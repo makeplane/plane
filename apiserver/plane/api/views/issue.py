@@ -118,7 +118,6 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
                 status=status.HTTP_200_OK,
             )
 
-
 class IssueAPIEndpoint(BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
@@ -148,6 +147,7 @@ class IssueAPIEndpoint(BaseAPIView):
         if base_filter:
             query = query.filter(base_filter)
 
+        print(query)
         return (query
             .filter(**filters)
             .select_related("project")
@@ -158,7 +158,7 @@ class IssueAPIEndpoint(BaseAPIView):
             .prefetch_related("labels")
             .order_by(self.kwargs.get("order_by", "-created_at"))).distinct()
         
-        
+
     def get(self, request, slug, project_id, pk=None):
         external_id = request.GET.get("external_id")
         external_source = request.GET.get("external_source")
@@ -925,7 +925,9 @@ class IssueCommentAPIEndpoint(BaseAPIView):
                 status=status.HTTP_409_CONFLICT,
             )
 
+       
         serializer = IssueCommentSerializer(data=request.data)
+        
         if serializer.is_valid():
             serializer.save(
                 project_id=project_id,
@@ -1108,7 +1110,6 @@ class IssueAttachmentEndpoint(BaseAPIView):
             )
 
         if serializer.is_valid():
-            # import pdb;pdb.set_trace()
             serializer.save(project_id=project_id, issue_id=issue_id)
             issue_activity.delay(
                 type="attachment.activity.created",

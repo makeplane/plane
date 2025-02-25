@@ -73,36 +73,6 @@ const navigation = (workspaceSlug: string, projectId: string) => [
     Icon: LayersIcon,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
   },
-  {
-    name: "Cycles",
-    href: `/${workspaceSlug}/projects/${projectId}/cycles`,
-    Icon: ContrastIcon,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  {
-    name: "Modules",
-    href: `/${workspaceSlug}/projects/${projectId}/modules`,
-    Icon: DiceIcon,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-  },
-  {
-    name: "Views",
-    href: `/${workspaceSlug}/projects/${projectId}/views`,
-    Icon: Layers,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-  },
-  {
-    name: "Pages",
-    href: `/${workspaceSlug}/projects/${projectId}/pages`,
-    Icon: FileText,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-  },
-  {
-    name: "Intake",
-    href: `/${workspaceSlug}/projects/${projectId}/inbox`,
-    Icon: Intake,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-  },
 ];
 
 export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {

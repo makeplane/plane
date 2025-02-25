@@ -9,3 +9,4 @@ export * from "./module";
 export * from "./cycle";
 export * from "./state";
 export * from "./state-group";
+export * from "./additional-properties";

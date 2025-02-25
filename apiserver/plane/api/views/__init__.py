@@ -34,3 +34,8 @@ from .member import ProjectMemberAPIEndpoint
 from .inbox import InboxIssueAPIEndpoint
 
 from .search import GlobalSearchEndpoint
+
+from .webhook import (
+    WebhookEndpoint, WebhookLogsEndpoint,
+    WebhookSecretRegenerateEndpoint
+)

@@ -7,6 +7,7 @@ from .module import urlpatterns as module_patterns
 from .inbox import urlpatterns as inbox_patterns
 from .member import urlpatterns as member_patterns
 from .search import urlpatterns as search_patters
+from .webhook import urlpatterns as webhook_patters
 
 urlpatterns = [
     *project_patterns,
@@ -17,5 +18,6 @@ urlpatterns = [
     *inbox_patterns,
     *member_patterns,
     *issue_type_patterns,
-    *search_patters
+    *search_patters,
+    *webhook_patters
 ]

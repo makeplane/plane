@@ -77,6 +77,7 @@ export type TIssueParams =
   | "show_empty_groups"
   | "cursor"
   | "per_page"
+  | "hub_code"
   | "issue_type"
   | "layout"
   | "expand";
@@ -98,6 +99,8 @@ export interface IIssueFilterOptions {
   subscriber?: string[] | null;
   target_date?: string[] | null;
   issue_type?: string[] | null;
+  hub_code?: string[] | null;
+  custom_properties?: string[] | null;
 }
 
 export interface IIssueDisplayFilterOptions {

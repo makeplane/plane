@@ -38,7 +38,6 @@ class S3Storage(S3Boto3Storage):
         self.aws_s3_endpoint_url = os.environ.get(
             "AWS_S3_ENDPOINT_URL"
         ) or os.environ.get("MINIO_ENDPOINT_URL")
-
         if os.environ.get("USE_MINIO") == "1":
             # Create an S3 client for MinIO
             self.s3_client = boto3.client(
@@ -47,7 +46,7 @@ class S3Storage(S3Boto3Storage):
                 aws_secret_access_key=self.aws_secret_access_key,
                 region_name=self.aws_region,
                 endpoint_url=(
-                    f"{request.scheme}://{request.get_host()}"
+                    f"https://{request.get_host()}"
                     if request
                     else self.aws_s3_endpoint_url
                 ),
@@ -89,6 +88,7 @@ class S3Storage(S3Boto3Storage):
 
         # Generate the presigned POST URL
         try:
+            
             # Generate a presigned URL for the S3 object
             response = self.s3_client.generate_presigned_post(
                 Bucket=self.aws_storage_bucket_name,
@@ -97,6 +97,7 @@ class S3Storage(S3Boto3Storage):
                 Conditions=conditions,
                 ExpiresIn=expiration,
             )
+            
         # Handle errors
         except ClientError as e:
             print(f"Error generating presigned POST URL: {e}")

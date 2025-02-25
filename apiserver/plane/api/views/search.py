@@ -64,7 +64,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             .values("name", "id", "identifier", "workspace__slug")
         )
 
-    def filter_issues(self, query, slug, project_id, workspace_search):
+    def filter_issues(self, query, slug, project_id, workspace_search, created_by_username=None):
         fields = ["name", "sequence_id", "project__identifier"]
         q = Q()
         for field in fields:
@@ -81,8 +81,10 @@ class GlobalSearchEndpoint(BaseAPIView):
             project__project_projectmember__member=self.request.user,
             project__project_projectmember__is_active=True,
             project__archived_at__isnull=True,
-            workspace__slug=slug,
+            workspace__slug=slug
         )
+        if created_by_username:
+            issues = issues.filter(created_by__username=created_by_username)
 
         if workspace_search == "false" and project_id:
             issues = issues.filter(project_id=project_id)
@@ -93,7 +95,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             "sequence_id",
             "project__identifier",
             "project_id",
-            "workspace__slug",
+            "workspace__slug"
         )[:100]
 
     def filter_cycles(self, query, slug, project_id, workspace_search):
@@ -230,6 +232,7 @@ class GlobalSearchEndpoint(BaseAPIView):
         workspace_search = request.query_params.get(
             "workspace_search", "false"
         )
+        created_by_username = request.query_params.get("created_by_username", False)
         project_id = request.query_params.get("project_id", False)
         if not query:
             return Response(
@@ -261,5 +264,5 @@ class GlobalSearchEndpoint(BaseAPIView):
 
         for model in MODELS_MAPPER.keys():
             func = MODELS_MAPPER.get(model, None)
-            results[model] = func(query, slug, project_id, workspace_search)
+            results[model] = func(query, slug, project_id, workspace_search, created_by_username=created_by_username)
         return Response({"results": results}, status=status.HTTP_200_OK)

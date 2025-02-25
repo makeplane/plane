@@ -116,7 +116,6 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
             response = super().dispatch(request, *args, **kwargs)
             if settings.DEBUG:
                 from django.db import connection
-
                 print(
                     f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
                 )
@@ -133,7 +132,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
             project_id = self.kwargs.get("project_id", None)
             if project_id == "DEFAULT":
                 project = Project.objects.filter(
-                        name='default', workspace__slug=kwargs['slug']
+                        name='TICKET', workspace__slug=kwargs['slug']
                     ).first()
                 if project:
                     kwargs['project_id'] = project.id
