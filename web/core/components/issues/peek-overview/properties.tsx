@@ -31,6 +31,7 @@ import { useIssueDetail, useMember, useProject, useProjectState } from "@/hooks/
 // plane web components
 import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issue-types/values";
 import { IssueWorklogProperty} from "@/plane-web/components/issues";
+import { ISSUE_ADDITIONAL_PROPERTIES } from "@/constants/issue";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
@@ -39,6 +40,7 @@ interface IPeekOverviewProperties {
   disabled: boolean;
   issueOperations: TIssueOperations;
 }
+
 
 export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issueOperations, disabled } = props;
@@ -287,14 +289,14 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         </div>
 
         <div>
-            {fields.map(({ key, label }) =>
-              issue?.[key] ? (
-                <div key={key} className="flex w-full items-center gap-3 h-8">
+            {ISSUE_ADDITIONAL_PROPERTIES.map((prop) =>
+              issue[prop.key] ? (
+                <div key={prop?.key} className="flex w-full items-center gap-3 h-8">
                   <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
                     <Info className="h-4 w-4 flex-shrink-0" />
-                    <span>{label}</span>
+                    <span>{prop?.title}</span>
                   </div>
-                  <div className="w-3/4 flex-grow group ml-2 text-sm">{issue[key]}</div>
+                  <div className="w-3/4 flex-grow group ml-2 text-sm">{issue[prop.key]}</div>
                 </div>
               ) : null
             )}
