@@ -221,6 +221,8 @@ export const GITHUB_REPOSITORY_INFO = (workspaceSlug: string, repoName: string) 
 // slack-project-integration
 export const SLACK_CHANNEL_INFO = (workspaceSlug: string, projectId: string) =>
   `SLACK_CHANNEL_INFO_${workspaceSlug.toString().toUpperCase()}_${projectId.toUpperCase()}`;
+export const SLACK_USER_CONNECTION_STATUS = (workspaceSlug: string) =>
+  `SLACK_USER_CONNECTION_STATUS_${workspaceSlug.toString().toUpperCase()}`;
 
 // Pages
 export const RECENT_PAGES_LIST = (projectId: string) => `RECENT_PAGES_LIST_${projectId.toUpperCase()}`;

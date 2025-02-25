@@ -4,3 +4,4 @@ export * from "./sidebar";
 export * from "./inbox-filter";
 export * from "./content";
 export * from "./inbox-issue-status";
+export * from "./settings";

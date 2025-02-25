@@ -40,13 +40,10 @@ export const InboxSettingUpdate: FC<InboxSettingUpdateProps> = observer((props: 
         }
     }
 
-    if (!notificationSettings) {
-        return null;
-    }
 
     return (
         <ToggleSwitch
-            value={notificationSettings[settings_key] ?? false}
+            value={notificationSettings ? notificationSettings[settings_key] : false}
             onChange={(newValue) => {
                 handleChange(newValue);
             }}
