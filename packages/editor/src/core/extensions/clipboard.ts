@@ -1,14 +1,8 @@
 import { Extension } from "@tiptap/core";
 import { Schema } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from '@tiptap/pm/state';
-
 import { Node as ProsemirrorNode } from "prosemirror-model";
-export function elementFromString(value) {
-  // add a wrapper to preserve leading and trailing whitespace
-  const wrappedValue = `<body>${value}</body>`
 
-  return new window.DOMParser().parseFromString(wrappedValue, 'text/html').body
-}
 export const MarkdownClipboard = Extension.create({
   name: 'markdownClipboard',
   addOptions() {
@@ -30,7 +24,6 @@ export const MarkdownClipboard = Extension.create({
               slice.content.content.some(
                 (node) => node.content.content.length > 1
               );
-
 
             if (!copyAsMarkdown) {
               return slice.content.content.map((node) =>
