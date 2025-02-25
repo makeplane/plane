@@ -1,7 +1,6 @@
 import { Extension } from "@tiptap/core";
-import { Schema } from "@tiptap/pm/model";
+import { Schema, Node as ProsemirrorNode } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from '@tiptap/pm/state';
-import { Node as ProsemirrorNode } from "prosemirror-model";
 
 
 export const MarkdownClipboard = Extension.create({
