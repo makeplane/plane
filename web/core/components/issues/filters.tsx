@@ -119,6 +119,8 @@ const HeaderFilters = observer(({ currentProjectDetails, projectId, workspaceSlu
           states={projectStates}
           cycleViewDisabled={!currentProjectDetails?.cycle_view}
           moduleViewDisabled={!currentProjectDetails?.module_view}
+          projectId={projectId}
+          workspaceSlug={workspaceSlug}
         />
       </FiltersDropdown>
       <FiltersDropdown title="Display" placement="bottom-end">
