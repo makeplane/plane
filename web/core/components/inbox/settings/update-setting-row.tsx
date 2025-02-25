@@ -17,14 +17,14 @@ export const InboxSettingUpdateRow: FC<InboxSettingUpdateRowProps> = observer((p
     const { t } = useTranslation()
 
     return (
-        <div className="w-full flex items-center justify-between">
-            <div className="text-base font-normal text-custom-text-200 w-2/4">
+        <div className="w-full grid gap-4 grid-cols-[50%_repeat(auto-fit,minmax(0,1fr))]">
+            <div className="text-base font-normal text-custom-text-200">
                 {t(title)}
             </div>
-            <div className="w-1/4">
+            <div className="">
                 <InboxSettingUpdate transport={EWorkspaceNotificationTransport.IN_APP} settings_key={settings_key} />
             </div>
-            <div className="w-1/4">
+            <div className="">
                 <InboxSettingUpdate transport={EWorkspaceNotificationTransport.EMAIL} settings_key={settings_key} />
             </div>
         </div>

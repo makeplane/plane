@@ -15,10 +15,10 @@ export const InboxSettingsRoot: FC = () => {
         <div className="text-lg font-normal text-custom-text-100">
           {t("notification_settings.task_updates")}
         </div>
-        <div className="flex items-center text-sm text-custom-text-350 font-semibold">
-          <div className="w-2/4">{t("notification_settings.advanced_settings")}</div>
-          <div className="w-1/4">{t("notification_settings.in_plane")}</div>
-          <div className="w-1/4">{t("notification_settings.email")}</div>
+        <div className="grid gap-4 grid-cols-[50%_repeat(auto-fit,minmax(0,1fr))] text-sm text-custom-text-350 font-semibold">
+          <div>{t("notification_settings.advanced_settings")}</div>
+          <div>{t("notification_settings.in_plane")}</div>
+          <div>{t("notification_settings.email")}</div>
         </div>
         {
           TASK_UPDATES_NOTIFICATION_SETTINGS?.map((item) => (
@@ -30,10 +30,10 @@ export const InboxSettingsRoot: FC = () => {
         <div className="text-lg font-normal text-custom-text-100">
           {t("notification_settings.comments")}
         </div>
-        <div className="flex items-center text-sm text-custom-text-350 font-semibold">
-          <div className="w-2/4">{t("notification_settings.advanced_settings")}</div>
-          <div className="w-1/4">{t("notification_settings.in_plane")}</div>
-          <div className="w-1/4">{t("notification_settings.email")}</div>
+        <div className="grid gap-4 grid-cols-[50%_repeat(auto-fit,minmax(0,1fr))] text-sm text-custom-text-350 font-semibold">
+          <div>{t("notification_settings.advanced_settings")}</div>
+          <div>{t("notification_settings.in_plane")}</div>
+          <div>{t("notification_settings.email")}</div>
         </div>
         {
           COMMENT_NOTIFICATION_SETTINGS?.map((item, index) => (
