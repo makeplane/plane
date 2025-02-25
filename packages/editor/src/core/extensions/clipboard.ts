@@ -20,7 +20,6 @@ export const MarkdownClipboard = Extension.create({
             const serializer = this.editor.storage.markdown.serializer;
             const hasMultipleBlocks = slice.content.childCount > 1;
 
-            console.log('has mul', hasMultipleBlocks)
             if (this.options.transformCopiedText && (hasMultipleBlocks)) {
               return serializer.serialize(slice.content);
             } else {
