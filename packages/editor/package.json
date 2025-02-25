@@ -63,7 +63,6 @@
     "lowlight": "^3.0.0",
     "lucide-react": "^0.469.0",
     "prosemirror-codemark": "^0.4.2",
-    "prosemirror-model": "^1.24.1",
     "prosemirror-utils": "^1.2.2",
     "tippy.js": "^6.3.7",
     "tiptap-markdown": "^0.8.10",

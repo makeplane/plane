@@ -20,8 +20,8 @@ export const MarkdownClipboard = Extension.create({
             const serializer = this.editor.storage.markdown.serializer;
             const hasMultipleBlocks = slice.content.childCount > 1;
             const hasOpenAndCloseEnd = slice.openStart === 0 && slice.openEnd === 0;
-
-            if (this.options.transformCopiedText && (hasMultipleBlocks || hasOpenAndCloseEnd)) {
+            const handleMarkdown = this.options.transformCopiedText && (hasMultipleBlocks || hasOpenAndCloseEnd);
+            if (handleMarkdown) {
               return serializer.serialize(slice.content);
             } else {
               return slice.content.textBetween(0, slice.content.size, "\n");
