@@ -1,4 +1,13 @@
 {
+  "sidebar": {
+    "pi_chat": "Пи Чат",
+    "initiatives": "Инициативы",
+    "teamspaces": "Тимспейсы",
+    "epics": "Эпики",
+    "upgrade_plan": "Апгрейд план",
+    "plane_pro": "Плейн Про",
+    "business": "Бизнес"
+  },
   "workspace_dashboards": "Дашборды",
   "pi_chat": "Pi Чат",
   "in_app": "В приложении",
