@@ -3,6 +3,7 @@ import { Schema } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { Node as ProsemirrorNode } from "prosemirror-model";
 
+
 export const MarkdownClipboard = Extension.create({
   name: 'markdownClipboard',
   addOptions() {
@@ -40,25 +41,25 @@ export const MarkdownClipboard = Extension.create({
   }
 })
 
-function toPlainText(root: ProsemirrorNode, schema: Schema) {
+const toPlainText = (root: ProsemirrorNode, schema: Schema): string => {
   const textSerializers = getTextSerializers(schema);
   return textBetween(root, 0, root.content.size, textSerializers);
-}
-export function getTextSerializers(schema: Schema) {
-  return Object.fromEntries(
-    Object.entries(schema.nodes)
-      .filter(([, node]) => node.spec.toPlainText)
-      .map(([name, node]) => [name, node.spec.toPlainText])
-  );
-}
+};
 
-export type PlainTextSerializer = (node: ProsemirrorNode) => string;
-export default function textBetween(
+type PlainTextSerializer = (node: ProsemirrorNode) => string;
+
+const getTextSerializers = (schema: Schema): Record<string, PlainTextSerializer | undefined> => Object.fromEntries(
+  Object.entries(schema.nodes)
+    .filter(([, node]) => node.spec.toPlainText)
+    .map(([name, node]) => [name, node.spec.toPlainText])
+);
+
+const textBetween = (
   doc: ProsemirrorNode,
   from: number,
   to: number,
   plainTextSerializers: Record<string, PlainTextSerializer | undefined>
-): string {
+): string => {
   let text = "";
   let first = true;
   const blockSeparator = "\n";
@@ -93,4 +94,4 @@ export default function textBetween(
   });
 
   return text;
-}
+};
