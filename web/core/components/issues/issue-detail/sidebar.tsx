@@ -26,6 +26,7 @@ import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issu
 import { IssueWorklogProperty } from "@/plane-web/components/issues";
 // components
 import type { TIssueOperations } from "./root";
+import { ISSUE_ADDITIONAL_PROPERTIES } from "@/constants/issue";
 
 type Props = {
   workspaceSlug: string;
@@ -285,14 +286,14 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               </div>
             </div>
 
-            {fields.map(({ key, label }) =>
-              issue?.[key] ? (
+            {ISSUE_ADDITIONAL_PROPERTIES.map((prop) =>
+              issue[prop.key] ? (
                 <div key={key} className="flex min-h-8 gap-2">
                   <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                     <Info className="h-4 w-4 flex-shrink-0" />
-                    <span>{label}</span>
+                    <span>{prop.title}</span>
                   </div>
-                  <div className="h-full min-h-8 text-sm w-3/5 pt-2 ml-2 flex-grow">{issue[key]}</div>
+                  <div className="h-full min-h-8 text-sm w-3/5 pt-2 ml-2 flex-grow">{issue[prop.key]}</div>
                 </div>
               ) : null
             )}
