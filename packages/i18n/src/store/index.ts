@@ -180,6 +180,8 @@ export class TranslationStore {
         return import("../locales/ja/translations-extended.json");
       case "zh-CN":
         return import("../locales/zh-CN/translations-extended.json");
+      case "ru":
+        return import("../locales/ru/translations-extended.json");
       default:
         throw new Error(`Unsupported language: ${language}`);
     }
