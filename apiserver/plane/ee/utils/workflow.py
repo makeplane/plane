@@ -2,7 +2,7 @@
 import uuid
 
 # Module imports
-from plane.db.models import Issue
+from plane.db.models import Issue, State
 from plane.ee.models import (
     Workflow,
     ProjectFeature,
@@ -106,6 +106,10 @@ class WorkflowStateManager:
         """
         False if the creation is allowed, True otherwise
         """
+
+        if not state_id:
+            # get the default state for the project
+            state_id = State.objects.get(project_id=self.project_id, default=True).id
 
         # Check if the feature is available for the workspace
         if not check_workspace_feature_flag(

@@ -55,6 +55,7 @@ from plane.payment.flags.flag import FeatureFlag
 from plane.utils.grouper import issue_group_values, issue_on_results
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.ee.utils.nested_issue_children import get_all_related_issues
+from plane.ee.utils.workflow import WorkflowStateManager
 
 
 class EpicViewSet(BaseViewSet):
@@ -145,6 +146,20 @@ class EpicViewSet(BaseViewSet):
             level=1,
             is_active=True,
         ).first()
+
+        # EE start
+        if request.data.get("state_id"):
+            workflow_state_manager = WorkflowStateManager(
+                project_id=project_id, slug=slug
+            )
+            if workflow_state_manager._validate_issue_creation(
+                state_id=request.data.get("state_id"),
+            ):
+                return Response(
+                    {"error": "You cannot create a epic in this state"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+        # EE end
 
         if not epic:
             return Response(
@@ -301,6 +316,21 @@ class EpicViewSet(BaseViewSet):
             return Response(
                 {"error": "Epic not found"}, status=status.HTTP_404_NOT_FOUND
             )
+
+        # EE: Check if state is updated then is the transition allowed
+        workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
+        if request.data.get(
+            "state_id"
+        ) and not workflow_state_manager.validate_state_transition(
+            issue=epic,
+            new_state_id=request.data.get("state_id"),
+            user_id=request.user.id,
+        ):
+            return Response(
+                {"error": "State transition is not allowed"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        # EE end
 
         current_instance = json.dumps(EpicSerializer(epic).data, cls=DjangoJSONEncoder)
 

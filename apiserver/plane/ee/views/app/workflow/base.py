@@ -241,10 +241,14 @@ class WorkflowEndpoint(BaseAPIView):
     def delete(self, request, slug, project_id):
 
         # Get the workflow for the project
-        workflow = Workflow.objects.filter(workspace__slug=slug, project_id=project_id).first()
+        workflow = Workflow.objects.filter(
+            workspace__slug=slug, project_id=project_id
+        ).first()
 
-        # delete the workflows for the project
-        Workflow.objects.filter(workspace__slug=slug, project_id=project_id).delete()
+        # update the workflows for the project
+        Workflow.objects.filter(workspace__slug=slug, project_id=project_id).update(
+            allow_issue_creation=True
+        )
 
         WorkflowTransition.objects.filter(
             workspace__slug=slug, project_id=project_id
@@ -268,28 +272,5 @@ class WorkflowEndpoint(BaseAPIView):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
         )
-
-        # Get all the states for the project
-        states = State.objects.filter(
-            workspace__slug=slug, project_id=project_id
-        ).values_list("id", flat=True)
-
-        workspace = Workspace.objects.get(slug=slug)
-
-        # bulk create the workflow states
-        if states:
-            Workflow.objects.bulk_create(
-                [
-                    Workflow(
-                        workspace_id=workspace.id,
-                        project_id=project_id,
-                        state_id=state_id,
-                        created_by=request.user,
-                        updated_by=request.user,
-                    )
-                    for state_id in states
-                ],
-                ignore_conflicts=True,
-            )
 
         return Response(status=status.HTTP_204_NO_CONTENT)

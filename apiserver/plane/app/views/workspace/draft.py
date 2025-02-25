@@ -17,6 +17,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
+from plane.ee.utils.workflow import WorkflowStateManager
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import (
     IssueCreateSerializer,
@@ -124,6 +125,21 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                 "project_id": request.data.get("project_id", None),
             },
         )
+
+        # EE start
+        if request.data.get("state_id"):
+            workflow_state_manager = WorkflowStateManager(
+                project_id=request.data.get("project_id", None), slug=slug
+            )
+            if workflow_state_manager._validate_issue_creation(
+                state_id=request.data.get("state_id"),
+            ):
+                return Response(
+                    {"error": "You cannot create a draft issue in this state"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+        # EE end
+
         if serializer.is_valid():
             serializer.save()
             issue = (
@@ -171,6 +187,24 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             return Response(
                 {"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND
             )
+
+        # EE start
+        # Check if state is updated then is the transition allowed
+        workflow_state_manager = WorkflowStateManager(
+            project_id=issue.project_id, slug=slug
+        )
+        if request.data.get(
+            "state_id"
+        ) and not workflow_state_manager.validate_state_transition(
+            issue=issue,
+            new_state_id=request.data.get("state_id"),
+            user_id=request.user.id,
+        ):
+            return Response(
+                {"error": "State transition is not allowed"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        # EE end
 
         serializer = DraftIssueCreateSerializer(
             issue,

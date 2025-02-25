@@ -38,6 +38,7 @@ from plane.app.serializers import (
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.ee.models import IntakeSetting
+from plane.ee.utils.workflow import WorkflowStateManager
 
 
 class IntakeViewSet(BaseViewSet):
@@ -130,9 +131,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                sub_issues_count=Issue.issue_objects.filter(
-                    parent=OuterRef("id")
-                )
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
@@ -182,7 +181,9 @@ class IntakeIssueViewSet(BaseViewSet):
             workspace__slug=slug, project_id=project_id
         ).first()
         if not intake:
-            return Response({"error": "Intake not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Intake not found"}, status=status.HTTP_404_NOT_FOUND
+            )
 
         project = Project.objects.get(pk=project_id)
         filters = issue_filters(request.GET, "GET", "issue__")
@@ -277,6 +278,17 @@ class IntakeIssueViewSet(BaseViewSet):
                 "default_assignee_id": project.default_assignee_id,
             },
         )
+        # EE start
+        workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
+        if workflow_state_manager._validate_issue_creation(
+            state_id=request.data.get("issue", None).get("state_id", None),
+        ):
+            return Response(
+                {"error": "You cannot create a intake issue in this state"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        # EE end
+
         if serializer.is_valid():
             serializer.save()
             intake_id = Intake.objects.filter(
@@ -392,6 +404,22 @@ class IntakeIssueViewSet(BaseViewSet):
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
             ).get(pk=intake_issue.issue_id, workspace__slug=slug, project_id=project_id)
+
+            # EE start
+            # Check if state is updated then is the transition allowed
+            workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
+            if issue_data.get(
+                "state_id", None
+            ) and not workflow_state_manager.validate_state_transition(
+                issue=issue,
+                new_state_id=issue_data.get("state_id", None),
+                user_id=request.user.id,
+            ):
+                return Response(
+                    {"error": "State transition is not allowed"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+            # EE end
             # Only allow guests to edit name and description
             if project_member.role <= 5:
                 issue_data = {
