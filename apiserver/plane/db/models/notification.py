@@ -66,6 +66,7 @@ class UserNotificationPreference(BaseModel):
         "db.Workspace",
         on_delete=models.CASCADE,
         related_name="workspace_notification_preferences",
+        null=True,
     )
     # project
     project = models.ForeignKey(
@@ -75,28 +76,14 @@ class UserNotificationPreference(BaseModel):
         null=True,
     )
 
-    transport = models.CharField(max_length=50, default="EMAIL")
+    # preference fields
+    property_change = models.BooleanField(default=True)
+    state_change = models.BooleanField(default=True)
+    comment = models.BooleanField(default=True)
+    mention = models.BooleanField(default=True)
+    issue_completed = models.BooleanField(default=True)
 
-    # task updates
-    property_change = models.BooleanField(default=False)
-    state_change = models.BooleanField(default=False)
-    issue_completed = models.BooleanField(default=False)
-    priority = models.BooleanField(default=False)
-    assignee = models.BooleanField(default=False)
-    start_due_date = models.BooleanField(default=False)
-    # comments fields
-    comment = models.BooleanField(default=False)
-    mention = models.BooleanField(default=False)
-    comment_reactions = models.BooleanField(default=False)
     class Meta:
-        unique_together = ["workspace", "user", "transport", "deleted_at"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["workspace", "user", "transport"],
-                condition=models.Q(deleted_at__isnull=True),
-                name="notification_preferences_unique_workspace_user_transport_when_deleted_at_null",
-            )
-        ]
         verbose_name = "UserNotificationPreference"
         verbose_name_plural = "UserNotificationPreferences"
         db_table = "user_notification_preferences"
@@ -105,7 +92,6 @@ class UserNotificationPreference(BaseModel):
     def __str__(self):
         """Return the user"""
         return f"<{self.user}>"
-
 
 class EmailNotificationLog(BaseModel):
     # receiver
@@ -136,6 +122,58 @@ class EmailNotificationLog(BaseModel):
         verbose_name_plural = "Email Notification Logs"
         db_table = "email_notification_logs"
         ordering = ("-created_at",)
+    
+class WorkspaceUserNotificationPreference(BaseModel):
+    # user it is related to
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="user_workspace_notification_preferences",
+    )
+    # workspace if it is applicable
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="workspace_user_notification_preferences",
+    )
+    # project
+    project = models.ForeignKey(
+        "db.Project",
+        on_delete=models.CASCADE,
+        related_name="project_user_notification_preferences",
+        null=True,
+    )
+
+    transport = models.CharField(max_length=50, default="EMAIL")
+
+    # task updates
+    property_change = models.BooleanField(default=False)
+    state_change = models.BooleanField(default=False)
+    priority = models.BooleanField(default=False)
+    assignee = models.BooleanField(default=False)
+    start_due_date = models.BooleanField(default=False)
+    # comments fields
+    comment = models.BooleanField(default=False)
+    mention = models.BooleanField(default=False)
+    comment_reactions = models.BooleanField(default=False)
+    class Meta:
+        unique_together = ["workspace", "user", "transport", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workspace", "user", "transport"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="notification_preferences_unique_workspace_user_transport_when_deleted_at_null",
+            )
+        ]
+        verbose_name = "Workspace User Notification Preference"
+        verbose_name_plural = "Workspace User Notification Preferences"
+        db_table = "workspace_user_notification_preferences"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        """Return the user"""
+        return f"<{self.user}>"
+
 
 class NotificationTransportChoices(models.TextChoices):
     EMAIL = "EMAIL", "Email"

@@ -8,7 +8,8 @@ from rest_framework.response import Response
 
 from plane.app.serializers import (
     NotificationSerializer,
-    UserNotificationPreferenceSerializer
+    UserNotificationPreferenceSerializer,
+    WorkspaceUserNotificationPreferenceSerializer
 )
 from plane.db.models import (
     Issue,
@@ -18,6 +19,7 @@ from plane.db.models import (
     UserNotificationPreference,
     WorkspaceMember,
     Workspace,
+    WorkspaceUserNotificationPreference,
     NotificationTransportChoices
 )
 from plane.utils.paginator import BasePaginator
@@ -366,8 +368,8 @@ class UserNotificationPreferenceEndpoint(BaseAPIView):
 
 
 class WorkspaceUserNotificationPreferenceEndpoint(BaseAPIView):
-    model = UserNotificationPreference
-    serializer_class = UserNotificationPreferenceSerializer
+    model = WorkspaceUserNotificationPreference
+    serializer_class = WorkspaceUserNotificationPreferenceSerializer
 
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
@@ -375,7 +377,7 @@ class WorkspaceUserNotificationPreferenceEndpoint(BaseAPIView):
     def get(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         get_notification_preferences = (
-            UserNotificationPreference.objects.filter(
+            WorkspaceUserNotificationPreference.objects.filter(
                 workspace=workspace, user=request.user
             )
         )
@@ -395,9 +397,9 @@ class WorkspaceUserNotificationPreferenceEndpoint(BaseAPIView):
 
 
         notification_preferences = (
-            UserNotificationPreference.objects.bulk_create(
+            WorkspaceUserNotificationPreference.objects.bulk_create(
                 [
-                    UserNotificationPreference(
+                    WorkspaceUserNotificationPreference(
                         workspace=workspace,
                         user=request.user,
                         transport=transport,
@@ -407,12 +409,12 @@ class WorkspaceUserNotificationPreferenceEndpoint(BaseAPIView):
             )
         )
 
-        notification_preferences = UserNotificationPreference.objects.filter(
+        notification_preferences = WorkspaceUserNotificationPreference.objects.filter(
             workspace=workspace, user=request.user
         )
 
         return Response(
-            UserNotificationPreferenceSerializer(
+            WorkspaceUserNotificationPreferenceSerializer(
                 notification_preferences, many=True
             ).data,
             status=status.HTTP_200_OK,
@@ -422,12 +424,12 @@ class WorkspaceUserNotificationPreferenceEndpoint(BaseAPIView):
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
     def patch(self, request, slug, transport):
-        notification_preference = UserNotificationPreference.objects.filter(
+        notification_preference = WorkspaceUserNotificationPreference.objects.filter(
             transport=transport, workspace__slug=slug, user=request.user
         ).first()
 
         if notification_preference:
-            serializer = UserNotificationPreferenceSerializer(
+            serializer = WorkspaceUserNotificationPreferenceSerializer(
                 notification_preference, data=request.data, partial=True
             )
 

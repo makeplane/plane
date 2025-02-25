@@ -19,7 +19,8 @@ from plane.db.models import (
     IssueActivity,
     UserNotificationPreference,
     ProjectMember,
-    NotificationTransportChoices
+    NotificationTransportChoices,
+    WorkspaceUserNotificationPreference
 )
 from django.db.models import Subquery
 
@@ -354,7 +355,7 @@ def notifications(
                 else:
                     sender = "in_app:issue_activities:subscribed"
 
-                preference = UserNotificationPreference.objects.filter(
+                preference = WorkspaceUserNotificationPreference.objects.filter(
                     user_id=subscriber, workspace_id=issue_workspace_id
                 )
                 email_preference = preference.filter(transport="EMAIL").first()
@@ -531,7 +532,7 @@ def notifications(
 
             for mention_id in comment_mentions:
                 if mention_id != actor_id:
-                    preference = UserNotificationPreference.objects.filter(
+                    preference = WorkspaceUserNotificationPreference.objects.filter(
                         user_id=mention_id,
                         workspace_id=issue_workspace_id,
                     )
@@ -608,7 +609,7 @@ def notifications(
 
             for mention_id in new_mentions:
                 if mention_id != actor_id:
-                    preference = UserNotificationPreference.objects.filter(
+                    preference = WorkspaceUserNotificationPreference.objects.filter(
                         user_id=mention_id,
                         workspace_id=issue_workspace_id,
                     )

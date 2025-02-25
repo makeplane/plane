@@ -49,7 +49,8 @@ from .notification import (
     EmailNotificationLog,
     Notification,
     UserNotificationPreference,
-    NotificationTransportChoices
+    NotificationTransportChoices,
+    WorkspaceUserNotificationPreference
 )
 from .page import Page, PageLabel, PageLog, ProjectPage, PageVersion
 from .project import (
