@@ -10381,11 +10381,6 @@ react-confetti@^6.1.0:
   dependencies:
     tween-functions "^1.2.0"
 
-react-day-picker@8.10.1:
-  version "8.10.1"
-  resolved "https://registry.yarnpkg.com/react-day-picker/-/react-day-picker-8.10.1.tgz#4762ec298865919b93ec09ba69621580835b8e80"
-  integrity sha512-TMx7fNbhLk15eqcMt+7Z7S2KF7mfTId/XJDjKE8f+IUcFn0l08/kI4FiYTL/0yuOLmEcbR4Fwe3GJf/NiiMnPA==
-
 react-day-picker@9.5.0:
   version "9.5.0"
   resolved "https://registry.yarnpkg.com/react-day-picker/-/react-day-picker-9.5.0.tgz#2ae36e85d6506026d72e350f49b5607d011cfd6f"
