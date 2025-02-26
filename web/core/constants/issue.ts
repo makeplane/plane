@@ -368,7 +368,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
         "vendor_code",
         "trip_reference_number",
         "reference_number",
-        // "custom_properties"
+        "custom_properties"
       ],
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
@@ -449,6 +449,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
         "vendor_code",
         "trip_reference_number",
         "reference_number",
+        "custom_properties"
       ],
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
