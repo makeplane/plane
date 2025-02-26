@@ -287,7 +287,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         </div>
 
         <div>
-            {ISSUE_ADDITIONAL_PROPERTIES.map((prop) =>
+            {ISSUE_ADDITIONAL_PROPERTIES.map((prop: any) =>
               issue[prop.key] ? (
                 <div key={prop?.key} className="flex w-full items-center gap-3 h-8">
                   <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
@@ -300,7 +300,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             )}
         </div>
 
-        <CustomProperties customProperties={customProperties} />
+        <CustomProperties customProperties={Array.isArray(customProperties) ? customProperties : []} />
 
         <IssueWorklogProperty
           workspaceSlug={workspaceSlug}

@@ -8,10 +8,10 @@ import { WorkspaceService } from "@/services/workspace.service";
 import { API_BASE_URL } from "@/helpers/common.helper";
 
 type Props = {
-  appliedFilters: Record<string, string>;
-  handleUpdate: (field: string, val: string) => void;
-  additionalPropertyTitle: string;
-  additionalPropertyKey: string;
+  appliedFilters: string[] | null;
+  handleUpdate: (val: string) => void;
+  additionalPropertyTitle: string | undefined;
+  additionalPropertyKey: string | undefined;
   searchQuery: string;
 };
 
@@ -27,8 +27,8 @@ export const FilterAdditionalProperties: React.FC<Props> = observer((props) => {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const response = await workspaceService.getIssueAdditionalProperties(workspaceSlug, projectId, additionalPropertyKey);
-        const formattedOptions = response.data.map((item: string) => ({ key: item, value: item })) || [];
+        const response = await workspaceService.getIssueAdditionalProperties(workspaceSlug.toString(), projectId.toString(), props.additionalPropertyKey);
+        const formattedOptions = response.data.map((item: string) => ({ label: item, value: item })) || [];
         setOptions(formattedOptions);
       } catch (error) {
         console.error(`Error fetching ${additionalPropertyKey} options:`, error);
@@ -39,7 +39,7 @@ export const FilterAdditionalProperties: React.FC<Props> = observer((props) => {
   }, [workspaceSlug, projectId, additionalPropertyKey]);
 
   const filteredOptions = searchQuery
-    ? options.filter(({ key }) => key.toLowerCase().includes(searchQuery.toLowerCase()))
+    ? options.filter((label: any) => label.toLowerCase().includes(searchQuery.toLowerCase()))
     : options;
 
   return (
@@ -53,12 +53,12 @@ export const FilterAdditionalProperties: React.FC<Props> = observer((props) => {
         <div>
           {filteredOptions.length > 0 ? (
             <>
-              {filteredOptions.slice(0, visibleOptions).map(({ key, value }) => (
+              {filteredOptions.slice(0, visibleOptions).map(({ label, value }) => (
                 <FilterOption
                   key={value}
                   isChecked={appliedFilters?.includes(value) ?? false}
                   onClick={() => handleUpdate(value)}
-                  title={key}
+                  title={label}
                 />
               ))}
               {filteredOptions.length > 5 && (

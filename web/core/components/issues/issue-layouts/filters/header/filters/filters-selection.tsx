@@ -245,14 +245,14 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
           </div>
         )}
 
-          {ISSUE_ADDITIONAL_PROPERTIES.map((prop) => (
+          {ISSUE_ADDITIONAL_PROPERTIES.map((prop: any) => (
             <div className="py-2">
               <FilterAdditionalProperties
                 key={prop.key}
-                appliedFilters={filters[prop.key] ?? null} 
+                appliedFilters={filters[prop.key as keyof IIssueFilterOptions] ?? null} 
                 additionalPropertyTitle={prop.title}
                 additionalPropertyKey={prop.key} 
-                handleUpdate={(val) => handleFiltersUpdate(prop.key, val)} 
+                handleUpdate={(val) => handleFiltersUpdate(prop.key as keyof IIssueFilterOptions, val)} 
                 searchQuery={filtersSearchQuery}
               />
             </div>

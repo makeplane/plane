@@ -14,7 +14,6 @@ type Props = {
   appliedFilters: string[] | null;
   handleUpdate: (val: string) => void;
   searchQuery: string;
-  states: IState[] | undefined;
 };
 
 export const FilterCustomProperty: React.FC<Props> = observer((props) => {
@@ -29,7 +28,7 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const handleViewToggle = (groupKey) => {
+  const handleViewToggle = (groupKey: string) => {
     setRenderMoreGroupItems((prev) => {
       return {
         ...prev,
@@ -41,24 +40,38 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
   React.useEffect(() => {
     const fetchCustomProperties = async (): Promise<void> => {
       try {
-        const data = await workspaceService.getIssuesCustomProperties(workspaceSlug);
-        setGroupedProperties(data);
-        Object?.keys(data)?.forEach((groupKey) => {
+        const data = await workspaceService.getIssuesCustomProperties(workspaceSlug.toString());
+    
+        if (Array.isArray(data)) {
+          // Convert array to an object with group keys
+          const groupedData: Record<string, any[]> = data.reduce((acc, item) => {
+            const key = item.group || "default"; // Adjust based on API response
+            acc[key] = acc[key] ? [...acc[key], item] : [item];
+            return acc;
+          }, {} as Record<string, any[]>);
+    
+          setGroupedProperties(groupedData);
+        } else {
+          setGroupedProperties(data);
+        }
+    
+        Object.keys(data).forEach((groupKey) => {
           setGroupPreviewEnabled((prev) => ({
             ...prev,
-            [groupKey]: true
+            [groupKey]: true,
           }));
         });
       } catch (error) {
         console.error("Error fetching custom properties:", error);
       }
     };
+    
 
     fetchCustomProperties();
   }, [workspaceSlug]);
 
   const filteredGroupOptions = useMemo(() => {
-    return Object.keys(groupedProperties).reduce((acc, groupKey) => {
+    return Object.keys(groupedProperties).reduce<Record<string, any[]>>((acc, groupKey) => {
       const properties = groupedProperties[groupKey];
 
       const filteredValues = properties
@@ -105,7 +118,7 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
                       .map((property) => (
                         <FilterOption
                           key={`${groupKey}:${property}`}
-                          isChecked={appliedFilters?.includes(`${groupKey}:${property}`)}
+                          isChecked={appliedFilters?.includes(`${groupKey}:${property}`) ? true : false}
                           onClick={() => handleUpdate(`${groupKey}:${property}`)}
                           title={property}
                         />

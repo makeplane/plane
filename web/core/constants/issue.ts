@@ -9,7 +9,6 @@ import {
   TIssueOrderByOptions,
   TIssuePriorities,
   TIssueGroupingFilters,
-  TIssueAdditionalProperties,
 } from "@plane/types";
 
 export const DRAG_ALLOWED_GROUPS: TIssueGroupByOptions[] = [
@@ -553,7 +552,7 @@ export const groupReactionEmojis = (reactions: any) => {
 };
 
 export const ISSUE_ADDITIONAL_PROPERTIES: {
-    key: TIssueAdditionalProperties;
+    key: keyof TIssue;
     title: string;
   }[] = [
     { key: "hub_code", title: "Hub Code" },

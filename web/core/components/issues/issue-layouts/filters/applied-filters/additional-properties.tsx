@@ -8,6 +8,7 @@ import { X } from "lucide-react";
 type Props = {
   handleRemove: (val: string) => void;
   values: string[];
+  editable: boolean | undefined;
 };
 
 export const AppliedAdditionalPropertiesFilters: React.FC<Props> = observer((props) => {

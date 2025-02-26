@@ -289,7 +289,7 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async getIssueAdditionalProperties(workspaceSlug: string, projectId: string , field: any): Promise<Record<string, any>[]> {
+  async getIssueAdditionalProperties(workspaceSlug: string, projectId: string , field: any): Promise<any> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/search?field=${field}`,
     )

@@ -284,9 +284,9 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               </div>
             </div>
 
-            {ISSUE_ADDITIONAL_PROPERTIES.map((prop) =>
+            {ISSUE_ADDITIONAL_PROPERTIES.map((prop: any) =>
               issue[prop.key] ? (
-                <div key={key} className="flex min-h-8 gap-2">
+                <div key={prop.key} className="flex min-h-8 gap-2">
                   <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                     <Info className="h-4 w-4 flex-shrink-0" />
                     <span>{prop.title}</span>
@@ -313,7 +313,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               />
             )}
             <CustomProperties 
-                customProperties={customProperties} 
+                customProperties={Array.isArray(customProperties) ? customProperties : []} 
             />
           </div>
         </div>
