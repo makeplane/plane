@@ -286,22 +286,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           </div>
         </div>
 
-        <div>
-            {ISSUE_ADDITIONAL_PROPERTIES.map((prop: any) =>
-              issue[prop.key] ? (
-                <div key={prop?.key} className="flex w-full items-center gap-3 h-8">
-                  <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-                    <Info className="h-4 w-4 flex-shrink-0" />
-                    <span>{prop?.title}</span>
-                  </div>
-                  <div className="w-3/4 flex-grow group ml-2 text-sm">{issue[prop.key]}</div>
-                </div>
-              ) : null
-            )}
-        </div>
-
-        <CustomProperties customProperties={Array.isArray(customProperties) ? customProperties : []} />
-
         <IssueWorklogProperty
           workspaceSlug={workspaceSlug}
           projectId={projectId}
@@ -318,6 +302,20 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             isDisabled={disabled}
           />
         )}
+
+        {ISSUE_ADDITIONAL_PROPERTIES.map((prop: any) =>
+          issue[prop.key] ? (
+            <div key={prop?.key} className="flex w-full items-center gap-3 h-8">
+              <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+                <Info className="h-4 w-4 flex-shrink-0" />
+                <span>{prop?.title}</span>
+              </div>
+              <div className="w-3/4 flex-grow group ml-2 text-sm">{issue[prop.key]}</div>
+            </div>
+          ) : null
+        )}
+
+        <CustomProperties customProperties={Array.isArray(customProperties) ? customProperties : []} />
       </div>
     </div>
   );

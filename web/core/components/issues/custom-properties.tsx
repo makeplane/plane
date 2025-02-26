@@ -1,5 +1,4 @@
 import React from "react";
-import { Info } from "lucide-react"; 
 
 type CustomProperty = {
   key: string;
@@ -22,7 +21,6 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({ customProper
       {customProperties.map((element) => (
         <div key={element.key} className="flex min-h-8 gap-2 align-items-center">
           <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
-            <Info className="h-4 w-4 flex-shrink-0 mt-0.5" />
             <span>{element.key}</span>
           </div>
           <div className="h-full min-h-8 w-3/5 mt-1 ml-5 flex-grow">

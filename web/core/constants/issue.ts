@@ -524,6 +524,6 @@ export const ISSUE_ADDITIONAL_PROPERTIES: {
     { key: "customer_code", title: "Customer Code" },
     { key: "worker_code", title: "Worker Code" },
     { key: "vendor_code", title: "Vendor Code" },
-    { key: "trip_reference_number", title: "Trip Reference Number" },
+    { key: "trip_reference_number", title: "Trip Ref Number" },
     { key: "reference_number", title: "Reference Number" }
   ];
