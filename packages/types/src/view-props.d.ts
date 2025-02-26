@@ -80,7 +80,14 @@ export type TIssueParams =
   | "hub_code"
   | "issue_type"
   | "layout"
-  | "expand";
+  | "expand"
+  | "customer_code"
+  | "worker_code"
+  | "trip_reference_number"
+  | "reference_number"
+  | "vendor_code"
+  | "custom_properties"
+  | "hub_code";
 
 export type TCalendarLayouts = "month" | "week";
 
