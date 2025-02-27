@@ -163,7 +163,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
             hidden: isCollapsed,
           })}
         >
-          <WorkspaceEditionBadge />
+          {/* <WorkspaceEditionBadge /> */}
         </div>
         <div
           className={`flex flex-shrink-0 items-center gap-1 ${isCollapsed ? "flex-col justify-center" : "justify-evenly"}`}
