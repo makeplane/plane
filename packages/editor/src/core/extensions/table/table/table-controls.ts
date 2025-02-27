@@ -19,15 +19,17 @@ export function tableControls() {
       handleTripleClickOn(view, pos, node, nodePos, event, direct) {
         if (node.type.name === 'tableCell') {
           event.preventDefault();
-          const start = nodePos + 1;
-          const end = nodePos + node.nodeSize - 1;
+          const $pos = view.state.doc.resolve(pos);
+          const line = $pos.parent;
+          const linePos = $pos.start();
+          const start = linePos;
+          const end = linePos + line.nodeSize - 1;
           const tr = view.state.tr.setSelection(
             TextSelection.create(view.state.doc, start, end)
           );
           view.dispatch(tr);
           return true;
         }
-
         return false;
       },
       handleDOMEvents: {
