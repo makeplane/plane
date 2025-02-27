@@ -100,6 +100,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                 </button>
               </CustomMenu.MenuItem>
             )}
+            {/*
             <CustomMenu.MenuItem>
               <a
                 href="mailto:sales@plane.so"
@@ -110,6 +111,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                 <span className="text-xs">{t("contact_sales")}</span>
               </a>
             </CustomMenu.MenuItem>
+            */}
             <div className="my-1 border-t border-custom-border-200" />
             <CustomMenu.MenuItem>
               <div
@@ -135,6 +137,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                 <span className="text-xs">{t("keyboard_shortcuts")}</span>
               </button>
             </CustomMenu.MenuItem>
+            {/*
             <CustomMenu.MenuItem>
               <button
                 type="button"
@@ -153,6 +156,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                 <span className="text-xs">Discord</span>
               </a>
             </CustomMenu.MenuItem>
+            */}
             <div className="px-1 pt-2 mt-1 text-xs text-custom-text-200 border-t border-custom-border-200">
               <PlaneVersionNumber />
             </div>
