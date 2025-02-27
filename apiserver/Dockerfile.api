@@ -63,10 +63,11 @@ RUN if [ "${ENV_TYPE}" = "apiserver" ]; then \
     python manage.py migrate --noinput; \
     fi
     
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf \
 CMD if [ "${ENV_TYPE}" = "apiserver" ]; then \
     gunicorn -w 2 -k uvicorn.workers.UvicornWorker plane.asgi:application --bind 0.0.0.0:8000 --max-requests 1200 --max-requests-jitter 1000 --access-logfile -; \
     elif [ "${ENV_TYPE}" = "celery" ]; then \
-    celery -A plane worker -l info; \
+    supervisord -c /etc/supervisor/conf.d/supervisord.conf \
     elif [ "${ENV_TYPE}" = "celery-beat" ]; then \
     celery -A plane beat -l info; \
     else \
