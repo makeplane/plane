@@ -23,6 +23,10 @@ export const MarkdownClipboard = Extension.create({
               slice.content.firstChild?.type.name === "table";
             const hasMultipleBlocks = slice.content.childCount > 1;
             const selectWhole = slice.openStart === 0 && slice.openEnd === 0;
+            const islist =
+              slice.content.childCount === 1 &&
+              ["bulletList", "orderedList", "taskList"].includes(slice.content.firstChild?.type.name ?? "");
+            const isBlockQuote = slice.content.firstChild?.type.name === "blockquote"
             let handleMarkdown = false;
 
             if (isTable && !selectWhole) {
@@ -38,10 +42,21 @@ export const MarkdownClipboard = Extension.create({
                 );
                 handleMarkdown = this.options.transformCopiedText && !allChildrenAreParagraphs && cellHasMultipleBlocks;
               }
+            } else if (islist) {
+              console.log('list')
+              const firstCell = slice.content.firstChild;
+              if (firstCell && firstCell.content.firstChild) {
+                const listHasMultipleBlocks = firstCell.content.childCount > 1;
+                handleMarkdown = this.options.transformCopiedText && listHasMultipleBlocks;
+              }
             } else {
+              console.log('else')
               handleMarkdown =
-                this.options.transformCopiedText && (hasMultipleBlocks || selectWhole);
+                this.options.transformCopiedText && (hasMultipleBlocks || selectWhole || isBlockQuote);
             }
+
+
+            console.log(handleMarkdown, 'u4', slice)
 
             return handleMarkdown
               ? serializer.serialize(slice.content)
