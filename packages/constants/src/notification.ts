@@ -157,22 +157,27 @@ export const TASK_UPDATES_NOTIFICATION_SETTINGS: TNotificationSettings[] = [
   {
     key: ENotificationSettingsKey.PROPERTY_CHANGE,
     i18n_title: "notification_settings.work_item_property_title",
+    i18n_subtitle: "notification_settings.work_item_property_subtitle",
   },
   {
     key: ENotificationSettingsKey.STATE_CHANGE,
     i18n_title: "notification_settings.status_title",
+    i18n_subtitle: "notification_settings.status_subtitle",
   },
   {
     key: ENotificationSettingsKey.PRIORITY,
     i18n_title: "notification_settings.priority_title",
+    i18n_subtitle: "notification_settings.priority_subtitle",
   },
   {
     key: ENotificationSettingsKey.ASSIGNEE,
     i18n_title: "notification_settings.assignee_title",
+    i18n_subtitle: "notification_settings.assignee_subtitle",
   },
   {
     key: ENotificationSettingsKey.START_DUE_DATE,
     i18n_title: "notification_settings.due_date_title",
+    i18n_subtitle: "notification_settings.due_date_subtitle",
   }
 ]
 
@@ -180,14 +185,17 @@ export const COMMENT_NOTIFICATION_SETTINGS: TNotificationSettings[] = [
   {
     key: ENotificationSettingsKey.MENTIONED_COMMENTS,
     i18n_title: "notification_settings.mentioned_comments_title",
+    i18n_subtitle: "notification_settings.mentioned_comments_subtitle",
   },
   {
     key: ENotificationSettingsKey.COMMENTS,
     i18n_title: "notification_settings.new_comments_title",
+    i18n_subtitle: "notification_settings.new_comments_subtitle",
   },
   {
     key: ENotificationSettingsKey.COMMENT_REACTIONS,
     i18n_title: "notification_settings.reaction_comments_title",
+    i18n_subtitle: "notification_settings.reaction_comments_subtitle",
   },
 ]
 

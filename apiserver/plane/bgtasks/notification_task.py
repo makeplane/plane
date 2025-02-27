@@ -12,15 +12,13 @@ from plane.db.models import (
     User,
     IssueAssignee,
     Issue,
-    State,
     EmailNotificationLog,
     Notification,
     IssueComment,
     IssueActivity,
-    UserNotificationPreference,
     ProjectMember,
     NotificationTransportChoices,
-    WorkspaceUserNotificationPreference
+    WorkspaceUserNotificationPreference,
 )
 from django.db.models import Subquery
 
@@ -209,6 +207,578 @@ def create_mention_notification(
     )
 
 
+def process_mentions(
+    requested_data,
+    current_instance,
+    project_id,
+    issue_id,
+    project_members,
+    issue_activities_created,
+):
+    """
+    Process mentions from issue data and comments.
+    Returns new mentions, removed mentions, and subscribers.
+    """
+    # Get new mentions from the newer instance
+    new_mentions = get_new_mentions(
+        requested_instance=requested_data, current_instance=current_instance
+    )
+    new_mentions = list(set(new_mentions) & {str(member) for member in project_members})
+    removed_mention = get_removed_mentions(
+        requested_instance=requested_data, current_instance=current_instance
+    )
+
+    comment_mentions = []
+    all_comment_mentions = []
+
+    # Get New Subscribers from the mentions of the newer instance
+    requested_mentions = extract_mentions(issue_instance=requested_data)
+    mention_subscribers = extract_mentions_as_subscribers(
+        project_id=project_id, issue_id=issue_id, mentions=requested_mentions
+    )
+
+    # Process comment mentions
+    for issue_activity in issue_activities_created:
+        issue_comment = issue_activity.get("issue_comment")
+        issue_comment_new_value = issue_activity.get("new_value")
+        issue_comment_old_value = issue_activity.get("old_value")
+        if issue_comment is not None:
+            all_comment_mentions = all_comment_mentions + extract_comment_mentions(
+                issue_comment_new_value
+            )
+
+            new_comment_mentions = get_new_comment_mentions(
+                old_value=issue_comment_old_value, new_value=issue_comment_new_value
+            )
+            comment_mentions = comment_mentions + new_comment_mentions
+            comment_mentions = [
+                mention
+                for mention in comment_mentions
+                if UUID(mention) in set(project_members)
+            ]
+
+    comment_mention_subscribers = extract_mentions_as_subscribers(
+        project_id=project_id, issue_id=issue_id, mentions=all_comment_mentions
+    )
+
+    return {
+        "new_mentions": new_mentions,
+        "removed_mention": removed_mention,
+        "comment_mentions": comment_mentions,
+        "mention_subscribers": mention_subscribers,
+        "comment_mention_subscribers": comment_mention_subscribers,
+    }
+
+
+def create_in_app_notifications(
+    issue,
+    project,
+    actor_id,
+    issue_activities_created,
+    issue_subscribers,
+    issue_assignees,
+    new_mentions,
+    comment_mentions,
+    last_activity,
+    issue_workspace_id,
+):
+    """
+    Create in-app notifications for issue activities and mentions.
+    Returns a list of Notification objects to be bulk created.
+    """
+    bulk_notifications = []
+
+    # Process notifications for subscribers
+    for subscriber in issue_subscribers:
+        if issue.created_by_id and issue.created_by_id == subscriber:
+            sender = "in_app:issue_activities:created"
+        elif (
+            subscriber in issue_assignees and issue.created_by_id not in issue_assignees
+        ):
+            sender = "in_app:issue_activities:assigned"
+        else:
+            sender = "in_app:issue_activities:subscribed"
+
+        # Get user notification preferences for in-app
+        in_app_preference = WorkspaceUserNotificationPreference.objects.filter(
+            user_id=subscriber,
+            workspace_id=issue_workspace_id,
+            transport=NotificationTransportChoices.IN_APP[0],
+        ).first()
+
+        for issue_activity in issue_activities_created:
+            # Skip if activity is not for this issue
+            if issue_activity.get("issue_detail").get("id") != issue.id:
+                continue
+
+            # Skip description updates
+            if issue_activity.get("field") == "description":
+                continue
+
+            # Check if notification should be sent based on preferences
+            send_in_app = should_send_notification(
+                in_app_preference, issue_activity.get("field")
+            )
+
+            if not send_in_app:
+                continue
+
+            # Get issue comment if relevant
+            issue_comment = get_issue_comment_for_activity(
+                issue_activity, issue.id, project.id, project.workspace_id
+            )
+
+            # Create in-app notification
+            bulk_notifications.append(
+                create_activity_notification(
+                    project=project,
+                    issue=issue,
+                    sender=sender,
+                    actor_id=actor_id,
+                    subscriber=subscriber,
+                    issue_activity=issue_activity,
+                    issue_comment=issue_comment,
+                )
+            )
+
+    # Process comment mention notifications
+    actor = User.objects.get(pk=actor_id)
+    for mention_id in comment_mentions:
+        if mention_id != actor_id:
+            in_app_preference = WorkspaceUserNotificationPreference.objects.filter(
+                user_id=mention_id,
+                workspace_id=issue_workspace_id,
+                transport=NotificationTransportChoices.IN_APP[0],
+            ).first()
+
+            if in_app_preference.mention:
+                for issue_activity in issue_activities_created:
+                    notification = create_mention_notification(
+                        project=project,
+                        issue=issue,
+                        notification_comment=f"{actor.display_name} has mentioned you in a comment in issue {issue.name}",
+                        actor_id=actor_id,
+                        mention_id=mention_id,
+                        issue_id=issue.id,
+                        activity=issue_activity,
+                    )
+                    bulk_notifications.append(notification)
+
+    # Process issue mention notifications
+    for mention_id in new_mentions:
+        if mention_id != actor_id:
+            in_app_preference = WorkspaceUserNotificationPreference.objects.filter(
+                user_id=mention_id,
+                workspace_id=issue_workspace_id,
+                transport=NotificationTransportChoices.IN_APP[0],
+            ).first()
+
+            if not in_app_preference.mention:
+                continue
+
+            if (
+                last_activity is not None
+                and last_activity.field == "description"
+                and actor_id == str(last_activity.actor_id)
+            ):
+                bulk_notifications.append(
+                    Notification(
+                        workspace=project.workspace,
+                        sender="in_app:issue_activities:mentioned",
+                        triggered_by_id=actor_id,
+                        receiver_id=mention_id,
+                        entity_identifier=issue.id,
+                        entity_name="issue",
+                        project=project,
+                        message=f"You have been mentioned in the issue {issue.name}",
+                        data=create_notification_data(issue, last_activity),
+                    )
+                )
+            else:
+                for issue_activity in issue_activities_created:
+                    notification = create_mention_notification(
+                        project=project,
+                        issue=issue,
+                        notification_comment=f"You have been mentioned in the issue {issue.name}",
+                        actor_id=actor_id,
+                        mention_id=mention_id,
+                        issue_id=issue.id,
+                        activity=issue_activity,
+                    )
+                    bulk_notifications.append(notification)
+
+    return bulk_notifications
+
+
+def create_email_notifications(
+    issue,
+    project,
+    actor_id,
+    issue_activities_created,
+    issue_subscribers,
+    issue_assignees,
+    new_mentions,
+    comment_mentions,
+    last_activity,
+    issue_workspace_id,
+):
+    """
+    Create email notifications for issue activities and mentions.
+    Returns a list of EmailNotificationLog objects to be bulk created.
+    """
+    bulk_email_logs = []
+
+    # Process notifications for subscribers
+    for subscriber in issue_subscribers:
+        # Get user notification preferences for email
+        email_preference = WorkspaceUserNotificationPreference.objects.filter(
+            user_id=subscriber,
+            workspace_id=issue_workspace_id,
+            transport=NotificationTransportChoices.EMAIL[0],
+        ).first()
+
+        for issue_activity in issue_activities_created:
+            # Skip if activity is not for this issue
+            if issue_activity.get("issue_detail").get("id") != issue.id:
+                continue
+
+            # Skip description updates
+            if issue_activity.get("field") == "description":
+                continue
+
+            # Check if notification should be sent based on preferences
+            send_email = should_send_notification(
+                email_preference, issue_activity.get("field")
+            )
+
+            if not send_email:
+                continue
+
+            # Get issue comment if relevant
+            issue_comment = get_issue_comment_for_activity(
+                issue_activity, issue.id, project.id, project.workspace_id
+            )
+
+            # Create email notification log
+            bulk_email_logs.append(
+                create_email_notification_log(
+                    issue=issue,
+                    actor_id=actor_id,
+                    subscriber=subscriber,
+                    issue_activity=issue_activity,
+                    issue_comment=issue_comment,
+                )
+            )
+
+    # Process comment mention notifications
+    for mention_id in comment_mentions:
+        if mention_id != actor_id:
+            email_preference = WorkspaceUserNotificationPreference.objects.filter(
+                user_id=mention_id,
+                workspace_id=issue_workspace_id,
+                transport=NotificationTransportChoices.EMAIL[0],
+            ).first()
+
+            if email_preference.mention:
+                for issue_activity in issue_activities_created:
+                    bulk_email_logs.append(
+                        create_mention_email_log(
+                            issue=issue,
+                            actor_id=actor_id,
+                            mention_id=mention_id,
+                            issue_activity=issue_activity,
+                            field="mention",
+                        )
+                    )
+
+    # Process issue mention notifications
+    for mention_id in new_mentions:
+        if mention_id != actor_id:
+            email_preference = WorkspaceUserNotificationPreference.objects.filter(
+                user_id=mention_id,
+                workspace_id=issue_workspace_id,
+                transport=NotificationTransportChoices.EMAIL[0],
+            ).first()
+
+            if not email_preference.mention:
+                continue
+
+            if (
+                last_activity is not None
+                and last_activity.field == "description"
+                and actor_id == str(last_activity.actor_id)
+            ):
+                bulk_email_logs.append(
+                    EmailNotificationLog(
+                        triggered_by_id=actor_id,
+                        receiver_id=mention_id,
+                        entity_identifier=issue.id,
+                        entity_name="issue",
+                        data=create_email_data_from_activity(
+                            issue, last_activity, field="mention"
+                        ),
+                    )
+                )
+            else:
+                for issue_activity in issue_activities_created:
+                    bulk_email_logs.append(
+                        create_mention_email_log(
+                            issue=issue,
+                            actor_id=actor_id,
+                            mention_id=mention_id,
+                            issue_activity=issue_activity,
+                            field="mention",
+                        )
+                    )
+
+    return bulk_email_logs
+
+
+def should_send_notification(preference, field):
+    """
+    Determine if notification should be sent based on user preferences and activity field.
+    """
+    if field == "state":
+        return preference.state_change
+    elif field == "comment":
+        return preference.comment
+    elif field == "priority":
+        return preference.priority
+    elif field == "assignee":
+        return preference.assignee
+    elif field == "start_date" or field == "target_date":
+        return preference.start_due_date
+    else:
+        return preference.property_change
+
+
+def get_issue_comment_for_activity(issue_activity, issue_id, project_id, workspace_id):
+    """
+    Fetch issue comment for an activity if it exists.
+    """
+    if issue_activity.get("issue_comment"):
+        return IssueComment.objects.filter(
+            id=issue_activity.get("issue_comment"),
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+        ).first()
+    return None
+
+
+def create_activity_notification(
+    project, issue, sender, actor_id, subscriber, issue_activity, issue_comment
+):
+    """
+    Create a Notification object for an issue activity.
+    """
+    return Notification(
+        workspace=project.workspace,
+        sender=sender,
+        triggered_by_id=actor_id,
+        receiver_id=subscriber,
+        entity_identifier=issue.id,
+        entity_name="issue",
+        project=project,
+        title=issue_activity.get("comment"),
+        data={
+            "issue": {
+                "id": str(issue.id),
+                "name": str(issue.name),
+                "identifier": str(issue.project.identifier),
+                "sequence_id": issue.sequence_id,
+                "state_name": issue.state.name,
+                "state_group": issue.state.group,
+            },
+            "issue_activity": {
+                "id": str(issue_activity.get("id")),
+                "verb": str(issue_activity.get("verb")),
+                "field": str(issue_activity.get("field")),
+                "actor": str(issue_activity.get("actor_id")),
+                "new_value": str(issue_activity.get("new_value")),
+                "old_value": str(issue_activity.get("old_value")),
+                "issue_comment": str(
+                    issue_comment.comment_stripped if issue_comment is not None else ""
+                ),
+                "old_identifier": (
+                    str(issue_activity.get("old_identifier"))
+                    if issue_activity.get("old_identifier")
+                    else None
+                ),
+                "new_identifier": (
+                    str(issue_activity.get("new_identifier"))
+                    if issue_activity.get("new_identifier")
+                    else None
+                ),
+            },
+        },
+    )
+
+
+def create_email_notification_log(
+    issue, actor_id, subscriber, issue_activity, issue_comment
+):
+    """
+    Create an EmailNotificationLog object for an issue activity.
+    """
+    return EmailNotificationLog(
+        triggered_by_id=actor_id,
+        receiver_id=subscriber,
+        entity_identifier=issue.id,
+        entity_name="issue",
+        data={
+            "issue": {
+                "id": str(issue.id),
+                "name": str(issue.name),
+                "identifier": str(issue.project.identifier),
+                "project_id": str(issue.project.id),
+                "workspace_slug": str(issue.project.workspace.slug),
+                "sequence_id": issue.sequence_id,
+                "state_name": issue.state.name,
+                "state_group": issue.state.group,
+            },
+            "issue_activity": {
+                "id": str(issue_activity.get("id")),
+                "verb": str(issue_activity.get("verb")),
+                "field": str(issue_activity.get("field")),
+                "actor": str(issue_activity.get("actor_id")),
+                "new_value": str(issue_activity.get("new_value")),
+                "old_value": str(issue_activity.get("old_value")),
+                "issue_comment": str(
+                    issue_comment.comment_stripped if issue_comment is not None else ""
+                ),
+                "old_identifier": (
+                    str(issue_activity.get("old_identifier"))
+                    if issue_activity.get("old_identifier")
+                    else None
+                ),
+                "new_identifier": (
+                    str(issue_activity.get("new_identifier"))
+                    if issue_activity.get("new_identifier")
+                    else None
+                ),
+                "activity_time": issue_activity.get("created_at"),
+            },
+        },
+    )
+
+
+def create_mention_email_log(issue, actor_id, mention_id, issue_activity, field):
+    """
+    Create an EmailNotificationLog for a mention notification.
+    """
+    return EmailNotificationLog(
+        triggered_by_id=actor_id,
+        receiver_id=mention_id,
+        entity_identifier=issue.id,
+        entity_name="issue",
+        data={
+            "issue": {
+                "id": str(issue.id),
+                "name": str(issue.name),
+                "identifier": str(issue.project.identifier),
+                "sequence_id": issue.sequence_id,
+                "state_name": issue.state.name,
+                "state_group": issue.state.group,
+                "project_id": str(issue.project.id),
+                "workspace_slug": str(issue.project.workspace.slug),
+            },
+            "issue_activity": {
+                "id": str(issue_activity.get("id")),
+                "verb": str(issue_activity.get("verb")),
+                "field": str(field),
+                "actor": str(issue_activity.get("actor_id")),
+                "new_value": str(issue_activity.get("new_value")),
+                "old_value": str(issue_activity.get("old_value")),
+                "old_identifier": (
+                    str(issue_activity.get("old_identifier"))
+                    if issue_activity.get("old_identifier")
+                    else None
+                ),
+                "new_identifier": (
+                    str(issue_activity.get("new_identifier"))
+                    if issue_activity.get("new_identifier")
+                    else None
+                ),
+                "activity_time": issue_activity.get("created_at"),
+            },
+        },
+    )
+
+
+def create_notification_data(issue, activity):
+    """
+    Create a standard data structure for notifications.
+    """
+    return {
+        "issue": {
+            "id": str(issue.id),
+            "name": str(issue.name),
+            "identifier": str(issue.project.identifier),
+            "sequence_id": issue.sequence_id,
+            "state_name": issue.state.name,
+            "state_group": issue.state.group,
+            "project_id": str(issue.project.id),
+            "workspace_slug": str(issue.project.workspace.slug),
+        },
+        "issue_activity": {
+            "id": str(activity.id),
+            "verb": str(activity.verb),
+            "field": str(activity.field),
+            "actor": str(activity.actor_id),
+            "new_value": str(activity.new_value),
+            "old_value": str(activity.old_value),
+            "old_identifier": (
+                str(activity.get("old_identifier"))
+                if activity.get("old_identifier")
+                else None
+            ),
+            "new_identifier": (
+                str(activity.get("new_identifier"))
+                if activity.get("new_identifier")
+                else None
+            ),
+        },
+    }
+
+
+def create_email_data_from_activity(issue, activity, field=None):
+    """
+    Create a standard data structure for email notifications.
+    """
+    return {
+        "issue": {
+            "id": str(issue.id),
+            "name": str(issue.name),
+            "identifier": str(issue.project.identifier),
+            "sequence_id": issue.sequence_id,
+            "state_name": issue.state.name,
+            "state_group": issue.state.group,
+            "project_id": str(issue.project.id),
+            "workspace_slug": str(issue.project.workspace.slug),
+        },
+        "issue_activity": {
+            "id": str(activity.id),
+            "verb": str(activity.verb),
+            "field": str(field or activity.field),
+            "actor": str(activity.actor_id),
+            "new_value": str(activity.new_value),
+            "old_value": str(activity.old_value),
+            "old_identifier": (
+                str(activity.get("old_identifier"))
+                if activity.get("old_identifier")
+                else None
+            ),
+            "new_identifier": (
+                str(activity.get("new_identifier"))
+                if activity.get("new_identifier")
+                else None
+            ),
+            "activity_time": str(activity.created_at),
+        },
+    }
+
+
 @shared_task
 def notifications(
     type,
@@ -226,7 +796,9 @@ def notifications(
             if issue_activities_created is not None
             else None
         )
-        if type not in [
+
+        # Skip processing for certain activity types
+        if type in [
             "cycle.activity.created",
             "cycle.activity.deleted",
             "module.activity.created",
@@ -241,560 +813,120 @@ def notifications(
             "issue_draft.activity.updated",
             "issue_draft.activity.deleted",
         ]:
-            # Create Notifications
-            bulk_notifications = []
-            bulk_email_logs = []
+            return
 
-            """
-            Mention Tasks
-            1. Perform Diffing and Extract the mentions, that mention notification needs to be sent
-            2. From the latest set of mentions, extract the users which are not a subscribers & make them subscribers
-            """
+        # Get project and issue information
+        project = Project.objects.get(pk=project_id)
+        issue = Issue.objects.filter(pk=issue_id).first()
+        issue_workspace_id = project.workspace_id
 
-            # get the list of active project members
-            project_members = ProjectMember.objects.filter(
-                project_id=project_id, is_active=True
-            ).values_list("member_id", flat=True)
+        # Get project members
+        project_members = ProjectMember.objects.filter(
+            project_id=project_id, is_active=True
+        ).values_list("member_id", flat=True)
 
-            # Get new mentions from the newer instance
-            new_mentions = get_new_mentions(
-                requested_instance=requested_data, current_instance=current_instance
-            )
-            new_mentions = list(
-                set(new_mentions) & {str(member) for member in project_members}
-            )
-            removed_mention = get_removed_mentions(
-                requested_instance=requested_data, current_instance=current_instance
-            )
+        # Handle mentions
+        mention_data = process_mentions(
+            requested_data=requested_data,
+            current_instance=current_instance,
+            project_id=project_id,
+            issue_id=issue_id,
+            project_members=project_members,
+            issue_activities_created=issue_activities_created,
+        )
 
-            comment_mentions = []
-            all_comment_mentions = []
+        new_mentions = mention_data["new_mentions"]
+        removed_mention = mention_data["removed_mention"]
+        comment_mentions = mention_data["comment_mentions"]
+        mention_subscribers = mention_data["mention_subscribers"]
+        comment_mention_subscribers = mention_data["comment_mention_subscribers"]
 
-            # Get New Subscribers from the mentions of the newer instance
-            requested_mentions = extract_mentions(issue_instance=requested_data)
-            mention_subscribers = extract_mentions_as_subscribers(
-                project_id=project_id, issue_id=issue_id, mentions=requested_mentions
-            )
-
-            for issue_activity in issue_activities_created:
-                issue_comment = issue_activity.get("issue_comment")
-                issue_comment_new_value = issue_activity.get("new_value")
-                issue_comment_old_value = issue_activity.get("old_value")
-                if issue_comment is not None:
-                    # TODO: Maybe save the comment mentions, so that in future, we can filter out the issues based on comment mentions as well.
-
-                    all_comment_mentions = (
-                        all_comment_mentions
-                        + extract_comment_mentions(issue_comment_new_value)
-                    )
-
-                    new_comment_mentions = get_new_comment_mentions(
-                        old_value=issue_comment_old_value,
-                        new_value=issue_comment_new_value,
-                    )
-                    comment_mentions = comment_mentions + new_comment_mentions
-                    comment_mentions = [
-                        mention
-                        for mention in comment_mentions
-                        if UUID(mention) in set(project_members)
-                    ]
-
-            comment_mention_subscribers = extract_mentions_as_subscribers(
-                project_id=project_id, issue_id=issue_id, mentions=all_comment_mentions
-            )
-            """
-            We will not send subscription activity notification to the below mentioned user sets
-            - Those who have been newly mentioned in the issue description, we will send mention notification to them.
-            - When the activity is a comment_created and there exist a mention in the comment, then we have to send the "mention_in_comment" notification
-            - When the activity is a comment_updated and there exist a mention change, then also we have to send the "mention_in_comment" notification
-            """
-
-            # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- #
-            issue_subscribers = list(
-                IssueSubscriber.objects.filter(
-                    project_id=project_id,
-                    issue_id=issue_id,
-                    subscriber__in=Subquery(project_members),
+        # Add the actor as a subscriber if needed
+        if subscriber:
+            try:
+                _ = IssueSubscriber.objects.get_or_create(
+                    project_id=project_id, issue_id=issue_id, subscriber_id=actor_id
                 )
-                .exclude(
-                    subscriber_id__in=list(new_mentions + comment_mentions + [actor_id])
-                )
-                .values_list("subscriber", flat=True)
-            )
+            except Exception:
+                pass
 
-            issue = Issue.objects.filter(pk=issue_id).first()
-
-            if subscriber:
-                # add the user to issue subscriber
-                try:
-                    _ = IssueSubscriber.objects.get_or_create(
-                        project_id=project_id, issue_id=issue_id, subscriber_id=actor_id
-                    )
-                except Exception:
-                    pass
-
-            project = Project.objects.get(pk=project_id)
-
-            issue_assignees = IssueAssignee.objects.filter(
-                issue_id=issue_id,
+        # Get issue subscribers excluding mentioned users and actor
+        issue_subscribers = list(
+            IssueSubscriber.objects.filter(
                 project_id=project_id,
-                assignee__in=Subquery(project_members),
-            ).values_list("assignee", flat=True)
-
-            issue_subscribers = list(set(issue_subscribers) - {uuid.UUID(actor_id)})
-            issue_workspace_id = project.workspace_id
-
-            for subscriber in issue_subscribers:
-                if issue.created_by_id and issue.created_by_id == subscriber:
-                    sender = "in_app:issue_activities:created"
-                elif (
-                    subscriber in issue_assignees
-                    and issue.created_by_id not in issue_assignees
-                ):
-                    sender = "in_app:issue_activities:assigned"
-                else:
-                    sender = "in_app:issue_activities:subscribed"
-
-                preference = WorkspaceUserNotificationPreference.objects.filter(
-                    user_id=subscriber, workspace_id=issue_workspace_id
-                )
-                email_preference = preference.filter(transport="EMAIL").first()
-                in_app_preference = preference.filter(transport="IN_APP").first()
-
-                for issue_activity in issue_activities_created:
-                    # If activity done in blocking then blocked by email should not go
-                    if issue_activity.get("issue_detail").get("id") != issue_id:
-                        continue
-
-                    # Do not send notification for description update
-                    if issue_activity.get("field") == "description":
-                        continue
-
-                    # Check if the value should be sent or not
-                    send_email = False
-                    send_in_app = False
-                    if issue_activity.get("field") == "state": 
-                        send_email = True if email_preference.state_change else False
-                        send_in_app = True if in_app_preference.state_change else False
-                    elif issue_activity.get("field") == "comment":
-                        send_email = True if email_preference.comment else False
-                        send_in_app = True if in_app_preference.comment else False
-                    elif issue_activity.get("field") == "priority":
-                        send_email = True if email_preference.priority else False
-                        send_in_app = True if in_app_preference.priority else False
-                    elif issue_activity.get("field") == "assignee":
-                        send_email = True if email_preference.assignee else False
-                        send_in_app = True if in_app_preference.assignee else False
-                    elif (
-                        issue_activity.get("field") == "start_date"
-                        or issue_activity.get("field") == "target_date"
-                    ):
-                        send_email = True if email_preference.start_due_date else False
-                        send_in_app = (
-                            True if in_app_preference.start_due_date else False
-                        )
-                    else:
-                        send_email = True if email_preference.property_change else False
-                        send_in_app = (
-                            True if in_app_preference.property_change else False
-                        )
-
-                    # If activity is of issue comment fetch the comment
-                    issue_comment = (
-                        IssueComment.objects.filter(
-                            id=issue_activity.get("issue_comment"),
-                            issue_id=issue_id,
-                            project_id=project_id,
-                            workspace_id=project.workspace_id,
-                        ).first()
-                        if issue_activity.get("issue_comment")
-                        else None
-                    )
-
-                    # Create in app notification
-                    if send_in_app:
-                        bulk_notifications.append(
-                            Notification(
-                                workspace=project.workspace,
-                                sender=sender,
-                                triggered_by_id=actor_id,
-                                receiver_id=subscriber,
-                                entity_identifier=issue_id,
-                                entity_name="issue",
-                                project=project,
-                                title=issue_activity.get("comment"),
-                                data={
-                                    "issue": {
-                                        "id": str(issue_id),
-                                        "name": str(issue.name),
-                                        "identifier": str(issue.project.identifier),
-                                        "sequence_id": issue.sequence_id,
-                                        "state_name": issue.state.name,
-                                        "state_group": issue.state.group,
-                                    },
-                                    "issue_activity": {
-                                        "id": str(issue_activity.get("id")),
-                                        "verb": str(issue_activity.get("verb")),
-                                        "field": str(issue_activity.get("field")),
-                                        "actor": str(issue_activity.get("actor_id")),
-                                        "new_value": str(issue_activity.get("new_value")),
-                                        "old_value": str(issue_activity.get("old_value")),
-                                        "issue_comment": str(
-                                            issue_comment.comment_stripped
-                                            if issue_comment is not None
-                                            else ""
-                                        ),
-                                        "old_identifier": (
-                                            str(issue_activity.get("old_identifier"))
-                                            if issue_activity.get("old_identifier")
-                                            else None
-                                        ),
-                                        "new_identifier": (
-                                            str(issue_activity.get("new_identifier"))
-                                            if issue_activity.get("new_identifier")
-                                            else None
-                                        ),
-                                    },
-                                },
-                            )
-                        )
-                    # Create email notification
-                    if send_email:
-                        bulk_email_logs.append(
-                            EmailNotificationLog(
-                                triggered_by_id=actor_id,
-                                receiver_id=subscriber,
-                                entity_identifier=issue_id,
-                                entity_name="issue",
-                                data={
-                                    "issue": {
-                                        "id": str(issue_id),
-                                        "name": str(issue.name),
-                                        "identifier": str(issue.project.identifier),
-                                        "project_id": str(issue.project.id),
-                                        "workspace_slug": str(
-                                            issue.project.workspace.slug
-                                        ),
-                                        "sequence_id": issue.sequence_id,
-                                        "state_name": issue.state.name,
-                                        "state_group": issue.state.group,
-                                    },
-                                    "issue_activity": {
-                                        "id": str(issue_activity.get("id")),
-                                        "verb": str(issue_activity.get("verb")),
-                                        "field": str(issue_activity.get("field")),
-                                        "actor": str(issue_activity.get("actor_id")),
-                                        "new_value": str(
-                                            issue_activity.get("new_value")
-                                        ),
-                                        "old_value": str(
-                                            issue_activity.get("old_value")
-                                        ),
-                                        "issue_comment": str(
-                                            issue_comment.comment_stripped
-                                            if issue_comment is not None
-                                            else ""
-                                        ),
-                                        "old_identifier": (
-                                            str(issue_activity.get("old_identifier"))
-                                            if issue_activity.get("old_identifier")
-                                            else None
-                                        ),
-                                        "new_identifier": (
-                                            str(issue_activity.get("new_identifier"))
-                                            if issue_activity.get("new_identifier")
-                                            else None
-                                        ),
-                                        "activity_time": issue_activity.get(
-                                            "created_at"
-                                        ),
-                                    },
-                                },
-                            )
-                        )
-
-            # ----------------------------------------------------------------------------------------------------------------- #
-
-            # Add Mentioned as Issue Subscribers
-            IssueSubscriber.objects.bulk_create(
-                mention_subscribers + comment_mention_subscribers,
-                batch_size=100,
-                ignore_conflicts=True,
+                issue_id=issue_id,
+                subscriber__in=Subquery(project_members),
             )
-
-            last_activity = (
-                IssueActivity.objects.filter(issue_id=issue_id)
-                .order_by("-created_at")
-                .first()
+            .exclude(
+                subscriber_id__in=list(new_mentions + comment_mentions + [actor_id])
             )
+            .values_list("subscriber", flat=True)
+        )
 
-            actor = User.objects.get(pk=actor_id)
+        issue_assignees = IssueAssignee.objects.filter(
+            issue_id=issue_id,
+            project_id=project_id,
+            assignee__in=Subquery(project_members),
+        ).values_list("assignee", flat=True)
 
-            for mention_id in comment_mentions:
-                if mention_id != actor_id:
-                    preference = WorkspaceUserNotificationPreference.objects.filter(
-                        user_id=mention_id,
-                        workspace_id=issue_workspace_id,
-                    )
-                    email_preference = preference.filter(transport=NotificationTransportChoices.EMAIL[0]).first()
-                    in_app_preference = preference.filter(transport=NotificationTransportChoices.IN_APP[0]).first()
-                    for issue_activity in issue_activities_created:
-                        notification = create_mention_notification(
-                            project=project,
-                            issue=issue,
-                            notification_comment=f"{actor.display_name} has mentioned you in a comment in issue {issue.name}",
-                            actor_id=actor_id,
-                            mention_id=mention_id,
-                            issue_id=issue_id,
-                            activity=issue_activity,
-                        )
+        issue_subscribers = list(set(issue_subscribers) - {uuid.UUID(actor_id)})
 
-                        # check for email notifications
-                        if email_preference.mention:
-                            bulk_email_logs.append(
-                                EmailNotificationLog(
-                                    triggered_by_id=actor_id,
-                                    receiver_id=mention_id,
-                                    entity_identifier=issue_id,
-                                    entity_name="issue",
-                                    data={
-                                        "issue": {
-                                            "id": str(issue_id),
-                                            "name": str(issue.name),
-                                            "identifier": str(issue.project.identifier),
-                                            "sequence_id": issue.sequence_id,
-                                            "state_name": issue.state.name,
-                                            "state_group": issue.state.group,
-                                            "project_id": str(issue.project.id),
-                                            "workspace_slug": str(
-                                                issue.project.workspace.slug
-                                            ),
-                                        },
-                                        "issue_activity": {
-                                            "id": str(issue_activity.get("id")),
-                                            "verb": str(issue_activity.get("verb")),
-                                            "field": str("mention"),
-                                            "actor": str(
-                                                issue_activity.get("actor_id")
-                                            ),
-                                            "new_value": str(
-                                                issue_activity.get("new_value")
-                                            ),
-                                            "old_value": str(
-                                                issue_activity.get("old_value")
-                                            ),
-                                            "old_identifier": (
-                                                str(
-                                                    issue_activity.get("old_identifier")
-                                                )
-                                                if issue_activity.get("old_identifier")
-                                                else None
-                                            ),
-                                            "new_identifier": (
-                                                str(
-                                                    issue_activity.get("new_identifier")
-                                                )
-                                                if issue_activity.get("new_identifier")
-                                                else None
-                                            ),
-                                            "activity_time": issue_activity.get(
-                                                "created_at"
-                                            ),
-                                        },
-                                    },
-                                )
-                            )
-                        if in_app_preference.mention:
-                            bulk_notifications.append(notification)
+        # Add Mentioned users as Issue Subscribers
+        IssueSubscriber.objects.bulk_create(
+            mention_subscribers + comment_mention_subscribers,
+            batch_size=100,
+            ignore_conflicts=True,
+        )
 
-            for mention_id in new_mentions:
-                if mention_id != actor_id:
-                    preference = WorkspaceUserNotificationPreference.objects.filter(
-                        user_id=mention_id,
-                        workspace_id=issue_workspace_id,
-                    )
-                    email_preference = preference.filter(transport=NotificationTransportChoices.EMAIL[0]).first()
-                    in_app_preference = preference.filter(transport=NotificationTransportChoices.IN_APP[0]).first()
-                    if (
-                        last_activity is not None
-                        and last_activity.field == "description"
-                        and actor_id == str(last_activity.actor_id)
-                    ):
-                        if in_app_preference.mention:
-                            bulk_notifications.append(
-                                Notification(
-                                    workspace=project.workspace,
-                                    sender="in_app:issue_activities:mentioned",
-                                    triggered_by_id=actor_id,
-                                    receiver_id=mention_id,
-                                    entity_identifier=issue_id,
-                                    entity_name="issue",
-                                    project=project,
-                                    message=f"You have been mentioned in the issue {issue.name}",
-                                    data={
-                                        "issue": {
-                                            "id": str(issue_id),
-                                            "name": str(issue.name),
-                                            "identifier": str(issue.project.identifier),
-                                            "sequence_id": issue.sequence_id,
-                                            "state_name": issue.state.name,
-                                            "state_group": issue.state.group,
-                                            "project_id": str(issue.project.id),
-                                            "workspace_slug": str(
-                                                issue.project.workspace.slug
-                                            ),
-                                        },
-                                        "issue_activity": {
-                                            "id": str(last_activity.id),
-                                            "verb": str(last_activity.verb),
-                                            "field": str(last_activity.field),
-                                            "actor": str(last_activity.actor_id),
-                                            "new_value": str(last_activity.new_value),
-                                            "old_value": str(last_activity.old_value),
-                                            "old_identifier": (
-                                                str(issue_activity.get("old_identifier"))
-                                                if issue_activity.get("old_identifier")
-                                                else None
-                                            ),
-                                            "new_identifier": (
-                                                str(issue_activity.get("new_identifier"))
-                                                if issue_activity.get("new_identifier")
-                                                else None
-                                            ),
-                                        },
-                                    },
-                                )
-                            )
-                        if email_preference.mention:
-                            bulk_email_logs.append(
-                                EmailNotificationLog(
-                                    triggered_by_id=actor_id,
-                                    receiver_id=subscriber,
-                                    entity_identifier=issue_id,
-                                    entity_name="issue",
-                                    data={
-                                        "issue": {
-                                            "id": str(issue_id),
-                                            "name": str(issue.name),
-                                            "identifier": str(issue.project.identifier),
-                                            "sequence_id": issue.sequence_id,
-                                            "state_name": issue.state.name,
-                                            "state_group": issue.state.group,
-                                        },
-                                        "issue_activity": {
-                                            "id": str(last_activity.id),
-                                            "verb": str(last_activity.verb),
-                                            "field": "mention",
-                                            "actor": str(last_activity.actor_id),
-                                            "new_value": str(last_activity.new_value),
-                                            "old_value": str(last_activity.old_value),
-                                            "old_identifier": (
-                                                str(
-                                                    issue_activity.get("old_identifier")
-                                                )
-                                                if issue_activity.get("old_identifier")
-                                                else None
-                                            ),
-                                            "new_identifier": (
-                                                str(
-                                                    issue_activity.get("new_identifier")
-                                                )
-                                                if issue_activity.get("new_identifier")
-                                                else None
-                                            ),
-                                            "activity_time": str(
-                                                last_activity.created_at
-                                            ),
-                                        },
-                                    },
-                                )
-                            )
-                    else:
-                        for issue_activity in issue_activities_created:
-                            notification = create_mention_notification(
-                                project=project,
-                                issue=issue,
-                                notification_comment=f"You have been mentioned in the issue {issue.name}",
-                                actor_id=actor_id,
-                                mention_id=mention_id,
-                                issue_id=issue_id,
-                                activity=issue_activity,
-                            )
-                            if email_preference.mention:
-                                bulk_email_logs.append(
-                                    EmailNotificationLog(
-                                        triggered_by_id=actor_id,
-                                        receiver_id=subscriber,
-                                        entity_identifier=issue_id,
-                                        entity_name="issue",
-                                        data={
-                                            "issue": {
-                                                "id": str(issue_id),
-                                                "name": str(issue.name),
-                                                "identifier": str(
-                                                    issue.project.identifier
-                                                ),
-                                                "sequence_id": issue.sequence_id,
-                                                "state_name": issue.state.name,
-                                                "state_group": issue.state.group,
-                                            },
-                                            "issue_activity": {
-                                                "id": str(issue_activity.get("id")),
-                                                "verb": str(issue_activity.get("verb")),
-                                                "field": str("mention"),
-                                                "actor": str(
-                                                    issue_activity.get("actor_id")
-                                                ),
-                                                "new_value": str(
-                                                    issue_activity.get("new_value")
-                                                ),
-                                                "old_value": str(
-                                                    issue_activity.get("old_value")
-                                                ),
-                                                "old_identifier": (
-                                                    str(
-                                                        issue_activity.get(
-                                                            "old_identifier"
-                                                        )
-                                                    )
-                                                    if issue_activity.get(
-                                                        "old_identifier"
-                                                    )
-                                                    else None
-                                                ),
-                                                "new_identifier": (
-                                                    str(
-                                                        issue_activity.get(
-                                                            "new_identifier"
-                                                        )
-                                                    )
-                                                    if issue_activity.get(
-                                                        "new_identifier"
-                                                    )
-                                                    else None
-                                                ),
-                                                "activity_time": issue_activity.get(
-                                                    "created_at"
-                                                ),
-                                            },
-                                        },
-                                    )
-                                )
-                            if in_app_preference.mention:
-                                bulk_notifications.append(notification)
+        # Update mentions for the issue
+        update_mentions_for_issue(
+            issue=issue,
+            project=project,
+            new_mentions=new_mentions,
+            removed_mention=removed_mention,
+        )
 
-            # save new mentions for the particular issue and remove the mentions that has been deleted from the description
-            update_mentions_for_issue(
-                issue=issue,
-                project=project,
-                new_mentions=new_mentions,
-                removed_mention=removed_mention,
-            )
-            # Bulk create notifications
-            Notification.objects.bulk_create(bulk_notifications, batch_size=100)
-            EmailNotificationLog.objects.bulk_create(
-                bulk_email_logs, batch_size=100, ignore_conflicts=True
-            )
+        # Create and send notifications for each transport type
+        last_activity = (
+            IssueActivity.objects.filter(issue_id=issue_id)
+            .order_by("-created_at")
+            .first()
+        )
+
+        # Process in-app notifications
+        in_app_notifications = create_in_app_notifications(
+            issue=issue,
+            project=project,
+            actor_id=actor_id,
+            issue_activities_created=issue_activities_created,
+            issue_subscribers=issue_subscribers,
+            issue_assignees=issue_assignees,
+            new_mentions=new_mentions,
+            comment_mentions=comment_mentions,
+            last_activity=last_activity,
+            issue_workspace_id=issue_workspace_id,
+        )
+
+        # Process email notifications
+        email_notifications = create_email_notifications(
+            issue=issue,
+            project=project,
+            actor_id=actor_id,
+            issue_activities_created=issue_activities_created,
+            issue_subscribers=issue_subscribers,
+            issue_assignees=issue_assignees,
+            new_mentions=new_mentions,
+            comment_mentions=comment_mentions,
+            last_activity=last_activity,
+            issue_workspace_id=issue_workspace_id,
+        )
+
+        # Bulk create notifications for each transport type
+        Notification.objects.bulk_create(in_app_notifications, batch_size=100)
+        EmailNotificationLog.objects.bulk_create(
+            email_notifications, batch_size=100, ignore_conflicts=True
+        )
+
         return
     except Exception as e:
         print(e)

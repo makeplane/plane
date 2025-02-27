@@ -2,6 +2,7 @@ import { ENotificationSettingsKey, EWorkspaceNotificationTransport } from "@plan
 
 export type TNotificationSettings = {
     i18n_title: string,
+    i18n_subtitle?: string,
     key: ENotificationSettingsKey
 }
 
