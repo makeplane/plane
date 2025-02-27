@@ -8,10 +8,12 @@ import {
 // helpers
 import { getPageName } from "@/helpers/page.helper";
 // hooks
-import { useProject, useProjectPage, useProjectView, useCycle, useModule } from "@/hooks/store";
+import { useProject, useProjectView, useCycle, useModule } from "@/hooks/store";
+// plane web hooks
+import { EPageStoreType, usePage } from "@/plane-web/hooks/store";
 
 export const useFavoriteItemDetails = (workspaceSlug: string, favorite: IFavorite) => {
-  const favoriteItemId = favorite?.entity_data?.id;
+  const favoriteItemId = favorite?.entity_identifier;
   const favoriteItemLogoProps = favorite?.entity_data?.logo_props;
   const favoriteItemName = favorite?.entity_data?.name || favorite?.name;
   const favoriteItemEntityType = favorite?.entity_type;
@@ -23,7 +25,10 @@ export const useFavoriteItemDetails = (workspaceSlug: string, favorite: IFavorit
   const { getModuleById } = useModule();
 
   // derived values
-  const pageDetail = useProjectPage(favoriteItemId ?? "");
+  const pageDetail = usePage({
+    pageId: favoriteItemId ?? "",
+    storeType: EPageStoreType.PROJECT,
+  });
   const viewDetails = getViewById(favoriteItemId ?? "");
   const cycleDetail = getCycleById(favoriteItemId ?? "");
   const moduleDetail = getModuleById(favoriteItemId ?? "");
@@ -40,7 +45,7 @@ export const useFavoriteItemDetails = (workspaceSlug: string, favorite: IFavorit
       itemIcon = getFavoriteItemIcon("project", currentProjectDetails?.logo_props || favoriteItemLogoProps);
       break;
     case "page":
-      itemTitle = getPageName(pageDetail.name || favoriteItemName);
+      itemTitle = getPageName(pageDetail?.name || favoriteItemName);
       itemIcon = getFavoriteItemIcon("page", pageDetail?.logo_props || favoriteItemLogoProps);
       break;
     case "view":

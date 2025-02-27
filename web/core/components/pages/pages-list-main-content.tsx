@@ -7,8 +7,10 @@ import { TPageNavigationTabs } from "@plane/types";
 // components
 import { DetailedEmptyState } from "@/components/empty-state";
 import { PageLoader } from "@/components/pages";
-import { useCommandPalette, useProjectPages, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// plane web hooks
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // assets
 import AllFiltersImage from "@/public/empty-state/pages/all-filters.svg";
 import NameFilterImage from "@/public/empty-state/pages/name-filter.svg";
@@ -16,15 +18,16 @@ import NameFilterImage from "@/public/empty-state/pages/name-filter.svg";
 type Props = {
   children: React.ReactNode;
   pageType: TPageNavigationTabs;
+  storeType: EPageStoreType;
 };
 
 export const PagesListMainContent: React.FC<Props> = observer((props) => {
-  const { children, pageType } = props;
+  const { children, pageType, storeType } = props;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { loader, isAnyPageAvailable, getCurrentProjectFilteredPageIds, getCurrentProjectPageIds, filters } =
-    useProjectPages();
+    usePageStore(storeType);
   const { toggleCreatePageModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   // derived values

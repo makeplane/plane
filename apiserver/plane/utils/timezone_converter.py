@@ -77,7 +77,7 @@ def convert_to_utc(
         current_datetime_in_project_tz = timezone.now().astimezone(local_tz)
         current_datetime_in_utc = current_datetime_in_project_tz.astimezone(pytz.utc)
 
-        if utc_datetime.date() == current_datetime_in_utc.date():
+        if localized_datetime.date() == current_datetime_in_project_tz.date():
             return current_datetime_in_utc
 
         return utc_datetime

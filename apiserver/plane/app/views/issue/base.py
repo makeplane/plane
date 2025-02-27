@@ -547,7 +547,7 @@ class IssueViewSet(BaseViewSet):
             )
 
         """
-        if the role is guest and guest_view_all_features is false and owned by is not 
+        if the role is guest and guest_view_all_features is false and owned by is not
         the requesting user then dont show the issue
         """
 
@@ -1116,8 +1116,22 @@ class IssueMetaEndpoint(BaseAPIView):
 
 class IssueDetailIdentifierEndpoint(BaseAPIView):
 
+    def strict_str_to_int(self, s):
+        if not s.isdigit() and not (s.startswith('-') and s[1:].isdigit()):
+            raise ValueError("Invalid integer string")
+        return int(s)
+
     def get(self, request, slug, project_identifier, issue_identifier):
-        
+
+        # Check if the issue identifier is a valid integer
+        try:
+            issue_identifier = self.strict_str_to_int(issue_identifier)
+        except ValueError:
+            return Response(
+                {"error": "Invalid issue identifier"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Fetch the project
         project = Project.objects.get(
             identifier__iexact=project_identifier,
@@ -1240,7 +1254,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
             )
 
         """
-        if the role is guest and guest_view_all_features is false and owned by is not 
+        if the role is guest and guest_view_all_features is false and owned by is not
         the requesting user then dont show the issue
         """
 

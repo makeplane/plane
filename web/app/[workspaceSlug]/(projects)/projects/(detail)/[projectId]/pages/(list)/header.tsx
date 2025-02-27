@@ -13,9 +13,11 @@ import { Breadcrumbs, Button, Header, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { BreadcrumbLink } from "@/components/common";
 // hooks
-import { useEventTracker, useProject, useProjectPages } from "@/hooks/store";
+import { useEventTracker, useProject } from "@/hooks/store";
 // plane web
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
+// plane web hooks
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 export const PagesListHeader = observer(() => {
   // states
@@ -27,7 +29,7 @@ export const PagesListHeader = observer(() => {
   const pageType = searchParams.get("type");
   // store hooks
   const { currentProjectDetails, loader } = useProject();
-  const { canCurrentUserCreatePage, createPage } = useProjectPages();
+  const { canCurrentUserCreatePage, createPage } = usePageStore(EPageStoreType.PROJECT);
   const { setTrackElement } = useEventTracker();
   // handle page create
   const handleCreatePage = async () => {

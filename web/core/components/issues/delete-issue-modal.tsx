@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // types
 import { PROJECT_ERROR_MESSAGES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -22,20 +24,18 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const DeleteIssueModal: React.FC<Props> = (props) => {
+export const DeleteIssueModal: React.FC<Props> = observer((props) => {
   const { dataId, data, isOpen, handleClose, isSubIssue = false, onSubmit, isEpic = false } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks
+  const { workspaceSlug } = useParams();
   const { issueMap } = useIssues();
   const { getProjectById } = useProject();
   const { allowPermissions } = useUserPermissions();
   const { t } = useTranslation();
 
   const { data: currentUser } = useUser();
-
-  // derived values
-  const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   useEffect(() => {
     setIsDeleting(false);
@@ -47,6 +47,14 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
   const issue = data ? data : issueMap[dataId!];
   const projectDetails = getProjectById(issue?.project_id);
   const isIssueCreator = issue?.created_by === currentUser?.id;
+
+  const canPerformProjectAdminActions = allowPermissions(
+    [EUserPermissions.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug?.toString(),
+    projectDetails?.id
+  );
+
   const authorized = isIssueCreator || canPerformProjectAdminActions;
 
   const onClose = () => {
@@ -114,4 +122,4 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
       }
     />
   );
-};
+});

@@ -100,8 +100,20 @@ class ResetPasswordEndpoint(View):
     def post(self, request, uidb64, token):
         try:
             # Decode the id from the uidb64
-            id = smart_str(urlsafe_base64_decode(uidb64))
-            user = User.objects.get(id=id)
+            try:
+                id = smart_str(urlsafe_base64_decode(uidb64))
+                user = User.objects.get(id=id)
+            except (ValueError, User.DoesNotExist):
+                exc = AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD_TOKEN"],
+                    error_message="INVALID_PASSWORD_TOKEN",
+                )
+                params = exc.get_error_dict()
+                url = urljoin(
+                    base_host(request=request, is_app=True),
+                    "accounts/reset-password?" + urlencode(params),
+                )
+                return HttpResponseRedirect(url)
 
             # check if the token is valid for the user
             if not PasswordResetTokenGenerator().check_token(user, token):

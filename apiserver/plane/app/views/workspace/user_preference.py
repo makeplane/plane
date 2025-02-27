@@ -30,7 +30,6 @@ class WorkspaceUserPreferenceViewSet(BaseAPIView):
         keys = [
             key
             for key, _ in WorkspaceUserPreference.UserPreferenceKeys.choices
-            if key not in ["projects"]
         ]
 
         for preference in keys:
@@ -40,20 +39,28 @@ class WorkspaceUserPreferenceViewSet(BaseAPIView):
                 preference = WorkspaceUserPreference.objects.bulk_create(
                     [
                         WorkspaceUserPreference(
-                            key=key, user=request.user, workspace=workspace
+                            key=key, user=request.user, workspace=workspace, sort_order=(65535 + (i*10000))
                         )
-                        for key in create_preference_keys
+                        for i, key in enumerate(create_preference_keys)
                     ],
                     batch_size=10,
                     ignore_conflicts=True,
                 )
 
-        preference = WorkspaceUserPreference.objects.filter(
+        preferences = WorkspaceUserPreference.objects.filter(
             user=request.user, workspace_id=workspace.id
-        )
+        ).order_by("sort_order").values("key", "is_pinned", "sort_order")
 
+
+        user_preferences = {}
+
+        for preference in preferences:
+            user_preferences[(str(preference["key"]))] = {
+                "is_pinned": preference["is_pinned"],
+                "sort_order": preference["sort_order"],
+        }
         return Response(
-            preference.values("key", "is_pinned", "sort_order"),
+            user_preferences,
             status=status.HTTP_200_OK,
         )
 

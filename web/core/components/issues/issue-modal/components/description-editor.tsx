@@ -22,14 +22,15 @@ import { RichTextEditor } from "@/components/editor";
 import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
-import { useInstance, useWorkspace } from "@/hooks/store";
+import { useEditorAsset, useInstance, useWorkspace } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 // services
 import { AIService } from "@/services/ai.service";
-import { FileService } from "@/services/file.service";
+const workspaceService = new WorkspaceService();
+const aiService = new AIService();
 
 type TIssueDescriptionEditorProps = {
   control: Control<TIssue>;
@@ -49,11 +50,6 @@ type TIssueDescriptionEditorProps = {
   onAssetUpload: (assetId: string) => void;
   onClose: () => void;
 };
-
-// services
-const workspaceService = new WorkspaceService();
-const aiService = new AIService();
-const fileService = new FileService();
 
 export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = observer((props) => {
   const {
@@ -80,8 +76,10 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
-  const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString())?.id as string;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString())?.id ?? "";
   const { config } = useInstance();
+  const { uploadEditorAsset } = useEditorAsset();
+  // platform
   const { isMobile } = usePlatformOS();
 
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
@@ -202,19 +200,20 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                   })
                 }
                 containerClassName="pt-3 min-h-[120px]"
-                uploadFile={async (file) => {
+                uploadFile={async (blockId, file) => {
                   try {
-                    const { asset_id } = await fileService.uploadProjectAsset(
-                      workspaceSlug,
-                      projectId,
-                      {
+                    const { asset_id } = await uploadEditorAsset({
+                      blockId,
+                      data: {
                         entity_identifier: issueId ?? "",
                         entity_type: isDraft
                           ? EFileAssetType.DRAFT_ISSUE_DESCRIPTION
                           : EFileAssetType.ISSUE_DESCRIPTION,
                       },
-                      file
-                    );
+                      file,
+                      projectId,
+                      workspaceSlug,
+                    });
                     onAssetUpload(asset_id);
                     return asset_id;
                   } catch (error) {
@@ -268,6 +267,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                     AI
                   </button>
                 }
+                workspaceId={workspaceId}
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
               />

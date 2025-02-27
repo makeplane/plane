@@ -457,12 +457,13 @@ function viewLogs(){
         echo "   8) Redis"
         echo "   9) Postgres"
         echo "   10) Minio"
+        echo "   11) RabbitMQ"
         echo "   0) Back to Main Menu"
         echo 
         read -p "Service: " DOCKER_SERVICE_NAME
 
-        until (( DOCKER_SERVICE_NAME >= 0 && DOCKER_SERVICE_NAME <= 10 )); do
-            echo "Invalid selection. Please enter a number between 1 and 11."
+        until (( DOCKER_SERVICE_NAME >= 0 && DOCKER_SERVICE_NAME <= 11 )); do
+            echo "Invalid selection. Please enter a number between 0 and 11."
             read -p "Service: " DOCKER_SERVICE_NAME
         done
 
@@ -481,6 +482,7 @@ function viewLogs(){
                 8) viewSpecificLogs "plane-redis";;
                 9) viewSpecificLogs "plane-db";;
                 10) viewSpecificLogs "plane-minio";;
+                11) viewSpecificLogs "plane-mq";;
                 0) askForAction;;
                 *) echo "INVALID SERVICE NAME SUPPLIED";;
             esac
@@ -499,6 +501,7 @@ function viewLogs(){
             redis) viewSpecificLogs "plane-redis";;
             postgres) viewSpecificLogs "plane-db";;
             minio) viewSpecificLogs "plane-minio";;
+            rabbitmq) viewSpecificLogs "plane-mq";;
             *) echo "INVALID SERVICE NAME SUPPLIED";;
         esac
     else

@@ -13,9 +13,9 @@ type Props = {
 
 export const PeekOverviewIssueDetails: React.FC<Props> = observer((props) => {
   const { anchor, issueDetails } = props;
-
-  const { project_details } = usePublish(anchor);
-
+  // store hooks
+  const { project_details, workspace: workspaceID } = usePublish(anchor);
+  // derived values
   const description = issueDetails.description_html;
 
   return (
@@ -35,6 +35,7 @@ export const PeekOverviewIssueDetails: React.FC<Props> = observer((props) => {
               ? "<p></p>"
               : description
           }
+          workspaceId={workspaceID?.toString() ?? ""}
         />
       )}
       <IssueReactions anchor={anchor} />

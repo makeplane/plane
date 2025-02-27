@@ -4,7 +4,7 @@
 Django==4.2.18
 # rest framework
 djangorestframework==3.15.2
-# postgres 
+# postgres
 psycopg==3.1.18
 psycopg-binary==3.1.18
 psycopg-c==3.1.18
@@ -37,7 +37,7 @@ uvicorn==0.29.0
 # sockets
 channels==4.1.0
 # ai
-litellm==1.51.0
+openai==1.63.2
 # slack
 slack-sdk==3.27.1
 # apm

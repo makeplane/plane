@@ -29,7 +29,7 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
   const dragStart = useRef({ x: 0, y: 0 });
   const dragOffset = useRef({ x: 0, y: 0 });
   const modalRef = useRef<HTMLDivElement>(null);
-  const imgRef = useRef<HTMLImageElement>(null);
+  const imgRef = useRef<HTMLImageElement | null>(null);
 
   const widthInNumber = useMemo(() => Number(width?.replace("px", "")), [width]);
 

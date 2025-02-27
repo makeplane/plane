@@ -112,7 +112,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                     onChange={(comment_json, comment_html) => onChange(comment_html)}
                     isSubmitting={isSubmitting}
                     showSubmitButton={false}
-                    uploadFile={async (file) => {
+                    uploadFile={async (blockId, file) => {
                       const { asset_id } = await uploadCommentAsset(file, anchor, comment.id);
                       return asset_id;
                     }}
@@ -140,6 +140,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
           <div className={`${isEditing ? "hidden" : ""}`}>
             <LiteTextReadOnlyEditor
               anchor={anchor}
+              workspaceId={workspaceID?.toString() ?? ""}
               ref={showEditorRef}
               id={comment.id}
               initialValue={comment.comment_html}
