@@ -23,13 +23,13 @@ export const MarkdownClipboard = Extension.create({
               slice.content.childCount === 1 &&
               slice.content.firstChild?.type.name === "table";
 
-            const hasMultipleContentBlocks = slice.content.childCount > 2;
+            const hasMultipleContentBlocks = slice.content.childCount > 1;
 
             const isWholeSelectionCopied = slice.openStart === 0 && slice.openEnd === 0;
 
             const listTypes = ["bulletList", "orderedList", "taskList"]
             const isListContent =
-              slice.content.childCount === 2 &&
+              slice.content.childCount === 1 &&
               listTypes.includes(
                 slice.content.firstChild?.type.name ?? ""
               );
@@ -66,7 +66,7 @@ export const MarkdownClipboard = Extension.create({
               const listNode = slice.content.firstChild;
 
               if (listNode && listNode.content.firstChild) {
-                const listHasMultipleItems = listNode.content.childCount > 2;
+                const listHasMultipleItems = listNode.content.childCount > 1;
                 shouldConvertToMarkdown = this.options.transformCopiedText && listHasMultipleItems;
               }
             }
