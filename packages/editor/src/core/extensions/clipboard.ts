@@ -71,6 +71,18 @@ export const MarkdownClipboard = Extension.create({
                   ((!cellContainsOnlyParagraphs && cellContainsMultipleBlocks) ||
                     containsComplexList);
               }
+            } else if (isTableRow) {
+              let result = '';
+              slice.content.forEach((tableRowNode) => {
+                const rowContent: Node[] = [];
+                tableRowNode.content.forEach((cell) => {
+                  const cellContent = markdownSerializer.serialize(cell.content);
+                  rowContent.push(cellContent);
+                });
+
+                result += rowContent.join('\t') + '\n';
+              });
+              return result;
             }
             else if (isListContent) {
               const listNode = slice.content.firstChild;
