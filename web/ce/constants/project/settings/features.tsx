@@ -84,20 +84,20 @@ export const PROJECT_FEATURES_LIST: TProjectFeatures = {
       },
     },
   },
-  project_others: {
-    key: "work_management",
-    title: "Work management",
-    description: "Available only on some plans as indicated by the label next to the feature below.",
-    featureList: {
-      is_time_tracking_enabled: {
-        key: "time_tracking",
-        property: "is_time_tracking_enabled",
-        title: "Time Tracking",
-        description: "Log time, see timesheets, and download full CSVs for your entire workspace.",
-        icon: <Timer className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
-        isPro: true,
-        isEnabled: false,
-      },
-    },
-  },
+  // project_others: {
+  //   key: "work_management",
+  //   title: "Work management",
+  //   description: "Available only on some plans as indicated by the label next to the feature below.",
+  //   featureList: {
+  //     is_time_tracking_enabled: {
+  //       key: "time_tracking",
+  //       property: "is_time_tracking_enabled",
+  //       title: "Time Tracking",
+  //       description: "Log time, see timesheets, and download full CSVs for your entire workspace.",
+  //       icon: <Timer className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
+  //       isPro: true,
+  //       isEnabled: false,
+  //     },
+  //   },
+  //},
 };
