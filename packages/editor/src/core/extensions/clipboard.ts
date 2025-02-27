@@ -3,77 +3,80 @@ import { Plugin, PluginKey } from "@tiptap/pm/state";
 
 export const MarkdownClipboard = Extension.create({
   name: "markdownClipboard",
+
   addOptions() {
     return {
       transformPastedText: false,
       transformCopiedText: true,
     };
   },
+
   addProseMirrorPlugins() {
     return [
       new Plugin({
         key: new PluginKey("markdownClipboard"),
         props: {
           clipboardTextSerializer: (slice) => {
-            const serializer = this.editor.storage.markdown.serializer;
-            const isTable =
+            const markdownSerializer = this.editor.storage.markdown.serializer;
+
+            const isTableContent =
               slice.content.childCount === 1 &&
               slice.content.firstChild?.type.name === "table";
-            const hasMultipleBlocks = slice.content.childCount > 2;
-            const selectWhole = slice.openStart === 0 && slice.openEnd === 0;
-            const isList =
+
+            const hasMultipleContentBlocks = slice.content.childCount > 2;
+
+            const isWholeSelectionCopied = slice.openStart === 0 && slice.openEnd === 0;
+
+            const listTypes = ["bulletList", "orderedList", "taskList"]
+            const isListContent =
               slice.content.childCount === 2 &&
-              ["bulletList", "orderedList", "taskList"].includes(
+              listTypes.includes(
                 slice.content.firstChild?.type.name ?? ""
               );
 
-            let handleMarkdown = false;
+            let shouldConvertToMarkdown = false;
 
-            if (isTable && !selectWhole) {
+            if (isTableContent && !isWholeSelectionCopied) {
               const tableNode = slice.content.firstChild;
-              if (
-                tableNode.content.firstChild &&
-                tableNode.content.firstChild.content.firstChild
-              ) {
-                const firstCell = tableNode.content.firstChild.content.firstChild;
-                const cellHasMultipleBlocks = firstCell.content.childCount > 1;
 
-                let handleList = false;
-                const listhasmultiintabl = firstCell.content.firstChild!.content!.childCount > 1;
+              if (tableNode.content.firstChild && tableNode.content.firstChild.content.firstChild) {
+                const firstTableCell = tableNode.content.firstChild.content.firstChild;
+                const cellContainsMultipleBlocks = firstTableCell.content.childCount > 1;
 
-                const containsLists = firstCell.content.content.some(
-                  (node) =>
-                    ["bulletList", "orderedList", "taskList"].includes(node.type.name)
+                let containsComplexList = false;
+                const listHasMultipleItemsInTable = firstTableCell.content.firstChild!.content!.childCount > 1;
+                const cellContainsList = firstTableCell.content.content.some(
+                  (node) => listTypes.includes(node.type.name)
                 );
 
-                if (containsLists && listhasmultiintabl) {
-                  handleList = true;
+                if (cellContainsList && listHasMultipleItemsInTable) {
+                  containsComplexList = true;
                 }
 
-                const allChildrenAreParagraphs = firstCell.content.content.every(
+                const cellContainsOnlyParagraphs = firstTableCell.content.content.every(
                   (node) => node.type.name === "paragraph"
                 );
 
-                console.log(allChildrenAreParagraphs, cellHasMultipleBlocks, handleList)
-                handleMarkdown =
-                  this.options.transformCopiedText &&
-                  (!allChildrenAreParagraphs && cellHasMultipleBlocks || handleList);
+                shouldConvertToMarkdown = this.options.transformCopiedText &&
+                  ((!cellContainsOnlyParagraphs && cellContainsMultipleBlocks) ||
+                    containsComplexList);
               }
-            } else if (isList) {
-              const firstCell = slice.content.firstChild;
-              if (firstCell && firstCell.content.firstChild) {
-                const listHasMultipleBlocks = firstCell.content.childCount > 2;
-                handleMarkdown = this.options.transformCopiedText && listHasMultipleBlocks;
+            }
+            else if (isListContent) {
+              const listNode = slice.content.firstChild;
+
+              if (listNode && listNode.content.firstChild) {
+                const listHasMultipleItems = listNode.content.childCount > 2;
+                shouldConvertToMarkdown = this.options.transformCopiedText && listHasMultipleItems;
               }
-            } else {
-              console.log('else')
-              handleMarkdown =
-                this.options.transformCopiedText && (hasMultipleBlocks || selectWhole);
+            }
+            else {
+              shouldConvertToMarkdown = this.options.transformCopiedText &&
+                (hasMultipleContentBlocks || isWholeSelectionCopied);
             }
 
-            console.log(handleMarkdown, 'U2', slice);
-            return handleMarkdown
-              ? serializer.serialize(slice.content)
+            return shouldConvertToMarkdown
+              ? markdownSerializer.serialize(slice.content)
               : slice.content.textBetween(0, slice.content.size, "\n");
           },
         },
