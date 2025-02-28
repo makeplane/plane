@@ -38,7 +38,7 @@ export const DocumentEditorAdditionalExtensions = (props: Props) => {
       searchTerms: ["work item", "link", "embed"],
       icon: <LayersIcon className="size-3.5" />,
       command: ({ editor, range }) => {
-        editor.chain().focus().insertContentAt(range, "<p>#issue_</p>").run();
+        editor.chain().focus().insertContentAt(range, "<p>#workitem_</p>").run();
       },
       section: "general",
       pushAfter: "callout",
