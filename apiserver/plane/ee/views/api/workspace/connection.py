@@ -47,6 +47,10 @@ class WorkspaceConnectionAPIView(BaseServiceAPIView):
 
     def delete(self, request, pk):
         connection = WorkspaceConnection.objects.filter(id=pk).first()
+        if not connection:
+            return Response(
+                {"error": "Connection not found"}, status=status.HTTP_404_NOT_FOUND
+            )
         connection.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

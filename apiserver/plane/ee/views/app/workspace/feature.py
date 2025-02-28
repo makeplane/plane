@@ -87,7 +87,8 @@ class WorkspaceFeaturesEndpoint(BaseAPIView):
                             updated_by=request.user,
                         )
                         for state in states
-                    ]
+                    ],
+                    ignore_conflicts=True,
                 )
 
             default_state = ProjectState.objects.filter(

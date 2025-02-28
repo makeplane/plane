@@ -4,6 +4,7 @@ import json
 # Django imports
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import IntegrityError
 
 # Third Party imports
 from rest_framework import status
@@ -37,27 +38,32 @@ class InitiativeReactionViewSet(BaseViewSet):
     @check_feature_flag(FeatureFlag.INITIATIVES)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def create(self, request, slug, initiative_id):
-        workspace = Workspace.objects.get(slug=slug)
-        serializer = InitiativeReactionSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(
-                initiative_id=initiative_id,
-                actor=request.user,
-                workspace_id=workspace.id,
+        try:
+            workspace = Workspace.objects.get(slug=slug)
+            serializer = InitiativeReactionSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(
+                    initiative_id=initiative_id,
+                    actor=request.user,
+                    workspace_id=workspace.id,
+                )
+                initiative_activity.delay(
+                    type="initiative_reaction.activity.created",
+                    slug=slug,
+                    requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+                    actor_id=str(request.user.id),
+                    initiative_id=str(initiative_id),
+                    current_instance=None,
+                    epoch=int(timezone.now().timestamp()),
+                    notification=True,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError:
+            return Response(
+                {"error": "Reaction already exists"}, status=status.HTTP_400_BAD_REQUEST
             )
-            initiative_activity.delay(
-                type="initiative_reaction.activity.created",
-                slug=slug,
-                requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
-                actor_id=str(request.user.id),
-                initiative_id=str(initiative_id),
-                current_instance=None,
-                epoch=int(timezone.now().timestamp()),
-                notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
-            )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
