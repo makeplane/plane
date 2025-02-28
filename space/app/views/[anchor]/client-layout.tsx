@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { LogoSpinner } from "@/components/common";
 import { SomethingWentWrongError } from "@/components/issues/issue-layouts/error";
 // hooks
+import { PageNotFound } from "@/components/ui/not-found";
 import { usePublish, usePublishList } from "@/hooks/store";
 // Plane web
 import { ViewNavbarRoot } from "@/plane-web/components/navbar";
@@ -35,6 +36,7 @@ export const ViewsClientLayout = observer((props: Props) => {
         }
       : null
   );
+  if (error?.status === 404) return <PageNotFound />;
 
   if (error) return <SomethingWentWrongError />;
 

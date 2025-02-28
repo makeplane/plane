@@ -5,6 +5,7 @@ import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common";
 // hooks
+import { PageNotFound } from "@/components/ui/not-found";
 import { usePublish, usePublishList } from "@/hooks/store";
 // plane web components
 import { PageDetailsError } from "@/plane-web/components/pages";
@@ -26,6 +27,8 @@ export const PagesClientLayout = observer((props: Props) => {
   );
 
   if (!entity_identifier && !error) return <LogoSpinner />;
+
+  if (error?.status === 404) return <PageNotFound />;
 
   if (error) return <PageDetailsError />;
 

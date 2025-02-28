@@ -11,12 +11,51 @@ from .base import BaseAPIView
 from plane.app.serializers import DeployBoardSerializer
 from plane.db.models import Project, DeployBoard, ProjectMember, WorkspaceMember
 
+# EE
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
+from plane.ee.models.intake import IntakeSetting
+
 
 class DeployBoardPublicSettingsEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
 
+    def check_feature_flags(self, deploy_board):
+        if deploy_board.entity_name == "page" and not check_workspace_feature_flag(
+            feature_key=FeatureFlag.PAGE_PUBLISH, slug=deploy_board.workspace.slug
+        ):
+            return False
+
+        if deploy_board.entity_name == "view" and not check_workspace_feature_flag(
+            feature_key=FeatureFlag.VIEW_PUBLISH, slug=deploy_board.workspace.slug
+        ):
+            return False
+
+        if deploy_board.entity_name == "intake" and not (
+            check_workspace_feature_flag(
+                feature_key=FeatureFlag.INTAKE_PUBLISH, slug=deploy_board.workspace.slug
+            )
+            and IntakeSetting.objects.filter(
+                workspace=deploy_board.workspace,
+                intake_id=deploy_board.entity_identifier,
+                is_form_enabled=True,
+            ).exists()
+        ):
+            return False
+
+        return True
+
     def get(self, request, anchor):
         deploy_board = DeployBoard.objects.get(anchor=anchor)
+        if deploy_board.entity_name in [
+            "page",
+            "view",
+            "intake",
+        ] and not self.check_feature_flags(deploy_board):
+            return Response(
+                {"message": "requested entity could not be found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         serializer = DeployBoardSerializer(deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
