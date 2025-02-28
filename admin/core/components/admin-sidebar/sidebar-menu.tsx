@@ -43,7 +43,7 @@ const INSTANCE_ADMIN_LINKS = [
   },
   {
     Icon: Image,
-    name: "Images in Plane",
+    name: "Images in ReyFlow",
     description: "Allow third-party image libraries.",
     href: `/image/`,
   },

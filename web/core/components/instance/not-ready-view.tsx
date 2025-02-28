@@ -27,21 +27,21 @@ export const InstanceNotReady: FC = () => {
         <div className="container h-[110px] flex-shrink-0 mx-auto px-5 lg:px-0 flex items-center justify-between gap-5 z-50">
           <div className="flex items-center gap-x-2 py-10">
             <Link href={`/`} className="h-[30px] w-[133px]">
-              <Image src={logo} alt="Plane logo" />
+              <Image src={logo} alt="ReyFlow logo" />
             </Link>
           </div>
         </div>
 
         <div className="absolute inset-0 z-0">
-          <Image src={patternBackground} className="w-screen h-full object-cover" alt="Plane background pattern" />
+          <Image src={patternBackground} className="w-screen h-full object-cover" alt="ReyFlow background pattern" />
         </div>
 
         <div className="relative z-10 mb-[110px] flex-grow">
           <div className="h-full w-full relative container px-5 mx-auto flex justify-center items-center">
             <div className="w-auto max-w-2xl relative space-y-8 py-10">
               <div className="relative flex flex-col justify-center items-center space-y-4">
-                <h1 className="text-3xl font-bold pb-3">Welcome aboard Plane!</h1>
-                <Image src={PlaneTakeOffImage} alt="Plane Logo" />
+                <h1 className="text-3xl font-bold pb-3">Welcome aboard ReyFlow!</h1>
+                <Image src={PlaneTakeOffImage} alt="ReyFlow Logo" />
                 <p className="font-medium text-base text-onboarding-text-400">
                   Get started by setting up your instance and workspace
                 </p>

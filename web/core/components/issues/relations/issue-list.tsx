@@ -1,12 +1,12 @@
 "use client";
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-// Plane
+// ReyFlow
 import { EIssueServiceType } from "@plane/constants";
 import { TIssue, TIssueServiceType } from "@plane/types";
 // components
 import { RelationIssueListItem } from "@/components/issues/relations";
-// Plane-web
+// ReyFlow-web
 import { TIssueRelationTypes } from "@/plane-web/types";
 
 type Props = {

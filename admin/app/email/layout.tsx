@@ -7,7 +7,7 @@ interface EmailLayoutProps {
 }
 
 export const metadata: Metadata = {
-  title: "Email Settings - Plane Web",
+  title: "Email Settings - ReyFlow Web",
 };
 
 export default function EmailLayout({ children }: EmailLayoutProps) {

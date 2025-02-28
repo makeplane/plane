@@ -5,13 +5,13 @@ import { InstanceSignInForm } from "@/components/login";
 import { DefaultLayout } from "@/layouts/default-layout";
 
 export const metadata: Metadata = {
-  title: "ReyFlow | Simple, extensible, open-source project management tool.",
+  title: "ReyFlow | Simple and extensible project management tool.",
   description:
-    "Open-source project management tool to manage work items, sprints, and product roadmaps with peace of mind.",
+    "Extensible project management tool to manage work items, sprints, and product roadmaps with peace of mind.",
   openGraph: {
-    title: "ReyFlow | Simple, extensible, open-source project management tool.",
+    title: "ReyFlow | Simple and extensible project management tool.",
     description:
-      "Open-source project management tool to manage work items, sprints, and product roadmaps with peace of mind.",
+      "Extensible project management tool to manage work items, sprints, and product roadmaps with peace of mind.",
     url: "https://plane.so/",
   },
   keywords:

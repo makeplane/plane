@@ -40,7 +40,7 @@ export const CommandPaletteHelpActions: React.FC<Props> = observer((props) => {
       >
         <div className="flex items-center gap-2 text-custom-text-200">
           <FileText className="h-3.5 w-3.5" />
-          Open Plane documentation
+          Open ReyFlow documentation
         </div>
       </Command.Item>
       <Command.Item

@@ -23,7 +23,7 @@ export const ProductUpdatesHeader = observer(() => {
         </div>
       </div>
       <div className="flex flex-shrink-0 items-center gap-8">
-        <Image src={PlaneLogo} alt="Plane" width={24} height={24} />
+        <Image src={PlaneLogo} alt="ReyFlow" width={24} height={24} />
       </div>
     </div>
   );

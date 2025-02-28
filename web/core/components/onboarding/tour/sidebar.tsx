@@ -42,7 +42,7 @@ export const TourSidebar: React.FC<Props> = ({ step, setStep }) => (
     <h3 className="text-lg font-medium">
       Let{"'"}s get started!
       <br />
-      Get more out of Plane.
+      Get more out of ReyFlow.
     </h3>
     <div className="mt-8 space-y-5">
       {sidebarOptions.map((option) => (

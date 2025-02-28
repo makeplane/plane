@@ -2,7 +2,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
-// Plane-web
+// ReyFlow-web
 import { getRelationActivityContent, useTimeLineRelationOptions } from "@/plane-web/components/relations";
 import { TIssueRelationTypes } from "@/plane-web/types";
 //

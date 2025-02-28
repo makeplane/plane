@@ -7,7 +7,7 @@ import { LogoSpinner, PoweredBy } from "@/components/common";
 import { SomethingWentWrongError } from "@/components/issues/issue-layouts/error";
 // hooks
 import { usePublish, usePublishList } from "@/hooks/store";
-// Plane web
+// ReyFlow web
 import { ViewNavbarRoot } from "@/plane-web/components/navbar";
 import { useView } from "@/plane-web/hooks/store";
 

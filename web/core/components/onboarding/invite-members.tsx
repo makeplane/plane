@@ -377,7 +377,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
           <div className="text-center space-y-1 py-4 mx-auto w-4/5">
             <h3 className="text-3xl font-bold text-onboarding-text-100">Invite your teammates</h3>
             <p className="font-medium text-onboarding-text-400">
-              Work in plane happens best with your team. Invite them now to use Plane to its potential.
+              Work in plane happens best with your team. Invite them now to use ReyFlow to its potential.
             </p>
           </div>
           <form

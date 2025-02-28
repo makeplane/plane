@@ -7,7 +7,7 @@ interface ImageLayoutProps {
 }
 
 export const metadata: Metadata = {
-  title: "Images Settings - Plane Web",
+  title: "Images Settings - ReyFlow Web",
 };
 
 export default function ImageLayout({ children }: ImageLayoutProps) {

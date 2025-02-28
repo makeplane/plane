@@ -4,7 +4,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { CircleDot, CopyPlus, Pencil, X, XCircle } from "lucide-react";
-// Plane
+// ReyFlow
 import { ISearchIssueResponse } from "@plane/types";
 import { RelatedIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -15,7 +15,7 @@ import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useIssues, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// Plane-web
+// ReyFlow-web
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 import { TIssueRelationTypes } from "@/plane-web/types";
 //

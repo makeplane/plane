@@ -20,7 +20,7 @@ const InstanceEmailPage = observer(() => {
         <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
           <div className="text-xl font-medium text-custom-text-100">Secure emails from your own instance</div>
           <div className="text-sm font-normal text-custom-text-300">
-            Plane can send useful emails to you and your users from your own instance without talking to the Internet.
+            ReyFlow can send useful emails to you and your users from your own instance without talking to the Internet.
             <div className="text-sm font-normal text-custom-text-300">
               Set it up below and please test your settings before you save them.&nbsp;
               <span className="text-red-400">Misconfigs can lead to email bounces and errors.</span>

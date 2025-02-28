@@ -18,7 +18,7 @@ export const OnePlanUpgrade: FC<OnePlanUpgradeProps> = (props) => {
     <div className="py-4 px-2 border border-custom-border-90 rounded-xl bg-custom-background-90">
       <div className="flex w-full justify-center h-10" />
       <div className="pt-6 pb-4 text-center font-semibold">
-        <div className="text-2xl">Plane One</div>
+        <div className="text-2xl">ReyFlow One</div>
         <div className="text-3xl">$799</div>
         <div className="text-sm text-custom-text-300">for two years’ support and updates</div>
       </div>

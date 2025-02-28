@@ -12,7 +12,7 @@ import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
-// Plane-web
+// ReyFlow-web
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics";
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 import { TIssueRelationTypes } from "@/plane-web/types";

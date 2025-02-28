@@ -7,11 +7,11 @@ import "@/styles/globals.css";
 import { AppProvider } from "./provider";
 
 export const metadata: Metadata = {
-  title: "Plane Publish | Make your Plane boards public with one-click",
-  description: "Plane Publish is a customer feedback management tool built on top of plane.so",
+  title: "ReyFlow Publish | Make your ReyFlow boards public with one-click",
+  description: "ReyFlow Publish is a customer feedback management tool built on top of plane.so",
   openGraph: {
-    title: "Plane Publish | Make your Plane boards public with one-click",
-    description: "Plane Publish is a customer feedback management tool built on top of plane.so",
+    title: "ReyFlow Publish | Make your ReyFlow boards public with one-click",
+    description: "ReyFlow Publish is a customer feedback management tool built on top of plane.so",
     url: "https://sites.plane.so/",
   },
   keywords:

@@ -15,7 +15,7 @@ const PRO_PLAN_FEATURES = [
   "Workflow manager",
   "Automations",
   "Popular integrations",
-  "Plane AI",
+  "ReyFlow AI",
 ];
 
 const ONE_PLAN_FEATURES = [

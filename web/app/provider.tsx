@@ -4,7 +4,7 @@ import { FC, ReactNode } from "react";
 import dynamic from "next/dynamic";
 import { useTheme, ThemeProvider } from "next-themes";
 import { SWRConfig } from "swr";
-// Plane Imports
+// ReyFlow Imports
 import { WEB_SWR_CONFIG } from "@plane/constants";
 import { TranslationProvider } from "@plane/i18n";
 import { Toast } from "@plane/ui";

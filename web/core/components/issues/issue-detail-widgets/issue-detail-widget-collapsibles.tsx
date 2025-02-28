@@ -10,7 +10,7 @@ import {
 } from "@/components/issues/issue-detail-widgets";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
-// Plane-web
+// ReyFlow-web
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 
 type Props = {

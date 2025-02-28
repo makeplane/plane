@@ -29,7 +29,7 @@ import { cn } from "@/helpers/common.helper";
 import { useProjectState } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
-// Plane-web
+// ReyFlow-web
 import { useWorkFlowFDragNDrop } from "@/plane-web/components/workflow";
 //
 import { GroupDragOverlay } from "../group-drag-overlay";

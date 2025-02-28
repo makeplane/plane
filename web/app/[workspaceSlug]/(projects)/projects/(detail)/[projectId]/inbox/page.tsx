@@ -56,7 +56,7 @@ const ProjectInboxPage = observer(() => {
         workspace: currentProjectDetails?.name,
       })
     : t("inbox_issue.page_label", {
-        workspace: "Plane",
+        workspace: "ReyFlow",
       });
 
   const currentNavigationTab = navigationTab

@@ -27,7 +27,7 @@ export const NewUserPopup: React.FC = observer(() => {
         <div className="grow">
           <div className="text-base font-semibold">Create workspace</div>
           <div className="py-2 text-sm font-medium text-custom-text-300">
-            Instance setup done! Welcome to Plane instance portal. Start your journey with by creating your first
+            Instance setup done! Welcome to ReyFlow instance portal. Start your journey with by creating your first
             workspace.
           </div>
           <div className="flex items-center gap-4 pt-2">
@@ -44,7 +44,7 @@ export const NewUserPopup: React.FC = observer(() => {
             src={resolveGeneralTheme(resolvedTheme) === "dark" ? TakeoffIconDark : TakeoffIconLight}
             height={80}
             width={80}
-            alt="Plane icon"
+            alt="ReyFlow icon"
           />
         </div>
       </div>

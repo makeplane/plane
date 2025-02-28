@@ -8,7 +8,7 @@ import { TIssueServiceType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
-// Plane-web
+// ReyFlow-web
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 import { TIssueRelationTypes } from "@/plane-web/types";
 

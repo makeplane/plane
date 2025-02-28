@@ -118,7 +118,7 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
             </div>
             {/* created by */}
             {createdByDetails && createdByDetails.email?.includes("intake@plane.so") ? (
-              <Avatar src={getFileURL("")} name={"Plane"} size="md" showTooltip />
+              <Avatar src={getFileURL("")} name={"ReyFlow"} size="md" showTooltip />
             ) : createdByDetails ? (
               <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />
             ) : null}

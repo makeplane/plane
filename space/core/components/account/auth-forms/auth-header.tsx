@@ -25,7 +25,7 @@ const Titles: TAuthHeaderDetails = {
   },
   [EAuthModes.SIGN_UP]: {
     header: "View, comment, and do more",
-    subHeader: "Sign up or log in to work with Plane work items and Pages.",
+    subHeader: "Sign up or log in to work with ReyFlow work items and Pages.",
   },
 };
 

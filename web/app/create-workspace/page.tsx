@@ -68,7 +68,7 @@ const CreateWorkspacePage = observer(() => {
             href="/"
           >
             <div className="h-[30px] w-[133px]">
-              <Image src={logo} alt="Plane logo" />
+              <Image src={logo} alt="ReyFlow logo" />
             </div>
           </Link>
           <div className="absolute right-4 top-1/4 -translate-y-1/2 text-sm text-custom-text-100 sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">

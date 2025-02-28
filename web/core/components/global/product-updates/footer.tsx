@@ -58,7 +58,7 @@ export const ProductUpdatesFooter = () => {
         "flex gap-1.5 items-center text-center font-medium hover:underline underline-offset-2 outline-none"
       )}
     >
-        <Image src={PlaneLogo} alt="Plane" width={12} height={12} />
+        <Image src={PlaneLogo} alt="ReyFlow" width={12} height={12} />
         {t("powered_by_plane_pages")}
       </a>
     </div>

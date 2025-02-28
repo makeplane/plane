@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-// Plane
+// ReyFlow
 import { Row } from "@plane/ui";
 // components
 import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";

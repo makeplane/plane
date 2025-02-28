@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import { AdminLayout } from "@/layouts/admin-layout";
 
 export const metadata: Metadata = {
-  title: "Workspace Management - Plane Web",
+  title: "Workspace Management - ReyFlow Web",
 };
 
 export default function WorkspaceManagementLayout({ children }: { children: ReactNode }) {

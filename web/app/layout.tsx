@@ -14,11 +14,11 @@ import { API_BASE_URL, cn } from "@/helpers/common.helper";
 import { AppProvider } from "./provider";
 
 export const metadata: Metadata = {
-  title: "ReyFlow | Simple, extensible, open-source project management tool.",
+  title: "ReyFlow | Simple and extensible project management tool.",
   description: SITE_DESCRIPTION,
   openGraph: {
-    title: "ReyFlow | Simple, extensible, open-source project management tool.",
-    description: "Open-source project management tool to manage work items, cycles, and product roadmaps easily",
+    title: "ReyFlow | Simple and extensible project management tool.",
+    description: "Extensible project management tool to manage work items, cycles, and product roadmaps easily",
     url: "https://app.plane.so/",
   },
   keywords:

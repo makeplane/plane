@@ -27,7 +27,7 @@ export const UserLoggedIn = observer(() => {
     <div className="flex flex-col h-screen w-screen">
       <div className="relative flex w-full items-center justify-between gap-4 border-b border-custom-border-200 px-6 py-5">
         <div className="h-[30px] w-[133px]">
-          <Image src={logo} alt="Plane logo" />
+          <Image src={logo} alt="ReyFlow logo" />
         </div>
         <UserAvatar />
       </div>
