@@ -16,11 +16,12 @@ export async function generateMetadata({ params }: Props) {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/public/anchor/${anchor}/intake/meta/`);
     const data = await response.json();
+
     return {
-      title: `${data?.name} - Intake` || DEFAULT_TITLE,
+      title: `${data?.name || DEFAULT_TITLE} - Intake`,
       description: DEFAULT_DESCRIPTION,
       openGraph: {
-        title: `${data?.name} - Intake` || DEFAULT_TITLE,
+        title: `${data?.name || DEFAULT_TITLE} - Intake`,
         description: DEFAULT_DESCRIPTION,
         type: "website",
         images: [
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }: Props) {
       },
       twitter: {
         card: "summary_large_image",
-        title: `${data?.name} - Intake` || DEFAULT_TITLE,
+        title: `${data?.name || DEFAULT_TITLE} - Intake`,
         description: data?.description || DEFAULT_DESCRIPTION,
         images: [data?.cover_image],
       },
