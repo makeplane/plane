@@ -9,7 +9,7 @@ export const IssueEmbedSuggestions = Extension.create({
   addOptions() {
     return {
       suggestion: {
-        char: "#issue_",
+        char: "#workitem_",
         allowSpaces: true,
         command: ({ editor, range, props }: { editor: Editor; range: Range; props: any }) => {
           props.command({ editor, range });
