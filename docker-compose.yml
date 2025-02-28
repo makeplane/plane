@@ -176,6 +176,7 @@ services:
     restart: always
     ports:
       - ${NGINX_PORT}:80
+      - ${NGINX_SSL_PORT}:443
     environment:
       FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
       BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
@@ -184,6 +185,9 @@ services:
       - api
       - space
       - admin
+    volumes:
+      - /opt/docker-volumes/nginx:/etc/nginx/conf.d
+      - ssl_certs:/etc/nginx/ssl
 
 volumes:
   plane-db:
@@ -193,4 +197,6 @@ volumes:
   plane-mq:
     driver: local
   plane-minio:
+    driver: local
+  ssl_certs:
     driver: local
