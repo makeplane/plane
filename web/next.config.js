@@ -59,6 +59,10 @@ const nextConfig = {
         source: "/ingest/:path*",
         destination: `${posthogHost}/:path*`,
       },
+      {
+        source: '/.well-known/acme-challenge/:path*',
+        destination: '/.well-known/acme-challenge/:path*',
+      },
     ];
     if (process.env.NEXT_PUBLIC_ADMIN_BASE_URL || process.env.NEXT_PUBLIC_ADMIN_BASE_PATH) {
       const ADMIN_BASE_URL = process.env.NEXT_PUBLIC_ADMIN_BASE_URL || "";
