@@ -1,13 +1,13 @@
 import { SyntheticEvent } from "react";
 import { observer } from "mobx-react";
-import { Users } from "lucide-react";
+import { CalendarCheck2, CalendarClock, Users } from "lucide-react";
 // plane imports
 import { EUserProjectRoles } from "@plane/constants";
 import { IWorkspace } from "@plane/types";
 import { Avatar, PriorityIcon, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
+import { DateDropdown, MemberDropdown } from "@/components/dropdowns";
 // helpers
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
@@ -19,6 +19,7 @@ import { EProjectPriority } from "@/plane-web/types/workspace-project-states";
 // local imports
 import { StateDropdown, PriorityDropdown } from "../dropdowns";
 import MembersDropdown from "../dropdowns/members-dropdown";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   project: TProject;
@@ -47,6 +48,7 @@ const Attributes: React.FC<Props> = observer((props) => {
   const projectMembersIds = project.members;
 
   const { getUserDetails } = useMember();
+  const { t } = useTranslation();
   const lead = getUserDetails(project.project_lead as string);
   const { workspaceProjectsPermissions } = useUserPermissions();
   const isEditingAllowed =
@@ -168,33 +170,44 @@ const Attributes: React.FC<Props> = observer((props) => {
         </Tooltip>
       )}
       {displayProperties["date"] && (
-        <div className="h-5 my-auto" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-          <DateRangeDropdown
-            buttonVariant="border-with-text"
-            minDate={new Date()}
-            value={{
-              from: getDate(project.start_date),
-              to: getDate(project.target_date),
-            }}
-            onSelect={(val) => {
+        <div className="h-5 my-auto flex gap-2" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+          <DateDropdown
+            value={project.start_date || null}
+            onChange={(val) => {
               handleUpdateProject({
-                start_date: val?.from ? renderFormattedPayloadDate(val.from)! : null,
-                target_date: val?.to ? renderFormattedPayloadDate(val.to)! : null,
+                start_date: val ? renderFormattedPayloadDate(val) : null,
+                target_date: project.target_date,
               });
             }}
-            placeholder={{
-              from: "Start date",
-              to: "End date",
-            }}
-            hideIcon={{
-              to: !!project.target_date,
-            }}
-            renderPlaceholder={false}
-            tabIndex={3}
-            buttonClassName={cn("z-1 px-2 py-0 h-5")}
-            className={cn("h-5 my-auto", dateClassname)}
-            disabled={!isEditingAllowed || isArchived}
+            placeholder={t("common.order_by.start_date")}
+            icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+            buttonVariant={project.start_date ? "border-with-text" : "border-without-text"}
+            buttonContainerClassName={`h-5 w-full flex cursor-pointer items-center gap-1.5 text-custom-text-300 rounded text-xs`}
+            optionsClassName="z-10"
             showTooltip
+            maxDate={getDate(project.target_date)}
+            disabled={!isEditingAllowed || isArchived}
+          />
+        </div>
+      )}
+      {displayProperties["date"] && (
+        <div className="h-5 my-auto flex gap-2" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+          <DateDropdown
+            value={project.target_date || null}
+            onChange={(val) => {
+              handleUpdateProject({
+                start_date: project.start_date,
+                target_date: val ? renderFormattedPayloadDate(val) : null,
+              });
+            }}
+            placeholder={t("common.order_by.due_date")}
+            icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+            buttonVariant={project.target_date ? "border-with-text" : "border-without-text"}
+            buttonContainerClassName={`h-5 w-full flex cursor-pointer items-center gap-1.5 text-custom-text-300 rounded text-xs`}
+            optionsClassName="z-10"
+            showTooltip
+            minDate={getDate(project.start_date)}
+            disabled={!isEditingAllowed || isArchived}
           />
         </div>
       )}
