@@ -188,7 +188,7 @@ services:
     volumes:
       - /opt/docker-volumes/nginx:/etc/nginx/conf.d
       - ssl_certs:/etc/nginx/ssl
-      - /opt/docker-volumes/nginx/html:/var/www/certbot
+      - /opt/docker-volumes/certbot:/var/www/certbot
 
 volumes:
   plane-db:
