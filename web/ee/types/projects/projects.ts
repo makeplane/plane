@@ -23,6 +23,7 @@ export type TProject = TPartialProject &
   IProject &
   TProjectAttributes & {
     description_html?: string | undefined;
+    project_name?: string;
   };
 
 export type TProjectFeaturesList = {

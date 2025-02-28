@@ -11,12 +11,12 @@ from plane.app.serializers import UserLiteSerializer, ProjectLiteSerializer, Wor
 
 class ProjectAttributeSerializer(BaseSerializer):
     state_id = serializers.UUIDField(required=False)
+    project_name = serializers.CharField()
 
     class Meta:
         model = ProjectAttribute
-        fields = ["project_id", "state_id", "priority", "start_date", "target_date"]
-
-
+        fields = ["project_id", "state_id", "priority", "start_date", "target_date", "project_name"]
+    
 class ProjectFeatureSerializer(BaseSerializer):
     is_issue_type_enabled = serializers.BooleanField(read_only=True)
     is_time_tracking_enabled = serializers.BooleanField(read_only=True)

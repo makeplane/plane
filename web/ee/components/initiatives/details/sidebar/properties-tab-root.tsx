@@ -97,7 +97,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
             className="text-xs font-medium text-custom-text-300 border-[0.5px] px-2 py-1 border-custom-border-300 hover:bg-custom-background-80 rounded cursor-pointer"
             onClick={() => toggleEpicModal(true)}
           >
-            {initiativeEpicIds?.length} {initiativeEpicIds?.length === 1 ? t("epic") : t("epics")}
+            {initiativeEpicIds?.length} {initiativeEpicIds?.length === 1 ? t("epic") : t("common.epics")}
           </button>
         </div>
         {/* Dates Drop down*/}

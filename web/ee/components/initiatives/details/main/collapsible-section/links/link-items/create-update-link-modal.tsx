@@ -147,7 +147,7 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observe
               : isSubmitting
                 ? t("common.adding")
                 : t("add")}{" "}
-            {t("link").toLowerCase()}
+            {t("common.link").toLowerCase()}
           </Button>
         </div>
       </form>
