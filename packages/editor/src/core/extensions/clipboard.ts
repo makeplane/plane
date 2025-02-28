@@ -1,4 +1,5 @@
 import { Extension } from "@tiptap/core";
+import { Fragment, Node } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 
 export const MarkdownClipboard = Extension.create({
@@ -18,25 +19,54 @@ export const MarkdownClipboard = Extension.create({
         props: {
           clipboardTextSerializer: (slice) => {
             const markdownSerializer = this.editor.storage.markdown.serializer;
+            const listTypes = ["bulletList", "orderedList", "taskList"];
+
+            const processTableContent = (tableNode: Node | Fragment) => {
+              let result = '';
+              tableNode.content.forEach((tableRowNode: Node | Fragment) => {
+                const rowContent: string[] = [];
+                tableRowNode.content.forEach((cell) => {
+                  const cellContent = markdownSerializer.serialize(cell.content);
+                  rowContent.push(cellContent);
+                });
+                result += rowContent.join('\t') + '\n';
+              });
+              return result;
+            };
 
             const isTableContent =
               slice.content.childCount === 1 &&
               slice.content.firstChild?.type.name === "table";
-            const isTableRow = slice.content.firstChild?.type.name === 'tableRow'
 
+            const isTableRow = slice.content.firstChild?.type.name === 'tableRow';
             const hasMultipleContentBlocks = slice.content.childCount > 1;
-
             const isWholeSelectionCopied = slice.openStart === 0 && slice.openEnd === 0;
-
-            const listTypes = ["bulletList", "orderedList", "taskList"]
-
             const isListContent =
               slice.content.childCount === 1 &&
-              listTypes.includes(
-                slice.content.firstChild?.type.name ?? ""
-              );
-
+              listTypes.includes(slice.content.firstChild?.type.name ?? "");
             let shouldConvertToMarkdown = false;
+
+            let result = '';
+            const multiNode = slice.content.childCount > 1;
+            if (multiNode) {
+              let containsTable = false;
+              slice.content.forEach((contentNode: Node) => {
+                if (contentNode.type.name === 'table') {
+                  containsTable = true;
+                  result += processTableContent(contentNode);
+                } else {
+                  result += markdownSerializer.serialize(contentNode);
+                }
+              });
+              if (containsTable) {
+                return result;
+              }
+            }
+
+
+            if (isTableContent && isWholeSelectionCopied) {
+              return processTableContent(slice.content.firstChild);
+            }
 
             if (isTableContent && !isWholeSelectionCopied) {
               const tableNode = slice.content.firstChild;
@@ -50,29 +80,32 @@ export const MarkdownClipboard = Extension.create({
                   (node) => listTypes.includes(node.type.name)
                 );
 
-                const allNodes = firstTableCell.content.content
-
+                const allNodes = firstTableCell.content.content;
                 const hasMultipleTypes = new Set(allNodes.map(n => n.type.name)).size > 1;
 
                 if (hasMultipleTypes) {
-                  return markdownSerializer.serialize(slice.content.firstChild.content.firstChild?.content.firstChild?.content)
+                  return markdownSerializer.serialize(
+                    slice.content.firstChild.content.firstChild?.content.firstChild?.content
+                  );
                 }
 
                 if (cellContainsList && listHasMultipleItemsInTable) {
                   containsComplexList = true;
-                  return markdownSerializer.serialize(slice.content.firstChild.content.firstChild?.content.firstChild?.content)
+                  return markdownSerializer.serialize(
+                    slice.content.firstChild.content.firstChild?.content.firstChild?.content
+                  );
                 }
 
                 const cellContainsOnlyParagraphs = firstTableCell.content.content.every(
                   (node) => node.type.name === "paragraph"
                 );
 
-
                 const isTableWithMultipleRowsOrCells = (() => {
                   if (isTableContent) {
                     const tableNode = slice.content.firstChild;
                     const hasMultipleRows = tableNode.content.childCount > 1;
                     let hasMultipleCells = false;
+
                     tableNode.content.forEach(row => {
                       if (row.content.childCount > 1) {
                         hasMultipleCells = true;
@@ -84,38 +117,17 @@ export const MarkdownClipboard = Extension.create({
                   return false;
                 })();
 
-
                 if (isTableWithMultipleRowsOrCells) {
-                  let result = '';
-                  const table = slice.content.firstChild;
-                  table.content.forEach((tableRowNode) => {
-                    const rowContent: Node[] = [];
-                    tableRowNode.content.forEach((cell) => {
-                      const cellContent = markdownSerializer.serialize(cell.content);
-                      rowContent.push(cellContent);
-                    });
-
-                    result += rowContent.join('\t') + '\n';
-                  });
-                  return result;
+                  return processTableContent(slice.content.firstChild);
                 }
 
                 shouldConvertToMarkdown = this.options.transformCopiedText &&
                   ((!cellContainsOnlyParagraphs && cellContainsMultipleBlocks) ||
                     containsComplexList);
               }
-            } else if (isTableRow) {
-              let result = '';
-              slice.content.forEach((tableRowNode) => {
-                const rowContent: Node[] = [];
-                tableRowNode.content.forEach((cell) => {
-                  const cellContent = markdownSerializer.serialize(cell.content);
-                  rowContent.push(cellContent);
-                });
-
-                result += rowContent.join('\t') + '\n';
-              });
-              return result;
+            }
+            else if (isTableRow) {
+              return processTableContent(slice.content);
             }
             else if (isListContent) {
               const listNode = slice.content.firstChild;
