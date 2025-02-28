@@ -14,10 +14,10 @@ import { API_BASE_URL, cn } from "@/helpers/common.helper";
 import { AppProvider } from "./provider";
 
 export const metadata: Metadata = {
-  title: "Plane | Simple, extensible, open-source project management tool.",
+  title: "ReyFlow | Simple, extensible, open-source project management tool.",
   description: SITE_DESCRIPTION,
   openGraph: {
-    title: "Plane | Simple, extensible, open-source project management tool.",
+    title: "ReyFlow | Simple, extensible, open-source project management tool.",
     description: "Open-source project management tool to manage work items, cycles, and product roadmaps easily",
     url: "https://app.plane.so/",
   },
@@ -49,7 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="manifest" href="/site.webmanifest.json" />
         <link rel="shortcut icon" href="/favicon/favicon.ico" />
         {/* Meta info for PWA */}
-        <meta name="application-name" content="Plane" />
+        <meta name="application-name" content="ReyFlow" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content={SITE_NAME} />

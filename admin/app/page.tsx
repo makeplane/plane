@@ -5,11 +5,11 @@ import { InstanceSignInForm } from "@/components/login";
 import { DefaultLayout } from "@/layouts/default-layout";
 
 export const metadata: Metadata = {
-  title: "Plane | Simple, extensible, open-source project management tool.",
+  title: "ReyFlow | Simple, extensible, open-source project management tool.",
   description:
     "Open-source project management tool to manage work items, sprints, and product roadmaps with peace of mind.",
   openGraph: {
-    title: "Plane | Simple, extensible, open-source project management tool.",
+    title: "ReyFlow | Simple, extensible, open-source project management tool.",
     description:
       "Open-source project management tool to manage work items, sprints, and product roadmaps with peace of mind.",
     url: "https://plane.so/",

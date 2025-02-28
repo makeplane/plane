@@ -7,7 +7,7 @@ interface IUseHeadParams {
 export const useHead = ({ title }: IUseHeadParams) => {
   useEffect(() => {
     if (title) {
-      document.title = title ?? "Plane | Simple, extensible, open-source project management tool.";
+      document.title = title ?? "ReyFlow | Simple, extensible, open-source project management tool.";
     }
   }, [title]);
 };
