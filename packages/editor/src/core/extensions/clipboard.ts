@@ -67,6 +67,39 @@ export const MarkdownClipboard = Extension.create({
                   (node) => node.type.name === "paragraph"
                 );
 
+
+                const isTableWithMultipleRowsOrCells = (() => {
+                  if (isTableContent) {
+                    const tableNode = slice.content.firstChild;
+                    const hasMultipleRows = tableNode.content.childCount > 1;
+                    let hasMultipleCells = false;
+                    tableNode.content.forEach(row => {
+                      if (row.content.childCount > 1) {
+                        hasMultipleCells = true;
+                      }
+                    });
+
+                    return hasMultipleRows || hasMultipleCells;
+                  }
+                  return false;
+                })();
+
+
+                if (isTableWithMultipleRowsOrCells) {
+                  let result = '';
+                  const table = slice.content.firstChild;
+                  table.content.forEach((tableRowNode) => {
+                    const rowContent: Node[] = [];
+                    tableRowNode.content.forEach((cell) => {
+                      const cellContent = markdownSerializer.serialize(cell.content);
+                      rowContent.push(cellContent);
+                    });
+
+                    result += rowContent.join('\t') + '\n';
+                  });
+                  return result;
+                }
+
                 shouldConvertToMarkdown = this.options.transformCopiedText &&
                   ((!cellContainsOnlyParagraphs && cellContainsMultipleBlocks) ||
                     containsComplexList);
