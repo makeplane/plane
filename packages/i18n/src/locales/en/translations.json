@@ -219,7 +219,7 @@
   "full_changelog": "Full changelog",
   "support": "Support",
   "discord": "Discord",
-  "powered_by_plane_pages": "Powered by Plane Pages",
+  "powered_by_plane_pages": "Powered by ReyFlow Pages",
   "please_select_at_least_one_invitation": "Please select at least one invitation.",
   "please_select_at_least_one_invitation_description": "Please select at least one invitation to join the workspace.",
   "we_see_that_someone_has_invited_you_to_join_a_workspace": "We see that someone has invited you to join a workspace",
@@ -380,7 +380,7 @@
       "not_right_now": "Not right now",
       "create_project": {
         "title": "Create a project",
-        "description": "Most things start with a project in Plane.",
+        "description": "Most things start with a project in ReyFlow.",
         "cta": "Get started"
       },
       "invite_team": {
@@ -394,7 +394,7 @@
         "cta": "Configure this workspace"
       },
       "personalize_account": {
-        "title": "Make Plane yours.",
+        "title": "Make ReyFlow yours.",
         "description": "Choose your picture, colors, and more.",
         "cta": "Personalize now"
       },
@@ -428,7 +428,7 @@
       }
     },
     "new_at_plane": {
-      "title": "New at Plane"
+      "title": "New at ReyFlow"
     },
     "quick_tutorial": {
       "title": "Quick tutorial"
@@ -1044,7 +1044,7 @@
 
   "workspace_creation": {
     "heading": "Create your workspace",
-    "subheading": "To start using Plane, you need to create or join a workspace.",
+    "subheading": "To start using ReyFlow, you need to create or join a workspace.",
     "form": {
       "name": {
         "label": "Name your workspace",
@@ -1098,11 +1098,11 @@
     "empty_state": {
       "general": {
         "title": "Overview of your projects, activity, and metrics",
-        "description": "Welcome to Plane, we are excited to have you here. Create your first project and track your work items, and this page will transform into a space that helps you progress. Admins will also see items which help their team progress.",
+        "description": "Welcome to ReyFlow, we are excited to have you here. Create your first project and track your work items, and this page will transform into a space that helps you progress. Admins will also see items which help their team progress.",
         "primary_button": {
           "text": "Build your first project",
           "comic": {
-            "title": "Everything starts with a project in Plane",
+            "title": "Everything starts with a project in ReyFlow",
             "description": "A project could be a product's roadmap, a marketing campaign, or launching a new car."
           }
         }
@@ -1204,7 +1204,7 @@
         "primary_button": {
           "text": "Start your first project",
           "comic": {
-            "title": "Everything starts with a project in Plane",
+            "title": "Everything starts with a project in ReyFlow",
             "description": "A project could be a product's roadmap, a marketing campaign, or launching a new car."
           }
         }
@@ -1215,7 +1215,7 @@
         "primary_button": {
           "text": "Start your first project",
           "comic": {
-            "title": "Everything starts with a project in Plane",
+            "title": "Everything starts with a project in ReyFlow",
             "description": "A project could be a product's roadmap, a marketing campaign, or launching a new car."
           }
         }
@@ -1269,7 +1269,7 @@
     "label": "Workspace settings",
     "page_label": "{workspace} - General settings",
     "key_created": "Key created",
-    "copy_key": "Copy and save this secret key in Plane Pages. You can't see this key after you hit Close. A CSV file containing the key has been downloaded.",
+    "copy_key": "Copy and save this secret key in ReyFlow Pages. You can't see this key after you hit Close. A CSV file containing the key has been downloaded.",
     "token_copied": "Token copied to clipboard.",
     "settings": {
       "general": {
@@ -1414,7 +1414,7 @@
         "generating": "Generating",
         "delete": {
           "title": "Delete API token",
-          "description": "Any application using this token will no longer have the access to Plane data. This action cannot be undone.",
+          "description": "Any application using this token will no longer have the access to ReyFlow data. This action cannot be undone.",
           "success": {
             "title": "Success!",
             "message": "The API token has been successfully deleted"
@@ -1429,7 +1429,7 @@
     "empty_state": {
       "api_tokens": {
         "title": "No API tokens created",
-        "description": "Plane APIs can be used to integrate your data in Plane with any external system. Create a token to get started."
+        "description": "ReyFlow APIs can be used to integrate your data in ReyFlow with any external system. Create a token to get started."
       },
       "webhooks": {
         "title": "No webhooks added",
@@ -1492,7 +1492,7 @@
     "empty_state": {
       "activity": {
         "title": "No activities yet",
-        "description": "Get started by creating a new work item! Add details and properties to it. Explore more in Plane to see your activity."
+        "description": "Get started by creating a new work item! Add details and properties to it. Explore more in ReyFlow to see your activity."
       },
       "assigned": {
         "title": "No work items are assigned to you",
@@ -1565,12 +1565,12 @@
       "label": "Automations",
       "auto-archive": {
         "title": "Auto-archive closed work items",
-        "description": "Plane will auto archive work items that have been completed or canceled.",
+        "description": "ReyFlow will auto archive work items that have been completed or canceled.",
         "duration": "Auto-archive work items that are closed for"
       },
       "auto-close": {
         "title": "Auto-close work items",
-        "description": "Plane will automatically close work items that haven't been completed or canceled.",
+        "description": "ReyFlow will automatically close work items that haven't been completed or canceled.",
         "duration": "Auto-close work items that are inactive for",
         "auto_close_status": "Auto-close status"
       }
@@ -1717,8 +1717,8 @@
         "primary_button": {
           "text": "Create your first work item",
           "comic": {
-            "title": "Work items are building blocks in Plane.",
-            "description": "Redesign the Plane UI, Rebrand the company, or Launch the new fuel injection system are examples of work items that likely have sub-work items."
+            "title": "Work items are building blocks in ReyFlow.",
+            "description": "Redesign the ReyFlow UI, Rebrand the company, or Launch the new fuel injection system are examples of work items that likely have sub-work items."
           }
         }
       },
@@ -1815,8 +1815,8 @@
   "project_page": {
     "empty_state": {
       "general": {
-        "title": "Write a note, a doc, or a full knowledge base. Get Galileo, Plane's AI assistant, to help you get started",
-        "description": "Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed work items, lay them out using a library of components, and keep them all in your project's context. To make short work of any doc, invoke Galileo, Plane's AI, with a shortcut or the click of a button.",
+        "title": "Write a note, a doc, or a full knowledge base. Get Galileo, ReyFlow's AI assistant, to help you get started",
+        "description": "Pages are thoughts potting space in ReyFlow. Take down meeting notes, format them easily, embed work items, lay them out using a library of components, and keep them all in your project's context. To make short work of any doc, invoke Galileo, ReyFlow's AI, with a shortcut or the click of a button.",
         "primary_button": {
           "text": "Create your first page"
         }
