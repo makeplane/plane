@@ -133,6 +133,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /var/lib/postgresql/data
+    ports:
+      - "5432:5432" 
 
   plane-redis:
     container_name: plane-redis
