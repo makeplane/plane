@@ -52,6 +52,12 @@ export const MarkdownClipboard = Extension.create({
             } else {
               const mulitpleNodes = slice.content.childCount > 1;
               if (!mulitpleNodes) {
+
+                // handle Paragraph
+                if (slice.content.firstChild?.type.name === 'paragraph') {
+                  return markdownSerializer.serialize(slice.content)
+                }
+
                 // handle list
                 const isListContent =
                   slice.content.childCount === 1 &&
@@ -64,6 +70,7 @@ export const MarkdownClipboard = Extension.create({
                     return markdownSerializer.serialize(slice.content)
                   }
                 }
+
                 // handle tasklist
                 const isTaskList =
                   slice.content.childCount === 1 && slice.content.firstChild?.type.name === taskList
