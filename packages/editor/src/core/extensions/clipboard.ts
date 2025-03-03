@@ -105,9 +105,13 @@ export const MarkdownClipboard = Extension.create({
                       const tableCell = tableNode.content.firstChild?.content.firstChild?.content;
                       const firstChildType = tableCell?.firstChild?.type.name;
                       const isListOrTaskList = firstChildType && (listTypes.includes(firstChildType) || firstChildType === taskList);
-
                       if (isListOrTaskList) {
-                        return markdownSerializer(tableNode.content.firstChild?.content.firstChild);
+                        if (tableCell?.firstChild?.childCount === 1) {
+                          return markdownSerializer(tableNode.content.firstChild?.content.firstChild);
+                        } else {
+                          return markdownSerializer.serialize(tableNode.content.firstChild?.content.firstChild);
+                        }
+
                       } else {
                         return markdownSerializer.serialize(tableNode.content.firstChild?.content.firstChild);
                       }
