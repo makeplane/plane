@@ -853,7 +853,7 @@ def delete_cycle_issue_activity(
     issues = requested_data.get("issues")
     for issue in issues:
         current_issue = Issue.objects.filter(pk=issue).first()
-        if issue:
+        if current_issue:
             current_issue.updated_at = timezone.now()
             current_issue.save(update_fields=["updated_at"])
         issue_activities.append(

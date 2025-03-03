@@ -252,7 +252,7 @@ ul[data-type="taskList"] li[data-checked="true"] {
 
 div[data-type="horizontalRule"] {
   line-height: 0;
-  padding: 0.25rem 0;
+  padding: var(--divider-padding-top) 0 var(--divider-padding-bottom) 0;
   margin-top: 0;
   margin-bottom: 0;
 
@@ -335,10 +335,10 @@ p.editor-paragraph-block {
 /* tailwind typography */
 .prose :where(h1.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   &:not(:first-child) {
-    padding-top: 28px;
+    padding-top: var(--heading-1-padding-top);
   }
 
-  padding-bottom: 4px;
+  padding-bottom: var(--heading-1-padding-bottom);
   font-size: var(--font-size-h1);
   line-height: var(--line-height-h1);
   font-weight: 600;
@@ -346,10 +346,10 @@ p.editor-paragraph-block {
 
 .prose :where(h2.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   &:not(:first-child) {
-    padding-top: 28px;
+    padding-top: var(--heading-2-padding-top);
   }
 
-  padding-bottom: 4px;
+  padding-bottom: var(--heading-2-padding-bottom);
   font-size: var(--font-size-h2);
   line-height: var(--line-height-h2);
   font-weight: 600;
@@ -357,10 +357,10 @@ p.editor-paragraph-block {
 
 .prose :where(h3.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   &:not(:first-child) {
-    padding-top: 28px;
+    padding-top: var(--heading-3-padding-top);
   }
 
-  padding-bottom: 4px;
+  padding-bottom: var(--heading-3-padding-bottom);
   font-size: var(--font-size-h3);
   line-height: var(--line-height-h3);
   font-weight: 600;
@@ -368,10 +368,10 @@ p.editor-paragraph-block {
 
 .prose :where(h4.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   &:not(:first-child) {
-    padding-top: 28px;
+    padding-top: var(--heading-4-padding-top);
   }
 
-  padding-bottom: 4px;
+  padding-bottom: var(--heading-4-padding-bottom);
   font-size: var(--font-size-h4);
   line-height: var(--line-height-h4);
   font-weight: 600;
@@ -379,10 +379,10 @@ p.editor-paragraph-block {
 
 .prose :where(h5.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   &:not(:first-child) {
-    padding-top: 20px;
+    padding-top: var(--heading-5-padding-top);
   }
 
-  padding-bottom: 4px;
+  padding-bottom: var(--heading-5-padding-bottom);
   font-size: var(--font-size-h5);
   line-height: var(--line-height-h5);
   font-weight: 600;
@@ -390,10 +390,10 @@ p.editor-paragraph-block {
 
 .prose :where(h6.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   &:not(:first-child) {
-    padding-top: 20px;
+    padding-top: var(--heading-6-padding-top);
   }
 
-  padding-bottom: 4px;
+  padding-bottom: var(--heading-6-padding-bottom);
   font-size: var(--font-size-h6);
   line-height: var(--line-height-h6);
   font-weight: 600;
@@ -405,16 +405,16 @@ p.editor-paragraph-block {
   }
 
   &:not(:first-child) {
-    padding-top: 4px;
+    padding-top: var(--paragraph-padding-top);
   }
 
   &:not(td p.editor-paragraph-block, th p.editor-paragraph-block) {
     &:last-child {
-      padding-bottom: 4px;
+      padding-bottom: var(--paragraph-padding-bottom);
     }
 
     &:not(:last-child) {
-      padding-bottom: 8px;
+      padding-bottom: var(--paragraph-padding-between);
     }
   }
 
@@ -423,7 +423,7 @@ p.editor-paragraph-block {
 }
 
 p.editor-paragraph-block + p.editor-paragraph-block {
-  padding-top: 8px !important;
+  padding-top: var(--paragraph-padding-between) !important;
 }
 
 .prose :where(ol):not(:where([class~="not-prose"], [class~="not-prose"] *)) li p.editor-paragraph-block,
