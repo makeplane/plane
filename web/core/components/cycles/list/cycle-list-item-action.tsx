@@ -208,7 +208,6 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
             from: getDate(cycleDetails.start_date),
             to: getDate(cycleDetails.end_date),
           }}
-          onSelect={(val) => {}}
           placeholder={{
             from: "Start date",
             to: "End date",
