@@ -1,3 +1,4 @@
+import { serialize } from "node:v8";
 import { Extension } from "@tiptap/core";
 import { Fragment, Node } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
@@ -39,14 +40,12 @@ export const MarkdownClipboard = Extension.create({
             };
 
             if (isTableRow) {
-              console.log(slice.content);
               const rowsCount = slice.content.childCount;
               const cellsCount = slice.content.firstChild.content.childCount;
-
               if (rowsCount === 1 || cellsCount === 1) {
                 return processTableContent(slice.content)
               } else {
-                markdownSerializer.serialize(slice.content);
+                return markdownSerializer.serialize(slice.content);
               }
             }
 
@@ -54,7 +53,6 @@ export const MarkdownClipboard = Extension.create({
               return markdownSerializer.serialize(slice.content);
             } else {
               const mulitpleNodes = slice.content.childCount > 1;
-              console.log("mulitpleNodes", mulitpleNodes);
               if (!mulitpleNodes) {
                 // handle list
                 const isListContent =
