@@ -23,8 +23,6 @@ export const MarkdownClipboard = Extension.create({
             const isNodeSelected = slice.openStart === 0 && slice.openEnd === 0;
             const listTypes = ["bulletList", "orderedList"];
             const taskList = 'taskList';
-            const blockQuote = 'blockquote';
-            const calloutComponent = 'calloutComponent';
             const table = 'table'
             const isTableRow = slice.content.firstChild?.type.name === 'tableRow';
 
@@ -58,32 +56,28 @@ export const MarkdownClipboard = Extension.create({
                 const isListContent =
                   slice.content.childCount === 1 &&
                   listTypes.includes(slice.content.firstChild?.type.name ?? "");
-                if (isListContent) {
-                  return markdownSerializer.serialize(slice.content.firstChild?.content)
-                }
 
+                if (isListContent) {
+                  if (slice.content.firstChild?.childCount === 1) {
+                    return markdownSerializer.serialize(slice.content.firstChild?.content)
+                  } else {
+                    return markdownSerializer.serialize(slice.content)
+                  }
+                }
                 // handle tasklist
                 const isTaskList =
                   slice.content.childCount === 1 && slice.content.firstChild?.type.name === taskList
                 if (isTaskList) {
-                  let result = '';
-                  slice.content.firstChild?.content.forEach((taskItem: Node) => {
-                    const taskItemContent = markdownSerializer.serialize(taskItem.content);
-                    result += taskItemContent + '\n';
-                  });
-                  return result;
-                }
-
-                // handle blockquote
-                const isblockQuote = slice.content.childCount === 1 && slice.content.firstChild?.type.name === blockQuote;
-                if (isblockQuote) {
-                  return markdownSerializer.serialize(slice.content.firstChild?.content)
-                }
-
-                // handle calloutComponent
-                const isCalloutComponent = slice.content.childCount === 1 && slice.content.firstChild?.type.name === calloutComponent;
-                if (isCalloutComponent) {
-                  return markdownSerializer.serialize(slice.content.firstChild?.content)
+                  if (slice.content.firstChild?.childCount === 1) {
+                    let result = '';
+                    slice.content.firstChild?.content.forEach((taskItem: Node) => {
+                      const taskItemContent = markdownSerializer.serialize(taskItem.content);
+                      result += taskItemContent + '\n';
+                    });
+                    return result;
+                  } else {
+                    return markdownSerializer.serialize(slice.content)
+                  }
                 }
 
                 // handle table
@@ -102,7 +96,6 @@ export const MarkdownClipboard = Extension.create({
                       return markdownSerializer.serialize(tableNode.content.firstChild?.content.firstChild);
                     } else {
                       const tableCell = tableNode.content.firstChild?.content.firstChild?.content;
-
                       const firstChildType = tableCell?.firstChild?.type.name;
                       const isListOrTaskList = firstChildType && (listTypes.includes(firstChildType) || firstChildType === taskList);
 
@@ -113,6 +106,11 @@ export const MarkdownClipboard = Extension.create({
                       }
                     }
                   }
+                }
+                // handle block Node
+                const isblockNode = slice.content.childCount === 1 && slice.content.firstChild?.type.isInGroup('block');
+                if (isblockNode) {
+                  return markdownSerializer.serialize(slice.content.firstChild?.content)
                 }
               } else {
                 return markdownSerializer.serialize(slice.content);
