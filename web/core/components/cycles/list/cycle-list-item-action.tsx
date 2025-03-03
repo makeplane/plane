@@ -4,7 +4,7 @@ import React, { FC, MouseEvent, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { Eye, Users } from "lucide-react";
+import { CalendarCheck2, CalendarClock, Eye, Users } from "lucide-react";
 // types
 import { CYCLE_FAVORITED, CYCLE_UNFAVORITED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -23,7 +23,7 @@ import {
 } from "@plane/ui";
 // components
 import { CycleQuickActions, TransferIssuesModal } from "@/components/cycles";
-import { DateRangeDropdown } from "@/components/dropdowns";
+import { DateDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // constants
 // helpers
@@ -41,7 +41,6 @@ import { CycleAdditionalActions } from "@/plane-web/components/cycles";
 import { CycleService } from "@/services/cycle.service";
 
 const cycleService = new CycleService();
-
 type Props = {
   workspaceSlug: string;
   projectId: string;
@@ -77,7 +76,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
   const { getUserDetails } = useMember();
 
   // form
-  const { control, reset } = useForm({
+  const { control, reset, getValues } = useForm({
     defaultValues,
   });
 
@@ -98,7 +97,6 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     workspaceSlug,
     projectId
   );
-  const renderIcon = Boolean(cycleDetails.start_date) || Boolean(cycleDetails.end_date);
 
   // handlers
   const handleAddToFavorites = (e: MouseEvent<HTMLButtonElement>) => {
@@ -171,20 +169,13 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     }
   };
 
-  const handleDateChange = async (startDate: Date | undefined, endDate: Date | undefined) => {
-    if (!startDate || !endDate) return;
-
+  const handleDateChange = async (payload: { start_date?: string | null; end_date?: string | null }) => {
     let isDateValid = false;
 
-    const payload = {
-      start_date: renderFormattedPayloadDate(startDate),
-      end_date: renderFormattedPayloadDate(endDate),
-    };
-
-    if (cycleDetails && cycleDetails.start_date && cycleDetails.end_date)
+    if (cycleDetails?.start_date && cycleDetails?.end_date)
       isDateValid = await dateChecker({
         ...payload,
-        cycle_id: cycleDetails.id,
+        cycle_id: cycleDetails?.id,
       });
     else isDateValid = await dateChecker(payload);
 
@@ -203,6 +194,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
       });
       reset({ ...cycleDetails });
     }
+    return isDateValid;
   };
 
   const createdByDetails = cycleDetails.created_by ? getUserDetails(cycleDetails.created_by) : undefined;
@@ -268,35 +260,77 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
 
       {!isActive && (
         <Controller
-          control={control}
           name="start_date"
-          render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
-            <Controller
-              control={control}
-              name="end_date"
-              render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
-                <DateRangeDropdown
-                  buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs`}
-                  buttonVariant="transparent-with-text"
-                  minDate={new Date()}
-                  value={{
-                    from: getDate(startDateValue),
-                    to: getDate(endDateValue),
-                  }}
-                  onSelect={(val) => {
-                    onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
-                    onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
-                    handleDateChange(val?.from, val?.to);
-                  }}
-                  placeholder={{
-                    from: "Start date",
-                    to: "End date",
-                  }}
-                  required={cycleDetails.status !== "draft"}
-                  disabled={isDisabled}
-                  hideIcon={{ from: renderIcon ?? true, to: renderIcon }}
-                />
-              )}
+          control={control}
+          rules={{ required: "Please select a date" }}
+          render={({ field: { value, onChange } }) => (
+            <DateDropdown
+              value={value ?? null}
+              onChange={async (val) => {
+                let isDateValid;
+                const valDate = val ? renderFormattedPayloadDate(val) : null;
+                if (getValues("end_date")) {
+                  isDateValid = await handleDateChange({
+                    start_date: valDate,
+                    end_date: renderFormattedPayloadDate(getValues("end_date")),
+                  });
+                } else {
+                  isDateValid = await handleDateChange({
+                    start_date: valDate,
+                    end_date: valDate,
+                  });
+                }
+                isDateValid && onChange(renderFormattedPayloadDate(val));
+              }}
+              placeholder={t("common.order_by.start_date")}
+              icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+              buttonVariant={value ? "border-with-text" : "border-without-text"}
+              buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 rounded text-xs`}
+              optionsClassName="z-10"
+              disabled={isDisabled}
+              renderByDefault={isMobile}
+              showTooltip
+              maxDate={getDate(getValues("end_date"))}
+              isClearable={false}
+            />
+          )}
+        />
+      )}
+
+      {!isActive && (
+        <Controller
+          name="end_date"
+          control={control}
+          rules={{ required: "Please select a date" }}
+          render={({ field: { value, onChange } }) => (
+            <DateDropdown
+              value={getDate(value) ?? null}
+              onChange={async (val) => {
+                let isDateValid;
+                const valDate = val ? renderFormattedPayloadDate(val) : null;
+                if (getValues("start_date")) {
+                  isDateValid = await handleDateChange({
+                    end_date: valDate,
+                    start_date: renderFormattedPayloadDate(getValues("start_date")),
+                  });
+                } else {
+                  isDateValid = await handleDateChange({
+                    end_date: valDate,
+                    start_date: valDate,
+                  });
+                }
+                isDateValid && onChange(renderFormattedPayloadDate(val));
+              }}
+              placeholder={t("common.order_by.due_date")}
+              icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+              buttonVariant={value ? "border-with-text" : "border-without-text"}
+              buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 rounded text-xs`}
+              optionsClassName="z-10"
+              disabled={isDisabled}
+              renderByDefault={isMobile}
+              showTooltip
+              minDate={getDate(getValues("start_date"))}
+              isClearable={false}
             />
           )}
         />

@@ -4,15 +4,21 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { SquareUser } from "lucide-react";
+import { CalendarCheck2, CalendarClock, SquareUser } from "lucide-react";
 // types
-import { MODULE_STATUS, MODULE_FAVORITED, MODULE_UNFAVORITED , EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import {
+  MODULE_STATUS,
+  MODULE_FAVORITED,
+  MODULE_UNFAVORITED,
+  EUserPermissions,
+  EUserPermissionsLevel,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IModule } from "@plane/types";
 // ui
 import { FavoriteStar, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
 // components
-import { DateRangeDropdown } from "@/components/dropdowns";
+import { DateDropdown } from "@/components/dropdowns";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
 // constants
@@ -132,28 +138,38 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
 
   return (
     <>
-      <DateRangeDropdown
-        buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs`}
-        buttonVariant="transparent-with-text"
-        className="h-7"
-        value={{
-          from: getDate(moduleDetails.start_date),
-          to: getDate(moduleDetails.target_date),
-        }}
-        onSelect={(val) => {
+      <DateDropdown
+        value={moduleDetails.start_date}
+        onChange={(val) => {
           handleModuleDetailsChange({
-            start_date: val?.from ? renderFormattedPayloadDate(val.from) : null,
-            target_date: val?.to ? renderFormattedPayloadDate(val.to) : null,
+            start_date: val ? renderFormattedPayloadDate(val) : null,
           });
         }}
-        placeholder={{
-          from: t("start_date"),
-          to: t("end_date"),
-        }}
+        placeholder={t("common.order_by.start_date")}
+        icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+        buttonVariant={moduleDetails.start_date ? "border-with-text" : "border-without-text"}
+        buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 rounded text-xs`}
+        optionsClassName="z-10"
         disabled={isDisabled}
-        hideIcon={{ from: renderIcon ?? true, to: renderIcon }}
+        showTooltip
+        maxDate={getDate(moduleDetails.target_date)}
       />
-
+      <DateDropdown
+        value={moduleDetails.target_date}
+        onChange={(val) => {
+          handleModuleDetailsChange({
+            target_date: val ? renderFormattedPayloadDate(val) : null,
+          });
+        }}
+        placeholder={t("common.order_by.due_date")}
+        icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+        buttonVariant={moduleDetails.target_date ? "border-with-text" : "border-without-text"}
+        buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 rounded text-xs`}
+        optionsClassName="z-10"
+        disabled={isDisabled}
+        showTooltip
+        minDate={getDate(moduleDetails.start_date)}
+      />
       {moduleStatus && (
         <ModuleStatusDropdown
           isDisabled={isDisabled}
