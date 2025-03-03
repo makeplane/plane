@@ -33,6 +33,8 @@ RUN apk add --no-cache --virtual .build-deps \
 # Install Flower for Celery Monitoring
 RUN pip install flower
 
+ENV FLOWER_UNAUTHENTICATED_API=true
+
 # Copy application files
 COPY manage.py manage.py
 COPY plane plane/
