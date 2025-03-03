@@ -3,31 +3,21 @@
 import React, { FC, MouseEvent, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
-import { Controller, useForm } from "react-hook-form";
-import { CalendarCheck2, CalendarClock, Eye, Users } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { Eye, Users } from "lucide-react";
 // types
 import { CYCLE_FAVORITED, CYCLE_UNFAVORITED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ICycle, TCycleGroups } from "@plane/types";
 // ui
-import {
-  Avatar,
-  AvatarGroup,
-  FavoriteStar,
-  LayersIcon,
-  TOAST_TYPE,
-  Tooltip,
-  TransferIcon,
-  setPromiseToast,
-  setToast,
-} from "@plane/ui";
+import { Avatar, AvatarGroup, FavoriteStar, LayersIcon, Tooltip, TransferIcon, setPromiseToast } from "@plane/ui";
 // components
 import { CycleQuickActions, TransferIssuesModal } from "@/components/cycles";
-import { DateDropdown } from "@/components/dropdowns";
+import { DateRangeDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // constants
 // helpers
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { getDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { generateQueryParams } from "@/helpers/router.helper";
@@ -36,11 +26,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { CycleAdditionalActions } from "@/plane-web/components/cycles";
-// plane web constants
-// services
-import { CycleService } from "@/services/cycle.service";
 
-const cycleService = new CycleService();
 type Props = {
   workspaceSlug: string;
   projectId: string;
@@ -155,48 +141,6 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     });
   };
 
-  const submitChanges = (data: Partial<ICycle>) => {
-    if (!workspaceSlug || !projectId || !cycleId) return;
-    updateCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), data);
-  };
-
-  const dateChecker = async (payload: any) => {
-    try {
-      const res = await cycleService.cycleDateCheck(workspaceSlug as string, projectId as string, payload);
-      return res.status;
-    } catch {
-      return false;
-    }
-  };
-
-  const handleDateChange = async (payload: { start_date?: string | null; end_date?: string | null }) => {
-    let isDateValid = false;
-
-    if (cycleDetails?.start_date && cycleDetails?.end_date)
-      isDateValid = await dateChecker({
-        ...payload,
-        cycle_id: cycleDetails?.id,
-      });
-    else isDateValid = await dateChecker(payload);
-
-    if (isDateValid) {
-      submitChanges(payload);
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: t("project_cycles.action.update.success.title"),
-        message: t("project_cycles.action.update.success.description"),
-      });
-    } else {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: t("project_cycles.action.update.failed.title"),
-        message: t("project_cycles.action.update.error.already_exists"),
-      });
-      reset({ ...cycleDetails });
-    }
-    return isDateValid;
-  };
-
   const createdByDetails = cycleDetails.created_by ? getUserDetails(cycleDetails.created_by) : undefined;
 
   useEffect(() => {
@@ -206,10 +150,6 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
       });
   }, [cycleDetails, reset]);
 
-  const isArchived = Boolean(cycleDetails.archived_at);
-  const isCompleted = cycleStatus === "completed";
-
-  const isDisabled = !isEditingAllowed || isArchived || isCompleted;
   // handlers
   const openCycleOverview = (e: MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
     e.preventDefault();
@@ -258,81 +198,27 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
         </div>
       )}
 
-      {!isActive && (
-        <Controller
-          name="start_date"
-          control={control}
-          rules={{ required: "Please select a date" }}
-          render={({ field: { value, onChange } }) => (
-            <DateDropdown
-              value={value ?? null}
-              onChange={async (val) => {
-                let isDateValid;
-                const valDate = val ? renderFormattedPayloadDate(val) : null;
-                if (getValues("end_date")) {
-                  isDateValid = await handleDateChange({
-                    start_date: valDate,
-                    end_date: renderFormattedPayloadDate(getValues("end_date")),
-                  });
-                } else {
-                  isDateValid = await handleDateChange({
-                    start_date: valDate,
-                    end_date: valDate,
-                  });
-                }
-                isDateValid && onChange(renderFormattedPayloadDate(val));
-              }}
-              placeholder={t("common.order_by.start_date")}
-              icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
-              buttonVariant={value ? "border-with-text" : "border-without-text"}
-              buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 rounded text-xs`}
-              optionsClassName="z-10"
-              disabled={isDisabled}
-              renderByDefault={isMobile}
-              showTooltip
-              maxDate={getDate(getValues("end_date"))}
-              isClearable={false}
-            />
-          )}
-        />
-      )}
-
-      {!isActive && (
-        <Controller
-          name="end_date"
-          control={control}
-          rules={{ required: "Please select a date" }}
-          render={({ field: { value, onChange } }) => (
-            <DateDropdown
-              value={getDate(value) ?? null}
-              onChange={async (val) => {
-                let isDateValid;
-                const valDate = val ? renderFormattedPayloadDate(val) : null;
-                if (getValues("start_date")) {
-                  isDateValid = await handleDateChange({
-                    end_date: valDate,
-                    start_date: renderFormattedPayloadDate(getValues("start_date")),
-                  });
-                } else {
-                  isDateValid = await handleDateChange({
-                    end_date: valDate,
-                    start_date: valDate,
-                  });
-                }
-                isDateValid && onChange(renderFormattedPayloadDate(val));
-              }}
-              placeholder={t("common.order_by.due_date")}
-              icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
-              buttonVariant={value ? "border-with-text" : "border-without-text"}
-              buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 rounded text-xs`}
-              optionsClassName="z-10"
-              disabled={isDisabled}
-              renderByDefault={isMobile}
-              showTooltip
-              minDate={getDate(getValues("start_date"))}
-              isClearable={false}
-            />
-          )}
+      {!isActive && cycleDetails.start_date && (
+        <DateRangeDropdown
+          buttonVariant={"transparent-with-text"}
+          buttonContainerClassName={`h-6 w-full cursor-auto flex items-center gap-1.5 text-custom-text-300 rounded text-xs [&>div]:hover:bg-transparent`}
+          buttonClassName="p-0"
+          minDate={new Date()}
+          value={{
+            from: getDate(cycleDetails.start_date),
+            to: getDate(cycleDetails.end_date),
+          }}
+          placeholder={{
+            from: "Start date",
+            to: "End date",
+          }}
+          showTooltip
+          required={cycleDetails.status !== "draft"}
+          disabled
+          hideIcon={{
+            from: false,
+            to: false,
+          }}
         />
       )}
 

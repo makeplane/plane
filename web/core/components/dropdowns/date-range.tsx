@@ -35,7 +35,7 @@ type Props = {
   };
   minDate?: Date;
   maxDate?: Date;
-  onSelect: (range: DateRange | undefined) => void;
+  onSelect?: (range: DateRange | undefined) => void;
   placeholder?: {
     from?: string;
     to?: string;
@@ -204,11 +204,7 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
               classNames={{ root: `p-3 rounded-md` }}
               selected={dateRange}
               onSelect={(val) => {
-                onSelect(val);
-                setDateRange({
-                  from: val?.from ?? undefined,
-                  to: val?.to ?? undefined,
-                });
+                onSelect?.(val);
               }}
               mode="range"
               disabled={disabledDays}
