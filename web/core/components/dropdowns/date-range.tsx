@@ -205,10 +205,6 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
               selected={dateRange}
               onSelect={(val) => {
                 onSelect(val);
-                setDateRange({
-                  from: val?.from ?? undefined,
-                  to: val?.to ?? undefined,
-                });
               }}
               mode="range"
               disabled={disabledDays}
