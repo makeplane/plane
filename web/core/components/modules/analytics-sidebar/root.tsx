@@ -6,7 +6,6 @@ import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import {
   ArchiveRestoreIcon,
-  CalendarCheck2,
   CalendarClock,
   ChevronDown,
   ChevronRight,
@@ -43,7 +42,7 @@ import {
   TextArea,
 } from "@plane/ui";
 // components
-import { DateDropdown, MemberDropdown } from "@/components/dropdowns";
+import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
 import {
   ArchiveModuleModal,
   DeleteModuleModal,
@@ -105,7 +104,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
   const estimateType = areEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
   const isEstimatePointValid = estimateType && estimateType?.type == EEstimateSystem.POINTS ? true : false;
 
-  const { reset, control, getValues } = useForm({
+  const { reset, control } = useForm({
     defaultValues,
   });
 
@@ -195,8 +194,11 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
       });
   };
 
-  const handleDateChange = async (data: Partial<IModule>) => {
-    submitChanges(data);
+  const handleDateChange = async (startDate: Date | undefined, targetDate: Date | undefined) => {
+    submitChanges({
+      start_date: startDate ? renderFormattedPayloadDate(startDate) : null,
+      target_date: targetDate ? renderFormattedPayloadDate(targetDate) : null,
+    });
     setToast({
       type: TOAST_TYPE.SUCCESS,
       title: "Success!",
@@ -413,59 +415,40 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
               <CalendarClock className="h-4 w-4" />
-              <span className="text-base">Start date</span>
+              <span className="text-base">{t("date_range")}</span>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="h-7 w-3/5">
               <Controller
+                control={control}
                 name="start_date"
-                control={control}
-                rules={{ required: "Please select a date" }}
-                render={({ field: { value, onChange } }) => (
-                  <DateDropdown
-                    value={value ?? null}
-                    onChange={(val) => {
-                      console.log(val);
-                      onChange(renderFormattedPayloadDate(val));
-                      handleDateChange({ start_date: val ? renderFormattedPayloadDate(val) : null });
+                render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
+                  <Controller
+                    control={control}
+                    name="target_date"
+                    render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => {
+                      const startDate = getDate(startDateValue);
+                      const endDate = getDate(endDateValue);
+                      return (
+                        <DateRangeDropdown
+                          buttonContainerClassName="w-full"
+                          buttonVariant="background-with-text"
+                          value={{
+                            from: startDate,
+                            to: endDate,
+                          }}
+                          onSelect={(val) => {
+                            onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
+                            onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+                            handleDateChange(val?.from, val?.to);
+                          }}
+                          placeholder={{
+                            from: t("start_date"),
+                            to: t("target_date"),
+                          }}
+                          disabled={!isEditingAllowed || isArchived}
+                        />
+                      );
                     }}
-                    placeholder={t("common.order_by.start_date")}
-                    icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
-                    buttonVariant={value ? "border-with-text" : "border-without-text"}
-                    buttonContainerClassName={`h-6 w-full flex ${!isEditingAllowed || isArchived ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 rounded text-xs`}
-                    optionsClassName="z-30"
-                    disabled={!isEditingAllowed || isArchived}
-                    showTooltip
-                    maxDate={getDate(getValues("target_date"))}
-                  />
-                )}
-              />
-            </div>
-          </div>
-          <div className="flex items-center justify-start gap-1">
-            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-              <CalendarClock className="h-4 w-4" />
-              <span className="text-base">Due date</span>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <Controller
-                name="target_date"
-                control={control}
-                rules={{ required: "Please select a date" }}
-                render={({ field: { value, onChange } }) => (
-                  <DateDropdown
-                    value={getDate(value) ?? null}
-                    onChange={(val) => {
-                      onChange(renderFormattedPayloadDate(val));
-                      handleDateChange({ target_date: val ? renderFormattedPayloadDate(val) : null });
-                    }}
-                    placeholder={t("common.order_by.due_date")}
-                    icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
-                    buttonVariant={value ? "border-with-text" : "border-without-text"}
-                    buttonContainerClassName={`h-6 w-full flex ${!isEditingAllowed || isArchived ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 rounded text-xs`}
-                    optionsClassName="z-30"
-                    disabled={!isEditingAllowed || isArchived}
-                    showTooltip
-                    minDate={getDate(getValues("start_date"))}
                   />
                 )}
               />

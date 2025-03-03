@@ -46,12 +46,12 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
     StarterKit.configure({
       bulletList: {
         HTMLAttributes: {
-          class: "list-disc pl-7 space-y-2",
+          class: "list-disc pl-7 space-y-[--list-spacing-y]",
         },
       },
       orderedList: {
         HTMLAttributes: {
-          class: "list-decimal pl-7 space-y-2",
+          class: "list-decimal pl-7 space-y-[--list-spacing-y]",
         },
       },
       listItem: {
