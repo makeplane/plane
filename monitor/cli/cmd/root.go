@@ -6,6 +6,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	prime_api "github.com/makeplane/plane-ee/monitor/lib/api"
 	"github.com/makeplane/plane-ee/monitor/lib/logger"
@@ -65,11 +66,11 @@ var rootCmd = &cobra.Command{
 			if deployPlatform := os.Getenv(constants.DEPLOY_PLATFORM); deployPlatform == "" {
 				return fmt.Errorf(error_msgs.DEPLOY_PLATFORM_ABSENT)
 			} else {
-				if deployPlatform != constants.DOCKER_COMPOSE {
+				if strings.ToUpper(deployPlatform) == strings.ToUpper(constants.KUBERNETES) {
 					api := prime_api.NewMonitorApi(HOST, MACHINE_SIGNATURE, "", APP_VERSION)
 					setupResponse, err := api.InitializeInstance(prime_api.CredentialsPayload{
-						ServerId: MACHINE_SIGNATURE,
-						Domain:   APP_DOMAIN,
+						ServerId:   MACHINE_SIGNATURE,
+						Domain:     APP_DOMAIN,
 						AppVersion: APP_VERSION,
 					})
 
