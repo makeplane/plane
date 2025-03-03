@@ -66,7 +66,7 @@ class ProjectViewSet(BaseViewSet):
         # EE: project_grouping starts
         state_id = ProjectAttribute.objects.filter(
             workspace__slug=self.kwargs.get("slug"), project_id=OuterRef("pk")
-        ).values("state_id")
+        ).values("state_id")[:1]
         # EE: project_grouping ends
 
         return self.filter_queryset(
@@ -106,17 +106,17 @@ class ProjectViewSet(BaseViewSet):
             .annotate(
                 priority=ProjectAttribute.objects.filter(
                     workspace__slug=self.kwargs.get("slug"), project_id=OuterRef("pk")
-                ).values("priority")
+                ).values("priority")[:1]
             )
             .annotate(
                 start_date=ProjectAttribute.objects.filter(
                     workspace__slug=self.kwargs.get("slug"), project_id=OuterRef("pk")
-                ).values("start_date")
+                ).values("start_date")[:1]
             )
             .annotate(
                 target_date=ProjectAttribute.objects.filter(
                     workspace__slug=self.kwargs.get("slug"), project_id=OuterRef("pk")
-                ).values("target_date")
+                ).values("target_date")[:1]
             )
             # EE: project_grouping ends
             .prefetch_related(
@@ -512,9 +512,11 @@ class ProjectViewSet(BaseViewSet):
                     if check_workspace_feature(
                         slug, WorkspaceFeatureContext.IS_PROJECT_GROUPING_ENABLED
                     ):
-                        project_attribute = ProjectAttribute.objects.filter(
-                            project_id=project.id
-                        ).first()
+                        project_attribute = (
+                            ProjectAttribute.objects.filter(project_id=project.id)
+                            .order_by("-created_at")
+                            .first()
+                        )
                         if project_attribute is not None:
                             project_attribute_serializer = ProjectAttributeSerializer(
                                 project_attribute, data=request.data, partial=True

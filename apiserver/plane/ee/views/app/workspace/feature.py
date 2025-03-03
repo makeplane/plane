@@ -2,7 +2,6 @@
 from rest_framework import status
 from rest_framework.response import Response
 
-from django.db.models import Q
 
 from plane.db.models import Project, Workspace
 from plane.ee.views.base import BaseAPIView
@@ -99,9 +98,11 @@ class WorkspaceFeaturesEndpoint(BaseAPIView):
                 workspace__slug=slug
             ).values_list("project_id", flat=True)
 
-            projects_ids = Project.objects.filter(
-                ~Q(id__in=project_attribute_project_ids), workspace__slug=slug
-            ).values_list("id", flat=True)
+            projects_ids = (
+                Project.objects.filter(workspace__slug=slug)
+                .exclude(id__in=project_attribute_project_ids)
+                .values_list("id", flat=True)
+            )
 
             # bulk create all the project attributes
             if projects_ids:
