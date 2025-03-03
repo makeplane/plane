@@ -417,7 +417,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
               <CalendarClock className="h-4 w-4" />
               <span className="text-base">{t("date_range")}</span>
             </div>
-            <div className="h-7 w-3/5">
+            <div className="h-7">
               <Controller
                 control={control}
                 name="start_date"
@@ -443,7 +443,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                           }}
                           placeholder={{
                             from: t("start_date"),
-                            to: t("target_date"),
+                            to: t("end_date"),
                           }}
                           disabled={!isEditingAllowed || isArchived}
                         />
