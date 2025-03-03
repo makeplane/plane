@@ -3,16 +3,7 @@
 import React, { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import {
-  ArchiveIcon,
-  ArchiveRestoreIcon,
-  CalendarCheck2,
-  CalendarClock,
-  ChevronRight,
-  EllipsisIcon,
-  LinkIcon,
-  Trash2,
-} from "lucide-react";
+import { ArchiveIcon, ArchiveRestoreIcon, ChevronRight, EllipsisIcon, LinkIcon, Trash2 } from "lucide-react";
 // types
 import { CYCLE_STATUS, CYCLE_UPDATED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -20,7 +11,7 @@ import { ICycle } from "@plane/types";
 // ui
 import { CustomMenu, setToast, TOAST_TYPE } from "@plane/ui";
 // components
-import { DateDropdown } from "@/components/dropdowns";
+import { DateRangeDropdown } from "@/components/dropdowns";
 // helpers
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
@@ -63,7 +54,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
   const { t } = useTranslation();
 
   // form info
-  const { control, reset, getValues } = useForm({
+  const { control, reset } = useForm({
     defaultValues,
   });
 
@@ -110,10 +101,10 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
       });
   };
 
-  const submitChanges = (data: Partial<ICycle>, changedProperty: string) => {
+  const submitChanges = async (data: Partial<ICycle>, changedProperty: string) => {
     if (!workspaceSlug || !projectId || !cycleDetails.id) return;
 
-    updateCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleDetails.id.toString(), data)
+    await updateCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleDetails.id.toString(), data)
       .then((res) => {
         captureCycleEvent({
           eventName: CYCLE_UPDATED,
@@ -154,16 +145,22 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
     }
   };
 
-  const handleDateChange = async (payload: { start_date?: string | null; end_date?: string | null }) => {
+  const handleDateChange = async (startDate: Date | undefined, endDate: Date | undefined) => {
     let isDateValid = false;
 
-    if (cycleDetails?.start_date && cycleDetails?.end_date)
+    const payload = {
+      start_date: renderFormattedPayloadDate(startDate) || null,
+      end_date: renderFormattedPayloadDate(endDate) || null,
+    };
+
+    if (payload?.start_date && payload.end_date) {
       isDateValid = await dateChecker({
         ...payload,
-        cycle_id: cycleDetails?.id,
+        cycle_id: cycleDetails.id,
       });
-    else isDateValid = await dateChecker(payload);
-
+    } else {
+      isDateValid = true;
+    }
     if (isDateValid) {
       submitChanges(payload, "date_range");
       setToast({
@@ -177,7 +174,6 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
         title: t("project_cycles.action.update.failed.title"),
         message: t("project_cycles.action.update.error.already_exists"),
       });
-      reset({ ...cycleDetails });
     }
     return isDateValid;
   };
@@ -288,79 +284,41 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
             </span>
           )}
         </div>
-        <div className="flex items-center gap-2">
-          <Controller
-            name="start_date"
-            control={control}
-            rules={{ required: "Please select a date" }}
-            render={({ field: { value, onChange } }) => (
-              <DateDropdown
-                value={value ?? null}
-                onChange={async (val) => {
-                  let isDateValid;
-                  const valDate = val ? renderFormattedPayloadDate(val) : null;
-                  if (getValues("end_date")) {
-                    isDateValid = await handleDateChange({
-                      start_date: valDate,
-                      end_date: renderFormattedPayloadDate(getValues("end_date")),
-                    });
-                  } else {
-                    isDateValid = await handleDateChange({
-                      start_date: valDate,
-                      end_date: valDate,
-                    });
-                  }
-                  isDateValid && onChange(renderFormattedPayloadDate(val));
-                }}
-                placeholder={t("common.order_by.start_date")}
-                icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
-                buttonVariant={value ? "border-with-text" : "border-without-text"}
-                buttonContainerClassName={`h-6 w-full flex ${!isEditingAllowed || isArchived || isCompleted ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 rounded text-xs`}
-                optionsClassName="z-10"
-                disabled={!isEditingAllowed || isArchived || isCompleted}
-                showTooltip
-                maxDate={getDate(getValues("end_date"))}
-                isClearable={false}
-              />
-            )}
-          />
 
-          <Controller
-            name="end_date"
-            control={control}
-            rules={{ required: "Please select a date" }}
-            render={({ field: { value, onChange } }) => (
-              <DateDropdown
-                value={getDate(value) ?? null}
-                onChange={async (val) => {
-                  let isDateValid;
-                  const valDate = val ? renderFormattedPayloadDate(val) : null;
-                  if (getValues("start_date")) {
-                    isDateValid = await handleDateChange({
-                      end_date: valDate,
-                      start_date: renderFormattedPayloadDate(getValues("start_date")),
-                    });
-                  } else {
-                    isDateValid = await handleDateChange({
-                      end_date: valDate,
-                      start_date: valDate,
-                    });
-                  }
-                  isDateValid && onChange(renderFormattedPayloadDate(val));
-                }}
-                placeholder={t("common.order_by.due_date")}
-                icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
-                buttonVariant={value ? "border-with-text" : "border-without-text"}
-                buttonContainerClassName={`h-6 w-full flex ${!isEditingAllowed || isArchived || isCompleted ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 rounded text-xs`}
-                optionsClassName="z-10"
-                disabled={!isEditingAllowed || isArchived || isCompleted}
-                showTooltip
-                minDate={getDate(getValues("start_date"))}
-                isClearable={false}
-              />
-            )}
-          />
-        </div>
+        <Controller
+          control={control}
+          name="start_date"
+          render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
+            <Controller
+              control={control}
+              name="end_date"
+              render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
+                <DateRangeDropdown
+                  className="h-7"
+                  buttonVariant="border-with-text"
+                  minDate={new Date()}
+                  value={{
+                    from: getDate(startDateValue),
+                    to: getDate(endDateValue),
+                  }}
+                  onSelect={async (val) => {
+                    const isDateValid = await handleDateChange(val?.from, val?.to);
+                    if (isDateValid) {
+                      onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
+                      onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+                    }
+                  }}
+                  placeholder={{
+                    from: "Start date",
+                    to: "End date",
+                  }}
+                  required={cycleDetails.status !== "draft"}
+                  disabled={!isEditingAllowed || isArchived || isCompleted}
+                />
+              )}
+            />
+          )}
+        />
       </div>
     </>
   );
