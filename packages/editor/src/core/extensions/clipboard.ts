@@ -47,7 +47,7 @@ export const MarkdownClipboard = Extension.create({
               }
             }
 
-            const traverseToParentOfLeaf = (node: any, parent: any, depth: number): any => {
+            const traverseToParentOfLeaf = (node: Node | null, parent: Fragment | Node, depth: number): Node | Fragment => {
               if (!node || depth <= 1 || !node.content?.firstChild) {
                 return parent;
               }
@@ -63,8 +63,6 @@ export const MarkdownClipboard = Extension.create({
             };
 
             const targetNode = traverseToParentOfLeaf(slice.content.firstChild, slice.content, slice.openStart);
-
-
             return markdownSerializer.serialize(targetNode);
           },
         },
