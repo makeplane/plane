@@ -50,20 +50,8 @@ class Page(BaseModel):
     projects = models.ManyToManyField(
         "db.Project", related_name="pages", through="db.ProjectPage"
     )
-    moved_to_page = models.ForeignKey(
-        "self",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="moved_page",
-    )
-    moved_to_project = models.ForeignKey(
-        "db.Project",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="moved_project",
-    )
+    moved_to_page = models.UUIDField(null=True, blank=True)
+    moved_to_project = models.UUIDField(null=True, blank=True)
 
     class Meta:
         verbose_name = "Page"
