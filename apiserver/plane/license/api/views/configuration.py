@@ -36,7 +36,6 @@ class InstanceConfigurationEndpoint(BaseAPIView):
     @invalidate_cache(path="/api/instances/configurations/", user=False)
     @invalidate_cache(path="/api/instances/", user=False)
     def patch(self, request):
-        print(request.data)
         configurations = InstanceConfiguration.objects.filter(
             key__in=request.data.keys()
         )
@@ -53,9 +52,6 @@ class InstanceConfigurationEndpoint(BaseAPIView):
         InstanceConfiguration.objects.bulk_update(
             bulk_configurations, ["value"], batch_size=100
         )
-
-        print(bulk_configurations)
-        print("Configurations updated successfully")
 
         serializer = InstanceConfigurationSerializer(configurations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
