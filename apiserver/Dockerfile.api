@@ -70,7 +70,7 @@ CMD if [ "${ENV_TYPE}" = "apiserver" ]; then \
     celery -A plane flower --port=5555 --address=0.0.0.0 --url_prefix=flower & \
     celery -A plane worker -l info; \
     elif [ "${ENV_TYPE}" = "celery-beat" ]; then \
-    celery -A plane beat -l info; \
+    (celery -A plane flower --port=5555 --address=0.0.0.0 --url-prefix=flower &) && celery -A plane beat -l info; \
     else \
     echo "Unknown ENV_TYPE: ${ENV_TYPE}"; \
     exit 1; \
