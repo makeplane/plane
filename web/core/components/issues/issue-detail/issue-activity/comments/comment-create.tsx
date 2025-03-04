@@ -18,7 +18,6 @@ const fileService = new FileService();
 // editor
 import { TActivityOperations } from "../root";
 
-
 type TIssueCommentCreate = {
   projectId: string;
   workspaceSlug: string;
@@ -82,7 +81,6 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
 
   const commentHTML = watch("comment_html");
   const isEmpty = isCommentEmpty(commentHTML);
-  const isEditorReadyToDiscard = editorRef.current?.isEditorReadyToDiscard()
 
   return (
     <div
@@ -90,7 +88,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
         "-bottom-5": !peekIssue,
       })}
       onKeyDown={(e) => {
-        if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !isEmpty && isEditorReadyToDiscard)
+        if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !isEmpty && editorRef.current?.isEditorReadyToDiscard())
           handleSubmit(onSubmit)(e);
       }}
     >
