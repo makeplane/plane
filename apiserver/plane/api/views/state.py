@@ -21,6 +21,7 @@ class StateAPIEndpoint(BaseAPIView):
     ]
 
     def get_queryset(self):
+        print(self.kwargs.get("project_id"))
         return (
             State.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))

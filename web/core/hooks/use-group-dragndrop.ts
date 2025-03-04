@@ -61,8 +61,8 @@ export const useGroupIssuesDragNDrop = (
     const moduleKey = ISSUE_FILTER_DEFAULT_DATA["module"];
     const cycleKey = ISSUE_FILTER_DEFAULT_DATA["cycle"];
 
-    const isModuleChanged = Object.keys(data).includes(moduleKey);
-    const isCycleChanged = Object.keys(data).includes(cycleKey);
+    const isModuleChanged = Object.keys(data).includes(moduleKey.toString());
+    const isCycleChanged = Object.keys(data).includes(cycleKey.toString());
 
     if (isCycleChanged && workspaceSlug) {
       if (data[cycleKey]) {

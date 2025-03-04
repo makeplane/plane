@@ -14,7 +14,7 @@ import {
   StateDropdown,
 } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { IssueCycleSelect, IssueLabel, IssueModuleSelect, IssueParentSelect } from "@/components/issues";
+import { IssueCycleSelect, IssueLabel, IssueModuleSelect, IssueParentSelect, CustomProperties} from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
@@ -26,6 +26,7 @@ import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issu
 import { IssueWorklogProperty } from "@/plane-web/components/issues";
 // components
 import type { TIssueOperations } from "./root";
+import { ISSUE_ADDITIONAL_PROPERTIES } from "@/constants/issue";
 
 type Props = {
   workspaceSlug: string;
@@ -282,7 +283,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 />
               </div>
             </div>
-
+            
             <IssueWorklogProperty
               workspaceSlug={workspaceSlug}
               projectId={projectId}
@@ -299,21 +300,24 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 isDisabled={!isEditable}
               />
             )}
-            {customProperties?.length > 0 && (
-              <hr className="flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-full mx-auto my-1" />
+
+            {ISSUE_ADDITIONAL_PROPERTIES.map((prop: any) =>
+              issue[prop.key] ? (
+                <div key={prop?.key} className="flex min-h-8 gap-2 align-items-center">
+                  <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
+                    <Info className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                    <span>{prop?.title}</span>
+                  </div>
+                  <div className="h-full min-h-8 w-3/5 mt-1 ml-5 flex-grow">
+                    <span className="text-sm">{issue[prop.key]}</span>
+                  </div>
+                </div>
+              ) : null
             )}
-            {Array.isArray(customProperties) && customProperties.map((element) => (
-              <div key={element.key} className="flex min-h-8 gap-2 align-items-center">
-                <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
-                  <Info className="h-4 w-4 flex-shrink-0 mt-0.5" />
-                  <span>{element?.key}</span>
-                </div>
-                <div className="h-full min-h-8 w-3/5 mt-1 ml-5 flex-grow">
-                  <span className="text-sm">{element?.value}</span>
-                </div>
-              </div>
-            ))
-            }
+
+            <CustomProperties 
+                customProperties={Array.isArray(customProperties) ? customProperties : []} 
+            />
           </div>
         </div>
       </div>

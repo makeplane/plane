@@ -5,6 +5,7 @@ import json
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
+from rest_framework.pagination import PageNumberPagination
 from django.db.models import (
     Exists,
     F,
@@ -34,6 +35,7 @@ from plane.app.serializers import (
     IssueDetailSerializer,
     IssueUserPropertySerializer,
     IssueSerializer,
+    BaseSerializer,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
@@ -46,6 +48,7 @@ from plane.db.models import (
     Project,
     ProjectMember,
     CycleIssue,
+    IssueCustomProperty,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -54,6 +57,7 @@ from plane.utils.grouper import (
 )
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
+from plane.utils.constants import ALLOWED_CUSTOM_PROPERTY_WORKSPACE_MAP
 from plane.utils.paginator import (
     GroupedOffsetPaginator,
     SubGroupedOffsetPaginator,
@@ -64,6 +68,24 @@ from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.global_paginator import paginate
 from plane.bgtasks.webhook_task import model_activity
 
+from plane.app.permissions import (
+    ProjectEntityPermission,
+    ProjectLitePermission,
+    ProjectMemberPermission,
+)
+
+class IssueCustomPropertySerializer(BaseSerializer):
+    class Meta:
+        model = IssueCustomProperty
+        fields = ["key", "value", "issue_type_custom_property"]
+        read_only_fields = [
+            "id",
+            "issue",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
 
 class IssueListEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -123,6 +145,7 @@ class IssueListEndpoint(BaseAPIView):
 
         order_by_param = request.GET.get("order_by", "-created_at")
         issue_queryset = queryset.filter(**filters)
+
         # Issue queryset
         issue_queryset, _ = order_issue_queryset(
             issue_queryset=issue_queryset,
@@ -209,7 +232,8 @@ class IssueViewSet(BaseViewSet):
         "workspace__id",
     ]
 
-    def get_queryset(self):
+    def get_queryset(self, filters={}):
+        custom_properties = filters.get("custom_properties", {})
         return (
             Issue.issue_objects.filter(
                 project_id=self.kwargs.get("project_id")
@@ -247,6 +271,18 @@ class IssueViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .filter(
+                *[
+                    Q(
+                        id__in=IssueCustomProperty.objects.filter(
+                            issue_id=OuterRef("id"),
+                            key=group_key,
+                            value__in=values
+                        ).values("issue_id")
+                    )
+                    for group_key, values in custom_properties.items()
+                ]
+            )
         ).distinct()
 
     @method_decorator(gzip_page)
@@ -260,9 +296,11 @@ class IssueViewSet(BaseViewSet):
 
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         filters = issue_filters(request.query_params, "GET")
+        filtersWithoutCustomProperties = filters.copy()
+        filtersWithoutCustomProperties.pop('custom_properties', None)
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = self.get_queryset().filter(**filters, **extra_filters)
+        issue_queryset = self.get_queryset(filters).filter(**filtersWithoutCustomProperties, **extra_filters)
         # Custom ordering for priority and state
 
         # Issue queryset
@@ -428,6 +466,12 @@ class IssueViewSet(BaseViewSet):
                     "sort_order",
                     "completed_at",
                     "estimate_point",
+                    "hub_code",
+                    "customer_code",
+                    "reference_number",
+                    "trip_reference_number",
+                    "vendor_code",
+                    "worker_code",
                     "priority",
                     "start_date",
                     "target_date",
@@ -1078,6 +1122,38 @@ class IssueDetailEndpoint(BaseAPIView):
             ).data,
         )
 
+# class HubViewSet(BaseAPIView):
+#     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+#     def list(self, request, slug, project_id):
+#         hubs = Hub.objects.filter(workspace__slug=slug, project_id=project_id)
+
+#         # Extract query parameters
+#         hub_code = request.GET.get("hub_code", "").strip()
+#         reference_number = request.GET.get("reference_number", "").strip()
+#         trip_reference_number = request.GET.get("trip_reference_number", "").strip()
+#         vendor_code = request.GET.get("vendor_code", "").strip()
+#         worker_code = request.GET.get("worker_code", "").strip()
+
+#         # Apply filtering dynamically
+#         filter_params = {}
+#         if hub_code:
+#             filter_params["hub_code__icontains"] = hub_code
+#         if reference_number:
+#             filter_params["reference_number__icontains"] = reference_number
+#         if trip_reference_number:
+#             filter_params["trip_reference_number__icontains"] = trip_reference_number
+#         if vendor_code:
+#             filter_params["vendor_code__icontains"] = vendor_code
+#         if worker_code:
+#             filter_params["worker_code__icontains"] = worker_code
+
+#         hubs = hubs.filter(**filter_params)
+
+#         # Serialize the results
+#         hub_data = HubSerializer(hubs, many=True).data
+#         return Response(hub_data, status=status.HTTP_200_OK)
+
+
 
 class IssueBulkUpdateDateEndpoint(BaseAPIView):
 
@@ -1170,3 +1246,53 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
             {"message": "Issues updated successfully"},
             status=status.HTTP_200_OK,
         )
+
+class SearchAPIEndpoint(BaseAPIView):
+    """
+    API to fetch hub codes for a specific workspace and project.
+    """
+    model = Issue
+    webhook_event = "issue"
+    permission_classes = [ProjectEntityPermission]
+    def get(self, request, slug, project_id):
+        """
+        Fetch unique values for hub_code, worker_code, reference_number, trip_reference_number,
+        customer_code, or vendor_code based on the requested query parameters.
+        """
+        allowed_fields = ["hub_code", "worker_code", "reference_number", "trip_reference_number", "customer_code", "vendor_code"]
+
+        field = request.GET.get("field")  # Get the single field value
+
+        if not field:  # Ensure that 'field' is provided in the request
+            return Response(
+                {"error": "Missing 'field' parameter. Allowed values: " + ", ".join(allowed_fields)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if field not in allowed_fields:  # Validate the field
+            return Response(
+                {"error": f"Invalid field. Allowed values: {', '.join(allowed_fields)}"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Fetch values dynamically based on the requested field
+        values = Issue.objects.filter(
+            workspace__slug=slug, project_id=project_id
+        ).values_list(field, flat=True)
+
+        unique_values = list(set(filter(None, values)))  # Remove duplicates and nulls
+
+        paginator = PageNumberPagination()
+        paginator.page_size = int(request.GET.get("limit", 10))  # Default limit = 10
+        paginated_values = paginator.paginate_queryset(unique_values, request)
+
+        # Custom pagination response
+        response_data = {
+            "total_results": len(unique_values),
+            "page": paginator.page.number,
+            "limit": paginator.page.paginator.per_page,
+            "total_pages": paginator.page.paginator.num_pages,
+            "data": paginated_values
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)

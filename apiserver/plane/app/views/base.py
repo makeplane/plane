@@ -120,7 +120,8 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
 
             if settings.DEBUG:
                 from django.db import connection
-
+                if len(connection.queries) > 20:
+                    print(connection.queries)
                 print(
                     f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
                 )

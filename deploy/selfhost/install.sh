@@ -182,7 +182,7 @@ function buildYourOwnImage(){
     local PLANE_TEMP_CODE_DIR=~/tmp/plane
     rm -rf $PLANE_TEMP_CODE_DIR
     mkdir -p $PLANE_TEMP_CODE_DIR
-    REPO=https://github.com/makeplane/plane.git
+    REPO=https://github.com/shipsy/plane.git
     git clone "$REPO" "$PLANE_TEMP_CODE_DIR"  --branch "$BRANCH" --single-branch --depth 1
 
     cp "$PLANE_TEMP_CODE_DIR/deploy/selfhost/build.yml" "$PLANE_TEMP_CODE_DIR/build.yml"

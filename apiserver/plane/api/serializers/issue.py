@@ -92,7 +92,7 @@ class IssueSerializer(BaseSerializer):
             "description",
             "description_stripped",
         ]
-
+    
     def validate(self, data):
         if (
             data.get("start_date", None) is not None
@@ -150,21 +150,23 @@ class IssueSerializer(BaseSerializer):
             raise serializers.ValidationError(
                 "Parent is not valid issue_id please pass a valid issue_id"
             )
-
-        if not is_uuid(data['created_by']):
-            if User.objects.filter(username=data['created_by']).exists():
-                data['created_by']= User.objects.get(username=data['created_by'])
-            else:
-                user_data = {
+        if self.instance is None:
+            if not is_uuid(data.get('created_by')):
+                if User.objects.filter(username=data['created_by']).exists():
+                    data['created_by'] = User.objects.get(username=data['created_by'])
+                else:
+                    user_data = {
                     "email": data['created_by'] + '@plane-shipsy.com',
                     "username": data['created_by'],
-                }
-                from plane.api.views import ProjectMemberAPIEndpoint
-                PMObj = ProjectMemberAPIEndpoint()
-                user = PMObj.create_user(user_data)
-                PMObj.create_workspace_member(self.context.get("workspace_id") ,user_data)
-                PMObj.create_project_member(self.context.get("project_id"), user_data)
-                data['created_by'] = user
+                    "role": 5,
+                    "display_name": data['created_by']
+                    }
+                    from plane.api.views import ProjectMemberAPIEndpoint
+                    PMObj = ProjectMemberAPIEndpoint()
+                    user = PMObj.create_user(user_data)
+                    PMObj.create_workspace_member(self.context.get("workspace_id"), user_data)
+                    PMObj.create_project_member(self.context.get("project_id"), user_data)
+                    data['created_by'] = user
 
         print(data)
         return data
@@ -463,7 +465,7 @@ class IssueCommentSerializer(BaseSerializer):
             "issue",
             "updated_by",
             "created_at",
-            "updated_at",
+            "updated_at"
         ]
         exclude = [
             "comment_stripped",
@@ -472,29 +474,32 @@ class IssueCommentSerializer(BaseSerializer):
 
     def validate(self, data):
         try:
-            if data.get("comment_html", None) is not None:
+            if data.get("comment_html", None) is not None:   
+                print("Am Here")  
+                        
                 parsed = html.fromstring(data["comment_html"])
                 parsed_str = html.tostring(parsed, encoding="unicode")
+                print(html.tostring(parsed, encoding="unicode"))
                 data["comment_html"] = parsed_str
-            # if not is_uuid(data['created_by']):
-            #     if User.objects.filter(username=data['created_by']).exists():
-            #         data['created_by']= User.objects.get(username=data['created_by'])
-            #     else:
-            #         user_data = {
-            #             "email": data['created_by'] + '@plane-shipsy.com',
-            #             "username": data['created_by'],
-            #         }
-            #         from plane.api.views import ProjectMemberAPIEndpoint
-            #         PMObj = ProjectMemberAPIEndpoint()
-            #         user = PMObj.create_user(user_data)
-            #         PMObj.create_workspace_member(self.context.get("workspace_id") ,user_data)
-            #         PMObj.create_project_member(self.context.get("project_id"), user_data)
-            #         data['created_by'] = user
+ ##           if not data.get('created_by', None):
+ ##               if User.objects.filter(username=data['created_by']).exists():
+ ##                   data['created_by'] = User.objects.get(username=data['created_by'])
+ ##               else:
+##                  user_data = {
+  ##                      "email": data['created_by'] + '@plane-shipsy.com',
+   ##                     "username": data['created_by'],
+    ##                }
+     ##               from plane.api.views import ProjectMemberAPIEndpoint
+      ##              PMObj = ProjectMemberAPIEndpoint()
+       ##             user = PMObj.create_user(user_data)
+       ##             PMObj.create_workspace_member(self.context.get("workspace_id") ,user_data)
+       ##             PMObj.create_project_member(self.context.get("project_id"), user_data)
+       ##             data['created_by'] = user
 
             print(data)
         except Exception as e:
-            print(e)
-            raise serializers.ValidationError("Invalid HTML passed")
+            print(e.__cause__)
+            raise serializers.ValidationError(e)
         return data
 
 

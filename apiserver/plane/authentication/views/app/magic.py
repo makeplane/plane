@@ -85,7 +85,7 @@ class MagicGenerateEndpoint(BaseAPIView):
             )
 
 
-class MagicSignInEndpoint(APIView):
+class MagicSignInEndpoint(BaseAPIView):
     permission_classes = [
         AllowAny,
     ]
@@ -95,7 +95,6 @@ class MagicSignInEndpoint(APIView):
     def add_user_to_workspace(self, user, workspace_slug):
         admin_user = User.objects.filter(is_superuser=True).first()
         workspace, base_project = self.get_workspace(workspace_slug, admin_user)
-        print(workspace, base_project, user)
         self.add_to_workspace(workspace, user)
         self.add_to_project(base_project, user)
         self.add_to_project(base_project, admin_user)
@@ -108,7 +107,8 @@ class MagicSignInEndpoint(APIView):
         ).first()
         if not workspace_member:
             workspace_member = WorkspaceMember.objects.create(
-                workspace=workspace, member=user, is_active=True
+                workspace=workspace, member=user, is_active=True,
+                role=15
             )
             try:
                 user.profile.last_workspace_id = workspace.id
@@ -118,7 +118,9 @@ class MagicSignInEndpoint(APIView):
                 })
                 user.profile.is_tour_completed = True
                 user.profile.is_onboarded = True
+                user.is_password_autoset = True
                 user.profile.company_name = workspace.name
+                user.save()
                 user.profile.save()
             except Exception as e:
                 print(e)
@@ -154,9 +156,9 @@ class MagicSignInEndpoint(APIView):
         
     def get_or_create_project(self, workspace, user):
         default_project_dict ={
-            'identifier': 'DEFAULT',
+            'identifier': 'TICKET',
             'workspace_id': workspace.id,
-            'name': 'default'
+            'name': 'TICKET'
         }
         project = Project.objects.filter(**default_project_dict).first()
         if project:

@@ -15,7 +15,6 @@ import { useAppTheme, useCommandPalette, useInstance, useTransient, useUserSetti
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { PlaneVersionNumber } from "@/plane-web/components/global";
-import { WorkspaceEditionBadge } from "@/plane-web/components/workspace";
 import { ENABLE_LOCAL_DB_CACHE } from "@/plane-web/constants/issues";
 
 export interface WorkspaceHelpSectionProps {
@@ -54,14 +53,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
       >
         
         <div
-          className={cn("w-full flex-grow px-0.5", {
-            hidden: isCollapsed,
-          })}
-        >
-          <WorkspaceEditionBadge />
-        </div>
-        <div
-          className={`flex flex-shrink-0 items-center gap-1 ${isCollapsed ? "flex-col justify-center" : "justify-evenly"}`}
+          className={`flex flex-shrink-0 items-center gap-1 ${isCollapsed ? "flex-col justify-center" : "justify-end ml-auto"}`}
         >
           <Tooltip tooltipContent={`${isCollapsed ? "Expand" : "Hide"}`} isMobile={isMobile}>
             <button

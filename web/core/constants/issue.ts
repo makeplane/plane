@@ -9,6 +9,7 @@ import {
   TIssueOrderByOptions,
   TIssuePriorities,
   TIssueGroupingFilters,
+  TIssue
 } from "@plane/types";
 
 export const DRAG_ALLOWED_GROUPS: TIssueGroupByOptions[] = [
@@ -307,6 +308,13 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
         "project",
         "start_date",
         "target_date",
+        "hub_code",
+        "customer_code",
+        "worker_code",
+        "vendor_code",
+        "trip_reference_number",
+        "reference_number",
+        "custom_properties",
       ],
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
@@ -354,6 +362,13 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
         "start_date",
         "target_date",
         "issue_type",
+        "hub_code",
+        "customer_code",
+        "worker_code",
+        "vendor_code",
+        "trip_reference_number",
+        "reference_number",
+        "custom_properties"
       ],
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
@@ -427,6 +442,14 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
         "start_date",
         "target_date",
         "issue_type",
+        "custom_properties",
+        "hub_code",
+        "customer_code",
+        "worker_code",
+        "vendor_code",
+        "trip_reference_number",
+        "reference_number",
+        "custom_properties"
       ],
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
@@ -493,3 +516,15 @@ export const groupReactionEmojis = (reactions: any) => {
 
   return groupedEmojis;
 };
+
+export const ISSUE_ADDITIONAL_PROPERTIES: {
+    key: keyof TIssue;
+    title: string;
+  }[] = [
+    { key: "hub_code", title: "Hub Code" },
+    { key: "customer_code", title: "Customer Code" },
+    { key: "worker_code", title: "Worker Code" },
+    { key: "vendor_code", title: "Vendor Code" },
+    { key: "trip_reference_number", title: "Trip Ref Number" },
+    { key: "reference_number", title: "Reference Number" }
+  ];

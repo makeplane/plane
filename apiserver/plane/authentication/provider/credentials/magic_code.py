@@ -83,12 +83,10 @@ class MagicCodeProvider(CredentialAdapter):
         # Check if the key already exists in python
         if ri.exists(key):
             data = json.loads(ri.get(key))
-
             current_attempt = data["current_attempt"] + 1
-
+            email = str(self.key).replace("magic_", "", 1)
+            username = email.replace("@plane-shipsy.com", "", 1)
             if data["current_attempt"] > 2:
-                email = str(self.key).replace("magic_", "", 1)
-                username = email.replace ("@plane-shipsy.com", "", 1)
                 if User.objects.filter(email=email).exists():
                     raise AuthenticationException(
                         error_code=AUTHENTICATION_ERROR_CODES[
@@ -112,10 +110,11 @@ class MagicCodeProvider(CredentialAdapter):
                 "token": token,
                 "username": username
             }
-            expiry = 600
+            expiry = 30
+            print(key, value)
             ri.set(key, json.dumps(value), ex=expiry)
         else:
-            username = self.key.replace ("@plane-shipsy.com", "", 1)
+            username = self.key.replace("@plane-shipsy.com", "", 1)
             value = {
                 "current_attempt": 0, 
                 "email": self.key, 
@@ -129,6 +128,9 @@ class MagicCodeProvider(CredentialAdapter):
 
     def set_user_data(self):
         ri = redis_instance()
+        keys = ri.keys('*')
+        print("All keys in redis:", keys)
+        print("Key to be checked:", self.key)
         if ri.exists(self.key):
             data = json.loads(ri.get(self.key))
             token = data["token"]

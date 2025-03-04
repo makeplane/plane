@@ -14,6 +14,7 @@ import {
   AppliedProjectFilters,
   AppliedStateFilters,
   AppliedStateGroupFilters,
+  AppliedAdditionalPropertiesFilters
 } from "@/components/issues";
 // constants
 // helpers
@@ -36,6 +37,7 @@ type Props = {
 
 const membersFilters = ["assignees", "mentions", "created_by", "subscriber"];
 const dateFilters = ["start_date", "target_date"];
+const additionalFilters = ["hub_code", "customer_code", "reference_number", "trip_reference_number", "vendor_code", "worker_code"];
 
 export const AppliedFiltersList: React.FC<Props> = observer((props) => {
   const {
@@ -131,6 +133,13 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
               <AppliedIssueTypeFilters
                 editable={isEditingAllowed}
                 handleRemove={(val) => handleRemoveFilter("issue_type", val)}
+                values={value}
+              />
+            )}
+            {additionalFilters?.includes(filterKey) && (
+              <AppliedAdditionalPropertiesFilters
+                editable={isEditingAllowed}
+                handleRemove={(val) => handleRemoveFilter(filterKey, val)}
                 values={value}
               />
             )}
