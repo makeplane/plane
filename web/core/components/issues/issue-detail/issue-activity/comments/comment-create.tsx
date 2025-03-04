@@ -11,7 +11,6 @@ import { LiteTextEditor } from "@/components/editor";
 import { cn } from "@/helpers/common.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
-import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useIssueDetail, useWorkspace } from "@/hooks/store";
 // services
 import { FileService } from "@/services/file.service";
@@ -83,8 +82,8 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
 
   const commentHTML = watch("comment_html");
   const isEmpty = isCommentEmpty(commentHTML);
-
   const isEditorReadyToDiscard = editorRef.current?.isEditorReadyToDiscard()
+
   return (
     <div
       className={cn("sticky bottom-0 z-[4] bg-custom-background-100 sm:static", {
