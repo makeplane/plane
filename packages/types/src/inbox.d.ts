@@ -66,7 +66,7 @@ export type TInboxIssueWithPagination = TInboxIssuePaginationInfo & {
   results: TInboxIssue[];
 };
 
-export const TAnchors: { [key as string]: string };
+export type TAnchors = { [key: string]: string };
 
 export type TInboxForm = {
   anchors: TAnchors;
