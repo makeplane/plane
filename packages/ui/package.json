@@ -7,7 +7,7 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "sideEffects": false,
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "files": [
     "dist/**"
   ],

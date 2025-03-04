@@ -2,6 +2,7 @@
   "name": "space",
   "version": "0.25.1",
   "private": true,
+  "license": "AGPL-3.0",
   "scripts": {
     "dev": "turbo run develop",
     "develop": "next dev -p 3002",

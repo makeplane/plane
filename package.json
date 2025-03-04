@@ -1,4 +1,6 @@
 {
+  "name": "plane",
+  "description": "Open-source project management that unlocks customer value",
   "repository": "https://github.com/makeplane/plane.git",
   "version": "0.25.1",
   "license": "AGPL-3.0",
@@ -28,6 +30,5 @@
     "nanoid": "3.3.8",
     "esbuild": "0.25.0"
   },
-  "packageManager": "yarn@1.22.22",
-  "name": "plane"
+  "packageManager": "yarn@1.22.22"
 }
