@@ -50,6 +50,20 @@ class Page(BaseModel):
     projects = models.ManyToManyField(
         "db.Project", related_name="pages", through="db.ProjectPage"
     )
+    moved_to_page = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="moved_page",
+    )
+    moved_to_project = models.ForeignKey(
+        "db.Project",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="moved_project",
+    )
 
     class Meta:
         verbose_name = "Page"
@@ -172,6 +186,7 @@ class PageVersion(BaseModel):
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
     description_json = models.JSONField(default=dict, blank=True)
+    sub_pages_data = models.JSONField(default=dict, blank=True)
 
     class Meta:
         verbose_name = "Page Version"
