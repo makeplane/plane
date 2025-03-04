@@ -30,7 +30,7 @@ x-pg-env: &pg-env
   POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-plane} 
   POSTGRES_DB: ${POSTGRES_DB:-plane}
   PGDATA: ${PGDATA:-/var/lib/postgresql/data}
-  DATABASE_URL: ${DATABASE_URL}
+  DATABASE_URL: ${DATABASE_URL:-postgresql://plane:plane@plane-db/plane}
   DB_URL: ${DATABASE_URL:-postgresql://plane:plane@plane-db/plane}
 
 x-rabbitmq-env: &rabbitmq-env
