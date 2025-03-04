@@ -96,7 +96,7 @@ export const ProjectDescriptionInput: FC<ProjectDescriptionInputProps> = observe
             <RichTextEditor
               id={project.id}
               initialValue={initialValue ?? ""}
-              value={swrProjectDescription ?? null}
+              value={project?.description_html ?? null}
               workspaceSlug={workspaceSlug}
               workspaceId={workspaceId}
               projectId={project.id}
