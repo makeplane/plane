@@ -10,6 +10,7 @@ export type TProjectAttachment = {
   asset_url: string;
   project_id: string;
   // required
+  created_by: string;
   updated_at: string;
   updated_by: string;
 };
