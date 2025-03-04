@@ -83,12 +83,8 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
 
   const commentHTML = watch("comment_html");
   const isEmpty = isCommentEmpty(commentHTML);
-  function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
-    return !!ref && typeof ref === "object" && "current" in ref;
-  }
-  const editorRefAPI = isMutableRefObject<EditorRefApi>(editorRef) ? editorRef.current : null;
-  const isEditorReadyToDiscard = editorRefAPI?.isEditorReadyToDiscard();
 
+  const isEditorReadyToDiscard = editorRef.current?.isEditorReadyToDiscard()
   return (
     <div
       className={cn("sticky bottom-0 z-[4] bg-custom-background-100 sm:static", {
