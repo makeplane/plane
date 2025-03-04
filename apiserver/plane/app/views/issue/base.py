@@ -1260,18 +1260,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
             identifier__iexact=project_identifier,
             workspace__slug=slug,
         )
-
-        # Check if the user is a member of the project
-        if not ProjectMember.objects.filter(
-            workspace__slug=slug,
-            project_id=project.id,
-            member=request.user,
-            is_active=True,
-        ).exists():
-            return Response(
-                {"error": "You are not allowed to view this issue"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
+   
 
         # Fetch the issue
         issue = (
@@ -1374,6 +1363,21 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
             return Response(
                 {"error": "The required object does not exist."},
                 status=status.HTTP_404_NOT_FOUND,
+            )
+        
+        # Check if the user is a member of the project
+        if not ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project.id,
+            member=request.user,
+            is_active=True,
+        ).exists():
+            return Response(
+                {
+                 "error": "You are not allowed to view this issue",
+                 "type": project.network
+                },
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         """

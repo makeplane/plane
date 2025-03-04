@@ -9,6 +9,7 @@ import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
 // components
+import { JoinProject } from "@/components/auth-screens";
 import { EmptyState } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { IssueDetailRoot } from "@/components/issues";
@@ -33,7 +34,7 @@ const IssueDetailsPage = observer(() => {
     fetchIssueWithIdentifier,
     issue: { getIssueById },
   } = useIssueDetail();
-  const { getProjectById } = useProject();
+  const { getProjectById, getProjectByIdentifier } = useProject();
   const { toggleIssueDetailSidebar, issueDetailSidebarCollapsed } = useAppTheme();
 
   const projectIdentifier = workItem?.toString().split("-")[0];
@@ -46,9 +47,11 @@ const IssueDetailsPage = observer(() => {
       ? () => fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
       : null
   );
-  const issueId = data?.id;
-  const projectId = data?.project_id;
+
   // derived values
+  const projectDetails = getProjectByIdentifier(projectIdentifier);
+  const issueId = data?.id;
+  const projectId = data?.project_id ?? projectDetails?.id ?? "";
   const issue = getIssueById(issueId?.toString() || "") || undefined;
   const project = (issue?.project_id && getProjectById(issue?.project_id)) || undefined;
   const issueLoader = !issue || isLoading;
@@ -68,46 +71,54 @@ const IssueDetailsPage = observer(() => {
     return () => window.removeEventListener("resize", handleToggleIssueDetailSidebar);
   }, [issueDetailSidebarCollapsed, toggleIssueDetailSidebar]);
 
+  const renderPrivateProjectEmptyState = error && error.type === 0;
+
   return (
     <>
       <PageHead title={pageTitle} />
-      {error ? (
-        <EmptyState
-          image={resolvedTheme === "dark" ? emptyIssueDark : emptyIssueLight}
-          title={t("issue.empty_state.issue_detail.title")}
-          description={t("issue.empty_state.issue_detail.description")}
-          primaryButton={{
-            text: t("issue.empty_state.issue_detail.primary_button.text"),
-            onClick: () => router.push(`/${workspaceSlug}/workspace-views/all-issues/`),
-          }}
-        />
-      ) : issueLoader ? (
-        <Loader className="flex h-full gap-5 p-5">
-          <div className="basis-2/3 space-y-2">
-            <Loader.Item height="30px" width="40%" />
-            <Loader.Item height="15px" width="60%" />
-            <Loader.Item height="15px" width="60%" />
-            <Loader.Item height="15px" width="40%" />
-          </div>
-          <div className="basis-1/3 space-y-3">
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-            <Loader.Item height="30px" />
-          </div>
-        </Loader>
+      {renderPrivateProjectEmptyState ? (
+        <JoinProject projectId={projectId} isPrivateProject />
       ) : (
-        workspaceSlug &&
-        projectId &&
-        issueId && (
-          <ProjectAuthWrapper workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()}>
-            <IssueDetailRoot
-              workspaceSlug={workspaceSlug.toString()}
-              projectId={projectId.toString()}
-              issueId={issueId.toString()}
+        <ProjectAuthWrapper workspaceSlug={workspaceSlug?.toString()} projectId={projectId}>
+          {error ? (
+            <EmptyState
+              image={resolvedTheme === "dark" ? emptyIssueDark : emptyIssueLight}
+              title={t("issue.empty_state.issue_detail.title")}
+              description={t("issue.empty_state.issue_detail.description")}
+              primaryButton={{
+                text: t("issue.empty_state.issue_detail.primary_button.text"),
+                onClick: () => router.push(`/${workspaceSlug}/workspace-views/all-issues/`),
+              }}
             />
-          </ProjectAuthWrapper>
-        )
+          ) : issueLoader ? (
+            <Loader className="flex h-full gap-5 p-5">
+              <div className="basis-2/3 space-y-2">
+                <Loader.Item height="30px" width="40%" />
+                <Loader.Item height="15px" width="60%" />
+                <Loader.Item height="15px" width="60%" />
+                <Loader.Item height="15px" width="40%" />
+              </div>
+              <div className="basis-1/3 space-y-3">
+                <Loader.Item height="30px" />
+                <Loader.Item height="30px" />
+                <Loader.Item height="30px" />
+                <Loader.Item height="30px" />
+              </div>
+            </Loader>
+          ) : (
+            workspaceSlug &&
+            projectId &&
+            issueId && (
+              <>
+                <IssueDetailRoot
+                  workspaceSlug={workspaceSlug.toString()}
+                  projectId={projectId.toString()}
+                  issueId={issueId.toString()}
+                />
+              </>
+            )
+          )}
+        </ProjectAuthWrapper>
       )}
     </>
   );
