@@ -11,12 +11,14 @@ import { LiteTextEditor } from "@/components/editor";
 import { cn } from "@/helpers/common.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
+import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useIssueDetail, useWorkspace } from "@/hooks/store";
 // services
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
 // editor
 import { TActivityOperations } from "../root";
+
 
 type TIssueCommentCreate = {
   projectId: string;
@@ -81,6 +83,11 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
 
   const commentHTML = watch("comment_html");
   const isEmpty = isCommentEmpty(commentHTML);
+  function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
+    return !!ref && typeof ref === "object" && "current" in ref;
+  }
+  const editorRefAPI = isMutableRefObject<EditorRefApi>(editorRef) ? editorRef.current : null;
+  const isEditorReadyToDiscard = editorRefAPI?.isEditorReadyToDiscard();
 
   return (
     <div
@@ -88,7 +95,8 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
         "-bottom-5": !peekIssue,
       })}
       onKeyDown={(e) => {
-        if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !isEmpty && !isSubmitting)
+        console.log(e.key, 'Key pressed')
+        if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !isEmpty && isEditorReadyToDiscard)
           handleSubmit(onSubmit)(e);
       }}
     >
