@@ -1,4 +1,4 @@
-x-plane-commercial: &plane-commercial
+x-plane: &plane
   APP_VERSION: ${APP_RELEASE_VERSION:-v1.8.0}
   APP_DOMAIN: ${DOMAIN_NAME:-localhost}
   MACHINE_SIGNATURE: ${MACHINE_SIGNATURE}
@@ -27,7 +27,7 @@ x-proxy-env: &proxy-env
 
 x-pg-env: &pg-env
   POSTGRES_USER: ${POSTGRES_USER:-plane}
-  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-plane} 
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-plane}
   POSTGRES_DB: ${POSTGRES_DB:-plane}
   PGDATA: ${PGDATA:-/var/lib/postgresql/data}
   DATABASE_URL: ${DATABASE_URL:-postgresql://plane:plane@plane-db/plane}
@@ -59,27 +59,27 @@ x-docstore-env: &docstore-env
   AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL:-http://plane-minio:9000}
   AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
 
-
 x-silo-env: &silo-env
-  # App Envs
   PORT: 3000
+  # Silo App Envs
   BATCH_SIZE: ${BATCH_SIZE:-60}
   DEDUP_INTERVAL: ${DEDUP_INTERVAL:-3}
-  SENTRY_DSN: ${SENTRY_DSN}
-  PG_SCHEMA: ${PG_SCHEMA:-silo}
+
   APP_BASE_URL: ${SITE_ADDRESS}
-  SILO_API_BASE_URL: ${SITE_ADDRESS}
   API_BASE_URL: ${API_BASE_URL:-http://api:8000}
+  SILO_API_BASE_URL: ${SITE_ADDRESS}
   SILO_BASE_PATH: ${SILO_BASE_PATH:-/silo}
   WEBHOOK_SECRET: ${WEBHOOK_SECRET:-plane-silo}
   MQ_PREFETCH_COUNT: ${MQ_PREFETCH_COUNT:-10}
+
+  # Silo Sentry Envs
+  SENTRY_DSN: ${SENTRY_DSN}
 
   # Authentication
   SILO_HMAC_SECRET_KEY: ${SILO_HMAC_SECRET_KEY:-tnbbvj6ATPvze4zaygdujxg4dpk4hqx0WDW}
 
   # Feature Flag Envs
   FEATURE_FLAG_SERVER_BASE_URL: ${FEATURE_FLAG_SERVER_BASE_URL}
-  FEATURE_FLAG_SERVER_AUTH_TOKEN: ${FEATURE_FLAG_SERVER_AUTH_TOKEN}
 
   # Github Envs
   GITHUB_APP_NAME: ${GITHUB_APP_NAME}
@@ -155,7 +155,7 @@ services:
     image: registry.plane.tools/plane/live-enterprise:${APP_RELEASE_VERSION}
     command: node live/dist/server.js live
     environment:
-      <<: [ *live-env, *redis-env ]
+      <<: [*live-env, *redis-env]
     deploy:
       replicas: ${LIVE_REPLICAS:-1}
       restart_policy:
@@ -169,7 +169,7 @@ services:
     volumes:
       - ${INSTALL_DIR}/data/monitor:/app
     environment:
-      <<: [ *plane-commercial, *monitor-env ]
+      <<: [*plane, *monitor-env]
     deploy:
       replicas: 1
       restart_policy:
@@ -179,7 +179,7 @@ services:
     image: registry.plane.tools/plane/backend-enterprise:${APP_RELEASE_VERSION}
     command: ./bin/docker-entrypoint-api-ee.sh
     environment:
-      <<: [ *plane-commercial, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
+      <<: [*plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env]
     deploy:
       replicas: ${API_REPLICAS:-1}
       restart_policy:
@@ -194,7 +194,7 @@ services:
     image: registry.plane.tools/plane/backend-enterprise:${APP_RELEASE_VERSION}
     command: ./bin/docker-entrypoint-worker.sh
     environment:
-      <<: [ *plane-commercial, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
+      <<: [*plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env]
     deploy:
       replicas: ${WORKER_REPLICAS:-1}
       restart_policy:
@@ -210,7 +210,7 @@ services:
     image: registry.plane.tools/plane/backend-enterprise:${APP_RELEASE_VERSION}
     command: ./bin/docker-entrypoint-beat.sh
     environment:
-      <<: [ *plane-commercial, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
+      <<: [*plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env]
     deploy:
       replicas: ${BEAT_WORKER_REPLICAS:-1}
       restart_policy:
@@ -226,7 +226,7 @@ services:
     image: registry.plane.tools/plane/backend-enterprise:${APP_RELEASE_VERSION}
     command: ./bin/docker-entrypoint-migrator.sh
     environment:
-      <<: [ *plane-commercial, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
+      <<: [*plane, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env]
     deploy:
       replicas: 1
       restart_policy:
@@ -241,7 +241,7 @@ services:
     image: registry.plane.tools/plane/postgres:15.5-alpine
     command: postgres -c 'max_connections=1000'
     environment:
-      <<: [ *pg-env ]
+      <<: [*pg-env]
     deploy:
       replicas: 1
       restart_policy:
@@ -251,8 +251,8 @@ services:
 
   plane-redis:
     image: registry.plane.tools/plane/valkey:7.2.5-alpine
-    environment:  
-      <<: [ *redis-env ]
+    environment:
+      <<: [*redis-env]
     deploy:
       replicas: 1
       restart_policy:
@@ -263,7 +263,7 @@ services:
   plane-mq:
     image: registry.plane.tools/plane/rabbitmq:3.13.6-management-alpine
     environment:
-      <<: [ *rabbitmq-env ]
+      <<: [*rabbitmq-env]
     deploy:
       replicas: 1
       restart_policy:
@@ -275,7 +275,7 @@ services:
     image: registry.plane.tools/plane/minio:latest
     command: server /export --console-address ":9090"
     environment:
-      <<: [ *docstore-env ]
+      <<: [*docstore-env]
     deploy:
       replicas: 1
       restart_policy:
@@ -289,19 +289,19 @@ services:
     restart: unless-stopped
     command: node silo/start.cjs
     environment:
-      <<: [ *silo-env, *pg-env, *rabbitmq-env, *redis-env ]
+      <<: [*silo-env, *pg-env, *rabbitmq-env, *redis-env]
     deploy:
       replicas: ${SILO_REPLICAS:-1}
     depends_on:
       - plane-redis
       - plane-mq
-      
+
   # Comment this if you already have a reverse proxy running
   proxy:
     image: registry.plane.tools/plane/proxy-enterprise:${APP_RELEASE_VERSION}
     restart: unless-stopped
     environment:
-      <<: [ *proxy-env ]
+      <<: [*proxy-env]
     ports:
       - target: 80
         published: ${LISTEN_HTTP_PORT:-80}
@@ -320,4 +320,3 @@ services:
       - space
       - admin
       - live
-
