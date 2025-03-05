@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     "strawberry.django",
     "rest_framework",
     "corsheaders",
-    "django_celery_beat",
+    "django_celery_beat"
 ]
 
 # Middlewares
@@ -503,3 +503,24 @@ FIREBASE_PRIVATE_KEY = os.environ.get("FIREBASE_PRIVATE_KEY", "")
 FIREBASE_CLIENT_EMAIL = os.environ.get("FIREBASE_CLIENT_EMAIL", "")
 FIREBASE_CLIENT_ID = os.environ.get("FIREBASE_CLIENT_ID", "")
 FIREBASE_CLIENT_CERT_URL = os.environ.get("FIREBASE_CLIENT_CERT_URL", "")
+
+
+# Elastic Search
+if os.environ.get("ELASTICSEARCH_URL"):
+    # Elastic Search Config
+    ELASTICSEARCH_DSL = {
+        "default": {
+            "hosts": os.environ.get("ELASTICSEARCH_URL"),
+            "http_auth": (
+                os.environ.get("ELASTICSEARCH_USER"),
+                os.environ.get("ELASTICSEARCH_PASSWORD"),
+            ),
+            # "verify_certs": True,
+        }
+    }
+    ELASTICSEARCH_DSL_SIGNAL_PROCESSOR = os.environ.get(
+        "ELASTICSEARCH_SIGNAL_PROCESSOR",
+        "django_elasticsearch_dsl.signals.CelerySignalProcessor"
+    )
+    
+    INSTALLED_APPS += ["django_elasticsearch_dsl",]

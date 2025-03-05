@@ -17,6 +17,7 @@ from .epic_property import urlpatterns as epic_property_patterns
 from .workflow import urlpatterns as workflow_patterns
 from .webhook import urlpatterns as webhook_patterns
 from .job import urlpatterns as import_job_patterns
+from .search import urlpatterns as search_patterns
 from .customer import urlpatterns as customer_property_patterns
 
 urlpatterns = [
@@ -41,5 +42,6 @@ urlpatterns = [
     *workflow_patterns,
     *webhook_patterns,
     *import_job_patterns,
+    *search_patterns,
     *customer_property_patterns,
 ]

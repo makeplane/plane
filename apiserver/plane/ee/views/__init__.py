@@ -114,3 +114,7 @@ from plane.ee.views.api.worklog import (
     IssueWorklogAPIEndpoint,
     ProjectWorklogAPIEndpoint,
 )
+
+from plane.ee.views.app.search.base import (
+    EnchancedGlobalSearchEndpoint
+)

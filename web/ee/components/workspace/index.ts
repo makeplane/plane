@@ -5,3 +5,5 @@ export * from "./upgrade-toast";
 export * from "./delete-workspace-section";
 export * from "./sidebar";
 export * from "./activation-modal";
+export * from "./sidebar";
+export * from "./search";
