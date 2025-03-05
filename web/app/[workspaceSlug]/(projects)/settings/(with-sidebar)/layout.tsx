@@ -10,7 +10,7 @@ import { AppHeader } from "@/components/core";
 import { useUserPermissions } from "@/hooks/store";
 // plane web constants
 // local components
-import { WorkspaceSettingHeader } from "./header";
+import { WorkspaceSettingHeader } from "../header";
 import { MobileWorkspaceSettingsTabs } from "./mobile-header-tabs";
 import { WorkspaceSettingsSidebar } from "./sidebar";
 

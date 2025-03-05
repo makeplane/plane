@@ -24,6 +24,8 @@ export interface IStateStore {
   // computed actions
   getStateById: (stateId: string | null | undefined) => IState | undefined;
   getProjectStates: (projectId: string | null | undefined) => IState[] | undefined;
+  getProjectStateIds: (projectId: string | null | undefined) => string[] | undefined;
+  getProjectDefaultStateId: (projectId: string | null | undefined) => string | undefined;
   // fetch actions
   fetchProjectStates: (workspaceSlug: string, projectId: string) => Promise<IState[]>;
   fetchWorkspaceStates: (workspaceSlug: string) => Promise<IState[]>;
@@ -134,6 +136,29 @@ export class StateStore implements IStateStore {
     const workspaceSlug = this.router.workspaceSlug || "";
     if (!projectId || !(this.fetchedMap[projectId] || this.fetchedMap[workspaceSlug])) return;
     return sortStates(Object.values(this.stateMap).filter((state) => state.project_id === projectId));
+  });
+
+  /**
+   * Returns the state ids for a project by projectId
+   * @param projectId
+   * @returns string[]
+   */
+  getProjectStateIds = computedFn((projectId: string | null | undefined) => {
+    const workspaceSlug = this.router.workspaceSlug;
+    if (!workspaceSlug || !projectId || !(this.fetchedMap[projectId] || this.fetchedMap[workspaceSlug]))
+      return undefined;
+    const projectStates = this.getProjectStates(projectId);
+    return projectStates?.map((state) => state.id) ?? [];
+  });
+
+  /**
+   * Returns the default state id for a project
+   * @param projectId
+   * @returns string | undefined
+   */
+  getProjectDefaultStateId = computedFn((projectId: string | null | undefined) => {
+    const projectStates = this.getProjectStates(projectId);
+    return projectStates?.find((state) => state.default)?.id;
   });
 
   /**

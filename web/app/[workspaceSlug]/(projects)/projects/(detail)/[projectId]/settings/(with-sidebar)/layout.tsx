@@ -4,7 +4,7 @@ import { FC, ReactNode } from "react";
 // components
 import { AppHeader } from "@/components/core";
 // local components
-import { ProjectSettingHeader } from "./header";
+import { ProjectSettingHeader } from "../header";
 import { ProjectSettingsSidebar } from "./sidebar";
 
 export interface IProjectSettingLayout {
