@@ -30,6 +30,13 @@ export type TIssueActivity = {
   new_identifier: string | undefined;
   epoch: number;
   issue_comment: string | null;
+  source_data: {
+    source: "IN_APP" | "FORM" | "EMAIL";
+    source_email?: string;
+    extra: {
+      username?: string;
+    };
+  };
 };
 
 export type TIssueActivityMap = {

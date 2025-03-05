@@ -11,12 +11,7 @@ export type TProperties = {
   icon: ReactNode;
   isPro: boolean;
   isEnabled: boolean;
-  renderChildren?: (
-    currentProjectDetails: IProject,
-    isAdmin: boolean,
-    handleSubmit: (featureKey: string, featureProperty: string) => Promise<void>,
-    workspaceSlug: string
-  ) => ReactNode;
+  renderChildren?: (currentProjectDetails: IProject, workspaceSlug: string) => ReactNode;
 };
 export type TFeatureList = {
   [key: string]: TProperties;

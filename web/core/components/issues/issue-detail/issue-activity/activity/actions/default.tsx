@@ -21,13 +21,27 @@ export const IssueDefaultActivity: FC<TIssueDefaultActivity> = observer((props) 
   const activity = getActivityById(activityId);
 
   if (!activity) return <></>;
+  const source = activity.source_data?.source;
+
   return (
     <IssueActivityBlockComponent
       activityId={activityId}
       icon={<LayersIcon width={14} height={14} className="text-custom-text-200" aria-hidden="true" />}
       ends={ends}
     >
-      <>{activity.verb === "created" ? " created the work item." : " deleted a work item."}</>
+      <>
+        {activity.verb === "created" ? (
+          source && source !== "IN_APP" ? (
+            <span>
+              created the work item via <span className="font-medium">{source.toLowerCase()}</span>.
+            </span>
+          ) : (
+            <span> created the work item.</span>
+          )
+        ) : (
+          <span> deleted a work item.</span>
+        )}
+      </>
     </IssueActivityBlockComponent>
   );
 });
