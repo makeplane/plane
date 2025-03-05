@@ -6,8 +6,6 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"strings"
-
 	prime_api "github.com/makeplane/plane-ee/monitor/lib/api"
 	"github.com/makeplane/plane-ee/monitor/lib/logger"
 	"github.com/makeplane/plane-ee/monitor/pkg/constants"
@@ -66,22 +64,18 @@ var rootCmd = &cobra.Command{
 			if deployPlatform := os.Getenv(constants.DEPLOY_PLATFORM); deployPlatform == "" {
 				return fmt.Errorf(error_msgs.DEPLOY_PLATFORM_ABSENT)
 			} else {
-				if strings.ToUpper(deployPlatform) == strings.ToUpper(constants.KUBERNETES) || strings.ToUpper(deployPlatform) == strings.ToUpper(constants.COOLIFY) {
-					api := prime_api.NewMonitorApi(HOST, MACHINE_SIGNATURE, "", APP_VERSION)
-					setupResponse, err := api.InitializeInstance(prime_api.CredentialsPayload{
-						ServerId:   MACHINE_SIGNATURE,
-						Domain:     APP_DOMAIN,
-						AppVersion: APP_VERSION,
-					})
+				api := prime_api.NewMonitorApi(HOST, MACHINE_SIGNATURE, "", APP_VERSION)
+				setupResponse, err := api.InitializeInstance(prime_api.CredentialsPayload{
+					ServerId:   MACHINE_SIGNATURE,
+					Domain:     APP_DOMAIN,
+					AppVersion: APP_VERSION,
+				})
 
-					if err != nil {
-						return fmt.Errorf(error_msgs.FAILED_INITIALIZATION, APP_DOMAIN)
-					}
-
-					INSTANCE_ID = setupResponse.InstanceId
-				} else {
-					return fmt.Errorf(error_msgs.INSTANCE_ID_ABSENT)
+				if err != nil {
+					return fmt.Errorf(error_msgs.FAILED_INITIALIZATION, APP_DOMAIN)
 				}
+
+				INSTANCE_ID = setupResponse.InstanceId
 			}
 		} else {
 			INSTANCE_ID = instanceId

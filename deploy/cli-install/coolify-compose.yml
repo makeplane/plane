@@ -220,7 +220,7 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-      - ${INSTALL_DIR}/logs/beat-worker:/code/plane/logs
+      - beat_worker_logs:/code/plane/logs
     depends_on:
       - api
       - plane-db

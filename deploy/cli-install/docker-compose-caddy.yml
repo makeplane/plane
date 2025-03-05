@@ -2,7 +2,7 @@ x-plane: &plane
   APP_VERSION: ${APP_RELEASE_VERSION:-v1.8.0}
   APP_DOMAIN: ${DOMAIN_NAME:-localhost}
   MACHINE_SIGNATURE: ${MACHINE_SIGNATURE}
-  DEPLOY_PLATFORM: docker-compose
+  DEPLOY_PLATFORM: docker_compose
   PRIME_HOST: https://prime.plane.so
 
 x-monitor-env: &monitor-env
