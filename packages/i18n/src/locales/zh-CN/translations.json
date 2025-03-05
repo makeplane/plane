@@ -983,7 +983,8 @@
         "sub_issue_count": "子工作项数量",
         "attachment_count": "附件数量",
         "created_on": "创建于",
-        "sub_issue": "子工作项"
+        "sub_issue": "子工作项",
+        "work_item_count": "工作项数量"
       },
       "extra": {
         "show_sub_issues": "显示子工作项",

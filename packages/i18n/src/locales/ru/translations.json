@@ -982,7 +982,8 @@
         "sub_issue_count": "Количество подэлементов",
         "attachment_count": "Количество вложений",
         "created_on": "Дата создания",
-        "sub_issue": "Подэлемент"
+        "sub_issue": "Подэлемент",
+        "work_item_count": "Количество рабочих элементов"
       },
       "extra": {
         "show_sub_issues": "Показывать подэлементы",

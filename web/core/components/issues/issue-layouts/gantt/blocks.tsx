@@ -5,9 +5,9 @@ import { useParams } from "next/navigation";
 // ui
 import { Tooltip, ControlLink } from "@plane/ui";
 // components
+import { findTotalDaysInRange } from "@plane/utils";
 import { SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";
 // helpers
-import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useIssues, useProject, useProjectState } from "@/hooks/store";
@@ -17,6 +17,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 //
+import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
 import { getBlockViewDetails } from "../utils";
 import { GanttStoreType } from "./base-gantt-root";
 
@@ -48,6 +49,8 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
 
   const handleIssuePeekOverview = () => handleRedirection(workspaceSlug, issueDetails, isMobile);
 
+  const duration = findTotalDaysInRange(issueDetails?.start_date, issueDetails?.target_date) || 0;
+
   return (
     <Tooltip
       isMobile={isMobile}
@@ -62,17 +65,24 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
     >
       <div
         id={`issue-${issueId}`}
-        className="relative flex h-full w-full cursor-pointer items-center rounded"
+        className="relative flex h-full w-full cursor-pointer items-center rounded space-between"
         style={blockStyle}
         onClick={handleIssuePeekOverview}
       >
-        <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
+        <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50 " />
         <div
-          className="sticky w-auto overflow-hidden truncate px-2.5 py-1 text-sm text-custom-text-100"
+          className="sticky w-auto overflow-hidden truncate px-2.5 py-1 text-sm text-custom-text-100 flex-1"
           style={{ left: `${SIDEBAR_WIDTH}px` }}
         >
           {issueDetails?.name}
         </div>
+        {isEpic && (
+          <IssueStats
+            issueId={issueId}
+            className="sticky mx-2 font-medium text-custom-text-100 overflow-hidden truncate w-auto justify-end flex-shrink-0"
+            showProgressText={duration >= 2}
+          />
+        )}
       </div>
     </Tooltip>
   );
