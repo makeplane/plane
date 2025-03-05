@@ -36,6 +36,7 @@ import { isValidHttpUrl } from "@/helpers/common";
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
 import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
+import { MarkdownClipboard } from "./clipboard";
 
 type TArguments = {
   disabledExtensions: TExtensions[];
@@ -141,6 +142,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       transformPastedText: true,
       breaks: true,
     }),
+    MarkdownClipboard,
     Table,
     TableHeader,
     TableCell,
