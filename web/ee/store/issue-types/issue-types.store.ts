@@ -15,6 +15,7 @@ import {
   TWorkItemTypesPropertiesOptions,
   TEpicPropertiesOptions,
 } from "@plane/types";
+import { buildWorkItemTypeSchema } from "@plane/utils";
 // plane web services
 import {
   epicIssueTypeService,
@@ -88,6 +89,17 @@ export class IssueTypes implements IIssueTypesStore {
   }
 
   // computed functions
+  /**
+   * @description Get all work item type ids
+   * @returns {string[]}
+   */
+  getIssueTypeIds = computedFn((activeOnly: boolean) =>
+    Object.keys(this.data).filter((issueTypeId) => {
+      const issueType = this.data[issueTypeId];
+      return !activeOnly || (activeOnly && issueType.is_active);
+    })
+  );
+
   /**
    * @description Get work item type by work item type id
    * @param issueTypeId
@@ -416,6 +428,22 @@ export class IssueTypes implements IIssueTypesStore {
         for (const issue of currentProjectIssues) {
           this.rootStore.issue.issues.updateIssue(issue.id, { type_id: issueType.id });
         }
+        // get all work item templates
+        const currentProjectWorkItemTemplates =
+          this.rootStore.templatesRoot.workItemTemplates.getAllWorkItemTemplatesForProject(projectId);
+        const workItemTemplatesWithoutType = currentProjectWorkItemTemplates.filter(
+          (template) => !template.template_data.type || !template.template_data.type.id
+        );
+        // attach the new default issue type to all work item templates
+        for (const template of workItemTemplatesWithoutType) {
+          template.updateInstance({
+            template_data: {
+              ...template.template_data,
+              type: buildWorkItemTypeSchema(issueType.id, this.getIssueTypeById),
+            },
+          });
+        }
+
         this.loader = "loaded";
       });
     } catch (error) {

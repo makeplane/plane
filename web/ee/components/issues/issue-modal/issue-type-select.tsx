@@ -3,20 +3,26 @@
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Controller, FieldPath } from "react-hook-form";
+import { Controller, FieldPath, useFormContext } from "react-hook-form";
 import { ChevronRight } from "lucide-react";
-// helpers
+// plane imports
+import { DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
+import { TIssue } from "@plane/types";
+// ce imports
 import { TIssueFields, TIssueTypeSelectProps } from "@/ce/components/issues";
+// helpers
 import { cn } from "@/helpers/common.helper";
-// plane web components
+// hooks
+import { useIssueModal } from "@/hooks/context/use-issue-modal";
+// plane web imports
 import { IssueTypeDropdown, TIssueTypeOptionTooltip } from "@/plane-web/components/issue-types/dropdowns";
-// plane web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
 export const IssueTypeSelect = observer(<T extends Partial<TIssueFields>>(props: TIssueTypeSelectProps<T>) => {
   const {
     control,
     projectId,
+    editorRef,
     disabled = false,
     variant = "sm",
     placeholder,
@@ -30,6 +36,9 @@ export const IssueTypeSelect = observer(<T extends Partial<TIssueFields>>(props:
   const { workspaceSlug } = useParams();
   // plane web store hooks
   const { isWorkItemTypeEnabledForProject, getIssueTypeIdsWithMandatoryProperties } = useIssueTypes();
+  // context hooks
+  const { workItemTemplateId, setWorkItemTemplateId } = useIssueModal();
+  const { reset } = useFormContext<TIssue>();
   // derived values
   const isWorkItemTypeEnabled = !!projectId && isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId);
   // Information for issue types with mandatory fields
@@ -50,6 +59,18 @@ export const IssueTypeSelect = observer(<T extends Partial<TIssueFields>>(props:
       }, {} as TIssueTypeOptionTooltip);
     }, [issueTypeIdsWithMandatoryProperties]);
   }
+
+  const handleIssueTypeChange = (newValue: string | null) => {
+    if (workItemTemplateId) {
+      reset({
+        ...DEFAULT_WORK_ITEM_FORM_VALUES,
+        project_id: projectId,
+        type_id: newValue,
+      });
+      editorRef?.current?.clearEditor();
+      setWorkItemTemplateId(null);
+    }
+  };
 
   return (
     <>
@@ -80,6 +101,7 @@ export const IssueTypeSelect = observer(<T extends Partial<TIssueFields>>(props:
                       // If it's not set as required, then allow issue type to be null (unset issue type)
                       const newValue = !isRequired && value === issueTypeId ? null : issueTypeId;
                       onChange(newValue);
+                      handleIssueTypeChange(newValue);
                       handleFormChange?.();
                     }}
                   />

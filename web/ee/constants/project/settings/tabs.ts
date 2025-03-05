@@ -43,6 +43,14 @@ export const PROJECT_SETTINGS = {
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/project-updates/`,
     Icon: SettingIcon,
   },
+  templates: {
+    key: "templates",
+    i18n_label: "common.templates",
+    href: `/settings/templates/`,
+    access: [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/templates/`,
+    Icon: SettingIcon,
+  },
 };
 
 export const PROJECT_SETTINGS_LINKS: {
@@ -57,11 +65,12 @@ export const PROJECT_SETTINGS_LINKS: {
   PROJECT_SETTINGS["members"],
   PROJECT_SETTINGS["features"],
   PROJECT_SETTINGS["states"],
-    PROJECT_SETTINGS["workflows"],
+  PROJECT_SETTINGS["workflows"],
   PROJECT_SETTINGS["labels"],
   PROJECT_SETTINGS["estimates"],
   PROJECT_SETTINGS["automations"],
   PROJECT_SETTINGS["work-item-types"],
   PROJECT_SETTINGS["epics"],
-    PROJECT_SETTINGS["project_updates"],
+  PROJECT_SETTINGS["project_updates"],
+  PROJECT_SETTINGS["templates"],
 ];

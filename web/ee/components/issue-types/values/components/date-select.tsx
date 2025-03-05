@@ -61,7 +61,7 @@ export const DateValueSelect = observer((props: TDateValueSelectProps) => {
         className="w-full flex-grow group"
         buttonContainerClassName="w-full text-left"
         buttonClassName={cn(
-          "text-sm",
+          "text-sm bg-custom-background-100",
           {
             "text-custom-text-400": !data?.length,
             "border-custom-border-200": variant === "create",

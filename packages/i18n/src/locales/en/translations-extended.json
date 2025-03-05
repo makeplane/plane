@@ -10,7 +10,8 @@
     "epics": "Epics",
     "project_updates": "Project Updates",
     "overview": "Overview",
-    "workflows": "Workflows"
+    "workflows": "Workflows",
+    "templates": "Templates"
   },
 
   "issue": {
@@ -1517,6 +1518,40 @@
     },
     "sidebar": {
       "properties": "Properties"
+    }
+  },
+
+  "templates": {
+    "settings": {
+      "title": "Templates",
+      "description": "Save 80% time spent on creating projects, work items, and pages when you use templates.",
+      "options": {
+        "project": {
+          "label": "Project templates"
+        },
+        "work_item": {
+          "label": "Work-item templates"
+        },
+        "page": {
+          "label": "Page templates"
+        }
+      },
+      "create_template": {
+        "label": "Create template"
+      },
+      "use_template": {
+        "button": "Use template"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Templates",
+        "description": "With project, work-item, and page templates in Plane, you don’t have to create a project from scratch or set work item props manually.",
+        "sub_description": "Get 80% of your admin time back when you use Templates."
+      },
+      "no_templates": {
+        "button": "Create your first template"
+      }
     }
   }
 }

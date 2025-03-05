@@ -20,6 +20,7 @@ import { IGanttBlock } from "@/components/gantt-chart";
 // helpers
 import { orderArrayBy } from "@/helpers/array.helper";
 import { getDate } from "@/helpers/date-time.helper";
+import { isEditorEmpty } from "@/helpers/editor.helper";
 
 type THandleIssuesMutation = (
   formData: Partial<TIssue>,
@@ -198,7 +199,7 @@ export const formatTextList = (TextArray: string[]): string => {
 };
 
 export const getDescriptionPlaceholderI18n = (isFocused: boolean, description: string | undefined): string => {
-  const isDescriptionEmpty = !description || description === "<p></p>" || description.trim() === "";
+  const isDescriptionEmpty = isEditorEmpty(description);
   if (!isDescriptionEmpty || isFocused) return "common.press_for_commands";
   else return "common.click_to_add_description";
 };

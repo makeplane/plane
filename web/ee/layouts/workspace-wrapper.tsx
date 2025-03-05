@@ -18,6 +18,7 @@ import {
   useWorkspaceProjectStates,
   useWorkspaceSubscription,
   useFeatureFlags,
+  useWorkItemTemplates,
   useCustomerProperties,
 } from "@/plane-web/hooks/store";
 // plane web types
@@ -41,6 +42,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, fetchWorkspaceSubscribedPlan } =
     useWorkspaceSubscription();
   const { fetchAll } = useIssueTypes();
+  const { fetchAllTemplates } = useWorkItemTemplates();
   const { fetchAllCustomerPropertiesAndOptions } = useCustomerProperties();
   // derived values
   const isFreeMemberCountExceeded = subscriptionDetail?.is_free_member_count_exceeded;
@@ -50,6 +52,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const isProjectStateEnabled =
     workspaceFeatures[workspaceSlug.toString()] &&
     workspaceFeatures[workspaceSlug.toString()][EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED];
+  const isWorkItemTemplatesEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TEMPLATES");
   const isCustomersFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_CUSTOMERS_ENABLED);
 
   // fetching feature flags
@@ -115,6 +118,15 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceSlug && isCustomersFeatureEnabled
       ? () => fetchAllCustomerPropertiesAndOptions(workspaceSlug.toString())
       : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  // fetching all work item templates
+  useSWR(
+    workspaceSlug && isWorkItemTemplatesEnabled
+      ? ["workItemTemplates", workspaceSlug, isWorkItemTemplatesEnabled]
+      : null,
+    workspaceSlug && isWorkItemTemplatesEnabled ? () => fetchAllTemplates(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 

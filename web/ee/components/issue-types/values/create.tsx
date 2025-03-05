@@ -43,6 +43,7 @@ export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPrope
     const [issuePropertyValues, setIssuePropertyValues] = React.useState({});
     // store hooks
     const {
+      workItemTemplateId,
       issuePropertyValues: issuePropertyDefaultValues,
       issuePropertyValueErrors,
       setIssuePropertyValues: handleIssuePropertyValueUpdate,
@@ -74,13 +75,15 @@ export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPrope
     }, [data]);
 
     useEffect(() => {
-      if (activeProperties?.length) {
+      // If template is applied, then we don't need to set the default values from here.
+      // It will be set in the provider -> handleTemplateChange.
+      if (!workItemTemplateId && activeProperties?.length) {
         handleIssuePropertyValueUpdate({
           ...getPropertiesDefaultValues(activeProperties),
           ...issuePropertyValues,
         });
       }
-    }, [activeProperties, handleIssuePropertyValueUpdate, issuePropertyValues]);
+    }, [activeProperties, handleIssuePropertyValueUpdate, issuePropertyValues, workItemTemplateId]);
 
     const handlePropertyValueChange = (propertyId: string, value: string[]) => {
       handleIssuePropertyValueUpdate((prev) => ({

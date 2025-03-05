@@ -148,6 +148,7 @@ export const WORKSPACE_SETTINGS_LINKS: {
   EXTENDED_WORKSPACE_SETTINGS["teamspaces"],
   EXTENDED_WORKSPACE_SETTINGS["initiatives"],
   EXTENDED_WORKSPACE_SETTINGS["customers"],
+    EXTENDED_WORKSPACE_SETTINGS["templates"],
 ];
 
 export const ROLE = {

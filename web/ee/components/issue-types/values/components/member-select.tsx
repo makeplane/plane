@@ -45,7 +45,7 @@ export const MemberValueSelect = observer((props: TMemberValueSelectProps) => {
 
   const memberPickerProps: Partial<MemberDropdownProps> = {
     buttonClassName: cn(
-      "h-full py-1 text-sm justify-between",
+      "h-full py-1 text-sm justify-between bg-custom-background-100",
       {
         "text-custom-text-400": !data?.length,
         "border-custom-border-200": variant === "create",

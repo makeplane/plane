@@ -74,6 +74,9 @@ import { EpicAnalytics, IEpicAnalyticStore } from "./issue/epic/analytic.store";
 import { IPiChatStore, PiChatStore } from "./pi-chat/pi-chat";
 // timeline
 import { IProjectStore, ProjectStore } from "./projects/projects";
+// templates
+import { ITemplatesRootStore, TemplatesRootStore } from "./templates/store/root.store";
+// timeline
 import { ITimelineStore } from "./timeline";
 
 export class RootStore extends CoreRootStore {
@@ -114,6 +117,8 @@ export class RootStore extends CoreRootStore {
   baseDashboards: IBaseDashboardsStore;
   // epics
   epicAnalytics: IEpicAnalyticStore;
+  // templates
+  templatesRoot: ITemplatesRootStore;
 
   constructor() {
     super();
@@ -154,6 +159,8 @@ export class RootStore extends CoreRootStore {
     this.baseDashboards = new BaseDashboardsStore(this);
     // epics
     this.epicAnalytics = new EpicAnalytics(this);
+    // templates
+    this.templatesRoot = new TemplatesRootStore(this);
   }
 
   resetOnSignOut() {
@@ -194,5 +201,7 @@ export class RootStore extends CoreRootStore {
     this.baseDashboards = new BaseDashboardsStore(this);
     // epics
     this.epicAnalytics = new EpicAnalytics(this);
+    // templates
+    this.templatesRoot = new TemplatesRootStore(this);
   }
 }

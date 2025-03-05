@@ -18,4 +18,5 @@ export * from "./state";
 export * from "./issue";
 export * from "./page";
 export * from "./feature-flag";
+export * from "./templates";
 export * from "./customers";

@@ -16,3 +16,5 @@ export * from "./work-item-types";
 export * from "./work-item-properties";
 export * from "./subscription";
 export * from "./workspace";
+export * from "./templates";
+export * from "./work-item";

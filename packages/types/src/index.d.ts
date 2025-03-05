@@ -41,6 +41,7 @@ export * from "./charts";
 export * from "./home";
 export * from "./stickies";
 export * from "./intake";
+export * from "./utils";
 // enterprise
 export * from "./active-cycle";
 export * from "./dashboards";
@@ -52,4 +53,5 @@ export * from "./import-job-types";
 export * from "./feature-flag";
 export * from "./work-item-types";
 export * from "./integration-config";
+export * from "./templates";
 export * from "./customers";

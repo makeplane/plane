@@ -236,7 +236,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                     projectId={projectId.toString()}
                     onChange={onChange}
                     setIsOpen={() => setCreateLabelModal(true)}
-                    buttonClassName="text-custom-text-300 "
+                    buttonContainerClassName="text-custom-text-300 "
                     placement="top-start"
                   />
                 </div>

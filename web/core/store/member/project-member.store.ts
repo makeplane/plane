@@ -26,14 +26,18 @@ export interface IProjectMemberDetails {
 
 export interface IProjectMemberStore {
   // observables
+  projectMemberFetchStatusMap: {
+    [projectId: string]: boolean;
+  };
   projectMemberMap: {
     [projectId: string]: Record<string, IProjectMembership>;
   };
   // computed
   projectMemberIds: string[] | null;
   // computed actions
+  getProjectMemberFetchStatus: (projectId: string) => boolean;
   getProjectMemberDetails: (userId: string, projectId: string) => IProjectMemberDetails | null;
-  getProjectMemberIds: (projectId: string) => string[] | null;
+  getProjectMemberIds: (projectId: string, includeGuestUsers: boolean) => string[] | null;
   // fetch actions
   fetchProjectMembers: (workspaceSlug: string, projectId: string) => Promise<IProjectMembership[]>;
   // bulk operation actions
@@ -54,6 +58,9 @@ export interface IProjectMemberStore {
 
 export class ProjectMemberStore implements IProjectMemberStore {
   // observables
+  projectMemberFetchStatusMap: {
+    [projectId: string]: boolean;
+  } = {};
   projectMemberMap: {
     [projectId: string]: Record<string, IProjectMembership>;
   } = {};
@@ -103,13 +110,18 @@ export class ProjectMemberStore implements IProjectMemberStore {
   }
 
   /**
+   * @description get the fetch status of a project member
+   * @param projectId
+   */
+  getProjectMemberFetchStatus = computedFn((projectId: string) => this.projectMemberFetchStatusMap?.[projectId]);
+
+  /**
    * @description get the details of a project member
    * @param userId
    */
   getProjectMemberDetails = computedFn((userId: string, projectId: string) => {
     const projectMember = this.projectMemberMap?.[projectId]?.[userId];
     if (!projectMember) return null;
-    console.log({ projectMember });
     const memberDetails: IProjectMemberDetails = {
       id: projectMember.id,
       role: projectMember.role,
@@ -122,9 +134,12 @@ export class ProjectMemberStore implements IProjectMemberStore {
    * @description get the list of all the user ids of all the members of a project using projectId
    * @param projectId
    */
-  getProjectMemberIds = computedFn((projectId: string): string[] | null => {
+  getProjectMemberIds = computedFn((projectId: string, includeGuestUsers: boolean): string[] | null => {
     if (!this.projectMemberMap?.[projectId]) return null;
     let members = Object.values(this.projectMemberMap?.[projectId]);
+    if (includeGuestUsers === false) {
+      members = members.filter((m) => m.role !== EUserPermissions.GUEST);
+    }
     members = sortBy(members, [
       (m) => m.member !== this.userStore.data?.id,
       (m) => this.memberRoot?.memberMap?.[m.member]?.display_name?.toLowerCase(),
@@ -144,6 +159,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
         response.forEach((member) => {
           set(this.projectMemberMap, [projectId, member.member], member);
         });
+        set(this.projectMemberFetchStatusMap, [projectId], true);
       });
       return response;
     });

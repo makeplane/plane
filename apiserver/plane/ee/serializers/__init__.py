@@ -89,6 +89,12 @@ from .app.dashboard import (
     WidgetSerializer,
 )
 
+from .app.template import (
+    TemplateSerializer,
+    WorkitemTemplateSerializer,
+    TemplateDataSerializer,
+)
+
 # Space imports
 from .space.page import PagePublicSerializer, PagePublicMetaSerializer
 from .space.views import ViewsPublicSerializer, ViewsPublicMetaSerializer

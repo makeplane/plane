@@ -39,5 +39,6 @@ export * from "./file-extended";
 export * from "./work-item-types";
 export * from "./work-item-properties";
 export * from "./teamspace";
+export * from "./templates";
 export * from "./enhanced-search";
 export * from "./customers";

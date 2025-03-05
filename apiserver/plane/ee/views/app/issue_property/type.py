@@ -10,6 +10,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.ee.views.base import BaseAPIView
 from plane.db.models import IssueType, Issue, Project, ProjectIssueType
+from plane.ee.models import WorkitemTemplate
 from plane.ee.permissions import ProjectEntityPermission, WorkspaceEntityPermission
 from plane.ee.serializers import IssueTypeSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -318,7 +319,22 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
             )
         )
 
+        work_item_type = issue_type.first()
+
+        # Update existing work item templates to use the new default issue type
+        work_item_type_template_schema = {
+            "id": str(work_item_type.id),
+            "name": work_item_type.name,
+            "logo_props": work_item_type.logo_props,
+            "is_epic": work_item_type.is_epic,
+        }
+        WorkitemTemplate.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            type__exact={},
+        ).update(type=work_item_type_template_schema)
+
         # Serialize the data
-        serializer = IssueTypeSerializer(issue_type.first())
+        serializer = IssueTypeSerializer(work_item_type)
 
         return Response(serializer.data, status=status.HTTP_200_OK)

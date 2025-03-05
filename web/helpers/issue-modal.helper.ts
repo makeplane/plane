@@ -1,6 +1,4 @@
 import set from "lodash/set";
-// constants
-import { EIssuesStoreType } from "@plane/constants";
 // types
 import type { TIssue } from "@plane/types";
 
@@ -16,19 +14,3 @@ export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { 
 
   return changedFields as Partial<TIssue>;
 }
-
-export const getModalTitle = (issueId: string | undefined, storeType: EIssuesStoreType, isDraft: boolean) => {
-  if (issueId) {
-    return "Update";
-  }
-  if (isDraft) {
-    return "Create a draft";
-  }
-
-  switch (storeType) {
-    case EIssuesStoreType.EPIC:
-      return "Create Epic";
-    default:
-      return "Create new issue";
-  }
-};
