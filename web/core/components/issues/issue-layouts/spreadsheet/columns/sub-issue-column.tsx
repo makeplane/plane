@@ -42,7 +42,7 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props
         }
       )}
     >
-      {isEpic ? <IssueStats issueId={issue.id} showLabel /> : label}
+      {isEpic ? <IssueStats issueId={issue.id} /> : label}
     </Row>
   );
 });
