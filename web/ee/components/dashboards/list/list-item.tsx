@@ -5,16 +5,16 @@ import { usePlatformOS } from "@plane/hooks";
 // components
 import { ListItem } from "@/components/core/list";
 // plane web store
-import { IWorkspaceDashboardsStore } from "@/plane-web/store/dashboards/workspace-dashboards.store";
+import { IDashboardInstance } from "@/plane-web/store/dashboards/dashboard";
 // local components
-import { WorkspaceDashboardListItemActions } from "./list-item-actions";
+import { DashboardListItemActions } from "./list-item-actions";
 
 type Props = {
-  getDashboardDetails: IWorkspaceDashboardsStore["getDashboardById"];
+  getDashboardDetails: (dashboardId: string) => IDashboardInstance | undefined;
   id: string;
 };
 
-export const WorkspaceDashboardListItem: React.FC<Props> = observer((props) => {
+export const DashboardListItem: React.FC<Props> = observer((props) => {
   const { getDashboardDetails, id } = props;
   // refs
   const parentRef = useRef(null);
@@ -29,9 +29,9 @@ export const WorkspaceDashboardListItem: React.FC<Props> = observer((props) => {
 
   return (
     <ListItem
-      title={"Dashboard name"}
+      title={dashboardDetails.name ?? ""}
       itemLink={getRedirectionLink()}
-      actionableItems={<WorkspaceDashboardListItemActions dashboardDetails={dashboardDetails} />}
+      actionableItems={<DashboardListItemActions dashboardDetails={dashboardDetails} parentRef={parentRef} />}
       isMobile={isMobile}
       parentRef={parentRef}
     />

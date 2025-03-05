@@ -1,90 +1,137 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-// plane imports
-import { EUserPermissions } from "@plane/constants";
-// plane services
-import { WorkspaceDashboardsService } from "@plane/services";
+import { computedFn } from "mobx-utils";
 // plane types
-import { TWorkspaceDashboard } from "@plane/types";
+import { TDashboard, TDashboardLevel, TLogoProps } from "@plane/types";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
+import { DashboardWidgetsStore, IDashboardWidgetsStore, TDashboardWidgetHelpers } from "./dashboard-widgets.store";
 
-export interface IWorkspaceDashboardInstance extends TWorkspaceDashboard {
+export interface IDashboardInstance extends TDashboard {
+  // observables
+  viewModeToggle: boolean;
+  dashboardLevel: TDashboardLevel;
   // permissions
   canCurrentUserEditDashboard: boolean;
   canCurrentUserFavoriteDashboard: boolean;
+  canCurrentUserDeleteDashboard: boolean;
   // helpers
-  asJSON: TWorkspaceDashboard;
+  asJSON: TDashboard;
   getRedirectionLink: () => string;
-  mutateProperties: (data: Partial<TWorkspaceDashboard>) => void;
+  mutateProperties: (data: Partial<TDashboard>) => void;
+  isViewModeEnabled: boolean;
   // actions
-  updateDashboard: (data: Partial<TWorkspaceDashboard>) => Promise<TWorkspaceDashboard>;
+  updateDashboard: (data: Partial<TDashboard>) => Promise<TDashboard>;
+  toggleViewingMode: (status?: boolean) => void;
+  // sub-stores
+  widgetsStore: IDashboardWidgetsStore;
 }
 
-export class WorkspaceDashboardInstance implements IWorkspaceDashboardInstance {
+type TDashboardHelpers = {
+  actions: {
+    update: (payload: Partial<TDashboard>) => Promise<TDashboard>;
+  };
+  permissions: {
+    canCurrentUserEditDashboard: (dashboard: TDashboard) => boolean;
+    canCurrentUserFavoriteDashboard: (dashboard: TDashboard) => boolean;
+    canCurrentUserDeleteDashboard: (dashboard: TDashboard) => boolean;
+  };
+};
+
+export type TDashboardCombinedHelpers = {
+  dashboard: TDashboardHelpers;
+  widget: TDashboardWidgetHelpers;
+};
+
+export class DashboardInstance implements IDashboardInstance {
+  // observables
+  dashboardLevel: TDashboardLevel;
+  viewModeToggle: boolean = false;
   // dashboard properties
   created_at: Date | undefined;
   created_by: string | undefined;
-  name: string | undefined;
   id: string | undefined;
   is_favorite: boolean | undefined;
+  logo_props: TLogoProps | undefined;
+  name: string | undefined;
+  owned_by: string | undefined;
   project_ids: string[] | undefined;
   updated_at: Date | undefined;
   updated_by: string | undefined;
-  // service
-  service: WorkspaceDashboardsService;
+  workspace: string | undefined;
+  // actions
+  private helpers: TDashboardHelpers;
   // root store
-  rootStore: RootStore;
+  private rootStore: RootStore;
+  // sub-store
+  widgetsStore: IDashboardWidgetsStore;
 
-  constructor(store: RootStore, dashboard: TWorkspaceDashboard) {
-    makeObservable(this, {
-      // observables
-      created_at: observable.ref,
-      created_by: observable.ref,
-      name: observable.ref,
-      id: observable.ref,
-      is_favorite: observable.ref,
-      project_ids: observable,
-      updated_at: observable.ref,
-      updated_by: observable.ref,
-      // computed
-      currentUserWorkspaceRole: computed,
-      canCurrentUserEditDashboard: computed,
-      canCurrentUserFavoriteDashboard: computed,
-      asJSON: computed,
-      // actions
-      mutateProperties: action,
-      updateDashboard: action,
-    });
+  constructor(
+    store: RootStore,
+    dashboard: TDashboard,
+    dashboardLevel: TDashboardLevel,
+    combinedHelpers: TDashboardCombinedHelpers
+  ) {
+    // initialize dashboard level
+    this.dashboardLevel = dashboardLevel;
     // initialize dashboard properties
     this.created_at = dashboard.created_at;
     this.created_by = dashboard.created_by;
-    this.name = dashboard.name;
     this.id = dashboard.id;
     this.is_favorite = dashboard.is_favorite;
+    this.logo_props = dashboard.logo_props;
+    this.name = dashboard.name;
+    this.owned_by = dashboard.owned_by;
     this.project_ids = dashboard.project_ids;
     this.updated_at = dashboard.updated_at;
     this.updated_by = dashboard.updated_by;
-    // initialize service
-    this.service = new WorkspaceDashboardsService();
+    this.workspace = dashboard.workspace;
+    // initialize helpers
+    this.helpers = combinedHelpers.dashboard;
     // initialize root store
     this.rootStore = store;
-  }
+    // initialize sub-store
+    this.widgetsStore = new DashboardWidgetsStore(store, combinedHelpers.widget);
 
-  get currentUserWorkspaceRole(): EUserPermissions {
-    const currentWorkspaceSlug = this.rootStore.workspaceRoot.currentWorkspace?.slug;
-    const currentWorkspaceRole = this.rootStore.user.permission.workspaceInfoBySlug(currentWorkspaceSlug ?? "")
-      ?.role as EUserPermissions;
-    return currentWorkspaceRole ?? EUserPermissions.GUEST;
+    makeObservable(this, {
+      // observables
+      dashboardLevel: observable.ref,
+      viewModeToggle: observable.ref,
+      created_at: observable.ref,
+      created_by: observable.ref,
+      id: observable.ref,
+      is_favorite: observable.ref,
+      logo_props: observable,
+      name: observable.ref,
+      owned_by: observable.ref,
+      project_ids: observable,
+      updated_at: observable.ref,
+      updated_by: observable.ref,
+      workspace: observable.ref,
+      // computed
+      canCurrentUserEditDashboard: computed,
+      canCurrentUserFavoriteDashboard: computed,
+      canCurrentUserDeleteDashboard: computed,
+      asJSON: computed,
+      isViewModeEnabled: computed,
+      // actions
+      mutateProperties: action,
+      updateDashboard: action,
+      toggleViewingMode: action,
+    });
   }
 
   // permissions
   get canCurrentUserEditDashboard() {
-    return this.currentUserWorkspaceRole >= EUserPermissions.MEMBER;
+    return this.helpers.permissions.canCurrentUserEditDashboard(this.asJSON);
   }
 
   get canCurrentUserFavoriteDashboard() {
-    return this.currentUserWorkspaceRole >= EUserPermissions.MEMBER;
+    return this.helpers.permissions.canCurrentUserFavoriteDashboard(this.asJSON);
+  }
+
+  get canCurrentUserDeleteDashboard() {
+    return this.helpers.permissions.canCurrentUserDeleteDashboard(this.asJSON);
   }
 
   // helpers
@@ -92,44 +139,62 @@ export class WorkspaceDashboardInstance implements IWorkspaceDashboardInstance {
     return {
       created_at: this.created_at,
       created_by: this.created_by,
-      name: this.name,
       id: this.id,
       is_favorite: this.is_favorite,
+      logo_props: this.logo_props,
+      name: this.name,
+      owned_by: this.owned_by,
       project_ids: this.project_ids,
       updated_at: this.updated_at,
       updated_by: this.updated_by,
+      workspace: this.workspace,
     };
   }
 
-  getRedirectionLink: IWorkspaceDashboardInstance["getRedirectionLink"] = () => {
+  get isViewModeEnabled() {
+    return !this.canCurrentUserEditDashboard || this.viewModeToggle;
+  }
+
+  getRedirectionLink: IDashboardInstance["getRedirectionLink"] = computedFn(() => {
     const currentWorkspaceSlug = this.rootStore.workspaceRoot.currentWorkspace?.slug;
     return `/${currentWorkspaceSlug}/dashboards/${this.id}`;
-  };
+  });
 
-  mutateProperties: IWorkspaceDashboardInstance["mutateProperties"] = (data) => {
+  mutateProperties: IDashboardInstance["mutateProperties"] = (data) => {
     runInAction(() => {
       Object.keys(data).map((key) => {
-        const dataKey = key as keyof TWorkspaceDashboard;
+        const dataKey = key as keyof TDashboard;
         set(this, [dataKey], data[dataKey]);
       });
     });
   };
 
-  updateDashboard: IWorkspaceDashboardInstance["updateDashboard"] = async (data) => {
+  updateDashboard: IDashboardInstance["updateDashboard"] = async (data) => {
     const workspaceSlug = this.rootStore.workspaceRoot.currentWorkspace?.slug;
     if (!workspaceSlug || !this.id) throw new Error("Required fields not found");
     const originalPage = { ...this.asJSON };
     try {
       // optimistically update
       this.mutateProperties(data);
-      const res = await this.service.update(workspaceSlug, this.id, data);
+      const res = await this.helpers.actions.update(data);
       return res;
     } catch (error) {
       // revert changes
       this.mutateProperties(originalPage);
       // update loader
-      console.error("Error in updating workspace dashboard:", error);
+      console.error("Error in updating dashboard:", error);
       throw error;
     }
+  };
+
+  toggleViewingMode: IDashboardInstance["toggleViewingMode"] = (status) => {
+    const updatedStatus = status === undefined ? !this.viewModeToggle : status;
+    runInAction(() => {
+      this.viewModeToggle = updatedStatus;
+      if (updatedStatus) {
+        this.widgetsStore.toggleDeleteWidget(null);
+        this.widgetsStore.toggleEditWidget(null);
+      }
+    });
   };
 }

@@ -913,28 +913,162 @@
       "chart_types": {
         "bar_chart": {
           "short_label": "Barre",
-          "long_label": "Graphique à barres"
+          "long_label": "Graphique à barres",
+          "chart_models": {
+            "basic": "Basique",
+            "stacked": "Empilé",
+            "grouped": "Groupé"
+          },
+          "orientation": {
+            "label": "Orientation",
+            "horizontal": "Horizontale",
+            "vertical": "Verticale",
+            "placeholder": "Ajouter une orientation"
+          }
         },
         "line_chart": {
           "short_label": "Ligne",
-          "long_label": "Graphique linéaire"
+          "long_label": "Graphique linéaire",
+          "chart_models": {
+            "basic": "Basique",
+            "multi_line": "Multi-lignes"
+          },
+          "line_color": "Couleur de ligne",
+          "line_type": {
+            "label": "Type de ligne",
+            "solid": "Pleine",
+            "dashed": "Pointillée",
+            "placeholder": "Ajouter un type de ligne"
+          }
         },
         "area_chart": {
-          "short_label": "Aires",
-          "long_label": "Graphique en aires"
+          "short_label": "Zone",
+          "long_label": "Graphique en zone",
+          "chart_models": {
+            "basic": "Basique",
+            "stacked": "Empilé",
+            "comparison": "Comparaison"
+          },
+          "fill_color": "Couleur de remplissage"
         },
         "donut_chart": {
           "short_label": "Anneau",
-          "long_label": "Graphique en anneau"
+          "long_label": "Graphique en anneau",
+          "chart_models": {
+            "basic": "Basique",
+            "progress": "Progression"
+          },
+          "center_value": "Valeur centrale",
+          "completed_color": "Couleur de complétion"
         },
         "pie_chart": {
           "short_label": "Secteur",
-          "long_label": "Graphique en secteurs"
+          "long_label": "Graphique en secteurs",
+          "chart_models": {
+            "basic": "Basique"
+          },
+          "group": {
+            "label": "Pièces groupées",
+            "group_thin_pieces": "Grouper les petites pièces",
+            "minimum_threshold": {
+              "label": "Seuil minimum",
+              "placeholder": "Ajouter un seuil"
+            },
+            "name_group": {
+              "label": "Nom du groupe",
+              "placeholder": "\"Moins de 5%\""
+            }
+          },
+          "show_values": "Afficher les valeurs",
+          "value_type": {
+            "percentage": "Pourcentage",
+            "count": "Nombre"
+          }
         },
         "text": {
           "short_label": "Texte",
-          "long_label": "Texte"
+          "long_label": "Texte",
+          "alignment": {
+            "label": "Alignement du texte",
+            "left": "Gauche",
+            "center": "Centre",
+            "right": "Droite",
+            "placeholder": "Ajouter un alignement de texte"
+          }
         }
+      },
+      "color_palettes": {
+        "modern_tech": "Technologie moderne",
+        "ocean_deep": "Océan profond",
+        "sunset_vibes": "Ambiance coucher de soleil"
+      },
+      "common": {
+        "widget_title": {
+          "label": "Titre du widget",
+          "placeholder": "ex., \"À faire hier\", \"Tous Terminés\""
+        },
+        "chart_type": "Type de graphique",
+        "visualization_type": {
+          "label": "Type de visualisation",
+          "placeholder": "Ajouter un type de visualisation"
+        },
+        "date_group": {
+          "label": "Groupe de dates",
+          "placeholder": "Ajouter un groupe de dates"
+        },
+        "grouping": "Groupement",
+        "group_by": "Grouper par",
+        "stacking": "Empilage",
+        "stack_by": "Empiler par",
+        "daily": "Quotidien",
+        "weekly": "Hebdomadaire",
+        "monthly": "Mensuel",
+        "yearly": "Annuel",
+        "work_item_count": "Nombre d'éléments de travail",
+        "estimate_point": "Point d'estimation",
+        "pending_work_item": "Éléments de travail en attente",
+        "completed_work_item": "Éléments de travail terminés",
+        "in_progress_work_item": "Éléments de travail en cours",
+        "blocked_work_item": "Éléments de travail bloqués",
+        "work_item_due_this_week": "Éléments de travail à échéance cette semaine",
+        "work_item_due_today": "Éléments de travail à échéance aujourd'hui",
+        "color_scheme": {
+          "label": "Schéma de couleurs",
+          "placeholder": "Ajouter un schéma de couleurs"
+        },
+        "smoothing": "Lissage",
+        "markers": "Marqueurs",
+        "legends": "Légendes",
+        "tooltips": "Infobulles",
+        "opacity": {
+          "label": "Opacité",
+          "placeholder": "Ajouter une opacité"
+        },
+        "border": "Bordure",
+        "widget_configuration": "Configuration du widget",
+        "configure_widget": "Configurer le widget",
+        "guides": "Guides",
+        "style": "Style",
+        "area_appearance": "Apparence de la zone",
+        "comparison_line_appearance": "Apparence de ligne de comparaison",
+        "add_property": "Ajouter une propriété",
+        "add_metric": "Ajouter une métrique"
+      },
+      "not_configured_state": {
+        "x_axis_property": "Il manque une propriété pour l'axe X",
+        "y_axis_metric": "Il manque une propriété pour l'axe Y",
+        "group_by": "Il manque une propriété pour le groupement",
+        "ask_admin": "Demandez à votre administrateur de configurer ce widget"
+      }
+    },
+    "empty_state": {
+      "dashboards_list": {
+        "title": "Visualisez les progrès dans les widgets, combinez-les dans des tableaux de bord et revenez à tout moment pour les dernières mises à jour.",
+        "description": "Construisez vos tableaux de bord avec des Widgets Personnalisés qui affichent vos données dans la portée que vous spécifiez. Obtenez des tableaux de bord pour tout votre travail à travers les projets et les équipes et partagez des liens permanents avec les parties prenantes pour un suivi à la demande."
+      },
+      "widgets_list": {
+        "title": "Visualisez vos données comme vous le souhaitez.",
+        "description": "Utilisez des lignes, des barres, des camemberts et d'autres formats pour voir vos données comme vous le souhaitez à partir des sources que vous spécifiez."
       }
     }
   },

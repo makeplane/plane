@@ -594,6 +594,7 @@ body {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
+  line-clamp: 1;
 }
 
 /* popover2 styling */
@@ -931,5 +932,124 @@ html.todesktop .header button {
     border-radius: 10px;
     padding: 20px;
     font-family: inherit;
+  }
+}
+
+/* react-grid-layout */
+.react-grid-item {
+  .react-resizable-handle {
+    position: absolute;
+    height: 8px !important;
+    width: 8px !important;
+    background: rgba(var(--color-border-400)) !important;
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+
+    &.react-resizable-handle-nw {
+      top: 0 !important;
+      left: 0 !important;
+      transform: translate(-50%, -50%) !important;
+      cursor: nwse-resize !important;
+    }
+    &.react-resizable-handle-ne {
+      top: 0 !important;
+      right: 0 !important;
+      transform: translate(50%, -50%) !important;
+      cursor: nesw-resize !important;
+    }
+    &.react-resizable-handle-se {
+      bottom: 0 !important;
+      right: 0 !important;
+      transform: translate(50%, 50%) !important;
+      cursor: nwse-resize !important;
+    }
+    &.react-resizable-handle-sw {
+      bottom: 0 !important;
+      left: 0 !important;
+      transform: translate(-50%, 50%) !important;
+      cursor: nesw-resize !important;
+    }
+
+    &::after {
+      display: none !important;
+    }
+  }
+
+  &:hover {
+    .react-resizable-handle {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    &:not(.resizing) .dashboard-widget-item:not(.selected) {
+      border-color: rgba(var(--color-border-400)) !important;
+    }
+  }
+
+  &.resizing {
+    .react-resizable-handle {
+      opacity: 1;
+      pointer-events: all;
+      background: rgba(var(--color-primary-100)) !important;
+    }
+
+    .dashboard-widget-item {
+      border-color: rgba(var(--color-primary-100)) !important;
+    }
+  }
+
+  .dashboard-widget-item.selected ~ .react-resizable-handle {
+    opacity: 1;
+    pointer-events: all;
+    background: rgba(var(--color-primary-100)) !important;
+  }
+}
+
+.react-grid-placeholder {
+  background: rgba(var(--color-primary-100), 0.3) !important;
+  border-radius: 4px;
+  transition: 0.2s all ease;
+}
+/* end react-grid-layout */
+
+input.hide-arrows {
+  &[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+input[type="color"].custom-color-picker {
+  appearance: none;
+  --moz-appearance: none;
+  --webkit-appearance: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  &::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+
+  &::-webkit-color-swatch {
+    border: 0;
+    border-radius: 0;
+  }
+
+  &::-moz-color-swatch,
+  &::-moz-focus-inner {
+    border: 0;
+  }
+
+  &::-moz-focus-inner {
+    padding: 0;
   }
 }

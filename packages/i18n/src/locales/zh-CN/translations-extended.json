@@ -912,29 +912,163 @@
     "widget": {
       "chart_types": {
         "bar_chart": {
-          "short_label": "柱形",
-          "long_label": "柱形图"
+          "short_label": "柱状",
+          "long_label": "柱状图",
+          "chart_models": {
+            "basic": "基础",
+            "stacked": "堆叠",
+            "grouped": "分组"
+          },
+          "orientation": {
+            "label": "方向",
+            "horizontal": "水平",
+            "vertical": "垂直",
+            "placeholder": "添加方向"
+          }
         },
         "line_chart": {
           "short_label": "线形",
-          "long_label": "线形图"
+          "long_label": "线形图",
+          "chart_models": {
+            "basic": "基础",
+            "multi_line": "多线"
+          },
+          "line_color": "线条颜色",
+          "line_type": {
+            "label": "线型",
+            "solid": "实线",
+            "dashed": "虚线",
+            "placeholder": "添加线型"
+          }
         },
         "area_chart": {
           "short_label": "区域",
-          "long_label": "区域图"
+          "long_label": "区域图",
+          "chart_models": {
+            "basic": "基础",
+            "stacked": "堆叠",
+            "comparison": "对比"
+          },
+          "fill_color": "填充颜色"
         },
         "donut_chart": {
           "short_label": "环形",
-          "long_label": "环形图"
+          "long_label": "环形图",
+          "chart_models": {
+            "basic": "基础",
+            "progress": "进度"
+          },
+          "center_value": "中心值",
+          "completed_color": "完成颜色"
         },
         "pie_chart": {
           "short_label": "饼形",
-          "long_label": "饼形图"
+          "long_label": "饼形图",
+          "chart_models": {
+            "basic": "基础"
+          },
+          "group": {
+            "label": "分组切片",
+            "group_thin_pieces": "分组细小切片",
+            "minimum_threshold": {
+              "label": "最小阈值",
+              "placeholder": "添加阈值"
+            },
+            "name_group": {
+              "label": "组名",
+              "placeholder": "\"小于5%\""
+            }
+          },
+          "show_values": "显示值",
+          "value_type": {
+            "percentage": "百分比",
+            "count": "计数"
+          }
         },
         "text": {
           "short_label": "文本",
-          "long_label": "文本"
+          "long_label": "文本",
+          "alignment": {
+            "label": "文本对齐",
+            "left": "左对齐",
+            "center": "居中",
+            "right": "右对齐",
+            "placeholder": "添加文本对齐"
+          }
         }
+      },
+      "color_palettes": {
+        "modern_tech": "现代科技",
+        "ocean_deep": "深海",
+        "sunset_vibes": "日落氛围"
+      },
+      "common": {
+        "widget_title": {
+          "label": "组件标题",
+          "placeholder": "例如，\"昨日待办\", \"全部完成\""
+        },
+        "chart_type": "图表类型",
+        "visualization_type": {
+          "label": "可视化类型",
+          "placeholder": "添加可视化类型"
+        },
+        "date_group": {
+          "label": "日期分组",
+          "placeholder": "添加日期分组"
+        },
+        "grouping": "分组",
+        "group_by": "分组依据",
+        "stacking": "堆叠",
+        "stack_by": "堆叠依据",
+        "daily": "每日",
+        "weekly": "每周",
+        "monthly": "每月",
+        "yearly": "每年",
+        "work_item_count": "工作项计数",
+        "estimate_point": "估算点数",
+        "pending_work_item": "待处理工作项",
+        "completed_work_item": "已完成工作项",
+        "in_progress_work_item": "进行中工作项",
+        "blocked_work_item": "已阻塞工作项",
+        "work_item_due_this_week": "本周到期工作项",
+        "work_item_due_today": "今日到期工作项",
+        "color_scheme": {
+          "label": "配色方案",
+          "placeholder": "添加配色方案"
+        },
+        "smoothing": "平滑",
+        "markers": "标记",
+        "legends": "图例",
+        "tooltips": "提示框",
+        "opacity": {
+          "label": "不透明度",
+          "placeholder": "添加不透明度"
+        },
+        "border": "边框",
+        "widget_configuration": "组件配置",
+        "configure_widget": "配置组件",
+        "guides": "指南",
+        "style": "样式",
+        "area_appearance": "区域外观",
+        "comparison_line_appearance": "比较线外观",
+        "add_property": "添加属性",
+        "add_metric": "添加指标"
+      },
+      "not_configured_state": {
+        "x_axis_property": "X轴缺少属性",
+        "y_axis_metric": "Y轴缺少属性",
+        "group_by": "分组依据缺少属性",
+        "ask_admin": "请联系管理员配置此组件"
+      }
+    },
+    "empty_state": {
+      "dashboards_list": {
+        "title": "在组件中可视化进度，在仪表板中组合它们，随时回来查看最新信息。",
+        "description": "使用自定义组件构建你的仪表板，在你指定的范围内显示数据。获取跨项目和团队的所有工作的仪表板，并与利益相关者共享永久链接以进行按需跟踪。"
+      },
+      "widgets_list": {
+        "title": "按照你想要的方式可视化数据。",
+        "description": "使用折线、柱状、饼图和其他格式，从你指定的数据源以你想要的方式查看数据。"
       }
     }
   },

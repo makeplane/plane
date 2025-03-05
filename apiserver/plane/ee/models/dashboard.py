@@ -3,6 +3,7 @@ from django.db import models
 
 from plane.db.models import BaseModel, ProjectBaseModel
 
+
 class Dashboard(BaseModel):
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="dashboard"
@@ -32,6 +33,7 @@ class DashboardProject(ProjectBaseModel):
     dashboard = models.ForeignKey(
         Dashboard, on_delete=models.CASCADE, related_name="dashboard_projects"
     )
+
     class Meta:
         unique_together = ("dashboard", "project", "deleted_at")
         constraints = [
@@ -74,14 +76,13 @@ class DashboardQuickFilter(BaseModel):
         verbose_name_plural = "Dashboard Quick Filters"
         db_table = "dashboard_quick_filters"
         ordering = ("-created_at",)
-    
+
     def __str__(self):
         """Return name of the dashboard quick filter"""
         return f"{self.dashboard.name} {self.name}"
 
 
 class Widget(BaseModel):
-
     class ChartTypeEnum(models.TextChoices):
         BAR_CHART = "BAR_CHART", "Bar Chart"
         LINE_CHART = "LINE_CHART", "Line Chart"
@@ -98,7 +99,7 @@ class Widget(BaseModel):
         COMPARISON = "COMPARISON", "Comparison"
         PROGRESS = "PROGRESS", "Progress"
 
-    class XAxisPropertyEnum(models.TextChoices):
+    class PropertyEnum(models.TextChoices):
         STATES = "STATES", "States"
         STATE_GROUPS = "STATE_GROUPS", "State Groups"
         LABELS = "LABELS", "Labels"
@@ -121,6 +122,25 @@ class Widget(BaseModel):
     class YAxisMetricEnum(models.TextChoices):
         WORK_ITEM_COUNT = "WORK_ITEM_COUNT", "Work Item Count"
         ESTIMATE_POINT_COUNT = "ESTIMATE_POINT_COUNT", "Estimate Point Count"
+
+        PENDING_WORK_ITEM_COUNT = "PENDING_WORK_ITEM_COUNT", "Pending Work Item Count"
+        COMPLETED_WORK_ITEM_COUNT = (
+            "COMPLETED_WORK_ITEM_COUNT",
+            "Completed Work Item Count",
+        )
+        IN_PROGRESS_WORK_ITEM_COUNT = (
+            "IN_PROGRESS_WORK_ITEM_COUNT",
+            "In Progress Work Item Count",
+        )
+        WORK_ITEM_DUE_THIS_WEEK_COUNT = (
+            "WORK_ITEM_DUE_THIS_WEEK_COUNT",
+            "Work Item Due This Week Count",
+        )
+        WORK_ITEM_DUE_TODAY_COUNT = (
+            "WORK_ITEM_DUE_TODAY_COUNT",
+            "Work Item Due Today Count",
+        )
+        BLOCKED_WORK_ITEM_COUNT = "BLOCKED_WORK_ITEM_COUNT", "Blocked Work Item Count"
 
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="widgets"

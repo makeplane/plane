@@ -54,6 +54,12 @@ export const EXTENDED_WORKSPACE_SETTINGS = {
 };
 
 export const EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {
+  dashboards: {
+    key: "dashboards",
+    labelTranslationKey: "workspace_dashboards",
+    href: `/dashboards/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+  },
   "active-cycles": {
     key: "active_cycles",
     labelTranslationKey: "cycles",

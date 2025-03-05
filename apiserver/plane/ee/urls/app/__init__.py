@@ -1,5 +1,6 @@
 from .ai import urlpatterns as ai_patterns
 from .cycle import urlpatterns as cycles_patterns
+from .dashboard import urlpatterns as dashboard_patterns
 from .draft import urlpatterns as draft_patterns
 from .epic import urlpatterns as epic_patterns
 from .issue import urlpatterns as issue_patterns
@@ -20,6 +21,7 @@ from .job import urlpatterns as import_job_patterns
 urlpatterns = [
     *ai_patterns,
     *cycles_patterns,
+    *dashboard_patterns,
     *draft_patterns,
     *epic_patterns,
     *issue_patterns,

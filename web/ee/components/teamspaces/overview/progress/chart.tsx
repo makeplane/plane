@@ -16,17 +16,17 @@ import { useTeamspaceAnalytics } from "@/plane-web/hooks/store/teamspaces/use-te
 const bars: TBarItem<EProgressDataKeys>[] = [
   {
     key: EProgressDataKeys.COMPLETED,
-    fillClassName: "fill-[#004EFF]",
+    label: "Completed",
+    fill: "#004EFF",
     textClassName: "text-white",
-    dotClassName: "bg-[#004EFF]",
     showPercentage: true,
     stackId: "bar-one",
   },
   {
     key: EProgressDataKeys.PENDING,
-    fillClassName: "fill-custom-background-80/80",
+    label: "Pending",
+    fill: "rgba(var(--color-background-80), 0.8)",
     textClassName: "text-custom-text-200",
-    dotClassName: "bg-custom-background-80/80",
     stackId: "bar-one",
   },
 ];
@@ -100,6 +100,7 @@ export const TeamspaceProgressChart: React.FC<TTeamspaceProgressChartProps> = ob
         </Loader>
       ) : (
         <BarChart
+          className="w-full h-96"
           data={modifiedData}
           bars={bars}
           xAxis={{

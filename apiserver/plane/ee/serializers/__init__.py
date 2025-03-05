@@ -75,6 +75,11 @@ from .app.workflow import (
     WorkflowTransitionActorSerializer,
     WorkflowTransitionActivitySerializer,
 )
+from .app.dashboard import (
+    DashboardSerializer,
+    DashboardQuickFilterSerializer,
+    WidgetSerializer,
+)
 
 # Space imports
 from .space.page import PagePublicSerializer, PagePublicMetaSerializer

@@ -35,7 +35,7 @@ import {
 // store
 import { CoreRootStore } from "@/store/root.store";
 // dashboards
-import { IWorkspaceDashboardsStore, WorkspaceDashboardsStore } from "./dashboards/workspace-dashboards.store";
+import { BaseDashboardsStore, IBaseDashboardsStore } from "./dashboards/base-dashboards.store";
 // importers
 import {
   IJiraStore,
@@ -103,7 +103,7 @@ export class RootStore extends CoreRootStore {
   initiativeFilterStore: IInitiativeFilterStore;
   initiativeStore: IInitiativeStore;
   // dashboards
-  workspaceDashboards: IWorkspaceDashboardsStore;
+  baseDashboards: IBaseDashboardsStore;
   // epics
   epicAnalytics: IEpicAnalyticStore;
 
@@ -141,7 +141,7 @@ export class RootStore extends CoreRootStore {
     this.initiativeFilterStore = new InitiativeFilterStore(this);
     this.initiativeStore = new InitiativeStore(this, this.initiativeFilterStore);
     // dashboards
-    this.workspaceDashboards = new WorkspaceDashboardsStore(this);
+    this.baseDashboards = new BaseDashboardsStore(this);
     // epics
     this.epicAnalytics = new EpicAnalytics(this);
   }
@@ -179,7 +179,7 @@ export class RootStore extends CoreRootStore {
     this.initiativeFilterStore = new InitiativeFilterStore(this);
     this.initiativeStore = new InitiativeStore(this, this.initiativeFilterStore);
     // dashboards
-    this.workspaceDashboards = new WorkspaceDashboardsStore(this);
+    this.baseDashboards = new BaseDashboardsStore(this);
     // epics
     this.epicAnalytics = new EpicAnalytics(this);
   }

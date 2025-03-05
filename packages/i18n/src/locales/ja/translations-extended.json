@@ -913,28 +913,162 @@
       "chart_types": {
         "bar_chart": {
           "short_label": "バー",
-          "long_label": "バー チャート"
+          "long_label": "バー チャート",
+          "chart_models": {
+            "basic": "ベーシック",
+            "stacked": "スタックド",
+            "grouped": "グループド"
+          },
+          "orientation": {
+            "label": "オリエンテーション",
+            "horizontal": "ホリゾンタル",
+            "vertical": "バーティカル",
+            "placeholder": "オリエンテーション アッド"
+          }
         },
         "line_chart": {
           "short_label": "ライン",
-          "long_label": "ライン チャート"
+          "long_label": "ライン チャート",
+          "chart_models": {
+            "basic": "ベーシック",
+            "multi_line": "マルチライン"
+          },
+          "line_color": "ライン カラー",
+          "line_type": {
+            "label": "ライン タイプ",
+            "solid": "ソリッド",
+            "dashed": "ダッシュド",
+            "placeholder": "ライン タイプ アッド"
+          }
         },
         "area_chart": {
           "short_label": "エリア",
-          "long_label": "エリア チャート"
+          "long_label": "エリア チャート",
+          "chart_models": {
+            "basic": "ベーシック",
+            "stacked": "スタックド",
+            "comparison": "コンパリソン"
+          },
+          "fill_color": "フィル カラー"
         },
         "donut_chart": {
           "short_label": "ドーナツ",
-          "long_label": "ドーナツ チャート"
+          "long_label": "ドーナツ チャート",
+          "chart_models": {
+            "basic": "ベーシック",
+            "progress": "プログレス"
+          },
+          "center_value": "センター バリュー",
+          "completed_color": "コンプリーテッド カラー"
         },
         "pie_chart": {
           "short_label": "パイ",
-          "long_label": "パイ チャート"
+          "long_label": "パイ チャート",
+          "chart_models": {
+            "basic": "ベーシック"
+          },
+          "group": {
+            "label": "グループド ピーセズ",
+            "group_thin_pieces": "グループ シン ピーセズ",
+            "minimum_threshold": {
+              "label": "ミニマム スレショルド",
+              "placeholder": "スレショルド アッド"
+            },
+            "name_group": {
+              "label": "ネーム グループ",
+              "placeholder": "\"レス ザン 5%\""
+            }
+          },
+          "show_values": "ショー バリューズ",
+          "value_type": {
+            "percentage": "パーセンテージ",
+            "count": "カウント"
+          }
         },
         "text": {
           "short_label": "テキスト",
-          "long_label": "テキスト"
+          "long_label": "テキスト",
+          "alignment": {
+            "label": "テキスト アラインメント",
+            "left": "レフト",
+            "center": "センター",
+            "right": "ライト",
+            "placeholder": "テキスト アラインメント アッド"
+          }
         }
+      },
+      "color_palettes": {
+        "modern_tech": "モダン テック",
+        "ocean_deep": "オーシャン ディープ",
+        "sunset_vibes": "サンセット バイブス"
+      },
+      "common": {
+        "widget_title": {
+          "label": "ウィジェット タイトル",
+          "placeholder": "例: \"トゥードゥー イェスタデイ\", \"オール コンプリート\""
+        },
+        "chart_type": "チャート タイプ",
+        "visualization_type": {
+          "label": "ビジュアライゼーション タイプ",
+          "placeholder": "ビジュアライゼーション タイプ アッド"
+        },
+        "date_group": {
+          "label": "デート グループ",
+          "placeholder": "デート グループ アッド"
+        },
+        "grouping": "グルーピング",
+        "group_by": "グループ バイ",
+        "stacking": "スタッキング",
+        "stack_by": "スタック バイ",
+        "daily": "デイリー",
+        "weekly": "ウィークリー",
+        "monthly": "マンスリー",
+        "yearly": "イヤーリー",
+        "work_item_count": "ワーク アイテム カウント",
+        "estimate_point": "エスティメート ポイント",
+        "pending_work_item": "ペンディング ワーク アイテムズ",
+        "completed_work_item": "コンプリーテッド ワーク アイテムズ",
+        "in_progress_work_item": "イン プログレス ワーク アイテムズ",
+        "blocked_work_item": "ブロックド ワーク アイテムズ",
+        "work_item_due_this_week": "ワーク アイテムズ デュー ディス ウィーク",
+        "work_item_due_today": "ワーク アイテムズ デュー トゥデイ",
+        "color_scheme": {
+          "label": "カラー スキーム",
+          "placeholder": "カラー スキーム アッド"
+        },
+        "smoothing": "スムージング",
+        "markers": "マーカーズ",
+        "legends": "レジェンズ",
+        "tooltips": "ツールチップス",
+        "opacity": {
+          "label": "オパシティ",
+          "placeholder": "オパシティ アッド"
+        },
+        "border": "ボーダー",
+        "widget_configuration": "ウィジェット コンフィギュレーション",
+        "configure_widget": "コンフィギュア ウィジェット",
+        "guides": "ガイズ",
+        "style": "スタイル",
+        "area_appearance": "エリア アピアランス",
+        "comparison_line_appearance": "コンペア ライン アピアランス",
+        "add_property": "アッド プロパティ",
+        "add_metric": "アッド メトリック"
+      },
+      "not_configured_state": {
+        "x_axis_property": "エックス アクシス イズ ミッシング ア プロパティ",
+        "y_axis_metric": "ワイ アクシス イズ ミッシング ア プロパティ",
+        "group_by": "グループ バイ イズ ミッシング ア プロパティ",
+        "ask_admin": "アスク ユア アドミン トゥ コンフィギュア ディス ウィジェット"
+      }
+    },
+    "empty_state": {
+      "dashboards_list": {
+        "title": "ウィジェットでプログレスをビジュアライズし、ダッシュボードでコンバインし、レーテストのためにいつでもカムバック。",
+        "description": "スペシファイしたスコープでデータをショーするカスタム ウィジェットでダッシュボードをビルド。プロジェクトとチームのアクロスのすべてのワークのダッシュボードをゲットし、オンデマンド トラッキングのためにステークホルダーとパーマリンクをシェア。"
+      },
+      "widgets_list": {
+        "title": "ウォントするウェイであなたのデータをビジュアライズ。",
+        "description": "ラインズ、バーズ、パイズ、アンド アザー フォーマットを ユーズして、スペシファイしたソースからウォントするウェイであなたのデータをシー。"
       }
     }
   },

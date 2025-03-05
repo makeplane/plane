@@ -52,9 +52,9 @@
       }
     },
     "customers": {
-        "heading": "Clientes",
-        "settings_heading": "Gestiona el trabajo por atributos del cliente.",
-        "settings_sub_heading": "Comienza con los atributos esenciales del cliente en Plane, intégralo más tarde con tu CRM o herramienta de soporte, y gestiona el trabajo por atributos del cliente."
+      "heading": "Clientes",
+      "settings_heading": "Gestiona el trabajo por atributos del cliente.",
+      "settings_sub_heading": "Comienza con los atributos esenciales del cliente en Plane, intégralo más tarde con tu CRM o herramienta de soporte, y gestiona el trabajo por atributos del cliente."
     },
     "empty_state": {
       "integrations": {
@@ -913,28 +913,162 @@
       "chart_types": {
         "bar_chart": {
           "short_label": "Barra",
-          "long_label": "Gráfico de barras"
+          "long_label": "Gráfico de barras",
+          "chart_models": {
+            "basic": "Básico",
+            "stacked": "Apilado",
+            "grouped": "Agrupado"
+          },
+          "orientation": {
+            "label": "Orientación",
+            "horizontal": "Horizontal",
+            "vertical": "Vertical",
+            "placeholder": "Añadir orientación"
+          }
         },
         "line_chart": {
           "short_label": "Línea",
-          "long_label": "Gráfico de líneas"
+          "long_label": "Gráfico de líneas",
+          "chart_models": {
+            "basic": "Básico",
+            "multi_line": "Multi-línea"
+          },
+          "line_color": "Color de línea",
+          "line_type": {
+            "label": "Tipo de línea",
+            "solid": "Sólida",
+            "dashed": "Discontinua",
+            "placeholder": "Añadir tipo de línea"
+          }
         },
         "area_chart": {
           "short_label": "Área",
-          "long_label": "Gráfico de área"
+          "long_label": "Gráfico de área",
+          "chart_models": {
+            "basic": "Básico",
+            "stacked": "Apilado",
+            "comparison": "Comparación"
+          },
+          "fill_color": "Color de relleno"
         },
         "donut_chart": {
           "short_label": "Dona",
-          "long_label": "Gráfico de dona"
+          "long_label": "Gráfico de dona",
+          "chart_models": {
+            "basic": "Básico",
+            "progress": "Progreso"
+          },
+          "center_value": "Valor central",
+          "completed_color": "Color de completado"
         },
         "pie_chart": {
           "short_label": "Circular",
-          "long_label": "Gráfico circular"
+          "long_label": "Gráfico circular",
+          "chart_models": {
+            "basic": "Básico"
+          },
+          "group": {
+            "label": "Piezas agrupadas",
+            "group_thin_pieces": "Agrupar piezas delgadas",
+            "minimum_threshold": {
+              "label": "Umbral mínimo",
+              "placeholder": "Añadir umbral"
+            },
+            "name_group": {
+              "label": "Nombre del grupo",
+              "placeholder": "\"Menos del 5%\""
+            }
+          },
+          "show_values": "Mostrar valores",
+          "value_type": {
+            "percentage": "Porcentaje",
+            "count": "Conteo"
+          }
         },
         "text": {
           "short_label": "Texto",
-          "long_label": "Texto"
+          "long_label": "Texto",
+          "alignment": {
+            "label": "Alineación de texto",
+            "left": "Izquierda",
+            "center": "Centro",
+            "right": "Derecha",
+            "placeholder": "Añadir alineación de texto"
+          }
         }
+      },
+      "color_palettes": {
+        "modern_tech": "Tecnología moderna",
+        "ocean_deep": "Océano profundo",
+        "sunset_vibes": "Ambiente atardecer"
+      },
+      "common": {
+        "widget_title": {
+          "label": "Título del widget",
+          "placeholder": "p.ej., \"Por hacer ayer\", \"Todos Completados\""
+        },
+        "chart_type": "Tipo de gráfico",
+        "visualization_type": {
+          "label": "Tipo de visualización",
+          "placeholder": "Añadir tipo de visualización"
+        },
+        "date_group": {
+          "label": "Grupo de fecha",
+          "placeholder": "Añadir grupo de fecha"
+        },
+        "grouping": "Agrupación",
+        "group_by": "Agrupar por",
+        "stacking": "Apilamiento",
+        "stack_by": "Apilar por",
+        "daily": "Diario",
+        "weekly": "Semanal",
+        "monthly": "Mensual",
+        "yearly": "Anual",
+        "work_item_count": "Conteo de elementos de trabajo",
+        "estimate_point": "Punto estimado",
+        "pending_work_item": "Elementos de trabajo pendientes",
+        "completed_work_item": "Elementos de trabajo completados",
+        "in_progress_work_item": "Elementos de trabajo en progreso",
+        "blocked_work_item": "Elementos de trabajo bloqueados",
+        "work_item_due_this_week": "Elementos de trabajo que vencen esta semana",
+        "work_item_due_today": "Elementos de trabajo que vencen hoy",
+        "color_scheme": {
+          "label": "Esquema de color",
+          "placeholder": "Añadir esquema de color"
+        },
+        "smoothing": "Suavizado",
+        "markers": "Marcadores",
+        "legends": "Leyendas",
+        "tooltips": "Tooltips",
+        "opacity": {
+          "label": "Opacidad",
+          "placeholder": "Añadir opacidad"
+        },
+        "border": "Borde",
+        "widget_configuration": "Configuración del widget",
+        "configure_widget": "Configurar widget",
+        "guides": "Guías",
+        "style": "Estilo",
+        "area_appearance": "Apariencia del área",
+        "comparison_line_appearance": "Apariencia de línea de comparación",
+        "add_property": "Añadir propiedad",
+        "add_metric": "Añadir métrica"
+      },
+      "not_configured_state": {
+        "x_axis_property": "Falta una propiedad en el eje X",
+        "y_axis_metric": "Falta una propiedad en el eje Y",
+        "group_by": "Falta una propiedad en la agrupación",
+        "ask_admin": "Solicite a su administrador que configure este widget"
+      }
+    },
+    "empty_state": {
+      "dashboards_list": {
+        "title": "Visualiza el progreso en widgets, combínalos en dashboards y regresa en cualquier momento para ver lo último.",
+        "description": "Construye tus dashboards con Widgets Personalizados que muestran tus datos en el alcance que especifiques. Obtén dashboards para todo tu trabajo a través de proyectos y equipos y comparte enlaces permanentes con las partes interesadas para seguimiento bajo demanda."
+      },
+      "widgets_list": {
+        "title": "Visualiza tus datos como quieras.",
+        "description": "Usa líneas, barras, gráficos circulares y otros formatos para ver tus datos de la manera que desees desde las fuentes que especifiques."
       }
     }
   },

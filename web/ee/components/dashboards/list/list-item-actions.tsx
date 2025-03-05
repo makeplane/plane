@@ -7,18 +7,20 @@ import { getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store";
 // plane web store
-import { IWorkspaceDashboardInstance } from "@/plane-web/store/dashboards/dashboard";
+import { IDashboardInstance } from "@/plane-web/store/dashboards/dashboard";
+import { DashboardQuickActions } from "../quick-actions";
 
 type Props = {
-  dashboardDetails: IWorkspaceDashboardInstance;
+  dashboardDetails: IDashboardInstance;
+  parentRef: React.RefObject<HTMLElement>;
 };
 
-export const WorkspaceDashboardListItemActions: React.FC<Props> = observer((props) => {
-  const { dashboardDetails } = props;
+export const DashboardListItemActions: React.FC<Props> = observer((props) => {
+  const { dashboardDetails, parentRef } = props;
   // derived values
   const { getUserDetails } = useMember();
   // derived values
-  const { created_at, created_by, is_favorite, canCurrentUserFavoriteDashboard } = dashboardDetails;
+  const { created_at, created_by, id, is_favorite, canCurrentUserFavoriteDashboard } = dashboardDetails;
   const creatorDetails = getUserDetails(created_by ?? "");
 
   return (
@@ -54,6 +56,7 @@ export const WorkspaceDashboardListItemActions: React.FC<Props> = observer((prop
           selected={!!is_favorite}
         />
       )}
+      {id && <DashboardQuickActions dashboardId={id} parentRef={parentRef} />}
     </>
   );
 });

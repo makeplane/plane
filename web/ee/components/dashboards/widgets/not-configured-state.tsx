@@ -1,0 +1,80 @@
+import { observer } from "mobx-react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/ui";
+// components
+import { SimpleEmptyState } from "@/components/empty-state";
+// hooks
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// plane web hooks
+import { useDashboards } from "@/plane-web/hooks/store";
+// chart types
+import { commonWidgetClassName } from "./";
+
+type Props = {
+  dashboardId: string;
+  widgetId: string;
+};
+
+export const DashboardWidgetNotConfiguredState: React.FC<Props> = observer((props) => {
+  const { dashboardId, widgetId } = props;
+  // store hooks
+  const { getDashboardById } = useDashboards();
+  // derived values
+  const dashboardDetails = getDashboardById(dashboardId);
+  const { isViewModeEnabled, toggleViewingMode } = dashboardDetails ?? {};
+  const { getWidgetById, isEditingWidget, toggleEditWidget } = dashboardDetails?.widgetsStore ?? {};
+  const widget = getWidgetById?.(widgetId);
+  const { canCurrentUserEditWidget, chart_type, isConfigurationMissing, height } = widget ?? {};
+  const isWidgetSelected = isEditingWidget === widgetId;
+  const shouldShowIcon = height !== 1;
+  // translation
+  const { t } = useTranslation();
+  // resolved asset
+  const resolvedPath = useResolvedAssetPath({
+    basePath: `/empty-state/dashboards/widgets/charts/${chart_type?.toLowerCase()}`,
+  });
+
+  const handleConfigureWidget = () => {
+    toggleEditWidget?.(widgetId);
+    toggleViewingMode?.(false);
+  };
+
+  return (
+    <div
+      className={commonWidgetClassName({
+        isSelected: isWidgetSelected,
+        className: "grid place-items-center",
+      })}
+    >
+      <div className="flex flex-col items-center gap-3">
+        <SimpleEmptyState
+          title={t(`dashboards.widget.not_configured_state.${isConfigurationMissing}`)}
+          assetPath={shouldShowIcon ? resolvedPath : undefined}
+        />
+        {canCurrentUserEditWidget ? (
+          isViewModeEnabled ? (
+            <p className="text-sm text-custom-text-400">
+              Switch to{" "}
+              <Button
+                onClick={handleConfigureWidget}
+                variant="link-primary"
+                size="sm"
+                className="w-fit inline-flex p-0"
+              >
+                Edit mode
+              </Button>{" "}
+              to configure your widget.
+            </p>
+          ) : (
+            <Button onClick={handleConfigureWidget} variant="link-primary" size="sm" className="w-fit">
+              {t("dashboards.widget.common.configure_widget")}
+            </Button>
+          )
+        ) : (
+          t("dashboards.widget.not_configured_state.ask_admin")
+        )}
+      </div>
+    </div>
+  );
+});

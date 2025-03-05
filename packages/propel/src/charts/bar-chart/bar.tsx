@@ -50,8 +50,8 @@ export const CustomBar = React.memo((props: any) => {
           Q${x + width},${y} ${x + width - BAR_BORDER_RADIUS},${y}
           L${x + BAR_BORDER_RADIUS},${y}
         `}
-        className={cn("transition-colors duration-200", fill)}
-        fill="currentColor"
+        className="transition-colors duration-200"
+        fill={fill}
       />
       {showText && (
         <text

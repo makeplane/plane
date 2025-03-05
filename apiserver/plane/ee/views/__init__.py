@@ -60,6 +60,7 @@ from plane.ee.views.app.issue_property import IssuePropertyEndpoint
 from plane.ee.views.app.intake import IntakeSettingEndpoint
 from plane.ee.views.app.epic import EpicViewSet, EpicLinkViewSet
 from plane.ee.views.app.inbox import InboxViewSet
+from plane.ee.views.app.dashboard import DashboardViewSet, DashboardQuickFilterEndpoint
 
 # Space imports
 from plane.ee.views.space.page import (

@@ -56,6 +56,8 @@ class FeatureFlag(Enum):
     MOVE_PAGES = "MOVE_PAGES"
     # cycle manual start and stop
     CYCLE_MANUAL_START_STOP = "CYCLE_MANUAL_START_STOP"
+    # Dashboards
+    DASHBOARDS = "DASHBOARDS"
 
 
 class AdminFeatureFlag(Enum):

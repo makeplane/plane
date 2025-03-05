@@ -35,3 +35,11 @@ from plane.ee.views.app.epic_property import (
     EpicPropertyActivityEndpoint,
     WorkspaceEpicTypeEndpoint,
 )
+
+from plane.ee.views.app.dashboard import (
+    DashboardViewSet,
+    DashboardQuickFilterEndpoint,
+    WidgetEndpoint,
+    WidgetListEndpoint,
+    BulkWidgetEndpoint,
+)

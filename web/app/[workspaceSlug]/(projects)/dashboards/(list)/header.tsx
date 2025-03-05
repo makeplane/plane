@@ -5,11 +5,13 @@ import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // plane web hooks
-import { useWorkspaceDashboards } from "@/plane-web/hooks/store";
+import { useDashboards } from "@/plane-web/hooks/store";
 
 export const WorkspaceDashboardsListHeader = observer(() => {
   // store hooks
-  const { toggleCreateUpdateModal } = useWorkspaceDashboards();
+  const {
+    workspaceDashboards: { toggleCreateUpdateModal },
+  } = useDashboards();
 
   return (
     <Header>

@@ -903,28 +903,172 @@
       "chart_types": {
         "bar_chart": {
           "short_label": "Bar",
-          "long_label": "Bar chart"
+          "long_label": "Bar chart",
+          "chart_models": {
+            "basic": "Basic",
+            "stacked": "Stacked",
+            "grouped": "Grouped"
+          },
+          "orientation": {
+            "label": "Orientation",
+            "horizontal": "Horizontal",
+            "vertical": "Vertical",
+            "placeholder": "Add orientation"
+          },
+          "bar_color": "Bar color"
         },
         "line_chart": {
           "short_label": "Line",
-          "long_label": "Line chart"
+          "long_label": "Line chart",
+          "chart_models": {
+            "basic": "Basic",
+            "multi_line": "Multi-line"
+          },
+          "line_color": "Line color",
+          "line_type": {
+            "label": "Line type",
+            "solid": "Solid",
+            "dashed": "Dashed",
+            "placeholder": "Add line type"
+          }
         },
         "area_chart": {
           "short_label": "Area",
-          "long_label": "Area chart"
+          "long_label": "Area chart",
+          "chart_models": {
+            "basic": "Basic",
+            "stacked": "Stacked",
+            "comparison": "Comparison"
+          },
+          "fill_color": "Fill color"
         },
         "donut_chart": {
           "short_label": "Donut",
-          "long_label": "Donut chart"
+          "long_label": "Donut chart",
+          "chart_models": {
+            "basic": "Basic",
+            "progress": "Progress"
+          },
+          "center_value": "Center value",
+          "completed_color": "Completed color"
         },
         "pie_chart": {
           "short_label": "Pie",
-          "long_label": "Pie chart"
+          "long_label": "Pie chart",
+          "chart_models": {
+            "basic": "Basic"
+          },
+          "group": {
+            "label": "Grouped pieces",
+            "group_thin_pieces": "Group thin pieces",
+            "minimum_threshold": {
+              "label": "Minimum threshold",
+              "placeholder": "Add threshold"
+            },
+            "name_group": {
+              "label": "Name group",
+              "placeholder": "\"Less than 5%\""
+            }
+          },
+          "show_values": "Show values",
+          "value_type": {
+            "percentage": "Percentage",
+            "count": "Count"
+          }
         },
         "text": {
           "short_label": "Text",
-          "long_label": "Text"
+          "long_label": "Text",
+          "alignment": {
+            "label": "Text alignment",
+            "left": "Left",
+            "center": "Center",
+            "right": "Right",
+            "placeholder": "Add text alignment"
+          },
+          "text_color": "Text color"
         }
+      },
+      "color_palettes": {
+        "modern_tech": "Modern tech",
+        "ocean_deep": "Ocean deep",
+        "sunset_vibes": "Sunset vibes"
+      },
+      "common": {
+        "widget_title": {
+          "label": "Widget title",
+          "placeholder": "e.g., \"To-do yesterday\", \"All Complete\""
+        },
+        "chart_type": "Chart type",
+        "visualization_type": {
+          "label": "Visualization type",
+          "placeholder": "Add visualization type"
+        },
+        "date_group": {
+          "label": "Date group",
+          "placeholder": "Add date group"
+        },
+        "grouping": "Grouping",
+        "group_by": "Group by",
+        "stacking": "Stacking",
+        "stack_by": "Stack by",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "yearly": "Yearly",
+        "work_item_count": "Work item count",
+        "estimate_point": "Estimate point",
+        "pending_work_item": "Pending work items",
+        "completed_work_item": "Completed work items",
+        "in_progress_work_item": "In progress work items",
+        "blocked_work_item": "Blocked work items",
+        "work_item_due_this_week": "Work items due this week",
+        "work_item_due_today": "Work items due today",
+        "color_scheme": {
+          "label": "Color scheme",
+          "placeholder": "Add color scheme"
+        },
+        "smoothing": "Smoothing",
+        "markers": "Markers",
+        "legends": "Legends",
+        "tooltips": "Tooltips",
+        "opacity": {
+          "label": "Opacity",
+          "placeholder": "Add opacity"
+        },
+        "border": "Border",
+        "widget_configuration": "Widget configuration",
+        "configure_widget": "Configure widget",
+        "guides": "Guides",
+        "style": "Style",
+        "area_appearance": "Area appearance",
+        "comparison_line_appearance": "Compare-line appearance",
+        "add_property": "Add property",
+        "add_metric": "Add metric"
+      },
+      "not_configured_state": {
+        "x_axis_property": "The x-axis is missing a property value.",
+        "y_axis_metric": "The widget is missing metric value.",
+        "group_by": "The group by is missing a property.",
+        "ask_admin": "Ask your admin to configure this widget."
+      }
+    },
+    "empty_state": {
+      "dashboards_list": {
+        "title": "Visualize data in widgets, build your dashboards with widgets, and see the latest on demand.",
+        "description": "Build your dashboards with Custom Widgets that show your data in the scope you specify. Get dashboards for all your work across projects and teams and share permalinks with stakeholders for on-demand tracking."
+      },
+      "dashboards_search": {
+        "title": "That doesn't match a dashboard's name.",
+        "description": "Make sure your query is right or try another query."
+      },
+      "widgets_list": {
+        "title": "Visualize your data how you want to.",
+        "description": "Use lines, bars, pies, and other formats to see your data\nthe way you want to from the sources you specify."
+      },
+      "widget_data": {
+        "title": "There is nothing to display per this widget's configs.",
+        "description": "Refresh to load the latest data or reconfigure this widget."
       }
     }
   },

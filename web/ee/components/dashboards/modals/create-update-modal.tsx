@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane types
-import { TWorkspaceDashboard } from "@plane/types";
+import { TDashboard } from "@plane/types";
 // plane ui
 import { Button, EModalPosition, EModalWidth, Input, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // components
@@ -10,24 +10,33 @@ import { Logo } from "@/components/common";
 import { ProjectDropdown } from "@/components/dropdowns";
 // hooks
 import { useProject } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
-import { useWorkspaceDashboards } from "@/plane-web/hooks/store";
+import { useDashboards } from "@/plane-web/hooks/store";
+import { useParams } from "next/navigation";
 
 type Props = {
-  data?: Partial<TWorkspaceDashboard>;
+  data?: Partial<TDashboard>;
   isOpen: boolean;
   onClose: () => void;
 };
 
-const defaultValues: Partial<TWorkspaceDashboard> = {
+const defaultValues: Partial<TDashboard> = {
   name: "",
   project_ids: [],
 };
 
 export const CreateUpdateWorkspaceDashboardModal: React.FC<Props> = observer((props) => {
   const { data, isOpen, onClose } = props;
+  // navigation
+  const { workspaceSlug } = useParams();
+  // app router
+  const router = useAppRouter();
   // store hooks
-  const { canCurrentUserCreateDashboard, createDashboard } = useWorkspaceDashboards();
+  const {
+    getDashboardById,
+    workspaceDashboards: { canCurrentUserCreateDashboard, createDashboard },
+  } = useDashboards();
   const { getProjectById } = useProject();
   // form info
   const {
@@ -35,7 +44,7 @@ export const CreateUpdateWorkspaceDashboardModal: React.FC<Props> = observer((pr
     formState: { errors, isSubmitting },
     handleSubmit,
     reset,
-  } = useForm<TWorkspaceDashboard>({
+  } = useForm<TDashboard>({
     defaultValues,
   });
   // derived value
@@ -48,10 +57,26 @@ export const CreateUpdateWorkspaceDashboardModal: React.FC<Props> = observer((pr
     }, 300);
   };
 
-  const handleCreate = async (data: Partial<TWorkspaceDashboard>) => {
+  const handleCreate = async (payload: Partial<TDashboard>) => {
     if (!canCurrentUserCreateDashboard) return;
+    return await createDashboard(payload);
+  };
+
+  const handleUpdate = async (payload: Partial<TDashboard>) => {
+    if (!isEditing || !data?.id) return;
+    const { updateDashboard } = getDashboardById(data.id) ?? {};
+    await updateDashboard?.(payload);
+  };
+
+  const handleFormSubmit = async (payload: Partial<TDashboard>) => {
     try {
-      await createDashboard(data);
+      if (isEditing) {
+        await handleUpdate(payload);
+      } else {
+        const res = await handleCreate(payload);
+        router.push(`/${workspaceSlug?.toString()}/dashboards/${res?.id}`);
+      }
+      handleClose();
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -73,7 +98,7 @@ export const CreateUpdateWorkspaceDashboardModal: React.FC<Props> = observer((pr
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
-      <form onSubmit={handleSubmit(handleCreate)}>
+      <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
           <h3 className="text-xl font-medium text-custom-text-200">{isEditing ? "Update" : "Create new"} dashboard</h3>
           <div className="space-y-3">
@@ -94,7 +119,6 @@ export const CreateUpdateWorkspaceDashboardModal: React.FC<Props> = observer((pr
                     placeholder="Title"
                     className="w-full text-base"
                     value={value}
-                    inputSize="md"
                     onChange={onChange}
                     hasError={Boolean(errors?.name)}
                     autoFocus

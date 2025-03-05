@@ -1,4 +1,4 @@
-import { BarChart2, Briefcase, Home, Inbox, Layers, PenSquare } from "lucide-react";
+import { BarChart2, Briefcase, Home, Inbox, Layers, LayoutGrid, PenSquare } from "lucide-react";
 import { ArchiveIcon, ContrastIcon, InitiativeIcon, PiChatLogo, TeamsIcon, UserActivityIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 
@@ -28,5 +28,7 @@ export const getSidebarNavigationItemIcon = (key: string, className: string = ""
       return <PenSquare className={cn("size-4 flex-shrink-0", className)} />;
     case "archives":
       return <ArchiveIcon className={cn("size-4 flex-shrink-0", className)} />;
+    case "dashboards":
+      return <LayoutGrid className={cn("size-4 flex-shrink-0", className)} />;
   }
 };

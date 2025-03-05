@@ -1,14 +1,17 @@
-// "use client";
+"use client";
 
-// // components
-// import { ContentWrapper } from "@/components/core";
+// components
+import { AppHeader, ContentWrapper, PageHead } from "@/components/core";
+import { WorkspaceDashboardDetailsHeader } from "./header";
 
-export default function DashboardDetailsLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
-
-  // return (
-  //   <>
-  //     <ContentWrapper>{children}</ContentWrapper>
-  //   </>
-  // );
+export default function WorkspaceDashboardDetailsLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <AppHeader header={<WorkspaceDashboardDetailsHeader />} />
+      <ContentWrapper>
+        <PageHead title="Dashboards" />
+        {children}
+      </ContentWrapper>
+    </>
+  );
 }

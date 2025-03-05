@@ -12,7 +12,7 @@ import { CreateUpdateInitiativeModal } from "@/plane-web/components/initiatives/
 import { CreateOrUpdateTeamspaceModal } from "@/plane-web/components/teamspaces/create-update";
 import { CreateUpdateTeamspaceViewModal } from "@/plane-web/components/teamspaces/views/modals/create-update";
 import { AddSeatsModal, RemoveUnusedSeatsModal } from "@/plane-web/components/workspace/billing/manage-seats";
-import { useWorkspaceDashboards, useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { useDashboards, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps) => {
   // router
@@ -34,10 +34,12 @@ export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps)
     toggleCreateInitiativeModal,
   } = useCommandPalette();
   const {
-    isCreateUpdateModalOpen: isWorkspaceDashboardModalOpen,
-    createUpdateModalPayload: workspaceDashboardModalPayload,
-    toggleCreateUpdateModal: toggleWorkspaceDashboardModal,
-  } = useWorkspaceDashboards();
+    workspaceDashboards: {
+      isCreateUpdateModalOpen: isWorkspaceDashboardModalOpen,
+      createUpdateModalPayload: workspaceDashboardModalPayload,
+      toggleCreateUpdateModal: toggleWorkspaceDashboardModal,
+    },
+  } = useDashboards();
   // derived values
   const isOfflineSubscription = subscriptionDetail?.is_offline_payment;
   const isProOrBusinessWorkspace =
