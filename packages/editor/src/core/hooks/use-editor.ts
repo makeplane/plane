@@ -111,7 +111,7 @@ export const useEditor = (props: CustomEditorProps) => {
     // value is null when intentionally passed where syncing is not yet
     // supported and value is undefined when the data from swr is not populated
     if (value == null) return;
-    if (editor && !editor.isDestroyed && !editor.storage.imageComponent.uploadInProgress) {
+    if (editor && !editor.isDestroyed && !editor.storage.imageComponent?.uploadInProgress) {
       try {
         editor.commands.setContent(value, false, { preserveWhitespace: "full" });
         if (editor.state.selection) {
@@ -129,7 +129,7 @@ export const useEditor = (props: CustomEditorProps) => {
   useEffect(() => {
     if (!editor) return;
     const assetsUploadStatus = fileHandler.assetsUploadStatus;
-    editor.commands.updateAssetsUploadStatus(assetsUploadStatus);
+    editor.commands.updateAssetsUploadStatus?.(assetsUploadStatus);
   }, [editor, fileHandler.assetsUploadStatus]);
 
   useImperativeHandle(
@@ -221,7 +221,7 @@ export const useEditor = (props: CustomEditorProps) => {
         if (!editor) return;
         scrollSummary(editor, marking);
       },
-      isEditorReadyToDiscard: () => editor?.storage.imageComponent.uploadInProgress === false,
+      isEditorReadyToDiscard: () => editor?.storage.imageComponent?.uploadInProgress === false,
       setFocusAtPosition: (position: number) => {
         if (!editor || editor.isDestroyed) {
           console.error("Editor reference is not available or has been destroyed.");

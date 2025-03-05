@@ -22,7 +22,7 @@ declare module "@tiptap/core" {
     imageComponent: {
       insertImageComponent: ({ file, pos, event }: InsertImageComponentProps) => ReturnType;
       uploadImage: (blockId: string, file: File) => () => Promise<string> | undefined;
-      updateAssetsUploadStatus: (updatedStatus: TFileHandler["assetsUploadStatus"]) => () => void;
+      updateAssetsUploadStatus?: (updatedStatus: TFileHandler["assetsUploadStatus"]) => () => void;
       getImageSource?: (path: string) => () => Promise<string>;
       restoreImage: (src: string) => () => Promise<void>;
     };

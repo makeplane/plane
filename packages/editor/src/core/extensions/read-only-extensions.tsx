@@ -41,8 +41,7 @@ type Props = {
 export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
   const { disabledExtensions, fileHandler, mentionHandler } = props;
 
-  return [
-    // @ts-expect-error tiptap types are incorrect
+  const extensions = [
     StarterKit.configure({
       bulletList: {
         HTMLAttributes: {
@@ -94,12 +93,6 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
       },
     }),
     CustomTypographyExtension,
-    ReadOnlyImageExtension(fileHandler).configure({
-      HTMLAttributes: {
-        class: "rounded-md",
-      },
-    }),
-    CustomReadOnlyImageExtension(fileHandler),
     TiptapUnderline,
     TextStyle,
     TaskList.configure({
@@ -136,4 +129,18 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
       disabledExtensions,
     }),
   ];
+
+  if (!disabledExtensions.includes("image")) {
+    extensions.push(
+      ReadOnlyImageExtension(fileHandler).configure({
+        HTMLAttributes: {
+          class: "rounded-md",
+        },
+      }),
+      CustomReadOnlyImageExtension(fileHandler)
+    );
+  }
+
+  // @ts-expect-error tiptap types are incorrect
+  return extensions;
 };

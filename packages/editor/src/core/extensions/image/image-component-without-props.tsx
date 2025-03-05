@@ -48,6 +48,7 @@ export const CustomImageComponentWithoutProps = () =>
       return {
         fileMap: new Map(),
         deletedImageSet: new Map<string, boolean>(),
+        assetsUploadStatus: {},
       };
     },
   });
