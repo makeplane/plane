@@ -80,6 +80,7 @@ class IssueSerializer(BaseSerializer):
             data["assignees"] = ProjectMember.objects.filter(
                 project_id=self.context.get("project_id"),
                 is_active=True,
+                role__gte=15,
                 member_id__in=data["assignees"],
             ).values_list("member_id", flat=True)
 
@@ -158,8 +159,13 @@ class IssueSerializer(BaseSerializer):
                 pass
         else:
             try:
-                # Then assign it to default assignee
-                if default_assignee_id is not None:
+                # Then assign it to default assignee, if it is a valid assignee
+                if default_assignee_id is not None and ProjectMember.objects.filter(
+                    member_id=default_assignee_id,
+                    project_id=project_id,
+                    role__gte=15,
+                    is_active=True
+                ).exists():
                     IssueAssignee.objects.create(
                         assignee_id=default_assignee_id,
                         issue=issue,
