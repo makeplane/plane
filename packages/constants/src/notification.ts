@@ -1,4 +1,4 @@
-import { TUnreadNotificationsCount } from "@plane/types";
+import { TUnreadNotificationsCount, TNotificationSettings } from "@plane/types";
 
 export enum ENotificationTab {
   ALL = "all",
@@ -135,3 +135,63 @@ export const allTimeIn30MinutesInterval12HoursFormat: Array<{
   { label: "11:00", value: "11:00" },
   { label: "11:30", value: "11:30" },
 ];
+
+
+export enum ENotificationSettingsKey {
+  PROPERTY_CHANGE = "property_change",
+  STATE_CHANGE = "state_change",
+  PRIORITY = "priority",
+  ASSIGNEE = "assignee",
+  START_DUE_DATE = "start_due_date",
+  COMMENTS = "comment",
+  MENTIONED_COMMENTS = "mention",
+  COMMENT_REACTIONS = "comment_reactions",
+}
+
+export enum EWorkspaceNotificationTransport {
+  EMAIL = "EMAIL",
+  IN_APP = "IN_APP",
+}
+
+export const TASK_UPDATES_NOTIFICATION_SETTINGS: TNotificationSettings[] = [
+  {
+    key: ENotificationSettingsKey.PROPERTY_CHANGE,
+    i18n_title: "notification_settings.work_item_property_title",
+  },
+  {
+    key: ENotificationSettingsKey.STATE_CHANGE,
+    i18n_title: "notification_settings.status_title",
+  },
+  {
+    key: ENotificationSettingsKey.PRIORITY,
+    i18n_title: "notification_settings.priority_title",
+  },
+  {
+    key: ENotificationSettingsKey.ASSIGNEE,
+    i18n_title: "notification_settings.assignee_title",
+  },
+  {
+    key: ENotificationSettingsKey.START_DUE_DATE,
+    i18n_title: "notification_settings.due_date_title",
+  }
+]
+
+export const COMMENT_NOTIFICATION_SETTINGS: TNotificationSettings[] = [
+  {
+    key: ENotificationSettingsKey.MENTIONED_COMMENTS,
+    i18n_title: "notification_settings.mentioned_comments_title",
+  },
+  {
+    key: ENotificationSettingsKey.COMMENTS,
+    i18n_title: "notification_settings.new_comments_title",
+  },
+  {
+    key: ENotificationSettingsKey.COMMENT_REACTIONS,
+    i18n_title: "notification_settings.reaction_comments_title",
+  },
+]
+
+export const NOTIFICATION_SETTINGS: TNotificationSettings[] = [
+ ...TASK_UPDATES_NOTIFICATION_SETTINGS,
+ ...COMMENT_NOTIFICATION_SETTINGS 
+]

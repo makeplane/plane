@@ -199,6 +199,7 @@ from .notification.base import (
     NotificationViewSet,
     UnreadNotificationEndpoint,
     UserNotificationPreferenceEndpoint,
+    WorkspaceUserNotificationPreferenceEndpoint,
 )
 
 from .exporter.base import ExportIssuesEndpoint
