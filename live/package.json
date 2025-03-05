@@ -1,7 +1,8 @@
 {
   "name": "live",
-  "version": "0.25.0",
-  "description": "",
+  "version": "0.25.1",
+  "license": "AGPL-3.0",
+  "description": "A realtime collaborative server powers Plane's rich text editor",
   "main": "./src/server.ts",
   "private": true,
   "type": "module",
@@ -14,7 +15,6 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
   "dependencies": {
     "@hocuspocus/extension-database": "^2.15.0",
     "@hocuspocus/extension-logger": "^2.15.0",

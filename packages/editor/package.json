@@ -1,7 +1,8 @@
 {
   "name": "@plane/editor",
-  "version": "0.25.0",
+  "version": "0.25.1",
   "description": "Core Editor that powers Plane",
+  "license": "AGPL-3.0",
   "private": true,
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",

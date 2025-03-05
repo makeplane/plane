@@ -1,7 +1,8 @@
 {
   "name": "@plane/utils",
-  "version": "0.25.0",
+  "version": "0.25.1",
   "description": "Helper functions shared across multiple apps internally",
+  "license": "AGPL-3.0",
   "private": true,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

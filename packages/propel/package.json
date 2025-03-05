@@ -1,7 +1,8 @@
 {
   "name": "@plane/propel",
-  "version": "0.25.0",
+  "version": "0.25.1",
   "private": true,
+  "license": "AGPL-3.0",
   "scripts": {
     "lint": "eslint src --ext .ts,.tsx",
     "lint:errors": "eslint src --ext .ts,.tsx --quiet"
