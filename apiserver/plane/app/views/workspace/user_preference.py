@@ -51,7 +51,6 @@ class WorkspaceUserPreferenceViewSet(BaseAPIView):
             user=request.user, workspace_id=workspace.id
         ).order_by("sort_order").values("key", "is_pinned", "sort_order")
 
-
         user_preferences = {}
 
         for preference in preferences:

@@ -37,6 +37,7 @@ export interface IProjectStore {
   getPartialProjectById: (projectId: string | undefined | null) => TPartialProject | undefined;
   getProjectIdentifierById: (projectId: string | undefined | null) => string;
   getProjectAnalyticsCountById: (projectId: string | undefined | null) => TProjectAnalyticsCount | undefined;
+  getProjectByIdentifier: (projectIdentifier: string) => TProject | undefined;
   // collapsible
   openCollapsibleSection: ProjectOverviewCollapsible[];
   lastCollapsibleAction: ProjectOverviewCollapsible | null;
@@ -233,7 +234,10 @@ export class ProjectStore implements IProjectStore {
     const projectIds = projects
       .filter(
         (project) =>
-          project.workspace === currentWorkspace.id && !!project.member_role && project.is_favorite && !project.archived_at
+          project.workspace === currentWorkspace.id &&
+          !!project.member_role &&
+          project.is_favorite &&
+          !project.archived_at
       )
       .map((project) => project.id);
     return projectIds;
@@ -362,6 +366,15 @@ export class ProjectStore implements IProjectStore {
     const projectInfo = this.projectMap[projectId ?? ""] || undefined;
     return projectInfo;
   });
+
+  /**
+   * Returns project details using project identifier
+   * @param projectIdentifier
+   * @returns TProject | undefined
+   */
+  getProjectByIdentifier = computedFn((projectIdentifier: string) =>
+    Object.values(this.projectMap).find((project) => project.identifier === projectIdentifier)
+  );
 
   /**
    * Returns project lite using project id
