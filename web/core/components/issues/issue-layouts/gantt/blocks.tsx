@@ -65,7 +65,7 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
     >
       <div
         id={`issue-${issueId}`}
-        className="relative flex h-full w-full cursor-pointer items-center rounded space-between bg-red-500"
+        className="relative flex h-full w-full cursor-pointer items-center rounded space-between"
         style={blockStyle}
         onClick={handleIssuePeekOverview}
       >
