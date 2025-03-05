@@ -61,6 +61,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
           projectId={projectId}
           buttonVariant="border-with-text"
           tabIndex={getIndex("state_id")}
+          isForWorkItemCreation={!data?.id}
         />
       </div>
 

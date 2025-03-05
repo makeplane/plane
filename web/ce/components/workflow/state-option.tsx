@@ -2,20 +2,21 @@ import { observer } from "mobx-react";
 import { Check } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 
-type Props = {
+export type TStateOptionProps = {
   projectId: string | null | undefined;
   option: {
     value: string | undefined;
     query: string;
     content: JSX.Element;
   };
-  filterAvailableStateIds: boolean;
   selectedValue: string | null | undefined;
   className?: string;
+  filterAvailableStateIds?: boolean;
   isForWorkItemCreation?: boolean;
+  alwaysAllowStateChange?: boolean;
 };
 
-export const StateOption = observer((props: Props) => {
+export const StateOption = observer((props: TStateOptionProps) => {
   const { option, className = "" } = props;
 
   return (
