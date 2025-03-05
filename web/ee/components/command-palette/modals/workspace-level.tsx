@@ -6,7 +6,8 @@ import {
 } from "@/ce/components/command-palette/modals/workspace-level";
 // hooks
 import { useCommandPalette } from "@/hooks/store";
-// plane web imports
+// plane web components
+import { CreateUpdateCustomerModal } from "@/plane-web/components/customers/customer-modal";
 import { CreateUpdateWorkspaceDashboardModal } from "@/plane-web/components/dashboards/modals";
 import { CreateUpdateInitiativeModal } from "@/plane-web/components/initiatives/components/create-update-initiatives-modal";
 import { CreateOrUpdateTeamspaceModal } from "@/plane-web/components/teamspaces/create-update";
@@ -32,6 +33,8 @@ export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps)
     toggleCreateTeamspaceViewModal,
     createUpdateInitiativeModal,
     toggleCreateInitiativeModal,
+    createUpdateCustomerModal,
+    toggleCreateCustomerModal,
   } = useCommandPalette();
   const {
     workspaceDashboards: {
@@ -69,6 +72,11 @@ export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps)
         data={workspaceDashboardModalPayload ?? undefined}
         isOpen={isWorkspaceDashboardModalOpen}
         onClose={() => toggleWorkspaceDashboardModal(false)}
+      />
+      <CreateUpdateCustomerModal
+        isOpen={createUpdateCustomerModal.isOpen}
+        customerId={createUpdateCustomerModal.customerId}
+        onClose={() => toggleCreateCustomerModal({ isOpen: false, customerId: undefined })}
       />
       {isProOrBusinessWorkspace && (
         <AddSeatsModal

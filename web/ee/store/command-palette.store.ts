@@ -1,6 +1,12 @@
 import { action, computed, makeObservable, observable } from "mobx";
 // types / constants
-import { TCreateUpdateInitiativeModal, TCreateUpdateTeamspaceModal, TCreateUpdateTeamspaceViewModal } from "@plane/types";
+import { DEFAULT_CREATE_UPDATE_CUSTOMER_MODAL_DATA } from "@plane/constants";
+import {
+  TCreateUpdateInitiativeModal,
+  TCreateUpdateTeamspaceModal,
+  TCreateUpdateTeamspaceViewModal,
+  TCreateUpdateCustomerModal,
+} from "@plane/types";
 import {
   DEFAULT_CREATE_UPDATE_TEAM_MODAL_DATA,
   DEFAULT_CREATE_UPDATE_TEAM_VIEW_MODAL_DATA,
@@ -14,12 +20,14 @@ export interface ICommandPaletteStore extends IBaseCommandPaletteStore {
   createUpdateTeamspaceModal: TCreateUpdateTeamspaceModal;
   createUpdateTeamspaceViewModal: TCreateUpdateTeamspaceViewModal;
   createUpdateInitiativeModal: TCreateUpdateInitiativeModal;
+  createUpdateCustomerModal: TCreateUpdateCustomerModal;
   // computed
   isAnyModalOpen: boolean;
   // actions
   toggleCreateTeamspaceModal: (value?: TCreateUpdateTeamspaceModal) => void;
   toggleCreateTeamspaceViewModal: (value?: TCreateUpdateTeamspaceViewModal) => void;
   toggleCreateInitiativeModal: (value?: TCreateUpdateInitiativeModal) => void;
+  toggleCreateCustomerModal: (value?: TCreateUpdateCustomerModal) => void;
 }
 
 export class CommandPaletteStore extends BaseCommandPaletteStore implements ICommandPaletteStore {
@@ -27,7 +35,7 @@ export class CommandPaletteStore extends BaseCommandPaletteStore implements ICom
   createUpdateTeamspaceModal: TCreateUpdateTeamspaceModal = DEFAULT_CREATE_UPDATE_TEAM_MODAL_DATA;
   createUpdateTeamspaceViewModal: TCreateUpdateTeamspaceViewModal = DEFAULT_CREATE_UPDATE_TEAM_VIEW_MODAL_DATA;
   createUpdateInitiativeModal: TCreateUpdateInitiativeModal = DEFAULT_CREATE_UPDATE_INITIATIVE_MODAL_DATA;
-
+  createUpdateCustomerModal: TCreateUpdateCustomerModal = DEFAULT_CREATE_UPDATE_CUSTOMER_MODAL_DATA;
   constructor() {
     super();
     makeObservable(this, {
@@ -35,6 +43,7 @@ export class CommandPaletteStore extends BaseCommandPaletteStore implements ICom
       createUpdateTeamspaceModal: observable,
       createUpdateTeamspaceViewModal: observable,
       createUpdateInitiativeModal: observable,
+      createUpdateCustomerModal: observable,
 
       // computed
       isAnyModalOpen: computed,
@@ -42,6 +51,7 @@ export class CommandPaletteStore extends BaseCommandPaletteStore implements ICom
       toggleCreateTeamspaceModal: action,
       toggleCreateTeamspaceViewModal: action,
       toggleCreateInitiativeModal: action,
+      toggleCreateCustomerModal: action,
     });
   }
 
@@ -52,9 +62,10 @@ export class CommandPaletteStore extends BaseCommandPaletteStore implements ICom
   get isAnyModalOpen(): boolean {
     return Boolean(
       super.getCoreModalsState() ||
-      this.createUpdateTeamspaceModal.isOpen ||
-      this.createUpdateTeamspaceViewModal.isOpen ||
-        this.createUpdateInitiativeModal.isOpen
+        this.createUpdateTeamspaceModal.isOpen ||
+        this.createUpdateTeamspaceViewModal.isOpen ||
+        this.createUpdateInitiativeModal.isOpen ||
+        this.createUpdateCustomerModal.isOpen
     );
   }
 
@@ -111,6 +122,25 @@ export class CommandPaletteStore extends BaseCommandPaletteStore implements ICom
       this.createUpdateInitiativeModal = {
         isOpen: !this.createUpdateInitiativeModal.isOpen,
         initiativeId: undefined,
+      };
+    }
+  };
+
+  /**
+   * Toggles the create customer modal
+   * @param value
+   * @returns
+   */
+  toggleCreateCustomerModal = (value?: TCreateUpdateCustomerModal) => {
+    if (value) {
+      this.createUpdateCustomerModal = {
+        isOpen: value.isOpen,
+        customerId: value.customerId,
+      };
+    } else {
+      this.createUpdateCustomerModal = {
+        isOpen: !this.createUpdateCustomerModal.isOpen,
+        customerId: undefined,
       };
     }
   };

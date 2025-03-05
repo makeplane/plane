@@ -1,44 +1,47 @@
 import React, { useState } from "react";
 import { AlignLeft, ChevronRight, Hash, CircleChevronDown } from "lucide-react";
+// plane i18n
 import { useTranslation } from "@plane/i18n";
+// plane ui
 import { Collapsible } from "@plane/ui";
+// helpers
 import { cn } from "@/helpers/common.helper";
 
 const DEFAULT_PROPERTIES_LIST = [
   {
-    i18n_title: "customers.properties.default.customer_name",
+    i18n_title: "customers.properties.default.customer_name.name",
     icon: AlignLeft,
   },
   {
-    i18n_title: "customers.properties.default.description",
+    i18n_title: "customers.properties.default.description.name",
     icon: AlignLeft,
   },
   {
-    i18n_title: "customers.properties.default.email",
+    i18n_title: "customers.properties.default.email.name",
     icon: AlignLeft,
   },
   {
-    i18n_title: "customers.properties.default.website_url",
+    i18n_title: "customers.properties.default.website_url.name",
     icon: AlignLeft,
   },
   {
-    i18n_title: "customers.properties.default.employees",
+    i18n_title: "customers.properties.default.employees.name",
     icon: Hash,
   },
   {
-    i18n_title: "customers.properties.default.domain",
+    i18n_title: "customers.properties.default.domain.name",
     icon: AlignLeft,
   },
   {
-    i18n_title: "customers.properties.default.stage",
+    i18n_title: "customers.properties.default.stage.name",
     icon: CircleChevronDown,
   },
   {
-    i18n_title: "customers.properties.default.contract_status",
+    i18n_title: "customers.properties.default.contract_status.name",
     icon: CircleChevronDown,
   },
   {
-    i18n_title: "customers.properties.default.revenue",
+    i18n_title: "customers.properties.default.revenue.name",
     icon: Hash,
   },
 ];
@@ -73,7 +76,7 @@ export const CustomerDefaultProperties = () => {
           {DEFAULT_PROPERTIES_LIST.map((property) => (
             <div
               key={property.i18n_title}
-              className="flex items-center gap-2 bg-custom-primary-0 border border-custom-border-200 rounded-md p-2 cursor-default"
+              className="flex items-center gap-2 bg-custom-background-100 border border-custom-border-200 rounded-md p-2 cursor-default"
             >
               <property.icon className="size-4" />
               <p className="text-sm text-custom-text-300">{t(property.i18n_title)}</p>

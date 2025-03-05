@@ -1,11 +1,15 @@
 import React, { FC } from "react";
-import { useTranslation } from "@plane/i18n";
-import { BuildingsIcon, Button } from "@plane/ui";
-import { Plus } from "lucide-react";
-import { TCreationListModes } from "@plane/types";
-import { TIssuePropertyCreateList } from "@/plane-web/components/issue-types";
-import { defaultCustomProperty } from "@/plane-web/components/customers/settings";
 import { v4 } from "uuid";
+import { Plus } from "lucide-react";
+// plane i18n
+import { useTranslation } from "@plane/i18n";
+// plane types
+import { TCreationListModes } from "@plane/types";
+// plane ui
+import { BuildingsIcon, Button } from "@plane/ui";
+// plane web components
+import { defaultCustomProperty } from "@/plane-web/components/customers/settings";
+import { TIssuePropertyCreateList } from "@/plane-web/components/issue-types";
 
 type TCustomerPropertiesEmptyStateProps = {
   handleCustomerPropertiesCreate: (mode: TCreationListModes, value: TIssuePropertyCreateList) => void;
@@ -15,7 +19,7 @@ export const CustomerPropertiesEmptyState: FC<TCustomerPropertiesEmptyStateProps
   const { handleCustomerPropertiesCreate } = props;
   const { t } = useTranslation();
   return (
-    <div className="w-full p-8 relative flex justify-center items-center bg-custom-primary-0 rounded-lg border border-custom-border-100">
+    <div className="w-full p-8 relative flex justify-center items-center bg-custom-background-100 rounded-lg border border-custom-border-100">
       <div className="flex flex-col items-center space-y-1">
         <div className="flex-shrink-0 grid place-items-center rounded-lg bg-custom-background-90 p-3">
           <BuildingsIcon className="h-14 w-14 text-custom-text-400" strokeWidth="1.5" />

@@ -1,12 +1,21 @@
-import React, { FC, useRef, useState } from "react";
+import React, { FC, useRef, useState, useMemo } from "react";
+import { observer } from "mobx-react";
 import { v4 } from "uuid";
 import { ChevronRight, Plus } from "lucide-react";
+// plane constants
 import { EIssuePropertyType } from "@plane/constants";
+// plane i18n
 import { useTranslation } from "@plane/i18n";
-import { TCreationListModes, TIssueProperty } from "@plane/types";
+// plane types
+import { TCreationListModes, TIssueProperty, TIssuePropertyPayload } from "@plane/types";
+// plane ui
 import { Button, Collapsible } from "@plane/ui";
+// helpers
 import { cn } from "@/helpers/common.helper";
-import { CustomerPropertiesEmptyState } from "./empty-state";
+// plane web components
+import { CustomerPropertiesEmptyState } from "@/plane-web/components/customers/settings/properties";
+import { IssuePropertyList, TCustomPropertyOperations } from "@/plane-web/components/issue-types";
+import { useCustomerProperties } from "@/plane-web/hooks/store/customers/use-customer-properties";
 
 export type TCustomerPropertyCreateList = Partial<TIssueProperty<EIssuePropertyType>> & {
   key: string;
@@ -22,15 +31,15 @@ export const defaultCustomProperty: Partial<TIssueProperty<EIssuePropertyType>> 
   is_required: false,
 };
 
-export const CustomerCustomPropertiesRoot: FC = () => {
+export const CustomerCustomPropertiesRoot: FC = observer(() => {
   // states
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [customerPropertyCreateList, setCustomerPropertyCreateList] = useState<TCustomerPropertyCreateList[]>([]);
   // hooks
   const { t } = useTranslation();
-
+  const { properties, getPropertyById, createProperty, deleteProperty } = useCustomerProperties();
   // derived
-  const isAnyPropertiesAvailable = customerPropertyCreateList.length > 0;
+  const isAnyPropertiesAvailable = customerPropertyCreateList.length > 0 || properties.length > 0;
 
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
@@ -57,13 +66,37 @@ export const CustomerCustomPropertiesRoot: FC = () => {
         break;
     }
   };
+
+  // property operations
+  const customPropertyOperations: TCustomPropertyOperations = useMemo(
+    () => ({
+      getPropertyDetail: (propertyId: string) => getPropertyById(propertyId)?.asJSON,
+      getSortedActivePropertyOptions: (propertyId: string) => {
+        const propertyDetail = getPropertyById(propertyId);
+        if (!propertyDetail) return;
+        return propertyDetail.sortedActivePropertyOptions;
+      },
+      createProperty: async (data: TIssuePropertyPayload) => createProperty(data),
+      updateProperty: async (propertyId: string, data: TIssuePropertyPayload) => {
+        const updatedProperty = getPropertyById(propertyId)?.updateProperty;
+        if (!updatedProperty) return;
+        updatedProperty(propertyId, data);
+      },
+      deleteProperty: async (propertyId: string) => deleteProperty(propertyId),
+      removePropertyListItem: (value: TCustomerPropertyCreateList) => {
+        handleCustomerPropertiesCreate("remove", value);
+      },
+    }),
+    [createProperty, deleteProperty, getPropertyById]
+  );
+
   return (
-    <div className="group/issue-type bg-custom-background-90/60 rounded-md px-4">
+    <div className="group/issue-type bg-custom-background-90/60 rounded-md">
       <Collapsible
         isOpen={isOpen}
         onToggle={() => setIsOpen(!isOpen)}
         title={
-          <div className="flex w-full gap-2 cursor-pointer items-center">
+          <div className="flex w-full gap-2 cursor-pointer items-center px-4">
             <div className="flex-shrink-0">
               <ChevronRight
                 className={cn("flex-shrink-0 size-4 transition-all text-custom-text-300", {
@@ -82,7 +115,15 @@ export const CustomerCustomPropertiesRoot: FC = () => {
         <div className="pb-4">
           {isAnyPropertiesAvailable ? (
             <>
-              <div className={cn("flex items-center py-2", !isAnyPropertiesAvailable && "justify-center")}>
+              <IssuePropertyList
+                issuePropertyCreateList={customerPropertyCreateList}
+                customPropertyOperations={customPropertyOperations}
+                containerRef={containerRef}
+                lastElementRef={lastElementRef}
+                properties={properties}
+                isUpdateAllowed
+              />
+              <div className={cn("flex items-center py-2 px-4", !isAnyPropertiesAvailable && "justify-center")}>
                 <Button
                   variant="accent-primary"
                   size="sm"
@@ -106,4 +147,4 @@ export const CustomerCustomPropertiesRoot: FC = () => {
       </Collapsible>
     </div>
   );
-};
+});

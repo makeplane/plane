@@ -15,6 +15,7 @@ from django.db.models import (
     UUIDField,
     Value,
     Subquery,
+    Count
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -45,9 +46,9 @@ from plane.db.models import (
     ProjectMember,
     CycleIssue,
     UserRecentVisit,
-    Cycle,
+    Cycle
 )
-from plane.ee.models import EntityIssueStateActivity
+from plane.ee.models import EntityIssueStateActivity, Customer
 from plane.utils.grouper import (
     issue_group_values,
     issue_on_results,
@@ -1274,6 +1275,9 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
                         :1
                     ]
                 )
+            )
+            .prefetch_related(
+                Prefetch("customer_request_issues__customer")
             )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))

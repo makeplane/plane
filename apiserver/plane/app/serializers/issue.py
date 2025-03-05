@@ -39,7 +39,7 @@ from plane.db.models import (
     ProjectMember,
     IssueType,
 )
-
+from plane.ee.models import Customer
 
 class IssueFlatSerializer(BaseSerializer):
     ## Contain only flat fields
@@ -653,7 +653,6 @@ class IssueStateSerializer(DynamicBaseSerializer):
         model = Issue
         fields = "__all__"
 
-
 class IssueIntakeSerializer(DynamicBaseSerializer):
     label_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
 
@@ -672,6 +671,21 @@ class IssueIntakeSerializer(DynamicBaseSerializer):
         ]
         read_only_fields = fields
 
+class CustomerSerializer(DynamicBaseSerializer):
+    class Meta:
+        model = Customer
+        fields = [
+            "id",
+            "name",
+            "email",
+            "website_url",
+            "domain",
+            "contract_status",
+            "stage",
+            "employees",
+            "revenue",
+            "created_by"
+        ]
 
 class IssueSerializer(DynamicBaseSerializer):
     # ids
@@ -718,7 +732,6 @@ class IssueSerializer(DynamicBaseSerializer):
             "type_id",
         ]
         read_only_fields = fields
-
 
 class IssueLiteSerializer(DynamicBaseSerializer):
     class Meta:

@@ -400,6 +400,7 @@ class WorkspaceUserPreference(BaseModel):
         ARCHIVES = "archives", "Archives"
         TEAM_SPACES = "team_spaces", "Team Spaces"
         INITIATIVES = "initiatives", "Initiatives"
+        CUSTOMERS = "customers", "Customers"
 
     workspace = models.ForeignKey(
         "db.Workspace",

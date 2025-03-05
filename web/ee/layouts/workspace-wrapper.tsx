@@ -18,6 +18,7 @@ import {
   useWorkspaceProjectStates,
   useWorkspaceSubscription,
   useFeatureFlags,
+  useCustomerProperties,
 } from "@/plane-web/hooks/store";
 // plane web types
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
@@ -33,13 +34,14 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { currentWorkspace } = useWorkspace();
   // store hooks
   const { fetchFeatureFlags } = useFeatureFlags();
-  const { fetchWorkspaceFeatures, workspaceFeatures } = useWorkspaceFeatures();
+  const { fetchWorkspaceFeatures, workspaceFeatures, isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const { fetchProjectFeatures } = useProjectAdvanced();
   const { fetchProjectStates } = useWorkspaceProjectStates();
   const { isTeamspacesFeatureEnabled, fetchTeamspaces } = useTeamspaces();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, fetchWorkspaceSubscribedPlan } =
     useWorkspaceSubscription();
   const { fetchAll } = useIssueTypes();
+  const { fetchAllCustomerPropertiesAndOptions } = useCustomerProperties();
   // derived values
   const isFreeMemberCountExceeded = subscriptionDetail?.is_free_member_count_exceeded;
   const isWorkspaceSettingsRoute = pathname.includes(`/${workspaceSlug}/settings`);
@@ -48,6 +50,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const isProjectStateEnabled =
     workspaceFeatures[workspaceSlug.toString()] &&
     workspaceFeatures[workspaceSlug.toString()][EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED];
+  const isCustomersFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_CUSTOMERS_ENABLED);
 
   // fetching feature flags
   const { isLoading: flagsLoader, error: flagsError } = useSWR(
@@ -104,6 +107,14 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
       ? `WORKSPACE_TEAMSPACES_${workspaceSlug}_${isTeamspacesFeatureEnabled}`
       : null,
     workspaceSlug && isTeamspacesFeatureEnabled ? () => fetchTeamspaces(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+  // fetching customer properties
+  useSWR(
+    workspaceSlug && isCustomersFeatureEnabled ? `CUSTOMERS_${workspaceSlug}_${isCustomersFeatureEnabled}` : null,
+    workspaceSlug && isCustomersFeatureEnabled
+      ? () => fetchAllCustomerPropertiesAndOptions(workspaceSlug.toString())
+      : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 

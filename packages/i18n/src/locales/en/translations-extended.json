@@ -1176,15 +1176,71 @@
     "properties": {
       "default": {
         "title": "Default Properties",
-        "customer_name": "Customer Name",
-        "description": "Description",
-        "email": "Email",
-        "website_url": "Website URL",
-        "employees": "Employees",
-        "domain": "Domain",
-        "stage": "Stage",
-        "contract_status": "Contract Status",
-        "revenue": "Revenue"
+        "customer_name": {
+          "name": "Customer Name",
+          "placeholder": "This could be name of the person or business",
+          "validation": {
+            "required": "Customer name is required.",
+            "max_length": "Customer name cannot be more than 255 characters."
+          }
+        },
+        "description": {
+          "name": "Description",
+          "validation": {}
+        },
+        "email": {
+          "name": "Email",
+          "placeholder": "Enter email",
+          "validation": {
+            "required": "Email is required.",
+            "pattern": "Invalid email address."
+          }
+        },
+        "website_url": {
+          "name": "Website",
+          "placeholder": "Any URL with https:// will work.",
+          "placeholder_short": "Add website",
+          "validation": {
+            "pattern": "Invalid website url"
+          }
+        },
+        "employees": {
+          "name": "Employees",
+          "placeholder": "Number of employees if your customer is a business.",
+          "validation": {
+            "min_length": "Employees cannot be less than 0."
+          }
+        },
+        "size": {
+          "name": "Size",
+          "placeholder": "Add company size",
+          "validation": {
+            "min_length": "Invalid size"
+          }
+        },
+        "domain": {
+          "name": "Domain",
+          "placeholder": "This is usually the same as the Website, but not always.",
+          "placeholder_short": "Add domain",
+          "validation": {}
+        },
+        "stage": {
+          "name": "Stage",
+          "placeholder": "Select stage",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "Contract Status",
+          "placeholder": "Select contract status",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "Revenue",
+          "placeholder": "This is the revenue your customer generates annually.",
+          "validation": {
+            "min_length": "Revenue cannot be less that 0."
+          }
+        }
       },
       "custom": {
         "title": "Custom Properties",
@@ -1196,6 +1252,38 @@
       },
       "add": {
         "primary_button": "Add new property"
+      }
+    },
+    "stage": {
+      "lead": "Lead",
+      "sales_qualified_lead": "Sales qualified lead",
+      "contract_negotiation": "Contract negotiation",
+      "closed_won": "Closed won",
+      "closed_lost": "Closed lost"
+    },
+    "contract_status": {
+      "active": "Active",
+      "pre_contract": "Pre-contract",
+      "signed": "Signed",
+      "inactive": "Inactive"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "We couldn't find that customer record.",
+        "description": "The link to this record could be wrong or this record could have been deleted.",
+        "primary_button": "Go to customers",
+        "secondary_button": "Add a customer"
+      },
+      "search": {
+        "title": "No matching customers",
+        "description1": "No customers detected with the matching criteria.",
+        "description2": "Create a new customer instead.",
+        "primary_button": "Create customer"
+      },
+      "list": {
+        "title": "Manage your work's volume, cadence, and flow by what's important to your customers.",
+        "description": "With Customers, a Plane-only feature, you can now create new customers from scratch and connect them to your work. Soon,  you will bring them over from other tools along with their custom attributes that matter to you.",
+        "primary_button": "Add your first customer"
       }
     },
     "settings": {
@@ -1226,6 +1314,209 @@
           }
         }
       }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "Error!",
+          "message": "Unable to fetch customers. Try again!"
+        }
+      },
+      "copy_link": {
+        "title": "Link copied",
+        "message": "Customer link copied to clipboard."
+      },
+      "create": {
+        "success": {
+          "title": "Success!",
+          "message": "Created customer successfully!"
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Unable to create customer. Try again!"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Success!",
+          "message": "Updated customer successfully!"
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Unable to update customer. Try again!"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "Error!",
+          "message": "Logo upload failed. Try again!"
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "Success!",
+            "message": "Work item removed successfully!"
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Failed to remove work item!"
+          }
+        },
+        "add": {
+          "error": {
+            "title": "Error!",
+            "message": "Unable to add work items to the customer. Try again."
+          },
+          "success": {
+            "title": "Success!",
+            "message": "Added work items to the customer."
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "Edit",
+      "copy_link": "Copy link to customer",
+      "delete": "Delete"
+    },
+    "create": {
+      "label": "Create customer",
+      "loading": "Creating...",
+      "cancel": "Cancel"
+    },
+    "update": {
+      "label": "Update customer",
+      "loading": "Updating..."
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "There're no requests to show yet.",
+          "description": "Create requests from your customers so you can link them to work items.",
+          "button": "Add new request"
+        }
+      },
+      "label": "{count, plural, one {Request} other {Requests}}",
+      "add": "Add request",
+      "create": "Create request",
+      "update": "Update request",
+      "form": {
+        "name": {
+          "placeholder": "Name this request",
+          "validation": {
+            "required": "Name is required."
+          }
+        },
+        "description": {
+          "placeholder": "Describe the nature of the request or paste this customer's comment from another tool."
+        },
+        "source": {
+          "add": "Add source",
+          "update": "Update source",
+          "url": {
+            "label": "URL",
+            "required": "Url is required",
+            "invalid": "Invalid website url"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "Link copied",
+          "message": "Customer request link copied to clipboard."
+        },
+        "attachment": {
+          "upload": {
+            "loading": "Uploading attachment...",
+            "success": {
+              "title": "Attachment uploaded",
+              "message": "The attachment has been successfully uploaded."
+            },
+            "error": {
+              "title": "Attachment not uploaded",
+              "message": "The attachment could not be uploaded."
+            }
+          },
+          "size": {
+            "error": {
+              "title": "Error!",
+              "message": "Only one file can be uploaded at a time."
+            }
+          },
+          "length": {
+            "message": "File must be of {size}MB or less in size"
+          },
+          "remove": {
+            "success": {
+              "title": "Attachment removed",
+              "message": "The attachment has been successfully removed"
+            },
+            "error": {
+              "title": "Attachment not removed",
+              "message": "The Attachment could not be removed"
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "Success!",
+              "message": "Source updated successfully!"
+            },
+            "error": {
+              "title": "Error!",
+              "message": "Unable to update source."
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "Error!",
+              "message": "Unable to add work items to the request. Try again."
+            },
+            "success": {
+              "title": "Success!",
+              "message": "Added work items to the request."
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "Request updated successfully!",
+            "title": "Success!"
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Unable to update request. Try again!"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "Request created successfully!",
+            "title": "Success!"
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Unable to create request. Try again!"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "Linked work items",
+      "link": "Link work items",
+      "empty_state": {
+        "list": {
+          "title": "You don't seem to have linked work items to this customer yet.",
+          "description": "Link existing work items from any project here so you can track them by this customer.",
+          "button": "Link work item"
+        }
+      }
+    },
+    "sidebar": {
+      "properties": "Properties"
     }
   }
 }

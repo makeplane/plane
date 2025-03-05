@@ -64,4 +64,6 @@ export * from "./sticky-note-icon";
 export * from "./bar-icon";
 export * from "./tree-map-icon";
 export * from "./buildings-icon";
+export * from "./customers-icon";
+export * from "./customer-request-icon";
 export * from "./plane";

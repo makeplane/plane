@@ -56,6 +56,7 @@ from plane.ee.views.app.project import (
     ProjectFeatureEndpoint,
 )
 
+from plane.ee.views.app.customer import CustomerPropertyEndpoint
 from plane.ee.views.app.issue_property import IssuePropertyEndpoint
 from plane.ee.views.app.intake import IntakeSettingEndpoint
 from plane.ee.views.app.epic import EpicViewSet, EpicLinkViewSet

@@ -4,8 +4,6 @@ from datetime import datetime
 
 # Django imports
 from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator
-from django.core.validators import validate_email
 
 # Module imports
 from plane.ee.models import (
@@ -15,99 +13,43 @@ from plane.ee.models import (
     RelationTypeEnum,
 )
 from plane.db.models import Issue, WorkspaceMember
+from plane.ee.utils.base_validators import (
+    validate_text,
+    validate_uuid,
+    validate_datetime,
+    validate_decimal,
+    validate_boolean,
+    validate_url,
+    validate_email_value,
+    validate_file,
+)
 
 ## Validation functions
 
-
-def validate_text(issue_property, value):
-    pass
-
-
-def validate_uuid(issue_property, value):
-    try:
-        # Validate the UUID
-        uuid.UUID(str(value), version=4)
-    except ValueError:
-        # Raise a validation error
-        raise ValidationError(f"{value} is not a valid UUID")
-
-
-def validate_datetime(issue_property, value):
-    try:
-        datetime.strptime(value, "%Y-%m-%d")
-    except ValueError:
-        try:
-            datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
-        except ValueError:
-            raise ValidationError(f"{value} is not a valid datetime")
-
-
-def validate_decimal(issue_property, value):
-    try:
-        # Validate the number
-        float(value)
-    except ValueError:
-        # Raise a validation error
-        raise ValidationError(f"{value} is not a valid decimal")
-
-
-def validate_boolean(issue_property, value):
-    try:
-        # Validate the boolean
-        if value not in ["true", "false"]:
-            raise ValueError
-    except ValueError:
-        # Raise a validation error
-        raise ValidationError(f"{value} is not a valid boolean")
-
-
-def validate_option(issue_property, value):
+def validate_option(property, value):
     if not IssuePropertyOption.objects.filter(
-        property=issue_property, id=value
+        property=property, id=value
     ).exists():
         raise ValidationError(f"{value} is not a valid option")
 
-
-def validate_relation(issue_property, value):
+def validate_relation(property, value):
     # Validate the UUID
-    validate_uuid(issue_property, value)
+    validate_uuid(property, value)
     # Validate the relation
-    if issue_property.relation_type == RelationTypeEnum.ISSUE:
+    if property.relation_type == RelationTypeEnum.ISSUE:
         if not Issue.objects.filter(
-            workspace_id=issue_property.workspace_id, id=value
+            workspace_id=property.workspace_id, id=value
         ).exists():
             raise ValidationError(f"{value} is not a valid issue")
-    elif issue_property.relation_type == RelationTypeEnum.USER:
+    elif property.relation_type == RelationTypeEnum.USER:
         if not WorkspaceMember.objects.filter(
-            workspace_id=issue_property.workspace_id, member_id=value
+            workspace_id=property.workspace_id, member_id=value
         ).exists():
             raise ValidationError(f"{value} is not a valid user")
     else:
         raise ValidationError(
-            f"{issue_property.relation_type} is not a valid relation type"
+            f"{property.relation_type} is not a valid relation type"
         )
-
-
-def validate_url(issue_property, value):
-    # Validate the URL
-    url_validator = URLValidator()
-    try:
-        url_validator(value)
-    except ValidationError:
-        raise ValidationError(f"{value} is not a valid URL")
-
-
-def validate_email_value(issue_property, value):
-    try:
-        # Validate the email
-        validate_email(value)
-    except ValidationError:
-        # Raise a validation error
-        raise ValidationError(f"{value} is not a valid email")
-
-
-def validate_file(issue_property, value):
-    pass
 
 
 ## Save functions
@@ -315,7 +257,6 @@ def property_validators(properties, property_values, existing_prop_values):
     for property in properties:
         # Fetch the validator
         validator = VALIDATOR_MAPPER.get(property.property_type)
-
         # Check if the property type is valid
         if not validator:
             raise ValidationError(
@@ -332,7 +273,7 @@ def property_validators(properties, property_values, existing_prop_values):
         # Validate the value
         for value in values:
             # Validate the value
-            validator(issue_property=property, value=value)
+            validator(property=property, value=value)
 
     return
 

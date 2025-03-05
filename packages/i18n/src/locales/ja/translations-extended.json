@@ -6,7 +6,8 @@
     "epics": "エピック",
     "upgrade_plan": "プランをアップグレード",
     "plane_pro": "Plane Pro",
-    "business": "ビジネス"
+    "business": "ビジネス",
+    "customers": "顧客"
   },
 
   "workspace_dashboards": "ダッシュボード",
@@ -1197,6 +1198,19 @@
       "add": {
         "primary_button": "新しいプロパティを追加"
       }
+    },
+    "stage": {
+      "lead": "リード",
+      "sales_qualified_lead": "セールスクォリティードリード",
+      "contract_negotiation": "契約交渉",
+      "closed_won": "クローズウォン",
+      "closed_lost": "クローズロスト"
+    },
+    "contract_status": {
+      "active": "アクティブ",
+      "pre_contract": "プレ契約",
+      "signed": "契約済み",
+      "inactive": "非アクティブ"
     },
     "settings": {
       "unauthorized": "このページにアクセスする権限がありません。",

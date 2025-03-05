@@ -73,7 +73,7 @@ export interface IIssueTypesStore {
   data: Record<string, IIssueType>; // all issue type id -> issue type
   // computed functions
   getIssueTypeById: (issueTypeId: string) => IIssueType | undefined;
-  getIssuePropertyById: (issuePropertyId: string) => IIssueProperty<EIssuePropertyType> | undefined;
+  getIssuePropertyById: (customPropertyId: string) => IIssueProperty<EIssuePropertyType> | undefined;
   getProjectWorkItemPropertiesLoader: (projectId: string, entityType: EWorkItemTypeEntity) => TLoader;
   getProjectWorkItemPropertiesFetchedMap: (projectId: string, entityType: EWorkItemTypeEntity) => boolean;
   getProjectIssueTypeIds: (projectId: string) => string[];

@@ -90,18 +90,12 @@ const CustomerSettingsPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="border-b border-custom-border-200 pb-3 tracking-tight">
-        <h3 className="text-xl font-medium">{t("project_settings.customers.settings_heading")}</h3>
-        <span className="text-custom-sidebar-text-400 text-sm font-medium">
-          {t("project_settings.customers.settings_sub_heading")}
-        </span>
-      </div>
       <WithFeatureFlagHOC flag="CUSTOMERS" fallback={<CustomerUpgrade />} workspaceSlug={workspaceSlug?.toString()}>
         <div className="flex items-center justify-between gap-2 border-b border-custom-border-200 pb-3">
           <div className="tracking-tight">
-            <h3 className="text-xl font-medium">{t("customers.label", { count: 2 })}</h3>
+            <h3 className="text-xl font-medium">{t("project_settings.customers.settings_heading")}</h3>
             <span className="text-custom-sidebar-text-400 text-sm font-medium">
-              {t("customers.settings.description")}
+              {t("project_settings.customers.settings_sub_heading")}
             </span>
           </div>
           <div>
@@ -109,7 +103,6 @@ const CustomerSettingsPage = observer(() => {
           </div>
         </div>
         <CustomerSettingsRoot
-          workspaceSlug={workspaceSlug.toString()}
           workspaceId={currentWorkspace?.id}
           toggleCustomersFeature={toggleCustomersFeature}
           isCustomersFeatureEnabled={isCustomersFeatureEnabled}

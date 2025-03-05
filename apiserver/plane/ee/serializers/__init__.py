@@ -15,6 +15,14 @@ from .app.issue_property import (
     IssuePropertyOptionSerializer,
     IssuePropertyActivitySerializer,
 )
+
+from .app.customer import (
+    CustomerSerializer,
+    CustomerPropertySerializer,
+    CustomerPropertyOptionSerializer,
+    CustomerRequestSerializer,
+    CustomerRequestAttachmentV2Serializer
+)
 from .app.worklog import IssueWorkLogSerializer
 from .app.exporter import ExporterHistorySerializer
 

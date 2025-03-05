@@ -1,5 +1,11 @@
 // plane web store
 import { IIssuePropertiesActivityStore, IIssueTypesStore } from "@plane/types";
+import {
+  CustomerProperties,
+  CustomerStore,
+  ICustomerPropertiesStore,
+  ICustomersStore,
+} from "@/plane-web/store/customers";
 import { ICycleStore, CycleStore } from "@/plane-web/store/cycle";
 import { FeatureFlagsStore, IFeatureFlagsStore } from "@/plane-web/store/feature-flags/feature-flags.store";
 import { IssuePropertiesActivityStore, IssueTypes } from "@/plane-web/store/issue-types";
@@ -89,6 +95,8 @@ export class RootStore extends CoreRootStore {
   projectDetails: IProjectStore;
   teamspaceRoot: ITeamspaceRootStore;
   workspaceNotification: IWorkspaceNotificationStore;
+  customersStore: ICustomersStore;
+  customerPropertiesStore: ICustomerPropertiesStore;
   // importers
   jiraImporter: IJiraStore;
   jiraServerImporter: IJiraServerStore;
@@ -127,6 +135,8 @@ export class RootStore extends CoreRootStore {
     this.projectDetails = new ProjectStore(this);
     this.teamspaceRoot = new TeamspaceRootStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
+    this.customersStore = new CustomerStore(this);
+    this.customerPropertiesStore = new CustomerProperties(this);
     // importers
     this.jiraImporter = new JiraStore(this);
     this.jiraServerImporter = new JiraServerStore(this);
@@ -165,6 +175,8 @@ export class RootStore extends CoreRootStore {
     this.timelineStore = new TimeLineStore(this);
     this.projectDetails = new ProjectStore(this);
     this.teamspaceRoot = new TeamspaceRootStore(this);
+    this.customersStore = new CustomerStore(this);
+    this.customerPropertiesStore = new CustomerProperties(this);
     // importers
     this.jiraImporter = new JiraStore(this);
     this.jiraServerImporter = new JiraServerStore(this);

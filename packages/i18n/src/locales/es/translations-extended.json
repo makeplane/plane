@@ -6,7 +6,8 @@
     "epics": "Epics",
     "upgrade_plan": "Actualizar plan",
     "plane_pro": "Plane Pro",
-    "business": "Business"
+    "business": "Business",
+    "customers": "Clientes"
   },
 
   "workspace_dashboards": "Tableros",
@@ -1197,6 +1198,19 @@
       "add": {
         "primary_button": "Agregar nueva propiedad"
       }
+    },
+    "stage": {
+      "lead": "Líder",
+      "sales_qualified_lead": "Líder de ventas calificado",
+      "contract_negotiation": "Negociación de contrato",
+      "closed_won": "Ganado",
+      "closed_lost": "Perdido"
+    },
+    "contract_status": {
+      "active": "Activo",
+      "pre_contract": "Pre-contrato",
+      "signed": "Contratado",
+      "inactive": "Inactivo"
     },
     "settings": {
       "unauthorized": "No está autorizado para acceder a esta página.",

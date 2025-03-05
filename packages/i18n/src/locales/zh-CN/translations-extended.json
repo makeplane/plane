@@ -6,7 +6,8 @@
     "epics": "史诗",
     "upgrade_plan": "升级计划",
     "plane_pro": "Plane Pro",
-    "business": "商业版"
+    "business": "商业版",
+    "customers": "客户"
   },
 
   "workspace_dashboards": "仪表板",
@@ -1197,6 +1198,19 @@
       "add": {
         "primary_button": "添加新属性"
       }
+    },
+    "stage": {
+      "lead": "潜在客户",
+      "sales_qualified_lead": "合格销售线索",
+      "contract_negotiation": "合同谈判",
+      "closed_won": "已成交",
+      "closed_lost": "已流失"
+    },
+    "contract_status": {
+      "active": "生效中",
+      "pre_contract": "签约前",
+      "signed": "已签约",
+      "inactive": "未生效"
     },
     "settings": {
       "unauthorized": "您无权访问此页面。",

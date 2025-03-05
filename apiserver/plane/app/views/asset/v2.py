@@ -16,6 +16,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 # Module imports
 from ..base import BaseAPIView
 from plane.db.models import FileAsset, Workspace, Project, User
+from plane.ee.models import Customer
 from plane.settings.storage import S3Storage
 from plane.app.permissions import allow_permission, ROLE
 from plane.utils.cache import invalidate_cache_directly
@@ -302,7 +303,16 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             project.cover_image_asset_id = asset_id
             project.save()
             return
-        else:
+        elif entity_type == FileAsset.EntityTypeContext.CUSTOMER_LOGO:
+            customer = Customer.objects.filter(id=asset.entity_identifier).first()
+            if customer is None:
+                return
+            # Delete the previous logo
+            if customer.logo_asset_id:
+                self.asset_delete(customer.logo_asset_id)
+            # Save the new logo
+            customer.logo_asset_id = asset_id
+            customer.save()
             return
 
     def entity_asset_delete(self, entity_type, asset, request):
@@ -371,6 +381,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         if entity_type in [
             FileAsset.EntityTypeContext.WORKSPACE_LOGO,
             FileAsset.EntityTypeContext.PROJECT_COVER,
+            FileAsset.EntityTypeContext.CUSTOMER_LOGO
         ]:
             size_limit = min(size, settings.FILE_SIZE_LIMIT)
         else:
@@ -491,6 +502,7 @@ class StaticFileAssetEndpoint(BaseAPIView):
             FileAsset.EntityTypeContext.USER_COVER,
             FileAsset.EntityTypeContext.WORKSPACE_LOGO,
             FileAsset.EntityTypeContext.PROJECT_COVER,
+            FileAsset.EntityTypeContext.CUSTOMER_LOGO
         ]:
             return Response(
                 {"error": "Invalid entity type.", "status": False},

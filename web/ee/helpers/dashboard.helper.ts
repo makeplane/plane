@@ -17,6 +17,7 @@ const SidebarFeatureKeyToFeatureFlagMap: Record<string, E_FEATURE_FLAGS | undefi
   active_cycles: E_FEATURE_FLAGS.WORKSPACE_ACTIVE_CYCLES,
   analytics: undefined,
   initiatives: E_FEATURE_FLAGS.INITIATIVES,
+  customers: E_FEATURE_FLAGS.CUSTOMERS,
 };
 
 export const isSidebarFeatureEnabled = (featureKey: string, workspaceSlug: string) => {
@@ -40,6 +41,11 @@ export const isSidebarFeatureEnabled = (featureKey: string, workspaceSlug: strin
       return (
         isFeatureFlagEnabled &&
         store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_INITIATIVES_ENABLED)
+      );
+    case "customers":
+      return (
+        isFeatureFlagEnabled &&
+        store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_CUSTOMERS_ENABLED)
       );
     default:
       return isFeatureFlagEnabled;
