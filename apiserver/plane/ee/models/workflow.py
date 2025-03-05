@@ -123,7 +123,18 @@ class WorkflowTransitionApproval(ProjectBaseModel):
 
 class WorkflowTransitionActivity(ProjectBaseModel):
     workflow = models.ForeignKey(
-        Workflow, on_delete=models.CASCADE, related_name="workflow_activities"
+        Workflow,
+        on_delete=models.SET_NULL,
+        related_name="workflow_activities",
+        blank=True,
+        null=True,
+    )
+    transition_state = models.ForeignKey(
+        "db.State",
+        on_delete=models.CASCADE,
+        related_name="workflow_activities",
+        null=True,
+        blank=True,
     )
     verb = models.CharField(max_length=255, verbose_name="Action", default="created")
     field = models.CharField(

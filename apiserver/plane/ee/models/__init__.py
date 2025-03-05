@@ -9,7 +9,6 @@ from .issue_properties import (
 
 from .draft import DraftIssuePropertyValue
 
-
 from .issue import (
     IssueWorkLog,
     EntityUpdates,
@@ -81,3 +80,13 @@ from .customer import (
     CustomerPropertyOption,
     CustomerRequestIssue,
 )
+
+from .dashboard import (
+    Dashboard,
+    DashboardProject,
+    DashboardQuickFilter,
+    DashboardWidget,
+    Widget,
+)
+
+from .template import Template, WorkitemTemplate

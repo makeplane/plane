@@ -44,6 +44,7 @@ class FileAsset(BaseModel):
         PROJECT_ATTACHMENT = "PROJECT_ATTACHMENT"
         TEAM_SPACE_DESCRIPTION = "TEAM_SPACE_DESCRIPTION"
         TEAM_SPACE_COMMENT_DESCRIPTION = "TEAM_SPACE_COMMENT_DESCRIPTION"
+        CUSTOMER_LOGO = "CUSTOMER_LOGO"
 
     attributes = models.JSONField(default=dict)
     asset = models.FileField(upload_to=get_upload_path, max_length=800)

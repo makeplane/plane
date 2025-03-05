@@ -35,6 +35,7 @@ class Customer(BaseModel):
     email = models.EmailField(blank=True, null=True)
     website_url = models.URLField(blank=True, null=True)
     logo_props = models.JSONField(blank=True, default=dict)
+    logo_asset = models.ForeignKey("db.FileAsset", on_delete=models.SET_NULL, null=True)
     domain = models.CharField(max_length=255, blank=True, null=True)
     employees = models.IntegerField(blank=True, null=True)
     stage = models.CharField(max_length=255, blank=True, null=True)

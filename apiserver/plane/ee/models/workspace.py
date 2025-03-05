@@ -155,6 +155,13 @@ class WorkspaceConnection(BaseModel):
     connection_slug = models.TextField(null=True, blank=True)
     scopes = models.JSONField(default=list)
     config = models.JSONField(default=dict)
+    deleted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="deleted_workspace_connections",
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "Workspace Connection"
