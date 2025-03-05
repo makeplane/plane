@@ -981,7 +981,7 @@
         "attachment_count": "Numero di allegati",
         "created_on": "Creato il",
         "sub_issue": "Sotto-elemento di lavoro",
-        "issue_count": "Conteggio degli elementi di lavoro"
+        "work_item_count": "Conteggio degli elementi di lavoro"
   },
       "extra": {
         "show_sub_issues": "Mostra sotto-elementi di lavoro",

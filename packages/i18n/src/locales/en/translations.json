@@ -815,7 +815,7 @@
         "attachment_count": "Attachment count",
         "created_on": "Created on",
         "sub_issue": "Sub-work item",
-        "issue_count": "Work item count"
+        "work_item_count": "Work item count"
       },
       "extra": {
         "show_sub_issues": "Show sub-work items",
