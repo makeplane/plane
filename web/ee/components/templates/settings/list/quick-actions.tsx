@@ -6,10 +6,11 @@ import { observer } from "mobx-react";
 import { Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { ETemplateLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TBaseTemplateWithData } from "@plane/types";
 import { AlertModalCore, ContextMenu, CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
 // helpers
-import { getCreateTemplateSettingsPath } from "@plane/utils";
+import { getCreateUpdateTemplateSettingsPath } from "@plane/utils";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -33,13 +34,15 @@ export const TemplateQuickActions = observer(
     // states
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+    // plane hooks
+    const { t } = useTranslation();
     // derived values
     const template = getTemplateById(templateId);
     if (!template) return null;
 
     const handleEditTemplate = () => {
       const updateTemplatePath =
-        getCreateTemplateSettingsPath({
+        getCreateUpdateTemplateSettingsPath({
           type: template.template_type,
           workspaceSlug,
           ...(template.project
@@ -64,15 +67,15 @@ export const TemplateQuickActions = observer(
         .then(() => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Template deleted successfully.",
+            title: t("templates.toasts.delete.success.title"),
+            message: t("templates.toasts.delete.success.message"),
           });
         })
         .catch(() => {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Template could not be deleted. Please try again.",
+            title: t("templates.toasts.delete.error.title"),
+            message: t("templates.toasts.delete.error.message"),
           });
         })
         .finally(() => {
@@ -83,7 +86,7 @@ export const TemplateQuickActions = observer(
     const MENU_ITEMS: TContextMenuItem[] = [
       {
         key: "edit",
-        title: "Edit",
+        title: t("common.actions.edit"),
         icon: Pencil,
         action: handleEditTemplate,
         shouldRender: isEditingAllowed,
@@ -91,7 +94,7 @@ export const TemplateQuickActions = observer(
       {
         key: "delete",
         action: handleDeleteTemplateModal,
-        title: "Delete",
+        title: t("common.actions.delete"),
         icon: Trash2,
         shouldRender: isEditingAllowed,
         className: "text-red-500",
@@ -105,12 +108,12 @@ export const TemplateQuickActions = observer(
           handleSubmit={handleTemplateDeletion}
           isSubmitting={isDeleteLoading}
           isOpen={isDeleteModalOpen}
-          title="Delete Template"
+          title={t("templates.delete_confirmation.title")}
           content={
             <>
-              Are you sure you want to delete template-{" "}
-              <span className="font-medium text-custom-text-100">{template.name}</span>? All of the data related to the
-              template will be permanently removed. This action cannot be undone.
+              {t("templates.delete_confirmation.description.prefix")}
+              <span className="font-medium text-custom-text-100">{template.name}</span>
+              {t("templates.delete_confirmation.description.suffix")}
             </>
           }
         />

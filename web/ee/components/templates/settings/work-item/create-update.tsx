@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
 import { ETemplateLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { ISearchIssueResponse, PartialDeep, TWorkItemTemplateForm, TWorkItemTemplateFormData } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import {
@@ -45,6 +46,8 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
   const [templateInvalidIds, setTemplateInvalidIds] = useState<
     TWorkItemSanitizationResult<TWorkItemTemplateFormData>["invalid"] | undefined
   >(undefined);
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   const { isWorkItemTypeEnabledForProject, getIssueTypeById, getIssuePropertyById } = useIssueTypes();
@@ -219,15 +222,15 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
             router.push(templateSettingsPagePath);
             setToast({
               type: TOAST_TYPE.SUCCESS,
-              title: "Template updated successfully",
-              message: `${templateData.template.name} has been successfully updated.`,
+              title: t("templates.toasts.update.success.title"),
+              message: t("templates.toasts.update.success.message", { templateName: templateData.template.name }),
             });
           })
           .catch(() => {
             setToast({
               type: TOAST_TYPE.ERROR,
-              title: "Error updating template",
-              message: "Please try again",
+              title: t("templates.toasts.update.error.title"),
+              message: t("templates.toasts.update.error.message"),
             });
           });
       }
@@ -244,15 +247,15 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
           router.push(templateSettingsPagePath);
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Template created successfully",
-            message: `${templateData.template.name} has been successfully created and is now available for your workspace.`,
+            title: t("templates.toasts.create.success.title"),
+            message: t("templates.toasts.create.success.message", { templateName: templateData.template.name }),
           });
         })
         .catch(() => {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error creating template",
-            message: "Please try again",
+            title: t("templates.toasts.create.error.title"),
+            message: t("templates.toasts.create.error.message"),
           });
         });
     }

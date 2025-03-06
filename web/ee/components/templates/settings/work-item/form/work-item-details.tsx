@@ -69,10 +69,10 @@ export const WorkItemDetails = observer((props: TWorkItemDetailsProps) => {
               }
               return undefined;
             },
-            required: "Work item title is required",
+            required: t("templates.settings.form.work_item.name.validation.required"),
             maxLength: {
               value: 255,
-              message: "Work item title should be less than 255 characters",
+              message: t("templates.settings.form.work_item.name.validation.maxLength"),
             },
           }}
           render={({ field: { value, onChange, ref } }) => (
@@ -86,7 +86,7 @@ export const WorkItemDetails = observer((props: TWorkItemDetailsProps) => {
               }}
               ref={issueTitleRef || ref}
               hasError={Boolean(errors.work_item?.name)}
-              placeholder="Give this work item a title."
+              placeholder={t("templates.settings.form.work_item.name.placeholder")}
               className="w-full text-lg font-bold p-0"
               mode="true-transparent"
               inputSize="md"
@@ -118,7 +118,7 @@ export const WorkItemDetails = observer((props: TWorkItemDetailsProps) => {
               }}
               placeholder={(isFocused, value) =>
                 isEditorEmpty(value)
-                  ? "Describe this work item so its clear what you will accomplish when you complete this."
+                  ? t("templates.settings.form.work_item.description.placeholder")
                   : t(`${getDescriptionPlaceholderI18n(isFocused, value)}`)
               }
               containerClassName="min-h-[80px] px-0"

@@ -31,10 +31,10 @@ export const TemplateDetails = observer(() => {
               }
               return undefined;
             },
-            required: "Template name is required",
+            required: t("templates.settings.form.work_item.template.name.validation.required"),
             maxLength: {
               value: 255,
-              message: "Template name should be less than 255 characters",
+              message: t("templates.settings.form.work_item.template.name.validation.maxLength"),
             },
           }}
           render={({ field: { value, onChange, ref } }) => (
@@ -45,7 +45,7 @@ export const TemplateDetails = observer(() => {
               value={value}
               onChange={onChange}
               ref={ref}
-              placeholder="Name your work-item template."
+              placeholder={t("templates.settings.form.work_item.template.name.placeholder")}
               className="w-full text-lg font-bold p-0"
               mode="true-transparent"
               inputSize="md"
@@ -70,7 +70,7 @@ export const TemplateDetails = observer(() => {
               value={value}
               onChange={onChange}
               ref={ref}
-              placeholder="Describe when and how to use this template."
+              placeholder={t("templates.settings.form.work_item.template.description.placeholder")}
               className="w-full min-h-[80px] p-0 resize-none"
               mode="true-transparent"
               textAreaSize="md"

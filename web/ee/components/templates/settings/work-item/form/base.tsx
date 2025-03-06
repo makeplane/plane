@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
 import { ETemplateLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TWorkItemTemplateForm, ISearchIssueResponse, PartialDeep, TWorkItemTemplateFormData } from "@plane/types";
 import { Button } from "@plane/ui";
 import { cn, TWorkItemSanitizationResult } from "@plane/utils";
@@ -77,6 +78,8 @@ export const WorkItemTemplateFormRoot: React.FC<TWorkItemTemplateFormRootProps> 
     } = props;
     // router
     const { workspaceSlug } = useParams();
+    // plane hooks
+    const { t } = useTranslation();
     // context
     const { selectedParentIssue } = useIssueModal();
     // form state
@@ -160,14 +163,14 @@ export const WorkItemTemplateFormRoot: React.FC<TWorkItemTemplateFormRootProps> 
                   className={cn(COMMON_BUTTON_CLASS_NAME)}
                   onClick={handleFormCancel}
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
                 <Button variant="primary" type="submit" size="sm" className={cn("shadow-sm")} loading={isSubmitting}>
                   {isSubmitting
-                    ? "Confirming"
+                    ? t("common.confirming")
                     : operation === EWorkItemFormOperation.CREATE
-                      ? "Create work-item template"
-                      : "Update work-item template"}
+                      ? t("templates.settings.form.work_item.button.create")
+                      : t("templates.settings.form.work_item.button.update")}
                 </Button>
               </div>
             </div>

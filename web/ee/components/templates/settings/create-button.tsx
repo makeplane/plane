@@ -1,12 +1,23 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 // plane imports
-import { ETemplateLevel, ETemplateType } from "@plane/constants";
+import {
+  ETemplateLevel,
+  ETemplateType,
+  EUserPermissionsLevel,
+  EUserProjectRoles,
+  EUserWorkspaceRoles,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CustomMenu, Button, TButtonSizes } from "@plane/ui";
-import { getCreateTemplateSettingsPath, getTemplateI18nLabel, TCreateTemplateSettingsPathProps } from "@plane/utils";
+import {
+  getCreateUpdateTemplateSettingsPath,
+  getTemplateI18nLabel,
+  TCreateTemplateSettingsPathProps,
+} from "@plane/utils";
 // hooks
+import { useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type TCreateTemplatesButtonProps = {
@@ -34,6 +45,13 @@ export const CreateTemplatesButton = observer((props: TCreateTemplatesButtonProp
   const router = useAppRouter();
   // plane hooks
   const { t } = useTranslation();
+  // store hooks
+  const { allowPermissions } = useUserPermissions();
+  // derived values
+  const hasAdminPermission =
+    props.currentLevel === ETemplateLevel.PROJECT
+      ? allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT, props.workspaceSlug, props.projectId)
+      : allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE, props.workspaceSlug);
 
   const CREATE_TEMPLATE_OPTIONS: TCreateTemplateOption[] = useMemo(() => {
     const getCreateTemplateSettingsPathProps = (type: ETemplateType) => {
@@ -51,33 +69,49 @@ export const CreateTemplatesButton = observer((props: TCreateTemplatesButtonProp
       {
         i18n_label: getTemplateI18nLabel(ETemplateType.PROJECT),
         onClick: () =>
-          router.push(getCreateTemplateSettingsPath(getCreateTemplateSettingsPathProps(ETemplateType.PROJECT))),
+          router.push(getCreateUpdateTemplateSettingsPath(getCreateTemplateSettingsPathProps(ETemplateType.PROJECT))),
         availableForLevels: [],
       },
       {
         i18n_label: getTemplateI18nLabel(ETemplateType.WORK_ITEM),
         onClick: () =>
-          router.push(getCreateTemplateSettingsPath(getCreateTemplateSettingsPathProps(ETemplateType.WORK_ITEM))),
+          router.push(getCreateUpdateTemplateSettingsPath(getCreateTemplateSettingsPathProps(ETemplateType.WORK_ITEM))),
         availableForLevels: [ETemplateLevel.WORKSPACE, ETemplateLevel.PROJECT],
       },
       {
         i18n_label: getTemplateI18nLabel(ETemplateType.PAGE),
         onClick: () =>
-          router.push(getCreateTemplateSettingsPath(getCreateTemplateSettingsPathProps(ETemplateType.PAGE))),
+          router.push(getCreateUpdateTemplateSettingsPath(getCreateTemplateSettingsPathProps(ETemplateType.PAGE))),
         availableForLevels: [],
       },
     ];
   }, [router, props]);
 
+  const getButtonLabel = useCallback(() => {
+    if (!hasAdminPermission)
+      return props.currentLevel === ETemplateLevel.PROJECT
+        ? t("templates.settings.create_template.no_permission.project")
+        : t("templates.settings.create_template.no_permission.workspace");
+
+    return t(props.buttonI18nLabel || "templates.settings.create_template.label");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasAdminPermission, props.buttonI18nLabel, props.currentLevel]);
+
   return (
     <CustomMenu
       customButton={
-        <Button variant="primary" size={props.buttonSize} className="flex items-center justify-center gap-1.5">
-          {t(props.buttonI18nLabel || "templates.settings.create_template.label")}
-          <ChevronDown className="size-3.5" />
+        <Button
+          variant="primary"
+          size={props.buttonSize}
+          className="flex items-center justify-center gap-1.5"
+          disabled={!hasAdminPermission}
+        >
+          {getButtonLabel()}
+          {hasAdminPermission && <ChevronDown className="size-3.5" />}
         </Button>
       }
       placement="bottom-end"
+      disabled={!hasAdminPermission}
       closeOnSelect
     >
       {CREATE_TEMPLATE_OPTIONS.map((option) => {

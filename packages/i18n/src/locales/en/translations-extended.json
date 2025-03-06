@@ -1537,10 +1537,52 @@
         }
       },
       "create_template": {
-        "label": "Create template"
+        "label": "Create template",
+        "no_permission": {
+          "project": "Contact your project admin to create templates",
+          "workspace": "Contact your workspace admin to create templates"
+        }
       },
       "use_template": {
         "button": "Use template"
+      },
+      "template_source": {
+        "workspace": {
+          "info": "Derived from workspace"
+        },
+        "project": {
+          "info": "Derived from project"
+        }
+      },
+      "form": {
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "Name your work-item template.",
+              "validation": {
+                "required": "Template name is required",
+                "maxLength": "Template name should be less than 255 characters"
+              }
+            },
+            "description": {
+              "placeholder": "Describe when and how to use this template."
+            }
+          },
+          "name": {
+            "placeholder": "Give this work item a title.",
+            "validation": {
+              "required": "Work item title is required",
+              "maxLength": "Work item title should be less than 255 characters"
+            }
+          },
+          "description": {
+            "placeholder": "Describe this work item so its clear what you will accomplish when you complete this."
+          },
+          "button": {
+            "create": "Create work-item template",
+            "update": "Update work-item template"
+          }
+        }
       }
     },
     "empty_state": {
@@ -1551,6 +1593,45 @@
       },
       "no_templates": {
         "button": "Create your first template"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Template created successfully",
+          "message": "{templateName} has been successfully created and is now available for your workspace. You can now use it to create new work items."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Unable to create template. Try again!"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Template updated successfully",
+          "message": "{templateName} has been successfully updated. You can now use it to create new work items."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Unable to update template. Try again!"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Success!",
+          "message": "Template deleted successfully!"
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Unable to delete template. Try again!"
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Delete template",
+      "description": {
+        "prefix": "Are you sure you want to delete template-",
+        "suffix": "? All of the data related to the template will be permanently removed. This action cannot be undone."
       }
     }
   }

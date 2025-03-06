@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ETemplateLevel, EUserPermissionsLevel, EUserProjectRoles, EUserWorkspaceRoles } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TBaseTemplateWithData } from "@plane/types";
 // components
 import { Button } from "@plane/ui";
@@ -24,6 +25,8 @@ export const TemplateListItem = observer(<T extends TBaseTemplateWithData>(props
   const { templateId, workspaceSlug, currentLevel, getTemplateById, deleteTemplate, handleUseTemplateAction } = props;
   // refs
   const parentRef = useRef<HTMLDivElement>(null);
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
@@ -50,10 +53,10 @@ export const TemplateListItem = observer(<T extends TBaseTemplateWithData>(props
       </div>
       <div className="flex flex-shrink-0 items-center gap-3">
         {currentLevel === ETemplateLevel.PROJECT && !template.project && (
-          <span className="text-xs text-custom-text-300">Derived from workspace</span>
+          <span className="text-xs text-custom-text-300">{t("templates.settings.template_source.workspace.info")}</span>
         )}
         {currentLevel === ETemplateLevel.WORKSPACE && template.project && (
-          <span className="text-xs text-custom-text-300">Derived from project</span>
+          <span className="text-xs text-custom-text-300">{t("templates.settings.template_source.project.info")}</span>
         )}
         <Button
           variant="neutral-primary"
@@ -61,7 +64,7 @@ export const TemplateListItem = observer(<T extends TBaseTemplateWithData>(props
           size="sm"
           onClick={handleUseTemplateAction}
         >
-          Use template
+          {t("templates.settings.use_template.button")}
         </Button>
         {shouldShowQuickActions && (
           <TemplateQuickActions

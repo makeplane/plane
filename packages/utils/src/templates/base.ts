@@ -41,7 +41,7 @@ export type TCreateTemplateSettingsPathProps = TBaseTemplateSettingsPathProps & 
   type: ETemplateType;
 };
 
-export const getCreateTemplateSettingsPath = (props: TCreateTemplateSettingsPathProps) => {
+export const getCreateUpdateTemplateSettingsPath = (props: TCreateTemplateSettingsPathProps) => {
   const { type, ...rest } = props;
   // get the base path
   const basePath = getTemplateSettingsBasePath(rest);
