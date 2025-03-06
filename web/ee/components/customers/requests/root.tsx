@@ -2,6 +2,7 @@ import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
 // plane web imports
 import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 import { useUserPermissions } from "@/hooks/store";
 import {
@@ -9,9 +10,9 @@ import {
   CustomerRequestForm,
   CustomerRequestListItem,
   CustomerRequestSearch,
+  CustomerRequestSearchEmptyState,
 } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
-import { useTranslation } from "@plane/i18n";
 
 type TProps = {
   workspaceSlug: string;
@@ -25,7 +26,7 @@ export const CustomerRequestsRoot: FC<TProps> = observer((props) => {
   // i18n
   const { t } = useTranslation();
   // hooks
-  const { getFilteredCustomerRequestIds } = useCustomers();
+  const { getFilteredCustomerRequestIds, requestSearchQuery } = useCustomers();
   const { allowPermissions } = useUserPermissions();
 
   // derived values
@@ -53,7 +54,13 @@ export const CustomerRequestsRoot: FC<TProps> = observer((props) => {
           )}
         </div>
       </div>
-      {!isRequestFormOpen && !requestIds?.length && <CustomerRequestEmptyState addRequest={handleFormOpen} />}
+      {!isRequestFormOpen &&
+        !requestIds?.length &&
+        (requestSearchQuery === "" ? (
+          <CustomerRequestEmptyState addRequest={handleFormOpen} />
+        ) : (
+          <CustomerRequestSearchEmptyState />
+        ))}
       <CustomerRequestForm
         isOpen={isRequestFormOpen}
         handleClose={handleFormClose}

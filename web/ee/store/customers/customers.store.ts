@@ -288,6 +288,11 @@ export class CustomerStore implements ICustomersStore {
         update(this.customersMap, [customerId], (customer) => ({ ...customer, ...data }));
       });
       const response = await this.customerService.update(workspaceSlug, customerId, data);
+      if (data.logo_asset) {
+        runInAction(() => {
+          update(this.customersMap, [customerId], (customer) => ({ ...customer, logo_url: response.logo_url }));
+        });
+      }
       return response;
     } catch (error) {
       runInAction(() => {
@@ -359,13 +364,12 @@ export class CustomerStore implements ICustomersStore {
       update(this.customersMap, [customerId], (customer: TCustomer) => ({
         ...customer,
         customer_request_count: customer.customer_request_count + 1,
-        customer_issue_count: customer.customer_issue_count + _workItems.length,
       }));
 
       if (this.customerWorkItemIdsMap[customerId]) {
-        update(this.customerWorkItemIdsMap, [customerId], (ids: string[]) => [...ids, ...response.issue_ids]);
+        update(this.customerWorkItemIdsMap, [customerId], (ids: string[]) => [...ids, ...workItemIds]);
       } else {
-        set(this.customerRequestIdsMap, [customerId], response.issue_ids);
+        set(this.customerRequestIdsMap, [customerId], workItemIds);
       }
       this.rootStore.issue.issues.addIssue(_workItems);
     });
@@ -456,7 +460,6 @@ export class CustomerStore implements ICustomersStore {
       update(this.customersMap, [customerId], (customer: TCustomer) => ({
         ...customer,
         customer_request_count: customer.customer_request_count - 1,
-        customer_issue_count: customer.customer_issue_count - (request.issue_ids.length ?? 0),
       }));
       remove(this.customerWorkItemIdsMap[customerId], (id) => _workItemIds.includes(id));
     });
@@ -508,11 +511,6 @@ export class CustomerStore implements ICustomersStore {
             issue_ids: [...workItemIds, ...request.issue_ids],
           }));
         }
-        // update customer data
-        update(this.customersMap, [customerId], (customer: TCustomer) => ({
-          ...customer,
-          customer_issue_count: (customer.customer_issue_count || 0) + workItemIds.length,
-        }));
         if (this.customerWorkItemIdsMap[customerId]) {
           update(this.customerWorkItemIdsMap, [customerId], (ids: string[]) => [...workItemIds, ...ids]);
         } else set(this.customerWorkItemIdsMap, [customerId], workItemIds);
@@ -554,11 +552,6 @@ export class CustomerStore implements ICustomersStore {
             issue_ids: _workItemIds,
           }));
         }
-        // update customers data
-        update(this.customersMap, [customerId], (customer: TCustomer) => ({
-          ...customer,
-          customer_issue_count: customer.customer_issue_count - 1,
-        }));
         remove(this.customerWorkItemIdsMap[customerId], (id) => id === workItemId);
         this.rootStore.issue.issues.removeIssue(workItemId);
       });

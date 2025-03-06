@@ -32,7 +32,9 @@ export const CustomerDefaultSidebarProperties: FC<TProps> = (props) => {
       <p className="text-sm font-medium mb-2">{t("customers.sidebar.properties")}</p>
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
-          <span className="text-sm text-custom-text-200">{t("customers.properties.default.email.name")}</span>
+          <span className="text-sm text-custom-text-200">
+            {t("customers.properties.default.email.name")} <span className="text-red-500">*</span>
+          </span>
         </div>
         <div className="w-3/5 flex-grow">
           <PropertyField

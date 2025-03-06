@@ -13,7 +13,6 @@ import {
   TCustomerRequestAttachment,
   TCustomerRequestAttachmentMap,
   TCustomerRequestAttachmentIdMap,
-  TAttachmentUploadPayload,
   TCustomerRequest,
 } from "@plane/types";
 import { CustomerStore } from "./customers.store";
@@ -42,7 +41,6 @@ export interface IRequestAttachmentActions {
     attachmentId: string,
     requestId: string
   ) => Promise<void>;
-  addAttachmentToRequest: (workspaceSlug: string, requestId: string, data: TAttachmentUploadPayload) => Promise<void>;
 }
 
 export interface IRequestAttachmentStore extends IRequestAttachmentActions {
@@ -134,7 +132,7 @@ export class RequestAttachmentStore implements IRequestAttachmentStore {
     runInAction(() => {
       update(this.customerStore.customerRequestsMap, [customerId, requestId], (request: TCustomerRequest) => ({
         ...request,
-        attachment_count: request.attachment_count + count,
+        attachment_count: (request.attachment_count || 0) + count,
       }));
     });
   };
@@ -180,8 +178,6 @@ export class RequestAttachmentStore implements IRequestAttachmentStore {
       });
     }
   };
-
-  addAttachmentToRequest = async (workspaceSlug: string, requestId: string, data: TAttachmentUploadPayload) => {};
 
   removeAttachment = async (workspaceSlug: string, customerId: string, attachmentId: string, requestId: string) => {
     const response = await this.requestAttachmentService.deleteRequestAttachment(workspaceSlug, attachmentId);

@@ -1221,9 +1221,9 @@
           }
         },
         "domain": {
-          "name": "Domain",
-          "placeholder": "This is usually the same as the Website, but not always.",
-          "placeholder_short": "Add domain",
+          "name": "Industry",
+          "placeholder": "Add industry",
+          "placeholder_short": "Add industry",
           "validation": {}
         },
         "stage": {
@@ -1397,6 +1397,10 @@
           "title": "There're no requests to show yet.",
           "description": "Create requests from your customers so you can link them to work items.",
           "button": "Add new request"
+        },
+        "search": {
+          "title": "No matching requests",
+          "description": "Make sure your query is right or try another query."
         }
       },
       "label": "{count, plural, one {Request} other {Requests}}",
@@ -1407,7 +1411,8 @@
         "name": {
           "placeholder": "Name this request",
           "validation": {
-            "required": "Name is required."
+            "required": "Name is required.",
+            "max_length": "Request name name should not exceed 255 characters."
           }
         },
         "description": {
@@ -1515,6 +1520,10 @@
           "description": "Link existing work items from any project here so you can track them by this customer.",
           "button": "Link work item"
         }
+      },
+      "action": {
+        "remove_epic": "Remove epic",
+        "remove": "Remove work item"
       }
     },
     "sidebar": {

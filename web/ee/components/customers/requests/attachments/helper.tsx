@@ -1,12 +1,12 @@
 "use client";
 import { useMemo } from "react";
 // plane ui
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // hooks
 import { useCustomers } from "@/plane-web/hooks/store";
 // types
 import { TAttachmentUploadStatus } from "@/store/issue/issue-details/attachment.store";
-import { useTranslation } from "@plane/i18n";
 
 export type TAttachmentOperations = {
   create: (file: File) => Promise<void>;

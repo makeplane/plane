@@ -130,7 +130,11 @@ export const CustomerWorkItem: FC<TProps> = observer((props) => {
                 <CustomMenu.MenuItem onClick={handleRemoveRelation}>
                   <div className="flex items-center gap-2 text-red-500">
                     <CircleMinus className="h-3.5 w-3.5" strokeWidth={2} />
-                    <span>{t("issue.remove.label")}</span>
+                    <span>
+                      {!!workItem.is_epic
+                        ? t("customers.linked_work_items.action.remove_epic")
+                        : t("customers.linked_work_items.action.remove")}
+                    </span>
                   </div>
                 </CustomMenu.MenuItem>
               )}

@@ -16,7 +16,7 @@ import { CustomerUpgrade, CustomerSettingsRoot } from "@/plane-web/components/cu
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 // plane web constants
 // plane web hooks
-import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { useCustomers, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 // plane web types
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 
@@ -26,7 +26,7 @@ const CustomerSettingsPage = observer(() => {
   // store hooks
   const { workspaceInfoBySlug } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
-  const { isWorkspaceFeatureEnabled, updateWorkspaceFeature } = useWorkspaceFeatures();
+  const { updateWorkspaceFeature } = useWorkspaceFeatures();
 
   const { t } = useTranslation();
 
@@ -34,7 +34,7 @@ const CustomerSettingsPage = observer(() => {
   const currentWorkspaceDetail = workspaceInfoBySlug(workspaceSlug.toString());
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Customers` : undefined;
   const isAdmin = currentWorkspaceDetail?.role === EUserWorkspaceRoles.ADMIN;
-  const isCustomersFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_CUSTOMERS_ENABLED);
+  const { isCustomersFeatureEnabled } = useCustomers();
 
   if (!workspaceSlug || !currentWorkspace?.id) return <></>;
 
@@ -99,13 +99,13 @@ const CustomerSettingsPage = observer(() => {
             </span>
           </div>
           <div>
-            <ToggleSwitch value={isCustomersFeatureEnabled} onChange={toggleCustomersFeature} size="sm" />
+            <ToggleSwitch value={!!isCustomersFeatureEnabled} onChange={toggleCustomersFeature} size="sm" />
           </div>
         </div>
         <CustomerSettingsRoot
           workspaceId={currentWorkspace?.id}
           toggleCustomersFeature={toggleCustomersFeature}
-          isCustomersFeatureEnabled={isCustomersFeatureEnabled}
+          isCustomersFeatureEnabled={!!isCustomersFeatureEnabled}
         />
       </WithFeatureFlagHOC>
     </>

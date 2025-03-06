@@ -61,15 +61,13 @@ export const CustomerAdditionalPropertyValuesCreate: React.FC<TCustomerAdditiona
     if (!activeProperties?.length) return null;
 
     return (
-      <div className="pt-2">
-        <CustomerAdditionalPropertyValues
-          customerPropertyValues={customerPropertyDefaultValues}
-          customerPropertyValueErrors={customerPropertyValueErrors}
-          variant="create"
-          isPropertyValuesLoading={isLoading}
-          handlePropertyValueChange={handlePropertyValueChange}
-        />
-      </div>
+      <CustomerAdditionalPropertyValues
+        customerPropertyValues={customerPropertyDefaultValues}
+        customerPropertyValueErrors={customerPropertyValueErrors}
+        variant="create"
+        isPropertyValuesLoading={isLoading}
+        handlePropertyValueChange={handlePropertyValueChange}
+      />
     );
   }
 );

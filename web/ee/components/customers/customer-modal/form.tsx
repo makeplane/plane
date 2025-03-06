@@ -156,13 +156,13 @@ export const CustomerForm: FC<TCustomerForms> = (props) => {
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} className="rounded-lg">
-        <div className="space-y-2 px-5 pt-5">
+        <div className="space-y-2 pl-5 pt-5">
           <h3 className="text-xl font-medium text-custom-text-200">
             {data?.id ? t("customers.update.label") : t("customers.create.label")}
           </h3>
           {/* Default Properties */}
           <div
-            className="max-h-[70vh] overflow-x-hidden overflow-y-auto py-2 vertical-scrollbar scrollbar-sm"
+            className="max-h-[72vh] overflow-x-hidden overflow-y-auto py-2 vertical-scrollbar scrollbar-sm space-y-2 pr-5"
             ref={formContainerRef}
           >
             <DefaultProperties

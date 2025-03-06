@@ -20,6 +20,7 @@ import {
   useFeatureFlags,
   useWorkItemTemplates,
   useCustomerProperties,
+  useCustomers,
 } from "@/plane-web/hooks/store";
 // plane web types
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
@@ -44,6 +45,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { fetchAll } = useIssueTypes();
   const { fetchAllTemplates } = useWorkItemTemplates();
   const { fetchAllCustomerPropertiesAndOptions } = useCustomerProperties();
+  const { isCustomersFeatureEnabled } = useCustomers();
   // derived values
   const isFreeMemberCountExceeded = subscriptionDetail?.is_free_member_count_exceeded;
   const isWorkspaceSettingsRoute = pathname.includes(`/${workspaceSlug}/settings`);
@@ -53,7 +55,6 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceFeatures[workspaceSlug.toString()] &&
     workspaceFeatures[workspaceSlug.toString()][EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED];
   const isWorkItemTemplatesEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TEMPLATES");
-  const isCustomersFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_CUSTOMERS_ENABLED);
 
   // fetching feature flags
   const { isLoading: flagsLoader, error: flagsError } = useSWR(

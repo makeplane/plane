@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useState } from "react";
+import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Database, Paperclip } from "lucide-react";
@@ -6,11 +6,19 @@ import { Database, Paperclip } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { CustomerService } from "@plane/services";
 import { ISearchIssueResponse, TCustomerRequest, TProjectIssuesSearchParams } from "@plane/types";
-import { Button, Input, LayersIcon, setToast, TextArea, TOAST_TYPE } from "@plane/ui";
+import { EFileAssetType } from "@plane/types/src/enums";
+import { Button, Input, LayersIcon, setToast, TOAST_TYPE } from "@plane/ui";
 import { ExistingIssuesListModal } from "@/components/core";
 // plane web imports
+import { RichTextEditor } from "@/components/editor";
+import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
+import { useEditorAsset, useWorkspace } from "@/hooks/store";
 import { RequestAttachmentsList, SourceCreateUpdateModal, SourceItem } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
+// plane web services
+import { WorkspaceService } from "@/plane-web/services";
+// services
+import { FileService } from "@/services/file.service";
 import { AddAttachmentButton } from "./attachments/add-attachment-btn";
 
 type TProps = {
@@ -26,6 +34,9 @@ const defaultValues = {
   description: "",
 };
 
+// services
+const workspaceService = new WorkspaceService();
+
 const customerService = new CustomerService();
 
 export const CustomerRequestForm: FC<TProps> = observer((props) => {
@@ -36,12 +47,18 @@ export const CustomerRequestForm: FC<TProps> = observer((props) => {
   const [workItemsModal, setWorkItemsModal] = useState<boolean>(false);
   const [selectedWorkItems, setSelectedWorkItems] = useState<ISearchIssueResponse[]>([]);
   const [link, setLink] = useState<string | undefined>();
+  const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
+
+  // refs
 
   // i18n
   const { t } = useTranslation();
   // hooks
   const { createCustomerRequest, updateCustomerRequest, addWorkItemsToCustomer } = useCustomers();
-
+  const { getWorkspaceBySlug } = useWorkspace();
+  const { uploadEditorAsset } = useEditorAsset();
+  // derived values
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id as string;
   const workItemsCount = useMemo(() => {
     const _count = selectedWorkItems.length;
     if (data) {
@@ -73,6 +90,10 @@ export const CustomerRequestForm: FC<TProps> = observer((props) => {
     setSelectedWorkItems(searchData);
   };
 
+  const onAssetUpload = (id: string) => {
+    setUploadedAssetIds((prev) => [...prev, id]);
+  };
+
   const onSubmit = async (data: Partial<TCustomerRequest>) => {
     const workItemIds = selectedWorkItems.map((item) => item.id).filter((id) => id !== null);
     const payload = { ...data, link };
@@ -81,7 +102,7 @@ export const CustomerRequestForm: FC<TProps> = observer((props) => {
       : createCustomerRequest(workspaceSlug, customerId, { ...payload, issue_ids: workItemIds });
     setSubmitting(true);
     try {
-      await operation;
+      const response = await operation;
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: data.id
@@ -92,7 +113,7 @@ export const CustomerRequestForm: FC<TProps> = observer((props) => {
           : t("customers.requests.toasts.create.success.message"),
       });
       if (data.id && workItemIds.length) {
-        await addWorkItemsToCustomer(workspaceSlug, customerId, workItemIds, data.id).catch((error: any) => {
+        await addWorkItemsToCustomer(workspaceSlug, customerId, workItemIds, response.id).catch((error: any) => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("customers.requests.toasts.work_item.add.error.title"),
@@ -152,6 +173,10 @@ export const CustomerRequestForm: FC<TProps> = observer((props) => {
                   value: true,
                   message: t("customers.requests.form.name.validation.required"),
                 },
+                max: {
+                  value: 255,
+                  message: t("customers.requests.form.name.validation.max_length"),
+                },
               }}
               render={({ field: { value, onChange } }) => (
                 <Input
@@ -165,14 +190,42 @@ export const CustomerRequestForm: FC<TProps> = observer((props) => {
             />
             <span className="text-xs text-red-500">{errors?.name?.message}</span>
             <Controller
-              name="description"
+              name="description_html"
               control={control}
               render={({ field: { value, onChange } }) => (
-                <TextArea
-                  value={value}
-                  onChange={onChange}
-                  placeholder={t("customers.requests.form.description.placeholder")}
-                  className="w-full border-0 text-base min-h-24"
+                <RichTextEditor
+                  id="customer-modal-editor"
+                  initialValue={value ?? ""}
+                  workspaceSlug={workspaceSlug}
+                  workspaceId={workspaceId}
+                  onChange={(_description: object, description_html: string) => {
+                    onChange(description_html);
+                  }}
+                  displayConfig={{ fontSize: "small-font" }}
+                  placeholder={(isFocused, description) => t(getDescriptionPlaceholderI18n(isFocused, description))}
+                  searchMentionCallback={async (payload) =>
+                    await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+                      ...payload,
+                    })
+                  }
+                  containerClassName="pt-3 min-h-[120px] rounded-lg relative"
+                  uploadFile={async (blockId, file) => {
+                    try {
+                      const { asset_id } = await uploadEditorAsset({
+                        blockId,
+                        data: {
+                          entity_identifier: data?.id ?? "",
+                          entity_type: EFileAssetType.CUSTOMER_DESCRIPTION,
+                        },
+                        file,
+                        workspaceSlug,
+                      });
+                      onAssetUpload?.(asset_id);
+                      return asset_id;
+                    } catch (error) {
+                      throw new Error("Asset upload failed. Please try again later.");
+                    }
+                  }}
                 />
               )}
             />

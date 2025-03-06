@@ -35,7 +35,7 @@ export const CustomerListItem: FC<TCustomerListItemProps> = observer((props) => 
       title={""}
       itemClassName="py-3"
       prependTitleElement={
-        <div className="flex gap-2 items-center truncate">
+        <div className="flex gap-2 items-center">
           <div className="rounded-md border-custom-border-300 p-1">
             {customer?.logo_url && customer.logo_url !== "" ? (
               <div className="bg-custom-background-100 rounded-md h-10 w-10 overflow-hidden border-[0.5px] border-custom-border-300 p-1.5">
@@ -51,7 +51,7 @@ export const CustomerListItem: FC<TCustomerListItemProps> = observer((props) => 
               </div>
             )}
           </div>
-          <div className="truncate">
+          <div className="w-4/5">
             <Tooltip tooltipContent={customer.name}>
               <h3 className="text-base truncate">{customer.name}</h3>
             </Tooltip>

@@ -1,6 +1,3 @@
-# Django imports
-from django.db import models
-
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response

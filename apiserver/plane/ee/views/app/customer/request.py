@@ -12,9 +12,11 @@ from plane.ee.serializers import CustomerRequestSerializer
 from plane.app.permissions import WorkSpaceAdminPermission
 
 # Django imports
-from django.db.models import (OuterRef,  Func, F, CharField, Subquery, Q)
+from django.db.models import (OuterRef,  Func, F, CharField, Subquery, Q, Value, UUIDField)
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.db.models.functions import Cast
+from django.db.models.functions import Cast, Coalesce
+from django.contrib.postgres.fields import ArrayField
+
 
 class CustomerRequestEndpoint(BaseAPIView):
     permission_classes = [WorkSpaceAdminPermission]
@@ -22,14 +24,20 @@ class CustomerRequestEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.CUSTOMERS)
     def get(self, request, slug, customer_id, pk=None):
         customer_requests = CustomerRequest.objects.filter(customer_id=customer_id, workspace__slug=slug).annotate( 
-            issue_ids=ArrayAgg(
-                "customer_request_issues__issue_id", 
-                filter=(
-                    Q(customer_request_issues__deleted_at__isnull=True) &
-                    (Q(customer_request_issues__issue__type_id__isnull=True) |
-                    Q(customer_request_issues__issue__project__project_projectfeature__is_epic_enabled=True))
+            issue_ids=Coalesce(
+                ArrayAgg(
+                    "customer_request_issues__issue_id", 
+                    filter=(
+                        Q(customer_request_issues__deleted_at__isnull=True) &
+                        Q(customer_request_issues__issue_id__isnull=False) &
+                        (
+                            Q(customer_request_issues__issue__type_id__isnull=True) |
+                            Q(customer_request_issues__issue__project__project_projectfeature__is_epic_enabled=True)
+                        )
+                    )
                 ),
-                distinct=True) 
+                Value([], output_field=ArrayField(UUIDField()))
+            ),
             ).annotate(attachment_count=Subquery(
                 FileAsset.objects.filter(
                     entity_identifier=Cast(OuterRef("id"), output_field=CharField()),
@@ -39,13 +47,13 @@ class CustomerRequestEndpoint(BaseAPIView):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             ))
-
+        
         if pk:
             customer_requests = customer_requests.get(pk=pk)
-        
+
             serializer = CustomerRequestSerializer(customer_requests)
 
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)     
 
         # Add search functionality
         search = request.query_params.get("query", False)

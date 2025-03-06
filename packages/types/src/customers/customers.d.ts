@@ -21,7 +21,6 @@ export type TCustomer = {
   contract_status: TCustomerContractStatus | undefined;
   revenue: number | undefined;
   customer_request_count: number;
-  customer_issue_count: number;
   created_by: string;
   created_at: string;
   updated_at: string;
@@ -44,6 +43,7 @@ export type TCustomerRequest = {
   id: string;
   name: string;
   description: string | undefined;
+  description_html: string | undefined;
   attachment_count: number;
   link: string | undefined;
   issue_ids: string[];

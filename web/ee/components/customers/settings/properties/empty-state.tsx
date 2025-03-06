@@ -19,7 +19,7 @@ export const CustomerPropertiesEmptyState: FC<TCustomerPropertiesEmptyStateProps
   const { handleCustomerPropertiesCreate } = props;
   const { t } = useTranslation();
   return (
-    <div className="w-full p-8 relative flex justify-center items-center bg-custom-background-100 rounded-lg border border-custom-border-100">
+    <div className="w-full p-8 relative flex justify-center items-center bg-custom-background-100 rounded-lg border border-custom-border-100 mx-4">
       <div className="flex flex-col items-center space-y-1">
         <div className="flex-shrink-0 grid place-items-center rounded-lg bg-custom-background-90 p-3">
           <BuildingsIcon className="h-14 w-14 text-custom-text-400" strokeWidth="1.5" />

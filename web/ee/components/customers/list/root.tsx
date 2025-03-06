@@ -1,6 +1,5 @@
 import React, { FC, useCallback } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 // constants
 import useSWR from "swr";
@@ -18,13 +17,16 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { CustomerListItem, CustomerLoader } from "@/plane-web/components/customers/list";
 // assets
 import { useCustomers } from "@/plane-web/hooks/store";
-import SearchEmptyImage from "@/public/empty-state/customers/search-empty-light.svg";
 
 export const CustomersListRoot: FC = observer(() => {
   const { workspaceSlug } = useParams();
-  const resolvedPath = useResolvedAssetPath({
+  const resolvedPathList = useResolvedAssetPath({
     basePath: "/empty-state/customers/customers-disabled",
     extension: "png",
+  });
+  const resolvedPathSearch = useResolvedAssetPath({
+    basePath: "/empty-state/customers/search-empty",
+    extension: "svg",
   });
   // i18n
   const { t } = useTranslation();
@@ -72,7 +74,7 @@ export const CustomersListRoot: FC = observer(() => {
     return (
       <div className="grid h-full w-full place-items-center">
         <div className="text-center place-items-center">
-          <Image src={SearchEmptyImage} className="mx-auto h-36 w-36 sm:h-48 sm:w-48" alt="No matching customers" />
+          <img src={resolvedPathSearch} className="mx-auto h-36 w-36 sm:h-48 sm:w-48" alt="No matching customers" />
           <h5 className="mb-1 mt-7 text-xl font-medium">{t("customers.empty_state.search.title")}</h5>
           <p className="whitespace-pre-line text-base text-custom-text-400 flex flex-col items-center">
             <span>{t("customers.empty_state.search.description1")}</span>
@@ -92,7 +94,7 @@ export const CustomersListRoot: FC = observer(() => {
         <DetailedEmptyState
           title={t("customers.empty_state.list.title")}
           description={t("customers.empty_state.list.description")}
-          assetPath={resolvedPath}
+          assetPath={resolvedPathList}
           primaryButton={{
             text: t("customers.empty_state.list.primary_button"),
             disabled: !hasWorkspaceAdminLevelPermissions,

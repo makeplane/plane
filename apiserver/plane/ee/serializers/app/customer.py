@@ -16,7 +16,6 @@ from rest_framework import serializers
 
 class CustomerSerializer(BaseSerializer):
     customer_request_count = serializers.IntegerField(read_only=True)
-    customer_issue_count = serializers.IntegerField(read_only=True)
     logo_url = serializers.CharField(read_only=True)
 
     class Meta:

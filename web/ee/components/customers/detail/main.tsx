@@ -1,15 +1,14 @@
 import React, { FC, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { ExternalLink, PencilIcon } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { TCustomerPayload } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
-import { CustomersIcon, Input, setToast, Tabs, TOAST_TYPE } from "@plane/ui";
+import { setToast, Tabs, TOAST_TYPE } from "@plane/ui";
 // hooks
-import { cn, getFileURL } from "@plane/utils";
-import { useAppTheme, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store";
 // plane web imports
 import { DescriptionInput, MainWrapper, TitleInput } from "@/plane-web/components/common";
 import { CustomerRequestsRoot, WorkItemsList } from "@/plane-web/components/customers";
@@ -34,7 +33,7 @@ export const CustomerMainRoot: FC<TProps> = observer((props) => {
   // i18n
   const { t } = useTranslation();
   // hooks
-  const { getCustomerById, updateCustomer, customerDetailSidebarCollapsed } = useCustomers();
+  const { getCustomerById, updateCustomer, customerDetailSidebarCollapsed, getCustomerWorkItemIds } = useCustomers();
   const { currentWorkspace } = useWorkspace();
   // refs
   const logoInputRef = useRef<HTMLInputElement>(null);
@@ -42,7 +41,7 @@ export const CustomerMainRoot: FC<TProps> = observer((props) => {
   // derived values
   const customer = getCustomerById(customerId.toString());
   const requestCount = customer?.customer_request_count || 0;
-  const workItemCount = customer?.customer_issue_count || 0;
+  const workItemCount = getCustomerWorkItemIds(customerId.toString())?.length || 0;
 
   const CUSTOMER_TABS = useMemo(
     () => [
@@ -120,7 +119,6 @@ export const CustomerMainRoot: FC<TProps> = observer((props) => {
   };
 
   if (!customer) return;
-
   return (
     <MainWrapper isSidebarOpen={!customerDetailSidebarCollapsed}>
       {/* <NameDescriptionUpdateStatus isSubmitting={isSubmitting} /> */}

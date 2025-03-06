@@ -5,8 +5,11 @@ import { useTranslation } from "@plane/i18n";
 import { CustomerService } from "@plane/services";
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
-// plane web imports
+// components
 import { ExistingIssuesListModal } from "@/components/core";
+import { RichTextReadOnlyEditor } from "@/components/editor";
+// plane web imports
+import { useWorkspace } from "@/hooks/store";
 import {
   SourceItem,
   CustomerRequestForm,
@@ -39,9 +42,11 @@ export const CustomerRequestListItem: FC<TProps> = observer((props) => {
   const { t } = useTranslation();
   // hooks
   const { getRequestById, addWorkItemsToCustomer, updateCustomerRequest } = useCustomers();
+  const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const request = getRequestById(customerId, requestId);
   const requestWorkItemsCount = request?.issue_ids.length || 0;
+  const workspaceDetails = getWorkspaceBySlug(workspaceSlug);
 
   const workItemSearchCallBack = (params: TProjectIssuesSearchParams) =>
     customerService.workItemsSearch(workspaceSlug, customerId, params);
@@ -84,6 +89,8 @@ export const CustomerRequestListItem: FC<TProps> = observer((props) => {
       });
   };
 
+  const handleOpenUrl = (link: string) => window.open(link, "_blank");
+
   const handleEdit = () => {
     setEditing(true);
   };
@@ -125,7 +132,7 @@ export const CustomerRequestListItem: FC<TProps> = observer((props) => {
             data={request}
           />
         ) : (
-          <div className="border-[0.5px] border-custom-border-200 rounded-md shadow-sm p-4 bg-custom-background-90">
+          <div className="border-[0.5px] border-custom-border-200 rounded-md shadow-sm p-4 bg-custom-background-90/80">
             <div className="flex justify-between" ref={parentRef}>
               <p className="text-base font-medium">{request.name}</p>
               <CustomerRequestQuickActions
@@ -136,13 +143,30 @@ export const CustomerRequestListItem: FC<TProps> = observer((props) => {
                 workspaceSlug={workspaceSlug}
               />
             </div>
-            <p className="text-sm text-custom-text-200 w-full pb-3">{request.description}</p>
+            {request.description_html ? (
+              <RichTextReadOnlyEditor
+                id={customerId}
+                initialValue={request.description_html ?? ""}
+                workspaceId={workspaceDetails?.id ?? ""}
+                workspaceSlug={workspaceSlug}
+                containerClassName="border-none ring-none outline-non text-sm !px-0 py-2"
+                editorClassName="px-0"
+                displayConfig={{
+                  fontSize: "small-font",
+                }}
+              />
+            ) : (
+              <div className="py-1"></div>
+            )}
             {isEditable && (
               <div className="flex gap-2">
                 <Button
                   variant="neutral-primary"
-                  className="text-custom-text-200 bg-custom-background-90 text-sm px-2"
-                  onClick={() => setLinkModal(true)}
+                  className="text-custom-text-200 bg-custom-background-100 text-sm px-2 hover:bg-custom-background-100 hover:shadow-custom-shadow"
+                  onClick={() => {
+                    if (!link) setLinkModal(true);
+                    else handleOpenUrl(link);
+                  }}
                 >
                   {link ? (
                     <SourceItem link={link} />
@@ -156,7 +180,7 @@ export const CustomerRequestListItem: FC<TProps> = observer((props) => {
                   <Button
                     variant="neutral-primary"
                     onClick={() => setWorkItemsModal(true)}
-                    className="text-custom-text-200 bg-custom-background-90 text-sm"
+                    className="text-custom-text-200 bg-custom-background-100 hover:bg-custom-background-100 text-sm"
                   >
                     <LayersIcon className="size-3" />
                     {t("customers.linked_work_items.link")}

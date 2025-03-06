@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import { observer } from "mobx-react";
 import { PencilIcon } from "lucide-react";
 // plane imports
 import { CustomersIcon, Input } from "@plane/ui";
@@ -12,9 +13,8 @@ type TProps = {
   logo: File | null;
 };
 
-export const CustomerLogoInput: FC<TProps> = (props) => {
+export const CustomerLogoInput: FC<TProps> = observer((props) => {
   const { handleOpenLogoInput, onLogoUpload, logo_url, logo, logoInputRef } = props;
-
   return (
     <div
       className="rounded-md border-custom-border-300 p-1 relative group cursor-pointer"
@@ -39,4 +39,4 @@ export const CustomerLogoInput: FC<TProps> = (props) => {
       )}
     </div>
   );
-};
+});
