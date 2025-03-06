@@ -48,17 +48,25 @@ export const MarkdownClipboard = Extension.create({
             }
 
             const traverseToParentOfLeaf = (node: Node | null, parent: Fragment | Node, depth: number): Node | Fragment => {
-              if (!node || depth <= 1 || !node.content?.firstChild) {
-                return parent;
-              }
-              if (node.content?.childCount > 1) {
-                if (node.content.firstChild?.type?.name === 'listItem') {
-                  return parent;
-                } else {
-                  return node.content;
+              let currentNode = node;
+              let currentParent = parent;
+              let currentDepth = depth;
+
+              while (currentNode && currentDepth > 1 && currentNode.content?.firstChild) {
+                if (currentNode.content?.childCount > 1) {
+                  if (currentNode.content.firstChild?.type?.name === 'listItem') {
+                    return currentParent;
+                  } else {
+                    return currentNode.content;
+                  }
                 }
+
+                currentParent = currentNode;
+                currentNode = currentNode.content?.firstChild || null;
+                currentDepth--;
               }
-              return traverseToParentOfLeaf(node.content?.firstChild || null, node, depth - 1);
+
+              return currentParent;
             };
 
             if (slice.content.childCount > 1) {
