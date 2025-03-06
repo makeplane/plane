@@ -14,7 +14,7 @@ import type { TIssue, TWorkspaceDraftIssue } from "@plane/types";
 // hooks
 import { Button, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { convertWorkItemTemplateToSearchResponse, getUpdateFormDataForReset } from "@plane/utils";
+import { convertWorkItemDataToSearchResponse, getUpdateFormDataForReset } from "@plane/utils";
 import {
   IssueDefaultProperties,
   IssueDescriptionEditor,
@@ -312,7 +312,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     const stateDetails = getStateById(issue.state_id);
 
     setSelectedParentIssue(
-      convertWorkItemTemplateToSearchResponse(workspaceSlug?.toString(), issue, projectDetails, stateDetails)
+      convertWorkItemDataToSearchResponse(workspaceSlug?.toString(), issue, projectDetails, stateDetails)
     );
   }, [watch, getIssueById, getProjectById, selectedParentIssue, getStateById]);
 

@@ -12,7 +12,7 @@ export const getUpdateFormDataForReset = (projectId: string | null | undefined, 
   target_date: formData.target_date,
 });
 
-export const convertWorkItemTemplateToSearchResponse = (
+export const convertWorkItemDataToSearchResponse = (
   workspaceSlug: string,
   workItem: TIssue,
   project: IPartialProject | undefined,
