@@ -24,13 +24,23 @@ type TIssueCommentCreate = {
   activityOperations: TActivityOperations;
   showAccessSpecifier?: boolean;
   issueId: string;
+  variant?: "default" | "epic";
 };
 
 export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
-  const { workspaceSlug, projectId, issueId, activityOperations, showAccessSpecifier = false } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    issueId,
+    activityOperations,
+    showAccessSpecifier = false,
+    variant = "default",
+  } = props;
   // states
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
+  const [showEditor, setShowEditor] = useState(false);
   // refs
+  const inputRef = useRef<HTMLInputElement>(null);
   const editorRef = useRef<EditorRefApi>(null);
   // store hooks
   const workspaceStore = useWorkspace();
@@ -82,44 +92,56 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
           handleSubmit(onSubmit)(e);
       }}
     >
-      <Controller
-        name="access"
-        control={control}
-        render={({ field: { onChange: onAccessChange, value: accessValue } }) => (
-          <Controller
-            name="comment_html"
-            control={control}
-            render={({ field: { value, onChange } }) => (
-              <LiteTextEditor
-                workspaceId={workspaceId}
-                id={"add_comment_" + issueId}
-                value={"<p></p>"}
-                projectId={projectId}
-                issue_id={issueId}
-                workspaceSlug={workspaceSlug}
-                onEnterKeyPress={(e) => {
-                  if (!isEmpty && !isSubmitting) {
-                    handleSubmit(onSubmit)(e);
-                  }
-                }}
-                ref={editorRef}
-                initialValue={value ?? "<p></p>"}
-                containerClassName="min-h-[35px]"
-                onChange={(comment_json, comment_html) => onChange(comment_html)}
-                accessSpecifier={accessValue ?? EIssueCommentAccessSpecifier.INTERNAL}
-                handleAccessChange={onAccessChange}
-                showAccessSpecifier={showAccessSpecifier}
-                isSubmitting={isSubmitting}
-                uploadFile={async (blockId, file) => {
-                  const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file);
-                  setUploadedAssetIds((prev) => [...prev, asset_id]);
-                  return asset_id;
-                }}
-              />
-            )}
-          />
-        )}
-      />
+      {!showEditor && variant === "epic" ? (
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder="Write your comment"
+          className="w-full px-3 py-2 border border-custom-border-200 rounded-lg"
+          onClick={() => {
+            setShowEditor(true);
+          }}
+        />
+      ) : (
+        <Controller
+          name="access"
+          control={control}
+          render={({ field: { onChange: onAccessChange, value: accessValue } }) => (
+            <Controller
+              name="comment_html"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <LiteTextEditor
+                  workspaceId={workspaceId}
+                  id={"add_comment_" + issueId}
+                  value={"<p></p>"}
+                  projectId={projectId}
+                  workspaceSlug={workspaceSlug}
+                  issue_id={issueId}
+                  onEnterKeyPress={(e) => {
+                    if (!isEmpty && !isSubmitting) {
+                      handleSubmit(onSubmit)(e);
+                    }
+                  }}
+                  ref={editorRef}
+                  initialValue={value ?? "<p></p>"}
+                  containerClassName="min-h-[35px]"
+                  onChange={(comment_json, comment_html) => onChange(comment_html)}
+                  accessSpecifier={accessValue ?? EIssueCommentAccessSpecifier.INTERNAL}
+                  handleAccessChange={onAccessChange}
+                  showAccessSpecifier={showAccessSpecifier}
+                  isSubmitting={isSubmitting}
+                  uploadFile={async (blockId, file) => {
+                    const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file);
+                    setUploadedAssetIds((prev) => [...prev, asset_id]);
+                    return asset_id;
+                  }}
+                />
+              )}
+            />
+          )}
+        />
+      )}
     </div>
   );
 };
