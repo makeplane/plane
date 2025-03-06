@@ -21,7 +21,7 @@ class CustomerRequestEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
     def get(self, request, slug, customer_id, pk=None):
-        customer_requests = CustomerRequest.objects.filter(workspace__slug=slug).annotate( 
+        customer_requests = CustomerRequest.objects.filter(customer_id=customer_id, workspace__slug=slug).annotate( 
             issue_ids=ArrayAgg(
                 "customer_request_issues__issue_id", 
                 filter=(

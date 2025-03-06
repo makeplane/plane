@@ -65,7 +65,6 @@ class CustomerRequestAttachmentV2Endpoint(BaseAPIView):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
     @check_feature_flag(FeatureFlag.CUSTOMERS)
     def post(self, request, slug):
         name = request.data.get("name")

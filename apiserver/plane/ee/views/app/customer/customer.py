@@ -39,11 +39,10 @@ class CustomerEndpoint(BaseAPIView):
         cursor = request.GET.get("cursor", None)
         
         customers = (   
-            Customer.objects.annotate(
+            Customer.objects.filter(workspace__slug=slug).annotate(
                 customer_request_count=
                     CustomerRequest.objects.filter(
                         customer_id=OuterRef("id"), 
-                        workspace__slug=slug
                     )
                 .order_by()
                 .annotate(count=Func(F("id"), function="count"))
@@ -52,7 +51,6 @@ class CustomerEndpoint(BaseAPIView):
                     customer_issue_count = 
                         CustomerRequestIssue.objects.filter(
                             customer_id=OuterRef("id"),
-                            workspace__slug=slug
                         )
                     .order_by()
                     .annotate(count=Func(F("id"), function="count"))
