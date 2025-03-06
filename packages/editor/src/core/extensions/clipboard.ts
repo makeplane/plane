@@ -1,4 +1,3 @@
-import { serialize } from "node:v8";
 import { Extension } from "@tiptap/core";
 import { Fragment, Node } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
@@ -22,6 +21,7 @@ export const MarkdownClipboard = Extension.create({
             const markdownSerializer = this.editor.storage.markdown.serializer;
             const isTableRow = slice.content.firstChild?.type?.name === 'tableRow';
             const nodeSelect = slice.openStart === 0 && slice.openEnd === 0;
+
             if (nodeSelect) {
               return markdownSerializer.serialize(slice.content);
             }
@@ -61,8 +61,12 @@ export const MarkdownClipboard = Extension.create({
               return traverseToParentOfLeaf(node.content?.firstChild || null, node, depth - 1);
             };
 
-            const targetNode = traverseToParentOfLeaf(slice.content.firstChild, slice.content, slice.openStart);
-            return markdownSerializer.serialize(targetNode);
+            if (slice.content.childCount > 1) {
+              return markdownSerializer.serialize(slice.content)
+            } else {
+              const targetNode = traverseToParentOfLeaf(slice.content.firstChild, slice.content, slice.openStart);
+              return markdownSerializer.serialize(targetNode);
+            }
           },
         },
       }),
