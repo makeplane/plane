@@ -28,7 +28,6 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props
   const { getIssueTypeById } = useIssueTypes();
   // derived values
   const issueTypeDetails = issue.type_id ? getIssueTypeById(issue.type_id) : undefined;
-  const isEpic = issueTypeDetails?.is_epic;
 
   const subIssueCount = issue?.sub_issues_count ?? 0;
 
