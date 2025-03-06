@@ -31,3 +31,8 @@ export type TWorkflowChangeHistory = TProjectBaseActivity<TWorkflowChangeHistory
   state_id?: string | null;
   transition_state_id?: string | null;
 };
+
+export interface IStateTransitionTree {
+  transition_state_ids: string[];
+  approvers: string[];
+}

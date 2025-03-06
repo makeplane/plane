@@ -1077,6 +1077,7 @@
   "workflows": {
     "workflow_states": {
       "work_item_creation": "新しい作業項目を許可",
+      "work_item_creation_disable_tooltip": "作業項目の作成はこの状態では無効になっています",
       "default_state": "デフォルトの状態は、すべてのメンバーが新しい作業項目を作成できるように設定されています。これは変更できません",
       "state_change_count": "{count, plural, one {1つの許可された状態変更} other {{count}つの許可された状態変更}}",
       "movers_count": "{count, plural, one {1人のリストされたレビューア} other {{count}人のリストされたレビューア}}",

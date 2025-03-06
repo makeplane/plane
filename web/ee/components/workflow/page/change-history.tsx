@@ -7,8 +7,9 @@ import { Loader as Spinner, X } from "lucide-react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { TWorkflowChangeHistory, TWorkflowChangeHistoryKeys } from "@plane/types";
 import { ApproverIcon, getButtonStyling, LayersIcon, Loader, WorkflowIcon } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, getWorkflowChangeHistoryKey } from "@plane/utils";
 // helpers
 import { ActivityBlockComponent } from "@/components/common/activity/activity-block";
 import { ActivitySortRoot } from "@/components/issues";
@@ -16,8 +17,6 @@ import { ActivitySortRoot } from "@/components/issues";
 import { useProjectState } from "@/hooks/store";
 // plane web hooks
 import { store } from "@/lib/store-context";
-import { getWorkflowChangeHistoryKey } from "@/plane-web/helpers/workflow.helper";
-import { TWorkflowChangeHistory, TWorkflowChangeHistoryKeys } from "@/plane-web/types";
 
 type TWorkflowChangeHistoryProps = {
   isOpen: boolean;

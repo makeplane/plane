@@ -3,6 +3,7 @@ import { useParams } from "next/navigation";
 import { Check } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // CE
@@ -24,6 +25,8 @@ export const StateOption = observer((props: TStateOptionProps) => {
   } = props;
   // router
   const { workspaceSlug } = useParams();
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { getIsWorkflowEnabled, getAvailableProjectStateIdMap, getAvailableWorkItemCreationStateIdMap } =
     useProjectState();
@@ -40,30 +43,40 @@ export const StateOption = observer((props: TStateOptionProps) => {
   }
 
   return (
-    <Combobox.Option
-      key={option.value}
-      value={option.value}
-      className={({ active, selected }) =>
-        `${className} ${active ? "bg-custom-background-80" : ""} ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+    <Tooltip
+      tooltipContent={
+        isForWorkItemCreation ? (
+          <div className="py-1.5 px-1">{t("workflows.workflow_states.work_item_creation_disable_tooltip")}</div>
+        ) : (
+          <WorkFlowDisabledMessage parentStateId={selectedValue ?? ""} />
+        )
       }
-      disabled={isDisabled}
+      className="border-[0.5px] border-custom-border-300 mx-0.5 shadow-lg"
+      position={isForWorkItemCreation ? "right" : "right-top"}
+      disabled={!isDisabled}
     >
-      {({ selected }) => (
-        <Tooltip
-          tooltipContent={<WorkFlowDisabledMessage parentStateId={selectedValue ?? ""} />}
-          position="right-top"
-          disabled={!isDisabled || isForWorkItemCreation}
+      <div>
+        <Combobox.Option
+          key={option.value}
+          value={option.value}
+          className={({ active, selected }) =>
+            cn(
+              className,
+              active ? "bg-custom-background-80" : "",
+              selected ? "text-custom-text-100" : "text-custom-text-200",
+              { "cursor-not-allowed text-custom-text-400 hover:bg-custom-background-90": isDisabled }
+            )
+          }
+          disabled={isDisabled}
         >
-          <div
-            className={cn("flex justify-between w-full", {
-              "cursor-not-allowed text-custom-text-400": isDisabled,
-            })}
-          >
-            <span className="flex-grow truncate">{option.content}</span>
-            {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
-          </div>
-        </Tooltip>
-      )}
-    </Combobox.Option>
+          {({ selected }) => (
+            <div className={cn("flex justify-between w-full")}>
+              <span className="flex-grow truncate">{option.content}</span>
+              {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+            </div>
+          )}
+        </Combobox.Option>
+      </div>
+    </Tooltip>
   );
 });

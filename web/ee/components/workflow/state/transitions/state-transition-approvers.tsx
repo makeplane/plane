@@ -1,44 +1,28 @@
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button, InfoIcon, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { IStateTransition } from "@plane/types";
+import { InfoIcon, Tooltip } from "@plane/ui";
 // components
-import { MemberDropdown } from "@/components/dropdowns/member";
 import { AppliedMembersFilters } from "@/components/issues";
 // hooks
 import { useProjectState } from "@/hooks/store";
-// plane web imports
-import { IStateTransition } from "@/plane-web/types";
 
 type Props = {
   stateTransition: IStateTransition;
-  workspaceSlug: string;
-  projectId: string;
-  transitionId: string;
   parentStateId: string;
+  handleApproversUpdate: (memberIds: string[]) => Promise<void>;
 };
 
 export const StateTransitionApprovers = observer((props: Props) => {
-  const { workspaceSlug, projectId, parentStateId, transitionId, stateTransition } = props;
+  const { parentStateId, stateTransition, handleApproversUpdate } = props;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { modifyStateTransitionMemberPermission, getStateById } = useProjectState();
+  const { getStateById } = useProjectState();
 
   const parentState = getStateById(parentStateId);
   const transitionState = getStateById(stateTransition.transition_state_id);
-
-  const handleApproversUpdate = async (memberIds: string[]) => {
-    try {
-      modifyStateTransitionMemberPermission(workspaceSlug, projectId, parentStateId, transitionId, memberIds);
-    } catch {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: t("workflows.toasts.modify_state_change_rule_movers.error.title"),
-        message: t("workflows.toasts.modify_state_change_rule_movers.error.message"),
-      });
-    }
-  };
 
   if (!parentState || !transitionState) return <></>;
 
@@ -61,19 +45,6 @@ export const StateTransitionApprovers = observer((props: Props) => {
               handleApproversUpdate((stateTransition?.approvers ?? []).filter((id) => id !== value))
             }
             values={stateTransition?.approvers ?? []}
-          />
-          <MemberDropdown
-            projectId={projectId}
-            value={stateTransition?.approvers ?? []}
-            onChange={handleApproversUpdate}
-            button={
-              <Button variant="accent-primary" size="sm" className="text-xs px-2 py-1">
-                {t("workflows.workflow_states.state_changes.movers.add")}
-              </Button>
-            }
-            buttonVariant="background-with-text"
-            optionsClassName="z-10"
-            multiple
           />
         </div>
       </div>

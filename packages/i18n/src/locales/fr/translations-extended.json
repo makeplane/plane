@@ -1077,6 +1077,7 @@
   "workflows": {
     "workflow_states": {
       "work_item_creation": "Autoriser les nouveaux éléments de travail",
+      "work_item_creation_disable_tooltip": "La création d'éléments de travail est désactivée pour cet état",
       "default_state": "L'état par défaut permet à tous les membres de créer de nouveaux éléments de travail. Cela ne peut pas être changé",
       "state_change_count": "{count, plural, one {1 changement d'état autorisé} other {{count} changements d'état autorisés}}",
       "movers_count": "{count, plural, one {1 réviseur listé} other {{count} réviseurs listés}}",

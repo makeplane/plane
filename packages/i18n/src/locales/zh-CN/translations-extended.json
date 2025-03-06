@@ -1077,6 +1077,7 @@
   "workflows": {
     "workflow_states": {
       "work_item_creation": "允许新工作项",
+      "work_item_creation_disable_tooltip": "工作项创建在此状态中被禁用",
       "default_state": "默认状态允许所有成员创建新工作项。不能更改",
       "state_change_count": "{count, plural, one {1 个允许的状态更改} other {{count} 个允许的状态更改}}",
       "movers_count": "{count, plural, one {1 个列出的评审人} other {{count} 个列出的评审人}}",

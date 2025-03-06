@@ -35,7 +35,11 @@ export const WorkFlowGroupTree = observer((props: Props) => {
   if (!isTransitionEnabledForState) return <></>;
 
   return (
-    <Tooltip tooltipContent={<WorkFlowEnabledMessage parentStateId={groupId} />} className="p-3" position="bottom-left">
+    <Tooltip
+      tooltipContent={<WorkFlowEnabledMessage parentStateId={groupId} />}
+      className="p-3 border-[0.5px] border-custom-border-300 shadow-lg"
+      position="bottom-left"
+    >
       <div
         className={cn(
           "flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded transition-all",

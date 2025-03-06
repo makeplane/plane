@@ -45,5 +45,5 @@
 }
 
 [cmdk-item][aria-disabled="true"]:hover, [cmdk-item][data-disabled="true"]:hover {
-  background-color: transparent;
+  background-color: rgba(var(--color-background-80), 0.7);
 }

@@ -8,13 +8,18 @@ import { action, autorun, makeObservable, observable, reaction, runInAction } fr
 import { computedFn } from "mobx-utils";
 // plane imports
 import { E_FEATURE_FLAGS, E_SORT_ORDER } from "@plane/constants";
-import { TLoader } from "@plane/types";
+import {
+  TLoader,
+  IStateTransition,
+  IStateWorkFlow,
+  IStateWorkFlowResponse,
+  TWorkflowChangeHistory,
+} from "@plane/types";
 // helpers
 import { convertStringArrayToBooleanObject } from "@/helpers/array.helper";
 // store
 import { IStateStore as ICoreStateStore, StateStore as CoreStateStore } from "@/store/state.store";
 // local imports
-import { IStateTransition, IStateWorkFlow, IStateWorkFlowResponse, TWorkflowChangeHistory } from "../types";
 import { RootStore } from "./root.store";
 
 export interface IStateStore extends ICoreStateStore {
@@ -74,7 +79,7 @@ export interface IStateStore extends ICoreStateStore {
     parentStateId: string,
     transitionId: string,
     actorIds: string[]
-  ) => void;
+  ) => Promise<void>;
   resetWorkflowStates: (workspaceSlug: string, projectId: string) => Promise<void>;
 }
 

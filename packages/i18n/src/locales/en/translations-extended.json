@@ -1077,6 +1077,7 @@
   "workflows": {
     "workflow_states": {
       "work_item_creation": "Allow new work items",
+      "work_item_creation_disable_tooltip": "Work item creation is disabled for this state",
       "default_state": "Default state lets all members create new work items. This can’t be changed",
       "state_change_count": "{count, plural, one {1 permitted state change} other {{count} permitted state changes}}",
       "movers_count": "{count, plural, one {1 listed reviewer} other {{count} listed reviewers}}",

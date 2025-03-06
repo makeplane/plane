@@ -399,7 +399,7 @@ class IssueViewSet(BaseViewSet):
                 state_id=request.data.get("state_id"),
             ):
                 return Response(
-                    {"error": "You cannot create a issue in this state"},
+                    {"error": "You cannot create a work item in this state"},
                     status=status.HTTP_403_FORBIDDEN,
                 )
 

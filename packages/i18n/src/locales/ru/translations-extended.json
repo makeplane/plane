@@ -938,6 +938,7 @@
   "workflows": {
     "workflow_states": {
       "work_item_creation": "Разрешить новые рабочие элементы",
+      "work_item_creation_disable_tooltip": "Создание рабочих элементов отключено для этого состояния",
       "default_state": "Стандартное состояние позволяет всем участникам создавать новые рабочие элементы. Это нельзя изменить",
       "state_change_count": "{count, plural, one {1 разрешенное изменение состояния} other {{count} разрешенных изменения состояния}}",
       "movers_count": "{count, plural, one {1 указанный перемещатель} other {{count} указанных перемещателей}}",
