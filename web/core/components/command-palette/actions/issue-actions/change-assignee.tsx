@@ -26,7 +26,7 @@ export const ChangeIssueAssignee: React.FC<Props> = observer((props) => {
   } = useMember();
   // derived values
   const projectId = issue?.project_id ?? "";
-  const projectMemberIds = getProjectMemberIds(projectId);
+  const projectMemberIds = getProjectMemberIds(projectId, false);
 
   const options =
     projectMemberIds

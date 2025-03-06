@@ -1,0 +1,202 @@
+import React, { FC, useEffect, useRef, useState } from "react";
+import { observer } from "mobx-react";
+import { Database, LayersIcon, PlusIcon } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
+import { CustomerService } from "@plane/services";
+import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
+import { Button, setToast, TOAST_TYPE } from "@plane/ui";
+// plane web imports
+import { ExistingIssuesListModal } from "@/components/core";
+import {
+  SourceItem,
+  CustomerRequestForm,
+  SourceCreateUpdateModal,
+  RequestWorkItemsListCollapsible,
+  RequestAttachmentsCollapsible,
+} from "@/plane-web/components/customers";
+import { CustomerRequestQuickActions } from "@/plane-web/components/customers/actions";
+import { useCustomers } from "@/plane-web/hooks/store";
+
+type TProps = {
+  requestId: string;
+  customerId: string;
+  workspaceSlug: string;
+  isEditable?: boolean;
+};
+
+const customerService = new CustomerService();
+
+export const CustomerRequestListItem: FC<TProps> = observer((props) => {
+  const { requestId, customerId, workspaceSlug, isEditable = false } = props;
+  // states
+  const [isEditing, setEditing] = useState<boolean>(false);
+  const [workItemsModal, setWorkItemsModal] = useState<boolean>(false);
+  const [linkModal, setLinkModal] = useState<boolean>(false);
+  const [link, setLink] = useState<string | undefined>();
+  // refs
+  const parentRef = useRef(null);
+  // i18n
+  const { t } = useTranslation();
+  // hooks
+  const { getRequestById, addWorkItemsToCustomer, updateCustomerRequest } = useCustomers();
+  // derived values
+  const request = getRequestById(customerId, requestId);
+  const requestWorkItemsCount = request?.issue_ids.length || 0;
+
+  const workItemSearchCallBack = (params: TProjectIssuesSearchParams) =>
+    customerService.workItemsSearch(workspaceSlug, customerId, params);
+
+  const handleUpdateSource = (link: string) => {
+    updateCustomerRequest(workspaceSlug, customerId, requestId, { link })
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("customers.requests.toasts.source.update.success.title"),
+          message: t("customers.requests.toasts.source.update.success.message"),
+        });
+      })
+      .catch((error) => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("customers.requests.toasts.source.update.error.title"),
+          message: error.error || error.link[0] || t("customers.requests.toasts.source.update.error.message"),
+        });
+        setLink(request?.link);
+      });
+  };
+
+  const handleAddWorkItemsToRequest = async (data: ISearchIssueResponse[]) => {
+    const workItemIds = data.map((item) => item.id);
+    await addWorkItemsToCustomer(workspaceSlug, customerId, workItemIds, requestId)
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("customers.requests.toasts.work_item.add.success.title"),
+          message: t("customers.requests.toasts.work_item.add.success.message"),
+        });
+      })
+      .catch((error) => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("customers.requests.toasts.work_item.add.error.title"),
+          message: error.error || t("customers.requests.toasts.work_item.add.error.message"),
+        });
+      });
+  };
+
+  const handleEdit = () => {
+    setEditing(true);
+  };
+
+  useEffect(() => {
+    if (link !== request?.link && link) {
+      handleUpdateSource(link);
+    }
+  }, [link]);
+
+  useEffect(() => {
+    if (request?.link) setLink(request.link);
+  }, [request]);
+  if (!request) return null;
+  return (
+    <>
+      <ExistingIssuesListModal
+        workspaceSlug={workspaceSlug}
+        isOpen={workItemsModal}
+        handleClose={() => setWorkItemsModal(false)}
+        searchParams={{}}
+        handleOnSubmit={handleAddWorkItemsToRequest}
+        selectedWorkItems={[]}
+        workItemSearchServiceCallback={workItemSearchCallBack}
+      />
+      <SourceCreateUpdateModal
+        isModalOpen={linkModal}
+        handleClose={() => setLinkModal(false)}
+        setLinkData={setLink}
+        preloadedData={{ url: link }}
+      />
+      <div>
+        {isEditing ? (
+          <CustomerRequestForm
+            isOpen={isEditing}
+            handleClose={() => setEditing(false)}
+            workspaceSlug={workspaceSlug}
+            customerId={customerId}
+            data={request}
+          />
+        ) : (
+          <div className="border-[0.5px] border-custom-border-200 rounded-md shadow-sm p-4 bg-custom-background-90">
+            <div className="flex justify-between" ref={parentRef}>
+              <p className="text-base font-medium">{request.name}</p>
+              <CustomerRequestQuickActions
+                customerId={customerId}
+                requestId={requestId}
+                parentRef={parentRef}
+                handleEdit={handleEdit}
+                workspaceSlug={workspaceSlug}
+              />
+            </div>
+            <p className="text-sm text-custom-text-200 w-full pb-3">{request.description}</p>
+            {isEditable && (
+              <div className="flex gap-2">
+                <Button
+                  variant="neutral-primary"
+                  className="text-custom-text-200 bg-custom-background-90 text-sm px-2"
+                  onClick={() => setLinkModal(true)}
+                >
+                  {link ? (
+                    <SourceItem link={link} />
+                  ) : (
+                    <>
+                      <Database className="size-3" /> {t("customers.requests.form.source.add")}
+                    </>
+                  )}
+                </Button>
+                {!request.link && requestWorkItemsCount === 0 && (
+                  <Button
+                    variant="neutral-primary"
+                    onClick={() => setWorkItemsModal(true)}
+                    className="text-custom-text-200 bg-custom-background-90 text-sm"
+                  >
+                    <LayersIcon className="size-3" />
+                    {t("customers.linked_work_items.link")}
+                  </Button>
+                )}
+              </div>
+            )}
+            {requestWorkItemsCount > 0 && (
+              <div className="pt-2 mt-2 border-t-[0.5px] border-custom-border-300 w-full">
+                <RequestWorkItemsListCollapsible
+                  workspaceSlug={workspaceSlug}
+                  openWorkItemModal={() => setWorkItemsModal(true)}
+                  workItemIds={request.issue_ids}
+                  customerId={customerId}
+                  requestId={requestId}
+                  isEditable={isEditable}
+                />
+              </div>
+            )}
+            <div className="pt-2 mt-2 border-t-[0.5px] border-custom-border-300 w-full">
+              <RequestAttachmentsCollapsible
+                workspaceSlug={workspaceSlug}
+                customerId={customerId}
+                requestId={requestId}
+                isEditable={isEditable}
+              />
+            </div>
+            {request.link && requestWorkItemsCount === 0 && isEditable && (
+              <div className="pt-2 mt-2 border-t-[0.5px] border-custom-border-300 w-full">
+                <div
+                  className="flex gap-2 items-center text-sm cursor-pointer text-custom-text-200 font-medium"
+                  onClick={() => setWorkItemsModal(true)}
+                >
+                  <PlusIcon className="size-4" /> {t("customers.linked_work_items.link")}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </>
+  );
+});
