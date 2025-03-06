@@ -983,8 +983,9 @@
         "sub_issue_count": "サブ作業項目数",
         "attachment_count": "添付ファイル数",
         "created_on": "作成日",
-        "sub_issue": "サブ作業項目"
-      },
+        "sub_issue": "サブ作業項目",
+        "work_item_count": "作業項目数"
+  },
       "extra": {
         "show_sub_issues": "サブ作業項目を表示",
         "show_empty_groups": "空のグループを表示"

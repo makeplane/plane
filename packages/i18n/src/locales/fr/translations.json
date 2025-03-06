@@ -983,7 +983,8 @@
         "sub_issue_count": "Nombre de sous-éléments",
         "attachment_count": "Nombre de pièces jointes",
         "created_on": "Créé le",
-        "sub_issue": "Sous-élément de travail"
+        "sub_issue": "Sous-élément de travail",
+        "work_item_count": "Nombre d'éléments de travail"
       },
       "extra": {
         "show_sub_issues": "Afficher les sous-éléments",

@@ -25,8 +25,10 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // local components
+import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
 import { TRenderQuickActions } from "../list/list-view-types";
 import { IssueProperties } from "../properties/all-properties";
+import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { getIssueBlockId } from "../utils";
 
 interface IssueBlockProps {
@@ -60,6 +62,9 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
   const { cardRef, issue, updateIssue, quickActions, isReadOnly, displayProperties, isEpic = false } = props;
   // hooks
   const { isMobile } = usePlatformOS();
+
+  // derived values
+  const subIssueCount = issue?.sub_issues_count ?? 0;
 
   const handleEventPropagation = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -105,6 +110,16 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
         isReadOnly={isReadOnly}
         isEpic={isEpic}
       />
+
+      {isEpic && displayProperties && (
+        <WithDisplayPropertiesHOC
+          displayProperties={displayProperties}
+          displayPropertyKey="sub_issue_count"
+          shouldRenderProperty={(properties) => !!properties.sub_issue_count && !!subIssueCount}
+        >
+          <IssueStats issueId={issue.id} className="mt-2 font-medium text-custom-text-350" />
+        </WithDisplayPropertiesHOC>
+      )}
     </>
   );
 });
