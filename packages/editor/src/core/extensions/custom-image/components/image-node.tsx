@@ -76,7 +76,7 @@ export const CustomImageNode = (props: CustomImageNodeProps) => {
             failedToLoadImage={failedToLoadImage}
             getPos={getPos}
             loadImageFromFileSystem={setImageFromFileSystem}
-            maxFileSize={editor.storage.imageComponent.maxFileSize}
+            maxFileSize={editor.storage.imageComponent?.maxFileSize}
             node={node}
             setIsUploaded={setIsUploaded}
             selected={selected}
