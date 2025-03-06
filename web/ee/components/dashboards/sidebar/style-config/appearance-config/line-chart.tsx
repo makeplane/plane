@@ -67,13 +67,15 @@ export const LineChartAppearanceConfig: React.FC<Props> = (props) => {
             control={control}
             name="config.smoothing"
             render={({ field: { value, onChange } }) => (
-              <ToggleSwitch
-                value={!!value}
-                onChange={(val) => {
-                  onChange(val);
-                  handleConfigUpdate({ smoothing: val });
-                }}
-              />
+              <div className="px-2">
+                <ToggleSwitch
+                  value={!!value}
+                  onChange={(val) => {
+                    onChange(val);
+                    handleConfigUpdate({ smoothing: val });
+                  }}
+                />
+              </div>
             )}
           />
         }
@@ -85,13 +87,15 @@ export const LineChartAppearanceConfig: React.FC<Props> = (props) => {
             control={control}
             name="config.show_markers"
             render={({ field: { value, onChange } }) => (
-              <ToggleSwitch
-                value={!!value}
-                onChange={(val) => {
-                  onChange(val);
-                  handleConfigUpdate({ show_markers: val });
-                }}
-              />
+              <div className="px-2">
+                <ToggleSwitch
+                  value={!!value}
+                  onChange={(val) => {
+                    onChange(val);
+                    handleConfigUpdate({ show_markers: val });
+                  }}
+                />
+              </div>
             )}
           />
         }

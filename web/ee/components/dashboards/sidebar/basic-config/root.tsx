@@ -32,6 +32,8 @@ export const WidgetConfigSidebarBasicConfig: React.FC<Props> = (props) => {
   const { control, getValues, setValue, watch } = useFormContext<TDashboardWidget>();
   // derived values
   const selectedChartType = watch("chart_type");
+  const showChartModelSelect =
+    !!selectedChartType && ![EWidgetChartTypes.PIE_CHART, EWidgetChartTypes.TEXT].includes(selectedChartType);
   const MODELS_LIST = selectedChartType ? WIDGET_CHART_MODELS_LIST[selectedChartType] : [];
 
   // update other form values to the default ones when chart type changes
@@ -162,7 +164,7 @@ export const WidgetConfigSidebarBasicConfig: React.FC<Props> = (props) => {
           />
         )}
       />
-      {selectedChartType !== EWidgetChartTypes.TEXT && (
+      {showChartModelSelect && (
         <WidgetPropertyWrapper
           title={t("dashboards.widget.common.visualization_type.label")}
           input={

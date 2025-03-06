@@ -1,7 +1,8 @@
+import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { Info, Minus } from "lucide-react";
 // plane ui
-import { Avatar, FavoriteStar, Tooltip } from "@plane/ui";
+import { Avatar, FavoriteStar, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // plane utils
 import { getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks
@@ -11,17 +12,44 @@ import { IDashboardInstance } from "@/plane-web/store/dashboards/dashboard";
 import { DashboardQuickActions } from "../quick-actions";
 
 type Props = {
-  dashboardDetails: IDashboardInstance;
+  dashboard: IDashboardInstance;
   parentRef: React.RefObject<HTMLElement>;
 };
 
 export const DashboardListItemActions: React.FC<Props> = observer((props) => {
-  const { dashboardDetails, parentRef } = props;
+  const { dashboard, parentRef } = props;
   // derived values
   const { getUserDetails } = useMember();
   // derived values
-  const { created_at, created_by, id, is_favorite, canCurrentUserFavoriteDashboard } = dashboardDetails;
+  const {
+    created_at,
+    created_by,
+    id,
+    is_favorite,
+    canCurrentUserFavoriteDashboard,
+    addToFavorites,
+    removeFromFavorites,
+  } = dashboard;
   const creatorDetails = getUserDetails(created_by ?? "");
+
+  const handleToggleFavorite = useCallback(async () => {
+    try {
+      if (is_favorite) {
+        await removeFromFavorites();
+      } else {
+        await addToFavorites();
+      }
+    } catch (error) {
+      console.error("Error while toggling favorite", error);
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error",
+        message: is_favorite
+          ? "Dashboard could not be removed from favorites. Please try again."
+          : "Dashboard could not be added to favorites. Please try again.",
+      });
+    }
+  }, [addToFavorites, is_favorite, removeFromFavorites]);
 
   return (
     <>
@@ -51,7 +79,7 @@ export const DashboardListItemActions: React.FC<Props> = observer((props) => {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            // pageOperations.toggleFavorite();
+            handleToggleFavorite();
           }}
           selected={!!is_favorite}
         />

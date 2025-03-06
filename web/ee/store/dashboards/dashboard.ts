@@ -23,6 +23,8 @@ export interface IDashboardInstance extends TDashboard {
   // actions
   updateDashboard: (data: Partial<TDashboard>) => Promise<TDashboard>;
   toggleViewingMode: (status?: boolean) => void;
+  addToFavorites: () => Promise<void>;
+  removeFromFavorites: () => Promise<void>;
   // sub-stores
   widgetsStore: IDashboardWidgetsStore;
 }
@@ -32,9 +34,9 @@ type TDashboardHelpers = {
     update: (payload: Partial<TDashboard>) => Promise<TDashboard>;
   };
   permissions: {
-    canCurrentUserEditDashboard: (dashboard: TDashboard) => boolean;
-    canCurrentUserFavoriteDashboard: (dashboard: TDashboard) => boolean;
-    canCurrentUserDeleteDashboard: (dashboard: TDashboard) => boolean;
+    canCurrentUserEditDashboard: boolean;
+    canCurrentUserFavoriteDashboard: boolean;
+    canCurrentUserDeleteDashboard: boolean;
   };
 };
 
@@ -118,20 +120,22 @@ export class DashboardInstance implements IDashboardInstance {
       mutateProperties: action,
       updateDashboard: action,
       toggleViewingMode: action,
+      addToFavorites: action,
+      removeFromFavorites: action,
     });
   }
 
   // permissions
   get canCurrentUserEditDashboard() {
-    return this.helpers.permissions.canCurrentUserEditDashboard(this.asJSON);
+    return this.helpers.permissions.canCurrentUserEditDashboard;
   }
 
   get canCurrentUserFavoriteDashboard() {
-    return this.helpers.permissions.canCurrentUserFavoriteDashboard(this.asJSON);
+    return this.helpers.permissions.canCurrentUserFavoriteDashboard;
   }
 
   get canCurrentUserDeleteDashboard() {
-    return this.helpers.permissions.canCurrentUserDeleteDashboard(this.asJSON);
+    return this.helpers.permissions.canCurrentUserDeleteDashboard;
   }
 
   // helpers
@@ -195,6 +199,47 @@ export class DashboardInstance implements IDashboardInstance {
         this.widgetsStore.toggleDeleteWidget(null);
         this.widgetsStore.toggleEditWidget(null);
       }
+    });
+  };
+
+  addToFavorites: IDashboardInstance["addToFavorites"] = async () => {
+    const { workspaceSlug } = this.rootStore.router;
+    if (!workspaceSlug || !this.id) return undefined;
+
+    const isDashboardFavorite = this.is_favorite;
+
+    runInAction(() => {
+      this.is_favorite = true;
+    });
+
+    await this.rootStore.favorite
+      .addFavorite(workspaceSlug.toString(), {
+        entity_type: "workspace_dashboard",
+        entity_identifier: this.id,
+        entity_data: { name: this.name || "" },
+      })
+      .catch((error) => {
+        runInAction(() => {
+          this.is_favorite = isDashboardFavorite;
+        });
+        throw error;
+      });
+  };
+
+  removeFromFavorites: IDashboardInstance["removeFromFavorites"] = async () => {
+    const { workspaceSlug } = this.rootStore.router;
+    if (!workspaceSlug || !this.id) return undefined;
+    const isDashboardFavorite = this.is_favorite;
+
+    runInAction(() => {
+      this.is_favorite = false;
+    });
+
+    await this.rootStore.favorite.removeFavoriteEntity(workspaceSlug, this.id).catch((error) => {
+      runInAction(() => {
+        this.is_favorite = isDashboardFavorite;
+      });
+      throw error;
     });
   };
 }

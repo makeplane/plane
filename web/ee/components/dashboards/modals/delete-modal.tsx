@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
@@ -22,6 +23,8 @@ export const DashboardDeleteModal: React.FC<Props> = observer((props) => {
   const { getDashboardById } = useDashboards();
   // derived values
   const dashboardDetails = getDashboardById(dashboardId);
+  // translation
+  const { t } = useTranslation();
 
   const handleSubmit = async () => {
     try {
@@ -50,7 +53,7 @@ export const DashboardDeleteModal: React.FC<Props> = observer((props) => {
       handleSubmit={handleSubmit}
       isSubmitting={loader}
       isOpen={isOpen}
-      title="Delete dashboard"
+      title={t("dashboard.delete_modal.heading")}
       content={
         <>
           Are you sure you want to delete dashboard{' "'}

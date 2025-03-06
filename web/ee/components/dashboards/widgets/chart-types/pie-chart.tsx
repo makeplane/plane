@@ -1,14 +1,12 @@
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import dynamic from "next/dynamic";
 import { useTheme } from "next-themes";
 // plane constants
-import { CHART_COLOR_PALETTES, EWidgetChartTypes } from "@plane/constants";
+import { CHART_COLOR_PALETTES } from "@plane/constants";
 import { TCellItem, TDashboardWidgetDatum, TPieChartWidgetConfig } from "@plane/types";
-// local components
-import { DashboardWidgetHeader } from "../header";
-import { DashboardWidgetContent } from "./content";
-import { commonWidgetClassName, generateExtendedColors, TWidgetComponentProps } from ".";
+// local imports
+import { generateExtendedColors, TWidgetComponentProps } from ".";
 
 const PieChart = dynamic(() =>
   import("@plane/propel/charts/pie-chart").then((mod) => ({
@@ -59,9 +57,7 @@ const parsePieChartData = (
 };
 
 export const DashboardPieChartWidget: React.FC<TWidgetComponentProps> = observer((props) => {
-  const { dashboardId, isSelected, widget } = props;
-  // refs
-  const widgetRef = useRef<HTMLDivElement>(null);
+  const { widget } = props;
   // derived values
   const { data, height, width } = widget ?? {};
   const widgetConfig = widget?.config as TPieChartWidgetConfig | undefined;
@@ -106,45 +102,29 @@ export const DashboardPieChartWidget: React.FC<TWidgetComponentProps> = observer
   if (!widget) return null;
 
   return (
-    <div
-      ref={widgetRef}
-      className={commonWidgetClassName({
-        isSelected,
-      })}
-    >
-      <DashboardWidgetHeader dashboardId={dashboardId} widget={widget} widgetRef={widgetRef} />
-      <DashboardWidgetContent
-        chartType={EWidgetChartTypes.PIE_CHART}
-        dashboardId={dashboardId}
-        isDataAvailable={!!data}
-        isDataEmpty={parsedData.length === 0}
-        widget={widget}
-      >
-        <PieChart
-          className="size-full"
-          margin={{
-            top: 20,
-            right: 16,
-            bottom: 20,
-            left: 16,
-          }}
-          data={parsedData}
-          dataKey="count"
-          cells={cells}
-          legend={
-            showLegends
-              ? {
-                  align: legendPosition === "right" ? "right" : "center",
-                  verticalAlign: legendPosition === "right" ? "middle" : "bottom",
-                  layout: legendPosition === "right" ? "vertical" : "horizontal",
-                  iconSize: 8,
-                }
-              : undefined
-          }
-          showTooltip={!!widgetConfig?.show_tooltip}
-          showLabel={showLabels}
-        />
-      </DashboardWidgetContent>
-    </div>
+    <PieChart
+      className="size-full"
+      margin={{
+        top: 20,
+        right: 16,
+        bottom: 20,
+        left: 16,
+      }}
+      data={parsedData}
+      dataKey="count"
+      cells={cells}
+      legend={
+        showLegends
+          ? {
+              align: legendPosition === "right" ? "right" : "center",
+              verticalAlign: legendPosition === "right" ? "middle" : "bottom",
+              layout: legendPosition === "right" ? "vertical" : "horizontal",
+              iconSize: 8,
+            }
+          : undefined
+      }
+      showTooltip={!!widgetConfig?.show_tooltip}
+      showLabel={showLabels}
+    />
   );
 });

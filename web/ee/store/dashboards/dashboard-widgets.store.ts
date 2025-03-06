@@ -57,8 +57,8 @@ export type TDashboardWidgetHelpers = {
   };
   permissions: {
     canCurrentUserCreateWidget: boolean;
-    canCurrentUserDeleteWidget: (widget: TDashboardWidget) => boolean;
-    canCurrentUserEditWidget: (widget: TDashboardWidget) => boolean;
+    canCurrentUserDeleteWidget: boolean;
+    canCurrentUserEditWidget: boolean;
   };
 };
 

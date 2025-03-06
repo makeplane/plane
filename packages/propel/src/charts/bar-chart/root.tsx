@@ -71,7 +71,6 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
           }}
           barSize={barSize}
           className="recharts-wrapper"
-          accessibilityLayer
         >
           <XAxis
             dataKey={xAxis.key}

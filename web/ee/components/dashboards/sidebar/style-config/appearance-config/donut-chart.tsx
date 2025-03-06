@@ -50,13 +50,15 @@ export const DonutChartAppearanceConfig: React.FC<Props> = (props) => {
             control={control}
             name="config.center_value"
             render={({ field: { value, onChange } }) => (
-              <ToggleSwitch
-                value={!!value}
-                onChange={(val) => {
-                  onChange(val);
-                  handleConfigUpdate({ center_value: val });
-                }}
-              />
+              <div className="px-2">
+                <ToggleSwitch
+                  value={!!value}
+                  onChange={(val) => {
+                    onChange(val);
+                    handleConfigUpdate({ center_value: val });
+                  }}
+                />
+              </div>
             )}
           />
         }

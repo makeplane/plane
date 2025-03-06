@@ -1,10 +1,10 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import isEqual from "lodash/isEqual";
 import pick from "lodash/pick";
 import { observer } from "mobx-react";
 import { type Layout, Layouts, Responsive, WidthProvider } from "react-grid-layout";
 // plane imports
-import { EWidgetGridBreakpoints } from "@plane/constants";
+import { EWidgetGridBreakpoints, WIDGET_GRID_BREAKPOINTS } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
@@ -22,6 +22,8 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export const DashboardsWidgetsGridRoot: React.FC<Props> = observer((props) => {
   const { dashboardId } = props;
+  // states
+  const [activeBreakpoint, setActiveBreakpoint] = useState<EWidgetGridBreakpoints>(EWidgetGridBreakpoints.MD);
   // store hooks
   const { getDashboardById } = useDashboards();
   // derived values
@@ -51,14 +53,15 @@ export const DashboardsWidgetsGridRoot: React.FC<Props> = observer((props) => {
     [layoutItems, updateWidgetsLayout]
   );
 
+  const handleBreakpointChange = useCallback((newBreakpoint: EWidgetGridBreakpoints) => {
+    setActiveBreakpoint(newBreakpoint);
+  }, []);
+
   console.log("Re-rendering");
 
   return (
     <ResponsiveGridLayout
-      breakpoints={{
-        [EWidgetGridBreakpoints.XXS]: 0,
-        [EWidgetGridBreakpoints.MD]: 768,
-      }}
+      breakpoints={WIDGET_GRID_BREAKPOINTS}
       layouts={layoutItems}
       cols={{
         [EWidgetGridBreakpoints.XXS]: 1,
@@ -70,14 +73,15 @@ export const DashboardsWidgetsGridRoot: React.FC<Props> = observer((props) => {
       draggableHandle=".widget-drag-handle"
       isDraggable
       isResizable
+      onBreakpointChange={handleBreakpointChange}
       onLayoutChange={handleLayoutChange}
     >
       {allWidgetIds?.map((widgetId) => {
         if (!widgetId) return null;
 
         return (
-          <div key={widgetId}>
-            <DashboardWidgetRoot dashboardId={dashboardId} widgetId={widgetId} />
+          <div key={widgetId} id={`widget-${widgetId}`}>
+            <DashboardWidgetRoot activeBreakpoint={activeBreakpoint} dashboardId={dashboardId} widgetId={widgetId} />
           </div>
         );
       })}

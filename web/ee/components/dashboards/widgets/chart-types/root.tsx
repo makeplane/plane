@@ -1,33 +1,39 @@
+import { useRef } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { EWidgetChartTypes } from "@plane/constants";
+import { EWidgetChartTypes, EWidgetGridBreakpoints } from "@plane/constants";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 // chart types
 import { DashboardWidgetNotConfiguredState } from "../not-configured-state";
 import { DashboardAreaChartWidget } from "./area-chart";
 import { DashboardBarChartWidget } from "./bar-chart";
+import { DashboardWidgetContent } from "./content";
 import { DashboardDonutChartWidget } from "./donut-chart";
+import { DashboardWidgetHeader } from "./header";
 import { DashboardLineChartWidget } from "./line-chart";
 import { DashboardPieChartWidget } from "./pie-chart";
 import { DashboardTextWidget } from "./text";
-import { TWidgetComponentProps } from "./";
+import { commonWidgetClassName, TWidgetComponentProps } from "./";
 
 type Props = {
+  activeBreakpoint: EWidgetGridBreakpoints;
   dashboardId: string;
   widgetId: string;
 };
 
 export const DashboardWidgetRoot: React.FC<Props> = observer((props) => {
-  const { dashboardId, widgetId } = props;
+  const { activeBreakpoint, dashboardId, widgetId } = props;
+  // refs
+  const widgetRef = useRef<HTMLDivElement>(null);
   // store hooks
   const { getDashboardById } = useDashboards();
   // derived values
   const dashboardDetails = getDashboardById(dashboardId);
   const { getWidgetById, isEditingWidget } = dashboardDetails?.widgetsStore ?? {};
   const widget = getWidgetById?.(widgetId);
-  const { chart_type, fetchWidgetData, isConfigurationMissing } = widget ?? {};
+  const { chart_type, data, fetchWidgetData, isConfigurationMissing } = widget ?? {};
   const isWidgetSelected = isEditingWidget === widgetId;
   const isWidgetConfigured = !isConfigurationMissing;
 
@@ -63,10 +69,34 @@ export const DashboardWidgetRoot: React.FC<Props> = observer((props) => {
   }
 
   if (!isWidgetConfigured) {
-    return <DashboardWidgetNotConfiguredState dashboardId={dashboardId} widgetId={widgetId} />;
+    return (
+      <DashboardWidgetNotConfiguredState
+        activeBreakpoint={activeBreakpoint}
+        dashboardId={dashboardId}
+        widgetId={widgetId}
+      />
+    );
   }
 
-  if (!WidgetComponent) return null;
+  if (!widget || !WidgetComponent) return null;
 
-  return <WidgetComponent dashboardId={dashboardId} isSelected={isWidgetSelected} widget={widget} />;
+  return (
+    <div
+      ref={widgetRef}
+      className={commonWidgetClassName({
+        isSelected: isWidgetSelected,
+      })}
+    >
+      <DashboardWidgetHeader dashboardId={dashboardId} widget={widget} widgetRef={widgetRef} />
+      <DashboardWidgetContent
+        activeBreakpoint={activeBreakpoint}
+        dashboardId={dashboardId}
+        isDataAvailable={!!data}
+        isDataEmpty={data?.data.length === 0}
+        widget={widget}
+      >
+        <WidgetComponent widget={widget} />
+      </DashboardWidgetContent>
+    </div>
+  );
 });

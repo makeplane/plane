@@ -1,15 +1,11 @@
-import { useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { TTextWidgetConfig } from "@plane/types";
-// local components
-import { DashboardWidgetHeader } from "../header";
-import { commonWidgetClassName, TWidgetComponentProps, WIDGET_HEADER_HEIGHT, WIDGET_Y_SPACING } from ".";
+// local imports
+import { TWidgetComponentProps } from ".";
 
 export const DashboardTextWidget: React.FC<TWidgetComponentProps> = observer((props) => {
-  const { dashboardId, isSelected, widget } = props;
-  // refs
-  const widgetRef = useRef<HTMLDivElement>(null);
+  const { widget } = props;
   // derived values
   const { data, height } = widget ?? {};
   const widgetConfig = widget?.config as TTextWidgetConfig | undefined;
@@ -19,30 +15,17 @@ export const DashboardTextWidget: React.FC<TWidgetComponentProps> = observer((pr
   if (!widget) return null;
 
   return (
-    <div
-      ref={widgetRef}
-      className={commonWidgetClassName({
-        isSelected,
-      })}
-    >
-      <DashboardWidgetHeader dashboardId={dashboardId} widget={widget} widgetRef={widgetRef} />
-      <div
-        className="flex items-center px-4"
+    <div className="size-full flex items-center px-4">
+      <p
+        className="font-semibold text-custom-text-100 truncate transition-all"
         style={{
-          height: `calc(100% - ${WIDGET_HEADER_HEIGHT + WIDGET_Y_SPACING}px)`,
+          fontSize: (height ?? 1) * 1.7 + "rem",
+          textAlign: selectedAlignment,
+          color: widgetConfig?.text_color,
         }}
       >
-        <p
-          className="w-full font-semibold text-custom-text-100 truncate transition-all"
-          style={{
-            fontSize: (height ?? 1) * 1.7 + "rem",
-            textAlign: selectedAlignment,
-            color: widgetConfig?.text_color,
-          }}
-        >
-          {textToDisplay}
-        </p>
-      </div>
+        {textToDisplay}
+      </p>
     </div>
   );
 });

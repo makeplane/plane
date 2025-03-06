@@ -23,7 +23,17 @@ export const PieChart = React.memo(<K extends string, T extends string>(props: T
   } = props;
 
   const renderCells = useMemo(
-    () => cells.map((cell) => <Cell key={cell.key} className={cell.className} fill={cell.fill} />),
+    () =>
+      cells.map((cell) => (
+        <Cell
+          key={cell.key}
+          className={cell.className}
+          fill={cell.fill}
+          style={{
+            outline: "none",
+          }}
+        />
+      )),
     [cells]
   );
 
@@ -38,7 +48,6 @@ export const PieChart = React.memo(<K extends string, T extends string>(props: T
             bottom: margin?.bottom === undefined ? 5 : margin.bottom,
             left: margin?.left === undefined ? 20 : margin.left,
           }}
-          accessibilityLayer
         >
           <Pie
             data={data}

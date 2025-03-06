@@ -180,11 +180,11 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
 
   // permissions
   get canCurrentUserDeleteWidget() {
-    return this.helpers.permissions.canCurrentUserDeleteWidget(this.asJSON);
+    return this.helpers.permissions.canCurrentUserDeleteWidget;
   }
 
   get canCurrentUserEditWidget() {
-    return this.helpers.permissions.canCurrentUserEditWidget(this.asJSON);
+    return this.helpers.permissions.canCurrentUserEditWidget;
   }
 
   // actions

@@ -12,6 +12,7 @@ type TModalPayload = (Partial<TDashboard> & { id: string }) | null;
 export interface IWorkspaceDashboardsStore {
   // observables
   fetchStatus: Record<string, boolean>;
+  searchQuery: string;
   // modal data
   isCreateUpdateModalOpen: boolean;
   createUpdateModalPayload: TModalPayload;
@@ -19,6 +20,7 @@ export interface IWorkspaceDashboardsStore {
   currentWorkspaceFetchStatus: boolean;
   isAnyDashboardAvailable: boolean;
   currentWorkspaceDashboardIds: string[];
+  currentWorkspaceFilteredDashboardIds: string[];
   toggleCreateUpdateModal: (status?: boolean) => void;
   updateCreateUpdateModalPayload: (payload: TModalPayload) => void;
   // permissions
@@ -28,11 +30,13 @@ export interface IWorkspaceDashboardsStore {
   fetchDashboardDetails: (dashboardId: string) => Promise<TDashboard>;
   createDashboard: (data: Partial<TDashboard>) => Promise<TDashboard>;
   deleteDashboard: (dashboardId: string) => Promise<void>;
+  updateSearchQuery: (query: string) => void;
 }
 
 export class WorkspaceDashboardsStore implements IWorkspaceDashboardsStore {
   // observables
   fetchStatus: Record<string, boolean> = {};
+  searchQuery: string = "";
   // modal data
   isCreateUpdateModalOpen: boolean = false;
   createUpdateModalPayload: TModalPayload = null;
@@ -46,17 +50,20 @@ export class WorkspaceDashboardsStore implements IWorkspaceDashboardsStore {
     makeObservable(this, {
       // observables
       fetchStatus: observable,
+      searchQuery: observable.ref,
       isCreateUpdateModalOpen: observable.ref,
       createUpdateModalPayload: observable.ref,
       // computed
       currentWorkspaceFetchStatus: computed,
       isAnyDashboardAvailable: computed,
       currentWorkspaceDashboardIds: computed,
+      currentWorkspaceFilteredDashboardIds: computed,
       currentUserWorkspaceRole: computed,
       canCurrentUserCreateDashboard: computed,
       // actions
       toggleCreateUpdateModal: action,
       updateCreateUpdateModalPayload: action,
+      updateSearchQuery: action,
     });
     // initialize service
     this.service = new WorkspaceDashboardsService();
@@ -75,11 +82,11 @@ export class WorkspaceDashboardsStore implements IWorkspaceDashboardsStore {
           update: async (payload) => await this.service.update(workspaceSlug, dashboardId, payload),
         },
         permissions: {
-          canCurrentUserEditDashboard: (dashboard) =>
+          canCurrentUserEditDashboard:
             currentUser?.id === dashboard.created_by || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN,
-          canCurrentUserFavoriteDashboard: (dashboard: TDashboard) =>
+          canCurrentUserFavoriteDashboard:
             currentUser?.id === dashboard.created_by || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN,
-          canCurrentUserDeleteDashboard: (dashboard: TDashboard) =>
+          canCurrentUserDeleteDashboard:
             currentUser?.id === dashboard.created_by || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN,
         },
       },
@@ -97,9 +104,12 @@ export class WorkspaceDashboardsStore implements IWorkspaceDashboardsStore {
             await this.service.retrieveWidgetData(workspaceSlug, dashboardId, widgetId),
         },
         permissions: {
-          canCurrentUserCreateWidget: true,
-          canCurrentUserDeleteWidget: () => true,
-          canCurrentUserEditWidget: () => true,
+          canCurrentUserCreateWidget:
+            currentUser?.id === dashboard.created_by || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN,
+          canCurrentUserDeleteWidget:
+            currentUser?.id === dashboard.created_by || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN,
+          canCurrentUserEditWidget:
+            currentUser?.id === dashboard.created_by || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN,
         },
       },
     });
@@ -116,6 +126,16 @@ export class WorkspaceDashboardsStore implements IWorkspaceDashboardsStore {
     if (!currentWorkspace) return [];
     const allWorkspaceDashboards = this.baseStore.getAllDashboardsByLevel("workspace");
     const filteredWorkspaceDashboards = allWorkspaceDashboards.filter((d) => d.workspace === currentWorkspace.id);
+    return filteredWorkspaceDashboards.map((d) => d.id ?? "");
+  }
+
+  get currentWorkspaceFilteredDashboardIds() {
+    const { currentWorkspace } = this.rootStore.workspaceRoot;
+    if (!currentWorkspace) return [];
+    const allWorkspaceDashboards = this.baseStore.getAllDashboardsByLevel("workspace");
+    const filteredWorkspaceDashboards = allWorkspaceDashboards.filter(
+      (d) => d.workspace === currentWorkspace.id && d.name?.toLowerCase().includes(this.searchQuery.toLowerCase())
+    );
     return filteredWorkspaceDashboards.map((d) => d.id ?? "");
   }
 
@@ -239,6 +259,12 @@ export class WorkspaceDashboardsStore implements IWorkspaceDashboardsStore {
   updateCreateUpdateModalPayload: IWorkspaceDashboardsStore["updateCreateUpdateModalPayload"] = (payload) => {
     runInAction(() => {
       this.createUpdateModalPayload = payload;
+    });
+  };
+
+  updateSearchQuery: IWorkspaceDashboardsStore["updateSearchQuery"] = (query) => {
+    runInAction(() => {
+      this.searchQuery = query;
     });
   };
 }

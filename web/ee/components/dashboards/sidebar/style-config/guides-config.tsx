@@ -27,13 +27,15 @@ export const WidgetConfigSidebarGuidesConfig: React.FC<Props> = (props) => {
             control={control}
             name="config.show_legends"
             render={({ field: { value, onChange } }) => (
-              <ToggleSwitch
-                value={!!value}
-                onChange={(val) => {
-                  onChange(val);
-                  handleConfigUpdate({ show_legends: val });
-                }}
-              />
+              <div className="px-2">
+                <ToggleSwitch
+                  value={!!value}
+                  onChange={(val) => {
+                    onChange(val);
+                    handleConfigUpdate({ show_legends: val });
+                  }}
+                />
+              </div>
             )}
           />
         }
@@ -45,13 +47,15 @@ export const WidgetConfigSidebarGuidesConfig: React.FC<Props> = (props) => {
             control={control}
             name="config.show_tooltip"
             render={({ field: { value, onChange } }) => (
-              <ToggleSwitch
-                value={!!value}
-                onChange={(val) => {
-                  onChange(val);
-                  handleConfigUpdate({ show_tooltip: val });
-                }}
-              />
+              <div className="px-2">
+                <ToggleSwitch
+                  value={!!value}
+                  onChange={(val) => {
+                    onChange(val);
+                    handleConfigUpdate({ show_tooltip: val });
+                  }}
+                />
+              </div>
             )}
           />
         }

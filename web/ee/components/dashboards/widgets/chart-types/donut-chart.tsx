@@ -1,14 +1,12 @@
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import dynamic from "next/dynamic";
 import { useTheme } from "next-themes";
 // plane imports
-import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR, EWidgetChartModels, EWidgetChartTypes } from "@plane/constants";
+import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR, EWidgetChartModels } from "@plane/constants";
 import { TCellItem, TDashboardWidgetDatum, TDonutChartWidgetConfig } from "@plane/types";
-// local components
-import { DashboardWidgetHeader } from "../header";
-import { DashboardWidgetContent } from "./content";
-import { commonWidgetClassName, generateExtendedColors, TWidgetComponentProps } from ".";
+// local imports
+import { generateExtendedColors, TWidgetComponentProps } from ".";
 
 const PieChart = dynamic(() =>
   import("@plane/propel/charts/pie-chart").then((mod) => ({
@@ -43,9 +41,7 @@ export const parseDonutChartData = (
 };
 
 export const DashboardDonutChartWidget: React.FC<TWidgetComponentProps> = observer((props) => {
-  const { dashboardId, isSelected, widget } = props;
-  // refs
-  const widgetRef = useRef<HTMLDivElement>(null);
+  const { widget } = props;
   // derived values
   const { chart_model, data, height, width } = widget ?? {};
   const widgetConfig = widget?.config as TDonutChartWidgetConfig | undefined;
@@ -96,58 +92,42 @@ export const DashboardDonutChartWidget: React.FC<TWidgetComponentProps> = observ
   if (!widget) return null;
 
   return (
-    <div
-      ref={widgetRef}
-      className={commonWidgetClassName({
-        isSelected,
-      })}
-    >
-      <DashboardWidgetHeader dashboardId={dashboardId} widget={widget} widgetRef={widgetRef} />
-      <DashboardWidgetContent
-        chartType={EWidgetChartTypes.DONUT_CHART}
-        dashboardId={dashboardId}
-        isDataAvailable={!!data}
-        isDataEmpty={parsedData.length === 0}
-        widget={widget}
-      >
-        <PieChart
-          className="size-full"
-          margin={{
-            top: isOfUnitHeight ? 0 : 20,
-            right: 16,
-            bottom: isOfUnitHeight ? 12 : 20,
-            left: 16,
-          }}
-          data={parsedData}
-          dataKey="count"
-          cells={cells}
-          innerRadius={isOfUnitHeight ? 10 : (height ?? 1) * 20}
-          centerLabel={
-            showCenterLabel
-              ? {
-                  text: totalCount,
-                  fill: "rgba(var(--color-text-100))",
-                  className: "text-2xl font-semibold",
-                  style: {
-                    fontSize: ((height ?? 1) * 1.5) / totalCountDigits + "rem",
-                  },
-                }
-              : undefined
-          }
-          legend={
-            showLegends
-              ? {
-                  align: legendPosition === "right" ? "right" : "center",
-                  verticalAlign: legendPosition === "right" ? "middle" : "bottom",
-                  layout: legendPosition === "right" ? "vertical" : "horizontal",
-                  iconSize: 8,
-                }
-              : undefined
-          }
-          showTooltip={!!widgetConfig?.show_tooltip}
-          showLabel={showLabels}
-        />
-      </DashboardWidgetContent>
-    </div>
+    <PieChart
+      className="size-full"
+      margin={{
+        top: isOfUnitHeight ? 0 : 20,
+        right: 16,
+        bottom: isOfUnitHeight ? 12 : 20,
+        left: 16,
+      }}
+      data={parsedData}
+      dataKey="count"
+      cells={cells}
+      innerRadius={isOfUnitHeight ? 10 : (height ?? 1) * 20}
+      centerLabel={
+        showCenterLabel
+          ? {
+              text: totalCount,
+              fill: "rgba(var(--color-text-100))",
+              className: "text-2xl font-semibold",
+              style: {
+                fontSize: ((height ?? 1) * 1.5) / totalCountDigits + "rem",
+              },
+            }
+          : undefined
+      }
+      legend={
+        showLegends
+          ? {
+              align: legendPosition === "right" ? "right" : "center",
+              verticalAlign: legendPosition === "right" ? "middle" : "bottom",
+              layout: legendPosition === "right" ? "vertical" : "horizontal",
+              iconSize: 8,
+            }
+          : undefined
+      }
+      showTooltip={!!widgetConfig?.show_tooltip}
+      showLabel={showLabels}
+    />
   );
 });

@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { Eye, LayoutGrid, Pencil } from "lucide-react";
 // plane imports
 import { EWidgetChartTypes } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Button, Header, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
@@ -23,6 +24,8 @@ export const WorkspaceDashboardDetailsHeader = observer(() => {
   const dashboardDetails = getDashboardById(dashboardId?.toString() ?? "");
   const { canCurrentUserEditDashboard, isViewModeEnabled, toggleViewingMode, widgetsStore } = dashboardDetails ?? {};
   const { canCurrentUserCreateWidget, getNewWidgetPayload, createWidget, toggleEditWidget } = widgetsStore ?? {};
+  // translation
+  const { t } = useTranslation();
 
   const handleAddNewWidget = async (chartType: EWidgetChartTypes) => {
     const payload = getNewWidgetPayload?.(chartType);
@@ -32,6 +35,8 @@ export const WorkspaceDashboardDetailsHeader = observer(() => {
       const res = await createWidget?.(payload);
       if (res?.id) {
         toggleEditWidget?.(res.id);
+        const widgetElement = document.getElementById(`widget-${res.id}`);
+        widgetElement?.scrollIntoView({ behavior: "smooth" });
       }
     } catch {
       setToast({
@@ -54,7 +59,7 @@ export const WorkspaceDashboardDetailsHeader = observer(() => {
               link={
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/dashboards`}
-                  label="Dashboards"
+                  label={t("workspace_dashboards")}
                   icon={<LayoutGrid className="size-4 text-custom-text-300" />}
                 />
               }
@@ -67,7 +72,7 @@ export const WorkspaceDashboardDetailsHeader = observer(() => {
                     <div className="flex items-center gap-2 truncate">
                       {dashboardDetails && !isViewModeEnabled && (
                         <span className="flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 rounded p-1">
-                          Editing
+                          {t("dashboards.common.editing")}
                         </span>
                       )}
                       <span className="truncate">{dashboardDetails?.name ?? ""}</span>
@@ -96,7 +101,7 @@ export const WorkspaceDashboardDetailsHeader = observer(() => {
             prependIcon={isViewModeEnabled ? <Pencil className="size-3.5" /> : <Eye className="size-3.5" />}
             disabled={!canCurrentUserEditDashboard}
           >
-            {isViewModeEnabled ? "Edit" : "View"}
+            {t(isViewModeEnabled ? "common.edit" : "common.view")}
           </Button>
         </Header.RightItem>
       )}

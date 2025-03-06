@@ -1,14 +1,12 @@
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import dynamic from "next/dynamic";
 import { useTheme } from "next-themes";
 // plane imports
-import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR, EWidgetChartModels, EWidgetChartTypes } from "@plane/constants";
+import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR, EWidgetChartModels } from "@plane/constants";
 import { TAreaChartWidgetConfig, TAreaItem } from "@plane/types";
-// local components
-import { DashboardWidgetHeader } from "../header";
-import { DashboardWidgetContent } from "./content";
-import { parseWidgetData, commonWidgetClassName, generateExtendedColors, TWidgetComponentProps } from ".";
+// local imports
+import { parseWidgetData, generateExtendedColors, TWidgetComponentProps } from ".";
 
 const AreaChart = dynamic(() =>
   import("@plane/propel/charts/area-chart").then((mod) => ({
@@ -17,9 +15,7 @@ const AreaChart = dynamic(() =>
 );
 
 export const DashboardAreaChartWidget: React.FC<TWidgetComponentProps> = observer((props) => {
-  const { dashboardId, isSelected, widget } = props;
-  // refs
-  const widgetRef = useRef<HTMLDivElement>(null);
+  const { widget } = props;
   // derived values
   const { chart_model, data } = widget ?? {};
   const widgetConfig = widget?.config as TAreaChartWidgetConfig | undefined;
@@ -73,57 +69,41 @@ export const DashboardAreaChartWidget: React.FC<TWidgetComponentProps> = observe
   if (!widget) return null;
 
   return (
-    <div
-      ref={widgetRef}
-      className={commonWidgetClassName({
-        isSelected,
-      })}
-    >
-      <DashboardWidgetHeader dashboardId={dashboardId} widget={widget} widgetRef={widgetRef} />
-      <DashboardWidgetContent
-        chartType={EWidgetChartTypes.AREA_CHART}
-        dashboardId={dashboardId}
-        isDataAvailable={!!data}
-        isDataEmpty={parsedData.data.length === 0}
-        widget={widget}
-      >
-        <AreaChart
-          className="size-full"
-          data={parsedData.data}
-          areas={areas}
-          margin={{
-            top: 20,
-            right: 16,
-            bottom: 20,
-            left: -10,
-          }}
-          xAxis={{
-            key: "name",
-          }}
-          yAxis={{
-            key: "count",
-          }}
-          legend={
-            showLegends
-              ? {
-                  align: "center",
-                  verticalAlign: "bottom",
-                  layout: "horizontal",
-                  iconSize: 8,
-                }
-              : undefined
-          }
-          showTooltip={!!widgetConfig?.show_tooltip}
-          comparisonLine={
-            isComparisonModel
-              ? {
-                  strokeColor: widgetConfig?.line_color ?? "",
-                  dashedLine: widgetConfig?.line_type === "dashed",
-                }
-              : undefined
-          }
-        />
-      </DashboardWidgetContent>
-    </div>
+    <AreaChart
+      className="size-full"
+      data={parsedData.data}
+      areas={areas}
+      margin={{
+        top: 20,
+        right: 16,
+        bottom: 20,
+        left: -10,
+      }}
+      xAxis={{
+        key: "name",
+      }}
+      yAxis={{
+        key: "count",
+      }}
+      legend={
+        showLegends
+          ? {
+              align: "center",
+              verticalAlign: "bottom",
+              layout: "horizontal",
+              iconSize: 8,
+            }
+          : undefined
+      }
+      showTooltip={!!widgetConfig?.show_tooltip}
+      comparisonLine={
+        isComparisonModel
+          ? {
+              strokeColor: widgetConfig?.line_color ?? "",
+              dashedLine: widgetConfig?.line_type === "dashed",
+            }
+          : undefined
+      }
+    />
   );
 });

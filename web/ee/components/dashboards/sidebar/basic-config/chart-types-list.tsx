@@ -42,7 +42,7 @@ export const WidgetConfigSidebarChartTypesList: React.FC<Props> = (props) => {
               >
                 <WidgetChartTypeIcon
                   type={chart.key}
-                  className={cn("flex-shrink-0 size-6 text-custom-text-300 transition-colors", {
+                  className={cn("flex-shrink-0 size-6 text-custom-text-400 transition-colors", {
                     "text-custom-primary-100": isTypeSelected,
                   })}
                 />

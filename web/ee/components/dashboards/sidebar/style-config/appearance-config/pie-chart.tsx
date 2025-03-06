@@ -32,18 +32,20 @@ export const PieChartAppearanceConfig: React.FC<Props> = (props) => {
               control={control}
               name="config.show_values"
               render={({ field: { value, onChange } }) => (
-                <ToggleSwitch
-                  value={!!value}
-                  onChange={(val) => {
-                    onChange(val);
-                    handleConfigUpdate({ show_values: val });
-                  }}
-                />
+                <div className="flex-shrink-0 px-2">
+                  <ToggleSwitch
+                    value={!!value}
+                    onChange={(val) => {
+                      onChange(val);
+                      handleConfigUpdate({ show_values: val });
+                    }}
+                  />
+                </div>
               )}
             />
             {isShowValuesEnabled && (
               <>
-                <span>as</span>
+                <span className="flex-shrink-0">as</span>
                 <Controller
                   control={control}
                   name="config.value_type"
@@ -51,6 +53,7 @@ export const PieChartAppearanceConfig: React.FC<Props> = (props) => {
                     const selectedValueType = PIE_CHART_VALUE_TYPE.find((t) => t.key === value);
                     return (
                       <CustomSelect
+                        className="flex-grow"
                         customButton={
                           <WidgetConfigSelectButton
                             placeholder={t("chart.metric")}
@@ -58,6 +61,7 @@ export const PieChartAppearanceConfig: React.FC<Props> = (props) => {
                             value={!!selectedValueType}
                           />
                         }
+                        customButtonClassName="w-full"
                         value={value}
                         onChange={(val: TWidgetPieChartValuesType) => {
                           onChange(val);

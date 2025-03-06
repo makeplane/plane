@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { ContextMenu, CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // plane web hooks
@@ -26,6 +27,8 @@ export const DashboardQuickActions: React.FC<Props> = observer((props) => {
   // derived values
   const dashboardDetails = getDashboardById(dashboardId);
   const { canCurrentUserDeleteDashboard, canCurrentUserEditDashboard, getRedirectionLink } = dashboardDetails ?? {};
+  // translation
+  const { t } = useTranslation();
   // menu items
   const MENU_ITEMS: TContextMenuItem[] = useMemo(() => {
     const dashboardLink = getRedirectionLink?.();
@@ -36,14 +39,14 @@ export const DashboardQuickActions: React.FC<Props> = observer((props) => {
           toggleCreateUpdateModal(true);
           updateCreateUpdateModalPayload({ ...dashboardDetails?.asJSON, id: dashboardId });
         },
-        title: "Edit",
+        title: t("common.actions.edit"),
         icon: Pencil,
         shouldRender: !!canCurrentUserEditDashboard,
       },
       {
         key: "open-in-new-tab",
         action: () => window.open(dashboardLink, "_blank"),
-        title: "Open in new tab",
+        title: t("common.actions.open_in_new_tab"),
         icon: ExternalLink,
       },
       {
@@ -58,13 +61,13 @@ export const DashboardQuickActions: React.FC<Props> = observer((props) => {
             });
           });
         },
-        title: "Copy link",
+        title: t("common.actions.copy_link"),
         icon: Link,
       },
       {
         key: "delete",
         action: () => setIsDeleteModalOpen(true),
-        title: "Delete",
+        title: t("common.actions.delete"),
         icon: Trash2,
         shouldRender: !!canCurrentUserDeleteDashboard,
       },
@@ -76,6 +79,7 @@ export const DashboardQuickActions: React.FC<Props> = observer((props) => {
     dashboardDetails?.asJSON,
     dashboardId,
     toggleCreateUpdateModal,
+    t,
     updateCreateUpdateModalPayload,
   ]);
 

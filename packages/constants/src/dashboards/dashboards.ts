@@ -5,10 +5,16 @@ import { DEFAULT_WIDGET_COLOR, DEFAULT_WIDGET_COLOR_SCHEME } from "./widgets";
 import {
   EWidgetChartModels,
   EWidgetChartTypes,
+  EWidgetGridBreakpoints,
   EWidgetXAxisDateGrouping,
   EWidgetXAxisProperty,
   EWidgetYAxisMetric,
 } from "./enums";
+
+export const WIDGET_GRID_BREAKPOINTS: Record<EWidgetGridBreakpoints, number> = {
+  [EWidgetGridBreakpoints.XXS]: 0,
+  [EWidgetGridBreakpoints.MD]: 768,
+};
 
 export const CIRCULAR_WIDGET_CHART_TYPES: EWidgetChartTypes[] = [
   EWidgetChartTypes.DONUT_CHART,

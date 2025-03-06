@@ -58,12 +58,17 @@ def process_grouped_data(data):
         key = item["key"]
         if key not in response:
             response[key] = {
-                "key": key,
-                "name": item.get("display_name", key),
+                "key": key if key else "none",
+                "name": (
+                    item.get("display_name", key)
+                    if item.get("display_name", key)
+                    else "None"
+                ),
                 "count": 0,
             }
-        group_key = str(item["group_key"]) if item["group_key"] else "None"
+        group_key = str(item["group_key"]) if item["group_key"] else "none"
         schema[group_key] = item.get("group_name", item["group_key"])
+        schema[group_key] = schema[group_key] if schema[group_key] else "None"
         response[key][group_key] = response[key].get(group_key, 0) + item["count"]
         response[key]["count"] += item["count"]
 
@@ -137,8 +142,7 @@ def build_grouped_chart_response(
 def build_simple_chart_response(queryset, id_field, name_field, aggregate_func):
     data = (
         queryset.annotate(
-            key=F(id_field),
-            display_name=F(name_field) if name_field else F(id_field),
+            key=F(id_field), display_name=F(name_field) if name_field else F(id_field)
         )
         .values("key", "display_name")
         .annotate(count=aggregate_func)

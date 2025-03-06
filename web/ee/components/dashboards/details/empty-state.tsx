@@ -23,7 +23,7 @@ export const DashboardsWidgetsListEmptyState: React.FC<Props> = observer((props)
   const { getDashboardById } = useDashboards();
   // derived values
   const { isViewModeEnabled, widgetsStore } = getDashboardById(dashboardId) ?? {};
-  const { createWidget, getNewWidgetPayload, toggleEditWidget } = widgetsStore ?? {};
+  const { canCurrentUserCreateWidget, createWidget, getNewWidgetPayload, toggleEditWidget } = widgetsStore ?? {};
   // translation
   const { t } = useTranslation();
   // empty state asset path
@@ -57,7 +57,7 @@ export const DashboardsWidgetsListEmptyState: React.FC<Props> = observer((props)
           description={t("dashboards.empty_state.widgets_list.description")}
           assetPath={widgetsAssetResolvedPath}
         />
-        {!isViewModeEnabled && (
+        {!isViewModeEnabled && canCurrentUserCreateWidget && (
           <DashboardWidgetChartTypesDropdown
             loading={isAddingWidget}
             disabled={isAddingWidget}

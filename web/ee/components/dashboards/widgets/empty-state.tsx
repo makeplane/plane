@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 // plane imports
+import { EWidgetGridBreakpoints } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // components
@@ -12,20 +13,20 @@ import { useDashboards } from "@/plane-web/hooks/store";
 import { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
 
 type Props = {
+  activeBreakpoint: EWidgetGridBreakpoints;
   dashboardId: string;
   widget: DashboardWidgetInstance;
 };
 
 export const DashboardWidgetEmptyState: React.FC<Props> = observer((props) => {
-  const { dashboardId, widget } = props;
+  const { activeBreakpoint, dashboardId, widget } = props;
   // store hooks
   const { getDashboardById } = useDashboards();
   // derived values
   const dashboardDetails = getDashboardById(dashboardId);
   const { isViewModeEnabled } = dashboardDetails ?? {};
-  const { toggleEditWidget } = dashboardDetails?.widgetsStore ?? {};
   const { canCurrentUserEditWidget, chart_type, height } = widget;
-  const shouldShowIcon = height !== 1;
+  const shouldShowIcon = activeBreakpoint === EWidgetGridBreakpoints.XXS || height !== 1;
   // translation
   const { t } = useTranslation();
   // resolved asset
@@ -33,12 +34,12 @@ export const DashboardWidgetEmptyState: React.FC<Props> = observer((props) => {
     basePath: `/empty-state/dashboards/widgets/charts/${chart_type?.toLowerCase()}`,
   });
 
-  const handleConfigureWidget = () => {
-    toggleEditWidget?.(widget.id ?? "");
+  const handleRefresh = () => {
+    window.location.reload();
   };
 
   return (
-    <div className="size-full grid place-items-center">
+    <div className="size-full grid place-items-center px-4 overflow-hidden">
       <div className="flex flex-col items-center gap-3">
         <SimpleEmptyState
           title={t("dashboards.empty_state.widget_data.title")}
@@ -46,19 +47,15 @@ export const DashboardWidgetEmptyState: React.FC<Props> = observer((props) => {
         />
         {canCurrentUserEditWidget &&
           (isViewModeEnabled ? (
-            <p className="text-sm text-custom-text-400">{t("dashboards.empty_state.widget_data.description")}</p>
+            <p className="text-sm text-custom-text-400 text-center whitespace-pre-line">
+              {t("dashboards.empty_state.widget_data.description")}
+            </p>
           ) : (
-            <p className="text-sm text-custom-text-400">
-              Refresh to load the latest data or{" "}
-              <Button
-                onClick={handleConfigureWidget}
-                variant="link-primary"
-                size="sm"
-                className="w-fit inline-flex p-0"
-              >
-                reconfigure
+            <p className="text-sm text-custom-text-400 text-center whitespace-pre-line">
+              <Button onClick={handleRefresh} variant="link-primary" size="sm" className="w-fit inline-flex p-0">
+                Refresh
               </Button>{" "}
-              this widget.
+              or add data to see it here.
             </p>
           ))}
       </div>

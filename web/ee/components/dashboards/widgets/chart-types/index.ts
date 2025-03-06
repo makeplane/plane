@@ -7,8 +7,6 @@ import { cn, hexToHsl, hslToHex } from "@plane/utils";
 import { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
 
 export type TWidgetComponentProps = {
-  dashboardId: string;
-  isSelected: boolean;
   widget: DashboardWidgetInstance | undefined;
 };
 

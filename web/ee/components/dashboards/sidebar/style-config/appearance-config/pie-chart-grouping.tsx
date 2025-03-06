@@ -45,13 +45,15 @@ export const PieChartGroupingConfig: React.FC<Props> = (props) => {
             control={control}
             name="config.group_thin_pieces"
             render={({ field: { value, onChange } }) => (
-              <ToggleSwitch
-                value={!!value}
-                onChange={(val) => {
-                  onChange(val);
-                  handleConfigUpdate({ group_thin_pieces: val });
-                }}
-              />
+              <div className="px-2">
+                <ToggleSwitch
+                  value={!!value}
+                  onChange={(val) => {
+                    onChange(val);
+                    handleConfigUpdate({ group_thin_pieces: val });
+                  }}
+                />
+              </div>
             )}
           />
         }

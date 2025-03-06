@@ -1,5 +1,5 @@
 // plane imports
-import { EWidgetChartTypes } from "@plane/constants";
+import { EWidgetGridBreakpoints } from "@plane/constants";
 // plane web stores
 import { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
 // local imports
@@ -8,7 +8,7 @@ import { DashboardWidgetLoader } from "../loader";
 import { WIDGET_HEADER_HEIGHT, WIDGET_Y_SPACING } from ".";
 
 type Props = {
-  chartType: EWidgetChartTypes;
+  activeBreakpoint: EWidgetGridBreakpoints;
   children: React.ReactNode;
   className?: string;
   dashboardId: string;
@@ -18,7 +18,7 @@ type Props = {
 };
 
 export const DashboardWidgetContent: React.FC<Props> = (props) => {
-  const { chartType, children, className, dashboardId, isDataAvailable, isDataEmpty, widget } = props;
+  const { activeBreakpoint, children, className, dashboardId, isDataAvailable, isDataEmpty, widget } = props;
 
   return (
     <div
@@ -29,7 +29,7 @@ export const DashboardWidgetContent: React.FC<Props> = (props) => {
     >
       {isDataAvailable ? (
         isDataEmpty ? (
-          <DashboardWidgetEmptyState dashboardId={dashboardId} widget={widget} />
+          <DashboardWidgetEmptyState activeBreakpoint={activeBreakpoint} dashboardId={dashboardId} widget={widget} />
         ) : (
           children
         )

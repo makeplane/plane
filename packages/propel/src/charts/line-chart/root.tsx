@@ -63,7 +63,6 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
             bottom: margin?.bottom === undefined ? 5 : margin.bottom,
             left: margin?.left === undefined ? 20 : margin.left,
           }}
-          accessibilityLayer
         >
           <XAxis
             dataKey={xAxis.key}

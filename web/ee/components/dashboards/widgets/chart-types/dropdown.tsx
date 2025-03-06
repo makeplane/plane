@@ -23,7 +23,7 @@ export const DashboardWidgetChartTypesDropdown: React.FC<Props> = (props) => {
       customButton={
         <span className={cn(getButtonStyling("neutral-primary", "sm"), "flex items-center gap-1")}>
           {!loading && <Plus className="size-3.5" />}
-          {loading ? "Adding" : "Add widget"}
+          {t(loading ? "common.adding" : "dashboards.widget.common.add_widget")}
         </span>
       }
       placement="bottom-end"

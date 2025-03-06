@@ -1,14 +1,12 @@
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import dynamic from "next/dynamic";
 import { useTheme } from "next-themes";
 // plane imports
-import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR, EWidgetChartModels, EWidgetChartTypes } from "@plane/constants";
+import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR, EWidgetChartModels } from "@plane/constants";
 import { TBarChartWidgetConfig, TBarItem } from "@plane/types";
-// local components
-import { DashboardWidgetHeader } from "../header";
-import { DashboardWidgetContent } from "./content";
-import { commonWidgetClassName, generateExtendedColors, parseWidgetData, TWidgetComponentProps } from ".";
+// local imports
+import { generateExtendedColors, parseWidgetData, TWidgetComponentProps } from ".";
 
 const BarChart = dynamic(() =>
   import("@plane/propel/charts/bar-chart").then((mod) => ({
@@ -17,9 +15,7 @@ const BarChart = dynamic(() =>
 );
 
 export const DashboardBarChartWidget: React.FC<TWidgetComponentProps> = observer((props) => {
-  const { dashboardId, isSelected, widget } = props;
-  // refs
-  const widgetRef = useRef<HTMLDivElement>(null);
+  const { widget } = props;
   // derived values
   const { chart_model, data } = widget ?? {};
   const widgetConfig = widget?.config as TBarChartWidgetConfig | undefined;
@@ -75,49 +71,33 @@ export const DashboardBarChartWidget: React.FC<TWidgetComponentProps> = observer
   if (!widget) return null;
 
   return (
-    <div
-      ref={widgetRef}
-      className={commonWidgetClassName({
-        isSelected,
-      })}
-    >
-      <DashboardWidgetHeader dashboardId={dashboardId} widget={widget} widgetRef={widgetRef} />
-      <DashboardWidgetContent
-        chartType={EWidgetChartTypes.BAR_CHART}
-        dashboardId={dashboardId}
-        isDataAvailable={!!data}
-        isDataEmpty={parsedData.data.length === 0}
-        widget={widget}
-      >
-        <BarChart
-          className="size-full"
-          data={parsedData.data}
-          bars={bars}
-          margin={{
-            top: 20,
-            right: 16,
-            bottom: 20,
-            left: -10,
-          }}
-          xAxis={{
-            key: "name",
-          }}
-          yAxis={{
-            key: "count",
-          }}
-          legend={
-            showLegends
-              ? {
-                  align: "center",
-                  verticalAlign: "bottom",
-                  layout: "horizontal",
-                  iconSize: 8,
-                }
-              : undefined
-          }
-          showTooltip={!!widgetConfig?.show_tooltip}
-        />
-      </DashboardWidgetContent>
-    </div>
+    <BarChart
+      className="size-full"
+      data={parsedData.data}
+      bars={bars}
+      margin={{
+        top: 20,
+        right: 16,
+        bottom: 20,
+        left: -10,
+      }}
+      xAxis={{
+        key: "name",
+      }}
+      yAxis={{
+        key: "count",
+      }}
+      legend={
+        showLegends
+          ? {
+              align: "center",
+              verticalAlign: "bottom",
+              layout: "horizontal",
+              iconSize: 8,
+            }
+          : undefined
+      }
+      showTooltip={!!widgetConfig?.show_tooltip}
+    />
   );
 });

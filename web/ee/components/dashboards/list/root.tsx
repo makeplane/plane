@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 // components
 import { ListLayout } from "@/components/core/list";
-import { DetailedEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState, SimpleEmptyState } from "@/components/empty-state";
 // hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
@@ -23,14 +23,15 @@ export const DashboardsListLayoutRoot = observer(() => {
     workspaceDashboards: {
       currentWorkspaceFetchStatus,
       isAnyDashboardAvailable,
-      currentWorkspaceDashboardIds,
+      currentWorkspaceFilteredDashboardIds,
       fetchDashboards,
     },
   } = useDashboards();
   // translation
   const { t } = useTranslation();
   // derived values
-  const dashboardsAssetResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/dashboards/list" });
+  const listEmptyStateResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/dashboards/list" });
+  const searchEmptyStateResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/dashboards/list-search" });
 
   useSWR(
     workspaceSlug ? `WORKSPACE_DASHBOARDS_LIST_${workspaceSlug.toString()}` : null,
@@ -48,7 +49,19 @@ export const DashboardsListLayoutRoot = observer(() => {
         <DetailedEmptyState
           title={t("dashboards.empty_state.dashboards_list.title")}
           description={t("dashboards.empty_state.dashboards_list.description")}
-          assetPath={dashboardsAssetResolvedPath}
+          assetPath={listEmptyStateResolvedPath}
+        />
+      </div>
+    );
+  }
+
+  if (currentWorkspaceFilteredDashboardIds.length === 0) {
+    return (
+      <div className="size-full grid place-items-center px-page-x">
+        <SimpleEmptyState
+          title={t("dashboards.empty_state.dashboards_search.title")}
+          description={t("dashboards.empty_state.dashboards_search.description")}
+          assetPath={searchEmptyStateResolvedPath}
         />
       </div>
     );
@@ -56,7 +69,7 @@ export const DashboardsListLayoutRoot = observer(() => {
 
   return (
     <ListLayout>
-      {currentWorkspaceDashboardIds.map((dashboardId) => (
+      {currentWorkspaceFilteredDashboardIds.map((dashboardId) => (
         <DashboardListItem key={dashboardId} getDashboardDetails={getDashboardById} id={dashboardId} />
       ))}
     </ListLayout>

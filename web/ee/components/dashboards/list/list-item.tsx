@@ -21,17 +21,17 @@ export const DashboardListItem: React.FC<Props> = observer((props) => {
   // platform check
   const { isMobile } = usePlatformOS();
   // derived values
-  const dashboardDetails = getDashboardDetails(id);
+  const dashboard = getDashboardDetails(id);
 
-  if (!dashboardDetails) return null;
+  if (!dashboard) return null;
 
-  const { getRedirectionLink } = dashboardDetails;
+  const { getRedirectionLink } = dashboard;
 
   return (
     <ListItem
-      title={dashboardDetails.name ?? ""}
+      title={dashboard.name ?? ""}
       itemLink={getRedirectionLink()}
-      actionableItems={<DashboardListItemActions dashboardDetails={dashboardDetails} parentRef={parentRef} />}
+      actionableItems={<DashboardListItemActions dashboard={dashboard} parentRef={parentRef} />}
       isMobile={isMobile}
       parentRef={parentRef}
     />

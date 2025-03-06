@@ -9,7 +9,7 @@ import { useDashboards } from "@/plane-web/hooks/store";
 // plane web store
 import { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
 // local imports
-import { WIDGET_HEADER_HEIGHT, WIDGET_Y_SPACING } from "./chart-types";
+import { WIDGET_HEADER_HEIGHT, WIDGET_Y_SPACING } from ".";
 
 type Props = {
   className?: string;
@@ -77,10 +77,12 @@ export const DashboardWidgetHeader: React.FC<Props> = observer((props) => {
         marginBottom: WIDGET_Y_SPACING,
       }}
     >
-      {!isViewModeEnabled && (
-        <DragHandle className="widget-drag-handle absolute top-6 -translate-y-1/2 left-0.5 bg-transparent p-0 opacity-0 pointer-events-none group-hover/widget:opacity-100 group-hover/widget:pointer-events-auto transition-opacity" />
-      )}
-      <h5 className="text-sm font-medium text-custom-text-200 truncate">{widget.name}</h5>
+      <div className="widget-drag-handle cursor-grab truncate">
+        {!isViewModeEnabled && (
+          <DragHandle className="absolute top-6 -translate-y-1/2 left-0.5 bg-transparent p-0 opacity-0 pointer-events-none group-hover/widget:opacity-100 group-hover/widget:pointer-events-auto transition-opacity" />
+        )}
+        <h5 className="text-sm font-medium text-custom-text-200 truncate">{widget.name}</h5>
+      </div>
       <div className="flex-shrink-0 hidden group-hover/widget:flex items-center">
         {!isViewModeEnabled && (
           <Tooltip tooltipContent="Edit">

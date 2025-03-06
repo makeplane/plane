@@ -996,6 +996,7 @@
         "sunset_vibes": "Sunset vibes"
       },
       "common": {
+        "add_widget": "Add widget",
         "widget_title": {
           "label": "Widget title",
           "placeholder": "e.g., \"To-do yesterday\", \"All Complete\""
@@ -1048,13 +1049,122 @@
         "add_metric": "Add metric"
       },
       "not_configured_state": {
-        "x_axis_property": "The x-axis is missing a property value.",
-        "y_axis_metric": "The widget is missing metric value.",
-        "group_by": "The group by is missing a property.",
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "The x-axis is missing a value.",
+            "y_axis_metric": "The metric is missing a value."
+          },
+          "stacked": {
+            "x_axis_property": "The x-axis is missing a value.",
+            "y_axis_metric": "The metric is missing a value.",
+            "group_by": "The stack by is missing a property."
+          },
+          "grouped": {
+            "x_axis_property": "The x-axis is missing a value.",
+            "y_axis_metric": "The metric is missing a value.",
+            "group_by": "The group by is missing a property."
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "The x-axis is missing a value.",
+            "y_axis_metric": "The metric is missing a value."
+          },
+          "multi_line": {
+            "x_axis_property": "The x-axis is missing a value.",
+            "y_axis_metric": "The metric is missing a value.",
+            "group_by": "The group by is missing a property."
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "The x-axis is missing a value.",
+            "y_axis_metric": "The metric is missing a value."
+          },
+          "stacked": {
+            "x_axis_property": "The x-axis is missing a value.",
+            "y_axis_metric": "The metric is missing a value.",
+            "group_by": "The stack by is missing a property."
+          },
+          "comparison": {
+            "x_axis_property": "The x-axis is missing a value.",
+            "y_axis_metric": "The metric is missing a value."
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "The property is missing a value.",
+            "y_axis_metric": "The metric is missing a value."
+          },
+          "progress": {
+            "y_axis_metric": "The metric is missing a value."
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "The property is missing a value.",
+            "y_axis_metric": "The metric is missing a value."
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "The metric is missing a value."
+          }
+        },
         "ask_admin": "Ask your admin to configure this widget."
       }
     },
+    "create_modal": {
+      "heading": {
+        "create": "Create new dashboard",
+        "update": "Update dashboard"
+      },
+      "title": {
+        "label": "Name your dashboard.",
+        "placeholder": "\"Capacity across projects\", \"Workload by team\", \"State across all projects\"",
+        "required_error": "Title is required"
+      },
+      "project": {
+        "label": "Choose projects",
+        "placeholder": "Data from these projects will power this dashboard.",
+        "required_error": "Projects are required"
+      },
+      "create_dashboard": "Create dashboard",
+      "update_dashboard": "Update dashboard"
+    },
+    "delete_modal": {
+      "heading": "Delete dashboard"
+    },
     "empty_state": {
+      "feature_flag": {
+        "title": "Present your progress in on-demand, forever dashboards.",
+        "description": "Build any dashboard you need to and customize how your data looks for the perfect presentation of your progress.",
+        "coming_soon_to_mobile": "Coming soon to the mobile app",
+        "card_1": {
+          "title": "For all your projects",
+          "description": "Get a total god-view of your workspace with all your projects or slice your work data for that perfect view your progress."
+        },
+        "card_2": {
+          "title": "For any data in Plane",
+          "description": "Go beyond out-of-the-box Analytics and readymade Cycle charts to look at teams', initiatives, or anything else like you haven't before."
+        },
+        "card_3": {
+          "title": "For all your data viz needs",
+          "description": "Choose from several customizable charts with fine-grained controls to see and show your work data exactly how you want to."
+        },
+        "card_4": {
+          "title": "On-demand and permanent",
+          "description": "Build once, keep forever with automatic refreshes of your data, contextual flags for scope changes, and shareable permalinks."
+        },
+        "card_5": {
+          "title": "Exports and scheduled comms",
+          "description": "For those times when links don't work, get your dashboards out into one-time PDFs or schedule them to be sent to stakeholders automatically."
+        },
+        "card_6": {
+          "title": "Auto-laid out for all devices",
+          "description": "Resize your widgets for the layout you want and see it the exact same across mobile, tablet, and other browsers."
+        }
+      },
       "dashboards_list": {
         "title": "Visualize data in widgets, build your dashboards with widgets, and see the latest on demand.",
         "description": "Build your dashboards with Custom Widgets that show your data in the scope you specify. Get dashboards for all your work across projects and teams and share permalinks with stakeholders for on-demand tracking."
@@ -1068,9 +1178,12 @@
         "description": "Use lines, bars, pies, and other formats to see your data\nthe way you want to from the sources you specify."
       },
       "widget_data": {
-        "title": "There is nothing to display per this widget's configs.",
-        "description": "Refresh to load the latest data or reconfigure this widget."
+        "title": "Nothing to see here",
+        "description": "Refresh or add data to see it here."
       }
+    },
+    "common": {
+      "editing": "Editing"
     }
   },
 

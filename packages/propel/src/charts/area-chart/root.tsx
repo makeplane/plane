@@ -88,7 +88,6 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
             left: margin?.left === undefined ? 20 : margin.left,
           }}
           reverseStackOrder
-          accessibilityLayer
         >
           <XAxis
             dataKey={xAxis.key}

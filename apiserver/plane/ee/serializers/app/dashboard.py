@@ -15,6 +15,7 @@ from rest_framework import serializers
 
 class DashboardSerializer(BaseSerializer):
     project_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
+    is_favorite = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Dashboard
@@ -89,7 +90,6 @@ class DashboardQuickFilterSerializer(BaseSerializer):
 
 
 class WidgetSerializer(BaseSerializer):
-
     x_axis_coord = serializers.IntegerField(required=False)
     y_axis_coord = serializers.IntegerField(required=False)
     height = serializers.IntegerField(required=False)

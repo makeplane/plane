@@ -4,13 +4,15 @@ import { LayoutGrid } from "lucide-react";
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
+// plane web components
+import { DashboardsListSearch } from "@/plane-web/components/dashboards/list/search";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 
 export const WorkspaceDashboardsListHeader = observer(() => {
   // store hooks
   const {
-    workspaceDashboards: { toggleCreateUpdateModal },
+    workspaceDashboards: { canCurrentUserCreateDashboard, toggleCreateUpdateModal, searchQuery, updateSearchQuery },
   } = useDashboards();
 
   return (
@@ -26,9 +28,12 @@ export const WorkspaceDashboardsListHeader = observer(() => {
         </div>
       </Header.LeftItem>
       <Header.RightItem>
-        <Button variant="primary" size="sm" onClick={() => toggleCreateUpdateModal(true)}>
-          Add dashboard
-        </Button>
+        <DashboardsListSearch value={searchQuery} onChange={updateSearchQuery} />
+        {canCurrentUserCreateDashboard && (
+          <Button variant="primary" size="sm" onClick={() => toggleCreateUpdateModal(true)}>
+            Add dashboard
+          </Button>
+        )}
       </Header.RightItem>
     </Header>
   );
