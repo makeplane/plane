@@ -6,7 +6,7 @@ import { EIssueServiceType, DEFAULT_WORK_ITEM_FORM_VALUES, EWorkItemTypeEntity }
 import { ISearchIssueResponse, TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import {
-  convertWorkItemTemplateToSearchResponse,
+  convertWorkItemDataToSearchResponse,
   extractAndSanitizeCustomPropertyValuesFormData,
   extractAndSanitizeWorkItemFormData,
   getPropertiesDefaultValues,
@@ -205,7 +205,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
         // Get state details
         const stateDetails = getStateById(parentWorkItem.state_id);
         // Get parent work item details
-        const parentWorkItemDetails = convertWorkItemTemplateToSearchResponse(
+        const parentWorkItemDetails = convertWorkItemDataToSearchResponse(
           workspaceSlug,
           parentWorkItem,
           projectDetails,

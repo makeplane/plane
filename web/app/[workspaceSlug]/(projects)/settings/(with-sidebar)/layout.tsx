@@ -10,7 +10,6 @@ import { AppHeader } from "@/components/core";
 import { useUserPermissions } from "@/hooks/store";
 // plane web components
 import { LicenseSeatsBanner } from "@/plane-web/components/license";
-// plane web constants
 // local components
 import { WorkspaceSettingHeader } from "../header";
 import { MobileWorkspaceSettingsTabs } from "./mobile-header-tabs";

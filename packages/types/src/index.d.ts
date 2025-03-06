@@ -40,9 +40,9 @@ export * from "./epics";
 export * from "./charts";
 export * from "./home";
 export * from "./stickies";
-export * from "./intake";
 export * from "./utils";
 // enterprise
+export * from "./intake";
 export * from "./active-cycle";
 export * from "./dashboards";
 export * from "./payment";
