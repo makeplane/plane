@@ -1,13 +1,13 @@
 from django.urls import path
 
 
-from plane.ee.views import EnchancedGlobalSearchEndpoint
+from plane.ee.views import EnhancedGlobalSearchEndpoint
 
 
 urlpatterns = [
     path(
         "workspaces/<str:slug>/enhanced-search/",
-        EnchancedGlobalSearchEndpoint.as_view(),
+        EnhancedGlobalSearchEndpoint.as_view(),
         name="enhanced-global-search",
     )
 ]

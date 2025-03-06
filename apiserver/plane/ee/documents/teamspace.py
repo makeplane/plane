@@ -21,7 +21,7 @@ class TeamspaceDocument(BaseDocument):
     workspace_slug = fields.KeywordField()
     active_member_user_ids = fields.ListField(fields.KeywordField())
     logo_props = JsonKeywordField(attr="logo_props")
-
+    is_deleted = fields.BooleanField()
     class Index:
         name = "teamspaces"
         settings = {"number_of_shards": 1, "number_of_replicas": 0}
@@ -29,7 +29,7 @@ class TeamspaceDocument(BaseDocument):
     class Django:
         model = Teamspace
         fields = [
-            "id", "name"
+            "id", "name", "deleted_at"
         ]
         # queryset_pagination tells dsl to add chunk_size to the queryset iterator.
         # which is required for django to use prefetch_related when using iterator.
@@ -37,7 +37,7 @@ class TeamspaceDocument(BaseDocument):
         # of the query and the number of records present in that table.
         queryset_pagination = 5000
         related_models = [TeamspaceMember]
-    
+
     def apply_related_to_queryset(self, qs):
         return qs.select_related("workspace").annotate(
             active_member_user_ids=Coalesce(
@@ -49,7 +49,7 @@ class TeamspaceDocument(BaseDocument):
                 Value([], output_field=ArrayField(UUIDField())),
             )
         )
-    
+
     def get_instances_from_related(self, related_instance):
         if isinstance(related_instance, TeamspaceMember):
             qs = related_instance.team_space.all()
@@ -68,3 +68,9 @@ class TeamspaceDocument(BaseDocument):
         Data preparation method for active_project_member_user_ids field
         """
         return instance.active_member_user_ids
+
+    def prepare_is_deleted(self, instance):
+        """
+        Data preparation method for is_deleted field
+        """
+        return bool(instance.deleted_at)

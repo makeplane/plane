@@ -520,7 +520,7 @@ if os.environ.get("ELASTICSEARCH_URL"):
     }
     ELASTICSEARCH_DSL_SIGNAL_PROCESSOR = os.environ.get(
         "ELASTICSEARCH_SIGNAL_PROCESSOR",
-        "django_elasticsearch_dsl.signals.CelerySignalProcessor"
+        "plane.ee.documents.signal_handler.CustomCelerySignalProcessor"
     )
-    
+
     INSTALLED_APPS += ["django_elasticsearch_dsl",]

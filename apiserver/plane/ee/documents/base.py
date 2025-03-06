@@ -8,14 +8,14 @@ class BaseDocument(Document):
     Any customizations needed on the Document level,
     that're needed to be applied to all the indexes, should go here.
     """
-    
+
     def get_queryset(self):
         """
         Customized get_queryset method that returns the queryset from objects manager,
         and apply any related models to the queryset.
         Return the queryset that should be indexed by this doc type.
         """
-        qs = self.django.model.objects.all()
+        qs = self.django.model.all_objects.all()
         return self.apply_related_to_queryset(qs)
 
 

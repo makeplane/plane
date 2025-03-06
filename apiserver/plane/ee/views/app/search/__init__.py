@@ -1,1 +1,1 @@
-from .base import EnchancedGlobalSearchEndpoint
+from .base import EnhancedGlobalSearchEndpoint

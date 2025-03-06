@@ -18,6 +18,7 @@ class CycleDocument(BaseDocument):
     workspace_slug = fields.KeywordField()
     active_project_member_user_ids = fields.ListField(fields.KeywordField())
     logo_props = JsonKeywordField(attr="logo_props")
+    is_deleted = fields.BooleanField()
 
     class Index:
         name = "cycles"
@@ -26,7 +27,7 @@ class CycleDocument(BaseDocument):
     class Django:
         model = Cycle
         fields = [
-            "id", "name", "description"
+            "id", "name", "description", "deleted_at"
         ]
         # queryset_pagination tells dsl to add chunk_size to the queryset iterator.
         # which is required for django to use prefetch_related when using iterator.
@@ -46,7 +47,7 @@ class CycleDocument(BaseDocument):
                 to_attr="active_project_members"
             )
         )
-    
+
     def get_instances_from_related(self, related_instance):
         if isinstance(related_instance, Project):
             qs = related_instance.project_cycle.all()
@@ -91,3 +92,9 @@ class CycleDocument(BaseDocument):
                 is_active=True
             ).only("member_id")
         return [member.member_id for member in members]
+
+    def prepare_is_deleted(self, instance):
+        """
+        Data preparation method for is_deleted field
+        """
+        return bool(instance.deleted_at)

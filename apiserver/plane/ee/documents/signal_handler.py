@@ -1,7 +1,10 @@
 import json
 
+from celery import shared_task
 from django_elasticsearch_dsl.registries import registry
+from django_elasticsearch_dsl.signals import CelerySignalProcessor
 
+from django.apps import apps
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
 
@@ -54,3 +57,29 @@ def update_index_on_bulk_create_update(sender, **kwargs):
 
 post_bulk_create.connect(update_index_on_bulk_create_update)
 post_bulk_update.connect(update_index_on_bulk_create_update)
+
+
+class CustomCelerySignalProcessor(CelerySignalProcessor):
+    @shared_task()
+    def registry_update_task(pk, app_label, model_name):
+        """Handle the update on the registry as a Celery task."""
+        try:
+            model = apps.get_model(app_label, model_name)
+        except LookupError:
+            pass
+        else:
+            registry.update(
+                model.all_objects.get(pk=pk)
+            )
+
+    @shared_task()
+    def registry_update_related_task(pk, app_label, model_name):
+        """Handle the related update on the registry as a Celery task."""
+        try:
+            model = apps.get_model(app_label, model_name)
+        except LookupError:
+            pass
+        else:
+            registry.update_related(
+                model.all_objects.get(pk=pk)
+            )

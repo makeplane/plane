@@ -24,7 +24,7 @@ def search_document(
     ):
     search = document.search()
 
-    query_list = []
+    query_list = [Q('term', is_deleted=False)] # Always filter out deleted items
     # Generate permission filters
     for f in filters:
         query_list.append(Q('term', **f))
@@ -47,7 +47,7 @@ def search_document(
     ]
 
 
-class EnchancedGlobalSearchEndpoint(BaseAPIView):
+class EnhancedGlobalSearchEndpoint(BaseAPIView):
 
     def filter_issues(self, query, slug, is_epic=False):
         # permission filters

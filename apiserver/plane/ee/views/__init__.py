@@ -116,5 +116,5 @@ from plane.ee.views.api.worklog import (
 )
 
 from plane.ee.views.app.search.base import (
-    EnchancedGlobalSearchEndpoint
+    EnhancedGlobalSearchEndpoint
 )

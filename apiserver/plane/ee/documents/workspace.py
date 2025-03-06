@@ -11,7 +11,7 @@ from .base import BaseDocument
 class WorkspaceDocument(BaseDocument):
     slug = fields.KeywordField(attr="slug")
     active_member_user_ids = fields.ListField(fields.KeywordField())
-
+    is_deleted = fields.BooleanField()
     class Index:
         name = "workspaces"
         settings = {"number_of_shards": 1, "number_of_replicas": 0}
@@ -19,7 +19,7 @@ class WorkspaceDocument(BaseDocument):
     class Django:
         model = Workspace
         fields = [
-            "id", "name"
+            "id", "name", "deleted_at"
         ]
         # queryset_pagination tells dsl to add chunk_size to the queryset iterator.
         # which is required for django to use prefetch_related when using iterator.
@@ -27,7 +27,7 @@ class WorkspaceDocument(BaseDocument):
         # of the query and the number of records present in that table.
         queryset_pagination = 10000
         related_models = [WorkspaceMember]
-    
+
     def apply_related_to_queryset(self, qs):
         return qs.prefetch_related(
             Prefetch(
@@ -36,7 +36,7 @@ class WorkspaceDocument(BaseDocument):
                 to_attr="active_members"
             )
         )
-    
+
     def get_instances_from_related(self, related_instance):
         if isinstance(related_instance, WorkspaceMember):
             qs = related_instance.workspace.all()
@@ -53,3 +53,9 @@ class WorkspaceDocument(BaseDocument):
         else:
             members = instance.workspace_member.filter(is_active=True).only("member_id")
         return [member.member_id for member in members]
+
+    def prepare_is_deleted(self, instance):
+        """
+        Data preparation method for is_deleted field
+        """
+        return bool(instance.deleted_at)

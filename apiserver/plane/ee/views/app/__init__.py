@@ -35,7 +35,7 @@ from plane.ee.views.app.epic_property import (
     WorkspaceEpicTypeEndpoint,
 )
 
-from plane.ee.views.app.search import EnchancedGlobalSearchEndpoint
+from plane.ee.views.app.search import EnhancedGlobalSearchEndpoint
 
 from plane.ee.views.app.dashboard import (
     DashboardViewSet,

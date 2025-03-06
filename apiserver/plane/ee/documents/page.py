@@ -25,7 +25,7 @@ class PageDocument(BaseDocument):
     workspace_slug = fields.KeywordField()
     active_member_user_ids = fields.ListField(fields.KeywordField())
     logo_props = JsonKeywordField(attr="logo_props")
-
+    is_deleted = fields.BooleanField()
     class Index:
         name = "pages"
         settings = {"number_of_shards": 1, "number_of_replicas": 0}
@@ -33,7 +33,7 @@ class PageDocument(BaseDocument):
     class Django:
         model = Page
         fields = [
-            "id", "name"
+            "id", "name", "deleted_at"
         ]
         # queryset_pagination tells dsl to add chunk_size to the queryset iterator.
         # which is required for django to use prefetch_related when using iterator.
@@ -41,7 +41,7 @@ class PageDocument(BaseDocument):
         # of the query and the number of records present in that table.
         queryset_pagination = 5000
         related_models = [WorkspaceMember]
-    
+
     def apply_related_to_queryset(self, qs):
         return qs.select_related(
             "workspace"
@@ -62,14 +62,14 @@ class PageDocument(BaseDocument):
                 Value([], output_field=ArrayField(UUIDField())),
             )
         )
-    
+
     def get_instances_from_related(self, related_instance):
         if isinstance(related_instance, WorkspaceMember):
             qs = Page.objects.filter(workspace__workspace_member=related_instance)
         else:
             qs = self.django.model.objects.none()
         return self.apply_related_to_queryset(qs)
-    
+
     def prepare_project_ids(self, instance):
         """
         Data preparation method for project_ids field
@@ -99,3 +99,9 @@ class PageDocument(BaseDocument):
                 is_active=True
             ).values_list('member_id')
             return list(active_member_user_ids)
+
+    def prepare_is_deleted(self, instance):
+        """
+        Data preparation method for is_deleted field
+        """
+        return bool(instance.deleted_at)

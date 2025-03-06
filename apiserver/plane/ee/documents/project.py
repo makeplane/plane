@@ -15,7 +15,7 @@ class ProjectDocument(BaseDocument):
     workspace_id = fields.KeywordField(attr="workspace_id")
     workspace_slug = fields.KeywordField()
     logo_props = JsonKeywordField(attr="logo_props")
-
+    is_deleted = fields.BooleanField()
     class Index:
         name = "projects"
         settings = {"number_of_shards": 1, "number_of_replicas": 0}
@@ -23,7 +23,7 @@ class ProjectDocument(BaseDocument):
     class Django:
         model = Project
         fields = [
-            "id", "name", "identifier", "archived_at"
+            "id", "name", "identifier", "archived_at", "deleted_at"
         ]
         # queryset_pagination tells dsl to add chunk_size to the queryset iterator.
         # which is required for django to use prefetch_related when using iterator.
@@ -31,7 +31,7 @@ class ProjectDocument(BaseDocument):
         # of the query and the number of records present in that table.
         queryset_pagination = 10000
         related_models = [ProjectMember]
-    
+
     def apply_related_to_queryset(self, qs):
         return qs.select_related("workspace").prefetch_related(
             Prefetch(
@@ -40,7 +40,7 @@ class ProjectDocument(BaseDocument):
                 to_attr="active_members"
             )
         )
-    
+
     def get_instances_from_related(self, related_instance):
         if isinstance(related_instance, ProjectMember):
             return related_instance.project
@@ -59,15 +59,21 @@ class ProjectDocument(BaseDocument):
                 is_active=True
             ).only("member_id")
         return [member.member_id for member in members]
-    
+
     def prepare_is_archived(self, instance):
         """
         Data preparation method for is_archived field
         """
         return bool(instance.archived_at)
-    
+
     def prepare_workspace_slug(self, instance):
         """
         Data preparation method for workspace_slug field
         """
         return instance.workspace.slug if instance.workspace else None
+
+    def prepare_is_deleted(self, instance):
+        """
+        Data preparation method for is_deleted field
+        """
+        return bool(instance.deleted_at)

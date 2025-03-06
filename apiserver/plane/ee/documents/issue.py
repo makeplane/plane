@@ -20,6 +20,7 @@ class IssueDocument(BaseDocument):
     is_epic = fields.BooleanField()
     active_project_member_user_ids = fields.ListField(fields.KeywordField())
     pretty_sequence = fields.TextField()
+    is_deleted = fields.BooleanField()
 
     class Index:
         name = "issues"
@@ -28,7 +29,7 @@ class IssueDocument(BaseDocument):
     class Django:
         model = Issue
         fields = [
-            "id", "name", "sequence_id", "priority"
+            "id", "name", "sequence_id", "priority", "deleted_at"
         ]
         # queryset_pagination tells dsl to add chunk_size to the queryset iterator.
         # which is required for django to use prefetch_related when using iterator.
@@ -102,3 +103,9 @@ class IssueDocument(BaseDocument):
 
     def prepare_pretty_sequence(self, instance):
         return f"{instance.project.identifier}-{instance.sequence_id}"
+
+    def prepare_is_deleted(self, instance):
+        """
+        Data preparation method for is_deleted field
+        """
+        return bool(instance.deleted_at)

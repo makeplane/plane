@@ -18,7 +18,7 @@ class IssueViewDocument(BaseDocument):
     workspace_slug = fields.KeywordField()
     active_project_member_user_ids = fields.ListField(fields.KeywordField())
     logo_props = JsonKeywordField(attr="logo_props")
-
+    is_deleted = fields.BooleanField()
     class Index:
         name = "issue_views"
         settings = {"number_of_shards": 1, "number_of_replicas": 0}
@@ -26,7 +26,7 @@ class IssueViewDocument(BaseDocument):
     class Django:
         model = IssueView
         fields = [
-            "id", "name"
+            "id", "name", "deleted_at"
         ]
         # queryset_pagination tells dsl to add chunk_size to the queryset iterator.
         # which is required for django to use prefetch_related when using iterator.
@@ -34,7 +34,7 @@ class IssueViewDocument(BaseDocument):
         # of the query and the number of records present in that table.
         queryset_pagination = 2500
         related_models = [Project, ProjectMember]
-    
+
     def apply_related_to_queryset(self, qs):
         return qs.select_related(
             "workspace"
@@ -46,7 +46,7 @@ class IssueViewDocument(BaseDocument):
                 to_attr="active_project_members"
             )
         )
-    
+
     def get_instances_from_related(self, related_instance):
         if isinstance(related_instance, Project):
             qs = related_instance.project_issueview.all()
@@ -93,3 +93,9 @@ class IssueViewDocument(BaseDocument):
                 is_active=True
             ).only("member_id")
         return [member.member_id for member in members]
+
+    def prepare_is_deleted(self, instance):
+        """
+        Data preparation method for is_deleted field
+        """
+        return bool(instance.deleted_at)
