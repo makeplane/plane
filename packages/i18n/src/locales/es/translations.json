@@ -985,7 +985,8 @@
         "sub_issue_count": "Cantidad de sub-elementos",
         "attachment_count": "Cantidad de archivos adjuntos",
         "created_on": "Creado el",
-        "sub_issue": "Sub-elemento de trabajo"
+        "sub_issue": "Sub-elemento de trabajo",
+        "work_item_count": "Recuento de elementos de trabajo"
       },
       "extra": {
         "show_sub_issues": "Mostrar sub-elementos",
