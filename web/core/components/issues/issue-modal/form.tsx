@@ -3,17 +3,18 @@
 import React, { FC, useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 // editor
-import { ETabIndices, EIssuesStoreType } from "@plane/constants";
+import { ETabIndices, EIssuesStoreType, DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import type { TIssue, ISearchIssueResponse, TWorkspaceDraftIssue } from "@plane/types";
+import type { TIssue, TWorkspaceDraftIssue } from "@plane/types";
 // hooks
 import { Button, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { convertWorkItemDataToSearchResponse, getUpdateFormDataForReset } from "@plane/utils";
 import {
   IssueDefaultProperties,
   IssueDescriptionEditor,
@@ -25,34 +26,21 @@ import { CreateLabelModal } from "@/components/labels";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getTextContent } from "@/helpers/editor.helper";
-import { getChangedIssuefields } from "@/helpers/issue.helper";
+import { getChangedIssuefields } from "@/helpers/issue-modal.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useIssueDetail, useProject, useProjectState, useWorkspaceDraftIssues } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
-// plane web components
+// plane web imports
 import { DeDupeButtonRoot, DuplicateModalRoot } from "@/plane-web/components/de-dupe";
-import { IssueAdditionalProperties, IssueTypeSelect } from "@/plane-web/components/issues/issue-modal";
+import {
+  IssueAdditionalProperties,
+  IssueTypeSelect,
+  WorkItemTemplateSelect,
+} from "@/plane-web/components/issues/issue-modal";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
-
-const defaultValues: Partial<TIssue> = {
-  project_id: "",
-  type_id: null,
-  name: "",
-  description_html: "",
-  estimate_point: null,
-  state_id: "",
-  parent_id: null,
-  priority: "none",
-  assignee_ids: [],
-  label_ids: [],
-  cycle_id: null,
-  module_ids: null,
-  start_date: null,
-  target_date: null,
-};
 
 export interface IssueFormProps {
   data?: Partial<TIssue>;
@@ -104,7 +92,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
   // states
   const [labelModal, setLabelModal] = useState(false);
-  const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
   const [isMoving, setIsMoving] = useState<boolean>(false);
 
@@ -120,10 +107,16 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   // store hooks
   const { getProjectById } = useProject();
   const {
+    workItemTemplateId,
+    isApplyingTemplate,
+    selectedParentIssue,
+    setWorkItemTemplateId,
+    setSelectedParentIssue,
     getIssueTypeIdOnProjectChange,
     getActiveAdditionalPropertiesLength,
     handlePropertyValuesValidation,
     handleCreateUpdatePropertyValues,
+    handleTemplateChange,
   } = useIssueModal();
   const { isMobile } = usePlatformOS();
   const { moveIssue } = useWorkspaceDraftIssues();
@@ -135,18 +128,20 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const { getStateById } = useProjectState();
 
   // form info
+  const methods = useForm<TIssue>({
+    defaultValues: { ...DEFAULT_WORK_ITEM_FORM_VALUES, project_id: defaultProjectId, ...data },
+    reValidateMode: "onChange",
+  });
   const {
-    formState: { errors, isDirty, isSubmitting, dirtyFields },
+    formState,
+    formState: { isDirty, isSubmitting, dirtyFields },
     handleSubmit,
     reset,
     watch,
     control,
     getValues,
     setValue,
-  } = useForm<TIssue>({
-    defaultValues: { ...defaultValues, project_id: defaultProjectId, ...data },
-    reValidateMode: "onChange",
-  });
+  } = methods;
 
   const projectId = watch("project_id");
   const activeAdditionalPropertiesLength = getActiveAdditionalPropertiesLength({
@@ -157,24 +152,21 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
   // derived values
   const projectDetails = projectId ? getProjectById(projectId) : undefined;
+  const isDisabled = isSubmitting || isApplyingTemplate;
 
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
 
   //reset few fields on projectId change
   useEffect(() => {
     if (isDirty) {
-      const formData = getValues();
-
-      reset({
-        ...defaultValues,
-        project_id: projectId,
-        name: formData.name,
-        description_html: formData.description_html,
-        priority: formData.priority,
-        start_date: formData.start_date,
-        target_date: formData.target_date,
-        parent_id: formData.parent_id,
-      });
+      if (workItemTemplateId) {
+        // reset work item template id
+        setWorkItemTemplateId(null);
+        reset({ ...DEFAULT_WORK_ITEM_FORM_VALUES, project_id: projectId });
+        editorRef.current?.clearEditor();
+      } else {
+        reset(getUpdateFormDataForReset(projectId, getValues()));
+      }
     }
     if (projectId && routeProjectId !== projectId) fetchCycles(workspaceSlug?.toString(), projectId);
 
@@ -194,6 +186,17 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, projectId]);
+
+  useEffect(() => {
+    if (workItemTemplateId && editorRef.current) {
+      handleTemplateChange({
+        workspaceSlug: workspaceSlug?.toString(),
+        reset,
+        editorRef,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workItemTemplateId]);
 
   const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue = false) => {
     // Check if the editor is ready to discard
@@ -233,7 +236,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       .then(() => {
         setGptAssistantModal(false);
         reset({
-          ...defaultValues,
+          ...DEFAULT_WORK_ITEM_FORM_VALUES,
           ...(isCreateMoreToggleEnabled ? { ...data } : {}),
           project_id: getValues<"project_id">("project_id"),
           type_id: getValues<"type_id">("type_id"),
@@ -262,7 +265,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         ...data,
         ...getValues(),
       } as TWorkspaceDraftIssue);
-    } catch (error) {
+    } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
@@ -308,16 +311,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
     const stateDetails = getStateById(issue.state_id);
 
-    setSelectedParentIssue({
-      id: issue.id,
-      name: issue.name,
-      project_id: issue.project_id,
-      project__identifier: projectDetails.identifier,
-      project__name: projectDetails.name,
-      sequence_id: issue.sequence_id,
-      type_id: issue.type_id,
-      state__color: stateDetails?.color,
-    } as ISearchIssueResponse);
+    setSelectedParentIssue(
+      convertWorkItemDataToSearchResponse(workspaceSlug?.toString(), issue, projectDetails, stateDetails)
+    );
   }, [watch, getIssueById, getProjectById, selectedParentIssue, getStateById]);
 
   // executing this useEffect when isDirty changes
@@ -351,7 +347,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const shouldRenderDuplicateModal = isDuplicateModalOpen && duplicateIssues?.length > 0;
 
   return (
-    <>
+    <FormProvider {...methods}>
       {projectId && (
         <CreateLabelModal
           isOpen={labelModal}
@@ -383,7 +379,16 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     <IssueTypeSelect
                       control={control}
                       projectId={projectId}
+                      editorRef={editorRef}
                       disabled={!!data?.sourceIssueId}
+                      handleFormChange={handleFormChange}
+                      renderChevron
+                    />
+                  )}
+                  {projectId && !data?.id && !data?.sourceIssueId && (
+                    <WorkItemTemplateSelect
+                      projectId={projectId}
+                      typeId={watch("type_id")}
                       handleFormChange={handleFormChange}
                       renderChevron
                     />
@@ -416,7 +421,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 <IssueTitleInput
                   control={control}
                   issueTitleRef={issueTitleRef}
-                  errors={errors}
+                  formState={formState}
                   handleFormChange={handleFormChange}
                 />
               </div>
@@ -526,6 +531,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       size="sm"
                       ref={submitBtnRef}
                       loading={isSubmitting}
+                      disabled={isDisabled}
                     >
                       {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
                     </Button>
@@ -562,6 +568,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           </div>
         )}
       </div>
-    </>
+    </FormProvider>
   );
 });
