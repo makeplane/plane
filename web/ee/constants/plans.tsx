@@ -1288,7 +1288,7 @@ export const PLANE_PLANS: PlanePlans = {
       yearlyPriceDescription: "Quote on request",
       monthlyPriceSecondaryDescription: "billed monthly",
       yearlyPriceSecondaryDescription: "billed yearly",
-      buttonCTA: "Talk to sales",
+      buttonCTA: "Talk to Sales",
       buttonVariant: "outline-primary",
     },
     enterprise: {
@@ -1298,7 +1298,7 @@ export const PLANE_PLANS: PlanePlans = {
       yearlyPriceDescription: "Quote on request",
       monthlyPriceSecondaryDescription: "billed monthly",
       yearlyPriceSecondaryDescription: "billed yearly",
-      buttonCTA: "Talk to sales",
+      buttonCTA: "Talk to Sales",
       buttonVariant: "outline-primary",
     },
   },

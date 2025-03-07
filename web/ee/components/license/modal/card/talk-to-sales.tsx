@@ -78,7 +78,7 @@ export const TalkToSalesCard: FC<TalkToSalesCardProps> = observer((props) => {
                 "relative inline-flex items-center justify-center w-56 px-4 py-2.5 text-sm font-medium rounded-lg focus:outline-none"
               )}
             >
-              Talk to sales
+              Talk to Sales
             </a>
             {isTrialAllowed && <div className="mt-4 h-4" />}
           </div>
