@@ -13,8 +13,6 @@ import {
   ESearchFilterKeys,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// plane ui
-import { Loader } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // services
@@ -24,17 +22,23 @@ import { SearchItems } from "./search-item";
 
 const workspaceService = new WorkspaceService();
 
-const MIN_SEARCH_LENGTH = 3;
 const DEBOUNCE_DELAY = 300;
 
-export const SearchResults: React.FC<{ query: string }> = observer(({ query }) => {
+type TProps = {
+  query: string;
+  flattenedSearchResults: TSearchResultItem[];
+  isSearching: boolean;
+  setFlattenedSearchResults: (results: TSearchResultItem[]) => void;
+  setIsSearching: (isSearching: boolean) => void;
+};
+
+export const SearchResults: React.FC<TProps> = observer((props) => {
+  const { query, flattenedSearchResults, setFlattenedSearchResults, isSearching, setIsSearching } = props;
   // params
   const { workspaceSlug } = useParams();
   // states
-  const [isSearching, setIsSearching] = useState(false);
   const [searchFilter, setSearchFilter] = useState<TSearchFilterKeys>(ESearchFilterKeys.ALL);
   const [searchResults, setSearchResults] = useState<TSearchQueryResponse>();
-  const [flattenedSearchResults, setFlattenedSearchResults] = useState<TSearchResultItem[]>([]);
   const [isFirstSearch, setIsFirstSearch] = useState(true);
   const [error, setError] = useState<string | null>(null);
   // plane hooks
@@ -56,7 +60,7 @@ export const SearchResults: React.FC<{ query: string }> = observer(({ query }) =
     async (searchQuery: string) => {
       if (!workspaceSlug) return;
       // update searching and error state
-      setIsSearching(true);
+
       setError(null);
       // perform search
       try {
@@ -87,8 +91,12 @@ export const SearchResults: React.FC<{ query: string }> = observer(({ query }) =
   );
 
   useEffect(() => {
-    if (query.length < MIN_SEARCH_LENGTH) return;
-
+    if (!query) {
+      setFlattenedSearchResults([]);
+      setSearchResults(undefined);
+      setIsSearching(false);
+      return;
+    }
     if (isFirstSearch) {
       performSearch(query);
       setIsFirstSearch(false);
@@ -154,20 +162,7 @@ export const SearchResults: React.FC<{ query: string }> = observer(({ query }) =
       );
     }
 
-    if (isSearching) {
-      return (
-        <div className="space-y-6 px-1 py-2">
-          {[...Array(4)].map((_, index) => (
-            <Loader key={index} className="flex gap-4 w-full items-center">
-              <Loader.Item height="28px" width="28px" />
-              <Loader.Item height="28px" width="100%" />
-            </Loader>
-          ))}
-        </div>
-      );
-    }
-
-    if (filteredSearchResults.length === 0 && query.length >= MIN_SEARCH_LENGTH) {
+    if (!isSearching && filteredSearchResults.length === 0 && query) {
       return (
         <div className="flex flex-col gap-4 items-center justify-center h-full py-8">
           <div className="w-24 h-24 bg-custom-background-90 rounded-full flex items-center justify-center">
@@ -185,12 +180,12 @@ export const SearchResults: React.FC<{ query: string }> = observer(({ query }) =
 
     return (
       <>
-        {query.length < MIN_SEARCH_LENGTH && flattenedSearchResults.length === 0 && (
+        {/* {query.length < MIN_SEARCH_LENGTH && flattenedSearchResults.length === 0 && (
           <div className="text-sm text-custom-text-200 p-3 bg-custom-background-90 rounded-md">
             {t("common.search.min_chars", { count: MIN_SEARCH_LENGTH })}
           </div>
-        )}
-        <div className="flex flex-col">
+        )} */}
+        <div className="flex flex-col transition-all duration-500 fade-in">
           {filteredSearchResults.map((entity) => (
             <Link
               key={entity.id}
