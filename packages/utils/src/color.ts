@@ -142,3 +142,40 @@ export const hslToHex = ({ h, s, l }: HSL): string => {
 
   return `#${f(0)}${f(8)}${f(4)}`;
 };
+
+/**
+ * @description Generates a deterministic HSL color based on input string
+ * @param {string} string - Input string to generate color from
+ * @returns {HSL} An object containing the HSL values
+ * @example
+ * generateRandomColor("hello") // returns consistent HSL color for "hello"
+ * generateRandomColor("") // returns { h: 0, s: 0, l: 0 }
+ */
+export const generateRandomColor = (string: string): HSL => {
+  if (!string)
+    return {
+      h: 0,
+      s: 0,
+      l: 0,
+    };
+
+  string = `${string}`;
+
+  const uniqueId = string.length.toString() + string; // Unique identifier based on string length
+  const combinedString = uniqueId + string;
+
+  const hash = Array.from(combinedString).reduce((acc, char) => {
+    const charCode = char.charCodeAt(0);
+    return (acc << 5) - acc + charCode;
+  }, 0);
+
+  const hue = hash % 360;
+  const saturation = 70; // Higher saturation for pastel colors
+  const lightness = 60; // Mid-range lightness for pastel colors
+
+  return {
+    h: hue,
+    s: saturation,
+    l: lightness,
+  };
+};

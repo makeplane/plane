@@ -91,36 +91,6 @@ export const copyUrlToClipboard = async (path: string) => {
 };
 
 /**
- * @description Generates a deterministic HSL color based on input string
- * @param {string} string - Input string to generate color from
- * @returns {string} HSL color string
- * @example
- * generateRandomColor("hello") // returns consistent HSL color for "hello"
- * generateRandomColor("") // returns "rgb(var(--color-primary-100))"
- */
-export const generateRandomColor = (string: string): string => {
-  if (!string) return "rgb(var(--color-primary-100))";
-
-  string = `${string}`;
-
-  const uniqueId = string.length.toString() + string;
-  const combinedString = uniqueId + string;
-
-  const hash = Array.from(combinedString).reduce((acc, char) => {
-    const charCode = char.charCodeAt(0);
-    return (acc << 5) - acc + charCode;
-  }, 0);
-
-  const hue = hash % 360;
-  const saturation = 70;
-  const lightness = 60;
-
-  const randomColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-
-  return randomColor;
-};
-
-/**
  * @description Gets first character of first word or first characters of first two words
  * @param {string} str - Input string
  * @returns {string} First character(s)
