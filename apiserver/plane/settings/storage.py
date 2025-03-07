@@ -32,6 +32,12 @@ class S3Storage(S3Boto3Storage):
         ) or os.environ.get("MINIO_ENDPOINT_URL")
 
         if os.environ.get("USE_MINIO") == "1":
+
+            # Determine protocol based on environment variable
+            if os.environ.get("MINIO_ENDPOINT_SSL") == "1":
+                endpoint_protocol = "https"
+            else:
+                endpoint_protocol = request.scheme if request else "http"
             # Create an S3 client for MinIO
             self.s3_client = boto3.client(
                 "s3",
@@ -39,7 +45,7 @@ class S3Storage(S3Boto3Storage):
                 aws_secret_access_key=self.aws_secret_access_key,
                 region_name=self.aws_region,
                 endpoint_url=(
-                    f"{request.scheme}://{request.get_host()}"
+                    f"{endpoint_protocol}://{request.get_host()}"
                     if request
                     else self.aws_s3_endpoint_url
                 ),
