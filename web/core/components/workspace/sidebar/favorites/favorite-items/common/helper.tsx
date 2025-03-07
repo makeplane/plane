@@ -30,6 +30,11 @@ export const getFavoriteItemIcon = (type: string, logo?: TLogoProps | undefined)
 export const generateFavoriteItemLink = (workspaceSlug: string, favorite: IFavorite) => {
   const entityLinkDetails = FAVORITE_ITEM_LINKS[favorite.entity_type];
 
+  if (!entityLinkDetails) {
+    console.error(`Unrecognized favorite entity type: ${favorite.entity_type}`);
+    return `/${workspaceSlug}`;
+  }
+
   if (entityLinkDetails.itemLevel === "workspace") {
     return `/${workspaceSlug}/${entityLinkDetails.getLink(favorite)}`;
   } else if (entityLinkDetails.itemLevel === "project") {
