@@ -216,7 +216,7 @@ class IssueCreateSerializer(BaseSerializer):
         created_by_id = instance.created_by_id
         updated_by_id = instance.updated_by_id
 
-        if assignees is not None and len(assignees):
+        if assignees is not None:
             IssueAssignee.objects.filter(issue=instance).delete()
             try:
                 IssueAssignee.objects.bulk_create(
