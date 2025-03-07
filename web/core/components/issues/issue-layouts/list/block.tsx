@@ -25,6 +25,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssueIdentifier } from "@/plane-web/components/issues";
 import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
 // types
+import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { TRenderQuickActions } from "./list-view-types";
 
 interface IssueBlockProps {
@@ -269,7 +270,15 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
             >
               <p className="truncate cursor-pointer text-sm text-custom-text-100">{issue.name}</p>
             </Tooltip>
-            {isEpic && <IssueStats issueId={issue.id} />}
+            {isEpic && displayProperties && (
+              <WithDisplayPropertiesHOC
+                displayProperties={displayProperties}
+                displayPropertyKey="sub_issue_count"
+                shouldRenderProperty={(properties) => !!properties.sub_issue_count}
+              >
+                <IssueStats issueId={issue.id} className="ml-2 font-medium text-custom-text-350" />
+              </WithDisplayPropertiesHOC>
+            )}
           </div>
           {!issue?.tempId && (
             <div

@@ -52,7 +52,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         renderComponent: (props) => <EditorMentionsRoot {...props} />,
       }}
       {...rest}
-      containerClassName={cn("relative pl-3", containerClassName)}
+      containerClassName={cn("relative pl-3 pb-3", containerClassName)}
     />
   );
 });

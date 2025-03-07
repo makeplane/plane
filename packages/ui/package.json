@@ -2,12 +2,12 @@
   "name": "@plane/ui",
   "description": "UI components shared across multiple apps internally",
   "private": true,
-  "version": "0.25.0",
+  "version": "0.25.1",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "sideEffects": false,
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "files": [
     "dist/**"
   ],
