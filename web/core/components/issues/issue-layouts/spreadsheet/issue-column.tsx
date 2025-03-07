@@ -3,27 +3,12 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // types
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
-// components
-import {
-  SpreadsheetAssigneeColumn,
-  SpreadsheetAttachmentColumn,
-  SpreadsheetCreatedOnColumn,
-  SpreadsheetDueDateColumn,
-  SpreadsheetEstimateColumn,
-  SpreadsheetLabelColumn,
-  SpreadsheetModuleColumn,
-  SpreadsheetCycleColumn,
-  SpreadsheetLinkColumn,
-  SpreadsheetPriorityColumn,
-  SpreadsheetStartDateColumn,
-  SpreadsheetStateColumn,
-  SpreadsheetSubIssueColumn,
-  SpreadsheetUpdatedOnColumn,
-} from "@/components/issues/issue-layouts/spreadsheet";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // components
+import { SPREADSHEET_COLUMNS } from "@/plane-web/components/issues/issue-layouts/utils";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+// utils
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -32,30 +17,6 @@ type Props = {
   property: keyof IIssueDisplayProperties;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   isEstimateEnabled: boolean;
-};
-
-type TSpreadsheetColumn = React.FC<{
-  issue: TIssue;
-  onClose: () => void;
-  onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
-  disabled: boolean;
-}>;
-
-const SPREADSHEET_COLUMNS: { [key in keyof IIssueDisplayProperties]: TSpreadsheetColumn } = {
-  assignee: SpreadsheetAssigneeColumn,
-  created_on: SpreadsheetCreatedOnColumn,
-  due_date: SpreadsheetDueDateColumn,
-  estimate: SpreadsheetEstimateColumn,
-  labels: SpreadsheetLabelColumn,
-  modules: SpreadsheetModuleColumn,
-  cycle: SpreadsheetCycleColumn,
-  link: SpreadsheetLinkColumn,
-  priority: SpreadsheetPriorityColumn,
-  start_date: SpreadsheetStartDateColumn,
-  state: SpreadsheetStateColumn,
-  sub_issue_count: SpreadsheetSubIssueColumn,
-  updated_on: SpreadsheetUpdatedOnColumn,
-  attachment_count: SpreadsheetAttachmentColumn,
 };
 
 export const IssueColumn = observer((props: Props) => {
