@@ -1,14 +1,20 @@
 import { E_INTEGRATION_KEYS, TServiceCredentials } from "@plane/etl/core";
 import { createGithubService, GithubService, GithubWebhookPayload } from "@plane/etl/github";
 import { MergeRequestEvent } from "@plane/etl/gitlab";
-import { Client, Client as PlaneClient } from "@plane/sdk";
+import { Client, ExState, Client as PlaneClient } from "@plane/sdk";
 import { classifyPullRequestEvent, getConnectionDetails } from "@/apps/github/helpers/helpers";
-import { GithubEntityConnection, GithubWorkspaceConnection, PullRequestWebhookActions } from "@/apps/github/types";
+import {
+  GithubEntityConnection,
+  githubEntityConnectionSchema,
+  GithubWorkspaceConnection,
+  PullRequestWebhookActions,
+} from "@/apps/github/types";
 import { env } from "@/env";
 import { getReferredIssues, IssueReference, IssueWithReference } from "@/helpers/parser";
 import { logger } from "@/logger";
 import { SentryInstance } from "@/sentry-config";
 import { getAPIClient } from "@/services/client";
+import { verifyEntityConnection } from "@/types";
 
 const apiClient = getAPIClient();
 
@@ -39,7 +45,7 @@ const handlePullRequestOpened = async (data: GithubWebhookPayload["webhook-pull-
     // Get the workspace connection for the installation
     const accountId = data.organization ? data.organization.id : data.repository.owner.id;
 
-    const { workspaceConnection, entityConnection } = await getConnectionDetails({
+    const { workspaceConnection } = await getConnectionDetails({
       accountId: accountId.toString(),
       credentials: planeCredentials as TServiceCredentials,
       installationId: data.installation.id.toString(),
@@ -48,49 +54,46 @@ const handlePullRequestOpened = async (data: GithubWebhookPayload["webhook-pull-
 
     const ghService = createGithubService(env.GITHUB_APP_ID, env.GITHUB_PRIVATE_KEY, data.installation.id.toString());
 
-    if (!workspaceConnection.target_hostname) {
-      throw new Error("Target hostname not found");
-    }
-
     const planeClient = new PlaneClient({
-      baseURL: workspaceConnection.target_hostname,
+      baseURL: env.API_BASE_URL,
       apiToken: planeCredentials.target_access_token,
     });
 
-    const attachedClosingReferences = await ghService.getPullRequestWithClosingReference(
-      data.repository.owner.login,
-      data.repository.name,
-      data.pull_request.number
-    );
+    // const attachedClosingReferences = await ghService.getPullRequestWithClosingReference(
+    //   data.repository.owner.login,
+    //   data.repository.name,
+    //   data.pull_request.number
+    // );
 
     // For all closing references, fetch the issues for the external id and
     // external source and add a link in plane issue for the bound PR
-    for (const reference of attachedClosingReferences.repository.pullRequest.closingIssuesReferences.edges) {
-      try {
-        const issue = await planeClient.issue.getIssueWithExternalId(
-          entityConnection.workspace_slug,
-          entityConnection.project_id ?? "",
-          reference.node.databaseId.toString(),
-          E_INTEGRATION_KEYS.GITHUB
-        );
-
-        if (issue) {
-          // Create a link in the issue for the pull request
-          await planeClient.issue.createLink(
-            entityConnection.workspace_slug,
-            entityConnection.project_id ?? "",
-            issue.id,
-            `GitHub PR: ${data.pull_request.title}`,
-            data.pull_request.html_url
-          );
-        }
-      } catch (error) {
-        logger.error("Error while creating link in issue", error);
-        console.log(error);
-        SentryInstance?.captureException(error);
-        continue;
-      }
-    }
+    // for (const reference of attachedClosingReferences.repository.pullRequest.closingIssuesReferences.edges) {
+    //   try {
+    //
+    //     const issue = await planeClient.issue.getIssueWithExternalId(
+    //       workspaceConnection.workspace_slug,
+    //       entityConnection.project_id ?? "",
+    //       reference.node.databaseId.toString(),
+    //       E_INTEGRATION_KEYS.GITHUB
+    //     );
+    //
+    //     if (issue) {
+    //       // Create a link in the issue for the pull request
+    //       await planeClient.issue.createLink(
+    //         entityConnection.workspace_slug,
+    //         entityConnection.project_id ?? "",
+    //         issue.id,
+    //         `GitHub PR: ${data.pull_request.title}`,
+    //         data.pull_request.html_url
+    //       );
+    //     }
+    //   } catch (error) {
+    //     logger.error("Error while creating link in issue", error);
+    //     console.log(error);
+    //     SentryInstance?.captureException(error);
+    //     continue;
+    //   }
+    // }
 
     if (data.repository.owner.login && data.repository.name && data.pull_request.number) {
       const { closingReferences, nonClosingReferences } = getReferredIssues(
@@ -98,18 +101,31 @@ const handlePullRequestOpened = async (data: GithubWebhookPayload["webhook-pull-
         data.pull_request.body || ""
       );
       const stateEvent = classifyPullRequestEvent(data.action, data.pull_request);
-      if (!stateEvent) return;
+
+      let entityConnection: GithubEntityConnection | undefined;
+
+      try {
+        const targetEntityConnection = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+          workspace_id: workspaceConnection.workspace_id,
+          entity_type: E_INTEGRATION_KEYS.GITHUB,
+          entity_id: data.repository.id.toString(),
+        });
+
+        entityConnection = verifyEntityConnection(githubEntityConnectionSchema, targetEntityConnection[0] as any);
+      } catch {}
+
       const targetState = getTargetState(stateEvent, entityConnection);
 
-      const referredIssues = ["MR_CLOSED", "MR_MERGED"].includes(stateEvent)
-        ? closingReferences
-        : [...closingReferences, ...nonClosingReferences];
+      const referredIssues =
+        stateEvent && ["MR_CLOSED", "MR_MERGED"].includes(stateEvent)
+          ? closingReferences
+          : [...closingReferences, ...nonClosingReferences];
 
       const updatedIssues = await Promise.all(
         referredIssues.map((reference) =>
           updateIssue(
             planeClient,
-            entityConnection,
+            workspaceConnection,
             reference,
             targetState,
             data.pull_request.title,
@@ -189,10 +205,14 @@ const createCommentBody = (
   return body;
 };
 
-const getTargetState = (event: MergeRequestEvent, entityConnection: GithubEntityConnection) => {
+const getTargetState = (event: MergeRequestEvent | undefined, entityConnection: GithubEntityConnection | undefined) => {
+  if (!event || !entityConnection) {
+    return null;
+  }
+
   const targetState = entityConnection.config.states.mergeRequestEventMapping[event];
   if (!targetState) {
-    logger.error(`[GITLAB] Target state not found for event ${event}, skipping...`);
+    logger.error(`[GITHUB] Target state not found for event ${event}, skipping...`);
     return null;
   }
   return targetState;
@@ -200,33 +220,36 @@ const getTargetState = (event: MergeRequestEvent, entityConnection: GithubEntity
 
 const updateIssue = async (
   planeClient: Client,
-  entityConnection: GithubEntityConnection,
+  workspaceConnection: GithubWorkspaceConnection,
   reference: IssueReference,
-  targetState: any,
+  targetState: { name: string; id: string } | null,
   prTitle: string,
   prNumber: number,
   prUrl: string
 ): Promise<IssueWithReference | null> => {
   try {
     const issue = await planeClient.issue.getIssueByIdentifier(
-      entityConnection.workspace_slug,
+      workspaceConnection.workspace_slug,
       reference.identifier,
       reference.sequence
     );
 
-    await planeClient.issue.update(entityConnection.workspace_slug, issue.project, issue.id, {
-      state: targetState.id,
-    });
+    if (targetState) {
+      await planeClient.issue.update(workspaceConnection.workspace_slug, issue.project, issue.id, {
+        state: targetState.id,
+      });
+
+      logger.info(`[GITHUB] Issue ${reference.identifier} updated to state ${targetState.name}`);
+    }
 
     // create link to the pull request to the issue
     const linkTitle = `[${prNumber}] ${prTitle}`;
     try {
-      await planeClient.issue.createLink(entityConnection.workspace_slug, issue.project, issue.id, linkTitle, prUrl);
+      await planeClient.issue.createLink(workspaceConnection.workspace_slug, issue.project, issue.id, linkTitle, prUrl);
     } catch (error) {
       console.log(error);
     }
 
-    logger.info(`[GITHUB] Issue ${reference.identifier} updated to state ${targetState.name}`);
     return { reference, issue };
   } catch (error) {
     console.log(error);

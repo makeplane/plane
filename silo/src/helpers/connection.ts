@@ -1,3 +1,5 @@
+import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { TWorkspaceCredential } from "@plane/types";
 import {
   githubEntityConnectionSchema,
   githubWorkspaceConnectionSchema,
@@ -5,8 +7,6 @@ import {
 } from "@/apps/github/types";
 import { getAPIClient } from "@/services/client";
 import { verifyEntityConnection, verifyWorkspaceConnection } from "@/types";
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
-import { TWorkspaceCredential } from "@plane/types";
 
 const apiClient = getAPIClient();
 

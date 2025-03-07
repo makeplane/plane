@@ -88,6 +88,16 @@ export default class GithubController {
         const connection = connections[0];
         const credential = await apiClient.workspaceCredential.getWorkspaceCredential(connection.credential_id);
         // Delete entity connections referencing the workspace connection
+        const entityConnections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+          workspace_id: workspaceId,
+          workspace_connection_id: connection.id,
+        });
+
+        await Promise.all(
+          entityConnections.map(async (entityConnection) => {
+            await apiClient.workspaceEntityConnection.deleteWorkspaceEntityConnection(entityConnection.id);
+          })
+        );
         // Delete the workspace connection associated with the team
         // Delete the team and user credentials for the workspace
         await apiClient.workspaceConnection.deleteWorkspaceConnection(connection.id);
@@ -104,6 +114,9 @@ export default class GithubController {
             await githubService.deleteInstallation(Number(credential.source_access_token));
           }
         }
+
+        // Delete the main workspace credential
+        await apiClient.workspaceCredential.deleteWorkspaceCredential(credential.id);
         return res.sendStatus(200);
       }
     } catch (error) {
@@ -508,7 +521,7 @@ export default class GithubController {
 
       const githubCredentials = credentials[0];
 
-      if (githubCredentials.source_access_token === null) {
+      if (!githubCredentials.source_access_token) {
         return res.status(401).json({
           message: "No installations found for the workspace",
         });
@@ -521,8 +534,7 @@ export default class GithubController {
         const service = createGithubService(
           env.GITHUB_APP_ID,
           env.GITHUB_PRIVATE_KEY,
-          // @ts-expect-error
-          githubCredentials.source_access_token
+          githubCredentials.source_access_token!
         );
 
         const installationId = Number(credential.source_access_token);
