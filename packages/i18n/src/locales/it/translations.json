@@ -862,7 +862,8 @@
     "delete": "Elimina",
     "deleting": "Eliminazione in corso",
     "pending": "In sospeso",
-    "invite": "Invita"
+    "invite": "Invita",
+    "view": "Visualizza"
   },
 
   "chart": {
@@ -982,7 +983,7 @@
         "created_on": "Creato il",
         "sub_issue": "Sotto-elemento di lavoro",
         "work_item_count": "Conteggio degli elementi di lavoro"
-  },
+      },
       "extra": {
         "show_sub_issues": "Mostra sotto-elementi di lavoro",
         "show_empty_groups": "Mostra gruppi vuoti"

@@ -865,7 +865,8 @@
     "delete": "删除",
     "deleting": "删除中",
     "pending": "待处理",
-    "invite": "邀请"
+    "invite": "邀请",
+    "view": "查看"
   },
 
   "chart": {

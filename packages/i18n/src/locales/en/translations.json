@@ -695,7 +695,7 @@
     "you": "You",
     "upgrade_cta": {
       "higher_subscription": "Upgrade to higher subscription",
-      "talk_to_sales": "Talk to sales"
+      "talk_to_sales": "Talk to Sales"
     },
     "category": "Category",
     "categories": "Categories",
@@ -704,7 +704,8 @@
     "delete": "Delete",
     "deleting": "Deleting",
     "pending": "Pending",
-    "invite": "Invite"
+    "invite": "Invite",
+    "view": "View"
   },
 
   "chart": {

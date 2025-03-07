@@ -12,15 +12,7 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseViewSet
-from plane.db.models import (
-    IntakeIssue,
-    Issue,
-    State,
-    IssueLink,
-    FileAsset,
-    DeployBoard,
-    IssueType,
-)
+from plane.db.models import IntakeIssue, Issue, IssueLink, FileAsset, DeployBoard
 from plane.app.serializers import (
     IssueSerializer,
     IntakeIssueSerializer,
@@ -216,7 +208,12 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             "description": issue_data.get("description", issue.description),
         }
 
-        issue_serializer = IssueCreateSerializer(issue, data=issue_data, partial=True)
+        issue_serializer = IssueCreateSerializer(
+            issue,
+            data=issue_data,
+            partial=True,
+            context={"project_id": project_deploy_board.project_id},
+        )
 
         if issue_serializer.is_valid():
             current_instance = issue
