@@ -268,6 +268,20 @@ class IssueActivitySerializer(BaseSerializer):
     issue_detail = IssueFlatSerializer(read_only=True, source="issue")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
+    source_data = serializers.SerializerMethodField()
+
+    def get_source_data(self, obj):
+        if (
+            hasattr(obj, "issue")
+            and hasattr(obj.issue, "source_data")
+            and obj.issue.source_data
+        ):
+            return {
+                "source": obj.issue.source_data[0].source,
+                "source_email": obj.issue.source_data[0].source_email,
+                "extra": obj.issue.source_data[0].extra,
+            }
+        return None
 
     class Meta:
         model = IssueActivity
