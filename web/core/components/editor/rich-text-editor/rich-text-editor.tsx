@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 // editor
-import { EditorRefApi, IRichTextEditor, RichTextEditorWithRef, TFileHandler } from "@plane/editor";
+import { EditorRefApi, IRichTextEditor, RichTextEditorWithRef, TExtensions, TFileHandler } from "@plane/editor";
 // plane types
 import { TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 // components
@@ -19,11 +19,20 @@ interface RichTextEditorWrapperProps
   workspaceId: string;
   projectId?: string;
   uploadFile: TFileHandler["upload"];
+  disabledExtensions?: TExtensions[];
 }
 
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
-  const { containerClassName, workspaceSlug, workspaceId, projectId, searchMentionCallback, uploadFile, ...rest } =
-    props;
+  const {
+    containerClassName,
+    workspaceSlug,
+    workspaceId,
+    projectId,
+    searchMentionCallback,
+    uploadFile,
+    disabledExtensions: additionalDisabledExtensions,
+    ...rest
+  } = props;
   // editor flaggings
   const { richTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // use editor mention
@@ -36,7 +45,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   return (
     <RichTextEditorWithRef
       ref={ref}
-      disabledExtensions={disabledExtensions}
+      disabledExtensions={[...disabledExtensions, ...(additionalDisabledExtensions ?? [])]}
       fileHandler={getEditorFileHandlers({
         projectId,
         uploadFile,
