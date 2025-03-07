@@ -19,6 +19,7 @@ export const PieChart = React.memo(<K extends string, T extends string>(props: T
     outerRadius,
     showTooltip = true,
     showLabel,
+    customLabel,
     centerLabel,
   } = props;
 
@@ -56,7 +57,30 @@ export const PieChart = React.memo(<K extends string, T extends string>(props: T
             cy="50%"
             innerRadius={innerRadius}
             outerRadius={outerRadius}
-            label={!!showLabel}
+            label={
+              showLabel
+                ? (payload) => {
+                    const { cx, cy, fill, innerRadius, midAngle, outerRadius, value } = payload;
+                    const RADIAN = Math.PI / 180;
+                    const radius = 25 + innerRadius + (outerRadius - innerRadius);
+                    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+                    return (
+                      <text
+                        className="text-xs font-medium"
+                        x={x}
+                        y={y}
+                        fill={fill}
+                        textAnchor={x > cx ? "start" : "end"}
+                        dominantBaseline="central"
+                      >
+                        {customLabel?.(value) ?? value}
+                      </text>
+                    );
+                  }
+                : undefined
+            }
           >
             {renderCells}
             {centerLabel && (

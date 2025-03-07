@@ -171,27 +171,44 @@ export class DashboardWidgetsStore implements IDashboardWidgetsStore {
   });
 
   get layoutItems() {
+    const widgetDetails = (this.allWidgetIds ?? []).map((widgetId) => {
+      const details = this.getWidgetById?.(widgetId);
+      return {
+        id: widgetId,
+        x: details?.x_axis_coord ?? 0,
+        y: details?.y_axis_coord ?? 0,
+        width: details?.width ?? 1,
+        height: details?.height ?? 1,
+      };
+    });
+
+    // sort widgets by y-axis first, then x-axis for XXS layout
+    const sortedWidgets = [...widgetDetails].sort((a, b) => {
+      if (a.y !== b.y) {
+        return a.y - b.y; // primary sort by y position
+      }
+      return a.x - b.x; // secondary sort by x position when y is the same
+    });
+
     const layouts: Layouts = {
-      [EWidgetGridBreakpoints.XXS]: (this.allWidgetIds ?? []).map((widgetId, index) => ({
-        i: widgetId,
+      [EWidgetGridBreakpoints.XXS]: sortedWidgets.map((widget, index) => ({
+        i: widget.id,
         x: 0,
         y: index * 2,
         w: 1,
         h: 2,
         resizeHandles: [],
       })),
-      [EWidgetGridBreakpoints.MD]: (this.allWidgetIds ?? []).map((widgetId) => {
-        const widgetDetails = this.getWidgetById?.(widgetId);
-        return {
-          i: widgetId,
-          x: widgetDetails?.x_axis_coord ?? 0,
-          y: widgetDetails?.y_axis_coord ?? 0,
-          w: widgetDetails?.width ?? 1,
-          h: widgetDetails?.height ?? 1,
-          resizeHandles: ["nw", "ne", "se", "sw"],
-        };
-      }),
+      [EWidgetGridBreakpoints.MD]: widgetDetails.map((widget) => ({
+        i: widget.id,
+        x: widget.x,
+        y: widget.y,
+        w: widget.width,
+        h: widget.height,
+        resizeHandles: ["nw", "ne", "se", "sw"],
+      })),
     };
+
     return layouts;
   }
 

@@ -105,6 +105,7 @@ export type TPieChartProps<K extends string, T extends string> = Pick<
   innerRadius?: number;
   outerRadius?: number;
   showLabel: boolean;
+  customLabel?: (value: any) => string;
   centerLabel?: {
     className?: string;
     fill: string;

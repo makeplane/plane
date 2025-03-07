@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR, EWidgetChartModels } from "@plane/constants";
 import { TLineChartWidgetConfig, TLineItem } from "@plane/types";
 // local imports
-import { parseWidgetData, generateExtendedColors, TWidgetComponentProps } from ".";
+import { generateExtendedColors, TWidgetComponentProps } from ".";
 
 const LineChart = dynamic(() =>
   import("@plane/propel/charts/line-chart").then((mod) => ({
@@ -15,12 +15,11 @@ const LineChart = dynamic(() =>
 );
 
 export const DashboardLineChartWidget: React.FC<TWidgetComponentProps> = observer((props) => {
-  const { widget } = props;
+  const { parsedData, widget } = props;
   // derived values
-  const { chart_model, data } = widget ?? {};
+  const { chart_model } = widget ?? {};
   const widgetConfig = widget?.config as TLineChartWidgetConfig | undefined;
   const showLegends = !!widgetConfig?.show_legends;
-  const parsedData = parseWidgetData(data);
   // next-themes
   const { resolvedTheme } = useTheme();
   // Get current palette colors and extend if needed

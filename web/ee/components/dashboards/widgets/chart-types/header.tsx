@@ -84,16 +84,17 @@ export const DashboardWidgetHeader: React.FC<Props> = observer((props) => {
         <h5 className="text-sm font-medium text-custom-text-200 truncate">{widget.name}</h5>
       </div>
       <div className="flex-shrink-0 hidden group-hover/widget:flex items-center">
-        {!isViewModeEnabled && (
+        {!isViewModeEnabled && canCurrentUserEditWidget && (
           <Tooltip tooltipContent="Edit">
             <button
               type="button"
               className="grid place-items-center p-1 rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80"
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 if (!widget.id) return;
                 toggleEditWidget?.(widget.id);
               }}
-              disabled={!canCurrentUserEditWidget}
             >
               <Pencil className="size-3.5" />
             </button>
@@ -103,7 +104,11 @@ export const DashboardWidgetHeader: React.FC<Props> = observer((props) => {
           <button
             type="button"
             className="grid place-items-center p-1 rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80"
-            onClick={fetchWidgetData}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              fetchWidgetData();
+            }}
             disabled={isFetchingData}
           >
             <RotateCw

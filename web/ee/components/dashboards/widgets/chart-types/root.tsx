@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
@@ -15,7 +15,7 @@ import { DashboardWidgetHeader } from "./header";
 import { DashboardLineChartWidget } from "./line-chart";
 import { DashboardPieChartWidget } from "./pie-chart";
 import { DashboardTextWidget } from "./text";
-import { commonWidgetClassName, TWidgetComponentProps } from "./";
+import { commonWidgetClassName, parseWidgetData, TWidgetComponentProps } from "./";
 
 type Props = {
   activeBreakpoint: EWidgetGridBreakpoints;
@@ -31,13 +31,22 @@ export const DashboardWidgetRoot: React.FC<Props> = observer((props) => {
   const { getDashboardById } = useDashboards();
   // derived values
   const dashboardDetails = getDashboardById(dashboardId);
-  const { getWidgetById, isEditingWidget } = dashboardDetails?.widgetsStore ?? {};
+  const { isViewModeEnabled, widgetsStore } = dashboardDetails ?? {};
+  const { getWidgetById, isEditingWidget, toggleEditWidget } = widgetsStore ?? {};
   const widget = getWidgetById?.(widgetId);
-  const { chart_type, data, fetchWidgetData, isConfigurationMissing } = widget ?? {};
+  const {
+    canCurrentUserEditWidget,
+    chart_type,
+    data,
+    fetchWidgetData,
+    isConfigurationMissing,
+    x_axis_property,
+    group_by,
+  } = widget ?? {};
   const isWidgetSelected = isEditingWidget === widgetId;
   const isWidgetConfigured = !isConfigurationMissing;
-
-  console.log("Re-rendering widget root");
+  const isEditingEnabled = !isViewModeEnabled && !!canCurrentUserEditWidget;
+  const parsedData = useMemo(() => parseWidgetData(data, x_axis_property, group_by), [data, group_by, x_axis_property]);
 
   useSWR(
     isWidgetConfigured && widgetId ? `WIDGET_DATA_${widgetId}` : null,
@@ -84,8 +93,15 @@ export const DashboardWidgetRoot: React.FC<Props> = observer((props) => {
     <div
       ref={widgetRef}
       className={commonWidgetClassName({
+        isEditingEnabled,
         isSelected: isWidgetSelected,
+        isResizingDisabled: !isEditingEnabled || activeBreakpoint === EWidgetGridBreakpoints.XXS,
       })}
+      onClick={() => {
+        if (!isEditingEnabled || isEditingWidget === widgetId) return;
+        toggleEditWidget?.(widgetId);
+      }}
+      role={isEditingEnabled ? "button" : "none"}
     >
       <DashboardWidgetHeader dashboardId={dashboardId} widget={widget} widgetRef={widgetRef} />
       <DashboardWidgetContent
@@ -95,7 +111,7 @@ export const DashboardWidgetRoot: React.FC<Props> = observer((props) => {
         isDataEmpty={data?.data.length === 0}
         widget={widget}
       >
-        <WidgetComponent widget={widget} />
+        <WidgetComponent parsedData={parsedData} widget={widget} />
       </DashboardWidgetContent>
     </div>
   );

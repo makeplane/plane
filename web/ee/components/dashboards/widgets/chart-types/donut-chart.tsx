@@ -41,7 +41,7 @@ export const parseDonutChartData = (
 };
 
 export const DashboardDonutChartWidget: React.FC<TWidgetComponentProps> = observer((props) => {
-  const { widget } = props;
+  const { parsedData, widget } = props;
   // derived values
   const { chart_model, data, height, width } = widget ?? {};
   const widgetConfig = widget?.config as TDonutChartWidgetConfig | undefined;
@@ -50,7 +50,10 @@ export const DashboardDonutChartWidget: React.FC<TWidgetComponentProps> = observ
   const showLegends = !!widgetConfig?.show_legends && !isOfUnitHeight;
   const legendPosition = (width ?? 1) >= (height ?? 1) ? "right" : "bottom";
   const showCenterLabel = !!widgetConfig?.center_value;
-  const parsedData = useMemo(() => parseDonutChartData(data?.data, chart_model), [chart_model, data?.data]);
+  const donutParsedData = useMemo(() => {
+    const secondParse = parseDonutChartData(parsedData.data, chart_model);
+    return secondParse;
+  }, [chart_model, parsedData]);
   const totalCount = data?.data?.reduce((acc, curr) => acc + curr.count, 0);
   const totalCountDigits = totalCount?.toString().length ?? 1;
   // next-themes
@@ -62,10 +65,10 @@ export const DashboardDonutChartWidget: React.FC<TWidgetComponentProps> = observ
 
   const cells: TCellItem<string>[] = useMemo(() => {
     let parsedCells: TCellItem<string>[];
-    const extendedColors = generateExtendedColors(baseColors ?? [], parsedData.length);
+    const extendedColors = generateExtendedColors(baseColors ?? [], donutParsedData.length);
 
     if (chart_model === EWidgetChartModels.BASIC) {
-      parsedCells = parsedData.map((datum, index) => ({
+      parsedCells = donutParsedData.map((datum, index) => ({
         key: datum.key,
         className: "stroke-transparent",
         fill: extendedColors[index],
@@ -87,7 +90,7 @@ export const DashboardDonutChartWidget: React.FC<TWidgetComponentProps> = observ
       parsedCells = [];
     }
     return parsedCells;
-  }, [baseColors, chart_model, parsedData, resolvedTheme, widgetConfig]);
+  }, [baseColors, chart_model, donutParsedData, resolvedTheme, widgetConfig]);
 
   if (!widget) return null;
 
@@ -100,7 +103,7 @@ export const DashboardDonutChartWidget: React.FC<TWidgetComponentProps> = observ
         bottom: isOfUnitHeight ? 12 : 20,
         left: 16,
       }}
-      data={parsedData}
+      data={donutParsedData}
       dataKey="count"
       cells={cells}
       innerRadius={isOfUnitHeight ? 10 : (height ?? 1) * 20}

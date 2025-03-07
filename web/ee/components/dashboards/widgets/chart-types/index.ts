@@ -1,30 +1,36 @@
 export * from "./root";
 
 // plane imports
+import { EWidgetXAxisProperty, TO_CAPITALIZE_PROPERTIES } from "@plane/constants";
 import { TDashboardWidgetData, TDashboardWidgetDatum } from "@plane/types";
-import { cn, hexToHsl, hslToHex } from "@plane/utils";
+import { capitalizeFirstLetter, cn, hexToHsl, hslToHex } from "@plane/utils";
 // plane web store
 import { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
 
 export type TWidgetComponentProps = {
+  parsedData: TDashboardWidgetData;
   widget: DashboardWidgetInstance | undefined;
 };
 
 type TArgs = {
   className?: string;
+  isEditingEnabled: boolean;
   isSelected: boolean;
+  isResizingDisabled: boolean;
 };
 
 export const WIDGET_HEADER_HEIGHT = 36;
 export const WIDGET_Y_SPACING = 8;
 
 export const commonWidgetClassName = (args: TArgs) => {
-  const { className, isSelected } = args;
+  const { className, isEditingEnabled, isSelected, isResizingDisabled } = args;
 
   const commonClassName = cn(
     "group/widget dashboard-widget-item size-full rounded-lg bg-custom-background-100 border border-custom-border-200 transition-colors",
     {
       "selected border-custom-primary-100": isSelected,
+      "cursor-pointer": isEditingEnabled,
+      disabled: isResizingDisabled,
     },
     className
   );
@@ -93,7 +99,11 @@ export const generateExtendedColors = (baseColorSet: string[], targetCount: numb
   return colors.slice(0, targetCount);
 };
 
-export const parseWidgetData = (data: TDashboardWidgetData | null | undefined): TDashboardWidgetData => {
+export const parseWidgetData = (
+  data: TDashboardWidgetData | null | undefined,
+  xAxisProperty: EWidgetXAxisProperty | null | undefined,
+  groupByProperty: EWidgetXAxisProperty | null | undefined
+): TDashboardWidgetData => {
   if (!data) {
     return {
       data: [],
@@ -106,13 +116,28 @@ export const parseWidgetData = (data: TDashboardWidgetData | null | undefined): 
     const keys = Object.keys(datum);
     const missingKeys = allKeys.filter((key) => !keys.includes(key));
     const missingValues: Record<string, number> = missingKeys.reduce((acc, key) => ({ ...acc, [key]: 0 }), {});
+
+    // capitalize first letter if xAxisProperty is PRIORITY or STATE_GROUPS and no groupByProperty is set
+    if (!groupByProperty && xAxisProperty && TO_CAPITALIZE_PROPERTIES.includes(xAxisProperty)) {
+      datum.name = capitalizeFirstLetter(datum.name);
+    }
+
     return {
       ...datum,
       ...missingValues,
     };
   });
+
+  // capitalize first letter if groupByProperty is PRIORITY or STATE_GROUPS
+  const updatedSchema = schema;
+  if (groupByProperty && TO_CAPITALIZE_PROPERTIES.includes(groupByProperty)) {
+    Object.keys(updatedSchema).forEach((key) => {
+      updatedSchema[key] = capitalizeFirstLetter(updatedSchema[key]);
+    });
+  }
+
   return {
     data: updatedWidgetData,
-    schema,
+    schema: updatedSchema,
   };
 };

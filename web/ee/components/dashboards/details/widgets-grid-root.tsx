@@ -28,7 +28,8 @@ export const DashboardsWidgetsGridRoot: React.FC<Props> = observer((props) => {
   const { getDashboardById } = useDashboards();
   // derived values
   const dashboardDetails = getDashboardById(dashboardId);
-  const { allWidgetIds, layoutItems, updateWidgetsLayout } = dashboardDetails?.widgetsStore ?? {};
+  const { canCurrentUserEditDashboard, isViewModeEnabled, widgetsStore } = dashboardDetails ?? {};
+  const { allWidgetIds, layoutItems, updateWidgetsLayout } = widgetsStore ?? {};
 
   const handleLayoutChange = useCallback(
     async (_: Layout[], allLayouts: Layouts) => {
@@ -71,8 +72,8 @@ export const DashboardsWidgetsGridRoot: React.FC<Props> = observer((props) => {
       margin={[32, 32]}
       containerPadding={[0, 0]}
       draggableHandle=".widget-drag-handle"
-      isDraggable
-      isResizable
+      isDraggable={!isViewModeEnabled && canCurrentUserEditDashboard && activeBreakpoint === EWidgetGridBreakpoints.MD}
+      isResizable={!isViewModeEnabled && canCurrentUserEditDashboard && activeBreakpoint === EWidgetGridBreakpoints.MD}
       onBreakpointChange={handleBreakpointChange}
       onLayoutChange={handleLayoutChange}
     >

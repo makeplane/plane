@@ -57,14 +57,17 @@ const parsePieChartData = (
 };
 
 export const DashboardPieChartWidget: React.FC<TWidgetComponentProps> = observer((props) => {
-  const { widget } = props;
+  const { parsedData, widget } = props;
   // derived values
-  const { data, height, width } = widget ?? {};
+  const { height, width } = widget ?? {};
   const widgetConfig = widget?.config as TPieChartWidgetConfig | undefined;
   const showLabels = !!widgetConfig?.show_values && height !== 1;
   const showLegends = !!widgetConfig?.show_legends;
   const legendPosition = (width ?? 1) >= (height ?? 1) ? "right" : "bottom";
-  const parsedData = useMemo(() => parsePieChartData(data?.data, widgetConfig), [data?.data, widgetConfig]);
+  const pieParsedData = useMemo(() => {
+    const secondParse = parsePieChartData(parsedData.data, widgetConfig);
+    return secondParse;
+  }, [parsedData, widgetConfig]);
   // next-themes
   const { resolvedTheme } = useTheme();
   // Get current palette colors and extend if needed
@@ -73,8 +76,8 @@ export const DashboardPieChartWidget: React.FC<TWidgetComponentProps> = observer
   ];
 
   const cells: TCellItem<string>[] = useMemo(() => {
-    const extendedColors = generateExtendedColors(baseColors ?? [], parsedData.length);
-    const parsedCells = parsedData.map((datum, index) => ({
+    const extendedColors = generateExtendedColors(baseColors ?? [], pieParsedData.length);
+    const parsedCells = pieParsedData.map((datum, index) => ({
       key: datum.key,
       className: "stroke-transparent",
       fill: extendedColors[index],
@@ -83,7 +86,7 @@ export const DashboardPieChartWidget: React.FC<TWidgetComponentProps> = observer
     if (widgetConfig?.group_thin_pieces) {
       for (let i = 0; i < parsedCells.length; i++) {
         const cellKey = parsedCells[i].key;
-        const doesKeyExist = parsedData.find((datum) => datum.key === cellKey);
+        const doesKeyExist = pieParsedData.find((datum) => datum.key === cellKey);
         if (!doesKeyExist) {
           parsedCells.splice(i, 1);
         }
@@ -97,7 +100,7 @@ export const DashboardPieChartWidget: React.FC<TWidgetComponentProps> = observer
       }
     }
     return parsedCells;
-  }, [baseColors, parsedData, widgetConfig]);
+  }, [baseColors, pieParsedData, widgetConfig]);
 
   if (!widget) return null;
 
@@ -110,7 +113,7 @@ export const DashboardPieChartWidget: React.FC<TWidgetComponentProps> = observer
         bottom: 20,
         left: 16,
       }}
-      data={parsedData}
+      data={pieParsedData}
       dataKey="count"
       cells={cells}
       legend={
@@ -125,6 +128,12 @@ export const DashboardPieChartWidget: React.FC<TWidgetComponentProps> = observer
       }
       showTooltip={!!widgetConfig?.show_tooltip}
       showLabel={showLabels}
+      customLabel={(val) => {
+        if (widgetConfig?.value_type === "percentage") {
+          return `${val}%`;
+        }
+        return val;
+      }}
     />
   );
 });

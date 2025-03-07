@@ -948,26 +948,26 @@ html.todesktop .header button {
     transition: opacity 0.2s ease;
 
     &.react-resizable-handle-nw {
-      top: 0 !important;
-      left: 0 !important;
+      top: 2px !important;
+      left: 2px !important;
       transform: translate(-50%, -50%) !important;
       cursor: nwse-resize !important;
     }
     &.react-resizable-handle-ne {
-      top: 0 !important;
-      right: 0 !important;
+      top: 2px !important;
+      right: 2px !important;
       transform: translate(50%, -50%) !important;
       cursor: nesw-resize !important;
     }
     &.react-resizable-handle-se {
-      bottom: 0 !important;
-      right: 0 !important;
+      bottom: 2px !important;
+      right: 2px !important;
       transform: translate(50%, 50%) !important;
       cursor: nwse-resize !important;
     }
     &.react-resizable-handle-sw {
-      bottom: 0 !important;
-      left: 0 !important;
+      bottom: 2px !important;
+      left: 2px !important;
       transform: translate(-50%, 50%) !important;
       cursor: nesw-resize !important;
     }
@@ -983,7 +983,7 @@ html.todesktop .header button {
       pointer-events: all;
     }
 
-    &:not(.resizing) .dashboard-widget-item:not(.selected) {
+    &:not(.resizing) .dashboard-widget-item:not(.selected):not(.disabled) {
       border-color: rgba(var(--color-border-400)) !important;
     }
   }

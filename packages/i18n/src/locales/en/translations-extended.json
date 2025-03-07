@@ -998,7 +998,7 @@
       "common": {
         "add_widget": "Add widget",
         "widget_title": {
-          "label": "Widget title",
+          "label": "Name this widget",
           "placeholder": "e.g., \"To-do yesterday\", \"All Complete\""
         },
         "chart_type": "Chart type",

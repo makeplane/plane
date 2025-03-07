@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR, EWidgetChartModels } from "@plane/constants";
 import { TAreaChartWidgetConfig, TAreaItem } from "@plane/types";
 // local imports
-import { parseWidgetData, generateExtendedColors, TWidgetComponentProps } from ".";
+import { generateExtendedColors, TWidgetComponentProps } from ".";
 
 const AreaChart = dynamic(() =>
   import("@plane/propel/charts/area-chart").then((mod) => ({
@@ -15,13 +15,12 @@ const AreaChart = dynamic(() =>
 );
 
 export const DashboardAreaChartWidget: React.FC<TWidgetComponentProps> = observer((props) => {
-  const { widget } = props;
+  const { parsedData, widget } = props;
   // derived values
-  const { chart_model, data } = widget ?? {};
+  const { chart_model } = widget ?? {};
   const widgetConfig = widget?.config as TAreaChartWidgetConfig | undefined;
   const showLegends = !!widgetConfig?.show_legends;
   const isComparisonModel = chart_model === EWidgetChartModels.COMPARISON;
-  const parsedData = parseWidgetData(data);
   // next-themes
   const { resolvedTheme } = useTheme();
   // Get current palette colors and extend if needed

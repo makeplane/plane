@@ -361,3 +361,8 @@ export const TEXT_WIDGET_Y_AXIS_METRICS_LIST: EWidgetYAxisMetric[] = [
   EWidgetYAxisMetric.WORK_ITEM_DUE_THIS_WEEK_COUNT,
   EWidgetYAxisMetric.WORK_ITEM_DUE_TODAY_COUNT,
 ];
+
+export const TO_CAPITALIZE_PROPERTIES: EWidgetXAxisProperty[] = [
+  EWidgetXAxisProperty.PRIORITY,
+  EWidgetXAxisProperty.STATE_GROUPS,
+];
