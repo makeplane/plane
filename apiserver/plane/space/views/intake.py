@@ -12,7 +12,14 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseViewSet
-from plane.db.models import IntakeIssue, Issue, IssueLink, FileAsset, DeployBoard
+from plane.db.models import (
+    IntakeIssue,
+    Issue,
+    IssueLink,
+    FileAsset,
+    DeployBoard,
+    IssueType,
+)
 from plane.app.serializers import (
     IssueSerializer,
     IntakeIssueSerializer,
