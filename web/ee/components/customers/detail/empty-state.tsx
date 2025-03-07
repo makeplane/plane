@@ -10,8 +10,8 @@ import { EmptyState } from "@/components/common";
 import { useCommandPalette } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // assets
-import DetailDark from "@/public/empty-state/customers/detail-dark.png";
-import DetailLight from "@/public/empty-state/customers/detail-light.png";
+import DetailDark from "@/public/empty-state/customers/detail-dark.svg";
+import DetailLight from "@/public/empty-state/customers/detail-light.svg";
 
 type TProps = {
   workspaceSlug: string;

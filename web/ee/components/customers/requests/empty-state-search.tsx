@@ -1,9 +1,9 @@
 import React from "react";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 import { useTranslation } from "@plane/i18n";
 import RequestEmptyDark from "@/public/empty-state/customers/request-search-dark.svg";
 import RequestEmptyLight from "@/public/empty-state/customers/request-search-light.svg";
-import { useTheme } from "next-themes";
 
 export const CustomerRequestSearchEmptyState = () => {
   // i18n

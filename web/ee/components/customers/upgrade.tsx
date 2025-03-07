@@ -15,8 +15,8 @@ import { cn } from "@/helpers/common.helper";
 // plane web hooks
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // assets
-import CustomerUpgradeDark from "@/public/empty-state/customers/customer-upgrade-dark.png";
-import CustomerUpgradeLight from "@/public/empty-state/customers/customer-upgrade-light.png";
+import CustomerUpgradeDark from "@/public/empty-state/customers/customer-upgrade-dark.webp";
+import CustomerUpgradeLight from "@/public/empty-state/customers/customer-upgrade-light.webp";
 
 export const CustomerUpgrade: FC = observer(() => {
   const { workspaceSlug } = useParams();

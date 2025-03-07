@@ -5,8 +5,8 @@ import { useTheme } from "next-themes";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // assets
-import CustomerDisabledDark from "@/public/empty-state/customers/customers-disabled-dark.png";
-import CustomerDisabledLight from "@/public/empty-state/customers/customers-disabled-light.png";
+import CustomerDisabledDark from "@/public/empty-state/customers/customers-disabled-dark.webp";
+import CustomerDisabledLight from "@/public/empty-state/customers/customers-disabled-light.webp";
 
 type TCustomerSettingsDisabled = {
   toggleCustomersFeature: () => void;
