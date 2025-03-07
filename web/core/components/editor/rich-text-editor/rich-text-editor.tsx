@@ -1,8 +1,7 @@
 import React, { forwardRef } from "react";
-// editor
-import { EditorRefApi, IRichTextEditor, RichTextEditorWithRef, TExtensions, TFileHandler } from "@plane/editor";
-// plane types
-import { TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
+// plane imports
+import { EditorRefApi, IRichTextEditor, RichTextEditorWithRef, TFileHandler } from "@plane/editor";
+import { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
 // helpers
@@ -13,13 +12,12 @@ import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
 interface RichTextEditorWrapperProps
-  extends Omit<IRichTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
+  extends MakeOptional<Omit<IRichTextEditor, "fileHandler" | "mentionHandler">, "disabledExtensions"> {
   searchMentionCallback: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
   workspaceSlug: string;
   workspaceId: string;
   projectId?: string;
   uploadFile: TFileHandler["upload"];
-  disabledExtensions?: TExtensions[];
 }
 
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {

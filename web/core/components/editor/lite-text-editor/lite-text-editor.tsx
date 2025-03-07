@@ -6,6 +6,7 @@ import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef, TFileHandler } fr
 // i18n
 import { useTranslation } from "@plane/i18n";
 // components
+import { MakeOptional } from "@plane/types";
 import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -19,7 +20,7 @@ import { WorkspaceService } from "@/plane-web/services";
 const workspaceService = new WorkspaceService();
 
 interface LiteTextEditorWrapperProps
-  extends Omit<ILiteTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
+  extends MakeOptional<Omit<ILiteTextEditor, "fileHandler" | "mentionHandler">, "disabledExtensions"> {
   workspaceSlug: string;
   workspaceId: string;
   projectId: string;
@@ -49,6 +50,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     showToolbarInitially = true,
     placeholder = t("issue.comments.placeholder"),
     uploadFile,
+    disabledExtensions: additionalDisabledExtensions,
     ...rest
   } = props;
   // states
@@ -81,7 +83,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     >
       <LiteTextEditorWithRef
         ref={ref}
-        disabledExtensions={disabledExtensions}
+        disabledExtensions={[...disabledExtensions, ...(additionalDisabledExtensions ?? [])]}
         fileHandler={getEditorFileHandlers({
           projectId,
           uploadFile,
