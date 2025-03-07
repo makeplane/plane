@@ -44,6 +44,7 @@ export interface IStateStore extends ICoreStateStore {
   ) => { [key: string]: boolean };
   getNextAvailableTransitionStateId: (projectId: string, parentStateId: string) => string | undefined;
   getAvailableWorkItemCreationStateIdMap: (projectId: string | null | undefined) => Record<string, boolean>;
+  getAvailableWorkItemCreationStateIds: (projectId: string | null | undefined) => string[];
   getWorkflowChangeHistorySortOrder: () => E_SORT_ORDER;
   getWorkflowChangeHistoryLoader: (projectId: string) => TLoader | undefined;
   getWorkflowChangeHistory: (projectId: string) => TWorkflowChangeHistory[] | undefined;
@@ -275,6 +276,19 @@ export class StateStore extends CoreStateStore implements IStateStore {
     return convertStringArrayToBooleanObject(
       projectStateIds.filter((projectStateId) => this.getIsWorkItemCreationAllowedForState(projectStateId))
     );
+  });
+
+  /**
+   * Returns the available project state ids based on the workflows
+   */
+  getAvailableWorkItemCreationStateIds = computedFn((projectId: string | null | undefined): string[] => {
+    const stateIdMap = this.getAvailableWorkItemCreationStateIdMap(projectId);
+    return Object.entries(stateIdMap).reduce<string[]>((allowedStateIds, [stateId, isCreationAllowed]) => {
+      if (isCreationAllowed) {
+        allowedStateIds.push(stateId);
+      }
+      return allowedStateIds;
+    }, []);
   });
 
   /**

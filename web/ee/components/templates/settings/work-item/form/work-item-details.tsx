@@ -122,6 +122,7 @@ export const WorkItemDetails = observer((props: TWorkItemDetailsProps) => {
                   : t(`${getDescriptionPlaceholderI18n(isFocused, value)}`)
               }
               containerClassName="min-h-[80px] px-0"
+              disabledExtensions={["image"]}
               uploadFile={async (blockId, file) => {
                 try {
                   const { asset_id } = await uploadEditorAsset({

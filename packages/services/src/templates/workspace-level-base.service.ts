@@ -1,16 +1,19 @@
 // plane imports
-import { API_BASE_URL } from "@plane/constants";
+import { API_BASE_URL, ETemplateType } from "@plane/constants";
 import { PartialDeep, TBaseTemplateWithData } from "@plane/types";
 // local imports
 import { APIService } from "../api.service";
-
+import { buildWorkspaceLevelTemplateApiUrl } from "./utils";
 /**
  * Service class for managing workspace level templates
  * @extends {APIService}
  */
 export abstract class WorkspaceLevelTemplateServiceBase<T extends TBaseTemplateWithData> extends APIService {
-  constructor(BASE_URL?: string) {
+  protected templateType: ETemplateType;
+
+  constructor(templateType: ETemplateType, BASE_URL?: string) {
     super(BASE_URL || API_BASE_URL);
+    this.templateType = templateType;
   }
 
   /**
@@ -20,7 +23,7 @@ export abstract class WorkspaceLevelTemplateServiceBase<T extends TBaseTemplateW
    * @throws {Error} If the API request fails
    */
   async list(workspaceSlug: string): Promise<T[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/templates/`)
+    return this.get(buildWorkspaceLevelTemplateApiUrl(workspaceSlug, this.templateType))
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -35,7 +38,7 @@ export abstract class WorkspaceLevelTemplateServiceBase<T extends TBaseTemplateW
    * @throws {Error} If the API request fails
    */
   async retrieve(workspaceSlug: string, templateId: string): Promise<T> {
-    return this.get(`/api/workspaces/${workspaceSlug}/templates/${templateId}/`)
+    return this.get(buildWorkspaceLevelTemplateApiUrl(workspaceSlug, this.templateType, templateId))
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -50,7 +53,7 @@ export abstract class WorkspaceLevelTemplateServiceBase<T extends TBaseTemplateW
    * @throws {Error} If the API request fails
    */
   async create(workspaceSlug: string, template: PartialDeep<T>): Promise<T> {
-    return this.post(`/api/workspaces/${workspaceSlug}/templates/`, template)
+    return this.post(buildWorkspaceLevelTemplateApiUrl(workspaceSlug, this.templateType), template)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -66,7 +69,7 @@ export abstract class WorkspaceLevelTemplateServiceBase<T extends TBaseTemplateW
    * @throws {Error} If the API request fails
    */
   async update(workspaceSlug: string, templateId: string, template: PartialDeep<T>): Promise<T> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/templates/${templateId}/`, template)
+    return this.patch(buildWorkspaceLevelTemplateApiUrl(workspaceSlug, this.templateType, templateId), template)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -80,7 +83,7 @@ export abstract class WorkspaceLevelTemplateServiceBase<T extends TBaseTemplateW
    * @throws {Error} If the API request fails
    */
   async destroy(workspaceSlug: string, templateId: string): Promise<void> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/templates/${templateId}/`)
+    return this.delete(buildWorkspaceLevelTemplateApiUrl(workspaceSlug, this.templateType, templateId))
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

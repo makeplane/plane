@@ -31,7 +31,7 @@ const TemplatesProjectSettingsPage = observer(() => {
   const { getAllWorkItemTemplatesForProject } = useWorkItemTemplates();
   // derived values
   const isTemplatesEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TEMPLATES");
-  const workItemTemplateIds = getAllWorkItemTemplatesForProject(projectId?.toString());
+  const workItemTemplateIds = getAllWorkItemTemplatesForProject(workspaceSlug?.toString(), projectId?.toString());
   const currentProjectDetails = getProjectById(projectId?.toString());
   const pageTitle = currentProjectDetails?.name
     ? `${currentProjectDetails.name} - ${t("common.templates")}`

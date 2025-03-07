@@ -50,7 +50,8 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
     fetchIssue: fetchEpicIssue,
   } = useIssueDetail(EIssueServiceType.EPICS);
   const { getProjectById } = useProject();
-  const { getStateById, getProjectStateIds, fetchProjectStates } = useProjectState();
+  const { getStateById, getProjectStateIds, getAvailableWorkItemCreationStateIds, fetchProjectStates } =
+    useProjectState();
   const { getProjectLabelIds, fetchProjectLabels } = useLabel();
   const { getModulesFetchStatusByProjectId, getProjectModuleIds, fetchModules } = useModule();
   const {
@@ -318,7 +319,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
         const { valid: sanitizedWorkItemFormData } = extractAndSanitizeWorkItemFormData({
           workItemData: template.template_data,
           parentDetails: parentDetails ?? null,
-          getProjectStateIds,
+          getProjectStateIds: getAvailableWorkItemCreationStateIds,
           getProjectLabelIds,
           getProjectModuleIds,
           getProjectMemberIds,
@@ -368,7 +369,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
       getTemplateById,
       handleProjectEntitiesFetch,
       handleParentWorkItemDetails,
-      getProjectStateIds,
+      getAvailableWorkItemCreationStateIds,
       getProjectLabelIds,
       getProjectModuleIds,
       getProjectMemberIds,

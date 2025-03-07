@@ -19,7 +19,7 @@ export const ProjectSettingsTemplatesListRoot = observer((props: TProjectSetting
   const { loader, getAllWorkItemTemplateIdsForProject, getTemplateById, deleteWorkItemTemplate } =
     useWorkItemTemplates();
   // derived values
-  const workItemTemplateIds = getAllWorkItemTemplateIdsForProject(projectId);
+  const workItemTemplateIds = getAllWorkItemTemplateIdsForProject(workspaceSlug, projectId);
 
   return (
     <TemplateListActionWrapper>

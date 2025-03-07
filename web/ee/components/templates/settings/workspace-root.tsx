@@ -17,7 +17,7 @@ export const WorkspaceTemplatesSettingsRoot: FC<TWorkspaceTemplatesSettingsRootP
   const { loader, getAllWorkItemTemplateIds } = useWorkItemTemplates();
   // derived values
   const isLoading = loader === "init-loader";
-  const workItemTemplateIds = getAllWorkItemTemplateIds();
+  const workItemTemplateIds = getAllWorkItemTemplateIds(workspaceSlug);
 
   if (workItemTemplateIds.length === 0 && !isLoading) {
     return <NoTemplatesEmptyState workspaceSlug={workspaceSlug} currentLevel={ETemplateLevel.WORKSPACE} />;

@@ -430,7 +430,7 @@ export class IssueTypes implements IIssueTypesStore {
         }
         // get all work item templates
         const currentProjectWorkItemTemplates =
-          this.rootStore.templatesRoot.workItemTemplates.getAllWorkItemTemplatesForProject(projectId);
+          this.rootStore.templatesRoot.workItemTemplates.getAllWorkItemTemplatesForProject(workspaceSlug, projectId);
         const workItemTemplatesWithoutType = currentProjectWorkItemTemplates.filter(
           (template) => !template.template_data.type || !template.template_data.type.id
         );

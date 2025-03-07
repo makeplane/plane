@@ -21,9 +21,9 @@ export interface IBaseTemplateStore<T extends TBaseTemplateWithData> {
   // computed functions
   getTemplateFetchStatusById: (templateId: string) => boolean;
   getTemplateById: (templateId: string) => IBaseTemplateInstance<T> | undefined;
-  getAllTemplates: () => IBaseTemplateInstance<T>[];
-  getAllTemplateIds: () => string[];
-  getAllProjectLevelCreatedTemplateIds: (projectId: string) => string[]; // return all template ids created at project level
+  getAllTemplates: (workspaceSlug: string) => IBaseTemplateInstance<T>[];
+  getAllTemplateIds: (workspaceSlug: string) => string[];
+  getAllProjectLevelCreatedTemplateIds: (workspaceSlug: string, projectId: string) => string[]; // return all template ids created at project level
 }
 
 export abstract class BaseTemplateStore<T extends TBaseTemplateWithData> implements IBaseTemplateStore<T> {
@@ -75,23 +75,36 @@ export abstract class BaseTemplateStore<T extends TBaseTemplateWithData> impleme
 
   /**
    * @description Get all templates
+   * @param workspaceSlug - The slug of the workspace
    * @returns All templates
    */
-  getAllTemplates = computedFn(() => orderBy(Object.values(this.templates), ["created_at"], ["desc"]));
+  getAllTemplates = computedFn((workspaceSlug: string) => {
+    const workspaceId = this.rootStore.workspaceRoot.getWorkspaceBySlug(workspaceSlug)?.id;
+    if (!workspaceId) return [];
+    return orderBy(
+      Object.values(this.templates).filter((template) => template.template_data.workspace === workspaceId),
+      ["created_at"],
+      ["desc"]
+    );
+  });
 
   /**
    * @description Get all template ids
+   * @param workspaceSlug - The slug of the workspace
    * @returns All template ids
    */
-  getAllTemplateIds = computedFn(() => this.getAllTemplates().map((template) => template.id));
+  getAllTemplateIds = computedFn((workspaceSlug: string) =>
+    this.getAllTemplates(workspaceSlug).map((template) => template.id)
+  );
 
   /**
    * @description Get all project template ids
+   * @param workspaceSlug - The slug of the workspace
    * @param projectId - The id of the project
    * @returns All project template ids
    */
-  getAllProjectLevelCreatedTemplateIds = computedFn((projectId: string) =>
-    this.getAllTemplates()
+  getAllProjectLevelCreatedTemplateIds = computedFn((workspaceSlug: string, projectId: string) =>
+    this.getAllTemplates(workspaceSlug)
       .filter((template) => template.template_data.project_id === projectId)
       .map((template) => template.id)
   );

@@ -84,7 +84,14 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
       ? ["workItemTemplates", workspaceSlug, templateId, isWorkItemTemplatesEnabled]
       : null,
     workspaceSlug && templateId && isWorkItemTemplatesEnabled
-      ? () => fetchTemplateById(workspaceSlug, templateId)
+      ? () =>
+          fetchTemplateById({
+            workspaceSlug,
+            templateId,
+            ...("projectId" in props
+              ? { level: ETemplateLevel.PROJECT, projectId: props.projectId }
+              : { level: ETemplateLevel.WORKSPACE }),
+          })
       : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );

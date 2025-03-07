@@ -31,7 +31,7 @@ export const SelectionDropdown = observer((props: TSelectionDropdownProps) => {
   // form context
   const {
     control,
-    formState: { errors, isDirty },
+    formState: { errors },
     watch,
     reset,
   } = useFormContext<TWorkItemTemplateForm>();
@@ -51,21 +51,19 @@ export const SelectionDropdown = observer((props: TSelectionDropdownProps) => {
       const defaultStateId = getProjectDefaultStateId(projectId);
       const defaultIssueType = getProjectDefaultIssueType(projectId);
 
-      if (isDirty) {
-        reset({
-          template: templateData,
-          work_item: {
-            ...defaultValueForReset.work_item,
-            project_id: projectId,
-            name: workItemData.name,
-            description_html: workItemData.description_html,
-            state_id: defaultStateId,
-            type_id: defaultIssueType?.id,
-          },
-        });
-      }
+      reset({
+        template: templateData,
+        work_item: {
+          ...defaultValueForReset.work_item,
+          project_id: projectId,
+          name: workItemData.name,
+          description_html: workItemData.description_html,
+          state_id: defaultStateId,
+          type_id: defaultIssueType?.id,
+        },
+      });
     },
-    [watch, getProjectDefaultStateId, getProjectDefaultIssueType, isDirty, reset, defaultValueForReset]
+    [watch, getProjectDefaultStateId, getProjectDefaultIssueType, reset, defaultValueForReset]
   );
 
   return (

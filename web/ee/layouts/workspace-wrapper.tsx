@@ -2,6 +2,8 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
+// plane imports
+import { ETemplateLevel } from "@plane/constants";
 // store hooks
 import { IWorkspaceAuthWrapper } from "@/ce/layouts/workspace-wrapper";
 import { useWorkspace } from "@/hooks/store";
@@ -25,7 +27,6 @@ import {
 // plane web types
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
-
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
   // props
   const { children } = props;
@@ -36,7 +37,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { currentWorkspace } = useWorkspace();
   // store hooks
   const { fetchFeatureFlags } = useFeatureFlags();
-  const { fetchWorkspaceFeatures, workspaceFeatures, isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
+  const { fetchWorkspaceFeatures, workspaceFeatures } = useWorkspaceFeatures();
   const { fetchProjectFeatures } = useProjectAdvanced();
   const { fetchProjectStates } = useWorkspaceProjectStates();
   const { isTeamspacesFeatureEnabled, fetchTeamspaces } = useTeamspaces();
@@ -127,7 +128,9 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceSlug && isWorkItemTemplatesEnabled
       ? ["workItemTemplates", workspaceSlug, isWorkItemTemplatesEnabled]
       : null,
-    workspaceSlug && isWorkItemTemplatesEnabled ? () => fetchAllTemplates(workspaceSlug.toString()) : null,
+    workspaceSlug && isWorkItemTemplatesEnabled
+      ? () => fetchAllTemplates({ workspaceSlug: workspaceSlug.toString(), level: ETemplateLevel.WORKSPACE })
+      : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 

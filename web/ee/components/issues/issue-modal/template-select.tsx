@@ -46,6 +46,7 @@ export const WorkItemTemplateSelect = observer((props: TWorkItemTemplateSelect) 
             {isApplyingTemplate && <Loader.Item height="100%" width="120px" />}
             {!isApplyingTemplate && projectId && (
               <WorkItemTemplateDropdown
+                workspaceSlug={workspaceSlug?.toString()}
                 templateId={workItemTemplateId}
                 projectId={projectId}
                 typeId={typeId}

@@ -17,7 +17,7 @@ export const WorkspaceSettingsTemplatesListRoot = observer((props: TWorkspaceSet
   // store hooks
   const { loader, getAllWorkItemTemplateIds, getTemplateById, deleteWorkItemTemplate } = useWorkItemTemplates();
   // derived values
-  const workItemTemplateIds = getAllWorkItemTemplateIds();
+  const workItemTemplateIds = getAllWorkItemTemplateIds(workspaceSlug);
 
   return (
     <TemplateListActionWrapper>

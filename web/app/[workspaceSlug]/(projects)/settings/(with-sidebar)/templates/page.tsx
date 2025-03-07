@@ -31,7 +31,7 @@ const TemplatesWorkspaceSettingsPage = observer(() => {
   const { getAllWorkItemTemplateIds } = useWorkItemTemplates();
   // derived values
   const isTemplatesEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TEMPLATES");
-  const workItemTemplateIds = getAllWorkItemTemplateIds();
+  const workItemTemplateIds = getAllWorkItemTemplateIds(workspaceSlug?.toString());
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - ${t("common.templates")}` : undefined;
   const hasAdminPermission = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
 

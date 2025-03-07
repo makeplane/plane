@@ -97,6 +97,7 @@ export const CreateTemplatesButton = observer((props: TCreateTemplatesButtonProp
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasAdminPermission, props.buttonI18nLabel, props.currentLevel]);
 
+  if (!hasAdminPermission) return null;
   return (
     <CustomMenu
       customButton={

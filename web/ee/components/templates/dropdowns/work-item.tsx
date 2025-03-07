@@ -15,6 +15,7 @@ export type TWorkItemTemplateOptionTooltip = {
 export type TWorkItemTemplateDropdownSize = "xs" | "sm";
 
 type TWorkItemTemplateDropdownProps = {
+  workspaceSlug: string;
   templateId: string | null;
   projectId: string;
   typeId: string | null;
@@ -28,6 +29,7 @@ type TWorkItemTemplateDropdownProps = {
 
 export const WorkItemTemplateDropdown = observer((props: TWorkItemTemplateDropdownProps) => {
   const {
+    workspaceSlug,
     templateId,
     projectId,
     typeId,
@@ -43,8 +45,8 @@ export const WorkItemTemplateDropdown = observer((props: TWorkItemTemplateDropdo
     useWorkItemTemplates();
   // derived values
   const allWorkItemTemplates = typeId
-    ? getAllWorkItemTemplatesForProjectByTypeId(projectId, typeId)
-    : getAllWorkItemTemplatesForProject(projectId);
+    ? getAllWorkItemTemplatesForProjectByTypeId(workspaceSlug, projectId, typeId)
+    : getAllWorkItemTemplatesForProject(workspaceSlug, projectId);
   const currentWorkItemTemplate = useMemo(
     () => (templateId ? getTemplateById(templateId) : undefined),
     [templateId, getTemplateById]

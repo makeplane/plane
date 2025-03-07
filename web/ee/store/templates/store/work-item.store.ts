@@ -19,9 +19,8 @@ import {
   WorkItemTemplateInstance,
 } from "@/plane-web/store/templates";
 
-type TCreateWorkItemTemplateProps = {
+type TBaseWorkItemTemplateProps = {
   workspaceSlug: string;
-  templateData: Partial<TWorkItemTemplate>;
 } & (
   | {
       level: ETemplateLevel.PROJECT;
@@ -32,20 +31,34 @@ type TCreateWorkItemTemplateProps = {
     }
 );
 
+type TFetchWorkItemTemplatesProps = TBaseWorkItemTemplateProps;
+
+type TFetchWorkItemTemplateByIdProps = TFetchWorkItemTemplatesProps & {
+  templateId: string;
+};
+
+type TCreateWorkItemTemplateProps = TBaseWorkItemTemplateProps & {
+  templateData: Partial<TWorkItemTemplate>;
+};
+
 export interface IWorkItemTemplateStore extends IBaseTemplateStore<TWorkItemTemplate> {
   // computed function
-  getAllWorkItemTemplates: () => IBaseTemplateInstance<TWorkItemTemplate>[];
-  getAllWorkItemTemplateIds: () => string[];
-  getAllWorkItemTemplatesForProject: (projectId: string) => IBaseTemplateInstance<TWorkItemTemplate>[];
-  getAllWorkItemTemplateIdsForProject: (projectId: string) => string[];
+  getAllWorkItemTemplates: (workspaceSlug: string) => IBaseTemplateInstance<TWorkItemTemplate>[];
+  getAllWorkItemTemplateIds: (workspaceSlug: string) => string[];
+  getAllWorkItemTemplatesForProject: (
+    workspaceSlug: string,
+    projectId: string
+  ) => IBaseTemplateInstance<TWorkItemTemplate>[];
+  getAllWorkItemTemplateIdsForProject: (workspaceSlug: string, projectId: string) => string[];
   getAllWorkItemTemplatesForProjectByTypeId: (
+    workspaceSlug: string,
     projectId: string,
     typeId: string
   ) => IBaseTemplateInstance<TWorkItemTemplate>[];
-  getAllWorkItemTemplateIdsForProjectByTypeId: (projectId: string, typeId: string) => string[];
+  getAllWorkItemTemplateIdsForProjectByTypeId: (workspaceSlug: string, projectId: string, typeId: string) => string[];
   // actions
-  fetchAllTemplates: (workspaceSlug: string) => Promise<void>;
-  fetchTemplateById: (workspaceSlug: string, templateId: string) => Promise<void>;
+  fetchAllTemplates: (props: TFetchWorkItemTemplatesProps) => Promise<void>;
+  fetchTemplateById: (props: TFetchWorkItemTemplateByIdProps) => Promise<void>;
   createWorkItemTemplate: (props: TCreateWorkItemTemplateProps) => Promise<TWorkItemTemplate | undefined>;
   deleteWorkItemTemplate: (workspaceSlug: string, templateId: string) => Promise<void>;
 }
@@ -69,10 +82,11 @@ export class WorkItemTemplateStore extends BaseTemplateStore<TWorkItemTemplate> 
   // computed functions
   /**
    * @description Get all work item templates
+   * @param workspaceSlug - The slug of the workspace
    * @returns All work item templates
    */
-  getAllWorkItemTemplates = computedFn(() =>
-    this.getAllTemplates().filter((template) => {
+  getAllWorkItemTemplates = computedFn((workspaceSlug: string) =>
+    this.getAllTemplates(workspaceSlug).filter((template) => {
       const typeId = template?.template_data?.type?.id;
       // If there's no work item type ID, include the template
       // Otherwise check if the ID is valid
@@ -82,57 +96,76 @@ export class WorkItemTemplateStore extends BaseTemplateStore<TWorkItemTemplate> 
 
   /**
    * @description Get all work item template ids
+   * @param workspaceSlug - The slug of the workspace
    * @returns All work item template ids
    */
-  getAllWorkItemTemplateIds = computedFn(() => this.getAllWorkItemTemplates().map((template) => template.id));
+  getAllWorkItemTemplateIds = computedFn((workspaceSlug: string) =>
+    this.getAllWorkItemTemplates(workspaceSlug).map((template) => template.id)
+  );
 
   /**
    * @description Get all work item templates for a project
+   * @param workspaceSlug - The slug of the workspace
    * @param projectId - The id of the project
    * @returns All work item templates for a project
    */
-  getAllWorkItemTemplatesForProject = computedFn((projectId: string) =>
-    this.getAllWorkItemTemplates().filter((template) => template.template_data.project === projectId)
+  getAllWorkItemTemplatesForProject = computedFn((workspaceSlug: string, projectId: string) =>
+    this.getAllWorkItemTemplates(workspaceSlug).filter((template) => template.template_data.project === projectId)
   );
 
   /**
    * @description Get all work item template ids for a project
+   * @param workspaceSlug - The slug of the workspace
    * @param projectId - The id of the project
    * @returns All work item template ids for a project
    */
-  getAllWorkItemTemplateIdsForProject = computedFn((projectId: string) =>
-    this.getAllWorkItemTemplatesForProject(projectId).map((template) => template.id)
+  getAllWorkItemTemplateIdsForProject = computedFn((workspaceSlug: string, projectId: string) =>
+    this.getAllWorkItemTemplatesForProject(workspaceSlug, projectId).map((template) => template.id)
   );
 
   /**
    * @description Get all work item templates for a project by type id
+   * @param workspaceSlug - The slug of the workspace
    * @param projectId - The id of the project
    * @param typeId - The id of the type
    * @returns All work item templates for a project by type id
    */
-  getAllWorkItemTemplatesForProjectByTypeId = computedFn((projectId: string, typeId: string) =>
-    this.getAllWorkItemTemplatesForProject(projectId).filter((template) => template.template_data.type?.id === typeId)
+  getAllWorkItemTemplatesForProjectByTypeId = computedFn((workspaceSlug: string, projectId: string, typeId: string) =>
+    this.getAllWorkItemTemplatesForProject(workspaceSlug, projectId).filter(
+      (template) => template.template_data.type?.id === typeId
+    )
   );
 
   /**
    * @description Get all work item template ids for a project by type id
+   * @param workspaceSlug - The slug of the workspace
    * @param projectId - The id of the project
    * @param typeId - The id of the type
    * @returns All work item template ids for a project by type id
    */
-  getAllWorkItemTemplateIdsForProjectByTypeId = computedFn((projectId: string, typeId: string) =>
-    this.getAllWorkItemTemplatesForProjectByTypeId(projectId, typeId).map((template) => template.id)
+  getAllWorkItemTemplateIdsForProjectByTypeId = computedFn((workspaceSlug: string, projectId: string, typeId: string) =>
+    this.getAllWorkItemTemplatesForProjectByTypeId(workspaceSlug, projectId, typeId).map((template) => template.id)
   );
 
   // actions
   /**
    * @description Fetch all templates
-   * @param workspaceSlug - The workspace slug
+   * @param props - The props
+   * @param props.workspaceSlug - The workspace slug
+   * @param props.level - The level of the templates
+   * @param props.projectId - The project id, required if the level is project
    */
-  fetchAllTemplates = action(async (workspaceSlug: string) => {
+  fetchAllTemplates = action(async (props: TFetchWorkItemTemplatesProps) => {
+    const { workspaceSlug, level } = props;
     try {
       this.loader = "init-loader";
-      const templates = await workspaceLevelService.list(workspaceSlug);
+      // Use the correct service based on the level
+      const listService =
+        level === ETemplateLevel.PROJECT
+          ? projectLevelService.list.bind(projectLevelService, workspaceSlug, props.projectId)
+          : workspaceLevelService.list.bind(workspaceLevelService, workspaceSlug);
+      // Fetch the templates
+      const templates = await listService();
       this.addOrUpdateTemplates(templates, (id, template) => {
         // Use the correct service based on the level
         const updateService = template.project
@@ -151,16 +184,25 @@ export class WorkItemTemplateStore extends BaseTemplateStore<TWorkItemTemplate> 
 
   /**
    * @description Fetch a template by id
-   * @param workspaceSlug - The workspace slug
-   * @param templateId - The template id
+   * @param props - The props
+   * @param props.workspaceSlug - The workspace slug
+   * @param props.templateId - The template id
+   * @param props.level - The level of the template
+   * @param props.projectId - The project id, required if the level is project
    */
-  fetchTemplateById = action(async (workspaceSlug: string, templateId: string) => {
+  fetchTemplateById = action(async (props: TFetchWorkItemTemplateByIdProps) => {
+    const { workspaceSlug, templateId, level } = props;
     // if the template is already being fetched, return
     if (this.getTemplateFetchStatusById(templateId)) return;
     this.loader = "init-loader";
     try {
+      // Use the correct service based on the level
+      const retrieveService =
+        level === ETemplateLevel.PROJECT
+          ? projectLevelService.retrieve.bind(projectLevelService, workspaceSlug, props.projectId)
+          : workspaceLevelService.retrieve.bind(workspaceLevelService, workspaceSlug);
       // Fetch the template
-      const template = await workspaceLevelService.retrieve(workspaceSlug, templateId);
+      const template = await retrieveService(templateId);
       this.addOrUpdateTemplates([template], (id, template) => {
         // Use the correct service based on the level
         const updateService = template.project

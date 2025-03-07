@@ -90,7 +90,7 @@ export const DefaultWorkItemTemplateProperties = observer((props: TDefaultWorkIt
                   buttonClassName={cn(COMMON_BUTTON_CLASS_NAME, {
                     [COMMON_ERROR_CLASS_NAME]: Boolean(errors?.work_item?.state_id || templateInvalidIds?.state_id),
                   })}
-                  isForWorkItemCreation
+                  alwaysAllowStateChange
                   disabled={!projectId}
                 />
               </div>
