@@ -30,6 +30,7 @@ export const DashboardWidgetNotConfiguredState: React.FC<Props> = observer((prop
   const { canCurrentUserEditWidget, chart_model, chart_type, isConfigurationMissing, height } = widget ?? {};
   const isWidgetSelected = isEditingWidget === widgetId;
   const shouldShowIcon = activeBreakpoint === EWidgetGridBreakpoints.XXS || height !== 1;
+  const isEditingEnabled = !isViewModeEnabled && !!canCurrentUserEditWidget;
   // translation
   const { t } = useTranslation();
   // resolved asset
@@ -45,8 +46,10 @@ export const DashboardWidgetNotConfiguredState: React.FC<Props> = observer((prop
   return (
     <div
       className={commonWidgetClassName({
-        isSelected: isWidgetSelected,
         className: "grid place-items-center px-4 overflow-hidden",
+        isEditingEnabled,
+        isSelected: isWidgetSelected,
+        isResizingDisabled: !isEditingEnabled || activeBreakpoint === EWidgetGridBreakpoints.XXS,
       })}
     >
       <div className="flex flex-col items-center gap-3">
