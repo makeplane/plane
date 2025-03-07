@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
@@ -12,6 +12,7 @@ import { TBulkIssueProperties } from "@plane/types";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import {
   DateDropdown,
   MemberDropdown,
@@ -29,9 +30,9 @@ import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper"
 import { useProjectEstimates } from "@/hooks/store";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-select";
-// plane web components
-import { IssueTypeSelect } from "@/plane-web/components/issues/issue-modal";
+import { IssueTypeDropdown, TIssueTypeOptionTooltip } from "@/plane-web/components/issue-types/dropdowns";
 // plane web hooks
+import { useIssueTypes } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
 type Props = {
@@ -66,7 +67,23 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
     issues: { bulkUpdateProperties },
   } = useIssuesStore();
   const { currentActiveEstimateId, areEstimateEnabledByProjectId } = useProjectEstimates();
+  const { getIssueTypeIdsWithMandatoryProperties } = useIssueTypes();
+  // derived values
   const isAdvancedBulkOpsEnabled = useFlag(workspaceSlug?.toString(), "BULK_OPS_PRO");
+  // Get issue types with mandatory properties
+  const issueTypeIdsWithMandatoryProperties = useMemo(() => {
+    if (!projectId) return [];
+    return getIssueTypeIdsWithMandatoryProperties(projectId?.toString());
+  }, [getIssueTypeIdsWithMandatoryProperties, projectId]);
+  // Create a map of information for issue types with mandatory field
+  const optionTooltip: TIssueTypeOptionTooltip = useMemo(() => {
+    if (issueTypeIdsWithMandatoryProperties.length === 0) return {};
+    return issueTypeIdsWithMandatoryProperties.reduce((acc, issueTypeId) => {
+      acc[issueTypeId] =
+        "This work item type includes mandatory properties that will initially be blank when a work item is converted to this type.";
+      return acc;
+    }, {} as TIssueTypeOptionTooltip);
+  }, [issueTypeIdsWithMandatoryProperties]);
 
   // form info
   const {
@@ -309,14 +326,25 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
               />
             )}
             {projectId && (
-              <IssueTypeSelect
-                variant="xs"
+              <Controller
                 control={control}
-                projectId={projectId.toString()}
-                disabled={isUpdateDisabled}
-                isRequired={false}
-                showMandatoryFieldInfo
-                dropDownContainerClassName="h-6"
+                name="type_id"
+                render={({ field: { value, onChange } }) => (
+                  <div className={cn("h-6")}>
+                    <IssueTypeDropdown
+                      issueTypeId={value}
+                      projectId={projectId?.toString()}
+                      disabled={isUpdateDisabled}
+                      variant="xs"
+                      optionTooltip={optionTooltip}
+                      handleIssueTypeChange={(issueTypeId) => {
+                        // Allow issue type to be null (unset issue type)
+                        const newValue = value === issueTypeId ? null : issueTypeId;
+                        onChange(newValue);
+                      }}
+                    />
+                  </div>
+                )}
               />
             )}
           </>

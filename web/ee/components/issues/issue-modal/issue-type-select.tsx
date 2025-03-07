@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, FieldPath, useFormContext } from "react-hook-form";
@@ -15,7 +15,7 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 // plane web imports
-import { IssueTypeDropdown, TIssueTypeOptionTooltip } from "@/plane-web/components/issue-types/dropdowns";
+import { IssueTypeDropdown } from "@/plane-web/components/issue-types/dropdowns";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
 export const IssueTypeSelect = observer(<T extends Partial<TIssueFields>>(props: TIssueTypeSelectProps<T>) => {
@@ -29,36 +29,17 @@ export const IssueTypeSelect = observer(<T extends Partial<TIssueFields>>(props:
     isRequired = true,
     renderChevron = false,
     dropDownContainerClassName,
-    showMandatoryFieldInfo = false, // Show info about mandatory fields
     handleFormChange,
   } = props;
   // router
   const { workspaceSlug } = useParams();
   // plane web store hooks
-  const { isWorkItemTypeEnabledForProject, getIssueTypeIdsWithMandatoryProperties } = useIssueTypes();
+  const { isWorkItemTypeEnabledForProject } = useIssueTypes();
   // context hooks
   const { workItemTemplateId, setWorkItemTemplateId } = useIssueModal();
   const { reset } = useFormContext<TIssue>();
   // derived values
   const isWorkItemTypeEnabled = !!projectId && isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId);
-  // Information for issue types with mandatory fields
-  let optionTooltip: TIssueTypeOptionTooltip = {};
-  if (showMandatoryFieldInfo) {
-    // Get issue types with mandatory properties
-    const issueTypeIdsWithMandatoryProperties = useMemo(() => {
-      if (!projectId) return [];
-      return getIssueTypeIdsWithMandatoryProperties(projectId);
-    }, [getIssueTypeIdsWithMandatoryProperties, projectId]);
-    // Create a map of information for issue types with mandatory field
-    optionTooltip = useMemo(() => {
-      if (issueTypeIdsWithMandatoryProperties.length === 0) return {};
-      return issueTypeIdsWithMandatoryProperties.reduce((acc, issueTypeId) => {
-        acc[issueTypeId] =
-          "This work item type includes mandatory properties that will initially be blank when a work item is converted to this type.";
-        return acc;
-      }, {} as TIssueTypeOptionTooltip);
-    }, [issueTypeIdsWithMandatoryProperties]);
-  }
 
   const handleIssueTypeChange = (newValue: string | null) => {
     if (workItemTemplateId) {
@@ -96,7 +77,6 @@ export const IssueTypeSelect = observer(<T extends Partial<TIssueFields>>(props:
                     disabled={disabled}
                     variant={variant}
                     placeholder={placeholder}
-                    optionTooltip={optionTooltip}
                     handleIssueTypeChange={(issueTypeId) => {
                       // If it's not set as required, then allow issue type to be null (unset issue type)
                       const newValue = !isRequired && value === issueTypeId ? null : issueTypeId;
