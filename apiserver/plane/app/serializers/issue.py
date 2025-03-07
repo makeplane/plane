@@ -125,11 +125,8 @@ class IssueCreateSerializer(BaseSerializer):
             return []
 
         return ProjectMember.objects.filter(
-            project_id=project_id,
-            role__gte=15,
-            is_active=True,
-            member_id__in=assignees
-        ).values_list('member_id', flat=True)
+            project_id=project_id, role__gte=15, is_active=True, member_id__in=assignees
+        ).values_list("member_id", flat=True)
 
     def create(self, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
@@ -167,12 +164,15 @@ class IssueCreateSerializer(BaseSerializer):
                 pass
         else:
             # Then assign it to default assignee, if it is a valid assignee
-            if default_assignee_id is not None and ProjectMember.objects.filter(
-                member_id=default_assignee_id,
-                project_id=project_id,
-                role__gte=15,
-                is_active=True
-            ).exists():
+            if (
+                default_assignee_id is not None
+                and ProjectMember.objects.filter(
+                    member_id=default_assignee_id,
+                    project_id=project_id,
+                    role__gte=15,
+                    is_active=True,
+                ).exists()
+            ):
                 try:
                     IssueAssignee.objects.create(
                         assignee_id=default_assignee_id,
@@ -269,6 +269,20 @@ class IssueActivitySerializer(BaseSerializer):
     issue_detail = IssueFlatSerializer(read_only=True, source="issue")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
+    source_data = serializers.SerializerMethodField()
+
+    def get_source_data(self, obj):
+        if (
+            hasattr(obj, "issue")
+            and hasattr(obj.issue, "source_data")
+            and obj.issue.source_data
+        ):
+            return {
+                "source": obj.issue.source_data[0].source,
+                "source_email": obj.issue.source_data[0].source_email,
+                "extra": obj.issue.source_data[0].extra,
+            }
+        return None
 
     class Meta:
         model = IssueActivity
