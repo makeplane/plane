@@ -22,7 +22,7 @@ export const CustomersListRoot: FC = observer(() => {
   const { workspaceSlug } = useParams();
   const resolvedPathList = useResolvedAssetPath({
     basePath: "/empty-state/customers/customers-disabled",
-    extension: "png",
+    extension: "webp",
   });
   const resolvedPathSearch = useResolvedAssetPath({
     basePath: "/empty-state/customers/search-empty",
