@@ -1,7 +1,9 @@
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
+// plane imports
 import { TIssueComment } from "@plane/types";
 import { Avatar } from "@plane/ui";
+import { getFileURL } from "@plane/utils";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
@@ -23,7 +25,12 @@ export const IssueCommentBlock: FC<TIssueCommentBlock> = observer((props) => {
   return (
     <div className="flex gap-2 w-full">
       <div className="size-9 grid place-items-center flex-shrink-0">
-        <Avatar size="lg" name={userDetails?.display_name} src={userDetails?.avatar_url} className="flex-shrink-0" />
+        <Avatar
+          size="lg"
+          name={userDetails?.display_name}
+          src={getFileURL(userDetails?.avatar_url)}
+          className="flex-shrink-0"
+        />
       </div>
       <div className="flex flex-col gap-3 truncate flex-grow">
         <div className="flex w-full">
