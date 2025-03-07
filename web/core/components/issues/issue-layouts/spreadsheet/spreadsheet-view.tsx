@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
 // plane constants
-import { EIssueLayoutTypes, SPREADSHEET_SELECT_GROUP } from "@plane/constants";
+import { EIssueLayoutTypes, SPREADSHEET_SELECT_GROUP, SPREADSHEET_PROPERTY_LIST } from "@plane/constants";
 // types
 import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 // components
@@ -17,23 +17,6 @@ import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-sta
 // types
 import { TRenderQuickActions } from "../list/list-view-types";
 import { SpreadsheetTable } from "./spreadsheet-table";
-
-const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
-  "state",
-  "priority",
-  "assignee",
-  "labels",
-  "modules",
-  "cycle",
-  "start_date",
-  "due_date",
-  "estimate",
-  "created_on",
-  "updated_on",
-  "link",
-  "attachment_count",
-  "sub_issue_count",
-];
 
 type Props = {
   displayProperties: IIssueDisplayProperties;

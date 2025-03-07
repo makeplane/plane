@@ -33,6 +33,8 @@ import { useEventTracker, useLabel, useIssues, useProjectState, useProject, useP
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web components
+import { IssueAdditionalProperties } from "@/plane-web/components/issues/issue-layouts/additional-properties";
 // local components
 import { IssuePropertyLabels } from "./labels";
 import { WithDisplayPropertiesHOC } from "./with-display-properties-HOC";
@@ -507,6 +509,9 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
           </div>
         </Tooltip>
       </WithDisplayPropertiesHOC>
+
+      {/* Additional Properties */}
+      <IssueAdditionalProperties displayProperties={displayProperties} issue={issue} />
 
       {/* label */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">
