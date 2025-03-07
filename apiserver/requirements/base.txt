@@ -76,7 +76,7 @@ openfeature-sdk==0.7.0
 # graphql
 strawberry-graphql-django==0.48.0
 # django rest framework jwt
-djangorestframework-simplejwt==5.3.1
+djangorestframework-simplejwt==5.4.0
 # Elastic Search Integration
 elasticsearch-dsl>=8.0.0,<9.0.0
 django-elasticsearch-dsl==8.0.0
