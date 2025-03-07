@@ -431,7 +431,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 }
 
             issue_serializer = IssueCreateSerializer(
-                issue, data=issue_data, partial=True
+                issue, data=issue_data, partial=True, context={"project_id": project_id}
             )
 
             if issue_serializer.is_valid():
