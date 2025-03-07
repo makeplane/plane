@@ -34,7 +34,7 @@ class S3Storage(S3Boto3Storage):
         if os.environ.get("USE_MINIO") == "1":
 
             # Determine protocol based on environment variable
-            if os.environ.get("FORCE_HTTPS") == "1":
+            if os.environ.get("MINIO_ENDPOINT_SSL") == "1":
                 endpoint_protocol = "https"
             else:
                 endpoint_protocol = request.scheme if request else "http"
