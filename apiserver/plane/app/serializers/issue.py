@@ -112,7 +112,6 @@ class IssueCreateSerializer(BaseSerializer):
         return data
 
     def validate(self, attrs):
-        print(attrs, self.context)
         if (
             attrs.get("start_date", None) is not None
             and attrs.get("target_date", None) is not None
