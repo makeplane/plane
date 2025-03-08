@@ -1,0 +1,83 @@
+import { Extension } from "@tiptap/core";
+import { Fragment, Node } from "@tiptap/pm/model";
+import { Plugin, PluginKey } from "@tiptap/pm/state";
+
+export const MarkdownClipboard = Extension.create({
+  name: "markdownClipboard",
+
+  addOptions() {
+    return {
+      transformPastedText: false,
+      transformCopiedText: true,
+    };
+  },
+
+  addProseMirrorPlugins() {
+    return [
+      new Plugin({
+        key: new PluginKey("markdownClipboard"),
+        props: {
+          clipboardTextSerializer: (slice) => {
+            const markdownSerializer = this.editor.storage.markdown.serializer;
+            const isTableRow = slice.content.firstChild?.type?.name === 'tableRow';
+            const nodeSelect = slice.openStart === 0 && slice.openEnd === 0;
+
+            if (nodeSelect) {
+              return markdownSerializer.serialize(slice.content);
+            }
+
+            const processTableContent = (tableNode: Node | Fragment) => {
+              let result = '';
+              tableNode.content?.forEach?.((tableRowNode: Node | Fragment) => {
+                tableRowNode.content?.forEach?.((cell: Node) => {
+                  const cellContent = cell.content ? markdownSerializer.serialize(cell.content) : '';
+                  result += cellContent + '\n';
+                });
+              });
+              return result;
+            };
+
+            if (isTableRow) {
+              const rowsCount = slice.content?.childCount || 0
+              const cellsCount = slice.content?.firstChild?.content?.childCount || 0;
+              if (rowsCount === 1 || cellsCount === 1) {
+                return processTableContent(slice.content)
+              } else {
+                return markdownSerializer.serialize(slice.content);
+              }
+            }
+
+            const traverseToParentOfLeaf = (node: Node | null, parent: Fragment | Node, depth: number): Node | Fragment => {
+              let currentNode = node;
+              let currentParent = parent;
+              let currentDepth = depth;
+
+              while (currentNode && currentDepth > 1 && currentNode.content?.firstChild) {
+                if (currentNode.content?.childCount > 1) {
+                  if (currentNode.content.firstChild?.type?.name === 'listItem') {
+                    return currentParent;
+                  } else {
+                    return currentNode.content;
+                  }
+                }
+
+                currentParent = currentNode;
+                currentNode = currentNode.content?.firstChild || null;
+                currentDepth--;
+              }
+
+              return currentParent;
+            };
+
+            if (slice.content.childCount > 1) {
+              return markdownSerializer.serialize(slice.content)
+            } else {
+              const targetNode = traverseToParentOfLeaf(slice.content.firstChild, slice.content, slice.openStart);
+              return markdownSerializer.serialize(targetNode);
+            }
+          },
+        },
+      }),
+    ];
+  },
+});
