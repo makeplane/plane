@@ -1,3 +1,9 @@
+export type TChartLegend = {
+  align: "left" | "center" | "right";
+  verticalAlign: "top" | "middle" | "bottom";
+  layout: "horizontal" | "vertical";
+};
+
 export type TChartMargin = {
   top?: number;
   right?: number;
@@ -25,12 +31,7 @@ type TChartProps<K extends string, T extends string> = {
     strokeColor?: string;
   };
   className?: string;
-  legend?: {
-    align: "left" | "center" | "right";
-    verticalAlign: "top" | "middle" | "bottom";
-    layout: "horizontal" | "vertical";
-    iconSize?: number;
-  };
+  legend?: TChartLegend;
   margin?: TChartMargin;
   tickCount?: {
     x?: number;
@@ -46,6 +47,8 @@ export type TBarItem<T extends string> = {
   textClassName: string;
   showPercentage?: boolean;
   stackId: string;
+  showTopBorderRadius?: (barKey: string, payload: any) => boolean;
+  showBottomBorderRadius?: (barKey: string, payload: any) => boolean;
 };
 
 export type TBarChartProps<K extends string, T extends string> = TChartProps<K, T> & {

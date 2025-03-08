@@ -31,6 +31,9 @@ export const TreeMapChart = React.memo((props: TreeMapChartProps) => {
                 fill: "currentColor",
                 className: "text-custom-background-90/80 cursor-pointer",
               }}
+              wrapperStyle={{
+                pointerEvents: "auto",
+              }}
             />
           )}
         </Treemap>

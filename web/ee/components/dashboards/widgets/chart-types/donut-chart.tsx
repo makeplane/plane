@@ -26,14 +26,14 @@ export const parseDonutChartData = (
     const pending = totalCount - completed;
     updatedData = [
       {
-        key: "completed",
-        name: "Completed",
-        count: completed,
-      } as TDashboardWidgetDatum,
-      {
         key: "pending",
         name: "Pending",
         count: pending,
+      } as TDashboardWidgetDatum,
+      {
+        key: "completed",
+        name: "Completed",
+        count: completed,
       } as TDashboardWidgetDatum,
     ];
   }
@@ -78,19 +78,19 @@ export const DashboardDonutChartWidget: React.FC<TWidgetComponentProps> = observ
         {
           key: "pending",
           className: "stroke-transparent",
-          fill: widgetConfig?.completed_color ?? DEFAULT_WIDGET_COLOR,
+          fill: "rgba(var(--color-background-80))",
         },
         {
           key: "completed",
           className: "stroke-transparent",
-          fill: resolvedTheme === "dark" ? "#4e4e4e" : "#EDEEF3",
+          fill: widgetConfig?.completed_color ?? DEFAULT_WIDGET_COLOR,
         },
       ];
     } else {
       parsedCells = [];
     }
     return parsedCells;
-  }, [baseColors, chart_model, donutParsedData, resolvedTheme, widgetConfig]);
+  }, [baseColors, chart_model, donutParsedData, widgetConfig]);
 
   if (!widget) return null;
 
@@ -125,7 +125,6 @@ export const DashboardDonutChartWidget: React.FC<TWidgetComponentProps> = observ
               align: legendPosition === "right" ? "right" : "center",
               verticalAlign: legendPosition === "right" ? "middle" : "bottom",
               layout: legendPosition === "right" ? "vertical" : "horizontal",
-              iconSize: 8,
             }
           : undefined
       }

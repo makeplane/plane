@@ -29,11 +29,12 @@ export const CustomTooltip = React.memo((props: Props) => {
       </p>
       {filteredPayload.map((item) => {
         if (!item.dataKey) return null;
+
         return (
           <div key={item?.dataKey} className="flex items-center gap-2 text-xs">
             {itemDotColors[item?.dataKey] && (
               <div
-                className="size-2 rounded-full"
+                className="flex-shrink-0 size-2 rounded-sm"
                 style={{
                   backgroundColor: itemDotColors[item?.dataKey],
                 }}

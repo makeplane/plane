@@ -20,7 +20,7 @@ export const CustomPieChartTooltip = React.memo((props: Props) => {
       {payload?.map((item) => (
         <div key={item?.dataKey} className="flex items-center gap-2 text-xs capitalize">
           <div
-            className="size-2 rounded-full"
+            className="flex-shrink-0 size-2 rounded-sm"
             style={{
               backgroundColor: dotColor,
             }}

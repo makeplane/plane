@@ -2,13 +2,23 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { LineChart as CoreLineChart, Legend, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  CartesianGrid,
+  LineChart as CoreLineChart,
+  Legend,
+  Line,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 // plane imports
-import { AXIS_LINE_CLASSNAME, AXIS_LABEL_CLASSNAME, TICK_LINE_CLASSNAME } from "@plane/constants";
+import { AXIS_LABEL_CLASSNAME } from "@plane/constants";
 import { TLineChartProps } from "@plane/types";
 // local components
-import { CustomXAxisTick, CustomYAxisTick } from "../tick";
-import { CustomTooltip } from "../tooltip";
+import { getLegendProps } from "../components/legend";
+import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
+import { CustomTooltip } from "../components/tooltip";
 
 export const LineChart = React.memo(<K extends string, T extends string>(props: TLineChartProps<K, T>) => {
   const {
@@ -32,8 +42,6 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
     [lines]
   );
   const itemDotColors = useMemo(() => lines.reduce((acc, line) => ({ ...acc, [line.key]: line.stroke }), {}), [lines]);
-  const yAxisStrokeColor = yAxis.strokeColor ?? "rgba(var(--color-border-400))";
-  const xAxisStrokeColor = xAxis.strokeColor ?? "rgba(var(--color-border-400))";
 
   const renderLines = useMemo(
     () =>
@@ -64,17 +72,12 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
             left: margin?.left === undefined ? 20 : margin.left,
           }}
         >
+          <CartesianGrid stroke="rgba(var(--color-border-100), 0.8)" vertical={false} />
           <XAxis
             dataKey={xAxis.key}
             tick={(props) => <CustomXAxisTick {...props} />}
-            tickLine={{
-              stroke: xAxisStrokeColor,
-              className: TICK_LINE_CLASSNAME,
-            }}
-            axisLine={{
-              stroke: xAxisStrokeColor,
-              className: AXIS_LINE_CLASSNAME,
-            }}
+            tickLine={false}
+            axisLine={false}
             label={
               xAxis.label && {
                 value: xAxis.label,
@@ -86,14 +89,8 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
           />
           <YAxis
             domain={yAxis.domain}
-            tickLine={{
-              stroke: yAxisStrokeColor,
-              className: TICK_LINE_CLASSNAME,
-            }}
-            axisLine={{
-              stroke: yAxisStrokeColor,
-              className: AXIS_LINE_CLASSNAME,
-            }}
+            tickLine={false}
+            axisLine={false}
             label={
               yAxis.label && {
                 value: yAxis.label,
@@ -109,35 +106,18 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
             allowDecimals={!!yAxis.allowDecimals}
           />
           {legend && (
-            <Legend
-              align={legend.align}
-              verticalAlign={legend.verticalAlign}
-              layout={legend.layout}
-              iconSize={legend.iconSize ?? 8}
-              iconType="circle"
-              formatter={(value) => itemLabels[value]}
-              wrapperStyle={{
-                fontSize: "12px",
-                lineHeight: "26px",
-                fontWeight: 500,
-                overflow: "scroll",
-                ...(legend.layout === "vertical"
-                  ? {
-                      maxWidth: "20%",
-                      maxHeight: "90%",
-                    }
-                  : {
-                      left: "50%",
-                      transform: "translateX(-50%)",
-                      width: "95%",
-                      maxHeight: "20%",
-                    }),
-              }}
-            />
+            // @ts-expect-error recharts types are not up to date
+            <Legend formatter={(value) => itemLabels[value]} {...getLegendProps(legend)} />
           )}
           {showTooltip && (
             <Tooltip
-              cursor={{ fill: "currentColor", className: "text-custom-background-90/80 cursor-pointer" }}
+              cursor={{
+                fill: "currentColor",
+                className: "text-custom-background-90/80 cursor-pointer",
+              }}
+              wrapperStyle={{
+                pointerEvents: "auto",
+              }}
               content={({ active, label, payload }) => (
                 <CustomTooltip
                   active={active}

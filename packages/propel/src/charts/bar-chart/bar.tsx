@@ -15,10 +15,24 @@ const calculatePercentage = <K extends string, T extends string>(
 };
 
 const MIN_BAR_HEIGHT_FOR_INTERNAL_TEXT = 14; // Minimum height needed to show text inside
-const BAR_BORDER_RADIUS = 2; // Border radius for each bar
+const BAR_TOP_BORDER_RADIUS = 4; // Border radius for each bar
+const BAR_BOTTOM_BORDER_RADIUS = 4; // Border radius for each bar
 
 export const CustomBar = React.memo((props: any) => {
-  const { fill, x, y, width, height, dataKey, stackKeys, payload, textClassName, showPercentage } = props;
+  const {
+    fill,
+    x,
+    y,
+    width,
+    height,
+    dataKey,
+    stackKeys,
+    payload,
+    textClassName,
+    showPercentage,
+    showTopBorderRadius,
+    showBottomBorderRadius,
+  } = props;
   // Calculate text position
   const TEXT_PADDING_Y = Math.min(6, Math.abs(MIN_BAR_HEIGHT_FOR_INTERNAL_TEXT - height / 2));
   const textY = y + height - TEXT_PADDING_Y; // Position inside bar if tall enough
@@ -34,25 +48,58 @@ export const CustomBar = React.memo((props: any) => {
     // bar percentage is a number
     !Number.isNaN(currentBarPercentage);
 
+  let pathData;
+  if (showTopBorderRadius && showBottomBorderRadius) {
+    // Both top and bottom rounded
+    pathData = `
+        M${x},${y + BAR_TOP_BORDER_RADIUS}
+        Q${x},${y} ${x + BAR_TOP_BORDER_RADIUS},${y}
+        L${x + width - BAR_TOP_BORDER_RADIUS},${y}
+        Q${x + width},${y} ${x + width},${y + BAR_TOP_BORDER_RADIUS}
+        L${x + width},${y + height - BAR_BOTTOM_BORDER_RADIUS}
+        Q${x + width},${y + height} ${x + width - BAR_BOTTOM_BORDER_RADIUS},${y + height}
+        L${x + BAR_BOTTOM_BORDER_RADIUS},${y + height}
+        Q${x},${y + height} ${x},${y + height - BAR_BOTTOM_BORDER_RADIUS}
+        Z
+      `;
+  } else if (showTopBorderRadius) {
+    // Only top rounded
+    pathData = `
+        M${x},${y + BAR_TOP_BORDER_RADIUS}
+        Q${x},${y} ${x + BAR_TOP_BORDER_RADIUS},${y}
+        L${x + width - BAR_TOP_BORDER_RADIUS},${y}
+        Q${x + width},${y} ${x + width},${y + BAR_TOP_BORDER_RADIUS}
+        L${x + width},${y + height}
+        L${x},${y + height}
+        Z
+      `;
+  } else if (showBottomBorderRadius) {
+    // Only bottom rounded
+    pathData = `
+        M${x},${y}
+        L${x + width},${y}
+        L${x + width},${y + height - BAR_BOTTOM_BORDER_RADIUS}
+        Q${x + width},${y + height} ${x + width - BAR_BOTTOM_BORDER_RADIUS},${y + height}
+        L${x + BAR_BOTTOM_BORDER_RADIUS},${y + height}
+        Q${x},${y + height} ${x},${y + height - BAR_BOTTOM_BORDER_RADIUS}
+        Z
+      `;
+  } else {
+    // No rounded corners
+    pathData = `
+        M${x},${y}
+        L${x + width},${y}
+        L${x + width},${y + height}
+        L${x},${y + height}
+        Z
+      `;
+  }
+
   if (!height) return null;
+
   return (
     <g>
-      <path
-        d={`
-          M${x + BAR_BORDER_RADIUS},${y + height}
-          L${x + BAR_BORDER_RADIUS},${y}
-          Q${x},${y} ${x},${y + BAR_BORDER_RADIUS}
-          L${x},${y + height - BAR_BORDER_RADIUS}
-          Q${x},${y + height} ${x + BAR_BORDER_RADIUS},${y + height}
-          L${x + width - BAR_BORDER_RADIUS},${y + height}
-          Q${x + width},${y + height} ${x + width},${y + height - BAR_BORDER_RADIUS}
-          L${x + width},${y + BAR_BORDER_RADIUS}
-          Q${x + width},${y} ${x + width - BAR_BORDER_RADIUS},${y}
-          L${x + BAR_BORDER_RADIUS},${y}
-        `}
-        className="transition-colors duration-200"
-        fill={fill}
-      />
+      <path d={pathData} className="transition-colors duration-200" fill={fill} />
       {showText && (
         <text
           x={x + width / 2}

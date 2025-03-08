@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useTheme } from "next-themes";
 // plane imports
 import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR, EWidgetChartModels } from "@plane/constants";
-import { TBarChartWidgetConfig, TBarItem } from "@plane/types";
+import { TBarChartWidgetConfig, TBarItem, TDashboardWidgetDatum } from "@plane/types";
 // local imports
 import { generateExtendedColors, TWidgetComponentProps } from ".";
 
@@ -41,9 +41,30 @@ export const DashboardBarChartWidget: React.FC<TWidgetComponentProps> = observer
           fill: widgetConfig?.bar_color ?? DEFAULT_WIDGET_COLOR,
           textClassName: "",
           showPercentage: false,
+          showTopBorderRadius: () => true,
+          showBottomBorderRadius: () => true,
         },
       ];
     } else if (chart_model === EWidgetChartModels.STACKED && parsedData.schema) {
+      // get the extreme bars of a particular group, excluding the zero value bars
+      const parsedExtremes: {
+        [key: string]: {
+          top: string | null;
+          bottom: string | null;
+        };
+      } = {};
+      parsedData.data.forEach((datum) => {
+        let top = null;
+        let bottom = null;
+        for (let i = 0; i < schemaKeys.length; i++) {
+          const key = schemaKeys[i];
+          if (datum[key] === 0) continue;
+          if (!bottom) bottom = key;
+          top = key;
+        }
+        parsedExtremes[datum.key] = { top, bottom };
+      });
+
       parsedBars = schemaKeys.map((key, index) => ({
         key: key,
         label: parsedData.schema[key],
@@ -51,6 +72,8 @@ export const DashboardBarChartWidget: React.FC<TWidgetComponentProps> = observer
         fill: extendedColors[index],
         textClassName: "",
         showPercentage: false,
+        showTopBorderRadius: (value, payload: TDashboardWidgetDatum) => parsedExtremes[payload.key].top === value,
+        showBottomBorderRadius: (value, payload: TDashboardWidgetDatum) => parsedExtremes[payload.key].bottom === value,
       }));
     } else if (chart_model === EWidgetChartModels.GROUPED && parsedData.schema) {
       parsedBars = schemaKeys.map((key, index) => ({
@@ -60,12 +83,14 @@ export const DashboardBarChartWidget: React.FC<TWidgetComponentProps> = observer
         fill: extendedColors[index],
         textClassName: "",
         showPercentage: false,
+        showTopBorderRadius: () => true,
+        showBottomBorderRadius: () => true,
       }));
     } else {
       parsedBars = [];
     }
     return parsedBars;
-  }, [baseColors, chart_model, parsedData.schema, widgetConfig]);
+  }, [baseColors, chart_model, parsedData, widgetConfig]);
 
   if (!widget) return null;
 
@@ -74,6 +99,7 @@ export const DashboardBarChartWidget: React.FC<TWidgetComponentProps> = observer
       className="size-full"
       data={parsedData.data}
       bars={bars}
+      barSize={20}
       margin={{
         top: 20,
         right: 16,
@@ -92,7 +118,6 @@ export const DashboardBarChartWidget: React.FC<TWidgetComponentProps> = observer
               align: "center",
               verticalAlign: "bottom",
               layout: "horizontal",
-              iconSize: 8,
             }
           : undefined
       }

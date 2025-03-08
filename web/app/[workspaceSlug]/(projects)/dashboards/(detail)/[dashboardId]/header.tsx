@@ -71,7 +71,7 @@ export const WorkspaceDashboardDetailsHeader = observer(() => {
                   label={
                     <div className="flex items-center gap-2 truncate">
                       {dashboardDetails && !isViewModeEnabled && (
-                        <span className="flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 rounded p-1">
+                        <span className="flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 rounded px-1 py-0.5">
                           {t("dashboards.common.editing")}
                         </span>
                       )}

@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Cell, PieChart as CorePieChart, Label, Legend, Pie, ResponsiveContainer, Tooltip } from "recharts";
 // plane imports
 import { TPieChartProps } from "@plane/types";
 // local components
+import { getLegendProps } from "../components/legend";
+import { CustomActiveShape } from "./active-shape";
 import { CustomPieChartTooltip } from "./tooltip";
 
 export const PieChart = React.memo(<K extends string, T extends string>(props: TPieChartProps<K, T>) => {
@@ -22,10 +24,12 @@ export const PieChart = React.memo(<K extends string, T extends string>(props: T
     customLabel,
     centerLabel,
   } = props;
+  // states
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const renderCells = useMemo(
     () =>
-      cells.map((cell) => (
+      cells.map((cell, index) => (
         <Cell
           key={cell.key}
           className={cell.className}
@@ -33,6 +37,8 @@ export const PieChart = React.memo(<K extends string, T extends string>(props: T
           style={{
             outline: "none",
           }}
+          onMouseEnter={() => setActiveIndex(index)}
+          onMouseLeave={() => setActiveIndex(null)}
         />
       )),
     [cells]
@@ -51,34 +57,32 @@ export const PieChart = React.memo(<K extends string, T extends string>(props: T
           }}
         >
           <Pie
+            activeIndex={activeIndex === null ? undefined : activeIndex}
+            onMouseLeave={() => setActiveIndex(null)}
             data={data}
             dataKey={dataKey}
             cx="50%"
             cy="50%"
+            activeShape={<CustomActiveShape />}
             innerRadius={innerRadius}
             outerRadius={outerRadius}
+            labelLine={false}
             label={
               showLabel
-                ? (payload) => {
-                    const { cx, cy, fill, innerRadius, midAngle, outerRadius, value } = payload;
-                    const RADIAN = Math.PI / 180;
-                    const radius = 25 + innerRadius + (outerRadius - innerRadius);
-                    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-                    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-                    return (
-                      <text
-                        className="text-xs font-medium"
-                        x={x}
-                        y={y}
-                        fill={fill}
-                        textAnchor={x > cx ? "start" : "end"}
-                        dominantBaseline="central"
-                      >
-                        {customLabel?.(value) ?? value}
-                      </text>
-                    );
-                  }
+                ? ({ payload, ...props }) => (
+                    <text
+                      className="text-sm font-medium"
+                      cx={props.cx}
+                      cy={props.cy}
+                      x={props.x}
+                      y={props.y}
+                      textAnchor={props.textAnchor}
+                      dominantBaseline={props.dominantBaseline}
+                      fill="rgba(var(--color-text-200))"
+                    >
+                      {customLabel?.(payload.count) ?? payload.count}
+                    </text>
+                  )
                 : undefined
             }
           >
@@ -93,35 +97,17 @@ export const PieChart = React.memo(<K extends string, T extends string>(props: T
               />
             )}
           </Pie>
-          {legend && (
-            <Legend
-              align={legend.align}
-              verticalAlign={legend.verticalAlign}
-              layout={legend.layout}
-              iconSize={legend.iconSize ?? 8}
-              iconType="circle"
-              wrapperStyle={{
-                fontSize: "12px",
-                lineHeight: "26px",
-                fontWeight: 500,
-                overflow: "scroll",
-                ...(legend.layout === "vertical"
-                  ? {
-                      maxWidth: "20%",
-                      maxHeight: "90%",
-                    }
-                  : {
-                      left: "50%",
-                      transform: "translateX(-50%)",
-                      width: "95%",
-                      maxHeight: "20%",
-                    }),
-              }}
-            />
-          )}
+          {/* @ts-expect-error recharts types are not up to date */}
+          {legend && <Legend {...getLegendProps(legend)} />}
           {showTooltip && (
             <Tooltip
-              cursor={{ fill: "currentColor", className: "text-custom-background-90/80 cursor-pointer" }}
+              cursor={{
+                fill: "currentColor",
+                className: "text-custom-background-90/80 cursor-pointer",
+              }}
+              wrapperStyle={{
+                pointerEvents: "auto",
+              }}
               content={({ active, payload }) => {
                 if (!active || !payload || !payload.length) return null;
                 const cellData = cells.find((c) => c.key === payload[0].payload.key);

@@ -85,7 +85,6 @@ export const DashboardLineChartWidget: React.FC<TWidgetComponentProps> = observe
               align: "center",
               verticalAlign: "bottom",
               layout: "horizontal",
-              iconSize: 8,
             }
           : undefined
       }

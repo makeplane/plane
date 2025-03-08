@@ -122,7 +122,6 @@ export const DashboardPieChartWidget: React.FC<TWidgetComponentProps> = observer
               align: legendPosition === "right" ? "right" : "center",
               verticalAlign: legendPosition === "right" ? "middle" : "bottom",
               layout: legendPosition === "right" ? "vertical" : "horizontal",
-              iconSize: 8,
             }
           : undefined
       }
