@@ -1,9 +1,9 @@
 import React, { FC } from "react";
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
 
-export type TIssueAdditionalProperties = {
+export type TWorkItemLayoutAdditionalProperties = {
   displayProperties: IIssueDisplayProperties;
   issue: TIssue;
 };
 
-export const IssueAdditionalProperties: FC<TIssueAdditionalProperties> = (props) => <></>;
+export const WorkItemLayoutAdditionalProperties: FC<TWorkItemLayoutAdditionalProperties> = (props) => <></>;
