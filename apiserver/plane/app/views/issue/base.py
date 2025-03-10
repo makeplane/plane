@@ -15,6 +15,7 @@ from django.db.models import (
     UUIDField,
     Value,
     Subquery,
+    Count
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -45,7 +46,9 @@ from plane.db.models import (
     ProjectMember,
     CycleIssue,
     UserRecentVisit,
+    Cycle
 )
+from plane.ee.models import EntityIssueStateActivity, Customer
 from plane.utils.grouper import (
     issue_group_values,
     issue_on_results,
@@ -60,6 +63,7 @@ from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.global_paginator import paginate
 from plane.bgtasks.webhook_task import model_activity
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
+from plane.ee.utils.workflow import WorkflowStateManager
 
 
 class IssueListEndpoint(BaseAPIView):
@@ -169,6 +173,7 @@ class IssueListEndpoint(BaseAPIView):
                 "is_draft",
                 "archived_at",
                 "deleted_at",
+                "type_id",
             )
             datetime_fields = ["created_at", "updated_at"]
             issues = user_timezone_converter(
@@ -364,6 +369,17 @@ class IssueViewSet(BaseViewSet):
                 "default_assignee_id": project.default_assignee_id,
             },
         )
+        if request.data.get("state_id"):
+            workflow_state_manager = WorkflowStateManager(
+                project_id=project_id, slug=slug
+            )
+            if workflow_state_manager._validate_issue_creation(
+                state_id=request.data.get("state_id")
+            ):
+                return Response(
+                    {"error": "You cannot create a work item in this state"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
         if serializer.is_valid():
             serializer.save()
@@ -413,6 +429,7 @@ class IssueViewSet(BaseViewSet):
                     "is_draft",
                     "archived_at",
                     "deleted_at",
+                    "type_id",
                 )
                 .first()
             )
@@ -449,6 +466,7 @@ class IssueViewSet(BaseViewSet):
         issue = (
             Issue.objects.filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(Q(type__is_epic=False) | Q(type__isnull=True))
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(
@@ -633,6 +651,26 @@ class IssueViewSet(BaseViewSet):
         current_instance = json.dumps(
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
+        estimate_type = Project.objects.filter(
+            workspace__slug=slug,
+            pk=project_id,
+            estimate__isnull=False,
+            estimate__type="points",
+        ).exists()
+
+        # Check if state is updated then is the transition allowed
+        workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
+        if request.data.get(
+            "state_id"
+        ) and not workflow_state_manager.validate_state_transition(
+            issue=issue,
+            new_state_id=request.data.get("state_id"),
+            user_id=request.user.id,
+        ):
+            return Response(
+                {"error": "State transition is not allowed"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         serializer = IssueCreateSerializer(
@@ -651,6 +689,30 @@ class IssueViewSet(BaseViewSet):
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
             )
+
+            if issue.cycle_id and (
+                request.data.get("state_id") or request.data.get("estimate_point")
+            ):
+                cycle = Cycle.objects.get(pk=issue.cycle_id)
+                if cycle.version == 2:
+                    EntityIssueStateActivity.objects.create(
+                        cycle_id=issue.cycle_id,
+                        state_id=issue.state_id,
+                        issue_id=issue.id,
+                        state_group=issue.state.group,
+                        action="UPDATED",
+                        entity_type="CYCLE",
+                        estimate_point_id=issue.estimate_point_id,
+                        estimate_value=(
+                            issue.estimate_point.value
+                            if estimate_type and issue.estimate_point
+                            else None
+                        ),
+                        workspace_id=issue.workspace_id,
+                        created_by_id=request.user.id,
+                        updated_by_id=request.user.id,
+                    )
+
             model_activity.delay(
                 model_name="issue",
                 model_id=str(serializer.data.get("id", None)),
@@ -671,7 +733,12 @@ class IssueViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN], creator=True, model=Issue)
     def destroy(self, request, slug, project_id, pk=None):
-        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+        issue = Issue.objects.get(
+            Q(type__is_epic=False) | Q(type__isnull=True),
+            workspace__slug=slug,
+            project_id=project_id,
+            pk=pk,
+        )
 
         issue.delete()
         # delete the issue from recent visits
@@ -849,6 +916,7 @@ class IssuePaginatedViewSet(BaseViewSet):
             "link_count",
             "attachment_count",
             "sub_issues_count",
+            "type_id",
         ]
 
         if str(is_description_required).lower() == "true":
@@ -1136,18 +1204,6 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
             identifier__iexact=project_identifier, workspace__slug=slug
         )
 
-        # Check if the user is a member of the project
-        if not ProjectMember.objects.filter(
-            workspace__slug=slug,
-            project_id=project.id,
-            member=request.user,
-            is_active=True,
-        ).exists():
-            return Response(
-                {"error": "You are not allowed to view this issue"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         # Fetch the issue
         issue = (
             Issue.issue_objects.filter(project_id=project.id)
@@ -1160,6 +1216,9 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
                         :1
                     ]
                 )
+            )
+            .prefetch_related(
+                Prefetch("customer_request_issues__customer")
             )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
@@ -1249,6 +1308,21 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
             return Response(
                 {"error": "The required object does not exist."},
                 status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Check if the user is a member of the project
+        if not ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project.id,
+            member=request.user,
+            is_active=True,
+        ).exists():
+            return Response(
+                {
+                    "error": "You are not allowed to view this issue",
+                    "type": project.network,
+                },
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         """

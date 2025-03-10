@@ -14,3 +14,10 @@ export type TEpicAnalytics = {
   cancelled_issues: number;
   overdue_issues: number;
 };
+
+export type TEpicStats = {
+  epic_id: string;
+  total_issues: number;
+  completed_issues: number;
+  cancelled_issues: number;
+};

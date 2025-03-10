@@ -1,1 +1,6 @@
-export * from "ce/helpers/workspace.helper";
+export const shouldRenderSettingLink = (settingKey: string) => {
+  switch (settingKey) {
+    default:
+      return true;
+  }
+};
