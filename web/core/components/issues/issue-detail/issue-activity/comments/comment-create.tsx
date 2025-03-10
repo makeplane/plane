@@ -88,7 +88,7 @@ export const IssueCommentCreate: FC<TIssueCommentCreate> = (props) => {
         "-bottom-5": !peekIssue,
       })}
       onKeyDown={(e) => {
-        if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !isEmpty && !isSubmitting)
+        if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !isEmpty && !isSubmitting && editorRef.current?.isEditorReadyToDiscard())
           handleSubmit(onSubmit)(e);
       }}
     >
