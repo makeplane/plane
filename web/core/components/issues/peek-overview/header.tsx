@@ -37,7 +37,7 @@ const PEEK_OPTIONS: { key: TPeekModes; icon: any; i18n_title: string }[] = [
   {
     key: "side-peek",
     icon: SidePanelIcon,
-    i18n_title: "common.side_peek ",
+    i18n_title: "common.side_peek",
   },
   {
     key: "modal",
