@@ -2,13 +2,23 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { BarChart as CoreBarChart, Bar, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  BarChart as CoreBarChart,
+  Bar,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+  Legend,
+  CartesianGrid,
+} from "recharts";
 // plane imports
-import { AXIS_LINE_CLASSNAME, LABEL_CLASSNAME } from "@plane/constants";
+import { AXIS_LABEL_CLASSNAME } from "@plane/constants";
 import { TBarChartProps } from "@plane/types";
 // local components
-import { CustomXAxisTick, CustomYAxisTick } from "../tick";
-import { CustomTooltip } from "../tooltip";
+import { getLegendProps } from "../components/legend";
+import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
+import { CustomTooltip } from "../components/tooltip";
 import { CustomBar } from "./bar";
 
 export const BarChart = React.memo(<K extends string, T extends string>(props: TBarChartProps<K, T>) => {
@@ -18,7 +28,9 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
     xAxis,
     yAxis,
     barSize = 40,
-    className = "w-full h-96",
+    className,
+    legend,
+    margin,
     tickCount = {
       x: undefined,
       y: 10,
@@ -27,10 +39,11 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
   } = props;
   // derived values
   const stackKeys = useMemo(() => bars.map((bar) => bar.key), [bars]);
-  const stackDotClassNames = useMemo(
-    () => bars.reduce((acc, bar) => ({ ...acc, [bar.key]: bar.dotClassName }), {}),
+  const stackLabels: Record<string, string> = useMemo(
+    () => bars.reduce((acc, bar) => ({ ...acc, [bar.key]: bar.label }), {}),
     [bars]
   );
+  const stackDotColors = useMemo(() => bars.reduce((acc, bar) => ({ ...acc, [bar.key]: bar.fill }), {}), [bars]);
 
   const renderBars = useMemo(
     () =>
@@ -39,15 +52,22 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
           key={bar.key}
           dataKey={bar.key}
           stackId={bar.stackId}
-          fill={bar.fillClassName}
-          shape={(shapeProps: any) => (
-            <CustomBar
-              {...shapeProps}
-              stackKeys={stackKeys}
-              textClassName={bar.textClassName}
-              showPercentage={bar.showPercentage}
-            />
-          )}
+          fill={bar.fill}
+          shape={(shapeProps: any) => {
+            const showTopBorderRadius = bar.showTopBorderRadius?.(shapeProps.dataKey, shapeProps.payload);
+            const showBottomBorderRadius = bar.showBottomBorderRadius?.(shapeProps.dataKey, shapeProps.payload);
+
+            return (
+              <CustomBar
+                {...shapeProps}
+                stackKeys={stackKeys}
+                textClassName={bar.textClassName}
+                showPercentage={bar.showPercentage}
+                showTopBorderRadius={!!showTopBorderRadius}
+                showBottomBorderRadius={!!showBottomBorderRadius}
+              />
+            );
+          }}
         />
       )),
     [stackKeys, bars]
@@ -58,60 +78,65 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
       <ResponsiveContainer width="100%" height="100%">
         <CoreBarChart
           data={data}
-          margin={{ top: 10, right: 10, left: 10, bottom: 40 }}
+          margin={{
+            top: margin?.top === undefined ? 5 : margin.top,
+            right: margin?.right === undefined ? 30 : margin.right,
+            bottom: margin?.bottom === undefined ? 5 : margin.bottom,
+            left: margin?.left === undefined ? 20 : margin.left,
+          }}
           barSize={barSize}
           className="recharts-wrapper"
         >
+          <CartesianGrid stroke="rgba(var(--color-border-100), 0.8)" vertical={false} />
           <XAxis
             dataKey={xAxis.key}
             tick={(props) => <CustomXAxisTick {...props} />}
-            tickLine={{
-              stroke: "currentColor",
-              className: AXIS_LINE_CLASSNAME,
-            }}
-            axisLine={{
-              stroke: "currentColor",
-              className: AXIS_LINE_CLASSNAME,
-            }}
+            tickLine={false}
+            axisLine={false}
             label={{
               value: xAxis.label,
               dy: 28,
-              className: LABEL_CLASSNAME,
+              className: AXIS_LABEL_CLASSNAME,
             }}
             tickCount={tickCount.x}
           />
           <YAxis
             domain={yAxis.domain}
-            tickLine={{
-              stroke: "currentColor",
-              className: AXIS_LINE_CLASSNAME,
-            }}
-            axisLine={{
-              stroke: "currentColor",
-              className: AXIS_LINE_CLASSNAME,
-            }}
+            tickLine={false}
+            axisLine={false}
             label={{
               value: yAxis.label,
               angle: -90,
               position: "bottom",
               offset: -24,
               dx: -16,
-              className: LABEL_CLASSNAME,
+              className: AXIS_LABEL_CLASSNAME,
             }}
             tick={(props) => <CustomYAxisTick {...props} />}
             tickCount={tickCount.y}
             allowDecimals={!!yAxis.allowDecimals}
           />
+          {legend && (
+            // @ts-expect-error recharts types are not up to date
+            <Legend formatter={(value) => stackLabels[value]} {...getLegendProps(legend)} />
+          )}
           {showTooltip && (
             <Tooltip
-              cursor={{ fill: "currentColor", className: "text-custom-background-90/80 cursor-pointer" }}
+              cursor={{
+                fill: "currentColor",
+                className: "text-custom-background-90/80 cursor-pointer",
+              }}
+              wrapperStyle={{
+                pointerEvents: "auto",
+              }}
               content={({ active, label, payload }) => (
                 <CustomTooltip
                   active={active}
                   label={label}
                   payload={payload}
                   itemKeys={stackKeys}
-                  itemDotClassNames={stackDotClassNames}
+                  itemLabels={stackLabels}
+                  itemDotColors={stackDotColors}
                 />
               )}
             />

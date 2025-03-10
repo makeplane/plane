@@ -164,6 +164,10 @@ export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = 
   "issue_type",
 ];
 
+export const EPICS_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = ISSUE_DISPLAY_PROPERTIES_KEYS.filter(
+  (key) => !["cycle", "modules", "issue_type"].includes(key)
+);
+
 export const ISSUE_DISPLAY_PROPERTIES: {
   key: keyof IIssueDisplayProperties;
   titleTranslationKey: string;

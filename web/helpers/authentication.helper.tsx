@@ -92,6 +92,10 @@ export enum EAuthenticationErrorCodes {
   ADMIN_USER_DEACTIVATED = "5190",
   // Rate limit
   RATE_LIMIT_EXCEEDED = "5900",
+  // mobile specific codes
+  USER_NOT_ONBOARDED = "6000",
+  TOKEN_NOT_SET = "6005",
+  MOBILE_SIGNUP_DISABLED = "6010",
 }
 
 export type TAuthErrorInfo = {
@@ -358,6 +362,20 @@ const errorCodeMessages: {
     title: "",
     message: () => `Rate limit exceeded. Please try again later.`,
   },
+
+  // mobile specific codes
+  [EAuthenticationErrorCodes.USER_NOT_ONBOARDED]: {
+    title: `User not onboarded`,
+    message: () => `User not onboarded. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.TOKEN_NOT_SET]: {
+    title: `Token not set`,
+    message: () => `Token not set. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.MOBILE_SIGNUP_DISABLED]: {
+    title: `Mobile sign up disabled`,
+    message: () => `Mobile sign up disabled. Please contact your administrator.`,
+  },
 };
 
 export const authErrorHandler = (
@@ -415,6 +433,9 @@ export const authErrorHandler = (
     EAuthenticationErrorCodes.ADMIN_USER_DOES_NOT_EXIST,
     EAuthenticationErrorCodes.ADMIN_USER_DEACTIVATED,
     EAuthenticationErrorCodes.RATE_LIMIT_EXCEEDED,
+    EAuthenticationErrorCodes.USER_NOT_ONBOARDED,
+    EAuthenticationErrorCodes.TOKEN_NOT_SET,
+    EAuthenticationErrorCodes.MOBILE_SIGNUP_DISABLED,
   ];
 
   if (bannerAlertErrorCodes.includes(errorCode))
