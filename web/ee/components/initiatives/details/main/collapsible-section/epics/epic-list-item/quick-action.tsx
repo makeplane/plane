@@ -44,7 +44,7 @@ export const EpicQuickActions: React.FC<Props> = observer((props: Props) => {
     copyUrlToClipboard(epicLink).then(() =>
       setToast({
         type: TOAST_TYPE.INFO,
-        title: `${"common.link_copied"}!`,
+        title: `${t("common.link_copied")}!`,
         message: t("epics.epic_link_copied_to_clipboard"),
       })
     );
