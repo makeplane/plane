@@ -39,7 +39,7 @@
     "@plane/utils": "*",
     "@popperjs/core": "^2.11.8",
     "@react-pdf/renderer": "^3.4.5",
-    "axios": "^1.7.9",
+    "axios": "^1.8.2",
     "clsx": "^2.0.0",
     "cmdk": "^1.0.0",
     "comlink": "^4.4.1",
