@@ -46,7 +46,6 @@ export const SpreadSheetPropertyIconMap: Record<string, FC<ISvgIcons>> = {
   Signal: Signal,
   CalendarClock: CalendarClock,
   DoubleCircleIcon: DoubleCircleIcon,
-  CalendarDays: CalendarDays,
   Link2: Link2,
   Paperclip: Paperclip,
   LayersIcon: LayersIcon,
