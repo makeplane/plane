@@ -1,6 +1,7 @@
 "use client";
 import React, { FC, useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // plane imports
 import { EIssueServiceType } from "@plane/constants";
 import { TIssue } from "@plane/types";
@@ -10,6 +11,7 @@ import { SubIssuesActionButton } from "@/components/issues";
 import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
 import { useSubIssueOperations } from "@/components/issues/issue-detail-widgets/sub-issues/helper";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
+import { TSubIssueOperations } from "@/components/issues/sub-issues";
 import { IssueList } from "@/components/issues/sub-issues/issues-list";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -17,6 +19,7 @@ import { cn } from "@/helpers/common.helper";
 import { useIssueDetail } from "@/hooks/store";
 // plane web imports
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common";
+import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
 type Props = {
   workspaceSlug: string;
@@ -57,11 +60,17 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
       issue: undefined,
     },
   });
+  // params
+  const { initiativeId } = useParams();
   // store hooks
   const {
     issue: { getIssueById },
+    peekIssue: epicPeekIssue,
   } = useIssueDetail(EIssueServiceType.EPICS);
   const { toggleCreateIssueModal, toggleDeleteIssueModal } = useIssueDetail(EIssueServiceType.EPICS);
+  const {
+    initiative: { fetchInitiativeAnalytics },
+  } = useInitiatives();
 
   // helpers
   const subIssueOperations = useSubIssueOperations(EIssueServiceType.EPICS);
@@ -107,6 +116,28 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
   const shouldRenderUpdateIssueModal = issueCrudState?.update?.toggle && issueCrudState?.update?.issue;
   const hasSubIssues = (issue?.sub_issues_count ?? 0) > 0;
 
+  const fetchInitiativeAnalyticsIfNeeded = async () => {
+    if (initiativeId && epicPeekIssue?.issueId) {
+      await fetchInitiativeAnalytics(workspaceSlug, initiativeId?.toString());
+    }
+  };
+
+  const epicSubIssuesOperation: TSubIssueOperations = {
+    ...subIssueOperations,
+    addSubIssue: async (workspaceSlug, projectId, parentIssueId, issue) => {
+      await subIssueOperations.addSubIssue(workspaceSlug, projectId, parentIssueId, issue);
+      await fetchInitiativeAnalyticsIfNeeded();
+    },
+    updateSubIssue: async (workspaceSlug, projectId, parentIssueId, issueId, issue, prevIssue) => {
+      await subIssueOperations.updateSubIssue(workspaceSlug, projectId, parentIssueId, issueId, issue, prevIssue);
+      await fetchInitiativeAnalyticsIfNeeded();
+    },
+    deleteSubIssue: async (workspaceSlug, projectId, parentIssueId, issueId) => {
+      await subIssueOperations.deleteSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
+      await fetchInitiativeAnalyticsIfNeeded();
+    },
+  };
+
   if (!hasSubIssues) {
     return (
       <SectionEmptyState
@@ -139,7 +170,7 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
         spacingLeft={6}
         disabled={!disabled}
         handleIssueCrudState={handleIssueCrudState}
-        subIssueOperations={subIssueOperations}
+        subIssueOperations={epicSubIssuesOperation}
         issueServiceType={EIssueServiceType.EPICS}
       />
 
