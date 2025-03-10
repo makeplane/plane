@@ -46,8 +46,19 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
           fillOpacity={area.fillOpacity}
           strokeOpacity={area.strokeOpacity}
           stroke={area.strokeColor}
+          strokeWidth={2}
           style={area.style}
-          dot={area.showDot}
+          dot={
+            area.showDot
+              ? {
+                  fill: area.fill,
+                  fillOpacity: 1,
+                }
+              : false
+          }
+          activeDot={{
+            stroke: area.fill,
+          }}
         />
       )),
     [areas]
@@ -85,7 +96,6 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
             bottom: margin?.bottom === undefined ? 5 : margin.bottom,
             left: margin?.left === undefined ? 20 : margin.left,
           }}
-          reverseStackOrder
         >
           <CartesianGrid stroke="rgba(var(--color-border-100), 0.8)" vertical={false} />
           <XAxis
@@ -127,8 +137,8 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
           {showTooltip && (
             <Tooltip
               cursor={{
-                fill: "currentColor",
-                className: "text-custom-background-90/80 cursor-pointer",
+                stroke: "rgba(var(--color-text-300))",
+                strokeDasharray: "4 4",
               }}
               wrapperStyle={{
                 pointerEvents: "auto",

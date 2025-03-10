@@ -79,7 +79,6 @@ export const DashboardPieChartWidget: React.FC<TWidgetComponentProps> = observer
     const extendedColors = generateExtendedColors(baseColors ?? [], pieParsedData.length);
     const parsedCells = pieParsedData.map((datum, index) => ({
       key: datum.key,
-      className: "stroke-transparent",
       fill: extendedColors[index],
     }));
 
@@ -94,7 +93,6 @@ export const DashboardPieChartWidget: React.FC<TWidgetComponentProps> = observer
       if (!parsedCells.find((cell) => cell.key === THIN_PIECES_GROUP_KEY)) {
         parsedCells.push({
           key: THIN_PIECES_GROUP_KEY,
-          className: "stroke-transparent",
           fill: extendedColors[parsedCells.length],
         });
       }

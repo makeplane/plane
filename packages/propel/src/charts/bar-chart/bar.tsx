@@ -48,58 +48,28 @@ export const CustomBar = React.memo((props: any) => {
     // bar percentage is a number
     !Number.isNaN(currentBarPercentage);
 
-  let pathData;
-  if (showTopBorderRadius && showBottomBorderRadius) {
-    // Both top and bottom rounded
-    pathData = `
-        M${x},${y + BAR_TOP_BORDER_RADIUS}
-        Q${x},${y} ${x + BAR_TOP_BORDER_RADIUS},${y}
-        L${x + width - BAR_TOP_BORDER_RADIUS},${y}
-        Q${x + width},${y} ${x + width},${y + BAR_TOP_BORDER_RADIUS}
-        L${x + width},${y + height - BAR_BOTTOM_BORDER_RADIUS}
-        Q${x + width},${y + height} ${x + width - BAR_BOTTOM_BORDER_RADIUS},${y + height}
-        L${x + BAR_BOTTOM_BORDER_RADIUS},${y + height}
-        Q${x},${y + height} ${x},${y + height - BAR_BOTTOM_BORDER_RADIUS}
-        Z
-      `;
-  } else if (showTopBorderRadius) {
-    // Only top rounded
-    pathData = `
-        M${x},${y + BAR_TOP_BORDER_RADIUS}
-        Q${x},${y} ${x + BAR_TOP_BORDER_RADIUS},${y}
-        L${x + width - BAR_TOP_BORDER_RADIUS},${y}
-        Q${x + width},${y} ${x + width},${y + BAR_TOP_BORDER_RADIUS}
-        L${x + width},${y + height}
-        L${x},${y + height}
-        Z
-      `;
-  } else if (showBottomBorderRadius) {
-    // Only bottom rounded
-    pathData = `
-        M${x},${y}
-        L${x + width},${y}
-        L${x + width},${y + height - BAR_BOTTOM_BORDER_RADIUS}
-        Q${x + width},${y + height} ${x + width - BAR_BOTTOM_BORDER_RADIUS},${y + height}
-        L${x + BAR_BOTTOM_BORDER_RADIUS},${y + height}
-        Q${x},${y + height} ${x},${y + height - BAR_BOTTOM_BORDER_RADIUS}
-        Z
-      `;
-  } else {
-    // No rounded corners
-    pathData = `
-        M${x},${y}
-        L${x + width},${y}
-        L${x + width},${y + height}
-        L${x},${y + height}
-        Z
-      `;
-  }
+  const topBorderRadius = showTopBorderRadius ? BAR_TOP_BORDER_RADIUS : 0;
+  const bottomBorderRadius = showBottomBorderRadius ? BAR_BOTTOM_BORDER_RADIUS : 0;
 
   if (!height) return null;
 
   return (
     <g>
-      <path d={pathData} className="transition-colors duration-200" fill={fill} />
+      <path
+        d={`
+        M${x},${y + topBorderRadius}
+        Q${x},${y} ${x + topBorderRadius},${y}
+        L${x + width - topBorderRadius},${y}
+        Q${x + width},${y} ${x + width},${y + topBorderRadius}
+        L${x + width},${y + height - bottomBorderRadius}
+        Q${x + width},${y + height} ${x + width - bottomBorderRadius},${y + height}
+        L${x + bottomBorderRadius},${y + height}
+        Q${x},${y + height} ${x},${y + height - bottomBorderRadius}
+        Z
+      `}
+        className="transition-colors duration-200"
+        fill={fill}
+      />
       {showText && (
         <text
           x={x + width / 2}

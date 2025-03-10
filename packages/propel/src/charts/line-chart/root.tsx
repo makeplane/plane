@@ -53,8 +53,19 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
           className={line.className}
           fill={line.fill}
           stroke={line.stroke}
+          strokeWidth={2}
           strokeDasharray={line.dashedLine ? "4 4" : "none"}
-          dot={line.showDot}
+          dot={
+            line.showDot
+              ? {
+                  fill: line.fill,
+                  fillOpacity: 1,
+                }
+              : false
+          }
+          activeDot={{
+            stroke: line.fill,
+          }}
         />
       )),
     [lines]
@@ -112,8 +123,8 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
           {showTooltip && (
             <Tooltip
               cursor={{
-                fill: "currentColor",
-                className: "text-custom-background-90/80 cursor-pointer",
+                stroke: "rgba(var(--color-text-300))",
+                strokeDasharray: "4 4",
               }}
               wrapperStyle={{
                 pointerEvents: "auto",

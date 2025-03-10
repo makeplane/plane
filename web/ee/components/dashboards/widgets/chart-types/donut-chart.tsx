@@ -26,14 +26,14 @@ export const parseDonutChartData = (
     const pending = totalCount - completed;
     updatedData = [
       {
-        key: "pending",
-        name: "Pending",
-        count: pending,
-      } as TDashboardWidgetDatum,
-      {
         key: "completed",
         name: "Completed",
         count: completed,
+      } as TDashboardWidgetDatum,
+      {
+        key: "pending",
+        name: "Pending",
+        count: pending,
       } as TDashboardWidgetDatum,
     ];
   }
@@ -70,20 +70,17 @@ export const DashboardDonutChartWidget: React.FC<TWidgetComponentProps> = observ
     if (chart_model === EWidgetChartModels.BASIC) {
       parsedCells = donutParsedData.map((datum, index) => ({
         key: datum.key,
-        className: "stroke-transparent",
         fill: extendedColors[index],
       }));
     } else if (chart_model === EWidgetChartModels.PROGRESS) {
       parsedCells = [
         {
-          key: "pending",
-          className: "stroke-transparent",
-          fill: "rgba(var(--color-background-80))",
+          key: "completed",
+          fill: widgetConfig?.completed_color ?? DEFAULT_WIDGET_COLOR,
         },
         {
-          key: "completed",
-          className: "stroke-transparent",
-          fill: widgetConfig?.completed_color ?? DEFAULT_WIDGET_COLOR,
+          key: "pending",
+          fill: "rgba(var(--color-background-80))",
         },
       ];
     } else {
@@ -106,7 +103,9 @@ export const DashboardDonutChartWidget: React.FC<TWidgetComponentProps> = observ
       data={donutParsedData}
       dataKey="count"
       cells={cells}
-      innerRadius={isOfUnitHeight ? 10 : (height ?? 1) * 20}
+      innerRadius="60%"
+      cornerRadius={2}
+      paddingAngle={4}
       centerLabel={
         showCenterLabel
           ? {

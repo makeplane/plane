@@ -23,6 +23,8 @@ export const PieChart = React.memo(<K extends string, T extends string>(props: T
     showLabel,
     customLabel,
     centerLabel,
+    cornerRadius,
+    paddingAngle,
   } = props;
   // states
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -63,9 +65,12 @@ export const PieChart = React.memo(<K extends string, T extends string>(props: T
             dataKey={dataKey}
             cx="50%"
             cy="50%"
+            blendStroke
             activeShape={<CustomActiveShape />}
             innerRadius={innerRadius}
             outerRadius={outerRadius}
+            cornerRadius={cornerRadius}
+            paddingAngle={paddingAngle}
             labelLine={false}
             label={
               showLabel

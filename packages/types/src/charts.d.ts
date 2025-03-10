@@ -105,8 +105,10 @@ export type TPieChartProps<K extends string, T extends string> = Pick<
 > & {
   dataKey: T;
   cells: TCellItem<T>[];
-  innerRadius?: number;
-  outerRadius?: number;
+  innerRadius?: number | string;
+  outerRadius?: number | string;
+  cornerRadius?: number;
+  paddingAngle?: number;
   showLabel: boolean;
   customLabel?: (value: any) => string;
   centerLabel?: {
