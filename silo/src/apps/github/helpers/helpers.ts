@@ -20,8 +20,7 @@ export const getConnectionDetails = async (props: {
   // Get the workspace connection for the installation
   const workspaceConnection = await apiClient.workspaceConnection.listWorkspaceConnections({
     workspace_id: props.credentials.workspace_id!,
-    connection_type: E_INTEGRATION_KEYS.GITHUB,
-    connection_id: props.accountId.toString(),
+    credential_id: props.credentials.id,
   });
 
   if (workspaceConnection.length === 0) {
