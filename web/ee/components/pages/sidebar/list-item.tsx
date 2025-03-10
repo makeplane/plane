@@ -39,7 +39,7 @@ export const WikiPageSidebarListItem: React.FC<Props> = observer((props) => {
   if (!page) return null;
 
   return (
-    <Tooltip tooltipContent={page.name} position="right" disabled={!isCollapsed} isMobile={isMobile}>
+    <Tooltip tooltipContent={page.name} position="right" isMobile={isMobile}>
       <Link
         href={`/${workspaceSlug}/pages/${page.id}`}
         className={cn(
