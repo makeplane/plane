@@ -28,3 +28,5 @@ export const getTeamProjectColumns = (): IGroupByColumn[] | undefined => {
     })
     .filter((column) => column !== undefined) as IGroupByColumn[];
 };
+
+export { SpreadSheetPropertyIconMap, SPREADSHEET_COLUMNS } from "@/ce/components/issues/issue-layouts/utils";
