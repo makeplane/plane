@@ -25,7 +25,9 @@ export const CustomerPropertiesEmptyState: FC<TCustomerPropertiesEmptyStateProps
           <BuildingsIcon className="h-14 w-14 text-custom-text-400" strokeWidth="1.5" />
         </div>
         <div className="text-custom-text-100 font-medium text-base">{t("customers.properties.empty_state.title")}</div>
-        <div className="text-sm text-custom-text-400 pb-4">{t("customers.properties.empty_state.description")}</div>
+        <div className="text-sm text-custom-text-400 pb-4 max-w-[60%] text-center">
+          {t("customers.properties.empty_state.description")}
+        </div>
         <Button
           variant="accent-primary"
           size="sm"

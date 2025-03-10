@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Button, EModalWidth, EModalPosition, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -19,7 +20,8 @@ type Props = {
 
 export const DeleteCustomerModal: React.FC<Props> = observer((props) => {
   const { isModalOpen, customerId, handleClose } = props;
-  // router
+  // i18n
+  const { t } = useTranslation(); // router
   const router = useAppRouter();
   const { workspaceSlug, customerId: customerIdParam } = useParams();
   // states
@@ -58,21 +60,20 @@ export const DeleteCustomerModal: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <ModalCore isOpen={isModalOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
+    <ModalCore isOpen={isModalOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XL}>
       <form onSubmit={onSubmit} className="flex flex-col gap-6 p-6">
         <div className="flex w-full items-center justify-start gap-4">
           <span className="place-items-center rounded-full bg-red-500/20 p-3">
             <AlertTriangle className="size-6 text-red-600" aria-hidden="true" />
           </span>
           <span className="flex items-center justify-start">
-            <h3 className="text-xl font-medium 2xl:text-2xl">Delete customer?</h3>
+            <h3 className="text-lg font-medium xl:text-xl">
+              {t("customers.delete.title", { customer_name: customer?.name })}
+            </h3>
           </span>
         </div>
         <span>
-          <p className="text-sm leading-5 text-custom-text-200">
-            Are you sure you want to delete customer <span className="break-words font-semibold">{customer?.name}</span>
-            ? All of the data related to the customer will be permanently removed. This action cannot be undone.
-          </p>
+          <p className="text-sm leading-5 text-custom-text-200">{t("customers.delete.description")}</p>
         </span>
 
         <div className="flex justify-end gap-2">

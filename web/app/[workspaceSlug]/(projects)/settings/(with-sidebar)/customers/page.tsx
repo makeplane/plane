@@ -6,8 +6,9 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserWorkspaceRoles } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// component
 import { setPromiseToast, ToggleSwitch } from "@plane/ui";
+import { cn } from "@plane/utils";
+// component
 import { PageHead } from "@/components/core";
 // store hooks
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
@@ -98,8 +99,13 @@ const CustomerSettingsPage = observer(() => {
               {t("project_settings.customers.settings_sub_heading")}
             </span>
           </div>
-          <div>
-            <ToggleSwitch value={!!isCustomersFeatureEnabled} onChange={toggleCustomersFeature} size="sm" />
+          <div className={cn(isCustomersFeatureEnabled && "cursor-not-allowed")}>
+            <ToggleSwitch
+              value={!!isCustomersFeatureEnabled}
+              disabled={isCustomersFeatureEnabled}
+              onChange={toggleCustomersFeature}
+              size="sm"
+            />
           </div>
         </div>
         <CustomerSettingsRoot

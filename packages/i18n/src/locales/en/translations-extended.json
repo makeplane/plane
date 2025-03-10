@@ -44,8 +44,8 @@
     },
     "customers": {
       "heading": "Customers",
-      "settings_heading": "Manage work by customer attributes.",
-      "settings_sub_heading": "Start with essential customer attributes on Plane, integrate with your CRM or Support tool later, and manage work by customer attributes."
+      "settings_heading": "Manage work by what's important to your customers.",
+      "settings_sub_heading": "Bring customer requests to work items, assign priority by requests, and roll up work items' states into customer records. Soon, you will integrate with your CRM or Support tool for even better work management by customer attributes."
     },
     "empty_state": {
       "integrations": {
@@ -1288,11 +1288,15 @@
 
   "customers": {
     "label": "{count, plural, one {Customer} other {Customers}}",
+    "upgrade": {
+      "title": "Prioritize and manage work with Customers.",
+      "description": "Map your work to customers and prioritize by customer attributes."
+    },
     "properties": {
       "default": {
-        "title": "Default Properties",
+        "title": "Default properties",
         "customer_name": {
-          "name": "Customer Name",
+          "name": "Customer name",
           "placeholder": "This could be name of the person or business",
           "validation": {
             "required": "Customer name is required.",
@@ -1335,7 +1339,7 @@
         },
         "domain": {
           "name": "Industry",
-          "placeholder": "Add industry",
+          "placeholder": "Retail, e-Commerce, Fintech, Banking",
           "placeholder_short": "Add industry",
           "validation": {}
         },
@@ -1358,12 +1362,12 @@
         }
       },
       "custom": {
-        "title": "Custom Properties",
-        "info": "Customize your customer properties here. Choose from different property types to aggregate your customers data."
+        "title": "Custom properties",
+        "info": "Add your customers' unique attributes to Plane so you can manage work items or customer records better."
       },
       "empty_state": {
-        "title": "Add custom properties",
-        "description": "New properties you add for the customer will show here"
+        "title": "You don't have any custom properties yet.",
+        "description": "Custom properties that you'd like to see in work items, elsewhere in Plane,or outside Plane in a CRM or another tool, will show up here when you add them."
       },
       "add": {
         "primary_button": "Add new property"
@@ -1390,10 +1394,8 @@
         "secondary_button": "Add a customer"
       },
       "search": {
-        "title": "No matching customers",
-        "description1": "No customers detected with the matching criteria.",
-        "description2": "Create a new customer instead.",
-        "primary_button": "Create customer"
+        "title": "You don't seem to have customer records matching that term.",
+        "description": "Try with another search term or reach out to us if you are sure you should see results for that term."
       },
       "list": {
         "title": "Manage your work's volume, cadence, and flow by what's important to your customers.",
@@ -1409,12 +1411,13 @@
         "enable": {
           "loading": "Enabling customers feature...",
           "success": {
-            "title": "Customers enabled",
-            "message": "Track and manage customer relationships."
+            "title": "You've turned on Customers for this workspace.",
+            "message": "You can't turn it off again."
           },
           "error": {
-            "title": "Error",
-            "message": "Failed to enable customers feature!"
+            "title": "We couldn't turn on Customers this time.",
+            "message": "Try again or come back to this screen later. If it still doesn't work.",
+            "action": "Talk to support"
           }
         },
         "disable": {
@@ -1433,22 +1436,27 @@
     "toasts": {
       "list": {
         "error": {
-          "title": "Error!",
-          "message": "Unable to fetch customers. Try again!"
+          "title": "We couldn't get your list of customers.",
+          "message": "Try again or refresh this page."
         }
       },
       "copy_link": {
-        "title": "Link copied",
-        "message": "Customer link copied to clipboard."
+        "title": "You copied the direct link to this customer.",
+        "message": "Paste in anywhere and it will lead right back here."
       },
       "create": {
         "success": {
-          "title": "Success!",
-          "message": "Created customer successfully!"
+          "title": "{customer_name} is now available",
+          "message": "You can reference this customer in work items and track requests from them, too.",
+          "actions": {
+            "view": "View",
+            "copy_link": "Copy link",
+            "copied": "Copied!"
+          }
         },
         "error": {
-          "title": "Error!",
-          "message": "Unable to create customer. Try again!"
+          "title": "We couldn't create that record this time.",
+          "message": "Try saving it again or copy over your unsaved text to a new entry, preferably in another tab."
         }
       },
       "update": {
@@ -1463,29 +1471,29 @@
       },
       "logo": {
         "error": {
-          "title": "Error!",
-          "message": "Logo upload failed. Try again!"
+          "title": "We couldn't upload the customer's logo.",
+          "message": "Try saving the logo again or start from scratch."
         }
       },
       "work_item": {
         "remove": {
           "success": {
-            "title": "Success!",
-            "message": "Work item removed successfully!"
+            "title": "You have removed a work item from this customer's record.",
+            "message": "We have automatically removed this customer from the work item, too."
           },
           "error": {
-            "title": "Error!",
-            "message": "Failed to remove work item!"
+            "title": "We couldn't remove that work item from this customer's record this time.",
+            "message": "We have automatically removed this customer from the work item, too."
           }
         },
         "add": {
           "error": {
-            "title": "Error!",
-            "message": "Unable to add work items to the customer. Try again."
+            "title": "We couldn't add that work item to this customer's record this time.",
+            "message": "Try adding that work item again or come back to it later. If it still doesn't work, reach out to us."
           },
           "success": {
-            "title": "Success!",
-            "message": "Added work items to the customer."
+            "title": "You have added a work item to this customer's record.",
+            "message": "We have automatically added this customer to the work item, too."
           }
         }
       }
@@ -1496,13 +1504,17 @@
       "delete": "Delete"
     },
     "create": {
-      "label": "Create customer",
-      "loading": "Creating...",
+      "label": "Create customer record",
+      "loading": "Creating",
       "cancel": "Cancel"
     },
     "update": {
       "label": "Update customer",
-      "loading": "Updating..."
+      "loading": "Updating"
+    },
+    "delete": {
+      "title": "Are you sure you want to delete the customer record {customer_name}?",
+      "description": "All data associated with this record will be deleted permanently. You can't restore this record later."
     },
     "requests": {
       "empty_state": {
@@ -1512,8 +1524,8 @@
           "button": "Add new request"
         },
         "search": {
-          "title": "No matching requests",
-          "description": "Make sure your query is right or try another query."
+          "title": "You don't seem to have requests matching that term.",
+          "description": "Try with another search term or reach out to us if you are sure you should see results for that term."
         }
       },
       "label": "{count, plural, one {Request} other {Requests}}",

@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
 // components
 import { useTranslation } from "@plane/i18n";
-import { Button, setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
 import { DetailedEmptyState } from "@/components/empty-state";
 // hooks
@@ -77,12 +77,15 @@ export const CustomersListRoot: FC = observer(() => {
           <img src={resolvedPathSearch} className="mx-auto h-36 w-36 sm:h-48 sm:w-48" alt="No matching customers" />
           <h5 className="mb-1 mt-7 text-xl font-medium">{t("customers.empty_state.search.title")}</h5>
           <p className="whitespace-pre-line text-base text-custom-text-400 flex flex-col items-center">
-            <span>{t("customers.empty_state.search.description1")}</span>
-            <span>{t("customers.empty_state.search.description2")}</span>
+            {/* TODO: Translate here */}
+            <span>
+              Try with another search term or{" "}
+              <a href="mailto:support@plane.so" className="underline">
+                reach out to us
+              </a>{" "}
+              if you are sure you should see results for that term.
+            </span>
           </p>
-          <Button className="mt-1" onClick={() => toggleCreateCustomerModal()}>
-            {t("customers.empty_state.search.primary_button")}
-          </Button>
         </div>
       </div>
     );

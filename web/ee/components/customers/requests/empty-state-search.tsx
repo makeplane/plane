@@ -17,7 +17,12 @@ export const CustomerRequestSearchEmptyState = () => {
       </div>
       <span className="text-center text-base font-medium">{t("customers.requests.empty_state.search.title")}</span>
       <span className="text-center text-sm text-custom-text-200">
-        {t("customers.requests.empty_state.search.description")}
+        {/* TODO: Translate here */}
+        Try with another search term or{" "}
+        <a href="mailto:support@plane.so" className="underline">
+          reach out to us
+        </a>{" "}
+        if you are sure you should see results for that term.
       </span>
     </div>
   );

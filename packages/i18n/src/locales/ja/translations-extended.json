@@ -54,8 +54,8 @@
     },
     "customers": {
       "heading": "顧客",
-      "settings_heading": "顧客属性で業務を管理する。",
-      "settings_sub_heading": "Planeで基本的な顧客属性から始め、後でCRMやサポートツールと連携し、顧客属性で業務を管理しましょう。"
+      "settings_heading": "顧客にとって重要なことに基づいて業務を管理しましょう。",
+      "settings_sub_heading": "顧客のリクエストを作業項目に変換し、リクエストに応じて優先順位を設定し、作業項目の状態を顧客記録に反映させます。まもなく、CRMやサポートツールと統合し、顧客属性に基づいたより良い業務管理が可能になります。"
     },
     "empty_state": {
       "integrations": {
@@ -1174,27 +1174,87 @@
   },
 
   "customers": {
-    "label": "{count, plural, one {顧客} other {顧客}}",
+    "label": "{count, plural, one {顧客} other {顧客たち}}",
+    "upgrade": {
+      "title": "顧客とともに優先順位をつけて業務を管理しましょう。",
+      "description": "業務を顧客に関連付け、顧客属性に基づいて優先順位を設定しましょう。"
+    },
     "properties": {
       "default": {
-        "title": "デフォルトプロパティ",
-        "customer_name": "顧客名",
-        "description": "説明",
-        "email": "メール",
-        "website_url": "ウェブサイトURL",
-        "employees": "従業員数",
-        "domain": "ドメイン",
-        "stage": "ステージ",
-        "contract_status": "契約状況",
-        "revenue": "収益"
+        "title": "デフォルトのプロパティ",
+        "customer_name": {
+          "name": "顧客名",
+          "placeholder": "これは人または企業の名前かもしれません",
+          "validation": {
+            "required": "顧客名は必須です。",
+            "max_length": "顧客名は255文字を超えてはいけません。"
+          }
+        },
+        "description": {
+          "name": "説明",
+          "validation": {}
+        },
+        "email": {
+          "name": "Eメール",
+          "placeholder": "メールアドレスを入力してください",
+          "validation": {
+            "required": "Eメールは必須です。",
+            "pattern": "無効なEメールアドレスです。"
+          }
+        },
+        "website_url": {
+          "name": "ウェブサイト",
+          "placeholder": "https://で始まる任意のURLが機能します。",
+          "placeholder_short": "ウェブサイトを追加",
+          "validation": {
+            "pattern": "無効なウェブサイトのURL"
+          }
+        },
+        "employees": {
+          "name": "従業員数",
+          "placeholder": "顧客が企業であれば従業員数を入力してください。",
+          "validation": {
+            "min_length": "従業員数は0未満であってはなりません。"
+          }
+        },
+        "size": {
+          "name": "サイズ",
+          "placeholder": "企業の規模を追加",
+          "validation": {
+            "min_length": "無効なサイズ"
+          }
+        },
+        "domain": {
+          "domain": "業界",
+          "placeholder": "小売、eコマース、フィンテック、銀行",
+          "placeholder_short": "業界を追加",
+          "validation": {}
+        },
+        "stage": {
+          "name": "ステージ",
+          "placeholder": "ステージを選択",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "契約状況",
+          "placeholder": "契約状況を選択",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "収益",
+          "placeholder": "顧客が生成した年間収益です。",
+          "validation": {
+            "min_length": "収益は0未満であってはなりません。"
+          }
+        }
       },
       "custom": {
         "title": "カスタムプロパティ",
-        "info": "ここで顧客プロパティをカスタマイズできます。異なるプロパティタイプから選択して、顧客データを集計します。"
+        "info": "顧客の固有の属性をPlaneに追加し、作業項目や顧客記録をより適切に管理しましょう。"
       },
       "empty_state": {
         "title": "カスタムプロパティを追加",
-        "description": "顧客に追加した新しいプロパティがここに表示されます"
+        "description": "手動または自動でCRMにマッピングしたいカスタムプロパティがここに表示されます。"
       },
       "add": {
         "primary_button": "新しいプロパティを追加"
@@ -1202,48 +1262,286 @@
     },
     "stage": {
       "lead": "リード",
-      "sales_qualified_lead": "セールスクォリティードリード",
+      "sales_qualified_lead": "営業確認済リード",
       "contract_negotiation": "契約交渉",
-      "closed_won": "クローズウォン",
-      "closed_lost": "クローズロスト"
+      "closed_won": "クロージング完了",
+      "closed_lost": "クロージング失敗"
     },
     "contract_status": {
       "active": "アクティブ",
-      "pre_contract": "プレ契約",
-      "signed": "契約済み",
+      "pre_contract": "契約前",
+      "signed": "署名済み",
       "inactive": "非アクティブ"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "この顧客レコードは見つかりませんでした。",
+        "description": "このリンクが間違っているか、レコードが削除された可能性があります。",
+        "primary_button": "顧客へ移動",
+        "secondary_button": "顧客を追加"
+      },
+      "search": {
+        "title": "その用語に一致する顧客記録が見つかりませんでした。",
+        "description": "別の検索語を試すか、その用語で結果が表示されるはずだと確信している場合はお問い合わせください。"
+      },
+      "list": {
+        "title": "顧客の重要な情報に基づいてワークフローの量、ペース、フローを管理します。",
+        "description": "Plane専用の顧客機能を使用すると、新しい顧客をゼロから作成してワークにリンクできます。まもなく、カスタム属性とともに他のツールからインポートできるようになります。",
+        "primary_button": "最初の顧客を追加"
+      }
     },
     "settings": {
       "unauthorized": "このページにアクセスする権限がありません。",
-      "description": "ワークフローで顧客関係を追跡および管理します。",
-      "enable": "顧客を有効にする",
+      "description": "ワークフロー内で顧客との関係を監視・管理します。",
+      "enable": "顧客機能を有効にする",
       "toasts": {
         "enable": {
           "loading": "顧客機能を有効にしています...",
           "success": {
-            "title": "顧客が有効化されました",
-            "message": "顧客関係を追跡および管理します。"
+            "title": "このワークスペースに対して顧客機能を有効にしました。",
+            "message": "もう一度無効にはできません。"
           },
           "error": {
-            "title": "エラー",
-            "message": "顧客機能の有効化に失敗しました！"
+            "title": "顧客機能を有効にできませんでした。",
+            "message": "もう一度お試しください。それでもうまくいかない場合は、サポートに連絡してください。",
+            "action": "サポートに連絡"
           }
         },
         "disable": {
           "loading": "顧客機能を無効にしています...",
           "success": {
-            "title": "顧客が無効化されました",
-            "message": "顧客機能が正常に無効化されました！"
+            "title": "顧客が無効になりました",
+            "message": "顧客機能は正常に無効化されました！"
           },
           "error": {
             "title": "エラー",
-            "message": "顧客機能の無効化に失敗しました！"
+            "message": "顧客機能を無効にできませんでした！"
           }
         }
       }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "顧客リストを取得できませんでした。",
+          "message": "もう一度お試しください、またはページを更新してください。"
+        }
+      },
+      "copy_link": {
+        "title": "顧客のリンクをコピーしました。",
+        "message": "どこにでも貼り付けて、このページに直接戻れます。"
+      },
+      "create": {
+        "success": {
+          "title": "{customer_name} が利用可能になりました",
+          "message": "この顧客を作業項目に参照し、リクエストを追跡できます。",
+          "actions": {
+            "view": "表示",
+            "copy_link": "リンクをコピー",
+            "copied": "コピーしました！"
+          }
+        },
+        "error": {
+          "title": "このレコードを作成できませんでした。",
+          "message": "もう一度保存してみてください、または保存していないテキストを新しい項目にコピーしてください。別のタブで試してみると良いでしょう。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "成功！",
+          "message": "顧客が正常に更新されました！"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": "顧客の更新に失敗しました。もう一度お試しください！"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "顧客のロゴを読み込めませんでした。",
+          "message": "ロゴを再保存するか、最初からやり直してください。"
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "この顧客の作業項目を削除しました。",
+            "message": "この顧客も自動的に作業項目から削除されました。"
+          },
+          "error": {
+            "title": "この顧客の作業項目を削除できませんでした。",
+            "message": "この顧客も自動的に作業項目から削除されました。"
+          }
+        },
+        "add": {
+          "error": {
+            "title": "この顧客の作業項目を追加できませんでした。",
+            "message": "もう一度作業項目を追加してみてください。それでもうまくいかない場合は、サポートに連絡してください。"
+          },
+          "success": {
+            "title": "作業項目をこの顧客のレコードに追加しました。",
+            "message": "この顧客も自動的に作業項目に追加されました。"
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "編集",
+      "copy_link": "顧客リンクをコピー",
+      "delete": "削除"
+    },
+    "create": {
+      "label": "顧客記録を作成",
+      "loading": "作成中",
+      "cancel": "キャンセル"
+    },
+    "update": {
+      "label": "顧客を更新",
+      "loading": "更新中"
+    },
+    "delete": {
+      "title": "顧客記録 {customer_name} を削除してもよろしいですか？",
+      "description": "この記録に関連するすべてのデータは完全に削除されます。後でこの記録を復元することはできません。"
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "まだリクエストはありません。",
+          "description": "顧客からリクエストを作成して、それらを作業項目にリンクできます。",
+          "button": "新しいリクエストを追加"
+        },
+        "search": {
+          "title": "その用語に一致するリクエストが見つかりませんでした。",
+          "description": "別の検索語を試すか、その用語で結果が表示されるはずだと確信している場合はお問い合わせください。"
+        }
+      },
+      "label": "{count, plural, one {リクエスト} other {リクエストたち}}",
+      "add": "リクエストを追加",
+      "create": "リクエストを作成",
+      "update": "リクエストを更新",
+      "form": {
+        "name": {
+          "placeholder": "このリクエストに名前を付けてください",
+          "validation": {
+            "required": "名前は必須です。",
+            "max_length": "リクエストの名前は255文字以内である必要があります。"
+          }
+        },
+        "description": {
+          "placeholder": "リクエストの性質を記述するか、他のツールからこの顧客のコメントを貼り付けてください。"
+        },
+        "source": {
+          "add": "ソースを追加",
+          "update": "ソースを更新",
+          "url": {
+            "label": "URL",
+            "required": "URLは必須です",
+            "invalid": "無効なウェブサイトのURL"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "リンクをコピーしました",
+          "message": "顧客のリクエストのリンクがクリップボードにコピーされました。"
+        },
+        "attachment": {
+          "upload": {
+            "loading": "添付ファイルのアップロード中...",
+            "success": {
+              "title": "添付ファイルのアップロード成功",
+              "message": "添付ファイルが正常にアップロードされました。"
+            },
+            "error": {
+              "title": "添付ファイルのアップロード失敗",
+              "message": "添付ファイルをアップロードできませんでした。"
+            }
+          },
+          "size": {
+            "error": {
+              "title": "エラー！",
+              "message": "一度に1つのファイルしかアップロードできません。"
+            }
+          },
+          "length": {
+            "message": "ファイルは{size}MB以内でなければなりません"
+          },
+          "remove": {
+            "success": {
+              "title": "添付ファイルを削除しました",
+              "message": "添付ファイルが正常に削除されました"
+            },
+            "error": {
+              "title": "添付ファイルを削除できません",
+              "message": "添付ファイルを削除できませんでした"
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "成功！",
+              "message": "ソースが正常に更新されました！"
+            },
+            "error": {
+              "title": "エラー！",
+              "message": "ソースを更新できませんでした。"
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "エラー！",
+              "message": "リクエストに作業項目を追加できませんでした。再試行してください。"
+            },
+            "success": {
+              "title": "成功！",
+              "message": "作業項目がリクエストに追加されました。"
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "リクエストが正常に更新されました！",
+            "title": "成功！"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "リクエストの更新に失敗しました。再試行してください！"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "リクエストが正常に作成されました！",
+            "title": "成功！"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "リクエストの作成に失敗しました。再試行してください！"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "リンクされた作業項目",
+      "link": "作業項目をリンク",
+      "empty_state": {
+        "list": {
+          "title": "まだこの顧客に作業項目をリンクしていません。",
+          "description": "既存の作業項目をここにリンクして、この顧客に関連付けて追跡できます。",
+          "button": "作業項目をリンク"
+        }
+      },
+      "action": {
+        "remove_epic": "エピックを削除",
+        "remove": "作業項目を削除"
+      }
+    },
+    "sidebar": {
+      "properties": "プロパティ"
     }
   },
-
   "templates": {
     "settings": {
       "title": "テンプレート",

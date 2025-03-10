@@ -7,7 +7,7 @@ import { useTranslation } from "@plane/i18n";
 import { TCustomer, TCustomerPayload } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
-import { cn } from "@plane/utils";
+import { cn, copyUrlToClipboard } from "@plane/utils";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // store
 import { useCommandPalette } from "@/hooks/store";
@@ -16,6 +16,7 @@ import { DefaultProperties, CustomerAdditionalProperties } from "@/plane-web/com
 import { getChangedCustomerFields } from "@/plane-web/helpers/customer-modal.helper";
 import { useCustomerModal } from "@/plane-web/hooks/context/use-customer-modal";
 import { useCustomers } from "@/plane-web/hooks/store";
+import { CreateCustomerCreateToastActions } from "./customer-create-toast-actions";
 
 const defaultValues: Partial<TCustomer> = {
   name: "",
@@ -76,8 +77,11 @@ export const CustomerForm: FC<TCustomerForms> = (props) => {
 
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: t("customers.toasts.create.success.title"),
+        title: t("customers.toasts.create.success.title", { customer_name: customer.name }),
         message: t("customers.toasts.create.success.message"),
+        actionItems: customer.id && (
+          <CreateCustomerCreateToastActions workspaceSlug={workspaceSlug.toString()} customerId={customer.id} />
+        ),
       });
       toggleCreateCustomerModal();
     } catch (error: any) {
