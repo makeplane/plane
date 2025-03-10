@@ -91,8 +91,8 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
       content={
         <>
           Are you sure you want to delete page-{" "}
-          <span className="break-words font-medium text-custom-text-100">{name}</span>? The Page will be deleted
-          permanently. This action cannot be undone.
+          <span className="break-words font-medium text-custom-text-100 break-all">{name}</span> ? The Page will be
+          deleted permanently. This action cannot be undone.
         </>
       }
     />
