@@ -84,7 +84,7 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                           <h4 className="text-sm font-medium leading-5">{t(featureItem.key)}</h4>
                           {featureItem.isPro && (
                             <Tooltip tooltipContent="Pro feature" position="top">
-                              <UpgradeBadge />
+                              <UpgradeBadge className="rounded" />
                             </Tooltip>
                           )}
                         </div>
