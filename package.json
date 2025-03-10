@@ -10,6 +10,7 @@
     "space",
     "admin",
     "live",
+    "silo",
     "packages/*"
   ],
   "scripts": {
@@ -28,7 +29,8 @@
   },
   "resolutions": {
     "nanoid": "3.3.8",
-    "esbuild": "0.25.0"
+    "esbuild": "0.25.0",
+    "@todesktop/client-util/nanoid": "^3.3.8"
   },
   "packageManager": "yarn@1.22.22"
 }
