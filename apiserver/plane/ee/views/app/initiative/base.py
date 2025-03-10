@@ -357,14 +357,14 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
         ).values_list("project_id", flat=True)
 
         # also get the epics which are part of the initiative
-        initiative_epics = (
-            InitiativeEpic.objects.filter(
-                workspace__slug=slug, initiative_id=initiative_id
-            )
-            .filter(epic__project__project_projectfeature__is_epic_enabled=True)
-            .values_list("epic_id", flat=True)
-        )
-
+        initiative_epics = list(InitiativeEpic.objects.filter(
+            workspace__slug=slug, initiative_id=initiative_id
+        ).values_list("epic_id", flat=True))
+        
+        related_issues_ids = [
+            issue_id for epic_id in initiative_epics for issue_id in get_all_related_issues(epic_id)
+        ]
+        
         # Annotate the counts for different states in one query
         issues = Issue.objects.filter(
             Q(
@@ -377,7 +377,7 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
                 project__archived_at__isnull=True,
                 is_draft=False,
             )
-            | Q(id__in=initiative_epics),
+            | Q(id__in=initiative_epics) | Q(id__in=related_issues_ids),
             workspace__slug=slug,
         ).aggregate(
             backlog_issues=Count("id", filter=Q(state__group="backlog")),
