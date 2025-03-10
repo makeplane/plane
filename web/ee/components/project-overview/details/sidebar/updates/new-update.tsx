@@ -21,7 +21,7 @@ export const NewUpdate = (props: TProps) => {
 
       {/* Textarea */}
       <TextArea
-        className="border-none p-0 text-sm"
+        className="border-none p-0 text-sm min-h-4"
         value={input}
         onChange={(e) => setInput(e.target.value)}
         placeholder="Add your update."
