@@ -67,9 +67,10 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
     issues: { bulkUpdateProperties },
   } = useIssuesStore();
   const { currentActiveEstimateId, areEstimateEnabledByProjectId } = useProjectEstimates();
-  const { getIssueTypeIdsWithMandatoryProperties } = useIssueTypes();
+  const { isWorkItemTypeEnabledForProject, getIssueTypeIdsWithMandatoryProperties } = useIssueTypes();
   // derived values
   const isAdvancedBulkOpsEnabled = useFlag(workspaceSlug?.toString(), "BULK_OPS_PRO");
+  const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId?.toString());
   // Get issue types with mandatory properties
   const issueTypeIdsWithMandatoryProperties = useMemo(() => {
     if (!projectId) return [];
@@ -325,7 +326,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                 )}
               />
             )}
-            {projectId && (
+            {projectId && isWorkItemTypeEnabled && (
               <Controller
                 control={control}
                 name="type_id"
