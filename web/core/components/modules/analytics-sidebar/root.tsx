@@ -323,7 +323,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                     {isInArchivableGroup ? (
                       <div className="flex items-center gap-2">
                         <ArchiveIcon className="h-3 w-3" />
-                        {t("archive_module")}
+                        {t("project_module.archive_module")}
                       </div>
                     ) : (
                       <div className="flex items-start gap-2">
@@ -342,7 +342,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                   <CustomMenu.MenuItem onClick={handleRestoreModule}>
                     <span className="flex items-center justify-start gap-2">
                       <ArchiveRestoreIcon className="h-3 w-3" />
-                      <span>{t("restore_module")}</span>
+                      <span>{t("project_module.restore_module")}</span>
                     </span>
                   </CustomMenu.MenuItem>
                 )}
