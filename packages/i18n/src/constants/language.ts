@@ -10,6 +10,7 @@ export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
   { label: "中文", value: "zh-CN" },
   { label: "Русский", value: "ru" },
   { label: "Italian", value: "it" },
+  { label: "Čeština", value: "cs" },
 ];
 
 export const STORAGE_KEY = "userLanguage";
