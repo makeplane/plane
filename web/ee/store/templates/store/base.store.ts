@@ -1,6 +1,6 @@
 import orderBy from "lodash/orderBy";
 import set from "lodash/set";
-import { action, makeObservable, observable } from "mobx";
+import { action, computed, makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { IBaseTemplateActionCallbacks, TBaseTemplateWithData, TLoader } from "@plane/types";
@@ -18,6 +18,8 @@ export interface IBaseTemplateStore<T extends TBaseTemplateWithData> {
   loader: TLoader; // template loader
   fetchStatusMap: Record<string, boolean>; // template id -> template slug
   templates: Record<string, IBaseTemplateInstance<T>>; // template id -> template
+  // computed
+  isInitializingTemplates: boolean;
   // computed functions
   getTemplateFetchStatusById: (templateId: string) => boolean;
   getTemplateById: (templateId: string) => IBaseTemplateInstance<T> | undefined;
@@ -55,7 +57,18 @@ export abstract class BaseTemplateStore<T extends TBaseTemplateWithData> impleme
       loader: observable,
       fetchStatusMap: observable,
       templates: observable,
+      // computed
+      isInitializingTemplates: computed,
     });
+  }
+
+  // computed
+  /**
+   * @description Whether the templates are being initialized
+   * @returns Whether the templates are being initialized
+   */
+  get isInitializingTemplates() {
+    return this.loader === "init-loader";
   }
 
   // computed functions
@@ -122,7 +135,7 @@ export abstract class BaseTemplateStore<T extends TBaseTemplateWithData> impleme
 
         // Update existing template if it exists
         if (this.templates[template.id]) {
-          this.templates[template.id].updateInstance(template);
+          this.templates[template.id].mutateInstance(template);
           continue;
         }
 

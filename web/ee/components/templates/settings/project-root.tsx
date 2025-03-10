@@ -15,13 +15,18 @@ type TProjectTemplatesSettingsRootProps = {
 export const ProjectTemplatesSettingsRoot: FC<TProjectTemplatesSettingsRootProps> = observer((props) => {
   const { workspaceSlug, projectId } = props;
   // store hooks
-  const { loader, getAllWorkItemTemplatesForProject } = useWorkItemTemplates();
+  const { isInitializingTemplates, isAnyWorkItemTemplatesAvailableForProject } = useWorkItemTemplates();
   // derived values
-  const isLoading = loader === "init-loader";
-  const workItemTemplateIds = getAllWorkItemTemplatesForProject(workspaceSlug, projectId);
+  const isWorkItemTemplatesAvailable = isAnyWorkItemTemplatesAvailableForProject(workspaceSlug, projectId);
 
-  if (workItemTemplateIds.length === 0 && !isLoading) {
-    return <NoTemplatesEmptyState workspaceSlug={workspaceSlug} projectId={projectId} currentLevel={ETemplateLevel.PROJECT} />;
+  if (!isInitializingTemplates && !isWorkItemTemplatesAvailable) {
+    return (
+      <NoTemplatesEmptyState
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        currentLevel={ETemplateLevel.PROJECT}
+      />
+    );
   }
 
   return <ProjectSettingsTemplatesListRoot workspaceSlug={workspaceSlug} projectId={projectId} />;

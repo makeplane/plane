@@ -16,22 +16,26 @@ type TProjectSettingsTemplatesListRootProps = {
 export const ProjectSettingsTemplatesListRoot = observer((props: TProjectSettingsTemplatesListRootProps) => {
   const { workspaceSlug, projectId } = props;
   // store hooks
-  const { loader, getAllWorkItemTemplateIdsForProject, getTemplateById, deleteWorkItemTemplate } =
-    useWorkItemTemplates();
+  const {
+    isInitializingTemplates: isInitializingWorkItemTemplates,
+    getAllWorkItemTemplateIdsForProject,
+    getTemplateById: getWorkItemTemplateById,
+    deleteWorkItemTemplate,
+  } = useWorkItemTemplates();
   // derived values
   const workItemTemplateIds = getAllWorkItemTemplateIdsForProject(workspaceSlug, projectId);
 
   return (
     <TemplateListActionWrapper>
       {({ handleUseTemplateAction }) => (
-        <TemplateListWrapper type={ETemplateType.WORK_ITEM} loaderState={loader}>
+        <TemplateListWrapper type={ETemplateType.WORK_ITEM} isInitializing={isInitializingWorkItemTemplates}>
           {workItemTemplateIds.map((templateId) => (
             <TemplateListItem
               key={templateId}
               templateId={templateId}
               workspaceSlug={workspaceSlug}
               currentLevel={ETemplateLevel.PROJECT}
-              getTemplateById={getTemplateById}
+              getTemplateById={getWorkItemTemplateById}
               deleteTemplate={(templateId) => deleteWorkItemTemplate(workspaceSlug, templateId)}
               handleUseTemplateAction={() => handleUseTemplateAction(templateId, ETemplateType.WORK_ITEM)}
             />

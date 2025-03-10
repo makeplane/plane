@@ -1242,5 +1242,120 @@
         }
       }
     }
+  },
+
+  "templates": {
+    "settings": {
+      "title": "模板",
+      "description": "使用模板可以节省80%创建项目、工作项和页面的时间。",
+      "options": {
+        "project": {
+          "label": "项目模板"
+        },
+        "work_item": {
+          "label": "工作项模板"
+        },
+        "page": {
+          "label": "页面模板"
+        }
+      },
+      "create_template": {
+        "label": "创建模板",
+        "no_permission": {
+          "project": "联系您的项目管理员创建模板",
+          "workspace": "联系您的工作区管理员创建模板"
+        }
+      },
+      "use_template": {
+        "button": "使用模板"
+      },
+      "template_source": {
+        "workspace": {
+          "info": "源自工作区"
+        },
+        "project": {
+          "info": "源自项目"
+        }
+      },
+      "form": {
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "为您的工作项模板命名。",
+              "validation": {
+                "required": "模板名称是必填项",
+                "maxLength": "模板名称应少于255个字符"
+              }
+            },
+            "description": {
+              "placeholder": "描述何时以及如何使用此模板。"
+            }
+          },
+          "name": {
+            "placeholder": "为此工作项提供标题。",
+            "validation": {
+              "required": "工作项标题是必填项",
+              "maxLength": "工作项标题应少于255个字符"
+            }
+          },
+          "description": {
+            "placeholder": "描述此工作项，以便清楚地了解完成后您将实现什么。"
+          },
+          "button": {
+            "create": "创建工作项模板",
+            "update": "更新工作项模板"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "模板",
+        "description": "使用Plane中的项目、工作项和页面模板，您无需从头开始创建项目或手动设置工作项属性。",
+        "sub_description": "使用模板可以收回80%的管理时间。"
+      },
+      "no_templates": {
+        "button": "创建您的第一个模板"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "模板已创建",
+          "message": "{templateName}，{templateType}模板，现已可用于您的工作区。"
+        },
+        "error": {
+          "title": "这次我们无法创建该模板。",
+          "message": "尝试再次保存您的详细信息或将它们复制到新模板中，最好在另一个标签页中。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "模板已更改",
+          "message": "{templateName}，{templateType}模板，已被更改。"
+        },
+        "error": {
+          "title": "我们无法保存对此模板的更改。",
+          "message": "尝试再次保存您的详细信息或稍后回到此模板。如果仍有问题，请联系我们。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "模板已删除",
+          "message": "{templateName}，{templateType}模板，已从您的工作区中删除。"
+        },
+        "error": {
+          "title": "这次我们无法删除该模板。",
+          "message": "尝试再次删除它或稍后再回来。如果那时您仍无法删除它，请联系我们。"
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "删除模板",
+      "description": {
+        "prefix": "您确定要删除模板-",
+        "suffix": "吗？与该模板相关的所有数据将被永久删除。此操作无法撤消。"
+      }
+    }
   }
 }

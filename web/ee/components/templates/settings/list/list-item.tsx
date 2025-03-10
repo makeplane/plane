@@ -1,13 +1,13 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { ETemplateLevel, EUserPermissionsLevel, EUserProjectRoles, EUserWorkspaceRoles } from "@plane/constants";
+import { ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TBaseTemplateWithData } from "@plane/types";
 // components
 import { Button } from "@plane/ui";
 // plane web imports
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store";
 import { IBaseTemplateStore } from "@/plane-web/store/templates";
 // local imports
 import { TemplateQuickActions } from "./quick-actions";
@@ -29,18 +29,9 @@ export const TemplateListItem = observer(<T extends TBaseTemplateWithData>(props
   const { t } = useTranslation();
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
-  const { allowPermissions } = useUserPermissions();
   // derived values
   const template = getTemplateById(templateId);
   const workspace = getWorkspaceBySlug(workspaceSlug);
-  // Check if editing is allowed based on the current currentLevel
-  const isEditingAllowed =
-    currentLevel === ETemplateLevel.WORKSPACE
-      ? allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE)
-      : allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
-  // If current currentLevel is workspace, template should not have a project, otherwise it should have a project (project currentLevel template)
-  const isCurrentLevelTemplate = currentLevel === ETemplateLevel.WORKSPACE ? !template?.project : !!template?.project;
-  const shouldShowQuickActions = isCurrentLevelTemplate && isEditingAllowed;
 
   if (!template || !workspace) return null;
   return (
@@ -66,16 +57,13 @@ export const TemplateListItem = observer(<T extends TBaseTemplateWithData>(props
         >
           {t("templates.settings.use_template.button")}
         </Button>
-        {shouldShowQuickActions && (
-          <TemplateQuickActions
-            templateId={templateId}
-            workspaceSlug={workspaceSlug}
-            parentRef={parentRef}
-            isEditingAllowed={isEditingAllowed}
-            getTemplateById={getTemplateById}
-            deleteTemplate={deleteTemplate}
-          />
-        )}
+        <TemplateQuickActions
+          templateId={templateId}
+          workspaceSlug={workspaceSlug}
+          parentRef={parentRef}
+          getTemplateById={getTemplateById}
+          deleteTemplate={deleteTemplate}
+        />
       </div>
     </div>
   );

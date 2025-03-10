@@ -10,7 +10,7 @@ import { useTranslation } from "@plane/i18n";
 import { TBaseTemplateWithData } from "@plane/types";
 import { AlertModalCore, ContextMenu, CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
 // helpers
-import { getCreateUpdateTemplateSettingsPath } from "@plane/utils";
+import { getCreateUpdateTemplateSettingsPath, getTemplateTypeI18nName } from "@plane/utils";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -21,14 +21,13 @@ type TTemplateQuickActionsProps<T extends TBaseTemplateWithData> = {
   templateId: string;
   workspaceSlug: string;
   parentRef: React.RefObject<HTMLDivElement> | null;
-  isEditingAllowed: boolean;
   getTemplateById: IBaseTemplateStore<T>["getTemplateById"];
   deleteTemplate: (templateId: string) => Promise<void>;
 };
 
 export const TemplateQuickActions = observer(
   <T extends TBaseTemplateWithData>(props: TTemplateQuickActionsProps<T>) => {
-    const { templateId, workspaceSlug, parentRef, isEditingAllowed, getTemplateById, deleteTemplate } = props;
+    const { templateId, workspaceSlug, parentRef, getTemplateById, deleteTemplate } = props;
     // router
     const router = useAppRouter();
     // states
@@ -38,7 +37,8 @@ export const TemplateQuickActions = observer(
     const { t } = useTranslation();
     // derived values
     const template = getTemplateById(templateId);
-    if (!template) return null;
+    const isAnyActionAllowed = template?.canCurrentUserEditTemplate || template?.canCurrentUserDeleteTemplate;
+    if (!template || !isAnyActionAllowed) return null;
 
     const handleEditTemplate = () => {
       const updateTemplatePath =
@@ -68,7 +68,10 @@ export const TemplateQuickActions = observer(
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: t("templates.toasts.delete.success.title"),
-            message: t("templates.toasts.delete.success.message"),
+            message: t("templates.toasts.delete.success.message", {
+              templateName: template.name,
+              templateType: t(getTemplateTypeI18nName(template.template_type))?.toLowerCase(),
+            }),
           });
         })
         .catch(() => {
@@ -89,14 +92,14 @@ export const TemplateQuickActions = observer(
         title: t("common.actions.edit"),
         icon: Pencil,
         action: handleEditTemplate,
-        shouldRender: isEditingAllowed,
+        shouldRender: template.canCurrentUserEditTemplate,
       },
       {
         key: "delete",
         action: handleDeleteTemplateModal,
         title: t("common.actions.delete"),
         icon: Trash2,
-        shouldRender: isEditingAllowed,
+        shouldRender: template.canCurrentUserDeleteTemplate,
         className: "text-red-500",
       },
     ];

@@ -14,12 +14,11 @@ type TWorkspaceTemplatesSettingsRootProps = {
 export const WorkspaceTemplatesSettingsRoot: FC<TWorkspaceTemplatesSettingsRootProps> = observer((props) => {
   const { workspaceSlug } = props;
   // store hooks
-  const { loader, getAllWorkItemTemplateIds } = useWorkItemTemplates();
+  const { isInitializingTemplates, isAnyWorkItemTemplatesAvailable } = useWorkItemTemplates();
   // derived values
-  const isLoading = loader === "init-loader";
-  const workItemTemplateIds = getAllWorkItemTemplateIds(workspaceSlug);
+  const isWorkItemTemplatesAvailable = isAnyWorkItemTemplatesAvailable(workspaceSlug);
 
-  if (workItemTemplateIds.length === 0 && !isLoading) {
+  if (!isInitializingTemplates && !isWorkItemTemplatesAvailable) {
     return <NoTemplatesEmptyState workspaceSlug={workspaceSlug} currentLevel={ETemplateLevel.WORKSPACE} />;
   }
 

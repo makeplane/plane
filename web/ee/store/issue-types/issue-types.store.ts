@@ -436,7 +436,7 @@ export class IssueTypes implements IIssueTypesStore {
         );
         // attach the new default issue type to all work item templates
         for (const template of workItemTemplatesWithoutType) {
-          template.updateInstance({
+          template.mutateInstance({
             template_data: {
               ...template.template_data,
               type: buildWorkItemTypeSchema(issueType.id, this.getIssueTypeById),

@@ -1,5 +1,16 @@
 import { ETemplateLevel, ETemplateType } from "@plane/constants";
 
+export const getTemplateTypeI18nName = (type: ETemplateType) => {
+  switch (type) {
+    case ETemplateType.PROJECT:
+      return "common.project";
+    case ETemplateType.WORK_ITEM:
+      return "common.work_item";
+    case ETemplateType.PAGE:
+      return "common.page";
+  }
+};
+
 export const getTemplateI18nLabel = (type: ETemplateType) => {
   switch (type) {
     case ETemplateType.PROJECT:

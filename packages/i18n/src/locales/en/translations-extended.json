@@ -1653,7 +1653,7 @@
           "label": "Project templates"
         },
         "work_item": {
-          "label": "Work-item templates"
+          "label": "Work item templates"
         },
         "page": {
           "label": "Page templates"
@@ -1721,32 +1721,32 @@
     "toasts": {
       "create": {
         "success": {
-          "title": "Template created successfully",
-          "message": "{templateName} has been successfully created and is now available for your workspace. You can now use it to create new work items."
+          "title": "Template created",
+          "message": "{templateName}, the {templateType} template, is now available for your workspace."
         },
         "error": {
-          "title": "Error!",
-          "message": "Unable to create template. Try again!"
+          "title": "We couldn’t create that template this time.",
+          "message": "Try saving your details again or copy them over to a new template, preferably in another tab."
         }
       },
       "update": {
         "success": {
-          "title": "Template updated successfully",
-          "message": "{templateName} has been successfully updated. You can now use it to create new work items."
+          "title": "Template changed",
+          "message": "{templateName}, the {templateType} template, was changed."
         },
         "error": {
-          "title": "Error!",
-          "message": "Unable to update template. Try again!"
+          "title": "We couldn’t save changes to this template.",
+          "message": "Try saving your details again or come back to this template later. If there’s trouble still, reach out to us."
         }
       },
       "delete": {
         "success": {
-          "title": "Success!",
-          "message": "Template deleted successfully!"
+          "title": "Template deleted",
+          "message": "{templateName}, the {templateType} template, has now been deleted from your workspace."
         },
         "error": {
-          "title": "Error!",
-          "message": "Unable to delete template. Try again!"
+          "title": "We couldn’t delete that template this.",
+          "message": "Try deleting it again or come back to it later. If you can’t delete it then, reach out to us."
         }
       }
     },

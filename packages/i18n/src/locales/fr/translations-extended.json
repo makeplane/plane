@@ -1242,5 +1242,120 @@
         }
       }
     }
+  },
+
+  "templates": {
+    "settings": {
+      "title": "Modèles",
+      "description": "Économisez 80% du temps consacré à la création de projets, d'éléments de travail et de pages lorsque vous utilisez des modèles.",
+      "options": {
+        "project": {
+          "label": "Modèles de projet"
+        },
+        "work_item": {
+          "label": "Modèles d'éléments de travail"
+        },
+        "page": {
+          "label": "Modèles de page"
+        }
+      },
+      "create_template": {
+        "label": "Créer un modèle",
+        "no_permission": {
+          "project": "Contactez l'administrateur de votre projet pour créer des modèles",
+          "workspace": "Contactez l'administrateur de votre espace de travail pour créer des modèles"
+        }
+      },
+      "use_template": {
+        "button": "Utiliser le modèle"
+      },
+      "template_source": {
+        "workspace": {
+          "info": "Dérivé de l'espace de travail"
+        },
+        "project": {
+          "info": "Dérivé du projet"
+        }
+      },
+      "form": {
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "Nommez votre modèle d'élément de travail.",
+              "validation": {
+                "required": "Le nom du modèle est requis",
+                "maxLength": "Le nom du modèle doit comporter moins de 255 caractères"
+              }
+            },
+            "description": {
+              "placeholder": "Décrivez quand et comment utiliser ce modèle."
+            }
+          },
+          "name": {
+            "placeholder": "Donnez un titre à cet élément de travail.",
+            "validation": {
+              "required": "Le titre de l'élément de travail est requis",
+              "maxLength": "Le titre de l'élément de travail doit comporter moins de 255 caractères"
+            }
+          },
+          "description": {
+            "placeholder": "Décrivez cet élément de travail afin qu'il soit clair ce que vous accomplirez lorsque vous le terminerez."
+          },
+          "button": {
+            "create": "Créer un modèle d'élément de travail",
+            "update": "Mettre à jour le modèle d'élément de travail"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Modèles",
+        "description": "Avec les modèles de projet, d'élément de travail et de page dans Plane, vous n'avez pas à créer un projet à partir de zéro ou à définir manuellement les propriétés des éléments de travail.",
+        "sub_description": "Récupérez 80% de votre temps d'administration lorsque vous utilisez des modèles."
+      },
+      "no_templates": {
+        "button": "Créez votre premier modèle"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Modèle créé",
+          "message": "{templateName}, le modèle de {templateType}, est maintenant disponible pour votre espace de travail."
+        },
+        "error": {
+          "title": "Nous n'avons pas pu créer ce modèle cette fois-ci.",
+          "message": "Essayez d'enregistrer à nouveau vos détails ou copiez-les dans un nouveau modèle, de préférence dans un autre onglet."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Modèle modifié",
+          "message": "{templateName}, le modèle de {templateType}, a été modifié."
+        },
+        "error": {
+          "title": "Nous n'avons pas pu enregistrer les modifications de ce modèle.",
+          "message": "Essayez d'enregistrer à nouveau vos détails ou revenez à ce modèle plus tard. Si vous rencontrez toujours des problèmes, contactez-nous."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Modèle supprimé",
+          "message": "{templateName}, le modèle de {templateType}, a été supprimé de votre espace de travail."
+        },
+        "error": {
+          "title": "Nous n'avons pas pu supprimer ce modèle cette fois-ci.",
+          "message": "Essayez de le supprimer à nouveau ou revenez-y plus tard. Si vous ne pouvez toujours pas le supprimer, contactez-nous."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Supprimer le modèle",
+      "description": {
+        "prefix": "Êtes-vous sûr de vouloir supprimer le modèle-",
+        "suffix": "? Toutes les données relatives au modèle seront définitivement supprimées. Cette action ne peut pas être annulée."
+      }
+    }
   }
 }

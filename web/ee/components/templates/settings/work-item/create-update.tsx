@@ -2,13 +2,14 @@ import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { ETemplateLevel } from "@plane/constants";
+import { ETemplateLevel, ETemplateType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ISearchIssueResponse, PartialDeep, TWorkItemTemplateForm, TWorkItemTemplateFormData } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import {
   extractAndSanitizeCustomPropertyValuesFormData,
   getPropertiesDefaultValues,
+  getTemplateTypeI18nName,
   getTemplateSettingsBasePath,
   TWorkItemSanitizationResult,
   workItemTemplateDataToSanitizedFormData,
@@ -50,8 +51,9 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
   const { t } = useTranslation();
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
-  const { isWorkItemTypeEnabledForProject, getIssueTypeById, getIssuePropertyById } = useIssueTypes();
-  const { getStateById, getProjectStateIds } = useProjectState();
+  const { isWorkItemTypeEnabledForProject, getIssueTypeById, getIssuePropertyById, getProjectDefaultIssueType } =
+    useIssueTypes();
+  const { getStateById, getProjectDefaultStateId, getProjectStateIds } = useProjectState();
   const {
     getUserDetails,
     project: { getProjectMemberIds },
@@ -178,9 +180,14 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
     }
 
     if (currentLevel === ETemplateLevel.PROJECT) {
+      const defaultStateId = getProjectDefaultStateId(props.projectId);
+      const defaultIssueType = getProjectDefaultIssueType(props.projectId);
+
       return {
         work_item: {
           project_id: props.projectId,
+          type_id: defaultIssueType?.id,
+          state_id: defaultStateId,
         },
       };
     }
@@ -230,7 +237,10 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: t("templates.toasts.update.success.title"),
-              message: t("templates.toasts.update.success.message", { templateName: templateData.template.name }),
+              message: t("templates.toasts.update.success.message", {
+                templateName: templateData.template.name,
+                templateType: t(getTemplateTypeI18nName(template.template_type))?.toLowerCase(),
+              }),
             });
           })
           .catch(() => {
@@ -255,7 +265,10 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: t("templates.toasts.create.success.title"),
-            message: t("templates.toasts.create.success.message", { templateName: templateData.template.name }),
+            message: t("templates.toasts.create.success.message", {
+              templateName: templateData.template.name,
+              templateType: t(getTemplateTypeI18nName(ETemplateType.WORK_ITEM))?.toLowerCase(),
+            }),
           });
         })
         .catch(() => {
@@ -270,7 +283,7 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
 
   const handleFormCancel = () => {
     resetLocalStates();
-    router.push(templateSettingsPagePath);
+    router.back();
   };
 
   if (loader === "init-loader" || isApplyingTemplate) {

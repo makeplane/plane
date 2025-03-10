@@ -2,7 +2,7 @@
 import { ETemplateType } from "@plane/constants";
 
 export type TBaseTemplate<
-  T extends ETemplateType = ETemplateType,
+  T extends ETemplateType,
   D extends Record<string, unknown> = Record<string, unknown>,
 > = {
   id: string;

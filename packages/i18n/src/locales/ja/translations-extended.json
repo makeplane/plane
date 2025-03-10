@@ -1242,5 +1242,120 @@
         }
       }
     }
+  },
+
+  "templates": {
+    "settings": {
+      "title": "テンプレート",
+      "description": "テンプレートを使用すると、プロジェクト、作業項目、ページの作成に費やす時間を80％節約できます。",
+      "options": {
+        "project": {
+          "label": "プロジェクトテンプレート"
+        },
+        "work_item": {
+          "label": "作業項目テンプレート"
+        },
+        "page": {
+          "label": "ページテンプレート"
+        }
+      },
+      "create_template": {
+        "label": "テンプレートを作成",
+        "no_permission": {
+          "project": "テンプレートを作成するには、プロジェクト管理者に連絡してください",
+          "workspace": "テンプレートを作成するには、ワークスペース管理者に連絡してください"
+        }
+      },
+      "use_template": {
+        "button": "テンプレートを使用"
+      },
+      "template_source": {
+        "workspace": {
+          "info": "ワークスペースから派生"
+        },
+        "project": {
+          "info": "プロジェクトから派生"
+        }
+      },
+      "form": {
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "作業項目テンプレートに名前を付けてください。",
+              "validation": {
+                "required": "テンプレート名は必須です",
+                "maxLength": "テンプレート名は255文字未満にしてください"
+              }
+            },
+            "description": {
+              "placeholder": "このテンプレートをいつ、どのように使用するかを説明してください。"
+            }
+          },
+          "name": {
+            "placeholder": "この作業項目にタイトルを付けてください。",
+            "validation": {
+              "required": "作業項目のタイトルは必須です",
+              "maxLength": "作業項目のタイトルは255文字未満にしてください"
+            }
+          },
+          "description": {
+            "placeholder": "この作業項目を完了したときに何を達成するのかが明確になるように説明してください。"
+          },
+          "button": {
+            "create": "作業項目テンプレートを作成",
+            "update": "作業項目テンプレートを更新"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "テンプレート",
+        "description": "Planeのプロジェクト、作業項目、ページテンプレートを使用すれば、ゼロからプロジェクトを作成したり、作業項目のプロパティを手動で設定したりする必要はありません。",
+        "sub_description": "テンプレートを使用すると、管理時間の80％を取り戻せます。"
+      },
+      "no_templates": {
+        "button": "最初のテンプレートを作成"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "テンプレートが作成されました",
+          "message": "{templateType}テンプレート「{templateName}」がワークスペースで利用できるようになりました。"
+        },
+        "error": {
+          "title": "今回はそのテンプレートを作成できませんでした。",
+          "message": "詳細を再度保存するか、できれば別のタブで新しいテンプレートにコピーしてください。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "テンプレートが変更されました",
+          "message": "{templateType}テンプレート「{templateName}」が変更されました。"
+        },
+        "error": {
+          "title": "このテンプレートの変更を保存できませんでした。",
+          "message": "詳細を再度保存するか、後でこのテンプレートに戻ってください。それでも問題が続く場合は、お問い合わせください。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "テンプレートが削除されました",
+          "message": "{templateType}テンプレート「{templateName}」がワークスペースから削除されました。"
+        },
+        "error": {
+          "title": "今回はそのテンプレートを削除できませんでした。",
+          "message": "再度削除を試みるか、後で戻ってきてください。それでも削除できない場合は、お問い合わせください。"
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "テンプレートを削除",
+      "description": {
+        "prefix": "テンプレート「",
+        "suffix": "」を削除してもよろしいですか？テンプレートに関連するすべてのデータは完全に削除されます。このアクションは元に戻せません。"
+      }
+    }
   }
 }

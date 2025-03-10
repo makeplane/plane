@@ -1,6 +1,7 @@
 import set from "lodash/set";
-import { action, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
+import { EUserPermissions, EUserProjectRoles, EUserWorkspaceRoles, TUserPermissions } from "@plane/constants";
 import { IBaseTemplateActionCallbacks, TBaseTemplate, TBaseTemplateWithData } from "@plane/types";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
@@ -15,8 +16,16 @@ export interface IBaseTemplateInstance<T extends TBaseTemplateWithData>
   extends TBaseTemplate<T["template_type"], T["template_data"]> {
   // computed
   asJSON: T;
+  getUserRoleForTemplateInstance:
+    | TUserPermissions
+    | EUserPermissions
+    | EUserWorkspaceRoles
+    | EUserProjectRoles
+    | undefined;
+  canCurrentUserEditTemplate: boolean;
+  canCurrentUserDeleteTemplate: boolean;
   // helper actions
-  updateInstance: (templateData: Partial<T>) => void;
+  mutateInstance: (templateData: Partial<T>) => void;
   // actions
   update: (templateData: Partial<T>) => Promise<void>;
 }
@@ -70,8 +79,13 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
       project: observable.ref,
       created_at: observable.ref,
       updated_at: observable.ref,
+      // computed
+      asJSON: computed,
+      getUserRoleForTemplateInstance: computed,
+      canCurrentUserEditTemplate: computed,
+      canCurrentUserDeleteTemplate: computed,
       // actions
-      updateInstance: action,
+      mutateInstance: action,
       update: action,
     });
   }
@@ -97,12 +111,30 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
     return baseObject as T;
   }
 
+  /**
+   * @description Returns the user role for the template instance
+   */
+  get getUserRoleForTemplateInstance() {
+    const workspaceSlug = this.rootStore.workspaceRoot.getWorkspaceById(this.workspace)?.slug;
+    if (!workspaceSlug) return undefined;
+
+    if (this.project) {
+      return this.rootStore.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(workspaceSlug, this.project);
+    }
+
+    return this.rootStore.user.permission.workspaceInfoBySlug(workspaceSlug)?.role ?? undefined;
+  }
+
+  // abstract computed
+  abstract get canCurrentUserEditTemplate(): boolean;
+  abstract get canCurrentUserDeleteTemplate(): boolean;
+
   // helper actions
   /**
    * @description Update template instance
    * @param templateData Template data
    */
-  updateInstance = action((templateData: Partial<T>): void => {
+  mutateInstance = action((templateData: Partial<T>): void => {
     if (!this.id) return;
     runInAction(() => {
       for (const key in templateData) {
@@ -125,7 +157,7 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
 
     try {
       const updatedTemplate = await this.updateActionCallback(this.id, templateData);
-      this.updateInstance(updatedTemplate);
+      this.mutateInstance(updatedTemplate);
     } catch (error) {
       console.error("BaseTemplateInstance.update -> error", error);
       throw error;

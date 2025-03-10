@@ -1242,5 +1242,120 @@
         }
       }
     }
+  },
+
+  "templates": {
+    "settings": {
+      "title": "Plantillas",
+      "description": "Ahorra un 80% del tiempo dedicado a crear proyectos, elementos de trabajo y páginas cuando utilizas plantillas.",
+      "options": {
+        "project": {
+          "label": "Plantillas de proyecto"
+        },
+        "work_item": {
+          "label": "Plantillas de elementos de trabajo"
+        },
+        "page": {
+          "label": "Plantillas de página"
+        }
+      },
+      "create_template": {
+        "label": "Crear plantilla",
+        "no_permission": {
+          "project": "Contacta con el administrador de tu proyecto para crear plantillas",
+          "workspace": "Contacta con el administrador de tu espacio de trabajo para crear plantillas"
+        }
+      },
+      "use_template": {
+        "button": "Usar plantilla"
+      },
+      "template_source": {
+        "workspace": {
+          "info": "Derivado del espacio de trabajo"
+        },
+        "project": {
+          "info": "Derivado del proyecto"
+        }
+      },
+      "form": {
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "Nombra tu plantilla de elemento de trabajo.",
+              "validation": {
+                "required": "El nombre de la plantilla es obligatorio",
+                "maxLength": "El nombre de la plantilla debe tener menos de 255 caracteres"
+              }
+            },
+            "description": {
+              "placeholder": "Describe cuándo y cómo utilizar esta plantilla."
+            }
+          },
+          "name": {
+            "placeholder": "Dale un título a este elemento de trabajo.",
+            "validation": {
+              "required": "El título del elemento de trabajo es obligatorio",
+              "maxLength": "El título del elemento de trabajo debe tener menos de 255 caracteres"
+            }
+          },
+          "description": {
+            "placeholder": "Describe este elemento de trabajo para que quede claro lo que conseguirás cuando lo completes."
+          },
+          "button": {
+            "create": "Crear plantilla de elemento de trabajo",
+            "update": "Actualizar plantilla de elemento de trabajo"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Plantillas",
+        "description": "Con las plantillas de proyectos, elementos de trabajo y páginas en Plane, no tienes que crear un proyecto desde cero ni configurar manualmente las propiedades de los elementos de trabajo.",
+        "sub_description": "Recupera el 80% de tu tiempo de administración cuando utilizas Plantillas."
+      },
+      "no_templates": {
+        "button": "Crea tu primera plantilla"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Plantilla creada",
+          "message": "{templateName}, la plantilla de {templateType}, ya está disponible para tu espacio de trabajo."
+        },
+        "error": {
+          "title": "No pudimos crear esa plantilla esta vez.",
+          "message": "Intenta guardar tus detalles de nuevo o cópialos a una nueva plantilla, preferiblemente en otra pestaña."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Plantilla modificada",
+          "message": "{templateName}, la plantilla de {templateType}, ha sido modificada."
+        },
+        "error": {
+          "title": "No pudimos guardar los cambios en esta plantilla.",
+          "message": "Intenta guardar tus detalles de nuevo o vuelve a esta plantilla más tarde. Si sigues teniendo problemas, contacta con nosotros."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Plantilla eliminada",
+          "message": "{templateName}, la plantilla de {templateType}, ha sido eliminada de tu espacio de trabajo."
+        },
+        "error": {
+          "title": "No pudimos eliminar esa plantilla esta vez.",
+          "message": "Intenta eliminarla de nuevo o vuelve a intentarlo más tarde. Si no puedes eliminarla entonces, contacta con nosotros."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Eliminar plantilla",
+      "description": {
+        "prefix": "¿Estás seguro de que quieres eliminar la plantilla-",
+        "suffix": "? Todos los datos relacionados con la plantilla se eliminarán permanentemente. Esta acción no se puede deshacer."
+      }
+    }
   }
 }

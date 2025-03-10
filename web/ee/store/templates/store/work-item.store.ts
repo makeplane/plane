@@ -7,7 +7,7 @@ import {
   workspaceWorkItemTemplateService as workspaceLevelService,
   projectWorkItemTemplateService as projectLevelService,
 } from "@plane/services";
-import { IBaseTemplateActionCallbacks, TWorkItemTemplate } from "@plane/types";
+import { IBaseTemplateActionCallbacks, TWorkItemTemplate, ITemplateService } from "@plane/types";
 import { isValidId } from "@plane/utils";
 // plane web imports
 import { RootStore } from "@/plane-web/store/root.store";
@@ -56,6 +56,8 @@ export interface IWorkItemTemplateStore extends IBaseTemplateStore<TWorkItemTemp
     typeId: string
   ) => IBaseTemplateInstance<TWorkItemTemplate>[];
   getAllWorkItemTemplateIdsForProjectByTypeId: (workspaceSlug: string, projectId: string, typeId: string) => string[];
+  isAnyWorkItemTemplatesAvailable: (workspaceSlug: string) => boolean;
+  isAnyWorkItemTemplatesAvailableForProject: (workspaceSlug: string, projectId: string) => boolean;
   // actions
   fetchAllTemplates: (props: TFetchWorkItemTemplatesProps) => Promise<void>;
   fetchTemplateById: (props: TFetchWorkItemTemplateByIdProps) => Promise<void>;
@@ -74,6 +76,7 @@ export class WorkItemTemplateStore extends BaseTemplateStore<TWorkItemTemplate> 
     makeObservable(this, {
       // observables
       fetchAllTemplates: action,
+      fetchTemplateById: action,
       createWorkItemTemplate: action,
       deleteWorkItemTemplate: action,
     });
@@ -147,6 +150,52 @@ export class WorkItemTemplateStore extends BaseTemplateStore<TWorkItemTemplate> 
     this.getAllWorkItemTemplatesForProjectByTypeId(workspaceSlug, projectId, typeId).map((template) => template.id)
   );
 
+  /**
+   * @description Check if any work item templates are available
+   * @param workspaceSlug - The slug of the workspace
+   * @returns True if any work item templates are available, false otherwise
+   */
+  isAnyWorkItemTemplatesAvailable = computedFn(
+    (workspaceSlug: string) => this.getAllWorkItemTemplates(workspaceSlug).length > 0
+  );
+
+  /**
+   * @description Check if any work item templates are available for a project
+   * @param workspaceSlug - The slug of the workspace
+   * @param projectId - The id of the project
+   * @returns True if any work item templates are available for a project, false otherwise
+   */
+  isAnyWorkItemTemplatesAvailableForProject = computedFn(
+    (workspaceSlug: string, projectId: string) =>
+      this.getAllWorkItemTemplatesForProject(workspaceSlug, projectId).length > 0
+  );
+
+  // helper actions
+  private getWorkItemTemplateServices = computedFn(
+    (props: TBaseWorkItemTemplateProps): ITemplateService<TWorkItemTemplate> => ({
+      list:
+        props.level === ETemplateLevel.PROJECT
+          ? projectLevelService.list.bind(projectLevelService, props.workspaceSlug, props.projectId)
+          : workspaceLevelService.list.bind(workspaceLevelService, props.workspaceSlug),
+      retrieve:
+        props.level === ETemplateLevel.PROJECT
+          ? projectLevelService.retrieve.bind(projectLevelService, props.workspaceSlug, props.projectId)
+          : workspaceLevelService.retrieve.bind(workspaceLevelService, props.workspaceSlug),
+      create:
+        props.level === ETemplateLevel.PROJECT
+          ? projectLevelService.create.bind(projectLevelService, props.workspaceSlug, props.projectId)
+          : workspaceLevelService.create.bind(workspaceLevelService, props.workspaceSlug),
+      update:
+        props.level === ETemplateLevel.PROJECT
+          ? projectLevelService.update.bind(projectLevelService, props.workspaceSlug, props.projectId)
+          : workspaceLevelService.update.bind(workspaceLevelService, props.workspaceSlug),
+      destroy:
+        props.level === ETemplateLevel.PROJECT
+          ? projectLevelService.destroy.bind(projectLevelService, props.workspaceSlug, props.projectId)
+          : workspaceLevelService.destroy.bind(workspaceLevelService, props.workspaceSlug),
+    })
+  );
+
   // actions
   /**
    * @description Fetch all templates
@@ -156,21 +205,20 @@ export class WorkItemTemplateStore extends BaseTemplateStore<TWorkItemTemplate> 
    * @param props.projectId - The project id, required if the level is project
    */
   fetchAllTemplates = action(async (props: TFetchWorkItemTemplatesProps) => {
-    const { workspaceSlug, level } = props;
     try {
       this.loader = "init-loader";
       // Use the correct service based on the level
-      const listService =
-        level === ETemplateLevel.PROJECT
-          ? projectLevelService.list.bind(projectLevelService, workspaceSlug, props.projectId)
-          : workspaceLevelService.list.bind(workspaceLevelService, workspaceSlug);
+      const workItemTemplateService = this.getWorkItemTemplateServices(props);
       // Fetch the templates
-      const templates = await listService();
+      const templates = await workItemTemplateService.list();
       this.addOrUpdateTemplates(templates, (id, template) => {
         // Use the correct service based on the level
-        const updateService = template.project
-          ? projectLevelService.update.bind(projectLevelService, workspaceSlug, template.project)
-          : workspaceLevelService.update.bind(workspaceLevelService, workspaceSlug);
+        const updateService = this.getWorkItemTemplateServices({
+          workspaceSlug: props.workspaceSlug,
+          ...(template.project
+            ? { level: ETemplateLevel.PROJECT, projectId: template.project }
+            : { level: ETemplateLevel.WORKSPACE }),
+        }).update;
         // Update the template
         return updateService(id, template);
       });
@@ -191,23 +239,23 @@ export class WorkItemTemplateStore extends BaseTemplateStore<TWorkItemTemplate> 
    * @param props.projectId - The project id, required if the level is project
    */
   fetchTemplateById = action(async (props: TFetchWorkItemTemplateByIdProps) => {
-    const { workspaceSlug, templateId, level } = props;
+    const { templateId } = props;
     // if the template is already being fetched, return
     if (this.getTemplateFetchStatusById(templateId)) return;
     this.loader = "init-loader";
     try {
       // Use the correct service based on the level
-      const retrieveService =
-        level === ETemplateLevel.PROJECT
-          ? projectLevelService.retrieve.bind(projectLevelService, workspaceSlug, props.projectId)
-          : workspaceLevelService.retrieve.bind(workspaceLevelService, workspaceSlug);
+      const retrieveService = this.getWorkItemTemplateServices(props).retrieve;
       // Fetch the template
       const template = await retrieveService(templateId);
       this.addOrUpdateTemplates([template], (id, template) => {
         // Use the correct service based on the level
-        const updateService = template.project
-          ? projectLevelService.update.bind(projectLevelService, workspaceSlug, template.project)
-          : workspaceLevelService.update.bind(workspaceLevelService, workspaceSlug);
+        const updateService = this.getWorkItemTemplateServices({
+          workspaceSlug: props.workspaceSlug,
+          ...(template.project
+            ? { level: ETemplateLevel.PROJECT, projectId: template.project }
+            : { level: ETemplateLevel.WORKSPACE }),
+        }).update;
         // Update the template
         return updateService(id, template);
       });
@@ -228,17 +276,12 @@ export class WorkItemTemplateStore extends BaseTemplateStore<TWorkItemTemplate> 
    * @param props.projectId - The project id, required if the level is project
    */
   createWorkItemTemplate = action(async (props: TCreateWorkItemTemplateProps) => {
-    const { workspaceSlug, templateData, level } = props;
+    const { templateData } = props;
     // Use the correct service based on the level and create the create and update action callbacks
+    const workItemTemplateService = this.getWorkItemTemplateServices(props);
     const createUpdateActionCallbacks: Pick<IBaseTemplateActionCallbacks<TWorkItemTemplate>, "create" | "update"> = {
-      create:
-        level === ETemplateLevel.PROJECT
-          ? projectLevelService.create.bind(projectLevelService, workspaceSlug, props.projectId)
-          : workspaceLevelService.create.bind(workspaceLevelService, workspaceSlug),
-      update:
-        level === ETemplateLevel.PROJECT
-          ? projectLevelService.update.bind(projectLevelService, workspaceSlug, props.projectId)
-          : workspaceLevelService.update.bind(workspaceLevelService, workspaceSlug),
+      create: workItemTemplateService.create,
+      update: workItemTemplateService.update,
     };
     // create the template
     return this.createTemplate(templateData, createUpdateActionCallbacks);
@@ -251,9 +294,12 @@ export class WorkItemTemplateStore extends BaseTemplateStore<TWorkItemTemplate> 
    */
   deleteWorkItemTemplate = action(async (workspaceSlug: string, templateId: string) => {
     this.deleteTemplate(templateId, (template) => {
-      const deleteService = template.project
-        ? projectLevelService.destroy.bind(projectLevelService, workspaceSlug, template.project)
-        : workspaceLevelService.destroy.bind(workspaceLevelService, workspaceSlug);
+      const deleteService = this.getWorkItemTemplateServices({
+        workspaceSlug,
+        ...(template.project
+          ? { level: ETemplateLevel.PROJECT, projectId: template.project }
+          : { level: ETemplateLevel.WORKSPACE }),
+      }).destroy;
       return deleteService(template.id);
     });
   });
