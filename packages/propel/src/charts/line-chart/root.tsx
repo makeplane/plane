@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
   CartesianGrid,
   LineChart as CoreLineChart,
@@ -35,6 +35,9 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
     legend,
     showTooltip = true,
   } = props;
+  // states
+  const [activeLine, setActiveLine] = useState<string | null>(null);
+  const [activeLegend, setActiveLegend] = useState<string | null>(null);
   // derived values
   const itemKeys = useMemo(() => lines.map((line) => line.key), [lines]);
   const itemLabels: Record<string, string> = useMemo(
@@ -50,7 +53,8 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
           key={line.key}
           dataKey={line.key}
           type={line.smoothCurves ? "monotone" : "linear"}
-          className={line.className}
+          className="[&_path]:transition-opacity [&_path]:duration-200"
+          opacity={!!activeLegend && activeLegend !== line.key ? 0.1 : 1}
           fill={line.fill}
           stroke={line.stroke}
           strokeWidth={2}
@@ -66,9 +70,11 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
           activeDot={{
             stroke: line.fill,
           }}
+          onMouseEnter={() => setActiveLine(line.key)}
+          onMouseLeave={() => setActiveLine(null)}
         />
       )),
-    [lines]
+    [activeLegend, lines]
   );
 
   return (
@@ -118,7 +124,12 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
           />
           {legend && (
             // @ts-expect-error recharts types are not up to date
-            <Legend formatter={(value) => itemLabels[value]} {...getLegendProps(legend)} />
+            <Legend
+              onMouseEnter={(payload) => setActiveLegend(payload.value)}
+              onMouseLeave={() => setActiveLegend(null)}
+              formatter={(value) => itemLabels[value]}
+              {...getLegendProps(legend)}
+            />
           )}
           {showTooltip && (
             <Tooltip
@@ -132,6 +143,7 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
               content={({ active, label, payload }) => (
                 <CustomTooltip
                   active={active}
+                  activeKey={activeLine}
                   label={label}
                   payload={payload}
                   itemKeys={itemKeys}

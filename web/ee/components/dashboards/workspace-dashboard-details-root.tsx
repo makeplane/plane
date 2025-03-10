@@ -20,8 +20,6 @@ export const WorkspaceDashboardDetailsRoot = observer(() => {
     dashboardId ? () => fetchDashboardDetails(dashboardId.toString()) : null
   );
 
-  console.log("Re-rendering root");
-
   return (
     <div className="size-full flex overflow-hidden">
       <DashboardsWidgetsListRoot
@@ -29,7 +27,7 @@ export const WorkspaceDashboardDetailsRoot = observer(() => {
         dashboardId={dashboardId.toString()}
       />
       <DashboardsWidgetConfigSidebarRoot
-        className="flex-shrink-0 h-full p-4 border-l border-custom-border-200 overflow-y-scroll vertical-scrollbar scrollbar-sm"
+        className="flex-shrink-0 h-full border-l border-custom-border-200 overflow-y-scroll vertical-scrollbar scrollbar-sm"
         dashboardId={dashboardId.toString()}
       />
     </div>

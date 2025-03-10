@@ -991,9 +991,9 @@
         }
       },
       "color_palettes": {
-        "modern_tech": "Modern tech",
-        "ocean_deep": "Ocean deep",
-        "sunset_vibes": "Sunset vibes"
+        "modern": "Modern",
+        "horizon": "Horizon",
+        "earthen": "Earthen"
       },
       "common": {
         "add_widget": "Add widget",
@@ -1052,63 +1052,63 @@
         "bar_chart": {
           "basic": {
             "x_axis_property": "The x-axis is missing a value.",
-            "y_axis_metric": "The metric is missing a value."
+            "y_axis_metric": "Metric is missing a value."
           },
           "stacked": {
             "x_axis_property": "The x-axis is missing a value.",
-            "y_axis_metric": "The metric is missing a value.",
-            "group_by": "The stack by is missing a property."
+            "y_axis_metric": "Metric is missing a value.",
+            "group_by": "Stack by is missing a value."
           },
           "grouped": {
             "x_axis_property": "The x-axis is missing a value.",
-            "y_axis_metric": "The metric is missing a value.",
-            "group_by": "The group by is missing a property."
+            "y_axis_metric": "Metric is missing a value.",
+            "group_by": "Group by is missing a value."
           }
         },
         "line_chart": {
           "basic": {
             "x_axis_property": "The x-axis is missing a value.",
-            "y_axis_metric": "The metric is missing a value."
+            "y_axis_metric": "Metric is missing a value."
           },
           "multi_line": {
             "x_axis_property": "The x-axis is missing a value.",
-            "y_axis_metric": "The metric is missing a value.",
-            "group_by": "The group by is missing a property."
+            "y_axis_metric": "Metric is missing a value.",
+            "group_by": "Group by is missing a value."
           }
         },
         "area_chart": {
           "basic": {
             "x_axis_property": "The x-axis is missing a value.",
-            "y_axis_metric": "The metric is missing a value."
+            "y_axis_metric": "Metric is missing a value."
           },
           "stacked": {
             "x_axis_property": "The x-axis is missing a value.",
-            "y_axis_metric": "The metric is missing a value.",
-            "group_by": "The stack by is missing a property."
+            "y_axis_metric": "Metric is missing a value.",
+            "group_by": "Stack by is missing a value."
           },
           "comparison": {
             "x_axis_property": "The x-axis is missing a value.",
-            "y_axis_metric": "The metric is missing a value."
+            "y_axis_metric": "Metric is missing a value."
           }
         },
         "donut_chart": {
           "basic": {
-            "x_axis_property": "The property is missing a value.",
-            "y_axis_metric": "The metric is missing a value."
+            "x_axis_property": "The x-axis is missing a value.",
+            "y_axis_metric": "Metric is missing a value."
           },
           "progress": {
-            "y_axis_metric": "The metric is missing a value."
+            "y_axis_metric": "Metric is missing a value."
           }
         },
         "pie_chart": {
           "basic": {
-            "x_axis_property": "The property is missing a value.",
-            "y_axis_metric": "The metric is missing a value."
+            "x_axis_property": "The x-axis is missing a value.",
+            "y_axis_metric": "Metric is missing a value."
           }
         },
         "text": {
           "basic": {
-            "y_axis_metric": "The metric is missing a value."
+            "y_axis_metric": "Metric is missing a value."
           }
         },
         "ask_admin": "Ask your admin to configure this widget."

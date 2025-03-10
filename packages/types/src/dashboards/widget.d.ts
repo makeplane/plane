@@ -7,7 +7,7 @@ import {
   EWidgetYAxisMetric,
 } from "@plane/constants";
 
-export type TWidgetChartColorScheme = "modern_tech" | "ocean_deep" | "sunset_vibes";
+export type TWidgetChartColorScheme = "modern" | "horizon" | "earthen";
 export type TWidgetBarChartOrientation = "vertical" | "horizontal";
 export type TWidgetLineChartLineType = "solid" | "dashed";
 export type TWidgetTextAlignment = "left" | "center" | "right";

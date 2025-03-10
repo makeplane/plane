@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
   BarChart as CoreBarChart,
   Bar,
@@ -37,6 +37,9 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
     },
     showTooltip = true,
   } = props;
+  // states
+  const [activeBar, setActiveBar] = useState<string | null>(null);
+  const [activeLegend, setActiveLegend] = useState<string | null>(null);
   // derived values
   const stackKeys = useMemo(() => bars.map((bar) => bar.key), [bars]);
   const stackLabels: Record<string, string> = useMemo(
@@ -52,6 +55,7 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
           key={bar.key}
           dataKey={bar.key}
           stackId={bar.stackId}
+          opacity={!!activeLegend && activeLegend !== bar.key ? 0.1 : 1}
           fill={bar.fill}
           shape={(shapeProps: any) => {
             const showTopBorderRadius = bar.showTopBorderRadius?.(shapeProps.dataKey, shapeProps.payload);
@@ -68,9 +72,12 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
               />
             );
           }}
+          className="[&_path]:transition-opacity [&_path]:duration-200"
+          onMouseEnter={() => setActiveBar(bar.key)}
+          onMouseLeave={() => setActiveBar(null)}
         />
       )),
-    [stackKeys, bars]
+    [activeLegend, stackKeys, bars]
   );
 
   return (
@@ -118,7 +125,12 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
           />
           {legend && (
             // @ts-expect-error recharts types are not up to date
-            <Legend formatter={(value) => stackLabels[value]} {...getLegendProps(legend)} />
+            <Legend
+              onMouseEnter={(payload) => setActiveLegend(payload.value)}
+              onMouseLeave={() => setActiveLegend(null)}
+              formatter={(value) => stackLabels[value]}
+              {...getLegendProps(legend)}
+            />
           )}
           {showTooltip && (
             <Tooltip
@@ -134,6 +146,7 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
                   active={active}
                   label={label}
                   payload={payload}
+                  activeKey={activeBar}
                   itemKeys={stackKeys}
                   itemLabels={stackLabels}
                   itemDotColors={stackDotColors}

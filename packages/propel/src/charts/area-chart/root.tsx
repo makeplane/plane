@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Area, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis, Line, ComposedChart, CartesianGrid } from "recharts";
 // plane imports
 import { AXIS_LABEL_CLASSNAME } from "@plane/constants";
@@ -26,6 +26,9 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
     showTooltip = true,
     comparisonLine,
   } = props;
+  // states
+  const [activeArea, setActiveArea] = useState<string | null>(null);
+  const [activeLegend, setActiveLegend] = useState<string | null>(null);
   // derived values
   const itemKeys = useMemo(() => areas.map((area) => area.key), [areas]);
   const itemLabels: Record<string, string> = useMemo(
@@ -43,6 +46,7 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
           dataKey={area.key}
           stackId={area.stackId}
           fill={area.fill}
+          opacity={!!activeLegend && activeLegend !== area.key ? 0.1 : 1}
           fillOpacity={area.fillOpacity}
           strokeOpacity={area.strokeOpacity}
           stroke={area.strokeColor}
@@ -59,9 +63,12 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
           activeDot={{
             stroke: area.fill,
           }}
+          onMouseEnter={() => setActiveArea(area.key)}
+          onMouseLeave={() => setActiveArea(null)}
+          className="[&_path]:transition-opacity [&_path]:duration-200"
         />
       )),
-    [areas]
+    [activeLegend, areas]
   );
 
   // create comparison line data for straight line from origin to last point
@@ -132,7 +139,12 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
           />
           {legend && (
             // @ts-expect-error recharts types are not up to date
-            <Legend formatter={(value) => itemLabels[value]} {...getLegendProps(legend)} />
+            <Legend
+              formatter={(value) => itemLabels[value]}
+              onMouseEnter={(payload) => setActiveLegend(payload.value)}
+              onMouseLeave={() => setActiveLegend(null)}
+              {...getLegendProps(legend)}
+            />
           )}
           {showTooltip && (
             <Tooltip
@@ -146,6 +158,7 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
               content={({ active, label, payload }) => (
                 <CustomTooltip
                   active={active}
+                  activeKey={activeArea}
                   label={label}
                   payload={payload}
                   itemKeys={itemKeys}

@@ -59,7 +59,6 @@ export type TBarChartProps<K extends string, T extends string> = TChartProps<K, 
 export type TLineItem<T extends string> = {
   key: T;
   label: string;
-  className?: string;
   dashedLine: boolean;
   fill: string;
   showDot: boolean;

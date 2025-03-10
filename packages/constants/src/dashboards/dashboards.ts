@@ -111,7 +111,7 @@ export const DEFAULT_WIDGET_CHART_TYPE_PAYLOAD: {
   [EWidgetChartTypes.AREA_CHART]: {
     default: EWidgetChartModels.BASIC,
     config: {
-      opacity: 0.6,
+      opacity: 0.2,
       show_border: true,
       smoothing: true,
       show_markers: true,
@@ -174,7 +174,7 @@ export const DEFAULT_WIDGET_CHART_TYPE_PAYLOAD: {
     [EWidgetChartModels.BASIC]: {
       config: {
         text_alignment: "left",
-        text_color: DEFAULT_WIDGET_COLOR,
+        text_color: "#787878",
       },
     },
   },

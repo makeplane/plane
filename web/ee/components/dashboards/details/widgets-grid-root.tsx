@@ -58,8 +58,6 @@ export const DashboardsWidgetsGridRoot: React.FC<Props> = observer((props) => {
     setActiveBreakpoint(newBreakpoint);
   }, []);
 
-  console.log("Re-rendering");
-
   return (
     <ResponsiveGridLayout
       breakpoints={WIDGET_GRID_BREAKPOINTS}

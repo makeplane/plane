@@ -2,9 +2,11 @@ import React from "react";
 import { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 // plane imports
 import { Card, ECardSpacing } from "@plane/ui";
+import { cn } from "@plane/utils";
 
 type Props = {
   active: boolean | undefined;
+  activeKey?: string | null;
   label: string | undefined;
   payload: Payload<ValueType, NameType>[] | undefined;
   itemKeys: string[];
@@ -13,7 +15,7 @@ type Props = {
 };
 
 export const CustomTooltip = React.memo((props: Props) => {
-  const { active, label, payload, itemKeys, itemLabels, itemDotColors } = props;
+  const { active, activeKey, label, payload, itemKeys, itemLabels, itemDotColors } = props;
   // derived values
   const filteredPayload = payload?.filter((item) => item.dataKey && itemKeys.includes(`${item.dataKey}`));
 
@@ -31,7 +33,12 @@ export const CustomTooltip = React.memo((props: Props) => {
         if (!item.dataKey) return null;
 
         return (
-          <div key={item?.dataKey} className="flex items-center gap-2 text-xs">
+          <div
+            key={item?.dataKey}
+            className={cn("flex items-center gap-2 text-xs transition-opacity", {
+              "opacity-20": activeKey && item.dataKey !== activeKey,
+            })}
+          >
             {itemDotColors[item?.dataKey] && (
               <div
                 className="flex-shrink-0 size-2 rounded-sm"

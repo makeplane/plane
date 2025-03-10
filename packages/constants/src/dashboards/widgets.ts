@@ -7,8 +7,8 @@ import {
   TWidgetTextAlignment,
 } from "@plane/types";
 
-export const DEFAULT_WIDGET_COLOR_SCHEME: TWidgetChartColorScheme = "sunset_vibes";
-export const DEFAULT_WIDGET_COLOR = "#386641";
+export const DEFAULT_WIDGET_COLOR_SCHEME: TWidgetChartColorScheme = "earthen";
+export const DEFAULT_WIDGET_COLOR = "#049bdc";
 
 export const CHART_COLOR_PALETTES: {
   key: TWidgetChartColorScheme;
@@ -17,8 +17,8 @@ export const CHART_COLOR_PALETTES: {
   dark: string[];
 }[] = [
   {
-    key: "modern_tech",
-    i18n_label: "dashboards.widget.color_palettes.modern_tech",
+    key: "modern",
+    i18n_label: "dashboards.widget.color_palettes.modern",
     light: [
       "#6172E8",
       "#8B6EDB",
@@ -45,8 +45,8 @@ export const CHART_COLOR_PALETTES: {
     ],
   },
   {
-    key: "ocean_deep",
-    i18n_label: "dashboards.widget.color_palettes.ocean_deep",
+    key: "horizon",
+    i18n_label: "dashboards.widget.color_palettes.horizon",
     light: [
       "#E76E50",
       "#289D90",
@@ -73,8 +73,8 @@ export const CHART_COLOR_PALETTES: {
     ],
   },
   {
-    key: "sunset_vibes",
-    i18n_label: "dashboards.widget.color_palettes.sunset_vibes",
+    key: "earthen",
+    i18n_label: "dashboards.widget.color_palettes.earthen",
     light: [
       "#386641",
       "#6A994E",

@@ -102,8 +102,10 @@ export const PieChart = React.memo(<K extends string, T extends string>(props: T
               />
             )}
           </Pie>
-          {/* @ts-expect-error recharts types are not up to date */}
-          {legend && <Legend {...getLegendProps(legend)} />}
+          {legend && (
+            // @ts-expect-error recharts types are not up to date
+            <Legend {...getLegendProps(legend)} />
+          )}
           {showTooltip && (
             <Tooltip
               cursor={{

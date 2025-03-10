@@ -77,10 +77,24 @@ export const DashboardsWidgetConfigSidebarRoot: React.FC<Props> = observer((prop
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asJSON, isEditingWidget]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        handleCloseSidebar();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleCloseSidebar]);
+
   return (
     <form
       onSubmit={handleSubmit(handleFormSubmit)}
-      className={cn(className, "w-[308px] -mr-[308px] flex flex-col gap-y-4 transition-all", {
+      className={cn(className, "w-[308px] -mr-[308px] flex flex-col gap-y-4 p-4 transition-all", {
         "mr-0": shouldShowSidebar,
       })}
     >

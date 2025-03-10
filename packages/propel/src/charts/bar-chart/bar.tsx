@@ -20,6 +20,7 @@ const BAR_BOTTOM_BORDER_RADIUS = 4; // Border radius for each bar
 
 export const CustomBar = React.memo((props: any) => {
   const {
+    opacity,
     fill,
     x,
     y,
@@ -67,8 +68,9 @@ export const CustomBar = React.memo((props: any) => {
         Q${x},${y + height} ${x},${y + height - bottomBorderRadius}
         Z
       `}
-        className="transition-colors duration-200"
+        className="transition-opacity duration-200"
         fill={fill}
+        opacity={opacity}
       />
       {showText && (
         <text
