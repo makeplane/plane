@@ -7,7 +7,7 @@
     "your_work": "Vaša práca",
     "inbox": "Doručená pošta",
     "workspace": "Pracovný priestor",
-    "views": "Zobrazenia",
+    "views": "Pohľady",
     "analytics": "Analytika",
     "work_items": "Pracovné položky",
     "cycles": "Cykly",
@@ -291,7 +291,7 @@
   "your_work": "Vaša práca",
   "drafts": "Koncepty",
   "projects": "Projekty",
-  "views": "Zobrazenia",
+  "views": "Pohľady",
   "workspace": "Pracovný priestor",
   "archives": "Archívy",
   "settings": "Nastavenia",
@@ -449,7 +449,7 @@
   "remove_parent_issue": "Odstrániť nadradenú pracovnú položku",
   "add_parent": "Pridať nadradenú",
   "loading_members": "Načítavam členov",
-  "view_link_copied_to_clipboard": "Odkaz na zobrazenie bol skopírovaný do schránky.",
+  "view_link_copied_to_clipboard": "Odkaz na pohľad bol skopírovaný do schránky.",
   "required": "Povinné",
   "optional": "Voliteľné",
   "Cancel": "Zrušiť",
@@ -866,7 +866,7 @@
     "deleting": "Mazanie",
     "pending": "Čakajúce",
     "invite": "Pozvať",
-    "view": "Zobrazenie"
+    "view": "Zobraziť"
   },
 
   "chart": {
@@ -1121,12 +1121,12 @@
   },
 
   "view": {
-    "label": "{count, plural, one {Zobrazenie} few {Zobrazenia} other {Zobrazení}}",
+    "label": "{count, plural, one {Pohľad} few {Pohľady} other {Pohľadov}}",
     "create": {
-      "label": "Vytvoriť zobrazenie"
+      "label": "Vytvoriť pohľad"
     },
     "update": {
-      "label": "Aktualizovať zobrazenie"
+      "label": "Aktualizovať pohľad"
     }
   },
 
@@ -1405,7 +1405,7 @@
   },
 
   "workspace_views": {
-    "add_view": "Pridať zobrazenie",
+    "add_view": "Pridať pohľad",
     "empty_state": {
       "all-issues": {
         "title": "Žiadne pracovné položky v projekte",
@@ -1969,13 +1969,13 @@
   "project_views": {
     "empty_state": {
       "general": {
-        "title": "Ukladajte filtre ako zobrazenia.",
-        "description": "Zobrazenia sú uložené filtre na jednoduchý prístup. Zdieľajte ich v tíme.",
+        "title": "Ukladajte filtre ako pohľady.",
+        "description": "Pohľady sú uložené filtre na jednoduchý prístup. Zdieľajte ich v tíme.",
         "primary_button": {
-          "text": "Vytvoriť prvé zobrazenie",
+          "text": "Vytvoriť prvý pohľad",
           "comic": {
-            "title": "Zobrazenia pracujú s vlastnosťami položiek.",
-            "description": "Vytvorte zobrazenie s požadovanými filtrami."
+            "title": "Pohľady pracujú s vlastnosťami položiek.",
+            "description": "Vytvorte pohľad s požadovanými filtrami."
           }
         }
       },
@@ -2152,8 +2152,8 @@
         }
       },
       "view": {
-        "title": "Zobrazenia nie sú povolené",
-        "description": "Aktivujte zobrazenia v nastaveniach projektu.",
+        "title": "Pohľady nie sú povolené",
+        "description": "Aktivujte pohľady v nastaveniach projektu.",
         "primary_button": {
           "text": "Spravovať funkcie"
         }
