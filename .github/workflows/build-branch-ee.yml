@@ -36,7 +36,7 @@ env:
 jobs:
   branch_build_setup:
     name: Build Setup
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     outputs:
       gh_branch_name: ${{ steps.set_env_variables.outputs.TARGET_BRANCH }}
       gh_buildx_driver: ${{ steps.set_env_variables.outputs.BUILDX_DRIVER }}
@@ -155,7 +155,7 @@ jobs:
             apiserver:
               - apiserver/**
             proxy:
-              - nginx/**
+              - proxy/**
             admin:
               - admin/**
               - packages/**
@@ -199,7 +199,7 @@ jobs:
   branch_build_push_admin:
     if: ${{ needs.branch_build_setup.outputs.build_admin == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Admin Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     steps:
       - name: Admin Build and Push
@@ -227,7 +227,7 @@ jobs:
   branch_build_push_web:
     if: ${{ needs.branch_build_setup.outputs.build_web == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Web Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     steps:
       - name: Web Build and Push
@@ -255,7 +255,7 @@ jobs:
   branch_build_push_space:
     if: ${{ needs.branch_build_setup.outputs.build_space == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Space Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     steps:
       - name: Space Build and Push
@@ -283,7 +283,7 @@ jobs:
   branch_build_push_live:
     if: ${{ needs.branch_build_setup.outputs.build_live == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Live Collaboration Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     steps:
       - name: Live Build and Push
@@ -311,7 +311,7 @@ jobs:
   branch_build_push_silo:
     if: ${{ needs.branch_build_setup.outputs.build_silo == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Silo Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     steps:
       - name: Silo Build and Push
@@ -339,7 +339,7 @@ jobs:
   branch_build_push_apiserver:
     if: ${{ needs.branch_build_setup.outputs.build_apiserver == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push API Server Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     steps:
       - name: Backend Build and Push
@@ -367,7 +367,7 @@ jobs:
   branch_build_push_proxy:
     if: ${{ needs.branch_build_setup.outputs.build_proxy == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Proxy Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     steps:
       - name: Proxy Build and Push
@@ -385,8 +385,8 @@ jobs:
           private-registry-project: ${{ vars.HARBOR_PROJECT }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_proxy }}
-          build-context: ./nginx
-          dockerfile-path: ./nginx/Dockerfile
+          build-context: ./proxy
+          dockerfile-path: ./proxy/Dockerfile.ee
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -395,7 +395,7 @@ jobs:
   branch_build_push_monitor:
     if: ${{ needs.branch_build_setup.outputs.build_monitor == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Monitor Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     steps:
       - name: Generate Keypair
@@ -439,7 +439,7 @@ jobs:
   branch_build_push_email:
     if: ${{ needs.branch_build_setup.outputs.build_email == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Email Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     steps:
       - id: checkout_files
@@ -471,7 +471,7 @@ jobs:
   upload_artifacts_s3:
     if: ${{ needs.branch_build_setup.outputs.artifact_upload_to_s3 == 'true' }}
     name: Upload artifacts to S3 Bucket
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     container:
       image: docker:20.10.7
@@ -494,17 +494,25 @@ jobs:
 
           mkdir -p ~/${{ env.ARTIFACT_SUFFIX }}
 
+          sed -i 's@APP_RELEASE_VERSION=.*@APP_RELEASE_VERSION='${{ env.ARTIFACT_SUFFIX }}'@' deploy/cli-install/variables.env
           cp deploy/cli-install/variables.env ~/${{ env.ARTIFACT_SUFFIX }}/variables.env
-          cp deploy/cli-install/Caddyfile ~/${{ env.ARTIFACT_SUFFIX }}/Caddyfile
-          sed -e 's@${APP_RELEASE_VERSION}@'${{ env.ARTIFACT_SUFFIX }}'@' deploy/cli-install/docker-compose.yml > ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose.yml
-          sed -e 's@${APP_RELEASE_VERSION}@'${{ env.ARTIFACT_SUFFIX }}'@' deploy/cli-install/docker-compose-caddy.yml > ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose-caddy.yml
+
+          sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deploy/cli-install/docker-compose-caddy.yml
+          cp deploy/cli-install/docker-compose-caddy.yml ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose-caddy.yml
+
+          sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deploy/cli-install/coolify-compose.yml
+          cp deploy/cli-install/coolify-compose.yml ~/${{ env.ARTIFACT_SUFFIX }}/coolify-compose.yml
+
+          # required for prime-cli backward compatibility
+          cp proxy/Caddyfile.ee ~/${{ env.ARTIFACT_SUFFIX }}/Caddyfile
+          cp deploy/cli-install/docker-compose-caddy.yml ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose.yml
 
           aws s3 cp ~/${{ env.ARTIFACT_SUFFIX }} s3://${{ vars.SELF_HOST_BUCKET_NAME }}/plane-enterprise/${{ env.ARTIFACT_SUFFIX }} --recursive
 
   publish_release:
     if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
     name: Build Release
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs:
       [
         branch_build_setup,
@@ -521,9 +529,17 @@ jobs:
       ]
     env:
       REL_VERSION: ${{ needs.branch_build_setup.outputs.release_version }}
+      ARTIFACT_SUFFIX: ${{ needs.branch_build_setup.outputs.artifact_s3_suffix }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Update docker-compose
+        run: |
+          sed -i 's@APP_RELEASE_VERSION=.*@APP_RELEASE_VERSION='${{ env.ARTIFACT_SUFFIX }}'@' deploy/cli-install/variables.env
+          sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deploy/cli-install/docker-compose-caddy.yml
+          sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deploy/cli-install/coolify-compose.yml
+          cp deploy/cli-install/docker-compose-caddy.yml deploy/cli-install/docker-compose.yml
 
       - name: Create Release
         id: create_release
@@ -538,6 +554,5 @@ jobs:
           generate_release_notes: true
           files: |
             ${{ github.workspace }}/deploy/cli-install/variables.env
-            ${{ github.workspace }}/deploy/cli-install/Caddyfile
             ${{ github.workspace }}/deploy/cli-install/docker-compose.yml
-            ${{ github.workspace }}/deploy/cli-install/docker-compose-caddy.yml
+            ${{ github.workspace }}/deploy/cli-install/coolify-compose.yml

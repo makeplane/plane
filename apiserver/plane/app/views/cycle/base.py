@@ -285,7 +285,7 @@ class CycleViewSet(BaseViewSet):
                 data=request.data, context={"project_id": project_id}
             )
             if serializer.is_valid():
-                serializer.save(project_id=project_id, owned_by=request.user)
+                serializer.save(project_id=project_id, owned_by=request.user, version=2)
                 cycle = (
                     self.get_queryset()
                     .filter(pk=serializer.data["id"])

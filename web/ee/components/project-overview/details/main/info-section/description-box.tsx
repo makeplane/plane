@@ -1,4 +1,6 @@
+"use client";
 import { useState } from "react";
+import { observer } from "mobx-react";
 import { useUser } from "@/hooks/store";
 import { TProject } from "@/plane-web/types";
 import { Actions } from "./actions";
@@ -12,7 +14,7 @@ type TProps = {
   toggleLinkModalOpen: (value: boolean) => void;
   disabled?: boolean;
 };
-export const DescriptionBox = (props: TProps) => {
+export const DescriptionBox = observer((props: TProps) => {
   const { workspaceSlug, project, handleProjectUpdate, toggleLinkModalOpen, disabled = false } = props;
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
 
@@ -36,4 +38,4 @@ export const DescriptionBox = (props: TProps) => {
       </div>
     </div>
   );
-};
+});

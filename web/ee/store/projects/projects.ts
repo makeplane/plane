@@ -4,7 +4,7 @@ import update from "lodash/update";
 import { action, makeObservable, observable, reaction, runInAction } from "mobx";
 // store
 import { ProjectService } from "@/plane-web/services";
-import { TProjectAttributesParams, TProjectAttributesResponse, TProjectFeatures } from "@/plane-web/types";
+import { TProjectAttributesParams, TProjectAttributesResponse, TProjectFeatures, TProjectFeaturesList } from "@/plane-web/types";
 import { CoreRootStore } from "@/store/root.store";
 import { IProjectAttachmentStore, ProjectAttachmentStore } from "./project-details/attachment.store";
 import { IProjectLinkStore, ProjectLinkStore } from "./project-details/link.store";
@@ -16,13 +16,18 @@ export interface IProjectStore {
   attachmentStore: IProjectAttachmentStore;
   featuresLoader: boolean;
   features: Record<string, TProjectFeatures>; // projectId -> project features
+  // computed methods
+  isProjectFeatureEnabled: (
+    projectId: string,
+    featureKey: keyof TProjectFeaturesList
+  ) => boolean;
   // helpers
   getProjectFeatures: (projectId: string) => TProjectFeatures | undefined;
   // actions
   toggleProjectFeatures: (
     workspaceSlug: string,
     projectId: string,
-    data: Partial<TProjectFeatures>,
+    data: Partial<TProjectFeaturesList>,
     shouldSync?: boolean
   ) => Promise<void>;
   fetchProjectFeatures: (workspaceSlug: string) => Promise<void>;
@@ -75,6 +80,7 @@ export class ProjectStore implements IProjectStore {
               is_epic_enabled: false,
               is_issue_type_enabled: false,
               is_time_tracking_enabled: false,
+              is_workflow_enabled: false,
               project_id: projectId,
             };
           }
@@ -82,6 +88,21 @@ export class ProjectStore implements IProjectStore {
       }
     );
   }
+
+  // computed methods
+  /**
+   * @description check if a project feature is enabled
+   * @param { string } projectId
+   * @param { keyof TProjectFeatures } featureKey
+   * @returns { boolean }
+   */
+  isProjectFeatureEnabled = (
+    projectId: string,
+    featureKey: keyof TProjectFeaturesList
+  ): boolean => {
+    const projectFeatures = this.features[projectId];
+    return projectFeatures?.[featureKey] ?? false;
+  };
 
   // helpers
   /**
@@ -114,7 +135,7 @@ export class ProjectStore implements IProjectStore {
   toggleProjectFeatures = async (
     workspaceSlug: string,
     projectId: string,
-    data: Partial<TProjectFeatures>,
+    data: Partial<TProjectFeaturesList>,
     shouldSync: boolean = true
   ): Promise<void> => {
     const initialState = this.features[projectId];

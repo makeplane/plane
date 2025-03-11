@@ -54,7 +54,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const {
     project: { fetchProjectMembers },
   } = useMember();
-  const { fetchProjectStates, fetchProjectStateTransitions } = useProjectState();
+  const { fetchProjectStates } = useProjectState();
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
 
@@ -118,12 +118,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // fetching project states
   useSWR(
     workspaceSlug && projectId ? `PROJECT_STATES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId
-      ? () => {
-          fetchProjectStates(workspaceSlug.toString(), projectId.toString());
-          fetchProjectStateTransitions(workspaceSlug.toString(), projectId.toString());
-        }
-      : null,
+    workspaceSlug && projectId ? () => fetchProjectStates(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project estimates
@@ -173,7 +168,8 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     );
 
   // check if the user don't have permission to access the project
-  if (projectExists && projectId && hasPermissionToCurrentProject === false) return <JoinProject />;
+  if (projectExists && projectId && hasPermissionToCurrentProject === false)
+    return <JoinProject projectId={projectId} />;
 
   // check if the project info is not found.
   if (loader === "loaded" && !projectExists && projectId && !!hasPermissionToCurrentProject === false)

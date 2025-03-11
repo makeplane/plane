@@ -113,10 +113,8 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
   );
   const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
 
-  const { workflowDisabledSource, isWorkflowDropDisabled, handleWorkFlowState } = useWorkFlowFDragNDrop(
-    group_by,
-    sub_group_by
-  );
+  const { workflowDisabledSource, isWorkflowDropDisabled, handleWorkFlowState, getIsWorkflowWorkItemCreationDisabled } =
+    useWorkFlowFDragNDrop(group_by, sub_group_by);
 
   // Enable Kanban Columns as Drop Targets
   useEffect(() => {
@@ -306,19 +304,21 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
 
       {shouldLoadMore && (isSubGroup ? <>{loadMore}</> : <KanbanIssueBlockLoader ref={setIntersectionElement} />)}
 
-      {enableQuickIssueCreate && !disableIssueCreation && (
-        <div className="w-full bg-custom-background-90 py-0.5 sticky bottom-0">
-          <QuickAddIssueRoot
-            layout={EIssueLayoutTypes.KANBAN}
-            QuickAddButton={KanbanQuickAddIssueButton}
-            prePopulatedData={{
-              ...(group_by && prePopulateQuickAddData(group_by, sub_group_by, groupId, sub_group_id)),
-            }}
-            quickAddCallback={quickAddCallback}
-            isEpic={isEpic}
-          />
-        </div>
-      )}
+      {enableQuickIssueCreate &&
+        !disableIssueCreation &&
+        !getIsWorkflowWorkItemCreationDisabled(groupId, sub_group_id) && (
+          <div className="w-full bg-custom-background-90 py-0.5 sticky bottom-0">
+            <QuickAddIssueRoot
+              layout={EIssueLayoutTypes.KANBAN}
+              QuickAddButton={KanbanQuickAddIssueButton}
+              prePopulatedData={{
+                ...(group_by && prePopulateQuickAddData(group_by, sub_group_by, groupId, sub_group_id)),
+              }}
+              quickAddCallback={quickAddCallback}
+              isEpic={isEpic}
+            />
+          </div>
+        )}
     </div>
   );
 });

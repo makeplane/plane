@@ -195,22 +195,19 @@ export class CycleStore extends CeCycleStore implements ICycleStore {
    * @param data
    * @returns
    */
-  createCycle = action(async (workspaceSlug: string, projectId: string, data: Partial<ICycle>) => {
-    const version =
-      (this.rootStore as RootStore)["workspaceSubscription"]?.currentWorkspaceSubscribedPlanDetail?.product === "PRO"
-        ? 2
-        : 1;
-    return await this.cycleService.createCycle(workspaceSlug, projectId, { ...data, version }).then((response) => {
-      runInAction(() => {
-        set(this.cycleMap, [response.id], response);
-        if (response.status?.toLowerCase() === "current") {
-          // Update workspace active cycle count in workspaceUserInfo
-          this.updateWorkspaceUserActiveCycleCount(workspaceSlug, 1);
-        }
-      });
-      return response;
-    });
-  });
+  createCycle = action(
+    async (workspaceSlug: string, projectId: string, data: Partial<ICycle>) =>
+      await this.cycleService.createCycle(workspaceSlug, projectId, data).then((response) => {
+        runInAction(() => {
+          set(this.cycleMap, [response.id], response);
+          if (response.status?.toLowerCase() === "current") {
+            // Update workspace active cycle count in workspaceUserInfo
+            this.updateWorkspaceUserActiveCycleCount(workspaceSlug, 1);
+          }
+        });
+        return response;
+      })
+  );
 
   updateCycleStatus = async (workspaceSlug: string, projectId: string, cycleId: string, action: CYCLE_ACTION) => {
     const date = format(new Date(), "yyyy-MM-dd");

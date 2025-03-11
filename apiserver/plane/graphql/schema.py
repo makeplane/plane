@@ -46,6 +46,7 @@ from .queries.issues import (
     SubIssuesQuery,
     IssueAttachmentQuery,
     IssueLinkQuery,
+    IssueShortenedMetaInfoQuery,
 )
 from .queries.dashboard import userInformationQuery
 from .queries.external import UnsplashImagesQuery, ProjectCoversQuery
@@ -153,6 +154,7 @@ class Query(
     WorkspaceAssetQuery,
     ProjectAssetQuery,
     InstanceQuery,
+    IssueShortenedMetaInfoQuery,
 ):
     pass
 

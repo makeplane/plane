@@ -142,6 +142,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                 disabled={isUpdateDisabled}
                 showDefaultState={false}
                 placement="top-start"
+                alwaysAllowStateChange
               />
             )}
           />

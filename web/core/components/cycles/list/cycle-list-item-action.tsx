@@ -3,31 +3,21 @@
 import React, { FC, MouseEvent, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Eye, Users } from "lucide-react";
 // types
 import { CYCLE_FAVORITED, CYCLE_UNFAVORITED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ICycle, TCycleGroups } from "@plane/types";
 // ui
-import {
-  Avatar,
-  AvatarGroup,
-  FavoriteStar,
-  LayersIcon,
-  TOAST_TYPE,
-  Tooltip,
-  TransferIcon,
-  setPromiseToast,
-  setToast,
-} from "@plane/ui";
+import { Avatar, AvatarGroup, FavoriteStar, LayersIcon, Tooltip, TransferIcon, setPromiseToast } from "@plane/ui";
 // components
 import { CycleQuickActions, TransferIssuesModal } from "@/components/cycles";
 import { DateRangeDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // constants
 // helpers
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { getDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { generateQueryParams } from "@/helpers/router.helper";
@@ -36,11 +26,6 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { CycleAdditionalActions } from "@/plane-web/components/cycles";
-// plane web constants
-// services
-import { CycleService } from "@/services/cycle.service";
-
-const cycleService = new CycleService();
 
 type Props = {
   workspaceSlug: string;
@@ -77,7 +62,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
   const { getUserDetails } = useMember();
 
   // form
-  const { control, reset } = useForm({
+  const { control, reset, getValues } = useForm({
     defaultValues,
   });
 
@@ -98,7 +83,6 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     workspaceSlug,
     projectId
   );
-  const renderIcon = Boolean(cycleDetails.start_date) || Boolean(cycleDetails.end_date);
 
   // handlers
   const handleAddToFavorites = (e: MouseEvent<HTMLButtonElement>) => {
@@ -157,54 +141,6 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     });
   };
 
-  const submitChanges = (data: Partial<ICycle>) => {
-    if (!workspaceSlug || !projectId || !cycleId) return;
-    updateCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), data);
-  };
-
-  const dateChecker = async (payload: any) => {
-    try {
-      const res = await cycleService.cycleDateCheck(workspaceSlug as string, projectId as string, payload);
-      return res.status;
-    } catch {
-      return false;
-    }
-  };
-
-  const handleDateChange = async (startDate: Date | undefined, endDate: Date | undefined) => {
-    if (!startDate || !endDate) return;
-
-    let isDateValid = false;
-
-    const payload = {
-      start_date: renderFormattedPayloadDate(startDate),
-      end_date: renderFormattedPayloadDate(endDate),
-    };
-
-    if (cycleDetails && cycleDetails.start_date && cycleDetails.end_date)
-      isDateValid = await dateChecker({
-        ...payload,
-        cycle_id: cycleDetails.id,
-      });
-    else isDateValid = await dateChecker(payload);
-
-    if (isDateValid) {
-      submitChanges(payload);
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: t("project_cycles.action.update.success.title"),
-        message: t("project_cycles.action.update.success.description"),
-      });
-    } else {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: t("project_cycles.action.update.failed.title"),
-        message: t("project_cycles.action.update.error.already_exists"),
-      });
-      reset({ ...cycleDetails });
-    }
-  };
-
   const createdByDetails = cycleDetails.created_by ? getUserDetails(cycleDetails.created_by) : undefined;
 
   useEffect(() => {
@@ -214,10 +150,6 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
       });
   }, [cycleDetails, reset]);
 
-  const isArchived = Boolean(cycleDetails.archived_at);
-  const isCompleted = cycleStatus === "completed";
-
-  const isDisabled = !isEditingAllowed || isArchived || isCompleted;
   // handlers
   const openCycleOverview = (e: MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
     e.preventDefault();
@@ -266,39 +198,27 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
         </div>
       )}
 
-      {!isActive && (
-        <Controller
-          control={control}
-          name="start_date"
-          render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
-            <Controller
-              control={control}
-              name="end_date"
-              render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
-                <DateRangeDropdown
-                  buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs`}
-                  buttonVariant="transparent-with-text"
-                  minDate={new Date()}
-                  value={{
-                    from: getDate(startDateValue),
-                    to: getDate(endDateValue),
-                  }}
-                  onSelect={(val) => {
-                    onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
-                    onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
-                    handleDateChange(val?.from, val?.to);
-                  }}
-                  placeholder={{
-                    from: "Start date",
-                    to: "End date",
-                  }}
-                  required={cycleDetails.status !== "draft"}
-                  disabled={isDisabled}
-                  hideIcon={{ from: renderIcon ?? true, to: renderIcon }}
-                />
-              )}
-            />
-          )}
+      {!isActive && cycleDetails.start_date && (
+        <DateRangeDropdown
+          buttonVariant={"transparent-with-text"}
+          buttonContainerClassName={`h-6 w-full cursor-auto flex items-center gap-1.5 text-custom-text-300 rounded text-xs [&>div]:hover:bg-transparent`}
+          buttonClassName="p-0"
+          minDate={new Date()}
+          value={{
+            from: getDate(cycleDetails.start_date),
+            to: getDate(cycleDetails.end_date),
+          }}
+          placeholder={{
+            from: "Start date",
+            to: "End date",
+          }}
+          showTooltip
+          required={cycleDetails.status !== "draft"}
+          disabled
+          hideIcon={{
+            from: false,
+            to: false,
+          }}
         />
       )}
 

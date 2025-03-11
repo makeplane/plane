@@ -51,6 +51,8 @@ export * from "./on-track-icon";
 export * from "./off-track-icon";
 export * from "./at-risk-icon";
 export * from "./plane-ai-icon";
+export * from "./workflow-icon";
+export * from "./approver-icon";
 export * from "./activity-icon";
 export * from "./updates-icon";
 export * from "./on-track-icon";

@@ -38,7 +38,7 @@ type TIssueDefaultPropertiesProps = {
 };
 
 export const EpicDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = observer((props) => {
-  const { control, projectId, startDate, targetDate, handleFormChange, setLabelModal } = props;
+  const { id, control, projectId, startDate, targetDate, handleFormChange, setLabelModal } = props;
   // store hooks
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const { isMobile } = usePlatformOS();
@@ -70,6 +70,7 @@ export const EpicDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = obs
               projectId={projectId ?? undefined}
               buttonVariant="border-with-text"
               tabIndex={getIndex("state_id")}
+              isForWorkItemCreation={!id}
             />
           </div>
         )}

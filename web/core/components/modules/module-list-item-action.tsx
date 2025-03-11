@@ -6,7 +6,13 @@ import { useParams } from "next/navigation";
 // icons
 import { SquareUser } from "lucide-react";
 // types
-import { MODULE_STATUS, MODULE_FAVORITED, MODULE_UNFAVORITED , EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import {
+  MODULE_STATUS,
+  MODULE_FAVORITED,
+  MODULE_UNFAVORITED,
+  EUserPermissions,
+  EUserPermissionsLevel,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IModule } from "@plane/types";
 // ui

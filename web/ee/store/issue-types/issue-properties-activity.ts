@@ -1,7 +1,7 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable } from "mobx";
 // plane imports
-import { IIssuePropertiesActivity, TIssuePropertiesActivity, TIssuePropertyAction } from "@plane/types";
+import { IIssuePropertiesActivity, IUserLite, TIssuePropertiesActivity, TIssuePropertyAction } from "@plane/types";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 
@@ -13,6 +13,7 @@ export class IssuePropertiesActivity implements IIssuePropertiesActivity {
   old_identifier: string | undefined = undefined;
   new_identifier: string | undefined = undefined;
   action: TIssuePropertyAction | undefined = undefined;
+  actor_detail: IUserLite | undefined = undefined;
   epoch: number | undefined = undefined;
   comment: string | undefined = undefined;
   issue: string | undefined = undefined;
@@ -36,6 +37,7 @@ export class IssuePropertiesActivity implements IIssuePropertiesActivity {
       old_identifier: observable.ref,
       new_identifier: observable.ref,
       action: observable.ref,
+      actor_detail: observable.ref,
       epoch: observable.ref,
       comment: observable.ref,
       issue: observable.ref,
@@ -64,6 +66,7 @@ export class IssuePropertiesActivity implements IIssuePropertiesActivity {
     this.issue = issueActivityData.issue;
     this.property = issueActivityData.property;
     this.actor = issueActivityData.actor;
+    this.actor_detail = issueActivityData.actor_detail;
     this.project = issueActivityData.project;
     this.workspace = issueActivityData.workspace;
     this.created_at = issueActivityData.created_at;
@@ -90,6 +93,7 @@ export class IssuePropertiesActivity implements IIssuePropertiesActivity {
       issue: this.issue,
       property: this.property,
       actor: this.actor,
+      actor_detail: this.actor_detail,
       project: this.project,
       workspace: this.workspace,
       created_at: this.created_at,

@@ -19,7 +19,8 @@
     "live": "ライブ",
     "epics": "エピック",
     "project_updates": "プロジェクトの更新",
-    "overview": "概要"
+    "overview": "概要",
+    "workflows": "ワークフロー"
   },
 
   "issue": {
@@ -380,6 +381,10 @@
       "invalid_issue_target_date": {
         "title": "作業項目を更新できません",
         "message": "選択された期限日が一部の作業項目の開始日より前になっています。期限日が開始日より後になるようにしてください。"
+      },
+      "invalid_state_transition": {
+        "title": "作業項目を更新できません",
+        "message": "一部の作業項目では状態の変更が許可されていません。状態の変更が許可されていることを確認してください。"
       }
     }
   },
@@ -933,6 +938,105 @@
       }
     }
   },
+
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "新しい作業項目を許可",
+      "default_state": "デフォルトの状態は、すべてのメンバーが新しい作業項目を作成できるように設定されています。これは変更できません",
+      "state_change_count": "{count, plural, one {1つの許可された状態変更} other {{count}つの許可された状態変更}}",
+      "movers_count": "{count, plural, one {1人のリストされたレビューア} other {{count}人のリストされたレビューア}}",
+      "state_changes": {
+        "label": {
+          "default": "許可された状態変更を追加",
+          "loading": "許可された状態変更を追加中"
+        },
+        "move_to": "状態を変更",
+        "movers": {
+          "label": "誰によって移動された場合",
+          "tooltip": "レビューアは、作業項目を一つの状態から別の状態に移動することを許可されている人々です。",
+          "add": "レビューアを追加"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "この作業項目をここに移動できません。"
+    },
+    "workflow_enabled": {
+      "label": "状態変更"
+    },
+    "workflow_tree": {
+      "label": "作業項目が",
+      "state_change_label": "をここに移動できます"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "変更とレビューの混沌をワークフローで制御。",
+        "description": "Plane内のワークフローで、作業がどこに移動するか、誰によって、そしていつによって移動するかを規則を設定します。"
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "変更履歴を表示",
+      "reset_workflow": "ワークフローをリセット"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "このワークフローをリセットしてよろしいですか？",
+        "description": "このワークフローをリセットすると、すべての状態変更ルールが削除され、このプロジェクトで再度実行するために再作成が必要になります。"
+      },
+      "delete_state_change": {
+        "title": "この状態変更ルールを削除してよろしいですか？",
+        "description": "削除すると、変更ができなくなり、このプロジェクトで再度実行するために再設定が必要になります。"
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action}ワークフロー",
+        "success": {
+          "title": "成功",
+          "message": "ワークフローが{action}されました"
+        },
+        "error": {
+          "title": "エラー",
+          "message": "ワークフローが{action}できませんでした。もう一度お試しください。"
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "成功",
+          "message": "ワークフローがリセットされました"
+        },
+        "error": {
+          "title": "ワークフローのリセットエラー",
+          "message": "ワークフローがリセットできませんでした。もう一度お試しください。"
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "状態変更ルールの追加エラー",
+          "message": "状態変更ルールが追加できませんでした。もう一度お試しください。"
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "状態変更ルールの変更エラー",
+          "message": "状態変更ルールが変更できませんでした。もう一度お試しください。"
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "状態変更ルールの削除エラー",
+          "message": "状態変更ルールが削除できませんでした。もう一度お試しください。"
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "状態変更ルールのレビューアの変更エラー",
+          "message": "状態変更ルールのレビューアが変更できませんでした。もう一度お試しください。"
+        }
+      }
+    }
+  },
+
   "customers": {
     "label": "{count, plural, one {顧客} other {顧客}}",
     "properties": {

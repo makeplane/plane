@@ -17,6 +17,7 @@ import { SectionWrapper } from "../common/section-wrapper";
 type TProgressSectionProps = {
   title?: string;
   data: TStateAnalytics;
+  indicatorElement?: React.ReactNode;
 };
 
 interface IProgressIndicatorData {
@@ -28,7 +29,7 @@ interface IProgressIndicatorData {
 }
 
 export const ProgressSection: FC<TProgressSectionProps> = (props) => {
-  const { data } = props;
+  const { data, indicatorElement } = props;
 
   const { t } = useTranslation();
 
@@ -44,8 +45,9 @@ export const ProgressSection: FC<TProgressSectionProps> = (props) => {
 
   return (
     <SectionWrapper>
-      <div className="flex items-center">
+      <div className="flex items-center gap-2">
         <h3 className="text-base text-custom-text-300 font-medium">{t("common.progress")}</h3>
+        {indicatorElement && <>{indicatorElement}</>}
       </div>
 
       <div className="flex flex-col gap-4">

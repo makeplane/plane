@@ -1,7 +1,8 @@
 {
   "name": "web",
-  "version": "0.24.1",
+  "version": "0.25.1",
   "private": true,
+  "license": "AGPL-3.0",
   "scripts": {
     "dev": "turbo run develop",
     "develop": "next dev --port 3000",

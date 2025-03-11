@@ -122,8 +122,6 @@ from .exporter import ExporterHistorySerializer
 
 from .webhook import WebhookSerializer, WebhookLogSerializer
 
-from .dashboard import DashboardSerializer, WidgetSerializer
-
 from .favorite import UserFavoriteSerializer
 
 from .draft import (

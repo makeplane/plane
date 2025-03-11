@@ -15,13 +15,12 @@ from rest_framework.response import Response
 # Module imports
 from plane.ee.views.base import BaseAPIView
 from plane.ee.permissions import WorkspaceUserPermission
-from plane.db.models import Workspace, Issue, FileAsset, Project
+from plane.db.models import Workspace, Issue, Project
 from plane.ee.models import (
     Initiative,
     InitiativeProject,
     InitiativeLabel,
     InitiativeReaction,
-    InitiativeLink,
     InitiativeEpic,
     ProjectAttribute,
 )
@@ -61,14 +60,17 @@ class InitiativeEndpoint(BaseAPIView):
                             workspace__slug=self.kwargs.get("slug"),
                         )
                         .filter(epic__project__deleted_at__isnull=True)
-                        .filter(epic__project__project_projectfeature__is_epic_enabled=True)
+                        .filter(
+                            epic__project__project_projectfeature__is_epic_enabled=True
+                        )
                         .values("initiative_id")
                         .annotate(epic_ids=ArrayAgg("epic_id", distinct=True))
                         .values("epic_ids")
                     ),
                     [],
                 ),
-            ).order_by(self.kwargs.get("order_by", "-created_at"))
+            )
+            .order_by(self.kwargs.get("order_by", "-created_at"))
             .distinct()
         )
 
@@ -77,20 +79,23 @@ class InitiativeEndpoint(BaseAPIView):
     def get(self, request, slug, pk=None):
         # Get initiative by pk
         if pk:
-            initiative = (self.get_queryset().filter(pk=pk).prefetch_related(
-                Prefetch(
-                    "initiative_reactions",
-                    queryset=InitiativeReaction.objects.select_related(
-                        "initiative", "actor"
-                    ),
+            initiative = (
+                self.get_queryset()
+                .filter(pk=pk)
+                .prefetch_related(
+                    Prefetch(
+                        "initiative_reactions",
+                        queryset=InitiativeReaction.objects.select_related(
+                            "initiative", "actor"
+                        ),
+                    )
                 )
+                .first()
             )
-            .first()
-        )
             serializer = InitiativeSerializer(initiative)
-            
+
             return Response(serializer.data, status=status.HTTP_200_OK)
-            
+
         # Get all initiatives in workspace
         initiatives = self.get_queryset()
 
@@ -152,7 +157,9 @@ class InitiativeEndpoint(BaseAPIView):
                             initiative_id=OuterRef("pk"), workspace__slug=slug
                         )
                         .filter(epic__project__deleted_at__isnull=True)
-                        .filter(epic__project__project_projectfeature__is_epic_enabled=True)
+                        .filter(
+                            epic__project__project_projectfeature__is_epic_enabled=True
+                        )
                         .values("initiative_id")
                         .annotate(epic_ids=ArrayAgg("epic_id", distinct=True))
                         .values("epic_ids")
@@ -350,11 +357,13 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
         ).values_list("project_id", flat=True)
 
         # also get the epics which are part of the initiative
-        initiative_epics = (InitiativeEpic.objects.filter(
-            workspace__slug=slug, initiative_id=initiative_id
+        initiative_epics = (
+            InitiativeEpic.objects.filter(
+                workspace__slug=slug, initiative_id=initiative_id
+            )
+            .filter(epic__project__project_projectfeature__is_epic_enabled=True)
+            .values_list("epic_id", flat=True)
         )
-        .filter(epic__project__project_projectfeature__is_epic_enabled=True)
-        .values_list("epic_id", flat=True))
 
         # Annotate the counts for different states in one query
         issues = Issue.objects.filter(

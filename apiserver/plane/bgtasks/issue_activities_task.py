@@ -10,10 +10,10 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 from django.db.models import Q
 
-from plane.app.serializers import IssueActivitySerializer
-from plane.bgtasks.notification_task import notifications
 
 # Module imports
+from plane.app.serializers import IssueActivitySerializer
+from plane.bgtasks.notification_task import notifications
 from plane.db.models import (
     CommentReaction,
     Cycle,
@@ -35,6 +35,7 @@ from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
 from plane.bgtasks.webhook_task import webhook_activity
 from plane.utils.issue_relation_mapper import get_inverse_relation
+from plane.utils.valid_uuid import is_valid_uuid
 
 
 # Track Changes in name
@@ -910,7 +911,7 @@ def delete_cycle_issue_activity(
     issues = requested_data.get("issues")
     for issue in issues:
         current_issue = Issue.objects.filter(pk=issue).first()
-        if issue:
+        if current_issue:
             current_issue.updated_at = timezone.now()
             current_issue.save(update_fields=["updated_at"])
         issue_activities.append(
@@ -1662,6 +1663,10 @@ def issue_activity(
 ):
     try:
         issue_activities = []
+
+        # check if project_id is valid
+        if not is_valid_uuid(str(project_id)):
+            return
 
         project = Project.objects.get(pk=project_id)
         workspace_id = project.workspace_id

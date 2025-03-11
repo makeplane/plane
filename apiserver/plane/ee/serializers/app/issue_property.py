@@ -5,6 +5,7 @@ from rest_framework import serializers
 from plane.ee.serializers import BaseSerializer
 from plane.db.models import IssueType
 from plane.ee.models import IssueProperty, IssuePropertyOption, IssuePropertyActivity
+from plane.app.serializers import UserLiteSerializer
 
 
 class IssueTypeSerializer(BaseSerializer):
@@ -32,6 +33,8 @@ class IssuePropertyOptionSerializer(BaseSerializer):
 
 
 class IssuePropertyActivitySerializer(BaseSerializer):
+    actor_detail = UserLiteSerializer(read_only=True, source='actor')
+    
     class Meta:
         model = IssuePropertyActivity
         fields = "__all__"

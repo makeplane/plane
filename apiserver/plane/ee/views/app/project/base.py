@@ -120,6 +120,8 @@ class ProjectAttributesEndpoint(BaseAPIView):
         if project_ids:
             projects = projects.filter(id__in=project_ids)
 
-        project_attributes = ProjectAttribute.objects.filter(project__in=projects)
+        project_attributes = ProjectAttribute.objects.filter(project__in=projects).annotate(project_name=F("project__name"))
+
         serializer = ProjectAttributeSerializer(project_attributes, many=True)
+
         return Response(serializer.data, status=status.HTTP_200_OK)

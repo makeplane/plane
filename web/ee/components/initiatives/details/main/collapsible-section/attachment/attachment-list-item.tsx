@@ -61,16 +61,16 @@ export const InitiativeAttachmentsListItem: FC<Props> = observer((props) => {
           </div>
 
           <div className="flex items-center gap-3">
-            {attachment?.updated_by && (
+            {attachment?.created_by && (
               <>
                 <Tooltip
                   isMobile={isMobile}
                   tooltipContent={`${
-                    getUserDetails(attachment.updated_by)?.display_name ?? ""
+                    getUserDetails(attachment.created_by)?.display_name ?? ""
                   } uploaded on ${renderFormattedDate(attachment.updated_at)}`}
                 >
                   <div className="flex items-center justify-center">
-                    <ButtonAvatars showTooltip userIds={attachment?.updated_by} />
+                    <ButtonAvatars showTooltip userIds={attachment?.created_by} />
                   </div>
                 </Tooltip>
               </>

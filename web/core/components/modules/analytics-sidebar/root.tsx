@@ -411,50 +411,49 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
           />
         )}
 
-        <div className="flex items-center justify-start gap-1">
-          <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-            <CalendarClock className="h-4 w-4" />
-            <span className="text-base">{t("date_range")}</span>
-          </div>
-          <div className="h-7 w-3/5">
-            <Controller
-              control={control}
-              name="start_date"
-              render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
-                <Controller
-                  control={control}
-                  name="target_date"
-                  render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => {
-                    const startDate = getDate(startDateValue);
-                    const endDate = getDate(endDateValue);
-                    return (
-                      <DateRangeDropdown
-                        buttonContainerClassName="w-full"
-                        buttonVariant="background-with-text"
-                        value={{
-                          from: startDate,
-                          to: endDate,
-                        }}
-                        onSelect={(val) => {
-                          onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
-                          onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
-                          handleDateChange(val?.from, val?.to);
-                        }}
-                        placeholder={{
-                          from: t("start_date"),
-                          to: t("target_date"),
-                        }}
-                        disabled={!isEditingAllowed || isArchived}
-                      />
-                    );
-                  }}
-                />
-              )}
-            />
-          </div>
-        </div>
-
         <div className="flex flex-col gap-5 pb-6 pt-2.5">
+          <div className="flex items-center justify-start gap-1">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+              <CalendarClock className="h-4 w-4" />
+              <span className="text-base">{t("date_range")}</span>
+            </div>
+            <div className="h-7">
+              <Controller
+                control={control}
+                name="start_date"
+                render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
+                  <Controller
+                    control={control}
+                    name="target_date"
+                    render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => {
+                      const startDate = getDate(startDateValue);
+                      const endDate = getDate(endDateValue);
+                      return (
+                        <DateRangeDropdown
+                          buttonContainerClassName="w-full"
+                          buttonVariant="background-with-text"
+                          value={{
+                            from: startDate,
+                            to: endDate,
+                          }}
+                          onSelect={(val) => {
+                            onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
+                            onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+                            handleDateChange(val?.from, val?.to);
+                          }}
+                          placeholder={{
+                            from: t("start_date"),
+                            to: t("end_date"),
+                          }}
+                          disabled={!isEditingAllowed || isArchived}
+                        />
+                      );
+                    }}
+                  />
+                )}
+              />
+            </div>
+          </div>
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
               <SquareUser className="h-4 w-4" />

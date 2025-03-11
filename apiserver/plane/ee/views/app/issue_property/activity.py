@@ -31,7 +31,7 @@ class IssuePropertyActivityEndpoint(BaseAPIView):
             issue_id=issue_id,
             property__issue_type__is_epic=False,
             **filters,
-        ).order_by(order_by)
+        ).select_related('actor').order_by(order_by)
 
         # Serialize the data
         serializer = IssuePropertyActivitySerializer(activities, many=True)

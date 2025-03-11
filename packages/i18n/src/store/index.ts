@@ -156,6 +156,10 @@ export class TranslationStore {
         return import("../locales/ja/translations.json");
       case "zh-CN":
         return import("../locales/zh-CN/translations.json");
+      case "ru":
+        return import("../locales/ru/translations.json");
+      case "it":
+        return import("../locales/it/translations.json");
       default:
         throw new Error(`Unsupported language: ${language}`);
     }
@@ -178,6 +182,10 @@ export class TranslationStore {
         return import("../locales/ja/translations-extended.json");
       case "zh-CN":
         return import("../locales/zh-CN/translations-extended.json");
+      case "ru":
+        return import("../locales/ru/translations-extended.json");
+      case "it":
+        return import("../locales/it/translations-extended.json");
       default:
         throw new Error(`Unsupported language: ${language}`);
     }

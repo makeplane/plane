@@ -1,6 +1,7 @@
 {
   "name": "@plane/constants",
-  "version": "0.24.1",
+  "version": "0.25.1",
   "private": true,
-  "main": "./src/index.ts"
+  "main": "./src/index.ts",
+  "license": "AGPL-3.0"
 }

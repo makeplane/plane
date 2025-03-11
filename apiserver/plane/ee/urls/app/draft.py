@@ -19,6 +19,6 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/draft-issues/<uuid:draft_issue_id>/issue-properties/<uuid:property_id>/values/",
         DraftIssuePropertyValueEndpoint.as_view(),
-        name="draftissue-property-values",
+        name="draft-issue-property-values",
     ),
 ]

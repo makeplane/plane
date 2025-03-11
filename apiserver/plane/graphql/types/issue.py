@@ -343,3 +343,9 @@ class IssueTypesType:
     @strawberry.field
     def workspace(self) -> int:
         return self.workspace_id
+
+
+@strawberry.type
+class IssueShortenedMetaInfo:
+    project: strawberry.ID
+    work_item: strawberry.ID

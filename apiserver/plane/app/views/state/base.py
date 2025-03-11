@@ -19,13 +19,25 @@ from .. import BaseViewSet
 from plane.app.serializers import StateSerializer
 from plane.app.permissions import ROLE, allow_permission
 from plane.db.models import State, Issue
+from plane.ee.models import Workflow
 from plane.utils.cache import invalidate_cache
 from plane.ee.bgtasks.project_activites_task import project_activity
-
+from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 
 class StateViewSet(BaseViewSet):
     serializer_class = StateSerializer
     model = State
+
+    def update_workflow_state(self, slug, project_id, state_id):
+        """Method to update the default workflow state's issue creation"""
+        if check_workspace_feature_flag(feature_key=FeatureFlag.WORKFLOWS, slug=slug):
+            workflow = Workflow.objects.filter(
+                workspace__slug=slug, project_id=project_id, state_id=state_id
+            ).first()
+            if workflow:
+                workflow.allow_issue_creation = True
+                workflow.save()
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -117,6 +129,10 @@ class StateViewSet(BaseViewSet):
         _ = State.objects.filter(
             workspace__slug=slug, project_id=project_id, pk=pk
         ).update(default=True)
+
+        # Call the method to update workflow state
+        self.update_workflow_state(slug, project_id, pk)
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)

@@ -3,8 +3,8 @@ import os
 from typing import List, Dict, Tuple
 
 # Third party import
-import requests
 from openai import OpenAI
+import requests
 from rest_framework import status
 from rest_framework.response import Response
 

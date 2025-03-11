@@ -61,7 +61,7 @@ export const IssueTypeLogo: FC<Props> = (props) => {
           <EpicIcon
             width={containerSizeMap[size]}
             height={containerSizeMap[size]}
-            className="text-custom-text-300 group-hover:text-custom-text-200"
+            className="text-custom-text-300 group-hover/kanban-block:text-custom-text-200"
           />
         ) : renderDefaultIcon ? (
           <LayersIcon

@@ -36,6 +36,7 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.utils.error_codes import ERROR_CODES
 from plane.ee.utils.issue_property_validators import property_savers
+from plane.ee.utils.workflow import WorkflowStateManager
 
 
 class BulkIssueOperationsEndpoint(BaseAPIView):
@@ -208,6 +209,23 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                         "epoch": epoch,
                     }
                 )
+                # Check if state is updated then is the transition allowed
+                workflow_state_manager = WorkflowStateManager(
+                    project_id=project_id, slug=slug
+                )
+                if not workflow_state_manager.validate_state_transition(
+                    issue=issue,
+                    new_state_id=properties.get("state_id"),
+                    user_id=request.user.id,
+                ):
+                    return Response(
+                        {
+                            "error_code": ERROR_CODES["INVALID_STATE_TRANSITION"],
+                            "error_message": "INVALID_STATE_TRANSITION",
+                        },
+                        status=status.HTTP_403_FORBIDDEN,
+                    )
+
                 issue.state_id = properties.get("state_id")
                 if issue.state.group == "completed":
                     issue.completed_at = timezone.now()
