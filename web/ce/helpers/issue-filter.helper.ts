@@ -16,3 +16,18 @@ export const shouldRenderDisplayProperty = (props: TShouldRenderDisplayProperty)
       return true;
   }
 };
+
+export type TShouldRenderColumn = {
+  key: keyof IIssueDisplayProperties;
+  isEstimateEnabled: boolean;
+};
+
+export const shouldRenderColumn = (props: TShouldRenderColumn): boolean => {
+  const { key, isEstimateEnabled } = props;
+  switch (key) {
+    case "estimate":
+      return isEstimateEnabled;
+    default:
+      return true;
+  }
+};

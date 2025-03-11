@@ -7,6 +7,7 @@ import { IIssueDisplayProperties, TIssue } from "@plane/types";
 import { useEventTracker } from "@/hooks/store";
 // components
 import { SPREADSHEET_COLUMNS } from "@/plane-web/components/issues/issue-layouts/utils";
+import { shouldRenderColumn } from "@/plane-web/helpers/issue-filter.helper";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 // utils
 
@@ -26,7 +27,7 @@ export const IssueColumn = observer((props: Props) => {
   const tableCellRef = useRef<HTMLTableCellElement | null>(null);
   const { captureIssueEvent } = useEventTracker();
 
-  const shouldRenderProperty = property === "estimate" ? isEstimateEnabled : true;
+  const shouldRenderProperty = shouldRenderColumn({ key: property, isEstimateEnabled });
 
   const Column = SPREADSHEET_COLUMNS[property];
 

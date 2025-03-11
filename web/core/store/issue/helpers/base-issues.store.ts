@@ -37,6 +37,7 @@ import { convertToISODateString } from "@/helpers/date-time.helper";
 // local-db
 import { SPECIAL_ORDER_BY } from "@/local-db/utils/query-constructor";
 import { updatePersistentLayer } from "@/local-db/utils/utils";
+import { workItemSortWithOrderByExtended } from "@/plane-web/store/issue/helpers/base-issue.store";
 // services
 import { CycleService } from "@/services/cycle.service";
 import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
@@ -1991,7 +1992,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         );
 
       default:
-        return getIssueIds(array);
+        return workItemSortWithOrderByExtended(array, key);
     }
   };
 
