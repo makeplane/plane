@@ -18,7 +18,7 @@ export const CreateCustomerCreateToastActions: FC<TCreateCustomerCreateToastActi
   // i18n
   const { t } = useTranslation();
 
-  const customerLink = `/${workspaceSlug}/${customerId}`;
+  const customerLink = `/${workspaceSlug}/customers/${customerId}`;
 
   const copyToClipboard = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     try {
