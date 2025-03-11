@@ -13,6 +13,7 @@ export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
   { label: "Čeština", value: "cs" },
   { label: "Slovenčina", value: "sk" },
   { label: "Deutsch", value: "de" },
+  { label: "Українська", value: "ua" },
 ];
 
 export const STORAGE_KEY = "userLanguage";
