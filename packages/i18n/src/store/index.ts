@@ -159,6 +159,8 @@ export class TranslationStore {
         return import("../locales/de/translations.json");
       case "ua":
         return import("../locales/ua/translations.json");
+      case "pl":
+        return import("../locales/pl/translations.json");
       default:
         throw new Error(`Unsupported language: ${language}`);
     }
