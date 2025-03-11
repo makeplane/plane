@@ -178,7 +178,9 @@ class IntakeIssueViewSet(BaseViewSet):
             workspace__slug=slug, project_id=project_id
         ).first()
         if not intake:
-            return Response({"error": "Intake not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Intake not found"}, status=status.HTTP_404_NOT_FOUND
+            )
 
         project = Project.objects.get(pk=project_id)
         filters = issue_filters(request.GET, "GET", "issue__")
@@ -385,7 +387,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 }
 
             issue_serializer = IssueCreateSerializer(
-                issue, data=issue_data, partial=True
+                issue, data=issue_data, partial=True, context={"project_id": project_id}
             )
 
             if issue_serializer.is_valid():

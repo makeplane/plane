@@ -111,25 +111,23 @@ class IssueCreateSerializer(BaseSerializer):
         data["label_ids"] = label_ids if label_ids else []
         return data
 
-    def validate(self, data):
+    def validate(self, attrs):
         if (
-            data.get("start_date", None) is not None
-            and data.get("target_date", None) is not None
-            and data.get("start_date", None) > data.get("target_date", None)
+            attrs.get("start_date", None) is not None
+            and attrs.get("target_date", None) is not None
+            and attrs.get("start_date", None) > attrs.get("target_date", None)
         ):
             raise serializers.ValidationError("Start date cannot exceed target date")
-        return data
 
-    def get_valid_assignees(self, assignees, project_id):
-        if not assignees:
-            return []
+        if attrs.get("assignee_ids", []):
+            attrs["assignee_ids"] = ProjectMember.objects.filter(
+                project_id=self.context["project_id"],
+                role__gte=15,
+                is_active=True,
+                member_id__in=attrs["assignee_ids"],
+            ).values_list("member_id", flat=True)
 
-        return ProjectMember.objects.filter(
-            project_id=project_id,
-            role__gte=15,
-            is_active=True,
-            member_id__in=assignees
-        ).values_list('member_id', flat=True)
+        return attrs
 
     def create(self, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
@@ -146,20 +144,19 @@ class IssueCreateSerializer(BaseSerializer):
         created_by_id = issue.created_by_id
         updated_by_id = issue.updated_by_id
 
-        valid_assignee_ids = self.get_valid_assignees(assignees, project_id)
-        if valid_assignee_ids is not None and len(valid_assignee_ids):
+        if assignees is not None and len(assignees):
             try:
                 IssueAssignee.objects.bulk_create(
                     [
                         IssueAssignee(
-                            assignee_id=user_id,
+                            assignee_id=assignee_id,
                             issue=issue,
                             project_id=project_id,
                             workspace_id=workspace_id,
                             created_by_id=created_by_id,
                             updated_by_id=updated_by_id,
                         )
-                        for user_id in valid_assignee_ids
+                        for assignee_id in assignees
                     ],
                     batch_size=10,
                 )
@@ -167,12 +164,15 @@ class IssueCreateSerializer(BaseSerializer):
                 pass
         else:
             # Then assign it to default assignee, if it is a valid assignee
-            if default_assignee_id is not None and ProjectMember.objects.filter(
-                member_id=default_assignee_id,
-                project_id=project_id,
-                role__gte=15,
-                is_active=True
-            ).exists():
+            if (
+                default_assignee_id is not None
+                and ProjectMember.objects.filter(
+                    member_id=default_assignee_id,
+                    project_id=project_id,
+                    role__gte=15,
+                    is_active=True,
+                ).exists()
+            ):
                 try:
                     IssueAssignee.objects.create(
                         assignee_id=default_assignee_id,
@@ -216,21 +216,20 @@ class IssueCreateSerializer(BaseSerializer):
         created_by_id = instance.created_by_id
         updated_by_id = instance.updated_by_id
 
-        valid_assignee_ids = self.get_valid_assignees(assignees, project_id)
-        if valid_assignee_ids is not None:
+        if assignees is not None:
             IssueAssignee.objects.filter(issue=instance).delete()
             try:
                 IssueAssignee.objects.bulk_create(
                     [
                         IssueAssignee(
-                            assignee_id=user_id,
+                            assignee_id=assignee_id,
                             issue=instance,
                             project_id=project_id,
                             workspace_id=workspace_id,
                             created_by_id=created_by_id,
                             updated_by_id=updated_by_id,
                         )
-                        for user_id in valid_assignee_ids
+                        for assignee_id in assignees
                     ],
                     batch_size=10,
                     ignore_conflicts=True,

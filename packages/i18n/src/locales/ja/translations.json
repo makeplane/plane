@@ -699,6 +699,7 @@
     "property": "プロパティ",
     "properties": "プロパティ",
     "parent": "親",
+    "page": "ページ",
     "remove": "削除",
     "archiving": "アーカイブ中",
     "archive": "アーカイブ",
@@ -856,7 +857,7 @@
     "you": "あなた",
     "upgrade_cta": {
       "higher_subscription": "高いサブスクリプションにアップグレード",
-      "talk_to_sales": "セールスに連絡"
+      "talk_to_sales": "トーク トゥ セールス"
     },
     "category": "カテゴリー",
     "categories": "カテゴリーズ",
@@ -865,7 +866,8 @@
     "delete": "デリート",
     "deleting": "デリーティング",
     "pending": "保留中",
-    "invite": "招待"
+    "invite": "招待",
+    "view": "ビュー"
   },
 
   "chart": {
@@ -983,7 +985,8 @@
         "sub_issue_count": "サブ作業項目数",
         "attachment_count": "添付ファイル数",
         "created_on": "作成日",
-        "sub_issue": "サブ作業項目"
+        "sub_issue": "サブ作業項目",
+        "work_item_count": "作業項目数"
       },
       "extra": {
         "show_sub_issues": "サブ作業項目を表示",

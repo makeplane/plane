@@ -1,6 +1,7 @@
 import React from "react";
-// editor
+// plane imports
 import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
+import { MakeOptional } from "@plane/types";
 // components
 import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";
 // helpers
@@ -9,7 +10,7 @@ import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
 
 interface LiteTextEditorWrapperProps
-  extends Omit<ILiteTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
+  extends MakeOptional<Omit<ILiteTextEditor, "fileHandler" | "mentionHandler">, "disabledExtensions"> {
   anchor: string;
   workspaceId: string;
   isSubmitting?: boolean;
@@ -25,6 +26,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     isSubmitting = false,
     showSubmitButton = true,
     uploadFile,
+    disabledExtensions,
     ...rest
   } = props;
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
@@ -38,7 +40,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     <div className="border border-custom-border-200 rounded p-3 space-y-3">
       <LiteTextEditorWithRef
         ref={ref}
-        disabledExtensions={[]}
+        disabledExtensions={disabledExtensions ?? []}
         fileHandler={getEditorFileHandlers({
           anchor,
           uploadFile,

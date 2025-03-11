@@ -68,7 +68,11 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
     }
   }, [isOpen, isMobile]);
 
-  const memberIds = propsMemberIds ? propsMemberIds : projectId ? getProjectMemberIds(projectId) : workspaceMemberIds;
+  const memberIds = propsMemberIds
+    ? propsMemberIds
+    : projectId
+      ? getProjectMemberIds(projectId, true)
+      : workspaceMemberIds;
   const onOpen = () => {
     if (!memberIds && workspaceSlug && projectId) fetchProjectMembers(workspaceSlug.toString(), projectId);
   };

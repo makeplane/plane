@@ -26,11 +26,9 @@ import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUserPer
 import { TProject } from "@/plane-web/types";
 
 export const SidebarProjectsList: FC = observer(() => {
-  // get local storage data for isFavoriteProjectsListOpen and isAllProjectsListOpen
-  const isAllProjectsListOpenInLocalStorage = localStorage.getItem("isAllProjectsListOpen");
   // states
 
-  const [isAllProjectsListOpen, setIsAllProjectsListOpen] = useState(isAllProjectsListOpenInLocalStorage === "true");
+  const [isAllProjectsListOpen, setIsAllProjectsListOpen] = useState(true);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false); // scroll animation state
   // refs

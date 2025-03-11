@@ -699,6 +699,7 @@
     "property": "属性",
     "properties": "属性",
     "parent": "父项",
+    "page": "页面",
     "remove": "移除",
     "archiving": "归档中",
     "archive": "归档",
@@ -865,7 +866,8 @@
     "delete": "删除",
     "deleting": "删除中",
     "pending": "待处理",
-    "invite": "邀请"
+    "invite": "邀请",
+    "view": "查看"
   },
 
   "chart": {
@@ -983,7 +985,8 @@
         "sub_issue_count": "子工作项数量",
         "attachment_count": "附件数量",
         "created_on": "创建于",
-        "sub_issue": "子工作项"
+        "sub_issue": "子工作项",
+        "work_item_count": "工作项数量"
       },
       "extra": {
         "show_sub_issues": "显示子工作项",

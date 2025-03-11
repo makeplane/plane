@@ -1,9 +1,13 @@
+# python imports
+import os
+
+# Third party imports
 from rest_framework.throttling import SimpleRateThrottle
 
 
 class ApiKeyRateThrottle(SimpleRateThrottle):
     scope = "api_key"
-    rate = "60/minute"
+    rate = os.environ.get("API_KEY_RATE_LIMIT", "60/minute")
 
     def get_cache_key(self, request, view):
         # Retrieve the API key from the request header

@@ -1,20 +1,21 @@
 import React, { forwardRef } from "react";
-// editor
+// plane imports
 import { EditorRefApi, IRichTextEditor, RichTextEditorWithRef, TFileHandler } from "@plane/editor";
+import { MakeOptional } from "@plane/types";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 
 interface RichTextEditorWrapperProps
-  extends Omit<IRichTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
+  extends MakeOptional<Omit<IRichTextEditor, "fileHandler" | "mentionHandler">, "disabledExtensions"> {
   anchor: string;
   uploadFile: TFileHandler["upload"];
   workspaceId: string;
 }
 
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
-  const { anchor, containerClassName, uploadFile, workspaceId, ...rest } = props;
+  const { anchor, containerClassName, uploadFile, workspaceId, disabledExtensions, ...rest } = props;
 
   return (
     <RichTextEditorWithRef
@@ -22,7 +23,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         renderComponent: (props) => <EditorMentionsRoot {...props} />,
       }}
       ref={ref}
-      disabledExtensions={[]}
+      disabledExtensions={disabledExtensions ?? []}
       fileHandler={getEditorFileHandlers({
         anchor,
         uploadFile,

@@ -635,7 +635,9 @@ class IssueViewSet(BaseViewSet):
         )
 
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
-        serializer = IssueCreateSerializer(issue, data=request.data, partial=True)
+        serializer = IssueCreateSerializer(
+            issue, data=request.data, partial=True, context={"project_id": project_id}
+        )
         if serializer.is_valid():
             serializer.save()
             issue_activity.delay(
@@ -1099,7 +1101,6 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
 
 
 class IssueMetaEndpoint(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
     def get(self, request, slug, project_id, issue_id):
         issue = Issue.issue_objects.only("sequence_id", "project__identifier").get(
@@ -1115,14 +1116,12 @@ class IssueMetaEndpoint(BaseAPIView):
 
 
 class IssueDetailIdentifierEndpoint(BaseAPIView):
-
     def strict_str_to_int(self, s):
-        if not s.isdigit() and not (s.startswith('-') and s[1:].isdigit()):
+        if not s.isdigit() and not (s.startswith("-") and s[1:].isdigit()):
             raise ValueError("Invalid integer string")
         return int(s)
 
     def get(self, request, slug, project_identifier, issue_identifier):
-
         # Check if the issue identifier is a valid integer
         try:
             issue_identifier = self.strict_str_to_int(issue_identifier)
@@ -1134,8 +1133,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
 
         # Fetch the project
         project = Project.objects.get(
-            identifier__iexact=project_identifier,
-            workspace__slug=slug,
+            identifier__iexact=project_identifier, workspace__slug=slug
         )
 
         # Check if the user is a member of the project
@@ -1237,8 +1235,8 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
             .annotate(
                 is_subscribed=Exists(
                     IssueSubscriber.objects.filter(
-                            workspace__slug=slug,
-                            project_id=project.id,
+                        workspace__slug=slug,
+                        project_id=project.id,
                         issue__sequence_id=issue_identifier,
                         subscriber=request.user,
                     )

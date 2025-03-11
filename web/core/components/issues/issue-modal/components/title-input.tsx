@@ -2,7 +2,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { Control, Controller, FieldErrors } from "react-hook-form";
+import { Control, Controller, FormState } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 // types
@@ -18,12 +18,17 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 type TIssueTitleInputProps = {
   control: Control<TIssue>;
   issueTitleRef: React.MutableRefObject<HTMLInputElement | null>;
-  errors: FieldErrors<TIssue>;
+  formState: FormState<TIssue>;
   handleFormChange: () => void;
 };
 
 export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props) => {
-  const { control, issueTitleRef, errors, handleFormChange } = props;
+  const {
+    control,
+    issueTitleRef,
+    formState: { errors },
+    handleFormChange,
+  } = props;
   // store hooks
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();

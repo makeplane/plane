@@ -529,6 +529,7 @@
     "property": "Property",
     "properties": "Properties",
     "parent": "Parent",
+    "page": "Page",
     "remove": "Remove",
     "archiving": "Archiving",
     "archive": "Archive",
@@ -687,7 +688,7 @@
     "you": "You",
     "upgrade_cta": {
       "higher_subscription": "Upgrade to higher subscription",
-      "talk_to_sales": "Talk to sales"
+      "talk_to_sales": "Talk to Sales"
     },
     "category": "Category",
     "categories": "Categories",
@@ -696,7 +697,8 @@
     "delete": "Delete",
     "deleting": "Deleting",
     "pending": "Pending",
-    "invite": "Invite"
+    "invite": "Invite",
+    "view": "View"
   },
 
   "chart": {
@@ -814,7 +816,8 @@
         "sub_issue_count": "Sub-work item count",
         "attachment_count": "Attachment count",
         "created_on": "Created on",
-        "sub_issue": "Sub-work item"
+        "sub_issue": "Sub-work item",
+        "work_item_count": "Work item count"
       },
       "extra": {
         "show_sub_issues": "Show sub-work items",

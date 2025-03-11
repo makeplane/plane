@@ -697,6 +697,7 @@
     "property": "Свойство",
     "properties": "Свойства",
     "parent": "Родительский",
+    "page": "Пейдж",
     "remove": "Удалить",
     "archiving": "Архивация",
     "archive": "Архивировать",
@@ -864,7 +865,8 @@
     "delete": "Удалить",
     "deleting": "Удаление",
     "pending": "Ожидание",
-    "invite": "Пригласить"
+    "invite": "Пригласить",
+    "view": "Просмотр"
   },
 
   "chart": {
@@ -982,7 +984,8 @@
         "sub_issue_count": "Количество подэлементов",
         "attachment_count": "Количество вложений",
         "created_on": "Дата создания",
-        "sub_issue": "Подэлемент"
+        "sub_issue": "Подэлемент",
+        "work_item_count": "Количество рабочих элементов"
       },
       "extra": {
         "show_sub_issues": "Показывать подэлементы",
@@ -1866,7 +1869,7 @@
         }
       },
       "completed_no_issues": {
-        "title": "Нет рабочих элементов в цикле", 
+        "title": "Нет рабочих элементов в цикле",
         "description": "Нет рабочих элементов. Рабочие элементы были перенесены или скрыты. Для просмотра измените настройки отображения."
       },
       "active": {
@@ -2285,7 +2288,7 @@
       "short_description": "Экспорт в csv"
     },
     "excel": {
-      "title": "Excel", 
+      "title": "Excel",
       "description": "Экспорт рабочих элементов в файл Excel.",
       "short_description": "Экспорт в excel"
     },
@@ -2303,7 +2306,7 @@
   "default_global_view": {
     "all_issues": "Все рабочие элементы",
     "assigned": "Назначенные",
-    "created": "Созданные", 
+    "created": "Созданные",
     "subscribed": "Подписанные"
   },
 
@@ -2332,7 +2335,7 @@
   "project_modules": {
     "status": {
       "backlog": "Бэклог",
-      "planned": "Запланировано", 
+      "planned": "Запланировано",
       "in_progress": "В процессе",
       "paused": "Приостановлено",
       "completed": "Завершено",

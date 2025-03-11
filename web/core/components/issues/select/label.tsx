@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
+import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
@@ -24,7 +25,9 @@ type Props = {
   disabled?: boolean;
   tabIndex?: number;
   createLabelEnabled?: boolean;
+  buttonContainerClassName?: string;
   buttonClassName?: string;
+  placement?: Placement;
 };
 
 export const IssueLabelSelect: React.FC<Props> = observer((props) => {
@@ -37,7 +40,9 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
     disabled = false,
     tabIndex,
     createLabelEnabled = false,
+    buttonContainerClassName,
     buttonClassName,
+    placement,
   } = props;
   const { t } = useTranslation();
   // router
@@ -55,7 +60,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   // popper
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-start",
+    placement: placement ?? "bottom-start",
   });
 
   const projectLabels = getProjectLabels(projectId);
@@ -115,13 +120,16 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
       <button
         type="button"
         ref={setReferenceElement}
-        className={cn("h-full flex cursor-pointer items-center gap-2 text-xs text-custom-text-200", buttonClassName)}
+        className={cn(
+          "h-full flex cursor-pointer items-center gap-2 text-xs text-custom-text-200",
+          buttonContainerClassName
+        )}
         onClick={handleOnClick}
       >
         {label ? (
           label
         ) : value && value.length > 0 ? (
-          <span className="flex items-center justify-center gap-2 text-xs h-full">
+          <span className={cn("flex items-center justify-center gap-2 text-xs h-full", buttonClassName)}>
             <IssueLabelsList
               labels={value.map((v) => projectLabels?.find((l) => l.id === v)) ?? []}
               length={3}
@@ -129,7 +137,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
             />
           </span>
         ) : (
-          <div className="h-full flex items-center justify-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs hover:bg-custom-background-80">
+          <div className={cn("h-full flex items-center justify-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs hover:bg-custom-background-80", buttonClassName)}>
             <Tag className="h-3 w-3 flex-shrink-0" />
             <span>{t("labels")}</span>
           </div>

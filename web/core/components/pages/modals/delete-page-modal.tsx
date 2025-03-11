@@ -3,12 +3,14 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // ui
+import { useParams } from "next/navigation";
 import { PAGE_DELETED } from "@plane/constants";
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // plane web hooks
+import { useAppRouter } from "@/hooks/use-app-router";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
@@ -36,6 +38,9 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
     onClose();
   };
 
+  const router = useAppRouter();
+  const { pageId: routePageId } = useParams();
+
   const handleDelete = async () => {
     setIsDeleting(true);
     await removePage(pageId)
@@ -53,6 +58,10 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
           title: "Success!",
           message: "Page deleted successfully.",
         });
+
+        if (routePageId) {
+          router.back();
+        }
       })
       .catch(() => {
         capturePageEvent({
@@ -82,8 +91,8 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
       content={
         <>
           Are you sure you want to delete page-{" "}
-          <span className="break-words font-medium text-custom-text-100">{name}</span>? The Page will be deleted
-          permanently. This action cannot be undone.
+          <span className="break-words font-medium text-custom-text-100 break-all">{name}</span> ? The Page will be
+          deleted permanently. This action cannot be undone.
         </>
       }
     />
