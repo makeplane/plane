@@ -56,6 +56,7 @@ export const DashboardsWidgetsListEmptyState: React.FC<Props> = observer((props)
           title={t("dashboards.empty_state.widgets_list.title")}
           description={t("dashboards.empty_state.widgets_list.description")}
           assetPath={widgetsAssetResolvedPath}
+          size="lg"
         />
         {!isViewModeEnabled && canCurrentUserCreateWidget && (
           <DashboardWidgetChartTypesDropdown

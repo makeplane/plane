@@ -62,6 +62,7 @@ export const DashboardsListLayoutRoot = observer(() => {
           title={t("dashboards.empty_state.dashboards_search.title")}
           description={t("dashboards.empty_state.dashboards_search.description")}
           assetPath={searchEmptyStateResolvedPath}
+          size="lg"
         />
       </div>
     );

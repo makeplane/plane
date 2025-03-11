@@ -26,9 +26,7 @@ export const CustomTooltip = React.memo((props: Props) => {
       className="flex flex-col max-h-[40vh] overflow-y-scroll vertical-scrollbar scrollbar-sm"
       spacing={ECardSpacing.SM}
     >
-      <p className="text-xs text-custom-text-100 font-medium border-b border-custom-border-200 pb-2 capitalize">
-        {label}
-      </p>
+      <p className="text-xs text-custom-text-100 font-medium border-b border-custom-border-200 pb-2">{label}</p>
       {filteredPayload.map((item) => {
         if (!item.dataKey) return null;
 

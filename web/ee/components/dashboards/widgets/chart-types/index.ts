@@ -1,9 +1,17 @@
 export * from "./root";
 
+import { getWeekOfMonth, isValid } from "date-fns";
 // plane imports
-import { EWidgetXAxisProperty, TO_CAPITALIZE_PROPERTIES } from "@plane/constants";
+import {
+  EWidgetXAxisDateGrouping,
+  EWidgetXAxisProperty,
+  TO_CAPITALIZE_PROPERTIES,
+  WIDGET_X_AXIS_DATE_PROPERTIES,
+} from "@plane/constants";
 import { TDashboardWidgetData, TDashboardWidgetDatum } from "@plane/types";
 import { capitalizeFirstLetter, cn, hexToHsl, hslToHex } from "@plane/utils";
+// helpers
+import { renderFormattedDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
 // plane web store
 import { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
 
@@ -99,10 +107,50 @@ export const generateExtendedColors = (baseColorSet: string[], targetCount: numb
   return colors.slice(0, targetCount);
 };
 
+const getDateGroupingName = (date: string, dateGrouping: EWidgetXAxisDateGrouping): string => {
+  if (!date || ["none", "null"].includes(date.toLowerCase())) return "None";
+
+  const formattedData = new Date(date);
+  const isValidDate = isValid(formattedData);
+
+  if (!isValidDate) return date;
+
+  const year = formattedData.getFullYear();
+  const currentYear = new Date().getFullYear();
+
+  const isCurrentYear = year === currentYear;
+
+  let parsedName: string | undefined;
+
+  switch (dateGrouping) {
+    case EWidgetXAxisDateGrouping.DAY:
+      if (isCurrentYear) parsedName = renderFormattedDateWithoutYear(formattedData);
+      else parsedName = renderFormattedDate(formattedData);
+      break;
+    case EWidgetXAxisDateGrouping.WEEK: {
+      const month = renderFormattedDate(formattedData, "MMM");
+      parsedName = `${month}, Week ${getWeekOfMonth(formattedData)}`;
+      break;
+    }
+    case EWidgetXAxisDateGrouping.MONTH:
+      if (isCurrentYear) parsedName = renderFormattedDate(formattedData, "MMM");
+      else parsedName = renderFormattedDate(formattedData, "MMM, yyyy");
+      break;
+    case EWidgetXAxisDateGrouping.YEAR:
+      parsedName = `${year}`;
+      break;
+    default:
+      parsedName = date;
+  }
+
+  return parsedName ?? date;
+};
+
 export const parseWidgetData = (
   data: TDashboardWidgetData | null | undefined,
   xAxisProperty: EWidgetXAxisProperty | null | undefined,
-  groupByProperty: EWidgetXAxisProperty | null | undefined
+  groupByProperty: EWidgetXAxisProperty | null | undefined,
+  xAxisDateGrouping: EWidgetXAxisDateGrouping | null | undefined
 ): TDashboardWidgetData => {
   if (!data) {
     return {
@@ -110,16 +158,24 @@ export const parseWidgetData = (
       schema: {},
     };
   }
-  const { data: widgetData, schema } = data;
+  const widgetData = structuredClone(data.data);
+  const schema = structuredClone(data.schema);
   const allKeys = Object.keys(schema);
   const updatedWidgetData: TDashboardWidgetDatum[] = widgetData.map((datum) => {
     const keys = Object.keys(datum);
     const missingKeys = allKeys.filter((key) => !keys.includes(key));
     const missingValues: Record<string, number> = missingKeys.reduce((acc, key) => ({ ...acc, [key]: 0 }), {});
 
-    // capitalize first letter if xAxisProperty is PRIORITY or STATE_GROUPS and no groupByProperty is set
-    if (!groupByProperty && xAxisProperty && TO_CAPITALIZE_PROPERTIES.includes(xAxisProperty)) {
-      datum.name = capitalizeFirstLetter(datum.name);
+    if (xAxisProperty) {
+      // capitalize first letter if xAxisProperty is in TO_CAPITALIZE_PROPERTIES and no groupByProperty is set
+      if (TO_CAPITALIZE_PROPERTIES.includes(xAxisProperty)) {
+        datum.name = capitalizeFirstLetter(datum.name);
+      }
+
+      // parse timestamp to visual date if xAxisProperty is in WIDGET_X_AXIS_DATE_PROPERTIES
+      if (WIDGET_X_AXIS_DATE_PROPERTIES.includes(xAxisProperty)) {
+        datum.name = getDateGroupingName(datum.name, xAxisDateGrouping ?? EWidgetXAxisDateGrouping.DAY);
+      }
     }
 
     return {
@@ -128,12 +184,20 @@ export const parseWidgetData = (
     };
   });
 
-  // capitalize first letter if groupByProperty is PRIORITY or STATE_GROUPS
+  // capitalize first letter if groupByProperty is in TO_CAPITALIZE_PROPERTIES
   const updatedSchema = schema;
-  if (groupByProperty && TO_CAPITALIZE_PROPERTIES.includes(groupByProperty)) {
-    Object.keys(updatedSchema).forEach((key) => {
-      updatedSchema[key] = capitalizeFirstLetter(updatedSchema[key]);
-    });
+  if (groupByProperty) {
+    if (TO_CAPITALIZE_PROPERTIES.includes(groupByProperty)) {
+      Object.keys(updatedSchema).forEach((key) => {
+        updatedSchema[key] = capitalizeFirstLetter(updatedSchema[key]);
+      });
+    }
+
+    if (WIDGET_X_AXIS_DATE_PROPERTIES.includes(groupByProperty)) {
+      Object.keys(updatedSchema).forEach((key) => {
+        updatedSchema[key] = getDateGroupingName(updatedSchema[key], EWidgetXAxisDateGrouping.DAY);
+      });
+    }
   }
 
   return {

@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { toJS } from "mobx";
 import { observer } from "mobx-react";
 import dynamic from "next/dynamic";
 import { useTheme } from "next-themes";
@@ -20,7 +21,7 @@ const parsePieChartData = (
   originalData: TDashboardWidgetDatum[] | undefined,
   config: TPieChartWidgetConfig | undefined
 ) => {
-  const data = [...(originalData ?? [])];
+  const data = structuredClone(originalData ?? []);
   let updatedData: TDashboardWidgetDatum[] = data;
   if (config?.value_type === "percentage") {
     const totalCount = data.reduce((acc, curr) => acc + curr.count, 0);
@@ -65,7 +66,7 @@ export const DashboardPieChartWidget: React.FC<TWidgetComponentProps> = observer
   const showLegends = !!widgetConfig?.show_legends;
   const legendPosition = (width ?? 1) >= (height ?? 1) ? "right" : "bottom";
   const pieParsedData = useMemo(() => {
-    const secondParse = parsePieChartData(parsedData.data, widgetConfig);
+    const secondParse = parsePieChartData(parsedData.data, toJS(widgetConfig));
     return secondParse;
   }, [parsedData, widgetConfig]);
   // next-themes

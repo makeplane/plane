@@ -14,9 +14,7 @@ export const CustomPieChartTooltip = React.memo((props: Props) => {
 
   return (
     <Card className="flex flex-col" spacing={ECardSpacing.SM}>
-      <p className="text-xs text-custom-text-100 font-medium border-b border-custom-border-200 pb-2 capitalize">
-        {label}
-      </p>
+      <p className="text-xs text-custom-text-100 font-medium border-b border-custom-border-200 pb-2">{label}</p>
       {payload?.map((item) => (
         <div key={item?.dataKey} className="flex items-center gap-2 text-xs capitalize">
           <div

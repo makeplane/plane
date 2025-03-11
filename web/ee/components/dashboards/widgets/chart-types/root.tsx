@@ -1,4 +1,5 @@
 import { useMemo, useRef } from "react";
+import { toJS } from "mobx";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
@@ -42,11 +43,15 @@ export const DashboardWidgetRoot: React.FC<Props> = observer((props) => {
     isConfigurationMissing,
     x_axis_property,
     group_by,
+    x_axis_date_grouping,
   } = widget ?? {};
   const isWidgetSelected = isEditingWidget === widgetId;
   const isWidgetConfigured = !isConfigurationMissing;
   const isEditingEnabled = !isViewModeEnabled && !!canCurrentUserEditWidget;
-  const parsedData = useMemo(() => parseWidgetData(data, x_axis_property, group_by), [data, group_by, x_axis_property]);
+  const parsedData = useMemo(
+    () => parseWidgetData(toJS(data), x_axis_property, group_by, x_axis_date_grouping),
+    [data, group_by, x_axis_date_grouping, x_axis_property]
+  );
 
   useSWR(
     isWidgetConfigured && widgetId ? `WIDGET_DATA_${widgetId}` : null,

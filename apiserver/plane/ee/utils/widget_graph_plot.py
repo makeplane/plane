@@ -45,8 +45,8 @@ def get_x_axis_field():
         "PRIORITY": ("priority", "priority"),
         "START_DATE": ("start_date", "start_date"),
         "TARGET_DATE": ("target_date", "target_date"),
-        "CREATED_AT": ("created_at", "created_at"),
-        "COMPLETED_AT": ("completed_at", "completed_at"),
+        "CREATED_AT": ("created_at__date", "created_at__date"),
+        "COMPLETED_AT": ("completed_at__date", "completed_at__date"),
     }
 
 
