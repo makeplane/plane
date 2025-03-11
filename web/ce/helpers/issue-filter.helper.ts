@@ -1,5 +1,7 @@
 // types
 import { IIssueDisplayProperties } from "@plane/types";
+// lib
+import { store } from "@/lib/store-context";
 
 export type TShouldRenderDisplayProperty = {
   workspaceSlug: string;
@@ -17,13 +19,8 @@ export const shouldRenderDisplayProperty = (props: TShouldRenderDisplayProperty)
   }
 };
 
-export type TShouldRenderColumn = {
-  key: keyof IIssueDisplayProperties;
-  isEstimateEnabled: boolean;
-};
-
-export const shouldRenderColumn = (props: TShouldRenderColumn): boolean => {
-  const { key, isEstimateEnabled } = props;
+export const shouldRenderColumn = (key: keyof IIssueDisplayProperties): boolean => {
+  const isEstimateEnabled: boolean = store.projectRoot.project.currentProjectDetails?.estimate !== null;
   switch (key) {
     case "estimate":
       return isEstimateEnabled;

@@ -293,7 +293,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
         <WorkItemAdditionalSidebarProperties
           workItemId={issue.id}
-          workItemType={issue.type_id}
+          workItemTypeId={issue.type_id}
           projectId={projectId}
           workspaceSlug={workspaceSlug}
           isEditable={!disabled}

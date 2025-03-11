@@ -21,13 +21,13 @@ type Props = {
 };
 
 export const IssueColumn = observer((props: Props) => {
-  const { displayProperties, issueDetail, disableUserActions, property, updateIssue, isEstimateEnabled } = props;
+  const { displayProperties, issueDetail, disableUserActions, property, updateIssue } = props;
   // router
   const pathname = usePathname();
   const tableCellRef = useRef<HTMLTableCellElement | null>(null);
   const { captureIssueEvent } = useEventTracker();
 
-  const shouldRenderProperty = shouldRenderColumn({ key: property, isEstimateEnabled });
+  const shouldRenderProperty = shouldRenderColumn(property);
 
   const Column = SPREADSHEET_COLUMNS[property];
 

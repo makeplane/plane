@@ -295,7 +295,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
             <WorkItemAdditionalSidebarProperties
               workItemId={issue.id}
-              workItemType={issue.type_id}
+              workItemTypeId={issue.type_id}
               projectId={projectId}
               workspaceSlug={workspaceSlug}
               isEditable={isEditable}

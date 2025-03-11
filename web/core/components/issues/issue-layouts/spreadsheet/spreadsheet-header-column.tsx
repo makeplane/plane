@@ -16,19 +16,12 @@ interface Props {
   isEpic?: boolean;
 }
 export const SpreadsheetHeaderColumn = observer((props: Props) => {
-  const {
-    displayProperties,
-    displayFilters,
-    property,
-    isEstimateEnabled,
-    handleDisplayFilterUpdate,
-    isEpic = false,
-  } = props;
+  const { displayProperties, displayFilters, property, handleDisplayFilterUpdate, isEpic = false } = props;
 
   //hooks
   const tableHeaderCellRef = useRef<HTMLTableCellElement | null>(null);
 
-  const shouldRenderProperty = shouldRenderColumn({ key: property, isEstimateEnabled });
+  const shouldRenderProperty = shouldRenderColumn(property);
 
   return (
     <WithDisplayPropertiesHOC

@@ -6,7 +6,7 @@ import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issu
 
 export type TWorkItemAdditionalSidebarProperties = {
   workItemId: string;
-  workItemType: string | null;
+  workItemTypeId: string | null;
   projectId: string;
   workspaceSlug: string;
   isEditable: boolean;
@@ -14,13 +14,13 @@ export type TWorkItemAdditionalSidebarProperties = {
 };
 
 export const WorkItemAdditionalSidebarProperties: FC<TWorkItemAdditionalSidebarProperties> = observer((props) => {
-  const { workItemId, projectId, workItemType, workspaceSlug, isEditable } = props;
+  const { workItemId, projectId, workItemTypeId, workspaceSlug, isEditable } = props;
   return (
     <>
-      {workItemType && (
+      {workItemTypeId && (
         <IssueAdditionalPropertyValuesUpdate
           issueId={workItemId}
-          issueTypeId={workItemType}
+          issueTypeId={workItemTypeId}
           projectId={projectId}
           workspaceSlug={workspaceSlug}
           isDisabled={!isEditable}
