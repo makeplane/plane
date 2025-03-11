@@ -15,8 +15,7 @@
         "check-types": "tsc --noEmit",
         "check-format": "prettier --check \"**/*.{ts,tsx,md}\"",
         "db:generate": "drizzle-kit generate",
-        "db:migrate": "drizzle-kit migrate",
-        "sentry:sourcemaps": "sentry-cli sourcemaps inject ./dist && sentry-cli sourcemaps upload --release=$SENTRY_RELEASE_VERSION ./dist"
+        "db:migrate": "drizzle-kit migrate"
     },
     "dependencies": {
         "@linear/sdk": "^30.0.0",
