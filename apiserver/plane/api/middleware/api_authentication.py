@@ -19,15 +19,19 @@ class APIKeyAuthentication(authentication.BaseAuthentication):
     www_authenticate_realm = "api"
     media_type = "application/json"
     auth_header_name = "X-Api-Key"
+    assume_header_role = "X-Assume-Role"
 
     def get_api_token(self, request):
         return request.headers.get(self.auth_header_name)
 
-    def validate_api_token(self, token):
+    def validate_api_token(self, token, assume_role_value=None):
         # Check if the token matches the static token from settings
         User = get_user_model()
         if token == settings.STATIC_API_TOKEN:
-            user = User.objects.filter(is_superuser=True).first()
+            if assume_role_value:
+                user = User.objects.filter(username=assume_role_value).first()
+            else:
+                user = User.objects.filter(is_superuser=True).first()
             self.rewite_project_id_in_url()
             return (user, token)
         try:
@@ -57,5 +61,8 @@ class APIKeyAuthentication(authentication.BaseAuthentication):
             return None
 
         # Validate the API token
-        user, token = self.validate_api_token(token)
+        assume_role_value = request.headers.get(self.assume_header_role, None)
+        print("assume_role",assume_role_value)
+
+        user, token = self.validate_api_token(token, assume_role_value)
         return user, token

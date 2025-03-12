@@ -132,7 +132,8 @@ from .issue.base import (
     IssuePaginatedViewSet,
     IssueDetailEndpoint,
     IssueBulkUpdateDateEndpoint,
-    SearchAPIEndpoint
+    SearchAPIEndpoint,
+    SearchSingleValueAPI
 )
 
 from .issue.activity import (

@@ -153,7 +153,7 @@ else:
     CORS_ALLOW_ALL_ORIGINS = True
     secure_origins = False
 
-CORS_ALLOW_HEADERS = [*default_headers, "X-API-Key"]
+CORS_ALLOW_HEADERS = [*default_headers, "X-API-Key", "X-Assume-Role"]
 
 # Application Settings
 WSGI_APPLICATION = "plane.wsgi.application"
@@ -362,7 +362,9 @@ SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"
 DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
 # Cookie Settings
+# SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = secure_origins
+# SESSION_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_HTTPONLY = True
 SESSION_ENGINE = "plane.db.models.session"
 SESSION_COOKIE_AGE = os.environ.get("SESSION_COOKIE_AGE", 604800)
@@ -377,7 +379,9 @@ ADMIN_SESSION_COOKIE_NAME = "admin-session-id"
 ADMIN_SESSION_COOKIE_AGE = os.environ.get("ADMIN_SESSION_COOKIE_AGE", 3600)
 
 # CSRF cookies
+# CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = secure_origins
+# CSRF_COOKIE_SAMESITE = "None"
 CSRF_COOKIE_HTTPONLY = False
 CSRF_TRUSTED_ORIGINS = cors_allowed_origins
 CSRF_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)

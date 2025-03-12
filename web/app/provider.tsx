@@ -1,9 +1,10 @@
 "use client";
 
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useTheme, ThemeProvider } from "next-themes";
 import { SWRConfig } from "swr";
+import { usePathname, useRouter } from "next/navigation";
 // ui
 import { Toast } from "@plane/ui";
 // constants
@@ -35,6 +36,26 @@ const ToastWithTheme = () => {
 export const AppProvider: FC<IAppProvider> = (props) => {
   const { children } = props;
   // themes
+
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    // const onIncomingMessage = (event) => {
+    //   console.log('onIncomingMessage', event);
+    //   if (event.data.type === 'ROUTE_CHANGE') {
+    //     console.log(location.pathname, event.data.path);
+    //     router.replace(event.data.path);
+    //   }
+    // };
+    console.log(pathname, 'pathname');
+    window.parent.postMessage({ type: "ROUTE_CHANGE", path: pathname }, "*");
+    // window.addEventListener('message', onIncomingMessage);
+    // return () => {
+    //   window.removeEventListener("message", onIncomingMessage);
+    // };
+  }, [pathname]);
+
   return (
     <>
       <AppProgressBar height="4px" color="#3F76FF" options={{ showSpinner: false }} shallowRouting />

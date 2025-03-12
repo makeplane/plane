@@ -113,6 +113,8 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
     def dispatch(self, request, *args, **kwargs):
         try:
             kwargs = self.check_kwargs(kwargs)
+            request.user = self.get_or_create_user_from_headers(request)
+            self.ensure_member_in_workspace(request.user, kwargs)
             response = super().dispatch(request, *args, **kwargs)
             if settings.DEBUG:
                 from django.db import connection
@@ -136,8 +138,42 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
                     ).first()
                 if project:
                     kwargs['project_id'] = project.id
+
+        
         return kwargs
-    
+
+    def get_or_create_user_from_headers(self, request):
+        """Extracts user info from headers and ensures they exist in the database."""
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+
+        assume_role = request.headers.get("X-Assume-Role")
+
+        if assume_role:
+            user, created = User.objects.get_or_create(
+                username=assume_role,  
+                defaults={"email": f"{assume_role}@example.com"}
+            )
+
+            if created:
+                print(f"New user created: {assume_role}")
+
+            return user
+
+        return request.user  # Default user if no assume role is found
+
+
+    def ensure_member_in_workspace(self, user, kwargs):
+        """ Ensures the given user is a member of the workspace. """
+        from plane.authentication.views.app.magic import MagicSignInEndpoint
+
+        if not user or not user.is_authenticated:  
+            return  
+        
+        if kwargs.get('slug', None):
+            MagicSignInEndpoint().add_user_to_workspace(user, kwargs['slug'])
+
+        
     def finalize_response(self, request, response, *args, **kwargs):
         # Call super to get the default response
         response = super().finalize_response(

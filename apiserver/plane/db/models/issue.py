@@ -45,7 +45,7 @@ def get_default_filters():
         "labels": None,
         "start_date": None,
         "target_date": None,
-        "subscriber": None,
+        "subscriber": None
     }
 
 

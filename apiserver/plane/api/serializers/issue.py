@@ -61,6 +61,12 @@ class IssueSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
+    state_id = serializers.PrimaryKeyRelatedField(
+        source="state",
+        queryset=State.objects.all(),
+        required=False,
+        allow_null=True,
+    )
 
     labels = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(
@@ -164,10 +170,9 @@ class IssueSerializer(BaseSerializer):
                     from plane.api.views import ProjectMemberAPIEndpoint
                     PMObj = ProjectMemberAPIEndpoint()
                     user = PMObj.create_user(user_data)
-                    PMObj.create_workspace_member(self.context.get("workspace_id"), user_data)
-                    PMObj.create_project_member(self.context.get("project_id"), user_data)
+                    PMObj.create_workspace_member(self.context.get("workspace_id"), user,5)
+                    PMObj.create_project_member(self.context.get("project_id"), user,5)
                     data['created_by'] = user
-
         print(data)
         return data
 
@@ -481,20 +486,6 @@ class IssueCommentSerializer(BaseSerializer):
                 parsed_str = html.tostring(parsed, encoding="unicode")
                 print(html.tostring(parsed, encoding="unicode"))
                 data["comment_html"] = parsed_str
- ##           if not data.get('created_by', None):
- ##               if User.objects.filter(username=data['created_by']).exists():
- ##                   data['created_by'] = User.objects.get(username=data['created_by'])
- ##               else:
-##                  user_data = {
-  ##                      "email": data['created_by'] + '@plane-shipsy.com',
-   ##                     "username": data['created_by'],
-    ##                }
-     ##               from plane.api.views import ProjectMemberAPIEndpoint
-      ##              PMObj = ProjectMemberAPIEndpoint()
-       ##             user = PMObj.create_user(user_data)
-       ##             PMObj.create_workspace_member(self.context.get("workspace_id") ,user_data)
-       ##             PMObj.create_project_member(self.context.get("project_id"), user_data)
-       ##             data['created_by'] = user
 
             print(data)
         except Exception as e:

@@ -1122,38 +1122,6 @@ class IssueDetailEndpoint(BaseAPIView):
             ).data,
         )
 
-# class HubViewSet(BaseAPIView):
-#     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
-#     def list(self, request, slug, project_id):
-#         hubs = Hub.objects.filter(workspace__slug=slug, project_id=project_id)
-
-#         # Extract query parameters
-#         hub_code = request.GET.get("hub_code", "").strip()
-#         reference_number = request.GET.get("reference_number", "").strip()
-#         trip_reference_number = request.GET.get("trip_reference_number", "").strip()
-#         vendor_code = request.GET.get("vendor_code", "").strip()
-#         worker_code = request.GET.get("worker_code", "").strip()
-
-#         # Apply filtering dynamically
-#         filter_params = {}
-#         if hub_code:
-#             filter_params["hub_code__icontains"] = hub_code
-#         if reference_number:
-#             filter_params["reference_number__icontains"] = reference_number
-#         if trip_reference_number:
-#             filter_params["trip_reference_number__icontains"] = trip_reference_number
-#         if vendor_code:
-#             filter_params["vendor_code__icontains"] = vendor_code
-#         if worker_code:
-#             filter_params["worker_code__icontains"] = worker_code
-
-#         hubs = hubs.filter(**filter_params)
-
-#         # Serialize the results
-#         hub_data = HubSerializer(hubs, many=True).data
-#         return Response(hub_data, status=status.HTTP_200_OK)
-
-
 
 class IssueBulkUpdateDateEndpoint(BaseAPIView):
 
@@ -1248,17 +1216,10 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
         )
 
 class SearchAPIEndpoint(BaseAPIView):
-    """
-    API to fetch hub codes for a specific workspace and project.
-    """
     model = Issue
     webhook_event = "issue"
-    permission_classes = [ProjectEntityPermission]
     def get(self, request, slug, project_id):
-        """
-        Fetch unique values for hub_code, worker_code, reference_number, trip_reference_number,
-        customer_code, or vendor_code based on the requested query parameters.
-        """
+        
         allowed_fields = ["hub_code", "worker_code", "reference_number", "trip_reference_number", "customer_code", "vendor_code"]
 
         field = request.GET.get("field")  # Get the single field value
@@ -1283,7 +1244,7 @@ class SearchAPIEndpoint(BaseAPIView):
         unique_values = list(set(filter(None, values)))  # Remove duplicates and nulls
 
         paginator = PageNumberPagination()
-        paginator.page_size = int(request.GET.get("limit", 10))  # Default limit = 10
+        paginator.page_size = int(request.GET.get("limit", 20))  # Default limit = 10
         paginated_values = paginator.paginate_queryset(unique_values, request)
 
         # Custom pagination response
@@ -1296,3 +1257,40 @@ class SearchAPIEndpoint(BaseAPIView):
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
+
+class SearchSingleValueAPI(BaseAPIView):
+    model = Issue
+    allowed_fields = ["hub_code", "trip_reference_number", "reference_number", "worker_code", "vendor_code","customer_code"]
+
+    def get(self, request, slug, project_id):
+        # Extract query parameters (only one should be provided)
+        query_params = {field: request.GET.get(field) for field in self.allowed_fields if request.GET.get(field)}
+
+        if len(query_params) != 1:
+            return Response(
+                {"error": f"Provide exactly one search parameter from: {', '.join(self.allowed_fields)}"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Extract the field and search value
+        search_field, search_value = next(iter(query_params.items()))
+
+        # Query for exact matches first
+        exact_matches = Issue.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            **{search_field: search_value}  # Exact match
+        ).values_list(search_field, flat=True)
+
+        # Query for partial matches using `icontains`
+        startwith_matches = Issue.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            **{f"{search_field}__istartswith": search_value}  # starts with  match
+        ).exclude(**{search_field: search_value})  # Exclude exact match
+        startwith_matches = startwith_matches.values_list(search_field, flat=True)
+
+        # Combine results: exact matches first, then partial matches
+        unique_values = list(set(exact_matches)) + list(set(startwith_matches))
+
+        return Response({"data": unique_values}, status=status.HTTP_200_OK)

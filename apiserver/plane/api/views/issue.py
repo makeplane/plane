@@ -39,6 +39,7 @@ from plane.app.permissions import (
     ProjectEntityPermission,
     ProjectLitePermission,
     ProjectMemberPermission,
+    ProjectEntityGuestPermission
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
@@ -65,7 +66,7 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
 
     model = Issue
     webhook_event = "issue"
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityGuestPermission]
     serializer_class = IssueSerializer
 
     @property
@@ -489,6 +490,10 @@ class IssueAPIEndpoint(BaseAPIView):
             )
 
     def patch(self, request, slug, project_id, pk=None):
+        modified_data = request.data.copy() if hasattr(request.data, 'copy') else dict(request.data)
+        # If 'state' is present in the data, rename it to 'state_id'
+        if 'state' in modified_data:
+            modified_data['state_id'] = modified_data.pop('state')
         issue = Issue.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
         )
@@ -496,10 +501,10 @@ class IssueAPIEndpoint(BaseAPIView):
         current_instance = json.dumps(
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
-        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
+        requested_data = json.dumps(modified_data, cls=DjangoJSONEncoder)
         serializer = IssueSerializer(
             issue,
-            data=request.data,
+            data=modified_data,
             context={
                 "project_id": project_id,
                 "workspace_id": project.workspace_id,
@@ -508,15 +513,15 @@ class IssueAPIEndpoint(BaseAPIView):
         )
         if serializer.is_valid():
             if (
-                request.data.get("external_id")
-                and (issue.external_id != str(request.data.get("external_id")))
+                modified_data.get("external_id")
+                and (issue.external_id != str(modified_data.get("external_id")))
                 and Issue.objects.filter(
                     project_id=project_id,
                     workspace__slug=slug,
-                    external_source=request.data.get(
+                    external_source=modified_data.get(
                         "external_source", issue.external_source
                     ),
-                    external_id=request.data.get("external_id"),
+                    external_id=modified_data.get("external_id"),
                 ).exists()
             ):
                 return Response(
@@ -526,7 +531,6 @@ class IssueAPIEndpoint(BaseAPIView):
                     },
                     status=status.HTTP_409_CONFLICT,
                 )
-
             serializer.save()
             issue_activity.delay(
                 type="issue.activity.updated",
@@ -535,7 +539,7 @@ class IssueAPIEndpoint(BaseAPIView):
                 issue_id=str(pk),
                 project_id=str(project_id),
                 current_instance=current_instance,
-                epoch=int(timezone.now().timestamp()),
+                epoch=int(timezone.now().timestamp())
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1058,13 +1062,16 @@ class IssueActivityAPIEndpoint(BaseAPIView):
         ).order_by(request.GET.get("order_by", "created_at"))
 
         if pk:
-            issue_activities = issue_activities.get(pk=pk)
-            serializer = IssueActivitySerializer(issue_activities)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            try:
+                issue_activity = issue_activities.get(pk=pk)
+                serializer = IssueActivitySerializer(issue_activity)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except IssueActivity.DoesNotExist:
+                return Response({"error": "IssueActivity not found"}, status=status.HTTP_404_NOT_FOUND)
 
         return self.paginate(
             request=request,
-            queryset=(issue_activities),
+            queryset=issue_activities,
             on_results=lambda issue_activity: IssueActivitySerializer(
                 issue_activity,
                 many=True,
