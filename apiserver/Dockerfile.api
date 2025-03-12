@@ -27,13 +27,15 @@ RUN apk add --no-cache --virtual .build-deps \
     "postgresql-dev" \
     "libc-dev" \
     "linux-headers" \
-    && \
-    pip install -r requirements.txt --compile --no-cache-dir \
-    && \
-    apk del .build-deps
+    && pip install -r requirements.txt --compile --no-cache-dir \
+    && apk del .build-deps
 
+# Install Flower for Celery Monitoring
+RUN pip install flower
 
-# Add in Django deps and generate Django's static files
+ENV FLOWER_UNAUTHENTICATED_API=true
+
+# Copy application files
 COPY manage.py manage.py
 COPY plane plane/
 COPY templates templates/
@@ -46,9 +48,8 @@ RUN mkdir -p /code/plane/logs
 RUN chmod +x ./bin/*
 RUN chmod -R 777 /code
 
-EXPOSE 8000
-
-# ENV N8N_CONFIG_FILES=/home/node/config/env.json 
+# Expose ports for API and Flower UI
+EXPOSE 8000 5555
 
 # Declare a build argument
 ARG ENV_FILE_PATH
@@ -62,19 +63,15 @@ ENV ENV_FILE_PATH=${ENV_FILE_PATH}
 RUN if [ "${ENV_TYPE}" = "apiserver" ]; then \
     python manage.py migrate --noinput; \
     fi
-    
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf \
+
 CMD if [ "${ENV_TYPE}" = "apiserver" ]; then \
     gunicorn -w 2 -k uvicorn.workers.UvicornWorker plane.asgi:application --bind 0.0.0.0:8000 --max-requests 1200 --max-requests-jitter 1000 --access-logfile -; \
     elif [ "${ENV_TYPE}" = "celery" ]; then \
-    supervisord -c /etc/supervisor/conf.d/supervisord.conf \
+    celery -A plane flower --port=5555 --address=0.0.0.0 --url_prefix=flower & \
+    celery -A plane worker -l info; \
     elif [ "${ENV_TYPE}" = "celery-beat" ]; then \
-    celery -A plane beat -l info; \
+    (celery -A plane flower --port=5555 --address=0.0.0.0 --url-prefix=flower &) && celery -A plane beat -l info; \
     else \
     echo "Unknown ENV_TYPE: ${ENV_TYPE}"; \
     exit 1; \
     fi
-        
-# Expose container port and run entry point script
-
-
