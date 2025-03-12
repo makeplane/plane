@@ -214,7 +214,7 @@ export class DashboardInstance implements IDashboardInstance {
 
     await this.rootStore.favorite
       .addFavorite(workspaceSlug.toString(), {
-        entity_type: "workspace_dashboard",
+        entity_type: this.dashboardLevel === "workspace" ? "workspace_dashboard" : "dashboard",
         entity_identifier: this.id,
         entity_data: { name: this.name || "" },
       })

@@ -25,17 +25,20 @@ export const PieChart = React.memo(<K extends string, T extends string>(props: T
     centerLabel,
     cornerRadius,
     paddingAngle,
+    tooltipLabel,
   } = props;
   // states
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [activeLegend, setActiveLegend] = useState<string | null>(null);
 
   const renderCells = useMemo(
     () =>
       cells.map((cell, index) => (
         <Cell
           key={cell.key}
-          className={cell.className}
+          className="transition-opacity duration-200"
           fill={cell.fill}
+          opacity={!!activeLegend && activeLegend !== cell.key ? 0.1 : 1}
           style={{
             outline: "none",
           }}
@@ -43,7 +46,7 @@ export const PieChart = React.memo(<K extends string, T extends string>(props: T
           onMouseLeave={() => setActiveIndex(null)}
         />
       )),
-    [cells]
+    [activeLegend, cells]
   );
 
   return (
@@ -76,7 +79,7 @@ export const PieChart = React.memo(<K extends string, T extends string>(props: T
               showLabel
                 ? ({ payload, ...props }) => (
                     <text
-                      className="text-sm font-medium"
+                      className="text-sm font-medium transition-opacity duration-200"
                       cx={props.cx}
                       cy={props.cy}
                       x={props.x}
@@ -84,6 +87,7 @@ export const PieChart = React.memo(<K extends string, T extends string>(props: T
                       textAnchor={props.textAnchor}
                       dominantBaseline={props.dominantBaseline}
                       fill="rgba(var(--color-text-200))"
+                      opacity={!!activeLegend && activeLegend !== payload.key ? 0.1 : 1}
                     >
                       {customLabel?.(payload.count) ?? payload.count}
                     </text>
@@ -97,6 +101,7 @@ export const PieChart = React.memo(<K extends string, T extends string>(props: T
                 value={centerLabel.text}
                 fill={centerLabel.fill}
                 position="center"
+                opacity={activeLegend ? 0.1 : 1}
                 style={centerLabel.style}
                 className={centerLabel.className}
               />
@@ -104,7 +109,17 @@ export const PieChart = React.memo(<K extends string, T extends string>(props: T
           </Pie>
           {legend && (
             // @ts-expect-error recharts types are not up to date
-            <Legend {...getLegendProps(legend)} />
+            <Legend
+              onMouseEnter={(payload) => {
+                // @ts-expect-error recharts types are not up to date
+                const key: string | undefined = payload.payload?.key;
+                if (!key) return;
+                setActiveLegend(key);
+                setActiveIndex(null);
+              }}
+              onMouseLeave={() => setActiveLegend(null)}
+              {...getLegendProps(legend)}
+            />
           )}
           {showTooltip && (
             <Tooltip
@@ -119,7 +134,12 @@ export const PieChart = React.memo(<K extends string, T extends string>(props: T
                 if (!active || !payload || !payload.length) return null;
                 const cellData = cells.find((c) => c.key === payload[0].payload.key);
                 if (!cellData) return null;
-                return <CustomPieChartTooltip dotColor={cellData.fill} label={dataKey} payload={payload} />;
+                const label = tooltipLabel
+                  ? typeof tooltipLabel === "function"
+                    ? tooltipLabel(payload[0]?.payload?.payload)
+                    : tooltipLabel
+                  : dataKey;
+                return <CustomPieChartTooltip dotColor={cellData.fill} label={label} payload={payload} />;
               }}
             />
           )}

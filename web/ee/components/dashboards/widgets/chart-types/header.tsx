@@ -77,7 +77,13 @@ export const DashboardWidgetHeader: React.FC<Props> = observer((props) => {
         marginBottom: WIDGET_Y_SPACING,
       }}
     >
-      <div className="widget-drag-handle cursor-grab truncate">
+      <div
+        className="widget-drag-handle cursor-grab truncate"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+      >
         {!isViewModeEnabled && (
           <DragHandle className="absolute top-6 -translate-y-1/2 left-0.5 bg-transparent p-0 opacity-0 pointer-events-none group-hover/widget:opacity-100 group-hover/widget:pointer-events-auto transition-opacity" />
         )}

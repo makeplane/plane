@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useTheme } from "next-themes";
 // plane constants
 import { CHART_COLOR_PALETTES } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TCellItem, TDashboardWidgetDatum, TPieChartWidgetConfig } from "@plane/types";
 // local imports
 import { generateExtendedColors, TWidgetComponentProps } from ".";
@@ -75,6 +76,8 @@ export const DashboardPieChartWidget: React.FC<TWidgetComponentProps> = observer
   const baseColors = CHART_COLOR_PALETTES.find((p) => p.key === widgetConfig?.color_scheme)?.[
     resolvedTheme === "dark" ? "dark" : "light"
   ];
+  // translation
+  const { t } = useTranslation();
 
   const cells: TCellItem<string>[] = useMemo(() => {
     const extendedColors = generateExtendedColors(baseColors ?? [], pieParsedData.length);
@@ -125,6 +128,11 @@ export const DashboardPieChartWidget: React.FC<TWidgetComponentProps> = observer
           : undefined
       }
       showTooltip={!!widgetConfig?.show_tooltip}
+      tooltipLabel={
+        widgetConfig?.value_type === "percentage"
+          ? t("dashboards.widget.chart_types.pie_chart.value_type.percentage")
+          : t("dashboards.widget.chart_types.pie_chart.value_type.count")
+      }
       showLabel={showLabels}
       customLabel={(val) => {
         if (widgetConfig?.value_type === "percentage") {

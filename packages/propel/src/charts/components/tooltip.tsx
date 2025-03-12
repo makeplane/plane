@@ -23,10 +23,12 @@ export const CustomTooltip = React.memo((props: Props) => {
 
   return (
     <Card
-      className="flex flex-col max-h-[40vh] overflow-y-scroll vertical-scrollbar scrollbar-sm"
+      className="flex flex-col max-h-[40vh] w-[12rem] overflow-y-scroll vertical-scrollbar scrollbar-sm"
       spacing={ECardSpacing.SM}
     >
-      <p className="text-xs text-custom-text-100 font-medium border-b border-custom-border-200 pb-2">{label}</p>
+      <p className="text-xs text-custom-text-100 font-medium border-b border-custom-border-200 pb-2 truncate">
+        {label}
+      </p>
       {filteredPayload.map((item) => {
         if (!item.dataKey) return null;
 
@@ -37,16 +39,18 @@ export const CustomTooltip = React.memo((props: Props) => {
               "opacity-20": activeKey && item.dataKey !== activeKey,
             })}
           >
-            {itemDotColors[item?.dataKey] && (
-              <div
-                className="flex-shrink-0 size-2 rounded-sm"
-                style={{
-                  backgroundColor: itemDotColors[item?.dataKey],
-                }}
-              />
-            )}
-            <span className="text-custom-text-300">{itemLabels[item?.dataKey]}:</span>
-            <span className="font-medium text-custom-text-200">{item?.value}</span>
+            <div className="flex items-center gap-2 truncate">
+              {itemDotColors[item?.dataKey] && (
+                <div
+                  className="flex-shrink-0 size-2 rounded-sm"
+                  style={{
+                    backgroundColor: itemDotColors[item?.dataKey],
+                  }}
+                />
+              )}
+              <span className="text-custom-text-300 truncate">{itemLabels[item?.dataKey]}:</span>
+            </div>
+            <span className="flex-shrink-0 font-medium text-custom-text-200">{item?.value}</span>
           </div>
         );
       })}

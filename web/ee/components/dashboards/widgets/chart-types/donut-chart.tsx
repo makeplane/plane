@@ -129,6 +129,7 @@ export const DashboardDonutChartWidget: React.FC<TWidgetComponentProps> = observ
       }
       showTooltip={!!widgetConfig?.show_tooltip}
       showLabel={showLabels}
+      tooltipLabel="Count"
     />
   );
 });

@@ -94,7 +94,6 @@ export type TAreaChartProps<K extends string, T extends string> = TChartProps<K,
 
 export type TCellItem<T extends string> = {
   key: T;
-  className?: string;
   fill: string;
 };
 
@@ -116,6 +115,7 @@ export type TPieChartProps<K extends string, T extends string> = Pick<
     style?: React.CSSProperties;
     text?: string | number;
   };
+  tooltipLabel?: string | ((payload: any) => string);
 };
 
 export type TreeMapItem = {
