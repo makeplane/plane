@@ -45,14 +45,14 @@ export const WorkFlowGroupTree = observer((props: Props) => {
           "flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded transition-all",
           {
             "bg-[#00A0CC]/15": isTransitionEnabledForUser,
-            "hover:bg-custom-background-80": !isTransitionEnabledForUser,
+            "bg-custom-background-80 hover:bg-custom-background-80": !isTransitionEnabledForUser,
           }
         )}
       >
         {isTransitionEnabledForUser ? (
           <ApproverIcon width={14} strokeWidth={2} className="text-[#00A0CC]" />
         ) : (
-          <WorkflowIcon width={14} strokeWidth={2} />
+          <WorkflowIcon width={14} strokeWidth={2} className="text-custom-text-200" />
         )}
       </div>
     </Tooltip>

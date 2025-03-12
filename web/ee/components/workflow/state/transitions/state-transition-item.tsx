@@ -38,6 +38,7 @@ export const StateTransitionItem = observer((props: StateTransitionItemProps) =>
   } = useProjectState();
   // derived state
   const stateTransition = getTransitionById(parentStateId, transitionId);
+  const areApproversAvailable = stateTransition.approvers && stateTransition.approvers.length > 0;
 
   if (!stateTransition) return <></>;
 
@@ -46,6 +47,11 @@ export const StateTransitionItem = observer((props: StateTransitionItemProps) =>
     parentStateId,
     stateTransition.transition_state_id
   );
+
+  const handleToggle = () => {
+    if (!areApproversAvailable) return;
+    setIsOpen((prevState) => !prevState);
+  };
 
   const handleTransitionStateChange = async (val: string) => {
     try {
@@ -101,9 +107,11 @@ export const StateTransitionItem = observer((props: StateTransitionItemProps) =>
       />
       <Collapsible
         isOpen={isOpen}
-        onToggle={() => setIsOpen((prevState) => !prevState)}
+        onToggle={handleToggle}
         className="w-full"
-        buttonClassName="flex w-full items-center justify-between"
+        buttonClassName={cn("flex w-full items-center justify-between", {
+          "cursor-not-allowed": !areApproversAvailable,
+        })}
         title={
           <div className="flex w-full items-center">
             <div className="flex w-full items-center justify-start gap-1 py-1">
@@ -126,7 +134,7 @@ export const StateTransitionItem = observer((props: StateTransitionItemProps) =>
                   dropdownArrow
                 />
               </div>
-              {stateTransition.approvers && stateTransition.approvers.length > 0 && (
+              {areApproversAvailable && (
                 <div className="flex gap-1 text-custom-text-400 items-center">
                   <ApproverIcon strokeWidth={2} className="flex-shrink-0 size-3.5 text-custom-text-300" />
                   <span className="text-xs font-medium">
@@ -167,7 +175,8 @@ export const StateTransitionItem = observer((props: StateTransitionItemProps) =>
                   <ChevronDown
                     strokeWidth={2}
                     className={cn("transition-all size-4 text-custom-text-400 hover:text-custom-text-300", {
-                      "rotate-180 text-custom-text-200": isOpen,
+                      "rotate-180 text-custom-text-200": isOpen && areApproversAvailable,
+                      "text-custom-text-400 hover:text-custom-text-400": !areApproversAvailable,
                     })}
                   />
                 </div>
@@ -176,11 +185,13 @@ export const StateTransitionItem = observer((props: StateTransitionItemProps) =>
           </div>
         }
       >
-        <StateTransitionApprovers
-          parentStateId={parentStateId}
-          stateTransition={stateTransition}
-          handleApproversUpdate={handleApproversUpdate}
-        />
+        {areApproversAvailable && (
+          <StateTransitionApprovers
+            parentStateId={parentStateId}
+            stateTransition={stateTransition}
+            handleApproversUpdate={handleApproversUpdate}
+          />
+        )}
       </Collapsible>
     </div>
   );

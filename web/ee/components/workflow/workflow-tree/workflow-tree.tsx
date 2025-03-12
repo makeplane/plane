@@ -9,11 +9,10 @@ import { StatePill } from "./state-pill";
 
 type Props = {
   parentStateId: string;
-  showCurrentUserName?: boolean;
 };
 
 export const WorkflowTree = observer((props: Props) => {
-  const { parentStateId, showCurrentUserName = true } = props;
+  const { parentStateId } = props;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -24,7 +23,7 @@ export const WorkflowTree = observer((props: Props) => {
   const currentStateTransitionMap = stateTransitionMap[parentStateId];
 
   const getUserName = (moverId: string) => {
-    if (!showCurrentUserName && moverId === user?.id) return t("common.you");
+    if (moverId === user?.id) return t("common.you");
     return getUserDetails(moverId)?.display_name;
   };
 
@@ -46,15 +45,15 @@ export const WorkflowTree = observer((props: Props) => {
     return 0;
   });
 
-  // Order approvers such that current user is first, followed by other approvers
+  // Order approvers such that current user is last
   const getOrderedApprovers = useCallback(
     (approvers: string[]) => {
       const currentUserIndex = approvers.indexOf(user?.id ?? "");
       if (currentUserIndex !== -1) {
         return [
-          approvers[currentUserIndex],
           ...approvers.slice(0, currentUserIndex),
           ...approvers.slice(currentUserIndex + 1),
+          approvers[currentUserIndex],
         ];
       }
       return approvers;

@@ -28,8 +28,8 @@ export const StateTransitionApprovers = observer((props: Props) => {
 
   return (
     <>
-      <hr className="border-t-[1px] border-custom-border-200 border-dashed h-[1] w-full pb-2" />
-      <div className="flex flex-col pb-2 gap-1">
+      <hr className="border-t-[1px] border-custom-border-200 border-dashed h-[1] w-full pb-2 mt-1.5" />
+      <div className="flex flex-col pt-1 pb-2 gap-1">
         <span className="flex items-center gap-1 text-xs text-custom-text-300 font-medium">
           {t("workflows.workflow_states.state_changes.movers.label")}
           <Tooltip tooltipContent={t("workflows.workflow_states.state_changes.movers.tooltip")} position="right">
@@ -38,7 +38,7 @@ export const StateTransitionApprovers = observer((props: Props) => {
             </span>
           </Tooltip>
         </span>
-        <div className="flex p-3 rounded-md border border-custom-border-100 w-full gap-2 items-center">
+        <div className="flex p-3 my-1 rounded-md border border-custom-border-100 w-full gap-2 items-center">
           <AppliedMembersFilters
             editable
             handleRemove={(value) =>

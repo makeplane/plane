@@ -20,7 +20,7 @@ export const StateItemContent = observer((props: StateItemContentProps) => {
 
   return (
     <div className="flex flex-col w-full gap-1.5 p-2">
-      <div className={cn("flex flex-col gap-3 px-3", transitionIds.length > 0 && "py-2")}>
+      <div className={cn("flex flex-col gap-4 px-3", transitionIds.length > 0 && "py-2")}>
         {transitionIds.map((transitionId) => (
           <StateTransitionItem
             key={transitionId}
