@@ -36,7 +36,7 @@ export const EpicQuickActions: React.FC<Props> = observer((props: Props) => {
 
   // derived values
   const epic = getIssueById(epicId);
-  const epicLink = `${workspaceSlug}/projects/${epic?.project_id}/issues/${epic?.id}`;
+  const epicLink = `${workspaceSlug}/projects/${epic?.project_id}/epics/${epic?.id}`;
   const projectIdentifier = getProjectIdentifierById(epic?.project_id);
 
   // handler
