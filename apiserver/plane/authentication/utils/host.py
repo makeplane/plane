@@ -4,6 +4,9 @@ from urllib.parse import urlsplit
 # Django imports
 from django.conf import settings
 
+# Module imports
+from plane.utils.ip_address import get_client_ip
+
 
 def base_host(request, is_admin=False, is_space=False, is_app=False):
     """Utility function to return host / origin from the request"""
@@ -39,4 +42,4 @@ def base_host(request, is_admin=False, is_space=False, is_app=False):
 
 
 def user_ip(request):
-    return str(request.META.get("REMOTE_ADDR"))
+    return get_client_ip(request)

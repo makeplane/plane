@@ -217,7 +217,7 @@ class InstanceAdminSignUpEndpoint(View):
             user.is_active = True
             user.last_active = timezone.now()
             user.last_login_time = timezone.now()
-            user.last_login_ip = request.META.get("REMOTE_ADDR")
+            user.last_login_ip = user_ip(request)
             user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
             user.token_updated_at = timezone.now()
             user.save()
@@ -344,7 +344,7 @@ class InstanceAdminSignInEndpoint(View):
         user.is_active = True
         user.last_active = timezone.now()
         user.last_login_time = timezone.now()
-        user.last_login_ip = request.META.get("REMOTE_ADDR")
+        user.last_login_ip = user_ip(request)
         user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
         user.token_updated_at = timezone.now()
         user.save()
