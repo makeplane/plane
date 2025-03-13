@@ -29,7 +29,7 @@
     "@sentry/profiling-node": "^8.27.0",
     "@types/cookie-parser": "^1.4.8",
     "amqplib": "^0.10.4",
-    "axios": "^1.7.9",
+    "axios": "^1.8.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "csv-string": "^4.1.1",
