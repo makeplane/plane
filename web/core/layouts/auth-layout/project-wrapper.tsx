@@ -168,7 +168,8 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     );
 
   // check if the user don't have permission to access the project
-  if (projectExists && projectId && hasPermissionToCurrentProject === false) return <JoinProject />;
+  if (projectExists && projectId && hasPermissionToCurrentProject === false)
+    return <JoinProject projectId={projectId} />;
 
   // check if the project info is not found.
   if (loader === "loaded" && !projectExists && projectId && !!hasPermissionToCurrentProject === false)

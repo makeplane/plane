@@ -1,7 +1,7 @@
-from django.conf import settings
-
 # Django imports
 from django.db import models
+from django.conf import settings
+
 
 # Module imports
 from .workspace import WorkspaceBaseModel
