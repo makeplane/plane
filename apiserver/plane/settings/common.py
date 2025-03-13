@@ -505,8 +505,9 @@ FIREBASE_CLIENT_ID = os.environ.get("FIREBASE_CLIENT_ID", "")
 FIREBASE_CLIENT_CERT_URL = os.environ.get("FIREBASE_CLIENT_CERT_URL", "")
 
 
-# Elastic Search
-if os.environ.get("ELASTICSEARCH_URL"):
+# ElasticSearch settings
+ELASTICSEARCH_ENABLED = os.environ.get("ELASTICSEARCH_ENABLED", "0") == "1"
+if ELASTICSEARCH_ENABLED:
     # Elastic Search Config
     ELASTICSEARCH_DSL = {
         "default": {

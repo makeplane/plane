@@ -7,6 +7,7 @@ from django_elasticsearch_dsl.signals import CelerySignalProcessor
 from django.apps import apps
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
+from django.conf import settings
 
 from plane.db.signals import post_bulk_create, post_bulk_update
 from plane.ee.bgtasks.elasticsearch_index_update_task import (
@@ -55,8 +56,9 @@ def update_index_on_bulk_create_update(sender, **kwargs):
         indices_to_update=indices_to_update
     )
 
-post_bulk_create.connect(update_index_on_bulk_create_update)
-post_bulk_update.connect(update_index_on_bulk_create_update)
+if settings.ELASTICSEARCH_ENABLED:
+    post_bulk_create.connect(update_index_on_bulk_create_update)
+    post_bulk_update.connect(update_index_on_bulk_create_update)
 
 
 class CustomCelerySignalProcessor(CelerySignalProcessor):
