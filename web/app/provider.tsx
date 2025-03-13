@@ -2,10 +2,9 @@
 
 import { FC, ReactNode, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";//ui
 import { useTheme, ThemeProvider } from "next-themes";
 import { SWRConfig } from "swr";
-import { usePathname, useRouter } from "next/navigation";
-// ui
 import { Toast } from "@plane/ui";
 // constants
 import { SWR_CONFIG } from "@/constants/swr-config";
@@ -37,7 +36,7 @@ export const AppProvider: FC<IAppProvider> = (props) => {
   const { children } = props;
   // themes
 
-  const router = useRouter();
+  // const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
