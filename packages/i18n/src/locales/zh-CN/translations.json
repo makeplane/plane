@@ -1473,7 +1473,8 @@
             "max_length": "工作区名称不应超过80个字符"
           },
           "company_size": {
-            "required": "公司规模为必填项"
+            "required": "公司规模为必填项",
+            "select_a_range": "选择组织规模"
           }
         }
       },
