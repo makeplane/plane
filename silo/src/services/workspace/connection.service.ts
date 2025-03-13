@@ -53,14 +53,20 @@ export class WorkspaceConnectionAPIService extends APIService {
             });
     }
 
-    async deleteWorkspaceConnection(connectionId: string): Promise<TWorkspaceConnection> {
-        return this.delete(`/api/v1/workspace-connections/${connectionId}/`)
+    async deleteWorkspaceConnection(connectionId: string, disconnectMeta?: object, deletedBy?: string): Promise<TWorkspaceConnection> {
+        const params: Record<string, unknown> = { deleted_by_id: deletedBy };
+
+        if (disconnectMeta) {
+            const disconnectMetaJson = JSON.stringify(disconnectMeta);
+            const disconnectMetaEncoded = Buffer.from(disconnectMetaJson).toString("base64");
+            params.disconnect_meta = disconnectMetaEncoded;
+        }
+
+        return this.delete(`/api/v1/workspace-connections/${connectionId}/`, { params })
             .then((response) => response.data)
             .catch((error) => {
                 console.log(error);
                 throw error?.response?.data;
             });
     }
-
-
 }

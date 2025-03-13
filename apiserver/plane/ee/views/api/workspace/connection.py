@@ -1,11 +1,17 @@
 # Third party imports
+import base64
+import json
 from rest_framework import status
 from rest_framework.response import Response
+from django.http import JsonResponse
+import logging
 
 # Module imports
 from plane.ee.views.api import BaseServiceAPIView
 from plane.ee.models.workspace import WorkspaceConnection, WorkspaceCredential
 from plane.ee.serializers import WorkspaceConnectionAPISerializer
+
+logger = logging.getLogger(__name__)
 
 
 class WorkspaceConnectionAPIView(BaseServiceAPIView):
@@ -51,7 +57,30 @@ class WorkspaceConnectionAPIView(BaseServiceAPIView):
             return Response(
                 {"error": "Connection not found"}, status=status.HTTP_404_NOT_FOUND
             )
-        connection.delete()
+
+        # Get deleted_by from query parameters
+        deleted_by_id = request.GET.get("deleted_by")
+
+        # Get disconnect_meta from query parameters
+        disconnect_meta_encoded = request.GET.get("disconnect_meta")
+        disconnect_meta = None
+
+        if disconnect_meta_encoded:
+            try:
+                # Decode the base64 string
+                disconnect_meta_json = base64.b64decode(disconnect_meta_encoded).decode(
+                    "utf-8"
+                )
+                # Parse the JSON
+                disconnect_meta = json.loads(disconnect_meta_json)
+            except (base64.binascii.Error, json.JSONDecodeError) as e:
+                # Log the error and continue without setting disconnect_meta
+                logger.warning("Invalid disconnect_meta format: %s", e)
+
+            # Update the connection with disconnect_meta
+
+        connection.delete(deleted_by_id=deleted_by_id, disconnect_meta=disconnect_meta)
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

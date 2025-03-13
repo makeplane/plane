@@ -173,11 +173,36 @@ class WorkspaceConnection(BaseModel):
 
     def delete(self, *args, **kwargs):
         credential = self.credential
-        super().delete(*args, **kwargs)
-        # Deactivate the credential if no other connections reference it
-        if not WorkspaceConnection.objects.filter(credential=credential).exists():
-            credential.is_active = False
-            credential.save()
+        deleted_by_id = kwargs.get("deleted_by_id", None)
+        disconnect_meta = kwargs.get("disconnect_meta", None)
+
+        if deleted_by_id:
+            User = get_user_model()
+            user = User.objects.filter(id=deleted_by_id).first()
+            if user:
+                self.deleted_by = user
+
+        if disconnect_meta:
+            self.disconnect_meta = disconnect_meta
+
+        with transaction.atomic():
+            self.save(update_fields=["deleted_by", "disconnect_meta"])
+            # Remove all credentials with the same workspace_id and connection_type + "-USER"
+            user_connection_type = f"{self.connection_type}-USER"
+            WorkspaceCredential.objects.filter(
+                workspace_id=self.workspace_id, connection_type=user_connection_type
+            ).delete()
+
+            super().delete(*args, **kwargs)
+            # Deactivate the credential if no other connections reference it
+            if (
+                credential
+                and not WorkspaceConnection.objects.filter(
+                    credential=credential
+                ).exists()
+            ):
+                credential.is_active = False
+                credential.save()
 
 
 class WorkspaceEntityConnection(BaseModel):

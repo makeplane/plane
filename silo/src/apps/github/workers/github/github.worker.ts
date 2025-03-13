@@ -1,12 +1,12 @@
-import { MQ, Store } from "@/worker/base";
-import { logger } from "@/logger";
-import { TaskHandler, TaskHeaders } from "@/types";
 import { GithubWebhookPayload } from "@plane/etl/github";
+import { logger } from "@/logger";
+import { SentryInstance } from "@/sentry-config";
+import { TaskHandler, TaskHeaders } from "@/types";
+import { MQ, Store } from "@/worker/base";
 import { handleInstallationEvents } from "./event-handlers/installation.handler";
 import { handleIssueComment } from "./event-handlers/issue-comment.handler";
 import { handleIssueEvents } from "./event-handlers/issue.handler";
 import { handlePullRequestEvents } from "./event-handlers/pull-request.handler";
-import { SentryInstance } from "@/sentry-config";
 
 export class GithubWebhookWorker extends TaskHandler {
   mq: MQ;
@@ -34,8 +34,6 @@ export class GithubWebhookWorker extends TaskHandler {
         case "issue_comment": {
           return handleIssueComment(this.store, data.action, data);
         }
-        default: {
-        }
       }
     } catch (error) {
       SentryInstance.captureException(error);
@@ -43,6 +41,5 @@ export class GithubWebhookWorker extends TaskHandler {
       logger.info("[GITHUB] Event Processed Successfully");
       return true;
     }
-
   }
 }

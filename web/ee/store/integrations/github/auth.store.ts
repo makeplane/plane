@@ -178,14 +178,15 @@ export class GithubAuthStore implements IGithubAuthStore {
     try {
       const workspaceId = this.store.workspace?.id;
       const organizationId = this.workspaceConnectionIds[0] || undefined;
-      if (!workspaceId || !organizationId) return undefined;
+      const userId = this.store.user?.id;
+      if (!workspaceId || !organizationId || !userId) return undefined;
 
       const organization = this.workspaceConnectionById(organizationId) || undefined;
       const connectionId = organization?.connection_id || undefined;
 
       if (!connectionId) return undefined;
 
-      await this.service.disconnectOrganization(workspaceId, connectionId);
+      await this.service.disconnectOrganization(workspaceId, connectionId, userId);
       runInAction(() => unset(this.workspaceConnectionMap, [workspaceId]));
 
       return undefined;

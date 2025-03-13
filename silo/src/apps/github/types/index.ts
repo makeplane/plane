@@ -1,7 +1,6 @@
-import { TServiceCredentials } from "@plane/etl/core";
 import { z } from "zod";
-import { MergeRequestEvent } from "../helpers/helpers";
 import { TWorkspaceConnection, TWorkspaceCredential, TWorkspaceEntityConnection } from "@plane/types";
+import { MergeRequestEvent } from "../helpers/helpers";
 
 const webhooksUserSchema = z.object({
   avatar_url: z.string().url().optional(),
@@ -62,7 +61,7 @@ export const githubEntityConnectionSchema = z.object({
 
 export type GithubEntityConnection = TWorkspaceEntityConnection<z.infer<typeof githubEntityConnectionSchema>>;
 
-export type GithubConnectionDetails =  {
+export type GithubConnectionDetails = {
   workspaceConnection: GithubWorkspaceConnection;
   entityConnection: GithubEntityConnection;
 };
@@ -90,3 +89,8 @@ export type PullRequestWebhookActions =
   | "unassigned"
   | "unlabeled"
   | "unlocked";
+
+export enum E_GITHUB_DISCONNECT_SOURCE {
+  ROUTE_DISCONNECT = "route-disconnect",
+  WEBHOOK_DISCONNECT = "webhook-disconnect",
+}

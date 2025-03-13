@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS, E_SILO_ERROR_CODES, SILO_ERROR_CODES } from "@plane/etl/core";
+import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
 import {
   createGithubAuth,
   createGithubService,
@@ -16,9 +16,10 @@ import { env } from "@/env";
 import { createOrUpdateCredentials } from "@/helpers/credential";
 import { responseHandler } from "@/helpers/response-handler";
 import { Controller, EnsureEnabled, Get, Post, useValidateUserAuthentication } from "@/lib";
+import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { integrationTaskManager } from "@/worker";
-import { GithubUserMap } from "../types";
+import { E_GITHUB_DISCONNECT_SOURCE, GithubUserMap } from "../types";
 
 export const githubAuthService = createGithubAuth(
   env.GITHUB_APP_NAME,
@@ -63,10 +64,10 @@ export default class GithubController {
   }
 
   // Disconnect the organization connection
-  @Post("/auth/organization-disconnect/:workspaceId/:connectionId")
+  @Post("/auth/organization-disconnect/:workspaceId/:connectionId/:userId")
   @useValidateUserAuthentication()
   async disconnectOrganization(req: Request, res: Response) {
-    const { workspaceId, connectionId } = req.params;
+    const { workspaceId, connectionId, userId } = req.params;
 
     if (!workspaceId || !connectionId) {
       return res.status(400).send({
@@ -84,40 +85,51 @@ export default class GithubController {
 
       if (connections.length === 0) {
         return res.sendStatus(200);
-      } else {
-        const connection = connections[0];
-        const credential = await apiClient.workspaceCredential.getWorkspaceCredential(connection.credential_id);
-        // Delete entity connections referencing the workspace connection
-        const entityConnections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
-          workspace_id: workspaceId,
-          workspace_connection_id: connection.id,
+      }
+
+      const connection = connections[0];
+      const credential = await apiClient.workspaceCredential.getWorkspaceCredential(connection.credential_id);
+
+      if (!credential || !credential.source_access_token) {
+        logger.error("No valid credential found for GitHub installation");
+        return res.status(400).send({
+          message: "No valid credential found for GitHub installation",
         });
+      }
 
-        await Promise.all(
-          entityConnections.map(async (entityConnection) => {
-            await apiClient.workspaceEntityConnection.deleteWorkspaceEntityConnection(entityConnection.id);
-          })
+      try {
+        // First attempt to delete the GitHub installation
+        const githubService = createGithubService(
+          env.GITHUB_APP_ID,
+          env.GITHUB_PRIVATE_KEY,
+          credential.source_access_token
         );
-        // Delete the workspace connection associated with the team
-        // Delete the team and user credentials for the workspace
-        await apiClient.workspaceConnection.deleteWorkspaceConnection(connection.id);
-        // delete the installation from github
-        if (credential) {
-          if (credential.source_access_token) {
-            const githubService = createGithubService(
-              env.GITHUB_APP_ID,
-              env.GITHUB_PRIVATE_KEY,
-              credential.source_access_token
-            );
 
-            // delete the installation from github
-            await githubService.deleteInstallation(Number(credential.source_access_token));
-          }
+        // Try to delete the installation from GitHub first
+        const deletionResult = await githubService.deleteInstallation(Number(credential.source_access_token));
+
+        if (deletionResult.status !== 204) {
+          return res.status(400).json({ error: "GitHub deletion failed" });
         }
 
-        // Delete the main workspace credential
-        await apiClient.workspaceCredential.deleteWorkspaceCredential(credential.id);
+        await apiClient.workspaceConnection.deleteWorkspaceConnection(
+          connection.id,
+          {
+            disconnect_source: E_GITHUB_DISCONNECT_SOURCE.ROUTE_DISCONNECT,
+            disconnect_id: credential.source_access_token,
+            connection_length: connections.length,
+            deletion_result: deletionResult,
+          },
+          userId
+        );
+
         return res.sendStatus(200);
+      } catch (error: any) {
+        logger.error("Failed to delete GitHub installation:", error);
+        return res.status(500).send({
+          message: "Failed to delete GitHub installation. Please try again or contact support.",
+          error: error.message,
+        });
       }
     } catch (error) {
       return responseHandler(res, 500, error);
