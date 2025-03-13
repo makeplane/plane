@@ -1473,7 +1473,8 @@
             "max_length": "ワークスペース名は80文字を超えることはできません"
           },
           "company_size": {
-            "required": "会社の規模は必須です"
+            "required": "会社の規模は必須です",
+            "select_a_range": "組織の規模を選択"
           }
         }
       },

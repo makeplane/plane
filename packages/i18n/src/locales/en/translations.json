@@ -1305,7 +1305,8 @@
             "max_length": "Workspace name should not exceed 80 characters"
           },
           "company_size": {
-            "required": "Company size is required"
+            "required": "Company size is required",
+            "select_a_range": "Select organization size"
           }
         }
       },
