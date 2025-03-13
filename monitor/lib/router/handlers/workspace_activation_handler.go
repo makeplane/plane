@@ -168,6 +168,13 @@ func GetSyncFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) func(
 				if err := tx.Create(updateLicense).Error; err != nil {
 					return err
 				}
+
+				if updateLicense.ProductType != "FREE" {
+					if err := RefreshFeatureFlags(context.Background(), api, *updateLicense, tx); err != nil {
+						return err
+					}
+				}
+
 				return nil
 			}); err != nil {
 				return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
