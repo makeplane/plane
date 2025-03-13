@@ -580,6 +580,7 @@ class ProjectViewSet(BaseViewSet):
             ).exists()
         ):
             project = Project.objects.get(pk=pk)
+
             project.delete()
             webhook_activity.delay(
                 event="project",
