@@ -73,8 +73,5 @@
     "storybook": "^8.1.1",
     "tsup": "^8.4.0",
     "typescript": "5.3.3"
-  },
-  "resolutions": {
-    "@types/react": "^18.0.0"
   }
 }
