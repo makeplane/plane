@@ -925,7 +925,8 @@
             "horizontal": "Horizontal",
             "vertical": "Vertical",
             "placeholder": "Añadir orientación"
-          }
+          },
+          "bar_color": "Color de barra"
         },
         "line_chart": {
           "short_label": "Línea",
@@ -995,17 +996,19 @@
             "center": "Centro",
             "right": "Derecha",
             "placeholder": "Añadir alineación de texto"
-          }
+          },
+          "text_color": "Color de texto"
         }
       },
       "color_palettes": {
-        "modern_tech": "Tecnología moderna",
-        "ocean_deep": "Océano profundo",
-        "sunset_vibes": "Ambiente atardecer"
+        "modern": "Moderno",
+        "horizon": "Horizonte",
+        "earthen": "Terroso"
       },
       "common": {
+        "add_widget": "Añadir widget",
         "widget_title": {
-          "label": "Título del widget",
+          "label": "Nombre de este widget",
           "placeholder": "p.ej., \"Por hacer ayer\", \"Todos Completados\""
         },
         "chart_type": "Tipo de gráfico",
@@ -1056,21 +1059,141 @@
         "add_metric": "Añadir métrica"
       },
       "not_configured_state": {
-        "x_axis_property": "Falta una propiedad en el eje X",
-        "y_axis_metric": "Falta una propiedad en el eje Y",
-        "group_by": "Falta una propiedad en la agrupación",
-        "ask_admin": "Solicite a su administrador que configure este widget"
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor."
+          },
+          "stacked": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor.",
+            "group_by": "A Apilar por le falta un valor."
+          },
+          "grouped": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor.",
+            "group_by": "A Agrupar por le falta un valor."
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor."
+          },
+          "multi_line": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor.",
+            "group_by": "A Agrupar por le falta un valor."
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor."
+          },
+          "stacked": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor.",
+            "group_by": "A Apilar por le falta un valor."
+          },
+          "comparison": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor."
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor."
+          },
+          "progress": {
+            "y_axis_metric": "A la métrica le falta un valor."
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor."
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "A la métrica le falta un valor."
+          }
+        },
+        "ask_admin": "Solicite a su administrador que configure este widget."
       }
     },
+    "create_modal": {
+      "heading": {
+        "create": "Crear nuevo dashboard",
+        "update": "Actualizar dashboard"
+      },
+      "title": {
+        "label": "Nombre su dashboard.",
+        "placeholder": "\"Capacidad entre proyectos\", \"Carga de trabajo por equipo\", \"Estado en todos los proyectos\"",
+        "required_error": "El título es obligatorio"
+      },
+      "project": {
+        "label": "Elegir proyectos",
+        "placeholder": "Los datos de estos proyectos alimentarán este dashboard.",
+        "required_error": "Los proyectos son obligatorios"
+      },
+      "create_dashboard": "Crear dashboard",
+      "update_dashboard": "Actualizar dashboard"
+    },
+    "delete_modal": {
+      "heading": "Eliminar dashboard"
+    },
     "empty_state": {
+      "feature_flag": {
+        "title": "Presente su progreso en dashboards bajo demanda y permanentes.",
+        "description": "Construya cualquier dashboard que necesite y personalice cómo se ven sus datos para una presentación perfecta de su progreso.",
+        "coming_soon_to_mobile": "Próximamente en la aplicación móvil",
+        "card_1": {
+          "title": "Para todos sus proyectos",
+          "description": "Obtenga una visión completa de su espacio de trabajo con todos sus proyectos o filtre sus datos de trabajo para esa vista perfecta de su progreso."
+        },
+        "card_2": {
+          "title": "Para cualquier dato en Plane",
+          "description": "Vaya más allá de la Analítica predeterminada y los gráficos de Ciclo prediseñados para ver equipos, iniciativas o cualquier otra cosa como nunca antes."
+        },
+        "card_3": {
+          "title": "Para todas sus necesidades de visualización de datos",
+          "description": "Elija entre varios gráficos personalizables con controles detallados para ver y mostrar sus datos de trabajo exactamente como desee."
+        },
+        "card_4": {
+          "title": "Bajo demanda y permanentes",
+          "description": "Construya una vez, mantenga para siempre con actualizaciones automáticas de sus datos, indicadores contextuales para cambios de alcance y enlaces permanentes compartibles."
+        },
+        "card_5": {
+          "title": "Exportaciones y comunicaciones programadas",
+          "description": "Para esos momentos en que los enlaces no funcionan, exporte sus dashboards a PDFs puntuales o programe su envío automático a las partes interesadas."
+        },
+        "card_6": {
+          "title": "Diseño automático para todos los dispositivos",
+          "description": "Cambie el tamaño de sus widgets para el diseño que desee y véalo exactamente igual en dispositivos móviles, tabletas y otros navegadores."
+        }
+      },
       "dashboards_list": {
-        "title": "Visualiza el progreso en widgets, combínalos en dashboards y regresa en cualquier momento para ver lo último.",
-        "description": "Construye tus dashboards con Widgets Personalizados que muestran tus datos en el alcance que especifiques. Obtén dashboards para todo tu trabajo a través de proyectos y equipos y comparte enlaces permanentes con las partes interesadas para seguimiento bajo demanda."
+        "title": "Visualice datos en widgets, construya sus dashboards con widgets y vea lo último bajo demanda.",
+        "description": "Construya sus dashboards con Widgets Personalizados que muestran sus datos en el alcance que especifique. Obtenga dashboards para todo su trabajo a través de proyectos y equipos y comparta enlaces permanentes con las partes interesadas para seguimiento bajo demanda."
+      },
+      "dashboards_search": {
+        "title": "Eso no coincide con el nombre de un dashboard.",
+        "description": "Asegúrese de que su consulta sea correcta o intente otra consulta."
       },
       "widgets_list": {
-        "title": "Visualiza tus datos como quieras.",
-        "description": "Usa líneas, barras, gráficos circulares y otros formatos para ver tus datos de la manera que desees desde las fuentes que especifiques."
+        "title": "Visualice sus datos como desee.",
+        "description": "Use líneas, barras, gráficos circulares y otros formatos para ver sus datos de la manera que desee desde las fuentes que especifique."
+      },
+      "widget_data": {
+        "title": "Nada que ver aquí",
+        "description": "Actualice o agregue datos para verlos aquí."
       }
+    },
+    "common": {
+      "editing": "Editando"
     }
   },
 

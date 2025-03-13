@@ -925,7 +925,8 @@
             "horizontal": "Horizontale",
             "vertical": "Verticale",
             "placeholder": "Ajouter une orientation"
-          }
+          },
+          "bar_color": "Couleur de barre"
         },
         "line_chart": {
           "short_label": "Ligne",
@@ -995,17 +996,19 @@
             "center": "Centre",
             "right": "Droite",
             "placeholder": "Ajouter un alignement de texte"
-          }
+          },
+          "text_color": "Couleur du texte"
         }
       },
       "color_palettes": {
-        "modern_tech": "Technologie moderne",
-        "ocean_deep": "Océan profond",
-        "sunset_vibes": "Ambiance coucher de soleil"
+        "modern": "Moderne",
+        "horizon": "Horizon",
+        "earthen": "Terreux"
       },
       "common": {
+        "add_widget": "Ajouter un widget",
         "widget_title": {
-          "label": "Titre du widget",
+          "label": "Nommez ce widget",
           "placeholder": "ex., \"À faire hier\", \"Tous Terminés\""
         },
         "chart_type": "Type de graphique",
@@ -1051,26 +1054,146 @@
         "guides": "Guides",
         "style": "Style",
         "area_appearance": "Apparence de la zone",
-        "comparison_line_appearance": "Apparence de ligne de comparaison",
+        "comparison_line_appearance": "Apparence de la ligne de comparaison",
         "add_property": "Ajouter une propriété",
         "add_metric": "Ajouter une métrique"
       },
       "not_configured_state": {
-        "x_axis_property": "Il manque une propriété pour l'axe X",
-        "y_axis_metric": "Il manque une propriété pour l'axe Y",
-        "group_by": "Il manque une propriété pour le groupement",
-        "ask_admin": "Demandez à votre administrateur de configurer ce widget"
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "L'axe X manque d'une valeur.",
+            "y_axis_metric": "La métrique manque d'une valeur."
+          },
+          "stacked": {
+            "x_axis_property": "L'axe X manque d'une valeur.",
+            "y_axis_metric": "La métrique manque d'une valeur.",
+            "group_by": "Empiler par manque d'une valeur."
+          },
+          "grouped": {
+            "x_axis_property": "L'axe X manque d'une valeur.",
+            "y_axis_metric": "La métrique manque d'une valeur.",
+            "group_by": "Grouper par manque d'une valeur."
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "L'axe X manque d'une valeur.",
+            "y_axis_metric": "La métrique manque d'une valeur."
+          },
+          "multi_line": {
+            "x_axis_property": "L'axe X manque d'une valeur.",
+            "y_axis_metric": "La métrique manque d'une valeur.",
+            "group_by": "Grouper par manque d'une valeur."
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "L'axe X manque d'une valeur.",
+            "y_axis_metric": "La métrique manque d'une valeur."
+          },
+          "stacked": {
+            "x_axis_property": "L'axe X manque d'une valeur.",
+            "y_axis_metric": "La métrique manque d'une valeur.",
+            "group_by": "Empiler par manque d'une valeur."
+          },
+          "comparison": {
+            "x_axis_property": "L'axe X manque d'une valeur.",
+            "y_axis_metric": "La métrique manque d'une valeur."
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "L'axe X manque d'une valeur.",
+            "y_axis_metric": "La métrique manque d'une valeur."
+          },
+          "progress": {
+            "y_axis_metric": "La métrique manque d'une valeur."
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "L'axe X manque d'une valeur.",
+            "y_axis_metric": "La métrique manque d'une valeur."
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "La métrique manque d'une valeur."
+          }
+        },
+        "ask_admin": "Demandez à votre administrateur de configurer ce widget."
       }
     },
+    "create_modal": {
+      "heading": {
+        "create": "Créer un nouveau tableau de bord",
+        "update": "Mettre à jour le tableau de bord"
+      },
+      "title": {
+        "label": "Nommez votre tableau de bord.",
+        "placeholder": "\"Capacité à travers les projets\", \"Charge de travail par équipe\", \"État à travers tous les projets\"",
+        "required_error": "Le titre est requis"
+      },
+      "project": {
+        "label": "Choisir les projets",
+        "placeholder": "Les données de ces projets alimenteront ce tableau de bord.",
+        "required_error": "Les projets sont requis"
+      },
+      "create_dashboard": "Créer le tableau de bord",
+      "update_dashboard": "Mettre à jour le tableau de bord"
+    },
+    "delete_modal": {
+      "heading": "Supprimer le tableau de bord"
+    },
     "empty_state": {
+      "feature_flag": {
+        "title": "Présentez votre progression dans des tableaux de bord à la demande et permanents.",
+        "description": "Construisez n'importe quel tableau de bord dont vous avez besoin et personnalisez l'apparence de vos données pour une présentation parfaite de votre progression.",
+        "coming_soon_to_mobile": "Bientôt disponible sur l'application mobile",
+        "card_1": {
+          "title": "Pour tous vos projets",
+          "description": "Obtenez une vision globale de votre espace de travail avec tous vos projets ou filtrez vos données de travail pour cette vision parfaite de votre progression."
+        },
+        "card_2": {
+          "title": "Pour toutes les données dans Plane",
+          "description": "Allez au-delà de l'Analytique prédéfinie et des graphiques de Cycle prêts à l'emploi pour regarder les équipes, les initiatives ou tout autre élément comme vous ne l'avez jamais fait auparavant."
+        },
+        "card_3": {
+          "title": "Pour tous vos besoins de visualisation de données",
+          "description": "Choisissez parmi plusieurs graphiques personnalisables avec des contrôles précis pour voir et montrer vos données de travail exactement comme vous le souhaitez."
+        },
+        "card_4": {
+          "title": "À la demande et permanents",
+          "description": "Construisez une fois, conservez pour toujours avec des rafraîchissements automatiques de vos données, des indicateurs contextuels pour les changements de portée et des liens permanents partageables."
+        },
+        "card_5": {
+          "title": "Exportations et communications programmées",
+          "description": "Pour ces moments où les liens ne fonctionnent pas, exportez vos tableaux de bord en PDF ponctuels ou programmez leur envoi automatique aux parties prenantes."
+        },
+        "card_6": {
+          "title": "Mise en page automatique pour tous les appareils",
+          "description": "Redimensionnez vos widgets pour la mise en page que vous souhaitez et voyez-la exactement de la même façon sur mobile, tablette et autres navigateurs."
+        }
+      },
       "dashboards_list": {
-        "title": "Visualisez les progrès dans les widgets, combinez-les dans des tableaux de bord et revenez à tout moment pour les dernières mises à jour.",
+        "title": "Visualisez les données dans les widgets, construisez vos tableaux de bord avec des widgets et consultez les dernières informations à la demande.",
         "description": "Construisez vos tableaux de bord avec des Widgets Personnalisés qui affichent vos données dans la portée que vous spécifiez. Obtenez des tableaux de bord pour tout votre travail à travers les projets et les équipes et partagez des liens permanents avec les parties prenantes pour un suivi à la demande."
+      },
+      "dashboards_search": {
+        "title": "Cela ne correspond pas au nom d'un tableau de bord.",
+        "description": "Assurez-vous que votre requête est correcte ou essayez une autre requête."
       },
       "widgets_list": {
         "title": "Visualisez vos données comme vous le souhaitez.",
         "description": "Utilisez des lignes, des barres, des camemberts et d'autres formats pour voir vos données comme vous le souhaitez à partir des sources que vous spécifiez."
+      },
+      "widget_data": {
+        "title": "Rien à voir ici",
+        "description": "Rafraîchissez ou ajoutez des données pour les voir ici."
       }
+    },
+    "common": {
+      "editing": "Modification"
     }
   },
 

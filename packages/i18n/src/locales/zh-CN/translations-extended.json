@@ -925,7 +925,8 @@
             "horizontal": "水平",
             "vertical": "垂直",
             "placeholder": "添加方向"
-          }
+          },
+          "bar_color": "柱状颜色"
         },
         "line_chart": {
           "short_label": "线形",
@@ -995,17 +996,19 @@
             "center": "居中",
             "right": "右对齐",
             "placeholder": "添加文本对齐"
-          }
+          },
+          "text_color": "文本颜色"
         }
       },
       "color_palettes": {
-        "modern_tech": "现代科技",
-        "ocean_deep": "深海",
-        "sunset_vibes": "日落氛围"
+        "modern": "现代",
+        "horizon": "地平线",
+        "earthen": "土色"
       },
       "common": {
+        "add_widget": "添加组件",
         "widget_title": {
-          "label": "组件标题",
+          "label": "命名此组件",
           "placeholder": "例如，\"昨日待办\", \"全部完成\""
         },
         "chart_type": "图表类型",
@@ -1056,21 +1059,141 @@
         "add_metric": "添加指标"
       },
       "not_configured_state": {
-        "x_axis_property": "X轴缺少属性",
-        "y_axis_metric": "Y轴缺少属性",
-        "group_by": "分组依据缺少属性",
-        "ask_admin": "请联系管理员配置此组件"
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。"
+          },
+          "stacked": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。",
+            "group_by": "堆叠依据缺少值。"
+          },
+          "grouped": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。",
+            "group_by": "分组依据缺少值。"
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。"
+          },
+          "multi_line": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。",
+            "group_by": "分组依据缺少值。"
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。"
+          },
+          "stacked": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。",
+            "group_by": "堆叠依据缺少值。"
+          },
+          "comparison": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。"
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。"
+          },
+          "progress": {
+            "y_axis_metric": "指标缺少值。"
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。"
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "指标缺少值。"
+          }
+        },
+        "ask_admin": "请联系管理员配置此组件。"
       }
     },
+    "create_modal": {
+      "heading": {
+        "create": "创建新仪表板",
+        "update": "更新仪表板"
+      },
+      "title": {
+        "label": "命名您的仪表板。",
+        "placeholder": "\"跨项目容量\", \"按团队工作量\", \"跨所有项目状态\"",
+        "required_error": "标题为必填项"
+      },
+      "project": {
+        "label": "选择项目",
+        "placeholder": "这些项目的数据将为此仪表板提供支持。",
+        "required_error": "项目为必填项"
+      },
+      "create_dashboard": "创建仪表板",
+      "update_dashboard": "更新仪表板"
+    },
+    "delete_modal": {
+      "heading": "删除仪表板"
+    },
     "empty_state": {
+      "feature_flag": {
+        "title": "在按需永久仪表板中展示您的进度。",
+        "description": "构建您需要的任何仪表板，并定制数据的显示方式，以完美呈现您的进度。",
+        "coming_soon_to_mobile": "即将登陆移动应用",
+        "card_1": {
+          "title": "适用于您的所有项目",
+          "description": "通过所有项目获得工作空间的全局视图，或者为完美查看您的进度而筛选工作数据。"
+        },
+        "card_2": {
+          "title": "适用于Plane中的任何数据",
+          "description": "超越内置分析和预制周期图表，以前所未有的方式查看团队、计划或任何其他内容。"
+        },
+        "card_3": {
+          "title": "满足您所有的数据可视化需求",
+          "description": "从多种可定制的图表中选择，具有精细控制，以您想要的方式准确查看和展示您的工作数据。"
+        },
+        "card_4": {
+          "title": "按需且永久",
+          "description": "构建一次，永久保存，数据自动刷新，范围变更的上下文标志，以及可共享的永久链接。"
+        },
+        "card_5": {
+          "title": "导出和定时通信",
+          "description": "当链接不起作用时，将您的仪表板导出为一次性PDF，或计划自动发送给利益相关者。"
+        },
+        "card_6": {
+          "title": "自动适应所有设备的布局",
+          "description": "调整组件大小以获得您想要的布局，并在移动设备、平板电脑和其他浏览器上看到完全相同的效果。"
+        }
+      },
       "dashboards_list": {
-        "title": "在组件中可视化进度，在仪表板中组合它们，随时回来查看最新信息。",
-        "description": "使用自定义组件构建你的仪表板，在你指定的范围内显示数据。获取跨项目和团队的所有工作的仪表板，并与利益相关者共享永久链接以进行按需跟踪。"
+        "title": "在组件中可视化数据，用组件构建仪表板，并按需查看最新信息。",
+        "description": "使用自定义组件构建您的仪表板，在您指定的范围内显示数据。获取跨项目和团队的所有工作的仪表板，并与利益相关者共享永久链接以进行按需跟踪。"
+      },
+      "dashboards_search": {
+        "title": "这与仪表板名称不匹配。",
+        "description": "确保您的查询正确或尝试其他查询。"
       },
       "widgets_list": {
-        "title": "按照你想要的方式可视化数据。",
-        "description": "使用折线、柱状、饼图和其他格式，从你指定的数据源以你想要的方式查看数据。"
+        "title": "按照您想要的方式可视化数据。",
+        "description": "使用折线、柱状、饼图和其他格式，从您指定的数据源以您想要的方式查看数据。"
+      },
+      "widget_data": {
+        "title": "这里没有内容",
+        "description": "刷新或添加数据以在此处查看。"
       }
+    },
+    "common": {
+      "editing": "编辑中"
     }
   },
 

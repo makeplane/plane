@@ -53,7 +53,7 @@ export const DashboardDeleteModal: React.FC<Props> = observer((props) => {
       handleSubmit={handleSubmit}
       isSubmitting={loader}
       isOpen={isOpen}
-      title={t("dashboard.delete_modal.heading")}
+      title={t("dashboards.delete_modal.heading")}
       content={
         <>
           Are you sure you want to delete dashboard{' "'}
