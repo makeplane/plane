@@ -1,6 +1,8 @@
 "use client";
 
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { observer } from "mobx-react";
+import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 // ui
@@ -34,39 +36,60 @@ const SignInPage = observer(() => {
   const logo = resolvedTheme === "light" ? BlackHorizontalLogo : WhiteHorizontalLogo;
 
   return (
-    <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>
-      <div className="relative w-screen h-screen overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src={resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern}
-            className="w-full h-full object-cover"
-            alt="Plane background pattern"
-          />
-        </div>
-        <div className="relative z-10 w-screen h-screen overflow-hidden overflow-y-auto flex flex-col">
-          <div className="container min-w-full px-10 lg:px-20 xl:px-36 flex-shrink-0 relative flex items-center justify-between pb-4 transition-all">
-            <div className="flex items-center gap-x-2 py-10">
-              <Link href={`/`} className="h-[30px] w-[133px]">
-                <Image src={logo} alt="Plane logo" />
-              </Link>
+    <>
+      <Head>
+        {/* Google tag manager */}
+        <GoogleAnalytics gaId="G-XCZ5TP3LXB" />
+        <script
+          async
+          src="https://tag.clearbitscripts.com/v1/pk_12bcecff2ad52af4201b104045511543/tags.js"
+          referrerPolicy="strict-origin-when-cross-origin"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-XCZ5TP3LXB');
+              `,
+          }}
+        />
+      </Head>
+      <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>
+        <div className="relative w-screen h-screen overflow-hidden">
+          <div className="absolute inset-0 z-0">
+            <Image
+              src={resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern}
+              className="w-full h-full object-cover"
+              alt="Plane background pattern"
+            />
+          </div>
+          <div className="relative z-10 w-screen h-screen overflow-hidden overflow-y-auto flex flex-col">
+            <div className="container min-w-full px-10 lg:px-20 xl:px-36 flex-shrink-0 relative flex items-center justify-between pb-4 transition-all">
+              <div className="flex items-center gap-x-2 py-10">
+                <Link href={`/`} className="h-[30px] w-[133px]">
+                  <Image src={logo} alt="Plane logo" />
+                </Link>
+              </div>
+              <div className="flex flex-col items-end sm:items-center sm:gap-2 sm:flex-row  text-center text-sm font-medium text-onboarding-text-300">
+                {t("auth.common.already_have_an_account")}
+                <Link
+                  href="/"
+                  onClick={() => captureEvent(NAVIGATE_TO_SIGNIN, {})}
+                  className="font-semibold text-custom-primary-100 hover:underline"
+                >
+                  {t("auth.common.login")}
+                </Link>
+              </div>
             </div>
-            <div className="flex flex-col items-end sm:items-center sm:gap-2 sm:flex-row  text-center text-sm font-medium text-onboarding-text-300">
-              {t("auth.common.already_have_an_account")}
-              <Link
-                href="/"
-                onClick={() => captureEvent(NAVIGATE_TO_SIGNIN, {})}
-                className="font-semibold text-custom-primary-100 hover:underline"
-              >
-                {t("auth.common.login")}
-              </Link>
+            <div className="flex flex-col justify-center flex-grow container h-[100vh-60px] mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 transition-all">
+              <AuthRoot authMode={EAuthModes.SIGN_UP} />
             </div>
           </div>
-          <div className="flex flex-col justify-center flex-grow container h-[100vh-60px] mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 transition-all">
-            <AuthRoot authMode={EAuthModes.SIGN_UP} />
-          </div>
         </div>
-      </div>
-    </AuthenticationWrapper>
+      </AuthenticationWrapper>
+    </>
   );
 });
 

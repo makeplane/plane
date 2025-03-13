@@ -22,6 +22,7 @@
     "@blueprintjs/popover2": "^1.13.3",
     "@headlessui/react": "^1.7.3",
     "@intercom/messenger-js-sdk": "^0.0.12",
+    "@next/third-parties": "^15.2.2",
     "@nivo/bar": "^0.88.0",
     "@nivo/calendar": "^0.88.0",
     "@nivo/core": "^0.88.0",
