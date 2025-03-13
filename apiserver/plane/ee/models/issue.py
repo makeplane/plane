@@ -249,6 +249,13 @@ class EntityUpdates(BaseModel):
         null=True,
         blank=True,
     )
+    epic = models.ForeignKey(
+        "db.Issue",
+        on_delete=models.DO_NOTHING,
+        related_name="epic_updates",
+        null=True,
+        blank=True,
+    )
     entity_type = models.CharField(max_length=30, choices=EntityTypeEnum.choices)
     description = models.TextField(blank=True)
     description_html = models.TextField(blank=True, default="<p></p>")

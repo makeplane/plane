@@ -262,6 +262,7 @@ class ProjectTemplate(BaseModel):
     default_assignee = models.JSONField(default=dict)
     project_lead = models.JSONField(default=dict)
     logo_props = models.JSONField(default=dict)
+    cover_asset = models.TextField(default=dict)
 
     # Feature toggles
     module_view = models.BooleanField(default=True)
@@ -303,6 +304,8 @@ class ProjectTemplate(BaseModel):
     estimates = models.JSONField(default=dict)
     workitem_types = models.JSONField(default=dict)
     epics = models.JSONField(default=dict)
+    members = models.JSONField(default=dict)
+    intake_settings = models.JSONField(default=dict)
 
     class Meta:
         unique_together = ["name", "workspace", "deleted_at"]

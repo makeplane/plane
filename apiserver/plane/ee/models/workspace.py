@@ -1,7 +1,8 @@
 # Django imports
-from django.db import models
+from django.db import models, transaction
 from django.conf import settings
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 
 # Module imports
 from plane.db.models.base import BaseModel
@@ -104,7 +105,7 @@ class WorkspaceActivity(WorkspaceBaseModel):
 
 
 class WorkspaceCredential(BaseModel):
-    source = models.CharField(max_length=20)  # importer type
+    source = models.CharField(max_length=60)  # importer type
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="credentials"
     )
@@ -162,6 +163,7 @@ class WorkspaceConnection(BaseModel):
         null=True,
         blank=True,
     )
+    disconnect_meta = models.JSONField(default=dict, blank=True)
 
     class Meta:
         verbose_name = "Workspace Connection"
@@ -179,7 +181,7 @@ class WorkspaceConnection(BaseModel):
 
 
 class WorkspaceEntityConnection(BaseModel):
-    type = models.CharField(max_length=30, blank=True, null=True)
+    type = models.CharField(max_length=60, blank=True, null=True)
     workspace_connection = models.ForeignKey(
         "ee.WorkspaceConnection",
         on_delete=models.CASCADE,
