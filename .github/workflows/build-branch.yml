@@ -47,12 +47,6 @@ jobs:
       gh_buildx_version: ${{ steps.set_env_variables.outputs.BUILDX_VERSION }}
       gh_buildx_platforms: ${{ steps.set_env_variables.outputs.BUILDX_PLATFORMS }}
       gh_buildx_endpoint: ${{ steps.set_env_variables.outputs.BUILDX_ENDPOINT }}
-      build_proxy: ${{ steps.changed_files.outputs.proxy_any_changed }}
-      build_apiserver: ${{ steps.changed_files.outputs.apiserver_any_changed }}
-      build_admin: ${{ steps.changed_files.outputs.admin_any_changed }}
-      build_space: ${{ steps.changed_files.outputs.space_any_changed }}
-      build_web: ${{ steps.changed_files.outputs.web_any_changed }}
-      build_live: ${{ steps.changed_files.outputs.live_any_changed }}
 
       dh_img_web: ${{ steps.set_env_variables.outputs.DH_IMG_WEB }}
       dh_img_space: ${{ steps.set_env_variables.outputs.DH_IMG_SPACE }}
@@ -123,46 +117,7 @@ jobs:
         name: Checkout Files
         uses: actions/checkout@v4
 
-      - name: Get changed files
-        id: changed_files
-        uses: tj-actions/changed-files@v42
-        with:
-          files_yaml: |
-            apiserver:
-              - apiserver/**
-            proxy:
-              - nginx/**
-            admin:
-              - admin/**
-              - packages/**
-              - "package.json"
-              - "yarn.lock"
-              - "tsconfig.json"
-              - "turbo.json"
-            space:
-              - space/**
-              - packages/**
-              - "package.json"
-              - "yarn.lock"
-              - "tsconfig.json"
-              - "turbo.json"
-            web:
-              - web/**
-              - packages/**
-              - "package.json"
-              - "yarn.lock"
-              - "tsconfig.json"
-              - "turbo.json"
-            live:
-              - live/**
-              - packages/**
-              - 'package.json'
-              - 'yarn.lock'
-              - 'tsconfig.json'
-              - 'turbo.json'
-
   branch_build_push_admin:
-    if: ${{ needs.branch_build_setup.outputs.build_admin == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Admin Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
@@ -185,7 +140,6 @@ jobs:
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
   branch_build_push_web:
-    if: ${{ needs.branch_build_setup.outputs.build_web == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Web Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
@@ -208,7 +162,6 @@ jobs:
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
   branch_build_push_space:
-    if: ${{ needs.branch_build_setup.outputs.build_space == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Space Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
@@ -231,7 +184,6 @@ jobs:
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
   branch_build_push_live:
-    if: ${{ needs.branch_build_setup.outputs.build_live == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Live Collaboration Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
@@ -254,7 +206,6 @@ jobs:
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
   branch_build_push_apiserver:
-    if: ${{ needs.branch_build_setup.outputs.build_apiserver == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push API Server Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
@@ -277,7 +228,6 @@ jobs:
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
   branch_build_push_proxy:
-    if: ${{ needs.branch_build_setup.outputs.build_proxy == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Proxy Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
