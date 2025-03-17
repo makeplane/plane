@@ -1,7 +1,7 @@
 import { E_INTEGRATION_KEYS, TServiceCredentials } from "@plane/etl/core";
 import { createGithubService, GithubService, GithubWebhookPayload } from "@plane/etl/github";
 import { MergeRequestEvent } from "@plane/etl/gitlab";
-import { Client, ExState, Client as PlaneClient } from "@plane/sdk";
+import { Client, Client as PlaneClient } from "@plane/sdk";
 import { classifyPullRequestEvent, getConnectionDetails } from "@/apps/github/helpers/helpers";
 import {
   GithubEntityConnection,
@@ -30,9 +30,8 @@ const handlePullRequestOpened = async (data: GithubWebhookPayload["webhook-pull-
       source_access_token: data.installation.id.toString(),
     });
 
-    if (!credentials || credentials.length === 0) {
-      logger.info("No credentials found for installation id", data.installation.id);
-      return false;
+    if (!credentials || credentials.length !== 1) {
+      throw new Error(`Invalid credential set found for installation id ${data.installation.id}`);
     }
 
     const planeCredentials = credentials[0];
@@ -112,7 +111,7 @@ const handlePullRequestOpened = async (data: GithubWebhookPayload["webhook-pull-
         });
 
         entityConnection = verifyEntityConnection(githubEntityConnectionSchema, targetEntityConnection[0] as any);
-      } catch {}
+      } catch { }
 
       const targetState = getTargetState(stateEvent, entityConnection);
 
