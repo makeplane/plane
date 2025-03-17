@@ -63,7 +63,11 @@ MIDDLEWARE = [
     "crum.CurrentRequestUserMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "plane.middleware.api_log_middleware.APITokenLogMiddleware",
+    "devzery.django.middleware.DevzeryDjangoMiddleware"
 ]
+
+DEVZERY_API_KEY = ""  # Replace with your Devzery API key
+DEVZERY_SERVER_NAME = ""  # Replace with an identifier for your microservice
 
 # Rest Framework settings
 REST_FRAMEWORK = {
