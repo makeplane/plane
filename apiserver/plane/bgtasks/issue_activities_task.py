@@ -710,11 +710,6 @@ def update_comment_activity(
     )
 
     if current_instance.get("comment_html") != requested_data.get("comment_html"):
-        # Get the issue comment and update the edited_at
-        issue_comment = IssueComment.objects.get(id=current_instance.get("id"))
-        issue_comment.edited_at = timezone.now()
-        issue_comment.save(update_fields=["edited_at"])
-
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
