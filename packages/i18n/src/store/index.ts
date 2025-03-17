@@ -153,6 +153,14 @@ export class TranslationStore {
         return import("../locales/it/translations.json");
       case "cs":
         return import("../locales/cs/translations.json");
+      case "sk":
+        return import("../locales/sk/translations.json");
+      case "de":
+        return import("../locales/de/translations.json");
+      case "ua":
+        return import("../locales/ua/translations.json");
+      case "pl":
+        return import("../locales/pl/translations.json");
       case "ko":
         return import("../locales/ko/translations.json");
       default:
