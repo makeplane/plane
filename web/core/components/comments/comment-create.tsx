@@ -1,5 +1,6 @@
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 // plane constants
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
@@ -27,6 +28,7 @@ type TCommentCreate = {
 const fileService = new FileService();
 export const CommentCreate: FC<TCommentCreate> = observer((props) => {
   const { workspaceSlug, entityId, activityOperations, showToolbarInitially = false } = props;
+  const { projectId } = useParams();
   // states
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
   // refs
@@ -88,6 +90,7 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
             control={control}
             render={({ field: { value, onChange } }) => (
               <LiteTextEditor
+                projectId={(projectId as string) ?? ""}
                 workspaceId={workspaceId}
                 id={"add_comment_" + entityId}
                 value={"<p></p>"}

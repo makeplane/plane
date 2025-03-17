@@ -2,6 +2,7 @@
 
 import { FC, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Check, Globe2, Lock, Pencil, Trash2, X } from "lucide-react";
 // PLane
@@ -32,6 +33,7 @@ type TCommentCard = {
 export const CommentCard: FC<TCommentCard> = observer((props) => {
   const { workspaceSlug, comment, activityOperations, ends, showAccessSpecifier = false, disabled = false } = props;
   const { t } = useTranslation();
+  const { projectId } = useParams();
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   const showEditorRef = useRef<EditorReadOnlyRefApi>(null);
@@ -150,6 +152,7 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
                 const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file, comment.id);
                 return asset_id;
               }}
+              projectId={(projectId as string) ?? ""}
             />
           </div>
           <div className="flex gap-1 self-end">
@@ -194,6 +197,7 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
             workspaceSlug={workspaceSlug}
             editorClassName="[&>*]:!py-0 [&>*]:!text-sm"
             containerClassName="!py-1"
+            projectId={(projectId as string) ?? ""}
           />
           <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
         </div>
