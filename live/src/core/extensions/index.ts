@@ -50,7 +50,6 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
                 params,
               });
             }
-            console.log("fetchedData", fetchedData);
 
             if (!fetchedData) {
               throw new AppError(`Failed to fetch document: ${pageId}`);

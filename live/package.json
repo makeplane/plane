@@ -3,12 +3,14 @@
   "version": "0.25.2",
   "license": "AGPL-3.0",
   "description": "A realtime collaborative server powers Plane's rich text editor",
-  "main": "./src/server.ts",
+  "main": "./dist/start.js",
+  "module": "./dist/start.mjs",
+  "types": "./dist/start.d.ts",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"tsup --watch\" \"nodemon --env-file=.env dist/start.js\"",
-    "build": "tsup src/start.ts",
+    "dev": "tsup --watch --onSuccess 'node --env-file=.env dist/start.js'",
+    "build": "tsup",
     "start": "node --env-file=.env dist/start.js",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:errors": "eslint src --ext .ts,.tsx --quiet"
@@ -60,7 +62,7 @@
     "@types/reflect-metadata": "^0.1.0",
     "concurrently": "^9.0.1",
     "nodemon": "^3.1.7",
-    "tsup": "^8.4.0",
+    "tsup": "8.3.0",
     "typescript": "5.3.3"
   }
 }

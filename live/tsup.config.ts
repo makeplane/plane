@@ -1,11 +1,17 @@
-import { defineConfig, Options } from "tsup";
+import { defineConfig } from "tsup";
 
-export default defineConfig((options: Options) => ({
-  entry: ["./src/start.ts"],
-  format: ["cjs", "esm"],
+export default defineConfig({
+  entry: ["src/start.ts"],
+  format: ["esm", "cjs"],
   dts: true,
+  splitting: false,
+  sourcemap: true,
   clean: true,
-  external: ["react"],
-  injectStyle: true,
-  ...options,
-}));
+  minify: false,
+  target: "node18",
+  outDir: "dist",
+  env: {
+    NODE_ENV: process.env.NODE_ENV || "development",
+  },
+  watch: ["src/**/*.{ts,tsx}"],
+});
