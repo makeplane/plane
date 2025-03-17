@@ -111,9 +111,10 @@ export class FavoriteStore implements IFavoriteStore {
    * @returns Promise<IFavorite>
    */
   addFavorite = async (workspaceSlug: string, data: Partial<IFavorite>) => {
-    const id = uuidv4();
     data = { ...data, parent: null, is_folder: data.entity_type === "folder" };
 
+    if (data.entity_identifier && this.entityMap[data.entity_identifier]) return this.entityMap[data.entity_identifier];
+    const id = uuidv4();
     try {
       // optimistic addition
       runInAction(() => {
@@ -271,6 +272,7 @@ export class FavoriteStore implements IFavoriteStore {
    * @returns Promise<void>
    */
   deleteFavorite = async (workspaceSlug: string, favoriteId: string) => {
+    if (!this.favoriteMap[favoriteId]) return;
     const parent = this.favoriteMap[favoriteId].parent;
     const children = this.groupedFavorites[favoriteId].children;
     const entity_identifier = this.favoriteMap[favoriteId].entity_identifier;
