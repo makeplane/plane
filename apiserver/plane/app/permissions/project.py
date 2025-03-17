@@ -30,7 +30,7 @@ class ProjectBasePermission(BasePermission):
             return WorkspaceMember.objects.filter(
                 workspace__slug=view.workspace_slug,
                 member=request.user,
-                role__in=[Admin, Member],
+                role__in=[Admin, Member, Guest],
                 is_active=True,
             ).exists()
 
@@ -65,7 +65,7 @@ class ProjectMemberPermission(BasePermission):
             return WorkspaceMember.objects.filter(
                 workspace__slug=view.workspace_slug,
                 member=request.user,
-                role__in=[Admin, Member],
+                role__in=[Admin, Member, Guest],
                 is_active=True,
             ).exists()
 
@@ -74,7 +74,7 @@ class ProjectMemberPermission(BasePermission):
         return ProjectMember.objects.filter(
             workspace__slug=view.workspace_slug,
             member=request.user,
-            role__in=[Admin, Member],
+            role__in=[Admin, Member, Guest],
             project_id=view.project_id,
             is_active=True,
         ).exists()
@@ -110,7 +110,7 @@ class ProjectEntityPermission(BasePermission):
         return ProjectMember.objects.filter(
             workspace__slug=view.workspace_slug,
             member=request.user,
-            role__in=[Admin, Member],
+            role__in=[Admin, Member, Guest],
             project_id=view.project_id,
             is_active=True,
         ).exists()
