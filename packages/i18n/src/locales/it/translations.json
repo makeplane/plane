@@ -1471,7 +1471,8 @@
             "max_length": "Il nome dello spazio di lavoro non deve superare gli 80 caratteri"
           },
           "company_size": {
-            "required": "La dimensione aziendale è obbligatoria"
+            "required": "La dimensione aziendale è obbligatoria",
+            "select_a_range": "Seleziona la dimensione dell'organizzazione"
           }
         }
       },

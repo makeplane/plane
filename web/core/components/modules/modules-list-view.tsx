@@ -90,20 +90,17 @@ export const ModulesListView: React.FC = observer(() => {
 
   return (
     <ContentWrapper variant={ERowVariant.HUGGING}>
-      {displayFilters?.layout === "list" && (
-        <div className="flex h-full w-full justify-between">
+      <div className="size-full flex justify-between">
+        {displayFilters?.layout === "list" && (
           <ListLayout>
             {filteredModuleIds.map((moduleId) => (
               <ModuleListItem key={moduleId} moduleId={moduleId} />
             ))}
           </ListLayout>
-          <ModulePeekOverview projectId={projectId?.toString() ?? ""} workspaceSlug={workspaceSlug?.toString() ?? ""} />
-        </div>
-      )}
-      {displayFilters?.layout === "board" && (
-        <Row className="flex h-full w-full justify-between py-page-y">
-          <div
-            className={`grid h-full w-full grid-cols-1 gap-6 overflow-y-auto ${
+        )}
+        {displayFilters?.layout === "board" && (
+          <Row
+            className={`size-full py-page-y grid grid-cols-1 gap-6 overflow-y-auto ${
               peekModule
                 ? "lg:grid-cols-1 xl:grid-cols-2 3xl:grid-cols-3"
                 : "lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4"
@@ -112,11 +109,17 @@ export const ModulesListView: React.FC = observer(() => {
             {filteredModuleIds.map((moduleId) => (
               <ModuleCardItem key={moduleId} moduleId={moduleId} />
             ))}
+          </Row>
+        )}
+        {displayFilters?.layout === "gantt" && (
+          <div className="size-full overflow-hidden">
+            <ModulesListGanttChartView />
           </div>
+        )}
+        <div className="flex-shrink-0">
           <ModulePeekOverview projectId={projectId?.toString() ?? ""} workspaceSlug={workspaceSlug?.toString() ?? ""} />
-        </Row>
-      )}
-      {displayFilters?.layout === "gantt" && <ModulesListGanttChartView />}
+        </div>
+      </div>
     </ContentWrapper>
   );
 });

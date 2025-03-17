@@ -1473,7 +1473,8 @@
             "max_length": "Le nom de l'espace de travail ne doit pas dépasser 80 caractères"
           },
           "company_size": {
-            "required": "La taille de l'entreprise est requise"
+            "required": "La taille de l'entreprise est requise",
+            "select_a_range": "Sélectionner la taille de l'organisation"
           }
         }
       },

@@ -25,7 +25,7 @@
     "@tailwindcss/typography": "^0.5.9",
     "@types/lodash": "^4.17.0",
     "autoprefixer": "10.4.14",
-    "axios": "^1.8.2",
+    "axios": "^1.8.3",
     "lodash": "^4.17.21",
     "lucide-react": "^0.469.0",
     "mobx": "^6.12.0",

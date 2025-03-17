@@ -15,6 +15,7 @@ export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
   { label: "Deutsch", value: "de" },
   { label: "Українська", value: "ua" },
   { label: "Polski", value: "pl" },
+  { label: "한국어", value: "ko" },
 ];
 
 export const STORAGE_KEY = "userLanguage";
