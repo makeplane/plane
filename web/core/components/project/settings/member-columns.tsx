@@ -106,34 +106,36 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
 
   // derived values
   const isCurrentUser = currentUser?.id === rowData.member.id;
-  const isProjectAdminOrGuest = [EUserPermissions.ADMIN, EUserPermissions.GUEST].includes(rowData.role);
-  const isWorkspaceMember = [EUserPermissions.MEMBER].includes(
+  const isRowDataWorkspaceAdmin = [EUserPermissions.ADMIN].includes(
     Number(getWorkspaceMemberDetails(rowData.member.id)?.role) ?? EUserPermissions.GUEST
   );
-  const isCurrentUserProjectMember = currentUser
-    ? getProjectMemberDetails(currentUser.id, projectId)?.role === EUserPermissions.MEMBER
+  const isCurrentUserWorkspaceAdmin = currentUser
+    ? [EUserPermissions.ADMIN].includes(
+        Number(getWorkspaceMemberDetails(currentUser.id)?.role) ?? EUserPermissions.GUEST
+      )
     : false;
-  const isRoleNonEditable =
-    isCurrentUser || (isProjectAdminOrGuest && !isWorkspaceMember) || isCurrentUserProjectMember;
+  const isCurrentUserProjectAdmin = currentUser
+    ? ![EUserPermissions.MEMBER, EUserPermissions.GUEST].includes(
+        getProjectMemberDetails(currentUser.id, projectId)?.role ?? EUserPermissions.GUEST
+      )
+    : false;
 
+  const isRoleEditable =
+    isCurrentUserWorkspaceAdmin || (isCurrentUserProjectAdmin && !isRowDataWorkspaceAdmin && !isCurrentUser);
   const checkCurrentOptionWorkspaceRole = (value: string) => {
     const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role as EUserPermissions | undefined;
     if (!value || !currentMemberWorkspaceRole) return ROLE;
 
-    const isGuestOROwner = [EUserPermissions.ADMIN, EUserPermissions.GUEST].includes(currentMemberWorkspaceRole);
+    const isGuest = [EUserPermissions.GUEST].includes(currentMemberWorkspaceRole);
 
     return Object.fromEntries(
-      Object.entries(ROLE).filter(([key]) => !isGuestOROwner || [currentMemberWorkspaceRole].includes(parseInt(key)))
+      Object.entries(ROLE).filter(([key]) => !isGuest || [currentMemberWorkspaceRole].includes(parseInt(key)))
     );
   };
 
   return (
     <>
-      {isRoleNonEditable ? (
-        <div className="w-32 flex ">
-          <span>{ROLE[rowData.role]}</span>
-        </div>
-      ) : (
+      {isRoleEditable ? (
         <Controller
           name="role"
           control={control}
@@ -170,6 +172,7 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
             >
               {Object.entries(checkCurrentOptionWorkspaceRole(rowData.member.id)).map(([key, label]) => {
                 if (parseInt(key) > (currentProjectRole ?? EUserPermissions.GUEST)) return null;
+
                 return (
                   <CustomSelect.Option key={key} value={key}>
                     {label}
@@ -179,6 +182,10 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
             </CustomSelect>
           )}
         />
+      ) : (
+        <div className="w-32 flex ">
+          <span>{ROLE[rowData.role]}</span>
+        </div>
       )}
     </>
   );
