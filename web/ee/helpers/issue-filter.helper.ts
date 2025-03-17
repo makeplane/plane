@@ -1,4 +1,5 @@
 // types
+import { IIssueDisplayProperties } from "@plane/types";
 import { TShouldRenderDisplayProperty } from "@/ce/helpers/issue-filter.helper";
 // lib
 import { store } from "@/lib/store-context";
@@ -13,6 +14,16 @@ export const shouldRenderDisplayProperty = (props: TShouldRenderDisplayProperty)
   switch (key) {
     case "issue_type":
       return isWorkItemTypeEnabled;
+    default:
+      return true;
+  }
+};
+
+export const shouldRenderColumn = (key: keyof IIssueDisplayProperties): boolean => {
+  const isEstimateEnabled: boolean = store.projectRoot.project.currentProjectDetails?.estimate !== null;
+  switch (key) {
+    case "estimate":
+      return isEstimateEnabled;
     default:
       return true;
   }
