@@ -9,10 +9,10 @@ from celery import shared_task
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 
-from plane.app.serializers import IssueActivitySerializer
-from plane.bgtasks.notification_task import notifications
 
 # Module imports
+from plane.app.serializers import IssueActivitySerializer
+from plane.bgtasks.notification_task import notifications
 from plane.db.models import (
     CommentReaction,
     Cycle,
@@ -32,6 +32,7 @@ from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
 from plane.bgtasks.webhook_task import webhook_activity
 from plane.utils.issue_relation_mapper import get_inverse_relation
+from plane.utils.valid_uuid import is_valid_uuid
 
 
 # Track Changes in name
@@ -790,14 +791,15 @@ def create_cycle_issue_activity(
                 issue_id=updated_record.get("issue_id"),
                 actor_id=actor_id,
                 verb="updated",
-                old_value=old_cycle.name,
-                new_value=new_cycle.name,
+                old_value=old_cycle.name if old_cycle else "",
+                new_value=new_cycle.name if new_cycle else "",
                 field="cycles",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"updated cycle from {old_cycle.name} to {new_cycle.name}",
-                old_identifier=old_cycle.id,
-                new_identifier=new_cycle.id,
+                comment=f"""updated cycle from {old_cycle.name if old_cycle else ""}
+                to {new_cycle.name if new_cycle else ""}""",
+                old_identifier=old_cycle.id if old_cycle else None,
+                new_identifier=new_cycle.id if new_cycle else None,
                 epoch=epoch,
             )
         )
@@ -851,7 +853,7 @@ def delete_cycle_issue_activity(
     issues = requested_data.get("issues")
     for issue in issues:
         current_issue = Issue.objects.filter(pk=issue).first()
-        if issue:
+        if current_issue:
             current_issue.updated_at = timezone.now()
             current_issue.save(update_fields=["updated_at"])
         issue_activities.append(
@@ -893,11 +895,11 @@ def create_module_issue_activity(
             actor_id=actor_id,
             verb="created",
             old_value="",
-            new_value=module.name,
+            new_value=module.name if module else "",
             field="modules",
             project_id=project_id,
             workspace_id=workspace_id,
-            comment=f"added module {module.name}",
+            comment=f"added module {module.name if module else ''}",
             new_identifier=requested_data.get("module_id"),
             epoch=epoch,
         )
@@ -1413,7 +1415,7 @@ def delete_issue_relation_activity(
             ),
             project_id=project_id,
             workspace_id=workspace_id,
-            comment=f'deleted {requested_data.get("relation_type")} relation',
+            comment=f"deleted {requested_data.get('relation_type')} relation",
             old_identifier=requested_data.get("related_issue"),
             epoch=epoch,
         )
@@ -1566,6 +1568,10 @@ def issue_activity(
 ):
     try:
         issue_activities = []
+
+        # check if project_id is valid
+        if not is_valid_uuid(str(project_id)):
+            return
 
         project = Project.objects.get(pk=project_id)
         workspace_id = project.workspace_id

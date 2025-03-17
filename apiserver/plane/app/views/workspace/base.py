@@ -64,12 +64,6 @@ class WorkSpaceViewSet(BaseViewSet):
             .values("count")
         )
 
-        issue_count = (
-            Issue.issue_objects.filter(workspace=OuterRef("id"))
-            .order_by()
-            .annotate(count=Func(F("id"), function="Count"))
-            .values("count")
-        )
         return (
             self.filter_queryset(super().get_queryset().select_related("owner"))
             .order_by("name")
@@ -78,8 +72,6 @@ class WorkSpaceViewSet(BaseViewSet):
                 workspace_member__is_active=True,
             )
             .annotate(total_members=member_count)
-            .annotate(total_issues=issue_count)
-            .select_related("owner")
         )
 
     def create(self, request):
@@ -125,7 +117,14 @@ class WorkSpaceViewSet(BaseViewSet):
                     role=20,
                     company_role=request.data.get("company_role", ""),
                 )
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+                # Get total members and role
+                total_members=WorkspaceMember.objects.filter(workspace_id=serializer.data["id"]).count()
+                data = serializer.data
+                data["total_members"] = total_members
+                data["role"] = 20
+
+                return Response(data, status=status.HTTP_201_CREATED)
             return Response(
                 [serializer.errors[error][0] for error in serializer.errors],
                 status=status.HTTP_400_BAD_REQUEST,
@@ -168,13 +167,6 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             .values("count")
         )
 
-        issue_count = (
-            Issue.issue_objects.filter(workspace=OuterRef("id"))
-            .order_by()
-            .annotate(count=Func(F("id"), function="Count"))
-            .values("count")
-        )
-
         role = (
             WorkspaceMember.objects.filter(workspace=OuterRef("id"), member=request.user, is_active=True)
             .values("role")
@@ -189,9 +181,7 @@ class UserWorkSpacesEndpoint(BaseAPIView):
                     ),
                 )
             )
-            .select_related("owner")
-            .annotate(total_members=member_count)
-            .annotate(total_issues=issue_count, role=role)
+            .annotate(role=role, total_members=member_count)
             .filter(
                 workspace_member__member=request.user, workspace_member__is_active=True
             )

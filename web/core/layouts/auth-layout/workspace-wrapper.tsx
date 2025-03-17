@@ -44,7 +44,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const {
     workspace: { fetchWorkspaceMembers },
   } = useMember();
-  const { workspaces } = useWorkspace();
+  const { workspaces, fetchSidebarNavigationPreferences } = useWorkspace();
   const { isMobile } = usePlatformOS();
   const { loader, workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } =
     useUserPermissions();
@@ -101,6 +101,13 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
+  // fetch workspace sidebar preferences
+  useSWR(
+    workspaceSlug ? `WORKSPACE_SIDEBAR_PREFERENCES_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchSidebarNavigationPreferences(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
   // initialize the local database
   const { isLoading: isDBInitializing } = useSWRImmutable(
     workspaceSlug ? `WORKSPACE_DB_${workspaceSlug}` : null,
@@ -143,7 +150,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
         <div className="container relative mx-auto flex h-full w-full flex-col overflow-hidden overflow-y-auto px-5 py-14 md:px-0">
           <div className="relative flex flex-shrink-0 items-center justify-between gap-4">
             <div className="z-10 flex-shrink-0 bg-custom-background-90 py-4">
-              <Image src={planeLogo} className="h-[26px] w-full" alt="Plane logo" />
+              <Image src={planeLogo} height={26} className="h-[26px]" alt="Plane logo" />
             </div>
             <div className="relative flex items-center gap-2">
               <div className="text-sm font-medium">{currentUser?.email}</div>

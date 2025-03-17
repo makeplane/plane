@@ -272,10 +272,9 @@ class IssueRelationViewSet(BaseViewSet):
 
         issue_relations = IssueRelation.objects.filter(
             workspace__slug=slug,
-            project_id=project_id,
         ).filter(
-            Q(issue_id=related_issue, related_issue_id=issue_id) |
-            Q(issue_id=issue_id, related_issue_id=related_issue)
+            Q(issue_id=related_issue, related_issue_id=issue_id)
+            | Q(issue_id=issue_id, related_issue_id=related_issue)
         )
         issue_relations = issue_relations.first()
         current_instance = json.dumps(

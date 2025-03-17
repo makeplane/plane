@@ -10,3 +10,5 @@ export * from "./issue";
 export * from "./state";
 export * from "./string";
 export * from "./theme";
+export * from "./workspace";
+export * from "./work-item";

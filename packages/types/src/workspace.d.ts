@@ -1,10 +1,4 @@
-import type {
-  ICycle,
-  IProjectMember,
-  IUser,
-  IUserLite,
-  IWorkspaceViewProps,
-} from "@plane/types";
+import type { ICycle, IProjectMember, IUser, IUserLite, IWorkspaceViewProps, TPaginationInfo } from "@plane/types";
 import { EUserWorkspaceRoles } from "@plane/constants"; // TODO: check if importing this over here causes circular dependency
 import { TUserPermissions } from "./enums";
 
@@ -21,9 +15,7 @@ export interface IWorkspace {
   readonly created_by: string;
   readonly updated_by: string;
   organization_size: string;
-  total_issues: number;
   total_projects?: number;
-  current_plan?: string;
   role: number;
 }
 
@@ -41,9 +33,10 @@ export interface IWorkspaceMemberInvitation {
   responded_at: Date;
   role: TUserPermissions;
   token: string;
+  invite_link: string;
   workspace: {
     id: string;
-    logo: string;
+    logo_url: string;
     name: string;
     slug: string;
   };
@@ -230,3 +223,13 @@ export interface IWorkspaceAnalyticsResponse {
 export type TWorkspacePaginationInfo = TPaginationInfo & {
   results: IWorkspace[];
 };
+
+export interface IWorkspaceSidebarNavigationItem {
+  key?: string;
+  is_pinned: boolean;
+  sort_order: number;
+}
+
+export interface IWorkspaceSidebarNavigation {
+  [key: string]: IWorkspaceSidebarNavigationItem;
+}

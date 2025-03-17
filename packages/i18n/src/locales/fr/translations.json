@@ -457,7 +457,7 @@
   "Cancel": "Annuler",
   "edit": "Modifier",
   "archive": "Archiver",
-  "restor": "Restaurer",
+  "restore": "Restaurer",
   "open_in_new_tab": "Ouvrir dans un nouvel onglet",
   "delete": "Supprimer",
   "deleting": "Suppression",
@@ -631,6 +631,8 @@
     "states": "États",
     "state": "État",
     "state_groups": "Groupes d'états",
+    "state_group": "Groupe d'état",
+    "priorities": "Priorités",
     "priority": "Priorité",
     "team_project": "Projet d'équipe",
     "project": "Projet",
@@ -639,12 +641,16 @@
     "module": "Module",
     "modules": "Modules",
     "labels": "Étiquettes",
+    "label": "Étiquette",
     "assignees": "Assignés",
     "assignee": "Assigné",
     "created_by": "Créé par",
     "none": "Aucun",
     "link": "Lien",
+    "estimates": "Estimations",
     "estimate": "Estimation",
+    "created_at": "Créé le",
+    "completed_at": "Terminé le",
     "layout": "Disposition",
     "filters": "Filtres",
     "display": "Affichage",
@@ -662,6 +668,7 @@
     "epic": "Epic",
     "epics": "Epics",
     "work_item": "Élément de travail",
+    "work_items": "Éléments de travail",
     "sub_work_item": "Sous-élément de travail",
     "add": "Ajouter",
     "warning": "Avertissement",
@@ -686,12 +693,13 @@
     "add_more": "Ajouter plus",
     "defaults": "Par défaut",
     "add_label": "Ajouter une étiquette",
-    "estimates": "Estimations",
     "customize_time_range": "Personnaliser la plage de temps",
     "loading": "Chargement",
     "attachments": "Pièces jointes",
+    "property": "Propriété",
     "properties": "Propriétés",
     "parent": "Parent",
+    "page": "Pâge",
     "remove": "Supprimer",
     "archiving": "Archivage",
     "archive": "Archiver",
@@ -823,8 +831,6 @@
     "select": "Sélectionner",
     "upgrade": "Mettre à niveau",
     "add_seats": "Ajouter des sièges",
-    "label": "Étiquette",
-    "priorities": "Priorités",
     "projects": "Projets",
     "workspace": "Espace de travail",
     "workspaces": "Espaces de travail",
@@ -842,7 +848,32 @@
     "disconnect": "Déconnecter",
     "disconnecting": "Déconnexion",
     "installing": "Installation",
-    "install": "Installer"
+    "install": "Installer",
+    "reset": "Réinitialiser",
+    "live": "En direct",
+    "change_history": "Historique des modifications",
+    "coming_soon": "À venir",
+    "members": "Membres",
+    "you": "Vous",
+    "upgrade_cta": {
+      "higher_subscription": "Passer à une abonnement plus élevé",
+      "talk_to_sales": "Parler aux ventes"
+    },
+    "category": "Catégorie",
+    "categories": "Catégories",
+    "saving": "Enregistrement",
+    "save_changes": "Enregistrer les modifications",
+    "delete": "Supprimer",
+    "deleting": "Suppression",
+    "pending": "En attente",
+    "invite": "Inviter",
+    "view": "Afficher"
+  },
+
+  "chart": {
+    "x_axis": "Axe X",
+    "y_axis": "Axe Y",
+    "metric": "Métrique"
   },
 
   "form": {
@@ -954,7 +985,8 @@
         "sub_issue_count": "Nombre de sous-éléments",
         "attachment_count": "Nombre de pièces jointes",
         "created_on": "Créé le",
-        "sub_issue": "Sous-élément de travail"
+        "sub_issue": "Sous-élément de travail",
+        "work_item_count": "Nombre d'éléments de travail"
       },
       "extra": {
         "show_sub_issues": "Afficher les sous-éléments",
@@ -1422,22 +1454,34 @@
         "company_size": "Taille de l'entreprise",
         "url": "URL de l'espace de travail",
         "update_workspace": "Mettre à jour l'espace de travail",
-        "delete_workspace": "Supprimer l'espace de travail",
-        "delete_workspace_description": "Lors de la suppression d'un espace de travail, toutes les données et ressources au sein de cet espace de travail seront définitivement supprimées et ne pourront pas être récupérées.",
-        "delete_btn": "Supprimer mon espace de travail",
+        "delete_workspace": "Supprimer cet espace de travail",
+        "delete_workspace_description": "Lors de la suppression d'un espace de travail, toutes les données et ressources au sein de cet espace seront définitivement supprimées et ne pourront pas être récupérées.",
+        "delete_btn": "Supprimer cet espace de travail",
+        "delete_modal": {
+          "title": "Êtes-vous sûr de vouloir supprimer cet espace de travail ?",
+          "description": "Vous avez un essai actif sur l'un de nos forfaits payants. Veuillez d'abord l'annuler pour continuer.",
+          "dismiss": "Fermer",
+          "cancel": "Annuler l'essai",
+          "success_title": "Espace de travail supprimé.",
+          "success_message": "Vous serez bientôt redirigé vers votre page de profil.",
+          "error_title": "Cela n'a pas fonctionné.",
+          "error_message": "Veuillez réessayer."
+        },
         "errors": {
           "name": {
             "required": "Le nom est requis",
             "max_length": "Le nom de l'espace de travail ne doit pas dépasser 80 caractères"
           },
           "company_size": {
-            "required": "La taille de l'entreprise est requise"
+            "required": "La taille de l'entreprise est requise",
+            "select_a_range": "Sélectionner la taille de l'organisation"
           }
         }
       },
       "members": {
         "title": "Membres",
         "add_member": "Ajouter un membre",
+        "pending_invites": "Invitations en attente",
         "invitations_sent_successfully": "Invitations envoyées avec succès",
         "leave_confirmation": "Êtes-vous sûr de vouloir quitter l'espace de travail ? Vous n'aurez plus accès à cet espace de travail. Cette action ne peut pas être annulée.",
         "details": {
@@ -1674,7 +1718,11 @@
       }
     },
     "states": {
-      "describe_this_state_for_your_members": "Décrivez cet état pour vos membres."
+      "describe_this_state_for_your_members": "Décrivez cet état pour vos membres.",
+      "empty_state": {
+        "title": "Aucun état disponible pour le groupe {groupKey}",
+        "description": "Veuillez créer un nouvel état"
+      }
     },
     "labels": {
       "label_title": "Titre de l'étiquette",

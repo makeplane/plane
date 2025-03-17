@@ -32,7 +32,7 @@ export const StateMarksAsDefault: FC<TStateMarksAsDefault> = observer((props) =>
   return (
     <button
       className={cn(
-        "text-sm whitespace-nowrap transition-colors",
+        "text-xs whitespace-nowrap transition-colors",
         isDefault ? "text-custom-text-300" : "text-custom-text-200 hover:text-custom-text-100"
       )}
       disabled={isDefault || isLoading}

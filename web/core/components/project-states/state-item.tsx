@@ -10,14 +10,12 @@ import { TDraggableData } from "@plane/constants";
 import { IState, TStateGroups } from "@plane/types";
 import { DropIndicator } from "@plane/ui";
 // components
-import { StateUpdate } from "@/components/project-states";
+import { StateItemTitle, StateUpdate } from "@/components/project-states";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getCurrentStateSequence } from "@/helpers/state.helper";
 // hooks
 import { useProjectState } from "@/hooks/store";
-// Plane-web
-import { StateItemChild } from "@/plane-web/components/workflow";
 
 type TStateItem = {
   workspaceSlug: string;
@@ -133,7 +131,7 @@ export const StateItem: FC<TStateItem> = observer((props) => {
           totalStates === 1 ? `cursor-auto` : `cursor-grab`
         )}
       >
-        <StateItemChild
+        <StateItemTitle
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           setUpdateStateModal={setUpdateStateModal}

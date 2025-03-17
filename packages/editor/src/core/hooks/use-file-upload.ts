@@ -6,6 +6,7 @@ import { insertImagesSafely } from "@/extensions/drop";
 import { isFileValid } from "@/plugins/image";
 
 type TUploaderArgs = {
+  blockId: string;
   editor: Editor;
   loadImageFromFileSystem: (file: string) => void;
   maxFileSize: number;
@@ -13,14 +14,16 @@ type TUploaderArgs = {
 };
 
 export const useUploader = (args: TUploaderArgs) => {
-  const { editor, loadImageFromFileSystem, maxFileSize, onUpload } = args;
+  const { blockId, editor, loadImageFromFileSystem, maxFileSize, onUpload } = args;
   // states
   const [uploading, setUploading] = useState(false);
 
   const uploadFile = useCallback(
     async (file: File) => {
       const setImageUploadInProgress = (isUploading: boolean) => {
-        editor.storage.imageComponent.uploadInProgress = isUploading;
+        if (editor.storage.imageComponent) {
+          editor.storage.imageComponent.uploadInProgress = isUploading;
+        }
       };
       setImageUploadInProgress(true);
       setUploading(true);
@@ -49,7 +52,7 @@ export const useUploader = (args: TUploaderArgs) => {
         reader.readAsDataURL(fileWithTrimmedName);
         // @ts-expect-error - TODO: fix typings, and don't remove await from
         // here for now
-        const url: string = await editor?.commands.uploadImage(fileWithTrimmedName);
+        const url: string = await editor?.commands.uploadImage(blockId, fileWithTrimmedName);
 
         if (!url) {
           throw new Error("Something went wrong while uploading the image");

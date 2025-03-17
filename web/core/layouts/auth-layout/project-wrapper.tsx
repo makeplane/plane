@@ -2,7 +2,6 @@
 
 import { FC, ReactNode, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -33,14 +32,14 @@ import { persistence } from "@/local-db/storage.sqlite";
 // plane web constants
 
 interface IProjectAuthWrapper {
+  workspaceSlug: string;
+  projectId: string;
   children: ReactNode;
   isLoading?: boolean;
 }
 
 export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
-  const { children, isLoading: isParentLoading = false } = props;
-  // router
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId, children, isLoading: isParentLoading = false } = props;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -55,7 +54,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const {
     project: { fetchProjectMembers },
   } = useMember();
-  const { fetchProjectStates, fetchProjectStateTransitions } = useProjectState();
+  const { fetchProjectStates } = useProjectState();
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
 
@@ -119,12 +118,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // fetching project states
   useSWR(
     workspaceSlug && projectId ? `PROJECT_STATES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId
-      ? () => {
-          fetchProjectStates(workspaceSlug.toString(), projectId.toString());
-          fetchProjectStateTransitions(workspaceSlug.toString(), projectId.toString());
-        }
-      : null,
+    workspaceSlug && projectId ? () => fetchProjectStates(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project estimates

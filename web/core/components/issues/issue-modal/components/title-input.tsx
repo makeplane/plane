@@ -2,7 +2,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { Control, Controller, FieldErrors } from "react-hook-form";
+import { Control, Controller, FormState } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 // types
@@ -18,12 +18,17 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 type TIssueTitleInputProps = {
   control: Control<TIssue>;
   issueTitleRef: React.MutableRefObject<HTMLInputElement | null>;
-  errors: FieldErrors<TIssue>;
+  formState: FormState<TIssue>;
   handleFormChange: () => void;
 };
 
 export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props) => {
-  const { control, issueTitleRef, errors, handleFormChange } = props;
+  const {
+    control,
+    issueTitleRef,
+    formState: { errors },
+    handleFormChange,
+  } = props;
   // store hooks
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
@@ -37,7 +42,7 @@ export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props)
     return undefined;
   };
   return (
-    <>
+    <div>
       <Controller
         control={control}
         name="name"
@@ -63,12 +68,12 @@ export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props)
             hasError={Boolean(errors.name)}
             placeholder={t("title")}
             className="w-full text-base"
-            tabIndex={getIndex("name")}
             autoFocus
+            tabIndex={getIndex("name")}
           />
         )}
       />
       <span className="text-xs font-medium text-red-500">{errors?.name?.message}</span>
-    </>
+    </div>
   );
 });

@@ -214,7 +214,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           issueId: response.id,
           issueTypeId: response.type_id,
           projectId: response.project_id,
-          workspaceSlug: workspaceSlug.toString(),
+          workspaceSlug: workspaceSlug?.toString(),
           isDraft: is_draft_issue,
         });
       }
@@ -241,11 +241,11 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       setDescription("<p></p>");
       setChangesMade(null);
       return response;
-    } catch (error) {
+    } catch (error: any) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("error"),
-        message: t(is_draft_issue ? "draft_creation_failed" : "issue_creation_failed"),
+        message: error?.error ?? t(is_draft_issue ? "draft_creation_failed" : "issue_creation_failed"),
       });
       captureIssueEvent({
         eventName: ISSUE_CREATED,
@@ -284,7 +284,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         issueId: data.id,
         issueTypeId: payload.type_id,
         projectId: payload.project_id,
-        workspaceSlug: workspaceSlug.toString(),
+        workspaceSlug: workspaceSlug?.toString(),
         isDraft: isDraft,
       });
 
@@ -299,12 +299,12 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         path: pathname,
       });
       handleClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("error"),
-        message: t("issue_could_not_be_updated"),
+        message: error?.error ?? t("issue_could_not_be_updated"),
       });
       captureIssueEvent({
         eventName: ISSUE_UPDATED,

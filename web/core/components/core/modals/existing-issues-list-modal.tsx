@@ -10,6 +10,7 @@ import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
 import { Button, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
@@ -23,13 +24,15 @@ import { IssueSearchModalEmptyState } from "./issue-search-modal-empty-state";
 
 type Props = {
   workspaceSlug: string | undefined;
-  projectId: string | undefined;
+  projectId?: string;
   isOpen: boolean;
   handleClose: () => void;
   searchParams: Partial<TProjectIssuesSearchParams>;
   handleOnSubmit: (data: ISearchIssueResponse[]) => Promise<void>;
   workspaceLevelToggle?: boolean;
   shouldHideIssue?: (issue: ISearchIssueResponse) => boolean;
+  selectedWorkItems?: ISearchIssueResponse[];
+  workItemSearchServiceCallback?: (params: TProjectIssuesSearchParams) => Promise<ISearchIssueResponse[]>;
 };
 
 const projectService = new ProjectService();
@@ -46,6 +49,8 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
     handleOnSubmit,
     workspaceLevelToggle = false,
     shouldHideIssue,
+    selectedWorkItems,
+    workItemSearchServiceCallback,
   } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);
@@ -84,20 +89,35 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
     handleClose();
   };
 
-  useEffect(() => {
-    if (!isOpen || !workspaceSlug || !projectId) return;
+  const handleSearch = () => {
+    if (!isOpen || !workspaceSlug) return;
     setIsLoading(true);
-    projectService
-      .projectIssuesSearch(workspaceSlug as string, projectId as string, {
-        search: debouncedSearchTerm,
-        ...searchParams,
-        workspace_search: isWorkspaceLevel,
-      })
+    const searchService =
+      workItemSearchServiceCallback ??
+      (projectId
+        ? projectService.projectIssuesSearch.bind(projectService, workspaceSlug?.toString(), projectId?.toString())
+        : undefined);
+    if (!searchService) return;
+    searchService({
+      search: debouncedSearchTerm,
+      ...searchParams,
+      workspace_search: isWorkspaceLevel,
+    })
       .then((res) => setIssues(res))
       .finally(() => {
         setIsSearching(false);
         setIsLoading(false);
       });
+  };
+
+  useEffect(() => {
+    if (selectedWorkItems) {
+      setSelectedIssues(selectedWorkItems);
+    }
+  }, [isOpen, selectedWorkItems]);
+
+  useEffect(() => {
+    handleSearch();
   }, [debouncedSearchTerm, isOpen, isWorkspaceLevel, projectId, workspaceSlug]);
 
   const filteredIssues = issues.filter((issue) => !shouldHideIssue?.(issue));
@@ -274,7 +294,13 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                                     <span className="truncate">{issue.name}</span>
                                   </div>
                                   <a
-                                    href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
+                                    href={generateWorkItemLink({
+                                      workspaceSlug,
+                                      projectId: issue?.project_id,
+                                      issueId: issue?.id,
+                                      projectIdentifier: issue.project__identifier,
+                                      sequenceId: issue?.sequence_id,
+                                    })}
                                     target="_blank"
                                     className="z-1 relative hidden flex-shrink-0 text-custom-text-200 hover:text-custom-text-100 group-hover:block"
                                     rel="noopener noreferrer"

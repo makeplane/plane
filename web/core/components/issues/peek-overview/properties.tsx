@@ -16,21 +16,15 @@ import {
   StateDropdown,
 } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import {
-  IssueCycleSelect,
-  IssueModuleSelect,
-  IssueParentSelect,
-  IssueLabel,
-  TIssueOperations,
-} from "@/components/issues";
+import { IssueCycleSelect, IssueModuleSelect, IssueLabel, TIssueOperations } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { useIssueDetail, useMember, useProject, useProjectState } from "@/hooks/store";
 // plane web components
-import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issue-types/values";
-import { IssueWorklogProperty } from "@/plane-web/components/issues";
+import { IssueParentSelectRoot, IssueWorklogProperty } from "@/plane-web/components/issues";
+import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
@@ -269,7 +263,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <LayoutPanelTop className="h-4 w-4 flex-shrink-0" />
             <p>{t("common.parent")}</p>
           </div>
-          <IssueParentSelect
+          <IssueParentSelectRoot
             className="w-3/4 flex-grow h-full"
             disabled={disabled}
             issueId={issueId}
@@ -297,15 +291,14 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           disabled={disabled}
         />
 
-        {issue.type_id && (
-          <IssueAdditionalPropertyValuesUpdate
-            issueId={issueId}
-            issueTypeId={issue.type_id}
-            projectId={projectId}
-            workspaceSlug={workspaceSlug}
-            isDisabled={disabled}
-          />
-        )}
+        <WorkItemAdditionalSidebarProperties
+          workItemId={issue.id}
+          workItemTypeId={issue.type_id}
+          projectId={projectId}
+          workspaceSlug={workspaceSlug}
+          isEditable={!disabled}
+          isPeekView
+        />
       </div>
     </div>
   );

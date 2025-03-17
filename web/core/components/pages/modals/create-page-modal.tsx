@@ -7,8 +7,10 @@ import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { PageForm } from "@/components/pages";
 // hooks
-import { useProjectPages, useEventTracker } from "@/hooks/store";
+import { useEventTracker } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web hooks
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 type Props = {
   workspaceSlug: string;
@@ -17,10 +19,19 @@ type Props = {
   pageAccess?: EPageAccess;
   handleModalClose: () => void;
   redirectionEnabled?: boolean;
+  storeType: EPageStoreType;
 };
 
 export const CreatePageModal: FC<Props> = (props) => {
-  const { workspaceSlug, projectId, isModalOpen, pageAccess, handleModalClose, redirectionEnabled = false } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    isModalOpen,
+    pageAccess,
+    handleModalClose,
+    redirectionEnabled = false,
+    storeType,
+  } = props;
   // states
   const [pageFormData, setPageFormData] = useState<Partial<TPage>>({
     id: undefined,
@@ -30,7 +41,7 @@ export const CreatePageModal: FC<Props> = (props) => {
   // router
   const router = useAppRouter();
   // store hooks
-  const { createPage } = useProjectPages();
+  const { createPage } = usePageStore(storeType);
   const { capturePageEvent } = useEventTracker();
   const handlePageFormData = <T extends keyof TPage>(key: T, value: TPage[T]) =>
     setPageFormData((prev) => ({ ...prev, [key]: value }));

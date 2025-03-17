@@ -79,7 +79,7 @@ export const AuthHeader: FC<TAuthHeader> = observer((props) => {
         header: (
           <div className="relative inline-flex items-center gap-2">
             {t("common.join")}{" "}
-            <WorkspaceLogo logo={workspace?.logo} name={workspace?.name} classNames="w-8 h-9 flex-shrink-0" />{" "}
+            <WorkspaceLogo logo={workspace?.logo_url} name={workspace?.name} classNames="size-9 flex-shrink-0" />{" "}
             {workspace.name}
           </div>
         ),

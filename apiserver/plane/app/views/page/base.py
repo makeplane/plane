@@ -40,7 +40,7 @@ from ..base import BaseAPIView, BaseViewSet
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.page_version_task import page_version
 from plane.bgtasks.recent_visited_task import recent_visited_task
-
+from plane.bgtasks.copy_s3_object import copy_s3_objects
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
     # Your SQL query
@@ -597,6 +597,16 @@ class PageDuplicateEndpoint(BaseAPIView):
         page_transaction.delay(
             {"description_html": page.description_html}, None, page.id
         )
+
+        # Copy the s3 objects uploaded in the page
+        copy_s3_objects.delay(
+            entity_name="PAGE",
+            entity_identifier=page.id,
+            project_id=project_id,
+            slug=slug,
+            user_id=request.user.id,
+        )
+
         page = (
             Page.objects.filter(pk=page.id)
             .annotate(

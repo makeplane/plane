@@ -112,7 +112,7 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   return (
     <>
       <div className="flex items-center border-b border-custom-border-100 pb-3.5">
-        <h3 className="text-xl font-medium">{t("defaults")}</h3>
+        <h3 className="text-xl font-medium">{t("common.defaults")}</h3>
       </div>
 
       <div className="flex w-full flex-col gap-2 pb-4">

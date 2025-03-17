@@ -1,13 +1,13 @@
-import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react";
 import { ImageIcon } from "lucide-react";
+import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
 import { ACCEPTED_FILE_EXTENSIONS } from "@/constants/config";
-// hooks
-import { useUploader, useDropZone, uploadFirstImageAndInsertRemaining } from "@/hooks/use-file-upload";
 // extensions
 import { CustoBaseImageNodeViewProps, getImageComponentImageFileMap } from "@/extensions/custom-image";
+// hooks
+import { useUploader, useDropZone, uploadFirstImageAndInsertRemaining } from "@/hooks/use-file-upload";
 
 type CustomImageUploaderProps = CustoBaseImageNodeViewProps & {
   maxFileSize: number;
@@ -38,6 +38,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   const onUpload = useCallback(
     (url: string) => {
       if (url) {
+        if (!imageEntityId) return;
         setIsUploaded(true);
         // Update the node view's src attribute post upload
         updateAttributes({ src: url });
@@ -68,6 +69,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   );
   // hooks
   const { uploading: isImageBeingUploaded, uploadFile } = useUploader({
+    blockId: imageEntityId ?? "",
     editor,
     loadImageFromFileSystem,
     maxFileSize,
@@ -82,7 +84,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
 
   // the meta data of the image component
   const meta = useMemo(
-    () => imageComponentImageFileMap?.get(imageEntityId),
+    () => imageComponentImageFileMap?.get(imageEntityId ?? ""),
     [imageComponentImageFileMap, imageEntityId]
   );
 
@@ -96,7 +98,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         if (meta.hasOpenedFileInputOnce) return;
         fileInputRef.current.click();
         hasTriggeredFilePickerRef.current = true;
-        imageComponentImageFileMap?.set(imageEntityId, { ...meta, hasOpenedFileInputOnce: true });
+        imageComponentImageFileMap?.set(imageEntityId ?? "", { ...meta, hasOpenedFileInputOnce: true });
       }
     }
   }, [meta, uploadFile, imageComponentImageFileMap]);

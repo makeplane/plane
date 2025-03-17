@@ -53,7 +53,7 @@ export const FilterDisplayProperties: React.FC<Props> = observer((props) => {
     }
   }).map((property) => {
     if (isEpic && property.key === "sub_issue_count") {
-      return { ...property, title: "Work item count" };
+      return { ...property, titleTranslationKey: "issue.display.properties.work_item_count" };
     }
     return property;
   });

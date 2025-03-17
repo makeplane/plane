@@ -27,12 +27,14 @@ import {
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
+import { generateWorkItemLink, shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 // hooks
 import { useEventTracker, useLabel, useIssues, useProjectState, useProject, useProjectEstimates } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web components
+import { WorkItemLayoutAdditionalProperties } from "@/plane-web/components/issues/issue-layouts/additional-properties";
 // local components
 import { IssuePropertyLabels } from "./labels";
 import { WithDisplayPropertiesHOC } from "./with-display-properties-HOC";
@@ -247,17 +249,17 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       });
   };
 
-  const redirectToIssueDetail = () => {
-    router.push(
-      `/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}${isEpic ? "epics" : "issues"}/${issue.id}#sub-issues`
-    );
-    // router.push({
-    //   pathname: `/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${
-    //     issue.id
-    //   }`,
-    //   hash: "sub-issues",
-    // });
-  };
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug?.toString(),
+    projectId: issue?.project_id,
+    issueId: issue?.id,
+    projectIdentifier: projectDetails?.identifier,
+    sequenceId: issue?.sequence_id,
+    isArchived: !!issue?.archived_at,
+    isEpic,
+  });
+
+  const redirectToIssueDetail = () => router.push(`${workItemLink}#sub-issues`);
 
   if (!displayProperties || !issue.project_id) return null;
 
@@ -429,36 +431,38 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
       {/* extra render properties */}
       {/* sub-issues */}
-      <WithDisplayPropertiesHOC
-        displayProperties={displayProperties}
-        displayPropertyKey="sub_issue_count"
-        shouldRenderProperty={(properties) => !!properties.sub_issue_count && !!subIssueCount}
-      >
-        <Tooltip
-          tooltipHeading={isEpic ? t("issues.label", { count: 2 }) : t("common.sub_work_items")}
-          tooltipContent={`${subIssueCount}`}
-          isMobile={isMobile}
-          renderByDefault={false}
+      {!isEpic && (
+        <WithDisplayPropertiesHOC
+          displayProperties={displayProperties}
+          displayPropertyKey="sub_issue_count"
+          shouldRenderProperty={(properties) => !!properties.sub_issue_count && !!subIssueCount}
         >
-          <div
-            onFocus={handleEventPropagation}
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              if (subIssueCount) redirectToIssueDetail();
-            }}
-            className={cn(
-              "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1",
-              {
-                "hover:bg-custom-background-80 cursor-pointer": subIssueCount,
-              }
-            )}
+          <Tooltip
+            tooltipHeading={t("common.sub_work_items")}
+            tooltipContent={`${subIssueCount}`}
+            isMobile={isMobile}
+            renderByDefault={false}
           >
-            <Layers className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
-            <div className="text-xs">{subIssueCount}</div>
-          </div>
-        </Tooltip>
-      </WithDisplayPropertiesHOC>
+            <div
+              onFocus={handleEventPropagation}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                if (subIssueCount) redirectToIssueDetail();
+              }}
+              className={cn(
+                "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1",
+                {
+                  "hover:bg-custom-background-80 cursor-pointer": subIssueCount,
+                }
+              )}
+            >
+              <Layers className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+              <div className="text-xs">{subIssueCount}</div>
+            </div>
+          </Tooltip>
+        </WithDisplayPropertiesHOC>
+      )}
 
       {/* attachments */}
       <WithDisplayPropertiesHOC
@@ -505,6 +509,9 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
           </div>
         </Tooltip>
       </WithDisplayPropertiesHOC>
+
+      {/* Additional Properties */}
+      <WorkItemLayoutAdditionalProperties displayProperties={displayProperties} issue={issue} />
 
       {/* label */}
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">

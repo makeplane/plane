@@ -1,28 +1,31 @@
+import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import useSWR from "swr";
 // components
 import { BulkDeleteIssuesModal } from "@/components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 // constants
-import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 // hooks
-import { useCommandPalette, useUser } from "@/hooks/store";
+import { useCommandPalette, useIssueDetail, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
-// services
-import { IssueService } from "@/services/issue";
 
-// services
-const issueService = new IssueService();
+export type TIssueLevelModalsProps = {
+  projectId: string | undefined;
+  issueId: string | undefined;
+};
 
-export const IssueLevelModals = observer(() => {
+export const IssueLevelModals: FC<TIssueLevelModalsProps> = observer((props) => {
+  const { projectId, issueId } = props;
   // router
   const pathname = usePathname();
-  const { workspaceSlug, projectId, issueId, cycleId, moduleId } = useParams();
+  const { workspaceSlug, cycleId, moduleId } = useParams();
   const router = useAppRouter();
   // store hooks
   const { data: currentUser } = useUser();
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail();
   const {
     issues: { removeIssue },
   } = useIssuesStore();
@@ -35,14 +38,8 @@ export const IssueLevelModals = observer(() => {
     toggleBulkDeleteIssueModal,
   } = useCommandPalette();
   // derived values
+  const issueDetails = issueId ? getIssueById(issueId) : undefined;
   const isDraftIssue = pathname?.includes("draft-issues") || false;
-
-  const { data: issueDetails } = useSWR(
-    workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
-    workspaceSlug && projectId && issueId
-      ? () => issueService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
-      : null
-  );
 
   return (
     <>

@@ -179,7 +179,9 @@ export class CycleStore implements ICycleStore {
       const endDate = getDate(c.end_date);
       const hasEndDatePassed = endDate && isPast(endDate);
       const isEndDateToday = endDate && isToday(endDate);
-      return c.project_id === projectId && hasEndDatePassed && !isEndDateToday && !c?.archived_at;
+      return (
+        c.project_id === projectId && ((hasEndDatePassed && !isEndDateToday) || c.status?.toLowerCase() === "completed")
+      );
     });
     completedCycles = sortBy(completedCycles, [(c) => c.sort_order]);
     const completedCycleIds = completedCycles.map((c) => c.id);
@@ -195,7 +197,9 @@ export class CycleStore implements ICycleStore {
     let incompleteCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
       const endDate = getDate(c.end_date);
       const hasEndDatePassed = endDate && isPast(endDate);
-      return c.project_id === projectId && !hasEndDatePassed && !c?.archived_at;
+      return (
+        c.project_id === projectId && !hasEndDatePassed && !c?.archived_at && c.status?.toLowerCase() !== "completed"
+      );
     });
     incompleteCycles = sortBy(incompleteCycles, [(c) => c.sort_order]);
     const incompleteCycleIds = incompleteCycles.map((c) => c.id);

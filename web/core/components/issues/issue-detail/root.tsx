@@ -4,7 +4,14 @@ import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // types
-import { EIssuesStoreType, ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import {
+  EIssuesStoreType,
+  ISSUE_UPDATED,
+  ISSUE_DELETED,
+  ISSUE_ARCHIVED,
+  EUserPermissions,
+  EUserPermissionsLevel,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 // ui
@@ -332,7 +339,12 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
   // issue details
   const issue = getIssueById(issueId);
   // checking if issue is editable, based on user role
-  const isEditable = allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);
+  const isEditable = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug,
+    projectId
+  );
 
   return (
     <>
@@ -359,7 +371,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             />
           </div>
           <div
-            className="fixed right-0 z-[5] h-full w-full min-w-[300px] overflow-hidden border-l border-custom-border-200 bg-custom-sidebar-background-100 py-5 sm:w-1/2 md:relative md:w-1/3 lg:min-w-80 xl:min-w-96"
+            className="fixed right-0 z-[5] h-full w-full min-w-[300px] border-l border-custom-border-200 bg-custom-sidebar-background-100 py-5 sm:w-1/2 md:relative md:w-1/3 lg:min-w-80 xl:min-w-96"
             style={issueDetailSidebarCollapsed ? { right: `-${window?.innerWidth || 0}px` } : {}}
           >
             <IssueDetailsSidebar

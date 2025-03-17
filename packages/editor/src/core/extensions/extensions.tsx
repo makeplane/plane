@@ -32,10 +32,10 @@ import {
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
-// types
-import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
+// types
+import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
 
 type TArguments = {
   disabledExtensions: TExtensions[];
@@ -50,17 +50,16 @@ type TArguments = {
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
   const { disabledExtensions, enableHistory, fileHandler, mentionHandler, placeholder, tabIndex } = args;
 
-  return [
-    // @ts-expect-error tiptap types are incorrect
+  const extensions = [
     StarterKit.configure({
       bulletList: {
         HTMLAttributes: {
-          class: "list-disc pl-7 space-y-2",
+          class: "list-disc pl-7 space-y-[--list-spacing-y]",
         },
       },
       orderedList: {
         HTMLAttributes: {
-          class: "list-decimal pl-7 space-y-2",
+          class: "list-decimal pl-7 space-y-[--list-spacing-y]",
         },
       },
       listItem: {
@@ -109,12 +108,6 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       },
     }),
     CustomTypographyExtension,
-    ImageExtension(fileHandler).configure({
-      HTMLAttributes: {
-        class: "rounded-md",
-      },
-    }),
-    CustomImageExtension(fileHandler),
     TiptapUnderline,
     TextStyle,
     TaskList.configure({
@@ -148,11 +141,11 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomMentionExtension(mentionHandler),
     Placeholder.configure({
       placeholder: ({ editor, node }) => {
-        if (!editor.isEditable) return;
+        if (!editor.isEditable) return "";
 
         if (node.type.name === "heading") return `Heading ${node.attrs.level}`;
 
-        if (editor.storage.imageComponent.uploadInProgress) return "";
+        if (editor.storage.imageComponent?.uploadInProgress) return "";
 
         const shouldHidePlaceholder =
           editor.isActive("table") ||
@@ -179,4 +172,18 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       disabledExtensions,
     }),
   ];
+
+  if (!disabledExtensions.includes("image")) {
+    extensions.push(
+      ImageExtension(fileHandler).configure({
+        HTMLAttributes: {
+          class: "rounded-md",
+        },
+      }),
+      CustomImageExtension(fileHandler)
+    );
+  }
+
+  // @ts-expect-error tiptap types are incorrect
+  return extensions;
 };

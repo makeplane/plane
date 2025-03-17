@@ -1,5 +1,5 @@
-import { FC, ReactNode } from "react";
 import { Editor } from "@tiptap/react";
+import { FC, ReactNode } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
@@ -71,7 +71,7 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
       onClick={handleContainerClick}
       onMouseLeave={handleContainerMouseLeave}
       className={cn(
-        "editor-container cursor-text relative",
+        `editor-container cursor-text relative line-spacing-${displayConfig.lineSpacing ?? DEFAULT_DISPLAY_CONFIG.lineSpacing}`,
         {
           "active-editor": editor?.isFocused && editor?.isEditable,
         },

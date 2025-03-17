@@ -1,9 +1,6 @@
-export type TIssueLayouts =
-  | "list"
-  | "kanban"
-  | "calendar"
-  | "spreadsheet"
-  | "gantt_chart";
+import { TIssue } from "./issues/issue";
+
+export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
 
 export type TIssueGroupByOptions =
   | "state"
@@ -211,3 +208,10 @@ export interface IssuePaginationOptions {
   subGroupedBy?: TIssueGroupByOptions;
   orderBy?: TIssueOrderByOptions;
 }
+
+export type TSpreadsheetColumn = React.FC<{
+  issue: TIssue;
+  onClose: () => void;
+  onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
+  disabled: boolean;
+}>;

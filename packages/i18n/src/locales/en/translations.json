@@ -287,7 +287,7 @@
   "Cancel": "Cancel",
   "edit": "Edit",
   "archive": "Archive",
-  "restor": "Restore",
+  "restore": "Restore",
   "open_in_new_tab": "Open in new tab",
   "delete": "Delete",
   "deleting": "Deleting",
@@ -418,7 +418,7 @@
         "project": "Your recent projects will appear here once you visit one.",
         "page": "Your recent pages will appear here once you visit one.",
         "issue": "Your recent work items will appear here once you visit one.",
-        "default": "You don't have any recent items yet."
+        "default": "You don't have any recents yet."
       },
       "filters": {
         "all": "All items",
@@ -461,6 +461,8 @@
     "states": "States",
     "state": "State",
     "state_groups": "State groups",
+    "state_group": "State group",
+    "priorities": "Priorities",
     "priority": "Priority",
     "team_project": "Team project",
     "project": "Project",
@@ -469,12 +471,16 @@
     "module": "Module",
     "modules": "Modules",
     "labels": "Labels",
+    "label": "Label",
     "assignees": "Assignees",
     "assignee": "Assignee",
     "created_by": "Created by",
     "none": "None",
     "link": "Link",
+    "estimates": "Estimates",
     "estimate": "Estimate",
+    "created_at": "Created at",
+    "completed_at": "Completed at",
     "layout": "Layout",
     "filters": "Filters",
     "display": "Display",
@@ -492,6 +498,7 @@
     "epic": "Epic",
     "epics": "Epics",
     "work_item": "Work item",
+    "work_items": "Work items",
     "sub_work_item": "Sub-work item",
     "add": "Add",
     "warning": "Warning",
@@ -516,12 +523,13 @@
     "add_more": "Add more",
     "defaults": "Defaults",
     "add_label": "Add label",
-    "estimates": "Estimates",
     "customize_time_range": "Customize time range",
     "loading": "Loading",
     "attachments": "Attachments",
+    "property": "Property",
     "properties": "Properties",
     "parent": "Parent",
+    "page": "Page",
     "remove": "Remove",
     "archiving": "Archiving",
     "archive": "Archive",
@@ -611,6 +619,7 @@
       "open_in_new_tab": "Open in new tab",
       "copy_link": "Copy link",
       "archive": "Archive",
+      "restore": "Restore",
       "delete": "Delete",
       "remove_relation": "Remove relation",
       "subscribe": "Subscribe",
@@ -653,8 +662,6 @@
     "select": "Select",
     "upgrade": "Upgrade",
     "add_seats": "Add Seats",
-    "label": "Label",
-    "priorities": "Priorities",
     "projects": "Projects",
     "workspace": "Workspace",
     "workspaces": "Workspaces",
@@ -672,7 +679,32 @@
     "disconnect": "Disconnect",
     "disconnecting": "Disconnecting",
     "installing": "Installing",
-    "install": "Install"
+    "install": "Install",
+    "reset": "Reset",
+    "live": "Live",
+    "change_history": "Change History",
+    "coming_soon": "Coming soon",
+    "members": "Members",
+    "you": "You",
+    "upgrade_cta": {
+      "higher_subscription": "Upgrade to higher subscription",
+      "talk_to_sales": "Talk to Sales"
+    },
+    "category": "Category",
+    "categories": "Categories",
+    "saving": "Saving",
+    "save_changes": "Save changes",
+    "delete": "Delete",
+    "deleting": "Deleting",
+    "pending": "Pending",
+    "invite": "Invite",
+    "view": "View"
+  },
+
+  "chart": {
+    "x_axis": "X-axis",
+    "y_axis": "Y-axis",
+    "metric": "Metric"
   },
 
   "form": {
@@ -784,7 +816,8 @@
         "sub_issue_count": "Sub-work item count",
         "attachment_count": "Attachment count",
         "created_on": "Created on",
-        "sub_issue": "Sub-work item"
+        "sub_issue": "Sub-work item",
+        "work_item_count": "Work item count"
       },
       "extra": {
         "show_sub_issues": "Show sub-work items",
@@ -1253,22 +1286,34 @@
         "company_size": "Company size",
         "url": "Workspace URL",
         "update_workspace": "Update workspace",
-        "delete_workspace": "Delete workspace",
+        "delete_workspace": "Delete this workspace",
         "delete_workspace_description": "When deleting a workspace, all of the data and resources within that workspace will be permanently removed and cannot be recovered.",
-        "delete_btn": "Delete my workspace",
+        "delete_btn": "Delete this workspace",
+        "delete_modal": {
+          "title": "Are you sure you want to delete this workspace?",
+          "description": "You have an active trial to one of our paid plans. Please cancel it first to proceed.",
+          "dismiss": "Dismiss",
+          "cancel": "Cancel trial",
+          "success_title": "Workspace deleted.",
+          "success_message": "You will soon go to your profile page.",
+          "error_title": "That didn't work.",
+          "error_message": "Try again, please."
+        },
         "errors": {
           "name": {
             "required": "Name is required",
             "max_length": "Workspace name should not exceed 80 characters"
           },
           "company_size": {
-            "required": "Company size is required"
+            "required": "Company size is required",
+            "select_a_range": "Select organization size"
           }
         }
       },
       "members": {
         "title": "Members",
         "add_member": "Add member",
+        "pending_invites": "Pending invites",
         "invitations_sent_successfully": "Invitations sent successfully",
         "leave_confirmation": "Are you sure you want to leave the workspace? You will no longer have access to this workspace. This action cannot be undone.",
         "details": {
@@ -1505,7 +1550,11 @@
       }
     },
     "states": {
-      "describe_this_state_for_your_members": "Describe this state for your members."
+      "describe_this_state_for_your_members": "Describe this state for your members.",
+      "empty_state": {
+        "title": "No states available for the {groupKey} group",
+        "description": "Please create a new state"
+      }
     },
     "labels": {
       "label_title": "Label title",

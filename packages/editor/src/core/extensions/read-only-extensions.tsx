@@ -27,31 +27,30 @@ import {
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
-// types
-import { TExtensions, TFileHandler, TReadOnlyMentionHandler } from "@/types";
 // plane editor extensions
 import { CoreReadOnlyEditorAdditionalExtensions } from "@/plane-editor/extensions";
+// types
+import { TExtensions, TReadOnlyFileHandler, TReadOnlyMentionHandler } from "@/types";
 
 type Props = {
   disabledExtensions: TExtensions[];
-  fileHandler: Pick<TFileHandler, "getAssetSrc">;
+  fileHandler: TReadOnlyFileHandler;
   mentionHandler: TReadOnlyMentionHandler;
 };
 
 export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
   const { disabledExtensions, fileHandler, mentionHandler } = props;
 
-  return [
-    // @ts-expect-error tiptap types are incorrect
+  const extensions = [
     StarterKit.configure({
       bulletList: {
         HTMLAttributes: {
-          class: "list-disc pl-7 space-y-2",
+          class: "list-disc pl-7 space-y-[--list-spacing-y]",
         },
       },
       orderedList: {
         HTMLAttributes: {
-          class: "list-decimal pl-7 space-y-2",
+          class: "list-decimal pl-7 space-y-[--list-spacing-y]",
         },
       },
       listItem: {
@@ -94,16 +93,6 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
       },
     }),
     CustomTypographyExtension,
-    ReadOnlyImageExtension({
-      getAssetSrc: fileHandler.getAssetSrc,
-    }).configure({
-      HTMLAttributes: {
-        class: "rounded-md",
-      },
-    }),
-    CustomReadOnlyImageExtension({
-      getAssetSrc: fileHandler.getAssetSrc,
-    }),
     TiptapUnderline,
     TextStyle,
     TaskList.configure({
@@ -140,4 +129,18 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
       disabledExtensions,
     }),
   ];
+
+  if (!disabledExtensions.includes("image")) {
+    extensions.push(
+      ReadOnlyImageExtension(fileHandler).configure({
+        HTMLAttributes: {
+          class: "rounded-md",
+        },
+      }),
+      CustomReadOnlyImageExtension(fileHandler)
+    );
+  }
+
+  // @ts-expect-error tiptap types are incorrect
+  return extensions;
 };

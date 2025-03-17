@@ -457,7 +457,7 @@
   "Cancel": "キャンセル",
   "edit": "編集",
   "archive": "アーカイブ",
-  "restor": "復元",
+  "restore": "復元",
   "open_in_new_tab": "新しいタブで開く",
   "delete": "削除",
   "deleting": "削除中",
@@ -631,6 +631,8 @@
     "states": "ステータス",
     "state": "ステータス",
     "state_groups": "ステータスグループ",
+    "state_group": "ステート グループ",
+    "priorities": "優先度",
     "priority": "優先度",
     "team_project": "チームプロジェクト",
     "project": "プロジェクト",
@@ -639,12 +641,16 @@
     "module": "モジュール",
     "modules": "モジュール",
     "labels": "ラベル",
+    "label": "ラベル",
     "assignees": "担当者",
     "assignee": "担当者",
     "created_by": "作成者",
     "none": "なし",
     "link": "リンク",
+    "estimates": "見積もり",
     "estimate": "見積もり",
+    "created_at": "クリエイテッド アット",
+    "completed_at": "コンプリーテッド アット",
     "layout": "レイアウト",
     "filters": "フィルター",
     "display": "表示",
@@ -662,6 +668,7 @@
     "epic": "エピック",
     "epics": "エピック",
     "work_item": "作業項目",
+    "work_items": "作業項目",
     "sub_work_item": "サブ作業項目",
     "add": "追加",
     "warning": "警告",
@@ -686,12 +693,13 @@
     "add_more": "さらに追加",
     "defaults": "デフォルト",
     "add_label": "ラベルを追加",
-    "estimates": "見積もり",
     "customize_time_range": "期間をカスタマイズ",
     "loading": "読み込み中",
     "attachments": "添付ファイル",
+    "property": "プロパティ",
     "properties": "プロパティ",
     "parent": "親",
+    "page": "ページ",
     "remove": "削除",
     "archiving": "アーカイブ中",
     "archive": "アーカイブ",
@@ -823,8 +831,6 @@
     "select": "選択",
     "upgrade": "アップグレード",
     "add_seats": "シートを追加",
-    "label": "ラベル",
-    "priorities": "優先度",
     "projects": "プロジェクト",
     "workspace": "ワークスペース",
     "workspaces": "ワークスペース",
@@ -842,7 +848,32 @@
     "disconnect": "切断",
     "disconnecting": "切断中",
     "installing": "インストール中",
-    "install": "インストール"
+    "install": "インストール",
+    "reset": "リセット",
+    "live": "ライブ",
+    "change_history": "変更履歴",
+    "coming_soon": "近日公開",
+    "members": "メンバー",
+    "you": "あなた",
+    "upgrade_cta": {
+      "higher_subscription": "高いサブスクリプションにアップグレード",
+      "talk_to_sales": "トーク トゥ セールス"
+    },
+    "category": "カテゴリー",
+    "categories": "カテゴリーズ",
+    "saving": "セービング",
+    "save_changes": "セーブ チェンジズ",
+    "delete": "デリート",
+    "deleting": "デリーティング",
+    "pending": "保留中",
+    "invite": "招待",
+    "view": "ビュー"
+  },
+
+  "chart": {
+    "x_axis": "エックス アクシス",
+    "y_axis": "ワイ アクシス",
+    "metric": "メトリック"
   },
 
   "form": {
@@ -954,7 +985,8 @@
         "sub_issue_count": "サブ作業項目数",
         "attachment_count": "添付ファイル数",
         "created_on": "作成日",
-        "sub_issue": "サブ作業項目"
+        "sub_issue": "サブ作業項目",
+        "work_item_count": "作業項目数"
       },
       "extra": {
         "show_sub_issues": "サブ作業項目を表示",
@@ -1422,22 +1454,34 @@
         "company_size": "会社の規模",
         "url": "ワークスペースURL",
         "update_workspace": "ワークスペースを更新",
-        "delete_workspace": "ワークスペースを削除",
-        "delete_workspace_description": "ワークスペースを削除すると、そのワークスペース内のすべてのデータとリソースが永久に削除され、復元できなくなります。",
-        "delete_btn": "ワークスペースを削除",
+        "delete_workspace": "このワークスペースを削除",
+        "delete_workspace_description": "ワークスペースを削除すると、そのワークスペース内のすべてのデータとリソースが完全に削除され、復元することはできません。",
+        "delete_btn": "このワークスペースを削除",
+        "delete_modal": {
+          "title": "このワークスペースを削除してもよろしいですか？",
+          "description": "有料プランの無料トライアルが有効です。続行するには、まずトライアルをキャンセルしてください。",
+          "dismiss": "閉じる",
+          "cancel": "トライアルをキャンセル",
+          "success_title": "ワークスペースが削除されました。",
+          "success_message": "まもなくプロフィールページに移動します。",
+          "error_title": "操作に失敗しました。",
+          "error_message": "もう一度お試しください。"
+        },
         "errors": {
           "name": {
             "required": "名前は必須です",
             "max_length": "ワークスペース名は80文字を超えることはできません"
           },
           "company_size": {
-            "required": "会社の規模は必須です"
+            "required": "会社の規模は必須です",
+            "select_a_range": "組織の規模を選択"
           }
         }
       },
       "members": {
         "title": "メンバー",
         "add_member": "メンバーを追加",
+        "pending_invites": "保留中の招待",
         "invitations_sent_successfully": "招待が正常に送信されました",
         "leave_confirmation": "ワークスペースから退出してもよろしいですか？このワークスペースにアクセスできなくなります。この操作は取り消せません。",
         "details": {
@@ -1674,7 +1718,11 @@
       }
     },
     "states": {
-      "describe_this_state_for_your_members": "このステータスについてメンバーに説明してください。"
+      "describe_this_state_for_your_members": "このステータスについてメンバーに説明してください。",
+      "empty_state": {
+        "title": "{groupKey}グループのステータスがありません",
+        "description": "新しいステータスを作成してください"
+      }
     },
     "labels": {
       "label_title": "ラベルタイトル",

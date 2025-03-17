@@ -1,12 +1,13 @@
+import { useRef } from "react";
 import { AlertCircle } from "lucide-react";
-// Plane
+// plane imports
 import { ISSUE_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssueOrderByOptions } from "@plane/types";
 // helpers
 import { cn } from "@/helpers/common.helper";
-// Plane-web
-import { WorkFlowDisabledMessage } from "@/plane-web/components/workflow";
+// plane web imports
+import { WorkFlowDisabledOverlay } from "@/plane-web/components/workflow";
 
 type Props = {
   dragColumnOrientation: "justify-start" | "justify-center" | "justify-end";
@@ -30,9 +31,10 @@ export const GroupDragOverlay = (props: Props) => {
     isDraggingOverColumn,
     isEpic = false,
   } = props;
-
   // hooks
   const { t } = useTranslation();
+  // refs
+  const messageContainerRef = useRef<HTMLDivElement>(null);
 
   const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
   const readableOrderBy = t(
@@ -41,27 +43,28 @@ export const GroupDragOverlay = (props: Props) => {
 
   return (
     <div
+      ref={messageContainerRef}
       className={cn(
-        `absolute top-0 left-0 h-full w-full items-center text-sm font-medium text-custom-text-300 rounded bg-custom-background-overlay ${dragColumnOrientation}`,
+        `absolute top-0 left-0 h-full w-full items-center text-sm font-medium text-custom-text-300 rounded bg-custom-background-80/85 ${dragColumnOrientation}`,
         {
           "flex flex-col border-[1px] border-custom-border-300 z-[2]": shouldOverlayBeVisible,
+          "bg-red-200/60": workflowDisabledSource && isDropDisabled,
         },
         { hidden: !shouldOverlayBeVisible }
       )}
     >
       {workflowDisabledSource ? (
-        <WorkFlowDisabledMessage parentStateId={workflowDisabledSource} className="my-2" />
+        <WorkFlowDisabledOverlay
+          messageContainerRef={messageContainerRef}
+          workflowDisabledSource={workflowDisabledSource}
+          shouldOverlayBeVisible={shouldOverlayBeVisible}
+        />
       ) : (
         <div
-          className={cn(
-            "p-3 my-8 flex flex-col rounded items-center",
-            {
-              "text-custom-text-200": shouldOverlayBeVisible,
-            },
-            {
-              "text-custom-text-error": isDropDisabled,
-            }
-          )}
+          className={cn("p-3 my-8 flex flex-col rounded items-center", {
+            "text-custom-text-200": shouldOverlayBeVisible,
+            "text-custom-text-error": isDropDisabled,
+          })}
         >
           {dropErrorMessage ? (
             <div className="flex items-center">
