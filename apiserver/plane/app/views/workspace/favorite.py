@@ -43,10 +43,13 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
                     entity_type=request.data.get("entity_type"),
                     entity_identifier=request.data.get("entity_identifier"),
                 ).first()
-                user_favorite = user_favorites.first()
-                serializer = UserFavoriteSerializer(user_favorite)
-                return Response(serializer.data, status=status.HTTP_200_OK)
 
+                # If the favorite exists return
+                if user_favorites:
+                    serializer = UserFavoriteSerializer(user_favorites)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+
+            # else create a new favorite
             serializer = UserFavoriteSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(
