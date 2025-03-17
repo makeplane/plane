@@ -190,7 +190,7 @@ class WorkspaceConnection(BaseModel):
             # Remove all credentials with the same workspace_id and connection_type + "-USER"
             user_connection_type = f"{self.connection_type}-USER"
             WorkspaceCredential.objects.filter(
-                workspace_id=self.workspace_id, connection_type=user_connection_type
+                workspace_id=self.workspace_id, source=user_connection_type
             ).delete()
 
             super().delete(*args, **kwargs)
