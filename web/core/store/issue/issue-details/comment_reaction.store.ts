@@ -144,13 +144,15 @@ export class IssueCommentReactionStore implements IIssueCommentReactionStore {
   };
 
   createCommentReaction = async (workspaceSlug: string, projectId: string, commentId: string, reaction: string) => {
+    // eslint-disable-next-line no-useless-catch
     try {
       const response = await this.issueReactionService.createIssueCommentReaction(workspaceSlug, projectId, commentId, {
         reaction,
       });
 
+      if (!this.commentReactions[commentId]) this.commentReactions[commentId] = {};
       runInAction(() => {
-        update(this.commentReactions, [commentId, reaction], (reactionId) => {
+        update(this.commentReactions, `${commentId}.${reaction}`, (reactionId) => {
           if (!reactionId) return [response.id];
           return concat(reactionId, response.id);
         });
