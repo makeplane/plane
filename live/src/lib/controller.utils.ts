@@ -1,42 +1,50 @@
 import { Router } from "express";
-import { ControllerConstructor } from "./controller.interface";
+import { IControllerRegistry, IServiceContainer, ControllerRegistration, WebSocketControllerRegistration } from "./controller.interface";
 import "reflect-metadata";
 
 // Define valid HTTP methods
 type HttpMethod = 'get' | 'post' | 'put' | 'patch' | 'delete' | 'all' | 'use' | 'options' | 'head' | 'ws';
 
 /**
- * Register controller routes with the provided router
+ * Register all controllers from a registry with dependency injection
  * @param router Express router to register routes on
- * @param controllers Array of controller classes to register
+ * @param registry Controller registry containing all controllers
+ * @param container Service container for dependency injection
  */
-export function registerControllers(router: Router, controllers: ControllerConstructor[]): void {
-  for (const Controller of controllers) {
-    const instance = new Controller();
-    
-    // Call registerRoutes if the controller implements it
-    if (instance.registerRoutes) {
-      instance.registerRoutes(router);
-    }
-    
-    // Handle controllers with decorators
-    const baseRoute = Reflect.getMetadata("baseRoute", Controller) || "";
-    if (baseRoute) {
-      const proto = Object.getPrototypeOf(instance);
-      const methods = Object.getOwnPropertyNames(proto).filter(
-        (item) => item !== "constructor" && typeof (instance as any)[item] === "function"
-      );
+export function registerControllers(
+  router: Router, 
+  registry: IControllerRegistry,
+  container: IServiceContainer
+): void {
+  // Register REST controllers
+  registry.controllers.forEach((registration) => {
+    const { Controller, dependencies = [] } = registration;
+    const resolvedDependencies = dependencies.map(dep => container.get(dep));
+    const instance = new Controller(...resolvedDependencies);
+    instance.registerRoutes(router);
+  });
 
-      methods.forEach((methodName) => {
-        const route = Reflect.getMetadata("route", proto, methodName) || "";
-        const method = Reflect.getMetadata("method", proto, methodName) as HttpMethod;
-        const middlewares = Reflect.getMetadata("middlewares", proto, methodName) || [];
+  // Register WebSocket controllers
+  registry.webSocketControllers.forEach((registration) => {
+    const { Controller, dependencies = [] } = registration;
+    const resolvedDependencies = dependencies.map(dep => container.get(dep));
+    const instance = new Controller(...resolvedDependencies);
+    instance.registerRoutes(router);
+  });
+}
 
-        if (route && method && method !== "ws") { // Skip WebSocket routes as they're handled differently
-          // Use type assertion to tell TypeScript that method is a valid key for router
-          (router as any)[method](baseRoute + route, ...middlewares, (instance as any)[methodName].bind(instance));
-        }
-      });
-    }
-  }
+/**
+ * Create a controller registry with the given controllers
+ * @param controllers Array of REST controller registrations
+ * @param webSocketControllers Array of WebSocket controller registrations
+ * @returns Controller registry
+ */
+export function createControllerRegistry(
+  controllers: ControllerRegistration[],
+  webSocketControllers: WebSocketControllerRegistration[] = []
+): IControllerRegistry {
+  return {
+    controllers,
+    webSocketControllers,
+  };
 } 

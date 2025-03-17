@@ -1,12 +1,11 @@
-import { Router } from "express";
 import type { Request, Response } from "express";
-import { manualLogger } from "@/core/helpers/logger";
 import { convertHTMLDocumentToAllFormats } from "@/core/helpers/convert-document";
 import { TConvertDocumentRequestBody } from "@/core/types/common";
-import { IController } from "@/lib/controller.interface";
+import { BaseController } from "@/lib/base.controller";
 import { Post } from "@/lib/decorators";
+import { logger } from "@plane/logger";
 
-export class DocumentController implements IController {
+export class DocumentController extends BaseController {
   @Post("/convert-document")
   async convertDocument(req: Request, res: Response) {
     const { description_html, variant } = req.body as TConvertDocumentRequestBody;
@@ -26,14 +25,10 @@ export class DocumentController implements IController {
         description_binary,
       });
     } catch (error) {
-      manualLogger.error("Error in /convert-document endpoint:", error);
+      logger.error("Error in /convert-document endpoint:", error);
       res.status(500).send({
         message: `Internal server error. ${error}`,
       });
     }
-  }
-
-  registerRoutes(router: Router): void {
-    // Routes are registered via decorators
   }
 }

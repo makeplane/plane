@@ -1,9 +1,9 @@
-import { ErrorRequestHandler } from "express";
-import { manualLogger } from "@/core/helpers/logger";
-import { SentryInstance } from "@/sentry-config";
-import { env } from "@/env";
+import { ErrorRequestHandler, Request, Response, NextFunction } from "express";
 
-// Base custom error class that extends the built-in Error
+import { SentryInstance, captureException } from "@/sentry-config";
+import { env } from "@/env";
+import { logger } from "@plane/logger";
+
 export class AppError extends Error {
   status: number;
   isOperational: boolean;
@@ -16,7 +16,7 @@ export class AppError extends Error {
     this.isOperational = isOperational;
     this.context = context;
     Error.captureStackTrace(this, this.constructor);
-    
+
     // Automatically report the error
     this.report();
   }
@@ -24,14 +24,14 @@ export class AppError extends Error {
   private report() {
     // Log the error
     if (this.isOperational) {
-      manualLogger.info(`Operational error: ${this.message}`, { error: this, context: this.context });
+      logger.info(`Operational error: ${this.message}`, { error: this, context: this.context });
     } else {
-      manualLogger.error(`Unhandled error: ${this.stack || this.message}`, { error: this, context: this.context });
+      logger.error(`Unhandled error: ${this.stack || this.message}`, { error: this, context: this.context });
     }
 
     // Send to Sentry
     if (SentryInstance) {
-      SentryInstance.captureException(this, {
+      captureException(this, {
         extra: {
           ...this.context,
           isOperational: this.isOperational,
@@ -41,26 +41,12 @@ export class AppError extends Error {
   }
 }
 
-// Operational errors - expected errors that we can recover from
-export class ValidationError extends AppError {
-  constructor(message: string, context?: Record<string, any>) {
-    super(message, 400, true, context);
-  }
-}
-
 export class NotFoundError extends AppError {
   constructor(message: string, context?: Record<string, any>) {
     super(message, 404, true, context);
   }
 }
 
-export class UnauthorizedError extends AppError {
-  constructor(message: string, context?: Record<string, any>) {
-    super(message, 401, true, context);
-  }
-}
-
-// Central error handler
 export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   // Already sent response, let default Express error handler deal with it
   if (res.headersSent) {
@@ -88,21 +74,34 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 export const setupGlobalErrorHandlers = (gracefulShutdown: () => Promise<void>) => {
   // Handle promise rejections
   process.on("unhandledRejection", (reason: unknown) => {
-    manualLogger.error("Unhandled Rejection: ", reason);
+    logger.error("Unhandled Rejection: ", reason);
     if (SentryInstance) {
       SentryInstance.captureException(reason);
     }
-    manualLogger.error(`UNHANDLED REJECTION! 💥 Shutting down...`);
+    logger.error(`UNHANDLED REJECTION! 💥 Shutting down...`);
     gracefulShutdown();
   });
 
   // Handle exceptions
   process.on("uncaughtException", (error: Error) => {
-    manualLogger.error("Uncaught Exception: ", error);
+    logger.error("Uncaught Exception: ", error);
     if (SentryInstance) {
       SentryInstance.captureException(error);
     }
-    manualLogger.error(`UNCAUGHT EXCEPTION! 💥 Shutting down...`);
+    logger.error(`UNCAUGHT EXCEPTION! 💥 Shutting down...`);
     gracefulShutdown();
   });
 };
+
+/**
+ * Configure error handling middleware for the Express app
+ */
+export function configureErrorHandlers(app: any): void {
+  // Global error handling middleware
+  app.use(errorHandler);
+
+  // 404 handler must be last
+  app.use((_req: Request, _res: Response, next: NextFunction) => {
+    next(new NotFoundError("Resource not found"));
+  });
+}
