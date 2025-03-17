@@ -5,13 +5,6 @@ import { Plugin, PluginKey } from "@tiptap/pm/state";
 export const MarkdownClipboard = Extension.create({
   name: "markdownClipboard",
 
-  addOptions() {
-    return {
-      transformPastedText: false,
-      transformCopiedText: false,
-    };
-  },
-
   addProseMirrorPlugins() {
     return [
       new Plugin({

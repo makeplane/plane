@@ -29,6 +29,7 @@ import {
   TableCell,
   TableHeader,
   TableRow,
+  MarkdownClipboard,
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
@@ -36,7 +37,6 @@ import { isValidHttpUrl } from "@/helpers/common";
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
 import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
-import { MarkdownClipboard } from "./clipboard";
 
 type TArguments = {
   disabledExtensions: TExtensions[];
@@ -138,7 +138,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomCodeInlineExtension,
     Markdown.configure({
       html: true,
-      transformCopiedText: true,
+      transformCopiedText: false,
       transformPastedText: true,
       breaks: true,
     }),
