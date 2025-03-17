@@ -9,13 +9,14 @@ import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // components
 import { PageListBlock } from "./";
 
+const storeType = EPageStoreType.PROJECT;
+
 type TPagesListRoot = {
   pageType: TPageNavigationTabs;
-  storeType: EPageStoreType;
 };
 
-export const PagesListRoot: FC<TPagesListRoot> = observer((props) => {
-  const { pageType, storeType } = props;
+export const ProjectPagesListRoot: FC<TPagesListRoot> = observer((props) => {
+  const { pageType } = props;
   // store hooks
   const { getCurrentProjectFilteredPageIds } = usePageStore(storeType);
   // derived values

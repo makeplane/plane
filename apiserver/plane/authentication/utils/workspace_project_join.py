@@ -5,6 +5,7 @@ from plane.db.models import (
     WorkspaceMemberInvite,
 )
 from plane.utils.cache import invalidate_cache_directly
+from plane.payment.bgtasks.member_sync_task import member_sync_task
 
 
 def process_workspace_project_invitations(user):
@@ -34,6 +35,12 @@ def process_workspace_project_invitations(user):
             user=False,
             multiple=True,
         )
+        for workspace_member_invite in workspace_member_invites
+    ]
+
+    # Sync workspace members
+    [
+        member_sync_task.delay(workspace_member_invite.workspace.slug)
         for workspace_member_invite in workspace_member_invites
     ]
 
@@ -77,6 +84,12 @@ def process_workspace_project_invitations(user):
         ],
         ignore_conflicts=True,
     )
+
+    # Sync workspace members
+    [
+        member_sync_task.delay(project_member_invite.workspace.slug)
+        for project_member_invite in project_member_invites
+    ]
 
     # Delete all the invites
     workspace_member_invites.delete()
