@@ -147,7 +147,7 @@ class MagicCodeProvider(CredentialAdapter):
                             "first_name": "",
                             "last_name": "",
                             "provider_id": "",
-                            "is_password_autoset": True,
+                            "is_password_autoset": False,
                         },
                     }
                 )
