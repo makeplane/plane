@@ -127,7 +127,7 @@ x-live-env: &live-env
 
 services:
   admin:
-    image: makeplane/admin-enterprise:${APP_RELEASE_VERSION:-v1.x.x}
+    image: registry.plane.tools/plane/admin-enterprise:${APP_RELEASE_VERSION:-v1.x.x}
     command: node admin/server.js admin
     deploy:
       replicas: ${ADMIN_REPLICAS:-1}
@@ -138,7 +138,7 @@ services:
       - web
 
   web:
-    image: makeplane/web-enterprise:${APP_RELEASE_VERSION:-v1.x.x}
+    image: registry.plane.tools/plane/web-enterprise:${APP_RELEASE_VERSION:-v1.x.x}
     command: node web/server.js web
     deploy:
       replicas: ${WEB_REPLICAS:-1}
