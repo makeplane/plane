@@ -1,6 +1,7 @@
-import { TStaticViewTypes } from "@plane/types";
+import { TStaticViewTypes, IWorkspaceSearchResults } from "@plane/types";
 import { EUserWorkspaceRoles } from "./user";
 import {
+  EXTENDED_WORKSPACE_RESULT_ENTITIES,
   EXTENDED_WORKSPACE_SETTINGS,
   EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS,
   EXTENDED_WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS,
@@ -148,7 +149,7 @@ export const WORKSPACE_SETTINGS_LINKS: {
   EXTENDED_WORKSPACE_SETTINGS["teamspaces"],
   EXTENDED_WORKSPACE_SETTINGS["initiatives"],
   EXTENDED_WORKSPACE_SETTINGS["customers"],
-    EXTENDED_WORKSPACE_SETTINGS["templates"],
+  EXTENDED_WORKSPACE_SETTINGS["templates"],
 ];
 
 export const ROLE = {
@@ -343,3 +344,16 @@ export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarN
   EXTENDED_WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["pi-chat"],
   WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["projects"],
 ];
+
+export const WORKSPACE_DEFAULT_SEARCH_RESULT: IWorkspaceSearchResults = {
+  results: {
+    workspace: [],
+    project: [],
+    issue: [],
+    cycle: [],
+    module: [],
+    issue_view: [],
+    page: [],
+    ...EXTENDED_WORKSPACE_RESULT_ENTITIES,
+  },
+};

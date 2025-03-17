@@ -101,3 +101,9 @@ export const EXTENDED_WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, 
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
   },
 };
+
+export const EXTENDED_WORKSPACE_RESULT_ENTITIES = {
+  epic: [],
+  team: [],
+  initiative: [],
+};

@@ -56,3 +56,4 @@ export * from "./integration-config";
 export * from "./templates";
 export * from "./customers";
 export * from "./workflow";
+export * from "./workspace-extended";
