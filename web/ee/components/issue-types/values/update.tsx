@@ -5,13 +5,8 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/constants";
 // ui
-import { TIssuePropertyValues } from "@plane/types";
+import { TIssuePropertyValues, TIssueServiceType } from "@plane/types";
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
-// ce components
-import {
-  IssueAdditionalPropertyValuesUpdate as CEIssueAdditionalPropertyValuesUpdate,
-  TIssueAdditionalPropertyValuesUpdateProps,
-} from "@/ce/components/issue-types";
 // plane web components
 import { IssueAdditionalPropertyValues } from "@/plane-web/components/issue-types";
 // plane web hooks
@@ -19,6 +14,16 @@ import { useIssuePropertiesActivity, useIssueType, useIssueTypes } from "@/plane
 // plane web services
 import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
 // plane imports
+
+type TIssueAdditionalPropertyValuesUpdateProps = {
+  issueId: string;
+  issueTypeId: string;
+  projectId: string;
+  workspaceSlug: string;
+  isDisabled: boolean;
+  issueServiceType?: TIssueServiceType;
+  entityType?: EWorkItemTypeEntity;
+};
 
 export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPropertyValuesUpdateProps> = observer(
   (props) => {
@@ -98,7 +103,7 @@ export const IssueAdditionalPropertyValuesUpdate: React.FC<TIssueAdditionalPrope
     };
 
     // if issue types are not enabled, return null
-    if (!isWorkItemTypeEntityEnabled) return <CEIssueAdditionalPropertyValuesUpdate {...props} />;
+    if (!isWorkItemTypeEntityEnabled) return <></>;
 
     if (propertiesLoader === "init-loader") {
       return (
