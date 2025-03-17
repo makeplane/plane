@@ -35,14 +35,14 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
         try:
             workspace = Workspace.objects.get(slug=slug)
 
-            user_favorites = UserFavorite.objects.filter(
-                workspace=workspace,
-                user_id=request.user.id,
-                entity_type=request.data.get("entity_type"),
-                entity_identifier=request.data.get("entity_identifier")
-            )
             # If the favorite exists return
-            if request.data.get("entity_identifier") and user_favorites.exists():
+            if request.data.get("entity_identifier"):
+                user_favorites = UserFavorite.objects.filter(
+                    workspace=workspace,
+                    user_id=request.user.id,
+                    entity_type=request.data.get("entity_type"),
+                    entity_identifier=request.data.get("entity_identifier"),
+                ).first()
                 user_favorite = user_favorites.first()
                 serializer = UserFavoriteSerializer(user_favorite)
                 return Response(serializer.data, status=status.HTTP_200_OK)
