@@ -114,9 +114,9 @@ export class FavoriteStore implements IFavoriteStore {
     data = { ...data, parent: null, is_folder: data.entity_type === "folder" };
 
     if (data.entity_identifier && this.entityMap[data.entity_identifier]) return this.entityMap[data.entity_identifier];
+    const id = uuidv4();
     try {
       // optimistic addition
-      const id = uuidv4();
       runInAction(() => {
         set(this.favoriteMap, [id], data);
         data.entity_identifier && set(this.entityMap, [data.entity_identifier], data);
