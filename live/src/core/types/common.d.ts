@@ -5,6 +5,11 @@ export type TDocumentTypes = "project_page" | TAdditionalDocumentTypes;
 
 export type HocusPocusServerContext = {
   cookie: string;
+  projectId: string;
+  workspaceSlug: string;
+  documentType: TDocumentTypes;
+  userId: string;
+  agentId: string;
 };
 
 export type TConvertDocumentRequestBody = {

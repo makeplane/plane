@@ -1,4 +1,4 @@
-import Errors from "./error-factory";
+import Errors from '@/core/helpers/error-handling/error-factory';
 
 /**
  * A simple validation utility that integrates with our error system.

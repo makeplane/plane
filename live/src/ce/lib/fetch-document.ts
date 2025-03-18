@@ -20,17 +20,6 @@ export const fetchDocument = async (args: TArgs): Promise<Uint8Array | null> => 
     throw new AppError("Page ID is required");
   }
 
-  return catchAsync(
-    async () => {
-      switch (documentType) {
-        default:
-          throw new AppError(`Invalid document type: ${documentType}`);
-      }
-    },
-    {
-      params: { pageId, documentType },
-      extra: { operation: "fetch" },
-    }
-  );
+  return null
 };
 

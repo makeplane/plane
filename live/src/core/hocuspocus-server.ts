@@ -8,7 +8,7 @@ import { DocumentCollaborativeEvents, TDocumentEventsServer } from "@plane/edito
 // editor types
 import { TUserDetails } from "@plane/editor";
 // types
-import { type HocusPocusServerContext } from "@/core/types/common";
+import { TDocumentTypes, type HocusPocusServerContext } from "@/core/types/common";
 // error handling
 import { AppError, catchAsync } from "@/core/helpers/error-handling/error-handler";
 
@@ -20,6 +20,7 @@ export const getHocusPocusServer = async () => {
     onAuthenticate: async ({
       requestHeaders,
       context,
+      requestParameters,
       // user id used as token for authentication
       token,
     }) => {
@@ -48,12 +49,17 @@ export const getHocusPocusServer = async () => {
             throw new AppError("Credentials not provided", 401);
           }
 
-          // set cookie in context, so it can be used throughout the ws connection
-          (context as HocusPocusServerContext).cookie = cookie;
+          const typedContext = {
+            ...context,
+            // for certain editors we need to take in the cookie from the request parameters
+            cookie: cookie ?? requestParameters.get("cookie"),
+            userId: userId,
+            documentType: requestParameters.get("documentType")?.toString() as TDocumentTypes,
+          } as HocusPocusServerContext;
 
           await handleAuthentication({
-            cookie,
-            userId,
+            cookie: typedContext.cookie,
+            userId: typedContext.userId,
           });
         },
         { extra: { operation: "authenticate" } },
