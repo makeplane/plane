@@ -196,12 +196,24 @@ export class TranslationStore {
         return import("../locales/ja/translations-extended.json");
       case "zh-CN":
         return import("../locales/zh-CN/translations-extended.json");
+      case "zh-TW":
+        return import("../locales/zh-TW/translations-extended.json");
       case "ru":
         return import("../locales/ru/translations-extended.json");
       case "it":
         return import("../locales/it/translations-extended.json");
       case "cs":
         return import("../locales/cs/translations-extended.json");
+      case "sk":
+        return import("../locales/sk/translations-extended.json");
+      case "de":
+        return import("../locales/de/translations-extended.json");
+      case "ua":
+        return import("../locales/ua/translations-extended.json");
+      case "pl":
+        return import("../locales/pl/translations-extended.json");
+      case "ko":
+        return import("../locales/ko/translations-extended.json");
       default:
         throw new Error(`Unsupported language: ${language}`);
     }
