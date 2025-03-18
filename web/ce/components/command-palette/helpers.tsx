@@ -16,14 +16,16 @@ import { generateWorkItemLink } from "@/helpers/issue.helper";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 
-export const commandGroups: {
+export type TCommandGroups = {
   [key: string]: {
     icon: JSX.Element | null;
     itemName: (item: any) => React.ReactNode;
     path: (item: any, projectId: string | undefined) => string;
     title: string;
   };
-} = {
+};
+
+export const commandGroups: TCommandGroups = {
   cycle: {
     icon: <ContrastIcon className="h-3 w-3" />,
     itemName: (cycle: IWorkspaceDefaultSearchResult) => (
