@@ -8,7 +8,7 @@ import useSWR from "swr";
 import { CommandIcon, FolderPlus, Search, Settings, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_DEFAULT_SEARCH_RESULT } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspaceSearchResults } from "@plane/types";
 import { LayersIcon, Loader, ToggleSwitch } from "@plane/ui";
@@ -58,9 +58,7 @@ export const CommandModal: React.FC = observer(() => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [results, setResults] = useState<IWorkspaceSearchResults>({
-    results: { workspace: [], project: [], issue: [], cycle: [], module: [], issue_view: [], page: [] },
-  });
+  const [results, setResults] = useState<IWorkspaceSearchResults>(WORKSPACE_DEFAULT_SEARCH_RESULT);
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   const [pages, setPages] = useState<string[]>([]);
   const [searchInIssue, setSearchInIssue] = useState(false);
@@ -151,9 +149,7 @@ export const CommandModal: React.FC = observer(() => {
             setIsSearching(false);
           });
       } else {
-        setResults({
-          results: { workspace: [], project: [], issue: [], cycle: [], module: [], issue_view: [], page: [] },
-        });
+        setResults(WORKSPACE_DEFAULT_SEARCH_RESULT);
         setIsLoading(false);
         setIsSearching(false);
       }
