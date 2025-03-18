@@ -41,7 +41,6 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
 
             if (documentType === "project_page") {
               fetchedData = await fetchPageDescriptionBinary(params, pageId, cookie);
-              console.log("fetchedData", fetchedData);
             } else {
               fetchedData = await fetchDocument({
                 cookie,
@@ -101,24 +100,43 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
   if (redisUrl) {
     try {
       const redisClient = new Redis(redisUrl);
+      let hasErrored = false;
 
       await new Promise<void>((resolve, reject) => {
         redisClient.on("error", (error: any) => {
-          if (error?.code === "ENOTFOUND" || error.message.includes("WRONGPASS") || error.message.includes("NOAUTH")) {
-            redisClient.disconnect();
+          if (!hasErrored) {
+            hasErrored = true;
+            if (
+              error?.code === "ENOTFOUND" ||
+              error.message.includes("WRONGPASS") ||
+              error.message.includes("NOAUTH")
+            ) {
+              redisClient.disconnect();
+            }
+            logger.warn(
+              `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`,
+              error
+            );
+            reject(error);
           }
-          logger.warn(
-            `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`,
-            error
-          );
-          reject(error);
         });
 
         redisClient.on("ready", () => {
-          extensions.push(new HocusPocusRedis({ redis: redisClient }));
-          logger.info("Redis Client connected ✅");
-          resolve();
+          if (!hasErrored) {
+            extensions.push(new HocusPocusRedis({ redis: redisClient }));
+            logger.info("Redis Client connected ✅");
+            resolve();
+          }
         });
+
+        // Add timeout to prevent hanging
+        setTimeout(() => {
+          if (!hasErrored) {
+            hasErrored = true;
+            redisClient.disconnect();
+            reject(new Error("Redis connection timeout"));
+          }
+        }, 5000);
       });
     } catch (error) {
       logger.warn(

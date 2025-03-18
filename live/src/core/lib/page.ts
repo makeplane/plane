@@ -51,7 +51,6 @@ export const fetchPageDescriptionBinary = async (
   if (!workspaceSlug || !projectId || !cookie) return null;
 
   const response = await pageService.fetchDescriptionBinary(workspaceSlug, projectId, pageId, cookie);
-  console.log("response", response);
   const binaryData = new Uint8Array(response);
 
   if (binaryData.byteLength === 0) {

@@ -4,8 +4,7 @@ import { SentryInstance, captureException } from "@/sentry-config";
 import { env } from "@/env";
 import { logger } from "@plane/logger";
 import Errors from "./error-factory";
-import { reportError } from "../error-reporting";
-import { ErrorContext } from "./error-reporting";
+import { ErrorContext, reportError } from "./error-reporting";
 
 /**
  * HTTP Status Codes
