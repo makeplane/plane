@@ -214,7 +214,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
     } catch (error) {
       // revert back to original members in case of error
       runInAction(() => {
-        set(this.projectMemberMap, [projectId, userId], originalProjectMemberData);
+        set(this.projectMemberMap, [projectId, userId, "role"], originalProjectMemberData?.role);
       });
       throw error;
     }

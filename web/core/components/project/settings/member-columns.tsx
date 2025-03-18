@@ -120,8 +120,12 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
       )
     : false;
 
+  // logic
+  // Workspace admin can change his own role
+  // Project admin can change any role except his own and workspace admin's role
   const isRoleEditable =
-    isCurrentUserWorkspaceAdmin || (isCurrentUserProjectAdmin && !isRowDataWorkspaceAdmin && !isCurrentUser);
+    (isCurrentUserWorkspaceAdmin && isCurrentUser) ||
+    (isCurrentUserProjectAdmin && !isRowDataWorkspaceAdmin && !isCurrentUser);
   const checkCurrentOptionWorkspaceRole = (value: string) => {
     const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role as EUserPermissions | undefined;
     if (!value || !currentMemberWorkspaceRole) return ROLE;
@@ -129,7 +133,7 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
     const isGuest = [EUserPermissions.GUEST].includes(currentMemberWorkspaceRole);
 
     return Object.fromEntries(
-      Object.entries(ROLE).filter(([key]) => !isGuest || [currentMemberWorkspaceRole].includes(parseInt(key)))
+      Object.entries(ROLE).filter(([key]) => !isGuest || parseInt(key) === EUserPermissions.GUEST)
     );
   };
 
@@ -170,15 +174,11 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
               optionsClassName="w-full"
               input
             >
-              {Object.entries(checkCurrentOptionWorkspaceRole(rowData.member.id)).map(([key, label]) => {
-                if (parseInt(key) > (currentProjectRole ?? EUserPermissions.GUEST)) return null;
-
-                return (
-                  <CustomSelect.Option key={key} value={key}>
-                    {label}
-                  </CustomSelect.Option>
-                );
-              })}
+              {Object.entries(checkCurrentOptionWorkspaceRole(rowData.member.id)).map(([key, label]) => (
+                <CustomSelect.Option key={key} value={key}>
+                  {label}
+                </CustomSelect.Option>
+              ))}
             </CustomSelect>
           )}
         />
