@@ -105,10 +105,20 @@ export default class GithubController {
           credential.source_access_token
         );
 
-        // Try to delete the installation from GitHub first
-        const deletionResult = await githubService.deleteInstallation(Number(credential.source_access_token));
+        let isDeleted = false;
+        let deletionResult = null;
 
-        if (deletionResult.status !== 204) {
+        // Try to delete the installation from GitHub first
+        try {
+          deletionResult = await githubService.deleteInstallation(Number(credential.source_access_token));
+          isDeleted = deletionResult.status === 204;
+        } catch (error: any) {
+          if (error && error?.response?.status === 404) {
+            isDeleted = true;
+          }
+        }
+
+        if (!isDeleted) {
           return res.status(400).json({ error: "GitHub deletion failed" });
         }
 
