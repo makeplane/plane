@@ -197,7 +197,7 @@ class ProjectMemberViewSet(BaseViewSet):
         workspace_role = WorkspaceMember.objects.get(
             workspace__slug=slug, member=project_member.member, is_active=True
         ).role
-        is_workspace_admin = workspace_role == ROLE.ADMIN
+        is_workspace_admin = workspace_role == ROLE.ADMIN.value
 
         # Check if the user is not editing their own role if they are not an admin
         if request.user.id == project_member.member_id and not is_workspace_admin:
