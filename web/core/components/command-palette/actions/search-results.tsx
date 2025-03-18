@@ -2,12 +2,12 @@
 
 import { Command } from "cmdk";
 import { useParams } from "next/navigation";
-// types
+// plane imports
 import { IWorkspaceSearchResults } from "@plane/types";
-// helpers
-import { commandGroups } from "@/components/command-palette";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
+import { commandGroups } from "@/plane-web/components/command-palette";
 
 type Props = {
   closePalette: () => void;
@@ -25,9 +25,9 @@ export const CommandPaletteSearchResults: React.FC<Props> = (props) => {
   return (
     <>
       {Object.keys(results.results).map((key) => {
+        // TODO: add type for results
         const section = (results.results as any)[key];
         const currentSection = commandGroups[key];
-
         if (!currentSection) return null;
         if (section.length > 0) {
           return (
