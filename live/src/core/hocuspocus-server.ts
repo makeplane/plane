@@ -9,8 +9,8 @@ import { DocumentCollaborativeEvents, TDocumentEventsServer } from "@plane/edito
 import { TUserDetails } from "@plane/editor";
 // types
 import { type HocusPocusServerContext } from "@/core/types/common";
-import { catchAsync } from "@/core/helpers/error-reporting";
-import { AppError } from "@/core/helpers/error-handler";
+// error handling
+import { AppError, catchAsync } from "@/core/helpers/error-handling/error-handler";
 
 export const getHocusPocusServer = async () => {
   const extensions = await getExtensions();

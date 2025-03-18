@@ -3,9 +3,9 @@ import type { WebSocket as WS } from "ws";
 import type { Hocuspocus } from "@hocuspocus/server";
 import { Controller, WebSocket } from "@/lib/decorators";
 import { BaseWebSocketController } from "@/lib/base.controller";
-import { ErrorCategory } from "@/core/helpers/error-handler";
+import { ErrorCategory } from "@/core/helpers/error-handling/error-handler";
 import { logger } from "@plane/logger";
-import Errors from "@/core/helpers/error-factory";
+import Errors from "@/core/helpers/error-handling/error-factory";
 
 @Controller("/collaboration")
 export class CollaborationController extends BaseWebSocketController {

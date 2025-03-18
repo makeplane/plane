@@ -4,6 +4,8 @@ import { SentryInstance, captureException } from "@/sentry-config";
 import { env } from "@/env";
 import { logger } from "@plane/logger";
 import Errors from "./error-factory";
+import { reportError } from "../error-reporting";
+import { ErrorContext } from "./error-reporting";
 
 /**
  * HTTP Status Codes
@@ -194,6 +196,13 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   // Set the response status
   res.status(statusCode);
 
+  // Set any custom headers if provided in the error object
+  if (err.headers && typeof err.headers === "object") {
+    Object.entries(err.headers).forEach(([key, value]) => {
+      res.set(key, value as string);
+    });
+  }
+
   // Prepare error response
   const errorResponse: {
     error: {
@@ -226,6 +235,79 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   }
 };
 
+export const asyncHandler = (fn: Function) => {
+  return (req: any, res: any, next: any) => {
+    Promise.resolve(fn(req, res, next)).catch((error) => {
+      // If it's not an AppError, convert it
+      if (!(error instanceof AppError)) {
+        error = Errors.convertError(error instanceof Error ? error : new Error(String(error)), {
+          context: {
+            url: req.originalUrl,
+            method: req.method,
+            body: req.body,
+            query: req.query,
+            params: req.params,
+            component: "express",
+            operation: "route-handler",
+          },
+        });
+      }
+
+      // Pass to Express error middleware
+      next(error);
+    });
+  };
+};
+
+export interface CatchAsyncOptions<T, E = Error> {
+  /** Default value to return in case of error, null by default */
+  defaultValue?: T | null;
+
+  /** Whether to report non-AppErrors automatically */
+  reportErrors?: boolean;
+
+  /** Whether to rethrow the error after handling it */
+  rethrow?: boolean;
+
+  /** Custom error transformer function */
+  transformError?: (error: unknown) => E;
+
+  /** Custom error handler function that runs before standard handling */
+  onError?: (error: unknown) => void | Promise<void>;
+
+  /** Custom handler for specific error types */
+  errorHandlers?: {
+    [key: string]: (error: any) => T | null | Promise<T>;
+  };
+}
+
+export const catchAsync = <T, E = Error>(
+  fn: () => Promise<T>,
+  context?: ErrorContext,
+  options: CatchAsyncOptions<T, E> = {}
+): (() => Promise<T | null>) => {
+  const { defaultValue = null, onError, rethrow = false } = options;
+
+  return async () => {
+    try {
+      return await fn();
+    } catch (error) {
+      // Apply custom error handler if provided
+      if (onError) {
+        await Promise.resolve(onError(error));
+      }
+
+      reportError(error, context);
+
+      if (rethrow) {
+        throw error;
+      }
+
+      return defaultValue;
+    }
+  };
+};
+
 /**
  * Sets up global error handlers for unhandled rejections and exceptions
  * @param gracefulShutdown Function to call for graceful shutdown
@@ -240,15 +322,13 @@ export const setupGlobalErrorHandlers = (gracefulShutdown: () => Promise<void>):
     }
 
     // Convert to AppError and handle
-    const appError = reason instanceof AppError
-      ? reason
-      : Errors.convertError(
-          reason instanceof Error ? reason : new Error(String(reason)),
-          {
+    const appError =
+      reason instanceof AppError
+        ? reason
+        : Errors.convertError(reason instanceof Error ? reason : new Error(String(reason)), {
             message: reason instanceof Error ? reason.message : String(reason),
-            context: { originalError: reason, source: "unhandledRejection" }
-          }
-        );
+            context: { originalError: reason, source: "unhandledRejection" },
+          });
 
     // Only crash if it's a fatal error
     if (appError.category === ErrorCategory.FATAL) {
@@ -271,14 +351,15 @@ export const setupGlobalErrorHandlers = (gracefulShutdown: () => Promise<void>):
     }
 
     // Convert to AppError if needed
-    const appError = error instanceof AppError
-      ? error
-      : Errors.convertError(error, {
-          context: {
-            originalError: error,
-            source: "uncaughtException",
-          }
-        });
+    const appError =
+      error instanceof AppError
+        ? error
+        : Errors.convertError(error, {
+            context: {
+              originalError: error,
+              source: "uncaughtException",
+            },
+          });
 
     // Only crash for fatal errors or if error handling system itself is broken
     if (appError.category === ErrorCategory.FATAL) {

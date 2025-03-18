@@ -1,6 +1,5 @@
 // types
-import { AppError } from "@/core/helpers/error-handler";
-import { catchAsync } from "@/core/helpers/error-reporting";
+import { AppError, catchAsync } from "@/core/helpers/error-handling/error-handler";
 import { TDocumentTypes } from "@/core/types/common";
 
 interface TArgs {
@@ -27,7 +26,6 @@ export const fetchDocument = async (args: TArgs): Promise<Uint8Array | null> => 
         default:
           throw new AppError(`Invalid document type: ${documentType}`);
       }
-      return null;
     },
     {
       params: { pageId, documentType },
@@ -35,3 +33,4 @@ export const fetchDocument = async (args: TArgs): Promise<Uint8Array | null> => 
     }
   );
 };
+

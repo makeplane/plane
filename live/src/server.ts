@@ -22,7 +22,7 @@ import { ServiceContainer } from "./lib/service-container";
 import { logger } from "@plane/logger";
 
 // Error handling
-import { configureErrorHandlers, AppError } from "@/core/helpers/error-handler";
+import { configureErrorHandlers, AppError } from "@/core/helpers/error-handling/error-handler";
 
 // WebSocket router type definition
 interface WebSocketRouter extends Router {

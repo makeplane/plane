@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import type { RequestHandler } from "express";
-import { asyncHandler } from "@/core/helpers/error-reporting";
+import { asyncHandler } from "@/core/helpers/error-handling/error-handler";
 
 export const Controller = (baseRoute = ""): ClassDecorator => {
   return function (target: object) {
