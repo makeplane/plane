@@ -13,7 +13,7 @@ import { CustomSelect, PopoverMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useMember, useUser } from "@/hooks/store";
+import { useMember, useUser, useUserPermissions } from "@/hooks/store";
 
 export interface RowData {
   member: IWorkspaceMember;
@@ -91,7 +91,7 @@ export const NameColumn: React.FC<NameProps> = (props) => {
 };
 
 export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) => {
-  const { rowData, currentProjectRole, projectId, workspaceSlug } = props;
+  const { rowData, projectId, workspaceSlug } = props;
   // form info
   const {
     control,
@@ -99,10 +99,11 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
   } = useForm();
   // store hooks
   const {
-    project: { updateMember, getProjectMemberDetails },
+    project: { updateMember },
     workspace: { getWorkspaceMemberDetails },
   } = useMember();
   const { data: currentUser } = useUser();
+  const { projectUserInfo } = useUserPermissions();
 
   // derived values
   const isCurrentUser = currentUser?.id === rowData.member.id;
@@ -114,10 +115,11 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
         Number(getWorkspaceMemberDetails(currentUser.id)?.role) ?? EUserPermissions.GUEST
       )
     : false;
-  const isCurrentUserProjectAdmin = currentUser
-    ? ![EUserPermissions.MEMBER, EUserPermissions.GUEST].includes(
-        getProjectMemberDetails(currentUser.id, projectId)?.role ?? EUserPermissions.GUEST
-      )
+  const currentProjectRole = projectUserInfo?.[workspaceSlug.toString()]?.[projectId.toString()]
+    ?.role as unknown as EUserPermissions;
+
+  const isCurrentUserProjectAdmin = currentProjectRole
+    ? ![EUserPermissions.MEMBER, EUserPermissions.GUEST].includes(Number(currentProjectRole) ?? EUserPermissions.GUEST)
     : false;
 
   // logic
@@ -144,9 +146,9 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
           name="role"
           control={control}
           rules={{ required: "Role is required." }}
-          render={({ field: { value } }) => (
+          render={() => (
             <CustomSelect
-              value={value}
+              value={rowData.role?.toString()}
               onChange={(value: EUserPermissions) => {
                 if (!workspaceSlug) return;
 
