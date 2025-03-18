@@ -29,7 +29,7 @@ export const CommentsWrapper: FC<TCommentsWrapper> = observer((props) => {
         <CommentCreate workspaceSlug={workspaceSlug} entityId={entityId} activityOperations={activityOperations} />
       )}
 
-      <div className="flex-grow py-4 overflow-y-auto vertical-scrollbar scrollbar-sm">
+      <div className="flex-grow py-4 overflow-y-auto">
         {comments?.map((r, index) => {
           let comment;
           if (typeof r === "string") {
