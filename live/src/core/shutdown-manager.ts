@@ -1,7 +1,6 @@
 import { Server } from "http";
 import type { Hocuspocus } from "@hocuspocus/server";
 import { logger } from "@plane/logger";
-import { AppError } from "@/core/helpers/error-handler";
 import { serverConfig } from "@/config/server-config";
 
 /**
@@ -26,17 +25,17 @@ export class ShutdownManager {
    */
   registerShutdownHandlers(): void {
     const gracefulShutdown = this.getGracefulShutdown();
-    
+
     // Handle process signals
     process.on("SIGTERM", gracefulShutdown);
     process.on("SIGINT", gracefulShutdown);
-    
+
     // Handle uncaught exceptions
     process.on("uncaughtException", (error) => {
       logger.error("Uncaught exception:", error);
       gracefulShutdown();
     });
-    
+
     // Handle unhandled promise rejections
     process.on("unhandledRejection", (reason) => {
       logger.error("Unhandled rejection:", reason);
@@ -51,28 +50,53 @@ export class ShutdownManager {
   private getGracefulShutdown(): () => Promise<void> {
     return async () => {
       logger.info("Starting graceful shutdown...");
-      
-      try {
-        // Destroy Hocuspocus server first
-        await this.hocusPocusServer.destroy();
-        logger.info("HocusPocus server WebSocket connections closed gracefully.");
 
-        // Close HTTP server
-        this.httpServer.close(() => {
-          logger.info("HTTP server closed gracefully.");
-          process.exit(0);
-        });
+      let hasShutdownCompleted = false;
+
+      // Create a timeout that will force exit if shutdown takes too long
+      const forceExitTimeout = setTimeout(() => {
+        if (!hasShutdownCompleted) {
+          logger.error("Forcing shutdown after timeout - some connections may not have closed gracefully.");
+          process.exit(1);
+        }
+      }, serverConfig.shutdownTimeout);
+
+      // Destroy Hocuspocus server first
+      logger.info("Shutting down Hocuspocus server...");
+      let hocuspocusShutdownSuccessful = false;
+
+      try {
+        await this.hocusPocusServer.destroy();
+        hocuspocusShutdownSuccessful = true;
+        logger.info("HocusPocus server WebSocket connections closed gracefully.");
       } catch (error) {
-        logger.error("Error during shutdown:", error);
-        if (error instanceof AppError) throw error;
-        throw new AppError(`Graceful shutdown failed: ${error instanceof Error ? error.message : String(error)}`);
+        hocuspocusShutdownSuccessful = false;
+        logger.error("Error during hocuspocus server shutdown:", error);
+        // Continue with HTTP server shutdown even if Hocuspocus shutdown fails
+      } finally {
+        logger.info(
+          `Proceeding to HTTP server shutdown. Hocuspocus shutdown ${hocuspocusShutdownSuccessful ? "was successful" : "had errors"}.`
+        );
       }
 
-      // Safety timeout to force exit if graceful shutdown takes too long
-      setTimeout(() => {
-        logger.error("Forcing shutdown after timeout...");
+      // Close HTTP server
+      try {
+        logger.info("Initiating HTTP server shutdown...");
+        this.httpServer.close(() => {
+          logger.info("HTTP server closed gracefully - all connections ended.");
+
+          // Clear the timeout since we're shutting down gracefully
+          clearTimeout(forceExitTimeout);
+          hasShutdownCompleted = true;
+
+          process.exit(0);
+        });
+        logger.info("HTTP server close initiated, waiting for connections to end...");
+      } catch (error) {
+        logger.error("Error during HTTP server shutdown:", error);
+        clearTimeout(forceExitTimeout);
         process.exit(1);
-      }, serverConfig.shutdownTimeout);
+      }
     };
   }
-} 
+}

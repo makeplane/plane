@@ -1,6 +1,10 @@
 import { Router, Request } from "express";
 import { WebSocket } from "ws";
 import "reflect-metadata";
+import { asyncHandler } from "@/core/helpers/error-reporting";
+import Errors from "@/core/helpers/error-factory";
+import { ErrorCategory } from "@/core/helpers/error-handler";
+import { logger } from "@plane/logger";
 
 export abstract class BaseController {
   protected router: Router;
@@ -36,13 +40,44 @@ export abstract class BaseController {
         const handler = (this as any)[methodName].bind(this);
 
         if (method === "ws") {
-          // Handle WebSocket routes
+          // Handle WebSocket routes with error handling for graceful failures
           (router as any).ws(fullRoute, (ws: WebSocket, req: Request) => {
-            handler(ws, req);
+            try {
+              handler(ws, req);
+            } catch (error: unknown) {
+              // Convert to AppError if needed
+              const appError = Errors.convertError(error instanceof Error ? error : new Error(String(error)), {
+                context: {
+                  controller: this.constructor.name,
+                  method: methodName,
+                  route: fullRoute,
+                  requestId: req.id || "unknown",
+                },
+              });
+
+              logger.error(`WebSocket error in ${this.constructor.name}.${methodName}`, {
+                error: appError,
+              });
+
+              // Send error message to client before closing
+              try {
+                ws.send(
+                  JSON.stringify({
+                    type: "error",
+                    message:
+                      appError.category === ErrorCategory.OPERATIONAL ? appError.message : "Internal server error",
+                  })
+                );
+              } catch (sendError) {
+                // Ignore send errors at this point
+              }
+
+              // Close the connection with an appropriate code
+              ws.close(1011, appError.message);
+            }
           });
         } else {
-          // Handle HTTP routes
-          (router as any)[method](fullRoute, ...middlewares, handler);
+          (router as any)[method](fullRoute, ...middlewares, asyncHandler(handler));
         }
       }
     });
@@ -54,4 +89,5 @@ export abstract class BaseController {
 
 export abstract class BaseWebSocketController extends BaseController {
   abstract handleConnection(ws: WebSocket, req: Request): void;
-} 
+}
+

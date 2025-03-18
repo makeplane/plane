@@ -56,8 +56,11 @@ export const getHocusPocusServer = async () => {
             userId,
           });
         },
-        { extra: { operation: "authenticate" } }
-      );
+        { extra: { operation: "authenticate" } },
+        {
+          rethrow: true,
+        }
+      )();
     },
     onStateless: async ({ payload, document }) => {
       return catchAsync(
