@@ -1,8 +1,8 @@
-import { useContext } from 'react';
+import { useContext } from "react";
 // context
-import { TranslationContext } from '../context';
+import { TranslationContext } from "../context";
 // types
-import { ILanguageOption, TLanguage } from '../types';
+import { ILanguageOption, TLanguage } from "../types";
 
 export type TTranslationStore = {
   t: (key: string, params?: Record<string, any>) => string;
@@ -23,7 +23,7 @@ export type TTranslationStore = {
 export function useTranslation(): TTranslationStore {
   const store = useContext(TranslationContext);
   if (!store) {
-    throw new Error('useTranslation must be used within a TranslationProvider');
+    throw new Error("useTranslation must be used within a TranslationProvider");
   }
 
   return {

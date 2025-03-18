@@ -97,7 +97,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
                     <>
                       {PROJECT_AUTOMATION_MONTHS.map((month) => (
                         <CustomSelect.Option key={month.i18n_label} value={month.value}>
-                          <span className="text-sm">{t(month.i18n_label, { month: month.value })}</span>
+                          <span className="text-sm">{t(month.i18n_label, { months: month.value })}</span>
                         </CustomSelect.Option>
                       ))}
 
@@ -106,7 +106,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
                         className="flex w-full select-none items-center rounded px-1 py-1.5 text-sm text-custom-text-200 hover:bg-custom-background-80"
                         onClick={() => setmonthModal(true)}
                       >
-                        {t("customize_time_range")}
+                        {t("common.customize_time_range")}
                       </button>
                     </>
                   </CustomSelect>
