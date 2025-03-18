@@ -192,7 +192,15 @@ class ProjectMemberViewSet(BaseViewSet):
         project_member = ProjectMember.objects.get(
             pk=pk, workspace__slug=slug, project_id=project_id, is_active=True
         )
-        if request.user.id == project_member.member_id:
+
+        # Fetch the workspace role of the project member
+        workspace_role = WorkspaceMember.objects.get(
+            workspace__slug=slug, member=project_member.member, is_active=True
+        ).role
+        is_workspace_admin = workspace_role == ROLE.ADMIN
+
+        # Check if the user is not editing their own role if they are not an admin
+        if request.user.id == project_member.member_id and not is_workspace_admin:
             return Response(
                 {"error": "You cannot update your own role"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -205,9 +213,6 @@ class ProjectMemberViewSet(BaseViewSet):
             is_active=True,
         )
 
-        workspace_role = WorkspaceMember.objects.get(
-            workspace__slug=slug, member=project_member.member, is_active=True
-        ).role
         if workspace_role in [5] and int(
             request.data.get("role", project_member.role)
         ) in [15, 20]:
@@ -222,6 +227,7 @@ class ProjectMemberViewSet(BaseViewSet):
             "role" in request.data
             and int(request.data.get("role", project_member.role))
             > requested_project_member.role
+            and not is_workspace_admin
         ):
             return Response(
                 {"error": "You cannot update a role that is higher than your own role"},
