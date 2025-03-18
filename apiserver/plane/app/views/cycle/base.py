@@ -268,7 +268,7 @@ class CycleViewSet(BaseViewSet):
         )
         datetime_fields = ["start_date", "end_date"]
         data = user_timezone_converter(
-            data, datetime_fields, request.user.user_timezone
+            data, datetime_fields, project_timezone
         )
         return Response(data, status=status.HTTP_200_OK)
 
@@ -318,9 +318,13 @@ class CycleViewSet(BaseViewSet):
                     .first()
                 )
 
+                # Fetch the project timezone
+                project = Project.objects.get(id=self.kwargs.get("project_id"))
+                project_timezone = project.timezone
+
                 datetime_fields = ["start_date", "end_date"]
                 cycle = user_timezone_converter(
-                    cycle, datetime_fields, request.user.user_timezone
+                    cycle, datetime_fields, project_timezone
                 )
 
                 # Send the model activity
@@ -407,9 +411,13 @@ class CycleViewSet(BaseViewSet):
                 "created_by",
             ).first()
 
+            # Fetch the project timezone
+            project = Project.objects.get(id=self.kwargs.get("project_id"))
+            project_timezone = project.timezone
+
             datetime_fields = ["start_date", "end_date"]
             cycle = user_timezone_converter(
-                cycle, datetime_fields, request.user.user_timezone
+                cycle, datetime_fields, project_timezone
             )
 
             # Send the model activity
@@ -480,10 +488,11 @@ class CycleViewSet(BaseViewSet):
             )
 
         queryset = queryset.first()
+        # Fetch the project timezone
+        project = Project.objects.get(id=self.kwargs.get("project_id"))
+        project_timezone = project.timezone
         datetime_fields = ["start_date", "end_date"]
-        data = user_timezone_converter(
-            data, datetime_fields, request.user.user_timezone
-        )
+        data = user_timezone_converter(data, datetime_fields, project_timezone)
 
         recent_visited_task.delay(
             slug=slug,
