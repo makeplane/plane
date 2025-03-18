@@ -39,7 +39,7 @@ export const FilterAdditionalProperties: React.FC<Props> = observer((props) => {
   }, [workspaceSlug, projectId, additionalPropertyKey]);
 
   const filteredOptions = searchQuery
-    ? options.filter((label: any) => label.toLowerCase().includes(searchQuery.toLowerCase()))
+    ? options.filter((option: any) => option?.label.toLowerCase().includes(searchQuery.toLowerCase()))
     : options;
 
   return (
