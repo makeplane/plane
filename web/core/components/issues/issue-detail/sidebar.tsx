@@ -27,6 +27,7 @@ import { IssueWorklogProperty } from "@/plane-web/components/issues";
 // components
 import type { TIssueOperations } from "./root";
 import { ISSUE_ADDITIONAL_PROPERTIES } from "@/constants/issue";
+import { CustomProperty } from "../custom-properties";
 
 type Props = {
   workspaceSlug: string;
@@ -55,11 +56,25 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const projectDetails = getProjectById(issue.project_id);
   const stateDetails = getStateById(issue.state_id);
   const customProperties = issue?.custom_properties || [];
+  const issue_type_id = issue?.issue_type_id || "defaultIssueTypeId";
+  console.log("issue_type_id in sidebar.tsx is", issue_type_id);
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
   const maxDate = issue.target_date ? getDate(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
+
+  const handleCustomPropertiesUpdate = async (updatedProperties: CustomProperty[]) => {
+    try {
+      console.log("Updating custom properties", updatedProperties);
+      await issueOperations.update(workspaceSlug, projectId, issueId, {
+        custom_properties: updatedProperties,
+      });
+      console.log("Custom properties updated successfully");
+    } catch (error) {
+      console.error("Error updating custom properties:", error);
+    }
+  };
 
   return (
     <>
@@ -315,8 +330,11 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               ) : null
             )}
 
-            <CustomProperties 
-                customProperties={Array.isArray(customProperties) ? customProperties : []} 
+            <CustomProperties
+              customProperties={Array.isArray(customProperties) ? customProperties : []}
+              issue_type_id={issue_type_id}
+              workspaceSlug={workspaceSlug}
+              updateCustomProperties={handleCustomPropertiesUpdate}
             />
           </div>
         </div>

@@ -32,6 +32,7 @@ import { useIssueDetail, useMember, useProject, useProjectState } from "@/hooks/
 import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issue-types/values";
 import { IssueWorklogProperty} from "@/plane-web/components/issues";
 import { ISSUE_ADDITIONAL_PROPERTIES } from "@/constants/issue";
+import { CustomProperty } from "../custom-properties";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
@@ -57,6 +58,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const createdByDetails = getUserDetails(issue?.created_by);
   const projectDetails = getProjectById(issue.project_id);
   const customProperties = issue?.custom_properties || [];
+  const issue_type_id = issue?.issue_type_id || "defaultIssueTypeId";
+  console.log("issue_type_id in properties.tsx is", issue_type_id);
   const isEstimateEnabled = projectDetails?.estimate;
   const stateDetails = getStateById(issue.state_id);
   const minDate = getDate(issue.start_date);
@@ -64,6 +67,18 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
   const maxDate = getDate(issue.target_date);
   maxDate?.setDate(maxDate.getDate());
+
+  const handleCustomPropertiesUpdate = async (updatedProperties: CustomProperty[]) => {
+    try {
+      console.log("Updating custom properties", updatedProperties);
+      await issueOperations.update(workspaceSlug, projectId, issueId, {
+        custom_properties: updatedProperties,
+      });
+      console.log("Custom properties updated successfully");
+    } catch (error) {
+      console.error("Error updating custom properties:", error);
+    }
+  };
 
   return (
     <div>
@@ -315,7 +330,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           ) : null
         )}
 
-        <CustomProperties customProperties={Array.isArray(customProperties) ? customProperties : []} />
+        <CustomProperties
+          customProperties={Array.isArray(customProperties) ? customProperties : []}
+          issue_type_id={issue_type_id}
+          workspaceSlug={workspaceSlug}
+          updateCustomProperties={handleCustomPropertiesUpdate}
+        />
       </div>
     </div>
   );
