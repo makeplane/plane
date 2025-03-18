@@ -5,14 +5,12 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
-// ui
+// plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, getButtonStyling } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
-// plane web hooks
-import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { cn } from "@plane/utils";
+// plane web imports
+import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace";
 // assets
 import CustomerUpgradeDark from "@/public/empty-state/customers/customer-upgrade-dark.webp";
 import CustomerUpgradeLight from "@/public/empty-state/customers/customer-upgrade-light.webp";
@@ -21,27 +19,6 @@ export const CustomerUpgrade: FC = observer(() => {
   const { workspaceSlug } = useParams();
   const { resolvedTheme } = useTheme();
   const { t } = useTranslation();
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
-  // derived values
-  const isPlaneOneInstance = subscriptionDetail?.is_self_managed && subscriptionDetail?.product === "ONE";
-  const isCustomersFeatureFlagEnabled = useFlag(workspaceSlug.toString(), E_FEATURE_FLAGS.CUSTOMERS);
-  const getUpgradeButton = () => {
-    if (isPlaneOneInstance) {
-      return (
-        <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
-          Upgrade to higher subscription
-        </a>
-      );
-    }
-
-    if (!isCustomersFeatureFlagEnabled) {
-      return (
-        <Button variant="primary" disabled>
-          Coming soon
-        </Button>
-      );
-    }
-  };
 
   return (
     <>
@@ -64,7 +41,9 @@ export const CustomerUpgrade: FC = observer(() => {
             <div className="w-full xl:max-w-[300px]">
               <div className="text-2xl/7 font-semibold mb-2 line-">{t("customers.upgrade.title")}</div>
               <div className="text-sm">{t("customers.upgrade.description")}</div>
-              <div className="mt-6">{getUpgradeButton()}</div>
+              <div className="mt-6">
+                <UpgradeEmptyStateButton workspaceSlug={workspaceSlug?.toString()} flag={E_FEATURE_FLAGS.CUSTOMERS} />
+              </div>
             </div>
           </div>
           <Image

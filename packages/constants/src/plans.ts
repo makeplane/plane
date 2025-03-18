@@ -1,3 +1,7 @@
+// plane imports
+import { TProductSubscriptionType } from "@plane/types";
+import { E_FEATURE_FLAGS } from "@plane/constants";
+
 export const ENTERPRISE_PLAN_FEATURES = [
   "Private + managed deployments",
   "GAC",
@@ -40,3 +44,14 @@ export const FREE_PLAN_UPGRADE_FEATURES = [
   "Integrations",
   "Public Views and Pages",
 ];
+
+/**
+ * This map is used to determine the base plan for a feature flag.
+ */
+// TODO: Update this to include all features flags
+export const FEATURE_TO_BASE_PLAN_MAP = {
+  [E_FEATURE_FLAGS.WORKFLOWS]: "BUSINESS",
+  [E_FEATURE_FLAGS.CUSTOMERS]: "PRO",
+  [E_FEATURE_FLAGS.WORKITEM_TEMPLATES]: "PRO",
+  [E_FEATURE_FLAGS.DASHBOARDS]: "PRO",
+};

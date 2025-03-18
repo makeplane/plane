@@ -4,51 +4,24 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
-import { Crown } from "lucide-react";
 // plane imports
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
-// plane web hooks
-import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // assets
 import TemplatesUpgradeDark from "@/public/empty-state/templates/upgrade-dark.webp";
 import TemplatesUpgradeLight from "@/public/empty-state/templates/upgrade-light.webp";
+import { UpgradeEmptyStateButton } from "../../workspace";
 
 export const TemplatesUpgrade: FC = observer(() => {
   // router
+  const { workspaceSlug } = useParams();
+  // store hooks
   const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
-  // store hooks
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
-  // derived values
-  const isPlaneOneInstance = subscriptionDetail?.is_self_managed && subscriptionDetail?.product === "ONE";
-
-  const getUpgradeButton = () => {
-    if (isPlaneOneInstance) {
-      return (
-        <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
-          {t("common.upgrade_cta.higher_subscription")}
-        </a>
-      );
-    }
-
-    return (
-      <Button variant="primary" disabled>
-        <Crown className="h-3.5 w-3.5" />
-        {t("common.coming_soon")}
-      </Button>
-    );
-
-    // return (
-    //   <Button variant="primary" onClick={() => togglePaidPlanModal(true)}>
-    //     <Crown className="h-3.5 w-3.5" />
-    //     {t("common.upgrade")}
-    //   </Button>
-    // );
-  };
 
   return (
     <div className="pr-10">
@@ -64,7 +37,10 @@ export const TemplatesUpgrade: FC = observer(() => {
             <div className="font-medium text-custom-text-300">{t("templates.empty_state.upgrade.description")}</div>
             <div className="font-medium text-custom-text-300">{t("templates.empty_state.upgrade.sub_description")}</div>
             <div className="flex mt-6 gap-4 flex-wrap">
-              {getUpgradeButton()}
+              <UpgradeEmptyStateButton
+                workspaceSlug={workspaceSlug?.toString()}
+                flag={E_FEATURE_FLAGS.WORKITEM_TEMPLATES}
+              />
               <Link
                 target="_blank"
                 href="https://plane.so/contact"
