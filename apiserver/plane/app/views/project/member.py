@@ -10,11 +10,7 @@ from plane.app.serializers import (
     ProjectMemberRoleSerializer,
 )
 
-from plane.app.permissions import (
-    ProjectMemberPermission,
-    ProjectLitePermission,
-    WorkspaceUserPermission,
-)
+from plane.app.permissions import WorkspaceUserPermission
 
 from plane.db.models import Project, ProjectMember, IssueUserProperty, WorkspaceMember
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
@@ -25,14 +21,6 @@ from plane.app.permissions.base import allow_permission, ROLE
 class ProjectMemberViewSet(BaseViewSet):
     serializer_class = ProjectMemberAdminSerializer
     model = ProjectMember
-
-    def get_permissions(self):
-        if self.action == "leave":
-            self.permission_classes = [ProjectLitePermission]
-        else:
-            self.permission_classes = [ProjectMemberPermission]
-
-        return super(ProjectMemberViewSet, self).get_permissions()
 
     search_fields = ["member__display_name", "member__first_name"]
 
