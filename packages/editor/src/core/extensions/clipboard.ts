@@ -70,6 +70,15 @@ export const MarkdownClipboard = Extension.create({
               return markdownSerializer.serialize(slice.content);
             } else {
               const targetNode = traverseToParentOfLeaf(slice.content.firstChild, slice.content, slice.openStart);
+
+              let currentNode = targetNode;
+              while (currentNode && currentNode.content && currentNode.childCount === 1 && currentNode.firstChild) {
+                currentNode = currentNode.firstChild;
+              }
+              if (currentNode instanceof Node && currentNode.isText) {
+                return currentNode.text;
+              }
+
               return markdownSerializer.serialize(targetNode);
             }
           },
