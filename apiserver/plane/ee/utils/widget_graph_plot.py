@@ -35,18 +35,34 @@ def get_y_axis_filter(y_axis):
 
 def get_x_axis_field():
     return {
-        "STATES": ("state__id", "state__name"),
-        "STATE_GROUPS": ("state__group", "state__group"),
-        "LABELS": ("labels__id", "labels__name"),
-        "ASSIGNEES": ("assignees__id", "assignees__display_name"),
-        "ESTIMATE_POINTS": ("estimate_point__value", "estimate_point__key"),
-        "CYCLES": ("issue_cycle__cycle_id", "issue_cycle__cycle__name"),
-        "MODULES": ("issue_module__module_id", "issue_module__module__name"),
-        "PRIORITY": ("priority", "priority"),
-        "START_DATE": ("start_date", "start_date"),
-        "TARGET_DATE": ("target_date", "target_date"),
-        "CREATED_AT": ("created_at__date", "created_at__date"),
-        "COMPLETED_AT": ("completed_at__date", "completed_at__date"),
+        "STATES": ("state__id", "state__name", None),
+        "STATE_GROUPS": ("state__group", "state__group", None),
+        "LABELS": (
+            "labels__id",
+            "labels__name",
+            {"label_issue__deleted_at__isnull": True},
+        ),
+        "ASSIGNEES": (
+            "assignees__id",
+            "assignees__display_name",
+            {"issue_assignee__deleted_at__isnull": True},
+        ),
+        "ESTIMATE_POINTS": ("estimate_point__value", "estimate_point__key", None),
+        "CYCLES": (
+            "issue_cycle__cycle_id",
+            "issue_cycle__cycle__name",
+            {"issue_cycle__deleted_at__isnull": True},
+        ),
+        "MODULES": (
+            "issue_module__module_id",
+            "issue_module__module__name",
+            {"issue_module__deleted_at__isnull": True},
+        ),
+        "PRIORITY": ("priority", "priority", None),
+        "START_DATE": ("start_date", "start_date", None),
+        "TARGET_DATE": ("target_date", "target_date", None),
+        "CREATED_AT": ("created_at__date", "created_at__date", None),
+        "COMPLETED_AT": ("completed_at__date", "completed_at__date", None),
     }
 
 
@@ -177,8 +193,19 @@ def build_widget_chart(
     field_mapping = get_x_axis_field()
     y_axis_filter = get_y_axis_filter(y_axis)
 
-    id_field, name_field = field_mapping.get(x_axis, (None, None))
-    group_field, group_name_field = field_mapping.get(group_by, (None, None))
+    id_field, name_field, additional_filter = field_mapping.get(
+        x_axis, (None, None, {})
+    )
+    group_field, group_name_field, group_additional_filter = field_mapping.get(
+        group_by, (None, None, {})
+    )
+
+    # Apply additional filters if they exist
+    if additional_filter or {}:
+        queryset = queryset.filter(**additional_filter)
+
+    if group_additional_filter or {}:
+        queryset = queryset.filter(**group_additional_filter)
 
     aggregate_func = (
         Sum(Cast("estimate_point__value", FloatField()))
