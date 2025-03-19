@@ -244,6 +244,7 @@ export const ListGroup = observer((props: Props) => {
 
   const isDragAllowed = !!group_by && DRAG_ALLOWED_GROUPS.includes(group_by);
   const canOverlayBeVisible = isWorkflowDropDisabled || orderBy !== "sort_order" || !!group.isDropDisabled;
+  const isDropDisabled = isWorkflowDropDisabled || !!group.isDropDisabled;
 
   const isGroupByCreatedBy = group_by === "created_by";
   const shouldExpand = (!!groupIssueCount && isExpanded) || !group_by;
@@ -253,7 +254,7 @@ export const ListGroup = observer((props: Props) => {
       ref={groupRef}
       className={cn(`relative flex flex-shrink-0 flex-col border-[1px] border-transparent`, {
         "border-custom-primary-100": isDraggingOverColumn,
-        "border-custom-error-200": isDraggingOverColumn && !!group.isDropDisabled,
+        "border-custom-error-200": isDraggingOverColumn && isDropDisabled,
       })}
     >
       <Row
@@ -283,7 +284,7 @@ export const ListGroup = observer((props: Props) => {
           <GroupDragOverlay
             dragColumnOrientation={dragColumnOrientation}
             canOverlayBeVisible={canOverlayBeVisible}
-            isDropDisabled={isWorkflowDropDisabled || !!group.isDropDisabled}
+            isDropDisabled={isDropDisabled}
             workflowDisabledSource={workflowDisabledSource}
             dropErrorMessage={group.dropErrorMessage}
             orderBy={orderBy}

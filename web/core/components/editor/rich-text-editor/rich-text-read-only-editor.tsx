@@ -1,18 +1,21 @@
 import React from "react";
-// editor
+// plane imports
 import { EditorReadOnlyRefApi, IRichTextReadOnlyEditor, RichTextReadOnlyEditorWithRef } from "@plane/editor";
+import { MakeOptional } from "@plane/types";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
+// store hooks
+import { useMember } from "@/hooks/store";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
-type RichTextReadOnlyEditorWrapperProps = Omit<
-  IRichTextReadOnlyEditor,
-  "disabledExtensions" | "fileHandler" | "mentionHandler"
+type RichTextReadOnlyEditorWrapperProps = MakeOptional<
+  Omit<IRichTextReadOnlyEditor, "fileHandler" | "mentionHandler">,
+  "disabledExtensions"
 > & {
   workspaceId: string;
   workspaceSlug: string;
@@ -20,7 +23,10 @@ type RichTextReadOnlyEditorWrapperProps = Omit<
 };
 
 export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, RichTextReadOnlyEditorWrapperProps>(
-  ({ workspaceId, workspaceSlug, projectId, ...props }, ref) => {
+  ({ workspaceId, workspaceSlug, projectId, disabledExtensions: additionalDisabledExtensions, ...props }, ref) => {
+    // store hooks
+    const { getUserDetails } = useMember();
+
     // editor flaggings
     const { richTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
     // editor config
@@ -29,7 +35,7 @@ export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, Ric
     return (
       <RichTextReadOnlyEditorWithRef
         ref={ref}
-        disabledExtensions={disabledExtensions}
+        disabledExtensions={[...disabledExtensions, ...(additionalDisabledExtensions ?? [])]}
         fileHandler={getReadOnlyEditorFileHandlers({
           projectId,
           workspaceId,
@@ -37,6 +43,7 @@ export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, Ric
         })}
         mentionHandler={{
           renderComponent: (props) => <EditorMentionsRoot {...props} />,
+          getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
         }}
         {...props}
         // overriding the containerClassName to add relative class passed

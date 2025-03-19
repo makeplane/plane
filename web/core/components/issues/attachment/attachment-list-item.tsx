@@ -66,7 +66,7 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
           </div>
 
           <div className="flex items-center gap-3">
-            {attachment?.updated_by && (
+            {attachment?.created_by && (
               <>
                 <Tooltip
                   isMobile={isMobile}

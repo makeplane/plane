@@ -28,6 +28,7 @@ export interface IModuleStore {
   projectModuleIds: string[] | null;
   projectArchivedModuleIds: string[] | null;
   // computed actions
+  getModulesFetchStatusByProjectId: (projectId: string) => boolean;
   getFilteredModuleIds: (projectId: string) => string[] | null;
   getFilteredArchivedModuleIds: (projectId: string) => string[] | null;
   getModuleById: (moduleId: string) => IModule | null;
@@ -151,6 +152,13 @@ export class ModulesStore implements IModuleStore {
     const projectModuleIds = archivedModules.map((m) => m.id);
     return projectModuleIds || null;
   }
+
+  /**
+   * Returns the fetch status for a specific project
+   * @param projectId
+   * @returns boolean
+   */
+  getModulesFetchStatusByProjectId = computedFn((projectId: string) => this.fetchedMap[projectId] ?? false);
 
   /**
    * @description returns filtered module ids based on display filters and filters
@@ -425,7 +433,6 @@ export class ModulesStore implements IModuleStore {
         set(this.moduleMap, [moduleId], { ...originalModuleDetails, ...data });
       });
       const response = await this.moduleService.patchModule(workspaceSlug, projectId, moduleId, data);
-      this.fetchModuleDetails(workspaceSlug, projectId, moduleId);
       return response;
     } catch (error) {
       console.error("Failed to update module in module store", error);

@@ -35,7 +35,7 @@ export const ScrollArea: FC<TScrollAreaProps> = (props) => {
       <RadixScrollArea.Viewport className="size-full">{children}</RadixScrollArea.Viewport>
       <RadixScrollArea.Scrollbar
         className={cn(
-          "group/track flex touch-none select-none bg-transparent transition-colors duration-[160ms] ease-out",
+          "group/track flex touch-none select-none bg-transparent transition-colors duration-150 ease-out",
           sizeStyles[size]
         )}
         orientation="vertical"
@@ -49,7 +49,7 @@ export const ScrollArea: FC<TScrollAreaProps> = (props) => {
       </RadixScrollArea.Scrollbar>
       <RadixScrollArea.Scrollbar
         className={cn(
-          "group/track flex touch-none select-none bg-transparent transition-colors duration-[160ms] ease-out",
+          "group/track flex touch-none select-none bg-transparent transition-colors duration-150 ease-out",
           sizeStyles[size]
         )}
         orientation="horizontal"

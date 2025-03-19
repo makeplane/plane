@@ -29,3 +29,9 @@ export const getTextContent = (jsx: JSX.Element | React.ReactNode | null | undef
   div.innerHTML = jsx.toString();
   return div.textContent?.trim() ?? "";
 };
+
+export const isEditorEmpty = (description: string | undefined): boolean =>
+  !description ||
+  description === "<p></p>" ||
+  description === `<p class="editor-paragraph-block"></p>` ||
+  description.trim() === "";

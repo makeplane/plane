@@ -631,6 +631,8 @@
     "states": "ステータス",
     "state": "ステータス",
     "state_groups": "ステータスグループ",
+    "state_group": "ステート グループ",
+    "priorities": "優先度",
     "priority": "優先度",
     "team_project": "チームプロジェクト",
     "project": "プロジェクト",
@@ -639,12 +641,16 @@
     "module": "モジュール",
     "modules": "モジュール",
     "labels": "ラベル",
+    "label": "ラベル",
     "assignees": "担当者",
     "assignee": "担当者",
     "created_by": "作成者",
     "none": "なし",
     "link": "リンク",
+    "estimates": "見積もり",
     "estimate": "見積もり",
+    "created_at": "クリエイテッド アット",
+    "completed_at": "コンプリーテッド アット",
     "layout": "レイアウト",
     "filters": "フィルター",
     "display": "表示",
@@ -687,13 +693,13 @@
     "add_more": "さらに追加",
     "defaults": "デフォルト",
     "add_label": "ラベルを追加",
-    "estimates": "見積もり",
     "customize_time_range": "期間をカスタマイズ",
     "loading": "読み込み中",
     "attachments": "添付ファイル",
     "property": "プロパティ",
     "properties": "プロパティ",
     "parent": "親",
+    "page": "ページ",
     "remove": "削除",
     "archiving": "アーカイブ中",
     "archive": "アーカイブ",
@@ -825,8 +831,6 @@
     "select": "選択",
     "upgrade": "アップグレード",
     "add_seats": "シートを追加",
-    "label": "ラベル",
-    "priorities": "優先度",
     "projects": "プロジェクト",
     "workspace": "ワークスペース",
     "workspaces": "ワークスペース",
@@ -853,7 +857,7 @@
     "you": "あなた",
     "upgrade_cta": {
       "higher_subscription": "高いサブスクリプションにアップグレード",
-      "talk_to_sales": "セールスに連絡"
+      "talk_to_sales": "トーク トゥ セールス"
     },
     "category": "カテゴリー",
     "categories": "カテゴリーズ",
@@ -862,7 +866,8 @@
     "delete": "デリート",
     "deleting": "デリーティング",
     "pending": "保留中",
-    "invite": "招待"
+    "invite": "招待",
+    "view": "ビュー"
   },
 
   "chart": {
@@ -980,7 +985,8 @@
         "sub_issue_count": "サブ作業項目数",
         "attachment_count": "添付ファイル数",
         "created_on": "作成日",
-        "sub_issue": "サブ作業項目"
+        "sub_issue": "サブ作業項目",
+        "work_item_count": "作業項目数"
       },
       "extra": {
         "show_sub_issues": "サブ作業項目を表示",
@@ -1467,7 +1473,8 @@
             "max_length": "ワークスペース名は80文字を超えることはできません"
           },
           "company_size": {
-            "required": "会社の規模は必須です"
+            "required": "会社の規模は必須です",
+            "select_a_range": "組織の規模を選択"
           }
         }
       },

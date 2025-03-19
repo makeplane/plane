@@ -461,6 +461,8 @@
     "states": "States",
     "state": "State",
     "state_groups": "State groups",
+    "state_group": "State group",
+    "priorities": "Priorities",
     "priority": "Priority",
     "team_project": "Team project",
     "project": "Project",
@@ -469,12 +471,16 @@
     "module": "Module",
     "modules": "Modules",
     "labels": "Labels",
+    "label": "Label",
     "assignees": "Assignees",
     "assignee": "Assignee",
     "created_by": "Created by",
     "none": "None",
     "link": "Link",
+    "estimates": "Estimates",
     "estimate": "Estimate",
+    "created_at": "Created at",
+    "completed_at": "Completed at",
     "layout": "Layout",
     "filters": "Filters",
     "display": "Display",
@@ -517,13 +523,13 @@
     "add_more": "Add more",
     "defaults": "Defaults",
     "add_label": "Add label",
-    "estimates": "Estimates",
     "customize_time_range": "Customize time range",
     "loading": "Loading",
     "attachments": "Attachments",
     "property": "Property",
     "properties": "Properties",
     "parent": "Parent",
+    "page": "Page",
     "remove": "Remove",
     "archiving": "Archiving",
     "archive": "Archive",
@@ -656,8 +662,6 @@
     "select": "Select",
     "upgrade": "Upgrade",
     "add_seats": "Add Seats",
-    "label": "Label",
-    "priorities": "Priorities",
     "projects": "Projects",
     "workspace": "Workspace",
     "workspaces": "Workspaces",
@@ -684,7 +688,7 @@
     "you": "You",
     "upgrade_cta": {
       "higher_subscription": "Upgrade to higher subscription",
-      "talk_to_sales": "Talk to sales"
+      "talk_to_sales": "Talk to Sales"
     },
     "category": "Category",
     "categories": "Categories",
@@ -693,7 +697,8 @@
     "delete": "Delete",
     "deleting": "Deleting",
     "pending": "Pending",
-    "invite": "Invite"
+    "invite": "Invite",
+    "view": "View"
   },
 
   "chart": {
@@ -811,7 +816,8 @@
         "sub_issue_count": "Sub-work item count",
         "attachment_count": "Attachment count",
         "created_on": "Created on",
-        "sub_issue": "Sub-work item"
+        "sub_issue": "Sub-work item",
+        "work_item_count": "Work item count"
       },
       "extra": {
         "show_sub_issues": "Show sub-work items",
@@ -1299,7 +1305,8 @@
             "max_length": "Workspace name should not exceed 80 characters"
           },
           "company_size": {
-            "required": "Company size is required"
+            "required": "Company size is required",
+            "select_a_range": "Select organization size"
           }
         }
       },

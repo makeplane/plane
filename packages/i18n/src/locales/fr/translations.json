@@ -631,6 +631,8 @@
     "states": "États",
     "state": "État",
     "state_groups": "Groupes d'états",
+    "state_group": "Groupe d'état",
+    "priorities": "Priorités",
     "priority": "Priorité",
     "team_project": "Projet d'équipe",
     "project": "Projet",
@@ -639,12 +641,16 @@
     "module": "Module",
     "modules": "Modules",
     "labels": "Étiquettes",
+    "label": "Étiquette",
     "assignees": "Assignés",
     "assignee": "Assigné",
     "created_by": "Créé par",
     "none": "Aucun",
     "link": "Lien",
+    "estimates": "Estimations",
     "estimate": "Estimation",
+    "created_at": "Créé le",
+    "completed_at": "Terminé le",
     "layout": "Disposition",
     "filters": "Filtres",
     "display": "Affichage",
@@ -687,13 +693,13 @@
     "add_more": "Ajouter plus",
     "defaults": "Par défaut",
     "add_label": "Ajouter une étiquette",
-    "estimates": "Estimations",
     "customize_time_range": "Personnaliser la plage de temps",
     "loading": "Chargement",
     "attachments": "Pièces jointes",
     "property": "Propriété",
     "properties": "Propriétés",
     "parent": "Parent",
+    "page": "Pâge",
     "remove": "Supprimer",
     "archiving": "Archivage",
     "archive": "Archiver",
@@ -825,8 +831,6 @@
     "select": "Sélectionner",
     "upgrade": "Mettre à niveau",
     "add_seats": "Ajouter des sièges",
-    "label": "Étiquette",
-    "priorities": "Priorités",
     "projects": "Projets",
     "workspace": "Espace de travail",
     "workspaces": "Espaces de travail",
@@ -853,7 +857,7 @@
     "you": "Vous",
     "upgrade_cta": {
       "higher_subscription": "Passer à une abonnement plus élevé",
-      "talk_to_sales": "Parler à la vente"
+      "talk_to_sales": "Parler aux ventes"
     },
     "category": "Catégorie",
     "categories": "Catégories",
@@ -862,7 +866,8 @@
     "delete": "Supprimer",
     "deleting": "Suppression",
     "pending": "En attente",
-    "invite": "Inviter"
+    "invite": "Inviter",
+    "view": "Afficher"
   },
 
   "chart": {
@@ -980,7 +985,8 @@
         "sub_issue_count": "Nombre de sous-éléments",
         "attachment_count": "Nombre de pièces jointes",
         "created_on": "Créé le",
-        "sub_issue": "Sous-élément de travail"
+        "sub_issue": "Sous-élément de travail",
+        "work_item_count": "Nombre d'éléments de travail"
       },
       "extra": {
         "show_sub_issues": "Afficher les sous-éléments",
@@ -1467,7 +1473,8 @@
             "max_length": "Le nom de l'espace de travail ne doit pas dépasser 80 caractères"
           },
           "company_size": {
-            "required": "La taille de l'entreprise est requise"
+            "required": "La taille de l'entreprise est requise",
+            "select_a_range": "Sélectionner la taille de l'organisation"
           }
         }
       },

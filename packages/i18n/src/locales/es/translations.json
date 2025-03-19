@@ -633,6 +633,8 @@
     "states": "Estados",
     "state": "Estado",
     "state_groups": "Grupos de estados",
+    "state_group": "Grupos de estado",
+    "priorities": "Prioridades",
     "priority": "Prioridad",
     "team_project": "Proyecto de equipo",
     "project": "Proyecto",
@@ -641,12 +643,16 @@
     "module": "Módulo",
     "modules": "Módulos",
     "labels": "Etiquetas",
+    "label": "Etiqueta",
     "assignees": "Asignados",
     "assignee": "Asignado",
     "created_by": "Creado por",
     "none": "Ninguno",
     "link": "Enlace",
+    "estimates": "Estimaciones",
     "estimate": "Estimación",
+    "created_at": "Creado en",
+    "completed_at": "Completado en",
     "layout": "Diseño",
     "filters": "Filtros",
     "display": "Mostrar",
@@ -689,13 +695,13 @@
     "add_more": "Agregar más",
     "defaults": "Valores predeterminados",
     "add_label": "Agregar etiqueta",
-    "estimates": "Estimaciones",
     "customize_time_range": "Personalizar rango de tiempo",
     "loading": "Cargando",
     "attachments": "Archivos adjuntos",
     "property": "Propiedad",
     "properties": "Propiedades",
     "parent": "Padre",
+    "page": "página",
     "remove": "Eliminar",
     "archiving": "Archivando",
     "archive": "Archivar",
@@ -827,8 +833,6 @@
     "select": "Seleccionar",
     "upgrade": "Mejorar",
     "add_seats": "Agregar asientos",
-    "label": "Etiqueta",
-    "priorities": "Prioridades",
     "projects": "Proyectos",
     "workspace": "Espacio de trabajo",
     "workspaces": "Espacios de trabajo",
@@ -864,7 +868,8 @@
     "delete": "Eliminar",
     "deleting": "Eliminando",
     "pending": "Pendiente",
-    "invite": "Invitar"
+    "invite": "Invitar",
+    "view": "Ver"
   },
 
   "chart": {
@@ -982,7 +987,8 @@
         "sub_issue_count": "Cantidad de sub-elementos",
         "attachment_count": "Cantidad de archivos adjuntos",
         "created_on": "Creado el",
-        "sub_issue": "Sub-elemento de trabajo"
+        "sub_issue": "Sub-elemento de trabajo",
+        "work_item_count": "Recuento de elementos de trabajo"
       },
       "extra": {
         "show_sub_issues": "Mostrar sub-elementos",
@@ -1469,7 +1475,8 @@
             "max_length": "El nombre del espacio de trabajo no debe exceder los 80 caracteres"
           },
           "company_size": {
-            "required": "El tamaño de la empresa es obligatorio"
+            "required": "El tamaño de la empresa es obligatorio",
+            "select_a_range": "Seleccionar tamaño de la organización"
           }
         }
       },

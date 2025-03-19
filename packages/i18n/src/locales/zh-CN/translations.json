@@ -631,6 +631,8 @@
     "states": "状态",
     "state": "状态",
     "state_groups": "状态组",
+    "state_group": "状态组",
+    "priorities": "优先级",
     "priority": "优先级",
     "team_project": "团队项目",
     "project": "项目",
@@ -639,12 +641,16 @@
     "module": "模块",
     "modules": "模块",
     "labels": "标签",
+    "label": "标签",
     "assignees": "负责人",
     "assignee": "负责人",
     "created_by": "创建者",
     "none": "无",
     "link": "链接",
+    "estimates": "估算",
     "estimate": "估算",
+    "created_at": "创建于",
+    "completed_at": "完成于",
     "layout": "布局",
     "filters": "筛选",
     "display": "显示",
@@ -687,13 +693,13 @@
     "add_more": "添加更多",
     "defaults": "默认值",
     "add_label": "添加标签",
-    "estimates": "估算",
     "customize_time_range": "自定义时间范围",
     "loading": "加载中",
     "attachments": "附件",
     "property": "属性",
     "properties": "属性",
     "parent": "父项",
+    "page": "页面",
     "remove": "移除",
     "archiving": "归档中",
     "archive": "归档",
@@ -825,8 +831,6 @@
     "select": "选择",
     "upgrade": "升级",
     "add_seats": "添加席位",
-    "label": "标签",
-    "priorities": "优先级",
     "projects": "项目",
     "workspace": "工作区",
     "workspaces": "工作区",
@@ -862,7 +866,8 @@
     "delete": "删除",
     "deleting": "删除中",
     "pending": "待处理",
-    "invite": "邀请"
+    "invite": "邀请",
+    "view": "查看"
   },
 
   "chart": {
@@ -980,7 +985,8 @@
         "sub_issue_count": "子工作项数量",
         "attachment_count": "附件数量",
         "created_on": "创建于",
-        "sub_issue": "子工作项"
+        "sub_issue": "子工作项",
+        "work_item_count": "工作项数量"
       },
       "extra": {
         "show_sub_issues": "显示子工作项",
@@ -1467,7 +1473,8 @@
             "max_length": "工作区名称不应超过80个字符"
           },
           "company_size": {
-            "required": "公司规模为必填项"
+            "required": "公司规模为必填项",
+            "select_a_range": "选择组织规模"
           }
         }
       },

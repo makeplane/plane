@@ -1,6 +1,5 @@
 import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import isEmpty from "lodash/isEmpty";
-import set from "lodash/set";
 import { v4 as uuidv4 } from "uuid";
 // plane constants
 import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE, STATE_GROUPS } from "@plane/constants";
@@ -21,6 +20,7 @@ import { IGanttBlock } from "@/components/gantt-chart";
 // helpers
 import { orderArrayBy } from "@/helpers/array.helper";
 import { getDate } from "@/helpers/date-time.helper";
+import { isEditorEmpty } from "@/helpers/editor.helper";
 
 type THandleIssuesMutation = (
   formData: Partial<TIssue>,
@@ -180,19 +180,6 @@ export const getIssueBlocksStructure = (block: TIssue): IGanttBlock => ({
   target_date: block?.target_date ?? undefined,
 });
 
-export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { [key: string]: boolean | undefined }) {
-  const changedFields: Partial<TIssue> = {};
-
-  const dirtyFieldKeys = Object.keys(dirtyFields) as (keyof TIssue)[];
-  for (const dirtyField of dirtyFieldKeys) {
-    if (!!dirtyFields[dirtyField]) {
-      set(changedFields, [dirtyField], formData[dirtyField]);
-    }
-  }
-
-  return changedFields;
-}
-
 export const formatTextList = (TextArray: string[]): string => {
   const count = TextArray.length;
   switch (count) {
@@ -212,7 +199,7 @@ export const formatTextList = (TextArray: string[]): string => {
 };
 
 export const getDescriptionPlaceholderI18n = (isFocused: boolean, description: string | undefined): string => {
-  const isDescriptionEmpty = !description || description === "<p></p>" || description.trim() === "";
+  const isDescriptionEmpty = isEditorEmpty(description);
   if (!isDescriptionEmpty || isFocused) return "common.press_for_commands";
   else return "common.click_to_add_description";
 };
