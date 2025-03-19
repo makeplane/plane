@@ -12,6 +12,7 @@ import {
   MODULE_UNFAVORITED,
   EUserPermissions,
   EUserPermissionsLevel,
+  IS_FAVORITE_MENU_OPEN,
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
@@ -47,7 +48,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
   const { t } = useTranslation();
 
   // local storage
-  const { setValue: toggleFavoriteMenu, storedValue } = useLocalStorage<boolean>("is_favorite_menu_open", false);
+  const { setValue: toggleFavoriteMenu, storedValue } = useLocalStorage<boolean>(IS_FAVORITE_MENU_OPEN, false);
   // derived values
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
