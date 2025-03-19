@@ -13,6 +13,8 @@ import { useEditorMention } from "@/hooks/use-editor-mention";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
+// store hooks
+import { useMember } from "@/hooks/store";
 
 interface RichTextEditorWrapperProps
   extends Omit<IRichTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
@@ -26,6 +28,8 @@ interface RichTextEditorWrapperProps
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
   const { containerClassName, workspaceSlug, workspaceId, projectId, searchMentionCallback, uploadFile, ...rest } =
     props;
+  // store hooks
+  const { getUserDetails } = useMember();
   // editor flaggings
   const { richTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // use editor mention
@@ -53,6 +57,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
           return res;
         },
         renderComponent: (props) => <EditorMentionsRoot {...props} />,
+        getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
       }}
       {...rest}
       containerClassName={cn("relative pl-3", containerClassName)}

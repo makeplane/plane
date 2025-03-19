@@ -5,6 +5,8 @@ import { EditorRefApi, IRichTextEditor, RichTextEditorWithRef } from "@plane/edi
 import { EditorMentionsRoot } from "@/components/editor";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
+// store hooks
+import { useMember } from "@/hooks/store";
 
 interface RichTextEditorWrapperProps
   extends Omit<IRichTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
@@ -12,12 +14,17 @@ interface RichTextEditorWrapperProps
 }
 
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
+  const { getMemberById } = useMember();
+
   const { containerClassName, uploadFile, ...rest } = props;
 
   return (
     <RichTextEditorWithRef
       mentionHandler={{
         renderComponent: (props) => <EditorMentionsRoot {...props} />,
+        getMentionedEntityDetails: (id: string) => ({
+          display_name: getMemberById(id)?.member__display_name ?? "",
+        }),
       }}
       ref={ref}
       disabledExtensions={[]}
