@@ -1,4 +1,4 @@
-import Errors from '@/core/helpers/error-handling/error-factory';
+import { handleError } from "./error-handling/error-factory";
 
 /**
  * A simple validation utility that integrates with our error system.
@@ -17,7 +17,13 @@ export class Validator<T> {
    */
   required(message?: string): Validator<T> {
     if (this.data === undefined || this.data === null) {
-      throw Errors.badRequest(message || `${this.name} is required`);
+      throw handleError(new ValidationError(this.name, message || `${this.name} is required`), {
+        errorType: 'bad-request',
+        component: 'validation',
+        operation: 'validateRequired',
+        extraContext: { field: this.name },
+        throw: true
+      });
     }
     return this;
   }
@@ -27,7 +33,13 @@ export class Validator<T> {
    */
   string(message?: string): Validator<T> {
     if (typeof this.data !== "string") {
-      throw Errors.badRequest(message || `${this.name} must be a string`);
+      throw handleError(new ValidationError(this.name, message || `${this.name} must be a string`), {
+        errorType: 'bad-request',
+        component: 'validation',
+        operation: 'validateString',
+        extraContext: { field: this.name },
+        throw: true
+      });
     }
     return this;
   }
@@ -37,7 +49,13 @@ export class Validator<T> {
    */
   notEmpty(message?: string): Validator<T> {
     if (typeof this.data === "string" && this.data.trim() === "") {
-      throw Errors.badRequest(message || `${this.name} cannot be empty`);
+      throw handleError(new ValidationError(this.name, message || `${this.name} cannot be empty`), {
+        errorType: 'bad-request',
+        component: 'validation',
+        operation: 'validateNonEmptyString',
+        extraContext: { field: this.name },
+        throw: true
+      });
     }
     return this;
   }
@@ -47,7 +65,13 @@ export class Validator<T> {
    */
   number(message?: string): Validator<T> {
     if (typeof this.data !== "number" || isNaN(this.data)) {
-      throw Errors.badRequest(message || `${this.name} must be a valid number`);
+      throw handleError(new ValidationError(this.name, message || `${this.name} must be a valid number`), {
+        errorType: 'bad-request',
+        component: 'validation',
+        operation: 'validateNumber',
+        extraContext: { field: this.name },
+        throw: true
+      });
     }
     return this;
   }
@@ -57,7 +81,13 @@ export class Validator<T> {
    */
   nonEmptyArray(message?: string): Validator<T> {
     if (!Array.isArray(this.data) || this.data.length === 0) {
-      throw Errors.badRequest(message || `${this.name} must be a non-empty array`);
+      throw handleError(new ValidationError(this.name, message || `${this.name} must be a non-empty array`), {
+        errorType: 'bad-request',
+        component: 'validation',
+        operation: 'validateArray',
+        extraContext: { field: this.name },
+        throw: true
+      });
     }
     return this;
   }
@@ -67,7 +97,13 @@ export class Validator<T> {
    */
   match(regex: RegExp, message?: string): Validator<T> {
     if (typeof this.data !== "string" || !regex.test(this.data)) {
-      throw Errors.badRequest(message || `${this.name} has an invalid format`);
+      throw handleError(new ValidationError(this.name, message || `${this.name} has an invalid format`), {
+        errorType: 'bad-request',
+        component: 'validation',
+        operation: 'validateFormat',
+        extraContext: { field: this.name, format: regex.toString() },
+        throw: true
+      });
     }
     return this;
   }
@@ -77,7 +113,13 @@ export class Validator<T> {
    */
   oneOf(allowedValues: any[], message?: string): Validator<T> {
     if (!allowedValues.includes(this.data)) {
-      throw Errors.badRequest(message || `${this.name} must be one of: ${allowedValues.join(", ")}`);
+      throw handleError(new ValidationError(this.name, message || `${this.name} must be one of: ${allowedValues.join(", ")}`), {
+        errorType: 'bad-request',
+        component: 'validation',
+        operation: 'validateEnum',
+        extraContext: { field: this.name, allowedValues },
+        throw: true
+      });
     }
     return this;
   }
@@ -87,7 +129,13 @@ export class Validator<T> {
    */
   custom(validationFn: (value: T) => boolean, message?: string): Validator<T> {
     if (!validationFn(this.data)) {
-      throw Errors.badRequest(message || `${this.name} is invalid`);
+      throw handleError(new ValidationError(this.name, message || `${this.name} is invalid`), {
+        errorType: 'bad-request',
+        component: 'validation',
+        operation: 'validateCustom',
+        extraContext: { field: this.name },
+        throw: true
+      });
     }
     return this;
   }
@@ -108,3 +156,106 @@ export const validate = <T>(data: T, name?: string): Validator<T> => {
 };
 
 export default validate;
+
+export class ValidationError extends Error {
+  constructor(public name: string, message: string) {
+    super(message);
+    this.name = name;
+  }
+}
+
+export const validateRequired = (value: any, name: string, message?: string) => {
+  if (value === undefined || value === null) {
+    throw handleError(new ValidationError(name, message || `${name} is required`), {
+      errorType: 'bad-request',
+      component: 'validation',
+      operation: 'validateRequired',
+      extraContext: { field: name },
+      throw: true
+    });
+  }
+};
+
+export const validateString = (value: any, name: string, message?: string) => {
+  if (typeof value !== 'string') {
+    throw handleError(new ValidationError(name, message || `${name} must be a string`), {
+      errorType: 'bad-request',
+      component: 'validation',
+      operation: 'validateString',
+      extraContext: { field: name },
+      throw: true
+    });
+  }
+};
+
+export const validateNonEmptyString = (value: string, name: string, message?: string) => {
+  if (!value.trim()) {
+    throw handleError(new ValidationError(name, message || `${name} cannot be empty`), {
+      errorType: 'bad-request',
+      component: 'validation',
+      operation: 'validateNonEmptyString',
+      extraContext: { field: name },
+      throw: true
+    });
+  }
+};
+
+export const validateNumber = (value: any, name: string, message?: string) => {
+  if (typeof value !== 'number' || isNaN(value)) {
+    throw handleError(new ValidationError(name, message || `${name} must be a valid number`), {
+      errorType: 'bad-request',
+      component: 'validation',
+      operation: 'validateNumber',
+      extraContext: { field: name },
+      throw: true
+    });
+  }
+};
+
+export const validateArray = (value: any, name: string, message?: string) => {
+  if (!Array.isArray(value) || value.length === 0) {
+    throw handleError(new ValidationError(name, message || `${name} must be a non-empty array`), {
+      errorType: 'bad-request',
+      component: 'validation',
+      operation: 'validateArray',
+      extraContext: { field: name },
+      throw: true
+    });
+  }
+};
+
+export const validateFormat = (value: string, name: string, format: RegExp, message?: string) => {
+  if (!format.test(value)) {
+    throw handleError(new ValidationError(name, message || `${name} has an invalid format`), {
+      errorType: 'bad-request',
+      component: 'validation',
+      operation: 'validateFormat',
+      extraContext: { field: name, format: format.toString() },
+      throw: true
+    });
+  }
+};
+
+export const validateEnum = (value: any, name: string, allowedValues: any[], message?: string) => {
+  if (!allowedValues.includes(value)) {
+    throw handleError(new ValidationError(name, message || `${name} must be one of: ${allowedValues.join(", ")}`), {
+      errorType: 'bad-request',
+      component: 'validation',
+      operation: 'validateEnum',
+      extraContext: { field: name, allowedValues },
+      throw: true
+    });
+  }
+};
+
+export const validateCustom = (value: any, name: string, validator: (value: any) => boolean, message?: string) => {
+  if (!validator(value)) {
+    throw handleError(new ValidationError(name, message || `${name} is invalid`), {
+      errorType: 'bad-request',
+      component: 'validation',
+      operation: 'validateCustom',
+      extraContext: { field: name },
+      throw: true
+    });
+  }
+};

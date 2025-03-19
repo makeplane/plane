@@ -1,5 +1,6 @@
 import { Server } from "@hocuspocus/server";
 import { v4 as uuidv4 } from "uuid";
+import { IncomingHttpHeaders } from "http";
 // lib
 import { handleAuthentication } from "@/core/lib/authentication";
 // extensions
@@ -10,7 +11,8 @@ import { TUserDetails } from "@plane/editor";
 // types
 import { TDocumentTypes, type HocusPocusServerContext } from "@/core/types/common";
 // error handling
-import { AppError, catchAsync } from "@/core/helpers/error-handling/error-handler";
+import { catchAsync } from "@/core/helpers/error-handling/error-handler";
+import { handleError } from "@/core/helpers/error-handling/error-factory";
 
 export const getHocusPocusServer = async () => {
   const extensions = await getExtensions();
@@ -23,6 +25,11 @@ export const getHocusPocusServer = async () => {
       requestParameters,
       // user id used as token for authentication
       token,
+    }: {
+      requestHeaders: IncomingHttpHeaders;
+      context: HocusPocusServerContext; // Better than 'any', still allows property assignment
+      requestParameters: URLSearchParams;
+      token: string;
     }) => {
       return catchAsync(
         async () => {
@@ -46,20 +53,23 @@ export const getHocusPocusServer = async () => {
           }
 
           if (!cookie || !userId) {
-            throw new AppError("Credentials not provided", 401);
+            handleError(null, {
+              errorType: "unauthorized",
+              message: "Credentials not provided",
+              component: "hocuspocus",
+              operation: "authenticate",
+              extraContext: { tokenProvided: !!token },
+              throw: true,
+            });
           }
 
-          const typedContext = {
-            ...context,
-            // for certain editors we need to take in the cookie from the request parameters
-            cookie: cookie ?? requestParameters.get("cookie"),
-            userId: userId,
-            documentType: requestParameters.get("documentType")?.toString() as TDocumentTypes,
-          } as HocusPocusServerContext;
+          context.documentType = requestParameters.get("documentType")?.toString() as TDocumentTypes;
+          context.cookie = cookie ?? requestParameters.get("cookie");
+          context.userId = userId;
 
-          await handleAuthentication({
-            cookie: typedContext.cookie,
-            userId: typedContext.userId,
+          return await handleAuthentication({
+            cookie: context.cookie,
+            userId: context.userId,
           });
         },
         { extra: { operation: "authenticate" } },

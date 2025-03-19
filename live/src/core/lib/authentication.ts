@@ -1,7 +1,6 @@
 // services
 import { UserService } from "@/core/services/user.service";
-import { logger } from "@plane/logger";
-
+import { handleError } from "@/core/helpers/error-handling/error-factory";
 
 const userService = new UserService();
 
@@ -17,11 +16,22 @@ export const handleAuthentication = async (props: Props) => {
   try {
     response = await userService.currentUser(cookie);
   } catch (error) {
-    logger.error("Failed to fetch current user:", error);
-    throw error;
+    handleError(error, {
+      errorType: "unauthorized",
+      message: "Failed to authenticate user",
+      component: "authentication",
+      operation: "fetch-current-user",
+      throw: true,
+    });
   }
   if (response.id !== userId) {
-    throw Error("Authentication failed: Token doesn't match the current user.");
+    handleError(null, {
+      errorType: "unauthorized",
+      message: "Authentication failed: Token doesn't match the current user.",
+      component: "authentication",
+      operation: "validate-user",
+      throw: true,
+    });
   }
 
   return {

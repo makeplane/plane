@@ -1,7 +1,7 @@
 import { SentryInstance } from "@/sentry-config";
 import { AppError, ErrorCategory } from "./error-handler";
 import { logger } from "@plane/logger";
-import Errors from "./error-factory";
+import { handleError } from "./error-factory";
 
 export interface ErrorContext {
   url?: string;
@@ -39,14 +39,17 @@ export const reportError = (error: Error | unknown, context?: ErrorContext): voi
 };
 
 export const handleFatalError = (error: Error | unknown, context?: ErrorContext): void => {
-  // If it's already a fatal AppError, use it directly
-  const fatalError =
-    error instanceof AppError && error.category === ErrorCategory.FATAL
-      ? error
-      : Errors.fatal(error instanceof Error ? error.message : String(error), {
-          ...context,
-          originalError: error,
-        });
+  // Convert to fatal AppError
+  const fatalError = handleError(error, {
+    errorType: 'fatal',
+    message: error instanceof Error ? error.message : String(error),
+    component: context?.extra?.component || 'system',
+    operation: context?.extra?.operation || 'fatal-error-handler',
+    extraContext: {
+      ...context,
+      originalError: error,
+    }
+  });
 
   process.emit("uncaughtException", fatalError);
 };

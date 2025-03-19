@@ -3,8 +3,9 @@ import { ErrorRequestHandler, Request, Response, NextFunction } from "express";
 import { SentryInstance, captureException } from "@/sentry-config";
 import { env } from "@/env";
 import { logger } from "@plane/logger";
-import Errors from "./error-factory";
+import { handleError } from "./error-factory";
 import { ErrorContext, reportError } from "./error-reporting";
+import { manualLogger } from "../logger";
 
 /**
  * HTTP Status Codes
@@ -125,14 +126,14 @@ export class AppError extends Error {
   private report(): void {
     // Different logging based on error category
     if (this.category === ErrorCategory.OPERATIONAL) {
-      logger.info(`Operational error: ${this.message}`, {
+      manualLogger.error(`Operational error: ${this.message}`, {
         errorName: this.name,
         errorStatus: this.status,
         errorCategory: this.category,
         context: this.context,
       });
     } else if (this.category === ErrorCategory.FATAL) {
-      logger.error(`FATAL error: ${this.message}`, {
+      manualLogger.error(`FATAL error: ${this.message}`, {
         errorName: this.name,
         errorStatus: this.status,
         errorCategory: this.category,
@@ -140,7 +141,7 @@ export class AppError extends Error {
         context: this.context,
       });
     } else {
-      logger.error(`${this.category} error: ${this.message}`, {
+      manualLogger.error(`${this.category} error: ${this.message}`, {
         errorName: this.name,
         errorStatus: this.status,
         errorCategory: this.category,
@@ -179,15 +180,15 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   }
 
   // Convert to AppError if it's not already one
-  const error =
-    err instanceof AppError
-      ? err
-      : new AppError(
-          err.message || "Unknown error occurred",
-          err.status || err.statusCode || HttpStatusCode.INTERNAL_SERVER,
-          ErrorCategory.PROGRAMMING,
-          { originalError: err }
-        );
+  const error = handleError(err, {
+    component: "express",
+    operation: "error-handler",
+    extraContext: {
+      originalError: err,
+      url: req.originalUrl,
+      method: req.method,
+    },
+  });
 
   // Normalize status code
   const statusCode = error.status;
@@ -237,23 +238,21 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 export const asyncHandler = (fn: Function) => {
   return (req: any, res: any, next: any) => {
     Promise.resolve(fn(req, res, next)).catch((error) => {
-      // If it's not an AppError, convert it
-      if (!(error instanceof AppError)) {
-        error = Errors.convertError(error instanceof Error ? error : new Error(String(error)), {
-          context: {
-            url: req.originalUrl,
-            method: req.method,
-            body: req.body,
-            query: req.query,
-            params: req.params,
-            component: "express",
-            operation: "route-handler",
-          },
-        });
-      }
+      // Convert to AppError if needed and pass to Express error middleware
+      const appError = handleError(error, {
+        errorType: "internal",
+        component: "express",
+        operation: "route-handler",
+        extraContext: {
+          url: req.originalUrl,
+          method: req.method,
+          body: req.body,
+          query: req.query,
+          params: req.params,
+        },
+      });
 
-      // Pass to Express error middleware
-      next(error);
+      next(appError);
     });
   };
 };
@@ -299,7 +298,17 @@ export const catchAsync = <T, E = Error>(
       reportError(error, context);
 
       if (rethrow) {
-        throw error;
+        // Use handleError to ensure consistent error handling when rethrowing
+        throw handleError(error, {
+          errorType: error instanceof AppError ? undefined : 'internal',
+          component: context?.extra?.component || 'unknown',
+          operation: context?.extra?.operation || 'unknown',
+          extraContext: {
+            ...context,
+            originalError: error
+          },
+          throw: true
+        });
       }
 
       return defaultValue;
@@ -321,13 +330,13 @@ export const setupGlobalErrorHandlers = (gracefulShutdown: () => Promise<void>):
     }
 
     // Convert to AppError and handle
-    const appError =
-      reason instanceof AppError
-        ? reason
-        : Errors.convertError(reason instanceof Error ? reason : new Error(String(reason)), {
-            message: reason instanceof Error ? reason.message : String(reason),
-            context: { originalError: reason, source: "unhandledRejection" },
-          });
+    const appError = handleError(reason, {
+      errorType: "internal",
+      message: reason instanceof Error ? reason.message : String(reason),
+      component: "process",
+      operation: "unhandledRejection",
+      extraContext: { source: "unhandledRejection" },
+    });
 
     // Only crash if it's a fatal error
     if (appError.category === ErrorCategory.FATAL) {
@@ -350,15 +359,14 @@ export const setupGlobalErrorHandlers = (gracefulShutdown: () => Promise<void>):
     }
 
     // Convert to AppError if needed
-    const appError =
-      error instanceof AppError
-        ? error
-        : Errors.convertError(error, {
-            context: {
-              originalError: error,
-              source: "uncaughtException",
-            },
-          });
+    const appError = handleError(error, {
+      errorType: "internal",
+      component: "process",
+      operation: "uncaughtException",
+      extraContext: {
+        source: "uncaughtException",
+      },
+    });
 
     // Only crash for fatal errors or if error handling system itself is broken
     if (appError.category === ErrorCategory.FATAL) {
@@ -389,8 +397,17 @@ export function configureErrorHandlers(app: any): void {
   // Global error handling middleware
   app.use(errorHandler);
 
-  // 404 handler must be last - it will be imported from error-factory
+  // 404 handler must be last
   app.use((_req: Request, _res: Response, next: NextFunction) => {
-    next(new AppError("Resource not found", HttpStatusCode.NOT_FOUND, ErrorCategory.OPERATIONAL));
+    next(
+      handleError(null, {
+        errorType: "not-found",
+        message: "Resource not found",
+        component: "express",
+        operation: "route-handler",
+        extraContext: { path: _req.path },
+        throw: true,
+      })
+    );
   });
 }

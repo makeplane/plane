@@ -1,22 +1,16 @@
-// Third-party libraries
-import { Redis } from "ioredis";
-// Hocuspocus extensions and core
+// hocuspocus extensions and core
 import { Database } from "@hocuspocus/extension-database";
 import { Extension } from "@hocuspocus/server";
 import { Logger } from "@hocuspocus/extension-logger";
-import { Redis as HocusPocusRedis } from "@hocuspocus/extension-redis";
-// core helpers and utilities
-import { getRedisUrl } from "@/core/lib/utils/redis-url";
-// core libraries
-import { fetchPageDescriptionBinary, updatePageDescription } from "@/core/lib/page";
-// plane live libraries
-import { fetchDocument } from "@/plane-live/lib/fetch-document";
-import { updateDocument } from "@/plane-live/lib/update-document";
+import { setupRedisExtension } from "@/core/extensions/redis";
 // types
 import { type HocusPocusServerContext, type TDocumentTypes } from "@/core/types/common";
 import { logger } from "@plane/logger";
 // error
-import { AppError, catchAsync } from "@/core/helpers/error-handling/error-handler";
+import { catchAsync } from "@/core/helpers/error-handling/error-handler";
+import { handleError } from "@/core/helpers/error-handling/error-factory";
+// document handlers
+import { getDocumentHandler } from "../handlers/document-handlers";
 
 export const getExtensions: () => Promise<Extension[]> = async () => {
   const extensions: Extension[] = [
@@ -27,31 +21,47 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
       },
     }),
     new Database({
-      fetch: async ({ context, documentName: pageId, requestParameters }) => {
-        const cookie = (context as HocusPocusServerContext).cookie;
+      fetch: async ({
+        context,
+        documentName: pageId,
+        requestParameters,
+      }: {
+        context: HocusPocusServerContext;
+        documentName: TDocumentTypes;
+        requestParameters: URLSearchParams;
+      }) => {
+        const { documentType } = context;
         const params = requestParameters;
-        const documentType = params.get("documentType")?.toString() as TDocumentTypes | undefined;
 
         let fetchedData = null;
         fetchedData = await catchAsync(
           async () => {
             if (!documentType) {
-              throw new AppError("Document type is required");
-            }
-
-            if (documentType === "project_page") {
-              fetchedData = await fetchPageDescriptionBinary(params, pageId, cookie);
-            } else {
-              fetchedData = await fetchDocument({
-                cookie,
-                documentType,
-                pageId,
-                params,
+              handleError(null, {
+                errorType: 'bad-request',
+                message: 'Document type is required',
+                component: 'database-extension',
+                operation: 'fetch',
+                extraContext: { pageId },
+                throw: true
               });
             }
 
+            const documentHandler = getDocumentHandler(documentType);
+            fetchedData = await documentHandler.fetch({
+              context: context as HocusPocusServerContext,
+              pageId,
+              params,
+            });
+
             if (!fetchedData) {
-              throw new AppError(`Failed to fetch document: ${pageId}`);
+              handleError(null, {
+                errorType: 'not-found',
+                message: `Failed to fetch document: ${pageId}`,
+                component: 'database-extension',
+                operation: 'fetch',
+                extraContext: { documentType, pageId }
+              });
             }
 
             return fetchedData;
@@ -63,28 +73,41 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
         )();
         return fetchedData;
       },
-      store: async ({ context, state, documentName: pageId, requestParameters }) => {
-        const cookie = (context as HocusPocusServerContext).cookie;
+      store: async ({
+        context,
+        state,
+        documentName: pageId,
+        requestParameters,
+      }: {
+        context: HocusPocusServerContext;
+        state: Buffer;
+        documentName: TDocumentTypes;
+        requestParameters: URLSearchParams;
+      }) => {
+        const { agentId } = context as HocusPocusServerContext;
         const params = requestParameters;
         const documentType = params.get("documentType")?.toString() as TDocumentTypes | undefined;
 
         catchAsync(
           async () => {
             if (!documentType) {
-              throw new AppError("Document type is required");
-            }
-
-            if (documentType === "project_page") {
-              await updatePageDescription(params, pageId, state, cookie);
-            } else {
-              await updateDocument({
-                cookie,
-                documentType,
-                pageId,
-                params,
-                updatedDescription: state,
+              handleError(null, {
+                errorType: 'bad-request',
+                message: 'Document type is required',
+                component: 'database-extension',
+                operation: 'store',
+                extraContext: { pageId },
+                throw: true
               });
             }
+
+            const documentHandler = getDocumentHandler(documentType, { agentId });
+            await documentHandler.store({
+              context: context as HocusPocusServerContext,
+              pageId,
+              state,
+              params,
+            });
           },
           {
             params: { pageId, documentType },
@@ -95,59 +118,10 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
     }),
   ];
 
-  const redisUrl = getRedisUrl();
-
-  if (redisUrl) {
-    try {
-      const redisClient = new Redis(redisUrl);
-      let hasErrored = false;
-
-      await new Promise<void>((resolve, reject) => {
-        redisClient.on("error", (error: any) => {
-          if (!hasErrored) {
-            hasErrored = true;
-            if (
-              error?.code === "ENOTFOUND" ||
-              error.message.includes("WRONGPASS") ||
-              error.message.includes("NOAUTH")
-            ) {
-              redisClient.disconnect();
-            }
-            logger.warn(
-              `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`,
-              error
-            );
-            reject(error);
-          }
-        });
-
-        redisClient.on("ready", () => {
-          if (!hasErrored) {
-            extensions.push(new HocusPocusRedis({ redis: redisClient }));
-            logger.info("Redis Client connected ✅");
-            resolve();
-          }
-        });
-
-        // Add timeout to prevent hanging
-        setTimeout(() => {
-          if (!hasErrored) {
-            hasErrored = true;
-            redisClient.disconnect();
-            reject(new Error("Redis connection timeout"));
-          }
-        }, 5000);
-      });
-    } catch (error) {
-      logger.warn(
-        `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`,
-        error
-      );
-    }
-  } else {
-    logger.warn(
-      "Redis URL is not set, continuing without Redis (you won't be able to sync data between multiple plane live servers)"
-    );
+  // Set up Redis extension if available
+  const redisExtension = await setupRedisExtension();
+  if (redisExtension) {
+    extensions.push(redisExtension);
   }
 
   return extensions;

@@ -1,4 +1,4 @@
-import Errors from "./error-factory";
+import { handleError } from "./error-factory";
 
 /**
  * A simple validation utility that integrates with our error system.
@@ -17,7 +17,13 @@ export class Validator<T> {
    */
   required(message?: string): Validator<T> {
     if (this.data === undefined || this.data === null) {
-      throw Errors.badRequest(message || `${this.name} is required`);
+      throw handleError(null, {
+        errorType: 'bad-request',
+        message: message || `${this.name} is required`,
+        component: 'validator',
+        operation: 'required',
+        throw: true
+      });
     }
     return this;
   }
@@ -27,7 +33,13 @@ export class Validator<T> {
    */
   string(message?: string): Validator<T> {
     if (typeof this.data !== "string") {
-      throw Errors.badRequest(message || `${this.name} must be a string`);
+      throw handleError(null, {
+        errorType: 'bad-request',
+        message: message || `${this.name} must be a string`,
+        component: 'validator',
+        operation: 'string',
+        throw: true
+      });
     }
     return this;
   }
@@ -37,7 +49,13 @@ export class Validator<T> {
    */
   notEmpty(message?: string): Validator<T> {
     if (typeof this.data === "string" && this.data.trim() === "") {
-      throw Errors.badRequest(message || `${this.name} cannot be empty`);
+      throw handleError(null, {
+        errorType: 'bad-request',
+        message: message || `${this.name} cannot be empty`,
+        component: 'validator',
+        operation: 'notEmpty',
+        throw: true
+      });
     }
     return this;
   }
@@ -47,7 +65,13 @@ export class Validator<T> {
    */
   number(message?: string): Validator<T> {
     if (typeof this.data !== "number" || isNaN(this.data)) {
-      throw Errors.badRequest(message || `${this.name} must be a valid number`);
+      throw handleError(null, {
+        errorType: 'bad-request',
+        message: message || `${this.name} must be a valid number`,
+        component: 'validator',
+        operation: 'number',
+        throw: true
+      });
     }
     return this;
   }
@@ -57,7 +81,13 @@ export class Validator<T> {
    */
   nonEmptyArray(message?: string): Validator<T> {
     if (!Array.isArray(this.data) || this.data.length === 0) {
-      throw Errors.badRequest(message || `${this.name} must be a non-empty array`);
+      throw handleError(null, {
+        errorType: 'bad-request',
+        message: message || `${this.name} must be a non-empty array`,
+        component: 'validator',
+        operation: 'nonEmptyArray',
+        throw: true
+      });
     }
     return this;
   }
@@ -67,7 +97,13 @@ export class Validator<T> {
    */
   match(regex: RegExp, message?: string): Validator<T> {
     if (typeof this.data !== "string" || !regex.test(this.data)) {
-      throw Errors.badRequest(message || `${this.name} has an invalid format`);
+      throw handleError(null, {
+        errorType: 'bad-request',
+        message: message || `${this.name} has an invalid format`,
+        component: 'validator',
+        operation: 'match',
+        throw: true
+      });
     }
     return this;
   }
@@ -77,7 +113,13 @@ export class Validator<T> {
    */
   oneOf(allowedValues: any[], message?: string): Validator<T> {
     if (!allowedValues.includes(this.data)) {
-      throw Errors.badRequest(message || `${this.name} must be one of: ${allowedValues.join(", ")}`);
+      throw handleError(null, {
+        errorType: 'bad-request',
+        message: message || `${this.name} must be one of: ${allowedValues.join(", ")}`,
+        component: 'validator',
+        operation: 'oneOf',
+        throw: true
+      });
     }
     return this;
   }
@@ -87,7 +129,13 @@ export class Validator<T> {
    */
   custom(validationFn: (value: T) => boolean, message?: string): Validator<T> {
     if (!validationFn(this.data)) {
-      throw Errors.badRequest(message || `${this.name} is invalid`);
+      throw handleError(null, {
+        errorType: 'bad-request',
+        message: message || `${this.name} is invalid`,
+        component: 'validator',
+        operation: 'custom',
+        throw: true
+      });
     }
     return this;
   }

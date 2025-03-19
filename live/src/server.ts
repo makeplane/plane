@@ -22,7 +22,8 @@ import { ServiceContainer } from "./lib/service-container";
 import { logger } from "@plane/logger";
 
 // Error handling
-import { configureErrorHandlers, AppError } from "@/core/helpers/error-handling/error-handler";
+import { configureErrorHandlers } from "@/core/helpers/error-handling/error-handler";
+import { handleError } from "@/core/helpers/error-handling/error-factory";
 
 // WebSocket router type definition
 interface WebSocketRouter extends Router {
@@ -93,8 +94,14 @@ export class Server {
       return this;
     } catch (error) {
       logger.error("Failed to initialize server:", error);
-      if (error instanceof AppError) throw error;
-      throw new AppError(`Server initialization failed: ${error instanceof Error ? error.message : String(error)}`);
+      
+      // This will always throw (never returns) - TypeScript correctly infers this
+      handleError(error, {
+        errorType: 'internal',
+        component: 'server',
+        operation: 'initialize',
+        throw: true
+      });
     }
   }
 
@@ -130,8 +137,12 @@ export class Server {
       // Mount the router on the base path
       this.app.use(serverConfig.basePath, router);
     } catch (error) {
-      if (error instanceof AppError) throw error;
-      throw new AppError(`Failed to setup routes: ${error instanceof Error ? error.message : String(error)}`);
+      handleError(error, {
+        errorType: 'internal',
+        component: 'server',
+        operation: 'setupRoutes',
+        throw: true
+      });
     }
   }
 
@@ -140,14 +151,24 @@ export class Server {
    * @returns HTTP Server instance
    */
   async start() {
-    const server = this.app.listen(this.port, () => {
-      logger.info(`Plane Live server has started at port ${this.port}`);
-    });
+    try {
+      const server = this.app.listen(this.port, () => {
+        logger.info(`Plane Live server has started at port ${this.port}`);
+      });
 
-    // Setup graceful shutdown
-    const shutdownManager = new ShutdownManager(this.hocusPocusServer, server);
-    shutdownManager.registerShutdownHandlers();
+      // Setup graceful shutdown
+      const shutdownManager = new ShutdownManager(this.hocusPocusServer, server);
+      shutdownManager.registerShutdownHandlers();
 
-    return server;
+      return server;
+    } catch (error) {
+      handleError(error, {
+        errorType: 'service-unavailable',
+        component: 'server',
+        operation: 'start',
+        extraContext: { port: this.port },
+        throw: true
+      });
+    }
   }
 }
