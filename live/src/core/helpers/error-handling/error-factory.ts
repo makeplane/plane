@@ -158,6 +158,7 @@ export function handleError(error: unknown, options: NonThrowingOptions): AppErr
  * Implementation of handleError that handles both throwing and non-throwing cases
  */
 export function handleError(error: unknown, options: ThrowingOptions | NonThrowingOptions): AppError | never {
+  console.log("error", error instanceof AppError);
   // Only throw if throw is explicitly true
   const shouldThrow = (options as ThrowingOptions).throw === true;
 
@@ -170,35 +171,43 @@ export function handleError(error: unknown, options: ThrowingOptions | NonThrowi
   }
 
   // Format the error message
-  const errorMessage = options.message 
-    ? (error instanceof Error 
-        ? `${options.message}: ${error.message}` 
-        : error 
-          ? `${options.message}: ${String(error)}` 
-          : options.message)
-    : (error instanceof Error 
-        ? error.message 
-        : error 
-          ? String(error) 
-          : 'Unknown error occurred');
+  const errorMessage = options.message
+    ? error instanceof Error
+      ? `${options.message}: ${error.message}`
+      : error
+        ? `${options.message}: ${String(error)}`
+        : options.message
+    : error instanceof Error
+      ? error.message
+      : error
+        ? String(error)
+        : "Unknown error occurred";
 
   // Build context object
   const context = {
     component: options.component,
     operation: options.operation,
     originalError: error,
-    ...(options.extraContext || {})
+    ...(options.extraContext || {}),
   };
 
   // Create the appropriate error type using our factory map
   const errorType = options.errorType || "internal";
   const factory = ERROR_FACTORIES[errorType];
+
+  if (!factory) {
+    // If no factory found, default to internal error
+    return ERROR_FACTORIES.internal.createError(errorMessage, context);
+  }
+
+  // Create the error with the factory
   const appError = factory.createError(errorMessage, context);
 
-  // Either throw or return the error
+  // If we should throw, do so now
   if (shouldThrow) {
     throw appError;
   }
+
   return appError;
 }
 

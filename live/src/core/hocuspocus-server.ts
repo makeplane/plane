@@ -31,6 +31,8 @@ export const getHocusPocusServer = async () => {
       requestParameters: URLSearchParams;
       token: string;
     }) => {
+      // need to rethrow all errors since hocuspocus needs to know to stop
+      // further propagation of events to other document lifecycle
       return catchAsync(
         async () => {
           let cookie: string | undefined = undefined;
@@ -66,10 +68,12 @@ export const getHocusPocusServer = async () => {
           context.documentType = requestParameters.get("documentType")?.toString() as TDocumentTypes;
           context.cookie = cookie ?? requestParameters.get("cookie");
           context.userId = userId;
+          context.workspaceSlug = requestParameters.get("workspaceSlug")?.toString() as string;
 
           return await handleAuthentication({
             cookie: context.cookie,
             userId: context.userId,
+            workspaceSlug: context.workspaceSlug,
           });
         },
         { extra: { operation: "authenticate" } },

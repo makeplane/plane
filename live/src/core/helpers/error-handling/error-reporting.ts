@@ -19,6 +19,7 @@ export interface ErrorContext {
  */
 export const reportError = (error: Error | unknown, context?: ErrorContext): void => {
   if (error instanceof AppError) {
+    // if it's an app error, don't report it as it's already been reported
     return;
   }
 
@@ -41,14 +42,14 @@ export const reportError = (error: Error | unknown, context?: ErrorContext): voi
 export const handleFatalError = (error: Error | unknown, context?: ErrorContext): void => {
   // Convert to fatal AppError
   const fatalError = handleError(error, {
-    errorType: 'fatal',
+    errorType: "fatal",
     message: error instanceof Error ? error.message : String(error),
-    component: context?.extra?.component || 'system',
-    operation: context?.extra?.operation || 'fatal-error-handler',
+    component: context?.extra?.component || "system",
+    operation: context?.extra?.operation || "fatal-error-handler",
     extraContext: {
       ...context,
       originalError: error,
-    }
+    },
   });
 
   process.emit("uncaughtException", fatalError);

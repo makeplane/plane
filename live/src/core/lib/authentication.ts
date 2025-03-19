@@ -7,20 +7,26 @@ const userService = new UserService();
 type Props = {
   cookie: string;
   userId: string;
+  workspaceSlug: string;
 };
 
 export const handleAuthentication = async (props: Props) => {
-  const { cookie, userId } = props;
+  const { cookie, userId, workspaceSlug } = props;
   // fetch current user info
   let response;
   try {
     response = await userService.currentUser(cookie);
   } catch (error) {
+    console.log("caught?");
     handleError(error, {
       errorType: "unauthorized",
       message: "Failed to authenticate user",
       component: "authentication",
       operation: "fetch-current-user",
+      extraContext: {
+        userId,
+        workspaceSlug,
+      },
       throw: true,
     });
   }
@@ -30,6 +36,10 @@ export const handleAuthentication = async (props: Props) => {
       message: "Authentication failed: Token doesn't match the current user.",
       component: "authentication",
       operation: "validate-user",
+      extraContext: {
+        userId,
+        workspaceSlug,
+      },
       throw: true,
     });
   }

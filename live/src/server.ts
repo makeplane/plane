@@ -94,13 +94,13 @@ export class Server {
       return this;
     } catch (error) {
       logger.error("Failed to initialize server:", error);
-      
+
       // This will always throw (never returns) - TypeScript correctly infers this
       handleError(error, {
-        errorType: 'internal',
-        component: 'server',
-        operation: 'initialize',
-        throw: true
+        errorType: "internal",
+        component: "server",
+        operation: "initialize",
+        throw: true,
       });
     }
   }
@@ -138,10 +138,10 @@ export class Server {
       this.app.use(serverConfig.basePath, router);
     } catch (error) {
       handleError(error, {
-        errorType: 'internal',
-        component: 'server',
-        operation: 'setupRoutes',
-        throw: true
+        errorType: "internal",
+        component: "server",
+        operation: "setupRoutes",
+        throw: true,
       });
     }
   }
@@ -163,11 +163,11 @@ export class Server {
       return server;
     } catch (error) {
       handleError(error, {
-        errorType: 'service-unavailable',
-        component: 'server',
-        operation: 'start',
+        errorType: "service-unavailable",
+        component: "server",
+        operation: "start",
         extraContext: { port: this.port },
-        throw: true
+        throw: true,
       });
     }
   }

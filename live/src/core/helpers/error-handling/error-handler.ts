@@ -6,6 +6,7 @@ import { logger } from "@plane/logger";
 import { handleError } from "./error-factory";
 import { ErrorContext, reportError } from "./error-reporting";
 import { manualLogger } from "../logger";
+import { APIService } from "@/core/services/api.service";
 
 /**
  * HTTP Status Codes
@@ -296,18 +297,21 @@ export const catchAsync = <T, E = Error>(
       }
 
       reportError(error, context);
+      if (error instanceof AppError) {
+        error.context;
+      }
 
       if (rethrow) {
         // Use handleError to ensure consistent error handling when rethrowing
-        throw handleError(error, {
-          errorType: error instanceof AppError ? undefined : 'internal',
-          component: context?.extra?.component || 'unknown',
-          operation: context?.extra?.operation || 'unknown',
+        handleError(error, {
+          component: context?.extra?.component || "unknown",
+          operation: context?.extra?.operation || "unknown",
           extraContext: {
             ...context,
-            originalError: error
+            ...(error instanceof AppError ? error.context : {}),
+            originalError: error,
           },
-          throw: true
+          throw: true,
         });
       }
 
