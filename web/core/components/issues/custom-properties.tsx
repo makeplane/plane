@@ -4,6 +4,7 @@ import axios from "axios";
 export type CustomProperty = {
   key: string;
   value: string;
+  is_required: boolean;
   issue_type_custom_property: string;
 };
 
@@ -43,6 +44,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({ customProper
       key: customProp.name,
       value: customProperty ? customProperty.value : "", // Use existing value or set empty if not found
       issue_type_custom_property: customProp.issue_type,
+      is_required: customProp.is_required,
     };
   });
   console.log("CustomProperties is", customProperties);
@@ -83,13 +85,20 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({ customProper
       };
   
       return (
-        <input
-          type="text"
-          value={value}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          className="text-sm border rounded px-1 py-0.5"
-        />
+        <div>
+          <label htmlFor={property.key} className="text-sm text-custom-text-300">
+            {property.is_required && <span className="text-red-500">* </span>}
+            {property.key}
+          </label>
+          <input
+            type="text"
+            value={value}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            className="text-sm border rounded px-1 py-0.5"
+          />
+          {error && <div className="error-message text-red-500 text-xs mt-1">{error}</div>}
+        </div>
       );
     };
 
