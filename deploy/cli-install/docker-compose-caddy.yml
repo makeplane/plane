@@ -1,5 +1,5 @@
 x-plane: &plane
-  APP_VERSION: ${APP_RELEASE_VERSION:-v1.8.0}
+  APP_VERSION: ${APP_RELEASE_VERSION:-v1.8.3}
   APP_DOMAIN: ${DOMAIN_NAME:-localhost}
   MACHINE_SIGNATURE: ${MACHINE_SIGNATURE}
   DEPLOY_PLATFORM: docker_compose
@@ -171,7 +171,7 @@ services:
   monitor:
     image: registry.plane.tools/plane/monitor-enterprise:${APP_RELEASE_VERSION}
     volumes:
-      - ${INSTALL_DIR}/data/monitor:/app
+      - ${INSTALL_DIR:-./plane}/data/monitor:/app
     environment:
       <<: [*plane, *monitor-env]
     deploy:
@@ -189,7 +189,7 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-      - ${INSTALL_DIR}/logs/api:/code/plane/logs
+      - ${INSTALL_DIR:-./plane}/logs/api:/code/plane/logs
     depends_on:
       - plane-db
       - plane-redis
@@ -204,7 +204,7 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-      - ${INSTALL_DIR}/logs/worker:/code/plane/logs
+      - ${INSTALL_DIR:-./plane}/logs/worker:/code/plane/logs
     depends_on:
       - api
       - plane-db
@@ -220,7 +220,7 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-      - ${INSTALL_DIR}/logs/beat-worker:/code/plane/logs
+      - ${INSTALL_DIR:-./plane}/logs/beat-worker:/code/plane/logs
     depends_on:
       - api
       - plane-db
@@ -236,7 +236,7 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-      - ${INSTALL_DIR}/logs/migrator:/code/plane/logs
+      - ${INSTALL_DIR:-./plane}/logs/migrator:/code/plane/logs
     depends_on:
       - plane-db
       - plane-redis
@@ -251,7 +251,7 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-      - ${INSTALL_DIR}/data/db:/var/lib/postgresql/data
+      - ${INSTALL_DIR:-./plane}/data/db:/var/lib/postgresql/data
 
   plane-redis:
     image: registry.plane.tools/plane/valkey:7.2.5-alpine
@@ -262,7 +262,7 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-      - ${INSTALL_DIR}/data/redis:/data
+      - ${INSTALL_DIR:-./plane}/data/redis:/data
 
   plane-mq:
     image: registry.plane.tools/plane/rabbitmq:3.13.6-management-alpine
@@ -273,7 +273,7 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-      - ${INSTALL_DIR}/data/mq:/var/lib/rabbitmq
+      - ${INSTALL_DIR:-./plane}/data/mq:/var/lib/rabbitmq
 
   plane-minio:
     image: registry.plane.tools/plane/minio:latest
@@ -285,8 +285,8 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-      - ${INSTALL_DIR}/data/minio/uploads:/export
-      - ${INSTALL_DIR}/data/minio/data:/data
+      - ${INSTALL_DIR:-./plane}/data/minio/uploads:/export
+      - ${INSTALL_DIR:-./plane}/data/minio/data:/data
 
   silo:
     image: registry.plane.tools/plane/silo-enterprise:${APP_RELEASE_VERSION}
@@ -316,8 +316,8 @@ services:
         protocol: tcp
         mode: host
     volumes:
-      - ${INSTALL_DIR}/caddy/config:/config
-      - ${INSTALL_DIR}/caddy/data:/data
+      - ${INSTALL_DIR:-./plane}/caddy/config:/config
+      - ${INSTALL_DIR:-./plane}/caddy/data:/data
     depends_on:
       - web
       - api
