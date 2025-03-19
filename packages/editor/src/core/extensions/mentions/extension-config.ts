@@ -63,6 +63,6 @@ export const CustomMentionExtensionConfig = Mention.extend<TMentionExtensionOpti
 function getMentionDisplayText(options: TMentionExtensionOptions, node: NodeType): string {
   const attrs = node.attrs as TMentionComponentAttributes;
   const mentionEntityId = attrs[EMentionComponentAttributeNames.ENTITY_IDENTIFIER];
-  const mentionEntityDetails = options.getMentionedEntityDetails?.(mentionEntityId);
+  const mentionEntityDetails = options.getMentionedEntityDetails?.(mentionEntityId ?? "");
   return `@${mentionEntityDetails?.display_name ?? attrs[EMentionComponentAttributeNames.ID] ?? mentionEntityId}`;
 }
