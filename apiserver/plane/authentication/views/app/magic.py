@@ -218,6 +218,7 @@ class MagicSignInEndpoint(BaseAPIView):
                     callback=post_user_auth_workflow,
                 )
                 user = provider.authenticate()
+                profile, _ = Profile.objects.get_or_create(user=user)
                 # Login the user and record his device info
                 user_login(request=request, user=user, is_app=True)
                 self.add_user_to_workspace(user, workspace)
