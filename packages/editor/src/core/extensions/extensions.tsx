@@ -130,7 +130,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomCodeInlineExtension,
     Markdown.configure({
       html: true,
-      transformCopiedText: true,
+      transformCopiedText: false,
       transformPastedText: true,
       breaks: true,
     }),

@@ -12,6 +12,8 @@ import { EditorMentionsRoot } from "@/components/editor";
 import { useEditorConfig } from "@/hooks/editor";
 import { useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
+// store hooks
+import { useMember } from "@/hooks/store";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
@@ -25,6 +27,8 @@ export type TVersionEditorProps = {
 
 export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props) => {
   const { activeVersion, currentVersionDescription, isCurrentVersionActive, versionDetails } = props;
+  // store hooks
+  const { getUserDetails } = useMember();
   // params
   const { workspaceSlug, projectId } = useParams();
   // store hooks
@@ -108,6 +112,7 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
       })}
       mentionHandler={{
         renderComponent: (props) => <EditorMentionsRoot {...props} />,
+        getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
       }}
       embedHandler={{
         issue: {
