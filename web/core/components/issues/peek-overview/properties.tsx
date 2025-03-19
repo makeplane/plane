@@ -58,7 +58,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const createdByDetails = getUserDetails(issue?.created_by);
   const projectDetails = getProjectById(issue.project_id);
   const customProperties = issue?.custom_properties || [];
-  const issue_type_id = issue?.issue_type_id || "defaultIssueTypeId";
+  const issue_type_id = issue?.issue_type_id || "f9f10db2-ea2d-4b43-839c-5fe0c974b0f4";
   console.log("issue_type_id in properties.tsx is", issue_type_id);
   const isEstimateEnabled = projectDetails?.estimate;
   const stateDetails = getStateById(issue.state_id);
