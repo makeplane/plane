@@ -19,4 +19,4 @@ export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
   { label: "한국어", value: "ko" },
 ];
 
-export const STORAGE_KEY = "userLanguage";
+export const LANGUAGE_STORAGE_KEY = "userLanguage";
