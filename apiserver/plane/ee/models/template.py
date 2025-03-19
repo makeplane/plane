@@ -248,6 +248,9 @@ class ProjectTemplate(BaseModel):
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="project_templates"
     )
+    template = models.ForeignKey(
+        Template, on_delete=models.CASCADE, related_name="project_templates", null=True
+    )
 
     # basics
     name = models.CharField(max_length=255, verbose_name="Project Name")
