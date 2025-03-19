@@ -8,13 +8,13 @@ import "@/styles/react-day-picker.css";
 // meta data info
 
 import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
+import { PageHead } from "@/components/core";
 // helpers
 import { API_BASE_URL, cn } from "@/helpers/common.helper";
 // local
 import { AppProvider } from "./provider";
 
 export const metadata: Metadata = {
-  title: "Plane | Simple, extensible, open-source project management tool.",
   description: SITE_DESCRIPTION,
   openGraph: {
     title: "Plane | Simple, extensible, open-source project management tool.",
@@ -74,6 +74,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <div id="context-menu-portal" />
+        <PageHead />
         <AppProvider>
           <div
             className={cn(

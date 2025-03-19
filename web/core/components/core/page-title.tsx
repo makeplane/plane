@@ -1,3 +1,5 @@
+"use client";
+
 import { useHead } from "@plane/ui";
 
 type PageHeadTitleProps = {
