@@ -221,7 +221,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
         this.navigationPreferencesMap[workspaceSlug] = {
           ...this.navigationPreferencesMap[workspaceSlug],
           [key]: {
-            ...this.navigationPreferencesMap[workspaceSlug]?.[key],
+            ...beforeUpdateData,
             ...data,
           },
         };
