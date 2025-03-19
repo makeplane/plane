@@ -468,6 +468,7 @@ jobs:
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
+
   upload_artifacts_s3:
     if: ${{ needs.branch_build_setup.outputs.artifact_upload_to_s3 == 'true' }}
     name: Upload artifacts to S3 Bucket
@@ -502,6 +503,9 @@ jobs:
 
           sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deploy/cli-install/coolify-compose.yml
           cp deploy/cli-install/coolify-compose.yml ~/${{ env.ARTIFACT_SUFFIX }}/coolify-compose.yml
+
+          sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deploy/cli-install/portainer-compose.yml
+          cp deploy/cli-install/portainer-compose.yml ~/${{ env.ARTIFACT_SUFFIX }}/portainer-compose.yml
 
           # required for prime-cli backward compatibility
           cp proxy/Caddyfile.ee ~/${{ env.ARTIFACT_SUFFIX }}/Caddyfile
@@ -539,7 +543,9 @@ jobs:
           sed -i 's@APP_RELEASE_VERSION=.*@APP_RELEASE_VERSION='${{ env.ARTIFACT_SUFFIX }}'@' deploy/cli-install/variables.env
           sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deploy/cli-install/docker-compose-caddy.yml
           sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deploy/cli-install/coolify-compose.yml
+          sed -i 's@${APP_RELEASE_VERSION.*@'${{ env.ARTIFACT_SUFFIX }}'@' deploy/cli-install/portainer-compose.yml
           cp deploy/cli-install/docker-compose-caddy.yml deploy/cli-install/docker-compose.yml
+          cp deploy/cli-install/portainer-compose.yml deploy/cli-install/swarm-compose.yml
 
       - name: Create Release
         id: create_release
@@ -556,3 +562,5 @@ jobs:
             ${{ github.workspace }}/deploy/cli-install/variables.env
             ${{ github.workspace }}/deploy/cli-install/docker-compose.yml
             ${{ github.workspace }}/deploy/cli-install/coolify-compose.yml
+            ${{ github.workspace }}/deploy/cli-install/portainer-compose.yml
+            ${{ github.workspace }}/deploy/cli-install/swarm-compose.yml
