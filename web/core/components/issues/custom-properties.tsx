@@ -4,8 +4,8 @@ import axios from "axios";
 export type CustomProperty = {
   key: string;
   value: string;
-  is_required: boolean;
   issue_type_custom_property: string;
+  is_required: boolean;
 };
 
 type CustomPropertiesProps = {
@@ -50,7 +50,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({ customProper
     return {
       key: customProp.name,
       value: customProperty ? customProperty.value : "", // Use existing value or set empty if not found
-      issue_type_custom_property: customProp.issue_type,
+      issue_type_custom_property: customProp.id,
       is_required: customProp.is_required,
     };
   });
