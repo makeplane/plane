@@ -19,6 +19,7 @@ from django.db.models import (
     Subquery,
 )
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
 
 # Third party imports
 from rest_framework import status
@@ -33,7 +34,8 @@ from plane.api.serializers import (
     IssueLinkSerializer,
     IssueSerializer,
     LabelSerializer,
-    IssueTypeSerializer
+    IssueTypeSerializer,
+    IssueCustomPropertySerializer
 )
 from plane.app.permissions import (
     ProjectEntityPermission,
@@ -52,7 +54,8 @@ from plane.db.models import (
     Project,
     ProjectMember,
     CycleIssue,
-    IssueType
+    IssueType,
+    IssueCustomProperty
 )
 from plane.utils.issue_filters import issue_filters
 from .base import BaseAPIView
@@ -1160,4 +1163,62 @@ class IssueAttachmentEndpoint(BaseAPIView):
         serializer = IssueAttachmentSerializer(issue_attachments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class IssueCustomPropertyUpdateAPIView(BaseAPIView):
+    """
+    This view handles the update of custom property values for issues.
+    """
 
+    model = IssueCustomProperty
+    serializer_class = IssueCustomPropertySerializer
+
+    def patch(self, request, slug, issue_id, pk):
+        """
+        Partially update a custom property value for a specific issue.
+        """
+        # Fetch the custom property using primary key (pk) and issue_id
+        custom_property = get_object_or_404(IssueCustomProperty, pk=pk, issue_id=issue_id)
+
+        # Ensure 'value' is in the request data
+        new_value = request.data.get('value')
+        if not new_value:
+            return Response(
+                {"error": "The value field is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Update the value field with the new value
+        custom_property.value = new_value
+        custom_property.save()
+
+        # Serialize the updated custom property
+        serializer = self.serializer_class(custom_property)
+
+        # Track the update activity (similar to other views)
+        # requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
+        # current_instance = json.dumps(serializer.data, cls=DjangoJSONEncoder)
+        # issue_activity.delay(
+        #     type="custom_property.activity.updated",
+        #     requested_data=requested_data,
+        #     actor_id=str(request.user.id),
+        #     issue_id=str(issue_id),
+        #     project_id=str(self.kwargs.get("project_id")),
+        #     current_instance=current_instance,
+        #     epoch=int(timezone.now().timestamp()),
+        # )
+
+        # Return the updated data as the response
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+    def get(self, request, slug, issue_id, pk=None):
+    """
+    Retrieve the custom property details for a given issue.
+    """
+    if pk:
+        custom_property = get_object_or_404(IssueCustomProperty, pk=pk, issue_id=issue_id)
+        serializer = self.serializer_class(custom_property)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # If no primary key is given, return a list of all custom properties for the issue
+    custom_properties = IssueCustomProperty.objects.filter(issue_id=issue_id)
+    serializer = self.serializer_class(custom_properties, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
