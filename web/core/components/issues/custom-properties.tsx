@@ -22,7 +22,14 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({ customProper
   useEffect(() => {
     const getIssueTypeCustomProperties = async () => {
       try {
-        const response = await axios.get(`/api/workspaces/${workspaceSlug}/issue-type/${issue_type_id}/custom-properties/`);
+        const response = await axios.get(
+          `/api/v1/workspaces/${workspaceSlug}/issue-type/${issue_type_id}/custom-properties/`,
+          {
+            headers: {
+              'x-api-key': 'TEST_API_TOKEN',
+            }
+          }
+        );
         setissueTypeCustomProperties(response.data);
         console.log("getIssueTypeCustomProperties response is", response);
       } catch (error) {
