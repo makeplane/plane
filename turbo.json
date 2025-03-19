@@ -32,11 +32,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "dist/**"]
-    },
-    "vite:build": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**", "dist/**"]
+      "outputs": [".next/**", "dist/**", "out/**"]
     },
     "develop": {
       "cache": false,
