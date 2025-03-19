@@ -63,6 +63,7 @@ class IssueTypeCustomProperty(BaseModel):
     name = models.CharField(max_length=255)
     value = models.JSONField()
     is_active = models.BooleanField(default=True)
+    is_required = models.BooleanField(default=False)
     issue_type = models.ForeignKey(
         "db.IssueType",
         on_delete=models.CASCADE,
