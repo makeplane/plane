@@ -1,5 +1,5 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
-import { Extensions } from "@tiptap/core";
+import { AnyExtension } from "@tiptap/core";
 // ui
 import { LayersIcon } from "@plane/ui";
 // extensions
@@ -20,56 +20,53 @@ type Props = {
   userDetails: TUserDetails;
 };
 
-export const DocumentEditorAdditionalExtensions = (props: Props) => {
-  const { disabledExtensions, issueEmbedConfig, provider, userDetails } = props;
+type ExtensionConfig = {
+  isEnabled: (disabledExtensions: TExtensions[]) => boolean;
+  getExtension: (props: Props) => AnyExtension;
+};
 
-  const isIssueEmbedDisabled = !!disabledExtensions?.includes("issue-embed");
-  const isCollaborationCursorDisabled = !!disabledExtensions?.includes("collaboration-cursor");
+const createSlashCommandOptions: TSlashCommandAdditionalOption[] = [
+  {
+    commandKey: "issue-embed",
+    key: "issue-embed",
+    title: "Work item embed",
+    description: "Embed work item from the project.",
+    searchTerms: ["work item", "link", "embed"],
+    icon: <LayersIcon className="size-3.5" />,
+    command: ({ editor, range }) => {
+      editor.chain().focus().insertContentAt(range, "<p>#workitem_</p>").run();
+    },
+    section: "general",
+    pushAfter: "callout",
+  },
+];
 
-  const extensions: Extensions = [];
-  const additionalSlashCommandOptions: TSlashCommandAdditionalOption[] = [];
-
-  if (!isIssueEmbedDisabled) {
-    const issueEmbedOption: TSlashCommandAdditionalOption = {
-      commandKey: "issue-embed",
-      key: "issue-embed",
-      title: "Work item embed",
-      description: "Embed work item from the project.",
-      searchTerms: ["work item", "link", "embed"],
-      icon: <LayersIcon className="size-3.5" />,
-      command: ({ editor, range }) => {
-        editor.chain().focus().insertContentAt(range, "<p>#workitem_</p>").run();
-      },
-      section: "general",
-      pushAfter: "callout",
-    };
-    additionalSlashCommandOptions.push(issueEmbedOption);
-  }
-  extensions.push(
-    SlashCommands({
-      additionalOptions: additionalSlashCommandOptions,
-      disabledExtensions,
-    })
-  );
-
-  if (issueEmbedConfig && !isIssueEmbedDisabled) {
-    extensions.push(
+const extensionRegistry: ExtensionConfig[] = [
+  {
+    isEnabled: (disabledExtensions) => !disabledExtensions.includes("slash-commands"),
+    getExtension: () => SlashCommands({ additionalOptions: createSlashCommandOptions }),
+  },
+  {
+    isEnabled: (disabledExtensions) => !disabledExtensions.includes("issue-embed"),
+    getExtension: ({ issueEmbedConfig }) =>
       IssueEmbedSuggestions.configure({
         suggestion: {
-          render: () => issueEmbedConfig.searchCallback && IssueListRenderer(issueEmbedConfig.searchCallback),
+          render: () => issueEmbedConfig?.searchCallback && IssueListRenderer(issueEmbedConfig.searchCallback),
         },
-      })
-    );
-  }
+      }),
+  },
+  {
+    isEnabled: (disabledExtensions) => !disabledExtensions.includes("collaboration-cursor"),
+    getExtension: ({ provider, userDetails }) => CustomCollaborationCursor({ provider, userDetails }),
+  },
+];
 
-  if (!isCollaborationCursorDisabled) {
-    extensions.push(
-      CustomCollaborationCursor({
-        provider,
-        userDetails,
-      })
-    );
-  }
+export const DocumentEditorAdditionalExtensions = (props: Props) => {
+  const { disabledExtensions = [] } = props;
 
-  return extensions;
+  const documentExtensions = extensionRegistry
+    .filter((config) => config.isEnabled(disabledExtensions))
+    .map((config) => config.getExtension(props));
+
+  return documentExtensions;
 };

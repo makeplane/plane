@@ -34,6 +34,10 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "dist/**"]
     },
+    "vite:build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**"]
+    },
     "develop": {
       "cache": false,
       "persistent": true,
