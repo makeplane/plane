@@ -9,12 +9,17 @@ import { IndexeddbPersistence } from "y-indexeddb";
 import { HeadingListExtension, SideMenuExtension } from "@/extensions";
 // hooks
 import { useEditor } from "@/hooks/use-editor";
+import { useEditorNavigation } from "./use-editor-navigation";
+import { useTitleEditor } from "./use-title-editor";
 // plane editor extensions
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
 import { TCollaborativeEditorProps } from "@/types";
-import { useTitleEditor } from "./use-title-editor";
 
+/**
+ * Hook that creates a collaborative editor with title and main editor components
+ * Handles real-time collaboration, local persistence, and keyboard navigation between editors
+ */
 export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   const {
     onTransaction,
@@ -35,17 +40,21 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     tabIndex,
     user,
   } = props;
-  // states
+
+  // Server connection states
   const [hasServerConnectionFailed, setHasServerConnectionFailed] = useState(false);
   const [hasServerSynced, setHasServerSynced] = useState(false);
-  // initialize Hocuspocus provider
+
+  // Create keyboard navigation extensions between editors
+  const { setTitleEditor, setMainEditor, titleNavigationExtension, mainNavigationExtension } = useEditorNavigation();
+
+  // Initialize Hocuspocus provider for real-time collaboration
   const provider = useMemo(
     () =>
       new HocuspocusProvider({
         name: id,
         parameters: realtimeConfig.queryParams,
-        // using user id as a token to verify the user on the server
-        token: JSON.stringify(user),
+        token: JSON.stringify(user), // Using user id as token for server auth
         url: realtimeConfig.url,
         onAuthenticationFailed: () => {
           serverHandler?.onServerError?.();
@@ -63,12 +72,13 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     [id, realtimeConfig, serverHandler, user]
   );
 
+  // Initialize local persistence using IndexedDB
   const localProvider = useMemo(
     () => (id ? new IndexeddbPersistence(id, provider.document) : undefined),
     [id, provider]
   );
 
-  // destroy and disconnect all providers connection on unmount
+  // Clean up providers on unmount
   useEffect(
     () => () => {
       provider?.destroy();
@@ -77,6 +87,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     [provider, localProvider]
   );
 
+  // Initialize main document editor
   const editor = useEditor({
     disabledExtensions,
     id,
@@ -85,21 +96,31 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     editorClassName,
     enableHistory: false,
     extensions: [
+      // Core extensions
       SideMenuExtension({
         aiEnabled: !disabledExtensions?.includes("ai"),
         dragDropEnabled: true,
       }),
       HeadingListExtension,
+
+      // Collaboration extension
       Collaboration.configure({
         document: provider.document,
       }),
+
+      // User-provided extensions
       ...(extensions ?? []),
+
+      // Additional document editor extensions
       ...DocumentEditorAdditionalExtensions({
         disabledExtensions,
         issueEmbedConfig: embedHandler?.issue,
         provider,
         userDetails: user,
       }),
+
+      // Navigation extension for keyboard shortcuts
+      mainNavigationExtension,
     ],
     fileHandler,
     forwardedRef,
@@ -111,17 +132,30 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     tabIndex,
   });
 
+  // Initialize title editor
   const titleEditor = useTitleEditor({
     editable: editable,
     provider,
     forwardedRef,
     extensions: [
+      // Collaboration extension for title field
       Collaboration.configure({
         document: provider.document,
         field: "title",
       }),
+
+      // Navigation extension for keyboard shortcuts
+      titleNavigationExtension,
     ],
   });
+
+  // Connect editors for navigation once they're initialized
+  useEffect(() => {
+    if (editor && titleEditor) {
+      setMainEditor(editor);
+      setTitleEditor(titleEditor);
+    }
+  }, [editor, titleEditor, setMainEditor, setTitleEditor]);
 
   return {
     editor,
