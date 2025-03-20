@@ -3,6 +3,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { CalendarCheck2, CalendarClock, LayoutPanelTop, Signal, Tag, Triangle, UserCircle2, Users, Info } from "lucide-react";
+import axios from "axios";
 // ui
 import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/ui";
 // components
@@ -56,7 +57,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const projectDetails = getProjectById(issue.project_id);
   const stateDetails = getStateById(issue.state_id);
   const customProperties = issue?.custom_properties || [];
-  const issue_type_id = issue?.issue_type_id || "f9f10db2-ea2d-4b43-839c-5fe0c974b0f4";
+  const issue_type_id = issue?.issue_type_id || "afd30f86-5ae5-428c-aa3a-e633ea973740";
   console.log("issue_type_id in sidebar.tsx is", issue_type_id);
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
@@ -67,10 +68,50 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const handleCustomPropertiesUpdate = async (updatedProperties: CustomProperty[]) => {
     try {
       console.log("Updating custom properties", updatedProperties);
-      await issueOperations.update(workspaceSlug, projectId, issueId, {
-        custom_properties: updatedProperties,
+  
+      // Create the necessary data for the API call
+      const updateRequests = updatedProperties.map((property) => {
+        const customPropertyId = property?.id || "";
+        // const issueIdHardCode = "0d41ef0f-4267-46b6-9ce7-ec207431a1d7";
+        const apiUrl = `/api/v1/workspaces/${workspaceSlug}/issues/${issueId}/custom-properties/`;
+
+        // If an ID exists, we PATCH the existing property
+        if (customPropertyId) {
+          return axios.patch(
+            `${apiUrl}${customPropertyId}/`, 
+            { value: property.value },
+            {
+              headers: {
+                'x-api-key': 'TEST_API_TOKEN',
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+        } else {
+          // If no ID exists, we POST to create a new custom property
+          return axios.post(
+            apiUrl, 
+            {
+              key: property.key,
+              value: property.value,
+              issue_type_custom_property: property.issue_type_custom_property, // Include this if needed
+            },
+            {
+              headers: {
+                'x-api-key': 'TEST_API_TOKEN',
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+        }
       });
+  
+      // Wait for all requests to complete
+      await Promise.all(updateRequests);
+  
       console.log("Custom properties updated successfully");
+      // Optionally, you can refresh the custom properties after the update
+      // You can either trigger a re-fetch from the server or update the local state
     } catch (error) {
       console.error("Error updating custom properties:", error);
     }
