@@ -60,7 +60,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const projectDetails = getProjectById(issue.project_id);
   const customProperties = issue?.custom_properties || [];
   const issue_type_id = issue?.issue_type_id || "afd30f86-5ae5-428c-aa3a-e633ea973740";
-  console.log("issue_type_id in properties.tsx is", issue_type_id);
   const isEstimateEnabled = projectDetails?.estimate;
   const stateDetails = getStateById(issue.state_id);
   const minDate = getDate(issue.start_date);
@@ -71,18 +70,10 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
   const handleCustomPropertiesUpdate = async (updatedProperties: CustomProperty[]) => {
     try {
-      console.log("Updating custom properties", updatedProperties);
-  
-      // Create the necessary data for the API call
       const updateRequests = updatedProperties.map((property) => {
         const customPropertyId = property?.id || "";
-        console.log("customPropertyId is", customPropertyId);
         const apiUrl = `/api/v1/workspaces/${workspaceSlug}/issues/${issueId}/custom-properties/`;
-
-        // If an ID exists, we PATCH the existing property
         if (customPropertyId) {
-          console.log("patch");
-          console.log("property in patch is", property);
           return axios.patch(
             `${apiUrl}${customPropertyId}/`, 
             { value: property.value },
@@ -94,15 +85,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             }
           );
         } else {
-          console.log("post");
-          console.log("property in post is", property);
-          // If no ID exists, we POST to create a new custom property
           return axios.post(
             apiUrl, 
             {
               key: property.key,
               value: property.value,
-              issue_type_custom_property: property.issue_type_custom_property, // Include this if needed
+              issue_type_custom_property: property.issue_type_custom_property,
             },
             {
               headers: {
@@ -113,15 +101,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           );
         }
       });
-  
-      // Wait for all requests to complete
       await Promise.all(updateRequests);
-  
-      console.log("Custom properties updated successfully");
-      // Optionally, you can refresh the custom properties after the update
-      // You can either trigger a re-fetch from the server or update the local state
     } catch (error) {
-      console.error("Error updating custom properties:", error);
     }
   };
   

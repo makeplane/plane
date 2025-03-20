@@ -67,15 +67,9 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const handleCustomPropertiesUpdate = async (updatedProperties: CustomProperty[]) => {
     try {
-      console.log("Updating custom properties", updatedProperties);
-  
-      // Create the necessary data for the API call
       const updateRequests = updatedProperties.map((property) => {
         const customPropertyId = property?.id || "";
-        // const issueIdHardCode = "0d41ef0f-4267-46b6-9ce7-ec207431a1d7";
         const apiUrl = `/api/v1/workspaces/${workspaceSlug}/issues/${issueId}/custom-properties/`;
-
-        // If an ID exists, we PATCH the existing property
         if (customPropertyId) {
           return axios.patch(
             `${apiUrl}${customPropertyId}/`, 
@@ -88,13 +82,12 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             }
           );
         } else {
-          // If no ID exists, we POST to create a new custom property
           return axios.post(
             apiUrl, 
             {
               key: property.key,
               value: property.value,
-              issue_type_custom_property: property.issue_type_custom_property, // Include this if needed
+              issue_type_custom_property: property.issue_type_custom_property,
             },
             {
               headers: {
@@ -105,15 +98,8 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
           );
         }
       });
-  
-      // Wait for all requests to complete
       await Promise.all(updateRequests);
-  
-      console.log("Custom properties updated successfully");
-      // Optionally, you can refresh the custom properties after the update
-      // You can either trigger a re-fetch from the server or update the local state
     } catch (error) {
-      console.error("Error updating custom properties:", error);
     }
   };
 
