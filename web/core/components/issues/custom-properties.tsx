@@ -31,9 +31,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({ customProper
           }
         );
         setissueTypeCustomProperties(response.data);
-        console.log("getIssueTypeCustomProperties response is", response);
       } catch (error) {
-        console.error("Error fetching custom properties:", error);
         setError("Failed to load custom properties.");
       }
     };
@@ -42,21 +40,18 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({ customProper
   }, [workspaceSlug, issue_type_id]);
 
   const mergedCustomProperties = issueTypeCustomProperties.map((customProp) => {
-    // Find the corresponding property in customProperties
     const customProperty = customProperties?.find(
       (prop) => prop.key === customProp.name
     );
 
     return {
       key: customProp.name,
-      value: customProperty ? customProperty.value : "", // Use existing value or set empty if not found
+      value: customProperty ? customProperty.value : "",
       issue_type_custom_property: customProp.id,
       is_required: customProp.is_required,
       id: customProperty ? customProperty.id : "",
     };
   });
-  console.log("CustomProperties is", customProperties);
-  console.log("mergedCustomProperties is", mergedCustomProperties);
 
   if (error) {
     return <div className="error-message">{error}</div>;
@@ -66,43 +61,29 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({ customProper
     return null; 
   }
 
-    // Inline editable component for each property
     const EditableProperty: React.FC<{ property: CustomProperty }> = React.memo(({ property }) => {
       const [value, setValue] = useState(property.value);
-      console.log("Component re-rendering due to state change");
       const handleBlur = async () => {
         try {
-          console.log("property.is_required is", property.is_required);
           if (property.is_required && value.trim() === "") {
             setEditableError("This field is required and cannot be left empty or consist of spaces.");
-            return; // Stop further execution if the field is empty or consists of spaces
+            return;
           }
           if (value !== property.value) {
-            console.log(`Updating property: ${property.key}, new value: ${value}`);
-            // Log the change
             const updatedProperty = { ...property, value };
-            console.log("Property sending to update is", [updatedProperty]);
-            // Call updateCustomProperties with only the updated property
             updateCustomProperties([updatedProperty]);
           }
         } catch (error) {
-          // Handle errors related to updating
-          console.error("Error updating custom property:", error);
           setEditableError("Failed to update custom property.");
         }
       };
 
       const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setValue(e.target.value);
-        console.log(`Editing property: ${property.key}, current value: ${e.target.value}`);
       };
   
       return (
         <div>
-          {/* <label htmlFor={property.key} className="text-sm text-custom-text-300">
-            {property.is_required && <span className="text-red-500">* </span>}
-            {property.key}
-          </label> */}
           <input
             type="text"
             value={value}
