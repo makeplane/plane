@@ -2,24 +2,27 @@ import React, { useState } from "react";
 // plane constants
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
-import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/editor";
+import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // components
+import { MakeOptional } from "@plane/types";
 import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
-import { useEditorMention } from "@/hooks/use-editor-mention";
+import { useEditorConfig, useEditorMention } from "@/hooks/editor";
+// store hooks
+import { useMember } from "@/hooks/store";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
-import { useFileSize } from "@/plane-web/hooks/use-file-size";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 const workspaceService = new WorkspaceService();
 
 interface LiteTextEditorWrapperProps
-  extends Omit<ILiteTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
+  extends MakeOptional<Omit<ILiteTextEditor, "fileHandler" | "mentionHandler">, "disabledExtensions"> {
   workspaceSlug: string;
   workspaceId: string;
   projectId: string;
@@ -29,11 +32,12 @@ interface LiteTextEditorWrapperProps
   showSubmitButton?: boolean;
   isSubmitting?: boolean;
   showToolbarInitially?: boolean;
-  uploadFile: (file: File) => Promise<string>;
+  uploadFile: TFileHandler["upload"];
   issue_id?: string;
 }
 
 export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
+  const { t } = useTranslation();
   const {
     containerClassName,
     workspaceSlug,
@@ -46,14 +50,17 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     showSubmitButton = true,
     isSubmitting = false,
     showToolbarInitially = true,
-    placeholder = "Add comment...",
+    placeholder = t("issue.comments.placeholder"),
     uploadFile,
+    disabledExtensions: additionalDisabledExtensions,
     ...rest
   } = props;
   // states
   const [isFocused, setIsFocused] = useState(showToolbarInitially);
   // editor flaggings
   const { liteTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
+  // store hooks
+  const { getUserDetails } = useMember();
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: async (payload) =>
@@ -63,8 +70,8 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         issue_id: issue_id,
       }),
   });
-  // file size
-  const { maxFileSize } = useFileSize();
+  // editor config
+  const { getEditorFileHandlers } = useEditorConfig();
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
     return !!ref && typeof ref === "object" && "current" in ref;
   }
@@ -80,9 +87,8 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     >
       <LiteTextEditorWithRef
         ref={ref}
-        disabledExtensions={disabledExtensions}
+        disabledExtensions={[...disabledExtensions, ...(additionalDisabledExtensions ?? [])]}
         fileHandler={getEditorFileHandlers({
-          maxFileSize,
           projectId,
           uploadFile,
           workspaceId,
@@ -95,6 +101,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
             return res;
           },
           renderComponent: (props) => <EditorMentionsRoot {...props} />,
+          getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
         }}
         placeholder={placeholder}
         containerClassName={cn(containerClassName, "relative")}

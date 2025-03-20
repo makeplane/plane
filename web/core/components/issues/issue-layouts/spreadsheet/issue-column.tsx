@@ -3,12 +3,13 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // types
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
-// constants
-import { SPREADSHEET_PROPERTY_DETAILS } from "@/constants/spreadsheet";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // components
+import { SPREADSHEET_COLUMNS } from "@/plane-web/components/issues/issue-layouts/utils";
+import { shouldRenderColumn } from "@/plane-web/helpers/issue-filter.helper";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+// utils
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -20,15 +21,17 @@ type Props = {
 };
 
 export const IssueColumn = observer((props: Props) => {
-  const { displayProperties, issueDetail, disableUserActions, property, updateIssue, isEstimateEnabled } = props;
+  const { displayProperties, issueDetail, disableUserActions, property, updateIssue } = props;
   // router
   const pathname = usePathname();
   const tableCellRef = useRef<HTMLTableCellElement | null>(null);
   const { captureIssueEvent } = useEventTracker();
 
-  const shouldRenderProperty = property === "estimate" ? isEstimateEnabled : true;
+  const shouldRenderProperty = shouldRenderColumn(property);
 
-  const { Column } = SPREADSHEET_PROPERTY_DETAILS[property];
+  const Column = SPREADSHEET_COLUMNS[property];
+
+  if (!Column) return null;
 
   return (
     <WithDisplayPropertiesHOC

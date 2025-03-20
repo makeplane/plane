@@ -1,11 +1,11 @@
 "use client";
 import { useMemo } from "react";
 import { usePathname } from "next/navigation";
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType, ISSUE_DELETED, ISSUE_UPDATED } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssue, TIssueServiceType } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { ISSUE_DELETED, ISSUE_UPDATED } from "@/constants/event-tracker";
 // helper
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
@@ -23,18 +23,19 @@ export const useRelationOperations = (
   const { updateIssue, removeIssue } = useIssueDetail(issueServiceType);
   const { captureIssueEvent } = useEventTracker();
   const pathname = usePathname();
+  const { t } = useTranslation();
   // derived values
-  const entityName = issueServiceType === EIssueServiceType.ISSUES ? "Issue" : "Epic";
+  const entityName = issueServiceType === EIssueServiceType.ISSUES ? "Work item" : "Epic";
 
   const issueOperations: TRelationIssueOperations = useMemo(
     () => ({
       copyText: (text: string) => {
         const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-        copyTextToClipboard(`${originURL}/${text}`).then(() => {
+        copyTextToClipboard(`${originURL}${text}`).then(() => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
-            title: "Link Copied!",
-            message: `${entityName} link copied to clipboard.`,
+            title: t("common.link_copied"),
+            message: t("entity.link_copied_to_clipboard", { entity: entityName }),
           });
         });
       },
@@ -51,9 +52,9 @@ export const useRelationOperations = (
             path: pathname,
           });
           setToast({
-            title: "Success!",
+            title: t("toast.success"),
             type: TOAST_TYPE.SUCCESS,
-            message: `${entityName} updated successfully`,
+            message: t("entity.update.success", { entity: entityName }),
           });
         } catch (error) {
           captureIssueEvent({
@@ -66,9 +67,9 @@ export const useRelationOperations = (
             path: pathname,
           });
           setToast({
-            title: "Error!",
+            title: t("toast.error"),
             type: TOAST_TYPE.ERROR,
-            message: `${entityName} update failed`,
+            message: t("entity.update.failed", { entity: entityName }),
           });
         }
       },

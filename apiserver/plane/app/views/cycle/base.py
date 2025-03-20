@@ -134,11 +134,11 @@ class CycleViewSet(BaseViewSet):
                 )
             )
             .annotate(
-                pending_issues=Count(
+                cancelled_issues=Count(
                     "issue_cycle__issue__id",
                     distinct=True,
                     filter=Q(
-                        issue_cycle__issue__state__group__in=["backlog", "unstarted", "started"],
+                        issue_cycle__issue__state__group__in=["cancelled"],
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                         issue_cycle__deleted_at__isnull=True,
@@ -227,7 +227,7 @@ class CycleViewSet(BaseViewSet):
                 "is_favorite",
                 "total_issues",
                 "completed_issues",
-                "pending_issues",
+                "cancelled_issues",
                 "assignee_ids",
                 "status",
                 "version",
@@ -259,7 +259,7 @@ class CycleViewSet(BaseViewSet):
             # meta fields
             "is_favorite",
             "total_issues",
-            "pending_issues",
+            "cancelled_issues",
             "completed_issues",
             "assignee_ids",
             "status",

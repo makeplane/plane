@@ -8,6 +8,8 @@ import { Check, Globe2, Lock, Pencil, Trash2, X } from "lucide-react";
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
+// plane i18n
+import { useTranslation } from "@plane/i18n";
 // plane types
 import { TIssueComment } from "@plane/types";
 // plane ui
@@ -47,6 +49,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
     showAccessSpecifier = false,
     disabled = false,
   } = props;
+  const { t } = useTranslation();
   // states
   const [isEditing, setIsEditing] = useState(false);
   // refs
@@ -104,7 +107,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
             <CustomMenu ellipsis closeOnSelect>
               <CustomMenu.MenuItem onClick={() => setIsEditing(true)} className="flex items-center gap-1">
                 <Pencil className="flex-shrink-0 size-3" />
-                Edit
+                {t("common.actions.edit")}
               </CustomMenu.MenuItem>
               {showAccessSpecifier && (
                 <>
@@ -116,7 +119,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
                       className="flex items-center gap-1"
                     >
                       <Globe2 className="flex-shrink-0 size-3" />
-                      Switch to public comment
+                      {t("issue.comments.switch.public")}
                     </CustomMenu.MenuItem>
                   ) : (
                     <CustomMenu.MenuItem
@@ -126,7 +129,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
                       className="flex items-center gap-1"
                     >
                       <Lock className="flex-shrink-0 size-3" />
-                      Switch to private comment
+                      {t("issue.comments.switch.private")}
                     </CustomMenu.MenuItem>
                   )}
                 </>
@@ -136,7 +139,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
                 className="flex items-center gap-1"
               >
                 <Trash2 className="flex-shrink-0 size-3" />
-                Delete
+                {t("common.actions.delete")}
               </CustomMenu.MenuItem>
             </CustomMenu>
           )}
@@ -167,8 +170,8 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
                 }
               }}
               showSubmitButton={false}
-              uploadFile={async (file) => {
-                const { asset_id } = await activityOperations.uploadCommentAsset(file, comment.id);
+              uploadFile={async (blockId, file) => {
+                const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file, comment.id);
                 return asset_id;
               }}
             />
@@ -212,6 +215,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
             ref={showEditorRef}
             id={comment.id}
             initialValue={comment.comment_html ?? ""}
+            workspaceId={workspaceId}
             workspaceSlug={workspaceSlug}
             projectId={projectId}
           />

@@ -5,6 +5,8 @@ import { Header, EHeaderVariant } from "@plane/ui";
 import { PageExtraOptions, PageSummaryPopover, PageToolbar } from "@/components/pages";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
+// plane web hooks
+import { EPageStoreType } from "@/plane-web/hooks/store";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 
@@ -13,10 +15,11 @@ type Props = {
   page: TPageInstance;
   setSidePeekVisible: (sidePeekState: boolean) => void;
   sidePeekVisible: boolean;
+  storeType: EPageStoreType;
 };
 
 export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
-  const { editorRef, page, setSidePeekVisible, sidePeekVisible } = props;
+  const { editorRef, page, setSidePeekVisible, sidePeekVisible, storeType } = props;
   // derived values
   const { isContentEditable } = page;
   // page filters
@@ -33,7 +36,7 @@ export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
             setSidePeekVisible={setSidePeekVisible}
           />
         </div>
-        <PageExtraOptions editorRef={editorRef} page={page} />
+        <PageExtraOptions editorRef={editorRef} page={page} storeType={storeType} />
       </Header>
       <Header variant={EHeaderVariant.TERNARY}>
         {isContentEditable && editorRef && <PageToolbar editorRef={editorRef} />}

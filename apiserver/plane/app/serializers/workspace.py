@@ -32,10 +32,9 @@ from django.core.exceptions import ValidationError
 
 
 class WorkSpaceSerializer(DynamicBaseSerializer):
-    owner = UserLiteSerializer(read_only=True)
     total_members = serializers.IntegerField(read_only=True)
-    total_issues = serializers.IntegerField(read_only=True)
     logo_url = serializers.CharField(read_only=True)
+    role = serializers.IntegerField(read_only=True)
 
     def validate_slug(self, value):
         # Check if the slug is restricted
@@ -60,7 +59,7 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
 class WorkspaceLiteSerializer(BaseSerializer):
     class Meta:
         model = Workspace
-        fields = ["name", "slug", "id"]
+        fields = ["name", "slug", "id", "logo_url"]
         read_only_fields = fields
 
 
@@ -91,9 +90,11 @@ class WorkspaceMemberAdminSerializer(DynamicBaseSerializer):
 
 
 class WorkSpaceMemberInviteSerializer(BaseSerializer):
-    workspace = WorkSpaceSerializer(read_only=True)
-    total_members = serializers.IntegerField(read_only=True)
-    created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
+    workspace = WorkspaceLiteSerializer(read_only=True)
+    invite_link = serializers.SerializerMethodField()
+
+    def get_invite_link(self, obj):
+        return f"/workspace-invitations/?invitation_id={obj.id}&email={obj.email}&slug={obj.workspace.slug}"
 
     class Meta:
         model = WorkspaceMemberInvite
@@ -107,6 +108,7 @@ class WorkSpaceMemberInviteSerializer(BaseSerializer):
             "responded_at",
             "created_at",
             "updated_at",
+            "invite_link",
         ]
 
 
@@ -146,6 +148,42 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
 
         return value
 
+
+    def create(self, validated_data):
+        # Filtering the WorkspaceUserLink with the given url to check if the link already exists.
+
+        url = validated_data.get("url")
+
+        workspace_user_link = WorkspaceUserLink.objects.filter(
+            url=url,
+            workspace_id=validated_data.get("workspace_id"),
+            owner_id=validated_data.get("owner_id")
+        )
+
+        if workspace_user_link.exists():
+            raise serializers.ValidationError(
+                {"error": "URL already exists for this workspace and owner"}
+            )
+
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        # Filtering the WorkspaceUserLink with the given url to check if the link already exists.
+
+        url = validated_data.get("url")
+
+        workspace_user_link = WorkspaceUserLink.objects.filter(
+                url=url,
+                workspace_id=instance.workspace_id,
+                owner=instance.owner
+            )
+
+        if workspace_user_link.exclude(pk=instance.id).exists():
+            raise serializers.ValidationError(
+                {"error": "URL already exists for this workspace and owner"}
+            )
+
+        return super().update(instance, validated_data)
 
 class IssueRecentVisitSerializer(serializers.ModelSerializer):
     project_identifier = serializers.SerializerMethodField()

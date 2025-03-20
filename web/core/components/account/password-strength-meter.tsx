@@ -26,35 +26,35 @@ export const PasswordStrengthMeter: FC<TPasswordStrengthMeter> = (props) => {
       case E_PASSWORD_STRENGTH.EMPTY: {
         return {
           bars: [`bg-custom-text-100`, `bg-custom-text-100`, `bg-custom-text-100`],
-          text: t("please_enter_your_password"),
+          text: t("auth.common.password.errors.empty"),
           textColor: "text-custom-text-100",
         };
       }
       case E_PASSWORD_STRENGTH.LENGTH_NOT_VALID: {
         return {
           bars: [`bg-red-500`, `bg-custom-text-100`, `bg-custom-text-100`],
-          text: t("password_length_should_me_more_than_8_characters"),
+          text: t("auth.common.password.errors.length"),
           textColor: "text-red-500",
         };
       }
       case E_PASSWORD_STRENGTH.STRENGTH_NOT_VALID: {
         return {
           bars: [`bg-red-500`, `bg-custom-text-100`, `bg-custom-text-100`],
-          text: t("password_is_weak"),
+          text: t("auth.common.password.errors.strength.weak"),
           textColor: "text-red-500",
         };
       }
       case E_PASSWORD_STRENGTH.STRENGTH_VALID: {
         return {
           bars: [`bg-green-500`, `bg-green-500`, `bg-green-500`],
-          text: t("password_is_strong"),
+          text: t("auth.common.password.errors.strength.strong"),
           textColor: "text-green-500",
         };
       }
       default: {
         return {
           bars: [`bg-custom-text-100`, `bg-custom-text-100`, `bg-custom-text-100`],
-          text: t("please_enter_your_password"),
+          text: t("auth.common.password.errors.empty"),
           textColor: "text-custom-text-100",
         };
       }

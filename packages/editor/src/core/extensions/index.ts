@@ -24,3 +24,4 @@ export * from "./read-only-extensions";
 export * from "./side-menu";
 export * from "./text-align";
 export * from "./flat-list";
+export * from "./clipboard";

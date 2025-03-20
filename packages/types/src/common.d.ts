@@ -24,3 +24,5 @@ export type TLogoProps = {
 };
 
 export type TNameDescriptionLoader = "submitting" | "submitted" | "saved";
+
+export type TFetchStatus = "partial" | "complete" | undefined;

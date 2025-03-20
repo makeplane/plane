@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 
 interface IStickyDelete {
@@ -15,6 +16,8 @@ export const StickyDeleteModal: React.FC<IStickyDelete> = observer((props) => {
   const { isOpen, handleClose, handleSubmit } = props;
   // states
   const [loader, setLoader] = useState(false);
+  // hooks
+  const { t } = useTranslation();
 
   const formSubmit = async () => {
     try {
@@ -23,8 +26,8 @@ export const StickyDeleteModal: React.FC<IStickyDelete> = observer((props) => {
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Warning!",
-        message: "Something went wrong. Please try again later.",
+        title: t("stickies.toasts.not_removed.title"),
+        message: t("stickies.toasts.not_removed.message"),
       });
     } finally {
       setLoader(false);
@@ -37,8 +40,8 @@ export const StickyDeleteModal: React.FC<IStickyDelete> = observer((props) => {
       handleSubmit={formSubmit}
       isSubmitting={loader}
       isOpen={isOpen}
-      title="Delete sticky"
-      content="Are you sure you want to delete the sticky?"
+      title={t("stickies.delete")}
+      content={t("stickies.delete_confirmation")}
     />
   );
 });

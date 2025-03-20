@@ -1,46 +1,54 @@
 import React, { forwardRef } from "react";
-// editor
-import { EditorRefApi, IRichTextEditor, RichTextEditorWithRef } from "@plane/editor";
-// plane types
-import { TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
+// plane imports
+import { EditorRefApi, IRichTextEditor, RichTextEditorWithRef, TFileHandler } from "@plane/editor";
+import { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
-import { useEditorMention } from "@/hooks/use-editor-mention";
+import { useEditorConfig, useEditorMention } from "@/hooks/editor";
+// store hooks
+import { useMember } from "@/hooks/store";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
-import { useFileSize } from "@/plane-web/hooks/use-file-size";
 
 interface RichTextEditorWrapperProps
-  extends Omit<IRichTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
+  extends MakeOptional<Omit<IRichTextEditor, "fileHandler" | "mentionHandler">, "disabledExtensions"> {
   searchMentionCallback: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
   workspaceSlug: string;
   workspaceId: string;
   projectId?: string;
-  uploadFile: (file: File) => Promise<string>;
+  uploadFile: TFileHandler["upload"];
 }
 
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
-  const { containerClassName, workspaceSlug, workspaceId, projectId, searchMentionCallback, uploadFile, ...rest } =
-    props;
+  const {
+    containerClassName,
+    workspaceSlug,
+    workspaceId,
+    projectId,
+    searchMentionCallback,
+    uploadFile,
+    disabledExtensions: additionalDisabledExtensions,
+    ...rest
+  } = props;
+  // store hooks
+  const { getUserDetails } = useMember();
   // editor flaggings
   const { richTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: async (payload) => await searchMentionCallback(payload),
   });
-  // file size
-  const { maxFileSize } = useFileSize();
+  // editor config
+  const { getEditorFileHandlers } = useEditorConfig();
 
   return (
     <RichTextEditorWithRef
       ref={ref}
-      disabledExtensions={disabledExtensions}
+      disabledExtensions={[...disabledExtensions, ...(additionalDisabledExtensions ?? [])]}
       fileHandler={getEditorFileHandlers({
-        maxFileSize,
         projectId,
         uploadFile,
         workspaceId,
@@ -53,9 +61,10 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
           return res;
         },
         renderComponent: (props) => <EditorMentionsRoot {...props} />,
+        getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
       }}
       {...rest}
-      containerClassName={cn("relative pl-3", containerClassName)}
+      containerClassName={cn("relative pl-3 pb-3", containerClassName)}
     />
   );
 });

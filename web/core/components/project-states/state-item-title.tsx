@@ -1,13 +1,10 @@
 import { SetStateAction } from "react";
 import { observer } from "mobx-react";
 import { GripVertical, Pencil } from "lucide-react";
-// Plane
+// plane imports
 import { IState } from "@plane/types";
 import { StateGroupIcon } from "@plane/ui";
-// Plane-web
-import { StateTransitionCount } from "@/plane-web/components/workflow";
-import { IStateWorkFlow } from "@/plane-web/types";
-//
+// local imports
 import { StateDelete, StateMarksAsDefault } from "./options";
 
 export type StateItemTitleProps = {
@@ -17,31 +14,37 @@ export type StateItemTitleProps = {
   stateCount: number;
   disabled: boolean;
   state: IState;
-  currentTransitionMap?: IStateWorkFlow;
+  shouldShowDescription?: boolean;
 };
 
 export const StateItemTitle = observer((props: StateItemTitleProps) => {
-  const { workspaceSlug, projectId, stateCount, setUpdateStateModal, disabled, state, currentTransitionMap } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    stateCount,
+    setUpdateStateModal,
+    disabled,
+    state,
+    shouldShowDescription = true,
+  } = props;
   return (
     <div className="flex items-center gap-2 w-full justify-between">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 px-1">
         {/* draggable indicator */}
         {!disabled && stateCount != 1 && (
-          <div className="flex-shrink-0 w-3 h-3 rounded-sm absolute left-0 hidden group-hover:flex justify-center items-center transition-colors bg-custom-background-90 cursor-pointer text-custom-text-200 hover:text-custom-text-100">
+          <div className="flex-shrink-0 w-3 h-3 rounded-sm absolute -left-1.5 hidden group-hover:flex justify-center items-center transition-colors bg-custom-background-90 cursor-pointer text-custom-text-200 hover:text-custom-text-100">
             <GripVertical className="w-3 h-3" />
           </div>
         )}
         {/* state icon */}
         <div className="flex-shrink-0">
-          <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
+          <StateGroupIcon stateGroup={state.group} color={state.color} className={"size-3.5"} />
         </div>
         {/* state title and description */}
         <div className="text-sm px-2 min-h-5">
           <h6 className="text-sm font-medium">{state.name}</h6>
-          <p className="text-xs text-custom-text-200">{state.description}</p>
+          {shouldShowDescription && <p className="text-xs text-custom-text-200">{state.description}</p>}
         </div>
-        {/* Transition count */}
-        <StateTransitionCount currentTransitionMap={currentTransitionMap} />
       </div>
 
       {!disabled && (

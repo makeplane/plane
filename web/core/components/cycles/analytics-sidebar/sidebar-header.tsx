@@ -5,14 +5,13 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ArchiveIcon, ArchiveRestoreIcon, ChevronRight, EllipsisIcon, LinkIcon, Trash2 } from "lucide-react";
 // types
+import { CYCLE_STATUS, CYCLE_UPDATED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { ICycle } from "@plane/types";
 // ui
 import { CustomMenu, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns";
-// constants
-import { CYCLE_STATUS } from "@/constants/cycle";
-import { CYCLE_UPDATED } from "@/constants/event-tracker";
 // helpers
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
@@ -20,7 +19,6 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 import { useCycle, useEventTracker, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // services
 import { CycleService } from "@/services/cycle.service";
 // local components
@@ -53,6 +51,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
   const { allowPermissions } = useUserPermissions();
   const { updateCycleDetails, restoreCycle } = useCycle();
   const { setTrackElement, captureCycleEvent } = useEventTracker();
+  const { t } = useTranslation();
 
   // form info
   const { control, reset } = useForm({
@@ -71,16 +70,16 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Restore success",
-          message: "Your cycle can be found in project cycles.",
+          title: t("project_cycles.action.restore.success.title"),
+          message: t("project_cycles.action.restore.success.description"),
         });
         router.push(`/${workspaceSlug.toString()}/projects/${projectId.toString()}/archives/cycles`);
       })
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Cycle could not be restored. Please try again.",
+          title: t("project_cycles.action.restore.failed.title"),
+          message: t("project_cycles.action.restore.failed.description"),
         })
       );
   };
@@ -90,22 +89,22 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Link Copied!",
-          message: "Cycle link copied to clipboard.",
+          title: t("common.link_copied"),
+          message: t("common.link_copied_to_clipboard"),
         });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Some error occurred",
+          title: t("common.errors.default.message"),
         });
       });
   };
 
-  const submitChanges = (data: Partial<ICycle>, changedProperty: string) => {
+  const submitChanges = async (data: Partial<ICycle>, changedProperty: string) => {
     if (!workspaceSlug || !projectId || !cycleDetails.id) return;
 
-    updateCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleDetails.id.toString(), data)
+    await updateCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleDetails.id.toString(), data)
       .then((res) => {
         captureCycleEvent({
           eventName: CYCLE_UPDATED,
@@ -147,38 +146,36 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
   };
 
   const handleDateChange = async (startDate: Date | undefined, endDate: Date | undefined) => {
-    if (!startDate || !endDate) return;
-
     let isDateValid = false;
 
     const payload = {
-      start_date: renderFormattedPayloadDate(startDate),
-      end_date: renderFormattedPayloadDate(endDate),
+      start_date: renderFormattedPayloadDate(startDate) || null,
+      end_date: renderFormattedPayloadDate(endDate) || null,
     };
 
-    if (cycleDetails?.start_date && cycleDetails.end_date)
+    if (payload?.start_date && payload.end_date) {
       isDateValid = await dateChecker({
         ...payload,
         cycle_id: cycleDetails.id,
       });
-    else isDateValid = await dateChecker(payload);
-
+    } else {
+      isDateValid = true;
+    }
     if (isDateValid) {
       submitChanges(payload, "date_range");
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "Cycle updated successfully.",
+        title: t("project_cycles.action.update.success.title"),
+        message: t("project_cycles.action.update.success.description"),
       });
     } else {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message:
-          "You already have a cycle on the given dates, if you want to create a draft cycle, you can do that by removing both the dates.",
+        title: t("project_cycles.action.update.failed.title"),
+        message: t("project_cycles.action.update.error.already_exists"),
       });
-      reset({ ...cycleDetails });
     }
+    return isDateValid;
   };
 
   const isEditingAllowed = allowPermissions(
@@ -232,15 +229,15 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
                   {isCompleted ? (
                     <div className="flex items-center gap-2">
                       <ArchiveIcon className="h-3 w-3" />
-                      Archive cycle
+                      {t("common.archive")}
                     </div>
                   ) : (
                     <div className="flex items-start gap-2">
                       <ArchiveIcon className="h-3 w-3" />
                       <div className="-mt-1">
-                        <p>Archive cycle</p>
+                        <p>{t("common.archive")}</p>
                         <p className="text-xs text-custom-text-400">
-                          Only completed cycles <br /> can be archived.
+                          {t("project_cycles.only_completed_cycles_can_be_archived")}
                         </p>
                       </div>
                     </div>
@@ -251,7 +248,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
                 <CustomMenu.MenuItem onClick={handleRestoreCycle}>
                   <span className="flex items-center justify-start gap-2">
                     <ArchiveRestoreIcon className="h-3 w-3" />
-                    <span>Restore cycle</span>
+                    <span>{t("project_cycles.action.restore.title")}</span>
                   </span>
                 </CustomMenu.MenuItem>
               )}
@@ -264,7 +261,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
                 >
                   <span className="flex items-center justify-start gap-2">
                     <Trash2 className="h-3 w-3" />
-                    <span>Delete cycle</span>
+                    <span>{t("delete")}</span>
                   </span>
                 </CustomMenu.MenuItem>
               )}
@@ -283,7 +280,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
                 backgroundColor: `${currentCycle.color}20`,
               }}
             >
-              {currentCycle.title}
+              {t(currentCycle.i18n_title)}
             </span>
           )}
         </div>
@@ -298,16 +295,18 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
               render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
                 <DateRangeDropdown
                   className="h-7"
-                  buttonVariant="transparent-with-text"
+                  buttonVariant="border-with-text"
                   minDate={new Date()}
                   value={{
                     from: getDate(startDateValue),
                     to: getDate(endDateValue),
                   }}
-                  onSelect={(val) => {
-                    onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
-                    onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
-                    handleDateChange(val?.from, val?.to);
+                  onSelect={async (val) => {
+                    const isDateValid = await handleDateChange(val?.from, val?.to);
+                    if (isDateValid) {
+                      onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
+                      onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+                    }
                   }}
                   placeholder={{
                     from: "Start date",

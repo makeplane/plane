@@ -12,12 +12,13 @@ import { renderMentionsDropdown } from "./utils";
 import { EMentionComponentAttributeNames } from "./types";
 
 export const CustomMentionExtension = (props: TMentionHandler) => {
-  const { searchCallback, renderComponent } = props;
+  const { searchCallback, renderComponent, getMentionedEntityDetails } = props;
   return CustomMentionExtensionConfig.extend({
     addOptions(this) {
       return {
         ...this.parent?.(),
         renderComponent,
+        getMentionedEntityDetails,
       };
     },
 

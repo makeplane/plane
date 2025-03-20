@@ -3,14 +3,15 @@ import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Check, Loader, Search, Tag } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// helpers
+// plane imports
+import { EUserPermissionsLevel, EUserProjectRoles, getRandomLabelColor } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IIssueLabel } from "@plane/types";
-import { getRandomLabelColor } from "@/constants/label";
+// helpers
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useLabel, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
 //constants
 export interface IIssueLabelSelect {
   workspaceSlug: string;
@@ -23,6 +24,7 @@ export interface IIssueLabelSelect {
 
 export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) => {
   const { workspaceSlug, projectId, issueId, values, onSelect, onAddLabel } = props;
+  const { t } = useTranslation();
   // store hooks
   const { isMobile } = usePlatformOS();
   const { fetchProjectLabels, getProjectLabels } = useLabel();
@@ -34,7 +36,8 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
   const [query, setQuery] = useState("");
   const [submitting, setSubmitting] = useState<boolean>(false);
 
-  const canCreateLabel = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canCreateLabel =
+    projectId && allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
 
   const projectLabels = getProjectLabels(projectId);
 
@@ -86,7 +89,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
       <div className="flex-shrink-0">
         <Tag className="h-2.5 w-2.5" />
       </div>
-      <div className="flex-shrink-0">Select Label</div>
+      <div className="flex-shrink-0">{t("label.select")}</div>
     </div>
   );
 
@@ -96,7 +99,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
       setQuery("");
     }
 
-    if (query !== "" && e.key === "Enter") {
+    if (query !== "" && e.key === "Enter" && canCreateLabel) {
       e.stopPropagation();
       e.preventDefault();
       await handleAddLabel(query);
@@ -147,7 +150,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
                   className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search"
+                  placeholder={t("common.search.label")}
                   displayValue={(assigned: any) => assigned?.name}
                   onKeyDown={searchInputKeyDown}
                   tabIndex={baseTabIndex}
@@ -156,7 +159,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
             </div>
             <div className={`vertical-scrollbar scrollbar-sm mt-2 max-h-48 space-y-1 overflow-y-scroll px-2 pr-0`}>
               {isLoading ? (
-                <p className="text-center text-custom-text-200">Loading...</p>
+                <p className="text-center text-custom-text-200">{t("common.loading")}</p>
               ) : filteredOptions.length > 0 ? (
                 filteredOptions.map((option) => (
                   <Combobox.Option
@@ -195,14 +198,15 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
                 >
                   {query.length ? (
                     <>
-                      + Add <span className="text-custom-text-100">&quot;{query}&quot;</span> to labels
+                      {/* TODO: Translate here */}+ Add{" "}
+                      <span className="text-custom-text-100">&quot;{query}&quot;</span> to labels
                     </>
                   ) : (
-                    "Type to add a new label"
+                    t("label.create.type")
                   )}
                 </Combobox.Option>
               ) : (
-                <p className="text-left text-custom-text-200 ">No matching results.</p>
+                <p className="text-left text-custom-text-200 ">{t("common.search.no_matching_results")}</p>
               )}
             </div>
           </div>

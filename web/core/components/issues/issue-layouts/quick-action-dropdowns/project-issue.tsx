@@ -1,25 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import omit from "lodash/omit";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { Copy, ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
+import { ARCHIVABLE_STATE_GROUPS, EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // types
-import { EIssuesStoreType } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // ui
 import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
-// constants
-import { ARCHIVABLE_STATE_GROUPS } from "@/constants/state";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useEventTracker, useIssues, useProjectState, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import { useEventTracker, useIssues, useProject, useProjectState, useUserPermissions } from "@/hooks/store";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
 
@@ -35,6 +34,8 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
     placements = "bottom-end",
     parentRef,
   } = props;
+  // i18n
+  const { t } = useTranslation();
   // router
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
@@ -48,9 +49,11 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
   const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
   const { getStateById } = useProjectState();
+  const { getProjectIdentifierById } = useProject();
   // derived values
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
   const stateDetails = getStateById(issue.state_id);
+  const projectIdentifier = getProjectIdentifierById(issue?.project_id);
   // auth
   const isEditingAllowed =
     allowPermissions(
@@ -63,16 +66,23 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
   const isDeletingAllowed = isEditingAllowed;
 
-  const issueLink = `${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`;
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug?.toString(),
+    projectId: issue?.project_id,
+    issueId: issue?.id,
+    projectIdentifier,
+    sequenceId: issue?.sequence_id,
+  });
+
   const handleCopyIssueLink = () =>
-    copyUrlToClipboard(issueLink).then(() =>
+    copyUrlToClipboard(workItemLink, false).then(() =>
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
-        message: "Issue link copied to clipboard",
+        message: "Work item link copied to clipboard",
       })
     );
-  const handleOpenInNewTab = () => window.open(`/${issueLink}`, "_blank");
+  const handleOpenInNewTab = () => window.open(workItemLink, "_blank");
 
   const isDraftIssue = pathname?.includes("draft-issues") || false;
 
@@ -86,62 +96,65 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
     ["id"]
   );
 
-  const MENU_ITEMS: TContextMenuItem[] = [
-    {
-      key: "edit",
-      title: "Edit",
-      icon: Pencil,
-      action: () => {
-        setTrackElement(activeLayout);
-        setIssueToEdit(issue);
-        setCreateUpdateIssueModal(true);
+  const MENU_ITEMS: TContextMenuItem[] = useMemo(
+    () => [
+      {
+        key: "edit",
+        title: t("common.actions.edit"),
+        icon: Pencil,
+        action: () => {
+          setTrackElement(activeLayout);
+          setIssueToEdit(issue);
+          setCreateUpdateIssueModal(true);
+        },
+        shouldRender: isEditingAllowed,
       },
-      shouldRender: isEditingAllowed,
-    },
-    {
-      key: "make-a-copy",
-      title: "Make a copy",
-      icon: Copy,
-      action: () => {
-        setTrackElement(activeLayout);
-        setCreateUpdateIssueModal(true);
+      {
+        key: "make-a-copy",
+        title: t("common.actions.make_a_copy"),
+        icon: Copy,
+        action: () => {
+          setTrackElement(activeLayout);
+          setCreateUpdateIssueModal(true);
+        },
+        shouldRender: isEditingAllowed,
       },
-      shouldRender: isEditingAllowed,
-    },
-    {
-      key: "open-in-new-tab",
-      title: "Open in new tab",
-      icon: ExternalLink,
-      action: handleOpenInNewTab,
-    },
-    {
-      key: "copy-link",
-      title: "Copy link",
-      icon: Link,
-      action: handleCopyIssueLink,
-    },
-    {
-      key: "archive",
-      title: "Archive",
-      description: isInArchivableGroup ? undefined : "Only completed or canceled\nissues can be archived",
-      icon: ArchiveIcon,
-      className: "items-start",
-      iconClassName: "mt-1",
-      action: () => setArchiveIssueModal(true),
-      disabled: !isInArchivableGroup,
-      shouldRender: isArchivingAllowed,
-    },
-    {
-      key: "delete",
-      title: "Delete",
-      icon: Trash2,
-      action: () => {
-        setTrackElement(activeLayout);
-        setDeleteIssueModal(true);
+      {
+        key: "open-in-new-tab",
+        title: t("common.actions.open_in_new_tab"),
+        icon: ExternalLink,
+        action: handleOpenInNewTab,
       },
-      shouldRender: isDeletingAllowed,
-    },
-  ];
+      {
+        key: "copy-link",
+        title: t("common.actions.copy_link"),
+        icon: Link,
+        action: handleCopyIssueLink,
+      },
+      {
+        key: "archive",
+        title: t("common.actions.archive"),
+        description: isInArchivableGroup ? undefined : t("issue.archive.description"),
+        icon: ArchiveIcon,
+        className: "items-start",
+        iconClassName: "mt-1",
+        action: () => setArchiveIssueModal(true),
+        disabled: !isInArchivableGroup,
+        shouldRender: isArchivingAllowed,
+      },
+      {
+        key: "delete",
+        title: t("common.actions.delete"),
+        icon: Trash2,
+        action: () => {
+          setTrackElement(activeLayout);
+          setDeleteIssueModal(true);
+        },
+        shouldRender: isDeletingAllowed,
+      },
+    ],
+    [t]
+  );
 
   return (
     <>

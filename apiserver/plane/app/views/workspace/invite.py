@@ -251,8 +251,7 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
             super()
             .get_queryset()
             .filter(email=self.request.user.email)
-            .select_related("workspace", "workspace__owner", "created_by")
-            .annotate(total_members=Count("workspace__workspace_member"))
+            .select_related("workspace")
         )
 
     @invalidate_cache(path="/api/workspaces/", user=False)

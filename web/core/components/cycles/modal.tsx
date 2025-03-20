@@ -4,13 +4,13 @@ import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { mutate } from "swr";
 // types
+import { CYCLE_CREATED, CYCLE_UPDATED } from "@plane/constants";
 import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { CycleForm } from "@/components/cycles";
 // constants
-import { CYCLE_CREATED, CYCLE_UPDATED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useCycle, useProject } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";

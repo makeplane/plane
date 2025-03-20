@@ -3,8 +3,11 @@
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane package imports
-import { E_SORT_ORDER } from "@plane/constants";
+import { E_SORT_ORDER, TActivityFilters, defaultActivityFilters, EUserPermissions } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
+// i18n
+import { useTranslation } from "@plane/i18n";
+//types
 import { TFileSignedURLResponse, TIssueComment } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { TOAST_TYPE, setToast } from "@plane/ui";
@@ -13,15 +16,9 @@ import { IssueCommentCreate } from "@/components/issues";
 import { ActivitySortRoot, IssueActivityCommentRoot } from "@/components/issues/issue-detail";
 // constants
 // hooks
-import { useIssueDetail, useProject, useUser, useUserPermissions } from "@/hooks/store";
+import { useEditorAsset, useIssueDetail, useProject, useUser, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { ActivityFilterRoot, IssueActivityWorklogCreateButton } from "@/plane-web/components/issues/worklog";
-// plane web constants
-import { TActivityFilters, defaultActivityFilters } from "@/plane-web/constants/issues";
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
-// services
-import { FileService } from "@/services/file.service";
-const fileService = new FileService();
 
 type TIssueActivity = {
   workspaceSlug: string;
@@ -35,17 +32,20 @@ export type TActivityOperations = {
   createComment: (data: Partial<TIssueComment>) => Promise<TIssueComment>;
   updateComment: (commentId: string, data: Partial<TIssueComment>) => Promise<void>;
   removeComment: (commentId: string) => Promise<void>;
-  uploadCommentAsset: (file: File, commentId?: string) => Promise<TFileSignedURLResponse>;
+  uploadCommentAsset: (blockId: string, file: File, commentId?: string) => Promise<TFileSignedURLResponse>;
 };
 
 export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   const { workspaceSlug, projectId, issueId, disabled = false, isIntakeIssue = false } = props;
+  // i18n
+  const { t } = useTranslation();
   // hooks
   const { setValue: setFilterValue, storedValue: selectedFilters } = useLocalStorage(
     "issue_activity_filters",
     defaultActivityFilters
   );
   const { setValue: setSortOrder, storedValue: sortOrder } = useLocalStorage("activity_sort_order", E_SORT_ORDER.ASC);
+  // store hooks
   const {
     issue: { getIssueById },
     createComment,
@@ -55,7 +55,8 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   const { projectPermissionsByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { getProjectById } = useProject();
   const { data: currentUser } = useUser();
-  //derived values
+  const { uploadEditorAsset } = useEditorAsset();
+  // derived values
   const issue = issueId ? getIssueById(issueId) : undefined;
   const currentUserProjectRole = projectPermissionsByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
   const isAdmin = (currentUserProjectRole ?? EUserPermissions.GUEST) === EUserPermissions.ADMIN;
@@ -87,16 +88,16 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
           const comment = await createComment(workspaceSlug, projectId, issueId, data);
           setToast({
-            title: "Success!",
+            title: t("common.success"),
             type: TOAST_TYPE.SUCCESS,
-            message: "Comment created successfully.",
+            message: t("issue.comments.create.success"),
           });
           return comment;
-        } catch (error) {
+        } catch {
           setToast({
-            title: "Error!",
+            title: t("common.error.label"),
             type: TOAST_TYPE.ERROR,
-            message: "Comment creation failed. Please try again later.",
+            message: t("issue.comments.create.error"),
           });
         }
       },
@@ -105,15 +106,15 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
           await updateComment(workspaceSlug, projectId, issueId, commentId, data);
           setToast({
-            title: "Success!",
+            title: t("common.success"),
             type: TOAST_TYPE.SUCCESS,
-            message: "Comment updated successfully.",
+            message: t("issue.comments.update.success"),
           });
-        } catch (error) {
+        } catch {
           setToast({
-            title: "Error!",
+            title: t("common.error.label"),
             type: TOAST_TYPE.ERROR,
-            message: "Comment update failed. Please try again later.",
+            message: t("issue.comments.update.error"),
           });
         }
       },
@@ -122,38 +123,39 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
           await removeComment(workspaceSlug, projectId, issueId, commentId);
           setToast({
-            title: "Success!",
+            title: t("common.success"),
             type: TOAST_TYPE.SUCCESS,
-            message: "Comment removed successfully.",
+            message: t("issue.comments.remove.success"),
           });
-        } catch (error) {
+        } catch {
           setToast({
-            title: "Error!",
+            title: t("common.error.label"),
             type: TOAST_TYPE.ERROR,
-            message: "Comment remove failed. Please try again later.",
+            message: t("issue.comments.remove.error"),
           });
         }
       },
-      uploadCommentAsset: async (file, commentId) => {
+      uploadCommentAsset: async (blockId, file, commentId) => {
         try {
           if (!workspaceSlug || !projectId) throw new Error("Missing fields");
-          const res = await fileService.uploadProjectAsset(
-            workspaceSlug,
-            projectId,
-            {
+          const res = await uploadEditorAsset({
+            blockId,
+            data: {
               entity_identifier: commentId ?? "",
               entity_type: EFileAssetType.COMMENT_DESCRIPTION,
             },
-            file
-          );
+            file,
+            projectId,
+            workspaceSlug,
+          });
           return res;
         } catch (error) {
           console.log("Error in uploading comment asset:", error);
-          throw new Error("Asset upload failed. Please try again later.");
+          throw new Error(t("issue.comments.upload.error"));
         }
       },
     }),
-    [workspaceSlug, projectId, issueId, createComment, updateComment, removeComment]
+    [workspaceSlug, projectId, issueId, createComment, updateComment, uploadEditorAsset, removeComment]
   );
 
   const project = getProjectById(projectId);
@@ -163,7 +165,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
     <div className="space-y-4 pt-3">
       {/* header */}
       <div className="flex items-center justify-between">
-        <div className="text-lg text-custom-text-100">Activity</div>
+        <div className="text-lg text-custom-text-100">{t("common.activity")}</div>
         <div className="flex items-center gap-2">
           {isWorklogButtonEnabled && (
             <IssueActivityWorklogCreateButton

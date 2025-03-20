@@ -2,6 +2,7 @@
 import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { EIssueServiceType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssueServiceType } from "@plane/types";
 import { CollapsibleButton } from "@plane/ui";
 // components
@@ -20,6 +21,7 @@ type Props = {
 
 export const RelationsCollapsibleTitle: FC<Props> = observer((props) => {
   const { isOpen, issueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
+  const { t } = useTranslation();
   // store hook
   const {
     relation: { getRelationCountByIssueId },
@@ -42,7 +44,7 @@ export const RelationsCollapsibleTitle: FC<Props> = observer((props) => {
   return (
     <CollapsibleButton
       isOpen={isOpen}
-      title="Relations"
+      title={t("common.relations")}
       indicatorElement={indicatorElement}
       actionItemElement={
         !disabled && <RelationActionButton issueId={issueId} disabled={disabled} issueServiceType={issueServiceType} />

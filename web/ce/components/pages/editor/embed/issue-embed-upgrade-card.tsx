@@ -18,7 +18,7 @@ export const IssueEmbedUpgradeCard: React.FC<any> = (props) => (
       <div className="flex items-center gap-4">
         <ProIcon className="flex-shrink-0 size-4" />
         <p className="text-custom-text !text-base">
-          Embed and access issues in pages seamlessly, upgrade to Plane Pro now.
+          Embed and access work items in pages seamlessly, upgrade to Plane Pro now.
         </p>
       </div>
       <a

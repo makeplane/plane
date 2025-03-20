@@ -15,7 +15,7 @@ import { ActivitySettingsLoader } from "@/components/ui";
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser, useWorkspace } from "@/hooks/store";
 
 type Props = {
   activity: IUserActivityResponse | undefined;
@@ -27,6 +27,9 @@ export const ActivityList: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
+  const { getWorkspaceBySlug } = useWorkspace();
+  // derived values
+  const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString() ?? "")?.id ?? "";
 
   // TODO: refactor this component
   return (
@@ -79,6 +82,7 @@ export const ActivityList: React.FC<Props> = observer((props) => {
                               : (activityItem.old_value?.toString() as string)
                           }
                           containerClassName="text-xs bg-custom-background-100"
+                          workspaceId={workspaceId}
                           workspaceSlug={workspaceSlug?.toString() ?? ""}
                           projectId={activityItem.project}
                         />

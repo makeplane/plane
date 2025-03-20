@@ -6,16 +6,22 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { EIssueLayoutTypes, EIssueServiceType, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import {
+  EIssueLayoutTypes,
+  EIssueServiceType,
+  EIssueFilterType,
+  EIssuesStoreType,
+  ISSUE_DELETED,
+  EUserPermissions,
+  EUserPermissionsLevel,
+} from "@plane/constants";
 import { DeleteIssueModal } from "@/components/issues";
 //constants
-import { ISSUE_DELETED } from "@/constants/event-tracker";
 //hooks
 import { useEventTracker, useIssueDetail, useIssues, useKanbanView, useUserPermissions } from "@/hooks/store";
 import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // store
 // ui
 // types
@@ -258,7 +264,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
                 isDragOverDelete ? "bg-red-500 opacity-70 blur-2xl" : ""
               } transition duration-300`}
             >
-              Drop here to delete the issue.
+              Drop here to delete the work item.
             </div>
           </div>
 

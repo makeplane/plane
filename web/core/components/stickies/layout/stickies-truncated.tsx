@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane utils
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // hooks
 import { useSticky } from "@/hooks/use-stickies";
@@ -20,6 +21,7 @@ export const StickiesTruncated = observer((props: StickiesTruncatedProps) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { fetchWorkspaceStickies } = useSticky();
+  const { t } = useTranslation();
 
   useSWR(
     workspaceSlug ? `WORKSPACE_STICKIES_${workspaceSlug}` : null,
@@ -40,7 +42,7 @@ export const StickiesTruncated = observer((props: StickiesTruncatedProps) => {
           )}
           onClick={handleClose}
         >
-          Show all
+          {t("show_all")}
         </Link>
       }
     >

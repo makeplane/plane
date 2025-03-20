@@ -28,6 +28,7 @@ import {
   CustomCalloutReadOnlyExtension,
   CustomColorExtension,
   FlatListExtension,
+  MarkdownClipboard,
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
@@ -35,18 +36,18 @@ import { isValidHttpUrl } from "@/helpers/common";
 import { CoreReadOnlyEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
 import { TExtensions, TFileHandler, TReadOnlyMentionHandler } from "@/types";
+import { TExtensions, TReadOnlyFileHandler, TReadOnlyMentionHandler } from "@/types";
 
 type Props = {
   disabledExtensions: TExtensions[];
-  fileHandler: Pick<TFileHandler, "getAssetSrc">;
+  fileHandler: TReadOnlyFileHandler;
   mentionHandler: TReadOnlyMentionHandler;
 };
 
 export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
   const { disabledExtensions, fileHandler, mentionHandler } = props;
 
-  return [
-    // @ts-expect-error tiptap types are incorrect
+  const extensions = [
     StarterKit.configure({
       bulletList: false,
       orderedList: false,
@@ -151,16 +152,6 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
       },
     }),
     CustomTypographyExtension,
-    ReadOnlyImageExtension({
-      getAssetSrc: fileHandler.getAssetSrc,
-    }).configure({
-      HTMLAttributes: {
-        class: "rounded-md",
-      },
-    }),
-    CustomReadOnlyImageExtension({
-      getAssetSrc: fileHandler.getAssetSrc,
-    }),
     TiptapUnderline,
     TextStyle,
     CustomCodeBlockExtension.configure({
@@ -171,8 +162,9 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
     CustomCodeInlineExtension,
     Markdown.configure({
       html: true,
-      transformCopiedText: true,
+      transformCopiedText: false,
     }),
+    MarkdownClipboard,
     Table,
     TableHeader,
     TableCell,
@@ -186,4 +178,18 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
       disabledExtensions,
     }),
   ];
+
+  if (!disabledExtensions.includes("image")) {
+    extensions.push(
+      ReadOnlyImageExtension(fileHandler).configure({
+        HTMLAttributes: {
+          class: "rounded-md",
+        },
+      }),
+      CustomReadOnlyImageExtension(fileHandler)
+    );
+  }
+
+  // @ts-expect-error tiptap types are incorrect
+  return extensions;
 };
