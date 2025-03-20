@@ -52,6 +52,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({ customProper
       value: customProperty ? customProperty.value : "", // Use existing value or set empty if not found
       issue_type_custom_property: customProp.id,
       is_required: customProp.is_required,
+      id: customProperty ? customProperty.id : "",
     };
   });
   console.log("CustomProperties is", customProperties);
@@ -66,18 +67,23 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({ customProper
   }
 
     // Inline editable component for each property
-    const EditableProperty: React.FC<{ property: CustomProperty }> = ({ property }) => {
+    const EditableProperty: React.FC<{ property: CustomProperty }> = React.memo(({ property }) => {
       const [value, setValue] = useState(property.value);
-  
+      console.log("Component re-rendering due to state change");
       const handleBlur = async () => {
         try {
+          console.log("property.is_required is", property.is_required);
+          if (property.is_required && value.trim() === "") {
+            setEditableError("This field is required and cannot be left empty or consist of spaces.");
+            return; // Stop further execution if the field is empty or consists of spaces
+          }
           if (value !== property.value) {
             console.log(`Updating property: ${property.key}, new value: ${value}`);
             // Log the change
-            const updatedCustomProperties = mergedCustomProperties.map((prop) =>
-              prop.key === property.key ? { ...prop, value } : prop
-            );
-            updateCustomProperties(updatedCustomProperties);
+            const updatedProperty = { ...property, value };
+            console.log("Property sending to update is", [updatedProperty]);
+            // Call updateCustomProperties with only the updated property
+            updateCustomProperties([updatedProperty]);
           }
         } catch (error) {
           // Handle errors related to updating
@@ -93,10 +99,10 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({ customProper
   
       return (
         <div>
-          <label htmlFor={property.key} className="text-sm text-custom-text-300">
+          {/* <label htmlFor={property.key} className="text-sm text-custom-text-300">
             {property.is_required && <span className="text-red-500">* </span>}
             {property.key}
-          </label>
+          </label> */}
           <input
             type="text"
             value={value}
@@ -106,8 +112,8 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({ customProper
           />
           {error && <div className="error-message text-red-500 text-xs mt-1">{error}</div>}
         </div>
-      );
-    };
+      )
+    });
 
   return (
     <div className="w-full">
@@ -116,7 +122,10 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({ customProper
       {mergedCustomProperties.map((element) => (
         <div key={element.key} className="flex min-h-8 gap-2 align-items-center">
           <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
-            <span>{element.key}</span>
+            <span>
+              {element.is_required && <span className="text-red-500">* </span>} 
+              {element.key}
+            </span>
           </div>
           <div className="h-full min-h-8 w-3/5 mt-1 ml-5 flex-grow">
             <EditableProperty property={element} />
