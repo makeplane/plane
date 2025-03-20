@@ -29,7 +29,9 @@ export function registerControllers(
     const { Controller, dependencies = [] } = registration;
     const resolvedDependencies = dependencies.map(dep => container.get(dep));
     const instance = new Controller(...resolvedDependencies);
-    instance.registerRoutes(router);
+    
+    // Call the specialized WebSocket registration method
+    instance.registerWebSocketRoutes(router);
   });
 }
 

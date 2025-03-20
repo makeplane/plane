@@ -1,6 +1,6 @@
 import { Router, Request } from "express";
 import { WebSocket } from "ws";
-import { BaseController, BaseWebSocketController } from "./base.controller";
+import { BaseController, BaseWebSocketController } from "@plane/decorators";
 
 /**
  * Controller factory function interface for creating controllers with dependencies
@@ -47,13 +47,19 @@ export interface IController {
    * Register routes for RESTful endpoints
    * @param router Express router to register routes on
    */
-  registerRoutes?(router: Router): void;
+  registerRoutes(router: Router): void;
 }
 
 /**
  * WebSocket controller interface for websocket handlers
  */
 export interface IWebSocketController extends IController {
+  /**
+   * Register routes specific to WebSocket endpoints
+   * @param router Express router with WebSocket support
+   */
+  registerWebSocketRoutes(router: any): void;
+  
   /**
    * Handle WebSocket connections
    * @param ws WebSocket connection
