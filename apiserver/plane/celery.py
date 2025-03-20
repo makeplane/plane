@@ -45,19 +45,30 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.api_logs_task.delete_api_logs",
         "schedule": crontab(hour=2, minute=30),  # UTC 02:30
     },
-    "track-entity-issue-state-progress": {
-        "task": "plane.ee.bgtasks.entity_issue_state_progress_task.track_entity_issue_state_progress",
-        "schedule": crontab(hour=0, minute=0),
+}
+
+EE_JOBS = {
+    "check-every-day-to-delete-hard-delete": {
+        "task": "plane.bgtasks.deletion_task.hard_delete",
+        "schedule": crontab(hour=3, minute=0),  # UTC 03:00
     },
+    # EE jobs
     "check-every-12-hr-instance-version": {
         "task": "plane.license.bgtasks.version_check_task.version_check",
-        "schedule": crontab(hour="*/12", minute=0),
+        "schedule": crontab(hour="*/12", minute=0),  # Every 12 hours
     },
     "check-every-day-to-sync-workspace-members": {
         "task": "plane.payment.bgtasks.workspace_subscription_sync_task.schedule_workspace_billing_task",
-        "schedule": crontab(hour=0, minute=0),
+        "schedule": crontab(hour=0, minute=0),  # UTC 00:00
+    },
+    "track-entity-issue-state-progress": {
+        "task": "plane.ee.bgtasks.entity_issue_state_progress_task.track_entity_issue_state_progress",
+        "schedule": crontab(hour=0, minute=30),  # UTC 00:30
     },
 }
+
+
+app.conf.beat_schedule.update(EE_JOBS)
 
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
