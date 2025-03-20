@@ -1,7 +1,7 @@
 import * as Comlink from "comlink";
 import set from "lodash/set";
 // plane
-import { EIssueGroupBYServerToProperty } from "@plane/constants";
+import { EIssueGroupBYServerToProperty, EUserPermissions } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // lib
 import { rootStore } from "@/lib/store-context";
@@ -292,6 +292,26 @@ export class Storage {
       if (this.status !== "ready" && !rootStore.user.localDBEnabled) {
         return;
       }
+    }
+
+    // Get current project details and user role for the project
+    const currentProject = rootStore.projectRoot.project.getProjectById(projectId);
+    const currentUserRole = rootStore.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
+      workspaceSlug,
+      projectId
+    );
+
+    // Return empty results if the user is a guest and the project does not have guest view all features enabled
+    if (currentUserRole === EUserPermissions.GUEST && currentProject?.guest_view_all_features === false) {
+      return {
+        results: [],
+        next_cursor: `${PAGE_SIZE}:0:0`,
+        prev_cursor: `${PAGE_SIZE}:0:0`,
+        total_results: 0,
+        total_count: 0,
+        next_page_results: false,
+        total_pages: 0,
+      };
     }
 
     const { cursor, group_by, sub_group_by } = queries;
