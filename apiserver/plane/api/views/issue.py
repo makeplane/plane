@@ -1177,49 +1177,24 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
         """
         Partially update a custom property value for a specific issue.
         """
-        # Fetch the custom property using primary key (pk) and issue_id
         custom_property = get_object_or_404(IssueCustomProperty, pk=pk, issue_id=issue_id)
-
-        # Ensure 'value' is in the request data
         new_value = request.data.get('value')
         if new_value is None:
             new_value = "" 
-
-        # Serialize the updated custom property
         serializer = self.serializer_class(custom_property)
-        # Track the update activity (uncommented)
         requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
-        # Log the requested data to verify what was received in the request
-        print(f"Requested data: {requested_data}")
-        # Serialize the current instance (updated custom property) and log it
         current_instance = json.dumps(serializer.data, cls=DjangoJSONEncoder)
-        print(f"Current instance (updated custom property): {current_instance}")
-        # Log the user ID to verify the actor
         actor_id = str(request.user.id) if request.user else "Unknown"
-        print(f"Actor ID (user making the update): {actor_id}")
-        # Log the issue ID to verify the issue being updated
         issue_id_str = str(issue_id) if issue_id else "Unknown issue ID"
-        print(f"Issue ID being updated: {issue_id_str}")
-        # Log the project ID being passed to verify its correctness
-        print(f"self.kwargs are {self.kwargs}")
         slug = slug=self.kwargs.get("slug")
-        print(f"slug is {slug}")
         workspace = Workspace.objects.get(slug=slug)
-        print(f"Workspace is {workspace}")
         try:
             project = Project.objects.get(workspace=workspace)
             project_id_str = project.id
-            print(f"Project ID: {project_id_str}")
         except Project.DoesNotExist:
             return Response({"error": "Project not found."}, status=status.HTTP_404_NOT_FOUND)
-        # project_id_str = str(self.kwargs.get("project_id")) if self.kwargs.get("project_id") else "Unknown project ID"
-        print(f"Project ID: {project_id_str}")
-        # Log the timestamp to verify the epoch
         epoch_timestamp = int(timezone.now().timestamp())
-        print(f"Epoch timestamp: {epoch_timestamp}")
-        # Trigger the issue activity background task
-        print("Triggering issue activity tracking...")
-        issue_activity.delay(
+        issue_activity(
             type="custom_property.activity.updated",
             requested_data=requested_data,
             actor_id=actor_id,
@@ -1228,15 +1203,8 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
             current_instance=current_instance,
             epoch=epoch_timestamp,
         )
-
-        # Log completion of the background task trigger
-        print("Issue activity background task triggered successfully.")
-
-        # Update the value field with the new value
         custom_property.value = new_value
         custom_property.save()
-
-        # Return the updated data as the response
         return Response(serializer.data, status=status.HTTP_200_OK)
         
     def get(self, request, slug, issue_id, pk=None):
@@ -1248,7 +1216,6 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
             serializer = self.serializer_class(custom_property)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        # If no primary key is given, return a list of all custom properties for the issue
         custom_properties = IssueCustomProperty.objects.filter(issue_id=issue_id)
         serializer = self.serializer_class(custom_properties, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -1257,33 +1224,21 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
         """
         Create a new custom property for a specific issue.
         """
-        # Ensure 'key', 'value', and 'issue_type_custom_property' are in the request data
         key = request.data.get('key')
         value = request.data.get('value')
         issue_type_custom_property_id = request.data.get('issue_type_custom_property')
-
-        print(f"Received key: {key}, value: {value}, issue_type_custom_property: {issue_type_custom_property_id}")  # Debugging line
-
         if not key or not value or not issue_type_custom_property_id:
             return Response(
                 {"error": "'key', 'value', and 'issue_type_custom_property' fields are required."},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
-        # Get the IssueTypeCustomProperty instance based on the provided ID
         try:
-            print(f"Attempting to retrieve IssueTypeCustomProperty with ID: {issue_type_custom_property_id}")  # Debugging line
             issue_type_custom_property = IssueTypeCustomProperty.objects.get(id=issue_type_custom_property_id)
         except IssueTypeCustomProperty.DoesNotExist:
             return Response(
                 {"error": f"The provided issue_type_custom_property (ID: {issue_type_custom_property_id}) does not exist."},
                 status=status.HTTP_404_NOT_FOUND
             )
-        
-        # Log the retrieved issue_type_custom_property object (optional)
-        print(f"Found IssueTypeCustomProperty: {issue_type_custom_property}")  # Debugging line
-
-        # Get the Issue instance based on the provided issue_id
         try:
             issue = Issue.objects.get(id=issue_id)
         except Issue.DoesNotExist:
@@ -1291,24 +1246,32 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
                 {"error": "The provided issue does not exist."},
                 status=status.HTTP_404_NOT_FOUND
             )
-        
         if not issue.project:
             return Response(
                 {"error": "The issue must be associated with a project."},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
-        # Create the new custom property for the issue
         custom_property = IssueCustomProperty.objects.create(
-            issue=issue,  # the related issue
+            issue=issue,
             key=key,
             value=value,
-            issue_type_custom_property=issue_type_custom_property,  # The type of the custom property
-            project=issue.project,  # Ensure project is set via Issue
+            issue_type_custom_property=issue_type_custom_property,
+            project=issue.project,
         )
-
-        # Serialize the created custom property
         serializer = self.serializer_class(custom_property)
-
-        # Return the newly created custom property as a response
+        requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
+        current_instance = json.dumps(serializer.data, cls=DjangoJSONEncoder)
+        actor_id = str(request.user.id) if request.user else "Unknown"
+        issue_id_str = str(issue_id) if issue_id else "Unknown issue ID"
+        project_id_str = str(issue.project.id)
+        epoch_timestamp = int(timezone.now().timestamp())
+        issue_activity(
+            type="custom_property.activity.created",
+            requested_data=requested_data,
+            actor_id=actor_id,
+            issue_id=issue_id_str,
+            project_id=project_id_str,
+            current_instance=current_instance,
+            epoch=epoch_timestamp,
+        )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
