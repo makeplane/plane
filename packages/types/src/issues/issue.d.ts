@@ -58,10 +58,18 @@ export type TIssue = TBaseIssue & {
   issue_link?: TIssueLink[];
   issue_relation?: IssueRelation[];
   issue_related?: IssueRelation[];
+  custom_properties?: Record<string, any>;
+  hub_code?: string[] | null;
+  worker_code?: string[] | null;
+  customer_code?: string[] | null;
+  trip_reference_number?: string[] | null;
+  reference_number?: string[] | null;
+  vendor_code?: string[] | null;
   // tempId is used for optimistic updates. It is not a part of the API response.
   tempId?: string;
   // sourceIssueId is used to store the original issue id when creating a copy of an issue. Used in cloning property values. It is not a part of the API response.
   sourceIssueId?: string;
+  [key: string]: any;
 };
 
 export type TIssueMap = {

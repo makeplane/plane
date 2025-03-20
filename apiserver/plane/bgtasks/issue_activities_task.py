@@ -367,14 +367,16 @@ def track_assignees(
     actor_id,
     issue_activities,
     epoch,
+    verb="updated"
 ):
+   
     requested_assignees = (
-        set([str(asg) for asg in requested_data.get("assignee_ids", [])])
+        set([str(asg) for asg in requested_data.get("assignee_ids", requested_data.get("assignees", []))])
         if requested_data is not None
         else set()
     )
     current_assignees = (
-        set([str(asg) for asg in current_instance.get("assignee_ids", [])])
+        set([str(asg) for asg in current_instance.get("assignee_ids", current_instance.get("assignees", []))])
         if current_instance is not None
         else set()
     )
@@ -389,7 +391,7 @@ def track_assignees(
             IssueActivity(
                 issue_id=issue_id,
                 actor_id=actor_id,
-                verb="updated",
+                verb=verb,
                 old_value="",
                 new_value=assignee.display_name,
                 field="assignees",
@@ -597,7 +599,7 @@ def create_issue_activity(
     requested_data = (
         json.loads(requested_data) if requested_data is not None else None
     )
-    if requested_data.get("assignee_ids") is not None:
+    if requested_data.get("assignee_ids") is not None or requested_data.get("assignees")is not None:
         track_assignees(
             requested_data,
             current_instance,
@@ -607,6 +609,7 @@ def create_issue_activity(
             actor_id,
             issue_activities,
             epoch,
+            "created"
         )
 
 

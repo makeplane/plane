@@ -15,6 +15,7 @@ def redis_instance():
             ssl_cert_reqs=None,
         )
     else:
+        print("redis url: ", settings.REDIS_URL)
         ri = redis.Redis.from_url(settings.REDIS_URL, db=0)
 
     return ri

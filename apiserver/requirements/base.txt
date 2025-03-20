@@ -1,7 +1,7 @@
 # base requirements
 
 # django
-Django==4.2.16
+Django==4.2.14
 # rest framework
 djangorestframework==3.15.2
 # postgres 
@@ -10,6 +10,7 @@ psycopg-binary==3.1.18
 psycopg-c==3.1.18
 dj-database-url==2.1.0
 # redis
+python-dotenv==1.0.0
 redis==5.0.4
 django-redis==5.4.0
 # cors
@@ -29,7 +30,7 @@ jsonmodels==2.7.0
 # sentry
 sentry-sdk==2.8.0
 # storage
-django-storages==1.14.2
+django-storages==1.14.4
 # user management
 django-crum==0.7.9
 # web server

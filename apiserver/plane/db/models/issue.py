@@ -45,7 +45,7 @@ def get_default_filters():
         "labels": None,
         "start_date": None,
         "target_date": None,
-        "subscriber": None,
+        "subscriber": None
     }
 
 
@@ -139,6 +139,12 @@ class Issue(ProjectBaseModel):
         null=True,
         blank=True,
     )
+    hub_code = models.CharField(max_length=255, blank=True, null=True)
+    vendor_code = models.CharField(max_length=255, blank=True, null=True)
+    customer_code = models.CharField(max_length=255, blank=True, null=True)
+    worker_code = models.CharField(max_length=255, blank=True, null=True)
+    reference_number = models.CharField(max_length=255, blank=True, null=True)
+    trip_reference_number = models.CharField(max_length=255, blank=True, null=True)
     name = models.CharField(max_length=255, verbose_name="Issue Name")
     description = models.JSONField(blank=True, default=dict)
     description_html = models.TextField(blank=True, default="<p></p>")
@@ -715,3 +721,27 @@ class IssueVote(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.issue.name} {self.actor.email}"
+
+
+class IssueCustomProperty(ProjectBaseModel):
+    issue = models.ForeignKey(
+        Issue, on_delete=models.CASCADE, related_name="custom_properties"
+    )
+    key = models.CharField(max_length=255)
+    value = models.CharField(max_length=255, null=True, blank=True)
+    issue_type_custom_property = models.ForeignKey(
+        "db.IssueTypeCustomProperty",
+        on_delete=models.SET_NULL,
+        related_name="issue_type_custom_property",
+        null=True,
+        blank=True,
+    )
+    
+    class Meta:
+        verbose_name = "Issue Custom Property"
+        verbose_name_plural = "Issue Custom Properties"
+        db_table = "issue_custom_properties"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.issue.name} {self.key}"

@@ -2,7 +2,7 @@ from django.urls import path
 
 from plane.api.views import (
     ProjectAPIEndpoint,
-    ProjectArchiveUnarchiveAPIEndpoint,
+    ProjectArchiveUnarchiveAPIEndpoint
 )
 
 urlpatterns = [
@@ -12,12 +12,12 @@ urlpatterns = [
         name="project",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<str:pk>/",
         ProjectAPIEndpoint.as_view(),
         name="project",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/archive/",
+        "workspaces/<str:slug>/projects/<str:project_id>/archive/",
         ProjectArchiveUnarchiveAPIEndpoint.as_view(),
         name="project-archive-unarchive",
     ),

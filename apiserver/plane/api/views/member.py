@@ -19,6 +19,7 @@ from plane.db.models import (
     Project,
     WorkspaceMember,
     ProjectMember,
+    Profile
 )
 
 from plane.app.permissions import (
@@ -63,17 +64,15 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
         # ------------------- Validation -------------------
         if (
             request.data.get("email") is None
-            or request.data.get("display_name") is None
         ):
             return Response(
                 {
-                    "error": "Expected email, display_name, workspace_slug, project_id, one or more of the fields are missing."
+                    "error": "Expected email, workspace_slug, project_id, one or more of the fields are missing."
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         email = request.data.get("email")
-
         try:
             validate_email(email)
         except ValidationError:
@@ -92,7 +91,7 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
             )
 
         # Check if user exists
-        user = User.objects.filter(email=email).first()
+        user = User.objects.filter(email=email.lower()).first()
         workspace_member = None
         project_member = None
 
@@ -115,39 +114,67 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
                     )
 
         # If user does not exist, create the user
+        user_data = {
+                "email": email,
+                "display_name": request.data.get("display_name"),
+                "first_name": request.data.get("first_name", ""),
+                "last_name": request.data.get("last_name", ""),
+                "role": request.data.get("role", 15),
+            }
         if not user:
-            user = User.objects.create(
-                email=email,
-                display_name=request.data.get("display_name"),
-                first_name=request.data.get("first_name", ""),
-                last_name=request.data.get("last_name", ""),
-                username=uuid.uuid4().hex,
-                password=make_password(uuid.uuid4().hex),
-                is_password_autoset=True,
-                is_active=False,
-            )
-            user.save()
+            user = self.create_user(user_data)
+            profile, _ = Profile.objects.get_or_create(user=user)
+            profile.last_workspace_id = workspace.id
+            profile.onboarding_step.update({
+                'profile_complete': True,
+                'workspace_join': True
+            })
+            profile.is_tour_completed = True
+            profile.is_onboarded = True
+            profile.company_name = workspace.name
+            profile.save()
 
-        # Create a workspace member for the user if not already a member
         if not workspace_member:
-            workspace_member = WorkspaceMember.objects.create(
-                workspace=workspace,
-                member=user,
-                role=request.data.get("role", 5),
-            )
-            workspace_member.save()
+            self.create_workspace_member(workspace.id, user, role=user_data.get("role"))
+            
 
-        # Create a project member for the user if not already a member
         if not project_member:
-            project_member = ProjectMember.objects.create(
-                project=project,
-                member=user,
-                role=request.data.get("role", 5),
-            )
-            project_member.save()
+            self.create_project_member(project.id, user, role=user_data.get("role"))
 
+        
         # Serialize the user and return the response
         user_data = UserLiteSerializer(user).data
 
         return Response(user_data, status=status.HTTP_201_CREATED)
 
+    def create_user(self, data):
+        user = User.objects.create(
+            email=data.get("email"),
+            display_name=data.get("display_name"),
+            first_name=data.get("first_name", ""),
+            last_name=data.get("last_name", ""),
+            username=data.get("username", uuid.uuid4().hex),
+            password=make_password(data.get("username", uuid.uuid4().hex)),
+            is_password_autoset=False,
+            is_active=False,
+        )
+        user.save()
+        return user
+
+        # Create a workspace member for the user if not already a member
+    def create_workspace_member(self, workspace_id, user, role=15):
+            workspace_member = WorkspaceMember.objects.create(
+                workspace_id=workspace_id,
+                member=user,
+                role=role
+            )
+            workspace_member.save()
+
+    def create_project_member(self, project_id, user, role=15):
+        # Create a project member for the user if not already a member
+        project_member = ProjectMember.objects.create(
+            project_id=project_id,
+            member=user,
+            role=role
+        )
+        project_member.save()

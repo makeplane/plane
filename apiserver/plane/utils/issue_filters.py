@@ -3,6 +3,7 @@ import uuid
 from datetime import timedelta
 
 from django.utils import timezone
+from django.db.models import Q
 
 # The date from pattern
 pattern = re.compile(r"\d+_(weeks|months)$")
@@ -267,7 +268,9 @@ def filter_created_by(params, issue_filter, method, prefix=""):
         ]
         if "None" in created_bys:
             issue_filter[f"{prefix}created_by__isnull"] = True
+        print(created_bys)
         created_bys = filter_valid_uuids(created_bys)
+
         if len(created_bys) and "" not in created_bys:
             issue_filter[f"{prefix}created_by__in"] = created_bys
     else:
@@ -277,6 +280,25 @@ def filter_created_by(params, issue_filter, method, prefix=""):
             and params.get("created_by") != "null"
         ):
             issue_filter[f"{prefix}created_by__in"] = params.get("created_by")
+    return issue_filter
+
+
+def filter_created_by_username(params, issue_filter, method, prefix=""):
+    if method == "GET":
+        created_bys = [
+            item
+            for item in params.get("created_by_username").split(",")
+            if item != "null"
+        ]
+        if len(created_bys) and "" not in created_bys:
+            issue_filter[f"{prefix}created_by__username__in"] = created_bys
+    # else:
+    #     if (
+    #         params.get("created_by", None)
+    #         and len(params.get("created_by"))
+    #         and params.get("created_by") != "null"
+    #     ):
+    #         issue_filter[f"{prefix}created_by__in"] = params.get("created_by")
     return issue_filter
 
 
@@ -538,6 +560,54 @@ def filter_logged_by(params, issue_filter, method, prefix=""):
     return issue_filter
 
 
+def filter_custom_properties(params, issue_filter, method, prefix=""):
+    if method == "GET":
+        custom_properties = [
+            item
+            for item in params.get("custom_properties").split(",")
+            if item != "null"
+        ]
+
+        # query = Q()
+        # for row in custom_properties:
+        #     key, value = row.split(":")
+        #     query &= Q(
+        #         Q(custom_properties__project_custom_property_id=key) &
+        #         Q(custom_properties__value=value)
+        #     )
+        
+        # issue_filter['base'] = query
+        
+        groupedCustomProperties = {}
+        for row in custom_properties:
+            key, value = row.split(':')
+            if key not in groupedCustomProperties:
+                groupedCustomProperties[key] = []
+            groupedCustomProperties[key].append(value)
+
+        issue_filter['custom_properties'] = groupedCustomProperties
+
+    print(issue_filter)
+    return issue_filter
+
+def filter_character_fields(params, issue_filter, method, prefix=""):
+    character_fields = [
+        "hub_code", 
+        "worker_code", 
+        "vendor_code", 
+        "trip_reference_number", 
+        "reference_number", 
+        "customer_code"
+    ]
+
+    for field in character_fields:
+        value = params.get(field, "").strip()  # Remove spaces to avoid blank entries
+        if value:  
+            issue_filter[f"{prefix}{field}__iexact"] = value  # Case-insensitive filtering
+
+    return issue_filter
+
+
 def issue_filters(query_params, method, prefix=""):
     issue_filter = {}
 
@@ -551,6 +621,7 @@ def issue_filters(query_params, method, prefix=""):
         "assignees": filter_assignees,
         "mentions": filter_mentions,
         "created_by": filter_created_by,
+        "created_by_username": filter_created_by_username,
         "logged_by": filter_logged_by,
         "name": filter_name,
         "created_at": filter_created_at,
@@ -566,10 +637,13 @@ def issue_filters(query_params, method, prefix=""):
         "sub_issue": filter_sub_issue_toggle,
         "subscriber": filter_subscribed_issues,
         "start_target_date": filter_start_target_date_issues,
+        "custom_properties": filter_custom_properties,
     }
 
     for key, value in ISSUE_FILTER.items():
         if key in query_params:
             func = value
             func(query_params, issue_filter, method, prefix)
+            
+    filter_character_fields(query_params, issue_filter, method, prefix)
     return issue_filter

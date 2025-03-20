@@ -7,20 +7,6 @@ services:
     volumes:
       - redisdata:/data
 
-  plane-mq:
-    image: rabbitmq:3.13.6-management-alpine
-    restart: unless-stopped
-    networks:
-      - dev_env
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    env_file:
-      - .env
-    environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
-      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
-
   plane-minio:
     image: minio/minio
     restart: unless-stopped
@@ -34,6 +20,8 @@ services:
     environment:
       MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
       MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
+    ports:
+      - 9090:9090
 
   plane-db:
     image: postgres:15.7-alpine
@@ -47,6 +35,8 @@ services:
       - .env
     environment:
       PGDATA: /var/lib/postgresql/data
+    ports:
+      - 5432:5432
 
   web:
     build:
@@ -122,6 +112,8 @@ services:
     depends_on:
       - plane-db
       - plane-redis
+    stdin_open: true
+    tty: true
 
   worker:
     build:

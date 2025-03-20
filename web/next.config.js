@@ -15,7 +15,11 @@ const nextConfig = {
       {
         source: "/(.*)?",
         headers: [
-          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "X-Frame-Options", value: "ALLOWALL" },
+          {
+            key: "Content-Security-Policy",
+            value: "frame-ancestors 'self' https://*.shipsy.io http://*.localhost:3001 http://*.localhost:3002 http://5.223.42.156:3000/", // Replace with the domains allowed to embed your app
+          },
           // {
           //   key: "Referrer-Policy",
           //   value: "origin-when-cross-origin",

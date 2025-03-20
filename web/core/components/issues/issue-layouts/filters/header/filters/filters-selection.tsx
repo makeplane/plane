@@ -16,16 +16,18 @@ import {
   FilterState,
   FilterStateGroup,
   FilterTargetDate,
+  FilterAdditionalProperties,
   FilterCycle,
   FilterModule,
   FilterIssueGrouping,
 } from "@/components/issues";
 // constants
-import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
+import { ILayoutDisplayFiltersOptions, ISSUE_ADDITIONAL_PROPERTIES } from "@/constants/issue";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { FilterIssueTypes } from "@/plane-web/components/issues";
+import { FilterCustomProperty } from "./custom-properties";
 
 type Props = {
   filters: IIssueFilterOptions;
@@ -238,6 +240,31 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
             <FilterTargetDate
               appliedFilters={filters.target_date ?? null}
               handleUpdate={(val) => handleFiltersUpdate("target_date", val)}
+              searchQuery={filtersSearchQuery}
+            />
+          </div>
+        )}
+
+          {ISSUE_ADDITIONAL_PROPERTIES.map((prop: any) => (
+            <div className="py-2">
+              <FilterAdditionalProperties
+                key={prop.key}
+                appliedFilters={filters[prop.key as keyof IIssueFilterOptions] ?? null} 
+                additionalPropertyTitle={prop.title}
+                additionalPropertyKey={prop.key} 
+                handleUpdate={(val) => handleFiltersUpdate(prop.key as keyof IIssueFilterOptions, val)} 
+                searchQuery={filtersSearchQuery}
+              />
+            </div>
+          ))}
+
+        {/* custom_properties */}
+        {isFilterEnabled("custom_properties") && (
+          <div className="py-2">
+            <FilterCustomProperty
+              appliedFilters={filters.custom_properties ?? null}
+              handleUpdate={(val) => handleFiltersUpdate("custom_properties", val)}
+              // handleUpdate={(val) => handleFiltersUpdate("custom_properties", null, val)}
               searchQuery={filtersSearchQuery}
             />
           </div>

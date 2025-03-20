@@ -11,6 +11,7 @@ from .issue import (
     IssueExpandSerializer,
     IssueLiteSerializer,
 )
+from .issue_type import IssueTypeSerializer, IssueTypeCustomPropertySerializer
 from .state import StateLiteSerializer, StateSerializer
 from .cycle import CycleSerializer, CycleIssueSerializer, CycleLiteSerializer
 from .module import (

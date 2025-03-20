@@ -8,6 +8,7 @@ from django.db import IntegrityError
 from django.urls import resolve
 from django.utils import timezone
 from plane.db.models.api import APIToken
+from plane.db.models import Project, User
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -74,6 +75,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
         or re-raising the error.
         """
         try:
+            print(exc)
             response = super().handle_exception(exc)
             return response
         except Exception as e:
@@ -84,6 +86,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
                 )
 
             if isinstance(e, ValidationError):
+                import traceback; traceback.print_exc()
                 return Response(
                     {"error": "Please provide valid detail"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -109,10 +112,12 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
 
     def dispatch(self, request, *args, **kwargs):
         try:
+            kwargs = self.check_kwargs(kwargs)
+            request.user = self.get_or_create_user_from_headers(request)
+            self.ensure_member_in_workspace(request.user, kwargs)
             response = super().dispatch(request, *args, **kwargs)
             if settings.DEBUG:
                 from django.db import connection
-
                 print(
                     f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
                 )
@@ -121,6 +126,54 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
             response = self.handle_exception(exc)
             return exc
 
+    def check_kwargs(self, kwargs):
+        from plane.authentication.views.app.magic import MagicSignInEndpoint
+        admin_user = User.objects.filter(is_superuser=True).first()
+        if kwargs.get('slug', None):
+            MagicSignInEndpoint().add_user_to_workspace(admin_user, kwargs['slug'])
+            project_id = self.kwargs.get("project_id", None)
+            if project_id == "DEFAULT":
+                project = Project.objects.filter(
+                        name='TICKET', workspace__slug=kwargs['slug']
+                    ).first()
+                if project:
+                    kwargs['project_id'] = project.id
+
+        
+        return kwargs
+
+    def get_or_create_user_from_headers(self, request):
+        """Extracts user info from headers and ensures they exist in the database."""
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+
+        assume_role = request.headers.get("X-Assume-Role")
+
+        if assume_role:
+            user, created = User.objects.get_or_create(
+                username=assume_role,  
+                defaults={"email": f"{assume_role}@example.com"}
+            )
+
+            if created:
+                print(f"New user created: {assume_role}")
+
+            return user
+
+        return request.user  # Default user if no assume role is found
+
+
+    def ensure_member_in_workspace(self, user, kwargs):
+        """ Ensures the given user is a member of the workspace. """
+        from plane.authentication.views.app.magic import MagicSignInEndpoint
+
+        if not user or not user.is_authenticated:  
+            return  
+        
+        if kwargs.get('slug', None):
+            MagicSignInEndpoint().add_user_to_workspace(user, kwargs['slug'])
+
+        
     def finalize_response(self, request, response, *args, **kwargs):
         # Call super to get the default response
         response = super().finalize_response(
@@ -145,6 +198,9 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
     @property
     def project_id(self):
         project_id = self.kwargs.get("project_id", None)
+        # if project_id == "DEFAULT":
+        #     import pdb;pdb.set_trace
+        #     return self.workspace.workspace_project.filter(name='default').first().id
         if project_id:
             return project_id
 

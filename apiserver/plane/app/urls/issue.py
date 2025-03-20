@@ -24,6 +24,8 @@ from plane.app.views import (
     IssueDetailEndpoint,
     IssueAttachmentV2Endpoint,
     IssueBulkUpdateDateEndpoint,
+    SearchAPIEndpoint,
+    SearchSingleValueAPI
 )
 
 urlpatterns = [
@@ -320,4 +322,14 @@ urlpatterns = [
         IssueBulkUpdateDateEndpoint.as_view(),
         name="project-issue-dates",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<str:project_id>/search",
+        SearchAPIEndpoint.as_view(),
+        name="key-codes",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<str:project_id>/filed_search",
+        SearchSingleValueAPI.as_view(),
+        name="key-codes"
+    )
 ]

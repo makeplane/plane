@@ -6,8 +6,8 @@ def get_redirection_path(user):
     profile, _ = Profile.objects.get_or_create(user=user)
 
     # Redirect to onboarding if the user is not onboarded yet
-    if not profile.is_onboarded:
-        return "onboarding"
+    # if not profile.is_onboarded:
+    #     return "onboarding"
 
     # Redirect to the last workspace if the user has last workspace
     if (

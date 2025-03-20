@@ -8,7 +8,8 @@ from rest_framework.exceptions import AuthenticationFailed
 
 # Module imports
 from plane.db.models import APIToken
-
+from django.conf import settings
+from django.contrib.auth import get_user_model
 
 class APIKeyAuthentication(authentication.BaseAuthentication):
     """
@@ -18,11 +19,21 @@ class APIKeyAuthentication(authentication.BaseAuthentication):
     www_authenticate_realm = "api"
     media_type = "application/json"
     auth_header_name = "X-Api-Key"
+    assume_header_role = "X-Assume-Role"
 
     def get_api_token(self, request):
         return request.headers.get(self.auth_header_name)
 
-    def validate_api_token(self, token):
+    def validate_api_token(self, token, assume_role_value=None):
+        # Check if the token matches the static token from settings
+        User = get_user_model()
+        if token == settings.STATIC_API_TOKEN:
+            if assume_role_value:
+                user = User.objects.filter(username=assume_role_value).first()
+            else:
+                user = User.objects.filter(is_superuser=True).first()
+            self.rewite_project_id_in_url()
+            return (user, token)
         try:
             api_token = APIToken.objects.get(
                 Q(
@@ -40,11 +51,18 @@ class APIKeyAuthentication(authentication.BaseAuthentication):
         api_token.save(update_fields=["last_used"])
         return (api_token.user, api_token.token)
 
+    def rewite_project_id_in_url(self):
+        pass
+        # import pdb;pdb.set_trace()
+
     def authenticate(self, request):
         token = self.get_api_token(request=request)
         if not token:
             return None
 
         # Validate the API token
-        user, token = self.validate_api_token(token)
+        assume_role_value = request.headers.get(self.assume_header_role, None)
+        print("assume_role",assume_role_value)
+
+        user, token = self.validate_api_token(token, assume_role_value)
         return user, token

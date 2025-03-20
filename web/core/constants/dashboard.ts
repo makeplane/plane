@@ -258,14 +258,14 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
   highlight: (pathname: string, baseUrl: string) => boolean;
   Icon: React.FC<Props>;
 }[] = [
-  {
-    key: "projects",
-    label: "Projects",
-    href: `/projects`,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/projects/`,
-    Icon: Briefcase,
-  },
+  // {
+  //   key: "projects",
+  //   label: "Projects",
+  //   href: `/projects`,
+  //   access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+  //   highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/projects/`,
+  //   Icon: Briefcase,
+  // },
   {
     key: "all-issues",
     label: "Views",
@@ -273,23 +273,23 @@ export const SIDEBAR_WORKSPACE_MENU_ITEMS: {
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/workspace-views/`),
     Icon: Layers,
-  },
-  {
-    key: "active-cycles",
-    label: "Cycles",
-    href: `/active-cycles`,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/active-cycles/`,
-    Icon: ContrastIcon,
-  },
-  {
-    key: "analytics",
-    label: "Analytics",
-    href: `/analytics`,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/analytics/`),
-    Icon: BarChart2,
-  },
+  }
+  // {
+  //   key: "active-cycles",
+  //   label: "Cycles",
+  //   href: `/active-cycles`,
+  //   access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+  //   highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/active-cycles/`,
+  //   Icon: ContrastIcon,
+  // },
+  // {
+  //   key: "analytics",
+  //   label: "Analytics",
+  //   href: `/analytics`,
+  //   access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+  //   highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/analytics/`),
+  //   Icon: BarChart2,
+  // },
 ];
 
 type TLinkOptions = {

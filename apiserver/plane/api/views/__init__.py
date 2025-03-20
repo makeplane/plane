@@ -1,4 +1,7 @@
-from .project import ProjectAPIEndpoint, ProjectArchiveUnarchiveAPIEndpoint
+from .project import (
+    ProjectAPIEndpoint, 
+    ProjectArchiveUnarchiveAPIEndpoint
+)
 
 from .state import StateAPIEndpoint
 
@@ -9,9 +12,10 @@ from .issue import (
     IssueLinkAPIEndpoint,
     IssueCommentAPIEndpoint,
     IssueActivityAPIEndpoint,
-    IssueAttachmentEndpoint,
+    IssueAttachmentEndpoint
 )
-
+from .issue_type import IssueTypeAPIEndpoint,IssueTypeCustomPropertyAPIEndpoint
+from .attachment import IssueAttachmentV2Endpoint
 from .cycle import (
     CycleAPIEndpoint,
     CycleIssueAPIEndpoint,
@@ -29,3 +33,9 @@ from .member import ProjectMemberAPIEndpoint
 
 from .inbox import InboxIssueAPIEndpoint
 
+from .search import GlobalSearchEndpoint
+
+from .webhook import (
+    WebhookEndpoint, WebhookLogsEndpoint,
+    WebhookSecretRegenerateEndpoint
+)
