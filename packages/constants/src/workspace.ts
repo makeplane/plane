@@ -325,6 +325,7 @@ export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarN
   WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["projects"],
 ];
 
+export const IS_FAVORITE_MENU_OPEN = "is_favorite_menu_open";
 export const WORKSPACE_DEFAULT_SEARCH_RESULT: IWorkspaceSearchResults = {
   results: {
     workspace: [],
