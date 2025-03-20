@@ -55,7 +55,8 @@ from plane.db.models import (
     ProjectMember,
     CycleIssue,
     IssueType,
-    IssueCustomProperty
+    IssueCustomProperty,
+    IssueTypeCustomProperty
 )
 from plane.utils.issue_filters import issue_filters
 from .base import BaseAPIView
@@ -1180,11 +1181,8 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
 
         # Ensure 'value' is in the request data
         new_value = request.data.get('value')
-        if not new_value:
-            return Response(
-                {"error": "The value field is required."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        if new_value is None:
+            new_value = "" 
 
         # Update the value field with the new value
         custom_property.value = new_value
@@ -1210,15 +1208,75 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
         
     def get(self, request, slug, issue_id, pk=None):
-    """
-    Retrieve the custom property details for a given issue.
-    """
-    if pk:
-        custom_property = get_object_or_404(IssueCustomProperty, pk=pk, issue_id=issue_id)
-        serializer = self.serializer_class(custom_property)
+        """
+        Retrieve the custom property details for a given issue.
+        """
+        if pk:
+            custom_property = get_object_or_404(IssueCustomProperty, pk=pk, issue_id=issue_id)
+            serializer = self.serializer_class(custom_property)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        # If no primary key is given, return a list of all custom properties for the issue
+        custom_properties = IssueCustomProperty.objects.filter(issue_id=issue_id)
+        serializer = self.serializer_class(custom_properties, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # If no primary key is given, return a list of all custom properties for the issue
-    custom_properties = IssueCustomProperty.objects.filter(issue_id=issue_id)
-    serializer = self.serializer_class(custom_properties, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    def post(self, request, slug, issue_id):
+        """
+        Create a new custom property for a specific issue.
+        """
+        # Ensure 'key', 'value', and 'issue_type_custom_property' are in the request data
+        key = request.data.get('key')
+        value = request.data.get('value')
+        issue_type_custom_property_id = request.data.get('issue_type_custom_property')
+
+        print(f"Received key: {key}, value: {value}, issue_type_custom_property: {issue_type_custom_property_id}")  # Debugging line
+
+        if not key or not value or not issue_type_custom_property_id:
+            return Response(
+                {"error": "'key', 'value', and 'issue_type_custom_property' fields are required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Get the IssueTypeCustomProperty instance based on the provided ID
+        try:
+            print(f"Attempting to retrieve IssueTypeCustomProperty with ID: {issue_type_custom_property_id}")  # Debugging line
+            issue_type_custom_property = IssueTypeCustomProperty.objects.get(id=issue_type_custom_property_id)
+        except IssueTypeCustomProperty.DoesNotExist:
+            return Response(
+                {"error": f"The provided issue_type_custom_property (ID: {issue_type_custom_property_id}) does not exist."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Log the retrieved issue_type_custom_property object (optional)
+        print(f"Found IssueTypeCustomProperty: {issue_type_custom_property}")  # Debugging line
+
+        # Get the Issue instance based on the provided issue_id
+        try:
+            issue = Issue.objects.get(id=issue_id)
+        except Issue.DoesNotExist:
+            return Response(
+                {"error": "The provided issue does not exist."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        if not issue.project:
+            return Response(
+                {"error": "The issue must be associated with a project."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Create the new custom property for the issue
+        custom_property = IssueCustomProperty.objects.create(
+            issue=issue,  # the related issue
+            key=key,
+            value=value,
+            issue_type_custom_property=issue_type_custom_property,  # The type of the custom property
+            project=issue.project,  # Ensure project is set via Issue
+        )
+
+        # Serialize the created custom property
+        serializer = self.serializer_class(custom_property)
+
+        # Return the newly created custom property as a response
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
