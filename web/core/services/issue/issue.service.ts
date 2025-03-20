@@ -1,6 +1,7 @@
 import { EIssueServiceType } from "@plane/constants";
 // types
 import {
+  TIssueParams,
   type IIssueDisplayProperties,
   type TBulkOperationsPayload,
   type TIssue,
@@ -75,7 +76,12 @@ export class IssueService extends APIService {
       });
   }
 
-  async getIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<TIssuesResponse> {
+  async getIssues(
+    workspaceSlug: string,
+    projectId: string,
+    queries?: Partial<Record<TIssueParams, string | boolean>>,
+    config = {}
+  ): Promise<TIssuesResponse> {
     if (getIssuesShouldFallbackToServer(queries) || this.serviceType !== EIssueServiceType.ISSUES) {
       return await this.getIssuesFromServer(workspaceSlug, projectId, queries, config);
     }
