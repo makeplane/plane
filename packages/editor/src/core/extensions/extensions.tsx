@@ -9,7 +9,6 @@ import TaskList from "@tiptap/extension-task-list";
 import TextStyle from "@tiptap/extension-text-style";
 import TiptapUnderline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
-import { Markdown } from "tiptap-markdown";
 // extensions
 import {
   CustomCalloutExtension,
@@ -41,7 +40,6 @@ import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
 import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
 import { DropCursorExtension } from "./drop-cursor";
-import { MarkdownCopy } from "./markdown/markdown";
 // import { createCopyToClipboardExtension } from "./clipboard-new";
 // import { MarkdownClipboard } from "./clipboard";
 
@@ -220,20 +218,6 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomTextAlignExtension,
     CustomCalloutExtension,
     CustomColorExtension,
-    // Markdown.configure({
-    //   html: true,
-    //   transformCopiedText: false,
-    //   transformPastedText: true,
-    //   breaks: true,
-    // }),
-    MarkdownCopy.configure({
-      html: true,
-      transformCopiedText: true,
-      transformPastedText: true,
-      breaks: true,
-    }),
-    // MarkdownClipboard,
-    // createCopyToClipboardExtension(),
     ...(CoreEditorAdditionalExtensions({
       disabledExtensions,
     }) as AnyExtension[]),
