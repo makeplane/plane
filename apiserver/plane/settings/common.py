@@ -512,11 +512,7 @@ if ELASTICSEARCH_ENABLED:
     ELASTICSEARCH_DSL = {
         "default": {
             "hosts": os.environ.get("ELASTICSEARCH_URL"),
-            "http_auth": (
-                os.environ.get("ELASTICSEARCH_USER"),
-                os.environ.get("ELASTICSEARCH_PASSWORD"),
-            ),
-            # "verify_certs": True,
+            "api_key": os.environ.get("ELASTICSEARCH_API_KEY")
         }
     }
     ELASTICSEARCH_DSL_SIGNAL_PROCESSOR = os.environ.get(
