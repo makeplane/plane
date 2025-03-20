@@ -13,6 +13,7 @@ import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@/he
 import { useIssueDetail, useWorkspaceNotifications } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
+import { IssueCreatorDisplay } from "@/plane-web/components/issues";
 import { IssueUser } from "../";
 // helpers
 
@@ -66,7 +67,11 @@ export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = obs
         {icon ? icon : <Network className="w-3.5 h-3.5" />}
       </div>
       <div className="w-full truncate text-custom-text-200">
-        <IssueUser activityId={activityId} customUserName={customUserName} />
+        {!activity?.field && activity?.verb === "created" ? (
+          <IssueCreatorDisplay activityId={activityId} customUserName={customUserName} />
+        ) : (
+          <IssueUser activityId={activityId} customUserName={customUserName} />
+        )}
         <span> {children} </span>
         <span>
           <Tooltip
