@@ -120,7 +120,9 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
         >
           <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{title}</div>
           <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
-          <WorkFlowGroupTree groupBy={groupBy} groupId={groupID} />
+          <div className="px-2.5">
+            <WorkFlowGroupTree groupBy={groupBy} groupId={groupID} />
+          </div>
         </div>
 
         {!disableIssueCreation &&

@@ -111,6 +111,7 @@ export type TBulkIssueProperties = Pick<
   | "module_ids"
   | "cycle_id"
   | "estimate_point"
+  | "type_id"
 >;
 
 export type TBulkOperationsPayload = {
