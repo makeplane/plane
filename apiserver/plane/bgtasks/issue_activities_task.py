@@ -222,6 +222,10 @@ def track_state(
     requested_state_id = requested_data.get("state_id") or requested_data.get("state")
 
     if current_state_id != requested_state_id:
+        # check if the current state
+        if not is_valid_uuid(requested_state_id):
+            return
+
         new_state = State.objects.get(pk=requested_state_id)
         old_state = State.objects.get(pk=current_state_id)
 

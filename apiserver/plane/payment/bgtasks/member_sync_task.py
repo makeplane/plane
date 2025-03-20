@@ -21,6 +21,10 @@ def member_sync_task(slug):
         if settings.PAYMENT_SERVER_BASE_URL:
             # workspace from slug
             workspace = Workspace.objects.filter(slug=slug).first()
+
+            if not workspace:
+                return
+
             workspace_id = str(workspace.id)
 
             # Get all active workspace members
