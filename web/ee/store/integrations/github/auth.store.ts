@@ -128,6 +128,7 @@ export class GithubAuthStore implements IGithubAuthStore {
 
       const response = await this.service.fetchOrganizationConnection(workspaceId);
       if (response) {
+        await this.store.fetchWebhookConnection(`${SILO_BASE_PATH}/api/github/plane-webhook`);
         runInAction(() => {
           response.forEach((data) => {
             if (data.id) set(this.workspaceConnectionMap, [workspaceId, data.id], data);
@@ -188,6 +189,7 @@ export class GithubAuthStore implements IGithubAuthStore {
 
       await this.service.disconnectOrganization(workspaceId, connectionId, userId);
       runInAction(() => unset(this.workspaceConnectionMap, [workspaceId]));
+      await this.store.removeWebhookConnection();
 
       return undefined;
     } catch (error) {

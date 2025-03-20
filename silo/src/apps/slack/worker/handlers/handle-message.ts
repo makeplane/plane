@@ -1,4 +1,5 @@
 import { SlackEventPayload, UnfurlMap } from "@plane/etl/slack";
+import { CONSTANTS } from "@/helpers/constants";
 import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { extractPlaneResource } from "../../helpers/parse-plane-resources";
@@ -10,14 +11,32 @@ import { createProjectLinkback } from "../../views/project-linkback";
 const apiClient = getAPIClient();
 
 export const handleSlackEvent = async (data: SlackEventPayload) => {
-  switch (data.event.type) {
-    case "message":
-      await handleMessageEvent(data);
-      break;
-    case "link_shared":
-      await handleLinkSharedEvent(data);
-    default:
-      break;
+  try {
+    switch (data.event.type) {
+      case "message":
+        await handleMessageEvent(data);
+        break;
+      case "link_shared":
+        await handleLinkSharedEvent(data);
+        break;
+      default:
+        break;
+    }
+  } catch (error: any) {
+    const { slackService } = await getConnectionDetails(data.team_id);
+
+    console.log(error);
+
+    const isPermissionError = error?.detail?.includes(CONSTANTS.NO_PERMISSION_ERROR);
+    const errorMessage = isPermissionError
+      ? CONSTANTS.NO_PERMISSION_ERROR_MESSAGE
+      : CONSTANTS.SOMETHING_WENT_WRONG;
+
+    await slackService.sendEphemeralMessage(data.event.user, errorMessage, data.event.channel, data.event.event_ts);
+
+    if (!isPermissionError) {
+      throw error;
+    }
   }
 };
 

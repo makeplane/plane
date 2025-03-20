@@ -810,7 +810,8 @@
     "multiple_connections_found": "1つの接続が期待される場合に複数の接続が見つかりました",
     "installation_not_found": "要求されたインストールが見つかりませんでした",
     "user_not_found": "要求されたユーザーが見つかりませんでした",
-    "error_fetching_token": "認証トークンの取得に失敗しました"
+    "error_fetching_token": "認証トークンの取得に失敗しました",
+    "cannot_create_multiple_connections": "あなたはすでに組織をワークスペースと接続しています。新しい接続を作成する前に、既存の接続を切断してください。"
   },
 
   "import_status": {

@@ -82,14 +82,14 @@ interface JobWorkerConfig {
  */
 type TaskProps =
   | {
-      type: "mq";
-      headers: TaskHeaders;
-      data: any;
-    }
+    type: "mq";
+    headers: TaskHeaders;
+    data: any;
+  }
   | {
-      type: "store";
-      event: string;
-    };
+    type: "store";
+    event: string;
+  };
 
 /**
  * Main task management class that handles worker lifecycle and task distribution
@@ -319,8 +319,11 @@ export class TaskManager {
   public registerStoreTask = async (headers: TaskHeaders, data: any, ttl?: number) => {
     if (!this.store) return;
     try {
+
+      const key = `silo:${headers.route}:${headers.type}:${headers.jobId}:${JSON.stringify(data)}`;
+
       await this.store.set(
-        `silo:${headers.route}:${headers.type}:${headers.jobId}:${JSON.stringify(data)}`,
+        key,
         "1",
         ttl,
         false

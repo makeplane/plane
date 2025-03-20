@@ -808,7 +808,8 @@
     "multiple_connections_found": "Sono state trovate più connessioni di quanto previsto",
     "installation_not_found": "L'installazione richiesta non è stata trovata",
     "user_not_found": "L'utente richiesto non è stato trovato",
-    "error_fetching_token": "Impossibile ottenere il token di autenticazione"
+    "error_fetching_token": "Impossibile ottenere il token di autenticazione",
+    "cannot_create_multiple_connections": "Hai già connesso la tua organizzazione con uno spazio di lavoro. Per favore disconnetti la connessione esistente prima di connettere una nuova."
   },
 
   "import_status": {

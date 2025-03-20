@@ -28,6 +28,7 @@ export interface IIntegrationBaseStore {
   fetchStates: (workspaceSlug: string, projectId: string) => Promise<IState[] | undefined>;
   fetchExternalApiToken: (workspaceSlug: string) => Promise<IApiToken | undefined>;
   fetchWebhookConnection: (url: string) => Promise<{ is_connected: boolean } | undefined>;
+  removeWebhookConnection: () => Promise<void>;
 }
 
 export class IntegrationBaseStore implements IIntegrationBaseStore {
@@ -38,6 +39,7 @@ export class IntegrationBaseStore implements IIntegrationBaseStore {
   states: Record<string, Record<string, IState>> = {}; // projectId -> stateId -> state
   externalApiToken: string | undefined = undefined;
   webhookConnection: Record<string, boolean> = {};
+  webhookConnectionId: Record<string, string> = {};
 
   constructor(protected store: RootStore) {
     makeObservable(this, {
@@ -218,8 +220,24 @@ export class IntegrationBaseStore implements IIntegrationBaseStore {
     if (response)
       runInAction(() => {
         set(this.webhookConnection, workspaceId, response?.is_connected || false);
+        set(this.webhookConnectionId, workspaceId, response?.id || "");
       });
 
     return response;
+  };
+
+  /**
+   * @description remove the webhook connection
+   * @returns { Promise<void> }
+   */
+  removeWebhookConnection = async (): Promise<void> => {
+    const workspaceId = this.store.workspaceRoot.currentWorkspace?.id;
+    const workspaceSlug = this.store.workspaceRoot.currentWorkspace?.slug;
+    if (!workspaceId || !workspaceSlug) return;
+
+    const webhookConnectionId = this.webhookConnectionId[workspaceId];
+    if (!webhookConnectionId) return;
+
+    await internalWebhookService.deleteInternalWebhook(workspaceSlug, webhookConnectionId);
   };
 }

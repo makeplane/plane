@@ -1,8 +1,8 @@
+import { E_ENTITY_CONNECTION_KEYS } from "@plane/etl/core";
 import { SlackMessageResponse } from "@plane/etl/slack";
 import { WebhookIssueCommentPayload } from "@plane/sdk";
 import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
-import { E_ENTITY_CONNECTION_KEYS } from "@plane/etl/core";
 
 const apiClient = getAPIClient();
 
@@ -17,6 +17,14 @@ const handleCommentSync = async (payload: WebhookIssueCommentPayload) => {
     project_id: data.data.project,
     entity_slug: data.data.issue,
   });
+
+  /*
+  In cases where we got a webhook from a comment, but the issues associated with the comment is not part of thread sync, which implies
+  that there is no entity connection for the issue.
+  */
+  if (!entityConnection) {
+    return;
+  }
 
   if (data.data.external_id === null) {
     // Search for the credentials of the creator

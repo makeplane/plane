@@ -49,24 +49,12 @@ export const getReferredIssues = (title: string, description: string): LinkedIss
   };
 
   const titleRefs = createIssueReference(title);
-  const closingReferences = closingRefs.map(createIssueReference);
-  closingReferences.push(titleRefs);
-  const nonClosingReferences = nonClosingRefs.map(createIssueReference);
-
-  // Remove duplicates while preserving order
-  const uniqueReferences = (refs: IssueReference[]): IssueReference[] => {
-    const seen = new Set<string>();
-    return refs.filter((ref) => {
-      const key = `${ref.identifier}-${ref.sequence}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-  };
+  const closingReferences = uniqueReferences(closingRefs.map(createIssueReference).concat(titleRefs));
+  const nonClosingReferences = uniqueReferences(nonClosingRefs.map(createIssueReference));
 
   return {
-    closingReferences: uniqueReferences(closingReferences),
-    nonClosingReferences: uniqueReferences(nonClosingReferences),
+    closingReferences,
+    nonClosingReferences,
   };
 };
 
@@ -117,4 +105,15 @@ export const parseMagicWords = (title: string): ParsedIssues => {
   nonClosingRefs.unshift(...allIssues);
 
   return { closingRefs, nonClosingRefs };
+};
+
+// Helper function to remove duplicates while preserving order
+const uniqueReferences = (refs: IssueReference[]): IssueReference[] => {
+  const seen = new Set<string>();
+  return refs.filter((ref) => {
+    const key = `${ref.identifier}-${ref.sequence}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 };

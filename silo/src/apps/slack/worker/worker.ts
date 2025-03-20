@@ -1,13 +1,13 @@
-import { logger } from "@/logger";
-import { TaskHandler, TaskHeaders } from "@/types";
 import { TSlackPayload } from "@plane/etl/slack";
-import { handleMessageAction } from "./handlers/message-action";
-import { handleBlockActions } from "./handlers/block-actions";
-import { MQ, Store } from "@/worker/base";
-import { handleViewSubmission } from "./handlers/view-submission";
-import { handleSlackEvent } from "./handlers/handle-message";
-import { handleCommand } from "./handlers/handle-command";
+import { logger } from "@/logger";
 import { SentryInstance } from "@/sentry-config";
+import { TaskHandler, TaskHeaders } from "@/types";
+import { MQ, Store } from "@/worker/base";
+import { handleBlockActions } from "./handlers/block-actions";
+import { handleCommand } from "./handlers/handle-command";
+import { handleSlackEvent } from "./handlers/handle-message";
+import { handleMessageAction } from "./handlers/message-action";
+import { handleViewSubmission } from "./handlers/view-submission";
 
 export class SlackInteractionHandler extends TaskHandler {
   mq: MQ;
@@ -35,8 +35,6 @@ export class SlackInteractionHandler extends TaskHandler {
         case "view_submission":
           await handleViewSubmission(data);
           break;
-        case "view_closed":
-          break;
         case "event":
           await handleSlackEvent(data);
           break;
@@ -53,6 +51,5 @@ export class SlackInteractionHandler extends TaskHandler {
       logger.info("[SLACK] Event Processed Successfully");
       return true;
     }
-
   }
 }

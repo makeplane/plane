@@ -18,8 +18,22 @@ export class InternalWebhookService extends APIService {
   async getOrCreateInternalWebhook(
     workspaceSlug: string,
     payload: Partial<IWebhook>
-  ): Promise<{ is_connected: boolean } | undefined> {
+  ): Promise<{ is_connected: boolean; id: string } | undefined> {
     return this.post(`/api/workspaces/${workspaceSlug}/internal-webhooks/`, payload)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  /**
+   * @description delete the internal webhook url
+   * @param { string } workspaceSlug
+   * @param { string } id
+   * @returns { Promise<void> }
+   */
+  async deleteInternalWebhook(workspaceSlug: string, id: string): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/internal-webhooks/${id}`)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;

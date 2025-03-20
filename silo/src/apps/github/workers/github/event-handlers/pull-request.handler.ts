@@ -1,5 +1,5 @@
 import { E_INTEGRATION_KEYS, TServiceCredentials } from "@plane/etl/core";
-import { createGithubService, GithubService, GithubWebhookPayload } from "@plane/etl/github";
+import { createGithubService, GithubPullRequestDedupPayload, GithubService } from "@plane/etl/github";
 import { MergeRequestEvent } from "@plane/etl/gitlab";
 import { Client, Client as PlaneClient } from "@plane/sdk";
 import { classifyPullRequestEvent, getConnectionDetails } from "@/apps/github/helpers/helpers";
@@ -19,133 +19,98 @@ import { verifyEntityConnection } from "@/types";
 const apiClient = getAPIClient();
 
 export const handlePullRequestEvents = async (action: PullRequestWebhookActions, data: unknown) => {
-  await handlePullRequestOpened(data as unknown as GithubWebhookPayload["webhook-pull-request-opened"]);
+  await handlePullRequestOpened(data as unknown as GithubPullRequestDedupPayload);
   return true;
 };
 
-const handlePullRequestOpened = async (data: GithubWebhookPayload["webhook-pull-request-opened"]) => {
-  if (data.installation) {
-    const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
-      source: E_INTEGRATION_KEYS.GITHUB,
-      source_access_token: data.installation.id.toString(),
-    });
+const handlePullRequestOpened = async (data: GithubPullRequestDedupPayload) => {
+  const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
+    source: E_INTEGRATION_KEYS.GITHUB,
+    source_access_token: data.installationId.toString(),
+  });
 
-    if (!credentials || credentials.length !== 1) {
-      throw new Error(`Invalid credential set found for installation id ${data.installation.id}`);
-    }
-
-    const planeCredentials = credentials[0];
-
-    if (!planeCredentials.target_access_token) {
-      logger.info("No target access token found for installation id", data.installation.id);
+  if (!credentials || credentials.length !== 1) {
+    if (credentials.length === 0) {
+      logger.info("No credentials found for installation id", data.installationId);
       return false;
     }
+    throw new Error(`Invalid credential set found for installation id ${data.installationId}`);
+  }
 
-    // Get the workspace connection for the installation
-    const accountId = data.organization ? data.organization.id : data.repository.owner.id;
+  const planeCredentials = credentials[0];
 
-    const { workspaceConnection } = await getConnectionDetails({
-      accountId: accountId.toString(),
-      credentials: planeCredentials as TServiceCredentials,
-      installationId: data.installation.id.toString(),
-      repositoryId: data.repository.id.toString(),
-    });
+  if (!planeCredentials.target_access_token) {
+    logger.info("No target access token found for installation id", data.installationId);
+    return false;
+  }
 
-    const ghService = createGithubService(env.GITHUB_APP_ID, env.GITHUB_PRIVATE_KEY, data.installation.id.toString());
+  // Get the workspace connection for the installation
+  const accountId = data.accountId;
 
-    const planeClient = new PlaneClient({
-      baseURL: env.API_BASE_URL,
-      apiToken: planeCredentials.target_access_token,
-    });
+  const { workspaceConnection } = await getConnectionDetails({
+    accountId: accountId.toString(),
+    credentials: planeCredentials as TServiceCredentials,
+    installationId: data.installationId.toString(),
+    repositoryId: data.repositoryId.toString(),
+  });
 
-    // const attachedClosingReferences = await ghService.getPullRequestWithClosingReference(
-    //   data.repository.owner.login,
-    //   data.repository.name,
-    //   data.pull_request.number
-    // );
+  const ghService = createGithubService(env.GITHUB_APP_ID, env.GITHUB_PRIVATE_KEY, data.installationId.toString());
+  const ghPullRequest = await ghService.getPullRequest(data.owner, data.repositoryName, Number(data.pullRequestNumber));
 
-    // For all closing references, fetch the issues for the external id and
-    // external source and add a link in plane issue for the bound PR
-    // for (const reference of attachedClosingReferences.repository.pullRequest.closingIssuesReferences.edges) {
-    //   try {
-    //
-    //     const issue = await planeClient.issue.getIssueWithExternalId(
-    //       workspaceConnection.workspace_slug,
-    //       entityConnection.project_id ?? "",
-    //       reference.node.databaseId.toString(),
-    //       E_INTEGRATION_KEYS.GITHUB
-    //     );
-    //
-    //     if (issue) {
-    //       // Create a link in the issue for the pull request
-    //       await planeClient.issue.createLink(
-    //         entityConnection.workspace_slug,
-    //         entityConnection.project_id ?? "",
-    //         issue.id,
-    //         `GitHub PR: ${data.pull_request.title}`,
-    //         data.pull_request.html_url
-    //       );
-    //     }
-    //   } catch (error) {
-    //     logger.error("Error while creating link in issue", error);
-    //     console.log(error);
-    //     SentryInstance?.captureException(error);
-    //     continue;
-    //   }
-    // }
+  const planeClient = new PlaneClient({
+    baseURL: env.API_BASE_URL,
+    apiToken: planeCredentials.target_access_token,
+  });
 
-    if (data.repository.owner.login && data.repository.name && data.pull_request.number) {
-      const { closingReferences, nonClosingReferences } = getReferredIssues(
-        data.pull_request.title,
-        data.pull_request.body || ""
+  if (data.owner && data.repositoryName && data.pullRequestNumber) {
+    const { closingReferences, nonClosingReferences } = getReferredIssues(
+      ghPullRequest.data.title,
+      ghPullRequest.data.body || ""
+    );
+    const stateEvent = classifyPullRequestEvent(ghPullRequest.data);
+
+    let entityConnection: GithubEntityConnection | undefined;
+
+    try {
+      const targetEntityConnection = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+        workspace_id: workspaceConnection.workspace_id,
+        entity_type: E_INTEGRATION_KEYS.GITHUB,
+        entity_id: data.repositoryId.toString(),
+      });
+
+      entityConnection = verifyEntityConnection(githubEntityConnectionSchema, targetEntityConnection[0] as any);
+    } catch {
+      logger.error(
+        `[GITHUB] Error while verifying entity connection for pull request ${data.pullRequestNumber} in repo ${data.owner}/${data.repositoryName}`
       );
-      const stateEvent = classifyPullRequestEvent(data.action, data.pull_request);
+    }
 
-      let entityConnection: GithubEntityConnection | undefined;
+    const targetState = getTargetState(stateEvent, entityConnection);
 
-      try {
-        const targetEntityConnection = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
-          workspace_id: workspaceConnection.workspace_id,
-          entity_type: E_INTEGRATION_KEYS.GITHUB,
-          entity_id: data.repository.id.toString(),
-        });
+    const referredIssues =
+      stateEvent && ["MR_CLOSED", "MR_MERGED"].includes(stateEvent)
+        ? closingReferences
+        : [...closingReferences, ...nonClosingReferences];
 
-        entityConnection = verifyEntityConnection(githubEntityConnectionSchema, targetEntityConnection[0] as any);
-      } catch { }
-
-      const targetState = getTargetState(stateEvent, entityConnection);
-
-      const referredIssues =
-        stateEvent && ["MR_CLOSED", "MR_MERGED"].includes(stateEvent)
-          ? closingReferences
-          : [...closingReferences, ...nonClosingReferences];
-
-      const updatedIssues = await Promise.all(
-        referredIssues.map((reference) =>
-          updateIssue(
-            planeClient,
-            workspaceConnection,
-            reference,
-            targetState,
-            data.pull_request.title,
-            data.pull_request.number,
-            data.pull_request.html_url
-          )
+    const updatedIssues = await Promise.all(
+      referredIssues.map((reference) =>
+        updateIssue(
+          planeClient,
+          workspaceConnection,
+          reference,
+          targetState,
+          ghPullRequest.data.title,
+          ghPullRequest.data.number,
+          ghPullRequest.data.html_url
         )
-      );
+      )
+    );
 
-      const validIssues = updatedIssues.filter((issue): issue is IssueWithReference => issue !== null);
+    const validIssues = updatedIssues.filter((issue): issue is IssueWithReference => issue !== null);
 
-      if (validIssues.length > 0) {
-        const body = createCommentBody(validIssues, nonClosingReferences, workspaceConnection);
-        await handleComment(
-          ghService,
-          data.repository.owner.login,
-          data.repository.name,
-          data.pull_request.number,
-          body
-        );
-      }
+    if (validIssues.length > 0) {
+      const body = createCommentBody(validIssues, nonClosingReferences, workspaceConnection);
+      await handleComment(ghService, data.owner, data.repositoryName, Number(data.pullRequestNumber), body);
     }
   }
 };
@@ -158,8 +123,12 @@ const handleComment = async (
   body: string
 ) => {
   const commentPrefix = "Pull Request Linked with Plane Issues";
+  const newCommentPrefix = "Pull Request Linked with Plane Work Items";
+
   const existingComments = await ghService.getPullRequestComments(owner, repo, pullNumber);
-  const existingComment = existingComments.data.find((comment) => comment.body?.startsWith(commentPrefix));
+  const existingComment = existingComments.data.find(
+    (comment) => comment.body?.startsWith(commentPrefix) || comment.body?.startsWith(newCommentPrefix)
+  );
 
   if (existingComment) {
     await ghService.updatePullRequestComment(owner, repo, existingComment.id, body);
@@ -175,7 +144,7 @@ const createCommentBody = (
   nonClosingReferences: IssueReference[],
   workspaceConnection: GithubWorkspaceConnection
 ) => {
-  const commentPrefix = "Pull Request Linked with Plane Issues";
+  const commentPrefix = "Pull Request Linked with Plane Work Items";
   let body = `${commentPrefix}\n\n`;
 
   const closingIssues = issues.filter(

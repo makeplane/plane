@@ -88,10 +88,15 @@ class InternalWebhookEndpoint(BaseAPIView):
             ).first()
 
             if existing_webhooks is not None:
-                return Response({"is_connected": True}, status=status.HTTP_200_OK)
+                return Response(
+                    {"id": existing_webhooks.id, "is_connected": True},
+                    status=status.HTTP_200_OK,
+                )
 
-            Webhook.objects.create(workspace_id=workspace.id, **request.data)
-            return Response({"is_connected": True}, status=status.HTTP_200_OK)
+            webhook = Webhook.objects.create(workspace_id=workspace.id, **request.data)
+            return Response(
+                {"id": webhook.id, "is_connected": True}, status=status.HTTP_200_OK
+            )
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(
@@ -99,3 +104,8 @@ class InternalWebhookEndpoint(BaseAPIView):
                     status=status.HTTP_410_GONE,
                 )
             raise IntegrityError
+
+    def delete(self, request, slug, pk):
+        webhook = Webhook.objects.get(pk=pk, workspace__slug=slug)
+        webhook.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

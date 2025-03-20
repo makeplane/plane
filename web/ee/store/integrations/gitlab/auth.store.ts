@@ -85,6 +85,7 @@ export class GitlabAuthStore implements IGitlabAuthStore {
 
       const response = await this.service.fetchOrganizationConnection(workspaceId);
       if (response) {
+        await this.store.fetchWebhookConnection(`${SILO_BASE_PATH}/api/gitlab/plane-webhook`);
         runInAction(() => {
           response.forEach((data) => {
             if (data.id) set(this.workspaceConnectionMap, [workspaceId, data.id], data);
@@ -145,6 +146,7 @@ export class GitlabAuthStore implements IGitlabAuthStore {
 
       await this.service.disconnectOrganization(workspaceId, connectionId);
       runInAction(() => unset(this.workspaceConnectionMap, [workspaceId]));
+      await this.store.removeWebhookConnection();
 
       return undefined;
     } catch (error) {

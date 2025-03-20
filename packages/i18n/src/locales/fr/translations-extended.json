@@ -810,7 +810,8 @@
     "multiple_connections_found": "Plusieurs connexions ont été trouvées alors qu'une seule était attendue",
     "installation_not_found": "L'installation demandée n'a pas pu être trouvée",
     "user_not_found": "L'utilisateur demandé n'a pas pu être trouvé",
-    "error_fetching_token": "Échec de la récupération du jeton d'authentification"
+    "error_fetching_token": "Échec de la récupération du jeton d'authentification",
+    "cannot_create_multiple_connections": "Vous avez déjà connecté votre organisation avec un espace de travail. Veuillez déconnecter la connexion existante avant de connecter une nouvelle."
   },
 
   "import_status": {

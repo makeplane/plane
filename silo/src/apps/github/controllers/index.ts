@@ -195,56 +195,52 @@ export default class GithubController {
     const redirectUri = `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/github/`;
 
     try {
-      // Get the credentials for the workspaceId
+      /*
+        Check if the same installation id is already present in any workspace of plane. Which means that the organization that we are trying to
+        associate with this workspace is already associated with another workspace. At this point, we don't allow multiple connections.
+      */
       const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
         source: E_INTEGRATION_KEYS.GITHUB,
-        workspace_id: authState.workspace_id,
+        source_access_token: installation_id as string,
       });
 
-      let shouldCreate = true;
       if (credentials && credentials.length > 0) {
-        credentials.forEach((credential) => {
-          // If we already have the installation id, we don't need to create it again
-          if (credential.source_access_token === installation_id) {
-            shouldCreate = false;
-          }
-        });
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.CANNOT_CREATE_MULTIPLE_CONNECTIONS}`);
       }
 
-      if (shouldCreate) {
-        const { id: insertedId } = await apiClient.workspaceCredential.createWorkspaceCredential({
-          source: E_INTEGRATION_KEYS.GITHUB,
-          workspace_id: authState.workspace_id,
-          user_id: authState.user_id,
-          source_access_token: installation_id as string,
-          target_access_token: authState.plane_api_token,
-        });
+      const { id: insertedId } = await apiClient.workspaceCredential.createWorkspaceCredential({
+        source: E_INTEGRATION_KEYS.GITHUB,
+        workspace_id: authState.workspace_id,
+        user_id: authState.user_id,
+        source_access_token: installation_id as string,
+        target_access_token: authState.plane_api_token,
+      });
 
-        // Create github service from the installation id
-        const service = createGithubService(env.GITHUB_APP_ID, env.GITHUB_PRIVATE_KEY, installation_id as string);
+      // Create github service from the installation id
+      const service = createGithubService(env.GITHUB_APP_ID, env.GITHUB_PRIVATE_KEY, installation_id as string);
 
-        // Get the installation details
-        const installation = await service.getInstallation(Number(installation_id));
+      // Get the installation details
+      const installation = await service.getInstallation(Number(installation_id));
 
-        if (!installation.data.account) {
-          return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.INVALID_INSTALLATION_ACCOUNT}`);
-        }
-
-        // Create workspace connection for github
-        await apiClient.workspaceConnection.createWorkspaceConnection({
-          workspace_id: authState.workspace_id,
-          connection_type: E_INTEGRATION_KEYS.GITHUB,
-          target_hostname: env.API_BASE_URL,
-          credential_id: insertedId,
-          connection_id: installation.data.account.id.toString(),
-          connection_data: installation.data.account,
-          // @ts-expect-error
-          connection_slug: installation.data.account.login,
-          config: {
-            userMap: [],
-          },
-        });
+      // In cases of partial installations, the account is might not be present, or absense of scopes.
+      if (!installation.data.account) {
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.INVALID_INSTALLATION_ACCOUNT}`);
       }
+
+      // Create workspace connection for github
+      await apiClient.workspaceConnection.createWorkspaceConnection({
+        workspace_id: authState.workspace_id,
+        connection_type: E_INTEGRATION_KEYS.GITHUB,
+        target_hostname: env.API_BASE_URL,
+        credential_id: insertedId,
+        connection_id: installation.data.account.id.toString(),
+        connection_data: installation.data.account,
+        // @ts-expect-error
+        connection_slug: installation.data.account.login,
+        config: {
+          userMap: [],
+        },
+      });
 
       res.redirect(redirectUri);
     } catch (error) {
@@ -579,19 +575,31 @@ export default class GithubController {
   @Post("/github-webhook")
   async githubWebhook(req: Request, res: Response) {
     try {
-      res.status(202).send({
-        message: "Webhook received",
-      });
-
       // Get the event types and the delivery id
       const eventType = req.headers["x-github-event"];
       const deliveryId = req.headers["x-github-delivery"];
 
+      const payload = req.body as GithubWebhookPayload;
+
+      const log = {
+        eventType,
+        deliveryId,
+        installationId: payload.installation?.id,
+        owner: payload.repository.owner.login,
+        repositoryId: payload.repository.id,
+        repositoryName: payload.repository.name,
+      };
+
+      console.log(JSON.stringify(log, null, 2));
+
       if (eventType === "issues") {
-        const payload = req.body as GithubWebhookPayload["webhook-issues-opened"];
+        const issuePayload = req.body as GithubWebhookPayload["webhook-issues-opened"];
+
         // Discard the issue, if the labels doens't include github label
-        if (!payload.issue?.labels?.find((label) => label.name.toLowerCase() === "plane")) {
-          return;
+        if (!issuePayload.issue?.labels?.find((label) => label.name.toLowerCase() === "plane")) {
+          return res.status(202).send({
+            message: "Webhook received",
+          });
         }
         await integrationTaskManager.registerStoreTask(
           {
@@ -600,17 +608,34 @@ export default class GithubController {
             type: eventType as string,
           },
           {
-            installationId: payload.installation?.id,
-            owner: payload.repository.owner.login,
-            accountId: payload.organization ? payload.organization.id : payload.repository.owner.id,
-            repositoryId: payload.repository.id,
-            repositoryName: payload.repository.name,
-            issueNumber: payload.issue.number,
+            installationId: issuePayload.installation?.id,
+            owner: issuePayload.repository.owner.login,
+            accountId: issuePayload.organization ? issuePayload.organization.id : issuePayload.repository.owner.id,
+            repositoryId: issuePayload.repository.id,
+            repositoryName: issuePayload.repository.name,
+            issueNumber: issuePayload.issue.number,
           },
           Number(env.DEDUP_INTERVAL)
         );
-
         // Forward the event to the task manager to process
+      } else if (eventType === "pull_request") {
+        const pullRequestPayload = req.body as GithubWebhookPayload["webhook-pull-request-opened"];
+        await integrationTaskManager.registerStoreTask(
+          {
+            route: "github-webhook",
+            jobId: eventType as string,
+            type: eventType as string,
+          },
+          {
+            installationId: pullRequestPayload.installation?.id,
+            owner: pullRequestPayload.repository.owner.login,
+            accountId: pullRequestPayload.organization ? pullRequestPayload.organization.id : pullRequestPayload.repository.owner.id,
+            repositoryId: pullRequestPayload.repository.id,
+            repositoryName: pullRequestPayload.repository.name,
+            pullRequestNumber: pullRequestPayload.pull_request.number,
+          },
+          Number(env.DEDUP_INTERVAL)
+        );
       } else {
         await integrationTaskManager.registerTask(
           {
@@ -621,7 +646,12 @@ export default class GithubController {
           req.body
         );
       }
+
+      return res.status(202).send({
+        message: "Webhook received",
+      });
     } catch (error) {
+      console.log(error);
       responseHandler(res, 500, error);
     }
   }
@@ -629,14 +659,12 @@ export default class GithubController {
   @Post("/plane-webhook")
   async planeWebhook(req: Request, res: Response) {
     try {
-      res.status(202).send({
-        message: "Webhook received",
-      });
       // Get the event types and delivery id
       const eventType = req.headers["x-plane-event"];
       const event = req.body.event;
 
       if (event == "issue" || event == "issue_comment") {
+
         const payload = req.body as PlaneWebhookPayloadBase<ExIssue | ExIssueComment>;
 
         const id = payload.data.id;
@@ -644,17 +672,31 @@ export default class GithubController {
         const project = payload.data.project;
         const issue = payload.data.issue;
 
+        const log = {
+          eventType,
+          event,
+          id,
+          workspace,
+          project,
+        };
+
+        console.log(JSON.stringify(log, null, 2));
+
         if (event == "issue") {
-          const labels = req.body.data.labels as ExIssueLabel[];
+          const labels = req.body.data.labels as ExIssueLabel[] | undefined;
           // If labels doesn't include github label, then we don't need to process this event
-          if (!labels.find((label) => label.name.toLowerCase() === E_INTEGRATION_KEYS.GITHUB.toLowerCase())) {
-            return;
+          if (!labels || !labels.find((label) => label.name.toLowerCase() === E_INTEGRATION_KEYS.GITHUB.toLowerCase())) {
+            return res.status(202).send({
+              message: "Webhook received",
+            });
           }
 
           // Reject the activity, that is not useful
           const skipFields = ["priority", "state", "start_date", "target_date", "cycles", "parent", "modules", "link"];
           if (payload.activity.field && skipFields.includes(payload.activity.field)) {
-            return;
+            return res.status(202).send({
+              message: "Webhook received",
+            });
           }
         }
 
@@ -675,6 +717,9 @@ export default class GithubController {
           Number(env.DEDUP_INTERVAL)
         );
       }
+      return res.status(202).send({
+        message: "Webhook received",
+      });
     } catch (error) {
       responseHandler(res, 500, error);
     }

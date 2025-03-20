@@ -12,6 +12,7 @@ export type GithubInstallation = RestEndpointMethodTypes["apps"]["getInstallatio
 export type GithubRepository =
   RestEndpointMethodTypes["apps"]["listReposAccessibleToInstallation"]["response"]["data"]["repositories"];
 export type GithubIssue = RestEndpointMethodTypes["issues"]["create"]["parameters"];
+export type GithubPullRequest = RestEndpointMethodTypes["pulls"]["get"]["response"]["data"];
 
 export type WebhookGitHubIssue = components["schemas"]["webhooks_issue"];
 export type WebhookGitHubLabel = components["schemas"]["webhooks_label"];
@@ -64,13 +65,20 @@ export type GithubAuthConfig = {
   callbackUrl: string;
 };
 
-export type GithubIssueDedupPayload = {
+export type BaseDedupPayload = {
   accountId: string;
-  issueNumber: string;
   owner: string;
   repositoryId: string;
   installationId: string;
   repositoryName: string;
+};
+
+export type GithubIssueDedupPayload = BaseDedupPayload & {
+  issueNumber: string;
+};
+
+export type GithubPullRequestDedupPayload = BaseDedupPayload & {
+  pullRequestNumber: string;
 };
 
 export type AppAuthParams = {

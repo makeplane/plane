@@ -798,6 +798,7 @@
     "generic_error": "An unexpected error occurred while processing your request",
     "connection_not_found": "The requested connection could not be found",
     "multiple_connections_found": "Multiple connections were found when only one was expected",
+    "cannot_create_multiple_connections": "You have already connected your organization with a workspace. Please disconnect the existing connection before connecting a new one.",
     "installation_not_found": "The requested installation could not be found",
     "user_not_found": "The requested user could not be found",
     "error_fetching_token": "Failed to fetch authentication token"

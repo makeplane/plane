@@ -86,7 +86,6 @@ export const ConnectOrganization: FC = observer(() => {
           </div>
           <div className="space-y-0.5 w-full">
             <div className="text-base font-medium">{workspaceConnection?.connection_data?.login}</div>
-            <div className="text-sm text-custom-text-200">{t("github_integration.org_added_desc")}</div>
           </div>
         </div>
       ) : (

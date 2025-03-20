@@ -2,11 +2,10 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // types
-import { TAppConnection, TSlackConfig, TSlackConnectionData } from "@plane/etl/slack";
-import { IWebhook, TWorkspaceConnection } from "@plane/types";
+import { TSlackConfig, TSlackConnectionData } from "@plane/etl/slack";
+import { TWorkspaceConnection } from "@plane/types";
 // plane web services
 import { SlackIntegrationService } from "@/plane-web/services/integrations/slack.service";
-import internalWebhookService from "@/plane-web/services/internal-webhook.service";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 // base integration store
@@ -107,6 +106,7 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
       if (!workspace) throw new Error("Workspace ID is required");
       const response = await this.service.getAppConnection(workspace);
       if (response) {
+        await this.fetchWebhookConnection(`${SILO_BASE_PATH}/api/slack/plane/events`);
         response.forEach((appConnection) => {
           set(this.appConnections, appConnection.connection_id, appConnection);
         });
@@ -163,6 +163,7 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
     const workspaceId = this.rootStore.workspaceRoot.currentWorkspace?.id;
     if (!workspaceId) throw new Error("Workspace ID is required");
     await this.service.disconnectApp(workspaceId, connectionId);
+    await this.removeWebhookConnection();
     runInAction(() => {
       delete this.appConnections[connectionId];
       if (this.appConnectionIds.length === 0) this.isUserConnected = false;

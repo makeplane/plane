@@ -810,7 +810,8 @@
     "multiple_connections_found": "找到多个连接，但只期望一个",
     "installation_not_found": "找不到请求的安装",
     "user_not_found": "找不到请求的用户",
-    "error_fetching_token": "获取身份验证令牌失败"
+    "error_fetching_token": "获取身份验证令牌失败",
+    "cannot_create_multiple_connections": "您已经将组织连接到工作区。请在连接新组织之前断开现有连接。"
   },
 
   "import_status": {

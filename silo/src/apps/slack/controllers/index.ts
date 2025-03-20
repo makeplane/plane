@@ -5,7 +5,7 @@ import {
   SlackAuthState,
   SlackUserAuthState,
   TSlackCommandPayload,
-  TSlackPayload,
+  TSlackPayload
 } from "@plane/etl/slack";
 import { PlaneWebhookData } from "@plane/sdk";
 import { env } from "@/env";
@@ -82,6 +82,17 @@ export default class SlackController {
 
       if (!response.ok) {
         return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.ERROR_FETCHING_TOKEN}`);
+      }
+
+      // Check if the team is already connected to any other workspace
+      const connections = await apiClient.workspaceConnection.listWorkspaceConnections({
+        connection_type: E_INTEGRATION_KEYS.SLACK,
+        connection_id: response.team.id,
+      })
+
+      // If the team is already connected to another workspace, return an error
+      if (connections.length > 0) {
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.CANNOT_CREATE_MULTIPLE_CONNECTIONS}`);
       }
 
       // Create credentials for slack for the workspace
