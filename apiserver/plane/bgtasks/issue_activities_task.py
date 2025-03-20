@@ -1610,6 +1610,34 @@ def create_inbox_activity(
         )
 
 
+# Track custom property
+def track_custom_property(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    if current_instance.get("value") != requested_data.get("value"):
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=current_instance.get("value"),
+                new_value=requested_data.get("value"),
+                field="custom_property",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="updated the custom property to",
+                epoch=epoch,
+            )
+        )
+
+
 # Receive message from room group
 @shared_task
 def issue_activity(
@@ -1672,6 +1700,7 @@ def issue_activity(
             "issue_draft.activity.updated": update_draft_issue_activity,
             "issue_draft.activity.deleted": delete_draft_issue_activity,
             "inbox.activity.created": create_inbox_activity,
+            "custom_property.activity.updated": track_custom_property,
         }
 
         func = ACTIVITY_MAPPER.get(type)
