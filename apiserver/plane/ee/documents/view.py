@@ -21,7 +21,6 @@ class IssueViewDocument(BaseDocument):
     is_deleted = fields.BooleanField()
     class Index:
         name = "issue_views"
-        settings = {"number_of_shards": 1, "number_of_replicas": 0}
 
     class Django:
         model = IssueView

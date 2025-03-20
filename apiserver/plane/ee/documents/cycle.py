@@ -22,7 +22,6 @@ class CycleDocument(BaseDocument):
 
     class Index:
         name = "cycles"
-        settings = {"number_of_shards": 1, "number_of_replicas": 0}
 
     class Django:
         model = Cycle
