@@ -110,6 +110,7 @@ export const Table = Node.create({
     return ["table", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), ["tbody", 0]];
   },
 
+  //@ts-expect-error todo
   addCommands() {
     return {
       insertTable:

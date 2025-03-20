@@ -35,7 +35,7 @@ import { isValidHttpUrl } from "@/helpers/common";
 // plane editor extensions
 import { CoreReadOnlyEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
-import { TExtensions, TFileHandler, TReadOnlyMentionHandler } from "@/types";
+// import { TExtensions, TFileHandler, TReadOnlyMentionHandler } from "@/types";
 import { TExtensions, TReadOnlyFileHandler, TReadOnlyMentionHandler } from "@/types";
 
 type Props = {

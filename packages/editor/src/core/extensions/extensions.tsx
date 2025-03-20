@@ -39,7 +39,7 @@ import { isValidHttpUrl } from "@/helpers/common";
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
-import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
+// import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
 import { DropCursorExtension } from "./drop-cursor";
 // import { createCopyToClipboardExtension } from "./clipboard-new";
 // import { MarkdownClipboard } from "./clipboard";
@@ -180,12 +180,12 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     }),
     CustomCodeMarkPlugin,
     CustomCodeInlineExtension,
-    Markdown.configure({
-      html: true,
-      transformCopiedText: false,
-      transformPastedText: true,
-      breaks: true,
-    }),
+    // Markdown.configure({
+    //   html: true,
+    //   transformCopiedText: false,
+    //   transformPastedText: true,
+    //   breaks: true,
+    // }),
     MarkdownClipboard,
     Table,
     TableHeader,
@@ -221,7 +221,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomTextAlignExtension,
     CustomCalloutExtension,
     CustomColorExtension,
-    ...(CoreEditorAdditionalExtensions({
+    ...CoreEditorAdditionalExtensions({
       disabledExtensions,
     }),
   ];

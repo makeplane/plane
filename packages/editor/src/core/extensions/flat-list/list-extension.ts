@@ -28,6 +28,7 @@ declare module "@tiptap/core" {
 }
 
 const { attrs, parseDOM, toDOM, content, group } = createListSpec();
+
 const listKeymapPlugin = keymap(listKeymap);
 const listInputRulePlugin = inputRules({ rules: listInputRules });
 
@@ -39,13 +40,13 @@ export const FlatListExtension = Node.create({
   selectable: true,
   draggable: true,
   addAttributes() {
-    return attrs;
+    return attrs || {};
   },
   parseHTML() {
     return parseDOM;
   },
   renderHTML({ node }) {
-    return toDOM(node);
+    return toDOM?.(node) || ["div", 0];
   },
   addCommands() {
     return {

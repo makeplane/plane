@@ -24,7 +24,7 @@ export const joinListUp: Command = (state, dispatch, view) => {
   // Handle case when there's a list node before
   if (
     nodeBefore?.type.name === "list" &&
-    nodeBefore?.lastChild.isBlock &&
+    nodeBefore?.lastChild?.isBlock &&
     !nodeBefore.lastChild.type.name.startsWith("paragraph")
   ) {
     if (dispatch) {

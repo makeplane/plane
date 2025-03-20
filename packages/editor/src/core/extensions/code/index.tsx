@@ -14,6 +14,7 @@ export const CustomCodeBlockExtension = CodeBlockLowlight.extend({
     return ReactNodeViewRenderer(CodeBlockComponent);
   },
 
+  //@ts-expect-error todo
   addKeyboardShortcuts() {
     return {
       Enter: ({ editor }) => {
