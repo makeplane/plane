@@ -73,6 +73,7 @@ import {
 import { EpicAnalytics, IEpicAnalyticStore } from "./issue/epic/analytic.store";
 import { IPiChatStore, PiChatStore } from "./pi-chat/pi-chat";
 // timeline
+import { IProjectInboxStore, ProjectInboxStore } from "./project-inbox.store";
 import { IProjectStore, ProjectStore } from "./projects/projects";
 // templates
 import { ITemplatesRootStore, TemplatesRootStore } from "./templates/store/root.store";
@@ -98,6 +99,7 @@ export class RootStore extends CoreRootStore {
   projectDetails: IProjectStore;
   teamspaceRoot: ITeamspaceRootStore;
   workspaceNotification: IWorkspaceNotificationStore;
+  projectInbox: IProjectInboxStore;
   customersStore: ICustomersStore;
   customerPropertiesStore: ICustomerPropertiesStore;
   // importers
@@ -140,6 +142,7 @@ export class RootStore extends CoreRootStore {
     this.projectDetails = new ProjectStore(this);
     this.teamspaceRoot = new TeamspaceRootStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
+    this.projectInbox = new ProjectInboxStore(this);
     this.customersStore = new CustomerStore(this);
     this.customerPropertiesStore = new CustomerProperties(this);
     // importers

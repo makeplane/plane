@@ -1633,6 +1633,7 @@ def create_issue_activity(
         actor_id=actor_id,
         epoch=epoch,
     )
+
     issue_activity.created_at = issue.created_at
     issue_activity.actor_id = issue.created_by_id
     issue_activity.save(update_fields=["created_at", "actor_id"])

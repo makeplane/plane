@@ -7,6 +7,7 @@ import { IProject } from "@plane/types";
 import { ToggleSwitch, Tooltip, setPromiseToast } from "@plane/ui";
 // hooks
 import { useEventTracker, useProject, useUser } from "@/hooks/store";
+import { ProjectFeatureChildren } from "@/plane-web/components/projects/settings";
 // plane web imports
 import { UpgradeBadge } from "@/plane-web/components/workspace";
 import { PROJECT_FEATURES_LIST } from "@/plane-web/constants/project/settings";
@@ -92,6 +93,7 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                             <Tooltip tooltipContent="Pro feature" position="top">
                               <UpgradeBadge
                                 flag={featureItem.property === "is_time_tracking_enabled" ? "ISSUE_WORKLOG" : undefined}
+                                className="rounded"
                               />
                             </Tooltip>
                           )}
@@ -117,8 +119,13 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                     />
                   </div>
                   <div className="pl-14">
-                    {currentProjectDetails?.[featureItem.property as keyof IProject] &&
-                      featureItem.renderChildren?.(currentProjectDetails, workspaceSlug)}
+                    {currentProjectDetails && currentProjectDetails?.[featureItem.property as keyof IProject] && (
+                      <ProjectFeatureChildren
+                        feature={featureItemKey}
+                        currentProjectDetails={currentProjectDetails}
+                        workspaceSlug={workspaceSlug}
+                      />
+                    )}
                   </div>
                 </div>
               );

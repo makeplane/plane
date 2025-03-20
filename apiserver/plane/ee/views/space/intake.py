@@ -22,6 +22,7 @@ from plane.bgtasks.issue_activities_task import issue_activity
 ## Enterprise imports
 from plane.ee.views.base import BaseAPIView
 from plane.ee.models import IntakeSetting
+from plane.ee.bgtasks.intake_email_task import intake_email
 
 
 class IntakeMetaPublishedIssueEndpoint(BaseAPIView):
@@ -98,7 +99,7 @@ class IntakePublishedIssueEndpoint(BaseAPIView):
             ).first()
             issue_data = {
                 "name": request.data.get("name"),
-                "description_html": request.data.get("description_html", None),
+                "description_html": request.data.get("description_html", "<p></p>"),
             }
 
             serializer = IssueCreateSerializer(
@@ -146,3 +147,12 @@ class IntakePublishedIssueEndpoint(BaseAPIView):
                 },
                 status=status.HTTP_402_PAYMENT_REQUIRED,
             )
+
+
+class IntakeEmailWebhookEndpoint(BaseAPIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        # Handle email webhook logic here
+        intake_email.delay(request.data)
+        return Response({"message": "Email received"}, status=status.HTTP_200_OK)

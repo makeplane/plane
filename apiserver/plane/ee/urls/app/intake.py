@@ -6,7 +6,7 @@ from plane.ee.views.app.intake import ProjectInTakePublishViewSet, IntakeSetting
 
 urlpatterns = [
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/publish-intake-regenerate/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/publish-intake-regenerate/<str:type>/",
         ProjectInTakePublishViewSet.as_view({"post": "regenerate"}),
         name="project-intake-regenerate",
     ),

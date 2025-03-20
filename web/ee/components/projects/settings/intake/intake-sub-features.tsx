@@ -3,12 +3,14 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Copy, ExternalLink, RefreshCcw } from "lucide-react";
+import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
 import { TInboxForm } from "@plane/types";
-import { Button, Loader, setPromiseToast, setToast, TOAST_TYPE, ToggleSwitch } from "@plane/ui";
+import { Button, Loader, setPromiseToast, setToast, TOAST_TYPE, ToggleSwitch, Tooltip } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { TProperties } from "@/ce/constants";
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
-import { useProject, useProjectInbox } from "@/hooks/store";
+import { useProject, useProjectInbox, useUserPermissions } from "@/hooks/store";
 import { RenewModal } from "./renew-modal";
 
 export type TIntakeFeatureList = {
@@ -20,18 +22,18 @@ export type TIntakeFeatureList = {
 };
 type Props = {
   projectId?: string;
-  isAdmin?: boolean;
-  handleSubmit?: (featureKey: string, featureProperty: string) => Promise<void>;
   allowEdit?: boolean;
   showDefault?: boolean;
   featureList: TIntakeFeatureList;
+  isTooltip?: boolean;
 };
 const IntakeSubFeatures = observer((props: Props) => {
-  const { projectId, isAdmin, allowEdit = true, showDefault = true, featureList } = props;
+  const { projectId, allowEdit = true, showDefault = true, featureList, isTooltip = false } = props;
   const { workspaceSlug } = useParams();
   const [modalType, setModalType] = useState("");
   const { fetchIntakeForms, toggleIntakeForms, regenerateIntakeForms, intakeForms } = useProjectInbox();
   const { isUpdatingProject } = useProject();
+  const { allowPermissions } = useUserPermissions();
 
   // fetching intake forms
   useSWR(
@@ -46,6 +48,12 @@ const IntakeSubFeatures = observer((props: Props) => {
 
   // Derived Values
   const settings = intakeForms[projectId];
+  const isAdmin = allowPermissions(
+    [EUserProjectRoles.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug.toString(),
+    projectId
+  );
 
   const copyToClipboard = (text: string) => {
     copyTextToClipboard(text).then(() =>
@@ -88,81 +96,103 @@ const IntakeSubFeatures = observer((props: Props) => {
           handleSubmit={regenerateIntakeForms}
         />
       )}
-      {Object.keys(featureList)
-        .filter((featureKey) => featureKey !== "in-app" || showDefault)
-        .map((featureKey) => {
-          const feature = featureList[featureKey];
-          const SPACE_APP_URL =
-            (SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL) + SPACE_BASE_PATH;
-          const publishLink = `${SPACE_APP_URL}/intake/${settings?.anchor}`;
-          const key = `is_${featureKey}_enabled`;
+      <div className={cn(isTooltip ? "divide-y divide-custom-border-200/50" : "mt-3")}>
+        {Object.keys(featureList)
+          .filter((featureKey) => featureKey !== "in-app" || showDefault)
+          .map((featureKey) => {
+            const feature = featureList[featureKey];
+            const SPACE_APP_URL =
+              (SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL) + SPACE_BASE_PATH;
+            const publishLink =
+              featureKey === "form"
+                ? `${SPACE_APP_URL}/intake/${settings?.anchors[feature.key]}`
+                : settings?.anchors[feature.key];
+            const key = `is_${featureKey}_enabled`;
 
-          return (
-            <div key={featureKey} className="gap-x-8 gap-y-3 bg-custom-background-100 pb-2 pt-4">
-              <div key={featureKey} className="flex items-center justify-between">
-                <div>
-                  <div className="flex items-start gap-2">
-                    <div className="flex items-center justify-center rounded my-auto">{feature.icon}</div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="text-sm font-medium leading-5">{feature.title}</h4>
+            return (
+              <div key={featureKey} className="gap-x-8 gap-y-3 bg-custom-background-100 py-3">
+                <div key={featureKey} className={cn("flex justify-between gap-2", {})}>
+                  <div className="flex gap-2 w-full">
+                    <div className="flex justify-center rounded mt-1">{feature.icon}</div>
+                    <div className="w-full">
+                      <div className={cn("flex justify-between gap-2", {})}>
+                        <div className="flex-1 w-full">
+                          <div className="text-sm font-medium leading-5 align-top ">{feature.title}</div>
+                          <p className="text-sm text-custom-text-300 text-wrap mt-1">{feature.description} </p>
+                        </div>
+                        <div className={cn(!isTooltip && "flex items-center")}>
+                          {settings && (
+                            <Tooltip
+                              tooltipContent={`Ask your Project Admin to turn this ${settings[key as keyof TInboxForm] ? "off" : "on"}.`}
+                              position="top"
+                              className=""
+                              disabled={isAdmin}
+                            >
+                              <div>
+                                <ToggleSwitch
+                                  value={Boolean(settings[key as keyof TInboxForm])}
+                                  onChange={(e) => handleSubmit(key as keyof TInboxForm)}
+                                  disabled={!feature.isEnabled || !isAdmin}
+                                  size="sm"
+                                />
+                              </div>
+                            </Tooltip>
+                          )}
+                          {(!settings || (!settings && isUpdatingProject)) && (
+                            <Loader>
+                              <Loader.Item height="16px" width="24px" className="rounded-lg" />
+                            </Loader>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  <p className="text-sm leading-5 tracking-tight text-custom-text-300 text-wrap">
-                    {feature.description}
-                  </p>
-                </div>
-                {allowEdit && handleSubmit && settings && (
-                  <ToggleSwitch
-                    value={Boolean(settings[key as keyof TInboxForm])}
-                    onChange={(e) => handleSubmit(key as keyof TInboxForm)}
-                    disabled={!feature.isEnabled || !isAdmin}
-                    size="sm"
-                  />
-                )}
-                {(!settings || (!settings && isUpdatingProject)) && (
-                  <Loader>
-                    <Loader.Item height="16px" width="24px" className="rounded-lg" />
-                  </Loader>
-                )}
-              </div>
-              {feature.hasOptions && settings && settings[key as keyof TInboxForm] && (
-                <div className="flex gap-2 h-[30px] mt-2 w-full">
-                  {settings?.anchor ? (
-                    <div className="flex items-center text-sm rounded-md border-[0.5px] border-custom-border-300 w-full max-w-[490px] py-1 px-2 gap-2 h-full">
-                      <span className="truncate flex-1 mr-4">{publishLink}</span>
-                      <Copy
-                        className="text-custom-text-400 w-[16px] cursor-pointer"
-                        onClick={() => copyToClipboard(publishLink)}
-                      />
-                      {feature.hasHyperlink && (
-                        <a href={publishLink} target="_blank">
-                          <ExternalLink className="text-custom-text-400 w-[16px] cursor-pointer" />
-                        </a>
+
+                      {feature.hasOptions && settings && settings[key as keyof TInboxForm] && (
+                        <div className="flex gap-2 h-[30px] mt-2 w-full">
+                          {settings?.anchors[feature.key] ? (
+                            <div
+                              className={cn(
+                                "flex items-center text-sm rounded-md border-[0.5px] border-custom-border-300 w-[400px] py-1 px-2 gap-2 h-full",
+                                {
+                                  "w-[320px]": isTooltip,
+                                }
+                              )}
+                            >
+                              <span className="truncate flex-1 mr-4">{publishLink}</span>
+                              <Copy
+                                className="text-custom-text-400 w-[16px] cursor-pointer"
+                                onClick={() => copyToClipboard(publishLink)}
+                              />
+                              {feature.hasHyperlink && (
+                                <a href={publishLink} target="_blank">
+                                  <ExternalLink className="text-custom-text-400 w-[16px] cursor-pointer" />
+                                </a>
+                              )}
+                            </div>
+                          ) : (
+                            <Loader>
+                              <Loader.Item height="30px" width="250px" className="rounded" />
+                            </Loader>
+                          )}
+                          {allowEdit && settings?.anchors[feature.key] && (
+                            <Button
+                              tabIndex={-1}
+                              size="sm"
+                              variant="accent-primary"
+                              className="w-fit cursor-pointer px-2 py-1 text-center text-sm font-medium outline-none my-auto h-full"
+                              onClick={() => setModalType(feature.key)}
+                            >
+                              <RefreshCcw className="w-[16px]" /> Renew
+                            </Button>
+                          )}
+                        </div>
                       )}
                     </div>
-                  ) : (
-                    <Loader>
-                      <Loader.Item height="30px" width="360px" className="rounded" />
-                    </Loader>
-                  )}
-                  {allowEdit && (
-                    <Button
-                      tabIndex={-1}
-                      size="sm"
-                      variant="accent-primary"
-                      className="w-fit cursor-pointer px-2 py-1 text-center text-sm font-medium outline-none my-auto h-full"
-                      onClick={() => setModalType(featureKey)}
-                    >
-                      <RefreshCcw className="w-[16px]" /> Renew
-                    </Button>
-                  )}
+                  </div>
                 </div>
-              )}
-            </div>
-          );
-        })}
+              </div>
+            );
+          })}
+      </div>
     </>
   );
 });

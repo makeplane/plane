@@ -11,7 +11,7 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   source: string;
-  handleSubmit: (workspaceSlug: string, projectId: string) => Promise<void>;
+  handleSubmit: (workspaceSlug: string, projectId: string, modalType: string) => Promise<void>;
 };
 
 export const RenewModal: React.FC<Props> = (props) => {
@@ -26,10 +26,8 @@ export const RenewModal: React.FC<Props> = (props) => {
 
   const onSubmit = async () => {
     setIsLoading(true);
-    onClose();
-    setIsLoading(false);
 
-    await handleSubmit(workspaceSlug, projectId)
+    await handleSubmit(workspaceSlug, projectId, source)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -46,6 +44,13 @@ export const RenewModal: React.FC<Props> = (props) => {
         })
       )
       .finally(() => setIsLoading(false));
+  };
+
+  const displayProperties: {
+    [key: string]: string;
+  } = {
+    intake_email: "email",
+    intake: "form",
   };
 
   return (
@@ -87,7 +92,7 @@ export const RenewModal: React.FC<Props> = (props) => {
                       Cancel
                     </Button>
                     <Button size="sm" tabIndex={1} onClick={onSubmit} loading={isLoading}>
-                      {isLoading ? "Renewing..." : `Renew ${source}`}
+                      {isLoading ? "Renewing..." : `Renew ${source && displayProperties[source]}`}
                     </Button>
                   </div>
                 </div>

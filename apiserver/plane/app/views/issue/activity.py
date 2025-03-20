@@ -10,6 +10,7 @@ from django.views.decorators.gzip import gzip_page
 from rest_framework.response import Response
 from rest_framework import status
 
+
 # Module imports
 from .. import BaseAPIView
 from plane.app.serializers import IssueActivitySerializer, IssueCommentSerializer

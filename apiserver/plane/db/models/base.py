@@ -21,6 +21,7 @@ class BaseModel(AuditModel):
     def save(self, *args, created_by_id=None, **kwargs):
         # Check if created_by_id is provided
         if created_by_id:
+            print("created_by_id provided", created_by_id)
             self.created_by_id = created_by_id
         else:
             user = get_current_user()
