@@ -56,7 +56,8 @@ from plane.db.models import (
     CycleIssue,
     IssueType,
     IssueCustomProperty,
-    IssueTypeCustomProperty
+    IssueTypeCustomProperty,
+    Workspace
 )
 from plane.utils.issue_filters import issue_filters
 from .base import BaseAPIView
@@ -1184,25 +1185,56 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
         if new_value is None:
             new_value = "" 
 
+        # Serialize the updated custom property
+        serializer = self.serializer_class(custom_property)
+        # Track the update activity (uncommented)
+        requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
+        # Log the requested data to verify what was received in the request
+        print(f"Requested data: {requested_data}")
+        # Serialize the current instance (updated custom property) and log it
+        current_instance = json.dumps(serializer.data, cls=DjangoJSONEncoder)
+        print(f"Current instance (updated custom property): {current_instance}")
+        # Log the user ID to verify the actor
+        actor_id = str(request.user.id) if request.user else "Unknown"
+        print(f"Actor ID (user making the update): {actor_id}")
+        # Log the issue ID to verify the issue being updated
+        issue_id_str = str(issue_id) if issue_id else "Unknown issue ID"
+        print(f"Issue ID being updated: {issue_id_str}")
+        # Log the project ID being passed to verify its correctness
+        print(f"self.kwargs are {self.kwargs}")
+        slug = slug=self.kwargs.get("slug")
+        print(f"slug is {slug}")
+        workspace = Workspace.objects.get(slug=slug)
+        print(f"Workspace is {workspace}")
+        try:
+            project = Project.objects.get(workspace=workspace)
+            project_id_str = project.id
+            print(f"Project ID: {project_id_str}")
+        except Project.DoesNotExist:
+            return Response({"error": "Project not found."}, status=status.HTTP_404_NOT_FOUND)
+        # project_id_str = str(self.kwargs.get("project_id")) if self.kwargs.get("project_id") else "Unknown project ID"
+        print(f"Project ID: {project_id_str}")
+        # Log the timestamp to verify the epoch
+        epoch_timestamp = int(timezone.now().timestamp())
+        print(f"Epoch timestamp: {epoch_timestamp}")
+        # Trigger the issue activity background task
+        print("Triggering issue activity tracking...")
+        issue_activity.delay(
+            type="custom_property.activity.updated",
+            requested_data=requested_data,
+            actor_id=actor_id,
+            issue_id=issue_id_str,
+            project_id=project_id_str,
+            current_instance=current_instance,
+            epoch=epoch_timestamp,
+        )
+
+        # Log completion of the background task trigger
+        print("Issue activity background task triggered successfully.")
+
         # Update the value field with the new value
         custom_property.value = new_value
         custom_property.save()
-
-        # Serialize the updated custom property
-        serializer = self.serializer_class(custom_property)
-
-        # Track the update activity (similar to other views)
-        # requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
-        # current_instance = json.dumps(serializer.data, cls=DjangoJSONEncoder)
-        # issue_activity.delay(
-        #     type="custom_property.activity.updated",
-        #     requested_data=requested_data,
-        #     actor_id=str(request.user.id),
-        #     issue_id=str(issue_id),
-        #     project_id=str(self.kwargs.get("project_id")),
-        #     current_instance=current_instance,
-        #     epoch=int(timezone.now().timestamp()),
-        # )
 
         # Return the updated data as the response
         return Response(serializer.data, status=status.HTTP_200_OK)
