@@ -109,6 +109,15 @@ export const ISSUE_FILTER_OPTIONS: {
   // { key: "draft", title: "Draft Issues" },
 ];
 
+const whileListedCustomProperties = [
+  { key: "hub_code", title: "Hub Code" },
+  { key: "customer_code", title: "Customer Code" },
+  { key: "worker_code", title: "Worker Code" },
+  { key: "vendor_code", title: "Vendor Code" },
+  { key: "trip_reference_number", title: "Trip Reference Number" },
+  { key: "reference_number", title: "Reference Number" },
+];
+
 export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = [
   "assignee",
   "start_date",
@@ -126,6 +135,7 @@ export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = 
   "modules",
   "cycle",
   "issue_type",
+  ...whileListedCustomProperties.map(prop => prop.key),
 ];
 
 export const ISSUE_DISPLAY_PROPERTIES: {
@@ -146,6 +156,7 @@ export const ISSUE_DISPLAY_PROPERTIES: {
   { key: "estimate", title: "Estimate" },
   { key: "modules", title: "Modules" },
   { key: "cycle", title: "Cycle" },
+  ...whileListedCustomProperties,
 ];
 
 export const ISSUE_EXTRA_OPTIONS: {
