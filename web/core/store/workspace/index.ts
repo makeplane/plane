@@ -1,3 +1,4 @@
+import clone from "lodash/clone";
 import set from "lodash/set";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 // types
@@ -215,7 +216,8 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
     data: Partial<IWorkspaceSidebarNavigationItem>
   ) => {
     // Store the data before update to use for reverting if needed
-    const beforeUpdateData = this.navigationPreferencesMap[workspaceSlug]?.[key];
+    const beforeUpdateData = clone(this.navigationPreferencesMap[workspaceSlug]?.[key]);
+
     try {
       runInAction(() => {
         this.navigationPreferencesMap[workspaceSlug] = {
