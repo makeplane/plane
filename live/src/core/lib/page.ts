@@ -2,6 +2,7 @@
 import { getAllDocumentFormatsFromBinaryData, getBinaryDataFromHTMLString } from "@/core/helpers/page";
 // services
 import { PageService } from "@/core/services/page.service";
+import logger from "@plane/logger";
 const pageService = new PageService();
 
 export const updatePageDescription = async (
@@ -39,6 +40,39 @@ const fetchDescriptionHTMLAndTransform = async (
   const pageDetails = await pageService.fetchDetails(workspaceSlug, projectId, pageId, cookie);
   const { contentBinary } = getBinaryDataFromHTMLString(pageDetails.description_html ?? "<p></p>");
   return contentBinary;
+};
+
+export const fetchProjectPageTitle = async (
+  workspaceSlug: string,
+  projectId: string,
+  pageId: string,
+  cookie: string | undefined
+) => {
+  if (!workspaceSlug || !cookie) return;
+
+  try {
+    const pageDetails = await pageService.fetchDetails(workspaceSlug, projectId, pageId, cookie);
+    return pageDetails.name;
+  } catch (error) {
+    logger.error("Error while transforming from HTML to Uint8Array", error);
+    throw error;
+  }
+};
+
+export const updateProjectPageTitle = async (
+  workspaceSlug: string,
+  projectId: string,
+  pageId: string,
+  title: string,
+  cookie: string | undefined
+) => {
+  if (!workspaceSlug || !projectId || !cookie) return;
+
+  const payload = {
+    name: title,
+  };
+
+  await pageService.updateTitle(workspaceSlug, projectId, pageId, payload, cookie);
 };
 
 export const fetchPageDescriptionBinary = async (

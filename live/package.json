@@ -22,12 +22,14 @@
     "@hocuspocus/extension-logger": "^2.15.0",
     "@hocuspocus/extension-redis": "^2.15.0",
     "@hocuspocus/server": "^2.15.0",
+    "@hocuspocus/transformer": "^2.15.2",
     "@plane/constants": "*",
     "@plane/editor": "*",
+    "@plane/logger": "*",
     "@plane/types": "*",
+    "@sentry/core": "^9.5.0",
     "@sentry/node": "^9.5.0",
     "@sentry/profiling-node": "^9.5.0",
-    "@sentry/core": "^9.5.0",
     "@tiptap/core": "2.10.4",
     "@tiptap/html": "2.11.0",
     "axios": "^1.8.3",
@@ -48,8 +50,7 @@
     "y-prosemirror": "^1.2.15",
     "y-protocols": "^1.0.6",
     "yjs": "^13.6.20",
-    "zod": "^3.24.2",
-    "@plane/logger": "*"
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/compression": "^1.7.5",

@@ -10,6 +10,7 @@ export type HocusPocusServerContext = {
   documentType: TDocumentTypes;
   userId: string;
   agentId: string;
+  parentId: string;
 };
 
 export type TConvertDocumentRequestBody = {

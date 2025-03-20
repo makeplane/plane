@@ -1,6 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+// core
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import Collaboration from "@tiptap/extension-collaboration";
+// react
+import { useEffect, useMemo, useState } from "react";
+// indexeddb
 import { IndexeddbPersistence } from "y-indexeddb";
 // extensions
 import { HeadingListExtension, SideMenuExtension } from "@/extensions";
@@ -10,6 +13,7 @@ import { useEditor } from "@/hooks/use-editor";
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
 import { TCollaborativeEditorProps } from "@/types";
+import { useTitleEditor } from "./use-title-editor";
 
 export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   const {
@@ -107,8 +111,21 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     tabIndex,
   });
 
+  const titleEditor = useTitleEditor({
+    editable: editable,
+    provider,
+    forwardedRef,
+    extensions: [
+      Collaboration.configure({
+        document: provider.document,
+        field: "title",
+      }),
+    ],
+  });
+
   return {
     editor,
+    titleEditor,
     hasServerConnectionFailed,
     hasServerSynced,
   };

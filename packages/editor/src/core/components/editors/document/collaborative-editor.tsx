@@ -46,7 +46,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   }
 
   // use document editor
-  const { editor, hasServerConnectionFailed, hasServerSynced } = useCollaborativeEditor({
+  const { editor, hasServerConnectionFailed, hasServerSynced, titleEditor } = useCollaborativeEditor({
     disabledExtensions,
     editable,
     editorClassName,
@@ -71,7 +71,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     containerClassName,
   });
 
-  if (!editor) return null;
+  if (!editor || !titleEditor) return null;
 
   if (!hasServerSynced && !hasServerConnectionFailed) return <DocumentContentLoader />;
 
@@ -81,6 +81,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
       bubbleMenuEnabled={bubbleMenuEnabled}
       displayConfig={displayConfig}
       editor={editor}
+      titleEditor={titleEditor}
       editorContainerClassName={editorContainerClassNames}
       id={id}
       tabIndex={tabIndex}

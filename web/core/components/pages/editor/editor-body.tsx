@@ -170,12 +170,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         })}
       >
         <div className="size-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
-          <PageEditorTitle
-            editorRef={editorRef}
-            title={pageTitle}
-            updateTitle={updateTitle}
-            readOnly={!isContentEditable}
-          />
           <CollaborativeDocumentEditorWithRef
             editable={isContentEditable}
             id={pageId}

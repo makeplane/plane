@@ -27,11 +27,27 @@ export interface DocumentHandler {
    * Fetch a document
    */
   fetch: (params: DocumentFetchParams) => Promise<any>;
-  
+
   /**
    * Store a document
    */
   store: (params: DocumentStoreParams) => Promise<void>;
+
+  /**
+   * Fetch title
+   */
+  fetchTitle: (params: { workspaceSlug: string; projectId: string; pageId: string; cookie: string }) => Promise<string>;
+
+  /**
+   * Update title
+   */
+  updateTitle?: (
+    workspaceSlug: string,
+    projectId: string,
+    pageId: string,
+    title: string,
+    cookie: string
+  ) => Promise<void>;
 }
 
 /**
@@ -59,4 +75,4 @@ export interface HandlerDefinition {
 /**
  * Type for a handler registration function
  */
-export type RegisterHandler = (definition: HandlerDefinition) => void; 
+export type RegisterHandler = (definition: HandlerDefinition) => void;

@@ -25,7 +25,7 @@ import type {
 } from "@/types";
 
 export interface CustomEditorProps {
-  editable: boolean;
+  editable?: boolean;
   editorClassName: string;
   editorProps?: EditorProps;
   enableHistory: boolean;

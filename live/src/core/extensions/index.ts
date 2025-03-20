@@ -38,12 +38,12 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
           async () => {
             if (!documentType) {
               handleError(null, {
-                errorType: 'bad-request',
-                message: 'Document type is required',
-                component: 'database-extension',
-                operation: 'fetch',
+                errorType: "bad-request",
+                message: "Document type is required",
+                component: "database-extension",
+                operation: "fetch",
                 extraContext: { pageId },
-                throw: true
+                throw: true,
               });
             }
 
@@ -56,11 +56,11 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
 
             if (!fetchedData) {
               handleError(null, {
-                errorType: 'not-found',
+                errorType: "not-found",
                 message: `Failed to fetch document: ${pageId}`,
-                component: 'database-extension',
-                operation: 'fetch',
-                extraContext: { documentType, pageId }
+                component: "database-extension",
+                operation: "fetch",
+                extraContext: { documentType, pageId },
               });
             }
 
@@ -92,12 +92,12 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
           async () => {
             if (!documentType) {
               handleError(null, {
-                errorType: 'bad-request',
-                message: 'Document type is required',
-                component: 'database-extension',
-                operation: 'store',
+                errorType: "bad-request",
+                message: "Document type is required",
+                component: "database-extension",
+                operation: "store",
                 extraContext: { pageId },
-                throw: true
+                throw: true,
               });
             }
 
