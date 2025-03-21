@@ -157,6 +157,7 @@ export interface ICollaborativeDocumentEditor
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
+  updatePageProperties?: (data: { name?: string }) => void;
 }
 
 // read only editor props

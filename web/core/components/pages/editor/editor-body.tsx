@@ -93,6 +93,16 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     [fontSize, fontStyle]
   );
 
+  const updatePageProperties = useCallback(
+    (data: { name?: string }) => {
+      if (data.name != null) {
+        console.log("data", data.name);
+        page.mutateProperties({ name: data.name });
+      }
+    },
+    [page]
+  );
+
   const getAIMenu = useCallback(
     ({ isOpen, onClose }: TAIMenuProps) => (
       <EditorAIMenu
@@ -197,6 +207,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             aiHandler={{
               menu: getAIMenu,
             }}
+            updatePageProperties={updatePageProperties}
           />
         </div>
       </div>

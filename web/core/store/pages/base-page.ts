@@ -31,6 +31,7 @@ export type TBasePage = TPage & {
   addToFavorites: () => Promise<void>;
   removePageFromFavorites: () => Promise<void>;
   duplicate: () => Promise<TPage | undefined>;
+  mutateProperties: (data: Partial<TPage>, shouldUpdateName?: boolean) => void;
 };
 
 export type TBasePagePermissions = {
@@ -164,6 +165,7 @@ export class BasePage implements TBasePage {
       addToFavorites: action,
       removePageFromFavorites: action,
       duplicate: action,
+      mutateProperties: action,
     });
 
     this.rootStore = store;
@@ -484,4 +486,16 @@ export class BasePage implements TBasePage {
    * @description duplicate the page
    */
   duplicate = async () => await this.services.duplicate();
+
+  /**
+   * @description mutate multiple properties at once
+   * @param data Partial<TPage>
+   */
+  mutateProperties = (data: Partial<TPage>, shouldUpdateName: boolean = true) => {
+    Object.keys(data).forEach((key) => {
+      const value = data[key as keyof TPage];
+      if (key === "name" && !shouldUpdateName) return;
+      set(this, key, value);
+    });
+  };
 }

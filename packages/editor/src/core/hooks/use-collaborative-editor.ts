@@ -39,6 +39,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     serverHandler,
     tabIndex,
     user,
+    updatePageProperties,
   } = props;
 
   // Server connection states
@@ -137,6 +138,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     editable: editable,
     provider,
     forwardedRef,
+    updatePageProperties,
     extensions: [
       // Collaboration extension for title field
       Collaboration.configure({

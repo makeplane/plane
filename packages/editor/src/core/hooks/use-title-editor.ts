@@ -15,6 +15,7 @@ export interface TitleEditorProps {
   initialValue?: string;
   field?: string;
   placeholder?: string;
+  updatePageProperties?: (data: { name?: string }) => void;
 }
 
 /**
@@ -22,10 +23,15 @@ export interface TitleEditorProps {
  * Uses the same Y.Doc as the main editor but a different field
  */
 export const useTitleEditor = (props: TitleEditorProps) => {
-  const { editable = true, initialValue = "", extensions } = props;
+  const { editable = true, initialValue = "", extensions, updatePageProperties } = props;
 
   const editor = useEditor(
     {
+      onUpdate: () => {
+        if (updatePageProperties) {
+          updatePageProperties({ name: editor?.getText() });
+        }
+      },
       editable,
       extensions: [
         ...TitleExtensions,

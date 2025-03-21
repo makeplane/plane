@@ -34,6 +34,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     serverHandler,
     tabIndex,
     user,
+    updatePageProperties,
   } = props;
 
   const extensions: Extensions = [];
@@ -63,6 +64,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     serverHandler,
     tabIndex,
     user,
+    updatePageProperties,
   });
 
   const editorContainerClassNames = getEditorClassNames({

@@ -23,7 +23,7 @@ export class TitleUpdateManager {
     projectId: string,
     cookie: string,
     documentHandler: any,
-    wait: number = 2000
+    wait: number = 5000
   ) {
     this.documentName = documentName;
     this.workspaceSlug = workspaceSlug;
@@ -107,4 +107,3 @@ export class TitleUpdateManager {
     this.lastTitle = null;
   }
 }
-
