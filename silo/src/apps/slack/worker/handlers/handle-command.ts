@@ -1,12 +1,19 @@
 import { TSlackCommandPayload } from "@plane/etl/slack";
 import { CONSTANTS } from "@/helpers/constants";
+import { logger } from "@/logger";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { ENTITIES } from "../../helpers/constants";
 import { convertToSlackOptions } from "../../helpers/slack-options";
 import { createProjectSelectionModal } from "../../views";
 
 export const handleCommand = async (data: TSlackCommandPayload) => {
-  const { workspaceConnection, slackService, planeClient } = await getConnectionDetails(data.team_id);
+  const details = await getConnectionDetails(data.team_id);
+  if (!details) {
+    logger.info(`[SLACK] No connection details found for team ${data.team_id}`);
+    return;
+  }
+
+  const { workspaceConnection, slackService, planeClient } = details;
 
   try {
     const projects = await planeClient.project.list(workspaceConnection.workspace_slug);

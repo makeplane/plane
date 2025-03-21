@@ -19,8 +19,8 @@ export const closingMagicWords = [
 export const nonClosingMagicWords = ["ref", "references", "reference to", "part of", "related to"];
 
 export interface IssueReference {
-  identifier: string;
   sequence: number;
+  identifier: string;
 }
 
 export interface LinkedIssues {
@@ -29,14 +29,19 @@ export interface LinkedIssues {
 }
 
 export interface IssueWithReference {
-  reference: IssueReference;
   issue: ExIssue;
+  reference: IssueReference;
+}
+
+interface ParsedIssues {
+  closingRefs: string[];
+  nonClosingRefs: string[];
 }
 
 export const getReferredIssues = (title: string, description: string): LinkedIssues => {
   const { closingRefs, nonClosingRefs } = parseMagicWords(description);
 
-  const createIssueReference = (identifier: string): IssueReference => {
+  const createIssueReference = (identifier: string): IssueReference | null => {
     const match = identifier.match(/([A-Z]+)-(\d+)/);
     if (match) {
       return {
@@ -45,12 +50,12 @@ export const getReferredIssues = (title: string, description: string): LinkedIss
       };
     }
     // This should never happen if our regex is correct, but we'll handle it just in case
-    return { identifier: identifier, sequence: 0 };
+    return null;
   };
 
-  const titleRefs = createIssueReference(title);
-  const closingReferences = uniqueReferences(closingRefs.map(createIssueReference).concat(titleRefs));
-  const nonClosingReferences = uniqueReferences(nonClosingRefs.map(createIssueReference));
+  const titleRefs = createIssueReference(title) ?? [];
+  const closingReferences = uniqueReferences(closingRefs.map(createIssueReference).filter((ref) => ref !== null).concat(titleRefs));
+  const nonClosingReferences = uniqueReferences(nonClosingRefs.map(createIssueReference).filter((ref) => ref !== null));
 
   return {
     closingReferences,
@@ -58,16 +63,12 @@ export const getReferredIssues = (title: string, description: string): LinkedIss
   };
 };
 
-export const parseIssueReference = (title: string): string[] => {
+export const parseIssueReference = (data: string): string[] => {
   const regex = /^([A-Z]+-\d+):/;
-  const match = title.match(regex);
+  const match = data.match(regex);
   return match ? [match[1]] : [];
 };
 
-interface ParsedIssues {
-  closingRefs: string[];
-  nonClosingRefs: string[];
-}
 
 export const parseMagicWords = (title: string): ParsedIssues => {
   const closingRefs: string[] = [];
@@ -94,15 +95,16 @@ export const parseMagicWords = (title: string): ParsedIssues => {
       closingRefs.unshift(...remainingIssues);
       // Remove these issues from consideration for future iterations
       allIssues.splice(allIssues.length - remainingIssues.length, remainingIssues.length);
-    } else if (nonClosingMagicWords.includes(word) && nonClosingRefs.length === 0) {
+    } else if (nonClosingMagicWords.includes(word)) {
       nonClosingRefs.unshift(...remainingIssues);
       // Remove these issues from consideration for future iterations
       allIssues.splice(allIssues.length - remainingIssues.length, remainingIssues.length);
     }
   }
 
-  // Any remaining issues are considered non-closing refs
-  nonClosingRefs.unshift(...allIssues);
+  // Any remaining issues without a preceding magic word are not considered references
+  // Remove this line to prevent adding them as non-closing references
+  // nonClosingRefs.unshift(...allIssues);
 
   return { closingRefs, nonClosingRefs };
 };

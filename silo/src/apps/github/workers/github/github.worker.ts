@@ -1,4 +1,5 @@
 import { GithubWebhookPayload } from "@plane/etl/github";
+import { CONSTANTS } from "@/helpers/constants";
 import { logger } from "@/logger";
 import { SentryInstance } from "@/sentry-config";
 import { TaskHandler, TaskHeaders } from "@/types";
@@ -35,7 +36,14 @@ export class GithubWebhookWorker extends TaskHandler {
           return handleIssueComment(this.store, data.action, data);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
+
+      // Silently skip events where we don't have permission to process
+      if (error?.detail && error?.detail.includes(CONSTANTS.NO_PERMISSION_ERROR)) {
+        logger.info(`[GITHUB] No permission to process event: ${error.detail} ${data}`);
+        return false;
+      }
+
       SentryInstance.captureException(error);
     } finally {
       logger.info("[GITHUB] Event Processed Successfully");

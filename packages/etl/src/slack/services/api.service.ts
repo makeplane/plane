@@ -58,7 +58,8 @@ export class SlackService {
         params: { channel: channelId },
       });
 
-      if (!response.data.channel.is_member) {
+      // If we fail to ensure bot is in channel, make an attempt to join the channel
+      if (!response.data?.channel?.is_member) {
         // Join the channel if not a member
         await this.client.post("conversations.join", {
           channel: channelId,
@@ -139,20 +140,20 @@ export class SlackService {
       const payload =
         typeof message === "string"
           ? {
-              channel: channelId,
-              thread_ts: threadTs,
-              metadata: metadata,
-              text: message,
-            }
+            channel: channelId,
+            thread_ts: threadTs,
+            metadata: metadata,
+            text: message,
+          }
           : {
-              channel: channelId,
-              thread_ts: threadTs,
-              metadata: {
-                event_type: "issue",
-                event_payload: metadata,
-              },
-              ...message,
-            };
+            channel: channelId,
+            thread_ts: threadTs,
+            metadata: {
+              event_type: "issue",
+              event_payload: metadata,
+            },
+            ...message,
+          };
 
       const isBotInChannel = await this.ensureBotInChannel(channelId);
       if (!isBotInChannel) {
@@ -184,22 +185,22 @@ export class SlackService {
       const payload =
         typeof message === "string"
           ? {
-              channel: channelId,
-              thread_ts: threadTs,
-              metadata: metadata,
-              text: message,
-              unfurl_links: unfurlLinks,
-            }
+            channel: channelId,
+            thread_ts: threadTs,
+            metadata: metadata,
+            text: message,
+            unfurl_links: unfurlLinks,
+          }
           : {
-              channel: channelId,
-              thread_ts: threadTs,
-              metadata: {
-                event_type: "issue",
-                event_payload: metadata,
-              },
-              unfurl_links: unfurlLinks,
-              ...message,
-            };
+            channel: channelId,
+            thread_ts: threadTs,
+            metadata: {
+              event_type: "issue",
+              event_payload: metadata,
+            },
+            unfurl_links: unfurlLinks,
+            ...message,
+          };
 
       const isBotInChannel = await this.ensureBotInChannel(channelId);
       if (!isBotInChannel) {

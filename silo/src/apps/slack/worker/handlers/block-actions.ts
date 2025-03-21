@@ -4,6 +4,7 @@ import { fetchPlaneAssets } from "@/apps/slack/helpers/fetch-plane-data";
 import { convertToSlackOption, convertToSlackOptions } from "@/apps/slack/helpers/slack-options";
 import { createIssueModalViewFull } from "@/apps/slack/views";
 import { CONSTANTS } from "@/helpers/constants";
+import { logger } from "@/logger";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { ACTIONS, ENTITIES, PLANE_PRIORITIES } from "../../helpers/constants";
 import { SlackPrivateMetadata } from "../../types/types";
@@ -32,7 +33,13 @@ export const handleBlockActions = async (data: TBlockActionPayload) => {
         return false;
     }
   } catch (error: any) {
-    const { slackService } = await getConnectionDetails(data.team.id);
+    const details = await getConnectionDetails(data.team.id);
+    if (!details) {
+      logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
+      return;
+    }
+
+    const { slackService } = details;
 
     // We only send data out of the service, so no `response` object is present
     const isPermissionError = error?.detail?.includes(CONSTANTS.NO_PERMISSION_ERROR);
@@ -73,7 +80,13 @@ async function handleSwitchCycleAction(data: TBlockActionPayload) {
   const selection = data.actions[0].selected_option;
   if (!selection) return;
 
-  const { workspaceConnection, slackService, planeClient } = await getConnectionDetails(data.team.id);
+  const details = await getConnectionDetails(data.team.id);
+  if (!details) {
+    logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
+    return;
+  }
+
+  const { workspaceConnection, slackService, planeClient } = details;
 
   const value = selection.value.split(".");
   if (value.length === 3) {
@@ -94,7 +107,14 @@ async function handleSwitchCycleAction(data: TBlockActionPayload) {
 
 async function handleCreateCommentAction(data: TBlockActionPayload) {
   if (data.actions[0].type !== "overflow") return;
-  const { slackService } = await getConnectionDetails(data.team.id);
+  const details = await getConnectionDetails(data.team.id);
+  if (!details) {
+    logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
+    return;
+  }
+
+  const { slackService } = details;
+
   const value = data.actions[0].selected_option.value;
   const values = value.split(".");
   if (values.length === 2) {
@@ -116,7 +136,14 @@ async function handleCreateCommentAction(data: TBlockActionPayload) {
 
 async function handleCreateWebLinkAction(data: TBlockActionPayload) {
   if (data.actions[0].type !== "overflow") return;
-  const { slackService } = await getConnectionDetails(data.team.id);
+  const details = await getConnectionDetails(data.team.id);
+  if (!details) {
+    logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
+    return;
+  }
+
+  const { slackService } = details;
+
   const value = data.actions[0].selected_option.value;
   const values = value.split(".");
   if (values.length === 2) {
@@ -145,7 +172,13 @@ async function handleSwitchPriorityAction(data: TBlockActionPayload) {
   const selection = data.actions[0].selected_option;
   if (!selection) return;
 
-  const { workspaceConnection, slackService, planeClient } = await getConnectionDetails(data.team.id);
+  const details = await getConnectionDetails(data.team.id);
+  if (!details) {
+    logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
+    return;
+  }
+
+  const { workspaceConnection, slackService, planeClient } = details;
 
   const value = selection.value.split(".");
   if (value.length === 3) {
@@ -199,7 +232,13 @@ async function handleProjectSelectAction(data: TBlockActionModalPayload) {
   const selection = data.actions[0].selected_option;
   if (!selection) return;
 
-  const { workspaceConnection, slackService, planeClient } = await getConnectionDetails(data.team.id);
+  const details = await getConnectionDetails(data.team.id);
+  if (!details) {
+    logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
+    return;
+  }
+
+  const { workspaceConnection, slackService, planeClient } = details;
 
   const projects = await planeClient.project.list(workspaceConnection.workspace_slug);
   const selectedProject = await planeClient.project.getProject(workspaceConnection.workspace_slug, selection.value);
@@ -236,7 +275,13 @@ async function handleLinkbackStateChange(data: TBlockActionPayload) {
     const selection = data.actions[0].selected_option;
     if (!selection) return;
 
-    const { workspaceConnection, slackService, planeClient } = await getConnectionDetails(data.team.id);
+    const details = await getConnectionDetails(data.team.id);
+    if (!details) {
+      logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
+      return;
+    }
+
+    const { workspaceConnection, slackService, planeClient } = details;
 
     const state = selection.value.split(".");
     if (state.length === 3) {
@@ -291,7 +336,14 @@ async function handleLinkbackStateChange(data: TBlockActionPayload) {
 async function handleAssignToMeAction(data: TBlockActionPayload) {
   if (data.actions[0].type !== "overflow") return;
 
-  const { workspaceConnection, slackService, planeClient } = await getConnectionDetails(data.team.id);
+  const details = await getConnectionDetails(data.team.id);
+  if (!details) {
+    logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
+    return;
+  }
+
+  const { workspaceConnection, slackService, planeClient } = details;
+
   const user = await slackService.getUserInfo(data.user.id);
   const issue = data.actions[0].selected_option.value.split(".");
   if (issue.length === 2) {

@@ -13,7 +13,14 @@ import { createSlackLinkback } from "../../views/issue-linkback";
 const apiClient = getAPIClient();
 
 export const handleViewSubmission = async (data: TViewSubmissionPayload) => {
-  const { workspaceConnection, slackService, planeClient, credentials } = await getConnectionDetails(data.team.id);
+  const details = await getConnectionDetails(data.team.id);
+  if (!details) {
+    logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
+    return;
+  }
+
+  const { workspaceConnection, slackService, planeClient, credentials } = details;
+
   const metadata = JSON.parse(data.view.private_metadata) as SlackPrivateMetadata;
 
   try {

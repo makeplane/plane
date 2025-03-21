@@ -1,11 +1,18 @@
 import { TMessageActionPayload } from "@plane/etl/slack";
 import { convertToSlackOptions } from "@/apps/slack/helpers/slack-options";
 import { createProjectSelectionModal } from "@/apps/slack/views";
+import { logger } from "@/logger";
 import { getConnectionDetails } from "../../helpers/connection-details";
 
 export const handleMessageAction = async (data: TMessageActionPayload) => {
   // Get the workspace connection for the associated team
-  const { workspaceConnection, slackService, planeClient } = await getConnectionDetails(data.team.id);
+  const details = await getConnectionDetails(data.team.id);
+  if (!details) {
+    logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
+    return;
+  }
+
+  const { workspaceConnection, slackService, planeClient } = details;
 
   const projects = await planeClient.project.list(workspaceConnection.workspace_slug);
   const filteredProjects = projects.results.filter((project) => project.is_member === true);

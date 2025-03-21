@@ -1,7 +1,7 @@
 import { E_INTEGRATION_KEYS, TServiceCredentials } from "@plane/etl/core";
 import { createGithubService, GithubPullRequestDedupPayload, GithubService } from "@plane/etl/github";
 import { MergeRequestEvent } from "@plane/etl/gitlab";
-import { Client, Client as PlaneClient } from "@plane/sdk";
+import { Client, ExIssue, Client as PlaneClient } from "@plane/sdk";
 import { classifyPullRequestEvent, getConnectionDetails } from "@/apps/github/helpers/helpers";
 import {
   GithubEntityConnection,
@@ -10,6 +10,7 @@ import {
   PullRequestWebhookActions,
 } from "@/apps/github/types";
 import { env } from "@/env";
+import { CONSTANTS } from "@/helpers/constants";
 import { getReferredIssues, IssueReference, IssueWithReference } from "@/helpers/parser";
 import { logger } from "@/logger";
 import { SentryInstance } from "@/sentry-config";
@@ -78,7 +79,9 @@ const handlePullRequestOpened = async (data: GithubPullRequestDedupPayload) => {
         entity_id: data.repositoryId.toString(),
       });
 
-      entityConnection = verifyEntityConnection(githubEntityConnectionSchema, targetEntityConnection[0] as any);
+      if (targetEntityConnection.length > 0) {
+        entityConnection = verifyEntityConnection(githubEntityConnectionSchema, targetEntityConnection[0] as any);
+      }
     } catch {
       logger.error(
         `[GITHUB] Error while verifying entity connection for pull request ${data.pullRequestNumber} in repo ${data.owner}/${data.repositoryName}`
@@ -195,8 +198,11 @@ const updateIssue = async (
   prNumber: number,
   prUrl: string
 ): Promise<IssueWithReference | null> => {
+
+  let issue: ExIssue | null = null;
+
   try {
-    const issue = await planeClient.issue.getIssueByIdentifier(
+    issue = await planeClient.issue.getIssueByIdentifier(
       workspaceConnection.workspace_slug,
       reference.identifier,
       reference.sequence
@@ -212,17 +218,26 @@ const updateIssue = async (
 
     // create link to the pull request to the issue
     const linkTitle = `[${prNumber}] ${prTitle}`;
-    try {
-      await planeClient.issue.createLink(workspaceConnection.workspace_slug, issue.project, issue.id, linkTitle, prUrl);
-    } catch (error) {
-      console.log(error);
+    await planeClient.issue.createLink(workspaceConnection.workspace_slug, issue.project, issue.id, linkTitle, prUrl);
+    return { reference, issue };
+  } catch (error: any) {
+    if (error?.detail && error?.detail.includes(CONSTANTS.NO_PERMISSION_ERROR)) {
+      logger.info(`[GITHUB] No permission to process event: ${error.detail} ${reference.identifier}-${reference.sequence}`);
+
+      if (issue) {
+        return { reference, issue };
+      }
+
+      return null;
     }
 
-    return { reference, issue };
-  } catch (error) {
-    console.log(error);
     logger.error(`[GITHUB] Error updating issue ${reference.identifier}-${reference.sequence}: ${error}`);
     SentryInstance?.captureException(error);
+
+    if (issue) {
+      return { reference, issue };
+    }
+
     return null;
   }
 };

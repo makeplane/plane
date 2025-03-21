@@ -1,9 +1,11 @@
-import { getRefreshCredentialHandler } from "./update-credentials";
-import { createSlackService } from "@plane/etl/slack";
-import { slackAuth } from "../auth/auth";
-import { Client as PlaneClient } from "@plane/sdk";
-import { getAPIClient } from "@/services/client";
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { createSlackService } from "@plane/etl/slack";
+import { Client as PlaneClient } from "@plane/sdk";
+import { env } from "@/env";
+import { logger } from "@/logger";
+import { getAPIClient } from "@/services/client";
+import { slackAuth } from "../auth/auth";
+import { getRefreshCredentialHandler } from "./update-credentials";
 
 
 export const getConnectionDetails = async (teamId: string) => {
@@ -15,14 +17,16 @@ export const getConnectionDetails = async (teamId: string) => {
 
 
   if (!workspaceConnection) {
-    throw new Error("Workspace connection not found");
+    logger.info(`[SLACK] Workspace connection not found for team ${teamId}`);
+    return null;
   }
 
   // Get the credentials for the workspace connection
   const credentials = await apiClient.workspaceCredential.getWorkspaceCredential(workspaceConnection.credential_id);
 
   if (!credentials) {
-    throw new Error("Credentials not found");
+    logger.info(`[SLACK] Credentials not found for team ${teamId}`);
+    return null;
   }
 
   if (
@@ -48,13 +52,9 @@ export const getConnectionDetails = async (teamId: string) => {
     refreshHandler
   );
 
-  if (!workspaceConnection.target_hostname) {
-    throw new Error("Target hostname not found");
-  }
-
   const planeClient = new PlaneClient({
     apiToken: credentials.target_access_token,
-    baseURL: workspaceConnection.target_hostname,
+    baseURL: env.API_BASE_URL
   });
 
   return {

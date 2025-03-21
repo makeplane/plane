@@ -11,6 +11,7 @@ import { PlaneWebhookData } from "@plane/sdk";
 import { env } from "@/env";
 import { responseHandler } from "@/helpers/response-handler";
 import { Controller, EnsureEnabled, Get, Post, useValidateUserAuthentication } from "@/lib";
+import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { integrationTaskManager } from "@/worker";
 import { slackAuth } from "../auth/auth";
@@ -18,7 +19,6 @@ import { getConnectionDetails } from "../helpers/connection-details";
 import { ACTIONS } from "../helpers/constants";
 import { parseIssueFormData } from "../helpers/parse-issue-form";
 import { convertToSlackOptions } from "../helpers/slack-options";
-
 const apiClient = getAPIClient();
 
 @EnsureEnabled(E_INTEGRATION_KEYS.SLACK)
@@ -365,7 +365,10 @@ export default class SlackController {
         const text = payload.value;
         // If the action is issue_labels, parse the view to be of type
         // IssueModalViewFull and pass it to the slack worker
-        const { workspaceConnection, planeClient } = await getConnectionDetails(payload.team.id);
+        const details = await getConnectionDetails(payload.team.id);
+        if (!details) { logger.info(`[SLACK] No connection details found for team ${payload.team.id}`); return }
+
+        const { workspaceConnection, planeClient } = details;
         const values = parseIssueFormData(payload.view.state.values);
         const labels = await planeClient.label.list(workspaceConnection.workspace_id, values.project);
         const filteredLabels = labels.results

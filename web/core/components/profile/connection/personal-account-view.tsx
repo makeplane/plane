@@ -19,6 +19,9 @@ export const IntegrationIcon = {
 export function PersonalAccountConnectView(props: TPersonalAccountConnectProps) {
   const { provider, connectionSlug, isConnectionLoading, isUserConnected, handleConnection, handleDisconnection } =
     props;
+
+  if (!provider) return null;
+
   const Icon = IntegrationIcon[provider.key];
 
   if (isConnectionLoading) {
@@ -55,8 +58,6 @@ export function PersonalAccountConnectView(props: TPersonalAccountConnectProps) 
       </div>
     );
   }
-
-  if (!provider) return null;
 
   return (
     <div className="flex flex-col border border-custom-border-200 rounded-s p-4 mb-2 justify-center">

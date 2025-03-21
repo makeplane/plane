@@ -584,13 +584,19 @@ export default class GithubController {
       const log = {
         eventType,
         deliveryId,
-        installationId: payload.installation?.id,
-        owner: payload.repository.owner.login,
-        repositoryId: payload.repository.id,
-        repositoryName: payload.repository.name,
+        installationId: payload?.installation?.id,
+        owner: payload?.repository?.owner?.login,
+        repositoryId: payload?.repository?.id,
+        repositoryName: payload?.repository?.name,
       };
 
-      console.log(JSON.stringify(log, null, 2));
+      console.log(`Github Webhook Payload: ${JSON.stringify(log)}`);
+
+      if (!payload.installation.id) {
+        return res.status(400).send({
+          message: "Installation ID is required to process the webhook",
+        });
+      }
 
       if (eventType === "issues") {
         const issuePayload = req.body as GithubWebhookPayload["webhook-issues-opened"];
