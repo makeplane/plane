@@ -8,6 +8,8 @@ import { EditorMentionsRoot } from "@/components/editor";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
+// store hooks
+import { useMember } from "@/hooks/store";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
@@ -31,6 +33,8 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
     disabledExtensions: additionalDisabledExtensions,
     ...rest
   } = props;
+  // store hooks
+  const { getUserDetails } = useMember();
   // editor flaggings
   const { richTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // use editor mention
@@ -57,6 +61,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
           return res;
         },
         renderComponent: (props) => <EditorMentionsRoot {...props} />,
+        getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
       }}
       {...rest}
       containerClassName={cn("relative pl-3 pb-3", containerClassName)}

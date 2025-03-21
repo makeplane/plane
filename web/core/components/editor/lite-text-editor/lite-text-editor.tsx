@@ -13,6 +13,8 @@ import { cn } from "@/helpers/common.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
+// store hooks
+import { useMember } from "@/hooks/store";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // plane web services
@@ -57,6 +59,8 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   const [isFocused, setIsFocused] = useState(showToolbarInitially);
   // editor flaggings
   const { liteTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
+  // store hooks
+  const { getUserDetails } = useMember();
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: async (payload) =>
@@ -97,6 +101,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
             return res;
           },
           renderComponent: (props) => <EditorMentionsRoot {...props} />,
+          getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
         }}
         placeholder={placeholder}
         containerClassName={cn(containerClassName, "relative")}

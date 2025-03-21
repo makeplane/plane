@@ -22,7 +22,7 @@ import { cn, LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
 import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
 import { useEditorMention } from "@/hooks/editor";
-import { useUser, useWorkspace } from "@/hooks/store";
+import { useUser, useWorkspace, useMember } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { EditorAIMenu } from "@/plane-web/components/pages";
@@ -68,6 +68,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   // store hooks
   const { data: currentUser } = useUser();
   const { getWorkspaceBySlug } = useWorkspace();
+  const { getUserDetails } = useMember();
+
   // derived values
   const { id: pageId, name: pageTitle, isContentEditable, updateTitle } = page;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
@@ -192,6 +194,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 return res;
               },
               renderComponent: (props) => <EditorMentionsRoot {...props} />,
+              getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
             }}
             embedHandler={{
               issue: issueEmbedProps,

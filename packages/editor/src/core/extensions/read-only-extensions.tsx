@@ -24,6 +24,7 @@ import {
   CustomTextAlignExtension,
   CustomCalloutReadOnlyExtension,
   CustomColorExtension,
+  MarkdownClipboard,
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
@@ -114,8 +115,9 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
     CustomCodeInlineExtension,
     Markdown.configure({
       html: true,
-      transformCopiedText: true,
+      transformCopiedText: false,
     }),
+    MarkdownClipboard,
     Table,
     TableHeader,
     TableCell,
