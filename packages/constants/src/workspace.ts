@@ -1,4 +1,4 @@
-import { TStaticViewTypes } from "@plane/types";
+import { TStaticViewTypes, IWorkspaceSearchResults } from "@plane/types";
 import { EUserWorkspaceRoles } from "./user";
 
 export const ORGANIZATION_SIZE = [
@@ -324,3 +324,16 @@ export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarN
   WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["inbox"],
   WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["projects"],
 ];
+
+export const IS_FAVORITE_MENU_OPEN = "is_favorite_menu_open";
+export const WORKSPACE_DEFAULT_SEARCH_RESULT: IWorkspaceSearchResults = {
+  results: {
+    workspace: [],
+    project: [],
+    issue: [],
+    cycle: [],
+    module: [],
+    issue_view: [],
+    page: [],
+  },
+};

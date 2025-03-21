@@ -117,7 +117,7 @@ class WorkspaceViewViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission(
-        allowed_roles=[], level="WORKSPACE", creator=True, model=IssueView
+        allowed_roles=[ROLE.ADMIN], level="WORKSPACE", creator=True, model=IssueView
     )
     def destroy(self, request, slug, pk):
         workspace_view = IssueView.objects.get(pk=pk, workspace__slug=slug)

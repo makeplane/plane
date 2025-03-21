@@ -1,13 +1,13 @@
 {
   "name": "live",
-  "version": "0.25.2",
+  "version": "0.25.3",
   "license": "AGPL-3.0",
   "description": "A realtime collaborative server powers Plane's rich text editor",
   "main": "./src/server.ts",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"babel src --out-dir dist --extensions '.ts,.js' --watch\" \"nodemon dist/server.js\"",
+    "dev": "PORT=3100 concurrently \"babel src --out-dir dist --extensions '.ts,.js' --watch\" \"nodemon dist/server.js\"",
     "build": "babel src --out-dir dist --extensions \".ts,.js\"",
     "start": "node dist/server.js",
     "lint": "eslint src --ext .ts,.tsx",
@@ -27,7 +27,7 @@
     "@sentry/profiling-node": "^8.28.0",
     "@tiptap/core": "2.10.4",
     "@tiptap/html": "2.11.0",
-    "axios": "^1.7.9",
+    "axios": "^1.8.3",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -59,7 +59,7 @@
     "concurrently": "^9.0.1",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
-    "tsup": "^7.2.0",
+    "tsup": "^8.4.0",
     "typescript": "5.3.3"
   }
 }

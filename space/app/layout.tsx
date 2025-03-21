@@ -30,6 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" type="image/png" sizes="16x16" href={`${SPACE_BASE_PATH}/favicon/favicon-16x16.png`} />
         <link rel="manifest" href={`${SPACE_BASE_PATH}/site.webmanifest.json`} />
         <link rel="shortcut icon" href={`${SPACE_BASE_PATH}/favicon/favicon.ico`} />
+        <meta name="robots" content="noindex, nofollow" />
       </head>
       <body>
         <AppProvider>

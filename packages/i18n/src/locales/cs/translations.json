@@ -6,7 +6,7 @@
     "home": "Domov",
     "your_work": "Vaše práce",
     "inbox": "Doručená pošta",
-    "workspace": "workspace",
+    "workspace": "Pracovní prostor",
     "views": "Pohledy",
     "analytics": "Analytika",
     "work_items": "Pracovní položky",
@@ -1473,7 +1473,8 @@
             "max_length": "Název prostoru nesmí přesáhnout 80 znaků"
           },
           "company_size": {
-            "required": "Velikost společnosti je povinná"
+            "required": "Velikost společnosti je povinná",
+            "select_a_range": "Vyberte velikost organizace"
           }
         }
       },
