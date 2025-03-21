@@ -109,6 +109,20 @@ export class FileService extends APIService {
       });
   }
 
+  async updateBulkWorkspaceAssetsUploadStatus(
+    workspaceSlug: string,
+    entityId: string,
+    data: {
+      asset_ids: string[];
+    }
+  ): Promise<void> {
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/${entityId}/bulk/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async updateBulkProjectAssetsUploadStatus(
     workspaceSlug: string,
     projectId: string,
