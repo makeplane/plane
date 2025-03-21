@@ -299,7 +299,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               projectId={projectId}
               workspaceSlug={workspaceSlug}
               isEditable={isEditable}
-              isPeekView
             />
           </div>
         </div>

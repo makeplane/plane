@@ -11,6 +11,7 @@ import {
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // Plane-web
+import { WorkItemAdditionalWidgets } from "@/plane-web/components/issues/issue-detail-widgets";
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 
 type Props = {
@@ -68,6 +69,13 @@ export const IssueDetailWidgetCollapsibles: FC<Props> = observer((props) => {
           disabled={disabled}
         />
       )}
+
+      <WorkItemAdditionalWidgets
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        workItemId={issueId}
+        disabled={disabled}
+      />
     </div>
   );
 });
