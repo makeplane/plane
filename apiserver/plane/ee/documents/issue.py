@@ -19,7 +19,7 @@ class IssueDocument(BaseDocument):
     type_id = fields.KeywordField(attr="type_id")
     is_epic = fields.BooleanField()
     active_project_member_user_ids = fields.ListField(fields.KeywordField())
-    pretty_sequence = fields.TextField()
+    pretty_sequence = fields.KeywordField()
     is_deleted = fields.BooleanField()
 
     class Index:

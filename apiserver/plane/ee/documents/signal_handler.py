@@ -70,8 +70,9 @@ class CustomCelerySignalProcessor(CelerySignalProcessor):
         except LookupError:
             pass
         else:
+            manager = getattr(model, 'all_objects', model.objects)
             registry.update(
-                model.all_objects.get(pk=pk)
+                manager.get(pk=pk)
             )
 
     @shared_task()
@@ -82,6 +83,7 @@ class CustomCelerySignalProcessor(CelerySignalProcessor):
         except LookupError:
             pass
         else:
+            manager = getattr(model, 'all_objects', model.objects)
             registry.update_related(
-                model.all_objects.get(pk=pk)
+                manager.get(pk=pk)
             )
