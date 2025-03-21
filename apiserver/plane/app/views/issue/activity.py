@@ -14,7 +14,7 @@ from rest_framework import status
 from .. import BaseAPIView
 from plane.app.serializers import IssueActivitySerializer, IssueCommentSerializer
 from plane.app.permissions import ProjectEntityPermission, allow_permission, ROLE
-from plane.db.models import IssueActivity, IssueComment, CommentReaction
+from plane.db.models import IssueActivity, IssueComment, CommentReaction, IntakeIssue
 
 
 class IssueActivityEndpoint(BaseAPIView):
@@ -57,13 +57,22 @@ class IssueActivityEndpoint(BaseAPIView):
                 )
             )
         )
-        issue_activities = IssueActivitySerializer(issue_activities, many=True).data
-        issue_comments = IssueCommentSerializer(issue_comments, many=True).data
 
         if request.GET.get("activity_type", None) == "issue-property":
+            issue_activities = issue_activities.prefetch_related(
+                Prefetch(
+                    "issue__issue_intake",
+                    queryset=IntakeIssue.objects.only(
+                        "source_email", "source", "extra"
+                    ),
+                    to_attr="source_data",
+                )
+            )
+            issue_activities = IssueActivitySerializer(issue_activities, many=True).data
             return Response(issue_activities, status=status.HTTP_200_OK)
 
         if request.GET.get("activity_type", None) == "issue-comment":
+            issue_comments = IssueCommentSerializer(issue_comments, many=True).data
             return Response(issue_comments, status=status.HTTP_200_OK)
 
         result_list = sorted(
