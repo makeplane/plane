@@ -31,7 +31,7 @@ const envSchema = z.object({
   HOCUSPOCUS_USERNAME: z.string().optional(),
   HOCUSPOCUS_PASSWORD: z.string().optional(),
 
-  // Graceful shutdown timeout
+  // Graceful termination timeout
   SHUTDOWN_TIMEOUT: z.string().default("10000").transform(Number),
 });
 

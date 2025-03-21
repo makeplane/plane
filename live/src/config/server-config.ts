@@ -62,5 +62,5 @@ function configureCors(app: express.Application): void {
 export const serverConfig = {
   port: env.PORT,
   basePath: env.LIVE_BASE_PATH,
-  shutdownTimeout: env.SHUTDOWN_TIMEOUT,
+  terminationTimeout: env.SHUTDOWN_TIMEOUT,
 }; 

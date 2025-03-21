@@ -1,6 +1,7 @@
 import { Server } from "./server";
 import { env } from "./env";
 import { logger } from "@plane/logger";
+import { handleError } from "@/core/helpers/error-handling/error-factory";
 
 /**
  * The main entry point for the application
@@ -18,7 +19,17 @@ const startServer = async () => {
     logger.info(`Server running at base path: ${env.LIVE_BASE_PATH}`);
   } catch (error) {
     logger.error("Failed to start server:", error);
-    process.exit(1);
+    
+    // Create an AppError but DON'T exit
+    handleError(error, {
+      errorType: "internal",
+      component: "startup",
+      operation: "startServer",
+      extraContext: { environment: env.NODE_ENV }
+    });
+    
+    // Continue running even if startup had issues
+    logger.warn("Server encountered errors during startup but will continue running");
   }
 };
 
