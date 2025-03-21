@@ -72,6 +72,12 @@ class Command(BaseCommand):
                 "is_encrypted": True,
             },
             {
+                "key": "GITHUB_ORGANIZATION_ID",
+                "value": os.environ.get("GITHUB_ORGANIZATION_ID"),
+                "category": "GITHUB",
+                "is_encrypted": False,
+            },
+            {
                 "key": "GITLAB_HOST",
                 "value": os.environ.get("GITLAB_HOST"),
                 "category": "GITLAB",
