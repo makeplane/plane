@@ -1,8 +1,12 @@
 "use client";
 
 import { observer } from "mobx-react";
+// constants
+import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 // editor
 import { EditorRefApi } from "@plane/editor";
+// plane hooks
+import { useLocalStorage } from "@plane/hooks";
 // ui
 import { ArchiveIcon, FavoriteStar, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // components
@@ -37,6 +41,11 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
   } = page;
   // use online status
   const { isOnline } = useOnlineStatus();
+  // local storage
+  const { setValue: toggleFavoriteMenu, storedValue: isFavoriteMenuOpen } = useLocalStorage<boolean>(
+    IS_FAVORITE_MENU_OPEN,
+    false
+  );
   // favorite handler
   const handleFavorite = () => {
     if (is_favorite) {
@@ -48,13 +57,14 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
         })
       );
     } else {
-      addToFavorites().then(() =>
+      addToFavorites().then(() => {
+        if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Page added to favorites.",
-        })
-      );
+        });
+      });
     }
   };
 

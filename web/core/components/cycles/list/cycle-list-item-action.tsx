@@ -6,7 +6,14 @@ import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Eye, Users } from "lucide-react";
 // types
-import { CYCLE_FAVORITED, CYCLE_UNFAVORITED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import {
+  CYCLE_FAVORITED,
+  CYCLE_UNFAVORITED,
+  EUserPermissions,
+  EUserPermissionsLevel,
+  IS_FAVORITE_MENU_OPEN,
+} from "@plane/constants";
+import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { ICycle, TCycleGroups } from "@plane/types";
 // ui
@@ -15,8 +22,6 @@ import { Avatar, AvatarGroup, FavoriteStar, LayersIcon, Tooltip, TransferIcon, s
 import { CycleQuickActions, TransferIssuesModal } from "@/components/cycles";
 import { DateRangeDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-// constants
-// helpers
 import { getDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
@@ -59,6 +64,12 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
   const { captureEvent } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
 
+  // local storage
+  const { setValue: toggleFavoriteMenu, storedValue: isFavoriteMenuOpen } = useLocalStorage<boolean>(
+    IS_FAVORITE_MENU_OPEN,
+    false
+  );
+
   const { getUserDetails } = useMember();
 
   // form
@@ -91,6 +102,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
 
     const addToFavoritePromise = addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).then(
       () => {
+        if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
         captureEvent(CYCLE_FAVORITED, {
           cycle_id: cycleId,
           element: "List layout",

@@ -4118,6 +4118,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/ws@^8.5.10":
+  version "8.18.0"
+  resolved "https://registry.yarnpkg.com/@types/ws/-/ws-8.18.0.tgz#8a2ec491d6f0685ceaab9a9b7ff44146236993b5"
+  integrity sha512-8svvI3hMyvN0kKCJMvTJP/x6Y/EoQbepff882wL+Sn5QsXb3etnamgrJq4isrBxSJj5L2AuXcI0+bgkoAXGUJw==
+  dependencies:
+    "@types/node" "*"
+
 "@types/zxcvbn@^4.4.4", "@types/zxcvbn@^4.4.5":
   version "4.4.5"
   resolved "https://registry.npmjs.org/@types/zxcvbn/-/zxcvbn-4.4.5.tgz"

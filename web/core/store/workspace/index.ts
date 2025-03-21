@@ -1,3 +1,4 @@
+import clone from "lodash/clone";
 import set from "lodash/set";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 // types
@@ -214,18 +215,29 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
     key: string,
     data: Partial<IWorkspaceSidebarNavigationItem>
   ) => {
+    // Store the data before update to use for reverting if needed
+    const beforeUpdateData = clone(this.navigationPreferencesMap[workspaceSlug]?.[key]);
     try {
-      const response = await this.workspaceService.updateSidebarPreference(workspaceSlug, key, data);
-
       runInAction(() => {
         this.navigationPreferencesMap[workspaceSlug] = {
           ...this.navigationPreferencesMap[workspaceSlug],
-          [key]: response,
+          [key]: {
+            ...beforeUpdateData,
+            ...data,
+          },
         };
       });
 
+      const response = await this.workspaceService.updateSidebarPreference(workspaceSlug, key, data);
       return response;
     } catch (error) {
+      // Revert to original data if API call fails
+      runInAction(() => {
+        this.navigationPreferencesMap[workspaceSlug] = {
+          ...this.navigationPreferencesMap[workspaceSlug],
+          [key]: beforeUpdateData,
+        };
+      });
       console.error("Failed to update sidebar preference:", error);
     }
   };

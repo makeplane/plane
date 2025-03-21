@@ -11,7 +11,7 @@ import { initializeSentry } from "./sentry-config";
 // Core functionality
 import { getHocusPocusServer } from "@/core/hocuspocus-server";
 import { controllerRegistry } from "@/core/controller-registry";
-import { ShutdownManager } from "@/core/shutdown-manager";
+import { ProcessManager } from "@/core/process-manager";
 
 // Service and controller related
 import { IControllerRegistry, IServiceContainer } from "./lib/controller.interface";
@@ -156,9 +156,9 @@ export class Server {
         logger.info(`Plane Live server has started at port ${this.port}`);
       });
 
-      // Setup graceful shutdown
-      const shutdownManager = new ShutdownManager(this.hocusPocusServer, server);
-      shutdownManager.registerShutdownHandlers();
+      // Setup graceful termination
+      const processManager = new ProcessManager(this.hocusPocusServer, server);
+      processManager.registerTerminationHandlers();
 
       return server;
     } catch (error) {

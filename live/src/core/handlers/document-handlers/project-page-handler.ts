@@ -1,10 +1,4 @@
-import {
-  fetchPageDescriptionBinary,
-  fetchProjectPageTitle,
-  updatePageDescription,
-  updateProjectPageTitle,
-} from "@/core/lib/page";
-import { HocusPocusServerContext } from "@/core/types/common";
+import { fetchPageDescriptionBinary, updatePageDescription } from "@/core/document-types/project-page";
 import {
   DocumentHandler,
   DocumentFetchParams,
@@ -29,44 +23,13 @@ export const projectPageHandler: DocumentHandler = {
    */
   store: async ({ pageId, state, params, context, title }: DocumentStoreParams) => {
     const { cookie } = context;
-    await updatePageDescription(params, pageId, state, cookie, title);
-  },
-
-  /**
-   * Fetch project page title
-   */
-  fetchTitle: async ({
-    workspaceSlug,
-    projectId,
-    pageId,
-    cookie,
-  }: {
-    workspaceSlug: string;
-    projectId: string;
-    pageId: string;
-    cookie: string;
-  }) => {
-    return await fetchProjectPageTitle(workspaceSlug, projectId, pageId, cookie);
-  },
-
-  /**
-   * Update project page title
-   */
-  updateTitle: async (
-    workspaceSlug: string,
-    projectId: string,
-    pageId: string,
-    title: string,
-    cookie: string,
-    abortSignal?: AbortSignal
-  ) => {
-    await updateProjectPageTitle(workspaceSlug, projectId, pageId, title, cookie, abortSignal);
+    await updatePageDescription(params, pageId, state, cookie);
   },
 };
 
 // Define the project page handler definition
 export const projectPageHandlerDefinition: HandlerDefinition = {
-  selector: (context: HocusPocusServerContext) => context.documentType === "project_page" && !context.agentId,
+  selector: (context) => context.documentType === "project_page",
   handler: projectPageHandler,
   priority: 10, // Standard priority
 };

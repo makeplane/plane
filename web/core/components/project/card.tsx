@@ -6,7 +6,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArchiveRestoreIcon, Check, ExternalLink, LinkIcon, Lock, Settings, Trash2, UserPlus } from "lucide-react";
 // types
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
+import { useLocalStorage } from "@plane/hooks";
 import type { IProject } from "@plane/types";
 // ui
 import {
@@ -68,6 +69,11 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const hasMemberRole = project.member_role === EUserPermissions.MEMBER;
   // archive
   const isArchived = !!project.archived_at;
+  // local storage
+  const { setValue: toggleFavoriteMenu, storedValue: isFavoriteMenuOpen } = useLocalStorage<boolean>(
+    IS_FAVORITE_MENU_OPEN,
+    false
+  );
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
@@ -78,6 +84,10 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
       success: {
         title: "Success!",
         message: () => "Project added to favorites.",
+        actionItems: () => {
+          if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
+          return <></>;
+        },
       },
       error: {
         title: "Error!",

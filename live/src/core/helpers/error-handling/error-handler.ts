@@ -229,10 +229,9 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   // Send the response
   res.json(errorResponse);
 
-  // If it's a fatal error, initiate shutdown after sending response
+  // For fatal errors, log but NEVER terminate the app
   if (error.category === ErrorCategory.FATAL) {
-    logger.error(`FATAL ERROR OCCURRED! Initiating shutdown...`);
-    process.emit("SIGTERM");
+    logger.error(`FATAL ERROR OCCURRED BUT APP WILL CONTINUE RUNNING: ${error.message}`);
   }
 };
 
@@ -321,10 +320,10 @@ export const catchAsync = <T, E = Error>(
 };
 
 /**
- * Sets up global error handlers for unhandled rejections and exceptions
- * @param gracefulShutdown Function to call for graceful shutdown
+ * Set up global error handlers for uncaught exceptions and unhandled rejections
+ * @param gracefulTerminationHandler Function to call for graceful termination
  */
-export const setupGlobalErrorHandlers = (gracefulShutdown: () => Promise<void>): void => {
+export const setupGlobalErrorHandlers = (gracefulTerminationHandler: () => Promise<void>): void => {
   // Handle promise rejections
   process.on("unhandledRejection", (reason: unknown) => {
     logger.error("Unhandled Promise Rejection", { reason });
@@ -342,13 +341,8 @@ export const setupGlobalErrorHandlers = (gracefulShutdown: () => Promise<void>):
       extraContext: { source: "unhandledRejection" },
     });
 
-    // Only crash if it's a fatal error
-    if (appError.category === ErrorCategory.FATAL) {
-      logger.error(`FATAL ERROR ENCOUNTERED! Shutting down...`);
-      gracefulShutdown();
-    } else {
-      logger.error(`Unhandled rejection caught and contained`);
-    }
+    // Log the error but never terminate
+    logger.error(`Unhandled rejection caught and contained: ${appError.message}`);
   });
 
   // Handle exceptions
@@ -372,24 +366,19 @@ export const setupGlobalErrorHandlers = (gracefulShutdown: () => Promise<void>):
       },
     });
 
-    // Only crash for fatal errors or if error handling system itself is broken
-    if (appError.category === ErrorCategory.FATAL) {
-      logger.error(`FATAL ERROR ENCOUNTERED! Shutting down...`);
-      gracefulShutdown();
-    } else {
-      logger.warn(`Uncaught exception contained - this should be investigated!`);
-    }
+    // Log the error but never terminate
+    logger.warn(`Uncaught exception contained: ${appError.message}`);
   });
 
   // Handle termination signals
   process.on("SIGTERM", () => {
-    logger.info("SIGTERM received. Shutting down gracefully...");
-    gracefulShutdown();
+    logger.info("SIGTERM received. Starting graceful termination...");
+    gracefulTerminationHandler();
   });
 
   process.on("SIGINT", () => {
-    logger.info("SIGINT received. Shutting down gracefully...");
-    gracefulShutdown();
+    logger.info("SIGINT received. Starting graceful termination...");
+    gracefulTerminationHandler();
   });
 };
 

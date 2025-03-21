@@ -2,7 +2,7 @@ import * as Comlink from "comlink";
 import set from "lodash/set";
 // plane
 import { EIssueGroupBYServerToProperty } from "@plane/constants";
-import { TIssue } from "@plane/types";
+import { TIssue, TIssueParams } from "@plane/types";
 // lib
 import { rootStore } from "@/lib/store-context";
 // services
@@ -15,6 +15,7 @@ import { addIssuesBulk, syncDeletesToLocal } from "./utils/load-issues";
 import { loadWorkSpaceData } from "./utils/load-workspace";
 import { issueFilterCountQueryConstructor, issueFilterQueryConstructor } from "./utils/query-constructor";
 import { runQuery } from "./utils/query-executor";
+import { sanitizeWorkItemQueries } from "./utils/query-sanitizer.ts";
 import { createTables } from "./utils/tables";
 import { clearOPFS, getGroupedIssueResults, getSubGroupedIssueResults, log, logError } from "./utils/utils";
 
@@ -269,7 +270,12 @@ export class Storage {
     return issue.updated_at;
   };
 
-  getIssues = async (workspaceSlug: string, projectId: string, queries: any, config: any) => {
+  getIssues = async (
+    workspaceSlug: string,
+    projectId: string,
+    queries: Partial<Record<TIssueParams, string | boolean>> | undefined,
+    config: any
+  ) => {
     log("#### Queries", queries);
 
     const currentProjectStatus = this.getStatus(projectId);
@@ -294,11 +300,12 @@ export class Storage {
       }
     }
 
-    const { cursor, group_by, sub_group_by } = queries;
+    const sanitizedQueries = sanitizeWorkItemQueries(workspaceSlug, projectId, queries);
+    const { cursor, group_by, sub_group_by } = sanitizedQueries || {};
 
-    const query = issueFilterQueryConstructor(this.workspaceSlug, projectId, queries);
+    const query = issueFilterQueryConstructor(this.workspaceSlug, projectId, sanitizedQueries);
     log("#### Query", query);
-    const countQuery = issueFilterCountQueryConstructor(this.workspaceSlug, projectId, queries);
+    const countQuery = issueFilterCountQueryConstructor(this.workspaceSlug, projectId, sanitizedQueries);
     const start = performance.now();
     let issuesRaw: any[] = [];
     let count: any[];
@@ -313,7 +320,7 @@ export class Storage {
 
     const { total_count } = count[0];
 
-    const [pageSize, page, offset] = cursor.split(":");
+    const [pageSize, page, offset] = cursor && typeof cursor === "string" ? cursor.split(":") : [];
 
     const groupByProperty: string =
       EIssueGroupBYServerToProperty[group_by as keyof typeof EIssueGroupBYServerToProperty];
