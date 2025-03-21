@@ -307,4 +307,10 @@ export const getComputedDisplayProperties = (
   modules: displayProperties?.modules ?? true,
   cycle: displayProperties?.cycle ?? true,
   issue_type: displayProperties?.issue_type ?? true,
+  hub_code: displayProperties?.hub_code ?? true,
+  customer_code: displayProperties?.customer_code ?? true,
+  worker_code: displayProperties?.worker_code ?? true,
+  vendor_code: displayProperties?.vendor_code ?? true,
+  trip_reference_number: displayProperties?.trip_reference_number ?? true,
+  reference_number: displayProperties?.reference_number ?? true,
 });

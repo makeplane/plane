@@ -11,6 +11,7 @@ import {
   CalendarCheck2,
   CalendarClock,
   Users,
+  Tags,
 } from "lucide-react";
 // types
 import { IIssueDisplayProperties, TIssue, TIssueOrderByOptions } from "@plane/types";
@@ -32,6 +33,7 @@ import {
   SpreadsheetStateColumn,
   SpreadsheetSubIssueColumn,
   SpreadsheetUpdatedOnColumn,
+  SpreadsheetStandardPropertyColumn,
 } from "@/components/issues/issue-layouts/spreadsheet";
 
 export const SPREADSHEET_PROPERTY_DETAILS: {
@@ -176,6 +178,60 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     icon: LayersIcon,
     Column: SpreadsheetSubIssueColumn,
   },
+  hub_code: {
+    title: "Hub Code",
+    ascendingOrderKey: "hub_code",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-hub_code",
+    descendingOrderTitle: "Z",
+    icon: Tags,
+    Column: SpreadsheetStandardPropertyColumn,
+  },
+  customer_code: {
+    title: "Customer Code",
+    ascendingOrderKey: "customer_code",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-customer_code",
+    descendingOrderTitle: "Z",
+    icon: Tags,
+    Column: SpreadsheetStandardPropertyColumn,
+  },
+  worker_code: {
+    title: "Worker Code",
+    ascendingOrderKey: "worker_code",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-worker_code",
+    descendingOrderTitle: "Z",
+    icon: Tags,
+    Column: SpreadsheetStandardPropertyColumn,
+  },
+  vendor_code: {
+    title: "Vendor Code",
+    ascendingOrderKey: "vendor_code",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-vendor_code",
+    descendingOrderTitle: "Z",
+    icon: Tags,
+    Column: SpreadsheetStandardPropertyColumn,
+  },
+  trip_reference_number: {
+    title: "Trip Ref Number",
+    ascendingOrderKey: "trip_reference_number",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-trip_reference_number",
+    descendingOrderTitle: "Z",
+    icon: Tags,
+    Column: SpreadsheetStandardPropertyColumn,
+  },
+  reference_number: {
+    title: "Reference Number",
+    ascendingOrderKey: "reference_number",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-reference_number",
+    descendingOrderTitle: "Z",
+    icon: Tags,
+    Column: SpreadsheetStandardPropertyColumn,
+  },
 };
 
 export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
@@ -193,6 +249,12 @@ export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
   "link",
   "attachment_count",
   "sub_issue_count",
+  "hub_code",
+  "customer_code",
+  "worker_code",
+  "vendor_code",
+  "trip_reference_number",
+  "reference_number",
 ];
 
 export const SPREADSHEET_SELECT_GROUP = "spreadsheet-issues";

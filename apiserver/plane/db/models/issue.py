@@ -76,6 +76,12 @@ def get_default_display_properties():
         "state": True,
         "sub_issue_count": True,
         "updated_on": True,
+        "hub_code": True,
+        "customer_code": True,
+        "worker_code": True,
+        "vendor_code": True,
+        "trip_reference_number": True,
+        "reference_number": True,
     }
 
 
