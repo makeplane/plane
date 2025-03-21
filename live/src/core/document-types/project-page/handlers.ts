@@ -6,12 +6,19 @@ const pageService = new PageService();
 /**
  * Updates the description of a project page
  */
-export const updatePageDescription = async (
-  params: URLSearchParams | undefined,
-  pageId: string,
-  updatedDescription: Uint8Array,
-  cookie: string | undefined
-) => {
+export const updatePageDescription = async ({
+  params,
+  pageId,
+  updatedDescription,
+  cookie,
+  title,
+}: {
+  params: URLSearchParams | undefined;
+  pageId: string;
+  updatedDescription: Uint8Array;
+  cookie: string | undefined;
+  title: string;
+}) => {
   if (!(updatedDescription instanceof Uint8Array)) {
     throw new Error("Invalid updatedDescription: must be an instance of Uint8Array");
   }
@@ -25,8 +32,8 @@ export const updatePageDescription = async (
     description_binary: contentBinaryEncoded,
     description_html: contentHTML,
     description: contentJSON,
+    name: title,
   };
 
   await pageService.updateDescription(workspaceSlug, projectId, pageId, payload, cookie);
 };
-

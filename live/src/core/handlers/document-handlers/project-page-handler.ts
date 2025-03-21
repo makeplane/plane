@@ -1,4 +1,5 @@
 import { fetchPageDescriptionBinary, updatePageDescription } from "@/core/document-types/project-page";
+import { fetchProjectPageTitle, updateProjectPageTitle } from "@/core/lib/page";
 import {
   DocumentHandler,
   DocumentFetchParams,
@@ -23,7 +24,21 @@ export const projectPageHandler: DocumentHandler = {
    */
   store: async ({ pageId, state, params, context, title }: DocumentStoreParams) => {
     const { cookie } = context;
-    await updatePageDescription(params, pageId, state, cookie);
+    await updatePageDescription({ params, pageId, updatedDescription: state, cookie, title });
+  },
+
+  /**
+   * Fetch project page title
+   */
+  fetchTitle: async ({ workspaceSlug, projectId, pageId, cookie }) => {
+    return await fetchProjectPageTitle({ workspaceSlug, projectId, pageId, cookie });
+  },
+
+  /**
+   * Store project page title
+   */
+  updateTitle: async ({ workspaceSlug, projectId, pageId, title, cookie, abortSignal }) => {
+    await updateProjectPageTitle({ workspaceSlug, projectId, pageId, title, cookie, abortSignal });
   },
 };
 

@@ -44,12 +44,17 @@ const fetchDescriptionHTMLAndTransform = async (
   return contentBinary;
 };
 
-export const fetchProjectPageTitle = async (
-  workspaceSlug: string,
-  projectId: string,
-  pageId: string,
-  cookie: string | undefined
-) => {
+export const fetchProjectPageTitle = async ({
+  workspaceSlug,
+  projectId,
+  pageId,
+  cookie,
+}: {
+  workspaceSlug: string;
+  projectId: string;
+  pageId: string;
+  cookie: string | undefined;
+}) => {
   if (!workspaceSlug || !cookie) return;
 
   try {
@@ -61,14 +66,21 @@ export const fetchProjectPageTitle = async (
   }
 };
 
-export const updateProjectPageTitle = async (
-  workspaceSlug: string,
-  projectId: string,
-  pageId: string,
-  title: string,
-  cookie: string | undefined,
-  abortSignal?: AbortSignal
-) => {
+export const updateProjectPageTitle = async ({
+  workspaceSlug,
+  projectId,
+  pageId,
+  title,
+  cookie,
+  abortSignal,
+}: {
+  workspaceSlug: string;
+  projectId: string;
+  pageId: string;
+  title: string;
+  cookie: string | undefined;
+  abortSignal?: AbortSignal;
+}) => {
   if (!workspaceSlug || !projectId || !cookie) return;
 
   const payload = {

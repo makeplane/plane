@@ -15,7 +15,7 @@ export interface DocumentFetchParams {
 export interface DocumentStoreParams {
   context: HocusPocusServerContext;
   pageId: string;
-  state: any;
+  state: Uint8Array;
   params: URLSearchParams | undefined;
   title: string;
 }
@@ -47,14 +47,14 @@ export interface DocumentHandler {
   /**
    * Update title
    */
-  updateTitle?: (
-    workspaceSlug: string,
-    projectId: string,
-    pageId: string,
-    title: string,
-    cookie: string,
-    abortSignal?: AbortSignal
-  ) => Promise<void>;
+  updateTitle?: (params: {
+    workspaceSlug: string;
+    projectId: string;
+    pageId: string;
+    title: string;
+    cookie: string;
+    abortSignal?: AbortSignal;
+  }) => Promise<void>;
 }
 
 /**

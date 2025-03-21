@@ -1,4 +1,4 @@
-import { Document, Server } from "@hocuspocus/server";
+import { Server } from "@hocuspocus/server";
 import { v4 as uuidv4 } from "uuid";
 import { IncomingHttpHeaders } from "http";
 // lib
@@ -14,11 +14,6 @@ import { TDocumentTypes, type HocusPocusServerContext } from "@/core/types/commo
 // error handling
 import { catchAsync } from "@/core/helpers/error-handling/error-handler";
 import { handleError } from "@/core/helpers/error-handling/error-factory";
-// transformer
-import { TiptapTransformer } from "@hocuspocus/transformer";
-import { TITLE_EDITOR_EXTENSIONS } from "@plane/editor";
-import { generateTitleProsemirrorJson } from "./helpers/generate-title-prosemirror-json";
-import { getDocumentHandler } from "./handlers/document-handlers";
 
 export const getHocusPocusServer = async () => {
   const extensions = await getExtensions();

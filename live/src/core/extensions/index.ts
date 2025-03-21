@@ -1,6 +1,6 @@
 // hocuspocus extensions and core
 import { Database } from "@hocuspocus/extension-database";
-import { Document, Extension, storePayload } from "@hocuspocus/server";
+import { Extension, storePayload } from "@hocuspocus/server";
 import { Logger } from "@hocuspocus/extension-logger";
 import { setupRedisExtension } from "@/core/extensions/redis";
 // types
@@ -86,7 +86,10 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
       }) => {
         const { agentId, documentType } = context as HocusPocusServerContext;
         const params = requestParameters;
-        const title = extractTextFromHTML(document?.getXmlFragment("title")?.toJSON());
+        let title = "";
+        if (document) {
+          title = extractTextFromHTML(document?.getXmlFragment("title")?.toJSON());
+        }
 
         catchAsync(
           async () => {

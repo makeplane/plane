@@ -106,6 +106,7 @@ export class PageService extends APIService {
       description_binary: string;
       description_html: string;
       description: object;
+      name: string;
     },
     cookie: string
   ): Promise<any> {
