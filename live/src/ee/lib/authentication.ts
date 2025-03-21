@@ -1,1 +1,2 @@
-export * from "../../ce/lib/authentication.js"
+export * from "../../core/lib/authentication";
+
