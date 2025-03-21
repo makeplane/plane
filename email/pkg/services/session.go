@@ -69,7 +69,7 @@ func (s *Session) Data(r io.Reader) error {
 	subject, _ := header.Subject()
 	// log.Printf("Subject: %v", subject)
 
-	var body string
+	var plainBody, htmlBody string
 	for {
 		p, err := mr.NextPart()
 		if err == io.EOF {
@@ -80,14 +80,26 @@ func (s *Session) Data(r io.Reader) error {
 
 		switch h := p.Header.(type) {
 		case *mail.InlineHeader:
-			// This is the message's text (can be plain-text or HTML)
+			// Check the content type of this part
+			contentType, _, _ := h.ContentType()
 			b, _ := io.ReadAll(p.Body)
-			body += string(b)
+
+			if contentType == "text/plain" {
+				plainBody = string(b)
+			} else if contentType == "text/html" {
+				htmlBody = string(b)
+			}
 		case *mail.AttachmentHeader:
 			// This is an attachment
 			filename, _ := h.Filename()
 			log.Printf("Got attachment: %v", filename)
 		}
+	}
+
+	// Prefer HTML if available, otherwise use plain text
+	body := plainBody
+	if htmlBody != "" {
+		body = htmlBody // Or consider storing both separately
 	}
 
 	// Store the email

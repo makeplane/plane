@@ -29,7 +29,7 @@ def get_anchors(message):
         return False, False
 
     # split the anchor again with -
-    anchor = workspace_anchor[0].split("-")
+    anchor = workspace_anchor[0].rsplit("-", 1)
     # Check if anchor is empty
     if not anchor or not (len(anchor) == 2):
         return False, False

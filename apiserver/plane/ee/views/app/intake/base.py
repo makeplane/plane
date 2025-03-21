@@ -30,7 +30,7 @@ from plane.ee.serializers.app.intake import IntakeSettingSerializer
 
 class IntakeSettingEndpoint(BaseAPIView):
     def get_intake_email_domain(self):
-        return os.environ.get("EMAIL_DOMAIN", "example.com")
+        return os.environ.get("INTAKE_EMAIL_DOMAIN", "example.com")
 
     def create_intake_user_bot(self, workspace, request, slug):
         # Create or retrieve the user for the intake bot
@@ -50,7 +50,7 @@ class IntakeSettingEndpoint(BaseAPIView):
                 user=user, user_type=1, workspace_id=workspace.id
             )
             WorkspaceMember.objects.get_or_create(
-                workspace_id=workspace.id, member_id=user.id, role=ROLE.ADMIN
+                workspace_id=workspace.id, member_id=user.id, role=ROLE.ADMIN.value
             )
             project_ids = Project.objects.filter(workspace__slug=slug).values_list(
                 "pk", flat=True
@@ -61,7 +61,7 @@ class IntakeSettingEndpoint(BaseAPIView):
                         project_id=project_id,
                         workspace_id=workspace.id,
                         member_id=user.id,
-                        role=ROLE.ADMIN,
+                        role=ROLE.ADMIN.value,
                         created_by_id=request.user.id,
                         updated_by_id=request.user.id,
                     )
