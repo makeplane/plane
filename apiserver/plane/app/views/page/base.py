@@ -550,6 +550,7 @@ class PagesDescriptionViewSet(BaseViewSet):
                     new_value=request.data, old_value=existing_instance, page_id=pk
                 )
             # Store the updated binary data
+            page.name = request.data.get("name", page.name)
             page.description_binary = new_binary_data
             page.description_html = request.data.get("description_html")
             page.description = request.data.get("description")
