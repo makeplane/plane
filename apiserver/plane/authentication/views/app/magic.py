@@ -118,7 +118,7 @@ class MagicSignInEndpoint(BaseAPIView):
                 })
                 user.profile.is_tour_completed = True
                 user.profile.is_onboarded = True
-                user.is_password_autoset = True
+                user.is_password_autoset = False
                 user.profile.company_name = workspace.name
                 user.save()
                 user.profile.save()
@@ -244,15 +244,12 @@ class MagicSignInEndpoint(BaseAPIView):
                 # Login the user and record his device info
                 self.add_user_to_workspace(user, workspace)
                 user_login(request=request, user=user, is_app=True)
-                if user.is_password_autoset and profile.is_onboarded:
-                    path = "accounts/set-password"
-                else:
-                    # Get the redirection path
-                    path = (
-                        str(next_path)
-                        if next_path
-                        else "/" + workspace
-                    )
+                # Get the redirection path
+                path = (
+                    str(next_path)
+                    if next_path
+                    else "/" + workspace
+                )
                 # redirect to referer path
                 url = urljoin(base_host(request=request, is_app=True), path)
                 if app_url:
