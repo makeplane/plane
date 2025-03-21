@@ -184,7 +184,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "A",
     descendingOrderKey: "-hub_code",
     descendingOrderTitle: "Z",
-    icon: DoubleCircleIcon,
+    icon: Tags,
     Column: SpreadsheetStandardPropertyColumn,
   },
   customer_code: {
