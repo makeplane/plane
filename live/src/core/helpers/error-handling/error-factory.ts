@@ -158,7 +158,6 @@ export function handleError(error: unknown, options: NonThrowingOptions): AppErr
  * Implementation of handleError that handles both throwing and non-throwing cases
  */
 export function handleError(error: unknown, options: ThrowingOptions | NonThrowingOptions): AppError | never {
-  console.log("error", error instanceof AppError);
   // Only throw if throw is explicitly true
   const shouldThrow = (options as ThrowingOptions).throw === true;
 
