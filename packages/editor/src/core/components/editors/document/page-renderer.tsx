@@ -45,10 +45,7 @@ export const PageRenderer = (props: IPageRenderer) => {
   const [cleanup, setCleanup] = useState(() => () => {});
 
   // Use our custom hook for editor navigation
-  useEditorNavigation({
-    titleEditor,
-    mainEditor: editor,
-  });
+  useEditorNavigation();
 
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
@@ -160,7 +157,7 @@ export const PageRenderer = (props: IPageRenderer) => {
               <EditorContentWrapper
                 focus={false}
                 editor={titleEditor}
-                id={id}
+                id={id + "-title"}
                 tabIndex={tabIndex}
                 className="no-scrollbar placeholder-custom-text-400 border-[0.5px] border-custom-border-200 bg-transparent tracking-[-2%] font-bold text-[2rem] leading-[2.375rem] w-full outline-none p-0 border-none resize-none rounded-none"
               />

@@ -27,9 +27,9 @@ export const projectPageHandler: DocumentHandler = {
   /**
    * Store project page description
    */
-  store: async ({ pageId, state, params, context }: DocumentStoreParams) => {
+  store: async ({ pageId, state, params, context, title }: DocumentStoreParams) => {
     const { cookie } = context;
-    await updatePageDescription(params, pageId, state, cookie);
+    await updatePageDescription(params, pageId, state, cookie, title);
   },
 
   /**
@@ -52,8 +52,15 @@ export const projectPageHandler: DocumentHandler = {
   /**
    * Update project page title
    */
-  updateTitle: async (workspaceSlug: string, projectId: string, pageId: string, title: string, cookie: string) => {
-    await updateProjectPageTitle(workspaceSlug, projectId, pageId, title, cookie);
+  updateTitle: async (
+    workspaceSlug: string,
+    projectId: string,
+    pageId: string,
+    title: string,
+    cookie: string,
+    abortSignal?: AbortSignal
+  ) => {
+    await updateProjectPageTitle(workspaceSlug, projectId, pageId, title, cookie, abortSignal);
   },
 };
 

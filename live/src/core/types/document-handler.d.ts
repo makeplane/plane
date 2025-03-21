@@ -1,4 +1,4 @@
-import { HocusPocusServerContext, TDocumentTypes } from "@/core/types/common";
+import { HocusPocusServerContext } from "@/core/types/common";
 
 /**
  * Parameters for document fetch operations
@@ -16,7 +16,8 @@ export interface DocumentStoreParams {
   context: HocusPocusServerContext;
   pageId: string;
   state: any;
-  params: URLSearchParams;
+  params: URLSearchParams | undefined;
+  title: string;
 }
 
 /**
@@ -36,7 +37,12 @@ export interface DocumentHandler {
   /**
    * Fetch title
    */
-  fetchTitle: (params: { workspaceSlug: string; projectId: string; pageId: string; cookie: string }) => Promise<string>;
+  fetchTitle: (params: {
+    workspaceSlug: string;
+    projectId: string;
+    pageId: string;
+    cookie: string;
+  }) => Promise<string | undefined>;
 
   /**
    * Update title
@@ -46,22 +52,15 @@ export interface DocumentHandler {
     projectId: string,
     pageId: string,
     title: string,
-    cookie: string
+    cookie: string,
+    abortSignal?: AbortSignal
   ) => Promise<void>;
-}
-
-/**
- * Handler context interface - extend this to add new criteria for handler selection
- */
-export interface HandlerContext {
-  documentType?: TDocumentTypes;
-  agentId?: string;
 }
 
 /**
  * Handler selector function type - determines if a handler should be used based on context
  */
-export type HandlerSelector = (context: HandlerContext) => boolean;
+export type HandlerSelector = (context: HocusPocusServerContext) => boolean;
 
 /**
  * Handler definition combining a selector and implementation

@@ -6,17 +6,18 @@ import logger from "@plane/logger";
 const pageService = new PageService();
 
 export const updatePageDescription = async (
-  params: URLSearchParams,
+  params: URLSearchParams | undefined,
   pageId: string,
   updatedDescription: Uint8Array,
-  cookie: string | undefined
+  cookie: string | undefined,
+  title: string
 ) => {
   if (!(updatedDescription instanceof Uint8Array)) {
     throw new Error("Invalid updatedDescription: must be an instance of Uint8Array");
   }
 
-  const workspaceSlug = params.get("workspaceSlug")?.toString();
-  const projectId = params.get("projectId")?.toString();
+  const workspaceSlug = params?.get("workspaceSlug")?.toString();
+  const projectId = params?.get("projectId")?.toString();
   if (!workspaceSlug || !projectId || !cookie) return;
 
   const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromBinaryData(updatedDescription);
@@ -24,6 +25,7 @@ export const updatePageDescription = async (
     description_binary: contentBinaryEncoded,
     description_html: contentHTML,
     description: contentJSON,
+    name: title,
   };
 
   await pageService.updateDescription(workspaceSlug, projectId, pageId, payload, cookie);
@@ -64,7 +66,8 @@ export const updateProjectPageTitle = async (
   projectId: string,
   pageId: string,
   title: string,
-  cookie: string | undefined
+  cookie: string | undefined,
+  abortSignal?: AbortSignal
 ) => {
   if (!workspaceSlug || !projectId || !cookie) return;
 
@@ -72,7 +75,7 @@ export const updateProjectPageTitle = async (
     name: title,
   };
 
-  await pageService.updateTitle(workspaceSlug, projectId, pageId, payload, cookie);
+  await pageService.updateTitle(workspaceSlug, projectId, pageId, payload, cookie, abortSignal);
 };
 
 export const fetchPageDescriptionBinary = async (

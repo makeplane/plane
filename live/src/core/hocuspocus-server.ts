@@ -25,7 +25,6 @@ export const getHocusPocusServer = async () => {
   const serverName = process.env.HOSTNAME || uuidv4();
   return Server.configure({
     name: serverName,
-    extensions: [...extensions, new TitleSyncExtension()],
     onAuthenticate: async ({
       requestHeaders,
       context,
@@ -89,42 +88,6 @@ export const getHocusPocusServer = async () => {
         }
       )();
     },
-    async onLoadDocument({
-      context,
-      document,
-      requestParameters,
-    }: {
-      context: HocusPocusServerContext;
-      document: Document;
-      requestParameters: URLSearchParams;
-    }) {
-      try {
-        const typedContext = context as HocusPocusServerContext;
-        const workspaceSlug = requestParameters.get("workspaceSlug")?.toString();
-        const projectId = requestParameters.get("projectId")?.toString();
-
-        let title: string | undefined;
-        const documentHandler = getDocumentHandler(typedContext.documentType);
-        if (!workspaceSlug || !projectId) return;
-        title = await documentHandler.fetchTitle({
-          workspaceSlug,
-          projectId,
-          pageId: document.name,
-          cookie: typedContext.cookie,
-        });
-        if (document.isEmpty("title")) {
-          if (!title) return;
-          const titleField = TiptapTransformer.toYdoc(generateTitleProsemirrorJson(title), "title", [
-            TITLE_EDITOR_EXTENSIONS,
-          ]);
-          document.merge(titleField);
-        }
-        console.log("title", title);
-      } catch (error) {
-        console.error("Error in onLoadDocument?", error);
-      }
-    },
-
     onStateless: async ({ payload, document }) => {
       return catchAsync(
         async () => {
@@ -137,7 +100,7 @@ export const getHocusPocusServer = async () => {
         { extra: { operation: "stateless", payload } }
       );
     },
-    // extensions,
-    debounce: 1000,
+    extensions: [...extensions, new TitleSyncExtension()],
+    debounce: 10000,
   });
 };

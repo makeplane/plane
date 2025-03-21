@@ -1,75 +1,92 @@
-import { Extension, afterLoadDocumentPayload, Hocuspocus } from "@hocuspocus/server";
+// hocuspocus
+import { Extension, afterLoadDocumentPayload, Hocuspocus, Document } from "@hocuspocus/server";
+import { TiptapTransformer } from "@hocuspocus/transformer";
 import * as Y from "yjs";
-import { getDocumentHandler } from "../handlers/document-handlers";
+// types
+import { HocusPocusServerContext } from "@/core/types/common";
+// editor extensions
+import { TITLE_EDITOR_EXTENSIONS } from "@plane/editor";
+// handlers
+import { getDocumentHandler } from "@/core/handlers/document-handlers";
+// helpers
+import { generateTitleProsemirrorJson } from "@/core/helpers/generate-title-prosemirror-json";
+import { extractTextFromHTML } from "./title-update/title-utils";
+import { TitleUpdateManager } from "./title-update/title-update-manager";
 
-// Enhanced debounce function with cleanup and edge case handling
-const debounce = <T extends (...args: any[]) => any>(
-  func: T,
-  wait: number
-): ((...args: Parameters<T>) => void) & { cancel: () => void } => {
-  let timeout: NodeJS.Timeout | null = null;
-  let lastArgs: Parameters<T> | null = null;
-
-  const debounced = (...args: Parameters<T>) => {
-    lastArgs = args;
-    
-    if (timeout) {
-      clearTimeout(timeout);
-    }
-
-    timeout = setTimeout(() => {
-      if (lastArgs) {
-        func(...lastArgs);
-        lastArgs = null;
-      }
-      timeout = null;
-    }, wait);
-  };
-
-  // Add cancel method to clear any pending timeouts
-  debounced.cancel = () => {
-    if (timeout) {
-      clearTimeout(timeout);
-      timeout = null;
-    }
-    lastArgs = null;
-  };
-
-  return debounced;
-};
-
+/**
+ * Hocuspocus extension for synchronizing document titles
+ */
 export class TitleSyncExtension implements Extension {
   instance!: Hocuspocus;
-  titleObservers: Map<string, (events: Y.YEvent<any>[]) => void> = new Map();
-  debouncedUpdateTitle: Map<string, ReturnType<typeof debounce>> = new Map();
+  
+  // Maps document names to their observers and update managers
+  private titleObservers: Map<string, (events: Y.YEvent<any>[]) => void> = new Map();
+  private titleUpdateManagers: Map<string, TitleUpdateManager> = new Map();
+  
+  /**
+   * Handle document loading - migrate old titles if needed
+   */
+  async onLoadDocument({
+    context,
+    document,
+    requestParameters,
+  }: {
+    context: HocusPocusServerContext;
+    document: Document;
+    requestParameters: URLSearchParams;
+  }) {
+    try {
+      // initially for on demand migration of old titles to a new title field
+      // in the yjs binary
+      if (document.isEmpty("title")) {
+        const typedContext = context as HocusPocusServerContext;
+        const workspaceSlug = requestParameters.get("workspaceSlug")?.toString();
+        const projectId = requestParameters.get("projectId")?.toString();
 
+        const documentHandler = getDocumentHandler(typedContext.documentType);
+        if (!workspaceSlug || !projectId) return;
+        const title = await documentHandler.fetchTitle({
+          workspaceSlug,
+          projectId,
+          pageId: document.name,
+          cookie: typedContext.cookie,
+        });
+        if (title == null) return;
+        const titleField = TiptapTransformer.toYdoc(
+          generateTitleProsemirrorJson(title),
+          "title",
+          TITLE_EDITOR_EXTENSIONS
+        );
+        document.merge(titleField);
+      }
+    } catch (error) {
+      console.error("Error in onLoadDocument: ", error);
+    }
+  }
+  /**
+   * Set up title synchronization for a document after it's loaded
+   */
   async afterLoadDocument({ document, documentName, context, requestParameters }: afterLoadDocumentPayload) {
     const workspaceSlug = requestParameters.get("workspaceSlug")?.toString();
     const projectId = requestParameters.get("projectId")?.toString();
-    const documentHandler = getDocumentHandler(context.documentType);
-
+    
+    // Exit if we don't have the required information
     if (!workspaceSlug || !projectId) return;
-
-    // Create debounced update function for this document
-    const updateTitle = debounce(async (title: string) => {
-      if (documentHandler.updateTitle) {
-        try {
-          await documentHandler.updateTitle(
-            workspaceSlug,
-            projectId,
-            documentName,
-            title,
-            context.cookie
-          );
-        } catch (error) {
-          console.error("Error updating title:", error);
-        }
-      }
-    }, 3000); // 3 second debounce
-
-    // Store the debounced function
-    this.debouncedUpdateTitle.set(documentName, updateTitle);
-
+    
+    const documentHandler = getDocumentHandler(context.documentType);
+    
+    // Create a title update manager for this document
+    const updateManager = new TitleUpdateManager(
+      documentName,
+      workspaceSlug,
+      projectId,
+      context.cookie,
+      documentHandler
+    );
+    
+    // Store the manager
+    this.titleUpdateManagers.set(documentName, updateManager);
+    
     // Set up observer for title field
     const titleObserver = (events: Y.YEvent<any>[]) => {
       let title = "";
@@ -77,37 +94,47 @@ export class TitleSyncExtension implements Extension {
         title = extractTextFromHTML(event.currentTarget.toJSON());
       });
       
-      // Get the debounced function for this document and call it
-      const debouncedUpdate = this.debouncedUpdateTitle.get(documentName);
-      if (debouncedUpdate) {
-        debouncedUpdate(title);
+      // Schedule an update with the manager
+      const manager = this.titleUpdateManagers.get(documentName);
+      if (manager) {
+        manager.scheduleUpdate(title);
       }
     };
-
+    
     // Observe the title field
     document.getXmlFragment("title").observeDeep(titleObserver);
     this.titleObservers.set(documentName, titleObserver);
   }
-
+  
+  /**
+   * Force save title before unloading the document
+   */
+  async beforeUnloadDocument({ documentName }: { documentName: string }) {
+    const updateManager = this.titleUpdateManagers.get(documentName);
+    if (updateManager) {
+      // Force immediate save and wait for it to complete
+      await updateManager.forceSave();
+      // Clean up the manager
+      this.titleUpdateManagers.delete(documentName);
+    }
+  }
+  
+  /**
+   * Remove observers after document unload
+   */
   async afterUnloadDocument({ documentName }: { documentName: string }) {
-    // Clean up observer and debounced function when document is unloaded
+    // Clean up observer when document is unloaded
     const observer = this.titleObservers.get(documentName);
     if (observer) {
+      console.log(`Removing title observer for ${documentName}`);
       this.titleObservers.delete(documentName);
     }
     
-    const debouncedUpdate = this.debouncedUpdateTitle.get(documentName);
-    if (debouncedUpdate) {
-      // Cancel any pending debounced calls before removing
-      debouncedUpdate.cancel();
-      this.debouncedUpdateTitle.delete(documentName);
+    // Ensure manager is cleaned up if beforeUnloadDocument somehow didn't run
+    if (this.titleUpdateManagers.has(documentName)) {
+      const manager = this.titleUpdateManagers.get(documentName)!;
+      manager.cancel();
+      this.titleUpdateManagers.delete(documentName);
     }
   }
 }
-
-export const extractTextFromHTML = (html: string): string => {
-  // Use a regex to extract text between tags
-  const textMatch = html.replace(/<[^>]*>/g, "");
-  return textMatch || "";
-};
-

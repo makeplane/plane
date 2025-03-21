@@ -3,7 +3,7 @@ import { useCallback, useRef } from "react";
 
 /**
  * Creates a title editor extension that enables keyboard navigation to the main editor
- * 
+ *
  * @param getMainEditor Function to get the main editor instance
  * @returns A Tiptap extension with keyboard shortcuts
  */
@@ -20,7 +20,7 @@ export const createTitleNavigationExtension = (getMainEditor: () => Editor | nul
 
           const { from, to } = editor.state.selection;
           const documentLength = editor.state.doc.content.size;
-          
+
           // If cursor is at the end of the title
           if (from === to && to === documentLength - 1) {
             mainEditor.commands.focus("start");
@@ -28,32 +28,32 @@ export const createTitleNavigationExtension = (getMainEditor: () => Editor | nul
           }
           return false;
         },
-        
+
         // Tab - Move to main editor
         Tab: () => {
           const mainEditor = getMainEditor();
           if (!mainEditor) return false;
-          
+
           mainEditor.commands.focus("start");
           return true;
         },
-        
+
         // Enter - Move to main editor
         Enter: () => {
           const mainEditor = getMainEditor();
           if (!mainEditor) return false;
-          
+
           mainEditor.commands.focus("start");
           return true;
-        }
+        },
       };
-    }
+    },
   });
 };
 
 /**
  * Creates a main editor extension that enables keyboard navigation to the title editor
- * 
+ *
  * @param getTitleEditor Function to get the title editor instance
  * @returns A Tiptap extension with keyboard shortcuts
  */
@@ -69,7 +69,7 @@ export const createMainNavigationExtension = (getTitleEditor: () => Editor | nul
           if (!titleEditor) return false;
 
           const { from, to } = editor.state.selection;
-          
+
           // If cursor is at the start of the main editor
           if (from === 1 && to === 1) {
             titleEditor.commands.focus("end");
@@ -77,27 +77,27 @@ export const createMainNavigationExtension = (getTitleEditor: () => Editor | nul
           }
           return false;
         },
-        
+
         // Shift+Tab - Move to title editor
         "Shift-Tab": () => {
           const titleEditor = getTitleEditor();
           if (!titleEditor) return false;
-          
+
           titleEditor.commands.focus("end");
           return true;
         },
-        
+
         // Backspace - Special handling for first paragraph
         Backspace: ({ editor }) => {
           const titleEditor = getTitleEditor();
           if (!titleEditor) return false;
 
           const { from, to, empty } = editor.state.selection;
-          
+
           // Only handle when cursor is at position 1 with empty selection
           if (from === 1 && to === 1 && empty) {
             const firstNode = editor.state.doc.firstChild;
-            
+
             // If first node is a paragraph
             if (firstNode && firstNode.type.name === "paragraph") {
               // If paragraph is already empty, delete it and focus title editor
@@ -115,46 +115,46 @@ export const createMainNavigationExtension = (getTitleEditor: () => Editor | nul
             }
           }
           return false;
-        }
+        },
       };
-    }
+    },
   });
 };
 
 /**
  * Hook to manage navigation between title and main editors
- * 
+ *
  * Creates extension factories for keyboard navigation between editors
  * and maintains references to both editors
- * 
+ *
  * @returns Object with editor setters and extensions
  */
 export const useEditorNavigation = () => {
   // Create refs to store editor instances
   const titleEditorRef = useRef<Editor | null>(null);
   const mainEditorRef = useRef<Editor | null>(null);
-  
+
   // Create stable getter functions
   const getTitleEditor = useCallback(() => titleEditorRef.current, []);
   const getMainEditor = useCallback(() => mainEditorRef.current, []);
-  
+
   // Create stable setter functions
   const setTitleEditor = useCallback((editor: Editor | null) => {
     titleEditorRef.current = editor;
   }, []);
-  
+
   const setMainEditor = useCallback((editor: Editor | null) => {
     mainEditorRef.current = editor;
   }, []);
-  
+
   // Create extension factories that access editor refs
   const titleNavigationExtension = createTitleNavigationExtension(getMainEditor);
   const mainNavigationExtension = createMainNavigationExtension(getTitleEditor);
-  
+
   return {
     setTitleEditor,
     setMainEditor,
     titleNavigationExtension,
-    mainNavigationExtension
+    mainNavigationExtension,
   };
 };

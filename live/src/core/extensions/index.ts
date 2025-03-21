@@ -1,6 +1,6 @@
 // hocuspocus extensions and core
 import { Database } from "@hocuspocus/extension-database";
-import { Extension } from "@hocuspocus/server";
+import { Document, Extension, storePayload } from "@hocuspocus/server";
 import { Logger } from "@hocuspocus/extension-logger";
 import { setupRedisExtension } from "@/core/extensions/redis";
 // types
@@ -11,6 +11,7 @@ import { catchAsync } from "@/core/helpers/error-handling/error-handler";
 import { handleError } from "@/core/helpers/error-handling/error-factory";
 // document handlers
 import { getDocumentHandler } from "../handlers/document-handlers";
+import { extractTextFromHTML } from "./title-update/title-utils";
 
 export const getExtensions: () => Promise<Extension[]> = async () => {
   const extensions: Extension[] = [
@@ -78,15 +79,14 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
         state,
         documentName: pageId,
         requestParameters,
-      }: {
+        document,
+      }: Partial<storePayload> & {
         context: HocusPocusServerContext;
-        state: Buffer;
         documentName: TDocumentTypes;
-        requestParameters: URLSearchParams;
       }) => {
-        const { agentId } = context as HocusPocusServerContext;
+        const { agentId, documentType } = context as HocusPocusServerContext;
         const params = requestParameters;
-        const documentType = params.get("documentType")?.toString() as TDocumentTypes | undefined;
+        const title = extractTextFromHTML(document?.getXmlFragment("title")?.toJSON());
 
         catchAsync(
           async () => {
@@ -107,6 +107,7 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
               pageId,
               state,
               params,
+              title,
             });
           },
           {
