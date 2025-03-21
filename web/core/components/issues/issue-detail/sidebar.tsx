@@ -57,8 +57,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const projectDetails = getProjectById(issue.project_id);
   const stateDetails = getStateById(issue.state_id);
   const customProperties = issue?.custom_properties || [];
-  const issue_type_id = issue?.issue_type_id || "afd30f86-5ae5-428c-aa3a-e633ea973740";
-  console.log("issue_type_id in sidebar.tsx is", issue_type_id);
+  const issue_type_id = issue?.type_id || "afd30f86-5ae5-428c-aa3a-e633ea973740";
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
