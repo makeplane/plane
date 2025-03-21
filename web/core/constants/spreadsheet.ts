@@ -215,7 +215,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetStandardPropertyColumn,
   },
   trip_reference_number: {
-    title: "Trip Reference Number",
+    title: "Trip Ref Number",
     ascendingOrderKey: "trip_reference_number",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-trip_reference_number",
