@@ -105,6 +105,7 @@ export const SidebarDropdown = observer(() => {
         {({ open }) => (
           <>
             <Menu.Button
+              disabled={true}
               className={cn(
                 "group/menu-button flex items-center justify-between gap-1 p-1 truncate rounded text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:outline-none",
                 {
