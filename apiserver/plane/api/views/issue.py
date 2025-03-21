@@ -1194,7 +1194,7 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
         except Project.DoesNotExist:
             return Response({"error": "Project not found."}, status=status.HTTP_404_NOT_FOUND)
         epoch_timestamp = int(timezone.now().timestamp())
-        issue_activity(
+        issue_activity.delay(
             type="custom_property.activity.updated",
             requested_data=requested_data,
             actor_id=actor_id,
@@ -1265,7 +1265,7 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
         issue_id_str = str(issue_id) if issue_id else "Unknown issue ID"
         project_id_str = str(issue.project.id)
         epoch_timestamp = int(timezone.now().timestamp())
-        issue_activity(
+        issue_activity.delay(
             type="custom_property.activity.created",
             requested_data=requested_data,
             actor_id=actor_id,
