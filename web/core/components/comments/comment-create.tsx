@@ -55,10 +55,15 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
       .createComment(formData)
       .then(async () => {
         if (uploadedAssetIds.length > 0) {
-          // TODO: WHat is this
-          // await fileService.updateBulkCommentAssetsUploadStatus(workspaceSlug, entityId, res?.id, {
-          //   asset_ids: uploadedAssetIds,
-          // });
+          if (projectId) {
+            await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId.toString(), entityId, {
+              asset_ids: uploadedAssetIds,
+            });
+          } else {
+            await fileService.updateBulkWorkspaceAssetsUploadStatus(workspaceSlug, entityId, {
+              asset_ids: uploadedAssetIds,
+            });
+          }
           setUploadedAssetIds([]);
         }
       })
@@ -90,7 +95,6 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
             control={control}
             render={({ field: { value, onChange } }) => (
               <LiteTextEditor
-                projectId={(projectId as string) ?? ""}
                 workspaceId={workspaceId}
                 id={"add_comment_" + entityId}
                 value={"<p></p>"}
@@ -102,7 +106,7 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
                 }}
                 ref={editorRef}
                 initialValue={value ?? "<p></p>"}
-                containerClassName="min-h-min"
+                containerClassName="min-h-min [&_p]:!p-0 [&_p]:!text-base"
                 onChange={(comment_json, comment_html) => onChange(comment_html)}
                 accessSpecifier={accessValue ?? EIssueCommentAccessSpecifier.INTERNAL}
                 handleAccessChange={onAccessChange}
@@ -113,6 +117,7 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
                   return asset_id;
                 }}
                 showToolbarInitially={showToolbarInitially}
+                parentClassName="p-2"
               />
             )}
           />
