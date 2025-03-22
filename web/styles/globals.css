@@ -1,4 +1,5 @@
 @import url("fonts/main.css");
+@import url("animations.css");
 
 @tailwind base;
 @tailwind components;

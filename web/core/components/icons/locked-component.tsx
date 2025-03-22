@@ -12,7 +12,11 @@ export const LockedComponent = (props: { toolTipContent?: string }) => {
 
   return (
     <>
-      {toolTipContent ? <Tooltip tooltipContent={toolTipContent}>{lockedComponent}</Tooltip> : <>{lockedComponent}</>}
+      {toolTipContent === "Lock" ? (
+        <Tooltip tooltipContent={toolTipContent}>{lockedComponent}</Tooltip>
+      ) : (
+        <>{lockedComponent}</>
+      )}
     </>
   );
 };
