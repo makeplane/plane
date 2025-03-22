@@ -3,6 +3,9 @@ events {
 
 http {
     sendfile on;
+    chunked_transfer_encoding on;
+    client_body_buffer_size 10M;
+    client_max_body_size 50M;
 
     server {
         listen 80;
