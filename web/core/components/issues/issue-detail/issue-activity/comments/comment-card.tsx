@@ -2,8 +2,9 @@
 
 import { FC, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { useRouter, usePathname } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { Check, Globe2, Lock, Pencil, Trash2, X } from "lucide-react";
+import { Check, Globe2, Lock, Pencil, Trash2, X, Link } from "lucide-react";
 // plane constants
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
@@ -13,13 +14,14 @@ import { useTranslation } from "@plane/i18n";
 // plane types
 import { TIssueComment } from "@plane/types";
 // plane ui
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // plane utils
 import { cn } from "@plane/utils";
 // components
 import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
 // helpers
-import { isCommentEmpty } from "@/helpers/string.helper";
+import { HIGHLIGHT_CLASS } from "@/components/issues/issue-layouts/utils";
+import { copyUrlToClipboard, isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetail, useUser, useWorkspace } from "@/hooks/store";
 // components
@@ -96,8 +98,42 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
     }
   }, [isEditing, setFocus]);
 
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash === `#comment-${commentId}`) {
+      setTimeout(() => {
+        const element = document.getElementById(`comment-${commentId}`);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
+          element.classList.add(HIGHLIGHT_CLASS);
+          setTimeout(() => {
+            element.classList.remove(HIGHLIGHT_CLASS);
+          }, 2000);
+        }
+      }, 100);
+    }
+  }, [commentId]);
+
   if (!comment || !currentUser) return <></>;
 
+  const pathName = usePathname();
+  const handleCommentLink = (id: string) => {
+    let path = pathName;
+    if (path.startsWith("/")) {
+      path = path.slice(1);
+    }
+    if (path.endsWith("/")) {
+      path = path.slice(0, -1);
+    }
+    const commentUrl = path + `#comment-${id}`;
+    copyUrlToClipboard(commentUrl).then(() =>
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Link copied",
+        message: "Comment link copied to clipboard",
+      })
+    );
+  };
   return (
     <IssueCommentBlock
       commentId={commentId}
@@ -105,6 +141,10 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
         <>
           {!disabled && currentUser?.id === comment.actor && (
             <CustomMenu ellipsis closeOnSelect>
+              <CustomMenu.MenuItem onClick={() => handleCommentLink(commentId)} className="flex items-center gap-1">
+                <Link className="flex-shrink-0 size-3" />
+                {t("common.actions.copy_link")}
+              </CustomMenu.MenuItem>
               <CustomMenu.MenuItem onClick={() => setIsEditing(true)} className="flex items-center gap-1">
                 <Pencil className="flex-shrink-0 size-3" />
                 {t("common.actions.edit")}
