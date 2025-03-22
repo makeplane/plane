@@ -408,14 +408,12 @@ p.editor-paragraph-block {
     padding-top: var(--paragraph-padding-top);
   }
 
-  &:not(td p.editor-paragraph-block, th p.editor-paragraph-block) {
-    &:last-child {
-      padding-bottom: var(--paragraph-padding-bottom);
-    }
+  &:last-child {
+    padding-bottom: 4px;
+  }
 
-    &:not(:last-child) {
-      padding-bottom: var(--paragraph-padding-between);
-    }
+  &:not(:last-child) {
+    padding-bottom: 8px;
   }
 
   font-size: var(--font-size-regular);
@@ -423,7 +421,7 @@ p.editor-paragraph-block {
 }
 
 p.editor-paragraph-block + p.editor-paragraph-block {
-  padding-top: var(--paragraph-padding-between) !important;
+  padding-top: 8px !important;
 }
 
 .prose :where(ol):not(:where([class~="not-prose"], [class~="not-prose"] *)) li p.editor-paragraph-block,

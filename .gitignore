@@ -85,3 +85,6 @@ deploy/selfhost/plane-app/
 ## Storybook
 *storybook.log
 output.css
+
+dev-server
+dev-editor

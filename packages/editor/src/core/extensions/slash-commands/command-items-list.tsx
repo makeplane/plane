@@ -37,6 +37,10 @@ import {
   insertImage,
   insertCallout,
   setText,
+  toggleFlatTaskList,
+  toggleFlatBulletList,
+  toggleFlatOrderedList,
+  toggleFlatToggleList,
 } from "@/helpers/editor-commands";
 // types
 import { CommandProps, ISlashCommandItem, TSlashCommandSectionKeys } from "@/types";
@@ -129,7 +133,7 @@ export const getSlashCommandFilteredSections =
             description: "Track tasks with a to-do list.",
             searchTerms: ["todo", "task", "list", "check", "checkbox"],
             icon: <ListTodo className="size-3.5" />,
-            command: ({ editor, range }) => toggleTaskList(editor, range),
+            command: ({ editor, range }) => toggleFlatTaskList(editor, range),
           },
           {
             commandKey: "bulleted-list",
@@ -138,7 +142,16 @@ export const getSlashCommandFilteredSections =
             description: "Create a simple bullet list.",
             searchTerms: ["unordered", "point"],
             icon: <List className="size-3.5" />,
-            command: ({ editor, range }) => toggleBulletList(editor, range),
+            command: ({ editor, range }) => toggleFlatBulletList(editor, range),
+          },
+          {
+            commandKey: "toggle-list",
+            key: "toggle-list",
+            title: "Toggle list",
+            description: "Create a toggle list.",
+            searchTerms: ["toggle"],
+            icon: <ListOrdered className="size-3.5" />,
+            command: ({ editor, range }) => toggleFlatToggleList(editor, range),
           },
           {
             commandKey: "numbered-list",
@@ -147,7 +160,7 @@ export const getSlashCommandFilteredSections =
             description: "Create a list with numbering.",
             searchTerms: ["ordered"],
             icon: <ListOrdered className="size-3.5" />,
-            command: ({ editor, range }) => toggleOrderedList(editor, range),
+            command: ({ editor, range }) => toggleFlatOrderedList(editor, range),
           },
           {
             commandKey: "table",
