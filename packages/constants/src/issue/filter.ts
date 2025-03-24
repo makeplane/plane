@@ -339,6 +339,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
           "-updated_at",
           "start_date",
           "-priority",
+          "target_date",
         ],
         type: [null, "active", "backlog"],
       },
