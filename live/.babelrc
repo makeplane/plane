@@ -15,7 +15,7 @@
         "root": ["./src"],
         "alias": {
           "@/core": "./src/core",
-          "@/plane-live": "./src/ce"
+          "@/plane-live": "./src/ee"
         }
       }
     ]

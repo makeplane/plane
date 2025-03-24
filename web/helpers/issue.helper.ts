@@ -328,8 +328,8 @@ export const generateWorkItemLink = ({
   isEpic?: boolean;
 }): string => {
   const archiveIssueLink = `/${workspaceSlug}/projects/${projectId}/archives/issues/${issueId}`;
-  const epicLink = `/${workspaceSlug}/projects/${projectId}/epics/${issueId}`;
   const workItemLink = `/${workspaceSlug}/browse/${projectIdentifier}-${sequenceId}/`;
+  const epicLink = workItemLink;
 
   return isArchived ? archiveIssueLink : isEpic ? epicLink : workItemLink;
 };
