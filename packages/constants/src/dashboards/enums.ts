@@ -34,6 +34,8 @@ export enum EWidgetXAxisProperty {
   TARGET_DATE = "TARGET_DATE",
   CREATED_AT = "CREATED_AT",
   COMPLETED_AT = "COMPLETED_AT",
+  WORK_ITEM_TYPES = "WORK_ITEM_TYPES",
+  PROJECTS = "PROJECTS",
 }
 
 export enum EWidgetXAxisDateGrouping {

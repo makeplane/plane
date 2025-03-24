@@ -112,6 +112,8 @@ class Widget(BaseModel):
         TARGET_DATE = "TARGET_DATE", "Target Date"
         CREATED_AT = "CREATED_AT", "Created At"
         COMPLETED_AT = "COMPLETED_AT", "Completed At"
+        WORK_ITEM_TYPES = "WORK_ITEM_TYPES", "Work Item Types"
+        PROJECTS = "PROJECTS", "Projects"
 
     class XAxisDateGroupingEnum(models.TextChoices):
         DAY = "DAY", "Day"

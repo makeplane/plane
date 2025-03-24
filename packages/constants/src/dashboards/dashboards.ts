@@ -298,6 +298,12 @@ export const WIDGET_X_AXIS_PROPERTIES_LIST: Record<
   [EWidgetXAxisProperty.PRIORITY]: {
     i18n_label: "common.priority",
   },
+  [EWidgetXAxisProperty.WORK_ITEM_TYPES]: {
+    i18n_label: "work_item_types.label",
+  },
+  [EWidgetXAxisProperty.PROJECTS]: {
+    i18n_label: "common.project",
+  },
   [EWidgetXAxisProperty.START_DATE]: {
     i18n_label: "start_date",
   },
