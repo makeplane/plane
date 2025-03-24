@@ -24,7 +24,7 @@ export const WorkspaceActiveCycleHeader = observer(() => {
           }
         />
       </Breadcrumbs>
-      <UpgradeBadge size="md" />
+      <UpgradeBadge size="md" flag="WORKSPACE_ACTIVE_CYCLES" />
     </Header.LeftItem>
   </Header>
   );

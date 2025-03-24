@@ -1,5 +1,4 @@
 import os
-import uuid
 
 # third party imports
 from celery import shared_task
@@ -27,45 +26,13 @@ def posthogConfiguration():
 
 
 @shared_task
-def auth_events(user, email, user_agent, ip, event_name, medium, first_time):
+def track_event(email, event_name, properties):
     try:
         POSTHOG_API_KEY, POSTHOG_HOST = posthogConfiguration()
 
         if POSTHOG_API_KEY and POSTHOG_HOST:
             posthog = Posthog(POSTHOG_API_KEY, host=POSTHOG_HOST)
-            posthog.capture(
-                email,
-                event=event_name,
-                properties={
-                    "event_id": uuid.uuid4().hex,
-                    "user": {"email": email, "id": str(user)},
-                    "device_ctx": {"ip": ip, "user_agent": user_agent},
-                    "medium": medium,
-                    "first_time": first_time,
-                },
-            )
-    except Exception as e:
-        log_exception(e)
-        return
-
-
-@shared_task
-def workspace_invite_event(user, email, user_agent, ip, event_name, accepted_from):
-    try:
-        POSTHOG_API_KEY, POSTHOG_HOST = posthogConfiguration()
-
-        if POSTHOG_API_KEY and POSTHOG_HOST:
-            posthog = Posthog(POSTHOG_API_KEY, host=POSTHOG_HOST)
-            posthog.capture(
-                email,
-                event=event_name,
-                properties={
-                    "event_id": uuid.uuid4().hex,
-                    "user": {"email": email, "id": str(user)},
-                    "device_ctx": {"ip": ip, "user_agent": user_agent},
-                    "accepted_from": accepted_from,
-                },
-            )
+            posthog.capture(email, event=event_name, properties=properties)
     except Exception as e:
         log_exception(e)
         return

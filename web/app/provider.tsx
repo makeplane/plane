@@ -40,8 +40,8 @@ export const AppProvider: FC<IAppProvider> = (props) => {
       <AppProgressBar height="4px" color="#3F76FF" options={{ showSpinner: false }} shallowRouting />
       <StoreProvider>
         <ThemeProvider themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]} defaultTheme="system">
-          <ToastWithTheme />
           <TranslationProvider>
+            <ToastWithTheme />
             <StoreWrapper>
               <InstanceWrapper>
                 <IntercomProvider>

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 // api service
 import { APIService } from "../api.service";
 
@@ -18,12 +18,14 @@ export class FileUploadService extends APIService {
    * Uploads a file to the specified signed URL
    * @param {string} url - The URL to upload the file to
    * @param {FormData} data - The form data to upload
+   * @param {AxiosRequestConfig} uploadProgressHandler - To track file upload progress
    * @returns {Promise<void>} Promise resolving to void
    * @throws {Error} If the request fails
    */
   async uploadFile(
     url: string,
     data: FormData,
+    uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
   ): Promise<void> {
     this.cancelSource = axios.CancelToken.source();
     return this.post(url, data, {
@@ -32,6 +34,7 @@ export class FileUploadService extends APIService {
       },
       cancelToken: this.cancelSource.token,
       withCredentials: false,
+      onUploadProgress: uploadProgressHandler,
     })
       .then((response) => response?.data)
       .catch((error) => {
