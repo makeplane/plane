@@ -8,6 +8,7 @@ import { EFileAssetType } from "@plane/types/src/enums";
 import { useIssueDetail } from "@/hooks/store";
 // components
 import { InfoSection } from "@/plane-web/components/common/layout/main/sections/info-root";
+import { IssueIdentifier } from "@/plane-web/components/issues";
 // local components
 import { useEpicOperations } from "../helper";
 import { EpicInfoActionItems } from "./info-section/action-items";
@@ -57,6 +58,9 @@ export const EpicInfoSection: FC<Props> = observer((props) => {
         <EpicInfoActionItems workspaceSlug={workspaceSlug} projectId={projectId} epicId={epicId} disabled={disabled} />
       }
       fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
+      identifierElement={
+        <IssueIdentifier issueId={epicId} projectId={projectId} size="md" enableClickToCopyIdentifier />
+      }
       disabled={disabled}
     />
   );
