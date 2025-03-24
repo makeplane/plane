@@ -24,7 +24,7 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
 
   const { workspaceUserInfo } = useUserPermissions();
   const pathname = usePathname();
-  const [workspaceSlug, suffix, route, _] = pathname.slice(1, -1).split("/");
+  const [workspaceSlug, suffix, route] = pathname.replace(/^\/|\/$/g, "").split("/"); // Regex removes leading and trailing slashes
 
   // derived values
   const userWorkspaceRole = workspaceUserInfo?.[workspaceSlug.toString()]?.role;
