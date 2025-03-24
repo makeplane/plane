@@ -84,7 +84,13 @@ class GlobalSearchEndpoint(BaseAPIView):
             workspace__slug=slug
         )
         if created_by_username:
-            issues = issues.filter(created_by__username=created_by_username)
+            created_by_usernames = [
+                username
+                for username in created_by_username.split(",")
+                if username.strip() and username != "null"
+            ]
+            if created_by_usernames:
+                issues = issues.filter(created_by__username__in=created_by_usernames)
 
         if workspace_search == "false" and project_id:
             issues = issues.filter(project_id=project_id)
@@ -232,7 +238,7 @@ class GlobalSearchEndpoint(BaseAPIView):
         workspace_search = request.query_params.get(
             "workspace_search", "false"
         )
-        created_by_username = request.query_params.get("created_by_username", False)
+        created_by_username = request.headers.get("X-Assume-Role", False)
         project_id = request.query_params.get("project_id", False)
         if not query:
             return Response(
