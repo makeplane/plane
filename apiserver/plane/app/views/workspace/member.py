@@ -70,10 +70,11 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if workspace_member.role > int(request.data.get("role")):
-            _ = ProjectMember.objects.filter(
+        # If a user is moved to a guest role he can't have any other role in projects
+        if "role" in request.data and int(request.data.get("role")) == 5:
+            ProjectMember.objects.filter(
                 workspace__slug=slug, member_id=workspace_member.member_id
-            ).update(role=int(request.data.get("role")))
+            ).update(role=5)
 
         if "role" in request.data:
             allowed, _, _ = workspace_member_check(
