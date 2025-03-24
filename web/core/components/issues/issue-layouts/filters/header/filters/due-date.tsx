@@ -12,7 +12,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterTargetDate: React.FC<Props> = observer((props) => {
+export const FilterDueDate: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -46,7 +46,7 @@ export const FilterTargetDate: React.FC<Props> = observer((props) => {
         />
       )}
       <FilterHeader
-        title={`Target date${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`Due date${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
