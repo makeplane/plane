@@ -54,8 +54,11 @@ export const getReferredIssues = (title: string, description: string): LinkedIss
   };
 
   const titleRefs = createIssueReference(title) ?? [];
-  const closingReferences = uniqueReferences(closingRefs.map(createIssueReference).filter((ref) => ref !== null).concat(titleRefs));
-  const nonClosingReferences = uniqueReferences(nonClosingRefs.map(createIssueReference).filter((ref) => ref !== null));
+  const closingReferences = uniqueReferences(closingRefs.map(createIssueReference)
+    .filter((ref) => ref !== null).concat(titleRefs));
+  const nonClosingReferences = uniqueReferences(nonClosingRefs.map(createIssueReference)
+    .filter((ref) => ref !== null)
+    .filter((ref) => !closingReferences.some((closingRef) => closingRef.identifier === ref.identifier && closingRef.sequence === ref.sequence)));
 
   return {
     closingReferences,

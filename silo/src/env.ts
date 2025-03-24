@@ -52,6 +52,7 @@ const envSchema = z.object({
   GITHUB_APP_ID: z.string().optional(),
   GITHUB_CLIENT_ID: z.string().optional(),
   GITHUB_CLIENT_SECRET: z.string().optional(),
+  GITHUB_WEBHOOK_SECRET: z.string().optional(),
   GITHUB_PRIVATE_KEY: z.string().optional(),
   // GitLab Env Variables
   GITLAB_CLIENT_ID: z.string().optional(),

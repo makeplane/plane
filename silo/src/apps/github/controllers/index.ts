@@ -1,4 +1,5 @@
-import { Request, Response } from "express";
+import crypto from 'crypto';
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
 import {
   createGithubAuth,
@@ -15,7 +16,7 @@ import { TWorkspaceConnection } from "@plane/types";
 import { env } from "@/env";
 import { createOrUpdateCredentials } from "@/helpers/credential";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, EnsureEnabled, Get, Post, useValidateUserAuthentication } from "@/lib";
+import { Controller, EnsureEnabled, Get, Middleware, Post, useValidateUserAuthentication } from "@/lib";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { integrationTaskManager } from "@/worker";
@@ -573,6 +574,7 @@ export default class GithubController {
 
   /* ------------------- Webhook Endpoints ------------------- */
   @Post("/github-webhook")
+  @Middleware(verifyGithubWebhook as RequestHandler)
   async githubWebhook(req: Request, res: Response) {
     try {
       // Get the event types and the delivery id
@@ -580,19 +582,9 @@ export default class GithubController {
       const deliveryId = req.headers["x-github-delivery"];
 
       const payload = req.body as GithubWebhookPayload;
+      logGithubWebhookPayload(payload, eventType, deliveryId);
 
-      const log = {
-        eventType,
-        deliveryId,
-        installationId: payload?.installation?.id,
-        owner: payload?.repository?.owner?.login,
-        repositoryId: payload?.repository?.id,
-        repositoryName: payload?.repository?.name,
-      };
-
-      console.log(`Github Webhook Payload: ${JSON.stringify(log)}`);
-
-      if (!payload.installation.id) {
+      if (!payload?.installation?.id) {
         return res.status(400).send({
           message: "Installation ID is required to process the webhook",
         });
@@ -730,30 +722,95 @@ export default class GithubController {
       responseHandler(res, 500, error);
     }
   }
+
   /* ------------------- Webhook Endpoints ------------------- */
 }
 
-function parseAccessToken(response: string): string {
+export const logGithubWebhookPayload = (
+  payload: any,
+  eventType: string | string[] | undefined,
+  deliveryId: string | string[] | undefined
+): void => {
+  const log = {
+    eventType,
+    deliveryId,
+    installationId: payload?.installation?.id,
+    owner: payload?.repository?.owner?.login,
+    repositoryId: payload?.repository?.id,
+    repositoryName: payload?.repository?.name,
+  };
+
+  console.log(`Github Webhook Payload: ${JSON.stringify(log)}`);
+};
+
+function verifyGithubWebhook(req: Request, res: Response, next: NextFunction) {
   try {
-    // Split the response into key-value pairs
-    const pairs = response.split("&");
+    const signature = req.headers['x-hub-signature-256'];
+    const event = req.headers['x-github-event'];
+    const id = req.headers['x-github-delivery'];
 
-    // Find the pair that starts with "access_token"
-    const accessTokenPair = pairs.find((pair) => pair.startsWith("access_token="));
+    const payload = JSON.stringify(req.body);
 
-    if (!accessTokenPair) {
-      throw new Error("Access token not found in the response");
+    // Make sure all required headers are present
+    if (!signature || !event || !id) {
+      logGithubWebhookPayload(req.body, event, id);
+      return res.status(401).json({
+        error: 'Missing required headers'
+      });
     }
 
-    // Split the pair and return the value (index 1)
-    const [, accessToken] = accessTokenPair.split("=");
-
-    if (!accessToken) {
-      throw new Error("Access token is empty");
+    // Get the raw body of the request
+    if (!payload) {
+      logGithubWebhookPayload(req.body, event, id);
+      return res.status(400).json({
+        error: 'Request body empty'
+      });
     }
 
-    return accessToken;
+    // Calculate expected signature
+    const hmac = crypto.createHmac('sha256', env.GITHUB_WEBHOOK_SECRET ?? "");
+    const calculatedSignature = 'sha256=' + hmac.update(payload).digest('hex');
+
+    // Constant time comparison to prevent timing attacks
+    const verified = crypto.timingSafeEqual(
+      Buffer.from(calculatedSignature),
+      Buffer.from(signature as string)
+    );
+
+    if (!verified) {
+      logGithubWebhookPayload(req.body, event, id);
+      return res.status(401).json({
+        error: 'Invalid signature'
+      });
+    }
+
+    // Signature is valid, proceed
+    next();
   } catch (error) {
-    throw error;
+    console.error('Error validating GitHub webhook:', error);
+    return res.status(500).json({
+      error: 'Error validating webhook signature'
+    });
   }
+};
+
+function parseAccessToken(response: string): string {
+  // Split the response into key-value pairs
+  const pairs = response.split("&");
+
+  // Find the pair that starts with "access_token"
+  const accessTokenPair = pairs.find((pair) => pair.startsWith("access_token="));
+
+  if (!accessTokenPair) {
+    throw new Error("Access token not found in the response");
+  }
+
+  // Split the pair and return the value (index 1)
+  const [, accessToken] = accessTokenPair.split("=");
+
+  if (!accessToken) {
+    throw new Error("Access token is empty");
+  }
+
+  return accessToken;
 }
