@@ -24,7 +24,7 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
 
   const { workspaceUserInfo } = useUserPermissions();
   const pathname = usePathname();
-  const { workspaceSlug } = useParams();
+  const [workspaceSlug, suffix, route, _] = pathname.slice(1, -1).split("/");
 
   // derived values
   const userWorkspaceRole = workspaceUserInfo?.[workspaceSlug.toString()]?.role;
@@ -32,7 +32,7 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
     pathname &&
     workspaceSlug &&
     userWorkspaceRole &&
-    WORKSPACE_SETTINGS_ACCESS[pathname.replace(`/${workspaceSlug}`, "").slice(0, -1)]?.includes(
+    WORKSPACE_SETTINGS_ACCESS[route ? `/${suffix}/${route}` : `/${suffix}`]?.includes(
       userWorkspaceRole as EUserWorkspaceRoles
     );
 
