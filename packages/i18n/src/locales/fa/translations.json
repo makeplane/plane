@@ -1,4 +1,23 @@
 {
+  "sidebar": {
+    "projects": "پروژه‌ها",
+    "pages": "صفحات",
+    "new_work_item": "آیتم کاری جدید",
+    "home": "خانه",
+    "your_work": "کارهای شما",
+    "inbox": "صندوق ورودی",
+    "workspace": "فضای کاری",
+    "views": "نمایش‌ها",
+    "analytics": "تحلیل‌ها",
+    "work_items": "آیتم‌های کاری",
+    "cycles": "چرخه‌ها",
+    "modules": "ماژول‌ها",
+    "intake": "ورودی",
+    "drafts": "پیش‌نویس‌ها",
+    "favorites": "مورد علاقه‌ها",
+    "pro": "حرفه‌ای",
+    "upgrade": "ارتقا"
+  },
   "submit": "ارسال",
   "cancel": "لغو",
   "loading": "در حال بارگذاری",
