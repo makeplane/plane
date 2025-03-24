@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-
+import { SWR_KEYS } from "@plane/constants";
 // Support email can be configured by the application
 export const getSupportEmail = (defaultEmail: string = ""): string => defaultEmail;
 
@@ -39,3 +39,16 @@ export const partitionValidIds = (ids: string[], validIds: string[]): { valid: s
 
   return { valid, invalid };
 };
+
+/**
+ * Generates a unique key for SWR cache
+ * @param workspaceSlug - The slug of the workspace
+ * @param label - The label for the cache key
+ * @param params - The parameters for the cache key
+ * @returns The unique key in array format
+ */
+export const getSwrKey = (workspaceSlug: string, label: SWR_KEYS, params: string[] = []) => [
+  label,
+  workspaceSlug,
+  ...params,
+];
