@@ -8,6 +8,8 @@ import { logger } from "@plane/logger";
 import { serverConfig } from "@/config/server-config";
 // error handling
 import { handleError } from "@/core/helpers/error-handling/error-factory";
+// shutdown manager
+import { ShutdownManager } from "@/core/shutdown-manager";
 
 /**
  * ProcessManager handles graceful process termination and resource cleanup
@@ -15,6 +17,7 @@ import { handleError } from "@/core/helpers/error-handling/error-factory";
 export class ProcessManager {
   private readonly hocusPocusServer: Hocuspocus;
   private readonly httpServer: Server;
+  private shutdownManager: ShutdownManager;
 
   /**
    * Initialize the process manager
@@ -24,6 +27,7 @@ export class ProcessManager {
   constructor(hocusPocusServer: Hocuspocus, httpServer: Server) {
     this.hocusPocusServer = hocusPocusServer;
     this.httpServer = httpServer;
+    this.shutdownManager = ShutdownManager.getInstance();
   }
 
   /**
@@ -67,54 +71,14 @@ export class ProcessManager {
    */
   private getGracefulTerminationHandler(): () => Promise<void> {
     return async () => {
-      logger.info("Starting graceful termination...");
-
-      let hasTerminationCompleted = false;
-
-      // Create a timeout that will force exit if termination takes too long
-      const forceExitTimeout = setTimeout(() => {
-        if (!hasTerminationCompleted) {
-          logger.error("Forcing termination after timeout - some connections may not have closed gracefully.");
-          process.exit(1);
-        }
-      }, serverConfig.terminationTimeout);
-
-      // Destroy Hocuspocus server first
-      logger.info("Stopping Hocuspocus server...");
-      let hocuspocusStopSuccessful = false;
-
-      try {
-        await this.hocusPocusServer.destroy();
-        hocuspocusStopSuccessful = true;
-        logger.info("HocusPocus server WebSocket connections closed gracefully.");
-      } catch (error) {
-        hocuspocusStopSuccessful = false;
-        logger.error("Error during hocuspocus server termination:", error);
-        // Continue with HTTP server termination even if Hocuspocus termination fails
-      } finally {
-        logger.info(
-          `Proceeding to HTTP server termination. Hocuspocus termination ${hocuspocusStopSuccessful ? "was successful" : "had errors"}.`
-        );
+      // Check if ShutdownManager is already handling a shutdown
+      if (this.shutdownManager.isShutdownInProgress()) {
+        logger.info("Shutdown already in progress via ShutdownManager, deferring to its process");
+        return;
       }
 
-      // Close HTTP server
-      try {
-        logger.info("Initiating HTTP server termination...");
-        this.httpServer.close(() => {
-          logger.info("HTTP server closed gracefully - all connections ended.");
-
-          // Clear the timeout since we're terminating gracefully
-          clearTimeout(forceExitTimeout);
-          hasTerminationCompleted = true;
-
-          process.exit(0);
-        });
-        logger.info("HTTP server close initiated, waiting for connections to end...");
-      } catch (error) {
-        logger.error("Error during HTTP server termination:", error);
-        clearTimeout(forceExitTimeout);
-        process.exit(1);
-      }
+      logger.info("Signal received, delegating to ShutdownManager for graceful termination");
+      await this.shutdownManager.shutdown("Process termination signal received", 0);
     };
   }
 } 
