@@ -2,6 +2,7 @@ export type { ISvgIcons } from "./type";
 export * from "./cycle";
 export * from "./module";
 export * from "./state";
+export * from "./widget";
 export * from "./archive-icon";
 export * from "./blocked-icon";
 export * from "./blocker-icon";

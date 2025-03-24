@@ -81,15 +81,6 @@ export const DashboardsFeatureFlagFallback = observer(() => {
               {t("common.upgrade_cta.talk_to_sales")}
             </a>
           </div>
-          <span className="absolute left-0 top-0">
-            <Image
-              src={`/workspace-active-cycles/cta-l-1-${isDarkMode ? "dark" : "light"}.webp`}
-              height={125}
-              width={125}
-              className="rounded-xl"
-              alt="l-1"
-            />
-          </span>
         </div>
         <div className="relative hidden w-1/2 lg:block">
           <span className="absolute -bottom-px -right-px rounded-br-xl overflow-hidden">

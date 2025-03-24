@@ -62,7 +62,7 @@ export const WidgetConfigSidebarStyleConfig: React.FC<Props> = observer((props) 
       >
         <div className="mt-3 flex flex-col gap-y-4">
           <WidgetConfigSidebarAppearanceConfig handleConfigUpdate={handleConfigUpdate} />
-          {selectedChartType !== EWidgetChartTypes.TEXT && (
+          {selectedChartType !== EWidgetChartTypes.NUMBER && (
             <WidgetConfigSidebarGuidesConfig handleConfigUpdate={handleConfigUpdate} />
           )}
         </div>

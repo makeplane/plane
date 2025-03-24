@@ -13,7 +13,7 @@ type Props = {
   handleConfigUpdate: (data: Partial<TDashboardWidgetConfig>) => Promise<void>;
 };
 
-export const TextAppearanceConfig: React.FC<Props> = (props) => {
+export const NumberAppearanceConfig: React.FC<Props> = (props) => {
   const { handleConfigUpdate } = props;
   // translation
   const { t } = useTranslation();
@@ -23,7 +23,7 @@ export const TextAppearanceConfig: React.FC<Props> = (props) => {
   return (
     <>
       <WidgetPropertyWrapper
-        title={t("dashboards.widget.chart_types.text.alignment.label")}
+        title={t("dashboards.widget.chart_types.number.alignment.label")}
         input={
           <Controller
             control={control}
@@ -34,7 +34,7 @@ export const TextAppearanceConfig: React.FC<Props> = (props) => {
                 <CustomSelect
                   customButton={
                     <WidgetConfigSelectButton
-                      placeholder={t("dashboards.widget.chart_types.text.alignment.placeholder")}
+                      placeholder={t("dashboards.widget.chart_types.number.alignment.placeholder")}
                       title={t(selectedAlignment?.i18n_label ?? "")}
                       value={!!selectedAlignment}
                     />
@@ -66,7 +66,7 @@ export const TextAppearanceConfig: React.FC<Props> = (props) => {
               onChange(val);
               handleConfigUpdate({ text_color: val });
             }}
-            title={t("dashboards.widget.chart_types.text.text_color")}
+            title={t("dashboards.widget.chart_types.number.text_color")}
             value={value}
           />
         )}

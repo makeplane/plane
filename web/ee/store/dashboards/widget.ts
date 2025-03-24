@@ -163,7 +163,7 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
       if (!this.x_axis_property) return "x_axis_property";
       if (!this.y_axis_metric) return "y_axis_metric";
     }
-    if (chartType === EWidgetChartTypes.TEXT) {
+    if (chartType === EWidgetChartTypes.NUMBER) {
       if (!this.y_axis_metric) return "y_axis_metric";
     }
     return null;

@@ -63,7 +63,7 @@ export type TPieChartWidgetConfig = {
   show_tooltip?: boolean;
 };
 // text
-export type TTextWidgetConfig = {
+export type TNumberWidgetConfig = {
   text_alignment?: TWidgetTextAlignment;
   text_color?: string;
 };
@@ -74,7 +74,7 @@ export type TDashboardWidgetConfig =
   | TAreaChartWidgetConfig
   | TDonutChartWidgetConfig
   | TPieChartWidgetConfig
-  | TTextWidgetConfig;
+  | TNumberWidgetConfig;
 
 export type TDashboardWidget = {
   chart_model: EWidgetChartModels | undefined;

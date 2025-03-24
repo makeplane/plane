@@ -10,6 +10,7 @@ import {
   EWidgetXAxisProperty,
   EWidgetYAxisMetric,
 } from "./enums";
+import { E_FEATURE_FLAGS } from "../feature-flag";
 
 export const WIDGET_GRID_BREAKPOINTS: Record<EWidgetGridBreakpoints, number> = {
   [EWidgetGridBreakpoints.XXS]: 0,
@@ -52,21 +53,18 @@ export const WIDGET_CHART_TYPES_LIST: {
     i18n_long_label: "dashboards.widget.chart_types.pie_chart.long_label",
   },
   {
-    key: EWidgetChartTypes.TEXT,
-    i18n_short_label: "dashboards.widget.chart_types.text.short_label",
-    i18n_long_label: "dashboards.widget.chart_types.text.long_label",
+    key: EWidgetChartTypes.NUMBER,
+    i18n_short_label: "dashboards.widget.chart_types.number.short_label",
+    i18n_long_label: "dashboards.widget.chart_types.number.long_label",
   },
 ];
 
 export const DEFAULT_WIDGET_CHART_TYPE_PAYLOAD: {
   [ChartType in EWidgetChartTypes]: {
     [ModelType in EWidgetChartModels]?: Partial<TDashboardWidget>;
-  } & {
-    default: EWidgetChartModels;
   } & Partial<TDashboardWidget>;
 } = {
   [EWidgetChartTypes.BAR_CHART]: {
-    default: EWidgetChartModels.BASIC,
     config: {
       orientation: "vertical",
       show_legends: true,
@@ -89,7 +87,6 @@ export const DEFAULT_WIDGET_CHART_TYPE_PAYLOAD: {
     },
   },
   [EWidgetChartTypes.LINE_CHART]: {
-    default: EWidgetChartModels.BASIC,
     config: {
       line_type: "solid",
       smoothing: true,
@@ -109,7 +106,6 @@ export const DEFAULT_WIDGET_CHART_TYPE_PAYLOAD: {
     },
   },
   [EWidgetChartTypes.AREA_CHART]: {
-    default: EWidgetChartModels.BASIC,
     config: {
       opacity: 0.2,
       show_border: true,
@@ -137,7 +133,6 @@ export const DEFAULT_WIDGET_CHART_TYPE_PAYLOAD: {
     },
   },
   [EWidgetChartTypes.DONUT_CHART]: {
-    default: EWidgetChartModels.BASIC,
     config: {
       center_value: true,
       show_legends: true,
@@ -155,7 +150,6 @@ export const DEFAULT_WIDGET_CHART_TYPE_PAYLOAD: {
     },
   },
   [EWidgetChartTypes.PIE_CHART]: {
-    default: EWidgetChartModels.BASIC,
     config: {
       show_legends: true,
       show_tooltip: true,
@@ -169,8 +163,7 @@ export const DEFAULT_WIDGET_CHART_TYPE_PAYLOAD: {
       },
     },
   },
-  [EWidgetChartTypes.TEXT]: {
-    default: EWidgetChartModels.BASIC,
+  [EWidgetChartTypes.NUMBER]: {
     [EWidgetChartModels.BASIC]: {
       config: {
         text_alignment: "left",
@@ -184,64 +177,95 @@ export const WIDGET_CHART_MODELS_LIST: Record<
   EWidgetChartTypes,
   {
     value: EWidgetChartModels;
-    i18n_label: string;
+    i18n_short_label: string;
+    i18n_long_label: string;
+    flags: E_FEATURE_FLAGS[];
   }[]
 > = {
   [EWidgetChartTypes.BAR_CHART]: [
     {
       value: EWidgetChartModels.BASIC,
-      i18n_label: "dashboards.widget.chart_types.bar_chart.chart_models.basic",
+      i18n_short_label: "dashboards.widget.chart_types.bar_chart.chart_models.basic.short_label",
+      i18n_long_label: "dashboards.widget.chart_types.bar_chart.chart_models.basic.long_label",
+      flags: [E_FEATURE_FLAGS.DASHBOARDS, E_FEATURE_FLAGS.DASHBOARDS_ADVANCED],
     },
     {
       value: EWidgetChartModels.STACKED,
-      i18n_label: "dashboards.widget.chart_types.bar_chart.chart_models.stacked",
+      i18n_short_label: "dashboards.widget.chart_types.bar_chart.chart_models.stacked.short_label",
+      i18n_long_label: "dashboards.widget.chart_types.bar_chart.chart_models.stacked.long_label",
+      flags: [E_FEATURE_FLAGS.DASHBOARDS_ADVANCED],
     },
     {
       value: EWidgetChartModels.GROUPED,
-      i18n_label: "dashboards.widget.chart_types.bar_chart.chart_models.grouped",
+      i18n_short_label: "dashboards.widget.chart_types.bar_chart.chart_models.grouped.short_label",
+      i18n_long_label: "dashboards.widget.chart_types.bar_chart.chart_models.grouped.long_label",
+      flags: [E_FEATURE_FLAGS.DASHBOARDS_ADVANCED],
     },
   ],
   [EWidgetChartTypes.LINE_CHART]: [
     {
       value: EWidgetChartModels.BASIC,
-      i18n_label: "dashboards.widget.chart_types.line_chart.chart_models.basic",
+      i18n_short_label: "dashboards.widget.chart_types.line_chart.chart_models.basic.short_label",
+      i18n_long_label: "dashboards.widget.chart_types.line_chart.chart_models.basic.long_label",
+      flags: [E_FEATURE_FLAGS.DASHBOARDS, E_FEATURE_FLAGS.DASHBOARDS_ADVANCED],
     },
     {
       value: EWidgetChartModels.MULTI_LINE,
-      i18n_label: "dashboards.widget.chart_types.line_chart.chart_models.multi_line",
+      i18n_short_label: "dashboards.widget.chart_types.line_chart.chart_models.multi_line.short_label",
+      i18n_long_label: "dashboards.widget.chart_types.line_chart.chart_models.multi_line.long_label",
+      flags: [E_FEATURE_FLAGS.DASHBOARDS_ADVANCED],
     },
   ],
   [EWidgetChartTypes.AREA_CHART]: [
     {
       value: EWidgetChartModels.BASIC,
-      i18n_label: "dashboards.widget.chart_types.area_chart.chart_models.basic",
+      i18n_short_label: "dashboards.widget.chart_types.area_chart.chart_models.basic.short_label",
+      i18n_long_label: "dashboards.widget.chart_types.area_chart.chart_models.basic.long_label",
+      flags: [E_FEATURE_FLAGS.DASHBOARDS, E_FEATURE_FLAGS.DASHBOARDS_ADVANCED],
     },
     {
       value: EWidgetChartModels.STACKED,
-      i18n_label: "dashboards.widget.chart_types.area_chart.chart_models.stacked",
+      i18n_short_label: "dashboards.widget.chart_types.area_chart.chart_models.stacked.short_label",
+      i18n_long_label: "dashboards.widget.chart_types.area_chart.chart_models.stacked.long_label",
+      flags: [E_FEATURE_FLAGS.DASHBOARDS_ADVANCED],
     },
     {
       value: EWidgetChartModels.COMPARISON,
-      i18n_label: "dashboards.widget.chart_types.area_chart.chart_models.comparison",
+      i18n_short_label: "dashboards.widget.chart_types.area_chart.chart_models.comparison.short_label",
+      i18n_long_label: "dashboards.widget.chart_types.area_chart.chart_models.comparison.long_label",
+      flags: [E_FEATURE_FLAGS.DASHBOARDS_ADVANCED],
     },
   ],
   [EWidgetChartTypes.DONUT_CHART]: [
     {
       value: EWidgetChartModels.BASIC,
-      i18n_label: "dashboards.widget.chart_types.donut_chart.chart_models.basic",
+      i18n_short_label: "dashboards.widget.chart_types.donut_chart.chart_models.basic.short_label",
+      i18n_long_label: "dashboards.widget.chart_types.donut_chart.chart_models.basic.long_label",
+      flags: [E_FEATURE_FLAGS.DASHBOARDS, E_FEATURE_FLAGS.DASHBOARDS_ADVANCED],
     },
     {
       value: EWidgetChartModels.PROGRESS,
-      i18n_label: "dashboards.widget.chart_types.donut_chart.chart_models.progress",
+      i18n_short_label: "dashboards.widget.chart_types.donut_chart.chart_models.progress.short_label",
+      i18n_long_label: "dashboards.widget.chart_types.donut_chart.chart_models.progress.long_label",
+      flags: [E_FEATURE_FLAGS.DASHBOARDS_ADVANCED],
     },
   ],
   [EWidgetChartTypes.PIE_CHART]: [
     {
       value: EWidgetChartModels.BASIC,
-      i18n_label: "dashboards.widget.chart_types.pie_chart.chart_models.basic",
+      i18n_short_label: "dashboards.widget.chart_types.pie_chart.chart_models.basic.short_label",
+      i18n_long_label: "dashboards.widget.chart_types.pie_chart.chart_models.basic.long_label",
+      flags: [E_FEATURE_FLAGS.DASHBOARDS, E_FEATURE_FLAGS.DASHBOARDS_ADVANCED],
     },
   ],
-  [EWidgetChartTypes.TEXT]: [],
+  [EWidgetChartTypes.NUMBER]: [
+    {
+      value: EWidgetChartModels.BASIC,
+      i18n_short_label: "dashboards.widget.chart_types.number.chart_models.basic.short_label",
+      i18n_long_label: "dashboards.widget.chart_types.number.chart_models.basic.long_label",
+      flags: [E_FEATURE_FLAGS.DASHBOARDS, E_FEATURE_FLAGS.DASHBOARDS_ADVANCED],
+    },
+  ],
 };
 
 export const WIDGET_X_AXIS_PROPERTIES_LIST: Record<
@@ -352,7 +376,7 @@ export const CHART_WIDGETS_Y_AXIS_METRICS_LIST: EWidgetYAxisMetric[] = [
   EWidgetYAxisMetric.ESTIMATE_POINT_COUNT,
 ];
 
-export const TEXT_WIDGET_Y_AXIS_METRICS_LIST: EWidgetYAxisMetric[] = [
+export const NUMBER_WIDGET_Y_AXIS_METRICS_LIST: EWidgetYAxisMetric[] = [
   EWidgetYAxisMetric.WORK_ITEM_COUNT,
   EWidgetYAxisMetric.PENDING_WORK_ITEM_COUNT,
   EWidgetYAxisMetric.COMPLETED_WORK_ITEM_COUNT,
@@ -365,4 +389,62 @@ export const TEXT_WIDGET_Y_AXIS_METRICS_LIST: EWidgetYAxisMetric[] = [
 export const TO_CAPITALIZE_PROPERTIES: EWidgetXAxisProperty[] = [
   EWidgetXAxisProperty.PRIORITY,
   EWidgetXAxisProperty.STATE_GROUPS,
+];
+
+export const WIDGET_DROPDOWN_SECTIONS: {
+  key: string;
+  i18n_label: string;
+  widgets: {
+    key: EWidgetChartTypes;
+    i18n_label: string;
+    models: {
+      value: EWidgetChartModels;
+      i18n_short_label: string;
+      i18n_long_label: string;
+      flags: E_FEATURE_FLAGS[];
+    }[];
+  }[];
+}[] = [
+  {
+    key: "charts",
+    i18n_label: "dashboards.widget.sections.charts",
+    widgets: [
+      {
+        key: EWidgetChartTypes.BAR_CHART,
+        i18n_label: "dashboards.widget.chart_types.bar_chart.short_label",
+        models: WIDGET_CHART_MODELS_LIST[EWidgetChartTypes.BAR_CHART],
+      },
+      {
+        key: EWidgetChartTypes.LINE_CHART,
+        i18n_label: "dashboards.widget.chart_types.line_chart.short_label",
+        models: WIDGET_CHART_MODELS_LIST[EWidgetChartTypes.LINE_CHART],
+      },
+      {
+        key: EWidgetChartTypes.AREA_CHART,
+        i18n_label: "dashboards.widget.chart_types.area_chart.short_label",
+        models: WIDGET_CHART_MODELS_LIST[EWidgetChartTypes.AREA_CHART],
+      },
+      {
+        key: EWidgetChartTypes.DONUT_CHART,
+        i18n_label: "dashboards.widget.chart_types.donut_chart.short_label",
+        models: WIDGET_CHART_MODELS_LIST[EWidgetChartTypes.DONUT_CHART],
+      },
+      {
+        key: EWidgetChartTypes.PIE_CHART,
+        i18n_label: "dashboards.widget.chart_types.pie_chart.short_label",
+        models: WIDGET_CHART_MODELS_LIST[EWidgetChartTypes.PIE_CHART],
+      },
+    ],
+  },
+  {
+    key: "text",
+    i18n_label: "dashboards.widget.sections.text",
+    widgets: [
+      {
+        key: EWidgetChartTypes.NUMBER,
+        i18n_label: "dashboards.widget.chart_types.number.short_label",
+        models: WIDGET_CHART_MODELS_LIST[EWidgetChartTypes.NUMBER],
+      },
+    ],
+  },
 ];

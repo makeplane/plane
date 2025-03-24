@@ -14,8 +14,8 @@ import { DashboardWidgetContent } from "./content";
 import { DashboardDonutChartWidget } from "./donut-chart";
 import { DashboardWidgetHeader } from "./header";
 import { DashboardLineChartWidget } from "./line-chart";
+import { DashboardNumberWidget } from "./number";
 import { DashboardPieChartWidget } from "./pie-chart";
-import { DashboardTextWidget } from "./text";
 import { commonWidgetClassName, parseWidgetData, TWidgetComponentProps } from "./";
 
 type Props = {
@@ -60,8 +60,8 @@ export const DashboardWidgetRoot: React.FC<Props> = observer((props) => {
 
   let WidgetComponent: React.FC<TWidgetComponentProps> | null = null;
   switch (chart_type) {
-    case EWidgetChartTypes.TEXT:
-      WidgetComponent = DashboardTextWidget;
+    case EWidgetChartTypes.NUMBER:
+      WidgetComponent = DashboardNumberWidget;
       break;
     case EWidgetChartTypes.BAR_CHART:
       WidgetComponent = DashboardBarChartWidget;

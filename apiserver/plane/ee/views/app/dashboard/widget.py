@@ -171,7 +171,7 @@ class WidgetListEndpoint(BaseAPIView):
         if (
             not x_axis_property
             and not widget.x_axis_property
-            and widget.chart_type != "TEXT"
+            and widget.chart_type != "NUMBER"
         ):
             return Response(
                 {"message": "x axis is required"}, status=status.HTTP_400_BAD_REQUEST

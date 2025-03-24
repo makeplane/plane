@@ -4,7 +4,12 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 import { Layout, Layouts } from "react-grid-layout";
 // plane imports
-import { DEFAULT_WIDGET_CHART_TYPE_PAYLOAD, EWidgetChartTypes, EWidgetGridBreakpoints } from "@plane/constants";
+import {
+  DEFAULT_WIDGET_CHART_TYPE_PAYLOAD,
+  EWidgetChartModels,
+  EWidgetChartTypes,
+  EWidgetGridBreakpoints,
+} from "@plane/constants";
 import { TDashboardWidget, TDashboardWidgetData, TDashboardWidgetsLayoutPayload } from "@plane/types";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
@@ -33,7 +38,7 @@ export interface IDashboardWidgetsStore {
   // widget helpers
   allWidgetIds: string[];
   isAnyWidgetAvailable: boolean;
-  getNewWidgetPayload: (chartType: EWidgetChartTypes) => Partial<TDashboardWidget>;
+  getNewWidgetPayload: (chartType: EWidgetChartTypes, chartModel: EWidgetChartModels) => Partial<TDashboardWidget>;
   getWidgetById: (widgetId: string) => DashboardWidgetInstance | undefined;
   // widget actions
   fetchWidgets: () => Promise<TDashboardWidget[]>;
@@ -144,15 +149,14 @@ export class DashboardWidgetsStore implements IDashboardWidgetsStore {
     return findNextAvailablePosition(Object.values(this.widgetsData ?? {}));
   }
 
-  getNewWidgetPayload: IDashboardWidgetsStore["getNewWidgetPayload"] = (chartType) => {
+  getNewWidgetPayload: IDashboardWidgetsStore["getNewWidgetPayload"] = (chartType, chartModel) => {
     const lastCoords = this.nextAvailablePosition;
     const chartTypeDefaultDetails = DEFAULT_WIDGET_CHART_TYPE_PAYLOAD[chartType];
-    const defaultModel = chartTypeDefaultDetails.default;
-    const defaultModelPayload = chartTypeDefaultDetails[defaultModel];
+    const defaultModelPayload = chartTypeDefaultDetails[chartModel];
     return {
       ...defaultModelPayload,
       chart_type: chartType,
-      chart_model: defaultModel,
+      chart_model: chartModel,
       name: "New widget",
       x_axis_coord: lastCoords.x,
       y_axis_coord: lastCoords.y,

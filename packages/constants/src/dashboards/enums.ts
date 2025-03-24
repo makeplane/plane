@@ -9,7 +9,7 @@ export enum EWidgetChartTypes {
   AREA_CHART = "AREA_CHART",
   PIE_CHART = "PIE_CHART",
   DONUT_CHART = "DONUT_CHART",
-  TEXT = "TEXT",
+  NUMBER = "NUMBER",
 }
 
 export enum EWidgetChartModels {

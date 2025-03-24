@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { Plus } from "lucide-react";
 // plane imports
-import { EWidgetChartTypes } from "@plane/constants";
+import { EWidgetChartModels, EWidgetChartTypes } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { getButtonStyling, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { SimpleEmptyState } from "@/components/empty-state";
 // hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useDashboards } from "@/plane-web/hooks/store";
-import { DashboardWidgetChartTypesDropdown } from "../widgets/chart-types/dropdown";
+import { DashboardWidgetChartTypesDropdown } from "../widgets/dropdown";
 
 type Props = {
   dashboardId: string;
@@ -29,8 +30,8 @@ export const DashboardsWidgetsListEmptyState: React.FC<Props> = observer((props)
   // empty state asset path
   const widgetsAssetResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/dashboards/widgets/list" });
 
-  const handleAddNewWidget = async (chartType: EWidgetChartTypes) => {
-    const payload = getNewWidgetPayload?.(chartType);
+  const handleAddNewWidget = async (chartType: EWidgetChartTypes, chartModel: EWidgetChartModels) => {
+    const payload = getNewWidgetPayload?.(chartType, chartModel);
     if (!payload) return;
     try {
       setIsAddingWidget(true);
@@ -60,9 +61,16 @@ export const DashboardsWidgetsListEmptyState: React.FC<Props> = observer((props)
         />
         {!isViewModeEnabled && canCurrentUserCreateWidget && (
           <DashboardWidgetChartTypesDropdown
-            loading={isAddingWidget}
+            buttonClassName={getButtonStyling("neutral-primary", "sm")}
+            buttonContent={
+              <>
+                {!isAddingWidget && <Plus className="flex-shrink-0 size-3.5" />}
+                {t(isAddingWidget ? "common.adding" : "dashboards.widget.common.add_widget")}
+              </>
+            }
             disabled={isAddingWidget}
-            onClick={handleAddNewWidget}
+            onSelect={(val) => handleAddNewWidget(val.chartType, val.chartModel)}
+            placement="auto"
           />
         )}
       </div>

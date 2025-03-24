@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Eye, LayoutGrid, Pencil } from "lucide-react";
+import { Eye, LayoutGrid, Pencil, Plus } from "lucide-react";
 // plane imports
-import { EWidgetChartTypes } from "@plane/constants";
+import { EWidgetChartModels, EWidgetChartTypes } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Breadcrumbs, Button, Header, setToast, TOAST_TYPE } from "@plane/ui";
+import { Breadcrumbs, Button, getButtonStyling, Header, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // plane web components
-import { DashboardWidgetChartTypesDropdown } from "@/plane-web/components/dashboards/widgets/chart-types/dropdown";
+import { DashboardWidgetChartTypesDropdown } from "@/plane-web/components/dashboards/widgets/dropdown";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 
@@ -27,8 +27,8 @@ export const WorkspaceDashboardDetailsHeader = observer(() => {
   // translation
   const { t } = useTranslation();
 
-  const handleAddNewWidget = async (chartType: EWidgetChartTypes) => {
-    const payload = getNewWidgetPayload?.(chartType);
+  const handleAddNewWidget = async (chartType: EWidgetChartTypes, chartModel: EWidgetChartModels) => {
+    const payload = getNewWidgetPayload?.(chartType, chartModel);
     if (!payload) return;
     try {
       setIsAddingWidget(true);
@@ -89,9 +89,15 @@ export const WorkspaceDashboardDetailsHeader = observer(() => {
         <Header.RightItem>
           {!isViewModeEnabled && canCurrentUserCreateWidget && (
             <DashboardWidgetChartTypesDropdown
-              loading={isAddingWidget}
-              disabled={!canCurrentUserCreateWidget}
-              onClick={handleAddNewWidget}
+              buttonClassName={getButtonStyling("neutral-primary", "sm")}
+              buttonContent={
+                <>
+                  {!isAddingWidget && <Plus className="flex-shrink-0 size-3.5" />}
+                  {t(isAddingWidget ? "common.adding" : "dashboards.widget.common.add_widget")}
+                </>
+              }
+              disabled={isAddingWidget}
+              onSelect={(val) => handleAddNewWidget(val.chartType, val.chartModel)}
             />
           )}
           <Button

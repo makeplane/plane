@@ -9,9 +9,9 @@ import { AreaChartComparisonLineAppearanceConfig } from "./area-chart-comparison
 import { BarChartAppearanceConfig } from "./bar-chart";
 import { DonutChartAppearanceConfig } from "./donut-chart";
 import { LineChartAppearanceConfig } from "./line-chart";
+import { NumberAppearanceConfig } from "./number";
 import { PieChartAppearanceConfig } from "./pie-chart";
 import { PieChartGroupingConfig } from "./pie-chart-grouping";
-import { TextAppearanceConfig } from "./text";
 
 type Props = {
   handleConfigUpdate: (data: Partial<TDashboardWidgetConfig>) => Promise<void>;
@@ -52,8 +52,8 @@ export const WidgetConfigSidebarAppearanceConfig: React.FC<Props> = (props) => {
         {selectedChartType === EWidgetChartTypes.PIE_CHART && (
           <PieChartAppearanceConfig handleConfigUpdate={handleConfigUpdate} />
         )}
-        {selectedChartType === EWidgetChartTypes.TEXT && (
-          <TextAppearanceConfig handleConfigUpdate={handleConfigUpdate} />
+        {selectedChartType === EWidgetChartTypes.NUMBER && (
+          <NumberAppearanceConfig handleConfigUpdate={handleConfigUpdate} />
         )}
       </div>
       {isComparisonAreaChart && <AreaChartComparisonLineAppearanceConfig handleConfigUpdate={handleConfigUpdate} />}

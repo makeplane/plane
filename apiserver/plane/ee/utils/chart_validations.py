@@ -14,7 +14,7 @@ CHART_VALIDATION_RULES = {
     "COMPARISON": {"AREA_CHART": {"group_by": "required"}},
     "PROGRESS": {"DONUT_CHART": {"x_axis_date_grouping": None, "group_by": None}},
     None: {
-        "TEXT": {"x_axis_date_grouping": None, "group_by": None, "chart_type": None}
+        "NUMBER": {"x_axis_date_grouping": None, "group_by": None, "chart_type": None}
     },
 }
 

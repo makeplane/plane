@@ -136,15 +136,15 @@ export const TEXT_ALIGNMENTS: {
 }[] = [
   {
     key: "left",
-    i18n_label: "dashboards.widget.chart_types.text.alignment.left",
+    i18n_label: "dashboards.widget.chart_types.number.alignment.left",
   },
   {
     key: "center",
-    i18n_label: "dashboards.widget.chart_types.text.alignment.center",
+    i18n_label: "dashboards.widget.chart_types.number.alignment.center",
   },
   {
     key: "right",
-    i18n_label: "dashboards.widget.chart_types.text.alignment.right",
+    i18n_label: "dashboards.widget.chart_types.number.alignment.right",
   },
 ];
 

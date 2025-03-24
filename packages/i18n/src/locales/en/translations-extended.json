@@ -907,9 +907,18 @@
           "short_label": "Bar",
           "long_label": "Bar chart",
           "chart_models": {
-            "basic": "Basic",
-            "stacked": "Stacked",
-            "grouped": "Grouped"
+            "basic": {
+              "short_label": "Basic",
+              "long_label": "Basic bar"
+            },
+            "stacked": {
+              "short_label": "Stacked",
+              "long_label": "Stacked bar"
+            },
+            "grouped": {
+              "short_label": "Grouped",
+              "long_label": "Grouped bar"
+            }
           },
           "orientation": {
             "label": "Orientation",
@@ -923,8 +932,14 @@
           "short_label": "Line",
           "long_label": "Line chart",
           "chart_models": {
-            "basic": "Basic",
-            "multi_line": "Multi-line"
+            "basic": {
+              "short_label": "Basic",
+              "long_label": "Basic line"
+            },
+            "multi_line": {
+              "short_label": "Multi-line",
+              "long_label": "Multi-line"
+            }
           },
           "line_color": "Line color",
           "line_type": {
@@ -938,9 +953,18 @@
           "short_label": "Area",
           "long_label": "Area chart",
           "chart_models": {
-            "basic": "Basic",
-            "stacked": "Stacked",
-            "comparison": "Comparison"
+            "basic": {
+              "short_label": "Basic",
+              "long_label": "Basic area"
+            },
+            "stacked": {
+              "short_label": "Stacked",
+              "long_label": "Stacked area"
+            },
+            "comparison": {
+              "short_label": "Comparison",
+              "long_label": "Comparison area"
+            }
           },
           "fill_color": "Fill color"
         },
@@ -948,8 +972,14 @@
           "short_label": "Donut",
           "long_label": "Donut chart",
           "chart_models": {
-            "basic": "Basic",
-            "progress": "Progress"
+            "basic": {
+              "short_label": "Basic",
+              "long_label": "Basic donut"
+            },
+            "progress": {
+              "short_label": "Progress",
+              "long_label": "Progress donut"
+            }
           },
           "center_value": "Center value",
           "completed_color": "Completed color"
@@ -958,7 +988,10 @@
           "short_label": "Pie",
           "long_label": "Pie chart",
           "chart_models": {
-            "basic": "Basic"
+            "basic": {
+              "short_label": "Basic",
+              "long_label": "Pie"
+            }
           },
           "group": {
             "label": "Grouped pieces",
@@ -978,9 +1011,15 @@
             "count": "Count"
           }
         },
-        "text": {
-          "short_label": "Text",
-          "long_label": "Text",
+        "number": {
+          "short_label": "Number",
+          "long_label": "Number",
+          "chart_models": {
+            "basic": {
+              "short_label": "Basic",
+              "long_label": "Number"
+            }
+          },
           "alignment": {
             "label": "Text alignment",
             "left": "Left",
@@ -990,6 +1029,10 @@
           },
           "text_color": "Text color"
         }
+      },
+      "sections": {
+        "charts": "Charts",
+        "text": "Text"
       },
       "color_palettes": {
         "modern": "Modern",
@@ -1002,11 +1045,7 @@
           "label": "Name this widget",
           "placeholder": "e.g., \"To-do yesterday\", \"All Complete\""
         },
-        "chart_type": "Chart type",
-        "visualization_type": {
-          "label": "Visualization type",
-          "placeholder": "Add visualization type"
-        },
+        "widget_type": "Widget type",
         "date_group": {
           "label": "Date group",
           "placeholder": "Add date group"
@@ -1107,7 +1146,7 @@
             "y_axis_metric": "Metric is missing a value."
           }
         },
-        "text": {
+        "number": {
           "basic": {
             "y_axis_metric": "Metric is missing a value."
           }

@@ -131,7 +131,7 @@ def fill_missing_dates(response, start_date, end_date, date_grouping):
     response.sort(key=lambda x: x["key"])
 
 
-def build_text_chart_response(queryset, y_axis_filter, y_axis, aggregate_func):
+def build_number_chart_response(queryset, y_axis_filter, y_axis, aggregate_func):
     count = (
         queryset.filter(**y_axis_filter).aggregate(total=aggregate_func).get("total", 0)
     )
@@ -179,7 +179,7 @@ def build_widget_chart(
     queryset, y_axis, chart_type, x_axis, group_by=None, x_axis_date_grouping=None
 ):
     # Validate x_axis
-    if chart_type != "TEXT" and x_axis not in Widget.PropertyEnum.values:
+    if chart_type != "NUMBER" and x_axis not in Widget.PropertyEnum.values:
         raise ValidationError(f"Invalid x_axis field: {x_axis}")
 
     # Validate y_axis
@@ -213,9 +213,9 @@ def build_widget_chart(
         else Count("id", distinct=True)
     )
 
-    if chart_type == "TEXT":
+    if chart_type == "NUMBER":
         return {
-            "data": build_text_chart_response(
+            "data": build_number_chart_response(
                 queryset, y_axis_filter, y_axis, aggregate_func
             ),
             "schema": {},

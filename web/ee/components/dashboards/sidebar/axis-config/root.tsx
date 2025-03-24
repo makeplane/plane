@@ -6,7 +6,7 @@ import {
   CIRCULAR_WIDGET_CHART_TYPES,
   EWidgetChartTypes,
   EWidgetYAxisMetric,
-  TEXT_WIDGET_Y_AXIS_METRICS_LIST,
+  NUMBER_WIDGET_Y_AXIS_METRICS_LIST,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TDashboardWidget } from "@plane/types";
@@ -54,7 +54,7 @@ export const WidgetConfigSidebarAxisConfig: React.FC<Props> = (props) => {
         }
       >
         <div className="mt-3 flex flex-col gap-y-4">
-          {selectedChartType === EWidgetChartTypes.TEXT ? (
+          {selectedChartType === EWidgetChartTypes.NUMBER ? (
             <Controller
               control={control}
               name="y_axis_metric"
@@ -64,7 +64,7 @@ export const WidgetConfigSidebarAxisConfig: React.FC<Props> = (props) => {
                     onChange(val);
                     handleSubmit({ y_axis_metric: val });
                   }}
-                  options={TEXT_WIDGET_Y_AXIS_METRICS_LIST}
+                  options={NUMBER_WIDGET_Y_AXIS_METRICS_LIST}
                   placeholder={t("dashboards.widget.common.add_metric")}
                   title={t("chart.metric")}
                   value={value}

@@ -1,14 +1,14 @@
 import { observer } from "mobx-react";
 // plane imports
-import { TTextWidgetConfig } from "@plane/types";
+import { TNumberWidgetConfig } from "@plane/types";
 // local imports
 import { TWidgetComponentProps } from ".";
 
-export const DashboardTextWidget: React.FC<TWidgetComponentProps> = observer((props) => {
+export const DashboardNumberWidget: React.FC<TWidgetComponentProps> = observer((props) => {
   const { widget } = props;
   // derived values
   const { data, height } = widget ?? {};
-  const widgetConfig = widget?.config as TTextWidgetConfig | undefined;
+  const widgetConfig = widget?.config as TNumberWidgetConfig | undefined;
   const selectedAlignment = widgetConfig?.text_alignment ?? "center";
   const textToDisplay = data?.data?.[0]?.count ?? 0;
 
