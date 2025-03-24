@@ -14,6 +14,13 @@ type Props = {
   handleSubmit: (workspaceSlug: string, projectId: string, modalType: string) => Promise<void>;
 };
 
+const displayProperties: {
+  [key: string]: string;
+} = {
+  intake_email: "Email",
+  intake: "Form",
+};
+
 export const RenewModal: React.FC<Props> = (props) => {
   const { workspaceSlug, projectId, isOpen, onClose, source, handleSubmit } = props;
   // states
@@ -31,8 +38,8 @@ export const RenewModal: React.FC<Props> = (props) => {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Archive success",
-          message: `${source} regenerated successfully.`,
+          title: "Success",
+          message: `${displayProperties[source]} regenerated successfully.`,
         });
         onClose();
       })
@@ -40,17 +47,10 @@ export const RenewModal: React.FC<Props> = (props) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "Project could not be archived. Please try again.",
+          message: "Something went wrong. Please try again.",
         })
       )
       .finally(() => setIsLoading(false));
-  };
-
-  const displayProperties: {
-    [key: string]: string;
-  } = {
-    intake_email: "email",
-    intake: "form",
   };
 
   return (
@@ -81,7 +81,7 @@ export const RenewModal: React.FC<Props> = (props) => {
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-lg">
                 <div className="px-5 py-4">
-                  <h3 className="text-xl font-medium 2xl:text-2xl">Renew {source}</h3>
+                  <h3 className="text-xl font-medium 2xl:text-2xl">Renew {displayProperties[source]}</h3>
                   <p className="mt-3 text-sm text-custom-text-200">
                     {source === "email"
                       ? "Changing your email address will block any emails sent to your current one. Are you sure you want to generate a new email?"
