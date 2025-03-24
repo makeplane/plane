@@ -26,7 +26,7 @@ export const RequestAttachmentCollapsibleTitle: FC<Props> = observer((props) => 
   const { getRequestById } = useCustomers();
 
   // derived values
-  const request = getRequestById(customerId, requestId);
+  const request = getRequestById(requestId);
   const requestAttachmentsCount = request?.attachment_count || 0;
 
   const { t } = useTranslation();

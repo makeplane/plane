@@ -1338,7 +1338,8 @@
           "name": "Pracownicy",
           "placeholder": "Liczba pracowników, jeśli Twój klient jest firmą.",
           "validation": {
-            "min_length": "Liczba pracowników nie może być mniejsza niż 0."
+            "min_length": "Liczba pracowników nie może być mniejsza niż 0.",
+            "max_length": "Liczba pracowników nie może być większa niż 2147483647."
           }
         },
         "size": {
@@ -1367,10 +1368,12 @@
         "revenue": {
           "name": "Przychód",
           "placeholder": "To jest przychód, który Twój klient generuje rocznie.",
+          "placeholder_short": "Dodaj przychód",
           "validation": {
             "min_length": "Przychód nie może być mniejszy niż 0."
           }
-        }
+        },
+        "invalid_value": "Nieprawidłowa wartość właściwości."
       },
       "custom": {
         "title": "Niestandardowe właściwości",
@@ -1493,8 +1496,8 @@
             "message": "Automatycznie usunęliśmy także tego klienta z elementu pracy."
           },
           "error": {
-            "title": "Nie mogliśmy usunąć tego elementu pracy z rekordu tego klienta tym razem.",
-            "message": "Automatycznie usunęliśmy także tego klienta z elementu pracy."
+            "title": "Błąd!",
+            "message": "Nie mogliśmy usunąć tego elementu pracy z rekordu tego klienta tym razem."
           }
         },
         "add": {

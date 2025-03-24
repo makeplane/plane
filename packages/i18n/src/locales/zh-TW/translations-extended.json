@@ -1338,7 +1338,8 @@
           "name": "員工數",
           "placeholder": "如果您的客戶是企業，則為員工數量。",
           "validation": {
-            "min_length": "員工數不能少於0。"
+            "min_length": "員工數不能少於0。",
+            "max_length": "員工數不能大於2147483647。"
           }
         },
         "size": {
@@ -1367,10 +1368,12 @@
         "revenue": {
           "name": "收入",
           "placeholder": "這是您的客戶每年產生的收入。",
+          "placeholder_short": "添加收入",
           "validation": {
             "min_length": "收入不能少於0。"
           }
-        }
+        },
+        "invalid_value": "無效的收入值。"
       },
       "custom": {
         "title": "自定義屬性",
@@ -1493,8 +1496,8 @@
             "message": "我們也已自動從工作項目中移除此客戶。"
           },
           "error": {
-            "title": "我們這次無法從此客戶記錄中移除該工作項目。",
-            "message": "我們也已自動從工作項目中移除此客戶。"
+            "title": "錯誤！",
+            "message": "我們這次無法從此客戶記錄中移除該工作項目。"
           }
         },
         "add": {

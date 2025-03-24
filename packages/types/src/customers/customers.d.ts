@@ -46,7 +46,9 @@ export type TCustomerRequest = {
   description_html: string | undefined;
   attachment_count: number;
   link: string | undefined;
-  issue_ids: string[];
+  work_item_ids: string[];
+  customer_id: string | undefined;
+  created_at: string;
 };
 
 export type TCustomerRequestCreateResponse = TCustomerRequest & {
@@ -96,3 +98,11 @@ export type TCustomerPaginationOptions = {
 export type TAttachmentUploadPayload = {
   attachment_ids: string[];
 };
+
+export type TCustomerWorkItemFilters = {
+  assignees?: string[] | null;
+  priority?: string[] | null;
+  state?: string[] | null;
+};
+
+export type TCustomerWorkItemFilter = keyof TCustomerWorkItemFilters;

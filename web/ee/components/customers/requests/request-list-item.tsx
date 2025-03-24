@@ -7,6 +7,7 @@ import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "@/components/core";
+import { ContentOverflowWrapper } from "@/components/core/content-overflow-HOC";
 import { RichTextReadOnlyEditor } from "@/components/editor";
 // plane web imports
 import { useWorkspace } from "@/hooks/store";
@@ -30,26 +31,25 @@ type TProps = {
 const customerService = new CustomerService();
 
 export const CustomerRequestListItem: FC<TProps> = observer((props) => {
-  const { requestId, customerId, workspaceSlug, isEditable = false } = props;
+  const { requestId, workspaceSlug, customerId, isEditable = false } = props;
   // states
   const [isEditing, setEditing] = useState<boolean>(false);
   const [workItemsModal, setWorkItemsModal] = useState<boolean>(false);
-  const [linkModal, setLinkModal] = useState<boolean>(false);
   const [link, setLink] = useState<string | undefined>();
   // refs
   const parentRef = useRef(null);
   // i18n
   const { t } = useTranslation();
   // hooks
-  const { getRequestById, addWorkItemsToCustomer, updateCustomerRequest } = useCustomers();
+  const { getRequestById, addWorkItemsToCustomer, updateCustomerRequest, toggleRequestSourceModal } = useCustomers();
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
-  const request = getRequestById(customerId, requestId);
-  const requestWorkItemsCount = request?.issue_ids.length || 0;
+  const request = getRequestById(requestId);
+  const requestWorkItemsCount = request?.work_item_ids?.length || 0;
   const workspaceDetails = getWorkspaceBySlug(workspaceSlug);
 
   const workItemSearchCallBack = (params: TProjectIssuesSearchParams) =>
-    customerService.workItemsSearch(workspaceSlug, customerId, params);
+    customerService.workItemsSearch(workspaceSlug, customerId, { ...params, customer_request_id: requestId });
 
   const handleUpdateSource = (link: string) => {
     updateCustomerRequest(workspaceSlug, customerId, requestId, { link })
@@ -116,110 +116,107 @@ export const CustomerRequestListItem: FC<TProps> = observer((props) => {
         selectedWorkItems={[]}
         workItemSearchServiceCallback={workItemSearchCallBack}
       />
-      <SourceCreateUpdateModal
-        isModalOpen={linkModal}
-        handleClose={() => setLinkModal(false)}
-        setLinkData={setLink}
-        preloadedData={{ url: link }}
-      />
-      <div>
-        {isEditing ? (
-          <CustomerRequestForm
-            isOpen={isEditing}
-            handleClose={() => setEditing(false)}
-            workspaceSlug={workspaceSlug}
+      <SourceCreateUpdateModal id={request.id} setLinkData={setLink} preloadedData={{ url: link }} />
+      {isEditing && request && (
+        <CustomerRequestForm
+          isOpen={isEditing}
+          handleClose={() => setEditing(false)}
+          workspaceSlug={workspaceSlug}
+          customerId={customerId}
+          data={request}
+        />
+      )}
+      <div className="border-[0.5px] border-custom-border-200 rounded-md shadow-sm p-4 bg-custom-background-90/80">
+        <div className="flex justify-between" ref={parentRef}>
+          <p className="text-base font-medium">{request.name}</p>
+          <CustomerRequestQuickActions
             customerId={customerId}
-            data={request}
+            requestId={requestId}
+            parentRef={parentRef}
+            handleEdit={handleEdit}
+            workspaceSlug={workspaceSlug}
           />
+        </div>
+        {request.description_html ? (
+          <ContentOverflowWrapper maxHeight={200} fallback={<div className="py-1" />}>
+            <RichTextReadOnlyEditor
+              id={customerId}
+              initialValue={request.description_html ?? ""}
+              workspaceId={workspaceDetails?.id ?? ""}
+              workspaceSlug={workspaceSlug}
+              containerClassName="border-none ring-none outline-non text-sm !px-0 py-2"
+              editorClassName="px-0"
+              displayConfig={{
+                fontSize: "small-font",
+              }}
+            />
+          </ContentOverflowWrapper>
         ) : (
-          <div className="border-[0.5px] border-custom-border-200 rounded-md shadow-sm p-4 bg-custom-background-90/80">
-            <div className="flex justify-between" ref={parentRef}>
-              <p className="text-base font-medium">{request.name}</p>
-              <CustomerRequestQuickActions
-                customerId={customerId}
-                requestId={requestId}
-                parentRef={parentRef}
-                handleEdit={handleEdit}
-                workspaceSlug={workspaceSlug}
-              />
-            </div>
-            {request.description_html ? (
-              <RichTextReadOnlyEditor
-                id={customerId}
-                initialValue={request.description_html ?? ""}
-                workspaceId={workspaceDetails?.id ?? ""}
-                workspaceSlug={workspaceSlug}
-                containerClassName="border-none ring-none outline-non text-sm !px-0 py-2"
-                editorClassName="px-0"
-                displayConfig={{
-                  fontSize: "small-font",
-                }}
-              />
-            ) : (
-              <div className="py-1"></div>
+          <div className="py-1" />
+        )}
+        <div className="mt-2" />
+        {isEditable && (
+          <div className="flex gap-2">
+            <Button
+              variant="neutral-primary"
+              className="text-custom-text-200 bg-custom-background-100 text-sm px-2 hover:bg-custom-background-100 hover:shadow-custom-shadow"
+              onClick={() => {
+                if (!link) toggleRequestSourceModal(request.id);
+                else handleOpenUrl(link);
+              }}
+            >
+              {link ? (
+                <SourceItem link={link} />
+              ) : (
+                <>
+                  <Database className="size-3" /> {t("customers.requests.form.source.add")}
+                </>
+              )}
+            </Button>
+            {!request.link && requestWorkItemsCount === 0 && (
+              <Button
+                variant="neutral-primary"
+                onClick={() => setWorkItemsModal(true)}
+                className="text-custom-text-200 bg-custom-background-100 hover:bg-custom-background-100 text-sm"
+              >
+                <LayersIcon className="size-3" />
+                {t("customers.linked_work_items.link")}
+              </Button>
             )}
-            {isEditable && (
-              <div className="flex gap-2">
-                <Button
-                  variant="neutral-primary"
-                  className="text-custom-text-200 bg-custom-background-100 text-sm px-2 hover:bg-custom-background-100 hover:shadow-custom-shadow"
-                  onClick={() => {
-                    if (!link) setLinkModal(true);
-                    else handleOpenUrl(link);
-                  }}
-                >
-                  {link ? (
-                    <SourceItem link={link} />
-                  ) : (
-                    <>
-                      <Database className="size-3" /> {t("customers.requests.form.source.add")}
-                    </>
-                  )}
-                </Button>
-                {!request.link && requestWorkItemsCount === 0 && (
-                  <Button
-                    variant="neutral-primary"
-                    onClick={() => setWorkItemsModal(true)}
-                    className="text-custom-text-200 bg-custom-background-100 hover:bg-custom-background-100 text-sm"
-                  >
-                    <LayersIcon className="size-3" />
-                    {t("customers.linked_work_items.link")}
-                  </Button>
-                )}
-              </div>
-            )}
-            {requestWorkItemsCount > 0 && (
-              <div className="pt-2 mt-2 border-t-[0.5px] border-custom-border-300 w-full">
-                <RequestWorkItemsListCollapsible
-                  workspaceSlug={workspaceSlug}
-                  openWorkItemModal={() => setWorkItemsModal(true)}
-                  workItemIds={request.issue_ids}
-                  customerId={customerId}
-                  requestId={requestId}
-                  isEditable={isEditable}
-                />
-              </div>
-            )}
+          </div>
+        )}
+        <div className="mt-3">
+          {requestWorkItemsCount > 0 && (
             <div className="pt-2 mt-2 border-t-[0.5px] border-custom-border-300 w-full">
-              <RequestAttachmentsCollapsible
+              <RequestWorkItemsListCollapsible
                 workspaceSlug={workspaceSlug}
+                openWorkItemModal={() => setWorkItemsModal(true)}
+                workItemIds={request.work_item_ids}
                 customerId={customerId}
                 requestId={requestId}
                 isEditable={isEditable}
               />
             </div>
-            {request.link && requestWorkItemsCount === 0 && isEditable && (
-              <div className="pt-2 mt-2 border-t-[0.5px] border-custom-border-300 w-full">
-                <div
-                  className="flex gap-2 items-center text-sm cursor-pointer text-custom-text-200 font-medium"
-                  onClick={() => setWorkItemsModal(true)}
-                >
-                  <PlusIcon className="size-4" /> {t("customers.linked_work_items.link")}
-                </div>
-              </div>
-            )}
+          )}
+          <div className="pt-2 mt-2 border-t-[0.5px] border-custom-border-300 w-full">
+            <RequestAttachmentsCollapsible
+              workspaceSlug={workspaceSlug}
+              customerId={customerId}
+              requestId={requestId}
+              isEditable={isEditable}
+            />
           </div>
-        )}
+          {request.link && requestWorkItemsCount === 0 && isEditable && (
+            <div className="pt-2 mt-2 border-t-[0.5px] border-custom-border-300 w-full">
+              <div
+                className="flex gap-2 items-center text-sm cursor-pointer text-custom-text-200 font-medium"
+                onClick={() => setWorkItemsModal(true)}
+              >
+                <PlusIcon className="size-4" /> {t("customers.linked_work_items.link")}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </>
   );

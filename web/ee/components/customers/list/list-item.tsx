@@ -36,9 +36,9 @@ export const CustomerListItem: FC<TCustomerListItemProps> = observer((props) => 
       itemClassName="py-3"
       prependTitleElement={
         <div className="flex gap-2 items-center">
-          <div className="rounded-md border-custom-border-300 p-1">
+          <div className="rounded-md border-custom-border-300">
             {customer?.logo_url && customer.logo_url !== "" ? (
-              <div className="bg-custom-background-100 rounded-md h-10 w-10 overflow-hidden border-[0.5px] border-custom-border-300 p-1.5">
+              <div className="bg-custom-background-100 rounded-md h-9 w-9 overflow-hidden border-[0.5px] border-custom-border-300">
                 <img
                   src={getFileURL(customer.logo_url)}
                   alt="customer logo"
@@ -46,7 +46,7 @@ export const CustomerListItem: FC<TCustomerListItemProps> = observer((props) => 
                 />
               </div>
             ) : (
-              <div className="bg-custom-background-90 rounded-md flex items-center justify-center h-10 w-10">
+              <div className="bg-custom-background-90 rounded-md flex items-center justify-center h-9 w-9">
                 <CustomersIcon className="size-5 opacity-50" />
               </div>
             )}

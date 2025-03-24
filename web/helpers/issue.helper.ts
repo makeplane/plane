@@ -294,6 +294,8 @@ export const getComputedDisplayProperties = (
   modules: displayProperties?.modules ?? true,
   cycle: displayProperties?.cycle ?? true,
   issue_type: displayProperties?.issue_type ?? true,
+  customer_count: displayProperties.customer_count ?? true,
+  customer_request_count: displayProperties.customer_request_count ?? true,
 });
 
 /**

@@ -151,7 +151,7 @@ export const CustomerDefaultSidebarProperties: FC<TProps> = (props) => {
 
       <div className="flex h-8 gap-2 items-center">
         <div className="w-2/5 flex-shrink-0">
-          <span className="text-sm text-custom-text-200">Revenue</span>
+          <span className="text-sm text-custom-text-200">{t("customers.properties.default.revenue.name")}</span>
         </div>
         <PropertyField
           value={customer.revenue}
@@ -161,10 +161,10 @@ export const CustomerDefaultSidebarProperties: FC<TProps> = (props) => {
           rules={{
             min: {
               value: 0,
-              message: "Invalid revenue",
+              message: t("customers.properties.default.revenue.validation.min_length"),
             },
           }}
-          placeholder="Add revenue"
+          placeholder={t("customers.properties.default.revenue.placeholder_short")}
           type="number"
           disabled={isDisabled}
         />
@@ -173,7 +173,7 @@ export const CustomerDefaultSidebarProperties: FC<TProps> = (props) => {
       {createdByDetails && (
         <div className="flex h-8 gap-2 items-center">
           <div className="w-2/5 flex-shrink-0">
-            <span className="text-sm text-custom-text-200">Created by</span>
+            <span className="text-sm text-custom-text-200">{t("common.created_by")}</span>
           </div>
           <div className="w-full h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-not-allowed">
             <ButtonAvatars showTooltip userIds={createdByDetails.id} />
@@ -202,6 +202,7 @@ const PropertyField: FC<TPropertyFiledProps> = (props) => {
     trigger,
     setValue,
   } = useForm();
+  const { t } = useTranslation();
 
   const handleBlur = async () => {
     const isValid = await trigger("property");
@@ -209,7 +210,7 @@ const PropertyField: FC<TPropertyFiledProps> = (props) => {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: errors.property?.message?.toString() || "Invalid property value.",
+        message: errors.property?.message?.toString() || t("customers.properties.default.invalid_value"),
       });
       setValue("property", value);
       return;
@@ -236,7 +237,7 @@ const PropertyField: FC<TPropertyFiledProps> = (props) => {
           disabled={disabled}
           placeholder={placeholder}
           className={cn(
-            "w-full border-none hover:bg-custom-background-80 focus:bg-custom-background-80 rounded-md",
+            "w-full border-none truncate hover:bg-custom-background-80 focus:bg-custom-background-80 rounded-md",
             disabled && "cursor-not-allowed"
           )}
         />

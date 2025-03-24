@@ -1297,6 +1297,10 @@
 
   "customers": {
     "label": "{count, plural, one {Cliente} other {Clienti}}",
+    "dropdown": {
+      "placeholder": "Seleziona cliente",
+      "required": "Per favore seleziona un cliente"
+    },
     "upgrade": {
       "title": "Dai priorità e gestisci il lavoro con i clienti.",
       "description": "Collega il tuo lavoro ai clienti e assegna priorità in base agli attributi dei clienti."
@@ -1336,7 +1340,8 @@
           "name": "Dipendenti",
           "placeholder": "Numero di dipendenti se il tuo cliente è un'azienda.",
           "validation": {
-            "min_length": "Il numero di dipendenti non può essere inferiore a 0."
+            "min_length": "Il numero di dipendenti non può essere inferiore a 0.",
+            "max_length": "Il numero di dipendenti non può essere superiore a 2147483647."
           }
         },
         "size": {
@@ -1365,10 +1370,12 @@
         "revenue": {
           "name": "Fatturato",
           "placeholder": "Questo è il fatturato annuale generato dal tuo cliente.",
+          "placeholder_short": "Aggiungi fatturato",
           "validation": {
             "min_length": "Il fatturato non può essere inferiore a 0."
           }
-        }
+        },
+        "invalid_value": "Valore proprietà non valido."
       },
       "custom": {
         "title": "Proprietà personalizzate",
@@ -1421,7 +1428,7 @@
           "loading": "Abilitazione della funzione clienti...",
           "success": {
             "title": "Hai attivato la funzione Clienti per questo spazio di lavoro.",
-            "message": "Non potrai disattivarla di nuovo."
+            "message": "I membri possono ora aggiungere record clienti, collegarli agli elementi di lavoro e altro ancora."
           },
           "error": {
             "title": "Questa volta non siamo riusciti ad attivare la funzione Clienti.",
@@ -1491,8 +1498,8 @@
             "message": "Abbiamo anche rimosso automaticamente questo cliente dall'elemento di lavoro."
           },
           "error": {
-            "title": "Questa volta non siamo riusciti a rimuovere questo elemento di lavoro da questo record del cliente.",
-            "message": "Abbiamo anche rimosso automaticamente questo cliente dall'elemento di lavoro."
+            "title": "Errore!",
+            "message": "Questa volta non siamo riusciti a rimuovere questo elemento di lavoro da questo record del cliente."
           }
         },
         "add": {

@@ -78,6 +78,8 @@ def get_default_display_properties():
         "state": True,
         "sub_issue_count": True,
         "updated_on": True,
+        "customer_count": True,
+        "customer_request_count": True,
     }
 
 

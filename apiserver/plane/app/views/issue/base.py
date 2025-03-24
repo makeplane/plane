@@ -15,6 +15,7 @@ from django.db.models import (
     UUIDField,
     Value,
     Subquery,
+    Count,
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -33,6 +34,8 @@ from plane.app.serializers import (
     IssueUserPropertySerializer,
     IssueSerializer,
 )
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
@@ -198,7 +201,7 @@ class IssueViewSet(BaseViewSet):
     filterset_fields = ["state__name", "assignees__id", "workspace__id"]
 
     def get_queryset(self):
-        return (
+        issues = (
             Issue.issue_objects.filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("workspace", "project", "state", "parent")
@@ -231,7 +234,29 @@ class IssueViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-        ).distinct()
+        )
+
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.CUSTOMERS, slug=self.kwargs.get("slug")
+        ):
+            issues = issues.annotate(
+                customer_count=Count(
+                    "customer_request_issues",
+                    filter=Q(customer_request_issues__deleted_at__isnull=True),
+                    distinct=True,
+                )
+            ).annotate(
+                customer_request_count=Count(
+                    "customer_request_issues",
+                    filter=Q(
+                        customer_request_issues__deleted_at__isnull=True,
+                        customer_request_issues__customer_request__isnull=False,
+                    ),
+                    distinct=True,
+                )
+            )
+
+        return issues.distinct()
 
     @method_decorator(gzip_page)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -295,7 +320,10 @@ class IssueViewSet(BaseViewSet):
                         order_by=order_by_param,
                         queryset=issue_queryset,
                         on_results=lambda issues: issue_on_results(
-                            group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                            group_by=group_by,
+                            issues=issues,
+                            sub_group_by=sub_group_by,
+                            slug=slug,
                         ),
                         paginator_cls=SubGroupedOffsetPaginator,
                         group_by_fields=issue_group_values(
@@ -328,7 +356,10 @@ class IssueViewSet(BaseViewSet):
                     order_by=order_by_param,
                     queryset=issue_queryset,
                     on_results=lambda issues: issue_on_results(
-                        group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                        group_by=group_by,
+                        issues=issues,
+                        sub_group_by=sub_group_by,
+                        slug=slug,
                     ),
                     paginator_cls=GroupedOffsetPaginator,
                     group_by_fields=issue_group_values(
@@ -353,7 +384,10 @@ class IssueViewSet(BaseViewSet):
                 request=request,
                 queryset=issue_queryset,
                 on_results=lambda issues: issue_on_results(
-                    group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                    group_by=group_by,
+                    issues=issues,
+                    sub_group_by=sub_group_by,
+                    slug=slug,
                 ),
             )
 
@@ -557,7 +591,24 @@ class IssueViewSet(BaseViewSet):
                     )
                 )
             )
-        ).first()
+        )
+
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.CUSTOMERS, slug=self.kwargs.get("slug")
+        ):
+            issue = issue.annotate(
+                customer_request_count=Count(
+                    "customer_request_issues",
+                    filter=Q(
+                        customer_request_issues__deleted_at__isnull=True,
+                        customer_request_issues__customer_request__isnull=False,
+                    ),
+                    distinct=True,
+                )
+            )
+
+        issue = issue.first()
+
         if not issue:
             return Response(
                 {"error": "The required object does not exist."},
@@ -593,7 +644,9 @@ class IssueViewSet(BaseViewSet):
             project_id=project_id,
         )
 
-        serializer = IssueDetailSerializer(issue, expand=self.expand)
+        serializer = IssueDetailSerializer(
+            issue, expand=self.expand, context={"slug": self.kwargs.get("slug")}
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission(
@@ -1079,6 +1132,7 @@ class IssueDetailEndpoint(BaseAPIView):
                 .values("count")
             )
         )
+
         issue = issue.filter(**filters)
         order_by_param = request.GET.get("order_by", "-created_at")
         # Issue queryset
@@ -1306,8 +1360,23 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
                     )
                 )
             )
-            .annotate(is_epic=F("type__is_epic"))
-        ).first()
+        )
+
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.CUSTOMERS, slug=self.kwargs.get("slug")
+        ):
+            issue = issue.annotate(
+                customer_request_count=Count(
+                    "customer_request_issues",
+                    filter=Q(
+                        customer_request_issues__deleted_at__isnull=True,
+                        customer_request_issues__customer_request__isnull=False,
+                    ),
+                    distinct=True,
+                )
+            )
+
+        issue = issue.first()
 
         # Check if the issue exists
         if not issue:
@@ -1361,5 +1430,8 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
         )
 
         # Serialize the issue
-        serializer = IssueDetailSerializer(issue, expand=self.expand)
+        serializer = IssueDetailSerializer(
+            issue, expand=self.expand, context={"slug": self.kwargs.get("slug")}
+        )
+
         return Response(serializer.data, status=status.HTTP_200_OK)

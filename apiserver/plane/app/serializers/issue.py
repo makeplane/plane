@@ -40,6 +40,9 @@ from plane.db.models import (
     IssueType,
 )
 from plane.ee.models import Customer
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
+
 
 
 class IssueFlatSerializer(BaseSerializer):
@@ -770,6 +773,18 @@ class IssueDetailSerializer(IssueSerializer):
             "is_epic",
         ]
         read_only_fields = fields
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        slug = self.context.get("slug", None)
+
+        if slug:
+            if check_workspace_feature_flag(
+                feature_key=FeatureFlag.CUSTOMERS, slug=slug
+            ):
+                self.fields["customer_request_count"] = serializers.IntegerField(
+                    read_only=True
+                )
 
 
 class IssuePublicSerializer(BaseSerializer):

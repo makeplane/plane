@@ -1,26 +1,27 @@
 import React, { FC, useEffect } from "react";
+import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "@plane/i18n";
 import { Button, Input, ModalCore } from "@plane/ui";
+import { useCustomers } from "@/plane-web/hooks/store";
 
 export type TLinkFormData = {
   url: string | undefined;
 };
 type TProps = {
-  handleClose: () => void;
   setLinkData: (link: string | undefined) => void;
-  isModalOpen: boolean;
   preloadedData?: TLinkFormData;
   onSubmit?: (link: string) => Promise<void>;
+  id: string;
 };
 
 const defaultValues = {
   url: "",
 };
 
-export const SourceCreateUpdateModal: FC<TProps> = (props) => {
+export const SourceCreateUpdateModal: FC<TProps> = observer((props) => {
   // props
-  const { setLinkData, isModalOpen, handleClose, preloadedData } = props;
+  const { setLinkData, preloadedData, id } = props;
   // i18n
   const { t } = useTranslation();
   // hooks
@@ -32,9 +33,10 @@ export const SourceCreateUpdateModal: FC<TProps> = (props) => {
   } = useForm<TLinkFormData>({
     defaultValues,
   });
+  const { requestSourceModalId, toggleRequestSourceModal } = useCustomers();
 
-  const onClose = () => {
-    if (handleClose) handleClose();
+  const handleClose = () => {
+    toggleRequestSourceModal(null);
   };
 
   const handleFormSubmit = async (data: TLinkFormData) => {
@@ -44,11 +46,11 @@ export const SourceCreateUpdateModal: FC<TProps> = (props) => {
   };
 
   useEffect(() => {
-    if (isModalOpen) reset({ ...defaultValues, ...preloadedData });
+    if (requestSourceModalId) reset({ ...defaultValues, ...preloadedData });
     return () => reset(defaultValues);
-  }, [preloadedData, reset, isModalOpen]);
+  }, [preloadedData, reset, requestSourceModalId]);
   return (
-    <ModalCore isOpen={isModalOpen} handleClose={handleClose}>
+    <ModalCore isOpen={requestSourceModalId === id} handleClose={handleClose}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
           <h3 className="text-xl font-medium text-custom-text-200">
@@ -88,7 +90,7 @@ export const SourceCreateUpdateModal: FC<TProps> = (props) => {
           </div>
         </div>
         <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
-          <Button variant="neutral-primary" size="sm" onClick={onClose}>
+          <Button variant="neutral-primary" size="sm" onClick={handleClose}>
             {t("common.cancel")}
           </Button>
           <Button variant="primary" size="sm" type="submit">
@@ -98,4 +100,4 @@ export const SourceCreateUpdateModal: FC<TProps> = (props) => {
       </form>
     </ModalCore>
   );
-};
+});

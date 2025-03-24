@@ -1338,7 +1338,8 @@
           "name": "Zamestnanci",
           "placeholder": "Počet zamestnancov, ak je váš zákazník podnik.",
           "validation": {
-            "min_length": "Zamestnanci nemôžu byť menej ako 0."
+            "min_length": "Zamestnanci nemôžu byť menej ako 0.",
+            "max_length": "Zamestnanci nemôžu byť viac ako 2147483647."
           }
         },
         "size": {
@@ -1367,10 +1368,12 @@
         "revenue": {
           "name": "Príjem",
           "placeholder": "Toto je príjem, ktorý váš zákazník generuje ročne.",
+          "placeholder_short": "Pridať príjem",
           "validation": {
             "min_length": "Príjem nemôže byť menej ako 0."
           }
-        }
+        },
+        "invalid_value": "Neplatná hodnota vlastnosti."
       },
       "custom": {
         "title": "Vlastné vlastnosti",
@@ -1493,8 +1496,8 @@
             "message": "Automaticky sme odstránili tohto zákazníka aj z pracovnej položky."
           },
           "error": {
-            "title": "Nemohli sme tentokrát odstrániť túto pracovnú položku zo záznamu tohto zákazníka.",
-            "message": "Automaticky sme odstránili tohto zákazníka aj z pracovnej položky."
+            "title": "Chyba!",
+            "message": "Nemohli sme tentokrát odstrániť túto pracovnú položku zo záznamu tohto zákazníka."
           }
         },
         "add": {

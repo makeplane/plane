@@ -7,13 +7,13 @@ import { useTranslation } from "@plane/i18n";
 import { TCustomer, TCustomerPayload } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
-import { cn, copyUrlToClipboard } from "@plane/utils";
+import { cn } from "@plane/utils";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // store
 import { useCommandPalette } from "@/hooks/store";
 // plane web components
 import { DefaultProperties, CustomerAdditionalProperties } from "@/plane-web/components/customers";
-import { getChangedCustomerFields } from "@/plane-web/helpers/customer-modal.helper";
+import { getChangedCustomerFields } from "@/plane-web/helpers/customers.helper";
 import { useCustomerModal } from "@/plane-web/hooks/context/use-customer-modal";
 import { useCustomers } from "@/plane-web/hooks/store";
 import { CreateCustomerCreateToastActions } from "./customer-create-toast-actions";

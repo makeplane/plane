@@ -5,3 +5,4 @@ from .request import CustomerRequestEndpoint, CustomerIssuesEndpoint
 from .value import CustomerPropertyValueEndpoint
 from .search import CustomerIssueSearchEndpoint
 from .attachment import CustomerRequestAttachmentV2Endpoint
+from .issue import IssueCustomerEndpoint, IssueCustomerRequestEndpoint

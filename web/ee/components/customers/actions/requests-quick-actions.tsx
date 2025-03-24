@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { observer } from "mobx-react";
 // icons
 import { Link2, Pencil, Trash2 } from "lucide-react";
@@ -14,6 +13,7 @@ import { copyUrlToClipboard } from "@/helpers/string.helper";
 // plane web constants
 import { useUserPermissions } from "@/hooks/store";
 import { DeleteCustomerRequestsModal } from "@/plane-web/components/customers/actions";
+import { useCustomers } from "@/plane-web/hooks/store";
 
 type Props = {
   customerId: string;
@@ -21,16 +21,16 @@ type Props = {
   parentRef: React.RefObject<HTMLDivElement> | null;
   handleEdit: () => void;
   workspaceSlug: string;
+  workItemId?: string;
 };
 
 export const CustomerRequestQuickActions: React.FC<Props> = observer((props) => {
-  const { customerId, handleEdit, parentRef, requestId, workspaceSlug } = props;
-  // states
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const { customerId, handleEdit, parentRef, requestId, workspaceSlug, workItemId } = props;
   // i18n
   const { t } = useTranslation();
   // hooks
   const { allowPermissions } = useUserPermissions();
+  const { requestDeleteModalId, toggleDeleteRequestModal } = useCustomers();
   // derived values
   const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
@@ -62,7 +62,7 @@ export const CustomerRequestQuickActions: React.FC<Props> = observer((props) => 
     },
     {
       key: "delete",
-      action: () => setIsDeleteModalOpen(true),
+      action: () => toggleDeleteRequestModal(requestId),
       title: "Delete",
       icon: Trash2,
       className: "text-red-500",
@@ -75,8 +75,9 @@ export const CustomerRequestQuickActions: React.FC<Props> = observer((props) => 
       <DeleteCustomerRequestsModal
         customerId={customerId}
         requestId={requestId}
-        isModalOpen={isDeleteModalOpen}
-        handleClose={() => setIsDeleteModalOpen(false)}
+        isModalOpen={requestDeleteModalId === requestId}
+        handleClose={() => toggleDeleteRequestModal(null)}
+        workItemId={workItemId}
       />
       {parentRef && <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />}
       <CustomMenu ellipsis placement="bottom-end" closeOnSelect>

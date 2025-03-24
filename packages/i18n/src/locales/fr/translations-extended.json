@@ -1299,6 +1299,10 @@
 
   "customers": {
     "label": "{count, plural, one {Client} other {Clients}}",
+    "drop_down": {
+      "placeholder": "Sélectionner un client",
+      "required": "Veuillez sélectionner un client"
+    },
     "upgrade": {
       "title": "Priorisez et gérez le travail avec vos clients.",
       "description": "Associez votre travail aux clients et établissez des priorités en fonction de leurs attributs."
@@ -1338,7 +1342,8 @@
           "name": "Employés",
           "placeholder": "Nombre d'employés si votre client est une entreprise.",
           "validation": {
-            "min_length": "Le nombre d'employés ne peut pas être inférieur à 0."
+            "min_length": "Le nombre d'employés ne peut pas être inférieur à 0.",
+            "max_length": "Le nombre d'employés ne peut pas être supérieur à 2147483647."
           }
         },
         "size": {
@@ -1367,10 +1372,12 @@
         "revenue": {
           "name": "Revenu",
           "placeholder": "Il s'agit du revenu annuel généré par votre client.",
+          "placeholder_short": "Ajouter un revenu",
           "validation": {
             "min_length": "Le revenu ne peut pas être inférieur à 0."
           }
-        }
+        },
+        "invalid_value": "Valeur de propriété invalide."
       },
       "custom": {
         "title": "Propriétés personnalisées",
@@ -1423,7 +1430,7 @@
           "loading": "Activation de la fonctionnalité clients...",
           "success": {
             "title": "Vous avez activé les clients pour cet espace de travail.",
-            "message": "Vous ne pourrez plus la désactiver."
+            "message": "Les membres peuvent désormais ajouter des enregistrements clients, les lier à des éléments de travail, et plus encore."
           },
           "error": {
             "title": "Nous n'avons pas pu activer les clients cette fois.",
@@ -1493,8 +1500,8 @@
             "message": "Nous avons également automatiquement supprimé ce client de l'élément de travail."
           },
           "error": {
-            "title": "Nous n'avons pas pu supprimer cet élément de travail de cet enregistrement de client cette fois.",
-            "message": "Nous avons également automatiquement supprimé ce client de l'élément de travail."
+            "title": "Erreur !",
+            "message": "Nous n'avons pas pu supprimer cet élément de travail de cet enregistrement de client cette fois."
           }
         },
         "add": {

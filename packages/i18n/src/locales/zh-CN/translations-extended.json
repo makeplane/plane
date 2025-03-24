@@ -1299,6 +1299,10 @@
 
   "customers": {
     "label": "{count, plural, one {客户} other {客户}}",
+    "dropdown": {
+      "placeholder": "选择客户",
+      "required": "请选择一个客户"
+    },
     "upgrade": {
       "title": "与客户一起优先排序并管理工作。",
       "description": "将您的工作与客户关联，并根据客户属性确定优先级。"
@@ -1338,7 +1342,8 @@
           "name": "员工",
           "placeholder": "如果客户是公司，请填写员工数量。",
           "validation": {
-            "min_length": "员工数量不能小于0。"
+            "min_length": "员工数量不能小于0。",
+            "max_length": "员工数量不能大于2147483647。"
           }
         },
         "size": {
@@ -1367,10 +1372,13 @@
         "revenue": {
           "name": "收入",
           "placeholder": "这是客户的年收入。",
+          "placeholder_short": "添加收入",
           "validation": {
-            "min_length": "收入不能小于0。"
+            "min_length": "收入不能小于0。",
+            "max_length": "收入不能大于2147483647。"
           }
-        }
+        },
+        "invalid_value": "无效的收入值。"
       },
       "custom": {
         "title": "自定义属性",
@@ -1423,7 +1431,7 @@
           "loading": "正在启用客户功能...",
           "success": {
             "title": "您已启用此工作区的客户功能。",
-            "message": "您将无法禁用此功能。"
+            "message": "成员现在可以添加客户记录、将其链接到工作项等。"
           },
           "error": {
             "title": "无法启用客户功能。",
@@ -1492,8 +1500,8 @@
             "message": "我们还自动将此客户从工作项中移除。"
           },
           "error": {
-            "title": "无法从该客户记录中删除工作项。",
-            "message": "我们还自动将此客户从工作项中移除。"
+            "title": "此次无法从该客户记录中删除工作项。",
+            "message": "请重试删除此工作项，如果问题仍然存在，请联系我们。"
           }
         },
         "add": {

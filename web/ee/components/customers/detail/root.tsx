@@ -16,10 +16,10 @@ export const CustomerDetailRoot: FC = observer(() => {
 
   // hooks
   const { currentWorkspace } = useWorkspace();
-  const { fetchCustomerDetails, loader } = useCustomers();
+  const { fetchCustomerDetails } = useCustomers();
   const { allowPermissions } = useUserPermissions();
 
-  const { data: customer } = useSWR(
+  const { data: customer, isLoading } = useSWR(
     workspaceSlug && customerId ? `CUSTOMER_DETAIL_${workspaceSlug}_${customerId}` : null,
     workspaceSlug && customerId ? () => fetchCustomerDetails(workspaceSlug.toString(), customerId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
@@ -30,7 +30,7 @@ export const CustomerDetailRoot: FC = observer(() => {
   const pageTitle =
     currentWorkspace?.name && customer?.name ? `${currentWorkspace.name} - ${customer.name}` : undefined;
 
-  return loader === "init-loader" ? (
+  return isLoading ? (
     <Loader className="flex h-full gap-5 p-5">
       <div className="basis-2/3 space-y-2">
         <Loader.Item height="30px" width="40%" />

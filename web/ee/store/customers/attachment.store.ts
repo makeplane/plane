@@ -128,9 +128,9 @@ export class RequestAttachmentStore implements IRequestAttachmentStore {
     });
   }, 16);
 
-  private updateRequestAttachmentCount = (customerId: string, requestId: string, count: number) => {
+  private updateRequestAttachmentCount = (requestId: string, count: number) => {
     runInAction(() => {
-      update(this.customerStore.customerRequestsMap, [customerId, requestId], (request: TCustomerRequest) => ({
+      update(this.customerStore.requestsMap, [requestId], (request: TCustomerRequest) => ({
         ...request,
         attachment_count: (request.attachment_count || 0) + count,
       }));
@@ -165,7 +165,7 @@ export class RequestAttachmentStore implements IRequestAttachmentStore {
           update(this.attachmentIds, [requestId], (attachmentIds = []) => uniq(concat(attachmentIds, [response.id])));
           set(this.attachmentMap, response.id, response);
         });
-        this.updateRequestAttachmentCount(customerId, requestId, 1);
+        this.updateRequestAttachmentCount(requestId, 1);
       }
 
       return response;
@@ -190,7 +190,7 @@ export class RequestAttachmentStore implements IRequestAttachmentStore {
       delete this.attachmentMap[attachmentId];
     });
 
-    this.updateRequestAttachmentCount(customerId, requestId, -1);
+    this.updateRequestAttachmentCount(requestId, -1);
 
     return response;
   };

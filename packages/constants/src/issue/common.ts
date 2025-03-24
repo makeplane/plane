@@ -1,4 +1,10 @@
 import { TIssueGroupByOptions, TIssueOrderByOptions, IIssueDisplayProperties } from "@plane/types";
+import {
+  ADDITIONAL_SPREADSHEET_PROPERTY_DETAILS,
+  ADDITIONAL_SPREADSHEET_PROPERTY_LIST,
+  ISSUE_ADDITIONAL_DISPLAY_PROPERTIES,
+  ISSUE_ADDITIONAL_DISPLAY_PROPERTIES_KEYS,
+} from "./common-extended";
 
 export const ALL_ISSUES = "All Issues";
 
@@ -162,6 +168,7 @@ export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = 
   "modules",
   "cycle",
   "issue_type",
+  ...ISSUE_ADDITIONAL_DISPLAY_PROPERTIES_KEYS,
 ];
 
 export const EPICS_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = ISSUE_DISPLAY_PROPERTIES_KEYS.filter(
@@ -213,6 +220,7 @@ export const ISSUE_DISPLAY_PROPERTIES: {
   },
   { key: "modules", titleTranslationKey: "common.module" },
   { key: "cycle", titleTranslationKey: "common.cycle" },
+  ...ISSUE_ADDITIONAL_DISPLAY_PROPERTIES,
 ];
 
 export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
@@ -230,6 +238,7 @@ export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
   "link",
   "attachment_count",
   "sub_issue_count",
+  ...ADDITIONAL_SPREADSHEET_PROPERTY_LIST,
 ];
 
 export const SPREADSHEET_PROPERTY_DETAILS: {
@@ -354,4 +363,5 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderTitle: "Least",
     icon: "LayersIcon",
   },
+  ...ADDITIONAL_SPREADSHEET_PROPERTY_DETAILS,
 };

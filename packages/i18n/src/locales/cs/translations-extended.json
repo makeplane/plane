@@ -1300,6 +1300,10 @@
 
   "customers": {
     "label": "{count, plural, one {Zákazník} other {Zákazníci}}",
+    "drop_down": {
+      "placeholder": "Vyberte zákazníka",
+      "required": "Prosím vyberte zákazníka"
+    },
     "upgrade": {
       "title": "Stanovte priority a spravujte práci se zákazníky.",
       "description": "Propojte svou práci se zákazníky a určete priority podle jejich atributů."
@@ -1339,7 +1343,8 @@
           "name": "Zaměstnanci",
           "placeholder": "Počet zaměstnanců, pokud je váš zákazník firma.",
           "validation": {
-            "min_length": "Počet zaměstnanců nemůže být menší než 0."
+            "min_length": "Počet zaměstnanců nemůže být menší než 0.",
+            "max_length": "Počet zaměstnanců nemůže být větší než 2147483647."
           }
         },
         "size": {
@@ -1368,10 +1373,12 @@
         "revenue": {
           "name": "Příjem",
           "placeholder": "Toto je roční příjem generovaný vaším zákazníkem.",
+          "placeholder_short": "Přidat příjem",
           "validation": {
             "min_length": "Příjem nemůže být menší než 0."
           }
-        }
+        },
+        "invalid_value": "Neplatná hodnota vlastnosti."
       },
       "custom": {
         "title": "Vlastní vlastnosti",
@@ -1424,7 +1431,7 @@
           "loading": "Povolování funkce zákazníků...",
           "success": {
             "title": "Zapnuli jste funkci Zákazníci pro tento pracovní prostor.",
-            "message": "Již ji nelze vypnout."
+            "message": "I membri possono ora aggiungere record clienti, collegarli agli elementi di lavoro e altro ancora."
           },
           "error": {
             "title": "Tentokrát se nám nepodařilo zapnout funkci Zákazníci.",
@@ -1494,8 +1501,8 @@
             "message": "Tento zákazník byl také automaticky odstraněn z pracovní položky."
           },
           "error": {
-            "title": "Tentokrát se nám nepodařilo odstranit tuto pracovní položku z tohoto záznamu zákazníka.",
-            "message": "Tento zákazník byl také automaticky odstraněn z pracovní položky."
+            "title": "Chyba!",
+            "message": "Tentokrát se nám nepodařilo odstranit tuto pracovní položku ze záznamu zákazníka."
           }
         },
         "add": {

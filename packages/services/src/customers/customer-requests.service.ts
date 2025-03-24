@@ -87,7 +87,7 @@ export class CustomerRequestsService extends APIService {
    * @param workItemIds
    */
   async addWorkItems(workspaceSlug: string, requestId: string, workItemIds: string[]): Promise<TBaseIssue[]> {
-    return this.post(`/api/workspaces/${workspaceSlug}/customer-requests/${requestId}/`, { issue_ids: workItemIds })
+    return this.post(`/api/workspaces/${workspaceSlug}/customer-requests/${requestId}/`, { work_item_ids: workItemIds })
       .then((response) => response.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -101,7 +101,7 @@ export class CustomerRequestsService extends APIService {
    * @param workItemId
    */
   async removeWorkItem(workspaceSlug: string, requestId: string, workItemId: string): Promise<void> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/customer-requests/${requestId}/issues/${workItemId}/`)
+    return this.delete(`/api/workspaces/${workspaceSlug}/customer-requests/${requestId}/work-items/${workItemId}/`)
       .then((response) => response.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -117,6 +117,20 @@ export class CustomerRequestsService extends APIService {
    */
   async destroy(workspaceSlug: string, customerId: string, requestId: string): Promise<void> {
     return this.delete(`/api/workspaces/${workspaceSlug}/customers/${customerId}/customer-requests/${requestId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Get list of requests for a customer
+   * @param workspaceSlug
+   * @param workItemId
+   * @returns
+   */
+  async listWorkItemRequests(workspaceSlug: string, workItemId: string): Promise<TCustomerRequest[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/work-items/${workItemId}/customer-requests/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

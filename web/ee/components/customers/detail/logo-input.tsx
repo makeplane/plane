@@ -25,7 +25,7 @@ export const CustomerLogoInput: FC<TProps> = observer((props) => {
         <PencilIcon className="size-2.5" />
       </div>
       {logo_url || logo ? (
-        <div className="bg-custom-background-100 rounded-md h-11 w-11 overflow-hidden border-[0.5px] border-custom-border-300 p-1.5">
+        <div className="bg-custom-background-100 rounded-md h-11 w-11 overflow-hidden border-[0.5px] border-custom-border-300">
           <img
             src={logo ? URL.createObjectURL(logo) : logo_url && logo_url !== "" ? (getFileURL(logo_url) ?? "") : ""}
             alt="customer logo"

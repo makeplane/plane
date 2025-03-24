@@ -1299,6 +1299,10 @@
 
   "customers": {
     "label": "{count, plural, one {Cliente} other {Clientes}}",
+    "drop_down": {
+      "placeholder": "Seleccione un cliente",
+      "required": "Por favor seleccione un cliente"
+    },
     "upgrade": {
       "title": "Prioriza y gestiona el trabajo con los clientes.",
       "description": "Asocia tu trabajo con los clientes y prioriza según sus atributos."
@@ -1338,7 +1342,8 @@
           "name": "Empleados",
           "placeholder": "Si el cliente es una empresa, ingrese el número de empleados.",
           "validation": {
-            "min_length": "El número de empleados no puede ser menor que 0."
+            "min_length": "El número de empleados no puede ser menor que 0.",
+            "max_length": "El número de empleados no puede ser mayor que 2147483647."
           }
         },
         "size": {
@@ -1367,10 +1372,12 @@
         "revenue": {
           "name": "Ingresos",
           "placeholder": "Este es el ingreso anual del cliente.",
+          "placeholder_short": "Agregar ingresos",
           "validation": {
             "min_length": "Los ingresos no pueden ser menores que 0."
           }
-        }
+        },
+        "invalid_value": "Valor de propiedad no válido."
       },
       "custom": {
         "title": "Propiedades personalizadas",
@@ -1423,7 +1430,7 @@
           "loading": "Habilitando la función de clientes...",
           "success": {
             "title": "La función de clientes ha sido habilitada para este espacio de trabajo.",
-            "message": "No podrás deshabilitar esta función."
+            "message": "I membri possono ora aggiungere record clienti, collegarli agli elementi di lavoro e altro ancora."
           },
           "error": {
             "title": "No se puede habilitar la función de clientes.",
@@ -1492,8 +1499,8 @@
             "message": "También hemos eliminado automáticamente a este cliente de los elementos de trabajo."
           },
           "error": {
-            "title": "No se pudo eliminar el elemento de trabajo de este cliente.",
-            "message": "También hemos eliminado automáticamente a este cliente de los elementos de trabajo."
+            "title": "¡Error!",
+            "message": "No se pudo eliminar el elemento de trabajo del registro de este cliente."
           }
         },
         "add": {

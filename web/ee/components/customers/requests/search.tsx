@@ -11,29 +11,57 @@ import { useTranslation } from "@plane/i18n";
 import { cn } from "@/helpers/common.helper";
 import { useCustomers } from "@/plane-web/hooks/store";
 
-export const CustomerRequestSearch: FC = observer(() => {
+type TProps = {
+  isWorkItemLevel?: boolean;
+};
+
+export const CustomerRequestSearch: FC<TProps> = observer((props) => {
+  const { isWorkItemLevel = false } = props;
   // i18n
   const { t } = useTranslation();
-  const { requestSearchQuery: searchQuery, updateRequestSearchQuery: updateSearchQuery } = useCustomers();
+  const {
+    customerRequestSearchQuery,
+    updateCustomerRequestSearchQuery,
+    workItemRequestSearchQuery,
+    updateWorkItemRequestSearchQuery,
+  } = useCustomers();
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
-    if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
+    if (isSearchOpen) {
+      if (!isWorkItemLevel) {
+        if (customerRequestSearchQuery.trim() === "") {
+          setIsSearchOpen(false);
+        }
+      } else if (workItemRequestSearchQuery.trim() === "") {
+        setIsSearchOpen(false);
+      }
+    }
   });
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
-      if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
+      if (isWorkItemLevel) {
+        if (workItemRequestSearchQuery && workItemRequestSearchQuery.trim() !== "")
+          updateWorkItemRequestSearchQuery("");
+      } else if (customerRequestSearchQuery && customerRequestSearchQuery.trim() !== "")
+        updateCustomerRequestSearchQuery("");
       else setIsSearchOpen(false);
     }
   };
 
+  const hadleUpdateSearchQuery = (query: string) => {
+    if (isWorkItemLevel) updateWorkItemRequestSearchQuery(query);
+    else updateCustomerRequestSearchQuery(query);
+  };
+
   /**Clear search before after render */
   useEffect(() => {
-    updateSearchQuery("");
+    if (isWorkItemLevel) updateWorkItemRequestSearchQuery("");
+    else updateCustomerRequestSearchQuery("");
   }, []);
 
   return (
@@ -42,7 +70,9 @@ export const CustomerRequestSearch: FC = observer(() => {
         <button
           type="button"
           className="-mr-1 p-2 hover:bg-custom-background-80 rounded text-custom-text-400 grid place-items-center"
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
             setIsSearchOpen(true);
             inputRef.current?.focus();
           }}
@@ -63,16 +93,18 @@ export const CustomerRequestSearch: FC = observer(() => {
           ref={inputRef}
           className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
           placeholder={t("common.search.label")}
-          value={searchQuery}
-          onChange={(e) => updateSearchQuery(e.target.value)}
+          value={isWorkItemLevel ? workItemRequestSearchQuery : customerRequestSearchQuery}
+          onChange={(e) => hadleUpdateSearchQuery(e.target.value)}
           onKeyDown={handleInputKeyDown}
         />
         {isSearchOpen && (
           <button
             type="button"
             className="grid place-items-center"
-            onClick={() => {
-              updateSearchQuery("");
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              hadleUpdateSearchQuery("");
               setIsSearchOpen(false);
             }}
           >

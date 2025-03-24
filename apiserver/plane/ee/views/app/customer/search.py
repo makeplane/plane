@@ -14,7 +14,7 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.app.permissions import WorkSpaceAdminPermission
 from plane.ee.models.issue import Issue
-from plane.ee.models.customer import CustomerRequestIssue
+from plane.ee.models.customer import CustomerRequestIssue, CustomerRequest
 
 
 class CustomerIssueSearchEndpoint(BaseAPIView):
@@ -23,6 +23,7 @@ class CustomerIssueSearchEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.CUSTOMERS)
     def get(self, request, slug, customer_id):
         query = request.query_params.get("search", None)
+        customer_request_id = request.query_params.get("customer_request_id", None)
 
         fields = ["name", "sequence_id", "project__identifier"]
         q = Q()
@@ -34,9 +35,23 @@ class CustomerIssueSearchEndpoint(BaseAPIView):
             else:
                 q |= Q(**{f"{field}__icontains": query})
 
-        issue_ids = CustomerRequestIssue.objects.filter(
-            customer_id=customer_id, deleted_at__isnull=True
+        # Get all customer request IDs for the customer in a single query
+        customer_request_ids = CustomerRequest.objects.filter(
+            customer_id=customer_id
+        ).values_list("id", flat=True)
+
+        # Filter issues that are already added to the given customer_request_id
+        # or have been directly added to the customer
+
+        issue_ids_to_exclude = CustomerRequestIssue.objects.filter(
+            customer_request_id=customer_request_id
         ).values_list("issue_id", flat=True)
+
+        # Filter work items that is already added to the customer requests of the customer
+        if customer_request_id is None:
+            issue_ids_to_exclude = CustomerRequestIssue.objects.filter(
+                customer_request_id__in=customer_request_ids
+            ).values_list("issue_id", flat=True)
 
         issues = (
             Issue.objects.filter(
@@ -45,6 +60,7 @@ class CustomerIssueSearchEndpoint(BaseAPIView):
                 project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
                 workspace__slug=slug,
+                archived_at__isnull=True,
             )
             .filter(
                 Q(issue_intake__status=1)
@@ -52,11 +68,11 @@ class CustomerIssueSearchEndpoint(BaseAPIView):
                 | Q(issue_intake__status=2)
                 | Q(issue_intake__isnull=True)
             )
-            .filter(
-                Q(type_id__isnull=True)
-                | Q(project__project_projectfeature__is_epic_enabled=True)
+            .exclude(
+                Q(type__is_epic=True)
+                & Q(project__project_projectfeature__is_epic_enabled=False)
             )
-            .exclude(id__in=issue_ids)
+            .exclude(id__in=issue_ids_to_exclude)
         )
 
         issues = issues.distinct().values(
@@ -68,10 +84,6 @@ class CustomerIssueSearchEndpoint(BaseAPIView):
             "sequence_id",
             "project_id",
             "project__identifier",
-            "created_at",
-            "updated_at",
-            "created_by",
-            "updated_by",
             "type_id",
             is_epic=F("type__is_epic"),
         )[:100]

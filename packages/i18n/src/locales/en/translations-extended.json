@@ -20,6 +20,14 @@
       "start_after": "Starts After",
       "finish_before": "Finishes Before",
       "finish_after": "Finishes After"
+    },
+    "display": {
+      "properties": {
+        "customer_count": "Customer count",
+        "customer_request_count": "Customer request count",
+        "customer": "Customer",
+        "requests": "Customer request"
+      }
     }
   },
 
@@ -1328,6 +1336,11 @@
 
   "customers": {
     "label": "{count, plural, one {Customer} other {Customers}}",
+    "open": "Open customer",
+    "dropdown": {
+      "placeholder": "Select customer",
+      "required": "Please select a customer"
+    },
     "upgrade": {
       "title": "Prioritize and manage work with Customers.",
       "description": "Map your work to customers and prioritize by customer attributes."
@@ -1367,7 +1380,8 @@
           "name": "Employees",
           "placeholder": "Number of employees if your customer is a business.",
           "validation": {
-            "min_length": "Employees cannot be less than 0."
+            "min_length": "Employees cannot be less than 0.",
+            "max_length": "Employees count cannot exceed 2147483647"
           }
         },
         "size": {
@@ -1396,10 +1410,15 @@
         "revenue": {
           "name": "Revenue",
           "placeholder": "This is the revenue your customer generates annually.",
+          "placeholder_short": "Add revenue",
           "validation": {
             "min_length": "Revenue cannot be less that 0."
           }
-        }
+        },
+        "requests": {
+          "name": "No.of requests"
+        },
+        "invalid_value": "Invalid property value."
       },
       "custom": {
         "title": "Custom properties",
@@ -1452,7 +1471,7 @@
           "loading": "Enabling customers feature...",
           "success": {
             "title": "You've turned on Customers for this workspace.",
-            "message": "You can't turn it off again."
+            "message": "Members can now add customer records, link them to work items, and more."
           },
           "error": {
             "title": "We couldn't turn on Customers this time.",
@@ -1522,8 +1541,8 @@
             "message": "We have automatically removed this customer from the work item, too."
           },
           "error": {
-            "title": "We couldn't remove that work item from this customer's record this time.",
-            "message": "We have automatically removed this customer from the work item, too."
+            "title": "Error!",
+            "message": "We couldn't remove that work item from this customer's record this time."
           }
         },
         "add": {

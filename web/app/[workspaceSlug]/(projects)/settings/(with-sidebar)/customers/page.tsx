@@ -100,12 +100,7 @@ const CustomerSettingsPage = observer(() => {
             </span>
           </div>
           <div className={cn(isCustomersFeatureEnabled && "cursor-not-allowed")}>
-            <ToggleSwitch
-              value={!!isCustomersFeatureEnabled}
-              disabled={isCustomersFeatureEnabled}
-              onChange={toggleCustomersFeature}
-              size="sm"
-            />
+            <ToggleSwitch value={!!isCustomersFeatureEnabled} onChange={toggleCustomersFeature} size="sm" />
           </div>
         </div>
         <CustomerSettingsRoot

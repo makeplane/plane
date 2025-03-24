@@ -100,8 +100,8 @@ export class CustomerService extends APIService {
     customerId: string,
     params: TProjectIssuesSearchParams
   ): Promise<ISearchIssueResponse[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/customers/${customerId}/search-issues`, {
-      params: { search: params.search },
+    return this.get(`/api/workspaces/${workspaceSlug}/customers/${customerId}/search-work-items/`, {
+      params: { search: params.search, customer_request_id: params.customer_request_id },
     })
       .then((response) => response?.data)
       .catch((error) => {
@@ -121,7 +121,7 @@ export class CustomerService extends APIService {
     customerId: string,
     query?: { request_id: string }
   ): Promise<TCustomerWorkItem[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/customers/${customerId}/issues`, { params: query })
+    return this.get(`/api/workspaces/${workspaceSlug}/customers/${customerId}/work-items/`, { params: query })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -143,7 +143,7 @@ export class CustomerService extends APIService {
     query?: { customer_request_id: string }
   ): Promise<TIssue[]> {
     return this.post(
-      `/api/workspaces/${workspaceSlug}/customers/${customerId}/issues/`,
+      `/api/workspaces/${workspaceSlug}/customers/${customerId}/work-items/`,
       { issue_ids: workItemIds },
       {
         params: query,
@@ -169,9 +169,23 @@ export class CustomerService extends APIService {
     workItemId: string,
     query?: { customer_request_id: string }
   ): Promise<void> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/customers/${customerId}/issues/${workItemId}/`, {
+    return this.delete(`/api/workspaces/${workspaceSlug}/customers/${customerId}/work-items/${workItemId}/`, {
       params: query,
     })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * @description Get list of work items related to a customer
+   * @param workspaceSlug
+   * @param workItemId
+   * @returns
+   */
+  async getWorkItemCustomers(workspaceSlug: string, workItemId: string): Promise<string[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/work-items/${workItemId}/customers/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

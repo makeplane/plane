@@ -35,28 +35,19 @@ export const AddAttachmentButton: FC<TProps> = (props) => {
         if (!currentFile || !workspaceSlug) return;
 
         setIsLoading(true);
-        attachmentOperations
-          .create(currentFile)
-          .catch(() => {
-            setToast({
-              type: TOAST_TYPE.ERROR,
-              title: t("customers.requests.toasts.attachments.upload.error.title"),
-              message: t("customers.requests.toasts.attachments.upload.error.message"),
-            });
-          })
-          .finally(() => {
-            setIsLoading(false);
-          });
+        attachmentOperations.create(currentFile).finally(() => {
+          setIsLoading(false);
+        });
         return;
       }
 
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: t("customers.requests.toasts.attachments.size.error.title"),
+        title: t("customers.requests.toasts.attachment.size.error.title"),
         message:
           totalAttachedFiles > 1
-            ? t("customers.requests.toasts.attachments.size.error.message")
-            : t("customers.requests.toasts.attachments.length.error.message", { size: maxFileSize / 1024 / 1024 }),
+            ? t("customers.requests.toasts.attachment.size.error.message")
+            : t("customers.requests.toasts.attachment.length.error.message", { size: maxFileSize / 1024 / 1024 }),
       });
       return;
     },

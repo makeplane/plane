@@ -117,7 +117,7 @@ export const DefaultProperties: FC<Props> = (props) => {
           render={({ field: { value, onChange } }) => (
             <>
               {value || logo ? (
-                <div className="bg-custom-background-100 rounded-md h-11 w-11 overflow-hidden border-[0.5px] border-custom-border-300 p-1.5">
+                <div className="bg-custom-background-100 rounded-md h-11 w-11 overflow-hidden border-[0.5px] border-custom-border-300">
                   <img
                     src={logo ? URL.createObjectURL(logo) : value && value !== "" ? (getFileURL(value) ?? "") : ""}
                     alt="customer logo"
@@ -316,6 +316,10 @@ export const DefaultProperties: FC<Props> = (props) => {
               min: {
                 value: 0,
                 message: t("customers.properties.default.employees.validation.min_length"),
+              },
+              max: {
+                value: 2147483647,
+                message: t("customers.properties.default.employees.validation.max_length"),
               },
             }}
             render={({ field: { value, onChange } }) => (

@@ -57,7 +57,7 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
   }, [notificationList]);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "right-start",
+    placement: "left-start",
   });
 
   const getUnreadActivityIds = (notificationList: TNotification[]): string[] =>

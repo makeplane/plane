@@ -116,7 +116,6 @@ export class IssueStore implements IIssueStore {
     if (issueStatus === "DRAFT")
       issue = await this.issueDraftService.getDraftIssueById(workspaceSlug, projectId, issueId, query);
     else issue = await this.issueService.retrieve(workspaceSlug, projectId, issueId, query);
-
     if (!issue) throw new Error("Work item not found");
 
     const issuePayload = this.addIssueToStore(issue);
@@ -212,6 +211,7 @@ export class IssueStore implements IIssueStore {
       is_draft: issue?.is_draft,
       is_subscribed: issue?.is_subscribed,
       is_epic: issue?.is_epic,
+      customer_request_count: issue?.customer_request_count,
     };
 
     this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);

@@ -1338,7 +1338,8 @@
           "name": "Mitarbeiter",
           "placeholder": "Anzahl der Mitarbeiter, wenn Ihr Kunde ein Unternehmen ist.",
           "validation": {
-            "min_length": "Mitarbeiteranzahl kann nicht weniger als 0 sein."
+            "min_length": "Mitarbeiteranzahl kann nicht weniger als 0 sein.",
+            "max_length": "Mitarbeiteranzahl darf nicht mehr als 2147483647 betragen."
           }
         },
         "size": {
@@ -1368,9 +1369,11 @@
           "name": "Umsatz",
           "placeholder": "Dies ist der Umsatz, den Ihr Kunde jährlich generiert.",
           "validation": {
-            "min_length": "Umsatz kann nicht weniger als 0 sein."
+            "min_length": "Umsatz kann nicht weniger als 0 sein.",
+            "max_length": "Umsatz darf nicht mehr als 2147483647 betragen."
           }
-        }
+        },
+        "invalid_value": "Ungültige Eigenschaftswert."
       },
       "custom": {
         "title": "Benutzerdefinierte Eigenschaften",
@@ -1493,8 +1496,8 @@
             "message": "Wir haben diesen Kunden auch automatisch aus der Arbeitsaufgabe entfernt."
           },
           "error": {
-            "title": "Wir konnten diese Arbeitsaufgabe diesmal nicht aus dem Datensatz dieses Kunden entfernen.",
-            "message": "Wir haben diesen Kunden auch automatisch aus der Arbeitsaufgabe entfernt."
+            "title": "Fehler!",
+            "message": "Wir konnten diese Arbeitsaufgabe diesmal nicht aus dem Datensatz dieses Kunden entfernen."
           }
         },
         "add": {

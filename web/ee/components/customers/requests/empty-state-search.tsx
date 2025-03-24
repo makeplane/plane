@@ -1,11 +1,12 @@
-import React from "react";
+import React, { FC } from "react";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useTranslation } from "@plane/i18n";
 import RequestEmptyDark from "@/public/empty-state/customers/request-search-dark.svg";
 import RequestEmptyLight from "@/public/empty-state/customers/request-search-light.svg";
 
-export const CustomerRequestSearchEmptyState = () => {
+export const CustomerRequestSearchEmptyState: FC = observer(() => {
   // i18n
   const { t } = useTranslation();
   // hooks
@@ -26,4 +27,4 @@ export const CustomerRequestSearchEmptyState = () => {
       </span>
     </div>
   );
-};
+});

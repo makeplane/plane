@@ -16,6 +16,8 @@ from plane.db.models import (
     State,
     WorkspaceMember,
 )
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 def issue_queryset_grouper(queryset, group_by, sub_group_by):
@@ -55,7 +57,7 @@ def issue_queryset_grouper(queryset, group_by, sub_group_by):
     return queryset.annotate(**default_annotations)
 
 
-def issue_on_results(issues, group_by, sub_group_by):
+def issue_on_results(issues, group_by, sub_group_by, slug=None):
     FIELD_MAPPER = {
         "labels__id": "label_ids",
         "assignees__id": "assignee_ids",
@@ -90,6 +92,10 @@ def issue_on_results(issues, group_by, sub_group_by):
         "state__group",
         "type_id",
     ]
+
+    if slug:
+        if check_workspace_feature_flag(feature_key=FeatureFlag.CUSTOMERS, slug=slug):
+            required_fields.extend(["customer_count", "customer_request_count"])
 
     if group_by in FIELD_MAPPER:
         original_list.remove(FIELD_MAPPER[group_by])

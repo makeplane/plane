@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 // plane web imports
 import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
@@ -21,25 +21,35 @@ type TProps = {
 
 export const CustomerRequestsRoot: FC<TProps> = observer((props) => {
   const { workspaceSlug, customerId } = props;
-  const [isRequestFormOpen, setRequestForm] = useState<boolean>(false);
 
   // i18n
   const { t } = useTranslation();
   // hooks
-  const { getFilteredCustomerRequestIds, requestSearchQuery } = useCustomers();
+  const {
+    getFilteredCustomerRequestIds,
+    customerRequestSearchQuery,
+    createUpdateRequestModalId,
+    toggleCreateUpdateRequestModal,
+  } = useCustomers();
   const { allowPermissions } = useUserPermissions();
 
   // derived values
   const requestIds = getFilteredCustomerRequestIds(customerId);
   const isEditable = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const isRequestFormOpen = createUpdateRequestModalId === customerId;
 
   const handleFormClose = () => {
-    setRequestForm(false);
+    toggleCreateUpdateRequestModal(null);
   };
 
   const handleFormOpen = () => {
-    if (!isRequestFormOpen) setRequestForm(true);
+    toggleCreateUpdateRequestModal(customerId);
   };
+
+  useEffect(() => {
+    toggleCreateUpdateRequestModal(null);
+  }, []);
+
   return (
     <>
       {/* Header */}
@@ -56,7 +66,7 @@ export const CustomerRequestsRoot: FC<TProps> = observer((props) => {
       </div>
       {!isRequestFormOpen &&
         !requestIds?.length &&
-        (requestSearchQuery === "" ? (
+        (customerRequestSearchQuery === "" ? (
           <CustomerRequestEmptyState addRequest={handleFormOpen} />
         ) : (
           <CustomerRequestSearchEmptyState />

@@ -46,7 +46,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { fetchAll } = useIssueTypes();
   const { fetchAllTemplates } = useWorkItemTemplates();
   const { fetchAllCustomerPropertiesAndOptions } = useCustomerProperties();
-  const { isCustomersFeatureEnabled } = useCustomers();
+  const { isCustomersFeatureEnabled, fetchCustomers } = useCustomers();
   // derived values
   const isFreeMemberCountExceeded = subscriptionDetail?.is_free_member_count_exceeded;
   const isWorkspaceSettingsRoute = pathname.includes(`/${workspaceSlug}/settings`);
@@ -120,6 +120,13 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceSlug && isCustomersFeatureEnabled
       ? () => fetchAllCustomerPropertiesAndOptions(workspaceSlug.toString())
       : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  // fetch customers
+  useSWR(
+    workspaceSlug ? `CUSTOMERS_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchCustomers(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 

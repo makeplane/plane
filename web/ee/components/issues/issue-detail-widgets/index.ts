@@ -1,1 +1,2 @@
-export * from "@/ce/components/issues/issue-detail-widgets";
+export * from "./additional-widgets";
+export * from "./customer-requests";
