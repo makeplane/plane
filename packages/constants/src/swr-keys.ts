@@ -1,3 +1,7 @@
-export enum SWR_KEYS {}
+export enum SWR_KEYS_CORE {}
 
-export type TSWRKey = SWR_KEYS;
+export const SWR_KEYS = {
+  ...SWR_KEYS_CORE,
+} as const;
+
+export type TSWRKey = SWR_KEYS_CORE;
