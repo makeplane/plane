@@ -1,6 +1,5 @@
 # Python imports
 import json
-from django.db import connection
 
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -17,7 +16,6 @@ from django.db.models import (
     When,
     Count,
     Subquery,
-    Exists,
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -39,6 +37,7 @@ from plane.db.models import (
     Workspace,
     CycleIssue,
     ProjectIssueType,
+    ProjectMember,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
@@ -153,7 +152,7 @@ class EpicViewSet(BaseViewSet):
                 project_id=project_id, slug=slug
             )
             if workflow_state_manager._validate_issue_creation(
-                state_id=request.data.get("state_id"),
+                state_id=request.data.get("state_id")
             ):
                 return Response(
                     {"error": "You cannot create a epic in this state"},
@@ -690,3 +689,150 @@ class EpicListAnalyticsEndpoint(BaseAPIView):
             )
 
         return Response(result, status=status.HTTP_200_OK)
+
+
+class EpicMetaEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
+    def get(self, request, slug, project_id, epic_id):
+        epic = Issue.objects.only("sequence_id", "project__identifier").get(
+            id=epic_id, project_id=project_id, workspace__slug=slug, type__is_epic=True
+        )
+        return Response(
+            {
+                "sequence_id": epic.sequence_id,
+                "project_identifier": epic.project.identifier,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class EpicDetailIdentifierEndpoint(BaseAPIView):
+    def strict_str_to_int(self, s):
+        if not s.isdigit() and not (s.startswith("-") and s[1:].isdigit()):
+            raise ValueError("Invalid integer string")
+        return int(s)
+
+    def get_queryset(self):
+        return (
+            Issue.objects.filter(Q(type__isnull=False) & Q(type__is_epic=True))
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("assignees", "labels")
+            .annotate(
+                cycle_id=Case(
+                    When(
+                        issue_cycle__cycle__deleted_at__isnull=True,
+                        then=F("issue_cycle__cycle_id"),
+                    ),
+                    default=None,
+                )
+            )
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(labels__id__isnull=True)
+                            & Q(label_issue__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True)
+                            & Q(issue_assignee__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(issue_module__module_id__isnull=True)
+                            & Q(issue_module__module__archived_at__isnull=True)
+                            & Q(issue_module__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+        ).distinct()
+
+    def get(self, request, slug, project_identifier, epic_identifier):
+        # Check if the issue identifier is a valid integer
+        try:
+            epic_identifier = self.strict_str_to_int(epic_identifier)
+        except ValueError:
+            return Response(
+                {"error": "Invalid issue identifier"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Fetch the project
+        project = Project.objects.get(
+            identifier__iexact=project_identifier, workspace__slug=slug
+        )
+
+        print()
+
+        # Fetch the issue
+        issue = (
+            self.get_queryset()
+            .filter(sequence_id=epic_identifier, project_id=project.id)
+            .first()
+        )
+
+        # Check if the issue exists
+        if not issue:
+            return Response(
+                {"error": "The required object does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Check if the user is a member of the project
+        if not ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project.id,
+            member=request.user,
+            is_active=True,
+        ).exists():
+            return Response(
+                {
+                    "error": "You are not allowed to view this issue",
+                    "type": project.network,
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # Serialize the issue
+        serializer = EpicDetailSerializer(issue, expand=self.expand)
+        return Response(serializer.data, status=status.HTTP_200_OK)

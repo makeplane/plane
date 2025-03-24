@@ -9,6 +9,7 @@ import { CircularProgressIndicator, EpicIcon } from "@plane/ui";
 import { ListItem } from "@/components/core/list";
 // helpers
 import { cn, getProgress } from "@/helpers/common.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -50,10 +51,19 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
   const progress = getProgress(initiativeEpicStats?.completed_issues, initiativeEpicStats?.total_issues);
 
   if (!issue || !issue.project_id) return <></>;
+
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug,
+    projectId: issue?.project_id,
+    issueId: issue?.id,
+    projectIdentifier,
+    sequenceId: issue?.sequence_id,
+  });
+
   return (
     <ListItem
       title={issue.name}
-      itemLink={`/${workspaceSlug}/projects/${issue.project_id}/epics/${issue.id}`}
+      itemLink={workItemLink}
       prependTitleElement={
         <div
           className={cn("flex flex-shrink-0 items-center space-x-2")}

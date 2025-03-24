@@ -5,6 +5,8 @@ from .base import (
     EpicDetailEndpoint,
     WorkspaceEpicEndpoint,
     EpicListAnalyticsEndpoint,
+    EpicMetaEndpoint,
+    EpicDetailIdentifierEndpoint,
 )
 from .link import EpicLinkViewSet
 from .comment import EpicCommentViewSet

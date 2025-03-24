@@ -15,10 +15,11 @@ import { PageHead } from "@/components/core";
 import { IssueDetailRoot } from "@/components/issues";
 // hooks
 import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
-// assets
 import { useAppRouter } from "@/hooks/use-app-router";
-
+// plane-web components
+import { EpicDetailRoot } from "@/plane-web/components/epics/details/root";
 import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
+// assets
 import emptyIssueDark from "@/public/empty-state/search/issues-dark.webp";
 import emptyIssueLight from "@/public/empty-state/search/issues-light.webp";
 
@@ -110,11 +111,23 @@ const IssueDetailsPage = observer(() => {
             projectId &&
             issueId && (
               <>
-                <IssueDetailRoot
-                  workspaceSlug={workspaceSlug.toString()}
-                  projectId={projectId.toString()}
-                  issueId={issueId.toString()}
-                />
+                {issue?.is_epic ? (
+                  <>
+                    <EpicDetailRoot
+                      workspaceSlug={workspaceSlug.toString()}
+                      projectId={projectId.toString()}
+                      epicId={issueId.toString()}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <IssueDetailRoot
+                      workspaceSlug={workspaceSlug.toString()}
+                      projectId={projectId.toString()}
+                      issueId={issueId.toString()}
+                    />
+                  </>
+                )}
               </>
             )
           )}

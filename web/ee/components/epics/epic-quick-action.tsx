@@ -13,9 +13,10 @@ import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from 
 import { DeleteIssueModal } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useEventTracker, useIssues, useUserPermissions } from "@/hooks/store";
+import { useEventTracker, useIssues, useProject, useUserPermissions } from "@/hooks/store";
 // plane-web
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 // types
@@ -48,23 +49,32 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
   const { allowPermissions } = useUserPermissions();
   const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
+  const { getProjectIdentifierById } = useProject();
   // derived values
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
+  const projectIdentifier = getProjectIdentifierById(issue?.project_id);
   // auth
   const isEditingAllowed =
     allowPermissions([EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER], EUserPermissionsLevel.PROJECT) && !readOnly;
   const isDeletingAllowed = isEditingAllowed;
 
-  const issueLink = `${workspaceSlug}/projects/${issue.project_id}/epics/${issue.id}`;
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug?.toString(),
+    projectId: issue?.project_id,
+    issueId: issue?.id,
+    projectIdentifier,
+    sequenceId: issue?.sequence_id,
+  });
+
   const handleCopyIssueLink = () =>
-    copyUrlToClipboard(issueLink).then(() =>
+    copyUrlToClipboard(workItemLink, false).then(() =>
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link copied",
         message: "Epic link copied to clipboard",
       })
     );
-  const handleOpenInNewTab = () => window.open(`/${issueLink}`, "_blank");
+  const handleOpenInNewTab = () => window.open(`${workItemLink}`, "_blank");
 
   const MENU_ITEMS: TContextMenuItem[] = [
     {

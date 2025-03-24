@@ -15,7 +15,6 @@ from django.db.models import (
     UUIDField,
     Value,
     Subquery,
-    Count
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -46,9 +45,9 @@ from plane.db.models import (
     ProjectMember,
     CycleIssue,
     UserRecentVisit,
-    Cycle
+    Cycle,
 )
-from plane.ee.models import EntityIssueStateActivity, Customer
+from plane.ee.models import EntityIssueStateActivity
 from plane.utils.grouper import (
     issue_group_values,
     issue_on_results,
@@ -1206,7 +1205,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
 
         # Fetch the issue
         issue = (
-            Issue.issue_objects.filter(project_id=project.id)
+            Issue.objects.filter(project_id=project.id)
             .filter(workspace__slug=slug)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
@@ -1217,9 +1216,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
                     ]
                 )
             )
-            .prefetch_related(
-                Prefetch("customer_request_issues__customer")
-            )
+            .prefetch_related(Prefetch("customer_request_issues__customer"))
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
                 .order_by()
@@ -1301,6 +1298,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
                     )
                 )
             )
+            .annotate(is_epic=F("type__is_epic"))
         ).first()
 
         # Check if the issue exists

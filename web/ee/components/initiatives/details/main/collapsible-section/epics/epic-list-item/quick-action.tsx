@@ -8,6 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // helpers
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
@@ -36,12 +37,19 @@ export const EpicQuickActions: React.FC<Props> = observer((props: Props) => {
 
   // derived values
   const epic = getIssueById(epicId);
-  const epicLink = `${workspaceSlug}/projects/${epic?.project_id}/epics/${epic?.id}`;
   const projectIdentifier = getProjectIdentifierById(epic?.project_id);
+
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug,
+    projectId: epic?.project_id,
+    issueId: epic?.id,
+    projectIdentifier,
+    sequenceId: epic?.sequence_id,
+  });
 
   // handler
   const handleCopyText = () =>
-    copyUrlToClipboard(epicLink).then(() =>
+    copyUrlToClipboard(workItemLink, false).then(() =>
       setToast({
         type: TOAST_TYPE.INFO,
         title: `${t("common.link_copied")}!`,

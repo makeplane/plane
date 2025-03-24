@@ -41,6 +41,7 @@ from plane.db.models import (
 )
 from plane.ee.models import Customer
 
+
 class IssueFlatSerializer(BaseSerializer):
     ## Contain only flat fields
 
@@ -666,6 +667,7 @@ class IssueStateSerializer(DynamicBaseSerializer):
         model = Issue
         fields = "__all__"
 
+
 class IssueIntakeSerializer(DynamicBaseSerializer):
     label_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
 
@@ -684,6 +686,7 @@ class IssueIntakeSerializer(DynamicBaseSerializer):
         ]
         read_only_fields = fields
 
+
 class CustomerSerializer(DynamicBaseSerializer):
     class Meta:
         model = Customer
@@ -697,8 +700,9 @@ class CustomerSerializer(DynamicBaseSerializer):
             "stage",
             "employees",
             "revenue",
-            "created_by"
+            "created_by",
         ]
+
 
 class IssueSerializer(DynamicBaseSerializer):
     # ids
@@ -746,6 +750,7 @@ class IssueSerializer(DynamicBaseSerializer):
         ]
         read_only_fields = fields
 
+
 class IssueLiteSerializer(DynamicBaseSerializer):
     class Meta:
         model = Issue
@@ -756,9 +761,14 @@ class IssueLiteSerializer(DynamicBaseSerializer):
 class IssueDetailSerializer(IssueSerializer):
     description_html = serializers.CharField()
     is_subscribed = serializers.BooleanField(read_only=True)
+    is_epic = serializers.BooleanField(read_only=True)
 
     class Meta(IssueSerializer.Meta):
-        fields = IssueSerializer.Meta.fields + ["description_html", "is_subscribed"]
+        fields = IssueSerializer.Meta.fields + [
+            "description_html",
+            "is_subscribed",
+            "is_epic",
+        ]
         read_only_fields = fields
 
 
