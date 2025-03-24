@@ -21,7 +21,9 @@ from plane.ee.bgtasks.elasticsearch_index_update_task import (
 all_documents = registry.get_documents()
 related_model_map = {}
 all_related_models = []
+all_document_models = []
 for doc in all_documents:
+    all_document_models.append(doc.django.model)
     related_model_map[doc] = doc.django.related_models
     all_related_models.extend(doc.django.related_models)
 all_related_models = list(set(all_related_models))
@@ -70,10 +72,13 @@ class CustomCelerySignalProcessor(CelerySignalProcessor):
         except LookupError:
             pass
         else:
-            manager = getattr(model, 'all_objects', model.objects)
-            registry.update(
-                manager.get(pk=pk)
-            )
+            # Check if the model is directly registered as an Elasticsearch document
+            is_registered = model in all_document_models
+            if is_registered:
+                manager = getattr(model, 'all_objects', model.objects)
+                registry.update(
+                    manager.get(pk=pk)
+                )
 
     @shared_task()
     def registry_update_related_task(pk, app_label, model_name):
@@ -83,7 +88,10 @@ class CustomCelerySignalProcessor(CelerySignalProcessor):
         except LookupError:
             pass
         else:
-            manager = getattr(model, 'all_objects', model.objects)
-            registry.update_related(
-                manager.get(pk=pk)
-            )
+            # Check if the model is directly registered or part of all_related_models
+            is_registered = model in all_document_models or model in all_related_models
+            if is_registered:
+                manager = getattr(model, 'all_objects', model.objects)
+                registry.update_related(
+                    manager.get(pk=pk)
+                )

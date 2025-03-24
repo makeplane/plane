@@ -10,41 +10,40 @@ from plane.ee.documents import (
 )
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.ee.serializers.app.search_serializers import (
+    IssueSearchSerializer, ProjectSearchSerializer, CycleSearchSerializer,
+    ModuleSearchSerializer, PageSearchSerializer, IssueViewSearchSerializer,
+    TeamspaceSearchSerializer
+)
 
 
-def serialize_data(data):
-    # Add any data transformations here for unserializable data.
-    if isinstance(data, AttrList):
-        return list(data)
-    return data
-
-
-def search_document(
-        document, filters, query, search_fields, result_fields, result_size=100
-    ):
-    search = document.search()
-
-    query_list = [Q('term', is_deleted=False)] # Always filter out deleted items
-    # Generate permission filters
+# Build a boolean filter query
+def build_filters(filters):
+    filter_list = [Q('term', is_deleted=False)]  # Exclude deleted items
     for f in filters:
-        query_list.append(Q('term', **f))
+        filter_list.append(Q('term', **f))  # Add filters
+    return Q("bool", must=filter_list)  # Return filter query
 
-    # Generate search filters
-    search_filter = Q('query_string', query=f"*{query}*", fields=search_fields)
 
-    query_list.append(search_filter)
+# Build a search query with query_string for wildcard support
+def build_query(query, search_fields):
+    wildcard_query = f"{query}*"
+    return Q('query_string', query=wildcard_query, fields=search_fields)
 
-    final_search_query = Q("bool", must=query_list)
 
-    results = search.query(final_search_query).extra(size=result_size).execute()
+# Execute search and serialize results
+def execute_search(document, filters, query, search_fields, serializer_class):
+    search = document.search()  # Start search
+    filter_query = build_filters(filters)  # Build filters
+    search_query = build_query(query, search_fields)  # Build search query
+    search = search.filter(filter_query)  # Apply filters
+    if search_query:
+        search = search.query(search_query)  # Apply search query if present
+    results = search.extra(size=100).execute()  # Run query with hardcoded result size
 
-    # NOTE: This is a quick implementation to return the search data
-    # TODO: We should explore using serializers
-    return [
-        {
-            field: serialize_data(getattr(r, field)) for field in result_fields
-        } for r in results
-    ]
+    # Serialize the results
+    serializer = serializer_class(results, many=True)
+    return serializer.data  # Return serialized data
 
 
 class EnhancedGlobalSearchEndpoint(BaseAPIView):
@@ -57,31 +56,15 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
             dict(project_is_archived=False),
             dict(is_epic=is_epic)
         ]
-
         search_fields = ["name", "description", "pretty_sequence", "project_indentifier"]
-        result_fields = [
-            "name", "id", "sequence_id", "project_identifier",
-            "project_id", "workspace_slug", "type_id"
-        ]
-
-        return search_document(
-            IssueDocument, filters, query, search_fields, result_fields
+        return execute_search(
+            IssueDocument, filters, query, search_fields, IssueSearchSerializer
         )
 
     def filter_epics(self, query, slug):
         return self.filter_issues(
             query, slug, is_epic=True
         )
-
-    # def filter_workspaces(self, query, slug, project_id, workspace_search):
-    #     # permission filters
-    #     filters = [dict(active_member_user_ids=f"{self.request.user.id}")]
-    #     search_fields = ["name"]
-    #     result_fields = ["name", "id", "slug"]
-
-    #     return search_document(
-    #         WorkspaceDocument, filters, query, search_fields, result_fields
-    #     )
 
     def filter_projects(self, query, slug):
         # permission filters
@@ -91,12 +74,9 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
             dict(is_archived=False)
         ]
         search_fields = ["name", "identifier"]
-        result_fields = ["name", "id", "identifier", "workspace_slug", "logo_props"]
-
-        results = search_document(
-            ProjectDocument, filters, query, search_fields, result_fields
+        return execute_search(
+            ProjectDocument, filters, query, search_fields, ProjectSearchSerializer
         )
-        return results
 
     def filter_cycles(self, query, slug):
         # permission filters
@@ -106,15 +86,9 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
             dict(project_is_archived=False)
         ]
         search_fields = ["name", "description"]
-        result_fields = [
-            "name", "id", "project_id", "logo_props",
-            "project_identifier", "workspace_slug"
-        ]
-
-        results = search_document(
-            CycleDocument, filters, query, search_fields, result_fields
+        return execute_search(
+            CycleDocument, filters, query, search_fields, CycleSearchSerializer
         )
-        return results
 
     def filter_modules(self, query, slug):
         # permission filters
@@ -124,15 +98,9 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
             dict(project_is_archived=False)
         ]
         search_fields = ["name", "description"]
-        result_fields = [
-            "name", "id", "project_id", "logo_props",
-            "project_identifier", "workspace_slug"
-        ]
-
-        results = search_document(
-            ModuleDocument, filters, query, search_fields, result_fields
+        return execute_search(
+            ModuleDocument, filters, query, search_fields, ModuleSearchSerializer
         )
-        return results
 
     def filter_pages(self, query, slug):
         # permission filters
@@ -141,15 +109,9 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
             dict(active_member_user_ids=f"{self.request.user.id}")
         ]
         search_fields = ["name", "description"]
-        result_fields = [
-            "name", "id", "project_ids", "logo_props",
-            "project_identifiers", "workspace_slug"
-        ]
-
-        results = search_document(
-            PageDocument, filters, query, search_fields, result_fields
+        return execute_search(
+            PageDocument, filters, query, search_fields, PageSearchSerializer
         )
-        return results
 
     def filter_views(self, query, slug):
         # permission filters
@@ -159,15 +121,9 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
             dict(project_is_archived=False)
         ]
         search_fields = ["name", "description"]
-        result_fields = [
-            "name", "id", "project_id", "logo_props",
-            "project_identifier", "workspace_slug"
-        ]
-
-        results = search_document(
-            IssueViewDocument, filters, query, search_fields, result_fields
+        return execute_search(
+            IssueViewDocument, filters, query, search_fields, IssueViewSearchSerializer
         )
-        return results
 
     def filter_teamspaces(self, query, slug):
         # permission filters
@@ -176,12 +132,9 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
             dict(active_member_user_ids=f"{self.request.user.id}")
         ]
         search_fields = ["name"]
-        result_fields = ["name", "id", "workspace_slug", "logo_props"]
-
-        results = search_document(
-            TeamspaceDocument, filters, query, search_fields, result_fields
+        return execute_search(
+            TeamspaceDocument, filters, query, search_fields, TeamspaceSearchSerializer
         )
-        return results
 
     @check_feature_flag(FeatureFlag.ADVANCED_SEARCH)
     def get(self, request, slug):
@@ -219,7 +172,7 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
 
         results = {}
 
-        for model in MODELS_MAPPER.keys():
-            func = MODELS_MAPPER.get(model, None)
+        for model, func in MODELS_MAPPER.items():
             results[model] = func(query, slug)
+
         return Response({"results": results}, status=status.HTTP_200_OK)

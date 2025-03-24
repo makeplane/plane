@@ -1,6 +1,7 @@
 import json
 
 from django_elasticsearch_dsl import Document, fields
+from elasticsearch_dsl import analysis
 
 
 class BaseDocument(Document):
@@ -38,3 +39,9 @@ class JsonKeywordField(fields.KeywordField):
             return json.dumps(value)
         except TypeError:
             return "{}"
+
+
+lowercase_normalizer = analysis.normalizer(
+    'lowercase_normalizer',
+    filter=['lowercase']
+)

@@ -4,7 +4,7 @@ from django_elasticsearch_dsl import fields
 from django_elasticsearch_dsl.registries import registry
 from plane.db.models import Issue, ProjectMember, Project
 
-from .base import BaseDocument
+from .base import BaseDocument, lowercase_normalizer
 
 
 @registry.register_document
@@ -19,7 +19,7 @@ class IssueDocument(BaseDocument):
     type_id = fields.KeywordField(attr="type_id")
     is_epic = fields.BooleanField()
     active_project_member_user_ids = fields.ListField(fields.KeywordField())
-    pretty_sequence = fields.KeywordField()
+    pretty_sequence = fields.KeywordField(normalizer=lowercase_normalizer)
     is_deleted = fields.BooleanField()
 
     class Index:

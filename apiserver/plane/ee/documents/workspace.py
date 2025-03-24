@@ -38,7 +38,7 @@ class WorkspaceDocument(BaseDocument):
 
     def get_instances_from_related(self, related_instance):
         if isinstance(related_instance, WorkspaceMember):
-            qs = related_instance.workspace.all()
+            qs = Workspace.objects.filter(id=related_instance.workspace_id)
         else:
             qs = self.django.model.objects.none()
         return self.apply_related_to_queryset(qs)
