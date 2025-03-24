@@ -1,7 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 /* eslint-disable @typescript-eslint/no-var-requires */
 /** @type {import('next').NextConfig} */
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 require("dotenv").config({ path: ".env" });
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { withSentryConfig } = require("@sentry/nextjs");
 
 const nextConfig = {
@@ -27,6 +29,19 @@ const nextConfig = {
     ],
     unoptimized: true,
   },
+  transpilePackages: [
+    "@plane/constants",
+    "@plane/editor",
+    "@plane/hooks",
+    "@plane/i18n",
+    "@plane/logger",
+    "@plane/propel",
+    "@plane/services",
+    "@plane/shared-state",
+    "@plane/types",
+    "@plane/ui",
+    "@plane/utils",
+  ],
 };
 
 const sentryConfig = {

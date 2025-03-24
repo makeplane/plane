@@ -249,8 +249,24 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       ],
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
-        group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", null],
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+        group_by: [
+          "state",
+          "priority",
+          "cycle",
+          "module",
+          "labels",
+          "assignees",
+          "created_by",
+          null,
+        ],
+        order_by: [
+          "sort_order",
+          "-created_at",
+          "-updated_at",
+          "start_date",
+          "-priority",
+          "target_date",
+        ],
         type: [null, "active", "backlog"],
       },
       extra_options: {

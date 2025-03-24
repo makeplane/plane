@@ -45,6 +45,7 @@ from plane.db.models import (
     ProjectMember,
     CycleIssue,
     UserRecentVisit,
+    ModuleIssue,
     Cycle,
 )
 from plane.ee.models import EntityIssueStateActivity
@@ -804,6 +805,13 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
 
         total_issues = len(issues)
 
+        # First, delete all related cycle issues
+        CycleIssue.objects.filter(issue_id__in=issue_ids).delete()
+
+        # Then, delete all related module issues
+        ModuleIssue.objects.filter(issue_id__in=issue_ids).delete()
+
+        # Finally, delete the issues themselves
         issues.delete()
 
         return Response(
