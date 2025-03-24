@@ -45,6 +45,7 @@ from plane.db.models import (
     ProjectMember,
     CycleIssue,
     UserRecentVisit,
+    ModuleIssue,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -738,6 +739,13 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
 
         total_issues = len(issues)
 
+        # First, delete all related cycle issues
+        CycleIssue.objects.filter(issue_id__in=issue_ids).delete()
+
+        # Then, delete all related module issues
+        ModuleIssue.objects.filter(issue_id__in=issue_ids).delete()
+
+        # Finally, delete the issues themselves
         issues.delete()
 
         return Response(
