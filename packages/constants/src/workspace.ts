@@ -127,6 +127,7 @@ export const WORKSPACE_SETTINGS = {
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/api-tokens/`,
   },
+  ...EXTENDED_WORKSPACE_SETTINGS,
 };
 
 export const WORKSPACE_SETTINGS_ACCESS = Object.fromEntries(
@@ -142,18 +143,18 @@ export const WORKSPACE_SETTINGS_LINKS: {
 }[] = [
   WORKSPACE_SETTINGS["general"],
   WORKSPACE_SETTINGS["members"],
-  EXTENDED_WORKSPACE_SETTINGS["project_states"],
+  WORKSPACE_SETTINGS["project_states"],
   WORKSPACE_SETTINGS["billing-and-plans"],
-  EXTENDED_WORKSPACE_SETTINGS["integrations"],
-  EXTENDED_WORKSPACE_SETTINGS["import"],
+  WORKSPACE_SETTINGS["integrations"],
+  WORKSPACE_SETTINGS["import"],
   WORKSPACE_SETTINGS["export"],
   WORKSPACE_SETTINGS["webhooks"],
   WORKSPACE_SETTINGS["api-tokens"],
-  EXTENDED_WORKSPACE_SETTINGS["worklogs"],
-  EXTENDED_WORKSPACE_SETTINGS["teamspaces"],
-  EXTENDED_WORKSPACE_SETTINGS["initiatives"],
-  EXTENDED_WORKSPACE_SETTINGS["customers"],
-  EXTENDED_WORKSPACE_SETTINGS["templates"],
+  WORKSPACE_SETTINGS["worklogs"],
+  WORKSPACE_SETTINGS["teamspaces"],
+  WORKSPACE_SETTINGS["initiatives"],
+  WORKSPACE_SETTINGS["customers"],
+  WORKSPACE_SETTINGS["templates"],
 ];
 
 export const ROLE = {
