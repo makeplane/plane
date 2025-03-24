@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // types
 import { IIssueDisplayProperties } from "@plane/types";
 // ui
-import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { Loader, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -90,6 +90,14 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
   const shouldRenderIssueID = displayProperties ? displayProperties.key : true;
 
   if (!shouldRenderIssueID) return null;
+
+  if (!projectIdentifier || !issueSequenceId) {
+    return (
+      <Loader className="flex flex-shrink-0 w-10 h-4">
+        <Loader.Item height="100%" width="100%" />
+      </Loader>
+    );
+  }
 
   return (
     <div className="flex items-center space-x-2">
