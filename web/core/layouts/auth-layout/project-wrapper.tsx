@@ -175,7 +175,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
 
   // check if the user don't have permission to access the project
   if (
-    (projectExists?.network !== EProjectNetwork.PRIVATE || isWorkspaceAdmin) &&
+    ((projectExists?.network && projectExists?.network !== EProjectNetwork.PRIVATE) || isWorkspaceAdmin) &&
     projectId &&
     hasPermissionToCurrentProject === false
   )
