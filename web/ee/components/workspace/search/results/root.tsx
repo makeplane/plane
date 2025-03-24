@@ -22,7 +22,7 @@ import { SearchItems } from "./search-item";
 
 const workspaceService = new WorkspaceService();
 
-const DEBOUNCE_DELAY = 300;
+const DEBOUNCE_DELAY = 900;
 
 type TProps = {
   query: string;
