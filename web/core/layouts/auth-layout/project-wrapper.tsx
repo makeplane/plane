@@ -182,7 +182,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     return <JoinProject />;
 
   // check if the project info is not found.
-  if (loader === "loaded" && !projectExists && projectId && !!hasPermissionToCurrentProject === false)
+  if (loader === "loaded" && projectId && !!hasPermissionToCurrentProject === false)
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100">
         <DetailedEmptyState
