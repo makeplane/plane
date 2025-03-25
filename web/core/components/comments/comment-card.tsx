@@ -2,7 +2,6 @@
 
 import { FC, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Check, Globe2, Lock, Pencil, Trash2, X } from "lucide-react";
 // PLane
@@ -28,12 +27,20 @@ type TCommentCard = {
   ends: "top" | "bottom" | undefined;
   showAccessSpecifier?: boolean;
   disabled?: boolean;
+  projectId?: string;
 };
 
 export const CommentCard: FC<TCommentCard> = observer((props) => {
-  const { workspaceSlug, comment, activityOperations, ends, showAccessSpecifier = false, disabled = false } = props;
+  const {
+    workspaceSlug,
+    comment,
+    activityOperations,
+    ends,
+    showAccessSpecifier = false,
+    disabled = false,
+    projectId,
+  } = props;
   const { t } = useTranslation();
-  const { projectId } = useParams();
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   const showEditorRef = useRef<EditorReadOnlyRefApi>(null);

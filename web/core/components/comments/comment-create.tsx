@@ -22,13 +22,13 @@ type TCommentCreate = {
   workspaceSlug: string;
   activityOperations: TCommentsOperations;
   showToolbarInitially?: boolean;
+  projectId?: string;
 };
 
 // services
 const fileService = new FileService();
 export const CommentCreate: FC<TCommentCreate> = observer((props) => {
-  const { workspaceSlug, entityId, activityOperations, showToolbarInitially = false } = props;
-  const { projectId } = useParams();
+  const { workspaceSlug, entityId, activityOperations, showToolbarInitially = false, projectId } = props;
   // states
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
   // refs

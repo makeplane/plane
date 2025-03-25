@@ -58,6 +58,7 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
             ends={index === 0 ? "top" : index === filteredActivityComments.length - 1 ? "bottom" : undefined}
             showAccessSpecifier={showAccessSpecifier}
             disabled={disabled}
+            projectId={projectId}
           />
         ) : activityComment.activity_type === "ACTIVITY" ? (
           <IssueActivityItem

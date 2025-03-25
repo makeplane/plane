@@ -127,6 +127,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
                 entityId={issueId}
                 activityOperations={activityOperations}
                 showToolbarInitially
+                projectId={projectId}
               />
             )}
           </div>
