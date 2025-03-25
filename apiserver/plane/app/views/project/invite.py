@@ -138,15 +138,13 @@ class UserProjectInvitationsViewset(BaseViewSet):
         )
 
         # Get all the projects
-        projects = (
-            Project.objects.filter(id__in=project_ids, workspace__slug=slug)
-            .only("id", "network")
-        )
-
+        projects = Project.objects.filter(
+            id__in=project_ids, workspace__slug=slug
+        ).only("id", "network")
         # Check if user has permission to join each project
         for project in projects:
             if (
-                project.network == ProjectNetwork.SECRET
+                project.network == ProjectNetwork.SECRET.value
                 and workspace_member.role != ROLE.ADMIN.value
             ):
                 return Response(
