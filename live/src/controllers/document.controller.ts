@@ -3,17 +3,17 @@ import type { Request, Response } from "express";
 import { convertHTMLDocumentToAllFormats } from "@/core/helpers/convert-document";
 // types
 import { TConvertDocumentRequestBody } from "@/core/types/common";
-// controller
-import { BaseController } from "@/lib/base.controller";
 // decorators
-import { Post, CatchErrors } from "@/lib/decorators";
+import { CatchErrors } from "@/lib/decorators";
 // logger
 import { logger } from "@plane/logger";
 // error handling
 import validate from "@/core/helpers/error-handling/error-validation";
+import { Controller, Post } from "@plane/decorators";
 
-export class DocumentController extends BaseController {
-  @Post("/convert-document")
+@Controller("/convert-document")
+export class DocumentController {
+  @Post("/")
   @CatchErrors()
   async convertDocument(req: Request, res: Response) {
     const { description_html, variant } = req.body as TConvertDocumentRequestBody;

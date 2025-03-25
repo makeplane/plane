@@ -1,52 +1,32 @@
 import { Router } from "express";
-import { IControllerRegistry, IServiceContainer, ControllerRegistration, WebSocketControllerRegistration } from "./controller.interface";
+import { registerControllers as registerRestControllers, registerWebSocketControllers } from "@plane/decorators";
 import "reflect-metadata";
 
-// Define valid HTTP methods
-type HttpMethod = 'get' | 'post' | 'put' | 'patch' | 'delete' | 'all' | 'use' | 'options' | 'head' | 'ws';
-
 /**
- * Register all controllers from a registry with dependency injection
+ * Register all controllers from the controllers array
  * @param router Express router to register routes on
- * @param registry Controller registry containing all controllers
- * @param container Service container for dependency injection
+ * @param controllers Array of controller classes to register
+ * @param dependencies Array of dependencies to pass to controllers
  */
-export function registerControllers(
-  router: Router, 
-  registry: IControllerRegistry,
-  container: IServiceContainer
-): void {
-  // Register REST controllers
-  registry.controllers.forEach((registration) => {
-    const { Controller, dependencies = [] } = registration;
-    const resolvedDependencies = dependencies.map(dep => container.get(dep));
-    const instance = new Controller(...resolvedDependencies);
-    instance.registerRoutes(router);
-  });
+export function registerControllers(router: Router, controllers: any[], dependencies: any[] = []): void {
+  controllers.forEach((Controller) => {
+    // Create the controller instance with dependencies
+    const instance = new Controller(...dependencies);
 
-  // Register WebSocket controllers
-  registry.webSocketControllers.forEach((registration) => {
-    const { Controller, dependencies = [] } = registration;
-    const resolvedDependencies = dependencies.map(dep => container.get(dep));
-    const instance = new Controller(...resolvedDependencies);
-    
-    // Call the specialized WebSocket registration method
-    instance.registerWebSocketRoutes(router);
+    // Determine if it's a WebSocket controller or REST controller by checking
+    // if it has any methods with the "ws" method metadata
+    const isWebsocket = Object.getOwnPropertyNames(Controller.prototype).some((methodName) => {
+      if (methodName === "constructor") return false;
+      return Reflect.getMetadata("method", instance, methodName) === "ws";
+    });
+
+    if (isWebsocket) {
+      // Register as WebSocket controller
+      // Pass the existing instance with dependencies to avoid creating a new instance without them
+      registerWebSocketControllers(router, Controller, instance);
+    } else {
+      // Register as REST controller - doesn't accept an instance parameter
+      registerRestControllers(router, Controller);
+    }
   });
 }
-
-/**
- * Create a controller registry with the given controllers
- * @param controllers Array of REST controller registrations
- * @param webSocketControllers Array of WebSocket controller registrations
- * @returns Controller registry
- */
-export function createControllerRegistry(
-  controllers: ControllerRegistration[],
-  webSocketControllers: WebSocketControllerRegistration[] = []
-): IControllerRegistry {
-  return {
-    controllers,
-    webSocketControllers,
-  };
-} 

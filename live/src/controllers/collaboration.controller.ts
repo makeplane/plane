@@ -1,21 +1,18 @@
 import type { Request } from "express";
 import type { WebSocket as WS } from "ws";
 import type { Hocuspocus } from "@hocuspocus/server";
-import { Controller, WebSocket } from "@/lib/decorators";
-import { BaseWebSocketController } from "@/lib/base.controller";
 import { ErrorCategory } from "@/core/helpers/error-handling/error-handler";
 import { logger } from "@plane/logger";
 import Errors from "@/core/helpers/error-handling/error-factory";
+import { Controller, WebSocket } from "@plane/decorators";
 
 @Controller("/collaboration")
-export class CollaborationController extends BaseWebSocketController {
+export class CollaborationController {
   private metrics = {
     errors: 0,
   };
 
-  constructor(private readonly hocusPocusServer: Hocuspocus) {
-    super();
-  }
+  constructor(private readonly hocusPocusServer: Hocuspocus) {}
 
   @WebSocket("/")
   handleConnection(ws: WS, req: Request) {

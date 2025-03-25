@@ -12,16 +12,7 @@ const envSchema = z.object({
   LIVE_BASE_PATH: z.string().default("/live"),
 
   // CORS configuration
-  CORS_ALLOWED_ORIGINS: z
-    .string()
-    .default("*"),
-  // Sentry configuration
-  LIVE_SENTRY_DSN: z.string().optional(),
-  LIVE_SENTRY_ENVIRONMENT: z.string().default("development"),
-  LIVE_SENTRY_TRACES_SAMPLE_RATE: z.string().default("0.5").transform(Number),
-  LIVE_SENTRY_RELEASE: z.string().optional(),
-  LIVE_SENTRY_RELEASE_VERSION: z.string().optional(),
-
+  CORS_ALLOWED_ORIGINS: z.string().default("*"),
   // Compression options
   COMPRESSION_LEVEL: z.string().default("6").transform(Number),
   COMPRESSION_THRESHOLD: z.string().default("5000").transform(Number),
@@ -49,4 +40,3 @@ function validateEnv() {
 
 // Export the validated environment
 export const env = validateEnv();
-
