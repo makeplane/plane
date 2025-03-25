@@ -1,6 +1,7 @@
 # Python imports
 import pytz
 from uuid import uuid4
+from enum import Enum
 
 # Django imports
 from django.conf import settings
@@ -15,6 +16,15 @@ from plane.db.mixins import AuditModel
 from .base import BaseModel
 
 ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
+
+
+class ProjectNetwork(Enum):
+    SECRET = 0
+    PUBLIC = 2
+
+    @classmethod
+    def choices(cls):
+        return [(0, "Secret"), (2, "Public")]
 
 
 def get_default_props():
@@ -112,6 +122,18 @@ class Project(BaseModel):
     # timezone
     TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
+
+    @property
+    def is_secret(self) -> bool:
+        return self.network == ProjectNetwork.SECRET
+
+    @property
+    def is_public(self) -> bool:
+        return self.network == ProjectNetwork.PUBLIC
+
+    @property
+    def network_type(self) -> ProjectNetwork:
+        return ProjectNetwork(self.network)
 
     @property
     def cover_image_url(self):
