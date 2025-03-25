@@ -4,7 +4,6 @@ from django.db import IntegrityError
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from sentry_sdk import capture_exception
 
 # Module imports
 from plane.app.views import BaseViewSet
@@ -73,7 +72,6 @@ class SlackProjectSyncViewSet(BaseViewSet):
                     {"error": "Slack is already installed for the project"},
                     status=status.HTTP_410_GONE,
                 )
-            capture_exception(e)
             return Response(
                 {"error": "Slack could not be installed. Please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,

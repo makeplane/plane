@@ -3,7 +3,6 @@ import { TImportJob } from "@plane/types";
 import { wait } from "@/helpers/delay";
 import { updateJobWithReport } from "@/helpers/job";
 import { logger } from "@/logger";
-import { SentryInstance } from "@/sentry-config";
 import { getAPIClient } from "@/services/client";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
@@ -157,7 +156,7 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
         await batchLock.releaseLock();
         // Inditate that the task has been errored, don't need to requeue, the task
         // will be requeued manually
-        SentryInstance.captureException(error);
+        console.error(`[ETL] Error processing etl job: ${error}`);
         return true;
       }
       return true;
@@ -168,7 +167,7 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
 
       // Inditate that the task has been errored, don't need to requeue, the task
       // will be requeued manually
-      SentryInstance.captureException(error);
+      console.error(`[ETL] Error processing etl job: ${error}`);
       return true;
     }
   }

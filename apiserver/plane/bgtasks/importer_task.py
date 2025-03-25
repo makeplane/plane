@@ -7,7 +7,6 @@ from django.contrib.auth.hashers import make_password
 
 # Third Party imports
 from celery import shared_task
-from sentry_sdk import capture_exception
 
 # Module imports
 from plane.db.models import (
@@ -191,5 +190,4 @@ def service_importer(service, importer_id):
         # Print logs if in DEBUG mode
         if settings.DEBUG:
             print(e)
-        capture_exception(e)
         return

@@ -1,6 +1,5 @@
 import amqp from "amqplib";
 import { env } from "@/env";
-import { SentryInstance } from "@/sentry-config";
 import { TMQEntityOptions } from "./types";
 
 export class MQActorBase {
@@ -67,7 +66,7 @@ export class MQActorBase {
         return true;
       } catch {
         if (attemptCount % 10 === 0) {
-          SentryInstance.captureException(new Error(`RabbitMQ reconnection attempt ${attemptCount} failed`));
+          console.error(`[MQ] RabbitMQ reconnection attempt ${attemptCount} failed`);
         }
         await new Promise((resolve) => setTimeout(resolve, this.RECONNECT_INTERVAL));
         console.log(`Attempting to reconnect to RabbitMQ [${attemptCount}]...`);
@@ -94,7 +93,7 @@ export class MQActorBase {
         return;
       } catch {
         if (attemptCount % 10 === 0) {
-          SentryInstance.captureException(new Error(`RabbitMQ initial connection attempt ${attemptCount} failed`));
+          console.error(`[MQ] RabbitMQ initial connection attempt ${attemptCount} failed`);
         }
         await new Promise((resolve) => setTimeout(resolve, this.RECONNECT_INTERVAL));
         console.log(`Attempting to reconnect to RabbitMQ [${attemptCount}]...`);
