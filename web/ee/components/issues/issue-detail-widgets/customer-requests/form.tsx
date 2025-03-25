@@ -142,14 +142,14 @@ export const WorkItemRequestForm: FC<TProps> = observer((props) => {
 
   return (
     <>
-      <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXXL}>
+      <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXXL}>
         <SourceCreateUpdateModal id={workItemId} setLinkData={setLink} preloadedData={{ url: link }} />
         <div className="p-4">
           <h3 className="text-xl font-medium text-custom-text-200">
             {data?.id ? t("customers.requests.update") : t("customers.requests.add")}
           </h3>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="max-h-[40vh] overflow-y-auto vertical-scrollbar scrollbar-sm py-2">
+            <div className="py-2">
               <div className="space-y-2">
                 <div>
                   <div className="w-fit">
@@ -214,7 +214,7 @@ export const WorkItemRequestForm: FC<TProps> = observer((props) => {
                           ...payload,
                         })
                       }
-                      containerClassName="pt-3 min-h-[120px] rounded-lg relative border border-custom-border-100"
+                      containerClassName="pt-3 min-h-[150px] rounded-lg relative border border-custom-border-100"
                       uploadFile={async (blockId, file) => {
                         try {
                           const { asset_id } = await uploadEditorAsset({

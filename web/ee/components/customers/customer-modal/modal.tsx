@@ -18,7 +18,7 @@ export const CreateUpdateCustomerModal: FC<Props> = observer((props) => {
   return (
     isOpen && (
       <CustomerModalProvider>
-        <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.CENTER} width={EModalWidth.XXXL}>
+        <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.TOP} width={EModalWidth.XXXL}>
           <CustomerForm data={customerDetails} handleModalClose={onClose} />
         </ModalCore>
       </CustomerModalProvider>
