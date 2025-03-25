@@ -13,7 +13,6 @@ import { env } from "@/env";
 import { CONSTANTS } from "@/helpers/constants";
 import { getReferredIssues, IssueReference, IssueWithReference } from "@/helpers/parser";
 import { logger } from "@/logger";
-import { SentryInstance } from "@/sentry-config";
 import { getAPIClient } from "@/services/client";
 import { verifyEntityConnection } from "@/types";
 
@@ -198,7 +197,6 @@ const updateIssue = async (
   prNumber: number,
   prUrl: string
 ): Promise<IssueWithReference | null> => {
-
   let issue: ExIssue | null = null;
 
   try {
@@ -222,7 +220,9 @@ const updateIssue = async (
     return { reference, issue };
   } catch (error: any) {
     if (error?.detail && error?.detail.includes(CONSTANTS.NO_PERMISSION_ERROR)) {
-      logger.info(`[GITHUB] No permission to process event: ${error.detail} ${reference.identifier}-${reference.sequence}`);
+      logger.info(
+        `[GITHUB] No permission to process event: ${error.detail} ${reference.identifier}-${reference.sequence}`
+      );
 
       if (issue) {
         return { reference, issue };
@@ -232,7 +232,6 @@ const updateIssue = async (
     }
 
     logger.error(`[GITHUB] Error updating issue ${reference.identifier}-${reference.sequence}: ${error}`);
-    SentryInstance?.captureException(error);
 
     if (issue) {
       return { reference, issue };

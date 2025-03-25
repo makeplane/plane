@@ -14,7 +14,6 @@ from django.utils import timezone
 from django.conf import settings
 
 # Third party imports
-from sentry_sdk import capture_exception
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
@@ -277,6 +276,5 @@ def send_welcome_slack(sender, instance, created, **kwargs):
                 except SlackApiError as e:
                     print(f"Got an error: {e.response['error']}")
         return
-    except Exception as e:
-        capture_exception(e)
+    except Exception:
         return

@@ -1,5 +1,4 @@
 import { PlaneWebhookPayload } from "@plane/sdk";
-import { SentryInstance } from "@/sentry-config";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
 import { handleIssueCommentWebhook } from "./event-handlers/issue-comment.handler";
@@ -15,7 +14,6 @@ export class PlaneGithubWebhookWorker extends TaskHandler {
     this.store = store;
   }
   async handleTask(headers: TaskHeaders, data: PlaneWebhookPayload): Promise<boolean> {
-
     try {
       switch (data.event) {
         case "issue":
@@ -28,10 +26,9 @@ export class PlaneGithubWebhookWorker extends TaskHandler {
           break;
       }
     } catch (error) {
-      SentryInstance.captureException(error);
+      console.error(`[GITHUB] Error processing plane webhook: ${error}`);
     } finally {
       return true;
     }
-
   }
 }

@@ -16,7 +16,6 @@ import { LinearDataMigrator } from "@/apps/linear-importer/migrator/linear.migra
 import { PlaneSlackWebhookWorker } from "@/apps/slack/worker/plane-worker";
 import { SlackInteractionHandler } from "@/apps/slack/worker/worker";
 import { logger } from "@/logger";
-import { SentryInstance } from "@/sentry-config";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "./base";
 import { Lock } from "./base/lock";
@@ -82,14 +81,14 @@ interface JobWorkerConfig {
  */
 type TaskProps =
   | {
-    type: "mq";
-    headers: TaskHeaders;
-    data: any;
-  }
+      type: "mq";
+      headers: TaskHeaders;
+      data: any;
+    }
   | {
-    type: "store";
-    event: string;
-  };
+      type: "store";
+      event: string;
+    };
 
 /**
  * Main task management class that handles worker lifecycle and task distribution
@@ -269,7 +268,6 @@ export class TaskManager {
       msg.properties.headers.retry_count = retryCount;
     } else {
       logger.error(`Max retry attempts reached for message: ${msg.content.toString()}`);
-      SentryInstance.captureException(error);
       await this.mq.ackMessage(msg);
     }
   }
@@ -289,7 +287,6 @@ export class TaskManager {
         this.workers.set(jobType, WorkerFactory.createWorker(workerType, this.mq!, this.store!));
       }
     } catch (error) {
-      SentryInstance.captureException(error);
       logger.error(`Something went wrong while initiating job worker 🧨, ${error}`);
     }
   };
@@ -319,15 +316,9 @@ export class TaskManager {
   public registerStoreTask = async (headers: TaskHeaders, data: any, ttl?: number) => {
     if (!this.store) return;
     try {
-
       const key = `silo:${headers.route}:${headers.type}:${headers.jobId}:${JSON.stringify(data)}`;
 
-      await this.store.set(
-        key,
-        "1",
-        ttl,
-        false
-      );
+      await this.store.set(key, "1", ttl, false);
     } catch (error) {
       logger.error("Error pushing to job worker queue:", error);
     }

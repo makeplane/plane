@@ -13,10 +13,6 @@ const envSchema = z.object({
   AMQP_URL: z.string().default("amqp://guest:guest@localhost:5672"),
   CORS_ALLOWED_ORIGINS: z.string().default("https://app.plane.so"),
   REDIS_URL: z.string().default("redis://localhost:6379"),
-  SENTRY_DSN: z.string().optional(),
-  SENTRY_ORG: z.string().default("plane-hq"),
-  SENTRY_PROJECT: z.string().default("plane-silo"),
-  SENTRY_RELEASE_VERSION: z.string().default("1.0.0"),
   PG_SCHEMA: z.string().optional(),
   APP_BASE_URL: z
     .string()

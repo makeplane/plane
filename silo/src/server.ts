@@ -1,4 +1,3 @@
-// sentry
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import * as dotenv from "dotenv";
@@ -33,7 +32,6 @@ import { env } from "./env";
 import { APIError } from "./lib";
 import { registerControllers } from "./lib/controller";
 import { expressLogger, logger } from "./logger";
-import { initializeSentry, SentryInstance } from "./sentry-config";
 // types
 import { APIErrorResponse } from "./types";
 
@@ -69,7 +67,6 @@ export default class Server {
     this.app = express();
     this.port = Number(env.PORT);
 
-    this.setupSentry();
     this.setupMiddleware();
     this.setupControllers();
     this.setupErrorHandlers();
@@ -92,7 +89,7 @@ export default class Server {
       );
     }
 
-    this.app.use(express.json({ limit: '25mb' }));
+    this.app.use(express.json({ limit: "25mb" }));
     this.app.use(cookieParser());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(this.setupLogger());
@@ -119,10 +116,6 @@ export default class Server {
     this.app.use(env.SILO_BASE_PATH || "/", router);
   }
 
-  private setupSentry(): void {
-    initializeSentry();
-  }
-
   private setupErrorHandlers(): void {
     // Global error handling middleware
     this.app.use(this.handleError.bind(this));
@@ -141,10 +134,6 @@ export default class Server {
     };
 
     logger.error("Global error handler caught:", logError);
-
-    if (SentryInstance) {
-      SentryInstance.captureException(err);
-    }
 
     const response: APIErrorResponse = {
       error: env.NODE_ENV === "production" ? "Internal Server Error" : err.message,
@@ -166,16 +155,10 @@ export default class Server {
   private setupProcessHandlers(): void {
     process.on("unhandledRejection", (reason) => {
       logger.error("Unhandled Rejection at:", reason);
-      if (SentryInstance) {
-        SentryInstance.captureException(reason);
-      }
     });
 
     process.on("uncaughtException", (err) => {
       logger.error("Uncaught Exception thrown:", err);
-      if (SentryInstance) {
-        SentryInstance.captureException(err);
-      }
       process.exit(1);
     });
   }

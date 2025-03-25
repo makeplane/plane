@@ -1,6 +1,5 @@
 import { TSlackPayload } from "@plane/etl/slack";
 import { logger } from "@/logger";
-import { SentryInstance } from "@/sentry-config";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
 import { handleBlockActions } from "./handlers/block-actions";
@@ -45,8 +44,7 @@ export class SlackInteractionHandler extends TaskHandler {
           break;
       }
     } catch (error) {
-      SentryInstance.captureException(error);
-      logger.error(error);
+      logger.error(`[SLACK] Error processing slack webhook: ${error}`);
     } finally {
       logger.info("[SLACK] Event Processed Successfully");
       return true;

@@ -8,7 +8,6 @@ x-silo-env: &silo-env
     - DB_URL=${DB_URL:-postgresql://plane:plane@plane-db/silo}
     - AMQP_URL=${AMQP_URL:-amqp://guest:guest@plane-mq:5672/}
     - REDIS_URL=${REDIS_URL:-redis://plane-redis:6379/}
-    - SENTRY_DSN=${SENTRY_DSN:-" "}
     - JIRA_CLIENT_ID=${JIRA_CLIENT_ID:-""}
     - JIRA_CLIENT_SECRET=${JIRA_CLIENT_SECRET:-""}
     - LINEAR_CLIENT_ID=${LINEAR_CLIENT_ID:-""}
@@ -77,7 +76,7 @@ services:
         npm --prefix ./silo run db:migrate
         node silo/start.js
       "
-    depends_on: 
+    depends_on:
       plane-mq:
         condition: service_healthy
 
