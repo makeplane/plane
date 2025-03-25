@@ -16,6 +16,22 @@ export function tableControls() {
       },
     },
     props: {
+      handleTripleClickOn(view, pos, node, nodePos, event, direct) {
+        if (node.type.name === 'tableCell') {
+          event.preventDefault();
+          const $pos = view.state.doc.resolve(pos);
+          const line = $pos.parent;
+          const linePos = $pos.start();
+          const start = linePos;
+          const end = linePos + line.nodeSize - 1;
+          const tr = view.state.tr.setSelection(
+            TextSelection.create(view.state.doc, start, end)
+          );
+          view.dispatch(tr);
+          return true;
+        }
+        return false;
+      },
       handleDOMEvents: {
         mousemove: (view, event) => {
           const pluginState = key.getState(view.state);

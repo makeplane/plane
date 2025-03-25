@@ -1,51 +1,111 @@
 import "reflect-metadata";
+import { RequestHandler } from "express";
 
 /**
- * GET method decorator
+ * Controller decorator
+ * @param baseRoute
+ * @returns
  */
-export const Get = (route: string): MethodDecorator => {
-  return function (target: object, propertyKey: string | symbol, _descriptor: PropertyDescriptor) {
-    Reflect.defineMetadata("route", route, target, propertyKey);
+export function Controller(baseRoute: string = ""): ClassDecorator {
+  return function (target: Function) {
+    Reflect.defineMetadata("baseRoute", baseRoute, target);
+  };
+}
+
+/**
+ * Controller GET method decorator
+ * @param route
+ * @returns
+ */
+export function Get(route: string): MethodDecorator {
+  return function (
+    target: object,
+    propertyKey: string | symbol,
+    descriptor: PropertyDescriptor,
+  ) {
     Reflect.defineMetadata("method", "get", target, propertyKey);
+    Reflect.defineMetadata("route", route, target, propertyKey);
   };
-};
+}
 
 /**
- * POST method decorator
+ * Controller POST method decorator
+ * @param route
+ * @returns
  */
-export const Post = (route: string): MethodDecorator => {
-  return function (target: object, propertyKey: string | symbol, _descriptor: PropertyDescriptor) {
-    Reflect.defineMetadata("route", route, target, propertyKey);
+export function Post(route: string): MethodDecorator {
+  return function (
+    target: object,
+    propertyKey: string | symbol,
+    descriptor: PropertyDescriptor,
+  ) {
     Reflect.defineMetadata("method", "post", target, propertyKey);
+    Reflect.defineMetadata("route", route, target, propertyKey);
   };
-};
+}
 
 /**
- * PUT method decorator
+ * Controller PATCH method decorator
+ * @param route
+ * @returns
  */
-export const Put = (route: string): MethodDecorator => {
-  return function (target: object, propertyKey: string | symbol, _descriptor: PropertyDescriptor) {
-    Reflect.defineMetadata("route", route, target, propertyKey);
-    Reflect.defineMetadata("method", "put", target, propertyKey);
-  };
-};
-
-/**
- * PATCH method decorator
- */
-export const Patch = (route: string): MethodDecorator => {
-  return function (target: object, propertyKey: string | symbol, _descriptor: PropertyDescriptor) {
-    Reflect.defineMetadata("route", route, target, propertyKey);
+export function Patch(route: string): MethodDecorator {
+  return function (
+    target: object,
+    propertyKey: string | symbol,
+    descriptor: PropertyDescriptor,
+  ) {
     Reflect.defineMetadata("method", "patch", target, propertyKey);
+    Reflect.defineMetadata("route", route, target, propertyKey);
   };
-};
+}
 
 /**
- * DELETE method decorator
+ * Controller PUT method decorator
+ * @param route
+ * @returns
  */
-export const Delete = (route: string): MethodDecorator => {
-  return function (target: object, propertyKey: string | symbol, _descriptor: PropertyDescriptor) {
+export function Put(route: string): MethodDecorator {
+  return function (
+    target: object,
+    propertyKey: string | symbol,
+    descriptor: PropertyDescriptor,
+  ) {
+    Reflect.defineMetadata("method", "put", target, propertyKey);
     Reflect.defineMetadata("route", route, target, propertyKey);
-    Reflect.defineMetadata("method", "delete", target, propertyKey);
   };
-}; 
+}
+
+/**
+ * Controller DELETE method decorator
+ * @param route
+ * @returns
+ */
+export function Delete(route: string): MethodDecorator {
+  return function (
+    target: object,
+    propertyKey: string | symbol,
+    descriptor: PropertyDescriptor,
+  ) {
+    Reflect.defineMetadata("method", "delete", target, propertyKey);
+    Reflect.defineMetadata("route", route, target, propertyKey);
+  };
+}
+
+/**
+ * Middleware decorator
+ * @param middleware
+ * @returns
+ */
+export function Middleware(middleware: RequestHandler): MethodDecorator {
+  return function (
+    target: object,
+    propertyKey: string | symbol,
+    descriptor: PropertyDescriptor,
+  ) {
+    const middlewares =
+      Reflect.getMetadata("middlewares", target, propertyKey) || [];
+    middlewares.push(middleware);
+    Reflect.defineMetadata("middlewares", middlewares, target, propertyKey);
+  };
+}

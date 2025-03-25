@@ -29,6 +29,7 @@ import {
   TableCell,
   TableHeader,
   TableRow,
+  MarkdownClipboard,
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
@@ -130,10 +131,11 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomCodeInlineExtension,
     Markdown.configure({
       html: true,
-      transformCopiedText: true,
+      transformCopiedText: false,
       transformPastedText: true,
       breaks: true,
     }),
+    MarkdownClipboard,
     Table,
     TableHeader,
     TableCell,

@@ -1,56 +1,61 @@
-import { Router, Request, Response, NextFunction } from "express";
+import { RequestHandler, Router } from "express";
 import "reflect-metadata";
 
-/**
- * Base controller class that provides route registration functionality
- */
-export abstract class BaseController {
-  protected router: Router;
+type HttpMethod =
+  | "get"
+  | "post"
+  | "put"
+  | "delete"
+  | "patch"
+  | "options"
+  | "head"
+  | "ws";
 
-  constructor() {
-    this.router = Router();
-  }
+interface ControllerInstance {
+  [key: string]: unknown;
+}
 
-  /**
-   * Get the base route for this controller
-   */
-  protected getBaseRoute(): string {
-    return Reflect.getMetadata("baseRoute", this.constructor) || "";
-  }
+interface ControllerConstructor {
+  new (...args: any[]): ControllerInstance;
+  prototype: ControllerInstance;
+}
 
-  /**
-   * Register all routes for this controller
-   * @param router - Express router to register routes on
-   * @param errorHandler - Optional function to wrap handlers with error handling
-   */
-  public registerRoutes(
-    router: Router, 
-    errorHandler?: (handler: (req: Request, res: Response, next: NextFunction) => Promise<any> | any) => any
-  ): void {
-    const baseRoute = this.getBaseRoute();
-    const proto = Object.getPrototypeOf(this);
-    const methods = Object.getOwnPropertyNames(proto).filter(
-      (item) => item !== "constructor" && typeof (this as any)[item] === "function"
-    );
+export function registerControllers(
+  router: Router,
+  Controller: ControllerConstructor,
+): void {
+  const instance = new Controller();
+  const baseRoute = Reflect.getMetadata("baseRoute", Controller) as string;
 
-    methods.forEach((methodName) => {
-      const route = Reflect.getMetadata("route", proto, methodName) || "";
-      const method = Reflect.getMetadata("method", proto, methodName) as string;
-      const middlewares = Reflect.getMetadata("middlewares", proto, methodName) || [];
+  Object.getOwnPropertyNames(Controller.prototype).forEach((methodName) => {
+    if (methodName === "constructor") return; // Skip the constructor
 
-      if (route && method) {
-        const fullRoute = baseRoute + route;
-        const handler = (this as any)[methodName].bind(this);
-        
-        // Skip WebSocket routes in this base controller
+    const method = Reflect.getMetadata(
+      "method",
+      instance,
+      methodName,
+    ) as HttpMethod;
+    const route = Reflect.getMetadata("route", instance, methodName) as string;
+    const middlewares =
+      (Reflect.getMetadata(
+        "middlewares",
+        instance,
+        methodName,
+      ) as RequestHandler[]) || [];
+
+    if (method && route) {
+      const handler = instance[methodName] as unknown;
+
+      if (typeof handler === "function") {
         if (method !== "ws") {
-          const wrappedHandler = errorHandler ? errorHandler(handler) : handler;
-          (router as any)[method](fullRoute, ...middlewares, wrappedHandler);
+          (
+            router[method] as (
+              path: string,
+              ...handlers: RequestHandler[]
+            ) => void
+          )(`${baseRoute}${route}`, ...middlewares, handler.bind(instance));
         }
       }
-    });
-
-    // Mount this controller's router on the main router
-    router.use(baseRoute, this.router);
-  }
-} 
+    }
+  });
+}
