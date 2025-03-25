@@ -59,8 +59,10 @@ export const AppProvider: FC<IAppProvider> = (props) => {
     const onIncomingMessage = async (event) => {
       console.log('onIncomingMessage', event);
       if (event.data.type === "PLANE_SIGN_OUT") {
-        await handleSignOut();
-        window.parent.postMessage({ type: "PLANE_SIGN_OUT_SUCCESS", path: pathname }, "*");
+        try {
+          await handleSignOut();
+          window.parent.postMessage({ type: "PLANE_SIGN_OUT_SUCCESS", path: pathname }, "*");
+        } catch (err) {}
       }
     };
     window.addEventListener('message', onIncomingMessage);
