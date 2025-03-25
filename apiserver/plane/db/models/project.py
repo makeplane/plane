@@ -124,18 +124,6 @@ class Project(BaseModel):
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
 
     @property
-    def is_secret(self) -> bool:
-        return self.network == ProjectNetwork.SECRET
-
-    @property
-    def is_public(self) -> bool:
-        return self.network == ProjectNetwork.PUBLIC
-
-    @property
-    def network_type(self) -> ProjectNetwork:
-        return ProjectNetwork(self.network)
-
-    @property
     def cover_image_url(self):
         # Return cover image url
         if self.cover_image_asset:
