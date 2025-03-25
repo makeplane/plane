@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";//ui
 import { useTheme, ThemeProvider } from "next-themes";
 import { SWRConfig } from "swr";
-import { Toast } from "@plane/ui";
+import { Toast, setToast, TOAST_TYPE } from "@plane/ui";
 // constants
 import { SWR_CONFIG } from "@/constants/swr-config";
 //helpers
@@ -18,6 +18,7 @@ import "@/lib/polyfills";
 import { StoreProvider } from "@/lib/store-context";
 // wrappers
 import { InstanceWrapper } from "@/lib/wrappers";
+import { useUser } from "@/hooks/store";
 // dynamic imports
 const StoreWrapper = dynamic(() => import("@/lib/wrappers/store-wrapper"), { ssr: false });
 const PostHogProvider = dynamic(() => import("@/lib/posthog-provider"), { ssr: false });
@@ -36,24 +37,39 @@ export const AppProvider: FC<IAppProvider> = (props) => {
   const { children } = props;
   // themes
 
-  // const router = useRouter();
   const pathname = usePathname();
+  const { signOut } = useUser();
+
+  const handleSignOut = async () => {
+    await signOut().catch(() =>
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to sign out. Please try again.",
+      })
+    );
+  };
 
   useEffect(() => {
-    // const onIncomingMessage = (event) => {
-    //   console.log('onIncomingMessage', event);
-    //   if (event.data.type === 'ROUTE_CHANGE') {
-    //     console.log(location.pathname, event.data.path);
-    //     router.replace(event.data.path);
-    //   }
-    // };
     console.log(pathname, 'pathname');
     window.parent.postMessage({ type: "ROUTE_CHANGE", path: pathname }, "*");
-    // window.addEventListener('message', onIncomingMessage);
-    // return () => {
-    //   window.removeEventListener("message", onIncomingMessage);
-    // };
   }, [pathname]);
+
+  useEffect(() => {
+    const onIncomingMessage = async (event) => {
+      console.log('onIncomingMessage', event);
+      if (event.data.type === "PLANE_SIGN_OUT") {
+        try {
+          await handleSignOut();
+          window.parent.postMessage({ type: "PLANE_SIGN_OUT_SUCCESS", path: pathname }, "*");
+        } catch (err) {}
+      }
+    };
+    window.addEventListener('message', onIncomingMessage);
+    return () => {
+      window.removeEventListener("message", onIncomingMessage);
+    };
+  }, []);
 
   return (
     <>
