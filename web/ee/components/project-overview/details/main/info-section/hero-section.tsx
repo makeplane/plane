@@ -105,19 +105,21 @@ export const HeroSection = observer((props: THeroSection) => {
           alt={project.name}
           className="absolute left-0 top-0 h-full w-full object-cover"
         />
-        <div className="absolute right-4 top-4">
-          <ImagePickerPopover
-            label="Change cover"
-            control={control}
-            onChange={(data) => {
-              if (data === project.cover_image) return;
-              handleCoverChange({ cover_image: data });
-            }}
-            value={project.cover_image ?? DEFAULT_COVER_IMAGE}
-            disabled={!isAdmin}
-            projectId={project.id}
-          />
-        </div>
+        {isAdmin && (
+          <div className="absolute right-4 top-4">
+            <ImagePickerPopover
+              label="Change cover"
+              control={control}
+              onChange={(data) => {
+                if (data === project.cover_image) return;
+                handleCoverChange({ cover_image: data });
+              }}
+              value={project.cover_image ?? DEFAULT_COVER_IMAGE}
+              disabled={!isAdmin}
+              projectId={project.id}
+            />
+          </div>
+        )}
       </div>
       <div className="relative px-10 pt-page-y mt-2">
         <form
