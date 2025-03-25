@@ -15,7 +15,6 @@ from django import apps
 from plane.utils.html_processor import strip_tags
 from plane.db.mixins import SoftDeletionManager
 from plane.utils.exception_logger import log_exception
-from .base import BaseModel
 from .project import ProjectBaseModel
 
 
@@ -71,6 +70,7 @@ def get_default_display_properties():
         "due_date": True,
         "estimate": True,
         "key": True,
+        "issue_type": True,
         "labels": True,
         "link": True,
         "priority": True,
@@ -78,6 +78,8 @@ def get_default_display_properties():
         "state": True,
         "sub_issue_count": True,
         "updated_on": True,
+        "customer_count": True,
+        "customer_request_count": True,
     }
 
 
@@ -93,6 +95,7 @@ class IssueManager(SoftDeletionManager):
                 | models.Q(issue_intake__status=2)
                 | models.Q(issue_intake__isnull=True)
             )
+            .filter(Q(type__is_epic=False) | Q(type__isnull=True))
             .filter(deleted_at__isnull=True)
             .filter(state__is_triage=False)
             .exclude(archived_at__isnull=False)
