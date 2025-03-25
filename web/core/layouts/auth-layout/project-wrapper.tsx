@@ -7,6 +7,7 @@ import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
+import { EProjectNetwork } from "@plane/types/src/enums";
 import { JoinProject } from "@/components/auth-screens";
 import { LogoSpinner } from "@/components/common";
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
@@ -69,6 +70,11 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     EUserPermissionsLevel.PROJECT,
     workspaceSlug.toString(),
     projectId?.toString()
+  );
+  const isWorkspaceAdmin = allowPermissions(
+    [EUserPermissions.ADMIN],
+    EUserPermissionsLevel.WORKSPACE,
+    workspaceSlug.toString()
   );
 
   // Initialize module timeline chart
@@ -168,10 +174,15 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     );
 
   // check if the user don't have permission to access the project
-  if (projectExists && projectId && hasPermissionToCurrentProject === false) return <JoinProject />;
+  if (
+    ((projectExists?.network && projectExists?.network !== EProjectNetwork.PRIVATE) || isWorkspaceAdmin) &&
+    projectId &&
+    hasPermissionToCurrentProject === false
+  )
+    return <JoinProject />;
 
   // check if the project info is not found.
-  if (loader === "loaded" && !projectExists && projectId && !!hasPermissionToCurrentProject === false)
+  if (loader === "loaded" && projectId && !!hasPermissionToCurrentProject === false)
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100">
         <DetailedEmptyState

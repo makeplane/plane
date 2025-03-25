@@ -1,6 +1,7 @@
 # Python imports
 import pytz
 from uuid import uuid4
+from enum import Enum
 
 # Django imports
 from django.conf import settings
@@ -15,6 +16,15 @@ from plane.db.mixins import AuditModel
 from .base import BaseModel
 
 ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
+
+
+class ProjectNetwork(Enum):
+    SECRET = 0
+    PUBLIC = 2
+
+    @classmethod
+    def choices(cls):
+        return [(0, "Secret"), (2, "Public")]
 
 
 def get_default_props():
