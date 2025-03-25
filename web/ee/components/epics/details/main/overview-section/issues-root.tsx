@@ -19,6 +19,7 @@ import { cn } from "@/helpers/common.helper";
 import { useIssueDetail } from "@/hooks/store";
 // plane web imports
 import { SectionEmptyState } from "@/plane-web/components/common/layout/main/common";
+import { useEpicAnalytics } from "@/plane-web/hooks/store";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
 type Props = {
@@ -68,6 +69,7 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
     peekIssue: epicPeekIssue,
   } = useIssueDetail(EIssueServiceType.EPICS);
   const { toggleCreateIssueModal, toggleDeleteIssueModal } = useIssueDetail(EIssueServiceType.EPICS);
+  const { fetchEpicAnalytics } = useEpicAnalytics();
   const {
     initiative: { fetchInitiativeAnalytics },
   } = useInitiatives();
@@ -94,6 +96,27 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
   const handleFetchSubIssues = useCallback(async () => {
     await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, epicId);
   }, [epicId, projectId, subIssueOperations, workspaceSlug]);
+
+  const handleDeleteSubIssue = async () => {
+    await subIssueOperations
+      .deleteSubIssue(
+        workspaceSlug,
+        projectId,
+        issueCrudState?.delete?.parentIssueId as string,
+        issueCrudState?.delete?.issue?.id as string
+      )
+      .then(() => {
+        fetchEpicAnalytics(workspaceSlug, projectId, epicId);
+      });
+  };
+
+  const handleUpdateSubIssue = async (_issue: TIssue) => {
+    await subIssueOperations
+      .updateSubIssue(workspaceSlug, projectId, epicId, _issue.id, _issue, issueCrudState?.update?.issue, true)
+      .then(() => {
+        fetchEpicAnalytics(workspaceSlug, projectId, epicId);
+      });
+  };
 
   useEffect(() => {
     handleFetchSubIssues();
@@ -182,14 +205,7 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
             toggleDeleteIssueModal(null);
           }}
           data={issueCrudState?.delete?.issue as TIssue}
-          onSubmit={async () =>
-            await subIssueOperations.deleteSubIssue(
-              workspaceSlug,
-              projectId,
-              issueCrudState?.delete?.parentIssueId as string,
-              issueCrudState?.delete?.issue?.id as string
-            )
-          }
+          onSubmit={handleDeleteSubIssue}
           isSubIssue
         />
       )}
@@ -202,17 +218,7 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
             toggleCreateIssueModal(false);
           }}
           data={issueCrudState?.update?.issue ?? undefined}
-          onSubmit={async (_issue: TIssue) => {
-            await subIssueOperations.updateSubIssue(
-              workspaceSlug,
-              projectId,
-              epicId,
-              _issue.id,
-              _issue,
-              issueCrudState?.update?.issue,
-              true
-            );
-          }}
+          onSubmit={async (_issue: TIssue) => handleUpdateSubIssue(_issue)}
         />
       )}
     </>

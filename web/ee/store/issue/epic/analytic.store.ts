@@ -93,6 +93,16 @@ export class EpicAnalytics implements IEpicAnalyticStore {
       const analytics = await this.epicService.getIssueProgressAnalytics(workspaceSlug, projectId, epicId);
       runInAction(() => {
         set(this.epicAnalyticsMap, epicId, analytics);
+        set(this.epicStatsMap, epicId, {
+          total_issues:
+            analytics.backlog_issues +
+            analytics.unstarted_issues +
+            analytics.started_issues +
+            analytics.completed_issues +
+            analytics.cancelled_issues,
+          cancelled_issues: analytics.cancelled_issues,
+          completed_issues: analytics.completed_issues,
+        });
         this.epicAnalyticsLoader[epicId] = "loaded";
       });
       return analytics;
