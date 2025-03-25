@@ -27,7 +27,7 @@ import { CreateLabelModal } from "@/components/labels";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
-import { useProjectEstimates } from "@/hooks/store";
+import { useProject, useProjectEstimates } from "@/hooks/store";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-select";
 import { IssueTypeDropdown, TIssueTypeOptionTooltip } from "@/plane-web/components/issue-types/dropdowns";
@@ -63,12 +63,16 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
   // plane imports
   const { t } = useTranslation();
   // store hooks
+  const { getProjectById } = useProject();
   const {
     issues: { bulkUpdateProperties },
   } = useIssuesStore();
   const { currentActiveEstimateId, areEstimateEnabledByProjectId } = useProjectEstimates();
   const { isWorkItemTypeEnabledForProject, getIssueTypeIdsWithMandatoryProperties } = useIssueTypes();
   // derived values
+  const projectDetails = projectId ? getProjectById(projectId.toString()) : undefined;
+  const isCyclesEnabled = !!projectDetails?.cycle_view;
+  const isModulesEnabled = !!projectDetails?.module_view;
   const isAdvancedBulkOpsEnabled = useFlag(workspaceSlug?.toString(), "BULK_OPS_PRO");
   const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId?.toString());
   // Get issue types with mandatory properties
@@ -264,7 +268,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
         )}
         {isAdvancedBulkOpsEnabled && (
           <>
-            {projectId && (
+            {projectId && isCyclesEnabled && (
               <Controller
                 name="cycle_id"
                 control={control}
@@ -303,7 +307,7 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                 )}
               />
             )}
-            {projectId && (
+            {projectId && isModulesEnabled && (
               <Controller
                 name="module_ids"
                 control={control}
