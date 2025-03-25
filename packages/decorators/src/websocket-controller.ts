@@ -1,4 +1,4 @@
-import type { Router, Request } from "express";
+import { Router, Request } from "express";
 import type { WebSocket } from "ws";
 import "reflect-metadata";
 

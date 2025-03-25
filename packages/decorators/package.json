@@ -17,7 +17,8 @@
     "lint:errors": "eslint src --ext .ts,.tsx --quiet"
   },
   "dependencies": {
-    "reflect-metadata": "^0.2.2"
+    "reflect-metadata": "^0.2.2",
+    "express": "^4.21.2"
   },
   "devDependencies": {
     "@plane/eslint-config": "*",
@@ -26,7 +27,6 @@
     "@plane/typescript-config": "*",
     "@types/node": "^20.14.9",
     "@types/ws": "^8.5.10",
-    "express": "^4.21.2",
     "tsup": "8.3.0",
     "typescript": "^5.3.3"
   },
