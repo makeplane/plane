@@ -3,6 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Signal, Tag, Triangle, LayoutPanelTop, CalendarClock, CalendarCheck2, Users, UserCircle2, Info } from "lucide-react";
+import axios from "axios";
 // hooks
 // ui icons
 import { DiceIcon, DoubleCircleIcon, ContrastIcon } from "@plane/ui";
@@ -32,6 +33,7 @@ import { useIssueDetail, useMember, useProject, useProjectState } from "@/hooks/
 import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issue-types/values";
 import { IssueWorklogProperty} from "@/plane-web/components/issues";
 import { ISSUE_ADDITIONAL_PROPERTIES } from "@/constants/issue";
+import { CustomProperty } from "../custom-properties";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
@@ -57,6 +59,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const createdByDetails = getUserDetails(issue?.created_by);
   const projectDetails = getProjectById(issue.project_id);
   const customProperties = issue?.custom_properties || [];
+  const issue_type_id = issue?.type_id || "afd30f86-5ae5-428c-aa3a-e633ea973740";
   const isEstimateEnabled = projectDetails?.estimate;
   const stateDetails = getStateById(issue.state_id);
   const minDate = getDate(issue.start_date);
@@ -65,6 +68,44 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const maxDate = getDate(issue.target_date);
   maxDate?.setDate(maxDate.getDate());
 
+  const handleCustomPropertiesUpdate = async (updatedProperties: CustomProperty[]) => {
+    try {
+      const updateRequests = updatedProperties.map((property) => {
+        const customPropertyId = property?.id || "";
+        const apiUrl = `/api/v1/workspaces/${workspaceSlug}/issues/${issueId}/custom-properties/`;
+        if (customPropertyId) {
+          return axios.patch(
+            `${apiUrl}${customPropertyId}/`, 
+            { value: property.value },
+            {
+              headers: {
+                'x-api-key': 'TEST_API_TOKEN',
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+        } else {
+          return axios.post(
+            apiUrl, 
+            {
+              key: property.key,
+              value: property.value,
+              issue_type_custom_property: property.issue_type_custom_property,
+            },
+            {
+              headers: {
+                'x-api-key': 'TEST_API_TOKEN',
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+        }
+      });
+      await Promise.all(updateRequests);
+    } catch (error) {
+    }
+  };
+  
   return (
     <div>
       <h6 className="text-sm font-medium">Properties</h6>
@@ -315,7 +356,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           ) : null
         )}
 
-        <CustomProperties customProperties={Array.isArray(customProperties) ? customProperties : []} />
+        <CustomProperties
+          customProperties={Array.isArray(customProperties) ? customProperties : []}
+          issue_type_id={issue_type_id}
+          workspaceSlug={workspaceSlug}
+          updateCustomProperties={handleCustomPropertiesUpdate}
+        />
       </div>
     </div>
   );

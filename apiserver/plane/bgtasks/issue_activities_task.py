@@ -1610,6 +1610,71 @@ def create_inbox_activity(
         )
 
 
+# Track custom property
+def update_custom_property_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    if isinstance(current_instance, str):
+        current_instance = json.loads(current_instance)
+    if isinstance(requested_data, str):
+        requested_data = json.loads(requested_data)
+    custom_property_key = current_instance.get("key", "unknown_key")
+    if current_instance.get("value") != requested_data.get("value"):
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=current_instance.get("value"),
+                new_value=requested_data.get("value"),
+                field=custom_property_key,
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment=f"updated the custom property ({custom_property_key}) to",
+                epoch=epoch,
+            )
+        )
+
+
+# Track custom property addition
+def create_custom_property_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    if isinstance(current_instance, str):
+        current_instance = json.loads(current_instance)
+    if isinstance(requested_data, str):
+        requested_data = json.loads(requested_data)
+    custom_property_key = requested_data.get("key", "unknown_key")
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            actor_id=actor_id,
+            verb="created",
+            old_value="",
+            new_value=requested_data.get("value"),
+            field=custom_property_key,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment=f"added a custom property ({custom_property_key})",
+            epoch=epoch,
+        )
+    )
+
+
 # Receive message from room group
 @shared_task
 def issue_activity(
@@ -1672,6 +1737,8 @@ def issue_activity(
             "issue_draft.activity.updated": update_draft_issue_activity,
             "issue_draft.activity.deleted": delete_draft_issue_activity,
             "inbox.activity.created": create_inbox_activity,
+            "custom_property.activity.updated": update_custom_property_activity,
+            "custom_property.activity.created": create_custom_property_activity,
         }
 
         func = ACTIVITY_MAPPER.get(type)

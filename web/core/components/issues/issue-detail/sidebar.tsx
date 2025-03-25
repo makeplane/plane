@@ -3,6 +3,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { CalendarCheck2, CalendarClock, LayoutPanelTop, Signal, Tag, Triangle, UserCircle2, Users, Info } from "lucide-react";
+import axios from "axios";
 // ui
 import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/ui";
 // components
@@ -27,6 +28,7 @@ import { IssueWorklogProperty } from "@/plane-web/components/issues";
 // components
 import type { TIssueOperations } from "./root";
 import { ISSUE_ADDITIONAL_PROPERTIES } from "@/constants/issue";
+import { CustomProperty } from "../custom-properties";
 
 type Props = {
   workspaceSlug: string;
@@ -55,11 +57,50 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const projectDetails = getProjectById(issue.project_id);
   const stateDetails = getStateById(issue.state_id);
   const customProperties = issue?.custom_properties || [];
+  const issue_type_id = issue?.type_id || "afd30f86-5ae5-428c-aa3a-e633ea973740";
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
   const maxDate = issue.target_date ? getDate(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
+
+  const handleCustomPropertiesUpdate = async (updatedProperties: CustomProperty[]) => {
+    try {
+      const updateRequests = updatedProperties.map((property) => {
+        const customPropertyId = property?.id || "";
+        const apiUrl = `/api/v1/workspaces/${workspaceSlug}/issues/${issueId}/custom-properties/`;
+        if (customPropertyId) {
+          return axios.patch(
+            `${apiUrl}${customPropertyId}/`, 
+            { value: property.value },
+            {
+              headers: {
+                'x-api-key': 'TEST_API_TOKEN',
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+        } else {
+          return axios.post(
+            apiUrl, 
+            {
+              key: property.key,
+              value: property.value,
+              issue_type_custom_property: property.issue_type_custom_property,
+            },
+            {
+              headers: {
+                'x-api-key': 'TEST_API_TOKEN',
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+        }
+      });
+      await Promise.all(updateRequests);
+    } catch (error) {
+    }
+  };
 
   return (
     <>
@@ -315,8 +356,11 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               ) : null
             )}
 
-            <CustomProperties 
-                customProperties={Array.isArray(customProperties) ? customProperties : []} 
+            <CustomProperties
+              customProperties={Array.isArray(customProperties) ? customProperties : []}
+              issue_type_id={issue_type_id}
+              workspaceSlug={workspaceSlug}
+              updateCustomProperties={handleCustomPropertiesUpdate}
             />
           </div>
         </div>

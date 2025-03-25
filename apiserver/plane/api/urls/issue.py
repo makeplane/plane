@@ -7,7 +7,8 @@ from plane.api.views import (
     IssueActivityAPIEndpoint,
     WorkspaceIssueAPIEndpoint,
     IssueAttachmentV2Endpoint,
-    IssueTypeAPIEndpoint
+    IssueTypeAPIEndpoint,
+    IssueCustomPropertyUpdateAPIView
 )
 
 urlpatterns = [
@@ -75,5 +76,15 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<str:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
         IssueAttachmentV2Endpoint.as_view(),
         name="attachment",
-    )
+    ),
+    path(
+        'workspaces/<str:slug>/issues/<uuid:issue_id>/custom-properties/<uuid:pk>/',
+        IssueCustomPropertyUpdateAPIView.as_view(),
+        name="update-issue-custom-property",
+    ),
+        path(
+        'workspaces/<str:slug>/issues/<uuid:issue_id>/custom-properties/',
+        IssueCustomPropertyUpdateAPIView.as_view(),
+        name="create-issue-custom-property",
+    ),
 ]
