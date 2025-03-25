@@ -1,7 +1,7 @@
 import range from "lodash/range";
 
 export const APITokenSettingsLoader = () => (
-  <section className="w-full overflow-y-auto py-8 pr-9">
+  <section className="w-full overflow-y-auto py-8 pl-9">
     <div className="mb-2 flex items-center justify-between border-b border-custom-border-200 py-3.5">
       <h3 className="text-xl font-medium">API tokens</h3>
       <span className="h-8 w-28 bg-custom-background-80 rounded" />

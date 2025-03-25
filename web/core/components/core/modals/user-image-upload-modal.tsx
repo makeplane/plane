@@ -137,14 +137,14 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
                           <>
                             <button
                               type="button"
-                              className="absolute right-0 top-0 z-40 -translate-y-1/2 translate-x-1/2 rounded bg-custom-background-90 px-2 py-0.5 text-xs font-medium text-custom-text-200"
+                              className="absolute left-0 top-0 z-40 -translate-y-1/2 translate-x-1/2 rounded bg-custom-background-90 px-2 py-0.5 text-xs font-medium text-custom-text-200"
                             >
                               Edit
                             </button>
                             <img
                               src={image ? URL.createObjectURL(image) : value ? getFileURL(value) : ""}
                               alt="image"
-                              className="absolute left-0 top-0 h-full w-full rounded-md object-cover"
+                              className="absolute right-0 top-0 h-full w-full rounded-md object-cover"
                             />
                           </>
                         ) : (

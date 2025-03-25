@@ -78,7 +78,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
           <>
             <div className="mt-7 border-b-[0.5px] border-custom-border-200 grid grid-cols-12 gap-1 text-xs text-custom-text-300 pb-1">
               <h6
-                className={cn("pl-1 flex items-center gap-1 col-span-7", {
+                className={cn("pr-1 flex items-center gap-1 col-span-7", {
                   "col-span-11": type === "assigned" && tab === "completed",
                   "col-span-9": type === "created" && tab === "completed",
                 })}

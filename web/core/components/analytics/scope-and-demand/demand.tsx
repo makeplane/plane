@@ -34,7 +34,7 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => {
                     }}
                   />
                   <h6 className="capitalize">{group.state_group}</h6>
-                  <span className="ml-1 rounded-3xl bg-custom-background-80 px-2 py-0.5 text-[0.65rem] text-custom-text-200">
+                  <span className="mr-1 rounded-3xl bg-custom-background-80 px-2 py-0.5 text-[0.65rem] text-custom-text-200">
                     {group.state_count}
                   </span>
                 </div>
@@ -42,7 +42,7 @@ export const AnalyticsDemand: React.FC<Props> = ({ defaultAnalytics }) => {
               </div>
               <div className="bar relative h-1 w-full rounded bg-custom-background-80">
                 <div
-                  className="absolute left-0 top-0 h-1 rounded duration-300"
+                  className="absolute right-0 top-0 h-1 rounded duration-300"
                   style={{
                     width: `${percentage}%`,
                     backgroundColor: STATE_GROUPS[group.state_group as TStateGroups].color,

@@ -49,7 +49,7 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = (props) => {
           <div className="col-span-12 md:col-span-4">
             <div className="text-3xl font-bold leading-8 flex">Upgrade to a paid plan and unlock missing features.</div>
             <div className="mt-4 mb-12">
-              <p className="text-sm mb-4 pr-8 text-custom-text-100">
+              <p className="text-sm mb-4 pl-8 text-custom-text-100">
                 Active Cycles, time tracking, bulk ops, and other features are waiting for you on one of our paid plans.
                 Upgrade today to unlock features your teams need yesterday.
               </p>
@@ -70,7 +70,7 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = (props) => {
                   {FREE_PLAN_UPGRADE_FEATURES.map((feature) => (
                     <li key={feature} className={cn("col-span-12 relative rounded-md p-2 flex")}>
                       <p className="w-full text-sm font-medium leading-5 flex items-center">
-                        <CircleX className="h-4 w-4 mr-4 text-red-500 flex-shrink-0" />
+                        <CircleX className="h-4 w-4 ml-4 text-red-500 flex-shrink-0" />
                         <span className="text-custom-text-200 truncate">{feature}</span>
                       </p>
                     </li>

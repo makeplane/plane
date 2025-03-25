@@ -17,7 +17,7 @@ const ProjectSettingLayout: FC<IProjectSettingLayout> = (props) => {
     <>
       <AppHeader header={<ProjectSettingHeader />} />
       <div className="inset-y-0 flex flex-row vertical-scrollbar scrollbar-lg h-full w-full overflow-y-auto">
-        <div className="px-page-x !pr-0 py-page-y flex-shrink-0 overflow-y-hidden sm:hidden hidden md:block lg:block">
+        <div className="px-page-x !pl-0 py-page-y flex-shrink-0 overflow-y-hidden sm:hidden hidden md:block lg:block">
           <ProjectSettingsSidebar />
         </div>
         <div className="flex flex-col relative w-full overflow-hidden">

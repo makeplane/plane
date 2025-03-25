@@ -192,7 +192,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
           <div className="px-5 space-y-4">
             {project.anchor && projectPublishSettings && (
               <>
-                <div className="bg-custom-background-80 border border-custom-border-300 rounded-md py-1.5 pl-4 pr-1 flex items-center justify-between gap-2">
+                <div className="bg-custom-background-80 border border-custom-border-300 rounded-md py-1.5 pr-4 pl-1 flex items-center justify-between gap-2">
                   <a
                     href={publishLink}
                     className="text-sm text-custom-text-200 truncate"

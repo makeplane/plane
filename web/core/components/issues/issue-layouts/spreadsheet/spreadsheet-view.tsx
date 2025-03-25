@@ -110,7 +110,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
               />
             </div>
             <div className="border-t border-custom-border-100">
-              <div className="z-5 sticky bottom-0 left-0 mb-3">
+              <div className="z-5 sticky bottom-0 right-0 mb-3">
                 {enableQuickCreateIssue && !disableIssueCreation && (
                   <QuickAddIssueRoot
                     layout={EIssueLayoutTypes.SPREADSHEET}

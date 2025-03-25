@@ -14,7 +14,7 @@ export const IssueEmbedUpgradeCard: React.FC<any> = (props) => (
       }
     )}
   >
-    <div className="flex items-center justify-between gap-5 mt-2.5 pl-4 pr-5 py-3 w-full max-md:max-w-full max-md:flex-wrap rounded-md">
+    <div className="flex items-center justify-between gap-5 mt-2.5 pr-4 pl-5 py-3 w-full max-md:max-w-full max-md:flex-wrap rounded-md">
       <div className="flex items-center gap-4">
         <ProIcon className="flex-shrink-0 size-4" />
         <p className="text-custom-text !text-base">

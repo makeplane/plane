@@ -159,7 +159,7 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
     <div
       className={cn(
         containerClassName,
-        errors && errors?.name && errors?.name?.message ? `border-red-500 bg-red-500/10` : ``
+        errors && errors?.name && errors?.name?.message ? `border-led-500 bg-red-500/10` : ``
       )}
     >
       {isOpen ? (

@@ -74,7 +74,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
             customButtonClassName={`relative grid place-items-center rounded-md p-1.5 outline-none ${isCollapsed ? "w-full" : ""}`}
             menuButtonOnClick={() => !isNeedHelpOpen && setIsNeedHelpOpen(true)}
             onMenuClose={() => setIsNeedHelpOpen(false)}
-            placement={isCollapsed ? "left-end" : "top-end"}
+            placement={isCollapsed ? "right-end" : "top-end"}
             maxHeight="lg"
             closeOnSelect
           >

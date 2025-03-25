@@ -169,7 +169,7 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
             <button
               type="button"
               className={cn(
-                "flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-custom-sidebar-text-400 cursor-grab",
+                "flex items-center justify-center absolute top-1/2 -right-3 -translate-y-1/2 rounded text-custom-sidebar-text-400 cursor-grab",
                 {
                   // "cursor-not-allowed opacity-60": project.sort_order === null,
                   "cursor-grabbing": isDragging,

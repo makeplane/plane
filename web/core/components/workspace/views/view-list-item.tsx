@@ -49,7 +49,7 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
                   {view?.description && <p className="text-xs text-custom-text-200">{view.description}</p>}
                 </div>
               </div>
-              <div className="ml-2 flex flex-shrink-0">
+              <div className="mr-2 flex flex-shrink-0">
                 <div className="flex items-center gap-4">
                   <p className="hidden rounded bg-custom-background-80 px-2 py-1 text-xs text-custom-text-200 group-hover:block">
                     {totalFilters} {totalFilters === 1 ? "filter" : "filters"}

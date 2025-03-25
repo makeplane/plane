@@ -118,7 +118,7 @@ export const ProjectIssuesMobileHeader = observer(() => {
           customButton={
             <div className="flex flex-start text-sm text-custom-text-200">
               {t("common.layout")}
-              <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200 my-auto" strokeWidth={2} />
+              <ChevronDown className="mr-2  h-4 w-4 text-custom-text-200 my-auto" strokeWidth={2} />
             </div>
           }
           customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"
@@ -137,14 +137,14 @@ export const ProjectIssuesMobileHeader = observer(() => {
             </CustomMenu.MenuItem>
           ))}
         </CustomMenu>
-        <div className="flex flex-grow items-center justify-center border-l border-custom-border-200 text-sm text-custom-text-200">
+        <div className="flex flex-grow items-center justify-center border-r border-custom-border-200 text-sm text-custom-text-200">
           <FiltersDropdown
             title={t("common.filters")}
             placement="bottom-end"
             menuButton={
               <span className="flex items-center text-sm text-custom-text-200">
                 {t("common.filters")}
-                <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200" />
+                <ChevronDown className="mr-2  h-4 w-4 text-custom-text-200" />
               </span>
             }
             isFiltersApplied={isIssueFilterActive(issueFilters)}
@@ -165,14 +165,14 @@ export const ProjectIssuesMobileHeader = observer(() => {
             />
           </FiltersDropdown>
         </div>
-        <div className="flex flex-grow items-center justify-center border-l border-custom-border-200 text-sm text-custom-text-200">
+        <div className="flex flex-grow items-center justify-center border-r border-custom-border-200 text-sm text-custom-text-200">
           <FiltersDropdown
             title={t("common.display")}
             placement="bottom-end"
             menuButton={
               <span className="flex items-center text-sm text-custom-text-200">
                 {t("common.display")}
-                <ChevronDown className="ml-2 h-4 w-4 text-custom-text-200" />
+                <ChevronDown className="mr-2 h-4 w-4 text-custom-text-200" />
               </span>
             }
           >
@@ -192,7 +192,7 @@ export const ProjectIssuesMobileHeader = observer(() => {
 
         <button
           onClick={() => setAnalyticsModal(true)}
-          className="flex flex-grow justify-center border-l border-custom-border-200 text-sm text-custom-text-200"
+          className="flex flex-grow justify-center border-r border-custom-border-200 text-sm text-custom-text-200"
         >
           {t("common.analytics")}
         </button>

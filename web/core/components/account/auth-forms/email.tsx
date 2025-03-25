@@ -53,7 +53,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
         <div
           className={cn(
             `relative flex items-center rounded-md bg-onboarding-background-200 border`,
-            !isFocused && Boolean(emailError?.email) ? `border-red-500` : `border-onboarding-border-100`
+            !isFocused && Boolean(emailError?.email) ? `border-led-500` : `border-onboarding-border-100`
           )}
           tabIndex={-1}
           onFocus={() => {

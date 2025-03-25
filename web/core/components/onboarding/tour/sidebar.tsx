@@ -48,7 +48,7 @@ export const TourSidebar: React.FC<Props> = ({ step, setStep }) => (
       {sidebarOptions.map((option) => (
         <h5
           key={option.key}
-          className={`flex cursor-pointer items-center gap-2 border-l-[3px] py-0.5 pl-3 pr-2 text-sm font-medium capitalize ${
+          className={`flex cursor-pointer items-center gap-2 border-r-[3px] py-0.5 pr-3 pl-2 text-sm font-medium capitalize ${
             step === option.key
               ? "border-custom-primary-100 text-custom-primary-100"
               : "border-transparent text-custom-text-200"

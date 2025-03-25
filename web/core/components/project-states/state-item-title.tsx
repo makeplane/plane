@@ -32,7 +32,7 @@ export const StateItemTitle = observer((props: StateItemTitleProps) => {
       <div className="flex items-center gap-1 px-1">
         {/* draggable indicator */}
         {!disabled && stateCount != 1 && (
-          <div className="flex-shrink-0 w-3 h-3 rounded-sm absolute -left-1.5 hidden group-hover:flex justify-center items-center transition-colors bg-custom-background-90 cursor-pointer text-custom-text-200 hover:text-custom-text-100">
+          <div className="flex-shrink-0 w-3 h-3 rounded-sm absolute -right-1.5 hidden group-hover:flex justify-center items-center transition-colors bg-custom-background-90 cursor-pointer text-custom-text-200 hover:text-custom-text-100">
             <GripVertical className="w-3 h-3" />
           </div>
         )}

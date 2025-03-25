@@ -153,7 +153,7 @@ const ForgotPasswordPage = observer(() => {
                         ref={ref}
                         hasError={Boolean(errors.email)}
                         placeholder={t("auth.common.email.placeholder")}
-                        className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                        className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pl-12 placeholder:text-onboarding-text-400"
                         autoComplete="on"
                         disabled={resendTimerCode > 0}
                       />

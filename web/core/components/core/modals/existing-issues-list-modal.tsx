@@ -159,11 +159,11 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                 >
                   <div className="relative m-1">
                     <Search
-                      className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
+                      className="pointer-events-none absolute right-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
                       aria-hidden="true"
                     />
                     <Combobox.Input
-                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
+                      className="h-12 w-full border-0 bg-transparent pr-11 pl-4 text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
                       placeholder={t("common.search.placeholder")}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -177,7 +177,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                         {selectedIssues.map((issue) => (
                           <div
                             key={issue.id}
-                            className="flex items-center gap-1 whitespace-nowrap rounded-md border border-custom-border-200 bg-custom-background-80 py-1 pl-2 text-xs text-custom-text-100"
+                            className="flex items-center gap-1 whitespace-nowrap rounded-md border border-custom-border-200 bg-custom-background-80 py-1 pr-2 text-xs text-custom-text-100"
                           >
                             <IssueIdentifier
                               projectId={issue.project_id}

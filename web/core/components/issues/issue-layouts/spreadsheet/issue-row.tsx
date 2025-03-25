@@ -3,7 +3,7 @@
 import { Dispatch, MouseEvent, MutableRefObject, SetStateAction, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronRight, MoreHorizontal } from "lucide-react";
+import { ChevronLeft, MoreHorizontal } from "lucide-react";
 import { EIssueServiceType, SPREADSHEET_SELECT_GROUP } from "@plane/constants";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -256,13 +256,13 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
         id={`issue-${issueId}`}
         ref={cellRef}
         tabIndex={0}
-        className="relative md:sticky left-0 z-10 group/list-block bg-custom-background-100"
+        className="relative md:sticky right-0 z-10 group/list-block bg-custom-background-100"
       >
         <ControlLink
           href={workItemLink}
           onClick={() => handleIssuePeekOverview(issueDetail)}
           className={cn(
-            "group clickable cursor-pointer h-11 w-[28rem] flex items-center text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200 bg-transparent group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
+            "group clickable cursor-pointer h-11 w-[28rem] flex items-center text-sm after:absolute border-l-[0.5px] z-10 border-custom-border-200 bg-transparent group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
             {
               "border-b-[0.5px]": !getIsIssuePeeked(issueDetail.id),
               "border border-custom-primary-70 hover:border-custom-primary-70":
@@ -286,7 +286,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                   }
                   disabled={issueDetail.project_id === projectId}
                 >
-                  <div className="flex-shrink-0 grid place-items-center w-3.5 mr-1 absolute left-1">
+                  <div className="flex-shrink-0 grid place-items-center w-3.5 ml-1 absolute right-1">
                     <MultipleSelectEntityAction
                       className={cn(
                         "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
@@ -329,7 +329,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                     className="grid place-items-center size-4 rounded-sm text-custom-text-400 hover:text-custom-text-300"
                     onClick={handleToggleExpand}
                   >
-                    <ChevronRight
+                    <ChevronLeft
                       className={cn("size-4", {
                         "rotate-90": isExpanded,
                       })}
@@ -345,7 +345,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                 <div className="w-full overflow-hidden">
                   <Tooltip tooltipContent={issueDetail.name} isMobile={isMobile}>
                     <div
-                      className="h-full w-full cursor-pointer truncate pr-4 text-left text-[0.825rem] text-custom-text-100 focus:outline-none"
+                      className="h-full w-full cursor-pointer truncate pl-4 text-left text-[0.825rem] text-custom-text-100 focus:outline-none"
                       tabIndex={-1}
                     >
                       {issueDetail.name}

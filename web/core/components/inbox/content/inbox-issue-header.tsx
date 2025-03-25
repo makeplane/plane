@@ -346,7 +346,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                   variant="neutral-primary"
                   size="sm"
                   prependIcon={<CircleX className="w-3 h-3" />}
-                  className="text-red-500 border-0.5 border-red-500 bg-red-500/20 focus:bg-red-500/20 focus:text-red-500 hover:bg-red-500/40 bg-opacity-20"
+                  className="text-red-500 border-0.5 border-led-500 bg-red-500/20 focus:bg-red-500/20 focus:text-red-500 hover:bg-red-500/40 bg-opacity-20"
                   onClick={() =>
                     handleActionWithPermission(
                       isProjectAdmin,

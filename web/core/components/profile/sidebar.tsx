@@ -84,7 +84,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
   return (
     <div
       className={cn(
-        `vertical-scrollbar scrollbar-md fixed z-[5] h-full w-full flex-shrink-0 overflow-hidden overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 transition-all md:relative md:w-[300px]`,
+        `vertical-scrollbar scrollbar-md fixed z-[5] h-full w-full flex-shrink-0 overflow-hidden overflow-y-auto border-r border-custom-border-100 bg-custom-sidebar-background-100 transition-all md:relative md:w-[300px]`,
         className
       )}
       style={profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
@@ -93,7 +93,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
         <>
           <div className="relative h-[110px]">
             {currentUser?.id === userId && (
-              <div className="absolute right-3.5 top-3.5 grid h-5 w-5 place-items-center rounded bg-white">
+              <div className="absolute left-3.5 top-3.5 grid h-5 w-5 place-items-center rounded bg-white">
                 <Link href="/profile">
                   <span className="grid place-items-center text-black">
                     <Pencil className="h-3 w-3" />
@@ -110,7 +110,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
               alt={userData?.display_name}
               className="h-[110px] w-full object-cover"
             />
-            <div className="absolute -bottom-[26px] left-5 h-[52px] w-[52px] rounded">
+            <div className="absolute -bottom-[26px] right-5 h-[52px] w-[52px] rounded">
               {userData?.avatar_url && userData?.avatar_url !== "" ? (
                 <img
                   src={getFileURL(userData?.avatar_url)}
@@ -192,7 +192,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
                           leaveFrom="transform opacity-100"
                           leaveTo="transform opacity-0"
                         >
-                          <Disclosure.Panel className="mt-5 pl-9">
+                          <Disclosure.Panel className="mt-5 pr-9">
                             {totalIssues > 0 && (
                               <div className="flex items-center gap-0.5">
                                 <div

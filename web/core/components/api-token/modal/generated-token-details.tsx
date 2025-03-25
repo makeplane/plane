@@ -42,7 +42,7 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
         onClick={() => copyApiToken(tokenDetails.token ?? "")}
         className="mt-4 flex truncate w-full items-center justify-between rounded-md border-[0.5px] border-custom-border-200 px-3 py-2 text-sm font-medium outline-none"
       >
-        <span className="truncate pr-2">{tokenDetails.token}</span>
+        <span className="truncate pl-2">{tokenDetails.token}</span>
         <Tooltip tooltipContent="Copy secret key" isMobile={isMobile}>
           <Copy className="h-4 w-4 text-custom-text-400 flex-shrink-0" />
         </Tooltip>

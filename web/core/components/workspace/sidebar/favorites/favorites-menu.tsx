@@ -11,7 +11,7 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import orderBy from "lodash/orderBy";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronRight, FolderPlus } from "lucide-react";
+import { ChevronLeft, FolderPlus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -213,7 +213,7 @@ export const SidebarFavoritesMenu = observer(() => {
                   className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform")}
                 />
               </Tooltip>
-              <ChevronRight
+              <ChevronLeft
                 onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)}
                 className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
                   "rotate-90": isFavoriteMenuOpen,
@@ -235,7 +235,7 @@ export const SidebarFavoritesMenu = observer(() => {
             <Disclosure.Panel
               as="div"
               className={cn("flex flex-col mt-0.5 gap-0.5", {
-                "space-y-0 mt-0 ml-0": sidebarCollapsed,
+                "space-y-0 mt-0 mr-0": sidebarCollapsed,
               })}
               static
             >
@@ -256,7 +256,7 @@ export const SidebarFavoritesMenu = observer(() => {
                       key={fav.id}
                       tooltipContent={fav?.entity_data ? fav.entity_data?.name : fav?.name}
                       position="right"
-                      className="ml-2"
+                      className="mr-2"
                       disabled={!sidebarCollapsed}
                       isMobile={isMobile}
                     >

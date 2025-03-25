@@ -54,7 +54,7 @@ export const AppSidebar: FC = observer(() => {
     <>
       <div
         className={cn(
-          "fixed inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-custom-sidebar-border-200 bg-custom-sidebar-background-100 duration-300 w-[250px] md:relative md:ml-0",
+          "fixed inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-l border-custom-sidebar-border-200 bg-custom-sidebar-background-100 duration-300 w-[250px] md:relative md:mr-0",
           {
             "w-[70px] -ml-[250px]": sidebarCollapsed,
           }

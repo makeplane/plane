@@ -4,7 +4,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // icons
-import { Plus, ChevronRight, Loader, Pencil } from "lucide-react";
+import { Plus, ChevronLeft, Loader, Pencil } from "lucide-react";
 // types
 import { IUser, TIssue } from "@plane/types";
 // ui
@@ -327,7 +327,7 @@ export const SubIssuesRoot: FC<ISubIssuesRoot> = observer((props) => {
                       {subIssueHelpers.preview_loader.includes(parentIssueId) ? (
                         <Loader strokeWidth={2} className="h-3 w-3 animate-spin" />
                       ) : (
-                        <ChevronRight
+                        <ChevronLeft
                           className={cn("h-3 w-3 transition-all", {
                             "rotate-90": subIssueHelpers.issue_visibility.includes(parentIssueId),
                           })}

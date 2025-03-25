@@ -156,7 +156,7 @@ export const WorkspaceDetails: FC = observer(() => {
           />
         )}
       />
-      <div className={`w-full overflow-y-auto md:pr-9 pr-4 ${isAdmin ? "" : "opacity-60"}`}>
+      <div className={`w-full overflow-y-auto md:pl-9 pl-4 ${isAdmin ? "" : "opacity-60"}`}>
         <div className="flex gap-5 border-b border-custom-border-100 pb-7 items-start">
           <div className="flex flex-col gap-1">
             <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
@@ -164,7 +164,7 @@ export const WorkspaceDetails: FC = observer(() => {
                 <div className="relative mx-auto flex h-14 w-14">
                   <img
                     src={getFileURL(workspaceLogo)}
-                    className="absolute left-0 top-0 h-full w-full rounded-md object-cover"
+                    className="absolute right-0 top-0 h-full w-full rounded-md object-cover"
                     alt="Workspace Logo"
                   />
                 </div>

@@ -149,7 +149,7 @@ const SetPasswordPage = observer(() => {
                       value={user?.email}
                       //hasError={Boolean(errors.email)}
                       placeholder={t("auth.common.email.placeholder")}
-                      className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 text-onboarding-text-400 cursor-not-allowed"
+                      className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pl-12 text-onboarding-text-400 cursor-not-allowed"
                       autoComplete="on"
                       disabled
                     />
@@ -167,7 +167,7 @@ const SetPasswordPage = observer(() => {
                       onChange={(e) => handleFormChange("password", e.target.value)}
                       //hasError={Boolean(errors.password)}
                       placeholder={t("auth.common.password.placeholder")}
-                      className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                      className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pl-12 placeholder:text-onboarding-text-400"
                       minLength={8}
                       onFocus={() => setIsPasswordInputFocused(true)}
                       onBlur={() => setIsPasswordInputFocused(false)}
@@ -176,12 +176,12 @@ const SetPasswordPage = observer(() => {
                     />
                     {showPassword.password ? (
                       <EyeOff
-                        className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                        className="absolute left-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
                         onClick={() => handleShowPassword("password")}
                       />
                     ) : (
                       <Eye
-                        className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                        className="absolute left-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
                         onClick={() => handleShowPassword("password")}
                       />
                     )}
@@ -199,18 +199,18 @@ const SetPasswordPage = observer(() => {
                       value={passwordFormData.confirm_password}
                       onChange={(e) => handleFormChange("confirm_password", e.target.value)}
                       placeholder={t("auth.common.password.confirm_password.placeholder")}
-                      className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                      className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pl-12 placeholder:text-onboarding-text-400"
                       onFocus={() => setIsRetryPasswordInputFocused(true)}
                       onBlur={() => setIsRetryPasswordInputFocused(false)}
                     />
                     {showPassword.retypePassword ? (
                       <EyeOff
-                        className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                        className="absolute left-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
                         onClick={() => handleShowPassword("retypePassword")}
                       />
                     ) : (
                       <Eye
-                        className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                        className="absolute left-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
                         onClick={() => handleShowPassword("retypePassword")}
                       />
                     )}

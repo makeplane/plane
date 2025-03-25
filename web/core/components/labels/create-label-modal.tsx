@@ -137,14 +137,14 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
                             >
                               {watch("color") && watch("color") !== "" && (
                                 <span
-                                  className="ml-2 h-5 w-5 rounded"
+                                  className="mr-2 h-5 w-5 rounded"
                                   style={{
                                     backgroundColor: watch("color") ?? "black",
                                   }}
                                 />
                               )}
                               <ChevronDown
-                                className={`ml-2 h-5 w-5 group-hover:text-custom-text-200 ${
+                                className={`mr-2 h-5 w-5 group-hover:text-custom-text-200 ${
                                   open ? "text-gray-600" : "text-gray-400"
                                 }`}
                                 aria-hidden="true"
@@ -160,7 +160,7 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
                               leaveFrom="opacity-100 translate-y-0"
                               leaveTo="opacity-0 translate-y-1"
                             >
-                              <Popover.Panel className="fixed left-5 z-50 mt-3 w-screen max-w-xs transform px-2 sm:px-0">
+                              <Popover.Panel className="fixed right-5 z-50 mt-3 w-screen max-w-xs transform px-2 sm:px-0">
                                 <Controller
                                   name="color"
                                   control={control}

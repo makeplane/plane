@@ -252,7 +252,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         <div className="relative h-full w-max min-w-full bg-custom-background-90">
           {/* drag and delete component */}
           <div
-            className={`fixed left-1/2 -translate-x-1/2 ${
+            className={`fixed right-1/2 -translate-x-1/2 ${
               isDragging ? "z-40" : ""
             } top-3 mx-3 flex w-72 items-center justify-center`}
             ref={deleteAreaRef}
@@ -260,7 +260,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
             <div
               className={`${
                 isDragging ? `opacity-100` : `opacity-0`
-              } flex w-full items-center justify-center rounded border-2 border-red-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
+              } flex w-full items-center justify-center rounded border-2 border-led-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
                 isDragOverDelete ? "bg-red-500 opacity-70 blur-2xl" : ""
               } transition duration-300`}
             >

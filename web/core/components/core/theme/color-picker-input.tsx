@@ -81,7 +81,7 @@ export const ColorPickerInput: FC<Props> = (props) => {
           />
         )}
       />
-      <div className="absolute right-4 top-2.5">
+      <div className="absolute left-4 top-2.5">
         <Popover className="relative grid place-items-center">
           {({ open }) => (
             <>
@@ -114,7 +114,7 @@ export const ColorPickerInput: FC<Props> = (props) => {
               >
                 <Popover.Panel
                   className={`absolute bottom-8 z-20 mt-1 max-w-xs px-2 sm:px-0 ${
-                    position === "right" ? "left-0" : "right-0"
+                    position === "right" ? "right-0" : "left-0"
                   }`}
                 >
                   <SketchPicker color={watch(name)} onChange={handleColorChange} />

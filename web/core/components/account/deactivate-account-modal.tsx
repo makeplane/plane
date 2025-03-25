@@ -94,7 +94,7 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
                         <Dialog.Title as="h3" className="my-4 text-2xl font-medium leading-6 text-custom-text-100">
                           {t("deactivate_your_account")}
                         </Dialog.Title>
-                        <p className="mt-6 list-disc pr-4 text-base font-normal text-custom-text-200">
+                        <p className="mt-6 list-disc pl-4 text-base font-normal text-custom-text-200">
                           {t("deactivate_your_account_description")}
                         </p>
                       </div>

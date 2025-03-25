@@ -60,7 +60,7 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
                     <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
                       <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </div>
-                    <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                    <div className="mt-3 text-center sm:mr-4 sm:mt-0 sm:text-left">
                       <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                         {currentUser?.id === userDetails.id
                           ? "Leave workspace?"

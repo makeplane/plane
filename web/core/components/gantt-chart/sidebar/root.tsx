@@ -50,21 +50,21 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
     <Row
       // DO NOT REMOVE THE ID
       id="gantt-sidebar"
-      className="sticky left-0 z-10 min-h-full h-max flex-shrink-0 border-r-[0.5px] border-custom-border-200 bg-custom-background-100"
+      className="sticky right-0 z-10 min-h-full h-max flex-shrink-0 border-l-[0.5px] border-custom-border-200 bg-custom-background-100"
       style={{
         width: `${SIDEBAR_WIDTH}px`,
       }}
       variant={ERowVariant.HUGGING}
     >
       <Row
-        className="group/list-header box-border flex-shrink-0 flex items-end justify-between gap-2 border-b-[0.5px] border-custom-border-200 pb-2 pr-4 text-sm font-medium text-custom-text-300 sticky top-0 z-10 bg-custom-background-100"
+        className="group/list-header box-border flex-shrink-0 flex items-end justify-between gap-2 border-b-[0.5px] border-custom-border-200 pb-2 pl-4 text-sm font-medium text-custom-text-300 sticky top-0 z-10 bg-custom-background-100"
         style={{
           height: `${HEADER_HEIGHT}px`,
         }}
       >
         <div className={cn("flex items-center gap-2")}>
           {enableSelection && (
-            <div className="flex-shrink-0 flex items-center w-3.5 absolute left-1">
+            <div className="flex-shrink-0 flex items-center w-3.5 absolute right-1">
               <MultipleSelectGroupAction
                 className={cn(
                   "size-3.5 opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto !outline-none",

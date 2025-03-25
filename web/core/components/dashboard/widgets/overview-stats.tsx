@@ -67,11 +67,11 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
     <Card
       spacing={ECardSpacing.SM}
       className="flex-row grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-2 grid-cols-2 space-y-0 p-0.5
-        [&>div>a>div]:border-r
+        [&>div>a>div]:border-l
         [&>div:last-child>a>div]:border-0
         [&>div>a>div]:border-custom-border-200
         [&>div:nth-child(2)>a>div]:border-0
-        [&>div:nth-child(2)>a>div]:lg:border-r
+        [&>div:nth-child(2)>a>div]:lg:border-l
         "
     >
       {STATS_LIST.map((stat, index) => (
@@ -86,7 +86,7 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
           )}
         >
           <Link href={stat.link} className="py-4 duration-300 rounded-[10px] w-full ">
-            <div className={`relative flex pl-10 sm:pl-20 md:pl-20 lg:pl-20 items-center`}>
+            <div className={`relative flex pr-10 sm:pr-20 md:pr-20 lg:pr-20 items-center`}>
               <div>
                 <h5 className="font-semibold text-xl">{stat.count}</h5>
                 <p className="text-custom-text-300 text-sm xl:text-base">{stat.title}</p>

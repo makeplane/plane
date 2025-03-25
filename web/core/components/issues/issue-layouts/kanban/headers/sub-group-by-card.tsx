@@ -38,7 +38,7 @@ export const HeaderSubGroupByCard: FC<IHeaderSubGroupByCard> = observer((props) 
 
       <div className="flex flex-shrink-0 items-center gap-1 text-sm">
         <div className="line-clamp-1 text-custom-text-100">{title}</div>
-        <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
+        <div className="pr-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
       </div>
 
       <WorkFlowGroupTree groupBy={sub_group_by} groupId={column_id} />

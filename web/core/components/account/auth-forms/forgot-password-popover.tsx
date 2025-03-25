@@ -11,7 +11,7 @@ export const ForgotPasswordPopover = () => {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "right-start",
+    placement: "left-start",
     modifiers: [
       {
         name: "preventOverflow",
@@ -38,7 +38,7 @@ export const ForgotPasswordPopover = () => {
       <Popover.Panel className="fixed z-10">
         {({ close }) => (
           <div
-            className="border border-onboarding-border-300 bg-onboarding-background-100 rounded z-10 py-1 px-2 w-64 break-words flex items-start gap-3 text-left ml-3"
+            className="border border-onboarding-border-300 bg-onboarding-background-100 rounded z-10 py-1 px-2 w-64 break-words flex items-start gap-3 text-left mr-3"
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}

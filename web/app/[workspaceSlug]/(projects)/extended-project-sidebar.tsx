@@ -108,12 +108,12 @@ export const ExtendedProjectSidebar = observer(() => {
       <div
         ref={extendedProjectSidebarRef}
         className={cn(
-          "absolute top-0 h-full z-[19] flex flex-col gap-2 w-[300px] transform transition-all duration-300 ease-in-out bg-custom-sidebar-background-100 border-r border-custom-sidebar-border-200 shadow-md",
+          "absolute top-0 h-full z-[19] flex flex-col gap-2 w-[300px] transform transition-all duration-300 ease-in-out bg-custom-sidebar-background-100 border-l border-custom-sidebar-border-200 shadow-md",
           {
             "translate-x-0 opacity-100 pointer-events-auto": extendedProjectSidebarCollapsed,
             "-translate-x-full opacity-0 pointer-events-none": !extendedProjectSidebarCollapsed,
-            "left-[70px]": sidebarCollapsed,
-            "left-[250px]": !sidebarCollapsed,
+            "right-[70px]": sidebarCollapsed,
+            "right-[250px]": !sidebarCollapsed,
           }
         )}
       >
@@ -134,7 +134,7 @@ export const ExtendedProjectSidebar = observer(() => {
               </Tooltip>
             )}
           </div>
-          <div className="ml-auto flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1 w-full">
+          <div className="mr-auto flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1 w-full">
             <Search className="h-3.5 w-3.5 text-custom-text-400" />
             <input
               className="w-full max-w-[234px] border-none bg-transparent text-sm outline-none placeholder:text-custom-text-400"

@@ -80,9 +80,9 @@ export const CustomAnalytics: React.FC<Props> = observer((props) => {
 
       <div
         className={cn(
-          "border-l border-custom-border-200 transition-all",
+          "border-r border-custom-border-200 transition-all",
           !isProjectLevel
-            ? "absolute bottom-0 right-0 top-0 h-full max-w-[250px] flex-shrink-0 sm:max-w-full md:relative"
+            ? "absolute bottom-0 left-0 top-0 h-full max-w-[250px] flex-shrink-0 sm:max-w-full md:relative"
             : ""
         )}
         style={workspaceAnalyticsSidebarCollapsed ? { right: `-${window?.innerWidth || 0}px` } : {}}

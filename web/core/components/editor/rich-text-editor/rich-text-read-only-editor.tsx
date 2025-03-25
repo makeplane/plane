@@ -41,7 +41,7 @@ export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, Ric
         }}
         {...props}
         // overriding the containerClassName to add relative class passed
-        containerClassName={cn(props.containerClassName, "relative pl-3")}
+        containerClassName={cn(props.containerClassName, "relative pr-3")}
       />
     );
   }

@@ -133,14 +133,14 @@ export const ModuleIssuesMobileHeader = observer(() => {
             </CustomMenu.MenuItem>
           ))}
         </CustomMenu>
-        <div className="flex flex-grow items-center justify-center border-l border-custom-border-200 text-sm text-custom-text-200">
+        <div className="flex flex-grow items-center justify-center border-r border-custom-border-200 text-sm text-custom-text-200">
           <FiltersDropdown
             title="Filters"
             placement="bottom-end"
             menuButton={
               <span className="flex items-center text-sm text-custom-text-200">
                 Filters
-                <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200" />
+                <ChevronDown className="mr-2  h-4 w-4 text-custom-text-200" />
               </span>
             }
             isFiltersApplied={isIssueFilterActive(issueFilters)}
@@ -161,14 +161,14 @@ export const ModuleIssuesMobileHeader = observer(() => {
             />
           </FiltersDropdown>
         </div>
-        <div className="flex flex-grow items-center justify-center border-l border-custom-border-200 text-sm text-custom-text-200">
+        <div className="flex flex-grow items-center justify-center border-r border-custom-border-200 text-sm text-custom-text-200">
           <FiltersDropdown
             title="Display"
             placement="bottom-end"
             menuButton={
               <span className="flex items-center text-sm text-custom-text-200">
                 Display
-                <ChevronDown className="ml-2 h-4 w-4 text-custom-text-200" />
+                <ChevronDown className="mr-2 h-4 w-4 text-custom-text-200" />
               </span>
             }
           >
@@ -189,7 +189,7 @@ export const ModuleIssuesMobileHeader = observer(() => {
 
         <button
           onClick={() => setAnalyticsModal(true)}
-          className="flex flex-grow justify-center border-l border-custom-border-200 text-sm text-custom-text-200"
+          className="flex flex-grow justify-center border-r border-custom-border-200 text-sm text-custom-text-200"
         >
           Analytics
         </button>

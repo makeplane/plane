@@ -112,8 +112,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
       ? "fixed z-20 flex flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300"
       : `w-full h-full`,
     !embedIssue && {
-      "bottom-0 right-0 top-0 w-full md:w-[50%] border-0 border-l": peekMode === "side-peek",
-      "size-5/6 top-[8.33%] left-[8.33%]": peekMode === "modal",
+      "bottom-0 left-0 top-0 w-full md:w-[50%] border-0 border-r": peekMode === "side-peek",
+      "size-5/6 top-[8.33%] right-[8.33%]": peekMode === "modal",
       "inset-0 m-4": peekMode === "full-screen",
     }
   );
@@ -250,7 +250,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         </div>
                       </div>
                       <div
-                        className={`h-full !w-[400px] flex-shrink-0 border-l border-custom-border-200 p-4 py-5 overflow-hidden vertical-scrollbar scrollbar-sm ${
+                        className={`h-full !w-[400px] flex-shrink-0 border-r border-custom-border-200 p-4 py-5 overflow-hidden vertical-scrollbar scrollbar-sm ${
                           is_archived ? "pointer-events-none" : ""
                         }`}
                       >

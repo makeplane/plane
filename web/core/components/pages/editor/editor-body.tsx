@@ -184,7 +184,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             ref={editorRef}
             containerClassName="h-full p-0 pb-64"
             displayConfig={displayConfig}
-            editorClassName="pl-10"
+            editorClassName="pr-10"
             mentionHandler={{
               searchCallback: async (query) => {
                 const res = await fetchMentions(query);

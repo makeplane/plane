@@ -49,7 +49,7 @@ export const ModuleGanttSidebar: React.FC<Props> = observer((props) => {
           </GanttDnDHOC>
         ))
       ) : (
-        <Loader className="space-y-3 pr-2">
+        <Loader className="space-y-3 pl-2">
           <Loader.Item height="34px" />
           <Loader.Item height="34px" />
           <Loader.Item height="34px" />

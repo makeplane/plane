@@ -28,7 +28,7 @@ export const TabsList: React.FC<Props> = observer((props) => {
     >
       <div
         className={cn(
-          "absolute top-1/2 left-[1px] bg-custom-background-100 rounded-[3px] transition-all duration-500 ease-in-out",
+          "absolute top-1/2 right-[1px] bg-custom-background-100 rounded-[3px] transition-all duration-500 ease-in-out",
           {
             // right shadow
             "shadow-[2px_0_8px_rgba(167,169,174,0.15)]": selectedTabIndex !== tabsList.length - 1,

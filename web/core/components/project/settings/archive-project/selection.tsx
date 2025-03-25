@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ChevronRight, ChevronUp } from "lucide-react";
+import { ChevronLeft, ChevronUp } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // types
 import { IProject } from "@plane/types";
@@ -22,7 +22,7 @@ export const ArchiveProjectSelection: React.FC<IArchiveProject> = (props) => {
         <div className="w-full">
           <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between">
             <span className="text-xl tracking-tight">Archive project</span>
-            {open ? <ChevronUp className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+            {open ? <ChevronUp className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
           </Disclosure.Button>
           <Transition
             show={open}

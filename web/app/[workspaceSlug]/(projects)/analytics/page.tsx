@@ -61,7 +61,7 @@ const AnalyticsPage = observer(() => {
                           >
                             {t(tab.i18n_title)}
                             <div
-                              className={`border absolute bottom-0 right-0 left-0 rounded-t-md ${selected ? "border-custom-primary-100" : "border-transparent group-hover:border-custom-border-200"}`}
+                              className={`border absolute bottom-0 left-0 right-0 rounded-t-md ${selected ? "border-custom-primary-100" : "border-transparent group-hover:border-custom-border-200"}`}
                             />
                           </button>
                         )}

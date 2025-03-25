@@ -141,7 +141,7 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                     <h6 className="flex items-center gap-1 text-xs">
                       <span className="text-custom-text-200">After:</span>
                       <span>{renderFormattedDate(watch("date1"))}</span>
-                      <span className="ml-1 text-custom-text-200">Before:</span>
+                      <span className="mr-1 text-custom-text-200">Before:</span>
                       {!isInvalid && <span>{renderFormattedDate(watch("date2"))}</span>}
                     </h6>
                   )}

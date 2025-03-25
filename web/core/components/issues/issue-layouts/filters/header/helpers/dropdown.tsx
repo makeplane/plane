@@ -70,7 +70,7 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
                       <span>{title}</span>
                     </div>
                     {isFiltersApplied && (
-                      <span className="absolute h-2 w-2 -right-0.5 -top-0.5 bg-custom-primary-100 rounded-full" />
+                      <span className="absolute h-2 w-2 -left-0.5 -top-0.5 bg-custom-primary-100 rounded-full" />
                     )}
                   </>
                 </Button>

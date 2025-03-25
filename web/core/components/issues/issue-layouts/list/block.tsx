@@ -5,7 +5,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronRight } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { EIssueServiceType } from "@plane/constants";
 // types
 import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
@@ -209,7 +209,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                   }
                   disabled={issue.project_id === projectId}
                 >
-                  <div className="flex-shrink-0 grid place-items-center w-3.5 absolute left-1">
+                  <div className="flex-shrink-0 grid place-items-center w-3.5 absolute right-1">
                     <MultipleSelectEntityAction
                       className={cn(
                         "opacity-0 pointer-events-none group-hover/list-block:opacity-100 group-hover/list-block:pointer-events-auto transition-opacity",
@@ -246,7 +246,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                     className="size-4 grid place-items-center rounded-sm text-custom-text-400 hover:text-custom-text-300"
                     onClick={handleToggleExpand}
                   >
-                    <ChevronRight
+                    <ChevronLeft
                       className={cn("size-4", {
                         "rotate-90": isExpanded,
                       })}
@@ -257,7 +257,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
               </div>
 
               {issue?.tempId !== undefined && (
-                <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
+                <div className="absolute right-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
               )}
             </div>
 
@@ -276,7 +276,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 displayPropertyKey="sub_issue_count"
                 shouldRenderProperty={(properties) => !!properties.sub_issue_count}
               >
-                <IssueStats issueId={issue.id} className="ml-2 font-medium text-custom-text-350" />
+                <IssueStats issueId={issue.id} className="mr-2 font-medium text-custom-text-350" />
               </WithDisplayPropertiesHOC>
             )}
           </div>

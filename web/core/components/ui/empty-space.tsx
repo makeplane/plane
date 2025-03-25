@@ -3,7 +3,7 @@ import React from "react";
 import Link from "next/link";
 // react
 // icons
-import { ChevronRight } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 
 type EmptySpaceProps = {
   title: string;
@@ -62,7 +62,7 @@ const EmptySpaceItem: React.FC<EmptySpaceItemProps> = ({ title, description, Ico
         {description ? <div className="text-sm">{description}</div> : null}
       </div>
       <div className="flex-shrink-0 self-center">
-        <ChevronRight className="h-5 w-5 text-custom-text-200 group-hover:text-custom-text-100" aria-hidden="true" />
+        <ChevronLeft className="h-5 w-5 text-custom-text-200 group-hover:text-custom-text-100" aria-hidden="true" />
       </div>
     </div>
   );

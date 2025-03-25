@@ -70,7 +70,7 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
                   {price.recurring === "month" && ("Monthly" as string)}
                   {price.recurring === "year" && ("Yearly" as string)}
                   {price.recurring === "year" && (
-                    <span className="bg-gradient-to-r from-[#C78401] to-[#896828] text-white rounded-full px-2 py-1 ml-1 text-xs">
+                    <span className="bg-gradient-to-r from-[#C78401] to-[#896828] text-white rounded-full px-2 py-1 mr-1 text-xs">
                       -{yearlyDiscount}%
                     </span>
                   )}
@@ -110,7 +110,7 @@ export const ProPlanUpgrade: FC<ProPlanUpgradeProps> = (props) => {
                       })}
                     >
                       <p className="w-full text-sm font-medium leading-5 flex items-center line-clamp-1">
-                        <CheckCircle className="h-4 w-4 mr-4 text-custom-text-300 flex-shrink-0" />
+                        <CheckCircle className="h-4 w-4 ml-4 text-custom-text-300 flex-shrink-0" />
                         <span className="text-custom-text-200 truncate">{feature}</span>
                       </p>
                     </li>

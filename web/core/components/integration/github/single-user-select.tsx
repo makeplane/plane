@@ -76,7 +76,7 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
         <div className="relative h-8 w-8 flex-shrink-0 rounded">
           <img
             src={collaborator.avatar_url}
-            className="absolute left-0 top-0 h-full w-full rounded object-cover"
+            className="absolute right-0 top-0 h-full w-full rounded object-cover"
             alt={`${collaborator.login} GitHub user`}
           />
         </div>

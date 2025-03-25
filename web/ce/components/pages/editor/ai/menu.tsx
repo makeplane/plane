@@ -1,7 +1,7 @@
 "use client";
 
 import React, { RefObject, useEffect, useRef, useState } from "react";
-import { ChevronRight, CornerDownRight, LucideIcon, RefreshCcw, Sparkles, TriangleAlert } from "lucide-react";
+import { ChevronLeft, CornerDownRight, LucideIcon, RefreshCcw, Sparkles, TriangleAlert } from "lucide-react";
 // plane editor
 import { EditorRefApi } from "@plane/editor";
 // plane ui
@@ -173,7 +173,7 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
                   <item.icon className="flex-shrink-0 size-3" />
                   {item.label}
                 </span>
-                <ChevronRight
+                <ChevronLeft
                   className={cn("flex-shrink-0 size-3 opacity-0 pointer-events-none transition-opacity", {
                     "opacity-100 pointer-events-auto": isActiveTask,
                   })}
@@ -215,7 +215,7 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
                       id="editor-ai-response"
                       initialValue={response}
                       containerClassName="!p-0 border-none"
-                      editorClassName="!pl-0"
+                      editorClassName="!pr-0"
                       workspaceId={workspaceId}
                       workspaceSlug={workspaceSlug}
                     />
@@ -262,7 +262,7 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
                   </p>
                 )}
               </div>
-              <div className="sticky bottom-0 w-full bg-custom-background-100 pl-[54.8px] py-2 flex items-center gap-2">
+              <div className="sticky bottom-0 w-full bg-custom-background-100 pr-[54.8px] py-2 flex items-center gap-2">
                 {TONES_LIST.map((tone) => (
                   <button
                     key={tone.key}

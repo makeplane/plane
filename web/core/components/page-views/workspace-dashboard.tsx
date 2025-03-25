@@ -73,7 +73,7 @@ export const WorkspaceDashboardView = observer(() => {
   return (
     <>
       {currentUserProfile && !currentUserProfile.is_tour_completed && (
-        <div className="fixed left-0 top-0 z-20 grid h-full w-full place-items-center bg-custom-backdrop bg-opacity-50 transition-opacity">
+        <div className="fixed right-0 top-0 z-20 grid h-full w-full place-items-center bg-custom-backdrop bg-opacity-50 transition-opacity">
           <TourRoot onComplete={handleTourCompleted} />
         </div>
       )}

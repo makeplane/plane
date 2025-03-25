@@ -2,7 +2,7 @@
 
 import { FC, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronLeft } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 // types
 import { IEstimateFormData, TEstimateSystemKeys, TEstimatePointsObject, TEstimateTypeError } from "@plane/types";
 // ui
@@ -149,7 +149,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
                 }}
                 className="flex-shrink-0 cursor-pointer w-5 h-5 flex justify-center items-center"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronRight className="w-4 h-4" />
               </div>
             )}
             <div className="text-xl font-medium text-custom-text-100">New estimate system</div>

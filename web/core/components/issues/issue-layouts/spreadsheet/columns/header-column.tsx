@@ -53,7 +53,7 @@ export const HeaderColumn = (props: Props) => {
             {<SpreadSheetPropertyIcon iconKey={propertyDetails.icon} className="h-4 w-4 text-custom-text-400" />}
             {property === "sub_issue_count" && isEpic ? t("issue.label", { count: 2 }) : t(propertyDetails.i18n_title)}
           </div>
-          <div className="ml-3 flex">
+          <div className="mr-3 flex">
             {activeSortingProperty === property && (
               <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full">
                 {propertyDetails.ascendingOrderKey === displayFilters.order_by ? (

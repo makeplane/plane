@@ -56,7 +56,7 @@ const SidebarDropdownItem = observer((props: TProps) => {
               {workspace?.logo_url && workspace.logo_url !== "" ? (
                 <img
                   src={getFileURL(workspace.logo_url)}
-                  className="absolute left-0 top-0 h-full w-full rounded object-cover"
+                  className="absolute right-0 top-0 h-full w-full rounded object-cover"
                   alt={t("workspace_logo")}
                 />
               ) : (

@@ -17,7 +17,7 @@ export const KanbanQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) 
             {...register("name", {
               required: isEpic ? t("epic.title.required") : t("issue.title.required"),
             })}
-            className="w-full rounded-md bg-transparent px-2 py-1.5 pl-0 text-sm font-medium leading-5 text-custom-text-200 outline-none"
+            className="w-full rounded-md bg-transparent px-2 py-1.5 pr-0 text-sm font-medium leading-5 text-custom-text-200 outline-none"
           />
         </div>
       </form>

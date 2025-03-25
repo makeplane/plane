@@ -35,7 +35,7 @@ export const ThemeSwitch: FC<Props> = (props) => {
                 }}
               />
               <div
-                className="h-full w-1/2 rounded-r-full border-l"
+                className="h-full w-1/2 rounded-r-full border-r"
                 style={{
                   borderLeftColor: value.icon.border,
                   background: value.icon.color2,
@@ -67,7 +67,7 @@ export const ThemeSwitch: FC<Props> = (props) => {
                 }}
               />
               <div
-                className="h-full w-1/2 rounded-r-full border-l"
+                className="h-full w-1/2 rounded-r-full border-r"
                 style={{
                   borderLeftColor: themeOption.icon.border,
                   background: themeOption.icon.color2,

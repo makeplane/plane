@@ -16,7 +16,7 @@ export const GanttLayoutLoader = () => (
       <span className="h-6 w-12 bg-custom-background-80 rounded" />
     </div>
     <div className="flex h-full">
-      <div className="h-full w-[25.5rem] border-r border-custom-border-200">
+      <div className="h-full w-[25.5rem] border-l border-custom-border-200">
         <Row className="flex items-end h-[3.75rem] py-2 border-b border-custom-border-200">
           <div className="flex items-center justify-between w-full">
             <span className="h-5 w-14 bg-custom-background-80 rounded" />
@@ -32,7 +32,7 @@ export const GanttLayoutLoader = () => (
           ))}
         </Row>
       </div>
-      <div className="h-full w-full border-r border-custom-border-200">
+      <div className="h-full w-full border-l border-custom-border-200">
         <div className="flex flex-col justify-between gap-2 h-[3.75rem] py-1.5 px-4 border-b border-custom-border-200">
           <div className="flex items-center justify-start">
             <span className="h-5 w-20 bg-custom-background-80 rounded" />

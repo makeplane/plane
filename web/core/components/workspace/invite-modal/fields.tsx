@@ -66,7 +66,7 @@ export const InvitationFields = observer((props: TInvitationFieldsProps) => {
                     className="w-full text-xs sm:text-sm"
                   />
                   {errors.emails?.[index]?.email && (
-                    <span className="ml-1 text-xs text-red-500">{errors.emails?.[index]?.email?.message}</span>
+                    <span className="mr-1 text-xs text-red-500">{errors.emails?.[index]?.email?.message}</span>
                   )}
                 </>
               )}

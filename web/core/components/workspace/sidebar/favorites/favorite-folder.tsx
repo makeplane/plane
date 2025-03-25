@@ -15,7 +15,7 @@ import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree
 import orderBy from "lodash/orderBy";
 import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
-import { PenSquare, Star, MoreHorizontal, ChevronRight, GripVertical } from "lucide-react";
+import { PenSquare, Star, MoreHorizontal, ChevronLeft, GripVertical } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 
 // plane helpers
@@ -82,7 +82,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
             render: ({ container }) => {
               const root = createRoot(container);
               root.render(
-                <div className="rounded flex gap-1 bg-custom-background-100 text-sm p-1 pr-2">
+                <div className="rounded flex gap-1 bg-custom-background-100 text-sm p-1 pl-2">
                   <div className="size-5 grid place-items-center flex-shrink-0">
                     <FavoriteFolderIcon />
                   </div>
@@ -165,7 +165,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
             >
               {/* draggable indicator */}
 
-              <div className="flex-shrink-0 w-3 h-3 rounded-sm absolute left-0 hidden group-hover:flex justify-center items-center transition-colors bg-custom-background-90 cursor-pointer text-custom-text-200 hover:text-custom-text-100">
+              <div className="flex-shrink-0 w-3 h-3 rounded-sm absolute right-0 hidden group-hover:flex justify-center items-center transition-colors bg-custom-background-90 cursor-pointer text-custom-text-200 hover:text-custom-text-100">
                 <GripVertical className="w-3 h-3" />
               </div>
 
@@ -188,7 +188,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                 </div>
               ) : (
                 <>
-                  <Tooltip tooltipContent={`${favorite.name}`} position="right" className="ml-8" isMobile={isMobile}>
+                  <Tooltip tooltipContent={`${favorite.name}`} position="right" className="mr-8" isMobile={isMobile}>
                     <div className="flex-grow flex truncate">
                       <Disclosure.Button
                         as="button"
@@ -208,7 +208,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                           <button
                             type="button"
                             className={cn(
-                              "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-custom-sidebar-text-400 cursor-grab",
+                              "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -right-3 -translate-y-1/2 rounded text-custom-sidebar-text-400 cursor-grab",
                               {
                                 "cursor-not-allowed opacity-60": favorite.sort_order === null,
                                 "cursor-grabbing": isDragging,
@@ -268,7 +268,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                       }
                     )}
                   >
-                    <ChevronRight
+                    <ChevronLeft
                       className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
                         "rotate-90": open,
                       })}

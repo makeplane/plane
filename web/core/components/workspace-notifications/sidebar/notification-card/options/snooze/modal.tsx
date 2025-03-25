@@ -228,7 +228,7 @@ export const NotificationSnoozeModal: FC<TNotificationSnoozeModal> = (props) => 
                               getTimeStamp().map((time, index) => (
                                 <CustomSelect.Option key={`${time}-${index}`} value={time.value}>
                                   <div className="flex items-center">
-                                    <span className="ml-3 block truncate">{time.label}</span>
+                                    <span className="mr-3 block truncate">{time.label}</span>
                                   </div>
                                 </CustomSelect.Option>
                               ))

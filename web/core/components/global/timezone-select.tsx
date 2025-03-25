@@ -41,7 +41,7 @@ export const TimezoneSelect: FC<TTimezoneSelect> = observer((props) => {
         options={isDisabled || disabled ? [] : timezones}
         onChange={onChange}
         buttonClassName={cn(buttonClassName, {
-          "border-red-500": error,
+          "border-led-500": error,
         })}
         className={cn("rounded-md border-[0.5px] !border-custom-border-200", className)}
         optionsClassName={cn("w-72", optionsClassName)}

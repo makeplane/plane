@@ -72,7 +72,7 @@ export const WidgetItem: FC<Props> = observer((props) => {
             getOffset: pointerOutsideOfPreview({ x: "0px", y: "0px" }),
             render: ({ container }) => {
               const root = createRoot(container);
-              root.render(<div className="rounded bg-custom-background-100 text-sm p-1 pr-2">{widget.key}</div>);
+              root.render(<div className="rounded bg-custom-background-100 text-sm p-1 pl-2">{widget.key}</div>);
               return () => root.unmount();
             },
             nativeSetDragImage,

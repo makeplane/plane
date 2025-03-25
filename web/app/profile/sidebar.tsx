@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 // icons
 import {
-  ChevronLeft,
+  ChevronRight,
   LogOut,
   MoveLeft,
   Plus,
@@ -125,10 +125,10 @@ export const ProfileLayoutSidebar = observer(() => {
 
   return (
     <div
-      className={`fixed inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-custom-sidebar-border-200 bg-custom-sidebar-background-100 duration-300 md:relative 
+      className={`fixed inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-l border-custom-sidebar-border-200 bg-custom-sidebar-background-100 duration-300 md:relative 
         ${sidebarCollapsed ? "-ml-[250px]" : ""}
         sm:${sidebarCollapsed ? "-ml-[250px]" : ""}
-        md:ml-0 ${sidebarCollapsed ? "w-[70px]" : "w-[250px]"}
+        md:mr-0 ${sidebarCollapsed ? "w-[70px]" : "w-[250px]"}
       `}
     >
       <div ref={ref} className="flex h-full w-full flex-col gap-y-4">
@@ -139,7 +139,7 @@ export const ProfileLayoutSidebar = observer(() => {
             }`}
           >
             <span className="grid h-5 w-5 flex-shrink-0 place-items-center">
-              <ChevronLeft className="h-5 w-5" strokeWidth={1} />
+              <ChevronRight className="h-5 w-5" strokeWidth={1} />
             </span>
             {!sidebarCollapsed && (
               <h4 className="truncate text-lg font-semibold text-custom-text-200">{t("profile_settings")}</h4>
@@ -159,7 +159,7 @@ export const ProfileLayoutSidebar = observer(() => {
                   <Tooltip
                     tooltipContent={t(link.key)}
                     position="right"
-                    className="ml-2"
+                    className="mr-2"
                     disabled={!sidebarCollapsed}
                     isMobile={isMobile}
                   >
@@ -188,7 +188,7 @@ export const ProfileLayoutSidebar = observer(() => {
             <div
               className={cn("vertical-scrollbar scrollbar-xs mt-2 px-4 h-full space-y-1.5 overflow-y-auto", {
                 "scrollbar-sm": !sidebarCollapsed,
-                "ml-2.5 px-1": sidebarCollapsed,
+                "mr-2.5 px-1": sidebarCollapsed,
               })}
             >
               {workspacesList.map((workspace) => (
@@ -213,7 +213,7 @@ export const ProfileLayoutSidebar = observer(() => {
                       {workspace?.logo_url && workspace.logo_url !== "" ? (
                         <img
                           src={getFileURL(workspace.logo_url)}
-                          className="absolute left-0 top-0 h-full w-full rounded object-cover"
+                          className="absolute right-0 top-0 h-full w-full rounded object-cover"
                           alt="Workspace Logo"
                         />
                       ) : (
@@ -234,7 +234,7 @@ export const ProfileLayoutSidebar = observer(() => {
                 <Tooltip
                   tooltipContent={t(link.key)}
                   position="right"
-                  className="ml-2"
+                  className="mr-2"
                   disabled={!sidebarCollapsed}
                   isMobile={isMobile}
                 >
@@ -275,7 +275,7 @@ export const ProfileLayoutSidebar = observer(() => {
             </button>
             <button
               type="button"
-              className={`ml-auto hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:grid ${
+              className={`mr-auto hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:grid ${
                 sidebarCollapsed ? "w-full" : ""
               }`}
               onClick={() => toggleSidebar()}

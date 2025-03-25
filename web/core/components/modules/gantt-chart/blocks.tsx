@@ -56,7 +56,7 @@ export const ModuleGanttBlock: React.FC<Props> = observer((props) => {
           )
         }
       >
-        <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
+        <div className="absolute right-0 top-0 h-full w-full bg-custom-background-100/50" />
         <div
           className="sticky w-auto overflow-hidden truncate px-2.5 py-1 text-sm text-custom-text-100"
           style={{ left: `${SIDEBAR_WIDTH}px` }}

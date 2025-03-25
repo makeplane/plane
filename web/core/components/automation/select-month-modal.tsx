@@ -102,7 +102,7 @@ export const SelectMonthModal: React.FC<Props> = ({ type, initialValues, isOpen,
                                     min={1}
                                     max={12}
                                   />
-                                  <span className="absolute right-8 top-2.5 text-sm text-custom-text-200">Months</span>
+                                  <span className="absolute left-8 top-2.5 text-sm text-custom-text-200">Months</span>
                                 </div>
                               )}
                             />
@@ -136,7 +136,7 @@ export const SelectMonthModal: React.FC<Props> = ({ type, initialValues, isOpen,
                                     min={1}
                                     max={12}
                                   />
-                                  <span className="absolute right-8 top-2.5 text-sm text-custom-text-200">Months</span>
+                                  <span className="absolute left-8 top-2.5 text-sm text-custom-text-200">Months</span>
                                 </div>
                               )}
                             />

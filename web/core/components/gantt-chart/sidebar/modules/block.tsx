@@ -35,7 +35,7 @@ export const ModulesSidebarBlock: React.FC<Props> = observer((props) => {
     >
       <Row
         id={`sidebar-block-${block.id}`}
-        className={cn("group w-full flex items-center gap-2 pr-4", {
+        className={cn("group w-full flex items-center gap-2 pl-4", {
           "bg-custom-background-90": isBlockActive(block.id),
         })}
         style={{

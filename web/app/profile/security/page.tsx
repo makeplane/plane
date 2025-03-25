@@ -138,12 +138,12 @@ const SecurityPage = observer(() => {
                 />
                 {showPassword?.oldPassword ? (
                   <EyeOff
-                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                    className="absolute left-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
                     onClick={() => handleShowPassword("oldPassword")}
                   />
                 ) : (
                   <Eye
-                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                    className="absolute left-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
                     onClick={() => handleShowPassword("oldPassword")}
                   />
                 )}
@@ -175,12 +175,12 @@ const SecurityPage = observer(() => {
                 />
                 {showPassword?.password ? (
                   <EyeOff
-                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                    className="absolute left-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
                     onClick={() => handleShowPassword("password")}
                   />
                 ) : (
                   <Eye
-                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                    className="absolute left-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
                     onClick={() => handleShowPassword("password")}
                   />
                 )}
@@ -215,12 +215,12 @@ const SecurityPage = observer(() => {
                 />
                 {showPassword?.confirmPassword ? (
                   <EyeOff
-                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                    className="absolute left-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
                     onClick={() => handleShowPassword("confirmPassword")}
                   />
                 ) : (
                   <Eye
-                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                    className="absolute left-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
                     onClick={() => handleShowPassword("confirmPassword")}
                   />
                 )}

@@ -24,7 +24,7 @@ export const CalendarQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props
           {...register("name", {
             required: `${isEpic ? "Epic" : "Work item"} title is required.`,
           })}
-          className="w-full rounded-md bg-transparent py-1.5 pr-2 text-sm md:text-xs font-medium leading-5 text-custom-text-200 outline-none"
+          className="w-full rounded-md bg-transparent py-1.5 pl-2 text-sm md:text-xs font-medium leading-5 text-custom-text-200 outline-none"
         />
       </form>
     </div>

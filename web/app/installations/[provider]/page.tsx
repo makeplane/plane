@@ -67,7 +67,7 @@ export default function AppPostInstallation() {
   }, [state, installation_id, provider, code]);
 
   return (
-    <div className="absolute left-0 top-0 z-50 flex h-full w-full flex-col items-center justify-center gap-y-3 bg-custom-background-80">
+    <div className="absolute right-0 top-0 z-50 flex h-full w-full flex-col items-center justify-center gap-y-3 bg-custom-background-80">
       <h2 className="text-2xl text-custom-text-100">Installing. Please wait...</h2>
       <LogoSpinner />
     </div>

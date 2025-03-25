@@ -1,5 +1,5 @@
 export const WebhookSettingsLoader = () => (
-  <div className="h-full w-full overflow-hidden py-8 pr-9">
+  <div className="h-full w-full overflow-hidden py-8 pl-9">
     <div className="flex h-full w-full flex-col">
       <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 pb-3.5">
         <div className="text-xl font-medium">Webhooks</div>

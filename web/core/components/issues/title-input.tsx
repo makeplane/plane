@@ -127,7 +127,7 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
         />
         <div
           className={cn(
-            "pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 p-0.5 text-xs text-custom-text-200 opacity-0 transition-opacity",
+            "pointer-events-none absolute bottom-1 left-1 z-[2] rounded bg-custom-background-100 p-0.5 text-xs text-custom-text-200 opacity-0 transition-opacity",
             {
               "opacity-100": isLengthVisible,
             }

@@ -20,7 +20,7 @@ export const NotificationMenuOptionItem: FC<TPopoverMenuOptions> = observer((pro
         <div className={cn("whitespace-nowrap text-sm", isActive ? "text-custom-text-100" : "text-custom-text-200")}>
           {label}
         </div>
-        {appendIcon && <div className="ml-auto">{appendIcon}</div>}
+        {appendIcon && <div className="mr-auto">{appendIcon}</div>}
       </div>
     );
 

@@ -52,7 +52,7 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
               </th>
             ))
           ) : (
-            <th scope="col" className="px-page-x py-3 text-left font-medium sm:pr-0">
+            <th scope="col" className="px-page-x py-3 text-left font-medium sm:pl-0">
               {ANALYTICS_Y_AXIS_VALUES.find((v) => v.value === params.y_axis)?.label}
             </th>
           )}
@@ -91,12 +91,12 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
             </td>
             {params.segment ? (
               barGraphData.xAxisKeys.map((key, index) => (
-                <td key={`segment-value-${index}`} className="whitespace-nowrap px-page-x py-2 sm:pr-0">
+                <td key={`segment-value-${index}`} className="whitespace-nowrap px-page-x py-2 sm:pl-0">
                   {item[key] ?? 0}
                 </td>
               ))
             ) : (
-              <td className="whitespace-nowrap px-page-x py-2 sm:pr-0">{item[yAxisKey]}</td>
+              <td className="whitespace-nowrap px-page-x py-2 sm:pl-0">{item[yAxisKey]}</td>
             )}
           </tr>
         ))}

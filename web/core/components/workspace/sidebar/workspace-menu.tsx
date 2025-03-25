@@ -77,7 +77,7 @@ export const SidebarWorkspaceMenu = observer(() => {
           <Disclosure.Panel
             as="div"
             className={cn("flex flex-col mt-0.5 gap-0.5", {
-              "space-y-0 mt-0 ml-0": sidebarCollapsed,
+              "space-y-0 mt-0 mr-0": sidebarCollapsed,
             })}
             static
           >

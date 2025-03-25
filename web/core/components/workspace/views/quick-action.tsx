@@ -89,7 +89,7 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
         isSelected
           ? "border-custom-primary-100 text-custom-primary-100"
           : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
-      } ${isPrivateView ? "pr-2" : ""}`}
+      } ${isPrivateView ? "pl-2" : ""}`}
     >
       <span className={`flex min-w-min flex-shrink-0 whitespace-nowrap text-sm font-medium outline-none`}>
         {view.name}

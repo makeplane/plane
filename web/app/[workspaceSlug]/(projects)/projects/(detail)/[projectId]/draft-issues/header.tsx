@@ -118,7 +118,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
           ) : null}
         </div>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="mr-auto flex items-center gap-2">
           <LayoutSelection
             layouts={[EIssueLayoutTypes.LIST, EIssueLayoutTypes.KANBAN]}
             onChange={(layout) => handleLayoutChange(layout)}

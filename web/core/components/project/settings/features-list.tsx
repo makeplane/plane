@@ -101,7 +101,7 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                       size="sm"
                     />
                   </div>
-                  <div className="pl-14">
+                  <div className="pr-14">
                     {currentProjectDetails?.[featureItem.property as keyof IProject] &&
                       featureItem.renderChildren?.(currentProjectDetails, workspaceSlug)}
                   </div>

@@ -51,7 +51,7 @@ export const NameColumn: React.FC<NameProps> = (props) => {
                   <span className="relative flex h-6 w-6 items-center justify-center rounded-full p-4 capitalize text-white">
                     <img
                       src={getFileURL(avatar_url)}
-                      className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
+                      className="absolute right-0 top-0 h-full w-full rounded-full object-cover"
                       alt={display_name || email}
                     />
                   </span>
@@ -163,7 +163,7 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
                   <span>{ROLE[rowData.role]}</span>
                 </div>
               }
-              buttonClassName={`!px-0 !justify-start hover:bg-custom-background-100 ${errors.role ? "border-red-500" : "border-none"}`}
+              buttonClassName={`!px-0 !justify-start hover:bg-custom-background-100 ${errors.role ? "border-led-500" : "border-none"}`}
               className="rounded-md p-0 w-32"
               optionsClassName="w-full"
               input

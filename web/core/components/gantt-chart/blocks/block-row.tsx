@@ -84,11 +84,11 @@ export const BlockRow: React.FC<Props> = observer((props) => {
     >
       <div
         className={cn("relative h-full", {
-          "rounded-l border border-r-0 border-custom-primary-70": getIsIssuePeeked(block.data.id),
+          "rounded-l border border-l-0 border-custom-primary-70": getIsIssuePeeked(block.data.id),
           "bg-custom-background-90": isBlockHoveredOn,
           "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isBlockSelected,
           "bg-custom-primary-100/10": isBlockSelected && isBlockHoveredOn,
-          "border border-r-0 border-custom-border-400": isBlockFocused,
+          "border border-l-0 border-custom-border-400": isBlockFocused,
         })}
       >
         {isBlockVisibleOnChart

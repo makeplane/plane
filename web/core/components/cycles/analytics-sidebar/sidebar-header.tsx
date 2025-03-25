@@ -3,7 +3,7 @@
 import React, { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { ArchiveIcon, ArchiveRestoreIcon, ChevronRight, EllipsisIcon, LinkIcon, Trash2 } from "lucide-react";
+import { ArchiveIcon, ArchiveRestoreIcon, ChevronLeft, EllipsisIcon, LinkIcon, Trash2 } from "lucide-react";
 // types
 import { CYCLE_STATUS, CYCLE_UPDATED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -209,7 +209,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
             className="flex size-4 items-center justify-center rounded-full bg-custom-border-200"
             onClick={() => handleClose()}
           >
-            <ChevronRight className="h-3 w-3 stroke-2 text-white" />
+            <ChevronLeft className="h-3 w-3 stroke-2 text-white" />
           </button>
         </div>
         <div className="flex items-center gap-3">

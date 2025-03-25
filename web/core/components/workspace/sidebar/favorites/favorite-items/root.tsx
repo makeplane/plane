@@ -81,7 +81,7 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
             render: ({ container }) => {
               const root = createRoot(container);
               root.render(
-                <div className="rounded bg-custom-background-100 text-sm p-1 pr-2">
+                <div className="rounded bg-custom-background-100 text-sm p-1 pl-2">
                   <FavoriteItemTitle
                     href={itemLink}
                     icon={itemIcon}

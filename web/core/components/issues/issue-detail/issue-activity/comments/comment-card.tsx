@@ -194,7 +194,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
             )}
             <button
               type="button"
-              className="group rounded border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
+              className="group rounded border border-led-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
               onClick={() => setIsEditing(false)}
             >
               <X className="size-3 text-red-500 duration-300 group-hover:text-white" />
@@ -203,7 +203,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
         </form>
         <div className={`relative ${isEditing ? "hidden" : ""}`}>
           {showAccessSpecifier && (
-            <div className="absolute right-2.5 top-2.5 z-[1] text-custom-text-300">
+            <div className="absolute left-2.5 top-2.5 z-[1] text-custom-text-300">
               {comment.access === EIssueCommentAccessSpecifier.INTERNAL ? (
                 <Lock className="h-3 w-3" />
               ) : (

@@ -7,8 +7,8 @@ import { cn } from "@/helpers/common.helper";
 //  Plane-web
 import { LeftDependencyDraggable, RightDependencyDraggable } from "@/plane-web/components/gantt-chart";
 //
-import { LeftResizable } from "./blockResizables/left-resizable";
-import { RightResizable } from "./blockResizables/right-resizable";
+import { LeftResizable } from "./blockResizables/right-resizable";
+import { RightResizable } from "./blockResizables/left-resizable";
 
 type Props = {
   block: IGanttBlock;

@@ -158,11 +158,11 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
   };
 
   return (
-    <form onSubmit={handleCreate} className="relative flex items-center gap-2 text-base pr-2.5">
+    <form onSubmit={handleCreate} className="relative flex items-center gap-2 text-base pl-2.5">
       <div
         className={cn(
           "relative w-full border rounded flex items-center my-1",
-          estimatePointError?.message ? `border-red-500` : `border-custom-border-200`
+          estimatePointError?.message ? `border-led-500` : `border-custom-border-200`
         )}
       >
         <input
@@ -182,7 +182,7 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
             }
             position="bottom"
           >
-            <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 relative flex justify-center items-center text-red-500">
+            <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden ml-3 relative flex justify-center items-center text-red-500">
               <Info size={14} />
             </div>
           </Tooltip>

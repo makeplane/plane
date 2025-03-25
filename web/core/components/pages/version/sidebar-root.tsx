@@ -16,7 +16,7 @@ export const PageVersionsSidebarRoot: React.FC<Props> = (props) => {
   const { activeVersion, fetchAllVersions, handleClose, isOpen, pageId } = props;
 
   return (
-    <div className="flex-shrink-0 py-4 border-l border-custom-border-200 flex flex-col">
+    <div className="flex-shrink-0 py-4 border-r border-custom-border-200 flex flex-col">
       <div className="px-6 flex items-center justify-between gap-2">
         <h5 className="text-base font-semibold">Version history</h5>
         <button

@@ -53,7 +53,7 @@ export const SidebarWorkspaceMenuItem: FC<SidebarWorkspaceMenuItemProps> = obser
     <Tooltip
       tooltipContent={t(item.labelTranslationKey)}
       position="right"
-      className="ml-2"
+      className="mr-2"
       disabled={!sidebarCollapsed}
       isMobile={isMobile}
     >

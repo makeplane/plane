@@ -2,7 +2,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
+import { ChevronLeft, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
 import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssue, TIssueServiceType } from "@plane/types";
@@ -104,7 +104,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
       >
         {issue && (
           <div
-            className="group relative flex min-h-11 h-full w-full items-center gap-3 pr-2 py-1 transition-all hover:bg-custom-background-90"
+            className="group relative flex min-h-11 h-full w-full items-center gap-3 pl-2 py-1 transition-all hover:bg-custom-background-90"
             style={{ paddingLeft: `${spacingLeft}px` }}
           >
             <div className="flex size-5 items-center justify-center flex-shrink-0">
@@ -129,7 +129,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                         setSubIssueHelpers(parentIssueId, "issue_visibility", issueId);
                       }}
                     >
-                      <ChevronRight
+                      <ChevronLeft
                         className={cn("size-3.5 transition-all", {
                           "rotate-90": subIssueHelpers.issue_visibility.includes(issue.id),
                         })}

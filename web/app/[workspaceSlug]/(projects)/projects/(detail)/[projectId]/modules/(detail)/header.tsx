@@ -176,7 +176,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                   </span>
                   <Link
                     href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
-                    className="block pl-2 text-custom-text-300 md:hidden"
+                    className="block pr-2 text-custom-text-300 md:hidden"
                   >
                     ...
                   </Link>
@@ -218,7 +218,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                       </div>
                     </>
                   }
-                  className="ml-1.5 flex-shrink-0"
+                  className="mr-1.5 flex-shrink-0"
                   placement="bottom-start"
                 >
                   {projectModuleIds?.map((moduleId) => <ModuleDropdownOption key={moduleId} moduleId={moduleId} />)}

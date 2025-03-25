@@ -64,7 +64,7 @@ export const ProjectsListMobileHeader = observer(() => {
         }}
         isMobile
       />
-      <div className="border-l border-custom-border-200 flex justify-around w-full">
+      <div className="border-r border-custom-border-200 flex justify-around w-full">
         <FiltersDropdown
           icon={<ListFilter className="h-3 w-3" />}
           title={t("common.filters")}

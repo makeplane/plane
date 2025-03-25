@@ -267,7 +267,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
           </div>
         </Card>
       </Link>
-      <div className="absolute right-4 bottom-[18px] flex items-center gap-1.5">
+      <div className="absolute left-4 bottom-[18px] flex items-center gap-1.5">
         {isEditingAllowed && (
           <FavoriteStar
             onClick={(e) => {

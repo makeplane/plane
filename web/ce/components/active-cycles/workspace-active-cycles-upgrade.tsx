@@ -91,7 +91,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
               {t("upgrade")}
             </a>
           </div>
-          <span className="absolute left-0 top-0">
+          <span className="absolute right-0 top-0">
             <Image
               src={`/workspace-active-cycles/cta-l-1-${isDarkMode ? "dark" : "light"}.webp`}
               height={125}
@@ -102,7 +102,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
           </span>
         </div>
         <div className="relative hidden w-1/2 lg:block">
-          <span className="absolute bottom-0 right-0">
+          <span className="absolute bottom-0 left-0">
             <Image
               src={`/workspace-active-cycles/cta-r-1-${isDarkMode ? "dark" : "light"}.webp`}
               height={420}
@@ -110,7 +110,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
               alt="r-1"
             />
           </span>
-          <span className="absolute -bottom-16 right-1/2 rounded-xl">
+          <span className="absolute -bottom-16 left-1/2 rounded-xl">
             <Image
               src={`/workspace-active-cycles/cta-r-2-${isDarkMode ? "dark" : "light"}.webp`}
               height={210}

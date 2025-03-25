@@ -106,7 +106,7 @@ export const PageToolbar: React.FC<Props> = ({ editorRef }) => {
             <ChevronDown className="flex-shrink-0 size-3" />
           </span>
         }
-        className="pr-2"
+        className="pl-2"
         placement="bottom-start"
         closeOnSelect
         maxHeight="lg"
@@ -147,7 +147,7 @@ export const PageToolbar: React.FC<Props> = ({ editorRef }) => {
         }
       />
       {Object.keys(toolbarItems).map((key) => (
-        <div key={key} className="flex items-center gap-0.5 px-2 first:pl-0 last:pr-0">
+        <div key={key} className="flex items-center gap-0.5 px-2 first:pr-0 last:pl-0">
           {toolbarItems[key].map((item) => (
             <ToolbarButton
               key={item.renderKey}

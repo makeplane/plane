@@ -130,7 +130,7 @@ export const ListGroup = observer((props: Props) => {
   ) : (
     <div
       className={
-        "h-11 relative flex items-center gap-3 bg-custom-background-100 border border-transparent border-t-custom-border-200 pl-8 p-3 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 hover:underline cursor-pointer"
+        "h-11 relative flex items-center gap-3 bg-custom-background-100 border border-transparent border-t-custom-border-200 pr-8 p-3 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 hover:underline cursor-pointer"
       }
       onClick={() => loadMoreIssues(group.id)}
     >
@@ -258,7 +258,7 @@ export const ListGroup = observer((props: Props) => {
       })}
     >
       <Row
-        className={cn("w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 pr-3 py-1", {
+        className={cn("w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 pl-3 py-1", {
           "sticky top-0 z-[2]": isExpanded && groupIssueCount > 0,
         })}
       >

@@ -102,7 +102,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
               onChange={handleIdentifierChange(onChange)}
               hasError={Boolean(errors.identifier)}
               placeholder={t("project_id")}
-              className={cn("w-full text-xs focus:border-blue-400 pr-7", {
+              className={cn("w-full text-xs focus:border-blue-400 pl-7", {
                 uppercase: value,
               })}
               tabIndex={getIndex("identifier")}
@@ -113,9 +113,9 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
           isMobile={isMobile}
           tooltipContent={t("project_id_tooltip_content")}
           className="text-sm"
-          position="right-top"
+          position="left-top"
         >
-          <Info className="absolute right-2 top-2.5 h-3 w-3 text-custom-text-400" />
+          <Info className="absolute left-2 top-2.5 h-3 w-3 text-custom-text-400" />
         </Tooltip>
         <span className="text-xs text-red-500">{errors?.identifier?.message}</span>
       </div>

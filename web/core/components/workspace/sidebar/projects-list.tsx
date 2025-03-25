@@ -5,7 +5,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { Briefcase, ChevronRight, Ellipsis, Plus } from "lucide-react";
+import { Briefcase, ChevronLeft, Ellipsis, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -208,7 +208,7 @@ export const SidebarProjectsList: FC = observer(() => {
                     className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
                     onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
                   >
-                    <ChevronRight
+                    <ChevronLeft
                       className={cn("flex-shrink-0 size-4 transition-all", {
                         "rotate-90": isAllProjectsListOpen,
                       })}
@@ -237,7 +237,7 @@ export const SidebarProjectsList: FC = observer(() => {
                 <Disclosure.Panel
                   as="div"
                   className={cn("flex flex-col gap-0.5", {
-                    "space-y-0 ml-0": isCollapsed,
+                    "space-y-0 mr-0": isCollapsed,
                   })}
                   static
                 >

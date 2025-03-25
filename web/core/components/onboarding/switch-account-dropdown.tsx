@@ -34,7 +34,7 @@ export const SwitchAccountDropdown: FC<TSwitchAccountDropdownProps> = observer((
   return (
     <div className="flex w-full shrink-0 justify-end">
       <SwitchAccountModal isOpen={showSwitchAccountModal} onClose={() => setShowSwitchAccountModal(false)} />
-      <div className="flex items-center gap-x-2 pr-4 z-10">
+      <div className="flex items-center gap-x-2 pl-4 z-10">
         {user?.avatar_url && (
           <Avatar
             name={displayName}
@@ -58,7 +58,7 @@ export const SwitchAccountDropdown: FC<TSwitchAccountDropdownProps> = observer((
             leaveFrom="transform scale-100 opacity-100"
             leaveTo="transform scale-95 opacity-0"
           >
-            <Menu.Items className="absolute z-10 right-0 rounded-md border-[0.5px] border-custom-border-300 mt-2 bg-custom-background-100 px-2 py-2.5 text-sm min-w-[12rem] shadow-custom-shadow-rg">
+            <Menu.Items className="absolute z-10 left-0 rounded-md border-[0.5px] border-custom-border-300 mt-2 bg-custom-background-100 px-2 py-2.5 text-sm min-w-[12rem] shadow-custom-shadow-rg">
               <Menu.Item
                 as="button"
                 type="button"

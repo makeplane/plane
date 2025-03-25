@@ -74,8 +74,8 @@ export const AppProgressBar = React.memo(
 
             border: solid 2px transparent;
             border-top-color: ${color};
-            border-left-color: ${color};
-            border-radius: 50%;
+            border-light-color: ${color};
+            border-ladius: 50%;
 
             -webkit-animation: nprogress-spinner 400ms linear infinite;
                     animation: nprogress-spinner 400ms linear infinite;

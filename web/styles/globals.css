@@ -18,7 +18,8 @@
 
 @layer base {
   html {
-    font-family: "Inter", sans-serif;
+    font-family: "Vazirmatn", sans-serif;
+    direction: rtl;
   }
 
   :root {

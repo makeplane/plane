@@ -35,8 +35,8 @@ export const GanttChartHeader: React.FC<Props> = observer((props) => {
       className="relative flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap py-2"
       style={{ height: `${GANTT_BREADCRUMBS_HEIGHT}px` }}
     >
-      <div className="ml-auto">
-        <div className="ml-auto text-sm font-medium">
+      <div className="mr-auto">
+        <div className="mr-auto text-sm font-medium">
           {blockIds ? `${blockIds.length} ${loaderTitle}` : t("common.loading")}
         </div>
       </div>

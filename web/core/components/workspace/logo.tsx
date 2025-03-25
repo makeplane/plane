@@ -20,7 +20,7 @@ export const WorkspaceLogo = (props: Props) => (
     {props.logo && props.logo !== "" ? (
       <img
         src={getFileURL(props.logo)}
-        className="absolute left-0 top-0 h-full w-full rounded object-cover"
+        className="absolute right-0 top-0 h-full w-full rounded object-cover"
         alt="Workspace Logo"
       />
     ) : (

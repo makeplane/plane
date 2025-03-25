@@ -35,7 +35,7 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
           <NotAuthorizedView section="settings" />
         ) : (
           <>
-            <div className="px-page-x !pr-0 py-page-y flex-shrink-0 overflow-y-hidden sm:hidden hidden md:block lg:block">
+            <div className="px-page-x !pl-0 py-page-y flex-shrink-0 overflow-y-hidden sm:hidden hidden md:block lg:block">
               <WorkspaceSettingsSidebar />
             </div>
             <div className="flex flex-col relative w-full overflow-hidden">

@@ -148,12 +148,12 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
             isMobile={isMobile}
             tooltipContent={`${project?.name}: ${t(item.i18n_key)}`}
             position="right"
-            className="ml-2"
+            className="mr-2"
             disabled={!isSidebarCollapsed}
           >
             <Link href={item.href} onClick={handleProjectClick}>
               <SidebarNavItem
-                className={`pl-[18px] ${isSidebarCollapsed ? "p-0 size-7 justify-center mx-auto" : ""}`}
+                className={`pr-[18px] ${isSidebarCollapsed ? "p-0 size-7 justify-center mx-auto" : ""}`}
                 isActive={
                   item.i18n_key === "sidebar.work_items"
                     ? pathname.includes(item.href) || pathname.includes(`/${workspaceSlug}/browse/`)

@@ -31,7 +31,7 @@ export const ComicBoxButton: React.FC<Props> = (props) => {
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>();
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "right-end",
+    placement: "left-end",
     modifiers: [
       {
         name: "offset",
@@ -53,9 +53,9 @@ export const ComicBoxButton: React.FC<Props> = (props) => {
               <div
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
-                className={`absolute bg-blue-300 right-0 z-10 h-2.5 w-2.5 animate-ping rounded-full`}
+                className={`absolute bg-blue-300 left-0 z-10 h-2.5 w-2.5 animate-ping rounded-full`}
               />
-              <div className={`absolute bg-blue-400/40 right-0 h-1.5 w-1.5 mt-0.5 mr-0.5 rounded-full`} />
+              <div className={`absolute bg-blue-400/40 left-0 h-1.5 w-1.5 mt-0.5 ml-0.5 rounded-full`} />
             </span>
           </div>
         </button>
@@ -68,7 +68,7 @@ export const ComicBoxButton: React.FC<Props> = (props) => {
             style={styles.popper}
             {...attributes.popper}
           >
-            <div className="absolute w-2 h-2 bg-custom-background-100 border rounded-lb-sm  border-custom-border-200 border-r-0 border-t-0 transform rotate-45 bottom-2 -left-[5px]" />
+            <div className="absolute w-2 h-2 bg-custom-background-100 border rounded-lb-sm  border-custom-border-200 border-l-0 border-t-0 transform rotate-45 bottom-2 -right-[5px]" />
             <h3 className="text-lg font-semibold w-full">{title}</h3>
             <h4 className="mt-1 text-sm">{description}</h4>
           </div>

@@ -14,24 +14,24 @@ export const PageContentLoader = () => (
 
       {/* editor options */}
       <div className="w-full relative flex items-center divide-x divide-custom-border-100">
-        <Loader className="relative flex items-center gap-1 pr-2">
-          <Loader.Item width="26px" height="26px" />
-          <Loader.Item width="26px" height="26px" />
-          <Loader.Item width="26px" height="26px" />
-          <Loader.Item width="26px" height="26px" />
-          <Loader.Item width="26px" height="26px" />
-          <Loader.Item width="26px" height="26px" />
-          <Loader.Item width="26px" height="26px" />
-        </Loader>
-        <Loader className="relative flex items-center gap-1 px-2">
-          <Loader.Item width="26px" height="26px" />
-          <Loader.Item width="26px" height="26px" />
-        </Loader>
-        <Loader className="relative flex items-center gap-1 px-2">
-          <Loader.Item width="26px" height="26px" />
-          <Loader.Item width="26px" height="26px" />
-        </Loader>
         <Loader className="relative flex items-center gap-1 pl-2">
+          <Loader.Item width="26px" height="26px" />
+          <Loader.Item width="26px" height="26px" />
+          <Loader.Item width="26px" height="26px" />
+          <Loader.Item width="26px" height="26px" />
+          <Loader.Item width="26px" height="26px" />
+          <Loader.Item width="26px" height="26px" />
+          <Loader.Item width="26px" height="26px" />
+        </Loader>
+        <Loader className="relative flex items-center gap-1 px-2">
+          <Loader.Item width="26px" height="26px" />
+          <Loader.Item width="26px" height="26px" />
+        </Loader>
+        <Loader className="relative flex items-center gap-1 px-2">
+          <Loader.Item width="26px" height="26px" />
+          <Loader.Item width="26px" height="26px" />
+        </Loader>
+        <Loader className="relative flex items-center gap-1 pr-2">
           <Loader.Item width="26px" height="26px" />
           <Loader.Item width="26px" height="26px" />
         </Loader>

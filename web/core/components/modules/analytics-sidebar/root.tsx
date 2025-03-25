@@ -8,7 +8,7 @@ import {
   ArchiveRestoreIcon,
   CalendarClock,
   ChevronDown,
-  ChevronRight,
+  ChevronLeft,
   Info,
   LinkIcon,
   Plus,
@@ -307,7 +307,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
               className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-border-300"
               onClick={() => handleClose()}
             >
-              <ChevronRight className="h-3 w-3 stroke-2 text-white" />
+              <ChevronLeft className="h-3 w-3 stroke-2 text-white" />
             </button>
           </div>
           <div className="flex items-center gap-3.5">

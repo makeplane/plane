@@ -45,7 +45,7 @@ export const Stickies = observer((props: TProps) => {
           >
             <Plus className="size-4 my-auto" /> <span>Add sticky</span>
             {creatingSticky && (
-              <div className="flex items-center justify-center ml-2">
+              <div className="flex items-center justify-center mr-2">
                 <div
                   className={`w-4 h-4 border-2 border-t-transparent rounded-full animate-spin border-custom-primary-100`}
                   role="status"

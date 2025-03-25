@@ -157,7 +157,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
                 />
               </div>
             </div>
-            <div className={`vertical-scrollbar scrollbar-sm mt-2 max-h-48 space-y-1 overflow-y-scroll px-2 pr-0`}>
+            <div className={`vertical-scrollbar scrollbar-sm mt-2 max-h-48 space-y-1 overflow-y-scroll px-2 pl-0`}>
               {isLoading ? (
                 <p className="text-center text-custom-text-200">{t("common.loading")}</p>
               ) : filteredOptions.length > 0 ? (

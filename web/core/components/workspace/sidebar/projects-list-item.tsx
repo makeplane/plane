@@ -10,7 +10,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
-import { LinkIcon, Settings, Share2, LogOut, MoreHorizontal, ChevronRight } from "lucide-react";
+import { LinkIcon, Settings, Share2, LogOut, MoreHorizontal, ChevronLeft } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane helpers
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -125,7 +125,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
             render: ({ container }) => {
               const root = createRoot(container);
               root.render(
-                <div className="rounded flex items-center bg-custom-background-100 text-sm p-1 pr-2">
+                <div className="rounded flex items-center bg-custom-background-100 text-sm p-1 pl-2">
                   <div className="size-4 grid place-items-center flex-shrink-0">
                     {project && <Logo logo={project?.logo_props} />}
                   </div>
@@ -234,7 +234,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                 <button
                   type="button"
                   className={cn(
-                    "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-custom-sidebar-text-400 cursor-grab",
+                    "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -right-3 -translate-y-1/2 rounded text-custom-sidebar-text-400 cursor-grab",
                     {
                       "cursor-not-allowed opacity-60": project.sort_order === null,
                       "cursor-grabbing": isDragging,
@@ -381,7 +381,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                   )}
                   onClick={() => setIsProjectListOpen(!isProjectListOpen)}
                 >
-                  <ChevronRight
+                  <ChevronLeft
                     className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
                       "rotate-90": isProjectListOpen,
                     })}

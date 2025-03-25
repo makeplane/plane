@@ -42,7 +42,7 @@ export const OnePlanUpgrade: FC<OnePlanUpgradeProps> = (props) => {
               })}
             >
               <p className="w-full text-sm font-medium leading-5 flex items-center">
-                <CheckCircle className="h-4 w-4 mr-4 text-custom-text-300 flex-shrink-0" />
+                <CheckCircle className="h-4 w-4 ml-4 text-custom-text-300 flex-shrink-0" />
                 <span className="text-custom-text-200 truncate">{feature}</span>
               </p>
             </li>

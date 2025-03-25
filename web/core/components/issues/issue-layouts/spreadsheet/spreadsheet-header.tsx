@@ -43,15 +43,15 @@ export const SpreadsheetHeader = observer((props: Props) => {
   const canSelectIssues = canEditProperties(projectId?.toString()) && !selectionHelpers.isSelectionDisabled;
 
   return (
-    <thead className="sticky top-0 left-0 z-[12] border-b-[0.5px] border-custom-border-100">
+    <thead className="sticky top-0 right-0 z-[12] border-b-[0.5px] border-custom-border-100">
       <tr>
         <th
-          className="group/list-header sticky left-0 z-[15] h-11 w-[28rem] flex items-center gap-1 bg-custom-background-90 text-sm font-medium before:absolute before:h-full before:right-0 before:border-custom-border-100"
+          className="group/list-header sticky right-0 z-[15] h-11 w-[28rem] flex items-center gap-1 bg-custom-background-90 text-sm font-medium before:absolute before:h-full before:left-0 before:border-custom-border-100"
           tabIndex={-1}
         >
           <Row>
             {canSelectIssues && (
-              <div className="flex-shrink-0 flex items-center w-3.5 mr-1 absolute left-1 py-[11px]">
+              <div className="flex-shrink-0 flex items-center w-3.5 ml-1 absolute right-1 py-[11px]">
                 <MultipleSelectGroupAction
                   className={cn(
                     "size-3.5 opacity-0 pointer-events-none group-hover/list-header:opacity-100 group-hover/list-header:pointer-events-auto !outline-none",

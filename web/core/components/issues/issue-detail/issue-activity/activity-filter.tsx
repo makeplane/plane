@@ -31,7 +31,7 @@ export const ActivityFilter: FC<TActivityFilter> = observer((props) => {
         >
           <span className="text-custom-text-200">{t("common.filters")}</span>
           {selectedFilters.length < filterOptions.length && (
-            <span className="absolute h-2 w-2 -right-0.5 -top-0.5 bg-custom-primary-100 rounded-full" />
+            <span className="absolute h-2 w-2 -left-0.5 -top-0.5 bg-custom-primary-100 rounded-full" />
           )}
         </Button>
       }

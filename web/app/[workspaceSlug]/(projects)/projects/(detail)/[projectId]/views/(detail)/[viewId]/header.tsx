@@ -172,7 +172,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                     {viewDetails?.name && truncateText(viewDetails.name, 40)}
                   </>
                 }
-                className="ml-1.5"
+                className="mr-1.5"
                 placement="bottom-start"
               >
                 {projectViewIds?.map((viewId) => {

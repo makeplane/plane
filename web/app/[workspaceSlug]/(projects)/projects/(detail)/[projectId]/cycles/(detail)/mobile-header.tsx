@@ -152,14 +152,14 @@ export const CycleIssuesMobileHeader = () => {
             </CustomMenu.MenuItem>
           ))}
         </CustomMenu>
-        <div className="flex flex-grow justify-center border-l border-custom-border-200 items-center text-custom-text-200 text-sm">
+        <div className="flex flex-grow justify-center border-r border-custom-border-200 items-center text-custom-text-200 text-sm">
           <FiltersDropdown
             title={t("common.filters")}
             placement="bottom-end"
             menuButton={
               <span className="flex items-center text-custom-text-200 text-sm">
                 {t("common.filters")}
-                <ChevronDown className="text-custom-text-200  h-4 w-4 ml-2" />
+                <ChevronDown className="text-custom-text-200  h-4 w-4 mr-2" />
               </span>
             }
             isFiltersApplied={isIssueFilterActive(issueFilters)}
@@ -180,14 +180,14 @@ export const CycleIssuesMobileHeader = () => {
             />
           </FiltersDropdown>
         </div>
-        <div className="flex flex-grow justify-center border-l border-custom-border-200 items-center text-custom-text-200 text-sm">
+        <div className="flex flex-grow justify-center border-r border-custom-border-200 items-center text-custom-text-200 text-sm">
           <FiltersDropdown
             title={t("common.display")}
             placement="bottom-end"
             menuButton={
               <span className="flex items-center text-custom-text-200 text-sm">
                 {t("common.display")}
-                <ChevronDown className="text-custom-text-200 h-4 w-4 ml-2" />
+                <ChevronDown className="text-custom-text-200 h-4 w-4 mr-2" />
               </span>
             }
           >
@@ -208,7 +208,7 @@ export const CycleIssuesMobileHeader = () => {
 
         <span
           onClick={() => setAnalyticsModal(true)}
-          className="flex flex-grow justify-center text-custom-text-200 text-sm border-l border-custom-border-200"
+          className="flex flex-grow justify-center text-custom-text-200 text-sm border-r border-custom-border-200"
         >
           {t("common.analytics")}
         </span>

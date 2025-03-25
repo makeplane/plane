@@ -124,8 +124,8 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
           {Object.keys(toolbarItems).map((key, index) => (
             <div
               key={key}
-              className={cn("flex items-stretch gap-0.5 border-r border-custom-border-200 px-2.5", {
-                "pl-0": index === 0,
+              className={cn("flex items-stretch gap-0.5 border-l border-custom-border-200 px-2.5", {
+                "pr-0": index === 0,
               })}
             >
               {toolbarItems[key].map((item) => {
@@ -165,7 +165,7 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
           ))}
         </div>
         {showSubmitButton && (
-          <div className="sticky right-1">
+          <div className="sticky left-1">
             <Button
               type="submit"
               variant="primary"

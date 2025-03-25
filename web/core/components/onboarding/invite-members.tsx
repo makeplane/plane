@@ -147,7 +147,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
   return (
     <div>
       <div className="group relative grid grid-cols-10 gap-4">
-        <div className="col-span-6 ml-8">
+        <div className="col-span-6 mr-8">
           <Controller
             control={control}
             name={`emails.${index}.email`}
@@ -176,7 +176,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
             )}
           />
         </div>
-        <div className="col-span-4 mr-8">
+        <div className="col-span-4 ml-8">
           <Controller
             control={control}
             name={`emails.${index}.role`}
@@ -253,10 +253,10 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
         {fields.length > 1 && (
           <button
             type="button"
-            className="absolute right-0 hidden place-items-center self-center rounded group-hover:grid"
+            className="absolute left-0 hidden place-items-center self-center rounded group-hover:grid"
             onClick={() => remove(index)}
           >
-            <XCircle className="h-5 w-5 pl-0.5 text-custom-text-400" />
+            <XCircle className="h-5 w-5 pr-0.5 text-custom-text-400" />
           </button>
         )}
       </div>

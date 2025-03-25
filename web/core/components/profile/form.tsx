@@ -171,7 +171,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
               className="h-44 w-full rounded-lg object-cover"
               alt={currentUser?.first_name ?? "Cover image"}
             />
-            <div className="absolute -bottom-6 left-6 flex items-end justify-between">
+            <div className="absolute -bottom-6 right-6 flex items-end justify-between">
               <div className="flex gap-3">
                 <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-custom-background-90">
                   <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
@@ -183,7 +183,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                       <div className="relative h-16 w-16 overflow-hidden">
                         <img
                           src={getFileURL(userAvatar)}
-                          className="absolute left-0 top-0 h-full w-full rounded-lg object-cover"
+                          className="absolute right-0 top-0 h-full w-full rounded-lg object-cover"
                           onClick={() => setIsImageUploadModalOpen(true)}
                           alt={currentUser?.display_name}
                           role="button"
@@ -194,7 +194,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                 </div>
               </div>
             </div>
-            <div className="absolute bottom-3 right-3 flex">
+            <div className="absolute bottom-3 left-3 flex">
               <Controller
                 control={control}
                 name="cover_image_url"
@@ -241,7 +241,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                       ref={ref}
                       hasError={Boolean(errors.first_name)}
                       placeholder="Enter your first name"
-                      className={`w-full rounded-md ${errors.first_name ? "border-red-500" : ""}`}
+                      className={`w-full rounded-md ${errors.first_name ? "border-led-500" : ""}`}
                       maxLength={24}
                       autoComplete="on"
                     />
@@ -300,7 +300,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                       ref={ref}
                       hasError={Boolean(errors?.display_name)}
                       placeholder="Enter your display name"
-                      className={`w-full ${errors?.display_name ? "border-red-500" : ""}`}
+                      className={`w-full ${errors?.display_name ? "border-led-500" : ""}`}
                       maxLength={24}
                     />
                   )}
@@ -328,7 +328,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                       hasError={Boolean(errors.email)}
                       placeholder="Enter your email"
                       className={`w-full cursor-not-allowed rounded-md !bg-custom-background-90 ${
-                        errors.email ? "border-red-500" : ""
+                        errors.email ? "border-led-500" : ""
                       }`}
                       autoComplete="on"
                       disabled
@@ -350,7 +350,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                       value={value}
                       onChange={onChange}
                       label={value ? t(value) : "Select your role"}
-                      buttonClassName={errors.role ? "border-red-500" : "border-none"}
+                      buttonClassName={errors.role ? "border-led-500" : "border-none"}
                       className="rounded-md border-[0.5px] !border-custom-border-200"
                       optionsClassName="w-full"
                       input
@@ -406,7 +406,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                       value={value}
                       label={value ? getLanguageLabel(value) : "Select a language"}
                       onChange={onChange}
-                      buttonClassName={errors.language ? "border-red-500" : "border-none"}
+                      buttonClassName={errors.language ? "border-led-500" : "border-none"}
                       className="rounded-md border-[0.5px] !border-custom-border-200"
                       optionsClassName="w-full"
                       input

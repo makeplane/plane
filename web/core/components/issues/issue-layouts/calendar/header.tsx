@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 
 // components
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronRight, ChevronLeft } from "lucide-react";
 import { EIssueFilterType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import {
@@ -109,10 +109,10 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
     <Row className="mb-4 flex items-center justify-between gap-2">
       <div className="flex items-center gap-1.5">
         <button type="button" className="grid place-items-center" onClick={handlePrevious}>
-          <ChevronLeft size={16} strokeWidth={2} />
+          <ChevronRight size={16} strokeWidth={2} />
         </button>
         <button type="button" className="grid place-items-center" onClick={handleNext}>
-          <ChevronRight size={16} strokeWidth={2} />
+          <ChevronLeft size={16} strokeWidth={2} />
         </button>
         <CalendarMonthsDropdown issuesFilterStore={issuesFilterStore} />
       </div>

@@ -42,7 +42,7 @@ export const AnalyticsLeaderBoard: React.FC<Props> = ({ users, title, emptyState
                   <div className="relative h-4 w-4 flex-shrink-0 rounded-full">
                     <img
                       src={getFileURL(user.avatar_url)}
-                      className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
+                      className="absolute right-0 top-0 h-full w-full rounded-full object-cover"
                       alt={user?.display_name ?? "None"}
                     />
                   </div>

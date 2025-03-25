@@ -16,7 +16,7 @@ export const OnboardingHeader: FC<OnboardingHeaderProps> = (props) => {
   return (
     <div className="flex w-full items-center justify-between font-semibold ">
       <div className="flex items-center gap-x-2">
-        <Image src={BluePlaneLogoWithoutText} height={30} width={30} alt="Plane Logo" className="mr-3" />
+        <Image src={BluePlaneLogoWithoutText} height={30} width={30} alt="Plane Logo" className="ml-3" />
         <OnboardingStepIndicator currentStep={currentStep} totalSteps={totalSteps} />
       </div>
     </div>

@@ -71,7 +71,7 @@ export const EditorUserMention: React.FC<Props> = observer((props) => {
         @{userDetails?.display_name}
       </Link>
       <div
-        className="top-full left-0 z-10 min-w-60 bg-custom-background-90 shadow-custom-shadow-rg rounded-lg p-4 opacity-0 pointer-events-none group-hover/user-mention:opacity-100 group-hover/user-mention:pointer-events-auto transition-opacity"
+        className="top-full right-0 z-10 min-w-60 bg-custom-background-90 shadow-custom-shadow-rg rounded-lg p-4 opacity-0 pointer-events-none group-hover/user-mention:opacity-100 group-hover/user-mention:pointer-events-auto transition-opacity"
         ref={setPopperElement}
         style={styles.popper}
         {...attributes.popper}

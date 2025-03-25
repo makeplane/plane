@@ -160,7 +160,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
 
       {isOpen && (
         <Popover.Panel
-          className="absolute right-0 z-20 mt-2 rounded-md border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-sm"
+          className="absolute left-0 z-20 mt-2 rounded-md border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-sm"
           static
         >
           <div
@@ -232,7 +232,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                               <img
                                 src={image.urls.small}
                                 alt={image.alt_description}
-                                className="absolute left-0 top-0 h-full w-full cursor-pointer rounded object-cover"
+                                className="absolute right-0 top-0 h-full w-full cursor-pointer rounded object-cover"
                               />
                             </div>
                           ))}
@@ -271,7 +271,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                               <img
                                 src={image}
                                 alt={`Default project cover image- ${index}`}
-                                className="absolute left-0 top-0 h-full w-full cursor-pointer rounded object-cover"
+                                className="absolute right-0 top-0 h-full w-full cursor-pointer rounded object-cover"
                               />
                             </div>
                           ))}
@@ -306,7 +306,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                       >
                         <button
                           type="button"
-                          className="absolute right-0 top-0 z-40 -translate-y-1/2 rounded bg-custom-background-90 px-2 py-0.5 text-xs font-medium text-custom-text-200"
+                          className="absolute left-0 top-0 z-40 -translate-y-1/2 rounded bg-custom-background-90 px-2 py-0.5 text-xs font-medium text-custom-text-200"
                         >
                           Edit
                         </button>

@@ -342,7 +342,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                   <div className="mt-5 flex items-center justify-between gap-2">
                     <button
                       type="button"
-                      className="flex items-center gap-2 bg-transparent py-2 pr-3 text-sm font-medium text-custom-primary outline-custom-primary"
+                      className="flex items-center gap-2 bg-transparent py-2 pl-3 text-sm font-medium text-custom-primary outline-custom-primary"
                       onClick={appendField}
                     >
                       <Plus className="h-4 w-4" />

@@ -114,7 +114,7 @@ export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = o
                 leaveFrom="opacity-100 translate-y-0"
                 leaveTo="opacity-0 translate-y-1"
               >
-                <Popover.Panel className="absolute mt-2 right-0 z-10 min-w-44 select-none">
+                <Popover.Panel className="absolute mt-2 left-0 z-10 min-w-44 select-none">
                   <div className="p-2 rounded-md border border-custom-border-200 bg-custom-background-100 space-y-1">
                     {data.snoozed_till && (
                       <button

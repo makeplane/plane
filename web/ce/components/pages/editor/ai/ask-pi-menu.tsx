@@ -45,7 +45,7 @@ export const AskPiMenu: React.FC<Props> = (props) => {
               id="editor-ai-response"
               initialValue={response}
               containerClassName="!p-0 border-none"
-              editorClassName="!pl-0"
+              editorClassName="!pr-0"
               workspaceId={workspaceId}
               workspaceSlug={workspaceSlug}
             />

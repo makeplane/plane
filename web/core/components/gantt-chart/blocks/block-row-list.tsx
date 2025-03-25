@@ -30,7 +30,7 @@ export const GanttChartRowList: FC<GanttChartBlocksProps> = (props) => {
   } = props;
 
   return (
-    <div className="absolute top-0 left-0 min-w-full w-max">
+    <div className="absolute top-0 right-0 min-w-full w-max">
       {blockIds?.map((blockId) => (
         <>
           <RenderIfVisible

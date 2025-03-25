@@ -68,7 +68,7 @@ export const WorkspaceMembersList: FC<{ searchQuery: string; isAdmin: boolean }>
               <div className="flex">
                 <h4 className="text-xl font-medium pt-2 pb-2">{t("workspace_settings.settings.members.pending_invites")}</h4>
                 {searchedInvitationsIds && (
-                  <CountChip count={searchedInvitationsIds.length} className="h-5  m-auto ml-2" />
+                  <CountChip count={searchedInvitationsIds.length} className="h-5  m-auto mr-2" />
                 )}
               </div>{" "}
               <ChevronDown className={`h-5 w-5 transition-all ${showPendingInvites ? "rotate-180" : ""}`} />
@@ -76,7 +76,7 @@ export const WorkspaceMembersList: FC<{ searchQuery: string; isAdmin: boolean }>
           }
         >
           <Disclosure.Panel>
-            <div className="ml-auto items-center gap-1.5 rounded-md bg-custom-background-100 py-1.5">
+            <div className="mr-auto items-center gap-1.5 rounded-md bg-custom-background-100 py-1.5">
               {searchedInvitationsIds?.map((invitationId) => (
                 <WorkspaceInvitationsListItem key={invitationId} invitationId={invitationId} />
               ))}

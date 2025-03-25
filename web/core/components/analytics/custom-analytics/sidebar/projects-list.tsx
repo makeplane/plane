@@ -44,7 +44,7 @@ export const CustomAnalyticsSidebarProjectsList: React.FC<Props> = observer((pro
                 </div>
                 <h5 className="flex items-center gap-1">
                   <p className="break-words">{truncateText(project.name, 20)}</p>
-                  <span className="ml-1 text-xs text-custom-text-200">({project.identifier})</span>
+                  <span className="mr-1 text-xs text-custom-text-200">({project.identifier})</span>
                 </h5>
               </div>
               <div className="mt-4 w-full space-y-3 px-2">

@@ -125,7 +125,7 @@ export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((p
           >
             <input {...getInputProps()} />
             {isDragActive && (
-              <div className="absolute flex items-center justify-center left-0 top-0 h-full w-full bg-custom-background-90/75 z-30 ">
+              <div className="absolute flex items-center justify-center right-0 top-0 h-full w-full bg-custom-background-90/75 z-30 ">
                 <div className="flex items-center justify-center p-1 rounded-md bg-custom-background-100">
                   <div className="flex flex-col justify-center items-center px-5 py-6 rounded-md border border-dashed border-custom-border-300">
                     <UploadCloud className="size-7" />
