@@ -13,6 +13,7 @@ import {
 // ui
 import { ContrastIcon, DiceIcon, EpicIcon, LayersIcon, Logo, TeamsIcon } from "@plane/ui";
 // plane web components
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 import { IdentifierText, IssueIdentifier } from "@/plane-web/components/issues";
 
 export const SearchItems: {
@@ -64,7 +65,13 @@ export const SearchItems: {
     ),
     itemName: (issue: IWorkspaceIssueEnhancedSearchResult) => <div className="flex">{issue.name}</div>,
     path: (issue: IWorkspaceIssueEnhancedSearchResult) =>
-      `/${issue?.workspace_slug}/projects/${issue?.project_id}/issues/${issue?.id}`,
+      generateWorkItemLink({
+        workspaceSlug: issue?.workspace_slug,
+        projectId: issue?.project_id,
+        issueId: issue?.id,
+        projectIdentifier: issue.project_identifier,
+        sequenceId: issue?.sequence_id,
+      }),
     title: "Work items",
   },
   [ESearchFilterKeys.VIEW]: {
@@ -128,8 +135,15 @@ export const SearchItems: {
       </>
     ),
     itemName: (epic: IWorkspaceIssueEnhancedSearchResult) => <div className="flex gap-2">{epic.name}</div>,
-    path: (epic: IWorkspaceDefaultEnhancedSearchResult) =>
-      `/${epic?.workspace_slug}/projects/${epic?.project_id}/epics/${epic?.id}`,
+    path: (epic: IWorkspaceIssueEnhancedSearchResult) =>
+      generateWorkItemLink({
+        workspaceSlug: epic?.workspace_slug,
+        projectId: epic?.project_id,
+        issueId: epic?.id,
+        projectIdentifier: epic.project_identifier,
+        sequenceId: epic?.sequence_id,
+        isEpic: true,
+      }),
   },
   [ESearchFilterKeys.TEAMSPACE]: {
     title: "Teamspaces",

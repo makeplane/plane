@@ -10,6 +10,7 @@ import {
 // plane web imports
 import { InitiativeIcon, TeamsIcon } from "@plane/ui";
 import { commandGroups as commandGroupsCE, TCommandGroups } from "@/ce/components/command-palette/helpers";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 import { IssueIdentifier } from "@/plane-web/components/issues";
 
 export const commandGroups: TCommandGroups = {
@@ -29,8 +30,15 @@ export const commandGroups: TCommandGroups = {
         {epic.name}
       </div>
     ),
-    path: (epic: IWorkspaceDefaultSearchResult) =>
-      `/${epic?.workspace__slug}/projects/${epic?.project_id}/epics/${epic?.id}`,
+    path: (epic: IWorkspaceIssueSearchResult) =>
+      generateWorkItemLink({
+        workspaceSlug: epic?.workspace__slug,
+        projectId: epic?.project_id,
+        issueId: epic?.id,
+        projectIdentifier: epic.project__identifier,
+        sequenceId: epic?.sequence_id,
+        isEpic: true,
+      }),
   },
   team: {
     title: "Teamspaces",
