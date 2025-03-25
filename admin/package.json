@@ -21,7 +21,6 @@
     "@plane/ui": "*",
     "@plane/utils": "*",
     "@plane/services": "*",
-    "@sentry/nextjs": "^8.54.0",
     "@tailwindcss/typography": "^0.5.9",
     "@types/lodash": "^4.17.0",
     "autoprefixer": "10.4.14",
