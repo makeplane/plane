@@ -34,7 +34,7 @@ export const CommentBlock: FC<TCommentBlock> = observer((props) => {
       />
       <div
         className={cn(
-          "flex-shrink-0 relative w-7 h-7 rounded-full transition-border duration-1000 flex justify-center items-center z-[3] bg-gray-500 text-white border border-white uppercase font-medium"
+          "flex-shrink-0 relative w-7 h-6 rounded-full transition-border duration-1000 flex justify-center items-center z-[3] uppercase font-medium"
         )}
       >
         <Avatar
