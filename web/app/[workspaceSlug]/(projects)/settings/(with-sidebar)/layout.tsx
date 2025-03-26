@@ -3,7 +3,8 @@
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 // components
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useParams, usePathname } from "next/navigation";
+import { EUserWorkspaceRoles, WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { AppHeader } from "@/components/core";
 // hooks
@@ -21,17 +22,26 @@ export interface IWorkspaceSettingLayout {
 const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => {
   const { children } = props;
 
-  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
+  const { workspaceUserInfo } = useUserPermissions();
+  const pathname = usePathname();
+  const [workspaceSlug, suffix, route] = pathname.replace(/^\/|\/$/g, "").split("/"); // Regex removes leading and trailing slashes
 
   // derived values
-  const isWorkspaceAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const userWorkspaceRole = workspaceUserInfo?.[workspaceSlug.toString()]?.role;
+  const isAuthorized =
+    pathname &&
+    workspaceSlug &&
+    userWorkspaceRole &&
+    WORKSPACE_SETTINGS_ACCESS[route ? `/${suffix}/${route}` : `/${suffix}`]?.includes(
+      userWorkspaceRole as EUserWorkspaceRoles
+    );
 
   return (
     <>
       <AppHeader header={<WorkspaceSettingHeader />} />
       <MobileWorkspaceSettingsTabs />
       <div className="inset-y-0 flex flex-row vertical-scrollbar scrollbar-lg h-full w-full overflow-y-auto">
-        {workspaceUserInfo && !isWorkspaceAdmin ? (
+        {workspaceUserInfo && !isAuthorized ? (
           <NotAuthorizedView section="settings" />
         ) : (
           <>

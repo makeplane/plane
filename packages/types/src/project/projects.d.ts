@@ -27,6 +27,7 @@ export interface IPartialProject {
   inbox_view: boolean;
   guest_view_all_features?: boolean;
   project_lead?: IUserLite | string | null;
+  network?: number;
   // Timestamps
   created_at?: Date;
   updated_at?: Date;
@@ -50,7 +51,6 @@ export interface IProject extends IPartialProject {
   anchor?: string | null;
   is_favorite?: boolean;
   members?: string[];
-  network?: number;
   timezone?: string;
 }
 

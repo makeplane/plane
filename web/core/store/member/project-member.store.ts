@@ -69,6 +69,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
   userStore: IUserStore;
   memberRoot: IMemberRootStore;
   projectRoot: IProjectStore;
+  rootStore: CoreRootStore;
   // services
   projectMemberService;
 
@@ -86,6 +87,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
     });
 
     // root store
+    this.rootStore = _rootStore;
     this.routerStore = _rootStore.router;
     this.userStore = _rootStore.user;
     this.memberRoot = _memberRoot;
@@ -199,10 +201,13 @@ export class ProjectMemberStore implements IProjectMemberStore {
     const memberDetails = this.getProjectMemberDetails(userId, projectId);
     if (!memberDetails) throw new Error("Member not found");
     // original data to revert back in case of error
-    const originalProjectMemberData = this.projectMemberMap?.[projectId]?.[userId];
+    const originalProjectMemberData = this.projectMemberMap?.[projectId]?.[userId]?.role;
+    const isCurrentUser = this.rootStore.user.data?.id === userId;
     try {
       runInAction(() => {
         set(this.projectMemberMap, [projectId, userId, "role"], data.role);
+        if (isCurrentUser)
+          set(this.rootStore.user.permission.projectUserInfo, [workspaceSlug, projectId, "role"], data.role);
       });
       const response = await this.projectMemberService.updateProjectMember(
         workspaceSlug,
@@ -214,7 +219,13 @@ export class ProjectMemberStore implements IProjectMemberStore {
     } catch (error) {
       // revert back to original members in case of error
       runInAction(() => {
-        set(this.projectMemberMap, [projectId, userId], originalProjectMemberData);
+        set(this.projectMemberMap, [projectId, userId, "role"], originalProjectMemberData);
+        if (isCurrentUser)
+          set(
+            this.rootStore.user.permission.projectUserInfo,
+            [workspaceSlug, projectId, "role"],
+            originalProjectMemberData
+          );
       });
       throw error;
     }
