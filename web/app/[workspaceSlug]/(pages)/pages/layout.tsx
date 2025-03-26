@@ -3,8 +3,10 @@
 // layouts
 import { useParams } from "next/navigation";
 // components
+import { EUserPermissions } from "@plane/constants";
 import { StickyActionBar } from "@/components/stickies";
 // wrappers
+import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
 import { AuthenticationWrapper } from "@/lib/wrappers";
 // plane web components
 import { PagesAppCommandPalette } from "@/plane-web/components/command-palette";
@@ -29,7 +31,10 @@ export default function WorkspacePagesLayout({ children }: { children: React.Rea
           flag="WORKSPACE_PAGES"
           fallback={<WorkspacePagesUpgrade />}
         >
-          <>
+          <WorkspaceAccessWrapper
+            pageKey="pages"
+            allowedPermissions={[EUserPermissions.ADMIN, EUserPermissions.MEMBER]}
+          >
             <PagesAppCommandPalette />
             <div className="relative flex h-full w-full overflow-hidden">
               <PagesAppSidebar />
@@ -41,7 +46,7 @@ export default function WorkspacePagesLayout({ children }: { children: React.Rea
                 <PiChatFloatingBot />
               </FloatingActionsRoot>
             </div>
-          </>
+          </WorkspaceAccessWrapper>
         </WithFeatureFlagHOC>
       </WorkspaceAuthWrapper>
     </AuthenticationWrapper>
