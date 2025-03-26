@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { format } from "date-fns";
 import { useProject, useUser } from "@/hooks/store";
 
@@ -7,8 +8,14 @@ export const useTimeZoneConverter = (projectId: string) => {
   const userTimezone = user?.user_timezone;
   const projectTimezone = getProjectById(projectId)?.timezone;
 
-  return {
-    renderFormattedDateInUserTimezone: (date: string, formatToken: string = "MMM dd, yyyy") => {
+  /**
+   * Render a date in the user's timezone
+   * @param date - The date to render
+   * @param formatToken - The format token to use
+   * @returns The formatted date
+   */
+  const renderFormattedDateInUserTimezone = useCallback(
+    (date: string, formatToken: string = "MMM dd, yyyy") => {
       // return if undefined
       if (!date || !userTimezone) return;
       // convert the date to the user's timezone
@@ -16,30 +23,47 @@ export const useTimeZoneConverter = (projectId: string) => {
       // return the formatted date
       return format(convertedDate, formatToken);
     },
-    getProjectUTCOffset: () => {
-      if (!projectTimezone) return;
+    [userTimezone]
+  );
 
-      // Get date in user's timezone
-      const projectDate = new Date(new Date().toLocaleString("en-US", { timeZone: projectTimezone }));
-      const utcDate = new Date(new Date().toLocaleString("en-US", { timeZone: "UTC" }));
+  /**
+   * Get the project's UTC offset
+   * @returns The project's UTC offset
+   */
+  const getProjectUTCOffset = useCallback(() => {
+    if (!projectTimezone) return;
 
-      // Calculate offset in minutes
-      const offsetInMinutes = (projectDate.getTime() - utcDate.getTime()) / 60000;
+    // Get date in user's timezone
+    const projectDate = new Date(new Date().toLocaleString("en-US", { timeZone: projectTimezone }));
+    const utcDate = new Date(new Date().toLocaleString("en-US", { timeZone: "UTC" }));
 
-      // return if undefined
-      if (!offsetInMinutes) return;
+    // Calculate offset in minutes
+    const offsetInMinutes = (projectDate.getTime() - utcDate.getTime()) / 60000;
 
-      // Convert to hours and minutes
-      const hours = Math.floor(Math.abs(offsetInMinutes) / 60);
-      const minutes = Math.abs(offsetInMinutes) % 60;
+    // return if undefined
+    if (!offsetInMinutes) return;
 
-      // Format as +/-HH:mm
-      const sign = offsetInMinutes >= 0 ? "+" : "-";
-      return `UTC ${sign}${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
-    },
-    isProjectTimeZoneDifferent: () => {
-      if (!projectTimezone || !userTimezone) return false;
-      return projectTimezone !== userTimezone;
-    },
+    // Convert to hours and minutes
+    const hours = Math.floor(Math.abs(offsetInMinutes) / 60);
+    const minutes = Math.abs(offsetInMinutes) % 60;
+
+    // Format as +/-HH:mm
+    const sign = offsetInMinutes >= 0 ? "+" : "-";
+    return `UTC ${sign}${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+  }, [projectTimezone]);
+
+  /**
+   * Check if the project's timezone is different from the user's timezone
+   * @returns True if the project's timezone is different from the user's timezone, false otherwise
+   */
+  const isProjectTimeZoneDifferent = useCallback(() => {
+    if (!projectTimezone || !userTimezone) return false;
+    return projectTimezone !== userTimezone;
+  }, [projectTimezone, userTimezone]);
+
+  return {
+    renderFormattedDateInUserTimezone,
+    getProjectUTCOffset,
+    isProjectTimeZoneDifferent,
   };
 };

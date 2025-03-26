@@ -1747,6 +1747,12 @@
     "remove_filters_to_see_all_cycles": "Приберіть фільтри, щоб побачити всі цикли",
     "remove_search_criteria_to_see_all_cycles": "Приберіть критерії пошуку, щоб побачити всі цикли",
     "only_completed_cycles_can_be_archived": "Архівувати можна лише завершені цикли",
+    "start_date": "Дата початку",
+    "end_date": "Дата завершення",
+    "in_your_timezone": "У вашому часовому поясі",
+    "transfer_work_items": "Перенести {count} робочих одиниць",
+    "date_range": "Діапазон дат",
+    "add_date": "Додати дату",
     "active_cycle": {
       "label": "Активний цикл",
       "progress": "Прогрес",

@@ -6,6 +6,8 @@ import { DateRange, Matcher } from "react-day-picker";
 import { usePopper } from "react-popper";
 import { ArrowRight, CalendarCheck2, CalendarDays } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 // ui
 import { ComboDropDown, Calendar } from "@plane/ui";
 // helpers
@@ -55,6 +57,7 @@ type Props = {
 };
 
 export const DateRangeDropdown: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
   const {
     buttonClassName,
     buttonContainerClassName,
@@ -71,8 +74,8 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
     maxDate,
     onSelect,
     placeholder = {
-      from: "Add date",
-      to: "Add date",
+      from: t("project_cycles.add_date"),
+      to: t("project_cycles.add_date"),
     },
     placement,
     showTooltip = false,
@@ -151,7 +154,7 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
       <DropdownButton
         className={buttonClassName}
         isActive={isOpen}
-        tooltipHeading={customTooltipHeading ?? "Date range"}
+        tooltipHeading={customTooltipHeading ?? t("project_cycles.date_range")}
         tooltipContent={
           customTooltipContent ?? (
             <>

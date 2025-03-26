@@ -210,7 +210,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
           }}
         >
           <TransferIcon className="fill-custom-primary-200 w-4" />
-          <span>Transfer {transferableIssuesCount} work items</span>
+          <span>{t("project_cycles.transfer_work_items", { count: transferableIssuesCount })}</span>
         </div>
       )}
       {isActive ? (
@@ -226,7 +226,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
                 </span>
               }
               disabled={!isProjectTimeZoneDifferent()}
-              tooltipHeading="In your timezone"
+              tooltipHeading={t("project_cycles.date_range")}
             >
               <div className="flex gap-1 text-xs text-custom-text-300 font-medium items-center">
                 <CalendarDays className="h-3 w-3 flex-shrink-0 my-auto" />
@@ -257,11 +257,11 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
                 to: getDate(cycleDetails.end_date),
               }}
               placeholder={{
-                from: "Start date",
-                to: "End date",
+                from: t("project_cycles.start_date"),
+                to: t("project_cycles.end_date"),
               }}
               showTooltip={isProjectTimeZoneDifferent()}
-              customTooltipHeading="In your timezone"
+              customTooltipHeading={t("project_cycles.in_your_timezone")}
               customTooltipContent={
                 <span className="flex gap-1">
                   {renderFormattedDateInUserTimezone(cycleDetails.start_date ?? "")}
