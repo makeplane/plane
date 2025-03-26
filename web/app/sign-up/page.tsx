@@ -33,7 +33,7 @@ const SignInPage = observer(() => {
   const { resolvedTheme } = useTheme();
 
   const logo = resolvedTheme === "light" ? BlackHorizontalLogo : WhiteHorizontalLogo;
-  // Determine if the sign-up block should be shown
+  // Determine if the sign-up functionality should be shown
   const showSignup = ENABLE_SIGNUP !== "0";
 
   return (
@@ -53,21 +53,28 @@ const SignInPage = observer(() => {
                 <Image src={logo} alt="Plane logo" />
               </Link>
             </div>
-            {showSignup && (
-              <div className="flex flex-col items-end sm:items-center sm:gap-2 sm:flex-row  text-center text-sm font-medium text-onboarding-text-300">
-                {t("auth.common.already_have_an_account")}
-                <Link
-                  href="/"
-                  onClick={() => captureEvent(NAVIGATE_TO_SIGNIN, {})}
-                  className="font-semibold text-custom-primary-100 hover:underline"
-                >
+            <div className="flex flex-col items-end sm:items-center sm:gap-2 sm:flex-row  text-center text-sm font-medium text-onboarding-text-300">
+              {t("auth.common.already_have_an_account")}
+              <Link
+                href="/"
+                onClick={() => captureEvent(NAVIGATE_TO_SIGNIN, {})}
+                className="font-semibold text-custom-primary-100 hover:underline"
+              >
+                {t("auth.common.login")}
+              </Link>
+            </div>
+          </div>
+          <div className="flex flex-col justify-center flex-grow container h-[100vh-60px] mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 transition-all">
+            {showSignup ? (
+              <AuthRoot authMode={EAuthModes.SIGN_UP} />
+            ) : (
+              <div className="text-center">
+                <p className="text-onboarding-text-300">Sign-up is currently disabled.</p>
+                <Link href="/" className="font-semibold text-custom-primary-100 hover:underline">
                   {t("auth.common.login")}
                 </Link>
               </div>
             )}
-          </div>
-          <div className="flex flex-col justify-center flex-grow container h-[100vh-60px] mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 transition-all">
-            <AuthRoot authMode={EAuthModes.SIGN_UP} />
           </div>
         </div>
       </div>

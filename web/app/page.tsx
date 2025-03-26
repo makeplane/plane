@@ -12,6 +12,7 @@ import { useTranslation } from "@plane/i18n";
 import { AuthRoot } from "@/components/account";
 import { PageHead } from "@/components/core";
 // constants
+import { ENABLE_SIGNUP } from "web/helpers/common.helper";
 // helpers
 import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
 // hooks
@@ -34,6 +35,8 @@ const HomePage = observer(() => {
   const { captureEvent } = useEventTracker();
 
   const logo = resolvedTheme === "light" ? BlackHorizontalLogo : WhiteHorizontalLogo;
+  // Determine if the sign-up block should be shown
+  const showSignup = ENABLE_SIGNUP !== "0";
 
   return (
     <DefaultLayout>
@@ -55,16 +58,18 @@ const HomePage = observer(() => {
                     <Image src={logo} alt="Plane logo" />
                   </Link>
                 </div>
-                <div className="flex flex-col items-end sm:items-center sm:gap-2 sm:flex-row text-center text-sm font-medium text-onboarding-text-300">
-                  {t("auth.common.new_to_plane")}
-                  <Link
-                    href="/sign-up"
-                    onClick={() => captureEvent(NAVIGATE_TO_SIGNUP, {})}
-                    className="font-semibold text-custom-primary-100 hover:underline"
-                  >
-                    {t("auth.common.create_account")}
-                  </Link>
-                </div>
+                {showSignup && (
+                  <div className="flex flex-col items-end sm:items-center sm:gap-2 sm:flex-row text-center text-sm font-medium text-onboarding-text-300">
+                    {t("auth.common.new_to_plane")}
+                    <Link
+                      href="/sign-up"
+                      onClick={() => captureEvent(NAVIGATE_TO_SIGNUP, {})}
+                      className="font-semibold text-custom-primary-100 hover:underline"
+                    >
+                      {t("auth.common.create_account")}
+                    </Link>
+                  </div>
+                )}
               </div>
               <div className="flex flex-col justify-center flex-grow container h-[100vh-60px] mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 transition-all">
                 <AuthRoot authMode={EAuthModes.SIGN_IN} />
