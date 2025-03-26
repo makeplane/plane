@@ -1773,6 +1773,12 @@
     "remove_filters_to_see_all_cycles": "Odstráňte filtre pre zobrazenie všetkých cyklov",
     "remove_search_criteria_to_see_all_cycles": "Odstráňte kritériá pre zobrazenie všetkých cyklov",
     "only_completed_cycles_can_be_archived": "Archivovať je možné iba dokončené cykly",
+    "start_date": "Dátum začiatku",
+    "end_date": "Dátum konca",
+    "in_your_timezone": "Váš časový pásmo",
+    "transfer_work_items": "Presunúť {count} pracovných položiek",
+    "date_range": "Dátumový rozsah",
+    "add_date": "Pridať dátum",
     "active_cycle": {
       "label": "Aktívny cyklus",
       "progress": "Pokrok",

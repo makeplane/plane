@@ -1776,6 +1776,12 @@
     "remove_filters_to_see_all_cycles": "모든 주기를 보려면 필터를 제거하세요",
     "remove_search_criteria_to_see_all_cycles": "모든 주기를 보려면 검색 기준을 제거하세요",
     "only_completed_cycles_can_be_archived": "완료된 주기만 아카이브할 수 있습니다",
+    "start_date": "시작일",
+    "end_date": "종료일",
+    "in_your_timezone": "내 시간대",
+    "transfer_work_items": "{count}개의 작업 항목 이전",
+    "date_range": "날짜 범위",
+    "add_date": "날짜 추가",
     "active_cycle": {
       "label": "활성 주기",
       "progress": "진행",
