@@ -161,8 +161,15 @@ class EpicIssuesEndpoint(BaseAPIView):
 
         _ = Issue.objects.bulk_update(issue_ids, ["parent"], batch_size=10)
 
-        updated_issue_ids = Issue.issue_objects.filter(id__in=issue_ids).annotate(
-            state_group=F("state__group")
+        updated_issue_ids = (
+            Issue.issue_objects.filter(id__in=issue_ids)
+            .annotate(state_group=F("state__group"))
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
         )
 
         # Track the issue
