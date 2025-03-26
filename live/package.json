@@ -25,6 +25,7 @@
     "@plane/constants": "*",
     "@plane/decorators": "*",
     "@plane/editor": "*",
+    "@plane/logger": "*",
     "@plane/types": "*",
     "@tiptap/core": "2.10.4",
     "@tiptap/html": "2.11.0",
@@ -46,8 +47,7 @@
     "y-prosemirror": "^1.2.15",
     "y-protocols": "^1.0.6",
     "yjs": "^13.6.20",
-    "zod": "^3.24.2",
-    "@plane/logger": "*"
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/compression": "^1.7.5",
