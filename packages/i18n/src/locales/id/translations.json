@@ -1,4 +1,174 @@
 {
+  "sidebar": {
+    "projects": "Projek",
+    "pages": "Halaman",
+    "new_work_item": "Item kerja baru",
+    "home": "Beranda",
+    "your_work": "Pekerjaan anda",
+    "inbox": "Inbox",
+    "workspace": "Workspace",
+    "views": "Views",
+    "analytics": "Analitik",
+    "work_items": "Item kerja",
+    "cycles": "Siklus",
+    "modules": "Modul",
+    "intake": "Intake",
+    "drafts": "Draft",
+    "favorites": "Favorit",
+    "pro": "Pro",
+    "upgrade": "Upgrade"
+  },
+
+  "auth": {
+    "common": {
+      "email": {
+        "label": "Email",
+        "placeholder": "nama@perusahaan.com",
+        "errors": {
+          "required": "Email wajib diisi",
+          "invalid": "Email tidak valid"
+        }
+      },
+      "password": {
+        "label": "Password",
+        "set_password": "Atur password",
+        "placeholder": "Masukkan password",
+        "confirm_password": {
+          "label": "Konfirmasi password",
+          "placeholder": "Konfirmasi password"
+        },
+        "current_password": {
+          "label": "Password saat ini"
+        },
+        "new_password": {
+          "label": "Password baru",
+          "placeholder": "Masukkan password baru"
+        },
+        "change_password": {
+          "label": {
+            "default": "Ubah password",
+            "submitting": "Mengubah password"
+          }
+        },
+        "errors": {
+          "match": "Password tidak cocok",
+          "empty": "Silakan masukkan password anda",
+          "length": "Panjang password harus lebih dari 8 karakter",
+          "strength": {
+            "weak": "Password lemah",
+            "strong": "Password kuat"
+          }
+        },
+        "submit": "Atur password",
+        "toast": {
+          "change_password": {
+            "success": {
+              "title": "Berhasil!",
+              "message": "Password berhasil diubah."
+            },
+            "error": {
+              "title": "Error!",
+              "message": "Terjadi kesalahan. Silakan coba lagi."
+            }
+          }
+        }
+      },
+      "unique_code": {
+        "label": "Kode unik",
+        "placeholder": "gets-sets-flys",
+        "paste_code": "Tempelkan kode yang dikirim ke email anda",
+        "requesting_new_code": "Meminta kode baru",
+        "sending_code": "Mengirim kode"
+      },
+      "already_have_an_account": "Sudah punya akun?",
+      "login": "Masuk",
+      "create_account": "Buat akun",
+      "new_to_plane": "Baru di Plane?",
+      "back_to_sign_in": "Kembali ke halaman masuk",
+      "resend_in": "Kirim ulang dalam {seconds} detik",
+      "sign_in_with_unique_code": "Masuk dengan kode unik",
+      "forgot_password": "Lupa password?"
+    },
+    "sign_up": {
+      "header": {
+        "label": "Buat akun untuk mulai mengelola pekerjaan dengan tim anda.",
+        "step": {
+          "email": {
+            "header": "Daftar",
+            "sub_header": ""
+          },
+          "password": {
+            "header": "Daftar",
+            "sub_header": "Daftar menggunakan kombinasi email-password."
+          },
+          "unique_code": {
+            "header": "Daftar",
+            "sub_header": "Daftar menggunakan kode unik yang dikirim ke alamat email di atas."
+          }
+        }
+      },
+      "errors": {
+        "password": {
+          "strength": "Coba atur password yang lebih kuat untuk melanjutkan"
+        }
+      }
+    },
+    "sign_in": {
+      "header": {
+        "label": "Masuk untuk mulai mengelola pekerjaan dengan tim anda.",
+        "step": {
+          "email": {
+            "header": "Masuk atau daftar",
+            "sub_header": ""
+          },
+          "password": {
+            "header": "Masuk atau daftar",
+            "sub_header": "Gunakan kombinasi email-password anda untuk masuk."
+          },
+          "unique_code": {
+            "header": "Masuk atau daftar",
+            "sub_header": "Masuk menggunakan kode unik yang dikirim ke alamat email di atas."
+          }
+        }
+      }
+    },
+    "forgot_password": {
+      "title": "Reset password anda",
+      "description": "Masukkan alamat email akun anda yang telah diverifikasi dan kami akan mengirimkan link reset password.",
+      "email_sent": "Kami telah mengirim link reset ke alamat email anda",
+      "send_reset_link": "Kirim link reset",
+      "errors": {
+        "smtp_not_enabled": "Kami melihat bahwa admin anda belum mengaktifkan SMTP, kami tidak dapat mengirimkan link reset password"
+      },
+      "toast": {
+        "success": {
+          "title": "Email terkirim",
+          "message": "Periksa inbox anda untuk link reset password. Jika tidak muncul dalam beberapa menit, periksa folder spam."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Terjadi kesalahan. Silakan coba lagi."
+        }
+      }
+    },
+    "reset_password": {
+      "title": "Atur password baru",
+      "description": "Amankan akun anda dengan password yang kuat"
+    },
+    "set_password": {
+      "title": "Amankan akun anda",
+      "description": "Mengatur password membantu anda masuk dengan aman"
+    },
+    "sign_out": {
+      "toast": {
+        "error": {
+          "title": "Error!",
+          "message": "Gagal keluar. Silakan coba lagi."
+        }
+      }
+    }
+  },
+
   "submit": "Kirim",
   "cancel": "Batal",
   "loading": "Memuat",
@@ -331,7 +501,7 @@
   "re_generate_key": "Hasilkan kembali kunci",
   "export": "Ekspor",
   "member": "{count, plural, one{# anggota} other{# anggota}}",
-  
+
   "project_view": {
     "sort_by": {
       "created_at": "Dibuat pada",
@@ -339,12 +509,12 @@
       "name": "Nama"
     }
   },
-  
+
   "toast": {
     "success": "Sukses!",
     "error": "Kesalahan!"
   },
-  
+
   "links": {
     "toasts": {
       "created": {
@@ -373,7 +543,7 @@
       }
     }
   },
-  
+
   "home": {
     "empty": {
       "quickstart_guide": "Panduan pemula Anda",
@@ -441,7 +611,7 @@
     "title": "Beranda",
     "star_us_on_github": "Bintang kami di GitHub"
   },
-  
+
   "link": {
     "modal": {
       "url": {
@@ -455,7 +625,7 @@
       }
     }
   },
-  
+
   "common": {
     "all": "Semua",
     "states": "Negara-negara",
@@ -534,29 +704,29 @@
     "archiving": "Mengarsipkan",
     "archive": "Arsip",
     "access": {
-        "public": "Publik",
-        "private": "Pribadi"
+      "public": "Publik",
+      "private": "Pribadi"
     },
     "done": "Selesai",
     "sub_work_items": "Sub-item kerja",
     "comment": "Komentar",
     "workspace_level": "Tingkat ruang kerja",
     "order_by": {
-        "label": "Urutkan berdasarkan",
-        "manual": "Manual",
-        "last_created": "Terakhir dibuat",
-        "last_updated": "Terakhir diperbarui",
-        "start_date": "Tanggal mulai",
-        "due_date": "Tanggal jatuh tempo",
-        "asc": "Menaik",
-        "desc": "Menurun",
-        "updated_on": "Diperbarui pada"
+      "label": "Urutkan berdasarkan",
+      "manual": "Manual",
+      "last_created": "Terakhir dibuat",
+      "last_updated": "Terakhir diperbarui",
+      "start_date": "Tanggal mulai",
+      "due_date": "Tanggal jatuh tempo",
+      "asc": "Menaik",
+      "desc": "Menurun",
+      "updated_on": "Diperbarui pada"
     },
     "sort": {
-        "asc": "Menaik",
-        "desc": "Menurun",
-        "created_on": "Dibuat pada",
-        "updated_on": "Diperbarui pada"
+      "asc": "Menaik",
+      "desc": "Menurun",
+      "created_on": "Dibuat pada",
+      "updated_on": "Diperbarui pada"
     },
     "comments": "Komentar",
     "updates": "Pembaruan",
@@ -578,12 +748,12 @@
     "resend": "Kirim ulang",
     "relations": "Hubungan",
     "errors": {
-        "default": {
-            "title": "Kesalahan!",
-            "message": "Sesuatu telah salah. Silakan coba lagi."
-        },
-        "required": "Bidang ini diperlukan",
-        "entity_required": "{entity} diperlukan"
+      "default": {
+        "title": "Kesalahan!",
+        "message": "Sesuatu telah salah. Silakan coba lagi."
+      },
+      "required": "Bidang ini diperlukan",
+      "entity_required": "{entity} diperlukan"
     },
     "update_link": "Perbarui tautan",
     "attach": "Lampirkan",
@@ -608,26 +778,26 @@
     "press_for_commands": "Tekan '/' untuk perintah",
     "click_to_add_description": "Klik untuk menambahkan deskripsi",
     "search": {
-        "label": "Pencarian",
-        "placeholder": "Ketik untuk mencari",
-        "no_matches_found": "Tidak ada kecocokan ditemukan",
-        "no_matching_results": "Tidak ada hasil yang cocok"
+      "label": "Pencarian",
+      "placeholder": "Ketik untuk mencari",
+      "no_matches_found": "Tidak ada kecocokan ditemukan",
+      "no_matching_results": "Tidak ada hasil yang cocok"
     },
     "actions": {
-        "edit": "Edit",
-        "make_a_copy": "Buat salinan",
-        "open_in_new_tab": "Buka di tab baru",
-        "copy_link": "Salin tautan",
-        "archive": "Arsip",
-        "restore": "Pulihkan",
-        "delete": "Hapus",
-        "remove_relation": "Hapus hubungan",
-        "subscribe": "Berlangganan",
-        "unsubscribe": "Berhenti berlangganan",
-        "clear_sorting": "Hapus pengurutan",
-        "show_weekends": "Tampilkan akhir pekan",
-        "enable": "Aktifkan",
-        "disable": "Nonaktifkan"
+      "edit": "Edit",
+      "make_a_copy": "Buat salinan",
+      "open_in_new_tab": "Buka di tab baru",
+      "copy_link": "Salin tautan",
+      "archive": "Arsip",
+      "restore": "Pulihkan",
+      "delete": "Hapus",
+      "remove_relation": "Hapus hubungan",
+      "subscribe": "Berlangganan",
+      "unsubscribe": "Berhenti berlangganan",
+      "clear_sorting": "Hapus pengurutan",
+      "show_weekends": "Tampilkan akhir pekan",
+      "enable": "Aktifkan",
+      "disable": "Nonaktifkan"
     },
     "name": "Nama",
     "discard": "Buang",
@@ -687,8 +857,8 @@
     "members": "Anggota",
     "you": "Anda",
     "upgrade_cta": {
-        "higher_subscription": "Tingkatkan ke langganan yang lebih tinggi",
-        "talk_to_sales": "Bicaralah dengan Penjualan"
+      "higher_subscription": "Tingkatkan ke langganan yang lebih tinggi",
+      "talk_to_sales": "Bicaralah dengan Penjualan"
     },
     "category": "Kategori",
     "categories": "Kategori",
