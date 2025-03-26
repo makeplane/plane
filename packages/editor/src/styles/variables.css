@@ -192,7 +192,7 @@
   }
 }
 
-/* keep a static padding of 20px for wide layouts for container width <912px */
+/* keep a static padding of 96px for wide layouts for container width <912px */
 @container page-header-container (max-width: 912) {
   .page-header-content.wide-layout {
     padding-left: var(--wide-content-margin) !important;
