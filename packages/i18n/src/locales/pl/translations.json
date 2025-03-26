@@ -1747,6 +1747,12 @@
     "remove_filters_to_see_all_cycles": "Usuń filtry, aby wyświetlić wszystkie cykle",
     "remove_search_criteria_to_see_all_cycles": "Usuń kryteria wyszukiwania, aby wyświetlić wszystkie cykle",
     "only_completed_cycles_can_be_archived": "Można archiwizować tylko ukończone cykle",
+    "start_date": "Data początku",
+    "end_date": "Data końca",
+    "in_your_timezone": "W Twojej strefie czasowej",
+    "transfer_work_items": "Przenieś {count} elementów pracy",
+    "date_range": "Zakres dat",
+    "add_date": "Dodaj datę",
     "active_cycle": {
       "label": "Aktywny cykl",
       "progress": "Postęp",

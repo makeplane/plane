@@ -6,6 +6,8 @@ import { DateRange, Matcher } from "react-day-picker";
 import { usePopper } from "react-popper";
 import { ArrowRight, CalendarCheck2, CalendarDays } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 // ui
 import { ComboDropDown, Calendar } from "@plane/ui";
 // helpers
@@ -50,9 +52,12 @@ type Props = {
   };
   renderByDefault?: boolean;
   renderPlaceholder?: boolean;
+  customTooltipContent?: React.ReactNode;
+  customTooltipHeading?: string;
 };
 
 export const DateRangeDropdown: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
   const {
     buttonClassName,
     buttonContainerClassName,
@@ -69,8 +74,8 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
     maxDate,
     onSelect,
     placeholder = {
-      from: "Add date",
-      to: "Add date",
+      from: t("project_cycles.add_date"),
+      to: t("project_cycles.add_date"),
     },
     placement,
     showTooltip = false,
@@ -78,6 +83,8 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
     value,
     renderByDefault = true,
     renderPlaceholder = true,
+    customTooltipContent,
+    customTooltipHeading,
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -147,13 +154,15 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
       <DropdownButton
         className={buttonClassName}
         isActive={isOpen}
-        tooltipHeading="Date range"
+        tooltipHeading={customTooltipHeading ?? t("project_cycles.date_range")}
         tooltipContent={
-          <>
-            {dateRange.from ? renderFormattedDate(dateRange.from) : "N/A"}
-            {" - "}
-            {dateRange.to ? renderFormattedDate(dateRange.to) : "N/A"}
-          </>
+          customTooltipContent ?? (
+            <>
+              {dateRange.from ? renderFormattedDate(dateRange.from) : "N/A"}
+              {" - "}
+              {dateRange.to ? renderFormattedDate(dateRange.to) : "N/A"}
+            </>
+          )
         }
         showTooltip={showTooltip}
         variant={buttonVariant}

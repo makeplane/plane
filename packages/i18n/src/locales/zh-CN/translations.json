@@ -1774,6 +1774,12 @@
     "remove_filters_to_see_all_cycles": "移除筛选器以查看所有周期",
     "remove_search_criteria_to_see_all_cycles": "移除搜索条件以查看所有周期",
     "only_completed_cycles_can_be_archived": "只能归档已完成的周期",
+    "start_date": "开始日期",
+    "end_date": "结束日期",
+    "in_your_timezone": "在您的时区",
+    "transfer_work_items": "转移 {count} 工作项",
+    "date_range": "日期范围",
+    "add_date": "添加日期",
     "active_cycle": {
       "label": "活动周期",
       "progress": "进度",

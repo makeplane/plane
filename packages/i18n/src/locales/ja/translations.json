@@ -1774,6 +1774,12 @@
     "remove_filters_to_see_all_cycles": "すべてのサイクルを表示するにはフィルターを解除してください",
     "remove_search_criteria_to_see_all_cycles": "すべてのサイクルを表示するには検索条件を解除してください",
     "only_completed_cycles_can_be_archived": "完了したサイクルのみアーカイブできます",
+    "start_date": "開始日",
+    "end_date": "終了日",
+    "in_your_timezone": "あなたのタイムゾーン",
+    "transfer_work_items": "作業項目を転送 {count}",
+    "date_range": "日付範囲",
+    "add_date": "日付を追加",
     "active_cycle": {
       "label": "アクティブなサイクル",
       "progress": "進捗",

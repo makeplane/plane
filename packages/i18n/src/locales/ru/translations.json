@@ -1774,6 +1774,12 @@
     "remove_filters_to_see_all_cycles": "Снимите фильтры для просмотра всех циклов",
     "remove_search_criteria_to_see_all_cycles": "Очистите поиск для просмотра всех циклов",
     "only_completed_cycles_can_be_archived": "Только завершённые циклы можно архивировать",
+    "start_date": "Дата начала",
+    "end_date": "Дата окончания",
+    "in_your_timezone": "В вашем часовом поясе",
+    "transfer_work_items": "Перенести {count} рабочих элементов",
+    "date_range": "Диапазон дат",
+    "add_date": "Добавить дату",
     "active_cycle": {
       "label": "Активный цикл",
       "progress": "Прогресс",
