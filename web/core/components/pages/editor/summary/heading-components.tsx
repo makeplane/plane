@@ -1,12 +1,12 @@
-// document editor
-import { IMarking } from "@plane/editor";
+// plane editor
+import type { IMarking } from "@plane/editor";
 
-type HeadingProps = {
+export type THeadingComponentProps = {
   marking: IMarking;
   onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 };
 
-export const OutlineHeading1 = ({ marking, onClick }: HeadingProps) => (
+export const OutlineHeading1 = ({ marking, onClick }: THeadingComponentProps) => (
   <button
     type="button"
     onClick={onClick}
@@ -16,7 +16,7 @@ export const OutlineHeading1 = ({ marking, onClick }: HeadingProps) => (
   </button>
 );
 
-export const OutlineHeading2 = ({ marking, onClick }: HeadingProps) => (
+export const OutlineHeading2 = ({ marking, onClick }: THeadingComponentProps) => (
   <button
     type="button"
     onClick={onClick}
@@ -26,7 +26,7 @@ export const OutlineHeading2 = ({ marking, onClick }: HeadingProps) => (
   </button>
 );
 
-export const OutlineHeading3 = ({ marking, onClick }: HeadingProps) => (
+export const OutlineHeading3 = ({ marking, onClick }: THeadingComponentProps) => (
   <button
     type="button"
     onClick={onClick}
