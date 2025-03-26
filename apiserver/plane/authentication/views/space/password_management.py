@@ -90,7 +90,7 @@ class ForgotPasswordSpaceEndpoint(APIView):
         if user:
             # Get the reset token for user
             uidb64, token = generate_password_token(user=user)
-            current_site = request.META.get("HTTP_ORIGIN")
+            current_site = base_host(request=request, is_space=True)
             # send the forgot password email
             forgot_password.delay(
                 user.first_name, user.email, uidb64, token, current_site

@@ -38,14 +38,14 @@ class MagicGenerateSpaceEndpoint(APIView):
             )
             return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 
-        origin = base_host(request=request, is_space=True)
+
         email = request.data.get("email", "").strip().lower()
         try:
             validate_email(email)
             adapter = MagicCodeProvider(request=request, key=email)
             key, token = adapter.initiate()
             # If the smtp is configured send through here
-            magic_link.delay(email, key, token, origin)
+            magic_link.delay(email, key, token)
             return Response({"key": str(key)}, status=status.HTTP_200_OK)
         except AuthenticationException as e:
             return Response(e.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
