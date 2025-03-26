@@ -50,6 +50,8 @@ type Props = {
   };
   renderByDefault?: boolean;
   renderPlaceholder?: boolean;
+  customTooltipContent?: React.ReactNode;
+  customTooltipHeading?: string;
 };
 
 export const DateRangeDropdown: React.FC<Props> = (props) => {
@@ -78,6 +80,8 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
     value,
     renderByDefault = true,
     renderPlaceholder = true,
+    customTooltipContent,
+    customTooltipHeading,
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -147,13 +151,15 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
       <DropdownButton
         className={buttonClassName}
         isActive={isOpen}
-        tooltipHeading="Date range"
+        tooltipHeading={customTooltipHeading ?? "Date range"}
         tooltipContent={
-          <>
-            {dateRange.from ? renderFormattedDate(dateRange.from) : "N/A"}
-            {" - "}
-            {dateRange.to ? renderFormattedDate(dateRange.to) : "N/A"}
-          </>
+          customTooltipContent ?? (
+            <>
+              {dateRange.from ? renderFormattedDate(dateRange.from) : "N/A"}
+              {" - "}
+              {dateRange.to ? renderFormattedDate(dateRange.to) : "N/A"}
+            </>
+          )
         }
         showTooltip={showTooltip}
         variant={buttonVariant}
