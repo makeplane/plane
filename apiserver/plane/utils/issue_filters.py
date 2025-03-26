@@ -597,7 +597,11 @@ def filter_character_fields(params, issue_filter, method, prefix=""):
         "vendor_code", 
         "trip_reference_number", 
         "reference_number", 
-        "customer_code"
+        "customer_code",
+        "hub_name",
+        "customer_name",
+        "vendor_name",
+        "worker_name"
     ]
 
     for field in character_fields:
