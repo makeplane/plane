@@ -142,9 +142,9 @@ export const PageRenderer = (props: IPageRenderer) => {
 
   return (
     <>
-      <div className="frame-renderer flex-grow w-full -mx-5" onMouseOver={handleLinkHover}>
+      <div className="frame-renderer flex-grow w-full" onMouseOver={handleLinkHover}>
         {titleEditor && (
-          <div className="relative w-full flex-shrink-0 md:pl-5 px-4">
+          <div className="relative w-full">
             <EditorContainer
               editor={titleEditor}
               id={id + "-title"}

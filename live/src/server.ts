@@ -6,7 +6,6 @@ import type { Hocuspocus } from "@hocuspocus/server";
 
 // Environment and configuration
 import { serverConfig, configureServerMiddleware } from "./config/server-config";
-import { initializeSentry } from "./sentry-config";
 
 // Core functionality
 import { getHocusPocusServer } from "@/core/hocuspocus-server";
@@ -52,8 +51,6 @@ export class Server {
     // Initialize express-ws after Express setup
     expressWs(this.app as any);
 
-    // Configure server
-    this.setupSentry();
     configureServerMiddleware(this.app);
   }
 
@@ -63,13 +60,6 @@ export class Server {
    */
   getApp(): Application {
     return this.app;
-  }
-
-  /**
-   * Set up Sentry for error tracking
-   */
-  private setupSentry(): void {
-    initializeSentry();
   }
 
   /**

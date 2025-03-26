@@ -1,12 +1,10 @@
 import { ErrorRequestHandler, Request, Response, NextFunction } from "express";
 
-import { SentryInstance, captureException } from "@/sentry-config";
 import { env } from "@/env";
 import { logger } from "@plane/logger";
 import { handleError } from "./error-factory";
 import { ErrorContext, reportError } from "./error-reporting";
 import { manualLogger } from "../logger";
-import { APIService } from "@/core/services/api.service";
 
 /**
  * HTTP Status Codes
@@ -148,18 +146,6 @@ export class AppError extends Error {
         errorCategory: this.category,
         stack: this.stack,
         context: this.context,
-      });
-    }
-
-    // Send to Sentry if configured
-    if (SentryInstance) {
-      captureException(this, {
-        extra: {
-          ...this.context,
-          isOperational: this.isOperational,
-          errorCategory: this.category,
-          status: this.status,
-        },
       });
     }
   }
@@ -328,10 +314,6 @@ export const setupGlobalErrorHandlers = (gracefulTerminationHandler: () => Promi
   process.on("unhandledRejection", (reason: unknown) => {
     logger.error("Unhandled Promise Rejection", { reason });
 
-    if (SentryInstance) {
-      SentryInstance.captureException(reason);
-    }
-
     // Convert to AppError and handle
     const appError = handleError(reason, {
       errorType: "internal",
@@ -351,10 +333,6 @@ export const setupGlobalErrorHandlers = (gracefulTerminationHandler: () => Promi
       error: error.message,
       stack: error.stack,
     });
-
-    if (SentryInstance) {
-      SentryInstance.captureException(error);
-    }
 
     // Convert to AppError if needed
     const appError = handleError(error, {

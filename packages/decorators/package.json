@@ -31,7 +31,7 @@
     "typescript": "^5.3.3"
   },
   "peerDependencies": {
-    "express": ">=4.17.1",
+    "express": ">=4.21.2",
     "ws": ">=8.0.0"
   },
   "peerDependenciesMeta": {

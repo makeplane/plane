@@ -1,5 +1,4 @@
-import { SentryInstance } from "@/sentry-config";
-import { AppError, ErrorCategory } from "./error-handler";
+import { AppError } from "./error-handler";
 import { logger } from "@plane/logger";
 import { handleError } from "./error-factory";
 
@@ -27,16 +26,6 @@ export const reportError = (error: Error | unknown, context?: ErrorContext): voi
     error,
     context,
   });
-
-  // Send to Sentry
-  if (SentryInstance) {
-    SentryInstance.captureException(error, {
-      extra: {
-        ...context,
-        errorCategory: ErrorCategory.PROGRAMMING,
-      },
-    });
-  }
 };
 
 export const handleFatalError = (error: Error | unknown, context?: ErrorContext): void => {

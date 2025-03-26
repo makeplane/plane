@@ -1,5 +1,7 @@
 import { Extensions } from "@tiptap/core";
 import React from "react";
+// plane imports
+import { cn } from "@plane/utils";
 // components
 import { DocumentContentLoader, PageRenderer } from "@/components/editors";
 // constants
@@ -75,7 +77,11 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
 
   if (!editor || !titleEditor) return null;
 
-  if (!hasServerSynced && !hasServerConnectionFailed) return <DocumentContentLoader />;
+  const blockWidthClassName = cn("w-full max-w-[720px] mx-auto transition-all duration-200 ease-in-out", {
+    "max-w-[1152px]": displayConfig.wideLayout,
+  });
+
+  if (!hasServerSynced && !hasServerConnectionFailed) return <DocumentContentLoader className={blockWidthClassName} />;
 
   return (
     <PageRenderer
@@ -84,7 +90,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
       displayConfig={displayConfig}
       editor={editor}
       titleEditor={titleEditor}
-      editorContainerClassName={editorContainerClassNames}
+      editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
       id={id}
       tabIndex={tabIndex}
     />

@@ -1,51 +1,61 @@
 import "reflect-metadata";
+import { RequestHandler } from "express";
+
+// Define valid HTTP methods
+type RestMethod = "get" | "post" | "put" | "patch" | "delete";
 
 /**
- * GET method decorator
+ * Controller decorator
+ * @param baseRoute
+ * @returns
  */
-export const Get = (route: string): MethodDecorator => {
-  return function (target: object, propertyKey: string | symbol, _descriptor: PropertyDescriptor) {
-    Reflect.defineMetadata("route", route, target, propertyKey);
-    Reflect.defineMetadata("method", "get", target, propertyKey);
+export function Controller(baseRoute: string = ""): ClassDecorator {
+  return function (target: Function) {
+    Reflect.defineMetadata("baseRoute", baseRoute, target);
   };
-};
+}
 
 /**
- * POST method decorator
+ * Factory function to create HTTP method decorators
+ * @param method HTTP method to handle
+ * @returns Method decorator
  */
-export const Post = (route: string): MethodDecorator => {
-  return function (target: object, propertyKey: string | symbol, _descriptor: PropertyDescriptor) {
-    Reflect.defineMetadata("route", route, target, propertyKey);
-    Reflect.defineMetadata("method", "post", target, propertyKey);
+function createHttpMethodDecorator(
+  method: RestMethod
+): (route: string) => MethodDecorator {
+  return function (route: string): MethodDecorator {
+    return function (
+      target: object,
+      propertyKey: string | symbol,
+      descriptor: PropertyDescriptor
+    ) {
+      Reflect.defineMetadata("method", method, target, propertyKey);
+      Reflect.defineMetadata("route", route, target, propertyKey);
+    };
   };
-};
+}
+
+// Export HTTP method decorators using the factory
+export const Get = createHttpMethodDecorator("get");
+export const Post = createHttpMethodDecorator("post");
+export const Put = createHttpMethodDecorator("put");
+export const Patch = createHttpMethodDecorator("patch");
+export const Delete = createHttpMethodDecorator("delete");
 
 /**
- * PUT method decorator
+ * Middleware decorator
+ * @param middleware
+ * @returns
  */
-export const Put = (route: string): MethodDecorator => {
-  return function (target: object, propertyKey: string | symbol, _descriptor: PropertyDescriptor) {
-    Reflect.defineMetadata("route", route, target, propertyKey);
-    Reflect.defineMetadata("method", "put", target, propertyKey);
+export function Middleware(middleware: RequestHandler): MethodDecorator {
+  return function (
+    target: object,
+    propertyKey: string | symbol,
+    descriptor: PropertyDescriptor,
+  ) {
+    const middlewares =
+      Reflect.getMetadata("middlewares", target, propertyKey) || [];
+    middlewares.push(middleware);
+    Reflect.defineMetadata("middlewares", middlewares, target, propertyKey);
   };
-};
-
-/**
- * PATCH method decorator
- */
-export const Patch = (route: string): MethodDecorator => {
-  return function (target: object, propertyKey: string | symbol, _descriptor: PropertyDescriptor) {
-    Reflect.defineMetadata("route", route, target, propertyKey);
-    Reflect.defineMetadata("method", "patch", target, propertyKey);
-  };
-};
-
-/**
- * DELETE method decorator
- */
-export const Delete = (route: string): MethodDecorator => {
-  return function (target: object, propertyKey: string | symbol, _descriptor: PropertyDescriptor) {
-    Reflect.defineMetadata("route", route, target, propertyKey);
-    Reflect.defineMetadata("method", "delete", target, propertyKey);
-  };
-}; 
+}

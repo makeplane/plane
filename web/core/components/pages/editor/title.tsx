@@ -17,26 +17,28 @@ type Props = {
   readOnly: boolean;
   title: string | undefined;
   updateTitle: (title: string) => void;
+  widthClassName: string;
 };
 
 export const PageEditorTitle: React.FC<Props> = observer((props) => {
-  const { editorRef, readOnly, title, updateTitle } = props;
+  const { editorRef, readOnly, title, updateTitle, widthClassName } = props;
   // states
   const [isLengthVisible, setIsLengthVisible] = useState(false);
   // page filters
   const { fontSize } = usePageFilters();
   // ui
-  const titleClassName = cn("bg-transparent tracking-[-2%] font-bold", {
+  const titleFontClassName = cn("tracking-[-2%] font-bold", {
     "text-[1.6rem] leading-[1.9rem]": fontSize === "small-font",
     "text-[2rem] leading-[2.375rem]": fontSize === "large-font",
   });
 
   return (
-    <div className="relative w-full flex-shrink-0 md:pl-5 px-4">
+    <div className="relative w-full flex-shrink-0 py-3 page-title-container">
       {readOnly ? (
         <h6
           className={cn(
-            titleClassName,
+            titleFontClassName,
+            widthClassName,
             {
               "text-custom-text-400": !title,
             },
@@ -46,9 +48,9 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
           {getPageName(title)}
         </h6>
       ) : (
-        <>
+        <div className={cn("relative", widthClassName)}>
           <TextArea
-            className={cn(titleClassName, "w-full outline-none p-0 border-none resize-none rounded-none")}
+            className={cn(titleFontClassName, "block w-full border-none outline-none p-0 resize-none rounded-none")}
             placeholder="Untitled"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -65,7 +67,7 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
           />
           <div
             className={cn(
-              "pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 p-0.5 text-xs text-custom-text-200 opacity-0 transition-opacity",
+              "pointer-events-none absolute bottom-1 right-1 z-[2] font-normal rounded bg-custom-background-100 p-0.5 text-xs text-custom-text-200 opacity-0 transition-opacity",
               {
                 "opacity-100": isLengthVisible,
               }
@@ -80,7 +82,7 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
             </span>
             /255
           </div>
-        </>
+        </div>
       )}
     </div>
   );

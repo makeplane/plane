@@ -53,6 +53,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   // TODO: change this logic once backend fix the response
   const cycleStatus = cycleDetails.status ? (cycleDetails.status.toLocaleLowerCase() as TCycleGroups) : "draft";
   const isCompleted = cycleStatus === "completed";
+  const isActive = cycleStatus === "current";
 
   const cycleTotalIssues =
     cycleDetails.backlog_issues +
@@ -113,6 +114,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
           cycleId={cycleId}
           cycleDetails={cycleDetails}
           parentRef={parentRef}
+          isActive={isActive}
         />
       }
       quickActionElement={

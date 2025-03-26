@@ -1606,6 +1606,12 @@
     "remove_filters_to_see_all_cycles": "Remove the filters to see all cycles",
     "remove_search_criteria_to_see_all_cycles": "Remove the search criteria to see all cycles",
     "only_completed_cycles_can_be_archived": "Only completed cycles can be archived",
+    "start_date": "Start date",
+    "end_date": "End date",
+    "in_your_timezone": "In your timezone",
+    "transfer_work_items": "Transfer {count} work items",
+    "date_range": "Date range",
+    "add_date": "Add date",
     "active_cycle": {
       "label": "Active cycle",
       "progress": "Progress",
