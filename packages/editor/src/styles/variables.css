@@ -187,13 +187,21 @@
 
 /* keep a static padding of 96px for wide layouts for container width >912px and <1344px */
 @container page-header-container (min-width: 912px) and (max-width: 1344px) {
-  .page-header-content {
+  .page-header-content.wide-layout {
     padding-left: var(--wide-content-margin) !important;
   }
 }
 
 /* keep a static padding of 20px for wide layouts for container width <912px */
-@container page-header-container (max-width: 912px) {
+@container page-header-container (max-width: 912) {
+  .page-header-content.wide-layout {
+    padding-left: var(--wide-content-margin) !important;
+  }
+}
+/* end layout config */
+
+/* keep a static padding of 20px for wide layouts for container width <760px */
+@container page-header-container (max-width: 760px) {
   .page-header-content {
     padding-left: var(--normal-content-margin) !important;
   }
