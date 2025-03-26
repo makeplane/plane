@@ -13,7 +13,11 @@ import { ProcessManager } from "@/core/process-manager";
 import { ShutdownManager } from "@/core/shutdown-manager";
 
 // Service and controller related
-import { IControllerRegistry, IServiceContainer } from "./lib/controller.interface";
+interface IServiceContainer {
+  register(serviceName: string, service: any): void;
+  get(serviceName: string): any;
+}
+
 import { registerControllers } from "./lib/controller.utils";
 import { ServiceContainer } from "./lib/service-container";
 
@@ -40,7 +44,6 @@ export class Server {
   private readonly app: Application;
   private readonly port: number;
   private hocusPocusServer!: Hocuspocus;
-  private controllerRegistry!: IControllerRegistry;
   private serviceContainer: IServiceContainer;
   private redisManager: RedisManager;
 

@@ -22,7 +22,6 @@ export class ShutdownManager {
   private isShuttingDown = false;
   private exitCode = 0;
   private forceExitTimeout: NodeJS.Timeout | null = null;
-  private servers: (HttpServer | Hocuspocus)[] = [];
 
   // Private constructor to enforce singleton pattern
   private constructor() {}
@@ -78,9 +77,6 @@ export class ShutdownManager {
     }, serverConfig.terminationTimeout || 10000); // Default to 10 seconds if not configured
 
     try {
-      // Log initial state of handles
-      logger.info("Initial handle state:");
-
       // Close components in order: Redis, HocusPocus, HTTP server
       await this.closeRedisConnections();
       await this.closeHocusPocusServer();
@@ -89,12 +85,9 @@ export class ShutdownManager {
       // Wait a bit to allow handles to close
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Log final state of handles
-      logger.info("Final handle state:");
-
-      logger.info("All components shut down successfully");
+      console.log("All components shut down successfully");
     } catch (error) {
-      logger.error("Error during graceful shutdown:", error);
+      console.error("Error during graceful shutdown:", error);
     } finally {
       // Clear timeout if we've made it this far
       if (this.forceExitTimeout) {
@@ -103,7 +96,7 @@ export class ShutdownManager {
 
       // Give a small delay before exiting to ensure all handles are closed
       setTimeout(() => {
-        logger.info(`Exiting process with code ${this.exitCode}`);
+        console.info(`Exiting process with code ${this.exitCode}`);
         process.exit(this.exitCode);
       }, 100);
     }
@@ -113,19 +106,19 @@ export class ShutdownManager {
    * Close Redis connections
    */
   private async closeRedisConnections(): Promise<void> {
-    logger.info("Closing Redis connections...");
+    console.info("Closing Redis connections...");
     try {
       const redisManager = RedisManager.getInstance();
       const redisClient = redisManager.getClient();
 
       if (redisClient) {
         await redisClient.quit();
-        logger.info("Redis connections closed successfully");
+        console.info("Redis connections closed successfully");
       } else {
-        logger.info("No Redis connections to close");
+        console.info("No Redis connections to close");
       }
     } catch (error) {
-      logger.error("Error closing Redis connections:", error);
+      console.error("Error closing Redis connections:", error);
     }
   }
 
@@ -133,16 +126,16 @@ export class ShutdownManager {
    * Close HocusPocus server
    */
   private async closeHocusPocusServer(): Promise<void> {
-    logger.info("Shutting down HocusPocus server...");
+    console.info("Shutting down HocusPocus server...");
     try {
       if (this.hocuspocusServer) {
         await this.hocuspocusServer.destroy();
-        logger.info("HocusPocus server shut down successfully");
+        console.info("HocusPocus server shut down successfully");
       } else {
-        logger.info("No HocusPocus server to shut down");
+        console.info("No HocusPocus server to shut down");
       }
     } catch (error) {
-      logger.error("Error shutting down HocusPocus server:", error);
+      console.error("Error shutting down HocusPocus server:", error);
     }
   }
 
@@ -153,7 +146,7 @@ export class ShutdownManager {
     logger.info("Closing HTTP server...");
     return new Promise<void>((resolve) => {
       if (!this.httpServer) {
-        logger.info("No HTTP server to close");
+        console.info("No HTTP server to close");
         resolve();
         return;
       }
@@ -163,9 +156,9 @@ export class ShutdownManager {
 
       this.httpServer.close((error) => {
         if (error) {
-          logger.error("Error closing HTTP server:", error);
+          console.error("Error closing HTTP server:", error);
         } else {
-          logger.info("HTTP server closed successfully");
+          console.info("HTTP server closed successfully");
         }
         resolve();
       });
