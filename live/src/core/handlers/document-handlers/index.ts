@@ -1,0 +1,31 @@
+import { DocumentHandler, HandlerContext } from "@/core/types/document-handler";
+import { handlerFactory } from "@/core/handlers/document-handlers/handler-factory";
+
+// Import handler definitions
+import {  projectPageHandlerDefinition } from "@/core/handlers/document-handlers/project-page-handler";
+
+// Register handlers
+handlerFactory.register(projectPageHandlerDefinition);
+
+/**
+ * Get a document handler based on the provided context criteria
+ * @param documentType The primary document type
+ * @param additionalContext Optional additional context criteria
+ * @returns The appropriate document handler
+ */
+export function getDocumentHandler(
+  documentType: string, 
+  additionalContext: Omit<HandlerContext, 'documentType'> = {}
+): DocumentHandler {
+  // Create a context object with all criteria
+  const context: HandlerContext = {
+    documentType: documentType as any,
+    ...additionalContext
+  };
+  
+  // Use the factory to get the appropriate handler
+  return handlerFactory.getHandler(context);
+}
+
+// Export the factory for direct access if needed
+export { handlerFactory };
