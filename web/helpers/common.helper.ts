@@ -42,3 +42,7 @@ export const convertRemToPixel = (rem: number): number => rem * 0.9 * 16;
 
 export const getProgress = (completed: number | undefined, total: number | undefined) =>
   total && total > 0 ? Math.round(((completed ?? 0) / total) * 100) : 0;
+
+export const TERMS_URL = process.env.NEXT_PUBLIC_TERMS_URL || "https://plane.so/legals/terms-and-conditions";
+
+export const PRIVACY_URL = process.env.NEXT_PUBLIC_PRIVACY_URL || "https://plane.so/legals/privacy-policy";
