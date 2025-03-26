@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-// document-editor
+// plane imports
 import {
   CollaborativeDocumentEditorWithRef,
   EditorRefApi,
@@ -10,10 +10,9 @@ import {
   TRealtimeConfig,
   TServerHandler,
 } from "@plane/editor";
-// plane types
 import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
-// plane ui
 import { ERowVariant, Row } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
@@ -151,7 +150,11 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     [currentUser?.display_name, currentUser?.id]
   );
 
-  if (pageId === undefined || !realtimeConfig) return <PageContentLoader />;
+  const blockWidthClassName = cn("block bg-transparent w-full max-w-[720px] mx-auto transition-all duration-300", {
+    "max-w-[1152px]": isFullWidth,
+  });
+
+  if (pageId === undefined || !realtimeConfig) return <PageContentLoader className={blockWidthClassName} />;
 
   return (
     <Row
@@ -174,9 +177,10 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         </div>
         <PageEditorTitle
           editorRef={editorRef}
+          readOnly={!isContentEditable}
           title={pageTitle}
           updateTitle={updateTitle}
-          readOnly={!isContentEditable}
+          widthClassName={blockWidthClassName}
         />
         <CollaborativeDocumentEditorWithRef
           editable={isContentEditable}

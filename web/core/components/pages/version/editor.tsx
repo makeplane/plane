@@ -1,19 +1,15 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane editor
+// plane imports
 import { DocumentReadOnlyEditorWithRef, TDisplayConfig } from "@plane/editor";
-// plane types
 import { TPageVersion } from "@plane/types";
-// plane ui
 import { Loader } from "@plane/ui";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
-import { useWorkspace } from "@/hooks/store";
+import { useMember, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
-// store hooks
-import { useMember } from "@/hooks/store";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
@@ -50,6 +46,7 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
   const displayConfig: TDisplayConfig = {
     fontSize,
     fontStyle,
+    wideLayout: true,
   };
 
   if (!isCurrentVersionActive && !versionDetails)

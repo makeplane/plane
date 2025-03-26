@@ -17,21 +17,19 @@ type Props = {
   readOnly: boolean;
   title: string | undefined;
   updateTitle: (title: string) => void;
+  widthClassName: string;
 };
 
 export const PageEditorTitle: React.FC<Props> = observer((props) => {
-  const { editorRef, readOnly, title, updateTitle } = props;
+  const { editorRef, readOnly, title, updateTitle, widthClassName } = props;
   // states
   const [isLengthVisible, setIsLengthVisible] = useState(false);
   // page filters
-  const { fontSize, isFullWidth } = usePageFilters();
+  const { fontSize } = usePageFilters();
   // ui
   const titleFontClassName = cn("tracking-[-2%] font-bold", {
     "text-[1.6rem] leading-[1.9rem]": fontSize === "small-font",
     "text-[2rem] leading-[2.375rem]": fontSize === "large-font",
-  });
-  const titleWidthClassName = cn("block bg-transparent w-full max-w-[720px] mx-auto transition-all duration-300", {
-    "max-w-[1152px]": isFullWidth,
   });
 
   return (
@@ -40,7 +38,7 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
         <h6
           className={cn(
             titleFontClassName,
-            titleWidthClassName,
+            widthClassName,
             {
               "text-custom-text-400": !title,
             },
@@ -50,7 +48,7 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
           {getPageName(title)}
         </h6>
       ) : (
-        <div className={cn("relative", titleWidthClassName)}>
+        <div className={cn("relative", widthClassName)}>
           <TextArea
             className={cn(titleFontClassName, "block w-full border-none outline-none p-0 resize-none rounded-none")}
             placeholder="Untitled"
