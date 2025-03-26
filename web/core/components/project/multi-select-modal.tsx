@@ -166,7 +166,7 @@ export const ProjectMultiSelectModal: React.FC<Props> = observer((props) => {
       </Combobox>
       <div className="flex items-center justify-end gap-2 p-3 border-t border-custom-border-100">
         <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-          Cancel
+          {t("cancel")}
         </Button>
         <Button
           ref={moveButtonRef}
@@ -176,7 +176,7 @@ export const ProjectMultiSelectModal: React.FC<Props> = observer((props) => {
           loading={isSubmitting}
           disabled={!areSelectedProjectsChanged}
         >
-          {isSubmitting ? "Confirming" : "Confirm"}
+          {isSubmitting ? t("confirming") : t("confirm")}
         </Button>
       </div>
     </ModalCore>
