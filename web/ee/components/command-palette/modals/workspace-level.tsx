@@ -41,6 +41,7 @@ export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps)
       isCreateUpdateModalOpen: isWorkspaceDashboardModalOpen,
       createUpdateModalPayload: workspaceDashboardModalPayload,
       toggleCreateUpdateModal: toggleWorkspaceDashboardModal,
+      updateCreateUpdateModalPayload: updateWorkspaceDashboardModalPayload,
     },
   } = useDashboards();
   // derived values
@@ -71,7 +72,12 @@ export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps)
       <CreateUpdateWorkspaceDashboardModal
         data={workspaceDashboardModalPayload ?? undefined}
         isOpen={isWorkspaceDashboardModalOpen}
-        onClose={() => toggleWorkspaceDashboardModal(false)}
+        onClose={() => {
+          toggleWorkspaceDashboardModal(false);
+          setTimeout(() => {
+            updateWorkspaceDashboardModalPayload(null);
+          }, 300);
+        }}
       />
       <CreateUpdateCustomerModal
         isOpen={createUpdateCustomerModal.isOpen}

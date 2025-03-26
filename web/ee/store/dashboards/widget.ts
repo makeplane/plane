@@ -2,11 +2,13 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
 import {
+  E_FEATURE_FLAGS,
   EWidgetChartModels,
   EWidgetChartTypes,
   EWidgetXAxisDateGrouping,
   EWidgetXAxisProperty,
   EWidgetYAxisMetric,
+  WIDGET_CHART_MODELS_LIST,
 } from "@plane/constants";
 // plane types
 import { TDashboardWidget, TDashboardWidgetConfig, TDashboardWidgetData } from "@plane/types";
@@ -21,6 +23,7 @@ export interface IDashboardWidgetInstance extends TDashboardWidget {
   asJSON: TDashboardWidget;
   mutateProperties: (data: Partial<TDashboardWidget>) => void;
   isConfigurationMissing: keyof TDashboardWidget | null;
+  isWidgetAvailableInCurrentPlan: boolean;
   // permissions
   canCurrentUserDeleteWidget: boolean;
   canCurrentUserEditWidget: boolean;
@@ -104,6 +107,7 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
       // computed
       asJSON: computed,
       isConfigurationMissing: computed,
+      isWidgetAvailableInCurrentPlan: computed,
       canCurrentUserDeleteWidget: computed,
       canCurrentUserEditWidget: computed,
       // actions
@@ -156,8 +160,12 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
       if (chartModel === EWidgetChartModels.STACKED && !this.group_by) return "group_by";
     }
     if (chartType === EWidgetChartTypes.DONUT_CHART) {
-      if (!this.x_axis_property) return "x_axis_property";
-      if (!this.y_axis_metric) return "y_axis_metric";
+      if (chartModel === EWidgetChartModels.PROGRESS) {
+        if (!this.y_axis_metric) return "y_axis_metric";
+      } else {
+        if (!this.x_axis_property) return "x_axis_property";
+        if (!this.y_axis_metric) return "y_axis_metric";
+      }
     }
     if (chartType === EWidgetChartTypes.PIE_CHART) {
       if (!this.x_axis_property) return "x_axis_property";
@@ -167,6 +175,16 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
       if (!this.y_axis_metric) return "y_axis_metric";
     }
     return null;
+  }
+
+  get isWidgetAvailableInCurrentPlan() {
+    const chartType = this.chart_type;
+    const chartModel = this.chart_model;
+    if (!chartType || !chartModel) return false;
+    const currentModelFlags = WIDGET_CHART_MODELS_LIST[chartType].find((model) => model.value === chartModel)?.flags;
+    const getFeatureFlag = (flag: E_FEATURE_FLAGS) =>
+      this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace(flag, false);
+    return !!currentModelFlags?.some((flag) => getFeatureFlag(flag));
   }
 
   mutateProperties: IDashboardWidgetInstance["mutateProperties"] = (data) => {

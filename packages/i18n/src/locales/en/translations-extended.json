@@ -1160,6 +1160,9 @@
           }
         },
         "ask_admin": "Ask your admin to configure this widget."
+      },
+      "upgrade_required": {
+        "title": "This widget type isn't included in your plan."
       }
     },
     "create_modal": {

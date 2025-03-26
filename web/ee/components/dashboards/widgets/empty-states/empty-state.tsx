@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EWidgetGridBreakpoints } from "@plane/constants";
@@ -25,7 +26,7 @@ export const DashboardWidgetEmptyState: React.FC<Props> = observer((props) => {
   // derived values
   const dashboardDetails = getDashboardById(dashboardId);
   const { isViewModeEnabled } = dashboardDetails ?? {};
-  const { canCurrentUserEditWidget, chart_type, height } = widget;
+  const { canCurrentUserEditWidget, chart_type, height, fetchWidgetData } = widget;
   const shouldShowIcon = activeBreakpoint === EWidgetGridBreakpoints.XXS || height !== 1;
   // translation
   const { t } = useTranslation();
@@ -34,9 +35,9 @@ export const DashboardWidgetEmptyState: React.FC<Props> = observer((props) => {
     basePath: `/empty-state/dashboards/widgets/charts/${chart_type?.toLowerCase()}`,
   });
 
-  const handleRefresh = () => {
-    window.location.reload();
-  };
+  const handleRefresh = useCallback(async () => {
+    await fetchWidgetData?.();
+  }, [fetchWidgetData]);
 
   return (
     <div className="size-full grid place-items-center px-4 overflow-hidden">

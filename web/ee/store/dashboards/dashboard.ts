@@ -48,7 +48,7 @@ export type TDashboardCombinedHelpers = {
 export class DashboardInstance implements IDashboardInstance {
   // observables
   dashboardLevel: TDashboardLevel;
-  viewModeToggle: boolean = false;
+  viewModeToggle: boolean = true;
   // dashboard properties
   created_at: Date | undefined;
   created_by: string | undefined;

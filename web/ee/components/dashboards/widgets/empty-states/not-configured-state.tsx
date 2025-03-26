@@ -10,7 +10,7 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 // chart types
-import { commonWidgetClassName } from "./";
+import { commonWidgetClassName } from "..";
 
 type Props = {
   activeBreakpoint: EWidgetGridBreakpoints;
@@ -79,7 +79,9 @@ export const DashboardWidgetNotConfiguredState: React.FC<Props> = observer((prop
             </Button>
           )
         ) : (
-          t("dashboards.widget.not_configured_state.ask_admin")
+          <p className="text-sm text-custom-text-400 text-center whitespace-pre-line">
+            {t("dashboards.widget.not_configured_state.ask_admin")}
+          </p>
         )}
       </div>
     </div>

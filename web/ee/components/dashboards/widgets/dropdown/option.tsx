@@ -10,7 +10,7 @@ import { cn, getSubscriptionName } from "@plane/utils";
 // plane web helpers
 import { getSubscriptionTextAndBackgroundColor } from "@/plane-web/helpers/subscription";
 // plane web hooks
-import { useFlag } from "@/plane-web/hooks/store";
+import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // local imports
 import { WidgetChartTypeIcon } from "..";
 
@@ -29,6 +29,8 @@ export const DashboardWidgetChartTypesDropdownOption: React.FC<Props> = observer
   const { isSelected, model, onSelect, widget } = props;
   // navigation
   const { workspaceSlug } = useParams();
+  // store hooks
+  const { togglePaidPlanModal } = useWorkspaceSubscription();
   // translation
   const { t } = useTranslation();
   // feature flags
@@ -78,8 +80,11 @@ export const DashboardWidgetChartTypesDropdownOption: React.FC<Props> = observer
           }
         )}
         onClick={() => {
-          if (isUpgradeNeeded) return;
-          onSelect(model.value);
+          if (isUpgradeNeeded) {
+            togglePaidPlanModal(true);
+          } else {
+            onSelect(model.value);
+          }
         }}
       >
         <WidgetChartTypeIcon

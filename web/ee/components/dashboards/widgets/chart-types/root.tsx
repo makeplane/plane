@@ -7,7 +7,7 @@ import { EWidgetChartTypes, EWidgetGridBreakpoints } from "@plane/constants";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 // chart types
-import { DashboardWidgetNotConfiguredState } from "../not-configured-state";
+import { DashboardWidgetNotConfiguredState } from "../empty-states/not-configured-state";
 import { DashboardAreaChartWidget } from "./area-chart";
 import { DashboardBarChartWidget } from "./bar-chart";
 import { DashboardWidgetContent } from "./content";
@@ -41,6 +41,7 @@ export const DashboardWidgetRoot: React.FC<Props> = observer((props) => {
     data,
     fetchWidgetData,
     isConfigurationMissing,
+    isWidgetAvailableInCurrentPlan,
     x_axis_property,
     group_by,
     x_axis_date_grouping,
@@ -54,8 +55,8 @@ export const DashboardWidgetRoot: React.FC<Props> = observer((props) => {
   );
 
   useSWR(
-    isWidgetConfigured && widgetId ? `WIDGET_DATA_${widgetId}` : null,
-    isWidgetConfigured && widgetId ? () => fetchWidgetData?.() : null
+    isWidgetConfigured && isWidgetAvailableInCurrentPlan && widgetId ? `WIDGET_DATA_${widgetId}` : null,
+    isWidgetConfigured && isWidgetAvailableInCurrentPlan && widgetId ? () => fetchWidgetData?.() : null
   );
 
   let WidgetComponent: React.FC<TWidgetComponentProps> | null = null;
@@ -82,7 +83,7 @@ export const DashboardWidgetRoot: React.FC<Props> = observer((props) => {
       WidgetComponent = null;
   }
 
-  if (!isWidgetConfigured) {
+  if (isWidgetAvailableInCurrentPlan && !isWidgetConfigured) {
     return (
       <DashboardWidgetNotConfiguredState
         activeBreakpoint={activeBreakpoint}

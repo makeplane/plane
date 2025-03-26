@@ -1,6 +1,4 @@
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // components
@@ -15,28 +13,16 @@ import { DashboardListItem } from "./list-item";
 import { DashboardsListLayoutLoader } from "./loader";
 
 export const DashboardsListLayoutRoot = observer(() => {
-  // navigation
-  const { workspaceSlug } = useParams();
   // store hooks
   const {
     getDashboardById,
-    workspaceDashboards: {
-      currentWorkspaceFetchStatus,
-      isAnyDashboardAvailable,
-      currentWorkspaceFilteredDashboardIds,
-      fetchDashboards,
-    },
+    workspaceDashboards: { currentWorkspaceFetchStatus, isAnyDashboardAvailable, currentWorkspaceFilteredDashboardIds },
   } = useDashboards();
   // translation
   const { t } = useTranslation();
   // derived values
   const listEmptyStateResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/dashboards/list" });
   const searchEmptyStateResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/dashboards/list-search" });
-
-  useSWR(
-    workspaceSlug ? `WORKSPACE_DASHBOARDS_LIST_${workspaceSlug.toString()}` : null,
-    workspaceSlug ? () => fetchDashboards() : null
-  );
 
   if (!currentWorkspaceFetchStatus) {
     return <DashboardsListLayoutLoader />;

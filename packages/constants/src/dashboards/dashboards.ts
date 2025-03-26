@@ -144,6 +144,7 @@ export const DEFAULT_WIDGET_CHART_TYPE_PAYLOAD: {
       },
     },
     [EWidgetChartModels.PROGRESS]: {
+      x_axis_property: EWidgetXAxisProperty.STATE_GROUPS,
       config: {
         completed_color: DEFAULT_WIDGET_COLOR,
       },

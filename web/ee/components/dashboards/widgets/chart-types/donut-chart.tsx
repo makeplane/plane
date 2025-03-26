@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import dynamic from "next/dynamic";
 import { useTheme } from "next-themes";
 // plane imports
-import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR, EWidgetChartModels } from "@plane/constants";
+import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR, EWidgetChartModels, STATE_GROUPS } from "@plane/constants";
 import { TCellItem, TDashboardWidgetDatum, TDonutChartWidgetConfig } from "@plane/types";
 // local imports
 import { generateExtendedColors, TWidgetComponentProps } from ".";
@@ -22,7 +22,7 @@ export const parseDonutChartData = (
   let updatedData: TDashboardWidgetDatum[] = data;
   if (chartModel === EWidgetChartModels.PROGRESS) {
     const totalCount = data.reduce((acc, curr) => acc + curr.count, 0);
-    const completed = data.find((datum) => datum.key === "completed")?.count ?? 0;
+    const completed = data.find((datum) => datum.key === STATE_GROUPS.completed.key)?.count ?? 0;
     const pending = totalCount - completed;
     updatedData = [
       {

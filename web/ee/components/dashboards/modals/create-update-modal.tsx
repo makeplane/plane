@@ -62,7 +62,12 @@ export const CreateUpdateWorkspaceDashboardModal: React.FC<Props> = observer((pr
 
   const handleCreate = async (payload: Partial<TDashboard>) => {
     if (!canCurrentUserCreateDashboard) return;
-    return await createDashboard(payload);
+    const res = await createDashboard(payload);
+    if (res.id) {
+      const { toggleViewingMode } = getDashboardById(res.id) ?? {};
+      toggleViewingMode?.(false);
+    }
+    return res;
   };
 
   const handleUpdate = async (payload: Partial<TDashboard>) => {
@@ -198,7 +203,7 @@ export const CreateUpdateWorkspaceDashboardModal: React.FC<Props> = observer((pr
             {t("common.cancel")}
           </Button>
           <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-            {data
+            {isEditing
               ? isSubmitting
                 ? t("common.updating")
                 : t("dashboards.create_modal.update_dashboard")
