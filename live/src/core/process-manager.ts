@@ -5,7 +5,6 @@ import type { Hocuspocus } from "@hocuspocus/server";
 // logger
 import { logger } from "@plane/logger";
 // config
-import { serverConfig } from "@/config/server-config";
 // error handling
 import { handleError } from "@/core/helpers/error-handling/error-factory";
 // shutdown manager
@@ -48,7 +47,7 @@ export class ProcessManager {
         errorType: "internal",
         component: "process",
         operation: "uncaughtException",
-        extraContext: { source: "uncaughtException" }
+        extraContext: { source: "uncaughtException" },
       });
     });
 
@@ -60,7 +59,7 @@ export class ProcessManager {
         errorType: "internal",
         component: "process",
         operation: "unhandledRejection",
-        extraContext: { source: "unhandledRejection" }
+        extraContext: { source: "unhandledRejection" },
       });
     });
   }
@@ -78,7 +77,8 @@ export class ProcessManager {
       }
 
       logger.info("Signal received, delegating to ShutdownManager for graceful termination");
-      await this.shutdownManager.shutdown("Process termination signal received", 0);
+      await this.shutdownManager.shutdown("Process termination signal received", 1);
     };
   }
-} 
+}
+
