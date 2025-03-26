@@ -11,7 +11,7 @@ interface ErrorFactory {
   createError: (message?: string, context?: Record<string, any>) => AppError;
 }
 
-const ERROR_FACTORIES: Record<string, ErrorFactory> = {
+const ERROR_FACTORIES = {
   "bad-request": {
     statusCode: HttpStatusCode.BAD_REQUEST,
     category: ErrorCategory.OPERATIONAL,
@@ -82,7 +82,7 @@ const ERROR_FACTORIES: Record<string, ErrorFactory> = {
     createError: (message = "Fatal Error", context?) =>
       new AppError(message, HttpStatusCode.INTERNAL_SERVER, ErrorCategory.FATAL, context),
   },
-};
+} satisfies Record<string, ErrorFactory>;
 
 // Create the type from the keys of the error factories map
 export type ErrorType = keyof typeof ERROR_FACTORIES;
