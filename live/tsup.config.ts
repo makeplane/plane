@@ -6,12 +6,10 @@ export default defineConfig({
   dts: true,
   splitting: false,
   sourcemap: true,
-  clean: true,
   minify: false,
   target: "node18",
   outDir: "dist",
   env: {
     NODE_ENV: process.env.NODE_ENV || "development",
   },
-  watch: ["src/**/*.{ts,tsx}"],
 });

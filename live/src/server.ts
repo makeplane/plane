@@ -9,13 +9,20 @@ import { serverConfig, configureServerMiddleware } from "./config/server-config"
 
 // Core functionality
 import { getHocusPocusServer } from "@/core/hocuspocus-server";
-import { controllerRegistry } from "@/core/controller-registry";
 import { ProcessManager } from "@/core/process-manager";
+import { ShutdownManager } from "@/core/shutdown-manager";
 
 // Service and controller related
-import { IControllerRegistry, IServiceContainer } from "./lib/controller.interface";
+interface IServiceContainer {
+  register(serviceName: string, service: any): void;
+  get(serviceName: string): any;
+}
+
 import { registerControllers } from "./lib/controller.utils";
 import { ServiceContainer } from "./lib/service-container";
+
+// Redis manager
+import { RedisManager } from "@/core/lib/redis-manager";
 
 // Logging
 import { logger } from "@plane/logger";
@@ -23,6 +30,7 @@ import { logger } from "@plane/logger";
 // Error handling
 import { configureErrorHandlers } from "@/core/helpers/error-handling/error-handler";
 import { handleError } from "@/core/helpers/error-handling/error-factory";
+import { getAllControllers } from "./core/controller-registry";
 
 // WebSocket router type definition
 interface WebSocketRouter extends Router {
@@ -36,8 +44,8 @@ export class Server {
   private readonly app: Application;
   private readonly port: number;
   private hocusPocusServer!: Hocuspocus;
-  private controllerRegistry!: IControllerRegistry;
   private serviceContainer: IServiceContainer;
+  private redisManager: RedisManager;
 
   /**
    * Creates an instance of the server class.
@@ -47,6 +55,7 @@ export class Server {
     this.app = express();
     this.serviceContainer = new ServiceContainer();
     this.port = port || serverConfig.port;
+    this.redisManager = RedisManager.getInstance();
 
     // Initialize express-ws after Express setup
     expressWs(this.app as any);
@@ -70,9 +79,6 @@ export class Server {
     try {
       // Initialize core services
       await this.initializeServices();
-
-      // Initialize controllers
-      await this.initializeControllers();
 
       // Set up routes
       await this.setupRoutes();
@@ -99,19 +105,20 @@ export class Server {
    * Initialize core services
    */
   private async initializeServices() {
+    // Initialize Redis connection first
+    logger.info("Initializing Redis connection...");
+    const redisClient = await this.redisManager.connect();
+
+    if (redisClient) {
+      // Register Redis client in the service container
+      this.serviceContainer.register("redis", redisClient);
+    }
+
     // Initialize the Hocuspocus server
     this.hocusPocusServer = await getHocusPocusServer();
 
     // Register services in the container
     this.serviceContainer.register("hocuspocus", this.hocusPocusServer);
-  }
-
-  /**
-   * Initialize controllers
-   */
-  private async initializeControllers() {
-    // Create controller registry with all controllers
-    this.controllerRegistry = controllerRegistry.createRegistry();
   }
 
   /**
@@ -121,8 +128,12 @@ export class Server {
     try {
       const router = express.Router() as WebSocketRouter;
 
-      // Register all controllers using the registry with the service container
-      registerControllers(router, this.controllerRegistry, this.serviceContainer);
+      // Get all controller classes
+      const controllers = getAllControllers();
+
+      // Register controllers with our simplified approach
+      // Pass the hocuspocus server as a dependency to the controllers that need it
+      registerControllers(router, controllers, [this.hocusPocusServer]);
 
       // Mount the router on the base path
       this.app.use(serverConfig.basePath, router);
@@ -146,7 +157,11 @@ export class Server {
         logger.info(`Plane Live server has started at port ${this.port}`);
       });
 
-      // Setup graceful termination
+      // Register servers with ShutdownManager
+      const shutdownManager = ShutdownManager.getInstance();
+      shutdownManager.register(server, this.hocusPocusServer);
+
+      // Setup graceful termination via ProcessManager (for signal handling)
       const processManager = new ProcessManager(this.hocusPocusServer, server);
       processManager.registerTerminationHandlers();
 

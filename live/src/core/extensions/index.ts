@@ -5,7 +5,7 @@ import { setupRedisExtension } from "@/core/extensions/redis";
 import { createDatabaseExtension } from "@/core/extensions/database";
 import { logger } from "@plane/logger";
 
-export const getExtensions: () => Promise<Extension[]> = async () => {
+export const getExtensions = async (): Promise<Extension[]> => {
   const extensions: Extension[] = [
     new Logger({
       onChange: false,
@@ -16,11 +16,9 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
     createDatabaseExtension(),
   ];
 
-  // Set up Redis extension if available
-  const redisExtension = await setupRedisExtension();
-  if (redisExtension) {
-    extensions.push(redisExtension);
-  }
+  // Add Redis extensions if Redis is available
+  const redisExtensions = await setupRedisExtension();
+  extensions.push(...redisExtensions);
 
   return extensions;
 };
