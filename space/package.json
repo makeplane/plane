@@ -25,7 +25,6 @@
     "@plane/types": "*",
     "@plane/ui": "*",
     "@plane/services": "*",
-    "@sentry/nextjs": "^8.54.0",
     "axios": "^1.8.3",
     "clsx": "^2.0.0",
     "date-fns": "^4.1.0",
