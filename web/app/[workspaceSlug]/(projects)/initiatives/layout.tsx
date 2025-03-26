@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { PageHead } from "@/components/core";
 import { useWorkspace } from "@/hooks/store";
 // plane web components
+import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
 import { InitiativesUpgrade } from "@/plane-web/components/initiatives/upgrade";
 // plane web hooks
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
@@ -23,19 +24,21 @@ const InitiativesLayout = observer(({ children }: { children: ReactNode }) => {
 
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Initiatives` : undefined;
-
-  if (currentWorkspace && !isInitiativesFeatureEnabled && !loader)
-    return (
-      <div className="h-full w-full max-w-5xl mx-auto flex items-center justify-center">
-        <InitiativesUpgrade workspaceSlug={workspaceSlug?.toString()} redirect />
-      </div>
-    );
+  const shouldUpgrade = currentWorkspace && !isInitiativesFeatureEnabled && !loader;
 
   return (
-    <>
-      <PageHead title={pageTitle} />
-      {children}
-    </>
+    <WorkspaceAccessWrapper pageKey="initiatives">
+      {shouldUpgrade ? (
+        <div className="h-full w-full max-w-5xl mx-auto flex items-center justify-center">
+          <InitiativesUpgrade workspaceSlug={workspaceSlug?.toString()} redirect />
+        </div>
+      ) : (
+        <>
+          <PageHead title={pageTitle} />
+          {children}
+        </>
+      )}
+    </WorkspaceAccessWrapper>
   );
 });
 
