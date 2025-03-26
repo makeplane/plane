@@ -46,9 +46,9 @@ export const PageContentBrowser: React.FC<Props> = (props) => {
           return (
             <div
               key={`${marking.level}-${marking.sequence}`}
-              className="h-[4px] bg-custom-border-400 self-end"
+              className="h-0.5 bg-custom-border-400 self-end rounded-sm"
               style={{
-                width: `${10 * (4 - marking.level)}px`,
+                width: marking.level === 1 ? "20px" : marking.level === 2 ? "18px" : "14px",
               }}
             />
           );

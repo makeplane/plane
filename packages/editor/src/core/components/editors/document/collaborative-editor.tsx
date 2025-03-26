@@ -75,7 +75,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
 
   if (!editor) return null;
 
-  const blockWidthClassName = cn("w-full max-w-[720px] mx-auto transition-all duration-300", {
+  const blockWidthClassName = cn("w-full max-w-[720px] mx-auto transition-all duration-200 ease-in-out", {
     "max-w-[1152px]": displayConfig.wideLayout,
   });
 

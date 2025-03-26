@@ -150,9 +150,12 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     [currentUser?.display_name, currentUser?.id]
   );
 
-  const blockWidthClassName = cn("block bg-transparent w-full max-w-[720px] mx-auto transition-all duration-300", {
-    "max-w-[1152px]": isFullWidth,
-  });
+  const blockWidthClassName = cn(
+    "block bg-transparent w-full max-w-[720px] mx-auto transition-all duration-200 ease-in-out",
+    {
+      "max-w-[1152px]": isFullWidth,
+    }
+  );
 
   if (pageId === undefined || !realtimeConfig) return <PageContentLoader className={blockWidthClassName} />;
 
@@ -169,7 +172,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               <div className="opacity-100 group-hover/page-toc:opacity-0 transition-opacity duration-300 cursor-pointer max-h-[50vh] overflow-hidden">
                 <PageContentBrowser editorRef={editorRef?.current} showOutline />
               </div>
-              <div className="absolute top-0 right-0 opacity-0 translate-x-1/2 group-hover/page-toc:opacity-100 group-hover/page-toc:translate-x-0 transition-all duration-300 w-64 max-h-[70vh] overflow-y-scroll vertical-scrollbar scrollbar-sm whitespace-nowrap bg-custom-background-90 p-4 rounded">
+              <div className="absolute top-0 right-0 opacity-0 translate-x-1/2 pointer-events-none group-hover/page-toc:opacity-100 group-hover/page-toc:translate-x-0 group-hover/page-toc:pointer-events-auto transition-all duration-300 w-64 max-h-[70vh] overflow-y-scroll vertical-scrollbar scrollbar-sm whitespace-nowrap bg-custom-background-90 p-4 rounded">
                 <PageContentBrowser editorRef={editorRef?.current} />
               </div>
             </div>

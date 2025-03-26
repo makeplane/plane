@@ -33,7 +33,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
     <div id="page-header-container">
       <div
         className={cn(
-          "hidden md:flex items-center relative min-h-[52px] page-header-content border-b border-custom-border-200 px-page-x transition-all duration-300",
+          "hidden md:flex items-center relative min-h-[52px] page-header-content border-b border-custom-border-200 px-page-x transition-all duration-200 ease-in-out",
           {
             "wide-layout": isFullWidth,
           }

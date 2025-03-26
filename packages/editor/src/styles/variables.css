@@ -162,7 +162,7 @@
       --header-width: var(--wide-content-width);
     }
 
-    padding-left: calc((100% - var(--header-width)) / 2);
+    padding-left: calc(((100% - var(--header-width)) / 2) - 10px);
   }
 }
 
@@ -181,7 +181,7 @@
   .ProseMirror {
     max-width: var(--editor-content-width);
     margin: 0 auto;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
