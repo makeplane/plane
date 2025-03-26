@@ -145,11 +145,8 @@ RUN chmod +x /app/pg-setup.sh
 #  APPLICATION ENVIRONMENT SETTINGS
 # *****************************************************************************
 ENV APP_DOMAIN=localhost
-
 ENV WEB_URL=http://${APP_DOMAIN}
 ENV DEBUG=0
-ENV SENTRY_DSN=
-ENV SENTRY_ENVIRONMENT=production
 ENV CORS_ALLOWED_ORIGINS=http://${APP_DOMAIN},https://${APP_DOMAIN}
 # Secret Key
 ENV SECRET_KEY=60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5

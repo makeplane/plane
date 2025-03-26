@@ -96,4 +96,4 @@ chatController.registerWebSocketRoutes(router);
 
 ## License
 
-AGPL-3.0
+This project is licensed under the [GNU Affero General Public License v3.0](https://github.com/makeplane/plane/blob/master/LICENSE.txt).

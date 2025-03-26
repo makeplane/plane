@@ -15,4 +15,3 @@ export function WebSocket(route: string): MethodDecorator {
     Reflect.defineMetadata("route", route, target, propertyKey);
   };
 }
-

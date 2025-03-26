@@ -6,11 +6,9 @@ import type { Hocuspocus } from "@hocuspocus/server";
 
 // Environment and configuration
 import { serverConfig, configureServerMiddleware } from "./config/server-config";
-import { initializeSentry } from "./sentry-config";
 
 // Core functionality
 import { getHocusPocusServer } from "@/core/hocuspocus-server";
-import { controllerRegistry } from "@/core/controller-registry";
 import { ProcessManager } from "@/core/process-manager";
 import { ShutdownManager } from "@/core/shutdown-manager";
 
@@ -28,6 +26,7 @@ import { logger } from "@plane/logger";
 // Error handling
 import { configureErrorHandlers } from "@/core/helpers/error-handling/error-handler";
 import { handleError } from "@/core/helpers/error-handling/error-factory";
+import { getAllControllers } from "./core/controller-registry";
 
 // WebSocket router type definition
 interface WebSocketRouter extends Router {
@@ -58,8 +57,6 @@ export class Server {
     // Initialize express-ws after Express setup
     expressWs(this.app as any);
 
-    // Configure server
-    this.setupSentry();
     configureServerMiddleware(this.app);
   }
 
@@ -72,13 +69,6 @@ export class Server {
   }
 
   /**
-   * Set up Sentry for error tracking
-   */
-  private setupSentry(): void {
-    initializeSentry();
-  }
-
-  /**
    * Initialize the server with all required components
    * @returns The server instance for chaining
    */
@@ -86,9 +76,6 @@ export class Server {
     try {
       // Initialize core services
       await this.initializeServices();
-
-      // Initialize controllers
-      await this.initializeControllers();
 
       // Set up routes
       await this.setupRoutes();
@@ -132,22 +119,18 @@ export class Server {
   }
 
   /**
-   * Initialize controllers
-   */
-  private async initializeControllers() {
-    // Create controller registry with all controllers
-    this.controllerRegistry = controllerRegistry.createRegistry();
-  }
-
-  /**
    * Set up API routes and WebSocket endpoints
    */
   private async setupRoutes() {
     try {
       const router = express.Router() as WebSocketRouter;
 
-      // Register all controllers using the registry with the service container
-      registerControllers(router, this.controllerRegistry, this.serviceContainer);
+      // Get all controller classes
+      const controllers = getAllControllers();
+
+      // Register controllers with our simplified approach
+      // Pass the hocuspocus server as a dependency to the controllers that need it
+      registerControllers(router, controllers, [this.hocusPocusServer]);
 
       // Mount the router on the base path
       this.app.use(serverConfig.basePath, router);

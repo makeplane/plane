@@ -13,7 +13,6 @@ export class RedisManager {
   private client: Redis | null = null;
   private hasEverConnected = false;
   private readonly maxReconnectAttempts = 3;
-  private currentRetryCount = 0;
 
   // Private constructor to enforce singleton pattern
   private constructor() {}
@@ -126,4 +125,3 @@ export class RedisManager {
     return "disconnected";
   }
 }
-

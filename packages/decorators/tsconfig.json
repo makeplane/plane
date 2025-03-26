@@ -1,11 +1,14 @@
 {
-  "extends": "@plane/typescript-config/react-library.json",
+  "extends": "@plane/typescript-config/node-library.json",
   "compilerOptions": {
-    "jsx": "react",
-    "lib": [
-      "esnext",
-      "dom"
-    ],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "lib": ["ES2020"],
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": [
     "./src"

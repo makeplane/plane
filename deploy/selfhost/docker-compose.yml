@@ -42,8 +42,6 @@ x-live-env: &live-env
 x-app-env: &app-env
   WEB_URL: ${WEB_URL:-http://localhost}
   DEBUG: ${DEBUG:-0}
-  SENTRY_DSN: ${SENTRY_DSN}
-  SENTRY_ENVIRONMENT: ${SENTRY_ENVIRONMENT:-production}
   CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
   GUNICORN_WORKERS: 1
   USE_MINIO: ${USE_MINIO:-1}
