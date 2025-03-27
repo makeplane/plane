@@ -501,6 +501,8 @@
   "re_generate_key": "キーを再生成",
   "export": "エクスポート",
   "member": "{count, plural, other{# メンバー}}",
+  "edited": "編集済み",
+  "bot": "ボット",
 
   "project_view": {
     "sort_by": {

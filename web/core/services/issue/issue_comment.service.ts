@@ -63,7 +63,7 @@ export class IssueCommentService extends APIService {
     issueId: string,
     commentId: string,
     data: Partial<TIssueComment>
-  ): Promise<void> {
+  ): Promise<TIssueComment> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/comments/${commentId}/`,
       data
