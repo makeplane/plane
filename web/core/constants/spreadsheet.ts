@@ -232,6 +232,42 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     icon: Tags,
     Column: SpreadsheetStandardPropertyColumn,
   },
+  hub_name: {
+    title: "Hub Name",
+    ascendingOrderKey: "hub_name",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-hub_name",
+    descendingOrderTitle: "Z",
+    icon: Tags,
+    Column: SpreadsheetStandardPropertyColumn,
+  },
+  customer_name: {
+    title: "Customer Name",
+    ascendingOrderKey: "customer_name",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-customer_name",
+    descendingOrderTitle: "Z",
+    icon: Tags,
+    Column: SpreadsheetStandardPropertyColumn,
+  },
+  vendor_name: {
+    title: "Vendor Name",
+    ascendingOrderKey: "vendor_name",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-vendor_name",
+    descendingOrderTitle: "Z",
+    icon: Tags,
+    Column: SpreadsheetStandardPropertyColumn,
+  },
+  worker_name: {
+    title: "Worker Name",
+    ascendingOrderKey: "worker_name",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-worker_name",
+    descendingOrderTitle: "Z",
+    icon: Tags,
+    Column: SpreadsheetStandardPropertyColumn,
+  },
 };
 
 export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
@@ -255,6 +291,10 @@ export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
   "vendor_code",
   "trip_reference_number",
   "reference_number",
+  "hub_name",
+  "customer_name",
+  "vendor_name",
+  "worker_name",
 ];
 
 export const SPREADSHEET_SELECT_GROUP = "spreadsheet-issues";

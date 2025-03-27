@@ -313,4 +313,8 @@ export const getComputedDisplayProperties = (
   vendor_code: displayProperties?.vendor_code ?? true,
   trip_reference_number: displayProperties?.trip_reference_number ?? true,
   reference_number: displayProperties?.reference_number ?? true,
+  hub_name: displayProperties?.hub_name ?? true,
+  customer_name: displayProperties?.customer_name ?? true,
+  vendor_name: displayProperties?.vendor_name ?? true,
+  worker_name: displayProperties?.worker_name ?? true,
 });
