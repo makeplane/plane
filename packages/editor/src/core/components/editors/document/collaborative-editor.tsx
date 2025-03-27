@@ -90,7 +90,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
       displayConfig={displayConfig}
       editor={editor}
       titleEditor={titleEditor}
-      editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
+      editorContainerClassName={editorContainerClassNames}
       id={id}
       tabIndex={tabIndex}
     />

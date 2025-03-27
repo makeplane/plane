@@ -12,7 +12,7 @@ import { Node } from "@tiptap/pm/model";
 import { EditorView } from "@tiptap/pm/view";
 import { Editor, ReactRenderer } from "@tiptap/react";
 // react
-import { useCallback, useRef, useState, useEffect } from "react";
+import { useCallback, useRef, useState } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // components
@@ -142,16 +142,18 @@ export const PageRenderer = (props: IPageRenderer) => {
 
   return (
     <>
-      <div className="frame-renderer flex-grow w-full" onMouseOver={handleLinkHover}>
+      <div
+        className={cn("frame-renderer flex-grow w-full space-y-4 document-editor-container", {
+          "wide-layout": displayConfig.wideLayout,
+        })}
+        onMouseOver={handleLinkHover}
+      >
         {titleEditor && (
-          <div className="relative w-full">
+          <div className="relative w-full py-3">
             <EditorContainer
               editor={titleEditor}
               id={id + "-title"}
-              editorContainerClassName={cn("page-title-editor bg-transparent p-0 pb-5 border-none ml-5", {
-                "small-font": displayConfig.fontSize === "small-font",
-                "large-font": displayConfig.fontSize === "large-font",
-              })}
+              editorContainerClassName={cn("page-title-editor bg-transparent p-0 border-none")}
               displayConfig={displayConfig}
             >
               <EditorContentWrapper
