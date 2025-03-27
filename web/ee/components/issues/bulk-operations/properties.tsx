@@ -283,7 +283,6 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                       disabled={isUpdateDisabled}
                       placement="top-start"
                       placeholder="Cycle"
-                      canRemoveCycle={false}
                     />
                   </>
                 )}
