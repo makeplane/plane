@@ -14,7 +14,8 @@ export type TLanguage =
   | "pl"
   | "ko"
   | "id"
-  | "ro";
+  | "ro"
+  | "vi";
 
 export interface ILanguageOption {
   label: string;
