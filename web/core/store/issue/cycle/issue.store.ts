@@ -148,7 +148,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       cycleId &&
       this.rootIssueStore.rootStore.cycle.getCycleById(cycleId)?.version === 2 &&
       isSidebarCollapsed &&
-      JSON.parse(isSidebarCollapsed) === "false" &&
+      JSON.parse(isSidebarCollapsed) === false &&
       this.rootIssueStore.rootStore.cycle.fetchActiveCycleProgressPro(workspaceSlug, projectId, cycleId);
   };
 
