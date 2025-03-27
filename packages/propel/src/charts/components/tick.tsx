@@ -2,7 +2,7 @@
 import React from "react";
 
 // Common classnames
-const AXIS_TICK_CLASSNAME = "fill-custom-text-400 text-sm capitalize";
+const AXIS_TICK_CLASSNAME = "fill-custom-text-300 text-sm";
 
 export const CustomXAxisTick = React.memo<any>(({ x, y, payload }: any) => (
   <g transform={`translate(${x},${y})`}>

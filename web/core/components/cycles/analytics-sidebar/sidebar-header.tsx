@@ -3,7 +3,15 @@
 import React, { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { ArchiveIcon, ArchiveRestoreIcon, ChevronRight, EllipsisIcon, LinkIcon, Trash2 } from "lucide-react";
+import {
+  ArchiveIcon,
+  ArchiveRestoreIcon,
+  ArrowRight,
+  ChevronRight,
+  EllipsisIcon,
+  LinkIcon,
+  Trash2,
+} from "lucide-react";
 // types
 import { CYCLE_STATUS, CYCLE_UPDATED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -20,6 +28,7 @@ import { useCycle, useEventTracker, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web constants
 // services
+import { useTimeZoneConverter } from "@/hooks/use-timezone-converter";
 import { CycleService } from "@/services/cycle.service";
 // local components
 import { ArchiveCycleModal } from "../archived-cycles";
@@ -52,6 +61,10 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
   const { updateCycleDetails, restoreCycle } = useCycle();
   const { setTrackElement, captureCycleEvent } = useEventTracker();
   const { t } = useTranslation();
+  const { renderFormattedDateInUserTimezone, getProjectUTCOffset } = useTimeZoneConverter(projectId);
+
+  // derived values
+  const projectUTCOffset = getProjectUTCOffset();
 
   // form info
   const { control, reset } = useForm({
@@ -289,34 +302,50 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
           control={control}
           name="start_date"
           render={({ field: { value: startDateValue, onChange: onChangeStartDate } }) => (
-            <Controller
-              control={control}
-              name="end_date"
-              render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
-                <DateRangeDropdown
-                  className="h-7"
-                  buttonVariant="border-with-text"
-                  minDate={new Date()}
-                  value={{
-                    from: getDate(startDateValue),
-                    to: getDate(endDateValue),
-                  }}
-                  onSelect={async (val) => {
-                    const isDateValid = await handleDateChange(val?.from, val?.to);
-                    if (isDateValid) {
-                      onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
-                      onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+            <div className="flex gap-2 items-center">
+              <Controller
+                control={control}
+                name="end_date"
+                render={({ field: { value: endDateValue, onChange: onChangeEndDate } }) => (
+                  <DateRangeDropdown
+                    className="h-7"
+                    buttonVariant="border-with-text"
+                    minDate={new Date()}
+                    value={{
+                      from: getDate(startDateValue),
+                      to: getDate(endDateValue),
+                    }}
+                    onSelect={async (val) => {
+                      const isDateValid = await handleDateChange(val?.from, val?.to);
+                      if (isDateValid) {
+                        onChangeStartDate(val?.from ? renderFormattedPayloadDate(val.from) : null);
+                        onChangeEndDate(val?.to ? renderFormattedPayloadDate(val.to) : null);
+                      }
+                    }}
+                    placeholder={{
+                      from: t("project_cycles.start_date"),
+                      to: t("project_cycles.end_date"),
+                    }}
+                    customTooltipHeading={t("project_cycles.in_your_timezone")}
+                    customTooltipContent={
+                      <span className="flex gap-1">
+                        {renderFormattedDateInUserTimezone(cycleDetails.start_date ?? "")}
+                        <ArrowRight className="h-3 w-3 flex-shrink-0 my-auto" />
+                        {renderFormattedDateInUserTimezone(cycleDetails.end_date ?? "")}
+                      </span>
                     }
-                  }}
-                  placeholder={{
-                    from: "Start date",
-                    to: "End date",
-                  }}
-                  required={cycleDetails.status !== "draft"}
-                  disabled={!isEditingAllowed || isArchived || isCompleted}
-                />
+                    showTooltip={!!cycleDetails.start_date && !!cycleDetails.end_date} // show tooltip only if both start and end date are present
+                    required={cycleDetails.status !== "draft"}
+                    disabled={!isEditingAllowed || isArchived || isCompleted}
+                  />
+                )}
+              />
+              {projectUTCOffset && (
+                <span className="rounded-md text-xs px-2 cursor-default  py-1 bg-custom-background-80 text-custom-text-300">
+                  {projectUTCOffset}
+                </span>
               )}
-            />
+            </div>
           )}
         />
       </div>
