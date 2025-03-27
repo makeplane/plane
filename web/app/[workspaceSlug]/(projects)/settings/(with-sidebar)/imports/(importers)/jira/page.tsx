@@ -7,7 +7,7 @@ import useSWR from "swr";
 import { DashboardLoaderRoot } from "@/plane-web/components/importers/common/dashboard";
 import { AuthenticationRoot, StepsRoot, JiraDashboardRoot } from "@/plane-web/components/importers/jira";
 //  plane web hooks
-import { useFlag, useJiraImporter } from "@/plane-web/hooks/store";
+import { useJiraImporter } from "@/plane-web/hooks/store";
 
 const JiraImporter: FC = observer(() => {
   const {
@@ -25,21 +25,20 @@ const JiraImporter: FC = observer(() => {
   const workspaceSlug = workspace?.slug || undefined;
   const workspaceId = workspace?.id || undefined;
   const userId = user?.id || undefined;
-  const isFeatureEnabled = useFlag(workspaceSlug?.toString(), "JIRA_IMPORTER");
 
   // fetching external api token
   const { isLoading: externalApiTokenIsLoading } = useSWR(
-    isFeatureEnabled && workspaceSlug && !externalApiToken ? `IMPORTER_EXTERNAL_SERVICE_TOKEN_${workspaceSlug}` : null,
-    isFeatureEnabled && workspaceSlug && !externalApiToken ? async () => fetchExternalApiToken(workspaceSlug) : null,
+    workspaceSlug && !externalApiToken ? `IMPORTER_EXTERNAL_SERVICE_TOKEN_${workspaceSlug}` : null,
+    workspaceSlug && !externalApiToken ? async () => fetchExternalApiToken(workspaceSlug) : null,
     { errorRetryCount: 0 }
   );
 
   // validating the importer is authenticated or not
   const { isLoading: importerAuthIsLoading } = useSWR(
-    isFeatureEnabled && workspaceSlug && userId && externalApiToken && !currentAuth
+    workspaceSlug && userId && externalApiToken && !currentAuth
       ? `IMPORTER_AUTHENTICATION_JIRA_${workspaceSlug}_${user?.id}`
       : null,
-    isFeatureEnabled && workspaceSlug && userId && externalApiToken && !currentAuth
+    workspaceSlug && userId && externalApiToken && !currentAuth
       ? async () => authVerification()
       : null,
     { errorRetryCount: 0 }
@@ -62,8 +61,6 @@ const JiraImporter: FC = observer(() => {
     setDefaultServiceConfig,
     resetImporterData,
   ]);
-
-  if (!isFeatureEnabled) return null;
 
   if ((!externalApiToken && externalApiTokenIsLoading) || (!currentAuth && importerAuthIsLoading))
     return <DashboardLoaderRoot />;

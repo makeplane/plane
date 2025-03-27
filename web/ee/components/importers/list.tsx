@@ -49,7 +49,7 @@ export const IMPORTERS_LIST: ImporterProps[] = [
   {
     flag: E_FEATURE_FLAGS.FLATFILE_IMPORTER,
     key: "csv",
-    title: "CSV Importers",
+    title: "CSV Importer",
     i18n_description: "flatfile_importer.flatfile_importer_description",
     logo: CSVLogo,
     beta: true,

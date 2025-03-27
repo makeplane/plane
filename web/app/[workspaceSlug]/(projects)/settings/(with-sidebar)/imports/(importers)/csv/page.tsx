@@ -3,11 +3,10 @@
 import { FC, Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { E_FEATURE_FLAGS } from "@plane/constants";
 import { DashboardLoaderRoot } from "@/plane-web/components/importers/common/dashboard";
 import { FlatfileDashboardRoot } from "@/plane-web/components/importers/flatfile";
 import { StepsRoot } from "@/plane-web/components/importers/flatfile/steps";
-import { useFlag, useFlatfileImporter } from "@/plane-web/hooks/store";
+import { useFlatfileImporter } from "@/plane-web/hooks/store";
 
 const FlatfileImporter: FC = observer(() => {
   const {
@@ -29,22 +28,20 @@ const FlatfileImporter: FC = observer(() => {
   const workspaceSlug = workspace?.slug || undefined;
   const workspaceId = workspace?.id || undefined;
   const userId = user?.id || undefined;
-  const isFeatureEnabled =
-    (workspaceSlug && useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.FLATFILE_IMPORTER)) || false;
 
   // fetching external api token
   const { isLoading: externalApiTokenIsLoading, error: externalApiTokenError } = useSWR(
-    isFeatureEnabled && workspaceSlug && !externalApiToken ? `IMPORTER_EXTERNAL_SERVICE_TOKEN_${workspaceSlug}` : null,
-    isFeatureEnabled && workspaceSlug && !externalApiToken ? async () => fetchExternalApiToken(workspaceSlug) : null,
+    workspaceSlug && !externalApiToken ? `IMPORTER_EXTERNAL_SERVICE_TOKEN_${workspaceSlug}` : null,
+    workspaceSlug && !externalApiToken ? async () => fetchExternalApiToken(workspaceSlug) : null,
     { revalidateOnFocus: false, errorRetryCount: 0 }
   );
 
   // Save Credentials
   const { isLoading: verifyCredentialsLoading } = useSWR(
-    isFeatureEnabled && workspaceId && userId && externalApiToken
+    workspaceId && userId && externalApiToken
       ? `CHECKING_AND_SAVING_CREDENTIALS_${workspaceSlug}`
       : null,
-    isFeatureEnabled && workspaceId && userId && externalApiToken
+    workspaceId && userId && externalApiToken
       ? async () => verifyAndAddCredentials(workspaceId, userId, externalApiToken)
       : null,
     { revalidateOnFocus: false, errorRetryCount: 0 }
@@ -66,8 +63,6 @@ const FlatfileImporter: FC = observer(() => {
       resetImporterData();
     };
   }, [workspaceId, userId, externalApiToken, serviceWorkspaceId, setDefaultServiceConfig, resetImporterData]);
-
-  if (!isFeatureEnabled) return null;
 
   if (externalApiTokenIsLoading || verifyCredentialsLoading || isProjectsLoading) {
     return <DashboardLoaderRoot />;

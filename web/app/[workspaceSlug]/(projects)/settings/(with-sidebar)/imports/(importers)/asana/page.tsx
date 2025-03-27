@@ -8,7 +8,7 @@ import { AuthenticationRoot, StepsRoot } from "@/plane-web/components/importers/
 //  plane web hooks
 import { AsanaDashboardRoot } from "@/plane-web/components/importers/asana/dashboard/root";
 import { DashboardLoaderRoot } from "@/plane-web/components/importers/common/dashboard";
-import { useFlag, useAsanaImporter } from "@/plane-web/hooks/store";
+import { useAsanaImporter } from "@/plane-web/hooks/store";
 
 const AsanaImporter: FC = observer(() => {
   const {
@@ -26,7 +26,6 @@ const AsanaImporter: FC = observer(() => {
   const workspaceSlug = workspace?.slug || undefined;
   const workspaceId = workspace?.id || undefined;
   const userId = user?.id || undefined;
-  const isFeatureEnabled = useFlag(workspaceSlug?.toString(), "ASANA_IMPORTER");
 
   // fetching external api token
   const { isLoading: externalApiTokenIsLoading } = useSWR(
@@ -58,8 +57,6 @@ const AsanaImporter: FC = observer(() => {
     setDefaultServiceConfig,
     resetImporterData,
   ]);
-
-  if (!isFeatureEnabled) return null;
 
   if ((!externalApiToken && externalApiTokenIsLoading) || (!currentAuth && importerAuthIsLoading))
     return <DashboardLoaderRoot />;

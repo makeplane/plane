@@ -5,26 +5,21 @@ import { useParams } from "next/navigation";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { PageHead } from "@/components/core";
-import { ImportersEmptyState } from "@/components/importers";
 // hooks
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
-import { useUserProfile } from "@/hooks/store/use-user-profile";
 // plane web components
 import { ImportersList } from "@/plane-web/components/importers";
 // plane web hooks
-import { useFlag } from "@/plane-web/hooks/store";
 
 const ImportsPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { data: currentUserProfile } = useUserProfile();
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
   // derived values
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Imports` : undefined;
-  const importersEnabled = useFlag(workspaceSlug?.toString(), "SILO_IMPORTERS");
 
   if (!isAdmin)
     return (
@@ -33,14 +28,6 @@ const ImportsPage = observer(() => {
         <div className="mt-10 flex h-full w-full justify-center p-4">
           <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
         </div>
-      </>
-    );
-
-  if (!importersEnabled)
-    return (
-      <>
-        <PageHead title={pageTitle} />
-        <ImportersEmptyState theme={currentUserProfile?.theme.theme || "light"} />
       </>
     );
 
