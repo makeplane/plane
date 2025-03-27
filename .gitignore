@@ -78,6 +78,7 @@ pnpm-workspace.yaml
 .npmrc
 .secrets
 tmp/
+
 ## packages
 dist
 .flatfile
@@ -87,6 +88,10 @@ deploy/selfhost/plane-app/
 ## Storybook
 *storybook.log
 output.css
+
+# Redis
+*.rdb
+*.rdb.gz
 
 # Monitor
 monitor/prime.key
