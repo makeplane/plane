@@ -25,26 +25,31 @@ type ExtensionConfig = {
   getExtension: (props: Props) => AnyExtension;
 };
 
-const createSlashCommandOptions: TSlashCommandAdditionalOption[] = [
-  {
-    commandKey: "issue-embed",
-    key: "issue-embed",
-    title: "Work item embed",
-    description: "Embed work item from the project.",
-    searchTerms: ["work item", "link", "embed"],
-    icon: <LayersIcon className="size-3.5" />,
-    command: ({ editor, range }) => {
-      editor.chain().focus().insertContentAt(range, "<p>#workitem_</p>").run();
+const createSlashCommandOptions = (disabledExtensions: TExtensions[] = []): TSlashCommandAdditionalOption[] => {
+  const options: TSlashCommandAdditionalOption[] = [
+    {
+      commandKey: "issue-embed",
+      key: "issue-embed",
+      title: "Work item embed",
+      description: "Embed work item from the project.",
+      searchTerms: ["work item", "link", "embed"],
+      icon: <LayersIcon className="size-3.5" />,
+      command: ({ editor, range }) => {
+        editor.chain().focus().insertContentAt(range, "<p>#workitem_</p>").run();
+      },
+      section: "general",
+      pushAfter: "callout",
     },
-    section: "general",
-    pushAfter: "callout",
-  },
-];
+  ];
+
+  return options.filter((option) => !disabledExtensions.includes(option.commandKey as TExtensions));
+};
 
 const extensionRegistry: ExtensionConfig[] = [
   {
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("slash-commands"),
-    getExtension: () => SlashCommands({ additionalOptions: createSlashCommandOptions }),
+    getExtension: ({ disabledExtensions }) =>
+      SlashCommands({ additionalOptions: createSlashCommandOptions(disabledExtensions) }),
   },
   {
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("issue-embed"),
