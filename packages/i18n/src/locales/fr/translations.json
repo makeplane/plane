@@ -502,6 +502,8 @@
   "export": "Exporter",
   "member": "{count, plural, one{# membre} other{# membres}}",
   "new_password_must_be_different_from_old_password": "Le nouveau mot de passe doit être différent du mot de passe précédent",
+  "edited": "Modifié",
+  "bot": "Bot",
 
   "project_view": {
     "sort_by": {

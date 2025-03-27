@@ -500,6 +500,8 @@
   "export": "Exportovať",
   "member": "{count, plural, one{# člen} few{# členovia} other{# členov}}",
   "new_password_must_be_different_from_old_password": "Nové heslo musí byť odlišné od starého hesla",
+  "edited": "Upravené",
+  "bot": "Bot",
 
   "project_view": {
     "sort_by": {

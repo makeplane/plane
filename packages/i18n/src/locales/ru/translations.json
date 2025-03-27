@@ -500,6 +500,8 @@
   "export": "Экспорт",
   "member": "{count, plural, one{# участник} few{# участника} other{# участников}}",
   "new_password_must_be_different_from_old_password": "Новое пароль должен отличаться от старого пароля",
+  "edited": "Редактировано",
+  "bot": "Бот",
 
   "project_view": {
     "sort_by": {
