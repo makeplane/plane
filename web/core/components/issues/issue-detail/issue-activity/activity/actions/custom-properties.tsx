@@ -35,10 +35,8 @@ export const IssueCustomPropertyActivity: FC<TIssueCustomPropertyActivity> = obs
     >
       <>
         {isNewProperty ? (
-          // When a custom property is added
           <>Added a Custom Property <span className="font-medium text-custom-text-100">{customPropertyKey}</span> with value <span className="font-medium text-custom-text-100">{newValue}</span>.</>
         ) : (
-          // When a custom property value is updated
           <>Updated the value of <span className="font-medium text-custom-text-100">{customPropertyKey}</span> from <span className="font-medium text-custom-text-100">{oldValue}</span> to <span className="font-medium text-custom-text-100">{newValue}</span>.</>
         )}
       </>
