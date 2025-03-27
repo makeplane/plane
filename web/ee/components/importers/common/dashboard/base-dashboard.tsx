@@ -19,6 +19,7 @@ export type TImporterConfig<T> = {
   serviceName: string;
   hideProject?: boolean;
   hideWorkspace?: boolean;
+  hideDeactivate?: boolean;
   getWorkspaceName: (job: TImportJob<T>) => string;
   getProjectName: (job: TImportJob<T>) => string;
   getPlaneProject: (job: TImportJob<T>) =>
@@ -201,15 +202,17 @@ export const BaseDashboard = observer(<T,>(props: IBaseDashboardProps<T>) => {
             </div>
           </div>
           <div className="flex-shrink-0 relative flex items-center gap-4">
-            <Button
-              variant="link-danger"
-              size="sm"
-              onClick={handleDeactivateAuth}
-              className="bg-transparent"
-              disabled={deactivateLoader}
+            {!config.hideDeactivate && (
+              <Button
+                variant="link-danger"
+                size="sm"
+                onClick={handleDeactivateAuth}
+                className="bg-transparent"
+                disabled={deactivateLoader}
             >
               {deactivateLoader ? "Deactivating..." : "Deactivate"}
-            </Button>
+              </Button>
+            )}
             {!currentAuth?.sourceTokenInvalid ? (
               <Button size="sm" onClick={handleDashboardView}>
                 {t("importers.import")}
