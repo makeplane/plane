@@ -331,9 +331,9 @@
   "re_generate_key": "Re-generate key",
   "export": "Export",
   "member": "{count, plural, one{# member} other{# members}}",
-  "edited": "Modifié",
+  "edited": "edited",
   "bot": "Bot",
-  
+
   "project_view": {
     "sort_by": {
       "created_at": "Created at",
