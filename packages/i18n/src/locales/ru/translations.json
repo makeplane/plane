@@ -499,6 +499,8 @@
   "re_generate_key": "Перегенерировать ключ",
   "export": "Экспорт",
   "member": "{count, plural, one{# участник} few{# участника} other{# участников}}",
+  "edited": "Редактировано",
+  "bot": "Бот",
 
   "project_view": {
     "sort_by": {

@@ -1,6 +1,5 @@
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 // plane constants
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
@@ -51,7 +50,7 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
   });
 
   const onSubmit = async (formData: Partial<TIssueComment>) => {
-    await activityOperations
+    activityOperations
       .createComment(formData)
       .then(async () => {
         if (uploadedAssetIds.length > 0) {

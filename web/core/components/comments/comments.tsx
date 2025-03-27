@@ -36,12 +36,12 @@ export const CommentsWrapper: FC<TCommentsWrapper> = observer((props) => {
       )}
 
       <div className="flex-grow py-4 overflow-y-auto">
-        {comments?.map((r, index) => {
+        {comments?.map((data, index) => {
           let comment;
-          if (typeof r === "string") {
-            comment = getCommentById?.(r);
+          if (typeof data === "string") {
+            comment = getCommentById?.(data);
           } else {
-            comment = r;
+            comment = data;
           }
 
           if (!comment) return null;

@@ -1,6 +1,7 @@
 import { FC, ReactNode, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { TIssueComment } from "@plane/types";
 import { Avatar, Tooltip } from "@plane/ui";
 import { calculateTimeAgo, cn, getFileURL, renderFormattedDate } from "@plane/utils";
@@ -20,6 +21,7 @@ export const CommentBlock: FC<TCommentBlock> = observer((props) => {
   const commentBlockRef = useRef<HTMLDivElement>(null);
   // store hooks
   const { getUserDetails } = useMember();
+  const { t } = useTranslation();
   const userDetails = getUserDetails(comment?.actor);
 
   if (!comment || !userDetails) return <></>;
@@ -49,7 +51,7 @@ export const CommentBlock: FC<TCommentBlock> = observer((props) => {
           <div className="flex-1 flex flex-wrap items-center gap-1">
             <div className="text-xs font-medium">
               {comment?.actor_detail?.is_bot
-                ? comment?.actor_detail?.first_name + " Bot"
+                ? comment?.actor_detail?.first_name + ` ${t("bot")}`
                 : comment?.actor_detail?.display_name || userDetails.display_name}
             </div>
             <div className="text-xs text-custom-text-300">
@@ -60,7 +62,7 @@ export const CommentBlock: FC<TCommentBlock> = observer((props) => {
               >
                 <span className="text-custom-text-350">
                   {calculateTimeAgo(comment.updated_at)}
-                  {comment.edited_at && " (edited)"}
+                  {comment.edited_at && ` (${t("edited")})`}
                 </span>
               </Tooltip>
             </div>

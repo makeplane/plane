@@ -500,6 +500,8 @@
   "re_generate_key": "Rigenera chiave",
   "export": "Esporta",
   "member": "{count, plural, one {# membro} other {# membri}}",
+  "edited": "Modificato",
+  "bot": "Bot",
 
   "project_view": {
     "sort_by": {

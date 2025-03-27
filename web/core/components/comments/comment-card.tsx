@@ -64,6 +64,7 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
   const isEmpty = isCommentEmpty(commentHTML ?? undefined);
   const isEditorReadyToDiscard = editorRef.current?.isEditorReadyToDiscard();
   const isSubmitButtonDisabled = isSubmitting || !isEditorReadyToDiscard;
+  const isDisabled = isSubmitting || isEmpty || isSubmitButtonDisabled;
 
   // helpers
   const onEnter = async (formData: Partial<TIssueComment>) => {
@@ -159,7 +160,7 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
                 const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file, comment.id);
                 return asset_id;
               }}
-              projectId={(projectId as string) ?? ""}
+              projectId={projectId?.toString() ?? ""}
             />
           </div>
           <div className="flex gap-1 self-end">
@@ -167,7 +168,7 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
               <button
                 type="button"
                 onClick={handleSubmit(onEnter)}
-                disabled={isSubmitting || isEmpty || isSubmitButtonDisabled}
+                disabled={isDisabled}
                 className={`group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300  ${
                   isEmpty ? "cursor-not-allowed bg-gray-200" : "hover:bg-green-500"
                 }`}

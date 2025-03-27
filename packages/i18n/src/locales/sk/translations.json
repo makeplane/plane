@@ -499,6 +499,8 @@
   "re_generate_key": "Znova generovať kľúč",
   "export": "Exportovať",
   "member": "{count, plural, one{# člen} few{# členovia} other{# členov}}",
+  "edited": "Upravené",
+  "bot": "Bot",
 
   "project_view": {
     "sort_by": {

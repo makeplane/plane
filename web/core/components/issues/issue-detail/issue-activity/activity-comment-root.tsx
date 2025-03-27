@@ -48,12 +48,13 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
 
   return (
     <div>
-      {filteredActivityComments.map((activityComment, index) =>
-        activityComment.activity_type === "COMMENT" ? (
+      {filteredActivityComments.map((activityComment, index) => {
+        const comment = getCommentById(activityComment.id);
+        return activityComment.activity_type === "COMMENT" ? (
           <CommentCard
             key={activityComment.id}
             workspaceSlug={workspaceSlug}
-            comment={getCommentById(activityComment.id)}
+            comment={comment}
             activityOperations={activityOperations}
             ends={index === 0 ? "top" : index === filteredActivityComments.length - 1 ? "bottom" : undefined}
             showAccessSpecifier={showAccessSpecifier}
@@ -80,8 +81,8 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
           />
         ) : (
           <></>
-        )
-      )}
+        );
+      })}
     </div>
   );
 });

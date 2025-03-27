@@ -501,6 +501,8 @@
   "re_generate_key": "重新生成密钥",
   "export": "导出",
   "member": "{count, plural, other{# 成员}}",
+  "edited": "已编辑",
+  "bot": "机器人",
 
   "project_view": {
     "sort_by": {

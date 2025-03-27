@@ -121,6 +121,7 @@ export class IssueCommentReactionStore implements IIssueCommentReactionStore {
 
       return response;
     } catch (error) {
+      console.log("error", error);
       throw error;
     }
   };
@@ -144,7 +145,6 @@ export class IssueCommentReactionStore implements IIssueCommentReactionStore {
   };
 
   createCommentReaction = async (workspaceSlug: string, projectId: string, commentId: string, reaction: string) => {
-    // eslint-disable-next-line no-useless-catch
     try {
       const response = await this.issueReactionService.createIssueCommentReaction(workspaceSlug, projectId, commentId, {
         reaction,
@@ -161,6 +161,7 @@ export class IssueCommentReactionStore implements IIssueCommentReactionStore {
 
       return response;
     } catch (error) {
+      console.log("error", error);
       throw error;
     }
   };

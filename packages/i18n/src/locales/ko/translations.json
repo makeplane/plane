@@ -501,6 +501,8 @@
   "re_generate_key": "키 다시 생성",
   "export": "내보내기",
   "member": "{count, plural, one{# 멤버} other{# 멤버}}",
+  "edited": "수정됨",
+  "bot": "봇",
 
   "project_view": {
     "sort_by": {
