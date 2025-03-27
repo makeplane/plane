@@ -1360,7 +1360,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
                     )
                 )
             )
-        )
+        ).annotate(is_epic=F("type__is_epic"))
 
         if check_workspace_feature_flag(
             feature_key=FeatureFlag.CUSTOMERS, slug=self.kwargs.get("slug")
