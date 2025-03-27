@@ -501,6 +501,8 @@
   "re_generate_key": "重新產生金鑰",
   "export": "匯出",
   "member": "{count, plural, one{# 位成員} other{# 位成員}}",
+  "edited": "已編輯",
+  "bot": "機器人",
 
   "project_view": {
     "sort_by": {

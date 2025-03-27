@@ -503,6 +503,8 @@
   "re_generate_key": "Regenerar clave",
   "export": "Exportar",
   "member": "{count, plural, one{# miembro} other{# miembros}}",
+  "edited": "Modificado",
+  "bot": "Bot",
 
   "project_view": {
     "sort_by": {

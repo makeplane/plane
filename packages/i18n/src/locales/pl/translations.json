@@ -499,6 +499,9 @@
   "re_generate_key": "Wygeneruj klucz ponownie",
   "export": "Eksportuj",
   "member": "{count, plural, one{# członek} few{# członkowie} other{# członków}}",
+  "edited": "Edytowano",
+  "bot": "Bot",
+
   "project_view": {
     "sort_by": {
       "created_at": "Utworzono dnia",
