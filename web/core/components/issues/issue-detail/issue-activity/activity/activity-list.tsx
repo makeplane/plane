@@ -87,8 +87,6 @@ export const IssueActivityItem: FC<TIssueActivityItem> = observer((props) => {
       return <IssueInboxActivity {...componentDefaultProps} />;
     case "type":
       return <IssueTypeActivity {...componentDefaultProps} />;
-    // case activityField && activityField.startsWith("Custom Property"): 
-    //   return <IssueCustomPropertyActivity {...componentDefaultProps} />;
     default:
       return <></>;
   }
