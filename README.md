@@ -16,10 +16,10 @@
 </p>
 
 <p align="center">
-    <a href="https://dub.sh/plane-website-readme"><b>Website</b></a> •
-    <a href="https://git.new/releases"><b>Releases</b></a> •
-    <a href="https://dub.sh/planepowershq"><b>Twitter</b></a> •
-    <a href="https://dub.sh/planedocs"><b>Documentation</b></a>
+    <a href="https://plane.so/"><b>Website</b></a> •
+    <a href="https://github.com/makeplane/plane/releases"><b>Releases</b></a> •
+    <a href="https://twitter.com/planepowers"><b>Twitter</b></a> •
+    <a href="https://docs.plane.so/"><b>Documentation</b></a>
 </p>
 
 <p>
@@ -39,7 +39,7 @@
     </a>
 </p>
 
-Meet [Plane](https://dub.sh/plane-website-readme), an open-source project management tool to track issues, run ~sprints~ cycles, and manage product roadmaps without the chaos of managing the tool itself. 🧘‍♀️
+Meet [Plane](https://plane.so/), an open-source project management tool to track issues, run ~sprints~ cycles, and manage product roadmaps without the chaos of managing the tool itself. 🧘‍♀️
 
 > Plane is evolving every day. Your suggestions, ideas, and reported bugs help us immensely. Do not hesitate to join in the conversation on [Discord](https://discord.com/invite/A92xrEGCge) or raise a GitHub issue. We read everything and respond to most.
 
