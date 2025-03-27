@@ -7,7 +7,6 @@ import jwt
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.db.models import Count
 from django.utils import timezone
 
 # Third party modules
@@ -27,6 +26,7 @@ from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.db.models import User, Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.utils.cache import invalidate_cache, invalidate_cache_directly
 from plane.utils.host import base_host
+from plane.utils.ip_address import get_client_ip
 from .. import BaseViewSet
 
 
@@ -213,7 +213,7 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                     user=user.id if user is not None else None,
                     email=email,
                     user_agent=request.META.get("HTTP_USER_AGENT"),
-                    ip=request.META.get("REMOTE_ADDR"),
+                    ip=get_client_ip(request=request),
                     event_name="MEMBER_ACCEPTED",
                     accepted_from="EMAIL",
                 )
