@@ -1774,6 +1774,12 @@
     "remove_filters_to_see_all_cycles": "Odeberte filtry pro zobrazení všech cyklů",
     "remove_search_criteria_to_see_all_cycles": "Odeberte kritéria pro zobrazení všech cyklů",
     "only_completed_cycles_can_be_archived": "Lze archivovat pouze dokončené cykly",
+    "start_date": "Začátek data",
+    "end_date": "Konec data",
+    "in_your_timezone": "V časovém pásmu",
+    "transfer_work_items": "Převést {count} pracovních položek",
+    "date_range": "Období data",
+    "add_date": "Přidat datum",
     "active_cycle": {
       "label": "Aktivní cyklus",
       "progress": "Pokrok",

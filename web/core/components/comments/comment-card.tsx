@@ -4,66 +4,50 @@ import { FC, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
 import { Check, Globe2, Lock, Pencil, Trash2, X } from "lucide-react";
-// plane constants
+// PLane
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
-// plane editor
 import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
-// plane i18n
 import { useTranslation } from "@plane/i18n";
-// plane types
-import { TIssueComment } from "@plane/types";
-// plane ui
+import { TIssueComment, TCommentsOperations } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
-// plane utils
-import { cn } from "@plane/utils";
 // components
 import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
 // helpers
 import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
-import { useIssueDetail, useUser, useWorkspace } from "@/hooks/store";
-// components
-import { IssueCommentReaction } from "../../reactions/issue-comment";
-import { TActivityOperations } from "../root";
-import { IssueCommentBlock } from "./comment-block";
+import { useUser } from "@/hooks/store";
+//
+import { CommentBlock } from "@/plane-web/components/comments";
+import { CommentReactions } from "./comment-reaction";
 
-type TIssueCommentCard = {
-  projectId: string;
-  issueId: string;
+type TCommentCard = {
   workspaceSlug: string;
-  commentId: string;
-  activityOperations: TActivityOperations;
+  comment: TIssueComment | undefined;
+  activityOperations: TCommentsOperations;
   ends: "top" | "bottom" | undefined;
   showAccessSpecifier?: boolean;
   disabled?: boolean;
+  projectId?: string;
 };
 
-export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
+export const CommentCard: FC<TCommentCard> = observer((props) => {
   const {
     workspaceSlug,
-    projectId,
-    issueId,
-    commentId,
+    comment,
     activityOperations,
     ends,
     showAccessSpecifier = false,
     disabled = false,
+    projectId,
   } = props;
   const { t } = useTranslation();
-  // states
-  const [isEditing, setIsEditing] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   const showEditorRef = useRef<EditorReadOnlyRefApi>(null);
+  // state
+  const [isEditing, setIsEditing] = useState(false);
   // store hooks
-  const {
-    comment: { getCommentById },
-  } = useIssueDetail();
   const { data: currentUser } = useUser();
-  // derived values
-  const comment = getCommentById(commentId);
-  const workspaceStore = useWorkspace();
-  const workspaceId = workspaceStore.getWorkspaceBySlug(comment?.workspace_detail?.slug as string)?.id as string;
   // form info
   const {
     formState: { isSubmitting },
@@ -75,13 +59,17 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
     defaultValues: { comment_html: comment?.comment_html },
   });
   // derived values
+  const workspaceId = comment?.workspace;
   const commentHTML = watch("comment_html");
-  const isEmpty = isCommentEmpty(commentHTML);
+  const isEmpty = isCommentEmpty(commentHTML ?? undefined);
   const isEditorReadyToDiscard = editorRef.current?.isEditorReadyToDiscard();
   const isSubmitButtonDisabled = isSubmitting || !isEditorReadyToDiscard;
+  const isDisabled = isSubmitting || isEmpty || isSubmitButtonDisabled;
 
+  // helpers
   const onEnter = async (formData: Partial<TIssueComment>) => {
     if (isSubmitting || !comment) return;
+
     setIsEditing(false);
 
     await activityOperations.updateComment(comment.id, formData);
@@ -96,11 +84,11 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
     }
   }, [isEditing, setFocus]);
 
-  if (!comment || !currentUser) return <></>;
+  if (!comment || !currentUser || !workspaceId) return <></>;
 
   return (
-    <IssueCommentBlock
-      commentId={commentId}
+    <CommentBlock
+      comment={comment}
       quickActions={
         <>
           {!disabled && currentUser?.id === comment.actor && (
@@ -156,8 +144,6 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
           >
             <LiteTextEditor
               workspaceId={workspaceId}
-              projectId={projectId}
-              issue_id={issueId}
               workspaceSlug={workspaceSlug}
               ref={editorRef}
               id={comment.id}
@@ -174,6 +160,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
                 const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file, comment.id);
                 return asset_id;
               }}
+              projectId={projectId?.toString() ?? ""}
             />
           </div>
           <div className="flex gap-1 self-end">
@@ -181,15 +168,14 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
               <button
                 type="button"
                 onClick={handleSubmit(onEnter)}
-                disabled={isSubmitButtonDisabled}
-                className={cn(
-                  "group rounded border border-green-500 text-green-500 hover:text-white bg-green-500/20 hover:bg-green-500 p-2 shadow-md duration-300",
-                  {
-                    "pointer-events-none": isSubmitButtonDisabled,
-                  }
-                )}
+                disabled={isDisabled}
+                className={`group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300  ${
+                  isEmpty ? "cursor-not-allowed bg-gray-200" : "hover:bg-green-500"
+                }`}
               >
-                <Check className="size-3" />
+                <Check
+                  className={`h-3 w-3 text-green-500 duration-300 ${isEmpty ? "text-black" : "group-hover:text-white"}`}
+                />
               </button>
             )}
             <button
@@ -201,7 +187,7 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
             </button>
           </div>
         </form>
-        <div className={`relative ${isEditing ? "hidden" : ""}`}>
+        <div className={`relative flex flex-col gap-2 ${isEditing ? "hidden" : ""}`}>
           {showAccessSpecifier && (
             <div className="absolute right-2.5 top-2.5 z-[1] text-custom-text-300">
               {comment.access === EIssueCommentAccessSpecifier.INTERNAL ? (
@@ -217,18 +203,13 @@ export const IssueCommentCard: FC<TIssueCommentCard> = observer((props) => {
             initialValue={comment.comment_html ?? ""}
             workspaceId={workspaceId}
             workspaceSlug={workspaceSlug}
-            projectId={projectId}
+            editorClassName="[&>*]:!py-0 [&>*]:!text-sm"
+            containerClassName="!py-1"
+            projectId={(projectId as string) ?? ""}
           />
-
-          <IssueCommentReaction
-            workspaceSlug={workspaceSlug}
-            projectId={comment?.project_detail?.id}
-            commentId={comment.id}
-            currentUser={currentUser}
-            disabled={disabled}
-          />
+          <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
         </div>
       </>
-    </IssueCommentBlock>
+    </CommentBlock>
   );
 });

@@ -26,8 +26,6 @@ faker==25.0.0
 django-filter==24.2
 # json model
 jsonmodels==2.7.0
-# sentry
-sentry-sdk==2.8.0
 # storage
 django-storages==1.14.2
 # user management
