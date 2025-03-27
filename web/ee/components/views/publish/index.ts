@@ -1,1 +1,2 @@
-export * from "ce/components/views/publish";
+export * from "./modal";
+export * from "./use-view-publish";
