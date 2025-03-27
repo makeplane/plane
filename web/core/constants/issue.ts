@@ -117,6 +117,11 @@ const whileListedCustomProperties = [
   { key: "vendor_code", title: "Vendor Code" },
   { key: "trip_reference_number", title: "Trip Reference Number" },
   { key: "reference_number", title: "Reference Number" },
+  { key: "hub_name", title: "Hub Name" },
+  { key: "customer_name", title: "Customer Name" },
+  { key: "vendor_name", title: "Vendor Name" },
+  { key: "worker_name", title: "Worker Name" },
+  
 ];
 
 export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = [

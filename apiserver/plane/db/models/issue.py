@@ -82,6 +82,10 @@ def get_default_display_properties():
         "vendor_code": True,
         "trip_reference_number": True,
         "reference_number": True,
+        "hub_name":True,
+        "customer_name":True,
+        "vendor_name":True,
+        "worker_name":True,
     }
 
 
