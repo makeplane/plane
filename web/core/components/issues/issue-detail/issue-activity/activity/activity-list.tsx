@@ -24,6 +24,7 @@ import {
   IssueAttachmentActivity,
   IssueArchivedAtActivity,
   IssueInboxActivity,
+  IssueCustomPropertyActivity,
 } from "./actions";
 
 type TIssueActivityItem = {
@@ -42,6 +43,11 @@ export const IssueActivityItem: FC<TIssueActivityItem> = observer((props) => {
   const componentDefaultProps = { activityId, ends };
 
   const activityField = getActivityById(activityId)?.field;
+
+  if (activityField && activityField.startsWith("Custom Property")) {
+    return <IssueCustomPropertyActivity {...componentDefaultProps} />;
+  }
+
   switch (activityField) {
     case null: // default issue creation
       return <IssueDefaultActivity {...componentDefaultProps} />;
@@ -81,6 +87,8 @@ export const IssueActivityItem: FC<TIssueActivityItem> = observer((props) => {
       return <IssueInboxActivity {...componentDefaultProps} />;
     case "type":
       return <IssueTypeActivity {...componentDefaultProps} />;
+    // case activityField && activityField.startsWith("Custom Property"): 
+    //   return <IssueCustomPropertyActivity {...componentDefaultProps} />;
     default:
       return <></>;
   }
