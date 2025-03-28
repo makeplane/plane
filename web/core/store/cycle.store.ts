@@ -632,7 +632,8 @@ export class CycleStore implements ICycleStore {
   deleteCycle = async (workspaceSlug: string, projectId: string, cycleId: string) =>
     await this.cycleService.deleteCycle(workspaceSlug, projectId, cycleId).then(() => {
       runInAction(() => {
-        if (this.cycleMap[cycleId].status?.toLowerCase() === "current") {
+        const cycle = this.getCycleById(cycleId);
+        if (cycle?.status?.toLowerCase() === "current") {
           // Update workspace active cycle count in workspaceUserInfo
           this.updateWorkspaceUserActiveCycleCount(workspaceSlug, -1);
         }
