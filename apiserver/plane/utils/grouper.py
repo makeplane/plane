@@ -101,10 +101,9 @@ def issue_on_results(issues, group_by, sub_group_by):
         "customer_code",
         "customer_name",
         "vendor_name",
-        "worker_name"
+        "worker_name",
         "vendor_code",
         "worker_code",
-        "worker_name",
     ]
 
     if group_by in FIELD_MAPPER:
