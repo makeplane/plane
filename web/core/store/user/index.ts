@@ -205,7 +205,7 @@ export class UserStore implements IUserStore {
   };
 
   changePassword = async (
-    csrfToken,
+    csrfToken: string,
     payload: {
       old_password?: string;
       new_password: string;
