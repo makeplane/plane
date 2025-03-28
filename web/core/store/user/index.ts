@@ -93,6 +93,7 @@ export class UserStore implements IUserStore {
       updateCurrentUser: action,
       handleSetPassword: action,
       deactivateAccount: action,
+      changePassword: action,
       reset: action,
       signOut: action,
       // computed
