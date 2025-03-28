@@ -1,24 +1,30 @@
 "use-client";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
-// types
+// plane imports
+import { EditorRefApi } from "@plane/editor";
 import { TNameDescriptionLoader } from "@plane/types";
 // components
+import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 import { IssueParentDetail, TIssueOperations } from "@/components/issues";
 // helpers
 import { getTextContent } from "@/helpers/editor.helper";
-// store hooks
-import { useIssueDetail, useProject, useUser } from "@/hooks/store";
 // hooks
+import { useIssueDetail, useProject, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // plane web components
 import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
 import { IssueTypeSwitcher } from "@/plane-web/components/issues";
-// local components
+// plane web hooks
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
+// services
+import { IssueVersionService } from "@/services/issue";
+// local components
 import { IssueDescriptionInput } from "../description-input";
 import { IssueReaction } from "../issue-detail/reactions";
 import { IssueTitleInput } from "../title-input";
+// services init
+const issueVersionService = new IssueVersionService();
 
 interface IPeekOverviewIssueDetails {
   workspaceSlug: string;
@@ -33,6 +39,8 @@ interface IPeekOverviewIssueDetails {
 
 export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer((props) => {
   const { workspaceSlug, issueId, issueOperations, disabled, isArchived, isSubmitting, setIsSubmitting } = props;
+  // refs
+  const editorRef = useRef<EditorRefApi>(null);
   // store hooks
   const { data: currentUser } = useUser();
   const {
@@ -113,6 +121,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
       />
 
       <IssueDescriptionInput
+        editorRef={editorRef}
         workspaceSlug={workspaceSlug}
         projectId={issue.project_id}
         issueId={issue.id}
@@ -123,15 +132,40 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
         containerClassName="-ml-3 border-none"
       />
 
-      {currentUser && (
-        <IssueReaction
-          workspaceSlug={workspaceSlug}
+      <div className="flex items-center justify-between gap-2">
+        {currentUser && (
+          <IssueReaction
+            workspaceSlug={workspaceSlug}
+            projectId={issue.project_id}
+            issueId={issueId}
+            currentUser={currentUser}
+            disabled={isArchived}
+          />
+        )}
+        <DescriptionVersionsRoot
+          className="flex-shrink-0"
+          entityInformation={{
+            id: issueId,
+            isRestoreEnabled: !disabled,
+            lastUpdatedAt: new Date(issue.updated_at),
+            lastUpdatedBy: issue.updated_by,
+          }}
+          fetchHandlers={{
+            listDescriptionVersions: (issueId) =>
+              issueVersionService.listDescriptionVersions(workspaceSlug, issue.project_id?.toString() ?? "", issueId),
+            retrieveDescriptionVersion: (issueId, versionId) =>
+              issueVersionService.retrieveDescriptionVersion(
+                workspaceSlug,
+                issue.project_id?.toString() ?? "",
+                issueId,
+                versionId
+              ),
+          }}
+          handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
           projectId={issue.project_id}
-          issueId={issueId}
-          currentUser={currentUser}
-          disabled={isArchived}
+          workspaceSlug={workspaceSlug}
         />
-      )}
+      </div>
     </div>
   );
 });

@@ -84,7 +84,7 @@ export type EditorReadOnlyRefApi = {
     json: JSONContent | null;
   };
   clearEditor: (emitUpdate?: boolean) => void;
-  setEditorValue: (content: string) => void;
+  setEditorValue: (content: string, emitUpdate?: boolean) => void;
   scrollSummary: (marking: IMarking) => void;
   getDocumentInfo: () => {
     characters: number;

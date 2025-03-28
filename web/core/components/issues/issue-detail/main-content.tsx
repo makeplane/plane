@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { EditorRefApi } from "@plane/editor";
 import { TNameDescriptionLoader } from "@plane/types";
 // components
+import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 import {
   IssueActivity,
   NameDescriptionUpdateStatus,
@@ -24,8 +27,12 @@ import useSize from "@/hooks/use-window-size";
 import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
 import { IssueTypeSwitcher } from "@/plane-web/components/issues";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
-// types
+// services
+import { IssueVersionService } from "@/services/issue";
+// local imports
 import { TIssueOperations } from "./root";
+// services init
+const issueVersionService = new IssueVersionService();
 
 type Props = {
   workspaceSlug: string;
@@ -38,6 +45,8 @@ type Props = {
 
 export const IssueMainContent: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isArchived } = props;
+  // refs
+  const editorRef = useRef<EditorRefApi>(null);
   // states
   const [isSubmitting, setIsSubmitting] = useState<TNameDescriptionLoader>("saved");
   // hooks
@@ -49,11 +58,9 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
   } = useIssueDetail();
   const { getProjectById } = useProject();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
-
   // derived values
   const projectDetails = getProjectById(projectId);
   const issue = issueId ? getIssueById(issueId) : undefined;
-
   // debounced duplicate issues swr
   const { duplicateIssues } = useDebouncedDuplicateIssues(
     workspaceSlug,
@@ -120,6 +127,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         />
 
         <IssueDescriptionInput
+          editorRef={editorRef}
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
           issueId={issue.id}
@@ -130,15 +138,36 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           containerClassName="-ml-3 border-none"
         />
 
-        {currentUser && (
-          <IssueReaction
-            workspaceSlug={workspaceSlug}
+        <div className="flex items-center justify-between gap-2">
+          {currentUser && (
+            <IssueReaction
+              className="flex-shrink-0"
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              issueId={issueId}
+              currentUser={currentUser}
+              disabled={isArchived}
+            />
+          )}
+          <DescriptionVersionsRoot
+            className="flex-shrink-0"
+            entityInformation={{
+              id: issueId,
+              isRestoreEnabled: isEditable,
+              lastUpdatedAt: new Date(issue.updated_at),
+              lastUpdatedBy: issue.updated_by,
+            }}
+            fetchHandlers={{
+              listDescriptionVersions: (issueId) =>
+                issueVersionService.listDescriptionVersions(workspaceSlug, projectId, issueId),
+              retrieveDescriptionVersion: (issueId, versionId) =>
+                issueVersionService.retrieveDescriptionVersion(workspaceSlug, projectId, issueId, versionId),
+            }}
+            handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
             projectId={projectId}
-            issueId={issueId}
-            currentUser={currentUser}
-            disabled={isArchived}
+            workspaceSlug={workspaceSlug}
           />
-        )}
+        </div>
       </div>
 
       <IssueDetailWidgets

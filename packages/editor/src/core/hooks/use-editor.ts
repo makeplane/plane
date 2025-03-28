@@ -145,8 +145,8 @@ export const useEditor = (props: CustomEditorProps) => {
       clearEditor: (emitUpdate = false) => {
         editor?.chain().setMeta("skipImageDeletion", true).clearContent(emitUpdate).run();
       },
-      setEditorValue: (content: string) => {
-        editor?.commands.setContent(content, false, { preserveWhitespace: "full" });
+      setEditorValue: (content: string, emitUpdate = false) => {
+        editor?.commands.setContent(content, emitUpdate, { preserveWhitespace: "full" });
       },
       setEditorValueAtCursorPosition: (content: string) => {
         if (editor?.state.selection) {
