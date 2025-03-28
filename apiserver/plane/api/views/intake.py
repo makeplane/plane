@@ -18,7 +18,7 @@ from plane.api.serializers import IntakeIssueSerializer, IssueSerializer
 from plane.app.permissions import ProjectLitePermission
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import Intake, IntakeIssue, Issue, Project, ProjectMember, State
-
+from plane.utils.host import base_host
 from .base import BaseAPIView
 
 
@@ -297,7 +297,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
                     current_instance=current_instance,
                     epoch=int(timezone.now().timestamp()),
                     notification=False,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                     intake=str(intake_issue.id),
                 )
 

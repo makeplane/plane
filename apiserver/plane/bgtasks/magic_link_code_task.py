@@ -16,7 +16,7 @@ from plane.utils.exception_logger import log_exception
 
 
 @shared_task
-def magic_link(email, key, token, current_site):
+def magic_link(email, key, token):
     try:
         (
             EMAIL_HOST,

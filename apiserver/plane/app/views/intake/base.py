@@ -37,6 +37,7 @@ from plane.app.serializers import (
 )
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.issue_activities_task import issue_activity
+from plane.utils.host import base_host
 
 
 class IntakeViewSet(BaseViewSet):
@@ -283,7 +284,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
                 intake=str(intake_issue.id),
             )
             intake_issue = (
@@ -407,7 +408,7 @@ class IntakeIssueViewSet(BaseViewSet):
                         ),
                         epoch=int(timezone.now().timestamp()),
                         notification=True,
-                        origin=request.META.get("HTTP_ORIGIN"),
+                        origin=base_host(request=request, is_app=True),
                         intake=str(intake_issue.id),
                     )
                 issue_serializer.save()
@@ -467,7 +468,7 @@ class IntakeIssueViewSet(BaseViewSet):
                     current_instance=current_instance,
                     epoch=int(timezone.now().timestamp()),
                     notification=False,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                     intake=(intake_issue.id),
                 )
 

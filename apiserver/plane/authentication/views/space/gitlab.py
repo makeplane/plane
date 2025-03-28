@@ -15,6 +15,7 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
     AuthenticationException,
 )
+from plane.utils.path_validator import validate_next_path
 
 
 class GitLabOauthInitiateSpaceEndpoint(View):
@@ -34,7 +35,7 @@ class GitLabOauthInitiateSpaceEndpoint(View):
             )
             params = exc.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
 
@@ -66,7 +67,7 @@ class GitLabCallbackSpaceEndpoint(View):
             )
             params = exc.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
 
@@ -77,7 +78,7 @@ class GitLabCallbackSpaceEndpoint(View):
             )
             params = exc.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)
 
@@ -93,6 +94,6 @@ class GitLabCallbackSpaceEndpoint(View):
         except AuthenticationException as e:
             params = e.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
             return HttpResponseRedirect(url)

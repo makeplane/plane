@@ -21,7 +21,7 @@ from plane.bgtasks.issue_activities_task import issue_activity
 from plane.app.permissions import allow_permission, ROLE
 from plane.settings.storage import S3Storage
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
-
+from plane.utils.host import base_host
 
 class IssueAttachmentEndpoint(BaseAPIView):
     serializer_class = IssueAttachmentSerializer
@@ -48,7 +48,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
                 current_instance=json.dumps(serializer.data, cls=DjangoJSONEncoder),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -67,7 +67,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -155,7 +155,7 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -213,7 +213,7 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
                 current_instance=json.dumps(serializer.data, cls=DjangoJSONEncoder),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
 
             # Update the attachment

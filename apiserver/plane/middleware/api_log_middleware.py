@@ -1,5 +1,6 @@
+# Module imports
 from plane.db.models import APIActivityLog
-
+from plane.utils.ip_address import get_client_ip
 
 class APITokenLogMiddleware:
     def __init__(self, get_response):
@@ -28,7 +29,7 @@ class APITokenLogMiddleware:
                         response.content.decode("utf-8") if response.content else None
                     ),
                     response_code=response.status_code,
-                    ip_address=request.META.get("REMOTE_ADDR", None),
+                    ip_address=get_client_ip(request=request),
                     user_agent=request.META.get("HTTP_USER_AGENT", None),
                 )
 

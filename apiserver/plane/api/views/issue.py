@@ -56,6 +56,7 @@ from plane.db.models import (
 from plane.settings.storage import S3Storage
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
+from plane.utils.host import base_host
 
 
 class WorkspaceIssueAPIEndpoint(BaseAPIView):
@@ -1048,7 +1049,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
 
         # Get the storage metadata
@@ -1108,7 +1109,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
                 current_instance=json.dumps(serializer.data, cls=DjangoJSONEncoder),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
 
             # Update the attachment

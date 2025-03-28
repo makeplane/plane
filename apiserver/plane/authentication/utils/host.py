@@ -1,18 +1,13 @@
-# Python imports
-from urllib.parse import urlsplit
-
 # Django imports
 from django.conf import settings
 
+# Module imports
+from plane.utils.ip_address import get_client_ip
 
 def base_host(request, is_admin=False, is_space=False, is_app=False):
     """Utility function to return host / origin from the request"""
     # Calculate the base origin from request
-    base_origin = str(
-        request.META.get("HTTP_ORIGIN")
-        or f"{urlsplit(request.META.get('HTTP_REFERER')).scheme}://{urlsplit(request.META.get('HTTP_REFERER')).netloc}"
-        or f"""{"https" if request.is_secure() else "http"}://{request.get_host()}"""
-    )
+    base_origin = f"{request.scheme}://{request.get_host()}"
 
     # Admin redirections
     if is_admin:
@@ -39,4 +34,4 @@ def base_host(request, is_admin=False, is_space=False, is_app=False):
 
 
 def user_ip(request):
-    return str(request.META.get("REMOTE_ADDR"))
+    return get_client_ip(request=request)
