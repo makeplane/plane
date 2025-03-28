@@ -500,6 +500,8 @@
   "re_generate_key": "Rigenera chiave",
   "export": "Esporta",
   "member": "{count, plural, one {# membro} other {# membri}}",
+  "new_password_must_be_different_from_old_password": "La nuova password deve essere diversa dalla password precedente",
+  
   "edited": "Modificato",
   "bot": "Bot",
 

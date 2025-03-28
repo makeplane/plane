@@ -501,6 +501,7 @@
   "re_generate_key": "キーを再生成",
   "export": "エクスポート",
   "member": "{count, plural, other{# メンバー}}",
+  "new_password_must_be_different_from_old_password": "新しいパスワードは古いパスワードと異なる必要があります",
   "edited": "編集済み",
   "bot": "ボット",
 
