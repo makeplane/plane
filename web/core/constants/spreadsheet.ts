@@ -295,7 +295,6 @@ export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
   "worker_name",
   "vendor_code",
   "worker_code",
-  "worker_name",
 ];
 
 export const SPREADSHEET_SELECT_GROUP = "spreadsheet-issues";
