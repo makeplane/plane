@@ -61,6 +61,7 @@ export interface IssueFormProps {
   };
   isDuplicateModalOpen: boolean;
   handleDuplicateIssueModal: (isOpen: boolean) => void;
+  handleDraftAndClose?: () => void;
   isProjectSelectionDisabled?: boolean;
   storeType: EIssuesStoreType;
 }
@@ -86,6 +87,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     },
     isDuplicateModalOpen,
     handleDuplicateIssueModal,
+    handleDraftAndClose,
     isProjectSelectionDisabled = false,
     storeType,
   } = props;
@@ -235,14 +237,22 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     await onSubmit(submitData, is_draft_issue)
       .then(() => {
         setGptAssistantModal(false);
-        reset({
-          ...DEFAULT_WORK_ITEM_FORM_VALUES,
-          ...(isCreateMoreToggleEnabled ? { ...data } : {}),
-          project_id: getValues<"project_id">("project_id"),
-          type_id: getValues<"type_id">("type_id"),
-          description_html: data?.description_html ?? "<p></p>",
-        });
-        editorRef?.current?.clearEditor();
+        if (isCreateMoreToggleEnabled && workItemTemplateId) {
+          handleTemplateChange({
+            workspaceSlug: workspaceSlug?.toString(),
+            reset,
+            editorRef,
+          });
+        } else {
+          reset({
+            ...DEFAULT_WORK_ITEM_FORM_VALUES,
+            ...(isCreateMoreToggleEnabled ? { ...data } : {}),
+            project_id: getValues<"project_id">("project_id"),
+            type_id: getValues<"type_id">("type_id"),
+            description_html: data?.description_html ?? "<p></p>",
+          });
+          editorRef?.current?.clearEditor();
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -389,6 +399,13 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     <WorkItemTemplateSelect
                       projectId={projectId}
                       typeId={watch("type_id")}
+                      handleModalClose={() => {
+                        if (handleDraftAndClose) {
+                          handleDraftAndClose();
+                        } else {
+                          onClose();
+                        }
+                      }}
                       handleFormChange={handleFormChange}
                       renderChevron
                     />
