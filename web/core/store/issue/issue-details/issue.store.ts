@@ -318,7 +318,7 @@ export class IssueStore implements IIssueStore {
     }
 
     // add identifiers to map
-    this.rootIssueDetailStore.rootIssueStore.issues.addIssueIdentifier(issueIdentifier, issueId);
+    rootWorkItemDetailStore.rootIssueStore.issues.addIssueIdentifier(issueIdentifier, issueId);
 
     // add related data
     if (issue.issue_reactions) rootWorkItemDetailStore.addReactions(issue.id, issue.issue_reactions);
@@ -352,7 +352,7 @@ export class IssueStore implements IIssueStore {
 
     // fetching states
     // TODO: check if this function is required
-    this.rootIssueDetailStore.rootIssueStore.rootStore.state.fetchProjectStates(workspaceSlug, projectId);
+    rootWorkItemDetailStore.rootIssueStore.rootStore.state.fetchProjectStates(workspaceSlug, projectId);
 
     return issue;
   };
