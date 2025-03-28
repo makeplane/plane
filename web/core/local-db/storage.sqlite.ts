@@ -303,8 +303,6 @@ export class Storage {
     log("#### Queries", queries);
 
     const currentProjectStatus = this.getStatus(projectId);
-    console.log("+++++++++currentProjectStatus", currentProjectStatus);
-    console.log("+++++++++this.status", this.status);
     if (
       !currentProjectStatus ||
       this.status !== "ready" ||
