@@ -929,6 +929,22 @@ class IssuePaginatedViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                customer_count=Count(
+                    "customer_request_issues",
+                    filter=Q(customer_request_issues__deleted_at__isnull=True),
+                    distinct=True,
+                )
+            ).annotate(
+                customer_request_count=Count(
+                    "customer_request_issues",
+                    filter=Q(
+                        customer_request_issues__deleted_at__isnull=True,
+                        customer_request_issues__customer_request__isnull=False,
+                    ),
+                    distinct=True,
+                )
+            )
         ).distinct()
 
     def process_paginated_result(self, fields, results, timezone):
@@ -976,6 +992,8 @@ class IssuePaginatedViewSet(BaseViewSet):
             "link_count",
             "attachment_count",
             "sub_issues_count",
+            "customer_count",
+            "customer_request_count",
             "type_id",
         ]
 
