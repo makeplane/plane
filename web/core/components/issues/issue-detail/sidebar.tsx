@@ -361,6 +361,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               issue_type_id={issue_type_id}
               workspaceSlug={workspaceSlug}
               updateCustomProperties={handleCustomPropertiesUpdate}
+              layout="two-fifths"
             />
           </div>
         </div>
