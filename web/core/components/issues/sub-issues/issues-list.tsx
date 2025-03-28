@@ -40,7 +40,7 @@ export const IssueList: FC<IIssueList> = observer((props) => {
   // hooks
   const {
     subIssues: { subIssuesByIssueId },
-  } = useIssueDetail(issueServiceType);
+  } = useIssueDetail();
 
   const subIssueIds = subIssuesByIssueId(parentIssueId);
 
