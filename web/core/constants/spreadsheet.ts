@@ -285,12 +285,17 @@ export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
   "link",
   "attachment_count",
   "sub_issue_count",
-  "hub_code",
-  "customer_code",
-  "worker_code",
-  "vendor_code",
   "trip_reference_number",
   "reference_number",
+  "hub_code",
+  "hub_name",
+  "customer_code",
+  "customer_name",
+  "vendor_name",
+  "worker_name",
+  "vendor_code",
+  "worker_code",
+  "worker_name",
 ];
 
 export const SPREADSHEET_SELECT_GROUP = "spreadsheet-issues";
