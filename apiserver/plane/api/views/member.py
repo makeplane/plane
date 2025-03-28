@@ -34,7 +34,7 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
     ]
 
     # Get all the users that are present inside the workspace
-    def get(self, request, slug, project_id):
+    def get(self, request, slug, project_id, member_id=None):
         # Check if the workspace exists
         if not Workspace.objects.filter(slug=slug).exists():
             return Response(
@@ -42,18 +42,41 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Get the workspace members that are present inside the workspace
-        project_members = ProjectMember.objects.filter(
-            project_id=project_id, workspace__slug=slug
-        ).values_list("member_id", flat=True)
+        if member_id:
+            # Check if the user is a member of the project in the workspace
+            if not ProjectMember.objects.filter(
+                project_id=project_id, 
+                workspace__slug=slug,
+                member_id=member_id
+            ).exists():
+                return Response(
+                    {"error": "User is not a member of this project"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+        
+            # Get the user details
+            try:
+                user = User.objects.get(id=member_id)
+                serialized_user = UserLiteSerializer(user).data
+                return Response(serialized_user, status=status.HTTP_200_OK)
+            except User.DoesNotExist:
+                return Response(
+                    {"error": "User does not exist"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+        else:
+            # Get the workspace members that are present inside the workspace
+            project_members = ProjectMember.objects.filter(
+                project_id=project_id, workspace__slug=slug
+            ).values_list("member_id", flat=True)
 
-        # Get all the users that are present inside the workspace
-        users = UserLiteSerializer(
-            User.objects.filter(
-                id__in=project_members,
-            ),
-            many=True,
-        ).data
+            # Get all the users that are present inside the workspace
+            users = UserLiteSerializer(
+                User.objects.filter(
+                    id__in=project_members,
+                ),
+                many=True,
+            ).data
 
         return Response(users, status=status.HTTP_200_OK)
 
