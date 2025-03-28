@@ -150,6 +150,7 @@ def generate_table_row(worklog):
         ),
         dateConverter(worklog["created_at"]),
         worklog["duration"],
+        worklog["description"],
     ]
 
 
@@ -199,6 +200,7 @@ def worklogs_export_task(provider, workspace_id, user_id, token_id, slug, filter
             .values(
                 "id",
                 "duration",
+                "description",
                 "project",
                 "workspace",
                 "logged_by__first_name",
@@ -214,7 +216,14 @@ def worklogs_export_task(provider, workspace_id, user_id, token_id, slug, filter
         )
 
         # CSV header
-        header = ["Project", "Issue", "Logged by", "Logged On", "Duration"]
+        header = [
+            "Project",
+            "Issue",
+            "Logged by",
+            "Logged On",
+            "Duration",
+            "Description",
+        ]
 
         EXPORTER_MAPPER = {"csv": generate_csv, "xlsx": generate_xlsx}
 
