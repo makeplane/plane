@@ -99,11 +99,11 @@ export const CycleIssuesHeader: React.FC = observer(() => {
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
-  const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
+  const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", false);
 
-  const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
+  const isSidebarCollapsed = storedValue ? (storedValue === true ? true : false) : false;
   const toggleSidebar = () => {
-    setValue(`${!isSidebarCollapsed}`);
+    setValue(!isSidebarCollapsed);
   };
 
   const handleLayoutChange = useCallback(
