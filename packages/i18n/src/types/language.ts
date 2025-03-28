@@ -13,6 +13,7 @@ export type TLanguage =
   | "ua"
   | "pl"
   | "ko"
+  | "pt-BR"
   | "id"
   | "ro";
 
