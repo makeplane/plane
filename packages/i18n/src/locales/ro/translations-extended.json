@@ -1021,9 +1021,7 @@
           "label": "Grupare după dată",
           "placeholder": "Adaugă grupare după dată"
         },
-        "grouping": "Grupare",
         "group_by": "Grupează după",
-        "stacking": "Stivuire",
         "stack_by": "Stivuiește după",
         "daily": "Zilnic",
         "weekly": "Săptămânal",

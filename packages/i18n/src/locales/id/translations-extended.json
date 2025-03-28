@@ -1021,9 +1021,7 @@
           "label": "Kelompok tanggal",
           "placeholder": "Tambah kelompok tanggal"
         },
-        "grouping": "Pengelompokan",
         "group_by": "Kelompokkan berdasarkan",
-        "stacking": "Penumpukan",
         "stack_by": "Tumpuk berdasarkan",
         "daily": "Harian",
         "weekly": "Mingguan",

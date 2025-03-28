@@ -1019,9 +1019,7 @@
           "label": "Gruppo data",
           "placeholder": "Aggiungi gruppo data"
         },
-        "grouping": "Raggruppamento",
         "group_by": "Raggruppa per",
-        "stacking": "Impilamento",
         "stack_by": "Impila per",
         "daily": "Giornaliero",
         "weekly": "Settimanale",

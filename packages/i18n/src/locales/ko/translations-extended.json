@@ -1021,9 +1021,7 @@
           "label": "데이트 그룹",
           "placeholder": "데이트 그룹 추가"
         },
-        "grouping": "그루핑",
         "group_by": "그룹 바이",
-        "stacking": "스태킹",
         "stack_by": "스택 바이",
         "daily": "데일리",
         "weekly": "위클리",

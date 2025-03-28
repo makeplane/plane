@@ -1021,9 +1021,7 @@
           "label": "Skupina dátumov",
           "placeholder": "Pridať skupinu dátumov"
         },
-        "grouping": "Zoskupovanie",
         "group_by": "Zoskupiť podľa",
-        "stacking": "Vrstvenie",
         "stack_by": "Vrstviť podľa",
         "daily": "Denne",
         "weekly": "Týždenne",

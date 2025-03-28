@@ -1021,9 +1021,7 @@
           "label": "Groupe de dates",
           "placeholder": "Ajouter un groupe de dates"
         },
-        "grouping": "Groupement",
         "group_by": "Grouper par",
-        "stacking": "Empilage",
         "stack_by": "Empiler par",
         "daily": "Quotidien",
         "weekly": "Hebdomadaire",

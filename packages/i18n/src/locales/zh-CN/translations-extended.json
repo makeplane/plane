@@ -1021,9 +1021,7 @@
           "label": "日期分组",
           "placeholder": "添加日期分组"
         },
-        "grouping": "分组",
         "group_by": "分组依据",
-        "stacking": "堆叠",
         "stack_by": "堆叠依据",
         "daily": "每日",
         "weekly": "每周",

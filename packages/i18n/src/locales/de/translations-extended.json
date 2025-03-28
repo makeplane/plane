@@ -1021,9 +1021,7 @@
           "label": "Datumsgruppe",
           "placeholder": "Datumsgruppe hinzufügen"
         },
-        "grouping": "Gruppierung",
         "group_by": "Gruppieren nach",
-        "stacking": "Stapelung",
         "stack_by": "Stapeln nach",
         "daily": "Täglich",
         "weekly": "Wöchentlich",

@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from "react-hook-form";
 // plane ui
-import { EWidgetChartModels, EWidgetChartTypes, WIDGET_X_AXIS_DATE_PROPERTIES } from "@plane/constants";
+import { WIDGET_X_AXIS_DATE_PROPERTIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TDashboardWidget } from "@plane/types";
 // local components
@@ -18,18 +18,13 @@ export const WidgetConfigSidebarXAxisConfig: React.FC<Props> = (props) => {
   // form info
   const { control, watch } = useFormContext<TDashboardWidget>();
   // derived values
-  const selectedChartType = watch("chart_type");
-  const selectedChartModel = watch("chart_model");
   const selectedXAxisProperty = watch("x_axis_property");
   const selectedGroupByProperty = watch("group_by");
   const isDateGroupingEnabled =
     !!selectedXAxisProperty && WIDGET_X_AXIS_DATE_PROPERTIES.includes(selectedXAxisProperty);
-  const isGroupByEnabled =
-    selectedChartType === EWidgetChartTypes.BAR_CHART && selectedChartModel === EWidgetChartModels.GROUPED;
 
   return (
     <div className="flex-shrink-0 space-y-1 text-sm">
-      <h6 className="font-medium text-custom-text-200">{t("chart.x_axis")}</h6>
       <Controller
         control={control}
         name="x_axis_property"
@@ -41,7 +36,7 @@ export const WidgetConfigSidebarXAxisConfig: React.FC<Props> = (props) => {
             }}
             placeholder={t("dashboards.widget.common.add_property")}
             shouldRenderOption={(key) => key !== selectedGroupByProperty}
-            title={t("common.property")}
+            title={t("chart.x_axis")}
             value={value}
           />
         )}
@@ -58,24 +53,6 @@ export const WidgetConfigSidebarXAxisConfig: React.FC<Props> = (props) => {
               }}
               placeholder={t("dashboards.widget.common.date_group.placeholder")}
               title={t("dashboards.widget.common.date_group.label")}
-              value={value}
-            />
-          )}
-        />
-      )}
-      {isGroupByEnabled && (
-        <Controller
-          control={control}
-          name="group_by"
-          render={({ field: { value, onChange } }) => (
-            <WidgetPropertySelect
-              onChange={(val) => {
-                onChange(val);
-                handleSubmit({ group_by: val });
-              }}
-              placeholder={t("dashboards.widget.common.add_property")}
-              shouldRenderOption={(key) => key !== selectedXAxisProperty}
-              title={t("dashboards.widget.common.group_by")}
               value={value}
             />
           )}

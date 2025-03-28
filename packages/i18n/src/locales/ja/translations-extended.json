@@ -1021,9 +1021,7 @@
           "label": "デート グループ",
           "placeholder": "デート グループ アッド"
         },
-        "grouping": "グルーピング",
         "group_by": "グループ バイ",
-        "stacking": "スタッキング",
         "stack_by": "スタック バイ",
         "daily": "デイリー",
         "weekly": "ウィークリー",

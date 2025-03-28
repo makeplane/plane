@@ -53,7 +53,7 @@ export const WidgetConfigSidebarAxisConfig: React.FC<Props> = (props) => {
           </div>
         }
       >
-        <div className="mt-3 flex flex-col gap-y-4">
+        <div className="mt-3 flex flex-col gap-y-1">
           {selectedChartType === EWidgetChartTypes.NUMBER ? (
             <Controller
               control={control}

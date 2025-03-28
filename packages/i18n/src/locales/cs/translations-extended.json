@@ -1022,9 +1022,7 @@
           "label": "Skupina dat",
           "placeholder": "Přidat skupinu dat"
         },
-        "grouping": "Skupinování",
         "group_by": "Skupina podle",
-        "stacking": "Skládání",
         "stack_by": "Skládat podle",
         "daily": "Denně",
         "weekly": "Týdně",

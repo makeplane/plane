@@ -1021,9 +1021,7 @@
           "label": "Grupa dat",
           "placeholder": "Dodaj grupę dat"
         },
-        "grouping": "Grupowanie",
         "group_by": "Grupuj według",
-        "stacking": "Spiętrzanie",
         "stack_by": "Spiętrzaj według",
         "daily": "Dziennie",
         "weekly": "Tygodniowo",

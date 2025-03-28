@@ -1058,9 +1058,7 @@
           "label": "Date group",
           "placeholder": "Add date group"
         },
-        "grouping": "Grouping",
         "group_by": "Group by",
-        "stacking": "Stacking",
         "stack_by": "Stack by",
         "daily": "Daily",
         "weekly": "Weekly",
