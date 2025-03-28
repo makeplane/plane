@@ -37,6 +37,7 @@ import {
   useProject,
   useProjectState,
   useProjectView,
+  useUser,
   useUserPermissions,
 } from "@/hooks/store";
 // plane web
@@ -54,6 +55,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const { setTrackElement } = useEventTracker();
   const { toggleCreateIssueModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
+  const { data } = useUser();
 
   const { currentProjectDetails, loader } = useProject();
   const { projectViewIds, getViewById } = useProjectView();
@@ -135,6 +137,10 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   );
 
   const viewDetails = viewId ? getViewById(viewId.toString()) : null;
+
+  // auth
+  const isOwner = viewDetails?.owned_by === data?.id;
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   const canUserCreateIssue = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -238,7 +244,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             <FiltersDropdown
               title="Filters"
               placement="bottom-end"
-              disabled={!canUserCreateIssue}
+              disabled={!isOwner && !isAdmin}
               isFiltersApplied={isIssueFilterActive(issueFilters)}
             >
               <FilterSelection
