@@ -26,6 +26,8 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
 )
 from plane.authentication.rate_limit import AuthenticationThrottle
+from plane.utils.path_validator import validate_next_path
+
 
 class MagicGenerateEndpoint(APIView):
     permission_classes = [AllowAny]
@@ -71,7 +73,7 @@ class MagicSignInEndpoint(View):
             )
             params = exc.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = urljoin(
                 base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
             )
@@ -87,7 +89,7 @@ class MagicSignInEndpoint(View):
             )
             params = exc.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = urljoin(
                 base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
             )
@@ -120,7 +122,7 @@ class MagicSignInEndpoint(View):
         except AuthenticationException as e:
             params = e.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = urljoin(
                 base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
             )
@@ -143,7 +145,7 @@ class MagicSignUpEndpoint(View):
             )
             params = exc.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = urljoin(
                 base_host(request=request, is_app=True), "?" + urlencode(params)
             )
@@ -157,7 +159,7 @@ class MagicSignUpEndpoint(View):
             )
             params = exc.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = urljoin(
                 base_host(request=request, is_app=True), "?" + urlencode(params)
             )
@@ -175,7 +177,7 @@ class MagicSignUpEndpoint(View):
             user_login(request=request, user=user, is_app=True)
             # Get the redirection path
             if next_path:
-                path = str(next_path)
+                path = str(validate_next_path(next_path))
             else:
                 path = get_redirection_path(user=user)
             # redirect to referer path
@@ -185,7 +187,7 @@ class MagicSignUpEndpoint(View):
         except AuthenticationException as e:
             params = e.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = urljoin(
                 base_host(request=request, is_app=True), "?" + urlencode(params)
             )
