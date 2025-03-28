@@ -61,6 +61,7 @@ export interface ICycleStore {
   updateCycleDistribution: (distributionUpdates: DistributionUpdates, cycleId: string) => void;
   setPlotType: (cycleId: string, plotType: TCyclePlotType) => void;
   setEstimateType: (cycleId: string, estimateType: TCycleEstimateType) => void;
+  updateWorkspaceUserActiveCycleCount: (workspaceSlug: string, increment: number) => void;
   // fetch
   fetchWorkspaceCycles: (workspaceSlug: string) => Promise<ICycle[]>;
   fetchAllCycles: (workspaceSlug: string, projectId: string) => Promise<undefined | ICycle[]>;
@@ -145,6 +146,7 @@ export class CycleStore implements ICycleStore {
       removeCycleFromFavorites: action,
       archiveCycle: action,
       restoreCycle: action,
+      updateWorkspaceUserActiveCycleCount: action,
     });
 
     this.rootStore = _rootStore;
@@ -387,6 +389,13 @@ export class CycleStore implements ICycleStore {
     set(this.estimatedType, [cycleId], estimateType);
   };
 
+  updateWorkspaceUserActiveCycleCount(workspaceSlug: string, increment: number) {
+    const workspaceUserInfo = this.rootStore.user.permission.workspaceUserInfo;
+    const currentCount = workspaceUserInfo[workspaceSlug]?.active_cycles_count ?? 0;
+
+    set(workspaceUserInfo, [workspaceSlug, "active_cycles_count"], currentCount + increment);
+  }
+
   /**
    * @description fetch all cycles
    * @param workspaceSlug
@@ -580,6 +589,10 @@ export class CycleStore implements ICycleStore {
       await this.cycleService.createCycle(workspaceSlug, projectId, data).then((response) => {
         runInAction(() => {
           set(this.cycleMap, [response.id], response);
+          if (response.status?.toLowerCase() === "current") {
+            // Update workspace active cycle count in workspaceUserInfo
+            this.updateWorkspaceUserActiveCycleCount(workspaceSlug, 1);
+          }
         });
         return response;
       })
@@ -618,6 +631,11 @@ export class CycleStore implements ICycleStore {
   deleteCycle = async (workspaceSlug: string, projectId: string, cycleId: string) =>
     await this.cycleService.deleteCycle(workspaceSlug, projectId, cycleId).then(() => {
       runInAction(() => {
+        const cycle = this.getCycleById(cycleId);
+        if (cycle?.status?.toLowerCase() === "current") {
+          // Update workspace active cycle count in workspaceUserInfo
+          this.updateWorkspaceUserActiveCycleCount(workspaceSlug, -1);
+        }
         delete this.cycleMap[cycleId];
         delete this.activeCycleIdMap[cycleId];
         if (this.rootStore.favorite.entityMap[cycleId]) this.rootStore.favorite.removeFavoriteFromStore(cycleId);

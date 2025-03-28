@@ -503,6 +503,8 @@
     "work_item": "Work item",
     "work_items": "Work items",
     "sub_work_item": "Sub-work item",
+    "views": "Views",
+    "pages": "Pages",
     "add": "Add",
     "warning": "Warning",
     "updating": "Updating",
@@ -614,7 +616,13 @@
       "label": "Search",
       "placeholder": "Type to search",
       "no_matches_found": "No matches found",
-      "no_matching_results": "No matching results"
+      "no_matching_results": "No matching results",
+      "min_chars": "Type at least {count} characters to search",
+      "error": "Error fetching search results",
+      "no_results": {
+        "title": "No matching results",
+        "description": "Remove the search criteria to see all results"
+      }
     },
     "actions": {
       "edit": "Edit",
