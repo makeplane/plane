@@ -18,7 +18,6 @@ import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.hel
 import { useUser } from "@/hooks/store";
 // services
 import { AuthService } from "@/services/auth.service";
-import { UserService } from "@/services/user.service";
 
 export interface FormValues {
   old_password: string;
@@ -32,7 +31,6 @@ const defaultValues: FormValues = {
   confirm_password: "",
 };
 
-const userService = new UserService();
 const authService = new AuthService();
 
 const defaultShowPassword = {
@@ -43,12 +41,11 @@ const defaultShowPassword = {
 
 const SecurityPage = observer(() => {
   // store
-  const { data: currentUser } = useUser();
+  const { data: currentUser, changePassword } = useUser();
   // states
   const [showPassword, setShowPassword] = useState(defaultShowPassword);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [isRetryPasswordInputFocused, setIsRetryPasswordInputFocused] = useState(false);
-  const [oldPasswordRequired, setOldPasswordRequired] = useState(!currentUser?.is_password_autoset);
 
   // use form
   const {
@@ -62,6 +59,7 @@ const SecurityPage = observer(() => {
   const oldPassword = watch("old_password");
   const password = watch("new_password");
   const confirmPassword = watch("confirm_password");
+  const oldPasswordRequired = !currentUser?.is_password_autoset;
   // i18n
   const { t } = useTranslation();
 
@@ -76,14 +74,13 @@ const SecurityPage = observer(() => {
       const csrfToken = await authService.requestCSRFToken().then((data) => data?.csrf_token);
       if (!csrfToken) throw new Error("csrf token not found");
 
-      await userService.changePassword(csrfToken, {
+      await changePassword(csrfToken, {
         ...(oldPasswordRequired && { old_password }),
         new_password,
       });
 
       reset(defaultValues);
       setShowPassword(defaultShowPassword);
-      setOldPasswordRequired(true);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("auth.common.password.toast.change_password.success.title"),
