@@ -43,6 +43,7 @@ export const IssueColumn = observer((props: Props) => {
       >
         <Column
           issue={issueDetail}
+          property={property}
           onChange={(issue: TIssue, data: Partial<TIssue>, updates: any) =>
             updateIssue &&
             updateIssue(issue.project_id, issue.id, data).then(() => {
