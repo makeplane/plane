@@ -499,6 +499,8 @@
   "re_generate_key": "Wygeneruj klucz ponownie",
   "export": "Eksportuj",
   "member": "{count, plural, one{# członek} few{# członkowie} other{# członków}}",
+  "new_password_must_be_different_from_old_password": "Nowe hasło musi być innym niż stare hasło",
+  
   "edited": "Edytowano",
   "bot": "Bot",
 

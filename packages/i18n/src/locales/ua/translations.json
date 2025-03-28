@@ -499,6 +499,7 @@
   "re_generate_key": "Повторно згенерувати ключ",
   "export": "Експортувати",
   "member": "{count, plural, one{# учасник} few{# учасники} other{# учасників}}",
+  "new_password_must_be_different_from_old_password": "Новий пароль повинен бути відмінним від старого пароля",
   "edited": "Редагувано",
   "bot": "Бот",
   

@@ -499,6 +499,8 @@
   "re_generate_key": "Schlüssel neu generieren",
   "export": "Exportieren",
   "member": "{count, plural, one{# Mitglied} few{# Mitglieder} other{# Mitglieder}}",
+  "new_password_must_be_different_from_old_password": "Das neue Passwort muss von dem alten Passwort abweichen",
+  
   "project_view": {
     "sort_by": {
       "created_at": "Erstellt am",
