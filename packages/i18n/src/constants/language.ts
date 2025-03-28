@@ -19,6 +19,7 @@ export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
   { label: "한국어", value: "ko" },
   { label: "Indonesian", value: "id" },
   { label: "Română", value: "ro" },
+  { label: "Tiếng việt", value: "vi" },
 ];
 
 export const LANGUAGE_STORAGE_KEY = "userLanguage";
