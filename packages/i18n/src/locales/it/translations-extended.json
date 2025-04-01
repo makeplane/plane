@@ -1297,7 +1297,8 @@
     "label": "{count, plural, one {Cliente} other {Clienti}}",
     "dropdown": {
       "placeholder": "Seleziona cliente",
-      "required": "Per favore seleziona un cliente"
+      "required": "Seleziona un cliente",
+      "no_selection": "Nessun cliente"
     },
     "upgrade": {
       "title": "Dai priorità e gestisci il lavoro con i clienti.",

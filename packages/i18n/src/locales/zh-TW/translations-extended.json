@@ -1297,6 +1297,12 @@
 
   "customers": {
     "label": "{count, plural, one {客戶} other {客戶}}",
+    "open": "開啟客戶",
+    "dropdown": {
+      "placeholder": "選擇客戶",
+      "required": "請選擇客戶",
+      "no_selection": "沒有客戶"
+    },
     "upgrade": {
       "title": "使用客戶功能優先處理和管理工作。",
       "description": "將您的工作映射到客戶並按客戶屬性進行優先排序。"

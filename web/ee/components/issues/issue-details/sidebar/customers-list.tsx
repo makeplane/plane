@@ -35,13 +35,18 @@ export const SidebarCustomersList: FC<TProps> = observer((props) => {
           <span>{t("customers.label", { count: 2 })}</span>
         </div>
         <div className="h-full min-h-8 w-3/5 flex flex-wrap gap-2 items-center">
-          {customerIds?.length ? (
-            customerIds?.map((id) => (
-              <CustomerSidebarListitem workspaceSlug={workspaceSlug} isPeekView={isPeekView} key={id} customerId={id} />
-            ))
-          ) : (
-            <></>
-          )}
+          {customerIds?.length
+            ? customerIds?.map((id) => (
+                <CustomerSidebarListitem
+                  workspaceSlug={workspaceSlug}
+                  isPeekView={isPeekView}
+                  key={id}
+                  customerId={id}
+                />
+              ))
+            : !isAdmin && (
+                <span className="text-sm text-custom-text-400 px-2">{t("customers.dropdown.no_selection")}</span>
+              )}
           {isAdmin && (
             <CustomerSelect
               workspaceSlug={workspaceSlug}

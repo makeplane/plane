@@ -1297,6 +1297,12 @@
 
   "customers": {
     "label": "{count, plural, one {Client} other {Clienți}}",
+    "open": "Deschide client",
+    "dropdown": {
+      "placeholder": "Selectează client",
+      "required": "Te rugăm să selectezi un client",
+      "no_selection": "Niciun client"
+    },
     "upgrade": {
       "title": "Prioritizează și gestionează munca cu Clienți.",
       "description": "Mapează munca ta la clienți și prioritizează după atributele clientului."

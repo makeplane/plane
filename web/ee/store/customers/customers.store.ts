@@ -536,10 +536,10 @@ export class CustomerStore implements ICustomersStore {
         // remove request form the work item
         remove(this.workItemRequestIdsMap[workItemId], (id) => id === requestId);
         // update counts for work item
-        update(this.rootStore.issue.issues.issuesMap, [workItemId], (issue: TIssue) => ({
-          ...issue,
-          customer_request_count: issue.customer_request_count ? issue.customer_request_count - 1 : 0,
-        }));
+        const requestCount = this.rootStore.issue.issues.getIssueById(workItemId)?.customer_request_count || 0;
+        this.rootStore.issue.issues.updateIssue(workItemId, {
+          customer_request_count: requestCount > 0 ? requestCount - 1 : 0,
+        });
       }
     });
   };
@@ -583,6 +583,8 @@ export class CustomerStore implements ICustomersStore {
         _params
       );
       const _workItems: TCustomerWorkItem[] = response.map((item) => ({ ...item, customer_request_id: requestId }));
+      // add work items to the issue store
+      this.rootStore.issue.issues.addIssue(_workItems);
       runInAction(() => {
         // update request data if work item is added to the request
         if (requestId) {
@@ -593,17 +595,23 @@ export class CustomerStore implements ICustomersStore {
         }
         // update counts and data for work items
         _workItems.forEach((item) => {
+          const _workItem = this.rootStore.issue.issues.getIssueById(item.id);
           if (requestId) {
             if (this.workItemRequestIdsMap[item.id]) {
               // add request id to the work item
               concat(requestId, this.workItemRequestIdsMap[item.id]);
+              const _requestCount = _workItem?.customer_request_count || 0;
               // update counts for work items
-              update(this.rootStore.issue.issues.issuesMap, [item.id], (issue: TIssue) => ({
-                ...issue,
-                customer_request_count: (issue.customer_request_count || 0) + 1,
-              }));
+              this.rootStore.issue.issues.updateIssue(item.id, {
+                customer_request_count: _requestCount + 1,
+              });
             }
           }
+          const _customerCount = _workItem?.customer_count || 0;
+          // update customer count for work items
+          this.rootStore.issue.issues.updateIssue(item.id, {
+            customer_count: _customerCount + 1,
+          });
           if (this.workItemCustomerIds[item.id]) {
             update(this.workItemCustomerIds, [item.id], (ids: string[]) => uniq([...ids, customerId]));
           } else set(this.workItemCustomerIds, [item.id], [customerId]);
@@ -611,8 +619,6 @@ export class CustomerStore implements ICustomersStore {
         if (this.customerWorkItemIdsMap[customerId]) {
           update(this.customerWorkItemIdsMap, [customerId], (ids: string[]) => [...workItemIds, ...ids]);
         } else set(this.customerWorkItemIdsMap, [customerId], workItemIds);
-
-        this.rootStore.issue.issues.addIssue(_workItems);
       });
       return response;
     } catch (error) {
@@ -647,16 +653,21 @@ export class CustomerStore implements ICustomersStore {
             ...request,
             issue_ids: _workItemIds,
           }));
+          // update count for work item if request is removed
+          const requestCount = this.rootStore.issue.issues.getIssueById(workItemId)?.customer_request_count || 0;
+          this.rootStore.issue.issues.updateIssue(workItemId, {
+            customer_request_count: requestCount > 0 ? requestCount - 1 : 0,
+          });
         }
         remove(this.customerWorkItemIdsMap[customerId], (id) => id === workItemId);
         remove(this.workItemRequestIdsMap[workItemId], (id) => id === _requestId);
-        // update count for work item if request is removed
-        update(this.rootStore.issue.issues.issuesMap, [workItemId], (issue: TIssue) => ({
-          ...issue,
-          customer_request_count: issue.customer_request_count ? issue.customer_request_count - 1 : 0,
-        }));
       });
       remove(this.workItemCustomerIds[workItemId], (id) => id === customerId);
+      // update customer count for work item
+      const customerCount = this.rootStore.issue.issues.getIssueById(workItemId)?.customer_count || 0;
+      this.rootStore.issue.issues.updateIssue(workItemId, {
+        customer_count: customerCount > 0 ? customerCount - 1 : 0,
+      });
     } catch (error) {
       console.error("CustomerStore->removeWorkItemFromCustomer", error);
       throw error;

@@ -39,7 +39,7 @@ export const CustomerSidebarListitem: FC<TCustomerListItem> = observer((props) =
   return (
     <Popover as="div">
       <div
-        className="flex gap-2 items-center py-0.5 px-1.5 border rounded-full border-custom-border-200 cursor-default"
+        className="flex gap-2 items-center py-0.5 px-1.5 border rounded-full border-custom-border-100 cursor-default"
         onMouseEnter={() => setShowPreview(true)}
         onMouseLeave={() => setShowPreview(false)}
         ref={setReferenceElement}
@@ -48,7 +48,7 @@ export const CustomerSidebarListitem: FC<TCustomerListItem> = observer((props) =
           {customer.logo_url ? (
             <img src={getFileURL(customer.logo_url)} alt="customer-logo" className="rounded-md w-3 h-3 object-cover" />
           ) : (
-            <div className="bg-custom-background-90 rounded-md flex items-center justify-center h-3 w-3 p-1.5">
+            <div className="bg-custom-background-90 rounded-md flex items-center justify-center h-3 w-3 p-0.5">
               <CustomersIcon className="size-5 opacity-50" />
             </div>
           )}

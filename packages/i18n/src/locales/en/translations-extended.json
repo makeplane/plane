@@ -1340,7 +1340,8 @@
     "open": "Open customer",
     "dropdown": {
       "placeholder": "Select customer",
-      "required": "Please select a customer"
+      "required": "Please select a customer",
+      "no_selection": "No customers"
     },
     "upgrade": {
       "title": "Prioritize and manage work with Customers.",

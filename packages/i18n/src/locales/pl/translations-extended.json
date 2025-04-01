@@ -1297,6 +1297,12 @@
 
   "customers": {
     "label": "{count, plural, one {Klient} other {Klienci}}",
+    "open": "Otwórz klienta",
+    "dropdown": {
+      "placeholder": "Wybierz klienta",
+      "required": "Proszę wybrać klienta",
+      "no_selection": "Brak klientów"
+    },
     "upgrade": {
       "title": "Priorytetyzuj i zarządzaj pracą z Klientami.",
       "description": "Mapuj swoją pracę do klientów i ustalaj priorytety według atrybutów klienta."

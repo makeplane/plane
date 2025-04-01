@@ -1297,6 +1297,12 @@
 
   "customers": {
     "label": "{count, plural, one {커스터머} other {커스터머}}",
+    "open": "커스터머 열기",
+    "dropdown": {
+      "placeholder": "커스터머 선택",
+      "required": "커스터머를 선택하세요",
+      "no_selection": "커스터머 없음"
+    },
     "upgrade": {
       "title": "커스터머로 작업을 우선순위화하고 관리하세요.",
       "description": "작업을 커스터머에 매핑하고 커스터머 속성에 따라 우선순위를 지정하세요."

@@ -1300,7 +1300,8 @@
     "label": "{count, plural, one {Zákazník} other {Zákazníci}}",
     "drop_down": {
       "placeholder": "Vyberte zákazníka",
-      "required": "Prosím vyberte zákazníka"
+      "required": "Vyberte prosím zákazníka",
+      "no_selection": "Žádní zákazníci"
     },
     "upgrade": {
       "title": "Stanovte priority a spravujte práci se zákazníky.",

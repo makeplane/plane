@@ -1297,6 +1297,12 @@
 
   "customers": {
     "label": "{count, plural, one {Kunde} other {Kunden}}",
+    "open": "Kunde öffnen",
+    "dropdown": {
+      "placeholder": "Kunde auswählen",
+      "required": "Bitte wählen Sie einen Kunden aus",
+      "no_selection": "Keine Kunden"
+    },
     "upgrade": {
       "title": "Priorisieren und verwalten Sie Arbeit mit Kunden.",
       "description": "Ordnen Sie Ihre Arbeit Kunden zu und priorisieren Sie nach Kundenattributen."

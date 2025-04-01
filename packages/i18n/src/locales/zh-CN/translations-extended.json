@@ -1299,7 +1299,8 @@
     "label": "{count, plural, one {客户} other {客户}}",
     "dropdown": {
       "placeholder": "选择客户",
-      "required": "请选择一个客户"
+      "required": "请选择客户",
+      "no_selection": "没有客户"
     },
     "upgrade": {
       "title": "与客户一起优先排序并管理工作。",

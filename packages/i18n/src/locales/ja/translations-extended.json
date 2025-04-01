@@ -1299,7 +1299,8 @@
     "label": "{count, plural, one {顧客} other {顧客たち}}",
     "dropdown": {
       "placeholder": "顧客を選択",
-      "required": "顧客を選択してください"
+      "required": "顧客を選択してください",
+      "no_selection": "顧客なし"
     },
     "upgrade": {
       "title": "顧客とともに優先順位をつけて業務を管理しましょう。",

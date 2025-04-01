@@ -1297,6 +1297,12 @@
 
   "customers": {
     "label": "{count, plural, one {Pelanggan} other {Pelanggan}}",
+    "open": "Buka pelanggan",
+    "dropdown": {
+      "placeholder": "Pilih pelanggan",
+      "required": "Silakan pilih pelanggan",
+      "no_selection": "Tidak ada pelanggan"
+    },
     "upgrade": {
       "title": "Prioritaskan dan kelola pekerjaan dengan Pelanggan.",
       "description": "Petakan pekerjaan Anda ke pelanggan dan prioritaskan berdasarkan atribut pelanggan."

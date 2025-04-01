@@ -1297,6 +1297,12 @@
 
   "customers": {
     "label": "{count, plural, one {Zákazník} few {Zákazníci} other {Zákazníkov}}",
+    "open": "Otvoriť zákazníka",
+    "dropdown": {
+      "placeholder": "Vyberte zákazníka",
+      "required": "Prosím vyberte zákazníka",
+      "no_selection": "Žiadni zákazníci"
+    },
     "upgrade": {
       "title": "Prioritizujte a spravujte prácu so Zákazníkmi.",
       "description": "Mapujte svoju prácu k zákazníkom a prioritizujte podľa atribútov zákazníka."
