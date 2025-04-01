@@ -31,7 +31,7 @@ import SlackController from "./apps/slack/controllers";
 import { env } from "./env";
 import { APIError } from "./lib";
 import { registerControllers } from "./lib/controller";
-import { expressLogger, logger } from "./logger";
+import { logger } from "./logger";
 // types
 import { APIErrorResponse } from "./types";
 
@@ -98,7 +98,7 @@ export default class Server {
   private setupLogger() {
     this.app.use(
       expressWinston.logger({
-        winstonInstance: expressLogger,
+        winstonInstance: logger,
         msg: '"{req.method} {req.url}" {req.httpVersion}',
         expressFormat: true,
         colorize: true,

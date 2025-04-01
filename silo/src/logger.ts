@@ -1,34 +1,20 @@
 import { createLogger, format, transports } from "winston";
 
-export const logger = createLogger({
-  level: "info",
-  format: format.combine(
-    format.colorize(),
-    format.timestamp(),
-    format.printf(({ timestamp, level, message, ...metadata }) => {
-      const msg = `[${timestamp}] "${level}" ${message}`;
-      const metaString = Object.keys(metadata).length ? ` ${JSON.stringify(metadata)}` : "";
-      return msg + metaString;
-    })),
-  transports: [new transports.Console()],
-});
+const formatLogMessage = (info: any) => {
+  const { timestamp, level, message, ...metadata } = info;
+  const msg = `[${timestamp}] "${level}" ${message}`;
+  const metaString = Object.keys(metadata).length ? ` ${JSON.stringify(metadata)}` : "";
+  return msg + metaString;
+};
 
-export const expressLogger = createLogger({
+export const logger = createLogger({
   level: "info",
   format: format.combine(
     format.colorize(),
     format.timestamp({
       format: "DD/MMM/YYYY HH:mm:ss",
     }),
-    format.printf(({ timestamp, level, message, ...metadata }) => {
-      const msg = `[${timestamp}] "${level}" ${message}`;
-      const metaString = Object.keys(metadata).length ? ` ${JSON.stringify(metadata)}` : "";
-      return msg + metaString;
-    })
+    format.printf(formatLogMessage)
   ),
-  transports: [
-    new transports.Console({
-      handleExceptions: true,
-    }),
-  ],
+  transports: [new transports.Console()],
 });
