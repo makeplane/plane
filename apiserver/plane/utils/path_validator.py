@@ -2,7 +2,7 @@
 from urllib.parse import urlparse
 
 
-def validate_next_path(next_path: str):
+def validate_next_path(next_path: str) -> str:
     """Validates that next_path is a valid path and extracts only the path component."""
     parsed_url = urlparse(next_path)
 
