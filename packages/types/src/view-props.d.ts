@@ -49,7 +49,27 @@ export type TIssueOrderByOptions =
   | "attachment_count"
   | "-attachment_count"
   | "sub_issues_count"
-  | "-sub_issues_count";
+  | "-sub_issues_count"
+  | "trip_reference_number"
+  | "-trip_reference_number"
+  | "reference_number"
+  | "-reference_number"
+  | "hub_code"
+  | "-hub_code"
+  | "hub_name"
+  | "-hub_name"
+  | "customer_code"
+  | "-customer_code"
+  | "customer_name"
+  | "-customer_name"
+  | "vendor_name"
+  | "-vendor_name"
+  | "vendor_code"
+  | "-vendor_code"
+  | "worker_code"
+  | "-worker_code"
+  | "worker_name"
+  | "-worker_name";
 
 export type TIssueGroupingFilters = "active" | "backlog" | null;
 
