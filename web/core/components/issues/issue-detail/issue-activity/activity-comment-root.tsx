@@ -1,26 +1,23 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // constants
-import { E_SORT_ORDER } from "@plane/constants";
+import { E_SORT_ORDER, TActivityFilters, filterActivityOnSelectedFilters } from "@plane/constants";
 // hooks
+import { TCommentsOperations } from "@plane/types";
+import { CommentCard } from "@/components/comments/comment-card";
 import { useIssueDetail } from "@/hooks/store";
 // plane web components
 import { IssueAdditionalPropertiesActivity } from "@/plane-web/components/issues";
 import { IssueActivityWorklog } from "@/plane-web/components/issues/worklog/activity/root";
-// plane web constants
-import { TActivityFilters, filterActivityOnSelectedFilters } from "@/plane-web/constants/issues";
 // components
 import { IssueActivityItem } from "./activity/activity-list";
-import { IssueCommentCard } from "./comments/comment-card";
-// types
-import { TActivityOperations } from "./root";
 
 type TIssueActivityCommentRoot = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
   selectedFilters: TActivityFilters[];
-  activityOperations: TActivityOperations;
+  activityOperations: TCommentsOperations;
   showAccessSpecifier?: boolean;
   disabled?: boolean;
   sortOrder: E_SORT_ORDER;
@@ -40,7 +37,7 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
   // hooks
   const {
     activity: { getActivityCommentByIssueId },
-    comment: {},
+    comment: { getCommentById },
   } = useIssueDetail();
 
   const activityComments = getActivityCommentByIssueId(issueId, sortOrder);
@@ -51,18 +48,18 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
 
   return (
     <div>
-      {filteredActivityComments.map((activityComment, index) =>
-        activityComment.activity_type === "COMMENT" ? (
-          <IssueCommentCard
-            projectId={projectId}
-            issueId={issueId}
+      {filteredActivityComments.map((activityComment, index) => {
+        const comment = getCommentById(activityComment.id);
+        return activityComment.activity_type === "COMMENT" ? (
+          <CommentCard
             key={activityComment.id}
             workspaceSlug={workspaceSlug}
-            commentId={activityComment.id}
+            comment={comment}
             activityOperations={activityOperations}
             ends={index === 0 ? "top" : index === filteredActivityComments.length - 1 ? "bottom" : undefined}
             showAccessSpecifier={showAccessSpecifier}
             disabled={disabled}
+            projectId={projectId}
           />
         ) : activityComment.activity_type === "ACTIVITY" ? (
           <IssueActivityItem
@@ -84,8 +81,8 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
           />
         ) : (
           <></>
-        )
-      )}
+        );
+      })}
     </div>
   );
 });

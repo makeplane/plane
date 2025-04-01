@@ -81,7 +81,7 @@ export const isValidHttpUrl2 = (string: string): boolean => {
 
   try {
     url = new URL(string);
-  } catch (_) {
+  } catch {
     return false;
   }
 

@@ -50,6 +50,7 @@ export const CustomImageComponentWithoutProps = () =>
         deletedImageSet: new Map<string, boolean>(),
         uploadInProgress: false,
         maxFileSize: 0,
+        assetsUploadStatus: {},
       };
     },
   });

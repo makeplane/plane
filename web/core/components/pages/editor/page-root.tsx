@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 // editor
 import { EditorRefApi } from "@plane/editor";
 // types
-import { TDocumentPayload, TPage, TPageVersion } from "@plane/types";
+import { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
 // components
 import {
   PageEditorHeaderRoot,
@@ -18,6 +18,8 @@ import {
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFallback } from "@/hooks/use-page-fallback";
 import { useQueryParams } from "@/hooks/use-query-params";
+// plane web hooks
+import { EPageStoreType } from "@/plane-web/hooks/store";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 
@@ -36,15 +38,16 @@ type TPageRootProps = {
   config: TPageRootConfig;
   handlers: TPageRootHandlers;
   page: TPageInstance;
+  storeType: EPageStoreType;
+  webhookConnectionParams: TWebhookConnectionQueryParams;
   workspaceSlug: string;
 };
 
 export const PageRoot = observer((props: TPageRootProps) => {
-  const { config, handlers, page, workspaceSlug } = props;
+  const { config, handlers, page, storeType, webhookConnectionParams, workspaceSlug } = props;
   // states
   const [editorReady, setEditorReady] = useState(false);
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
-  const [sidePeekVisible, setSidePeekVisible] = useState(window.innerWidth >= 768);
   const [isVersionsOverlayOpen, setIsVersionsOverlayOpen] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
@@ -100,13 +103,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
         pageId={page.id ?? ""}
         restoreEnabled={isContentEditable}
       />
-      <PageEditorHeaderRoot
-        editorReady={editorReady}
-        editorRef={editorRef}
-        page={page}
-        setSidePeekVisible={(state) => setSidePeekVisible(state)}
-        sidePeekVisible={sidePeekVisible}
-      />
+      <PageEditorHeaderRoot editorReady={editorReady} editorRef={editorRef} page={page} storeType={storeType} />
       <PageEditorBody
         config={config}
         editorReady={editorReady}
@@ -115,7 +112,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
         handleEditorReady={setEditorReady}
         handlers={handlers}
         page={page}
-        sidePeekVisible={sidePeekVisible}
+        webhookConnectionParams={webhookConnectionParams}
         workspaceSlug={workspaceSlug}
       />
     </>

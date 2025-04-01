@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 // types
+import { useTranslation } from "@plane/i18n";
 import type { TIssue } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
@@ -19,6 +20,7 @@ export const DeclineIssueModal: React.FC<Props> = (props) => {
   const [isDeclining, setIsDeclining] = useState(false);
   // store hooks
   const { getProjectById } = useProject();
+  const { t } = useTranslation();
   // derived values
   const projectDetails = data.project_id ? getProjectById(data?.project_id) : undefined;
 
@@ -38,11 +40,11 @@ export const DeclineIssueModal: React.FC<Props> = (props) => {
       handleSubmit={handleDecline}
       isSubmitting={isDeclining}
       isOpen={isOpen}
-      title="Decline issue"
+      title={t("inbox_issue.modals.decline.title")}
+      // TODO: Need to translate the confirmation message
       content={
         <>
-          {" "}
-          Are you sure you want to decline issue{" "}
+          Are you sure you want to decline work item{" "}
           <span className="break-words font-medium text-custom-text-100">
             {projectDetails?.identifier}-{data?.sequence_id}
           </span>
@@ -50,8 +52,8 @@ export const DeclineIssueModal: React.FC<Props> = (props) => {
         </>
       }
       primaryButtonText={{
-        loading: "Declining",
-        default: "Decline",
+        loading: t("declining"),
+        default: t("decline"),
       }}
     />
   );

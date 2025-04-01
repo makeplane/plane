@@ -3,6 +3,7 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 import { EIssueServiceType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssueServiceType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
@@ -20,6 +21,7 @@ type Props = {
 
 export const RelationActionButton: FC<Props> = observer((props) => {
   const { customButton, issueId, disabled = false, issueServiceType = EIssueServiceType.ISSUES } = props;
+  const { t } = useTranslation();
   // store hooks
   const { toggleRelationModal, setRelationKey } = useIssueDetail(issueServiceType);
 
@@ -56,7 +58,7 @@ export const RelationActionButton: FC<Props> = observer((props) => {
           >
             <div className="flex items-center gap-2">
               {item.icon(12)}
-              <span>{item.label}</span>
+              <span>{t(item.i18n_label)}</span>
             </div>
           </CustomMenu.MenuItem>
         );

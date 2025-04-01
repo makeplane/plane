@@ -17,15 +17,18 @@ import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { HIGHLIGHT_CLASS } from "@/components/issues/issue-layouts/utils";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
-import { useIssueDetail, useKanbanView } from "@/hooks/store";
+import { useIssueDetail, useKanbanView, useProject } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // local components
+import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
 import { TRenderQuickActions } from "../list/list-view-types";
 import { IssueProperties } from "../properties/all-properties";
+import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { getIssueBlockId } from "../utils";
 
 interface IssueBlockProps {
@@ -59,6 +62,9 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
   const { cardRef, issue, updateIssue, quickActions, isReadOnly, displayProperties, isEpic = false } = props;
   // hooks
   const { isMobile } = usePlatformOS();
+
+  // derived values
+  const subIssueCount = issue?.sub_issues_count ?? 0;
 
   const handleEventPropagation = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -104,6 +110,16 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
         isReadOnly={isReadOnly}
         isEpic={isEpic}
       />
+
+      {isEpic && displayProperties && (
+        <WithDisplayPropertiesHOC
+          displayProperties={displayProperties}
+          displayPropertyKey="sub_issue_count"
+          shouldRenderProperty={(properties) => !!properties.sub_issue_count && !!subIssueCount}
+        >
+          <IssueStats issueId={issue.id} className="mt-2 font-medium text-custom-text-350" />
+        </WithDisplayPropertiesHOC>
+      )}
     </>
   );
 });
@@ -130,6 +146,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
   // hooks
+  const { getProjectIdentifierById } = useProject();
   const { getIsIssuePeeked } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   const { handleRedirection } = useIssuePeekOverviewRedirection(isEpic);
   const { isMobile } = usePlatformOS();
@@ -147,6 +164,17 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
   const canEditIssueProperties = canEditProperties(issue?.project_id ?? undefined);
 
   const isDragAllowed = canDragIssuesInCurrentGrouping && !issue?.tempId && canEditIssueProperties;
+  const projectIdentifier = getProjectIdentifierById(issue?.project_id);
+
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug,
+    projectId: issue?.project_id,
+    issueId,
+    projectIdentifier,
+    sequenceId: issue?.sequence_id,
+    isEpic,
+    isArchived: !!issue?.archived_at,
+  });
 
   useOutsideClickDetector(cardRef, () => {
     cardRef?.current?.classList?.remove(HIGHLIGHT_CLASS);
@@ -205,9 +233,9 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
           else {
             setToast({
               type: TOAST_TYPE.WARNING,
-              title: "Cannot move issue",
+              title: "Cannot move work item",
               message: !canEditIssueProperties
-                ? "You are not allowed to move this issue"
+                ? "You are not allowed to move this work item"
                 : "Drag and drop is disabled for the current grouping",
             });
           }
@@ -215,9 +243,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
       >
         <ControlLink
           id={getIssueBlockId(issueId, groupId, subGroupId)}
-          href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}${isEpic ? "epics" : "issues"}/${
-            issue.id
-          }`}
+          href={workItemLink}
           ref={cardRef}
           className={cn(
             "block rounded border-[1px] outline-[0.5px] outline-transparent w-full border-custom-border-200 bg-custom-background-100 text-sm transition-all hover:border-custom-border-400",

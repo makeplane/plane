@@ -6,7 +6,8 @@ import "@/styles/command-pallette.css";
 import "@/styles/emoji.css";
 import "@/styles/react-day-picker.css";
 // meta data info
-import { SITE_NAME, SITE_DESCRIPTION } from "@/constants/meta";
+
+import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
 // helpers
 import { API_BASE_URL, cn } from "@/helpers/common.helper";
 // local
@@ -17,12 +18,11 @@ export const metadata: Metadata = {
   description: SITE_DESCRIPTION,
   openGraph: {
     title: "Plane | Simple, extensible, open-source project management tool.",
-    description:
-      "Open-source project management tool to manage issues, sprints, and product roadmaps with peace of mind.",
+    description: "Open-source project management tool to manage work items, cycles, and product roadmaps easily",
     url: "https://app.plane.so/",
   },
   keywords:
-    "software development, plan, ship, software, accelerate, code management, release management, project management, issue tracking, agile, scrum, kanban, collaboration",
+    "software development, plan, ship, software, accelerate, code management, release management, project management, work item tracking, agile, scrum, kanban, collaboration",
   twitter: {
     site: "@planepowers",
   },
@@ -67,7 +67,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preload" href={`${API_BASE_URL}/api/users/me/settings/ `} as="fetch" crossOrigin="use-credentials" />
         <link
           rel="preload"
-          href={`${API_BASE_URL}/api/users/me/workspaces/`}
+          href={`${API_BASE_URL}/api/users/me/workspaces/?v=${Date.now()}`}
           as="fetch"
           crossOrigin="use-credentials"
         />

@@ -3,6 +3,8 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { ExternalLink, LinkIcon } from "lucide-react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 // ui
 import { TStaticViewTypes } from "@plane/types";
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
@@ -16,12 +18,14 @@ type Props = {
   globalViewId: string | undefined;
   view: {
     key: TStaticViewTypes;
-    label: string;
+    i18n_label: string;
   };
 };
 
 export const DefaultWorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
   const { parentRef, globalViewId, view, workspaceSlug } = props;
+
+  const { t } = useTranslation();
 
   const viewLink = `${workspaceSlug}/workspace-views/${view.key}`;
   const handleCopyText = () =>
@@ -38,13 +42,13 @@ export const DefaultWorkspaceViewQuickActions: React.FC<Props> = observer((props
     {
       key: "open-new-tab",
       action: handleOpenInNewTab,
-      title: "Open in new tab",
+      title: t("open_in_new_tab"),
       icon: ExternalLink,
     },
     {
       key: "copy-link",
       action: handleCopyText,
-      title: "Copy link",
+      title: t("copy_link"),
       icon: LinkIcon,
     },
   ];
@@ -64,7 +68,7 @@ export const DefaultWorkspaceViewQuickActions: React.FC<Props> = observer((props
                     : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
                 }`}
               >
-                {view.label}
+                {t(view.i18n_label)}
               </span>
             ) : (
               <Link
@@ -79,7 +83,7 @@ export const DefaultWorkspaceViewQuickActions: React.FC<Props> = observer((props
                       : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
                   }`}
                 >
-                  {view.label}
+                  {t(view.i18n_label)}
                 </span>
               </Link>
             )}
@@ -110,7 +114,7 @@ export const DefaultWorkspaceViewQuickActions: React.FC<Props> = observer((props
             >
               {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
               <div>
-                <h5>{item.title}</h5>
+                <h5>{t(item.title || "")}</h5>
                 {item.description && (
                   <p
                     className={cn("text-custom-text-300 whitespace-pre-line", {

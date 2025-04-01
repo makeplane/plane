@@ -2,14 +2,14 @@
 
 import { observer } from "mobx-react";
 
+import { PROJECT_MEMBER_LEAVE } from "@plane/constants";
 import { TOAST_TYPE, Table, setToast } from "@plane/ui";
 // components
 import { ConfirmProjectMemberRemove } from "@/components/project";
 // constants
-import { PROJECT_MEMBER_LEAVE } from "@/constants/event-tracker";
 
 // hooks
-import { useEventTracker, useMember, useProject, useUser, useUserPermissions } from "@/hooks/store";
+import { useEventTracker, useMember, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useProjectColumns } from "@/plane-web/components/projects/settings/useProjectColumns";
 import { IProjectMemberDetails } from "@/store/member/project-member.store";
@@ -27,7 +27,6 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
   // store hooks
   const { leaveProject } = useUserPermissions();
   const { data: currentUser } = useUser();
-  const { fetchProjectDetails } = useProject();
   const {
     project: { removeMemberFromProject },
   } = useMember();
@@ -45,7 +44,6 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
             state: "SUCCESS",
             element: "Project settings members page",
           });
-          await fetchProjectDetails(workspaceSlug.toString(), projectId.toString());
         })
         .catch((err) =>
           setToast({

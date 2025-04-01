@@ -1,35 +1,121 @@
-export type TStackItem<T extends string> = {
-  key: T;
-  fillClassName: string;
-  textClassName: string;
-  dotClassName?: string;
-  showPercentage?: boolean;
+export type TChartLegend = {
+  align: "left" | "center" | "right";
+  verticalAlign: "top" | "middle" | "bottom";
+  layout: "horizontal" | "vertical";
 };
 
-export type TStackChartData<K extends string, T extends string> = {
+export type TChartMargin = {
+  top?: number;
+  right?: number;
+  bottom?: number;
+  left?: number;
+};
+
+export type TChartData<K extends string, T extends string> = {
+  // required key
   [key in K]: string | number;
 } & Record<T, any>;
 
-export type TStackedBarChartProps<K extends string, T extends string> = {
-  data: TStackChartData<K, T>[];
-  stacks: TStackItem<T>[];
+type TChartProps<K extends string, T extends string> = {
+  data: TChartData<K, T>[];
   xAxis: {
-    key: keyof TStackChartData<K, T>;
-    label: string;
+    key: keyof TChartData<K, T>;
+    label?: string;
+    strokeColor?: string;
   };
   yAxis: {
-    key: keyof TStackChartData<K, T>;
-    label: string;
-    domain?: [number, number];
     allowDecimals?: boolean;
+    domain?: [number, number];
+    key: keyof TChartData<K, T>;
+    label?: string;
+    strokeColor?: string;
   };
-  barSize?: number;
   className?: string;
+  legend?: TChartLegend;
+  margin?: TChartMargin;
   tickCount?: {
     x?: number;
     y?: number;
   };
   showTooltip?: boolean;
+};
+
+export type TBarItem<T extends string> = {
+  key: T;
+  label: string;
+  fill: string;
+  textClassName: string;
+  showPercentage?: boolean;
+  stackId: string;
+  showTopBorderRadius?: (barKey: string, payload: any) => boolean;
+  showBottomBorderRadius?: (barKey: string, payload: any) => boolean;
+};
+
+export type TBarChartProps<K extends string, T extends string> = TChartProps<K, T> & {
+  bars: TBarItem<T>[];
+  barSize?: number;
+};
+
+export type TLineItem<T extends string> = {
+  key: T;
+  label: string;
+  dashedLine: boolean;
+  fill: string;
+  showDot: boolean;
+  smoothCurves: boolean;
+  stroke: string;
+  style?: Record<string, string | number>;
+};
+
+export type TLineChartProps<K extends string, T extends string> = TChartProps<K, T> & {
+  lines: TLineItem<T>[];
+};
+
+export type TAreaItem<T extends string> = {
+  key: T;
+  label: string;
+  stackId: string;
+  fill: string;
+  fillOpacity: number;
+  showDot: boolean;
+  smoothCurves: boolean;
+  strokeColor: string;
+  strokeOpacity: number;
+  style?: Record<string, string | number>;
+};
+
+export type TAreaChartProps<K extends string, T extends string> = TChartProps<K, T> & {
+  areas: TAreaItem<T>[];
+  comparisonLine?: {
+    dashedLine: boolean;
+    strokeColor: string;
+  };
+};
+
+export type TCellItem<T extends string> = {
+  key: T;
+  fill: string;
+};
+
+export type TPieChartProps<K extends string, T extends string> = Pick<
+  TChartProps<K, T>,
+  "className" | "data" | "showTooltip" | "legend" | "margin"
+> & {
+  dataKey: T;
+  cells: TCellItem<T>[];
+  innerRadius?: number | string;
+  outerRadius?: number | string;
+  cornerRadius?: number;
+  paddingAngle?: number;
+  showLabel: boolean;
+  customLabel?: (value: any) => string;
+  centerLabel?: {
+    className?: string;
+    fill: string;
+    style?: React.CSSProperties;
+    text?: string | number;
+  };
+  tooltipLabel?: string | ((payload: any) => string);
 };
 
 export type TreeMapItem = {
@@ -45,7 +131,7 @@ export type TreeMapItem = {
   | {
       fillClassName: string;
     }
-  );
+);
 
 export type TreeMapChartProps = {
   data: TreeMapItem[];

@@ -2,8 +2,8 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { Pencil, Trash2, ExternalLink, Link2, Link } from "lucide-react";
-// plane ui
+import { Pencil, Trash2, ExternalLink, EllipsisVertical, Link2, Link } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast, CustomMenu, TContextMenuItem } from "@plane/ui";
 // plane utils
 import { cn, copyTextToClipboard } from "@plane/utils";
@@ -26,6 +26,7 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
   const {
     quickLinks: { getLinkById, toggleLinkModal, setLinkData },
   } = useHome();
+  const { t } = useTranslation();
 
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
@@ -41,8 +42,8 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
     copyTextToClipboard(viewLink).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Link Copied!",
-        message: "View link copied to clipboard.",
+        title: t("link_copied"),
+        message: t("view_link_copied_to_clipboard"),
       });
     });
   const handleOpenInNewTab = () => window.open(`${viewLink}`, "_blank");
@@ -51,25 +52,25 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
     {
       key: "edit",
       action: () => handleEdit(true),
-      title: "Edit",
+      title: t("edit"),
       icon: Pencil,
     },
     {
       key: "open-new-tab",
       action: handleOpenInNewTab,
-      title: "Open in new tab",
+      title: t("open_in_new_tab"),
       icon: ExternalLink,
     },
     {
       key: "copy-link",
       action: handleCopyText,
-      title: "Copy link",
+      title: t("copy_link"),
       icon: Link,
     },
     {
       key: "delete",
       action: () => linkOperations.remove(linkId),
-      title: "Delete",
+      title: t("delete"),
       icon: Trash2,
     },
   ];

@@ -2,6 +2,7 @@
 import { FC, Fragment } from "react";
 import { observer } from "mobx-react";
 // plane ui
+import { useTranslation } from "@plane/i18n";
 import { TCycleEstimateType } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
@@ -23,6 +24,7 @@ export const SidebarChart: FC<ProgressChartProps> = observer((props) => {
   // hooks
   const { getEstimateTypeByCycleId, getCycleById, fetchCycleDetails, fetchArchivedCycleDetails, setEstimateType } =
     useCycle();
+  const { t } = useTranslation();
 
   // derived data
   const cycleDetails = validateCycleSnapshot(getCycleById(cycleId));
@@ -66,11 +68,11 @@ export const SidebarChart: FC<ProgressChartProps> = observer((props) => {
           <div className="relative flex items-center gap-2">
             <div className="flex items-center justify-center gap-1 text-xs">
               <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
-              <span>Ideal</span>
+              <span>{t("ideal")}</span>
             </div>
             <div className="flex items-center justify-center gap-1 text-xs">
               <span className="h-2.5 w-2.5 rounded-full bg-[#4C8FFF]" />
-              <span>Current</span>
+              <span>{t("current")}</span>
             </div>
           </div>
           {cycleStartDate && cycleEndDate && completionChartDistributionData ? (
@@ -80,7 +82,7 @@ export const SidebarChart: FC<ProgressChartProps> = observer((props) => {
                 startDate={cycleStartDate}
                 endDate={cycleEndDate}
                 totalIssues={estimateType === "points" ? totalEstimatePoints : totalIssues}
-                plotTitle={estimateType === "points" ? "points" : "issues"}
+                plotTitle={estimateType === "points" ? t("points") : t("work_items")}
               />
             </Fragment>
           ) : (

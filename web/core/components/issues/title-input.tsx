@@ -2,6 +2,7 @@
 
 import { FC, useState, useEffect, useCallback } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { TNameDescriptionLoader } from "@plane/types";
 // components
 import { TextArea } from "@plane/ui";
@@ -37,6 +38,7 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
     className,
     containerClassName,
   } = props;
+  const { t } = useTranslation();
   // states
   const [title, setTitle] = useState("");
   const [isLengthVisible, setIsLengthVisible] = useState(false);
@@ -119,7 +121,7 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
           value={title}
           onChange={handleTitleChange}
           maxLength={255}
-          placeholder="Issue title"
+          placeholder={t("issue.title.label")}
           onFocus={() => setIsLengthVisible(true)}
           onBlur={() => setIsLengthVisible(false)}
         />
@@ -135,7 +137,7 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
           /255
         </div>
       </div>
-      {title?.length === 0 && <span className="text-sm font-medium text-red-500">Title is required</span>}
+      {title?.length === 0 && <span className="text-sm font-medium text-red-500">{t("form.title.required")}</span>}
     </div>
   );
 });

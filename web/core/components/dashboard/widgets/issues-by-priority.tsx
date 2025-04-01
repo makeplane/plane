@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // types
+import { EDurationFilters } from "@plane/constants";
 import { TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
 // components
 import { Card } from "@plane/ui";
@@ -13,7 +14,6 @@ import {
 } from "@/components/dashboard/widgets";
 import { IssuesByPriorityGraph } from "@/components/graphs";
 // constants
-import { EDurationFilters } from "@/constants/dashboard";
 // helpers
 import { getCustomDates } from "@/helpers/dashboard.helper";
 // hooks

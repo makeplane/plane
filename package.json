@@ -1,6 +1,8 @@
 {
+  "name": "plane",
+  "description": "Open-source project management that unlocks customer value",
   "repository": "https://github.com/makeplane/plane.git",
-  "version": "0.24.1",
+  "version": "0.25.3",
   "license": "AGPL-3.0",
   "private": true,
   "workspaces": [
@@ -22,8 +24,13 @@
   "devDependencies": {
     "prettier": "latest",
     "prettier-plugin-tailwindcss": "^0.5.4",
-    "turbo": "^2.3.3"
+    "turbo": "^2.4.2"
   },
-  "packageManager": "yarn@1.22.22",
-  "name": "plane"
+  "resolutions": {
+    "nanoid": "3.3.8",
+    "esbuild": "0.25.0",
+    "@babel/helpers": "7.26.10",
+    "@babel/runtime": "7.26.10"
+  },
+  "packageManager": "yarn@1.22.22"
 }

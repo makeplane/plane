@@ -5,6 +5,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IProject, IUserLite, IWorkspace } from "@plane/types";
 // ui
 import { Loader, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
@@ -14,7 +16,6 @@ import { MemberSelect } from "@/components/project";
 import { PROJECT_MEMBERS } from "@/constants/fetch-keys";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 // types
 
@@ -28,6 +29,8 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { allowPermissions } = useUserPermissions();
+
+  const { t } = useTranslation();
 
   const { currentProjectDetails, fetchProjectDetails, updateProject } = useProject();
   // derived values
@@ -78,9 +81,9 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
     })
       .then(() => {
         setToast({
-          title: "Success!",
+          title: `${t("success")}!`,
           type: TOAST_TYPE.SUCCESS,
-          message: "Project updated successfully",
+          message: t("project_settings.general.toast.success"),
         });
       })
       .catch((err) => {
@@ -96,9 +99,9 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
     })
       .then(() => {
         setToast({
-          title: "Success!",
+          title: `${t("success")}!`,
           type: TOAST_TYPE.SUCCESS,
-          message: "Project updated successfully",
+          message: t("project_settings.general.toast.success"),
         });
       })
       .catch((err) => {
@@ -109,13 +112,13 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   return (
     <>
       <div className="flex items-center border-b border-custom-border-100 pb-3.5">
-        <h3 className="text-xl font-medium">Defaults</h3>
+        <h3 className="text-xl font-medium">{t("common.defaults")}</h3>
       </div>
 
       <div className="flex w-full flex-col gap-2 pb-4">
         <div className="flex w-full items-center gap-4 py-4">
           <div className="flex w-1/2 flex-col gap-2">
-            <h4 className="text-sm">Project lead</h4>
+            <h4 className="text-sm">{t("project_settings.members.project_lead")}</h4>
             <div className="">
               {currentProjectDetails ? (
                 <Controller
@@ -140,7 +143,7 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
           </div>
 
           <div className="flex w-1/2 flex-col gap-2">
-            <h4 className="text-sm">Default assignee</h4>
+            <h4 className="text-sm">{t("project_settings.members.default_assignee")}</h4>
             <div className="">
               {currentProjectDetails ? (
                 <Controller
@@ -169,10 +172,10 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
         <div className="relative pb-4 flex justify-between items-center gap-3">
           <div className="space-y-1">
             <h3 className="text-lg font-medium text-custom-text-100">
-              Grant view access to all issues for guest users:
+              {t("project_settings.members.guest_super_permissions.title")}
             </h3>
             <p className="text-sm text-custom-text-200">
-              This will allow guests to have view access to all the project issues.
+              {t("project_settings.members.guest_super_permissions.sub_heading")}
             </p>
           </div>
           <ToggleSwitch

@@ -2,13 +2,15 @@ import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { Check } from "lucide-react";
 // plane constants
-import { EIssueLayoutTypes } from "@plane/constants";
+import { EIssueLayoutTypes, ISSUE_LAYOUT_MAP } from "@plane/constants";
+// plane i18n
+import { useTranslation } from "@plane/i18n";
 // plane ui
 import { Dropdown } from "@plane/ui";
 // plane utils
 import { cn } from "@plane/utils";
-// constants
-import { ISSUE_LAYOUT_MAP } from "@/constants/issue";
+// components
+import { IssueLayoutIcon } from "@/components/issues";
 
 type TLayoutDropDown = {
   onChange: (value: EIssueLayoutTypes) => void;
@@ -18,6 +20,8 @@ type TLayoutDropDown = {
 
 export const LayoutDropDown = observer((props: TLayoutDropDown) => {
   const { onChange, value = EIssueLayoutTypes.LIST, disabledLayouts = [] } = props;
+  // plane i18n
+  const { t } = useTranslation();
   // derived values
   const availableLayouts = useMemo(
     () => Object.values(ISSUE_LAYOUT_MAP).filter((layout) => !disabledLayouts.includes(layout.key)),
@@ -35,11 +39,10 @@ export const LayoutDropDown = observer((props: TLayoutDropDown) => {
 
   const buttonContent = useCallback((isOpen: boolean, buttonValue: string | string[] | undefined) => {
     const dropdownValue = ISSUE_LAYOUT_MAP[buttonValue as EIssueLayoutTypes];
-
     return (
       <div className="flex gap-2 items-center text-custom-text-200">
-        <dropdownValue.icon strokeWidth={2} className={`size-3.5 text-custom-text-200`} />
-        <span className="font-medium text-xs">{dropdownValue.label}</span>
+        <IssueLayoutIcon layout={dropdownValue.key} strokeWidth={2} className={`size-3.5 text-custom-text-200`} />
+        <span className="font-medium text-xs">{t(dropdownValue.i18n_label)}</span>
       </div>
     );
   }, []);
@@ -50,8 +53,8 @@ export const LayoutDropDown = observer((props: TLayoutDropDown) => {
     return (
       <div className={cn("flex gap-2 items-center text-custom-text-200 w-full justify-between")}>
         <div className="flex gap-2 items-center">
-          <dropdownValue.icon strokeWidth={2} className={`size-3 text-custom-text-200`} />
-          <span className="font-medium text-xs">{dropdownValue.label}</span>
+          <IssueLayoutIcon layout={dropdownValue.key} strokeWidth={2} className={`size-3 text-custom-text-200`} />
+          <span className="font-medium text-xs">{t(dropdownValue.i18n_label)}</span>
         </div>
         {props.selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
       </div>

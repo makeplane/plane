@@ -3,14 +3,16 @@
 import { FC, useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, Plus } from "lucide-react";
+// plane imports
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IState, TStateGroups } from "@plane/types";
-// components
 import { StateGroupIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
+// components
 import { StateList, StateCreate } from "@/components/project-states";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type TGroupItem = {
   workspaceSlug: string;
@@ -34,17 +36,18 @@ export const GroupItem: FC<TGroupItem> = observer((props) => {
     handleExpand,
     handleGroupCollapse,
   } = props;
+  // refs
+  const dropElementRef = useRef<HTMLDivElement | null>(null);
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { allowPermissions } = useUserPermissions();
   // state
   const [createState, setCreateState] = useState(false);
-
   // derived values
   const currentStateExpanded = groupsExpanded.includes(groupKey);
-  // refs
-  const dropElementRef = useRef<HTMLDivElement | null>(null);
-
   const isEditable = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+  const shouldShowEmptyState = states.length === 0 && currentStateExpanded && !createState;
 
   return (
     <div
@@ -72,15 +75,26 @@ export const GroupItem: FC<TGroupItem> = observer((props) => {
           </div>
           <div className="text-base font-medium text-custom-text-200 capitalize px-1">{groupKey}</div>
         </div>
-        <div
-          className="flex-shrink-0 w-6 h-6 rounded flex justify-center items-center overflow-hidden transition-colors hover:bg-custom-background-80 cursor-pointer text-custom-primary-100/80 hover:text-custom-primary-100"
+        <button
+          className={cn(
+            "flex-shrink-0 w-6 h-6 rounded flex justify-center items-center overflow-hidden transition-colors hover:bg-custom-background-80 cursor-pointer text-custom-primary-100/80 hover:text-custom-primary-100",
+            !isEditable && "cursor-not-allowed text-custom-text-400 hover:text-custom-text-400"
+          )}
           onClick={() => !createState && setCreateState(true)}
+          disabled={!isEditable}
         >
           <Plus className="w-4 h-4" />
-        </div>
+        </button>
       </div>
 
-      {groupedStates[groupKey].length > 0 && currentStateExpanded && (
+      {shouldShowEmptyState && (
+        <div className="flex flex-col justify-center items-center h-full py-4 text-sm text-custom-text-300">
+          <div>{t("project_settings.states.empty_state.title", { groupKey })}</div>
+          {isEditable && <div>{t("project_settings.states.empty_state.description")}</div>}
+        </div>
+      )}
+
+      {currentStateExpanded && (
         <div id="group-droppable-container">
           <StateList
             workspaceSlug={workspaceSlug}

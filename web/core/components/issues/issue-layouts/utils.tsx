@@ -1,6 +1,6 @@
 "use client";
 
-import { CSSProperties } from "react";
+import { CSSProperties, FC } from "react";
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import clone from "lodash/clone";
 import concat from "lodash/concat";
@@ -11,7 +11,7 @@ import uniq from "lodash/uniq";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { ContrastIcon } from "lucide-react";
 // plane types
-import { EIssuesStoreType } from "@plane/constants";
+import { EIssuesStoreType, ISSUE_PRIORITIES, STATE_GROUPS } from "@plane/constants";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -27,19 +27,16 @@ import {
   IWorkspaceView,
 } from "@plane/types";
 // plane ui
-import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
+import { Avatar, CycleGroupIcon, DiceIcon, ISvgIcons, PriorityIcon, StateGroupIcon } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
-// constants
-import { ISSUE_PRIORITIES } from "@/constants/issue";
-import { STATE_GROUPS } from "@/constants/state";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // store
 import { store } from "@/lib/store-context";
 // plane web store
-import { getTeamProjectColumns } from "@/plane-web/components/issues/issue-layouts/utils";
+import { getTeamProjectColumns, SpreadSheetPropertyIconMap } from "@/plane-web/components/issues/issue-layouts/utils";
 // store
 import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/base-issues.store";
 
@@ -85,7 +82,7 @@ export const getGroupByColumns = ({
     return [
       {
         id: "All Issues",
-        name: isEpic ? "All Epics" : "All Issues",
+        name: `All ${isEpic ? "Epics" : "work items"}`,
         payload: {},
         icon: undefined,
       },
@@ -154,7 +151,7 @@ const getCycleColumns = (): IGroupByColumn[] | undefined => {
       icon: <CycleGroupIcon cycleGroup={cycleStatus as TCycleGroups} className="h-3.5 w-3.5" />,
       payload: { cycle_id: cycle.id },
       isDropDisabled,
-      dropErrorMessage: isDropDisabled ? "Issue cannot be moved to completed cycles" : undefined,
+      dropErrorMessage: isDropDisabled ? "Work item cannot be moved to completed cycles" : undefined,
     });
   });
   cycles.push({
@@ -710,4 +707,15 @@ export const getBlockViewDetails = (
     message,
     blockStyle,
   };
+};
+
+/**
+ * This method returns the icon for Spreadsheet column headers
+ * @param iconKey
+ */
+export const SpreadSheetPropertyIcon: FC<ISvgIcons & { iconKey: string }> = (props) => {
+  const { iconKey } = props;
+  const Icon = SpreadSheetPropertyIconMap[iconKey];
+  if (!Icon) return null;
+  return <Icon {...props} />;
 };

@@ -32,6 +32,7 @@ export interface IIssueStoreActions {
     removeModuleIds: string[]
   ) => Promise<void>;
   removeIssueFromModule: (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => Promise<void>;
+  fetchIssueWithIdentifier: (workspaceSlug: string, project_identifier: string, sequence_id: string) => Promise<TIssue>;
 }
 
 export interface IIssueStore extends IIssueStoreActions {
@@ -39,6 +40,7 @@ export interface IIssueStore extends IIssueStoreActions {
   getIsLocalDBIssueDescription: (issueId: string | undefined) => boolean;
   // helper methods
   getIssueById: (issueId: string) => TIssue | undefined;
+  getIssueIdByIdentifier: (issueIdentifier: string) => string | undefined;
 }
 
 export class IssueStore implements IIssueStore {
@@ -86,6 +88,11 @@ export class IssueStore implements IIssueStore {
     return this.rootIssueDetailStore.rootIssueStore.issues.getIssueById(issueId) ?? undefined;
   });
 
+  getIssueIdByIdentifier = computedFn((issueIdentifier: string) => {
+    if (!issueIdentifier) return undefined;
+    return this.rootIssueDetailStore.rootIssueStore.issues.getIssueIdByIdentifier(issueIdentifier) ?? undefined;
+  });
+
   // actions
   fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string, issueStatus = "DEFAULT") => {
     const query = {
@@ -110,7 +117,7 @@ export class IssueStore implements IIssueStore {
       issue = await this.issueDraftService.getDraftIssueById(workspaceSlug, projectId, issueId, query);
     else issue = await this.issueService.retrieve(workspaceSlug, projectId, issueId, query);
 
-    if (!issue) throw new Error("Issue not found");
+    if (!issue) throw new Error("Work item not found");
 
     const issuePayload = this.addIssueToStore(issue);
     this.localDBIssueDescription = undefined;
@@ -284,5 +291,69 @@ export class IssueStore implements IIssueStore {
     );
     await this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
     return currentModule;
+  };
+
+  fetchIssueWithIdentifier = async (workspaceSlug: string, project_identifier: string, sequence_id: string) => {
+    const query = {
+      expand: "issue_reactions,issue_attachments,issue_link,parent",
+    };
+    const issue = await this.issueService.retrieveWithIdentifier(workspaceSlug, project_identifier, sequence_id, query);
+    const issueIdentifier = `${project_identifier}-${sequence_id}`;
+    const issueId = issue?.id;
+    const projectId = issue?.project_id;
+    const rootWorkItemDetailStore = issue?.is_epic
+      ? this.rootIssueDetailStore.rootIssueStore.epicDetail
+      : this.rootIssueDetailStore.rootIssueStore.issueDetail;
+
+    if (!issue || !projectId || !issueId) throw new Error("Issue not found");
+
+    const issuePayload = this.addIssueToStore(issue);
+    this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);
+
+    // handle parent issue if exists
+    if (issue?.parent && issue?.parent?.id && issue?.parent?.project_id) {
+      this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue.parent.id).then((res) => {
+        this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
+      });
+    }
+
+    // add identifiers to map
+    rootWorkItemDetailStore.rootIssueStore.issues.addIssueIdentifier(issueIdentifier, issueId);
+
+    // add related data
+    if (issue.issue_reactions) rootWorkItemDetailStore.addReactions(issue.id, issue.issue_reactions);
+    if (issue.issue_link) rootWorkItemDetailStore.addLinks(issue.id, issue.issue_link);
+    if (issue.issue_attachments) rootWorkItemDetailStore.addAttachments(issue.id, issue.issue_attachments);
+    rootWorkItemDetailStore.addSubscription(issue.id, issue.is_subscribed);
+
+    // fetch related data
+    // issue reactions
+    if (issue.issue_reactions) rootWorkItemDetailStore.addReactions(issueId, issue.issue_reactions);
+
+    // fetch issue links
+    if (issue.issue_link) rootWorkItemDetailStore.addLinks(issueId, issue.issue_link);
+
+    // fetch issue attachments
+    if (issue.issue_attachments) rootWorkItemDetailStore.addAttachments(issueId, issue.issue_attachments);
+
+    rootWorkItemDetailStore.addSubscription(issueId, issue.is_subscribed);
+
+    // fetch issue activity
+    rootWorkItemDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
+
+    // fetch issue comments
+    rootWorkItemDetailStore.comment.fetchComments(workspaceSlug, projectId, issueId);
+
+    // fetch sub issues
+    rootWorkItemDetailStore.subIssues.fetchSubIssues(workspaceSlug, projectId, issueId);
+
+    // fetch issue relations
+    rootWorkItemDetailStore.relation.fetchRelations(workspaceSlug, projectId, issueId);
+
+    // fetching states
+    // TODO: check if this function is required
+    rootWorkItemDetailStore.rootIssueStore.rootStore.state.fetchProjectStates(workspaceSlug, projectId);
+
+    return issue;
   };
 }

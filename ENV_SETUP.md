@@ -43,9 +43,6 @@ NGINX_PORT=80
 # Debug value for api server use it as 0 for production use
 DEBUG=0
 CORS_ALLOWED_ORIGINS="http://localhost"
-# Error logs
-SENTRY_DSN=""
-SENTRY_ENVIRONMENT="development"
 # Database Settings
 POSTGRES_USER="plane"
 POSTGRES_PASSWORD="plane"

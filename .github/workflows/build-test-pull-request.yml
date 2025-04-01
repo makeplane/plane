@@ -6,49 +6,9 @@ on:
     types: ["opened", "synchronize", "ready_for_review"]
 
 jobs:
-  get-changed-files:
+  lint-apiserver:
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
-    outputs:
-      apiserver_changed: ${{ steps.changed-files.outputs.apiserver_any_changed }}
-      admin_changed: ${{ steps.changed-files.outputs.admin_any_changed }}
-      space_changed: ${{ steps.changed-files.outputs.space_any_changed }}
-      web_changed: ${{ steps.changed-files.outputs.web_any_changed }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v44
-        with:
-          files_yaml: |
-            apiserver:
-              - apiserver/**
-            admin:
-              - admin/**
-              - packages/**
-              - 'package.json'
-              - 'yarn.lock'
-              - 'tsconfig.json'
-              - 'turbo.json'
-            space:
-              - space/**
-              - packages/**
-              - 'package.json'
-              - 'yarn.lock'
-              - 'tsconfig.json'
-              - 'turbo.json'
-            web:
-              - web/**
-              - packages/**
-              - 'package.json'
-              - 'yarn.lock'
-              - 'tsconfig.json'
-              - 'turbo.json'
-
-  lint-apiserver:
-    needs: get-changed-files
-    runs-on: ubuntu-latest
-    if: needs.get-changed-files.outputs.apiserver_changed == 'true'
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -63,41 +23,38 @@ jobs:
         run: ruff check --fix apiserver
 
   lint-admin:
-    needs: get-changed-files
-    if: needs.get-changed-files.outputs.admin_changed == 'true'
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
       - run: yarn install
       - run: yarn lint --filter=admin
 
   lint-space:
-    needs: get-changed-files
-    if: needs.get-changed-files.outputs.space_changed == 'true'
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
       - run: yarn install
       - run: yarn lint --filter=space
 
   lint-web:
-    needs: get-changed-files
-    if: needs.get-changed-files.outputs.web_changed == 'true'
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
       - run: yarn install
       - run: yarn lint --filter=web
 
@@ -109,7 +66,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
       - run: yarn install
       - run: yarn build --filter=admin
 
@@ -121,7 +78,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
       - run: yarn install
       - run: yarn build --filter=space
 
@@ -133,6 +90,6 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
       - run: yarn install
       - run: yarn build --filter=web

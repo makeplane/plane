@@ -15,19 +15,23 @@ import { IssueService } from "@/services/issue";
 export type IIssueStore = {
   // observables
   issuesMap: Record<string, TIssue>; // Record defines issue_id as key and TIssue as value
+  issuesIdentifierMap: Record<string, string>; // Record defines issue_identifier as key and issue_id as value
   // actions
   getIssues(workspaceSlug: string, projectId: string, issueIds: string[]): Promise<TIssue[]>;
   addIssue(issues: TIssue[]): void;
+  addIssueIdentifier(issueIdentifier: string, issueId: string): void;
   updateIssue(issueId: string, issue: Partial<TIssue>): void;
   removeIssue(issueId: string): void;
   // helper methods
   getIssueById(issueId: string): undefined | TIssue;
+  getIssueIdByIdentifier(issueIdentifier: string): undefined | string;
   getIssuesByIds(issueIds: string[], type: "archived" | "un-archived"): TIssue[]; // Record defines issue_id as key and TIssue as value
 };
 
 export class IssueStore implements IIssueStore {
   // observables
   issuesMap: { [issue_id: string]: TIssue } = {};
+  issuesIdentifierMap: { [issue_identifier: string]: string } = {};
   // service
   issueService;
 
@@ -35,8 +39,10 @@ export class IssueStore implements IIssueStore {
     makeObservable(this, {
       // observable
       issuesMap: observable,
+      issuesIdentifierMap: observable,
       // actions
       addIssue: action,
+      addIssueIdentifier: action,
       updateIssue: action,
       removeIssue: action,
     });
@@ -56,6 +62,19 @@ export class IssueStore implements IIssueStore {
         if (!this.issuesMap[issue.id]) set(this.issuesMap, issue.id, issue);
         else update(this.issuesMap, issue.id, (prevIssue) => ({ ...prevIssue, ...issue }));
       });
+    });
+  };
+
+  /**
+   * @description This method will add issue_identifier to the issuesIdentifierMap
+   * @param issueIdentifier
+   * @param issueId
+   * @returns {void}
+   */
+  addIssueIdentifier = (issueIdentifier: string, issueId: string) => {
+    if (!issueIdentifier || !issueId) return;
+    runInAction(() => {
+      set(this.issuesIdentifierMap, issueIdentifier, issueId);
     });
   };
 
@@ -114,6 +133,16 @@ export class IssueStore implements IIssueStore {
   getIssueById = computedFn((issueId: string) => {
     if (!issueId || !this.issuesMap[issueId]) return undefined;
     return this.issuesMap[issueId];
+  });
+
+  /**
+   * @description This method will return the issue_id from the issuesIdentifierMap
+   * @param {string} issueIdentifier
+   * @returns {string | undefined}
+   */
+  getIssueIdByIdentifier = computedFn((issueIdentifier: string) => {
+    if (!issueIdentifier || !this.issuesIdentifierMap[issueIdentifier]) return undefined;
+    return this.issuesIdentifierMap[issueIdentifier];
   });
 
   /**

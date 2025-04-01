@@ -134,11 +134,11 @@ class CycleViewSet(BaseViewSet):
                 )
             )
             .annotate(
-                pending_issues=Count(
+                cancelled_issues=Count(
                     "issue_cycle__issue__id",
                     distinct=True,
                     filter=Q(
-                        issue_cycle__issue__state__group__in=["backlog", "unstarted", "started"],
+                        issue_cycle__issue__state__group__in=["cancelled"],
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                         issue_cycle__deleted_at__isnull=True,
@@ -227,7 +227,7 @@ class CycleViewSet(BaseViewSet):
                 "is_favorite",
                 "total_issues",
                 "completed_issues",
-                "pending_issues",
+                "cancelled_issues",
                 "assignee_ids",
                 "status",
                 "version",
@@ -259,7 +259,7 @@ class CycleViewSet(BaseViewSet):
             # meta fields
             "is_favorite",
             "total_issues",
-            "pending_issues",
+            "cancelled_issues",
             "completed_issues",
             "assignee_ids",
             "status",
@@ -268,7 +268,7 @@ class CycleViewSet(BaseViewSet):
         )
         datetime_fields = ["start_date", "end_date"]
         data = user_timezone_converter(
-            data, datetime_fields, request.user.user_timezone
+            data, datetime_fields, project_timezone
         )
         return Response(data, status=status.HTTP_200_OK)
 
@@ -318,9 +318,13 @@ class CycleViewSet(BaseViewSet):
                     .first()
                 )
 
+                # Fetch the project timezone
+                project = Project.objects.get(id=self.kwargs.get("project_id"))
+                project_timezone = project.timezone
+
                 datetime_fields = ["start_date", "end_date"]
                 cycle = user_timezone_converter(
-                    cycle, datetime_fields, request.user.user_timezone
+                    cycle, datetime_fields, project_timezone
                 )
 
                 # Send the model activity
@@ -407,9 +411,13 @@ class CycleViewSet(BaseViewSet):
                 "created_by",
             ).first()
 
+            # Fetch the project timezone
+            project = Project.objects.get(id=self.kwargs.get("project_id"))
+            project_timezone = project.timezone
+
             datetime_fields = ["start_date", "end_date"]
             cycle = user_timezone_converter(
-                cycle, datetime_fields, request.user.user_timezone
+                cycle, datetime_fields, project_timezone
             )
 
             # Send the model activity
@@ -480,10 +488,11 @@ class CycleViewSet(BaseViewSet):
             )
 
         queryset = queryset.first()
+        # Fetch the project timezone
+        project = Project.objects.get(id=self.kwargs.get("project_id"))
+        project_timezone = project.timezone
         datetime_fields = ["start_date", "end_date"]
-        data = user_timezone_converter(
-            data, datetime_fields, request.user.user_timezone
-        )
+        data = user_timezone_converter(data, datetime_fields, project_timezone)
 
         recent_visited_task.delay(
             slug=slug,

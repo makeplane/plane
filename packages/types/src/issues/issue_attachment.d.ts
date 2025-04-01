@@ -11,6 +11,7 @@ export type TIssueAttachment = {
   // required
   updated_at: string;
   updated_by: string;
+  created_by: string;
 };
 
 export type TIssueAttachmentUploadResponse = TFileSignedURLResponse & {

@@ -2,9 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import { CircleCheck, XCircle } from "lucide-react";
+import { CODE_VERIFIED } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button, Input, Spinner } from "@plane/ui";
 // constants
-import { CODE_VERIFIED } from "@/constants/event-tracker";
 // helpers
 import { EAuthModes } from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";
@@ -49,6 +50,8 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   // timer
   const { timer: resendTimerCode, setTimer: setResendCodeTimer } = useTimer(0);
+  // plane hooks
+  const { t } = useTranslation();
 
   const handleFormChange = (key: keyof TUniqueCodeFormValues, value: string) =>
     setUniqueCodeFormData((prev) => ({ ...prev, [key]: value }));
@@ -94,7 +97,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
       {nextPath && <input type="hidden" value={nextPath} name="next_path" />}
       <div className="space-y-1">
         <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
-          Email
+          {t("auth.common.email.label")}
         </label>
         <div
           className={`relative flex items-center rounded-md bg-onboarding-background-200 border border-onboarding-border-100`}
@@ -105,7 +108,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
             type="email"
             value={uniqueCodeFormData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
-            placeholder="name@company.com"
+            placeholder={t("auth.common.email.placeholder")}
             className={`disable-autofill-style h-[46px] w-full placeholder:text-onboarding-text-400 border-0`}
             autoComplete="on"
             disabled
@@ -121,20 +124,20 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
 
       <div className="space-y-1">
         <label className="text-sm font-medium text-onboarding-text-300" htmlFor="code">
-          Unique code
+          {t("auth.common.unique_code.label")}
         </label>
         <Input
           name="code"
           value={uniqueCodeFormData.code}
           onChange={(e) => handleFormChange("code", e.target.value)}
-          placeholder="gets-sets-flys"
+          placeholder={t("auth.common.unique_code.placeholder")}
           className="disable-autofill-style h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
           autoFocus
         />
         <div className="flex w-full items-center justify-between px-1 text-xs pt-1">
           <p className="flex items-center gap-1 font-medium text-green-700">
             <CircleCheck height={12} width={12} />
-            Paste the code sent to your email
+            {t("auth.common.unique_code.paste_code")}
           </p>
           <button
             type="button"
@@ -147,17 +150,17 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
             disabled={isRequestNewCodeDisabled}
           >
             {resendTimerCode > 0
-              ? `Resend in ${resendTimerCode}s`
+              ? t("auth.common.resend_in", { seconds: resendTimerCode })
               : isRequestingNewCode
-                ? "Requesting new code"
-                : "Resend"}
+                ? t("auth.common.unique_code.requesting_new_code")
+                : t("common.resend")}
           </button>
         </div>
       </div>
 
       <div className="space-y-2.5">
         <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
-          {isRequestingNewCode ? "Sending code" : isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
+          {isRequestingNewCode ? t("auth.common.unique_code.sending_code") : isSubmitting ? <Spinner height="20px" width="20px" /> : t("common.continue")}
         </Button>
       </div>
     </form>

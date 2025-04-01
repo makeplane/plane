@@ -51,6 +51,10 @@ export const ListKeymap = ({ tabIndex }: { tabIndex?: number }) =>
           } else if (this.editor.commands.liftListItem("taskItem")) {
             return true;
           }
+          // if tabIndex is set, we don't want to handle Tab key
+          if (tabIndex !== undefined && tabIndex !== null) {
+            return false;
+          }
           return true;
         },
         Delete: ({ editor }) => {

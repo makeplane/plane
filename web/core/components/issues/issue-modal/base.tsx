@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { EIssuesStoreType } from "@plane/constants";
+import { EIssuesStoreType, ISSUE_CREATED, ISSUE_UPDATED } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import type { TBaseIssue, TIssue } from "@plane/types";
@@ -11,7 +11,6 @@ import type { TBaseIssue, TIssue } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issues";
 // constants
-import { ISSUE_CREATED, ISSUE_UPDATED } from "@/constants/event-tracker";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useEventTracker, useCycle, useIssues, useModule, useIssueDetail, useUser } from "@/hooks/store";
@@ -215,7 +214,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           issueId: response.id,
           issueTypeId: response.type_id,
           projectId: response.project_id,
-          workspaceSlug: workspaceSlug.toString(),
+          workspaceSlug: workspaceSlug?.toString(),
           isDraft: is_draft_issue,
         });
       }
@@ -242,11 +241,11 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       setDescription("<p></p>");
       setChangesMade(null);
       return response;
-    } catch (error) {
+    } catch (error: any) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("error"),
-        message: t(is_draft_issue ? "draft_creation_failed" : "issue_creation_failed"),
+        message: error?.error ?? t(is_draft_issue ? "draft_creation_failed" : "issue_creation_failed"),
       });
       captureIssueEvent({
         eventName: ISSUE_CREATED,
@@ -285,7 +284,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         issueId: data.id,
         issueTypeId: payload.type_id,
         projectId: payload.project_id,
-        workspaceSlug: workspaceSlug.toString(),
+        workspaceSlug: workspaceSlug?.toString(),
         isDraft: isDraft,
       });
 
@@ -300,12 +299,12 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         path: pathname,
       });
       handleClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("error"),
-        message: t("issue_could_not_be_updated"),
+        message: error?.error ?? t("issue_could_not_be_updated"),
       });
       captureIssueEvent({
         eventName: ISSUE_UPDATED,

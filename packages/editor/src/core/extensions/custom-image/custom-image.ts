@@ -21,7 +21,8 @@ declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     imageComponent: {
       insertImageComponent: ({ file, pos, event }: InsertImageComponentProps) => ReturnType;
-      uploadImage: (file: File) => () => Promise<string> | undefined;
+      uploadImage: (blockId: string, file: File) => () => Promise<string> | undefined;
+      updateAssetsUploadStatus?: (updatedStatus: TFileHandler["assetsUploadStatus"]) => () => void;
       getImageSource?: (path: string) => () => Promise<string>;
       restoreImage: (src: string) => () => Promise<void>;
     };
@@ -29,9 +30,10 @@ declare module "@tiptap/core" {
 }
 
 export const getImageComponentImageFileMap = (editor: Editor) =>
-  (editor.storage.imageComponent as CustomImageExtensionStorage | undefined)?.fileMap;
+  (editor.storage.imageComponent as UploadImageExtensionStorage | undefined)?.fileMap;
 
-export interface CustomImageExtensionStorage {
+export interface UploadImageExtensionStorage {
+  assetsUploadStatus: TFileHandler["assetsUploadStatus"];
   fileMap: Map<string, UploadEntity>;
   deletedImageSet: Map<string, boolean>;
   uploadInProgress: boolean;
@@ -42,6 +44,7 @@ export type UploadEntity = ({ event: "insert" } | { event: "drop"; file: File })
 
 export const CustomImageExtension = (props: TFileHandler) => {
   const {
+    assetsUploadStatus,
     getAssetSrc,
     upload,
     delete: deleteImageFn,
@@ -108,7 +111,6 @@ export const CustomImageExtension = (props: TFileHandler) => {
       this.editor.state.doc.descendants((node) => {
         if (node.type.name === this.name) {
           if (!node.attrs.src?.startsWith("http")) return;
-
           imageSources.add(node.attrs.src);
         }
       });
@@ -131,13 +133,14 @@ export const CustomImageExtension = (props: TFileHandler) => {
         markdown: {
           serialize() {},
         },
+        assetsUploadStatus,
       };
     },
 
     addCommands() {
       return {
         insertImageComponent:
-          (props: { file?: File; pos?: number; event: "insert" | "drop" }) =>
+          (props) =>
           ({ commands }) => {
             // Early return if there's an invalid file being dropped
             if (
@@ -185,12 +188,15 @@ export const CustomImageExtension = (props: TFileHandler) => {
               attrs: attributes,
             });
           },
-        uploadImage: (file: File) => async () => {
-          const fileUrl = await upload(file);
+        uploadImage: (blockId, file) => async () => {
+          const fileUrl = await upload(blockId, file);
           return fileUrl;
         },
-        getImageSource: (path: string) => async () => await getAssetSrc(path),
-        restoreImage: (src: string) => async () => {
+        updateAssetsUploadStatus: (updatedStatus) => () => {
+          this.storage.assetsUploadStatus = updatedStatus;
+        },
+        getImageSource: (path) => async () => await getAssetSrc(path),
+        restoreImage: (src) => async () => {
           await restoreImageFn(src);
         },
       };

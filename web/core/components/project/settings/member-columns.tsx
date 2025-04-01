@@ -3,18 +3,17 @@ import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { Trash2 } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
+// plane imports
+import { ROLE, EUserPermissions } from "@plane/constants";
 // plane types
 import { IUser, IWorkspaceMember } from "@plane/types";
 // plane ui
 import { CustomSelect, PopoverMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { ROLE } from "@/constants/workspace";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useMember, useUser } from "@/hooks/store";
-// plane web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
+import { useMember, useUser, useUserPermissions } from "@/hooks/store";
 
 export interface RowData {
   member: IWorkspaceMember;
@@ -92,7 +91,7 @@ export const NameColumn: React.FC<NameProps> = (props) => {
 };
 
 export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) => {
-  const { rowData, currentProjectRole, projectId, workspaceSlug } = props;
+  const { rowData, projectId, workspaceSlug } = props;
   // form info
   const {
     control,
@@ -100,48 +99,56 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
   } = useForm();
   // store hooks
   const {
-    project: { updateMember, getProjectMemberDetails },
+    project: { updateMember },
     workspace: { getWorkspaceMemberDetails },
   } = useMember();
   const { data: currentUser } = useUser();
+  const { projectUserInfo } = useUserPermissions();
 
   // derived values
   const isCurrentUser = currentUser?.id === rowData.member.id;
-  const isProjectAdminOrGuest = [EUserPermissions.ADMIN, EUserPermissions.GUEST].includes(rowData.role);
-  const isWorkspaceMember = [EUserPermissions.MEMBER].includes(
+  const isRowDataWorkspaceAdmin = [EUserPermissions.ADMIN].includes(
     Number(getWorkspaceMemberDetails(rowData.member.id)?.role) ?? EUserPermissions.GUEST
   );
-  const isCurrentUserProjectMember = currentUser
-    ? getProjectMemberDetails(currentUser.id, projectId)?.role === EUserPermissions.MEMBER
+  const isCurrentUserWorkspaceAdmin = currentUser
+    ? [EUserPermissions.ADMIN].includes(
+        Number(getWorkspaceMemberDetails(currentUser.id)?.role) ?? EUserPermissions.GUEST
+      )
     : false;
-  const isRoleNonEditable =
-    isCurrentUser || (isProjectAdminOrGuest && !isWorkspaceMember) || isCurrentUserProjectMember;
+  const currentProjectRole = projectUserInfo?.[workspaceSlug.toString()]?.[projectId.toString()]
+    ?.role as unknown as EUserPermissions;
 
+  const isCurrentUserProjectAdmin = currentProjectRole
+    ? ![EUserPermissions.MEMBER, EUserPermissions.GUEST].includes(Number(currentProjectRole) ?? EUserPermissions.GUEST)
+    : false;
+
+  // logic
+  // Workspace admin can change his own role
+  // Project admin can change any role except his own and workspace admin's role
+  const isRoleEditable =
+    (isCurrentUserWorkspaceAdmin && isCurrentUser) ||
+    (isCurrentUserProjectAdmin && !isRowDataWorkspaceAdmin && !isCurrentUser);
   const checkCurrentOptionWorkspaceRole = (value: string) => {
     const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role as EUserPermissions | undefined;
     if (!value || !currentMemberWorkspaceRole) return ROLE;
 
-    const isGuestOROwner = [EUserPermissions.ADMIN, EUserPermissions.GUEST].includes(currentMemberWorkspaceRole);
+    const isGuest = [EUserPermissions.GUEST].includes(currentMemberWorkspaceRole);
 
     return Object.fromEntries(
-      Object.entries(ROLE).filter(([key]) => !isGuestOROwner || [currentMemberWorkspaceRole].includes(parseInt(key)))
+      Object.entries(ROLE).filter(([key]) => !isGuest || parseInt(key) === EUserPermissions.GUEST)
     );
   };
 
   return (
     <>
-      {isRoleNonEditable ? (
-        <div className="w-32 flex ">
-          <span>{ROLE[rowData.role as keyof typeof ROLE]}</span>
-        </div>
-      ) : (
+      {isRoleEditable ? (
         <Controller
           name="role"
           control={control}
           rules={{ required: "Role is required." }}
-          render={({ field: { value } }) => (
+          render={() => (
             <CustomSelect
-              value={value}
+              value={rowData.role?.toString()}
               onChange={(value: EUserPermissions) => {
                 if (!workspaceSlug) return;
 
@@ -161,7 +168,7 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
               }}
               label={
                 <div className="flex ">
-                  <span>{ROLE[rowData.role as keyof typeof ROLE]}</span>
+                  <span>{ROLE[rowData.role]}</span>
                 </div>
               }
               buttonClassName={`!px-0 !justify-start hover:bg-custom-background-100 ${errors.role ? "border-red-500" : "border-none"}`}
@@ -169,17 +176,18 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
               optionsClassName="w-full"
               input
             >
-              {Object.entries(checkCurrentOptionWorkspaceRole(rowData.member.id)).map(([key, label]) => {
-                if (parseInt(key) > (currentProjectRole ?? EUserPermissions.GUEST)) return null;
-                return (
-                  <CustomSelect.Option key={key} value={key}>
-                    {label}
-                  </CustomSelect.Option>
-                );
-              })}
+              {Object.entries(checkCurrentOptionWorkspaceRole(rowData.member.id)).map(([key, label]) => (
+                <CustomSelect.Option key={key} value={key}>
+                  {label}
+                </CustomSelect.Option>
+              ))}
             </CustomSelect>
           )}
         />
+      ) : (
+        <div className="w-32 flex ">
+          <span>{ROLE[rowData.role]}</span>
+        </div>
       )}
     </>
   );

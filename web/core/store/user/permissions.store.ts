@@ -3,14 +3,16 @@ import unset from "lodash/unset";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { IProjectMember, IUserProjectsRole, IWorkspaceMemberMe } from "@plane/types";
-// plane web types
 import {
+  EUserProjectRoles,
+  EUserWorkspaceRoles,
   EUserPermissions,
   EUserPermissionsLevel,
   TUserPermissions,
   TUserPermissionsLevel,
-} from "@/plane-web/constants/user-permissions";
+} from "@plane/constants";
+import { IProjectMember, IUserProjectsRole, IWorkspaceMemberMe } from "@plane/types";
+// plane web types
 // plane web services
 import { WorkspaceService } from "@/plane-web/services/workspace.service";
 // services
@@ -21,6 +23,8 @@ import { CoreRootStore } from "@/store/root.store";
 
 // derived services
 const workspaceService = new WorkspaceService();
+
+type ETempUserRole = TUserPermissions | EUserWorkspaceRoles | EUserProjectRoles; // TODO: Remove this once we have migrated user permissions to enums to plane constants package
 
 export interface IUserPermissionStore {
   loader: boolean;
@@ -36,7 +40,7 @@ export interface IUserPermissionStore {
     projectId: string
   ) => TUserPermissions | undefined;
   allowPermissions: (
-    allowPermissions: TUserPermissions[],
+    allowPermissions: ETempUserRole[],
     level: TUserPermissionsLevel,
     workspaceSlug?: string,
     projectId?: string,
@@ -115,7 +119,7 @@ export class UserPermissionStore implements IUserPermissionStore {
    * @returns { boolean }
    */
   allowPermissions = (
-    allowPermissions: TUserPermissions[],
+    allowPermissions: ETempUserRole[],
     level: TUserPermissionsLevel,
     workspaceSlug?: string,
     projectId?: string,
@@ -140,7 +144,7 @@ export class UserPermissionStore implements IUserPermissionStore {
         this.projectPermissionsByWorkspaceSlugAndProjectId(workspaceSlug, projectId)) as EUserPermissions | undefined;
     }
 
-    if (currentUserRole && allowPermissions.includes(currentUserRole)) {
+    if (currentUserRole && allowPermissions.includes(currentUserRole as TUserPermissions)) {
       if (onPermissionAllowed) {
         return onPermissionAllowed();
       } else {

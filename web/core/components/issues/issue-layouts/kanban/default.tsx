@@ -1,5 +1,7 @@
 import { MutableRefObject } from "react";
 import { observer } from "mobx-react";
+// i18n
+import { useTranslation } from "@plane/i18n";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -22,6 +24,7 @@ import { useKanbanView } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // types
 // parent components
+import { useWorkFlowFDragNDrop } from "@/plane-web/components/workflow";
 import { TRenderQuickActions } from "../list/list-view-types";
 import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation, getApproximateCardHeight } from "../utils";
 // components
@@ -89,11 +92,16 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     subGroupIndex = 0,
     isEpic = false,
   } = props;
+  // i18n
+  const { t } = useTranslation();
   // store hooks
   const storeType = useIssueStoreType();
   const issueKanBanView = useKanbanView();
   // derived values
   const isDragDisabled = !issueKanBanView?.getCanUserDragDrop(group_by, sub_group_by);
+
+  const { getIsWorkflowWorkItemCreationDisabled } = useWorkFlowFDragNDrop(group_by, sub_group_by);
+
   const list = getGroupByColumns({
     groupBy: group_by as GroupByColumnTypes,
     includeNone: true,
@@ -163,7 +171,11 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
                     title={subList.name}
                     count={getGroupIssueCount(subList.id, undefined, false) ?? 0}
                     issuePayload={subList.payload}
-                    disableIssueCreation={disableIssueCreation || isGroupByCreatedBy}
+                    disableIssueCreation={
+                      disableIssueCreation ||
+                      isGroupByCreatedBy ||
+                      getIsWorkflowWorkItemCreationDisabled(subList.id, sub_group_id)
+                    }
                     addIssuesToView={addIssuesToView}
                     collapsedGroups={collapsedGroups}
                     handleCollapsedGroups={handleCollapsedGroups}

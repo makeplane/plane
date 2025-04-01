@@ -2,8 +2,8 @@ import React, { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useCycle, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // components
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";

@@ -1,4 +1,5 @@
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { TIssue, TPaginationData } from "@plane/types";
 // components
 import { CalendarQuickAddIssueActions, CalendarIssueBlockRoot } from "@/components/issues";
@@ -43,6 +44,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
     isEpic = false,
   } = props;
   const formattedDatePayload = renderFormattedPayloadDate(date);
+  const { t } = useTranslation();
 
   const {
     issues: { getGroupIssueCount, getPaginationData, getIssueLoader },
@@ -99,7 +101,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
             className="w-min whitespace-nowrap rounded text-xs px-1.5 py-1 font-medium  hover:bg-custom-background-80 text-custom-primary-100 hover:text-custom-primary-200"
             onClick={() => loadMoreIssues(formattedDatePayload)}
           >
-            Load More
+            {t("common.load_more")}
           </button>
         </div>
       )}

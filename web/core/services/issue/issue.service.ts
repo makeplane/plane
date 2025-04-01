@@ -1,6 +1,7 @@
 import { EIssueServiceType } from "@plane/constants";
 // types
 import {
+  TIssueParams,
   type IIssueDisplayProperties,
   type TBulkOperationsPayload,
   type TIssue,
@@ -75,7 +76,12 @@ export class IssueService extends APIService {
       });
   }
 
-  async getIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<TIssuesResponse> {
+  async getIssues(
+    workspaceSlug: string,
+    projectId: string,
+    queries?: Partial<Record<TIssueParams, string | boolean>>,
+    config = {}
+  ): Promise<TIssuesResponse> {
     if (getIssuesShouldFallbackToServer(queries) || this.serviceType !== EIssueServiceType.ISSUES) {
       return await this.getIssuesFromServer(workspaceSlug, projectId, queries, config);
     }
@@ -435,6 +441,46 @@ export class IssueService extends APIService {
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-subscribe-issues/`, data)
       .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getIssueMetaFromURL(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string
+  ): Promise<{
+    project_identifier: string;
+    sequence_id: string;
+  }> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/meta/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async retrieveWithIdentifier(
+    workspaceSlug: string,
+    project_identifier: string,
+    issue_sequence: string,
+    queries?: any
+  ): Promise<TIssue> {
+    return this.get(`/api/workspaces/${workspaceSlug}/work-items/${project_identifier}-${issue_sequence}/`, {
+      params: queries,
+    })
+      .then((response) => {
+        // skip issue update when the service type is epic
+        if (response.data && this.serviceType === EIssueServiceType.ISSUES) {
+          updateIssue({ ...response.data, is_local_update: 1 });
+        }
+        // add is_epic flag when the service type is epic
+        if (response.data && this.serviceType === EIssueServiceType.EPICS) {
+          response.data.is_epic = true;
+        }
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });

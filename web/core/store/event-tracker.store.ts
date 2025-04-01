@@ -1,6 +1,6 @@
 import { action, computed, makeObservable, observable } from "mobx";
 import posthog from "posthog-js";
-// stores
+// store
 import {
   GROUP_WORKSPACE,
   WORKSPACE_CREATED,
@@ -13,8 +13,7 @@ import {
   getProjectStateEventPayload,
   getWorkspaceEventPayload,
   getPageEventPayload,
-} from "@/constants/event-tracker";
-// store
+} from "@plane/constants";
 import { CoreRootStore } from "./root.store";
 
 export interface IEventTrackerStore {
