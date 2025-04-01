@@ -145,6 +145,16 @@ export interface IIssueDisplayProperties {
   modules?: boolean;
   cycle?: boolean;
   issue_type?: boolean;
+  trip_reference_number?: boolean;
+  reference_number?: boolean;
+  hub_code?: boolean;
+  hub_name?: boolean;
+  customer_code?: boolean;
+  customer_name?: boolean;
+  vendor_name?: boolean;
+  vendor_code?: boolean;
+  worker_code?: boolean;
+  worker_name?: boolean;
 }
 
 export type TIssueKanbanFilters = {
