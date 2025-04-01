@@ -149,14 +149,17 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
     ...subIssueOperations,
     addSubIssue: async (workspaceSlug, projectId, parentIssueId, issue) => {
       await subIssueOperations.addSubIssue(workspaceSlug, projectId, parentIssueId, issue);
+      await fetchEpicAnalytics(workspaceSlug, projectId, epicId);
       await fetchInitiativeAnalyticsIfNeeded();
     },
     updateSubIssue: async (workspaceSlug, projectId, parentIssueId, issueId, issue, prevIssue) => {
       await subIssueOperations.updateSubIssue(workspaceSlug, projectId, parentIssueId, issueId, issue, prevIssue);
+      await fetchEpicAnalytics(workspaceSlug, projectId, epicId);
       await fetchInitiativeAnalyticsIfNeeded();
     },
     deleteSubIssue: async (workspaceSlug, projectId, parentIssueId, issueId) => {
       await subIssueOperations.deleteSubIssue(workspaceSlug, projectId, parentIssueId, issueId);
+      await fetchEpicAnalytics(workspaceSlug, projectId, epicId);
       await fetchInitiativeAnalyticsIfNeeded();
     },
   };
