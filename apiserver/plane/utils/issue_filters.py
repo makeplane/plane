@@ -592,12 +592,16 @@ def filter_custom_properties(params, issue_filter, method, prefix=""):
 
 def filter_character_fields(params, issue_filter, method, prefix=""):
     character_fields = [
-        "hub_code", 
-        "worker_code", 
-        "vendor_code", 
-        "trip_reference_number", 
-        "reference_number", 
-        "customer_code"
+        "trip_reference_number",
+        "reference_number",
+        "hub_code",
+        "hub_name",
+        "customer_code",
+        "customer_name",
+        "vendor_name",
+        "worker_name"
+        "vendor_code",
+        "worker_code",
     ]
 
     for field in character_fields:
