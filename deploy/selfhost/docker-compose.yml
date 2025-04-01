@@ -161,7 +161,7 @@ services:
     command: ./bin/docker-entrypoint-migrator.sh
     platform: ${DOCKER_PLATFORM:-}
     pull_policy: if_not_present
-    restart: unless-stopped
+    restart: no
     deploy:
       replicas: 1
     volumes:
