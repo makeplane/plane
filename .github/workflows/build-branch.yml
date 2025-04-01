@@ -291,4 +291,5 @@ jobs:
             ${{ github.workspace }}/deploy/selfhost/swarm.sh
             ${{ github.workspace }}/deploy/selfhost/restore.sh
             ${{ github.workspace }}/deploy/selfhost/docker-compose.yml
+            ${{ github.workspace }}/deploy/selfhost/swarm-compose.yml
             ${{ github.workspace }}/deploy/selfhost/variables.env

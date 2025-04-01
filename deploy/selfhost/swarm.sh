@@ -16,7 +16,7 @@ OS_NAME=$(uname)
 # Create necessary directories
 mkdir -p $PLANE_INSTALL_DIR/archive
 
-DOCKER_FILE_PATH=$PLANE_INSTALL_DIR/docker-compose.yml
+DOCKER_FILE_PATH=$PLANE_INSTALL_DIR/swarm-compose.yml
 DOCKER_ENV_PATH=$PLANE_INSTALL_DIR/plane.env
 
 function print_header() {
@@ -150,33 +150,33 @@ function updateEnvFile() {
 function download() {
     cd $SCRIPT_DIR || exit 1  
     TS=$(date +%s)
-    if [ -f "$PLANE_INSTALL_DIR/docker-compose.yml" ]
+    if [ -f "$PLANE_INSTALL_DIR/swarm-compose.yml" ]
     then
-        mv $PLANE_INSTALL_DIR/docker-compose.yml $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yml
+        mv $PLANE_INSTALL_DIR/swarm-compose.yml $PLANE_INSTALL_DIR/archive/$TS.swarm-compose.yml
     fi
 
     echo $RELEASE_DOWNLOAD_URL
     echo $FALLBACK_DOWNLOAD_URL
     echo $APP_RELEASE
 
-    RESPONSE=$(curl -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$RELEASE_DOWNLOAD_URL/$APP_RELEASE/docker-compose.yml?$(date +%s)")
+    RESPONSE=$(curl -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$RELEASE_DOWNLOAD_URL/$APP_RELEASE/swarm-compose.yml?$(date +%s)")
     BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
     STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
 
     if [ "$STATUS" -eq 200 ]; then
-        echo "$BODY" > $PLANE_INSTALL_DIR/docker-compose.yml
+        echo "$BODY" > $PLANE_INSTALL_DIR/swarm-compose.yml
     else
         # Fallback to download from the raw github url
-        RESPONSE=$(curl -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$FALLBACK_DOWNLOAD_URL/docker-compose.yml?$(date +%s)")
+        RESPONSE=$(curl -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$FALLBACK_DOWNLOAD_URL/swarm-compose.yml?$(date +%s)")
         BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
         STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
 
         if [ "$STATUS" -eq 200 ]; then
-            echo "$BODY" > $PLANE_INSTALL_DIR/docker-compose.yml
+            echo "$BODY" > $PLANE_INSTALL_DIR/swarm-compose.yml
         else
-            echo "Failed to download docker-compose.yml. HTTP Status: $STATUS"
-            echo "URL: $RELEASE_DOWNLOAD_URL/$APP_RELEASE/docker-compose.yml"
-            mv $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yml $PLANE_INSTALL_DIR/docker-compose.yml
+            echo "Failed to download swarm-compose.yml. HTTP Status: $STATUS"
+            echo "URL: $RELEASE_DOWNLOAD_URL/$APP_RELEASE/swarm-compose.yml"
+            mv $PLANE_INSTALL_DIR/archive/$TS.swarm-compose.yml $PLANE_INSTALL_DIR/swarm-compose.yml
             exit 1
         fi
     fi
@@ -198,7 +198,7 @@ function download() {
         else
             echo "Failed to download variables.env. HTTP Status: $STATUS"
             echo "URL: $RELEASE_DOWNLOAD_URL/$APP_RELEASE/variables.env"
-            mv $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yml $PLANE_INSTALL_DIR/docker-compose.yml
+            mv $PLANE_INSTALL_DIR/archive/$TS.swarm-compose.yml $PLANE_INSTALL_DIR/swarm-compose.yml
             exit 1
         fi
     fi
@@ -266,11 +266,8 @@ function deployStack() {
                 echo "Please check the logs for the 'migrator' service and resolve the issue(s)."
                 echo "Stop the services by running the command: ./swarm.sh stop"
                 exit 1
-            else
-                echo "   Data Migration completed successfully ✅"
             fi
-        else
-            echo "Warning: Could not find migrator container to check exit status"
+       
         fi
     fi
 
