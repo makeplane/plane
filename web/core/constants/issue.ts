@@ -140,7 +140,16 @@ export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = 
   "modules",
   "cycle",
   "issue_type",
-  ...whileListedCustomProperties.map(prop => prop.key),
+  "trip_reference_number",
+  "reference_number",
+  "hub_code",
+  "hub_name",
+  "customer_code",
+  "customer_name",
+  "vendor_name",
+  "vendor_code",
+  "worker_code",
+  "worker_name",
 ];
 
 export const ISSUE_DISPLAY_PROPERTIES: {
@@ -161,7 +170,16 @@ export const ISSUE_DISPLAY_PROPERTIES: {
   { key: "estimate", title: "Estimate" },
   { key: "modules", title: "Modules" },
   { key: "cycle", title: "Cycle" },
-  ...whileListedCustomProperties,
+  { key: "trip_reference_number", title: "Trip Reference Number" },
+  { key: "reference_number", title: "Reference Number" },
+  { key: "hub_code", title: "Hub Code" },
+  { key: "hub_name", title: "Hub Name" },
+  { key: "customer_code", title: "Customer Code" },
+  { key: "customer_name", title: "Customer Name" },
+  { key: "vendor_name", title: "Vendor Name" },
+  { key: "vendor_code", title: "Vendor Code" },
+  { key: "worker_code", title: "Worker Code" },
+  { key: "worker_name", title: "Worker Name" },
 ];
 
 export const ISSUE_EXTRA_OPTIONS: {
