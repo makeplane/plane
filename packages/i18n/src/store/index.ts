@@ -171,6 +171,8 @@ export class TranslationStore {
         return import("../locales/id/translations.json");
       case "ro":
         return import("../locales/ro/translations.json");
+      case "vi":
+        return import("../locales/vi/translations.json");
       default:
         throw new Error(`Unsupported language: ${language}`);
     }
