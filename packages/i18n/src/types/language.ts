@@ -13,8 +13,10 @@ export type TLanguage =
   | "ua"
   | "pl"
   | "ko"
+  | "pt-BR"
   | "id"
-  | "ro";
+  | "ro"
+  | "vi-VN";
 
 export interface ILanguageOption {
   label: string;
