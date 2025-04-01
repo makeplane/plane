@@ -226,6 +226,10 @@ export class TranslationStore {
         return import("../locales/id/translations-extended.json");
       case "ro":
         return import("../locales/ro/translations-extended.json");
+      case "pt-BR":
+        return import("../locales/pt-BR/translations-extended.json");
+      case "vi-VN":
+        return import("../locales/vi-VN/translations-extended.json");
       default:
         throw new Error(`Unsupported language: ${language}`);
     }
