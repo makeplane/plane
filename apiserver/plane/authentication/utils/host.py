@@ -1,13 +1,13 @@
 # Django imports
 from django.conf import settings
-
+from django.http import HttpRequest
 # Third party imports
 from rest_framework.request import Request
 
 # Module imports
 from plane.utils.ip_address import get_client_ip
 
-def base_host(request: Request, is_admin: bool = False, is_space: bool = False, is_app: bool = False) -> str:
+def base_host(request: Request | HttpRequest, is_admin: bool = False, is_space: bool = False, is_app: bool = False) -> str:
     """Utility function to return host / origin from the request"""
     # Calculate the base origin from request
     base_origin = settings.WEB_URL or settings.APP_BASE_URL
@@ -36,5 +36,5 @@ def base_host(request: Request, is_admin: bool = False, is_space: bool = False, 
     return base_origin
 
 
-def user_ip(request: Request) -> str:
+def user_ip(request: Request | HttpRequest) -> str:
     return get_client_ip(request=request)
