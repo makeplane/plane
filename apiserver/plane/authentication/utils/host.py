@@ -7,7 +7,7 @@ from rest_framework.request import Request
 # Module imports
 from plane.utils.ip_address import get_client_ip
 
-def base_host(request: Request, is_admin: bool = False, is_space: bool = False, is_app: bool = False):
+def base_host(request: Request, is_admin: bool = False, is_space: bool = False, is_app: bool = False) -> str:
     """Utility function to return host / origin from the request"""
     # Calculate the base origin from request
     base_origin = settings.WEB_URL or settings.APP_BASE_URL
