@@ -6,6 +6,7 @@ import { Row, Tooltip } from "@plane/ui";
 
 type Props = {
   issue: TIssue;
+  property: string;
 };
 
 export const SpreadsheetStandardPropertyColumn: React.FC<Props> = observer((props) => {
