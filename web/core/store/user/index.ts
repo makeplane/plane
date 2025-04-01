@@ -41,6 +41,10 @@ export interface IUserStore {
   updateCurrentUser: (data: Partial<IUser>) => Promise<IUser | undefined>;
   handleSetPassword: (csrfToken: string, data: { password: string }) => Promise<IUser | undefined>;
   deactivateAccount: () => Promise<void>;
+  changePassword: (
+    csrfToken: string,
+    payload: { old_password?: string; new_password: string }
+  ) => Promise<IUser | undefined>;
   reset: () => void;
   signOut: () => Promise<void>;
   // computed
@@ -89,6 +93,7 @@ export class UserStore implements IUserStore {
       updateCurrentUser: action,
       handleSetPassword: action,
       deactivateAccount: action,
+      changePassword: action,
       reset: action,
       signOut: action,
       // computed
@@ -196,6 +201,23 @@ export class UserStore implements IUserStore {
           message: "Failed to update current user",
         };
       });
+      throw error;
+    }
+  };
+
+  changePassword = async (
+    csrfToken: string,
+    payload: {
+      old_password?: string;
+      new_password: string;
+    }
+  ): Promise<IUser | undefined> => {
+    try {
+      const user = await this.userService.changePassword(csrfToken, payload);
+      if (this.data) set(this.data, ["is_password_autoset"], false);
+      return user;
+    } catch (error) {
+      console.log(error);
       throw error;
     }
   };
