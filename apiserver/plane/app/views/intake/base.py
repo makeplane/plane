@@ -30,14 +30,14 @@ from plane.db.models import (
 )
 from plane.app.serializers import (
     IssueCreateSerializer,
-    IssueSerializer,
+    IssueDetailSerializer,
     IntakeSerializer,
     IntakeIssueSerializer,
     IntakeIssueDetailSerializer,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.issue_activities_task import issue_activity
-
+from plane.bgtasks.issue_description_version_task import issue_description_version_task
 
 class IntakeViewSet(BaseViewSet):
     serializer_class = IntakeSerializer
@@ -87,7 +87,7 @@ class IntakeIssueViewSet(BaseViewSet):
     serializer_class = IntakeIssueSerializer
     model = IntakeIssue
 
-    filterset_fields = ["statulls"]
+    filterset_fields = ["status"]
 
     def get_queryset(self):
         return (
@@ -286,6 +286,13 @@ class IntakeIssueViewSet(BaseViewSet):
                 origin=request.META.get("HTTP_ORIGIN"),
                 intake=str(intake_issue.id),
             )
+            # updated issue description version
+            issue_description_version_task.delay(
+                updated_issue=json.dumps(request.data, cls=DjangoJSONEncoder),
+                issue_id=str(serializer.data["id"]),
+                user_id=request.user.id,
+                is_creating=True,
+            )
             intake_issue = (
                 IntakeIssue.objects.select_related("issue")
                 .prefetch_related("issue__labels", "issue__assignees")
@@ -385,13 +392,16 @@ class IntakeIssueViewSet(BaseViewSet):
                     ),
                     "description": issue_data.get("description", issue.description),
                 }
+            current_instance = json.dumps(
+                IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder
+            )
 
             issue_serializer = IssueCreateSerializer(
                 issue, data=issue_data, partial=True, context={"project_id": project_id}
             )
 
             if issue_serializer.is_valid():
-                current_instance = issue
+
                 # Log all the updates
                 requested_data = json.dumps(issue_data, cls=DjangoJSONEncoder)
                 if issue is not None:
@@ -401,14 +411,17 @@ class IntakeIssueViewSet(BaseViewSet):
                         actor_id=str(request.user.id),
                         issue_id=str(issue.id),
                         project_id=str(project_id),
-                        current_instance=json.dumps(
-                            IssueSerializer(current_instance).data,
-                            cls=DjangoJSONEncoder,
-                        ),
+                        current_instance=current_instance,
                         epoch=int(timezone.now().timestamp()),
                         notification=True,
                         origin=request.META.get("HTTP_ORIGIN"),
                         intake=str(intake_issue.id),
+                    )
+                    # updated issue description version
+                    issue_description_version_task.delay(
+                        updated_issue=current_instance,
+                        issue_id=str(pk),
+                        user_id=request.user.id,
                     )
                 issue_serializer.save()
             else:

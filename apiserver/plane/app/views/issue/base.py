@@ -632,7 +632,7 @@ class IssueViewSet(BaseViewSet):
             )
 
         current_instance = json.dumps(
-            IssueSerializer(issue).data, cls=DjangoJSONEncoder
+            IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder
         )
 
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
