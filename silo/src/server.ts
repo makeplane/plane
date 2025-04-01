@@ -68,6 +68,7 @@ export default class Server {
     this.port = Number(env.PORT);
 
     this.setupMiddleware();
+    this.setupLogger();
     this.setupControllers();
     this.setupErrorHandlers();
     this.setupProcessHandlers();
@@ -92,20 +93,21 @@ export default class Server {
     this.app.use(express.json({ limit: "25mb" }));
     this.app.use(cookieParser());
     this.app.use(express.urlencoded({ extended: true }));
-    this.app.use(this.setupLogger());
   }
 
   private setupLogger() {
-    return expressWinston.logger({
-      winstonInstance: expressLogger,
-      msg: '"{req.method} {req.url}" {req.httpVersion}',
-      expressFormat: true,
-      colorize: true,
-      requestWhitelist: [],
-      responseWhitelist: ["statusCode"],
-      bodyBlacklist: ["password", "authorization"],
-      ignoreRoute: () => false,
-    });
+    this.app.use(
+      expressWinston.logger({
+        winstonInstance: expressLogger,
+        msg: '"{req.method} {req.url}" {req.httpVersion}',
+        expressFormat: true,
+        colorize: true,
+        requestWhitelist: [],
+        responseWhitelist: ["statusCode"],
+        bodyBlacklist: ["password", "authorization"],
+        ignoreRoute: () => false,
+      })
+    );
   }
 
   private setupControllers(): void {
