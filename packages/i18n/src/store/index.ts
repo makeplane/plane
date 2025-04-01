@@ -165,6 +165,8 @@ export class TranslationStore {
         return import("../locales/pl/translations.json");
       case "ko":
         return import("../locales/ko/translations.json");
+      case "pt-BR":
+        return import("../locales/pt-BR/translations.json");
       case "id":
         return import("../locales/id/translations.json");
       case "ro":
