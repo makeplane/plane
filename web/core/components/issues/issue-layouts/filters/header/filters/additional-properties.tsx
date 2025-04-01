@@ -16,7 +16,7 @@ type Props = {
 };
 
 export const FilterAdditionalProperties: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug } = useParams();
   const { appliedFilters, handleUpdate, searchQuery, additionalPropertyTitle, additionalPropertyKey } = props;
   const workspaceService = new WorkspaceService(API_BASE_URL);
   
@@ -27,7 +27,7 @@ export const FilterAdditionalProperties: React.FC<Props> = observer((props) => {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const response = await workspaceService.getIssueAdditionalProperties(workspaceSlug.toString(), projectId.toString(), props.additionalPropertyKey);
+        const response = await workspaceService.getIssueAdditionalProperties(workspaceSlug.toString(), props.additionalPropertyKey);
         const formattedOptions = response.data.map((item: string) => ({ label: item, value: item })) || [];
         setOptions(formattedOptions);
       } catch (error) {
@@ -36,7 +36,7 @@ export const FilterAdditionalProperties: React.FC<Props> = observer((props) => {
     };
 
     fetchOptions();
-  }, [workspaceSlug, projectId, additionalPropertyKey]);
+  }, [workspaceSlug, additionalPropertyKey]);
 
   const filteredOptions = searchQuery
     ? options.filter((option: any) => option?.label.toLowerCase().includes(searchQuery.toLowerCase()))

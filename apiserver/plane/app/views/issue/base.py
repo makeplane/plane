@@ -1218,7 +1218,7 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
 class SearchAPIEndpoint(BaseAPIView):
     model = Issue
     webhook_event = "issue"
-    def get(self, request, slug, project_id):
+    def get(self, request, slug):
         
         allowed_fields = ["hub_code", "worker_code", "reference_number", "trip_reference_number", "customer_code", "vendor_code"]
 
@@ -1238,7 +1238,7 @@ class SearchAPIEndpoint(BaseAPIView):
 
         # Fetch values dynamically based on the requested field
         values = Issue.objects.filter(
-            workspace__slug=slug, project_id=project_id
+            workspace__slug=slug
         ).values_list(field, flat=True)
 
         unique_values = list(set(filter(None, values)))  # Remove duplicates and nulls
