@@ -57,6 +57,16 @@ export interface IIssue
     | "sub_issues_count"
     | "link_count"
     | "estimate_point"
+    | "trip_reference_number"
+    | "reference_number"
+    | "hub_code"
+    | "hub_name"
+    | "customer_code"
+    | "customer_name"
+    | "vendor_name"
+    | "vendor_code"
+    | "worker_code"
+    | "worker_name"
   > {
   comments: Comment[];
   reaction_items: IIssueReaction[];
