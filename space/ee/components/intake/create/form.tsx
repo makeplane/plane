@@ -5,15 +5,14 @@ import { IProject } from "@plane/types";
 // plane ui
 import { Button, Input } from "@plane/ui";
 // components
+import { getFileURL } from "@plane/utils";
 import { ProjectLogo } from "@/components/common";
 import { RichTextEditor } from "@/components/editor/rich-text-editor";
 // hooks
 import { useIssueDetails, usePublish } from "@/hooks/store";
-// helpers
-import { getDescriptionPlaceholder } from "@/plane-web/helpers/issue.helper";
 // local types
 import { TFormData } from "./create-issue-modal";
-
+import { useTranslation } from "@plane/i18n";
 type TProps = {
   project: Partial<IProject>;
   isSubmitting: boolean;
@@ -22,12 +21,15 @@ type TProps = {
 
   placeholder?: string | ((isFocused: boolean, value: string) => string);
 };
+const DEFAULT_COVER_IMAGE =
+  "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80";
 
 const IssueForm = observer((props: TProps) => {
   const { project, isSubmitting, descriptionEditorRef, anchor, placeholder } = props;
   // store hooks
-  const { workspace: workspaceID } = usePublish(anchor);
+  const { workspace: workspaceID, project_details } = usePublish(anchor);
   const { uploadIssueAsset } = useIssueDetails();
+  const { t } = useTranslation();
   const {
     formState: { errors },
     control,
@@ -36,26 +38,39 @@ const IssueForm = observer((props: TProps) => {
   return (
     <>
       <div className="space-y-5">
+        <div className="relative h-[133px] w-full">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-md" />
+          <img
+            src={getFileURL(project_details?.cover_image ?? DEFAULT_COVER_IMAGE)}
+            alt="Project cover image"
+            className="h-[133px] w-full rounded-md object-cover"
+          />
+          <div className="z-5 absolute bottom-2 flex w-full items-end justify-between gap-3 px-4">
+            <div className="flex flex-grow gap-3 truncate items-center">
+              {project.logo_props && <ProjectLogo logo={project.logo_props} className="my-auto text-[24px]" />}
+              <div className="flex flex-col gap-1 truncate text-white items-center">
+                <span className="truncate text-lg font-semibold">{project_details?.name}</span>
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="mb-6">
-          <h3 className="text-xl font-medium text-custom-text-200">Create Work item</h3>
-          <div className="text-sm text-custom-text-300 flex gap-2">
-            <span> This work item will be added to the intake of the project</span>
-            <span className="my-auto flex capitalize">
-              {project.logo_props && <ProjectLogo logo={project.logo_props} className="text-sm my-auto mr-1" />}
-              <span> {project.name}</span>
-            </span>
+          <h3 className="text-xl font-medium text-custom-text-200">{t("intake_forms.create.title")}</h3>
+          <div className="text-sm text-custom-text-300 flex gap-2 mt-1">
+            <span>{t("intake_forms.create.sub-title")}</span>
           </div>
         </div>
 
         <div className="md:col-span-3">
+          <div className="text-sm text-custom-text-300 mb-1 font-medium">{t("intake_forms.create.name")}</div>
           <Controller
             control={control}
             name="username"
             rules={{
-              required: "Name is required",
+              required: t("intake_forms.create.errors.name"),
               maxLength: {
                 value: 255,
-                message: "Name should be less than 255 characters",
+                message: t("intake_forms.create.errors.name_max_length"),
               },
             }}
             render={({ field: { value, onChange } }) => (
@@ -66,22 +81,23 @@ const IssueForm = observer((props: TProps) => {
                 value={value}
                 onChange={onChange}
                 hasError={Boolean(errors.username)}
-                placeholder="Your name"
-                className="w-full focus:border-blue-400 text-base"
+                placeholder="Jason Ray"
+                className="w-full focus:border-blue-400 text-base border-custom-border-300"
               />
             )}
           />
           <span className="text-xs text-red-500 capitalize">{errors?.username?.message}</span>
         </div>
         <div className="md:col-span-3">
+          <div className="text-sm text-custom-text-300 mb-1 font-medium">{t("intake_forms.create.email")}</div>
           <Controller
             control={control}
             name="email"
             rules={{
-              required: "Email is required",
+              required: t("intake_forms.create.errors.email"),
               pattern: {
                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: "invalid email address",
+                message: t("intake_forms.create.errors.email_invalid"),
               },
             }}
             render={({ field: { value, onChange } }) => (
@@ -92,8 +108,8 @@ const IssueForm = observer((props: TProps) => {
                 value={value}
                 onChange={onChange}
                 hasError={Boolean(errors.email)}
-                placeholder="Your email"
-                className="w-full focus:border-blue-400 text-base"
+                placeholder="jason.ray@company.com"
+                className="w-full focus:border-blue-400 text-base border-custom-border-300"
               />
             )}
           />
@@ -101,14 +117,15 @@ const IssueForm = observer((props: TProps) => {
         </div>
 
         <div className="md:col-span-3">
+          <div className="text-sm text-custom-text-300 mb-1 font-medium">{t("intake_forms.create.about")}</div>
           <Controller
             control={control}
             name="name"
             rules={{
-              required: "Title is required",
+              required: t("intake_forms.create.errors.title"),
               maxLength: {
                 value: 255,
-                message: "Title should be less than 255 characters",
+                message: t("intake_forms.create.errors.title_max_length"),
               },
             }}
             render={({ field: { value, onChange } }) => (
@@ -119,39 +136,40 @@ const IssueForm = observer((props: TProps) => {
                 value={value}
                 onChange={onChange}
                 hasError={Boolean(errors.name)}
-                placeholder="Enter title of the work item"
-                className="w-full focus:border-blue-400 text-base"
+                placeholder="Improve vertical scroll, Approve laptop purchase"
+                className="w-full focus:border-blue-400 text-base border-custom-border-300"
               />
             )}
           />
           <span className="text-xs text-red-500 capitalize">{errors?.name?.message}</span>
         </div>
-        <Controller
-          name="description_html"
-          control={control}
-          render={({ field: { onChange } }) => (
-            <RichTextEditor
-              id="inbox-modal-editor"
-              initialValue="<p></p>"
-              ref={descriptionEditorRef}
-              dragDropEnabled={false}
-              onChange={(_description: object, description_html: string) => onChange(description_html)}
-              placeholder={
-                placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)
-              }
-              containerClassName="px-0 text-base"
-              uploadFile={async (blockId, file) => {
-                const { asset_id } = await uploadIssueAsset(file, anchor);
-                return asset_id;
-              }}
-              anchor={anchor}
-              workspaceId={workspaceID?.toString() ?? ""}
-            />
-          )}
-        />
+        <div className="md:col-span-3">
+          <div className="text-sm text-custom-text-300 mb-1 font-medium">{t("intake_forms.create.description")}</div>
+          <Controller
+            name="description_html"
+            control={control}
+            render={({ field: { onChange } }) => (
+              <RichTextEditor
+                id="inbox-modal-editor"
+                initialValue="<p></p>"
+                ref={descriptionEditorRef}
+                dragDropEnabled={false}
+                onChange={(_description: object, description_html: string) => onChange(description_html)}
+                placeholder={() => ""}
+                containerClassName="px-0 text-base"
+                uploadFile={async (blockId, file) => {
+                  const { asset_id } = await uploadIssueAsset(file, anchor);
+                  return asset_id;
+                }}
+                anchor={anchor}
+                workspaceId={workspaceID?.toString() ?? ""}
+              />
+            )}
+          />
+        </div>
 
-        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} className="mx-auto mr-0">
-          {isSubmitting ? "Creating" : "Create work item"}
+        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} className="mx-auto ml-0">
+          {isSubmitting ? t("intake_forms.create.loading") : t("intake_forms.create.create_work_item")}
         </Button>
       </div>
     </>

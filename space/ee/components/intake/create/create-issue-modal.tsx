@@ -2,11 +2,17 @@ import { useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { EditorRefApi } from "@plane/editor";
 import { IProject } from "@plane/types";
-import { Card, ECardSpacing, setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 import { useIntake } from "@/plane-web/hooks/store/use-intake";
+import PlaneLogo from "@/public/plane-logos/blue-without-text-new.png";
 import IssueForm from "./form";
 import FormSuccess from "./success";
-
+import Image from "next/image";
+import IntakeInfo from "../info";
+import GridBgLight from "@/public/images/grid-bg-light.svg";
+import GridBgDark from "@/public/images/grid-bg-dark.svg";
+import { useTheme } from "next-themes";
+import { cn } from "@plane/utils";
 type TProps = {
   project: Partial<IProject>;
   anchor: string;
@@ -19,18 +25,23 @@ export type TFormData = {
 };
 
 const CreateIssueModal = ({ project, anchor }: TProps) => {
+  // state
   const [success, setSuccess] = useState(false);
-  const descriptionEditorRef = useRef<EditorRefApi>(null);
-
   const [formSubmitting, setFormSubmitting] = useState(false);
+  // refs
+  const descriptionEditorRef = useRef<EditorRefApi>(null);
+  // hooks
+  const { publishIntakeForm } = useIntake();
+  const { resolvedTheme } = useTheme();
   // form info
   const methods = useForm<TFormData>({
     defaultValues: { email: "", username: "", description_html: "", name: "" },
     reValidateMode: "onChange",
   });
-  const { handleSubmit } = methods;
+  const { handleSubmit, reset } = methods;
 
-  const { publishIntakeForm } = useIntake();
+  // derived
+  const gridBgImage = resolvedTheme === "dark" ? GridBgDark : GridBgLight;
 
   if (!project) return null;
 
@@ -57,6 +68,7 @@ const CreateIssueModal = ({ project, anchor }: TProps) => {
       await publishIntakeForm(anchor.toString(), payload);
       setSuccess(true);
       setFormSubmitting(false);
+      reset();
     } catch (e) {
       // handle your error
       console.log(e);
@@ -70,22 +82,42 @@ const CreateIssueModal = ({ project, anchor }: TProps) => {
   };
 
   return (
-    <div className="contents">
-      {!success && (
-        <Card spacing={ECardSpacing.SM} className="m-auto max-w-[375px] md:max-w-[575px] custom-sidebar-shadow-4xl">
-          <FormProvider {...methods}>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <IssueForm
-                anchor={anchor}
-                project={project}
-                isSubmitting={formSubmitting}
-                descriptionEditorRef={descriptionEditorRef}
-              />
-            </form>
-          </FormProvider>
-        </Card>
-      )}
-      {success && <FormSuccess />}
+    <div className="w-full h-full flex flex-col bg-custom-background-100 ">
+      {!success && <Image src={gridBgImage} alt="Grid Background" className="absolute top-0 left-0 w-full h-full " />}
+      <div className="flex justify-between pt-6 px-page-x z-10">
+        <div className="flex gap-2 items-center">
+          <Image src={PlaneLogo} alt="Plane Logo" height={24} />
+          <div className="text-2xl text-custom-text-100 font-semibold">Plane</div>
+          <div className="text-2xl text-custom-text-300 font-semibold">Intake</div>
+        </div>
+
+        <IntakeInfo />
+      </div>
+      <div className="flex justify-center w-full h-full items-center overflow-y-scroll">
+        {!success ? (
+          <div
+            className={cn(
+              "p-4 rounded-md w-[375px] md:w-[575px] shadow-custom-shadow-xs border-[1px] z-[5] border-custom-border-200 bg-custom-background-90",
+              {
+                "bg-custom-background-100 border-custom-border-100  shadow-custom-shadow-sm": resolvedTheme === "light",
+              }
+            )}
+          >
+            <FormProvider {...methods}>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <IssueForm
+                  anchor={anchor}
+                  project={project}
+                  isSubmitting={formSubmitting}
+                  descriptionEditorRef={descriptionEditorRef}
+                />
+              </form>
+            </FormProvider>
+          </div>
+        ) : (
+          <FormSuccess onReset={() => setSuccess(false)} />
+        )}
+      </div>
     </div>
   );
 };
