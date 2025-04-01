@@ -499,6 +499,10 @@
   "re_generate_key": "Tạo lại khóa",
   "export": "Xuất",
   "member": "{count, plural, other{# thành viên}}",
+  "new_password_must_be_different_from_old_password": "Mật khẩu mới phải khác mật khẩu cũ",
+  "edited": "đã chỉnh sửa",
+  "bot": "bot",
+
   "project_view": {
     "sort_by": {
       "created_at": "Thời gian tạo",

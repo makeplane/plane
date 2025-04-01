@@ -415,16 +415,16 @@
     "recents": {
       "title": "Recentes",
       "empty": {
-      "project": "Seus projetos recentes aparecerão aqui quando você visitar um.",
-      "page": "Suas páginas recentes aparecerão aqui quando você visitar uma.",
-      "issue": "Seus itens de trabalho recentes aparecerão aqui quando você visitar um.",
-      "default": "Você não tem nenhum item recente ainda."
+        "project": "Seus projetos recentes aparecerão aqui quando você visitar um.",
+        "page": "Suas páginas recentes aparecerão aqui quando você visitar uma.",
+        "issue": "Seus itens de trabalho recentes aparecerão aqui quando você visitar um.",
+        "default": "Você não tem nenhum item recente ainda."
       },
       "filters": {
-      "all": "Todos os itens",
-      "projects": "Projetos",
-      "pages": "Páginas",
-      "issues": "Itens de trabalho"
+        "all": "Todos os itens",
+        "projects": "Projetos",
+        "pages": "Páginas",
+        "issues": "Itens de trabalho"
       }
     },
     "new_at_plane": {
@@ -440,21 +440,21 @@
     "manage_widgets": "Gerenciar widgets",
     "title": "Página inicial",
     "star_us_on_github": "Nos dê uma estrela no GitHub"
-    },
+  },
 
-    "link": {
+  "link": {
     "modal": {
       "url": {
-      "text": "URL",
-      "required": "URL inválido",
-      "placeholder": "Digite ou cole um URL"
+        "text": "URL",
+        "required": "URL inválido",
+        "placeholder": "Digite ou cole um URL"
       },
       "title": {
-      "text": "Título de exibição",
-      "placeholder": "Como você gostaria de ver este link"
+        "text": "Título de exibição",
+        "placeholder": "Como você gostaria de ver este link"
       }
     }
-    },
+  },
 
   "common": {
     "all": "Todos",
@@ -579,8 +579,8 @@
     "relations": "Relações",
     "errors": {
       "default": {
-      "title": "Erro!",
-      "message": "Algo deu errado. Por favor, tente novamente."
+        "title": "Erro!",
+        "message": "Algo deu errado. Por favor, tente novamente."
       },
       "required": "Este campo é obrigatório",
       "entity_required": "{entity} é obrigatório"
