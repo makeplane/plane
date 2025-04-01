@@ -49,6 +49,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
       onClose: () => void;
       onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
       disabled: boolean;
+      property: string;
     }>;
   };
 } = {
