@@ -71,7 +71,7 @@ export const TemplateDetails = observer(() => {
               onChange={onChange}
               ref={ref}
               placeholder={t("templates.settings.form.work_item.template.description.placeholder")}
-              className="w-full min-h-[80px] p-0 resize-none"
+              className="w-full text-base min-h-[80px] p-0 resize-none"
               mode="true-transparent"
               textAreaSize="md"
             />

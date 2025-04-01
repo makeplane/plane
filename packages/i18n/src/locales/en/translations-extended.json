@@ -1829,6 +1829,17 @@
         "prefix": "Are you sure you want to delete template-",
         "suffix": "? All of the data related to the template will be permanently removed. This action cannot be undone."
       }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Add new template"
+      },
+      "tooltip": {
+        "work_item": "Pick a work item template"
+      },
+      "no_results": {
+        "work_item": "No templates found."
+      }
     }
   }
 }

@@ -1783,6 +1783,17 @@
         "prefix": "Apakah Anda yakin ingin menghapus template-",
         "suffix": "? Semua data terkait template akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan."
       }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Tambah template baru"
+      },
+      "tooltip": {
+        "work_item": "Pilih template item kerja"
+      },
+      "no_results": {
+        "work_item": "Tidak ada template yang ditemukan."
+      }
     }
   }
 }

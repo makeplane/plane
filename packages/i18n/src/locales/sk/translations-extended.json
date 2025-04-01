@@ -1786,6 +1786,17 @@
         "prefix": "Ste si istí, že chcete odstrániť šablónu-",
         "suffix": "? Všetky údaje súvisiace so šablónou budú natrvalo odstránené. Túto akciu nemožno vrátiť späť."
       }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Vytvoriť novú šablónu"
+      },
+      "tooltip": {
+        "work_item": "Vyberte šablónu pracovnej položky"
+      },
+      "no_results": {
+        "work_item": "Žiadne šablóny nenájdené."
+      }
     }
   }
 }

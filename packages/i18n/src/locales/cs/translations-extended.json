@@ -1786,6 +1786,17 @@
         "prefix": "Opravdu chcete smazat šablonu-",
         "suffix": "? Všechna data související se šablonou budou trvale odstraněna. Tuto akci nelze vrátit zpět."
       }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Přidat novou šablonu"
+      },
+      "tooltip": {
+        "work_item": "Vyberte šablonu pracovní položky"
+      },
+      "no_results": {
+        "work_item": "Žádné šablony nenalezeny."
+      }
     }
   }
 }

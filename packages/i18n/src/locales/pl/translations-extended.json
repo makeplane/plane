@@ -1786,6 +1786,17 @@
         "prefix": "Czy na pewno chcesz usunąć szablon-",
         "suffix": "? Wszystkie dane związane z szablonem zostaną trwale usunięte. Tej akcji nie można cofnąć."
       }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Dodaj nowy szablon"
+      },
+      "tooltip": {
+        "work_item": "Wybierz szablon elementu pracy"
+      },
+      "no_results": {
+        "work_item": "Nie znaleziono szablonów."
+      }
     }
   }
 }

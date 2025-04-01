@@ -1786,6 +1786,17 @@
         "prefix": "Sind Sie sicher, dass Sie die Vorlage löschen möchten-",
         "suffix": "? Alle mit der Vorlage verbundenen Daten werden dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden."
       }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Neue Vorlage hinzufügen"
+      },
+      "tooltip": {
+        "work_item": "Wählen Sie eine Arbeitsaufgabenvorlage"
+      },
+      "no_results": {
+        "work_item": "Keine Vorlagen gefunden."
+      }
     }
   }
 }

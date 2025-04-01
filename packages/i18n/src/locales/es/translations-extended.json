@@ -1784,6 +1784,17 @@
         "prefix": "¿Estás seguro de que quieres eliminar la plantilla-",
         "suffix": "? Todos los datos relacionados con la plantilla se eliminarán permanentemente. Esta acción no se puede deshacer."
       }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Añadir nueva plantilla"
+      },
+      "tooltip": {
+        "work_item": "Selecciona una plantilla de elemento de trabajo"
+      },
+      "no_results": {
+        "work_item": "No se encontraron plantillas."
+      }
     }
   }
 }

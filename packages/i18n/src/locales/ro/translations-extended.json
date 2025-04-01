@@ -1783,6 +1783,17 @@
         "prefix": "Ești sigur că vrei să ștergi șablonul-",
         "suffix": "? Toate datele legate de șablon vor fi eliminate permanent. Această acțiune nu poate fi anulată."
       }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Adaugă șablon nou"
+      },
+      "tooltip": {
+        "work_item": "Alege un șablon de element de lucru"
+      },
+      "no_results": {
+        "work_item": "Nu există șabloane."
+      }
     }
   }
 }

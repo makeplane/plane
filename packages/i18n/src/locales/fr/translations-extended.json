@@ -1785,6 +1785,17 @@
         "prefix": "Êtes-vous sûr de vouloir supprimer le modèle-",
         "suffix": "? Toutes les données relatives au modèle seront définitivement supprimées. Cette action ne peut pas être annulée."
       }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Ajouter un nouveau modèle"
+      },
+      "tooltip": {
+        "work_item": "Sélectionnez un modèle d'élément de travail"
+      },
+      "no_results": {
+        "work_item": "Aucun modèle trouvé."
+      }
     }
   }
 }

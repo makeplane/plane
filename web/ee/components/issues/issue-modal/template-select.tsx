@@ -3,14 +3,15 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Loader as Spinner } from "lucide-react";
 // plane imports
-import { Loader } from "@plane/ui";
+import { ETemplateLevel, EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
 import { cn } from "@plane/utils";
 // ce imports
 import { TWorkItemTemplateSelect } from "@/ce/components/issues";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
+import { useUserPermissions } from "@/hooks/store";
 // plane web imports
 import { WorkItemTemplateDropdown } from "@/plane-web/components/templates/dropdowns";
 import { useFlag } from "@/plane-web/hooks/store";
@@ -24,14 +25,25 @@ export const WorkItemTemplateSelect = observer((props: TWorkItemTemplateSelect) 
     placeholder,
     renderChevron = false,
     dropDownContainerClassName,
+    handleModalClose,
     handleFormChange,
   } = props;
   // router
   const { workspaceSlug } = useParams();
+  // store hooks
+  const { allowPermissions } = useUserPermissions();
   // issue modal context
   const { workItemTemplateId, isApplyingTemplate, setWorkItemTemplateId } = useIssueModal();
   // derived values
   const isTemplatesEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TEMPLATES");
+  const hasWorkspaceAdminPermission = allowPermissions(
+    [EUserWorkspaceRoles.ADMIN],
+    EUserPermissionsLevel.WORKSPACE,
+    workspaceSlug?.toString()
+  );
+  const hasProjectAdminPermission = projectId
+    ? allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug?.toString(), projectId)
+    : false;
 
   return (
     <>
@@ -43,8 +55,7 @@ export const WorkItemTemplateSelect = observer((props: TWorkItemTemplateSelect) 
             </div>
           )}
           <div className={cn("h-7", dropDownContainerClassName)}>
-            {isApplyingTemplate && <Loader.Item height="100%" width="120px" />}
-            {!isApplyingTemplate && projectId && (
+            {projectId && (
               <WorkItemTemplateDropdown
                 workspaceSlug={workspaceSlug?.toString()}
                 templateId={workItemTemplateId}
@@ -53,10 +64,14 @@ export const WorkItemTemplateSelect = observer((props: TWorkItemTemplateSelect) 
                 disabled={disabled}
                 size={size}
                 placeholder={placeholder}
+                customLabelContent={isApplyingTemplate && <Spinner className="size-4 animate-spin" />}
                 handleTemplateChange={(templateId) => {
                   setWorkItemTemplateId(templateId);
                   handleFormChange?.();
                 }}
+                handleRedirection={handleModalClose}
+                showCreateNewTemplate={hasWorkspaceAdminPermission || hasProjectAdminPermission}
+                level={hasWorkspaceAdminPermission ? ETemplateLevel.WORKSPACE : ETemplateLevel.PROJECT}
               />
             )}
           </div>

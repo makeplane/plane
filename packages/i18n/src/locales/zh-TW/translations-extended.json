@@ -1786,6 +1786,17 @@
         "prefix": "您確定要刪除模板-",
         "suffix": "嗎？與模板相關的所有數據將被永久移除。此操作無法撤銷。"
       }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "添加新模板"
+      },
+      "tooltip": {
+        "work_item": "選擇工作項目模板"
+      },
+      "no_results": {
+        "work_item": "沒有找到模板。"
+      }
     }
   }
 }

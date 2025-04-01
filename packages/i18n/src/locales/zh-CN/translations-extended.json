@@ -1785,6 +1785,17 @@
         "prefix": "您确定要删除模板-",
         "suffix": "吗？与该模板相关的所有数据将被永久删除。此操作无法撤消。"
       }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "添加新模板"
+      },
+      "tooltip": {
+        "work_item": "选择工作项模板"
+      },
+      "no_results": {
+        "work_item": "没有找到模板。"
+      }
     }
   }
 }
