@@ -1738,8 +1738,64 @@
       }
     },
     "estimates": {
-      "title": "프로젝트에 대한 추정 활성화",
-      "description": "팀의 복잡성과 작업량을 전달하는 데 도움이 됩니다."
+      "label": "추정",
+      "title": "내 프로젝트에 추정 활성화",
+      "description": "팀의 복잡성과 업무량을 전달하는 데 도움이 됩니다.",
+      "no_estimate": "추정 없음",
+      "create": {
+        "custom": "사용자 정의",
+        "start_from_scratch": "처음부터 시작",
+        "choose_template": "템플릿 선택",
+        "choose_estimate_system": "추정 시스템 선택",
+        "enter_estimate_point": "추정 포인트 입력"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "추정 포인트 생성됨",
+            "message": "추정 포인트가 성공적으로 생성되었습니다"
+          },
+          "error": {
+            "title": "추정 포인트 생성 실패",
+            "message": "새 추정 포인트를 생성할 수 없습니다. 다시 시도해주세요."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "추정 수정됨",
+            "message": "프로젝트의 추정 포인트가 업데이트되었습니다."
+          },
+          "error": {
+            "title": "추정 수정 실패",
+            "message": "추정을 수정할 수 없습니다. 다시 시도해주세요"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "성공!",
+            "message": "추정이 활성화되었습니다."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "성공!",
+            "message": "추정이 비활성화되었습니다."
+          },
+          "error": {
+            "title": "오류!",
+            "message": "추정을 비활성화할 수 없습니다. 다시 시도해주세요"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "추정 포인트는 0보다 커야 합니다.",
+        "unable_to_process": "요청을 처리할 수 없습니다. 다시 시도해주세요.",
+        "numeric": "추정 포인트는 숫자여야 합니다.",
+        "character": "추정 포인트는 문자여야 합니다.",
+        "empty": "추정 값은 비워둘 수 없습니다.",
+        "already_exists": "추정 값이 이미 존재합니다.",
+        "unsaved_changes": "저장되지 않은 변경사항이 있습니다. 완료를 클릭하기 전에 저장해주세요"
+      }
     },
     "automations": {
       "label": "자동화",

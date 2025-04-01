@@ -1738,8 +1738,64 @@
       }
     },
     "estimates": {
+      "label": "Estimativas",
       "title": "Habilitar estimativas para meu projeto",
-      "description": "Elas ajudam você a comunicar a complexidade e a carga de trabalho da equipe."
+      "description": "Elas ajudam você a comunicar a complexidade e a carga de trabalho da equipe.",
+      "no_estimate": "Sem estimativa",
+      "create": {
+        "custom": "Personalizado",
+        "start_from_scratch": "Começar do zero",
+        "choose_template": "Escolher um modelo",
+        "choose_estimate_system": "Escolher um sistema de estimativa",
+        "enter_estimate_point": "Inserir ponto de estimativa"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Ponto de estimativa criado",
+            "message": "O ponto de estimativa foi criado com sucesso"
+          },
+          "error": {
+            "title": "Falha na criação do ponto de estimativa",
+            "message": "Não foi possível criar o novo ponto de estimativa, por favor tente novamente."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Estimativa modificada",
+            "message": "O ponto de estimativa foi atualizado em seu projeto."
+          },
+          "error": {
+            "title": "Falha na modificação da estimativa",
+            "message": "Não foi possível modificar a estimativa, por favor tente novamente"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Sucesso!",
+            "message": "As estimativas foram habilitadas."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Sucesso!",
+            "message": "As estimativas foram desabilitadas."
+          },
+          "error": {
+            "title": "Erro!",
+            "message": "Não foi possível desabilitar a estimativa. Por favor, tente novamente"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "O ponto de estimativa precisa ser maior que 0.",
+        "unable_to_process": "Não foi possível processar sua solicitação, por favor tente novamente.",
+        "numeric": "O ponto de estimativa precisa ser um valor numérico.",
+        "character": "O ponto de estimativa precisa ser um caractere.",
+        "empty": "O valor da estimativa não pode estar vazio.",
+        "already_exists": "O valor da estimativa já existe.",
+        "unsaved_changes": "Você tem algumas alterações não salvas. Por favor, salve-as antes de clicar em concluir"
+      }
     },
     "automations": {
       "label": "Automações",

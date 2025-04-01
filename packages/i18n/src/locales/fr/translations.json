@@ -1736,8 +1736,64 @@
       }
     },
     "estimates": {
+      "label": "Estimations",
       "title": "Activer les estimations pour mon projet",
-      "description": "Elles vous aident à communiquer la complexité et la charge de travail de l'équipe."
+      "description": "Elles vous aident à communiquer la complexité et la charge de travail de l'équipe.",
+      "no_estimate": "Aucune estimation",
+      "create": {
+        "custom": "Personnalisé",
+        "start_from_scratch": "Commencer de zéro",
+        "choose_template": "Choisir un modèle",
+        "choose_estimate_system": "Choisir un système d'estimation",
+        "enter_estimate_point": "Saisir un point d'estimation"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Point d'estimation créé",
+            "message": "Le point d'estimation a été créé avec succès"
+          },
+          "error": {
+            "title": "Échec de la création du point d'estimation",
+            "message": "Nous n'avons pas pu créer le nouveau point d'estimation, veuillez réessayer."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Estimation modifiée",
+            "message": "Le point d'estimation a été mis à jour dans votre projet."
+          },
+          "error": {
+            "title": "Échec de la modification de l'estimation",
+            "message": "Nous n'avons pas pu modifier l'estimation, veuillez réessayer"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Succès !",
+            "message": "Les estimations ont été activées."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Succès !",
+            "message": "Les estimations ont été désactivées."
+          },
+          "error": {
+            "title": "Erreur !",
+            "message": "L'estimation n'a pas pu être désactivée. Veuillez réessayer"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Le point d'estimation doit être supérieur à 0.",
+        "unable_to_process": "Nous ne pouvons pas traiter votre demande, veuillez réessayer.",
+        "numeric": "Le point d'estimation doit être une valeur numérique.",
+        "character": "Le point d'estimation doit être une valeur caractère.",
+        "empty": "La valeur d'estimation ne peut pas être vide.",
+        "already_exists": "La valeur d'estimation existe déjà.",
+        "unsaved_changes": "Vous avez des modifications non enregistrées, veuillez les sauvegarder avant de cliquer sur terminé"
+      }
     },
     "automations": {
       "label": "Automatisations",

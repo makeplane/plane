@@ -1711,8 +1711,64 @@
       }
     },
     "estimates": {
+      "label": "Ước tính",
       "title": "Bật ước tính cho dự án của tôi",
-      "description": "Chúng giúp bạn truyền đạt độ phức tạp và khối lượng công việc của nhóm."
+      "description": "Chúng giúp bạn truyền đạt độ phức tạp và khối lượng công việc của nhóm.",
+      "no_estimate": "Không có ước tính",
+      "create": {
+        "custom": "Tùy chỉnh",
+        "start_from_scratch": "Bắt đầu từ đầu",
+        "choose_template": "Chọn mẫu",
+        "choose_estimate_system": "Chọn hệ thống ước tính",
+        "enter_estimate_point": "Nhập điểm ước tính"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Đã tạo điểm ước tính",
+            "message": "Điểm ước tính đã được tạo thành công"
+          },
+          "error": {
+            "title": "Không thể tạo điểm ước tính",
+            "message": "Không thể tạo điểm ước tính mới, vui lòng thử lại"
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Đã cập nhật ước tính",
+            "message": "Điểm ước tính đã được cập nhật trong dự án của bạn"
+          },
+          "error": {
+            "title": "Không thể cập nhật ước tính",
+            "message": "Không thể cập nhật ước tính, vui lòng thử lại"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Thành công!",
+            "message": "Đã bật ước tính"
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Thành công!",
+            "message": "Đã tắt ước tính"
+          },
+          "error": {
+            "title": "Lỗi!",
+            "message": "Không thể tắt ước tính. Vui lòng thử lại"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Điểm ước tính phải lớn hơn 0",
+        "unable_to_process": "Không thể xử lý yêu cầu của bạn, vui lòng thử lại",
+        "numeric": "Điểm ước tính phải là số",
+        "character": "Điểm ước tính phải là ký tự",
+        "empty": "Giá trị ước tính không được để trống",
+        "already_exists": "Giá trị ước tính này đã tồn tại",
+        "unsaved_changes": "Bạn có thay đổi chưa lưu. Vui lòng lưu trước khi nhấn 'xong'"
+      }
     },
     "automations": {
       "label": "Tự động hóa",
