@@ -1,10 +1,11 @@
 "use client";
 
 import React, { FC, MouseEvent, useEffect, useMemo, useState } from "react";
+import { format, parseISO } from "date-fns";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { Eye, Users } from "lucide-react";
+import { Eye, Users, ArrowRight, CalendarDays } from "lucide-react";
 // types
 import {
   CYCLE_FAVORITED,
@@ -29,6 +30,7 @@ import { generateQueryParams } from "@/helpers/router.helper";
 import { useCycle, useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useTimeZoneConverter } from "@/hooks/use-timezone-converter";
 // plane web components
 import { CycleAdditionalActions } from "@/plane-web/components/cycles";
 
@@ -55,6 +57,8 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
   // hooks
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
+  const { isProjectTimeZoneDifferent, getProjectUTCOffset, renderFormattedDateInUserTimezone } =
+    useTimeZoneConverter(projectId);
   // router
   const router = useAppRouter();
   const searchParams = useSearchParams();
@@ -87,6 +91,8 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     : 0;
 
   const showTransferIssues = routerProjectId && transferableIssuesCount > 0 && cycleStatus === "completed";
+
+  const projectUTCOffset = getProjectUTCOffset();
 
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -189,14 +195,12 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
         <Eye className="h-4 w-4 my-auto  text-custom-primary-200" />
         <span>{t("project_cycles.more_details")}</span>
       </button>
-
       {showIssueCount && (
         <div className="flex items-center gap-1">
           <LayersIcon className="h-4 w-4 text-custom-text-300" />
           <span className="text-xs text-custom-text-300">{cycleDetails.total_issues}</span>
         </div>
       )}
-
       <CycleAdditionalActions cycleId={cycleId} projectId={projectId} />
       {showTransferIssues && (
         <div
@@ -206,37 +210,77 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
           }}
         >
           <TransferIcon className="fill-custom-primary-200 w-4" />
-          <span>Transfer {transferableIssuesCount} work items</span>
+          <span>{t("project_cycles.transfer_work_items", { count: transferableIssuesCount })}</span>
         </div>
       )}
-
-      {!isActive && cycleDetails.start_date && (
-        <DateRangeDropdown
-          buttonVariant={"transparent-with-text"}
-          buttonContainerClassName={`h-6 w-full cursor-auto flex items-center gap-1.5 text-custom-text-300 rounded text-xs [&>div]:hover:bg-transparent`}
-          buttonClassName="p-0"
-          minDate={new Date()}
-          value={{
-            from: getDate(cycleDetails.start_date),
-            to: getDate(cycleDetails.end_date),
-          }}
-          placeholder={{
-            from: "Start date",
-            to: "End date",
-          }}
-          showTooltip
-          required={cycleDetails.status !== "draft"}
-          disabled
-          hideIcon={{
-            from: false,
-            to: false,
-          }}
-        />
+      {isActive ? (
+        <>
+          <div className="flex gap-2">
+            {/* Duration */}
+            <Tooltip
+              tooltipContent={
+                <span className="flex gap-1">
+                  {renderFormattedDateInUserTimezone(cycleDetails.start_date ?? "")}
+                  <ArrowRight className="h-3 w-3 flex-shrink-0 my-auto" />
+                  {renderFormattedDateInUserTimezone(cycleDetails.end_date ?? "")}
+                </span>
+              }
+              disabled={!isProjectTimeZoneDifferent()}
+              tooltipHeading={t("project_cycles.in_your_timezone")}
+            >
+              <div className="flex gap-1 text-xs text-custom-text-300 font-medium items-center">
+                <CalendarDays className="h-3 w-3 flex-shrink-0 my-auto" />
+                {cycleDetails.start_date && <span>{format(parseISO(cycleDetails.start_date), "MMM dd, yyyy")}</span>}
+                <ArrowRight className="h-3 w-3 flex-shrink-0 my-auto" />
+                {cycleDetails.end_date && <span>{format(parseISO(cycleDetails.end_date), "MMM dd, yyyy")}</span>}
+              </div>
+            </Tooltip>
+            {projectUTCOffset && (
+              <span className="rounded-md text-xs px-2 cursor-default  py-1 bg-custom-background-80 text-custom-text-300">
+                {projectUTCOffset}
+              </span>
+            )}
+            {/* created by */}
+            {createdByDetails && <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />}
+          </div>
+        </>
+      ) : (
+        cycleDetails.start_date && (
+          <>
+            <DateRangeDropdown
+              buttonVariant={"transparent-with-text"}
+              buttonContainerClassName={`h-6 w-full cursor-auto flex items-center gap-1.5 text-custom-text-300 rounded text-xs [&>div]:hover:bg-transparent`}
+              buttonClassName="p-0"
+              minDate={new Date()}
+              value={{
+                from: getDate(cycleDetails.start_date),
+                to: getDate(cycleDetails.end_date),
+              }}
+              placeholder={{
+                from: t("project_cycles.start_date"),
+                to: t("project_cycles.end_date"),
+              }}
+              showTooltip={isProjectTimeZoneDifferent()}
+              customTooltipHeading={t("project_cycles.in_your_timezone")}
+              customTooltipContent={
+                <span className="flex gap-1">
+                  {renderFormattedDateInUserTimezone(cycleDetails.start_date ?? "")}
+                  <ArrowRight className="h-3 w-3 flex-shrink-0 my-auto" />
+                  {renderFormattedDateInUserTimezone(cycleDetails.end_date ?? "")}
+                </span>
+              }
+              required={cycleDetails.status !== "draft"}
+              disabled
+              hideIcon={{
+                from: false,
+                to: false,
+              }}
+            />
+          </>
+        )
       )}
-
       {/* created by */}
       {createdByDetails && !isActive && <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />}
-
       {!isActive && (
         <Tooltip tooltipContent={`${cycleDetails.assignee_ids?.length} Members`} isMobile={isMobile}>
           <div className="flex w-10 cursor-default items-center justify-center">
@@ -255,7 +299,6 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
           </div>
         </Tooltip>
       )}
-
       {isEditingAllowed && !cycleDetails.archived_at && (
         <FavoriteStar
           onClick={(e) => {

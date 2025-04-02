@@ -12,3 +12,4 @@ import * as WebSocketDecorators from "./websocket";
 // Named namespace exports
 export const Rest = RestDecorators;
 export const WebSocketNS = WebSocketDecorators;
+

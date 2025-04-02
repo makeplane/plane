@@ -1,8 +1,7 @@
 import { observer } from "mobx-react";
 import { EditorRefApi } from "@plane/editor";
 // components
-import { Header, EHeaderVariant } from "@plane/ui";
-import { PageEditorMobileHeaderRoot, PageExtraOptions, PageSummaryPopover, PageToolbar } from "@/components/pages";
+import { PageEditorMobileHeaderRoot, PageExtraOptions, PageToolbar } from "@/components/pages";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -16,13 +15,11 @@ type Props = {
   editorReady: boolean;
   editorRef: React.RefObject<EditorRefApi>;
   page: TPageInstance;
-  setSidePeekVisible: (sidePeekState: boolean) => void;
-  sidePeekVisible: boolean;
   storeType: EPageStoreType;
 };
 
 export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
-  const { editorReady, editorRef, page, setSidePeekVisible, sidePeekVisible, storeType } = props;
+  const { editorReady, editorRef, page, storeType } = props;
   // derived values
   const { isContentEditable } = page;
   // page filters
@@ -33,39 +30,27 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
   if (!resolvedEditorRef) return null;
 
   return (
-    <>
-      <Header variant={EHeaderVariant.SECONDARY} showOnMobile={false}>
-        <Header.LeftItem className="gap-0 w-full">
-          {editorReady && (
-            <div
-              className={cn("flex-shrink-0 my-auto", {
-                "w-40 lg:w-56": !isFullWidth,
-                "w-[5%]": isFullWidth,
-              })}
-            >
-              <PageSummaryPopover
-                editorRef={editorRef.current}
-                isFullWidth={isFullWidth}
-                sidePeekVisible={sidePeekVisible}
-                setSidePeekVisible={setSidePeekVisible}
-              />
-            </div>
-          )}
-          {isStickyToolbarEnabled && editorReady && isContentEditable && editorRef.current && (
-            <PageToolbar editorRef={editorRef?.current} />
-          )}
-        </Header.LeftItem>
-        <PageExtraOptions editorRef={resolvedEditorRef} page={page} storeType={storeType} />
-      </Header>
-      <div className="md:hidden">
-        <PageEditorMobileHeaderRoot
-          editorRef={resolvedEditorRef}
-          page={page}
-          sidePeekVisible={sidePeekVisible}
-          setSidePeekVisible={setSidePeekVisible}
-          storeType={storeType}
-        />
+    <div id="page-header-container">
+      <div
+        className={cn(
+          "hidden md:flex items-center relative min-h-[52px] page-header-content border-b border-custom-border-200 px-page-x transition-all duration-200 ease-in-out",
+          {
+            "wide-layout": isFullWidth,
+          }
+        )}
+      >
+        <div className="max-w-full w-full flex items-center justify-between">
+          <div>
+            {isStickyToolbarEnabled && editorReady && isContentEditable && editorRef.current && (
+              <PageToolbar editorRef={editorRef?.current} />
+            )}
+          </div>
+          <PageExtraOptions editorRef={resolvedEditorRef} page={page} storeType={storeType} />
+        </div>
       </div>
-    </>
+      <div className="md:hidden">
+        <PageEditorMobileHeaderRoot editorRef={resolvedEditorRef} page={page} storeType={storeType} />
+      </div>
+    </div>
   );
 });

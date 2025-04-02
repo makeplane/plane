@@ -48,7 +48,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
   // states
   const [editorReady, setEditorReady] = useState(false);
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
-  const [sidePeekVisible, setSidePeekVisible] = useState(window.innerWidth >= 768);
   const [isVersionsOverlayOpen, setIsVersionsOverlayOpen] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
@@ -104,14 +103,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
         pageId={page.id ?? ""}
         restoreEnabled={isContentEditable}
       />
-      <PageEditorHeaderRoot
-        editorReady={editorReady}
-        editorRef={editorRef}
-        page={page}
-        setSidePeekVisible={(state) => setSidePeekVisible(state)}
-        sidePeekVisible={sidePeekVisible}
-        storeType={storeType}
-      />
+      <PageEditorHeaderRoot editorReady={editorReady} editorRef={editorRef} page={page} storeType={storeType} />
       <PageEditorBody
         config={config}
         editorReady={editorReady}
@@ -120,7 +112,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
         handleEditorReady={setEditorReady}
         handlers={handlers}
         page={page}
-        sidePeekVisible={sidePeekVisible}
         webhookConnectionParams={webhookConnectionParams}
         workspaceSlug={workspaceSlug}
       />
