@@ -71,9 +71,6 @@ export const LucideIconsList: React.FC<TIconsListProps> = (props) => {
                 onChange={handleColorChange}
                 className={`transition-all duration-200 ease-in-out size-4`}
               />
-              {!DEFAULT_BACKGROUND_COLORS.includes(selectedColor) && (
-                <Check className="absolute inset-0 m-auto text-white" size={12} strokeWidth={3} />
-              )}
             </div>
             {DEFAULT_BACKGROUND_COLORS.map((curCol) => (
               <button
