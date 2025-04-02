@@ -1,12 +1,11 @@
 import { DocumentHandler } from "@/core/types/document-handler";
 import { handlerFactory } from "@/core/handlers/document-handlers/handler-factory";
 
-// Import CE initialization
-import { initializeCEDocumentHandlers } from "@/ce/document-types";
 import { HocusPocusServerContext } from "@/core/types/common";
+import { initializeDocumentHandlers } from "@/plane-live/document-types";
 
 // Initialize all CE document handlers
-initializeCEDocumentHandlers();
+initializeDocumentHandlers();
 
 /**
  * Get a document handler based on the provided context criteria
@@ -30,4 +29,3 @@ export function getDocumentHandler(
 
 // Export the factory for direct access if needed
 export { handlerFactory };
-
