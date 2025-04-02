@@ -142,8 +142,8 @@ export const UnderLineItem = (editor: Editor): EditorMenuItem<"underline"> => ({
   icon: UnderlineIcon,
 });
 
-export const StrikeThroughItem = (editor: Editor): EditorMenuItem<"strike"> => ({
-  key: "strike",
+export const StrikeThroughItem = (editor: Editor): EditorMenuItem<"strikethrough"> => ({
+  key: "strikethrough",
   name: "Strikethrough",
   isActive: () => editor?.isActive("strike"),
   command: () => toggleStrike(editor),

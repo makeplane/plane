@@ -88,6 +88,7 @@ deploy/selfhost/plane-app/
 *storybook.log
 output.css
 
+dev-editor
 # Redis
 *.rdb
 *.rdb.gz
