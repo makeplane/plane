@@ -1,5 +1,7 @@
 # Python import
+import uuid
 from uuid import uuid4
+import hashlib
 
 # Django imports
 from django.conf import settings
@@ -10,13 +12,14 @@ from django.db import models, transaction
 from django.utils import timezone
 from django.db.models import Q
 from django import apps
+from django.db import connection
 
 # Module imports
 from plane.utils.html_processor import strip_tags
 from plane.db.mixins import SoftDeletionManager
 from plane.utils.exception_logger import log_exception
 from .project import ProjectBaseModel
-
+from plane.utils.uuid import convert_uuid_to_integer
 
 def get_default_properties():
     return {
@@ -212,10 +215,17 @@ class Issue(ProjectBaseModel):
 
         if self._state.adding:
             with transaction.atomic():
+                # Create a lock for this specific project using an advisory lock
+                # This ensures only one transaction per project can execute this code at a time
+                lock_key = convert_uuid_to_integer(self.project.id)
+
+                with connection.cursor() as cursor:
+                    # Get an exclusive lock using the project ID as the lock key
+                    cursor.execute("SELECT pg_advisory_xact_lock(%s)", [lock_key])
+
+                # Get the last sequence for the project
                 last_sequence = (
-                    IssueSequence.objects.filter(project=self.project)
-                    .select_for_update()
-                    .aggregate(largest=models.Max("sequence"))["largest"]
+                    IssueSequence.objects.filter(project=self.project).aggregate(largest=models.Max("sequence"))["largest"]
                 )
                 self.sequence_id = last_sequence + 1 if last_sequence else 1
                 # Strip the html tags using html parser
