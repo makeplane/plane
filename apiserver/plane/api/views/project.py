@@ -258,9 +258,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                 ProjectSerializer(project).data, cls=DjangoJSONEncoder
             )
 
-            intake_view = request.data.get(
-                "inbox_view", request.data.get("intake_view", project.intake_view)
-            )
+            intake_view = request.data.get("intake_view", project.intake_view)
 
             if project.archived_at:
                 return Response(
