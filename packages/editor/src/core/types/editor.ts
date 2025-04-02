@@ -31,7 +31,6 @@ export type TEditorCommands =
   | "h6"
   | "bold"
   | "italic"
-  | "link"
   | "underline"
   | "strikethrough"
   | "bulleted-list"
@@ -64,10 +63,6 @@ export type TCommandExtraProps = {
   };
   "text-align": {
     alignment: TTextAlign;
-  };
-  link: {
-    url: string;
-    text: string;
   };
 };
 

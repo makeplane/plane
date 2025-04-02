@@ -62,7 +62,6 @@ export const isValidHttpUrl = (string: string): { isValid: boolean; url: string 
   // Try again with https:// prefix
   try {
     const urlWithHttps = `https://${string}`;
-    console.log("urlWithHttps", urlWithHttps);
     new URL(urlWithHttps);
     return {
       isValid: true,
@@ -74,18 +73,6 @@ export const isValidHttpUrl = (string: string): { isValid: boolean; url: string 
       url: string,
     };
   }
-};
-
-export const isValidHttpUrl2 = (string: string): boolean => {
-  let url: URL;
-
-  try {
-    url = new URL(string);
-  } catch {
-    return false;
-  }
-
-  return url.protocol === "http:" || url.protocol === "https:";
 };
 
 export const getParagraphCount = (editorState: EditorState | undefined) => {

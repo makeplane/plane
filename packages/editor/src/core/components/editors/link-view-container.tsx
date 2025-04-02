@@ -5,10 +5,9 @@ import { FC, useCallback, useEffect, useState } from "react";
 // components
 import { LinkView, LinkViewProps } from "@/components/links";
 // storage
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
 interface LinkViewContainerProps {
-  editor: Editor | null;
+  editor: Editor;
   containerRef: React.RefObject<HTMLDivElement>;
 }
 
@@ -21,39 +20,9 @@ export const LinkViewContainer: FC<LinkViewContainerProps> = ({ editor, containe
   const editorState = useEditorState({
     editor,
     selector: ({ editor }: { editor: Editor }) => ({
-      linkExtensionStorage: getExtensionStorage(editor, "link"),
+      linkExtensionStorage: editor.storage.link,
     }),
   });
-
-  useEffect(() => {
-    if (editorState.linkExtensionStorage.isPreviewOpen && editor && editorState.linkExtensionStorage.posToInsert) {
-      // Get the coordinates of the selection
-      const coords = editor.view.coordsAtPos(editorState.linkExtensionStorage.posToInsert.from);
-      const rect = new DOMRect(coords.left, coords.top, 0, coords.bottom - coords.top);
-
-      setVirtualElement({
-        getBoundingClientRect() {
-          return rect;
-        },
-      });
-
-      const node = editor.state.doc.nodeAt(editorState.linkExtensionStorage.posToInsert.from);
-      setLinkViewProps({
-        url: "",
-        view: "LinkEditView",
-        text: node?.text || "",
-        editor: editor,
-        from: editorState.linkExtensionStorage.posToInsert.from,
-        to: editorState.linkExtensionStorage.posToInsert.to,
-        closeLinkView: () => {
-          setIsOpen(false);
-          if (editor) editorState.linkExtensionStorage.isPreviewOpen = false;
-        },
-      });
-
-      setIsOpen(true);
-    }
-  }, [editorState.linkExtensionStorage.isPreviewOpen, editorState.linkExtensionStorage.posToInsert, editor]);
 
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
@@ -80,7 +49,7 @@ export const LinkViewContainer: FC<LinkViewContainerProps> = ({ editor, containe
 
   const handleLinkHover = useCallback(
     (event: MouseEvent) => {
-      if (!editor || editorState.linkExtensionStorage.isPreviewOpen) return;
+      if (!editor || editorState.linkExtensionStorage.isBubbleMenuOpen) return;
 
       // Find the closest anchor tag from the event target
       const target = (event.target as HTMLElement)?.closest("a");
@@ -126,7 +95,7 @@ export const LinkViewContainer: FC<LinkViewContainerProps> = ({ editor, containe
         console.error("Error handling link hover:", error);
       }
     },
-    [editor, editorState.linkExtensionStorage.isPreviewOpen, getReferenceProps, isOpen, linkViewProps]
+    [editor, editorState.linkExtensionStorage, getReferenceProps, isOpen, linkViewProps]
   );
 
   // Set up event listeners
@@ -139,7 +108,14 @@ export const LinkViewContainer: FC<LinkViewContainerProps> = ({ editor, containe
     return () => {
       container.removeEventListener("mouseover", handleLinkHover);
     };
-  }, [handleLinkHover, containerRef]);
+  }, [handleLinkHover]);
+
+  // Close link view when bubble menu opens
+  useEffect(() => {
+    if (editorState.linkExtensionStorage.isBubbleMenuOpen && isOpen) {
+      setIsOpen(false);
+    }
+  }, [editorState.linkExtensionStorage, isOpen]);
 
   return (
     <>

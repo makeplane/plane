@@ -52,7 +52,7 @@ export const CustomImageExtension = (props: TFileHandler) => {
     validation: { maxFileSize },
   } = props;
 
-  return Image.extend<Record<string, unknown>, CustomImageExtensionStorage>({
+  return Image.extend<Record<string, unknown>, UploadImageExtensionStorage>({
     name: "imageComponent",
     selectable: true,
     group: "block",

@@ -1,16 +1,16 @@
 import { Editor } from "@tiptap/core";
 import {
-  CustomImageExtensionStorage,
   CustomLinkStorage,
   HeadingExtensionStorage,
   MentionExtensionStorage,
+  UploadImageExtensionStorage,
 } from "@/extensions";
 import { ImageExtensionStorage } from "@/plugins/image";
 
 type ExtensionNames = "imageComponent" | "image" | "link" | "headingList" | "mention";
 
 interface ExtensionStorageMap {
-  imageComponent: CustomImageExtensionStorage;
+  imageComponent: UploadImageExtensionStorage;
   image: ImageExtensionStorage;
   link: CustomLinkStorage;
   headingList: HeadingExtensionStorage;

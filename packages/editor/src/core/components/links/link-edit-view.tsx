@@ -1,8 +1,8 @@
 import { Node } from "@tiptap/pm/model";
 import { Link2Off } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 // components
-import { LinkViewProps } from "@/components/links";
+import { LinkViewProps, LinkViews } from "@/components/links";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 
@@ -30,7 +30,7 @@ const InputView = ({ label, value, placeholder, onChange, autoFocus }: InputView
 
 interface LinkEditViewProps {
   viewProps: LinkViewProps;
-  switchView: (view: "LinkPreview" | "LinkEditView" | "LinkInputView") => void;
+  switchView: (view: LinkViews) => void;
 }
 
 export const LinkEditView = ({ viewProps }: LinkEditViewProps) => {
@@ -67,11 +67,11 @@ export const LinkEditView = ({ viewProps }: LinkEditViewProps) => {
   }, [initialText]);
 
   // Handlers
-  const handleTextChange = (value: string) => {
+  const handleTextChange = useCallback((value: string) => {
     if (value.trim() !== "") setLocalText(value);
-  };
+  }, []);
 
-  const applyChanges = (): boolean => {
+  const applyChanges = useCallback((): boolean => {
     if (linkRemoved) return false;
     hasSubmitted.current = true;
 
@@ -95,7 +95,7 @@ export const LinkEditView = ({ viewProps }: LinkEditViewProps) => {
         .insertContent(localText)
         .setTextSelection({ from, to: from + localText.length })
         .run();
-
+      //
       // Restore marks
       node.marks.forEach((mark) => {
         editor.chain().setMark(mark.type.name, mark.attrs).run();
@@ -103,29 +103,36 @@ export const LinkEditView = ({ viewProps }: LinkEditViewProps) => {
     }
 
     return true;
-  };
+  }, [editor, from, to, initialText, localText, localUrl]);
 
-  const removeLink = () => {
+  const removeLink = useCallback(() => {
     editor.view.dispatch(editor.state.tr.removeMark(from, to, editor.schema.marks.link));
     setLinkRemoved(true);
     closeLinkView();
-  };
+  }, [editor, from, to, closeLinkView]);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      e.stopPropagation();
-      if (applyChanges()) {
-        closeLinkView();
-        setLocalUrl("");
-        setLocalText("");
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter") {
+        e.stopPropagation();
+        if (applyChanges()) {
+          closeLinkView();
+          setLocalUrl("");
+          setLocalText("");
+        }
       }
-    }
-  };
+    },
+    [applyChanges, closeLinkView]
+  );
 
   return (
     <div
       onKeyDown={handleKeyDown}
-      className="shadow-md rounded p-2 flex flex-col gap-3 bg-custom-background-90 border-custom-border-100 border-2"
+      className="shadow-md rounded p-2 flex flex-col gap-3 bg-custom-background-90 border-custom-border-100 border-2 animate-in fade-in translate-y-1 duration-200 origin-center"
+      style={{
+        animationTimingFunction: "cubic-bezier(.55, .085, .68, .53)",
+        transformOrigin: "center",
+      }}
       tabIndex={0}
     >
       <InputView label="URL" placeholder="Enter or paste URL" value={localUrl} onChange={setLocalUrl} autoFocus />
@@ -133,7 +140,7 @@ export const LinkEditView = ({ viewProps }: LinkEditViewProps) => {
       <div className="mb-1 bg-custom-border-300 h-[1px] w-full gap-2" />
       <div className="flex text-sm text-custom-text-800 gap-2 items-center">
         <Link2Off size={14} className="inline-block" />
-        <button onClick={removeLink} className="cursor-pointer">
+        <button onClick={removeLink} className="cursor-pointer hover:text-custom-text-400 transition-colors">
           Remove Link
         </button>
       </div>

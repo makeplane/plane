@@ -251,6 +251,7 @@ export const CustomLinkExtension = Mark.create<LinkOptions, CustomLinkStorage>({
   addStorage() {
     return {
       isPreviewOpen: false,
+      isBubbleMenuOpen: false,
       posToInsert: { from: 0, to: 0 },
     };
   },

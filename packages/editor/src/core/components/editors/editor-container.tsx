@@ -1,4 +1,4 @@
-import { Editor } from "@tiptap/react";
+import { Editor, useEditorState } from "@tiptap/react";
 import { FC, ReactNode, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
@@ -8,11 +8,12 @@ import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 import { TDisplayConfig } from "@/types";
 // components
 import { LinkViewContainer } from "./link-view-container";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
 interface EditorContainerProps {
   children: ReactNode;
   displayConfig: TDisplayConfig;
-  editor: Editor | null;
+  editor: Editor;
   editorContainerClassName: string;
   id: string;
 }
@@ -87,8 +88,8 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
         )}
       >
         {children}
+        <LinkViewContainer editor={editor} containerRef={containerRef} />
       </div>
-      <LinkViewContainer editor={editor} containerRef={containerRef} />
     </>
   );
 };
