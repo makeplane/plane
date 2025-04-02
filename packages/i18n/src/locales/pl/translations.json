@@ -500,7 +500,7 @@
   "export": "Eksportuj",
   "member": "{count, plural, one{# członek} few{# członkowie} other{# członków}}",
   "new_password_must_be_different_from_old_password": "Nowe hasło musi być innym niż stare hasło",
-  
+
   "edited": "Edytowano",
   "bot": "Bot",
 
@@ -2324,12 +2324,20 @@
       "manual": "Ręcznie"
     }
   },
+
   "cycle": {
     "label": "{count, plural, one {Cykl} few {Cykle} other {Cyklów}}",
     "no_cycle": "Brak cyklu"
   },
+
   "module": {
     "label": "{count, plural, one {Moduł} few {Moduły} other {Modułów}}",
     "no_module": "Brak modułu"
+  },
+
+  "description_versions": {
+    "last_edited_by": "Ostatnio edytowane przez",
+    "previously_edited_by": "Wcześniej edytowane przez",
+    "edited_by": "Edytowane przez"
   }
 }

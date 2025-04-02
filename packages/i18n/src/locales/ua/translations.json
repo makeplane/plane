@@ -502,7 +502,7 @@
   "new_password_must_be_different_from_old_password": "Новий пароль повинен бути відмінним від старого пароля",
   "edited": "Редагувано",
   "bot": "Бот",
-  
+
   "project_view": {
     "sort_by": {
       "created_at": "Створено",
@@ -2323,12 +2323,20 @@
       "manual": "Вручну"
     }
   },
+
   "cycle": {
     "label": "{count, plural, one {Цикл} few {Цикли} other {Циклів}}",
     "no_cycle": "Немає циклу"
   },
+
   "module": {
     "label": "{count, plural, one {Модуль} few {Модулі} other {Модулів}}",
     "no_module": "Немає модуля"
+  },
+
+  "description_versions": {
+    "last_edited_by": "Останнє редагування",
+    "previously_edited_by": "Раніше відредаговано",
+    "edited_by": "Відредаговано"
   }
 }
