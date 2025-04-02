@@ -15,7 +15,7 @@ from plane.app.serializers import IssueLinkSerializer
 from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import IssueLink
 from plane.bgtasks.issue_activities_task import issue_activity
-
+from plane.utils.host import base_host
 
 class IssueLinkViewSet(BaseViewSet):
     permission_classes = [ProjectEntityPermission]
@@ -52,7 +52,7 @@ class IssueLinkViewSet(BaseViewSet):
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -77,7 +77,7 @@ class IssueLinkViewSet(BaseViewSet):
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -98,7 +98,7 @@ class IssueLinkViewSet(BaseViewSet):
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
         issue_link.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -68,7 +68,6 @@ export const PageToolbar: React.FC<Props> = ({ editorRef }) => {
   const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
 
   const updateActiveStates = useCallback(() => {
-    // console.log("Updating status");
     const newActiveStates: Record<string, boolean> = {};
     Object.values(toolbarItems)
       .flat()
@@ -81,7 +80,6 @@ export const PageToolbar: React.FC<Props> = ({ editorRef }) => {
         });
       });
     setActiveStates(newActiveStates);
-    // console.log("newActiveStates", newActiveStates);
   }, [editorRef]);
 
   useEffect(() => {

@@ -51,6 +51,7 @@ x-app-env: &app-env
   API_KEY_RATE_LIMIT: ${API_KEY_RATE_LIMIT:-60/minute}
   MINIO_ENDPOINT_SSL: ${MINIO_ENDPOINT_SSL:-0}
 
+
 services:
   web:
     image: ${DOCKERHUB_USER:-makeplane}/plane-frontend:${APP_RELEASE:-stable}

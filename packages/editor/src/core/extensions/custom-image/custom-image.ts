@@ -35,6 +35,9 @@ export const getImageComponentImageFileMap = (editor: Editor) =>
 export interface UploadImageExtensionStorage {
   assetsUploadStatus: TFileHandler["assetsUploadStatus"];
   fileMap: Map<string, UploadEntity>;
+  deletedImageSet: Map<string, boolean>;
+  uploadInProgress: boolean;
+  maxFileSize: number;
 }
 
 export type UploadEntity = ({ event: "insert" } | { event: "drop"; file: File }) & { hasOpenedFileInputOnce?: boolean };

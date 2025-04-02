@@ -27,7 +27,7 @@ from plane.db.models import (
     IssueUserProperty,
 )
 from plane.db.models.project import ProjectNetwork
-
+from plane.utils.host import base_host
 
 class ProjectInvitationsViewset(BaseViewSet):
     serializer_class = ProjectMemberInviteSerializer
@@ -99,7 +99,7 @@ class ProjectInvitationsViewset(BaseViewSet):
         project_invitations = ProjectMemberInvite.objects.bulk_create(
             project_invitations, batch_size=10, ignore_conflicts=True
         )
-        current_site = request.META.get("HTTP_ORIGIN")
+        current_site = base_host(request=request, is_app=True)
 
         # Send invitations
         for invitation in project_invitations:

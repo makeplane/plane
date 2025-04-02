@@ -52,6 +52,9 @@ export const CustomReadOnlyImageExtension = (props: TReadOnlyFileHandler) => {
     addStorage() {
       return {
         fileMap: new Map(),
+        deletedImageSet: new Map<string, boolean>(),
+        uploadInProgress: false,
+        maxFileSize: 0,
         // escape markdown for images
         markdown: {
           serialize() {},
