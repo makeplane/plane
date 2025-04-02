@@ -45,11 +45,24 @@ export const getTrimmedHTML = (html: string) => {
 };
 
 export const isValidHttpUrl = (string: string): { isValid: boolean; url: string } => {
+  // List of potentially dangerous protocols to block
+  const blockedProtocols = ["javascript:", "data:", "vbscript:", "file:", "about:"];
+
   // First try with the original string
   try {
     const url = new URL(string);
-    // If URL is valid and has a protocol, return as is
-    if (url.protocol === "http:" || url.protocol === "https:") {
+
+    // Check for potentially dangerous protocols
+    const protocol = url.protocol.toLowerCase();
+    if (blockedProtocols.some((p) => protocol === p)) {
+      return {
+        isValid: false,
+        url: string,
+      };
+    }
+
+    // If URL has any valid protocol, return as is
+    if (url.protocol && url.protocol !== "") {
       return {
         isValid: true,
         url: string,
