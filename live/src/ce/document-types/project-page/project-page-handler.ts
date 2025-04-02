@@ -1,4 +1,3 @@
-
 import {
   DocumentHandler,
   DocumentFetchParams,
@@ -6,7 +5,12 @@ import {
   HandlerDefinition,
 } from "@/core/types/document-handler";
 import { handlerFactory } from "@/core/handlers/document-handlers/handler-factory";
-import { fetchPageDescriptionBinary, updatePageDescription ,fetchProjectPageTitle, updateProjectPageTitle } from "./handlers";
+import {
+  fetchPageDescriptionBinary,
+  updatePageDescription,
+  fetchProjectPageTitle,
+  updateProjectPageTitle,
+} from "./handlers";
 
 /**
  * Handler for "project_page" document type

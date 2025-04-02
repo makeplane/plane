@@ -4,7 +4,7 @@ import { handlerFactory } from "@/core/handlers/document-handlers/handler-factor
 import { HocusPocusServerContext } from "@/core/types/common";
 import { initializeDocumentHandlers } from "@/plane-live/document-types";
 
-// Initialize all CE document handlers
+// initialize all document handlers
 initializeDocumentHandlers();
 
 /**
