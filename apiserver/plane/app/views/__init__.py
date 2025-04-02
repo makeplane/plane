@@ -184,7 +184,7 @@ from .estimate.base import (
     EstimatePointEndpoint,
 )
 
-from .intake.base import IntakeViewSet, IntakeIssueViewSet
+from .intake.base import IntakeViewSet, IntakeIssueViewSet, IntakeIssueDescriptionVersionEndpoint
 
 from .analytic.base import (
     AnalyticsEndpoint,

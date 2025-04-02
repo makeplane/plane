@@ -3,7 +3,13 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.db.models import IssueVersion, IssueDescriptionVersion
+from plane.db.models import (
+    IssueVersion,
+    IssueDescriptionVersion,
+    Project,
+    ProjectMember,
+    Issue,
+)
 from ..base import BaseAPIView
 from plane.app.serializers import (
     IssueVersionDetailSerializer,
@@ -79,6 +85,27 @@ class IssueDescriptionVersionEndpoint(BaseAPIView):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, issue_id, pk=None):
+        project = Project.objects.get(pk=project_id)
+        issue = Issue.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=issue_id
+        )
+
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+            and not issue.created_by == request.user
+        ):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if pk:
             issue_description_version = IssueDescriptionVersion.objects.get(
                 workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk

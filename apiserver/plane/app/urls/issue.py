@@ -263,22 +263,22 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/versions/",
         IssueVersionEndpoint.as_view(),
-        name="page-versions",
+        name="issue-versions",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/versions/<uuid:pk>/",
         IssueVersionEndpoint.as_view(),
-        name="page-versions",
+        name="issue-versions",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/description-versions/",
         IssueDescriptionVersionEndpoint.as_view(),
-        name="page-versions",
+        name="issue-versions",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/description-versions/<uuid:pk>/",
         IssueDescriptionVersionEndpoint.as_view(),
-        name="page-versions",
+        name="issue-versions",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/meta/",
