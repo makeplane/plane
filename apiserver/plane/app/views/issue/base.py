@@ -66,6 +66,7 @@ from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.global_paginator import paginate
 from plane.bgtasks.webhook_task import model_activity
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
+from plane.utils.host import base_host
 from plane.ee.utils.workflow import WorkflowStateManager
 
 
@@ -428,7 +429,7 @@ class IssueViewSet(BaseViewSet):
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             issue = (
                 issue_queryset_grouper(
@@ -479,7 +480,7 @@ class IssueViewSet(BaseViewSet):
                 current_instance=None,
                 actor_id=request.user.id,
                 slug=slug,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             # updated issue description version
             issue_description_version_task.delay(
@@ -740,7 +741,7 @@ class IssueViewSet(BaseViewSet):
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
 
             if issue.cycle_id and (
@@ -773,7 +774,7 @@ class IssueViewSet(BaseViewSet):
                 current_instance=current_instance,
                 actor_id=request.user.id,
                 slug=slug,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             # updated issue description version
             issue_description_version_task.delay(
@@ -810,8 +811,8 @@ class IssueViewSet(BaseViewSet):
             current_instance={},
             epoch=int(timezone.now().timestamp()),
             notification=True,
+            origin=base_host(request=request, is_app=True),
             subscriber=False,
-            origin=request.META.get("HTTP_ORIGIN"),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 

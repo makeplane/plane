@@ -7,7 +7,6 @@ import jwt
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.db.models import Count
 from django.utils import timezone
 
 # Third party modules
@@ -26,6 +25,8 @@ from plane.bgtasks.event_tracking_task import track_event
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.db.models import User, Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.utils.cache import invalidate_cache, invalidate_cache_directly
+from plane.utils.host import base_host
+from plane.utils.ip_address import get_client_ip
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 from .. import BaseViewSet
 from plane.payment.utils.member_payment_count import workspace_member_check
@@ -137,7 +138,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             workspace_invitations, batch_size=10, ignore_conflicts=True
         )
 
-        current_site = request.META.get("HTTP_ORIGIN")
+        current_site = base_host(request=request, is_app=True)
 
         # Send invitations
         for invitation in workspace_invitations:
@@ -248,6 +249,8 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                 # Send event
                 track_event.delay(
                     email=email,
+                    user_agent=request.META.get("HTTP_USER_AGENT"),
+                    ip=get_client_ip(request=request),
                     event_name="MEMBER_ACCEPTED",
                     properties={
                         "event_id": uuid.uuid4().hex,

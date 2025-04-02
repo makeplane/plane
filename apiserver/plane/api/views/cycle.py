@@ -39,7 +39,7 @@ from plane.db.models import (
     UserFavorite,
 )
 from plane.utils.analytics_plot import burndown_plot
-
+from plane.utils.host import base_host
 from .base import BaseAPIView
 from plane.bgtasks.webhook_task import model_activity
 
@@ -259,7 +259,7 @@ class CycleAPIEndpoint(BaseAPIView):
                     current_instance=None,
                     actor_id=request.user.id,
                     slug=slug,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -331,7 +331,7 @@ class CycleAPIEndpoint(BaseAPIView):
                 current_instance=current_instance,
                 actor_id=request.user.id,
                 slug=slug,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -702,7 +702,7 @@ class CycleIssueAPIEndpoint(BaseAPIView):
             ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
         # Return all Cycle Issues
         return Response(
@@ -1176,7 +1176,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
 
         return Response({"message": "Success"}, status=status.HTTP_200_OK)

@@ -37,6 +37,7 @@ from plane.db.models import (
 from .. import BaseViewSet
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
+from plane.utils.host import base_host
 from plane.ee.models import IssuePropertyValue, DraftIssuePropertyValue
 
 
@@ -276,7 +277,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
 
             if request.data.get("cycle_id", None):
@@ -305,7 +306,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     ),
                     epoch=int(timezone.now().timestamp()),
                     notification=True,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                 )
 
             if request.data.get("module_ids", []):
@@ -335,7 +336,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                         current_instance=None,
                         epoch=int(timezone.now().timestamp()),
                         notification=True,
-                        origin=request.META.get("HTTP_ORIGIN"),
+                        origin=base_host(request=request, is_app=True),
                     )
                     for module in request.data.get("module_ids", [])
                 ]

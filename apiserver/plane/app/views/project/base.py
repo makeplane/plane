@@ -37,6 +37,7 @@ from plane.db.models import (
 from plane.utils.cache import cache_response
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.bgtasks.recent_visited_task import recent_visited_task
+from plane.utils.host import base_host
 
 # EE imports
 from plane.ee.models import ProjectState, ProjectAttribute, ProjectFeature
@@ -408,7 +409,7 @@ class ProjectViewSet(BaseViewSet):
                     current_instance=None,
                     actor_id=request.user.id,
                     slug=slug,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                 )
 
                 project_activity.delay(
@@ -535,7 +536,7 @@ class ProjectViewSet(BaseViewSet):
                     current_instance=current_instance,
                     actor_id=request.user.id,
                     slug=slug,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                 )
                 project_activity.delay(
                     type="project.activity.updated",
@@ -592,7 +593,7 @@ class ProjectViewSet(BaseViewSet):
                 new_value=None,
                 actor_id=request.user.id,
                 slug=slug,
-                current_site=request.META.get("HTTP_ORIGIN"),
+                current_site=base_host(request=request, is_app=True),
                 event_id=project.id,
                 old_identifier=None,
                 new_identifier=None,

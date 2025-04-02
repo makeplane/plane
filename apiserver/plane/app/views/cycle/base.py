@@ -30,6 +30,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+
+# Module imports
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import (
     CycleSerializer,
@@ -52,7 +54,7 @@ from plane.db.models import (
 from plane.ee.models import EntityIssueStateActivity
 from plane.utils.analytics_plot import burndown_plot
 from plane.bgtasks.recent_visited_task import recent_visited_task
-# Module imports
+from plane.utils.host import base_host
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.webhook_task import model_activity
 from plane.utils.timezone_converter import convert_to_utc, user_timezone_converter
@@ -335,7 +337,7 @@ class CycleViewSet(BaseViewSet):
                     current_instance=None,
                     actor_id=request.user.id,
                     slug=slug,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                 )
                 return Response(cycle, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -428,7 +430,7 @@ class CycleViewSet(BaseViewSet):
                 current_instance=current_instance,
                 actor_id=request.user.id,
                 slug=slug,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
 
             return Response(cycle, status=status.HTTP_200_OK)
@@ -541,7 +543,7 @@ class CycleViewSet(BaseViewSet):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
         # TODO: Soft delete the cycle break the onetoone relationship with cycle issue
         cycle.delete()
@@ -1135,7 +1137,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
 
         return Response({"message": "Success"}, status=status.HTTP_200_OK)
