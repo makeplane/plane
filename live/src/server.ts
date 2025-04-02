@@ -12,14 +12,7 @@ import { getHocusPocusServer } from "@/core/hocuspocus-server";
 import { ProcessManager } from "@/core/process-manager";
 import { ShutdownManager } from "@/core/shutdown-manager";
 
-// Service and controller related
-interface IServiceContainer {
-  register(serviceName: string, service: any): void;
-  get(serviceName: string): any;
-}
-
 import { registerControllers } from "./lib/controller.utils";
-import { ServiceContainer } from "./lib/service-container";
 
 // Redis manager
 import { RedisManager } from "@/core/lib/redis-manager";
@@ -44,7 +37,6 @@ export class Server {
   private readonly app: Application;
   private readonly port: number;
   private hocusPocusServer!: Hocuspocus;
-  private serviceContainer: IServiceContainer;
   private redisManager: RedisManager;
 
   /**
@@ -53,7 +45,6 @@ export class Server {
    */
   constructor(port?: number) {
     this.app = express();
-    this.serviceContainer = new ServiceContainer();
     this.port = port || serverConfig.port;
     this.redisManager = RedisManager.getInstance();
 
@@ -105,20 +96,11 @@ export class Server {
    * Initialize core services
    */
   private async initializeServices() {
-    // Initialize Redis connection first
     logger.info("Initializing Redis connection...");
-    const redisClient = await this.redisManager.connect();
-
-    if (redisClient) {
-      // Register Redis client in the service container
-      this.serviceContainer.register("redis", redisClient);
-    }
+    await this.redisManager.connect();
 
     // Initialize the Hocuspocus server
     this.hocusPocusServer = await getHocusPocusServer();
-
-    // Register services in the container
-    this.serviceContainer.register("hocuspocus", this.hocusPocusServer);
   }
 
   /**

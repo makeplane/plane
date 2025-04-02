@@ -19,4 +19,3 @@ export const CatchErrors = (): MethodDecorator => {
     return descriptor;
   };
 };
-
