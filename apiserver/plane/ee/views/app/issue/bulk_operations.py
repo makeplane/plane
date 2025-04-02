@@ -471,9 +471,13 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                             "epoch": epoch,
                         }
                     )
-                
+
+                # Get the current cycle ID if it exists
+                ci = issue.issue_cycle.first()
+                current_cycle_id = str(ci.cycle_id) if ci else ""
+
                 # If the cycle id is not None, create a cycle activity to add the cycle since the issue is being moved into a cycle
-                if properties.get("cycle_id") is not None and issue.issue_cycle.first() and str(issue.issue_cycle.first().cycle_id) != properties.get("cycle_id"):
+                if properties.get("cycle_id") is not None and current_cycle_id != properties.get("cycle_id"):
                     # New issues to create
                     bulk_cycle_issues.append(CycleIssue(
                         created_by_id=request.user.id,
@@ -492,7 +496,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                             "current_instance": json.dumps(
                                 {
                                     "cycle_id": (
-                                        str(issue.issue_cycle.first().cycle_id) if issue.issue_cycle.first() else None
+                                        current_cycle_id if current_cycle_id else None
                                     )
                                 }
                             ),
