@@ -317,6 +317,9 @@ export const WIDGET_X_AXIS_PROPERTIES_LIST: Record<
   [EWidgetXAxisProperty.COMPLETED_AT]: {
     i18n_label: "common.completed_at",
   },
+  [EWidgetXAxisProperty.CREATED_BY]: {
+    i18n_label: "common.created_by",
+  },
 };
 
 export const WIDGET_X_AXIS_DATE_PROPERTIES: EWidgetXAxisProperty[] = [

@@ -65,6 +65,7 @@ def get_x_axis_field():
         "COMPLETED_AT": ("completed_at__date", "completed_at__date", None),
         "WORK_ITEM_TYPES": ("type_id", "type__name", None),
         "PROJECTS": ("project_id", "project__name", None),
+        "CREATED_BY": ("created_by_id", "created_by__display_name", None),
     }
 
 
