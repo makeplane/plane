@@ -10,6 +10,7 @@ import { Toast, setToast, TOAST_TYPE } from "@plane/ui";
 import { SWR_CONFIG } from "@/constants/swr-config";
 //helpers
 import { resolveGeneralTheme } from "@/helpers/theme.helper";
+import { useUser } from "@/hooks/store";
 // nprogress
 import { AppProgressBar } from "@/lib/n-progress";
 // polyfills
@@ -18,7 +19,6 @@ import "@/lib/polyfills";
 import { StoreProvider } from "@/lib/store-context";
 // wrappers
 import { InstanceWrapper } from "@/lib/wrappers";
-import { useUser } from "@/hooks/store";
 // dynamic imports
 const StoreWrapper = dynamic(() => import("@/lib/wrappers/store-wrapper"), { ssr: false });
 const PostHogProvider = dynamic(() => import("@/lib/posthog-provider"), { ssr: false });
@@ -56,7 +56,7 @@ export const AppProvider: FC<IAppProvider> = (props) => {
   }, [pathname]);
 
   useEffect(() => {
-    const onIncomingMessage = async (event) => {
+    const onIncomingMessage = async (event: MessageEvent) => {
       console.log('onIncomingMessage', event);
       if (event.data.type === "PLANE_SIGN_OUT") {
         try {
