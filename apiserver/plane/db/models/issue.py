@@ -153,6 +153,7 @@ class Issue(ProjectBaseModel):
     customer_name = models.CharField(max_length=255, blank=True, null=True)
     vendor_name = models.CharField(max_length=255, blank=True, null=True)
     worker_name = models.CharField(max_length=255, blank=True, null=True)
+    source = models.CharField(max_length=255, blank=True, null=True)
     name = models.CharField(max_length=255, verbose_name="Issue Name")
     description = models.JSONField(blank=True, default=dict)
     description_html = models.TextField(blank=True, default="<p></p>")

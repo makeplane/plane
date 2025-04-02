@@ -718,6 +718,7 @@ class IssueSerializer(DynamicBaseSerializer):
             "vendor_code",
             "worker_code",
             "worker_name",
+            "source",
             "priority",
             "start_date",
             "target_date",
