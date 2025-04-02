@@ -1,22 +1,25 @@
 import { Editor } from "@tiptap/react";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // types
 import { TDisplayConfig } from "@/types";
+// components
+import { LinkViewContainer } from "./link-view-container";
 
 interface EditorContainerProps {
   children: ReactNode;
   displayConfig: TDisplayConfig;
-  editor: Editor | null;
+  editor: Editor;
   editorContainerClassName: string;
   id: string;
 }
 
 export const EditorContainer: FC<EditorContainerProps> = (props) => {
   const { children, displayConfig, editor, editorContainerClassName, id } = props;
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleContainerClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (event.target !== event.currentTarget) return;
@@ -66,22 +69,26 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
   };
 
   return (
-    <div
-      id={`editor-container-${id}`}
-      onClick={handleContainerClick}
-      onMouseLeave={handleContainerMouseLeave}
-      className={cn(
-        `editor-container cursor-text relative line-spacing-${displayConfig.lineSpacing ?? DEFAULT_DISPLAY_CONFIG.lineSpacing}`,
-        {
-          "active-editor": editor?.isFocused && editor?.isEditable,
-          "wide-layout": displayConfig.wideLayout,
-        },
-        displayConfig.fontSize ?? DEFAULT_DISPLAY_CONFIG.fontSize,
-        displayConfig.fontStyle ?? DEFAULT_DISPLAY_CONFIG.fontStyle,
-        editorContainerClassName
-      )}
-    >
-      {children}
-    </div>
+    <>
+      <div
+        ref={containerRef}
+        id={`editor-container-${id}`}
+        onClick={handleContainerClick}
+        onMouseLeave={handleContainerMouseLeave}
+        className={cn(
+          `editor-container cursor-text relative line-spacing-${displayConfig.lineSpacing ?? DEFAULT_DISPLAY_CONFIG.lineSpacing}`,
+          {
+            "active-editor": editor?.isFocused && editor?.isEditable,
+            "wide-layout": displayConfig.wideLayout,
+          },
+          displayConfig.fontSize ?? DEFAULT_DISPLAY_CONFIG.fontSize,
+          displayConfig.fontStyle ?? DEFAULT_DISPLAY_CONFIG.fontStyle,
+          editorContainerClassName
+        )}
+      >
+        {children}
+        <LinkViewContainer editor={editor} containerRef={containerRef} />
+      </div>
+    </>
   );
 };
