@@ -1,4 +1,3 @@
-import { useCallback, useRef, useState } from "react";
 import {
   autoUpdate,
   computePosition,
@@ -12,6 +11,7 @@ import {
 import { Node } from "@tiptap/pm/model";
 import { EditorView } from "@tiptap/pm/view";
 import { Editor, ReactRenderer } from "@tiptap/react";
+import { useCallback, useRef, useState } from "react";
 // components
 import { EditorContainer, EditorContentWrapper } from "@/components/editors";
 import { LinkView, LinkViewProps } from "@/components/links";
