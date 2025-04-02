@@ -323,7 +323,7 @@ urlpatterns = [
         name="project-issue-dates",
     ),
     path(
-        "workspaces/<str:slug>/projects/<str:project_id>/search",
+        "workspaces/<str:slug>/search",
         SearchAPIEndpoint.as_view(),
         name="key-codes",
     ),
