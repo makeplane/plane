@@ -1,4 +1,4 @@
-import { Editor, useEditorState } from "@tiptap/react";
+import { Editor } from "@tiptap/react";
 import { FC, ReactNode, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
@@ -8,7 +8,6 @@ import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 import { TDisplayConfig } from "@/types";
 // components
 import { LinkViewContainer } from "./link-view-container";
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
 interface EditorContainerProps {
   children: ReactNode;

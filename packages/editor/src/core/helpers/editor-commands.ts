@@ -5,7 +5,6 @@ import { InsertImageComponentProps } from "@/extensions";
 import { replaceCodeWithText } from "@/extensions/code/utils/replace-code-block-with-text";
 // helpers
 import { findTableAncestor } from "@/helpers/common";
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
 export const setText = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("paragraph").run();

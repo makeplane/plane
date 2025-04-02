@@ -19,7 +19,7 @@ export const PageRenderer = (props: IPageRenderer) => {
   const { aiHandler, bubbleMenuEnabled, displayConfig, editor, editorContainerClassName, id, tabIndex } = props;
 
   return (
-    <div className="frame-renderer flex-grow w-full -mx-5">
+    <div className="frame-renderer flex-grow w-full">
       <EditorContainer
         displayConfig={displayConfig}
         editor={editor}

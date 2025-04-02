@@ -1,10 +1,8 @@
 import { autoUpdate, flip, hide, shift, useDismiss, useFloating, useInteractions } from "@floating-ui/react";
 import { Editor, useEditorState } from "@tiptap/react";
 import { FC, useCallback, useEffect, useState } from "react";
-
 // components
 import { LinkView, LinkViewProps } from "@/components/links";
-// storage
 
 interface LinkViewContainerProps {
   editor: Editor;
@@ -12,7 +10,6 @@ interface LinkViewContainerProps {
 }
 
 export const LinkViewContainer: FC<LinkViewContainerProps> = ({ editor, containerRef }) => {
-  // states for link hover functionality
   const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
   const [isOpen, setIsOpen] = useState(false);
   const [virtualElement, setVirtualElement] = useState<any>(null);
