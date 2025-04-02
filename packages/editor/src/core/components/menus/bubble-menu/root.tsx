@@ -103,6 +103,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
     tippyOptions: {
       moveTransition: "transform 0.15s ease-out",
       duration: [300, 0],
+      zIndex: 9,
       onShow: () => {
         props.editor.storage.link.isBubbleMenuOpen = true;
       },
