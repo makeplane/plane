@@ -691,6 +691,7 @@ class IssueViewSet(BaseViewSet):
             current_instance={},
             epoch=int(timezone.now().timestamp()),
             notification=True,
+            subscriber=False,
             origin=request.META.get("HTTP_ORIGIN"),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
