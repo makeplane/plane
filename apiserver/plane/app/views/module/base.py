@@ -61,7 +61,7 @@ from plane.utils.timezone_converter import user_timezone_converter
 from plane.bgtasks.webhook_task import model_activity
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.recent_visited_task import recent_visited_task
-
+from plane.utils.host import base_host
 
 class ModuleViewSet(BaseViewSet):
     model = Module
@@ -376,7 +376,7 @@ class ModuleViewSet(BaseViewSet):
                 current_instance=None,
                 actor_id=request.user.id,
                 slug=slug,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             datetime_fields = ["created_at", "updated_at"]
             module = user_timezone_converter(
@@ -768,7 +768,7 @@ class ModuleViewSet(BaseViewSet):
                 current_instance=current_instance,
                 actor_id=request.user.id,
                 slug=slug,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
 
             datetime_fields = ["created_at", "updated_at"]
@@ -795,7 +795,7 @@ class ModuleViewSet(BaseViewSet):
                 current_instance=json.dumps({"module_name": str(module.name)}),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             for issue in module_issues
         ]
