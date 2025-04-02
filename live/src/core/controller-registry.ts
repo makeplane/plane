@@ -1,6 +1,6 @@
-import { HealthController } from "@/controllers/health.controller";
-import { DocumentController } from "@/controllers/document.controller";
-import { CollaborationController } from "@/controllers/collaboration.controller";
+import { HealthController } from "@/core/controllers/health.controller";
+import { DocumentController } from "@/core/controllers/document.controller";
+import { CollaborationController } from "@/core/controllers/collaboration.controller";
 
 /**
  * Controller registry exports

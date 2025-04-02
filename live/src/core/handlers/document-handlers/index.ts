@@ -1,11 +1,11 @@
 import { DocumentHandler, HandlerContext } from "@/core/types/document-handler";
 import { handlerFactory } from "@/core/handlers/document-handlers/handler-factory";
 
-// Import handler definitions
-import {  projectPageHandlerDefinition } from "@/core/handlers/document-handlers/project-page-handler";
+// Import CE initialization
+import { initializeCEDocumentHandlers } from "@/ce/document-types";
 
-// Register handlers
-handlerFactory.register(projectPageHandlerDefinition);
+// Initialize all CE document handlers
+initializeCEDocumentHandlers();
 
 /**
  * Get a document handler based on the provided context criteria
@@ -14,18 +14,19 @@ handlerFactory.register(projectPageHandlerDefinition);
  * @returns The appropriate document handler
  */
 export function getDocumentHandler(
-  documentType: string, 
-  additionalContext: Omit<HandlerContext, 'documentType'> = {}
+  documentType: string,
+  additionalContext: Omit<HandlerContext, "documentType"> = {}
 ): DocumentHandler {
   // Create a context object with all criteria
   const context: HandlerContext = {
     documentType: documentType as any,
-    ...additionalContext
+    ...additionalContext,
   };
-  
+
   // Use the factory to get the appropriate handler
   return handlerFactory.getHandler(context);
 }
 
 // Export the factory for direct access if needed
 export { handlerFactory };
+
