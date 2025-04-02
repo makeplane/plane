@@ -604,7 +604,7 @@ class IntakeIssueViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class IntakeIssueDescriptionVersionEndpoint(BaseAPIView):
+class IntakeWorkItemDescriptionVersionEndpoint(BaseAPIView):
 
     def process_paginated_result(self, fields, results, timezone):
         paginated_data = results.values(*fields)
@@ -617,10 +617,10 @@ class IntakeIssueDescriptionVersionEndpoint(BaseAPIView):
         return paginated_data
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
-    def get(self, request, slug, project_id, issue_id, pk=None):
+    def get(self, request, slug, project_id, work_item_id, pk=None):
         project = Project.objects.get(pk=project_id)
         issue = Issue.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=issue_id
+            workspace__slug=slug, project_id=project_id, pk=work_item_id
         )
 
         if (
@@ -641,7 +641,10 @@ class IntakeIssueDescriptionVersionEndpoint(BaseAPIView):
 
         if pk:
             issue_description_version = IssueDescriptionVersion.objects.get(
-                workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
+                workspace__slug=slug,
+                project_id=project_id,
+                issue_id=work_item_id,
+                pk=pk,
             )
 
             serializer = IssueDescriptionVersionDetailSerializer(
@@ -665,7 +668,7 @@ class IntakeIssueDescriptionVersionEndpoint(BaseAPIView):
         ]
 
         issue_description_versions_queryset = IssueDescriptionVersion.objects.filter(
-            workspace__slug=slug, project_id=project_id, issue_id=issue_id
+            workspace__slug=slug, project_id=project_id, issue_id=work_item_id
         )
         paginated_data = self.paginate(
             base_queryset=issue_description_versions_queryset,

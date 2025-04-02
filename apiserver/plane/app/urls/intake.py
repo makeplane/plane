@@ -4,7 +4,7 @@ from django.urls import path
 from plane.app.views import (
     IntakeViewSet,
     IntakeIssueViewSet,
-    IntakeIssueDescriptionVersionEndpoint,
+    IntakeWorkItemDescriptionVersionEndpoint,
 )
 
 
@@ -58,13 +58,13 @@ urlpatterns = [
         name="inbox-issue",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/intake-issues/<uuid:issue_id>/description-versions/",
-        IntakeIssueDescriptionVersionEndpoint.as_view(),
-        name="intake-issue-versions",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/intake-work-items/<uuid:work_item_id>/description-versions/",
+        IntakeWorkItemDescriptionVersionEndpoint.as_view(),
+        name="intake-work-item-versions",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/intake-issues/<uuid:issue_id>/description-versions/<uuid:pk>/",
-        IntakeIssueDescriptionVersionEndpoint.as_view(),
-        name="intake-issue-versions",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/intake-work-items/<uuid:work_item_id>/description-versions/<uuid:pk>/",
+        IntakeWorkItemDescriptionVersionEndpoint.as_view(),
+        name="intake-work-item-versions",
     ),
 ]
