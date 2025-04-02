@@ -226,7 +226,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
                 </span>
               }
               disabled={!isProjectTimeZoneDifferent()}
-              tooltipHeading={t("project_cycles.date_range")}
+              tooltipHeading={t("project_cycles.in_your_timezone")}
             >
               <div className="flex gap-1 text-xs text-custom-text-300 font-medium items-center">
                 <CalendarDays className="h-3 w-3 flex-shrink-0 my-auto" />

@@ -43,6 +43,7 @@ interface CustomSearchSelectProps {
   footerOption?: JSX.Element;
   onChange: any;
   onClose?: () => void;
+  noResultsMessage?: string;
   options:
   | {
     value: any;

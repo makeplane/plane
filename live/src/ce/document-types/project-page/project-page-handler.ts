@@ -1,11 +1,12 @@
-import { fetchPageDescriptionBinary, updatePageDescription } from "@/core/document-types/project-page";
-import { fetchProjectPageTitle, updateProjectPageTitle } from "@/core/lib/page";
+
 import {
   DocumentHandler,
   DocumentFetchParams,
   DocumentStoreParams,
   HandlerDefinition,
 } from "@/core/types/document-handler";
+import { handlerFactory } from "@/core/handlers/document-handlers/handler-factory";
+import { fetchPageDescriptionBinary, updatePageDescription ,fetchProjectPageTitle, updateProjectPageTitle } from "./handlers";
 
 /**
  * Handler for "project_page" document type
@@ -48,3 +49,8 @@ export const projectPageHandlerDefinition: HandlerDefinition = {
   handler: projectPageHandler,
   priority: 10, // Standard priority
 };
+
+// Register the handler directly from CE
+export function registerProjectPageHandler() {
+  handlerFactory.register(projectPageHandlerDefinition);
+}

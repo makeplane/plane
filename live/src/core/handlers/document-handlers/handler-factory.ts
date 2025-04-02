@@ -1,4 +1,4 @@
-import { DocumentHandler, HandlerContext, HandlerDefinition } from "./types";
+import { DocumentHandler, HandlerContext, HandlerDefinition } from "@/core/types/document-handler";
 
 /**
  * Class that manages handler selection based on multiple criteria

@@ -1,12 +1,12 @@
 import { DocumentHandler } from "@/core/types/document-handler";
 import { handlerFactory } from "@/core/handlers/document-handlers/handler-factory";
 
-// Import handler definitions
-import { projectPageHandlerDefinition } from "@/core/handlers/document-handlers/project-page-handler";
-import { HocusPocusServerContext, TDocumentTypes } from "@/core/types/common";
+// Import CE initialization
+import { initializeCEDocumentHandlers } from "@/ce/document-types";
+import { HocusPocusServerContext } from "@/core/types/common";
 
-// Register handlers
-handlerFactory.register(projectPageHandlerDefinition);
+// Initialize all CE document handlers
+initializeCEDocumentHandlers();
 
 /**
  * Get a document handler based on the provided context criteria
@@ -15,12 +15,12 @@ handlerFactory.register(projectPageHandlerDefinition);
  * @returns The appropriate document handler
  */
 export function getDocumentHandler(
-  documentType: TDocumentTypes,
-  additionalContext: Omit<HocusPocusServerContext, "documentType"> | {} = {}
+  documentType: string,
+  additionalContext: Omit<HocusPocusServerContext, "documentType">
 ): DocumentHandler {
   // Create a context object with all criteria
-  const context = {
-    documentType: documentType,
+  const context: HocusPocusServerContext = {
+    documentType: documentType as any,
     ...additionalContext,
   };
 
@@ -30,3 +30,4 @@ export function getDocumentHandler(
 
 // Export the factory for direct access if needed
 export { handlerFactory };
+
