@@ -1,14 +1,15 @@
 "use client";
 
-import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-// plane types
+// plane imports
 import { ISSUE_ARCHIVED, ISSUE_DELETED } from "@plane/constants";
+import { EditorRefApi } from "@plane/editor";
 import { TIssue, TNameDescriptionLoader } from "@plane/types";
-// plane ui
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 import { InboxIssueContentProperties } from "@/components/inbox/content";
 import {
   IssueDescriptionInput,
@@ -18,7 +19,6 @@ import {
   TIssueOperations,
   IssueAttachmentRoot,
 } from "@/components/issues";
-// constants
 // helpers
 import { getTextContent } from "@/helpers/editor.helper";
 // hooks
@@ -27,7 +27,12 @@ import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // store types
 import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
+// services
+import { IssueVersionService } from "@/services/issue";
+// stores
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
+// services init
+const issueVersionService = new IssueVersionService();
 
 type Props = {
   workspaceSlug: string;
@@ -39,15 +44,20 @@ type Props = {
 };
 
 export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
-  const pathname = usePathname();
   const { workspaceSlug, projectId, inboxIssue, isEditable, isSubmitting, setIsSubmitting } = props;
-  // hooks
+  // navigation
+  const pathname = usePathname();
+  // refs
+  const editorRef = useRef<EditorRefApi>(null);
+  // store hooks
   const { data: currentUser } = useUser();
-  const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
-  const { captureIssueEvent } = useEventTracker();
   const { loader } = useProjectInbox();
   const { getProjectById } = useProject();
   const { removeIssue, archiveIssue } = useIssueDetail();
+  // reload confirmation
+  const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
+  // event tracker
+  const { captureIssueEvent } = useEventTracker();
 
   useEffect(() => {
     if (isSubmitting === "submitted") {
@@ -60,7 +70,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
     }
   }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
-  // dervied values
+  // derived values
   const issue = inboxIssue.issue;
   const projectDetails = issue?.project_id ? getProjectById(issue?.project_id) : undefined;
 
@@ -124,7 +134,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
             },
             path: pathname,
           });
-        } catch (error) {
+        } catch {
           setToast({
             title: "Work item update failed",
             type: TOAST_TYPE.ERROR,
@@ -195,6 +205,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           </Loader>
         ) : (
           <IssueDescriptionInput
+            editorRef={editorRef}
             workspaceSlug={workspaceSlug}
             projectId={issue.project_id}
             issueId={issue.id}
@@ -207,14 +218,34 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           />
         )}
 
-        {currentUser && (
-          <IssueReaction
-            workspaceSlug={workspaceSlug}
+        <div className="flex items-center justify-between gap-2">
+          {currentUser && (
+            <IssueReaction
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              issueId={issue.id}
+              currentUser={currentUser}
+            />
+          )}
+          <DescriptionVersionsRoot
+            className="flex-shrink-0"
+            entityInformation={{
+              createdAt: new Date(issue.created_at ?? ""),
+              createdBy: issue.created_by ?? "",
+              id: issue.id,
+              isRestoreEnabled: isEditable,
+            }}
+            fetchHandlers={{
+              listDescriptionVersions: (issueId) =>
+                issueVersionService.listDescriptionVersions(workspaceSlug, projectId, issueId),
+              retrieveDescriptionVersion: (issueId, versionId) =>
+                issueVersionService.retrieveDescriptionVersion(workspaceSlug, projectId, issueId, versionId),
+            }}
+            handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
             projectId={projectId}
-            issueId={issue.id}
-            currentUser={currentUser}
+            workspaceSlug={workspaceSlug}
           />
-        )}
+        </div>
       </div>
 
       <IssueAttachmentRoot

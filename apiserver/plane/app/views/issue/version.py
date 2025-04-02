@@ -106,7 +106,7 @@ class IssueDescriptionVersionEndpoint(BaseAPIView):
 
         issue_description_versions_queryset = IssueDescriptionVersion.objects.filter(
             workspace__slug=slug, project_id=project_id, issue_id=issue_id
-        )
+        ).order_by("-created_at")
         paginated_data = paginate(
             base_queryset=issue_description_versions_queryset,
             queryset=issue_description_versions_queryset,

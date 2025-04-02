@@ -9,10 +9,10 @@ import { DescriptionVersionsDropdown } from "./dropdown";
 import { DescriptionVersionsModal } from "./modal";
 
 export type TDescriptionVersionEntityInformation = {
+  createdAt: Date;
+  createdBy: string;
   id: string;
   isRestoreEnabled: boolean;
-  lastUpdatedAt: Date;
-  lastUpdatedBy: string;
 };
 
 type Props = {

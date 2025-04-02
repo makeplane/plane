@@ -145,10 +145,10 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
         <DescriptionVersionsRoot
           className="flex-shrink-0"
           entityInformation={{
+            createdAt: new Date(issue.created_at),
+            createdBy: issue.created_by,
             id: issueId,
             isRestoreEnabled: !disabled,
-            lastUpdatedAt: new Date(issue.updated_at),
-            lastUpdatedBy: issue.updated_by,
           }}
           fetchHandlers={{
             listDescriptionVersions: (issueId) =>

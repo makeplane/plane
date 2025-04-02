@@ -152,10 +152,10 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           <DescriptionVersionsRoot
             className="flex-shrink-0"
             entityInformation={{
+              createdAt: new Date(issue.created_at),
+              createdBy: issue.created_by,
               id: issueId,
               isRestoreEnabled: isEditable,
-              lastUpdatedAt: new Date(issue.updated_at),
-              lastUpdatedBy: issue.updated_by,
             }}
             fetchHandlers={{
               listDescriptionVersions: (issueId) =>
