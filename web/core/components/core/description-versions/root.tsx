@@ -12,7 +12,7 @@ export type TDescriptionVersionEntityInformation = {
   createdAt: Date;
   createdBy: string;
   id: string;
-  isRestoreEnabled: boolean;
+  isRestoreDisabled: boolean;
 };
 
 type Props = {
@@ -77,7 +77,7 @@ export const DescriptionVersionsRoot: React.FC<Props> = observer((props) => {
         isNextDisabled={activeVersionIndex === versionsCount - 1}
         isOpen={isModalOpen}
         isPrevDisabled={activeVersionIndex === 0}
-        isRestoreEnabled={entityInformation.isRestoreEnabled}
+        isRestoreDisabled={entityInformation.isRestoreDisabled}
         projectId={projectId}
         workspaceSlug={workspaceSlug}
       />

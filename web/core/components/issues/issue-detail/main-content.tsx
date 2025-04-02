@@ -28,11 +28,11 @@ import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
 import { IssueTypeSwitcher } from "@/plane-web/components/issues";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 // services
-import { IssueVersionService } from "@/services/issue";
+import { WorkItemVersionService } from "@/services/issue";
 // local imports
 import { TIssueOperations } from "./root";
 // services init
-const issueVersionService = new IssueVersionService();
+const workItemVersionService = new WorkItemVersionService();
 
 type Props = {
   workspaceSlug: string;
@@ -121,7 +121,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           isSubmitting={isSubmitting}
           setIsSubmitting={(value) => setIsSubmitting(value)}
           issueOperations={issueOperations}
-          disabled={!isEditable}
+          disabled={isArchived || !isEditable}
           value={issue.name}
           containerClassName="-ml-3"
         />
@@ -132,7 +132,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           projectId={issue.project_id}
           issueId={issue.id}
           initialValue={issue.description_html}
-          disabled={!isEditable}
+          disabled={isArchived || !isEditable}
           issueOperations={issueOperations}
           setIsSubmitting={(value) => setIsSubmitting(value)}
           containerClassName="-ml-3 border-none"
@@ -149,24 +149,26 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
               disabled={isArchived}
             />
           )}
-          <DescriptionVersionsRoot
-            className="flex-shrink-0"
-            entityInformation={{
-              createdAt: new Date(issue.created_at),
-              createdBy: issue.created_by,
-              id: issueId,
-              isRestoreEnabled: isEditable,
-            }}
-            fetchHandlers={{
-              listDescriptionVersions: (issueId) =>
-                issueVersionService.listDescriptionVersions(workspaceSlug, projectId, issueId),
-              retrieveDescriptionVersion: (issueId, versionId) =>
-                issueVersionService.retrieveDescriptionVersion(workspaceSlug, projectId, issueId, versionId),
-            }}
-            handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
-            projectId={projectId}
-            workspaceSlug={workspaceSlug}
-          />
+          {isEditable && (
+            <DescriptionVersionsRoot
+              className="flex-shrink-0"
+              entityInformation={{
+                createdAt: new Date(issue.created_at),
+                createdBy: issue.created_by,
+                id: issueId,
+                isRestoreDisabled: !isEditable || isArchived,
+              }}
+              fetchHandlers={{
+                listDescriptionVersions: (issueId) =>
+                  workItemVersionService.listDescriptionVersions(workspaceSlug, projectId, issueId),
+                retrieveDescriptionVersion: (issueId, versionId) =>
+                  workItemVersionService.retrieveDescriptionVersion(workspaceSlug, projectId, issueId, versionId),
+              }}
+              handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
+              projectId={projectId}
+              workspaceSlug={workspaceSlug}
+            />
+          )}
         </div>
       </div>
 

@@ -21,7 +21,7 @@ type Props = {
   isNextDisabled: boolean;
   isOpen: boolean;
   isPrevDisabled: boolean;
-  isRestoreEnabled: boolean;
+  isRestoreDisabled: boolean;
   projectId: string | undefined;
   workspaceSlug: string;
 };
@@ -36,7 +36,7 @@ export const DescriptionVersionsModal: React.FC<Props> = observer((props) => {
     isNextDisabled,
     isPrevDisabled,
     isOpen,
-    isRestoreEnabled,
+    isRestoreDisabled,
     projectId,
     workspaceSlug,
   } = props;
@@ -161,7 +161,7 @@ export const DescriptionVersionsModal: React.FC<Props> = observer((props) => {
             <Button variant="neutral-primary" size="sm" onClick={handleClose}>
               {t("common.cancel")}
             </Button>
-            {isRestoreEnabled && (
+            {!isRestoreDisabled && (
               <Button
                 variant="primary"
                 size="sm"

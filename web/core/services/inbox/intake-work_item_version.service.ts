@@ -1,30 +1,22 @@
 // plane imports
-import { EIssueServiceType } from "@plane/constants";
-import {
-  type TDescriptionVersionsListResponse,
-  type TDescriptionVersionDetails,
-  type TIssueServiceType,
-} from "@plane/types";
+import { type TDescriptionVersionsListResponse, type TDescriptionVersionDetails } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 
-export class IssueVersionService extends APIService {
-  private serviceType: TIssueServiceType;
-
-  constructor(serviceType: TIssueServiceType = EIssueServiceType.ISSUES) {
+export class IntakeWorkItemVersionService extends APIService {
+  constructor() {
     super(API_BASE_URL);
-    this.serviceType = serviceType;
   }
 
   async listDescriptionVersions(
     workspaceSlug: string,
     projectId: string,
-    issueId: string
+    intakeWorkItemId: string
   ): Promise<TDescriptionVersionsListResponse> {
     return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/description-versions/`
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/intake-work-items/${intakeWorkItemId}/description-versions/`
     )
       .then((response) => response?.data)
       .catch((error) => {
@@ -35,11 +27,11 @@ export class IssueVersionService extends APIService {
   async retrieveDescriptionVersion(
     workspaceSlug: string,
     projectId: string,
-    issueId: string,
+    intakeWorkItemId: string,
     versionId: string
   ): Promise<TDescriptionVersionDetails> {
     return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/description-versions/${versionId}/`
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/intake-work-items/${intakeWorkItemId}/description-versions/${versionId}/`
     )
       .then((response) => response?.data)
       .catch((error) => {

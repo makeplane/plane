@@ -18,13 +18,13 @@ import { IssueTypeSwitcher } from "@/plane-web/components/issues";
 // plane web hooks
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 // services
-import { IssueVersionService } from "@/services/issue";
+import { WorkItemVersionService } from "@/services/issue";
 // local components
 import { IssueDescriptionInput } from "../description-input";
 import { IssueReaction } from "../issue-detail/reactions";
 import { IssueTitleInput } from "../title-input";
 // services init
-const issueVersionService = new IssueVersionService();
+const workItemVersionService = new WorkItemVersionService();
 
 interface IPeekOverviewIssueDetails {
   workspaceSlug: string;
@@ -115,7 +115,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
         isSubmitting={isSubmitting}
         setIsSubmitting={(value) => setIsSubmitting(value)}
         issueOperations={issueOperations}
-        disabled={disabled}
+        disabled={disabled || isArchived}
         value={issue.name}
         containerClassName="-ml-3"
       />
@@ -126,7 +126,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
         projectId={issue.project_id}
         issueId={issue.id}
         initialValue={issueDescription}
-        disabled={disabled}
+        disabled={disabled || isArchived}
         issueOperations={issueOperations}
         setIsSubmitting={(value) => setIsSubmitting(value)}
         containerClassName="-ml-3 border-none"
@@ -142,29 +142,35 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
             disabled={isArchived}
           />
         )}
-        <DescriptionVersionsRoot
-          className="flex-shrink-0"
-          entityInformation={{
-            createdAt: new Date(issue.created_at),
-            createdBy: issue.created_by,
-            id: issueId,
-            isRestoreEnabled: !disabled,
-          }}
-          fetchHandlers={{
-            listDescriptionVersions: (issueId) =>
-              issueVersionService.listDescriptionVersions(workspaceSlug, issue.project_id?.toString() ?? "", issueId),
-            retrieveDescriptionVersion: (issueId, versionId) =>
-              issueVersionService.retrieveDescriptionVersion(
-                workspaceSlug,
-                issue.project_id?.toString() ?? "",
-                issueId,
-                versionId
-              ),
-          }}
-          handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
-          projectId={issue.project_id}
-          workspaceSlug={workspaceSlug}
-        />
+        {!disabled && (
+          <DescriptionVersionsRoot
+            className="flex-shrink-0"
+            entityInformation={{
+              createdAt: new Date(issue.created_at),
+              createdBy: issue.created_by,
+              id: issueId,
+              isRestoreDisabled: disabled || isArchived,
+            }}
+            fetchHandlers={{
+              listDescriptionVersions: (issueId) =>
+                workItemVersionService.listDescriptionVersions(
+                  workspaceSlug,
+                  issue.project_id?.toString() ?? "",
+                  issueId
+                ),
+              retrieveDescriptionVersion: (issueId, versionId) =>
+                workItemVersionService.retrieveDescriptionVersion(
+                  workspaceSlug,
+                  issue.project_id?.toString() ?? "",
+                  issueId,
+                  versionId
+                ),
+            }}
+            handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
+            projectId={issue.project_id}
+            workspaceSlug={workspaceSlug}
+          />
+        )}
       </div>
     </div>
   );

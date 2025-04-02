@@ -28,11 +28,11 @@ import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 // services
-import { IssueVersionService } from "@/services/issue";
+import { IntakeWorkItemVersionService } from "@/services/inbox";
 // stores
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 // services init
-const issueVersionService = new IssueVersionService();
+const intakeWorkItemVersionService = new IntakeWorkItemVersionService();
 
 type Props = {
   workspaceSlug: string;
@@ -227,24 +227,26 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
               currentUser={currentUser}
             />
           )}
-          <DescriptionVersionsRoot
-            className="flex-shrink-0"
-            entityInformation={{
-              createdAt: new Date(issue.created_at ?? ""),
-              createdBy: issue.created_by ?? "",
-              id: issue.id,
-              isRestoreEnabled: isEditable,
-            }}
-            fetchHandlers={{
-              listDescriptionVersions: (issueId) =>
-                issueVersionService.listDescriptionVersions(workspaceSlug, projectId, issueId),
-              retrieveDescriptionVersion: (issueId, versionId) =>
-                issueVersionService.retrieveDescriptionVersion(workspaceSlug, projectId, issueId, versionId),
-            }}
-            handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
-            projectId={projectId}
-            workspaceSlug={workspaceSlug}
-          />
+          {isEditable && (
+            <DescriptionVersionsRoot
+              className="flex-shrink-0"
+              entityInformation={{
+                createdAt: new Date(issue.created_at ?? ""),
+                createdBy: issue.created_by ?? "",
+                id: issue.id,
+                isRestoreDisabled: !isEditable,
+              }}
+              fetchHandlers={{
+                listDescriptionVersions: (issueId) =>
+                  intakeWorkItemVersionService.listDescriptionVersions(workspaceSlug, projectId, issueId),
+                retrieveDescriptionVersion: (issueId, versionId) =>
+                  intakeWorkItemVersionService.retrieveDescriptionVersion(workspaceSlug, projectId, issueId, versionId),
+              }}
+              handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
+              projectId={projectId}
+              workspaceSlug={workspaceSlug}
+            />
+          )}
         </div>
       </div>
 
