@@ -42,7 +42,7 @@ from plane.bgtasks.issue_activities_task import issue_activity
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
 from plane.app.views.base import BaseAPIView
 from plane.utils.timezone_converter import user_timezone_converter
-
+from plane.utils.global_paginator import paginate
 
 class IntakeViewSet(BaseViewSet):
     serializer_class = IntakeSerializer
@@ -670,7 +670,7 @@ class IntakeWorkItemDescriptionVersionEndpoint(BaseAPIView):
         issue_description_versions_queryset = IssueDescriptionVersion.objects.filter(
             workspace__slug=slug, project_id=project_id, issue_id=work_item_id
         )
-        paginated_data = self.paginate(
+        paginated_data = paginate(
             base_queryset=issue_description_versions_queryset,
             queryset=issue_description_versions_queryset,
             cursor=cursor,
