@@ -23,10 +23,9 @@ export const LinkPreview = ({
 
   return (
     <div
-      className="absolute left-0 top-0 max-w-max animate-in fade-in translate-y-1 duration-300 origin-center"
+      className="absolute left-0 top-0 max-w-max animate-in fade-in translate-y-1"
       style={{
-        animationTimingFunction: "cubic-bezier(.55, .085, .68, .53)",
-        transformOrigin: "center",
+        transition: "all 0.2s cubic-bezier(.55, .085, .68, .53)",
       }}
     >
       <div className="shadow-md items-center rounded p-2 flex gap-3 bg-custom-background-90 border-custom-border-100 border-2 text-custom-text-300 text-xs">

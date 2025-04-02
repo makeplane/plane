@@ -42,7 +42,7 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
             {
               "text-custom-text-400": !title,
             },
-            "break-words pb-1.5"
+            "break-words"
           )}
         >
           {getPageName(title)}
