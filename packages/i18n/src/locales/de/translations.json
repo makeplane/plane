@@ -499,6 +499,8 @@
   "re_generate_key": "Schlüssel neu generieren",
   "export": "Exportieren",
   "member": "{count, plural, one{# Mitglied} few{# Mitglieder} other{# Mitglieder}}",
+  "new_password_must_be_different_from_old_password": "Das neue Passwort muss von dem alten Passwort abweichen",
+  
   "project_view": {
     "sort_by": {
       "created_at": "Erstellt am",
@@ -1747,6 +1749,12 @@
     "remove_filters_to_see_all_cycles": "Entfernen Sie Filter, um alle Zyklen anzuzeigen",
     "remove_search_criteria_to_see_all_cycles": "Entfernen Sie Suchkriterien, um alle Zyklen anzuzeigen",
     "only_completed_cycles_can_be_archived": "Nur abgeschlossene Zyklen können archiviert werden",
+    "start_date": "Startdatum",
+    "end_date": "Enddatum",
+    "in_your_timezone": "In Ihrer Zeitzone",
+    "transfer_work_items": "Übertragen von {count} Arbeitselementen",
+    "date_range": "Datumsbereich",
+    "add_date": "Datum hinzufügen",
     "active_cycle": {
       "label": "Aktiver Zyklus",
       "progress": "Fortschritt",

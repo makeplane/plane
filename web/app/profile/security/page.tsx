@@ -14,9 +14,10 @@ import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/com
 // helpers
 import { authErrorHandler } from "@/helpers/authentication.helper";
 import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.helper";
+// hooks
+import { useUser } from "@/hooks/store";
 // services
 import { AuthService } from "@/services/auth.service";
-import { UserService } from "@/services/user.service";
 
 export interface FormValues {
   old_password: string;
@@ -30,7 +31,6 @@ const defaultValues: FormValues = {
   confirm_password: "",
 };
 
-const userService = new UserService();
 const authService = new AuthService();
 
 const defaultShowPassword = {
@@ -40,10 +40,13 @@ const defaultShowPassword = {
 };
 
 const SecurityPage = observer(() => {
+  // store
+  const { data: currentUser, changePassword } = useUser();
   // states
   const [showPassword, setShowPassword] = useState(defaultShowPassword);
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
   const [isRetryPasswordInputFocused, setIsRetryPasswordInputFocused] = useState(false);
+
   // use form
   const {
     control,
@@ -56,6 +59,7 @@ const SecurityPage = observer(() => {
   const oldPassword = watch("old_password");
   const password = watch("new_password");
   const confirmPassword = watch("confirm_password");
+  const oldPasswordRequired = !currentUser?.is_password_autoset;
   // i18n
   const { t } = useTranslation();
 
@@ -70,8 +74,8 @@ const SecurityPage = observer(() => {
       const csrfToken = await authService.requestCSRFToken().then((data) => data?.csrf_token);
       if (!csrfToken) throw new Error("csrf token not found");
 
-      await userService.changePassword(csrfToken, {
-        old_password,
+      await changePassword(csrfToken, {
+        ...(oldPasswordRequired && { old_password }),
         new_password,
       });
 
@@ -95,7 +99,7 @@ const SecurityPage = observer(() => {
 
   const isButtonDisabled =
     getPasswordStrength(password) != E_PASSWORD_STRENGTH.STRENGTH_VALID ||
-    oldPassword.trim() === "" ||
+    (oldPasswordRequired && oldPassword.trim() === "") ||
     password.trim() === "" ||
     confirmPassword.trim() === "" ||
     password !== confirmPassword ||
@@ -115,41 +119,43 @@ const SecurityPage = observer(() => {
         <ProfileSettingContentHeader title={t("auth.common.password.change_password.label.default")} />
         <form onSubmit={handleSubmit(handleChangePassword)} className="flex flex-col gap-8 py-6">
           <div className="flex flex-col gap-10 w-full max-w-96">
-            <div className="space-y-1">
-              <h4 className="text-sm">{t("auth.common.password.current_password.label")}</h4>
-              <div className="relative flex items-center rounded-md">
-                <Controller
-                  control={control}
-                  name="old_password"
-                  rules={{
-                    required: t("common.errors.required"),
-                  }}
-                  render={({ field: { value, onChange } }) => (
-                    <Input
-                      id="old_password"
-                      type={showPassword?.oldPassword ? "text" : "password"}
-                      value={value}
-                      onChange={onChange}
-                      placeholder={t("old_password")}
-                      className="w-full"
-                      hasError={Boolean(errors.old_password)}
+            {oldPasswordRequired && (
+              <div className="space-y-1">
+                <h4 className="text-sm">{t("auth.common.password.current_password.label")}</h4>
+                <div className="relative flex items-center rounded-md">
+                  <Controller
+                    control={control}
+                    name="old_password"
+                    rules={{
+                      required: t("common.errors.required"),
+                    }}
+                    render={({ field: { value, onChange } }) => (
+                      <Input
+                        id="old_password"
+                        type={showPassword?.oldPassword ? "text" : "password"}
+                        value={value}
+                        onChange={onChange}
+                        placeholder={t("old_password")}
+                        className="w-full"
+                        hasError={Boolean(errors.old_password)}
+                      />
+                    )}
+                  />
+                  {showPassword?.oldPassword ? (
+                    <EyeOff
+                      className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                      onClick={() => handleShowPassword("oldPassword")}
+                    />
+                  ) : (
+                    <Eye
+                      className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+                      onClick={() => handleShowPassword("oldPassword")}
                     />
                   )}
-                />
-                {showPassword?.oldPassword ? (
-                  <EyeOff
-                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                    onClick={() => handleShowPassword("oldPassword")}
-                  />
-                ) : (
-                  <Eye
-                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                    onClick={() => handleShowPassword("oldPassword")}
-                  />
-                )}
+                </div>
+                {errors.old_password && <span className="text-xs text-red-500">{errors.old_password.message}</span>}
               </div>
-              {errors.old_password && <span className="text-xs text-red-500">{errors.old_password.message}</span>}
-            </div>
+            )}
             <div className="space-y-1">
               <h4 className="text-sm">{t("auth.common.password.new_password.label")}</h4>
               <div className="relative flex items-center rounded-md">

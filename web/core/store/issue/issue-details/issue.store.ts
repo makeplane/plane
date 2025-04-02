@@ -301,6 +301,9 @@ export class IssueStore implements IIssueStore {
     const issueIdentifier = `${project_identifier}-${sequence_id}`;
     const issueId = issue?.id;
     const projectId = issue?.project_id;
+    const rootWorkItemDetailStore = issue?.is_epic
+      ? this.rootIssueDetailStore.rootIssueStore.epicDetail
+      : this.rootIssueDetailStore.rootIssueStore.issueDetail;
 
     if (!issue || !projectId || !issueId) throw new Error("Issue not found");
 
@@ -315,41 +318,41 @@ export class IssueStore implements IIssueStore {
     }
 
     // add identifiers to map
-    this.rootIssueDetailStore.rootIssueStore.issues.addIssueIdentifier(issueIdentifier, issueId);
+    rootWorkItemDetailStore.rootIssueStore.issues.addIssueIdentifier(issueIdentifier, issueId);
 
     // add related data
-    if (issue.issue_reactions) this.rootIssueDetailStore.addReactions(issue.id, issue.issue_reactions);
-    if (issue.issue_link) this.rootIssueDetailStore.addLinks(issue.id, issue.issue_link);
-    if (issue.issue_attachments) this.rootIssueDetailStore.addAttachments(issue.id, issue.issue_attachments);
-    this.rootIssueDetailStore.addSubscription(issue.id, issue.is_subscribed);
+    if (issue.issue_reactions) rootWorkItemDetailStore.addReactions(issue.id, issue.issue_reactions);
+    if (issue.issue_link) rootWorkItemDetailStore.addLinks(issue.id, issue.issue_link);
+    if (issue.issue_attachments) rootWorkItemDetailStore.addAttachments(issue.id, issue.issue_attachments);
+    rootWorkItemDetailStore.addSubscription(issue.id, issue.is_subscribed);
 
     // fetch related data
     // issue reactions
-    if (issue.issue_reactions) this.rootIssueDetailStore.addReactions(issueId, issue.issue_reactions);
+    if (issue.issue_reactions) rootWorkItemDetailStore.addReactions(issueId, issue.issue_reactions);
 
     // fetch issue links
-    if (issue.issue_link) this.rootIssueDetailStore.addLinks(issueId, issue.issue_link);
+    if (issue.issue_link) rootWorkItemDetailStore.addLinks(issueId, issue.issue_link);
 
     // fetch issue attachments
-    if (issue.issue_attachments) this.rootIssueDetailStore.addAttachments(issueId, issue.issue_attachments);
+    if (issue.issue_attachments) rootWorkItemDetailStore.addAttachments(issueId, issue.issue_attachments);
 
-    this.rootIssueDetailStore.addSubscription(issueId, issue.is_subscribed);
+    rootWorkItemDetailStore.addSubscription(issueId, issue.is_subscribed);
 
     // fetch issue activity
-    this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
+    rootWorkItemDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
 
     // fetch issue comments
-    this.rootIssueDetailStore.comment.fetchComments(workspaceSlug, projectId, issueId);
+    rootWorkItemDetailStore.comment.fetchComments(workspaceSlug, projectId, issueId);
 
     // fetch sub issues
-    this.rootIssueDetailStore.subIssues.fetchSubIssues(workspaceSlug, projectId, issueId);
+    rootWorkItemDetailStore.subIssues.fetchSubIssues(workspaceSlug, projectId, issueId);
 
     // fetch issue relations
-    this.rootIssueDetailStore.relation.fetchRelations(workspaceSlug, projectId, issueId);
+    rootWorkItemDetailStore.relation.fetchRelations(workspaceSlug, projectId, issueId);
 
     // fetching states
     // TODO: check if this function is required
-    this.rootIssueDetailStore.rootIssueStore.rootStore.state.fetchProjectStates(workspaceSlug, projectId);
+    rootWorkItemDetailStore.rootIssueStore.rootStore.state.fetchProjectStates(workspaceSlug, projectId);
 
     return issue;
   };

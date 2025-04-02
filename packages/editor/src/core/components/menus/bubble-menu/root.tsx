@@ -91,6 +91,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
         empty ||
         !editor.isEditable ||
         editor.isActive("image") ||
+        editor.isActive("imageComponent") ||
         isNodeSelection(selection) ||
         isCellSelection(selection) ||
         isSelecting
@@ -102,7 +103,12 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
     tippyOptions: {
       moveTransition: "transform 0.15s ease-out",
       duration: [300, 0],
+      zIndex: 9,
+      onShow: () => {
+        props.editor.storage.link.isBubbleMenuOpen = true;
+      },
       onHidden: () => {
+        props.editor.storage.link.isBubbleMenuOpen = false;
         setIsNodeSelectorOpen(false);
         setIsLinkSelectorOpen(false);
         setIsColorSelectorOpen(false);

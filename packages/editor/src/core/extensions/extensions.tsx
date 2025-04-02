@@ -102,7 +102,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       autolink: true,
       linkOnPaste: true,
       protocols: ["http", "https"],
-      validate: (url: string) => isValidHttpUrl(url),
+      validate: (url: string) => isValidHttpUrl(url).isValid,
       HTMLAttributes: {
         class:
           "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",

@@ -8,7 +8,11 @@ export interface IMarking {
   sequence: number;
 }
 
-export const HeadingListExtension = Extension.create({
+export type HeadingExtensionStorage = {
+  headings: IMarking[];
+};
+
+export const HeadingListExtension = Extension.create<any, HeadingExtensionStorage>({
   name: "headingList",
 
   addStorage() {

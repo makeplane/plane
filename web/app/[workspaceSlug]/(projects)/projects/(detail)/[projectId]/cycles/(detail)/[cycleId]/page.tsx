@@ -26,7 +26,7 @@ const CycleDetailPage = observer(() => {
   const { getProjectById } = useProject();
   // const { issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
   // hooks
-  const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
+  const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", false);
 
   useCyclesDetails({
     workspaceSlug: workspaceSlug?.toString(),
@@ -34,7 +34,7 @@ const CycleDetailPage = observer(() => {
     cycleId: cycleId.toString(),
   });
   // derived values
-  const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
+  const isSidebarCollapsed = storedValue ? (storedValue === true ? true : false) : false;
   const cycle = cycleId ? getCycleById(cycleId.toString()) : undefined;
   const project = projectId ? getProjectById(projectId.toString()) : undefined;
   const pageTitle = project?.name && cycle?.name ? `${project?.name} - ${cycle?.name}` : undefined;
@@ -42,7 +42,7 @@ const CycleDetailPage = observer(() => {
   /**
    * Toggles the sidebar
    */
-  const toggleSidebar = () => setValue(`${!isSidebarCollapsed}`);
+  const toggleSidebar = () => setValue(!isSidebarCollapsed);
 
   // const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 

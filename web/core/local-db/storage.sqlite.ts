@@ -19,7 +19,7 @@ import { sanitizeWorkItemQueries } from "./utils/query-sanitizer.ts";
 import { createTables } from "./utils/tables";
 import { clearOPFS, getGroupedIssueResults, getSubGroupedIssueResults, log, logError } from "./utils/utils";
 
-const DB_VERSION = 1;
+const DB_VERSION = 1.1;
 const PAGE_SIZE = 500;
 const BATCH_SIZE = 50;
 
@@ -69,6 +69,25 @@ export class Storage {
     }
   };
 
+  private initializeWorker = async (workspaceSlug: string) => {
+    const { DBClass } = await import("./worker/db");
+    const worker = new Worker(new URL("./worker/db.ts", import.meta.url));
+    const MyWorker = Comlink.wrap<typeof DBClass>(worker);
+
+    // Add cleanup on window unload
+    window.addEventListener("unload", () => worker.terminate());
+
+    this.workspaceSlug = workspaceSlug;
+    this.dbName = workspaceSlug;
+    const instance = await new MyWorker();
+    await instance.init(workspaceSlug);
+
+    this.db = {
+      exec: instance.exec,
+      close: instance.close,
+    };
+  };
+
   initialize = async (workspaceSlug: string): Promise<boolean> => {
     if (!rootStore.user.localDBEnabled) return false; // return if the window gets hidden
 
@@ -101,22 +120,27 @@ export class Storage {
     }
 
     try {
-      const { DBClass } = await import("./worker/db");
-      const worker = new Worker(new URL("./worker/db.ts", import.meta.url));
-      const MyWorker = Comlink.wrap<typeof DBClass>(worker);
-
-      // Add cleanup on window unload
-      window.addEventListener("unload", () => worker.terminate());
-
       this.workspaceSlug = workspaceSlug;
       this.dbName = workspaceSlug;
-      const instance = await new MyWorker();
-      await instance.init(workspaceSlug);
+      await this.initializeWorker(workspaceSlug);
 
-      this.db = {
-        exec: instance.exec,
-        close: instance.close,
-      };
+      const dbVersion = await this.getOption("DB_VERSION");
+      log("Stored db version", dbVersion);
+      log("Current db version", DB_VERSION);
+      // Check if the database version matches the current version
+      // If there's a mismatch, clear storage to avoid compatibility issues
+      if (
+        dbVersion !== undefined &&
+        dbVersion !== "" &&
+        !isNaN(Number(dbVersion)) &&
+        Number(dbVersion) !== DB_VERSION
+      ) {
+        log("Database version mismatch detected - clearing storage to ensure compatibility");
+        await this.clearStorage();
+        await this.initializeWorker(workspaceSlug);
+      } else {
+        log("Database version matches current version - proceeding with data load");
+      }
 
       this.status = "ready";
       // Your SQLite code here.
@@ -312,6 +336,7 @@ export class Storage {
     try {
       [issuesRaw, count] = await Promise.all([runQuery(query), runQuery(countQuery)]);
     } catch (e) {
+      log("Unable to get work items from local db, falling back to server");
       logError(e);
       const issueService = new IssueService();
       return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries, config);

@@ -501,6 +501,9 @@
   "re_generate_key": "重新產生金鑰",
   "export": "匯出",
   "member": "{count, plural, one{# 位成員} other{# 位成員}}",
+  "new_password_must_be_different_from_old_password": "新密碼必須與舊密碼不同",
+  "edited": "已編輯",
+  "bot": "機器人",
 
   "project_view": {
     "sort_by": {
@@ -1776,6 +1779,12 @@
     "remove_filters_to_see_all_cycles": "移除篩選器以檢視所有週期",
     "remove_search_criteria_to_see_all_cycles": "移除搜尋條件以檢視所有週期",
     "only_completed_cycles_can_be_archived": "只有已完成的週期可以封存",
+    "start_date": "開始日期",
+    "end_date": "結束日期",
+    "in_your_timezone": "在您的時區",
+    "transfer_work_items": "轉移 {count} 工作事項",
+    "date_range": "日期範圍",
+    "add_date": "新增日期",
     "active_cycle": {
       "label": "使用中的週期",
       "progress": "進度",
