@@ -17,6 +17,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
+from plane.ee.utils.workflow import WorkflowStateManager
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import (
     IssueCreateSerializer,
@@ -37,6 +38,8 @@ from .. import BaseViewSet
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 from plane.utils.host import base_host
+from plane.ee.models import IssuePropertyValue, DraftIssuePropertyValue
+
 
 class WorkspaceDraftIssueViewSet(BaseViewSet):
     model = DraftIssue
@@ -123,6 +126,21 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                 "project_id": request.data.get("project_id", None),
             },
         )
+
+        # EE start
+        if request.data.get("state_id"):
+            workflow_state_manager = WorkflowStateManager(
+                project_id=request.data.get("project_id", None), slug=slug
+            )
+            if workflow_state_manager._validate_issue_creation(
+                state_id=request.data.get("state_id"),
+            ):
+                return Response(
+                    {"error": "You cannot create a draft issue in this state"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+        # EE end
+
         if serializer.is_valid():
             serializer.save()
             issue = (
@@ -170,6 +188,24 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             return Response(
                 {"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND
             )
+
+        # EE start
+        # Check if state is updated then is the transition allowed
+        workflow_state_manager = WorkflowStateManager(
+            project_id=issue.project_id, slug=slug
+        )
+        if request.data.get(
+            "state_id"
+        ) and not workflow_state_manager.validate_state_transition(
+            issue=issue,
+            new_state_id=request.data.get("state_id"),
+            user_id=request.user.id,
+        ):
+            return Response(
+                {"error": "State transition is not allowed"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        # EE end
 
         serializer = DraftIssueCreateSerializer(
             issue,
@@ -312,6 +348,32 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                 entity_type=FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
                 draft_issue_id=None,
             )
+
+            draft_issue_property_values = DraftIssuePropertyValue.objects.filter(
+                draft_issue=draft_issue
+            )
+            IssuePropertyValue.objects.bulk_create(
+                [
+                    IssuePropertyValue(
+                        workspace_id=draft_issue_property_value.workspace_id,
+                        project_id=draft_issue_property_value.project_id,
+                        issue_id=serializer.data.get("id", None),
+                        property_id=draft_issue_property_value.property_id,
+                        value_text=draft_issue_property_value.value_text,
+                        value_boolean=draft_issue_property_value.value_boolean,
+                        value_decimal=draft_issue_property_value.value_decimal,
+                        value_datetime=draft_issue_property_value.value_datetime,
+                        value_uuid=draft_issue_property_value.value_uuid,
+                        value_option=draft_issue_property_value.value_option,
+                    )
+                    for draft_issue_property_value in draft_issue_property_values
+                ],
+                batch_size=10,
+                ignore_conflicts=True,
+            )
+            # TODO: Log the activity for issue property
+
+            draft_issue_property_values.delete()
 
             # delete the draft issue
             draft_issue.delete()

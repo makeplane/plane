@@ -18,6 +18,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // local components
+import { useEpicAnalytics } from "@/plane-web/hooks/store";
 import { IssueList } from "./issues-list";
 import { IssueProperty } from "./properties";
 // ui
@@ -66,8 +67,10 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
   const project = useProject();
   const { getProjectStates } = useProjectState();
   const { handleRedirection } = useIssuePeekOverviewRedirection();
+  const { fetchEpicAnalytics } = useEpicAnalytics();
   const { isMobile } = usePlatformOS();
   const issue = getIssueById(issueId);
+  const parentIssue = getIssueById(parentIssueId);
 
   // derived values
   const projectDetail = (issue && issue.project_id && project.getProjectById(issue.project_id)) || undefined;
@@ -214,11 +217,15 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
 
                 {disabled && (
                   <CustomMenu.MenuItem
-                    onClick={(e) => {
+                    onClick={async (e) => {
                       e.stopPropagation();
                       e.preventDefault();
                       if (issue.project_id)
-                        subIssueOperations.removeSubIssue(workspaceSlug, issue.project_id, parentIssueId, issue.id);
+                        await subIssueOperations
+                          .removeSubIssue(workspaceSlug, issue.project_id, parentIssueId, issue.id)
+                          .then(() => {
+                            if (parentIssue?.is_epic) fetchEpicAnalytics(workspaceSlug, projectId, parentIssue.id);
+                          });
                     }}
                   >
                     <div className="flex items-center gap-2">

@@ -217,6 +217,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
   ) => {
     // Store the data before update to use for reverting if needed
     const beforeUpdateData = clone(this.navigationPreferencesMap[workspaceSlug]?.[key]);
+
     try {
       runInAction(() => {
         this.navigationPreferencesMap[workspaceSlug] = {
