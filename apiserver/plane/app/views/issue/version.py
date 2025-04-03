@@ -95,7 +95,7 @@ class WorkItemDescriptionVersionEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project_id=project_id,
                 member=request.user,
-                role=5,
+                role=ROLE.GUEST.value,
                 is_active=True,
             ).exists()
             and not project.guest_view_all_features
@@ -103,7 +103,7 @@ class WorkItemDescriptionVersionEndpoint(BaseAPIView):
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         if pk:
