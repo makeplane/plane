@@ -32,7 +32,7 @@ export type TEditorCommands =
   | "bold"
   | "italic"
   | "underline"
-  | "strike"
+  | "strikethrough"
   | "bulleted-list"
   | "numbered-list"
   | "to-do-list"
@@ -136,13 +136,13 @@ export interface IEditorProps {
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
   value?: string | null;
+  bubbleMenuEnabled?: boolean;
 }
 export interface ILiteTextEditor extends IEditorProps {
   extensions?: Extensions;
 }
 export interface IRichTextEditor extends IEditorProps {
   extensions?: Extensions;
-  bubbleMenuEnabled?: boolean;
   dragDropEnabled?: boolean;
 }
 
@@ -202,3 +202,15 @@ export type TRealtimeConfig = {
   url: string;
   queryParams: TWebhookConnectionQueryParams;
 };
+
+export interface EditorEvents {
+  beforeCreate: never;
+  create: never;
+  update: never;
+  selectionUpdate: never;
+  transaction: never;
+  focus: never;
+  blur: never;
+  destroy: never;
+  ready: { height: number };
+}

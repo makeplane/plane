@@ -73,7 +73,12 @@ declare module "@tiptap/core" {
   }
 }
 
-export const CustomLinkExtension = Mark.create<LinkOptions>({
+export type CustomLinkStorage = {
+  isPreviewOpen: boolean;
+  posToInsert: { from: number; to: number };
+};
+
+export const CustomLinkExtension = Mark.create<LinkOptions, CustomLinkStorage>({
   name: "link",
 
   priority: 1000,
@@ -241,5 +246,13 @@ export const CustomLinkExtension = Mark.create<LinkOptions>({
     }
 
     return plugins;
+  },
+
+  addStorage() {
+    return {
+      isPreviewOpen: false,
+      isBubbleMenuOpen: false,
+      posToInsert: { from: 0, to: 0 },
+    };
   },
 });

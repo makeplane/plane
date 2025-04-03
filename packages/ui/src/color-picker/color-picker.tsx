@@ -12,7 +12,9 @@ export const ColorPicker: React.FC<ColorPickerProps> = (props) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   // handlers
-  const handleOnClick = () => {
+  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
     inputRef.current?.click();
   };
 
