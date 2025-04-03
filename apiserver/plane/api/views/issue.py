@@ -1194,6 +1194,10 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
         except Project.DoesNotExist:
             return Response({"error": "Project not found."}, status=status.HTTP_404_NOT_FOUND)
         epoch_timestamp = int(timezone.now().timestamp())
+
+        custom_property.value = new_value
+        custom_property.save()
+
         issue_activity.delay(
             type="custom_property.activity.updated",
             requested_data=requested_data,
@@ -1203,8 +1207,6 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
             current_instance=current_instance,
             epoch=epoch_timestamp,
         )
-        custom_property.value = new_value
-        custom_property.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
         
     def get(self, request, slug, issue_id, pk=None):

@@ -1,5 +1,6 @@
 # Python imports
 import json
+import logging
 
 
 # Third Party imports
@@ -1625,7 +1626,11 @@ def update_custom_property_activity(
         current_instance = json.loads(current_instance)
     if isinstance(requested_data, str):
         requested_data = json.loads(requested_data)
-    custom_property_key = current_instance.get("key", "unknown_key")
+    if "key" not in current_instance:
+        error_msg = f"Missing key in custom property for issue_id={issue_id}, project_id={project_id}"
+        logging.getLogger("plane").error(error_msg)
+        return
+    custom_property_key = current_instance.get("key")
     if current_instance.get("value") != requested_data.get("value"):
         issue_activities.append(
             IssueActivity(
@@ -1658,7 +1663,11 @@ def create_custom_property_activity(
         current_instance = json.loads(current_instance)
     if isinstance(requested_data, str):
         requested_data = json.loads(requested_data)
-    custom_property_key = requested_data.get("key", "unknown_key")
+    if "key" not in requested_data:
+        error_msg = f"Missing key in custom property for issue_id={issue_id}, project_id={project_id}"
+        logging.getLogger("plane").error(error_msg)
+        return
+    custom_property_key = requested_data.get("key")
     issue_activities.append(
         IssueActivity(
             issue_id=issue_id,
