@@ -7,6 +7,8 @@ export type CustomProperty = {
   value: string;
   issue_type_custom_property: string;
   is_required: boolean;
+  name: string;
+  id: string;
 };
 
 type CustomPropertiesProps = {
@@ -66,6 +68,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
       issue_type_custom_property: customProp.id,
       is_required: customProp.is_required,
       id: customProperty ? customProperty.id : "",
+      name: customProp.name,
     };
   });
 
