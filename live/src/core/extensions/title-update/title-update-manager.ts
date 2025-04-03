@@ -55,8 +55,6 @@ export class TitleUpdateManager {
     }
 
     try {
-      console.log(`Starting title update for ${this.documentName} with: "${title}"`);
-
       await this.documentHandler.updateTitle({
         context: this.context,
         pageId: this.documentName,
@@ -64,16 +62,12 @@ export class TitleUpdateManager {
         abortSignal: signal,
       });
 
-      console.log(`Completed title update for ${this.documentName} with: "${title}"`);
-
       // Clear last title only if it matches what we just updated
       if (this.lastTitle === title) {
         this.lastTitle = null;
       }
     } catch (error) {
-      if (error instanceof Error && error.name === "AbortError") {
-        console.log(`Title update for ${this.documentName} was aborted`);
-      } else {
+      if (error instanceof Error && !(error.name === "AbortError")) {
         console.error(`Error updating title for ${this.documentName}:`, error);
       }
     }
