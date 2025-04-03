@@ -36,7 +36,8 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
       })}
       {...rest}
       containerClassName={containerClassName}
-      editorClassName="min-h-[100px] max-h-[50vh] border-[0.5px] border-custom-border-200 rounded-md pl-3 py-2 overflow-y-scroll"
+      editorClassName="min-h-[100px] max-h-[200px] border-[0.5px] border-custom-border-300 rounded-md pl-3 py-2 overflow-hidden"
+      displayConfig={{ fontSize: "large-font" }}
     />
   );
 });

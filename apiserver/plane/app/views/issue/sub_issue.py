@@ -22,7 +22,7 @@ from plane.db.models import Issue, IssueLink, FileAsset, CycleIssue
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.timezone_converter import user_timezone_converter
 from collections import defaultdict
-
+from plane.utils.host import base_host
 
 class SubIssuesEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
@@ -176,7 +176,7 @@ class SubIssuesEndpoint(BaseAPIView):
                 current_instance=json.dumps({"parent": str(sub_issue_id)}),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             for sub_issue_id in sub_issue_ids
         ]

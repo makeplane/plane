@@ -2,6 +2,7 @@ import { Editor, NodeViewProps, NodeViewWrapper } from "@tiptap/react";
 import { useEffect, useRef, useState } from "react";
 // extensions
 import { CustomImageBlock, CustomImageUploader, ImageAttributes } from "@/extensions/custom-image";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
 export type CustoBaseImageNodeViewProps = {
   getPos: () => number;
@@ -76,7 +77,7 @@ export const CustomImageNode = (props: CustomImageNodeProps) => {
             failedToLoadImage={failedToLoadImage}
             getPos={getPos}
             loadImageFromFileSystem={setImageFromFileSystem}
-            maxFileSize={editor.storage.imageComponent?.maxFileSize}
+            maxFileSize={getExtensionStorage(editor, "imageComponent").maxFileSize}
             node={node}
             setIsUploaded={setIsUploaded}
             selected={selected}
