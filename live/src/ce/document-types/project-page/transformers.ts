@@ -1,6 +1,6 @@
 import { PageService } from "@/core/services/page.service";
 import { getBinaryDataFromHTMLString } from "@/core/helpers/page";
-import logger from "@plane/logger";
+import { logger } from "@plane/logger";
 
 const pageService = new PageService();
 
@@ -23,4 +23,5 @@ export const transformHTMLToBinary = async (
     logger.error("Error while transforming from HTML to Uint8Array", error);
     throw error;
   }
-}; 
+};
+
