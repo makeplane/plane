@@ -75,7 +75,7 @@ class MagicGenerateEndpoint(BaseAPIView):
             adapter = MagicCodeProvider(request=request, key=email)
             key, token = adapter.initiate()
             # If the smtp is configured send through here
-            magic_link.delay(email, key, token, origin)
+            # magic_link.delay(email, key, token, origin)
             return Response({"key": str(key), "token": token}, status=status.HTTP_200_OK)
         except AuthenticationException as e:
             params = e.get_error_dict()
