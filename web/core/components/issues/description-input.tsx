@@ -60,7 +60,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
   const { uploadEditorAsset } = useEditorAsset();
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
-  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id?.toString() ?? "";
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id?.toString();
   // form info
   const { handleSubmit, reset, control } = useForm<TIssue>({
     defaultValues: {
@@ -101,6 +101,8 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
     }, 1500),
     [handleSubmit, issueId]
   );
+
+  if (!workspaceId) return null;
 
   return (
     <>
