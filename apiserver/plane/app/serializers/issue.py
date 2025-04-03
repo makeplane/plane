@@ -777,10 +777,12 @@ class IssueDetailSerializer(IssueSerializer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         slug = self.context.get("slug", None)
+        user_id = self.context.get("user_id", None)
 
-        if slug:
+        # Check if the user has access to the customer request count
+        if slug and user_id:
             if check_workspace_feature_flag(
-                feature_key=FeatureFlag.CUSTOMERS, slug=slug
+                feature_key=FeatureFlag.CUSTOMERS, slug=slug, user_id=user_id
             ):
                 self.fields["customer_request_count"] = serializers.IntegerField(
                     read_only=True

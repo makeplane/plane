@@ -87,6 +87,7 @@ class CustomerRequestAttachmentV2Endpoint(BaseAPIView):
         if check_workspace_feature_flag(
             feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
             slug=slug,
+            user_id=str(request.user.id)
         ):
             size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
         else:

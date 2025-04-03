@@ -132,8 +132,9 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             workflow_state_manager = WorkflowStateManager(
                 project_id=request.data.get("project_id", None), slug=slug
             )
-            if workflow_state_manager._validate_issue_creation(
+            if workflow_state_manager.validate_issue_creation(
                 state_id=request.data.get("state_id"),
+                user_id=request.user.id,
             ):
                 return Response(
                     {"error": "You cannot create a draft issue in this state"},

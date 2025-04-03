@@ -46,7 +46,7 @@ class EpicActivityEndpoint(BaseAPIView):
             .select_related("actor", "workspace", "issue", "project")
         ).order_by("created_at")
 
-        if not check_workspace_feature_flag(feature_key=FeatureFlag.EPICS, slug=slug):
+        if not check_workspace_feature_flag(feature_key=FeatureFlag.EPICS, slug=slug, user_id=str(request.user.id)):
             epic_activities = epic_activities.filter(~Q(field="type"))
 
         epic_comments = (

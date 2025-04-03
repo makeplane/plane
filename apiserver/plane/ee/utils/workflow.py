@@ -102,7 +102,7 @@ class WorkflowStateManager:
         # Transition is allowed
         return True
 
-    def _validate_issue_creation(self, state_id: int) -> bool:
+    def validate_issue_creation(self, state_id: int, user_id: str) -> bool:
         """
         False if the creation is allowed, True otherwise
         """
@@ -113,7 +113,7 @@ class WorkflowStateManager:
 
         # Check if the feature is available for the workspace
         if not check_workspace_feature_flag(
-            slug=self.slug, feature_key=FeatureFlag.WORKFLOWS
+            slug=self.slug, feature_key=FeatureFlag.WORKFLOWS, user_id=user_id
         ):
             return False
 

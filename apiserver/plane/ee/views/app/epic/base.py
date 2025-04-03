@@ -151,8 +151,9 @@ class EpicViewSet(BaseViewSet):
             workflow_state_manager = WorkflowStateManager(
                 project_id=project_id, slug=slug
             )
-            if workflow_state_manager._validate_issue_creation(
-                state_id=request.data.get("state_id")
+            if workflow_state_manager.validate_issue_creation(
+                state_id=request.data.get("state_id"),
+                user_id=request.user.id,
             ):
                 return Response(
                     {"error": "You cannot create a epic in this state"},

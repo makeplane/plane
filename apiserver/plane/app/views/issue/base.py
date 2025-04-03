@@ -238,7 +238,7 @@ class IssueViewSet(BaseViewSet):
         )
 
         if check_workspace_feature_flag(
-            feature_key=FeatureFlag.CUSTOMERS, slug=self.kwargs.get("slug")
+            feature_key=FeatureFlag.CUSTOMERS, slug=self.kwargs.get("slug"), user_id=str(self.request.user.id)
         ):
             issues = issues.annotate(
                 customer_count=Count(
@@ -408,8 +408,9 @@ class IssueViewSet(BaseViewSet):
             workflow_state_manager = WorkflowStateManager(
                 project_id=project_id, slug=slug
             )
-            if workflow_state_manager._validate_issue_creation(
-                state_id=request.data.get("state_id")
+            if workflow_state_manager.validate_issue_creation(
+                state_id=request.data.get("state_id"),
+                user_id=request.user.id,
             ):
                 return Response(
                     {"error": "You cannot create a work item in this state"},
@@ -595,7 +596,7 @@ class IssueViewSet(BaseViewSet):
         )
 
         if check_workspace_feature_flag(
-            feature_key=FeatureFlag.CUSTOMERS, slug=self.kwargs.get("slug")
+            feature_key=FeatureFlag.CUSTOMERS, slug=self.kwargs.get("slug"), user_id=str(request.user.id)
         ):
             issue = issue.annotate(
                 customer_request_count=Count(
@@ -646,7 +647,7 @@ class IssueViewSet(BaseViewSet):
         )
 
         serializer = IssueDetailSerializer(
-            issue, expand=self.expand, context={"slug": self.kwargs.get("slug")}
+            issue, expand=self.expand, context={"slug": self.kwargs.get("slug"), "user_id": str(request.user.id)}
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -1388,7 +1389,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
         ).annotate(is_epic=F("type__is_epic"))
 
         if check_workspace_feature_flag(
-            feature_key=FeatureFlag.CUSTOMERS, slug=self.kwargs.get("slug")
+            feature_key=FeatureFlag.CUSTOMERS, slug=self.kwargs.get("slug"), user_id=str(request.user.id)
         ):
             issue = issue.annotate(
                 customer_request_count=Count(
@@ -1456,7 +1457,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
 
         # Serialize the issue
         serializer = IssueDetailSerializer(
-            issue, expand=self.expand, context={"slug": self.kwargs.get("slug")}
+            issue, expand=self.expand, context={"slug": self.kwargs.get("slug"), "user_id": str(request.user.id)}
         )
 
         return Response(serializer.data, status=status.HTTP_200_OK)

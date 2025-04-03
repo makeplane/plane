@@ -45,7 +45,7 @@ class IssueActivityEndpoint(BaseAPIView):
         ).order_by("created_at")
 
         if not check_workspace_feature_flag(
-            feature_key=FeatureFlag.ISSUE_TYPES, slug=slug
+            feature_key=FeatureFlag.ISSUE_TYPES, slug=slug, user_id=str(request.user.id)
         ):
             issue_activities = issue_activities.filter(~Q(field="type"))
 

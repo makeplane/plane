@@ -281,8 +281,9 @@ class IntakeIssueViewSet(BaseViewSet):
         )
         # EE start
         workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
-        if workflow_state_manager._validate_issue_creation(
+        if workflow_state_manager.validate_issue_creation(
             state_id=request.data.get("issue", None).get("state_id", None),
+            user_id=request.user.id,
         ):
             return Response(
                 {"error": "You cannot create a intake issue in this state"},
