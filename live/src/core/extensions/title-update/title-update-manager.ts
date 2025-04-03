@@ -1,6 +1,7 @@
 import { DocumentHandler } from "@/core/types/document-handler";
 import { DebounceManager } from "./debounce";
 import { HocusPocusServerContext } from "@/core/types/common";
+import { env } from "@/env";
 
 /**
  * Manages title update operations for a single document
@@ -20,7 +21,7 @@ export class TitleUpdateManager {
     documentName: string,
     documentHandler: DocumentHandler,
     context: HocusPocusServerContext,
-    wait: number = 5000
+    wait: number = 3000
   ) {
     this.context = context;
     this.documentName = documentName;
@@ -29,7 +30,7 @@ export class TitleUpdateManager {
     // Set up debounce manager with logging
     this.debounceManager = new DebounceManager({
       wait,
-      logPrefix: `TitleManager[${documentName.substring(0, 8)}]`,
+      logPrefix: env.NODE_ENV === "development" ? `TitleManager[${documentName.substring(0, 8)}]` : "",
     });
   }
 
@@ -84,7 +85,6 @@ export class TitleUpdateManager {
   async forceSave(): Promise<void> {
     // Ensure we have the current title
     if (!this.lastTitle) {
-      console.log(`No title to force save for ${this.documentName}`);
       return;
     }
 
