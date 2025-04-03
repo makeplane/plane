@@ -3,19 +3,13 @@
   "compilerOptions": {
     "module": "ES2015",
     "moduleResolution": "Bundler",
-    "lib": [
-      "ES2015"
-    ],
+    "lib": ["ES2015"],
     "outDir": "./dist",
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@/plane-live/*": [
-        "./src/ce/*"
-      ]
+      "@/*": ["./src/*"],
+      "@/plane-live/*": ["./src/ce/*"]
     },
     "removeComments": true,
     "esModuleInterop": true,
@@ -26,13 +20,6 @@
     "emitDecoratorMetadata": true,
     "sourceRoot": "/"
   },
-  "include": [
-    "src/**/*.ts",
-    "tsup.config.ts"
-  ],
-  "exclude": [
-    "./dist",
-    "./build",
-    "./node_modules"
-  ]
+  "include": ["src/**/*.ts", "tsup.config.ts"],
+  "exclude": ["./dist", "./build", "./node_modules"]
 }

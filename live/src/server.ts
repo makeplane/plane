@@ -1,161 +1,93 @@
-import express from "express";
-import type { Application, Request, Router } from "express";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import express, { Application } from "express";
 import expressWs from "express-ws";
-import type * as ws from "ws";
-import type { Hocuspocus } from "@hocuspocus/server";
-
-// Environment and configuration
-import { serverConfig, configureServerMiddleware } from "./config/server-config";
-
-// Core functionality
-import { getHocusPocusServer } from "@/core/hocuspocus-server";
-import { ProcessManager } from "@/core/process-manager";
-import { ShutdownManager } from "@/core/shutdown-manager";
-
+import helmet from "helmet";
+import path from "path";
+import { Server as HocusPocusServer, Hocuspocus } from "@hocuspocus/server";
+import { v4 as uuidv4 } from "uuid";
+import { onAuthenticate, onStateless, handleDataFetch, handleDataStore } from "./hocuspocus";
+import { Logger } from "@hocuspocus/extension-logger";
+import { Database } from "@hocuspocus/extension-database";
+// controllers
+import { HealthController } from "@/core/controllers/health.controller";
+import { DocumentController } from "@/core/controllers/document.controller";
+import { CollaborationController } from "@/core/controllers/collaboration.controller";
 import { registerControllers } from "./lib/controller.utils";
 
-// Redis manager
-import { RedisManager } from "@/core/lib/redis-manager";
+export default class Server {
+  app: Application;
+  PORT: number;
+  BASE_PATH: string;
+  CORS_ALLOWED_ORIGINS: string;
+  hocuspocusServer: Hocuspocus | null = null;
 
-// Logging
-import { logger } from "@plane/logger";
-
-// Error handling
-import { configureErrorHandlers } from "@/core/helpers/error-handling/error-handler";
-import { handleError } from "@/core/helpers/error-handling/error-factory";
-import { getAllControllers } from "./core/controller-registry";
-
-// WebSocket router type definition
-interface WebSocketRouter extends Router {
-  ws: (_path: string, _handler: (ws: ws.WebSocket, req: Request) => void) => void;
-}
-
-/**
- * Main server class for the application
- */
-export class Server {
-  private readonly app: Application;
-  private readonly port: number;
-  private hocusPocusServer!: Hocuspocus;
-  private redisManager: RedisManager;
-
-  /**
-   * Creates an instance of the server class.
-   * @param port Optional port number, defaults to environment configuration
-   */
-  constructor(port?: number) {
+  constructor() {
+    this.PORT = parseInt(process.env.PORT || "3000");
+    this.BASE_PATH = process.env.LIVE_BASE_PATH || "/";
+    this.CORS_ALLOWED_ORIGINS = process.env.CORS_ALLOWED_ORIGINS || "*";
+    // Initialize express app
     this.app = express();
-    this.port = port || serverConfig.port;
-    this.redisManager = RedisManager.getInstance();
-
-    // Initialize express-ws after Express setup
     expressWs(this.app as any);
-
-    configureServerMiddleware(this.app);
+    // Security middleware
+    this.app.use(helmet());
+    // cors
+    this.setupCors();
+    // Cookie parsing
+    this.app.use(cookieParser());
+    // Body parsing middleware
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true }));
+    // static files
+    this.app.use(express.static(path.join(__dirname, "public")));
+    // setup redis
+    this.setupRedis();
+    // setup hocuspocus server
+    this.setupHocuspocusServer();
+    // setup controllers
+    this.setupControllers();
   }
 
-  /**
-   * Get the Express application instance
-   * Useful for testing
-   */
-  getApp(): Application {
-    return this.app;
+  private setupCors() {
+    const origin = this.CORS_ALLOWED_ORIGINS.split(",").map((origin) => origin.trim());
+    this.app.use(
+      cors({
+        origin,
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization", "x-api-key"],
+      })
+    );
   }
 
-  /**
-   * Initialize the server with all required components
-   * @returns The server instance for chaining
-   */
-  async initialize() {
-    try {
-      // Initialize core services
-      await this.initializeServices();
+  private setupRedis() {}
 
-      // Set up routes
-      await this.setupRoutes();
-
-      // Set up error handlers
-      logger.info("Setting up error handlers");
-      configureErrorHandlers(this.app);
-
-      return this;
-    } catch (error) {
-      logger.error("Failed to initialize server:", error);
-
-      // This will always throw (never returns) - TypeScript correctly infers this
-      handleError(error, {
-        errorType: "internal",
-        component: "server",
-        operation: "initialize",
-        throw: true,
-      });
-    }
+  private setupHocuspocusServer() {
+    const serverName = process.env.HOSTNAME || uuidv4();
+    this.hocuspocusServer = HocusPocusServer.configure({
+      name: serverName,
+      onAuthenticate: onAuthenticate(),
+      onStateless: onStateless(),
+      debounce: 1000,
+      extensions: [
+        new Logger(),
+        new Database({
+          fetch: handleDataFetch,
+          store: handleDataStore,
+        }),
+      ],
+    });
   }
 
-  /**
-   * Initialize core services
-   */
-  private async initializeServices() {
-    logger.info("Initializing Redis connection...");
-    await this.redisManager.connect();
-
-    // Initialize the Hocuspocus server
-    this.hocusPocusServer = await getHocusPocusServer();
+  private setupControllers() {
+    const router = express.Router();
+    registerControllers(router, [HealthController, DocumentController, CollaborationController]);
+    this.app.use(this.BASE_PATH, router);
   }
 
-  /**
-   * Set up API routes and WebSocket endpoints
-   */
-  private async setupRoutes() {
-    try {
-      const router = express.Router() as WebSocketRouter;
-
-      // Get all controller classes
-      const controllers = getAllControllers();
-
-      // Register controllers with our simplified approach
-      // Pass the hocuspocus server as a dependency to the controllers that need it
-      registerControllers(router, controllers, [this.hocusPocusServer]);
-
-      // Mount the router on the base path
-      this.app.use(serverConfig.basePath, router);
-    } catch (error) {
-      handleError(error, {
-        errorType: "internal",
-        component: "server",
-        operation: "setupRoutes",
-        throw: true,
-      });
-    }
-  }
-
-  /**
-   * Start the server
-   * @returns HTTP Server instance
-   */
-  async start() {
-    try {
-      const server = this.app.listen(this.port, () => {
-        logger.info(`Plane Live server has started at port ${this.port}`);
-      });
-
-      // Register servers with ShutdownManager
-      const shutdownManager = ShutdownManager.getInstance();
-      shutdownManager.register(server, this.hocusPocusServer);
-
-      // Setup graceful termination via ProcessManager (for signal handling)
-      const processManager = new ProcessManager(this.hocusPocusServer, server);
-      processManager.registerTerminationHandlers();
-
-      return server;
-    } catch (error) {
-      handleError(error, {
-        errorType: "service-unavailable",
-        component: "server",
-        operation: "start",
-        extraContext: { port: this.port },
-        throw: true,
-      });
-    }
+  start() {
+    this.app.listen(this.PORT, () => {
+      console.log(`Plane Live server has started at port ${this.PORT}`);
+    });
   }
 }
