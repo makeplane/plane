@@ -44,11 +44,8 @@ export class PageService extends APIService {
     cookie: string,
     abortSignal?: AbortSignal
   ): Promise<any> {
-    console.log("aaya update call", data);
-
     // Early abort check
     if (abortSignal?.aborted) {
-      console.log(`Title update was already aborted before starting: ${pageId}`);
       throw new DOMException("Aborted", "AbortError");
     }
 
@@ -57,7 +54,6 @@ export class PageService extends APIService {
     const abortPromise = new Promise((_, reject) => {
       if (abortSignal) {
         abortListener = () => {
-          console.log(`Title update aborted during execution: ${pageId}`);
           reject(new DOMException("Aborted", "AbortError"));
         };
         abortSignal.addEventListener("abort", abortListener);
@@ -65,12 +61,6 @@ export class PageService extends APIService {
     });
 
     try {
-      // The simulated delay that can be aborted
-      // await Promise.race([
-      //   new Promise((resolve) => setTimeout(resolve, 10000)),
-      //   abortPromise
-      // ]);
-
       // The actual API call that can be aborted
       return await Promise.race([
         this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`, data, {
@@ -83,7 +73,6 @@ export class PageService extends APIService {
           .catch((error) => {
             // Special handling for aborted fetch requests
             if (error.name === "AbortError") {
-              console.log(`Fetch request for title update was aborted: ${pageId}`);
               throw new DOMException("Aborted", "AbortError");
             }
             throw error;

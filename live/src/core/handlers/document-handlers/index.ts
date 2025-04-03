@@ -13,17 +13,7 @@ initializeDocumentHandlers();
  * @param additionalContext Optional additional context criteria
  * @returns The appropriate document handler
  */
-export function getDocumentHandler(
-  documentType: string,
-  additionalContext: Omit<HocusPocusServerContext, "documentType">
-): DocumentHandler {
-  // Create a context object with all criteria
-  const context: HocusPocusServerContext = {
-    documentType: documentType as any,
-    ...additionalContext,
-  };
-
-  // Use the factory to get the appropriate handler
+export function getDocumentHandler(context: HocusPocusServerContext): DocumentHandler {
   return handlerFactory.getHandler(context);
 }
 

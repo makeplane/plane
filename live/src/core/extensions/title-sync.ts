@@ -1,5 +1,5 @@
 // hocuspocus
-import { Extension, afterLoadDocumentPayload, Hocuspocus, Document } from "@hocuspocus/server";
+import { Extension, Hocuspocus, Document } from "@hocuspocus/server";
 import { TiptapTransformer } from "@hocuspocus/transformer";
 import * as Y from "yjs";
 // types
@@ -18,38 +18,22 @@ import { TitleUpdateManager } from "./title-update/title-update-manager";
  */
 export class TitleSyncExtension implements Extension {
   instance!: Hocuspocus;
-  
+
   // Maps document names to their observers and update managers
   private titleObservers: Map<string, (events: Y.YEvent<any>[]) => void> = new Map();
   private titleUpdateManagers: Map<string, TitleUpdateManager> = new Map();
-  
-  /**
-   * Handle document loading - migrate old titles if needed
-   */
-  async onLoadDocument({
-    context,
-    document,
-    requestParameters,
-  }: {
-    context: HocusPocusServerContext;
-    document: Document;
-    requestParameters: URLSearchParams;
-  }) {
+
+  async onLoadDocument({ context, document }: { context: HocusPocusServerContext; document: Document }) {
     try {
       // initially for on demand migration of old titles to a new title field
       // in the yjs binary
       if (document.isEmpty("title")) {
-        const typedContext = context as HocusPocusServerContext;
-        const workspaceSlug = requestParameters.get("workspaceSlug")?.toString();
-        const projectId = requestParameters.get("projectId")?.toString();
-
-        const documentHandler = getDocumentHandler(typedContext.documentType);
+        const { workspaceSlug, projectId } = context;
+        const documentHandler = getDocumentHandler(context);
         if (!workspaceSlug || !projectId) return;
         const title = await documentHandler.fetchTitle({
-          workspaceSlug,
-          projectId,
+          context,
           pageId: document.name,
-          cookie: typedContext.cookie,
         });
         if (title == null) return;
         const titleField = TiptapTransformer.toYdoc(
@@ -66,46 +50,47 @@ export class TitleSyncExtension implements Extension {
   /**
    * Set up title synchronization for a document after it's loaded
    */
-  async afterLoadDocument({ document, documentName, context, requestParameters }: afterLoadDocumentPayload) {
-    const workspaceSlug = requestParameters.get("workspaceSlug")?.toString();
-    const projectId = requestParameters.get("projectId")?.toString();
-    
+  async afterLoadDocument({
+    document,
+    documentName,
+    context,
+  }: {
+    document: Document;
+    documentName: string;
+    context: HocusPocusServerContext;
+  }) {
+    const { workspaceSlug, projectId } = context;
+
     // Exit if we don't have the required information
     if (!workspaceSlug || !projectId) return;
-    
-    const documentHandler = getDocumentHandler(context.documentType);
-    
+
+    const documentHandler = getDocumentHandler(context);
+
     // Create a title update manager for this document
-    const updateManager = new TitleUpdateManager(
-      documentName,
-      workspaceSlug,
-      projectId,
-      context.cookie,
-      documentHandler
-    );
-    
+    const updateManager = new TitleUpdateManager(documentName, documentHandler, context);
+
     // Store the manager
     this.titleUpdateManagers.set(documentName, updateManager);
-    
+
     // Set up observer for title field
     const titleObserver = (events: Y.YEvent<any>[]) => {
       let title = "";
       events.forEach((event) => {
         title = extractTextFromHTML(event.currentTarget.toJSON());
       });
-      
+
       // Schedule an update with the manager
       const manager = this.titleUpdateManagers.get(documentName);
       if (manager) {
         manager.scheduleUpdate(title);
       }
     };
-    
+
     // Observe the title field
     document.getXmlFragment("title").observeDeep(titleObserver);
     this.titleObservers.set(documentName, titleObserver);
   }
-  
+
   /**
    * Force save title before unloading the document
    */
@@ -118,7 +103,7 @@ export class TitleSyncExtension implements Extension {
       this.titleUpdateManagers.delete(documentName);
     }
   }
-  
+
   /**
    * Remove observers after document unload
    */
@@ -126,10 +111,9 @@ export class TitleSyncExtension implements Extension {
     // Clean up observer when document is unloaded
     const observer = this.titleObservers.get(documentName);
     if (observer) {
-      console.log(`Removing title observer for ${documentName}`);
       this.titleObservers.delete(documentName);
     }
-    
+
     // Ensure manager is cleaned up if beforeUnloadDocument somehow didn't run
     if (this.titleUpdateManagers.has(documentName)) {
       const manager = this.titleUpdateManagers.get(documentName)!;

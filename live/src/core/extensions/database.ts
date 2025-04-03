@@ -16,15 +16,11 @@ export const createDatabaseExtension = () => {
 const handleFetch = async ({
   context,
   documentName: pageId,
-  requestParameters,
 }: {
   context: HocusPocusServerContext;
   documentName: TDocumentTypes;
-  requestParameters: URLSearchParams;
 }) => {
   const { documentType } = context;
-  const params = requestParameters;
-
   let fetchedData = null;
   fetchedData = await catchAsync(
     async () => {
@@ -39,11 +35,10 @@ const handleFetch = async ({
         });
       }
 
-      const documentHandler = getDocumentHandler(documentType);
+      const documentHandler = getDocumentHandler(context);
       fetchedData = await documentHandler.fetch({
         context: context as HocusPocusServerContext,
         pageId,
-        params,
       });
 
       if (!fetchedData) {
@@ -70,7 +65,6 @@ const handleStore = async ({
   context,
   state,
   documentName: pageId,
-  requestParameters,
   document,
 }: Partial<storePayload> & {
   context: HocusPocusServerContext;
@@ -93,7 +87,6 @@ const handleStore = async ({
         title = extractTextFromHTML(document?.getXmlFragment("title")?.toJSON());
       }
       const { documentType } = context as HocusPocusServerContext;
-      const params = requestParameters;
       if (!documentType) {
         handleError(null, {
           errorType: "bad-request",
@@ -105,12 +98,11 @@ const handleStore = async ({
         });
       }
 
-      const documentHandler = getDocumentHandler(documentType);
+      const documentHandler = getDocumentHandler(context);
       await documentHandler.store({
         context: context as HocusPocusServerContext,
         pageId,
         state,
-        params,
         title,
       });
     },

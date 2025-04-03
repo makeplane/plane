@@ -6,7 +6,6 @@ import { HocusPocusServerContext } from "@/core/types/common";
 export interface DocumentFetchParams {
   context: HocusPocusServerContext;
   pageId: string;
-  params: URLSearchParams;
 }
 
 /**
@@ -16,7 +15,6 @@ export interface DocumentStoreParams {
   context: HocusPocusServerContext;
   pageId: string;
   state: Uint8Array;
-  params: URLSearchParams | undefined;
   title: string;
 }
 
@@ -37,22 +35,15 @@ export interface DocumentHandler {
   /**
    * Fetch title
    */
-  fetchTitle: (params: {
-    workspaceSlug: string;
-    projectId: string;
-    pageId: string;
-    cookie: string;
-  }) => Promise<string | undefined>;
+  fetchTitle: (params: { pageId: string; context: HocusPocusServerContext }) => Promise<string | undefined>;
 
   /**
    * Update title
    */
   updateTitle?: (params: {
-    workspaceSlug: string;
-    projectId: string;
+    context: HocusPocusServerContext;
     pageId: string;
     title: string;
-    cookie: string;
     abortSignal?: AbortSignal;
   }) => Promise<void>;
 }

@@ -6,7 +6,6 @@ import { handleAuthentication } from "@/core/lib/authentication";
 // extensions
 import { getExtensions } from "@/core/extensions/index";
 import { DocumentCollaborativeEvents, TDocumentEventsServer } from "@plane/editor/lib";
-import { TitleSyncExtension } from "./extensions/title-sync";
 // editor types
 import { TUserDetails } from "@plane/editor";
 // types
@@ -70,6 +69,7 @@ export const getHocusPocusServer = async () => {
           context.cookie = cookie ?? requestParameters.get("cookie");
           context.userId = userId;
           context.workspaceSlug = requestParameters.get("workspaceSlug")?.toString() as string;
+          context.projectId = requestParameters.get("projectId")?.toString() as string;
 
           return await handleAuthentication({
             cookie: context.cookie,
@@ -95,7 +95,7 @@ export const getHocusPocusServer = async () => {
         { extra: { operation: "stateless", payload } }
       );
     },
-    extensions: [...extensions, new TitleSyncExtension()],
-    debounce: 10000,
+    extensions,
+    debounce: 1000,
   });
 };

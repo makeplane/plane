@@ -19,32 +19,19 @@ export const projectPageHandler: DocumentHandler = {
   /**
    * Fetch project page description
    */
-  fetch: async ({ pageId, params, context }: DocumentFetchParams) => {
-    const { cookie } = context;
-    return await fetchPageDescriptionBinary(params, pageId, cookie);
-  },
-
+  fetch: fetchPageDescriptionBinary,
   /**
    * Store project page description
    */
-  store: async ({ pageId, state, params, context, title }: DocumentStoreParams) => {
-    const { cookie } = context;
-    await updatePageDescription({ params, pageId, updatedDescription: state, cookie, title });
-  },
-
+  store: updatePageDescription,
   /**
    * Fetch project page title
    */
-  fetchTitle: async ({ workspaceSlug, projectId, pageId, cookie }) => {
-    return await fetchProjectPageTitle({ workspaceSlug, projectId, pageId, cookie });
-  },
-
+  fetchTitle: fetchProjectPageTitle,
   /**
    * Store project page title
    */
-  updateTitle: async ({ workspaceSlug, projectId, pageId, title, cookie, abortSignal }) => {
-    await updateProjectPageTitle({ workspaceSlug, projectId, pageId, title, cookie, abortSignal });
-  },
+  updateTitle: updateProjectPageTitle,
 };
 
 // Define the project page handler definition

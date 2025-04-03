@@ -2,6 +2,7 @@ import { PageService } from "@/core/services/page.service";
 import { transformHTMLToBinary } from "./transformers";
 import { getAllDocumentFormatsFromBinaryData } from "@/core/helpers/page";
 import { logger } from "@plane/logger";
+import { HocusPocusServerContext } from "@/core/types/common";
 
 const pageService = new PageService();
 
@@ -9,13 +10,15 @@ const pageService = new PageService();
  * Fetches the binary description data for a project page
  * Falls back to HTML transformation if binary is not available
  */
-export const fetchPageDescriptionBinary = async (
-  params: URLSearchParams,
-  pageId: string,
-  cookie: string | undefined
-) => {
-  const workspaceSlug = params.get("workspaceSlug")?.toString();
-  const projectId = params.get("projectId")?.toString();
+export const fetchPageDescriptionBinary = async ({
+  pageId,
+  context,
+}: {
+  pageId: string;
+  context: HocusPocusServerContext;
+}) => {
+  const { workspaceSlug, projectId, cookie } = context;
+
   if (!workspaceSlug || !projectId || !cookie) return null;
 
   const response = await pageService.fetchDescriptionBinary(workspaceSlug, projectId, pageId, cookie);
@@ -35,24 +38,21 @@ export const fetchPageDescriptionBinary = async (
  * Updates the description of a project page
  */
 export const updatePageDescription = async ({
-  params,
+  context,
   pageId,
-  updatedDescription,
-  cookie,
+  state: updatedDescription,
   title,
 }: {
-  params: URLSearchParams | undefined;
+  context: HocusPocusServerContext;
   pageId: string;
-  updatedDescription: Uint8Array;
-  cookie: string | undefined;
+  state: Uint8Array;
   title: string;
 }) => {
   if (!(updatedDescription instanceof Uint8Array)) {
     throw new Error("Invalid updatedDescription: must be an instance of Uint8Array");
   }
 
-  const workspaceSlug = params?.get("workspaceSlug")?.toString();
-  const projectId = params?.get("projectId")?.toString();
+  const { workspaceSlug, projectId, cookie } = context;
   if (!workspaceSlug || !projectId || !cookie) return;
 
   const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromBinaryData(updatedDescription);
@@ -67,17 +67,14 @@ export const updatePageDescription = async ({
 };
 
 export const fetchProjectPageTitle = async ({
-  workspaceSlug,
-  projectId,
+  context,
   pageId,
-  cookie,
 }: {
-  workspaceSlug: string;
-  projectId: string;
+  context: HocusPocusServerContext;
   pageId: string;
-  cookie: string | undefined;
 }) => {
-  if (!workspaceSlug || !cookie) return;
+  const { workspaceSlug, projectId, cookie } = context;
+  if (!workspaceSlug || !projectId || !cookie) return;
 
   try {
     const pageDetails = await pageService.fetchDetails(workspaceSlug, projectId, pageId, cookie);
@@ -89,20 +86,17 @@ export const fetchProjectPageTitle = async ({
 };
 
 export const updateProjectPageTitle = async ({
-  workspaceSlug,
-  projectId,
+  context,
   pageId,
   title,
-  cookie,
   abortSignal,
 }: {
-  workspaceSlug: string;
-  projectId: string;
+  context: HocusPocusServerContext;
   pageId: string;
   title: string;
-  cookie: string | undefined;
   abortSignal?: AbortSignal;
 }) => {
+  const { workspaceSlug, projectId, cookie } = context;
   if (!workspaceSlug || !projectId || !cookie) return;
 
   const payload = {

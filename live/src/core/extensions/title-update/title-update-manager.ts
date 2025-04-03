@@ -1,5 +1,6 @@
 import { DocumentHandler } from "@/core/types/document-handler";
 import { DebounceManager } from "./debounce";
+import { HocusPocusServerContext } from "@/core/types/common";
 
 /**
  * Manages title update operations for a single document
@@ -7,28 +8,22 @@ import { DebounceManager } from "./debounce";
  */
 export class TitleUpdateManager {
   private documentName: string;
-  private workspaceSlug: string;
-  private projectId: string;
-  private cookie: string;
   private documentHandler: DocumentHandler;
   private debounceManager: DebounceManager;
   private lastTitle: string | null = null;
+  private context: HocusPocusServerContext;
 
   /**
    * Create a new TitleUpdateManager instance
    */
   constructor(
     documentName: string,
-    workspaceSlug: string,
-    projectId: string,
-    cookie: string,
-    documentHandler: any,
+    documentHandler: DocumentHandler,
+    context: HocusPocusServerContext,
     wait: number = 5000
   ) {
+    this.context = context;
     this.documentName = documentName;
-    this.workspaceSlug = workspaceSlug;
-    this.projectId = projectId;
-    this.cookie = cookie;
     this.documentHandler = documentHandler;
 
     // Set up debounce manager with logging
@@ -61,14 +56,12 @@ export class TitleUpdateManager {
     try {
       console.log(`Starting title update for ${this.documentName} with: "${title}"`);
 
-      await this.documentHandler.updateTitle(
-        this.workspaceSlug,
-        this.projectId,
-        this.documentName,
+      await this.documentHandler.updateTitle({
+        context: this.context,
+        pageId: this.documentName,
         title,
-        this.cookie,
-        signal
-      );
+        abortSignal: signal,
+      });
 
       console.log(`Completed title update for ${this.documentName} with: "${title}"`);
 

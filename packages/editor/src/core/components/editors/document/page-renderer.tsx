@@ -21,7 +21,7 @@ export const PageRenderer = (props: IPageRenderer) => {
     props;
 
   return (
-    <div className="frame-renderer flex-grow w-full">
+    <div className={"frame-renderer flex-grow w-full space-y-4 document-editor-container"}>
       {titleEditor && (
         <div className="relative w-full py-3">
           <EditorContainer
