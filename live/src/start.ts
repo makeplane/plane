@@ -1,4 +1,4 @@
-import { Server } from "./server";
+import Server from "./server";
 import { env } from "./env";
 import { logger } from "@plane/logger";
 
