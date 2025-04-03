@@ -17,8 +17,11 @@ export const getExtensions = async (): Promise<Extension[]> => {
   ];
 
   // Add Redis extensions if Redis is available
-  const redisExtensions = await setupRedisExtension();
-  extensions.push(...redisExtensions);
+  const redisExtension = await setupRedisExtension();
+  if (redisExtension) {
+    logger.info("HocusPocus Redis extension configured ✅");
+    extensions.push(redisExtension);
+  }
 
   return extensions;
 };

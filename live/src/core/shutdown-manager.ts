@@ -112,6 +112,7 @@ export class ShutdownManager {
       const redisClient = redisManager.getClient();
 
       if (redisClient) {
+        redisClient.disconnect();
         await redisClient.quit();
         console.info("Redis connections closed successfully");
       } else {
