@@ -47,7 +47,7 @@ export const DescriptionVersionsModal: React.FC<Props> = observer((props) => {
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const activeVersionId = activeVersionDetails?.id;
-  const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString() ?? "")?.id ?? "";
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
   const versionCreator = activeVersionDetails?.owned_by ? getUserDetails(activeVersionDetails.owned_by) : null;
   // translation
   const { t } = useTranslation();
