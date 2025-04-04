@@ -76,7 +76,15 @@ export const InitiativeCommentCreate: FC<TInitiativeCommentCreate> = observer((p
     <div
       className={cn("sticky bottom-0 z-[4] bg-custom-background-100 sm:static")}
       onKeyDown={(e) => {
-        if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !isEmpty && !isSubmitting)
+        if (
+          e.key === "Enter" &&
+          !e.shiftKey &&
+          !e.ctrlKey &&
+          !e.metaKey &&
+          !isEmpty &&
+          !isSubmitting &&
+          editorRef.current?.isEditorReadyToDiscard()
+        )
           handleSubmit(onSubmit)(e);
       }}
     >
