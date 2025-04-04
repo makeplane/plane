@@ -1736,8 +1736,64 @@
       }
     },
     "estimates": {
+      "label": "見積もり",
       "title": "プロジェクトの見積もりを有効にする",
-      "description": "チームの複雑さと作業負荷を伝えるのに役立ちます。"
+      "description": "チームの複雑さと作業負荷を伝えるのに役立ちます。",
+      "no_estimate": "見積もりなし",
+      "create": {
+        "custom": "カスタム",
+        "start_from_scratch": "最初から作成",
+        "choose_template": "テンプレートを選択",
+        "choose_estimate_system": "見積もりシステムを選択",
+        "enter_estimate_point": "見積もりポイントを入力"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "見積もりポイントが作成されました",
+            "message": "見積もりポイントが正常に作成されました"
+          },
+          "error": {
+            "title": "見積もりポイントの作成に失敗しました",
+            "message": "新しい見積もりポイントを作成できませんでした。もう一度お試しください。"
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "見積もりが変更されました",
+            "message": "プロジェクトの見積もりポイントが更新されました。"
+          },
+          "error": {
+            "title": "見積もりの変更に失敗しました",
+            "message": "見積もりを変更できませんでした。もう一度お試しください。"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "成功！",
+            "message": "見積もりが有効になりました。"
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "成功！",
+            "message": "見積もりが無効になりました。"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "見積もりを無効にできませんでした。もう一度お試しください。"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "見積もりポイントは0より大きい必要があります。",
+        "unable_to_process": "リクエストを処理できません。もう一度お試しください。",
+        "numeric": "見積もりポイントは数値である必要があります。",
+        "character": "見積もりポイントは文字である必要があります。",
+        "empty": "見積もり値を空にすることはできません。",
+        "already_exists": "見積もり値は既に存在します。",
+        "unsaved_changes": "保存されていない変更があります。完了をクリックする前に保存してください。"
+      }
     },
     "automations": {
       "label": "自動化",

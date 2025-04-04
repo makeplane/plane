@@ -1736,8 +1736,64 @@
       }
     },
     "estimates": {
+      "label": "Estimări",
       "title": "Activează estimările pentru proiectul meu",
-      "description": "Acestea te ajută să comunici complexitatea și volumul de muncă al echipei."
+      "description": "Acestea te ajută să comunici complexitatea și volumul de muncă al echipei.",
+      "no_estimate": "Fără estimare",
+      "create": {
+        "custom": "Personalizat",
+        "start_from_scratch": "Începe de la zero",
+        "choose_template": "Alege un șablon",
+        "choose_estimate_system": "Alege un sistem de estimare",
+        "enter_estimate_point": "Introdu punctul de estimare"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Punct de estimare creat",
+            "message": "Punctul de estimare a fost creat cu succes"
+          },
+          "error": {
+            "title": "Crearea punctului de estimare a eșuat",
+            "message": "Nu s-a putut crea noul punct de estimare, te rugăm să încerci din nou."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Estimare modificată",
+            "message": "Punctul de estimare a fost actualizat în proiectul tău."
+          },
+          "error": {
+            "title": "Modificarea estimării a eșuat",
+            "message": "Nu s-a putut modifica estimarea, te rugăm să încerci din nou"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Succes!",
+            "message": "Estimările au fost activate."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Succes!",
+            "message": "Estimările au fost dezactivate."
+          },
+          "error": {
+            "title": "Eroare!",
+            "message": "Nu s-a putut dezactiva estimarea. Te rugăm să încerci din nou"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Punctul de estimare trebuie să fie mai mare decât 0.",
+        "unable_to_process": "Nu s-a putut procesa cererea ta, te rugăm să încerci din nou.",
+        "numeric": "Punctul de estimare trebuie să fie o valoare numerică.",
+        "character": "Punctul de estimare trebuie să fie un caracter.",
+        "empty": "Valoarea estimării nu poate fi goală.",
+        "already_exists": "Valoarea estimării există deja.",
+        "unsaved_changes": "Ai modificări nesalvate. Te rugăm să le salvezi înainte de a apăsa finalizare"
+      }
     },
     "automations": {
       "label": "Automatizări",

@@ -500,7 +500,7 @@
   "export": "Eksportuj",
   "member": "{count, plural, one{# członek} few{# członkowie} other{# członków}}",
   "new_password_must_be_different_from_old_password": "Nowe hasło musi być innym niż stare hasło",
-  
+
   "edited": "Edytowano",
   "bot": "Bot",
 
@@ -1713,8 +1713,64 @@
       }
     },
     "estimates": {
-      "title": "Włącz szacowania w projekcie",
-      "description": "Pomaga komunikować złożoność i obciążenie zespołu."
+      "label": "Szacunki",
+      "title": "Włącz szacunki dla mojego projektu",
+      "description": "Pomagają w komunikowaniu złożoności i obciążenia zespołu.",
+      "no_estimate": "Brak szacunku",
+      "create": {
+        "custom": "Własne",
+        "start_from_scratch": "Zacznij od zera",
+        "choose_template": "Wybierz szablon",
+        "choose_estimate_system": "Wybierz system szacowania",
+        "enter_estimate_point": "Wprowadź punkt szacunkowy"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Utworzono punkt szacunkowy",
+            "message": "Punkt szacunkowy został pomyślnie utworzony"
+          },
+          "error": {
+            "title": "Nie udało się utworzyć punktu szacunkowego",
+            "message": "Nie mogliśmy utworzyć nowego punktu szacunkowego, spróbuj ponownie."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Zmodyfikowano szacunek",
+            "message": "Punkt szacunkowy został zaktualizowany w Twoim projekcie."
+          },
+          "error": {
+            "title": "Modyfikacja szacunku nie powiodła się",
+            "message": "Nie mogliśmy zmodyfikować szacunku, spróbuj ponownie"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Sukces!",
+            "message": "Szacunki zostały włączone."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Sukces!",
+            "message": "Szacunki zostały wyłączone."
+          },
+          "error": {
+            "title": "Błąd!",
+            "message": "Nie można było wyłączyć szacunku. Spróbuj ponownie"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Punkt szacunkowy musi być większy niż 0.",
+        "unable_to_process": "Nie możemy przetworzyć Twojego żądania, spróbuj ponownie.",
+        "numeric": "Punkt szacunkowy musi być wartością liczbową.",
+        "character": "Punkt szacunkowy musi być znakiem.",
+        "empty": "Wartość szacunku nie może być pusta.",
+        "already_exists": "Wartość szacunku już istnieje.",
+        "unsaved_changes": "Masz niezapisane zmiany. Zapisz je przed kliknięciem 'gotowe'"
+      }
     },
     "automations": {
       "label": "Automatyzacje",

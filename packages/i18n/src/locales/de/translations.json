@@ -500,7 +500,7 @@
   "export": "Exportieren",
   "member": "{count, plural, one{# Mitglied} few{# Mitglieder} other{# Mitglieder}}",
   "new_password_must_be_different_from_old_password": "Das neue Passwort muss von dem alten Passwort abweichen",
-  
+
   "project_view": {
     "sort_by": {
       "created_at": "Erstellt am",
@@ -1710,8 +1710,64 @@
       }
     },
     "estimates": {
-      "title": "Schätzungen im Projekt aktivieren",
-      "description": "Hilft, die Komplexität und Auslastung für das Team zu kommunizieren."
+      "label": "Schätzungen",
+      "title": "Schätzungen für mein Projekt aktivieren",
+      "description": "Sie helfen bei der Kommunikation von Komplexität und Arbeitsbelastung des Teams.",
+      "no_estimate": "Keine Schätzung",
+      "create": {
+        "custom": "Benutzerdefiniert",
+        "start_from_scratch": "Von vorne beginnen",
+        "choose_template": "Vorlage auswählen",
+        "choose_estimate_system": "Schätzungssystem auswählen",
+        "enter_estimate_point": "Schätzungspunkt eingeben"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Schätzungspunkt erstellt",
+            "message": "Der Schätzungspunkt wurde erfolgreich erstellt"
+          },
+          "error": {
+            "title": "Erstellung des Schätzungspunkts fehlgeschlagen",
+            "message": "Der neue Schätzungspunkt konnte nicht erstellt werden, bitte versuchen Sie es erneut."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Schätzung geändert",
+            "message": "Der Schätzungspunkt wurde in Ihrem Projekt aktualisiert."
+          },
+          "error": {
+            "title": "Änderung der Schätzung fehlgeschlagen",
+            "message": "Die Schätzung konnte nicht geändert werden, bitte versuchen Sie es erneut"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Erfolg!",
+            "message": "Schätzungen wurden aktiviert."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Erfolg!",
+            "message": "Schätzungen wurden deaktiviert."
+          },
+          "error": {
+            "title": "Fehler!",
+            "message": "Schätzung konnte nicht deaktiviert werden. Bitte versuchen Sie es erneut"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Schätzungspunkt muss größer als 0 sein.",
+        "unable_to_process": "Ihre Anfrage konnte nicht verarbeitet werden, bitte versuchen Sie es erneut.",
+        "numeric": "Schätzungspunkt muss ein numerischer Wert sein.",
+        "character": "Schätzungspunkt muss ein Zeichenwert sein.",
+        "empty": "Schätzungswert darf nicht leer sein.",
+        "already_exists": "Schätzungswert existiert bereits.",
+        "unsaved_changes": "Sie haben ungespeicherte Änderungen. Bitte speichern Sie diese, bevor Sie auf Fertig klicken"
+      }
     },
     "automations": {
       "label": "Automatisierung",

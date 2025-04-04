@@ -50,7 +50,7 @@ const WorkspaceInvitationPage = observer(() => {
       })
       .then(() => {
         if (email === currentUser?.email) {
-          router.push("/invitations");
+          router.push(`/${invitationDetail.workspace.slug}`);
         } else {
           router.push(`/?${searchParams.toString()}`);
         }
