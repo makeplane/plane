@@ -4,6 +4,7 @@ import { FC, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronLeft } from "lucide-react";
 // types
+import { useTranslation } from "@plane/i18n";
 import { IEstimateFormData, TEstimateSystemKeys, TEstimatePointsObject, TEstimateTypeError } from "@plane/types";
 // ui
 import { Button, EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
@@ -26,6 +27,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
   const { workspaceSlug, projectId, isOpen, handleClose } = props;
   // hooks
   const { createEstimate } = useProjectEstimates();
+  const { t } = useTranslation();
   // states
   const [estimateSystem, setEstimateSystem] = useState<TEstimateSystemKeys>(EEstimateSystem.POINTS);
   const [estimatePoints, setEstimatePoints] = useState<TEstimatePointsObject[] | undefined>(undefined);
@@ -95,16 +97,16 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
         setButtonLoader(false);
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Estimate created",
-          message: "A new estimate has been added in your project.",
+          title: t("project_settings.estimates.toasts.created.success.title"),
+          message: t("project_settings.estimates.toasts.created.success.message"),
         });
         handleClose();
       } catch (error) {
         setButtonLoader(false);
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Estimate creation failed",
-          message: "We were unable to create the new estimate, please try again.",
+          title: t("project_settings.estimates.toasts.created.error.title"),
+          message: t("project_settings.estimates.toasts.created.error.message"),
         });
       }
     } else {
@@ -119,8 +121,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
             delete newError[currentKey];
           } else {
             newError[currentKey].message =
-              newError[currentKey].message ||
-              "Estimate point can't be empty. Enter a value in each field or remove those you don't have values for.";
+              newError[currentKey].message || t("project_settings.estimates.validation.remove_empty");
           }
         });
         return newError;

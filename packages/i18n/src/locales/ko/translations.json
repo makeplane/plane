@@ -1739,35 +1739,35 @@
     },
     "estimates": {
       "label": "추정",
-      "title": "내 프로젝트에 추정 활성화",
-      "description": "팀의 복잡성과 업무량을 전달하는 데 도움이 됩니다.",
+      "title": "프로젝트 추정 활성화",
+      "description": "팀의 복잡성과 작업량을 전달하는 데 도움이 됩니다.",
       "no_estimate": "추정 없음",
       "create": {
-        "custom": "사용자 정의",
+        "custom": "사용자 지정",
         "start_from_scratch": "처음부터 시작",
         "choose_template": "템플릿 선택",
         "choose_estimate_system": "추정 시스템 선택",
-        "enter_estimate_point": "추정 포인트 입력"
+        "enter_estimate_point": "추정 입력"
       },
       "toasts": {
         "created": {
           "success": {
-            "title": "추정 포인트 생성됨",
-            "message": "추정 포인트가 성공적으로 생성되었습니다"
+            "title": "추정 생성됨",
+            "message": "추정이 성공적으로 생성되었습니다"
           },
           "error": {
-            "title": "추정 포인트 생성 실패",
-            "message": "새 추정 포인트를 생성할 수 없습니다. 다시 시도해주세요."
+            "title": "추정 생성 실패",
+            "message": "새 추정을 생성할 수 없습니다. 다시 시도해 주세요."
           }
         },
         "updated": {
           "success": {
             "title": "추정 수정됨",
-            "message": "프로젝트의 추정 포인트가 업데이트되었습니다."
+            "message": "프로젝트의 추정이 업데이트되었습니다."
           },
           "error": {
             "title": "추정 수정 실패",
-            "message": "추정을 수정할 수 없습니다. 다시 시도해주세요"
+            "message": "추정을 수정할 수 없습니다. 다시 시도해 주세요"
           }
         },
         "enabled": {
@@ -1783,31 +1783,32 @@
           },
           "error": {
             "title": "오류!",
-            "message": "추정을 비활성화할 수 없습니다. 다시 시도해주세요"
+            "message": "추정을 비활성화할 수 없습니다. 다시 시도해 주세요"
           }
         }
       },
       "validation": {
-        "min_length": "추정 포인트는 0보다 커야 합니다.",
-        "unable_to_process": "요청을 처리할 수 없습니다. 다시 시도해주세요.",
-        "numeric": "추정 포인트는 숫자여야 합니다.",
-        "character": "추정 포인트는 문자여야 합니다.",
-        "empty": "추정 값은 비워둘 수 없습니다.",
+        "min_length": "추정은 0보다 커야 합니다.",
+        "unable_to_process": "요청을 처리할 수 없습니다. 다시 시도해 주세요.",
+        "numeric": "추정은 숫자 값이어야 합니다.",
+        "character": "추정은 문자 값이어야 합니다.",
+        "empty": "추정 값은 비어있을 수 없습니다.",
         "already_exists": "추정 값이 이미 존재합니다.",
-        "unsaved_changes": "저장되지 않은 변경사항이 있습니다. 완료를 클릭하기 전에 저장해주세요"
+        "unsaved_changes": "저장되지 않은 변경 사항이 있습니다. 완료를 클릭하기 전에 저장하세요",
+        "remove_empty": "추정은 비어있을 수 없습니다. 각 필드에 값을 입력하거나 값이 없는 필드를 제거하세요."
       }
     },
     "automations": {
       "label": "자동화",
       "auto-archive": {
-        "title": "닫힌 작업 항목 자동 아카이브",
-        "description": "Plane은 완료되거나 취소된 작업 항목을 자동으로 아카이브합니다.",
-        "duration": "닫힌 작업 항목을 자동 아카이브"
+        "title": "완료된 작업 항목 자동 보관",
+        "description": "Plane은 완료되거나 취소된 작업 항목을 자동으로 보관합니다.",
+        "duration": "다음 기간 동안 닫힌 작업 항목 자동 보관"
       },
       "auto-close": {
         "title": "작업 항목 자동 닫기",
         "description": "Plane은 완료되거나 취소되지 않은 작업 항목을 자동으로 닫습니다.",
-        "duration": "비활성 상태인 작업 항목 자동 닫기",
+        "duration": "다음 기간 동안 비활성 작업 항목 자동 닫기",
         "auto_close_status": "자동 닫기 상태"
       }
     },

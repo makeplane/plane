@@ -2,7 +2,9 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Triangle } from "lucide-react";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { EEstimateSystem } from "@plane/types/src/enums";
+import { convertMinutesToHoursMinutesString } from "@/helpers/date-time.helper";
+import { useIssueDetail, useProjectEstimates } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent, IssueLink } from "./";
 
@@ -14,8 +16,17 @@ export const IssueEstimateActivity: FC<TIssueEstimateActivity> = observer((props
   const {
     activity: { getActivityById },
   } = useIssueDetail();
+  const { currentActiveEstimate } = useProjectEstimates();
 
   const activity = getActivityById(activityId);
+
+  const renderValue = (value: string) => {
+    const isTinmeEstimate = currentActiveEstimate?.type === EEstimateSystem.TIME;
+    if (isTinmeEstimate) {
+      return convertMinutesToHoursMinutesString(Number(value));
+    }
+    return value;
+  };
 
   if (!activity) return <></>;
 
@@ -26,8 +37,8 @@ export const IssueEstimateActivity: FC<TIssueEstimateActivity> = observer((props
       ends={ends}
     >
       <>
-        {activity.new_value ? `set the estimate point to ` : `removed the estimate point `}
-        {activity.new_value ? activity.new_value : activity?.old_value || ""}
+        {activity.new_value ? `set the estimate to ` : `removed the estimate `}
+        {activity.new_value ? renderValue(activity.new_value) : renderValue(activity?.old_value || "")}
         {showIssue && (activity.new_value ? ` to ` : ` from `)}
         {showIssue && <IssueLink activityId={activityId} />}.
       </>

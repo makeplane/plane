@@ -1736,35 +1736,35 @@
     },
     "estimates": {
       "label": "Stime",
-      "title": "Abilita stime per il mio progetto",
-      "description": "Aiutano a comunicare la complessità e il carico di lavoro del team.",
+      "title": "Abilita le stime per il mio progetto",
+      "description": "Ti aiutano a comunicare la complessità e il carico di lavoro del team.",
       "no_estimate": "Nessuna stima",
       "create": {
         "custom": "Personalizzato",
         "start_from_scratch": "Inizia da zero",
         "choose_template": "Scegli un modello",
-        "choose_estimate_system": "Scegli un sistema di stime",
-        "enter_estimate_point": "Inserisci punto di stima"
+        "choose_estimate_system": "Scegli un sistema di stima",
+        "enter_estimate_point": "Inserisci stima"
       },
       "toasts": {
         "created": {
           "success": {
-            "title": "Punto di stima creato",
-            "message": "Il punto di stima è stato creato con successo"
+            "title": "Stima creata",
+            "message": "La stima è stata creata con successo"
           },
           "error": {
-            "title": "Creazione del punto di stima fallita",
-            "message": "Non siamo riusciti a creare il nuovo punto di stima, per favore riprova."
+            "title": "Creazione stima fallita",
+            "message": "Non siamo riusciti a creare la nuova stima, riprova."
           }
         },
         "updated": {
           "success": {
             "title": "Stima modificata",
-            "message": "Il punto di stima è stato aggiornato nel tuo progetto."
+            "message": "La stima è stata aggiornata nel tuo progetto."
           },
           "error": {
-            "title": "Modifica della stima fallita",
-            "message": "Non siamo riusciti a modificare la stima, per favore riprova"
+            "title": "Modifica stima fallita",
+            "message": "Non siamo riusciti a modificare la stima, riprova"
           }
         },
         "enabled": {
@@ -1780,31 +1780,32 @@
           },
           "error": {
             "title": "Errore!",
-            "message": "Non è stato possibile disabilitare la stima. Per favore riprova"
+            "message": "Impossibile disabilitare la stima. Riprova"
           }
         }
       },
       "validation": {
-        "min_length": "Il punto di stima deve essere maggiore di 0.",
-        "unable_to_process": "Non siamo in grado di elaborare la tua richiesta, per favore riprova.",
-        "numeric": "Il punto di stima deve essere un valore numerico.",
-        "character": "Il punto di stima deve essere un valore carattere.",
+        "min_length": "La stima deve essere maggiore di 0.",
+        "unable_to_process": "Non possiamo elaborare la tua richiesta, riprova.",
+        "numeric": "La stima deve essere un valore numerico.",
+        "character": "La stima deve essere un valore di carattere.",
         "empty": "Il valore della stima non può essere vuoto.",
         "already_exists": "Il valore della stima esiste già.",
-        "unsaved_changes": "Hai delle modifiche non salvate, salvale prima di cliccare su fatto"
+        "unsaved_changes": "Hai delle modifiche non salvate. Salva prima di cliccare su Fatto",
+        "remove_empty": "La stima non può essere vuota. Inserisci un valore in ogni campo o rimuovi quelli per cui non hai valori."
       }
     },
     "automations": {
-      "label": "Automazioni",
+      "label": "Automatizzazioni",
       "auto-archive": {
         "title": "Archivia automaticamente gli elementi di lavoro chiusi",
-        "description": "Plane archivierà automaticamente gli elementi di lavoro che sono stati completati o annullati.",
-        "duration": "Archivia automaticamente gli elementi di lavoro chiusi da"
+        "description": "Plane archiverà automaticamente gli elementi di lavoro che sono stati completati o annullati.",
+        "duration": "Archivia automaticamente gli elementi di lavoro chiusi per"
       },
       "auto-close": {
         "title": "Chiudi automaticamente gli elementi di lavoro",
         "description": "Plane chiuderà automaticamente gli elementi di lavoro che non sono stati completati o annullati.",
-        "duration": "Chiudi automaticamente gli elementi di lavoro inattivi da",
+        "duration": "Chiudi automaticamente gli elementi di lavoro inattivi per",
         "auto_close_status": "Stato di chiusura automatica"
       }
     },

@@ -1791,7 +1791,8 @@
         "character": "Bod odhadu musí byť znakovou hodnotou.",
         "empty": "Hodnota odhadu nemôže byť prázdna.",
         "already_exists": "Hodnota odhadu už existuje.",
-        "unsaved_changes": "Máte neuložené zmeny. Prosím, uložte ich pred kliknutím na hotovo"
+        "unsaved_changes": "Máte neuložené zmeny. Prosím, uložte ich pred kliknutím na hotovo",
+        "remove_empty": "Odhad nemôže byť prázdny. Zadajte hodnotu do každého poľa alebo odstráňte prázdne polia."
       }
     },
     "automations": {
