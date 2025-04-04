@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { Controller, useForm } from "react-hook-form";
-import useSWR from "swr";
 // icons
 import { CircleCheck } from "lucide-react";
 // plane imports
@@ -49,7 +48,7 @@ const ForgotPasswordPage = observer(() => {
   const { t } = useTranslation();
   // store hooks
   const { captureEvent } = useEventTracker();
-  const { fetchInstanceConfigurations, formattedConfig } = useInstance();
+  const { config } = useInstance();
   // hooks
   const { resolvedTheme } = useTheme();
   // timer
@@ -95,10 +94,8 @@ const ForgotPasswordPage = observer(() => {
       });
   };
 
-  useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
-
   // derived values
-  const enableSignUpConfig = formattedConfig?.ENABLE_SIGNUP ?? "";
+  const enableSignUpConfig = config?.enable_signup ?? false;
 
   const logo = resolvedTheme === "light" ? BlackHorizontalLogo : WhiteHorizontalLogo;
 
