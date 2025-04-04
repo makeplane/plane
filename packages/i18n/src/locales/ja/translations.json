@@ -2430,5 +2430,11 @@
   "module": {
     "label": "{count, plural, one {モジュール} other {モジュール}}",
     "no_module": "モジュールなし"
+  },
+
+  "description_versions": {
+    "last_edited_by": "最終編集者",
+    "previously_edited_by": "以前の編集者",
+    "edited_by": "編集者"
   }
 }

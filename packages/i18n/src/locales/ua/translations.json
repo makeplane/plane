@@ -2379,12 +2379,20 @@
       "manual": "Вручну"
     }
   },
+
   "cycle": {
     "label": "{count, plural, one {Цикл} few {Цикли} other {Циклів}}",
     "no_cycle": "Немає циклу"
   },
+
   "module": {
     "label": "{count, plural, one {Модуль} few {Модулі} other {Модулів}}",
     "no_module": "Немає модуля"
+  },
+
+  "description_versions": {
+    "last_edited_by": "Останнє редагування",
+    "previously_edited_by": "Раніше відредаговано",
+    "edited_by": "Відредаговано"
   }
 }

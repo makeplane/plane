@@ -41,6 +41,7 @@ export enum EIssueGroupBYServerToProperty {
 export enum EIssueServiceType {
   ISSUES = "issues",
   EPICS = "epics",
+  WORK_ITEMS = "work-items",
 }
 
 export enum EIssuesStoreType {

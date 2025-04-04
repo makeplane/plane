@@ -2432,5 +2432,11 @@
   "module": {
     "label": "{count, plural, one {模組} other {模組}}",
     "no_module": "無模組"
+  },
+
+  "description_versions": {
+    "last_edited_by": "最後編輯者",
+    "previously_edited_by": "先前編輯者",
+    "edited_by": "編輯者"
   }
 }

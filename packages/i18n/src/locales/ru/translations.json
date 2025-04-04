@@ -2430,5 +2430,11 @@
   "module": {
     "label": "{count, plural, one {Модуль} other {Модули}}",
     "no_module": "Нет модуля"
+  },
+
+  "description_versions": {
+    "last_edited_by": "Последнее редактирование",
+    "previously_edited_by": "Ранее отредактировано",
+    "edited_by": "Отредактировано"
   }
 }

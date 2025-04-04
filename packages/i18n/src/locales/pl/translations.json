@@ -2380,12 +2380,20 @@
       "manual": "Ręcznie"
     }
   },
+
   "cycle": {
     "label": "{count, plural, one {Cykl} few {Cykle} other {Cyklów}}",
     "no_cycle": "Brak cyklu"
   },
+
   "module": {
     "label": "{count, plural, one {Moduł} few {Moduły} other {Modułów}}",
     "no_module": "Brak modułu"
+  },
+
+  "description_versions": {
+    "last_edited_by": "Ostatnio edytowane przez",
+    "previously_edited_by": "Wcześniej edytowane przez",
+    "edited_by": "Edytowane przez"
   }
 }
