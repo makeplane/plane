@@ -13,7 +13,7 @@ type CustomPropertySection = {
   page?: number;
   total_pages?: number;
   total_results?: number;
-  searchQuery?: string;
+  query?: string;
 };
 
 type CustomPropertiesState = {
@@ -33,7 +33,7 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
 
   const [mainPreviewEnabled, setMainPreviewEnabled] = useState(true);
   const [groupPreviewEnabled, setGroupPreviewEnabled] = useState<Record<string, boolean>>({});
-  const [customProperties, setCustomProperties] = useState<CustomPropertiesState>({});
+  const [customProperties, setCustomProperties] = useState({});
 
   const fetchCustomProperties = async (
     groupKey?: string,
@@ -51,7 +51,7 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
 
       // If no specific section, initialize all sections
       if (!groupKey) {
-        const initialState: CustomPropertiesState = Object.keys(data).reduce((acc, key) => {
+        const initialState = Object.keys(data).reduce((acc, key) => {
           acc[key] = {
             ...(data[key] || {}),
             query: ''
@@ -135,12 +135,12 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
         handleIsPreviewEnabled={() => setMainPreviewEnabled(!mainPreviewEnabled)}
       />
       {mainPreviewEnabled && (
-        <div>
+        <>
           {Object.keys(filteredGroupOptions).map((groupKey) => {
             const groupedSection = filteredGroupOptions[groupKey];
             const properties = filteredGroupOptions[groupKey].data || [];
             return (
-              <div key={groupKey} className="mb-2">
+              <div key={groupKey}>
                 <FilterHeader
                   title={groupKey}
                   isPreviewEnabled={groupPreviewEnabled[groupKey]}
@@ -158,14 +158,14 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
                           title={property}
                         />
                       ))}
-                    {groupedSection.page < groupedSection.total_pages && (
+                    {groupedSection.page < groupedSection.total_pages && properties.length ? (
                       <button
                         onClick={() => fetchNextPage(groupKey)}
                         className="ml-8 text-xs font-medium text-custom-primary-100 cursor-pointer"
                       >
                         View More
                       </button>
-                    )}
+                    ) : null}
                     {
                       properties.length == 0 ?
                       <p className="text-xs italic text-custom-text-400">No Matches Found</p> : null
@@ -175,7 +175,7 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
               </div>
             );
           })}
-        </div>
+        </>
       )}
     </>
   );
