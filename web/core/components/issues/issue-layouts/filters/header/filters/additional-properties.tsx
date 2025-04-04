@@ -8,6 +8,14 @@ import { WorkspaceService } from "@/services/workspace.service";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { FilterSearch } from "./search-filters";
 
+type AdditionalPropertyProps = {
+  data: string[];
+  page?: number;
+  total_pages?: number;
+  total_results?: number;
+  searchQuery?: string;
+};
+
 type Props = {
   appliedFilters: string[] | null;
   handleUpdate: (val: string) => void;
@@ -21,7 +29,7 @@ export const FilterAdditionalProperties: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery, additionalPropertyTitle, additionalPropertyKey } = props;
   const workspaceService = new WorkspaceService(API_BASE_URL);
 
-  const [options, setOptions] = useState({});
+  const [options, setOptions] = useState<any>({});
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
   const fetchOptions = async (query = '', page = 1) => {

@@ -54,7 +54,7 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
       if (!groupKey) {
         const initialState: CustomPropertiesState = Object.keys(data).reduce((acc, key) => {
           acc[key] = {
-            ...data[key],
+            ...(data[key] || {}),
             searchQuery: ''
           };
           return acc;
@@ -71,10 +71,10 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
         setCustomProperties(prev => ({
           ...prev,
           [groupKey]: {
-            ...data[groupKey],
+            ...(data[groupKey] || {}),
             data: page > 1
-              ? [...(prev[groupKey]?.data || []), ...data[groupKey].data]
-              : data[groupKey].data,
+              ? [...(prev[groupKey]?.data || []), ...(data[groupKey]?.data || [])]
+              : (data[groupKey]?.data || []),
             searchQuery: query || ''
           }
         }));
@@ -94,14 +94,6 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
     const currentSection = customProperties[groupKey];
     const nextPage = currentSection.page + 1;
 
-    // setCustomProperties(prev => ({
-    //   ...prev,
-    //   [groupKey]: {
-    //     ...prev[groupKey],
-    //     page: nextPage,
-    //   }
-    // }));
-
     await fetchCustomProperties(
       groupKey,
       currentSection.searchQuery || '',
@@ -109,21 +101,12 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
     );
   };
 
-  const handleSectionSearch = useCallback(
-    async (groupKey: string, query: string) => {
-      // setCustomProperties(prev => ({
-      //   ...prev,
-      //   [groupKey]: {
-      //     ...prev[groupKey],
-      //     query,
-      //   }
-      // }));
-
+  const handleSectionSearch = (async (groupKey: string, query: string) => {
       await fetchCustomProperties(groupKey, query, 1);
-    },
-    [fetchCustomProperties] // Dependencies
+    });
+    // [fetchCustomProperties] // Dependencies
     // [setCustomProperties, fetchCustomProperties] // Dependencies
-  );
+  // );
 
   const filteredGroupOptions = useMemo(() => {
     return Object.keys(customProperties).reduce<Record<string, any[]>>((acc, groupKey) => {
