@@ -2429,5 +2429,11 @@
   "module": {
     "label": "{count, plural, one {Modul} few {Moduly} other {Modulov}}",
     "no_module": "Žiadny modul"
+  },
+
+  "description_versions": {
+    "last_edited_by": "Naposledy upravené používateľom",
+    "previously_edited_by": "Predtým upravené používateľom",
+    "edited_by": "Upravené používateľom"
   }
 }

@@ -638,7 +638,8 @@
       "clear_sorting": "Clear sorting",
       "show_weekends": "Show weekends",
       "enable": "Enable",
-      "disable": "Disable"
+      "disable": "Disable",
+      "copy_markdown": "Copy markdown"
     },
     "name": "Name",
     "discard": "Discard",
@@ -2270,6 +2271,12 @@
   "module": {
     "label": "{count, plural, one {Module} other {Modules}}",
     "no_module": "No module"
+  },
+
+  "description_versions": {
+    "last_edited_by": "Last edited by",
+    "previously_edited_by": "Previously edited by",
+    "edited_by": "Edited by"
   },
 
   "intake_forms": {

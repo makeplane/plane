@@ -24,7 +24,7 @@ from plane.app.views import (
     IssueAttachmentV2Endpoint,
     IssueBulkUpdateDateEndpoint,
     IssueVersionEndpoint,
-    IssueDescriptionVersionEndpoint,
+    WorkItemDescriptionVersionEndpoint,
     IssueMetaEndpoint,
     IssueDetailIdentifierEndpoint,
 )
@@ -257,22 +257,22 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/versions/",
         IssueVersionEndpoint.as_view(),
-        name="page-versions",
+        name="issue-versions",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/versions/<uuid:pk>/",
         IssueVersionEndpoint.as_view(),
-        name="page-versions",
+        name="issue-versions",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/description-versions/",
-        IssueDescriptionVersionEndpoint.as_view(),
-        name="page-versions",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:work_item_id>/description-versions/",
+        WorkItemDescriptionVersionEndpoint.as_view(),
+        name="work-item-versions",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/description-versions/<uuid:pk>/",
-        IssueDescriptionVersionEndpoint.as_view(),
-        name="page-versions",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:work_item_id>/description-versions/<uuid:pk>/",
+        WorkItemDescriptionVersionEndpoint.as_view(),
+        name="work-item-versions",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/meta/",

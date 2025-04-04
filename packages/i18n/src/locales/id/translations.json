@@ -2424,5 +2424,11 @@
   "module": {
     "label": "{count, plural, one {Modul} other {Modul}}",
     "no_module": "Tidak ada modul"
+  },
+
+  "description_versions": {
+    "last_edited_by": "Terakhir disunting oleh",
+    "previously_edited_by": "Sebelumnya disunting oleh",
+    "edited_by": "Disunting oleh"
   }
 }

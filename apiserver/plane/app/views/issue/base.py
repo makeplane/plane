@@ -635,7 +635,7 @@ class IssueViewSet(BaseViewSet):
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         recent_visited_task.delay(
@@ -704,7 +704,7 @@ class IssueViewSet(BaseViewSet):
             )
 
         current_instance = json.dumps(
-            IssueSerializer(issue).data, cls=DjangoJSONEncoder
+            IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder
         )
         estimate_type = Project.objects.filter(
             workspace__slug=slug,
@@ -1444,7 +1444,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         recent_visited_task.delay(

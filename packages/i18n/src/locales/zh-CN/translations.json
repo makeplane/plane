@@ -2421,5 +2421,11 @@
   "module": {
     "label": "{count, plural, one {模块} other {模块}}",
     "no_module": "无模块"
+  },
+
+  "description_versions": {
+    "last_edited_by": "最后编辑者",
+    "previously_edited_by": "之前编辑者",
+    "edited_by": "编辑者"
   }
 }

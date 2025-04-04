@@ -123,7 +123,7 @@ export type TBulkOperationsPayload = {
 
 export type TIssueDetailWidget = "sub-issues" | "relations" | "links" | "attachments" | TWorkItemDetailExtended;
 
-export type TIssueServiceType = EIssueServiceType.ISSUES | EIssueServiceType.EPICS;
+export type TIssueServiceType = EIssueServiceType.ISSUES | EIssueServiceType.EPICS | EIssueServiceType.WORK_ITEMS;
 
 export interface IPublicIssue
   extends Pick<

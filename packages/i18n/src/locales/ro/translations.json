@@ -2424,5 +2424,11 @@
   "module": {
     "label": "{count, plural, one {Modul} other {Module}}",
     "no_module": "Niciun modul"
+  },
+
+  "description_versions": {
+    "last_edited_by": "Ultima editare de către",
+    "previously_edited_by": "Editat anterior de către",
+    "edited_by": "Editat de"
   }
 }

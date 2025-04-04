@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { EditorRefApi } from "@plane/editor";
 import { TNameDescriptionLoader } from "@plane/types";
 // components
+import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 import {
   IssueActivity,
   NameDescriptionUpdateStatus,
@@ -24,8 +27,12 @@ import useSize from "@/hooks/use-window-size";
 import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
 import { IssueTypeSwitcher } from "@/plane-web/components/issues";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
-// types
+// services
+import { WorkItemVersionService } from "@/services/issue";
+// local imports
 import { TIssueOperations } from "./root";
+// services init
+const workItemVersionService = new WorkItemVersionService();
 
 type Props = {
   workspaceSlug: string;
@@ -38,6 +45,8 @@ type Props = {
 
 export const IssueMainContent: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isArchived } = props;
+  // refs
+  const editorRef = useRef<EditorRefApi>(null);
   // states
   const [isSubmitting, setIsSubmitting] = useState<TNameDescriptionLoader>("saved");
   // hooks
@@ -49,11 +58,9 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
   } = useIssueDetail();
   const { getProjectById } = useProject();
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
-
   // derived values
   const projectDetails = getProjectById(projectId);
   const issue = issueId ? getIssueById(issueId) : undefined;
-
   // debounced duplicate issues swr
   const { duplicateIssues } = useDebouncedDuplicateIssues(
     workspaceSlug,
@@ -114,31 +121,55 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           isSubmitting={isSubmitting}
           setIsSubmitting={(value) => setIsSubmitting(value)}
           issueOperations={issueOperations}
-          disabled={!isEditable}
+          disabled={isArchived || !isEditable}
           value={issue.name}
           containerClassName="-ml-3"
         />
 
         <IssueDescriptionInput
+          editorRef={editorRef}
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
           issueId={issue.id}
           initialValue={issue.description_html}
-          disabled={!isEditable}
+          disabled={isArchived || !isEditable}
           issueOperations={issueOperations}
           setIsSubmitting={(value) => setIsSubmitting(value)}
           containerClassName="-ml-3 border-none"
         />
 
-        {currentUser && (
-          <IssueReaction
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={issueId}
-            currentUser={currentUser}
-            disabled={isArchived}
-          />
-        )}
+        <div className="flex items-center justify-between gap-2">
+          {currentUser && (
+            <IssueReaction
+              className="flex-shrink-0"
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              issueId={issueId}
+              currentUser={currentUser}
+              disabled={isArchived}
+            />
+          )}
+          {isEditable && (
+            <DescriptionVersionsRoot
+              className="flex-shrink-0"
+              entityInformation={{
+                createdAt: new Date(issue.created_at),
+                createdBy: issue.created_by,
+                id: issueId,
+                isRestoreDisabled: !isEditable || isArchived,
+              }}
+              fetchHandlers={{
+                listDescriptionVersions: (issueId) =>
+                  workItemVersionService.listDescriptionVersions(workspaceSlug, projectId, issueId),
+                retrieveDescriptionVersion: (issueId, versionId) =>
+                  workItemVersionService.retrieveDescriptionVersion(workspaceSlug, projectId, issueId, versionId),
+              }}
+              handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
+              projectId={projectId}
+              workspaceSlug={workspaceSlug}
+            />
+          )}
+        </div>
       </div>
 
       <IssueDetailWidgets

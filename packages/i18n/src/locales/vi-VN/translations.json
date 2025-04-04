@@ -2378,12 +2378,20 @@
       "manual": "Thủ công"
     }
   },
+
   "cycle": {
     "label": "{count, plural, one {chu kỳ} other {chu kỳ}}",
     "no_cycle": "Không có chu kỳ"
   },
+
   "module": {
     "label": "{count, plural, one {mô-đun} other {mô-đun}}",
     "no_module": "Không có mô-đun"
+  },
+
+  "description_versions": {
+    "last_edited_by": "Chỉnh sửa lần cuối bởi",
+    "previously_edited_by": "Trước đây được chỉnh sửa bởi",
+    "edited_by": "Được chỉnh sửa bởi"
   }
 }

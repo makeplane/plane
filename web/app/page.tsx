@@ -6,7 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 // ui
 import { useTheme } from "next-themes";
-import useSWR from "swr";
 // components
 import { NAVIGATE_TO_SIGNUP } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -34,12 +33,9 @@ const HomePage = observer(() => {
   // hooks
   const { captureEvent } = useEventTracker();
   // store
-  const { fetchInstanceConfigurations, formattedConfig } = useInstance();
-
-  useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
-
+  const { config } = useInstance();
   // derived values
-  const enableSignUpConfig = formattedConfig?.ENABLE_SIGNUP ?? "";
+  const enableSignUpConfig = config?.enable_signup ?? false;
 
   const logo = resolvedTheme === "light" ? BlackHorizontalLogo : WhiteHorizontalLogo;
 

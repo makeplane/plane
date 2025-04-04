@@ -2429,5 +2429,11 @@
   "module": {
     "label": "{count, plural, one {Modulo} other {Moduli}}",
     "no_module": "Nessun modulo"
+  },
+
+  "description_versions": {
+    "last_edited_by": "Ultima modifica di",
+    "previously_edited_by": "Precedentemente modificato da",
+    "edited_by": "Modificato da"
   }
 }
