@@ -141,7 +141,7 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
             const groupedSection = filteredGroupOptions[groupKey];
             const properties = filteredGroupOptions[groupKey].data || [];
             return (
-              <div key={groupKey} className="pl-2">
+              <div key={groupKey} className="mb-2">
                 <FilterHeader
                   title={groupKey}
                   isPreviewEnabled={groupPreviewEnabled[groupKey]}
@@ -167,6 +167,10 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
                         View More
                       </button>
                     )}
+                    {
+                      properties.length == 0 ?
+                      <p className="text-xs italic text-custom-text-400">No Matches Found</p> : null
+                    }
                   </div>
                 )}
               </div>

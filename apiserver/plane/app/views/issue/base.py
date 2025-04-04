@@ -1245,13 +1245,13 @@ class SearchAPIEndpoint(BaseAPIView):
         filter_criteria = {f"{field}__icontains": query} if query else {}
 
         values = Issue.objects.filter(
-            Q(workspace__slug=slug, project_id=project_id) & Q(**filter_criteria)
+            Q(workspace__slug=slug) & Q(**filter_criteria)
         ).values_list(field, flat=True)
 
         unique_values = list(set(filter(None, values)))  # Remove duplicates and nulls
 
         paginator = PageNumberPagination()
-        paginator.page_size = int(request.GET.get("limit", 20))  # Default limit = 10
+        paginator.page_size = int(request.GET.get("limit", 10))  # Default limit = 10
         paginated_values = paginator.paginate_queryset(unique_values, request)
 
         # Custom pagination response

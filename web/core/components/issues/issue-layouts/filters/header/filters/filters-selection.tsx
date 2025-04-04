@@ -264,7 +264,6 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
             <FilterCustomProperty
               appliedFilters={filters.custom_properties ?? null}
               handleUpdate={(val) => handleFiltersUpdate("custom_properties", val)}
-              // handleUpdate={(val) => handleFiltersUpdate("custom_properties", null, val)}
               searchQuery={filtersSearchQuery}
             />
           </div>

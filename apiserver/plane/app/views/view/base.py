@@ -342,8 +342,8 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 "data": [],
                 "total_results": 0,
                 "limit": 5,
-                "total_pages": 0,
-                "page": 0
+                "total_pages": 1,
+                "page": 1
             }
         
         for item in unique_values_list:
