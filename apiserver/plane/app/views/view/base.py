@@ -341,7 +341,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             response_data[field] = {
                 "data": [],
                 "total_results": 0,
-                "limit": 5,
+                "limit": 10,
                 "total_pages": 1,
                 "page": 1
             }

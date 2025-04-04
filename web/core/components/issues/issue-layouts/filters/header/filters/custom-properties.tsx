@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useMemo, useState, useEffect, useCallback } from "react";
-// import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { WorkspaceService } from "@/services/workspace.service";

@@ -1224,7 +1224,7 @@ class SearchAPIEndpoint(BaseAPIView):
     webhook_event = "issue"
     def get(self, request, slug):
         
-        allowed_fields = ["hub_code", "worker_code", "reference_number", "trip_reference_number", "customer_code", "vendor_code"]
+        allowed_fields = ["hub_code", "hub_name", "worker_code", "worker_name", "reference_number", "trip_reference_number", "customer_code", "customer_name", "vendor_code", "vendor_name"]
 
         field = request.GET.get("field")  # Get the single field value
         query = request.GET.get("query")
