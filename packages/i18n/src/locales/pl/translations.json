@@ -1715,10 +1715,10 @@
     "estimates": {
       "label": "Szacunki",
       "title": "Włącz szacunki dla mojego projektu",
-      "description": "Pomagają w komunikowaniu złożoności i obciążenia zespołu.",
-      "no_estimate": "Brak szacunku",
+      "description": "Pomagają w komunikacji o złożoności i obciążeniu zespołu.",
+      "no_estimate": "Bez szacunku",
       "create": {
-        "custom": "Własne",
+        "custom": "Niestandardowy",
         "start_from_scratch": "Zacznij od zera",
         "choose_template": "Wybierz szablon",
         "choose_estimate_system": "Wybierz system szacowania",
@@ -1727,22 +1727,22 @@
       "toasts": {
         "created": {
           "success": {
-            "title": "Utworzono punkt szacunkowy",
-            "message": "Punkt szacunkowy został pomyślnie utworzony"
+            "title": "Utworzono szacunek",
+            "message": "Szacunek został utworzony pomyślnie"
           },
           "error": {
-            "title": "Nie udało się utworzyć punktu szacunkowego",
-            "message": "Nie mogliśmy utworzyć nowego punktu szacunkowego, spróbuj ponownie."
+            "title": "Błąd tworzenia szacunku",
+            "message": "Nie udało się utworzyć nowego szacunku, spróbuj ponownie."
           }
         },
         "updated": {
           "success": {
-            "title": "Zmodyfikowano szacunek",
-            "message": "Punkt szacunkowy został zaktualizowany w Twoim projekcie."
+            "title": "Zaktualizowano szacunek",
+            "message": "Szacunek został zaktualizowany w Twoim projekcie."
           },
           "error": {
-            "title": "Modyfikacja szacunku nie powiodła się",
-            "message": "Nie mogliśmy zmodyfikować szacunku, spróbuj ponownie"
+            "title": "Błąd aktualizacji szacunku",
+            "message": "Nie udało się zaktualizować szacunku, spróbuj ponownie"
           }
         },
         "enabled": {
@@ -1758,7 +1758,7 @@
           },
           "error": {
             "title": "Błąd!",
-            "message": "Nie można było wyłączyć szacunku. Spróbuj ponownie"
+            "message": "Nie udało się wyłączyć szacunków. Spróbuj ponownie"
           }
         }
       },
@@ -1769,21 +1769,22 @@
         "character": "Punkt szacunkowy musi być znakiem.",
         "empty": "Wartość szacunku nie może być pusta.",
         "already_exists": "Wartość szacunku już istnieje.",
-        "unsaved_changes": "Masz niezapisane zmiany. Zapisz je przed kliknięciem 'gotowe'"
+        "unsaved_changes": "Masz niezapisane zmiany. Zapisz je przed kliknięciem 'gotowe'",
+        "remove_empty": "Szacunek nie może być pusty. Wprowadź wartość w każde pole lub usuń te, dla których nie masz wartości."
       }
     },
     "automations": {
-      "label": "Automatyzacje",
+      "label": "Automatyzacja",
       "auto-archive": {
-        "title": "Automatycznie archiwizuj zamknięte elementy",
-        "description": "Plane będzie archiwizował ukończone lub anulowane elementy.",
+        "title": "Automatyczna archiwizacja zamkniętych elementów",
+        "description": "Plane będzie automatycznie archiwizował elementy, które zostały ukończone lub anulowane.",
         "duration": "Archiwizuj elementy zamknięte dłużej niż"
       },
       "auto-close": {
-        "title": "Automatycznie zamykaj elementy",
-        "description": "Plane będzie zamykać nieaktywne elementy.",
+        "title": "Automatyczne zamykanie elementów",
+        "description": "Plane będzie automatycznie zamykał elementy, które nie zostały ukończone lub anulowane.",
         "duration": "Zamknij elementy nieaktywne dłużej niż",
-        "auto_close_status": "Stan do automatycznego zamknięcia"
+        "auto_close_status": "Status automatycznego zamknięcia"
       }
     },
     "empty_state": {

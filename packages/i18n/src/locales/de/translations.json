@@ -1712,34 +1712,34 @@
     "estimates": {
       "label": "Schätzungen",
       "title": "Schätzungen für mein Projekt aktivieren",
-      "description": "Sie helfen bei der Kommunikation von Komplexität und Arbeitsbelastung des Teams.",
+      "description": "Sie helfen dir, die Komplexität und Arbeitsbelastung des Teams zu kommunizieren.",
       "no_estimate": "Keine Schätzung",
       "create": {
         "custom": "Benutzerdefiniert",
-        "start_from_scratch": "Von vorne beginnen",
-        "choose_template": "Vorlage auswählen",
-        "choose_estimate_system": "Schätzungssystem auswählen",
-        "enter_estimate_point": "Schätzungspunkt eingeben"
+        "start_from_scratch": "Von Grund auf neu",
+        "choose_template": "Vorlage wählen",
+        "choose_estimate_system": "Schätzungssystem wählen",
+        "enter_estimate_point": "Schätzung eingeben"
       },
       "toasts": {
         "created": {
           "success": {
-            "title": "Schätzungspunkt erstellt",
-            "message": "Der Schätzungspunkt wurde erfolgreich erstellt"
+            "title": "Schätzung erstellt",
+            "message": "Die Schätzung wurde erfolgreich erstellt"
           },
           "error": {
-            "title": "Erstellung des Schätzungspunkts fehlgeschlagen",
-            "message": "Der neue Schätzungspunkt konnte nicht erstellt werden, bitte versuchen Sie es erneut."
+            "title": "Schätzungserstellung fehlgeschlagen",
+            "message": "Wir konnten die neue Schätzung nicht erstellen, bitte versuche es erneut."
           }
         },
         "updated": {
           "success": {
             "title": "Schätzung geändert",
-            "message": "Der Schätzungspunkt wurde in Ihrem Projekt aktualisiert."
+            "message": "Die Schätzung wurde in deinem Projekt aktualisiert."
           },
           "error": {
-            "title": "Änderung der Schätzung fehlgeschlagen",
-            "message": "Die Schätzung konnte nicht geändert werden, bitte versuchen Sie es erneut"
+            "title": "Schätzungsänderung fehlgeschlagen",
+            "message": "Wir konnten die Schätzung nicht ändern, bitte versuche es erneut"
           }
         },
         "enabled": {
@@ -1755,32 +1755,33 @@
           },
           "error": {
             "title": "Fehler!",
-            "message": "Schätzung konnte nicht deaktiviert werden. Bitte versuchen Sie es erneut"
+            "message": "Schätzung konnte nicht deaktiviert werden. Bitte versuche es erneut"
           }
         }
       },
       "validation": {
-        "min_length": "Schätzungspunkt muss größer als 0 sein.",
-        "unable_to_process": "Ihre Anfrage konnte nicht verarbeitet werden, bitte versuchen Sie es erneut.",
-        "numeric": "Schätzungspunkt muss ein numerischer Wert sein.",
-        "character": "Schätzungspunkt muss ein Zeichenwert sein.",
-        "empty": "Schätzungswert darf nicht leer sein.",
-        "already_exists": "Schätzungswert existiert bereits.",
-        "unsaved_changes": "Sie haben ungespeicherte Änderungen. Bitte speichern Sie diese, bevor Sie auf Fertig klicken"
+        "min_length": "Die Schätzung muss größer als 0 sein.",
+        "unable_to_process": "Wir können deine Anfrage nicht verarbeiten, bitte versuche es erneut.",
+        "numeric": "Die Schätzung muss ein numerischer Wert sein.",
+        "character": "Die Schätzung muss ein Zeichenwert sein.",
+        "empty": "Der Schätzungswert darf nicht leer sein.",
+        "already_exists": "Der Schätzungswert existiert bereits.",
+        "unsaved_changes": "Du hast ungespeicherte Änderungen. Bitte speichere sie, bevor du auf Fertig klickst",
+        "remove_empty": "Die Schätzung darf nicht leer sein. Gib einen Wert in jedes Feld ein oder entferne die Felder, für die du keine Werte hast."
       }
     },
     "automations": {
-      "label": "Automatisierung",
+      "label": "Automatisierungen",
       "auto-archive": {
-        "title": "Abgeschlossene Elemente automatisch archivieren",
-        "description": "Plane archiviert abgeschlossene oder abgebrochene Elemente.",
-        "duration": "Archivieren von Elementen, die seit mehr als folgendem Zeitraum abgeschlossen sind"
+        "title": "Geschlossene Arbeitselemente automatisch archivieren",
+        "description": "Plane wird Arbeitselemente automatisch archivieren, die abgeschlossen oder abgebrochen wurden.",
+        "duration": "Arbeitselemente automatisch archivieren, die seit"
       },
       "auto-close": {
-        "title": "Elemente automatisch schließen",
-        "description": "Plane schließt inaktive Elemente.",
-        "duration": "Schließen von Elementen, die seit mehr als folgendem Zeitraum inaktiv sind",
-        "auto_close_status": "Status für automatisches Schließen"
+        "title": "Arbeitselemente automatisch schließen",
+        "description": "Plane wird Arbeitselemente automatisch schließen, die nicht abgeschlossen oder abgebrochen wurden.",
+        "duration": "Inaktive Arbeitselemente automatisch schließen seit",
+        "auto_close_status": "Status der automatischen Schließung"
       }
     },
     "empty_state": {

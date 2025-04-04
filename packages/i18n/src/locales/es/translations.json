@@ -1739,87 +1739,88 @@
     },
     "estimates": {
       "label": "Estimaciones",
-      "title": "Habilitar estimaciones para mi proyecto",
-      "description": "Ayudan a comunicar la complejidad y la carga de trabajo del equipo.",
+      "title": "Activar estimaciones para mi proyecto",
+      "description": "Te ayudan a comunicar la complejidad y la carga de trabajo del equipo.",
       "no_estimate": "Sin estimación",
       "create": {
         "custom": "Personalizado",
-        "start_from_scratch": "Empezar desde cero",
+        "start_from_scratch": "Comenzar desde cero",
         "choose_template": "Elegir una plantilla",
         "choose_estimate_system": "Elegir un sistema de estimación",
-        "enter_estimate_point": "Ingresar punto de estimación"
+        "enter_estimate_point": "Ingresar estimación"
       },
       "toasts": {
         "created": {
           "success": {
-            "title": "Punto de estimación creado",
-            "message": "El punto de estimación se ha creado exitosamente"
+            "title": "Estimación creada",
+            "message": "La estimación se ha creado correctamente"
           },
           "error": {
-            "title": "Error al crear punto de estimación",
-            "message": "No pudimos crear el nuevo punto de estimación, por favor intenta de nuevo."
+            "title": "Error al crear la estimación",
+            "message": "No pudimos crear la nueva estimación, por favor inténtalo de nuevo."
           }
         },
         "updated": {
           "success": {
             "title": "Estimación modificada",
-            "message": "El punto de estimación ha sido actualizado en tu proyecto."
+            "message": "La estimación se ha actualizado en tu proyecto."
           },
           "error": {
-            "title": "Error al modificar estimación",
-            "message": "No pudimos modificar la estimación, por favor intenta de nuevo"
+            "title": "Error al modificar la estimación",
+            "message": "No pudimos modificar la estimación, por favor inténtalo de nuevo"
           }
         },
         "enabled": {
           "success": {
             "title": "¡Éxito!",
-            "message": "Las estimaciones han sido habilitadas."
+            "message": "Las estimaciones han sido activadas."
           }
         },
         "disabled": {
           "success": {
             "title": "¡Éxito!",
-            "message": "Las estimaciones han sido deshabilitadas."
+            "message": "Las estimaciones han sido desactivadas."
           },
           "error": {
             "title": "¡Error!",
-            "message": "No se pudo deshabilitar la estimación. Por favor intenta de nuevo"
+            "message": "No se pudo desactivar la estimación. Por favor inténtalo de nuevo"
           }
         }
       },
       "validation": {
-        "min_length": "El punto de estimación debe ser mayor que 0.",
-        "unable_to_process": "No podemos procesar tu solicitud, por favor intenta de nuevo.",
-        "numeric": "El punto de estimación debe ser un valor numérico.",
-        "character": "El punto de estimación debe ser un valor de carácter.",
-        "empty": "El valor de estimación no puede estar vacío.",
-        "already_exists": "El valor de estimación ya existe.",
-        "unsaved_changes": "Tienes cambios sin guardar. Por favor guárdalos antes de hacer clic en listo"
+        "min_length": "La estimación debe ser mayor que 0.",
+        "unable_to_process": "No podemos procesar tu solicitud, por favor inténtalo de nuevo.",
+        "numeric": "La estimación debe ser un valor numérico.",
+        "character": "La estimación debe ser un valor de carácter.",
+        "empty": "El valor de la estimación no puede estar vacío.",
+        "already_exists": "El valor de la estimación ya existe.",
+        "unsaved_changes": "Tienes cambios sin guardar. Por favor guárdalos antes de hacer clic en Hecho",
+        "remove_empty": "La estimación no puede estar vacía. Ingresa un valor en cada campo o elimina aquellos para los que no tienes valores."
       }
     },
     "automations": {
       "label": "Automatizaciones",
       "auto-archive": {
-        "title": "Auto-archivar elementos de trabajo cerrados",
-        "description": "Plane archivará automáticamente los elementos de trabajo que se hayan completado o cancelado.",
-        "duration": "Auto-archivar elementos de trabajo que están cerrados por"
+        "title": "Archivar automáticamente elementos de trabajo cerrados",
+        "description": "Plane archivará automáticamente los elementos de trabajo que hayan sido completados o cancelados.",
+        "duration": "Archivar automáticamente elementos de trabajo cerrados durante"
       },
       "auto-close": {
-        "title": "Auto-cerrar elementos de trabajo",
-        "description": "Plane cerrará automáticamente los elementos de trabajo que no se hayan completado o cancelado.",
-        "duration": "Auto-cerrar elementos de trabajo que están inactivos por",
-        "auto_close_status": "Estado de auto-cierre"
+        "title": "Cerrar automáticamente elementos de trabajo",
+        "description": "Plane cerrará automáticamente los elementos de trabajo que no hayan sido completados o cancelados.",
+        "duration": "Cerrar automáticamente elementos de trabajo inactivos durante",
+        "auto_close_status": "Estado de cierre automático"
       }
     },
 
     "empty_state": {
       "labels": {
         "title": "Aún no hay etiquetas",
-        "description": "Crea etiquetas para ayudar a organizar y filtrar elementos de trabajo en tu proyecto."
+        "description": "Crea etiquetas para organizar y filtrar elementos de trabajo en tu proyecto."
       },
       "estimates": {
         "title": "Aún no hay sistemas de estimación",
-        "description": "Crea un conjunto de estimaciones para comunicar la cantidad de trabajo por elemento de trabajo.",
+        "description": "Crea un conjunto de estimaciones para comunicar el volumen de trabajo por elemento de trabajo.",
         "primary_button": "Agregar sistema de estimación"
       }
     }

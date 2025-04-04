@@ -1738,76 +1738,77 @@
       }
     },
     "estimates": {
-      "label": "估算",
-      "title": "为我的项目启用估算",
-      "description": "它们有助于您传达团队的复杂性和工作量。",
-      "no_estimate": "无估算",
+      "label": "預估",
+      "title": "為我的專案啟用預估",
+      "description": "幫助你傳達團隊的複雜性和工作負荷。",
+      "no_estimate": "無預估",
       "create": {
-        "custom": "自定义",
-        "start_from_scratch": "从头开始",
-        "choose_template": "选择模板",
-        "choose_estimate_system": "选择估算系统",
-        "enter_estimate_point": "输入估算点数"
+        "custom": "自訂",
+        "start_from_scratch": "從頭開始",
+        "choose_template": "選擇範本",
+        "choose_estimate_system": "選擇預估系統",
+        "enter_estimate_point": "輸入預估"
       },
       "toasts": {
         "created": {
           "success": {
-            "title": "已创建估算点数",
-            "message": "估算点数创建成功"
+            "title": "預估已建立",
+            "message": "預估已成功建立"
           },
           "error": {
-            "title": "无法创建估算点数",
-            "message": "无法创建新的估算点数，请重试"
+            "title": "預估建立失敗",
+            "message": "我們無法建立新的預估，請重試。"
           }
         },
         "updated": {
           "success": {
-            "title": "已更新估算",
-            "message": "您项目中的估算点数已更新"
+            "title": "預估已修改",
+            "message": "專案中的預估已更新。"
           },
           "error": {
-            "title": "无法更新估算",
-            "message": "无法更新估算，请重试"
+            "title": "預估修改失敗",
+            "message": "我們無法修改預估，請重試"
           }
         },
         "enabled": {
           "success": {
             "title": "成功！",
-            "message": "已启用估算"
+            "message": "預估已啟用。"
           }
         },
         "disabled": {
           "success": {
             "title": "成功！",
-            "message": "已禁用估算"
+            "message": "預估已停用。"
           },
           "error": {
-            "title": "错误！",
-            "message": "无法禁用估算。请重试"
+            "title": "錯誤！",
+            "message": "無法停用預估。請重試"
           }
         }
       },
       "validation": {
-        "min_length": "估算点数需要大于0。",
-        "unable_to_process": "我们无法处理您的请求，请重试。",
-        "numeric": "估算点数需要是数值。",
-        "character": "估算点数需要是字符值。",
-        "empty": "估算值不能为空。",
-        "already_exists": "估算值已存在。",
-        "unsaved_changes": "您有未保存的更改，请在点击完成前保存它们"
+        "min_length": "預估必須大於0。",
+        "unable_to_process": "我們無法處理你的請求，請重試。",
+        "numeric": "預估必須是數值。",
+        "character": "預估必須是字元值。",
+        "empty": "預估值不能為空。",
+        "already_exists": "預估值已存在。",
+        "unsaved_changes": "你有未儲存的變更。請在點擊完成前儲存",
+        "remove_empty": "預估不能為空。在每個欄位中輸入值或移除沒有值的欄位。"
       }
     },
     "automations": {
       "label": "自動化",
       "auto-archive": {
-        "title": "自動封存已關閉的工作事項",
-        "description": "Plane 將自動封存已完成或取消的工作事項。",
-        "duration": "自動封存已關閉"
+        "title": "自動封存已關閉的工作項目",
+        "description": "Plane將自動封存已完成或已取消的工作項目。",
+        "duration": "自動封存已關閉的工作項目"
       },
       "auto-close": {
-        "title": "自動關閉工作事項",
-        "description": "Plane 將自動關閉尚未完成或取消的工作事項。",
-        "duration": "自動關閉閒置",
+        "title": "自動關閉工作項目",
+        "description": "Plane將自動關閉未完成或未取消的工作項目。",
+        "duration": "自動關閉非活動工作項目",
         "auto_close_status": "自動關閉狀態"
       }
     },
