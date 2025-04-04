@@ -5,7 +5,17 @@ import { ChevronLeft, ChevronRight, Copy } from "lucide-react";
 import { EditorReadOnlyRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { TDescriptionVersion } from "@plane/types";
-import { Avatar, Button, getButtonStyling, Loader, ModalCore, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import {
+  Avatar,
+  Button,
+  EModalPosition,
+  getButtonStyling,
+  Loader,
+  ModalCore,
+  setToast,
+  TOAST_TYPE,
+  Tooltip,
+} from "@plane/ui";
 import { calculateTimeAgo, cn, copyTextToClipboard } from "@plane/utils";
 // components
 import { RichTextReadOnlyEditor } from "@/components/editor";
@@ -66,7 +76,7 @@ export const DescriptionVersionsModal: React.FC<Props> = observer((props) => {
   if (!workspaceId) return null;
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose}>
+    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP}>
       <div className="p-4" data-prevent-outside-click>
         {/* Header */}
         <div className="flex items-center justify-between gap-2 py-0.5">
@@ -117,7 +127,7 @@ export const DescriptionVersionsModal: React.FC<Props> = observer((props) => {
         <div className="mt-4 pb-4">
           {activeVersionDescription ? (
             <RichTextReadOnlyEditor
-              containerClassName="max-h-96 overflow-y-scroll vertical-scrollbar scrollbar-sm p-0 !pl-0 border-none"
+              containerClassName="p-0 !pl-0 border-none"
               editorClassName="pl-0"
               id={activeVersionId ?? ""}
               initialValue={activeVersionDescription ?? "<p></p>"}
