@@ -3,25 +3,16 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { MoveRight, Trash2, X } from "lucide-react";
-import { TEstimatePointsObject, TEstimateTypeErrorObject } from "@plane/types";
+import { TEstimatePointsObject } from "@plane/types";
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+// ce imports
+import { TEstimatePointDelete } from "@/ce/components/estimates/points/delete";
 // hooks
 import { useEstimate, useEstimatePoint } from "@/hooks/store";
 // plane web components
 import { EstimatePointDropdown } from "@/plane-web/components/estimates";
 // plane web constants
 import { estimateCount } from "@/plane-web/constants/estimates";
-
-type TEstimatePointDelete = {
-  workspaceSlug: string;
-  projectId: string;
-  estimateId: string;
-  estimatePointId: string;
-  estimatePoints: TEstimatePointsObject[];
-  callback: () => void;
-  estimatePointError?: TEstimateTypeErrorObject | undefined;
-  handleEstimatePointError?: (newValue: string, message: string | undefined, mode?: "add" | "delete") => void;
-};
 
 export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) => {
   const {
