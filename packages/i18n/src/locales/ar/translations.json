@@ -1,0 +1,2417 @@
+{
+    "sidebar": {
+      "projects": "المشاريع",
+      "pages": "الصفحات",
+      "new_work_item": "عنصر عمل جديد",
+      "home": "الصفحة الرئيسية",
+      "your_work": "عملك",
+      "inbox": "البريد الوارد",
+      "workspace": "مساحة العمل",
+      "views": "العروض",
+      "analytics": "التحليلات",
+      "work_items": "عناصر العمل",
+      "cycles": "الدورات",
+      "modules": "الوحدات",
+      "intake": "الاستيعاب",
+      "drafts": "المسودات",
+      "favorites": "المفضلة",
+      "pro": "احترافي",
+      "upgrade": "الترقية"
+  },
+    "auth": {
+      "common": {
+        "email": {
+          "label": "البريد الإلكتروني",
+          "placeholder": "nom@entreprise.com",
+          "errors": {
+            "required": "البريد الإلكتروني مطلوب",
+            "invalid": "البريد الإلكتروني غير صالح"
+          }
+        },
+        "password": {
+          "label": "كلمة المرور",
+          "set_password": "تعيين كلمة المرور",
+          "placeholder": "أدخل كلمة المرور",
+          "confirm_password": {
+            "label": "تأكيد كلمة المرور",
+            "placeholder": "تأكيد كلمة المرور"
+          },
+          "current_password": {
+            "label": "كلمة المرور الحالية"
+          },
+          "new_password": {
+            "label": "كلمة مرور جديدة",
+            "placeholder": "أدخل كلمة المرور الجديدة"
+          },
+          "change_password": {
+            "label": {
+              "default": "تغيير كلمة المرور",
+              "submitting": "جاري تغيير كلمة المرور"
+            }
+          },
+          "errors": {
+            "match": "كلمات المرور غير متطابقة",
+            "empty": "يرجى إدخال كلمة المرور",
+            "length": "يجب أن تحتوي كلمة المرور على أكثر من 8 أحرف",
+            "strength": {
+              "weak": "كلمة المرور ضعيفة",
+              "strong": "كلمة المرور قوية"
+            }
+          },
+          "submit": "تعيين كلمة المرور",
+          "toast": {
+            "change_password": {
+              "success": {
+                "title": "نجاح!",
+                "message": "تم تغيير كلمة المرور بنجاح."
+              },
+              "error": {
+                "title": "خطأ!",
+                "message": "حدث خطأ. يرجى المحاولة مرة أخرى."
+              }
+            }
+          }
+        },
+      
+        "unique_code": {
+      "label": "رمز فريد",
+      "placeholder": "obtient-définit-vole",
+      "paste_code": "الصق الرمز المرسل إلى بريدك الإلكتروني",
+      "requesting_new_code": "طلب رمز جديد",
+      "sending_code": "جاري إرسال الرمز"
+  },
+  "already_have_an_account": "هل لديك حساب بالفعل؟",
+  "login": "تسجيل الدخول",
+  "create_account": "إنشاء حساب",
+  "new_to_plane": "جديد على Plane؟",
+  "back_to_sign_in": "العودة إلى تسجيل الدخول",
+  "resend_in": "إعادة الإرسال خلال {seconds} ثانية",
+  "sign_in_with_unique_code": "تسجيل الدخول باستخدام رمز فريد",
+  "forgot_password": "هل نسيت كلمة المرور؟",
+  "sign_up": {
+      "header": {
+          "label": "أنشئ حسابًا لبدء إدارة العمل مع فريقك.",
+          "step": {
+              "email": {
+                  "header": "التسجيل",
+                  "sub_header": ""
+              },
+              "password": {
+                  "header": "التسجيل",
+                  "sub_header": "سجل باستخدام مجموعة البريد الإلكتروني وكلمة المرور."
+              },
+              "unique_code": {
+                  "header": "التسجيل",
+                  "sub_header": "سجل باستخدام رمز فريد يتم إرساله إلى البريد الإلكتروني أعلاه."
+              }
+          }
+      },
+      "errors": {
+          "password": {
+              "strength": "حاول تعيين كلمة مرور قوية للمتابعة"
+          }
+      }
+  }
+  
+      },
+      "sign_in": {
+      "header": {
+          "label": "سجل الدخول لبدء إدارة العمل مع فريقك.",
+          "step": {
+              "email": {
+                  "header": "تسجيل الدخول أو التسجيل",
+                  "sub_header": ""
+              },
+              "password": {
+                  "header": "تسجيل الدخول أو التسجيل",
+                  "sub_header": "استخدم مجموعة البريد الإلكتروني وكلمة المرور الخاصة بك لتسجيل الدخول."
+              },
+              "unique_code": {
+                  "header": "تسجيل الدخول أو التسجيل",
+                  "sub_header": "سجل الدخول باستخدام رمز فريد يتم إرساله إلى البريد الإلكتروني أعلاه."
+              }
+          }
+      }
+  },
+  "forgot_password": {
+      "title": "إعادة تعيين كلمة المرور الخاصة بك",
+      "description": "أدخل عنوان البريد الإلكتروني الذي تم التحقق منه لحسابك، وسنرسل لك رابطًا لإعادة تعيين كلمة المرور.",
+      "email_sent": "لقد أرسلنا رابط إعادة التعيين إلى بريدك الإلكتروني",
+      "send_reset_link": "إرسال رابط إعادة التعيين",
+      "errors": {
+          "smtp_not_enabled": "نلاحظ أن مدير النظام لم يقم بتمكين SMTP، لذلك لا يمكننا إرسال رابط لإعادة تعيين كلمة المرور"
+      },
+      "toast": {
+          "success": {
+              "title": "تم إرسال البريد الإلكتروني",
+              "message": "تحقق من صندوق الوارد الخاص بك للحصول على رابط إعادة تعيين كلمة المرور. إذا لم يظهر خلال بضع دقائق، تحقق من مجلد البريد العشوائي."
+          },
+          "error": {
+              "title": "خطأ!",
+              "message": "حدث خطأ. يرجى المحاولة مرة أخرى."
+          }
+      }
+  },
+  "reset_password": {
+      "title": "تعيين كلمة مرور جديدة",
+      "description": "قم بتأمين حسابك بكلمة مرور قوية"
+  },
+  "set_password": {
+      "title": "تأمين حسابك",
+      "description": "تعيين كلمة مرور سيمكنك من تسجيل الدخول بشكل آمن"
+  },
+  "sign_out": {
+      "toast": {
+          "error": {
+              "title": "خطأ!",
+              "message": "فشل تسجيل الخروج. يرجى المحاولة مرة أخرى."
+          }
+      }
+  }
+},
+  "submit": "إرسال",
+"cancel": "إلغاء",
+"loading": "جارٍ التحميل",
+"error": "خطأ",
+"success": "نجاح",
+"warning": "تحذير",
+"info": "معلومة",
+"close": "إغلاق",
+"yes": "نعم",
+"no": "لا",
+"ok": "موافق",
+"name": "الاسم",
+"description": "الوصف",
+"search": "بحث",
+"add_member": "إضافة عضو",
+"adding_members": "إضافة أعضاء",
+"remove_member": "إزالة العضو",
+"add_members": "إضافة أعضاء",
+"adding_member": "إضافة عضو",
+"remove_members": "إزالة الأعضاء",
+"add": "إضافة",
+"adding": "إضافة",
+"remove": "إزالة",
+"add_new": "إضافة جديد",
+"remove_selected": "إزالة المحدد",
+"first_name": "الاسم الأول",
+"last_name": "الاسم الأخير",
+"email": "البريد الإلكتروني",
+"display_name": "اسم العرض",
+"role": "الدور",
+"timezone": "المنطقة الزمنية",
+"avatar": "الصورة الشخصية",
+"cover_image": "صورة الغلاف",
+"password": "كلمة المرور",
+"change_cover": "تغيير الغلاف",
+"language": "اللغة",
+"saving": "جارٍ الحفظ",
+"save_changes": "حفظ التغييرات",
+"deactivate_account": "تعطيل الحساب",
+"deactivate_account_description": "عند تعطيل الحساب، سيتم حذف جميع بيانات وموارد هذا الحساب بشكل دائم ولن يمكن استعادتها.",
+"profile_settings": "إعدادات الملف الشخصي",
+"your_account": "حسابك",
+"security": "الأمان",
+"activity": "النشاط",
+"appearance": "المظهر",
+"notifications": "الإشعارات",
+"workspaces": "مساحات العمل",
+"create_workspace": "إنشاء مساحة عمل",
+"invitations": "الدعوات",
+"summary": "الملخص",
+"assigned": "مُعين",
+"created": "تم الإنشاء",
+"subscribed": "مشترك",
+"you_do_not_have_the_permission_to_access_this_page": "ليس لديك إذن للوصول إلى هذه الصفحة.",
+"something_went_wrong_please_try_again": "حدث خطأ. يرجى المحاولة مرة أخرى.",
+"load_more": "تحميل المزيد",
+"select_or_customize_your_interface_color_scheme": "اختر أو خصص مخطط ألوان واجهتك.",
+"theme": "النمط",
+"system_preference": "تفضيلات النظام",
+"light": "فاتح",
+"dark": "داكن",
+"light_contrast": "تباين عالٍ فاتح",
+"dark_contrast": "تباين عالٍ داكن",
+"custom": "نمط مخصص",
+"select_your_theme": "اختر نمطك",
+"customize_your_theme": "خصص نمطك",
+"background_color": "لون الخلفية",
+"text_color": "لون النص",
+"primary_color": "اللون الرئيسي (النمط)",
+"sidebar_background_color": "لون خلفية الشريط الجانبي",
+"sidebar_text_color": "لون النص في الشريط الجانبي",
+"set_theme": "تعيين النمط",
+"enter_a_valid_hex_code_of_6_characters": "أدخل رمز سداسي عشري صالح من 6 أحرف",
+"background_color_is_required": "لون الخلفية مطلوب",
+"text_color_is_required": "لون النص مطلوب",
+"primary_color_is_required": "اللون الرئيسي مطلوب",
+"sidebar_background_color_is_required": "لون خلفية الشريط الجانبي مطلوب",
+"sidebar_text_color_is_required": "لون النص في الشريط الجانبي مطلوب",
+"updating_theme": "تحديث النمط",
+"theme_updated_successfully": "تم تحديث النمط بنجاح",
+"failed_to_update_the_theme": "فشل في تحديث النمط",
+"email_notifications": "الإشعارات عبر البريد الإلكتروني",
+"stay_in_the_loop_on_issues_you_are_subscribed_to_enable_this_to_get_notified": "ابقَ على اطلاع على العناصر التي اشتركت فيها. قم بتمكين هذا لتلقي الإشعارات.",
+"email_notification_setting_updated_successfully": "تم تحديث إعداد الإشعارات عبر البريد الإلكتروني بنجاح",
+"failed_to_update_email_notification_setting": "فشل في تحديث إعداد الإشعارات عبر البريد الإلكتروني",
+"notify_me_when": "إعلامي عندما",
+"property_changes": "تغييرات الخصائص",
+"property_changes_description": "إعلامي عندما تتغير خصائص عناصر العمل مثل المكلفين، الأولوية، التقديرات أو غيرها.",
+"state_change": "تغيير الحالة",
+"state_change_description": "إعلامي عندما تنتقل عناصر العمل إلى حالة مختلفة",
+"issue_completed": "تم إتمام عنصر العمل",
+"issue_completed_description": "إعلامي فقط عندما يتم إتمام عنصر العمل",
+"comments": "التعليقات",
+"comments_description": "إعلامي عندما يترك شخص ما تعليقًا على عنصر العمل",
+"mentions": "الإشارات",
+"mentions_description": "إعلامي فقط عندما يذكرني شخص ما في التعليقات أو الوصف",
+"old_password": "كلمة المرور القديمة",
+  "general_settings": "الإعدادات العامة",
+  "sign_out": "تسجيل الخروج",
+  "signing_out": "تسجيل الخروج",
+  "active_cycles": "الدورات النشطة",
+  "active_cycles_description": "راقب الدورات عبر المشاريع، تابع العناصر العمل الأولوية وتعمق في الدورات التي تحتاج إلى الانتباه.",
+  "on_demand_snapshots_of_all_your_cycles": "لقطات عند الطلب لجميع دوراتك",
+  "upgrade": "ترقية",
+  "10000_feet_view": "عرض من 10,000 قدم لجميع الدورات النشطة.",
+  "10000_feet_view_description": "قم بالتقليل لرؤية الدورات الجارية في جميع مشاريعك في وقت واحد بدلاً من الانتقال من دورة إلى أخرى في كل مشروع.",
+  "get_snapshot_of_each_active_cycle": "احصل على لمحة عن كل دورة نشطة.",
+  "get_snapshot_of_each_active_cycle_description": "تابع المقاييس الرئيسية لجميع الدورات النشطة، شاهد تقدمها واحصل على فكرة عن نطاقها مقارنة بالمواعيد النهائية.",
+  "compare_burndowns": "قارن البورنداون.",
+  "compare_burndowns_description": "راقب أداء كل من فرقك من خلال إلقاء نظرة على تقرير البورنداون لكل دورة.",
+  "quickly_see_make_or_break_issues": "شاهد بسرعة العناصر العمل الحاسمة.",
+  "quickly_see_make_or_break_issues_description": "استعرض العناصر ذات الأولوية العالية لكل دورة مقارنة بمواعيدها النهائية. شاهدها جميعًا لكل دورة بنقرة واحدة.",
+  "zoom_into_cycles_that_need_attention": "قم بالتكبير في الدورات التي تحتاج إلى الانتباه.",
+  "zoom_into_cycles_that_need_attention_description": "افحص حالة أي دورة لا تتوافق مع التوقعات بنقرة واحدة.",
+  "stay_ahead_of_blockers": "كن مستعدًا للعوائق.",
+  "stay_ahead_of_blockers_description": "حدد التحديات في كل مشروع وشاهد التبعيات بين الدورات التي قد لا تكون واضحة من منظور آخر.",
+  "analytics": "التحليلات",
+  "workspace_invites": "دعوات إلى مساحة العمل",
+  "enter_god_mode": "دخول وضع الإله",
+  "workspace_logo": "شعار مساحة العمل",
+  "new_issue": "عنصر عمل جديد",
+  "your_work": "عملك",
+  "drafts": "المسودات",
+  "projects": "المشاريع",
+  "views": "العروض",
+  "workspace": "مساحة العمل",
+  "archives": "الأرشيفات",
+  "settings": "الإعدادات",
+  "failed_to_move_favorite": "فشل في نقل العنصر المفضل",
+  "favorites": "المفضلات",
+  "no_favorites_yet": "لا توجد مفضلات بعد",
+  "create_folder": "إنشاء مجلد",
+  "new_folder": "مجلد جديد",
+  "favorite_updated_successfully": "تم تحديث المفضل بنجاح",
+  "favorite_created_successfully": "تم إنشاء المفضل بنجاح",
+  "folder_already_exists": "المجلد موجود بالفعل",
+  "folder_name_cannot_be_empty": "اسم المجلد لا يمكن أن يكون فارغًا",
+  "something_went_wrong": "حدث خطأ ما",
+  "failed_to_reorder_favorite": "فشل في إعادة ترتيب المفضل",
+  "favorite_removed_successfully": "تم إزالة المفضل بنجاح",
+  "failed_to_create_favorite": "فشل في إنشاء المفضل",
+  "failed_to_rename_favorite": "فشل في إعادة تسمية المفضل",
+  "project_link_copied_to_clipboard": "تم نسخ رابط المشروع إلى الحافظة",
+  "link_copied": "تم نسخ الرابط",
+  "add_project": "إضافة مشروع",
+  "create_project": "إنشاء مشروع",
+  "failed_to_remove_project_from_favorites": "فشل في إزالة المشروع من المفضلات. يرجى المحاولة مرة أخرى.",
+  "project_created_successfully": "تم إنشاء المشروع بنجاح",
+  "project_created_successfully_description": "تم إنشاء المشروع بنجاح. يمكنك الآن بدء إضافة عناصر العمل.",
+  "project_cover_image_alt": "صورة غلاف المشروع",
+  "name_is_required": "الاسم مطلوب",
+  "title_should_be_less_than_255_characters": "يجب أن يكون العنوان أقل من 255 حرفًا",
+  "project_name": "اسم المشروع",
+  "project_id_must_be_at_least_1_character": "يجب أن يحتوي معرف المشروع على حرف واحد على الأقل",
+  "project_id_must_be_at_most_5_characters": "يجب أن يحتوي معرف المشروع على 5 أحرف كحد أقصى",
+  "project_id": "معرف المشروع",
+  "project_id_tooltip_content": "يساعدك في تحديد العناصر العمل فقط في المشروع. الحد الأقصى هو 5 أحرف.",
+  "description_placeholder": "الوصف",
+  "only_alphanumeric_non_latin_characters_allowed": "يُسمح فقط بالحروف والأرقام غير اللاتينية.",
+  "project_id_is_required": "معرف المشروع مطلوب",
+  "project_id_allowed_char": "يُسمح فقط بالحروف والأرقام غير اللاتينية.",
+  "project_id_min_char": "يجب أن يحتوي معرف المشروع على حرف واحد على الأقل",
+  "project_id_max_char": "يجب أن يحتوي معرف المشروع على 5 أحرف كحد أقصى",
+  "project_description_placeholder": "أدخل وصف المشروع",
+  "select_network": "اختيار الشبكة",
+  "lead": "القائد",
+  "date_range": "نطاق التاريخ",
+  "private": "خاص",
+  "public": "عام",
+  "accessible_only_by_invite": "يمكن الوصول إليها فقط عن طريق الدعوة",
+  "anyone_in_the_workspace_except_guests_can_join": "يمكن لأي شخص في مساحة العمل باستثناء الضيوف الانضمام",
+  "creating": "إنشاء",
+  "creating_project": "إنشاء المشروع",
+  "adding_project_to_favorites": "إضافة المشروع إلى المفضلات",
+  "project_added_to_favorites": "تم إضافة المشروع إلى المفضلات",
+  "couldnt_add_the_project_to_favorites": "تعذر إضافة المشروع إلى المفضلات. يرجى المحاولة مرة أخرى.",
+  "removing_project_from_favorites": "إزالة المشروع من المفضلات",
+  "project_removed_from_favorites": "تم إزالة المشروع من المفضلات",
+  "couldnt_remove_the_project_from_favorites": "تعذر إزالة المشروع من المفضلات. يرجى المحاولة مرة أخرى.",
+  "add_to_favorites": "إضافة إلى المفضلات",
+  "remove_from_favorites": "إزالة من المفضلات",
+  "publish_settings": "إعدادات النشر",
+  "publish": "نشر",
+  "copy_link": "نسخ الرابط",
+  "leave_project": "مغادرة المشروع",
+  "join_the_project_to_rearrange": "انضم إلى المشروع لإعادة الترتيب",
+  "drag_to_rearrange": "اسحب لإعادة الترتيب",
+  "congrats": "تهانينا!",
+  "open_project": "فتح المشروع",
+  "issues": "العناصر العمل",
+  "cycles": "الدورات",
+  "modules": "الوحدات",
+  "pages": "الصفحات",
+  "intake": "استلام",
+  "time_tracking": "تتبع الوقت",
+  "work_management": "إدارة العمل",
+  "projects_and_issues": "المشاريع والعناصر العمل",
+  "projects_and_issues_description": "قم بتمكين أو تعطيل هذه العناصر لهذا المشروع.",
+  "cycles_description": "خطط العمل كما تريد حسب المشروع وغير تكرار الفترة من فترة إلى أخرى.",
+  "modules_description": "قم بتجميع العمل في تكوينات مشابهة للمشاريع الفرعية مع مسؤوليها والمكلفين.",
+  "views_description": "احفظ التصفية، والفرز، وإعدادات العرض للاستخدام لاحقًا أو لمشاركتها.",
+  "pages_description": "اكتب أي شيء كما لو كنت تكتب أي شيء.",
+  "intake_description": "ابقَ على اطلاع بالعناصر العمل التي تم الاشتراك فيها. قم بتمكين هذا ليتم إعلامك.",
+  "time_tracking_description": "تتبع الوقت المستغرق على العناصر العمل والمشاريع.",
+  "work_management_description": "قم بإدارة عملك ومشاريعك بسهولة.",
+  "documentation": "الوثائق",
+  "message_support": "اتصل بالدعم",
+  "contact_sales": "اتصل بالمبيعات",
+  "hyper_mode": "وضع هايبر",
+  "keyboard_shortcuts": "اختصارات لوحة المفاتيح",
+  "whats_new": "ما الجديد؟",
+  "version": "الإصدار",
+  "we_are_having_trouble_fetching_the_updates": "نواجه صعوبة في جلب التحديثات.",
+  "our_changelogs": "سجلات التغييرات لدينا",
+  "for_the_latest_updates": "لأحدث التحديثات.",
+  "please_visit": "يرجى زيارة",
+  "docs": "الوثائق",
+  "full_changelog": "سجل التغييرات الكامل",
+  "support": "الدعم",
+  "discord": "ديسكورد",
+  "powered_by_plane_pages": "مدعوم من Plane Pages",
+  "please_select_at_least_one_invitation": "يرجى اختيار دعوة واحدة على الأقل.",
+  "please_select_at_least_one_invitation_description": "يرجى اختيار دعوة واحدة على الأقل للانضمام إلى مساحة العمل.",
+  "we_see_that_someone_has_invited_you_to_join_a_workspace": "نرى أن شخصًا ما قد دعاك للانضمام إلى مساحة عمل",
+  "join_a_workspace": "انضم إلى مساحة العمل",
+  "we_see_that_someone_has_invited_you_to_join_a_workspace_description": "نرى أن شخصًا ما قد دعاك للانضمام إلى مساحة عمل",
+  "join_a_workspace_description": "انضم إلى مساحة عمل",
+  "accept_and_join": "قبول والانضمام",
+  "go_home": "الذهاب إلى الصفحة الرئيسية",
+  "no_pending_invites": "لا توجد دعوات معلقة",
+  "you_can_see_here_if_someone_invites_you_to_a_workspace": "يمكنك رؤية هنا إذا دعاك شخص ما إلى مساحة عمل",
+  "back_to_home": "العودة إلى الصفحة الرئيسية",
+  "workspace_name": "اسم مساحة العمل",
+  "deactivate_your_account": "إلغاء تنشيط حسابك",
+  "deactivate_your_account_description": "بمجرد إلغاء التنشيط، لن تتمكن من أن تكون مخصصًا لعناصر العمل أو محاسبًا لمساحة العمل. لإعادة تنشيط حسابك، ستحتاج إلى دعوة إلى مساحة عمل مع هذا البريد الإلكتروني.",
+  "deactivating": "إلغاء التنشيط",
+  "confirm": "تأكيد",
+  "confirming": "تأكيد",
+  "draft_created": "تم إنشاء المسودة",
+  "issue_created_successfully": "تم إنشاء العنصر العمل بنجاح",
+  "draft_creation_failed": "فشل في إنشاء المسودة",
+  "issue_creation_failed": "فشل في إنشاء العنصر العمل",
+  "draft_issue": "عنصر العمل في المسودة",
+  "issue_updated_successfully": "تم تحديث العنصر العمل بنجاح",
+  "issue_could_not_be_updated": "تعذر تحديث العنصر العمل",
+  "create_a_draft": "إنشاء مسودة",
+  "save_to_drafts": "حفظ في المسودات",
+  "save": "حفظ",
+  "update": "تحديث",
+  "updating": "تحديث",
+  "create_new_issue": "إنشاء عنصر عمل جديد",
+  "editor_is_not_ready_to_discard_changes": "المحرر غير جاهز للتراجع عن التعديلات",
+  "failed_to_move_issue_to_project": "فشل في نقل العنصر العمل إلى المشروع",
+  "create_more": "إنشاء المزيد",
+  "add_to_project": "إضافة إلى المشروع",
+  "discard": "إلغاء",
+  "duplicate_issue_found": "تم العثور على عنصر عمل مكرر",
+  "duplicate_issues_found": "تم العثور على عناصر عمل مكررة",
+  "no_matching_results": "لا توجد نتائج مطابقة",
+  "title_is_required": "العنوان مطلوب",
+  "title": "العنوان",
+  "state": "الحالة",
+  "priority": "الأولوية",
+  "none": "لا شيء",
+  "urgent": "عاجل",
+  "high": "عالي",
+  "medium": "متوسط",
+  "low": "منخفض",
+  "members": "الأعضاء",
+  "assignee": "المكلف",
+  "assignees": "المكلفين",
+  "you": "أنت",
+  "labels": "التصنيفات",
+  "create_new_label": "إنشاء تصنيف جديد",
+  "start_date": "تاريخ البدء",
+  "end_date": "تاريخ الانتهاء",
+  "due_date": "تاريخ الاستحقاق",
+  "estimate": "التقدير",
+  "change_parent_issue": "تغيير العنصر العمل الرئيسي",
+  "remove_parent_issue": "إزالة العنصر العمل الرئيسي",
+  "add_parent": "إضافة رئيسي",
+  "loading_members": "جارٍ تحميل الأعضاء",
+  "view_link_copied_to_clipboard": "تم نسخ رابط العرض إلى الحافظة.",
+  "required": "مطلوب",
+  "optional": "اختياري",
+  "Cancel": "إلغاء",
+  "edit": "تعديل",
+  "archive": "أرشيف",
+  "restore": "استعادة",
+  "open_in_new_tab": "افتح في تبويب جديد",
+  "delete": "حذف",
+  "deleting": "جاري الحذف",
+  "make_a_copy": "إنشاء نسخة",
+  "move_to_project": "نقل إلى المشروع",
+  "good": "صباح الخير",
+  "morning": "صباح",
+  "afternoon": "بعد الظهر",
+  "evening": "مساء",
+  "show_all": "عرض الكل",
+  "show_less": "عرض أقل",
+  "no_data_yet": "لا توجد بيانات بعد",
+  "syncing": "مزامنة",
+  "add_work_item": "إضافة عنصر عمل",
+  "advanced_description_placeholder": "اضغط '/' للخيارات",
+  "create_work_item": "إنشاء عنصر عمل",
+  "attachments": "المرفقات",
+  "declining": "رفض",
+  "declined": "مرفوض",
+  "decline": "رفض",
+  "unassigned": "غير مُعين",
+  "work_items": "عناصر العمل",
+  "add_link": "إضافة رابط",
+  "points": "النقاط",
+  "no_assignee": "لا يوجد مكلف",
+  "no_assignees_yet": "لا يوجد مكلفون بعد",
+  "no_labels_yet": "لا توجد تسميات بعد",
+  "ideal": "مثالي",
+  "current": "حالي",
+  "no_matching_members": "لا يوجد أعضاء مطابقين",
+  "leaving": "مغادرة",
+  "removing": "إزالة",
+  "leave": "مغادرة",
+  "refresh": "تحديث",
+  "refreshing": "جاري التحديث",
+  "refresh_status": "تحديث الحالة",
+  "prev": "السابق",
+  "next": "التالي",
+  "re_generating": "إعادة التوليد",
+  "re_generate": "إعادة التوليد",
+  "re_generate_key": "إعادة توليد المفتاح",
+  "export": "تصدير",
+  "member": "{count, plural, one{عضو} other{# أعضاء}}",
+  "new_password_must_be_different_from_old_password": "يجب أن يكون كلمة المرور الجديدة مختلفة عن كلمة المرور القديمة",
+  "edited": "تم التعديل",
+  "bot": "روبوت",
+
+  "project_view": {
+    "sort_by": {
+      "created_at": "تم الإنشاء في",
+      "updated_at": "تم التحديث في",
+      "name": "الاسم"
+    }
+  },
+
+  "toast": {
+    "success": "نجاح!",
+    "error": "خطأ!"
+  },
+
+  "links": {
+    "toasts": {
+      "created": {
+        "title": "تم إنشاء الرابط",
+        "message": "تم إنشاء الرابط بنجاح"
+      },
+      "not_created": {
+        "title": "لم يتم إنشاء الرابط",
+        "message": "لم يتمكن من إنشاء الرابط"
+      },
+      "updated": {
+        "title": "تم تحديث الرابط",
+        "message": "تم تحديث الرابط بنجاح"
+      },
+      "not_updated": {
+        "title": "لم يتم تحديث الرابط",
+        "message": "لم يتمكن من تحديث الرابط"
+      },
+      "removed": {
+        "title": "تم إزالة الرابط",
+        "message": "تم إزالة الرابط بنجاح"
+      },
+      "not_removed": {
+        "title": "لم يتم إزالة الرابط",
+        "message": "لم يتمكن من إزالة الرابط"
+      }
+    }
+  },
+
+  "home": {
+    "empty": {
+      "quickstart_guide": "دليل البدء السريع",
+      "not_right_now": "ليس الآن",
+      "create_project": {
+        "title": "إنشاء مشروع",
+        "description": "تبدأ معظم الأشياء بمشروع في Plane.",
+        "cta": "ابدأ"
+      },
+      "invite_team": {
+        "title": "دعوة فريقك",
+        "description": "ابني واطلق وأدر مع زملائك.",
+        "cta": "أدخلهم"
+      },
+      "configure_workspace": {
+        "title": "إعداد مساحة العمل.",
+        "description": "فعّل أو قم بإلغاء تفعيل الميزات أو اذهب أبعد من ذلك.",
+        "cta": "إعداد مساحة العمل"
+      },
+      "personalize_account": {
+        "title": "اجعل Plane خاص بك.",
+        "description": "اختر صورتك، ألوانك والمزيد.",
+        "cta": "خصص الآن"
+      },
+      "widgets": {
+        "title": "يبدو هادئًا بدون الأدوات، قم بتفعيلها",
+        "description": "يبدو أن جميع الأدوات معطلة. قم بتفعيلها الآن لتحسين تجربتك!",
+        "primary_button": {
+          "text": "إدارة الأدوات"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "احفظ الروابط لعناصر العمل التي ترغب في الوصول إليها بسهولة.",
+      "add": "إضافة رابط سريع",
+      "title": "رابط سريع",
+      "title_plural": "روابط سريعة"
+    },
+    "recents": {
+      "title": "الأخيرة",
+      "empty": {
+        "project": "مشاريعك الأخيرة ستظهر هنا بعد زيارتك لإحداها.",
+        "page": "صفحاتك الأخيرة ستظهر هنا بعد زيارتك لإحداها.",
+        "issue": "عناصر العمل الأخيرة ستظهر هنا بعد زيارتك لإحداها.",
+        "default": "لا توجد عناصر حديثة لديك بعد."
+      },
+      "filters": {
+        "all": "جميع العناصر",
+        "projects": "المشاريع",
+        "pages": "الصفحات",
+        "issues": "عناصر العمل"
+      }
+    },
+    "new_at_plane": {
+      "title": "جديد في Plane"
+    },
+    "quick_tutorial": {
+      "title": "دورة تدريبية سريعة"
+    },
+    "widget": {
+      "reordered_successfully": "تم إعادة ترتيب الأداة بنجاح.",
+      "reordering_failed": "حدث خطأ أثناء إعادة ترتيب الأداة."
+    },
+    "manage_widgets": "إدارة الأدوات",
+    "title": "الصفحة الرئيسية",
+    "star_us_on_github": "امنحنا نجمة على GitHub"
+  },
+
+  "link": {
+    "modal": {
+      "url": {
+        "text": "رابط URL",
+        "required": "الرابط غير صالح",
+        "placeholder": "اكتب أو الصق رابط URL"
+      },
+      "title": {
+        "text": "عنوان العرض",
+        "placeholder": "كيف تريد عرض هذا الرابط"
+      }
+    }
+  },
+
+  "common": {
+    "all": "الكل",
+    "states": "الحالات",
+    "state": "الحالة",
+    "state_groups": "مجموعات الحالات",
+    "state_group": "مجموعة الحالة",
+    "priorities": "الأولويات",
+    "priority": "أولوية",
+    "team_project": "مشروع الفريق",
+    "project": "مشروع",
+    "cycle": "دورة",
+    "cycles": "دورات",
+    "module": "وحدة",
+    "modules": "وحدات",
+    "labels": "التسميات",
+    "label": "التسمية",
+    "assignees": "المكلفين",
+    "assignee": "المكلف",
+    "created_by": "تم الإنشاء بواسطة",
+    "none": "لا شيء",
+    "link": "رابط",
+    "estimates": "التقديرات",
+    "estimate": "تقدير",
+    "created_at": "تم الإنشاء في",
+    "completed_at": "تم الإنجاز في",
+    "layout": "التخطيط",
+    "filters": "الفلاتر",
+    "display": "العرض",
+    "load_more": "تحميل المزيد",
+    "activity": "النشاط",
+    "analytics": "التحليلات",
+    "dates": "التواريخ",
+    "success": "نجاح!",
+    "something_went_wrong": "حدث خطأ ما",
+    "error": {
+      "label": "خطأ!",
+      "message": "حدث خطأ. يرجى المحاولة مرة أخرى."
+    },
+    "group_by": "تجميع بواسطة",
+    "epic": "ملحمة",
+    "epics": "ملحمات",
+    "work_item": "عنصر عمل",
+    "work_items": "عناصر العمل",
+    "sub_work_item": "عنصر عمل فرعي",
+    "add": "إضافة",
+    "warning": "تحذير",
+    "updating": "جاري التحديث",
+    "adding": "جاري الإضافة",
+    "update": "تحديث",
+    "creating": "جاري الإنشاء",
+    "create": "إنشاء",
+    "cancel": "إلغاء",
+    "description": "الوصف",
+    "title": "العنوان",
+    "attachment": "مرفق",
+    "general": "عام",
+    "features": "الميزات",
+    "automation": "التشغيل الآلي",
+    "project_name": "اسم المشروع",
+    "project_id": "معرف المشروع",
+    "project_timezone": "المنطقة الزمنية للمشروع",
+    "created_on": "تم الإنشاء في",
+    "update_project": "تحديث المشروع",
+    "identifier_already_exists": "المعرف موجود بالفعل",
+    "add_more": "إضافة المزيد",
+    "defaults": "الإعدادات الافتراضية",
+    "add_label": "إضافة تسمية",
+    "customize_time_range": "تخصيص نطاق الوقت",
+    "loading": "جاري التحميل",
+    "attachments": "المرفقات",
+    "property": "الخاصية",
+    "properties": "الخصائص",
+    "parent": "الأصل",
+    "page": "الصفحة",
+"remove": "إزالة",
+"archiving": "أرشفة",
+"archive": "أرشفة",
+"access": {
+  "public": "عام",
+  "private": "خاص"
+},
+"done": "تم",
+"sub_work_items": "العناصر الفرعية للعمل",
+"comment": "تعليق",
+"workspace_level": "مستوى مساحة العمل",
+"order_by": {
+  "label": "ترتيب حسب",
+  "manual": "يدوي",
+  "last_created": "آخر إنشاء",
+  "last_updated": "آخر تحديث",
+  "start_date": "تاريخ البدء",
+  "due_date": "تاريخ الاستحقاق",
+  "asc": "تصاعدي",
+  "desc": "تنازلي",
+  "updated_on": "تم التحديث في"
+},
+"sort": {
+  "asc": "تصاعدي",
+  "desc": "تنازلي",
+  "created_on": "تم الإنشاء في",
+  "updated_on": "تم التحديث في"
+},
+"comments": "التعليقات",
+"updates": "التحديثات",
+"clear_all": "مسح الكل",
+"copied": "تم النسخ!",
+"link_copied": "تم نسخ الرابط!",
+"link_copied_to_clipboard": "تم نسخ الرابط إلى الحافظة",
+"copied_to_clipboard": "تم نسخ رابط العنصر إلى الحافظة",
+"is_copied_to_clipboard": "تم نسخ العنصر إلى الحافظة",
+"no_links_added_yet": "لم تتم إضافة روابط حتى الآن",
+"add_link": "إضافة رابط",
+"links": "الروابط",
+"go_to_workspace": "الذهاب إلى مساحة العمل",
+"progress": "التقدم",
+"optional": "اختياري",
+"join": "انضم",
+"go_back": "الرجوع",
+"continue": "متابعة",
+"resend": "إعادة الإرسال",
+"relations": "العلاقات",
+"errors": {
+  "default": {
+    "title": "خطأ!",
+    "message": "حدث خطأ ما. الرجاء المحاولة مرة أخرى."
+  },
+  "required": "هذا الحقل مطلوب",
+  "entity_required": "{entity} مطلوب"
+},
+"update_link": "تحديث الرابط",
+"attach": "إرفاق",
+"create_new": "إنشاء جديد",
+"add_existing": "إضافة موجود",
+"type_or_paste_a_url": "اكتب أو الصق عنوان URL",
+"url_is_invalid": "عنوان URL غير صالح",
+"display_title": "عنوان العرض",
+"link_title_placeholder": "كيف تريد أن يظهر هذا الرابط",
+"url": "عنوان URL",
+"side_peek": "معاينة جانبية",
+"modal": "نافذة منبثقة",
+"full_screen": "شاشة كاملة",
+"close_peek_view": "إغلاق المعاينة",
+"toggle_peek_view_layout": "تبديل تخطيط المعاينة",
+"options": "الخيارات",
+"duration": "المدة",
+"today": "اليوم",
+"week": "أسبوع",
+"month": "شهر",
+"quarter": "ربع",
+"press_for_commands": "اضغط على '/' للعثور على الأوامر",
+"click_to_add_description": "انقر لإضافة وصف",
+"search": {
+  "label": "بحث",
+  "placeholder": "اكتب للبحث",
+  "no_matches_found": "لم يتم العثور على تطابقات",
+  "no_matching_results": "لا توجد نتائج تطابق"
+},
+"actions": {
+  "edit": "تعديل",
+  "make_a_copy": "عمل نسخة",
+  "open_in_new_tab": "فتح في نافذة جديدة",
+  "copy_link": "نسخ الرابط",
+  "archive": "أرشفة",
+  "delete": "حذف",
+  "remove_relation": "إزالة العلاقة",
+  "subscribe": "اشتراك",
+  "unsubscribe": "إلغاء الاشتراك",
+  "clear_sorting": "مسح الترتيب",
+  "show_weekends": "عرض عطلات نهاية الأسبوع",
+  "enable": "تمكين",
+  "disable": "تعطيل"
+},
+"name": "الاسم",
+"discard": "إلغاء",
+"confirm": "تأكيد",
+"confirming": "تأكيد",
+"read_the_docs": "اقرأ الوثائق",
+"default": "افتراضي",
+"active": "نشط",
+"enabled": "مفعل",
+"disabled": "معطل",
+"mandate": "تفويض",
+"mandatory": "إلزامي",
+"yes": "نعم",
+"no": "لا",
+"please_wait": "الرجاء الانتظار",
+"enabling": "تمكين",
+"disabling": "تعطيل",
+"beta": "بيتا",
+"or": "أو",
+"next": "التالي",
+"back": "رجوع",
+"cancelling": "إلغاء",
+"configuring": "إعداد",
+"clear": "مسح",
+"import": "استيراد",
+"connect": "اتصال",
+"authorizing": "تفويض",
+"processing": "جاري المعالجة",
+"no_data_available": "لا توجد بيانات متاحة",
+"from": "من {name}",
+"authenticated": "تم التوثيق",
+"select": "اختيار",
+"upgrade": "ترقية",
+"add_seats": "إضافة مقاعد",
+"projects": "المشاريع",
+"workspace": "مساحة العمل",
+"workspaces": "مساحات العمل",
+"team": "فريق",
+"teams": "الفرق",
+"entity": "كيان",
+"entities": "كيانات",
+"task": "مهمة",
+"tasks": "مهام",
+"section": "قسم",
+"sections": "أقسام",
+"edit": "تعديل",
+"connecting": "جاري الاتصال",
+"connected": "متصل",
+"disconnect": "فصل الاتصال",
+"disconnecting": "جاري فصل الاتصال",
+"installing": "جاري التثبيت",
+"install": "تثبيت",
+"reset": "إعادة تعيين",
+"live": "مباشر",
+"change_history": "تاريخ التغييرات",
+"coming_soon": "قريباً",
+"members": "الأعضاء",
+"you": "أنت",
+"upgrade_cta": {
+  "higher_subscription": "الترقية إلى اشتراك أعلى",
+  "talk_to_sales": "التحدث مع المبيعات"
+},
+"category": "فئة",
+"categories": "فئات",
+"saving": "جاري الحفظ",
+"save_changes": "حفظ التغييرات",
+"delete": "حذف",
+"deleting": "جاري الحذف",
+"pending": "قيد الانتظار",
+"invite": "دعوة",
+"view": "عرض"
+},
+
+"chart": {
+  "x_axis": "محور X",
+  "y_axis": "محور Y",
+  "metric": "مؤشر"
+},
+
+"form": {
+  "title": {
+    "required": "العنوان مطلوب",
+    "max_length": "يجب أن يحتوي العنوان على أقل من {length} حرف"
+  }
+},
+
+"entity": {
+  "grouping_title": "تجميع {entity}",
+  "priority": "أولوية {entity}",
+  "all": "جميع {entity}",
+  "drop_here_to_move": "اسحب هنا لنقل {entity}",
+  "delete": {
+    "label": "حذف {entity}",
+    "success": "تم حذف {entity} بنجاح",
+    "failed": "فشل في حذف {entity}"
+  },
+  "update": {
+    "failed": "فشل في تحديث {entity}",
+    "success": "تم تحديث {entity} بنجاح"
+  },
+  "link_copied_to_clipboard": "تم نسخ رابط {entity} إلى الحافظة",
+  "fetch": {
+    "failed": "خطأ في جلب {entity}"
+  },
+  "add": {
+    "success": "تم إضافة {entity} بنجاح",
+    "failed": "خطأ في إضافة {entity}"
+  }
+},
+
+"epic": {
+  "all": "جميع الإيبيكس",
+  "label": "{count, plural, one {إيبيك} other {إيبيكس}}",
+  "new": "إيبيك جديد",
+  "adding": "إضافة إيبيك",
+  "create": {
+    "success": "تم إنشاء الإيبيك بنجاح"
+  },
+  "add": {
+    "press_enter": "اضغط على 'إدخال' لإضافة إيبيك آخر",
+    "label": "إضافة إيبيك"
+  },
+  "title": {
+    "label": "عنوان الإيبيك",
+    "required": "عنوان الإيبيك مطلوب."
+  }
+},
+
+"issue": {
+  "label": "{count, plural, one {عنصر عمل} other {عناصر عمل}}",
+  "all": "جميع عناصر العمل",
+  "edit": "تعديل عنصر العمل",
+  "title": {
+    "label": "عنوان عنصر العمل",
+    "required": "عنوان عنصر العمل مطلوب."
+  },
+
+    "add": {
+  "press_enter": "اضغط على 'إدخال' لإضافة عنصر عمل آخر",
+  "label": "إضافة عنصر عمل",
+  "cycle": {
+    "failed": "تعذر إضافة عنصر العمل إلى الدورة. يرجى المحاولة مرة أخرى.",
+    "success": "{count, plural, one {تم إضافة عنصر عمل} other {تم إضافة عناصر عمل}} إلى الدورة بنجاح.",
+    "loading": "جارٍ إضافة {count, plural, one {عنصر العمل} other {عناصر العمل}} إلى الدورة"
+  },
+  "assignee": "إضافة معيين",
+  "start_date": "إضافة تاريخ بدء",
+  "due_date": "إضافة تاريخ استحقاق",
+  "parent": "إضافة عنصر عمل رئيسي",
+  "sub_issue": "إضافة عنصر عمل فرعي",
+  "relation": "إضافة علاقة",
+  "link": "إضافة رابط",
+  "existing": "إضافة عنصر عمل موجود"
+},
+"remove": {
+  "label": "حذف عنصر العمل",
+  "cycle": {
+    "loading": "جارٍ حذف عنصر العمل من الدورة",
+    "success": "تم حذف عنصر العمل من الدورة بنجاح.",
+    "failed": "تعذر حذف عنصر العمل من الدورة. يرجى المحاولة مرة أخرى."
+  },
+  "module": {
+    "loading": "جارٍ حذف عنصر العمل من الوحدة",
+    "success": "تم حذف عنصر العمل من الوحدة بنجاح.",
+    "failed": "تعذر حذف عنصر العمل من الوحدة. يرجى المحاولة مرة أخرى."
+  },
+  "parent": {
+    "label": "حذف عنصر العمل الرئيسي"
+  }
+},
+"new": "عنصر عمل جديد",
+"adding": "جارٍ إضافة عنصر عمل",
+"create": {
+  "success": "تم إنشاء عنصر العمل بنجاح"
+},
+"priority": {
+  "urgent": "عاجل",
+  "high": "مرتفع",
+  "medium": "متوسط",
+  "low": "منخفض"
+},
+"display": {
+  "properties": {
+    "label": "خصائص العرض",
+    "id": "المعرف",
+    "issue_type": "نوع عنصر العمل",
+    "sub_issue_count": "عدد العناصر الفرعية",
+    "attachment_count": "عدد المرفقات",
+    "created_on": "تم الإنشاء في",
+    "sub_issue": "عنصر عمل فرعي",
+    "work_item_count": "عدد عناصر العمل"
+  },
+  "extra": {
+    "show_sub_issues": "عرض العناصر الفرعية",
+    "show_empty_groups": "عرض المجموعات الفارغة"
+  }
+},
+"layouts": {
+  "ordered_by_label": "تم ترتيب هذا التخطيط بواسطة",
+  "list": "قائمة",
+  "kanban": "لوحة",
+  "calendar": "تقويم",
+  "spreadsheet": "جدول بيانات",
+  "gantt": "جدول زمني",
+  "title": {
+    "list": "تخطيط القائمة",
+    "kanban": "تخطيط اللوحة",
+    "calendar": "تخطيط التقويم",
+    "spreadsheet": "تخطيط جدول البيانات",
+    "gantt": "تخطيط الجدول الزمني"
+  }
+},
+"states": {
+  "active": "نشط",
+  "backlog": "قيد الانتظار"
+},
+"comments": {
+  "placeholder": "أضف تعليقًا",
+  "switch": {
+    "private": "تحويل إلى تعليق خاص",
+    "public": "تحويل إلى تعليق عام"
+  },
+  "create": {
+    "success": "تم إنشاء التعليق بنجاح",
+    "error": "فشل إنشاء التعليق. يرجى المحاولة لاحقًا."
+  },
+  "update": {
+    "success": "تم تحديث التعليق بنجاح",
+    "error": "فشل تحديث التعليق. يرجى المحاولة لاحقًا."
+  },
+  "remove": {
+    "success": "تم حذف التعليق بنجاح",
+    "error": "فشل حذف التعليق. يرجى المحاولة لاحقًا."
+  },
+  "upload": {
+    "error": "فشل تحميل الملف. يرجى المحاولة لاحقًا."
+  }
+},
+"empty_state": {
+  "issue_detail": {
+    "title": "عنصر العمل غير موجود",
+    "description": "عنصر العمل الذي تبحث عنه غير موجود أو تم أرشفته أو حذفه.",
+    "primary_button": {
+      "text": "عرض عناصر العمل الأخرى"
+    }
+  }
+},
+"sibling": {
+  "label": "عناصر العمل الشقيقة"
+},
+    "archive": {
+  "description": "يمكن أرشفة العناصر التي تم الانتهاء منها أو التي تم إلغاؤها فقط",
+  "label": "أرشفة عنصر العمل",
+  "confirm_message": "هل أنت متأكد أنك تريد أرشفة عنصر العمل؟ يمكن استعادة جميع العناصر المؤرشفة لاحقًا.",
+  "success": {
+    "label": "تم الأرشفة بنجاح",
+    "message": "توجد أرشيفاتك في أرشيف المشروع."
+  },
+  "failed": {
+    "message": "لم يتمكن النظام من أرشفة عنصر العمل. يرجى المحاولة مرة أخرى."
+  }
+},
+"restore": {
+  "success": {
+    "title": "استعادة ناجحة",
+    "message": "عنصر العمل الخاص بك موجود في عناصر العمل للمشروع."
+  },
+  "failed": {
+    "message": "لم يتمكن النظام من استعادة عنصر العمل. يرجى المحاولة مرة أخرى."
+  }
+},
+"relation": {
+  "relates_to": "مرتبط بـ",
+  "duplicate": "تكرار لـ",
+  "blocked_by": "محظور بواسطة",
+  "blocking": "يمنع"
+},
+"copy_link": "نسخ رابط عنصر العمل",
+"delete": {
+  "label": "حذف عنصر العمل",
+  "error": "حدث خطأ أثناء حذف عنصر العمل"
+},
+"subscription": {
+  "actions": {
+    "subscribed": "تم الاشتراك في عنصر العمل بنجاح",
+    "unsubscribed": "تم إلغاء الاشتراك في عنصر العمل بنجاح"
+  }
+},
+"select": {
+  "error": "يرجى تحديد عنصر عمل واحد على الأقل",
+  "empty": "لا توجد عناصر عمل محددة",
+  "add_selected": "إضافة العناصر المحددة"
+},
+"open_in_full_screen": "فتح عنصر العمل في وضع الشاشة الكاملة"
+},
+"attachment": {
+  "error": "تعذر إرفاق الملف. يرجى المحاولة في وقت لاحق.",
+  "only_one_file_allowed": "يمكن تحميل ملف واحد فقط في كل مرة.",
+  "file_size_limit": "يجب أن يكون حجم الملف أقل من {size}MB.",
+  "drag_and_drop": "اسحب وأفلت في أي مكان لتحميل الملف",
+  "delete": "حذف المرفق"
+},
+"label": {
+  "select": "اختيار علامة",
+  "create": {
+    "success": "تم إنشاء العلامة بنجاح",
+    "failed": "فشل إنشاء العلامة",
+    "already_exists": "العلامة موجودة بالفعل",
+    "type": "اكتب لإضافة علامة جديدة"
+  }
+},
+"sub_work_item": {
+  "update": {
+    "success": "تم تحديث عنصر العمل الفرعي بنجاح",
+    "error": "حدث خطأ أثناء تحديث عنصر العمل الفرعي"
+  },
+  "remove": {
+    "success": "تم حذف عنصر العمل الفرعي بنجاح",
+    "error": "حدث خطأ أثناء حذف عنصر العمل الفرعي"
+  }
+},
+"view": {
+  "label": "{count, plural, one {عرض} other {عروض}}",
+  "create": {
+    "label": "إنشاء عرض"
+  },
+  "update": {
+    "label": "تحديث العرض"
+  }
+},
+"inbox_issue": {
+  "status": {
+    "pending": {
+      "title": "معلق",
+      "description": "معلق"
+    },
+    "declined": {
+      "title": "مرفوض",
+      "description": "مرفوض"
+    },
+    "snoozed": {
+      "title": "مؤجل",
+      "description": "{days, plural, one{# يوم} other{# أيام}} المتبقية"
+    },
+    "accepted": {
+      "title": "مقبول",
+      "description": "مقبول"
+    },
+    "duplicate": {
+      "title": "مكرر",
+      "description": "مكرر"
+    }
+  },
+  "modals": {
+    "decline": {
+      "title": "رفض عنصر العمل",
+      "content": "هل أنت متأكد أنك تريد رفض عنصر العمل {value}؟"
+    },
+    "delete": {
+      "title": "حذف عنصر العمل",
+      "content": "هل أنت متأكد أنك تريد حذف عنصر العمل {value}؟",
+      "success": "تم حذف عنصر العمل بنجاح"
+    }
+  },
+  "errors": {
+    "snooze_permission": "فقط مدراء المشروع يمكنهم تأجيل أو إلغاء تأجيل عناصر العمل",
+    "accept_permission": "فقط مدراء المشروع يمكنهم قبول عناصر العمل",
+    "decline_permission": "فقط مدراء المشروع يمكنهم رفض عناصر العمل"
+  },
+  "actions": {
+    "accept": "قبول",
+    "decline": "رفض",
+    "snooze": "تأجيل",
+    "unsnooze": "إلغاء التأجيل",
+    "copy": "نسخ رابط عنصر العمل",
+    "delete": "حذف",
+    "open": "فتح عنصر العمل",
+    "mark_as_duplicate": "وضع علامة كمكرر",
+    "move": "نقل {value} إلى عناصر العمل للمشروع"
+  },
+  "source": {
+    "in-app": "داخل التطبيق"
+  },
+  "order_by": {
+    "created_at": "تم الإنشاء في",
+    "updated_at": "تم التحديث في",
+    "id": "معرف"
+  },
+  "label": "الاستقبال",
+  "page_label": "{workspace} - الاستقبال",
+  "modal": {
+    "title": "إنشاء عنصر عمل استقبالي"
+  },
+  "tabs": {
+    "open": "مفتوح",
+    "closed": "مغلق"
+  },
+  "empty_state": {
+    "sidebar_open_tab": {
+      "title": "لا توجد عناصر عمل مفتوحة",
+      "description": "ابحث عن العناصر المفتوحة هنا. أنشئ عنصر عمل جديد."
+    },
+    "sidebar_closed_tab": {
+      "title": "لا توجد عناصر عمل مغلقة",
+      "description": "يمكنك العثور هنا على جميع العناصر، سواء تم قبولها أو رفضها."
+    },
+    "sidebar_filter": {
+      "title": "لا توجد عناصر عمل مطابقة",
+      "description": "لا توجد عناصر عمل تطابق الفلتر المطبق في الاستقبال. أنشئ عنصر عمل جديد."
+    },
+    "detail": {
+      "title": "حدد عنصر عمل لعرض تفاصيله."
+    }
+  }
+},
+"workspace_creation": {
+  "heading": "أنشئ مساحة العمل الخاصة بك",
+  "subheading": "للبدء في استخدام Plane، يجب عليك إنشاء مساحة عمل أو الانضمام إليها.",
+  "form": {
+    "name": {
+      "label": "سم مساحة العمل الخاصة بك",
+      "placeholder": "من الأفضل دائمًا اختيار شيء مألوف وسهل التذكر."
+    },
+    "url": {
+      "label": "حدد عنوان URL لمساحة العمل الخاصة بك",
+      "placeholder": "اكتب أو الصق عنوان URL",
+      "edit_slug": "يمكنك تعديل الجزء الأخير فقط من عنوان URL"
+    },
+    "organization_size": {
+      "label": "كم عدد الأشخاص سيستخدمون هذه المساحة للعمل؟",
+      "placeholder": "حدد النطاق"
+    }
+  },
+  "errors": {
+    "creation_disabled": {
+      "title": "فقط مدير حسابك يمكنه إنشاء مساحات العمل",
+      "description": "إذا كنت تعرف عنوان البريد الإلكتروني لمدير الحساب، انقر على الزر أدناه للتواصل معه.",
+      "request_button": "اتصل بمدير الحساب"
+    },
+    "validation": {
+  "name_alphanumeric": "يمكن أن تحتوي أسماء مساحات العمل فقط على (' ')، ('-'), ('_') والحروف والأرقام.",
+  "name_length": "حدد اسمك بحد أقصى 80 حرفًا.",
+  "url_alphanumeric": "يمكن أن تحتوي عناوين URL فقط على ('-') والحروف والأرقام.",
+  "url_length": "حدد عنوان URL بحد أقصى 48 حرفًا.",
+  "url_already_taken": "عنوان URL لمساحة العمل محجوز بالفعل!"
+}
+    },
+    "request_email": {
+  "subject": "طلب إنشاء مساحة عمل جديدة",
+  "body": "مرحبًا مشرف (مشرفين) المثيل،\n\nيرجى إنشاء مساحة عمل جديدة بعنوان URL [/workspace-name] لهدف [هدف إنشاء مساحة العمل].\n\nشكرًا،\n{firstName} {lastName}\n{email}"
+},
+
+"button": {
+  "default": "إنشاء مساحة العمل",
+  "loading": "جارٍ إنشاء مساحة العمل"
+},
+
+"toast": {
+  "success": {
+    "title": "نجاح",
+    "message": "تم إنشاء مساحة العمل بنجاح"
+  },
+  "error": {
+    "title": "خطأ",
+    "message": "تعذر إنشاء مساحة العمل. يرجى المحاولة مرة أخرى."
+  }
+},
+
+"workspace_dashboard": {
+  "empty_state": {
+    "general": {
+      "title": "نظرة عامة على مشاريعك، الأنشطة والقياسات",
+      "description": "مرحبًا بك في Plane، نحن سعداء بوجودك هنا. أنشئ مشروعك الأول وراقب عناصر العمل الخاصة بك، وستتحول هذه الصفحة إلى مساحة تساعدك على التقدم. سيرى المشرفون أيضًا العناصر التي تساعد فريقهم على التقدم.",
+      "primary_button": {
+        "text": "ابدأ مشروعك الأول",
+        "comic": {
+          "title": "كل شيء يبدأ بمشروع في Plane",
+          "description": "قد يكون المشروع هو خريطة طريق منتج، حملة تسويقية، أو إطلاق سيارة جديدة."
+        }
+      }
+    }
+  }
+},
+
+"workspace_analytics": {
+  "label": "التحليلات",
+  "page_label": "{workspace} - التحليلات",
+  "open_tasks": "إجمالي المهام المفتوحة",
+  "error": "حدث خطأ أثناء استرجاع البيانات.",
+  "work_items_closed_in": "عناصر العمل المغلقة في",
+  "selected_projects": "المشاريع المحددة",
+  "total_members": "إجمالي الأعضاء",
+  "total_cycles": "إجمالي الدورات",
+  "total_modules": "إجمالي الوحدات",
+  "pending_work_items": {
+    "title": "عناصر العمل المعلقة",
+    "empty_state": "سيتم عرض تحليل عناصر العمل المعلقة من الزملاء هنا."
+  },
+  "work_items_closed_in_a_year": {
+    "title": "عناصر العمل المغلقة في السنة",
+    "empty_state": "أغلق عناصر العمل لرؤية تحليلاتها على شكل رسم بياني."
+  },
+  "most_work_items_created": {
+    "title": "أكثر العناصر التي تم إنشاؤها",
+    "empty_state": "الزملاء وعدد العناصر التي أنشأوها ستظهر هنا."
+  },
+  "most_work_items_closed": {
+    "title": "أكثر العناصر التي تم إغلاقها",
+    "empty_state": "الزملاء وعدد العناصر التي أغلقوها ستظهر هنا."
+  },
+  "tabs": {
+    "scope_and_demand": "النطاق والطلب",
+    "custom": "تحليلات مخصصة"
+  },
+  "empty_state": {
+    "general": {
+      "title": "راقب التقدم، أعباء العمل، والتخصيصات. حدد الاتجاهات، تخلص من العقبات، وتسريع العمل",
+      "description": "عرض النطاق مقابل الطلب، التقديرات، وزيادة النطاق. الحصول على الأداء حسب الأعضاء والفِرق، وضمان سير مشروعك وفقًا للجدول الزمني.",
+      "primary_button": {
+        "text": "ابدأ مشروعك الأول",
+        "comic": {
+          "title": "التحليلات تعمل بشكل أفضل مع الدورات + الوحدات",
+          "description": "أولاً، خطط لعناصر العمل في الدورات، وإذا كان ممكنًا، اجمع عناصر العمل التي تمتد عبر أكثر من دورة في وحدات. قم بمراجعة كل من هذه في التنقل على اليسار."
+        }
+      }
+    }
+  }
+}
+  },
+
+  "workspace_analytics": {
+  "label": "التحليلات",
+  "page_label": "{workspace} - التحليلات",
+  "open_tasks": "إجمالي المهام المفتوحة",
+  "error": "حدث خطأ أثناء استرجاع البيانات.",
+  "work_items_closed_in": "العناصر المغلقة في",
+  "selected_projects": "المشاريع المحددة",
+  "total_members": "إجمالي الأعضاء",
+  "total_cycles": "إجمالي الدورات",
+  "total_modules": "إجمالي الوحدات",
+  "pending_work_items": {
+    "title": "العناصر المعلقة",
+    "empty_state": "ستظهر هنا تحليلات العناصر المعلقة حسب الزملاء."
+  },
+  "work_items_closed_in_a_year": {
+    "title": "العناصر المغلقة في السنة",
+    "empty_state": "أغلق بعض العناصر لرؤية تحليلاتها بشكل رسومي."
+  },
+  "most_work_items_created": {
+    "title": "أكثر العناصر التي تم إنشاؤها",
+    "empty_state": "سيظهر الزملاء وعدد العناصر التي أنشئوها هنا."
+  },
+  "most_work_items_closed": {
+    "title": "أكثر العناصر التي تم إغلاقها",
+    "empty_state": "سيظهر الزملاء وعدد العناصر التي أغلقوها هنا."
+  },
+  "tabs": {
+    "scope_and_demand": "النطاق والطلب",
+    "custom": "تحليلات مخصصة"
+  },
+  "empty_state": {
+    "general": {
+      "title": "تابع التقدم، أحمال العمل، والتخصيصات. اكتشف الاتجاهات، احذف الحواجز، وسرع العمل",
+      "description": "عرض النطاق مقابل الطلب، التقديرات، وزيادة النطاق. احصل على الأداء حسب الأعضاء والفرق، وتأكد من سير المشروع في الوقت المحدد.",
+      "primary_button": {
+        "text": "ابدأ مشروعك الأول",
+        "comic": {
+          "title": "التحليلات تعمل بشكل أفضل مع الدورات + الوحدات",
+          "description": "أولاً، خطط لعناصر العمل في دورات وإذا أمكن، اجمع العناصر التي تمتد لأكثر من دورة في وحدات. تحقق من كلاهما في التنقل على اليسار."
+        }
+      }
+    }
+  }
+},
+"workspace_projects": {
+  "label": "{count, plural, one {مشروع} other {مشاريع}}",
+  "create": {
+    "label": "إضافة مشروع"
+  },
+  "network": {
+    "private": {
+      "title": "خاص",
+      "description": "متاح فقط عن طريق الدعوة"
+    },
+    "public": {
+      "title": "عام",
+      "description": "متاح للجميع في مساحة العمل باستثناء الضيوف"
+    }
+  },
+  "error": {
+    "permission": "ليس لديك إذن لإجراء هذا الإجراء.",
+    "cycle_delete": "فشل حذف الدورة",
+    "module_delete": "فشل حذف الوحدة",
+    "issue_delete": "فشل حذف عنصر العمل"
+  },
+  "state": {
+    "backlog": "قيد الانتظار",
+    "unstarted": "لم يبدأ بعد",
+    "started": "بدأ",
+    "completed": "تم",
+    "cancelled": "ملغى"
+  },
+  "sort": {
+    "manual": "يدوي",
+    "name": "الاسم",
+    "created_at": "تاريخ الإنشاء",
+    "members_length": "عدد الأعضاء"
+  },
+  "scope": {
+    "my_projects": "مشاريعي",
+    "archived_projects": "المشاريع المؤرشفة"
+  },
+  "common": {
+    "months_count": "{months, plural, one{# شهر} other{# أشهر}}"
+  },
+  "empty_state": {
+    "general": {
+      "title": "لا توجد مشاريع نشطة",
+      "description": "اعتبر كل مشروع كأب للعمل الموجه نحو الهدف. المشاريع هي المكان الذي توجد فيه المهام، الدورات، والوحدات، ومع زملائك، تساعدك على تحقيق هذا الهدف. أنشئ مشروعًا جديدًا أو فلتر المشاريع المؤرشفة.",
+      "primary_button": {
+        "text": "ابدأ مشروعك الأول",
+        "comic": {
+          "title": "كل شيء يبدأ بمشروع في Plane",
+          "description": "قد يكون المشروع خارطة طريق لمنتج أو حملة تسويقية أو إطلاق سيارة جديدة."
+        }
+      }
+    },
+    "no_projects": {
+      "title": "لا توجد مشاريع",
+      "description": "لإنشاء عناصر عمل أو إدارة عملك، يجب عليك إنشاء مشروع أو أن تكون جزءًا من مشروع.",
+      "primary_button": {
+        "text": "ابدأ مشروعك الأول",
+        "comic": {
+          "title": "كل شيء يبدأ بمشروع في Plane",
+          "description": "قد يكون المشروع خارطة طريق لمنتج أو حملة تسويقية أو إطلاق سيارة جديدة."
+        }
+      }
+    },
+    "filter": {
+      "title": "لا توجد مشاريع مطابقة",
+      "description": "لم يتم العثور على أي مشروع يطابق المعايير. \n أنشئ مشروعًا جديدًا بدلاً من ذلك."
+    },
+    "search": {
+      "description": "لم يتم العثور على أي مشروع يطابق المعايير.\n أنشئ مشروعًا جديدًا بدلاً من ذلك."
+    }
+  }
+},
+  "workspace_views": {
+  "add_view": "إضافة عرض",
+  "empty_state": {
+    "all-issues": {
+      "title": "لا يوجد عنصر عمل في المشروع",
+      "description": "تم الانتهاء من المشروع الأول! الآن، قسم عملك إلى أجزاء قابلة للتتبع باستخدام عناصر العمل. لننطلق!",
+      "primary_button": {
+        "text": "إنشاء عنصر عمل جديد"
+      }
+    },
+    "assigned": {
+      "title": "لا يوجد عنصر عمل حاليًا",
+      "description": "يمكنك متابعة عناصر العمل التي تم تعيينها لك هنا.",
+      "primary_button": {
+        "text": "إنشاء عنصر عمل جديد"
+      }
+    },
+    "created": {
+      "title": "لا يوجد عنصر عمل حاليًا",
+      "description": "جميع عناصر العمل التي تنشئها تظهر هنا، تابعها مباشرة من هنا.",
+      "primary_button": {
+        "text": "إنشاء عنصر عمل جديد"
+      }
+    },
+    "subscribed": {
+      "title": "لا يوجد عنصر عمل حاليًا",
+      "description": "اشترك في عناصر العمل التي تهمك، وتابعها جميعًا هنا."
+    },
+    "custom-view": {
+      "title": "لا يوجد عنصر عمل حاليًا",
+      "description": "عناصر العمل التي تتوافق مع الفلاتر، تابعها جميعًا هنا."
+    }
+  }
+},
+
+"workspace_settings": {
+  "label": "إعدادات مساحة العمل",
+  "page_label": "{workspace} - الإعدادات العامة",
+  "key_created": "تم إنشاء المفتاح",
+  "copy_key": "انسخ هذا المفتاح السري واحفظه في صفحات Plane. لن تتمكن من رؤية هذا المفتاح بعد النقر على إغلاق. تم تحميل ملف CSV يحتوي على المفتاح.",
+  "token_copied": "تم نسخ الرمز إلى الحافظة.",
+  "settings": {
+    "general": {
+      "title": "عام",
+      "upload_logo": "تحميل الشعار",
+      "edit_logo": "تعديل الشعار",
+      "name": "اسم مساحة العمل",
+      "company_size": "حجم الشركة",
+      "url": "رابط مساحة العمل",
+      "update_workspace": "تحديث مساحة العمل",
+      "delete_workspace": "حذف مساحة العمل هذه",
+      "delete_workspace_description": "عند حذف مساحة العمل، سيتم حذف جميع البيانات والموارد داخل هذه المساحة بشكل دائم ولن يمكن استرجاعها.",
+      "delete_btn": "حذف مساحة العمل هذه",
+      "delete_modal": {
+        "title": "هل أنت متأكد من أنك تريد حذف هذه المساحة؟",
+        "description": "لديك تجربة نشطة في أحد خططنا المدفوعة. يرجى إلغاؤها أولاً للمتابعة.",
+        "dismiss": "إغلاق",
+        "cancel": "إلغاء التجربة",
+        "success_title": "تم حذف مساحة العمل.",
+        "success_message": "سيتم إعادة توجيهك قريبًا إلى صفحتك الشخصية.",
+        "error_title": "لم تنجح العملية.",
+        "error_message": "يرجى المحاولة مرة أخرى."
+      },
+      "errors": {
+        "name": {
+          "required": "الاسم مطلوب",
+          "max_length": "اسم مساحة العمل لا يجب أن يتجاوز 80 حرفًا"
+        },
+        "company_size": {
+          "required": "حجم الشركة مطلوب",
+          "select_a_range": "اختر نطاق الحجم"
+        }
+      }
+    },
+    "members": {
+      "title": "الأعضاء",
+      "add_member": "إضافة عضو",
+      "pending_invites": "الدعوات المعلقة",
+      "invitations_sent_successfully": "تم إرسال الدعوات بنجاح",
+      "leave_confirmation": "هل أنت متأكد أنك تريد مغادرة مساحة العمل؟ لن تتمكن من الوصول إلى هذه المساحة بعد الآن. هذه العملية لا يمكن التراجع عنها.",
+      "details": {
+        "full_name": "الاسم الكامل",
+        "display_name": "اسم العرض",
+        "email_address": "عنوان البريد الإلكتروني",
+        "account_type": "نوع الحساب",
+        "authentication": "المصادقة",
+        "joining_date": "تاريخ الانضمام"
+      },
+      "modal": {
+        "title": "دعوة الأشخاص للتعاون",
+        "description": "ادعُ الأشخاص للتعاون في مساحة العمل الخاصة بك.",
+        "button": "إرسال الدعوات",
+        "button_loading": "جارٍ إرسال الدعوات",
+        "placeholder": "اسم@شركة.com",
+        "errors": {
+          "required": "نحن بحاجة إلى عنوان بريد إلكتروني لدعوتهم.",
+          "invalid": "البريد الإلكتروني غير صالح"
+        }
+      }
+    },
+    "billing_and_plans": {
+      "title": "الفواتير والخطط",
+      "current_plan": "الخطة الحالية",
+      "free_plan": "أنت تستخدم الخطة المجانية حاليًا",
+      "view_plans": "عرض الخطط"
+    },
+    "exports": {
+      "title": "التصدير",
+      "exporting": "جارٍ التصدير",
+      "previous_exports": "التصديرات السابقة",
+      "export_separate_files": "تصدير البيانات في ملفات منفصلة",
+      "modal": {
+        "title": "تصدير إلى",
+        "toasts": {
+          "success": {
+            "title": "تم التصدير بنجاح",
+            "message": "ستتمكن من تنزيل {entity} التي تم تصديرها من التصدير السابق."
+          },
+          "error": {
+            "title": "فشل التصدير",
+            "message": "فشل التصدير. يرجى المحاولة مرة أخرى."
+          }
+        }
+      }
+    },
+      "webhooks": {
+  "title": "الويب هوك",
+  "add_webhook": "إضافة ويب هوك",
+  "modal": {
+    "title": "إنشاء ويب هوك",
+    "details": "تفاصيل الويب هوك",
+    "payload": "رابط الحمولة",
+    "question": "ما هي الأحداث التي ترغب في تفعيلها باستخدام هذا الويب هوك؟",
+    "error": "الرابط مطلوب"
+  },
+  "secret_key": {
+    "title": "المفتاح السري",
+    "message": "إنشاء رمز لتوقيع الحمولة للويب هوك"
+  },
+  "options": {
+    "all": "إرسال كل شيء",
+    "individual": "اختيار الأحداث الفردية"
+  },
+  "toasts": {
+    "created": {
+      "title": "تم إنشاء الويب هوك",
+      "message": "تم إنشاء الويب هوك بنجاح"
+    },
+    "not_created": {
+      "title": "لم يتم إنشاء الويب هوك",
+      "message": "لم يتم إنشاء الويب هوك"
+    },
+    "updated": {
+      "title": "تم تحديث الويب هوك",
+      "message": "تم تحديث الويب هوك بنجاح"
+    },
+    "not_updated": {
+      "title": "لم يتم تحديث الويب هوك",
+      "message": "لم يتم تحديث الويب هوك"
+    },
+    "removed": {
+      "title": "تم حذف الويب هوك",
+      "message": "تم حذف الويب هوك بنجاح"
+    },
+    "not_removed": {
+      "title": "لم يتم حذف الويب هوك",
+      "message": "لم يتم حذف الويب هوك"
+    },
+    "secret_key_copied": {
+      "message": "تم نسخ المفتاح السري إلى الحافظة."
+    },
+    "secret_key_not_copied": {
+      "message": "حدث خطأ أثناء نسخ المفتاح السري."
+    }
+  }
+},
+      "api_tokens": {
+  "title": "رموز API",
+  "add_token": "إضافة رمز API",
+  "create_token": "إنشاء رمز",
+  "never_expires": "لا ينتهي أبدًا",
+  "generate_token": "إنشاء رمز",
+  "generating": "جارٍ الإنشاء",
+  "delete": {
+    "title": "حذف رمز API",
+    "description": "أي تطبيق يستخدم هذا الرمز لن يكون لديه وصول إلى بيانات Plane بعد الآن. لا يمكن التراجع عن هذه العملية.",
+    "success": {
+      "title": "نجاح!",
+      "message": "تم حذف رمز API بنجاح"
+    },
+    "error": {
+      "title": "خطأ!",
+      "message": "لم يتم حذف رمز API"
+    }
+        }
+      }
+    },
+    "empty_state": {
+  "api_tokens": {
+    "title": "لم يتم إنشاء رمز API",
+    "description": "يمكن استخدام API Plane لدمج بياناتك في Plane مع أي نظام خارجي. أنشئ رمزًا للبدء."
+  },
+  "webhooks": {
+    "title": "لم يتم إضافة أي ويب هوك",
+    "description": "أنشئ ويب هوك للحصول على التحديثات في الوقت الفعلي وأتمتة الإجراءات."
+  },
+  "exports": {
+    "title": "لا توجد تصديرات حالياً",
+    "description": "في كل مرة تقوم فيها بالتصدير، سيكون لديك أيضًا نسخة هنا للرجوع إليها."
+  },
+  "imports": {
+    "title": "لا توجد استيرادات حالياً",
+    "description": "ابحث عن جميع الاستيرادات السابقة هنا وقم بتحميلها."
+        }
+    }
+  },
+
+  "profile": {
+  "label": "الملف الشخصي",
+  "page_label": "عملك",
+  "work": "العمل",
+  "details": {
+    "joined_on": "مسجل في",
+    "time_zone": "المنطقة الزمنية"
+  },
+  "stats": {
+    "workload": "عبء العمل",
+    "overview": "نظرة عامة",
+    "created": "عناصر العمل التي تم إنشاؤها",
+    "assigned": "عناصر العمل المعينة",
+    "subscribed": "عناصر العمل المتابعة",
+    "state_distribution": {
+      "title": "عناصر العمل حسب الحالة",
+      "empty": "أنشئ عناصر العمل لعرضها حسب الحالة في الرسم البياني لتحليل أفضل."
+    },
+    "priority_distribution": {
+      "title": "عناصر العمل حسب الأولوية",
+      "empty": "أنشئ عناصر العمل لعرضها حسب الأولوية في الرسم البياني لتحليل أفضل."
+    },
+    "recent_activity": {
+      "title": "النشاط الأخير",
+      "empty": "لم نجد أي بيانات. يرجى مراجعة مساهماتك.",
+      "button": "تحميل نشاط اليوم",
+      "button_loading": "جارٍ التحميل"
+    }
+  },
+  "actions": {
+    "profile": "الملف الشخصي",
+    "security": "الأمان",
+    "activity": "النشاط",
+    "appearance": "المظهر",
+    "notifications": "الإشعارات"
+  },
+  "tabs": {
+    "summary": "الملخص",
+    "assigned": "المعين",
+    "created": "المنشأ",
+    "subscribed": "المتابع",
+    "activity": "النشاط"
+  },
+  "empty_state": {
+    "activity": {
+      "title": "لا يوجد نشاط حالياً",
+      "description": "ابدأ بإنشاء عنصر عمل جديد! أضف إليه تفاصيل وخصائص. استكشف Plane أكثر لرؤية نشاطك."
+    },
+    "assigned": {
+      "title": "لا توجد عناصر عمل مخصصة لك",
+      "description": "يمكنك متابعة عناصر العمل التي تم تعيينها لك هنا."
+    },
+    "created": {
+      "title": "لا توجد عناصر عمل حالياً",
+      "description": "جميع عناصر العمل التي تنشئها ستظهر هنا، تابعها مباشرة من هنا."
+    },
+    "subscribed": {
+      "title": "لا توجد عناصر عمل حالياً",
+      "description": "اشترك في عناصر العمل التي تهمك، تابعها جميعها هنا."
+    }
+    }
+    },
+
+  "project_settings": {
+  "general": {
+    "enter_project_id": "أدخل معرف المشروع",
+    "please_select_a_timezone": "يرجى اختيار المنطقة الزمنية",
+    "archive_project": {
+      "title": "أرشفة المشروع",
+      "description": "أرشفة المشروع ستزيله من شريط التنقل الجانبي، ولكنك ستظل قادرًا على الوصول إليه من صفحة المشاريع الخاصة بك. يمكنك استعادة المشروع أو حذفه في أي وقت.",
+      "button": "أرشفة المشروع"
+    },
+    "delete_project": {
+      "title": "حذف المشروع",
+      "description": "عند حذف المشروع، سيتم حذف جميع البيانات والموارد الخاصة بهذا المشروع بشكل دائم ولن يمكن استرجاعها.",
+      "button": "حذف مشروعي"
+    },
+    "toast": {
+      "success": "تم تحديث المشروع بنجاح",
+      "error": "لم يتمكن من تحديث المشروع. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "members": {
+    "label": "الأعضاء",
+    "project_lead": "قائد المشروع",
+    "default_assignee": "المعين بشكل افتراضي",
+    "guest_super_permissions": {
+      "title": "منح الوصول للقراءة لجميع عناصر العمل للمستخدمين الضيوف:",
+      "sub_heading": "سيسمح هذا للضيوف بالوصول للقراءة إلى جميع عناصر العمل في المشروع."
+    },
+    "invite_members": {
+      "title": "دعوة الأعضاء",
+      "sub_heading": "ادعُ الأعضاء للعمل على مشروعك.",
+      "select_co_worker": "اختيار زميل العمل"
+    }
+  },
+  "states": {
+    "describe_this_state_for_your_members": "وصف هذه الحالة لأعضائك.",
+    "empty_state": {
+      "title": "لا توجد حالة للمجموعة {groupKey}",
+      "description": "يرجى إنشاء حالة جديدة"
+    }
+  },
+  "labels": {
+    "label_title": "عنوان التسمية",
+    "label_title_is_required": "عنوان التسمية مطلوب",
+    "label_max_char": "اسم التسمية لا يجب أن يتجاوز 255 حرفًا",
+    "toast": {
+      "error": "خطأ في تحديث التسمية"
+    }
+  },
+  "estimates": {
+    "title": "تفعيل التقديرات لمشروعي",
+    "description": "تساعدك على التواصل بشأن تعقيد العمل وعبء الفريق."
+  },
+  "automations": {
+    "label": "الأتمتة",
+    "auto-archive": {
+      "title": "أرشفة العناصر المغلقة تلقائيًا",
+      "description": "سيتم أرشفة العناصر المغلقة (المنتهية أو الملغاة) تلقائيًا في Plane.",
+      "duration": "أرشفة العناصر المغلقة منذ"
+    },
+    "auto-close": {
+      "title": "إغلاق العناصر تلقائيًا",
+      "description": "سيقوم Plane بإغلاق العناصر غير المنتهية أو الملغاة تلقائيًا.",
+      "duration": "إغلاق العناصر غير النشطة منذ",
+      "auto_close_status": "حالة الإغلاق التلقائي"
+    }
+  },
+
+  "empty_state": {
+    "labels": {
+      "title": "لا توجد تسميات حاليًا",
+      "description": "أنشئ تسميات للمساعدة في تنظيم وتصفية عناصر العمل في مشروعك."
+    },
+    "estimates": {
+      "title": "لا توجد أنظمة تقدير حاليًا",
+      "description": "أنشئ مجموعة تقديرات للتواصل بشأن كمية العمل لكل عنصر من عناصر العمل.",
+      "primary_button": "إضافة نظام تقدير"
+    }
+  }
+},
+
+"project_cycles": {
+  "add_cycle": "إضافة دورة",
+  "more_details": "مزيد من التفاصيل",
+  "cycle": "دورة",
+  "update_cycle": "تحديث الدورة",
+  "create_cycle": "إنشاء دورة",
+  "no_matching_cycles": "لا توجد دورات مطابقة",
+  "remove_filters_to_see_all_cycles": "قم بإزالة الفلاتر لرؤية جميع الدورات",
+  "remove_search_criteria_to_see_all_cycles": "قم بإزالة معايير البحث لرؤية جميع الدورات",
+  "only_completed_cycles_can_be_archived": "فقط الدورات المكتملة يمكن أرشفتها",
+  "start_date": "تاريخ البدء",
+  "end_date": "تاريخ الانتهاء",
+  "in_your_timezone": "في منطقتك الزمنية",
+  "transfer_work_items": "نقل {count} عنصر عمل",
+  "date_range": "نطاق التاريخ",
+  "add_date": "إضافة تاريخ",
+  "active_cycle": {
+    "label": "دورة نشطة",
+    "progress": "التقدم",
+    "chart": "رسم بياني للتقدم",
+    "priority_issue": "العناصر ذات الأولوية",
+    "assignees": "المعينين",
+    "issue_burndown": "رسم بياني للتقدم في العناصر",
+    "ideal": "مثالي",
+    "current": "حالي",
+    "labels": "التسميات"
+  },
+  "upcoming_cycle": {
+    "label": "دورة قادمة"
+  },
+  "completed_cycle": {
+    "label": "دورة مكتملة"
+  },
+  "status": {
+    "days_left": "أيام متبقية",
+    "completed": "مكتمل",
+    "yet_to_start": "لم يبدأ بعد",
+    "in_progress": "قيد التقدم",
+    "draft": "مسودة"
+  },
+  "action": {
+    "restore": {
+      "title": "استعادة الدورة",
+      "success": {
+        "title": "تم استعادة الدورة",
+        "description": "تم استعادة الدورة."
+      },
+      "failed": {
+        "title": "فشل استعادة الدورة",
+        "description": "لم يتمكن من استعادة الدورة. يرجى المحاولة مرة أخرى."
+      }
+    },
+      "favorite": {
+  "loading": "إضافة الدورة إلى المفضلة",
+  "success": {
+    "description": "تمت إضافة الدورة إلى المفضلة.",
+    "title": "تم بنجاح!"
+  },
+        "failed": {
+    "description": "تعذر إضافة الدورة إلى المفضلة. يرجى المحاولة مرة أخرى.",
+    "title": "خطأ!"
+  }
+},
+"unfavorite": {
+  "loading": "إزالة الدورة من المفضلة",
+  "success": {
+    "description": "تمت إزالة الدورة من المفضلة.",
+    "title": "تم بنجاح!"
+  },
+  "failed": {
+    "description": "تعذر إزالة الدورة من المفضلة. يرجى المحاولة مرة أخرى.",
+    "title": "خطأ!"
+  }
+},
+"update": {
+  "loading": "تحديث الدورة",
+  "success": {
+    "description": "تم تحديث الدورة بنجاح.",
+    "title": "تم بنجاح!"
+  },
+  "failed": {
+    "description": "حدث خطأ أثناء تحديث الدورة. يرجى المحاولة مرة أخرى.",
+    "title": "خطأ!"
+  },
+  "error": {
+    "already_exists": "لديك دورة بالفعل في التواريخ المحددة. إذا كنت ترغب في إنشاء دورة كمشروع مسودة، يمكنك فعل ذلك من خلال حذف التاريخين."
+  }
+}
+    },
+    "empty_state": {
+  "general": {
+    "title": "قم بتجميع وتخطيط عملك في دورات.",
+    "description": "قسم العمل إلى فترات محددة، وقم بالتخطيط بالتراجع عن الموعد النهائي لمشروعك لتحديد التواريخ، وتقدم العمل بشكل ملموس مع فريقك.",
+    "primary_button": {
+      "text": "حدد دورتك الأولى",
+      "comic": {
+        "title": "الدورات هي فترات متكررة.",
+        "description": "إن السبرينت أو التكرار أو أي مصطلح آخر تستخدمه لمتابعة العمل الأسبوعي أو نصف الشهري هو دورة."
+      }
+    }
+  },
+      "no_issues": {
+    "title": "لا توجد عناصر عمل تم إضافتها إلى الدورة",
+    "description": "أضف أو أنشئ عناصر العمل التي ترغب في تخطيطها وتسليمها في هذه الدورة",
+    "primary_button": {
+      "text": "إنشاء عنصر عمل جديد"
+    },
+    "secondary_button": {
+      "text": "إضافة عنصر موجود"
+    }
+  },
+      "completed_no_issues": {
+    "title": "لا توجد عناصر عمل في الدورة",
+    "description": "لا توجد عناصر عمل في الدورة. تم نقل العناصر أو إخفاؤها. لعرض العناصر المخفية إذا كانت موجودة، قم بتحديث خصائص العرض الخاصة بك وفقًا لذلك."
+  },
+  "active": {
+    "title": "لا توجد دورة نشطة",
+    "description": "الدورة النشطة تشمل أي فترة تحتوي تاريخ اليوم ضمن نطاقها. تجد هنا تقدم العمل وتفاصيل الدورة النشطة."
+  },
+  "archived": {
+    "title": "لا توجد دورة مؤرشفة حاليًا",
+    "description": "لترتيب مشروعك، قم بأرشفة الدورات المكتملة. يمكنك العثور عليها هنا بمجرد أرشفتها."
+  }
+}
+  },
+
+  "project_issues": {
+  "empty_state": {
+    "no_issues": {
+      "title": "أنشئ عنصر عمل وخصصه لشخص ما، حتى لنفسك",
+      "description": "فكر في عناصر العمل كمهام أو عمل أو أهداف (Jobs To Be Done). عادة ما تكون عناصر العمل وأجزاءها الفرعية هي إجراءات زمنية مخصصة لأعضاء الفريق. يقوم فريقك بإنشاء وتخصيص وإنجاز عناصر العمل لدفع مشروعك نحو هدفه.",
+      "primary_button": {
+        "text": "أنشئ أول عنصر عمل لك",
+        "comic": {
+          "title": "عناصر العمل هي اللبنات الأساسية في Plane.",
+          "description": "إعادة تصميم واجهة Plane، تجديد هوية الشركة، أو إطلاق نظام حقن الوقود الجديد هي أمثلة لعناصر العمل التي ربما تحتوي على أجزاء فرعية."
+        }
+      }
+    },
+    "no_archived_issues": {
+      "title": "لا توجد عناصر عمل مؤرشفة حاليًا",
+      "description": "يمكنك أرشفة عناصر العمل المكتملة أو الملغاة يدويًا أو عبر الأتمتة. ستجدها هنا بمجرد أرشفتها.",
+      "primary_button": {
+        "text": "إعداد الأتمتة"
+      }
+    },
+    "issues_empty_filter": {
+      "title": "لا توجد عناصر عمل تطابق الفلاتر المطبقة",
+      "secondary_button": {
+        "text": "مسح جميع الفلاتر"
+      }
+    }
+  }
+},
+
+  "project_module": {
+  "add_module": "إضافة وحدة",
+  "update_module": "تحديث الوحدة",
+  "create_module": "إنشاء وحدة",
+  "archive_module": "أرشفة الوحدة",
+  "restore_module": "استعادة الوحدة",
+  "delete_module": "حذف الوحدة",
+  "empty_state": {
+    "general": {
+      "title": "ربط معالم مشروعك بالوحدات وتتبع العمل المجمع بسهولة.",
+      "description": "مجموعة من عناصر العمل التي تنتمي إلى والد منطقي وهرمي تشكل وحدة. اعتبرها وسيلة لتتبع العمل حسب معالم المشروع. لها فترات مواعيد وموارد خاصة بها وكذلك تحليلات لمساعدتك في رؤية مدى قربك أو بعدك عن المعلم.",
+      "primary_button": {
+        "text": "بناء وحدتك الأولى",
+        "comic": {
+          "title": "الوحدات تساعد في تجميع العمل حسب الهيكلية.",
+          "description": "وحدة سلة، وحدة هيكل، ووحدة مستودع هي أمثلة جيدة لهذا التجميع."
+        }
+      }
+    },
+      "no_issues": {
+      "title": "لا توجد عناصر عمل في الوحدة",
+      "description": "قم بإنشاء أو إضافة عناصر العمل التي ترغب في إتمامها ضمن هذه الوحدة",
+      "primary_button": {
+        "text": "إنشاء عناصر عمل جديدة"
+      },
+      "secondary_button": {
+        "text": "إضافة عنصر موجود"
+      }
+    },
+    "archived": {
+      "title": "لا توجد وحدات مؤرشفة حاليًا",
+      "description": "لترتيب مشروعك، قم بأرشفة الوحدات المكتملة أو الملغاة. يمكنك العثور عليها هنا بمجرد أرشفتها."
+    },
+    "sidebar": {
+      "in_active": "هذه الوحدة ليست نشطة بعد.",
+      "invalid_date": "تاريخ غير صالح. يرجى إدخال تاريخ صالح."
+    }
+  },
+    "quick_actions": {
+    "archive_module": "أرشفة الوحدة",
+    "archive_module_description": "فقط الوحدات المكتملة أو الملغاة يمكن أرشفتها.",
+    "delete_module": "حذف الوحدة"
+  },
+  "toast": {
+    "copy": {
+      "success": "تم نسخ رابط الوحدة إلى الحافظة"
+    },
+    "delete": {
+      "success": "تم حذف الوحدة بنجاح",
+      "error": "فشل حذف الوحدة"
+    }
+  }
+},
+
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "سجل طرق عرض مفلترة لمشروعك. أنشئ بقدر ما تحتاج",
+        "description": "العروض هي مجموعة من الفلاتر المسجلة التي تستخدمها بشكل متكرر أو التي ترغب في الوصول إليها بسهولة. يمكن لجميع زملائك في المشروع رؤية العروض الخاصة بكل شخص واختيار الأنسب لاحتياجاتهم.",
+        "primary_button": {
+          "text": "أنشئ عرضك الأول",
+          "comic": {
+            "title": "العروض تعمل على خصائص عناصر العمل.",
+            "description": "يمكنك إنشاء عرض هنا مع العديد من الخصائص كفلاتر حسب ما تراه مناسبًا."
+          }
+        }
+      },
+      "filter": {
+        "title": "لا يوجد عرض مطابق",
+        "description": "لا يوجد عرض يتطابق مع معايير البحث. \n أنشئ عرضًا جديدًا بدلاً من ذلك."
+      }
+    }
+  },
+
+  "project_page": {
+    "empty_state": {
+      "general": {
+        "title": "اكتب ملاحظة أو مستند أو قاعدة معرفية كاملة. احصل على مساعدة من جاليليو، مساعد الذكاء الاصطناعي ل Plane، للبدء",
+        "description": "الصفحات هي مساحة تفكير في Plane. قم بتدوين ملاحظات الاجتماعات، وقم بتنسيقها بسهولة، ودمج عناصر العمل، ورتبها باستخدام مكتبة المكونات، واحتفظ بها جميعًا في سياق مشروعك. لتسهيل كتابة أي مستند، استخدم جاليليو، الذكاء الاصطناعي ل Plane، باستخدام اختصار أو نقرة على الزر.",
+        "primary_button": {
+          "text": "أنشئ صفحتك الأولى"
+        }
+      },
+      "private": {
+        "title": "لا توجد صفحات خاصة بعد",
+        "description": "احتفظ بأفكارك الخاصة هنا. عندما تكون مستعدًا للمشاركة، الفريق على بعد نقرة واحدة.",
+        "primary_button": {
+          "text": "أنشئ صفحتك الأولى"
+        }
+      },
+      "public": {
+        "title": "لا توجد صفحات عامة بعد",
+        "description": "اطلع هنا على الصفحات التي تم مشاركتها مع الجميع في مشروعك.",
+        "primary_button": {
+          "text": "أنشئ صفحتك الأولى"
+        }
+      },
+      "archived": {
+        "title": "لا توجد صفحات مؤرشفة بعد",
+        "description": "أرشف الصفحات التي لم تعد في دائرة اهتماماتك. يمكنك الوصول إليها هنا عند الحاجة."
+      }
+    }
+  },
+
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "لم يتم العثور على نتائج"
+      }
+    }
+  },
+
+  "issue_relation": {
+    "empty_state": {
+      "search": {
+        "title": "لم يتم العثور على عنصر عمل مطابق"
+      },
+      "no_issues": {
+        "title": "لم يتم العثور على عنصر عمل"
+      }
+    }
+  },
+
+  "issue_comment": {
+    "empty_state": {
+      "general": {
+        "title": "لا توجد تعليقات بعد",
+        "description": "يمكن استخدام التعليقات كمساحة للنقاش والمتابعة لعناصر العمل"
+      }
+    }
+  },
+
+  "notification": {
+    "label": "صندوق الوارد",
+    "page_label": "{workspace} - صندوق الوارد",
+    "options": {
+      "mark_all_as_read": "علامة الكل كمقروء",
+      "mark_read": "علامة كمقروء",
+      "mark_unread": "علامة كغير مقروء",
+      "refresh": "تحديث",
+      "filters": "مرشحات صندوق الوارد",
+      "show_unread": "عرض غير المقروء",
+      "show_snoozed": "عرض المؤجل",
+      "show_archived": "عرض المؤرشف",
+      "mark_archive": "أرشفة",
+      "mark_unarchive": "إلغاء الأرشفة",
+      "mark_snooze": "تأجيل",
+      "mark_unsnooze": "إلغاء التأجيل"
+    },
+    "toasts": {
+      "read": "تم تعليم الإشعار كمقروء",
+      "unread": "تم تعليم الإشعار كغير مقروء",
+      "archived": "تم تعليم الإشعار كمؤرشف",
+      "unarchived": "تم تعليم الإشعار كغير مؤرشف",
+      "snoozed": "تم تأجيل الإشعار",
+      "unsnoozed": "تم إلغاء تأجيل الإشعار"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "اختر لعرض التفاصيل."
+      },
+      "all": {
+        "title": "لا يوجد عنصر عمل مخصص",
+        "description": "يمكنك مشاهدة التحديثات لعناصر العمل المخصصة لك هنا"
+      },
+      "mentions": {
+        "title": "لا يوجد عنصر عمل مخصص",
+        "description": "يمكنك مشاهدة التحديثات لعناصر العمل المخصصة لك هنا"
+      }
+    },
+    "tabs": {
+      "all": "الكل",
+      "mentions": "الإشارات"
+    },
+    "filter": {
+      "assigned": "مخصص لي",
+      "created": "أنشأته أنا",
+      "subscribed": "متابع لي"
+    },
+    "snooze": {
+      "1_day": "يوم واحد",
+      "3_days": "3 أيام",
+      "5_days": "5 أيام",
+      "1_week": "أسبوع واحد",
+      "2_weeks": "أسبوعان",
+      "custom": "مخصص"
+    }
+  },
+
+  "active_cycle": {
+    "empty_state": {
+      "progress": {
+        "title": "أضف عناصر العمل إلى الدورة لمشاهدة تقدمه"
+      },
+      "chart": {
+        "title": "أضف عناصر العمل إلى الدورة لمشاهدة الرسم البياني للتقدم."
+      },
+      "priority_issue": {
+        "title": "شاهد عناصر العمل ذات الأولوية التي تم معالجتها في الدورة."
+      },
+      "assignee": {
+        "title": "أضف المعينين إلى عناصر العمل لمشاهدة توزيع العمل حسب المعين."
+      },
+      "label": {
+        "title": "أضف التسميات إلى عناصر العمل لمشاهدة توزيع العمل حسب التسمية."
+      }
+    }
+  },
+
+  "disabled_project": {
+    "empty_state": {
+      "inbox": {
+        "title": "الإدخال غير مفعل لهذا المشروع.",
+        "description": "يساعدك الإدخال على إدارة الطلبات الواردة في مشروعك وإضافتها كعناصر عمل في سير العمل الخاص بك. قم بتفعيل الإدخال من إعدادات المشروع لإدارة الطلبات.",
+        "primary_button": {
+          "text": "إدارة الميزات"
+        }
+      },
+      "cycle": {
+        "title": "الدورات غير مفعلّة لهذا المشروع.",
+        "description": "قسّم العمل إلى فترات زمنية، خطط بالتراجع من الموعد النهائي لمشروعك لتحديد التواريخ، وحقق تقدمًا ملموسًا مع الفريق. قم بتفعيل ميزة الدورات لمشروعك لبدء استخدامها.",
+        "primary_button": {
+          "text": "إدارة الميزات"
+        }
+      },
+      "module": {
+        "title": "الوحدات غير مفعلّة لهذا المشروع.",
+        "description": "الوحدات هي العناصر الأساسية في مشروعك. قم بتفعيل الوحدات من إعدادات المشروع لبدء استخدامها.",
+        "primary_button": {
+          "text": "إدارة الميزات"
+        }
+      },
+      "page": {
+        "title": "الصفحات غير مفعلّة لهذا المشروع.",
+        "description": "الصفحات هي العناصر الأساسية في مشروعك. قم بتفعيل الصفحات من إعدادات المشروع لبدء استخدامها.",
+        "primary_button": {
+          "text": "إدارة الميزات"
+        }
+      },
+      "view": {
+        "title": "العروض غير مفعلّة لهذا المشروع.",
+        "description": "العروض هي العناصر الأساسية في مشروعك. قم بتفعيل العروض من إعدادات المشروع لبدء استخدامها.",
+        "primary_button": {
+          "text": "إدارة الميزات"
+        }
+      }
+    }
+  },
+  "workspace_draft_issues": {
+    "draft_an_issue": "إنشاء مسودة عنصر عمل",
+    "empty_state": {
+      "title": "ستظهر العناصر التي تم إعدادها جزئيًا، وتعليقاتها قريبًا، هنا.",
+      "description": "للتجربة، ابدأ بإضافة عنصر عمل واتركه في منتصف الطريق أو أنشئ أول مسودة لك أدناه. 😉",
+      "primary_button": {
+        "text": "إنشاء أول مسودة لك"
+      }
+    },
+    "delete_modal": {
+      "title": "حذف المسودة",
+      "description": "هل أنت متأكد أنك تريد حذف هذه المسودة؟ هذه العملية لا يمكن التراجع عنها."
+    },
+    "toasts": {
+      "created": {
+        "success": "تم إنشاء المسودة",
+        "error": "لم يتمكن من إنشاء عنصر العمل. يرجى المحاولة مرة أخرى."
+      },
+      "deleted": {
+        "success": "تم حذف المسودة"
+      }
+    }
+  },
+
+  "stickies": {
+    "title": "ملاحظاتك اللاصقة",
+    "placeholder": "انقر هنا للكتابة",
+    "all": "جميع الملاحظات اللاصقة",
+    "no-data": "دوّن فكرة، التقط فكرة، أو سجل إلهامًا. أضف ملاحظة لاصقة للبدء.",
+    "add": "إضافة ملاحظة لاصقة",
+    "search_placeholder": "ابحث حسب العنوان",
+    "delete": "حذف الملاحظة اللاصقة",
+    "delete_confirmation": "هل أنت متأكد أنك تريد حذف هذه الملاحظة اللاصقة؟",
+    "empty_state": {
+      "simple": "دوّن فكرة، التقط فكرة، أو سجل إلهامًا. أضف ملاحظة لاصقة للبدء.",
+      "general": {
+        "title": "الملاحظات اللاصقة هي ملاحظات سريعة ومهام تسجلها في الوقت الذي يحدث فيه الأمر.",
+        "description": "التقط أفكارك وأفكارك بسهولة من خلال إنشاء ملاحظات لاصقة يمكنك الرجوع إليها في أي وقت ومن أي مكان.",
+        "primary_button": {
+          "text": "إضافة ملاحظة لاصقة"
+        }
+      },
+      "search": {
+        "title": "لا يتوافق هذا مع أي من ملاحظاتك اللاصقة.",
+        "description": "جرّب مصطلحًا مختلفًا أو دعنا نعرف\nإذا كنت متأكدًا من صحة بحثك.",
+        "primary_button": {
+          "text": "إضافة ملاحظة لاصقة"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "لا يمكن أن يتجاوز اسم الملاحظة اللاصقة 100 حرف.",
+        "already_exists": "هناك ملاحظة لاصقة بدون وصف بالفعل"
+      },
+      "created": {
+        "title": "تم إنشاء الملاحظة اللاصقة",
+        "message": "تم إنشاء الملاحظة اللاصقة بنجاح"
+      },
+      "not_created": {
+        "title": "لم يتم إنشاء الملاحظة اللاصقة",
+        "message": "لم يتمكن من إنشاء الملاحظة اللاصقة"
+      },
+      "updated": {
+        "title": "تم تحديث الملاحظة اللاصقة",
+        "message": "تم تحديث الملاحظة اللاصقة بنجاح"
+      },
+      "not_updated": {
+        "title": "لم يتم تحديث الملاحظة اللاصقة",
+        "message": "لم يتمكن من تحديث الملاحظة اللاصقة"
+      },
+      "removed": {
+        "title": "تم حذف الملاحظة اللاصقة",
+        "message": "تم حذف الملاحظة اللاصقة بنجاح"
+      },
+      "not_removed": {
+        "title": "لم يتم حذف الملاحظة اللاصقة",
+        "message": "لم يتمكن من حذف الملاحظة اللاصقة"
+      }
+    }
+  },
+
+  "role_details": {
+    "guest": {
+      "title": "ضيف",
+      "description": "يمكن دعوة الأعضاء الخارجيين من المنظمات كضيوف."
+    },
+    "member": {
+      "title": "عضو",
+      "description": "القدرة على القراءة، الكتابة، التعديل، والحذف للكيانات في المشاريع، الدورات، والوحدات"
+    },
+    "admin": {
+      "title": "مدير",
+      "description": "تم تفعيل جميع الأذونات في مساحة العمل."
+    }
+  },
+  "user_roles": {
+    "product_or_project_manager": "مدير منتج / مدير مشروع",
+    "development_or_engineering": "تطوير / هندسة",
+    "founder_or_executive": "مؤسس / تنفيذي",
+    "freelancer_or_consultant": "مستقل / مستشار",
+    "marketing_or_growth": "تسويق / نمو",
+    "sales_or_business_development": "مبيعات / تطوير الأعمال",
+    "support_or_operations": "دعم / عمليات",
+    "student_or_professor": "طالب / أستاذ",
+    "human_resources": "الموارد البشرية",
+    "other": "آخر"
+  },
+
+  "importer": {
+    "github": {
+      "title": "GitHub",
+      "description": "استورد عناصر العمل من مستودعات GitHub وامزامنها."
+    },
+    "jira": {
+      "title": "Jira",
+      "description": "استورد عناصر العمل وepics من مشاريع وepics Jira."
+    }
+  },
+
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "صدر عناصر العمل إلى ملف CSV.",
+      "short_description": "تصدير إلى CSV"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "صدر عناصر العمل إلى ملف Excel.",
+      "short_description": "تصدير إلى Excel"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "صدر عناصر العمل إلى ملف Excel.",
+      "short_description": "تصدير إلى Excel"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "صدر عناصر العمل إلى ملف JSON.",
+      "short_description": "تصدير إلى JSON"
+    }
+  },
+  "default_global_view": {
+    "all_issues": "جميع عناصر العمل",
+    "assigned": "المعينين",
+    "created": "المُنشئين",
+    "subscribed": "المتابعين"
+  },
+
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "تفضيل النظام"
+      },
+      "light": {
+        "label": "فاتح"
+      },
+      "dark": {
+        "label": "داكن"
+      },
+      "light_contrast": {
+        "label": "تباين عالي فاتح"
+      },
+      "dark_contrast": {
+        "label": "تباين عالي داكن"
+      },
+      "custom": {
+        "label": "ثيم مخصص"
+      }
+    }
+  },
+  "project_modules": {
+    "status": {
+      "backlog": "قيد الانتظار",
+      "planned": "مخطط",
+      "in_progress": "قيد التنفيذ",
+      "paused": "معلق",
+      "completed": "مكتمل",
+      "cancelled": "ملغى"
+    },
+    "layout": {
+      "list": "عرض قائمة",
+      "board": "عرض لوحة",
+      "timeline": "عرض خط زمني"
+    },
+    "order_by": {
+      "name": "الاسم",
+      "progress": "التقدم",
+      "issues": "عدد عناصر العمل",
+      "due_date": "تاريخ الاستحقاق",
+      "created_at": "تاريخ الإنشاء",
+      "manual": "يدوي"
+    }
+  },
+
+  "cycle": {
+    "label": "{count, plural, one {دورة} other {دورات}}",
+    "no_cycle": "لا توجد دورة"
+  },
+
+  "module": {
+    "label": "{count, plural, one {وحدة} other {وحدات}}",
+    "no_module": "لا توجد وحدة"
+  }
+}
