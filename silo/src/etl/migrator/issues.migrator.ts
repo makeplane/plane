@@ -93,7 +93,7 @@ export const createIssuesWithParent = async (payload: IssueWithParentPayload): P
       planeIssuePropertyValues,
     });
   } catch (error) {
-    console.error("Error while creating issue at root", error);
+    logger.error("Error while creating issue at root", error);
   }
 
   return result;
@@ -201,7 +201,6 @@ export const generateIssuePayload = async (payload: BulkIssueCreatePayload): Pro
         issue_property_values: associatedIssuePropertyValues,
       });
     } catch (error) {
-      console.log("Error occured inside `CreateIssues`", error);
       logger.error(`[${jobId.slice(0, 7)}] Error while creating the issue: ${issue.external_id}`, error);
     }
   }
@@ -293,7 +292,6 @@ const processAttachments = async (
 
       assets.push(assetId);
     } catch (error) {
-      console.log("Error occured inside `processAttachments`", error);
       logger.error(`[${jobId.slice(0, 7)}] Error processing attachment for issue "${issue.name}":`, error);
     }
   }
@@ -359,7 +357,7 @@ export const createIssues = async (payload: IssueCreatePayload): Promise<ExIssue
         } else {
           //TODO: This is an edge case and shouldn't be encountered. Create the parent issue if it doesn't exist
           issue.parent = null;
-          console.warn(`[${jobId.slice(0, 7)}] Parent issue not found for the issue: ${issue.external_id}`);
+          logger.warn(`[${jobId.slice(0, 7)}] Parent issue not found for the issue: ${issue.external_id}`);
         }
       }
 
@@ -401,7 +399,6 @@ export const createIssues = async (payload: IssueCreatePayload): Promise<ExIssue
 
       await wait(issueWaitTime);
     } catch (error) {
-      console.log("Error occured inside `CreateIssues`", error);
       logger.error(`[${jobId.slice(0, 7)}] Error while creating the issue: ${issue.external_id}`, error);
     }
   }
@@ -481,11 +478,11 @@ export const createOrUpdateIssueComment = async (
             issueComment
           );
         } catch (error) {
-          console.log("Error while updating comment", error);
+          logger.error("Error while updating comment", error);
         }
       }
     } else {
-      console.log("Error while creating comment, other than already exist", error);
+      logger.error("Error while creating comment, other than already exist", error);
     }
   }
 };
@@ -627,11 +624,9 @@ const createIssueAttachments = async (
             }
           } else {
             logger.error(`[${jobId.slice(5)}] Error while creating the attachment: ${issue.name}`);
-            console.log(error);
           }
         }
       } catch (error) {
-        console.log("Something went wrong while creating the attachment", error);
         logger.error(`[${jobId.slice(0, 7)}] Error while fetching the attachments for the issue: ${issue.name}`, error);
       }
     });
@@ -968,7 +963,7 @@ const replaceImageComponent = (
       root.innerHTML = root.innerHTML.replace("<body", "<p").replace("</body>", "</p>");
       return root.toString();
     } catch (error) {
-      console.error("Error in replaceImageComponent:", error);
+      logger.error("Error in replaceImageComponent:", error);
       return description_html;
     }
   }
@@ -995,7 +990,7 @@ function convertJiraImageURL(originalURL: string): string {
 
     return url.toString();
   } catch (error) {
-    console.error("Error converting URL:", error);
+    logger.error("Error converting URL:", error);
     return originalURL;
   }
 }
@@ -1079,7 +1074,6 @@ const processCommentAttachments = async (
 
     return [processedComment, assetIds];
   } catch (error) {
-    console.log("Error occurred inside `processCommentAttachments`", error);
     logger.error(`[${jobId.slice(0, 7)}] Error processing attachments for comment:`, error);
   }
 

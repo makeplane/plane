@@ -34,7 +34,7 @@ export const handleCommand = async (data: TSlackCommandPayload) => {
 
     const res = await slackService.openModal(data.trigger_id, modal);
     if (res && !res.ok) {
-      console.error("Something went wrong while opening the modal", res);
+      logger.error("Something went wrong while opening the modal", res);
     }
   } catch (error: any) {
     const isPermissionError = error?.detail?.includes(CONSTANTS.NO_PERMISSION_ERROR);

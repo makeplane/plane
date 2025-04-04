@@ -156,7 +156,7 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
         await batchLock.releaseLock();
         // Inditate that the task has been errored, don't need to requeue, the task
         // will be requeued manually
-        console.error(`[ETL] Error processing etl job: ${error}`);
+        logger.error("[ETL] Error processing etl job", error);
         return true;
       }
       return true;
@@ -167,7 +167,7 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
 
       // Inditate that the task has been errored, don't need to requeue, the task
       // will be requeued manually
-      console.error(`[ETL] Error processing etl job: ${error}`);
+      logger.error("[ETL] Error processing etl job", error);
       return true;
     }
   }
@@ -180,7 +180,7 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
         headers,
       });
     } catch (error) {
-      console.error(error);
+      logger.error("Error pushing to job worker queue", error);
       throw new Error("Error pushing to job worker queue");
     }
   };

@@ -2,6 +2,7 @@ import { TImportJob } from "@plane/types";
 import { APIService } from "@/services/api.service";
 // types
 import { ClientOptions } from "@/types";
+import { logger } from "@/logger";
 
 export class ImportJobAPIService<TJobConfig = object> extends APIService {
   constructor(options: ClientOptions) {
@@ -12,7 +13,7 @@ export class ImportJobAPIService<TJobConfig = object> extends APIService {
     return this.post(`/api/v1/import-jobs/`, data)
       .then((response) => response.data)
       .catch((error) => {
-        console.log(error?.response?.data);
+        logger.error(error?.response?.data);
         throw error?.response?.data;
       });
   }
@@ -21,7 +22,7 @@ export class ImportJobAPIService<TJobConfig = object> extends APIService {
     return this.patch(`/api/v1/import-jobs/${id}/`, data)
       .then((response) => response.data)
       .catch((error) => {
-        console.log(error?.response?.data);
+        logger.error(error?.response?.data);
         throw error?.response?.data;
       });
   }
@@ -30,7 +31,7 @@ export class ImportJobAPIService<TJobConfig = object> extends APIService {
     return this.get(`/api/v1/import-jobs/${id}/`)
       .then((response) => response.data)
       .catch((error) => {
-        console.log(error?.response?.data);
+        logger.error(error?.response?.data);
         throw error?.response?.data;
       });
   }
@@ -39,7 +40,7 @@ export class ImportJobAPIService<TJobConfig = object> extends APIService {
     return this.get(`/api/v1/import-jobs/`, { params: params })
       .then((response) => response.data)
       .catch((error) => {
-        console.log(error?.response?.data);
+        logger.error(error?.response?.data);
         throw error?.response?.data;
       });
   }

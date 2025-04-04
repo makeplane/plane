@@ -31,9 +31,9 @@ export const handleMessageAction = async (data: TMessageActionPayload) => {
   try {
     const res = await slackService.openModal(data.trigger_id, modal);
     if (res && !res.ok) {
-      console.log("Something went wrong while opening the modal", res);
+      logger.error("Something went wrong while opening the modal", res);
     }
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 };

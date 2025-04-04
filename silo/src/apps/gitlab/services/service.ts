@@ -1,6 +1,7 @@
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { createGitLabService } from "@plane/etl/gitlab";
 import { getAPIClient } from "@/services/client";
+import { logger } from "@/logger";
 
 const apiClient = getAPIClient();
 
@@ -38,7 +39,7 @@ export const getGitlabClientService = async (workspaceId: string,) => {
         );
         return gitlabService;
     } catch (error) {
-        console.error(error);
+        logger.error("Failed to get gitlab client service:", error);
         throw error;
     }
 }

@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from "crypto";
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
 import {
@@ -245,7 +245,7 @@ export default class GithubController {
 
       res.redirect(redirectUri);
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to create GitHub connection:", error);
       return res.redirect(`${env.APP_BASE_URL}/error?error=${E_SILO_ERROR_CODES.GENERIC_ERROR}`);
     }
   }
@@ -449,7 +449,7 @@ export default class GithubController {
 
       return res.redirect(redirectUri);
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to create GitHub connection:", error);
       return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.GENERIC_ERROR}`);
     }
   }
@@ -627,7 +627,9 @@ export default class GithubController {
           {
             installationId: pullRequestPayload.installation?.id,
             owner: pullRequestPayload.repository.owner.login,
-            accountId: pullRequestPayload.organization ? pullRequestPayload.organization.id : pullRequestPayload.repository.owner.id,
+            accountId: pullRequestPayload.organization
+              ? pullRequestPayload.organization.id
+              : pullRequestPayload.repository.owner.id,
             repositoryId: pullRequestPayload.repository.id,
             repositoryName: pullRequestPayload.repository.name,
             pullRequestNumber: pullRequestPayload.pull_request.number,
@@ -649,7 +651,7 @@ export default class GithubController {
         message: "Webhook received",
       });
     } catch (error) {
-      console.log(error);
+      logger.error("Failed to process GitHub webhook:", error);
       responseHandler(res, 500, error);
     }
   }
@@ -662,7 +664,6 @@ export default class GithubController {
       const event = req.body.event;
 
       if (event == "issue" || event == "issue_comment") {
-
         const payload = req.body as PlaneWebhookPayloadBase<ExIssue | ExIssueComment>;
 
         const id = payload.data.id;
@@ -678,12 +679,15 @@ export default class GithubController {
           project,
         };
 
-        console.log(JSON.stringify(log, null, 2));
+        logger.info("Plane webhook received", log);
 
         if (event == "issue") {
           const labels = req.body.data.labels as ExIssueLabel[] | undefined;
           // If labels doesn't include github label, then we don't need to process this event
-          if (!labels || !labels.find((label) => label.name.toLowerCase() === E_INTEGRATION_KEYS.GITHUB.toLowerCase())) {
+          if (
+            !labels ||
+            !labels.find((label) => label.name.toLowerCase() === E_INTEGRATION_KEYS.GITHUB.toLowerCase())
+          ) {
             return res.status(202).send({
               message: "Webhook received",
             });
@@ -740,14 +744,16 @@ export const logGithubWebhookPayload = (
     repositoryName: payload?.repository?.name,
   };
 
-  console.log(`Github Webhook Payload: ${JSON.stringify(log)}`);
+  logger.info(`Github Webhook Payload`, {
+    log,
+  });
 };
 
 function verifyGithubWebhook(req: Request, res: Response, next: NextFunction) {
   try {
-    const signature = req.headers['x-hub-signature-256'];
-    const event = req.headers['x-github-event'];
-    const id = req.headers['x-github-delivery'];
+    const signature = req.headers["x-hub-signature-256"];
+    const event = req.headers["x-github-event"];
+    const id = req.headers["x-github-delivery"];
 
     const payload = JSON.stringify(req.body);
 
@@ -755,7 +761,7 @@ function verifyGithubWebhook(req: Request, res: Response, next: NextFunction) {
     if (!signature || !event || !id) {
       logGithubWebhookPayload(req.body, event, id);
       return res.status(401).json({
-        error: 'Missing required headers'
+        error: "Missing required headers",
       });
     }
 
@@ -763,36 +769,33 @@ function verifyGithubWebhook(req: Request, res: Response, next: NextFunction) {
     if (!payload) {
       logGithubWebhookPayload(req.body, event, id);
       return res.status(400).json({
-        error: 'Request body empty'
+        error: "Request body empty",
       });
     }
 
     // Calculate expected signature
-    const hmac = crypto.createHmac('sha256', env.GITHUB_WEBHOOK_SECRET ?? "");
-    const calculatedSignature = 'sha256=' + hmac.update(payload).digest('hex');
+    const hmac = crypto.createHmac("sha256", env.GITHUB_WEBHOOK_SECRET ?? "");
+    const calculatedSignature = "sha256=" + hmac.update(payload).digest("hex");
 
     // Constant time comparison to prevent timing attacks
-    const verified = crypto.timingSafeEqual(
-      Buffer.from(calculatedSignature),
-      Buffer.from(signature as string)
-    );
+    const verified = crypto.timingSafeEqual(Buffer.from(calculatedSignature), Buffer.from(signature as string));
 
     if (!verified) {
       logGithubWebhookPayload(req.body, event, id);
       return res.status(401).json({
-        error: 'Invalid signature'
+        error: "Invalid signature",
       });
     }
 
     // Signature is valid, proceed
     next();
   } catch (error) {
-    console.error('Error validating GitHub webhook:', error);
+    logger.error("Error validating GitHub webhook:", error);
     return res.status(500).json({
-      error: 'Error validating webhook signature'
+      error: "Error validating webhook signature",
     });
   }
-};
+}
 
 function parseAccessToken(response: string): string {
   // Split the response into key-value pairs

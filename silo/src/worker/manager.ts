@@ -181,11 +181,10 @@ export class TaskManager {
             await this.handleTask(props);
           } catch (error) {
             await this.handleError(msg, error);
-            console.log("Error handling task", error);
+            logger.error("Error handling task", error);
           }
         } catch (error) {
-          logger.error("Error processing message:");
-          console.log(error);
+          logger.error("Error processing message:", error);
           await this.handleError(msg, error);
         }
         await this.mq?.ackMessage(msg);

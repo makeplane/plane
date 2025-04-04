@@ -2,6 +2,7 @@ import { env } from "@/env";
 import { MQConsumer } from "./consumer";
 import { MQProducer } from "./producer";
 import { TMQEntityOptions } from "./types";
+import { logger } from "@/logger";
 
 // An encapsulation of RabbitMQ producer and consumer
 export class MQ {
@@ -37,7 +38,7 @@ export class MQ {
       await this.consumer.close();
       await this.producer.close();
     } catch (error) {
-      console.log("Error while closing RabbitMq connection", error);
+      logger.error("Error while closing RabbitMq connection", error);
     }
   }
 

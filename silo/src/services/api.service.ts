@@ -2,6 +2,7 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosHeaders } from "axios";
 // types
 import HMACSigner from "@/helpers/hmac-sign";
 import { ClientOptions } from "@/types";
+import { logger } from "@/logger";
 
 
 export abstract class APIService {
@@ -45,7 +46,7 @@ export abstract class APIService {
       (response) => response,
       (error) => {
         if (error.response && error.response.status === 401) {
-          console.log("401 error");
+          logger.error("401 error");
         }
         return Promise.reject(error);
       }

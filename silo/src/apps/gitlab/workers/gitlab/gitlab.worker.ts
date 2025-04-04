@@ -23,7 +23,7 @@ export class GitlabWebhookWorker extends TaskHandler {
         await handleMergeRequest(data as GitlabMergeRequestEvent);
       }
     } catch (error) {
-      console.error(`[GITLAB] Error processing gitlab webhook: ${error}`);
+      logger.error("[GITLAB] Error processing gitlab webhook", error);
     } finally {
       logger.info("[GITLAB] Event Processed Successfully");
       return true;

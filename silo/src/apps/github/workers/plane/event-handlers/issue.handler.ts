@@ -102,7 +102,6 @@ const handleIssueSync = async (store: Store, payload: PlaneWebhookPayload) => {
     await store.set(`silo:issue:${githubIssue?.data.number}`, "true");
   } catch (error) {
     logger.error("Error handling issue create/update event", error);
-    console.log(error);
   }
 };
 

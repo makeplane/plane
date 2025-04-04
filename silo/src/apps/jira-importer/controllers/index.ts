@@ -10,6 +10,7 @@ import { createPlaneClient } from "@/helpers/utils";
 import { Controller, Get, Post, useValidateUserAuthentication } from "@/lib";
 import { getAPIClient } from "@/services/client";
 import { jiraAuth } from "../auth/auth";
+import { logger } from "@/logger";
 
 class JiraApiError extends Error {
   constructor(
@@ -95,7 +96,7 @@ class JiraController {
             };
             return res.json([resource]);
           } catch (error: any) {
-            console.error(error);
+            logger.error(error);
             return res.sendStatus(400);
           }
         }
@@ -112,7 +113,7 @@ class JiraController {
       const resources = await fetchJiraResources(axiosInstance, credentials);
       return res.json(resources);
     } catch (error) {
-      console.error("error in get resources", error);
+      logger.error("error in get resources", error);
       handleError(error, res);
     }
   }
@@ -292,7 +293,11 @@ export const createJiraClient = async (workspaceId: string, userId: string, clou
       refreshTokenCallback: refreshTokenCallback,
     });
   } else {
-    if (!jiraCredentials.source_hostname || !jiraCredentials.source_access_token || !jiraCredentials.source_auth_email) {
+    if (
+      !jiraCredentials.source_hostname ||
+      !jiraCredentials.source_access_token ||
+      !jiraCredentials.source_auth_email
+    ) {
       throw new Error("Invalid Jira credentials");
     }
 
@@ -387,7 +392,7 @@ async function refreshAndRetry(
 }
 
 function handleError(error: any, res: Response) {
-  console.error("Error occurred:", error);
+  logger.error("Error occurred:", error);
   if (error instanceof JiraApiError) {
     return responseHandler(res, error.statusCode, error);
   }

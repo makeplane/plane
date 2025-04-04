@@ -3,7 +3,7 @@ import { parse, HTMLElement } from "node-html-parser";
 import { Client as PlaneClient } from "@plane/sdk";
 import { env } from "@/env";
 import { getValidCredentials } from "./credential";
-
+import { logger } from "@/logger";
 export const removeSpanAroundImg = (htmlContent: string): string => {
   // Parse the HTML content
   const root = parse(htmlContent);
@@ -60,7 +60,7 @@ export const downloadFile = async (url: string, authToken?: string | undefined):
     return blob;
   } catch (e) {
     const buffer = Buffer.from((e as any).response?.data);
-    console.error("Assest download failed:", buffer.toString("utf-8"));
+    logger.error("Assest download failed:", buffer.toString("utf-8"));
   }
 };
 
@@ -80,9 +80,9 @@ export const uploadFile = async ({ url, data }: UploadFileParams): Promise<boole
     return response.status === 204 || response.status === 200;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error("Upload failed:", error.response?.data || error.message);
+      logger.error("Upload failed:", error.response?.data || error.message);
     } else {
-      console.error("Upload failed:", error);
+      logger.error("Upload failed:", error);
     }
     throw error;
   }

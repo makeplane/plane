@@ -57,8 +57,7 @@ export const createModules = async (
                 );
                 return fetchedIssue?.id;
               } catch (e) {
-                console.log("Error while fetching issue for module");
-                console.log(e);
+                logger.error("Error while fetching issue for module", e);
               }
               // fetch the issue from plane if the issue is not found in the allIssues
             }

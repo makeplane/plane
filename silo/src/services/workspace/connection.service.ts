@@ -2,6 +2,7 @@ import { TWorkspaceConnection, TWorkspaceUserConnection } from "@plane/types";
 import { APIService } from "@/services/api.service";
 // types
 import { ClientOptions } from "@/types";
+import { logger } from "@/logger";
 
 export class WorkspaceConnectionAPIService extends APIService {
     constructor(options: ClientOptions) {
@@ -12,7 +13,7 @@ export class WorkspaceConnectionAPIService extends APIService {
         return this.post(`/api/v1/workspace-connections/`, data)
             .then((response) => response.data)
             .catch((error) => {
-                console.log(error);
+                logger.error(error);
                 throw error?.response?.data;
             });
     }
@@ -21,7 +22,7 @@ export class WorkspaceConnectionAPIService extends APIService {
         return this.patch(`/api/v1/workspace-connections/${connectionId}/`, data)
             .then((response) => response.data)
             .catch((error) => {
-                console.log(error);
+                logger.error(error);
                 throw error?.response?.data;
             });
     }
@@ -30,7 +31,7 @@ export class WorkspaceConnectionAPIService extends APIService {
         return this.get(`/api/v1/workspace-connections/${connectionId}/`)
             .then((response) => response.data)
             .catch((error) => {
-                console.log(error);
+                logger.error(error);
                 throw error?.response?.data;
             });
     }
@@ -39,7 +40,7 @@ export class WorkspaceConnectionAPIService extends APIService {
         return this.get(`/api/v1/workspace-user-connections/`, { params: { workspace_id: workspaceId, user_id: userId } })
             .then((response) => response.data)
             .catch((error) => {
-                console.log(error);
+                logger.error(error);
                 throw error?.response?.data;
             });
     }
@@ -48,7 +49,7 @@ export class WorkspaceConnectionAPIService extends APIService {
         return this.get(`/api/v1/workspace-connections/`, { params: params })
             .then((response) => response.data)
             .catch((error) => {
-                console.log(error);
+                logger.error(error);
                 throw error?.response?.data;
             });
     }
@@ -65,7 +66,7 @@ export class WorkspaceConnectionAPIService extends APIService {
         return this.delete(`/api/v1/workspace-connections/${connectionId}/`, { params })
             .then((response) => response.data)
             .catch((error) => {
-                console.log(error);
+                logger.error(error);
                 throw error?.response?.data;
             });
     }

@@ -7,6 +7,7 @@ import { createOrUpdateCredentials, getCredentialsByWorkspaceId } from "@/helper
 import { responseHandler } from "@/helpers/response-handler";
 import { createPlaneClient } from "@/helpers/utils";
 import { Controller, Get, Post, useValidateUserAuthentication } from "@/lib";
+import { logger } from "@/logger";
 
 @Controller("/api/linear")
 class LinearController {
@@ -121,7 +122,7 @@ class LinearController {
       const teams = await linearServiceInstance.getNumberOfIssues(teamId);
       res.json(teams);
     } catch (error: any) {
-      console.log(error);
+      logger.error(error);
       responseHandler(res, 500, error);
     }
   }

@@ -71,7 +71,7 @@ const updateIssue = async (
     try {
       await planeClient.issue.createLink(entityConnection.workspace_slug, issue.project, issue.id, linkTitle, prUrl);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
 
     logger.info(`[GITLAB] Issue ${reference.identifier} updated to state ${targetState.name} for project ${projectId}`);

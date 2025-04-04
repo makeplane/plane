@@ -87,8 +87,7 @@ export const handleViewSubmission = async (data: TViewSubmissionPayload) => {
               });
             }
           } else {
-            logger.error("Error sending thread message:");
-            console.error(res);
+            logger.error("Error sending thread message:", res);
           }
 
           /* ==================== File Upload ==================== */

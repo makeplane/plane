@@ -3,7 +3,7 @@ import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
 import { handleIssueCommentWebhook } from "./event-handlers/issue-comment.handler";
 import { handleIssueWebhook } from "./event-handlers/issue.handler";
-
+import { logger } from "@/logger";
 export class PlaneGithubWebhookWorker extends TaskHandler {
   mq: MQ;
   store: Store;
@@ -26,7 +26,7 @@ export class PlaneGithubWebhookWorker extends TaskHandler {
           break;
       }
     } catch (error) {
-      console.error(`[GITHUB] Error processing plane webhook: ${error}`);
+      logger.error("[GITHUB] Error processing plane webhook:", error);
     } finally {
       return true;
     }

@@ -20,6 +20,7 @@ import { getAPIClient } from "@/services/client";
 import { integrationTaskManager } from "@/worker";
 import { verifyGitlabToken } from "../helpers";
 import { gitlabAuthService, getGitlabClientService } from "../services";
+import { logger } from "@/logger";
 
 const apiClient = getAPIClient();
 
@@ -45,7 +46,7 @@ export default class GitlabController {
       });
       return res.json(workspaceConnection);
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       return responseHandler(res, 500, error);
     }
   }
@@ -493,7 +494,7 @@ export default class GitlabController {
 
       res.status(200).json(entityConnections);
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       responseHandler(res, 500, error);
     }
   }
@@ -538,7 +539,7 @@ export default class GitlabController {
       };
       return gitlabWebhook;
     } catch (error) {
-      console.error("error getWorkspaceWebhook", error);
+      logger.error("error getWorkspaceWebhook", error);
       throw error;
     }
   }

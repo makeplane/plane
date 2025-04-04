@@ -1,3 +1,4 @@
+import { logger } from "@/logger";
 import { Response } from "express";
 
 const { APP_ENV } = process.env;
@@ -69,7 +70,7 @@ export const responseHandler = (res: Response, status: number, data: any = {}, e
       });
     }
     case 500: {
-      console.error(`[SILo] Error processing response: ${data}`);
+      logger.error(`[SILo] Error processing response: ${data}`);
       return res.status(status).json({
         status,
         message: "Internal Server Error",
@@ -78,7 +79,7 @@ export const responseHandler = (res: Response, status: number, data: any = {}, e
       });
     }
     default: {
-      console.error(`[SILo] Error processing response: ${data}`);
+      logger.error(`[SILo] Error processing response: ${data}`);
       return res.status(status).json({
         status: 500,
         message: "Default Internal Server Error",

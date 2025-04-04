@@ -2,6 +2,7 @@ import { TWorkspaceEntityConnection } from "@plane/types";
 import { APIService } from "@/services/api.service";
 // types
 import { ClientOptions } from "@/types";
+import { logger } from "@/logger";
 
 export class WorkspaceEntityConnectionAPIService extends APIService {
   constructor(options: ClientOptions) {
@@ -14,7 +15,7 @@ export class WorkspaceEntityConnectionAPIService extends APIService {
     return this.post(`/api/v1/workspace-entity-connections/`, data)
       .then((response) => response.data)
       .catch((error) => {
-        console.log(error);
+        logger.error(error);
         throw error?.response?.data;
       });
   }
@@ -26,7 +27,7 @@ export class WorkspaceEntityConnectionAPIService extends APIService {
     return this.patch(`/api/v1/workspace-entity-connections/${connectionId}/`, data)
       .then((response) => response.data)
       .catch((error) => {
-        console.log(error);
+        logger.error(error);
         throw error?.response?.data;
       });
   }
@@ -35,7 +36,7 @@ export class WorkspaceEntityConnectionAPIService extends APIService {
     return this.get(`/api/v1/workspace-entity-connections/${connectionId}/`)
       .then((response) => response.data)
       .catch((error) => {
-        console.log(error);
+        logger.error(error);
         throw error?.response?.data;
       });
   }
@@ -46,7 +47,7 @@ export class WorkspaceEntityConnectionAPIService extends APIService {
     return this.get(`/api/v1/workspace-entity-connections/`, { params: params })
       .then((response) => response.data)
       .catch((error) => {
-        console.log(error);
+        logger.error(error);
         throw error?.response?.data;
       });
   }
@@ -55,7 +56,7 @@ export class WorkspaceEntityConnectionAPIService extends APIService {
     return this.delete(`/api/v1/workspace-entity-connections/${connectionId}/`)
       .then((response) => response.data)
       .catch((error) => {
-        console.log(error);
+        logger.error(error);
         throw error?.response?.data;
       });
   }
