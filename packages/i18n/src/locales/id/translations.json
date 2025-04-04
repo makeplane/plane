@@ -1736,8 +1736,64 @@
       }
     },
     "estimates": {
-      "title": "Aktifkan estimasi untuk proyek saya",
-      "description": "Mereka membantu Anda dalam mengkomunikasikan kompleksitas dan beban kerja tim."
+      "label": "Perkiraan",
+      "title": "Aktifkan perkiraan untuk proyek saya",
+      "description": "Mereka membantu Anda dalam mengkomunikasikan kompleksitas dan beban kerja tim.",
+      "no_estimate": "Tidak ada perkiraan",
+      "create": {
+        "custom": "Kustom",
+        "start_from_scratch": "Mulai dari awal",
+        "choose_template": "Pilih template",
+        "choose_estimate_system": "Pilih sistem perkiraan",
+        "enter_estimate_point": "Masukkan poin perkiraan"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Poin perkiraan dibuat",
+            "message": "Poin perkiraan telah berhasil dibuat"
+          },
+          "error": {
+            "title": "Pembuatan poin perkiraan gagal",
+            "message": "Kami tidak dapat membuat poin perkiraan baru, silakan coba lagi."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Perkiraan dimodifikasi",
+            "message": "Poin perkiraan telah diperbarui dalam proyek Anda."
+          },
+          "error": {
+            "title": "Modifikasi perkiraan gagal",
+            "message": "Kami tidak dapat memodifikasi perkiraan, silakan coba lagi"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Sukses!",
+            "message": "Perkiraan telah diaktifkan."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Sukses!",
+            "message": "Perkiraan telah dinonaktifkan."
+          },
+          "error": {
+            "title": "Kesalahan!",
+            "message": "Perkiraan tidak dapat dinonaktifkan. Silakan coba lagi"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Poin perkiraan harus lebih besar dari 0.",
+        "unable_to_process": "Kami tidak dapat memproses permintaan Anda, silakan coba lagi.",
+        "numeric": "Poin perkiraan harus berupa nilai numerik.",
+        "character": "Poin perkiraan harus berupa nilai karakter.",
+        "empty": "Nilai perkiraan tidak boleh kosong.",
+        "already_exists": "Nilai perkiraan sudah ada.",
+        "unsaved_changes": "Anda memiliki beberapa perubahan yang belum disimpan, Silakan simpan sebelum mengklik selesai"
+      }
     },
     "automations": {
       "label": "Otomatisasi",

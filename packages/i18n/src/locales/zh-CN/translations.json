@@ -1736,8 +1736,55 @@
       }
     },
     "estimates": {
+      "label": "估算",
       "title": "为我的项目启用估算",
-      "description": "它们有助于您传达团队的复杂性和工作量。"
+      "description": "它们有助于您传达团队的复杂性和工作量。",
+      "no_estimate": "无估算",
+      "create": {
+        "custom": "自定义",
+        "start_from_scratch": "从头开始",
+        "choose_template": "选择模板",
+        "choose_estimate_system": "选择估算系统",
+        "enter_estimate_point": "输入估算点数"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "已创建估算点数",
+            "message": "估算点数创建成功"
+          },
+          "error": {
+            "title": "无法创建估算点数",
+            "message": "无法创建新的估算点数，请重试"
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "已更新估算",
+            "message": "您项目中的估算点数已更新"
+          },
+          "error": {
+            "title": "无法更新估算",
+            "message": "无法更新估算，请重试"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "成功！",
+            "message": "已启用估算"
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "成功！",
+            "message": "已禁用估算"
+          },
+          "error": {
+            "title": "错误！",
+            "message": "无法禁用估算。请重试"
+          }
+        }
+      }
     },
     "automations": {
       "label": "自动化",

@@ -119,7 +119,7 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
         ],
       },
     },
-    is_available: false,
+    is_available: true,
     is_ee: true,
   },
 };

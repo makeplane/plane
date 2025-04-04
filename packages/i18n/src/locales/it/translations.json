@@ -501,7 +501,7 @@
   "export": "Esporta",
   "member": "{count, plural, one {# membro} other {# membri}}",
   "new_password_must_be_different_from_old_password": "La nuova password deve essere diversa dalla password precedente",
-  
+
   "edited": "Modificato",
   "bot": "Bot",
 
@@ -1735,8 +1735,64 @@
       }
     },
     "estimates": {
-      "title": "Abilita le stime per il mio progetto",
-      "description": "Aiutano a comunicare la complessità e il carico di lavoro del team."
+      "label": "Stime",
+      "title": "Abilita stime per il mio progetto",
+      "description": "Aiutano a comunicare la complessità e il carico di lavoro del team.",
+      "no_estimate": "Nessuna stima",
+      "create": {
+        "custom": "Personalizzato",
+        "start_from_scratch": "Inizia da zero",
+        "choose_template": "Scegli un modello",
+        "choose_estimate_system": "Scegli un sistema di stime",
+        "enter_estimate_point": "Inserisci punto di stima"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Punto di stima creato",
+            "message": "Il punto di stima è stato creato con successo"
+          },
+          "error": {
+            "title": "Creazione del punto di stima fallita",
+            "message": "Non siamo riusciti a creare il nuovo punto di stima, per favore riprova."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Stima modificata",
+            "message": "Il punto di stima è stato aggiornato nel tuo progetto."
+          },
+          "error": {
+            "title": "Modifica della stima fallita",
+            "message": "Non siamo riusciti a modificare la stima, per favore riprova"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Successo!",
+            "message": "Le stime sono state abilitate."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Successo!",
+            "message": "Le stime sono state disabilitate."
+          },
+          "error": {
+            "title": "Errore!",
+            "message": "Non è stato possibile disabilitare la stima. Per favore riprova"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Il punto di stima deve essere maggiore di 0.",
+        "unable_to_process": "Non siamo in grado di elaborare la tua richiesta, per favore riprova.",
+        "numeric": "Il punto di stima deve essere un valore numerico.",
+        "character": "Il punto di stima deve essere un valore carattere.",
+        "empty": "Il valore della stima non può essere vuoto.",
+        "already_exists": "Il valore della stima esiste già.",
+        "unsaved_changes": "Hai delle modifiche non salvate, salvale prima di cliccare su fatto"
+      }
     },
     "automations": {
       "label": "Automazioni",

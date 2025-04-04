@@ -2,10 +2,11 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // hooks
 import { useProject, useProjectEstimates } from "@/hooks/store";
-
+// i18n
 type TEstimateDisableSwitch = {
   workspaceSlug: string;
   projectId: string;
@@ -14,6 +15,8 @@ type TEstimateDisableSwitch = {
 
 export const EstimateDisableSwitch: FC<TEstimateDisableSwitch> = observer((props) => {
   const { workspaceSlug, projectId, isAdmin } = props;
+  // i18n
+  const { t } = useTranslation();
   // hooks
   const { updateProject, currentProjectDetails } = useProject();
   const { currentActiveEstimateId } = useProjectEstimates();
@@ -29,14 +32,18 @@ export const EstimateDisableSwitch: FC<TEstimateDisableSwitch> = observer((props
       });
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: currentProjectActiveEstimate ? "Estimates have been disabled" : "Estimates have been enabled",
+        title: currentProjectActiveEstimate
+          ? t("project_settings.estimates.toasts.disabled.success.title")
+          : t("project_settings.estimates.toasts.enabled.success.title"),
+        message: currentProjectActiveEstimate
+          ? t("project_settings.estimates.toasts.disabled.success.message")
+          : t("project_settings.estimates.toasts.enabled.success.message"),
       });
     } catch (err) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Estimate could not be disabled. Please try again",
+        title: t("project_settings.estimates.toasts.disabled.error.title"),
+        message: t("project_settings.estimates.toasts.disabled.error.message"),
       });
     }
   };

@@ -1568,8 +1568,64 @@
       }
     },
     "estimates": {
+      "label": "Estimates",
       "title": "Enable estimates for my project",
-      "description": "They help you in communicating complexity and workload of the team."
+      "description": "They help you in communicating complexity and workload of the team.",
+      "no_estimate": "No estimate",
+      "create": {
+        "custom": "Custom",
+        "start_from_scratch": "Start from scratch",
+        "choose_template": "Choose a template",
+        "choose_estimate_system": "Choose an estimate system",
+        "enter_estimate_point": "Enter estimate point"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Estimate point created",
+            "message": "The estimate point has been created successfully"
+          },
+          "error": {
+            "title": "Estimate point creation failed",
+            "message": "We were unable to create the new estimate point, please try again."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Estimate modified",
+            "message": "The estimate point has been updated in your project."
+          },
+          "error": {
+            "title": "Estimate modification failed",
+            "message": "We were unable to modify the estimate, please try again"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Success!",
+            "message": "Estimates have been enabled."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Success!",
+            "message": "Estimates have been disabled."
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Estimate could not be disabled. Please try again"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Estimate point needs to be greater than 0.",
+        "unable_to_process": "We are unable to process your request, please try again.",
+        "numeric": "Estimate point needs to be a numeric value.",
+        "character": "Estimate point needs to be a character value.",
+        "empty": "Estimate value cannot be empty.",
+        "already_exists": "Estimate value already exists.",
+        "unsaved_changes": "You have some unsaved changes, Please save them before clicking on done"
+      }
     },
     "automations": {
       "label": "Automations",

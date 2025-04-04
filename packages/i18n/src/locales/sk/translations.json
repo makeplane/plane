@@ -1735,8 +1735,64 @@
       }
     },
     "estimates": {
-      "title": "Povoliť odhady v projekte",
-      "description": "Pomáhajú komunikovať zložitosť a vyťaženie tímu."
+      "label": "Odhady",
+      "title": "Povoliť odhady pre môj projekt",
+      "description": "Pomáhajú vám komunikovať zložitosť a pracovné zaťaženie tímu.",
+      "no_estimate": "Bez odhadu",
+      "create": {
+        "custom": "Vlastné",
+        "start_from_scratch": "Začať od nuly",
+        "choose_template": "Vybrať šablónu",
+        "choose_estimate_system": "Vybrať systém odhadov",
+        "enter_estimate_point": "Zadať bod odhadu"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Bod odhadu vytvorený",
+            "message": "Bod odhadu bol úspešne vytvorený"
+          },
+          "error": {
+            "title": "Vytvorenie bodu odhadu zlyhalo",
+            "message": "Nepodarilo sa vytvoriť nový bod odhadu, skúste to prosím znova."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Odhad upravený",
+            "message": "Bod odhadu bol aktualizovaný vo vašom projekte."
+          },
+          "error": {
+            "title": "Úprava odhadu zlyhala",
+            "message": "Nepodarilo sa upraviť odhad, skúste to prosím znova"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Úspech!",
+            "message": "Odhady boli povolené."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Úspech!",
+            "message": "Odhady boli zakázané."
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Odhad sa nepodarilo zakázať. Skúste to prosím znova"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Bod odhadu musí byť väčší ako 0.",
+        "unable_to_process": "Nemôžeme spracovať vašu požiadavku, skúste to prosím znova.",
+        "numeric": "Bod odhadu musí byť číselná hodnota.",
+        "character": "Bod odhadu musí byť znakovou hodnotou.",
+        "empty": "Hodnota odhadu nemôže byť prázdna.",
+        "already_exists": "Hodnota odhadu už existuje.",
+        "unsaved_changes": "Máte neuložené zmeny. Prosím, uložte ich pred kliknutím na hotovo"
+      }
     },
     "automations": {
       "label": "Automatizácie",
