@@ -44,7 +44,6 @@ from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
 
-
 class IssueFlatSerializer(BaseSerializer):
     ## Contain only flat fields
 
@@ -755,9 +754,16 @@ class IssueSerializer(DynamicBaseSerializer):
 
 
 class IssueLiteSerializer(DynamicBaseSerializer):
+    is_epic = serializers.SerializerMethodField()
+
+    def get_is_epic(self, obj):
+        if hasattr(obj, "type") and obj.type:
+            return obj.type.is_epic
+        return False
+
     class Meta:
         model = Issue
-        fields = ["id", "sequence_id", "project_id", "type_id"]
+        fields = ["id", "sequence_id", "project_id", "type_id", "is_epic"]
         read_only_fields = fields
 
 

@@ -2,7 +2,7 @@ import { makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 import { EIssueServiceType } from "@plane/constants";
 // types
-import { TIssue, TIssueServiceType } from "@plane/types";
+import { TBaseIssue, TIssue, TIssueServiceType } from "@plane/types";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
 // services
@@ -69,6 +69,11 @@ export class IssueStore implements IIssueStore {
     this.issueArchiveService = new IssueArchiveService(serviceType);
     this.issueDraftService = new IssueDraftService();
   }
+
+  isEpic = computedFn((projectId: string, issue: Partial<TBaseIssue>) => {
+    if (issue.is_epic !== undefined) return issue.is_epic;
+    return this.rootIssueDetailStore.rootIssueStore.rootStore.issueTypes.getProjectEpicId(projectId) === issue.type_id;
+  });
 
   getIsFetchingIssueDetails = computedFn((issueId: string | undefined) => {
     if (!issueId) return false;
@@ -327,12 +332,23 @@ export class IssueStore implements IIssueStore {
     this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);
 
     // handle parent issue if exists
-    if (issue?.parent && issue?.parent?.id && issue?.parent?.project_id) {
-      this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue.parent.id).then((res) => {
-        this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
-      });
+    if (
+      issue &&
+      issue?.parent &&
+      issue?.parent?.id &&
+      issue?.parent?.project_id &&
+      this.serviceType === EIssueServiceType.ISSUES
+    ) {
+      if (this.isEpic(projectId, issue?.parent)) {
+        this.epicService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
+          this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
+        });
+      } else {
+        this.issueService.retrieve(workspaceSlug, issue.parent.project_id, issue?.parent?.id).then((res) => {
+          this.rootIssueDetailStore.rootIssueStore.issues.addIssue([res]);
+        });
+      }
     }
-
     // add identifiers to map
     rootWorkItemDetailStore.rootIssueStore.issues.addIssueIdentifier(issueIdentifier, issueId);
 

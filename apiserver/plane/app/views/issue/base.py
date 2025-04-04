@@ -938,7 +938,8 @@ class IssuePaginatedViewSet(BaseViewSet):
                     filter=Q(customer_request_issues__deleted_at__isnull=True),
                     distinct=True,
                 )
-            ).annotate(
+            )
+            .annotate(
                 customer_request_count=Count(
                     "customer_request_issues",
                     filter=Q(
@@ -1293,10 +1294,14 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
                 | Q(issue_intake__status=-1)
                 | Q(issue_intake__status=2)
                 | Q(issue_intake__isnull=True)
-            ).filter(project_id=project.id)
+            )
+            .filter(project_id=project.id)
             .filter(workspace__slug=slug)
-            .select_related("workspace", "project", "state", "parent")
+            .select_related("workspace", "project", "state")
             .prefetch_related("assignees", "labels", "issue_module__module")
+            .prefetch_related(
+                Prefetch("parent", queryset=Issue.objects.select_related("type"))
+            )
             .annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id")).values("cycle_id")[
