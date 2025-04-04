@@ -37,7 +37,7 @@ const handleFetch = async ({
         });
       }
 
-      const documentHandler = getDocumentHandler(documentType);
+      const documentHandler = getDocumentHandler(documentType, context);
       fetchedData = await documentHandler.fetch({
         context: context as HocusPocusServerContext,
         pageId,
@@ -100,7 +100,7 @@ const handleStore = async ({
         });
       }
 
-      const documentHandler = getDocumentHandler(documentType);
+      const documentHandler = getDocumentHandler(documentType, context);
       await documentHandler.store({
         context: context as HocusPocusServerContext,
         pageId,

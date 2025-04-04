@@ -5,7 +5,11 @@ import {
   HandlerDefinition,
 } from "@/core/types/document-handler";
 import { handlerFactory } from "@/core/handlers/document-handlers/handler-factory";
-import { fetchPageDescriptionBinary, updatePageDescription } from "./handlers";
+import { PageService } from "@/core/services/page.service";
+import { transformHTMLToBinary } from "./transformers";
+import { getAllDocumentFormatsFromBinaryData } from "@/core/helpers/page";
+
+const pageService = new PageService();
 
 /**
  * Handler for "project_page" document type
@@ -16,7 +20,21 @@ export const projectPageHandler: DocumentHandler = {
    */
   fetch: async ({ pageId, params, context }: DocumentFetchParams) => {
     const { cookie } = context;
-    return await fetchPageDescriptionBinary(params, pageId, cookie);
+    const workspaceSlug = params.get("workspaceSlug")?.toString();
+    const projectId = params.get("projectId")?.toString();
+    if (!workspaceSlug || !projectId || !cookie) return null;
+
+    const response = await pageService.fetchDescriptionBinary(workspaceSlug, projectId, pageId, cookie);
+    const binaryData = new Uint8Array(response);
+
+    if (binaryData.byteLength === 0) {
+      const binary = await transformHTMLToBinary(workspaceSlug, projectId, pageId, cookie);
+      if (binary) {
+        return binary;
+      }
+    }
+
+    return binaryData;
   },
 
   /**
@@ -24,7 +42,22 @@ export const projectPageHandler: DocumentHandler = {
    */
   store: async ({ pageId, state, params, context }: DocumentStoreParams) => {
     const { cookie } = context;
-    await updatePageDescription(params, pageId, state, cookie);
+    if (!(state instanceof Uint8Array)) {
+      throw new Error("Invalid state: must be an instance of Uint8Array");
+    }
+
+    const workspaceSlug = params?.get("workspaceSlug")?.toString();
+    const projectId = params?.get("projectId")?.toString();
+    if (!workspaceSlug || !projectId || !cookie) return;
+
+    const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromBinaryData(state);
+    const payload = {
+      description_binary: contentBinaryEncoded,
+      description_html: contentHTML,
+      description: contentJSON,
+    };
+
+    await pageService.updateDescription(workspaceSlug, projectId, pageId, payload, cookie);
   },
 };
 
