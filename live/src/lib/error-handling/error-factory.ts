@@ -152,11 +152,13 @@ export function handleError(error: unknown, options: ThrowingOptions): never;
  * });
  * return { error: appError.output() };
  */
+// eslint-disable-next-line no-redeclare
 export function handleError(error: unknown, options: NonThrowingOptions): AppError;
 
 /**
  * Implementation of handleError that handles both throwing and non-throwing cases
  */
+// eslint-disable-next-line no-redeclare
 export function handleError(error: unknown, options: ThrowingOptions | NonThrowingOptions): AppError | never {
   // Only throw if throw is explicitly true
   const shouldThrow = (options as ThrowingOptions).throw === true;

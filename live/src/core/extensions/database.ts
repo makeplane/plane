@@ -1,6 +1,6 @@
 import { Database } from "@hocuspocus/extension-database";
-import { catchAsync } from "@/core/helpers/error-handling/error-handler";
-import { handleError } from "@/core/helpers/error-handling/error-factory";
+import { catchAsync } from "@/lib/error-handling/error-handler";
+import { handleError } from "@/lib/error-handling/error-factory";
 import { getDocumentHandler } from "../handlers/document-handlers";
 import { type HocusPocusServerContext, type TDocumentTypes } from "@/core/types/common";
 

@@ -4,7 +4,7 @@ import { env } from "@/env";
 import { logger } from "@plane/logger";
 import { handleError } from "./error-factory";
 import { ErrorContext, reportError } from "./error-reporting";
-import { manualLogger } from "../logger";
+import { manualLogger } from "../../core/helpers/logger";
 
 /**
  * HTTP Status Codes

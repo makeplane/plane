@@ -1,5 +1,3 @@
-import { Router, Request } from "express";
-import type { WebSocket } from "ws";
 import "reflect-metadata";
 
 interface ControllerInstance {
@@ -11,23 +9,19 @@ interface ControllerConstructor {
   prototype: ControllerInstance;
 }
 
-export function registerWebSocketControllers(
-  router: Router,
+export function registerWebSocketController(
+  router: any,
   Controller: ControllerConstructor,
-  existingInstance?: ControllerInstance,
+  dependencies: any[] = []
 ): void {
-  const instance = existingInstance || new Controller();
-  const baseRoute = Reflect.getMetadata("baseRoute", Controller) as string;
+  const instance = new Controller(...dependencies);
+  const baseRoute = Reflect.getMetadata("baseRoute", Controller);
 
   Object.getOwnPropertyNames(Controller.prototype).forEach((methodName) => {
     if (methodName === "constructor") return; // Skip the constructor
 
-    const method = Reflect.getMetadata(
-      "method",
-      instance,
-      methodName,
-    ) as string;
-    const route = Reflect.getMetadata("route", instance, methodName) as string;
+    const method = Reflect.getMetadata("method", instance, methodName);
+    const route = Reflect.getMetadata("route", instance, methodName);
 
     if (method === "ws" && route) {
       const handler = instance[methodName] as unknown;
@@ -36,50 +30,21 @@ export function registerWebSocketControllers(
         typeof handler === "function" &&
         typeof (router as any).ws === "function"
       ) {
-        (router as any).ws(
-          `${baseRoute}${route}`,
-          (ws: WebSocket, req: Request) => {
-            try {
-              handler.call(instance, ws, req);
-            } catch (error) {
-              console.error(
-                `WebSocket error in ${Controller.name}.${methodName}`,
-                error,
-              );
-              ws.close(
-                1011,
-                error instanceof Error
-                  ? error.message
-                  : "Internal server error",
-              );
-            }
-          },
-        );
+        router.ws(`${baseRoute}${route}`, (ws: any, req: any) => {
+          try {
+            handler.call(instance, ws, req);
+          } catch (error) {
+            console.error(
+              `WebSocket error in ${Controller.name}.${methodName}`,
+              error
+            );
+            ws.close(
+              1011,
+              error instanceof Error ? error.message : "Internal server error"
+            );
+          }
+        });
       }
     }
   });
-}
-
-/**
- * Base controller class for WebSocket endpoints
- */
-export abstract class BaseWebSocketController {
-  protected router: Router;
-
-  constructor() {
-    this.router = Router();
-  }
-
-  /**
-   * Get the base route for this controller
-   */
-  protected getBaseRoute(): string {
-    return Reflect.getMetadata("baseRoute", this.constructor) || "";
-  }
-
-  /**
-   * Abstract method to handle WebSocket connections
-   * Implement this in your derived class
-   */
-  abstract handleConnection(ws: WebSocket, req: Request): void;
 }

@@ -5,7 +5,7 @@ import {
   HandlerDefinition,
 } from "@/core/types/document-handler";
 import { handlerFactory } from "@/core/handlers/document-handlers/handler-factory";
-import { PageService } from "@/core/services/page.service";
+import { PageService } from "@/services/page.service";
 import { transformHTMLToBinary } from "./transformers";
 import { getAllDocumentFormatsFromBinaryData } from "@/core/helpers/page";
 

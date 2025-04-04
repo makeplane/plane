@@ -1,4 +1,4 @@
-import { PageService } from "@/core/services/page.service";
+import { PageService } from "@/services/page.service";
 import { getBinaryDataFromHTMLString } from "@/core/helpers/page";
 import { logger } from "@plane/logger";
 
@@ -24,4 +24,3 @@ export const transformHTMLToBinary = async (
     throw error;
   }
 };
-

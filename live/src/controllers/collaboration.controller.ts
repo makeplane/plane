@@ -1,9 +1,9 @@
 import type { Request } from "express";
 import type { WebSocket as WS } from "ws";
 import type { Hocuspocus } from "@hocuspocus/server";
-import { ErrorCategory } from "@/core/helpers/error-handling/error-handler";
+import { ErrorCategory } from "@/lib/error-handling/error-handler";
 import { logger } from "@plane/logger";
-import Errors from "@/core/helpers/error-handling/error-factory";
+import Errors from "@/lib/error-handling/error-factory";
 import { Controller, WebSocket } from "@plane/decorators";
 
 @Controller("/collaboration")

@@ -1,4 +1,4 @@
-import { CatchErrors } from "@/lib/decorators";
+import { CatchErrors } from "@/lib/error";
 import { Controller, Get } from "@plane/decorators";
 import type { Request, Response } from "express";
 

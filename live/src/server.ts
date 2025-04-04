@@ -6,14 +6,13 @@ import helmet from "helmet";
 import path from "path";
 import { Hocuspocus } from "@hocuspocus/server";
 // controllers
-import { HealthController } from "@/core/controllers/health.controller";
-import { DocumentController } from "@/core/controllers/document.controller";
-import { CollaborationController } from "@/core/controllers/collaboration.controller";
-import { registerControllers } from "./lib/controller.utils";
+
 import { initializeRedis } from "./core/lib/redis-manager";
 import { logger } from "@plane/logger";
 import { createHocusPocus } from "./hocuspocus";
-import { handleError } from "./core/helpers/error-handling/error-factory";
+
+import { registerWebSocketController, registerController } from "@plane/decorators";
+import { REST_CONTROLLERS, WEBSOCKET_CONTROLLERS } from "./controllers";
 
 export default class Server {
   app: Application;
@@ -63,11 +62,15 @@ export default class Server {
 
   private setupControllers() {
     const router = express.Router();
-    registerControllers(
-      router,
-      [HealthController, DocumentController, CollaborationController],
-      [this.hocuspocusServer]
-    );
+
+    REST_CONTROLLERS.forEach((controller: any) => {
+      registerController(router, controller, [this.hocuspocusServer]);
+    });
+
+    WEBSOCKET_CONTROLLERS.forEach((controller: any) => {
+      registerWebSocketController(router, controller, [this.hocuspocusServer]);
+    });
+
     this.app.use(this.BASE_PATH, router);
   }
 
@@ -82,30 +85,16 @@ export default class Server {
 
     process.on("uncaughtException", (error) => {
       logger.error("Uncaught exception:", error);
-      // Create AppError to track the issue but don't terminate
-      handleError(error, {
-        errorType: "internal",
-        component: "process",
-        operation: "uncaughtException",
-        extraContext: { source: "uncaughtException" },
-      });
     });
 
     // Handle unhandled promise rejections - create AppError but DON'T terminate
-    process.on("unhandledRejection", (reason) => {
-      logger.error("Unhandled rejection:", reason);
-      // Create AppError to track the issue but don't terminate
-      handleError(reason, {
-        errorType: "internal",
-        component: "process",
-        operation: "unhandledRejection",
-        extraContext: { source: "unhandledRejection" },
-      });
+    process.on("unhandledRejection", (error) => {
+      logger.error("Unhandled rejection:", error);
     });
   }
 
-  private async shutdown(reason: string): Promise<void> {
-    logger.info(`Initiating graceful shutdown: ${reason}`);
+  private async shutdown(error: string): Promise<void> {
+    logger.info(`Initiating graceful shutdown: ${error}`);
 
     if (!this.httpServer) {
       logger.info("No HTTP server to close");

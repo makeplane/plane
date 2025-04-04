@@ -5,12 +5,12 @@ import { convertHTMLDocumentToAllFormats } from "@/core/helpers/convert-document
 // types
 import { TConvertDocumentRequestBody } from "@/core/types/common";
 // decorators
-import { CatchErrors } from "@/lib/decorators";
+import { CatchErrors } from "@/lib/error";
 // logger
 import { logger } from "@plane/logger";
 import { Controller, Post } from "@plane/decorators";
-import { AppError } from "@/core/helpers/error-handling/error-handler";
-import { handleError } from "@/core/helpers/error-handling/error-factory";
+import { AppError } from "@/lib/error-handling/error-handler";
+import { handleError } from "@/lib/error-handling/error-factory";
 
 // Define the schema with more robust validation
 const convertDocumentSchema = z.object({

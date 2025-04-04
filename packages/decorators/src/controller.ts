@@ -20,11 +20,12 @@ interface ControllerConstructor {
   prototype: ControllerInstance;
 }
 
-export function registerControllers(
+export function registerController(
   router: Router,
   Controller: ControllerConstructor,
+  dependencies: any[] = []
 ): void {
-  const instance = new Controller();
+  const instance = new Controller(...dependencies);
   const baseRoute = Reflect.getMetadata("baseRoute", Controller) as string;
 
   Object.getOwnPropertyNames(Controller.prototype).forEach((methodName) => {
@@ -33,14 +34,14 @@ export function registerControllers(
     const method = Reflect.getMetadata(
       "method",
       instance,
-      methodName,
+      methodName
     ) as HttpMethod;
     const route = Reflect.getMetadata("route", instance, methodName) as string;
     const middlewares =
       (Reflect.getMetadata(
         "middlewares",
         instance,
-        methodName,
+        methodName
       ) as RequestHandler[]) || [];
 
     if (method && route) {
