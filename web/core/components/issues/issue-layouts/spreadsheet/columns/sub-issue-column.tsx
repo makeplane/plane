@@ -8,7 +8,9 @@ import { Row } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
+
 import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
+import { useIssueTypes } from "@/plane-web/hooks/store";
 
 type Props = {
   issue: TIssue;
@@ -22,6 +24,11 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props
   const { workspaceSlug } = useParams();
   // derived values
   const isEpic = issue?.is_epic;
+
+  const { getIssueTypeById } = useIssueTypes();
+  // derived values
+  const issueTypeDetails = issue.type_id ? getIssueTypeById(issue.type_id) : undefined;
+
   const subIssueCount = issue?.sub_issues_count ?? 0;
 
   const redirectToIssueDetail = () => {
@@ -31,6 +38,7 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props
   };
 
   const label = `${subIssueCount} sub-work item${subIssueCount !== 1 ? "s" : ""}`;
+  const issueLabel = isEpic ? "work item" : "sub-work item";
 
   return (
     <Row
