@@ -39,11 +39,11 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
   const fetchCustomProperties = async (
     groupKey?: string,
     query?: string,
-    page: number = 1
+    page?: number
   ) => {
     try {
       const params = {
-        page,
+        page: page || 1,
         query: query || '',
         key: groupKey || '',
       };
@@ -55,7 +55,7 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
         const initialState: CustomPropertiesState = Object.keys(data).reduce((acc, key) => {
           acc[key] = {
             ...(data[key] || {}),
-            searchQuery: ''
+            query: ''
           };
           return acc;
         }, {});
@@ -72,10 +72,10 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
           ...prev,
           [groupKey]: {
             ...(data[groupKey] || {}),
-            data: page > 1
+            data: (page ?? 0) > 1
               ? [...(prev[groupKey]?.data || []), ...(data[groupKey]?.data || [])]
               : (data[groupKey]?.data || []),
-            searchQuery: query || ''
+            query: query || ''
           }
         }));
       }
@@ -96,7 +96,7 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
 
     await fetchCustomProperties(
       groupKey,
-      currentSection.searchQuery || '',
+      currentSection.query || '',
       nextPage
     );
   };
@@ -104,9 +104,6 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
   const handleSectionSearch = (async (groupKey: string, query: string) => {
       await fetchCustomProperties(groupKey, query, 1);
     });
-    // [fetchCustomProperties] // Dependencies
-    // [setCustomProperties, fetchCustomProperties] // Dependencies
-  // );
 
   const filteredGroupOptions = useMemo(() => {
     return Object.keys(customProperties).reduce<Record<string, any[]>>((acc, groupKey) => {
@@ -114,14 +111,11 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
 
       const filteredValues = properties
         .filter((property) => property?.toLowerCase()?.includes(searchQuery.toLowerCase()))
-      // .map((property) => property);
 
-      if (filteredValues?.length > 0) {
-        acc[groupKey] = {
-          ...customProperties[groupKey],
-          data: filteredValues,
-        };
-      }
+      acc[groupKey] = {
+        ...customProperties[groupKey],
+        data: filteredValues,
+      };
 
       return acc;
     }, {});
