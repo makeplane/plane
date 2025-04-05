@@ -17,7 +17,15 @@ from rest_framework.response import Response
 from plane.api.serializers import IntakeIssueSerializer, IssueSerializer
 from plane.app.permissions import ProjectLitePermission
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.db.models import Intake, IntakeIssue, Issue, Project, ProjectMember, State
+from plane.db.models import (
+    Intake,
+    IntakeIssue,
+    Issue,
+    Project,
+    ProjectMember,
+    State,
+    IssueType,
+)
 from plane.utils.host import base_host
 from plane.ee.models import IntakeSetting
 from .base import BaseAPIView
