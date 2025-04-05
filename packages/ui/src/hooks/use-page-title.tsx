@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { SITE_TITLE } from "@plane/constants";
 
 interface IUseHeadParams {
   title?: string;
@@ -7,7 +8,9 @@ interface IUseHeadParams {
 export const useHead = ({ title }: IUseHeadParams) => {
   useEffect(() => {
     if (title) {
-      document.title = title ?? "Plane | Simple, extensible, open-source project management tool.";
+      document.title = title;
+    } else {
+      document.title = SITE_TITLE;
     }
   }, [title]);
 };
