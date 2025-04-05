@@ -23,7 +23,7 @@
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.3.1",
     "globals": "^15.9.0",
-    "vite": "6.2.4",
+    "vite": "6.2.5",
     "vite-plugin-node-polyfills": "^0.22.0"
   }
 }
