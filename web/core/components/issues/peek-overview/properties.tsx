@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { Signal, Tag, Triangle, LayoutPanelTop, CalendarClock, CalendarCheck2, Users, UserCircle2 } from "lucide-react";
+import { Signal, Tag, Triangle, LayoutPanelTop, CalendarClock, CalendarCheck2, Users, UserCircle2, Info } from "lucide-react";
 // hooks
 // ui icons
 import { DiceIcon, DoubleCircleIcon, ContrastIcon } from "@plane/ui";
@@ -21,6 +21,7 @@ import {
   IssueParentSelect,
   IssueLabel,
   TIssueOperations,
+  CustomProperties
 } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -29,7 +30,8 @@ import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { useIssueDetail, useMember, useProject, useProjectState } from "@/hooks/store";
 // plane web components
 import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issue-types/values";
-import { IssueWorklogProperty } from "@/plane-web/components/issues";
+import { IssueWorklogProperty} from "@/plane-web/components/issues";
+import { ISSUE_ADDITIONAL_PROPERTIES } from "@/constants/issue";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
@@ -38,6 +40,7 @@ interface IPeekOverviewProperties {
   disabled: boolean;
   issueOperations: TIssueOperations;
 }
+
 
 export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issueOperations, disabled } = props;
@@ -53,9 +56,9 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   if (!issue) return <></>;
   const createdByDetails = getUserDetails(issue?.created_by);
   const projectDetails = getProjectById(issue.project_id);
+  const customProperties = issue?.custom_properties || [];
   const isEstimateEnabled = projectDetails?.estimate;
   const stateDetails = getStateById(issue.state_id);
-
   const minDate = getDate(issue.start_date);
   minDate?.setDate(minDate.getDate());
 
@@ -299,6 +302,20 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             isDisabled={disabled}
           />
         )}
+
+        {ISSUE_ADDITIONAL_PROPERTIES.map((prop: any) =>
+          issue[prop.key] ? (
+            <div key={prop?.key} className="flex w-full items-center gap-3 h-8">
+              <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+                <Info className="h-4 w-4 flex-shrink-0" />
+                <span>{prop?.title}</span>
+              </div>
+              <div className="w-3/4 flex-grow group ml-2 text-sm">{issue[prop.key]}</div>
+            </div>
+          ) : null
+        )}
+
+        <CustomProperties customProperties={Array.isArray(customProperties) ? customProperties : []} />
       </div>
     </div>
   );

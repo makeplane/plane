@@ -54,7 +54,7 @@ export const ANALYTICS_X_AXIS_VALUES: { value: TXAxisValues; label: string }[] =
   {
     value: "created_at",
     label: "Created date",
-  },
+  }
 ];
 
 export const ANALYTICS_Y_AXIS_VALUES: { value: TYAxisValues; label: string }[] = [

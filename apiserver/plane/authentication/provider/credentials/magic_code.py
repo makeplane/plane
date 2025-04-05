@@ -44,12 +44,12 @@ class MagicCodeProvider(CredentialAdapter):
             ]
         )
 
-        if not (EMAIL_HOST):
-            raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["SMTP_NOT_CONFIGURED"],
-                error_message="SMTP_NOT_CONFIGURED",
-                payload={"email": str(key)},
-            )
+        # if not (EMAIL_HOST):
+        #     raise AuthenticationException(
+        #         error_code=AUTHENTICATION_ERROR_CODES["SMTP_NOT_CONFIGURED"],
+        #         error_message="SMTP_NOT_CONFIGURED",
+        #         payload={"email": str(key)},
+        #     )
 
         if ENABLE_MAGIC_LINK_LOGIN == "0":
             raise AuthenticationException(
@@ -83,11 +83,10 @@ class MagicCodeProvider(CredentialAdapter):
         # Check if the key already exists in python
         if ri.exists(key):
             data = json.loads(ri.get(key))
-
             current_attempt = data["current_attempt"] + 1
-
+            email = str(self.key).replace("magic_", "", 1)
+            username = email.replace("@plane-shipsy.com", "", 1)
             if data["current_attempt"] > 2:
-                email = str(self.key).replace("magic_", "", 1)
                 if User.objects.filter(email=email).exists():
                     raise AuthenticationException(
                         error_code=AUTHENTICATION_ERROR_CODES[
@@ -109,11 +108,19 @@ class MagicCodeProvider(CredentialAdapter):
                 "current_attempt": current_attempt,
                 "email": str(self.key),
                 "token": token,
+                "username": username
             }
-            expiry = 600
+            expiry = 30
+            print(key, value)
             ri.set(key, json.dumps(value), ex=expiry)
         else:
-            value = {"current_attempt": 0, "email": self.key, "token": token}
+            username = self.key.replace("@plane-shipsy.com", "", 1)
+            value = {
+                "current_attempt": 0, 
+                "email": self.key, 
+                "token": token,
+                "username": username
+            }
             expiry = 600
 
             ri.set(key, json.dumps(value), ex=expiry)
@@ -121,21 +128,26 @@ class MagicCodeProvider(CredentialAdapter):
 
     def set_user_data(self):
         ri = redis_instance()
+        keys = ri.keys('*')
+        print("All keys in redis:", keys)
+        print("Key to be checked:", self.key)
         if ri.exists(self.key):
             data = json.loads(ri.get(self.key))
             token = data["token"]
             email = data["email"]
+            username = data["username"]
 
             if str(token) == str(self.code):
                 super().set_user_data(
                     {
                         "email": email,
                         "user": {
+                            "username": username,
                             "avatar": "",
                             "first_name": "",
                             "last_name": "",
                             "provider_id": "",
-                            "is_password_autoset": True,
+                            "is_password_autoset": False,
                         },
                     }
                 )

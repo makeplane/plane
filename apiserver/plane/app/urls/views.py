@@ -64,6 +64,15 @@ urlpatterns = [
         name="global-view-issues",
     ),
     path(
+        "workspaces/<str:slug>/custom-properties/",
+        WorkspaceViewIssuesViewSet.as_view(
+            {
+                "get": "listCustomProperty",
+            }
+        ),
+        name="global-view-issues",
+    ),
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-views/",
         IssueViewFavoriteViewSet.as_view(
             {

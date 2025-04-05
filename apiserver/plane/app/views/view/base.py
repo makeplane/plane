@@ -1,5 +1,6 @@
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
+from django.db.models import Count
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import (
     Exists,
@@ -27,6 +28,7 @@ from plane.app.permissions import (
 )
 from plane.app.serializers import (
     IssueViewSerializer,
+    BaseSerializer,
 )
 from plane.db.models import (
     Issue,
@@ -38,6 +40,7 @@ from plane.db.models import (
     ProjectMember,
     Project,
     CycleIssue,
+    IssueCustomProperty
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -45,6 +48,7 @@ from plane.utils.grouper import (
     issue_queryset_grouper,
 )
 from plane.utils.issue_filters import issue_filters
+from plane.utils.constants import ALLOWED_CUSTOM_PROPERTY_WORKSPACE_MAP
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import (
     GroupedOffsetPaginator,
@@ -56,6 +60,18 @@ from plane.db.models import (
     UserFavorite,
 )
 
+class IssueCustomPropertySerializer(BaseSerializer):
+    class Meta:
+        model = IssueCustomProperty
+        fields = ["key", "value", "issue_type_custom_property"]
+        read_only_fields = [
+            "id",
+            "issue",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
 
 class WorkspaceViewViewSet(BaseViewSet):
     serializer_class = IssueViewSerializer
@@ -190,7 +206,8 @@ class WorkspaceViewViewSet(BaseViewSet):
 
 
 class WorkspaceViewIssuesViewSet(BaseViewSet):
-    def get_queryset(self):
+    def get_queryset(self, filters):
+        custom_properties = filters.get("custom_properties", {})
         return (
             Issue.issue_objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(
@@ -274,6 +291,18 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
             )
+            .filter(
+                *[
+                    Q(
+                        id__in=IssueCustomProperty.objects.filter(
+                            issue_id=OuterRef("id"),
+                            key=group_key,
+                            value__in=values
+                        ).values("issue_id")
+                    )
+                    for group_key, values in custom_properties.items()
+                ]
+            )
         )
 
     @method_decorator(gzip_page)
@@ -281,13 +310,32 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST],
         level="WORKSPACE",
     )
+
+    def listCustomProperty(self, request, slug):
+        customPropertyAllowedKeys = ALLOWED_CUSTOM_PROPERTY_WORKSPACE_MAP.get(slug, [])
+        custom_properties = IssueCustomProperty.objects.filter(key__in=customPropertyAllowedKeys)
+        serializer = IssueCustomPropertySerializer(custom_properties, many=True)
+
+        groupedCustomProperties = {}
+        for item in serializer.data:
+            key = item.get("key")
+            value = item.get("value")
+            if value is None or key not in customPropertyAllowedKeys:
+                continue
+            groupedCustomProperties.setdefault(key, set()).add(value)
+
+        groupedUniqueCustomProperties = {key: list(values) for key, values in groupedCustomProperties.items()}
+        return Response(groupedUniqueCustomProperties, status=status.HTTP_200_OK)
+    
     def list(self, request, slug):
         filters = issue_filters(request.query_params, "GET")
+        filtersWithoutCustomProperties = filters.copy()
+        filtersWithoutCustomProperties.pop('custom_properties', None)
         order_by_param = request.GET.get("order_by", "-created_at")
 
         issue_queryset = (
-            self.get_queryset()
-            .filter(**filters)
+            self.get_queryset(filters)
+            .filter(**filtersWithoutCustomProperties)
             .annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(

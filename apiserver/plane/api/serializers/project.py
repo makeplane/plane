@@ -9,6 +9,7 @@ from plane.db.models import (
 )
 
 from .base import BaseSerializer
+from .issue_type import IssueTypeSerializer
 
 
 class ProjectSerializer(BaseSerializer):
@@ -30,7 +31,6 @@ class ProjectSerializer(BaseSerializer):
             "workspace",
             "created_at",
             "updated_at",
-            "created_by",
             "updated_by",
             "deleted_at",
             "cover_image_url",
@@ -104,3 +104,4 @@ class ProjectLiteSerializer(BaseSerializer):
             "cover_image_url",
         ]
         read_only_fields = fields
+

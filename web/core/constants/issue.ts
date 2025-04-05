@@ -9,6 +9,7 @@ import {
   TIssueOrderByOptions,
   TIssuePriorities,
   TIssueGroupingFilters,
+  TIssue
 } from "@plane/types";
 
 export const DRAG_ALLOWED_GROUPS: TIssueGroupByOptions[] = [
@@ -109,6 +110,19 @@ export const ISSUE_FILTER_OPTIONS: {
   // { key: "draft", title: "Draft Issues" },
 ];
 
+const whileListedCustomProperties = [
+  { key: "trip_reference_number", title: "Trip Reference Number" },
+  { key: "reference_number", title: "Reference Number" },
+  { key: "hub_code", title: "Hub Code" },
+  { key: "hub_name", title: "Hub Name" },
+  { key: "customer_code", title: "Customer Code" },
+  { key: "customer_name", title: "Customer Name" },
+  { key: "vendor_name", title: "Vendor Name" },
+  { key: "vendor_code", title: "Vendor Code" },
+  { key: "worker_code", title: "Worker Code" },
+  { key: "worker_name", title: "Worker Name" },
+];
+
 export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = [
   "assignee",
   "start_date",
@@ -126,6 +140,16 @@ export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = 
   "modules",
   "cycle",
   "issue_type",
+  "trip_reference_number",
+  "reference_number",
+  "hub_code",
+  "hub_name",
+  "customer_code",
+  "customer_name",
+  "vendor_name",
+  "vendor_code",
+  "worker_code",
+  "worker_name",
 ];
 
 export const ISSUE_DISPLAY_PROPERTIES: {
@@ -146,6 +170,16 @@ export const ISSUE_DISPLAY_PROPERTIES: {
   { key: "estimate", title: "Estimate" },
   { key: "modules", title: "Modules" },
   { key: "cycle", title: "Cycle" },
+  { key: "trip_reference_number", title: "Trip Reference Number" },
+  { key: "reference_number", title: "Reference Number" },
+  { key: "hub_code", title: "Hub Code" },
+  { key: "hub_name", title: "Hub Name" },
+  { key: "customer_code", title: "Customer Code" },
+  { key: "customer_name", title: "Customer Name" },
+  { key: "vendor_name", title: "Vendor Name" },
+  { key: "vendor_code", title: "Vendor Code" },
+  { key: "worker_code", title: "Worker Code" },
+  { key: "worker_name", title: "Worker Name" },
 ];
 
 export const ISSUE_EXTRA_OPTIONS: {
@@ -307,6 +341,13 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
         "project",
         "start_date",
         "target_date",
+        "hub_code",
+        "customer_code",
+        "worker_code",
+        "vendor_code",
+        "trip_reference_number",
+        "reference_number",
+        "custom_properties",
       ],
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
@@ -354,6 +395,13 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
         "start_date",
         "target_date",
         "issue_type",
+        "hub_code",
+        "customer_code",
+        "worker_code",
+        "vendor_code",
+        "trip_reference_number",
+        "reference_number",
+        "custom_properties"
       ],
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
@@ -427,6 +475,14 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
         "start_date",
         "target_date",
         "issue_type",
+        "custom_properties",
+        "hub_code",
+        "customer_code",
+        "worker_code",
+        "vendor_code",
+        "trip_reference_number",
+        "reference_number",
+        "custom_properties"
       ],
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
@@ -493,3 +549,19 @@ export const groupReactionEmojis = (reactions: any) => {
 
   return groupedEmojis;
 };
+
+export const ISSUE_ADDITIONAL_PROPERTIES: {
+    key: keyof TIssue;
+    title: string;
+  }[] = [
+    { key: "trip_reference_number", title: "Trip Ref Number" },
+    { key: "reference_number", title: "Reference Number" },
+    { key: "hub_code", title: "Hub Code" },
+    { key: "hub_name", title: "Hub Name" },
+    { key: "customer_code", title: "Customer Code" },
+    { key: "customer_name", title: "Customer Name" },
+    { key: "vendor_code", title: "Vendor Code" },
+    { key: "vendor_name", title: "Vendor Name" },
+    { key: "worker_code", title: "Worker Code" },
+    { key: "worker_name", title: "Worker Name" }
+  ];

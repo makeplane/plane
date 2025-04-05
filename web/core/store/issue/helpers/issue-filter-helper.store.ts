@@ -82,6 +82,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     const computedFilters: Partial<Record<TIssueParams, undefined | string[] | boolean | string>> = {
       // issue filters
       priority: filters?.priority || undefined,
+      custom_properties: filters?.custom_properties || undefined,
       state_group: filters?.state_group || undefined,
       state: filters?.state || undefined,
       assignees: filters?.assignees || undefined,
@@ -103,6 +104,12 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
       order_by: displayFilters?.order_by || undefined,
       type: displayFilters?.type || undefined,
       sub_issue: displayFilters?.sub_issue ?? true,
+      hub_code: filters?.hub_code || undefined,
+      worker_code: filters?.worker_code || undefined,
+      customer_code: filters?.customer_code || undefined,
+      trip_reference_number: filters?.trip_reference_number || undefined,
+      vendor_code: filters?.vendor_code || undefined,
+      reference_number: filters?.reference_number || undefined,
     };
 
     const issueFiltersParams: Partial<Record<TIssueParams, boolean | string>> = {};
@@ -144,6 +151,12 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     project: filters?.project || null,
     subscriber: filters?.subscriber || null,
     issue_type: filters?.issue_type || null,
+    hub_code: filters?.hub_code || null,
+    worker_code: filters?.worker_code || null,
+    customer_code: filters?.customer_code || null,
+    trip_reference_number: filters?.trip_reference_number || null,
+    vendor_code: filters?.vendor_code || null,
+    reference_number: filters?.reference_number || null,
   });
 
   /**

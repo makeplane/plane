@@ -1,6 +1,7 @@
 # Django imports
 from django.utils import timezone
 from lxml import html
+import uuid
 
 #  Third party imports
 from rest_framework import serializers
@@ -19,8 +20,8 @@ from plane.db.models import (
     ProjectMember,
     State,
     User,
+    IssueCustomProperty
 )
-
 from .base import BaseSerializer
 from .cycle import CycleLiteSerializer, CycleSerializer
 from .module import ModuleLiteSerializer, ModuleSerializer
@@ -32,6 +33,26 @@ from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 
 
+def is_uuid(value):
+    try:
+        uuid_obj = uuid.UUID(str(value))  # Convert to string in case it's not already
+        return True
+    except (ValueError, TypeError):
+        return False
+
+class IssueCustomPropertySerializer(BaseSerializer):
+    class Meta:
+        model = IssueCustomProperty
+        fields = ["key", "value", "issue_type_custom_property"]
+        read_only_fields = [
+            "id",
+            "issue",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+
 class IssueSerializer(BaseSerializer):
     assignees = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(
@@ -39,6 +60,12 @@ class IssueSerializer(BaseSerializer):
         ),
         write_only=True,
         required=False,
+    )
+    state_id = serializers.PrimaryKeyRelatedField(
+        source="state",
+        queryset=State.objects.all(),
+        required=False,
+        allow_null=True,
     )
 
     labels = serializers.ListField(
@@ -54,6 +81,9 @@ class IssueSerializer(BaseSerializer):
         required=False,
         allow_null=True,
     )
+    custom_properties = IssueCustomPropertySerializer(many=True, required=False)
+
+    created_by = serializers.CharField(required=False)
 
     class Meta:
         model = Issue
@@ -68,7 +98,7 @@ class IssueSerializer(BaseSerializer):
             "description",
             "description_stripped",
         ]
-
+    
     def validate(self, data):
         if (
             data.get("start_date", None) is not None
@@ -126,13 +156,32 @@ class IssueSerializer(BaseSerializer):
             raise serializers.ValidationError(
                 "Parent is not valid issue_id please pass a valid issue_id"
             )
-
+        if self.instance is None:
+            if not is_uuid(data.get('created_by')):
+                if User.objects.filter(username=data['created_by']).exists():
+                    data['created_by'] = User.objects.get(username=data['created_by'])
+                else:
+                    user_data = {
+                    "email": data['created_by'] + '@plane-shipsy.com',
+                    "username": data['created_by'],
+                    "role": 5,
+                    "display_name": data['created_by']
+                    }
+                    from plane.api.views import ProjectMemberAPIEndpoint
+                    PMObj = ProjectMemberAPIEndpoint()
+                    user = PMObj.create_user(user_data)
+                    PMObj.create_workspace_member(self.context.get("workspace_id"), user,5)
+                    PMObj.create_project_member(self.context.get("project_id"), user,5)
+                    data['created_by'] = user
+        print(data)
         return data
+
+    
 
     def create(self, validated_data):
         assignees = validated_data.pop("assignees", None)
         labels = validated_data.pop("labels", None)
-
+        custom_properties = validated_data.pop("custom_properties", None)
         project_id = self.context["project_id"]
         workspace_id = self.context["workspace_id"]
         default_assignee_id = self.context["default_assignee_id"]
@@ -198,13 +247,31 @@ class IssueSerializer(BaseSerializer):
                 ],
                 batch_size=10,
             )
+        if custom_properties is not None and len(custom_properties):
+            IssueCustomProperty.objects.bulk_create(
+                [
+                    IssueCustomProperty(
+                        key=custom_property['key'],
+                        value=custom_property['value'],
+                        issue_type_custom_property=custom_property['issue_type_custom_property'],
+                        issue=issue,
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        created_by_id=created_by_id,
+                        updated_by_id=updated_by_id,
+                    )
+                    for custom_property in custom_properties
+                ],
+                batch_size=10,
+            )
 
         return issue
 
     def update(self, instance, validated_data):
         assignees = validated_data.pop("assignees", None)
         labels = validated_data.pop("labels", None)
-
+        custom_properties = validated_data.pop("custom_properties", None)
+        
         # Related models
         project_id = instance.project_id
         workspace_id = instance.workspace_id
@@ -244,7 +311,24 @@ class IssueSerializer(BaseSerializer):
                 ],
                 batch_size=10,
             )
-
+        if custom_properties is not None:
+            IssueCustomProperty.objects.filter(issue=instance).delete()
+            IssueCustomProperty.objects.bulk_create(
+                [
+                    IssueCustomProperty(
+                        key=custom_property['key'],
+                        value=custom_property['value'],
+                        issue_type_custom_property=custom_property['issue_type_custom_property'],
+                        issue=instance,
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        created_by_id=created_by_id,
+                        updated_by_id=updated_by_id,
+                    )
+                    for custom_property in custom_properties
+                ],
+                batch_size=10,
+            )
         # Time updation occues even when other related models are updated
         instance.updated_at = timezone.now()
         return super().update(instance, validated_data)
@@ -363,18 +447,20 @@ class IssueAttachmentSerializer(BaseSerializer):
         model = FileAsset
         fields = "__all__"
         read_only_fields = [
-            "id",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
             "workspace",
             "project",
             "issue",
-            "updated_by",
-            "updated_at",
         ]
 
 
 class IssueCommentSerializer(BaseSerializer):
     is_member = serializers.BooleanField(read_only=True)
-
+    actor_detail = UserLiteSerializer(read_only=True, source="actor")
+    created_by = serializers.CharField(required=False)
     class Meta:
         model = IssueComment
         read_only_fields = [
@@ -382,10 +468,9 @@ class IssueCommentSerializer(BaseSerializer):
             "workspace",
             "project",
             "issue",
-            "created_by",
             "updated_by",
             "created_at",
-            "updated_at",
+            "updated_at"
         ]
         exclude = [
             "comment_stripped",
@@ -394,17 +479,25 @@ class IssueCommentSerializer(BaseSerializer):
 
     def validate(self, data):
         try:
-            if data.get("comment_html", None) is not None:
+            if data.get("comment_html", None) is not None:   
+                print("Am Here")  
+                        
                 parsed = html.fromstring(data["comment_html"])
                 parsed_str = html.tostring(parsed, encoding="unicode")
+                print(html.tostring(parsed, encoding="unicode"))
                 data["comment_html"] = parsed_str
 
-        except Exception:
-            raise serializers.ValidationError("Invalid HTML passed")
+            print(data)
+        except Exception as e:
+            print(e.__cause__)
+            raise serializers.ValidationError(e)
         return data
 
 
 class IssueActivitySerializer(BaseSerializer):
+    actor_detail = UserLiteSerializer(read_only=True, source="actor")
+    # issue_detail = IssueFlatSerializer(read_only=True, source="issue")
+    # project_detail = ProjectLiteSerializer(read_only=True, source="project")
     class Meta:
         model = IssueActivity
         exclude = [

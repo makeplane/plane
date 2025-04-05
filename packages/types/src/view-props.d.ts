@@ -49,7 +49,27 @@ export type TIssueOrderByOptions =
   | "attachment_count"
   | "-attachment_count"
   | "sub_issues_count"
-  | "-sub_issues_count";
+  | "-sub_issues_count"
+  | "trip_reference_number"
+  | "-trip_reference_number"
+  | "reference_number"
+  | "-reference_number"
+  | "hub_code"
+  | "-hub_code"
+  | "hub_name"
+  | "-hub_name"
+  | "customer_code"
+  | "-customer_code"
+  | "customer_name"
+  | "-customer_name"
+  | "vendor_name"
+  | "-vendor_name"
+  | "vendor_code"
+  | "-vendor_code"
+  | "worker_code"
+  | "-worker_code"
+  | "worker_name"
+  | "-worker_name";
 
 export type TIssueGroupingFilters = "active" | "backlog" | null;
 
@@ -77,9 +97,17 @@ export type TIssueParams =
   | "show_empty_groups"
   | "cursor"
   | "per_page"
+  | "hub_code"
   | "issue_type"
   | "layout"
-  | "expand";
+  | "expand"
+  | "customer_code"
+  | "worker_code"
+  | "trip_reference_number"
+  | "reference_number"
+  | "vendor_code"
+  | "custom_properties"
+  | "hub_code";
 
 export type TCalendarLayouts = "month" | "week";
 
@@ -98,6 +126,13 @@ export interface IIssueFilterOptions {
   subscriber?: string[] | null;
   target_date?: string[] | null;
   issue_type?: string[] | null;
+  hub_code?: string[] | null;
+  customer_code?: string[] | null;
+  worker_code?: string[] | null;
+  trip_reference_number?: string[] | null;
+  reference_number?: string[] | null;
+  vendor_code?: string[] | null;
+  custom_properties?: string[] | null;
 }
 
 export interface IIssueDisplayFilterOptions {
@@ -130,6 +165,16 @@ export interface IIssueDisplayProperties {
   modules?: boolean;
   cycle?: boolean;
   issue_type?: boolean;
+  trip_reference_number?: boolean;
+  reference_number?: boolean;
+  hub_code?: boolean;
+  hub_name?: boolean;
+  customer_code?: boolean;
+  customer_name?: boolean;
+  vendor_name?: boolean;
+  vendor_code?: boolean;
+  worker_code?: boolean;
+  worker_name?: boolean;
 }
 
 export type TIssueKanbanFilters = {

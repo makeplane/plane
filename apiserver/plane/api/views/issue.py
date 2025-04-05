@@ -33,11 +33,13 @@ from plane.api.serializers import (
     IssueLinkSerializer,
     IssueSerializer,
     LabelSerializer,
+    IssueTypeSerializer
 )
 from plane.app.permissions import (
     ProjectEntityPermission,
     ProjectLitePermission,
     ProjectMemberPermission,
+    ProjectEntityGuestPermission
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
@@ -50,8 +52,9 @@ from plane.db.models import (
     Project,
     ProjectMember,
     CycleIssue,
+    IssueType
 )
-
+from plane.utils.issue_filters import issue_filters
 from .base import BaseAPIView
 
 
@@ -63,7 +66,7 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
 
     model = Issue
     webhook_event = "issue"
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectEntityGuestPermission]
     serializer_class = IssueSerializer
 
     @property
@@ -116,7 +119,6 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
                 status=status.HTTP_200_OK,
             )
 
-
 class IssueAPIEndpoint(BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
@@ -132,25 +134,31 @@ class IssueAPIEndpoint(BaseAPIView):
     serializer_class = IssueSerializer
 
     def get_queryset(self):
-        return (
-            Issue.issue_objects.annotate(
+        filters = issue_filters(self.request.query_params, "GET")
+        base_filter = filters.pop('base', None)
+        query = (Issue.issue_objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(
                     parent=OuterRef("id")
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
-            )
-            .filter(project_id=self.kwargs.get("project_id"))
-            .filter(workspace__slug=self.kwargs.get("slug"))
+            ).filter(project_id=self.kwargs.get("project_id"))
+            .filter(workspace__slug=self.kwargs.get("slug")))
+        if base_filter:
+            query = query.filter(base_filter)
+
+        print(query)
+        return (query
+            .filter(**filters)
             .select_related("project")
             .select_related("workspace")
             .select_related("state")
             .select_related("parent")
             .prefetch_related("assignees")
             .prefetch_related("labels")
-            .order_by(self.kwargs.get("order_by", "-created_at"))
-        ).distinct()
+            .order_by(self.kwargs.get("order_by", "-created_at"))).distinct()
+        
 
     def get(self, request, slug, project_id, pk=None):
         external_id = request.GET.get("external_id")
@@ -301,7 +309,6 @@ class IssueAPIEndpoint(BaseAPIView):
 
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
-
         serializer = IssueSerializer(
             data=request.data,
             context={
@@ -335,7 +342,6 @@ class IssueAPIEndpoint(BaseAPIView):
                     },
                     status=status.HTTP_409_CONFLICT,
                 )
-
             serializer.save()
             # Refetch the issue
             issue = Issue.objects.filter(
@@ -344,9 +350,10 @@ class IssueAPIEndpoint(BaseAPIView):
                 pk=serializer.data["id"],
             ).first()
             issue.created_at = request.data.get("created_at", timezone.now())
-            issue.created_by_id = request.data.get(
-                "created_by", request.user.id
-            )
+            if not issue.created_by:
+                issue.created_by_id = request.data.get(
+                    "created_by", request.user.id
+                )
             issue.save(update_fields=["created_at", "created_by"])
 
             # Track the issue
@@ -483,6 +490,10 @@ class IssueAPIEndpoint(BaseAPIView):
             )
 
     def patch(self, request, slug, project_id, pk=None):
+        modified_data = request.data.copy() if hasattr(request.data, 'copy') else dict(request.data)
+        # If 'state' is present in the data, rename it to 'state_id'
+        if 'state' in modified_data:
+            modified_data['state_id'] = modified_data.pop('state')
         issue = Issue.objects.get(
             workspace__slug=slug, project_id=project_id, pk=pk
         )
@@ -490,10 +501,10 @@ class IssueAPIEndpoint(BaseAPIView):
         current_instance = json.dumps(
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
-        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
+        requested_data = json.dumps(modified_data, cls=DjangoJSONEncoder)
         serializer = IssueSerializer(
             issue,
-            data=request.data,
+            data=modified_data,
             context={
                 "project_id": project_id,
                 "workspace_id": project.workspace_id,
@@ -502,15 +513,15 @@ class IssueAPIEndpoint(BaseAPIView):
         )
         if serializer.is_valid():
             if (
-                request.data.get("external_id")
-                and (issue.external_id != str(request.data.get("external_id")))
+                modified_data.get("external_id")
+                and (issue.external_id != str(modified_data.get("external_id")))
                 and Issue.objects.filter(
                     project_id=project_id,
                     workspace__slug=slug,
-                    external_source=request.data.get(
+                    external_source=modified_data.get(
                         "external_source", issue.external_source
                     ),
-                    external_id=request.data.get("external_id"),
+                    external_id=modified_data.get("external_id"),
                 ).exists()
             ):
                 return Response(
@@ -520,7 +531,6 @@ class IssueAPIEndpoint(BaseAPIView):
                     },
                     status=status.HTTP_409_CONFLICT,
                 )
-
             serializer.save()
             issue_activity.delay(
                 type="issue.activity.updated",
@@ -529,7 +539,7 @@ class IssueAPIEndpoint(BaseAPIView):
                 issue_id=str(pk),
                 project_id=str(project_id),
                 current_instance=current_instance,
-                epoch=int(timezone.now().timestamp()),
+                epoch=int(timezone.now().timestamp())
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -919,7 +929,9 @@ class IssueCommentAPIEndpoint(BaseAPIView):
                 status=status.HTTP_409_CONFLICT,
             )
 
+       
         serializer = IssueCommentSerializer(data=request.data)
+        
         if serializer.is_valid():
             serializer.save(
                 project_id=project_id,
@@ -1050,13 +1062,16 @@ class IssueActivityAPIEndpoint(BaseAPIView):
         ).order_by(request.GET.get("order_by", "created_at"))
 
         if pk:
-            issue_activities = issue_activities.get(pk=pk)
-            serializer = IssueActivitySerializer(issue_activities)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            try:
+                issue_activity = issue_activities.get(pk=pk)
+                serializer = IssueActivitySerializer(issue_activity)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except IssueActivity.DoesNotExist:
+                return Response({"error": "IssueActivity not found"}, status=status.HTTP_404_NOT_FOUND)
 
         return self.paginate(
             request=request,
-            queryset=(issue_activities),
+            queryset=issue_activities,
             on_results=lambda issue_activity: IssueActivitySerializer(
                 issue_activity,
                 many=True,
@@ -1144,3 +1159,5 @@ class IssueAttachmentEndpoint(BaseAPIView):
         )
         serializer = IssueAttachmentSerializer(issue_attachments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+

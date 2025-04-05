@@ -25,10 +25,14 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.instrumentation.django import DjangoInstrumentor
+from dotenv import load_dotenv
+
+# Load environment variables from .env file if it exists
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+print(f"BASE_DIR: {BASE_DIR}")
+load_dotenv(os.path.join(BASE_DIR, "file.env"))
 # Secret Key
 SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
 
@@ -149,7 +153,7 @@ else:
     CORS_ALLOW_ALL_ORIGINS = True
     secure_origins = False
 
-CORS_ALLOW_HEADERS = [*default_headers, "X-API-Key"]
+CORS_ALLOW_HEADERS = [*default_headers, "X-API-Key", "X-Assume-Role"]
 
 # Application Settings
 WSGI_APPLICATION = "plane.wsgi.application"
@@ -181,6 +185,8 @@ else:
 
 # Redis Config
 REDIS_URL = os.environ.get("REDIS_URL")
+for key, value in os.environ.items():
+    print(f"Env Variable {key}: {value}")
 REDIS_SSL = REDIS_URL and "rediss" in REDIS_URL
 
 if REDIS_SSL:
@@ -266,7 +272,7 @@ AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
 AWS_REGION = os.environ.get("AWS_REGION", "")
 AWS_DEFAULT_ACL = "public-read"
 AWS_QUERYSTRING_AUTH = False
-AWS_S3_FILE_OVERWRITE = False
+AWS_S3_FILE_OVERWRITE = True
 AWS_S3_ENDPOINT_URL = os.environ.get(
     "AWS_S3_ENDPOINT_URL", None
 ) or os.environ.get("MINIO_ENDPOINT_URL", None)
@@ -356,7 +362,9 @@ SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"
 DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
 # Cookie Settings
+# SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = secure_origins
+# SESSION_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_HTTPONLY = True
 SESSION_ENGINE = "plane.db.models.session"
 SESSION_COOKIE_AGE = os.environ.get("SESSION_COOKIE_AGE", 604800)
@@ -371,8 +379,10 @@ ADMIN_SESSION_COOKIE_NAME = "admin-session-id"
 ADMIN_SESSION_COOKIE_AGE = os.environ.get("ADMIN_SESSION_COOKIE_AGE", 3600)
 
 # CSRF cookies
+# CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = secure_origins
-CSRF_COOKIE_HTTPONLY = True
+# CSRF_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_HTTPONLY = False
 CSRF_TRUSTED_ORIGINS = cors_allowed_origins
 CSRF_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
 CSRF_FAILURE_VIEW = "plane.authentication.views.common.csrf_failure"
@@ -381,7 +391,7 @@ CSRF_FAILURE_VIEW = "plane.authentication.views.common.csrf_failure"
 ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", None)
 SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
 APP_BASE_URL = os.environ.get("APP_BASE_URL")
-
+STATIC_API_TOKEN = os.environ.get("STATIC_API_TOKEN", "TEST_API_TOKEN")
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
 
 # Instance Changelog URL

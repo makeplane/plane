@@ -12,6 +12,7 @@ export * from "./issue-update-status";
 export * from "./create-issue-toast-action-items";
 export * from "./relations";
 export * from "./issue-detail-widgets";
+export * from "./custom-properties";
 
 // issue details
 export * from "./issue-detail";

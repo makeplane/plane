@@ -94,6 +94,16 @@ def issue_on_results(issues, group_by, sub_group_by):
         "is_draft",
         "archived_at",
         "state__group",
+        "trip_reference_number",
+        "reference_number",
+        "hub_code",
+        "hub_name",
+        "customer_code",
+        "customer_name",
+        "vendor_name",
+        "worker_name",
+        "vendor_code",
+        "worker_code",
     ]
 
     if group_by in FIELD_MAPPER:

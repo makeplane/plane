@@ -402,8 +402,10 @@ def webhook_activity(
 
         if event == "issue_comment":
             webhooks = webhooks.filter(issue_comment=True)
-
+            
         for webhook in webhooks:
+            event_data = get_model_data(event=event, event_id=event_id)
+            actor_data = get_model_data(event="user", event_id=actor_id)
             webhook_send_task.delay(
                 webhook=webhook.id,
                 slug=slug,

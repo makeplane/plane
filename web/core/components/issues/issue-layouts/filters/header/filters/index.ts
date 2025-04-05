@@ -11,3 +11,4 @@ export * from "./state";
 export * from "./cycle";
 export * from "./module";
 export * from "./target-date";
+export * from "./additional-properties";
