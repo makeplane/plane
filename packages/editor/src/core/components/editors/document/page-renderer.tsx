@@ -10,16 +10,35 @@ type IPageRenderer = {
   bubbleMenuEnabled: boolean;
   displayConfig: TDisplayConfig;
   editor: Editor;
+  titleEditor?: Editor;
   editorContainerClassName: string;
   id: string;
   tabIndex?: number;
 };
 
 export const PageRenderer = (props: IPageRenderer) => {
-  const { aiHandler, bubbleMenuEnabled, displayConfig, editor, editorContainerClassName, id, tabIndex } = props;
+  const { aiHandler, bubbleMenuEnabled, displayConfig, editor, editorContainerClassName, id, tabIndex, titleEditor } =
+    props;
 
   return (
-    <div className="frame-renderer flex-grow w-full">
+    <div className={"frame-renderer flex-grow w-full space-y-4 document-editor-container"}>
+      {titleEditor && (
+        <div className="relative w-full py-3">
+          <EditorContainer
+            editor={titleEditor}
+            id={id + "-title"}
+            editorContainerClassName={"page-title-editor bg-transparent p-0 border-none"}
+            displayConfig={displayConfig}
+          >
+            <EditorContentWrapper
+              focus={false}
+              editor={titleEditor}
+              id={id + "-title"}
+              className="no-scrollbar placeholder-custom-text-400 border-[0.5px] border-custom-border-200 bg-transparent tracking-[-2%] font-bold text-[2rem] leading-[2.375rem] w-full outline-none p-0 border-none resize-none rounded-none"
+            />
+          </EditorContainer>
+        </div>
+      )}
       <EditorContainer
         displayConfig={displayConfig}
         editor={editor}

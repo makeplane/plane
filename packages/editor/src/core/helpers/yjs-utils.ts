@@ -7,10 +7,12 @@ import {
   CoreEditorExtensionsWithoutProps,
   DocumentEditorExtensionsWithoutProps,
 } from "@/extensions/core-without-props";
+import { TitleExtensions } from "@/extensions/title-extension";
 
 // editor extension configs
 const RICH_TEXT_EDITOR_EXTENSIONS = CoreEditorExtensionsWithoutProps;
 const DOCUMENT_EDITOR_EXTENSIONS = [...CoreEditorExtensionsWithoutProps, ...DocumentEditorExtensionsWithoutProps];
+export const TITLE_EDITOR_EXTENSIONS = TitleExtensions;
 // editor schemas
 // @ts-expect-error tiptap types are incorrect
 const richTextEditorSchema = getSchema(RICH_TEXT_EDITOR_EXTENSIONS);

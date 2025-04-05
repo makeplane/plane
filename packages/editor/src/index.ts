@@ -5,6 +5,7 @@ import "./styles/editor.css";
 import "./styles/table.css";
 import "./styles/github-dark.css";
 import "./styles/drag-drop.css";
+import "./styles/title-editor.css";
 
 // editors
 export {

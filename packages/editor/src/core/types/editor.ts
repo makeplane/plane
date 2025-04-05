@@ -93,6 +93,11 @@ export type EditorReadOnlyRefApi = {
   };
 };
 
+// title ref api
+export interface EditorTitleRefApi extends EditorReadOnlyRefApi {
+  setEditorValue: (content: string) => void;
+}
+
 export interface EditorRefApi extends EditorReadOnlyRefApi {
   blur: () => void;
   scrollToNodeViaDOMCoordinates: (behavior?: ScrollBehavior, position?: number) => void;
@@ -152,6 +157,7 @@ export interface ICollaborativeDocumentEditor
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
+  updatePageProperties?: (data: { name?: string }) => void;
 }
 
 // read only editor props

@@ -15,7 +15,7 @@ import { ERowVariant, Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
-import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
+import { PageContentBrowser, PageContentLoader } from "@/components/pages";
 // helpers
 import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
 import { generateRandomColor } from "@/helpers/string.helper";
@@ -68,7 +68,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { getUserDetails } = useMember();
 
   // derived values
-  const { id: pageId, name: pageTitle, isContentEditable, updateTitle } = page;
+  const { id: pageId, isContentEditable } = page;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
   // issue-embed
   const { issueEmbedProps } = useIssueEmbed({
@@ -91,6 +91,16 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       wideLayout: isFullWidth,
     }),
     [fontSize, fontStyle, isFullWidth]
+  );
+
+  const updatePageProperties = useCallback(
+    (data: { name?: string }) => {
+      if (data.name != null) {
+        console.log("data", data.name);
+        page.mutateProperties({ name: data.name });
+      }
+    },
+    [page]
   );
 
   const getAIMenu = useCallback(
@@ -164,7 +174,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       className="relative size-full flex flex-col pt-[64px] overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md duration-200"
       variant={ERowVariant.HUGGING}
     >
-      <div id="page-content-container" className="relative w-full flex-shrink-0 space-y-4">
+      <div id="page-content-container" className="relative w-full flex-shrink-0">
         {/* table of content */}
         <div className="page-summary-container absolute h-full right-0 top-[64px] z-[5]">
           <div className="sticky top-[72px]">
@@ -178,13 +188,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             </div>
           </div>
         </div>
-        <PageEditorTitle
-          editorRef={editorRef}
-          readOnly={!isContentEditable}
-          title={pageTitle}
-          updateTitle={updateTitle}
-          widthClassName={blockWidthClassName}
-        />
         <CollaborativeDocumentEditorWithRef
           editable={isContentEditable}
           id={pageId}
@@ -212,6 +215,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           aiHandler={{
             menu: getAIMenu,
           }}
+          updatePageProperties={updatePageProperties}
         />
       </div>
     </Row>
