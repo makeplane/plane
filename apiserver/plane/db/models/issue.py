@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models, transaction
+from django.db import models, transaction, connection
 from django.utils import timezone
 from django.db.models import Q
 from django import apps
@@ -20,6 +20,7 @@ from plane.db.mixins import SoftDeletionManager
 from plane.utils.exception_logger import log_exception
 from .project import ProjectBaseModel
 from plane.utils.uuid import convert_uuid_to_integer
+
 
 def get_default_properties():
     return {
@@ -224,9 +225,9 @@ class Issue(ProjectBaseModel):
                     cursor.execute("SELECT pg_advisory_xact_lock(%s)", [lock_key])
 
                 # Get the last sequence for the project
-                last_sequence = (
-                    IssueSequence.objects.filter(project=self.project).aggregate(largest=models.Max("sequence"))["largest"]
-                )
+                last_sequence = IssueSequence.objects.filter(
+                    project=self.project
+                ).aggregate(largest=models.Max("sequence"))["largest"]
                 self.sequence_id = last_sequence + 1 if last_sequence else 1
                 # Strip the html tags using html parser
                 self.description_stripped = (

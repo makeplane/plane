@@ -1747,23 +1747,23 @@
         "start_from_scratch": "Começar do zero",
         "choose_template": "Escolher um modelo",
         "choose_estimate_system": "Escolher um sistema de estimativa",
-        "enter_estimate_point": "Inserir ponto de estimativa"
+        "enter_estimate_point": "Inserir estimativa"
       },
       "toasts": {
         "created": {
           "success": {
-            "title": "Ponto de estimativa criado",
-            "message": "O ponto de estimativa foi criado com sucesso"
+            "title": "Estimativa criada",
+            "message": "A estimativa foi criada com sucesso"
           },
           "error": {
-            "title": "Falha na criação do ponto de estimativa",
-            "message": "Não foi possível criar o novo ponto de estimativa, por favor tente novamente."
+            "title": "Falha na criação da estimativa",
+            "message": "Não foi possível criar a nova estimativa, por favor tente novamente."
           }
         },
         "updated": {
           "success": {
             "title": "Estimativa modificada",
-            "message": "O ponto de estimativa foi atualizado em seu projeto."
+            "message": "A estimativa foi atualizada em seu projeto."
           },
           "error": {
             "title": "Falha na modificação da estimativa",
@@ -1788,13 +1788,14 @@
         }
       },
       "validation": {
-        "min_length": "O ponto de estimativa precisa ser maior que 0.",
+        "min_length": "A estimativa precisa ser maior que 0.",
         "unable_to_process": "Não foi possível processar sua solicitação, por favor tente novamente.",
-        "numeric": "O ponto de estimativa precisa ser um valor numérico.",
-        "character": "O ponto de estimativa precisa ser um caractere.",
+        "numeric": "A estimativa precisa ser um valor numérico.",
+        "character": "A estimativa precisa ser um valor em caracteres.",
         "empty": "O valor da estimativa não pode estar vazio.",
         "already_exists": "O valor da estimativa já existe.",
-        "unsaved_changes": "Você tem algumas alterações não salvas. Por favor, salve-as antes de clicar em concluir"
+        "unsaved_changes": "Você tem algumas alterações não salvas. Por favor, salve-as antes de clicar em concluir",
+        "remove_empty": "A estimativa não pode estar vazia. Insira um valor em cada campo ou remova aqueles para os quais você não tem valores."
       }
     },
     "automations": {
