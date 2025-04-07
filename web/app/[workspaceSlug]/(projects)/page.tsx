@@ -4,8 +4,8 @@ import { observer } from "mobx-react";
 // components
 import { useTranslation } from "@plane/i18n";
 import { PageHead, AppHeader, ContentWrapper } from "@/components/core";
-import { WorkspaceHomeView } from "@/components/home";
 // hooks
+import { WorkspaceHomeView } from "@/components/home";
 import { useWorkspace } from "@/hooks/store";
 // local components
 import { WorkspaceDashboardHeader } from "./header";

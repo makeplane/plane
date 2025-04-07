@@ -56,7 +56,7 @@ class IssueSerializer(BaseSerializer):
     class Meta:
         model = Issue
         read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at"]
-        exclude = ["description", "description_stripped"]
+        exclude = ["description"]
 
     def validate(self, data):
         if (
@@ -160,12 +160,15 @@ class IssueSerializer(BaseSerializer):
         else:
             try:
                 # Then assign it to default assignee, if it is a valid assignee
-                if default_assignee_id is not None and ProjectMember.objects.filter(
-                    member_id=default_assignee_id,
-                    project_id=project_id,
-                    role__gte=15,
-                    is_active=True
-                ).exists():
+                if (
+                    default_assignee_id is not None
+                    and ProjectMember.objects.filter(
+                        member_id=default_assignee_id,
+                        project_id=project_id,
+                        role__gte=15,
+                        is_active=True,
+                    ).exists()
+                ):
                     IssueAssignee.objects.create(
                         assignee_id=default_assignee_id,
                         issue=issue,
@@ -402,7 +405,7 @@ class IssueCommentSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
-        exclude = ["comment_stripped", "comment_json"]
+        exclude = ["comment_json"]
 
     def validate(self, data):
         try:
