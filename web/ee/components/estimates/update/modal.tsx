@@ -38,11 +38,8 @@ export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) =>
   }, [isOpen]);
 
   const handleEstimateEditType = (type: TEstimateUpdateStageKeys) => {
-    if (type === EEstimateUpdateStages.SWITCH && estimate?.type)
-      setEstimateSystemSwitchType(
-        estimate?.type === EEstimateSystem.CATEGORIES ? EEstimateSystem.POINTS : EEstimateSystem.CATEGORIES
-      );
     setEstimateEditType(type);
+    setEstimateSystemSwitchType(undefined);
   };
 
   return (
@@ -67,10 +64,11 @@ export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) =>
                 estimateId={estimateId}
               />
             )}
-            {estimateEditType === EEstimateUpdateStages.SWITCH && estimateSystemSwitchType && (
+            {estimateEditType === EEstimateUpdateStages.SWITCH && (
               <EstimatePointSwitchRoot
                 setEstimateEditType={setEstimateEditType}
                 estimateSystemSwitchType={estimateSystemSwitchType}
+                setEstimateSystemSwitchType={setEstimateSystemSwitchType}
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 estimateId={estimateId}

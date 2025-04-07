@@ -138,7 +138,7 @@ export const EstimatePointEditRoot: FC<TEstimatePointEditRoot> = observer((props
             // NOTE: validate the estimate type
             newError[currentKey].message =
               newError[currentKey].message ||
-              "Estimate point can't be empty. Enter a value in each field or remove those you don't have values for.";
+              "Estimate can't be empty. Enter a value in each field or remove those you don't have values for.";
           }
         });
         return newError;

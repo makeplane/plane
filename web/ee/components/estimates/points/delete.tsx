@@ -4,8 +4,10 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { MoveRight, Trash2, X } from "lucide-react";
 import { TEstimatePointsObject } from "@plane/types";
+import { EEstimateSystem } from "@plane/types/src/enums";
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // ce imports
+import { convertMinutesToHoursMinutesString } from "@plane/utils";
 import { TEstimatePointDelete } from "@/ce/components/estimates/points/delete";
 // hooks
 import { useEstimate, useEstimatePoint } from "@/hooks/store";
@@ -24,6 +26,7 @@ export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) =>
     callback,
     estimatePointError,
     handleEstimatePointError,
+    estimateSystem,
   } = props;
   // hooks
   const { estimatePointIds, estimatePointById, deleteEstimatePoint } = useEstimate(estimateId);
@@ -96,14 +99,17 @@ export const EstimatePointDelete: FC<TEstimatePointDelete> = observer((props) =>
   return (
     <div className="relative flex items-center gap-2 text-base pr-2.5">
       <div className="flex-grow relative flex items-center gap-3">
-        <div className="w-full border border-custom-border-200 rounded p-2.5 bg-custom-background-90">
-          {estimatePoint?.value}
+        <div className="w-full border border-custom-border-200 rounded px-3 py-2 bg-custom-background-90 text-sm">
+          {estimateSystem === EEstimateSystem.TIME
+            ? convertMinutesToHoursMinutesString(Number(estimatePoint?.value))
+            : estimatePoint?.value}
         </div>
         <div className="text-sm first-letter:relative flex justify-center items-center gap-2 whitespace-nowrap">
           Mark as <MoveRight size={14} />
         </div>
         <EstimatePointDropdown
           options={selectDropdownOptions}
+          estimateSystem={estimateSystem}
           error={estimatePointError?.message ? "Continue or discard the estimate point delete operation." : undefined}
           callback={(estimateId: string) => {
             setEstimateInputValue(estimateId);

@@ -5,19 +5,22 @@ import { usePopper } from "react-popper";
 import { Info, Check, ChevronDown } from "lucide-react";
 import { Listbox, Transition } from "@headlessui/react";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { TEstimatePointsObject } from "@plane/types";
+import { TEstimatePointsObject, TEstimateSystemKeys } from "@plane/types";
+import { EEstimateSystem } from "@plane/types/src/enums";
 import { Tooltip } from "@plane/ui";
 // helpers
+import { convertMinutesToHoursMinutesString } from "@plane/utils";
 import { cn } from "@/helpers/common.helper";
 
 type TEstimatePointDropdown = {
   options: TEstimatePointsObject[];
   error: string | undefined;
   callback: (estimateId: string) => void;
+  estimateSystem: TEstimateSystemKeys;
 };
 
 export const EstimatePointDropdown: FC<TEstimatePointDropdown> = (props) => {
-  const { options, error, callback } = props;
+  const { options, error, callback, estimateSystem } = props;
   // states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | undefined>(undefined);
@@ -63,14 +66,16 @@ export const EstimatePointDropdown: FC<TEstimatePointDropdown> = (props) => {
           ref={setReferenceElement}
           onClick={() => setIsDropdownOpen((prev) => !prev)}
           className={cn(
-            "relative w-full rounded border flex items-center gap-3 p-2.5",
+            "relative w-full rounded border flex items-center gap-3 px-3 py-2",
             error ? `border-red-500` : `border-custom-border-200`
           )}
         >
           <div
             className={cn(`w-full text-sm text-left`, !selectedValue ? "text-custom-text-300" : "text-custom-text-100")}
           >
-            {selectedValue?.value || "Select an estimate point"}
+            {estimateSystem === EEstimateSystem.TIME && selectedValue?.id
+              ? convertMinutesToHoursMinutesString(Number(selectedValue?.value))
+              : selectedValue?.value || "Select an estimate point"}
           </div>
           <ChevronDown className={`size-3 ${true ? "stroke-onboarding-text-400" : "stroke-onboarding-text-100"}`} />
           {error && (
@@ -124,7 +129,11 @@ export const EstimatePointDropdown: FC<TEstimatePointDropdown> = (props) => {
                     )}
                   >
                     <div className="relative flex items-center text-wrap gap-2 px-1 py-0.5">
-                      <div className="text-sm font-medium w-full line-clamp-1">{option.value}</div>
+                      <div className="text-sm font-medium w-full line-clamp-1">
+                        {estimateSystem === EEstimateSystem.TIME
+                          ? convertMinutesToHoursMinutesString(Number(option.value))
+                          : option.value}
+                      </div>
                       {selectedOption === option?.id && <Check size={12} />}
                     </div>
                   </Listbox.Option>

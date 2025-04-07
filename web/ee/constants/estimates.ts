@@ -29,6 +29,31 @@ ESTIMATE_SYSTEMS.points.templates.squares.values = [
   { id: undefined, key: 9, value: "81" },
 ];
 
+ESTIMATE_SYSTEMS.time.is_available = true;
+ESTIMATE_SYSTEMS.time.is_ee = false;
+
+ESTIMATE_SYSTEMS.time.templates = {
+  ...ESTIMATE_SYSTEMS.time.templates,
+  hours: {
+    title: "Hours",
+    values: [
+      { id: undefined, key: 1, value: "60" },
+      { id: undefined, key: 2, value: "120" },
+      { id: undefined, key: 3, value: "180" },
+      { id: undefined, key: 4, value: "240" },
+      { id: undefined, key: 5, value: "330" },
+      { id: undefined, key: 6, value: "390" },
+    ],
+  },
+  custom: {
+    title: "Custom",
+    values: [
+      { id: undefined, key: 1, value: "60" },
+      { id: undefined, key: 2, value: "120" },
+    ],
+  },
+};
+
 export { MAX_ESTIMATE_POINT_INPUT_LENGTH, EEstimateSystem, EEstimateUpdateStages, estimateCount, ESTIMATE_SYSTEMS };
 
 export const ESTIMATE_OPTIONS_STAGE_ONE: Partial<

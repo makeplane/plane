@@ -1,1 +1,1 @@
-export * from "ce/components/estimates/inputs";
+export * from "./time-input";

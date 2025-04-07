@@ -1,6 +1,7 @@
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import capitalize from "lodash/capitalize";
 import { observer } from "mobx-react";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, MoveRight } from "lucide-react";
 import {
   IEstimateFormData,
   TEstimatePointsObject,
@@ -12,23 +13,32 @@ import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useEstimate } from "@/hooks/store";
 // plane web components
-import { EstimatePointItemSwitchPreview } from "@/plane-web/components/estimates";
+import { EstimatePointItemSwitchPreview, EstimateSwitchDropdown } from "@/plane-web/components/estimates";
 // plane web constants
 import { EEstimateSystem, EEstimateUpdateStages, ESTIMATE_SYSTEMS } from "@/plane-web/constants/estimates";
 
 type TEstimatePointSwitchRoot = {
   setEstimateEditType?: Dispatch<SetStateAction<TEstimateUpdateStageKeys | undefined>>;
-  estimateSystemSwitchType: TEstimateSystemKeys;
+  estimateSystemSwitchType?: TEstimateSystemKeys;
   workspaceSlug: string;
   projectId: string;
   estimateId: string;
   handleClose: () => void;
   mode?: EEstimateUpdateStages;
+  setEstimateSystemSwitchType?: Dispatch<SetStateAction<TEstimateSystemKeys | undefined>>;
 };
 
 export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((props) => {
   // props
-  const { setEstimateEditType, estimateSystemSwitchType, workspaceSlug, projectId, estimateId, handleClose } = props;
+  const {
+    setEstimateEditType,
+    estimateSystemSwitchType,
+    workspaceSlug,
+    projectId,
+    estimateId,
+    handleClose,
+    setEstimateSystemSwitchType,
+  } = props;
   // hooks
   const { asJson: estimate, estimatePointIds, estimatePointById, updateEstimateSwitch } = useEstimate(estimateId);
   // states
@@ -101,7 +111,7 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
 
     // validate if fields are valid in points and time required number values and categories required string values
     const estimatePointArray: string[] = [];
-    if ([(EEstimateSystem.TIME, EEstimateSystem.POINTS)].includes(estimateSystemSwitchType)) {
+    if ([EEstimateSystem.TIME, EEstimateSystem.POINTS].includes(estimateSystemSwitchType)) {
       estimatePoints?.map((estimatePoint) => {
         if (estimateSystemSwitchType && estimatePoint.value && estimatePoint.value != "") {
           if (!isNaN(Number(estimatePoint.value))) {
@@ -199,22 +209,45 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
 
       <div className="space-y-3 px-5 pb-5">
         <div className="text-sm font-medium flex items-center gap-2">
-          <div className="w-full">Current {estimate?.type}</div>
-          <div className="flex-shrink-0 w-4 h-4" />
-          <div className="w-full">New {estimateSystemSwitchType}</div>
+          <div className="w-full text-cutstom-text-400">Current estimate system</div>
+          <div className="flex-shrink-0 w-4" />
+          <div className="w-full text-cutstom-text-400">New estimate system</div>
         </div>
 
-        {estimatePoints.map((estimateObject, index) => (
-          <EstimatePointItemSwitchPreview
-            key={estimateObject?.id}
-            estimateId={estimateId}
-            estimatePointId={estimateObject?.id}
-            estimateSystemSwitchType={estimateSystemSwitchType}
-            estimatePoint={estimateObject}
-            handleEstimatePoint={(value: string) => handleEstimatePoints(index, value)}
-            estimatePointError={estimatePointError?.[estimateObject.key] || undefined}
-          />
-        ))}
+        <div className="text-sm font-medium flex items-center gap-2">
+          <div className="w-full space-y-1">
+            <div className="w-full border border-custom-border-200 rounded px-3 py-2 bg-custom-background-90">
+              {capitalize(estimate?.type)}
+            </div>
+          </div>
+          <div className="flex-shrink-0 w-4 h-4 relative flex justify-center items-center">
+            <MoveRight size={12} />
+          </div>
+          <div className="w-full">
+            <EstimateSwitchDropdown
+              estimateType={estimateSystemSwitchType}
+              onChange={(value) => setEstimateSystemSwitchType && setEstimateSystemSwitchType(value)}
+              currentEstimateType={estimate?.type}
+            />
+          </div>
+        </div>
+
+        {estimateSystemSwitchType &&
+          estimatePoints.map((estimateObject, index) => (
+            <div key={estimateObject?.id}>
+              <div className="border-t-[0.5px] border-custom-border-200 pb-3" />
+              <EstimatePointItemSwitchPreview
+                key={estimateObject?.id}
+                estimateId={estimateId}
+                estimatePointId={estimateObject?.id}
+                estimateSystemSwitchType={estimateSystemSwitchType}
+                estimatePoint={estimateObject}
+                estimateType={estimate?.type}
+                handleEstimatePoint={(value: string) => handleEstimatePoints(index, value)}
+                estimatePointError={estimatePointError?.[estimateObject.key] || undefined}
+              />
+            </div>
+          ))}
       </div>
 
       <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-custom-border-200">
@@ -222,7 +255,12 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
           Cancel
         </Button>
 
-        <Button variant="primary" size="sm" onClick={handleSwitchEstimate} disabled={switchLoader}>
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={handleSwitchEstimate}
+          disabled={switchLoader || !estimateSystemSwitchType}
+        >
           {switchLoader ? "Updating..." : "Update"}
         </Button>
       </div>
