@@ -47,7 +47,6 @@ export const WidgetConfigSidebarCircularChartConfig: React.FC<Props> = (props) =
                 handleSubmit({ x_axis_property: val });
               }}
               placeholder={t("dashboards.widget.common.add_property")}
-              shouldRenderOption={() => true}
               title={t("common.property")}
               value={value}
             />
