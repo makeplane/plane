@@ -22,10 +22,11 @@ type Props = {
   projectId: string;
   view: IProjectView;
   workspaceSlug: string;
+  customClassName?: string;
 };
 
 export const ViewQuickActions: React.FC<Props> = observer((props) => {
-  const { parentRef, projectId, view, workspaceSlug } = props;
+  const { parentRef, projectId, view, workspaceSlug, customClassName } = props;
   // states
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
@@ -95,7 +96,7 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
       <DeleteProjectViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
       <PublishViewModal isOpen={isPublishModalOpen} onClose={() => setPublishModalOpen(false)} view={view} />
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
-      <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
+      <CustomMenu ellipsis placement="bottom-end" closeOnSelect buttonClassName={customClassName}>
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
           return (
