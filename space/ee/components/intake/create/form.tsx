@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 // plane types
 import { Controller, useFormContext } from "react-hook-form";
+import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 // plane ui
 import { Button, Input } from "@plane/ui";
@@ -12,20 +13,19 @@ import { RichTextEditor } from "@/components/editor/rich-text-editor";
 import { useIssueDetails, usePublish } from "@/hooks/store";
 // local types
 import { TFormData } from "./create-issue-modal";
-import { useTranslation } from "@plane/i18n";
+
 type TProps = {
   project: Partial<IProject>;
   isSubmitting: boolean;
   descriptionEditorRef: React.RefObject<any>;
   anchor: string;
-
   placeholder?: string | ((isFocused: boolean, value: string) => string);
 };
 const DEFAULT_COVER_IMAGE =
   "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80";
 
 const IssueForm = observer((props: TProps) => {
-  const { project, isSubmitting, descriptionEditorRef, anchor, placeholder } = props;
+  const { project, isSubmitting, descriptionEditorRef, anchor } = props;
   // store hooks
   const { workspace: workspaceID, project_details } = usePublish(anchor);
   const { uploadIssueAsset } = useIssueDetails();
@@ -62,7 +62,10 @@ const IssueForm = observer((props: TProps) => {
         </div>
 
         <div className="md:col-span-3">
-          <div className="text-sm text-custom-text-300 mb-1 font-medium">{t("intake_forms.create.name")}</div>
+          <div className="text-sm text-custom-text-300 mb-1 font-medium">
+            {t("intake_forms.create.name")}
+            <span className="ml-0.5 text-red-500">*</span>
+          </div>
           <Controller
             control={control}
             name="username"
@@ -89,7 +92,10 @@ const IssueForm = observer((props: TProps) => {
           <span className="text-xs text-red-500 capitalize">{errors?.username?.message}</span>
         </div>
         <div className="md:col-span-3">
-          <div className="text-sm text-custom-text-300 mb-1 font-medium">{t("intake_forms.create.email")}</div>
+          <div className="text-sm text-custom-text-300 mb-1 font-medium">
+            {t("intake_forms.create.email")}
+            <span className="ml-0.5 text-red-500">*</span>
+          </div>
           <Controller
             control={control}
             name="email"
@@ -117,7 +123,10 @@ const IssueForm = observer((props: TProps) => {
         </div>
 
         <div className="md:col-span-3">
-          <div className="text-sm text-custom-text-300 mb-1 font-medium">{t("intake_forms.create.about")}</div>
+          <div className="text-sm text-custom-text-300 mb-1 font-medium">
+            {t("intake_forms.create.about")}
+            <span className="ml-0.5 text-red-500">*</span>
+          </div>
           <Controller
             control={control}
             name="name"
