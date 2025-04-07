@@ -64,7 +64,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             .values("name", "id", "identifier", "workspace__slug")
         )
 
-    def filter_issues(self, query, slug, project_id, workspace_search, created_by_username=None):
+    def filter_issues(self, query, slug, project_id, workspace_search, created_by_username=None, vendor_code=None):
         fields = ["name", "sequence_id", "project__identifier"]
         q = Q()
         for field in fields:
@@ -94,6 +94,9 @@ class GlobalSearchEndpoint(BaseAPIView):
 
         if workspace_search == "false" and project_id:
             issues = issues.filter(project_id=project_id)
+
+        if vendor_code:
+            issues = issues.filter(vendor_code=vendor_code)
 
         return issues.distinct().values(
             "name",
@@ -239,6 +242,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             "workspace_search", "false"
         )
         created_by_username = request.headers.get("X-Assume-Role", False)
+        vendor_code = request.query_params.get("vendor_code", False)
         project_id = request.query_params.get("project_id", False)
         if not query:
             return Response(
@@ -270,5 +274,5 @@ class GlobalSearchEndpoint(BaseAPIView):
 
         for model in MODELS_MAPPER.keys():
             func = MODELS_MAPPER.get(model, None)
-            results[model] = func(query, slug, project_id, workspace_search, created_by_username=created_by_username)
+            results[model] = func(query, slug, project_id, workspace_search, created_by_username=created_by_username, vendor_code=vendor_code)
         return Response({"results": results}, status=status.HTTP_200_OK)
