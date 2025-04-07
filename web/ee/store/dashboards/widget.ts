@@ -29,7 +29,7 @@ export interface IDashboardWidgetInstance extends TDashboardWidget {
   canCurrentUserEditWidget: boolean;
   // actions
   updateWidget: (data: Partial<TDashboardWidget>) => Promise<TDashboardWidget>;
-  fetchWidgetData: () => Promise<TDashboardWidgetData>;
+  fetchWidgetData: () => Promise<TDashboardWidgetData | undefined>;
 }
 
 export class DashboardWidgetInstance implements IDashboardWidgetInstance {
@@ -226,6 +226,10 @@ export class DashboardWidgetInstance implements IDashboardWidgetInstance {
 
   fetchWidgetData: IDashboardWidgetInstance["fetchWidgetData"] = async () => {
     const workspaceSlug = this.rootStore.workspaceRoot.currentWorkspace?.slug;
+    const configurationMissing = this.isConfigurationMissing;
+    if (configurationMissing) {
+      return;
+    }
     if (!workspaceSlug || !this.id) throw new Error("Required fields not found");
     try {
       runInAction(() => {

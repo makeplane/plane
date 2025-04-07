@@ -10,13 +10,12 @@ import { WidgetConfigSelectButton } from "../select-button";
 type Props = {
   onChange: (value: EWidgetXAxisProperty) => void;
   placeholder: string;
-  shouldRenderOption: (key: string) => boolean;
   title: string;
   value: TDashboardWidget["x_axis_property"];
 };
 
 export const WidgetPropertySelect: React.FC<Props> = (props) => {
-  const { onChange, placeholder, shouldRenderOption, title, value } = props;
+  const { onChange, placeholder, title, value } = props;
   // translation
   const { t } = useTranslation();
 
@@ -36,14 +35,11 @@ export const WidgetPropertySelect: React.FC<Props> = (props) => {
           value={value}
           onChange={onChange}
         >
-          {Object.entries(WIDGET_X_AXIS_PROPERTIES_LIST).map(([key, property]) => {
-            if (!shouldRenderOption(key)) return null;
-            return (
-              <CustomSelect.Option key={key} value={key}>
-                {t(property.i18n_label)}
-              </CustomSelect.Option>
-            );
-          })}
+          {Object.entries(WIDGET_X_AXIS_PROPERTIES_LIST).map(([key, property]) => (
+            <CustomSelect.Option key={key} value={key}>
+              {t(property.i18n_label)}
+            </CustomSelect.Option>
+          ))}
         </CustomSelect>
       }
     />

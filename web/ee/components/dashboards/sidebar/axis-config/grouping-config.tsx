@@ -15,7 +15,7 @@ export const WidgetConfigSidebarGroupingConfig: React.FC<Props> = (props) => {
   // translation
   const { t } = useTranslation();
   // form info
-  const { control, watch } = useFormContext<TDashboardWidget>();
+  const { control, watch, setValue } = useFormContext<TDashboardWidget>();
   // derived values
   const selectedChartType = watch("chart_type");
   const selectedChartModel = watch("chart_model");
@@ -37,11 +37,14 @@ export const WidgetConfigSidebarGroupingConfig: React.FC<Props> = (props) => {
         render={({ field: { value, onChange } }) => (
           <WidgetPropertySelect
             onChange={(val) => {
+              const isXAxisSame = selectedXAxisProperty === val;
               onChange(val);
-              handleSubmit({ group_by: val });
+              if (isXAxisSame) {
+                setValue("x_axis_property", null);
+              }
+              handleSubmit({ group_by: val, ...(isXAxisSame ? { x_axis_property: null } : {}) });
             }}
             placeholder={t("dashboards.widget.common.add_property")}
-            shouldRenderOption={(key) => key !== selectedXAxisProperty}
             title={t(isStackingEnabled ? "dashboards.widget.common.stack_by" : "dashboards.widget.common.group_by")}
             value={value}
           />
