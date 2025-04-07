@@ -6,10 +6,8 @@ import { DEFAULT_BACKGROUND_COLORS } from "@plane/constants";
 import { TLogoProps } from "@plane/types";
 // ui
 import { ColorPicker, Input, LUCIDE_ICONS_LIST } from "@plane/ui";
-// utils
-import { hexToHsl } from "@plane/utils";
 // helpers
-import { createBackgroundColor, getIconColor } from "@/helpers/theme";
+import { generateIconColors } from "@/helpers/color.helper";
 
 export type TIconsListProps = {
   defaultBackgroundColor?: string;
@@ -62,7 +60,7 @@ export const LucideIconsList: React.FC<TIconsListProps> = (props) => {
               className="relative grid place-items-center cursor-pointer rounded-full transition-all duration-200 ease-linear size-6"
               style={{
                 backgroundColor: !DEFAULT_BACKGROUND_COLORS.includes(selectedColor)
-                  ? createBackgroundColor(hexToHsl(selectedColor))
+                  ? generateIconColors(selectedColor).background
                   : "transparent",
               }}
             >
@@ -79,7 +77,7 @@ export const LucideIconsList: React.FC<TIconsListProps> = (props) => {
                 className={`relative grid place-items-center cursor-pointer rounded-full transition-all duration-200 ease-linear size-6`}
                 style={{
                   backgroundColor:
-                    curCol === selectedColor ? createBackgroundColor(hexToHsl(selectedColor)) : "transparent",
+                    curCol === selectedColor ? generateIconColors(selectedColor).background : "transparent",
                 }}
                 onClick={() => {
                   setSelectedColor(curCol);
@@ -94,7 +92,7 @@ export const LucideIconsList: React.FC<TIconsListProps> = (props) => {
                 <span
                   className={`cursor-pointer rounded-full size-4 transition-all  ease-in-out`}
                   style={{
-                    backgroundColor: getIconColor(hexToHsl(curCol)),
+                    backgroundColor: generateIconColors(curCol).foreground,
                   }}
                 >
                   {curCol === selectedColor && (

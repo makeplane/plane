@@ -1,13 +1,11 @@
 import React, { FC } from "react";
-import { useTheme } from "next-themes";
 // types
 import { TLogoProps } from "@plane/types";
 // ui
 import { EpicIcon, LayersIcon, LUCIDE_ICONS_LIST } from "@plane/ui";
-import { hexToHsl } from "@plane/utils";
 // helpers
+import { generateIconColors } from "@/helpers/color.helper";
 import { cn } from "@/helpers/common.helper";
-import { createBackgroundColor, getIconColor } from "@/helpers/theme";
 
 export type TIssueTypeLogoSize = "xs" | "sm" | "md" | "lg" | "xl";
 
@@ -37,7 +35,6 @@ const containerSizeMap = {
 
 export const IssueTypeLogo: FC<Props> = (props) => {
   const { icon_props, size = "sm", containerClassName, isDefault = false, isEpic = false } = props;
-  const { resolvedTheme } = useTheme();
 
   // derived values
   const LucideIcon = LUCIDE_ICONS_LIST.find((item) => item.name === icon_props?.name);
@@ -46,9 +43,7 @@ export const IssueTypeLogo: FC<Props> = (props) => {
   // if no value, return empty fragment
   if (!icon_props?.name && !isDefault && !isEpic) return <></>;
 
-  const hsl = icon_props?.background_color ? hexToHsl(icon_props?.background_color) : null;
-  const iconColor = hsl ? getIconColor(hsl) : "transparent";
-  const backgroundColor = hsl ? createBackgroundColor(hsl, resolvedTheme as "light" | "dark") : "transparent";
+  const { foreground, background } = generateIconColors(icon_props?.background_color ?? "#000000");
 
   return (
     <>
@@ -56,7 +51,7 @@ export const IssueTypeLogo: FC<Props> = (props) => {
         style={{
           height: containerSizeMap[size],
           width: containerSizeMap[size],
-          backgroundColor: backgroundColor,
+          backgroundColor: background,
         }}
         className={cn(
           "flex-shrink-0 grid place-items-center rounded bg-custom-background-80",
@@ -71,14 +66,14 @@ export const IssueTypeLogo: FC<Props> = (props) => {
             width={containerSizeMap[size]}
             height={containerSizeMap[size]}
             className="text-custom-text-300 group-hover/kanban-block:text-custom-text-200"
-            color={iconColor}
+            color={foreground}
           />
         ) : renderDefaultIcon ? (
           <LayersIcon
             width={iconSizeMap[size]}
             height={iconSizeMap[size]}
             style={{
-              color: iconColor ?? "#ffffff", // fallback color
+              color: foreground ?? "#ffffff", // fallback color
             }}
           />
         ) : (
@@ -87,7 +82,7 @@ export const IssueTypeLogo: FC<Props> = (props) => {
               style={{
                 height: iconSizeMap[size],
                 width: iconSizeMap[size],
-                color: iconColor ?? "#ffffff", // fallback color
+                color: foreground ?? "#ffffff", // fallback color
               }}
             />
           )
