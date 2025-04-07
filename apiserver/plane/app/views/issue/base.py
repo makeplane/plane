@@ -1224,9 +1224,10 @@ class SearchAPIEndpoint(BaseAPIView):
     webhook_event = "issue"
     def get(self, request, slug):
         
-        allowed_fields = ["hub_code", "worker_code", "reference_number", "trip_reference_number", "customer_code", "vendor_code"]
+        allowed_fields = ["hub_code", "hub_name", "worker_code", "worker_name", "reference_number", "trip_reference_number", "customer_code", "customer_name", "vendor_code", "vendor_name"]
 
         field = request.GET.get("field")  # Get the single field value
+        query = request.GET.get("query")
 
         if not field:  # Ensure that 'field' is provided in the request
             return Response(
@@ -1241,14 +1242,16 @@ class SearchAPIEndpoint(BaseAPIView):
             )
 
         # Fetch values dynamically based on the requested field
+        filter_criteria = {f"{field}__icontains": query} if query else {}
+
         values = Issue.objects.filter(
-            workspace__slug=slug
+            Q(workspace__slug=slug) & Q(**filter_criteria)
         ).values_list(field, flat=True)
 
         unique_values = list(set(filter(None, values)))  # Remove duplicates and nulls
 
         paginator = PageNumberPagination()
-        paginator.page_size = int(request.GET.get("limit", 20))  # Default limit = 10
+        paginator.page_size = int(request.GET.get("limit", 10))  # Default limit = 10
         paginated_values = paginator.paginate_queryset(unique_values, request)
 
         # Custom pagination response

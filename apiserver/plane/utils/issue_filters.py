@@ -606,9 +606,10 @@ def filter_character_fields(params, issue_filter, method, prefix=""):
     ]
 
     for field in character_fields:
-        value = params.get(field, "").strip()  # Remove spaces to avoid blank entries
-        if value:  
-            issue_filter[f"{prefix}{field}__iexact"] = value  # Case-insensitive filtering
+        value = params.get(field, "").strip()
+        if value:
+            values_list = [v.strip() for v in value.split(",") if v.strip()]
+            issue_filter[f"{prefix}{field}__in"] = values_list
 
     return issue_filter
 
