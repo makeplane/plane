@@ -47,15 +47,23 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
         return;
       }
 
-      // Insert a new paragraph at the end of the document
-      const endPosition = editor?.state.doc.content.size;
-      editor?.chain().insertContentAt(endPosition, { type: "paragraph" }).run();
+      // Get the last node in the document
+      const docSize = editor.state.doc.content.size;
+      const lastNodePos = editor.state.doc.resolve(Math.max(0, docSize - 2));
+      const lastNode = lastNodePos.node();
 
-      // Focus the newly added paragraph for immediate editing
-      editor
-        .chain()
-        .setTextSelection(endPosition + 1)
-        .run();
+      // Check if the last node is a  not paragraph
+      if (lastNode && lastNode.type.name !== "paragraph") {
+        // If last node is not a paragraph, insert a new paragraph at the end
+        const endPosition = editor?.state.doc.content.size;
+        editor?.chain().insertContentAt(endPosition, { type: "paragraph" }).run();
+
+        // Focus the newly added paragraph for immediate editing
+        editor
+          .chain()
+          .setTextSelection(endPosition + 1)
+          .run();
+      }
     } catch (error) {
       console.error("An error occurred while handling container click to insert new empty node at bottom:", error);
     }
