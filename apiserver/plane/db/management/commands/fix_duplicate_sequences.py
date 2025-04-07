@@ -1,9 +1,11 @@
 # Django imports
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Max
+from django.db import connection
 
 # Module imports
 from plane.db.models import Project, Issue, IssueSequence
+from plane.utils.uuid import convert_uuid_to_integer
 
 
 class Command(BaseCommand):
@@ -61,6 +63,15 @@ class Command(BaseCommand):
                     f"{issues.count()} issues found with identifier {issue_identifier}"
                 )
             )
+
+            # This ensures only one transaction per project can execute this code at a time
+            lock_key = convert_uuid_to_integer(project.id)
+
+            # Acquire an exclusive lock using the project ID as the lock key
+            with connection.cursor() as cursor:
+                # Get an exclusive lock using the project ID as the lock key
+                cursor.execute("SELECT pg_advisory_xact_lock(%s)", [lock_key])
+
             # Get the maximum sequence ID for the project
             last_sequence = IssueSequence.objects.filter(project=project).aggregate(
                 largest=Max("sequence")
@@ -69,6 +80,11 @@ class Command(BaseCommand):
             bulk_issues = []
             bulk_issue_sequences = []
 
+            issue_sequence_map = {
+                isq.issue_id: isq
+                for isq in IssueSequence.objects.filter(project=project)
+            }
+
             # change the ids of duplicate issues
             for index, issue in enumerate(issues[1:]):
                 updated_sequence_id = last_sequence + index + 1
@@ -76,9 +92,7 @@ class Command(BaseCommand):
                 bulk_issues.append(issue)
 
                 # Find the same issue sequence instance from the above queryset
-                sequence_identifier = next(
-                    (isq for isq in issue_sequences if isq.issue_id == issue.id), None
-                )
+                sequence_identifier = issue_sequence_map.get(issue.id)
                 if sequence_identifier:
                     sequence_identifier.sequence = updated_sequence_id
                     bulk_issue_sequences.append(sequence_identifier)
