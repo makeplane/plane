@@ -70,6 +70,7 @@ from plane.utils.host import base_host
 from plane.ee.utils.workflow import WorkflowStateManager
 
 
+
 class IssueListEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
@@ -1176,8 +1177,16 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
         """
         Validate that start date is before target date.
         """
+        from datetime import datetime
+
         start = new_start or current_start
         target = new_target or current_target
+
+        # Convert string dates to datetime objects if they're strings
+        if isinstance(start, str):
+            start = datetime.strptime(start, "%Y-%m-%d").date()
+        if isinstance(target, str):
+            target = datetime.strptime(target, "%Y-%m-%d").date()
 
         if start and target and start > target:
             return False
