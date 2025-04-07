@@ -242,7 +242,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             "workspace_search", "false"
         )
         created_by_username = request.headers.get("X-Assume-Role", False)
-        vendor_code = request.headers.get("X-Vendor-Code", False)
+        vendor_code = request.query_params.get("X-Vendor-Code", False)
         project_id = request.query_params.get("project_id", False)
         if not query:
             return Response(
