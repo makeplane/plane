@@ -105,6 +105,13 @@ class EpicCommentViewSet(BaseViewSet):
             epic_comment, data=request.data, partial=True
         )
         if serializer.is_valid():
+            if (
+                "comment_html" in request.data
+                and request.data["comment_html"] != epic_comment.comment_html
+            ):
+                serializer.save(edited_at=timezone.now())
+
+        if serializer.is_valid():
             serializer.save()
             issue_activity.delay(
                 type="comment.activity.updated",

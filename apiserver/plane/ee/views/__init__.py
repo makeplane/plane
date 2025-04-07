@@ -115,6 +115,6 @@ from plane.ee.views.api.worklog import (
     ProjectWorklogAPIEndpoint,
 )
 
-from plane.ee.views.app.search.base import (
-    EnhancedGlobalSearchEndpoint
-)
+from plane.ee.views.app.search.base import EnhancedGlobalSearchEndpoint
+
+from plane.ee.views.app.workspace.asset import WorkspaceBulkAssetEndpoint

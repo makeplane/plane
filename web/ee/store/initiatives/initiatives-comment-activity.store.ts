@@ -1,3 +1,4 @@
+import { find, pull, set } from "lodash";
 import concat from "lodash/concat";
 import sortBy from "lodash/sortBy";
 import uniq from "lodash/uniq";
@@ -6,6 +7,8 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // PLane-web
 import { EActivityFilterType } from "@plane/constants";
+import { TIssueCommentReaction, TIssueCommentReactionIdMap, TIssueCommentReactionMap } from "@plane/types";
+import { groupReactions } from "@/helpers/emoji.helper";
 import {
   TInitiativeComment,
   TInitiativeReaction,
@@ -18,6 +21,13 @@ import { InitiativeStore } from "./initiatives.store";
 export interface IInitiativeCommentActivityStore {
   initiativeCommentsMap: Record<string, TInitiativeComment[]>;
   initiativeActivityMap: Record<string, TInitiativeActivity[]>;
+  // observables
+  commentReactions: TIssueCommentReactionIdMap;
+  commentReactionMap: TIssueCommentReactionMap;
+
+  getCommentReactionsByCommentId: (commentId: string) => { [reaction: string]: string[] } | undefined;
+  getCommentReactionById: (reactionId: string) => TIssueCommentReaction | undefined;
+  commentReactionsByUser: (commentId: string, userId: string) => TIssueCommentReaction[];
 
   getInitiativeComments: (initiativeId: string) => TInitiativeComment[] | undefined;
   getActivityCommentByIssueId: (initiativeId: string) => TInitiativeActivityComment[] | undefined;
@@ -54,6 +64,8 @@ export interface IInitiativeCommentActivityStore {
 }
 
 export class InitiativeCommentActivityStore implements IInitiativeCommentActivityStore {
+  commentReactions: TIssueCommentReactionIdMap = {};
+  commentReactionMap: TIssueCommentReactionMap = {};
   initiativeCommentsMap: Record<string, TInitiativeComment[]> = {};
   initiativeActivityMap: Record<string, TInitiativeActivity[]> = {};
 
@@ -62,6 +74,8 @@ export class InitiativeCommentActivityStore implements IInitiativeCommentActivit
   constructor(_initiativeStore: InitiativeStore) {
     makeObservable(this, {
       // observables
+      commentReactions: observable,
+      commentReactionMap: observable,
       initiativeCommentsMap: observable,
       initiativeActivityMap: observable,
       // actions
@@ -76,6 +90,35 @@ export class InitiativeCommentActivityStore implements IInitiativeCommentActivit
 
     this.initiativeStore = _initiativeStore;
   }
+
+  // helper methods
+  getCommentReactionsByCommentId = (commentId: string) => {
+    if (!commentId) return undefined;
+    return this.commentReactions[commentId] ?? undefined;
+  };
+
+  getCommentReactionById = (reactionId: string) => {
+    if (!reactionId) return undefined;
+    return this.commentReactionMap[reactionId] ?? undefined;
+  };
+
+  commentReactionsByUser = (commentId: string, userId: string) => {
+    if (!commentId || !userId) return [];
+
+    const reactions = this.getCommentReactionsByCommentId(commentId);
+    if (!reactions) return [];
+
+    const _userReactions: TIssueCommentReaction[] = [];
+    Object.keys(reactions).forEach((reaction) => {
+      if (reactions?.[reaction])
+        reactions?.[reaction].map((reactionId) => {
+          const currentReaction = this.getCommentReactionById(reactionId);
+          if (currentReaction && currentReaction.actor === userId) _userReactions.push(currentReaction);
+        });
+    });
+
+    return _userReactions;
+  };
 
   getInitiativeComments = computedFn((initiativeId: string) => this.initiativeCommentsMap[initiativeId]);
 
@@ -115,9 +158,26 @@ export class InitiativeCommentActivityStore implements IInitiativeCommentActivit
   async fetchInitiativeComments(workspaceSlug: string, initiativeId: string): Promise<TInitiativeComment[]> {
     try {
       const response = await this.initiativeStore.initiativeService.getInitiativeComments(workspaceSlug, initiativeId);
-
       runInAction(() => {
         this.initiativeCommentsMap[initiativeId] = response;
+
+        response.map((comment) => {
+          const groupedReactions = groupReactions(comment.comment_reactions || [], "reaction");
+
+          const commentReactionIdsMap: { [reaction: string]: string[] } = {};
+
+          Object.keys(groupedReactions).map((reactionId) => {
+            const reactionIds = (groupedReactions[reactionId] || []).map((reaction) => reaction.id);
+            commentReactionIdsMap[reactionId] = reactionIds;
+          });
+
+          runInAction(() => {
+            set(this.commentReactions, comment.id, commentReactionIdsMap);
+            (comment.comment_reactions || []).forEach((reaction) =>
+              set(this.commentReactionMap, reaction.id, reaction)
+            );
+          });
+        });
       });
 
       return response;
@@ -159,7 +219,7 @@ export class InitiativeCommentActivityStore implements IInitiativeCommentActivit
     payload: Partial<TInitiativeComment>
   ): Promise<void> => {
     try {
-      await this.initiativeStore.initiativeService.updateInitiativeComment(
+      const response = await this.initiativeStore.initiativeService.updateInitiativeComment(
         workspaceSlug,
         initiativeId,
         commentId,
@@ -178,7 +238,7 @@ export class InitiativeCommentActivityStore implements IInitiativeCommentActivit
 
         const initiativeComment = this.initiativeCommentsMap[initiativeId][initiativeCommentIndex];
 
-        this.initiativeCommentsMap[initiativeId][initiativeCommentIndex] = { ...initiativeComment, ...payload };
+        this.initiativeCommentsMap[initiativeId][initiativeCommentIndex] = { ...initiativeComment, ...response };
       });
     } catch (e) {
       console.log("error while updating initiative Comment", e);
@@ -260,22 +320,13 @@ export class InitiativeCommentActivityStore implements IInitiativeCommentActivit
         payload
       );
 
+      if (!this.commentReactions[commentId]) this.commentReactions[commentId] = {};
       runInAction(() => {
-        if (!this.initiativeCommentsMap[initiativeId] || !Array.isArray(this.initiativeCommentsMap[initiativeId]))
-          return;
-
-        const initiativeCommentIndex = this.initiativeCommentsMap[initiativeId].findIndex(
-          (initiativeComment) => initiativeComment.id === commentId
-        );
-
-        if (initiativeCommentIndex < 0) return;
-
-        const initiativeComment = this.initiativeCommentsMap[initiativeId][initiativeCommentIndex];
-
-        if (!initiativeComment.comment_reactions || !Array.isArray(initiativeComment.comment_reactions))
-          initiativeComment.comment_reactions = [];
-
-        initiativeComment.comment_reactions.push(response);
+        update(this.commentReactions, `${commentId}.${payload.reaction}`, (reactionId) => {
+          if (!reactionId) return [response.id];
+          return concat(reactionId, response.id);
+        });
+        set(this.commentReactionMap, response.id, response);
       });
       return response;
     } catch (e) {
@@ -288,40 +339,28 @@ export class InitiativeCommentActivityStore implements IInitiativeCommentActivit
     workspaceSlug: string,
     initiativeId: string,
     commentId: string,
-    reactionId: string,
+    userId: string,
     reactionEmoji: string
   ): Promise<void> => {
     try {
+      const userReactions = this.commentReactionsByUser(commentId, userId);
+      const currentReaction = find(userReactions, { actor: userId, reaction: reactionEmoji });
+
+      if (currentReaction && currentReaction.id) {
+        runInAction(() => {
+          pull(this.commentReactions[commentId][reactionEmoji], currentReaction.id);
+          delete this.commentReactionMap[reactionEmoji];
+        });
+      }
+
       await this.initiativeStore.initiativeService.deleteInitiativeCommentReaction(
         workspaceSlug,
         initiativeId,
         commentId,
         reactionEmoji
       );
-
-      runInAction(() => {
-        if (!this.initiativeCommentsMap[initiativeId] || !Array.isArray(this.initiativeCommentsMap[initiativeId]))
-          return;
-
-        const initiativeCommentIndex = this.initiativeCommentsMap[initiativeId].findIndex(
-          (initiativeComment) => initiativeComment.id === commentId
-        );
-
-        if (initiativeCommentIndex < 0) return;
-
-        const initiativeComment = this.initiativeCommentsMap[initiativeId][initiativeCommentIndex];
-
-        if (!initiativeComment.comment_reactions || !Array.isArray(initiativeComment.comment_reactions)) return;
-
-        update(
-          this.initiativeCommentsMap[initiativeId][initiativeCommentIndex],
-          ["comment_reactions"],
-          (reactions: TInitiativeReaction[]) => reactions.filter((reaction) => reaction.id !== reactionId)
-        );
-      });
-    } catch (e) {
-      console.error("error while deleting reaction to initiative Comment", e);
-      throw e;
+    } catch (error) {
+      throw error;
     }
   };
 }

@@ -33,6 +33,7 @@ export const SidebarRoot: FC<TSidebarRootProps> = (props) => {
         defaultTab={defaultTab}
         containerClassName="gap-4"
         tabListContainerClassName="px-6"
+        tabPanelClassName="h-full"
       />
     </SidebarWrapper>
   );

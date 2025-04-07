@@ -29,27 +29,6 @@ export type TTeamspaceActivityDetailsHelperMap = {
   [key in TTeamspaceActivityKeys]: (activity: TTeamspaceActivity) => TTeamspaceActivityDetails;
 };
 
-export type TTeamspaceComment = {
-  id: string;
-  actor: string;
-  actor_detail: IUserLite;
-  comment_reactions: TTeamspaceReaction[];
-  created_at: string;
-  updated_at: string;
-  deleted_at: string | null;
-  comment_stripped: string | null;
-  comment_json: object;
-  comment_html: string | null;
-  attachments: object[];
-  access: EIssueCommentAccessSpecifier;
-  external_id: string | undefined;
-  external_source: string | undefined;
-  created_by: string;
-  updated_by: string | null;
-  workspace: string;
-  team: string;
-};
-
 export type TWorkloadFilter = {
   yAxisKey: ETeamspaceAnalyticsValueKeys;
   xAxisKey: EProgressXAxisKeys;

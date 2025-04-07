@@ -17,15 +17,9 @@ from plane.utils.issue_filters import issue_filters
 
 class TeamspaceSerializer(BaseSerializer):
     lead_id = serializers.PrimaryKeyRelatedField(
-        source="lead",
-        queryset=User.objects.all(),
-        required=False,
-        allow_null=True,
+        source="lead", queryset=User.objects.all(), required=False, allow_null=True
     )
-    project_ids = serializers.ListField(
-        child=serializers.UUIDField(),
-        required=False,
-    )
+    project_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
 
     class Meta:
         model = Teamspace
@@ -43,9 +37,7 @@ class TeamspaceSerializer(BaseSerializer):
             "created_by",
             "updated_by",
         ]
-        read_only_fields = [
-            "workspace",
-        ]
+        read_only_fields = ["workspace"]
 
 
 class TeamspaceMemberSerializer(BaseSerializer):
@@ -98,14 +90,8 @@ class TeamspacePageSerializer(BaseSerializer):
         required=False,
     )
     # Many to many
-    label_ids = serializers.ListField(
-        child=serializers.UUIDField(),
-        required=False,
-    )
-    project_ids = serializers.ListField(
-        child=serializers.UUIDField(),
-        required=False,
-    )
+    label_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
+    project_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
     anchor = serializers.CharField(read_only=True)
     team = serializers.UUIDField(read_only=True)
 
@@ -134,11 +120,7 @@ class TeamspacePageSerializer(BaseSerializer):
             "anchor",
             "team",
         ]
-        read_only_fields = [
-            "workspace",
-            "owned_by",
-            "anchor",
-        ]
+        read_only_fields = ["workspace", "owned_by", "anchor"]
 
     def create(self, validated_data):
         workspace_id = self.context["workspace_id"]
@@ -174,10 +156,7 @@ class TeamspacePageVersionSerializer(BaseSerializer):
             "created_by",
             "updated_by",
         ]
-        read_only_fields = [
-            "workspace",
-            "page",
-        ]
+        read_only_fields = ["workspace", "page"]
 
 
 class TeamspacePageVersionDetailSerializer(BaseSerializer):
@@ -197,13 +176,21 @@ class TeamspacePageVersionDetailSerializer(BaseSerializer):
             "created_by",
             "updated_by",
         ]
-        read_only_fields = [
-            "workspace",
-            "page",
-        ]
+        read_only_fields = ["workspace", "page"]
+
+
+class TeamspaceCommentReactionSerializer(BaseSerializer):
+    class Meta:
+        model = TeamspaceCommentReaction
+        fields = ["id", "reaction", "actor"]
+        read_only_fields = ["workspace", "team_space", "comment", "actor", "deleted_at"]
 
 
 class TeamspaceCommentSerializer(BaseSerializer):
+    comment_reactions = TeamspaceCommentReactionSerializer(
+        read_only=True, many=True, source="team_space_reactions"
+    )
+
     class Meta:
         model = TeamspaceComment
         fields = "__all__"
@@ -215,23 +202,6 @@ class TeamspaceCommentSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
-        ]
-
-
-class TeamspaceCommentReactionSerializer(BaseSerializer):
-    class Meta:
-        model = TeamspaceCommentReaction
-        fields = [
-            "id",
-            "reaction",
-            "actor",
-        ]
-        read_only_fields = [
-            "workspace",
-            "team_space",
-            "comment",
-            "actor",
-            "deleted_at",
         ]
 
 

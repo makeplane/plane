@@ -81,7 +81,12 @@ class InitiativeCommentViewSet(BaseViewSet):
             initiative_comment, data=request.data, partial=True
         )
         if serializer.is_valid():
-            serializer.save()
+            if (
+                "comment_html" in request.data
+                and request.data["comment_html"] != initiative_comment.comment_html
+            ):
+                serializer.save(edited_at=timezone.now())
+
             initiative_activity.delay(
                 type="comment.activity.updated",
                 slug=slug,

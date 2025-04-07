@@ -33,12 +33,18 @@ class TeamspaceCommentEndpoint(TeamspaceBaseEndpoint):
             comment = TeamspaceComment.objects.get(
                 workspace__slug=slug, team_space_id=team_space_id, id=pk
             )
+
             serializer = TeamspaceCommentSerializer(comment)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        comments = TeamspaceComment.objects.filter(
-            workspace__slug=slug, team_space_id=team_space_id
-        ).order_by("-created_at")
+        comments = (
+            TeamspaceComment.objects.filter(
+                workspace__slug=slug, team_space_id=team_space_id
+            )
+            .prefetch_related("team_space_reactions")
+            .order_by("-created_at")
+        )
+
         serializer = TeamspaceCommentSerializer(comments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -79,7 +85,11 @@ class TeamspaceCommentEndpoint(TeamspaceBaseEndpoint):
             comment, data=request.data, partial=True
         )
         if serializer.is_valid():
-            serializer.save()
+            if (
+                "comment_html" in request.data
+                and request.data["comment_html"] != comment.comment_html
+            ):
+                serializer.save(edited_at=timezone.now())
 
             # Send activity
             team_space_activity.delay(
@@ -92,6 +102,7 @@ class TeamspaceCommentEndpoint(TeamspaceBaseEndpoint):
                 epoch=int(timezone.now().timestamp()),
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
