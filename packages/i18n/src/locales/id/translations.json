@@ -1738,30 +1738,30 @@
     "estimates": {
       "label": "Perkiraan",
       "title": "Aktifkan perkiraan untuk proyek saya",
-      "description": "Mereka membantu Anda dalam mengkomunikasikan kompleksitas dan beban kerja tim.",
+      "description": "Ini membantu Anda dalam mengkomunikasikan kompleksitas dan beban kerja tim.",
       "no_estimate": "Tidak ada perkiraan",
       "create": {
         "custom": "Kustom",
         "start_from_scratch": "Mulai dari awal",
         "choose_template": "Pilih template",
         "choose_estimate_system": "Pilih sistem perkiraan",
-        "enter_estimate_point": "Masukkan poin perkiraan"
+        "enter_estimate_point": "Masukkan perkiraan"
       },
       "toasts": {
         "created": {
           "success": {
-            "title": "Poin perkiraan dibuat",
-            "message": "Poin perkiraan telah berhasil dibuat"
+            "title": "Perkiraan dibuat",
+            "message": "Perkiraan telah berhasil dibuat"
           },
           "error": {
-            "title": "Pembuatan poin perkiraan gagal",
-            "message": "Kami tidak dapat membuat poin perkiraan baru, silakan coba lagi."
+            "title": "Pembuatan perkiraan gagal",
+            "message": "Kami tidak dapat membuat perkiraan baru, silakan coba lagi."
           }
         },
         "updated": {
           "success": {
             "title": "Perkiraan dimodifikasi",
-            "message": "Poin perkiraan telah diperbarui dalam proyek Anda."
+            "message": "Perkiraan telah diperbarui dalam proyek Anda."
           },
           "error": {
             "title": "Modifikasi perkiraan gagal",
@@ -1770,13 +1770,13 @@
         },
         "enabled": {
           "success": {
-            "title": "Sukses!",
+            "title": "Berhasil!",
             "message": "Perkiraan telah diaktifkan."
           }
         },
         "disabled": {
           "success": {
-            "title": "Sukses!",
+            "title": "Berhasil!",
             "message": "Perkiraan telah dinonaktifkan."
           },
           "error": {
@@ -1786,39 +1786,40 @@
         }
       },
       "validation": {
-        "min_length": "Poin perkiraan harus lebih besar dari 0.",
+        "min_length": "Perkiraan harus lebih besar dari 0.",
         "unable_to_process": "Kami tidak dapat memproses permintaan Anda, silakan coba lagi.",
-        "numeric": "Poin perkiraan harus berupa nilai numerik.",
-        "character": "Poin perkiraan harus berupa nilai karakter.",
+        "numeric": "Perkiraan harus berupa nilai numerik.",
+        "character": "Perkiraan harus berupa nilai karakter.",
         "empty": "Nilai perkiraan tidak boleh kosong.",
         "already_exists": "Nilai perkiraan sudah ada.",
-        "unsaved_changes": "Anda memiliki beberapa perubahan yang belum disimpan, Silakan simpan sebelum mengklik selesai"
+        "unsaved_changes": "Anda memiliki beberapa perubahan yang belum disimpan, Harap simpan sebelum mengklik selesai",
+        "remove_empty": "Perkiraan tidak boleh kosong. Masukkan nilai di setiap bidang atau hapus yang tidak memiliki nilai."
       }
     },
     "automations": {
       "label": "Otomatisasi",
       "auto-archive": {
-        "title": "Otomatis mengarsipkan item kerja yang ditutup",
-        "description": "Plane akan otomatis mengarsipkan item kerja yang telah diselesaikan atau dibatalkan.",
-        "duration": "Otomatis mengarsipkan item kerja yang ditutup untuk"
+        "title": "Arsip otomatis item kerja yang ditutup",
+        "description": "Plane akan mengarsipkan secara otomatis item kerja yang telah selesai atau dibatalkan.",
+        "duration": "Arsip otomatis item kerja yang ditutup selama"
       },
       "auto-close": {
-        "title": "Otomatis menutup item kerja",
-        "description": "Plane akan secara otomatis menutup item kerja yang belum diselesaikan atau dibatalkan.",
-        "duration": "Otomatis menutup item kerja yang tidak aktif selama",
-        "auto_close_status": "Status otomatis tutup"
+        "title": "Tutup otomatis item kerja",
+        "description": "Plane akan menutup secara otomatis item kerja yang belum selesai atau dibatalkan.",
+        "duration": "Tutup otomatis item kerja yang tidak aktif selama",
+        "auto_close_status": "Status penutupan otomatis"
       }
     },
 
     "empty_state": {
       "labels": {
         "title": "Belum ada label",
-        "description": "Buat label untuk membantu mengorganisir dan memfilter item kerja dalam proyek Anda."
+        "description": "Buat label untuk membantu mengatur dan memfilter item kerja dalam proyek Anda."
       },
       "estimates": {
-        "title": "Belum ada sistem estimasi",
-        "description": "Buat seperangkat estimasi untuk mengkomunikasikan jumlah pekerjaan per item kerja.",
-        "primary_button": "Tambah sistem estimasi"
+        "title": "Belum ada sistem perkiraan",
+        "description": "Buat serangkaian perkiraan untuk mengkomunikasikan jumlah pekerjaan per item kerja.",
+        "primary_button": "Tambah sistem perkiraan"
       }
     }
   },
