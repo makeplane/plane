@@ -16,13 +16,6 @@ import {
 
 export type TWorkItemTypeSchema = Pick<TIssueType, "id" | "name" | "logo_props" | "is_epic">;
 
-export type TWorkItemParentSchema = Pick<Partial<ISearchIssueResponse>, "id" | "project_id"> &
-  Partial<{
-    project_identifier: string | undefined;
-    sequence_id: number | undefined;
-    type: CompleteOrEmpty<TWorkItemTypeSchema>;
-  }>;
-
 export type TWorkItemStateSchema = Pick<Partial<IState>, "id" | "name" | "group">;
 
 export type TWorkItemAssigneeSchema = Pick<IUserLite, "id">;
@@ -54,7 +47,6 @@ export type TWorkItemPropertySchema = TCustomPropertySchema & { type: TWorkItemT
 
 export type TWorkItemTemplateData = Pick<TIssue, "name" | "description_html" | "priority"> & {
   id?: string;
-  parent: CompleteOrEmpty<TWorkItemParentSchema>;
   state: CompleteOrEmpty<TWorkItemStateSchema>;
   assignees: TWorkItemAssigneeSchema[];
   labels: TWorkItemLabelSchema[];
@@ -78,7 +70,6 @@ export type TWorkItemTemplateFormData = Pick<
   | "assignee_ids"
   | "label_ids"
   | "module_ids"
-  | "parent_id"
 >;
 
 export type TWorkItemTemplateForm = {

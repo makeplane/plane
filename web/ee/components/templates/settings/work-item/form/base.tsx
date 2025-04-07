@@ -8,11 +8,9 @@ import { FormProvider, useForm } from "react-hook-form";
 // plane imports
 import { ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TWorkItemTemplateForm, ISearchIssueResponse, PartialDeep, TWorkItemTemplateFormData } from "@plane/types";
+import { TWorkItemTemplateForm, PartialDeep, TWorkItemTemplateFormData } from "@plane/types";
 import { Button } from "@plane/ui";
 import { cn, TWorkItemSanitizationResult } from "@plane/utils";
-// hooks
-import { useIssueModal } from "@/hooks/context/use-issue-modal";
 // plane web imports
 import { IssueAdditionalProperties } from "@/plane-web/components/issues";
 // local imports
@@ -29,7 +27,6 @@ export enum EWorkItemFormOperation {
 
 export type TWorkItemTemplateFormSubmitData = {
   data: TWorkItemTemplateForm;
-  parentWorkItemDetails: ISearchIssueResponse | null;
 };
 
 type TWorkItemTemplateFormRootProps = {
@@ -61,7 +58,6 @@ const DEFAULT_WORK_ITEM_TEMPLATE_FORM_VALUES: TWorkItemTemplateForm = {
     assignee_ids: [],
     label_ids: [],
     module_ids: [],
-    parent_id: null,
   },
 };
 
@@ -80,8 +76,6 @@ export const WorkItemTemplateFormRoot: React.FC<TWorkItemTemplateFormRootProps> 
     const { workspaceSlug } = useParams();
     // plane hooks
     const { t } = useTranslation();
-    // context
-    const { selectedParentIssue } = useIssueModal();
     // form state
     const defaultValueForReset = useMemo(
       () =>
@@ -102,7 +96,7 @@ export const WorkItemTemplateFormRoot: React.FC<TWorkItemTemplateFormRootProps> 
     const projectId = watch("work_item.project_id");
 
     const onSubmit = async (data: TWorkItemTemplateForm) => {
-      await handleFormSubmit({ data, parentWorkItemDetails: selectedParentIssue });
+      await handleFormSubmit({ data });
     };
 
     return (

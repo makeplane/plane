@@ -148,7 +148,6 @@ export const EpicModalProvider = observer((props: TEpicModalProviderProps) => {
         getActiveAdditionalPropertiesLength,
         handlePropertyValuesValidation,
         handleCreateUpdatePropertyValues,
-        handleParentWorkItemDetails: () => Promise.resolve(undefined),
         handleProjectEntitiesFetch: () => Promise.resolve(),
         handleTemplateChange: () => Promise.resolve(),
       }}

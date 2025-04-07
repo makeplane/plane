@@ -11,7 +11,6 @@ from plane.db.models import Workspace
 from plane.ee.views.base import BaseAPIView
 from plane.ee.models import Template, WorkitemTemplate
 from plane.ee.models.template import (
-    Parent,
     Assignee,
     Label,
     Module,
@@ -74,7 +73,6 @@ class TemplateBaseEndpoint(BaseAPIView):
             tuple: (is_valid, errors)
         """
         validation_map = {
-            "parent": Parent,
             "state": State,
             "type": Type,
             "assignees": Assignee,

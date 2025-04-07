@@ -5,7 +5,6 @@ import {
   IIssueProperty,
   IIssuePropertyOption,
   IModule,
-  ISearchIssueResponse,
   IState,
   IUserLite,
   TIssuePropertyValues,
@@ -20,7 +19,6 @@ import {
 import { extractIds, isValidId, partitionValidIds } from "../common";
 
 export type TSanitizeWorkItemTemplateFormDataParams = {
-  parentDetails: ISearchIssueResponse | null;
   getProjectStateIds: (projectId: string | null | undefined) => string[] | undefined;
   getProjectLabelIds: (projectId: string | null | undefined) => string[] | undefined;
   getProjectModuleIds: (projectId: string) => string[] | null;
@@ -75,7 +73,6 @@ export const extractWorkItemFormData = (
   assignee_ids: extractIds(workItemData.assignees) ?? [],
   label_ids: extractIds(workItemData.labels) ?? [],
   module_ids: extractIds(workItemData.modules) ?? [],
-  parent_id: workItemData.parent?.id ?? null,
 });
 
 type TExtractAndSanitizeWorkItemFormDataParams = TSanitizeWorkItemTemplateFormDataParams & {
@@ -105,8 +102,7 @@ export type TWorkItemSanitizationResult<T> = {
 export const extractAndSanitizeWorkItemFormData = (
   params: TExtractAndSanitizeWorkItemFormDataParams
 ): TWorkItemSanitizationResult<TWorkItemTemplateFormData> => {
-  const { workItemData, parentDetails, getProjectStateIds, getProjectLabelIds, getProjectModuleIds, getProjectMemberIds } =
-    params;
+  const { workItemData, getProjectStateIds, getProjectLabelIds, getProjectModuleIds, getProjectMemberIds } = params;
 
   // Extract base work item data first
   const extractedData = extractWorkItemFormData(workItemData);
@@ -141,12 +137,6 @@ export const extractAndSanitizeWorkItemFormData = (
     projectModuleIds
   );
 
-  // Check parent ID validity
-  const originalParentId = extractedData.parent_id;
-  const currentParentId = parentDetails?.id ?? null;
-  // Parent is invalid if it was set but no longer exists
-  const invalidParentId = originalParentId && !currentParentId ? originalParentId : null;
-
   // Return both sanitized data and invalid IDs
   return {
     valid: {
@@ -155,14 +145,12 @@ export const extractAndSanitizeWorkItemFormData = (
       assignee_ids: validAssigneeIds,
       label_ids: validLabelIds,
       module_ids: validModuleIds,
-      parent_id: currentParentId,
     },
     invalid: {
       state_id: invalidStateId,
       assignee_ids: invalidAssigneeIds,
       label_ids: invalidLabelIds,
       module_ids: invalidModuleIds,
-      parent_id: invalidParentId,
     },
   };
 };
@@ -210,7 +198,6 @@ type TWorkItemTemplateFormDataParams = {
   workspaceId: string;
   formData: TWorkItemTemplateForm;
   customPropertyValues: TIssuePropertyValues;
-  parentDetails: ISearchIssueResponse | null;
   getWorkItemTypeById: (workItemTypeId: string) => TIssueType | undefined;
   getWorkItemPropertyById: (workItemPropertyId: string) => IIssueProperty<EIssuePropertyType> | undefined;
   getStateById: (stateId: string) => IState | undefined;
@@ -226,7 +213,6 @@ export const workItemTemplateFormDataToData = ({
   workspaceId,
   formData,
   customPropertyValues,
-  parentDetails,
   getWorkItemTypeById,
   getWorkItemPropertyById,
   getStateById,
@@ -244,7 +230,6 @@ export const workItemTemplateFormDataToData = ({
       workspaceId,
       workItem: work_item,
       customPropertyValues,
-      parentDetails,
       getWorkItemTypeById,
       getWorkItemPropertyById,
       getStateById,
@@ -259,7 +244,6 @@ type TBuildTemplateDataParams = {
   workspaceId: string;
   workItem: TWorkItemTemplateForm["work_item"];
   customPropertyValues: TIssuePropertyValues;
-  parentDetails: ISearchIssueResponse | null;
   getWorkItemTypeById: (workItemTypeId: string) => TIssueType | undefined;
   getWorkItemPropertyById: (workItemPropertyId: string) => IIssueProperty<EIssuePropertyType> | undefined;
   getStateById: (stateId: string) => IState | undefined;
@@ -275,7 +259,6 @@ export const buildTemplateSchema = ({
   workspaceId,
   workItem,
   customPropertyValues,
-  parentDetails,
   getWorkItemTypeById,
   getWorkItemPropertyById,
   getStateById,
@@ -288,7 +271,6 @@ export const buildTemplateSchema = ({
   project: workItem.project_id,
   workspace: workspaceId,
   type: buildWorkItemTypeSchema(workItem.type_id, getWorkItemTypeById),
-  parent: buildParentSchema(parentDetails, getWorkItemTypeById),
   state: buildStateSchema(workItem.state_id, getStateById),
   priority: workItem.priority,
   assignees: buildAssigneesSchema(workItem.assignee_ids, getUserDetails),
@@ -312,26 +294,6 @@ export const buildWorkItemTypeSchema = (
     name: workItemType.name,
     logo_props: workItemType.logo_props,
     is_epic: workItemType.is_epic,
-  };
-};
-
-/**
- * Builds parent schema
- */
-export const buildParentSchema = (
-  parentDetails: ISearchIssueResponse | null,
-  getWorkItemTypeById: (workItemTypeId: string) => TIssueType | undefined
-): TWorkItemTemplate["template_data"]["parent"] => {
-  if (!parentDetails) return {};
-
-  const workItemParentTypeSchema = buildWorkItemTypeSchema(parentDetails.type_id, getWorkItemTypeById);
-
-  return {
-    id: parentDetails.id,
-    project_id: parentDetails.project_id,
-    project_identifier: parentDetails.project__identifier,
-    sequence_id: parentDetails.sequence_id,
-    type: workItemParentTypeSchema,
   };
 };
 

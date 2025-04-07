@@ -4,7 +4,7 @@ import useSWR from "swr";
 // plane imports
 import { ETemplateLevel, ETemplateType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ISearchIssueResponse, PartialDeep, TWorkItemTemplateForm, TWorkItemTemplateFormData } from "@plane/types";
+import { PartialDeep, TWorkItemTemplateForm, TWorkItemTemplateFormData } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import {
   extractAndSanitizeCustomPropertyValuesFormData,
@@ -68,7 +68,6 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
     setWorkItemTemplateId,
     setIsApplyingTemplate,
     setIssuePropertyValues,
-    handleParentWorkItemDetails,
     handleProjectEntitiesFetch,
   } = useIssueModal();
   // derived values
@@ -114,21 +113,9 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
       // fetch all entities required for the template
       await handleProjectEntitiesFetch({ workspaceSlug, templateId });
 
-      // fetch parent work item details if it exists
-      let parentDetails: ISearchIssueResponse | undefined = undefined;
-      if (templateDetails?.template_data.parent) {
-        parentDetails = await handleParentWorkItemDetails({
-          workspaceSlug,
-          parentId: templateDetails.template_data.parent?.id,
-          parentProjectId: templateDetails.template_data.parent?.project_id,
-          isParentEpic: !!templateDetails.template_data.parent?.type?.is_epic,
-        });
-      }
-
       // Get the sanitized work item form data
       const { form: sanitizedWorkItemFormData, invalidIds } = workItemTemplateDataToSanitizedFormData({
         template: templateDetails,
-        parentDetails: parentDetails ?? null,
         getProjectStateIds,
         getProjectLabelIds,
         getProjectModuleIds,
@@ -208,7 +195,7 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
   );
 
   const handleFormSubmit = async (data: TWorkItemTemplateFormSubmitData) => {
-    const { data: templateData, parentWorkItemDetails } = data;
+    const { data: templateData } = data;
 
     // Get current workspace detail
     const currentWorkspace = getWorkspaceBySlug(workspaceSlug);
@@ -218,7 +205,6 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
       workspaceId: currentWorkspace.id,
       formData: templateData,
       customPropertyValues: issuePropertyValues,
-      parentDetails: parentWorkItemDetails,
       getWorkItemTypeById: getIssueTypeById,
       getWorkItemPropertyById: getIssuePropertyById,
       getStateById: getStateById,

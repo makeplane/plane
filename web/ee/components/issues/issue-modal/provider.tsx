@@ -2,11 +2,10 @@ import React, { useCallback, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 // plane imports
-import { EIssueServiceType, DEFAULT_WORK_ITEM_FORM_VALUES, EWorkItemTypeEntity } from "@plane/constants";
+import { DEFAULT_WORK_ITEM_FORM_VALUES, EWorkItemTypeEntity } from "@plane/constants";
 import { ISearchIssueResponse, TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import {
-  convertWorkItemDataToSearchResponse,
   extractAndSanitizeCustomPropertyValuesFormData,
   extractAndSanitizeWorkItemFormData,
   getPropertiesDefaultValues,
@@ -18,13 +17,12 @@ import {
   IssueModalContext,
   TActiveAdditionalPropertiesProps,
   TCreateUpdatePropertyValuesProps,
-  THandleParentWorkItemDetailsProps,
   THandleProjectEntitiesFetchProps,
   THandleTemplateChangeProps,
   TPropertyValuesValidationProps,
 } from "@/components/issues";
 // plane web hooks
-import { useIssueDetail, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
+import { useLabel, useMember, useModule, useProjectState } from "@/hooks/store";
 import { useIssuePropertiesActivity, useIssueTypes, useWorkItemTemplates } from "@/plane-web/hooks/store";
 // plane web services
 import { DraftIssuePropertyValuesService, IssuePropertyValuesService } from "@/plane-web/services/issue-types";
@@ -33,7 +31,7 @@ const issuePropertyValuesService = new IssuePropertyValuesService();
 const draftIssuePropertyValuesService = new DraftIssuePropertyValuesService();
 
 export const IssueModalProvider = observer((props: TIssueModalProviderProps) => {
-  const { children, templateId } = props;
+  const { children, templateId, dataForPreload } = props;
   // states
   const [workItemTemplateId, setWorkItemTemplateId] = useState<string | null>(templateId ?? null);
   const [isApplyingTemplate, setIsApplyingTemplate] = useState<boolean>(false);
@@ -41,17 +39,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
   const [issuePropertyValues, setIssuePropertyValues] = useState<TIssuePropertyValues>({});
   const [issuePropertyValueErrors, setIssuePropertyValueErrors] = useState<TIssuePropertyValueErrors>({});
   // store hooks
-  const {
-    issue: { getIssueById },
-    fetchIssue,
-  } = useIssueDetail(EIssueServiceType.ISSUES);
-  const {
-    issue: { getIssueById: getEpicIssueById },
-    fetchIssue: fetchEpicIssue,
-  } = useIssueDetail(EIssueServiceType.EPICS);
-  const { getProjectById } = useProject();
-  const { getStateById, getProjectStateIds, getAvailableWorkItemCreationStateIds, fetchProjectStates } =
-    useProjectState();
+  const { getProjectStateIds, getAvailableWorkItemCreationStateIds, fetchProjectStates } = useProjectState();
   const { getProjectLabelIds, fetchProjectLabels } = useLabel();
   const { getModulesFetchStatusByProjectId, getProjectModuleIds, fetchModules } = useModule();
   const {
@@ -178,50 +166,6 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
   };
 
   /**
-   * Used to fetch parent work item details and set the selected parent issue
-   */
-  const handleParentWorkItemDetails = useCallback(
-    async (props: THandleParentWorkItemDetailsProps): Promise<ISearchIssueResponse | undefined> => {
-      const { parentId, parentProjectId, isParentEpic, workspaceSlug } = props;
-      // reset selected parent issue
-      setSelectedParentIssue(null);
-      // Fetch parent work item details if it exists
-      if (parentId && parentProjectId) {
-        // Define getWorkItemById and fetchWorkItem based on parent issue type
-        const getWorkItemById = isParentEpic ? getEpicIssueById : getIssueById;
-        const fetchWorkItem = isParentEpic ? fetchEpicIssue : fetchIssue;
-        // Get parent work item details
-        let parentWorkItem = getWorkItemById(parentId);
-        // Fetch parent work item details if it doesn't exist
-        if (!parentWorkItem) {
-          parentWorkItem = await fetchWorkItem(workspaceSlug, parentProjectId, parentId).catch(() => {
-            // If parent work item is not available, set the parent issue to null
-            setSelectedParentIssue(null);
-            return undefined;
-          });
-          if (!parentWorkItem) return;
-        }
-        // Get project details
-        const projectDetails = getProjectById(parentProjectId);
-        // Get state details
-        const stateDetails = getStateById(parentWorkItem.state_id);
-        // Get parent work item details
-        const parentWorkItemDetails = convertWorkItemDataToSearchResponse(
-          workspaceSlug,
-          parentWorkItem,
-          projectDetails,
-          stateDetails
-        );
-        // Set selected parent issue
-        setSelectedParentIssue(parentWorkItemDetails);
-        // return parent work item details
-        return parentWorkItemDetails;
-      }
-    },
-    [fetchEpicIssue, fetchIssue, getEpicIssueById, getIssueById, getProjectById, getStateById]
-  );
-
-  /**
    * Used to fetch all the entities for the project required for the work item modal
    */
   const handleProjectEntitiesFetch = useCallback(
@@ -307,18 +251,9 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
         // fetch all entities required in the work item modal for the template
         await handleProjectEntitiesFetch({ workspaceSlug, templateId: workItemTemplateId });
 
-        // handle parent work item details
-        const parentDetails = await handleParentWorkItemDetails({
-          parentId: template.template_data.parent?.id,
-          parentProjectId: template.template_data.parent?.project_id,
-          isParentEpic: !!template.template_data.parent?.type?.is_epic,
-          workspaceSlug,
-        });
-
         // Get the sanitized work item form data
         const { valid: sanitizedWorkItemFormData } = extractAndSanitizeWorkItemFormData({
           workItemData: template.template_data,
-          parentDetails: parentDetails ?? null,
           getProjectStateIds: getAvailableWorkItemCreationStateIds,
           getProjectLabelIds,
           getProjectModuleIds,
@@ -328,6 +263,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
         // reset form values
         reset({
           ...DEFAULT_WORK_ITEM_FORM_VALUES,
+          ...dataForPreload,
           ...sanitizedWorkItemFormData,
         });
 
@@ -368,11 +304,11 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
       workItemTemplateId,
       getTemplateById,
       handleProjectEntitiesFetch,
-      handleParentWorkItemDetails,
       getAvailableWorkItemCreationStateIds,
       getProjectLabelIds,
       getProjectModuleIds,
       getProjectMemberIds,
+      dataForPreload,
       isWorkItemTypeEnabledForProject,
       getIssueTypeById,
     ]
@@ -395,7 +331,6 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
         getActiveAdditionalPropertiesLength,
         handlePropertyValuesValidation,
         handleCreateUpdatePropertyValues,
-        handleParentWorkItemDetails,
         handleProjectEntitiesFetch,
         handleTemplateChange,
       }}
