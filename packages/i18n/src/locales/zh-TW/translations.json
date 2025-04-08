@@ -594,7 +594,7 @@
         "default": "您還沒有任何最近項目。"
       },
       "filters": {
-        "all": "所有項目",
+        "all": "所有",
         "projects": "專案",
         "pages": "頁面",
         "issues": "工作事項"

@@ -590,10 +590,10 @@
         "default": "Zatím nemáte žádné nedávné položky."
       },
       "filters": {
-        "all": "Všechny položky",
+        "all": "Vše",
         "projects": "Projekty",
         "pages": "Stránky",
-        "issues": "Pracovní položky"
+        "issues": "Úkoly"
       }
     },
     "new_at_plane": {
