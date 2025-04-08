@@ -1,15 +1,12 @@
 "use client";
 
 import { observer } from "mobx-react";
-// icons
 import { Link2, Pencil, Trash2 } from "lucide-react";
-// ui
+// plane imports
 import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { cn, copyUrlToClipboard } from "@plane/utils";
 // plane web constants
 import { useUserPermissions } from "@/hooks/store";
 import { DeleteCustomerRequestsModal } from "@/plane-web/components/customers/actions";

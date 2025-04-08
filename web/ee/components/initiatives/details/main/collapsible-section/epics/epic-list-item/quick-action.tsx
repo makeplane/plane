@@ -6,10 +6,9 @@ import { LinkIcon, MoreHorizontal, Trash2 } from "lucide-react";
 import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, copyUrlToClipboard } from "@plane/utils";
 // helpers
 import { generateWorkItemLink } from "@/helpers/issue.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 // Plane-web
@@ -49,7 +48,7 @@ export const EpicQuickActions: React.FC<Props> = observer((props: Props) => {
 
   // handler
   const handleCopyText = () =>
-    copyUrlToClipboard(workItemLink, false).then(() =>
+    copyUrlToClipboard(workItemLink).then(() =>
       setToast({
         type: TOAST_TYPE.INFO,
         title: `${t("common.link_copied")}!`,

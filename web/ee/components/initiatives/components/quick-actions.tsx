@@ -2,14 +2,11 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-// icons
 import { ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
-// ui
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
-import { cn } from "@plane/utils";
-// helpers
-import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
 import { useUser } from "@/hooks/store";
 // Plane-web

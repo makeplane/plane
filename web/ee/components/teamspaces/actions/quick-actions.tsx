@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-// icons
 import { ExternalLink, Link2, Pencil, Trash2 } from "lucide-react";
-// ui
+// plane imports
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { copyUrlToClipboard } from "@plane/utils";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useCommandPalette } from "@/hooks/store";
 // plane web constants

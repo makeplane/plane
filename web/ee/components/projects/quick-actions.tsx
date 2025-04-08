@@ -5,11 +5,9 @@ import { ArchiveRestoreIcon, LinkIcon, MoreHorizontal, Settings, Trash2 } from "
 // plane imports
 import { EUserProjectRoles } from "@plane/constants";
 import { ArchiveIcon, CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, copyUrlToClipboard } from "@plane/utils";
 // components
 import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from "@/components/project";
-// helpers
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // plane web imports
 import { TProject } from "@/plane-web/types/projects";
 

@@ -4,11 +4,9 @@ import { FC, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Link2, MoveDiagonal, MoveRight, Sidebar } from "lucide-react";
-// constants
+// plane imports
 import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
-// types
 import { TIssue } from "@plane/types";
-// ui
 import {
   CenterPanelIcon,
   CustomSelect,
@@ -18,13 +16,12 @@ import {
   Tooltip,
   setToast,
 } from "@plane/ui";
+import { copyUrlToClipboard } from "@plane/utils";
 // components
 import { NameDescriptionUpdateStatus } from "@/components/issues";
-// constants
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { generateWorkItemLink } from "@/helpers/issue.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // store hooks
 import { useAppTheme, useIssueDetail, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -117,7 +114,7 @@ export const EpicPeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pro
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
-    copyUrlToClipboard(workItemLink, false).then(() => {
+    copyUrlToClipboard(workItemLink).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",

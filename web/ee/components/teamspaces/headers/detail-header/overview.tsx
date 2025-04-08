@@ -1,12 +1,13 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Link2, Sidebar } from "lucide-react";
-// components
+// plane imports
 import { setToast, TOAST_TYPE } from "@plane/ui";
+import { copyUrlToClipboard } from "@plane/utils";
+// components
 import { NameDescriptionUpdateStatus } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // plane web components
 import { TeamQuickActions } from "@/plane-web/components/teamspaces/actions";
 // plane web hooks

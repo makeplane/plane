@@ -4,17 +4,16 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
-// plane constants
+// plane imports
 import { EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
 import { TIssue } from "@plane/types";
-// ui
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { copyUrlToClipboard } from "@plane/utils";
 // components
 import { DeleteIssueModal } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { generateWorkItemLink } from "@/helpers/issue.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useIssues, useProject, useUserPermissions } from "@/hooks/store";
 // plane-web
@@ -67,7 +66,7 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
   });
 
   const handleCopyIssueLink = () =>
-    copyUrlToClipboard(workItemLink, false).then(() =>
+    copyUrlToClipboard(workItemLink).then(() =>
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link copied",

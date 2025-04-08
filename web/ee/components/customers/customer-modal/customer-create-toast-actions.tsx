@@ -1,10 +1,9 @@
 "use client";
 import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
-// helpers
+// plane imports
 import { useTranslation } from "@plane/i18n";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
-// hooks
+import { copyUrlToClipboard } from "@plane/utils";
 
 type TCreateCustomerCreateToastActions = {
   workspaceSlug: string;
@@ -22,10 +21,10 @@ export const CreateCustomerCreateToastActions: FC<TCreateCustomerCreateToastActi
 
   const copyToClipboard = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     try {
-      await copyUrlToClipboard(customerLink, false);
+      await copyUrlToClipboard(customerLink);
       setCopied(true);
       setTimeout(() => setCopied(false), 3000);
-    } catch (error) {
+    } catch {
       setCopied(false);
     }
     e.preventDefault();

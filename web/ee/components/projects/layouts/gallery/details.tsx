@@ -13,13 +13,11 @@ import {
   CustomMenu,
   ArchiveIcon,
 } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, copyUrlToClipboard } from "@plane/utils";
 // components
 import { Logo } from "@/components/common";
-// constants
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
