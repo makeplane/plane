@@ -167,17 +167,17 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
           data={issueCrudState?.delete?.issue as TIssue}
           onSubmit={async () => {
             if (
-              issueCrudState.removeRelation.issue &&
-              issueCrudState.removeRelation.issue.project_id &&
+              issueCrudState.removeRelation.issueId &&
+              issueCrudState.removeRelation.issue?.project_id &&
               issueCrudState.removeRelation.relationKey &&
               issueCrudState.removeRelation.relationIssueId
             ) {
               await removeRelation(
                 workspaceSlug,
                 issueCrudState.removeRelation.issue.project_id,
-                issueCrudState.removeRelation.issueId as string,
+                issueCrudState.removeRelation.issueId,
                 issueCrudState.removeRelation.relationKey as TIssueRelationTypes,
-                issueCrudState.removeRelation.relationIssueId as string,
+                issueCrudState.removeRelation.relationIssueId,
                 true
               );
             }
@@ -192,7 +192,7 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
               await deleteOperation(
                 workspaceSlug,
                 issueCrudState.delete.issue?.project_id,
-                issueCrudState?.delete?.issue?.id as string
+                issueCrudState?.delete?.issue?.id
               );
             }
           }}
