@@ -1,9 +1,9 @@
 FROM caddy:builder AS caddy-builder
 
-RUN xcaddy build \
-    --with github.com/caddy-dns/cloudflare \
-    --with github.com/caddy-dns/digitalocean \
-    --with github.com/mholt/caddy-l4
+RUN xcaddy build
+    # --with github.com/caddy-dns/cloudflare \
+    # --with github.com/caddy-dns/digitalocean \
+    # --with github.com/mholt/caddy-l4
 
 FROM caddy:alpine
 
