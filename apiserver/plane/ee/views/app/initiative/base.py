@@ -455,46 +455,9 @@ class WorkspaceInitiativeAnalytics(BaseAPIView):
             ),
         )
 
-        # fetch all the issues in which the user is part of
-        issues = Issue.objects.filter(
-            workspace__slug=slug,
-            project__project_projectmember__member=self.request.user,
-            project__project_projectmember__is_active=True,
-        ).values("id", "project_id", "state__group")
-
         result = []
 
         for initiative in initiatives:
-            total_issues = issues.filter(
-                Q(
-                    Q(type__is_epic=False) | Q(type__isnull=True),
-                    Q(issue_intake__status__in=[-1, 1, 2])
-                    | Q(issue_intake__status__isnull=True),
-                    project_id__in=initiative.project_ids,
-                    deleted_at__isnull=True,
-                    archived_at__isnull=True,
-                    project__archived_at__isnull=True,
-                    is_draft=False,
-                )
-                | Q(id__in=initiative.epic_ids)
-            ).count()
-            completed_issues = (
-                issues.filter(
-                    Q(
-                        Q(type__is_epic=False) | Q(type__isnull=True),
-                        Q(issue_intake__status__in=[-1, 1, 2])
-                        | Q(issue_intake__status__isnull=True),
-                        project_id__in=initiative.project_ids,
-                        deleted_at__isnull=True,
-                        archived_at__isnull=True,
-                        project__archived_at__isnull=True,
-                        is_draft=False,
-                    )
-                    | Q(id__in=initiative.epic_ids)
-                )
-                .filter(state__group="completed")
-                .count()
-            )
             # Get latest updates for each project and epic
             latest_updates = EntityUpdates.objects.filter(
                 Q(project_id__in=initiative.project_ids, entity_type="PROJECT")
@@ -520,8 +483,6 @@ class WorkspaceInitiativeAnalytics(BaseAPIView):
             result.append(
                 {
                     "initiative_id": initiative.id,
-                    "total_issues": total_issues,
-                    "completed_issues": completed_issues,
                     "on_track_updates_count": on_track_updates_count,
                     "off_track_updates_count": off_track_updates_count,
                     "at_risk_updates_count": at_risk_updates_count,
