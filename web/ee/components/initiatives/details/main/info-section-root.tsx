@@ -48,7 +48,7 @@ export const InitiativeInfoSection: FC<Props> = observer((props) => {
       fileAssetType={EFileAssetType.INITIATIVE_DESCRIPTION}
       disabled={disabled}
       iconElement={
-        <div className="w-11 h-11 bg-custom-background-80 rounded-md flex items-center justify-center text-custom-text-300">
+        <div className="flex-shrink-0 size-11 bg-custom-background-80 rounded-md flex items-center justify-center text-custom-text-300">
           <InitiativeIcon width={24} height={24} />
         </div>
       }
