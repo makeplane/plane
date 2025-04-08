@@ -9,6 +9,7 @@ import {
   Avatar,
   Button,
   EModalPosition,
+  EModalWidth,
   getButtonStyling,
   Loader,
   ModalCore,
@@ -16,7 +17,7 @@ import {
   TOAST_TYPE,
   Tooltip,
 } from "@plane/ui";
-import { calculateTimeAgo, cn, copyTextToClipboard } from "@plane/utils";
+import { calculateTimeAgo, cn, copyTextToClipboard, getFileURL } from "@plane/utils";
 // components
 import { RichTextReadOnlyEditor } from "@/components/editor";
 // hooks
@@ -76,7 +77,7 @@ export const DescriptionVersionsModal: React.FC<Props> = observer((props) => {
   if (!workspaceId) return null;
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP}>
+    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXXXL}>
       <div className="p-4" data-prevent-outside-click>
         {/* Header */}
         <div className="flex items-center justify-between gap-2 py-0.5">
@@ -84,7 +85,11 @@ export const DescriptionVersionsModal: React.FC<Props> = observer((props) => {
             <p className="flex items-center gap-1">
               {t("description_versions.edited_by")}
               <span className="flex-shrink-0">
-                <Avatar size="sm" src={versionCreator?.avatar_url} name={versionCreator?.display_name} />
+                <Avatar
+                  size="sm"
+                  src={getFileURL(versionCreator?.avatar_url ?? "")}
+                  name={versionCreator?.display_name}
+                />
               </span>
             </p>
             <p className="flex-shrink-0 text-custom-text-200">
