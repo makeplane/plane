@@ -32,6 +32,7 @@ from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from .base import BaseAPIView
 from plane.utils.host import base_host
 
+
 class ProjectAPIEndpoint(BaseAPIView):
     """Project Endpoints to create, update, list, retrieve and delete endpoint"""
 
@@ -135,7 +136,7 @@ class ProjectAPIEndpoint(BaseAPIView):
         serializer = ProjectSerializer(project, fields=self.fields, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request, slug):
+    def post(self, request, slug, pk=None):
         try:
             workspace = Workspace.objects.get(slug=slug)
             serializer = ProjectSerializer(

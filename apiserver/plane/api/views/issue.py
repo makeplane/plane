@@ -266,7 +266,7 @@ class IssueAPIEndpoint(BaseAPIView):
             ).data,
         )
 
-    def post(self, request, slug, project_id):
+    def post(self, request, slug, project_id, pk=None):
         project = Project.objects.get(pk=project_id)
 
         serializer = IssueSerializer(
@@ -540,7 +540,7 @@ class LabelAPIEndpoint(BaseAPIView):
             .order_by(self.kwargs.get("order_by", "-created_at"))
         )
 
-    def post(self, request, slug, project_id):
+    def post(self, request, slug, project_id, pk=None):
         try:
             serializer = LabelSerializer(data=request.data)
             if serializer.is_valid():
@@ -676,7 +676,7 @@ class IssueLinkAPIEndpoint(BaseAPIView):
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request, slug, project_id, issue_id):
+    def post(self, request, slug, project_id, issue_id, pk=None):
         serializer = IssueLinkSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id)
@@ -791,7 +791,7 @@ class IssueCommentAPIEndpoint(BaseAPIView):
             ).data,
         )
 
-    def post(self, request, slug, project_id, issue_id):
+    def post(self, request, slug, project_id, issue_id, pk=None):
         # Validation check if the issue already exists
         if (
             request.data.get("external_id")
@@ -945,7 +945,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
     model = FileAsset
 
-    def post(self, request, slug, project_id, issue_id):
+    def post(self, request, slug, project_id, issue_id, pk=None):
         name = request.data.get("name")
         type = request.data.get("type", False)
         size = request.data.get("size")
