@@ -594,7 +594,7 @@
         "default": "아직 최근 항목이 없습니다."
       },
       "filters": {
-        "all": "모든 항목",
+        "all": "모든",
         "projects": "프로젝트",
         "pages": "페이지",
         "issues": "작업 항목"

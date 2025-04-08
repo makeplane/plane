@@ -424,7 +424,7 @@
         "default": "You don't have any recents yet."
       },
       "filters": {
-        "all": "All items",
+        "all": "All",
         "projects": "Projects",
         "pages": "Pages",
         "issues": "Work items"

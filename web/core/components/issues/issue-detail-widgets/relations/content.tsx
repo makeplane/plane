@@ -44,6 +44,7 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
   const [issueCrudState, setIssueCrudState] = useState<{
     update: TIssueCrudState;
     delete: TIssueCrudState;
+    removeRelation: TIssueCrudState & { relationKey: string | undefined; relationIssueId: string | undefined };
   }>({
     update: {
       toggle: false,
@@ -55,11 +56,18 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
       issueId: undefined,
       issue: undefined,
     },
+    removeRelation: {
+      toggle: false,
+      issueId: undefined,
+      issue: undefined,
+      relationKey: undefined,
+      relationIssueId: undefined,
+    },
   });
 
   // store hooks
   const {
-    relation: { getRelationsByIssueId },
+    relation: { getRelationsByIssueId, removeRelation },
     toggleDeleteIssueModal,
     toggleCreateIssueModal,
   } = useIssueDetail(issueServiceType);
@@ -72,15 +80,23 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
   const relations = getRelationsByIssueId(issueId);
   const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
 
-  const handleIssueCrudState = (key: "update" | "delete", _issueId: string | null, issue: TIssue | null = null) => {
-    setIssueCrudState({
-      ...issueCrudState,
+  const handleIssueCrudState = (
+    key: "update" | "delete" | "removeRelation",
+    _issueId: string | null,
+    issue: TIssue | null = null,
+    relationKey?: TIssueRelationTypes | null,
+    relationIssueId?: string | null
+  ) => {
+    setIssueCrudState((prevState) => ({
+      ...prevState,
       [key]: {
-        toggle: !issueCrudState[key].toggle,
+        toggle: !prevState[key].toggle,
         issueId: _issueId,
         issue: issue,
+        relationKey: relationKey,
+        relationIssueId: relationIssueId,
       },
-    });
+    }));
   };
 
   // if relations are not available, return null
@@ -151,6 +167,21 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
           data={issueCrudState?.delete?.issue as TIssue}
           onSubmit={async () => {
             if (
+              issueCrudState.removeRelation.issueId &&
+              issueCrudState.removeRelation.issue?.project_id &&
+              issueCrudState.removeRelation.relationKey &&
+              issueCrudState.removeRelation.relationIssueId
+            ) {
+              await removeRelation(
+                workspaceSlug,
+                issueCrudState.removeRelation.issue.project_id,
+                issueCrudState.removeRelation.issueId,
+                issueCrudState.removeRelation.relationKey as TIssueRelationTypes,
+                issueCrudState.removeRelation.relationIssueId,
+                true
+              );
+            }
+            if (
               issueCrudState.delete.issue &&
               issueCrudState.delete.issue.id &&
               issueCrudState.delete.issue.project_id
@@ -161,7 +192,7 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
               await deleteOperation(
                 workspaceSlug,
                 issueCrudState.delete.issue?.project_id,
-                issueCrudState?.delete?.issue?.id as string
+                issueCrudState?.delete?.issue?.id
               );
             }
           }}

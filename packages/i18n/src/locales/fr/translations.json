@@ -594,7 +594,7 @@
         "default": "Vous n'avez pas encore d'éléments récents."
       },
       "filters": {
-        "all": "Tous les éléments",
+        "all": "Tous",
         "projects": "Projets",
         "pages": "Pages",
         "issues": "Éléments de travail"

@@ -594,7 +594,7 @@
         "default": "您还没有任何最近项目。"
       },
       "filters": {
-        "all": "所有项目",
+        "all": "所有",
         "projects": "项目",
         "pages": "页面",
         "issues": "工作项"

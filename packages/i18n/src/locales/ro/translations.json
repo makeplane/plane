@@ -592,7 +592,7 @@
         "default": "Nu ai nimic recent încă."
       },
       "filters": {
-        "all": "Toate activitățile",
+        "all": "Toate",
         "projects": "Proiecte",
         "pages": "Documentație",
         "issues": "Activități"

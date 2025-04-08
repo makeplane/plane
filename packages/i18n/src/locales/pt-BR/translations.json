@@ -594,7 +594,7 @@
         "default": "Você não tem nenhum item recente ainda."
       },
       "filters": {
-        "all": "Todos os itens",
+        "all": "Todos",
         "projects": "Projetos",
         "pages": "Páginas",
         "issues": "Itens de trabalho"
