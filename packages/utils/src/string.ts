@@ -86,8 +86,11 @@ export const copyTextToClipboard = async (text: string): Promise<void> => {
  * await copyUrlToClipboard("issues/123") // copies "https://example.com/issues/123"
  */
 export const copyUrlToClipboard = async (path: string) => {
-  const originUrl = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-  await copyTextToClipboard(`${originUrl}/${path}`);
+  // get origin or default to empty string if not in browser
+  const originUrl = typeof window !== "undefined" ? window.location.origin : "";
+  // create URL object and ensure proper path formatting
+  const url = new URL(path, originUrl);
+  await copyTextToClipboard(url.toString());
 };
 
 /**
