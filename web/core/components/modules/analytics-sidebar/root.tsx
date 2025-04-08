@@ -41,6 +41,7 @@ import {
   ArchiveIcon,
   TextArea,
 } from "@plane/ui";
+import { copyUrlToClipboard } from "@plane/utils";
 // components
 import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
 import {
@@ -50,10 +51,8 @@ import {
   ModuleAnalyticsProgress,
   ModuleLinksList,
 } from "@/components/modules";
-
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useModule, useEventTracker, useProjectEstimates, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

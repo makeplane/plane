@@ -56,13 +56,6 @@ export const createSimilarString = (str: string) => {
 };
 
 /**
- * @description Copies full URL (origin + path) to clipboard
- * @param {string} path - URL path to copy
- * @returns {Promise<void>} Promise that resolves when copying is complete
- * @example
- * await copyUrlToClipboard("issues/123") // copies "https://example.com/issues/123"
- */
-/**
  * @description Copies text to clipboard
  * @param {string} text - Text to copy
  * @returns {Promise<void>} Promise that resolves when copying is complete
