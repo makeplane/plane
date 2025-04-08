@@ -43,7 +43,7 @@ type TChartProps<K extends string, T extends string> = {
 export type TBarItem<T extends string> = {
   key: T;
   label: string;
-  fill: string;
+  fill: string | ((payload: any) => string);
   textClassName: string;
   showPercentage?: boolean;
   stackId: string;
@@ -116,6 +116,7 @@ export type TPieChartProps<K extends string, T extends string> = Pick<
     text?: string | number;
   };
   tooltipLabel?: string | ((payload: any) => string);
+  customLegend?: (props: any) => React.ReactNode;
 };
 
 export type TreeMapItem = {
