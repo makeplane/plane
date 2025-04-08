@@ -15,7 +15,13 @@ type TGroupList = {
 export const GroupList: FC<TGroupList> = observer((props) => {
   const { workspaceSlug, projectId, groupedStates } = props;
   // states
-  const [groupsExpanded, setGroupsExpanded] = useState<Partial<TStateGroups>[]>([]);
+  const [groupsExpanded, setGroupsExpanded] = useState<Partial<TStateGroups>[]>([
+    "backlog",
+    "unstarted",
+    "started",
+    "completed",
+    "cancelled",
+  ]);
 
   const handleGroupCollapse = (groupKey: TStateGroups) => {
     setGroupsExpanded((prev) => {
