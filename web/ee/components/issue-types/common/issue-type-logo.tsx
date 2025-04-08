@@ -51,7 +51,7 @@ export const IssueTypeLogo: FC<Props> = (props) => {
         style={{
           height: containerSizeMap[size],
           width: containerSizeMap[size],
-          backgroundColor: background,
+          backgroundColor: isEpic ? "transparent" : background,
         }}
         className={cn(
           "flex-shrink-0 grid place-items-center rounded bg-custom-background-80",
