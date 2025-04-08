@@ -1,5 +1,6 @@
-import React, { Ref, useRef } from "react";
+import React, { Ref, useRef, useState } from "react";
 import Link from "next/link";
+import { usePopper } from "react-popper";
 import { Popover, Transition } from "@headlessui/react";
 import { TUpdate } from "@plane/types";
 import { EUpdateEntityType, EUpdateStatus } from "@plane/types/src/enums";
@@ -33,34 +34,47 @@ interface IInitiativeUpdate extends TUpdate {
 
 export const UpdateStatusPills = (props: TStatusPills) => {
   const { handleUpdateOperations, workspaceSlug, initiativeId, analytics } = props;
-  // refs
-  const popoverButtonRef = useRef(null);
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
   const statusCounts = {
     [EUpdateStatus.ON_TRACK]: analytics?.on_track_updates_count ?? 0,
     [EUpdateStatus.AT_RISK]: analytics?.at_risk_updates_count ?? 0,
     [EUpdateStatus.OFF_TRACK]: analytics?.off_track_updates_count ?? 0,
   };
+  // react-popper derived values
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: "bottom",
+    modifiers: [
+      {
+        name: "preventOverflow",
+        options: {
+          padding: 10,
+        },
+      },
+    ],
+  });
 
   return (
     <div className="flex gap-2 flex-shrink-0">
-      {Object.entries(statusCounts).map(([status, count]) => (
-        <Popover className={cn("relative flex h-full items-center justify-center")} key={status}>
-          <Popover.Button
-            ref={popoverButtonRef as Ref<HTMLButtonElement>}
-            className={cn("my-auto outline-none text-custom-text-300")}
-          >
-            <button className="flex items-center gap-1 border border-custom-border-300 rounded-full px-2 py-1 shadow-sm">
-              <UpdateStatusIcons statusType={status as EUpdateStatus} showBackground={false} />
-              <span className="text-xs font-medium text-custom-text-300">{count}</span>
-            </button>
-          </Popover.Button>
+      {Object.entries(statusCounts)
+        .filter(([_, count]) => count > 0)
+        .map(([status, count]) => (
+          <Popover className={cn("relative flex h-full items-center justify-center")} key={status}>
+            <Popover.Button ref={setReferenceElement} className={cn("my-auto outline-none text-custom-text-300")}>
+              <button className="flex items-center gap-1 border border-custom-border-300 rounded-full px-2 py-1">
+                <UpdateStatusIcons statusType={status as EUpdateStatus} showBackground={false} />
+                <span className="text-xs font-medium text-custom-text-300">{count}</span>
+              </button>
+            </Popover.Button>
 
-          <Transition as={React.Fragment}>
             <Popover.Panel
               className={cn(
                 "absolute left-0 top-full z-20 w-screen mt-2 rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none max-w-[320px]"
               )}
+              ref={setPopperElement}
+              style={styles.popper}
+              {...attributes.popper}
             >
               <UpdateList
                 count={count}
@@ -92,9 +106,8 @@ export const UpdateStatusPills = (props: TStatusPills) => {
                 }}
               />
             </Popover.Panel>
-          </Transition>
-        </Popover>
-      ))}
+          </Popover>
+        ))}
     </div>
   );
 };
