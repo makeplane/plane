@@ -592,7 +592,7 @@
         "default": "Zatiaľ nemáte žiadne nedávne položky."
       },
       "filters": {
-        "all": "Všetky položky",
+        "all": "Všetko",
         "projects": "Projekty",
         "pages": "Stránky",
         "issues": "Pracovné položky"
