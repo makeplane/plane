@@ -1,14 +1,10 @@
 import { useMemo } from "react";
-// plane constants
+// plane imports
 import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
-// plane editor
 import { EditorRefApi } from "@plane/editor";
-// plane types
 import { EPageAccess } from "@plane/types/src/enums";
-// plane ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
-// helpers
-import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { copyUrlToClipboard } from "@plane/utils";
 // hooks
 import { useCollaborativePageActions } from "@/hooks/use-collaborative-page-actions";
 // store types

@@ -87,6 +87,7 @@ export const copyTextToClipboard = async (text: string): Promise<void> => {
  */
 export const copyUrlToClipboard = async (path: string) => {
   const originUrl = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+  if (path[0] === "/") path = path.slice(1);
   await copyTextToClipboard(`${originUrl}/${path}`);
 };
 
