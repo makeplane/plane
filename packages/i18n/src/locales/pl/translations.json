@@ -590,7 +590,7 @@
         "default": "Nie masz jeszcze żadnych ostatnich pozycji."
       },
       "filters": {
-        "all": "Wszystkie pozycje",
+        "all": "Wszystkie",
         "projects": "Projekty",
         "pages": "Strony",
         "issues": "Elementy pracy"

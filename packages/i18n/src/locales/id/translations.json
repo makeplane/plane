@@ -592,7 +592,7 @@
         "default": "Anda belum memiliki yang terbaru."
       },
       "filters": {
-        "all": "Semua item",
+        "all": "Semua",
         "projects": "Proyek",
         "pages": "Halaman",
         "issues": "Item kerja"

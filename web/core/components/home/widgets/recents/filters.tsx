@@ -28,7 +28,6 @@ export const FiltersDropdown: FC<TFiltersDropdown> = observer((props) => {
           setActiveFilter(filter.name);
         }}
       >
-        {filter.icon && <div>{filter.icon}</div>}
         <div className="truncate font-medium text-xs capitalize">{t(filter.i18n_key)}</div>
       </CustomMenu.MenuItem>
     ));
