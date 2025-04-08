@@ -124,7 +124,7 @@ x-live-env: &live-env
 
 services:
   admin:
-    image: registry.plane.tools/plane/admin-enterprise:${APP_RELEASE_VERSION:-v1.x.x}
+    image: makeplane/admin-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: node admin/server.js admin
     deploy:
       replicas: ${ADMIN_REPLICAS:-1}
@@ -135,7 +135,7 @@ services:
       - web
 
   web:
-    image: registry.plane.tools/plane/web-enterprise:${APP_RELEASE_VERSION:-v1.x.x}
+    image: makeplane/web-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: node web/server.js web
     deploy:
       replicas: ${WEB_REPLICAS:-1}
@@ -146,7 +146,7 @@ services:
       - worker
 
   space:
-    image: registry.plane.tools/plane/space-enterprise:${APP_RELEASE_VERSION:-v1.x.x}
+    image: makeplane/space-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: node space/server.js space
     deploy:
       replicas: ${SPACE_REPLICAS:-1}
@@ -157,7 +157,7 @@ services:
       - web
 
   live:
-    image: registry.plane.tools/plane/live-enterprise:${APP_RELEASE_VERSION:-v1.x.x}
+    image: makeplane/live-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: node live/dist/server.js live
     environment:
       <<: [ *live-env, *redis-env ]
@@ -170,7 +170,7 @@ services:
       - web
 
   monitor:
-    image: registry.plane.tools/plane/monitor-enterprise:${APP_RELEASE_VERSION:-v1.x.x}
+    image: makeplane/monitor-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     volumes:
       - 'monitor_data:/app'
     environment:
@@ -181,7 +181,7 @@ services:
         condition: on-failure
 
   api:
-    image: registry.plane.tools/plane/backend-enterprise:${APP_RELEASE_VERSION:-v1.x.x}
+    image: makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: ./bin/docker-entrypoint-api-ee.sh
     environment:
       <<: [ *plane-commercial, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
@@ -196,7 +196,7 @@ services:
       - plane-redis
 
   worker:
-    image: registry.plane.tools/plane/backend-enterprise:${APP_RELEASE_VERSION:-v1.x.x}
+    image: makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: ./bin/docker-entrypoint-worker.sh
     environment:
       <<: [ *plane-commercial, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
@@ -212,7 +212,7 @@ services:
       - plane-redis
 
   beat-worker:
-    image: registry.plane.tools/plane/backend-enterprise:${APP_RELEASE_VERSION:-v1.x.x}
+    image: makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: ./bin/docker-entrypoint-beat.sh
     environment:
       <<: [ *plane-commercial, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
@@ -228,7 +228,7 @@ services:
       - plane-redis
 
   migrator:
-    image: registry.plane.tools/plane/backend-enterprise:${APP_RELEASE_VERSION:-v1.x.x}
+    image: makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: ./bin/docker-entrypoint-migrator.sh
     environment:
       <<: [ *plane-commercial, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
@@ -243,7 +243,7 @@ services:
       - plane-redis
 
   plane-db:
-    image: postgres:15.5-alpine
+    image: postgres:15.7-alpine
     command: postgres -c 'max_connections=1000'
     environment:
       <<: [ *pg-env ]
@@ -266,7 +266,7 @@ services:
       - redisdata:/data
   
   plane-mq:
-    image: registry.plane.tools/plane/rabbitmq:3.13.6-management-alpine
+    image: rabbitmq:3.13.6-management-alpine
     environment:
       <<: [ *rabbitmq-env ]
     deploy:
@@ -277,7 +277,7 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
 
   plane-minio:
-    image: registry.plane.tools/plane/minio:latest
+    image: minio/minio:latest
     command: server /export --console-address ":9090"
     environment:
       <<: [ *docstore-env ]
@@ -292,7 +292,7 @@ services:
       - minio_data:/data
 
   silo:
-    image: registry.plane.tools/plane/silo-enterprise:${APP_RELEASE_VERSION:-v1.x.x}
+    image: makeplane/silo-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     restart: unless-stopped
     command: node silo/start.cjs
     environment:
@@ -305,7 +305,7 @@ services:
       
   # Comment this if you already have a reverse proxy running
   proxy:
-    image: registry.plane.tools/plane/proxy-enterprise:${APP_RELEASE_VERSION:-v1.x.x}
+    image: makeplane/proxy-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     restart: unless-stopped
     environment:
       <<: [ *plane-commercial, *proxy-env ]

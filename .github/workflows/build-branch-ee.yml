@@ -82,15 +82,15 @@ jobs:
           BR_NAME=$( echo "${{ env.TARGET_BRANCH }}" |sed 's/[^a-zA-Z0-9.-]//g')
           echo "TARGET_BRANCH=$BR_NAME" >> $GITHUB_OUTPUT
 
-          echo "DH_IMG_WEB=web-enterprise" >> $GITHUB_OUTPUT
-          echo "DH_IMG_SPACE=space-enterprise" >> $GITHUB_OUTPUT
-          echo "DH_IMG_ADMIN=admin-enterprise" >> $GITHUB_OUTPUT
-          echo "DH_IMG_LIVE=live-enterprise" >> $GITHUB_OUTPUT
-          echo "DH_IMG_BACKEND=backend-enterprise" >> $GITHUB_OUTPUT
-          echo "DH_IMG_PROXY=proxy-enterprise" >> $GITHUB_OUTPUT
-          echo "DH_IMG_MONITOR=monitor-enterprise" >> $GITHUB_OUTPUT
-          echo "DH_IMG_SILO=silo-enterprise" >> $GITHUB_OUTPUT
-          echo "DH_IMG_EMAIL=email-enterprise" >> $GITHUB_OUTPUT
+          echo "DH_IMG_WEB=web-commercial" >> $GITHUB_OUTPUT
+          echo "DH_IMG_SPACE=space-commercial" >> $GITHUB_OUTPUT
+          echo "DH_IMG_ADMIN=admin-commercial" >> $GITHUB_OUTPUT
+          echo "DH_IMG_LIVE=live-commercial" >> $GITHUB_OUTPUT
+          echo "DH_IMG_BACKEND=backend-commercial" >> $GITHUB_OUTPUT
+          echo "DH_IMG_PROXY=proxy-commercial" >> $GITHUB_OUTPUT
+          echo "DH_IMG_MONITOR=monitor-commercial" >> $GITHUB_OUTPUT
+          echo "DH_IMG_SILO=silo-commercial" >> $GITHUB_OUTPUT
+          echo "DH_IMG_EMAIL=email-commercial" >> $GITHUB_OUTPUT
 
           echo "BUILD_TYPE=${{env.BUILD_TYPE}}" >> $GITHUB_OUTPUT
           BUILD_RELEASE=false
@@ -101,7 +101,7 @@ jobs:
           if [ "${{ env.BUILD_TYPE }}" == "Release" ]; then
             FLAT_RELEASE_VERSION=$(echo "${{ env.RELEASE_VERSION }}" | sed 's/[^a-zA-Z0-9.-]//g')
             echo "FLAT_RELEASE_VERSION=${FLAT_RELEASE_VERSION}" >> $GITHUB_OUTPUT
-            HARBOR_PUSH=true
+            # HARBOR_PUSH=true
 
             semver_regex="^v([0-9]+)\.([0-9]+)\.([0-9]+)(-[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*)?$"
             if [[ ! $FLAT_RELEASE_VERSION =~ $semver_regex ]]; then
