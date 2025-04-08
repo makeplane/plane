@@ -1,5 +1,6 @@
 # Python imports
 import json
+from collections import defaultdict
 
 # Module imports
 from django.db.models import OuterRef, Subquery, Q, Count, Prefetch, Func, F
@@ -23,6 +24,7 @@ from plane.ee.models import (
     InitiativeReaction,
     InitiativeEpic,
     ProjectAttribute,
+    EntityUpdates,
 )
 from plane.ee.serializers import InitiativeSerializer, InitiativeProjectSerializer
 from plane.payment.flags.flag import FeatureFlag
@@ -357,14 +359,18 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
         ).values_list("project_id", flat=True)
 
         # also get the epics which are part of the initiative
-        initiative_epics = list(InitiativeEpic.objects.filter(
-            workspace__slug=slug, initiative_id=initiative_id
-        ).values_list("epic_id", flat=True))
-        
+        initiative_epics = list(
+            InitiativeEpic.objects.filter(
+                workspace__slug=slug, initiative_id=initiative_id
+            ).values_list("epic_id", flat=True)
+        )
+
         related_issues_ids = [
-            issue_id for epic_id in initiative_epics for issue_id in get_all_related_issues(epic_id)
+            issue_id
+            for epic_id in initiative_epics
+            for issue_id in get_all_related_issues(epic_id)
         ]
-        
+
         # Annotate the counts for different states in one query
         issues = Issue.objects.filter(
             Q(
@@ -377,7 +383,8 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
                 project__archived_at__isnull=True,
                 is_draft=False,
             )
-            | Q(id__in=initiative_epics) | Q(id__in=related_issues_ids),
+            | Q(id__in=initiative_epics)
+            | Q(id__in=related_issues_ids),
             workspace__slug=slug,
         ).aggregate(
             backlog_issues=Count("id", filter=Q(state__group="backlog")),
@@ -386,8 +393,36 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
             completed_issues=Count("id", filter=Q(state__group="completed")),
             cancelled_issues=Count("id", filter=Q(state__group="cancelled")),
         )
+        latest_updates = EntityUpdates.objects.filter(
+            Q(project_id__in=project_ids, entity_type="PROJECT")
+            | Q(epic_id__in=initiative_epics, entity_type="EPIC"),
+            workspace__slug=slug,
+        ).order_by("project_id", "epic_id", "-created_at")
 
-        return Response(issues, status=status.HTTP_200_OK)
+        # Get the latest update for each project/epic combination
+        seen_combinations = set()
+        status_counts = defaultdict(int)
+
+        for update in latest_updates:
+            key = (update.project_id, update.epic_id)
+            if key not in seen_combinations:
+                seen_combinations.add(key)
+                status_counts[update.status] += 1
+
+        # Get counts from the status_counts dictionary
+        on_track_updates_count = status_counts.get("ON-TRACK", 0)
+        off_track_updates_count = status_counts.get("OFF-TRACK", 0)
+        at_risk_updates_count = status_counts.get("AT-RISK", 0)
+
+        return Response(
+            {
+                **issues,
+                "on_track_updates_count": on_track_updates_count,
+                "off_track_updates_count": off_track_updates_count,
+                "at_risk_updates_count": at_risk_updates_count,
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class WorkspaceInitiativeAnalytics(BaseAPIView):
@@ -460,12 +495,36 @@ class WorkspaceInitiativeAnalytics(BaseAPIView):
                 .filter(state__group="completed")
                 .count()
             )
+            # Get latest updates for each project and epic
+            latest_updates = EntityUpdates.objects.filter(
+                Q(project_id__in=initiative.project_ids, entity_type="PROJECT")
+                | Q(epic_id__in=initiative.epic_ids, entity_type="EPIC"),
+                workspace__slug=slug,
+            ).order_by("project_id", "epic_id", "-created_at")
+
+            # Get the latest update for each project/epic combination
+            seen_combinations = set()
+            status_counts = defaultdict(int)
+
+            for update in latest_updates:
+                key = (update.project_id, update.epic_id)
+                if key not in seen_combinations:
+                    seen_combinations.add(key)
+                    status_counts[update.status] += 1
+
+            # Get counts from the status_counts dictionary
+            on_track_updates_count = status_counts.get("ON-TRACK", 0)
+            off_track_updates_count = status_counts.get("OFF-TRACK", 0)
+            at_risk_updates_count = status_counts.get("AT-RISK", 0)
 
             result.append(
                 {
                     "initiative_id": initiative.id,
                     "total_issues": total_issues,
                     "completed_issues": completed_issues,
+                    "on_track_updates_count": on_track_updates_count,
+                    "off_track_updates_count": off_track_updates_count,
+                    "at_risk_updates_count": at_risk_updates_count,
                 }
             )
 

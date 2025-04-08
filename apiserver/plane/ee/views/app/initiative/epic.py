@@ -5,16 +5,10 @@ import json
 from django.db import models
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models.functions import Cast
-from django.db.models import CharField
 from django.db.models import (
     OuterRef,
     Subquery,
     Q,
-    Count,
-    Prefetch,
-    Func,
-    F,
     UUIDField,
     Value,
 )
@@ -34,7 +28,7 @@ from plane.ee.serializers.app.initiative import (
 )
 from plane.ee.models.initiative import InitiativeEpic, InitiativeProject
 from plane.db.models import Workspace, Issue
-from plane.ee.models import Initiative
+from plane.ee.models import Initiative, EntityUpdates
 from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -190,6 +184,16 @@ class InitiativeEpicViewSet(BaseViewSet):
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
             )
+            .annotate(
+                update_status=Subquery(
+                    EntityUpdates.objects.filter(
+                        workspace__slug=slug,
+                        epic_id=OuterRef("id"),
+                        entity_type="EPIC",
+                        parent__isnull=True,
+                    ).values("status")[:1]
+                )
+            )
             .values(
                 "id",
                 "name",
@@ -206,6 +210,7 @@ class InitiativeEpicViewSet(BaseViewSet):
                 "label_ids",
                 "assignee_ids",
                 "type_id",
+                "update_status",
             )
         )
 
@@ -213,7 +218,7 @@ class InitiativeEpicViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def destroy(self, request, slug, initiative_id, epic_id):
-        initative_epics = (
+        initiative_epics = (
             InitiativeEpic.objects.filter(
                 workspace__slug=slug, initiative_id=initiative_id
             )
@@ -222,12 +227,12 @@ class InitiativeEpicViewSet(BaseViewSet):
         )
 
         current_instance = json.dumps(
-            {"epic_ids": list(initative_epics)}, cls=DjangoJSONEncoder
+            {"epic_ids": list(initiative_epics)}, cls=DjangoJSONEncoder
         )
 
         updated_epic_ids = (
-            [eid for eid in initative_epics if eid != UUID(str(epic_id))]
-            if initative_epics
+            [eid for eid in initiative_epics if eid != UUID(str(epic_id))]
+            if initiative_epics
             else []
         )
 
@@ -247,6 +252,6 @@ class InitiativeEpicViewSet(BaseViewSet):
             origin=request.META.get("HTTP_ORIGIN"),
         )
 
-        initative_epics.filter(epic_id=epic_id).delete()
+        initiative_epics.filter(epic_id=epic_id).delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -1,5 +1,6 @@
 import { IProject, IPartialProject } from "@plane/types";
 // plane web types
+import { EUpdateStatus } from "@plane/types/src/enums";
 import { TProjectPriority } from "@/plane-web/types/workspace-project-filters";
 
 export type TPartialProject = IPartialProject;
@@ -24,6 +25,7 @@ export type TProject = TPartialProject &
   TProjectAttributes & {
     description_html?: string | undefined;
     project_name?: string;
+    update_status?: EUpdateStatus | undefined;
   };
 
 export type TProjectFeaturesList = {

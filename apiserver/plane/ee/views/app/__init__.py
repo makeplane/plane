@@ -15,6 +15,9 @@ from plane.ee.views.app.initiative import (
     InitiativeEndpoint,
     InitiativeProjectEndpoint,
     InitiativeLabelEndpoint,
+    InitiativeUpdateViewSet,
+    InitiativeUpdateCommentsViewSet,
+    InitiativeUpdatesReactionViewSet,
 )
 
 from plane.ee.views.app.webhook import InternalWebhookEndpoint

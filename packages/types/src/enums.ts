@@ -71,3 +71,15 @@ export enum EFileAssetType {
   CUSTOMER_DESCRIPTION = "CUSTOMER_DESCRIPTION",
   CUSTOMER_REQUEST_DESCRIPTION = "CUSTOMER_REQUEST_DESCRIPTION",
 }
+
+export enum EUpdateStatus {
+  OFF_TRACK = "OFF-TRACK",
+  ON_TRACK = "ON-TRACK",
+  AT_RISK = "AT-RISK",
+}
+
+export enum EUpdateEntityType {
+  PROJECT = "PROJECT",
+  EPIC = "EPIC",
+  INITIATIVE = "INITIATIVE",
+}

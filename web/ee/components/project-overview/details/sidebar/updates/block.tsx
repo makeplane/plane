@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { MessageCircle, Rocket } from "lucide-react";
 import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUpdateStatus } from "@plane/types/src/enums";
 import { AtRiskIcon, OffTrackIcon, OnTrackIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { useMember, useUser, useUserPermissions } from "@/hooks/store";
+import { UpdateStatusIcons } from "@/plane-web/components/updates/status-icons";
 import { useProjectUpdates } from "@/plane-web/hooks/store/projects/use-project-updates";
-import { EProjectUpdateStatus, TProjectUpdate } from "@/plane-web/types";
+import { TProjectUpdate } from "@/plane-web/types";
 import { CommentList } from "./comments/comment-list";
 import { NewUpdate } from "./new-update";
 import { Properties } from "./properties";
@@ -15,16 +17,16 @@ import { UpdateQuickActions } from "./quick-actions";
 import { UpdateReaction } from "./update-reaction";
 
 const conf = {
-  [EProjectUpdateStatus.ON_TRACK]: {
+  [EUpdateStatus.ON_TRACK]: {
     icon: OnTrackIcon,
     color: "#1FAD40",
   },
 
-  [EProjectUpdateStatus.AT_RISK]: {
+  [EUpdateStatus.AT_RISK]: {
     icon: AtRiskIcon,
     color: "#CC7700",
   },
-  [EProjectUpdateStatus.OFF_TRACK]: {
+  [EUpdateStatus.OFF_TRACK]: {
     icon: OffTrackIcon,
     color: "#CC0000",
   },
@@ -84,7 +86,7 @@ export const UpdateBlock = observer((props: TProps) => {
           <div className="flex flex-1">
             <div className={cn(`mr-2`, {})}>
               {/* render icon here */}
-              {React.createElement(icon)}
+              <UpdateStatusIcons statusType={updateData.status as EUpdateStatus} size="md" />
             </div>
             {/* Type and creator */}
             <div className="flex-1">

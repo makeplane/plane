@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import { observer } from "mobx-react";
 // Plane
 import { EIssueServiceType } from "@plane/constants";
+import { EUpdateStatus } from "@plane/types/src/enums";
 import { CircularProgressIndicator, EpicIcon } from "@plane/ui";
 // components
 import { ListItem } from "@/components/core/list";
@@ -15,6 +16,7 @@ import { useIssueDetail, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { IdentifierText } from "@/plane-web/components/issues";
+import { UpdateStatusIcons } from "@/plane-web/components/updates/status-icons";
 import { useEpicAnalytics } from "@/plane-web/hooks/store";
 // local components
 import { EpicProperties } from "./properties";
@@ -72,6 +74,7 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
             e.stopPropagation();
           }}
         >
+          <UpdateStatusIcons statusType={issue.update_status} />
           <EpicIcon className="h-4 w-4 text-custom-text-300" />
           <IdentifierText
             identifier={`${projectIdentifier}-${issueSequenceId}`}

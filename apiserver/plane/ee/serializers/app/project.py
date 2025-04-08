@@ -17,6 +17,7 @@ class ProjectAttributeSerializer(BaseSerializer):
     state_id = serializers.UUIDField(required=False)
     project_name = serializers.CharField()
     network = serializers.IntegerField(required=False)
+    update_status = serializers.CharField(required=False)
 
     class Meta:
         model = ProjectAttribute
@@ -28,6 +29,7 @@ class ProjectAttributeSerializer(BaseSerializer):
             "target_date",
             "project_name",
             "network",
+            "update_status",
         ]
 
 

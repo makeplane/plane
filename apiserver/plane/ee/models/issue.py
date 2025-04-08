@@ -98,6 +98,7 @@ class EntityTypeEnum(models.TextChoices):
     MODULE = "MODULE", "Module"
     PROJECT = "PROJECT", "Project"
     TEAM = "TEAM", "Team"
+    EPIC = "EPIC", "Epic"
 
 
 class EntityIssueStateActivity(BaseModel):
@@ -214,17 +215,18 @@ class EntityProgress(BaseModel):
         return f"{self.progress_date} <{self.entity_type}>"
 
 
-class UpdatesEnum(models.TextChoices):
-    ON_TRACK = "ON_TRACK", "On Track"
-    OFF_TRACK = "OFF_TRACK", "Off Track"
-    AT_RISK = "AT_RISK", "At Risk"
-    STARTED = "STARTED", "Started"
-    ENDED = "ENDED", "Ended"
-    SCOPE_INCREASED = "SCOPE_INCREASED", "Scope Increased"
-    SCOPE_DECREASED = "SCOPE_DECREASED", "Scope Decreased"
 
 
 class EntityUpdates(BaseModel):
+    class UpdatesEnum(models.TextChoices):
+        ON_TRACK = "ON-TRACK", "On Track"
+        OFF_TRACK = "OFF-TRACK", "Off Track"
+        AT_RISK = "AT-RISK", "At Risk"
+        STARTED = "STARTED", "Started"
+        ENDED = "ENDED", "Ended"
+        SCOPE_INCREASED = "SCOPE_INCREASED", "Scope Increased"
+        SCOPE_DECREASED = "SCOPE_DECREASED", "Scope Decreased"
+
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="workspace_updates"
     )

@@ -14,6 +14,9 @@ from plane.ee.views.app.epic import (
     EpicDetailEndpoint,
     WorkspaceEpicEndpoint,
     EpicListAnalyticsEndpoint,
+    EpicsUpdateViewSet,
+    EpicsUpdateCommentsViewSet,
+    EpicsUpdatesReactionViewSet,
     EpicMetaEndpoint,
     EpicDetailIdentifierEndpoint,
 )
@@ -86,6 +89,37 @@ urlpatterns = [
         name="project-epic-comment",
     ),
     ## End Epic Comments
+    ## Epic updates
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/epics/<uuid:epic_id>/updates/",
+        EpicsUpdateViewSet.as_view(),
+        name="epic-updates",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/epics/<uuid:epic_id>/updates/<uuid:pk>/",
+        EpicsUpdateViewSet.as_view(),
+        name="epic-updates",
+    ),
+    ## End epic updates
+    ## Epic update comments
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/epics/<uuid:epic_id>/updates/<uuid:pk>/comments/",
+        EpicsUpdateCommentsViewSet.as_view(),
+        name="epic-updates",
+    ),
+    ## End epic update comments
+    ## Epic update reactions
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/epics/<uuid:epic_id>/updates/<uuid:update_id>/reactions/",
+        EpicsUpdatesReactionViewSet.as_view(),
+        name="epic-update-reactions",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/epics/<uuid:epic_id>/updates/<uuid:update_id>/reactions/<str:reaction_code>/",
+        EpicsUpdatesReactionViewSet.as_view(),
+        name="epic-update-reactions",
+    ),
+    ## End epic update reactions
     ## Epic Attachment
     path(
         "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/epics/<uuid:epic_id>/attachments/",

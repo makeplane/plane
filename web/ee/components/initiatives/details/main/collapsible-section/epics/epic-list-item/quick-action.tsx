@@ -70,7 +70,7 @@ export const EpicQuickActions: React.FC<Props> = observer((props: Props) => {
     {
       key: "remove",
       action: () =>
-        removeEpicFromInitiative(workspaceSlug, initiativeId, epic?.id).then(() => {
+        removeEpicFromInitiative(workspaceSlug, initiativeId, epic?.id).then(async () => {
           setToast({
             title: "Success!",
             type: TOAST_TYPE.SUCCESS,

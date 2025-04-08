@@ -16,6 +16,9 @@ from plane.ee.views.app.initiative import (
     InitiativeEpicViewSet,
     WorkspaceInitiativeAnalytics,
     InitiativeEpicAnalytics,
+    InitiativeUpdateViewSet,
+    InitiativeUpdateCommentsViewSet,
+    InitiativeUpdatesReactionViewSet,
 )
 
 urlpatterns = [
@@ -139,4 +142,35 @@ urlpatterns = [
         InitiativeEpicAnalytics.as_view(),
         name="initiative-epic-analytics",
     ),
+    # Initiative Updates
+    path(
+        "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/updates/",
+        InitiativeUpdateViewSet.as_view(),
+        name="initiative-updates",
+    ),
+    path(
+        "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/updates/<uuid:update_id>/",
+        InitiativeUpdateViewSet.as_view(),
+        name="initiative-updates",
+    ),
+    # End Initiative Updates
+    # InitIative Update comments
+    path(
+        "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/updates/<uuid:update_id>/comments/",
+        InitiativeUpdateCommentsViewSet.as_view(),
+        name="initiative-update-comments",
+    ),
+    # End InitIative Update comments
+    # InitIative Update Reactions
+    path(
+        "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/updates/<uuid:update_id>/reactions/",
+        InitiativeUpdatesReactionViewSet.as_view(),
+        name="initiative-update-comments",
+    ),
+    path(
+        "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/updates/<uuid:update_id>/reactions/<str:reaction_code>/",
+        InitiativeUpdatesReactionViewSet.as_view(),
+        name="initiative-update-comments",
+    ),
+    # End InitIative Update Reactions
 ]

@@ -5,6 +5,7 @@ import { TIssueLink } from "./issue_link";
 import { TIssueReaction, IIssuePublicReaction, IPublicVote } from "./issue_reaction";
 import { TIssueRelationTypes, TIssuePublicComment } from "@/plane-web/types";
 import { TWorkItemExtended, TWorkItemDetailExtended } from "./issue-extended";
+import { EUpdateStatus } from "../enums";
 
 // new issue structure types
 
@@ -66,6 +67,7 @@ export type TIssue = TBaseIssue &
     tempId?: string;
     // sourceIssueId is used to store the original issue id when creating a copy of an issue. Used in cloning property values. It is not a part of the API response.
     sourceIssueId?: string;
+    update_status?: EUpdateStatus | undefined;
   };
 
 export type TIssueMap = {

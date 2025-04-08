@@ -501,6 +501,73 @@
   "member": "{count, plural, one{# člen} few{# členové} other{# členů}}",
   "new_password_must_be_different_from_old_password": "Nové heslo musí být odlišné od starého hesla",
 
+  "updates": {
+    "progress": {
+      "title": "Průběh",
+      "since_last_update": "Od poslední aktualizace",
+      "comments": "{count, plural, one{# komentář} other{# komentářů}}"
+    },
+    "add_update": "Přidat aktualizaci",
+    "add_update_placeholder": "Napište svou aktualizaci zde",
+    "empty": {
+      "title": "Zatím žádné aktualizace",
+      "description": "Můžete zde vidět aktualizace."
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reakce vytvořena",
+          "message": "Reakce byla úspěšně vytvořena"
+        },
+        "error": {
+          "title": "Reakce nebyla vytvořena",
+          "message": "Reakce se nepodařilo vytvořit"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reakce odstraněna",
+          "message": "Reakce byla úspěšně odstraněna"
+        },
+        "error": {
+          "title": "Reakce nebyla odstraněna",
+          "message": "Reakce se nepodařilo odstranit"
+        }
+      }
+    },
+    "create": {
+      "success": {
+        "title": "Aktualizace vytvořena",
+        "message": "Aktualizace byla úspěšně vytvořena"
+      },
+      "error": {
+        "title": "Aktualizace nebyla vytvořena",
+        "message": "Aktualizace se nepodařilo vytvořit"
+      }
+    },
+    "delete": {
+      "title": "Smazat aktualizaci",
+      "confirmation": "Opravdu chcete smazat tuto aktualizaci? Tato akce je nevratná.",
+      "success": {
+        "title": "Aktualizace smazána",
+        "message": "Aktualizace byla úspěšně smazána"
+      },
+      "error": {
+        "title": "Aktualizace nebyla smazána",
+        "message": "Aktualizace se nepodařilo smazat"
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Aktualizace aktualizována",
+        "message": "Aktualizace byla úspěšně aktualizována"
+      },
+      "error": {
+        "title": "Aktualizace nebyla aktualizována",
+        "message": "Aktualizace se nepodařilo aktualizovat"
+      }
+    }
+  },
   "project_view": {
     "sort_by": {
       "created_at": "Vytvořeno dne",

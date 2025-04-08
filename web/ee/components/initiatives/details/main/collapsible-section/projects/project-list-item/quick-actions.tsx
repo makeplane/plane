@@ -20,7 +20,6 @@ export const QuickActions: React.FC<Props> = observer((props: Props) => {
   const {
     initiative: { updateInitiative, getInitiativeById },
   } = useInitiatives();
-
   const { t } = useTranslation();
 
   // derived states
@@ -49,7 +48,7 @@ export const QuickActions: React.FC<Props> = observer((props: Props) => {
       action: () =>
         updateInitiative(workspaceSlug, initiativeId, {
           project_ids: initiative?.project_ids ? initiative?.project_ids.filter((id) => id !== project.id) : [],
-        }).then(() => {
+        }).then(async () => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",

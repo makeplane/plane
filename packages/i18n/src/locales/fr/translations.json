@@ -501,6 +501,73 @@
   "re_generate_key": "Régénérer la clé",
   "export": "Exporter",
   "member": "{count, plural, one{# membre} other{# membres}}",
+  "updates": {
+    "add_update": "Ajouter une mise à jour",
+    "add_update_placeholder": "Ajoutez votre mise à jour ici",
+    "empty": {
+      "title": "Aucune mise à jour",
+      "description": "Vous pouvez voir les mises à jour ici."
+    },
+    "delete": {
+      "title": "Supprimer la mise à jour",
+      "confirmation": "Êtes-vous sûr de vouloir supprimer cette mise à jour ? Cette action est irréversible.",
+      "success": {
+        "title": "Mise à jour supprimée",
+        "message": "La mise à jour a été supprimée avec succès."
+      },
+      "error": {
+        "title": "Mise à jour non supprimée",
+        "message": "La mise à jour n'a pas pu être supprimée."
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Réaction créée",
+          "message": "Réaction créée avec succès."
+        },
+        "error": {
+          "title": "Réaction non créée",
+          "message": "La réaction n'a pas pu être créée."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Réaction supprimée",
+          "message": "Réaction supprimée avec succès."
+        },
+        "error": {
+          "title": "Réaction non supprimée",
+          "message": "La réaction n'a pas pu être supprimée."
+        }
+      }
+    },
+    "progress": {
+      "title": "Progrès",
+      "since_last_update": "Depuis la dernière mise à jour",
+      "comments": "{count, plural, one{# commentaire} other{# commentaires}}"
+    },
+    "create": {
+      "success": {
+        "title": "Mise à jour créée",
+        "message": "Mise à jour créée avec succès."
+      },
+      "error": {
+        "title": "Mise à jour non créée",
+        "message": "La mise à jour n'a pas pu être créée."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Mise à jour mise à jour",
+        "message": "Mise à jour mise à jour avec succès."
+      },
+      "error": {
+        "title": "Mise à jour non mise à jour",
+        "message": "La mise à jour n'a pas pu être mise à jour."
+      }
+    }
+  },
   "new_password_must_be_different_from_old_password": "Le nouveau mot de passe doit être différent du mot de passe précédent",
   "edited": "Modifié",
   "bot": "Bot",

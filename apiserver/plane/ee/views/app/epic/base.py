@@ -501,7 +501,7 @@ class EpicAnalyticsEndpoint(BaseAPIView):
             completed_issues=Count("id", filter=Q(state__group="completed")),
             cancelled_issues=Count("id", filter=Q(state__group="cancelled")),
         )
-
+        
         return Response(issues, status=status.HTTP_200_OK)
 
 

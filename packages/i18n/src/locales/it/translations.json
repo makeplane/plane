@@ -500,6 +500,73 @@
   "re_generate_key": "Rigenera chiave",
   "export": "Esporta",
   "member": "{count, plural, one {# membro} other {# membri}}",
+  "updates": {
+    "add_update": "Aggiungi aggiornamento",
+    "add_update_placeholder": "Scrivi il tuo aggiornamento qui",
+    "empty": {
+      "title": "Nessun aggiornamento",
+      "description": "Puoi vedere gli aggiornamenti qui."
+    },
+    "delete": {
+      "title": "Elimina aggiornamento",
+      "confirmation": "Sei sicuro di voler eliminare questo aggiornamento? Questa azione è irreversibile.",
+      "success": {
+        "title": "Aggiornamento eliminato",
+        "message": "L'aggiornamento è stato eliminato con successo."
+      },
+      "error": {
+        "title": "Aggiornamento non eliminato",
+        "message": "L'aggiornamento non può essere eliminato."
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reazione creata",
+          "message": "Reazione creata con successo."
+        },
+        "error": {
+          "title": "Reazione non creata",
+          "message": "La reazione non può essere creata."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reazione eliminata",
+          "message": "Reazione eliminata con successo."
+        },
+        "error": {
+          "title": "Reazione non eliminata",
+          "message": "La reazione non può essere eliminata."
+        }
+      }
+    },
+    "progress": {
+      "title": "Progresso",
+      "since_last_update": "Dal ultimo aggiornamento",
+      "comments": "{count, plural, one {# commento} other {# commenti}}"
+    },
+    "create": {
+      "success": {
+        "title": "Aggiornamento creato",
+        "message": "Aggiornamento creato con successo."
+      },
+      "error": {
+        "title": "Aggiornamento non creato",
+        "message": "L'aggiornamento non può essere creato."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Aggiornamento aggiornato",
+        "message": "Aggiornamento aggiornato con successo."
+      },
+      "error": {
+        "title": "Aggiornamento non aggiornato",
+        "message": "L'aggiornamento non può essere aggiornato."
+      }
+    }
+  },
   "new_password_must_be_different_from_old_password": "La nuova password deve essere diversa dalla password precedente",
 
   "edited": "Modificato",

@@ -16,6 +16,7 @@ from .issue import (
     EntityProgress,
     EntityIssueStateActivity,
     EpicUserProperties,
+    EntityTypeEnum,
 )
 
 from .project import (

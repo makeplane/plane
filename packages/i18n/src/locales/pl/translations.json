@@ -499,6 +499,73 @@
   "re_generate_key": "Wygeneruj klucz ponownie",
   "export": "Eksportuj",
   "member": "{count, plural, one{# członek} few{# członkowie} other{# członków}}",
+  "updates": {
+    "add_update": "Dodaj aktualizację",
+    "add_update_placeholder": "Dodaj swoją aktualizację tutaj",
+    "empty": {
+      "title": "Nie ma jeszcze aktualizacji",
+      "description": "Możesz tutaj zobaczyć aktualizacje."
+    },
+    "delete": {
+      "title": "Usuń aktualizację",
+      "confirmation": "Czy na pewno chcesz usunąć tę aktualizację? Ta operacja jest nieodwracalna.",
+      "success": {
+        "title": "Aktualizacja została usunięta",
+        "message": "Aktualizacja została pomyślnie usunięta."
+      },
+      "error": {
+        "title": "Aktualizacja nie została usunięta",
+        "message": "Nie udało się usunąć aktualizacji."
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reakcja została dodana",
+          "message": "Reakcja została pomyślnie dodana."
+        },
+        "error": {
+          "title": "Reakcja nie została dodana",
+          "message": "Nie udało się dodać reakcji."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reakcja została usunięta",
+          "message": "Reakcja została pomyślnie usunięta."
+        },
+        "error": {
+          "title": "Reakcja nie została usunięta",
+          "message": "Nie udało się usunąć reakcji."
+        }
+      }
+    },
+    "progress": {
+      "title": "Postęp",
+      "since_last_update": "Od ostatniej aktualizacji",
+      "comments": "{count, plural, one{# komentarz} other{# komentarze}}"
+    },
+    "create": {
+      "success": {
+        "title": "Aktualizacja została stworzona",
+        "message": "Aktualizacja została pomyślnie stworzona."
+      },
+      "error": {
+        "title": "Aktualizacja nie została stworzona",
+        "message": "Nie udało się stworzyć aktualizacji."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Aktualizacja została zaktualizowana",
+        "message": "Aktualizacja została pomyślnie zaktualizowana."
+      },
+      "error": {
+        "title": "Aktualizacja nie została zaktualizowana",
+        "message": "Nie udało się zaktualizować aktualizacji."
+      }
+    }
+  },
   "new_password_must_be_different_from_old_password": "Nowe hasło musi być innym niż stare hasło",
 
   "edited": "Edytowano",

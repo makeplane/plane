@@ -71,6 +71,7 @@ import {
 } from "./integrations";
 // pi chat
 import { EpicAnalytics, IEpicAnalyticStore } from "./issue/epic/analytic.store";
+import { EpicBaseStore, IEpicBaseStore } from "./issue/epic/base.store";
 import { IPiChatStore, PiChatStore } from "./pi-chat/pi-chat";
 // timeline
 import { IProjectInboxStore, ProjectInboxStore } from "./project-inbox.store";
@@ -119,6 +120,7 @@ export class RootStore extends CoreRootStore {
   baseDashboards: IBaseDashboardsStore;
   // epics
   epicAnalytics: IEpicAnalyticStore;
+  epicBaseStore: IEpicBaseStore;
   // templates
   templatesRoot: ITemplatesRootStore;
 
@@ -162,6 +164,7 @@ export class RootStore extends CoreRootStore {
     this.baseDashboards = new BaseDashboardsStore(this);
     // epics
     this.epicAnalytics = new EpicAnalytics(this);
+    this.epicBaseStore = new EpicBaseStore(this);
     // templates
     this.templatesRoot = new TemplatesRootStore(this);
   }

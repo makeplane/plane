@@ -15,3 +15,8 @@ from .attachment import EpicAttachmentEndpoint
 from .archive import EpicArchiveViewSet
 from .reaction import EpicReactionViewSet
 from .issue import EpicIssuesEndpoint
+from .update import (
+    EpicsUpdateViewSet,
+    EpicsUpdateCommentsViewSet,
+    EpicsUpdatesReactionViewSet,
+)

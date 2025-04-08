@@ -176,10 +176,16 @@ export type TInitiativeAnalytics = {
   completed_issues: number;
   cancelled_issues: number;
   overdue_issues: number;
+  on_track_updates_count: number;
+  at_risk_updates_count: number;
+  off_track_updates_count: number;
 };
 
 export type TInitiativeStats = {
   initiative_id: string;
   total_issues: number;
   completed_issues: number;
+  on_track_updates_count: number;
+  at_risk_updates_count: number;
+  off_track_updates_count: number;
 };

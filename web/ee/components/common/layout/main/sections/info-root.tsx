@@ -22,6 +22,8 @@ type TInfoSectionProps = {
   fileAssetType: EFileAssetType;
   actionElement?: React.ReactNode;
   identifierElement?: React.ReactNode;
+  iconElement?: React.ReactNode;
+  titleElement?: React.ReactNode;
 };
 
 export const InfoSection: FC<TInfoSectionProps> = (props) => {
@@ -38,6 +40,8 @@ export const InfoSection: FC<TInfoSectionProps> = (props) => {
     fileAssetType,
     actionElement,
     identifierElement,
+    iconElement,
+    titleElement,
   } = props;
 
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
@@ -55,15 +59,19 @@ export const InfoSection: FC<TInfoSectionProps> = (props) => {
       <div className="flex flex-col gap-2">
         {identifierElement && <>{identifierElement}</>}
         <div className="flex items-center justify-between gap-2 w-full">
-          <div className="flex-grow">
-            <TitleInput
-              isSubmitting={isSubmitting}
-              setIsSubmitting={(value) => setIsSubmitting(value)}
-              onSubmit={onTitleSubmit}
-              disabled={disabled}
-              value={titleValue}
-              containerClassName="-ml-3"
-            />
+          <div className="flex flex-grow gap-3 items-center">
+            {iconElement && <>{iconElement}</>}
+            <div className="flex flex-col gap-1">
+              <TitleInput
+                isSubmitting={isSubmitting}
+                setIsSubmitting={(value) => setIsSubmitting(value)}
+                onSubmit={onTitleSubmit}
+                disabled={disabled}
+                value={titleValue}
+                containerClassName="-ml-3"
+              />
+              {titleElement && <>{titleElement}</>}
+            </div>
           </div>
           {indicatorElement && <>{indicatorElement}</>}
         </div>

@@ -4,9 +4,12 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { EFileAssetType } from "@plane/types/src/enums";
 // components
+import { InitiativeIcon } from "@plane/ui";
 import { InfoSection } from "@/plane-web/components/common/layout/main/sections/info-root";
+import { UpdateStatusPills } from "@/plane-web/components/initiatives/common/update-status";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local components
+import { useInitiativeUpdates } from "../sidebar/use-updates";
 import { InitiativeInfoActionItems } from "./info-section/action-items";
 import { InitiativeInfoIndicatorItem } from "./info-section/indicator-item";
 
@@ -20,11 +23,13 @@ export const InitiativeInfoSection: FC<Props> = observer((props) => {
   const { workspaceSlug, initiativeId, disabled = false } = props;
   // store hooks
   const {
-    initiative: { getInitiativeById, updateInitiative },
+    initiative: { getInitiativeById, updateInitiative, getInitiativeAnalyticsById },
   } = useInitiatives();
+  const { handleUpdateOperations } = useInitiativeUpdates(workspaceSlug, initiativeId);
 
   // derived values
   const initiative = initiativeId ? getInitiativeById(initiativeId) : undefined;
+  const initiativeAnalytics = initiativeId ? getInitiativeAnalyticsById(initiativeId) : undefined;
 
   if (!initiative) return <></>;
 
@@ -42,6 +47,19 @@ export const InitiativeInfoSection: FC<Props> = observer((props) => {
       }
       fileAssetType={EFileAssetType.INITIATIVE_DESCRIPTION}
       disabled={disabled}
+      iconElement={
+        <div className="w-11 h-11 bg-custom-background-80 rounded-md flex items-center justify-center text-custom-text-300">
+          <InitiativeIcon width={24} height={24} />
+        </div>
+      }
+      titleElement={
+        <UpdateStatusPills
+          handleUpdateOperations={handleUpdateOperations}
+          workspaceSlug={workspaceSlug}
+          initiativeId={initiativeId}
+          analytics={initiativeAnalytics}
+        />
+      }
     />
   );
 });

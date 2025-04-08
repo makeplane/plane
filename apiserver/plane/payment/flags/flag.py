@@ -40,6 +40,7 @@ class FeatureFlag(Enum):
     TEAMSPACES = "TEAMSPACES"
     # Epics
     EPICS = "EPICS"
+    EPIC_OVERVIEW = "EPIC_OVERVIEW"
     # Workflows
     WORKFLOWS = "WORKFLOWS"
     # Project Overview
