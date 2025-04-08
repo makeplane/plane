@@ -5,7 +5,11 @@ import { observer } from "mobx-react";
 // plane web components
 import { ProjectStateGroupListItem } from "@/plane-web/components/workspace-project-states";
 // plane web types
-import { TProjectStateGroupKey, TProjectStateIdsByGroup } from "@/plane-web/types/workspace-project-states";
+import {
+  EProjectStateGroup,
+  TProjectStateGroupKey,
+  TProjectStateIdsByGroup,
+} from "@/plane-web/types/workspace-project-states";
 
 type TGroupList = {
   workspaceSlug: string;
@@ -16,7 +20,14 @@ type TGroupList = {
 export const ProjectStateGroupList: FC<TGroupList> = observer((props) => {
   const { workspaceSlug, workspaceId, groupProjectStates } = props;
   // states
-  const [groupsExpanded, setGroupsExpanded] = useState<Partial<TProjectStateGroupKey>[]>([]);
+  const [groupsExpanded, setGroupsExpanded] = useState<Partial<TProjectStateGroupKey>[]>([
+    EProjectStateGroup.DRAFT,
+    EProjectStateGroup.PLANNING,
+    EProjectStateGroup.EXECUTION,
+    EProjectStateGroup.MONITORING,
+    EProjectStateGroup.COMPLETED,
+    EProjectStateGroup.CANCELLED,
+  ]);
 
   const handleGroupCollapse = (groupKey: TProjectStateGroupKey) => {
     setGroupsExpanded((prev) => {
