@@ -30,6 +30,7 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
   const { workspaceSlug, entityId, activityOperations, showToolbarInitially = false, projectId } = props;
   // states
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // store hooks
@@ -37,19 +38,14 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
   // derived values
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug as string)?.id as string;
   // form info
-  const {
-    handleSubmit,
-    control,
-    watch,
-    formState: { isSubmitting },
-    reset,
-  } = useForm<Partial<TIssueComment>>({
+  const { handleSubmit, control, watch, reset } = useForm<Partial<TIssueComment>>({
     defaultValues: {
       comment_html: "<p></p>",
     },
   });
 
   const onSubmit = async (formData: Partial<TIssueComment>) => {
+    setIsSubmitting(true);
     activityOperations
       .createComment(formData)
       .then(async () => {
@@ -71,6 +67,7 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
           comment_html: "<p></p>",
         });
         editorRef.current?.clearEditor();
+        setIsSubmitting(false);
       });
   };
 
