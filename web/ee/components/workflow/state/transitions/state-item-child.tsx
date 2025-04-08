@@ -26,7 +26,7 @@ export const StateItemChild = observer((props: StateItemChildProps) => {
   // plane hooks
   const { t } = useTranslation();
   // states
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   // store hooks
   const {
     stateTransitionMap,
