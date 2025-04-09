@@ -90,8 +90,7 @@ class CycleUpdatesViewSet(BaseViewSet):
                 .order_by("-created_at")
                 .values("id")[:1]
             ),
-            action__in=["ADDED", "UPDATED"],
-        )
+        ).filter(action__in=["ADDED", "UPDATED"])
         total_issues = cycle_issues.count()
         total_estimate_points = (
             cycle_issues.aggregate(total_estimate_points=Sum("estimate_value"))[

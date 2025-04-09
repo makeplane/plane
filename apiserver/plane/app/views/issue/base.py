@@ -68,7 +68,9 @@ from plane.bgtasks.webhook_task import model_activity
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
 from plane.utils.host import base_host
 from plane.ee.utils.workflow import WorkflowStateManager
-
+from plane.ee.bgtasks.entity_issue_state_progress_task import (
+    entity_issue_state_activity_task,
+)
 
 
 class IssueListEndpoint(BaseAPIView):
@@ -755,25 +757,17 @@ class IssueViewSet(BaseViewSet):
             if issue.cycle_id and (
                 request.data.get("state_id") or request.data.get("estimate_point")
             ):
-                cycle = Cycle.objects.get(pk=issue.cycle_id)
-                if cycle.version == 2:
-                    EntityIssueStateActivity.objects.create(
-                        cycle_id=issue.cycle_id,
-                        state_id=issue.state_id,
-                        issue_id=issue.id,
-                        state_group=issue.state.group,
-                        action="UPDATED",
-                        entity_type="CYCLE",
-                        estimate_point_id=issue.estimate_point_id,
-                        estimate_value=(
-                            issue.estimate_point.value
-                            if estimate_type and issue.estimate_point
-                            else None
-                        ),
-                        workspace_id=issue.workspace_id,
-                        created_by_id=request.user.id,
-                        updated_by_id=request.user.id,
-                    )
+                entity_issue_state_activity_task.delay(
+                    issue_cycle_data=[
+                        {
+                            "issue_id": str(issue.id),
+                            "cycle_id": str(issue.cycle_id),
+                        }
+                    ],
+                    user_id=str(request.user.id),
+                    slug=slug,
+                    action="UPDATED",
+                )
 
             model_activity.delay(
                 model_name="issue",
@@ -801,8 +795,22 @@ class IssueViewSet(BaseViewSet):
             project_id=project_id,
             pk=pk,
         )
-
+        issue_cycle = CycleIssue.objects.filter(issue_id=pk).first()
+        if issue_cycle:
+            # added a entry to remove from the entity issue state activity
+            entity_issue_state_activity_task.delay(
+                issue_cycle_data=[
+                    {
+                        "issue_id": str(issue.id),
+                        "cycle_id": str(issue_cycle.cycle_id),
+                    },
+                ],
+                user_id=str(request.user.id),
+                slug=slug,
+                action="REMOVED",
+            )
         issue.delete()
+
         # delete the issue from recent visits
         UserRecentVisit.objects.filter(
             project_id=project_id,
@@ -868,8 +876,33 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
 
         total_issues = len(issues)
 
+        # EE code
+        # fetch all the issues with their respective cycle ids
+        issues_with_cycle_ids = CycleIssue.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            issue_id__in=issue_ids,
+        )
+
+        # then trigger the entity issue state activity task for each issue
+        for issue_id, cycle_id in issues_with_cycle_ids.values_list(
+            "issue_id", "cycle_id"
+        ):
+            entity_issue_state_activity_task.delay(
+                issue_cycle_data=[
+                    {
+                        "issue_id": str(issue_id),
+                        "cycle_id": str(cycle_id),
+                    }
+                ],
+                user_id=str(request.user.id),
+                slug=slug,
+                action="REMOVED",
+            )
+        # EE code end here
+
         # First, delete all related cycle issues
-        CycleIssue.objects.filter(issue_id__in=issue_ids).delete()
+        issues_with_cycle_ids.delete()
 
         # Then, delete all related module issues
         ModuleIssue.objects.filter(issue_id__in=issue_ids).delete()

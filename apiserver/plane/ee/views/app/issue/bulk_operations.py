@@ -2,6 +2,7 @@
 import json
 from datetime import datetime
 from typing import List, Optional
+
 # Django imports
 from django.utils import timezone
 from django.db.models.functions import Coalesce
@@ -36,13 +37,21 @@ from plane.payment.flags.flag import FeatureFlag
 from plane.utils.error_codes import ERROR_CODES
 from plane.ee.utils.issue_property_validators import property_savers
 from plane.ee.utils.workflow import WorkflowStateManager
+from plane.ee.bgtasks.entity_issue_state_progress_task import (
+    entity_issue_state_activity_task,
+)
 
 
 class BulkIssueOperationsEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
 
     def create_issue_property_values(
-        self, issues: List[Issue], type_id: str, project_id: str, slug: str, workspace_id: str
+        self,
+        issues: List[Issue],
+        type_id: str,
+        project_id: str,
+        slug: str,
+        workspace_id: str,
     ) -> None:
         """Create default property values for issues if they don't exist."""
         # Get issue properties with default values for the issue type
@@ -71,13 +80,15 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
         for issue in issues:
             # Get existing property ids for this issue
             existing_prop_ids = {
-                prop_id for prop_id, issue_id in existing_property_values 
+                prop_id
+                for prop_id, issue_id in existing_property_values
                 if str(issue_id) == str(issue.id)
             }
 
             # Get missing properties
             missing_properties = [
-                prop for prop in issue_properties_with_default_values
+                prop
+                for prop in issue_properties_with_default_values
                 if str(prop.id) not in existing_prop_ids
             ]
 
@@ -105,7 +116,9 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 bulk_issue_property_values, batch_size=100
             )
 
-    def validate_dates(self, start_date: Optional[str], target_date: Optional[str]) -> None:
+    def validate_dates(
+        self, start_date: Optional[str], target_date: Optional[str]
+    ) -> None:
         """Validate start and target dates."""
         if start_date and target_date:
             start = datetime.strptime(start_date, "%Y-%m-%d").date()
@@ -461,7 +474,9 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                             "current_instance": json.dumps(
                                 {
                                     "cycle_id": (
-                                        str(issue.issue_cycle.first().cycle_id) if issue.issue_cycle.first() else None
+                                        str(issue.issue_cycle.first().cycle_id)
+                                        if issue.issue_cycle.first()
+                                        else None
                                     )
                                 }
                             ),
@@ -477,16 +492,32 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 current_cycle_id = str(ci.cycle_id) if ci else ""
 
                 # If the cycle id is not None, create a cycle activity to add the cycle since the issue is being moved into a cycle
-                if properties.get("cycle_id") is not None and current_cycle_id != properties.get("cycle_id"):
+                if properties.get(
+                    "cycle_id"
+                ) is not None and current_cycle_id != properties.get("cycle_id"):
                     # New issues to create
-                    bulk_cycle_issues.append(CycleIssue(
-                        created_by_id=request.user.id,
-                        updated_by_id=request.user.id,
-                        cycle_id=properties.get("cycle_id"),
-                        issue=issue,
-                        project_id=project_id,
-                        workspace_id=workspace_id,
-                    ))
+                    bulk_cycle_issues.append(
+                        CycleIssue(
+                            created_by_id=request.user.id,
+                            updated_by_id=request.user.id,
+                            cycle_id=properties.get("cycle_id"),
+                            issue=issue,
+                            project_id=project_id,
+                            workspace_id=workspace_id,
+                        )
+                    )
+                    # pushed to a background job to update the entity issue state activity
+                    entity_issue_state_activity_task.delay(
+                        issue_cycle_data=[
+                            {
+                                "issue_id": str(issue.id),
+                                "cycle_id": str(properties.get("cycle_id")),
+                            }
+                        ],
+                        user_id=str(request.user.id),
+                        slug=slug,
+                        action="ADDED",
+                    )
                     bulk_issue_activities.append(
                         {
                             "type": "cycle.activity.created",
@@ -539,6 +570,26 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
 
         # Cycle Issues
         if "cycle_id" in properties:
+            # Fetch all the issues with their respective cycle ids
+            issues_with_cycle_ids = CycleIssue.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                issue_id__in=issue_ids,
+            ).values_list("issue_id", "cycle_id")
+
+            # Build the issue-cycle mapping list
+            issue_cycle_data = [
+                {"issue_id": str(issue_id), "cycle_id": str(cycle_id)}
+                for issue_id, cycle_id in issues_with_cycle_ids
+            ]
+            # Trigger the background task once
+            entity_issue_state_activity_task.delay(
+                issue_cycle_data=issue_cycle_data,
+                user_id=str(request.user.id),
+                slug=slug,
+                action="REMOVED",
+            )
+
             # Delete all cycle ids irrespective of the issue
             CycleIssue.objects.filter(
                 issue__in=issues,

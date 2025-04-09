@@ -21,7 +21,10 @@ from plane.db.models import (
     IssueActivity,
     CycleIssue,
 )
-from plane.ee.models import EntityIssueStateActivity, EntityProgress
+from plane.ee.models import EntityProgress
+from plane.ee.bgtasks.entity_issue_state_progress_task import (
+    entity_issue_state_activity_task,
+)
 
 # @shared_task
 # Module imports
@@ -162,22 +165,20 @@ class Command(BaseCommand):
             ],
             batch_size=100,
         )
-        EntityIssueStateActivity.objects.bulk_create(
-            [
-                EntityIssueStateActivity(
-                    issue=issue,
-                    entity_type="CYCLE",
-                    cycle=cycle,
-                    workspace=workspace,
-                    action="ADDED",
-                    state_id=issue.state_id,
-                    state_group=issue.state.group,
-                    estimate_value=random.randint(1, 10),
-                    created_by_id=project.created_by_id,
-                )
+
+        cycle_id = str(cycle.id)
+        # trigger the entity issue state activity task
+        entity_issue_state_activity_task.delay(
+            issue_cycle_data=[
+                {
+                    "issue_id": str(issue.id),
+                    "cycle_id": str(cycle_id),
+                }
                 for issue in issues
             ],
-            batch_size=100,
+            user_id=str(project.created_by_id),
+            slug=workspace_slug,
+            action="ADDED",
         )
 
         # Prepare analytics record for bulk insert

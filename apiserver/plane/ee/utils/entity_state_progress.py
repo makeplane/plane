@@ -40,8 +40,7 @@ def calculate_entity_issue_state_progress(current_date=None, cycles=[]):
                         .order_by("-created_at")
                         .values("id")[:1]
                     ),
-                    action__in=["ADDED", "UPDATED"],
-                )
+                ).filter(action__in=["ADDED", "UPDATED"])
 
                 total_issues = cycle_issues.count()
                 total_estimate_points = (
