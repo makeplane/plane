@@ -1742,12 +1742,15 @@
       "title": "Activar estimaciones para mi proyecto",
       "description": "Te ayudan a comunicar la complejidad y la carga de trabajo del equipo.",
       "no_estimate": "Sin estimación",
+      "new": "Nuevo sistema de estimación",
       "create": {
         "custom": "Personalizado",
         "start_from_scratch": "Comenzar desde cero",
         "choose_template": "Elegir una plantilla",
         "choose_estimate_system": "Elegir un sistema de estimación",
-        "enter_estimate_point": "Ingresar estimación"
+        "enter_estimate_point": "Ingresar estimación",
+        "step": "Paso {step} de {total}",
+        "label": "Crear estimación"
       },
       "toasts": {
         "created": {
@@ -1796,6 +1799,25 @@
         "already_exists": "El valor de la estimación ya existe.",
         "unsaved_changes": "Tienes cambios sin guardar. Por favor guárdalos antes de hacer clic en Hecho",
         "remove_empty": "La estimación no puede estar vacía. Ingresa un valor en cada campo o elimina aquellos para los que no tienes valores."
+      },
+      "systems": {
+        "points": {
+          "label": "Puntos",
+          "fibonacci": "Fibonacci",
+          "linear": "Lineal",
+          "squares": "Cuadrados",
+          "custom": "Personalizado"
+        },
+        "categories": {
+          "label": "Categorías",
+          "t_shirt_sizes": "Tallas de camiseta",
+          "easy_to_hard": "Fácil a difícil",
+          "custom": "Personalizado"
+        },
+        "time": {
+          "label": "Tiempo",
+          "hours": "Horas"
+        }
       }
     },
     "automations": {

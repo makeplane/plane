@@ -1740,12 +1740,15 @@
       "title": "Activează estimările pentru proiectul meu",
       "description": "Te ajută să comunici complexitatea și volumul de muncă al echipei.",
       "no_estimate": "Fără estimare",
+      "new": "Noul sistem de estimare",
       "create": {
         "custom": "Personalizat",
         "start_from_scratch": "Începe de la zero",
         "choose_template": "Alege un șablon",
         "choose_estimate_system": "Alege un sistem de estimare",
-        "enter_estimate_point": "Introdu estimarea"
+        "enter_estimate_point": "Introdu estimarea",
+        "step": "Pasul {step} de {total}",
+        "label": "Creează estimare"
       },
       "toasts": {
         "created": {
@@ -1794,6 +1797,25 @@
         "already_exists": "Valoarea estimării există deja.",
         "unsaved_changes": "Ai modificări nesalvate, te rugăm să le salvezi înainte de a finaliza",
         "remove_empty": "Estimarea nu poate fi goală. Introdu o valoare în fiecare câmp sau elimină câmpurile pentru care nu ai valori."
+      },
+      "systems": {
+        "points": {
+          "label": "Puncte",
+          "fibonacci": "Fibonacci",
+          "linear": "Linear",
+          "squares": "Pătrate",
+          "custom": "Personalizat"
+        },
+        "categories": {
+          "label": "Categorii",
+          "t_shirt_sizes": "Mărimi tricou",
+          "easy_to_hard": "De la ușor la greu",
+          "custom": "Personalizat"
+        },
+        "time": {
+          "label": "Timp",
+          "hours": "Ore"
+        }
       }
     },
     "automations": {

@@ -1717,12 +1717,15 @@
       "title": "Włącz szacunki dla mojego projektu",
       "description": "Pomagają w komunikacji o złożoności i obciążeniu zespołu.",
       "no_estimate": "Bez szacunku",
+      "new": "Nowy system szacowania",
       "create": {
         "custom": "Niestandardowy",
         "start_from_scratch": "Zacznij od zera",
         "choose_template": "Wybierz szablon",
         "choose_estimate_system": "Wybierz system szacowania",
-        "enter_estimate_point": "Wprowadź punkt szacunkowy"
+        "enter_estimate_point": "Wprowadź punkt szacunkowy",
+        "step": "Krok {step} z {total}",
+        "label": "Utwórz szacunek"
       },
       "toasts": {
         "created": {
@@ -1771,6 +1774,25 @@
         "already_exists": "Wartość szacunku już istnieje.",
         "unsaved_changes": "Masz niezapisane zmiany. Zapisz je przed kliknięciem 'gotowe'",
         "remove_empty": "Szacunek nie może być pusty. Wprowadź wartość w każde pole lub usuń te, dla których nie masz wartości."
+      },
+      "systems": {
+        "points": {
+          "label": "Punkty",
+          "fibonacci": "Fibonacci",
+          "linear": "Liniowy",
+          "squares": "Kwadraty",
+          "custom": "Własny"
+        },
+        "categories": {
+          "label": "Kategorie",
+          "t_shirt_sizes": "Rozmiary koszulek",
+          "easy_to_hard": "Od łatwego do trudnego",
+          "custom": "Własne"
+        },
+        "time": {
+          "label": "Czas",
+          "hours": "Godziny"
+        }
       }
     },
     "automations": {

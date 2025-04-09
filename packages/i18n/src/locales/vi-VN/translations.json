@@ -1715,12 +1715,15 @@
       "title": "Bật ước tính cho dự án của tôi",
       "description": "Chúng giúp bạn truyền đạt độ phức tạp và khối lượng công việc của nhóm.",
       "no_estimate": "Không có ước tính",
+      "new": "Hệ thống ước tính mới",
       "create": {
         "custom": "Tùy chỉnh",
         "start_from_scratch": "Bắt đầu từ đầu",
         "choose_template": "Chọn mẫu",
         "choose_estimate_system": "Chọn hệ thống ước tính",
-        "enter_estimate_point": "Nhập điểm ước tính"
+        "enter_estimate_point": "Nhập điểm ước tính",
+        "step": "Bước {step} của {total}",
+        "label": "Tạo ước tính"
       },
       "toasts": {
         "created": {
@@ -1768,6 +1771,25 @@
         "empty": "Giá trị ước tính không được để trống",
         "already_exists": "Giá trị ước tính này đã tồn tại",
         "unsaved_changes": "Bạn có thay đổi chưa lưu. Vui lòng lưu trước khi nhấn 'xong'"
+      },
+      "systems": {
+        "points": {
+          "label": "Điểm",
+          "fibonacci": "Fibonacci",
+          "linear": "Tuyến tính",
+          "squares": "Bình phương",
+          "custom": "Tùy chỉnh"
+        },
+        "categories": {
+          "label": "Danh mục",
+          "t_shirt_sizes": "Kích cỡ áo",
+          "easy_to_hard": "Dễ đến khó",
+          "custom": "Tùy chỉnh"
+        },
+        "time": {
+          "label": "Thời gian",
+          "hours": "Giờ"
+        }
       }
     },
     "automations": {

@@ -1742,12 +1742,15 @@
       "title": "Habilitar estimativas para meu projeto",
       "description": "Elas ajudam você a comunicar a complexidade e a carga de trabalho da equipe.",
       "no_estimate": "Sem estimativa",
+      "new": "Novo sistema de estimativa",
       "create": {
         "custom": "Personalizado",
         "start_from_scratch": "Começar do zero",
         "choose_template": "Escolher um modelo",
         "choose_estimate_system": "Escolher um sistema de estimativa",
-        "enter_estimate_point": "Inserir estimativa"
+        "enter_estimate_point": "Inserir estimativa",
+        "step": "Passo {step} de {total}",
+        "label": "Criar estimativa"
       },
       "toasts": {
         "created": {
@@ -1796,6 +1799,25 @@
         "already_exists": "O valor da estimativa já existe.",
         "unsaved_changes": "Você tem algumas alterações não salvas. Por favor, salve-as antes de clicar em concluir",
         "remove_empty": "A estimativa não pode estar vazia. Insira um valor em cada campo ou remova aqueles para os quais você não tem valores."
+      },
+      "systems": {
+        "points": {
+          "label": "Pontos",
+          "fibonacci": "Fibonacci",
+          "linear": "Linear",
+          "squares": "Quadrados",
+          "custom": "Personalizado"
+        },
+        "categories": {
+          "label": "Categorias",
+          "t_shirt_sizes": "Tamanhos de Camiseta",
+          "easy_to_hard": "Fácil a difícil",
+          "custom": "Personalizado"
+        },
+        "time": {
+          "label": "Tempo",
+          "hours": "Horas"
+        }
       }
     },
     "automations": {

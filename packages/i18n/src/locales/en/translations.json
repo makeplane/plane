@@ -1573,12 +1573,15 @@
       "title": "Enable estimates for my project",
       "description": "They help you in communicating complexity and workload of the team.",
       "no_estimate": "No estimate",
+      "new": "New estimate system",
       "create": {
         "custom": "Custom",
         "start_from_scratch": "Start from scratch",
         "choose_template": "Choose a template",
         "choose_estimate_system": "Choose an estimate system",
-        "enter_estimate_point": "Enter estimate"
+        "enter_estimate_point": "Enter estimate",
+        "step": "Step {step} of {total}",
+        "label": "Create estimate"
       },
       "toasts": {
         "created": {
@@ -1627,6 +1630,25 @@
         "already_exists": "Estimate value already exists.",
         "unsaved_changes": "You have some unsaved changes, Please save them before clicking on done",
         "remove_empty": "Estimate can't be empty. Enter a value in each field or remove those you don't have values for."
+      },
+      "systems": {
+        "points": {
+          "label": "Points",
+          "fibonacci": "Fibonacci",
+          "linear": "Linear",
+          "squares": "Squares",
+          "custom": "Custom"
+        },
+        "categories": {
+          "label": "Categories",
+          "t_shirt_sizes": "T-Shirt Sizes",
+          "easy_to_hard": "Easy to hard",
+          "custom": "Custom"
+        },
+        "time": {
+          "label": "Time",
+          "hours": "Hours"
+        }
       }
     },
     "automations": {
