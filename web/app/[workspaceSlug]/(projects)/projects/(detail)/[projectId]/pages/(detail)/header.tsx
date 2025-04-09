@@ -1,27 +1,23 @@
 "use client";
-
-import { useState } from "react";
 import { observer } from "mobx-react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
-import { FileText } from "lucide-react";
+import { FileText, Layers } from "lucide-react";
 // types
-import { TLogoProps } from "@plane/types";
+import { ICustomSearchSelectOption } from "@plane/types";
 // ui
-import { Breadcrumbs, EmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, Tooltip, setToast, Header } from "@plane/ui";
+import { Breadcrumbs, Header, CustomSearchSelect } from "@plane/ui";
 // components
-import { BreadcrumbLink, Logo } from "@/components/common";
+import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 import { PageEditInformationPopover } from "@/components/pages";
 // helpers
-import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
-import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { useProject } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
 // plane web hooks
-import { EPageStoreType, usePage } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 
 export interface IPagesHeaderProps {
   showButton?: boolean;
@@ -29,42 +25,36 @@ export interface IPagesHeaderProps {
 
 export const PageDetailsHeader = observer(() => {
   // router
-  const { workspaceSlug, pageId } = useParams();
-  // state
-  const [isOpen, setIsOpen] = useState(false);
+  const { workspaceSlug, pageId, projectId } = useParams();
   // store hooks
   const { currentProjectDetails, loader } = useProject();
   const page = usePage({
     pageId: pageId?.toString() ?? "",
     storeType: EPageStoreType.PROJECT,
   });
-  if (!page) return null;
+  const { getPageById, getCurrentProjectPageIds } = usePageStore(EPageStoreType.PROJECT);
   // derived values
-  const { name, logo_props, updatePageLogo, isContentEditable } = page;
-  // use platform
-  const { isMobile } = usePlatformOS();
+  const projectPageIds = getCurrentProjectPageIds(projectId?.toString());
 
-  const handlePageLogoUpdate = async (data: TLogoProps) => {
-    if (data) {
-      updatePageLogo(data)
-        .then(() => {
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Logo Updated successfully.",
-          });
-        })
-        .catch(() => {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Something went wrong. Please try again.",
-          });
-        });
-    }
-  };
+  if (!page) return null;
+  const switcherOptions = projectPageIds
+    .map((id) => {
+      const _page = id === pageId ? page : getPageById(id);
+      if (!_page) return;
+      const pageLink = `/${workspaceSlug}/projects/${projectId}/pages/${_page.id}`;
+      return {
+        value: _page.id,
+        query: _page.name,
+        content: (
+          <Link href={pageLink} className="flex gap-2 items-center justify-between">
+            <SwitcherLabel logo_props={_page.logo_props} name={_page.name} LabelIcon={Layers} />
+          </Link>
+        ),
+      };
+    })
+    .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
 
-  const pageTitle = getPageName(name);
+  if (!page) return null;
 
   return (
     <Header>
@@ -99,60 +89,14 @@ export const PageDetailsHeader = observer(() => {
               }
             />
             <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <li className="flex items-center space-x-2" tabIndex={-1}>
-                  <div className="flex flex-wrap items-center gap-2.5">
-                    <div className="flex cursor-default items-center gap-1 text-sm font-medium text-custom-text-100">
-                      <div className="flex h-5 w-5 items-center justify-center overflow-hidden">
-                        <EmojiIconPicker
-                          isOpen={isOpen}
-                          handleToggle={(val: boolean) => setIsOpen(val)}
-                          className="flex items-center justify-center"
-                          buttonClassName="flex items-center justify-center"
-                          label={
-                            <>
-                              {logo_props?.in_use ? (
-                                <Logo logo={logo_props} size={16} type="lucide" />
-                              ) : (
-                                <FileText className="h-4 w-4 text-custom-text-300" />
-                              )}
-                            </>
-                          }
-                          onChange={(val) => {
-                            let logoValue = {};
-
-                            if (val?.type === "emoji")
-                              logoValue = {
-                                value: convertHexEmojiToDecimal(val.value.unified),
-                                url: val.value.imageUrl,
-                              };
-                            else if (val?.type === "icon") logoValue = val.value;
-
-                            handlePageLogoUpdate({
-                              in_use: val?.type,
-                              [val?.type]: logoValue,
-                            }).finally(() => setIsOpen(false));
-                          }}
-                          defaultIconColor={
-                            logo_props?.in_use && logo_props.in_use === "icon" ? logo_props?.icon?.color : undefined
-                          }
-                          defaultOpen={
-                            logo_props?.in_use && logo_props?.in_use === "emoji"
-                              ? EmojiIconPickerTypes.EMOJI
-                              : EmojiIconPickerTypes.ICON
-                          }
-                          disabled={!isContentEditable}
-                        />
-                      </div>
-                      <Tooltip tooltipContent={pageTitle} position="bottom" isMobile={isMobile}>
-                        <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate">
-                          {pageTitle}
-                        </div>
-                      </Tooltip>
-                    </div>
-                  </div>
-                </li>
+              type="component"
+              component={
+                <CustomSearchSelect
+                  value={pageId}
+                  options={switcherOptions}
+                  label={<SwitcherLabel logo_props={page.logo_props} name={page.name} LabelIcon={Layers} />}
+                  onChange={() => {}}
+                />
               }
             />
           </Breadcrumbs>
