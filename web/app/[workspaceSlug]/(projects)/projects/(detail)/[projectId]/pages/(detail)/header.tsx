@@ -34,7 +34,7 @@ export const PageDetailsHeader = observer(() => {
   const { getPageById, getCurrentProjectPageIds } = usePageStore(EPageStoreType.PROJECT);
   // derived values
   const projectPageIds = getCurrentProjectPageIds(projectId?.toString());
-  
+
   if (!page) return null;
   const switcherOptions = projectPageIds
     .map((id) => {
