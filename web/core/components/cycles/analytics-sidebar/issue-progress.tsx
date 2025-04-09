@@ -187,7 +187,9 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
                     )}
                   </>
                 ) : (
-                  <div className="py-2 text-sm text-custom-text-350">{t("no_data_yet")}</div>
+                  <div className="my-2 py-2 text-sm text-custom-text-350  bg-custom-background-90 rounded-md px-2 w-full">
+                    {t("no_data_yet")}
+                  </div>
                 )}
               </Disclosure.Panel>
             </Transition>
