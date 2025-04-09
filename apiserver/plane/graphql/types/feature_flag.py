@@ -28,20 +28,24 @@ class FeatureFlagsTypesEnum(Enum):
     PROJECT_GROUPING = "PROJECT_GROUPING"
     CYCLE_PROGRESS_CHARTS = "CYCLE_PROGRESS_CHARTS"
     FILE_SIZE_LIMIT_PRO = "FILE_SIZE_LIMIT_PRO"
+    TIMELINE_DEPENDENCY = "TIMELINE_DEPENDENCY"
     TEAMSPACES = "TEAMSPACES"
     INBOX_STACKING = "INBOX_STACKING"
     PROJECT_OVERVIEW = "PROJECT_OVERVIEW"
     PROJECT_UPDATES = "PROJECT_UPDATES"
     CYCLE_MANUAL_START_STOP = "CYCLE_MANUAL_START_STOP"
     HOME_ADVANCED = "HOME_ADVANCED"
+    WORKFLOWS = "WORKFLOWS"
+    CUSTOMERS = "CUSTOMERS"
     INTAKE_SETTINGS = "INTAKE_SETTINGS"
     INITIATIVES = "INITIATIVES"
     PI_CHAT = "PI_CHAT"
     PI_DEDUPE = "PI_DEDUPE"
 
-    # Silo integrations
+    # Silo importers and integrations
     SILO = "SILO"
     SILO_IMPORTERS = "SILO_IMPORTERS"
+    FLATFILE_IMPORTER = "FLATFILE_IMPORTER"
     JIRA_IMPORTER = "JIRA_IMPORTER"
     JIRA_ISSUE_TYPES_IMPORTER = "JIRA_ISSUE_TYPES_IMPORTER"
     JIRA_SERVER_IMPORTER = "JIRA_SERVER_IMPORTER"
@@ -85,12 +89,15 @@ class FeatureFlagType:
     project_grouping: bool
     cycle_progress_charts: bool
     file_size_limit_pro: bool
+    timeline_dependency: bool
     teamspaces: bool
     inbox_stacking: bool
     project_overview: bool
     project_updates: bool
     cycle_manual_start_stop: bool
     home_advanced: bool
+    workflows: bool
+    customers: bool
     intake_settings: bool
     initiatives: bool
     pi_chat: bool
@@ -98,6 +105,7 @@ class FeatureFlagType:
     # ====== silo integrations ======
     silo: bool
     silo_importers: bool
+    flatfile_importer: bool
     jira_importer: bool
     jira_issue_types_importer: bool
     jira_server_importer: bool

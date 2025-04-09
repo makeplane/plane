@@ -55,6 +55,7 @@ from .queries.version_check import VersionCheckQuery
 from .queries.timezone import TimezoneListQuery
 from .queries.asset import WorkspaceAssetQuery, ProjectAssetQuery
 from .queries.instance import InstanceQuery
+from .queries.stickies import WorkspaceStickiesQuery
 
 # mutations
 from .mutations.workspace import WorkspaceMutation, WorkspaceInviteMutation
@@ -91,6 +92,7 @@ from .mutations.issues import (
     IssueCycleMutation,
     IssueLinkMutation,
     IssueAttachmentMutation,
+    IssueMutationV2,
 )
 from .mutations.device import DeviceInformationMutation
 from .mutations.asset import (
@@ -98,6 +100,7 @@ from .mutations.asset import (
     WorkspaceAssetMutation,
     ProjectAssetMutation,
 )
+from .mutations.stickies import WorkspaceStickiesMutation
 
 
 # combined query class for all
@@ -155,6 +158,7 @@ class Query(
     ProjectAssetQuery,
     InstanceQuery,
     IssueShortenedMetaInfoQuery,
+    WorkspaceStickiesQuery,
 ):
     pass
 
@@ -195,6 +199,8 @@ class Mutation(
     WorkspaceAssetMutation,
     ProjectAssetMutation,
     IssueLinkMutation,
+    WorkspaceStickiesMutation,
+    IssueMutationV2,
 ):
     pass
 

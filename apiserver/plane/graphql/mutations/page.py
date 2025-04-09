@@ -26,6 +26,13 @@ from plane.db.models import (
     Project,
 )
 
+@strawberry.input
+class PageInput:
+    name: str
+    description_html: Optional[str] = strawberry.field(default="<p></p>")
+    logo_props: Optional[JSON] = strawberry.field(default_factory=dict)
+    access: int = strawberry.field(default=2)
+    description_binary: Optional[str] = strawberry.field(default=None)
 
 @sync_to_async
 def get_workspace_member(slug: str, user_id: str):
@@ -124,6 +131,56 @@ class PageMutation:
         page_details = await sync_to_async(Page.objects.get)(id=page.id)
 
         return page_details
+
+    @strawberry.mutation(
+        extensions=[
+            PermissionExtension(
+                permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])]
+            )
+        ]
+    )
+    async def batchCreatePages(
+        self,
+        info: Info,
+        slug: str,
+        project: strawberry.ID,
+        pages: list[PageInput],
+    ) -> None:
+        workspace = await sync_to_async(Workspace.objects.get)(slug=slug)
+        project_details = await sync_to_async(Project.objects.get)(id=project)
+        
+        # Prepare pages for bulk creation
+        pages_to_create = [
+            Page(
+                workspace=workspace,
+                name=page_data.name,
+                description_html=page_data.description_html,
+                description_binary=base64.b64decode(page_data.description_binary) if page_data.description_binary else None,
+                logo_props=page_data.logo_props,
+                access=page_data.access,
+                owned_by=info.context.user,
+            )
+            for page_data in pages
+        ]
+        
+        # Bulk create pages
+        created_pages = await sync_to_async(Page.objects.bulk_create)(pages_to_create)
+        
+        # Prepare project pages for bulk creation
+        project_pages_to_create = [
+            ProjectPage(
+                workspace=workspace,
+                project=project_details,
+                page=created_page,
+                created_by=info.context.user,
+                updated_by=info.context.user,
+            )
+            for created_page in created_pages
+        ]
+        
+        # Bulk create project pages
+        await sync_to_async(ProjectPage.objects.bulk_create)(project_pages_to_create)
+        return None
 
     @strawberry.mutation(
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]

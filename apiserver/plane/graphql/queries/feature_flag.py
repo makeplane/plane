@@ -96,6 +96,9 @@ class FeatureFlagQuery:
             file_size_limit_pro=feature_flags.get(
                 FeatureFlagsTypesEnum.FILE_SIZE_LIMIT_PRO.value, False
             ),
+            timeline_dependency=feature_flags.get(
+                FeatureFlagsTypesEnum.TIMELINE_DEPENDENCY.value, False
+            ),
             teamspaces=feature_flags.get(FeatureFlagsTypesEnum.TEAMSPACES.value, False),
             inbox_stacking=feature_flags.get(
                 FeatureFlagsTypesEnum.INBOX_STACKING.value, False
@@ -112,6 +115,8 @@ class FeatureFlagQuery:
             home_advanced=feature_flags.get(
                 FeatureFlagsTypesEnum.HOME_ADVANCED.value, False
             ),
+            workflows=feature_flags.get(FeatureFlagsTypesEnum.WORKFLOWS.value, False),
+            customers=feature_flags.get(FeatureFlagsTypesEnum.CUSTOMERS.value, False),
             intake_settings=feature_flags.get(
                 FeatureFlagsTypesEnum.INTAKE_SETTINGS.value, False
             ),
@@ -123,6 +128,9 @@ class FeatureFlagQuery:
             silo=feature_flags.get(FeatureFlagsTypesEnum.SILO.value, False),
             silo_importers=feature_flags.get(
                 FeatureFlagsTypesEnum.SILO_IMPORTERS.value, False
+            ),
+            flatfile_importer=feature_flags.get(
+                FeatureFlagsTypesEnum.FLATFILE_IMPORTER.value, False
             ),
             jira_importer=feature_flags.get(
                 FeatureFlagsTypesEnum.JIRA_IMPORTER.value, False
