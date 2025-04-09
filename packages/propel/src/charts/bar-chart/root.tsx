@@ -56,7 +56,6 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
           dataKey={bar.key}
           stackId={bar.stackId}
           opacity={!!activeLegend && activeLegend !== bar.key ? 0.1 : 1}
-          fill={bar.fill}
           shape={(shapeProps: any) => {
             const showTopBorderRadius = bar.showTopBorderRadius?.(shapeProps.dataKey, shapeProps.payload);
             const showBottomBorderRadius = bar.showBottomBorderRadius?.(shapeProps.dataKey, shapeProps.payload);
@@ -64,6 +63,7 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
             return (
               <CustomBar
                 {...shapeProps}
+                fill={typeof bar.fill === "function" ? bar.fill(shapeProps.payload) : bar.fill}
                 stackKeys={stackKeys}
                 textClassName={bar.textClassName}
                 showPercentage={bar.showPercentage}
