@@ -5,17 +5,16 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Pencil } from "lucide-react";
 // constants
-import { ORGANIZATION_SIZE, WORKSPACE_UPDATED ,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { ORGANIZATION_SIZE, WORKSPACE_UPDATED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
-// ui
 import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { copyUrlToClipboard } from "@plane/utils";
 // components
 import { LogoSpinner } from "@/components/common";
 import { WorkspaceImageUploadModal } from "@/components/core";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web components

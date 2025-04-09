@@ -29,7 +29,6 @@ import {
   ModuleAnalyticsProgress,
   ModuleLinksList,
 } from "@/components/modules";
-
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks

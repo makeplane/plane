@@ -12,17 +12,16 @@ import {
   LinkIcon,
   Trash2,
 } from "lucide-react";
-// types
+// Plane Imports
 import { CYCLE_STATUS, CYCLE_UPDATED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ICycle } from "@plane/types";
-// ui
 import { CustomMenu, setToast, TOAST_TYPE } from "@plane/ui";
+import { copyUrlToClipboard } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns";
 // helpers
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useCycle, useEventTracker, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

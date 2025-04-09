@@ -589,7 +589,7 @@
         "default": "Bạn chưa có dự án gần đây nào."
       },
       "filters": {
-        "all": "Tất cả dự án",
+        "all": "Tất cả",
         "projects": "Dự án",
         "pages": "Trang",
         "issues": "Mục công việc"
