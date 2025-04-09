@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { ISearchIssueResponse, TIssue } from "@plane/types";
+import { ISearchIssueResponse, TIssue, TIssueServiceType } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "@/components/core";
@@ -17,10 +17,11 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
+  issueServiceType: TIssueServiceType;
 };
 
 export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId } = props;
+  const { workspaceSlug, projectId, issueId, issueServiceType } = props;
   // store hooks
   const {
     isIssueLinkModalOpen,
@@ -146,6 +147,7 @@ export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
         isModalOpen={isIssueLinkModalOpen}
         handleOnClose={handleIssueLinkModalOnClose}
         linkOperations={handleLinkOperations}
+        issueServiceType={issueServiceType}
       />
 
       {shouldRenderCreateUpdateModal && (
