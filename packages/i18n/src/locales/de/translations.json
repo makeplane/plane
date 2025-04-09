@@ -1714,12 +1714,15 @@
       "title": "Schätzungen für mein Projekt aktivieren",
       "description": "Sie helfen dir, die Komplexität und Arbeitsbelastung des Teams zu kommunizieren.",
       "no_estimate": "Keine Schätzung",
+      "new": "Neues Schätzungssystem",
       "create": {
         "custom": "Benutzerdefiniert",
         "start_from_scratch": "Von Grund auf neu",
         "choose_template": "Vorlage wählen",
         "choose_estimate_system": "Schätzungssystem wählen",
-        "enter_estimate_point": "Schätzung eingeben"
+        "enter_estimate_point": "Schätzung eingeben",
+        "step": "Schritt {step} von {total}",
+        "label": "Schätzung erstellen"
       },
       "toasts": {
         "created": {
@@ -1768,6 +1771,25 @@
         "already_exists": "Der Schätzungswert existiert bereits.",
         "unsaved_changes": "Du hast ungespeicherte Änderungen. Bitte speichere sie, bevor du auf Fertig klickst",
         "remove_empty": "Die Schätzung darf nicht leer sein. Gib einen Wert in jedes Feld ein oder entferne die Felder, für die du keine Werte hast."
+      },
+      "systems": {
+        "points": {
+          "label": "Punkte",
+          "fibonacci": "Fibonacci",
+          "linear": "Linear",
+          "squares": "Quadrate",
+          "custom": "Benutzerdefiniert"
+        },
+        "categories": {
+          "label": "Kategorien",
+          "t_shirt_sizes": "T-Shirt-Größen",
+          "easy_to_hard": "Einfach bis schwer",
+          "custom": "Benutzerdefiniert"
+        },
+        "time": {
+          "label": "Zeit",
+          "hours": "Stunden"
+        }
       }
     },
     "automations": {

@@ -1739,12 +1739,15 @@
       "title": "Povoliť odhady pre môj projekt",
       "description": "Pomáhajú vám komunikovať zložitosť a pracovné zaťaženie tímu.",
       "no_estimate": "Bez odhadu",
+      "new": "Nový systém odhadov",
       "create": {
         "custom": "Vlastné",
         "start_from_scratch": "Začať od nuly",
         "choose_template": "Vybrať šablónu",
         "choose_estimate_system": "Vybrať systém odhadov",
-        "enter_estimate_point": "Zadať bod odhadu"
+        "enter_estimate_point": "Zadať bod odhadu",
+        "step": "Krok {step} z {total}",
+        "label": "Vytvoriť odhad"
       },
       "toasts": {
         "created": {
@@ -1793,6 +1796,25 @@
         "already_exists": "Hodnota odhadu už existuje.",
         "unsaved_changes": "Máte neuložené zmeny. Prosím, uložte ich pred kliknutím na hotovo",
         "remove_empty": "Odhad nemôže byť prázdny. Zadajte hodnotu do každého poľa alebo odstráňte prázdne polia."
+      },
+      "systems": {
+        "points": {
+          "label": "Body",
+          "fibonacci": "Fibonacci",
+          "linear": "Lineárne",
+          "squares": "Štvorce",
+          "custom": "Vlastné"
+        },
+        "categories": {
+          "label": "Kategórie",
+          "t_shirt_sizes": "Veľkosti tričiek",
+          "easy_to_hard": "Od jednoduchého po náročné",
+          "custom": "Vlastné"
+        },
+        "time": {
+          "label": "Čas",
+          "hours": "Hodiny"
+        }
       }
     },
     "automations": {

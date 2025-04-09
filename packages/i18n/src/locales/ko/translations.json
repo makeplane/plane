@@ -1742,12 +1742,15 @@
       "title": "프로젝트 추정 활성화",
       "description": "팀의 복잡성과 작업량을 전달하는 데 도움이 됩니다.",
       "no_estimate": "추정 없음",
+      "new": "새 추정 시스템",
       "create": {
         "custom": "사용자 지정",
         "start_from_scratch": "처음부터 시작",
         "choose_template": "템플릿 선택",
         "choose_estimate_system": "추정 시스템 선택",
-        "enter_estimate_point": "추정 입력"
+        "enter_estimate_point": "추정 입력",
+        "step": "단계 {step}/{total}",
+        "label": "추정 생성"
       },
       "toasts": {
         "created": {
@@ -1796,6 +1799,25 @@
         "already_exists": "추정 값이 이미 존재합니다.",
         "unsaved_changes": "저장되지 않은 변경 사항이 있습니다. 완료를 클릭하기 전에 저장하세요",
         "remove_empty": "추정은 비어있을 수 없습니다. 각 필드에 값을 입력하거나 값이 없는 필드를 제거하세요."
+      },
+      "systems": {
+        "points": {
+          "label": "포인트",
+          "fibonacci": "피보나치",
+          "linear": "선형",
+          "squares": "제곱",
+          "custom": "사용자 정의"
+        },
+        "categories": {
+          "label": "카테고리",
+          "t_shirt_sizes": "티셔츠 사이즈",
+          "easy_to_hard": "쉬움에서 어려움",
+          "custom": "사용자 정의"
+        },
+        "time": {
+          "label": "시간",
+          "hours": "시간"
+        }
       }
     },
     "automations": {

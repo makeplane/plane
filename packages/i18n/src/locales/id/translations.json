@@ -1740,12 +1740,15 @@
       "title": "Aktifkan perkiraan untuk proyek saya",
       "description": "Ini membantu Anda dalam mengkomunikasikan kompleksitas dan beban kerja tim.",
       "no_estimate": "Tidak ada perkiraan",
+      "new": "Sistem perkiraan baru",
       "create": {
         "custom": "Kustom",
         "start_from_scratch": "Mulai dari awal",
         "choose_template": "Pilih template",
         "choose_estimate_system": "Pilih sistem perkiraan",
-        "enter_estimate_point": "Masukkan perkiraan"
+        "enter_estimate_point": "Masukkan perkiraan",
+        "step": "Langkah {step} dari {total}",
+        "label": "Buat perkiraan"
       },
       "toasts": {
         "created": {
@@ -1794,6 +1797,25 @@
         "already_exists": "Nilai perkiraan sudah ada.",
         "unsaved_changes": "Anda memiliki beberapa perubahan yang belum disimpan, Harap simpan sebelum mengklik selesai",
         "remove_empty": "Perkiraan tidak boleh kosong. Masukkan nilai di setiap bidang atau hapus yang tidak memiliki nilai."
+      },
+      "systems": {
+        "points": {
+          "label": "Poin",
+          "fibonacci": "Fibonacci",
+          "linear": "Linear",
+          "squares": "Kuadrat",
+          "custom": "Kustom"
+        },
+        "categories": {
+          "label": "Kategori",
+          "t_shirt_sizes": "Ukuran Baju",
+          "easy_to_hard": "Mudah ke sulit",
+          "custom": "Kustom"
+        },
+        "time": {
+          "label": "Waktu",
+          "hours": "Jam"
+        }
       }
     },
     "automations": {

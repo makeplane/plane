@@ -42,7 +42,7 @@ export const DropdownOptions: React.FC<IMultiSelectDropdownOptions | ISingleSele
           isMobile={isMobile}
         />
       )}
-      <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
+      <div className={cn("max-h-48 space-y-1 overflow-y-scroll", !disableSearch && "mt-2")}>
         <>
           {options ? (
             options.length > 0 ? (

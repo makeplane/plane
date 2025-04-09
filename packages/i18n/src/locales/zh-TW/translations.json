@@ -1742,12 +1742,15 @@
       "title": "為我的專案啟用預估",
       "description": "幫助你傳達團隊的複雜性和工作負荷。",
       "no_estimate": "無預估",
+      "new": "新估算系統",
       "create": {
         "custom": "自訂",
         "start_from_scratch": "從頭開始",
         "choose_template": "選擇範本",
         "choose_estimate_system": "選擇預估系統",
-        "enter_estimate_point": "輸入預估"
+        "enter_estimate_point": "輸入預估",
+        "step": "步驟 {step} 共 {total}",
+        "label": "建立預估"
       },
       "toasts": {
         "created": {
@@ -1796,6 +1799,25 @@
         "already_exists": "預估值已存在。",
         "unsaved_changes": "你有未儲存的變更。請在點擊完成前儲存",
         "remove_empty": "預估不能為空。在每個欄位中輸入值或移除沒有值的欄位。"
+      },
+      "systems": {
+        "points": {
+          "label": "點數",
+          "fibonacci": "費波那契數列",
+          "linear": "線性",
+          "squares": "平方數",
+          "custom": "自訂"
+        },
+        "categories": {
+          "label": "類別",
+          "t_shirt_sizes": "T恤尺寸",
+          "easy_to_hard": "簡單到困難",
+          "custom": "自訂"
+        },
+        "time": {
+          "label": "時間",
+          "hours": "小時"
+        }
       }
     },
     "automations": {

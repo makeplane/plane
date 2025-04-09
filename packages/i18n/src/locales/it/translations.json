@@ -1739,12 +1739,15 @@
       "title": "Abilita le stime per il mio progetto",
       "description": "Ti aiutano a comunicare la complessità e il carico di lavoro del team.",
       "no_estimate": "Nessuna stima",
+      "new": "Nuovo sistema di stima",
       "create": {
         "custom": "Personalizzato",
         "start_from_scratch": "Inizia da zero",
         "choose_template": "Scegli un modello",
         "choose_estimate_system": "Scegli un sistema di stima",
-        "enter_estimate_point": "Inserisci stima"
+        "enter_estimate_point": "Inserisci stima",
+        "step": "Passo {step} di {total}",
+        "label": "Crea stima"
       },
       "toasts": {
         "created": {
@@ -1793,6 +1796,25 @@
         "already_exists": "Il valore della stima esiste già.",
         "unsaved_changes": "Hai delle modifiche non salvate. Salva prima di cliccare su Fatto",
         "remove_empty": "La stima non può essere vuota. Inserisci un valore in ogni campo o rimuovi quelli per cui non hai valori."
+      },
+      "systems": {
+        "points": {
+          "label": "Punti",
+          "fibonacci": "Fibonacci",
+          "linear": "Lineare",
+          "squares": "Quadrati",
+          "custom": "Personalizzato"
+        },
+        "categories": {
+          "label": "Categorie",
+          "t_shirt_sizes": "Taglie T-Shirt",
+          "easy_to_hard": "Da facile a difficile",
+          "custom": "Personalizzato"
+        },
+        "time": {
+          "label": "Tempo",
+          "hours": "Ore"
+        }
       }
     },
     "automations": {

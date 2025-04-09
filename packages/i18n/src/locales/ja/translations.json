@@ -1740,12 +1740,15 @@
       "title": "プロジェクトの見積もりを有効にする",
       "description": "チームの複雑さと作業負荷を伝えるのに役立ちます。",
       "no_estimate": "見積もりなし",
+      "new": "新しい見積もりシステム",
       "create": {
         "custom": "カスタム",
         "start_from_scratch": "最初から開始",
         "choose_template": "テンプレートを選択",
         "choose_estimate_system": "見積もりシステムを選択",
-        "enter_estimate_point": "見積もりを入力"
+        "enter_estimate_point": "見積もりを入力",
+        "step": "ステップ {step} の {total}",
+        "label": "見積もりを作成"
       },
       "toasts": {
         "created": {
@@ -1794,6 +1797,25 @@
         "already_exists": "見積もり値は既に存在します。",
         "unsaved_changes": "未保存の変更があります。完了をクリックする前に保存してください",
         "remove_empty": "見積もりは空にできません。各フィールドに値を入力するか、値がないフィールドを削除してください。"
+      },
+      "systems": {
+        "points": {
+          "label": "ポイント",
+          "fibonacci": "フィボナッチ",
+          "linear": "リニア",
+          "squares": "二乗",
+          "custom": "カスタム"
+        },
+        "categories": {
+          "label": "カテゴリー",
+          "t_shirt_sizes": "Tシャツサイズ",
+          "easy_to_hard": "簡単から難しい",
+          "custom": "カスタム"
+        },
+        "time": {
+          "label": "時間",
+          "hours": "時間"
+        }
       }
     },
     "automations": {

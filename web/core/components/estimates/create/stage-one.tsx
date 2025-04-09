@@ -38,18 +38,18 @@ export const EstimateCreateStageOne: FC<TEstimateCreateStageOne> = (props) => {
             return {
               label: !ESTIMATE_SYSTEMS[currentSystem]?.is_available ? (
                 <div className="relative flex items-center gap-2 cursor-no-drop text-custom-text-300">
-                  {ESTIMATE_SYSTEMS[currentSystem]?.name}
+                  {t(ESTIMATE_SYSTEMS[currentSystem]?.i18n_name)}
                   <Tooltip tooltipContent={t("common.coming_soon")}>
                     <Info size={12} />
                   </Tooltip>
                 </div>
               ) : !isEnabled ? (
                 <div className="relative flex items-center gap-2 cursor-no-drop text-custom-text-300">
-                  {ESTIMATE_SYSTEMS[currentSystem]?.name}
+                  {t(ESTIMATE_SYSTEMS[currentSystem]?.i18n_name)}
                   <UpgradeBadge />
                 </div>
               ) : (
-                <div>{ESTIMATE_SYSTEMS[currentSystem]?.name}</div>
+                <div>{t(ESTIMATE_SYSTEMS[currentSystem]?.i18n_name)}</div>
               ),
               value: system,
               disabled: !isEnabled,
