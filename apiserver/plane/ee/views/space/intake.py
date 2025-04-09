@@ -1,5 +1,6 @@
 # Python imports
 import json
+import uuid
 
 # Third party imports
 from rest_framework.response import Response
@@ -11,18 +12,29 @@ from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Module imports
-from plane.db.models import DeployBoard, Intake, IntakeIssue, Project, APIToken
+from plane.db.models import (
+    DeployBoard,
+    Intake,
+    IntakeIssue,
+    Project,
+    APIToken,
+    FileAsset,
+    Workspace,
+)
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag_decorator import ErrorCodes
-from plane.ee.serializers import IssueCreateSerializer
 from plane.space.serializer.project import ProjectLiteSerializer
 from plane.bgtasks.issue_activities_task import issue_activity
+from plane.settings.storage import S3Storage
+from plane.space.rate_limit import SpaceRateThrottle, AnchorBasedRateThrottle
 
 ## Enterprise imports
+from plane.ee.serializers import IssueCreateSerializer
 from plane.ee.views.base import BaseAPIView
 from plane.ee.models import IntakeSetting
 from plane.ee.bgtasks.intake_email_task import intake_email
+from plane.ee.utils.intake_email_anchor import get_anchors
 
 
 class IntakeMetaPublishedIssueEndpoint(BaseAPIView):
@@ -62,6 +74,7 @@ class IntakeMetaPublishedIssueEndpoint(BaseAPIView):
 
 class IntakePublishedIssueEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
+    throttle_classes = [SpaceRateThrottle, AnchorBasedRateThrottle]
 
     def post(self, request, anchor):
         # Get the deploy board object
@@ -156,3 +169,80 @@ class IntakeEmailWebhookEndpoint(BaseAPIView):
         # Handle email webhook logic here
         intake_email.delay(request.data)
         return Response({"message": "Email received"}, status=status.HTTP_200_OK)
+
+
+class IntakeEmailAttachmentEndpoint(BaseAPIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        # Get the publish anchor and workspace slug
+        publish_anchor, workspace_slug = get_anchors(request.data.get("to", ""))
+
+        # Check if publish anchor or workspace slug is empty
+        if not publish_anchor or not workspace_slug:
+            return Response(
+                {"error": "Invalid email address"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Check if workspace has feature flag enabled
+        if not check_workspace_feature_flag(
+            feature_key=FeatureFlag.INTAKE_PUBLISH, slug=workspace_slug
+        ):
+            return Response(
+                {"error": "Payment required"}, status=status.HTTP_402_PAYMENT_REQUIRED
+            )
+
+        # Get the deploy boards
+        deploy_board = DeployBoard.objects.get(
+            workspace__slug=workspace_slug,
+            anchor=publish_anchor,
+            entity_name=DeployBoard.DeployBoardType.INTAKE_EMAIL,
+        )
+        api_token = APIToken.objects.filter(
+            workspace_id=deploy_board.workspace_id,
+            user__is_bot=True,
+            user__bot_type="INTAKE_BOT",
+        ).first()
+
+        if not api_token:
+            return Response(
+                {"error": "Intake bot not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Get the workspace
+        workspace = Workspace.objects.get(slug=workspace_slug)
+
+        # Loop through assets
+        name = request.data.get("name")
+        type = request.data.get("type", "image/jpeg")
+        size = request.data.get("size", 0)
+
+        if name:
+            # asset key
+            asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{name}"
+        else:
+            name = f"attachment-{uuid.uuid4().hex}"
+            asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{name}"
+
+        # Create a File Asset
+        asset = FileAsset.objects.create(
+            attributes={"name": name, "type": type, "size": size},
+            asset=asset_key,
+            size=size,
+            workspace=workspace,
+            created_by=api_token.user,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            project_id=deploy_board.project_id,
+        )
+
+        # Get the presigned URL
+        storage = S3Storage(request=request)
+        # Generate a presigned URL to share an S3 object
+        presigned_url = storage.generate_presigned_post(
+            object_name=asset_key, file_type=type, file_size=size
+        )
+        # Return the presigned URL
+        return Response(
+            {"asset_id": str(asset.id), "presigned_url": presigned_url},
+            status=status.HTTP_200_OK,
+        )

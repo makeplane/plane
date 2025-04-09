@@ -47,7 +47,7 @@ class FileAsset(BaseModel):
         CUSTOMER_REQUEST_ATTACHMENT = "CUSTOMER_REQUEST_ATTACHMENT"
         CUSTOMER_LOGO = "CUSTOMER_LOGO"
         CUSTOMER_DESCRIPTION = "CUSTOMER_DESCRIPTION"
-        CUSTOMER_REQUEST_DESCRIPTION= "CUSTOMER_REQUEST_DESCRIPTION"
+        CUSTOMER_REQUEST_DESCRIPTION = "CUSTOMER_REQUEST_DESCRIPTION"
 
     attributes = models.JSONField(default=dict)
     asset = models.FileField(upload_to=get_upload_path, max_length=800)

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"io"
-	"log"
+	"plane/email/pkg/logger"
 	"plane/email/pkg/utils/parser"
 	"strings"
 
@@ -19,6 +19,7 @@ type Session struct {
 
 func (s *Session) AuthPlain(username, password string) error {
 	// log.Println("Authenticating user", username)
+
 	if AuthenticateUser(username, password) {
 		return nil
 	}
@@ -40,34 +41,38 @@ func (s *Session) Rcpt(to string, opts *smtp.RcptOptions) error {
 func (s *Session) Data(r io.Reader) error {
 	// log.Println("Receiving message")
 	if s.From == "" || len(s.To) == 0 {
+		logger.Log.Errorf("missing from or to address")
 		return errors.New("missing from or to address")
 	}
+
 	// Read email data
 	var buf bytes.Buffer
 	if _, err := io.Copy(&buf, r); err != nil {
+		logger.Log.Errorf("failed to read email data: %v", err)
 		return err
 	}
 	data := buf.Bytes()
 
 	// Basic spam check
 	if parser.IsBacklistedDomain(string(s.From)) {
-		log.Printf("Detected spam domain from %s", s.From)
+		logger.Log.Errorf("Detected spam domain from %s", s.From)
 		return errors.New("message rejected")
 	}
 	if parser.IsSpam(string(data)) {
-		log.Printf("Detected spam from %s", s.From)
+		logger.Log.Errorf("Detected spam from %s", s.From)
 		return errors.New("message rejected")
 	}
 
 	// Parse the email
 	mr, err := mail.CreateReader(bytes.NewReader(data))
 	if err != nil {
+		logger.Log.Errorf("failed to parse email: %v", err)
 		return err
 	}
 
 	header := mr.Header
 	subject, _ := header.Subject()
-	// log.Printf("Subject: %v", subject)
+	var attachments []Attachment // Custom struct to hold attachment metadata
 
 	var plainBody, htmlBody string
 	for {
@@ -75,6 +80,7 @@ func (s *Session) Data(r io.Reader) error {
 		if err == io.EOF {
 			break
 		} else if err != nil {
+			logger.Log.Errorf("failed to read email part: %v", err)
 			return err
 		}
 
@@ -90,10 +96,32 @@ func (s *Session) Data(r io.Reader) error {
 				htmlBody = string(b)
 			}
 		case *mail.AttachmentHeader:
-			// This is an attachment
 			filename, _ := h.Filename()
-			log.Printf("Got attachment: %v", filename)
+			contentType, _, _ := h.ContentType()
+			content, err := io.ReadAll(p.Body)
+			if err != nil {
+				logger.Log.Errorf("failed to read attachment %s: %v", filename, err)
+				continue
+			}
+			logger.Log.Infof("Received attachment: %s (%s)", filename, contentType)
+			// Save or process the attachment
+			attachments = append(attachments, Attachment{
+				Name:    filename,
+				Type:    contentType,
+				Size:    len(content),
+				Content: content,
+			})
+
 		}
+	}
+
+	// get attachment urls
+	attachmentIDs, err := UploadAttachment(attachments, strings.Join(s.To, ", "), s.From)
+
+	// update attachment IDs
+	if err != nil {
+		logger.Log.Errorf("failed to upload attachments: %v", err)
+		return err
 	}
 
 	// Prefer HTML if available, otherwise use plain text
@@ -103,10 +131,12 @@ func (s *Session) Data(r io.Reader) error {
 	}
 
 	// Store the email
-	if err := SaveEmail(s.From, strings.Join(s.To, ", "), subject, body); err != nil {
+	if err := SaveEmail(s.From, strings.Join(s.To, ", "), subject, body, attachmentIDs); err != nil {
+		logger.Log.Errorf("failed to save email: %v", err)
 		return err
 	}
-	log.Printf("Email processed successfully: %s", s.From)
+
+	logger.Log.Infof("Email processed successfully: %s", s.From)
 	return nil
 }
 

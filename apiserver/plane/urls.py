@@ -5,7 +5,10 @@ from django.urls import include, path, re_path
 from django.views.generic import TemplateView
 
 # Module imports
-from plane.ee.views.space.intake import IntakeEmailWebhookEndpoint
+from plane.ee.views.space.intake import (
+    IntakeEmailWebhookEndpoint,
+    IntakeEmailAttachmentEndpoint,
+)
 
 handler404 = "plane.app.views.error_404.custom_404_view"
 
@@ -21,6 +24,7 @@ urlpatterns = [
     path("graphql/", include("plane.graphql.urls")),
     # this is a webhook endpoint for email intake - this endpoint should not be exposed to ingress
     path("intake/email/", IntakeEmailWebhookEndpoint.as_view()),
+    path("intake/email/attachments/", IntakeEmailAttachmentEndpoint.as_view()),
 ]
 
 

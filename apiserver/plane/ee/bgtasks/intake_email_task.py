@@ -10,35 +10,14 @@ from celery import shared_task
 
 # Module imports
 from plane.db.models import DeployBoard, Intake, APIToken, IntakeIssue, Issue
+from plane.db.models.asset import FileAsset
 from plane.ee.models import IntakeSetting
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.bgtasks.issue_activities_task import issue_activity
+from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.utils.exception_logger import log_exception
-
-
-def get_anchors(message):
-    # Get the to email
-    to_email = message.get("to")
-
-    # split the email to get anchor and slug
-    workspace_anchor = to_email.split("@")
-
-    # Check if workspace anchor is empty
-    if not workspace_anchor:
-        return False, False
-
-    # split the anchor again with -
-    anchor = workspace_anchor[0].rsplit("-", 1)
-    # Check if anchor is empty
-    if not anchor or not (len(anchor) == 2):
-        return False, False
-
-    # Get the publish anchor and workspace slug
-    publish_anchor = anchor[1]
-    workspace_slug = anchor[0]
-
-    return publish_anchor, workspace_slug
+from plane.ee.utils.intake_email_anchor import get_anchors
 
 
 def create_intake_issue(deploy_board, message, intake):
@@ -90,6 +69,20 @@ def create_intake_issue(deploy_board, message, intake):
         origin=None,
         intake=str(intake_issue.id),
     )
+    return issue.id
+
+
+def update_assets(issue_id, attachment_ids):
+    # Update the issue_id and is_uploaded status for the file assets
+    FileAsset.objects.filter(pk__in=attachment_ids).update(
+        issue_id=issue_id, is_uploaded=True
+    )
+
+    # Spawn meta bgtask
+    [
+        get_asset_object_metadata.delay(asset_id=str(asset_id))
+        for asset_id in attachment_ids
+    ]
     return
 
 
@@ -99,7 +92,7 @@ def intake_email(message):
         if message.get("subject") is None:
             return
         # Get the publish anchor and workspace slug
-        publish_anchor, workspace_slug = get_anchors(message)
+        publish_anchor, workspace_slug = get_anchors(message.get("to", ""))
 
         # Check if publish anchor or workspace slug is empty
         if not publish_anchor or not workspace_slug:
@@ -136,7 +129,10 @@ def intake_email(message):
             return
 
         # Create intake issue
-        create_intake_issue(deploy_board, message, intake)
+        issue_id = create_intake_issue(deploy_board, message, intake)
+
+        # update the assets
+        update_assets(issue_id, message.get("attachments"))
 
         return
     except (DeployBoard.DoesNotExist, IntakeSetting.DoesNotExist):

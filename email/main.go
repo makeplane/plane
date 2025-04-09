@@ -8,10 +8,12 @@ import (
 	"sync"
 	"time"
 
+	"plane/email/pkg/logger"
 	"plane/email/pkg/services"
 	"plane/email/pkg/utils"
 
 	"github.com/emersion/go-smtp"
+	"github.com/sirupsen/logrus"
 )
 
 func createServer(be *services.Backend, addr string, forceTLS bool) *smtp.Server {
@@ -41,6 +43,8 @@ func createServer(be *services.Backend, addr string, forceTLS bool) *smtp.Server
 }
 
 func main() {
+	// enable logging
+	log := logger.New()
 
 	// Generate Certificates
 	utils.GenerateCerts()
@@ -97,27 +101,45 @@ func main() {
 	// Start server on port 25
 	go func() {
 		defer wg.Done()
-		log.Println("Starting SMTP server at", server25.Domain, server25.Addr)
+		log.WithFields(logrus.Fields{
+			"domain": server25.Domain,
+			"addr":   server25.Addr,
+		}).Info("SMTP server started")
 		if err := server25.ListenAndServe(); err != nil {
-			log.Printf("SMTP server (port 10025) error: %v", err)
+			log.WithFields(logrus.Fields{
+				"domain": server25.Domain,
+				"addr":   server25.Addr,
+			}).Error(err)
 		}
 	}()
 
 	// Start server on port 465
 	go func() {
 		defer wg.Done()
-		log.Println("Starting SMTPS server at", server465.Domain, server465.Addr)
+		log.WithFields(logrus.Fields{
+			"domain": server465.Domain,
+			"addr":   server465.Addr,
+		}).Info("SMTP server started")
 		if err := server465.ListenAndServeTLS(); err != nil {
-			log.Printf("SMTPS server (port 10465) error: %v", err)
+			log.WithFields(logrus.Fields{
+				"domain": server465.Domain,
+				"addr":   server465.Addr,
+			}).Error(err)
 		}
 	}()
 
 	// Start server on port 587
 	go func() {
 		defer wg.Done()
-		log.Println("Starting SMTP server at", server587.Domain, server587.Addr)
+		log.WithFields(logrus.Fields{
+			"domain": server587.Domain,
+			"addr":   server587.Addr,
+		}).Info("SMTP server started")
 		if err := server587.ListenAndServe(); err != nil {
-			log.Printf("SMTP server (port 10587) error: %v", err)
+			log.WithFields(logrus.Fields{
+				"domain": server587.Domain,
+				"addr":   server587.Addr,
+			}).Error(err)
 		}
 	}()
 
