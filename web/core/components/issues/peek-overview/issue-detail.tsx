@@ -10,7 +10,7 @@ import { IssueParentDetail, TIssueOperations } from "@/components/issues";
 // helpers
 import { getTextContent } from "@/helpers/editor.helper";
 // hooks
-import { useIssueDetail, useProject, useUser } from "@/hooks/store";
+import { useIssueDetail, useMember, useProject, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // plane web components
 import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
@@ -47,7 +47,8 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
     issue: { getIssueById },
   } = useIssueDetail();
   const { getProjectById } = useProject();
-  // hooks
+  const { getUserDetails } = useMember();
+  // reload confirmation
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
   useEffect(() => {
@@ -147,7 +148,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
             className="flex-shrink-0"
             entityInformation={{
               createdAt: new Date(issue.created_at),
-              createdBy: issue.created_by,
+              createdByDisplayName: getUserDetails(issue.created_by ?? "")?.display_name ?? "",
               id: issueId,
               isRestoreDisabled: disabled || isArchived,
             }}

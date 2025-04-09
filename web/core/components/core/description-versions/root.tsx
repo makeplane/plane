@@ -10,7 +10,7 @@ import { DescriptionVersionsModal } from "./modal";
 
 export type TDescriptionVersionEntityInformation = {
   createdAt: Date;
-  createdBy: string;
+  createdByDisplayName: string;
   id: string;
   isRestoreDisabled: boolean;
 };
