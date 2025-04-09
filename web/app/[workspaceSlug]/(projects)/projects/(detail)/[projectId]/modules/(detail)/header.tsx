@@ -1,11 +1,11 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // icons
-import { ArrowRight, PanelRight } from "lucide-react";
+import { PanelRight } from "lucide-react";
 // plane constants
 import {
   EIssueLayoutTypes,
@@ -23,15 +23,15 @@ import {
   IIssueFilterOptions,
 } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, CustomMenu, DiceIcon, Tooltip, Header, CustomSearchSelect } from "@plane/ui";
+import { Breadcrumbs, Button, DiceIcon, Tooltip, Header, CustomSearchSelect } from "@plane/ui";
 // components
 import { ProjectAnalyticsModal } from "@/components/analytics";
 import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // helpers
+import { ModuleQuickActions } from "@/components/modules";
 import { cn } from "@/helpers/common.helper";
 import { isIssueFilterActive } from "@/helpers/filter.helper";
-import { truncateText } from "@/helpers/string.helper";
 // hooks
 import {
   useEventTracker,
@@ -51,30 +51,9 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 
-const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
-  // router
-  const { workspaceSlug, projectId } = useParams();
-  // store hooks
-  const { getModuleById } = useModule();
-  // derived values
-  const moduleDetail = getModuleById(moduleId);
-
-  if (!moduleDetail) return null;
-
-  return (
-    <CustomMenu.MenuItem key={moduleDetail.id}>
-      <Link
-        href={`/${workspaceSlug}/projects/${projectId}/modules/${moduleDetail.id}`}
-        className="flex items-center gap-1.5"
-      >
-        <DiceIcon className="h-3 w-3" />
-        {truncateText(moduleDetail.name, 40)}
-      </Link>
-    </CustomMenu.MenuItem>
-  );
-};
-
 export const ModuleIssuesHeader: React.FC = observer(() => {
+  // refs
+  const parentRef = useRef<HTMLDivElement>(null);
   // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // router
@@ -320,14 +299,18 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
           )}
           <button
             type="button"
-            className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"
+            className="p-1 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
             onClick={toggleSidebar}
           >
-            <ArrowRight className={`hidden h-4 w-4 duration-300 md:block ${isSidebarCollapsed ? "-rotate-180" : ""}`} />
-            <PanelRight
-              className={cn("block h-4 w-4 md:hidden", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")}
-            />
+            <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
           </button>
+          <ModuleQuickActions
+            parentRef={parentRef}
+            moduleId={moduleId?.toString()}
+            projectId={projectId.toString()}
+            workspaceSlug={workspaceSlug.toString()}
+            customClassName="flex-shrink-0 flex items-center justify-center size-6 bg-custom-background-80/70 rounded"
+          />
         </Header.RightItem>
       </Header>
     </>

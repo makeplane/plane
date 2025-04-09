@@ -2,12 +2,13 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-// hooks
+// plane imports
+import { EInboxIssueSource } from "@plane/constants";
 import { LayersIcon } from "@plane/ui";
+// hooks
 import { useIssueDetail } from "@/hooks/store";
-// components
+// local imports
 import { IssueActivityBlockComponent } from "./";
-// icons
 
 type TIssueDefaultActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
@@ -31,7 +32,7 @@ export const IssueDefaultActivity: FC<TIssueDefaultActivity> = observer((props) 
     >
       <>
         {activity.verb === "created" ? (
-          source && source !== "IN_APP" ? (
+          source && source !== EInboxIssueSource.IN_APP ? (
             <span>
               created the work item via <span className="font-medium">{source.toLowerCase()}</span>.
             </span>
