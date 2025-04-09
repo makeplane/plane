@@ -25,7 +25,9 @@ export const DescriptionVersionsDropdown: React.FC<Props> = observer((props) => 
   // derived values
   const latestVersion = versions?.[0];
   const lastUpdatedAt = latestVersion?.created_at ?? entityInformation.createdAt;
-  const lastUpdatedByUserDetails = getUserDetails(latestVersion?.owned_by ?? entityInformation.createdBy);
+  const lastUpdatedByUserDisplayName = latestVersion?.owned_by
+    ? getUserDetails(latestVersion?.owned_by)?.display_name
+    : entityInformation.createdByDisplayName;
   // translation
   const { t } = useTranslation();
 
@@ -38,8 +40,7 @@ export const DescriptionVersionsDropdown: React.FC<Props> = observer((props) => 
           </span>
           <p className="text-xs">
             {t("description_versions.last_edited_by")}{" "}
-            <span className="font-medium">{lastUpdatedByUserDetails?.display_name}</span>{" "}
-            {calculateTimeAgo(lastUpdatedAt)}
+            <span className="font-medium">{lastUpdatedByUserDisplayName}</span> {calculateTimeAgo(lastUpdatedAt)}
           </p>
         </div>
       }
