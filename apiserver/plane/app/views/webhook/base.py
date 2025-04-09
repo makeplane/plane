@@ -29,7 +29,7 @@ class WebhookEndpoint(BaseAPIView):
             if "already exists" in str(e):
                 return Response(
                     {"error": "URL already exists for the workspace"},
-                    status=status.HTTP_410_GONE,
+                    status=status.HTTP_409_CONFLICT,
                 )
             raise IntegrityError
 

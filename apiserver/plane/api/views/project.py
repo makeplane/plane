@@ -239,7 +239,7 @@ class ProjectAPIEndpoint(BaseAPIView):
             if "already exists" in str(e):
                 return Response(
                     {"name": "The project name is already taken"},
-                    status=status.HTTP_410_GONE,
+                    status=status.HTTP_409_CONFLICT,
                 )
         except Workspace.DoesNotExist:
             return Response(
@@ -248,7 +248,7 @@ class ProjectAPIEndpoint(BaseAPIView):
         except ValidationError:
             return Response(
                 {"identifier": "The project identifier is already taken"},
-                status=status.HTTP_410_GONE,
+                status=status.HTTP_409_CONFLICT,
             )
 
     def patch(self, request, slug, pk):
@@ -306,7 +306,7 @@ class ProjectAPIEndpoint(BaseAPIView):
             if "already exists" in str(e):
                 return Response(
                     {"name": "The project name is already taken"},
-                    status=status.HTTP_410_GONE,
+                    status=status.HTTP_409_CONFLICT,
                 )
         except (Project.DoesNotExist, Workspace.DoesNotExist):
             return Response(
@@ -315,7 +315,7 @@ class ProjectAPIEndpoint(BaseAPIView):
         except ValidationError:
             return Response(
                 {"identifier": "The project identifier is already taken"},
-                status=status.HTTP_410_GONE,
+                status=status.HTTP_409_CONFLICT,
             )
 
     def delete(self, request, slug, pk):

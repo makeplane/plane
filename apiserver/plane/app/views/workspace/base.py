@@ -119,7 +119,9 @@ class WorkSpaceViewSet(BaseViewSet):
                 )
 
                 # Get total members and role
-                total_members=WorkspaceMember.objects.filter(workspace_id=serializer.data["id"]).count()
+                total_members = WorkspaceMember.objects.filter(
+                    workspace_id=serializer.data["id"]
+                ).count()
                 data = serializer.data
                 data["total_members"] = total_members
                 data["role"] = 20
@@ -134,7 +136,7 @@ class WorkSpaceViewSet(BaseViewSet):
             if "already exists" in str(e):
                 return Response(
                     {"slug": "The workspace with the slug already exists"},
-                    status=status.HTTP_410_GONE,
+                    status=status.HTTP_409_CONFLICT,
                 )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
@@ -167,10 +169,9 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             .values("count")
         )
 
-        role = (
-            WorkspaceMember.objects.filter(workspace=OuterRef("id"), member=request.user, is_active=True)
-            .values("role")
-        )
+        role = WorkspaceMember.objects.filter(
+            workspace=OuterRef("id"), member=request.user, is_active=True
+        ).values("role")
 
         workspace = (
             Workspace.objects.prefetch_related(
