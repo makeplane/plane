@@ -145,7 +145,7 @@ const IssueForm = observer((props: TProps) => {
                 value={value}
                 onChange={onChange}
                 hasError={Boolean(errors.name)}
-                placeholder="Improve vertical scroll, Approve laptop purchase"
+                placeholder="e.g., Improve vertical scroll, Approve laptop purchase"
                 className="w-full focus:border-blue-400 text-base border-custom-border-300"
               />
             )}

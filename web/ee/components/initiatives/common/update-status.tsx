@@ -92,9 +92,10 @@ export const UpdateStatusPills = (props: TStatusPills) => {
                     <Link href={route} className={cn(`font-medium capitalize flex gap-2`)} target="_blank">
                       {initiativeUpdate.epic_id && (
                         <div className="flex gap-2 text-custom-text-350 items-center">
-                          <EpicIcon className="size-4 my-auto" />
-                          <div className="text-[11px] flex flex-shrink-0">
-                            {initiativeUpdate.project__identifier} {initiativeUpdate.epic__sequence_id}
+                          <EpicIcon className="size-4 my-auto flex-shrink-0" />
+                          <div className="text-[11px] flex flex-shrink-0 gap-1">
+                            <span>{initiativeUpdate.project__identifier}</span>
+                            <span>{initiativeUpdate.epic__sequence_id}</span>
                           </div>
                         </div>
                       )}
