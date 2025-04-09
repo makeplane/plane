@@ -7,3 +7,4 @@ export * from "./pro-icon";
 export * from "./custom-error";
 export * from "./count-chip";
 export * from "./activity";
+export * from "./switcher-label";

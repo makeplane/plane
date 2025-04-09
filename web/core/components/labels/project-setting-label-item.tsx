@@ -6,7 +6,7 @@ import { IIssueLabel } from "@plane/types";
 // hooks
 import { useLabel } from "@/hooks/store";
 // components
-import { CreateUpdateLabelInline } from "./create-update-label-inline";
+import { CreateUpdateLabelInline, TLabelOperationsCallbacks } from "./create-update-label-inline";
 import { ICustomMenuItem, LabelItemBlock } from "./label-block/label-item-block";
 import { LabelDndHOC } from "./label-drag-n-drop-HOC";
 
@@ -23,6 +23,7 @@ type Props = {
     droppedLabelId: string | undefined,
     dropAtEndOfList: boolean
   ) => void;
+  labelOperationsCallbacks: TLabelOperationsCallbacks;
   isEditable?: boolean;
 };
 
@@ -35,6 +36,7 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
     isLastChild,
     isParentDragging = false,
     onDrop,
+    labelOperationsCallbacks,
     isEditable = false,
   } = props;
   // states
@@ -89,6 +91,7 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
                 setLabelForm={setEditLabelForm}
                 isUpdating
                 labelToUpdate={label}
+                labelOperationsCallbacks={labelOperationsCallbacks}
                 onClose={() => {
                   setEditLabelForm(false);
                   setIsUpdating(false);

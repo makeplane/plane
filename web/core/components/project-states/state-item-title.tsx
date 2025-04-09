@@ -2,31 +2,33 @@ import { SetStateAction } from "react";
 import { observer } from "mobx-react";
 import { GripVertical, Pencil } from "lucide-react";
 // plane imports
-import { IState } from "@plane/types";
+import { IState, TStateOperationsCallbacks } from "@plane/types";
 import { StateGroupIcon } from "@plane/ui";
 // local imports
 import { StateDelete, StateMarksAsDefault } from "./options";
 
-export type StateItemTitleProps = {
-  workspaceSlug: string;
-  projectId: string;
-  setUpdateStateModal: (value: SetStateAction<boolean>) => void;
+type TBaseStateItemTitleProps = {
   stateCount: number;
-  disabled: boolean;
   state: IState;
   shouldShowDescription?: boolean;
+  setUpdateStateModal: (value: SetStateAction<boolean>) => void;
 };
 
-export const StateItemTitle = observer((props: StateItemTitleProps) => {
-  const {
-    workspaceSlug,
-    projectId,
-    stateCount,
-    setUpdateStateModal,
-    disabled,
-    state,
-    shouldShowDescription = true,
-  } = props;
+type TEnabledStateItemTitleProps = TBaseStateItemTitleProps & {
+  disabled: false;
+  stateOperationsCallbacks: Pick<TStateOperationsCallbacks, "markStateAsDefault" | "deleteState">;
+  shouldTrackEvents: boolean;
+};
+
+type TDisabledStateItemTitleProps = TBaseStateItemTitleProps & {
+  disabled: true;
+};
+
+export type TStateItemTitleProps = TEnabledStateItemTitleProps | TDisabledStateItemTitleProps;
+
+export const StateItemTitle = observer((props: TStateItemTitleProps) => {
+  const { stateCount, setUpdateStateModal, disabled, state, shouldShowDescription = true } = props;
+
   return (
     <div className="flex items-center gap-2 w-full justify-between">
       <div className="flex items-center gap-1 px-1">
@@ -46,19 +48,16 @@ export const StateItemTitle = observer((props: StateItemTitleProps) => {
           {shouldShowDescription && <p className="text-xs text-custom-text-200">{state.description}</p>}
         </div>
       </div>
-
       {!disabled && (
         <div className="hidden group-hover:flex items-center gap-2">
           {/* state mark as default option */}
           <div className="flex-shrink-0 text-xs transition-all">
             <StateMarksAsDefault
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
               stateId={state.id}
               isDefault={state.default ? true : false}
+              markStateAsDefaultCallback={props.stateOperationsCallbacks.markStateAsDefault}
             />
           </div>
-
           {/* state edit options */}
           <div className="flex items-center gap-1 transition-all">
             <button
@@ -67,7 +66,12 @@ export const StateItemTitle = observer((props: StateItemTitleProps) => {
             >
               <Pencil className="w-3 h-3" />
             </button>
-            <StateDelete workspaceSlug={workspaceSlug} projectId={projectId} totalStates={stateCount} state={state} />
+            <StateDelete
+              totalStates={stateCount}
+              state={state}
+              deleteStateCallback={props.stateOperationsCallbacks.deleteState}
+              shouldTrackEvents={props.shouldTrackEvents}
+            />
           </div>
         </div>
       )}

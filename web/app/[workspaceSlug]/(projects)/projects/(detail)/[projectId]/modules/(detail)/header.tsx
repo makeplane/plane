@@ -16,12 +16,17 @@ import {
   EUserPermissionsLevel,
 } from "@plane/constants";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
+import {
+  ICustomSearchSelectOption,
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+} from "@plane/types";
 // ui
-import { Breadcrumbs, Button, CustomMenu, DiceIcon, Tooltip, Header } from "@plane/ui";
+import { Breadcrumbs, Button, CustomMenu, DiceIcon, Tooltip, Header, CustomSearchSelect } from "@plane/ui";
 // components
 import { ProjectAnalyticsModal } from "@/components/analytics";
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -155,7 +160,24 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     EUserPermissionsLevel.PROJECT
   );
 
-  const issuesCount = getGroupIssueCount(undefined, undefined, false);
+  const workItemsCount = getGroupIssueCount(undefined, undefined, false);
+
+  const switcherOptions = projectModuleIds
+    ?.map((id) => {
+      const _module = id === moduleId ? moduleDetails : getModuleById(id);
+      if (!_module) return;
+      const moduleLink = `/${workspaceSlug}/projects/${projectId}/modules/${_module.id}`;
+      return {
+        value: _module.id,
+        query: _module.name,
+        content: (
+          <Link href={moduleLink}>
+            <SwitcherLabel name={_module.name} LabelIcon={DiceIcon} />
+          </Link>
+        ),
+      };
+    })
+    .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
 
   return (
     <>
@@ -196,33 +218,29 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
             <Breadcrumbs.BreadcrumbItem
               type="component"
               component={
-                <CustomMenu
+                <CustomSearchSelect
+                  options={switcherOptions}
                   label={
-                    <>
-                      <DiceIcon className="h-3 w-3" />
-                      <div className="flex w-auto max-w-[70px] items-center gap-2 truncate sm:max-w-[200px]">
-                        <p className="truncate">{moduleDetails?.name && moduleDetails.name}</p>
-                        {issuesCount && issuesCount > 0 ? (
-                          <Tooltip
-                            isMobile={isMobile}
-                            tooltipContent={`There are ${issuesCount} ${
-                              issuesCount > 1 ? "work items" : "work item"
-                            } in this module`}
-                            position="bottom"
-                          >
-                            <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-custom-primary-100/20 px-2 text-center text-xs font-semibold text-custom-primary-100">
-                              {issuesCount}
-                            </span>
-                          </Tooltip>
-                        ) : null}
-                      </div>
-                    </>
+                    <div className="flex items-center gap-1">
+                      <SwitcherLabel name={moduleDetails?.name} LabelIcon={DiceIcon} />
+                      {workItemsCount && workItemsCount > 0 ? (
+                        <Tooltip
+                          isMobile={isMobile}
+                          tooltipContent={`There are ${workItemsCount} ${
+                            workItemsCount > 1 ? "work items" : "work item"
+                          } in this module`}
+                          position="bottom"
+                        >
+                          <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-custom-primary-100/20 px-2 text-center text-xs font-semibold text-custom-primary-100">
+                            {workItemsCount}
+                          </span>
+                        </Tooltip>
+                      ) : null}
+                    </div>
                   }
-                  className="ml-1.5 flex-shrink-0"
-                  placement="bottom-start"
-                >
-                  {projectModuleIds?.map((moduleId) => <ModuleDropdownOption key={moduleId} moduleId={moduleId} />)}
-                </CustomMenu>
+                  value={moduleId}
+                  onChange={() => {}}
+                />
               }
             />
           </Breadcrumbs>

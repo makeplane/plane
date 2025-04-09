@@ -111,7 +111,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("common.link_copied"),
-        message: t("common.copied_to_clipboard"),
+        message: t("common.link_copied_to_clipboard"),
       });
     });
   };

@@ -24,10 +24,11 @@ type Props = {
   moduleId: string;
   projectId: string;
   workspaceSlug: string;
+  customClassName?: string;
 };
 
 export const ModuleQuickActions: React.FC<Props> = observer((props) => {
-  const { parentRef, moduleId, projectId, workspaceSlug } = props;
+  const { parentRef, moduleId, projectId, workspaceSlug, customClassName } = props;
   // router
   const router = useAppRouter();
   // states
@@ -167,7 +168,7 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
         </div>
       )}
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
-      <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
+      <CustomMenu ellipsis placement="bottom-end" closeOnSelect buttonClassName={customClassName}>
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
           return (
