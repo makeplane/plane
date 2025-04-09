@@ -503,6 +503,73 @@
   "re_generate_key": "Regenerar clave",
   "export": "Exportar",
   "member": "{count, plural, one{# miembro} other{# miembros}}",
+  "updates": {
+    "add_update": "Agregar actualización",
+    "add_update_placeholder": "Escribe tu actualización aquí",
+    "empty": {
+      "title": "Aún no hay actualizaciones",
+      "description": "Puedes ver las actualizaciones aquí."
+    },
+    "delete": {
+      "title": "Eliminar actualización",
+      "confirmation": "¿Estás seguro de querer eliminar esta actualización? Esta acción es irreversible.",
+      "success": {
+        "title": "Actualización eliminada",
+        "message": "La actualización se ha eliminado correctamente"
+      },
+      "error": {
+        "title": "Actualización no eliminada",
+        "message": "La actualización no se pudo eliminar"
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reacción creada",
+          "message": "Reacción creada con éxito"
+        },
+        "error": {
+          "title": "Reacción no creada",
+          "message": "No se pudo crear la reacción"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reacción eliminada",
+          "message": "Reacción eliminada con éxito"
+        },
+        "error": {
+          "title": "Reacción no eliminada",
+          "message": "No se pudo eliminar la reacción"
+        }
+      }
+    },
+    "progress": {
+      "title": "Progreso",
+      "since_last_update": "Desde la última actualización",
+      "comments": "{count, plural, one{# comentario} other{# comentarios}}"
+    },
+    "create": {
+      "success": {
+        "title": "Actualización creada",
+        "message": "Actualización creada con éxito"
+      },
+      "error": {
+        "title": "Actualización no creada",
+        "message": "No se pudo crear la actualización"
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Actualización actualizada",
+        "message": "Actualización actualizada con éxito"
+      },
+      "error": {
+        "title": "Actualización no actualizada",
+        "message": "No se pudo actualizar la actualización"
+      }
+    }
+  },
   "new_password_must_be_different_from_old_password": "La nueva contraseña debe ser diferente a la contraseña anterior",
   "edited": "Modificado",
   "bot": "Bot",

@@ -5,15 +5,17 @@ import { useForm, Controller } from "react-hook-form";
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
 import { EditorRefApi } from "@plane/editor";
-// components
+// plane types
 import { TIssueComment, TCommentsOperations } from "@plane/types";
+// components
 import { LiteTextEditor } from "@/components/editor";
 // constants
-// helpers
 import { cn } from "@/helpers/common.helper";
+// helpers
 import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
+// services
 import { FileService } from "@/services/file.service";
 
 type TCommentCreate = {
@@ -26,6 +28,7 @@ type TCommentCreate = {
 
 // services
 const fileService = new FileService();
+
 export const CommentCreate: FC<TCommentCreate> = observer((props) => {
   const { workspaceSlug, entityId, activityOperations, showToolbarInitially = false, projectId } = props;
   // states
@@ -81,7 +84,15 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
     <div
       className={cn("sticky bottom-0 z-[4] bg-custom-background-100 sm:static")}
       onKeyDown={(e) => {
-        if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !isEmpty && !isSubmitting)
+        if (
+          e.key === "Enter" &&
+          !e.shiftKey &&
+          !e.ctrlKey &&
+          !e.metaKey &&
+          !isEmpty &&
+          !isSubmitting &&
+          editorRef.current?.isEditorReadyToDiscard()
+        )
           handleSubmit(onSubmit)(e);
       }}
     >

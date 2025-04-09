@@ -504,7 +504,73 @@
   "new_password_must_be_different_from_old_password": "Nova senha deve ser diferente da senha antiga",
   "edited": "editado",
   "bot": "robô",
-
+  "updates": {
+    "add_update": "Adicionar atualização",
+    "add_update_placeholder": "Adicione sua atualização aqui",
+    "empty": {
+      "title": "Ainda não há atualizações",
+      "description": "Você pode ver as atualizações aqui."
+    },
+    "delete": {
+      "title": "Deletar atualização",
+      "confirmation": "Você tem certeza que deseja deletar esta atualização? Esta operação é irreversível.",
+      "success": {
+        "title": "Atualização deletada",
+        "message": "A atualização foi deletada com sucesso."
+      },
+      "error": {
+        "title": "Atualização não deletada",
+        "message": "A atualização não foi deletada."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Atualização atualizada",
+        "message": "A atualização foi atualizada com sucesso."
+      },
+      "error": {
+        "title": "Atualização não atualizada",
+        "message": "A atualização não foi atualizada."
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reação criada",
+          "message": "A reação foi criada com sucesso."
+        },
+        "error": {
+          "title": "Reação não criada",
+          "message": "A reação não foi criada."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reação removida",
+          "message": "A reação foi removida com sucesso."
+        },
+        "error": {
+          "title": "Reação não removida",
+          "message": "A reação não foi removida."
+        }
+      }
+    },
+    "progress": {
+      "title": "Progresso",
+      "since_last_update": "Desde a última atualização",
+      "comments": "{count, plural, one{# comentário} other{# comentários}}"
+    },
+    "create": {
+      "success": {
+        "title": "Atualização criada",
+        "message": "A atualização foi criada com sucesso."
+      },
+      "error": {
+        "title": "Atualização não criada",
+        "message": "A atualização não foi criada."
+      }
+    }
+  },
   "project_view": {
     "sort_by": {
       "created_at": "Criado em",

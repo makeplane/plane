@@ -64,7 +64,7 @@ export const ListItem: FC<IListItemProps> = (props) => {
           className
         )}
       >
-        <div className={cn("relative flex w-full items-center justify-between gap-3 overflow-hidden", itemClassName)}>
+        <div className={cn("relative flex w-full items-center justify-between gap-3 ", itemClassName)}>
           <ControlLink
             id={id}
             className="relative flex w-full items-center gap-3 overflow-hidden"
