@@ -4,8 +4,8 @@ import { Controller, useFormContext } from "react-hook-form";
 import { useTranslation } from "@plane/i18n";
 import { TWorkItemTemplateForm } from "@plane/types";
 import { Input, TextArea } from "@plane/ui";
-// local imports
-import { validateWhitespace } from "./common";
+// plane web imports
+import { validateWhitespaceI18n } from "@/plane-web/components/templates/settings/common";
 
 export const TemplateDetails = observer(() => {
   // plane hooks
@@ -25,7 +25,7 @@ export const TemplateDetails = observer(() => {
           name="template.name"
           rules={{
             validate: (value) => {
-              const result = validateWhitespace(value);
+              const result = validateWhitespaceI18n(value);
               if (result) {
                 return t(result);
               }

@@ -12,8 +12,8 @@ import { IssueLabelSelect } from "@/components/issues/select";
 import { CreateLabelModal } from "@/components/labels";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
-// local imports
-import { COMMON_BUTTON_CLASS_NAME, COMMON_ERROR_CLASS_NAME } from "./common";
+// plane web imports
+import { COMMON_BUTTON_CLASS_NAME, COMMON_ERROR_CLASS_NAME } from "@/plane-web/components/templates/settings/common";
 
 type TDefaultWorkItemTemplatePropertiesProps = {
   workspaceSlug: string;

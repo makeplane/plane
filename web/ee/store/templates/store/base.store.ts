@@ -95,7 +95,7 @@ export abstract class BaseTemplateStore<T extends TBaseTemplateWithData> impleme
     const workspaceId = this.rootStore.workspaceRoot.getWorkspaceBySlug(workspaceSlug)?.id;
     if (!workspaceId) return [];
     return orderBy(
-      Object.values(this.templates).filter((template) => template.template_data.workspace === workspaceId),
+      Object.values(this.templates).filter((template) => template.workspace === workspaceId),
       ["created_at"],
       ["desc"]
     );
@@ -118,7 +118,7 @@ export abstract class BaseTemplateStore<T extends TBaseTemplateWithData> impleme
    */
   getAllProjectLevelCreatedTemplateIds = computedFn((workspaceSlug: string, projectId: string) =>
     this.getAllTemplates(workspaceSlug)
-      .filter((template) => template.template_data.project_id === projectId)
+      .filter((template) => template.project === projectId)
       .map((template) => template.id)
   );
 

@@ -28,10 +28,15 @@ const TemplatesProjectSettingsPage = observer(() => {
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { getProjectById } = useProject();
-  const { getAllWorkItemTemplatesForProject } = useWorkItemTemplates();
+  const { isAnyWorkItemTemplatesAvailableForProject } = useWorkItemTemplates();
   // derived values
-  const isTemplatesEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TEMPLATES");
-  const workItemTemplateIds = getAllWorkItemTemplatesForProject(workspaceSlug?.toString(), projectId?.toString());
+  const isWorkItemTemplatesEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TEMPLATES");
+  const isWorkItemTemplatesAvailableForProject = isAnyWorkItemTemplatesAvailableForProject(
+    workspaceSlug?.toString(),
+    projectId?.toString()
+  );
+  const isAnyTemplatesEnabled = isWorkItemTemplatesEnabled;
+  const isAnyTemplatesAvailableForProject = isWorkItemTemplatesAvailableForProject;
   const currentProjectDetails = getProjectById(projectId?.toString());
   const pageTitle = currentProjectDetails?.name
     ? `${currentProjectDetails.name} - ${t("common.templates")}`
@@ -58,7 +63,7 @@ const TemplatesProjectSettingsPage = observer(() => {
             {t("templates.settings.description")}
           </span>
         </div>
-        {isTemplatesEnabled && workItemTemplateIds.length > 0 && hasAdminPermission && (
+        {isAnyTemplatesEnabled && isAnyTemplatesAvailableForProject && hasAdminPermission && (
           <CreateTemplatesButton
             workspaceSlug={workspaceSlug?.toString()}
             projectId={projectId?.toString()}

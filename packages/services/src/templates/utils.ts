@@ -4,13 +4,11 @@ import { ETemplateType } from "@plane/constants";
 /**
  * Maps template types to their corresponding API path segments
  */
-// const TEMPLATE_PATH_MAPPING: Record<ETemplateType, string> = {
-//   [ETemplateType.WORK_ITEM]: "/workitems",
-//   [ETemplateType.PAGE]: "/pages",
-//   [ETemplateType.PROJECT]: "/projects",
-// };
-// TODO: Update this once the API is updated
-const TEMPLATE_PATH_MAPPING: Partial<Record<ETemplateType, string>> = {};
+const TEMPLATE_PATH_MAPPING: Record<ETemplateType, string> = {
+  [ETemplateType.WORK_ITEM]: "/workitems",
+  [ETemplateType.PAGE]: "/pages",
+  [ETemplateType.PROJECT]: "/projects",
+};
 
 /**
  * Returns the URL path segment for a given template type

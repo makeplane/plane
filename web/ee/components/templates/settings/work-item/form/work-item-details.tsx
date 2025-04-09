@@ -15,9 +15,8 @@ import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 // hooks
 import { useEditorAsset, useMember, useWorkspace } from "@/hooks/store";
 // plane web hooks
+import { validateWhitespaceI18n } from "@/plane-web/components/templates/settings/common";
 import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-search";
-// local imports
-import { validateWhitespace } from "./common";
 
 type TWorkItemDetailsProps = {
   workspaceSlug: string;
@@ -63,7 +62,7 @@ export const WorkItemDetails = observer((props: TWorkItemDetailsProps) => {
           name="work_item.name"
           rules={{
             validate: (value) => {
-              const result = validateWhitespace(value);
+              const result = validateWhitespaceI18n(value);
               if (result) {
                 return t(result);
               }

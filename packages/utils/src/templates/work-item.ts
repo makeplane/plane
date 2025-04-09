@@ -17,6 +17,7 @@ import {
 } from "@plane/types";
 // local imports
 import { extractIds, isValidId, partitionValidIds } from "../common";
+import { extractTemplateBasicFormData } from "./base";
 
 export type TSanitizeWorkItemTemplateFormDataParams = {
   getProjectStateIds: (projectId: string | null | undefined) => string[] | undefined;
@@ -48,15 +49,6 @@ export const workItemTemplateDataToSanitizedFormData = (
     invalidIds: sanitizationResult.invalid,
   };
 };
-
-/**
- * Extracts the basic template form data
- */
-export const extractTemplateBasicFormData = (template: TWorkItemTemplate) => ({
-  id: template.id,
-  name: template.name,
-  description_html: template.description_html,
-});
 
 /**
  * Extracts work item form data from the template
@@ -166,7 +158,7 @@ export const extractCustomPropertyValuesFromFormData = (properties: TWorkItemPro
     return acc;
   }, {});
 
-type TextractAndSanitizeCustomPropertyValuesFormDataParams = {
+type TExtractAndSanitizeCustomPropertyValuesFormDataParams = {
   properties: TWorkItemPropertySchema[];
   getPropertyById: <T extends EIssuePropertyType>(propertyId: string) => IIssueProperty<T> | undefined;
 };
@@ -175,7 +167,7 @@ type TextractAndSanitizeCustomPropertyValuesFormDataParams = {
  * Extracts and sanitizes custom property values from form data
  */
 export const extractAndSanitizeCustomPropertyValuesFormData = (
-  params: TextractAndSanitizeCustomPropertyValuesFormDataParams
+  params: TExtractAndSanitizeCustomPropertyValuesFormDataParams
 ): TIssuePropertyValues => {
   const { properties, getPropertyById } = params;
   // Extract custom property values from form data
@@ -194,9 +186,8 @@ export const extractAndSanitizeCustomPropertyValuesFormData = (
   return sanitizedCustomPropertyValues;
 };
 
-type TWorkItemTemplateFormDataParams = {
+type TBuildWorkItemTemplateSchemaParams = {
   workspaceId: string;
-  formData: TWorkItemTemplateForm;
   customPropertyValues: TIssuePropertyValues;
   getWorkItemTypeById: (workItemTypeId: string) => TIssueType | undefined;
   getWorkItemPropertyById: (workItemPropertyId: string) => IIssueProperty<EIssuePropertyType> | undefined;
@@ -205,6 +196,10 @@ type TWorkItemTemplateFormDataParams = {
   getLabelById: (labelId: string) => IIssueLabel | null;
   getModuleById: (moduleId: string) => IModule | null;
 };
+
+type TWorkItemTemplateFormDataParams = {
+  formData: TWorkItemTemplateForm;
+} & TBuildWorkItemTemplateSchemaParams;
 
 /**
  * Converts form data back to the work item template format
@@ -226,7 +221,7 @@ export const workItemTemplateFormDataToData = ({
     name: template.name,
     description_html: template.description_html,
     template_type: ETemplateType.WORK_ITEM,
-    template_data: buildTemplateSchema({
+    template_data: buildWorkItemTemplateSchema({
       workspaceId,
       workItem: work_item,
       customPropertyValues,
@@ -240,22 +235,14 @@ export const workItemTemplateFormDataToData = ({
   };
 };
 
-type TBuildTemplateDataParams = {
-  workspaceId: string;
+type TBuildWorkItemTemplateDataParams = {
   workItem: TWorkItemTemplateForm["work_item"];
-  customPropertyValues: TIssuePropertyValues;
-  getWorkItemTypeById: (workItemTypeId: string) => TIssueType | undefined;
-  getWorkItemPropertyById: (workItemPropertyId: string) => IIssueProperty<EIssuePropertyType> | undefined;
-  getStateById: (stateId: string) => IState | undefined;
-  getUserDetails: (userId: string) => IUserLite | undefined;
-  getLabelById: (labelId: string) => IIssueLabel | null;
-  getModuleById: (moduleId: string) => IModule | null;
-};
+} & TBuildWorkItemTemplateSchemaParams;
 
 /**
  * Builds the template schema
  */
-export const buildTemplateSchema = ({
+const buildWorkItemTemplateSchema = ({
   workspaceId,
   workItem,
   customPropertyValues,
@@ -265,7 +252,7 @@ export const buildTemplateSchema = ({
   getUserDetails,
   getLabelById,
   getModuleById,
-}: TBuildTemplateDataParams): TWorkItemTemplate["template_data"] => ({
+}: TBuildWorkItemTemplateDataParams): TWorkItemTemplate["template_data"] => ({
   name: workItem.name,
   description_html: workItem.description_html,
   project: workItem.project_id,
@@ -284,7 +271,7 @@ export const buildTemplateSchema = ({
  */
 export const buildWorkItemTypeSchema = (
   typeId: string | null | undefined,
-  getWorkItemTypeById: (workItemTypeId: string) => TIssueType | undefined
+  getWorkItemTypeById: TBuildWorkItemTemplateDataParams["getWorkItemTypeById"]
 ): TWorkItemTemplate["template_data"]["type"] => {
   const workItemType = typeId ? getWorkItemTypeById(typeId) : undefined;
 
@@ -302,7 +289,7 @@ export const buildWorkItemTypeSchema = (
  */
 export const buildStateSchema = (
   stateId: string | null,
-  getStateById: (stateId: string) => IState | undefined
+  getStateById: TBuildWorkItemTemplateDataParams["getStateById"]
 ): TWorkItemTemplate["template_data"]["state"] => {
   const state = stateId ? getStateById(stateId) : undefined;
 
@@ -319,7 +306,7 @@ export const buildStateSchema = (
  */
 export const buildAssigneesSchema = (
   assigneeIds: string[],
-  getUserDetails: (userId: string) => IUserLite | undefined
+  getUserDetails: TBuildWorkItemTemplateDataParams["getUserDetails"]
 ): TWorkItemTemplate["template_data"]["assignees"] =>
   assigneeIds
     .map((assigneeId) => {
@@ -334,7 +321,7 @@ export const buildAssigneesSchema = (
  */
 export const buildLabelsSchema = (
   labelIds: string[],
-  getLabelById: (labelId: string) => IIssueLabel | null
+  getLabelById: TBuildWorkItemTemplateDataParams["getLabelById"]
 ): TWorkItemTemplate["template_data"]["labels"] =>
   labelIds
     .map((labelId) => {
@@ -352,7 +339,7 @@ export const buildLabelsSchema = (
  */
 export const buildModulesSchema = (
   moduleIds: string[],
-  getModuleById: (moduleId: string) => IModule | null
+  getModuleById: TBuildWorkItemTemplateDataParams["getModuleById"]
 ): TWorkItemTemplate["template_data"]["modules"] =>
   moduleIds
     .map((moduleId) => {
@@ -388,9 +375,9 @@ export const buildPropertyOptionsSchema = (
  * Builds properties schema
  */
 export const buildPropertiesSchema = (
-  customPropertyValues: TIssuePropertyValues,
-  getWorkItemTypeById: (workItemTypeId: string) => TIssueType | undefined,
-  getWorkItemPropertyById: (workItemPropertyId: string) => IIssueProperty<EIssuePropertyType> | undefined
+  customPropertyValues: TBuildWorkItemTemplateSchemaParams["customPropertyValues"],
+  getWorkItemTypeById: TBuildWorkItemTemplateDataParams["getWorkItemTypeById"],
+  getWorkItemPropertyById: TBuildWorkItemTemplateDataParams["getWorkItemPropertyById"]
 ): TWorkItemTemplate["template_data"]["properties"] => {
   const properties: TWorkItemTemplate["template_data"]["properties"] = [];
 

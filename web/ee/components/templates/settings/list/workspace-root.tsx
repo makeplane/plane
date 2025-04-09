@@ -27,7 +27,11 @@ export const WorkspaceSettingsTemplatesListRoot = observer((props: TWorkspaceSet
   return (
     <TemplateListActionWrapper>
       {({ handleUseTemplateAction }) => (
-        <TemplateListWrapper type={ETemplateType.WORK_ITEM} isInitializing={isInitializingWorkItemTemplates}>
+        <TemplateListWrapper
+          type={ETemplateType.WORK_ITEM}
+          isInitializing={isInitializingWorkItemTemplates}
+          templateIds={workItemTemplateIds}
+        >
           {workItemTemplateIds.map((templateId) => (
             <TemplateListItem
               key={templateId}

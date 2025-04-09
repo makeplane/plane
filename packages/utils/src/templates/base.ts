@@ -1,5 +1,12 @@
+// plane imports
 import { ETemplateLevel, ETemplateType } from "@plane/constants";
+import { TBaseTemplateWithData } from "@plane/types";
 
+/**
+ * Gets the i18n name key for the template type
+ * @param type - The type of the template
+ * @returns The i18n name key for the template type
+ */
 export const getTemplateTypeI18nName = (type: ETemplateType) => {
   switch (type) {
     case ETemplateType.PROJECT:
@@ -11,6 +18,11 @@ export const getTemplateTypeI18nName = (type: ETemplateType) => {
   }
 };
 
+/**
+ * Gets the i18n label key for the template type
+ * @param type - The type of the template
+ * @returns The i18n label key for the template type
+ */
 export const getTemplateI18nLabel = (type: ETemplateType) => {
   switch (type) {
     case ETemplateType.PROJECT:
@@ -34,6 +46,13 @@ export type TBaseTemplateSettingsPathProps = {
     }
 );
 
+/**
+ * Gets the base path for the template settings page
+ * @params workspaceSlug - The slug of the workspace
+ * @params level - The level of the template (workspace or project)
+ * @params projectId - The ID of the project (optional for workspace templates)
+ * @returns The base path for the template settings page
+ */
 export const getTemplateSettingsBasePath = (props: TBaseTemplateSettingsPathProps) => {
   const { level, workspaceSlug } = props;
 
@@ -52,6 +71,14 @@ export type TCreateTemplateSettingsPathProps = TBaseTemplateSettingsPathProps & 
   type: ETemplateType;
 };
 
+/**
+ * Gets the path for the create/update template settings page
+ * @param workspaceSlug - The slug of the workspace
+ * @param type - The type of the template
+ * @param level - The level of the template (workspace or project)
+ * @param projectId - The ID of the project (optional for workspace templates)
+ * @returns The path for the create/update template settings page
+ */
 export const getCreateUpdateTemplateSettingsPath = (props: TCreateTemplateSettingsPathProps) => {
   const { type, ...rest } = props;
   // get the base path
@@ -67,3 +94,12 @@ export const getCreateUpdateTemplateSettingsPath = (props: TCreateTemplateSettin
       return `${basePath}/page`;
   }
 };
+
+/**
+ * Extracts the basic template form data
+ */
+export const extractTemplateBasicFormData = (template: TBaseTemplateWithData) => ({
+  id: template.id,
+  name: template.name,
+  description_html: template.description_html,
+});

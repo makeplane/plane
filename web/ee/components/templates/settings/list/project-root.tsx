@@ -28,7 +28,11 @@ export const ProjectSettingsTemplatesListRoot = observer((props: TProjectSetting
   return (
     <TemplateListActionWrapper>
       {({ handleUseTemplateAction }) => (
-        <TemplateListWrapper type={ETemplateType.WORK_ITEM} isInitializing={isInitializingWorkItemTemplates}>
+        <TemplateListWrapper
+          type={ETemplateType.WORK_ITEM}
+          isInitializing={isInitializingWorkItemTemplates}
+          templateIds={workItemTemplateIds}
+        >
           {workItemTemplateIds.map((templateId) => (
             <TemplateListItem
               key={templateId}

@@ -44,7 +44,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, fetchWorkspaceSubscribedPlan } =
     useWorkspaceSubscription();
   const { fetchAll } = useIssueTypes();
-  const { fetchAllTemplates } = useWorkItemTemplates();
+  const { fetchAllTemplates: fetchAllWorkItemTemplates } = useWorkItemTemplates();
   const { fetchAllCustomerPropertiesAndOptions } = useCustomerProperties();
   const { isCustomersFeatureEnabled, fetchCustomers } = useCustomers();
   // derived values
@@ -136,7 +136,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
       ? ["workItemTemplates", workspaceSlug, isWorkItemTemplatesEnabled]
       : null,
     workspaceSlug && isWorkItemTemplatesEnabled
-      ? () => fetchAllTemplates({ workspaceSlug: workspaceSlug.toString(), level: ETemplateLevel.WORKSPACE })
+      ? () => fetchAllWorkItemTemplates({ workspaceSlug: workspaceSlug.toString(), level: ETemplateLevel.WORKSPACE })
       : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );

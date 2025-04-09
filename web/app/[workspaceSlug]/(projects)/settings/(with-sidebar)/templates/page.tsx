@@ -28,10 +28,12 @@ const TemplatesWorkspaceSettingsPage = observer(() => {
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
-  const { getAllWorkItemTemplateIds } = useWorkItemTemplates();
+  const { isAnyWorkItemTemplatesAvailable } = useWorkItemTemplates();
   // derived values
-  const isTemplatesEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TEMPLATES");
-  const workItemTemplateIds = getAllWorkItemTemplateIds(workspaceSlug?.toString());
+  const isWorkItemTemplatesEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TEMPLATES");
+  const isWorkItemTemplatesAvailable = isAnyWorkItemTemplatesAvailable(workspaceSlug?.toString());
+  const isAnyTemplatesEnabled = isWorkItemTemplatesEnabled;
+  const isAnyTemplatesAvailable = isWorkItemTemplatesAvailable;
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - ${t("common.templates")}` : undefined;
   const hasAdminPermission = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
@@ -51,7 +53,7 @@ const TemplatesWorkspaceSettingsPage = observer(() => {
             {t("templates.settings.description")}
           </span>
         </div>
-        {isTemplatesEnabled && workItemTemplateIds.length > 0 && (
+        {isAnyTemplatesEnabled && isAnyTemplatesAvailable && hasAdminPermission && (
           <CreateTemplatesButton
             workspaceSlug={workspaceSlug?.toString()}
             currentLevel={ETemplateLevel.WORKSPACE}

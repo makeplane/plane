@@ -8,24 +8,28 @@ import { getTemplateI18nLabel } from "@plane/utils";
 type TemplateListWrapperProps = {
   type: ETemplateType;
   isInitializing: boolean;
+  templateIds: string[];
   children: React.ReactNode;
 };
 
 export const TemplateListWrapper = observer((props: TemplateListWrapperProps) => {
-  const { type, isInitializing, children } = props;
+  const { type, isInitializing, templateIds, children } = props;
   // plane hooks
   const { t } = useTranslation();
+  // derived values
+  const areTemplatesAvailable = templateIds.length > 0;
 
+  if (!isInitializing && !areTemplatesAvailable) return null;
   return (
     <div className="flex flex-col gap-4">
       <h3 className="text-sm font-semibold text-custom-text-400">{t(getTemplateI18nLabel(type))}</h3>
       <div className="flex flex-col gap-4">
         {isInitializing ? (
-          <>
+          <Loader>
             {Array.from({ length: 3 }).map((_, index) => (
               <Loader.Item key={index} height="70px" />
             ))}
-          </>
+          </Loader>
         ) : (
           children
         )}

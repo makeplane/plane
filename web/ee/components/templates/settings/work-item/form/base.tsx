@@ -13,8 +13,8 @@ import { Button } from "@plane/ui";
 import { cn, TWorkItemSanitizationResult } from "@plane/utils";
 // plane web imports
 import { IssueAdditionalProperties } from "@/plane-web/components/issues";
+import { COMMON_BUTTON_CLASS_NAME } from "@/plane-web/components/templates/settings/common";
 // local imports
-import { COMMON_BUTTON_CLASS_NAME } from "./common";
 import { DefaultWorkItemTemplateProperties } from "./default-properties";
 import { SelectionDropdown } from "./selection-dropdown";
 import { TemplateDetails } from "./template-details";
@@ -107,7 +107,7 @@ export const WorkItemTemplateFormRoot: React.FC<TWorkItemTemplateFormRootProps> 
             <TemplateDetails />
           </div>
 
-          <div className="bg-custom-background-90/80 size-full">
+          <div className="bg-custom-background-90/40 border-t border-custom-border-100 size-full">
             <div className="w-full max-w-4xl px-page-x py-page-y md:p-9 mx-auto">
               {/* Work Item Properties Section */}
               <div className="space-y-2">

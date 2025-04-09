@@ -14,9 +14,8 @@ import { shouldRenderProject } from "@/helpers/project.helper";
 import { useProjectState, useUser } from "@/hooks/store";
 // plane web imports
 import { IssueTypeDropdown } from "@/plane-web/components/issue-types/dropdowns";
+import { COMMON_BUTTON_CLASS_NAME, COMMON_ERROR_CLASS_NAME } from "@/plane-web/components/templates/settings/common";
 import { useIssueTypes } from "@/plane-web/hooks/store";
-// local imports
-import { COMMON_BUTTON_CLASS_NAME, COMMON_ERROR_CLASS_NAME } from "./common";
 
 type TSelectionDropdownProps = {
   workspaceSlug: string;
