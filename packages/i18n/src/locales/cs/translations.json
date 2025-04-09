@@ -867,7 +867,8 @@
     "deleting": "Mazání",
     "pending": "Čekající",
     "invite": "Pozvat",
-    "view": "Pohled"
+    "view": "Pohled",
+    "deactivated_user": "Deaktivovaný uživatel"
   },
 
   "chart": {

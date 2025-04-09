@@ -869,7 +869,8 @@
     "deleting": "Se șterge",
     "pending": "În așteptare",
     "invite": "Invită",
-    "view": "Vizualizează"
+    "view": "Vizualizează",
+    "deactivated_user": "Utilizator dezactivat"
   },
 
   "chart": {

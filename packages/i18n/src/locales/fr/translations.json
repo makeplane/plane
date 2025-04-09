@@ -870,7 +870,8 @@
     "deleting": "Suppression",
     "pending": "En attente",
     "invite": "Inviter",
-    "view": "Afficher"
+    "view": "Afficher",
+    "deactivated_user": "Utilisateur désactivé"
   },
 
   "chart": {

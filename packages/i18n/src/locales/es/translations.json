@@ -872,7 +872,8 @@
     "deleting": "Eliminando",
     "pending": "Pendiente",
     "invite": "Invitar",
-    "view": "Ver"
+    "view": "Ver",
+    "deactivated_user": "Usuario desactivado"
   },
 
   "chart": {

@@ -869,7 +869,8 @@
     "deleting": "Menghapus",
     "pending": "Tertunda",
     "invite": "Undang",
-    "view": "Lihat"
+    "view": "Lihat",
+    "deactivated_user": "Pengguna dinonaktifkan"
   },
 
   "chart": {

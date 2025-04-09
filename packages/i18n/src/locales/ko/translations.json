@@ -871,7 +871,8 @@
     "deleting": "삭제 중",
     "pending": "보류 중",
     "invite": "초대",
-    "view": "보기"
+    "view": "보기",
+    "deactivated_user": "비활성화된 사용자"
   },
 
   "chart": {

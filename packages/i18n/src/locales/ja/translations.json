@@ -870,7 +870,8 @@
     "deleting": "デリーティング",
     "pending": "保留中",
     "invite": "招待",
-    "view": "ビュー"
+    "view": "ビュー",
+    "deactivated_user": "無効化されたユーザー"
   },
 
   "chart": {

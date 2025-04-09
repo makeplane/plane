@@ -702,7 +702,8 @@
     "deleting": "Deleting",
     "pending": "Pending",
     "invite": "Invite",
-    "view": "View"
+    "view": "View",
+    "deactivated_user": "Deactivated user"
   },
 
   "chart": {

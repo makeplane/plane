@@ -20,7 +20,7 @@ import {
 // helpers
 import { getTextContent } from "@/helpers/editor.helper";
 // hooks
-import { useIssueDetail, useProject, useUser } from "@/hooks/store";
+import { useIssueDetail, useMember, useProject, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 import useSize from "@/hooks/use-window-size";
 // plane web components
@@ -52,6 +52,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
   // hooks
   const windowSize = useSize();
   const { data: currentUser } = useUser();
+  const { getUserDetails } = useMember();
   const {
     issue: { getIssueById },
     peekIssue,
@@ -154,7 +155,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
               className="flex-shrink-0"
               entityInformation={{
                 createdAt: new Date(issue.created_at),
-                createdBy: issue.created_by,
+                createdByDisplayName: getUserDetails(issue.created_by ?? "")?.display_name ?? "",
                 id: issueId,
                 isRestoreDisabled: !isEditable || isArchived,
               }}

@@ -870,7 +870,8 @@
     "deleting": "删除中",
     "pending": "待处理",
     "invite": "邀请",
-    "view": "查看"
+    "view": "查看",
+    "deactivated_user": "已停用用户"
   },
 
   "chart": {
