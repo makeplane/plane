@@ -4,6 +4,7 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Check } from "lucide-react";
+import { EIssueServiceType } from "@plane/constants";
 // plane types
 import { TIssue } from "@plane/types";
 // plane ui
@@ -20,7 +21,7 @@ export const ChangeIssueAssignee: React.FC<Props> = observer((props) => {
   // router params
   const { workspaceSlug } = useParams();
   // store
-  const { updateIssue } = useIssueDetail();
+  const { updateIssue } = useIssueDetail(issue?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   const {
     project: { getProjectMemberIds, getProjectMemberDetails },
   } = useMember();
