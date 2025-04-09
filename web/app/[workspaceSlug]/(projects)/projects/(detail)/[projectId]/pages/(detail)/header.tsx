@@ -2,12 +2,11 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import useSWR from "swr";
-import { Archive, Earth, FileText, Layers, Lock } from "lucide-react";
+import { FileText, Layers } from "lucide-react";
 // types
 import { ICustomSearchSelectOption } from "@plane/types";
 // ui
-import { Breadcrumbs, Header, CustomSearchSelect, Tooltip } from "@plane/ui";
+import { Breadcrumbs, Header, CustomSearchSelect } from "@plane/ui";
 // components
 import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 import { PageEditInformationPopover } from "@/components/pages";
@@ -33,16 +32,10 @@ export const PageDetailsHeader = observer(() => {
     pageId: pageId?.toString() ?? "",
     storeType: EPageStoreType.PROJECT,
   });
-  const { getPageById, getCurrentProjectPageIds, fetchPagesList } = usePageStore(EPageStoreType.PROJECT);
-  // derived values
+  const { getPageById, getCurrentProjectPageIds } = usePageStore(EPageStoreType.PROJECT);
   // derived values
   const projectPageIds = getCurrentProjectPageIds(projectId?.toString());
 
-  // fetching pages list
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_PAGES_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchPagesList(workspaceSlug.toString(), projectId.toString()) : null
-  );
   if (!page) return null;
   const switcherOptions = projectPageIds
     .map((id) => {
