@@ -1,15 +1,23 @@
 import { FC } from "react";
+import { observer } from "mobx-react";
 import Image from "next/image";
-import { getButtonStyling } from "@plane/ui";
+import { useParams } from "next/navigation";
+// constants
+import { E_FEATURE_FLAGS } from "@plane/constants";
 // helpers
 import { cn } from "@/helpers/common.helper";
+// components
+import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace";
 
 export type IntegrationsEmptyStateProps = {
   theme: string;
 };
 
-export const IntegrationsEmptyState: FC<IntegrationsEmptyStateProps> = (props) => {
+export const IntegrationsEmptyState: FC<IntegrationsEmptyStateProps> = observer((props) => {
   const { theme } = props;
+  // router
+  const { workspaceSlug } = useParams();
+  // derived values
   const isDarkMode = theme === "dark";
 
   return (
@@ -32,14 +40,10 @@ export const IntegrationsEmptyState: FC<IntegrationsEmptyStateProps> = (props) =
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <a
-              className={`${getButtonStyling("primary", "md")} cursor-pointer`}
-              href="https://ece39166.sibforms.com/serve/MUIFAPPLJk02NaZT7ZOinKdoKPL351GVFpEmit1jpJixcLlqd3TaulIT9Czmu0yDy_5bqzuVmEu6Y6oUc09X2NIhI88jplFs0G6ARQa6NxHxACHAUtKNQhOmyI7zpC4MLV_E3kkwlwbzguZyKKURADedKgRarGu77LFz6f9CH-DUDntNbrooJhU1-vndV1EyWNrFgvjMDjz2wSat"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Stay in loop
-            </a>
+            <UpgradeEmptyStateButton
+              workspaceSlug={workspaceSlug?.toString()}
+              flag={E_FEATURE_FLAGS.SILO_INTEGRATIONS}
+            />
           </div>
         </div>
         <div className="relative hidden w-1/2 lg:block">
@@ -63,4 +67,4 @@ export const IntegrationsEmptyState: FC<IntegrationsEmptyStateProps> = (props) =
       </div>
     </div>
   );
-};
+});
