@@ -91,6 +91,7 @@ export const CreateProjectFormBase: FC<TCreateProjectFormProps> = observer((prop
 
   const onSubmit = async (formData: Partial<TProject>) => {
     // Get the members payload for bulk add
+    const allowAssetStatusUpdate = !projectTemplateId;
     const allowBulkAddMembers = isProjectGroupingEnabled || projectTemplateId;
     const membersPayload: IProjectBulkAddFormData["members"] = [];
     if (formData.members) {
@@ -119,7 +120,7 @@ export const CreateProjectFormBase: FC<TCreateProjectFormProps> = observer((prop
 
     return createProjectService(formData)
       .then(async (res) => {
-        if (coverImage) {
+        if (coverImage && allowAssetStatusUpdate) {
           await updateCoverImageStatus(res.id, coverImage);
         }
         const newPayload = {
