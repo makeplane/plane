@@ -86,7 +86,7 @@ const ActiveCycleDetail = observer((props: ActiveCycleDetailProps) => {
         })}
       >
         <div className="h-full w-full flex-1">
-          {cycleProgress !== null ? (
+          {cycleProgress !== null && !progressLoader ? (
             <div className="h-[430px]">
               <Selection
                 plotType={computedPlotType}
@@ -119,7 +119,6 @@ const ActiveCycleDetail = observer((props: ActiveCycleDetailProps) => {
           data={cycleProgress}
           estimateType={computedEstimateType}
           plotType={computedPlotType}
-          progressLoader={progressLoader}
           handleFiltersUpdate={handleFiltersUpdate}
           parentWidth={containerWidth}
         />

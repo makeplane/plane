@@ -1,4 +1,4 @@
-import { startOfToday, format } from "date-fns";
+import { startOfToday, format, differenceInWeeks } from "date-fns";
 import { TCycleProgress } from "@plane/types";
 import { TProgressChartData } from "@/helpers/cycle.helper";
 
@@ -33,6 +33,7 @@ const CustomizedXAxisTicks = (props: TProps) => {
   const isStart = payload.value === startDate;
   const isEnd = payload.value === endDate;
   const isToday = payload.value === format(startOfToday(), "yyyy-MM-dd");
+  const weeks = endDate && startDate ? differenceInWeeks(endDate, startDate) : 4;
 
   if (!data || !endDate) return null;
 
@@ -62,7 +63,10 @@ const CustomizedXAxisTicks = (props: TProps) => {
 
   const shouldShowThisTick = () =>
     (data.length < 10 && showAllTicks) ||
-    (payload.index !== 0 && payload.index % 7 === 0 && !areAdjacentTicksVisible(payload) && showAllTicks) ||
+    (payload.index !== 0 &&
+      payload.index % (weeks * 2 - 1) === 0 &&
+      !areAdjacentTicksVisible(payload) &&
+      showAllTicks) ||
     shouldShowTick(data[payload.index]);
 
   if (!shouldShowThisTick()) return null;

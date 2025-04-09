@@ -489,16 +489,13 @@ export class CycleStore implements ICycleStore {
    * @param cycleId
    *  @returns
    */
-  fetchActiveCycleProgress = async (workspaceSlug: string, projectId: string, cycleId: string) => {
-    this.progressLoader = true;
-    return await this.cycleService.workspaceActiveCyclesProgress(workspaceSlug, projectId, cycleId).then((progress) => {
+  fetchActiveCycleProgress = async (workspaceSlug: string, projectId: string, cycleId: string) =>
+    await this.cycleService.workspaceActiveCyclesProgress(workspaceSlug, projectId, cycleId).then((progress) => {
       runInAction(() => {
         set(this.cycleMap, [cycleId], { ...this.cycleMap[cycleId], ...progress });
-        this.progressLoader = false;
       });
       return progress;
     });
-  };
 
   /**
    * @description fetches active cycle progress for pro users
@@ -522,8 +519,9 @@ export class CycleStore implements ICycleStore {
     projectId: string,
     cycleId: string,
     analytic_type: string
-  ) =>
-    await this.cycleService
+  ) => {
+    set(this.cycleMap, [cycleId, analytic_type === "points" ? "estimate_distribution" : "distribution"], null);
+    return await this.cycleService
       .workspaceActiveCyclesAnalytics(workspaceSlug, projectId, cycleId, analytic_type)
       .then((cycle) => {
         runInAction(() => {
@@ -531,7 +529,7 @@ export class CycleStore implements ICycleStore {
         });
         return cycle;
       });
-
+  };
   /**
    * @description fetches cycle details
    * @param workspaceSlug
@@ -608,9 +606,6 @@ export class CycleStore implements ICycleStore {
    */
   updateCycleDetails = async (workspaceSlug: string, projectId: string, cycleId: string, data: Partial<ICycle>) => {
     try {
-      runInAction(() => {
-        set(this.cycleMap, [cycleId], { ...this.cycleMap?.[cycleId], ...data });
-      });
       const response = await this.cycleService.patchCycle(workspaceSlug, projectId, cycleId, data);
       this.fetchCycleDetails(workspaceSlug, projectId, cycleId);
       return response;

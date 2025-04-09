@@ -50,7 +50,6 @@ export const ActiveCycleBase: React.FC<IActiveCycleDetails> = observer((props) =
             projectId={projectId}
             cycleId={cycleDetails.cycle?.id || "  "}
             workspaceSlug={workspaceSlug}
-            progressLoader={cycleDetails.progressLoader}
           />
         </div>
         <div>

@@ -47,7 +47,7 @@ const useCycleDetails = (props: IActiveCycleDetails) => {
   // fetches cycle details for non-pro users
   useSWR(
     workspaceSlug && projectId && cycle?.id && cycle?.version === 1
-      ? `PROJECT_ACTIVE_CYCLE_${projectId}_PROGRESS`
+      ? `PROJECT_ACTIVE_CYCLE_${projectId}_PROGRESS_${cycle.start_date}_${cycle.end_date}`
       : null,
     workspaceSlug && projectId && cycle?.id && cycle?.version === 1
       ? () => fetchActiveCycleProgress(workspaceSlug, projectId, cycle.id)
@@ -56,26 +56,28 @@ const useCycleDetails = (props: IActiveCycleDetails) => {
   );
   // fetches cycle details for non-pro users
   useSWR(
-    workspaceSlug && projectId && cycle?.id && !cycle?.distribution && cycle?.version === 1
-      ? `PROJECT_ACTIVE_CYCLE_${projectId}_DURATION`
+    workspaceSlug && projectId && cycle?.id && cycle?.version === 1
+      ? `PROJECT_ACTIVE_CYCLE_${projectId}_DURATION_${cycle.start_date}_${cycle.end_date}`
       : null,
-    workspaceSlug && projectId && cycle?.id && !cycle?.distribution && cycle?.version === 1
+    workspaceSlug && projectId && cycle?.id && cycle?.version === 1
       ? () => fetchActiveCycleAnalytics(workspaceSlug, projectId, cycle.id, "issues")
-      : null
+      : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetches cycle details for non-pro users
   useSWR(
-    workspaceSlug && projectId && cycle?.id && !cycle?.estimate_distribution && cycle?.version === 1
-      ? `PROJECT_ACTIVE_CYCLE_${projectId}_ESTIMATE_DURATION`
+    workspaceSlug && projectId && cycle?.id && cycle?.version === 1
+      ? `PROJECT_ACTIVE_CYCLE_${projectId}_ESTIMATE_DURATION_${cycle.start_date}_${cycle.end_date}`
       : null,
-    workspaceSlug && projectId && cycle?.id && !cycle?.estimate_distribution && cycle?.version === 1
+    workspaceSlug && projectId && cycle?.id && cycle?.version === 1
       ? () => fetchActiveCycleAnalytics(workspaceSlug, projectId, cycle.id, "points")
-      : null
+      : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetches cycle details for pro users
   useSWR(
     workspaceSlug && projectId && cycleId && cycle?.version === 2
-      ? `PROJECT_ACTIVE_CYCLE_${projectId}_PROGRESS_PRO`
+      ? `PROJECT_ACTIVE_CYCLE_${projectId}_PROGRESS_PRO_${cycle.start_date}_${cycle.end_date}`
       : null,
     workspaceSlug && projectId && cycleId && cycle?.version === 2
       ? () => fetchActiveCycleProgressPro(workspaceSlug, projectId, cycleId)

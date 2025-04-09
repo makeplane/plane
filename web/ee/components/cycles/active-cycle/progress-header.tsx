@@ -18,7 +18,6 @@ type Props = {
   projectId: string;
   cycleId: string;
   cycleDetails: ICycle;
-  progressLoader: boolean;
 };
 
 export const CycleProgressHeader: FC<Props> = (props: Props) => {
