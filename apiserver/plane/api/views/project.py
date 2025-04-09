@@ -136,7 +136,7 @@ class ProjectAPIEndpoint(BaseAPIView):
         serializer = ProjectSerializer(project, fields=self.fields, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request, slug, pk=None):
+    def post(self, request, slug):
         try:
             workspace = Workspace.objects.get(slug=slug)
             serializer = ProjectSerializer(

@@ -136,7 +136,7 @@ class ModuleAPIEndpoint(BaseAPIView):
             .order_by(self.kwargs.get("order_by", "-created_at"))
         )
 
-    def post(self, request, slug, project_id, pk=None):
+    def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         serializer = ModuleSerializer(
             data=request.data,
@@ -333,7 +333,7 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
-    def get(self, request, slug, project_id, module_id):
+    def get(self, request, slug, project_id, module_id, issue_id=None):
         order_by = request.GET.get("order_by", "created_at")
         issues = (
             Issue.issue_objects.filter(

@@ -237,7 +237,7 @@ class CycleAPIEndpoint(BaseAPIView):
             ).data,
         )
 
-    def post(self, request, slug, project_id, pk=None):
+    def post(self, request, slug, project_id):
         if (
             request.data.get("start_date", None) is None
             and request.data.get("end_date", None) is None

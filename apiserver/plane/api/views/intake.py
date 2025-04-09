@@ -76,7 +76,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
             ).data,
         )
 
-    def post(self, request, slug, project_id, pk=None):
+    def post(self, request, slug, project_id):
         if not request.data.get("issue", {}).get("name", False):
             return Response(
                 {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
