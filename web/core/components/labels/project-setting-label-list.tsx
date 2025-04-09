@@ -14,6 +14,7 @@ import {
   DeleteLabelModal,
   ProjectSettingLabelGroup,
   ProjectSettingLabelItem,
+  TLabelOperationsCallbacks,
 } from "@/components/labels";
 // hooks
 import { useLabel, useUserPermissions } from "@/hooks/store";
@@ -24,7 +25,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   // router
   const { workspaceSlug, projectId } = useParams();
   // refs
-  const scrollToRef = useRef<HTMLFormElement>(null);
+  const scrollToRef = useRef<HTMLDivElement>(null);
   // states
   const [showLabelForm, setLabelForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -32,11 +33,16 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { projectLabels, updateLabelPosition, projectLabelsTree } = useLabel();
+  const { projectLabels, updateLabelPosition, projectLabelsTree, createLabel, updateLabel } = useLabel();
   const { allowPermissions } = useUserPermissions();
   // derived values
   const isEditable = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/project-settings/labels" });
+  const labelOperationsCallbacks: TLabelOperationsCallbacks = {
+    createLabel: (data: Partial<IIssueLabel>) => createLabel(workspaceSlug?.toString(), projectId?.toString(), data),
+    updateLabel: (labelId: string, data: Partial<IIssueLabel>) =>
+      updateLabel(workspaceSlug?.toString(), projectId?.toString(), labelId, data),
+  };
 
   const newLabel = () => {
     setIsUpdating(false);
@@ -84,6 +90,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
               labelForm={showLabelForm}
               setLabelForm={setLabelForm}
               isUpdating={isUpdating}
+              labelOperationsCallbacks={labelOperationsCallbacks}
               ref={scrollToRef}
               onClose={() => {
                 setLabelForm(false);
@@ -117,6 +124,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                         isLastChild={index === projectLabelsTree.length - 1}
                         onDrop={onDrop}
                         isEditable={isEditable}
+                        labelOperationsCallbacks={labelOperationsCallbacks}
                       />
                     );
                   }
@@ -130,6 +138,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                       isLastChild={index === projectLabelsTree.length - 1}
                       onDrop={onDrop}
                       isEditable={isEditable}
+                      labelOperationsCallbacks={labelOperationsCallbacks}
                     />
                   );
                 })}

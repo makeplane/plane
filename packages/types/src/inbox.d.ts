@@ -1,6 +1,8 @@
+// plane constants
+import { TInboxIssue, TInboxIssueStatus } from "@plane/constants";
+// plane types
 import { TPaginationInfo } from "./common";
 import { TIssuePriorities } from "./issues";
-import { TIssue } from "./issues/base";
 
 // filters
 export type TInboxIssueFilterMemberKeys = "assignees" | "created_by";
