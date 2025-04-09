@@ -863,7 +863,8 @@
     "deleting": "Đang xóa",
     "pending": "Đang chờ xử lý",
     "invite": "Mời",
-    "view": "Xem"
+    "view": "Xem",
+    "deactivated_user": "Người dùng bị vô hiệu hóa"
   },
   "chart": {
     "x_axis": "Trục X",

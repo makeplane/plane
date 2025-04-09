@@ -871,7 +871,8 @@
     "deleting": "刪除中",
     "pending": "待處理",
     "invite": "邀請",
-    "view": "檢視"
+    "view": "檢視",
+    "deactivated_user": "已停用用戶"
   },
 
   "chart": {

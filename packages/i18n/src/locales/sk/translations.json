@@ -869,7 +869,8 @@
     "deleting": "Mazanie",
     "pending": "Čakajúce",
     "invite": "Pozvať",
-    "view": "Zobraziť"
+    "view": "Zobraziť",
+    "deactivated_user": "Deaktivovaný používateľ"
   },
 
   "chart": {

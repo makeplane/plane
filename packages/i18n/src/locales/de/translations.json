@@ -862,7 +862,8 @@
     "deleting": "Wird gelöscht",
     "pending": "Ausstehend",
     "invite": "Einladen",
-    "view": "Ansicht"
+    "view": "Ansicht",
+    "deactivated_user": "Deaktivierter Benutzer"
   },
   "chart": {
     "x_axis": "X-Achse",

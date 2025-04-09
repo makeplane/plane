@@ -865,7 +865,8 @@
     "deleting": "Usuwanie",
     "pending": "Oczekujące",
     "invite": "Zaproś",
-    "view": "Widok"
+    "view": "Widok",
+    "deactivated_user": "Dezaktywowany użytkownik"
   },
   "chart": {
     "x_axis": "Oś X",
