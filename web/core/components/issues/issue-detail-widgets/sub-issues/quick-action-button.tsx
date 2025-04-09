@@ -2,7 +2,7 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { LayersIcon, Plus } from "lucide-react";
-import { EIssueServiceType } from "@plane/constants";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { TIssue, TIssueServiceType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
@@ -13,11 +13,12 @@ type Props = {
   issueId: string;
   customButton?: React.ReactNode;
   disabled?: boolean;
-  issueServiceType?: TIssueServiceType;
+  issueServiceType: TIssueServiceType;
 };
 
 export const SubIssuesActionButton: FC<Props> = observer((props) => {
-  const { issueId, customButton, disabled = false, issueServiceType = EIssueServiceType.ISSUES } = props;
+  const { issueId, customButton, disabled = false, issueServiceType } = props;
+  // translation
   const { t } = useTranslation();
   // store hooks
   const {

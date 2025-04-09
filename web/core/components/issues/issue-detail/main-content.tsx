@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { EIssueServiceType } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
 import { TNameDescriptionLoader } from "@plane/types";
 // components
@@ -179,6 +180,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         issueId={issueId}
         disabled={!isEditable || isArchived}
         renderWidgetModals={!isPeekModeActive}
+        issueServiceType={EIssueServiceType.ISSUES}
       />
 
       {windowSize[0] < 768 && (
