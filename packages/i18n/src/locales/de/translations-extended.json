@@ -63,6 +63,38 @@
         "title": "Keine Integrationen konfiguriert",
         "description": "Konfigurieren Sie GitHub und andere Integrationen, um Ihre Projektarbeitsaufgaben zu synchronisieren."
       }
+    },
+    "estimates": {
+      "edit": {
+        "title": "Schätzsystem bearbeiten",
+        "add_or_update": {
+          "title": "Schätzungen hinzufügen, aktualisieren oder entfernen",
+          "description": "Verwalten Sie das aktuelle System durch Hinzufügen, Aktualisieren oder Entfernen von Punkten oder Kategorien."
+        },
+        "switch": {
+          "title": "Schätzungstyp ändern",
+          "description": "Konvertieren Sie Ihr Punktesystem in ein Kategoriesystem und umgekehrt."
+        }
+      },
+      "switch": "Schätzsystem wechseln",
+      "current": "Aktuelles Schätzsystem",
+      "select": "Wählen Sie ein Schätzsystem",
+      "toasts": {
+        "reorder": {
+          "success": {
+            "title": "Schätzungen neu geordnet",
+            "message": "Die Schätzungen wurden in Ihrem Projekt neu geordnet."
+          },
+          "error": {
+            "title": "Neuordnung der Schätzungen fehlgeschlagen",
+            "message": "Die Schätzungen konnten nicht neu geordnet werden, bitte versuchen Sie es erneut"
+          }
+        }
+      },
+      "validation": {
+        "fill": "Bitte füllen Sie dieses Schätzungsfeld aus",
+        "repeat": "Schätzungswert darf nicht wiederholt werden"
+      }
     }
   },
 

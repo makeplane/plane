@@ -62,6 +62,38 @@
         "title": "未配置集成",
         "description": "配置 GitHub 和其他集成以同步您的项目工作项。"
       }
+    },
+    "estimates": {
+      "edit": {
+        "title": "编辑估算系统",
+        "add_or_update": {
+          "title": "添加、更新或删除估算",
+          "description": "通过添加、更新或删除点数或类别来管理当前系统。"
+        },
+        "switch": {
+          "title": "更改估算类型",
+          "description": "将点数系统转换为类别系统，反之亦然。"
+        }
+      },
+      "switch": "切换估算系统",
+      "current": "当前估算系统",
+      "select": "选择估算系统",
+      "toasts": {
+        "reorder": {
+          "success": {
+            "title": "估算已重新排序",
+            "message": "估算已在您的项目中重新排序。"
+          },
+          "error": {
+            "title": "估算重新排序失败",
+            "message": "我们无法重新排序估算，请重试"
+          }
+        }
+      },
+      "validation": {
+        "fill": "请填写此估算字段",
+        "repeat": "估算值不能重复"
+      }
     }
   },
 

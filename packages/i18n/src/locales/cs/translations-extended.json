@@ -63,6 +63,38 @@
         "title": "Žádné integrace nejsou nakonfigurovány",
         "description": "Nakonfigurujte GitHub a další integrace pro synchronizaci vašich pracovních položek projektu."
       }
+    },
+    "estimates": {
+      "edit": {
+        "title": "Upravit systém odhadů",
+        "add_or_update": {
+          "title": "Přidat, upravit nebo odebrat odhady",
+          "description": "Spravujte aktuální systém přidáním, úpravou nebo odebráním bodů či kategorií."
+        },
+        "switch": {
+          "title": "Změnit typ odhadu",
+          "description": "Převeďte váš bodový systém na systém kategorií a naopak."
+        }
+      },
+      "switch": "Přepnout systém odhadů",
+      "current": "Aktuální systém odhadů",
+      "select": "Vyberte systém odhadů",
+      "toasts": {
+        "reorder": {
+          "success": {
+            "title": "Odhady přeuspořádány",
+            "message": "Odhady byly přeuspořádány ve vašem projektu."
+          },
+          "error": {
+            "title": "Přeuspořádání odhadů selhalo",
+            "message": "Nepodařilo se přeuspořádat odhady, zkuste to prosím znovu"
+          }
+        }
+      },
+      "validation": {
+        "fill": "Vyplňte prosím toto pole odhadu",
+        "repeat": "Hodnota odhadu se nemůže opakovat"
+      }
     }
   },
 

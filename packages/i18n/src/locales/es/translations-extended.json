@@ -62,6 +62,38 @@
         "title": "No hay integraciones configuradas",
         "description": "Configura GitHub y otras integraciones para sincronizar los elementos de trabajo de tu proyecto."
       }
+    },
+    "estimates": {
+      "edit": {
+        "title": "Editar sistema de estimaciones",
+        "add_or_update": {
+          "title": "Agregar, actualizar o eliminar estimaciones",
+          "description": "Gestiona el sistema actual agregando, actualizando o eliminando los puntos o categorías."
+        },
+        "switch": {
+          "title": "Cambiar tipo de estimación",
+          "description": "Convierte tu sistema de puntos a sistema de categorías y viceversa."
+        }
+      },
+      "switch": "Cambiar sistema de estimaciones",
+      "current": "Sistema de estimaciones actual",
+      "select": "Seleccionar un sistema de estimaciones",
+      "toasts": {
+        "reorder": {
+          "success": {
+            "title": "Estimaciones reordenadas",
+            "message": "Las estimaciones han sido reordenadas en tu proyecto."
+          },
+          "error": {
+            "title": "Error al reordenar estimaciones",
+            "message": "No pudimos reordenar las estimaciones, por favor intenta de nuevo"
+          }
+        }
+      },
+      "validation": {
+        "fill": "Por favor completa este campo de estimación",
+        "repeat": "El valor de estimación no puede repetirse"
+      }
     }
   },
 

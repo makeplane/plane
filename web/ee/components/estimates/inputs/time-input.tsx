@@ -29,7 +29,7 @@ export const EstimateTimeInput: FC<TEstimateTimeInputProps> = (props) => {
           autoFocus
           min={0}
           step="any"
-          value={hours}
+          value={hours || ""}
           onChange={(e) => onChange("hours", parseInt(e.target.value))}
         />
         {/* minutes */}
@@ -40,7 +40,7 @@ export const EstimateTimeInput: FC<TEstimateTimeInputProps> = (props) => {
           placeholder="Minutes"
           className="w-full border-0 border-l rounded-none"
           min={0}
-          value={minutes}
+          value={minutes || ""}
           onChange={(e) => onChange("minutes", parseInt(e.target.value))}
         />
       </div>

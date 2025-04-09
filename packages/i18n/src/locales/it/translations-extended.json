@@ -60,6 +60,38 @@
         "title": "Nessuna integrazione configurata",
         "description": "Configura GitHub e altre integrazioni per sincronizzare i tuoi elementi di lavoro del progetto."
       }
+    },
+    "estimates": {
+      "edit": {
+        "title": "Modifica sistema di stime",
+        "add_or_update": {
+          "title": "Aggiungi, aggiorna o rimuovi stime",
+          "description": "Gestisci il sistema attuale aggiungendo, aggiornando o rimuovendo punti o categorie."
+        },
+        "switch": {
+          "title": "Cambia tipo di stima",
+          "description": "Converti il tuo sistema a punti in sistema a categorie e viceversa."
+        }
+      },
+      "switch": "Cambia sistema di stime",
+      "current": "Sistema di stime attuale",
+      "select": "Seleziona un sistema di stime",
+      "toasts": {
+        "reorder": {
+          "success": {
+            "title": "Stime riordinate",
+            "message": "Le stime sono state riordinate nel tuo progetto."
+          },
+          "error": {
+            "title": "Riordinamento stime fallito",
+            "message": "Non siamo riusciti a riordinare le stime, riprova"
+          }
+        }
+      },
+      "validation": {
+        "fill": "Compila questo campo di stima",
+        "repeat": "Il valore della stima non può essere ripetuto"
+      }
     }
   },
 

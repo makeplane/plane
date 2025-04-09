@@ -63,6 +63,38 @@
         "title": "Nicio integrare configurată",
         "description": "Configurează GitHub și alte integrări pentru a sincroniza elementele de lucru ale proiectului tău."
       }
+    },
+    "estimates": {
+      "edit": {
+        "title": "Editează sistemul de estimări",
+        "add_or_update": {
+          "title": "Adaugă, actualizează sau elimină estimări",
+          "description": "Gestionează sistemul curent prin adăugarea, actualizarea sau eliminarea punctelor sau categoriilor."
+        },
+        "switch": {
+          "title": "Schimbă tipul de estimare",
+          "description": "Convertește sistemul tău de puncte în sistem de categorii și invers."
+        }
+      },
+      "switch": "Schimbă sistemul de estimări",
+      "current": "Sistemul de estimări curent",
+      "select": "Selectează un sistem de estimări",
+      "toasts": {
+        "reorder": {
+          "success": {
+            "title": "Estimări reordonate",
+            "message": "Estimările au fost reordonate în proiectul tău."
+          },
+          "error": {
+            "title": "Reordonarea estimărilor a eșuat",
+            "message": "Nu am putut reordona estimările, te rugăm să încerci din nou"
+          }
+        }
+      },
+      "validation": {
+        "fill": "Te rugăm să completezi acest câmp de estimare",
+        "repeat": "Valoarea estimării nu poate fi repetată"
+      }
     }
   },
 

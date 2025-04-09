@@ -63,6 +63,38 @@
         "title": "Không có tích hợp nào được cấu hình",
         "description": "Cấu hình GitHub và các tích hợp khác để đồng bộ hóa các mục công việc dự án của bạn."
       }
+    },
+    "estimates": {
+      "edit": {
+        "title": "Chỉnh sửa hệ thống ước tính",
+        "add_or_update": {
+          "title": "Thêm, cập nhật hoặc xóa ước tính",
+          "description": "Quản lý hệ thống hiện tại bằng cách thêm, cập nhật hoặc xóa điểm hoặc danh mục."
+        },
+        "switch": {
+          "title": "Thay đổi loại ước tính",
+          "description": "Chuyển đổi hệ thống điểm của bạn thành hệ thống danh mục và ngược lại."
+        }
+      },
+      "switch": "Chuyển đổi hệ thống ước tính",
+      "current": "Hệ thống ước tính hiện tại",
+      "select": "Chọn hệ thống ước tính",
+      "toasts": {
+        "reorder": {
+          "success": {
+            "title": "Đã sắp xếp lại ước tính",
+            "message": "Ước tính đã được sắp xếp lại trong dự án của bạn."
+          },
+          "error": {
+            "title": "Sắp xếp lại ước tính thất bại",
+            "message": "Chúng tôi không thể sắp xếp lại ước tính, vui lòng thử lại"
+          }
+        }
+      },
+      "validation": {
+        "fill": "Vui lòng điền vào trường ước tính này",
+        "repeat": "Giá trị ước tính không thể lặp lại"
+      }
     }
   },
 

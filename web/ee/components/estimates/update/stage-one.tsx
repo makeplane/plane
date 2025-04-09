@@ -1,6 +1,7 @@
 "use client";
 
 import { FC } from "react";
+import { useTranslation } from "@plane/i18n";
 import { TEstimateUpdateStageKeys } from "@plane/types";
 import { Button } from "@plane/ui";
 // plane web constants
@@ -14,11 +15,12 @@ type TEstimateUpdateStageOne = {
 
 export const EstimateUpdateStageOne: FC<TEstimateUpdateStageOne> = (props) => {
   const { estimateEditType, handleClose, handleEstimateEditType } = props;
+  const { t } = useTranslation();
 
   return (
     <>
       <div className="relative flex justify-between items-center gap-2 px-5">
-        <div className="text-xl font-medium text-custom-text-200">Edit estimate system</div>
+        <div className="text-xl font-medium text-custom-text-200">{t("project_settings.estimates.edit.title")}</div>
       </div>
 
       {!estimateEditType && (
@@ -32,9 +34,11 @@ export const EstimateUpdateStageOne: FC<TEstimateUpdateStageOne> = (props) => {
                   className="border border-custom-border-300 cursor-pointer space-y-1 p-3 rounded transition-colors"
                   onClick={() => handleEstimateEditType && handleEstimateEditType(currentStage)}
                 >
-                  <h3 className="text-base font-medium">{ESTIMATE_OPTIONS_STAGE_ONE?.[currentStage]?.title}</h3>
+                  <h3 className="text-base font-medium">
+                    {t(ESTIMATE_OPTIONS_STAGE_ONE?.[currentStage]?.i18n_title || "")}
+                  </h3>
                   <p className="text-sm text-custom-text-200">
-                    {ESTIMATE_OPTIONS_STAGE_ONE?.[currentStage]?.description}
+                    {t(ESTIMATE_OPTIONS_STAGE_ONE?.[currentStage]?.i18n_description || "")}
                   </p>
                 </div>
               );
@@ -44,7 +48,7 @@ export const EstimateUpdateStageOne: FC<TEstimateUpdateStageOne> = (props) => {
 
       <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-custom-border-200">
         <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-          Cancel
+          {t("common.cancel")}
         </Button>
       </div>
     </>

@@ -60,6 +60,48 @@
         "title": "No integrations configured",
         "description": "Configure GitHub and other integrations to sync your project work items."
       }
+    },
+    "estimates": {
+      "edit": {
+        "title": "Edit estimate system",
+        "add_or_update": {
+          "title": "Add, update or remove estimates",
+          "description": "Manage current system either adding, updating or removing the points or categories."
+        },
+        "switch": {
+          "title": "Change estimate type",
+          "description": "Convert your points system to categories system and vice versa."
+        }
+      },
+      "switch": "Switch estimate system",
+      "current": "Current estimate system",
+      "select": "Select an estimate system",
+      "toasts": {
+        "reorder": {
+          "success": {
+            "title": "Estimates re-ordered",
+            "message": "Estimates have been re-ordered in your project."
+          },
+          "error": {
+            "title": "Estimate re-order failed",
+            "message": "We were unable to re-order the estimates, please try again"
+          }
+        },
+        "switch": {
+          "success": {
+            "title": "Estimate system created",
+            "message": "Created and Enabled successfully"
+          },
+          "error": {
+            "title": "Error",
+            "message": "Something went wrong"
+          }
+        }
+      },
+      "validation": {
+        "fill": "Please fill this estimate field",
+        "repeat": "Estimate value cannot be repeated"
+      }
     }
   },
 

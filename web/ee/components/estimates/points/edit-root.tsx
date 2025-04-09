@@ -1,6 +1,7 @@
 import { Dispatch, FC, Fragment, SetStateAction, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronLeft, Plus } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { TEstimatePointsObject, TEstimateTypeError, TEstimateUpdateStageKeys } from "@plane/types";
 import { Button, Sortable, TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -24,6 +25,7 @@ export const EstimatePointEditRoot: FC<TEstimatePointEditRoot> = observer((props
   const { workspaceSlug, projectId, estimateId, setEstimateEditType, handleClose } = props;
   // hooks
   const { asJson: estimate, estimatePointIds, estimatePointById, updateEstimateSortOrder } = useEstimate(estimateId);
+  const { t } = useTranslation();
   // states
   const [estimatePointCreate, setEstimatePointCreate] = useState<TEstimatePointsObject[] | undefined>(undefined);
   const [estimatePointError, setEstimatePointError] = useState<TEstimateTypeError>(undefined);
@@ -61,14 +63,14 @@ export const EstimatePointEditRoot: FC<TEstimatePointEditRoot> = observer((props
       await updateEstimateSortOrder(workspaceSlug, projectId, updatedEstimateKeysOrder);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Estimates re-ordered",
-        message: "Estimates have been re-ordered in your project.",
+        title: t("estimates.toasts.reorder.success.title"),
+        message: t("estimates.toasts.reorder.success.message"),
       });
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Estimate re-order failed",
-        message: "We were unable to re-order the estimates, please try again",
+        title: t("estimates.toasts.reorder.error.title"),
+        message: t("estimates.toasts.reorder.error.message"),
       });
     }
   };
@@ -137,8 +139,7 @@ export const EstimatePointEditRoot: FC<TEstimatePointEditRoot> = observer((props
           } else {
             // NOTE: validate the estimate type
             newError[currentKey].message =
-              newError[currentKey].message ||
-              "Estimate can't be empty. Enter a value in each field or remove those you don't have values for.";
+              newError[currentKey].message || t("project_settings.estimates.validation.remove_empty");
           }
         });
         return newError;
@@ -157,11 +158,11 @@ export const EstimatePointEditRoot: FC<TEstimatePointEditRoot> = observer((props
           >
             <ChevronLeft className="w-4 h-4" />
           </div>
-          <div className="text-xl font-medium text-custom-text-200">Edit estimate system</div>
+          <div className="text-xl font-medium text-custom-text-200">{t("project_settings.estimates.edit.title")}</div>
         </div>
 
         <Button variant="primary" size="sm" onClick={handleEstimateDone}>
-          Done
+          {t("common.done")}
         </Button>
       </div>
 

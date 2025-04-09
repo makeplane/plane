@@ -63,6 +63,38 @@
         "title": "Tidak ada integrasi yang dikonfigurasi",
         "description": "Konfigurasikan GitHub dan integrasi lainnya untuk menyinkronkan item kerja proyek Anda."
       }
+    },
+    "estimates": {
+      "edit": {
+        "title": "Edit sistem estimasi",
+        "add_or_update": {
+          "title": "Tambah, perbarui atau hapus estimasi",
+          "description": "Kelola sistem saat ini dengan menambah, memperbarui atau menghapus poin atau kategori."
+        },
+        "switch": {
+          "title": "Ubah tipe estimasi",
+          "description": "Konversi sistem poin Anda ke sistem kategori dan sebaliknya."
+        }
+      },
+      "switch": "Alihkan sistem estimasi",
+      "current": "Sistem estimasi saat ini",
+      "select": "Pilih sistem estimasi",
+      "toasts": {
+        "reorder": {
+          "success": {
+            "title": "Estimasi diurutkan ulang",
+            "message": "Estimasi telah diurutkan ulang dalam proyek Anda."
+          },
+          "error": {
+            "title": "Pengurutan ulang estimasi gagal",
+            "message": "Kami tidak dapat mengurutkan ulang estimasi, silakan coba lagi"
+          }
+        }
+      },
+      "validation": {
+        "fill": "Harap isi bidang estimasi ini",
+        "repeat": "Nilai estimasi tidak boleh diulang"
+      }
     }
   },
 

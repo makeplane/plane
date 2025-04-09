@@ -63,6 +63,38 @@
         "title": "Brak skonfigurowanych integracji",
         "description": "Skonfiguruj GitHub i inne integracje, aby synchronizować elementy pracy projektu."
       }
+    },
+    "estimates": {
+      "edit": {
+        "title": "Edytuj system szacowania",
+        "add_or_update": {
+          "title": "Dodaj, zaktualizuj lub usuń szacunki",
+          "description": "Zarządzaj obecnym systemem poprzez dodawanie, aktualizowanie lub usuwanie punktów lub kategorii."
+        },
+        "switch": {
+          "title": "Zmień typ szacowania",
+          "description": "Przekształć system punktowy na system kategorii i odwrotnie."
+        }
+      },
+      "switch": "Przełącz system szacowania",
+      "current": "Obecny system szacowania",
+      "select": "Wybierz system szacowania",
+      "toasts": {
+        "reorder": {
+          "success": {
+            "title": "Szacunki zostały przestawione",
+            "message": "Szacunki zostały przestawione w Twoim projekcie."
+          },
+          "error": {
+            "title": "Nie udało się przestawić szacunków",
+            "message": "Nie mogliśmy przestawić szacunków, spróbuj ponownie"
+          }
+        }
+      },
+      "validation": {
+        "fill": "Proszę wypełnić to pole szacowania",
+        "repeat": "Wartość szacowania nie może się powtarzać"
+      }
     }
   },
 
