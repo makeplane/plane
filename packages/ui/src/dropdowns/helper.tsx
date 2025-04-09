@@ -45,14 +45,14 @@ interface CustomSearchSelectProps {
   onClose?: () => void;
   noResultsMessage?: string;
   options:
-  | {
-    value: any;
-    query: string;
-    content: React.ReactNode;
-    disabled?: boolean;
-    tooltip?: string | React.ReactNode;
-  }[]
-  | undefined;
+    | {
+        value: any;
+        query: string;
+        content: React.ReactNode;
+        disabled?: boolean;
+        tooltip?: string | React.ReactNode;
+      }[]
+    | undefined;
 }
 
 interface SingleValueProps {

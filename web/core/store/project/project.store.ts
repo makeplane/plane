@@ -37,6 +37,7 @@ export interface IProjectStore {
   getPartialProjectById: (projectId: string | undefined | null) => TPartialProject | undefined;
   getProjectIdentifierById: (projectId: string | undefined | null) => string;
   getProjectAnalyticsCountById: (projectId: string | undefined | null) => TProjectAnalyticsCount | undefined;
+  getProjectByIdentifier: (projectIdentifier: string) => TProject | undefined;
   // collapsible
   openCollapsibleSection: ProjectOverviewCollapsible[];
   lastCollapsibleAction: ProjectOverviewCollapsible | null;
@@ -44,6 +45,9 @@ export interface IProjectStore {
   setOpenCollapsibleSection: (section: ProjectOverviewCollapsible[]) => void;
   setLastCollapsibleAction: (section: ProjectOverviewCollapsible) => void;
   toggleOpenCollapsibleSection: (section: ProjectOverviewCollapsible) => void;
+
+  // helper actions
+  processProjectAfterCreation: (workspaceSlug: string, data: TProject) => void;
 
   // fetch actions
   fetchPartialProjects: (workspaceSlug: string) => Promise<TPartialProject[]>;
@@ -104,6 +108,8 @@ export class ProjectStore implements IProjectStore {
       currentProjectDetails: computed,
       joinedProjectIds: computed,
       favoriteProjectIds: computed,
+      // helper actions
+      processProjectAfterCreation: action,
       // fetch actions
       fetchPartialProjects: action,
       fetchProjects: action,
@@ -233,7 +239,10 @@ export class ProjectStore implements IProjectStore {
     const projectIds = projects
       .filter(
         (project) =>
-          project.workspace === currentWorkspace.id && !!project.member_role && project.is_favorite && !project.archived_at
+          project.workspace === currentWorkspace.id &&
+          !!project.member_role &&
+          project.is_favorite &&
+          !project.archived_at
       )
       .map((project) => project.id);
     return projectIds;
@@ -254,6 +263,19 @@ export class ProjectStore implements IProjectStore {
     } else {
       this.openCollapsibleSection = [...this.openCollapsibleSection, section];
     }
+  };
+
+  /**
+   * @description process project after creation
+   * @param workspaceSlug
+   * @param data
+   */
+  processProjectAfterCreation = (workspaceSlug: string, data: TProject) => {
+    runInAction(() => {
+      set(this.projectMap, [data.id], data);
+      // updating the user project role in workspaceProjectsPermissions
+      set(this.rootStore.user.permission.workspaceProjectsPermissions, [workspaceSlug, data.id], data.member_role);
+    });
   };
 
   /**
@@ -362,6 +384,15 @@ export class ProjectStore implements IProjectStore {
     const projectInfo = this.projectMap[projectId ?? ""] || undefined;
     return projectInfo;
   });
+
+  /**
+   * Returns project details using project identifier
+   * @param projectIdentifier
+   * @returns TProject | undefined
+   */
+  getProjectByIdentifier = computedFn((projectIdentifier: string) =>
+    Object.values(this.projectMap).find((project) => project.identifier === projectIdentifier)
+  );
 
   /**
    * Returns project lite using project id
@@ -481,15 +512,7 @@ export class ProjectStore implements IProjectStore {
   createProject = async (workspaceSlug: string, data: any) => {
     try {
       const response = await this.projectService.createProject(workspaceSlug, data);
-      runInAction(() => {
-        set(this.projectMap, [response.id], response);
-        // updating the user project role in workspaceProjectsPermissions
-        set(
-          this.rootStore.user.permission.workspaceProjectsPermissions,
-          [workspaceSlug, response.id],
-          response.member_role
-        );
-      });
+      this.processProjectAfterCreation(workspaceSlug, response);
       return response;
     } catch (error) {
       console.log("Failed to create project from project store");

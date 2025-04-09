@@ -29,3 +29,4 @@ export * from "./event-tracker";
 export * from "./spreadsheet";
 export * from "./dashboard";
 export * from "./page";
+export * from "./emoji";

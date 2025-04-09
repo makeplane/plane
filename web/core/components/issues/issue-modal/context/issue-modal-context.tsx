@@ -61,7 +61,6 @@ export type TIssueModalContext = {
   getActiveAdditionalPropertiesLength: (props: TActiveAdditionalPropertiesProps) => number;
   handlePropertyValuesValidation: (props: TPropertyValuesValidationProps) => boolean;
   handleCreateUpdatePropertyValues: (props: TCreateUpdatePropertyValuesProps) => Promise<void>;
-  handleParentWorkItemDetails: (props: THandleParentWorkItemDetailsProps) => Promise<ISearchIssueResponse | undefined>;
   handleProjectEntitiesFetch: (props: THandleProjectEntitiesFetchProps) => Promise<void>;
   handleTemplateChange: (props: THandleTemplateChangeProps) => Promise<void>;
 };
