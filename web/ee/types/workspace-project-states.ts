@@ -1,57 +1,25 @@
-export enum EProjectStateLoader {
-  INIT_LOADER = "project-state-init-loader",
-  MUTATION_LOADER = "project-state-mutation-loader",
-}
-export type TProjectStateLoader = EProjectStateLoader | undefined;
+// Re-exporting from here to avoid import changes in other files
+// TODO: Remove this once all the imports are updated
+import { EProjectStateGroup, EProjectPriority, EProjectAccess, EProjectStateLoader } from "@plane/constants";
+import {
+  TProjectStateLoader as TProjectStateLoaderExport,
+  TProjectStateDraggableData as TProjectStateDraggableDataExport,
+  TProjectStateGroupKey as TProjectStateGroupKeyExport,
+  TProjectState as TProjectStateExport,
+  TProjectStateIdsByGroup as TProjectStateIdsByGroupExport,
+  TProjectStatesByGroup as TProjectStatesByGroupExport,
+} from "@plane/types";
 
-export type TProjectStateDraggableData = {
-  groupKey: TProjectStateGroupKey;
-  id: string;
-};
+export { EProjectStateGroup, EProjectPriority, EProjectAccess, EProjectStateLoader };
 
-export enum EProjectStateGroup {
-  DRAFT = "draft",
-  PLANNING = "planning",
-  EXECUTION = "execution",
-  MONITORING = "monitoring",
-  COMPLETED = "completed",
-  CANCELLED = "cancelled",
-}
-export type TProjectStateGroupKey = EProjectStateGroup;
+export type TProjectStateLoader = TProjectStateLoaderExport;
 
-export enum EProjectPriority {
-  NONE = "none",
-  LOW = "low",
-  MEDIUM = "medium",
-  HIGH = "high",
-  URGENT = "urgent",
-}
-export enum EProjectAccess {
-  PUBLIC = "public",
-  PRIVATE = "private",
-}
+export type TProjectStateDraggableData = TProjectStateDraggableDataExport;
 
-export type TProjectState = {
-  id: string | undefined;
-  name: string | undefined;
-  description: string | undefined;
-  color: string | undefined;
-  sequence: number | undefined;
-  group: TProjectStateGroupKey | undefined;
-  default: boolean | undefined;
-  external_source: string | undefined;
-  external_id: string | undefined;
-  workspace_id: string | undefined;
-  created_by: string | undefined;
-  updated_by: string | undefined;
-  created_at: string | undefined;
-  updated_at: string | undefined;
-};
+export type TProjectStateGroupKey = TProjectStateGroupKeyExport;
 
-export type TProjectStateIdsByGroup = {
-  [key in TProjectStateGroupKey]: string[];
-};
+export type TProjectState = TProjectStateExport;
 
-export type TProjectStatesByGroup = {
-  [key in TProjectStateGroupKey]: TProjectState[];
-};
+export type TProjectStateIdsByGroup = TProjectStateIdsByGroupExport;
+
+export type TProjectStatesByGroup = TProjectStatesByGroupExport;

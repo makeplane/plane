@@ -14,9 +14,7 @@ import {
   TIssueProperty,
   TIssuePropertyOption,
   TIssueType,
-  IIssuePropertiesService,
-  IIssueTypesService,
-  TIssueTypeStoreServices,
+  IWorkItemTypeStoreInstanceServices,
 } from "@plane/types";
 // plane web store
 import { IssueProperty } from "@/plane-web/store/issue-types";
@@ -24,7 +22,7 @@ import { RootStore } from "@/plane-web/store/root.store";
 
 type TIssueTypeStore = {
   root: RootStore;
-  services: TIssueTypeStoreServices;
+  services: IWorkItemTypeStoreInstanceServices;
   issueTypeData: TIssueType;
 };
 
@@ -50,8 +48,8 @@ export class IssueType implements IIssueType {
   // root store
   rootStore: RootStore;
   // service
-  service: IIssueTypesService | undefined;
-  issuePropertyService: IIssuePropertiesService;
+  service: IWorkItemTypeStoreInstanceServices["workItemType"] | undefined;
+  customPropertyService: IWorkItemTypeStoreInstanceServices["customProperty"];
 
   constructor(protected store: TIssueTypeStore) {
     makeObservable(this, {
@@ -102,8 +100,8 @@ export class IssueType implements IIssueType {
     this.updated_by = issueTypeData.updated_by;
     this.properties = [];
     // service
-    this.service = services.issueTypes;
-    this.issuePropertyService = services.issueProperties;
+    this.service = services.workItemType;
+    this.customPropertyService = services.customProperty;
   }
 
   // computed
@@ -156,14 +154,14 @@ export class IssueType implements IIssueType {
    */
   updateType = async (issueTypeData: Partial<TIssueType>, shouldSync: boolean = true) => {
     const { workspaceSlug, projectId } = this.rootStore.router;
-    if (!workspaceSlug || !projectId || !this.id) return undefined;
+    if (!workspaceSlug || !this.id) return undefined;
     try {
       let issueType: Partial<TIssueType> = issueTypeData;
       if (shouldSync) {
         if (!this.service || !this.service.update) throw new Error("Work item type update service not available.");
         issueType = await this.service.update({
           workspaceSlug,
-          projectId,
+          projectId: projectId,
           issueTypeId: this.id,
           data: issueTypeData,
         });
@@ -219,10 +217,10 @@ export class IssueType implements IIssueType {
    */
   createProperty = async (propertyData: TIssuePropertyPayload) => {
     const { workspaceSlug, projectId } = this.rootStore.router;
-    if (!workspaceSlug || !projectId || !this.id) return;
+    if (!workspaceSlug || !this.id) return;
 
     try {
-      const issuePropertyResponse = await this.issuePropertyService.create({
+      const issuePropertyResponse = await this.customPropertyService.create({
         workspaceSlug,
         projectId,
         issueTypeId: this.id,
@@ -245,10 +243,10 @@ export class IssueType implements IIssueType {
    */
   deleteProperty = async (propertyId: string) => {
     const { workspaceSlug, projectId } = this.rootStore.router;
-    if (!workspaceSlug || !projectId || !this.id) return;
+    if (!workspaceSlug || !this.id) return;
 
     try {
-      await this.issuePropertyService.deleteProperty({
+      await this.customPropertyService.deleteProperty({
         workspaceSlug,
         projectId,
         issueTypeId: this.id,

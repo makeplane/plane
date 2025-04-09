@@ -70,7 +70,7 @@ export const CreateTemplatesButton = observer((props: TCreateTemplatesButtonProp
         i18n_label: getTemplateI18nLabel(ETemplateType.PROJECT),
         onClick: () =>
           router.push(getCreateUpdateTemplateSettingsPath(getCreateTemplateSettingsPathProps(ETemplateType.PROJECT))),
-        availableForLevels: [],
+        availableForLevels: [ETemplateLevel.WORKSPACE],
       },
       {
         i18n_label: getTemplateI18nLabel(ETemplateType.WORK_ITEM),

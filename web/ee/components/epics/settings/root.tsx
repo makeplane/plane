@@ -4,13 +4,14 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
+import { EWorkItemTypeEntity } from "@plane/constants";
 import { setPromiseToast, ToggleSwitch, Tooltip } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store";
 // plane web components
 import { EpicsEmptyState, EpicPropertiesRoot } from "@/plane-web/components/epics";
 // plane web hooks
-import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 
 export const EpicsRoot = observer(() => {
@@ -19,7 +20,7 @@ export const EpicsRoot = observer(() => {
   // states
   const [isLoading, setIsLoading] = useState(false);
   // store hooks
-  const { getProjectEpicDetails, enableEpics, disableEpics } = useIssueTypes();
+  const { getProjectEpicDetails, enableEpics, disableEpics, getProjectWorkItemPropertiesLoader } = useIssueTypes();
   const { getProjectById } = useProject();
   const { getProjectFeatures } = useProjectAdvanced();
   // derived values
@@ -79,9 +80,9 @@ export const EpicsRoot = observer(() => {
         </div>
         {epicDetails?.id && (
           <EpicPropertiesRoot
-            workspaceSlug={workspaceSlug?.toString()}
-            projectId={projectId?.toString()}
             epicId={epicDetails?.id}
+            propertiesLoader={getProjectWorkItemPropertiesLoader(projectId?.toString(), EWorkItemTypeEntity.EPIC)}
+            getWorkItemTypeById={useIssueType}
           />
         )}
       </div>

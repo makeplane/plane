@@ -20,13 +20,21 @@ from plane.ee.views.app.epic import (
     EpicMetaEndpoint,
     EpicDetailIdentifierEndpoint,
 )
-from plane.ee.views.app.epic_property import WorkspaceEpicTypeEndpoint
+from plane.ee.views.app.epic_property import (
+    WorkspaceEpicTypeEndpoint,
+    ProjectEpicTypeEndpoint,
+)
 
 urlpatterns = [
     path(
         "workspaces/<str:slug>/epic-types/",
         WorkspaceEpicTypeEndpoint.as_view(),
         name="epics",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/epic-types/",
+        ProjectEpicTypeEndpoint.as_view(),
+        name="project-epics",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/epics/",

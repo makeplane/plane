@@ -105,8 +105,8 @@ const IntakeSubFeatures = observer((props: Props) => {
               (SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL) + SPACE_BASE_PATH;
             const publishLink =
               featureKey === "form"
-                ? `${SPACE_APP_URL}/intake/${settings?.anchors[feature.key]}`
-                : settings?.anchors[feature.key];
+                ? `${SPACE_APP_URL}/intake/${settings?.anchors?.[feature.key]}`
+                : settings?.anchors?.[feature.key];
             const key = `is_${featureKey}_enabled`;
 
             return (

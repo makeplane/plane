@@ -23,6 +23,7 @@ import {
   useWorkItemTemplates,
   useCustomerProperties,
   useCustomers,
+  useProjectTemplates,
 } from "@/plane-web/hooks/store";
 // plane web types
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
@@ -45,6 +46,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     useWorkspaceSubscription();
   const { fetchAll } = useIssueTypes();
   const { fetchAllTemplates: fetchAllWorkItemTemplates } = useWorkItemTemplates();
+  const { fetchAllTemplates: fetchAllProjectTemplates } = useProjectTemplates();
   const { fetchAllCustomerPropertiesAndOptions } = useCustomerProperties();
   const { isCustomersFeatureEnabled, fetchCustomers } = useCustomers();
   // derived values
@@ -55,6 +57,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const isProjectStateEnabled =
     workspaceFeatures[workspaceSlug.toString()] &&
     workspaceFeatures[workspaceSlug.toString()][EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED];
+  const isProjectTemplatesEnabled = useFlag(workspaceSlug?.toString(), "PROJECT_TEMPLATES");
   const isWorkItemTemplatesEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TEMPLATES");
 
   // fetching feature flags
@@ -127,6 +130,15 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   useSWR(
     workspaceSlug ? `CUSTOMERS_${workspaceSlug}` : null,
     workspaceSlug ? () => fetchCustomers(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  // fetching all project templates
+  useSWR(
+    workspaceSlug && isProjectTemplatesEnabled ? ["projectTemplates", workspaceSlug, isProjectTemplatesEnabled] : null,
+    workspaceSlug && isProjectTemplatesEnabled
+      ? () => fetchAllProjectTemplates({ workspaceSlug: workspaceSlug.toString() })
+      : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 

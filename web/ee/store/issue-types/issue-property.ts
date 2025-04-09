@@ -12,11 +12,9 @@ import {
   TIssuePropertyPayload,
   TIssuePropertySettingsMap,
   TIssuePropertyOption,
-  IIssuePropertiesService,
-  IIssuePropertyOptionsService,
-  TIssueTypeStoreServices,
   IIssueProperty,
   IIssuePropertyOption,
+  ICustomPropertyStoreInstanceServices,
 } from "@plane/types";
 // plane web store
 import { IssuePropertyOption } from "@/plane-web/store/issue-types";
@@ -24,7 +22,7 @@ import { RootStore } from "@/plane-web/store/root.store";
 
 type TIssuePropertyStore<T extends EIssuePropertyType> = {
   root: RootStore;
-  services: TIssueTypeStoreServices;
+  services: ICustomPropertyStoreInstanceServices;
   propertyData: TIssueProperty<T>;
 };
 
@@ -53,8 +51,8 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
   // root store
   rootStore: RootStore;
   // service
-  service: IIssuePropertiesService;
-  propertyOptionService: IIssuePropertyOptionsService;
+  service: ICustomPropertyStoreInstanceServices["customProperty"];
+  propertyOptionService: ICustomPropertyStoreInstanceServices["customPropertyOption"];
 
   constructor(protected store: TIssuePropertyStore<T>) {
     makeObservable(this, {
@@ -110,8 +108,8 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
     this.updated_at = propertyData.updated_at;
     this.updated_by = propertyData.updated_by;
     // service
-    this.service = services.issueProperties;
-    this.propertyOptionService = services.issuePropertyOptions;
+    this.service = services.customProperty;
+    this.propertyOptionService = services.customPropertyOption;
   }
 
   // computed
@@ -215,7 +213,7 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
    */
   createPropertyOption = async (propertyOption: Partial<TIssuePropertyOption>) => {
     const { workspaceSlug, projectId } = this.rootStore.router;
-    if (!workspaceSlug || !projectId || !this.id) return undefined;
+    if (!workspaceSlug || !this.id) return undefined;
 
     try {
       const issuePropertyOption = await this.propertyOptionService.create({
@@ -270,7 +268,7 @@ export class IssueProperty<T extends EIssuePropertyType> implements IIssueProper
    */
   deletePropertyOption = async (propertyOptionId: string) => {
     const { workspaceSlug, projectId } = this.rootStore.router;
-    if (!workspaceSlug || !projectId || !this.id) return;
+    if (!workspaceSlug || !this.id) return;
 
     try {
       await this.propertyOptionService.deleteOption({

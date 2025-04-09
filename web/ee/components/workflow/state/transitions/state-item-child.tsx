@@ -52,8 +52,6 @@ export const StateItemChild = observer((props: StateItemChildProps) => {
           <div className="flex w-full items-center gap-2 py-2.5 px-3 bg-custom-background-90">
             <div className="w-fit flex-shrink-0">
               <StateItemTitle
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
                 setUpdateStateModal={() => {}}
                 stateCount={stateCount}
                 disabled

@@ -2,13 +2,18 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Collapsible, CollapsibleButton } from "@plane/ui";
+import { Collapsible, DropdownIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
+
+type TChildProps = {
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
 type TTemplateCollapsibleWrapper = {
   title: string;
-  children: React.ReactNode;
-  actionElement?: React.ReactNode;
+  children: React.ReactNode | ((props: TChildProps) => React.ReactNode);
+  actionElement?: React.ReactNode | ((props: TChildProps) => React.ReactNode);
   isOptional?: boolean;
   showBottomBorder?: boolean;
 };
@@ -25,31 +30,41 @@ export const TemplateCollapsibleWrapper = observer((props: TTemplateCollapsibleW
       isOpen={isOpen}
       onToggle={() => setIsOpen(!isOpen)}
       title={
-        <CollapsibleButton
-          isOpen={isOpen}
-          title={
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <div>{title}</div>
-                {isOptional && (
-                  <div className="flex items-center gap-1.5 text-sm italic text-custom-text-400">
-                    <svg viewBox="0 0 2 2" className="h-1 w-1 fill-current">
-                      <circle cx={1} cy={1} r={1} />
-                    </svg>
-                    {t("common.optional")}
-                  </div>
+        <div className="flex w-full items-center gap-3 py-3">
+          <DropdownIcon
+            className={cn("size-2 text-custom-text-300 hover:text-custom-text-200 duration-300", {
+              "-rotate-90": !isOpen,
+            })}
+          />
+          <div className="flex w-full items-center justify-between gap-4">
+            <div className="text-base text-custom-text-100 font-medium flex items-center gap-2">
+              <div
+                className={cn(
+                  "flex flex-grow items-center w-full",
+                  isOpen ? "text-custom-text-100" : "text-custom-text-300 hover:text-custom-text-200"
                 )}
+              >
+                {title}
               </div>
-              {actionElement && actionElement}
+              {isOptional && (
+                <div className="flex items-center gap-1.5 text-sm italic text-custom-text-400">
+                  <svg viewBox="0 0 2 2" className="h-1 w-1 fill-current">
+                    <circle cx={1} cy={1} r={1} />
+                  </svg>
+                  {t("common.optional")}
+                </div>
+              )}
             </div>
-          }
-          className="border-none px-0"
-          titleClassName={cn(isOpen ? "text-custom-text-100" : "text-custom-text-300 hover:text-custom-text-200")}
-        />
+            <div className="flex-shrink-0">
+              {typeof actionElement === "function" ? actionElement({ isOpen, setIsOpen }) : actionElement}
+            </div>
+          </div>
+        </div>
       }
-      className={cn("py-2.5", { "border-b border-custom-border-200": showBottomBorder })}
+      className={cn("w-full py-3", { "border-b border-custom-border-200": showBottomBorder })}
+      buttonClassName="w-full"
     >
-      {children}
+      {typeof children === "function" ? children({ isOpen, setIsOpen }) : children}
     </Collapsible>
   );
 });

@@ -21,7 +21,7 @@ from .app.customer import (
     CustomerPropertySerializer,
     CustomerPropertyOptionSerializer,
     CustomerRequestSerializer,
-    CustomerRequestAttachmentV2Serializer
+    CustomerRequestAttachmentV2Serializer,
 )
 from .app.worklog import IssueWorkLogSerializer
 from .app.exporter import ExporterHistorySerializer
@@ -48,7 +48,6 @@ from .app.initiative import (
     InitiativeActivitySerializer,
     InitiativeEpicSerializer,
 )
-
 
 from .app.teamspace import (
     TeamspaceSerializer,
@@ -93,6 +92,8 @@ from .app.template import (
     TemplateSerializer,
     WorkitemTemplateSerializer,
     TemplateDataSerializer,
+    PageTemplateSerializer,
+    ProjectTemplateSerializer,
 )
 
 # Space imports

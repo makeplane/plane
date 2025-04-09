@@ -4,24 +4,30 @@ import { observer } from "mobx-react";
 import { EIssuesStoreType, ETemplateType } from "@plane/constants";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues";
+import { CreateProjectModal } from "@/components/project";
 
 type TChildProps = {
   handleUseTemplateAction: (templateId: string, type: ETemplateType) => void;
 };
 
 type TTemplateListActionWrapperProps = {
+  workspaceSlug: string;
   children: (props: TChildProps) => React.ReactElement;
 };
 
 export const TemplateListActionWrapper = observer((props: TTemplateListActionWrapperProps) => {
-  const { children } = props;
+  const { workspaceSlug, children } = props;
   // states
+  const [isCreateProjectModalOpen, setIsCreateProjectModalOpen] = useState(false);
   const [isCreateWorkItemModalOpen, setIsCreateWorkItemModalOpen] = useState(false);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
 
   const handleUseTemplateAction = (templateId: string, type: ETemplateType) => {
     setSelectedTemplateId(templateId);
     switch (type) {
+      case ETemplateType.PROJECT:
+        setIsCreateProjectModalOpen(true);
+        break;
       case ETemplateType.WORK_ITEM:
         setIsCreateWorkItemModalOpen(true);
         break;
@@ -34,6 +40,15 @@ export const TemplateListActionWrapper = observer((props: TTemplateListActionWra
 
   return (
     <>
+      <CreateProjectModal
+        workspaceSlug={workspaceSlug}
+        templateId={selectedTemplateId ?? undefined}
+        isOpen={isCreateProjectModalOpen}
+        onClose={() => {
+          setIsCreateProjectModalOpen(false);
+          handleModalClose();
+        }}
+      />
       <CreateUpdateIssueModal
         isOpen={isCreateWorkItemModalOpen}
         onClose={() => {

@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-catch */
 
 // plane imports
-import { TProjectLink, TStateAnalytics } from "@plane/types";
+import { TProject, TProjectLink, TStateAnalytics } from "@plane/types";
 // plane web imports
 import { TProjectAttributesParams, TProjectAttributesResponse, TProjectFeatures } from "@/plane-web/types";
 // services
@@ -10,6 +10,22 @@ import { ProjectService as CeProjectService } from "@/services/project";
 export class ProjectService extends CeProjectService {
   constructor() {
     super();
+  }
+
+  // create project using template
+  async createProjectUsingTemplate(
+    workspaceSlug: string,
+    templateId: string,
+    data: Partial<TProject>
+  ): Promise<TProject> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/use-template/`, {
+      template_id: templateId,
+      ...data,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
   }
 
   // attributes

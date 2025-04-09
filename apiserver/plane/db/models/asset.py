@@ -48,6 +48,8 @@ class FileAsset(BaseModel):
         CUSTOMER_LOGO = "CUSTOMER_LOGO"
         CUSTOMER_DESCRIPTION = "CUSTOMER_DESCRIPTION"
         CUSTOMER_REQUEST_DESCRIPTION = "CUSTOMER_REQUEST_DESCRIPTION"
+        WORKITEM_TEMPLATE_DESCRIPTION = "WORKITEM_TEMPLATE_DESCRIPTION"
+        PAGE_TEMPLATE_DESCRIPTION = "PAGE_TEMPLATE_DESCRIPTION"
 
     attributes = models.JSONField(default=dict)
     asset = models.FileField(upload_to=get_upload_path, max_length=800)
@@ -129,6 +131,8 @@ class FileAsset(BaseModel):
             self.EntityTypeContext.INITIATIVE_COMMENT_DESCRIPTION,
             self.EntityTypeContext.TEAM_SPACE_COMMENT_DESCRIPTION,
             self.EntityTypeContext.CUSTOMER_DESCRIPTION,
+            self.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
+            self.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
         ]:
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/{self.id}/"
 

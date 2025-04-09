@@ -1,22 +1,20 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { v4 } from "uuid";
 import { InfoIcon, Plus } from "lucide-react";
 // plane imports
-import { EIssuePropertyType, EWorkItemTypeEntity } from "@plane/constants";
+import { EIssuePropertyType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssueProperty, TCreationListModes, TIssuePropertyPayload } from "@plane/types";
+import { TIssueProperty, TCreationListModes, TIssuePropertyPayload, IIssueType, TLoader } from "@plane/types";
 import { Button, Loader, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web components
 import { IssuePropertyList, IssueTypePropertiesEmptyState } from "@/plane-web/components/issue-types";
-// plane web hooks
-import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 
 type TIssuePropertiesRoot = {
   issueTypeId: string;
-  entityType: EWorkItemTypeEntity;
+  propertiesLoader: TLoader;
+  getWorkItemTypeById: (workItemTypeId: string) => IIssueType | undefined;
 };
 
 export type TIssuePropertyCreateList = Partial<TIssueProperty<EIssuePropertyType>> & {
@@ -34,18 +32,14 @@ const defaultIssueProperty: Partial<TIssueProperty<EIssuePropertyType>> = {
 };
 
 export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
-  const { issueTypeId, entityType } = props;
-  // router
-  const { projectId } = useParams();
+  const { issueTypeId, propertiesLoader, getWorkItemTypeById } = props;
   // states
   const [issuePropertyCreateList, setIssuePropertyCreateList] = useState<TIssuePropertyCreateList[]>([]);
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { getProjectWorkItemPropertiesLoader } = useIssueTypes();
-  const issueType = useIssueType(issueTypeId);
+  const issueType = getWorkItemTypeById(issueTypeId);
   // derived values
-  const propertiesLoader = getProjectWorkItemPropertiesLoader(projectId?.toString(), entityType);
   const properties = issueType?.properties;
   const isAnyPropertiesAvailable = (properties && properties?.length > 0) || issuePropertyCreateList.length > 0;
   // refs

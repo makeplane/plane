@@ -26,7 +26,7 @@ export const ProjectSettingsTemplatesListRoot = observer((props: TProjectSetting
   const workItemTemplateIds = getAllWorkItemTemplateIdsForProject(workspaceSlug, projectId);
 
   return (
-    <TemplateListActionWrapper>
+    <TemplateListActionWrapper workspaceSlug={workspaceSlug}>
       {({ handleUseTemplateAction }) => (
         <TemplateListWrapper
           type={ETemplateType.WORK_ITEM}

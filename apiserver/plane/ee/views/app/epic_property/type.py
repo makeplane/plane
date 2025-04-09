@@ -50,3 +50,39 @@ class WorkspaceEpicTypeEndpoint(BaseAPIView):
         ).order_by("created_at")
         serializer = EpicTypeSerializer(epics, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ProjectEpicTypeEndpoint(BaseAPIView):
+    permission_classes = [WorkspaceEntityPermission]
+
+    @check_feature_flag(FeatureFlag.EPICS)
+    def get(self, request, slug, project_id):
+        # Get all epics for the project
+        epics = (
+            IssueType.objects.filter(
+                workspace__slug=slug,
+                project_issue_types__project_id=project_id,
+                is_epic=True,
+            )
+            .annotate(
+                issue_exists=Exists(
+                    Issue.objects.filter(project_id=project_id, type_id=OuterRef("pk"))
+                )
+            )
+            .annotate(
+                project_ids=Coalesce(
+                    Subquery(
+                        ProjectIssueType.objects.filter(
+                            issue_type=OuterRef("pk"), workspace__slug=slug
+                        )
+                        .values("issue_type")
+                        .annotate(project_ids=ArrayAgg("project_id", distinct=True))
+                        .values("project_ids")
+                    ),
+                    [],
+                )
+            )
+        ).order_by("created_at")
+
+        serializer = EpicTypeSerializer(epics, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

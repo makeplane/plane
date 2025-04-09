@@ -8,7 +8,6 @@ import {
   IIssueLabel,
   IUserLite,
   IModule,
-  ISearchIssueResponse,
   TIssueProperty,
   TIssuePropertyOption,
   CompleteOrEmpty,
@@ -18,13 +17,16 @@ export type TWorkItemTypeSchema = Pick<TIssueType, "id" | "name" | "logo_props" 
 
 export type TWorkItemStateSchema = Pick<Partial<IState>, "id" | "name" | "group">;
 
-export type TWorkItemAssigneeSchema = Pick<IUserLite, "id">;
+type TWorkItemAssigneeSchema = Pick<IUserLite, "id">;
 
-export type TWorkItemLabelSchema = Pick<IIssueLabel, "id" | "name">;
+export type TWorkItemLabelSchema = Pick<IIssueLabel, "id" | "name" | "color">;
 
-export type TWorkItemModuleSchema = Pick<IModule, "id" | "name">;
+type TWorkItemModuleSchema = Pick<IModule, "id" | "name">;
 
-export type TCustomPropertyOptionSchema = Pick<TIssuePropertyOption, "id" | "name" | "is_default">;
+type TCustomPropertyOptionSchema = Pick<
+  TIssuePropertyOption,
+  "id" | "name" | "is_active" | "is_default" | "logo_props"
+>;
 
 export type TCustomPropertySchema = Pick<
   TIssueProperty<EIssuePropertyType>,
@@ -36,14 +38,18 @@ export type TCustomPropertySchema = Pick<
   | "logo_props"
   | "is_required"
   | "settings"
+  | "is_active"
   | "is_multi"
   | "default_value"
 > & {
   options: TCustomPropertyOptionSchema[];
+};
+
+export type TCustomPropertyWithValuesSchema = TCustomPropertySchema & {
   values: string[];
 };
 
-export type TWorkItemPropertySchema = TCustomPropertySchema & { type: TWorkItemTypeSchema };
+export type TWorkItemPropertySchema = TCustomPropertyWithValuesSchema & { type: TWorkItemTypeSchema };
 
 export type TWorkItemTemplateData = Pick<TIssue, "name" | "description_html" | "priority"> & {
   id?: string;

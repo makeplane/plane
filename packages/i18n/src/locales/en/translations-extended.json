@@ -1751,6 +1751,34 @@
         }
       },
       "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Name your project template.",
+              "validation": {
+                "required": "Template name is required",
+                "maxLength": "Template name should be less than 255 characters"
+              }
+            },
+            "description": {
+              "placeholder": "Describe when and how to use this template."
+            }
+          },
+          "name": {
+            "placeholder": "Name your project.",
+            "validation": {
+              "required": "Project title is required",
+              "maxLength": "Project title should be less than 255 characters"
+            }
+          },
+          "description": {
+            "placeholder": "Describe the purpose and goals of this project."
+          },
+          "button": {
+            "create": "Create project template",
+            "update": "Update project template"
+          }
+        },
         "work_item": {
           "template": {
             "name": {
@@ -1832,13 +1860,18 @@
     },
     "dropdown": {
       "add": {
-        "work_item": "Add new template"
+        "work_item": "Add new template",
+        "project": "Add new template"
+      },
+      "label": {
+        "project": "Pick a project template"
       },
       "tooltip": {
         "work_item": "Pick a work item template"
       },
       "no_results": {
-        "work_item": "No templates found."
+        "work_item": "No templates found.",
+        "project": "No templates found."
       }
     }
   }

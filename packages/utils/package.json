@@ -26,8 +26,6 @@
   },
   "devDependencies": {
     "@plane/eslint-config": "*",
-    "@plane/constants": "*",
-    "@plane/types": "*",
     "@types/node": "^22.5.4",
     "@types/react": "^18.3.11",
     "@types/zxcvbn": "^4.4.5",

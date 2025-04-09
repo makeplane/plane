@@ -3,27 +3,26 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Pencil } from "lucide-react";
-// plane hooks
+// plane imports
 import { useTranslation } from "@plane/i18n";
+import { IIssueType } from "@plane/types";
 import { setPromiseToast, ToggleSwitch, Tooltip } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
-// plane web hooks
-import { useIssueType } from "@/plane-web/hooks/store";
+import { cn } from "@plane/utils";
 
 type Props = {
   issueTypeId: string;
+  getWorkItemTypeById: (issueTypeId: string) => IIssueType | undefined;
   onEditIssueTypeIdChange: (issueTypeId: string) => void;
 };
 
 export const IssueTypeQuickActions: React.FC<Props> = observer((props) => {
-  const { issueTypeId, onEditIssueTypeIdChange } = props;
+  const { issueTypeId, getWorkItemTypeById, onEditIssueTypeIdChange } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const issueType = useIssueType(issueTypeId);
+  const issueType = getWorkItemTypeById(issueTypeId);
   // derived values
   const issueTypeDetail = issueType?.asJSON;
   const isIssueTypeEnabled = issueType?.is_active;

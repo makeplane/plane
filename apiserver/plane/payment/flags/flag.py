@@ -59,12 +59,16 @@ class FeatureFlag(Enum):
     CYCLE_MANUAL_START_STOP = "CYCLE_MANUAL_START_STOP"
     # workitem templates
     WORKITEM_TEMPLATES = "WORKITEM_TEMPLATES"
+    # Page templates
+    PAGE_TEMPLATES = "PAGE_TEMPLATES"
     # Advanced search with elasticsearch
     ADVANCED_SEARCH = "ADVANCED_SEARCH"
     # Customers
     CUSTOMERS = "CUSTOMERS"
     # Dashboards
     DASHBOARDS = "DASHBOARDS"
+    # Project Templates
+    PROJECT_TEMPLATES = "PROJECT_TEMPLATES"
 
 
 class AdminFeatureFlag(Enum):

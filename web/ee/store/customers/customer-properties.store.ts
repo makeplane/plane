@@ -156,8 +156,8 @@ export class CustomerProperties implements ICustomerPropertiesStore {
         customerProperty = new IssueProperty({
           root: this.rootStore,
           services: {
-            issueProperties: this.service,
-            issuePropertyOptions: this.propertyOptionsService,
+            customProperty: this.service,
+            customPropertyOption: this.propertyOptionsService,
           },
           propertyData: issuePropertyData,
         });

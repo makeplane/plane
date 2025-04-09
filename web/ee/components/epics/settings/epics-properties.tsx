@@ -4,39 +4,41 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronRight } from "lucide-react";
 // plane imports
-import { EWorkItemTypeEntity } from "@plane/constants";
+import { TLoader, IIssueType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web components
 import { IssuePropertiesRoot } from "@/plane-web/components/issue-types";
-// plane web hooks
-import { useIssueTypes } from "@/plane-web/hooks/store";
 
 type EpicPropertiesProps = {
   epicId: string;
-  workspaceSlug: string;
-  projectId: string;
+  propertiesLoader: TLoader;
+  containerClassName?: string;
+  getWorkItemTypeById: (issueTypeId: string) => IIssueType | undefined;
+  getClassName?: (isOpen: boolean) => string;
 };
 
 export const EpicPropertiesRoot = observer((props: EpicPropertiesProps) => {
   // props
-  const { epicId, projectId } = props;
+  const { epicId, propertiesLoader, containerClassName, getWorkItemTypeById, getClassName } = props;
   // states
   const [isOpen, setIsOpen] = useState(true);
-  // store hooks
-  const { getProjectEpicDetails } = useIssueTypes();
   // derived values
-  const epicDetail = projectId ? getProjectEpicDetails(projectId?.toString()) : undefined;
+  const epicDetail = getWorkItemTypeById(epicId);
 
   if (!epicDetail) return null;
 
   return (
-    <div className={cn("py-2 border-b border-custom-border-100 last:border-b-0")}>
+    <div className={cn("py-2 border-b border-custom-border-100 last:border-b-0", containerClassName)}>
       <div
-        className={cn("group/issue-type hover:bg-custom-background-90/60 rounded-md", {
-          "bg-custom-background-90/60": isOpen,
-        })}
+        className={cn(
+          "group/issue-type hover:bg-custom-background-90/60 rounded-md",
+          {
+            "bg-custom-background-90/60": isOpen,
+          },
+          getClassName?.(isOpen)
+        )}
       >
         <Collapsible
           key={epicId}
@@ -74,7 +76,11 @@ export const EpicPropertiesRoot = observer((props: EpicPropertiesProps) => {
           buttonClassName={cn("flex w-full py-2 gap-2 items-center justify-between")}
         >
           <div className="p-2">
-            <IssuePropertiesRoot issueTypeId={epicId} entityType={EWorkItemTypeEntity.EPIC} />
+            <IssuePropertiesRoot
+              issueTypeId={epicId}
+              propertiesLoader={propertiesLoader}
+              getWorkItemTypeById={getWorkItemTypeById}
+            />
           </div>
         </Collapsible>
       </div>

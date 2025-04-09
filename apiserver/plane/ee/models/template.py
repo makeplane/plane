@@ -153,6 +153,7 @@ class Assignee(PydanticBaseModel):
 class Label(PydanticBaseModel):
     id: UUID4
     name: str = Field(..., max_length=255)
+    color: Optional[str] = Field(..., max_length=7)
 
 
 class Module(PydanticBaseModel):
@@ -165,6 +166,7 @@ class IssuePropertyOption(PydanticBaseModel):
     name: str = Field(..., max_length=255)
     is_active: bool = True
     is_default: bool = False
+    logo_props: Optional[Dict] = {}
 
 
 class IssueProperty(PydanticBaseModel):
@@ -235,6 +237,12 @@ class PageTemplate(WorkspaceBaseModel):
         super(PageTemplate, self).save(*args, **kwargs)
 
 
+class PageParent(PydanticBaseModel):
+    id: UUID4
+    project_id: UUID4
+    project_identifier: str
+
+
 class ProjectTemplate(BaseModel):
     NETWORK_CHOICES = ((0, "Secret"), (2, "Public"))
 
@@ -279,6 +287,7 @@ class ProjectTemplate(BaseModel):
     is_project_updates_enabled = models.BooleanField(default=False)
     is_epic_enabled = models.BooleanField(default=False)
     is_workflow_enabled = models.BooleanField(default=False)
+
     TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
 
@@ -326,3 +335,127 @@ class ProjectTemplate(BaseModel):
 
     def __str__(self):
         return self.name
+
+
+class ProjectState(PydanticBaseModel):
+    id: UUID4
+    name: str
+    group: str
+
+
+class WorkitemProperty(PydanticBaseModel):
+    id: UUID4
+    display_name: str = Field(..., max_length=255)
+    property_type: str
+    relation_type: Optional[str] = None
+    logo_props: Dict
+    is_required: bool = False
+    settings: Dict = {}
+    is_active: bool = True
+    is_multi: bool = False
+    options: List[IssuePropertyOption] = []
+
+    @staticmethod
+    def validate_datetime(value: str) -> bool:
+        for fmt in ("%Y-%m-%d", "%Y-%m-%d %H:%M:%S"):
+            try:
+                datetime.strptime(value, fmt)
+                return True
+            except ValueError:
+                continue
+        return False
+
+    @staticmethod
+    def validate_decimal(value: str) -> bool:
+        try:
+            float(value)
+            return True
+        except ValueError:
+            return False
+
+
+class WorkitemType(PydanticBaseModel):
+    id: UUID4
+    name: str = Field(..., max_length=255)
+    logo_props: dict
+    is_epic: bool
+    is_default: bool = False
+    is_active: bool = True
+    properties: List[WorkitemProperty]
+
+
+class EstimatePoints(PydanticBaseModel):
+    id: UUID4
+    key: int = Field(..., ge=0, le=12)
+    value: str = Field(..., max_length=255)
+
+
+class Estimate(PydanticBaseModel):
+    id: UUID4
+    name: str = Field(..., max_length=255)
+    type: str = Field(..., max_length=255)
+    points: List[EstimatePoints]
+
+
+class Epic(PydanticBaseModel):
+    id: UUID4
+    name: str = Field(..., max_length=255)
+    is_epic: bool = True
+    properties: List[WorkitemProperty]
+
+
+class WorkitemState(PydanticBaseModel):
+    id: UUID4
+    name: str = Field(..., max_length=255)
+    description: Optional[str] = Field("", max_length=255)
+    color: str = Field(..., max_length=255)
+    sequence: int
+    default: bool = False
+    group: str = Field(..., max_length=255)
+
+    @field_validator("group")
+    def validate_group(cls, group: str) -> str:
+        valid_groups = {
+            "backlog",
+            "unstarted",
+            "started",
+            "completed",
+            "cancelled",
+            "triage",
+        }
+        if group not in valid_groups:
+            raise ValueError("Invalid group")
+        return group
+
+
+class Member(PydanticBaseModel):
+    member_id: UUID4
+    role: int
+
+    @field_validator("role")
+    def validate_role(cls, role: int) -> int:
+        if role not in [5, 15, 20]:
+            raise ValueError("Invalid role")
+        return role
+
+
+class IntakeSettings(PydanticBaseModel):
+    is_in_app_enabled: bool = False
+    is_email_enabled: bool = False
+    is_form_enabled: bool = False
+
+
+class WorkflowTransitionApprover(PydanticBaseModel):
+    approver: UUID4
+
+
+class WorkflowTransition(PydanticBaseModel):
+    transition_state: UUID4
+    rejection_state: UUID4
+    approver: List[WorkflowTransitionApprover]
+
+
+class Workflow(PydanticBaseModel):
+    state: UUID4
+    allow_issue_creation: bool = False
+    transitions: List[WorkflowTransition]

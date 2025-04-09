@@ -1,23 +1,22 @@
 import { ListTodo, Mail, Zap } from "lucide-react";
+// plane imports
 import {
-  TFeatureList,
-  TProjectFeatures,
-  PROJECT_FEATURES_LIST,
+  PROJECT_BASE_FEATURES_LIST as CE_PROJECT_BASE_FEATURES_LIST,
+  PROJECT_OTHER_FEATURES_LIST as CE_PROJECT_OTHER_FEATURES_LIST,
+  PROJECT_FEATURES_LIST as CE_PROJECT_FEATURES_LIST,
   TProperties,
 } from "@/ce/constants/project/settings/features";
 
-PROJECT_FEATURES_LIST.project_others.featureList.is_time_tracking_enabled = {
-  ...PROJECT_FEATURES_LIST.project_others.featureList.is_time_tracking_enabled,
-  isEnabled: true,
-  isPro: true,
-};
-export type TIntakeFeatureList = {
-  [key: string]: TProperties & {
+export type TIntakeFeatureKeys = "in_app" | "email" | "form";
+
+type TIntakeFeatureList = {
+  [key in TIntakeFeatureKeys]: TProperties & {
     hasOptions: boolean;
     hasHyperlink?: boolean;
     canShuffle?: boolean;
   };
 };
+
 export const INTAKE_FEATURES_LIST: TIntakeFeatureList = {
   in_app: {
     property: "in_app",
@@ -57,5 +56,38 @@ export const INTAKE_FEATURES_LIST: TIntakeFeatureList = {
   },
 };
 
-export type { TFeatureList, TProjectFeatures };
-export { PROJECT_FEATURES_LIST };
+export const PROJECT_BASE_FEATURES_LIST = {
+  ...CE_PROJECT_BASE_FEATURES_LIST,
+};
+
+export const PROJECT_OTHER_FEATURES_LIST = {
+  ...CE_PROJECT_OTHER_FEATURES_LIST,
+  is_time_tracking_enabled: {
+    ...CE_PROJECT_OTHER_FEATURES_LIST.is_time_tracking_enabled,
+    isEnabled: true,
+    isPro: true,
+  },
+};
+
+export const PROJECT_FEATURES_LIST = {
+  ...CE_PROJECT_FEATURES_LIST,
+  project_features: {
+    ...CE_PROJECT_FEATURES_LIST.project_features,
+    featureList: PROJECT_BASE_FEATURES_LIST,
+  },
+  project_others: {
+    ...CE_PROJECT_FEATURES_LIST.project_others,
+    featureList: PROJECT_OTHER_FEATURES_LIST,
+  },
+};
+
+export const PROJECT_FEATURES_LIST_FOR_TEMPLATE = {
+  ...PROJECT_BASE_FEATURES_LIST,
+  ...PROJECT_OTHER_FEATURES_LIST,
+  inbox: {
+    ...PROJECT_BASE_FEATURES_LIST.inbox,
+    property: "intake_view", // TODO: Remove this once the property is updated in original constant
+  },
+};
+
+export type TProjectFeatureForTemplateKeys = keyof typeof PROJECT_FEATURES_LIST_FOR_TEMPLATE;

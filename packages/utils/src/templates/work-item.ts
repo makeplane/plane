@@ -7,6 +7,8 @@ import {
   IModule,
   IState,
   IUserLite,
+  TCustomPropertySchema,
+  TCustomPropertyWithValuesSchema,
   TIssuePropertyValues,
   TIssueType,
   TWorkItemPropertySchema,
@@ -263,7 +265,11 @@ const buildWorkItemTemplateSchema = ({
   assignees: buildAssigneesSchema(workItem.assignee_ids, getUserDetails),
   labels: buildLabelsSchema(workItem.label_ids, getLabelById),
   modules: buildModulesSchema(workItem.module_ids ?? [], getModuleById),
-  properties: buildPropertiesSchema(customPropertyValues, getWorkItemTypeById, getWorkItemPropertyById),
+  properties: buildWorkItemTypePropertiesWithValuesSchema(
+    customPropertyValues,
+    getWorkItemTypeById,
+    getWorkItemPropertyById
+  ),
 });
 
 /**
@@ -330,9 +336,10 @@ export const buildLabelsSchema = (
       return {
         id: label.id,
         name: label.name,
+        color: label.color,
       };
     })
-    .filter((label): label is { id: string; name: string } => label !== null);
+    .filter((label): label is { id: string; name: string; color: string } => label !== null);
 
 /**
  * Builds modules schema
@@ -365,41 +372,81 @@ export const buildPropertyOptionsSchema = (
         id: propertyOption.id,
         name: propertyOption.name,
         is_default: propertyOption.is_default,
+        is_active: propertyOption.is_active,
+        logo_props: propertyOption.logo_props ?? undefined,
       };
     })
-    .filter(
-      (propertyOption): propertyOption is { id: string; name: string; is_default: boolean } => propertyOption !== null
-    );
+    .filter(Boolean) as TWorkItemTemplate["template_data"]["properties"][number]["options"];
 
 /**
- * Builds properties schema
+ * Builds base custom property schema
  */
-export const buildPropertiesSchema = (
+export const buildCustomPropertySchema = (
+  propertyId: string,
+  getWorkItemPropertyById: TBuildWorkItemTemplateDataParams["getWorkItemPropertyById"]
+): TCustomPropertySchema | undefined => {
+  const property = getWorkItemPropertyById(propertyId);
+  if (!property) return undefined;
+  return {
+    id: property.id,
+    name: property.name,
+    display_name: property.display_name,
+    property_type: property.property_type,
+    relation_type: property.relation_type,
+    logo_props: property.logo_props,
+    is_required: property.is_required,
+    settings: property.settings,
+    is_active: property.is_active,
+    is_multi: property.is_multi,
+    default_value: property.default_value,
+    options: buildPropertyOptionsSchema(property.propertyOptions),
+  };
+};
+
+/**
+ * Builds properties schema with values
+ */
+export const buildCustomPropertiesWithValuesSchema = (
+  customPropertyValues: TBuildWorkItemTemplateSchemaParams["customPropertyValues"],
+  getWorkItemPropertyById: TBuildWorkItemTemplateDataParams["getWorkItemPropertyById"]
+): TCustomPropertyWithValuesSchema[] => {
+  const properties: TCustomPropertyWithValuesSchema[] = [];
+
+  Object.keys(customPropertyValues).forEach((propertyId) => {
+    // build custom property schema, if not available, skip
+    const customPropertySchema = buildCustomPropertySchema(propertyId, getWorkItemPropertyById);
+    if (!customPropertySchema) return;
+
+    properties.push({
+      ...customPropertySchema,
+      values: customPropertyValues[propertyId],
+    });
+  });
+  return properties;
+};
+
+/**
+ * Builds work item type properties with values schema
+ */
+export const buildWorkItemTypePropertiesWithValuesSchema = (
   customPropertyValues: TBuildWorkItemTemplateSchemaParams["customPropertyValues"],
   getWorkItemTypeById: TBuildWorkItemTemplateDataParams["getWorkItemTypeById"],
   getWorkItemPropertyById: TBuildWorkItemTemplateDataParams["getWorkItemPropertyById"]
 ): TWorkItemTemplate["template_data"]["properties"] => {
   const properties: TWorkItemTemplate["template_data"]["properties"] = [];
+  const customPropertyWithValuesSchema = buildCustomPropertiesWithValuesSchema(
+    customPropertyValues,
+    getWorkItemPropertyById
+  );
 
-  Object.keys(customPropertyValues).forEach((propertyId) => {
-    const property = getWorkItemPropertyById(propertyId);
+  customPropertyWithValuesSchema.forEach((customProperty) => {
+    const property = customProperty.id ? getWorkItemPropertyById(customProperty.id) : undefined;
     const workItemTypeSchema = buildWorkItemTypeSchema(property?.issue_type, getWorkItemTypeById);
     // if property or work item type schema is not available, skip
     if (!property || !workItemTypeSchema || Object.keys(workItemTypeSchema).length === 0) return;
 
     properties.push({
-      id: property.id,
-      name: property.name,
-      display_name: property.display_name,
-      property_type: property.property_type,
-      relation_type: property.relation_type,
-      logo_props: property.logo_props,
-      is_required: property.is_required,
-      settings: property.settings,
-      is_multi: property.is_multi,
-      default_value: property.default_value,
-      options: buildPropertyOptionsSchema(property.propertyOptions),
-      values: customPropertyValues[propertyId],
+      ...customProperty,
       type: workItemTypeSchema as TWorkItemTypeSchema,
     });
   });

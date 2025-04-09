@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -36,7 +36,7 @@ export const CreateOrUpdateIssueTypeForm: React.FC<Props> = observer((props) => 
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleIssueTypeFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleIssueTypeFormSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (validateForm(formData)) {
       await handleFormSubmit();
@@ -49,7 +49,7 @@ export const CreateOrUpdateIssueTypeForm: React.FC<Props> = observer((props) => 
   };
 
   return (
-    <form onSubmit={handleIssueTypeFormSubmit}>
+    <form>
       <div className="space-y-3 p-5 pb-2">
         <h3 className="text-xl font-medium text-custom-text-200">
           {formData.id ? t("work_item_types.update.title") : t("work_item_types.create.title")}
@@ -102,7 +102,7 @@ export const CreateOrUpdateIssueTypeForm: React.FC<Props> = observer((props) => 
           <Button variant="neutral-primary" size="sm" onClick={handleModalClose} tabIndex={3}>
             {t("common.cancel")}
           </Button>
-          <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={4}>
+          <Button variant="primary" size="sm" onClick={handleIssueTypeFormSubmit} loading={isSubmitting} tabIndex={4}>
             {formData.id ? t("work_item_types.update.button") : t("work_item_types.create.button")}
           </Button>
         </div>

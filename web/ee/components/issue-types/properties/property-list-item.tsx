@@ -389,7 +389,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
     return (
       <div
         className={cn(
-          "w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 group p-3 my-2.5 rounded-lg bg-custom-background-100 border border-custom-border-100 cursor-default overflow-hidden"
+          "w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 group p-3 my-2.5 rounded-lg bg-custom-background-100 border border-custom-border-200 cursor-default overflow-hidden"
         )}
         onDoubleClick={() => setIssuePropertyOperationMode("update")}
       >
@@ -435,7 +435,7 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
             )}
           </div>
           <div
-            className="flex-shrink-0 border-l border-custom-border-100 pl-2"
+            className="flex-shrink-0 border-l border-custom-border-200 pl-2"
             onDoubleClick={(e) => e.stopPropagation()}
           >
             <IssuePropertyQuickActions
@@ -453,10 +453,10 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
   return (
     <div
       className={cn(
-        "w-full flex flex-col items-center justify-center my-2.5 rounded-lg bg-custom-background-100 border border-custom-border-100 divide-y divide-custom-border-100 cursor-default"
+        "w-full flex flex-col items-center justify-center my-2.5 rounded-lg bg-custom-background-100 border border-custom-border-200 divide-y divide-custom-border-200 cursor-default"
       )}
     >
-      <div className="w-full grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-x sm:divide-y-0 divide-custom-border-100 ease-out transition-all duration-500">
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-x sm:divide-y-0 divide-custom-border-200 ease-out transition-all duration-500">
         <div className="p-3">
           <PropertyTitleDescriptionInput
             propertyDetail={issuePropertyData}

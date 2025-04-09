@@ -7,6 +7,7 @@ import {
   TUpdateIssueTypePayload,
   TDeleteIssueTypePayload,
   TEnableIssueTypePayload,
+  TFetchIssueTypesProjectLevelPayload,
 } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
@@ -25,8 +26,8 @@ class IssueTypesService extends APIService implements IIssueTypesService {
       });
   }
 
-  async fetchAllEpic({ workspaceSlug }: TFetchIssueTypesPayload): Promise<TIssueType[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/epic-types/`)
+  async fetchAllProjectLevel({ workspaceSlug, projectId }: TFetchIssueTypesProjectLevelPayload): Promise<TIssueType[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

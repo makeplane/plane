@@ -18,7 +18,7 @@ import {
   TemplatesUpgrade,
   WorkspaceTemplatesSettingsRoot,
 } from "@/plane-web/components/templates/settings";
-import { useFlag, useWorkItemTemplates } from "@/plane-web/hooks/store";
+import { useFlag, useProjectTemplates, useWorkItemTemplates } from "@/plane-web/hooks/store";
 
 const TemplatesWorkspaceSettingsPage = observer(() => {
   // router
@@ -29,11 +29,14 @@ const TemplatesWorkspaceSettingsPage = observer(() => {
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   const { isAnyWorkItemTemplatesAvailable } = useWorkItemTemplates();
+  const { isAnyProjectTemplatesAvailable } = useProjectTemplates();
   // derived values
   const isWorkItemTemplatesEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TEMPLATES");
   const isWorkItemTemplatesAvailable = isAnyWorkItemTemplatesAvailable(workspaceSlug?.toString());
-  const isAnyTemplatesEnabled = isWorkItemTemplatesEnabled;
-  const isAnyTemplatesAvailable = isWorkItemTemplatesAvailable;
+  const isProjectTemplatesEnabled = useFlag(workspaceSlug?.toString(), "PROJECT_TEMPLATES");
+  const isProjectTemplatesAvailable = isAnyProjectTemplatesAvailable(workspaceSlug?.toString());
+  const isAnyTemplatesEnabled = isWorkItemTemplatesEnabled || isProjectTemplatesEnabled;
+  const isAnyTemplatesAvailable = isWorkItemTemplatesAvailable || isProjectTemplatesAvailable;
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - ${t("common.templates")}` : undefined;
   const hasAdminPermission = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
