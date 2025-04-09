@@ -4,35 +4,38 @@ import { FC, useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, Plus } from "lucide-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IState, TStateGroups } from "@plane/types";
+import { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 import { StateGroupIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { StateList, StateCreate } from "@/components/project-states";
-// hooks
-import { useUserPermissions } from "@/hooks/store";
 
 type TGroupItem = {
-  workspaceSlug: string;
-  projectId: string;
   groupKey: TStateGroups;
   groupsExpanded: Partial<TStateGroups>[];
-  handleGroupCollapse: (groupKey: TStateGroups) => void;
-  handleExpand: (groupKey: TStateGroups) => void;
   groupedStates: Record<string, IState[]>;
   states: IState[];
+  stateOperationsCallbacks: TStateOperationsCallbacks;
+  isEditable: boolean;
+  shouldTrackEvents: boolean;
+  groupItemClassName?: string;
+  stateItemClassName?: string;
+  handleGroupCollapse: (groupKey: TStateGroups) => void;
+  handleExpand: (groupKey: TStateGroups) => void;
 };
 
 export const GroupItem: FC<TGroupItem> = observer((props) => {
   const {
-    workspaceSlug,
-    projectId,
     groupKey,
     groupedStates,
     states,
     groupsExpanded,
+    isEditable,
+    stateOperationsCallbacks,
+    shouldTrackEvents,
+    groupItemClassName,
+    stateItemClassName,
     handleExpand,
     handleGroupCollapse,
   } = props;
@@ -40,18 +43,18 @@ export const GroupItem: FC<TGroupItem> = observer((props) => {
   const dropElementRef = useRef<HTMLDivElement | null>(null);
   // plane hooks
   const { t } = useTranslation();
-  // store hooks
-  const { allowPermissions } = useUserPermissions();
   // state
   const [createState, setCreateState] = useState(false);
   // derived values
   const currentStateExpanded = groupsExpanded.includes(groupKey);
-  const isEditable = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
   const shouldShowEmptyState = states.length === 0 && currentStateExpanded && !createState;
 
   return (
     <div
-      className="space-y-1 border border-custom-border-200 rounded bg-custom-background-90 transition-all p-2"
+      className={cn(
+        "space-y-1 border border-custom-border-200 rounded bg-custom-background-90 transition-all p-2",
+        groupItemClassName
+      )}
       ref={dropElementRef}
     >
       <div className="flex justify-between items-center gap-2">
@@ -75,12 +78,22 @@ export const GroupItem: FC<TGroupItem> = observer((props) => {
           </div>
           <div className="text-base font-medium text-custom-text-200 capitalize px-1">{groupKey}</div>
         </div>
-        <div
-          className="flex-shrink-0 w-6 h-6 rounded flex justify-center items-center overflow-hidden transition-colors hover:bg-custom-background-80 cursor-pointer text-custom-primary-100/80 hover:text-custom-primary-100"
-          onClick={() => !createState && setCreateState(true)}
+        <button
+          type="button"
+          className={cn(
+            "flex-shrink-0 w-6 h-6 rounded flex justify-center items-center overflow-hidden transition-colors hover:bg-custom-background-80 cursor-pointer text-custom-primary-100/80 hover:text-custom-primary-100",
+            (!isEditable || createState) && "cursor-not-allowed text-custom-text-400 hover:text-custom-text-400"
+          )}
+          onClick={() => {
+            if (!createState) {
+              handleExpand(groupKey);
+              setCreateState(true);
+            }
+          }}
+          disabled={!isEditable || createState}
         >
           <Plus className="w-4 h-4" />
-        </div>
+        </button>
       </div>
 
       {shouldShowEmptyState && (
@@ -93,12 +106,13 @@ export const GroupItem: FC<TGroupItem> = observer((props) => {
       {currentStateExpanded && (
         <div id="group-droppable-container">
           <StateList
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
             groupKey={groupKey}
             groupedStates={groupedStates}
             states={states}
             disabled={!isEditable}
+            stateOperationsCallbacks={stateOperationsCallbacks}
+            shouldTrackEvents={shouldTrackEvents}
+            stateItemClassName={stateItemClassName}
           />
         </div>
       )}
@@ -106,10 +120,10 @@ export const GroupItem: FC<TGroupItem> = observer((props) => {
       {isEditable && createState && (
         <div className="">
           <StateCreate
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
             groupKey={groupKey}
             handleClose={() => setCreateState(false)}
+            createStateCallback={stateOperationsCallbacks.createState}
+            shouldTrackEvents={shouldTrackEvents}
           />
         </div>
       )}

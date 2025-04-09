@@ -179,7 +179,9 @@ export class CycleStore implements ICycleStore {
       const endDate = getDate(c.end_date);
       const hasEndDatePassed = endDate && isPast(endDate);
       const isEndDateToday = endDate && isToday(endDate);
-      return c.project_id === projectId && hasEndDatePassed && !isEndDateToday && !c?.archived_at;
+      return (
+        c.project_id === projectId && ((hasEndDatePassed && !isEndDateToday) || c.status?.toLowerCase() === "completed")
+      );
     });
     completedCycles = sortBy(completedCycles, [(c) => c.sort_order]);
     const completedCycleIds = completedCycles.map((c) => c.id);
@@ -195,7 +197,9 @@ export class CycleStore implements ICycleStore {
     let incompleteCycles = Object.values(this.cycleMap ?? {}).filter((c) => {
       const endDate = getDate(c.end_date);
       const hasEndDatePassed = endDate && isPast(endDate);
-      return c.project_id === projectId && !hasEndDatePassed && !c?.archived_at;
+      return (
+        c.project_id === projectId && !hasEndDatePassed && !c?.archived_at && c.status?.toLowerCase() !== "completed"
+      );
     });
     incompleteCycles = sortBy(incompleteCycles, [(c) => c.sort_order]);
     const incompleteCycleIds = incompleteCycles.map((c) => c.id);
@@ -237,10 +241,10 @@ export class CycleStore implements ICycleStore {
   }
 
   getIsPointsDataAvailable = computedFn((cycleId: string) => {
-    const cycle = this.cycleMap[cycleId];
+    const cycle = this.getCycleById(cycleId);
     if (!cycle) return false;
-    if (this.cycleMap[cycleId].version === 2) return cycle.progress.some((p) => p.total_estimate_points > 0);
-    else if (this.cycleMap[cycleId].version === 1) {
+    if (cycle.version === 2) return cycle.progress?.some((p) => p.total_estimate_points > 0);
+    else if (cycle.version === 1) {
       const completionChart = cycle.estimate_distribution?.completion_chart || {};
       return !isEmpty(completionChart) && Object.keys(completionChart).some((p) => completionChart[p]! > 0);
     } else return false;
@@ -556,8 +560,7 @@ export class CycleStore implements ICycleStore {
    * @returns
    */
   updateCycleDistribution = (distributionUpdates: DistributionUpdates, cycleId: string) => {
-    const cycle = this.cycleMap[cycleId];
-
+    const cycle = this.getCycleById(cycleId);
     if (!cycle) return;
 
     runInAction(() => {
@@ -640,7 +643,7 @@ export class CycleStore implements ICycleStore {
         entity_type: "cycle",
         entity_identifier: cycleId,
         project_id: projectId,
-        entity_data: { name: this.cycleMap[cycleId].name || "" },
+        entity_data: { name: currentCycle?.name || "" },
       });
       return response;
     } catch (error) {

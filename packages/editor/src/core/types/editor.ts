@@ -16,6 +16,7 @@ import {
   TExtensions,
   TFileHandler,
   TMentionHandler,
+  TReadOnlyFileHandler,
   TReadOnlyMentionHandler,
   TServerHandler,
 } from "@/types";
@@ -44,10 +45,14 @@ export type TEditorCommands =
   | "text-color"
   | "background-color"
   | "text-align"
-  | "callout";
+  | "callout"
+  | "attachment";
 
 export type TCommandExtraProps = {
   image: {
+    savedSelection: Selection | null;
+  };
+  attachment: {
     savedSelection: Selection | null;
   };
   "text-color": {
@@ -79,7 +84,7 @@ export type EditorReadOnlyRefApi = {
     json: JSONContent | null;
   };
   clearEditor: (emitUpdate?: boolean) => void;
-  setEditorValue: (content: string) => void;
+  setEditorValue: (content: string, emitUpdate?: boolean) => void;
   scrollSummary: (marking: IMarking) => void;
   getDocumentInfo: () => {
     characters: number;
@@ -126,13 +131,13 @@ export interface IEditorProps {
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
   value?: string | null;
+  bubbleMenuEnabled?: boolean;
 }
 export interface ILiteTextEditor extends IEditorProps {
   extensions?: Extensions;
 }
 export interface IRichTextEditor extends IEditorProps {
   extensions?: Extensions;
-  bubbleMenuEnabled?: boolean;
   dragDropEnabled?: boolean;
 }
 
@@ -155,7 +160,7 @@ export interface IReadOnlyEditorProps {
   disabledExtensions: TExtensions[];
   displayConfig?: TDisplayConfig;
   editorClassName?: string;
-  fileHandler: Pick<TFileHandler, "getAssetSrc">;
+  fileHandler: TReadOnlyFileHandler;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
   id: string;
   initialValue: string;
@@ -191,3 +196,15 @@ export type TRealtimeConfig = {
   url: string;
   queryParams: TWebhookConnectionQueryParams;
 };
+
+export interface EditorEvents {
+  beforeCreate: never;
+  create: never;
+  update: never;
+  selectionUpdate: never;
+  transaction: never;
+  focus: never;
+  blur: never;
+  destroy: never;
+  ready: { height: number };
+}

@@ -6,10 +6,11 @@ import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 import { PageHead } from "@/components/core";
 // hooks
-import { InboxSettingsContentHeader, InboxSettingsRoot, InboxSettingContentWrapper } from "@/components/inbox/settings";
+import { InboxSettingsContentHeader, InboxSettingContentWrapper } from "@/components/inbox/settings";
 import { EmailSettingsLoader } from "@/components/ui";
 import { NOTIFICATION_SETTINGS } from "@/constants/fetch-keys";
 import { useWorkspaceNotificationSettings } from "@/hooks/store";
+import { InboxSettingsRoot } from "@/plane-web/components/inbox/settings/root";
 
 const NotificationsSettingsPage = observer(() => {
   // store hooks

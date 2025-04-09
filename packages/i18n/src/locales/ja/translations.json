@@ -457,7 +457,7 @@
   "Cancel": "キャンセル",
   "edit": "編集",
   "archive": "アーカイブ",
-  "restor": "復元",
+  "restore": "復元",
   "open_in_new_tab": "新しいタブで開く",
   "delete": "削除",
   "deleting": "削除中",
@@ -501,6 +501,9 @@
   "re_generate_key": "キーを再生成",
   "export": "エクスポート",
   "member": "{count, plural, other{# メンバー}}",
+  "new_password_must_be_different_from_old_password": "新しいパスワードは古いパスワードと異なる必要があります",
+  "edited": "編集済み",
+  "bot": "ボット",
 
   "project_view": {
     "sort_by": {
@@ -591,7 +594,7 @@
         "default": "まだ最近の項目がありません。"
       },
       "filters": {
-        "all": "すべての項目",
+        "all": "すべて",
         "projects": "プロジェクト",
         "pages": "ページ",
         "issues": "作業項目"
@@ -631,6 +634,8 @@
     "states": "ステータス",
     "state": "ステータス",
     "state_groups": "ステータスグループ",
+    "state_group": "ステート グループ",
+    "priorities": "優先度",
     "priority": "優先度",
     "team_project": "チームプロジェクト",
     "project": "プロジェクト",
@@ -639,12 +644,16 @@
     "module": "モジュール",
     "modules": "モジュール",
     "labels": "ラベル",
+    "label": "ラベル",
     "assignees": "担当者",
     "assignee": "担当者",
     "created_by": "作成者",
     "none": "なし",
     "link": "リンク",
+    "estimates": "見積もり",
     "estimate": "見積もり",
+    "created_at": "クリエイテッド アット",
+    "completed_at": "コンプリーテッド アット",
     "layout": "レイアウト",
     "filters": "フィルター",
     "display": "表示",
@@ -662,6 +671,7 @@
     "epic": "エピック",
     "epics": "エピック",
     "work_item": "作業項目",
+    "work_items": "作業項目",
     "sub_work_item": "サブ作業項目",
     "add": "追加",
     "warning": "警告",
@@ -686,13 +696,13 @@
     "add_more": "さらに追加",
     "defaults": "デフォルト",
     "add_label": "ラベルを追加",
-    "estimates": "見積もり",
     "customize_time_range": "期間をカスタマイズ",
     "loading": "読み込み中",
     "attachments": "添付ファイル",
     "property": "プロパティ",
     "properties": "プロパティ",
     "parent": "親",
+    "page": "ページ",
     "remove": "削除",
     "archiving": "アーカイブ中",
     "archive": "アーカイブ",
@@ -824,8 +834,6 @@
     "select": "選択",
     "upgrade": "アップグレード",
     "add_seats": "シートを追加",
-    "label": "ラベル",
-    "priorities": "優先度",
     "projects": "プロジェクト",
     "workspace": "ワークスペース",
     "workspaces": "ワークスペース",
@@ -844,6 +852,16 @@
     "disconnecting": "切断中",
     "installing": "インストール中",
     "install": "インストール",
+    "reset": "リセット",
+    "live": "ライブ",
+    "change_history": "変更履歴",
+    "coming_soon": "近日公開",
+    "members": "メンバー",
+    "you": "あなた",
+    "upgrade_cta": {
+      "higher_subscription": "高いサブスクリプションにアップグレード",
+      "talk_to_sales": "トーク トゥ セールス"
+    },
     "category": "カテゴリー",
     "categories": "カテゴリーズ",
     "saving": "セービング",
@@ -851,7 +869,8 @@
     "delete": "デリート",
     "deleting": "デリーティング",
     "pending": "保留中",
-    "invite": "招待"
+    "invite": "招待",
+    "view": "ビュー"
   },
 
   "chart": {
@@ -969,7 +988,8 @@
         "sub_issue_count": "サブ作業項目数",
         "attachment_count": "添付ファイル数",
         "created_on": "作成日",
-        "sub_issue": "サブ作業項目"
+        "sub_issue": "サブ作業項目",
+        "work_item_count": "作業項目数"
       },
       "extra": {
         "show_sub_issues": "サブ作業項目を表示",
@@ -1456,7 +1476,8 @@
             "max_length": "ワークスペース名は80文字を超えることはできません"
           },
           "company_size": {
-            "required": "会社の規模は必須です"
+            "required": "会社の規模は必須です",
+            "select_a_range": "組織の規模を選択"
           }
         }
       },
@@ -1715,20 +1736,77 @@
       }
     },
     "estimates": {
+      "label": "見積もり",
       "title": "プロジェクトの見積もりを有効にする",
-      "description": "チームの複雑さと作業負荷を伝えるのに役立ちます。"
+      "description": "チームの複雑さと作業負荷を伝えるのに役立ちます。",
+      "no_estimate": "見積もりなし",
+      "create": {
+        "custom": "カスタム",
+        "start_from_scratch": "最初から開始",
+        "choose_template": "テンプレートを選択",
+        "choose_estimate_system": "見積もりシステムを選択",
+        "enter_estimate_point": "見積もりを入力"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "見積もりを作成",
+            "message": "見積もりが正常に作成されました"
+          },
+          "error": {
+            "title": "見積もり作成に失敗",
+            "message": "新しい見積もりを作成できませんでした。もう一度お試しください。"
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "見積もりを更新",
+            "message": "プロジェクトの見積もりが更新されました。"
+          },
+          "error": {
+            "title": "見積もり更新に失敗",
+            "message": "見積もりを更新できませんでした。もう一度お試しください"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "成功！",
+            "message": "見積もりが有効になりました。"
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "成功！",
+            "message": "見積もりが無効になりました。"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "見積もりを無効にできませんでした。もう一度お試しください"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "見積もりは0より大きい必要があります。",
+        "unable_to_process": "リクエストを処理できません。もう一度お試しください。",
+        "numeric": "見積もりは数値である必要があります。",
+        "character": "見積もりは文字値である必要があります。",
+        "empty": "見積もり値は空にできません。",
+        "already_exists": "見積もり値は既に存在します。",
+        "unsaved_changes": "未保存の変更があります。完了をクリックする前に保存してください",
+        "remove_empty": "見積もりは空にできません。各フィールドに値を入力するか、値がないフィールドを削除してください。"
+      }
     },
     "automations": {
       "label": "自動化",
       "auto-archive": {
-        "title": "完了した作業項目を自動アーカイブ",
+        "title": "完了した作業項目を自動的にアーカイブ",
         "description": "Planeは完了またはキャンセルされた作業項目を自動的にアーカイブします。",
-        "duration": "次の期間完了している作業項目を自動アーカイブ"
+        "duration": "閉じられた作業項目を自動的にアーカイブ"
       },
       "auto-close": {
-        "title": "作業項目を自動クローズ",
-        "description": "Planeは完了またはキャンセルされていない作業項目を自動的にクローズします。",
-        "duration": "次の期間非アクティブな作業項目を自動クローズ",
+        "title": "作業項目を自動的に閉じる",
+        "description": "Planeは完了またはキャンセルされていない作業項目を自動的に閉じます。",
+        "duration": "非アクティブな作業項目を自動的に閉じる",
         "auto_close_status": "自動クローズステータス"
       }
     },
@@ -1756,6 +1834,12 @@
     "remove_filters_to_see_all_cycles": "すべてのサイクルを表示するにはフィルターを解除してください",
     "remove_search_criteria_to_see_all_cycles": "すべてのサイクルを表示するには検索条件を解除してください",
     "only_completed_cycles_can_be_archived": "完了したサイクルのみアーカイブできます",
+    "start_date": "開始日",
+    "end_date": "終了日",
+    "in_your_timezone": "あなたのタイムゾーン",
+    "transfer_work_items": "作業項目を転送 {count}",
+    "date_range": "日付範囲",
+    "add_date": "日付を追加",
     "active_cycle": {
       "label": "アクティブなサイクル",
       "progress": "進捗",
@@ -2349,10 +2433,16 @@
     "no_module": "モジュールなし"
   },
 
+  "description_versions": {
+    "last_edited_by": "最終編集者",
+    "previously_edited_by": "以前の編集者",
+    "edited_by": "編集者"
+  },
+
   "notification_settings": {
     "page_label": "{workspace} - 受信トレイ設定",
     "inbox_settings": "受信トレイ設定",
-    "inbox_settings_description": "ワークスペースでのアクティビティに関する通知の受信方法をカスタマイズします。変更は自動的に保存されます。",
+    "inbox_settings_description": "ワークスペース内のアクティビティに関する通知の受け取り方法をカスタマイズします。変更は自動的に保存されます。",
     "advanced_settings": "詳細設定",
     "in_plane": "Plane内",
     "email": "メール",
@@ -2360,25 +2450,25 @@
     "task_updates": "作業項目の更新",
     "task_updates_subtitle": "ワークスペース内の作業項目が更新されたときに通知を受け取ります。",
     "comments": "コメント",
-    "comments_subtitle": "ワークスペース内のディスカッションに関する最新情報を入手します。",
-    "work_item_property_title": "作業項目のあらゆるプロパティの更新",
+    "comments_subtitle": "ワークスペース内のディスカッションを最新の状態に保ちます。",
+    "work_item_property_title": "作業項目のプロパティの更新",
     "work_item_property_subtitle": "ワークスペース内の作業項目が更新されたときに通知を受け取ります。",
-    "status_title": "状態変更",
+    "status_title": "状態の変更",
     "status_subtitle": "作業項目の状態が更新されたとき。",
-    "priority_title": "優先度変更",
+    "priority_title": "優先度の変更",
     "priority_subtitle": "作業項目の優先度レベルが調整されたとき。",
-    "assignee_title": "担当者変更",
+    "assignee_title": "担当者の変更",
     "assignee_subtitle": "作業項目が誰かに割り当てられたり再割り当てされたとき。",
-    "due_date_title": "日付変更",
-    "due_date_subtitle": "作業項目の開始日または期日が更新されたとき。",
-    "module_title": "モジュール更新",
-    "cycle_title": "サイクル更新",
+    "due_date_title": "日付の変更",
+    "due_date_subtitle": "作業項目の開始日または期限が更新されたとき。",
+    "module_title": "モジュールの更新",
+    "cycle_title": "サイクルの更新",
     "mentioned_comments_title": "メンション",
-    "mentioned_comments_subtitle": "誰かがコメントであなたに言及したとき。",
+    "mentioned_comments_subtitle": "誰かがコメントであなたをメンションしたとき。",
     "new_comments_title": "新しいコメント",
     "new_comments_subtitle": "フォローしているタスクに新しいコメントが追加されたとき。",
     "reaction_comments_title": "リアクション",
-    "reaction_comments_subtitle": "誰かがあなたのコメントやタスクに絵文字でリアクションしたときに通知を受け取ります。",
+    "reaction_comments_subtitle": "誰かがあなたのコメントやタスクに絵文字で反応したときに通知を受け取ります。",
     "setting_updated_successfully": "設定が正常に更新されました",
     "failed_to_update_setting": "設定の更新に失敗しました"
   }

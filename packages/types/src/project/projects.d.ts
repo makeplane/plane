@@ -25,7 +25,9 @@ export interface IPartialProject {
   module_view: boolean;
   page_view: boolean;
   inbox_view: boolean;
+  guest_view_all_features?: boolean;
   project_lead?: IUserLite | string | null;
+  network?: number;
   // Timestamps
   created_at?: Date;
   updated_at?: Date;
@@ -46,13 +48,9 @@ export interface IProject extends IPartialProject {
   default_state?: string | null;
   description?: string;
   estimate?: string | null;
-  guest_view_all_features?: boolean;
   anchor?: string | null;
   is_favorite?: boolean;
-  is_issue_type_enabled?: boolean;
-  is_time_tracking_enabled?: boolean;
   members?: string[];
-  network?: number;
   timezone?: string;
 }
 

@@ -4,9 +4,9 @@ import { ReactNodeViewRenderer } from "@tiptap/react";
 // components
 import { CustomImageNode, UploadImageExtensionStorage } from "@/extensions/custom-image";
 // types
-import { TFileHandler } from "@/types";
+import { TReadOnlyFileHandler } from "@/types";
 
-export const CustomReadOnlyImageExtension = (props: Pick<TFileHandler, "getAssetSrc">) => {
+export const CustomReadOnlyImageExtension = (props: TReadOnlyFileHandler) => {
   const { getAssetSrc } = props;
 
   return Image.extend<Record<string, unknown>, UploadImageExtensionStorage>({
@@ -52,10 +52,14 @@ export const CustomReadOnlyImageExtension = (props: Pick<TFileHandler, "getAsset
     addStorage() {
       return {
         fileMap: new Map(),
+        deletedImageSet: new Map<string, boolean>(),
+        uploadInProgress: false,
+        maxFileSize: 0,
         // escape markdown for images
         markdown: {
           serialize() {},
         },
+        assetsUploadStatus: {},
       };
     },
 

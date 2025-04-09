@@ -8,7 +8,7 @@ import useSWR from "swr";
 import { CommandIcon, FolderPlus, Search, Settings, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_DEFAULT_SEARCH_RESULT } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspaceSearchResults } from "@plane/types";
 import { LayersIcon, Loader, ToggleSwitch } from "@plane/ui";
@@ -51,23 +51,24 @@ const workspaceService = new WorkspaceService();
 export const CommandModal: React.FC = observer(() => {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, workItem } = useParams();
+  const { workspaceSlug, projectId: routerProjectId, workItem } = useParams();
   // states
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
   const [resultsCount, setResultsCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [results, setResults] = useState<IWorkspaceSearchResults>({
-    results: { workspace: [], project: [], issue: [], cycle: [], module: [], issue_view: [], page: [] },
-  });
+  const [results, setResults] = useState<IWorkspaceSearchResults>(WORKSPACE_DEFAULT_SEARCH_RESULT);
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   const [pages, setPages] = useState<string[]>([]);
   const [searchInIssue, setSearchInIssue] = useState(false);
   // plane hooks
   const { t } = useTranslation();
   // hooks
-  const { fetchIssueWithIdentifier } = useIssueDetail();
+  const {
+    issue: { getIssueById },
+    fetchIssueWithIdentifier,
+  } = useIssueDetail();
   const { workspaceProjectIds } = useProject();
   const { platform, isMobile } = usePlatformOS();
   const { canPerformAnyCreateAction } = useUser();
@@ -75,11 +76,10 @@ export const CommandModal: React.FC = observer(() => {
     useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   const { setTrackElement } = useEventTracker();
-
   const projectIdentifier = workItem?.toString().split("-")[0];
   const sequence_id = workItem?.toString().split("-")[1];
-
-  const { data: issueDetails } = useSWR(
+  // fetch work item details using identifier
+  const { data: workItemDetailsSWR } = useSWR(
     workspaceSlug && workItem ? `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}` : null,
     workspaceSlug && workItem
       ? () => fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
@@ -87,8 +87,9 @@ export const CommandModal: React.FC = observer(() => {
   );
 
   // derived values
+  const issueDetails = workItemDetailsSWR ? getIssueById(workItemDetailsSWR?.id) : null;
   const issueId = issueDetails?.id;
-  const projectId = issueDetails?.project_id;
+  const projectId = issueDetails?.project_id ?? routerProjectId;
   const page = pages[pages.length - 1];
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
@@ -148,9 +149,7 @@ export const CommandModal: React.FC = observer(() => {
             setIsSearching(false);
           });
       } else {
-        setResults({
-          results: { workspace: [], project: [], issue: [], cycle: [], module: [], issue_view: [], page: [] },
-        });
+        setResults(WORKSPACE_DEFAULT_SEARCH_RESULT);
         setIsLoading(false);
         setIsSearching(false);
       }
@@ -474,6 +473,7 @@ export const CommandModal: React.FC = observer(() => {
                     <ToggleSwitch
                       value={isWorkspaceLevel}
                       onChange={() => setIsWorkspaceLevel((prevData) => !prevData)}
+                      disabled={!projectId}
                       size="sm"
                     />
                   </div>

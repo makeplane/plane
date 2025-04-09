@@ -215,6 +215,7 @@
   "activity": "Actividad",
   "appearance": "Apariencia",
   "notifications": "Notificaciones",
+  "connections": "Conexiones",
   "workspaces": "Espacios de trabajo",
   "create_workspace": "Crear espacio de trabajo",
   "invitations": "Invitaciones",
@@ -291,6 +292,7 @@
   "workspace_logo": "Logo del espacio de trabajo",
   "new_issue": "Nuevo elemento de trabajo",
   "your_work": "Tu trabajo",
+  "workspace_dashboards": "Paneles de control",
   "drafts": "Borradores",
   "projects": "Proyectos",
   "views": "Vistas",
@@ -457,7 +459,7 @@
   "Cancel": "Cancelar",
   "edit": "Editar",
   "archive": "Archivar",
-  "restor": "Restaurar",
+  "restore": "Restaurar",
   "open_in_new_tab": "Abrir en nueva pestaña",
   "delete": "Eliminar",
   "deleting": "Eliminando",
@@ -501,6 +503,9 @@
   "re_generate_key": "Regenerar clave",
   "export": "Exportar",
   "member": "{count, plural, one{# miembro} other{# miembros}}",
+  "new_password_must_be_different_from_old_password": "La nueva contraseña debe ser diferente a la contraseña anterior",
+  "edited": "Modificado",
+  "bot": "Bot",
 
   "project_view": {
     "sort_by": {
@@ -591,7 +596,7 @@
         "default": "Aún no tienes elementos recientes."
       },
       "filters": {
-        "all": "Todos los elementos",
+        "all": "Todos",
         "projects": "Proyectos",
         "pages": "Páginas",
         "issues": "Elementos de trabajo"
@@ -631,6 +636,8 @@
     "states": "Estados",
     "state": "Estado",
     "state_groups": "Grupos de estados",
+    "state_group": "Grupos de estado",
+    "priorities": "Prioridades",
     "priority": "Prioridad",
     "team_project": "Proyecto de equipo",
     "project": "Proyecto",
@@ -639,12 +646,16 @@
     "module": "Módulo",
     "modules": "Módulos",
     "labels": "Etiquetas",
+    "label": "Etiqueta",
     "assignees": "Asignados",
     "assignee": "Asignado",
     "created_by": "Creado por",
     "none": "Ninguno",
     "link": "Enlace",
+    "estimates": "Estimaciones",
     "estimate": "Estimación",
+    "created_at": "Creado en",
+    "completed_at": "Completado en",
     "layout": "Diseño",
     "filters": "Filtros",
     "display": "Mostrar",
@@ -662,6 +673,7 @@
     "epic": "Epic",
     "epics": "Epics",
     "work_item": "Elemento de trabajo",
+    "work_items": "Elementos de trabajo",
     "sub_work_item": "Sub-elemento de trabajo",
     "add": "Agregar",
     "warning": "Advertencia",
@@ -686,13 +698,13 @@
     "add_more": "Agregar más",
     "defaults": "Valores predeterminados",
     "add_label": "Agregar etiqueta",
-    "estimates": "Estimaciones",
     "customize_time_range": "Personalizar rango de tiempo",
     "loading": "Cargando",
     "attachments": "Archivos adjuntos",
     "property": "Propiedad",
     "properties": "Propiedades",
     "parent": "Padre",
+    "page": "página",
     "remove": "Eliminar",
     "archiving": "Archivando",
     "archive": "Archivar",
@@ -824,8 +836,6 @@
     "select": "Seleccionar",
     "upgrade": "Mejorar",
     "add_seats": "Agregar asientos",
-    "label": "Etiqueta",
-    "priorities": "Prioridades",
     "projects": "Proyectos",
     "workspace": "Espacio de trabajo",
     "workspaces": "Espacios de trabajo",
@@ -844,6 +854,16 @@
     "disconnecting": "Desconectando",
     "installing": "Instalando",
     "install": "Instalar",
+    "reset": "Reiniciar",
+    "live": "En vivo",
+    "change_history": "Historial de cambios",
+    "coming_soon": "Próximamente",
+    "members": "Miembros",
+    "you": "Tú",
+    "upgrade_cta": {
+      "higher_subscription": "Mejorar a una suscripción más alta",
+      "talk_to_sales": "Hablar con ventas"
+    },
     "category": "Categoría",
     "categories": "Categorías",
     "saving": "Guardando",
@@ -851,7 +871,8 @@
     "delete": "Eliminar",
     "deleting": "Eliminando",
     "pending": "Pendiente",
-    "invite": "Invitar"
+    "invite": "Invitar",
+    "view": "Ver"
   },
 
   "chart": {
@@ -969,7 +990,8 @@
         "sub_issue_count": "Cantidad de sub-elementos",
         "attachment_count": "Cantidad de archivos adjuntos",
         "created_on": "Creado el",
-        "sub_issue": "Sub-elemento de trabajo"
+        "sub_issue": "Sub-elemento de trabajo",
+        "work_item_count": "Recuento de elementos de trabajo"
       },
       "extra": {
         "show_sub_issues": "Mostrar sub-elementos",
@@ -1456,7 +1478,8 @@
             "max_length": "El nombre del espacio de trabajo no debe exceder los 80 caracteres"
           },
           "company_size": {
-            "required": "El tamaño de la empresa es obligatorio"
+            "required": "El tamaño de la empresa es obligatorio",
+            "select_a_range": "Seleccionar tamaño de la organización"
           }
         }
       },
@@ -1715,32 +1738,89 @@
       }
     },
     "estimates": {
-      "title": "Habilitar estimaciones para mi proyecto",
-      "description": "Ayudan a comunicar la complejidad y la carga de trabajo del equipo."
+      "label": "Estimaciones",
+      "title": "Activar estimaciones para mi proyecto",
+      "description": "Te ayudan a comunicar la complejidad y la carga de trabajo del equipo.",
+      "no_estimate": "Sin estimación",
+      "create": {
+        "custom": "Personalizado",
+        "start_from_scratch": "Comenzar desde cero",
+        "choose_template": "Elegir una plantilla",
+        "choose_estimate_system": "Elegir un sistema de estimación",
+        "enter_estimate_point": "Ingresar estimación"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Estimación creada",
+            "message": "La estimación se ha creado correctamente"
+          },
+          "error": {
+            "title": "Error al crear la estimación",
+            "message": "No pudimos crear la nueva estimación, por favor inténtalo de nuevo."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Estimación modificada",
+            "message": "La estimación se ha actualizado en tu proyecto."
+          },
+          "error": {
+            "title": "Error al modificar la estimación",
+            "message": "No pudimos modificar la estimación, por favor inténtalo de nuevo"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "¡Éxito!",
+            "message": "Las estimaciones han sido activadas."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "¡Éxito!",
+            "message": "Las estimaciones han sido desactivadas."
+          },
+          "error": {
+            "title": "¡Error!",
+            "message": "No se pudo desactivar la estimación. Por favor inténtalo de nuevo"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "La estimación debe ser mayor que 0.",
+        "unable_to_process": "No podemos procesar tu solicitud, por favor inténtalo de nuevo.",
+        "numeric": "La estimación debe ser un valor numérico.",
+        "character": "La estimación debe ser un valor de carácter.",
+        "empty": "El valor de la estimación no puede estar vacío.",
+        "already_exists": "El valor de la estimación ya existe.",
+        "unsaved_changes": "Tienes cambios sin guardar. Por favor guárdalos antes de hacer clic en Hecho",
+        "remove_empty": "La estimación no puede estar vacía. Ingresa un valor en cada campo o elimina aquellos para los que no tienes valores."
+      }
     },
     "automations": {
       "label": "Automatizaciones",
       "auto-archive": {
-        "title": "Auto-archivar elementos de trabajo cerrados",
-        "description": "Plane archivará automáticamente los elementos de trabajo que se hayan completado o cancelado.",
-        "duration": "Auto-archivar elementos de trabajo que están cerrados por"
+        "title": "Archivar automáticamente elementos de trabajo cerrados",
+        "description": "Plane archivará automáticamente los elementos de trabajo que hayan sido completados o cancelados.",
+        "duration": "Archivar automáticamente elementos de trabajo cerrados durante"
       },
       "auto-close": {
-        "title": "Auto-cerrar elementos de trabajo",
-        "description": "Plane cerrará automáticamente los elementos de trabajo que no se hayan completado o cancelado.",
-        "duration": "Auto-cerrar elementos de trabajo que están inactivos por",
-        "auto_close_status": "Estado de auto-cierre"
+        "title": "Cerrar automáticamente elementos de trabajo",
+        "description": "Plane cerrará automáticamente los elementos de trabajo que no hayan sido completados o cancelados.",
+        "duration": "Cerrar automáticamente elementos de trabajo inactivos durante",
+        "auto_close_status": "Estado de cierre automático"
       }
     },
 
     "empty_state": {
       "labels": {
         "title": "Aún no hay etiquetas",
-        "description": "Crea etiquetas para ayudar a organizar y filtrar elementos de trabajo en tu proyecto."
+        "description": "Crea etiquetas para organizar y filtrar elementos de trabajo en tu proyecto."
       },
       "estimates": {
         "title": "Aún no hay sistemas de estimación",
-        "description": "Crea un conjunto de estimaciones para comunicar la cantidad de trabajo por elemento de trabajo.",
+        "description": "Crea un conjunto de estimaciones para comunicar el volumen de trabajo por elemento de trabajo.",
         "primary_button": "Agregar sistema de estimación"
       }
     }
@@ -1756,6 +1836,12 @@
     "remove_filters_to_see_all_cycles": "Elimina los filtros para ver todos los ciclos",
     "remove_search_criteria_to_see_all_cycles": "Elimina los criterios de búsqueda para ver todos los ciclos",
     "only_completed_cycles_can_be_archived": "Solo los ciclos completados pueden ser archivados",
+    "start_date": "Fecha de inicio",
+    "end_date": "Fecha de finalización",
+    "in_your_timezone": "En tu zona horaria",
+    "transfer_work_items": "Transferir {count} elementos de trabajo",
+    "date_range": "Rango de fechas",
+    "add_date": "Agregar fecha",
     "active_cycle": {
       "label": "Ciclo activo",
       "progress": "Progreso",
@@ -2349,30 +2435,36 @@
     "no_module": "Sin módulo"
   },
 
+  "description_versions": {
+    "last_edited_by": "Última edición por",
+    "previously_edited_by": "Editado anteriormente por",
+    "edited_by": "Editado por"
+  },
+
   "notification_settings": {
-    "page_label": "{workspace} - Configuración de bandeja de entrada",
-    "inbox_settings": "Configuración de bandeja de entrada",
-    "inbox_settings_description": "Personaliza cómo recibes notificaciones para actividades en tu espacio de trabajo. Tus cambios se guardan automáticamente.",
+    "page_label": "{workspace} - Configuración de la bandeja de entrada",
+    "inbox_settings": "Configuración de la bandeja de entrada",
+    "inbox_settings_description": "Personaliza cómo recibes notificaciones de actividades en tu espacio de trabajo. Tus cambios se guardan automáticamente.",
     "advanced_settings": "Configuración avanzada",
     "in_plane": "En Plane",
     "email": "Correo electrónico",
     "slack": "Slack",
     "task_updates": "Actualizaciones de elementos de trabajo",
-    "task_updates_subtitle": "Recibe notificaciones cuando se actualicen elementos de trabajo en tu espacio de trabajo.",
+    "task_updates_subtitle": "Recibe notificaciones cuando se actualicen los elementos de trabajo en tu espacio de trabajo.",
     "comments": "Comentarios",
     "comments_subtitle": "Mantente actualizado sobre las discusiones en tu espacio de trabajo.",
     "work_item_property_title": "Actualización de cualquier propiedad del elemento de trabajo",
-    "work_item_property_subtitle": "Recibe notificaciones cuando se actualicen elementos de trabajo en tu espacio de trabajo.",
+    "work_item_property_subtitle": "Recibe notificaciones cuando se actualicen los elementos de trabajo en tu espacio de trabajo.",
     "status_title": "Cambio de estado",
     "status_subtitle": "Cuando se actualiza el estado de un elemento de trabajo.",
     "priority_title": "Cambio de prioridad",
     "priority_subtitle": "Cuando se ajusta el nivel de prioridad de un elemento de trabajo.",
-    "assignee_title": "Cambio de asignación",
-    "assignee_subtitle": "Cuando un elemento de trabajo es asignado o reasignado a alguien.",
+    "assignee_title": "Cambio de asignado",
+    "assignee_subtitle": "Cuando un elemento de trabajo se asigna o reasigna a alguien.",
     "due_date_title": "Cambio de fecha",
     "due_date_subtitle": "Cuando se actualiza la fecha de inicio o vencimiento de un elemento de trabajo.",
-    "module_title": "Actualización de módulo",
-    "cycle_title": "Actualización de ciclo",
+    "module_title": "Actualización del módulo",
+    "cycle_title": "Actualización del ciclo",
     "mentioned_comments_title": "Menciones",
     "mentioned_comments_subtitle": "Cuando alguien te menciona en un comentario.",
     "new_comments_title": "Nuevos comentarios",

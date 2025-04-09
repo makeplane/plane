@@ -45,6 +45,7 @@ from plane.db.models import (
     ProjectMember,
     CycleIssue,
     UserRecentVisit,
+    ModuleIssue,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -60,6 +61,7 @@ from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.global_paginator import paginate
 from plane.bgtasks.webhook_task import model_activity
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
+from plane.utils.host import base_host
 
 
 class IssueListEndpoint(BaseAPIView):
@@ -378,7 +380,7 @@ class IssueViewSet(BaseViewSet):
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             issue = (
                 issue_queryset_grouper(
@@ -428,7 +430,7 @@ class IssueViewSet(BaseViewSet):
                 current_instance=None,
                 actor_id=request.user.id,
                 slug=slug,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             # updated issue description version
             issue_description_version_task.delay(
@@ -547,7 +549,7 @@ class IssueViewSet(BaseViewSet):
             )
 
         """
-        if the role is guest and guest_view_all_features is false and owned by is not 
+        if the role is guest and guest_view_all_features is false and owned by is not
         the requesting user then dont show the issue
         """
 
@@ -564,7 +566,7 @@ class IssueViewSet(BaseViewSet):
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         recent_visited_task.delay(
@@ -631,11 +633,13 @@ class IssueViewSet(BaseViewSet):
             )
 
         current_instance = json.dumps(
-            IssueSerializer(issue).data, cls=DjangoJSONEncoder
+            IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder
         )
 
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
-        serializer = IssueCreateSerializer(issue, data=request.data, partial=True)
+        serializer = IssueCreateSerializer(
+            issue, data=request.data, partial=True, context={"project_id": project_id}
+        )
         if serializer.is_valid():
             serializer.save()
             issue_activity.delay(
@@ -647,7 +651,7 @@ class IssueViewSet(BaseViewSet):
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             model_activity.delay(
                 model_name="issue",
@@ -656,7 +660,7 @@ class IssueViewSet(BaseViewSet):
                 current_instance=current_instance,
                 actor_id=request.user.id,
                 slug=slug,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             # updated issue description version
             issue_description_version_task.delay(
@@ -688,7 +692,8 @@ class IssueViewSet(BaseViewSet):
             current_instance={},
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
+            subscriber=False,
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -736,6 +741,13 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
 
         total_issues = len(issues)
 
+        # First, delete all related cycle issues
+        CycleIssue.objects.filter(issue_id__in=issue_ids).delete()
+
+        # Then, delete all related module issues
+        ModuleIssue.objects.filter(issue_id__in=issue_ids).delete()
+
+        # Finally, delete the issues themselves
         issues.delete()
 
         return Response(
@@ -1023,8 +1035,16 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
         """
         Validate that start date is before target date.
         """
+        from datetime import datetime
+
         start = new_start or current_start
         target = new_target or current_target
+
+        # Convert string dates to datetime objects if they're strings
+        if isinstance(start, str):
+            start = datetime.strptime(start, "%Y-%m-%d").date()
+        if isinstance(target, str):
+            target = datetime.strptime(target, "%Y-%m-%d").date()
 
         if start and target and start > target:
             return False
@@ -1099,7 +1119,6 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
 
 
 class IssueMetaEndpoint(BaseAPIView):
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
     def get(self, request, slug, project_id, issue_id):
         issue = Issue.issue_objects.only("sequence_id", "project__identifier").get(
@@ -1115,13 +1134,24 @@ class IssueMetaEndpoint(BaseAPIView):
 
 
 class IssueDetailIdentifierEndpoint(BaseAPIView):
+    def strict_str_to_int(self, s):
+        if not s.isdigit() and not (s.startswith("-") and s[1:].isdigit()):
+            raise ValueError("Invalid integer string")
+        return int(s)
 
     def get(self, request, slug, project_identifier, issue_identifier):
-        
+        # Check if the issue identifier is a valid integer
+        try:
+            issue_identifier = self.strict_str_to_int(issue_identifier)
+        except ValueError:
+            return Response(
+                {"error": "Invalid issue identifier"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Fetch the project
         project = Project.objects.get(
-            identifier__iexact=project_identifier,
-            workspace__slug=slug,
+            identifier__iexact=project_identifier, workspace__slug=slug
         )
 
         # Check if the user is a member of the project
@@ -1223,8 +1253,8 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
             .annotate(
                 is_subscribed=Exists(
                     IssueSubscriber.objects.filter(
-                            workspace__slug=slug,
-                            project_id=project.id,
+                        workspace__slug=slug,
+                        project_id=project.id,
                         issue__sequence_id=issue_identifier,
                         subscriber=request.user,
                     )
@@ -1240,7 +1270,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
             )
 
         """
-        if the role is guest and guest_view_all_features is false and owned by is not 
+        if the role is guest and guest_view_all_features is false and owned by is not
         the requesting user then dont show the issue
         """
 
@@ -1257,7 +1287,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         recent_visited_task.delay(

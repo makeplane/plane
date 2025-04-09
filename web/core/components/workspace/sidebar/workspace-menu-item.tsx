@@ -65,12 +65,12 @@ export const SidebarWorkspaceMenuItem: FC<SidebarWorkspaceMenuItemProps> = obser
           <div className="flex items-center gap-1.5 py-[1px]">
             <item.Icon
               className={cn("size-4", {
-                "rotate-180": item.key === "active-cycles",
+                "rotate-180": item.key === "active_cycles",
               })}
             />
             {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{t(item.labelTranslationKey)}</p>}
           </div>
-          {!sidebarCollapsed && item.key === "active-cycles" && (
+          {!sidebarCollapsed && item.key === "active_cycles" && (
             <div className="flex-shrink-0">
               <UpgradeBadge />
             </div>

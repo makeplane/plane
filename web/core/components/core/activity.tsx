@@ -36,7 +36,7 @@ export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   const { isMobile } = usePlatformOS();
 
   const workItemLink = generateWorkItemLink({
-    workspaceSlug: workspaceSlug.toString() ?? activity.workspace_detail?.slug,
+    workspaceSlug: workspaceSlug?.toString() ?? activity.workspace_detail?.slug,
     projectId: activity?.project,
     issueId: activity?.issue,
     projectIdentifier: activity?.project_detail?.identifier,

@@ -1,6 +1,7 @@
 {
   "name": "@plane/services",
-  "version": "0.24.1",
+  "version": "0.25.3",
+  "license": "AGPL-3.0",
   "private": true,
   "main": "./src/index.ts",
   "scripts": {
@@ -9,6 +10,6 @@
   },
   "dependencies": {
     "@plane/constants": "*",
-    "axios": "^1.7.9"
+    "axios": "^1.8.3"
   }
 }

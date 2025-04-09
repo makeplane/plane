@@ -367,8 +367,9 @@ export class IssueDetail implements IIssueDetail {
     projectId: string,
     issueId: string,
     relationType: TIssueRelationTypes,
-    relatedIssue: string
-  ) => this.relation.removeRelation(workspaceSlug, projectId, issueId, relationType, relatedIssue);
+    relatedIssue: string,
+    updateLocally?: boolean
+  ) => this.relation.removeRelation(workspaceSlug, projectId, issueId, relationType, relatedIssue, updateLocally);
 
   // activity
   fetchActivities = async (workspaceSlug: string, projectId: string, issueId: string, loaderType?: TActivityLoader) =>

@@ -16,17 +16,21 @@ import {
   EUserPermissionsLevel,
 } from "@plane/constants";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
+import {
+  ICustomSearchSelectOption,
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+} from "@plane/types";
 // ui
-import { Breadcrumbs, Button, CustomMenu, Tooltip, Header } from "@plane/ui";
+import { Breadcrumbs, Button, Tooltip, Header, CustomSearchSelect } from "@plane/ui";
 // components
-import { BreadcrumbLink, Logo } from "@/components/common";
+import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
 import { ViewQuickActions } from "@/components/views";
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
-import { truncateText } from "@/helpers/string.helper";
 // hooks
 import {
   useCommandPalette,
@@ -143,6 +147,23 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
 
   if (!viewDetails) return;
 
+  const switcherOptions = projectViewIds
+    ?.map((id) => {
+      const _view = id === viewId ? viewDetails : getViewById(id);
+      if (!_view) return;
+      const viewLink = `/${workspaceSlug}/projects/${projectId}/views/${_view.id}`;
+      return {
+        value: _view.id,
+        query: _view.name,
+        content: (
+          <Link href={viewLink}>
+            <SwitcherLabel logo_props={_view.logo_props} name={_view.name} LabelIcon={Layers} />
+          </Link>
+        ),
+      };
+    })
+    .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
+
   return (
     <Header>
       <Header.LeftItem>
@@ -161,42 +182,12 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
           <Breadcrumbs.BreadcrumbItem
             type="component"
             component={
-              <CustomMenu
-                label={
-                  <>
-                    {viewDetails?.logo_props?.in_use ? (
-                      <Logo logo={viewDetails.logo_props} size={12} type="lucide" />
-                    ) : (
-                      <Layers height={12} width={12} />
-                    )}
-                    {viewDetails?.name && truncateText(viewDetails.name, 40)}
-                  </>
-                }
-                className="ml-1.5"
-                placement="bottom-start"
-              >
-                {projectViewIds?.map((viewId) => {
-                  const view = getViewById(viewId);
-
-                  if (!view) return;
-
-                  return (
-                    <CustomMenu.MenuItem key={viewId}>
-                      <Link
-                        href={`/${workspaceSlug}/projects/${projectId}/views/${viewId}`}
-                        className="flex items-center gap-1.5"
-                      >
-                        {view?.logo_props?.in_use ? (
-                          <Logo logo={view.logo_props} size={12} type="lucide" />
-                        ) : (
-                          <Layers height={12} width={12} />
-                        )}
-                        {truncateText(view.name, 40)}
-                      </Link>
-                    </CustomMenu.MenuItem>
-                  );
-                })}
-              </CustomMenu>
+              <CustomSearchSelect
+                options={switcherOptions}
+                value={viewId}
+                label={<SwitcherLabel logo_props={viewDetails.logo_props} name={viewDetails.name} LabelIcon={Layers} />}
+                onChange={() => {}}
+              />
             }
           />
         </Breadcrumbs>
@@ -210,17 +201,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         ) : (
           <></>
         )}
-
-        <div className="hidden md:block">
-          <ViewQuickActions
-            parentRef={parentRef}
-            projectId={projectId.toString()}
-            view={viewDetails}
-            workspaceSlug={workspaceSlug.toString()}
-          />
-        </div>
       </Header.LeftItem>
-      <Header.RightItem>
+      <Header.RightItem className="items-center">
         {!viewDetails?.is_locked ? (
           <>
             <LayoutSelection
@@ -287,6 +269,15 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         ) : (
           <></>
         )}
+        <div className="hidden md:block">
+          <ViewQuickActions
+            parentRef={parentRef}
+            customClassName="flex-shrink-0 flex items-center justify-center size-6 bg-custom-background-80/70 rounded"
+            projectId={projectId.toString()}
+            view={viewDetails}
+            workspaceSlug={workspaceSlug.toString()}
+          />
+        </div>
       </Header.RightItem>
     </Header>
   );

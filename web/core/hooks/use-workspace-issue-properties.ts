@@ -1,5 +1,8 @@
 import useSWR from "swr";
-import { useCycle, useProjectEstimates, useLabel, useModule, useProjectState } from "./store";
+// plane web imports
+import { useWorkspaceIssuePropertiesExtended } from "@/plane-web/hooks/use-workspace-issue-properties-extended";
+// plane imports
+import { useCycle, useProjectEstimates, useLabel, useModule } from "./store";
 
 export const useWorkspaceIssueProperties = (workspaceSlug: string | string[] | undefined) => {
   const { fetchWorkspaceLabels } = useLabel();
@@ -37,4 +40,7 @@ export const useWorkspaceIssueProperties = (workspaceSlug: string | string[] | u
     workspaceSlug ? () => getWorkspaceEstimates(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
+
+  // fetch extended issue properties
+  useWorkspaceIssuePropertiesExtended(workspaceSlug);
 };

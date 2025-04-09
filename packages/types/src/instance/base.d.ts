@@ -37,6 +37,7 @@ export interface IInstance {
 }
 
 export interface IInstanceConfig {
+  enable_signup: boolean;
   is_workspace_creation_disabled: boolean;
   is_google_enabled: boolean;
   is_github_enabled: boolean;
@@ -72,9 +73,7 @@ export interface IInstanceAdmin {
   user_detail: IUserLite;
 }
 
-export type TInstanceIntercomConfigurationKeys =
-  | "IS_INTERCOM_ENABLED"
-  | "INTERCOM_APP_ID";
+export type TInstanceIntercomConfigurationKeys = "IS_INTERCOM_ENABLED" | "INTERCOM_APP_ID";
 
 export type TInstanceConfigurationKeys =
   | TInstanceAIConfigurationKeys

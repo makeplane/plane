@@ -26,12 +26,12 @@ export const CoreEditorExtensionsWithoutProps = [
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
-        class: "list-disc pl-7 space-y-2",
+        class: "list-disc pl-7 space-y-[--list-spacing-y]",
       },
     },
     orderedList: {
       HTMLAttributes: {
-        class: "list-decimal pl-7 space-y-2",
+        class: "list-decimal pl-7 space-y-[--list-spacing-y]",
       },
     },
     listItem: {
@@ -66,7 +66,7 @@ export const CoreEditorExtensionsWithoutProps = [
     autolink: true,
     linkOnPaste: true,
     protocols: ["http", "https"],
-    validate: (url: string) => isValidHttpUrl(url),
+    validate: (url: string) => isValidHttpUrl(url).isValid,
     HTMLAttributes: {
       class:
         "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",

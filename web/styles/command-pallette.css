@@ -30,10 +30,22 @@
   background-color: rgba(var(--color-background-100));
 }
 
-[cmdk-item]:hover {
+[cmdk-item]:focus {
   background-color: rgba(var(--color-background-80));
 }
 
 [cmdk-item][aria-selected="true"] {
   background-color: rgba(var(--color-background-80));
+}
+
+[cmdk-item][aria-disabled="true"],
+[cmdk-item][data-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.5;
+  background-color: transparent;
+}
+
+[cmdk-item][aria-disabled="true"]:focus,
+[cmdk-item][data-disabled="true"]:focus {
+  background-color: rgba(var(--color-background-80), 0.7);
 }

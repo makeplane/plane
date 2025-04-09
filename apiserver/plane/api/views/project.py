@@ -30,7 +30,7 @@ from plane.db.models import (
 )
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from .base import BaseAPIView
-
+from plane.utils.host import base_host
 
 class ProjectAPIEndpoint(BaseAPIView):
     """Project Endpoints to create, update, list, retrieve and delete endpoint"""
@@ -228,7 +228,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                     current_instance=None,
                     actor_id=request.user.id,
                     slug=slug,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                 )
 
                 serializer = ProjectSerializer(project)
@@ -258,9 +258,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                 ProjectSerializer(project).data, cls=DjangoJSONEncoder
             )
 
-            intake_view = request.data.get(
-                "inbox_view", request.data.get("intake_view", project.intake_view)
-            )
+            intake_view = request.data.get("intake_view", project.intake_view)
 
             if project.archived_at:
                 return Response(
@@ -297,7 +295,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                     current_instance=current_instance,
                     actor_id=request.user.id,
                     slug=slug,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                 )
 
                 serializer = ProjectSerializer(project)
@@ -334,7 +332,7 @@ class ProjectAPIEndpoint(BaseAPIView):
             new_value=None,
             actor_id=request.user.id,
             slug=slug,
-            current_site=request.META.get("HTTP_ORIGIN"),
+            current_site=base_host(request=request, is_app=True),
             event_id=project.id,
             old_identifier=None,
             new_identifier=None,

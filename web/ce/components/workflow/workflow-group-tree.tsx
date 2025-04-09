@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { TIssueGroupByOptions } from "@plane/types";
 
 type Props = {

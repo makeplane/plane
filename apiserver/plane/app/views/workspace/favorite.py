@@ -4,6 +4,7 @@ from rest_framework.response import Response
 
 # Django modules
 from django.db.models import Q
+from django.db import IntegrityError
 
 # Module imports
 from plane.app.views.base import BaseAPIView
@@ -31,16 +32,37 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def post(self, request, slug):
-        workspace = Workspace.objects.get(slug=slug)
-        serializer = UserFavoriteSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(
-                user_id=request.user.id,
-                workspace=workspace,
-                project_id=request.data.get("project_id", None),
+        try:
+            workspace = Workspace.objects.get(slug=slug)
+
+            # If the favorite exists return
+            if request.data.get("entity_identifier"):
+                user_favorites = UserFavorite.objects.filter(
+                    workspace=workspace,
+                    user_id=request.user.id,
+                    entity_type=request.data.get("entity_type"),
+                    entity_identifier=request.data.get("entity_identifier"),
+                ).first()
+
+                # If the favorite exists return
+                if user_favorites:
+                    serializer = UserFavoriteSerializer(user_favorites)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+
+            # else create a new favorite
+            serializer = UserFavoriteSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(
+                    user_id=request.user.id,
+                    workspace=workspace,
+                    project_id=request.data.get("project_id", None),
+                )
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError:
+            return Response(
+                {"error": "Favorite already exists"}, status=status.HTTP_400_BAD_REQUEST
             )
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def patch(self, request, slug, favorite_id):

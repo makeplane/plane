@@ -99,6 +99,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
               projectId={projectId ?? undefined}
               buttonVariant="border-with-text"
               tabIndex={getIndex("state_id")}
+              isForWorkItemCreation={!id}
             />
           </div>
         )}

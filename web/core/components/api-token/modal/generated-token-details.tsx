@@ -26,7 +26,7 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: `${t("success")}!`,
-        message: t("workspace_setting.token_copied"),
+        message: t("workspace_settings.token_copied"),
       })
     );
   };

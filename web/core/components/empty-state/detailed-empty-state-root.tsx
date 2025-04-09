@@ -27,6 +27,7 @@ type Props = {
   secondaryButton?: ButtonConfig;
   customPrimaryButton?: React.ReactNode;
   customSecondaryButton?: React.ReactNode;
+  className?: string;
 };
 
 const sizeClasses = {
@@ -66,12 +67,18 @@ export const DetailedEmptyState: React.FC<Props> = observer((props) => {
     customPrimaryButton,
     customSecondaryButton,
     assetPath,
+    className,
   } = props;
 
   const hasButtons = primaryButton || secondaryButton || customPrimaryButton || customSecondaryButton;
 
   return (
-    <div className="flex items-center justify-center min-h-full min-w-full overflow-y-auto py-10 md:px-20 px-5">
+    <div
+      className={cn(
+        "flex items-center justify-center min-h-full min-w-full overflow-y-auto py-10 md:px-20 px-5",
+        className
+      )}
+    >
       <div className={cn("flex flex-col gap-5", sizeClasses[size])}>
         <div className="flex flex-col gap-1.5 flex-shrink">
           <h3 className={cn("text-xl font-semibold", { "font-medium": !description })}>{title}</h3>

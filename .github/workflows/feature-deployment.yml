@@ -51,7 +51,7 @@ jobs:
         uses: actions/checkout@v4
 
   full_build_push:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     env:
       BUILD_TYPE: full

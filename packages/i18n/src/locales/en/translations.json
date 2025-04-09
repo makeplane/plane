@@ -287,7 +287,7 @@
   "Cancel": "Cancel",
   "edit": "Edit",
   "archive": "Archive",
-  "restor": "Restore",
+  "restore": "Restore",
   "open_in_new_tab": "Open in new tab",
   "delete": "Delete",
   "deleting": "Deleting",
@@ -331,6 +331,9 @@
   "re_generate_key": "Re-generate key",
   "export": "Export",
   "member": "{count, plural, one{# member} other{# members}}",
+  "new_password_must_be_different_from_old_password": "New password must be different from old password",
+  "edited": "edited",
+  "bot": "Bot",
 
   "project_view": {
     "sort_by": {
@@ -421,7 +424,7 @@
         "default": "You don't have any recents yet."
       },
       "filters": {
-        "all": "All items",
+        "all": "All",
         "projects": "Projects",
         "pages": "Pages",
         "issues": "Work items"
@@ -461,6 +464,8 @@
     "states": "States",
     "state": "State",
     "state_groups": "State groups",
+    "state_group": "State group",
+    "priorities": "Priorities",
     "priority": "Priority",
     "team_project": "Team project",
     "project": "Project",
@@ -469,12 +474,16 @@
     "module": "Module",
     "modules": "Modules",
     "labels": "Labels",
+    "label": "Label",
     "assignees": "Assignees",
     "assignee": "Assignee",
     "created_by": "Created by",
     "none": "None",
     "link": "Link",
+    "estimates": "Estimates",
     "estimate": "Estimate",
+    "created_at": "Created at",
+    "completed_at": "Completed at",
     "layout": "Layout",
     "filters": "Filters",
     "display": "Display",
@@ -492,6 +501,7 @@
     "epic": "Epic",
     "epics": "Epics",
     "work_item": "Work item",
+    "work_items": "Work items",
     "sub_work_item": "Sub-work item",
     "add": "Add",
     "warning": "Warning",
@@ -516,13 +526,13 @@
     "add_more": "Add more",
     "defaults": "Defaults",
     "add_label": "Add label",
-    "estimates": "Estimates",
     "customize_time_range": "Customize time range",
     "loading": "Loading",
     "attachments": "Attachments",
     "property": "Property",
     "properties": "Properties",
     "parent": "Parent",
+    "page": "Page",
     "remove": "Remove",
     "archiving": "Archiving",
     "archive": "Archive",
@@ -612,6 +622,7 @@
       "open_in_new_tab": "Open in new tab",
       "copy_link": "Copy link",
       "archive": "Archive",
+      "restore": "Restore",
       "delete": "Delete",
       "remove_relation": "Remove relation",
       "subscribe": "Subscribe",
@@ -619,7 +630,8 @@
       "clear_sorting": "Clear sorting",
       "show_weekends": "Show weekends",
       "enable": "Enable",
-      "disable": "Disable"
+      "disable": "Disable",
+      "copy_markdown": "Copy markdown"
     },
     "name": "Name",
     "discard": "Discard",
@@ -654,8 +666,6 @@
     "select": "Select",
     "upgrade": "Upgrade",
     "add_seats": "Add Seats",
-    "label": "Label",
-    "priorities": "Priorities",
     "projects": "Projects",
     "workspace": "Workspace",
     "workspaces": "Workspaces",
@@ -674,6 +684,16 @@
     "disconnecting": "Disconnecting",
     "installing": "Installing",
     "install": "Install",
+    "reset": "Reset",
+    "live": "Live",
+    "change_history": "Change History",
+    "coming_soon": "Coming soon",
+    "members": "Members",
+    "you": "You",
+    "upgrade_cta": {
+      "higher_subscription": "Upgrade to higher subscription",
+      "talk_to_sales": "Talk to Sales"
+    },
     "category": "Category",
     "categories": "Categories",
     "saving": "Saving",
@@ -681,7 +701,8 @@
     "delete": "Delete",
     "deleting": "Deleting",
     "pending": "Pending",
-    "invite": "Invite"
+    "invite": "Invite",
+    "view": "View"
   },
 
   "chart": {
@@ -799,7 +820,8 @@
         "sub_issue_count": "Sub-work item count",
         "attachment_count": "Attachment count",
         "created_on": "Created on",
-        "sub_issue": "Sub-work item"
+        "sub_issue": "Sub-work item",
+        "work_item_count": "Work item count"
       },
       "extra": {
         "show_sub_issues": "Show sub-work items",
@@ -1287,7 +1309,8 @@
             "max_length": "Workspace name should not exceed 80 characters"
           },
           "company_size": {
-            "required": "Company size is required"
+            "required": "Company size is required",
+            "select_a_range": "Select organization size"
           }
         }
       },
@@ -1546,8 +1569,65 @@
       }
     },
     "estimates": {
+      "label": "Estimates",
       "title": "Enable estimates for my project",
-      "description": "They help you in communicating complexity and workload of the team."
+      "description": "They help you in communicating complexity and workload of the team.",
+      "no_estimate": "No estimate",
+      "create": {
+        "custom": "Custom",
+        "start_from_scratch": "Start from scratch",
+        "choose_template": "Choose a template",
+        "choose_estimate_system": "Choose an estimate system",
+        "enter_estimate_point": "Enter estimate"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Estimate created",
+            "message": "The estimate has been created successfully"
+          },
+          "error": {
+            "title": "Estimate creation failed",
+            "message": "We were unable to create the new estimate, please try again."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Estimate modified",
+            "message": "The estimate has been updated in your project."
+          },
+          "error": {
+            "title": "Estimate modification failed",
+            "message": "We were unable to modify the estimate, please try again"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Success!",
+            "message": "Estimates have been enabled."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Success!",
+            "message": "Estimates have been disabled."
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Estimate could not be disabled. Please try again"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Estimate needs to be greater than 0.",
+        "unable_to_process": "We are unable to process your request, please try again.",
+        "numeric": "Estimate needs to be a numeric value.",
+        "character": "Estimate needs to be a character value.",
+        "empty": "Estimate value cannot be empty.",
+        "already_exists": "Estimate value already exists.",
+        "unsaved_changes": "You have some unsaved changes, Please save them before clicking on done",
+        "remove_empty": "Estimate can't be empty. Enter a value in each field or remove those you don't have values for."
+      }
     },
     "automations": {
       "label": "Automations",
@@ -1587,6 +1667,12 @@
     "remove_filters_to_see_all_cycles": "Remove the filters to see all cycles",
     "remove_search_criteria_to_see_all_cycles": "Remove the search criteria to see all cycles",
     "only_completed_cycles_can_be_archived": "Only completed cycles can be archived",
+    "start_date": "Start date",
+    "end_date": "End date",
+    "in_your_timezone": "In your timezone",
+    "transfer_work_items": "Transfer {count} work items",
+    "date_range": "Date range",
+    "add_date": "Add date",
     "active_cycle": {
       "label": "Active cycle",
       "progress": "Progress",
@@ -2178,6 +2264,12 @@
   "module": {
     "label": "{count, plural, one {Module} other {Modules}}",
     "no_module": "No module"
+  },
+
+  "description_versions": {
+    "last_edited_by": "Last edited by",
+    "previously_edited_by": "Previously edited by",
+    "edited_by": "Edited by"
   },
 
   "notification_settings": {

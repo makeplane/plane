@@ -2,29 +2,30 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-// helpers
-import { cn } from "@/helpers/common.helper";
-// hooks
-import { useProjectState } from "@/hooks/store";
+// plane imports
+import { TStateOperationsCallbacks } from "@plane/types";
+import { cn } from "@plane/utils";
 
-type TStateMarksAsDefault = { workspaceSlug: string; projectId: string; stateId: string; isDefault: boolean };
+type TStateMarksAsDefault = {
+  stateId: string;
+  isDefault: boolean;
+  markStateAsDefaultCallback: TStateOperationsCallbacks["markStateAsDefault"];
+};
 
 export const StateMarksAsDefault: FC<TStateMarksAsDefault> = observer((props) => {
-  const { workspaceSlug, projectId, stateId, isDefault } = props;
-  // hooks
-  const { markStateAsDefault } = useProjectState();
+  const { stateId, isDefault, markStateAsDefaultCallback } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);
 
   const handleMarkAsDefault = async () => {
-    if (!workspaceSlug || !projectId || !stateId || isDefault) return;
+    if (!stateId || isDefault) return;
     setIsLoading(true);
 
     try {
       setIsLoading(false);
-      await markStateAsDefault(workspaceSlug, projectId, stateId);
+      await markStateAsDefaultCallback(stateId);
       setIsLoading(false);
-    } catch (error) {
+    } catch {
       setIsLoading(false);
     }
   };
@@ -32,7 +33,7 @@ export const StateMarksAsDefault: FC<TStateMarksAsDefault> = observer((props) =>
   return (
     <button
       className={cn(
-        "text-sm whitespace-nowrap transition-colors",
+        "text-xs whitespace-nowrap transition-colors",
         isDefault ? "text-custom-text-300" : "text-custom-text-200 hover:text-custom-text-100"
       )}
       disabled={isDefault || isLoading}

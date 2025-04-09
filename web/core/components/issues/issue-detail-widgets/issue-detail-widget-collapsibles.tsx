@@ -11,6 +11,7 @@ import {
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // Plane-web
+import { WorkItemAdditionalWidgets } from "@/plane-web/components/issues/issue-detail-widgets";
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 
 type Props = {
@@ -26,7 +27,7 @@ export const IssueDetailWidgetCollapsibles: FC<Props> = observer((props) => {
   const {
     issue: { getIssueById },
     subIssues: { subIssuesByIssueId },
-    attachment: { getAttachmentsUploadStatusByIssueId },
+    attachment: { getAttachmentsCountByIssueId, getAttachmentsUploadStatusByIssueId },
     relation: { getRelationCountByIssueId },
   } = useIssueDetail();
 
@@ -41,8 +42,8 @@ export const IssueDetailWidgetCollapsibles: FC<Props> = observer((props) => {
   const shouldRenderRelations = issueRelationsCount > 0;
   const shouldRenderLinks = !!issue?.link_count && issue?.link_count > 0;
   const attachmentUploads = getAttachmentsUploadStatusByIssueId(issueId);
-  const shouldRenderAttachments =
-    (!!issue?.attachment_count && issue?.attachment_count > 0) || (!!attachmentUploads && attachmentUploads.length > 0);
+  const attachmentsCount = getAttachmentsCountByIssueId(issueId);
+  const shouldRenderAttachments = attachmentsCount > 0 || (!!attachmentUploads && attachmentUploads.length > 0);
 
   return (
     <div className="flex flex-col">
@@ -68,6 +69,13 @@ export const IssueDetailWidgetCollapsibles: FC<Props> = observer((props) => {
           disabled={disabled}
         />
       )}
+
+      <WorkItemAdditionalWidgets
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        workItemId={issueId}
+        disabled={disabled}
+      />
     </div>
   );
 });
