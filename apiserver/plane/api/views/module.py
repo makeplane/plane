@@ -333,7 +333,7 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
-    def get(self, request, slug, project_id, module_id, issue_id=None):
+    def get(self, request, slug, project_id, module_id):
         order_by = request.GET.get("order_by", "created_at")
         issues = (
             Issue.issue_objects.filter(
