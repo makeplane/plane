@@ -83,5 +83,3 @@ from .label import Label
 from .device import Device, DeviceSession
 
 from .sticky import Sticky
-
-from .version import EntityDescriptionVersion
