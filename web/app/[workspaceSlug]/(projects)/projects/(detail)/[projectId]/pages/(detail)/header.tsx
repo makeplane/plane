@@ -2,9 +2,10 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { FileText, Layers } from "lucide-react";
+import { ArchiveIcon, Earth, FileText, Lock } from "lucide-react";
 // types
-import { ICustomSearchSelectOption } from "@plane/types";
+import { EPageAccess } from "@plane/constants";
+import { ICustomSearchSelectOption, TPage } from "@plane/types";
 // ui
 import { Breadcrumbs, Header, CustomSearchSelect } from "@plane/ui";
 // components
@@ -18,6 +19,18 @@ import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
 // plane web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
+
+const PageAccessIcon = (page: TPage) => (
+  <div>
+    {page.archived_at ? (
+      <ArchiveIcon className="h-2.5 w-2.5 text-custom-text-300" />
+    ) : page.access === EPageAccess.PUBLIC ? (
+      <Earth className="h-2.5 w-2.5 text-custom-text-300" />
+    ) : (
+      <Lock className="h-2.5 w-2.5 text-custom-text-300" />
+    )}
+  </div>
+);
 
 export interface IPagesHeaderProps {
   showButton?: boolean;
@@ -46,9 +59,12 @@ export const PageDetailsHeader = observer(() => {
         value: _page.id,
         query: _page.name,
         content: (
-          <Link href={pageLink} className="flex gap-2 items-center justify-between">
-            <SwitcherLabel logo_props={_page.logo_props} name={_page.name} LabelIcon={Layers} />
-          </Link>
+          <div className="flex gap-2 items-center justify-between">
+            <Link href={pageLink} className="flex gap-2 items-center justify-between w-full">
+              <SwitcherLabel logo_props={_page.logo_props} name={_page.name} LabelIcon={FileText} />
+            </Link>
+            <PageAccessIcon {..._page} />
+          </div>
         ),
       };
     })
@@ -94,7 +110,7 @@ export const PageDetailsHeader = observer(() => {
                 <CustomSearchSelect
                   value={pageId}
                   options={switcherOptions}
-                  label={<SwitcherLabel logo_props={page.logo_props} name={page.name} LabelIcon={Layers} />}
+                  label={<SwitcherLabel logo_props={page.logo_props} name={page.name} LabelIcon={FileText} />}
                   onChange={() => {}}
                 />
               }
