@@ -17,10 +17,11 @@ type Props = {
   customerId: string;
   workspaceSlug: string;
   parentRef: React.RefObject<HTMLDivElement> | null;
+  customClassName?: string;
 };
 
 export const CustomerQuickActions: React.FC<Props> = observer((props) => {
-  const { customerId, workspaceSlug, parentRef } = props;
+  const { customerId, workspaceSlug, parentRef, customClassName } = props;
   // states
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   // i18n
@@ -82,7 +83,7 @@ export const CustomerQuickActions: React.FC<Props> = observer((props) => {
         handleClose={() => setIsDeleteModalOpen(false)}
       />
       {parentRef && <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />}
-      <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
+      <CustomMenu ellipsis placement="bottom-end" closeOnSelect buttonClassName={customClassName}>
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
           return (

@@ -30,6 +30,7 @@ type InitiativeCollapsible = "links" | "attachments" | "projects" | "epics";
 
 export interface IInitiativeStore {
   initiativesMap: Record<string, TInitiative> | undefined;
+  initiativeIds: string[];
   initiativesStatsMap: Record<string, TInitiativeStats> | undefined;
   initiativeLinks: IInitiativeLinkStore;
   initiativeCommentActivities: IInitiativeCommentActivityStore;
@@ -154,6 +155,10 @@ export class InitiativeStore implements IInitiativeStore {
     if (!workspaceSlug) return;
 
     return this.getGroupedInitiativeIds(workspaceSlug);
+  }
+
+  get initiativeIds() {
+    return Object.keys(this.initiativesMap ?? {});
   }
 
   getGroupedInitiativeIds = computedFn((workspaceSlug: string) => {

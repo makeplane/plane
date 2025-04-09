@@ -11,7 +11,6 @@ import { Breadcrumbs, Header, CustomSearchSelect } from "@plane/ui";
 import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 import { PageEditInformationPopover } from "@/components/pages";
 // helpers
-// hooks
 import { useProject } from "@/hooks/store";
 // plane web components
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
@@ -35,7 +34,7 @@ export const PageDetailsHeader = observer(() => {
   const { getPageById, getCurrentProjectPageIds } = usePageStore(EPageStoreType.PROJECT);
   // derived values
   const projectPageIds = getCurrentProjectPageIds(projectId?.toString());
-
+  
   if (!page) return null;
   const switcherOptions = projectPageIds
     .map((id) => {

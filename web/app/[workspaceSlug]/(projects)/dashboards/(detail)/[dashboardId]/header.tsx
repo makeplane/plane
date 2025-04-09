@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -6,37 +6,19 @@ import { Eye, LayoutGrid, Pencil, Plus } from "lucide-react";
 // plane imports
 import { EWidgetChartModels, EWidgetChartTypes } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Breadcrumbs, Button, CustomMenu, getButtonStyling, Header, setToast, TOAST_TYPE } from "@plane/ui";
+import { ICustomSearchSelectOption } from "@plane/types";
+import { Breadcrumbs, Button, CustomSearchSelect, getButtonStyling, Header, setToast, TOAST_TYPE } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
-// helpers
-import { truncateText } from "@/helpers/string.helper";
+import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 // plane web components
+import { DashboardQuickActions } from "@/plane-web/components/dashboards/quick-actions";
 import { DashboardWidgetChartTypesDropdown } from "@/plane-web/components/dashboards/widgets/dropdown";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 
-const DashboardDropdownOption: React.FC<{ dashboardId: string }> = ({ dashboardId }) => {
-  // router
-  const { workspaceSlug } = useParams();
-  // store hooks
-  const { getDashboardById } = useDashboards();
-  // derived values
-  const dashboard = getDashboardById(dashboardId);
-
-  if (!dashboard) return null;
-
-  return (
-    <CustomMenu.MenuItem key={dashboard.id}>
-      <Link href={`/${workspaceSlug}/dashboards/${dashboard.id}`} className="flex items-center gap-1.5">
-        <LayoutGrid className="flex-shrink-0 size-3" />
-        {truncateText(dashboard.name ?? "", 40)}
-      </Link>
-    </CustomMenu.MenuItem>
-  );
-};
-
 export const WorkspaceDashboardDetailsHeader = observer(() => {
+  // refs
+  const parentRef = useRef(null);
   // states
   const [isAddingWidget, setIsAddingWidget] = useState(false);
   // navigation
@@ -75,6 +57,22 @@ export const WorkspaceDashboardDetailsHeader = observer(() => {
     }
   };
 
+  const switcherOptions = currentWorkspaceDashboardIds
+    .map((id) => {
+      const _dashboard = getDashboardById(id);
+      if (!_dashboard?.id || !_dashboard?.name) return null;
+      return {
+        value: _dashboard.id,
+        query: _dashboard.name,
+        content: (
+          <Link href={`/${workspaceSlug}/dashboards/${_dashboard.id}`}>
+            <SwitcherLabel name={_dashboard.name} LabelIcon={LayoutGrid} />
+          </Link>
+        ),
+      };
+    })
+    .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
+
   return (
     <Header>
       <Header.LeftItem>
@@ -93,36 +91,19 @@ export const WorkspaceDashboardDetailsHeader = observer(() => {
             <Breadcrumbs.BreadcrumbItem
               type="component"
               component={
-                <div className="flex items-center gap-2">
-                  <CustomMenu
-                    label={
-                      <>
-                        <LayoutGrid className="flex-shrink-0 size-3" />
-                        <div className="flex w-auto max-w-[70px] items-center gap-2 truncate sm:max-w-[200px]">
-                          <p className="truncate">{dashboardDetails?.name ?? ""}</p>
-                        </div>
-                      </>
-                    }
-                    className="ml-1.5 flex-shrink-0 truncate"
-                    placement="bottom-start"
-                  >
-                    {currentWorkspaceDashboardIds?.map((dashboardId) => (
-                      <DashboardDropdownOption key={dashboardId} dashboardId={dashboardId} />
-                    ))}
-                  </CustomMenu>
-                  {dashboardDetails && !isViewModeEnabled && (
-                    <span className="flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 rounded px-1 py-0.5 text-sm">
-                      {t("dashboards.common.editing")}
-                    </span>
-                  )}
-                </div>
+                <CustomSearchSelect
+                  label={<SwitcherLabel name={dashboardDetails?.name} LabelIcon={LayoutGrid} />}
+                  value={dashboardId.toString()}
+                  onChange={() => {}}
+                  options={switcherOptions}
+                />
               }
             />
           </Breadcrumbs>
         </div>
       </Header.LeftItem>
       {dashboardDetails && (
-        <Header.RightItem>
+        <Header.RightItem className="items-center">
           {!isViewModeEnabled && canCurrentUserCreateWidget && (
             <DashboardWidgetChartTypesDropdown
               buttonClassName={getButtonStyling("neutral-primary", "sm")}
@@ -145,6 +126,12 @@ export const WorkspaceDashboardDetailsHeader = observer(() => {
           >
             {t(isViewModeEnabled ? "common.edit" : "common.view")}
           </Button>
+          <DashboardQuickActions
+            dashboardId={dashboardId.toString()}
+            parentRef={parentRef}
+            showEdit={false}
+            customClassName="p-1 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
+          />
         </Header.RightItem>
       )}
     </Header>

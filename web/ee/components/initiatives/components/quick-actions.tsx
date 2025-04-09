@@ -20,10 +20,11 @@ type Props = {
   initiative: TInitiative;
   workspaceSlug: string;
   disabled?: boolean;
+  customClassName?: string;
 };
 
 export const InitiativeQuickActions: React.FC<Props> = observer((props) => {
-  const { parentRef, initiative, workspaceSlug, disabled = false } = props;
+  const { parentRef, initiative, workspaceSlug, disabled = false, customClassName } = props;
   // states
   const [updateModal, setUpdateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
@@ -101,7 +102,7 @@ export const InitiativeQuickActions: React.FC<Props> = observer((props) => {
         </div>
       )}
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
-      <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
+      <CustomMenu ellipsis placement="bottom-end" closeOnSelect buttonClassName={customClassName}>
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
           return (

@@ -13,10 +13,12 @@ import { DashboardDeleteModal } from "./modals/delete-modal";
 type Props = {
   dashboardId: string;
   parentRef: React.RefObject<HTMLElement>;
+  showEdit?: boolean;
+  customClassName?: string;
 };
 
 export const DashboardQuickActions: React.FC<Props> = observer((props) => {
-  const { dashboardId, parentRef } = props;
+  const { dashboardId, parentRef, showEdit = true, customClassName } = props;
   // states
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   // store hooks
@@ -41,7 +43,7 @@ export const DashboardQuickActions: React.FC<Props> = observer((props) => {
         },
         title: t("common.actions.edit"),
         icon: Pencil,
-        shouldRender: !!canCurrentUserEditDashboard,
+        shouldRender: !!canCurrentUserEditDashboard && showEdit,
       },
       {
         key: "open-in-new-tab",
@@ -92,7 +94,13 @@ export const DashboardQuickActions: React.FC<Props> = observer((props) => {
         isOpen={isDeleteModalOpen}
       />
       {parentRef && <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />}
-      <CustomMenu placement="bottom-end" optionsClassName="max-h-[90vh]" ellipsis closeOnSelect>
+      <CustomMenu
+        placement="bottom-end"
+        optionsClassName="max-h-[90vh]"
+        buttonClassName={customClassName}
+        ellipsis
+        closeOnSelect
+      >
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
           return (

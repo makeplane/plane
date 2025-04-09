@@ -198,9 +198,15 @@ class EpicViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.EPICS)
     def list(self, request, slug, project_id):
+        search = request.GET.get("search", None)
+
         filters = issue_filters(request.query_params, "GET")
         epics = self.get_queryset().filter(**filters)
         order_by_param = request.GET.get("order_by", "-created_at")
+
+        # Add search functionality
+        if search:
+            epics = epics.filter(Q(name__icontains=search))
 
         # epics queryset
         issue_queryset, order_by_param = order_issue_queryset(

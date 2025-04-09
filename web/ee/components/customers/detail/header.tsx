@@ -1,13 +1,15 @@
 "use client";
 import React, { FC, useRef } from "react";
 import { observer } from "mobx-react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 // plane imports
-import { Sidebar } from "lucide-react";
-import { Breadcrumbs, CustomersIcon, Header } from "@plane/ui";
+import { PanelRight } from "lucide-react";
+import { ICustomSearchSelectOption } from "@plane/types";
+import { Breadcrumbs, CustomersIcon, Header, CustomSearchSelect } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 // plane web imports
@@ -18,7 +20,7 @@ export const CustomerDetailHeader: FC = observer(() => {
   const { workspaceSlug, customerId } = useParams();
   // hooks
   const { currentWorkspace } = useWorkspace();
-  const { getCustomerById } = useCustomers();
+  const { getCustomerById, customerIds } = useCustomers();
   const { toggleCustomerDetailSidebar, customerDetailSidebarCollapsed } = useCustomers();
   // derived values
   const workspaceId = currentWorkspace?.id || undefined;
@@ -27,6 +29,22 @@ export const CustomerDetailHeader: FC = observer(() => {
 
   const customer = getCustomerById(customerId.toString());
   if (!workspaceSlug || !workspaceId) return <></>;
+
+  const switcherOptions = customerIds
+    .map((id) => {
+      const _customer = getCustomerById(id);
+      if (!_customer?.id || !_customer?.name) return null;
+      return {
+        value: _customer.id,
+        query: _customer.name,
+        content: (
+          <Link href={`/${workspaceSlug}/customers/${_customer.id}`}>
+            <SwitcherLabel logo_url={_customer.logo_url} name={_customer.name} LabelIcon={CustomersIcon} />
+          </Link>
+        ),
+      };
+    })
+    .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
 
   return (
     <>
@@ -45,23 +63,39 @@ export const CustomerDetailHeader: FC = observer(() => {
                   />
                 }
               />
-              <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label={customer?.name} />} />
+              <Breadcrumbs.BreadcrumbItem
+                type="component"
+                component={
+                  <CustomSearchSelect
+                    label={
+                      <SwitcherLabel logo_url={customer?.logo_url} name={customer?.name} LabelIcon={CustomersIcon} />
+                    }
+                    value={customerId.toString()}
+                    onChange={() => {}}
+                    options={switcherOptions}
+                  />
+                }
+              />
             </Breadcrumbs>
           </div>
         </Header.LeftItem>
         <Header.RightItem>
           {customer && (
             <div ref={parentRef} className="flex gap-2 items-center">
+              <button
+                type="button"
+                className="p-1 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
+                onClick={() => toggleCustomerDetailSidebar()}
+              >
+                <PanelRight
+                  className={cn("h-4 w-4", !customerDetailSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")}
+                />
+              </button>
               <CustomerQuickActions
                 customerId={customerId.toString()}
                 workspaceSlug={workspaceSlug.toString()}
                 parentRef={parentRef}
-              />
-              <Sidebar
-                className={cn("size-4 cursor-pointer", {
-                  "text-custom-primary-100": !customerDetailSidebarCollapsed,
-                })}
-                onClick={() => toggleCustomerDetailSidebar()}
+                customClassName="p-1 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
               />
             </div>
           )}

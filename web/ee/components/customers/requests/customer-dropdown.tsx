@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { CustomersIcon, CustomSearchSelect } from "@plane/ui";
-import { getFileURL } from "@plane/utils";
+import { SwitcherLabel } from "@/components/common";
 import { useCustomers } from "@/plane-web/hooks/store";
 
 type TProps = {
@@ -43,24 +43,7 @@ export const CustomerDropDown: FC<TProps> = observer((props) => {
     return {
       value: customer?.id,
       query: `${customer?.name}`,
-      content: (
-        <div className="flex items-center gap-2">
-          <div className="p-1">
-            {customer?.logo_url ? (
-              <img
-                src={getFileURL(customer.logo_url)}
-                alt="customer-logo"
-                className="rounded-sm w-3 h-3 object-cover"
-              />
-            ) : (
-              <div className="bg-custom-background-90 rounded-md flex items-center justify-center h-3 w-3">
-                <CustomersIcon className="size-4 opacity-50" />
-              </div>
-            )}
-          </div>
-          <p className="text-sm">{customer?.name}</p>
-        </div>
-      ),
+      content: <SwitcherLabel logo_url={customer?.logo_url} name={customer?.name} LabelIcon={CustomersIcon} />,
     };
   });
 
