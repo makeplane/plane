@@ -162,11 +162,15 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    * @param data
    */
   updateWorkspace = async (workspaceSlug: string, data: Partial<IWorkspace>) =>
-    await this.workspaceService.updateWorkspace(workspaceSlug, data).then((response) => {
-      runInAction(() => {
-        set(this.workspaces, response.id, response);
-      });
-      return response;
+    await this.workspaceService.updateWorkspace(workspaceSlug, data).then((res) => {
+      if (res && res.id) {
+        runInAction(() => {
+          Object.keys(data).forEach((key) => {
+            set(this.workspaces, [res.id, key], data[key as keyof IWorkspace]);
+          });
+        });
+      }
+      return res;
     });
 
   /**
