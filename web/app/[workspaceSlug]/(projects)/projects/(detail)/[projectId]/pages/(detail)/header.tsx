@@ -12,7 +12,6 @@ import { Breadcrumbs, Header, CustomSearchSelect } from "@plane/ui";
 import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 import { PageEditInformationPopover } from "@/components/pages";
 // helpers
-// hooks
 import { useProject } from "@/hooks/store";
 // plane web components
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
