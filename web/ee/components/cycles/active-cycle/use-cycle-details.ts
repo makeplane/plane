@@ -47,7 +47,7 @@ const useCycleDetails = (props: IActiveCycleDetails) => {
   // fetches cycle details for non-pro users
   useSWR(
     workspaceSlug && projectId && cycle?.id && cycle?.version === 1
-      ? `PROJECT_ACTIVE_CYCLE_${projectId}_PROGRESS_${cycle.start_date}_${cycle.end_date}`
+      ? `PROJECT_ACTIVE_CYCLE_${projectId}_PROGRESS_${cycle.start_date}_${cycle.end_date}_${cycle.id}`
       : null,
     workspaceSlug && projectId && cycle?.id && cycle?.version === 1
       ? () => fetchActiveCycleProgress(workspaceSlug, projectId, cycle.id)
@@ -57,7 +57,7 @@ const useCycleDetails = (props: IActiveCycleDetails) => {
   // fetches cycle details for non-pro users
   useSWR(
     workspaceSlug && projectId && cycle?.id && cycle?.version === 1
-      ? `PROJECT_ACTIVE_CYCLE_${projectId}_DURATION_${cycle.start_date}_${cycle.end_date}`
+      ? `PROJECT_ACTIVE_CYCLE_${projectId}_DURATION_${cycle.start_date}_${cycle.end_date}_${cycle.id}`
       : null,
     workspaceSlug && projectId && cycle?.id && cycle?.version === 1
       ? () => fetchActiveCycleAnalytics(workspaceSlug, projectId, cycle.id, "issues")
@@ -67,7 +67,7 @@ const useCycleDetails = (props: IActiveCycleDetails) => {
   // fetches cycle details for non-pro users
   useSWR(
     workspaceSlug && projectId && cycle?.id && cycle?.version === 1
-      ? `PROJECT_ACTIVE_CYCLE_${projectId}_ESTIMATE_DURATION_${cycle.start_date}_${cycle.end_date}`
+      ? `PROJECT_ACTIVE_CYCLE_${projectId}_ESTIMATE_DURATION_${cycle.start_date}_${cycle.end_date}_${cycle.id}`
       : null,
     workspaceSlug && projectId && cycle?.id && cycle?.version === 1
       ? () => fetchActiveCycleAnalytics(workspaceSlug, projectId, cycle.id, "points")
@@ -77,7 +77,7 @@ const useCycleDetails = (props: IActiveCycleDetails) => {
   // fetches cycle details for pro users
   useSWR(
     workspaceSlug && projectId && cycleId && cycle?.version === 2
-      ? `PROJECT_ACTIVE_CYCLE_${projectId}_PROGRESS_PRO_${cycle.start_date}_${cycle.end_date}`
+      ? `PROJECT_ACTIVE_CYCLE_${projectId}_PROGRESS_PRO_${cycle.start_date}_${cycle.end_date}_${cycle.id}`
       : null,
     workspaceSlug && projectId && cycleId && cycle?.version === 2
       ? () => fetchActiveCycleProgressPro(workspaceSlug, projectId, cycleId)
