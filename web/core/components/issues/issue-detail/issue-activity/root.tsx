@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane package imports
 import { E_SORT_ORDER, TActivityFilters, defaultActivityFilters, EUserPermissions } from "@plane/constants";
@@ -81,6 +81,18 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   const activityOperations = useCommentOperations(workspaceSlug, projectId, issueId);
 
   const project = getProjectById(projectId);
+  const renderCommentCreationBox = useMemo(
+    () => (
+      <CommentCreate
+        workspaceSlug={workspaceSlug}
+        entityId={issueId}
+        activityOperations={activityOperations}
+        showToolbarInitially
+        projectId={projectId}
+      />
+    ),
+    [workspaceSlug, issueId, activityOperations, projectId]
+  );
   if (!project) return <></>;
 
   return (
@@ -111,6 +123,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
       <div className="space-y-3">
         <div className="min-h-[200px]">
           <div className="space-y-3">
+            {!disabled && sortOrder === E_SORT_ORDER.DESC && renderCommentCreationBox}
             <IssueActivityCommentRoot
               projectId={projectId}
               workspaceSlug={workspaceSlug}
@@ -121,15 +134,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
               disabled={disabled}
               sortOrder={sortOrder || E_SORT_ORDER.ASC}
             />
-            {!disabled && (
-              <CommentCreate
-                workspaceSlug={workspaceSlug}
-                entityId={issueId}
-                activityOperations={activityOperations}
-                showToolbarInitially
-                projectId={projectId}
-              />
-            )}
+            {!disabled && sortOrder === E_SORT_ORDER.ASC && renderCommentCreationBox}
           </div>
         </div>
       </div>

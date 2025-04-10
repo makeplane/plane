@@ -39,8 +39,8 @@ class CycleSerializer(BaseSerializer):
             data.get("start_date", None) is not None
             and data.get("end_date", None) is not None
         ):
-            project_id = (
-                self.initial_data.get("project_id") or self.instance.project_id
+            project_id = self.initial_data.get("project_id") or (
+                self.instance.project_id
                 if self.instance and hasattr(self.instance, "project_id")
                 else None
             )
