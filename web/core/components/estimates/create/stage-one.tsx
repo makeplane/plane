@@ -78,7 +78,7 @@ export const EstimateCreateStageOne: FC<TEstimateCreateStageOne> = (props) => {
               <p className="text-base font-medium">{t("project_settings.estimates.create.custom")}</p>
               <p className="text-xs text-custom-text-300">
                 {/* TODO: Translate here */}
-                Add your own <span className="lowercase">{currentEstimateSystem.name}</span> from scratch
+                Add your own <span className="lowercase">{currentEstimateSystem.name}</span> from scratch.
               </p>
             </button>
           </div>
@@ -100,7 +100,7 @@ export const EstimateCreateStageOne: FC<TEstimateCreateStageOne> = (props) => {
                       {currentEstimateSystem.templates[name]?.values
                         ?.map((template) =>
                           estimateSystem === EEstimateSystem.TIME
-                            ? convertMinutesToHoursMinutesString(Number(template.value))
+                            ? convertMinutesToHoursMinutesString(Number(template.value)).trim()
                             : template.value
                         )
                         ?.join(", ")}

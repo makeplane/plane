@@ -90,12 +90,14 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { currentActiveEstimateIdByProjectId, getProjectEstimates, currentActiveEstimate } = useProjectEstimates();
+  const { currentActiveEstimateIdByProjectId, getProjectEstimates, getEstimateById } = useProjectEstimates();
   const { estimatePointIds, estimatePointById } = useEstimate(
     projectId ? currentActiveEstimateIdByProjectId(projectId) : undefined
   );
 
   const currentActiveEstimateId = projectId ? currentActiveEstimateIdByProjectId(projectId) : undefined;
+
+  const currentActiveEstimate = currentActiveEstimateId ? getEstimateById(currentActiveEstimateId) : undefined;
 
   const options: DropdownOptions = (estimatePointIds ?? [])
     ?.map((estimatePoint) => {

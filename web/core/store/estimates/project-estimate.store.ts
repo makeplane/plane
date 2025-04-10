@@ -1,7 +1,6 @@
 import orderBy from "lodash/orderBy";
 import set from "lodash/set";
 import unset from "lodash/unset";
-import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
@@ -39,7 +38,7 @@ export interface IProjectEstimateStore {
     projectId: string,
     loader?: TEstimateLoader
   ) => Promise<IEstimateType[] | undefined>;
-  getEstimateById: (workspaceSlug: string, projectId: string, estimateId: string) => Promise<IEstimateType | undefined>;
+  getEstimateById: (estimateId: string) => IEstimate | undefined;
   createEstimate: (
     workspaceSlug: string,
     projectId: string,
@@ -241,44 +240,10 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
   };
 
   /**
-   * @description update an estimate for a project
-   * @param { string } workspaceSlug
-   * @param { string } projectId
    * @param { string } estimateId
    * @returns IEstimateType | undefined
    */
-  getEstimateById = async (
-    workspaceSlug: string,
-    projectId: string,
-    estimateId: string
-  ): Promise<IEstimateType | undefined> => {
-    try {
-      this.error = undefined;
-
-      const estimate = await estimateService.fetchEstimateById(workspaceSlug, projectId, estimateId);
-      if (estimate) {
-        runInAction(() => {
-          if (estimate.id)
-            update(this.estimates, [estimate.id], (estimateStore) => {
-              if (estimateStore) estimateStore.updateEstimate(estimate);
-              else
-                return new Estimate(this.store, {
-                  ...estimate,
-                  type: estimate.type?.toLowerCase() as TEstimateSystemKeys,
-                });
-            });
-        });
-      }
-
-      return estimate;
-    } catch (error) {
-      this.error = {
-        status: "error",
-        message: "Error fetching estimate by id",
-      };
-      throw error;
-    }
-  };
+  getEstimateById = (estimateId: string): IEstimate | undefined => this.estimates[estimateId];
 
   /**
    * @description create an estimate for a project
