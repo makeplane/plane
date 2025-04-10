@@ -46,6 +46,15 @@ ESTIMATE_SYSTEMS.time.templates = {
       { id: undefined, key: 6, value: "390" },
     ],
   },
+  custom: {
+    title: "Custom",
+    i18n_title: "project_settings.estimates.systems.time.custom",
+    values: [
+      { id: undefined, key: 1, value: "60" },
+      { id: undefined, key: 2, value: "120" },
+    ],
+    hide: true,
+  },
 };
 
 export { MAX_ESTIMATE_POINT_INPUT_LENGTH, EEstimateSystem, EEstimateUpdateStages, estimateCount, ESTIMATE_SYSTEMS };
