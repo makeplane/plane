@@ -1,6 +1,7 @@
 # Python imports
 import os
 import uuid
+from django.db import transaction
 
 # Django imports
 from django.contrib.auth.hashers import make_password
@@ -32,31 +33,73 @@ class IntakeSettingEndpoint(BaseAPIView):
     def get_intake_email_domain(self):
         return os.environ.get("INTAKE_EMAIL_DOMAIN", "example.com")
 
-    def create_intake_user_bot(self, workspace, request, slug):
-        # Create or retrieve the user for the intake bot
-        user, new_user = User.objects.get_or_create(
-            email=f"{workspace.id}-intake@plane.so",
-            is_bot=True,
-            bot_type="INTAKE_BOT",
-            defaults={
-                "username": uuid.uuid4().hex,
-                "password": make_password(uuid.uuid4().hex),
-                "is_password_autoset": True,
-                "is_bot": True,
-            },
-        )
-        if new_user:
-            APIToken.objects.get_or_create(
+    def get_create_user(self, workspace) -> User:
+        workspace_user_email = f"{workspace.id}-intake@plane.so"
+        new_user = User.objects.filter(email=workspace_user_email).first()
+
+        # create user if not exists
+        if not new_user:
+            new_user = User.objects.create(
+                email=workspace_user_email,
+                is_bot=True,
+                bot_type="INTAKE_BOT",
+                username=uuid.uuid4().hex,
+                password=make_password(uuid.uuid4().hex),
+                is_password_autoset=True,
+            )
+
+        return new_user
+
+    def get_create_api_token(self, user: User, workspace: Workspace) -> APIToken:
+        api_token = APIToken.objects.filter(
+            user=user, user_type=1, workspace_id=workspace.id
+        ).first()
+        
+        # create api token if not exists
+        if not api_token:
+            api_token = APIToken.objects.create(
                 user=user, user_type=1, workspace_id=workspace.id
             )
-            WorkspaceMember.objects.get_or_create(
-                workspace_id=workspace.id, member_id=user.id, role=ROLE.ADMIN.value
-            )
-            project_ids = Project.objects.filter(workspace__slug=slug).values_list(
-                "pk", flat=True
-            )
-            ProjectMember.objects.bulk_create(
-                [
+
+        return api_token
+
+    @transaction.atomic
+    def create_intake_user_bot(self, workspace, request, slug):
+        try:
+            # Create or retrieve the user for the intake bot
+            user = self.get_create_user(workspace)
+            
+            # Create or get API token
+            _ = self.get_create_api_token(user, workspace)
+            
+            # Add user to workspace as admin if not already a member
+            workspace_member = WorkspaceMember.objects.filter(
+                workspace_id=workspace.id,
+                member_id=user.id,
+                role=ROLE.ADMIN.value
+            ).first()
+            
+            if not workspace_member:
+                WorkspaceMember.objects.create(
+                    workspace_id=workspace.id,
+                    member_id=user.id,
+                    role=ROLE.ADMIN.value
+                )
+            
+            # Get all project IDs in a single query
+            project_ids = list(Project.objects.filter(workspace__slug=slug).values_list("pk", flat=True))
+            
+            # Create project members in bulk if they don't exist
+            if project_ids:
+                existing_members = set(
+                    ProjectMember.objects.filter(
+                        workspace_id=workspace.id,
+                        member_id=user.id,
+                        project_id__in=project_ids
+                    ).values_list("project_id", flat=True)
+                )
+                
+                new_members = [
                     ProjectMember(
                         project_id=project_id,
                         workspace_id=workspace.id,
@@ -66,12 +109,20 @@ class IntakeSettingEndpoint(BaseAPIView):
                         updated_by_id=request.user.id,
                     )
                     for project_id in project_ids
-                ],
-                ignore_conflicts=True,
-                batch_size=10,
-            )
-
-        return
+                    if project_id not in existing_members
+                ]
+                
+                if new_members:
+                    ProjectMember.objects.bulk_create(
+                        new_members,
+                        batch_size=100,
+                        ignore_conflicts=True
+                    )
+            
+            return True
+        except Exception as e:
+            # Log the error here if needed
+            raise e
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
     @check_feature_flag(FeatureFlag.INTAKE_SETTINGS)
