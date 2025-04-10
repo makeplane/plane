@@ -147,7 +147,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
           <DescriptionVersionsRoot
             className="flex-shrink-0"
             entityInformation={{
-              createdAt: new Date(issue.created_at),
+              createdAt: new Date(issue.created_at ?? ""),
               createdByDisplayName: getUserDetails(issue.created_by ?? "")?.display_name ?? "",
               id: issueId,
               isRestoreDisabled: disabled || isArchived,
