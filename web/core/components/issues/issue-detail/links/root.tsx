@@ -2,15 +2,15 @@
 
 import { FC, useCallback, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
+// plane imports
+import { EIssueServiceType } from "@plane/constants";
 import { TIssueLink } from "@plane/types";
-// hooks
 import { TOAST_TYPE, setToast } from "@plane/ui";
+// hooks
 import { useIssueDetail } from "@/hooks/store";
-// ui
-// components
+// local imports
 import { IssueLinkCreateUpdateModal } from "./create-update-link-modal";
 import { IssueLinkList } from "./links";
-// types
 
 export type TLinkOperations = {
   create: (data: Partial<TIssueLink>) => Promise<void>;
@@ -90,7 +90,7 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
             title: "Link removed",
           });
           toggleIssueLinkModal(false);
-        } catch (error) {
+        } catch {
           setToast({
             message: "The link could not be removed",
             type: TOAST_TYPE.ERROR,
@@ -112,6 +112,7 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
         isModalOpen={isIssueLinkModal}
         handleOnClose={handleOnClose}
         linkOperations={handleLinkOperations}
+        issueServiceType={EIssueServiceType.ISSUES}
       />
 
       <div className="py-1 text-xs">
