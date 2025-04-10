@@ -401,7 +401,8 @@ class RelatedIssueSerializer(BaseSerializer):
         ]
         read_only_fields = [
             "workspace",
-            "projectcreated_by",
+            "project",
+            "created_by",
             "created_at",
             "updated_by",
             "updated_at",
