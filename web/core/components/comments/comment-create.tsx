@@ -24,14 +24,21 @@ type TCommentCreate = {
   activityOperations: TCommentsOperations;
   showToolbarInitially?: boolean;
   projectId?: string;
-  callBack?: (elementId: string) => void;
+  onSubmitCallback?: (elementId: string) => void;
 };
 
 // services
 const fileService = new FileService();
 
 export const CommentCreate: FC<TCommentCreate> = observer((props) => {
-  const { workspaceSlug, entityId, activityOperations, showToolbarInitially = false, projectId, callBack } = props;
+  const {
+    workspaceSlug,
+    entityId,
+    activityOperations,
+    showToolbarInitially = false,
+    projectId,
+    onSubmitCallback,
+  } = props;
   // states
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
   // refs
@@ -56,7 +63,7 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
   const onSubmit = async (formData: Partial<TIssueComment>) => {
     try {
       const comment = await activityOperations.createComment(formData);
-      if (comment?.id) callBack?.(comment.id);
+      if (comment?.id) onSubmitCallback?.(comment.id);
       if (uploadedAssetIds.length > 0) {
         if (projectId) {
           await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId.toString(), entityId, {

@@ -42,7 +42,7 @@ export const CommentsWrapper: FC<TCommentsWrapper> = observer((props) => {
           entityId={entityId}
           activityOperations={activityOperations}
           projectId={projectId}
-          callBack={async (elementId: string) => {
+          onSubmitCallback={async (elementId: string) => {
             const sourceElementId = elementId ?? "";
             const sourceElement = document.getElementById(sourceElementId);
             if (sourceElement)
