@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
@@ -11,6 +11,7 @@ import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
 import { InitiativesUpgrade } from "@/plane-web/components/initiatives/upgrade";
 // plane web hooks
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 
 const InitiativesLayout = observer(({ children }: { children: ReactNode }) => {
@@ -25,6 +26,16 @@ const InitiativesLayout = observer(({ children }: { children: ReactNode }) => {
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Initiatives` : undefined;
   const shouldUpgrade = currentWorkspace && !isInitiativesFeatureEnabled && !loader;
+
+  // store hooks
+  const { initiative, initiativeFilters } = useInitiatives();
+
+  useEffect(() => {
+    if (workspaceSlug) {
+      initiativeFilters.initInitiativeFilters(workspaceSlug.toString());
+      initiative.fetchInitiatives(workspaceSlug.toString());
+    }
+  }, [workspaceSlug, initiative, initiativeFilters]);
 
   return (
     <WorkspaceAccessWrapper pageKey="initiatives">

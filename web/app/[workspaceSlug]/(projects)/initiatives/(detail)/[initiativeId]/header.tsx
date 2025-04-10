@@ -36,7 +36,7 @@ export const InitiativesDetailsHeader = observer(() => {
   const initiativesDetails = initiativeId ? getInitiativeById(initiativeId.toString()) : undefined;
 
   const switcherOptions = initiativeIds
-    .map((id) => {
+    ?.map((id) => {
       const _initiative = getInitiativeById(id);
       if (!_initiative?.id || !_initiative?.name) return null;
       return {

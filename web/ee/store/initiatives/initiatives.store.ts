@@ -30,7 +30,7 @@ type InitiativeCollapsible = "links" | "attachments" | "projects" | "epics";
 
 export interface IInitiativeStore {
   initiativesMap: Record<string, TInitiative> | undefined;
-  initiativeIds: string[];
+  initiativeIds: string[] | undefined;
   initiativesStatsMap: Record<string, TInitiativeStats> | undefined;
   initiativeLinks: IInitiativeLinkStore;
   initiativeCommentActivities: IInitiativeCommentActivityStore;
