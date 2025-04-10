@@ -95,6 +95,13 @@
         "fill": "Prosím vyplňte toto pole odhadu",
         "repeat": "Hodnota odhadu sa nemôže opakovať"
       }
+    },
+    "epics": {
+      "properties": {
+        "title": "Vlastnosti",
+        "description": "Pridajte vlastné vlastnosti k vášmu epiku."
+      },
+      "disabled": "Zakázané"
     }
   },
 
@@ -1740,6 +1747,34 @@
         }
       },
       "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Pomenujte svoju projektovú šablónu.",
+              "validation": {
+                "required": "Názov šablóny je povinný",
+                "maxLength": "Názov šablóny by mal mať menej ako 255 znakov"
+              }
+            },
+            "description": {
+              "placeholder": "Popíšte, kedy a ako používať túto šablónu."
+            }
+          },
+          "name": {
+            "placeholder": "Pomenujte svoj projekt.",
+            "validation": {
+              "required": "Názov projektu je povinný",
+              "maxLength": "Názov projektu by mal mať menej ako 255 znakov"
+            }
+          },
+          "description": {
+            "placeholder": "Popíšte účel a ciele tohto projektu."
+          },
+          "button": {
+            "create": "Vytvoriť projektovú šablónu",
+            "update": "Aktualizovať projektovú šablónu"
+          }
+        },
         "work_item": {
           "template": {
             "name": {
@@ -1778,6 +1813,9 @@
       },
       "no_templates": {
         "button": "Vytvorte svoju prvú šablónu"
+      },
+      "no_labels": {
+        "description": " Zatiaľ žiadne štítky. Vytvorte štítky, ktoré pomôžu organizovať a filtrovať pracovné položky vo vašom projekte."
       }
     },
     "toasts": {

@@ -94,6 +94,13 @@
         "fill": "Por favor completa este campo de estimación",
         "repeat": "El valor de estimación no puede repetirse"
       }
+    },
+    "epics": {
+      "properties": {
+        "title": "Propiedades",
+        "description": "Agrega propiedades personalizadas a tu épica."
+      },
+      "disabled": "Deshabilitado"
     }
   },
 
@@ -1738,6 +1745,34 @@
         }
       },
       "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Nombra tu plantilla de proyecto.",
+              "validation": {
+                "required": "El nombre de la plantilla es obligatorio",
+                "maxLength": "El nombre de la plantilla debe tener menos de 255 caracteres"
+              }
+            },
+            "description": {
+              "placeholder": "Describe cuándo y cómo utilizar esta plantilla."
+            }
+          },
+          "name": {
+            "placeholder": "Nombra tu proyecto.",
+            "validation": {
+              "required": "El título del proyecto es obligatorio",
+              "maxLength": "El título del proyecto debe tener menos de 255 caracteres"
+            }
+          },
+          "description": {
+            "placeholder": "Describe el propósito y los objetivos de este proyecto."
+          },
+          "button": {
+            "create": "Crear plantilla de proyecto",
+            "update": "Actualizar plantilla de proyecto"
+          }
+        },
         "work_item": {
           "template": {
             "name": {
@@ -1776,6 +1811,9 @@
       },
       "no_templates": {
         "button": "Crea tu primera plantilla"
+      },
+      "no_labels": {
+        "description": " Aún no hay etiquetas. Crea etiquetas para ayudar a organizar y filtrar elementos de trabajo en tu proyecto."
       }
     },
     "toasts": {
@@ -1819,13 +1857,18 @@
     },
     "dropdown": {
       "add": {
-        "work_item": "Añadir nueva plantilla"
+        "work_item": "Agregar nueva plantilla",
+        "project": "Agregar nueva plantilla"
+      },
+      "label": {
+        "project": "Seleccionar una plantilla de proyecto"
       },
       "tooltip": {
-        "work_item": "Selecciona una plantilla de elemento de trabajo"
+        "work_item": "Seleccionar una plantilla de elemento de trabajo"
       },
       "no_results": {
-        "work_item": "No se encontraron plantillas."
+        "work_item": "No se encontraron plantillas.",
+        "project": "No se encontraron plantillas."
       }
     }
   }

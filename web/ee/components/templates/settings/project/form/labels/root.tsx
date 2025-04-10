@@ -110,9 +110,7 @@ export const ProjectLabels = observer((props: TProjectLabelsProps) => {
       >
         <div className="flex flex-col gap-y-4 pt-2 pb-4">
           {showEmptyState && (
-            <div className="px-5 text-sm text-custom-text-300">
-              No labels yet. Create labels to help organize and filter work items in you project.
-            </div>
+            <div className="px-5 text-sm text-custom-text-300">{t("templates.empty_state.no_labels.description")}</div>
           )}
           {showCreateLabelForm && (
             <div className="w-full rounded-lg border border-custom-border-100 bg-custom-background-100 px-3.5 py-2.5">

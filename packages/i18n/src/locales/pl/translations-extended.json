@@ -95,6 +95,13 @@
         "fill": "Proszę wypełnić to pole szacowania",
         "repeat": "Wartość szacowania nie może się powtarzać"
       }
+    },
+    "epics": {
+      "properties": {
+        "title": "Właściwości",
+        "description": "Dodaj niestandardowe właściwości do swojego epiku."
+      },
+      "disabled": "Wyłączone"
     }
   },
 
@@ -1740,6 +1747,34 @@
         }
       },
       "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Nazwij swój szablon projektu.",
+              "validation": {
+                "required": "Nazwa szablonu jest wymagana",
+                "maxLength": "Nazwa szablonu powinna mieć mniej niż 255 znaków"
+              }
+            },
+            "description": {
+              "placeholder": "Opisz kiedy i jak korzystać z tego szablonu."
+            }
+          },
+          "name": {
+            "placeholder": "Nazwij swój projekt.",
+            "validation": {
+              "required": "Tytuł projektu jest wymagany",
+              "maxLength": "Tytuł projektu powinien mieć mniej niż 255 znaków"
+            }
+          },
+          "description": {
+            "placeholder": "Opisz cel i założenia tego projektu."
+          },
+          "button": {
+            "create": "Utwórz szablon projektu",
+            "update": "Aktualizuj szablon projektu"
+          }
+        },
         "work_item": {
           "template": {
             "name": {
@@ -1778,6 +1813,9 @@
       },
       "no_templates": {
         "button": "Utwórz swój pierwszy szablon"
+      },
+      "no_labels": {
+        "description": " Brak etykiet. Utwórz etykiety, aby pomóc zorganizować i filtrować elementy pracy w Twoim projekcie."
       }
     },
     "toasts": {
@@ -1821,13 +1859,18 @@
     },
     "dropdown": {
       "add": {
-        "work_item": "Dodaj nowy szablon"
+        "work_item": "Dodaj nowy szablon",
+        "project": "Dodaj nowy szablon"
+      },
+      "label": {
+        "project": "Wybierz szablon projektu"
       },
       "tooltip": {
         "work_item": "Wybierz szablon elementu pracy"
       },
       "no_results": {
-        "work_item": "Nie znaleziono szablonów."
+        "work_item": "Nie znaleziono szablonów.",
+        "project": "Nie znaleziono szablonów."
       }
     }
   }

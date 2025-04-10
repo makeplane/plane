@@ -94,6 +94,13 @@
         "fill": "この見積もりフィールドを入力してください",
         "repeat": "見積もり値を重複させることはできません"
       }
+    },
+    "epics": {
+      "properties": {
+        "title": "プロパティ",
+        "description": "エピックにカスタムプロパティを追加します。"
+      },
+      "disabled": "無効"
     }
   },
 
@@ -1738,6 +1745,34 @@
         }
       },
       "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "プロジェクトテンプレートに名前を付けてください。",
+              "validation": {
+                "required": "テンプレート名は必須です",
+                "maxLength": "テンプレート名は255文字未満にしてください"
+              }
+            },
+            "description": {
+              "placeholder": "このテンプレートをいつ、どのように使用するかを説明してください。"
+            }
+          },
+          "name": {
+            "placeholder": "プロジェクトに名前を付けてください。",
+            "validation": {
+              "required": "プロジェクトのタイトルは必須です",
+              "maxLength": "プロジェクトのタイトルは255文字未満にしてください"
+            }
+          },
+          "description": {
+            "placeholder": "このプロジェクトの目的と目標を説明してください。"
+          },
+          "button": {
+            "create": "プロジェクトテンプレートを作成",
+            "update": "プロジェクトテンプレートを更新"
+          }
+        },
         "work_item": {
           "template": {
             "name": {
@@ -1776,6 +1811,9 @@
       },
       "no_templates": {
         "button": "最初のテンプレートを作成"
+      },
+      "no_labels": {
+        "description": " まだラベルがありません。プロジェクト内の作業項目を整理してフィルタリングするためのラベルを作成してください。"
       }
     },
     "toasts": {
@@ -1819,13 +1857,18 @@
     },
     "dropdown": {
       "add": {
-        "work_item": "新しいテンプレートを追加"
+        "work_item": "新しいテンプレートを追加",
+        "project": "新しいテンプレートを追加"
+      },
+      "label": {
+        "project": "プロジェクトテンプレートを選択"
       },
       "tooltip": {
         "work_item": "作業項目テンプレートを選択"
       },
       "no_results": {
-        "work_item": "テンプレートが見つかりません。"
+        "work_item": "テンプレートが見つかりません。",
+        "project": "テンプレートが見つかりません。"
       }
     }
   }

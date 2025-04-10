@@ -92,6 +92,13 @@
         "fill": "Compila questo campo di stima",
         "repeat": "Il valore della stima non può essere ripetuto"
       }
+    },
+    "epics": {
+      "properties": {
+        "title": "Proprietà",
+        "description": "Aggiungi proprietà personalizzate alla tua epica."
+      },
+      "disabled": "Disabilitato"
     }
   },
 
@@ -1737,6 +1744,34 @@
         }
       },
       "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Dai un nome al tuo modello di progetto.",
+              "validation": {
+                "required": "Il nome del modello è obbligatorio",
+                "maxLength": "Il nome del modello deve contenere meno di 255 caratteri"
+              }
+            },
+            "description": {
+              "placeholder": "Descrivi quando e come utilizzare questo modello."
+            }
+          },
+          "name": {
+            "placeholder": "Dai un nome al tuo progetto.",
+            "validation": {
+              "required": "Il titolo del progetto è obbligatorio",
+              "maxLength": "Il titolo del progetto deve contenere meno di 255 caratteri"
+            }
+          },
+          "description": {
+            "placeholder": "Descrivi lo scopo e gli obiettivi di questo progetto."
+          },
+          "button": {
+            "create": "Crea modello di progetto",
+            "update": "Aggiorna modello di progetto"
+          }
+        },
         "work_item": {
           "template": {
             "name": {
@@ -1775,6 +1810,9 @@
       },
       "no_templates": {
         "button": "Crea il tuo primo modello"
+      },
+      "no_labels": {
+        "description": " Nessuna etichetta ancora. Crea etichette per aiutare a organizzare e filtrare gli elementi di lavoro nel tuo progetto."
       }
     },
     "toasts": {
@@ -1818,13 +1856,18 @@
     },
     "dropdown": {
       "add": {
-        "work_item": "Aggiungi nuovo modello"
+        "work_item": "Aggiungi nuovo modello",
+        "project": "Aggiungi nuovo modello"
+      },
+      "label": {
+        "project": "Scegli un modello di progetto"
       },
       "tooltip": {
-        "work_item": "Seleziona un modello di elemento di lavoro"
+        "work_item": "Scegli un modello di elemento di lavoro"
       },
       "no_results": {
-        "work_item": "Nessun modello trovato."
+        "work_item": "Nessun modello trovato.",
+        "project": "Nessun modello trovato."
       }
     }
   }

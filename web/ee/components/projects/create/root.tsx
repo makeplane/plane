@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { useForm, FormProvider } from "react-hook-form";
 // plane imports
 import { DEFAULT_PROJECT_FORM_VALUES, EUserProjectRoles, PROJECT_CREATED } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IProjectBulkAddFormData } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // types
@@ -40,6 +41,7 @@ export const CreateProjectFormBase: FC<TCreateProjectFormProps> = observer((prop
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
   // store hooks
+  const { t } = useTranslation();
   const { currentWorkspace } = useWorkspace();
   const {
     project: { bulkAddMembersToProject },
@@ -195,10 +197,10 @@ export const CreateProjectFormBase: FC<TCreateProjectFormProps> = observer((prop
 
           <div className="flex justify-end gap-2 pt-4 border-t border-custom-border-100">
             <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={6}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button variant="primary" type="submit" size="sm" loading={isLoading} tabIndex={7}>
-              {isSubmitting ? "Creating" : "Create project"}
+              {isSubmitting ? t("common.creating") : t("create_project")}
             </Button>
           </div>
         </form>

@@ -95,6 +95,13 @@
         "fill": "Te rugăm să completezi acest câmp de estimare",
         "repeat": "Valoarea estimării nu poate fi repetată"
       }
+    },
+    "epics": {
+      "properties": {
+        "title": "Proprietăți",
+        "description": "Adaugă proprietăți personalizate la epicul tău."
+      },
+      "disabled": "Dezactivat"
     }
   },
 
@@ -1737,6 +1744,34 @@
         }
       },
       "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Denumește șablonul tău de proiect.",
+              "validation": {
+                "required": "Numele șablonului este obligatoriu",
+                "maxLength": "Numele șablonului trebuie să fie mai mic de 255 de caractere"
+              }
+            },
+            "description": {
+              "placeholder": "Descrie când și cum să folosești acest șablon."
+            }
+          },
+          "name": {
+            "placeholder": "Denumește proiectul tău.",
+            "validation": {
+              "required": "Titlul proiectului este obligatoriu",
+              "maxLength": "Titlul proiectului trebuie să fie mai mic de 255 de caractere"
+            }
+          },
+          "description": {
+            "placeholder": "Descrie scopul și obiectivele acestui proiect."
+          },
+          "button": {
+            "create": "Creează șablon de proiect",
+            "update": "Actualizează șablon de proiect"
+          }
+        },
         "work_item": {
           "template": {
             "name": {
@@ -1775,6 +1810,9 @@
       },
       "no_templates": {
         "button": "Creează primul tău șablon"
+      },
+      "no_labels": {
+        "description": " Nu există etichete încă. Creează etichete pentru a ajuta la organizarea și filtrarea elementelor de lucru în proiectul tău."
       }
     },
     "toasts": {
@@ -1818,13 +1856,18 @@
     },
     "dropdown": {
       "add": {
-        "work_item": "Adaugă șablon nou"
+        "work_item": "Adaugă șablon nou",
+        "project": "Adaugă șablon nou"
+      },
+      "label": {
+        "project": "Alege un șablon de proiect"
       },
       "tooltip": {
         "work_item": "Alege un șablon de element de lucru"
       },
       "no_results": {
-        "work_item": "Nu există șabloane."
+        "work_item": "Nu s-au găsit șabloane.",
+        "project": "Nu s-au găsit șabloane."
       }
     }
   }

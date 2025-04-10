@@ -94,6 +94,13 @@
         "fill": "Por favor, preencha este campo de estimativa",
         "repeat": "O valor da estimativa não pode ser repetido"
       }
+    },
+    "epics": {
+      "properties": {
+        "title": "Propriedades",
+        "description": "Adicione propriedades personalizadas ao seu épico."
+      },
+      "disabled": "Desativado"
     }
   },
 
@@ -1732,6 +1739,34 @@
         }
       },
       "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Nomeie seu modelo de projeto.",
+              "validation": {
+                "required": "Nome do modelo é obrigatório",
+                "maxLength": "Nome do modelo deve ter menos de 255 caracteres"
+              }
+            },
+            "description": {
+              "placeholder": "Descreva quando e como usar este modelo."
+            }
+          },
+          "name": {
+            "placeholder": "Nomeie seu projeto.",
+            "validation": {
+              "required": "Título do projeto é obrigatório",
+              "maxLength": "Título do projeto deve ter menos de 255 caracteres"
+            }
+          },
+          "description": {
+            "placeholder": "Descreva o propósito e objetivos deste projeto."
+          },
+          "button": {
+            "create": "Criar modelo de projeto",
+            "update": "Atualizar modelo de projeto"
+          }
+        },
         "work_item": {
           "template": {
             "name": {
@@ -1770,6 +1805,9 @@
       },
       "no_templates": {
         "button": "Crie seu primeiro modelo"
+      },
+      "no_labels": {
+        "description": " Ainda não há etiquetas. Crie etiquetas para ajudar a organizar e filtrar itens de trabalho em seu projeto."
       }
     },
     "toasts": {
@@ -1810,6 +1848,22 @@
         "prefix": "Tem certeza que deseja excluir o modelo-",
         "suffix": "? Todos os dados relacionados ao modelo serão removidos permanentemente. Esta ação não pode ser desfeita."
       }
+    }
+  },
+  "dropdown": {
+    "add": {
+      "work_item": "Adicionar novo modelo",
+      "project": "Adicionar novo modelo"
+    },
+    "label": {
+      "project": "Escolher um modelo de projeto"
+    },
+    "tooltip": {
+      "work_item": "Escolher um modelo de item de trabalho"
+    },
+    "no_results": {
+      "work_item": "Nenhum modelo encontrado.",
+      "project": "Nenhum modelo encontrado."
     }
   }
 }

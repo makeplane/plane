@@ -95,6 +95,13 @@
         "fill": "이 견적 필드를 작성해 주세요",
         "repeat": "견적 값은 중복될 수 없습니다"
       }
+    },
+    "epics": {
+      "properties": {
+        "title": "프로퍼티",
+        "description": "에픽에 커스텀 프로퍼티를 추가하세요."
+      },
+      "disabled": "비활성화됨"
     }
   },
 
@@ -1740,6 +1747,34 @@
         }
       },
       "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "프로젝트 템플릿의 이름을 지정하세요.",
+              "validation": {
+                "required": "템플릿 이름이 필요합니다",
+                "maxLength": "템플릿 이름은 255자 미만이어야 합니다"
+              }
+            },
+            "description": {
+              "placeholder": "이 템플릿을 언제 어떻게 사용할지 설명하세요."
+            }
+          },
+          "name": {
+            "placeholder": "프로젝트의 이름을 지정하세요.",
+            "validation": {
+              "required": "프로젝트 타이틀이 필요합니다",
+              "maxLength": "프로젝트 타이틀은 255자 미만이어야 합니다"
+            }
+          },
+          "description": {
+            "placeholder": "이 프로젝트의 목적과 목표를 설명하세요."
+          },
+          "button": {
+            "create": "프로젝트 템플릿 생성",
+            "update": "프로젝트 템플릿 업데이트"
+          }
+        },
         "work_item": {
           "template": {
             "name": {
@@ -1778,6 +1813,9 @@
       },
       "no_templates": {
         "button": "첫 번째 템플릿 생성"
+      },
+      "no_labels": {
+        "description": " 아직 라벨이 없습니다. 프로젝트의 워크 아이템을 구성하고 필터링하는 데 도움이 되는 라벨을 만드세요."
       }
     },
     "toasts": {
@@ -1821,13 +1859,18 @@
     },
     "dropdown": {
       "add": {
-        "work_item": "새 템플릿 추가"
+        "work_item": "새 템플릿 추가",
+        "project": "새 템플릿 추가"
+      },
+      "label": {
+        "project": "프로젝트 템플릿 선택"
       },
       "tooltip": {
-        "work_item": "워크 아이템 템플릿 선택"
+        "work_item": "작업 항목 템플릿 선택"
       },
       "no_results": {
-        "work_item": "템플릿이 없습니다."
+        "work_item": "템플릿을 찾을 수 없습니다.",
+        "project": "템플릿을 찾을 수 없습니다."
       }
     }
   }

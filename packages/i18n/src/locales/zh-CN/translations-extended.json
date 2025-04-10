@@ -94,6 +94,13 @@
         "fill": "请填写此估算字段",
         "repeat": "估算值不能重复"
       }
+    },
+    "epics": {
+      "properties": {
+        "title": "属性",
+        "description": "为您的史诗添加自定义属性。"
+      },
+      "disabled": "已禁用"
     }
   },
 
@@ -1739,6 +1746,34 @@
         }
       },
       "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "为您的项目模板命名。",
+              "validation": {
+                "required": "模板名称是必填项",
+                "maxLength": "模板名称应少于255个字符"
+              }
+            },
+            "description": {
+              "placeholder": "描述何时以及如何使用此模板。"
+            }
+          },
+          "name": {
+            "placeholder": "为您的项目命名。",
+            "validation": {
+              "required": "项目标题是必填项",
+              "maxLength": "项目标题应少于255个字符"
+            }
+          },
+          "description": {
+            "placeholder": "描述此项目的目的和目标。"
+          },
+          "button": {
+            "create": "创建项目模板",
+            "update": "更新项目模板"
+          }
+        },
         "work_item": {
           "template": {
             "name": {
@@ -1777,6 +1812,9 @@
       },
       "no_templates": {
         "button": "创建您的第一个模板"
+      },
+      "no_labels": {
+        "description": " 还没有标签。创建标签以帮助组织和筛选项目中的工作项。"
       }
     },
     "toasts": {
@@ -1820,13 +1858,18 @@
     },
     "dropdown": {
       "add": {
-        "work_item": "添加新模板"
+        "work_item": "添加新模板",
+        "project": "添加新模板"
+      },
+      "label": {
+        "project": "选择项目模板"
       },
       "tooltip": {
         "work_item": "选择工作项模板"
       },
       "no_results": {
-        "work_item": "没有找到模板。"
+        "work_item": "未找到模板。",
+        "project": "未找到模板。"
       }
     }
   }

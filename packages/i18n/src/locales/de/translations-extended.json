@@ -95,6 +95,13 @@
         "fill": "Bitte füllen Sie dieses Schätzungsfeld aus",
         "repeat": "Schätzungswert darf nicht wiederholt werden"
       }
+    },
+    "epics": {
+      "properties": {
+        "title": "Eigenschaften",
+        "description": "Fügen Sie benutzerdefinierte Eigenschaften zu Ihrer Epic hinzu."
+      },
+      "disabled": "Deaktiviert"
     }
   },
 
@@ -1740,6 +1747,34 @@
         }
       },
       "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Benennen Sie Ihre Projektvorlage.",
+              "validation": {
+                "required": "Vorlagenname ist erforderlich",
+                "maxLength": "Vorlagenname sollte weniger als 255 Zeichen enthalten"
+              }
+            },
+            "description": {
+              "placeholder": "Beschreiben Sie, wann und wie diese Vorlage verwendet werden soll."
+            }
+          },
+          "name": {
+            "placeholder": "Benennen Sie Ihr Projekt.",
+            "validation": {
+              "required": "Projekttitel ist erforderlich",
+              "maxLength": "Projekttitel sollte weniger als 255 Zeichen enthalten"
+            }
+          },
+          "description": {
+            "placeholder": "Beschreiben Sie den Zweck und die Ziele dieses Projekts."
+          },
+          "button": {
+            "create": "Projektvorlage erstellen",
+            "update": "Projektvorlage aktualisieren"
+          }
+        },
         "work_item": {
           "template": {
             "name": {
@@ -1778,6 +1813,9 @@
       },
       "no_templates": {
         "button": "Erstellen Sie Ihre erste Vorlage"
+      },
+      "no_labels": {
+        "description": " Noch keine Labels vorhanden. Erstellen Sie Labels, um Arbeitsaufgaben in Ihrem Projekt zu organisieren und zu filtern."
       }
     },
     "toasts": {
@@ -1821,13 +1859,18 @@
     },
     "dropdown": {
       "add": {
-        "work_item": "Neue Vorlage hinzufügen"
+        "work_item": "Neue Vorlage hinzufügen",
+        "project": "Neue Vorlage hinzufügen"
+      },
+      "label": {
+        "project": "Projektvorlage auswählen"
       },
       "tooltip": {
-        "work_item": "Wählen Sie eine Arbeitsaufgabenvorlage"
+        "work_item": "Arbeitselement-Vorlage auswählen"
       },
       "no_results": {
-        "work_item": "Keine Vorlagen gefunden."
+        "work_item": "Keine Vorlagen gefunden.",
+        "project": "Keine Vorlagen gefunden."
       }
     }
   }

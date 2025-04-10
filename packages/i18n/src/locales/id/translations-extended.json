@@ -95,6 +95,13 @@
         "fill": "Harap isi bidang estimasi ini",
         "repeat": "Nilai estimasi tidak boleh diulang"
       }
+    },
+    "epics": {
+      "properties": {
+        "title": "Properti",
+        "description": "Tambahkan properti kustom ke epic Anda."
+      },
+      "disabled": "Dinonaktifkan"
     }
   },
 
@@ -1737,6 +1744,34 @@
         }
       },
       "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Beri nama template proyek Anda.",
+              "validation": {
+                "required": "Nama template diperlukan",
+                "maxLength": "Nama template harus kurang dari 255 karakter"
+              }
+            },
+            "description": {
+              "placeholder": "Jelaskan kapan dan bagaimana menggunakan template ini."
+            }
+          },
+          "name": {
+            "placeholder": "Beri nama proyek Anda.",
+            "validation": {
+              "required": "Judul proyek diperlukan",
+              "maxLength": "Judul proyek harus kurang dari 255 karakter"
+            }
+          },
+          "description": {
+            "placeholder": "Jelaskan tujuan dan sasaran proyek ini."
+          },
+          "button": {
+            "create": "Buat template proyek",
+            "update": "Perbarui template proyek"
+          }
+        },
         "work_item": {
           "template": {
             "name": {
@@ -1775,6 +1810,9 @@
       },
       "no_templates": {
         "button": "Buat template pertama Anda"
+      },
+      "no_labels": {
+        "description": " Belum ada label. Buat label untuk membantu mengatur dan memfilter item kerja dalam proyek Anda."
       }
     },
     "toasts": {
@@ -1818,13 +1856,18 @@
     },
     "dropdown": {
       "add": {
-        "work_item": "Tambah template baru"
+        "work_item": "Tambah template baru",
+        "project": "Tambah template baru"
+      },
+      "label": {
+        "project": "Pilih template proyek"
       },
       "tooltip": {
         "work_item": "Pilih template item kerja"
       },
       "no_results": {
-        "work_item": "Tidak ada template yang ditemukan."
+        "work_item": "Tidak ada template ditemukan.",
+        "project": "Tidak ada template ditemukan."
       }
     }
   }

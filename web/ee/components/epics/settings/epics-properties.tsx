@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronRight } from "lucide-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { TLoader, IIssueType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
 // helpers
@@ -22,6 +23,8 @@ type EpicPropertiesProps = {
 export const EpicPropertiesRoot = observer((props: EpicPropertiesProps) => {
   // props
   const { epicId, propertiesLoader, containerClassName, getWorkItemTypeById, getClassName } = props;
+  // hooks
+  const { t } = useTranslation();
   // states
   const [isOpen, setIsOpen] = useState(true);
   // derived values
@@ -58,15 +61,17 @@ export const EpicPropertiesRoot = observer((props: EpicPropertiesProps) => {
                 </div>
                 <div className="flex flex-col items-start justify-start whitespace-normal">
                   <div className="flex gap-4 text-left items-center">
-                    <div className="text-sm text-custom-text-100 font-medium line-clamp-1">Properties</div>
+                    <div className="text-sm text-custom-text-100 font-medium line-clamp-1">
+                      {t("project_settings.epics.properties.title")}
+                    </div>
                     {!epicDetail?.is_active && (
                       <div className="py-0.5 px-3 text-xs rounded font-medium text-custom-text-300 bg-custom-background-80/70">
-                        Disabled
+                        {t("project_settings.epics.disabled")}
                       </div>
                     )}
                   </div>
                   <div className="text-sm text-custom-text-300 text-left line-clamp-1">
-                    Add custom properties to your epic.
+                    {t("project_settings.epics.properties.description")}
                   </div>
                 </div>
               </div>

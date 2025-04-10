@@ -95,6 +95,13 @@
         "fill": "請填寫此估算欄位",
         "repeat": "估算值不能重複"
       }
+    },
+    "epics": {
+      "properties": {
+        "title": "屬性",
+        "description": "為您的史詩添加自定義屬性。"
+      },
+      "disabled": "已停用"
     }
   },
 
@@ -1740,6 +1747,34 @@
         }
       },
       "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "為您的專案模板命名。",
+              "validation": {
+                "required": "模板名稱為必填項",
+                "maxLength": "模板名稱應少於255個字符"
+              }
+            },
+            "description": {
+              "placeholder": "描述何時以及如何使用此模板。"
+            }
+          },
+          "name": {
+            "placeholder": "為您的專案命名。",
+            "validation": {
+              "required": "專案標題為必填項",
+              "maxLength": "專案標題應少於255個字符"
+            }
+          },
+          "description": {
+            "placeholder": "描述此專案的目的和目標。"
+          },
+          "button": {
+            "create": "創建專案模板",
+            "update": "更新專案模板"
+          }
+        },
         "work_item": {
           "template": {
             "name": {
@@ -1778,6 +1813,9 @@
       },
       "no_templates": {
         "button": "創建您的第一個模板"
+      },
+      "no_labels": {
+        "description": " 尚無標籤。創建標籤以幫助組織和篩選專案中的工作項目。"
       }
     },
     "toasts": {
@@ -1821,13 +1859,18 @@
     },
     "dropdown": {
       "add": {
-        "work_item": "添加新模板"
+        "work_item": "新增範本",
+        "project": "新增範本"
+      },
+      "label": {
+        "project": "選擇專案範本"
       },
       "tooltip": {
-        "work_item": "選擇工作項目模板"
+        "work_item": "選擇工作項目範本"
       },
       "no_results": {
-        "work_item": "沒有找到模板。"
+        "work_item": "找不到範本。",
+        "project": "找不到範本。"
       }
     }
   }

@@ -95,6 +95,13 @@
         "fill": "Vyplňte prosím toto pole odhadu",
         "repeat": "Hodnota odhadu se nemůže opakovat"
       }
+    },
+    "epics": {
+      "properties": {
+        "title": "Vlastnosti",
+        "description": "Přidejte vlastní vlastnosti k vaší epice."
+      },
+      "disabled": "Zakázáno"
     }
   },
 
@@ -1740,6 +1747,34 @@
         }
       },
       "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Pojmenujte svou šablonu projektu.",
+              "validation": {
+                "required": "Název šablony je povinný",
+                "maxLength": "Název šablony by měl být kratší než 255 znaků"
+              }
+            },
+            "description": {
+              "placeholder": "Popište, kdy a jak tuto šablonu použít."
+            }
+          },
+          "name": {
+            "placeholder": "Pojmenujte svůj projekt.",
+            "validation": {
+              "required": "Název projektu je povinný",
+              "maxLength": "Název projektu by měl být kratší než 255 znaků"
+            }
+          },
+          "description": {
+            "placeholder": "Popište účel a cíle tohoto projektu."
+          },
+          "button": {
+            "create": "Vytvořit šablonu projektu",
+            "update": "Aktualizovat šablonu projektu"
+          }
+        },
         "work_item": {
           "template": {
             "name": {
@@ -1778,6 +1813,9 @@
       },
       "no_templates": {
         "button": "Vytvořte svou první šablonu"
+      },
+      "no_labels": {
+        "description": " No labels yet. Create labels to help organize and filter work items in you project."
       }
     },
     "toasts": {
@@ -1821,13 +1859,18 @@
     },
     "dropdown": {
       "add": {
-        "work_item": "Přidat novou šablonu"
+        "work_item": "Přidat novou šablonu",
+        "project": "Přidat novou šablonu"
+      },
+      "label": {
+        "project": "Vybrat šablonu projektu"
       },
       "tooltip": {
-        "work_item": "Vyberte šablonu pracovní položky"
+        "work_item": "Vybrat šablonu pracovní položky"
       },
       "no_results": {
-        "work_item": "Žádné šablony nenalezeny."
+        "work_item": "Nebyly nalezeny žádné šablony.",
+        "project": "Nebyly nalezeny žádné šablony."
       }
     }
   }

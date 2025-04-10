@@ -102,6 +102,13 @@
         "fill": "Please fill this estimate field",
         "repeat": "Estimate value cannot be repeated"
       }
+    },
+    "epics": {
+      "properties": {
+        "title": "Properties",
+        "description": "Add custom properties to your epic."
+      },
+      "disabled": "Disabled"
     }
   },
 
@@ -1859,6 +1866,9 @@
       },
       "no_templates": {
         "button": "Create your first template"
+      },
+      "no_labels": {
+        "description": " No labels yet. Create labels to help organize and filter work items in you project."
       }
     },
     "toasts": {

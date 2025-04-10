@@ -95,6 +95,13 @@
         "fill": "Vui lòng điền vào trường ước tính này",
         "repeat": "Giá trị ước tính không thể lặp lại"
       }
+    },
+    "epics": {
+      "properties": {
+        "title": "Thuộc tính",
+        "description": "Thêm thuộc tính tùy chỉnh vào epic của bạn."
+      },
+      "disabled": "Đã vô hiệu hóa"
     }
   },
 
@@ -1733,6 +1740,34 @@
         }
       },
       "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Đặt tên cho mẫu dự án của bạn.",
+              "validation": {
+                "required": "Tên mẫu là bắt buộc",
+                "maxLength": "Tên mẫu nên ít hơn 255 ký tự"
+              }
+            },
+            "description": {
+              "placeholder": "Mô tả khi nào và làm thế nào để sử dụng mẫu này."
+            }
+          },
+          "name": {
+            "placeholder": "Đặt tên cho dự án của bạn.",
+            "validation": {
+              "required": "Tiêu đề dự án là bắt buộc",
+              "maxLength": "Tiêu đề dự án nên ít hơn 255 ký tự"
+            }
+          },
+          "description": {
+            "placeholder": "Mô tả mục đích và mục tiêu của dự án này."
+          },
+          "button": {
+            "create": "Tạo mẫu dự án",
+            "update": "Cập nhật mẫu dự án"
+          }
+        },
         "work_item": {
           "template": {
             "name": {
@@ -1771,6 +1806,9 @@
       },
       "no_templates": {
         "button": "Tạo mẫu đầu tiên của bạn"
+      },
+      "no_labels": {
+        "description": " Chưa có nhãn nào. Tạo nhãn để giúp tổ chức và lọc các mục công việc trong dự án của bạn."
       }
     },
     "toasts": {
