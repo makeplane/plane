@@ -232,7 +232,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
             <DescriptionVersionsRoot
               className="flex-shrink-0"
               entityInformation={{
-                createdAt: new Date(issue.created_at ?? ""),
+                createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
                 createdByDisplayName:
                   inboxIssue.source === EInboxIssueSource.FORMS
                     ? "Intake Form user"

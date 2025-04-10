@@ -155,7 +155,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
             <DescriptionVersionsRoot
               className="flex-shrink-0"
               entityInformation={{
-                createdAt: new Date(issue.created_at),
+                createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
                 createdByDisplayName: getUserDetails(issue.created_by ?? "")?.display_name ?? "",
                 id: issueId,
                 isRestoreDisabled: !isEditable || isArchived,
