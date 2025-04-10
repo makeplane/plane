@@ -5,15 +5,17 @@ import { useForm, Controller } from "react-hook-form";
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
 import { EditorRefApi } from "@plane/editor";
-// components
+// plane types
 import { TIssueComment, TCommentsOperations } from "@plane/types";
+// components
 import { LiteTextEditor } from "@/components/editor";
 // constants
-// helpers
 import { cn } from "@/helpers/common.helper";
+// helpers
 import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
+// services
 import { FileService } from "@/services/file.service";
 
 type TCommentCreate = {
@@ -22,12 +24,21 @@ type TCommentCreate = {
   activityOperations: TCommentsOperations;
   showToolbarInitially?: boolean;
   projectId?: string;
+  onSubmitCallback?: (elementId: string) => void;
 };
 
 // services
 const fileService = new FileService();
+
 export const CommentCreate: FC<TCommentCreate> = observer((props) => {
-  const { workspaceSlug, entityId, activityOperations, showToolbarInitially = false, projectId } = props;
+  const {
+    workspaceSlug,
+    entityId,
+    activityOperations,
+    showToolbarInitially = false,
+    projectId,
+    onSubmitCallback,
+  } = props;
   // states
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
   // refs
@@ -51,7 +62,8 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
 
   const onSubmit = async (formData: Partial<TIssueComment>) => {
     try {
-      await activityOperations.createComment(formData);
+      const comment = await activityOperations.createComment(formData);
+      if (comment?.id) onSubmitCallback?.(comment.id);
       if (uploadedAssetIds.length > 0) {
         if (projectId) {
           await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId.toString(), entityId, {
@@ -81,7 +93,15 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
     <div
       className={cn("sticky bottom-0 z-[4] bg-custom-background-100 sm:static")}
       onKeyDown={(e) => {
-        if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !isEmpty && !isSubmitting)
+        if (
+          e.key === "Enter" &&
+          !e.shiftKey &&
+          !e.ctrlKey &&
+          !e.metaKey &&
+          !isEmpty &&
+          !isSubmitting &&
+          editorRef.current?.isEditorReadyToDiscard()
+        )
           handleSubmit(onSubmit)(e);
       }}
     >

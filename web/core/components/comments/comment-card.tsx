@@ -161,7 +161,9 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
                 return asset_id;
               }}
               projectId={projectId?.toString() ?? ""}
-            />
+              editorClassName="[&>*]:!py-0 [&>*]:!text-sm"
+              parentClassName="p-2"
+              />
           </div>
           <div className="flex gap-1 self-end">
             {!isEmpty && (
@@ -181,7 +183,10 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
             <button
               type="button"
               className="group rounded border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
-              onClick={() => setIsEditing(false)}
+              onClick={() => {
+                setIsEditing(false);
+                editorRef.current?.setEditorValue(comment.comment_html ?? "<p></p>");
+              }}
             >
               <X className="size-3 text-red-500 duration-300 group-hover:text-white" />
             </button>
