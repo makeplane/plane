@@ -55,6 +55,13 @@ from plane.utils.grouper import issue_group_values, issue_on_results
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.ee.utils.nested_issue_children import get_all_related_issues
 from plane.ee.utils.workflow import WorkflowStateManager
+from plane.app.views.issue.version import (
+    IssueDescriptionVersion,
+    IssueDescriptionVersionDetailSerializer,
+)
+from plane.utils.global_paginator import paginate
+from plane.utils.timezone_converter import user_timezone_converter
+from plane.bgtasks.issue_description_version_task import issue_description_version_task
 
 
 class EpicViewSet(BaseViewSet):
@@ -190,6 +197,13 @@ class EpicViewSet(BaseViewSet):
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
+            )
+            # updated issue description version
+            issue_description_version_task.delay(
+                updated_issue=json.dumps(request.data, cls=DjangoJSONEncoder),
+                issue_id=str(serializer.data["id"]),
+                user_id=request.user.id,
+                is_creating=True,
             )
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -354,6 +368,12 @@ class EpicViewSet(BaseViewSet):
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
+            )
+            # updated issue description version
+            issue_description_version_task.delay(
+                updated_issue=current_instance,
+                issue_id=str(serializer.data.get("id", None)),
+                user_id=request.user.id,
             )
 
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -843,3 +863,81 @@ class EpicDetailIdentifierEndpoint(BaseAPIView):
         # Serialize the issue
         serializer = EpicDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class EpicDescriptionVersionEndpoint(BaseAPIView):
+
+    def process_paginated_result(self, fields, results, timezone):
+        paginated_data = results.values(*fields)
+
+        datetime_fields = ["created_at", "updated_at"]
+        paginated_data = user_timezone_converter(
+            paginated_data, datetime_fields, timezone
+        )
+
+        return paginated_data
+
+    @check_feature_flag(FeatureFlag.EPICS)
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id, epic_id, pk=None):
+        project = Project.objects.get(pk=project_id)
+        issue = Issue.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=epic_id
+        )
+
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=ROLE.GUEST.value,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+            and not issue.created_by == request.user
+        ):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if pk:
+            issue_description_version = IssueDescriptionVersion.objects.get(
+                workspace__slug=slug,
+                project_id=project_id,
+                issue_id=epic_id,
+                pk=pk,
+            )
+
+            serializer = IssueDescriptionVersionDetailSerializer(
+                issue_description_version
+            )
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        cursor = request.GET.get("cursor", None)
+
+        required_fields = [
+            "id",
+            "workspace",
+            "project",
+            "issue",
+            "last_saved_at",
+            "owned_by",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+        issue_description_versions_queryset = IssueDescriptionVersion.objects.filter(
+            workspace__slug=slug, project_id=project_id, issue_id=epic_id
+        ).order_by("-created_at")
+        paginated_data = paginate(
+            base_queryset=issue_description_versions_queryset,
+            queryset=issue_description_versions_queryset,
+            cursor=cursor,
+            on_result=lambda results: self.process_paginated_result(
+                required_fields, results, request.user.user_timezone
+            ),
+        )
+        return Response(paginated_data, status=status.HTTP_200_OK)

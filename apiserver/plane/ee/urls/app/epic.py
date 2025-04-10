@@ -19,6 +19,7 @@ from plane.ee.views.app.epic import (
     EpicsUpdatesReactionViewSet,
     EpicMetaEndpoint,
     EpicDetailIdentifierEndpoint,
+    EpicDescriptionVersionEndpoint,
 )
 from plane.ee.views.app.epic_property import (
     WorkspaceEpicTypeEndpoint,
@@ -196,5 +197,15 @@ urlpatterns = [
         "workspaces/<str:slug>/epics/<str:project_identifier>-<str:epic_identifier>/",
         EpicDetailIdentifierEndpoint.as_view(),
         name="epic-detail-identifier",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/epics/<uuid:epic_id>/description-versions/",
+        EpicDescriptionVersionEndpoint.as_view(),
+        name="epic-description-versions",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/epics/<uuid:epic_id>/description-versions/<uuid:pk>/",
+        EpicDescriptionVersionEndpoint.as_view(),
+        name="epic-description-versions",
     ),
 ]

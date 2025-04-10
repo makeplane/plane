@@ -1,11 +1,15 @@
 "use client";
 
 import { observer } from "mobx-react";
+// plane imports
+import { EIssueServiceType } from "@plane/constants";
+// components
+import { IssueDetailWidgets } from "@/components/issues/issue-detail-widgets/root";
 // hooks
 import { useAppTheme } from "@/hooks/store";
-// local-components
+// plane web components
 import { MainWrapper } from "@/plane-web/components/common";
-import { EpicCollapsibleSection } from "./collapsible-section-root";
+// local imports
 import { EpicInfoSection } from "./info-section-root";
 import { EpicOverviewRoot } from "./overview-section-root";
 import { EpicProgressSection } from "./progress-section-root";
@@ -26,7 +30,16 @@ export const EpicMainContentRoot: React.FC<Props> = observer((props) => {
     <MainWrapper isSidebarOpen={!epicDetailSidebarCollapsed}>
       <EpicInfoSection workspaceSlug={workspaceSlug} projectId={projectId} epicId={epicId} disabled={disabled} />
       <EpicProgressSection epicId={epicId} />
-      <EpicCollapsibleSection workspaceSlug={workspaceSlug} projectId={projectId} epicId={epicId} disabled={disabled} />
+      <div className="py-2">
+        <IssueDetailWidgets
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={epicId}
+          disabled={disabled}
+          issueServiceType={EIssueServiceType.EPICS}
+          hideWidgets={["sub-work-items", "relations"]}
+        />
+      </div>
       <EpicOverviewRoot workspaceSlug={workspaceSlug} projectId={projectId} epicId={epicId} disabled={disabled} />
     </MainWrapper>
   );

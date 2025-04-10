@@ -7,6 +7,7 @@ from .base import (
     EpicListAnalyticsEndpoint,
     EpicMetaEndpoint,
     EpicDetailIdentifierEndpoint,
+    EpicDescriptionVersionEndpoint,
 )
 from .link import EpicLinkViewSet
 from .comment import EpicCommentViewSet

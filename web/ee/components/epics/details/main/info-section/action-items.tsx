@@ -2,17 +2,20 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { Link, Paperclip } from "lucide-react";
-// constants
+// plane imports
 import { EIssueServiceType } from "@plane/constants";
+import { EditorRefApi } from "@plane/editor";
 // components
-import { IssueAttachmentActionButton, IssueLinksActionButton, IssueReaction } from "@/components/issues";
-import { IssueLinkCreateUpdateModal } from "@/components/issues/issue-detail/links/create-update-link-modal";
-import { useLinkOperations } from "@/components/issues/issue-detail-widgets/links/helper";
+import { DescriptionVersionsRoot } from "@/components/core/description-versions";
+import { IssueReaction } from "@/components/issues";
 // hooks
-import { useIssueDetail, useUser } from "@/hooks/store";
+import { useIssueDetail, useMember, useUser } from "@/hooks/store";
+// services
+import { WorkItemVersionService } from "@/services/issue";
+const workItemVersionService = new WorkItemVersionService(EIssueServiceType.EPICS);
 
 type TEpicInfoActionItemsProps = {
+  editorRef: React.RefObject<EditorRefApi>;
   workspaceSlug: string;
   projectId: string;
   epicId: string;
@@ -20,28 +23,20 @@ type TEpicInfoActionItemsProps = {
 };
 
 export const EpicInfoActionItems: FC<TEpicInfoActionItemsProps> = observer((props) => {
-  const { workspaceSlug, projectId, epicId, disabled } = props;
+  const { editorRef, workspaceSlug, projectId, epicId, disabled } = props;
   // store hooks
   const { data: currentUser } = useUser();
+  const { getUserDetails } = useMember();
   const {
-    isIssueLinkModalOpen,
-    toggleIssueLinkModal: toggleIssueLinkModalStore,
-    setIssueLinkData,
-    setLastWidgetAction,
+    issue: { getIssueById },
   } = useIssueDetail(EIssueServiceType.EPICS);
+  // derived values
+  const epic = getIssueById(epicId);
 
-  // helper hooks
-  const handleLinkOperations = useLinkOperations(workspaceSlug, projectId, epicId, EIssueServiceType.EPICS);
-
-  // handlers
-  const handleIssueLinkModalOnClose = () => {
-    toggleIssueLinkModalStore(false);
-    setLastWidgetAction("links");
-    setIssueLinkData(null);
-  };
+  if (!epic || !epic.project_id) return null;
 
   return (
-    <>
+    <div className="flex-shrink-0 w-full flex items-center justify-between gap-2">
       {currentUser && (
         <IssueReaction
           workspaceSlug={workspaceSlug}
@@ -52,41 +47,31 @@ export const EpicInfoActionItems: FC<TEpicInfoActionItemsProps> = observer((prop
           className="m-0"
         />
       )}
-      <div className="flex flex-col gap-5">
-        <div className="flex items-center flex-wrap gap-2">
-          <IssueLinksActionButton
-            issueServiceType={EIssueServiceType.EPICS}
-            customButton={
-              <div className="flex items-center gap-1 p-2 text-custom-text-300 hover:text-custom-text-100">
-                <Link className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />
-                <span className="text-sm font-medium">Add link</span>
-              </div>
-            }
-            disabled={disabled}
-          />
-          <IssueAttachmentActionButton
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={epicId}
-            issueServiceType={EIssueServiceType.EPICS}
-            customButton={
-              <div className="flex items-center gap-1 p-2 text-custom-text-300 hover:text-custom-text-100">
-                <Paperclip className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />
-                <span className="text-sm font-medium">Attach</span>
-              </div>
-            }
-            disabled={disabled}
-          />
-        </div>
-      </div>
-
-      {/* Modals */}
-      <IssueLinkCreateUpdateModal
-        isModalOpen={isIssueLinkModalOpen}
-        handleOnClose={handleIssueLinkModalOnClose}
-        linkOperations={handleLinkOperations}
-        issueServiceType={EIssueServiceType.EPICS}
-      />
-    </>
+      {!disabled && (
+        <DescriptionVersionsRoot
+          className="flex-shrink-0"
+          entityInformation={{
+            createdAt: epic.created_at ? new Date(epic.created_at) : new Date(),
+            createdByDisplayName: getUserDetails(epic.created_by)?.display_name ?? "",
+            id: epicId,
+            isRestoreDisabled: disabled,
+          }}
+          fetchHandlers={{
+            listDescriptionVersions: (epicId) =>
+              workItemVersionService.listDescriptionVersions(workspaceSlug, epic.project_id?.toString() ?? "", epicId),
+            retrieveDescriptionVersion: (epicId, versionId) =>
+              workItemVersionService.retrieveDescriptionVersion(
+                workspaceSlug,
+                epic.project_id?.toString() ?? "",
+                epicId,
+                versionId
+              ),
+          }}
+          handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
+          projectId={epic.project_id}
+          workspaceSlug={workspaceSlug}
+        />
+      )}
+    </div>
   );
 });

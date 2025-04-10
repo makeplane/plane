@@ -4,11 +4,11 @@ import { FC, useCallback, useEffect, useState } from "react";
 import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-// types
+// plane imports
+import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { TNameDescriptionLoader } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
-// ui
 import { Loader } from "@plane/ui";
 // components
 import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
@@ -26,6 +26,8 @@ interface IFormData {
 }
 
 export type DescriptionInputProps = {
+  editorReadOnlyRef?: React.RefObject<EditorReadOnlyRefApi>;
+  editorRef?: React.RefObject<EditorRefApi>;
   workspaceSlug: string;
   projectId?: string;
   itemId: string;
@@ -41,6 +43,8 @@ export type DescriptionInputProps = {
 
 export const DescriptionInput: FC<DescriptionInputProps> = observer((props) => {
   const {
+    editorReadOnlyRef,
+    editorRef,
     workspaceSlug,
     projectId,
     itemId,
@@ -111,6 +115,7 @@ export const DescriptionInput: FC<DescriptionInputProps> = observer((props) => {
           render={({ field: { onChange } }) =>
             !disabled ? (
               <RichTextEditor
+                ref={editorRef}
                 id={itemId}
                 initialValue={localDescription.description_html ?? "<p></p>"}
                 value={swrDescription ?? null}
@@ -154,6 +159,7 @@ export const DescriptionInput: FC<DescriptionInputProps> = observer((props) => {
               />
             ) : (
               <RichTextReadOnlyEditor
+                ref={editorReadOnlyRef}
                 id={itemId}
                 initialValue={localDescription.description_html ?? ""}
                 containerClassName={containerClassName}

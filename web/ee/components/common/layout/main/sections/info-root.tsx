@@ -1,7 +1,8 @@
 "use client";
 
 import React, { FC, useEffect, useState } from "react";
-// enums
+// plane imports
+import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 import { EFileAssetType } from "@plane/types/src/enums";
 // hooks
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
@@ -10,6 +11,8 @@ import { DescriptionInput, TitleInput } from "../../../input";
 import { SectionWrapper } from "../common";
 
 type TInfoSectionProps = {
+  editorReadOnlyRef?: React.RefObject<EditorReadOnlyRefApi>;
+  editorRef?: React.RefObject<EditorRefApi>;
   workspaceSlug: string;
   projectId?: string;
   itemId: string;
@@ -28,6 +31,8 @@ type TInfoSectionProps = {
 
 export const InfoSection: FC<TInfoSectionProps> = (props) => {
   const {
+    editorReadOnlyRef,
+    editorRef,
     workspaceSlug,
     projectId,
     itemId,
@@ -79,6 +84,8 @@ export const InfoSection: FC<TInfoSectionProps> = (props) => {
         {indicatorElement && <>{indicatorElement}</>}
       </div>
       <DescriptionInput
+        editorReadOnlyRef={editorReadOnlyRef}
+        editorRef={editorRef}
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         itemId={itemId}
