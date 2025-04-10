@@ -15,6 +15,6 @@ class AnchorBasedRateThrottle(AnonRateThrottle):
 
     def get_cache_key(self, request, view):
         # Get the anchor from the URL parameters
-        anchor = request.kwargs.get("anchor", "")
+        anchor = view.kwargs.get("anchor", "")
         # Combine anchor and IP for the cache key
         return f"anchor_throttle_{anchor}"
