@@ -41,6 +41,7 @@ from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.exception_logger import log_exception
 from plane.utils.host import base_host
 
+
 class ProjectViewSet(BaseViewSet):
     serializer_class = ProjectListSerializer
     model = Project
@@ -341,7 +342,7 @@ class ProjectViewSet(BaseViewSet):
             if "already exists" in str(e):
                 return Response(
                     {"name": "The project name is already taken"},
-                    status=status.HTTP_410_GONE,
+                    status=status.HTTP_409_CONFLICT,
                 )
         except Workspace.DoesNotExist:
             return Response(
@@ -350,7 +351,7 @@ class ProjectViewSet(BaseViewSet):
         except serializers.ValidationError:
             return Response(
                 {"identifier": "The project identifier is already taken"},
-                status=status.HTTP_410_GONE,
+                status=status.HTTP_409_CONFLICT,
             )
 
     def partial_update(self, request, slug, pk=None):
@@ -419,7 +420,7 @@ class ProjectViewSet(BaseViewSet):
             if "already exists" in str(e):
                 return Response(
                     {"name": "The project name is already taken"},
-                    status=status.HTTP_410_GONE,
+                    status=status.HTTP_409_CONFLICT,
                 )
         except (Project.DoesNotExist, Workspace.DoesNotExist):
             return Response(
@@ -428,7 +429,7 @@ class ProjectViewSet(BaseViewSet):
         except serializers.ValidationError:
             return Response(
                 {"identifier": "The project identifier is already taken"},
-                status=status.HTTP_410_GONE,
+                status=status.HTTP_409_CONFLICT,
             )
 
     def destroy(self, request, slug, pk):

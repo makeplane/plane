@@ -307,6 +307,10 @@ def track_labels(
 
     # Set of newly added labels
     for added_label in added_labels:
+        # validate uuids
+        if not is_valid_uuid(added_label):
+            continue
+
         label = Label.objects.get(pk=added_label)
         issue_activities.append(
             IssueActivity(
@@ -327,6 +331,10 @@ def track_labels(
 
     # Set of dropped labels
     for dropped_label in dropped_labels:
+        # validate uuids
+        if not is_valid_uuid(dropped_label):
+            continue
+
         label = Label.objects.get(pk=dropped_label)
         issue_activities.append(
             IssueActivity(
@@ -373,6 +381,10 @@ def track_assignees(
 
     bulk_subscribers = []
     for added_asignee in added_assignees:
+        # validate uuids
+        if not is_valid_uuid(added_asignee):
+            continue
+
         assignee = User.objects.get(pk=added_asignee)
         issue_activities.append(
             IssueActivity(
@@ -406,6 +418,10 @@ def track_assignees(
     )
 
     for dropped_assignee in dropped_assginees:
+        # validate uuids
+        if not is_valid_uuid(dropped_assignee):
+            continue
+
         assignee = User.objects.get(pk=dropped_assignee)
         issue_activities.append(
             IssueActivity(

@@ -141,8 +141,10 @@ class CycleAPIEndpoint(BaseAPIView):
         if pk:
             queryset = self.get_queryset().filter(archived_at__isnull=True).get(pk=pk)
             data = CycleSerializer(
-                queryset, fields=self.fields,
-                expand=self.expand, context={"project": project}
+                queryset,
+                fields=self.fields,
+                expand=self.expand,
+                context={"project": project},
             ).data
             return Response(data, status=status.HTTP_200_OK)
         queryset = self.get_queryset().filter(archived_at__isnull=True)
@@ -154,8 +156,11 @@ class CycleAPIEndpoint(BaseAPIView):
                 start_date__lte=timezone.now(), end_date__gte=timezone.now()
             )
             data = CycleSerializer(
-                queryset, many=True, fields=self.fields,
-                expand=self.expand, context={"project": project}
+                queryset,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+                context={"project": project},
             ).data
             return Response(data, status=status.HTTP_200_OK)
 
@@ -166,8 +171,11 @@ class CycleAPIEndpoint(BaseAPIView):
                 request=request,
                 queryset=(queryset),
                 on_results=lambda cycles: CycleSerializer(
-                    cycles, many=True, fields=self.fields,
-                    expand=self.expand, context={"project": project}
+                    cycles,
+                    many=True,
+                    fields=self.fields,
+                    expand=self.expand,
+                    context={"project": project},
                 ).data,
             )
 
@@ -178,8 +186,11 @@ class CycleAPIEndpoint(BaseAPIView):
                 request=request,
                 queryset=(queryset),
                 on_results=lambda cycles: CycleSerializer(
-                    cycles, many=True, fields=self.fields,
-                    expand=self.expand, context={"project": project}
+                    cycles,
+                    many=True,
+                    fields=self.fields,
+                    expand=self.expand,
+                    context={"project": project},
                 ).data,
             )
 
@@ -190,8 +201,11 @@ class CycleAPIEndpoint(BaseAPIView):
                 request=request,
                 queryset=(queryset),
                 on_results=lambda cycles: CycleSerializer(
-                    cycles, many=True, fields=self.fields,
-                    expand=self.expand, context={"project": project}
+                    cycles,
+                    many=True,
+                    fields=self.fields,
+                    expand=self.expand,
+                    context={"project": project},
                 ).data,
             )
 
@@ -204,16 +218,22 @@ class CycleAPIEndpoint(BaseAPIView):
                 request=request,
                 queryset=(queryset),
                 on_results=lambda cycles: CycleSerializer(
-                    cycles, many=True, fields=self.fields,
-                    expand=self.expand, context={"project": project}
+                    cycles,
+                    many=True,
+                    fields=self.fields,
+                    expand=self.expand,
+                    context={"project": project},
                 ).data,
             )
         return self.paginate(
             request=request,
             queryset=(queryset),
             on_results=lambda cycles: CycleSerializer(
-                cycles, many=True, fields=self.fields,
-                expand=self.expand, context={"project": project}
+                cycles,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+                context={"project": project},
             ).data,
         )
 
