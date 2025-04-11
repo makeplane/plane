@@ -4,21 +4,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FileText } from "lucide-react";
-// plane types
-import { TLogoProps } from "@plane/types";
-// ui
-import {
-  Breadcrumbs,
-  EmojiIconPicker,
-  EmojiIconPickerTypes,
-  Header,
-  Loader,
-  setToast,
-  TeamsIcon,
-  TOAST_TYPE,
-} from "@plane/ui";
-// plane uitls
-import { convertHexEmojiToDecimal } from "@plane/utils";
+// plane imports
+import { Breadcrumbs, EmojiIconPicker, EmojiIconPickerTypes, Header, Loader, TeamsIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { PageEditInformationPopover } from "@/components/pages";
@@ -40,27 +27,6 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
   });
   // derived values
   const teamspace = getTeamspaceById(teamspaceId?.toString());
-
-  const handlePageLogoUpdate = async (data: TLogoProps) => {
-    if (data) {
-      page
-        ?.updatePageLogo(data)
-        .then(() => {
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Logo Updated successfully.",
-          });
-        })
-        .catch(() => {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Something went wrong. Please try again.",
-          });
-        });
-    }
-  };
 
   if (!workspaceSlug) return;
   return (
@@ -125,21 +91,7 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
                           )}
                         </>
                       }
-                      onChange={(val) => {
-                        let logoValue = {};
-
-                        if (val?.type === "emoji")
-                          logoValue = {
-                            value: convertHexEmojiToDecimal(val.value.unified),
-                            url: val.value.imageUrl,
-                          };
-                        else if (val?.type === "icon") logoValue = val.value;
-
-                        handlePageLogoUpdate({
-                          in_use: val?.type,
-                          [val?.type]: logoValue,
-                        }).finally(() => setIsOpen(false));
-                      }}
+                      onChange={(val) => page?.updatePageLogo?.(val)}
                       defaultIconColor={
                         page?.logo_props?.in_use && page.logo_props.in_use === "icon"
                           ? page.logo_props?.icon?.color

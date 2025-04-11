@@ -6,14 +6,12 @@ import { useParams } from "next/navigation";
 import { FileText } from "lucide-react";
 // types
 import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
-import { TLogoProps } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, EmojiIconPicker, EmojiIconPickerTypes, Header, TOAST_TYPE, setToast } from "@plane/ui";
+import { Breadcrumbs, Button, EmojiIconPicker, EmojiIconPickerTypes, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 // helpers
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
-import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
@@ -47,26 +45,6 @@ export const PageDetailsHeader = observer(() => {
   const pagePublishSettings = getPagePublishSettings(pageId.toString());
   const isPublishAllowed =
     isCurrentUserOwner || allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
-
-  const handlePageLogoUpdate = async (data: TLogoProps) => {
-    if (data) {
-      updatePageLogo?.(data)
-        .then(() => {
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Logo Updated successfully.",
-          });
-        })
-        .catch(() => {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Something went wrong. Please try again.",
-          });
-        });
-    }
-  };
 
   const SPACE_APP_URL = SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL;
   const publishLink = `${SPACE_APP_URL}${SPACE_BASE_PATH}/pages/${anchor}`;
@@ -116,21 +94,7 @@ export const PageDetailsHeader = observer(() => {
                             )}
                           </>
                         }
-                        onChange={(val) => {
-                          let logoValue = {};
-
-                          if (val?.type === "emoji")
-                            logoValue = {
-                              value: convertHexEmojiToDecimal(val.value.unified),
-                              url: val.value.imageUrl,
-                            };
-                          else if (val?.type === "icon") logoValue = val.value;
-
-                          handlePageLogoUpdate({
-                            in_use: val?.type,
-                            [val?.type]: logoValue,
-                          }).finally(() => setIsOpen(false));
-                        }}
+                        onChange={(val) => updatePageLogo?.(val)}
                         defaultIconColor={
                           logo_props?.in_use && logo_props.in_use === "icon" ? logo_props?.icon?.color : undefined
                         }
