@@ -39,6 +39,7 @@ export const CommentBlock: FC<TCommentBlock> = observer((props) => {
   if (!comment || !userDetails) return <></>;
   return (
     <div
+      id={comment.id}
       className={`relative flex gap-3 ${ends === "top" ? `pb-2` : ends === "bottom" ? `pt-2` : `py-2`}`}
       ref={commentBlockRef}
     >

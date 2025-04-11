@@ -30,12 +30,13 @@ export const useCommentOperations = (
       createComment: async (data: Partial<TIssueComment>) => {
         try {
           if (!workspaceSlug || !projectId || !epicId) throw new Error("Missing fields");
-          await createComment(workspaceSlug, projectId, epicId, data);
+          const comment = await createComment(workspaceSlug, projectId, epicId, data);
           setToast({
             title: "Success!",
             type: TOAST_TYPE.SUCCESS,
             message: "Comment created successfully.",
           });
+          return comment;
         } catch (error) {
           console.log("Error in creating comment:", error);
           setToast({

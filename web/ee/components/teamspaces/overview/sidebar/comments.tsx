@@ -59,6 +59,7 @@ export const TeamsOverviewSidebarComments: FC<TTeamSidebarCommentsRootProps> = o
           activityOperations={activityOperations}
           comments={teamspaceComments}
           isEditingAllowed={isEditingAllowed}
+          sortOrder={teamspaceCommentsSortOrder}
         />
       )}
     </div>

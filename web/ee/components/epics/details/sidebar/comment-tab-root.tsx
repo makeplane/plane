@@ -89,6 +89,7 @@ export const EpicSidebarCommentsRoot: FC<TEpicSidebarCommentsRootProps> = observ
         comments={sortedActivity
           .filter((activityComment) => activityComment.activity_type === "COMMENT")
           .map((comment) => comment.id)}
+        sortOrder={sortOrder ?? E_SORT_ORDER.ASC}
         isEditingAllowed={!disabled}
         getCommentById={getCommentById}
         projectId={projectId}

@@ -38,12 +38,13 @@ export const useCommentOperations = (workspaceSlug: string, initiativeId: string
       createComment: async (data: Partial<TIssueComment>) => {
         try {
           if (!workspaceSlug || !initiativeId) throw new Error("Missing fields");
-          await createInitiativeComment(workspaceSlug, initiativeId, data);
+          const comment = await createInitiativeComment(workspaceSlug, initiativeId, data);
           setToast({
             title: t("toast.success"),
             type: TOAST_TYPE.SUCCESS,
             message: t("issue.comments.create.success"),
           });
+          return comment;
         } catch (error) {
           setToast({
             title: t("toast.error"),

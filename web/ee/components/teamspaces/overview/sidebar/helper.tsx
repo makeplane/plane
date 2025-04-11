@@ -31,12 +31,13 @@ export const useCommentOperations = (
       createComment: async (data: Partial<TIssueComment>) => {
         try {
           if (!workspaceSlug || !teamspaceId) throw new Error("Missing fields");
-          await createTeamspaceComment(workspaceSlug, teamspaceId, data);
+          const comment = await createTeamspaceComment(workspaceSlug, teamspaceId, data);
           setToast({
             title: "Success!",
             type: TOAST_TYPE.SUCCESS,
             message: "Comment created successfully.",
           });
+          return comment;
         } catch {
           setToast({
             title: "Error!",

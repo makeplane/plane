@@ -5,6 +5,7 @@ import {
   TIssueActivityIssueDetail,
   InitiativeComment,
   TIssueActivityUserDetail,
+  TIssueComment,
 } from "@plane/types";
 
 export type TInitiative = {
@@ -77,26 +78,25 @@ export type TInitiativeAttachment = {
   updated_by: string;
 };
 
-export type TInitiativeComment = {
-  id: string;
-  actor_detail: IUserLite;
-  comment_reactions: InitiativeReaction[];
-  created_at: string;
-  updated_at: string;
-  deleted_at: string | null;
-  comment_stripped: string | null;
-  comment_json: any;
-  comment_html: string | null;
-  attachments: any[];
-  access: EIssueCommentAccessSpecifier;
-  external_id: string | undefined;
-  external_source: string | undefined;
-  created_by: string;
-  updated_by: string | null;
-  workspace: string;
-  initiative: string;
-  actor: string;
-};
+export type TInitiativeComment = Pick<
+  TIssueComment,
+  | "id"
+  | "actor"
+  | "actor_detail"
+  | "created_at"
+  | "updated_at"
+  | "created_by"
+  | "updated_by"
+  | "attachments"
+  | "comment_reactions"
+  | "comment_stripped"
+  | "comment_html"
+  | "comment_json"
+  | "external_id"
+  | "external_source"
+  | "access"
+  | "workspace"
+>;
 
 export type TInitiativePropertyAction = "created" | "updated" | "deleted";
 

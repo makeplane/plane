@@ -81,6 +81,7 @@ export const InitiativeSidebarCommentsRoot: FC<Props> = observer((props) => {
         comments={sortedActivity
           .filter((activityComment) => activityComment.activity_type === "COMMENT")
           .map((activityComment) => (activityComment as TInitiativeActivityComment).detail as TIssueComment)}
+        sortOrder={sortOrder ?? E_SORT_ORDER.ASC}
         isEditingAllowed={!disabled}
       />
     </SidebarContentWrapper>
