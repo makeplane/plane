@@ -81,14 +81,14 @@ interface JobWorkerConfig {
  */
 type TaskProps =
   | {
-      type: "mq";
-      headers: TaskHeaders;
-      data: any;
-    }
+    type: "mq";
+    headers: TaskHeaders;
+    data: any;
+  }
   | {
-      type: "store";
-      event: string;
-    };
+    type: "store";
+    event: string;
+  };
 
 /**
  * Main task management class that handles worker lifecycle and task distribution
@@ -118,13 +118,9 @@ export class TaskManager {
    * @param {TMQEntityOptions} options - Queue configuration options
    */
   private initQueue = async (options: TMQEntityOptions) => {
-    try {
-      this.mq = new MQ(options);
-      await this.mq.connect();
-      logger.info(`Message Queue ${options.queueName} connected successfully 🐇🐇🐰`);
-    } catch (error) {
-      throw error;
-    }
+    this.mq = new MQ(options);
+    await this.mq.connect();
+    logger.info(`Message Queue ${options.queueName} connected successfully 🐇🐇🐰`);
   };
 
   /**
@@ -132,14 +128,8 @@ export class TaskManager {
    * @private
    * @param {string} name - Name of the store instance
    */
-  private initStore = async (name: string) => {
-    try {
-      this.store = new Store();
-      await this.store.connect();
-      logger.info(`Redis Store for ${name} connected successfully 📚🫙🫙`);
-    } catch (error) {
-      throw error;
-    }
+  private initStore = async () => {
+    this.store = Store.getInstance();
   };
 
   /**
@@ -158,40 +148,36 @@ export class TaskManager {
    */
   private startConsumer = async () => {
     if (!this.mq || !this.store) return;
-    try {
-      this.store.addListener("ready", (data) => {
+    this.store.addListener("ready", (data) => {
+      const props: TaskProps = {
+        type: "store",
+        event: data,
+      };
+
+      this.handleTask(props);
+    });
+
+    await this.mq.startConsuming(async (msg: any) => {
+      try {
+        const data = JSON.parse(msg.content.toString());
+        const headers = msg.properties.headers;
         const props: TaskProps = {
-          type: "store",
-          event: data,
+          type: "mq",
+          headers: headers.headers,
+          data: data,
         };
-
-        this.handleTask(props);
-      });
-
-      await this.mq.startConsuming(async (msg: any) => {
         try {
-          const data = JSON.parse(msg.content.toString());
-          const headers = msg.properties.headers;
-          const props: TaskProps = {
-            type: "mq",
-            headers: headers.headers,
-            data: data,
-          };
-          try {
-            await this.handleTask(props);
-          } catch (error) {
-            await this.handleError(msg, error);
-            logger.error("Error handling task", error);
-          }
+          await this.handleTask(props);
         } catch (error) {
-          logger.error("Error processing message:", error);
           await this.handleError(msg, error);
+          logger.error("Error handling task", error);
         }
-        await this.mq?.ackMessage(msg);
-      });
-    } catch (error) {
-      logger.error("Error starting job worker consumer:", error);
-    }
+      } catch (error) {
+        logger.error("Error processing message:", error);
+        await this.handleError(msg, error);
+      }
+      await this.mq?.ackMessage(msg);
+    });
   };
 
   /**
@@ -279,7 +265,7 @@ export class TaskManager {
   public start = async (options: TMQEntityOptions) => {
     try {
       await this.initQueue(options);
-      await this.initStore(options.queueName);
+      await this.initStore();
       await this.startConsumer();
 
       for (const [jobType, workerType] of Object.entries(this.config.workerTypes)) {

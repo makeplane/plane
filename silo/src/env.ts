@@ -14,6 +14,7 @@ const envSchema = z.object({
   CORS_ALLOWED_ORIGINS: z.string().default("https://app.plane.so"),
   REDIS_URL: z.string().default("redis://localhost:6379"),
   PG_SCHEMA: z.string().optional(),
+  MAX_STORE_CONNECTION_ATTEMPTS: z.string().default("20"),
   APP_BASE_URL: z
     .string()
     .default("")

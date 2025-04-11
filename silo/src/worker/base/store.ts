@@ -1,28 +1,91 @@
 import { EventEmitter } from "events";
 import { createClient, RedisClientType, RedisDefaultModules, RedisFunctions, RedisModules, RedisScripts } from "redis";
 import { env } from "@/env";
+import { logger } from "@/logger";
 
 export class Store extends EventEmitter {
+  private static instance: Store | null = null;
   private client!: RedisClientType<RedisDefaultModules & RedisModules, RedisFunctions, RedisScripts>;
   private subscriber!: RedisClientType<RedisDefaultModules & RedisModules, RedisFunctions, RedisScripts>;
   private jobs: string[] = [];
+  private reconnecting: boolean = false;
+  private readonly RECONNECT_INTERVAL = 5000;
+  private readonly MAX_INITIAL_CONNECT_ATTEMPTS = Number(env.MAX_STORE_CONNECTION_ATTEMPTS);
 
-  constructor() {
+  private constructor() {
     super();
   }
 
-  public async connect() {
+  public static getInstance(): Store {
+    if (!Store.instance) {
+      Store.instance = new Store();
+    }
+    return Store.instance;
+  }
+
+  private async setupConnectionListeners() {
+    this.client.on("error", (error) => {
+      logger.error("Redis client error:", error);
+      this.handleReconnection();
+    });
+
+    this.client.on("end", () => {
+      logger.error("Redis client connection ended");
+      this.handleReconnection();
+    });
+  }
+
+  private async handleReconnection() {
+    if (this.reconnecting) return;
+
+    this.reconnecting = true;
+    let attemptCount = 0;
+    const attempts = this.MAX_INITIAL_CONNECT_ATTEMPTS;
+
+    while (attemptCount < attempts) {
+      try {
+        attemptCount++;
+        await this.initializeConnection();
+        this.reconnecting = false;
+        console.log("Successfully reconnected to Redis");
+        return true;
+      } catch (error) {
+        await new Promise((resolve) => setTimeout(resolve, this.RECONNECT_INTERVAL));
+        console.log(`Attempting to reconnect to Redis [${attemptCount}]...`);
+      }
+    }
+  }
+
+  private async initializeConnection() {
     this.client = createClient({
       url: env.REDIS_URL,
     });
-    await this.client.connect();
 
     this.subscriber = this.client.duplicate();
+
+    await this.client.connect();
     await this.subscriber.connect();
 
     await this.client.configSet("notify-keyspace-events", "Ex");
-
+    await this.setupConnectionListeners();
     this.setupExpirationListener();
+  }
+
+  public async connect() {
+
+    const attempts = this.MAX_INITIAL_CONNECT_ATTEMPTS;
+    let attemptCount = 0;
+    while (attemptCount < attempts) {
+      try {
+        attemptCount++;
+        await this.initializeConnection();
+        logger.info(`Redis Store connected successfully 📚🫙🫙`);
+        return;
+      } catch (error) {
+        await new Promise((resolve) => setTimeout(resolve, this.RECONNECT_INTERVAL));
+        console.log(`Attempting to connect to Redis [${attemptCount}]...`);
+      }
+    }
   }
 
   private setupExpirationListener() {
@@ -35,6 +98,17 @@ export class Store extends EventEmitter {
         this.jobs.splice(index, 1);
       }
     });
+  }
+
+  public async disconnect() {
+    try {
+      await this.client.quit();
+      await this.subscriber.quit();
+      logger.info("Successfully disconnected from Redis");
+    } catch (error) {
+      console.error("Error during Redis disconnect:", error);
+      throw error;
+    }
   }
 
   public async get(key: string): Promise<string | null> {
@@ -70,14 +144,5 @@ export class Store extends EventEmitter {
 
   public getJobs(): string[] {
     return [...this.jobs];
-  }
-
-  public async disconnect() {
-    await this.client.quit();
-    await this.subscriber.quit();
-  }
-
-  public async getTTL(key: string): Promise<number> {
-    return await this.client.ttl(key);
   }
 }
