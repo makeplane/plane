@@ -1,7 +1,7 @@
-import React, { Ref, useRef, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePopper } from "react-popper";
-import { Popover, Transition } from "@headlessui/react";
+import { Popover } from "@headlessui/react";
 import { TUpdate } from "@plane/types";
 import { EUpdateEntityType, EUpdateStatus } from "@plane/types/src/enums";
 import { EpicIcon } from "@plane/ui";
@@ -62,7 +62,7 @@ export const UpdateStatusPills = (props: TStatusPills) => {
         .map(([status, count]) => (
           <Popover className={cn("relative flex h-full items-center justify-center")} key={status}>
             <Popover.Button ref={setReferenceElement} className={cn("my-auto outline-none text-custom-text-300")}>
-              <button className="flex items-center gap-1 border border-custom-border-300 rounded-full px-2 py-1">
+              <button className="flex items-center gap-1 border border-custom-border-300 rounded-full px-2 py-1 bg-custom-background-100 hover:shadow-sm">
                 <UpdateStatusIcons statusType={status as EUpdateStatus} showBackground={false} />
                 <span className="text-xs font-medium text-custom-text-300">{count}</span>
               </button>

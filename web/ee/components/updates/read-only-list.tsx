@@ -6,6 +6,7 @@ import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { useMember } from "@/hooks/store";
+import Progress from "./progress";
 import { StatusOptions, UpdateStatusIcons } from "./status-icons";
 
 type TUpdateList = {
@@ -88,6 +89,9 @@ export const UpdateList = observer((props: TUpdateList) => {
 
             {/* Update */}
             <div className="text-base my-3">{updateData.description}</div>
+
+            {/* Progress */}
+            <Progress completedIssues={updateData.completed_issues} totalIssues={updateData.total_issues} />
           </div>
         ))}
       </div>

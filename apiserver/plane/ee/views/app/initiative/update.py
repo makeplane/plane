@@ -1,16 +1,5 @@
 # Django imports
-from django.db.models import (
-    Q,
-    Prefetch,
-    Func,
-    F,
-    Subquery,
-    OuterRef,
-    Case,
-    When,
-    Value,
-    CharField,
-)
+from django.db.models import Q, Prefetch, Case, When, Value, CharField, Count
 
 # Module imports
 from plane.ee.views.base import BaseAPIView
@@ -86,6 +75,8 @@ class InitiativeUpdateViewSet(BaseAPIView):
                 "project__identifier",
                 "type",
                 "description",
+                "total_issues",
+                "completed_issues",
             )
             .distinct("project_id", "epic_id")
         )

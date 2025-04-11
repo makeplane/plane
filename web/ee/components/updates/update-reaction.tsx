@@ -2,6 +2,7 @@
 
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { IUser, TUpdateOperations } from "@plane/types";
 // components
 import { EUpdateEntityType } from "@plane/types/src/enums";
@@ -14,8 +15,6 @@ import { renderEmoji } from "@/helpers/emoji.helper";
 import { formatTextList } from "@/helpers/issue.helper";
 import { useMember } from "@/hooks/store";
 import { useUpdateDetail } from "@/plane-web/hooks/use-update-detail";
-import { useTranslation } from "@plane/i18n";
-// types
 
 export type TUpdateReaction = {
   workspaceSlug: string;

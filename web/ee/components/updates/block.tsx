@@ -13,6 +13,7 @@ import { useMember, useUser, useUserPermissions } from "@/hooks/store";
 import { useUpdateDetail } from "@/plane-web/hooks/use-update-detail";
 import { CommentList } from "./comments/comment-list";
 import { NewUpdate } from "./new-update";
+import Progress from "./progress";
 import { UpdateQuickActions } from "./quick-actions";
 import { StatusOptions, UpdateStatusIcons } from "./status-icons";
 import { UpdateReaction } from "./update-reaction";
@@ -126,22 +127,7 @@ export const UpdateBlock = observer((props: TProps) => {
           <div className="text-base my-3">{updateData.description}</div>
 
           {/* Progress */}
-          <div className="text-xs text-custom-text-350 font-medium">{t("updates.progress.since_last_update")}</div>
-          <div className="flex text-custom-text-300 text-xs gap-4 mb-3">
-            <div className="flex font-medium mr-2">
-              <Rocket size={12} className="my-auto mr-1" />
-              <span>
-                {t("updates.progress.title")}{" "}
-                {updateData.total_issues > 0
-                  ? Math.round((updateData.completed_issues / updateData.total_issues) * 100)
-                  : 0}
-                %
-              </span>
-            </div>
-            <div>
-              {updateData.completed_issues} / {updateData.total_issues} done
-            </div>
-          </div>
+          <Progress completedIssues={updateData.completed_issues} totalIssues={updateData.total_issues} />
 
           {/* Actions */}
           <div className="flex gap-2 mb-3 justify-between mt-4 ">
