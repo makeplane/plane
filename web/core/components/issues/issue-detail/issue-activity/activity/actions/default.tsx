@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 import { EInboxIssueSource } from "@plane/constants";
 import { LayersIcon } from "@plane/ui";
 // hooks
+import { capitalizeFirstLetter } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store";
 // local imports
 import { IssueActivityBlockComponent } from "./";
@@ -34,7 +35,8 @@ export const IssueDefaultActivity: FC<TIssueDefaultActivity> = observer((props) 
         {activity.verb === "created" ? (
           source && source !== EInboxIssueSource.IN_APP ? (
             <span>
-              created the work item via <span className="font-medium">{source.toLowerCase()}</span>.
+              created the work item via{" "}
+              <span className="font-medium">{capitalizeFirstLetter(source.toLowerCase() || "")}</span>.
             </span>
           ) : (
             <span> created the work item.</span>
