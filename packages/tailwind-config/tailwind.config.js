@@ -113,12 +113,6 @@ module.exports = {
             primary: convertToRGB(" --color-background-primary"),
             error: convertToRGB(" --color-background-error"),
             DEFAULT: convertToRGB("--color-background-100"),
-            subscription: {
-              free: convertToRGB("--color-background-subscription-free"),
-              one: convertToRGB("--color-background-subscription-one"),
-              pro: convertToRGB("--color-background-subscription-pro"),
-              business: convertToRGB("--color-background-subscription-business"),
-            },
           },
           text: {
             0: "rgb(255, 255, 255)",
@@ -145,12 +139,6 @@ module.exports = {
             primary: convertToRGB("--color-text-primary"),
             error: convertToRGB("--color-text-error"),
             DEFAULT: convertToRGB("--color-text-100"),
-            subscription: {
-              free: convertToRGB("--color-text-subscription-free"),
-              one: convertToRGB("--color-text-subscription-one"),
-              pro: convertToRGB("--color-text-subscription-pro"),
-              business: convertToRGB("--color-text-subscription-business"),
-            },
           },
           border: {
             0: "rgb(255, 255, 255)",

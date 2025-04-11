@@ -6,7 +6,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Crown } from "lucide-react";
-// ui
+// plane imports
+import { EProductSubscriptionEnum } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -20,7 +21,8 @@ export const TeamspaceUpgrade: FC = observer(() => {
   const { resolvedTheme } = useTheme();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
   // derived values
-  const isPlaneOneInstance = subscriptionDetail?.is_self_managed && subscriptionDetail?.product === "ONE";
+  const isPlaneOneInstance =
+    subscriptionDetail?.is_self_managed && subscriptionDetail?.product === EProductSubscriptionEnum.ONE;
 
   const getUpgradeButton = () => {
     if (isPlaneOneInstance) {

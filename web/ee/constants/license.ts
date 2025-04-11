@@ -143,3 +143,30 @@ export const BUSINESS_PLAN_FEATURES_MAP = [
     comingSoon: true,
   },
 ];
+
+export const ENTERPRISE_PLAN_FEATURES_MAP = [
+  {
+    label: "Private + managed deployments",
+    comingSoon: true,
+  },
+  {
+    label: "GAC",
+    comingSoon: true,
+  },
+  {
+    label: "LDAP support",
+    comingSoon: true,
+  },
+  {
+    label: "Databases + Formulas",
+    comingSoon: true,
+  },
+  {
+    label: "Unlimited and full Automation Flows",
+    comingSoon: true,
+  },
+  {
+    label: "Full-suite professional services",
+    comingSoon: true,
+  },
+];

@@ -1,7 +1,7 @@
 // plane imports
 import { EProductSubscriptionEnum } from "@plane/constants";
 import { cn } from "@plane/utils";
-import { getSubscriptionTextAndBackgroundColor } from "@/plane-web/helpers/subscription";
+import { getSubscriptionTextAndBackgroundColor } from "@/components/workspace/billing/subscription";
 
 type TProps = {
   subscriptionType: EProductSubscriptionEnum;
@@ -13,7 +13,10 @@ type TProps = {
 export const SubscriptionButton = (props: TProps) => {
   const { subscriptionType, handleClick, children, className } = props;
   // derived values
-  const subscriptionColor = getSubscriptionTextAndBackgroundColor(subscriptionType);
+  const subscriptionColor =
+    subscriptionType === EProductSubscriptionEnum.FREE
+      ? "bg-custom-primary-200/15 text-custom-primary-300"
+      : getSubscriptionTextAndBackgroundColor(subscriptionType);
 
   return (
     <button

@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // plane web helpers
-import { getSubscriptionTextAndBackgroundColor } from "@/plane-web/helpers/subscription";
+import { getSubscriptionTextAndBackgroundColor } from "@/components/workspace/billing/subscription";
 // plane web hooks
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // local imports

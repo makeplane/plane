@@ -4,9 +4,9 @@ import { observer } from "mobx-react";
 // plane imports
 import { EProductSubscriptionEnum } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// plane web imports
 import { PlaneIcon } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, getSubscriptionName } from "@plane/utils";
+// plane web imports
 import { SubscriptionButton } from "@/plane-web/components/common";
 import { PaidPlanUpgradeModal, PlaneOneEditionBadge } from "@/plane-web/components/license";
 import { SubscriptionActivationModal } from "@/plane-web/components/workspace";
@@ -23,7 +23,7 @@ export const SelfHostedEditionBadge = observer(() => {
   const { isActivationModalOpen, toggleLicenseActivationModal } = useSelfHostedSubscription();
   const { t } = useTranslation();
 
-  if (!subscriptionDetail || subscriptionDetail.product === "FREE")
+  if (!subscriptionDetail || subscriptionDetail.product === EProductSubscriptionEnum.FREE)
     return (
       <>
         <SubscriptionActivationModal
@@ -32,7 +32,7 @@ export const SelfHostedEditionBadge = observer(() => {
         />
         <PaidPlanUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
         <SubscriptionButton
-          subscriptionType={EProductSubscriptionEnum.PRO}
+          subscriptionType={subscriptionDetail?.product ?? EProductSubscriptionEnum.FREE}
           handleClick={() => togglePaidPlanModal(true)}
           className="min-w-24"
         >
@@ -41,21 +41,17 @@ export const SelfHostedEditionBadge = observer(() => {
       </>
     );
 
-  if (subscriptionDetail.product === "ONE") {
+  if (subscriptionDetail.product === EProductSubscriptionEnum.ONE) {
     return <PlaneOneEditionBadge />;
   }
 
-  if (subscriptionDetail.product === "PRO") {
-    return (
-      <>
-        <SubscriptionButton
-          subscriptionType={EProductSubscriptionEnum.PRO}
-          handleClick={() => handleSuccessModalToggle(true)}
-        >
-          <PlaneIcon className={cn("size-3")} />
-          Pro
-        </SubscriptionButton>
-      </>
-    );
-  }
+  return (
+    <SubscriptionButton
+      subscriptionType={subscriptionDetail.product}
+      handleClick={() => handleSuccessModalToggle(true)}
+    >
+      <PlaneIcon className={cn("size-3")} />
+      {getSubscriptionName(subscriptionDetail.product)}
+    </SubscriptionButton>
+  );
 });

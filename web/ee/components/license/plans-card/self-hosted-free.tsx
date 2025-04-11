@@ -1,7 +1,8 @@
 "use client";
 
 import { observer } from "mobx-react";
-// ui
+// plane imports
+import { EProductSubscriptionEnum } from "@plane/constants";
 import { Button } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -17,7 +18,7 @@ export const SelfHostedFreePlanCard = observer(() => {
 
   return (
     <PlanCard
-      planName="Free"
+      planVariant={EProductSubscriptionEnum.FREE}
       planDescription={
         <>
           <div className="text-sm font-medium text-custom-text-200">
@@ -34,7 +35,7 @@ export const SelfHostedFreePlanCard = observer(() => {
           <Button
             variant="primary"
             size="md"
-            className={cn("cursor-pointer outline-none")}
+            className={cn("cursor-pointer outline-none text-xs px-4 py-1.5 rounded-lg focus:outline-none")}
             onClick={() => toggleLicenseActivationModal(true)}
           >
             Activate this workspace

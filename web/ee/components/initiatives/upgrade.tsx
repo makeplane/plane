@@ -5,8 +5,9 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-// ui
 import { Crown } from "lucide-react";
+// plane imports
+import { EProductSubscriptionEnum } from "@plane/constants";
 import { Button, getButtonStyling, setPromiseToast } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -35,7 +36,8 @@ export const InitiativesUpgrade: FC<Props> = observer((props) => {
   // derived values
   const isInitiativesFeatureFlagEnabled = useFlag(workspaceSlug, "INITIATIVES");
   const isInitiativesFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_INITIATIVES_ENABLED);
-  const isPlaneOneInstance = subscriptionDetail?.is_self_managed && subscriptionDetail?.product === "ONE";
+  const isPlaneOneInstance =
+    subscriptionDetail?.is_self_managed && subscriptionDetail?.product === EProductSubscriptionEnum.ONE;
 
   // handlers
   const handleEnableInitiatives = async () => {

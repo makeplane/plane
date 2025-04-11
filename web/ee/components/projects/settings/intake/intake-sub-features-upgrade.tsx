@@ -5,9 +5,9 @@ import { EProductSubscriptionEnum, EUserPermissionsLevel, EUserProjectRoles } fr
 import { ToggleSwitch, Tooltip } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 import { TProperties } from "@/ce/constants";
+import { getSubscriptionTextAndBackgroundColor } from "@/components/workspace/billing/subscription";
 import { useUserPermissions } from "@/hooks/store";
 import { PaidPlanUpgradeModal } from "@/plane-web/components/license";
-import { getSubscriptionTextAndBackgroundColor } from "@/plane-web/helpers/subscription";
 
 export type TIntakeFeatureList = {
   [key: string]: TProperties & {

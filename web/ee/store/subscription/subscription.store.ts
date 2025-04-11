@@ -1,8 +1,8 @@
 /* eslint-disable no-useless-catch */
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
-// types
-import { DEFAULT_ADD_WORKSPACE_SEATS_MODAL_DATA } from "@plane/constants";
+// plane imports
+import { DEFAULT_ADD_WORKSPACE_SEATS_MODAL_DATA, EProductSubscriptionEnum } from "@plane/constants";
 import { IWorkspaceProductSubscription, TAddWorkspaceSeatsModal } from "@plane/types";
 // services
 import { PaymentService } from "@/plane-web/services/payment.service";
@@ -105,7 +105,7 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
    * @returns number
    */
   get currentWorkspaceSubscriptionAvailableSeats() {
-    if (this.currentWorkspaceSubscribedPlanDetail?.product == "FREE") {
+    if (this.currentWorkspaceSubscribedPlanDetail?.product === EProductSubscriptionEnum.FREE) {
       return (
         (this.currentWorkspaceSubscribedPlanDetail.free_seats || 12) -
         (this.currentWorkspaceSubscribedPlanDetail.occupied_seats || 0)
@@ -179,7 +179,7 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
       const response = await paymentService.getWorkspaceCurrentPlan(workspaceSlug);
       runInAction(() => {
         set(this.subscribedPlan, workspaceSlug, {
-          product: response?.product ?? "FREE",
+          product: response?.product ?? EProductSubscriptionEnum.FREE,
           is_cancelled: response?.is_cancelled ?? false,
           is_self_managed: response?.is_self_managed ?? true,
           interval: response?.interval ?? null,

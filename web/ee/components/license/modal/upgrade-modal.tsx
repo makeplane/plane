@@ -4,20 +4,23 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// types
-import { BUSINESS_PLAN_FEATURES, PRO_PLAN_FEATURES } from "@plane/constants";
-import { IPaymentProduct, TProductSubscriptionType } from "@plane/types";
-// ui
+// plane imports
+import {
+  BUSINESS_PLAN_FEATURES,
+  ENTERPRISE_PLAN_FEATURES,
+  EProductSubscriptionEnum,
+  PRO_PLAN_FEATURES,
+  SUBSCRIPTION_WEBPAGE_URLS,
+} from "@plane/constants";
+import { IPaymentProduct } from "@plane/types";
 import { EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
-// plane web components
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
+import { FreePlanCard, PlanUpgradeCard } from "@/components/license";
+import { TCheckoutParams } from "@/components/license/modal/card/checkout-button";
+// plane web imports
 import { ProTrialButton } from "@/plane-web/components/license/modal/trial-button";
-// plane web hooks
 import { useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web/hooks/store";
-// plane web services
 import { PaymentService } from "@/plane-web/services/payment.service";
-// local components
-import { FreePlanCard, PlanUpgradeCard } from "./card";
 
 const paymentService = new PaymentService();
 
@@ -32,12 +35,6 @@ export type PaidPlanUpgradeModalProps = {
   handleClose: () => void;
 };
 
-export type TStripeCheckoutParams = {
-  planVariant: TProductSubscriptionType;
-  productId: string;
-  priceId: string;
-};
-
 export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((props) => {
   const { isOpen, handleClose } = props;
   // router
@@ -46,7 +43,7 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   const { toggleLicenseActivationModal } = useSelfHostedSubscription();
   // states
-  const [upgradeLoaderType, setUpgradeLoaderType] = useState<TProductSubscriptionType | undefined>(undefined);
+  const [upgradeLoaderType, setUpgradeLoaderType] = useState<EProductSubscriptionEnum | undefined>(undefined);
   // fetch products
   const { isLoading: isProductsAPILoading, data } = useSWR(
     workspaceSlug ? `PAYMENT_PRODUCTS_${workspaceSlug?.toString()}` : null,
@@ -59,6 +56,7 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
   );
   // derived values
   const isSelfHosted = subscriptionDetail?.is_self_managed;
+  const isTrialAllowed = subscriptionDetail?.is_trial_allowed;
   const isOnTrial = subscriptionDetail?.is_on_trial;
   const isTrialEnded = subscriptionDetail?.is_trial_ended;
   const currentPlan = subscriptionDetail?.product;
@@ -67,15 +65,20 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
       ? currentPlan?.charAt(0).toUpperCase() + currentPlan?.slice(1).toLowerCase()
       : "";
   // product details
-  const proProduct = (data || [])?.find((product: IPaymentProduct) => product?.type === "PRO");
-  const businessProduct = (data || [])?.find((product: IPaymentProduct) => product?.type === "BUSINESS");
+  const proProduct = (data || [])?.find((product: IPaymentProduct) => product?.type === EProductSubscriptionEnum.PRO);
+  const businessProduct = (data || [])?.find(
+    (product: IPaymentProduct) => product?.type === EProductSubscriptionEnum.BUSINESS
+  );
+  const enterpriseProduct = (data || [])?.find(
+    (product: IPaymentProduct) => product?.type === EProductSubscriptionEnum.ENTERPRISE
+  );
   // common card classname
-  const COMMON_CARD_CLASSNAME = cn("flex flex-col w-full h-full justify-end col-span-12 sm:col-span-6 lg:col-span-4");
+  const COMMON_CARD_CLASSNAME = cn("flex flex-col w-full h-full justify-end col-span-12 sm:col-span-6 xl:col-span-3");
   const COMMON_EXTRA_FEATURES_CLASSNAME = cn(
-    "pt-1.5 text-center text-xs text-custom-primary-200 font-semibold underline"
+    "pt-2 text-center text-xs text-custom-primary-200 font-medium hover:underline"
   );
 
-  const handleStripeCheckout = ({ planVariant, productId, priceId }: TStripeCheckoutParams) => {
+  const handleStripeCheckout = ({ planVariant, productId, priceId }: TCheckoutParams) => {
     if (!productId || !priceId) {
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -108,7 +111,7 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
   };
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.VIXL} className="rounded-2xl">
+    <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.VIIXL} className="rounded-2xl">
       <div className="p-10 max-h-[90vh] overflow-auto">
         <div className="grid grid-cols-12 gap-6 h-full">
           <div className={cn(COMMON_CARD_CLASSNAME)}>
@@ -127,8 +130,8 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
             <div className="text-3xl font-bold leading-8 flex">Upgrade to a paid plan and unlock missing features.</div>
             <div className="mt-4 mb-2">
               <p className="text-sm mb-4 pr-8 text-custom-text-100">
-                Active Cycles, time tracking, bulk ops, and other features are waiting for you on one of our paid plans.
-                Upgrade today to unlock features your teams need yesterday.
+                Dashboards, Workflows, Approvals, Time Management, and other superpowers are just a click away. Upgrade
+                today to unlock features your teams need yesterday.
               </p>
             </div>
             {/* Workspace activation */}
@@ -147,11 +150,11 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
               </div>
             )}
             {/* Free plan details */}
-            <FreePlanCard />
+            <FreePlanCard isOnFreePlan={subscriptionDetail?.product === EProductSubscriptionEnum.FREE} />
           </div>
           <div className={cn(COMMON_CARD_CLASSNAME)}>
             <PlanUpgradeCard
-              planVariant="PRO"
+              planVariant={EProductSubscriptionEnum.PRO}
               isLoading={isProductsAPILoading}
               product={proProduct}
               features={PRO_PLAN_FEATURES}
@@ -159,7 +162,7 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
               verticalFeatureList
               extraFeatures={
                 <p className={COMMON_EXTRA_FEATURES_CLASSNAME}>
-                  <a href="https://plane.so/pro" target="_blank">
+                  <a href={SUBSCRIPTION_WEBPAGE_URLS[EProductSubscriptionEnum.PRO]} target="_blank">
                     See full features list
                   </a>
                 </p>
@@ -168,11 +171,13 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
                 <ProTrialButton productId={productId} priceId={priceId} handleClose={handleClose} />
               )}
               handleCheckout={handleStripeCheckout}
+              isSelfHosted={!!isSelfHosted}
+              isTrialAllowed={!!isTrialAllowed}
             />
           </div>
           <div className={cn(COMMON_CARD_CLASSNAME)}>
             <PlanUpgradeCard
-              planVariant="BUSINESS"
+              planVariant={EProductSubscriptionEnum.BUSINESS}
               isLoading={isProductsAPILoading}
               product={businessProduct}
               features={BUSINESS_PLAN_FEATURES}
@@ -180,12 +185,34 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
               verticalFeatureList
               extraFeatures={
                 <p className={COMMON_EXTRA_FEATURES_CLASSNAME}>
-                  <a href="https://plane.so/business" target="_blank">
+                  <a href={SUBSCRIPTION_WEBPAGE_URLS[EProductSubscriptionEnum.BUSINESS]} target="_blank">
                     See full features list
                   </a>
                 </p>
               }
               handleCheckout={handleStripeCheckout}
+              isSelfHosted={!!isSelfHosted}
+              isTrialAllowed={!!isTrialAllowed}
+            />
+          </div>
+          <div className={cn(COMMON_CARD_CLASSNAME)}>
+            <PlanUpgradeCard
+              planVariant={EProductSubscriptionEnum.ENTERPRISE}
+              isLoading={isProductsAPILoading}
+              product={enterpriseProduct}
+              features={ENTERPRISE_PLAN_FEATURES}
+              upgradeLoaderType={upgradeLoaderType}
+              verticalFeatureList
+              extraFeatures={
+                <p className={COMMON_EXTRA_FEATURES_CLASSNAME}>
+                  <a href={SUBSCRIPTION_WEBPAGE_URLS[EProductSubscriptionEnum.ENTERPRISE]} target="_blank">
+                    See full features list
+                  </a>
+                </p>
+              }
+              handleCheckout={handleStripeCheckout}
+              isSelfHosted={!!isSelfHosted}
+              isTrialAllowed={!!isTrialAllowed}
             />
           </div>
         </div>

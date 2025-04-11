@@ -2,7 +2,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Crown } from "lucide-react";
 // plane imports
-import { EProductSubscriptionTier, FEATURE_TO_BASE_PLAN_MAP } from "@plane/constants";
+import { EProductSubscriptionEnum, EProductSubscriptionTier, FEATURE_TO_BASE_PLAN_MAP } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TProductSubscriptionType } from "@plane/types";
 import { Button, getButtonStyling } from "@plane/ui";
@@ -28,8 +28,9 @@ export const UpgradeEmptyStateButton: FC<TUpgradeEmptyStateButtonProps> = observ
     if (!subscriptionDetail) return null;
     // derived values
     const isFeatureFlagEnabled = useFlag(workspaceSlug, flag);
-    const isOnFreePlan = subscriptionDetail.product === "FREE";
-    const isPlaneOneInstance = subscriptionDetail.is_self_managed && subscriptionDetail.product === "ONE";
+    const isOnFreePlan = subscriptionDetail.product === EProductSubscriptionEnum.FREE;
+    const isPlaneOneInstance =
+      subscriptionDetail.is_self_managed && subscriptionDetail.product === EProductSubscriptionEnum.ONE;
     const basePlanForCurrentFeature = FEATURE_TO_BASE_PLAN_MAP[flag] as TProductSubscriptionType | undefined;
     const isFeatureAvailableForCurrentPlan =
       !!basePlanForCurrentFeature &&

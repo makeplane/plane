@@ -1,3 +1,5 @@
+import { EProductSubscriptionEnum } from "./payment";
+
 export enum E_FEATURE_FLAGS {
   BULK_OPS_ONE = "BULK_OPS_ONE",
   BULK_OPS_PRO = "BULK_OPS_PRO",
@@ -77,3 +79,15 @@ export enum E_FEATURE_FLAGS {
   DASHBOARDS = "DASHBOARDS",
   DASHBOARDS_ADVANCED = "DASHBOARDS_ADVANCED",
 }
+
+/**
+ * This map is used to determine the base plan for a feature flag.
+ */
+// TODO: Update this to include all features flags
+export const FEATURE_TO_BASE_PLAN_MAP = {
+  [E_FEATURE_FLAGS.WORKFLOWS]: EProductSubscriptionEnum.BUSINESS,
+  [E_FEATURE_FLAGS.CUSTOMERS]: EProductSubscriptionEnum.PRO,
+  [E_FEATURE_FLAGS.WORKITEM_TEMPLATES]: EProductSubscriptionEnum.PRO,
+  [E_FEATURE_FLAGS.DASHBOARDS]: EProductSubscriptionEnum.PRO,
+  [E_FEATURE_FLAGS.SILO_INTEGRATIONS]: EProductSubscriptionEnum.PRO,
+};

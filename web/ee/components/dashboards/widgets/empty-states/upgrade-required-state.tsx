@@ -5,10 +5,10 @@ import { useTranslation } from "@plane/i18n";
 import { cn, getSubscriptionName } from "@plane/utils";
 // components
 import { SimpleEmptyState } from "@/components/empty-state";
+// helpers
+import { getSubscriptionTextAndBackgroundColor } from "@/components/workspace/billing/subscription";
 // hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-// plane web helpers
-import { getSubscriptionTextAndBackgroundColor } from "@/plane-web/helpers/subscription";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web stores

@@ -17,12 +17,12 @@ import { PaymentService } from "@/plane-web/services/payment.service";
 
 const paymentService = new PaymentService();
 
-type TBusinessPlanCardProps = {
+type TEnterprisePlanCardProps = {
   upgradeLoader: EProductSubscriptionEnum | null;
   handleUpgrade: (selectedSubscriptionType: EProductSubscriptionEnum) => void;
 };
 
-export const BusinessPlanCard: React.FC<TBusinessPlanCardProps> = observer((props: TBusinessPlanCardProps) => {
+export const EnterprisePlanCard: React.FC<TEnterprisePlanCardProps> = observer((props: TEnterprisePlanCardProps) => {
   const { upgradeLoader, handleUpgrade } = props;
   // params
   const { workspaceSlug } = useParams();
@@ -38,7 +38,7 @@ export const BusinessPlanCard: React.FC<TBusinessPlanCardProps> = observer((prop
   const isInTrialPeriod = !isSelfManaged && subscriptionDetail?.is_on_trial && !subscriptionDetail?.has_upgraded;
 
   useEffect(() => {
-    setIsLoading(upgradeLoader === EProductSubscriptionEnum.BUSINESS);
+    setIsLoading(upgradeLoader === EProductSubscriptionEnum.ENTERPRISE);
   }, [upgradeLoader]);
 
   const handleSubscriptionPageRedirection = () => {
@@ -65,10 +65,10 @@ export const BusinessPlanCard: React.FC<TBusinessPlanCardProps> = observer((prop
   if (!subscriptionDetail) return null;
   return (
     <PlanCard
-      planVariant={EProductSubscriptionEnum.BUSINESS}
+      planVariant={EProductSubscriptionEnum.ENTERPRISE}
       planDescription={
         <>
-          <div>Unlimited members, 1:5 Guests, Work item types, Active Cycles, and more</div>
+          <div>Unlimited members, Unlimited Guests, Custom Workflows, Advanced Analytics, and more</div>
           {!subscriptionDetail.is_offline_payment ? (
             <>
               {isSubscriptionCancelled ? (
@@ -101,7 +101,7 @@ export const BusinessPlanCard: React.FC<TBusinessPlanCardProps> = observer((prop
               className="cursor-pointer px-3 py-1.5 text-center text-xs font-medium outline-none"
               onClick={
                 !isSelfManaged && isInTrialPeriod
-                  ? () => handleUpgrade(EProductSubscriptionEnum.BUSINESS)
+                  ? () => handleUpgrade(EProductSubscriptionEnum.ENTERPRISE)
                   : handleSubscriptionPageRedirection
               }
               disabled={isLoading}

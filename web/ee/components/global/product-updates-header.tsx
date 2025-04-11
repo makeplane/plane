@@ -2,7 +2,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { ExternalLink, RefreshCw } from "lucide-react";
-// ui
+// plane imports
+import { EProductSubscriptionEnum } from "@plane/constants";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -87,7 +88,7 @@ export const ProductUpdatesHeader = observer(() => {
         )}
       </div>
       <div className="flex flex-shrink-0 items-center gap-8">
-        {isSelfManaged && subscriptionDetail?.product === "ONE" && (
+        {isSelfManaged && subscriptionDetail?.product === EProductSubscriptionEnum.ONE && (
           <div className="cursor-default rounded-md bg-green-500/10 px-2 py-0.5 text-center text-xs font-medium text-green-500 outline-none leading-6">
             Perpetual license
           </div>

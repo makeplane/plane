@@ -1,6 +1,7 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { EProductSubscriptionEnum } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { AlertModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
@@ -26,7 +27,8 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
   // states
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [enableIssueTypeConfirmation, setEnableIssueTypeConfirmation] = useState<boolean>(false);
-  const isSelfManagedUpgradeDisabled = subscriptionDetail?.is_self_managed && subscriptionDetail?.product !== "FREE";
+  const isSelfManagedUpgradeDisabled =
+    subscriptionDetail?.is_self_managed && subscriptionDetail?.product !== EProductSubscriptionEnum.FREE;
   // derived values
   const isIssueTypeSettingsEnabled = useFlag(workspaceSlug, "ISSUE_TYPES");
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/issue-types/issue-type", extension: "svg" });

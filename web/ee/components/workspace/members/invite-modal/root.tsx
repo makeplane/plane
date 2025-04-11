@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
+import { SUBSCRIPTION_WITH_SEATS_MANAGEMENT } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EModalWidth, EModalPosition, ModalCore } from "@plane/ui";
 // ce imports
@@ -50,7 +51,8 @@ export const SendWorkspaceInvitationModal: React.FC<TSendWorkspaceInvitationModa
     onSubmit,
     onClose,
   });
-  const isProOrBusinessWorkspace = subscriptionDetail && ["PRO", "BUSINESS"].includes(subscriptionDetail.product);
+  const isSeatsManagementEnabled =
+    subscriptionDetail && SUBSCRIPTION_WITH_SEATS_MANAGEMENT.includes(subscriptionDetail.product);
   // swr
   const {
     isLoading: isMemberInviteCheckLoading,
@@ -84,12 +86,12 @@ export const SendWorkspaceInvitationModal: React.FC<TSendWorkspaceInvitationModa
     (memberInviteCheckData?.allowed_admin_members === 0 && memberInviteCheckData?.allowed_guests === 0);
   // check if the invitation limit is reached
   const isInvitationLimitReached =
-    isProOrBusinessWorkspace &&
+    isSeatsManagementEnabled &&
     (isInviteStatusDisabled ||
       totalAdminAndMembers > (memberInviteCheckData?.allowed_admin_members ?? 0) ||
       totalGuests > (memberInviteCheckData?.allowed_guests ?? 0));
   // compute if the invite button is disabled
-  const isInviteDisabled = isProOrBusinessWorkspace ? isMemberInviteCheckLoading || isInvitationLimitReached : false;
+  const isInviteDisabled = isSeatsManagementEnabled ? isMemberInviteCheckLoading || isInvitationLimitReached : false;
 
   return (
     <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>

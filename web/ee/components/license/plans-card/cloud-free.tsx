@@ -3,31 +3,38 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Loader as LoaderIcon } from "lucide-react";
-// types
-import { TProductSubscriptionType } from "@plane/types";
-// ui
-import { Button, Loader } from "@plane/ui";
+// plane imports
+import { EProductSubscriptionEnum } from "@plane/constants";
+import { Button, getButtonStyling, Loader } from "@plane/ui";
+import { cn, getSubscriptionName } from "@plane/utils";
+// helpers
+import { getUpgradeButtonStyle } from "@/components/workspace/billing/subscription";
 // plane web components
 import { PlanCard } from "@/plane-web/components/license";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 type TCloudFreePlanCardProps = {
+  upgradeProductType: EProductSubscriptionEnum;
   isProductsAPILoading: boolean;
-  trialLoader: boolean;
-  upgradeLoader: boolean;
-  handleTrial: () => void;
-  handleUpgrade: (productType: TProductSubscriptionType) => void;
+  trialLoader: EProductSubscriptionEnum | null;
+  upgradeLoader: EProductSubscriptionEnum | null;
+  handleTrial: (selectedSubscriptionType: EProductSubscriptionEnum) => void;
+  handleUpgrade: (selectedSubscriptionType: EProductSubscriptionEnum) => void;
 };
 
 export const CloudFreePlanCard: FC<TCloudFreePlanCardProps> = observer((props: TCloudFreePlanCardProps) => {
-  const { isProductsAPILoading, trialLoader, upgradeLoader, handleTrial, handleUpgrade } = props;
+  const { upgradeProductType, isProductsAPILoading, trialLoader, upgradeLoader, handleTrial, handleUpgrade } = props;
   // store hooks
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
+  // derived values
+  const upgradeProductName = getSubscriptionName(upgradeProductType);
+  const upgradeButtonStyle =
+    getUpgradeButtonStyle(upgradeProductType, !!upgradeLoader) ?? getButtonStyling("primary", "lg", !!upgradeLoader);
 
   return (
     <PlanCard
-      planName="Free"
+      planVariant={EProductSubscriptionEnum.FREE}
       planDescription={
         <>
           <div className="text-sm font-medium text-custom-text-200">
@@ -40,15 +47,23 @@ export const CloudFreePlanCard: FC<TCloudFreePlanCardProps> = observer((props: T
       }
       button={
         <div className="flex items-center justify-center gap-2">
-          <Button
-            tabIndex={-1}
-            variant="primary"
-            className="w-fit cursor-pointer px-4 py-1.5 text-center text-sm font-medium outline-none"
-            onClick={() => handleUpgrade("PRO")}
-            disabled={upgradeLoader}
-          >
-            {upgradeLoader ? "Redirecting to Stripe..." : "Upgrade to Pro"}
-          </Button>
+          {isProductsAPILoading ? (
+            <Loader className="w-32">
+              <Loader.Item height="30px" width="100%" />
+            </Loader>
+          ) : (
+            <button
+              className={cn(
+                upgradeButtonStyle,
+                "relative inline-flex items-center justify-center w-fit px-4 py-1 text-xs font-medium rounded-lg focus:outline-none"
+              )}
+              tabIndex={-1}
+              onClick={() => handleUpgrade(upgradeProductType)}
+              disabled={!!upgradeLoader}
+            >
+              {upgradeLoader === upgradeProductType ? "Redirecting to Stripe..." : `Upgrade to ${upgradeProductName}`}
+            </button>
+          )}
           {subscriptionDetail?.is_trial_ended && (
             <div className="px-2 text-center text-xs text-red-500 font-medium">Pro trial ended</div>
           )}
@@ -60,9 +75,17 @@ export const CloudFreePlanCard: FC<TCloudFreePlanCardProps> = observer((props: T
                 </Loader>
               ) : (
                 <>
-                  <Button variant="link-neutral" size="sm" onClick={handleTrial} className="w-28">
+                  <Button
+                    variant="link-neutral"
+                    size="sm"
+                    onClick={() => handleTrial(upgradeProductType)}
+                    className="w-28"
+                    disabled={!!trialLoader}
+                  >
+                    <div className="w-3 h-3">
+                      {trialLoader === upgradeProductType && <LoaderIcon size={12} className="animate-spin" />}
+                    </div>
                     <span>Start free trial</span>
-                    <div className="w-3 h-3">{trialLoader && <LoaderIcon size={12} className="animate-spin" />}</div>
                   </Button>
                 </>
               )}
