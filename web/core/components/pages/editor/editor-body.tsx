@@ -30,6 +30,8 @@ import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
+// local imports
+import { PageEditorHeaderRoot } from "./header";
 
 export type TEditorBodyConfig = {
   fileHandler: TFileHandler;
@@ -161,10 +163,10 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   return (
     <Row
-      className="relative size-full flex flex-col pt-[64px] overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md duration-200"
+      className="relative size-full flex flex-col overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md duration-200"
       variant={ERowVariant.HUGGING}
     >
-      <div id="page-content-container" className="relative w-full flex-shrink-0 space-y-4">
+      <div id="page-content-container" className="relative w-full flex-shrink-0">
         {/* table of content */}
         <div className="page-summary-container absolute h-full right-0 top-[64px] z-[5]">
           <div className="sticky top-[72px]">
@@ -178,13 +180,17 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             </div>
           </div>
         </div>
-        <PageEditorTitle
-          editorRef={editorRef}
-          readOnly={!isContentEditable}
-          title={pageTitle}
-          updateTitle={updateTitle}
-          widthClassName={blockWidthClassName}
-        />
+        <div className="page-header-container group/page-header">
+          <div className={blockWidthClassName}>
+            <PageEditorHeaderRoot page={page} />
+            <PageEditorTitle
+              editorRef={editorRef}
+              readOnly={!isContentEditable}
+              title={pageTitle}
+              updateTitle={updateTitle}
+            />
+          </div>
+        </div>
         <CollaborativeDocumentEditorWithRef
           editable={isContentEditable}
           id={pageId}

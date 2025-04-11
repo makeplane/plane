@@ -7,7 +7,7 @@ import { EditorRefApi } from "@plane/editor";
 import { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
 // components
 import {
-  PageEditorHeaderRoot,
+  PageEditorToolbarRoot,
   PageEditorBody,
   PageVersionsOverlay,
   PagesVersionEditor,
@@ -103,7 +103,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
         pageId={page.id ?? ""}
         restoreEnabled={isContentEditable}
       />
-      <PageEditorHeaderRoot editorReady={editorReady} editorRef={editorRef} page={page} storeType={storeType} />
+      <PageEditorToolbarRoot editorReady={editorReady} editorRef={editorRef} page={page} storeType={storeType} />
       <PageEditorBody
         config={config}
         editorReady={editorReady}
