@@ -4,7 +4,7 @@ import { Triangle } from "lucide-react";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // components
-import { renderEstimate } from "@/plane-web/components/issues/issue-details";
+import { renderEstimate } from "@/plane-web/components/issues/issue-details/issue-properties-activity/helper";
 import { IssueActivityBlockComponent, IssueLink } from "./";
 
 type TIssueEstimateActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
