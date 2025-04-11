@@ -1,0 +1,10 @@
+{
+  "watch": [
+    "src"
+  ],
+  "ext": "ts",
+  "ignore": [
+    "src/public"
+  ],
+  "exec": "NODE_ENV=development tsup src/start.ts --watch --onSuccess 'node --env-file=.env dist/start.cjs'"
+}
