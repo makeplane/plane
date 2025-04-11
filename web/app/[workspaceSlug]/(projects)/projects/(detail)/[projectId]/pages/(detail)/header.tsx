@@ -13,6 +13,7 @@ import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 import { PageEditInformationPopover } from "@/components/pages";
 // helpers
 // hooks
+import { getPageName } from "@/helpers/page.helper";
 import { useProject } from "@/hooks/store";
 // plane web components
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
@@ -61,7 +62,7 @@ export const PageDetailsHeader = observer(() => {
         content: (
           <div className="flex gap-2 items-center justify-between">
             <Link href={pageLink} className="flex gap-2 items-center justify-between w-full">
-              <SwitcherLabel logo_props={_page.logo_props} name={_page.name} LabelIcon={FileText} />
+              <SwitcherLabel logo_props={_page.logo_props} name={getPageName(_page.name)} LabelIcon={FileText} />
             </Link>
             <PageAccessIcon {..._page} />
           </div>
@@ -110,7 +111,9 @@ export const PageDetailsHeader = observer(() => {
                 <CustomSearchSelect
                   value={pageId}
                   options={switcherOptions}
-                  label={<SwitcherLabel logo_props={page.logo_props} name={page.name} LabelIcon={FileText} />}
+                  label={
+                    <SwitcherLabel logo_props={page.logo_props} name={getPageName(page.name)} LabelIcon={FileText} />
+                  }
                   onChange={() => {}}
                 />
               }
