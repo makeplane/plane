@@ -67,7 +67,7 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
       },
       createLabel: async (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => {
         try {
-          const labelResponse = await createLabel(workspaceSlug, projectId, data);
+          const labelResponse = await createLabel(workspaceSlug, data);
           if (!isInboxIssue)
             setToast({
               title: t("toast.success"),

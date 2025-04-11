@@ -10,7 +10,7 @@ import { IIssueLabel } from "@plane/types";
 import { CreateUpdateLabelInline, TLabelOperationsCallbacks } from "./create-update-label-inline";
 import { ICustomMenuItem, LabelItemBlock } from "./label-block/label-item-block";
 import { LabelDndHOC } from "./label-drag-n-drop-HOC";
-import { ProjectSettingLabelItem } from "./project-setting-label-item";
+import { SettingLabelItem } from "./setting-label-item";
 
 type Props = {
   label: IIssueLabel;
@@ -29,7 +29,7 @@ type Props = {
   isEditable?: boolean;
 };
 
-export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
+export const SettingLabelGroup: React.FC<Props> = observer((props) => {
   const {
     label,
     labelChildren,
@@ -128,7 +128,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                           {labelChildren.map((child, index) => (
                             <div key={child.id} className={`group flex w-full items-center text-sm`}>
                               <div className="w-full">
-                                <ProjectSettingLabelItem
+                                <SettingLabelItem
                                   label={child}
                                   handleLabelDelete={() => handleLabelDelete(child)}
                                   setIsUpdating={setIsUpdating}

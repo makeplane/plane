@@ -31,7 +31,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT_VIEW);
-  const { projectLabels } = useLabel();
+  const { labels } = useLabel();
   const { projectStates } = useProjectState();
   const { viewMap, updateView } = useProjectView();
   const { data } = useUser();
@@ -138,7 +138,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
           appliedFilters={appliedFilters ?? {}}
           handleClearAllFilters={handleClearAllFilters}
           handleRemoveFilter={handleRemoveFilter}
-          labels={projectLabels ?? []}
+          labels={labels ?? []}
           states={projectStates}
           disableEditing={isLocked}
         />

@@ -76,20 +76,19 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
   //hooks
-  const { fetchProjectLabels, getProjectLabels, createLabel } = useLabel();
+  const { fetchLabels, getLabels, createLabel } = useLabel();
   const { isMobile } = usePlatformOS();
-  const storeLabels = getProjectLabels(projectId);
+  const storeLabels = getLabels();
   const { allowPermissions } = useUserPermissions();
 
-  const canCreateLabel =
-    projectId && allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
+  const canCreateLabel = allowPermissions([EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER], EUserPermissionsLevel.WORKSPACE, workspaceSlug);
 
-  let projectLabels: IIssueLabel[] = defaultOptions;
-  if (storeLabels && storeLabels.length > 0) projectLabels = storeLabels;
+  let labels: IIssueLabel[] = defaultOptions;
+  if (storeLabels && storeLabels.length > 0) labels = storeLabels;
 
   const options = useMemo(
     () =>
-      projectLabels.map((label) => ({
+      labels.map((label) => ({
         value: label?.id,
         query: label?.name,
         content: (
@@ -104,7 +103,7 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
           </div>
         ),
       })),
-    [projectLabels]
+    [labels]
   );
 
   const filteredOptions = useMemo(
@@ -126,9 +125,9 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
   });
 
   const onOpen = useCallback(() => {
-    if (!storeLabels && workspaceSlug && projectId)
-      fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
-  }, [storeLabels, workspaceSlug, projectId, fetchProjectLabels]);
+    if (!storeLabels && workspaceSlug)
+      fetchLabels(workspaceSlug).then(() => setIsLoading(false));
+  }, [storeLabels, workspaceSlug, projectId, fetchLabels]);
 
   const toggleDropdown = useCallback(() => {
     if (!isOpen) onOpen();
@@ -146,7 +145,7 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
   const handleAddLabel = async (labelName: string) => {
     if (!projectId) return;
     setSubmitting(true);
-    const label = await createLabel(workspaceSlug, projectId, { name: labelName, color: getRandomLabelColor() });
+    const label = await createLabel(workspaceSlug, { name: labelName, color: getRandomLabelColor() });
     onChange([...value, label.id]);
     setQuery("");
     setSubmitting(false);
