@@ -21,7 +21,10 @@ export const IssueCreatorDisplay: FC<TIssueUser> = (props) => {
 
   const getUserName = () => {
     if (customUserName) return customUserName;
-    if (activity?.source_data?.extra?.username) return activity?.source_data?.extra?.username;
+    if (activity?.source_data?.extra?.username)
+      return `${activity?.source_data?.extra?.username} ${
+        activity?.source_data?.source_email && `(${activity?.source_data?.source_email})`
+      }`;
     if (activity?.source_data?.source_email) return activity?.source_data?.source_email;
     return "Plane";
   };
