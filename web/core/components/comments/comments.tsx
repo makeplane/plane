@@ -22,15 +22,7 @@ type TCommentsWrapper = {
 };
 
 export const CommentsWrapper: FC<TCommentsWrapper> = observer((props) => {
-  const {
-    entityId,
-    activityOperations,
-    comments,
-    getCommentById,
-    isEditingAllowed = true,
-    projectId,
-    sortOrder,
-  } = props;
+  const { entityId, activityOperations, comments, getCommentById, isEditingAllowed = true, projectId } = props;
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
@@ -55,7 +47,7 @@ export const CommentsWrapper: FC<TCommentsWrapper> = observer((props) => {
 
   return (
     <div className="relative flex flex-col gap-y-2 h-full overflow-hidden">
-      {sortOrder === E_SORT_ORDER.DESC && renderCommentCreate}
+      {renderCommentCreate}
       <div className="flex-grow py-4 overflow-y-auto">
         {comments?.map((data, index) => {
           let comment;
@@ -79,7 +71,6 @@ export const CommentsWrapper: FC<TCommentsWrapper> = observer((props) => {
           );
         })}
       </div>
-      {sortOrder === E_SORT_ORDER.ASC && renderCommentCreate}
     </div>
   );
 });
