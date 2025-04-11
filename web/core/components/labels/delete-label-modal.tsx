@@ -19,7 +19,7 @@ type Props = {
 export const DeleteLabelModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose, data } = props;
   // router
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug } = useParams();
   // store hooks
   const { deleteLabel } = useLabel();
   // states
@@ -31,11 +31,11 @@ export const DeleteLabelModal: React.FC<Props> = observer((props) => {
   };
 
   const handleDeletion = async () => {
-    if (!workspaceSlug || !projectId || !data) return;
+    if (!workspaceSlug || !data) return;
 
     setIsDeleteLoading(true);
 
-    await deleteLabel(workspaceSlug.toString(), projectId.toString(), data.id)
+    await deleteLabel(workspaceSlug.toString(), data.id)
       .then(() => {
         handleClose();
       })

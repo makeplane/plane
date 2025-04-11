@@ -54,7 +54,7 @@ export const ModuleIssuesMobileHeader = observer(() => {
   } = useIssues(EIssuesStoreType.MODULE);
   const activeLayout = issueFilters?.displayFilters?.layout;
   const { projectStates } = useProjectState();
-  const { projectLabels } = useLabel();
+  const { labels } = useLabel();
   const {
     project: { projectMemberIds },
   } = useMember();
@@ -153,7 +153,7 @@ export const ModuleIssuesMobileHeader = observer(() => {
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
               }
-              labels={projectLabels}
+              labels={labels}
               memberIds={projectMemberIds ?? undefined}
               states={projectStates}
               cycleViewDisabled={!currentProjectDetails?.cycle_view}

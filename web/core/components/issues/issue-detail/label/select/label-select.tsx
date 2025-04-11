@@ -27,7 +27,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
   const { t } = useTranslation();
   // store hooks
   const { isMobile } = usePlatformOS();
-  const { fetchProjectLabels, getProjectLabels } = useLabel();
+  const { fetchLabels, getLabels } = useLabel();
   const { allowPermissions } = useUserPermissions();
   // states
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
@@ -36,20 +36,19 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
   const [query, setQuery] = useState("");
   const [submitting, setSubmitting] = useState<boolean>(false);
 
-  const canCreateLabel =
-    projectId && allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
+  const canCreateLabel = allowPermissions([EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER], EUserPermissionsLevel.WORKSPACE, workspaceSlug);
 
-  const projectLabels = getProjectLabels(projectId);
+  const labels = getLabels();
 
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
 
-  const fetchLabels = () => {
+  const fLabels = () => {
     setIsLoading(true);
-    if (!projectLabels && workspaceSlug && projectId)
-      fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
+    if (!labels && workspaceSlug)
+      fetchLabels(workspaceSlug).then(() => setIsLoading(false));
   };
 
-  const options = (projectLabels ?? []).map((label) => ({
+  const options = (labels ?? []).map((label) => ({
     value: label.id,
     query: label.name,
     content: (
@@ -130,7 +129,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
             ref={setReferenceElement}
             type="button"
             className="cursor-pointer rounded"
-            onClick={() => !projectLabels && fetchLabels()}
+            onClick={() => !labels && fLabels()}
           >
             {label}
           </button>

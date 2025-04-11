@@ -57,6 +57,8 @@ services:
       - dev_env
     volumes:
       - ./web:/app/web
+      - ./packages:/app/packages
+    command: ["yarn", "dev", "--filter=web"]
     env_file:
       - ./web/.env
     depends_on:
@@ -72,6 +74,8 @@ services:
       - dev_env
     volumes:
       - ./space:/app/space
+      - ./packages:/app/packages
+    command: ["yarn", "dev", "--filter=space"]
     depends_on:
       - api
       - worker
@@ -86,6 +90,8 @@ services:
       - dev_env
     volumes:
       - ./admin:/app/admin
+      - ./packages:/app/packages
+    command: ["yarn", "dev", "--filter=admin"]
     depends_on:
       - api
       - worker
@@ -100,6 +106,8 @@ services:
       - dev_env
     volumes:
       - ./live:/app/live
+      - ./packages:/app/packages
+    command: ["yarn", "dev", "--filter=live"]
     depends_on:
       - api
       - worker
