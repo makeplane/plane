@@ -20,7 +20,7 @@ export const MobileWorkspaceSettingsTabs = observer(() => {
     <div className="flex-shrink-0 md:hidden sticky inset-0 flex overflow-x-auto bg-custom-background-100 z-10">
       {WORKSPACE_SETTINGS_LINKS.map(
         (item, index) =>
-          shouldRenderSettingLink(item.key) &&
+          shouldRenderSettingLink(workspaceSlug.toString(), item.key) &&
           allowPermissions(item.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString()) && (
             <div
               className={`${
