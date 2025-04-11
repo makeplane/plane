@@ -15,6 +15,7 @@ import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 import { useLabel, useMember, useProjectInbox } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { InboxSourcePill } from "@/plane-web/components/inbox/source-pill";
 
 type InboxIssueListItemProps = {
   workspaceSlug: string;
@@ -65,7 +66,10 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
               <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
                 {projectIdentifier}-{issue.sequence_id}
               </div>
-              {inboxIssue.status !== -2 && <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />}
+              <div className="flex items-center gap-2">
+                {inboxIssue.source && <InboxSourcePill source={inboxIssue.source} />}
+                {inboxIssue.status !== -2 && <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />}
+              </div>
             </div>
             <h3 className="truncate w-full text-sm">{issue.name}</h3>
           </div>
