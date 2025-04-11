@@ -303,11 +303,10 @@ class LabelSerializer(BaseSerializer):
             "name",
             "color",
             "id",
-            "project_id",
             "workspace_id",
             "sort_order",
         ]
-        read_only_fields = ["workspace", "project"]
+        read_only_fields = ["workspace"]
 
 
 class LabelLiteSerializer(BaseSerializer):

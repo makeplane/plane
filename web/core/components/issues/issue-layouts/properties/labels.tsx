@@ -64,9 +64,9 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   // store hooks
-  const { getProjectLabels } = useLabel();
+  const { getLabels } = useLabel();
   const { isMobile } = usePlatformOS();
-  const storeLabels = getProjectLabels(projectId);
+  const storeLabels = getLabels();
 
   const handleClose = () => {
     if (!isOpen) return;
@@ -84,8 +84,8 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
 
   if (!value) return null;
 
-  let projectLabels: IIssueLabel[] = defaultOptions as IIssueLabel[];
-  if (storeLabels && storeLabels.length > 0) projectLabels = storeLabels;
+  let labels: IIssueLabel[] = defaultOptions as IIssueLabel[];
+  if (storeLabels && storeLabels.length > 0) labels = storeLabels;
 
   const NoLabel = useMemo(
     () => (
@@ -125,7 +125,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
           isMobile={isMobile}
           position="top"
           tooltipHeading={t("common.labels")}
-          tooltipContent={projectLabels
+          tooltipContent={labels
             ?.filter((l) => value.includes(l?.id))
             .map((l) => l?.name)
             .join(", ")}
@@ -138,7 +138,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
         </Tooltip>
       </div>
     ),
-    [fullWidth, disabled, noLabelBorder, isMobile, projectLabels, value]
+    [fullWidth, disabled, noLabelBorder, isMobile, labels, value]
   );
 
   const LabelItem = useCallback(
@@ -179,7 +179,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     <>
       {value.length > 0 ? (
         value.length <= maxRender ? (
-          projectLabels
+          labels
             ?.filter((l) => value.includes(l?.id))
             .map((label) => (
               <LabelDropdown

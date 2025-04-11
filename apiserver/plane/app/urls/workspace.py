@@ -17,6 +17,7 @@ from plane.app.views import (
     WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
     WorkspaceLabelsEndpoint,
+    LabelViewSet,
     WorkspaceProjectMemberEndpoint,
     WorkspaceUserPropertiesEndpoint,
     WorkspaceStatesEndpoint,
@@ -160,6 +161,23 @@ urlpatterns = [
         "workspaces/<str:slug>/labels/",
         WorkspaceLabelsEndpoint.as_view(),
         name="workspace-labels",
+    ),
+    path(
+        "workspaces/<str:slug>/issue-labels/",
+        LabelViewSet.as_view({"get": "list", "post": "create"}),
+        name="workspace-issue-labels",
+    ),
+    path(
+        "workspaces/<str:slug>/issue-labels/<uuid:pk>/",
+        LabelViewSet.as_view(
+            {
+                "get": "retrieve",
+                "put": "update",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="workspace-issue-labels",
     ),
     path(
         "workspaces/<str:slug>/user-properties/",

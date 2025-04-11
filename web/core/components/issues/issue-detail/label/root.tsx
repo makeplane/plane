@@ -27,7 +27,7 @@ export type TIssueLabel = {
 
 export type TLabelOperations = {
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
-  createLabel: (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => Promise<any>;
+  createLabel: (workspaceSlug: string, data: Partial<IIssueLabel>) => Promise<any>;
 };
 
 export const IssueLabel: FC<TIssueLabel> = observer((props) => {
@@ -65,9 +65,9 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
           });
         }
       },
-      createLabel: async (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => {
+      createLabel: async (workspaceSlug: string, data: Partial<IIssueLabel>) => {
         try {
-          const labelResponse = await createLabel(workspaceSlug, projectId, data);
+          const labelResponse = await createLabel(workspaceSlug, data);
           if (!isInboxIssue)
             setToast({
               title: t("toast.success"),

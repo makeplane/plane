@@ -17,7 +17,6 @@ from plane.app.views import (
     IssueSubscriberViewSet,
     IssueUserDisplayPropertyEndpoint,
     IssueViewSet,
-    LabelViewSet,
     BulkArchiveIssuesEndpoint,
     DeletedIssuesListViewSet,
     IssuePaginatedViewSet,
@@ -64,23 +63,6 @@ urlpatterns = [
             }
         ),
         name="project-issue",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-labels/",
-        LabelViewSet.as_view({"get": "list", "post": "create"}),
-        name="project-issue-labels",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-labels/<uuid:pk>/",
-        LabelViewSet.as_view(
-            {
-                "get": "retrieve",
-                "put": "update",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
-        ),
-        name="project-issue-labels",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-create-labels/",

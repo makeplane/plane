@@ -16,7 +16,7 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.MODULE);
-  const { projectLabels } = useLabel();
+  const { labels } = useLabel();
   const { projectStates } = useProjectState();
   // derived values
   const userFilters = issueFilters?.filters;
@@ -82,7 +82,7 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
           appliedFilters={appliedFilters}
           handleClearAllFilters={handleClearAllFilters}
           handleRemoveFilter={handleRemoveFilter}
-          labels={projectLabels ?? []}
+          labels={labels ?? []}
           states={projectStates}
         />
       </Header.LeftItem>
