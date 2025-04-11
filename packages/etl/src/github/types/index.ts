@@ -12,6 +12,7 @@ export type GithubInstallation = RestEndpointMethodTypes["apps"]["getInstallatio
 export type GithubRepository =
   RestEndpointMethodTypes["apps"]["listReposAccessibleToInstallation"]["response"]["data"]["repositories"];
 export type GithubIssue = RestEndpointMethodTypes["issues"]["create"]["parameters"];
+export type GithubIssueComment = RestEndpointMethodTypes["issues"]["createComment"]["response"]["data"];
 export type GithubPullRequest = RestEndpointMethodTypes["pulls"]["get"]["response"]["data"];
 
 export type WebhookGitHubIssue = components["schemas"]["webhooks_issue"];

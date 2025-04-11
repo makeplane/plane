@@ -216,6 +216,7 @@ export default class GitlabController {
 
       return res.redirect(redirectUri);
     } catch (error) {
+      console.error(error);
       return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.GENERIC_ERROR}`);
     }
   }

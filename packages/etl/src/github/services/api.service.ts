@@ -107,14 +107,6 @@ export class GithubService {
     return data;
   }
 
-  async getPullRequest(owner: string, repo: string, pull_number: number) {
-    return this.client.pulls.get({
-      owner,
-      repo,
-      pull_number,
-    });
-  }
-
   async getPullRequestWithClosingReference(
     owner: string,
     repo: string,

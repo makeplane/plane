@@ -4,10 +4,10 @@ import {
   GitlabMergeRequestEvent,
   gitlabWorkspaceConnectionSchema,
 } from "@plane/etl/gitlab";
-import { GitlabConnectionDetails } from "../types";
 import { logger } from "@/logger";
-import { verifyEntityConnection, verifyEntityConnections, verifyWorkspaceConnection } from "@/types";
 import { getAPIClient } from "@/services/client";
+import { verifyEntityConnection, verifyEntityConnections, verifyWorkspaceConnection } from "@/types";
+import { GitlabConnectionDetails } from "../types";
 
 const apiClient = getAPIClient();
 
@@ -35,6 +35,8 @@ export const getGitlabConnectionDetails = async (
     return;
   }
 
+  const verifiedEntityConnection = verifyEntityConnection(gitlabEntityConnectionSchema, entityConnection as any);
+
   // Find the workspace connection for the project
   const workspaceConnection = await apiClient.workspaceConnection.getWorkspaceConnection(
     entityConnection.workspace_connection_id
@@ -45,6 +47,11 @@ export const getGitlabConnectionDetails = async (
     return;
   }
 
+  const verifiedWorkspaceConnection = verifyWorkspaceConnection(
+    gitlabWorkspaceConnectionSchema,
+    workspaceConnection as any
+  );
+
   // project connections for this workspace connection for target state mapping
   const projectConnectionSet = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
     workspace_connection_id: workspaceConnection.id,
@@ -53,15 +60,12 @@ export const getGitlabConnectionDetails = async (
 
   if (projectConnectionSet.length === 0) {
     logger.error(`[GITLAB] Plane Project connection not found for project ${data.project.id}, skipping...`);
-    return;
+
+    return {
+      workspaceConnection: verifiedWorkspaceConnection,
+      entityConnection: verifiedEntityConnection,
+    };
   }
-
-  const verifiedWorkspaceConnection = verifyWorkspaceConnection(
-    gitlabWorkspaceConnectionSchema,
-    workspaceConnection as any
-  );
-
-  const verifiedEntityConnection = verifyEntityConnection(gitlabEntityConnectionSchema, entityConnection as any);
 
   const verifiedProjectConnection = verifyEntityConnections(gitlabEntityConnectionSchema, projectConnectionSet as any);
 
