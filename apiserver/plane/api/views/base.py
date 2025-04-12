@@ -14,10 +14,17 @@ from rest_framework.response import Response
 
 # Third party imports
 from rest_framework.views import APIView
+from oauth2_provider.contrib.rest_framework import (
+    OAuth2Authentication,
+    IsAuthenticatedOrTokenHasScope,
+)
+
 
 # Module imports
 from plane.api.middleware.api_authentication import APIKeyAuthentication
 from plane.api.rate_limit import ApiKeyRateThrottle, ServiceTokenRateThrottle
+from plane.authentication.rate_limit import OAuthTokenRateThrottle
+from plane.authentication.permissions.oauth import OauthApplicationWorkspacePermission
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
 
@@ -37,9 +44,12 @@ class TimezoneMixin:
 
 
 class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
-    authentication_classes = [APIKeyAuthentication]
-
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [APIKeyAuthentication, OAuth2Authentication]
+    permission_classes = [
+        IsAuthenticated,
+        IsAuthenticatedOrTokenHasScope
+    ]
+    required_scopes = ["read", "write"]
 
     def filter_queryset(self, queryset):
         for backend in list(self.filter_backends):
@@ -47,7 +57,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
         return queryset
 
     def get_throttles(self):
-        throttle_classes = []
+        throttle_classes = super().get_throttles()
         api_key = self.request.headers.get("X-Api-Key")
 
         if api_key:
@@ -60,6 +70,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
                 return throttle_classes
 
         throttle_classes.append(ApiKeyRateThrottle())
+        throttle_classes.append(OAuthTokenRateThrottle())
 
         return throttle_classes
 
@@ -128,6 +139,10 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
         ratelimit_reset = request.META.get("X-RateLimit-Reset")
         if ratelimit_reset is not None:
             response["X-RateLimit-Reset"] = ratelimit_reset
+        
+        ratelimit_limit = request.META.get("X-RateLimit-Limit")
+        if ratelimit_limit is not None:
+            response["X-RateLimit-Limit"] = ratelimit_limit
 
         return response
 

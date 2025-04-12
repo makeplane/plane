@@ -64,3 +64,5 @@ from .app.mobile.github import (
     MobileGitHubOauthInitiateEndpoint,
     MobileGitHubCallbackEndpoint,
 )
+
+from .oauth import CustomAuthorizationView

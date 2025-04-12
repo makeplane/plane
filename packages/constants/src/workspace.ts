@@ -82,6 +82,8 @@ export const RESTRICTED_URLS = [
   "licenses",
   "instances",
   "instance",
+  "oauth",
+  "applications",
 ];
 
 export const WORKSPACE_SETTINGS = {
@@ -146,6 +148,7 @@ export const WORKSPACE_SETTINGS_LINKS: {
   WORKSPACE_SETTINGS["project_states"],
   WORKSPACE_SETTINGS["billing-and-plans"],
   WORKSPACE_SETTINGS["integrations"],
+  WORKSPACE_SETTINGS["applications"],
   WORKSPACE_SETTINGS["import"],
   WORKSPACE_SETTINGS["export"],
   WORKSPACE_SETTINGS["webhooks"],

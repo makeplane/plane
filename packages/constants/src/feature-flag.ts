@@ -78,6 +78,8 @@ export enum E_FEATURE_FLAGS {
   // dashboards
   DASHBOARDS = "DASHBOARDS",
   DASHBOARDS_ADVANCED = "DASHBOARDS_ADVANCED",
+  // applications
+  APPLICATIONS = "APPLICATIONS",
 }
 
 /**

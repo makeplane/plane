@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     # Third-party things
     "strawberry.django",
     "rest_framework",
+    "oauth2_provider",
     "corsheaders",
     "django_celery_beat",
 ]
@@ -65,6 +66,7 @@ MIDDLEWARE = [
     "crum.CurrentRequestUserMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "plane.middleware.api_log_middleware.APITokenLogMiddleware",
+    "oauth2_provider.middleware.OAuth2TokenMiddleware",
     "plane.middleware.logger.RequestLoggerMiddleware",
 ]
 
@@ -482,6 +484,24 @@ FIREBASE_CLIENT_EMAIL = os.environ.get("FIREBASE_CLIENT_EMAIL", "")
 FIREBASE_CLIENT_ID = os.environ.get("FIREBASE_CLIENT_ID", "")
 FIREBASE_CLIENT_CERT_URL = os.environ.get("FIREBASE_CLIENT_CERT_URL", "")
 
+# Oauth Provider Settings
+from plane.authentication.utils import is_pkce_required # noqa
+OAUTH2_PROVIDER_ACCESS_TOKEN_MODEL = "authentication.AccessToken"
+OAUTH2_PROVIDER_APPLICATION_MODEL = "authentication.Application"
+OAUTH2_PROVIDER_GRANT_MODEL = "authentication.Grant"
+OAUTH2_PROVIDER_REFRESH_TOKEN_MODEL = "authentication.RefreshToken"
+OAUTH2_PROVIDER_ID_TOKEN_MODEL = "authentication.IDToken"
+
+
+OAUTH2_PROVIDER = {
+    'AUTHORIZATION_CODE_EXPIRE_SECONDS': 60,  # 1 minute
+    'OAUTH2_VALIDATOR_CLASS': 'plane.authentication.views.oauth.CustomOAuth2Validator',
+    'ALLOWED_GRANT_TYPES': [
+        'authorization_code',
+        'client_credentials',
+    ],
+    'PKCE_REQUIRED': is_pkce_required,
+}
 
 # ElasticSearch settings
 ELASTICSEARCH_ENABLED = os.environ.get("ELASTICSEARCH_ENABLED", "0") == "1"
@@ -499,3 +519,6 @@ if ELASTICSEARCH_ENABLED:
     )
 
     INSTALLED_APPS += ["django_elasticsearch_dsl"]
+
+# Web URL
+WEB_URL = os.environ.get("WEB_URL", "http://localhost:3000")

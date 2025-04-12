@@ -247,7 +247,11 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         if entity_type == FileAsset.EntityTypeContext.COMMENT_DESCRIPTION:
             return {"comment_id": entity_id}
 
-        if entity_type == FileAsset.EntityTypeContext.TEAM_SPACE_DESCRIPTION:
+        if entity_type in (
+            FileAsset.EntityTypeContext.TEAM_SPACE_DESCRIPTION,
+            FileAsset.EntityTypeContext.OAUTH_APP_DESCRIPTION,
+            FileAsset.EntityTypeContext.OAUTH_APP_LOGO,
+        ):
             return {"entity_identifier": entity_id}
 
         return {}
@@ -502,6 +506,7 @@ class StaticFileAssetEndpoint(BaseAPIView):
             FileAsset.EntityTypeContext.USER_COVER,
             FileAsset.EntityTypeContext.WORKSPACE_LOGO,
             FileAsset.EntityTypeContext.PROJECT_COVER,
+            FileAsset.EntityTypeContext.OAUTH_APP_LOGO,
             FileAsset.EntityTypeContext.CUSTOMER_LOGO
         ]:
             return Response(

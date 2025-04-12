@@ -51,6 +51,13 @@ export const EXTENDED_WORKSPACE_SETTINGS = {
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/customers/`,
   },
+  applications: {
+    key: "applications",
+    i18n_label: "workspace_settings.settings.applications.title",
+    href: "/settings/applications",
+    access: [EUserWorkspaceRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/settings/applications/`),
+  },
   templates: {
     key: "templates",
     i18n_label: "common.templates",

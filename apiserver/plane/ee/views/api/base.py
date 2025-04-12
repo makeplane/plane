@@ -113,4 +113,8 @@ class BaseServiceAPIView(TimezoneMixin, APIView, BasePaginator):
         if ratelimit_reset is not None:
             response["X-RateLimit-Reset"] = ratelimit_reset
 
+        ratelimit_limit = request.META.get("X-RateLimit-Limit")
+        if ratelimit_limit is not None:
+            response["X-RateLimit-Limit"] = ratelimit_limit
+
         return response

@@ -249,6 +249,15 @@ export class FileService extends APIService {
       });
   }
 
+  async deleteOldWorkspaceAssetV2(workspaceSlug: string, src: string): Promise<any> {
+    const assetKey = getAssetIdFromUrl(src);
+    return this.delete(`/api/assets/v2/workspaces/${workspaceSlug}/${assetKey}/`)
+      .then((response) => response?.status)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async deleteOldUserAsset(src: string): Promise<any> {
     const assetKey = getAssetIdFromUrl(src);
     return this.delete(`/api/users/file-assets/${assetKey}/`)

@@ -44,6 +44,8 @@ class FileAsset(BaseModel):
         PROJECT_ATTACHMENT = "PROJECT_ATTACHMENT"
         TEAM_SPACE_DESCRIPTION = "TEAM_SPACE_DESCRIPTION"
         TEAM_SPACE_COMMENT_DESCRIPTION = "TEAM_SPACE_COMMENT_DESCRIPTION"
+        OAUTH_APP_LOGO = "OAUTH_APP_LOGO"
+        OAUTH_APP_DESCRIPTION = "OAUTH_APP_DESCRIPTION"
         CUSTOMER_REQUEST_ATTACHMENT = "CUSTOMER_REQUEST_ATTACHMENT"
         CUSTOMER_LOGO = "CUSTOMER_LOGO"
         CUSTOMER_DESCRIPTION = "CUSTOMER_DESCRIPTION"
@@ -95,12 +97,14 @@ class FileAsset(BaseModel):
 
     @property
     def asset_url(self):
-        if (
-            self.entity_type == self.EntityTypeContext.WORKSPACE_LOGO
-            or self.entity_type == self.EntityTypeContext.USER_AVATAR
-            or self.entity_type == self.EntityTypeContext.USER_COVER
-            or self.entity_type == self.EntityTypeContext.PROJECT_COVER
-            or self.entity_type == self.EntityTypeContext.CUSTOMER_LOGO
+        if self.entity_type in (
+            self.EntityTypeContext.WORKSPACE_LOGO,
+            self.EntityTypeContext.USER_AVATAR,
+            self.EntityTypeContext.USER_COVER,
+            self.EntityTypeContext.PROJECT_COVER,
+            self.EntityTypeContext.OAUTH_APP_LOGO,
+            self.EntityTypeContext.OAUTH_APP_DESCRIPTION,
+            self.EntityTypeContext.CUSTOMER_LOGO
         ):
             return f"/api/assets/v2/static/{self.id}/"
 

@@ -69,9 +69,12 @@ import {
   IConnectionStore,
   ConnectionStore,
 } from "./integrations";
-// pi chat
+
 import { EpicAnalytics, IEpicAnalyticStore } from "./issue/epic/analytic.store";
 import { EpicBaseStore, IEpicBaseStore } from "./issue/epic/base.store";
+// marketplace
+import { IApplicationStore, ApplicationStore } from "./marketplace/application.store";
+// pi chat
 import { IPiChatStore, PiChatStore } from "./pi-chat/pi-chat";
 // timeline
 import { IProjectInboxStore, ProjectInboxStore } from "./project-inbox.store";
@@ -121,6 +124,8 @@ export class RootStore extends CoreRootStore {
   // epics
   epicAnalytics: IEpicAnalyticStore;
   epicBaseStore: IEpicBaseStore;
+  // marketplace
+  applicationStore: IApplicationStore;
   // templates
   templatesRoot: ITemplatesRootStore;
 
@@ -165,6 +170,8 @@ export class RootStore extends CoreRootStore {
     // epics
     this.epicAnalytics = new EpicAnalytics(this);
     this.epicBaseStore = new EpicBaseStore(this);
+    // marketplace
+    this.applicationStore = new ApplicationStore(this);
     // templates
     this.templatesRoot = new TemplatesRootStore(this);
   }
@@ -207,6 +214,8 @@ export class RootStore extends CoreRootStore {
     this.baseDashboards = new BaseDashboardsStore(this);
     // epics
     this.epicAnalytics = new EpicAnalytics(this);
+    // marketplace
+    this.applicationStore = new ApplicationStore(this);
     // templates
     this.templatesRoot = new TemplatesRootStore(this);
   }

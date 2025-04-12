@@ -17,4 +17,5 @@ export * from "./teamspaces";
 export * from "./use-initiative-attachments";
 export * from "./customers";
 export * from "./epics";
+export * from "./marketplace";
 export * from "./templates";

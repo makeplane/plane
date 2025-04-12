@@ -54,6 +54,7 @@ export * from "./import-job-types";
 export * from "./feature-flag";
 export * from "./work-item-types";
 export * from "./integration-config";
+export * from "./marketplace";
 export * from "./templates";
 export * from "./customers";
 export * from "./workflow";
