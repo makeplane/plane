@@ -1,4 +1,174 @@
 {
+  "sidebar": {
+    "projects": "Projeks",
+    "pages": "Peycıs",
+    "new_work_item": "Niv vörk aytım",
+    "home": "Hom",
+    "your_work": "Yor vörk",
+    "inbox": "İnboks",
+    "workspace": "Vörkspeys",
+    "views": "Viyus",
+    "analytics": "Analitiks",
+    "work_items": "Vörk aytıms",
+    "cycles": "Saykıls",
+    "modules": "Modüls",
+    "intake": "İnteyk",
+    "drafts": "Drafts",
+    "favorites": "Feyvorits",
+    "pro": "Pro",
+    "upgrade": "Apgreyd"
+  },
+
+  "auth": {
+    "common": {
+      "email": {
+        "label": "İmeyl",
+        "placeholder": "neym@kampıni.com",
+        "errors": {
+          "required": "İmeyl is required",
+          "invalid": "İmeyl is invalid"
+        }
+      },
+      "password": {
+        "label": "Pasvörd",
+        "set_password": "Set a pasvörd",
+        "placeholder": "Enter pasvörd",
+        "confirm_password": {
+          "label": "Konfırm pasvörd",
+          "placeholder": "Konfırm pasvörd"
+        },
+        "current_password": {
+          "label": "Körınt pasvörd"
+        },
+        "new_password": {
+          "label": "Niv pasvörd",
+          "placeholder": "Enter niv pasvörd"
+        },
+        "change_password": {
+          "label": {
+            "default": "Çeync pasvörd",
+            "submitting": "Çeyncıng pasvörd"
+          }
+        },
+        "errors": {
+          "match": "Pasvörds don't match",
+          "empty": "Please enter your pasvörd",
+          "length": "Pasvörd length should me more than 8 karakterz",
+          "strength": {
+            "weak": "Pasvörd is weak",
+            "strong": "Pasvörd is strong"
+          }
+        },
+        "submit": "Set pasvörd",
+        "toast": {
+          "change_password": {
+            "success": {
+              "title": "Sakses!",
+              "message": "Pasvörd çeynced successfully."
+            },
+            "error": {
+              "title": "Error!",
+              "message": "Something went wrong. Please try again."
+            }
+          }
+        }
+      },
+      "unique_code": {
+        "label": "Yunik kod",
+        "placeholder": "gets-sets-flys",
+        "paste_code": "Peyst the kod sent to your imeyl",
+        "requesting_new_code": "Rikvestıng niv kod",
+        "sending_code": "Sending kod"
+      },
+      "already_have_an_account": "Already have an akount?",
+      "login": "Log in",
+      "create_account": "Krieyt akount",
+      "new_to_plane": "Niv to Pleyn?",
+      "back_to_sign_in": "Bek to sayn in",
+      "resend_in": "Risend in {seconds} sekınds",
+      "sign_in_with_unique_code": "Sayn in vit yunik kod",
+      "forgot_password": "Forgot your pasvörd?"
+    },
+    "sign_up": {
+      "header": {
+        "label": "Krieyt an akount to start menıcıng vörk vit your tim.",
+        "step": {
+          "email": {
+            "header": "Sayn ap",
+            "sub_header": ""
+          },
+          "password": {
+            "header": "Sayn ap",
+            "sub_header": "Sayn ap using an imeyl-pasvörd kombıneyşın."
+          },
+          "unique_code": {
+            "header": "Sayn ap",
+            "sub_header": "Sayn ap using a yunik kod sent to the imeyl address above."
+          }
+        }
+      },
+      "errors": {
+        "password": {
+          "strength": "Try setting-ap a strong pasvörd to proceed"
+        }
+      }
+    },
+    "sign_in": {
+      "header": {
+        "label": "Log in to start menıcıng vörk vit your tim.",
+        "step": {
+          "email": {
+            "header": "Log in or sayn ap",
+            "sub_header": ""
+          },
+          "password": {
+            "header": "Log in or sayn ap",
+            "sub_header": "Use your imeyl-pasvörd kombıneyşın to log in."
+          },
+          "unique_code": {
+            "header": "Log in or sayn ap",
+            "sub_header": "Log in using a yunik kod sent to the imeyl address above."
+          }
+        }
+      }
+    },
+    "forgot_password": {
+      "title": "Reset your pasvörd",
+      "description": "Enter your yuzer akount's verified imeyl address and we will send you a pasvörd reset link.",
+      "email_sent": "We sent the reset link to your imeyl address",
+      "send_reset_link": "Send reset link",
+      "errors": {
+        "smtp_not_enabled": "We see that your god hasn't enabled SMTP, we will not be able to send a pasvörd reset link"
+      },
+      "toast": {
+        "success": {
+          "title": "İmeyl sent",
+          "message": "Çek your inbox for a link to reset your pasvörd. If it doesn't appear within a few minutes, çek your spam folder."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Something went wrong. Please try again."
+        }
+      }
+    },
+    "reset_password": {
+      "title": "Set niv pasvörd",
+      "description": "Sikur your akount vit a strong pasvörd"
+    },
+    "set_password": {
+      "title": "Sikur your akount",
+      "description": "Setting pasvörd helps you login sikurli"
+    },
+    "sign_out": {
+      "toast": {
+        "error": {
+          "title": "Error!",
+          "message": "Failed to sayn out. Please try again."
+        }
+      }
+    }
+  },
+
   "submit": "Gönder",
   "cancel": "İptal",
   "loading": "Yükleniyor",
@@ -2059,6 +2229,7 @@
       }
     }
   },
+
   "workspace_draft_issues": {
     "draft_an_issue": "Taslak iş öğesi oluştur",
     "empty_state": {
@@ -2202,6 +2373,7 @@
       "short_description": "JSON olarak aktar"
     }
   },
+
   "default_global_view": {
     "all_issues": "Tüm iş öğeleri",
     "assigned": "Atanan",
@@ -2231,6 +2403,7 @@
       }
     }
   },
+
   "project_modules": {
     "status": {
       "backlog": "Bekleme Listesi",
