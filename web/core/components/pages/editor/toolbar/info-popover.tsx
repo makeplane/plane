@@ -38,7 +38,7 @@ export const PageInfoPopover: React.FC<Props> = (props) => {
   const { getUserDetails } = useMember();
   // derived values
   const editorInformation = page.updated_by ? getUserDetails(page.updated_by) : undefined;
-  const creatorInformation = page.created_by ? getUserDetails(page.created_by) : undefined;
+  const creatorInformation = page.owned_by ? getUserDetails(page.owned_by) : undefined;
 
   const documentsInfo = editorRef?.getDocumentInfo() || { words: 0, characters: 0, paragraphs: 0 };
 
@@ -92,28 +92,30 @@ export const PageInfoPopover: React.FC<Props> = (props) => {
             ))}
           </div>
           <div className="space-y-2 mt-3">
-            <div>
-              <p className="text-xs font-medium text-custom-text-300">Edited by</p>
-              <Link
-                href={`/${workspaceSlug?.toString()}/profile/${page.updated_by}`}
-                className="mt-2 flex items-center gap-1.5 text-sm font-medium"
-              >
-                <Avatar
-                  src={getFileURL(editorInformation?.avatar_url ?? "")}
-                  name={editorInformation?.display_name}
-                  className="flex-shrink-0"
-                  size="sm"
-                />
-                <span>
-                  {editorInformation?.display_name}{" "}
-                  <span className="text-custom-text-300">{renderFormattedDate(page.updated_at)}</span>
-                </span>
-              </Link>
-            </div>
+            {editorInformation?.display_name && (
+              <div>
+                <p className="text-xs font-medium text-custom-text-300">Edited by</p>
+                <Link
+                  href={`/${workspaceSlug?.toString()}/profile/${page.updated_by}`}
+                  className="mt-2 flex items-center gap-1.5 text-sm font-medium"
+                >
+                  <Avatar
+                    src={getFileURL(editorInformation?.avatar_url ?? "")}
+                    name={editorInformation?.display_name}
+                    className="flex-shrink-0"
+                    size="sm"
+                  />
+                  <span className="flex items-center gap-2 text-xs">
+                    <span className="font-medium">{editorInformation?.display_name}</span>{" "}
+                    <span className="text-custom-text-300">{renderFormattedDate(page.updated_at)}</span>
+                  </span>
+                </Link>
+              </div>
+            )}
             <div>
               <p className="text-xs font-medium text-custom-text-300">Created by</p>
               <Link
-                href={`/${workspaceSlug?.toString()}/profile/${page.created_by}`}
+                href={`/${workspaceSlug?.toString()}/profile/${page.owned_by}`}
                 className="mt-2 flex items-center gap-1.5 text-sm font-medium"
               >
                 <Avatar
@@ -122,8 +124,8 @@ export const PageInfoPopover: React.FC<Props> = (props) => {
                   className="flex-shrink-0"
                   size="sm"
                 />
-                <span>
-                  {creatorInformation?.display_name}{" "}
+                <span className="flex items-center gap-2 text-xs">
+                  <span className="font-medium">{creatorInformation?.display_name}</span>{" "}
                   <span className="text-custom-text-300">{renderFormattedDate(page.created_at)}</span>
                 </span>
               </Link>

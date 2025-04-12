@@ -121,7 +121,7 @@ export const MobileDocumentEditor = () => {
   return (
     <div onClick={onEditorFocus} className="min-h-screen">
       <CollaborativeDocumentEditorWithRef
-        editable={true}
+        editable
         placeholder={"Write something..."}
         onTransaction={updateActiveStates}
         id={initialParams?.pageId}

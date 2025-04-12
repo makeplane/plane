@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+import { useRouter, useParams } from "next/navigation";
 // plane imports
 import { PAGE_DELETED } from "@plane/constants";
 import { TOAST_TYPE, setToast, AlertModalCore } from "@plane/ui";
@@ -24,7 +25,9 @@ export const WikiDeletePageModal: React.FC<TConfirmPageDeletionProps> = observer
   // store hooks
   const { removePage } = usePageStore(EPageStoreType.WORKSPACE);
   const { capturePageEvent } = useEventTracker();
+  const { workspaceSlug } = useParams();
 
+  const router = useRouter();
   if (!page) return null;
 
   const { name } = page;
@@ -37,7 +40,7 @@ export const WikiDeletePageModal: React.FC<TConfirmPageDeletionProps> = observer
   const handleDelete = async () => {
     if (!page.id) return;
     setIsDeleting(true);
-    await removePage(page.id)
+    await removePage({ pageId: page.id, shouldSync: true })
       .then(() => {
         capturePageEvent({
           eventName: PAGE_DELETED,
@@ -52,6 +55,7 @@ export const WikiDeletePageModal: React.FC<TConfirmPageDeletionProps> = observer
           title: "Success!",
           message: "Page deleted successfully.",
         });
+        router.push(`/${workspaceSlug}/pages`);
       })
       .catch(() => {
         capturePageEvent({

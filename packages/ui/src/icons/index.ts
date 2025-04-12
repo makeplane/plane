@@ -68,3 +68,7 @@ export * from "./buildings-icon";
 export * from "./customers-icon";
 export * from "./customer-request-icon";
 export * from "./plane";
+export * from "./moved-page-icon";
+export * from "./restricted-page-icon";
+export * from "./empty-page-icon";
+export * from "./moved-icon";

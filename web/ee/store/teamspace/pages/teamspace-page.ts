@@ -1,4 +1,5 @@
-import { computed, makeObservable } from "mobx";
+import set from "lodash/set";
+import { action, computed, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { EPageAccess, EUserWorkspaceRoles, EUserPermissions } from "@plane/constants";
@@ -55,6 +56,8 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
     });
     makeObservable(this, {
       // computed
+      parentPageIds: computed,
+      subPageIds: computed,
       canCurrentUserAccessPage: computed,
       canCurrentUserEditPage: computed,
       canCurrentUserDuplicatePage: computed,
@@ -65,14 +68,40 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
       canCurrentUserFavoritePage: computed,
       canCurrentUserMovePage: computed,
       isContentEditable: computed,
+      // actions
+      fetchSubPages: action,
     });
+  }
+
+  get parentPageIds() {
+    const immediateParent = this.parent_id;
+    if (!immediateParent) return [];
+    const parentPageIds = [immediateParent];
+    let parent = this.rootStore.workspacePages.data[immediateParent];
+    while (parent?.parent_id) {
+      parentPageIds.push(parent.parent_id);
+      parent = this.rootStore.workspacePages.data[parent.parent_id];
+    }
+    return parentPageIds.filter((id): id is string => id !== undefined);
+  }
+
+  get subPageIds() {
+    const pages = Object.values(this.rootStore.projectPages.data);
+    const subPageIds = pages
+      .filter((page) => page.parent_id === this.id)
+      .map((page) => page.id)
+      .filter((id): id is string => id !== undefined);
+    return subPageIds;
+  }
+
+  get subPages() {
+    return this.subPageIds.map((id) => this.rootStore.projectPages.data[id]);
   }
 
   private getUserWorkspaceRole = computedFn((): EUserWorkspaceRoles | EUserPermissions | undefined => {
     const { workspaceSlug } = this.rootStore.router;
     if (!workspaceSlug || !this.team) return;
-    const userRole =
-      this.rootStore.user.permission.workspaceInfoBySlug(workspaceSlug)?.role;
+    const userRole = this.rootStore.user.permission.workspaceInfoBySlug(workspaceSlug)?.role;
     return userRole;
   });
 
@@ -91,7 +120,8 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
     const userRole = this.getUserWorkspaceRole();
     const isPagePublic = this.access === EPageAccess.PUBLIC;
     return (
-      (isPagePublic && !!userRole && userRole >= EUserWorkspaceRoles.MEMBER) || (!isPagePublic && this.isCurrentUserOwner)
+      (isPagePublic && !!userRole && userRole >= EUserWorkspaceRoles.MEMBER) ||
+      (!isPagePublic && this.isCurrentUserOwner)
     );
   }
 
@@ -168,4 +198,22 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
     const { workspaceSlug } = this.rootStore.router;
     return `/${workspaceSlug}/teamspaces/${this.team}/pages/${this.id}`;
   });
+
+  fetchSubPages = async () => {
+    try {
+      const { workspaceSlug } = this.rootStore.router ?? {};
+      const teamspaceId = this.team;
+      if (!workspaceSlug || !teamspaceId || !this.id) throw new Error("Required fields not found");
+      const subPages = await teamspacePageService.fetchSubPages(workspaceSlug, teamspaceId, this.id);
+
+      runInAction(() => {
+        for (const page of subPages) {
+          if (page?.id) set(this.rootStore.projectPages.data, [page.id], new TeamspacePage(this.rootStore, page));
+        }
+      });
+    } catch (error) {
+      console.error("Error in fetching sub-pages", error);
+      throw error;
+    }
+  };
 }

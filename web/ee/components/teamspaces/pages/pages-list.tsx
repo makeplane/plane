@@ -7,7 +7,7 @@ import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ListLayout } from "@/components/core/list";
 import { DetailedEmptyState, SimpleEmptyState } from "@/components/empty-state";
-import { PageListBlock, PageLoader } from "@/components/pages";
+import { PageListBlockRoot, PageLoader } from "@/components/pages";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -111,7 +111,7 @@ export const TeamspacePagesList = observer((props: Props) => {
           <ListLayout>
             {filteredTeamspacePageIds.length > 0 ? (
               filteredTeamspacePageIds.map((pageId) => (
-                <PageListBlock key={pageId} pageId={pageId} storeType={storeType} />
+                <PageListBlockRoot key={pageId} paddingLeft={0} pageId={pageId} storeType={storeType} />
               ))
             ) : (
               <p className="mt-10 text-center text-sm text-custom-text-300">No results found</p>

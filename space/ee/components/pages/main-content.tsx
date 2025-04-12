@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { observer } from "mobx-react-lite";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { FileText } from "lucide-react";
 // editor
@@ -16,6 +17,7 @@ import { usePublish } from "@/hooks/store";
 import { IssueEmbedCard } from "@/plane-web/components/pages";
 // plane web hooks
 import { usePage, usePagesList } from "@/plane-web/hooks/store";
+import { PageEmbedCardRoot } from "./page/root";
 
 type Props = {
   anchor: string;
@@ -24,6 +26,8 @@ type Props = {
 export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
   const { anchor } = props;
   // refs
+  const { workspaceSlug, projectId } = useParams();
+
   const editorRef = useRef<EditorRefApi>(null);
   // store hooks
   const publishSettings = usePublish(anchor);
@@ -80,6 +84,10 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
             embedHandler={{
               issue: {
                 widgetCallback: ({ issueId }) => <IssueEmbedCard anchor={anchor} issueId={issueId} />,
+              },
+              page: {
+                widgetCallback: ({ pageId }) => <PageEmbedCardRoot pageId={pageId} />,
+                workspaceSlug: "",
               },
             }}
           />

@@ -88,7 +88,7 @@ class WorkspacePageQuery:
         # Build the query
         query = (
             Page.objects.filter(workspace__slug=slug, pk=page)
-            .filter(parent__isnull=True, archived_at__isnull=True)
+            .filter(archived_at__isnull=True)
             .filter(Q(owned_by=user) | Q(access=0))
             .select_related("workspace", "owned_by")
             .prefetch_related("projects")
@@ -207,7 +207,6 @@ class PageQuery:
                 projects__project_projectmember__is_active=True,
                 projects__archived_at__isnull=True,
             )
-            .filter(parent__isnull=True, archived_at__isnull=True)
             .filter(Q(owned_by=user) | Q(access=0))
             .select_related("workspace", "owned_by")
             .prefetch_related("projects")

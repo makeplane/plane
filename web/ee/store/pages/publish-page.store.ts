@@ -18,7 +18,8 @@ export interface IPublishPageStore {
   publishProjectPage: (
     projectID: string,
     pageID: string,
-    data: Partial<TPagePublishSettings>
+    data: Partial<TPagePublishSettings>,
+    shouldSync?: boolean
   ) => Promise<TPagePublishSettings>;
   fetchProjectPagePublishSettings: (projectID: string, pageID: string) => Promise<TPagePublishSettings>;
   updateProjectPagePublishSettings: (
@@ -26,7 +27,7 @@ export interface IPublishPageStore {
     pageID: string,
     data: Partial<TPagePublishSettings>
   ) => Promise<TPagePublishSettings>;
-  unpublishProjectPage: (projectID: string, pageID: string) => Promise<void>;
+  unpublishProjectPage: (projectID: string, pageID: string, shouldSync?: boolean) => Promise<void>;
   // workspace level actions
   publishWorkspacePage: (pageID: string, data: Partial<TPagePublishSettings>) => Promise<TPagePublishSettings>;
   fetchWorkspacePagePublishSettings: (pageID: string) => Promise<TPagePublishSettings>;
@@ -76,7 +77,12 @@ export class PublishPageStore implements IPublishPageStore {
    * @param {string} pageID
    * @param {TPagePublishSettings} data
    */
-  publishProjectPage = async (projectID: string, pageID: string, data: Partial<TPagePublishSettings>) => {
+  publishProjectPage = async (
+    projectID: string,
+    pageID: string,
+    data: Partial<TPagePublishSettings>,
+    shouldSync?: boolean
+  ) => {
     const { workspaceSlug } = this.rootStore.router;
     if (!workspaceSlug) throw new Error("workspaceSlug not found");
     const response = await this.publishPageService.publishProjectPage(workspaceSlug, projectID, pageID, data);
@@ -124,14 +130,16 @@ export class PublishPageStore implements IPublishPageStore {
    * @param {string} projectID
    * @param {string} pageID
    */
-  unpublishProjectPage = async (projectID: string, pageID: string) => {
+  unpublishProjectPage = async (projectID: string, pageID: string, shouldSync: boolean = true) => {
     const { workspaceSlug } = this.rootStore.router;
     if (!workspaceSlug) throw new Error("workspaceSlug not found");
-    await this.publishPageService.unpublishProjectPage(workspaceSlug, projectID, pageID);
     runInAction(() => {
       unset(this.data, [pageID]);
       set(this.rootStore.projectPages.data?.[pageID], ["anchor"], null);
     });
+    if (shouldSync) {
+      await this.publishPageService.unpublishProjectPage(workspaceSlug, projectID, pageID);
+    }
   };
 
   /**
@@ -139,7 +147,7 @@ export class PublishPageStore implements IPublishPageStore {
    * @param {string} pageID
    * @param {TPagePublishSettings} data
    */
-  publishWorkspacePage = async (pageID: string, data: Partial<TPagePublishSettings>) => {
+  publishWorkspacePage = async (pageID: string, data: Partial<TPagePublishSettings>, shouldSync?: boolean) => {
     const { workspaceSlug } = this.rootStore.router;
     if (!workspaceSlug) throw new Error("workspaceSlug not found");
     const response = await this.publishPageService.publishWorkspacePage(workspaceSlug, pageID, data);

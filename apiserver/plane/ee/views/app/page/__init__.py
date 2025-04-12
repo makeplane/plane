@@ -5,5 +5,7 @@ from .workspace import (
     WorkspacePageVersionEndpoint,
     WorkspacePageFavoriteEndpoint,
     WorkspacePageDuplicateEndpoint,
+    WorkspacePageRestoreEndpoint,
 )
 from .base import MovePageEndpoint
+from .live import PagesLiveServerSubPagesViewSet, PagesLiveServerDescriptionViewSet

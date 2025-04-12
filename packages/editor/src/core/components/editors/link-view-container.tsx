@@ -46,7 +46,7 @@ export const LinkViewContainer: FC<LinkViewContainerProps> = ({ editor, containe
 
   const handleLinkHover = useCallback(
     (event: MouseEvent) => {
-      if (!editor || editorState.linkExtensionStorage.isBubbleMenuOpen) return;
+      if (!editor || editorState.linkExtensionStorage?.isBubbleMenuOpen) return;
 
       // Find the closest anchor tag from the event target
       const target = (event.target as HTMLElement)?.closest("a");
@@ -109,7 +109,7 @@ export const LinkViewContainer: FC<LinkViewContainerProps> = ({ editor, containe
 
   // Close link view when bubble menu opens
   useEffect(() => {
-    if (editorState.linkExtensionStorage.isBubbleMenuOpen && isOpen) {
+    if (editorState.linkExtensionStorage?.isBubbleMenuOpen && isOpen) {
       setIsOpen(false);
     }
   }, [editorState.linkExtensionStorage, isOpen]);

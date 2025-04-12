@@ -43,7 +43,7 @@ const ProjectPagesPage = observer(() => {
 
   if (!workspaceSlug || !projectId) return <></>;
 
-  // No access to cycle
+  // No access to page
   if (currentProjectDetails?.page_view === false)
     return (
       <div className="flex items-center justify-center h-full w-full">

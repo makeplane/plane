@@ -38,7 +38,7 @@ const TeamspacePageDetailsPage = observer(() => {
   const teamspaceId = routerTeamSpaceId?.toString();
   const pageId = routerPageId?.toString();
   // store hooks
-  const { createPage, fetchTeamspacePageDetails } = usePageStore(storeType);
+  const { createPage, fetchPageDetails } = usePageStore(storeType);
   const page = usePage({
     pageId: pageId?.toString() ?? "",
     storeType,
@@ -62,7 +62,8 @@ const TeamspacePageDetailsPage = observer(() => {
   // fetch page details
   const { error: pageDetailsError } = useSWR(
     workspaceSlug && teamspaceId && pageId ? `TEAM_PAGE_DETAILS_${pageId}` : null,
-    workspaceSlug && teamspaceId && pageId ? () => fetchTeamspacePageDetails(workspaceSlug, teamspaceId, pageId) : null,
+    // @ts-expect-error store fixes
+    workspaceSlug && teamspaceId && pageId ? () => fetchPageDetails(workspaceSlug, teamspaceId, pageId) : null,
     {
       revalidateIfStale: true,
       revalidateOnFocus: true,
@@ -119,6 +120,7 @@ const TeamspacePageDetailsPage = observer(() => {
       documentType: "teamspace_page",
       teamspaceId,
       workspaceSlug,
+      parentPageId: null,
     }),
     [teamspaceId, workspaceSlug]
   );

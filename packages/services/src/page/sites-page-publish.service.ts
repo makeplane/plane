@@ -42,4 +42,19 @@ export class SitesPagePublishService extends APIService {
         throw error?.response;
       });
   }
+
+  /**
+   * Retrieves subpages for a specific page.
+   * @param {string} anchor - The anchor identifier
+   * @param {string} pageId - The parent page identifier
+   * @returns {Promise<TPublicPageResponse[]>} The subpages list
+   * @throws {Error} If the API request fails
+   */
+  async fetchSubPages(anchor: string): Promise<TPublicPageResponse[]> {
+    return this.get(`/api/public/anchor/${anchor}/sub-pages/`)
+      .then((response) => response?.data || [])
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
 }

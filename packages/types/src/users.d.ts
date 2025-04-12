@@ -156,14 +156,7 @@ export interface IUserProfileProjectSegregation {
     id: string;
     pending_issues: number;
   }[];
-  user_data: Pick<
-    IUser,
-    | "avatar_url"
-    | "cover_image_url"
-    | "display_name"
-    | "first_name"
-    | "last_name"
-  > & {
+  user_data: Pick<IUser, "avatar_url" | "cover_image_url" | "display_name" | "first_name" | "last_name"> & {
     date_joined: Date;
     user_timezone: string;
   };

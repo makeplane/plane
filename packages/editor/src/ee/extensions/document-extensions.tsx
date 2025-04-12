@@ -1,13 +1,16 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
-import { AnyExtension } from "@tiptap/core";
+import { Extension } from "@tiptap/core";
+import { FileText } from "lucide-react";
 // ui
 import { LayersIcon } from "@plane/ui";
 // extensions
 import { SlashCommands, TSlashCommandAdditionalOption } from "@/extensions";
+// helpers
+import { insertPageEmbed } from "@/helpers/editor-commands";
 // plane editor extensions
 import { IssueEmbedSuggestions, IssueListRenderer } from "@/plane-editor/extensions";
 // plane editor types
-import { TIssueEmbedConfig } from "@/plane-editor/types";
+import { TEmbedConfig } from "@/plane-editor/types";
 // types
 import { TExtensions, TUserDetails } from "@/types";
 // local extensions
@@ -15,22 +18,33 @@ import { CustomCollaborationCursor } from "./collaboration-cursor";
 
 type Props = {
   disabledExtensions?: TExtensions[];
-  issueEmbedConfig: TIssueEmbedConfig | undefined;
+  embedConfig: TEmbedConfig | undefined;
   provider: HocuspocusProvider;
   userDetails: TUserDetails;
 };
 
+/**
+ * Registry entry configuration for extensions
+ */
 type ExtensionConfig = {
+  /** Determines if the extension should be enabled based on disabled extensions */
   isEnabled: (disabledExtensions: TExtensions[]) => boolean;
-  getExtension: (props: Props) => AnyExtension;
+  /** Returns the extension instance(s) when enabled */
+  getExtension: (props: Props) => Extension[];
 };
 
-const createSlashCommandOptions = (disabledExtensions: TExtensions[] = []): TSlashCommandAdditionalOption[] => {
-  const options: TSlashCommandAdditionalOption[] = [
-    {
+/**
+ * Registry for slash commands
+ * Each entry defines a single slash command option with its own enabling logic
+ */
+const slashCommandRegistry = [
+  {
+    // Work item embed slash command
+    isEnabled: (disabledExtensions: TExtensions[]) => !disabledExtensions.includes("issue-embed"),
+    getOption: (): TSlashCommandAdditionalOption => ({
       commandKey: "issue-embed",
       key: "issue-embed",
-      title: "Work item embed",
+      title: "Work item",
       description: "Embed work item from the project.",
       searchTerms: ["work item", "link", "embed"],
       icon: <LayersIcon className="size-3.5" />,
@@ -39,39 +53,101 @@ const createSlashCommandOptions = (disabledExtensions: TExtensions[] = []): TSla
       },
       section: "general",
       pushAfter: "callout",
-    },
-  ];
-
-  return options.filter((option) => !disabledExtensions.includes(option.commandKey as TExtensions));
-};
-
-const extensionRegistry: ExtensionConfig[] = [
-  {
-    isEnabled: (disabledExtensions) => !disabledExtensions.includes("slash-commands"),
-    getExtension: ({ disabledExtensions }) =>
-      SlashCommands({ additionalOptions: createSlashCommandOptions(disabledExtensions) }),
+    }),
   },
   {
-    isEnabled: (disabledExtensions) => !disabledExtensions.includes("issue-embed"),
-    getExtension: ({ issueEmbedConfig }) =>
-      IssueEmbedSuggestions.configure({
-        suggestion: {
-          render: () => issueEmbedConfig?.searchCallback && IssueListRenderer(issueEmbedConfig.searchCallback),
+    // Page embed slash command
+    isEnabled: (disabledExtensions: TExtensions[]) => !disabledExtensions.includes("nested-pages"),
+    getOption: ({ embedConfig }: Props): TSlashCommandAdditionalOption | null => {
+      // Only enable if page config with createCallback exists
+      const pageConfig = embedConfig?.page;
+      if (!pageConfig?.createCallback) return null;
+
+      const createCallback = pageConfig.createCallback;
+      return {
+        commandKey: "page-embed",
+        key: "page-embed",
+        title: "Page",
+        description: "Embed a page from the project.",
+        searchTerms: ["page", "link", "embed", "sub-page"],
+        icon: <FileText className="size-3.5" />,
+        command: async ({ editor, range }) => {
+          // const res = await createCallback();
+          // if (!res) return;
+          insertPageEmbed({}, editor, range);
         },
-      }),
-  },
-  {
-    isEnabled: (disabledExtensions) => !disabledExtensions.includes("collaboration-cursor"),
-    getExtension: ({ provider, userDetails }) => CustomCollaborationCursor({ provider, userDetails }),
+        section: "general",
+        pushAfter: "issue-embed",
+      };
+    },
   },
 ];
 
+/**
+ * Main extension registry
+ * Each entry defines a TipTap extension with its own enabling logic
+ */
+const extensionRegistry: ExtensionConfig[] = [
+  {
+    // Slash commands extension
+    isEnabled: (disabledExtensions) => !disabledExtensions.includes("slash-commands"),
+    getExtension: (props) => {
+      // Get enabled slash command options from the registry
+      const slashCommandOptions = slashCommandRegistry
+        .filter((command) => command.isEnabled(props.disabledExtensions || []))
+        .map((command) => command.getOption(props))
+        .filter((option): option is TSlashCommandAdditionalOption => option !== null);
+
+      return [
+        SlashCommands({
+          additionalOptions: slashCommandOptions,
+          disabledExtensions: props.disabledExtensions,
+        }),
+      ];
+    },
+  },
+  {
+    // Issue embed suggestions extension
+    isEnabled: (disabledExtensions) => !disabledExtensions.includes("issue-embed"),
+    getExtension: ({ embedConfig }) => {
+      const issueConfig = embedConfig?.issue;
+      const searchCallback = issueConfig?.searchCallback;
+
+      // Only enable if search callback exists
+      if (!searchCallback) return [];
+
+      return [
+        IssueEmbedSuggestions.configure({
+          suggestion: {
+            render: () => IssueListRenderer(searchCallback),
+          },
+        }),
+      ];
+    },
+  },
+  {
+    // Collaboration cursor extension
+    isEnabled: (disabledExtensions) => !disabledExtensions.includes("collaboration-cursor"),
+    getExtension: ({ provider, userDetails }) => [
+      CustomCollaborationCursor({
+        provider,
+        userDetails,
+      }),
+    ],
+  },
+];
+
+/**
+ * Returns all enabled extensions for the document editor
+ */
 export const DocumentEditorAdditionalExtensions = (props: Props) => {
   const { disabledExtensions = [] } = props;
 
-  const documentExtensions = extensionRegistry
+  // Filter enabled extensions and flatten the result
+  const extensions = extensionRegistry
     .filter((config) => config.isEnabled(disabledExtensions))
-    .map((config) => config.getExtension(props));
+    .map((config) => config.getExtension(props))
+    .flat();
 
-  return documentExtensions;
+  return extensions;
 };

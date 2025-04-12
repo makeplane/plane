@@ -13,12 +13,11 @@ class WorkspacePageSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
-    projects = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(queryset=Project.objects.all()),
-        write_only=True,
-        required=False,
-    )
     anchor = serializers.CharField(read_only=True)
+    parent_id = serializers.PrimaryKeyRelatedField(
+        source="parent", queryset=Page.objects.all(), required=False, allow_null=True
+    )
+    sub_pages_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Page
@@ -29,7 +28,6 @@ class WorkspacePageSerializer(BaseSerializer):
             "access",
             "color",
             "labels",
-            "parent",
             "is_favorite",
             "is_locked",
             "archived_at",
@@ -40,8 +38,9 @@ class WorkspacePageSerializer(BaseSerializer):
             "updated_by",
             "view_props",
             "logo_props",
-            "projects",
             "anchor",
+            "parent_id",
+            "sub_pages_count",
         ]
         read_only_fields = ["workspace", "owned_by", "anchor"]
 
@@ -143,6 +142,10 @@ class WorkspacePageDetailSerializer(BaseSerializer):
     description_html = serializers.CharField()
     is_favorite = serializers.BooleanField(read_only=True)
     anchor = serializers.CharField(read_only=True)
+    sub_pages_count = serializers.IntegerField(read_only=True)
+    parent_id = serializers.PrimaryKeyRelatedField(
+        source="parent", queryset=Page.objects.all(), required=False, allow_null=True
+    )
 
     class Meta(WorkspacePageSerializer.Meta):
         fields = WorkspacePageSerializer.Meta.fields + ["description_html", "anchor"]
@@ -181,5 +184,30 @@ class WorkspacePageVersionDetailSerializer(BaseSerializer):
             "updated_at",
             "created_by",
             "updated_by",
+            "sub_pages_data",
         ]
         read_only_fields = ["workspace", "page"]
+
+
+class WorkspacePageLiteSerializer(BaseSerializer):
+    sub_pages_count = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Page
+        fields = [
+            "id",
+            "name",
+            "access",
+            "logo_props",
+            "is_locked",
+            "archived_at",
+            "parent_id",
+            "workspace",
+            "sub_pages_count",
+            "owned_by",
+            "deleted_at",
+            "is_description_empty",
+            "updated_at",
+            "moved_to_page",
+            "moved_to_project",
+        ]

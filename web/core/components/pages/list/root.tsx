@@ -7,7 +7,7 @@ import { ListLayout } from "@/components/core/list";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // components
-import { PageListBlock } from "./";
+import { PageListBlockRoot } from "./";
 
 const storeType = EPageStoreType.PROJECT;
 
@@ -26,7 +26,7 @@ export const ProjectPagesListRoot: FC<TPagesListRoot> = observer((props) => {
   return (
     <ListLayout>
       {filteredPageIds.map((pageId) => (
-        <PageListBlock key={pageId} pageId={pageId} storeType={storeType} />
+        <PageListBlockRoot key={pageId} paddingLeft={0} pageId={pageId} storeType={storeType} pageType={pageType} />
       ))}
     </ListLayout>
   );

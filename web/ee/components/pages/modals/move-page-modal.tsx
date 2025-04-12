@@ -65,10 +65,14 @@ export const MovePageModal: React.FC<TMovePageModalProps> = observer((props) => 
 
   const handleMovePage = async (newProjectId: string) => {
     if (!workspaceSlug || !projectId || !id) return;
-    await movePage(workspaceSlug.toString(), projectId.toString(), id, newProjectId)
+    await movePage({
+      workspaceSlug: workspaceSlug.toString(),
+      projectId: projectId.toString(),
+      pageId: id,
+      newProjectId: newProjectId,
+    })
       .then(() => {
         handleClose();
-        router.push(`/${workspaceSlug}/projects/${newProjectId}/pages/${id}`);
       })
       .catch(() =>
         setToast({

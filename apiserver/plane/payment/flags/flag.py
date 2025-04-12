@@ -67,6 +67,8 @@ class FeatureFlag(Enum):
     CUSTOMERS = "CUSTOMERS"
     # Dashboards
     DASHBOARDS = "DASHBOARDS"
+    # Nested pages
+    NESTED_PAGES = "NESTED_PAGES"
     # Project Templates
     PROJECT_TEMPLATES = "PROJECT_TEMPLATES"
 

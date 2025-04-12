@@ -24,11 +24,11 @@ import {
   CustomTypographyExtension,
   DropHandlerExtension,
   ImageExtension,
-  ListKeymap,
   Table,
   TableCell,
   TableHeader,
   TableRow,
+  ListKeymap,
   MarkdownClipboard,
 } from "@/extensions";
 // helpers
@@ -50,7 +50,6 @@ type TArguments = {
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
   const { disabledExtensions, enableHistory, fileHandler, mentionHandler, placeholder, tabIndex } = args;
-
   const extensions = [
     StarterKit.configure({
       bulletList: {
@@ -162,7 +161,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
           else return placeholder(editor.isFocused, editor.getHTML());
         }
 
-        return "Press '/' for commands...";
+        return "Press '/' for commands";
       },
       includeChildren: true,
     }),

@@ -1,18 +1,18 @@
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useParams } from "next/navigation";
+import Image from "next/image";
+import useSWR from "swr";
 // plane imports
 import { EUserPermissionsLevel, EUserWorkspaceRoles, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TPageNavigationTabs } from "@plane/types";
+import { TPage, TPageNavigationTabs } from "@plane/types";
 // components
 import { DetailedEmptyState } from "@/components/empty-state";
-import { PageLoader } from "@/components/pages";
+import { PageListBlockRoot, PageLoader } from "@/components/pages";
 // hooks
 import { useCommandPalette, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import { WikiPageListBlock } from "@/plane-web/components/pages";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // assets
@@ -25,23 +25,31 @@ type Props = {
 
 export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
   const { pageType } = props;
-  // params
   const { workspaceSlug } = useParams();
+
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { toggleCreatePageModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
+  const workspacePageStore = usePageStore(EPageStoreType.WORKSPACE);
+  const { filters, updateFilters, fetchPagesByType } = workspacePageStore;
+
+  // Use SWR to fetch the data
   const {
-    filters,
-    getCurrentWorkspacePageIdsByType,
-    getCurrentWorkspaceFilteredPageIdsByType,
-    loader,
-    isAnyPageAvailable,
-  } = usePageStore(EPageStoreType.WORKSPACE);
+    data: pages,
+    error,
+    isLoading,
+  } = useSWR(
+    workspaceSlug ? `WORKSPACE_PAGES_${workspaceSlug}_${pageType}_${filters.searchQuery || ""}` : null,
+    workspaceSlug ? () => fetchPagesByType(pageType, filters.searchQuery) : null,
+    {
+      revalidateOnFocus: true,
+      revalidateIfStale: true,
+    }
+  );
+
   // derived values
-  const pageIds = getCurrentWorkspacePageIdsByType(pageType);
-  const filteredPageIds = getCurrentWorkspaceFilteredPageIdsByType(pageType);
   const hasWorkspaceMemberLevelPermissions = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
@@ -59,25 +67,10 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
     basePath: "/empty-state/pages/archived",
   });
 
-  if (loader === "init-loader") return <PageLoader />;
+  if (isLoading) return <PageLoader />;
+
   // if no pages exist in the active page type
-  if (!isAnyPageAvailable || pageIds?.length === 0) {
-    if (!isAnyPageAvailable) {
-      return (
-        <DetailedEmptyState
-          title={t("workspace_pages.empty_state.general.title")}
-          description={t("workspace_pages.empty_state.general.description")}
-          assetPath={generalPageResolvedPath}
-          primaryButton={{
-            text: t("workspace_pages.empty_state.general.primary_button.text"),
-            onClick: () => {
-              toggleCreatePageModal({ isOpen: true });
-            },
-            disabled: !hasWorkspaceMemberLevelPermissions,
-          }}
-        />
-      );
-    }
+  if (!pages || pages.length === 0) {
     if (pageType === "public")
       return (
         <DetailedEmptyState
@@ -116,17 +109,33 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
           assetPath={archivedPageResolvedPath}
         />
       );
+
+    // General empty state when no pages are found
+    return (
+      <DetailedEmptyState
+        title={t("workspace_pages.empty_state.general.title")}
+        description={t("workspace_pages.empty_state.general.description")}
+        assetPath={generalPageResolvedPath}
+        primaryButton={{
+          text: t("workspace_pages.empty_state.general.primary_button.text"),
+          onClick: () => {
+            toggleCreatePageModal({ isOpen: true });
+          },
+          disabled: !hasWorkspaceMemberLevelPermissions,
+        }}
+      />
+    );
   }
 
   // if no pages match the filter criteria
-  if (filteredPageIds?.length === 0)
+  if (filters.searchQuery && pages.length === 0)
     return (
       <div className="h-full w-full grid place-items-center">
         <div className="text-center">
           <Image
             src={filters.searchQuery.length > 0 ? NameFilterImage : AllFiltersImage}
             className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
-            alt="No matching modules"
+            alt="No matching pages"
           />
           <h5 className="text-xl font-medium mt-7 mb-1">No matching pages</h5>
           <p className="text-custom-text-400 text-base">
@@ -140,8 +149,14 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
 
   return (
     <div className="size-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
-      {filteredPageIds?.map((pageId) => (
-        <WikiPageListBlock key={pageId} workspaceSlug={workspaceSlug.toString()} pageId={pageId} />
+      {pages.map((page: TPage) => (
+        <PageListBlockRoot
+          key={page.id}
+          pageId={page.id || ""}
+          storeType={EPageStoreType.WORKSPACE}
+          pageType={pageType}
+          paddingLeft={0}
+        />
       ))}
     </div>
   );

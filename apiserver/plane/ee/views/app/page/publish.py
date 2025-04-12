@@ -9,6 +9,7 @@ from plane.db.models import DeployBoard, Workspace, Page
 from plane.app.serializers import DeployBoardSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
+from plane.ee.bgtasks.page_update import nested_page_update
 
 
 class ProjectPagePublishEndpoint(BaseAPIView):
@@ -50,6 +51,13 @@ class ProjectPagePublishEndpoint(BaseAPIView):
             },
         )
 
+        nested_page_update.delay(
+            page_id=pk,
+            action="published",
+            project_id=project_id,
+            slug=slug,
+            user_id=request.user.id,
+        )
         # Return the deploy board
         serializer = DeployBoardSerializer(deploy_board)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -100,12 +108,22 @@ class ProjectPagePublishEndpoint(BaseAPIView):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=Page)
     def delete(self, request, slug, project_id, pk):
-        # Get the deploy board
+        # Get the deploy board and un publish all the sub page as well.
         deploy_board = DeployBoard.objects.get(
-            entity_identifier=pk, entity_name="page", workspace__slug=slug
+            entity_identifier=pk,
+            entity_name="page",
+            workspace__slug=slug,
         )
         # Delete the deploy board
         deploy_board.delete()
+
+        nested_page_update.delay(
+            page_id=pk,
+            action="unpublished",
+            project_id=project_id,
+            slug=slug,
+            user_id=request.user.id,
+        )
         # Return the response
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -148,6 +166,12 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
             },
         )
 
+        nested_page_update.delay(
+            page_id=pk,
+            action="published",
+            slug=slug,
+            user_id=request.user.id,
+        )
         # Return the deploy board
         serializer = DeployBoardSerializer(deploy_board)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -196,8 +220,19 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
         allowed_roles=[ROLE.ADMIN], creator=True, model=Page, level="WORKSPACE"
     )
     def delete(self, request, slug, pk):
+        # Get the deploy board and un publish all the sub page as well.
         deploy_board = DeployBoard.objects.get(
-            entity_identifier=pk, entity_name="page", workspace__slug=slug
+            entity_identifier=pk,
+            entity_name="page",
+            workspace__slug=slug,
         )
+        # Delete the deploy board
         deploy_board.delete()
+
+        nested_page_update.delay(
+            page_id=pk,
+            action="unpublished",
+            slug=slug,
+            user_id=request.user.id,
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)

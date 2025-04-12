@@ -36,6 +36,7 @@ from plane.ee.views.app.page import (
     WorkspacePageFavoriteEndpoint,
     WorkspacePageDuplicateEndpoint,
     MovePageEndpoint,
+    WorkspacePageRestoreEndpoint,
 )
 from plane.ee.views.app.views import (
     IssueViewEEViewSet,
@@ -66,6 +67,7 @@ from plane.ee.views.app.dashboard import DashboardViewSet, DashboardQuickFilterE
 # Space imports
 from plane.ee.views.space.page import (
     PagePublicEndpoint,
+    SubPagePublicEndpoint,
     PagePublicIssuesEndpoint,
     PageMetaDataEndpoint,
 )
@@ -113,6 +115,11 @@ from plane.ee.views.api.job.report import ImportReportAPIView
 from plane.ee.views.api.worklog import (
     IssueWorklogAPIEndpoint,
     ProjectWorklogAPIEndpoint,
+)
+
+from plane.ee.views.app.page.live import (
+    PagesLiveServerDescriptionViewSet,
+    PagesLiveServerSubPagesViewSet,
 )
 
 from plane.ee.views.app.search.base import EnhancedGlobalSearchEndpoint

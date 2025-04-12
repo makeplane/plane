@@ -1,6 +1,6 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -18,18 +18,35 @@ import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 export const PagesAppSidebar = observer(() => {
   // params
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, pageId } = useParams();
+  const pathname = usePathname();
+  // state
+  const [expandedPageIds, setExpandedPageIds] = useState<string[]>([]);
   // store hooks
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
-  const { fetchAllPages } = usePageStore(EPageStoreType.WORKSPACE);
+  const { fetchParentPages } = usePageStore(EPageStoreType.WORKSPACE);
   // refs
   const ref = useRef<HTMLDivElement>(null);
 
-  useSWR(workspaceSlug ? `WORKSPACE_PAGES_LIST_${workspaceSlug}` : null, workspaceSlug ? () => fetchAllPages() : null, {
-    revalidateOnFocus: false,
-    revalidateIfStale: false,
-    revalidateOnReconnect: false,
-  });
+  // Fetch parent pages if we're on a page detail view
+  const { data: parentPagesList } = useSWR(
+    workspaceSlug && pageId && pathname?.includes("/pages/") ? `PARENT_PAGES_LIST_${pageId.toString()}` : null,
+    workspaceSlug && pageId && pathname?.includes("/pages/") ? () => fetchParentPages(pageId.toString()) : null
+  );
+
+  // Auto-expand parent pages when viewing a page
+  useEffect(() => {
+    if (parentPagesList && parentPagesList.length > 0) {
+      // Include all pages in the list (including the current page)
+      const allPageIds = parentPagesList.map((page) => page.id);
+
+      // Filter out any undefined values
+      const validPageIds = allPageIds.filter((id) => id !== undefined) as string[];
+
+      // Update expanded pages state
+      setExpandedPageIds((prev) => Array.from(new Set([...prev, ...validPageIds])));
+    }
+  }, [parentPagesList]);
 
   useOutsideClickDetector(ref, () => {
     if (sidebarCollapsed === false) {
@@ -69,7 +86,7 @@ export const PagesAppSidebar = observer(() => {
             "opacity-0": !sidebarCollapsed,
           })}
         />
-        <PagesAppSidebarList />
+        <PagesAppSidebarList expandedPageIds={expandedPageIds} setExpandedPageIds={setExpandedPageIds} />
         <SidebarHelpSection />
       </div>
     </div>

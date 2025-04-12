@@ -44,8 +44,14 @@ def page_transaction(new_value, old_value, page_id):
         new_transactions = []
         deleted_transaction_ids = set()
 
-        # TODO - Add "img", "todo" components
-        components = ["mention-component", "issue-embed-component"]
+        # TODO - "todo" components
+        components = [
+            "mention-component",
+            "issue-embed-component",
+            "page-embed-component",
+            "page-link-component",
+            "image-component",
+        ]
 
         for component in components:
             old_mentions = extract_components(old_value, component)

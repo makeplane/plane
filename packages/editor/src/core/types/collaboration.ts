@@ -41,6 +41,7 @@ export type TCollaborativeEditorProps = TCollaborativeEditorHookProps & {
   mentionHandler: TMentionHandler;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
+  updatePageProperties?: (pageId: string, messageType: string, payload?: any, performAction?: boolean) => void;
 };
 
 export type TReadOnlyCollaborativeEditorProps = TCollaborativeEditorHookProps & {

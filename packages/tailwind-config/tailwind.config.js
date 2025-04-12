@@ -327,6 +327,7 @@ module.exports = {
         },
       }),
       screens: {
+        xs: "480px",
         "3xl": "1792px",
       },
       // scale down font sizes to 90% of default
@@ -494,6 +495,14 @@ module.exports = {
           ".px-page-x": {
             paddingLeft: "1.35rem",
             paddingRight: "1.35rem",
+          },
+        },
+        // Hide scrollbar but keep functionality
+        ".scrollbar-hide": {
+          "-ms-overflow-style": "none", /* IE and Edge */
+          "scrollbar-width": "none", /* Firefox */
+          "&::-webkit-scrollbar": {
+            display: "none", /* Chrome, Safari and Opera */
           },
         },
       };

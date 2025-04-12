@@ -12,6 +12,12 @@ export interface IPage extends TPublicPageResponse {
   // observables
   issueEmbedError: boolean;
   issueEmbedData: IIssue[] | undefined;
+  // additional properties for subpages
+  archived_at: string | null | undefined;
+  deleted_at: Date | undefined;
+  anchor: string | null | undefined;
+  is_locked: boolean;
+  parent_id: string | null | undefined;
   // computed
   asJSON: TPublicPageResponse | undefined;
   areIssueEmbedsLoaded: boolean;
@@ -19,6 +25,7 @@ export interface IPage extends TPublicPageResponse {
   getIssueEmbedDetails: (issueID: string) => IIssue | undefined;
   // actions
   fetchPageIssueEmbeds: (anchor: string) => Promise<IIssue[]>;
+  mutateProperties: (data: Partial<TPublicPageResponse>, shouldUpdateName?: boolean) => void;
 }
 
 export class Page implements IPage {
@@ -32,6 +39,12 @@ export class Page implements IPage {
   logo_props: TLogoProps | undefined;
   name: string | undefined;
   updated_at: Date | undefined;
+  // additional properties for subpages
+  archived_at: string | null | undefined = null;
+  deleted_at: Date | undefined = undefined;
+  anchor: string | null | undefined = null;
+  is_locked: boolean = false;
+  parent_id: string | null | undefined = null;
   // services
   pageService: SitesPagePublishService;
 
@@ -45,6 +58,11 @@ export class Page implements IPage {
     this.logo_props = page.logo_props || undefined;
     this.name = page.name || undefined;
     this.updated_at = page.updated_at || undefined;
+    // Initialize additional properties if they exist in the response
+    this.archived_at = page.archived_at || null;
+    this.deleted_at = page.deleted_at || undefined;
+    this.anchor = page.anchor || null;
+    this.parent_id = page.parent_id || null;
 
     makeObservable(this, {
       // observables
@@ -57,11 +75,17 @@ export class Page implements IPage {
       logo_props: observable,
       name: observable.ref,
       updated_at: observable,
+      // additional properties for subpages
+      archived_at: observable,
+      deleted_at: observable,
+      anchor: observable,
+      parent_id: observable,
       // computed
       asJSON: computed,
       areIssueEmbedsLoaded: computed,
       // actions
       fetchPageIssueEmbeds: action,
+      mutateProperties: action,
     });
 
     this.pageService = new SitesPagePublishService();
@@ -75,6 +99,10 @@ export class Page implements IPage {
       logo_props: this.logo_props,
       name: this.name,
       updated_at: this.updated_at,
+      archived_at: this.archived_at,
+      deleted_at: this.deleted_at,
+      anchor: this.anchor,
+      parent_id: this.parent_id,
     };
   }
 
@@ -109,5 +137,27 @@ export class Page implements IPage {
       });
       throw error;
     }
+  };
+
+  /**
+   * @description Update page properties
+   * @param {Partial<TPublicPageResponse>} data Page data to update
+   * @param {boolean} shouldUpdateName Whether to update name (defaults to true)
+   */
+  mutateProperties = (data: Partial<TPublicPageResponse>, shouldUpdateName: boolean = true) => {
+    runInAction(() => {
+      // Update basic properties
+      if (data.created_at !== undefined) this.created_at = data.created_at;
+      if (data.description_html !== undefined) this.description_html = data.description_html;
+      if (data.id !== undefined) this.id = data.id;
+      if (data.logo_props !== undefined) this.logo_props = data.logo_props;
+      if (shouldUpdateName && data.name !== undefined) this.name = data.name;
+      if (data.updated_at !== undefined) this.updated_at = data.updated_at;
+      // Update subpage related properties
+      if (data.archived_at !== undefined) this.archived_at = data.archived_at;
+      if (data.deleted_at !== undefined) this.deleted_at = data.deleted_at;
+      if (data.anchor !== undefined) this.anchor = data.anchor;
+      if (data.parent_id !== undefined) this.parent_id = data.parent_id;
+    });
   };
 }

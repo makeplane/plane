@@ -160,11 +160,10 @@ from .api import ApiTokenEndpoint, ServiceApiTokenEndpoint
 
 from .page.base import (
     PageViewSet,
-    PageFavoriteViewSet,
     PageLogEndpoint,
-    SubPagesEndpoint,
-    PagesDescriptionViewSet,
+    PageFavoriteViewSet,
     PageDuplicateEndpoint,
+    PagesDescriptionViewSet,
 )
 from .page.version import PageVersionEndpoint
 

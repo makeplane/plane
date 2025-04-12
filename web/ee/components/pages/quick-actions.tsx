@@ -48,7 +48,7 @@ export const WorkspacePageQuickActions: React.FC<Props> = observer((props) => {
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "make-public-private",
-      action: access === 0 ? makePrivate : makePublic,
+      action: access === 0 ? () => makePrivate({}) : () => makePublic({}),
       title: access === 0 ? "Make private" : "Make public",
       icon: access === 0 ? Lock : UsersRound,
       shouldRender: canCurrentUserChangeAccess && !archived_at,
@@ -69,7 +69,7 @@ export const WorkspacePageQuickActions: React.FC<Props> = observer((props) => {
     },
     {
       key: "archive-restore",
-      action: archived_at ? restore : archive,
+      action: archived_at ? () => restore({}) : () => archive({}),
       title: archived_at ? "Restore" : "Archive",
       icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
       shouldRender: canCurrentUserArchivePage,

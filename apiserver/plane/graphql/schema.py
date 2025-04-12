@@ -55,6 +55,12 @@ from .queries.version_check import VersionCheckQuery
 from .queries.timezone import TimezoneListQuery
 from .queries.asset import WorkspaceAssetQuery, ProjectAssetQuery
 from .queries.instance import InstanceQuery
+from .queries.pages import (
+    WorkspaceNestedParentPagesQuery,
+    WorkspaceNestedChildPagesQuery,
+    NestedParentPagesQuery,
+    NestedChildPagesQuery,
+)
 from .queries.stickies import WorkspaceStickiesQuery
 
 # mutations
@@ -99,6 +105,14 @@ from .mutations.asset import (
     UserAssetMutation,
     WorkspaceAssetMutation,
     ProjectAssetMutation,
+)
+from .mutations.pages import (
+    WorkspaceNestedChildArchivePageMutation,
+    WorkspaceNestedChildRestorePageMutation,
+    NestedChildArchivePageMutation,
+    NestedChildRestorePageMutation,
+    WorkspaceNestedChildDeletePageMutation,
+    NestedChildDeletePageMutation,
 )
 from .mutations.stickies import WorkspaceStickiesMutation
 
@@ -158,6 +172,10 @@ class Query(
     ProjectAssetQuery,
     InstanceQuery,
     IssueShortenedMetaInfoQuery,
+    WorkspaceNestedParentPagesQuery,
+    WorkspaceNestedChildPagesQuery,
+    NestedParentPagesQuery,
+    NestedChildPagesQuery,
     WorkspaceStickiesQuery,
 ):
     pass
@@ -199,6 +217,12 @@ class Mutation(
     WorkspaceAssetMutation,
     ProjectAssetMutation,
     IssueLinkMutation,
+    WorkspaceNestedChildArchivePageMutation,
+    WorkspaceNestedChildRestorePageMutation,
+    NestedChildArchivePageMutation,
+    NestedChildRestorePageMutation,
+    WorkspaceNestedChildDeletePageMutation,
+    NestedChildDeletePageMutation,
     WorkspaceStickiesMutation,
     IssueMutationV2,
 ):

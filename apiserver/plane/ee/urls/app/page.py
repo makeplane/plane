@@ -9,6 +9,9 @@ from plane.ee.views import (
     WorkspacePageFavoriteEndpoint,
     WorkspacePageDuplicateEndpoint,
     MovePageEndpoint,
+    PagesLiveServerDescriptionViewSet,
+    PagesLiveServerSubPagesViewSet,
+    WorkspacePageRestoreEndpoint,
 )
 
 
@@ -73,6 +76,11 @@ urlpatterns = [
         name="workspace-page-version",
     ),
     path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/versions/<uuid:pk>/restore/",
+        WorkspacePageRestoreEndpoint.as_view(),
+        name="workspace-pages-restore",
+    ),
+    path(
         "workspaces/<str:slug>/favorite-pages/<uuid:pk>/",
         WorkspacePageFavoriteEndpoint.as_view(),
         name="page-favorites",
@@ -81,5 +89,27 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/move/",
         MovePageEndpoint.as_view(),
         name="move-page",
+    ),
+    path(
+        "pages/<uuid:page_id>/sub-pages/",
+        PagesLiveServerSubPagesViewSet.as_view({"get": "list"}),
+        name="page-secret-sub-pages",
+    ),
+    path(
+        "pages/<uuid:page_id>/description/",
+        PagesLiveServerDescriptionViewSet.as_view(
+            {"get": "retrieve", "patch": "partial_update"}
+        ),
+        name="page-secret-description",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/sub-pages/",
+        WorkspacePageViewSet.as_view({"get": "sub_pages"}),
+        name="workspace-sub-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/parent-pages/",
+        WorkspacePageViewSet.as_view({"get": "parent_pages"}),
+        name="workspace-parent-pages",
     ),
 ]

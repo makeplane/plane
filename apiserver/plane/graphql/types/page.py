@@ -38,7 +38,9 @@ class PageType:
     is_favorite: bool
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
+    deleted_at: Optional[datetime]
     projects: list[strawberry.ID]
+    is_description_empty: bool
     # teams: list[strawberry.ID]
     # labels: list[strawberry.ID]
 
@@ -87,3 +89,27 @@ class PageLiteType:
     @strawberry.field
     def projects(self) -> list[ProjectLiteType]:
         return self.projects.all()
+
+
+@strawberry_django.type(Page)
+class NestedParentPageLiteType:
+    id: strawberry.ID
+    name: str
+    access: int
+    logo_props: JSON
+    is_locked: bool
+    archived_at: Optional[date]
+    parent: Optional[strawberry.ID]
+    workspace: strawberry.ID
+    owned_by: strawberry.ID
+    deleted_at: Optional[datetime]
+    is_description_empty: bool
+
+    @strawberry.field
+    def owned_by(self) -> list[ProjectLiteType]:
+        return self.owned_by_id
+
+    @strawberry.field
+    async def projects(self) -> list[strawberry.ID]:
+        projects = await sync_to_async(list)(self.projects.all())
+        return [project.id for project in projects]

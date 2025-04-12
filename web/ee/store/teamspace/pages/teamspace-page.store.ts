@@ -29,6 +29,7 @@ export interface ITeamspacePageStore {
   getTeamspacePageIds: (teamspaceId: string) => string[] | undefined;
   getFilteredTeamspacePageIds: (teamspaceId: string) => string[] | undefined;
   getPageById: (pageId: string) => TTeamspacePageDetails | undefined;
+  isNestedPagesEnabled: (workspaceSlug: string) => boolean;
   // helper actions
   initTeamspacePagesScope: (teamspaceId: string) => void;
   getTeamspacePagesScope: (teamspaceId: string) => ETeamspaceEntityScope | undefined;
@@ -43,15 +44,11 @@ export interface ITeamspacePageStore {
   clearAllFilters: (teamspaceId: string) => void;
   // fetch actions
   fetchTeamspacePages: (workspaceSlug: string, teamspaceId: string, loader?: TLoader) => Promise<TPage[] | undefined>;
-  fetchTeamspacePageDetails: (
-    workspaceSlug: string,
-    teamspaceId: string,
-    pageId: string,
-    loader?: TLoader
-  ) => Promise<TPage | undefined>;
+  fetchPageDetails: (teamspaceId: string, pageId: string, loader?: TLoader) => Promise<TPage | undefined>;
   // CRUD actions
   createPage: (data: Partial<TPage>) => Promise<TPage>;
-  removePage: (pageId: string) => Promise<void>;
+  removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
+  getOrFetchPageInstance: (pageId: string) => Promise<TTeamspacePageDetails | undefined>;
 }
 
 export class TeamspacePageStore implements ITeamspacePageStore {
@@ -85,7 +82,7 @@ export class TeamspacePageStore implements ITeamspacePageStore {
       clearAllFilters: action,
       // fetch actions
       fetchTeamspacePages: action,
-      fetchTeamspacePageDetails: action,
+      fetchPageDetails: action,
       // CRUD actions
       createPage: action,
       removePage: action,
@@ -148,6 +145,7 @@ export class TeamspacePageStore implements ITeamspacePageStore {
     let filteredPages = teamspacePages.filter(
       (page) =>
         getPageName(page.name).toLowerCase().includes(teamspaceFilters.searchQuery.toLowerCase()) &&
+        !page.parent_id &&
         shouldFilterPage(page, teamspaceFilters.filters)
     );
     filteredPages = orderPages(filteredPages, teamspaceFilters.sortKey, teamspaceFilters.sortBy);
@@ -162,6 +160,12 @@ export class TeamspacePageStore implements ITeamspacePageStore {
    * @returns TTeamspacePageDetails | undefined
    */
   getPageById = computedFn((pageId: string) => this.flattenedPages[pageId]);
+
+  /**
+   * Returns true if nested pages feature is enabled
+   * @returns boolean
+   */
+  isNestedPagesEnabled = computedFn(() => false);
 
   /**
    * Initializes teamspace pages scope
@@ -293,13 +297,15 @@ export class TeamspacePageStore implements ITeamspacePageStore {
    * @param pageId
    * @returns Promise<TTeamspacePageDetails>
    */
-  fetchTeamspacePageDetails = async (
-    workspaceSlug: string,
+  fetchPageDetails = async (
     teamspaceId: string,
     pageId: string,
     loader: TLoader = "init-loader"
   ): Promise<TTeamspacePageDetails | undefined> => {
     try {
+      const { workspaceSlug } = this.rootStore.router;
+      if (!workspaceSlug) return;
+
       if (this.getTeamspacePagesFetchedStatus(teamspaceId)) {
         loader = "mutation";
       }
@@ -348,22 +354,41 @@ export class TeamspacePageStore implements ITeamspacePageStore {
    * @param pageId
    * @returns
    */
-  removePage = async (pageId: string): Promise<void> => {
+  removePage = async ({ pageId, shouldSync = true }: { pageId: string; shouldSync?: boolean }) => {
     const { workspaceSlug, teamspaceId } = this.rootStore.router;
-    if (!workspaceSlug || !teamspaceId) return;
+    if (!workspaceSlug || !teamspaceId) return undefined;
     const currentPage = this.getPageById(pageId);
-    const deletePagePromise =
-      currentPage.project_ids?.length === 0
-        ? this.teamspacePageService.remove(workspaceSlug, teamspaceId, pageId)
-        : currentPage.project_ids?.[0] &&
-          this.projectPageService.remove(workspaceSlug, currentPage.project_ids[0], pageId);
-    // delete page
-    if (!deletePagePromise || !teamspaceId) return;
-    await deletePagePromise.then(() => {
-      runInAction(() => {
-        delete this.pageMap[teamspaceId][pageId];
-        if (this.rootStore.favorite.entityMap[pageId]) this.rootStore.favorite.removeFavoriteFromStore(pageId);
-      });
+
+    runInAction(() => {
+      if (pageId) {
+        currentPage.mutateProperties({ deleted_at: new Date() });
+      }
+      if (this.rootStore.favorite.entityMap[pageId]) this.rootStore.favorite.removeFavoriteFromStore(pageId);
     });
+
+    if (shouldSync) {
+      const deletePagePromise =
+        currentPage.project_ids?.length === 0
+          ? this.teamspacePageService.remove(workspaceSlug, teamspaceId, pageId)
+          : currentPage.project_ids?.[0] &&
+            this.projectPageService.remove(workspaceSlug, currentPage.project_ids[0], pageId);
+      if (!deletePagePromise || !teamspaceId) return;
+
+      await deletePagePromise.then(() => {});
+    }
+  };
+
+  getOrFetchPageInstance = async (pageId: string) => {
+    const pageInstance = this.getPageById(pageId);
+    if (pageInstance) {
+      return pageInstance;
+    } else {
+      const { workspaceSlug, teamspaceId } = this.rootStore.router;
+      if (!workspaceSlug || !teamspaceId) return;
+      const page = await this.fetchPageDetails(teamspaceId, pageId);
+      if (page) {
+        return page.team ? new TeamspacePage(this.rootStore, page) : new ProjectPage(this.rootStore, page);
+      }
+    }
   };
 }

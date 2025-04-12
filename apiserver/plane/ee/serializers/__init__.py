@@ -4,6 +4,7 @@ from .app.issue import IssueLiteSerializer
 from .app.active_cycle import WorkspaceActiveCycleSerializer
 from .app.page import (
     WorkspacePageSerializer,
+    WorkspacePageLiteSerializer,
     WorkspacePageDetailSerializer,
     WorkspacePageVersionSerializer,
     WorkspacePageVersionDetailSerializer,
@@ -97,7 +98,11 @@ from .app.template import (
 )
 
 # Space imports
-from .space.page import PagePublicSerializer, PagePublicMetaSerializer
+from .space.page import (
+    PagePublicSerializer,
+    PagePublicMetaSerializer,
+    SubPagePublicSerializer,
+)
 from .space.views import ViewsPublicSerializer, ViewsPublicMetaSerializer
 from .space.issue import IssueCreateSerializer
 

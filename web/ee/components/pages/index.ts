@@ -6,3 +6,6 @@ export * from "./version";
 export * from "./extra-actions";
 export * from "./quick-actions";
 export * from "./workspace-pages-upgrade";
+export * from "./collaborators-list";
+export * from "./badge";
+export * from "./embed";

@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useRef } from "react";
 import { Editor } from "@tiptap/react";
-import tippy, { Instance } from "tippy.js";
 import { Copy, LucideIcon, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useRef } from "react";
+import tippy, { Instance } from "tippy.js";
 
 interface BlockMenuProps {
   editor: Editor;
@@ -102,7 +102,9 @@ export const BlockMenu = (props: BlockMenuProps) => {
       key: "duplicate",
       label: "Duplicate",
       isDisabled:
-        editor.state.selection.content().content.firstChild?.type.name === "image" || editor.isActive("imageComponent"),
+        editor.state.selection.content().content.firstChild?.type.name === "image" ||
+        editor.isActive("imageComponent") ||
+        editor.isActive("pageEmbedComponent"),
       onClick: (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -153,7 +155,7 @@ export const BlockMenu = (props: BlockMenuProps) => {
     >
       {MENU_ITEMS.map((item) => {
         // Skip rendering the button if it should be disabled
-        if (item.isDisabled && item.key === "duplicate") {
+        if (item.isDisabled) {
           return null;
         }
 

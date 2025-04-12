@@ -25,4 +25,12 @@ export class WorkspacePageVersionService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async restoreVersion(workspaceSlug: string, pageId: string, versionId: string): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/pages/${pageId}/versions/${versionId}/restore/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

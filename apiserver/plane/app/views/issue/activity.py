@@ -20,7 +20,6 @@ from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
 
-
 class IssueActivityEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
 

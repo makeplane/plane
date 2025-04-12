@@ -1,13 +1,12 @@
 import { Extensions } from "@tiptap/core";
 import { forwardRef, MutableRefObject } from "react";
-// plane imports
-import { cn } from "@plane/utils";
 // components
 import { PageRenderer } from "@/components/editors";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // extensions
 import { IssueWidget } from "@/extensions";
+import { PageEmbedReadOnlyExtension } from "@/extensions/page-embed";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
@@ -61,6 +60,14 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     );
   }
 
+  if (embedHandler?.page) {
+    extensions.push(
+      PageEmbedReadOnlyExtension({
+        widgetCallback: embedHandler.page.widgetCallback,
+      })
+    );
+  }
+
   const editor = useReadOnlyEditor({
     disabledExtensions,
     editorClassName,
@@ -83,7 +90,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
       bubbleMenuEnabled={false}
       displayConfig={displayConfig}
       editor={editor}
-      editorContainerClassName={cn(editorContainerClassName, "document-editor")}
+      editorContainerClassName={editorContainerClassName}
       id={id}
     />
   );
