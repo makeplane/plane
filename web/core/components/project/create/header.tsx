@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { X } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // plane types
 import { IProject } from "@plane/types";
 // plane ui
@@ -21,6 +22,7 @@ type Props = {
 const ProjectCreateHeader: React.FC<Props> = (props) => {
   const { handleClose, isMobile = false } = props;
   const { watch, control } = useFormContext<IProject>();
+  const { t } = useTranslation();
   // derived values
   const coverImage = watch("cover_image_url");
 
@@ -33,7 +35,7 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
         <img
           src={getFileURL(coverImage)}
           className="absolute left-0 top-0 h-full w-full rounded-lg object-cover"
-          alt="Project cover image"
+          alt={t("project_cover_image_alt")}
         />
       )}
 
@@ -48,7 +50,7 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
           control={control}
           render={({ field: { value, onChange } }) => (
             <ImagePickerPopover
-              label="Change Cover"
+              label={t("change_cover")}
               onChange={onChange}
               control={control}
               value={value}
