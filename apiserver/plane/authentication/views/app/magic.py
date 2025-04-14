@@ -190,6 +190,7 @@ class MagicSignInEndpoint(BaseAPIView):
         email = request.POST.get("email", "").strip().lower()
         app_url = request.POST.get("app_url", "").strip().lower()
         workspace = request.POST.get("workspace", "").strip().lower()
+        language = request.POST.get("language", "en").strip()  # Get language, default to 'en'
         next_path = request.POST.get("next_path")
         if code == "" or email == "":
             exc = AuthenticationException(
@@ -219,6 +220,8 @@ class MagicSignInEndpoint(BaseAPIView):
                 )
                 user = provider.authenticate()
                 profile, _ = Profile.objects.get_or_create(user=user)
+                profile.language = language
+                profile.save()
                 # Login the user and record his device info
                 user_login(request=request, user=user, is_app=True)
                 self.add_user_to_workspace(user, workspace)
@@ -241,6 +244,8 @@ class MagicSignInEndpoint(BaseAPIView):
                 )
                 user = provider.authenticate()
                 profile, _ = Profile.objects.get_or_create(user=user)
+                profile.language = language
+                profile.save()
                 # Login the user and record his device info
                 self.add_user_to_workspace(user, workspace)
                 user_login(request=request, user=user, is_app=True)

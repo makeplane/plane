@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
+import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
 // components
 import { CreateWorkspaceForm } from "@/components/workspace";
@@ -18,6 +19,7 @@ import BlackHorizontalLogo from "@/public/plane-logos/black-horizontal-with-blue
 import WhiteHorizontalLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
 
 const CreateWorkspacePage = observer(() => {
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   // store hooks
@@ -48,7 +50,7 @@ const CreateWorkspacePage = observer(() => {
             href="/"
           >
             <div className="h-[30px] w-[133px]">
-              <Image src={logo} alt="Plane logo" />
+              <Image src={logo} alt={t("plane_logo")} />
             </div>
           </Link>
           <div className="absolute right-4 top-1/4 -translate-y-1/2 text-sm text-custom-text-100 sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">

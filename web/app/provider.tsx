@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";//ui
 import { useTheme, ThemeProvider } from "next-themes";
 import { SWRConfig } from "swr";
 import { Toast, setToast, TOAST_TYPE } from "@plane/ui";
+// Plane Imports
+import { TranslationProvider } from "@plane/i18n";
 // constants
 import { SWR_CONFIG } from "@/constants/swr-config";
 //helpers
@@ -77,15 +79,17 @@ export const AppProvider: FC<IAppProvider> = (props) => {
       <StoreProvider>
         <ThemeProvider themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]} defaultTheme="system">
           <ToastWithTheme />
-          <StoreWrapper>
-            <InstanceWrapper>
-              <IntercomProvider>
-                <PostHogProvider>
-                  <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
-                </PostHogProvider>
-              </IntercomProvider>
-            </InstanceWrapper>
-          </StoreWrapper>
+          <TranslationProvider>
+            <StoreWrapper>
+              <InstanceWrapper>
+                <IntercomProvider>
+                  <PostHogProvider>
+                    <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
+                  </PostHogProvider>
+                </IntercomProvider>
+              </InstanceWrapper>
+            </StoreWrapper>
+          </TranslationProvider>
         </ThemeProvider>
       </StoreProvider>
     </>

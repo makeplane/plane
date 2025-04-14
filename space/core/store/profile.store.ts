@@ -54,6 +54,7 @@ export class ProfileStore implements IProfileStore {
     has_billing_address: false,
     created_at: "",
     updated_at: "",
+    language: "",
   };
 
   // services
