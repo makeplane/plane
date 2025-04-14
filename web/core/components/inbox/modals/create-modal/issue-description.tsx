@@ -21,7 +21,7 @@ import { useProjectInbox } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { FileService } from "@/services/file.service";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "@plane/i18n";
 const fileService = new FileService();
 
 type TInboxIssueDescription = {

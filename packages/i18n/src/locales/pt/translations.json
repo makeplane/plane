@@ -356,5 +356,6 @@
   "parent": "Pai",
   "sub_issue": "Subtarefa",
   "target_date": "Data alvo",
-  "module": "Módulo"
+  "module": "Módulo",
+  "order_by": "Encomendar Por"
 }

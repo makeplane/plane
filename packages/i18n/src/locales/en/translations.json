@@ -355,5 +355,6 @@
   "properties": "Properties",
   "parent": "Parent",
   "sub_issue": "Sub-issue",
-  "target_date": "Target Date"
+  "target_date": "Target Date",
+  "order_by": "Order by"
 }

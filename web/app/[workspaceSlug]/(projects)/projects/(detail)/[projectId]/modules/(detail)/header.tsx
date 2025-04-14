@@ -42,7 +42,7 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "@plane/i18n";
 
 const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
   // router

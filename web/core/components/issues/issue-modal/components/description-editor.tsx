@@ -26,7 +26,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { AIService } from "@/services/ai.service";
 import { FileService } from "@/services/file.service";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "@plane/i18n";
 
 type TIssueDescriptionEditorProps = {
   control: Control<TIssue>;
