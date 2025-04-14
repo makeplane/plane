@@ -42,6 +42,7 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import { useTranslation } from "next-i18next";
 
 const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
   // router
@@ -67,6 +68,7 @@ const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
 };
 
 export const ModuleIssuesHeader: React.FC = observer(() => {
+  const { t } = useTranslation();
   // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // router
@@ -291,7 +293,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                 variant="neutral-primary"
                 size="sm"
               >
-                Analytics
+                {t("analytics")}
               </Button>
               <Button
                 className="hidden sm:flex"

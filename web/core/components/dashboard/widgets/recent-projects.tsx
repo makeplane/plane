@@ -19,6 +19,7 @@ import { getFileURL } from "@/helpers/file.helper";
 import { useEventTracker, useDashboard, useProject, useCommandPalette, useUserPermissions } from "@/hooks/store";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import { useTranslation } from "@plane/i18n";
 
 const WIDGET_KEY = "recent_projects";
 
@@ -68,6 +69,7 @@ const ProjectListItem: React.FC<ProjectListItemProps> = observer((props) => {
 
 export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
+  const { t } = useTranslation();
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
@@ -113,7 +115,7 @@ export const RecentProjectsWidget: React.FC<WidgetProps> = observer((props) => {
               <Plus className="h-6 w-6" />
             </div>
             <p className="text-sm font-medium text-custom-text-300 group-hover:text-custom-text-100 group-hover:underline">
-              Create new project
+              {t("create_new_project")}
             </p>
           </button>
         )}

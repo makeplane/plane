@@ -20,11 +20,13 @@ import { getCustomDates } from "@/helpers/dashboard.helper";
 // hooks
 import { useDashboard } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useTranslation } from "@plane/i18n";
 
 const WIDGET_KEY = "issues_by_state_groups";
 
 export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
+  const { t } = useTranslation();
   // states
   const [defaultStateGroup, setDefaultStateGroup] = useState<TStateGroups | null>(null);
   const [activeStateGroup, setActiveStateGroup] = useState<TStateGroups | null>(null);
@@ -141,7 +143,7 @@ export const IssuesByStateGroupWidget: React.FC<WidgetProps> = observer((props) 
           href={`/${workspaceSlug}/workspace-views/assigned`}
           className="text-lg font-semibold text-custom-text-300 hover:underline"
         >
-          Assigned by state
+          {t("assigned_by_state")}
         </Link>
         <DurationFilterDropdown
           customDates={selectedCustomDates}

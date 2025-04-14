@@ -11,6 +11,7 @@ import { useDashboard } from "@/hooks/store";
 // components
 // helpers
 // types
+import { useTranslation } from "@plane/i18n";
 
 export type WidgetProps = {
   dashboardId: string;
@@ -21,6 +22,7 @@ const WIDGET_KEY = "overview_stats";
 
 export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
+  const { t } = useTranslation();
   // store hooks
   const { fetchWidgetStats, getWidgetStats } = useDashboard();
   // derived values
@@ -30,27 +32,27 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = observer((props) => {
   const STATS_LIST = [
     {
       key: "assigned",
-      title: "Issues assigned",
+      title: t("issues_assigned"),
       count: widgetStats?.assigned_issues_count,
       link: `/${workspaceSlug}/workspace-views/assigned`,
     },
     {
       key: "overdue",
-      title: "Issues overdue",
+      title: t("issues_overdue"),
       count: widgetStats?.pending_issues_count,
       link: `/${workspaceSlug}/workspace-views/assigned/?state_group=backlog,unstarted,started&target_date=${today};before`,
     },
     {
       key: "created",
-      title: "Issues created",
+      title: t("issues_created"),
       count: widgetStats?.created_issues_count,
       link: `/${workspaceSlug}/workspace-views/created`,
     },
     {
       key: "completed",
-      title: "Issues completed",
+      title: t("issues_completed"),
       count: widgetStats?.completed_issues_count,
-      link: `/${workspaceSlug}/workspace-views/assigned?state_group=completed`,
+      link: `/${workspaceSlug}/workspace-views/completed`,
     },
   ];
 

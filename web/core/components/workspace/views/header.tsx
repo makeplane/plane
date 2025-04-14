@@ -18,6 +18,7 @@ import { DEFAULT_GLOBAL_VIEWS_LIST } from "@/constants/workspace";
 // store hooks
 import { useEventTracker, useGlobalView, useUserPermissions } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import { useTranslation } from "@plane/i18n";
 
 const ViewTab = observer((props: { viewId: string }) => {
   const { viewId } = props;
@@ -52,6 +53,7 @@ const DefaultViewTab = (props: {
   };
 }) => {
   const { tab } = props;
+  const { t } = useTranslation();
   // refs
   const parentRef = useRef<HTMLDivElement>(null);
   // router
@@ -64,7 +66,10 @@ const DefaultViewTab = (props: {
         parentRef={parentRef}
         globalViewId={globalViewId?.toString()}
         workspaceSlug={workspaceSlug?.toString()}
-        view={tab}
+        view={{
+          key: tab.key,
+          label: t(tab.key) // Translate using the key
+        }}
       />
     </div>
   );
