@@ -231,18 +231,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         formData?.start_date,
       ];
       
-      console.log(formData?.archived_at)
-      console.log(formData?.label_ids?.length)
-      console.log(formData?.assignee_ids?.length)
-      console.log(formData?.start_date)
-      console.log(formData?.cycle_id)
-      console.log(formData?.target_date)
-      console.log(formData?.parent_id)
-      console.log(formData?.label_ids?.length)
-      console.log(formData?.state_id)
-
-
-
       const hasAnyProp = propsToCheck.some((value) => value !== null && value !== undefined && value !== "" && value !==0);
 
       console.log(hasAnyProp)
