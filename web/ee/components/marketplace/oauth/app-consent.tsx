@@ -86,7 +86,7 @@ export const AppConsent = observer(({ application, consentParams }: TAppConsentP
         </div>
         <h1>{t("workspace_settings.settings.applications.app_consent_title", { app: application.name })}</h1>
 
-        <div className="flex flex-col gap-y-4 border border-border-100 rounded-lg p-4 bg-gray-100">
+        <div className="flex flex-col gap-y-4 border border-border-100 rounded-lg p-4 bg-custom-background-90">
             <div className="text-sm text-custom-text-300 font-medium">
                 {t("workspace_settings.settings.applications.choose_workspace_to_connect_app_with")}
             </div>

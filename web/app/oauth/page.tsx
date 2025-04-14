@@ -41,10 +41,10 @@ const OAuthPage = observer(() => {
     )
   }
 
-  if (!application || !client_id || !redirect_uri || !code_challenge || !code_challenge_method) {
+  if (!application || !client_id || !redirect_uri) {
     return (
       <DefaultLayout>
-        <div className="flex flex-col justify-center items-center space-y-4 flex-grow container h-[100vh-60px] mx-auto max-w-2xl px-10 lg:max-w-2xl lg:px-5 transition-all">
+        <div className="flex flex-col justify-center items-center space-y-4 flex-grow container h-[100vh-60px] mx-auto max-w-2xl px-10 lg:max-w-2xl lg:px-5 transition-all mt-10">
           <Image src={logo} alt="Plane logo" />
           <h1 className="text-2xl font-bold">Something went wrong</h1>
           <p className="text-sm text-gray-500">Please check the URL and try again.</p>

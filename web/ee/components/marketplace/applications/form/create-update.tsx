@@ -67,13 +67,10 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
   const { currentWorkspace } = useWorkspace();
   const { uploadEditorAsset } = useEditorAsset();
   const { checkApplicationSlug } = useApplications();
-  const { data: userProfile } = useUserProfile();
 
   // derived values
   const workspaceSlug = currentWorkspace?.slug;
   const workspaceId = currentWorkspace?.id;
-  const isDarkMode = userProfile?.theme.theme === "dark";
-  const bgColor = isDarkMode ? "bg-custom-background-100" : "bg-gray-100";
 
   const handleTextChange = (key: keyof Partial<TUserApplication>, value: string) => {
     if (key === "name" && !watch("id")) {
@@ -166,7 +163,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
               watch("logo_url")
                 ? <img loading="lazy" src={getFileURL(watch("logo_url") ?? "")} alt="Logo" className="w-20 h-20 object-cover" />
                 :
-                <div className={`flex items-center justify-center w-20 gap-2 p-5 ${bgColor} rounded border border-custom-border-200`}>
+                <div className={`flex items-center justify-center w-20 gap-2 p-5 bg-custom-background-100 rounded border border-custom-border-200`}>
                   <Camera className="w-5 h-5 text-custom-text-400" />
                 </div>
             }
