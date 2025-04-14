@@ -1,6 +1,6 @@
-import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
+import { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
+// document-editor
 import {
   CollaborativeDocumentEditorWithRef,
   EditorRefApi,
@@ -10,35 +10,42 @@ import {
   TRealtimeConfig,
   TServerHandler,
 } from "@plane/editor";
+// plane types
 import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
+// plane ui
 import { ERowVariant, Row } from "@plane/ui";
-import { cn } from "@plane/utils";
 // components
+import { HSL, cn, hslToHex } from "@plane/utils";
 import { EditorMentionsRoot } from "@/components/editor";
-import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
+import { PageContentBrowser, PageContentLoader } from "@/components/pages";
 // helpers
 import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
-import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
 import { useEditorMention } from "@/hooks/editor";
-import { useUser, useWorkspace, useMember } from "@/hooks/store";
+import { useMember, useUser, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
+import { type TCustomEventHandlers, useRealtimePageEvents } from "@/hooks/use-realtime-page-events";
 // plane web components
 import { EditorAIMenu } from "@/plane-web/components/pages";
+// plane web store
+import { EPageStoreType } from "@/plane-web/hooks/store";
 // plane web hooks
+import { useEditorEmbeds } from "@/plane-web/hooks/use-editor-embed";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
-import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 // local imports
+import { MultipleDeletePagesModal } from "../../../../ee/components/pages/modals/multiple-page-delete-modal";
 import { PageEditorHeaderRoot } from "./header";
 
 export type TEditorBodyConfig = {
   fileHandler: TFileHandler;
 };
 
+// Define the structure of action-specific data
 export type TEditorBodyHandlers = {
   fetchEntity: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
+  getRedirectionLink: (pageId: string) => string;
 };
 
 type Props = {
@@ -51,6 +58,30 @@ type Props = {
   page: TPageInstance;
   webhookConnectionParams: TWebhookConnectionQueryParams;
   workspaceSlug: string;
+  storeType: EPageStoreType;
+  customRealtimeEventHandlers?: TCustomEventHandlers;
+};
+
+export const generateRandomColor = (input: string): HSL => {
+  // If input is falsy, generate a random seed string.
+  // The random seed is created by converting a random number to base-36 and taking a substring.
+  const seed = input || Math.random().toString(36).substring(2, 8);
+
+  const uniqueId = seed.length.toString() + seed; // Unique identifier based on string length
+  const combinedString = uniqueId + seed;
+
+  // Create a hash value from the combined string.
+  const hash = Array.from(combinedString).reduce((acc, char) => {
+    const charCode = char.charCodeAt(0);
+    return (acc << 5) - acc + charCode;
+  }, 0);
+
+  // Derive the HSL values from the hash.
+  const hue = Math.abs(hash % 360);
+  const saturation = 70; // Maintains a good amount of color
+  const lightness = 70; // Increased lightness for a pastel look
+
+  return { h: hue, s: saturation, l: lightness };
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
@@ -61,28 +92,40 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     handleEditorReady,
     handlers,
     page,
+    storeType,
     webhookConnectionParams,
     workspaceSlug,
+    customRealtimeEventHandlers,
   } = props;
   // store hooks
   const { data: currentUser } = useUser();
   const { getWorkspaceBySlug } = useWorkspace();
+  // states
+  const [deletePageModal, setDeletePageModal] = useState({
+    visible: false,
+    pages: [page],
+  });
   const { getUserDetails } = useMember();
 
   // derived values
-  const { id: pageId, name: pageTitle, isContentEditable, updateTitle } = page;
+  const { id: pageId, isContentEditable } = page;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
-  // issue-embed
-  const { issueEmbedProps } = useIssueEmbed({
+  // all editor embeds
+  const { embedProps } = useEditorEmbeds({
     fetchEmbedSuggestions: handlers.fetchEntity,
+    getRedirectionLink: handlers.getRedirectionLink,
     workspaceSlug,
+    page,
+    editorRef,
+    storeType,
+    setDeletePageModal,
   });
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: handlers.fetchEntity,
   });
   // editor flaggings
-  const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug);
+  const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString(), storeType);
   // page filters
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // derived values
@@ -94,6 +137,16 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     }),
     [fontSize, fontStyle, isFullWidth]
   );
+
+  // Use the new hook to handle page events
+  const { updatePageProperties } = useRealtimePageEvents({
+    storeType,
+    page,
+    editorRef: editorRef,
+    getUserDetails,
+    customRealtimeEventHandlers,
+    handlers,
+  });
 
   const getAIMenu = useCallback(
     ({ isOpen, onClose }: TAIMenuProps) => (
@@ -147,7 +200,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     () => ({
       id: currentUser?.id ?? "",
       name: currentUser?.display_name ?? "",
-      color: generateRandomColor(currentUser?.id ?? ""),
+      color: hslToHex(generateRandomColor(currentUser?.id ?? "")),
     }),
     [currentUser?.display_name, currentUser?.id]
   );
@@ -159,7 +212,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     }
   );
 
-  if (pageId === undefined || !realtimeConfig) return <PageContentLoader className={blockWidthClassName} />;
+  if (pageId === undefined || !realtimeConfig || realtimeConfig.queryParams.parentPageId === undefined)
+    return <PageContentLoader className={blockWidthClassName} />;
 
   return (
     <Row
@@ -183,12 +237,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         <div className="page-header-container group/page-header">
           <div className={blockWidthClassName}>
             <PageEditorHeaderRoot page={page} />
-            <PageEditorTitle
-              editorRef={editorRef}
-              readOnly={!isContentEditable}
-              title={pageTitle}
-              updateTitle={updateTitle}
-            />
           </div>
         </div>
         <CollaborativeDocumentEditorWithRef
@@ -208,9 +256,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             renderComponent: (props) => <EditorMentionsRoot {...props} />,
             getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
           }}
-          embedHandler={{
-            issue: issueEmbedProps,
-          }}
+          updatePageProperties={updatePageProperties}
+          embedHandler={embedProps}
+          pageRestorationInProgress={page.restoration.inProgress}
           realtimeConfig={realtimeConfig}
           serverHandler={serverHandler}
           user={userConfig}
@@ -220,6 +268,16 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           }}
         />
       </div>
+
+      <MultipleDeletePagesModal
+        editorRef={editorRef}
+        isOpen={deletePageModal.visible}
+        onClose={() => {
+          setDeletePageModal({ visible: false, pages: [] });
+        }}
+        pages={deletePageModal.pages}
+        storeType={storeType}
+      />
     </Row>
   );
 });

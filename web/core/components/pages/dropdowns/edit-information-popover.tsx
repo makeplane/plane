@@ -13,7 +13,7 @@ export const PageEditInformationPopover: React.FC<Props> = observer((props) => {
 
   return (
     <div className="flex-shrink-0 whitespace-nowrap">
-      <span className="text-sm text-custom-text-300">Edited {calculateTimeAgoShort(page.updated_at ?? "")} ago</span>
+      <span className="text-sm text-custom-text-300">Edited {calculateTimeAgoShort(page?.updated_at ?? "")} ago</span>
     </div>
   );
 });

@@ -39,10 +39,12 @@ export interface IIssueActivityStore extends IIssueActivityStoreActions {
   loader: TActivityLoader;
   activities: TIssueActivityIdMap;
   activityMap: TIssueActivityMap;
+  sortOrder: E_SORT_ORDER;
   // helper methods
   getActivitiesByIssueId: (issueId: string) => string[] | undefined;
   getActivityById: (activityId: string) => TIssueActivity | undefined;
   getActivityCommentByIssueId: (issueId: string, sortOrder: E_SORT_ORDER) => TIssueActivityComment[] | undefined;
+  toggleSortOrder: () => void;
 }
 
 export class IssueActivityStore implements IIssueActivityStore {
@@ -50,7 +52,7 @@ export class IssueActivityStore implements IIssueActivityStore {
   loader: TActivityLoader = "fetch";
   activities: TIssueActivityIdMap = {};
   activityMap: TIssueActivityMap = {};
-
+  sortOrder: E_SORT_ORDER = E_SORT_ORDER.ASC;
   // services
   serviceType;
   issueActivityService;
@@ -71,6 +73,14 @@ export class IssueActivityStore implements IIssueActivityStore {
     // services
     this.issueActivityService = new IssueActivityService(this.serviceType);
   }
+
+  toggleSortOrder = () => {
+    if (this.sortOrder === E_SORT_ORDER.ASC) {
+      this.sortOrder = E_SORT_ORDER.DESC;
+    } else {
+      this.sortOrder = E_SORT_ORDER.ASC;
+    }
+  };
 
   // helper methods
   getActivitiesByIssueId = (issueId: string) => {

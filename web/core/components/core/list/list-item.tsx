@@ -24,6 +24,8 @@ interface IListItemProps {
   isSidebarOpen?: boolean;
   quickActionElement?: JSX.Element;
   preventDefaultNProgress?: boolean;
+  leftElementClassName?: string;
+  rightElementClassName?: string;
 }
 
 export const ListItem: FC<IListItemProps> = (props) => {
@@ -44,6 +46,8 @@ export const ListItem: FC<IListItemProps> = (props) => {
     quickActionElement,
     itemClassName = "",
     preventDefaultNProgress = false,
+    leftElementClassName = "",
+    rightElementClassName = "",
   } = props;
 
   // router
@@ -64,7 +68,7 @@ export const ListItem: FC<IListItemProps> = (props) => {
           className
         )}
       >
-        <div className={cn("relative flex w-full items-center justify-between gap-3 overflow-hidden", itemClassName)}>
+        <div className={cn("relative flex w-full items-center justify-between gap-3 ", itemClassName)}>
           <ControlLink
             id={id}
             className="relative flex w-full items-center gap-3 overflow-hidden"
@@ -74,13 +78,15 @@ export const ListItem: FC<IListItemProps> = (props) => {
             disabled={disableLink}
             data-prevent-nprogress={preventDefaultNProgress}
           >
-            <div className="flex items-center gap-4 truncate">
+            <div className={cn("flex items-center gap-4 truncate", leftElementClassName)}>
               {prependTitleElement && <span className="flex items-center flex-shrink-0">{prependTitleElement}</span>}
               <Tooltip tooltipContent={title} position="top" isMobile={isMobile}>
                 <span className="truncate text-sm">{title}</span>
               </Tooltip>
             </div>
-            {appendTitleElement && <span className="flex items-center flex-shrink-0">{appendTitleElement}</span>}
+            {appendTitleElement && (
+              <span className={cn("flex items-center flex-shrink-0", rightElementClassName)}>{appendTitleElement}</span>
+            )}
           </ControlLink>
           {quickActionElement && quickActionElement}
         </div>
