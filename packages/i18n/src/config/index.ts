@@ -2,7 +2,7 @@ import en from "../locales/en/translations.json";
 import fr from "../locales/fr/translations.json";
 import es from "../locales/es/translations.json";
 import ja from "../locales/ja/translations.json";
-import ptBR from "../locales/ptBR/translations.json";
+import pt from "../locales/pt/translations.json";
  
  export type Language = (typeof languages)[number];
  export type Translations = {
@@ -12,13 +12,13 @@ import ptBR from "../locales/ptBR/translations.json";
  };
  
  export const fallbackLng = "en";
- export const languages = ["en", "fr", "es", "ja", "ptBR"] as const;
+ export const languages = ["en", "fr", "es", "ja", "pt"] as const;
  export const translations: Translations = {
    en,
    fr,
    es,
    ja,
-   ptBR,
+   pt,
  };
  
  export const SUPPORTED_LANGUAGES = [
@@ -39,7 +39,7 @@ import ptBR from "../locales/ptBR/translations.json";
      value: "ja",
    },
    {
-    label: "Português Brasil",
-    value: "ptBR",
+    label: "Portugese",
+    value: "pt",
   },
  ];
