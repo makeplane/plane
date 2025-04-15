@@ -5,7 +5,7 @@ import { getValidKeysFromObject } from "@/helpers/array.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web components
-import { IssueTypeActivity } from "@/plane-web/components/issues/issue-details";
+import { IssueTypeActivity, AdditionalActivityRoot } from "@/plane-web/components/issues/issue-details";
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 // local components
 import {
@@ -61,6 +61,7 @@ export const IssueActivityItem: FC<TIssueActivityItem> = observer((props) => {
     case "priority":
       return <IssuePriorityActivity {...componentDefaultProps} showIssue={false} />;
     case "estimate_point":
+    case "estimate_categories":
       return <IssueEstimateActivity {...componentDefaultProps} showIssue={false} />;
     case "parent":
       return <IssueParentActivity {...componentDefaultProps} showIssue={false} />;
@@ -88,6 +89,6 @@ export const IssueActivityItem: FC<TIssueActivityItem> = observer((props) => {
     case "type":
       return <IssueTypeActivity {...componentDefaultProps} />;
     default:
-      return <></>;
+      return <AdditionalActivityRoot {...componentDefaultProps} field={activityField} />;
   }
 });
