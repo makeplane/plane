@@ -1,6 +1,4 @@
 import { Editor } from "@tiptap/react";
-// utils
-import { cn } from "@plane/utils";
 // components
 import { EditorContainer, EditorContentWrapper } from "@/components/editors";
 import { AIFeaturesMenu, BlockMenu, EditorBubbleMenu } from "@/components/menus";
@@ -23,13 +21,13 @@ export const PageRenderer = (props: IPageRenderer) => {
     props;
 
   return (
-    <div className={"frame-renderer flex-grow w-full"}>
+    <div className="frame-renderer document-editor flex-grow w-full">
       {titleEditor && (
         <div className="relative w-full py-3">
           <EditorContainer
             editor={titleEditor}
             id={id + "-title"}
-            editorContainerClassName="page-title-editor bg-transparent py-3 border-none document-editor"
+            editorContainerClassName="page-title-editor bg-transparent py-3 border-none"
             displayConfig={displayConfig}
           >
             <EditorContentWrapper

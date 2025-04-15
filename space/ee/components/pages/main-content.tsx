@@ -1,6 +1,5 @@
 import { useRef } from "react";
 import { observer } from "mobx-react-lite";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { FileText } from "lucide-react";
 // editor
@@ -17,6 +16,7 @@ import { usePublish } from "@/hooks/store";
 import { IssueEmbedCard } from "@/plane-web/components/pages";
 // plane web hooks
 import { usePage, usePagesList } from "@/plane-web/hooks/store";
+// local imports
 import { PageEmbedCardRoot } from "./page/root";
 
 type Props = {
@@ -25,8 +25,6 @@ type Props = {
 
 export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
   const { anchor } = props;
-  // refs
-  const { workspaceSlug, projectId } = useParams();
 
   const editorRef = useRef<EditorRefApi>(null);
   // store hooks
@@ -55,7 +53,7 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
       variant={ERowVariant.HUGGING}
     >
       <div id="page-content-container" className="flex flex-col size-full space-y-4">
-        <div className="w-full py-3 page-title-container">
+        <div className="w-full py-3 page-header-container">
           <div className="space-y-2 block bg-transparent w-full max-w-[720px] mx-auto transition-all duration-200 ease-in-out">
             <div className="size-[60px] bg-custom-background-80 rounded grid place-items-center">
               {pageDetails.logo_props?.in_use ? (
