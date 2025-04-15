@@ -59,6 +59,7 @@ export const IssueDetailWidgets: FC<Props> = (props) => {
           projectId={projectId}
           issueId={issueId}
           issueServiceType={issueServiceType}
+          hideWidgets={hideWidgets}
         />
       )}
     </>
