@@ -33,7 +33,7 @@ export const ProjectViewEmptyState: React.FC = observer(() => {
         primaryButton={
           isCreatingIssueAllowed
             ? {
-                text: {t("new_issue")},
+                text: t("new_issue"),
                 icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
                 onClick: () => {
                   setTrackElement("View issue empty state");
