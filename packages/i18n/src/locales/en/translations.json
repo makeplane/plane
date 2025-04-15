@@ -440,5 +440,6 @@
   "updated_intake_issue_status": "updated intake issue status.",
   "added_custom_property": "Added a Custom Property ",
   "with_value": " with value",
-  "updated_custom_property_value": "Updated the value of "
+  "updated_custom_property_value": "Updated the value of ",
+  "options": "Options"
 }

@@ -440,5 +440,6 @@
   "updated_intake_issue_status": "atualizou o status da tarefa da triagem.",
   "added_custom_property": "Adicionou uma Propriedade Personalizada",
   "with_value": " com valor",
-  "updated_custom_property_value": "Atualizou o valor de "
+  "updated_custom_property_value": "Atualizou o valor de ",
+  "options": "opções"
 }
