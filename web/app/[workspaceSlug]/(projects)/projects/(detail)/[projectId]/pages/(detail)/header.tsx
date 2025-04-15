@@ -1,14 +1,13 @@
 "use client";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ArchiveIcon, Earth, FileText, Lock } from "lucide-react";
+import { FileText } from "lucide-react";
 // types
-import { EPageAccess } from "@plane/constants";
-import { ICustomSearchSelectOption, TPage } from "@plane/types";
+import { ICustomSearchSelectOption } from "@plane/types";
 // ui
 import { Breadcrumbs, Header, CustomSearchSelect } from "@plane/ui";
 // components
-import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
+import { BreadcrumbLink, PageAccessIcon, SwitcherLabel } from "@/components/common";
 import { PageEditInformationPopover } from "@/components/pages";
 // helpers
 // hooks
@@ -20,18 +19,6 @@ import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
 // plane web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
-
-const PageAccessIcon = (page: TPage) => (
-  <div>
-    {page.archived_at ? (
-      <ArchiveIcon className="h-2.5 w-2.5 text-custom-text-300" />
-    ) : page.access === EPageAccess.PUBLIC ? (
-      <Earth className="h-2.5 w-2.5 text-custom-text-300" />
-    ) : (
-      <Lock className="h-2.5 w-2.5 text-custom-text-300" />
-    )}
-  </div>
-);
 
 export interface IPagesHeaderProps {
   showButton?: boolean;
