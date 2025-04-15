@@ -13,7 +13,7 @@ import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issu
 // constants
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useEventTracker, useCycle, useIssues, useModule, useIssueDetail, useUser } from "@/hooks/store";
+import { useEventTracker, useCycle, useIssues, useModule, useIssueDetail, useUser, useProject } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // services
@@ -58,7 +58,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   // store hooks
   const { t } = useTranslation();
   const { captureIssueEvent } = useEventTracker();
-  const { workspaceSlug, projectId: routerProjectId, cycleId, moduleId } = useParams();
+  const { workspaceSlug, projectId: routerProjectId, cycleId, moduleId, workItem } = useParams();
   const { projectsWithCreatePermissions } = useUser();
   const { fetchCycleDetails } = useCycle();
   const { fetchModuleDetails } = useModule();
@@ -67,12 +67,15 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const { issues: draftIssues } = useIssues(EIssuesStoreType.WORKSPACE_DRAFT);
   const { fetchIssue } = useIssueDetail();
   const { handleCreateUpdatePropertyValues } = useIssueModal();
+  const { getProjectByIdentifier } = useProject();
   // pathname
   const pathname = usePathname();
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(storeType);
   // derived values
-  const projectId = data?.project_id ?? routerProjectId?.toString();
+  const routerProjectIdentifier = workItem?.toString().split("-")[0];
+  const projectIdFromRouter = getProjectByIdentifier(routerProjectIdentifier)?.id;
+  const projectId = data?.project_id ?? routerProjectId?.toString() ?? projectIdFromRouter;
   const projectIdsWithCreatePermissions = Object.keys(projectsWithCreatePermissions ?? {});
 
   const fetchIssueDetail = async (issueId: string | undefined) => {

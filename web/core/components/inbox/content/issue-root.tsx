@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // plane imports
-import { ISSUE_ARCHIVED, ISSUE_DELETED } from "@plane/constants";
+import { EInboxIssueSource, ISSUE_ARCHIVED, ISSUE_DELETED } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
 import { TIssue, TNameDescriptionLoader } from "@plane/types";
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
@@ -22,7 +22,7 @@ import {
 // helpers
 import { getTextContent } from "@/helpers/editor.helper";
 // hooks
-import { useEventTracker, useIssueDetail, useProject, useProjectInbox, useUser } from "@/hooks/store";
+import { useEventTracker, useIssueDetail, useMember, useProject, useProjectInbox, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // store types
 import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
@@ -51,6 +51,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   const editorRef = useRef<EditorRefApi>(null);
   // store hooks
   const { data: currentUser } = useUser();
+  const { getUserDetails } = useMember();
   const { loader } = useProjectInbox();
   const { getProjectById } = useProject();
   const { removeIssue, archiveIssue } = useIssueDetail();
@@ -231,8 +232,11 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
             <DescriptionVersionsRoot
               className="flex-shrink-0"
               entityInformation={{
-                createdAt: new Date(issue.created_at ?? ""),
-                createdBy: issue.created_by ?? "",
+                createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
+                createdByDisplayName:
+                  inboxIssue.source === EInboxIssueSource.FORMS
+                    ? "Intake Form user"
+                    : (getUserDetails(issue.created_by ?? "")?.display_name ?? ""),
                 id: issue.id,
                 isRestoreDisabled: !isEditable,
               }}

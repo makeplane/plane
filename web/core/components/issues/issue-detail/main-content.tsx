@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { EIssueServiceType } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
 import { TNameDescriptionLoader } from "@plane/types";
 // components
@@ -20,7 +21,7 @@ import {
 // helpers
 import { getTextContent } from "@/helpers/editor.helper";
 // hooks
-import { useIssueDetail, useProject, useUser } from "@/hooks/store";
+import { useIssueDetail, useMember, useProject, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 import useSize from "@/hooks/use-window-size";
 // plane web components
@@ -52,6 +53,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
   // hooks
   const windowSize = useSize();
   const { data: currentUser } = useUser();
+  const { getUserDetails } = useMember();
   const {
     issue: { getIssueById },
     peekIssue,
@@ -153,8 +155,8 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
             <DescriptionVersionsRoot
               className="flex-shrink-0"
               entityInformation={{
-                createdAt: new Date(issue.created_at),
-                createdBy: issue.created_by,
+                createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
+                createdByDisplayName: getUserDetails(issue.created_by ?? "")?.display_name ?? "",
                 id: issueId,
                 isRestoreDisabled: !isEditable || isArchived,
               }}
@@ -178,6 +180,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         issueId={issueId}
         disabled={!isEditable || isArchived}
         renderWidgetModals={!isPeekModeActive}
+        issueServiceType={EIssueServiceType.ISSUES}
       />
 
       {windowSize[0] < 768 && (

@@ -1,9 +1,11 @@
 "use client";
 
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
+import smoothScrollIntoView from "smooth-scroll-into-view-if-needed";
+import { E_SORT_ORDER } from "@plane/constants";
 import { TCommentsOperations, TIssueComment } from "@plane/types";
 // local components
 import { CommentCard } from "./comment-card";
@@ -15,6 +17,7 @@ type TCommentsWrapper = {
   isEditingAllowed?: boolean;
   activityOperations: TCommentsOperations;
   comments: TIssueComment[] | string[];
+  sortOrder?: E_SORT_ORDER;
   getCommentById?: (activityId: string) => TIssueComment | undefined;
 };
 
@@ -23,18 +26,22 @@ export const CommentsWrapper: FC<TCommentsWrapper> = observer((props) => {
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
-
-  return (
-    <div className="relative flex flex-col gap-y-2 h-full overflow-hidden">
-      {isEditingAllowed && (
+  const renderCommentCreate = useMemo(
+    () =>
+      isEditingAllowed && (
         <CommentCreate
           workspaceSlug={workspaceSlug}
           entityId={entityId}
           activityOperations={activityOperations}
           projectId={projectId}
         />
-      )}
+      ),
+    [isEditingAllowed, workspaceSlug, entityId, activityOperations, projectId]
+  );
 
+  return (
+    <div className="relative flex flex-col gap-y-2 h-full overflow-hidden">
+      {renderCommentCreate}
       <div className="flex-grow py-4 overflow-y-auto">
         {comments?.map((data, index) => {
           let comment;

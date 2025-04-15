@@ -1,24 +1,8 @@
-// ui
+// plane imports
+import { RANDOM_EMOJI_CODES } from "@plane/constants";
 import { LUCIDE_ICONS_LIST } from "@plane/ui";
 
-export const getRandomEmoji = () => {
-  const emojis = [
-    "8986",
-    "9200",
-    "128204",
-    "127773",
-    "127891",
-    "128076",
-    "128077",
-    "128187",
-    "128188",
-    "128512",
-    "128522",
-    "128578",
-  ];
-
-  return emojis[Math.floor(Math.random() * emojis.length)];
-};
+export const getRandomEmoji = () => RANDOM_EMOJI_CODES[Math.floor(Math.random() * RANDOM_EMOJI_CODES.length)];
 
 export const getRandomIconName = () => LUCIDE_ICONS_LIST[Math.floor(Math.random() * LUCIDE_ICONS_LIST.length)].name;
 
@@ -45,8 +29,18 @@ export const groupReactions: (reactions: any[], key: string) => { [key: string]:
   reactions: any,
   key: string
 ) => {
+  if (!Array.isArray(reactions)) {
+    console.error("Expected an array of reactions, but got:", reactions);
+    return {};
+  }
+
   const groupedReactions = reactions.reduce(
     (acc: any, reaction: any) => {
+      if (!reaction || typeof reaction !== "object" || !Object.prototype.hasOwnProperty.call(reaction, key)) {
+        console.warn("Skipping undefined reaction or missing key:", reaction);
+        return acc; // Skip undefined reactions or those without the specified key
+      }
+
       if (!acc[reaction[key]]) {
         acc[reaction[key]] = [];
       }

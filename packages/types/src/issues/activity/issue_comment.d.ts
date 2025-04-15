@@ -40,7 +40,7 @@ export type TIssueComment = {
 };
 
 export type TCommentsOperations = {
-  createComment: (data: Partial<TIssueComment>) => Promise<void>;
+  createComment: (data: Partial<TIssueComment>) => Promise<Partial<TIssueComment> | undefined>;
   updateComment: (commentId: string, data: Partial<TIssueComment>) => Promise<void>;
   removeComment: (commentId: string) => Promise<void>;
   uploadCommentAsset: (blockId: string, file: File, commentId?: string) => Promise<TFileSignedURLResponse>;

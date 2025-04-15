@@ -17,11 +17,10 @@ type Props = {
   readOnly: boolean;
   title: string | undefined;
   updateTitle: (title: string) => void;
-  widthClassName: string;
 };
 
 export const PageEditorTitle: React.FC<Props> = observer((props) => {
-  const { editorRef, readOnly, title, updateTitle, widthClassName } = props;
+  const { editorRef, readOnly, title, updateTitle } = props;
   // states
   const [isLengthVisible, setIsLengthVisible] = useState(false);
   // page filters
@@ -33,12 +32,11 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
   });
 
   return (
-    <div className="relative w-full flex-shrink-0 py-3 page-title-container">
+    <div className="relative w-full flex-shrink-0 py-3">
       {readOnly ? (
         <h6
           className={cn(
             titleFontClassName,
-            widthClassName,
             {
               "text-custom-text-400": !title,
             },
@@ -48,7 +46,7 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
           {getPageName(title)}
         </h6>
       ) : (
-        <div className={cn("relative", widthClassName)}>
+        <div className="relative">
           <TextArea
             className={cn(titleFontClassName, "block w-full border-none outline-none p-0 resize-none rounded-none")}
             placeholder="Untitled"

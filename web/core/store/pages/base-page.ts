@@ -1,9 +1,10 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
-// constants
+// plane imports
 import { EPageAccess } from "@plane/constants";
-// types
 import { TDocumentPayload, TLogoProps, TNameDescriptionLoader, TPage } from "@plane/types";
+import { TChangeHandlerProps } from "@plane/ui";
+import { convertHexEmojiToDecimal } from "@plane/utils";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 
@@ -27,7 +28,7 @@ export type TBasePage = TPage & {
   unlock: (shouldSync?: boolean) => Promise<void>;
   archive: (shouldSync?: boolean) => Promise<void>;
   restore: (shouldSync?: boolean) => Promise<void>;
-  updatePageLogo: (logo_props: TLogoProps) => Promise<void>;
+  updatePageLogo: (value: TChangeHandlerProps) => Promise<void>;
   addToFavorites: () => Promise<void>;
   removePageFromFavorites: () => Promise<void>;
   duplicate: () => Promise<TPage | undefined>;
@@ -424,12 +425,25 @@ export class BasePage implements TBasePage {
     }
   };
 
-  updatePageLogo = async (logo_props: TLogoProps) => {
+  updatePageLogo = async (value: TChangeHandlerProps) => {
+    let logoValue = {};
+    if (value?.type === "emoji")
+      logoValue = {
+        value: convertHexEmojiToDecimal(value.value.unified),
+        url: value.value.imageUrl,
+      };
+    else if (value?.type === "icon") logoValue = value.value;
+
+    const logoProps: TLogoProps = {
+      in_use: value?.type,
+      [value?.type]: logoValue,
+    };
+
     await this.services.update({
-      logo_props,
+      logo_props: logoProps,
     });
     runInAction(() => {
-      this.logo_props = logo_props;
+      this.logo_props = logoProps;
     });
   };
 

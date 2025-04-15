@@ -153,9 +153,14 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
                 <ChevronLeft className="w-4 h-4" />
               </div>
             )}
-            <div className="text-xl font-medium text-custom-text-100">New estimate system</div>
+            <div className="text-xl font-medium text-custom-text-100">{t("project_settings.estimates.new")}</div>
           </div>
-          <div className="text-xs text-gray-400">Step {renderEstimateStepsCount} of 2</div>
+          <div className="text-xs text-gray-400">
+            {t("project_settings.estimates.create.step", {
+              step: renderEstimateStepsCount,
+              total: 2,
+            })}
+          </div>
         </div>
 
         {/* estimate steps */}
@@ -191,11 +196,11 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
 
         <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-custom-border-200">
           <Button variant="neutral-primary" size="sm" onClick={handleClose} disabled={buttonLoader}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           {estimatePoints && (
             <Button variant="primary" size="sm" onClick={handleCreateEstimate} disabled={buttonLoader}>
-              {buttonLoader ? `Creating` : `Create estimate`}
+              {buttonLoader ? t("common.creating") : t("project_settings.estimates.create.label")}
             </Button>
           )}
         </div>

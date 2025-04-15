@@ -3,7 +3,7 @@ import { TNotification } from "@plane/types";
 // components
 import { LiteTextReadOnlyEditor } from "@/components/editor";
 // helpers
-import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { convertMinutesToHoursMinutesString, renderFormattedDate } from "@/helpers/date-time.helper";
 import { sanitizeCommentForNotification } from "@/helpers/notification.helper";
 import { replaceUnderscoreIfSnakeCase, stripAndTruncateHTML } from "@/helpers/string.helper";
 
@@ -68,6 +68,10 @@ export const NotificationContent: FC<{
     if (notificationField === "assignees") return newValue !== "" ? newValue : oldValue;
     if (notificationField === "labels") return newValue !== "" ? newValue : oldValue;
     if (notificationField === "parent") return newValue !== "" ? newValue : oldValue;
+    if (notificationField === "estimate_time")
+      return newValue !== ""
+        ? convertMinutesToHoursMinutesString(Number(newValue))
+        : convertMinutesToHoursMinutesString(Number(oldValue));
     return newValue;
   };
 

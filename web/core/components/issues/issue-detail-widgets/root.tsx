@@ -1,5 +1,8 @@
 "use client";
+
 import React, { FC } from "react";
+// plane imports
+import { TIssueServiceType } from "@plane/types";
 // components
 import {
   IssueDetailWidgetActionButtons,
@@ -7,16 +10,29 @@ import {
   IssueDetailWidgetModals,
 } from "@/components/issues/issue-detail-widgets";
 
+export type TWorkItemWidgets = "sub-work-items" | "relations" | "links" | "attachments";
+
 type Props = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
   disabled: boolean;
   renderWidgetModals?: boolean;
+  issueServiceType: TIssueServiceType;
+  hideWidgets?: TWorkItemWidgets[];
 };
 
 export const IssueDetailWidgets: FC<Props> = (props) => {
-  const { workspaceSlug, projectId, issueId, disabled, renderWidgetModals = true } = props;
+  const {
+    workspaceSlug,
+    projectId,
+    issueId,
+    disabled,
+    renderWidgetModals = true,
+    issueServiceType,
+    hideWidgets,
+  } = props;
+
   return (
     <>
       <div className="flex flex-col gap-5">
@@ -25,16 +41,26 @@ export const IssueDetailWidgets: FC<Props> = (props) => {
           projectId={projectId}
           issueId={issueId}
           disabled={disabled}
+          issueServiceType={issueServiceType}
+          hideWidgets={hideWidgets}
         />
         <IssueDetailWidgetCollapsibles
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           issueId={issueId}
           disabled={disabled}
+          issueServiceType={issueServiceType}
+          hideWidgets={hideWidgets}
         />
       </div>
       {renderWidgetModals && (
-        <IssueDetailWidgetModals workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
+        <IssueDetailWidgetModals
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+          issueServiceType={issueServiceType}
+          hideWidgets={hideWidgets}
+        />
       )}
     </>
   );
