@@ -356,14 +356,5 @@
   "parent": "Parent",
   "sub_issue": "Sub-issue",
   "target_date": "Target Date",
-  "order_by": "Order by",
-  "add_sub_issue": "Add sub-issue",
-  "add_relation": "Add relation",
-  "add_link": "Add link",
-  "attach": "Attach",
-  "links": "Links",
-  "relations": "Relations",
-  "attachments": "Attachments",
-  "display": "Display",
-  "add_view": "Add View"
+  "order_by": "Order by"
 }
