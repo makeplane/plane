@@ -27,6 +27,7 @@ import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
 import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import { useTranslation } from "@plane/i18n";
 
 interface ICalendarHeader {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
@@ -39,6 +40,7 @@ interface ICalendarHeader {
 
 export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((props) => {
   const { issuesFilterStore, updateFilters } = props;
+  const { t } = useTranslation();
 
   const { projectId } = useParams();
 
@@ -105,7 +107,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
                   open ? "text-custom-text-100" : "text-custom-text-200"
                 }`}
               >
-                <div className="font-medium">Options</div>
+                <div className="font-medium">{t("options")}</div>
                 <div
                   className={`flex h-3.5 w-3.5 items-center justify-center transition-all ${open ? "" : "rotate-180"}`}
                 >
@@ -141,7 +143,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
                       className="flex w-full items-center justify-between gap-2 rounded px-1 py-1.5 text-left text-xs hover:bg-custom-background-80"
                       onClick={() => handleLayoutChange(layoutDetails.key, closePopover)}
                     >
-                      {layoutDetails.title}
+                      {t(layoutDetails.title)}
                       {calendarLayout === layout && <Check size={12} strokeWidth={2} />}
                     </button>
                   ))}
@@ -150,7 +152,7 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
                     className="flex w-full items-center justify-between gap-2 rounded px-1 py-1.5 text-left text-xs hover:bg-custom-background-80"
                     onClick={handleToggleWeekends}
                   >
-                    Show weekends
+                    {t("show_weekends")}
                     <ToggleSwitch
                       value={showWeekends}
                       onChange={() => {

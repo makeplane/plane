@@ -7,6 +7,7 @@ import { FilterHeader, FilterOption } from "@/components/issues";
 import { WorkspaceService } from "@/services/workspace.service";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { FilterSearch } from "./search-filters";
+import { useTranslation } from "@plane/i18n";
 
 type AdditionalPropertyProps = {
   data: string[];
@@ -25,6 +26,7 @@ type Props = {
 };
 
 export const FilterAdditionalProperties: React.FC<Props> = observer((props) => {
+  const { t } = useTranslation();
   const { workspaceSlug } = useParams();
   const { appliedFilters, handleUpdate, searchQuery, additionalPropertyTitle, additionalPropertyKey } = props;
   const workspaceService = new WorkspaceService(API_BASE_URL);
@@ -87,12 +89,12 @@ export const FilterAdditionalProperties: React.FC<Props> = observer((props) => {
                   onClick={() => fetchNextPage()}
                   className="ml-8 text-xs font-medium text-custom-primary-100 cursor-pointer"
                 >
-                  View More
+                  {t("view_more")}
                 </button>
               )}
             </>
           ) : (
-            <p className="text-xs italic text-custom-text-400">No Matches Found</p>
+            <p className="text-xs italic text-custom-text-400">{t("no_matches_found")}</p>
           )}
         </div>
       )}

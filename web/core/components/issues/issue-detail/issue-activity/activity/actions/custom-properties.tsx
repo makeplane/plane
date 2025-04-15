@@ -8,11 +8,13 @@ import { useIssueDetail } from "@/hooks/store";
 import { IssueActivityBlockComponent, IssueLink } from "./";
 // icons
 import { DoubleCircleIcon } from "@plane/ui";
+import { useTranslation } from "@plane/i18n";
 
 type TIssueCustomPropertyActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
 export const IssueCustomPropertyActivity: FC<TIssueCustomPropertyActivity> = observer((props) => {
   const { activityId, showIssue = true, ends } = props;
+  const { t } = useTranslation();
   // hooks
   const {
     activity: { getActivityById },
@@ -35,9 +37,9 @@ export const IssueCustomPropertyActivity: FC<TIssueCustomPropertyActivity> = obs
     >
       <>
         {isNewProperty ? (
-          <>Added a Custom Property <span className="font-medium text-custom-text-100">{customPropertyKey}</span> with value <span className="font-medium text-custom-text-100">{newValue}</span>.</>
+          <>{t("added_custom_property")} <span className="font-medium text-custom-text-100">{customPropertyKey}</span> {t("with_value")} <span className="font-medium text-custom-text-100">{newValue}</span>.</>
         ) : (
-          <>Updated the value of <span className="font-medium text-custom-text-100">{customPropertyKey}</span> from <span className="font-medium text-custom-text-100">{oldValue}</span> to <span className="font-medium text-custom-text-100">{newValue}</span>.</>
+          <>{t("updated_custom_property_value")} <span className="font-medium text-custom-text-100">{customPropertyKey}</span> from <span className="font-medium text-custom-text-100">{oldValue}</span> to <span className="font-medium text-custom-text-100">{newValue}</span>.</>
         )}
       </>
     </IssueActivityBlockComponent>

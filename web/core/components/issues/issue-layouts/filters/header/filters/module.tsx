@@ -9,6 +9,7 @@ import { Loader, DiceIcon } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues";
 import { useModule } from "@/hooks/store";
 // ui
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -18,6 +19,7 @@ type Props = {
 
 export const FilterModule: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
+  const { t } = useTranslation();
   // hooks
   const { projectId } = useParams();
   const { getModuleById, getProjectModuleIds } = useModule();
@@ -51,7 +53,7 @@ export const FilterModule: React.FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title={`Module ${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("module")} ${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -80,7 +82,7 @@ export const FilterModule: React.FC<Props> = observer((props) => {
                 )}
               </>
             ) : (
-              <p className="text-xs italic text-custom-text-400">No matches found</p>
+              <p className="text-xs italic text-custom-text-400">{t("no_matches_found")}</p>
             )
           ) : (
             <Loader className="space-y-2">

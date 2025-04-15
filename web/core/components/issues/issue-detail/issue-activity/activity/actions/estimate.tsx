@@ -5,11 +5,13 @@ import { Triangle } from "lucide-react";
 import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent, IssueLink } from "./";
+import { useTranslation } from "@plane/i18n";
 
 type TIssueEstimateActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
 export const IssueEstimateActivity: FC<TIssueEstimateActivity> = observer((props) => {
   const { activityId, showIssue = true, ends } = props;
+  const { t } = useTranslation();
   // hooks
   const {
     activity: { getActivityById },
@@ -26,9 +28,9 @@ export const IssueEstimateActivity: FC<TIssueEstimateActivity> = observer((props
       ends={ends}
     >
       <>
-        {activity.new_value ? `set the estimate point to ` : `removed the estimate point `}
+        {activity.new_value ? `${t("set_estimate_point_to")} ` : `${t("removed_estimate_point")} `}
         {activity.new_value ? activity.new_value : activity?.old_value || ""}
-        {showIssue && (activity.new_value ? ` to ` : ` from `)}
+        {showIssue && (activity.new_value ? ` ${t("to")} ` : ` ${t("from")} `)}
         {showIssue && <IssueLink activityId={activityId} />}.
       </>
     </IssueActivityBlockComponent>

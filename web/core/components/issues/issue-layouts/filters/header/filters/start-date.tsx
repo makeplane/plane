@@ -6,6 +6,7 @@ import { DateFilterModal } from "@/components/core";
 import { FilterHeader, FilterOption } from "@/components/issues";
 // constants
 import { DATE_AFTER_FILTER_OPTIONS } from "@/constants/filters";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -15,6 +16,7 @@ type Props = {
 
 export const FilterStartDate: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
+  const { t } = useTranslation();
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
   const [isDateFilterModalOpen, setIsDateFilterModalOpen] = useState(false);
@@ -47,7 +49,7 @@ export const FilterStartDate: React.FC<Props> = observer((props) => {
         />
       )}
       <FilterHeader
-        title={`Start date${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("start_date")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -67,7 +69,7 @@ export const FilterStartDate: React.FC<Props> = observer((props) => {
               <FilterOption isChecked={isCustomDateSelected()} onClick={handleCustomDate} title="Custom" multiple />
             </>
           ) : (
-            <p className="text-xs italic text-custom-text-400">No matches found</p>
+            <p className="text-xs italic text-custom-text-400">{t("no_matches_found")}</p>
           )}
         </div>
       )}

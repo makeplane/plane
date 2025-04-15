@@ -23,8 +23,10 @@ import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useMember, useModuleFilter } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useTranslation } from "@plane/i18n";
 
 export const ModuleViewHeader: FC = observer(() => {
+  const { t } = useTranslation();
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
   // router
@@ -147,7 +149,7 @@ export const ModuleViewHeader: FC = observer(() => {
       />
       <FiltersDropdown
         icon={<ListFilter className="h-3 w-3" />}
-        title="Filters"
+        title={t("filters")}
         placement="bottom-end"
         isFiltersApplied={isFiltersApplied}
       >

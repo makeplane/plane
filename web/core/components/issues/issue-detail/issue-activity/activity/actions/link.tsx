@@ -5,11 +5,13 @@ import { MessageSquare } from "lucide-react";
 import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent, IssueLink } from "./";
+import { useTranslation } from "@plane/i18n";
 
 type TIssueLinkActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
 export const IssueLinkActivity: FC<TIssueLinkActivity> = observer((props) => {
   const { activityId, showIssue = false, ends } = props;
+  const { t } = useTranslation();
   // hooks
   const {
     activity: { getActivityById },
@@ -27,38 +29,38 @@ export const IssueLinkActivity: FC<TIssueLinkActivity> = observer((props) => {
       <>
         {activity.verb === "created" ? (
           <>
-            <span>added </span>
+            <span>{t("added")} </span>
             <a
               href={`${activity.new_value}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
-              link
+              {t("link")}
             </a>
           </>
         ) : activity.verb === "updated" ? (
           <>
-            <span>updated the </span>
+            <span>{t("updated")} </span>
             <a
               href={`${activity.old_value}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
-              link
+              {t("link")}
             </a>
           </>
         ) : (
           <>
-            <span>removed this </span>
+            <span>{t("removed")} </span>
             <a
               href={`${activity.old_value}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
-              link
+              {t("link")}
             </a>
           </>
         )}

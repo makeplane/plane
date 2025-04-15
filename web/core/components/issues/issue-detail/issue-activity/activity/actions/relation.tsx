@@ -7,11 +7,13 @@ import { ISSUE_RELATION_OPTIONS } from "@/plane-web/components/relations";
 import { TIssueRelationTypes } from "@/plane-web/types";
 //
 import { IssueActivityBlockComponent } from "./";
+import { useTranslation } from "@plane/i18n";
 
 type TIssueRelationActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
 export const IssueRelationActivity: FC<TIssueRelationActivity> = observer((props) => {
   const { activityId, ends } = props;
+  const { t } = useTranslation();
   // hooks
   const {
     activity: { getActivityById },
@@ -28,15 +30,15 @@ export const IssueRelationActivity: FC<TIssueRelationActivity> = observer((props
     >
       <>
         {activity.field === "blocking" &&
-          (activity.old_value === "" ? `marked this issue is blocking issue ` : `removed the blocking issue `)}
+          (activity.old_value === "" ? `${t("marked_blocking_issue")} ` : `${t("removed_blocking_issue")} `)}
         {activity.field === "blocked_by" &&
           (activity.old_value === ""
-            ? `marked this issue is being blocked by `
-            : `removed this issue being blocked by issue `)}
+            ? `${t("marked_blocked_by")} `
+            : `${t("removed_blocked_by")} `)}
         {activity.field === "duplicate" &&
-          (activity.old_value === "" ? `marked this issue as duplicate of ` : `removed this issue as a duplicate of `)}
+          (activity.old_value === "" ? `${t("marked_duplicate_of")} ` : `r${t("removed_duplicate_of")} `)}
         {activity.field === "relates_to" &&
-          (activity.old_value === "" ? `marked that this issue relates to ` : `removed the relation from `)}
+          (activity.old_value === "" ? `${t("marked_relation_to")} ` : `${t("removed_relation_from")} `)}
 
         {activity.old_value === "" ? (
           <span className="font-medium text-custom-text-100">{activity.new_value}.</span>

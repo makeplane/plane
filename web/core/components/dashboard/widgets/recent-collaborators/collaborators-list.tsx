@@ -14,6 +14,7 @@ import { getFileURL } from "@/helpers/file.helper";
 import { useDashboard, useMember, useUser } from "@/hooks/store";
 // components
 import { WidgetLoader } from "../loaders";
+import { useTranslation } from "@plane/i18n";
 
 type CollaboratorListItemProps = {
   issueCount: number;
@@ -63,6 +64,7 @@ const WIDGET_KEY = "recent_collaborators";
 
 export const CollaboratorsList: React.FC<CollaboratorsListProps> = (props) => {
   const { dashboardId, searchQuery = "", workspaceSlug } = props;
+  const { t } = useTranslation();
 
   // state
   const [visibleItems, setVisibleItems] = useState(16);
@@ -146,7 +148,7 @@ export const CollaboratorsList: React.FC<CollaboratorsListProps> = (props) => {
       )}
       {isExpanded && (
         <div className="py-4 flex justify-center items-center text-sm font-medium" onClick={handleHide}>
-          <div className="text-custom-primary-90 hover:text-custom-primary-100 transition-all cursor-pointer">Hide</div>
+          <div className="text-custom-primary-90 hover:text-custom-primary-100 transition-all cursor-pointer">{t("hide")}</div>
         </div>
       )}
     </>

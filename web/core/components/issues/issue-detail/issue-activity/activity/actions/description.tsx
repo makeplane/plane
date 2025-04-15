@@ -5,11 +5,13 @@ import { MessageSquare } from "lucide-react";
 import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent, IssueLink } from "./";
+import { useTranslation } from "@plane/i18n";
 
 type TIssueDescriptionActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
 export const IssueDescriptionActivity: FC<TIssueDescriptionActivity> = observer((props) => {
   const { activityId, showIssue = true, ends } = props;
+  const { t } = useTranslation();
   // hooks
   const {
     activity: { getActivityById },
@@ -25,8 +27,8 @@ export const IssueDescriptionActivity: FC<TIssueDescriptionActivity> = observer(
       ends={ends}
     >
       <>
-        updated the description
-        {showIssue ? ` of ` : ``}
+        {t("updated_description")}
+        {showIssue ? ` ${t("of")} ` : ``}
         {showIssue && <IssueLink activityId={activityId} />}.
       </>
     </IssueActivityBlockComponent>

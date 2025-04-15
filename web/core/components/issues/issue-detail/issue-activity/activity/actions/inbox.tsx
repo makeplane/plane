@@ -6,11 +6,13 @@ import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent } from "./";
 // icons
+import { useTranslation } from "@plane/i18n";
 
 type TIssueInboxActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
 export const IssueInboxActivity: FC<TIssueInboxActivity> = observer((props) => {
   const { activityId, ends } = props;
+  const { t } = useTranslation();
   // hooks
   const {
     activity: { getActivityById },
@@ -21,15 +23,15 @@ export const IssueInboxActivity: FC<TIssueInboxActivity> = observer((props) => {
   const getInboxActivityMessage = () => {
     switch (activity?.verb) {
       case "-1":
-        return "declined this issue from intake.";
+        return t("declined_issue_from_intake");
       case "0":
-        return "snoozed this issue.";
+        return t("snoozed_issue");
       case "1":
-        return "accepted this issue from intake.";
+        return t("accepted_issue_from_intake");
       case "2":
-        return "declined this issue from intake by marking a duplicate issue.";
+        return t("declined_issue_from_intake_duplicate");
       default:
-        return "updated intake issue status.";
+        return t("updated_intake_issue_status");
     }
   };
 

@@ -16,6 +16,7 @@ import { FileService } from "@/services/file.service";
 const fileService = new FileService();
 // types
 import { Comment } from "@/types/issue";
+import { useTranslation } from "@plane/i18n";
 
 const defaultValues: Partial<Comment> = {
   comment_html: "",
@@ -28,6 +29,7 @@ type Props = {
 
 export const AddComment: React.FC<Props> = observer((props) => {
   const { anchor } = props;
+  const { t } = useTranslation();
   // states
   const [uploadedAssetIds, setUploadAssetIds] = useState<string[]>([]);
   // refs
@@ -91,7 +93,7 @@ export const AddComment: React.FC<Props> = observer((props) => {
               }
               onChange={(comment_json, comment_html) => onChange(comment_html)}
               isSubmitting={isSubmitting}
-              placeholder="Add Comment..."
+              placeholder={t("Add Comment...")}
               uploadFile={async (file) => {
                 const { asset_id } = await uploadCommentAsset(file, anchor);
                 setUploadAssetIds((prev) => [...prev, asset_id]);

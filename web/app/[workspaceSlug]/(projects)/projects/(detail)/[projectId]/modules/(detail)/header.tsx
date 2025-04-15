@@ -251,7 +251,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
               selectedLayout={activeLayout}
             />
             <FiltersDropdown
-              title="Filters"
+              title={t("filters")}
               placement="bottom-end"
               isFiltersApplied={isIssueFilterActive(issueFilters)}
             >
@@ -270,7 +270,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                 moduleViewDisabled={!currentProjectDetails?.module_view}
               />
             </FiltersDropdown>
-            <FiltersDropdown title="Display" placement="bottom-end">
+            <FiltersDropdown title={t("display")} placement="bottom-end">
               <DisplayFiltersSelection
                 layoutDisplayFiltersOptions={
                   activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined

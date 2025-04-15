@@ -8,11 +8,13 @@ import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent } from "./";
 // icons
+import { useTranslation } from "@plane/i18n";
 
 type TIssueModuleActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
 export const IssueModuleActivity: FC<TIssueModuleActivity> = observer((props) => {
   const { activityId, ends } = props;
+  const { t } = useTranslation();
   // hooks
   const {
     activity: { getActivityById },
@@ -30,7 +32,7 @@ export const IssueModuleActivity: FC<TIssueModuleActivity> = observer((props) =>
       <>
         {activity.verb === "created" ? (
           <>
-            <span>added this issue to the module </span>
+            <span>{t("added_issue_to_module")} </span>
             <a
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
@@ -42,7 +44,7 @@ export const IssueModuleActivity: FC<TIssueModuleActivity> = observer((props) =>
           </>
         ) : activity.verb === "updated" ? (
           <>
-            <span>set the module to </span>
+            <span>{t("set_module_to")} </span>
             <a
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
@@ -54,7 +56,7 @@ export const IssueModuleActivity: FC<TIssueModuleActivity> = observer((props) =>
           </>
         ) : (
           <>
-            <span>removed the issue from the module </span>
+            <span>{t("removed_issue_from_module")} </span>
             <a
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/modules/${activity.old_identifier}`}
               target="_blank"

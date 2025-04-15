@@ -242,7 +242,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
           Cancel
         </Button>
         <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-          {data ? (isSubmitting ? "Updating" : "Update View") : isSubmitting ? "Creating" : "Create View"}
+          {data ? (isSubmitting ? t("updating") : t("update_view")) : isSubmitting ? t("creating") : t("create_view")}
         </Button>
       </div>
     </form>
