@@ -145,15 +145,10 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     ?.map((id) => {
       const _module = id === moduleId ? moduleDetails : getModuleById(id);
       if (!_module) return;
-      const moduleLink = `/${workspaceSlug}/projects/${projectId}/modules/${_module.id}`;
       return {
         value: _module.id,
         query: _module.name,
-        content: (
-          <Link href={moduleLink}>
-            <SwitcherLabel name={_module.name} LabelIcon={DiceIcon} />
-          </Link>
-        ),
+        content: <SwitcherLabel name={_module.name} LabelIcon={DiceIcon} />,
       };
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
@@ -218,13 +213,15 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                     </div>
                   }
                   value={moduleId}
-                  onChange={() => {}}
+                  onChange={(value: string) => {
+                    router.push(`/${workspaceSlug}/projects/${projectId}/modules/${value}`);
+                  }}
                 />
               }
             />
           </Breadcrumbs>
         </Header.LeftItem>
-        <Header.RightItem>
+        <Header.RightItem className="items-center">
           <div className="hidden gap-2 md:flex">
             <LayoutSelection
               layouts={[
@@ -299,7 +296,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
           )}
           <button
             type="button"
-            className="p-1 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
+            className="p-1.5 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
             onClick={toggleSidebar}
           >
             <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
@@ -309,7 +306,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
             moduleId={moduleId?.toString()}
             projectId={projectId.toString()}
             workspaceSlug={workspaceSlug.toString()}
-            customClassName="flex-shrink-0 flex items-center justify-center size-6 bg-custom-background-80/70 rounded"
+            customClassName="flex-shrink-0 flex items-center justify-center bg-custom-background-80/70 rounded size-[26px]"
           />
         </Header.RightItem>
       </Header>

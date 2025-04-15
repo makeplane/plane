@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // icons
-import { ArrowRight, PanelRight } from "lucide-react";
+import { PanelRight } from "lucide-react";
 // plane constants
 import {
   EIssueLayoutTypes,
@@ -25,7 +25,7 @@ import {
   IIssueFilterOptions,
 } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, ContrastIcon, CustomMenu, Tooltip, Header, CustomSearchSelect } from "@plane/ui";
+import { Breadcrumbs, Button, ContrastIcon, Tooltip, Header, CustomSearchSelect } from "@plane/ui";
 // components
 import { ProjectAnalyticsModal } from "@/components/analytics";
 import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
@@ -34,7 +34,6 @@ import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelect
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { isIssueFilterActive } from "@/helpers/filter.helper";
-import { truncateText } from "@/helpers/string.helper";
 // hooks
 import {
   useEventTracker,
@@ -52,27 +51,6 @@ import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
-
-const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
-  // router
-  const { workspaceSlug, projectId } = useParams();
-  // store hooks
-  const { getCycleById } = useCycle();
-  // derived values
-  const cycle = getCycleById(cycleId);
-  //
-
-  if (!cycle) return null;
-
-  return (
-    <CustomMenu.MenuItem key={cycle.id}>
-      <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`} className="flex items-center gap-1.5">
-        <ContrastIcon className="h-3 w-3" />
-        {truncateText(cycle.name, 40)}
-      </Link>
-    </CustomMenu.MenuItem>
-  );
-};
 
 export const CycleIssuesHeader: React.FC = observer(() => {
   // refs
@@ -171,22 +149,15 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     ?.map((id) => {
       const _cycle = id === cycleId ? cycleDetails : getCycleById(id);
       if (!_cycle) return;
-      const cycleLink = `/${workspaceSlug}/projects/${projectId}/cycles/${_cycle.id}`;
       return {
         value: _cycle.id,
         query: _cycle.name,
-        content: (
-          <Link href={cycleLink}>
-            <SwitcherLabel name={_cycle.name} LabelIcon={ContrastIcon} />
-          </Link>
-        ),
+        content: <SwitcherLabel name={_cycle.name} LabelIcon={ContrastIcon} />,
       };
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
 
   const workItemsCount = getGroupIssueCount(undefined, undefined, false);
-
-  const issuesCount = getGroupIssueCount(undefined, undefined, false);
 
   return (
     <>
@@ -231,7 +202,9 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                   <CustomSearchSelect
                     options={switcherOptions}
                     value={cycleId}
-                    onChange={() => {}}
+                    onChange={(value: string) => {
+                      router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${value}`);
+                    }}
                     label={
                       <div className="flex items-center gap-1">
                         <SwitcherLabel name={cycleDetails?.name} LabelIcon={ContrastIcon} />
@@ -256,7 +229,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
             </Breadcrumbs>
           </div>
         </Header.LeftItem>
-        <Header.RightItem>
+        <Header.RightItem className="items-center">
           <div className="hidden items-center gap-2 md:flex ">
             <LayoutSelection
               layouts={[
@@ -325,7 +298,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
             )}
             <button
               type="button"
-              className="p-1 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
+              className="p-1.5 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
               onClick={toggleSidebar}
             >
               <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
@@ -335,7 +308,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               cycleId={cycleId}
               projectId={projectId}
               workspaceSlug={workspaceSlug}
-              customClassName="flex-shrink-0 flex items-center justify-center size-6 bg-custom-background-80/70 rounded"
+              customClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-custom-background-80/70 rounded"
             />
           </div>
         </Header.RightItem>
