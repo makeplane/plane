@@ -57,7 +57,7 @@ export class FeatureFlagsStore implements IFeatureFlagsStore {
   getFeatureFlagForCurrentWorkspace = computedFn((flag: keyof typeof E_FEATURE_FLAGS, defaultValue: boolean) => {
     const workspaceSlug = this.rootStore.router.workspaceSlug;
 
-      if (!workspaceSlug) return defaultValue;
+    if (!workspaceSlug) return defaultValue;
 
     return this.flags[workspaceSlug]?.[E_FEATURE_FLAGS[flag]] ?? defaultValue;
   });
