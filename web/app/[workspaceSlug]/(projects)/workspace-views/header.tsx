@@ -18,8 +18,10 @@ import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } f
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useLabel, useMember, useIssues, useGlobalView } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 export const GlobalIssuesHeader = observer(() => {
+  const { t } = useTranslation();
   // states
   const [createViewModal, setCreateViewModal] = useState(false);
   // router
@@ -112,7 +114,7 @@ export const GlobalIssuesHeader = observer(() => {
           {!isLocked ? (
             <>
               <FiltersDropdown
-                title="Filters"
+                title={t("filters")}
                 placement="bottom-end"
                 isFiltersApplied={isIssueFilterActive(issueFilters)}
               >
@@ -126,7 +128,7 @@ export const GlobalIssuesHeader = observer(() => {
                   memberIds={workspaceMemberIds ?? undefined}
                 />
               </FiltersDropdown>
-              <FiltersDropdown title="Display" placement="bottom-end">
+              <FiltersDropdown title={t("display")} placement="bottom-end">
                 <DisplayFiltersSelection
                   layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
                   displayFilters={issueFilters?.displayFilters ?? {}}
@@ -141,7 +143,7 @@ export const GlobalIssuesHeader = observer(() => {
           )}
 
           <Button variant="primary" size="sm" onClick={() => setCreateViewModal(true)}>
-            Add view
+          {t("add_view")}
           </Button>
         </Header.RightItem>
       </Header>

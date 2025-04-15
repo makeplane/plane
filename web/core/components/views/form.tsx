@@ -25,6 +25,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 
 import { AccessController } from "@/plane-web/components/views/access-controller";
 import { LayoutDropDown } from "../dropdowns/layout";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   data?: IProjectView | null;
@@ -43,6 +44,7 @@ const defaultValues: Partial<IProjectView> = {
 
 export const ProjectViewForm: React.FC<Props> = observer((props) => {
   const { handleFormSubmit, handleClose, data, preLoadedData } = props;
+  const { t } = useTranslation();
   // state
   const [isOpen, setIsOpen] = useState(false);
   // store hooks
@@ -250,7 +252,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     control={control}
                     name="filters"
                     render={({ field: { onChange, value: filters } }) => (
-                      <FiltersDropdown title="Filters" tabIndex={getIndex("filters")}>
+                      <FiltersDropdown title={t("filters")} tabIndex={getIndex("filters")}>
                         <FilterSelection
                           filters={filters ?? {}}
                           handleFiltersUpdate={(key, value) => {
@@ -286,7 +288,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     control={control}
                     name="display_properties"
                     render={({ field: { onChange: onDisplayPropertiesChange, value: displayProperties } }) => (
-                      <FiltersDropdown title="Display">
+                      <FiltersDropdown title={t("display")}>
                         <DisplayFiltersSelection
                           layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[displayFilters.layout]}
                           displayFilters={displayFilters ?? {}}

@@ -23,6 +23,7 @@ import { useLabel, useProjectState, useMember, useIssues } from "@/hooks/store";
 import { TProject } from "@/plane-web/types";
 // local components
 import { ProjectAnalyticsModal } from "../analytics";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   currentProjectDetails: TProject | undefined;
@@ -31,6 +32,7 @@ type Props = {
   canUserCreateIssue: boolean | undefined;
 };
 const HeaderFilters = observer(({ currentProjectDetails, projectId, workspaceSlug, canUserCreateIssue }: Props) => {
+  const { t } = useTranslation();
   // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // store hooks
@@ -107,7 +109,7 @@ const HeaderFilters = observer(({ currentProjectDetails, projectId, workspaceSlu
         onChange={(layout) => handleLayoutChange(layout)}
         selectedLayout={activeLayout}
       />
-      <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
+      <FiltersDropdown title={t("filters")} placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
         <FilterSelection
           filters={issueFilters?.filters ?? {}}
           handleFiltersUpdate={handleFiltersUpdate}
@@ -121,7 +123,7 @@ const HeaderFilters = observer(({ currentProjectDetails, projectId, workspaceSlu
           moduleViewDisabled={!currentProjectDetails?.module_view}
         />
       </FiltersDropdown>
-      <FiltersDropdown title="Display" placement="bottom-end">
+      <FiltersDropdown title={t("display")} placement="bottom-end">
         <DisplayFiltersSelection
           layoutDisplayFiltersOptions={activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined}
           displayFilters={issueFilters?.displayFilters ?? {}}
@@ -134,7 +136,7 @@ const HeaderFilters = observer(({ currentProjectDetails, projectId, workspaceSlu
       </FiltersDropdown>
       {canUserCreateIssue ? (
         <Button className="hidden md:block" onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
-          Analytics
+          {t("analytics")}
         </Button>
       ) : (
         <></>

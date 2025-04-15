@@ -22,8 +22,10 @@ import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useTranslation } from "@plane/i18n";
 
 export const ProjectDraftIssueHeader: FC = observer(() => {
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
   // store hooks
@@ -138,7 +140,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
             onChange={(layout) => handleLayoutChange(layout)}
             selectedLayout={activeLayout}
           />
-          <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
+          <FiltersDropdown title={t("filters")} placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
             <FilterSelection
               filters={issueFilters?.filters ?? {}}
               handleFiltersUpdate={handleFiltersUpdate}
@@ -154,7 +156,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
               moduleViewDisabled={!currentProjectDetails?.module_view}
             />
           </FiltersDropdown>
-          <FiltersDropdown title="Display" placement="bottom-end">
+          <FiltersDropdown title={t("display")} placement="bottom-end">
             <DisplayFiltersSelection
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined

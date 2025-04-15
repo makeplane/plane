@@ -42,9 +42,10 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "@plane/i18n";
 
 const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
@@ -303,7 +304,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                 }}
                 size="sm"
               >
-                Add issue
+                {t("add_issue")}
               </Button>
             </>
           ) : (

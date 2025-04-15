@@ -356,5 +356,15 @@
   "parent": "Pai",
   "sub_issue": "Subtarefa",
   "target_date": "Data alvo",
-  "module": "Módulo"
+  "module": "Módulo",
+  "order_by": "Encomendar Por",
+   "add_sub_issue": "Adicionar subproblema",
+   "add_relation": "Adicionar relação",
+   "add_link": "Adicionar link",
+   "attach": "Anexar",
+   "links": "Links",
+   "relations": "Relações",
+   "attachments": "Anexos",
+   "display": "Exibir",
+   "add_view": "Adicionar Visualização"
 }
