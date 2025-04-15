@@ -42,11 +42,13 @@ import { WorkspaceService } from "@/plane-web/services";
 // services
 import { IssueService } from "@/services/issue";
 import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
+import { useTranslation } from "@plane/i18n";
 
 const workspaceService = new WorkspaceService();
 const issueService = new IssueService();
 
 export const CommandModal: React.FC = observer(() => {
+  const { t } = useTranslation();
   // hooks
   const { workspaceProjectIds } = useProject();
   const { isMobile } = usePlatformOS();
@@ -333,7 +335,7 @@ export const CommandModal: React.FC = observer(() => {
                               >
                                 <div className="flex items-center gap-2 text-custom-text-200">
                                   <FolderPlus className="h-3.5 w-3.5" />
-                                  Create new project
+                                  {t("create_new_project")}
                                 </div>
                                 <kbd>P</kbd>
                               </Command.Item>

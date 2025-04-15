@@ -12,9 +12,11 @@ import { CustomSelect, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "@/helpers/string.helper";
 import { useCommandPalette, useEventTracker, useProject } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 // types
 
 export const JiraGetImportDetail: React.FC = observer(() => {
+  const { t } = useTranslation();
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
@@ -208,7 +210,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                     className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-custom-text-200"
                   >
                     <Plus className="h-4 w-4 text-custom-text-200" />
-                    <span>Create new project</span>
+                    <span>{t("create_new_project")}</span>
                   </button>
                 </div>
               </CustomSelect>

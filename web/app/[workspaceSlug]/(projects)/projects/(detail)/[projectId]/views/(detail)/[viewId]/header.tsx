@@ -37,6 +37,7 @@ import {
   useUserPermissions,
 } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import { useTranslation } from "@plane/i18n";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
   // router
@@ -48,6 +49,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const { setTrackElement } = useEventTracker();
   const { toggleCreateIssueModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
+  const { t } = useTranslation();
 
   const { currentProjectDetails, loader } = useProject();
   const { projectViewIds, getViewById } = useProjectView();
@@ -145,7 +147,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             link={
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
-                label={currentProjectDetails?.name ?? "Project"}
+                label={currentProjectDetails?.name ?? t("project")}
                 icon={
                   currentProjectDetails && (
                     <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
@@ -161,7 +163,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             link={
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/views`}
-                label="Views"
+                label={t("views")}
                 icon={<Layers className="h-4 w-4 text-custom-text-300" />}
               />
             }
