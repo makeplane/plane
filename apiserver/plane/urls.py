@@ -26,7 +26,7 @@ urlpatterns = [
     path("api/payments/", include("plane.payment.urls")),
     path("", include("plane.web.urls")),
     path("graphql/", include("plane.graphql.urls")),
-    path("o/", include(("plane.authentication.oauth_urls", "oauth2_provider"))),
+    path("auth/o/", include(("plane.authentication.oauth_urls", "oauth2_provider"))),
     # this is a webhook endpoint for email intake - this endpoint should not be exposed to ingress
     path("intake/email/", IntakeEmailWebhookEndpoint.as_view()),
     path("intake/email/attachments/", IntakeEmailAttachmentEndpoint.as_view()),

@@ -17,10 +17,10 @@ export type TConsentParams = {
 
 export class OAuthService extends APIService {
     constructor() {
-        super(API_BASE_URL);
+        super(`${API_BASE_URL}/auth/o`);
     }
 
-    async authorizeApplication(consentParams: TConsentParams, csrf_token: string) {
+    async authorizeApplication(consentParams: TConsentParams, csrf_token: string, additionalParams: Record<string, string> | null = null) {
         // Filter out undefined params
         const filteredParams: Record<string, string> = Object.fromEntries(
             Object.entries(consentParams)
@@ -30,7 +30,7 @@ export class OAuthService extends APIService {
 
         const form = document.createElement("form");
         form.method = "POST";
-        form.action = `${API_BASE_URL}/o/authorize-app/`;
+        form.action = `${this.baseURL}/authorize-app/`;
 
         const element1 = document.createElement("input");
         element1.value = csrf_token;
@@ -52,7 +52,19 @@ export class OAuthService extends APIService {
             form.appendChild(element);
         });
 
+        if (additionalParams) {
+          const element = document.createElement("input");
+          element.value = new URLSearchParams(additionalParams).toString();
+          element.name = "additional_params";
+          element.type = "hidden";
+          form.appendChild(element);
+        }
+
         document.body.appendChild(form);
         form.submit();
+    }
+
+    getAuthorizationUrl(consentParams: TConsentParams) {
+        return `${this.baseURL}/authorize-app/?${new URLSearchParams(consentParams).toString()}`;
     }
 }

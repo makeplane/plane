@@ -45,15 +45,11 @@ export const AppConsent = observer(({ application, consentParams }: TAppConsentP
         try {
             setIsSubmitting(true);
             if (!selectedWorkspace || !application?.id || !csrfToken) return;
-            const { redirect_uri } = consentParams;
 
             // create the installation
             const installation = await applicationService.installApplication(selectedWorkspace.slug, application?.id);
-
-            // post to oauth with updated redirect uri
-            const redirectUri = `${redirect_uri}?app_installation_id=${installation?.id}`;
-            const updatedConsentParams = { ...consentParams, redirect_uri: redirectUri };
-            await oauthService.authorizeApplication(updatedConsentParams, csrfToken);
+            // post to oauth with additional params
+            await oauthService.authorizeApplication(consentParams, csrfToken, { app_installation_id: installation?.id });
             return;
         } catch (error) {
             console.error(error);

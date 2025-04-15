@@ -9,6 +9,7 @@ import { TUserApplication } from "@plane/types";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { useWorkspace } from "@/hooks/store";
+import { OAuthService } from "@/plane-web/services/marketplace";
 
 type ApplicationInstallationDetailsProps = {
   app: TUserApplication;
@@ -66,8 +67,15 @@ export const ApplicationInstallationDetails: React.FC<ApplicationInstallationDet
 
   const handleNext = () => {
     const redirectUri = app.redirect_uris.split(" ")[0];
-    if (redirectUri) {
-      window.location.assign(`${API_BASE_URL}/o/authorize-app/?client_id=${app.client_id}&redirect_uri=${redirectUri}&response_type=code`);
+    if (redirectUri && app.client_id) {
+      const oauthService = new OAuthService();
+      const authorizationUrl = oauthService.getAuthorizationUrl({
+        client_id: app.client_id,
+        redirect_uri: redirectUri,
+        response_type: "code",
+        scope: "read write"
+      });
+      window.location.assign(authorizationUrl);
     } else {
       setToast({
         type: TOAST_TYPE.ERROR,
