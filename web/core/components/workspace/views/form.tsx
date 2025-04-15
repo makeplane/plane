@@ -131,7 +131,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                   onChange={onChange}
                   ref={ref}
                   hasError={Boolean(errors.name)}
-                  placeholder="Title"
+                  placeholder={t("title")}
                   className="w-full text-base"
                 />
               )}
@@ -147,7 +147,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                   id="description"
                   name="description"
                   value={value}
-                  placeholder="Description"
+                  placeholder={t("description")}
                   onChange={onChange}
                   className="w-full text-base resize-none min-h-24"
                   hasError={Boolean(errors?.description)}
@@ -239,7 +239,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
       </div>
       <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
         <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-          Cancel
+          {t("cancel")}
         </Button>
         <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
           {data ? (isSubmitting ? t("updating") : t("update_view")) : isSubmitting ? t("creating") : t("create_view")}

@@ -201,7 +201,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     value={value}
                     onChange={onChange}
                     hasError={Boolean(errors.name)}
-                    placeholder="Title"
+                    placeholder={t("title")}
                     className="w-full text-base"
                     tabIndex={getIndex("name")}
                     autoFocus
@@ -219,7 +219,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                 <TextArea
                   id="description"
                   name="description"
-                  placeholder="Description"
+                  placeholder={t("description")}
                   className="w-full text-base resize-none min-h-24"
                   hasError={Boolean(errors?.description)}
                   value={value}
@@ -332,7 +332,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
       </div>
       <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
         <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={getIndex("cancel")}>
-          Cancel
+          {t("cancel")}
         </Button>
         <Button variant="primary" size="sm" type="submit" tabIndex={getIndex("submit")} loading={isSubmitting}>
           {data ? (isSubmitting ? t("updating") : t("update_view")) : isSubmitting ? t("creating") : t("create_view")}
