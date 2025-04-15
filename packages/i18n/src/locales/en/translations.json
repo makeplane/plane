@@ -442,5 +442,8 @@
   "with_value": " with value",
   "updated_custom_property_value": "Updated the value of ",
   "options": "Options",
-  "add_issue": "Add Issue"
+  "add_issue": "Add Issue",
+  "Add Comment...": "Add Comment...",
+  "duration": "Duration",
+  "updates": "Updates"
 }
