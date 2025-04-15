@@ -1,22 +1,20 @@
-import React from "react";
-import { TIssueServiceType } from "@plane/types";
-// hooks
-import { PriorityDropdown, MemberDropdown, StateDropdown } from "@/components/dropdowns";
-import { useIssueDetail } from "@/hooks/store";
+// plane imports
+import { TIssueServiceType, TSubIssueOperations } from "@plane/types";
 // components
-// types
-import { TSubIssueOperations } from "./root";
+import { PriorityDropdown, MemberDropdown, StateDropdown } from "@/components/dropdowns";
+// hooks
+import { useIssueDetail } from "@/hooks/store";
 
-export interface IIssueProperty {
+type Props = {
   workspaceSlug: string;
   parentIssueId: string;
   issueId: string;
   disabled: boolean;
   subIssueOperations: TSubIssueOperations;
   issueServiceType?: TIssueServiceType;
-}
+};
 
-export const IssueProperty: React.FC<IIssueProperty> = (props) => {
+export const SubIssuesListItemProperties: React.FC<Props> = (props) => {
   const { workspaceSlug, parentIssueId, issueId, disabled, subIssueOperations, issueServiceType } = props;
   // hooks
   const {

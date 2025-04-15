@@ -1,12 +1,11 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
 import { ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
+// plane imports
 import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssue, TIssueServiceType } from "@plane/types";
-// ui
+import { TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
 import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -17,15 +16,11 @@ import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-red
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
-// local components
-import { IssueList } from "./issues-list";
-import { IssueProperty } from "./properties";
-// ui
-// types
-import { TSubIssueOperations } from "./root";
-// import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
+// local imports
+import { SubIssuesListItemProperties } from "./properties";
+import { SubIssuesListRoot } from "./root";
 
-export interface ISubIssues {
+type Props = {
   workspaceSlug: string;
   projectId: string;
   parentIssueId: string;
@@ -40,9 +35,9 @@ export interface ISubIssues {
   subIssueOperations: TSubIssueOperations;
   issueId: string;
   issueServiceType?: TIssueServiceType;
-}
+};
 
-export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
+export const SubIssuesListItem: React.FC<Props> = observer((props) => {
   const {
     workspaceSlug,
     projectId,
@@ -171,7 +166,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                 e.stopPropagation();
               }}
             >
-              <IssueProperty
+              <SubIssuesListItemProperties
                 workspaceSlug={workspaceSlug}
                 parentIssueId={parentIssueId}
                 issueId={issueId}
@@ -203,7 +198,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    subIssueOperations.copyText(workItemLink);
+                    subIssueOperations.copyLink(workItemLink);
                   }}
                 >
                   <div className="flex items-center gap-2">
@@ -256,7 +251,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
         issue.project_id &&
         subIssueCount > 0 &&
         !isCurrentIssueRoot && (
-          <IssueList
+          <SubIssuesListRoot
             workspaceSlug={workspaceSlug}
             projectId={issue.project_id}
             parentIssueId={issue.id}

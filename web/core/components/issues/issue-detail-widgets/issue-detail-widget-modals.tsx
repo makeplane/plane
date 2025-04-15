@@ -42,7 +42,7 @@ export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
   } = useIssueDetail();
 
   // helper hooks
-  const subIssueOperations = useSubIssueOperations();
+  const subIssueOperations = useSubIssueOperations(issueServiceType);
   const handleLinkOperations = useLinkOperations(workspaceSlug, projectId, issueId);
 
   // handlers

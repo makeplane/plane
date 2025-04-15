@@ -1,6 +1,8 @@
 "use client";
-import React, { FC } from "react";
+
+import { FC } from "react";
 import { observer } from "mobx-react";
+// plane imports
 import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssueServiceType } from "@plane/types";
@@ -19,13 +21,13 @@ type Props = {
 
 export const SubIssuesCollapsibleTitle: FC<Props> = observer((props) => {
   const { isOpen, parentIssueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
+  // translation
   const { t } = useTranslation();
   // store hooks
   const {
     subIssues: { subIssuesByIssueId, stateDistributionByIssueId },
   } = useIssueDetail(issueServiceType);
-
-  // derived data
+  // derived values
   const subIssuesDistribution = stateDistributionByIssueId(parentIssueId);
   const subIssues = subIssuesByIssueId(parentIssueId);
 
