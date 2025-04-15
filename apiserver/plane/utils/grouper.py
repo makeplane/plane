@@ -24,6 +24,16 @@ def issue_queryset_grouper(queryset, group_by, sub_group_by):
         "module_ids": "issue_module__module_id",
     }
 
+    GROUP_FILTER_MAPPER = {
+        "assignees__id": Q(issue_assignee__deleted_at__isnull=True),
+        "labels__id": Q(label_issue__deleted_at__isnull=True),
+        "issue_module__module_id": Q(issue_module__deleted_at__isnull=True),
+    }
+
+    for group_key in [group_by, sub_group_by]:
+        if group_key in GROUP_FILTER_MAPPER:
+            queryset = queryset.filter(GROUP_FILTER_MAPPER[group_key])
+
     annotations_map = {
         "assignee_ids": (
             "assignees__id",
