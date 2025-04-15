@@ -20,9 +20,7 @@ export type TRelationIssueOperations = {
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 };
 
-export const useSubIssueOperations = (
-  issueServiceType: TIssueServiceType = EIssueServiceType.ISSUES
-): TSubIssueOperations => {
+export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSubIssueOperations => {
   // router
   const { epicId: epicIdParam } = useParams();
   const pathname = usePathname();
@@ -32,15 +30,15 @@ export const useSubIssueOperations = (
     issue: { getIssueById },
     subIssues: { setSubIssueHelpers },
     createSubIssues,
+    fetchSubIssues,
     updateSubIssue,
     deleteSubIssue,
-  } = useIssueDetail();
+    removeSubIssue,
+  } = useIssueDetail(issueServiceType);
   const { getStateById } = useProjectState();
   const { peekIssue: epicPeekIssue } = useIssueDetail(EIssueServiceType.EPICS);
   // const { updateEpicAnalytics } = useIssueTypes();
   const { updateAnalytics } = updateEpicAnalytics();
-  const { fetchSubIssues } = useIssueDetail();
-  const { removeSubIssue } = useIssueDetail(issueServiceType);
   const { captureIssueEvent } = useEventTracker();
 
   // derived values
@@ -66,7 +64,7 @@ export const useSubIssueOperations = (
       fetchSubIssues: async (workspaceSlug: string, projectId: string, parentIssueId: string) => {
         try {
           await fetchSubIssues(workspaceSlug, projectId, parentIssueId);
-        } catch (error) {
+        } catch {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
@@ -92,7 +90,7 @@ export const useSubIssueOperations = (
                   : t("issue.label", { count: 2 }),
             }),
           });
-        } catch (error) {
+        } catch {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
@@ -157,7 +155,7 @@ export const useSubIssueOperations = (
             message: t("sub_work_item.update.success"),
           });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
-        } catch (error) {
+        } catch {
           captureIssueEvent({
             eventName: "Sub-issue updated",
             payload: { ...oldIssue, ...issueData, state: "FAILED", element: "Issue detail page" },
@@ -203,7 +201,7 @@ export const useSubIssueOperations = (
             path: pathname,
           });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
-        } catch (error) {
+        } catch {
           captureIssueEvent({
             eventName: "Sub-issue removed",
             payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
@@ -231,7 +229,7 @@ export const useSubIssueOperations = (
             });
             setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
           });
-        } catch (error) {
+        } catch {
           captureIssueEvent({
             eventName: "Sub-issue removed",
             payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
@@ -245,7 +243,22 @@ export const useSubIssueOperations = (
         }
       },
     }),
-    [fetchSubIssues, createSubIssues, updateSubIssue, removeSubIssue, deleteSubIssue, setSubIssueHelpers]
+    [
+      fetchSubIssues,
+      createSubIssues,
+      epicId,
+      updateSubIssue,
+      removeSubIssue,
+      deleteSubIssue,
+      setSubIssueHelpers,
+      getIssueById,
+      getStateById,
+      updateAnalytics,
+      captureIssueEvent,
+      pathname,
+      t,
+      issueServiceType,
+    ]
   );
 
   return subIssueOperations;
