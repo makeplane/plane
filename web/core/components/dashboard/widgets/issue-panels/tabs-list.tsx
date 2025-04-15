@@ -6,6 +6,7 @@ import { EDurationFilters, FILTERED_ISSUES_TABS_LIST, UNFILTERED_ISSUES_TABS_LIS
 import { cn } from "@/helpers/common.helper";
 // types
 // constants
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   durationFilter: EDurationFilters;
@@ -13,6 +14,7 @@ type Props = {
 };
 
 export const TabsList: React.FC<Props> = observer((props) => {
+  const { t } = useTranslation();
   const { durationFilter, selectedTab } = props;
 
   const tabsList = durationFilter === "none" ? UNFILTERED_ISSUES_TABS_LIST : FILTERED_ISSUES_TABS_LIST;
@@ -53,7 +55,7 @@ export const TabsList: React.FC<Props> = observer((props) => {
             }
           )}
         >
-          <span className="scale-110">{tab.label}</span>
+          <span className="scale-110">{t(tab.key)}</span>
         </Tab>
       ))}
     </Tab.List>
