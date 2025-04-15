@@ -34,12 +34,6 @@ export const CommentsWrapper: FC<TCommentsWrapper> = observer((props) => {
           entityId={entityId}
           activityOperations={activityOperations}
           projectId={projectId}
-          onSubmitCallback={async (elementId: string) => {
-            const sourceElementId = elementId ?? "";
-            const sourceElement = document.getElementById(sourceElementId);
-            if (sourceElement)
-              await smoothScrollIntoView(sourceElement, { behavior: "smooth", block: "center", duration: 1500 });
-          }}
         />
       ),
     [isEditingAllowed, workspaceSlug, entityId, activityOperations, projectId]
