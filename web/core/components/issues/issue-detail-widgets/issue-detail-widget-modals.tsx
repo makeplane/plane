@@ -39,11 +39,11 @@ export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
     createRelation,
     issueCrudOperationState,
     setIssueCrudOperationState,
-  } = useIssueDetail();
+  } = useIssueDetail(issueServiceType);
 
   // helper hooks
-  const subIssueOperations = useSubIssueOperations();
-  const handleLinkOperations = useLinkOperations(workspaceSlug, projectId, issueId);
+  const subIssueOperations = useSubIssueOperations(issueServiceType);
+  const handleLinkOperations = useLinkOperations(workspaceSlug, projectId, issueId, issueServiceType);
 
   // handlers
   const handleIssueCrudState = (
