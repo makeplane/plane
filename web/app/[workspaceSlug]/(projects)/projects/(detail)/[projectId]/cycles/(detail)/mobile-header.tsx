@@ -23,8 +23,10 @@ import {
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useCycle, useProjectState, useLabel, useMember, useProject } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 export const CycleIssuesMobileHeader = () => {
+  const { t } = useTranslation();
   const [analyticsModal, setAnalyticsModal] = useState(false);
   const { getCycleById } = useCycle();
   const layouts = [
@@ -150,7 +152,7 @@ export const CycleIssuesMobileHeader = () => {
             placement="bottom-end"
             menuButton={
               <span className="flex items-center text-custom-text-200 text-sm">
-                Filters
+                {t("filters")}
                 <ChevronDown className="text-custom-text-200  h-4 w-4 ml-2" />
               </span>
             }
@@ -178,7 +180,7 @@ export const CycleIssuesMobileHeader = () => {
             placement="bottom-end"
             menuButton={
               <span className="flex items-center text-custom-text-200 text-sm">
-                Display
+                {t("display")}
                 <ChevronDown className="text-custom-text-200 h-4 w-4 ml-2" />
               </span>
             }
@@ -202,7 +204,7 @@ export const CycleIssuesMobileHeader = () => {
           onClick={() => setAnalyticsModal(true)}
           className="flex flex-grow justify-center text-custom-text-200 text-sm border-l border-custom-border-200"
         >
-          Analytics
+          {t("analytics")}
         </span>
       </div>
     </>

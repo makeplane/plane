@@ -8,11 +8,13 @@ import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent } from "./";
 // icons
+import { useTranslation } from "@plane/i18n";
 
 type TIssueDefaultActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
 export const IssueDefaultActivity: FC<TIssueDefaultActivity> = observer((props) => {
   const { activityId, ends } = props;
+  const { t } = useTranslation();
   // hooks
   const {
     activity: { getActivityById },
@@ -27,7 +29,7 @@ export const IssueDefaultActivity: FC<TIssueDefaultActivity> = observer((props) 
       icon={<LayersIcon width={14} height={14} className="text-custom-text-200" aria-hidden="true" />}
       ends={ends}
     >
-      <>{activity.verb === "created" ? " created the issue." : " deleted an issue."}</>
+      <>{activity.verb === "created" ? ` ${t("created_issue")} `: ` ${t("deleted_issue")}.`}</>
     </IssueActivityBlockComponent>
   );
 });

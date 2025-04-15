@@ -17,6 +17,7 @@ import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
 import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import { useTranslation } from "@plane/i18n";
 
 interface ICalendarHeader {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
@@ -30,6 +31,7 @@ interface ICalendarHeader {
 
 export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
   const { issuesFilterStore, updateFilters, setSelectedDate } = props;
+  const { t } = useTranslation();
 
   const issueCalendarView = useCalendarView();
 
@@ -113,7 +115,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
           className="rounded bg-custom-background-80 px-2.5 py-1 text-xs font-medium text-custom-text-200 hover:text-custom-text-100"
           onClick={handleToday}
         >
-          Today
+          {t("today")}
         </button>
         <CalendarOptionsDropdown issuesFilterStore={issuesFilterStore} updateFilters={updateFilters} />
       </div>

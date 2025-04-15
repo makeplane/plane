@@ -18,6 +18,7 @@ import { ActivityFilterRoot, IssueActivityWorklogCreateButton } from "@/plane-we
 import { TActivityFilters, defaultActivityFilters } from "@/plane-web/constants/issues";
 import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
+import { useTranslation } from "@plane/i18n";
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
 
@@ -38,6 +39,7 @@ export type TActivityOperations = {
 
 export const IssueActivity: FC<TIssueActivity> = observer((props) => {
   const { workspaceSlug, projectId, issueId, disabled = false, isIntakeIssue = false } = props;
+  const { t } = useTranslation();
   // hooks
   const { createComment, updateComment, removeComment } = useIssueDetail();
   const { projectPermissionsByWorkspaceSlugAndProjectId } = useUserPermissions();
@@ -142,7 +144,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
     <div className="space-y-4 pt-3">
       {/* header */}
       <div className="flex items-center justify-between">
-        <div className="text-lg text-custom-text-100">Activity</div>
+        <div className="text-lg text-custom-text-100">{t("activity")}</div>
         <div className="flex items-center gap-2">
           {isWorklogButtonEnabled && (
             <IssueActivityWorklogCreateButton

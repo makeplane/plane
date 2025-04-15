@@ -12,8 +12,10 @@ import { InboxIssueCreateModalRoot } from "@/components/inbox";
 // hooks
 import { useProject, useProjectInbox, useUserPermissions } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import { useTranslation } from "@plane/i18n";
 
 export const ProjectInboxHeader: FC = observer(() => {
+  const { t } = useTranslation();
   // states
   const [createIssueModal, setCreateIssueModal] = useState(false);
   // router
@@ -77,7 +79,7 @@ export const ProjectInboxHeader: FC = observer(() => {
             />
 
             <Button variant="primary" size="sm" onClick={() => setCreateIssueModal(true)}>
-              Add issue
+              {t("add_issue")}
             </Button>
           </div>
         ) : (

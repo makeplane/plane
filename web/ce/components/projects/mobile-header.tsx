@@ -13,8 +13,10 @@ import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/pr
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useMember, useProjectFilter } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 export const ProjectsListMobileHeader = observer(() => {
+  const { t } = useTranslation();
   // router
   const { workspaceSlug } = useParams();
   const {
@@ -68,7 +70,7 @@ export const ProjectsListMobileHeader = observer(() => {
           menuButton={
             <div className="flex text-sm items-center gap-2 neutral-primary text-custom-text-200">
               <ListFilter className="h-3 w-3" />
-              Filters
+                {t("filters")}
               <ChevronDown className="h-3 w-3" strokeWidth={2} />
             </div>
           }

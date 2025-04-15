@@ -5,6 +5,7 @@ import { FC } from "react";
 import { ActivityFilter } from "@/components/issues";
 // plane web constants
 import { TActivityFilters, ACTIVITY_FILTER_TYPE_OPTIONS, TActivityFilterOption } from "@/plane-web/constants/issues";
+import { useTranslation } from "@plane/i18n";
 
 export type TActivityFilterRoot = {
   selectedFilters: TActivityFilters[];
@@ -15,12 +16,13 @@ export type TActivityFilterRoot = {
 
 export const ActivityFilterRoot: FC<TActivityFilterRoot> = (props) => {
   const { selectedFilters, toggleFilter } = props;
+  const { t } = useTranslation();
 
   const filters: TActivityFilterOption[] = Object.entries(ACTIVITY_FILTER_TYPE_OPTIONS).map(([key, value]) => {
     const filterKey = key as TActivityFilters;
     return {
       key: filterKey,
-      label: value.label,
+      label: t(value.label),
       isSelected: selectedFilters.includes(filterKey),
       onClick: () => toggleFilter(filterKey),
     };

@@ -18,6 +18,7 @@ import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 import { useWorkspace } from "@/hooks/store";
 // services
 import { FileService } from "@/services/file.service";
+import { useTranslation } from "@plane/i18n";
 const fileService = new FileService();
 
 export type IssueDescriptionInputProps = {
@@ -46,6 +47,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
     setIsSubmitting,
     placeholder,
   } = props;
+  const { t } = useTranslation();
 
   const { handleSubmit, reset, control } = useForm<TIssue>({
     defaultValues: {
@@ -116,7 +118,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
                   debouncedFormSave();
                 }}
                 placeholder={
-                  placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)
+                  placeholder ? placeholder : (isFocused, value) => t(getDescriptionPlaceholder(isFocused, value))
                 }
                 containerClassName={containerClassName}
                 uploadFile={async (file) => {

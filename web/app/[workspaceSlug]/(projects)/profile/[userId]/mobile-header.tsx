@@ -23,8 +23,10 @@ import {
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 export const ProfileIssuesMobileHeader = observer(() => {
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, userId } = useParams();
   // store hook
@@ -145,7 +147,7 @@ export const ProfileIssuesMobileHeader = observer(() => {
           placement="bottom-end"
           menuButton={
             <div className="flex flex-center text-sm text-custom-text-200">
-              Filters
+              {t("filters")}
               <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200" strokeWidth={2} />
             </div>
           }
@@ -171,7 +173,7 @@ export const ProfileIssuesMobileHeader = observer(() => {
           placement="bottom-end"
           menuButton={
             <div className="flex flex-center text-sm text-custom-text-200">
-              Display
+              {t("display")}
               <ChevronDown className="ml-2 h-4 w-4 text-custom-text-200" strokeWidth={2} />
             </div>
           }

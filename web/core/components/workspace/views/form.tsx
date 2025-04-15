@@ -17,6 +17,7 @@ import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpe
 // hooks
 import { useLabel, useMember } from "@/hooks/store";
 import { AccessController } from "@/plane-web/components/views/access-controller";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   handleFormSubmit: (values: Partial<IWorkspaceView>) => Promise<void>;
@@ -35,6 +36,7 @@ const defaultValues: Partial<IWorkspaceView> = {
 
 export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
   const { handleFormSubmit, handleClose, data, preLoadedData } = props;
+  const { t } = useTranslation();
   // store hooks
   const { workspaceLabels } = useLabel();
   const {
@@ -160,7 +162,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
               control={control}
               name="filters"
               render={({ field: { onChange, value: filters } }) => (
-                <FiltersDropdown title="Filters">
+                <FiltersDropdown title={t("filters")}>
                   <FilterSelection
                     filters={filters ?? {}}
                     handleFiltersUpdate={(key, value) => {
@@ -197,7 +199,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                   control={control}
                   name="display_properties"
                   render={({ field: { onChange: onDisplayPropertiesChange, value: displayProperties } }) => (
-                    <FiltersDropdown title="Display">
+                    <FiltersDropdown title={t("display")}>
                       <DisplayFiltersSelection
                         layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
                         displayFilters={displayFilters ?? {}}
@@ -240,7 +242,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
           Cancel
         </Button>
         <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-          {data ? (isSubmitting ? "Updating" : "Update View") : isSubmitting ? "Creating" : "Create View"}
+          {data ? (isSubmitting ? t("updating") : t("update_view")) : isSubmitting ? t("creating") : t("create_view")}
         </Button>
       </div>
     </form>

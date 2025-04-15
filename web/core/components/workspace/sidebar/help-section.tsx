@@ -16,12 +16,14 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { PlaneVersionNumber } from "@/plane-web/components/global";
 import { ENABLE_LOCAL_DB_CACHE } from "@/plane-web/constants/issues";
+import { useTranslation } from "@plane/i18n";
 
 export interface WorkspaceHelpSectionProps {
   setSidebarActive?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(() => {
+  const { t } = useTranslation();
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
@@ -55,7 +57,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
         <div
           className={`flex flex-shrink-0 items-center gap-1 ${isCollapsed ? "flex-col justify-center" : "justify-end ml-auto"}`}
         >
-          <Tooltip tooltipContent={`${isCollapsed ? "Expand" : "Hide"}`} isMobile={isMobile}>
+          <Tooltip tooltipContent={`${isCollapsed ? t("expand") : t("hide")}`} isMobile={isMobile}>
             <button
               type="button"
               className={`grid place-items-center rounded-md p-1 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${isCollapsed ? "w-full" : ""

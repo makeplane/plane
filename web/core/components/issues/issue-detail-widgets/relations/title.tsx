@@ -6,6 +6,7 @@ import { CollapsibleButton } from "@plane/ui";
 import { RelationActionButton } from "@/components/issues/issue-detail-widgets";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   isOpen: boolean;
@@ -15,6 +16,7 @@ type Props = {
 
 export const RelationsCollapsibleTitle: FC<Props> = observer((props) => {
   const { isOpen, issueId, disabled } = props;
+  const { t } = useTranslation();
   // store hook
   const {
     relation: { getRelationCountByIssueId },
@@ -36,7 +38,7 @@ export const RelationsCollapsibleTitle: FC<Props> = observer((props) => {
   return (
     <CollapsibleButton
       isOpen={isOpen}
-      title="Relations"
+      title={t("relations")}
       indicatorElement={indicatorElement}
       actionItemElement={!disabled && <RelationActionButton issueId={issueId} disabled={disabled} />}
     />

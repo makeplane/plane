@@ -12,6 +12,7 @@ import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/pr
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useMember, useProjectFilter } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   filterMenuButton?: React.ReactNode;
@@ -21,6 +22,7 @@ type Props = {
 };
 
 const HeaderFilters = observer(({ filterMenuButton, isMobile, classname = "", filterClassname = "" }: Props) => {
+  const { t } = useTranslation();
   // router
   const { workspaceSlug } = useParams();
   const {
@@ -71,7 +73,7 @@ const HeaderFilters = observer(({ filterMenuButton, isMobile, classname = "", fi
       <div className={cn(filterClassname)}>
         <FiltersDropdown
           icon={<ListFilter className="h-3 w-3" />}
-          title="Filters"
+          title={t("filters")}
           placement="bottom-end"
           isFiltersApplied={isFiltersApplied}
           menuButton={filterMenuButton || null}

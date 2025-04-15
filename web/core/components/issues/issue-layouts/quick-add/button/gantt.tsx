@@ -3,9 +3,11 @@ import { observer } from "mobx-react";
 import { PlusIcon } from "lucide-react";
 import { Row } from "@plane/ui";
 import { TQuickAddIssueButton } from "../root";
+import { useTranslation } from "@plane/i18n";
 
 export const GanttQuickAddIssueButton: FC<TQuickAddIssueButton> = observer((props) => {
   const { onClick } = props;
+  const { t } = useTranslation();
 
   return (
     <button
@@ -15,7 +17,7 @@ export const GanttQuickAddIssueButton: FC<TQuickAddIssueButton> = observer((prop
     >
       <Row className="flex py-2 gap-2">
         <PlusIcon className="h-3.5 w-3.5 stroke-2 my-auto" />
-        <span className="text-sm font-medium">New Issue</span>
+        <span className="text-sm font-medium">{t("new_issue")}</span>
       </Row>
     </button>
   );

@@ -11,8 +11,10 @@ import { useMember, useProjectView } from "@/hooks/store";
 import { FiltersDropdown } from "../issues";
 import { ViewFiltersSelection } from "./filters/filter-selection";
 import { ViewOrderByDropdown } from "./filters/order-by";
+import { useTranslation } from "@plane/i18n";
 
 export const ViewListHeader = observer(() => {
+  const { t } = useTranslation();
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   // refs
@@ -101,7 +103,7 @@ export const ViewListHeader = observer(() => {
         />
         <FiltersDropdown
           icon={<ListFilter className="h-3 w-3" />}
-          title="Filters"
+          title={t("filters")}
           placement="bottom-end"
           isFiltersApplied={false}
         >

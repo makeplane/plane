@@ -6,6 +6,7 @@ import { CircularProgressIndicator, CollapsibleButton } from "@plane/ui";
 import { SubIssuesActionButton } from "@/components/issues/issue-detail-widgets";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   isOpen: boolean;
@@ -15,6 +16,7 @@ type Props = {
 
 export const SubIssuesCollapsibleTitle: FC<Props> = observer((props) => {
   const { isOpen, parentIssueId, disabled } = props;
+  const { t } = useTranslation();
   // store hooks
   const {
     subIssues: { subIssuesByIssueId, stateDistributionByIssueId },
@@ -48,7 +50,7 @@ export const SubIssuesCollapsibleTitle: FC<Props> = observer((props) => {
   return (
     <CollapsibleButton
       isOpen={isOpen}
-      title="Sub-issues"
+      title={t("sub_issues")}
       indicatorElement={indicatorElement}
       actionItemElement={!disabled && <SubIssuesActionButton issueId={parentIssueId} disabled={disabled} />}
     />

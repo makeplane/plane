@@ -8,11 +8,13 @@ import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent, IssueLink } from "./";
 // icons
+import { useTranslation } from "@plane/i18n";
 
 type TIssueStateActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
 export const IssueStateActivity: FC<TIssueStateActivity> = observer((props) => {
   const { activityId, showIssue = true, ends } = props;
+  const { t } = useTranslation();
   // hooks
   const {
     activity: { getActivityById },
@@ -28,8 +30,8 @@ export const IssueStateActivity: FC<TIssueStateActivity> = observer((props) => {
       ends={ends}
     >
       <>
-        set the state to <span className="font-medium text-custom-text-100">{activity.new_value}</span>
-        {showIssue ? ` for ` : ``}
+        {t("set_state_to")} <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+        {showIssue ? ` ${t("for")} ` : ``}
         {showIssue && <IssueLink activityId={activityId} />}.
       </>
     </IssueActivityBlockComponent>
