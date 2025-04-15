@@ -7,6 +7,7 @@ import { FilterHeader, FilterOption } from "@/components/issues";
 // types
 import { ISSUE_ORDER_BY_OPTIONS } from "@/constants/issue";
 // constants
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   selectedOrderBy: TIssueOrderByOptions | undefined;
@@ -16,6 +17,7 @@ type Props = {
 
 export const FilterOrderBy: React.FC<Props> = observer((props) => {
   const { selectedOrderBy, handleUpdate, orderByOptions } = props;
+  const { t } = useTranslation();
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
@@ -24,7 +26,7 @@ export const FilterOrderBy: React.FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title="Order by"
+        title={t("order_by")}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
