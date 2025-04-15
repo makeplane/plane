@@ -171,7 +171,7 @@
   container-type: inline-size;
 }
 
-.editor-container.document-editor {
+.frame-renderer.document-editor .editor-container {
   --editor-content-width: var(--normal-content-width);
 
   &.wide-layout {
@@ -210,7 +210,7 @@
 
 /* keep a static padding of 96px for wide layouts for container width >912px and <1344px */
 @container page-content-container (min-width: 912px) and (max-width: 1344px) {
-  .editor-container.wide-layout,
+  .frame-renderer.document-editor .editor-container.wide-layout,
   .page-header-container {
     padding-left: var(--wide-content-margin);
     padding-right: var(--wide-content-margin);
@@ -219,7 +219,7 @@
 
 /* keep a static padding of 20px for wide layouts for container width <912px */
 @container page-content-container (max-width: 912px) {
-  .editor-container.wide-layout,
+  .frame-renderer.document-editor .editor-container.wide-layout,
   .page-header-container {
     padding-left: var(--normal-content-margin);
     padding-right: var(--normal-content-margin);
@@ -228,7 +228,7 @@
 
 /* keep a static padding of 20px for normal layouts for container width <760px */
 @container page-content-container (max-width: 760px) {
-  .editor-container:not(.wide-layout),
+  .frame-renderer.document-editor .editor-container:not(.wide-layout),
   .page-header-container {
     padding-left: var(--normal-content-margin);
     padding-right: var(--normal-content-margin);

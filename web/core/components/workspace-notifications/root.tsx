@@ -1,6 +1,6 @@
 "use client";
-
 import { FC, useCallback } from "react";
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -8,6 +8,7 @@ import { NOTIFICATION_TABS, TNotificationTab } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { Header, Row, ERowVariant, EHeaderVariant, ContentWrapper } from "@plane/ui";
+import { NotificationCardListRoot as NotificationCardListRootCe } from "@/ce/components/workspace-notifications";
 import { CountChip } from "@/components/common";
 import {
   NotificationsLoader,
@@ -20,7 +21,10 @@ import { cn } from "@/helpers/common.helper";
 import { getNumberCount } from "@/helpers/string.helper";
 // hooks
 import { useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
-import { NotificationCardListRoot } from "@/plane-web/components/workspace-notifications";
+
+import { NotificationCardListRoot as NotificationCardListRootEe } from "@/plane-web/components/workspace-notifications";
+import { useFlag } from "@/plane-web/hooks/store";
+
 export const NotificationsSidebarRoot: FC = observer(() => {
   const { workspaceSlug } = useParams();
   // hooks
@@ -48,16 +52,18 @@ export const NotificationsSidebarRoot: FC = observer(() => {
     [currentNotificationTab, setCurrentNotificationTab]
   );
 
+  const isFeatureEnabled = useFlag(workspaceSlug.toString(), "INBOX_STACKING");
+
   if (!workspaceSlug || !workspace) return <></>;
 
   return (
     <div
       className={cn(
-        "relative border-0 md:border-r border-custom-border-200 z-[10] flex-shrink-0 bg-custom-background-100 h-full transition-all overflow-hidden",
+        "relative border-0 md:border-r border-custom-border-200 z-[10] flex-shrink-0 bg-custom-background-100 h-full transition-all max-md:overflow-hidden",
         currentSelectedNotificationId ? "w-0 md:w-2/6" : "w-full md:w-2/6"
       )}
     >
-      <div className="relative w-full h-full overflow-hidden flex flex-col">
+      <div className="relative w-full h-full flex flex-col">
         <Row className="h-[3.75rem] border-b border-custom-border-200 flex">
           <NotificationSidebarHeader workspaceSlug={workspaceSlug.toString()} />
         </Row>
@@ -101,7 +107,11 @@ export const NotificationsSidebarRoot: FC = observer(() => {
           <>
             {notificationIds && notificationIds.length > 0 ? (
               <ContentWrapper variant={ERowVariant.HUGGING}>
-                <NotificationCardListRoot workspaceSlug={workspaceSlug.toString()} workspaceId={workspace?.id} />
+                {isFeatureEnabled ? (
+                  <NotificationCardListRootEe workspaceSlug={workspaceSlug.toString()} workspaceId={workspace?.id} />
+                ) : (
+                  <NotificationCardListRootCe workspaceSlug={workspaceSlug.toString()} workspaceId={workspace?.id} />
+                )}
               </ContentWrapper>
             ) : (
               <div className="relative w-full h-full flex justify-center items-center">

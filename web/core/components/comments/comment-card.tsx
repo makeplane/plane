@@ -139,7 +139,15 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
         <form className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}>
           <div
             onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !isEmpty) handleSubmit(onEnter)(e);
+              if (
+                e.key === "Enter" &&
+                !e.shiftKey &&
+                !e.ctrlKey &&
+                !e.metaKey &&
+                !isEmpty &&
+                editorRef.current?.isEditorReadyToDiscard()
+              )
+                handleSubmit(onEnter)(e);
             }}
           >
             <LiteTextEditor
