@@ -1,4 +1,4 @@
-import { FC, useRef, useState } from "react";
+import { FC, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { EIssueServiceType } from "@plane/constants";
 import { TIssueOperations } from "@/components/issues";
@@ -57,39 +57,44 @@ export const EpicView: FC<IEpicView> = observer((props) => {
   const {
     updatesStore: { deleteModalId },
   } = useEpics();
-  const { setPeekIssue: setIssuePeekIssue } = useIssueDetail();
-  const { isAnyModalOpen: isAnyIssueModalOpen } = useIssueDetail();
+  const { isAnyModalOpen: isAnyIssueModalOpen, setPeekIssue: setIssuePeekIssue } = useIssueDetail();
   const issue = getIssueById(issueId);
   // remove peek id
-  const removeRoutePeekId = () => {
+  const removeRoutePeekId = useCallback(() => {
     setIssuePeekIssue(undefined);
     setPeekIssue(undefined);
     if (embedIssue && embedRemoveCurrentNotification) embedRemoveCurrentNotification();
-  };
-
-  usePeekOverviewOutsideClickDetector(
-    issuePeekOverviewRef,
-    () => {
-      if (!embedIssue) {
-        if (!isAnyModalOpen && !isAnyIssueModalOpen && !deleteEpicModal && !editEpicModal && !deleteModalId) {
-          removeRoutePeekId();
-        }
+  }, [embedIssue, embedRemoveCurrentNotification, setIssuePeekIssue, setPeekIssue]);
+  // outside click
+  const handleOutsideClick = useCallback(() => {
+    if (!embedIssue) {
+      if (!isAnyModalOpen && !isAnyIssueModalOpen && !deleteEpicModal && !editEpicModal && !deleteModalId) {
+        removeRoutePeekId();
       }
-    },
-    issueId
-  );
-
-  const handleKeyDown = () => {
-    const slashCommandDropdownElement = document.querySelector("#slash-command");
-    const dropdownElement = document.activeElement?.tagName === "INPUT";
-    if (!isAnyModalOpen && !slashCommandDropdownElement && !dropdownElement) {
-      removeRoutePeekId();
-      const issueElement = document.getElementById(`issue-${issueId}`);
-      if (issueElement) issueElement?.focus();
     }
-  };
-
-  useKeypress("Escape", () => !embedIssue && handleKeyDown());
+  }, [
+    embedIssue,
+    isAnyModalOpen,
+    isAnyIssueModalOpen,
+    deleteEpicModal,
+    editEpicModal,
+    deleteModalId,
+    removeRoutePeekId,
+  ]);
+  usePeekOverviewOutsideClickDetector(issuePeekOverviewRef, handleOutsideClick, issueId);
+  // keydown
+  const handleKeyDown = useCallback(() => {
+    if (!embedIssue) {
+      const slashCommandDropdownElement = document.querySelector("#slash-command");
+      const dropdownElement = document.activeElement?.tagName === "INPUT";
+      if (!isAnyModalOpen && !slashCommandDropdownElement && !dropdownElement) {
+        removeRoutePeekId();
+        const issueElement = document.getElementById(`issue-${issueId}`);
+        if (issueElement) issueElement?.focus();
+      }
+    }
+  }, [embedIssue, isAnyModalOpen, issueId, removeRoutePeekId]);
+  useKeypress("Escape", handleKeyDown);
 
   const handleRestore = async () => {
     if (!issueOperations.restore) return;
