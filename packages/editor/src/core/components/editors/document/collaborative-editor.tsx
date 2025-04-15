@@ -63,25 +63,26 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   }
 
   // use document editor
-  const { editor, hasServerConnectionFailed, hasServerSynced, titleEditor } = useCollaborativeEditor({
-    disabledExtensions,
-    editable,
-    editorClassName,
-    embedHandler,
-    extensions,
-    fileHandler,
-    forwardedRef,
-    handleEditorReady,
-    id,
-    mentionHandler,
-    onTransaction,
-    placeholder,
-    realtimeConfig,
-    serverHandler,
-    tabIndex,
-    user,
-    updatePageProperties,
-  });
+  const { editor, hasServerConnectionFailed, hasServerSynced, titleEditor, isContentInIndexedDb } =
+    useCollaborativeEditor({
+      disabledExtensions,
+      editable,
+      editorClassName,
+      embedHandler,
+      extensions,
+      fileHandler,
+      forwardedRef,
+      handleEditorReady,
+      id,
+      mentionHandler,
+      onTransaction,
+      placeholder,
+      realtimeConfig,
+      serverHandler,
+      tabIndex,
+      user,
+      updatePageProperties,
+    });
 
   const editorContainerClassNames = getEditorClassNames({
     noBorder: true,
@@ -95,7 +96,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     "max-w-[1152px]": displayConfig.wideLayout,
   });
 
-  if ((!hasServerSynced && !hasServerConnectionFailed) || pageRestorationInProgress)
+  if ((!hasServerSynced && !hasServerConnectionFailed && !isContentInIndexedDb) || pageRestorationInProgress)
     return <DocumentContentLoader className={blockWidthClassName} />;
 
   return (

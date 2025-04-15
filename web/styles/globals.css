@@ -1113,6 +1113,17 @@ input[type="color"].custom-color-picker {
   }
 }
 
+@keyframes editorFadeIn {
+  from {
+    opacity: 0.8;
+    margin-top: 20px;
+  }
+  to {
+    opacity: 1;
+    margin-top: 0;
+  }
+}
+
 @keyframes fadeTransition {
   from {
     opacity: 0;
@@ -1146,12 +1157,36 @@ input[type="color"].custom-color-picker {
   }
 }
 
+@keyframes pulse-subtle {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.9;
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0);
+  }
+
+  100% {
+    transform: scale(0.85);
+    opacity: 0.9;
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
 .animate-fade-in {
   animation: fadeIn 200ms var(--ease-out-quad) forwards;
 }
 
 .animate-fade-transition {
   animation: fadeTransition 200ms var(--ease-out-cubic) forwards;
+}
+
+.animate-editorFadeIn {
+  animation: editorFadeIn 0.3s var(--ease-out-cubic) forwards;
 }
 
 .animate-pulse-subtle {

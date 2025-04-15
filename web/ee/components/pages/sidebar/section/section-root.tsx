@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Disclosure, Transition } from "@headlessui/react";
@@ -23,58 +23,149 @@ export const WikiSidebarListSectionRoot: React.FC<SectionRootProps> = observer((
 
   // states
   const [isCreatingPage, setIsCreatingPage] = useState<TPageNavigationTabs | null>(null);
-  const [initialRenderComplete, setInitialRenderComplete] = useState(false);
+  const [shouldBeOpen, setShouldBeOpen] = useState<boolean>(false);
+  const [hasTriggeredOpen, setHasTriggeredOpen] = useState<boolean>(false);
 
   // refs
   const listSectionRef = useRef<HTMLDivElement>(null);
+  const disclosureButtonRef = useRef<HTMLButtonElement>(null);
 
   // hooks
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
   const { sidebarCollapsed } = useAppTheme();
-  const { createPage, getPageById } = usePageStore(EPageStoreType.WORKSPACE);
+  const { createPage, getPageById, getPublicPages, getPrivatePages, getArchivedPages } = usePageStore(
+    EPageStoreType.WORKSPACE
+  );
 
   // Custom hooks
   const { isDropping } = useSectionDragAndDrop(listSectionRef, getPageById);
-  const { pageIds, isLoading } = useSectionPages(sectionType);
+  const { isLoading } = useSectionPages(sectionType);
 
-  // Set initial render complete after first load
+  // Get the page IDs based on section type from store
+  const getStorePageIds = useCallback(() => {
+    switch (sectionType) {
+      case "public":
+        return getPublicPages();
+      case "private":
+        return getPrivatePages();
+      case "archived":
+        return getArchivedPages();
+      default:
+        return [];
+    }
+  }, [getPublicPages, getPrivatePages, getArchivedPages, sectionType]);
+
+  // Use SWR pageIds when loading, store pageIds when SWR is done
+  const pageIds = getStorePageIds();
+
+  // Helper function to get all parent IDs of a page
+  const getParentIdsChain = useCallback(
+    (pageId: string): string[] => {
+      const parentIds: string[] = [];
+      let currentPage = getPageById(pageId);
+
+      while (currentPage && currentPage.parent_id) {
+        parentIds.push(currentPage.parent_id);
+        currentPage = getPageById(currentPage.parent_id);
+      }
+
+      return parentIds;
+    },
+    [getPageById]
+  );
+
+  // Check if current page belongs to this section and update shouldBeOpen
   useEffect(() => {
-    if (!isLoading && !initialRenderComplete) {
-      setInitialRenderComplete(true);
-    }
-  }, [isLoading, initialRenderComplete]);
-
-  // Debug log when current page ID and pageIds change
-  useEffect(() => {
-    if (currentPageId) {
-      console.log(
-        `Section: ${sectionType}, currentPageId: ${currentPageId}, includes: ${pageIds.includes(currentPageId)}, pageIds: ${pageIds.length > 0 ? pageIds.join(", ") : "none"}`
-      );
-    }
-  }, [currentPageId, pageIds, sectionType]);
-
-  // Determine if this section should be open
-  const shouldBeOpen = () => {
-    // If we have a current page ID and it's in this section's pageIds, open this section
-    if (currentPageId && pageIds.includes(currentPageId)) {
-      return true;
-    }
-
-    // If we're still loading or haven't completed initial render, default to public section
-    if (isLoading || !initialRenderComplete) {
-      const defaultOpen = sectionType === "public" && !currentPageId;
-      return defaultOpen;
-    }
-
-    // If there's no current page ID, only open the public section by default
+    // Default - only public section is open when no page is selected
     if (!currentPageId) {
-      return sectionType === "public";
+      setShouldBeOpen(sectionType === "public");
+      return;
     }
 
-    // In all other cases, keep section closed by default
-    return false;
-  };
+    // If current page belongs to this section, open it
+    if (pageIds.includes(currentPageId)) {
+      setShouldBeOpen(true);
+      return;
+    }
+
+    // Check if the current page is a child page of any page in this section
+    const currentPage = getPageById(currentPageId);
+    if (currentPage && currentPage.parent_id) {
+      // Get the root parent of the current page
+      let parentId = currentPage.parent_id;
+      let parentPage = getPageById(parentId);
+
+      // Navigate up the parent chain until we find a top-level parent
+      while (parentPage && parentPage.parent_id) {
+        parentId = parentPage.parent_id;
+        parentPage = getPageById(parentId);
+      }
+
+      // If the root parent is in this section, open the section
+      if (parentPage && pageIds.includes(parentId)) {
+        setShouldBeOpen(true);
+        return;
+      }
+    }
+
+    // Otherwise, close unless it's the public section with no current page
+    setShouldBeOpen(false);
+  }, [currentPageId, pageIds, sectionType, getPageById]);
+
+  // Expand parent pages when a child page is selected
+  useEffect(() => {
+    if (!currentPageId || !setExpandedPageIds) return;
+
+    const currentPage = getPageById(currentPageId);
+    if (!currentPage) return;
+
+    // Check if the current page belongs to this section
+    const belongsToSection =
+      pageIds.includes(currentPageId) ||
+      (currentPage.parent_id && getParentIdsChain(currentPageId).some((id) => pageIds.includes(id)));
+
+    if (belongsToSection) {
+      // Get all parent IDs that need to be expanded
+      const parentIds = getParentIdsChain(currentPageId);
+
+      // Add all parent IDs to expandedPageIds if not already included
+      if (parentIds.length > 0) {
+        setExpandedPageIds((prev) => {
+          const newExpandedIds = [...prev];
+          parentIds.forEach((id) => {
+            if (!newExpandedIds.includes(id)) {
+              newExpandedIds.push(id);
+            }
+          });
+          return newExpandedIds;
+        });
+      }
+    }
+  }, [currentPageId, pageIds, getPageById, setExpandedPageIds, getParentIdsChain]);
+
+  useEffect(() => {
+    // Skip if we've already triggered for this state or if still loading
+    if (hasTriggeredOpen || isLoading) return;
+
+    const button = disclosureButtonRef.current;
+    if (!button) return;
+
+    // Get the current open state from the button's aria-expanded attribute
+    const isCurrentlyOpen = button.getAttribute("aria-expanded") === "true";
+
+    // Only click if the current state doesn't match the desired state
+    if (shouldBeOpen !== isCurrentlyOpen) {
+      button.click();
+    }
+
+    setHasTriggeredOpen(true);
+  }, [shouldBeOpen, hasTriggeredOpen, isLoading, sectionType]);
+
+  // Reset the trigger state when shouldBeOpen changes
+  useEffect(() => {
+    setHasTriggeredOpen(false);
+  }, [shouldBeOpen]);
 
   // derived values
   const isCollapsed = !!sidebarCollapsed;
@@ -103,6 +194,9 @@ export const WikiSidebarListSectionRoot: React.FC<SectionRootProps> = observer((
       .finally(() => setIsCreatingPage(null));
   };
 
+  // Initial default open state - only public section opens by default without a current page
+  const initialOpenState = !currentPageId && sectionType === "public";
+
   return (
     <div
       ref={listSectionRef}
@@ -110,7 +204,7 @@ export const WikiSidebarListSectionRoot: React.FC<SectionRootProps> = observer((
         "[&:not(:has(.is-dragging))]:bg-custom-primary-100/20": isDropping,
       })}
     >
-      <Disclosure defaultOpen={shouldBeOpen()}>
+      <Disclosure defaultOpen={initialOpenState}>
         {({ open }) => (
           <>
             <SectionHeader
@@ -119,6 +213,7 @@ export const WikiSidebarListSectionRoot: React.FC<SectionRootProps> = observer((
               isCollapsed={isCollapsed}
               isCreatingPage={isCreatingPage}
               handleCreatePage={handleCreatePage}
+              buttonRef={disclosureButtonRef}
             />
 
             <Transition

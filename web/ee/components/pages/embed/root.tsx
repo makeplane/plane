@@ -59,7 +59,7 @@ export const PageEmbedCardRoot: React.FC<Props> = observer((props) => {
   }, [embedPageId, parentPage, createPage, updateAttributes]);
 
   return (
-    <div className="relative">
+    <div className="relative" data-drag-handle>
       {isCreating ? (
         <div className="animate-[fadeIn_0.2s_var(--ease-out-quad)_forwards]">
           <PlaceholderEmbed />

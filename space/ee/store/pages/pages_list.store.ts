@@ -11,7 +11,7 @@ export interface IPagesListStore {
   // observables
   data: Record<string, IPage>; // anchor => TPublicPageResponse
   // actions
-  fetchPageDetails: (anchor: string,shouldFetchSubPages?: boolean) => Promise<TPublicPageResponse>;
+  fetchPageDetails: (anchor: string, shouldFetchSubPages?: boolean) => Promise<TPublicPageResponse>;
 }
 
 export class PagesListStore implements IPagesListStore {
@@ -48,17 +48,17 @@ export class PagesListStore implements IPagesListStore {
    */
   fetchPageDetails = async (anchor: string, shouldFetchSubPages: boolean = true) => {
     // If pageId is provided, fetch that specific page, otherwise fetch the main page for the anchor
-    let response = await this.pageService.retrieve(anchor);
+    const response = await this.pageService.retrieve(anchor);
 
     // Create or update the page in the store
     const pageInstance = this.data[anchor];
-    
+
     runInAction(() => {
       if (pageInstance) {
         // If page already exists, update its properties
         // This assumes you have a mutateProperties method in your Page class
         // You might need to implement it similar to the Web project
-        if (typeof pageInstance.mutateProperties === 'function') {
+        if (typeof pageInstance.mutateProperties === "function") {
           pageInstance.mutateProperties(response, false);
         } else {
           // If mutateProperties doesn't exist, replace the entire object
@@ -68,7 +68,7 @@ export class PagesListStore implements IPagesListStore {
         // Create a new page instance
         set(this.data, [anchor], new Page(this.rootStore, response));
       }
-      
+
       // Log store items after updating main page
       this.logStoreItems();
     });
@@ -77,21 +77,21 @@ export class PagesListStore implements IPagesListStore {
     if (shouldFetchSubPages) {
       try {
         const subPages = await this.pageService.fetchSubPages(anchor);
-        
+
         // Store each subpage in the data store
         runInAction(() => {
-          subPages.forEach(subPage => {
+          subPages.forEach((subPage) => {
             if (subPage.id) {
               const subPageInstance = this.data[subPage.id];
-              
-              if (subPageInstance && typeof subPageInstance.mutateProperties === 'function') {
+
+              if (subPageInstance && typeof subPageInstance.mutateProperties === "function") {
                 subPageInstance.mutateProperties(subPage, false);
               } else {
                 set(this.data, [subPage.id], new Page(this.rootStore, subPage));
               }
             }
           });
-          
+
           // Log store items after updating subpages
           this.logStoreItems();
         });

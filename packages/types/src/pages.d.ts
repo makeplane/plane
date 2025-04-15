@@ -32,7 +32,6 @@ export type TPage = {
 export type TCollaborator = {
   name: string;
   color: string;
-  clientTemporaryId?: string;
   id?: string;
   photoUrl?: string;
 };

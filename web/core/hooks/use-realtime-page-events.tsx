@@ -1,6 +1,6 @@
 import { MutableRefObject, useCallback, useMemo } from "react";
 import { EditorRefApi, EventToPayloadMap } from "@plane/editor";
-import { IUserLite } from "@plane/types";
+import { IUserLite, TCollaborator } from "@plane/types";
 import { dismissToast, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { TEditorBodyHandlers } from "@/components/pages";
@@ -218,10 +218,10 @@ export const useRealtimePageEvents = ({
           const pageItem = getPageById(pageId);
           const collaborators = data.users;
           if (pageItem && collaborators) {
-            const collaboratorsForPageStore = collaborators.map((col) => ({
+            const collaboratorsForPageStore: TCollaborator[] = collaborators.map((col) => ({
               name: col.name,
               color: col.color,
-              userId: col.id,
+              id: col.id,
             }));
             pageItem.updateCollaborators(collaboratorsForPageStore);
           }
@@ -286,10 +286,6 @@ export const useRealtimePageEvents = ({
         // create a new page instace of the duplicatedPage in the store
         await getOrFetchPageInstance(duplicatedPage);
 
-        console.log("page.id", page.id);
-        console.log("duplicatedPage", pageIds[0]);
-        console.log("data.user_id", data.user_id);
-        console.log("currentUser?.id", currentUser?.id);
         if (page.id === pageIds[0] && data.user_id === currentUser?.id) {
           setToast({
             type: TOAST_TYPE.SUCCESS,

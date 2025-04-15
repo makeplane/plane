@@ -16,10 +16,11 @@ type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   page: TPageInstance;
   storeType: EPageStoreType;
+  isSyncing: boolean;
 };
 
 export const PageEditorToolbarRoot: React.FC<Props> = observer((props) => {
-  const { editorReady, editorRef, page, storeType } = props;
+  const { editorReady, editorRef, page, storeType, isSyncing } = props;
   // derived values
   const { isContentEditable } = page;
   // page filters
@@ -45,11 +46,16 @@ export const PageEditorToolbarRoot: React.FC<Props> = observer((props) => {
               <PageToolbar editorRef={editorRef?.current} />
             )}
           </div>
-          <PageExtraOptions editorRef={resolvedEditorRef} page={page} storeType={storeType} />
+          <PageExtraOptions editorRef={resolvedEditorRef} page={page} storeType={storeType} isSyncing={isSyncing} />
         </div>
       </div>
       <div className="md:hidden">
-        <PageEditorMobileHeaderRoot editorRef={resolvedEditorRef} page={page} storeType={storeType} />
+        <PageEditorMobileHeaderRoot
+          editorRef={resolvedEditorRef}
+          page={page}
+          storeType={storeType}
+          isSyncing={isSyncing}
+        />
       </div>
     </div>
   );

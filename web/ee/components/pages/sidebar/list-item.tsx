@@ -47,6 +47,7 @@ export const WikiPageSidebarListItem: React.FC<Props> = observer((props) => {
   const {
     fetchSubPages,
     is_description_empty,
+    description_html,
     getRedirectionLink,
     sub_pages_count,
     archived_at,
@@ -58,6 +59,10 @@ export const WikiPageSidebarListItem: React.FC<Props> = observer((props) => {
     () => !isNestedPagesEnabled(workspaceSlug?.toString()) && page?.parent_id,
     [isNestedPagesEnabled, workspaceSlug, page?.parent_id]
   );
+  const isDescriptionEmpty = useMemo(
+    () => is_description_empty || description_html === "<p></p>",
+    [is_description_empty, description_html]
+  );
   // Function to determine the appropriate logo to display
   const pageEmbedLogo = useMemo(() => {
     if (!canCurrentUserAccessPage || isNestedPagesDisabledForPage) {
@@ -66,11 +71,11 @@ export const WikiPageSidebarListItem: React.FC<Props> = observer((props) => {
     if (logo_props?.in_use) {
       return <Logo logo={logo_props} size={14} type="lucide" />;
     }
-    if (!is_description_empty) {
+    if (!isDescriptionEmpty) {
       return <FileText className="size-3.5" />;
     }
     return <EmptyPageIcon className="size-3.5" />;
-  }, [logo_props, is_description_empty, canCurrentUserAccessPage, isNestedPagesDisabledForPage]);
+  }, [logo_props, isDescriptionEmpty, canCurrentUserAccessPage, isNestedPagesDisabledForPage]);
 
   const isPageActive = pathname === `/${workspaceSlug}/pages/${page?.id}/`;
   const pageLink = getRedirectionLink?.() ?? "";

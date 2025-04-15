@@ -28,7 +28,7 @@ export const useRealtimeEvents = (props: {
 
     const collaboratorPayload: EventToPayloadMap["collaborators-updated"] = {
       users: currentUsers,
-      user_id: editor?.storage?.collaborationCursor?.clientID,
+      user_id: editor?.storage?.collaborationCursor?.clientId,
     };
 
     updatePageProperties(id, "collaborators-updated", collaboratorPayload, false);

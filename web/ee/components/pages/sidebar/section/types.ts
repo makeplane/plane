@@ -47,8 +47,3 @@ export interface DragAndDropHookReturn {
   isDropping: boolean;
 }
 
-// Return type for pages hook
-export interface SectionPagesHookReturn {
-  pageIds: string[];
-  isLoading: boolean;
-} 

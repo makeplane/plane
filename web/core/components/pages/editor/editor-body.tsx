@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 // document-editor
 import {
@@ -17,7 +17,7 @@ import { ERowVariant, Row } from "@plane/ui";
 // components
 import { HSL, cn, hslToHex } from "@plane/utils";
 import { EditorMentionsRoot } from "@/components/editor";
-import { PageContentBrowser, PageContentLoader } from "@/components/pages";
+import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
 import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
 // hooks
@@ -27,6 +27,7 @@ import { usePageFilters } from "@/hooks/use-page-filters";
 import { type TCustomEventHandlers, useRealtimePageEvents } from "@/hooks/use-realtime-page-events";
 // plane web components
 import { EditorAIMenu } from "@/plane-web/components/pages";
+import { MultipleDeletePagesModal } from "@/plane-web/components/pages/modals/multiple-page-delete-modal";
 // plane web store
 import { EPageStoreType } from "@/plane-web/hooks/store";
 // plane web hooks
@@ -34,8 +35,6 @@ import { useEditorEmbeds } from "@/plane-web/hooks/use-editor-embed";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
-// local imports
-import { MultipleDeletePagesModal } from "../../../../ee/components/pages/modals/multiple-page-delete-modal";
 import { PageEditorHeaderRoot } from "./header";
 
 export type TEditorBodyConfig = {
@@ -60,6 +59,7 @@ type Props = {
   workspaceSlug: string;
   storeType: EPageStoreType;
   customRealtimeEventHandlers?: TCustomEventHandlers;
+  setIsSyncing: Dispatch<SetStateAction<boolean>>;
 };
 
 export const generateRandomColor = (input: string): HSL => {
@@ -96,6 +96,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     webhookConnectionParams,
     workspaceSlug,
     customRealtimeEventHandlers,
+    setIsSyncing,
   } = props;
   // store hooks
   const { data: currentUser } = useUser();
@@ -106,6 +107,12 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     pages: [page],
   });
   const { getUserDetails } = useMember();
+
+  const [isVisible, setIsVisible] = useState(false);
+  // Simple animation effect that triggers on mount
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
 
   // derived values
   const { id: pageId, isContentEditable } = page;
@@ -169,12 +176,17 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     handleConnectionStatus(true);
   }, [handleConnectionStatus]);
 
+  const handleServerSyncing = useCallback(() => {
+    setIsSyncing(false);
+  }, [setIsSyncing]);
+
   const serverHandler: TServerHandler = useMemo(
     () => ({
       onConnect: handleServerConnect,
       onServerError: handleServerError,
+      onServerSynced: handleServerSyncing,
     }),
-    [handleServerConnect, handleServerError]
+    [handleServerConnect, handleServerError, handleServerSyncing]
   );
 
   const realtimeConfig: TRealtimeConfig | undefined = useMemo(() => {
@@ -217,7 +229,12 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   return (
     <Row
-      className="relative size-full flex flex-col overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md duration-200"
+      className={`relative size-full flex flex-col overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md ${
+        isVisible ? "opacity-100" : "opacity-0"
+      }`}
+      style={{
+        transition: "opacity 0.25s var(--ease-out-cubic)",
+      }}
       variant={ERowVariant.HUGGING}
     >
       <div id="page-content-container" className="relative w-full flex-shrink-0">
@@ -239,34 +256,49 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             <PageEditorHeaderRoot page={page} />
           </div>
         </div>
-        <CollaborativeDocumentEditorWithRef
-          editable={isContentEditable}
-          id={pageId}
-          fileHandler={config.fileHandler}
-          handleEditorReady={handleEditorReady}
-          ref={editorRef}
-          containerClassName="h-full p-0 pb-64"
-          displayConfig={displayConfig}
-          mentionHandler={{
-            searchCallback: async (query) => {
-              const res = await fetchMentions(query);
-              if (!res) throw new Error("Failed in fetching mentions");
-              return res;
-            },
-            renderComponent: (props) => <EditorMentionsRoot {...props} />,
-            getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
+        <div
+          className={`transition-all ${isVisible ? "opacity-100" : "opacity-0"}`}
+          style={{
+            transition: "opacity 0.25s var(--ease-out-cubic)",
+            transitionDelay: "0.1s",
           }}
-          updatePageProperties={updatePageProperties}
-          embedHandler={embedProps}
-          pageRestorationInProgress={page.restoration.inProgress}
-          realtimeConfig={realtimeConfig}
-          serverHandler={serverHandler}
-          user={userConfig}
-          disabledExtensions={disabledExtensions}
-          aiHandler={{
-            menu: getAIMenu,
-          }}
-        />
+        >
+          <div
+            style={{
+              animation: isVisible ? "editorFadeIn 0.3s var(--ease-out-cubic) forwards" : "none",
+              animationDelay: "0.1s",
+            }}
+          >
+            <CollaborativeDocumentEditorWithRef
+              editable={isContentEditable}
+              id={pageId}
+              fileHandler={config.fileHandler}
+              handleEditorReady={handleEditorReady}
+              ref={editorRef}
+              containerClassName="h-full p-0 pb-64"
+              displayConfig={displayConfig}
+              mentionHandler={{
+                searchCallback: async (query) => {
+                  const res = await fetchMentions(query);
+                  if (!res) throw new Error("Failed in fetching mentions");
+                  return res;
+                },
+                renderComponent: (props) => <EditorMentionsRoot {...props} />,
+                getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
+              }}
+              updatePageProperties={updatePageProperties}
+              embedHandler={embedProps}
+              pageRestorationInProgress={page.restoration.inProgress}
+              realtimeConfig={realtimeConfig}
+              serverHandler={serverHandler}
+              user={userConfig}
+              disabledExtensions={disabledExtensions}
+              aiHandler={{
+                menu: getAIMenu,
+              }}
+            />
+          </div>
+        </div>
       </div>
 
       <MultipleDeletePagesModal

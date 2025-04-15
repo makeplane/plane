@@ -54,8 +54,6 @@ export const PageEmbedCardRoot: React.FC<Props> = observer((props) => {
 
   // derived values
   const { logo_props, name, archived_at } = page ?? {};
-  console.log("name", name);
-  console.log("archived_at", archived_at);
 
   const [displayState, setDisplayState] = useState<PageDisplayState>({
     text: getPageName(name),
