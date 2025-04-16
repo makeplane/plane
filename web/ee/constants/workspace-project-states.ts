@@ -11,31 +11,38 @@ export const WORKSPACE_PROJECT_STATE_GROUPS: {
   [key in TProjectStateGroupKey]: {
     title: string;
     color: string;
+    background: string;
   };
 } = {
   [EProjectStateGroup.DRAFT]: {
     title: "Draft",
     color: "#60646C",
+    background: "#F3F4F7",
   },
   [EProjectStateGroup.PLANNING]: {
     title: "Planning",
     color: "#60646C",
+    background: "#C7CBD2",
   },
   [EProjectStateGroup.EXECUTION]: {
     title: "Execution",
     color: "#F59E0B",
+    background: "#FFF3D8",
   },
   [EProjectStateGroup.MONITORING]: {
     title: "Monitoring",
     color: "#00838F",
+    background: "#D9E4FF",
   },
   [EProjectStateGroup.COMPLETED]: {
     title: "Completed",
     color: "#46A758",
+    background: "#D0EDDB",
   },
   [EProjectStateGroup.CANCELLED]: {
     title: "Cancelled",
     color: "#9AA4BC",
+    background: "#FAD7D5",
   },
 };
 
