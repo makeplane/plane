@@ -221,6 +221,8 @@ export const GITHUB_REPOSITORY_INFO = (workspaceSlug: string, repoName: string) 
 // slack-project-integration
 export const SLACK_CHANNEL_INFO = (workspaceSlug: string, projectId: string) =>
   `SLACK_CHANNEL_INFO_${workspaceSlug.toString().toUpperCase()}_${projectId.toUpperCase()}`;
+export const SLACK_USER_CONNECTION_STATUS = (workspaceSlug: string) =>
+  `SLACK_USER_CONNECTION_STATUS_${workspaceSlug.toString().toUpperCase()}`;
 
 // Pages
 export const RECENT_PAGES_LIST = (projectId: string) => `RECENT_PAGES_LIST_${projectId.toUpperCase()}`;
@@ -273,3 +275,7 @@ export const COMMENT_REACTION_LIST = (workspaceSlug: string, projectId: string, 
 export const API_TOKENS_LIST = (workspaceSlug: string) => `API_TOKENS_LIST_${workspaceSlug.toUpperCase()}`;
 export const API_TOKEN_DETAILS = (workspaceSlug: string, tokenId: string) =>
   `API_TOKEN_DETAILS_${workspaceSlug.toUpperCase()}_${tokenId.toUpperCase()}`;
+
+// notification settings
+export const NOTIFICATION_SETTINGS = (workspaceSlug: string) =>
+  `NOTIFICATION_SETTINGS_${workspaceSlug.toUpperCase()}`;
