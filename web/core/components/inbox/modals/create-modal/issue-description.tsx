@@ -21,7 +21,6 @@ import { useProjectInbox } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { FileService } from "@/services/file.service";
-import { useTranslation } from "@plane/i18n";
 const fileService = new FileService();
 
 type TInboxIssueDescription = {
@@ -49,7 +48,6 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
     onEnterKeyPress,
     onAssetUpload,
   } = props;
-  const { t } = useTranslation();
   // hooks
   const { loader } = useProjectInbox();
   const { isMobile } = usePlatformOS();
@@ -73,7 +71,7 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
       projectId={projectId}
       dragDropEnabled={false}
       onChange={(_description: object, description_html: string) => handleData("description_html", description_html)}
-      placeholder={t(getDescriptionPlaceholder)}
+      placeholder={getDescriptionPlaceholder}
       containerClassName={containerClassName}
       onEnterKeyPress={onEnterKeyPress}
       tabIndex={getIndex("description_html")}

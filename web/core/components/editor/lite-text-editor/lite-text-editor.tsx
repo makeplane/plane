@@ -30,6 +30,7 @@ interface LiteTextEditorWrapperProps extends Omit<ILiteTextEditor, "fileHandler"
 }
 
 export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
+  const { t } = useTranslation();
   const {
     containerClassName,
     workspaceSlug,
@@ -40,11 +41,11 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     showAccessSpecifier = false,
     showSubmitButton = true,
     isSubmitting = false,
-    placeholder = "Add comment...",
+    placeholder = t("Add comment..."),
     uploadFile,
     ...rest
   } = props;
-  const { t } = useTranslation();
+  
   // store hooks
   const { data: currentUser } = useUser();
   const {
@@ -85,7 +86,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           highlights: mentionHighlights,
           suggestions: mentionSuggestions,
         }}
-        placeholder={t(placeholder)}
+        placeholder= {placeholder}
         containerClassName={cn(containerClassName, "relative")}
         {...rest}
       />
