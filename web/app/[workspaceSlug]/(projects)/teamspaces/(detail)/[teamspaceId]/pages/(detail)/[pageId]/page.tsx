@@ -62,8 +62,7 @@ const TeamspacePageDetailsPage = observer(() => {
   // fetch page details
   const { error: pageDetailsError } = useSWR(
     workspaceSlug && teamspaceId && pageId ? `TEAM_PAGE_DETAILS_${pageId}` : null,
-    // @ts-expect-error store fixes
-    workspaceSlug && teamspaceId && pageId ? () => fetchPageDetails(workspaceSlug, teamspaceId, pageId) : null,
+    workspaceSlug && teamspaceId && pageId ? () => fetchPageDetails(teamspaceId, pageId) : null,
     {
       revalidateIfStale: true,
       revalidateOnFocus: true,
