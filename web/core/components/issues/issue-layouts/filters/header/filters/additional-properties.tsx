@@ -37,7 +37,7 @@ export const FilterAdditionalProperties: React.FC<Props> = observer((props) => {
   const fetchOptions = async (query = '', page = 1) => {
     try {
       const response = await workspaceService.getIssueAdditionalProperties(workspaceSlug.toString(), additionalPropertyKey, query, page);
-      setOptions((options) => ({
+      setOptions((options: any) => ({
         ...response,
         query,
         data: page > 1 ? [...(options?.data || []), ...(response?.data || [])] : (response?.data || []),
@@ -73,10 +73,10 @@ export const FilterAdditionalProperties: React.FC<Props> = observer((props) => {
       />
       {previewEnabled && (
         <div>
-          <FilterSearch propertyKey={additionalPropertyKey} handleSectionSearch={handleSectionSearch} />
+          <FilterSearch propertyKey={additionalPropertyKey ?? ""} handleSectionSearch={handleSectionSearch} />
           {filteredOptions.length > 0 ? (
             <>
-              {filteredOptions.map((option, index) => (
+              {filteredOptions.map((option:any, index:any) => (
                 <FilterOption
                   key={index}
                   isChecked={appliedFilters?.includes(option) ?? false}
@@ -89,7 +89,7 @@ export const FilterAdditionalProperties: React.FC<Props> = observer((props) => {
                   onClick={() => fetchNextPage()}
                   className="ml-8 text-xs font-medium text-custom-primary-100 cursor-pointer"
                 >
-                  {t("view_more")}
+                  
                 </button>
               )}
             </>
