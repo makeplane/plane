@@ -283,6 +283,7 @@ CELERY_IMPORTS = (
     "plane.bgtasks.silo_credentials_update_task",
     # ee tasks
     "plane.ee.bgtasks.entity_issue_state_progress_task",
+    "plane.ee.bgtasks.app_bot_task",
 )
 
 # Application Envs

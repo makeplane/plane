@@ -114,7 +114,9 @@ class OAuthApplicationEndpoint(BaseAPIView):
                 # Annotate with ownership information
                 applications = applications.annotate(
                     is_owned=Case(
-                        When(application_owners__workspace__slug=slug, then=Value(True)),
+                        When(
+                            application_owners__workspace__slug=slug, then=Value(True)
+                        ),
                         default=Value(False),
                         output_field=BooleanField(),
                     )
@@ -124,7 +126,9 @@ class OAuthApplicationEndpoint(BaseAPIView):
                 applications = applications.annotate(
                     is_installed=Exists(
                         WorkspaceAppInstallation.objects.filter(
-                            application_id=OuterRef("id"), workspace__slug=slug
+                            application_id=OuterRef("id"),
+                            workspace__slug=slug,
+                            status=WorkspaceAppInstallation.Status.INSTALLED,
                         )
                     )
                 )
@@ -142,7 +146,9 @@ class OAuthApplicationEndpoint(BaseAPIView):
                 workspace__slug=slug
             ).exists()
             application.is_installed = WorkspaceAppInstallation.objects.filter(
-                application=application, workspace__slug=slug
+                application=application,
+                workspace__slug=slug,
+                status=WorkspaceAppInstallation.Status.INSTALLED,
             ).exists()
 
             serialised_application = ApplicationSerializer(application)
@@ -224,8 +230,7 @@ class OAuthApplicationInstallEndpoint(BaseAPIView):
 
         # create or update workspace installation
         workspace_application = WorkspaceAppInstallation.objects.filter(
-            workspace=workspace,
-            application=pk,
+            workspace=workspace, application=pk
         ).first()
         if not workspace_application:
             workspace_application_serialiser = WorkspaceAppInstallationSerializer(
@@ -294,11 +299,9 @@ class OAuthApplicationPublishEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class OAuthApplicationClientIdEndpoint(BaseAPIView):
-    
     def get(self, request, client_id):
         application = Application.objects.filter(
-            client_id=client_id,
-            deleted_at__isnull=True,
+            client_id=client_id, deleted_at__isnull=True
         ).first()
         if not application:
             return Response(

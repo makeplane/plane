@@ -8,7 +8,7 @@ from plane.db.models.project import Project, ProjectMember
 
 
 @shared_task
-def add_app_bots_to_project(project_id):
+def add_app_bots_to_project(project_id, user_id):
     """
     Background task to add app bot users to a project.
     This ensures any workspace app bot is automatically added as a project member.
@@ -38,7 +38,9 @@ def add_app_bots_to_project(project_id):
                         project=project,
                         workspace=project.workspace,
                         member=installation.app_bot,
-                        role=ROLE.MEMBER.value
+                        role=ROLE.MEMBER.value,
+                        created_by_id=user_id,
+                        updated_by_id=user_id,
                     )
                 )
         

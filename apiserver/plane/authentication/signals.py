@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from plane.ee.bgtasks.app_bot_task import add_app_bots_to_project
 from plane.db.models.project import Project
 
+from crum import get_current_user
 
 @receiver(post_save, sender=Project)
 def trigger_app_bots_to_project(sender, instance, created, **kwargs):
@@ -15,4 +16,5 @@ def trigger_app_bots_to_project(sender, instance, created, **kwargs):
     """
     if created:
         # Trigger the background task with the project id
-        add_app_bots_to_project.delay(str(instance.id))
+        user = get_current_user()
+        add_app_bots_to_project.delay(str(instance.id), user.id)
