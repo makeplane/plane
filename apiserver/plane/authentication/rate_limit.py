@@ -1,12 +1,11 @@
 # Third party imports
-from typing import Optional, Tuple, Union, Dict, Any, Callable
+from typing import Optional, Any, Callable
 from rest_framework.throttling import AnonRateThrottle, SimpleRateThrottle
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.request import Request
-from django.http import JsonResponse, HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse
 from oauth2_provider.contrib.rest_framework import OAuth2Authentication
-from django_ratelimit.exceptions import Ratelimited
 from django_ratelimit.core import get_usage
 
 # Module imports
@@ -61,10 +60,27 @@ class OAuthTokenRateThrottle(SimpleRateThrottle):
         """
         allowed = super().allow_request(request, view)
 
-        if allowed:
-            request.META["X-RateLimit-Limit"] = self.rate.num_requests
-            request.META["X-RateLimit-Remaining"] = self.get_rate()
-            request.META["X-RateLimit-Reset"] = self.wait()
+        if allowed and self.key is not None:
+            now = self.timer()
+            # Calculate the remaining limit and reset time
+            history = self.cache.get(self.key, [])
+
+            # Remove old histories
+            while history and history[-1] <= now - self.duration:
+                history.pop()
+
+            # Calculate the requests
+            num_requests = len(history)
+
+            # Check available requests
+            available = self.num_requests - num_requests
+
+            # Unix timestamp for when the rate limit will reset
+            reset_time = int(now + self.duration)
+
+            # Add headers
+            request.META["X-RateLimit-Remaining"] = max(0, available)
+            request.META["X-RateLimit-Reset"] = reset_time
 
         return allowed
 

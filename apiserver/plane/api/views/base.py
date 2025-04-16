@@ -47,7 +47,8 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
     authentication_classes = [APIKeyAuthentication, OAuth2Authentication]
     permission_classes = [
         IsAuthenticated,
-        IsAuthenticatedOrTokenHasScope
+        IsAuthenticatedOrTokenHasScope,
+        OauthApplicationWorkspacePermission
     ]
     required_scopes = ["read", "write"]
 
@@ -139,10 +140,6 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
         ratelimit_reset = request.META.get("X-RateLimit-Reset")
         if ratelimit_reset is not None:
             response["X-RateLimit-Reset"] = ratelimit_reset
-        
-        ratelimit_limit = request.META.get("X-RateLimit-Limit")
-        if ratelimit_limit is not None:
-            response["X-RateLimit-Limit"] = ratelimit_limit
 
         return response
 

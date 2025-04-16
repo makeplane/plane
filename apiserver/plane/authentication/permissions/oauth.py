@@ -1,16 +1,20 @@
+from typing import Any, Optional
+
+from django.views import View
 from rest_framework.permissions import BasePermission
-from oauth2_provider.contrib.rest_framework import (
-    OAuth2Authentication,
-)
+from rest_framework.request import Request
+from oauth2_provider.contrib.rest_framework import OAuth2Authentication
+
 from plane.authentication.models.oauth import WorkspaceAppInstallation
 
 
 class OauthApplicationWorkspacePermission(BasePermission):
     """
     Checks if the OAuth application is installed in the workspace.
+    If workspace_slug is not provided, OAuth2 authentication is sufficient.
     """
 
-    def has_permission(self, request, view):
+    def has_permission(self, request: Request, view: View) -> bool:
         is_authenticated = bool(request.user and request.user.is_authenticated)
 
         oauth2authenticated = False
@@ -19,18 +23,24 @@ class OauthApplicationWorkspacePermission(BasePermission):
                 request.successful_authenticator, OAuth2Authentication
             )
 
-        application_has_workspace_access = False
-        if oauth2authenticated:
-            application = request.client
-            workspace_slug = view.kwargs.get("workspace_slug")
-            if application and workspace_slug:
-                application_installation = WorkspaceAppInstallation.objects.filter(
-                    application=application,
-                    workspace__slug=workspace_slug,
-                    deleted_at__isnull=True
-                ).first()
+        # If not OAuth2 authenticated, allow only if user is authenticated
+        if not oauth2authenticated:
+            return is_authenticated
 
-                application_has_workspace_access = bool(application_installation)
+        # If OAuth2 authenticated but no workspace_slug, allow access
+        workspace_slug: Optional[str] = view.kwargs.get("workspace_slug")
+        if not workspace_slug:
+            return True
 
-        return (is_authenticated and not oauth2authenticated) \
-                or application_has_workspace_access
+        # Check if application has access to the specific workspace
+        application = request.client
+        if application:
+            application_installation = WorkspaceAppInstallation.objects.filter(
+                application=application,
+                workspace__slug=workspace_slug,
+                deleted_at__isnull=True
+            ).first()
+
+            return bool(application_installation)
+
+        return False
