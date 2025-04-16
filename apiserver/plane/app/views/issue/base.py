@@ -1246,6 +1246,7 @@ class SearchAPIEndpoint(BaseAPIView):
 
         values = Issue.objects.filter(
             Q(workspace__slug=slug) & Q(**filter_criteria)
+
         ).values_list(field, flat=True)
 
         unique_values = list(set(filter(None, values)))  # Remove duplicates and nulls
