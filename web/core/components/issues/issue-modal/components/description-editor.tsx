@@ -26,7 +26,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { AIService } from "@/services/ai.service";
 import { FileService } from "@/services/file.service";
-import { useTranslation } from "@plane/i18n";
 
 type TIssueDescriptionEditorProps = {
   control: Control<TIssue>;
@@ -70,7 +69,6 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
     onAssetUpload,
     onClose,
   } = props;
-  const { t } = useTranslation();
   // states
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
   // store hooks
@@ -189,7 +187,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                 onEnterKeyPress={() => submitBtnRef?.current?.click()}
                 ref={editorRef}
                 tabIndex={getIndex("description_html")}
-                placeholder={t(getDescriptionPlaceholder)}
+                placeholder={getDescriptionPlaceholder}
                 containerClassName="pt-3 min-h-[120px]"
                 uploadFile={async (file) => {
                   try {
