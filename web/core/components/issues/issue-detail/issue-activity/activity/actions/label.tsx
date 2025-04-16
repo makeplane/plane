@@ -5,11 +5,13 @@ import { Tag } from "lucide-react";
 import { useIssueDetail, useLabel } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent, IssueLink, LabelActivityChip } from "./";
+import { useTranslation } from "@plane/i18n";
 
 type TIssueLabelActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
 export const IssueLabelActivity: FC<TIssueLabelActivity> = observer((props) => {
   const { activityId, showIssue = true, ends } = props;
+  const { t } = useTranslation();
   // hooks
   const {
     activity: { getActivityById },
