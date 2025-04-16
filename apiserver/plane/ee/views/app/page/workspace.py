@@ -226,7 +226,6 @@ class WorkspacePageViewSet(BaseViewSet):
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def access(self, request, slug, pk):
-        action = request.data.get("action", "current-page")
         access = request.data.get("access", 0)
         page = Page.objects.filter(pk=pk, workspace__slug=slug).first()
 
@@ -248,7 +247,6 @@ class WorkspacePageViewSet(BaseViewSet):
             page_id=page.id,
             action="made-public" if access == 0 else "made-private",
             slug=slug,
-            sub_pages=True if action == "all" else False,
             user_id=request.user.id,
         )
         return Response(status=status.HTTP_204_NO_CONTENT)

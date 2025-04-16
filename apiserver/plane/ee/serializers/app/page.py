@@ -148,7 +148,11 @@ class WorkspacePageDetailSerializer(BaseSerializer):
     )
 
     class Meta(WorkspacePageSerializer.Meta):
-        fields = WorkspacePageSerializer.Meta.fields + ["description_html", "anchor"]
+        fields = WorkspacePageSerializer.Meta.fields + [
+            "description_html",
+            "is_description_empty",
+            "anchor",
+        ]
 
 
 class WorkspacePageVersionSerializer(BaseSerializer):
