@@ -1,10 +1,10 @@
 import { Database } from "@hocuspocus/extension-database";
 import { catchAsync } from "@/core/helpers/error-handling/error-handler";
 import { handleError } from "@/core/helpers/error-handling/error-factory";
-import { getDocumentHandler } from "../handlers/page-handlers";
 import { type HocusPocusServerContext, type TDocumentTypes } from "@/core/types/common";
 import { storePayload } from "@hocuspocus/server";
 import { extractTextFromHTML } from "./title-update/title-utils";
+import { getDocumentHandler } from "../handlers/page-handlers";
 
 export const createDatabaseExtension = () => {
   return new Database({
@@ -109,18 +109,13 @@ const handleStore = async ({
         });
       }
 
-      try {
-        const documentHandler = getDocumentHandler(documentType);
-        await documentHandler.store({
-          context: context as HocusPocusServerContext,
-          pageId,
-          state,
-          title,
-        });
-      } catch (error) {
-        console.error("Error in document handler store operation:", error);
-        throw error;
-      }
+      const documentHandler = getDocumentHandler(documentType);
+      await documentHandler.store({
+        context: context as HocusPocusServerContext,
+        pageId,
+        state,
+        title,
+      });
     },
     {
       params: {

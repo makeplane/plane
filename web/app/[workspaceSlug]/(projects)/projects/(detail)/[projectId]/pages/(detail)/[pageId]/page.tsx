@@ -93,7 +93,7 @@ const PageDetailsPage = observer(() => {
           versionId
         );
       },
-      getRedirectionLink: (pageId: string) => `/${workspaceSlug}/projects/${projectId}/pages/${pageId}`,
+      getRedirectionLink: (pageId) => `/${workspaceSlug}/projects/${projectId}/pages/${pageId}`,
       updateDescription: updateDescription ?? (async () => {}),
     }),
     [createPage, fetchEntityCallback, id, projectId, updateDescription, workspaceSlug]

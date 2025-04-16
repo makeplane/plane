@@ -18,8 +18,16 @@ type Props = {
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    pageEmbedComponent: {
-      insertPageEmbed: (params: { position?: number }) => ReturnType;
+    "page-embed-component": {
+      insertPageEmbed: ({
+        pageId,
+        workspaceSlug,
+        position,
+      }: {
+        pageId: string;
+        workspaceSlug: string;
+        position?: number;
+      }) => ReturnType;
     };
   }
 }
@@ -32,8 +40,8 @@ export const PageEmbedExtension = (props: Props) =>
     addCommands() {
       return {
         insertPageEmbed:
-          ({ position }) =>
-          ({ commands, chain, editor, tr, dispatch }) => {
+          ({ pageId, workspaceSlug, position }) =>
+          ({ commands, chain, editor, dispatch }) => {
             const transactionId = uuidv4();
             let success = false;
 
@@ -43,13 +51,15 @@ export const PageEmbedExtension = (props: Props) =>
                 type: this.name,
                 attrs: {
                   id: transactionId,
+                  entity_identifier: pageId,
+                  workspace_identifier: workspaceSlug,
                   entity_name: "sub_page",
                 } as PageEmbedExtensionAttributes,
               });
 
               if (success && dispatch && editor) {
                 // Find the inserted node to determine its end position
-                const nodeEndPos = position + editor.state?.doc.nodeAt(position)?.nodeSize || 0;
+                const nodeEndPos = position + (editor.state?.doc.nodeAt(position)?.nodeSize || 0);
 
                 // Check if there's already a paragraph after this node
                 const nodeAfter = editor.state.doc.nodeAt(nodeEndPos);
@@ -73,6 +83,8 @@ export const PageEmbedExtension = (props: Props) =>
                 type: this.name,
                 attrs: {
                   id: transactionId,
+                  entity_identifier: pageId,
+                  workspace_identifier: workspaceSlug,
                   entity_name: "sub_page",
                 } as PageEmbedExtensionAttributes,
               });

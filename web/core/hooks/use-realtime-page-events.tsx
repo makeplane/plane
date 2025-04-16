@@ -155,10 +155,8 @@ export const useRealtimePageEvents = ({
         });
       },
       deleted: ({ pageIds, data }) => {
-        console.log("pageIds", pageIds);
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
-          console.log("pageItem", pageItem);
           if (pageItem) {
             removePage({ pageId, shouldSync: false });
             if (page.id === pageId && data?.user_id !== currentUser?.id) {
@@ -167,15 +165,18 @@ export const useRealtimePageEvents = ({
                 title: "Page deleted",
                 message: `Page deleted${getUserDisplayText(data.user_id)}`,
               });
-              router.back();
-            } else if (page.id === pageId) router.back();
+              router.push(handlers.getRedirectionLink());
+            } else if (page.id === pageId) {
+              console.log("aaya", handlers.getRedirectionLink());
+              router.push(handlers.getRedirectionLink());
+            }
           }
         });
       },
       title_updated: ({ pageIds, data }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
-          if (pageItem && data.title) pageItem.updateTitle(data.title);
+          if (pageItem && data.title != null) pageItem.updateTitle(data.title);
         });
       },
       moved_internally: ({ pageIds, data }) => {
@@ -232,7 +233,6 @@ export const useRealtimePageEvents = ({
           let descriptionHTML: string | null = null;
           if (page?.restoration.versionId) {
             descriptionHTML = page.restoration.descriptionHTML;
-            console.log(descriptionHTML);
             if (!editorRef.current) {
               page?.setVersionToBeRestored(null, null);
               page?.setRestorationStatus(false);
@@ -273,10 +273,10 @@ export const useRealtimePageEvents = ({
                   title: "Page deleted",
                   message: `Page deleted${getUserDisplayText(data.user_id)}`,
                 });
-                router.back();
+                router.push(handlers.getRedirectionLink());
               }
             });
-          else if (page.id === pageId) router.back();
+          else if (page.id === pageId) router.push(handlers.getRedirectionLink());
         });
       },
       duplicated: async ({ pageIds, data }) => {

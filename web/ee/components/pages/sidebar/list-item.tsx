@@ -30,6 +30,7 @@ export const WikiPageSidebarListItem: React.FC<Props> = observer((props) => {
   const { handleToggleExpanded, isDragging, isExpanded, paddingLeft, pageId } = props;
   // states
   const [isFetchingSubPages, setIsFetchingSubPages] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
   // navigation
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
@@ -83,20 +84,21 @@ export const WikiPageSidebarListItem: React.FC<Props> = observer((props) => {
 
   const handleSubPagesToggle = async () => {
     handleToggleExpanded();
-    setIsFetchingSubPages(true);
-    try {
-      if (!isExpanded) {
+
+    // Only fetch if expanding
+    if (!isExpanded) {
+      setIsFetchingSubPages(true);
+      try {
         await fetchSubPages?.();
+      } catch (error) {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Failed to fetch sub-pages. Please try again.",
+        });
+      } finally {
+        setIsFetchingSubPages(false);
       }
-    } catch {
-      handleToggleExpanded();
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Failed to fetch sub-pages. Please try again.",
-      });
-    } finally {
-      setIsFetchingSubPages(false);
     }
   };
 
@@ -118,6 +120,8 @@ export const WikiPageSidebarListItem: React.FC<Props> = observer((props) => {
           router.push(pageLink);
         }}
         target="_self"
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
       >
         <div
           className="flex items-center gap-1 truncate"
@@ -126,15 +130,7 @@ export const WikiPageSidebarListItem: React.FC<Props> = observer((props) => {
           }}
         >
           <div className="size-4 flex-shrink-0 grid place-items-center">
-            <span
-              className={cn("grid place-items-center", {
-                "group-hover:hidden": shouldShowSubPagesButton,
-              })}
-            >
-              {pageEmbedLogo}
-            </span>
-
-            {shouldShowSubPagesButton && (
+            {shouldShowSubPagesButton && isHovering ? (
               <button
                 type="button"
                 onClick={(e) => {
@@ -142,9 +138,7 @@ export const WikiPageSidebarListItem: React.FC<Props> = observer((props) => {
                   e.preventDefault();
                   handleSubPagesToggle();
                 }}
-                className={cn(
-                  "rounded hover:bg-custom-background-80 hidden group-hover:grid place-items-center transition-opacity"
-                )}
+                className="rounded hover:bg-custom-background-80 grid place-items-center"
                 data-prevent-NProgress
               >
                 {isFetchingSubPages ? (
@@ -158,6 +152,8 @@ export const WikiPageSidebarListItem: React.FC<Props> = observer((props) => {
                   />
                 )}
               </button>
+            ) : (
+              <span className="grid place-items-center">{pageEmbedLogo}</span>
             )}
           </div>
           {!isNestedPagesDisabledForPage ? (

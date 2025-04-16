@@ -1,5 +1,5 @@
 import { Extensions } from "@tiptap/core";
-import React from "react";
+import React, { useEffect, useState } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // components
@@ -63,7 +63,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   }
 
   // use document editor
-  const { editor, hasServerConnectionFailed, hasServerSynced, titleEditor, isContentInIndexedDb } =
+  const { editor, hasServerConnectionFailed, hasServerSynced, titleEditor, isContentInIndexedDb, isIndexedDbSynced } =
     useCollaborativeEditor({
       disabledExtensions,
       editable,
@@ -96,8 +96,15 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     "max-w-[1152px]": displayConfig.wideLayout,
   });
 
-  if ((!hasServerSynced && !hasServerConnectionFailed && !isContentInIndexedDb) || pageRestorationInProgress)
+  // Show minimal loading state during initial IndexedDB sync
+  if (!isIndexedDbSynced) {
+    return null;
+  }
+
+  // Show full loading state for more intensive operations
+  if ((!hasServerSynced && !hasServerConnectionFailed && !isContentInIndexedDb) || pageRestorationInProgress) {
     return <DocumentContentLoader className={blockWidthClassName} />;
+  }
 
   return (
     <PageRenderer

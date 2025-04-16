@@ -72,9 +72,16 @@ const slashCommandRegistry = [
         searchTerms: ["page", "link", "embed", "sub-page"],
         icon: <FileText className="size-3.5" />,
         command: async ({ editor, range }) => {
-          // const res = await createCallback();
-          // if (!res) return;
-          insertPageEmbed({}, editor, range);
+          const res = await createCallback();
+          if (!res) return;
+          insertPageEmbed(
+            {
+              pageId: res.pageId,
+              workspaceSlug: res.workspaceSlug,
+            },
+            editor,
+            range
+          );
         },
         section: "general",
         pushAfter: "issue-embed",

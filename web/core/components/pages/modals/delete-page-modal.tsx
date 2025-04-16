@@ -8,6 +8,7 @@ import { PAGE_DELETED } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
+import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // plane web hooks
@@ -25,6 +26,7 @@ type TConfirmPageDeletionProps = {
 
 export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((props) => {
   const { isOpen, onClose, page, storeType, editorRef } = props;
+  const { workspaceSlug } = useParams();
   // states
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks
@@ -66,7 +68,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
         });
 
         if (routePageId) {
-          router.back();
+          router.push(`/${workspaceSlug}/pages`);
         }
       })
       .catch(() => {
@@ -96,9 +98,9 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
       title="Delete page"
       content={
         <>
-          Are you sure you want to delete page-{" "}
-          <span className="break-words font-medium text-custom-text-100 break-all">{name}</span> ? The Page will be
-          deleted permanently. This action cannot be undone.
+          Are you sure you want to delete page -{" "}
+          <span className="break-words font-medium text-custom-text-100 break-all">{getPageName(name)}</span> ? The Page
+          will be deleted permanently. This action cannot be undone.
         </>
       }
     />

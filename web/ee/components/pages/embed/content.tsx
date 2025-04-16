@@ -164,7 +164,7 @@ export const PageEmbedContent: React.FC<Props> = observer((props) => {
     // Start the timer now that mouse has both entered and moved
     hoverTimerRef.current = setTimeout(() => {
       setShowPreview(true);
-    }, 500);
+    }, 600);
   }, [hasMouseMoved]);
 
   const handleMouseLeave = useCallback(() => {
@@ -186,6 +186,21 @@ export const PageEmbedContent: React.FC<Props> = observer((props) => {
     },
     []
   );
+
+  // Add keydown event listener only when preview is open
+  useEffect(() => {
+    const handleKeyDown = () => {
+      setShowPreview(false);
+    };
+
+    if (showPreview) {
+      document.addEventListener("keydown", handleKeyDown);
+
+      return () => {
+        document.removeEventListener("keydown", handleKeyDown);
+      };
+    }
+  }, [showPreview]);
 
   const onDragEnter = useCallback(
     (e: React.DragEvent) => {
@@ -278,43 +293,50 @@ export const PageEmbedContent: React.FC<Props> = observer((props) => {
   return (
     <>
       <div
-        ref={dropTargetRef}
-        role="button"
-        className={cn(
-          "relative page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors duration-150 flex items-center gap-1.5 !no-underline hover:bg-custom-background-90",
-          {
-            "bg-custom-background-80": draggedInside && isDroppable,
-          },
-          displayState.bgColor
-        )}
+        className="relative"
         onMouseEnter={handleMouseEnter}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        onDragEnter={onDragEnter}
-        onDragOver={onDragOver}
-        onDragLeave={onDragLeave}
-        onDrop={onDrop}
-        onClick={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          if (e.metaKey) {
-            window.open(redirectLink, "_blank");
-          } else {
-            if (redirectLink) {
-              router.push(redirectLink);
-            }
-          }
-        }}
       >
-        {pageEmbedLogo}
-        <div className="flex-shrink-0 flex items-center gap-3">
-          <p className="not-prose text-base font-medium break-words truncate underline decoration-custom-text-300 underline-offset-4">
-            {displayState.text}
-          </p>
-          {displayState?.badge}
+        <div
+          ref={dropTargetRef}
+          role="button"
+          data-drag-handle
+          className={cn(
+            "page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors duration-150 flex items-center gap-1.5 !no-underline hover:bg-custom-background-90",
+            {
+              "bg-custom-background-80": draggedInside && isDroppable,
+            },
+            displayState.bgColor
+          )}
+          onDragEnter={onDragEnter}
+          onDragOver={onDragOver}
+          onDragLeave={onDragLeave}
+          onDrop={onDrop}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            if (e.metaKey) {
+              window.open(redirectLink, "_blank");
+            } else {
+              if (redirectLink) {
+                router.push(redirectLink);
+              }
+            }
+          }}
+        >
+          {pageEmbedLogo}
+          <div className="flex-shrink-0 flex items-center gap-3">
+            <p className="not-prose text-base font-medium break-words truncate underline decoration-custom-text-300 underline-offset-4">
+              {displayState.text}
+            </p>
+            {displayState?.badge}
+          </div>
         </div>
+
         {shouldShowPreview && <PageEmbedPreview page={page} storeType={storeType} logo={pageEmbedLogo} />}
       </div>
+
       {displayState?.modalTitle && (
         <AlertModalCore
           variant="primary"

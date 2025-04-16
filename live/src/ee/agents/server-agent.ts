@@ -7,7 +7,7 @@ import { manualLogger } from "@/core/helpers/logger";
 import { TPage } from "@plane/types";
 import { HocusPocusServerContext } from "@/core/types/common";
 import { DocumentProcessor } from "@/plane-live/lib/document-processor";
-import { getDocumentHandler } from "../../core/handlers/page-handlers";
+import { getDocumentHandler } from "@/core/handlers/page-handlers";
 
 /**
  * Metadata for a stored connection

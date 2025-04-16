@@ -24,6 +24,8 @@ import { configureErrorHandlers } from "@/core/helpers/error-handling/error-hand
 import { handleError } from "@/core/helpers/error-handling/error-factory";
 import { getAllControllers } from "./core/controller-registry";
 import { initializeDocumentHandlers } from "@/plane-live/document-types";
+// Shutdown manager
+import { shutdownManager } from "@/core/shutdown-manager";
 
 // WebSocket router type definition
 interface WebSocketRouter extends Router {
@@ -146,18 +148,10 @@ export class Server {
         logger.info(`Plane Live server has started at port ${this.port}`);
       });
 
-      // Setup graceful shutdown
-      process.on("SIGTERM", () => this.shutdown("Received SIGTERM"));
-      process.on("SIGINT", () => this.shutdown("Received SIGINT"));
-
-      process.on("uncaughtException", (error) => {
-        logger.error("Uncaught exception:", error);
-      });
-
-      // Handle unhandled promise rejections - create AppError but DON'T terminate
-      process.on("unhandledRejection", (error) => {
-        logger.error("Unhandled rejection:", error);
-      });
+      if (this.httpServer) {
+        shutdownManager.register({ httpServer: this.httpServer });
+        shutdownManager.registerTerminationHandlers();
+      }
     } catch (error) {
       handleError(error, {
         errorType: "service-unavailable",
@@ -167,28 +161,5 @@ export class Server {
         throw: true,
       });
     }
-  }
-  private async shutdown(error: string): Promise<void> {
-    logger.info(`Initiating graceful shutdown: ${error}`);
-
-    if (!this.httpServer) {
-      logger.info("No HTTP server to close");
-      return;
-    }
-
-    // Close all existing connections
-    this.httpServer.closeAllConnections?.();
-
-    // Close the server
-    return new Promise<void>((resolve) => {
-      this.httpServer?.close((error: Error | undefined) => {
-        if (error) {
-          logger.error("Error closing HTTP server:", error);
-        } else {
-          logger.info("HTTP server closed successfully");
-        }
-        resolve();
-      });
-    });
   }
 }

@@ -2,10 +2,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import useSWR from "swr";
+import { useMemo } from "react";
 // plane imports
 import { EUserPermissionsLevel, EUserWorkspaceRoles, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TPage, TPageNavigationTabs } from "@plane/types";
+import { TPageNavigationTabs } from "@plane/types";
 // components
 import { DetailedEmptyState } from "@/components/empty-state";
 import { PageListBlockRoot, PageLoader } from "@/components/pages";
@@ -32,15 +33,11 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
   // store hooks
   const { toggleCreatePageModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
-  const workspacePageStore = usePageStore(EPageStoreType.WORKSPACE);
-  const { filters, updateFilters, fetchPagesByType } = workspacePageStore;
+  const pageStore = usePageStore(EPageStoreType.WORKSPACE);
+  const { filters, updateFilters, fetchPagesByType, publicPageIds, privatePageIds, archivedPageIds } = pageStore;
 
-  // Use SWR to fetch the data
-  const {
-    data: pages,
-    error,
-    isLoading,
-  } = useSWR(
+  // Use SWR to fetch the data but not for rendering
+  const { isLoading, data } = useSWR(
     workspaceSlug ? `WORKSPACE_PAGES_${workspaceSlug}_${pageType}_${filters.searchQuery || ""}` : null,
     workspaceSlug ? () => fetchPagesByType(pageType, filters.searchQuery) : null,
     {
@@ -49,11 +46,31 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
     }
   );
 
-  // derived values
-  const hasWorkspaceMemberLevelPermissions = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
+  // Get the appropriate page IDs based on page type
+  const pageIds = useMemo(() => {
+    // If there's a search query, use the search results
+    if (filters.searchQuery) {
+      console.log("data", data);
+      return (data?.map((page) => page.id).filter(Boolean) as string[]) || [];
+    }
+    switch (pageType) {
+      case "public":
+        return publicPageIds;
+      case "private":
+        return privatePageIds;
+      case "archived":
+        return archivedPageIds;
+      default:
+        return [];
+    }
+  }, [pageType, publicPageIds, privatePageIds, archivedPageIds, data, filters.searchQuery]);
+
+  // derived values - memoized for performance
+  const hasWorkspaceMemberLevelPermissions = useMemo(
+    () => allowPermissions([EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER], EUserPermissionsLevel.WORKSPACE),
+    [allowPermissions]
   );
+
   const generalPageResolvedPath = useResolvedAssetPath({
     basePath: "/empty-state/onboarding/pages",
   });
@@ -70,7 +87,7 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
   if (isLoading) return <PageLoader />;
 
   // if no pages exist in the active page type
-  if (!pages || pages.length === 0) {
+  if (!pageIds || pageIds.length === 0) {
     if (pageType === "public")
       return (
         <DetailedEmptyState
@@ -128,7 +145,7 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
   }
 
   // if no pages match the filter criteria
-  if (filters.searchQuery && pages.length === 0)
+  if (filters.searchQuery && pageIds.length === 0)
     return (
       <div className="h-full w-full grid place-items-center">
         <div className="text-center">
@@ -149,10 +166,10 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
 
   return (
     <div className="size-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
-      {pages.map((page: TPage) => (
+      {pageIds.map((pageId) => (
         <PageListBlockRoot
-          key={page.id}
-          pageId={page.id || ""}
+          key={pageId}
+          pageId={pageId}
           storeType={EPageStoreType.WORKSPACE}
           pageType={pageType}
           paddingLeft={0}

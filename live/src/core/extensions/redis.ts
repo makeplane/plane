@@ -1,34 +1,17 @@
-import { Redis as HocusPocusRedis } from "@hocuspocus/extension-redis";
-// core helpers and utilities
-import { logger } from "@plane/logger";
-import { RedisManager } from "@/core/lib/redis-manager";
+import { Redis } from "@hocuspocus/extension-redis";
+import { OutgoingMessage } from "@hocuspocus/server";
 
-/**
- * Sets up the Redis extension for HocusPocus using the RedisManager singleton
- * @returns Promise that resolves to a Redis extension array
- */
-export const setupRedisExtension = async () => {
-  const redisManager = RedisManager.getInstance();
+export class CustomHocuspocusRedisExtension extends Redis {
+  public broadcastToDocument(documentName: string, payload: any): Promise<number> {
+    const stringPayload = typeof payload === "string" ? payload : JSON.stringify(payload);
+    const message = new OutgoingMessage(documentName).writeBroadcastStateless(stringPayload);
 
-  // Wait for Redis connection
-  const redisClient = await redisManager.connect();
+    const emptyPrefix = Buffer.concat([Buffer.from([0])]);
 
-  if (redisClient) {
-    return new HocusPocusRedis({
-      redis: redisClient,
-    });
-  } else {
-    logger.warn(
-      "Redis connection failed, continuing without Redis extension (you won't be able to sync data between multiple plane live servers)"
+    return this.pub.publishBuffer(
+      // we're accessing the private method of the hocuspocus redis extension
+      this["pubKey"](documentName),
+      Buffer.concat([emptyPrefix, Buffer.from(message.toUint8Array())])
     );
   }
-};
-
-/**
- * Helper to get the current Redis status
- * Useful for health checks
- */
-export const getRedisStatus = (): "connected" | "connecting" | "disconnected" | "not-configured" => {
-  const redisManager = RedisManager.getInstance();
-  return redisManager.getStatus();
-};
+}

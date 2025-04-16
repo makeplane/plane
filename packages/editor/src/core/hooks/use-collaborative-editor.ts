@@ -51,6 +51,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   // Create keyboard navigation extensions between editors
   const { setTitleEditor, setMainEditor, titleNavigationExtension, mainNavigationExtension } = useEditorNavigation();
   const [isContentInIndexedDb, setIsContentInIndexedDb] = useState(true);
+  const [isIndexedDbSynced, setIsIndexedDbSynced] = useState(false);
 
   // Initialize Hocuspocus provider for real-time collaboration
   const provider = useMemo(
@@ -94,6 +95,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
 
   useEffect(() => {
     localProvider?.on("synced", () => {
+      setIsIndexedDbSynced(true);
       if (localProvider.doc.share.get("default")?._length === 0) {
         setIsContentInIndexedDb(false);
       } else {
@@ -199,5 +201,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     hasServerConnectionFailed,
     hasServerSynced,
     isContentInIndexedDb,
+    isIndexedDbSynced,
   };
 };

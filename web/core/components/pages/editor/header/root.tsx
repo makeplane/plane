@@ -11,10 +11,11 @@ import { PageEditorHeaderLogoPicker } from "./logo-picker";
 
 type Props = {
   page: TPageInstance;
+  isEditorVisible?: boolean;
 };
 
 export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
-  const { page } = props;
+  const { page, isEditorVisible = true } = props;
   // states
   const [isLogoPickerOpen, setIsLogoPickerOpen] = useState(false);
   // derived values
@@ -27,9 +28,13 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
       <div className="h-[48px] flex items-end text-left">
         {!isLogoSelected && (
           <div
-            className={cn("opacity-0 group-hover/page-header:opacity-100 transition-all duration-200", {
-              "opacity-100": isTitleEmpty,
-            })}
+            className={cn(
+              "transition-all duration-300",
+              isEditorVisible ? "opacity-0 group-hover/page-header:opacity-100" : "opacity-0",
+              {
+                "opacity-100": isTitleEmpty && isEditorVisible,
+              }
+            )}
           >
             <EmojiIconPicker
               isOpen={isLogoPickerOpen}

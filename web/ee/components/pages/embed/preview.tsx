@@ -113,7 +113,7 @@ export const PageEmbedPreview: React.FC<Props> = observer((props) => {
         e.preventDefault();
       }}
       className={cn(
-        "absolute top-full left-0 z-10 w-80 bg-custom-background-100 shadow-custom-shadow-rg rounded-lg overflow-hidden max-h-[250px]",
+        "absolute top-full left-0 z-10 w-80 bg-custom-background-100 shadow-custom-shadow-rg rounded-lg overflow-hidden max-h-[250px] cursor-default",
         "transition-all duration-200 transform origin-top-left",
         isAnimatedIn ? "opacity-100 translate-y-0 scale-100" : "opacity-0 -translate-y-2 scale-95"
       )}
@@ -214,7 +214,7 @@ export const PageEmbedPreview: React.FC<Props> = observer((props) => {
           {is_description_empty && (
             <div
               className={cn(
-                "h-full flex items-center justify-center text-custom-text-300 text-sm transition-opacity duration-300 ease-in-out",
+                "h-full flex items-center justify-center text-custom-text-300 text-sm transition-opacity duration-300 ease-in-out cursor-default",
                 isContentVisible && is_description_empty ? "opacity-100" : "opacity-0",
                 !isLoading && is_description_empty ? "block" : "hidden"
               )}

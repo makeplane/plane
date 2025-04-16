@@ -87,7 +87,13 @@ const PageDetailsPage = observer(() => {
         if (!workspaceSlug) return;
         return await workspacePageVersionService.fetchVersionById(workspaceSlug.toString(), pageId, versionId);
       },
-      getRedirectionLink: (pageId) => `/${workspaceSlug}/pages/${pageId}`,
+      getRedirectionLink: (pageId) => {
+        if (pageId) {
+          return `/${workspaceSlug}/pages/${pageId}`;
+        } else {
+          return `/${workspaceSlug}/pages`;
+        }
+      },
       updateDescription: updateDescription ?? (async () => {}),
     }),
     [createPage, fetchEntityCallback, id, updateDescription, workspaceSlug]
@@ -126,9 +132,9 @@ const PageDetailsPage = observer(() => {
 
   useEffect(() => {
     if (page?.deleted_at && page?.id) {
-      router.back();
+      router.push(pageRootHandlers.getRedirectionLink());
     }
-  }, [page?.deleted_at, page?.id, router]);
+  }, [page?.deleted_at, page?.id, router, pageRootHandlers]);
 
   if ((!page || !id) && !pageDetailsError)
     return (

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { EditorRefApi } from "@plane/editor";
 import { ToggleSwitch } from "@plane/ui";
+import { getPageName } from "@/helpers/page.helper";
 import { usePageOperations } from "@/hooks/use-page-operations";
 import { EPageStoreType } from "@/plane-web/hooks/store";
 import { TPageInstance } from "@/store/pages/base-page";
@@ -36,8 +37,8 @@ export const LockPageModal = ({
       contentText={
         <>
           <div>
-            Do you want to {page.is_locked ? "unlock" : "lock"} all subpages of page-{" "}
-            <span className="break-words font-medium text-custom-text-100">{page.name}</span>?{" "}
+            Do you want to {page.is_locked ? "unlock" : "lock"} all subpages of page -{" "}
+            <span className="break-words break-all font-medium text-custom-text-100">{getPageName(page.name)}</span>?{" "}
             {page.is_locked
               ? "This will allow others to edit this page."
               : "This will prevent others from editing this page."}

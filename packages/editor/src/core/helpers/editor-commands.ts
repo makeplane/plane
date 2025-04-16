@@ -207,7 +207,9 @@ export const insertCallout = (editor: Editor, range?: Range) => {
 
 export const insertPageEmbed = (
   data: {
+    pageId: string;
     position?: number;
+    workspaceSlug: string;
   },
   editor: Editor,
   range?: Range

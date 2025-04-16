@@ -5,12 +5,16 @@ export const generateTitleProsemirrorJson = (text: string) => {
       {
         type: "heading",
         attrs: { level: 1 },
-        content: [
-          {
-            type: "text",
-            text,
-          },
-        ],
+        ...(text
+          ? {
+              content: [
+                {
+                  type: "text",
+                  text,
+                },
+              ],
+            }
+          : {}),
       },
     ],
   };

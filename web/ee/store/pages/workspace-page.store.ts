@@ -1,5 +1,5 @@
 import set from "lodash/set";
-import { makeObservable, observable, runInAction, action, computed } from "mobx";
+import { makeObservable, observable, runInAction, action, computed, reaction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { EPageAccess } from "@plane/constants";
 // types
@@ -22,6 +22,10 @@ export interface IWorkspacePageStore {
   data: Record<string, TWorkspacePage>; // pageId => Page
   error: TError | undefined;
   filters: TPageFilters;
+  // page type arrays
+  publicPageIds: string[];
+  privatePageIds: string[];
+  archivedPageIds: string[];
   // computed
   isAnyPageAvailable: boolean;
   currentWorkspacePageIds: string[] | undefined;
@@ -32,10 +36,6 @@ export interface IWorkspacePageStore {
   isNestedPagesEnabled: (workspaceSlug: string) => boolean;
   updateFilters: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
   clearAllFilters: () => void;
-  // new helper methods for sidebar
-  getPublicPages: () => string[];
-  getPrivatePages: () => string[];
-  getArchivedPages: () => string[];
   findRootParent: (page: TWorkspacePage) => TWorkspacePage | undefined;
   clearRootParentCache: () => void;
   // actions
@@ -59,8 +59,14 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     sortKey: "updated_at",
     sortBy: "desc",
   };
+  // page type arrays
+  publicPageIds: string[] = [];
+  privatePageIds: string[] = [];
+  archivedPageIds: string[] = [];
   // private props
   private _rootParentMap: Map<string, string | null> = new Map(); // pageId => rootParentId
+  // disposers for reactions
+  private disposers: (() => void)[] = [];
   // services
   pageService: WorkspacePageService;
 
@@ -71,6 +77,10 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       data: observable,
       error: observable,
       filters: observable,
+      // page type arrays
+      publicPageIds: observable,
+      privatePageIds: observable,
+      archivedPageIds: observable,
       // computed
       currentWorkspacePageIds: computed,
       // helper actions
@@ -85,8 +95,53 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       removePage: action,
       updatePagesInStore: action,
     });
+
     // service
     this.pageService = new WorkspacePageService();
+
+    // Set up reactions to automatically update page type arrays
+    this.setupReactions();
+  }
+
+  /**
+   * Set up MobX reactions to automatically update the page type arrays
+   */
+  private setupReactions() {
+    // Update page arrays whenever data or workspace changes
+    const updatePageArraysReaction = reaction(
+      // Track these dependencies
+      () => ({
+        // Track the keys of the data object to detect additions/removals
+        pageIds: Object.keys(this.data),
+        // Track the version property of each page to detect updates
+        pageVersions: Object.values(this.data).map((page) => ({
+          id: page.id,
+          updated_at: page.updated_at,
+          access: page.access,
+          archived_at: page.archived_at,
+          deleted_at: page.deleted_at,
+          parent_id: page.parent_id,
+        })),
+        currentWorkspace: this.store.workspaceRoot.currentWorkspace?.id,
+      }),
+      // Effect: update the arrays
+      () => {
+        this.updatePageTypeArrays();
+      },
+      // Options: run immediately to populate arrays on initialization
+      { fireImmediately: true }
+    );
+
+    // Add the disposer to clean up later
+    this.disposers.push(updatePageArraysReaction);
+  }
+
+  /**
+   * Clean up reactions when the store is disposed
+   */
+  dispose() {
+    this.disposers.forEach((dispose) => dispose());
+    this.disposers = [];
   }
 
   /**
@@ -200,6 +255,67 @@ export class WorkspacePageStore implements IWorkspacePageStore {
           }
         }
       }
+    });
+  };
+
+  /**
+   * Updates the page type arrays based on the current data
+   * This is called automatically by reactions, no need to call manually
+   */
+  private updatePageTypeArrays = () => {
+    const { currentWorkspace } = this.store.workspaceRoot;
+    if (!currentWorkspace) {
+      // Clear arrays when no workspace is selected
+      runInAction(() => {
+        this.publicPageIds = [];
+        this.privatePageIds = [];
+        this.archivedPageIds = [];
+      });
+      return;
+    }
+
+    const allPages = Object.values(this.data);
+    const workspacePages = allPages.filter((page) => page.workspace === currentWorkspace.id);
+
+    // Compute new page IDs for each type
+    const newPublicPageIds = workspacePages
+      .filter((page) => page.access === EPageAccess.PUBLIC && !page.parent_id && !page.archived_at && !page.deleted_at)
+      .map((page) => page.id)
+      .filter((id): id is string => id !== undefined);
+
+    // Get all non-archived pages for private calculation
+    const nonArchivedPages = workspacePages.filter((page) => !page.archived_at && !page.deleted_at);
+
+    // Compute private pages
+    const privateParentPages = nonArchivedPages.filter(
+      (page) => page.access === EPageAccess.PRIVATE && !page.parent_id
+    );
+
+    // Find child pages with non-private root parents
+    const privateChildPages = nonArchivedPages.filter((page) => {
+      if (!page.parent_id || page.access !== EPageAccess.PRIVATE || !page.id) return false;
+
+      // Find root parent
+      const rootParent = this.findRootParent(page);
+      return rootParent?.access !== EPageAccess.PRIVATE;
+    });
+
+    const newPrivatePageIds = [...privateParentPages, ...privateChildPages]
+      .map((page) => page.id)
+      .filter((id): id is string => id !== undefined);
+
+    // Compute archived pages
+    const newArchivedPageIds = workspacePages
+      .filter((page) => page.archived_at && !page.deleted_at)
+      .sort((a, b) => (a.parent_id ? 1 : 0) - (b.parent_id ? 1 : 0)) // Sort parent pages first
+      .map((page) => page.id)
+      .filter((id): id is string => id !== undefined);
+
+    // Update arrays in a single runInAction to batch updates
+    runInAction(() => {
+      this.publicPageIds = newPublicPageIds;
+      this.privatePageIds = newPrivatePageIds;
+      this.archivedPageIds = newArchivedPageIds;
     });
   };
 
@@ -467,79 +583,6 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       throw error;
     }
   };
-
-  // New helper methods for sidebar
-  getPublicPages = computedFn(() => {
-    const { currentWorkspace } = this.store.workspaceRoot;
-    if (!currentWorkspace) return [];
-
-    // Get only top-level public pages in one pass
-    return Object.values(this.data)
-      .filter(
-        (page) =>
-          page.workspace === currentWorkspace.id &&
-          page.access === EPageAccess.PUBLIC &&
-          !page.parent_id &&
-          !page.archived_at
-      )
-      .map((page) => page.id)
-      .filter((id): id is string => id !== undefined);
-  });
-
-  getPrivatePages = computedFn(() => {
-    const { currentWorkspace } = this.store.workspaceRoot;
-    if (!currentWorkspace) return [];
-
-    // Get all pages for this workspace in one pass
-    const workspacePages = Object.values(this.data).filter(
-      (page) => page.workspace === currentWorkspace.id && !page.archived_at
-    );
-
-    // Extract top-level private pages
-    const parentPages = workspacePages.filter((page) => page.access === EPageAccess.PRIVATE && !page.parent_id);
-
-    // Extract child pages with non-private root parents
-    const childPages = workspacePages.filter((page) => {
-      if (!page.parent_id || page.access !== EPageAccess.PRIVATE || !page.id) return false;
-
-      // Get root parent from cache or compute it
-      let rootParentId = this._rootParentMap.get(page.id);
-
-      if (rootParentId === undefined) {
-        const rootParent = this.findRootParent(page);
-        rootParentId = rootParent?.id || null;
-        if (rootParentId) this._rootParentMap.set(page.id, rootParentId);
-      }
-
-      if (!rootParentId) return false;
-
-      // Get the root parent page
-      const rootParent = this.getPageById(rootParentId);
-      return rootParent?.access !== EPageAccess.PRIVATE;
-    });
-
-    // Combine and extract IDs, filter out any undefined IDs
-    return [...parentPages, ...childPages].map((page) => page.id).filter((id): id is string => id !== undefined);
-  });
-
-  getArchivedPages = computedFn(() => {
-    const { currentWorkspace } = this.store.workspaceRoot;
-    if (!currentWorkspace) return [];
-
-    // Get all archived pages for this workspace in one pass
-    const archivedPages = Object.values(this.data).filter(
-      (page) => page.workspace === currentWorkspace.id && page.archived_at
-    );
-
-    // Sort parent pages first, then child pages
-    const sortedPages = [
-      ...archivedPages.filter((page) => !page.parent_id),
-      ...archivedPages.filter((page) => page.parent_id),
-    ];
-
-    // Extract IDs
-    return sortedPages.map((page) => page.id).filter((id): id is string => id !== undefined);
-  });
 
   // Helper function to find the root parent of a page with caching
   findRootParent = computedFn((page: TWorkspacePage): TWorkspacePage | undefined => {

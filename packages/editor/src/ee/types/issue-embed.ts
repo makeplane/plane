@@ -1,8 +1,8 @@
 // types
 import { Editor } from "@tiptap/react";
 import { TPage } from "@plane/types";
-import { TEmbedItem } from "@/types";
 import { PageEmbedExtensionAttributes } from "@/extensions/page-embed/extension-config";
+import { TEmbedItem } from "@/types";
 
 export type TEmbedConfig = {
   issue?: TIssueEmbedConfig;
@@ -51,6 +51,12 @@ export type TPageEmbedConfig = {
   deletePage?: (id: string[]) => Promise<void>;
   updatePageProperties?: (pageId: string, messageType: string, payload?: any, performAction?: boolean) => void;
   workspaceSlug: string;
+};
+
+export type TPageEmbedNodeViewRendererProps = {
+  node: { attrs: PageEmbedExtensionAttributes };
+  editor: Editor;
+  updateAttributes: (attrs: Partial<PageEmbedExtensionAttributes>) => void;
 };
 
 export type TPageLinkConfig = {

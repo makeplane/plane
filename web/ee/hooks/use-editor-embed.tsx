@@ -6,8 +6,6 @@ import { EditorRefApi, TEmbedConfig, TEmbedItem, TIssueEmbedConfig, TPageEmbedCo
 import { TPage, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 // plane ui
 import { PriorityIcon, setToast, TOAST_TYPE } from "@plane/ui";
-//  hooks
-import { useAppRouter } from "@/hooks/use-app-router";
 // plane web components
 import { IssueEmbedCard, IssueEmbedUpgradeCard, PageEmbedCardRoot } from "@/plane-web/components/pages";
 // plane web hooks
@@ -22,7 +20,7 @@ export type TEmbedHookProps = {
   workspaceSlug?: string;
   page?: TPageInstance;
   editorRef?: React.RefObject<EditorRefApi>;
-  getRedirectionLink?: (pageId: string) => string;
+  getRedirectionLink?: (pageId?: string) => string;
   storeType: EPageStoreType;
   setDeletePageModal?: (params: { visible: boolean; pages: TPageInstance[] }) => void;
 };
@@ -39,7 +37,6 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
     setDeletePageModal,
   } = props;
   const { projectId: projectIdFromParams } = useParams();
-  const router = useAppRouter();
 
   // store hooks
   const isIssueEmbedEnabled = useFlag(workspaceSlug, "PAGE_ISSUE_EMBEDS");
@@ -117,9 +114,7 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
           parent_id: page.id,
         };
         const res = await createPage(payload);
-        if (res?.id) {
-          router.push(getRedirectionLink(res.id));
-        }
+
         return {
           pageId: res?.id ?? "",
           projectId: projectIdFromParams?.toString() ?? "",
@@ -191,7 +186,6 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
     getPageById,
     createPage,
     getRedirectionLink,
-    router,
     projectIdFromParams,
     workspaceSlug,
     editorRef,

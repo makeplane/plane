@@ -163,7 +163,7 @@ export class BasePage implements TBasePage {
     this.created_at = page?.created_at || undefined;
     this.updated_at = page?.updated_at || undefined;
     this.oldName = page?.name || "";
-    this.parent_id = page?.parent_id || undefined;
+    this.parent_id = page?.parent_id === null ? null : page?.parent_id;
     this.deleted_at = page?.deleted_at || undefined;
     this.moved_to_page = page?.moved_to_page || null;
     this.moved_to_project = page?.moved_to_project || null;

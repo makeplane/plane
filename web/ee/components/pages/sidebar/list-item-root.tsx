@@ -47,7 +47,10 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
   });
   // derived values
   const { sub_pages_count, subPageIds } = page ?? {};
-  const isExpanded = expandedPageIds.includes(pageId) || localIsExpanded;
+
+  // Simplified state management - use props if available, otherwise local state
+  const isExpanded = setExpandedPageIds ? expandedPageIds.includes(pageId) : localIsExpanded;
+
   const shouldShowSubPages = !isDragging && isExpanded && sub_pages_count !== undefined && sub_pages_count > 0;
   const canShowAddButton =
     page?.canCurrentUserEditPage &&
@@ -76,16 +79,18 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
   // Load sub-pages when expanded
   useEffect(() => {
     if (isExpanded && sub_pages_count && sub_pages_count > 0 && !subPagesLoaded && page) {
-      // This will trigger the loading of sub-pages if they're not already loaded
       page.fetchSubPages();
       setSubPagesLoaded(true);
     }
   }, [isExpanded, sub_pages_count, subPagesLoaded, page]);
 
+  // Simplified toggle function - single responsibility
   const handleToggleExpanded = () => {
     if (setExpandedPageIds) {
+      // Using parent component's state management
       setExpandedPageIds((prev) => (prev.includes(pageId) ? prev.filter((id) => id !== pageId) : [...prev, pageId]));
     } else {
+      // Using local state
       setLocalIsExpanded((prev) => !prev);
     }
   };
@@ -223,12 +228,13 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
       </div>
       <Transition
         show={shouldShowSubPages}
-        enter="transition-all duration-400 ease-out"
-        enterFrom="opacity-0 max-h-0 transform scale-y-95 origin-top overflow-hidden"
-        enterTo="opacity-100 max-h-[2000px] transform scale-y-100 origin-top overflow-hidden"
-        leave="transition-all duration-300 ease-in-out"
-        leaveFrom="opacity-100 max-h-[2000px] transform scale-y-100 origin-top overflow-hidden"
-        leaveTo="opacity-0 max-h-0 transform scale-y-95 origin-top overflow-hidden"
+        enter="transition-all duration-200 ease-out"
+        enterFrom="opacity-0 max-h-0 -translate-y-2"
+        enterTo="opacity-100 max-h-[1000px] translate-y-0"
+        leave="transition-all duration-150 ease-in"
+        leaveFrom="opacity-100 max-h-[1000px] translate-y-0"
+        leaveTo="opacity-0 max-h-0 -translate-y-2"
+        className="overflow-hidden"
       >
         <div className="transform-gpu will-change-transform">
           {subPageIds?.map((subPageId) => (

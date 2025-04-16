@@ -1,7 +1,7 @@
 // hocuspocus extensions and core
 import { Extension } from "@hocuspocus/server";
 import { Logger } from "@hocuspocus/extension-logger";
-import { setupRedisExtension } from "@/core/extensions/redis";
+import { setupRedisExtension } from "@/core/extensions/setup-redis";
 import { createDatabaseExtension } from "@/core/extensions/database";
 import { logger } from "@plane/logger";
 import { TitleSyncExtension } from "./title-sync";

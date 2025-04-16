@@ -6,6 +6,8 @@ import { useRouter, useParams } from "next/navigation";
 // plane imports
 import { PAGE_DELETED } from "@plane/constants";
 import { TOAST_TYPE, setToast, AlertModalCore } from "@plane/ui";
+// helpers
+import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // plane web hooks
@@ -84,9 +86,9 @@ export const WikiDeletePageModal: React.FC<TConfirmPageDeletionProps> = observer
       title="Delete page"
       content={
         <>
-          Are you sure you want to delete page-{" "}
-          <span className="break-words font-medium text-custom-text-100">{name}</span>? The Page will be deleted
-          permanently. This action cannot be undone.
+          Are you sure you want to delete page -{" "}
+          <span className="break-words font-medium text-custom-text-100">{getPageName(name)}</span> ? The Page will be
+          deleted permanently. This action cannot be undone.
         </>
       }
     />

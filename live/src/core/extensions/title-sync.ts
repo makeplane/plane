@@ -12,6 +12,7 @@ import { getDocumentHandler } from "@/core/handlers/page-handlers";
 import { generateTitleProsemirrorJson } from "@/core/helpers/generate-title-prosemirror-json";
 import { extractTextFromHTML } from "./title-update/title-utils";
 import { TitleUpdateManager } from "./title-update/title-update-manager";
+import { broadcastMessageToPage } from "@/ee/lib/utils/broadcast-message";
 
 /**
  * Hocuspocus extension for synchronizing document titles
@@ -36,7 +37,7 @@ export class TitleSyncExtension implements Extension {
           context,
           pageId: document.name,
         });
-        if (!title) return;
+        if (title == null) return;
         const titleField = TiptapTransformer.toYdoc(
           generateTitleProsemirrorJson(title),
           "title",
@@ -80,26 +81,18 @@ export class TitleSyncExtension implements Extension {
       // Schedule an update with the manager
       const manager = this.titleUpdateManagers.get(documentName);
 
+      // In your titleObserver
       if (context.parentId) {
-        const parentDocument = instance.documents.get(context.parentId);
-        if (parentDocument) {
-          // Broadcast the title update to all connections of the parent document
-          parentDocument.broadcastStateless(
-            JSON.stringify(
-              createRealtimeEvent({
-                user_id: context.userId,
-                workspace_slug: context.workspaceSlug as string,
-                action: "title_updated",
-                page_id: documentName,
-                data: {
-                  title: title,
-                  // If you need to include user_id in the payload
-                },
-                descendants_ids: [], // or include any descendant page IDs if needed
-              })
-            )
-          );
-        }
+        const event = createRealtimeEvent({
+          user_id: context.userId,
+          workspace_slug: context.workspaceSlug as string,
+          action: "title_updated",
+          page_id: documentName,
+          data: { title },
+          descendants_ids: [],
+        });
+
+        broadcastMessageToPage(instance, context.parentId, event);
       }
 
       if (manager) {

@@ -17,7 +17,7 @@ import { ERowVariant, Row } from "@plane/ui";
 // components
 import { HSL, cn, hslToHex } from "@plane/utils";
 import { EditorMentionsRoot } from "@/components/editor";
-import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
+import { PageContentBrowser, PageContentLoader } from "@/components/pages";
 // helpers
 import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
 // hooks
@@ -37,6 +37,7 @@ import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { TPageInstance } from "@/store/pages/base-page";
 import { PageEditorHeaderRoot } from "./header";
 
+// Add a CSS keyframe animation
 export type TEditorBodyConfig = {
   fileHandler: TFileHandler;
 };
@@ -44,7 +45,7 @@ export type TEditorBodyConfig = {
 // Define the structure of action-specific data
 export type TEditorBodyHandlers = {
   fetchEntity: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
-  getRedirectionLink: (pageId: string) => string;
+  getRedirectionLink: (pageId?: string) => string;
 };
 
 type Props = {
@@ -109,9 +110,13 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { getUserDetails } = useMember();
 
   const [isVisible, setIsVisible] = useState(false);
-  // Simple animation effect that triggers on mount
+  // Delayed animation effect that triggers on mount
   useEffect(() => {
-    setIsVisible(true);
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 100); // Slightly longer delay for smoother coordination
+
+    return () => clearTimeout(timer);
   }, []);
 
   // derived values
@@ -229,12 +234,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   return (
     <Row
-      className={`relative size-full flex flex-col overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md ${
-        isVisible ? "opacity-100" : "opacity-0"
-      }`}
-      style={{
-        transition: "opacity 0.25s var(--ease-out-cubic)",
-      }}
+      className={`relative size-full flex flex-col overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md`}
       variant={ERowVariant.HUGGING}
     >
       <div id="page-content-container" className="relative w-full flex-shrink-0">
@@ -251,56 +251,49 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             </div>
           </div>
         </div>
-        <div className="page-header-container group/page-header">
-          <div className={blockWidthClassName}>
-            <PageEditorHeaderRoot page={page} />
-          </div>
-        </div>
         <div
-          className={`transition-all ${isVisible ? "opacity-100" : "opacity-0"}`}
+          className={`${isVisible ? "animate-editor-fade-in" : "opacity-0"}`}
           style={{
-            transition: "opacity 0.25s var(--ease-out-cubic)",
-            transitionDelay: "0.1s",
+            animation: isVisible ? "editorFadeIn 0.5s var(--ease-out-cubic) forwards" : "none",
+            animationDelay: "100ms",
           }}
         >
-          <div
-            style={{
-              animation: isVisible ? "editorFadeIn 0.3s var(--ease-out-cubic) forwards" : "none",
-              animationDelay: "0.1s",
-            }}
-          >
-            <CollaborativeDocumentEditorWithRef
-              editable={isContentEditable}
-              id={pageId}
-              fileHandler={config.fileHandler}
-              handleEditorReady={handleEditorReady}
-              ref={editorRef}
-              containerClassName="h-full p-0 pb-64"
-              displayConfig={displayConfig}
-              mentionHandler={{
-                searchCallback: async (query) => {
-                  const res = await fetchMentions(query);
-                  if (!res) throw new Error("Failed in fetching mentions");
-                  return res;
-                },
-                renderComponent: (props) => <EditorMentionsRoot {...props} />,
-                getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
-              }}
-              updatePageProperties={updatePageProperties}
-              embedHandler={embedProps}
-              pageRestorationInProgress={page.restoration.inProgress}
-              realtimeConfig={realtimeConfig}
-              serverHandler={serverHandler}
-              user={userConfig}
-              disabledExtensions={disabledExtensions}
-              aiHandler={{
-                menu: getAIMenu,
-              }}
-            />
+          <div className="page-header-container group/page-header">
+            <div className={blockWidthClassName}>
+              <PageEditorHeaderRoot page={page} isEditorVisible={isVisible} />
+            </div>
           </div>
+
+          <CollaborativeDocumentEditorWithRef
+            editable={isContentEditable}
+            id={pageId}
+            fileHandler={config.fileHandler}
+            handleEditorReady={handleEditorReady}
+            ref={editorRef}
+            containerClassName="h-full p-0 pb-64"
+            displayConfig={displayConfig}
+            mentionHandler={{
+              searchCallback: async (query) => {
+                const res = await fetchMentions(query);
+                if (!res) throw new Error("Failed in fetching mentions");
+                return res;
+              },
+              renderComponent: (props) => <EditorMentionsRoot {...props} />,
+              getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
+            }}
+            updatePageProperties={updatePageProperties}
+            embedHandler={embedProps}
+            pageRestorationInProgress={page.restoration.inProgress}
+            realtimeConfig={realtimeConfig}
+            serverHandler={serverHandler}
+            user={userConfig}
+            disabledExtensions={disabledExtensions}
+            aiHandler={{
+              menu: getAIMenu,
+            }}
+          />
         </div>
       </div>
-
       <MultipleDeletePagesModal
         editorRef={editorRef}
         isOpen={deletePageModal.visible}

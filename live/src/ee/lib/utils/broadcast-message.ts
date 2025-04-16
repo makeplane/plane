@@ -1,33 +1,26 @@
 import { Hocuspocus } from "@hocuspocus/server";
 import { ServerAgentManager } from "@/ee/agents/server-agent";
 import { BroadcastedEvent } from "@plane/editor";
+import { CustomHocuspocusRedisExtension } from "@/core/extensions/redis";
 
-/**
- * Broadcasts a message to all clients connected to a specific page
- * @param server The Hocuspocus server or serverAgentManager
- * @param pageId The ID of the page to broadcast to
- * @param message The realtime event message to broadcast
- * @returns true if the message was broadcast, false otherwise
- */
 export const broadcastMessageToPage = (
-  server: Hocuspocus | ServerAgentManager,
-  pageId: string,
-  message: BroadcastedEvent
+  instance: Hocuspocus | ServerAgentManager,
+  documentName: string,
+  eventData: BroadcastedEvent
 ): boolean => {
-  // If server is serverAgentManager, get the Hocuspocus server from it
-  const hocuspocusServer = "hocuspocusServer" in server ? (server as ServerAgentManager).hocuspocusServer : server;
+  const hocuspocusServer =
+    "hocuspocusServer" in instance ? (instance as ServerAgentManager).hocuspocusServer : instance;
 
-  // Check if hocuspocusServer is available and has documents
   if (!hocuspocusServer || !hocuspocusServer.documents) {
     console.error("HocusPocus server not available or initialized");
     return false;
   }
+  const redisExtension = hocuspocusServer.configuration.extensions.find(
+    (ext) => ext instanceof CustomHocuspocusRedisExtension
+  ) as CustomHocuspocusRedisExtension | undefined;
 
-  const document = hocuspocusServer.documents.get(pageId);
-
-  if (document) {
-    // Broadcast the message to all clients connected to this document
-    document.broadcastStateless(JSON.stringify(message));
+  if (redisExtension) {
+    redisExtension.broadcastToDocument(documentName, eventData);
     return true;
   }
   return false;
