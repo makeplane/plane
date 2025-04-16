@@ -166,7 +166,7 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
               disabled={isCommentEmpty}
               loading={isSubmitting}
             >
-              {t("Comment")}
+              {t("comment")}
             </Button>
           </div>
         )}
