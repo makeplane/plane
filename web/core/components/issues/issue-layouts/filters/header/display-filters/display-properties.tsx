@@ -9,6 +9,7 @@ import { ISSUE_DISPLAY_PROPERTIES } from "@/constants/issue";
 import { shouldRenderDisplayProperty } from "@/plane-web/helpers/issue-filter.helper";
 // components
 import { FilterHeader } from "../helpers/filter-header";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -26,6 +27,7 @@ export const FilterDisplayProperties: React.FC<Props> = observer((props) => {
     cycleViewDisabled = false,
     moduleViewDisabled = false,
   } = props;
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId: routerProjectId } = useParams();
   // states
@@ -72,7 +74,7 @@ export const FilterDisplayProperties: React.FC<Props> = observer((props) => {
                   })
                 }
               >
-                {displayProperty.title}
+                {t(displayProperty.key)}
               </button>
             </>
           ))}

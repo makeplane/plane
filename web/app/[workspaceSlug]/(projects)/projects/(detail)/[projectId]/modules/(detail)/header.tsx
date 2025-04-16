@@ -42,8 +42,10 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import { useTranslation } from "@plane/i18n";
 
 const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
@@ -67,6 +69,7 @@ const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
 };
 
 export const ModuleIssuesHeader: React.FC = observer(() => {
+  const { t } = useTranslation();
   // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // router
@@ -248,7 +251,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
               selectedLayout={activeLayout}
             />
             <FiltersDropdown
-              title="Filters"
+              title={t("filters")}
               placement="bottom-end"
               isFiltersApplied={isIssueFilterActive(issueFilters)}
             >
@@ -267,7 +270,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                 moduleViewDisabled={!currentProjectDetails?.module_view}
               />
             </FiltersDropdown>
-            <FiltersDropdown title="Display" placement="bottom-end">
+            <FiltersDropdown title={t("display")} placement="bottom-end">
               <DisplayFiltersSelection
                 layoutDisplayFiltersOptions={
                   activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
@@ -291,7 +294,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                 variant="neutral-primary"
                 size="sm"
               >
-                Analytics
+                {t("analytics")}
               </Button>
               <Button
                 className="hidden sm:flex"
@@ -301,7 +304,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                 }}
                 size="sm"
               >
-                Add issue
+                {t("add_issue")}
               </Button>
             </>
           ) : (

@@ -8,6 +8,7 @@ import GithubLogo from "@/public/services/github.png";
 import JiraLogo from "@/public/services/jira.svg";
 import JSONLogo from "@/public/services/json.svg";
 
+
 export const ROLE = {
   [EUserPermissions.GUEST]: "Guest",
   [EUserPermissions.MEMBER]: "Member",

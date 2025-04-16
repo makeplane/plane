@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { useTranslation } from "@plane/i18n";
 // hooks
 import { IUser } from "@plane/types";
 import { useCurrentTime } from "@/hooks/use-current-time";
@@ -12,6 +13,7 @@ export const UserGreetingsView: FC<IUserGreetingsView> = (props) => {
   const { user } = props;
   // current time hook
   const { currentTime } = useCurrentTime();
+  const { t } = useTranslation();
 
   const hour = new Intl.DateTimeFormat("en-US", {
     hour12: false,
@@ -39,7 +41,7 @@ export const UserGreetingsView: FC<IUserGreetingsView> = (props) => {
   return (
     <div>
       <h3 className="text-xl font-semibold">
-        Good {greeting}, {user?.first_name} {user?.last_name}
+        {t("good")} {t(greeting)}, {user?.first_name} {user?.last_name}
       </h3>
       <h6 className="flex items-center gap-2 font-medium text-custom-text-400">
         <div>{greeting === "morning" ? "🌤️" : greeting === "afternoon" ? "🌥️" : "🌙️"}</div>

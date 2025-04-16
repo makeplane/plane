@@ -9,6 +9,7 @@ import { Loader, StateGroupIcon } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues";
 // ui
 // types
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -19,6 +20,7 @@ type Props = {
 
 export const FilterState: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery, states } = props;
+  const { t } = useTranslation();
 
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -42,7 +44,7 @@ export const FilterState: React.FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title={`State${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("state")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -71,7 +73,7 @@ export const FilterState: React.FC<Props> = observer((props) => {
                 )}
               </>
             ) : (
-              <p className="text-xs italic text-custom-text-400">No matches found</p>
+              <p className="text-xs italic text-custom-text-400">{t("no_matches_found")}</p>
             )
           ) : (
             <Loader className="space-y-2">

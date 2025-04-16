@@ -5,11 +5,13 @@ import { Signal } from "lucide-react";
 import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent, IssueLink } from "./";
+import { useTranslation } from "@plane/i18n";
 
 type TIssuePriorityActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
 export const IssuePriorityActivity: FC<TIssuePriorityActivity> = observer((props) => {
   const { activityId, showIssue = true, ends } = props;
+  const { t } = useTranslation();
   // hooks
   const {
     activity: { getActivityById },
@@ -25,8 +27,8 @@ export const IssuePriorityActivity: FC<TIssuePriorityActivity> = observer((props
       ends={ends}
     >
       <>
-        set the priority to <span className="font-medium text-custom-text-100">{activity.new_value}</span>
-        {showIssue ? ` for ` : ``}
+        {t("set_priority_to")} <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+        {showIssue ? ` ${t("for")} ` : ``}
         {showIssue && <IssueLink activityId={activityId} />}.
       </>
     </IssueActivityBlockComponent>

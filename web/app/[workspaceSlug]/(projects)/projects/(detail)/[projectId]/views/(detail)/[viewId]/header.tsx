@@ -37,8 +37,10 @@ import {
   useUserPermissions,
 } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import { useTranslation } from "@plane/i18n";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId, viewId } = useParams();
   // store hooks
@@ -145,7 +147,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             link={
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
-                label={currentProjectDetails?.name ?? "Project"}
+                label={currentProjectDetails?.name ?? t("project")}
                 icon={
                   currentProjectDetails && (
                     <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
@@ -161,7 +163,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             link={
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/views`}
-                label="Views"
+                label={t("views")}
                 icon={<Layers className="h-4 w-4 text-custom-text-300" />}
               />
             }
@@ -249,7 +251,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             />
 
             <FiltersDropdown
-              title="Filters"
+              title={t("filters")}
               placement="bottom-end"
               disabled={!canUserCreateIssue}
               isFiltersApplied={isIssueFilterActive(issueFilters)}
@@ -269,7 +271,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 moduleViewDisabled={!currentProjectDetails?.module_view}
               />
             </FiltersDropdown>
-            <FiltersDropdown title="Display" placement="bottom-end">
+            <FiltersDropdown title={t("display")} placement="bottom-end">
               <DisplayFiltersSelection
                 layoutDisplayFiltersOptions={
                   activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
@@ -294,7 +296,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             }}
             size="sm"
           >
-            Add issue
+            {t("add_issue")}
           </Button>
         ) : (
           <></>

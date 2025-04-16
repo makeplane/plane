@@ -8,6 +8,7 @@ import { FilterHeader, FilterOption } from "@/components/issues";
 // icons
 import { STATE_GROUPS } from "@/constants/state";
 // constants
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -17,6 +18,7 @@ type Props = {
 
 export const FilterStateGroup: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
+  const { t } = useTranslation();
 
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -35,7 +37,7 @@ export const FilterStateGroup: React.FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title={`State group${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("state_group")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -63,7 +65,7 @@ export const FilterStateGroup: React.FC<Props> = observer((props) => {
               )}
             </>
           ) : (
-            <p className="text-xs italic text-custom-text-400">No matches found</p>
+            <p className="text-xs italic text-custom-text-400">{t("no_matches_found")}</p>
           )}
         </div>
       )}

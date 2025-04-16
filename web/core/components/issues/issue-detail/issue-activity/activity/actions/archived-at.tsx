@@ -9,11 +9,13 @@ import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent } from "./";
 // ui
+import { useTranslation } from "@plane/i18n";
 
 type TIssueArchivedAtActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
 export const IssueArchivedAtActivity: FC<TIssueArchivedAtActivity> = observer((props) => {
   const { activityId, ends } = props;
+  const { t } = useTranslation();
   // hooks
   const {
     activity: { getActivityById },
@@ -36,7 +38,7 @@ export const IssueArchivedAtActivity: FC<TIssueArchivedAtActivity> = observer((p
       ends={ends}
       customUserName={activity.new_value === "archive" ? "Plane" : undefined}
     >
-      {activity.new_value === "restore" ? "restored the issue" : "archived the issue"}.
+      {activity.new_value === "restore" ? t("restored_issue") : t("archived_issue")}.
     </IssueActivityBlockComponent>
   );
 });

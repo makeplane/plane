@@ -278,10 +278,9 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async getIssuesCustomProperties(workspaceSlug: string, config = {}): Promise<Record<string, any>[]> {
+  async getIssuesCustomProperties(workspaceSlug: string, fetchConfig: {query: string, page: number, key?: string}): Promise<Record<string, any>[]> {
     return this.get(
-      `/api/workspaces/${workspaceSlug}/custom-properties/`,
-      config
+      `/api/workspaces/${workspaceSlug}/custom-properties?query=${fetchConfig.query}&page=${fetchConfig.page}&field=${fetchConfig.key}`,
     )
       .then((response) => response?.data)
       .catch((error) => {
@@ -289,9 +288,9 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async getIssueAdditionalProperties(workspaceSlug: string, field: any): Promise<any> {
+  async getIssueAdditionalProperties(workspaceSlug: string, field: any, query: string, page: number): Promise<any> {
     return this.get(
-      `/api/workspaces/${workspaceSlug}/search?field=${field}`,
+      `/api/workspaces/${workspaceSlug}/search?field=${field}&query=${query}&page=${page}`,
     )
       .then((response) => response?.data)
       .catch((error) => {

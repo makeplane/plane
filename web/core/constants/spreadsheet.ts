@@ -54,7 +54,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
   };
 } = {
   assignee: {
-    title: "Assignees",
+    title: "assignees",
     ascendingOrderKey: "assignees__first_name",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-assignees__first_name",
@@ -63,7 +63,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetAssigneeColumn,
   },
   created_on: {
-    title: "Created on",
+    title: "created_on",
     ascendingOrderKey: "-created_at",
     ascendingOrderTitle: "New",
     descendingOrderKey: "created_at",
@@ -72,7 +72,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetCreatedOnColumn,
   },
   due_date: {
-    title: "Due date",
+    title: "due_date",
     ascendingOrderKey: "-target_date",
     ascendingOrderTitle: "New",
     descendingOrderKey: "target_date",
@@ -81,7 +81,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetDueDateColumn,
   },
   estimate: {
-    title: "Estimate",
+    title: "estimate",
     ascendingOrderKey: "estimate_point",
     ascendingOrderTitle: "Low",
     descendingOrderKey: "-estimate_point",
@@ -90,7 +90,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetEstimateColumn,
   },
   labels: {
-    title: "Labels",
+    title: "labels",
     ascendingOrderKey: "labels__name",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-labels__name",
@@ -99,7 +99,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetLabelColumn,
   },
   modules: {
-    title: "Modules",
+    title: "modules",
     ascendingOrderKey: "issue_module__module__name",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-issue_module__module__name",
@@ -108,7 +108,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetModuleColumn,
   },
   cycle: {
-    title: "Cycle",
+    title: "cycle",
     ascendingOrderKey: "issue_cycle__cycle__name",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-issue_cycle__cycle__name",
@@ -117,7 +117,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetCycleColumn,
   },
   priority: {
-    title: "Priority",
+    title: "priority",
     ascendingOrderKey: "priority",
     ascendingOrderTitle: "None",
     descendingOrderKey: "-priority",
@@ -126,7 +126,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetPriorityColumn,
   },
   start_date: {
-    title: "Start date",
+    title: "start_date",
     ascendingOrderKey: "-start_date",
     ascendingOrderTitle: "New",
     descendingOrderKey: "start_date",
@@ -135,7 +135,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetStartDateColumn,
   },
   state: {
-    title: "State",
+    title: "state",
     ascendingOrderKey: "state__name",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-state__name",
@@ -144,7 +144,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetStateColumn,
   },
   updated_on: {
-    title: "Updated on",
+    title: "updated_on",
     ascendingOrderKey: "-updated_at",
     ascendingOrderTitle: "New",
     descendingOrderKey: "updated_at",
@@ -153,7 +153,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetUpdatedOnColumn,
   },
   link: {
-    title: "Link",
+    title: "link",
     ascendingOrderKey: "-link_count",
     ascendingOrderTitle: "Most",
     descendingOrderKey: "link_count",
@@ -162,7 +162,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetLinkColumn,
   },
   attachment_count: {
-    title: "Attachment",
+    title: "attachment",
     ascendingOrderKey: "-attachment_count",
     ascendingOrderTitle: "Most",
     descendingOrderKey: "attachment_count",
@@ -171,7 +171,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetAttachmentColumn,
   },
   sub_issue_count: {
-    title: "Sub-issue",
+    title: "sub_issue",
     ascendingOrderKey: "-sub_issues_count",
     ascendingOrderTitle: "Most",
     descendingOrderKey: "sub_issues_count",
@@ -180,7 +180,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetSubIssueColumn,
   },
   trip_reference_number: {
-    title: "Trip Ref Number",
+    title: "trip_reference_number",
     ascendingOrderKey: "trip_reference_number",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-trip_reference_number",
@@ -189,7 +189,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetStandardPropertyColumn,
   },
   reference_number: {
-    title: "Reference Number",
+    title: "reference_number",
     ascendingOrderKey: "reference_number",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-reference_number",
@@ -198,7 +198,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetStandardPropertyColumn,
   },
   hub_code: {
-    title: "Hub Code",
+    title: "hub_code",
     ascendingOrderKey: "hub_code",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-hub_code",
@@ -207,7 +207,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetStandardPropertyColumn,
   },
   hub_name: {
-    title: "Hub Name",
+    title: "hub_name",
     ascendingOrderKey: "hub_name",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-hub_name",
@@ -216,7 +216,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetStandardPropertyColumn,
   },
   customer_code: {
-    title: "Customer Code",
+    title: "customer_code",
     ascendingOrderKey: "customer_code",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-customer_code",
@@ -225,7 +225,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetStandardPropertyColumn,
   },
   customer_name: {
-    title: "Customer Name",
+    title: "customer_name",
     ascendingOrderKey: "customer_name",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-customer_name",
@@ -234,7 +234,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetStandardPropertyColumn,
   },
   vendor_name: {
-    title: "Vendor Name",
+    title: "vendor_name",
     ascendingOrderKey: "vendor_name",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-vendor_name",
@@ -243,7 +243,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetStandardPropertyColumn,
   },
   vendor_code: {
-    title: "Vendor Code",
+    title: "vendor_code",
     ascendingOrderKey: "vendor_code",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-vendor_code",
@@ -252,7 +252,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetStandardPropertyColumn,
   },
   worker_code: {
-    title: "Worker Code",
+    title: "worker_code",
     ascendingOrderKey: "worker_code",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-worker_code",
@@ -261,7 +261,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     Column: SpreadsheetStandardPropertyColumn,
   },
   worker_name: {
-    title: "Worker Name",
+    title: "worker_name",
     ascendingOrderKey: "worker_name",
     ascendingOrderTitle: "A",
     descendingOrderKey: "-worker_name",
@@ -293,9 +293,9 @@ export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
   "customer_code",
   "customer_name",
   "vendor_name",
-  "worker_name",
   "vendor_code",
   "worker_code",
+  "worker_name",
 ];
 
 export const SPREADSHEET_SELECT_GROUP = "spreadsheet-issues";

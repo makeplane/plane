@@ -11,6 +11,7 @@ import { TOOLBAR_ITEMS } from "@/constants/editor";
 import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   accessSpecifier?: EIssueCommentAccessSpecifier;
@@ -57,6 +58,7 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
     showSubmitButton,
     editorRef,
   } = props;
+  const { t } = useTranslation();
 
   // State to manage active states of toolbar items
   const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
@@ -164,7 +166,7 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
               disabled={isCommentEmpty}
               loading={isSubmitting}
             >
-              Comment
+              {t("comment")}
             </Button>
           </div>
         )}

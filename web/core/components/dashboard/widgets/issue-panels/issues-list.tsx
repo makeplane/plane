@@ -23,6 +23,7 @@ import { getRedirectionFilters } from "@/helpers/dashboard.helper";
 // hooks
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useTranslation } from "@plane/i18n";
 
 export type WidgetIssuesListProps = {
   isLoading: boolean;
@@ -34,6 +35,7 @@ export type WidgetIssuesListProps = {
 
 export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
   const { isLoading, tab, type, widgetStats, workspaceSlug } = props;
+  const { t } = useTranslation();
   // hooks
   const { isMobile } = usePlatformOS();
   const { handleRedirection } = useIssuePeekOverviewRedirection();
@@ -83,16 +85,16 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
                   "col-span-9": type === "created" && tab === "completed",
                 })}
               >
-                Issues
+                {t("issues")}
                 <span className="flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-medium rounded-xl px-2 flex items-center text-center justify-center">
                   {widgetStats.count}
                 </span>
               </h6>
-              <h6 className="text-center col-span-1">Priority</h6>
-              {["upcoming", "pending"].includes(tab) && <h6 className="text-center col-span-2">Due date</h6>}
-              {tab === "overdue" && <h6 className="text-center col-span-2">Due by</h6>}
-              {type === "assigned" && tab !== "completed" && <h6 className="text-center col-span-2">Blocked by</h6>}
-              {type === "created" && <h6 className="text-center col-span-2">Assigned to</h6>}
+              <h6 className="text-center col-span-1">{t("priority")}</h6>
+              {["upcoming", "pending"].includes(tab) && <h6 className="text-center col-span-2">{t("due_date")}</h6>}
+              {tab === "overdue" && <h6 className="text-center col-span-2">{t("due_by")}</h6>}
+              {type === "assigned" && tab !== "completed" && <h6 className="text-center col-span-2">{t("blocked_by")}</h6>}
+              {type === "created" && <h6 className="text-center col-span-2">{t("assigned_to")}</h6>}
             </div>
             <div className="pb-3 mt-2">
               {issuesList.map((issue) => {
@@ -126,7 +128,7 @@ export const WidgetIssuesList: React.FC<WidgetIssuesListProps> = (props) => {
             "w-min my-3 mx-auto py-1 px-2 text-xs hover:bg-custom-primary-100/20"
           )}
         >
-          View all issues
+          {t("view_all_issues")}
         </Link>
       )}
     </>

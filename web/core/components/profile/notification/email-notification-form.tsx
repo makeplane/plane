@@ -2,14 +2,14 @@
 
 import React, { FC, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useTranslation } from "@plane/i18n";
 import { IUserEmailNotificationSettings } from "@plane/types";
 // ui
 import { Button, Checkbox, TOAST_TYPE, setToast } from "@plane/ui";
 // services
 import { UserService } from "@/services/user.service";
 // types
-
-interface IEmailNotificationFormProps {
+ interface IEmailNotificationFormProps {
   data: IUserEmailNotificationSettings;
 }
 
@@ -18,6 +18,7 @@ const userService = new UserService();
 
 export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) => {
   const { data } = props;
+  const { t } = useTranslation();
   // form data
   const {
     handleSubmit,
@@ -43,9 +44,9 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
       .updateCurrentUserEmailNotificationSettings(payload)
       .then(() =>
         setToast({
-          title: "Success!",
+          title: t("success"),
           type: TOAST_TYPE.SUCCESS,
-          message: "Email Notification Settings updated successfully",
+          message: t("email_notification_setting_updated_successfully"),
         })
       )
       .catch((err) => console.error(err));
@@ -57,15 +58,13 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
 
   return (
     <>
-      <div className="pt-6 text-lg font-medium text-custom-text-100">Notify me when:</div>
+      <div className="pt-6 text-lg font-medium text-custom-text-100">{t("notify_me_when")}:</div>
       {/* Notification Settings */}
       <div className="flex flex-col py-2">
         <div className="flex gap-2 items-center pt-6">
           <div className="grow">
-            <div className="pb-1 text-base font-medium text-custom-text-100">Property changes</div>
-            <div className="text-sm font-normal text-custom-text-300">
-              Notify me when issue’s properties like assignees, priority, estimates or anything else changes.
-            </div>
+            <div className="pb-1 text-base font-medium text-custom-text-100">{t("property_changes")}</div>
+            <div className="text-sm font-normal text-custom-text-300">{t("property_changes_description")}</div>
           </div>
           <div className="shrink-0">
             <Controller
@@ -79,9 +78,9 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
         </div>
         <div className="flex gap-2 items-center pt-6 pb-2">
           <div className="grow">
-            <div className="pb-1 text-base font-medium text-custom-text-100">State change</div>
+            <div className="pb-1 text-base font-medium text-custom-text-100">{t("state_change")}</div>
             <div className="text-sm font-normal text-custom-text-300">
-              Notify me when the issues moves to a different state
+              {t("state_change_description")}
             </div>
           </div>
           <div className="shrink-0">
@@ -102,8 +101,8 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
         </div>
         <div className="flex gap-2 items-center border-0 border-l-[3px] border-custom-border-300 pl-3">
           <div className="grow">
-            <div className="pb-1 text-base font-medium text-custom-text-100">Issue completed</div>
-            <div className="text-sm font-normal text-custom-text-300">Notify me only when an issue is completed</div>
+            <div className="pb-1 text-base font-medium text-custom-text-100">{t("issue_completed")}</div>
+            <div className="text-sm font-normal text-custom-text-300">{t("issue_completed_description")}</div>
           </div>
           <div className="shrink-0">
             <Controller
@@ -117,9 +116,9 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
         </div>
         <div className="flex gap-2 items-center pt-6">
           <div className="grow">
-            <div className="pb-1 text-base font-medium text-custom-text-100">Comments</div>
+            <div className="pb-1 text-base font-medium text-custom-text-100">{t("comments")}</div>
             <div className="text-sm font-normal text-custom-text-300">
-              Notify me when someone leaves a comment on the issue
+              {t("comments_description")}
             </div>
           </div>
           <div className="shrink-0">
@@ -134,9 +133,9 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
         </div>
         <div className="flex gap-2 items-center pt-6">
           <div className="grow">
-            <div className="pb-1 text-base font-medium text-custom-text-100">Mentions</div>
+            <div className="pb-1 text-base font-medium text-custom-text-100">{t("mentions")}</div>
             <div className="text-sm font-normal text-custom-text-300">
-              Notify me only when someone mentions me in the comments or description
+              {t("mentions_description")}
             </div>
           </div>
           <div className="shrink-0">

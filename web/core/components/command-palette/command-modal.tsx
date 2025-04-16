@@ -42,11 +42,13 @@ import { WorkspaceService } from "@/plane-web/services";
 // services
 import { IssueService } from "@/services/issue";
 import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
+import { useTranslation } from "@plane/i18n";
 
 const workspaceService = new WorkspaceService();
 const issueService = new IssueService();
 
 export const CommandModal: React.FC = observer(() => {
+  const { t } = useTranslation();
   // hooks
   const { workspaceProjectIds } = useProject();
   const { isMobile } = usePlatformOS();
@@ -245,7 +247,7 @@ export const CommandModal: React.FC = observer(() => {
                       />
                       <Command.Input
                         className="w-full border-0 border-b border-custom-border-200 bg-transparent p-4 pl-11 text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
-                        placeholder={placeholder}
+                        placeholder={t(placeholder)}
                         value={searchTerm}
                         onValueChange={(e) => setSearchTerm(e)}
                         autoFocus
@@ -315,7 +317,7 @@ export const CommandModal: React.FC = observer(() => {
                                 >
                                   <div className="flex items-center gap-2 text-custom-text-200">
                                     <LayersIcon className="h-3.5 w-3.5" />
-                                    Create new issue
+                                    {t("create_new_issue")}
                                   </div>
                                   <kbd>C</kbd>
                                 </Command.Item>
@@ -333,7 +335,7 @@ export const CommandModal: React.FC = observer(() => {
                               >
                                 <div className="flex items-center gap-2 text-custom-text-200">
                                   <FolderPlus className="h-3.5 w-3.5" />
-                                  Create new project
+                                  {t("create_new_project")}
                                 </div>
                                 <kbd>P</kbd>
                               </Command.Item>

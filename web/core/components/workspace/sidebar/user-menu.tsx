@@ -4,6 +4,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
+import { useTranslation } from "@plane/i18n";
 // components
 import { Tooltip } from "@plane/ui";
 import { SidebarNavItem } from "@/components/sidebar";
@@ -19,6 +20,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export const SidebarUserMenu = observer(() => {
+  const { t } = useTranslation();
   // store hooks
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const { captureEvent } = useEventTracker();
@@ -64,7 +66,7 @@ export const SidebarUserMenu = observer(() => {
           allowPermissions(link.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString()) && (
             <Tooltip
               key={link.key}
-              tooltipContent={link.label}
+              tooltipContent={t(link.key)}
               position="right"
               className="ml-2"
               disabled={!sidebarCollapsed}
@@ -77,7 +79,7 @@ export const SidebarUserMenu = observer(() => {
                 >
                   <div className="flex items-center gap-1.5 py-[1px]">
                     <link.Icon className="size-4 flex-shrink-0" />
-                    {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{link.label}</p>}
+                    {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{t(link.key)}</p>}
                   </div>
                   {link.key === "notifications" && notificationIndicatorElement}
                 </SidebarNavItem>

@@ -8,10 +8,12 @@ import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { ViewListHeader } from "@/components/views";
+import { useTranslation } from "@plane/i18n";
 // hooks
 import { useCommandPalette, useProject } from "@/hooks/store";
 
 export const ProjectViewsHeader = observer(() => {
+  const { t } = useTranslation();
   // router
   const { workspaceSlug } = useParams();
   // store hooks
@@ -49,7 +51,7 @@ export const ProjectViewsHeader = observer(() => {
           <ViewListHeader />
           <div>
             <Button variant="primary" size="sm" onClick={() => toggleCreateViewModal(true)}>
-              Add view
+              {t("add_view")}
             </Button>
           </div>
         </Header.RightItem>

@@ -10,6 +10,7 @@ import { cn } from "@/helpers/common.helper";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // constants
 import { GANTT_SELECT_GROUP, HEADER_HEIGHT, SIDEBAR_WIDTH } from "../constants";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   blockIds: string[];
@@ -39,6 +40,7 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
     quickAdd,
     selectionHelpers,
   } = props;
+  const { t } = useTranslation();
 
   const isGroupSelectionEmpty = selectionHelpers.isGroupSelected(GANTT_SELECT_GROUP) === "empty";
 
@@ -75,7 +77,7 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
           )}
           <h6>{title}</h6>
         </div>
-        <h6>Duration</h6>
+        <h6>{t("duration")}</h6>
       </Row>
 
       <Row variant={ERowVariant.HUGGING} className="min-h-full h-max bg-custom-background-100 overflow-hidden">

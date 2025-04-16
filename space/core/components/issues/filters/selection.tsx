@@ -6,7 +6,7 @@ import { Search, X } from "lucide-react";
 // types
 import { IIssueFilterOptions, TIssueFilterKeys } from "@/types/issue";
 // components
-import { FilterPriority, FilterState, FilterCustomProperty } from ".";
+import { FilterPriority, FilterState } from ".";
 
 type Props = {
   filters: IIssueFilterOptions;

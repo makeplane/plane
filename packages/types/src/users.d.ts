@@ -28,6 +28,8 @@ export interface IUser extends IUserLite {
   username: string;
   last_login_medium: TLoginMediums;
   theme: IUserTheme;
+  cover_image: string;
+  cover_image_asset: any;
 }
 
 export interface IUserAccount {
@@ -59,6 +61,7 @@ export type TUserProfile = {
   billing_address_country: string | undefined;
   billing_address: string | undefined;
   has_billing_address: boolean;
+  language: string;
   created_at: Date | string;
   updated_at: Date | string;
 };

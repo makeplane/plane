@@ -16,8 +16,10 @@ import { cn } from "@/helpers/common.helper";
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useMember, useModuleFilter } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 export const ArchivedModulesHeader: FC = observer(() => {
+  const { t } = useTranslation();
   // router
   const { projectId } = useParams();
   // refs
@@ -133,7 +135,7 @@ export const ArchivedModulesHeader: FC = observer(() => {
         />
         <FiltersDropdown
           icon={<ListFilter className="h-3 w-3" />}
-          title="Filters"
+          title={t("filters")}
           placement="bottom-end"
           isFiltersApplied={isFiltersApplied}
         >

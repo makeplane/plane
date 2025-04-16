@@ -12,7 +12,8 @@ from .issue import (
     IssueLinkAPIEndpoint,
     IssueCommentAPIEndpoint,
     IssueActivityAPIEndpoint,
-    IssueAttachmentEndpoint
+    IssueAttachmentEndpoint,
+    IssueCustomPropertyUpdateAPIView
 )
 from .issue_type import IssueTypeAPIEndpoint,IssueTypeCustomPropertyAPIEndpoint
 from .attachment import IssueAttachmentV2Endpoint

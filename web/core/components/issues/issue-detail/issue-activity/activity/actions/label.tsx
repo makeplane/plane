@@ -26,7 +26,7 @@ export const IssueLabelActivity: FC<TIssueLabelActivity> = observer((props) => {
       ends={ends}
     >
       <>
-        {activity.old_value === "" ? `added a new label ` : `removed the label `}
+        {activity.old_value === "" ? `${t("added_label")} ` : `${t("removed_label")} `}
         <LabelActivityChip
           name={activity.old_value === "" ? activity.new_value : activity.old_value}
           color={
@@ -35,7 +35,7 @@ export const IssueLabelActivity: FC<TIssueLabelActivity> = observer((props) => {
               : projectLabels?.find((l) => l.id === activity.old_identifier)?.color
           }
         />
-        {showIssue && (activity.old_value === "" ? ` to ` : ` from `)}
+        {showIssue && (activity.old_value === "" ? ` ${t("to")} ` : ` ${t("from")} `)}
         {showIssue && <IssueLink activityId={activityId} />}
       </>
     </IssueActivityBlockComponent>

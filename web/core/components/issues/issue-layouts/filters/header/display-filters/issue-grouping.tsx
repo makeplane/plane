@@ -7,6 +7,7 @@ import { FilterHeader, FilterOption } from "@/components/issues";
 // types
 import { ISSUE_FILTER_OPTIONS } from "@/constants/issue";
 // constants
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   selectedIssueType: TIssueGroupingFilters | undefined;
@@ -15,6 +16,7 @@ type Props = {
 
 export const FilterIssueGrouping: React.FC<Props> = observer((props) => {
   const { selectedIssueType, handleUpdate } = props;
+  const { t } = useTranslation();
 
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
 
@@ -23,7 +25,7 @@ export const FilterIssueGrouping: React.FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title="Issue Grouping"
+        title={t("issue_grouping")}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />

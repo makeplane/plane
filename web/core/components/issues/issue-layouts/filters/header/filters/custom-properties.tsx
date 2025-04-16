@@ -1,14 +1,25 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
-// import sortBy from "lodash/sortBy";
+import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { IState } from "@plane/types";
 import { WorkspaceService } from "@/services/workspace.service";
 import { API_BASE_URL } from "@/helpers/common.helper";
-// import { Loader, StateGroupIcon } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterSearch } from "./search-filters";
+import { useTranslation } from "@plane/i18n";
+
+type CustomPropertySection = {
+  data: string[];
+  page?: number;
+  total_pages?: number;
+  total_results?: number;
+  query?: string;
+};
+
+type CustomPropertiesState = {
+  [key: string]: CustomPropertySection;
+};
 
 type Props = {
   appliedFilters: string[] | null;
@@ -17,74 +28,99 @@ type Props = {
 };
 
 export const FilterCustomProperty: React.FC<Props> = observer((props) => {
+  const { t } = useTranslation();
   const { workspaceSlug } = useParams();
   const workspaceService = new WorkspaceService(API_BASE_URL);
   const { appliedFilters, handleUpdate, searchQuery } = props;
 
   const [mainPreviewEnabled, setMainPreviewEnabled] = useState(true);
   const [groupPreviewEnabled, setGroupPreviewEnabled] = useState<Record<string, boolean>>({});
-  const [renderMoreGroupItems, setRenderMoreGroupItems] = useState<Record<string, boolean>>({});
-  const [groupedProperties, setGroupedProperties] = useState<Record<string, any[]>>({});
+  const [customProperties, setCustomProperties] = useState({});
+
+  const fetchCustomProperties = async (
+    groupKey?: string,
+    query?: string,
+    page?: number
+  ) => {
+    try {
+      const params = {
+        page: page || 1,
+        query: query || '',
+        key: groupKey || '',
+      };
+
+      const data = await workspaceService.getIssuesCustomProperties(workspaceSlug, params);
+
+      // If no specific section, initialize all sections
+      if (!groupKey) {
+        const initialState = Object.keys(data).reduce((acc, key) => {
+          acc[key] = {
+            ...(data[key] || {}),
+            query: ''
+          };
+          return acc;
+        }, {});
+
+        setCustomProperties(initialState);
+
+        const initialGroupPreview = Object.keys(data).reduce((acc, key) => {
+          acc[key] = true;
+          return acc;
+        }, {});
+        setGroupPreviewEnabled(initialGroupPreview);
+      } else {
+        setCustomProperties(prev => ({
+          ...prev,
+          [groupKey]: {
+            ...(data[groupKey] || {}),
+            data: (page ?? 0) > 1
+              ? [...(prev[groupKey]?.data || []), ...(data[groupKey]?.data || [])]
+              : (data[groupKey]?.data || []),
+            query: query || ''
+          }
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching custom properties:", error);
+    }
+  };
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const handleViewToggle = (groupKey: string) => {
-    setRenderMoreGroupItems((prev) => {
-      return {
-        ...prev,
-        [groupKey]: !prev[groupKey]
-      };
-    });
-  };
-
-  React.useEffect(() => {
-    const fetchCustomProperties = async (): Promise<void> => {
-      try {
-        const data = await workspaceService.getIssuesCustomProperties(workspaceSlug.toString());
-    
-        if (Array.isArray(data)) {
-          // Convert array to an object with group keys
-          const groupedData: Record<string, any[]> = data.reduce((acc, item) => {
-            const key = item.group || "default"; // Adjust based on API response
-            acc[key] = acc[key] ? [...acc[key], item] : [item];
-            return acc;
-          }, {} as Record<string, any[]>);
-    
-          setGroupedProperties(groupedData);
-        } else {
-          setGroupedProperties(data);
-        }
-    
-        Object.keys(data).forEach((groupKey) => {
-          setGroupPreviewEnabled((prev) => ({
-            ...prev,
-            [groupKey]: true,
-          }));
-        });
-      } catch (error) {
-        console.error("Error fetching custom properties:", error);
-      }
-    };
-    
-
+  useEffect(() => {
     fetchCustomProperties();
   }, [workspaceSlug]);
 
+  const fetchNextPage = async (groupKey: string) => {
+    const currentSection = customProperties[groupKey];
+    const nextPage = currentSection.page + 1;
+
+    await fetchCustomProperties(
+      groupKey,
+      currentSection.query || '',
+      nextPage
+    );
+  };
+
+  const handleSectionSearch = (async (groupKey: string, query: string) => {
+      await fetchCustomProperties(groupKey, query, 1);
+    });
+
   const filteredGroupOptions = useMemo(() => {
-    return Object.keys(groupedProperties).reduce<Record<string, any[]>>((acc, groupKey) => {
-      const properties = groupedProperties[groupKey];
+    return Object.keys(customProperties).reduce<Record<string, any[]>>((acc, groupKey) => {
+      const properties = customProperties[groupKey]?.data || [];
 
       const filteredValues = properties
         .filter((property) => property?.toLowerCase()?.includes(searchQuery.toLowerCase()))
-        .map((property) => property);
 
-      if (filteredValues?.length > 0) {
-        acc[groupKey] = filteredValues;
-      }
+      acc[groupKey] = {
+        ...customProperties[groupKey],
+        data: filteredValues,
+      };
 
       return acc;
     }, {});
-  }, [searchQuery, groupedProperties]);
+  }, [searchQuery, customProperties]);
 
   const toggleGroupPreview = (groupKey: string) => {
     setGroupPreviewEnabled((prev) => ({
@@ -101,11 +137,12 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
         handleIsPreviewEnabled={() => setMainPreviewEnabled(!mainPreviewEnabled)}
       />
       {mainPreviewEnabled && (
-        <div>
+        <>
           {Object.keys(filteredGroupOptions).map((groupKey) => {
-            const properties = filteredGroupOptions[groupKey];
+            const groupedSection = filteredGroupOptions[groupKey];
+            const properties = filteredGroupOptions[groupKey].data || [];
             return (
-              <div key={groupKey} className="pl-2">
+              <div key={groupKey}>
                 <FilterHeader
                   title={groupKey}
                   isPreviewEnabled={groupPreviewEnabled[groupKey]}
@@ -113,8 +150,8 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
                 />
                 {groupPreviewEnabled[groupKey] && (
                   <div>
+                    <FilterSearch propertyKey={groupKey} handleSectionSearch={handleSectionSearch} />
                     {properties
-                      .slice(0, renderMoreGroupItems[groupKey] ? properties.length : 5)
                       .map((property) => (
                         <FilterOption
                           key={`${groupKey}:${property}`}
@@ -123,19 +160,24 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
                           title={property}
                         />
                       ))}
-                    {properties.length > 5 ? <button
-                      type="button"
-                      className="ml-8 text-xs font-medium text-custom-primary-100"
-                      onClick={() => handleViewToggle(groupKey)}
-                    >
-                      {renderMoreGroupItems[groupKey] ? "View less" : "View all"}
-                    </button> : null}
+                    {groupedSection.page < groupedSection.total_pages && properties.length ? (
+                      <button
+                        onClick={() => fetchNextPage(groupKey)}
+                        className="ml-8 text-xs font-medium text-custom-primary-100 cursor-pointer"
+                      >
+                        {t("view_more")}
+                      </button>
+                    ) : null}
+                    {
+                      properties.length == 0 ?
+                      <p className="text-xs italic text-custom-text-400">{t("no_matches_found")}</p> : null
+                    }
                   </div>
                 )}
               </div>
             );
           })}
-        </div>
+        </>
       )}
     </>
   );

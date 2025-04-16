@@ -33,6 +33,7 @@
     "@plane/helpers": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
+    "@plane/i18n": "*",
     "@popperjs/core": "^2.11.8",
     "@react-pdf/renderer": "^3.4.5",
     "@sentry/nextjs": "^8.32.0",

@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 // types
 import { TIssuesByPriorityWidgetFilters, TIssuesByPriorityWidgetResponse } from "@plane/types";
+import { useTranslation } from "@plane/i18n";
 // components
 import { Card } from "@plane/ui";
 import {
@@ -24,6 +25,7 @@ const WIDGET_KEY = "issues_by_priority";
 
 export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   // store hooks
@@ -76,7 +78,7 @@ export const IssuesByPriorityWidget: React.FC<WidgetProps> = observer((props) =>
           href={`/${workspaceSlug}/workspace-views/assigned`}
           className="text-lg font-semibold text-custom-text-300 hover:underline"
         >
-          Assigned by priority
+          {t("assigned_by_priority")}
         </Link>
         <DurationFilterDropdown
           customDates={selectedCustomDates}

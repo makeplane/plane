@@ -6,6 +6,7 @@ import { Button, PopoverMenu } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 // constants
 import { TActivityFilterOption, TActivityFilters } from "@/plane-web/constants/issues";
+import { useTranslation } from "@plane/i18n";
 
 type TActivityFilter = {
   selectedFilters: TActivityFilters[];
@@ -14,6 +15,7 @@ type TActivityFilter = {
 
 export const ActivityFilter: FC<TActivityFilter> = observer((props) => {
   const { selectedFilters = [], filterOptions } = props;
+  const { t } = useTranslation();
 
   return (
     <PopoverMenu
@@ -25,7 +27,7 @@ export const ActivityFilter: FC<TActivityFilter> = observer((props) => {
           prependIcon={<ListFilter className="h-3 w-3" />}
           className="relative"
         >
-          <span className="text-custom-text-200">Filters</span>
+          <span className="text-custom-text-200">{t("filters")}</span>
         </Button>
       }
       panelClassName="p-2 rounded-md border border-custom-border-200 bg-custom-background-100"

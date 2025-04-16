@@ -9,10 +9,10 @@ export type TActivityFilters = EActivityFilterType;
 
 export const ACTIVITY_FILTER_TYPE_OPTIONS: Record<EActivityFilterType, { label: string }> = {
   [EActivityFilterType.ACTIVITY]: {
-    label: "Updates",
+    label: "updates",
   },
   [EActivityFilterType.COMMENT]: {
-    label: "Comments",
+    label: "comments",
   },
 };
 
