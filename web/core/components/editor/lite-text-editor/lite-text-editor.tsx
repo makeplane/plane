@@ -15,6 +15,7 @@ import { isCommentEmpty } from "@/helpers/string.helper";
 import { useMember, useMention, useUser } from "@/hooks/store";
 // plane web hooks
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
+import { useTranslation } from "@plane/i18n";
 
 interface LiteTextEditorWrapperProps extends Omit<ILiteTextEditor, "fileHandler" | "mentionHandler"> {
   workspaceSlug: string;
@@ -43,6 +44,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     uploadFile,
     ...rest
   } = props;
+  const { t } = useTranslation();
   // store hooks
   const { data: currentUser } = useUser();
   const {
@@ -83,7 +85,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           highlights: mentionHighlights,
           suggestions: mentionSuggestions,
         }}
-        placeholder={placeholder}
+        placeholder={t(placeholder)}
         containerClassName={cn(containerClassName, "relative")}
         {...rest}
       />
