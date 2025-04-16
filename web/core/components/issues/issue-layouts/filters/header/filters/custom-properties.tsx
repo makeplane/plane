@@ -29,13 +29,14 @@ type Props = {
 
 export const FilterCustomProperty: React.FC<Props> = observer((props) => {
   const { t } = useTranslation();
-  const { workspaceSlug } = useParams();
+  const { routerWorkspaceSlug } = useParams();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
   const workspaceService = new WorkspaceService(API_BASE_URL);
   const { appliedFilters, handleUpdate, searchQuery } = props;
 
   const [mainPreviewEnabled, setMainPreviewEnabled] = useState(true);
   const [groupPreviewEnabled, setGroupPreviewEnabled] = useState<Record<string, boolean>>({});
-  const [customProperties, setCustomProperties] = useState({});
+  const [customProperties, setCustomProperties] = useState<CustomPropertiesState>({});
 
   const fetchCustomProperties = async (
     groupKey?: string,
@@ -49,7 +50,7 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
         key: groupKey || '',
       };
 
-      const data = await workspaceService.getIssuesCustomProperties(workspaceSlug, params);
+      const data = await workspaceService.getIssuesCustomProperties(workspaceSlug, params) as any;
 
       // If no specific section, initialize all sections
       if (!groupKey) {
@@ -59,14 +60,14 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
             query: ''
           };
           return acc;
-        }, {});
+        }, {} as CustomPropertiesState);
 
         setCustomProperties(initialState);
 
         const initialGroupPreview = Object.keys(data).reduce((acc, key) => {
           acc[key] = true;
           return acc;
-        }, {});
+        }, {} as Record<string, boolean>);
         setGroupPreviewEnabled(initialGroupPreview);
       } else {
         setCustomProperties(prev => ({
@@ -93,7 +94,7 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
 
   const fetchNextPage = async (groupKey: string) => {
     const currentSection = customProperties[groupKey];
-    const nextPage = currentSection.page + 1;
+    const nextPage = (currentSection.page ?? 1) + 1;
 
     await fetchCustomProperties(
       groupKey,
@@ -107,11 +108,11 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
     });
 
   const filteredGroupOptions = useMemo(() => {
-    return Object.keys(customProperties).reduce<Record<string, any[]>>((acc, groupKey) => {
-      const properties = customProperties[groupKey]?.data || [];
+    return Object.keys(customProperties).reduce<Record<string, CustomPropertySection>>((acc, groupKey) => {
+      const properties: string[] = customProperties[groupKey]?.data || [];
 
       const filteredValues = properties
-        .filter((property) => property?.toLowerCase()?.includes(searchQuery.toLowerCase()))
+        .filter((property: string) => property?.toLowerCase()?.includes(searchQuery.toLowerCase()))
 
       acc[groupKey] = {
         ...customProperties[groupKey],
@@ -160,7 +161,7 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
                           title={property}
                         />
                       ))}
-                    {groupedSection.page < groupedSection.total_pages && properties.length ? (
+                    {(groupedSection.page ?? 1) < (groupedSection.total_pages ?? 1) && properties.length ? (
                       <button
                         onClick={() => fetchNextPage(groupKey)}
                         className="ml-8 text-xs font-medium text-custom-primary-100 cursor-pointer"
