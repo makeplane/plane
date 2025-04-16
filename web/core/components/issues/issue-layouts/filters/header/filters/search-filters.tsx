@@ -8,7 +8,7 @@ import { Search } from "lucide-react";
 
 type Props = {
 	propertyKey: string;
-	handleSectionSearch: () => void;
+	handleSectionSearch: (groupKey: string, query: string) => void;
 };
 
 export const FilterSearch: React.FC<Props> = observer(({ propertyKey, handleSectionSearch }) => {
