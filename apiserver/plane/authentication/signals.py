@@ -17,4 +17,5 @@ def trigger_app_bots_to_project(sender, instance, created, **kwargs):
     if created:
         # Trigger the background task with the project id
         user = get_current_user()
-        add_app_bots_to_project.delay(str(instance.id), user.id)
+        user_id = user.id if user and user.is_authenticated else None
+        add_app_bots_to_project.delay(str(instance.id), user_id)
