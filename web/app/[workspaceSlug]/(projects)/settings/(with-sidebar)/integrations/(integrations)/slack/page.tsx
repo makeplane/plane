@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { ArrowLeft, Cloud } from "lucide-react";
 // plane web components
-import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
+import { E_FEATURE_FLAGS, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import { E_INTEGRATION_KEYS, SILO_ERROR_CODES } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
@@ -26,7 +26,7 @@ const SlackIntegration: FC<{ searchParams?: { error: string } }> = observer(({ s
   // store hooks
   const { fetchExternalApiToken, externalApiToken } = useSlackIntegration();
   // derived values
-  const isFeatureEnabled = useFlag(workspaceSlug?.toString(), "SLACK_INTEGRATION");
+  const isFeatureEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.SLACK_INTEGRATION) || false;
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
 
   // derived values

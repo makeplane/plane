@@ -36,7 +36,7 @@ const GitHubIntegration: FC<{ searchParams?: { error: string } }> = observer(({ 
 
   // derived values
   const workspaceSlug = workspace?.slug || undefined;
-  const isFeatureEnabled = useFlag(workspaceSlug?.toString() || "", E_FEATURE_FLAGS.GITHUB_INTEGRATION) || true;
+  const isFeatureEnabled = useFlag(workspaceSlug?.toString() || "", E_FEATURE_FLAGS.GITHUB_INTEGRATION) || false;
   const workspaceConnectionId = workspaceConnectionIds[0] || undefined;
   const organization = workspaceConnectionId ? workspaceConnectionById(workspaceConnectionId) : undefined;
   const githubLogo = resolvedTheme === "dark" ? GithubLightLogo : GithubDarkLogo;
