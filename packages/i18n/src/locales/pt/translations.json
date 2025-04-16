@@ -463,5 +463,11 @@
   "October": "Outubro",
   "November": "Novembro",
   "December": "Dezembro",
-  "current": "Atual"
+  "current": "Atual",
+  "view_all": "Ver tudo",
+  "view_all_issues": "Ver todos os problemas",
+  "assigned_to": "Atribuído a",
+  "due_by": "Devido até",
+  "blocked_by": "Bloqueado por",
+  "sub_issues": "Subproblemas"
 }

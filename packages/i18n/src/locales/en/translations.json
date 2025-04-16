@@ -463,5 +463,11 @@
   "October": "October",
   "November": "November",
   "December": "December",
-  "current": "Current"
+  "current": "Current",
+  "view_all": "View all",
+  "view_all_issues": "View all issues",
+  "assigned_to": "Assigned to",
+  "due_by": "Due by",
+  "blocked_by": "Blocked by",
+  "sub_issues": "Sub-issues"
 }
