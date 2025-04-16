@@ -86,7 +86,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           highlights: mentionHighlights,
           suggestions: mentionSuggestions,
         }}
-        placeholder= placeholder
+        placeholder= {placeholder}
         containerClassName={cn(containerClassName, "relative")}
         {...rest}
       />
