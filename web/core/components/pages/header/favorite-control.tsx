@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 // plane imports
 import { FavoriteStar } from "@plane/ui";
 // hooks
@@ -9,7 +10,7 @@ type Props = {
   page: TPageInstance;
 };
 
-export const PageFavoriteControl = ({ page }: Props) => {
+export const PageFavoriteControl = observer(({ page }: Props) => {
   // derived values
   const { is_favorite, canCurrentUserFavoritePage } = page;
   // page operations
@@ -27,4 +28,4 @@ export const PageFavoriteControl = ({ page }: Props) => {
       iconClassName="size-3.5 text-custom-text-200 group-hover:text-custom-text-10"
     />
   );
-};
+});
