@@ -628,6 +628,18 @@ export class CustomerStore implements ICustomersStore {
   };
 
   /**
+   * @description Update requests
+   */
+  removeWorkItemFromRequests = (workItemId: string) => {
+    // remove work item from all requests
+    Object.values(this.requestsMap).forEach((request) => {
+      if (request.work_item_ids) {
+        remove(request.work_item_ids, (id) => id === workItemId);
+      }
+    });
+  };
+
+  /**
    * @description Remove work item from request
    * @param workspaceSlug
    * @param customerId
@@ -643,9 +655,8 @@ export class CustomerStore implements ICustomersStore {
     try {
       const _params = requestId ? { customer_request_id: requestId } : undefined;
       await this.customerService.removeWorkItemFromCustomer(workspaceSlug, customerId, workItemId, _params);
-      const workItem: TCustomerWorkItem | undefined = this.rootStore.issue.issues.getIssueById(workItemId);
-      const _requestId = workItem?.customer_request_id || requestId;
-      runInAction(() => {
+      const _requestId = requestId;
+      runInAction(async () => {
         if (_requestId) {
           const _workItemIds = this.requestsMap[_requestId]?.work_item_ids;
           remove(_workItemIds, (id) => id === workItemId);
@@ -658,8 +669,13 @@ export class CustomerStore implements ICustomersStore {
           this.rootStore.issue.issues.updateIssue(workItemId, {
             customer_request_count: requestCount > 0 ? requestCount - 1 : 0,
           });
+        } else {
+          // check if requests are related to the work item and remove from all of them
+          this.removeWorkItemFromRequests(workItemId);
         }
-        remove(this.customerWorkItemIdsMap[customerId], (id) => id === workItemId);
+        // fetch updated work items
+        await this.fetchCustomerWorkItems(workspaceSlug, customerId);
+        // remove request from the work item
         remove(this.workItemRequestIdsMap[workItemId], (id) => id === _requestId);
       });
       remove(this.workItemCustomerIds[workItemId], (id) => id === customerId);

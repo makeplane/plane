@@ -169,7 +169,7 @@ export class CustomerService extends APIService {
     workItemId: string,
     query?: { customer_request_id: string }
   ): Promise<void> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/customers/${customerId}/work-items/${workItemId}/`, {
+    return this.delete(`/api/workspaces/${workspaceSlug}/customers/${customerId}/work-items/${workItemId}/`, null, {
       params: query,
     })
       .then((response) => response?.data)
