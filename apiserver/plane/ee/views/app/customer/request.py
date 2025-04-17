@@ -1,5 +1,6 @@
 # Python imports
 import re
+import json
 
 # Third party imports
 from rest_framework.response import Response
@@ -10,12 +11,15 @@ from plane.ee.views.base import BaseAPIView
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.models import CustomerRequest, Customer, CustomerRequestIssue
-from plane.db.models import Workspace, Issue, FileAsset
+from plane.db.models import Workspace, Issue, FileAsset, Issue
 from plane.ee.serializers import CustomerRequestSerializer
 from plane.app.permissions import WorkSpaceAdminPermission
 from plane.utils.issue_filters import issue_filters
+from plane.bgtasks.issue_activities_task import issue_activity
+
 
 # Django imports
+from django.utils import timezone
 from django.db.models import OuterRef, Func, F, CharField, Subquery, Q, Value, UUIDField
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models.functions import Cast, Coalesce
@@ -146,8 +150,31 @@ class CustomerRequestEndpoint(BaseAPIView):
 
         customer_request.delete()
 
-        # Delete the linked issues
-        CustomerRequestIssue.objects.filter(customer_request=pk).delete()
+        customer_request_issues = CustomerRequestIssue.objects.filter(
+            customer_request=pk
+        ).prefetch_related("customer", "customer_request")
+
+        for customer_request_issue in customer_request_issues:
+            issue_activity.delay(
+                type="customer.activity.deleted",
+                requested_data=json.dumps(
+                    {
+                        "customer_id": str(customer_request_issue.customer_id),
+                        "name": customer_request_issue.customer_request.name,
+                        "customer_request_id": str(pk),
+                    }
+                ),
+                actor_id=str(request.user.id),
+                issue_id=str(customer_request_issue.issue_id),
+                project_id=customer_request_issue.issue.project_id,
+                current_instance=None,
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                subscriber=True,
+            )
+
+            # Delete the linked issues
+            customer_request_issue.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -210,7 +237,6 @@ class CustomerIssuesEndpoint(BaseAPIView):
             is_epic=F("type__is_epic"),
         )
 
-        print(issues, "print issues after distince")
         return Response(issues, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
@@ -236,6 +262,41 @@ class CustomerIssuesEndpoint(BaseAPIView):
         issues = CustomerRequestIssue.objects.bulk_create(
             customer_request_issues, batch_size=10, ignore_conflicts=True
         )
+
+        if customer_request_id is not None:
+            name = CustomerRequest.objects.get(pk=customer_request_id).name
+
+            requested_data = json.dumps(
+                {
+                    "customer_id": str(customer_id),
+                    "name": name,
+                    "customer_request_id": str(customer_request_id),
+                }
+            )
+        else:
+            name = Customer.objects.get(pk=customer_id).name
+
+            requested_data = json.dumps(
+                {
+                    "customer_id": str(customer_id),
+                    "name": name,
+                    "customer_request_id": None,
+                }
+            )
+
+        # Track the issue
+        for issue in issues:
+            issue_activity.delay(
+                type="customer.activity.created",
+                requested_data=requested_data,
+                actor_id=str(request.user.id),
+                issue_id=str(issue.issue_id),
+                project_id=str(issue.issue.project_id),
+                current_instance=None,
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                subscriber=True,
+            )
 
         # Listing only inserted issue ids
         created_issue_ids = [issue.issue_id for issue in issues]
@@ -263,17 +324,55 @@ class CustomerIssuesEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
     def delete(self, request, slug, customer_id, work_item_id):
-        customer_request_id = request.query_params.get("customer_request_id")
+        customer_request_id = request.query_params.get("customer_request_id", None)
 
-        customer_request_issue = CustomerRequestIssue.objects.filter(
-            customer_id=customer_id, issue_id=work_item_id, workspace__slug=slug
-        )
+        filters = {
+            "customer_id": customer_id,
+            "issue_id": work_item_id,
+            "workspace__slug": slug,
+        }
 
         if customer_request_id:
-            customer_request_issue = customer_request_issue.filter(
-                customer_request_id=customer_request_id
+            filters["customer_request_id"] = customer_request_id
+
+        customer_request_issues = CustomerRequestIssue.objects.filter(
+            **filters
+        ).prefetch_related("customer_request", "customer")
+
+        first_issue = customer_request_issues[0]
+
+        if customer_request_id:
+            name = first_issue.customer_request.name
+            requested_data = json.dumps(
+                {
+                    "customer_id": str(customer_id),
+                    "name": name,
+                    "customer_request_id": str(customer_request_id),
+                }
+            )
+        else:
+            name = first_issue.customer.name
+            requested_data = json.dumps(
+                {
+                    "customer_id": str(customer_id),
+                    "name": name,
+                    "customer_request_id": None,
+                }
             )
 
-        customer_request_issue.delete()
+        for customer_request_issue in customer_request_issues:
+            issue_activity.delay(
+                type="customer.activity.deleted",
+                requested_data=requested_data,
+                actor_id=str(request.user.id),
+                issue_id=str(work_item_id),
+                project_id=customer_request_issue.issue.project_id,
+                current_instance=None,
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                subscriber=True,
+            )
+
+            customer_request_issue.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)

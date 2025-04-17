@@ -64,8 +64,7 @@ export const CustomerRequestsRoot: FC<TProps> = observer((props) => {
           )}
         </div>
       </div>
-      {!isRequestFormOpen &&
-        !requestIds?.length &&
+      {!requestIds?.length &&
         (customerRequestSearchQuery === "" ? (
           <CustomerRequestEmptyState addRequest={handleFormOpen} />
         ) : (

@@ -1667,6 +1667,74 @@ def create_issue_activity(
         )
 
 
+def create_customer_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+
+    if requested_data.get("customer_request_id") is not None:
+        field = "customer_request"
+    elif requested_data.get("customer_request_id") is None:
+        field = "customer"
+
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            actor_id=actor_id,
+            verb="created",
+            comment="linked to the customer",
+            new_value=requested_data.get("name"),
+            old_value=None,
+            field=field,
+            new_identifier=requested_data.get("customer_id"),
+            epoch=epoch,
+        )
+    )
+
+
+def delete_customer_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+
+    if requested_data.get("customer_request_id") is not None:
+        field = "customer_request"
+    elif requested_data.get("customer_request_id") is None:
+        field = "customer"
+
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            actor_id=actor_id,
+            verb="deleted",
+            comment="removed from customer",
+            new_value=None,
+            old_value=requested_data.get("name"),
+            field=field,
+            old_identifier=requested_data.get("customer_id"),
+            epoch=epoch,
+        )
+    )
+
+
 # Receive message from room group
 @shared_task
 def issue_activity(
@@ -1737,6 +1805,8 @@ def issue_activity(
             "issue_draft.activity.deleted": delete_draft_issue_activity,
             "intake.activity.created": create_intake_activity,
             "epic.activity.created": create_epic_activity,
+            "customer.activity.created": create_customer_activity,
+            "customer.activity.deleted": delete_customer_activity,
         }
 
         func = ACTIVITY_MAPPER.get(type)

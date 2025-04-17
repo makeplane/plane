@@ -5,3 +5,5 @@ export * from "./issue-type-activity";
 export * from "./parent-select-root";
 export * from "./issue-creator";
 export * from "./additional-activity-root";
+export * from "./customer-activity";
+export * from "./customer-request-activity";
