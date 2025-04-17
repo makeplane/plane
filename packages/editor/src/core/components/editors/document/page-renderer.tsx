@@ -1,6 +1,8 @@
 import { Editor } from "@tiptap/react";
+// plane imports
+import { cn } from "@plane/utils";
 // components
-import { EditorContainer, EditorContentWrapper } from "@/components/editors";
+import { DocumentContentLoader, EditorContainer, EditorContentWrapper } from "@/components/editors";
 import { AIFeaturesMenu, BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // types
 import { TAIHandler, TDisplayConfig } from "@/types";
@@ -13,48 +15,68 @@ type IPageRenderer = {
   titleEditor?: Editor;
   editorContainerClassName: string;
   id: string;
+  isLoading?: boolean;
   tabIndex?: number;
 };
 
 export const PageRenderer = (props: IPageRenderer) => {
-  const { aiHandler, bubbleMenuEnabled, displayConfig, editor, editorContainerClassName, id, tabIndex, titleEditor } =
-    props;
+  const {
+    aiHandler,
+    bubbleMenuEnabled,
+    displayConfig,
+    editor,
+    editorContainerClassName,
+    id,
+    tabIndex,
+    titleEditor,
+    isLoading = false,
+  } = props;
 
   return (
-    <div className="frame-renderer document-editor flex-grow w-full">
-      {titleEditor && (
-        <div className="relative w-full py-3">
+    <div
+      className={cn("frame-renderer flex-grow w-full", {
+        "wide-layout": displayConfig.wideLayout,
+      })}
+    >
+      {isLoading ? (
+        <DocumentContentLoader />
+      ) : (
+        <>
+          {titleEditor && (
+            <div className="relative w-full py-3">
+              <EditorContainer
+                editor={titleEditor}
+                id={id + "-title"}
+                editorContainerClassName="page-title-editor bg-transparent py-3 border-none"
+                displayConfig={displayConfig}
+              >
+                <EditorContentWrapper
+                  focus={false}
+                  editor={titleEditor}
+                  id={id + "-title"}
+                  tabIndex={tabIndex}
+                  className="no-scrollbar placeholder-custom-text-400 bg-transparent tracking-[-2%] font-bold text-[2rem] leading-[2.375rem] w-full outline-none p-0 border-none resize-none rounded-none"
+                />
+              </EditorContainer>
+            </div>
+          )}
           <EditorContainer
-            editor={titleEditor}
-            id={id + "-title"}
-            editorContainerClassName="page-title-editor bg-transparent py-3 border-none"
             displayConfig={displayConfig}
+            editor={editor}
+            editorContainerClassName={editorContainerClassName}
+            id={id}
           >
-            <EditorContentWrapper
-              focus={false}
-              editor={titleEditor}
-              id={id + "-title"}
-              tabIndex={tabIndex}
-              className="no-scrollbar placeholder-custom-text-400 border-[0.5px] border-custom-border-200 bg-transparent tracking-[-2%] font-bold text-[2rem] leading-[2.375rem] w-full outline-none p-0 border-none resize-none rounded-none"
-            />
+            <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
+            {editor.isEditable && (
+              <div>
+                {bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
+                <BlockMenu editor={editor} />
+                <AIFeaturesMenu menu={aiHandler?.menu} />
+              </div>
+            )}
           </EditorContainer>
-        </div>
+        </>
       )}
-      <EditorContainer
-        displayConfig={displayConfig}
-        editor={editor}
-        editorContainerClassName={editorContainerClassName}
-        id={id}
-      >
-        <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
-        {editor.isEditable && (
-          <div>
-            {bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
-            <BlockMenu editor={editor} />
-            <AIFeaturesMenu menu={aiHandler?.menu} />
-          </div>
-        )}
-      </EditorContainer>
     </div>
   );
 };

@@ -129,9 +129,8 @@ export class ProfileStore implements IUserProfileStore {
       if (currentUserProfileData) {
         this.mutateUserProfile(data);
       }
-      // const userProfile = await this.userService.updateCurrentUserProfile(data);
-      // return userProfile;
-      return undefined;
+      const userProfile = await this.userService.updateCurrentUserProfile(data);
+      return userProfile;
     } catch {
       if (currentUserProfileData) {
         this.mutateUserProfile(currentUserProfileData);
