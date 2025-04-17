@@ -138,5 +138,5 @@ class CustomOAuth2Validator(OAuth2Validator):
         """
         Allow both authorization_code and client_credentials regardless of grant type
         """
-        allowed_grant_types = ['authorization_code', 'client_credentials']
+        allowed_grant_types = ['authorization_code', 'client_credentials', 'refresh_token']
         return grant_type in allowed_grant_types

@@ -184,7 +184,7 @@ class WorkspaceAppInstallation(BaseModel):
     def save(self, *args, **kwargs):
         # create bot user and attach
         if not self.app_bot:
-            username = f"{uuid.uuid4().hex}_bot"
+            username = f"{self.workspace.slug}_{self.application.slug}_bot"
             self.app_bot = User.objects.create(
                 username=username,
                 first_name=f"{self.application.name}",

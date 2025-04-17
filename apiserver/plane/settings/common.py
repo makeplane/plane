@@ -502,6 +502,7 @@ OAUTH2_PROVIDER = {
     'ALLOWED_GRANT_TYPES': [
         'authorization_code',
         'client_credentials',
+        'refresh_token',
     ],
     'PKCE_REQUIRED': is_pkce_required,
 }
