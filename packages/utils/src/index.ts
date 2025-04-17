@@ -19,5 +19,6 @@ export * from "./subscription-extented";
 export * from "./workspace";
 export * from "./templates";
 export * from "./work-item";
+export * from "./get-icon-for-link";
 export * from "./subscription";
 export * from "./workflow";

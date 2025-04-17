@@ -2,11 +2,18 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { Pencil, Trash2, ExternalLink, EllipsisVertical, Link2, Link } from "lucide-react";
+import {
+  Pencil,
+  ExternalLink,
+  Link,
+  Trash2
+} from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast, CustomMenu, TContextMenuItem } from "@plane/ui";
 // plane utils
-import { cn, copyTextToClipboard } from "@plane/utils";
+import { cn, copyTextToClipboard,getIconForLink } from "@plane/utils";
+
+
 // helpers
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
 // hooks
@@ -32,6 +39,8 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
   if (!linkDetail) return <></>;
 
   const viewLink = linkDetail.url;
+  
+  const Icon = getIconForLink(linkDetail.url);
 
   const handleEdit = (modalToggle: boolean) => {
     toggleLinkModal(modalToggle);
@@ -47,6 +56,7 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
       });
     });
   const handleOpenInNewTab = () => window.open(`${viewLink}`, "_blank");
+ 
 
   const MENU_ITEMS: TContextMenuItem[] = [
     {
@@ -81,7 +91,7 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
       className="cursor-pointer group flex items-center bg-custom-background-100 px-4 w-[230px] h-[56px] border-[0.5px] border-custom-border-200 rounded-md gap-4 hover:shadow-md transition-shadow"
     >
       <div className="flex-shrink-0 size-8 rounded p-2 bg-custom-background-80 grid place-items-center">
-        <Link2 className="size-4 stroke-2 text-custom-text-350 -rotate-45" />
+        <Icon className="size-4 stroke-2 text-custom-text-350" />
       </div>
       <div className="flex-1 truncate">
         <div className="text-sm font-medium truncate">{linkDetail.title || linkDetail.url}</div>

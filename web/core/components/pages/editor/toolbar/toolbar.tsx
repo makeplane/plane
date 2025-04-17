@@ -15,6 +15,7 @@ import { cn } from "@/helpers/common.helper";
 
 type Props = {
   editorRef: EditorRefApi;
+  isHidden: boolean;
 };
 
 type ToolbarButtonProps = {
@@ -66,7 +67,8 @@ ToolbarButton.displayName = "ToolbarButton";
 
 const toolbarItems = TOOLBAR_ITEMS.document;
 
-export const PageToolbar: React.FC<Props> = ({ editorRef }) => {
+export const PageToolbar: React.FC<Props> = (props) => {
+  const { editorRef, isHidden } = props;
   // states
   const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
 
@@ -99,7 +101,11 @@ export const PageToolbar: React.FC<Props> = ({ editorRef }) => {
   );
 
   return (
-    <div className="flex flex-1 items-center overflow-x-auto overflow-y-hidden scrollbar-hide max-w-full">
+    <div
+      className={cn("flex flex-wrap items-center opacity-100 transition-opacity duration-200 ease-in-out", {
+        "opacity-0 pointer-events-none": isHidden,
+      })}
+    >
       <div className="flex items-center divide-x divide-custom-border-200 flex-nowrap min-w-0 w-full">
         <CustomMenu
           customButton={
