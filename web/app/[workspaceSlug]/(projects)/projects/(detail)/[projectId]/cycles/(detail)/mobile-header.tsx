@@ -110,7 +110,7 @@ export const CycleIssuesMobileHeader = () => {
         workspaceSlug.toString(),
         projectId.toString(),
         EIssueFilterType.DISPLAY_PROPERTIES,
-        property,
+        property as IIssueDisplayProperties,
         cycleId.toString()
       );
     },

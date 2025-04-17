@@ -62,7 +62,7 @@ export const ArchivedIssuesHeader: FC = observer(() => {
   const handleDisplayPropertiesUpdate = (property: Partial<IIssueDisplayProperties>) => {
     if (!workspaceSlug || !projectId) return;
 
-    updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.DISPLAY_PROPERTIES, property);
+    updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.DISPLAY_PROPERTIES, property as IIssueDisplayProperties);
   };
 
   return (

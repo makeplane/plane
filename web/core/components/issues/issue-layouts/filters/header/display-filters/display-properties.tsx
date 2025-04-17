@@ -10,6 +10,7 @@ import { shouldRenderDisplayProperty } from "@/plane-web/helpers/issue-filter.he
 // components
 import { FilterHeader } from "../helpers/filter-header";
 import { useTranslation } from "@plane/i18n";
+import { useUserPermissions } from "@/hooks/store";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -17,6 +18,11 @@ type Props = {
   handleUpdate: (updatedDisplayProperties: Partial<IIssueDisplayProperties>) => void;
   cycleViewDisabled?: boolean;
   moduleViewDisabled?: boolean;
+};
+
+type IProperty = {
+  key: keyof IIssueDisplayProperties | string;
+  title: string;
 };
 
 export const FilterDisplayProperties: React.FC<Props> = observer((props) => {
@@ -34,10 +40,26 @@ export const FilterDisplayProperties: React.FC<Props> = observer((props) => {
   const [previewEnabled, setPreviewEnabled] = React.useState(true);
   // derived values
   const projectId = !!routerProjectId ? routerProjectId?.toString() : undefined;
+  const { workspaceUserInfo } = useUserPermissions();
+
+  const customPropertiesForDisplay: IProperty[] = Object.keys(
+    workspaceUserInfo[workspaceSlug?.toString()]?.default_props?.display_properties?.custom_properties || {}
+  ).map((key) => ({
+    key,
+    title: key,
+  }));
+
+  const combinedPropertiesForDisplay: IProperty[] = [
+    ...ISSUE_DISPLAY_PROPERTIES,
+    ...customPropertiesForDisplay
+  ];
 
   // Filter out "cycle" and "module" keys if cycleViewDisabled or moduleViewDisabled is true
   // Also filter out display properties that should not be rendered
-  const filteredDisplayProperties = ISSUE_DISPLAY_PROPERTIES.filter((property) => {
+  const filteredDisplayProperties = combinedPropertiesForDisplay.filter((property) => {
+    if (customPropertiesForDisplay.some((customProperty) => customProperty.key === property.key)) {
+      return true;
+    }
     if (!displayPropertiesToRender.includes(property.key)) return false;
     switch (property.key) {
       case "cycle":
@@ -74,7 +96,7 @@ export const FilterDisplayProperties: React.FC<Props> = observer((props) => {
                   })
                 }
               >
-                {t(displayProperty.key)}
+                {t(displayProperty.key as string)}
               </button>
             </>
           ))}

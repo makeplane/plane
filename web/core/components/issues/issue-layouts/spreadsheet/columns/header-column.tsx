@@ -10,6 +10,10 @@ import useLocalStorage from "@/hooks/use-local-storage";
 //types
 //constants
 import { useTranslation } from "@plane/i18n";
+import { useParams } from "next/navigation";
+import { Tags } from "lucide-react";
+import { SpreadsheetCustomPropertiesColumn } from "@/components/issues/issue-layouts/spreadsheet";
+import { useUserPermissions } from "@/hooks/store";
 
 interface Props {
   property: keyof IIssueDisplayProperties;
@@ -21,6 +25,8 @@ interface Props {
 export const HeaderColumn = (props: Props) => {
   const { displayFilters, handleDisplayFilterUpdate, property, onClose } = props;
   const { t } = useTranslation();
+  const { workspaceSlug } = useParams();
+  const { workspaceUserInfo } = useUserPermissions();
 
   const { storedValue: selectedMenuItem, setValue: setSelectedMenuItem } = useLocalStorage(
     "spreadsheetViewSorting",
@@ -30,7 +36,28 @@ export const HeaderColumn = (props: Props) => {
     "spreadsheetViewActiveSortingProperty",
     ""
   );
-  const propertyDetails = SPREADSHEET_PROPERTY_DETAILS[property];
+
+  const combinedPropertyDetails = {
+    ...SPREADSHEET_PROPERTY_DETAILS
+  };
+
+  const customPropertiesForSpreadsheet = Object.keys(
+    workspaceUserInfo[workspaceSlug?.toString()]?.default_props?.display_properties?.custom_properties || {}
+  );
+  
+  customPropertiesForSpreadsheet.forEach((propertyName) => {
+    combinedPropertyDetails[propertyName] = {
+      title: propertyName,
+      ascendingOrderKey: propertyName,
+      ascendingOrderTitle: "A",
+      descendingOrderKey: `-${propertyName}`,
+      descendingOrderTitle: "Z",
+      icon: Tags,
+      Column: SpreadsheetCustomPropertiesColumn,
+    };
+  });
+
+  const propertyDetails = combinedPropertyDetails[property];
 
   const handleOrderBy = (order: TIssueOrderByOptions, itemKey: string) => {
     handleDisplayFilterUpdate({ order_by: order });
@@ -68,7 +95,7 @@ export const HeaderColumn = (props: Props) => {
       placement="bottom-start"
       closeOnSelect
     >
-      <CustomMenu.MenuItem onClick={() => handleOrderBy(propertyDetails.ascendingOrderKey, property)}>
+      <CustomMenu.MenuItem onClick={() => handleOrderBy(propertyDetails.ascendingOrderKey, property as string)}>
         <div
           className={`flex items-center justify-between gap-1.5 px-1 ${
             selectedMenuItem === `${propertyDetails.ascendingOrderKey}_${property}`
@@ -86,7 +113,7 @@ export const HeaderColumn = (props: Props) => {
           {selectedMenuItem === `${propertyDetails.ascendingOrderKey}_${property}` && <CheckIcon className="h-3 w-3" />}
         </div>
       </CustomMenu.MenuItem>
-      <CustomMenu.MenuItem onClick={() => handleOrderBy(propertyDetails.descendingOrderKey, property)}>
+      <CustomMenu.MenuItem onClick={() => handleOrderBy(propertyDetails.descendingOrderKey, property as string)}>
         <div
           className={`flex items-center justify-between gap-1.5 px-1 ${
             selectedMenuItem === `${propertyDetails.descendingOrderKey}_${property}`
@@ -109,11 +136,11 @@ export const HeaderColumn = (props: Props) => {
       {selectedMenuItem &&
         selectedMenuItem !== "" &&
         displayFilters?.order_by !== "-created_at" &&
-        selectedMenuItem.includes(property) && (
+        selectedMenuItem.includes(property as string) && (
           <CustomMenu.MenuItem
             className={`mt-0.5 ${selectedMenuItem === `-created_at_${property}` ? "bg-custom-background-80" : ""}`}
             key={property}
-            onClick={() => handleOrderBy("-created_at", property)}
+            onClick={() => handleOrderBy("-created_at", property as string)}
           >
             <div className="flex items-center gap-2 px-1">
               <Eraser className="h-3 w-3" />
