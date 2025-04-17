@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FileText } from "lucide-react";
 import { EPageAccess } from "@plane/constants";
-import { EditorRefApi, TPageEmbedConfig } from "@plane/editor";
+import { TPageEmbedConfig } from "@plane/editor";
 import { TPage } from "@plane/types";
 import { AlertModalCore, EmptyPageIcon, RestrictedPageIcon } from "@plane/ui";
 // utils
@@ -25,7 +25,6 @@ type Props = {
   previewDisabled?: boolean;
   storeType: EPageStoreType;
   redirectLink?: string;
-  editorRef?: React.RefObject<EditorRefApi>;
   onPageDrop?: (droppedPageId: string) => void;
   isDroppable?: boolean;
   pageDetails?: TPage;
@@ -50,7 +49,7 @@ export const PageEmbedContent: React.FC<Props> = observer((props) => {
   const [draggedInside, setDraggedInside] = useState(false);
   const [hasMouseMoved, setHasMouseMoved] = useState(false);
   const dropTargetRef = useRef<HTMLDivElement>(null);
-  const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragCountRef = useRef(0); // Used to track enter/leave events for nested elements
   const {
     embedPageId,

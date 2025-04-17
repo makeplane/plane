@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useParams } from "next/navigation";
 // plane editor
-import { EditorRefApi, TEmbedConfig, TEmbedItem, TIssueEmbedConfig, TPageEmbedConfig } from "@plane/editor";
+import { TEmbedConfig, TEmbedItem, TIssueEmbedConfig, TPageEmbedConfig } from "@plane/editor";
 // plane types
 import { TPage, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 // plane ui
@@ -19,23 +19,14 @@ export type TEmbedHookProps = {
   projectId?: string;
   workspaceSlug?: string;
   page?: TPageInstance;
-  editorRef?: React.RefObject<EditorRefApi>;
   getRedirectionLink?: (pageId?: string) => string;
   storeType: EPageStoreType;
   setDeletePageModal?: (params: { visible: boolean; pages: TPageInstance[] }) => void;
 };
 
 export const useEditorEmbeds = (props: TEmbedHookProps) => {
-  const {
-    fetchEmbedSuggestions,
-    projectId,
-    workspaceSlug,
-    page,
-    editorRef,
-    getRedirectionLink,
-    storeType,
-    setDeletePageModal,
-  } = props;
+  const { fetchEmbedSuggestions, projectId, workspaceSlug, page, getRedirectionLink, storeType, setDeletePageModal } =
+    props;
   const { projectId: projectIdFromParams } = useParams();
 
   // store hooks
@@ -127,7 +118,6 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
           embedPageId={pageIdFromNode}
           storeType={storeType}
           redirectLink={getRedirectionLink(pageIdFromNode)}
-          editorRef={editorRef}
           onPageDrop={(droppedPageId: string) => {
             const droppedPageDetails = getPageById(droppedPageId);
             droppedPageDetails?.update({ parent_id: pageIdFromNode });
@@ -188,7 +178,6 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
     getRedirectionLink,
     projectIdFromParams,
     workspaceSlug,
-    editorRef,
     setDeletePageModal,
   ]);
 

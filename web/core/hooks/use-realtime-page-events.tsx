@@ -1,5 +1,5 @@
-import { MutableRefObject, useCallback, useMemo } from "react";
-import { EditorRefApi, EventToPayloadMap } from "@plane/editor";
+import { useCallback, useMemo } from "react";
+import { EventToPayloadMap } from "@plane/editor";
 import { IUserLite, TCollaborator } from "@plane/types";
 import { dismissToast, setToast, TOAST_TYPE } from "@plane/ui";
 // components
@@ -26,7 +26,6 @@ export type TCustomEventHandlers = {
 interface UsePageEventsProps {
   page: TPageInstance;
   storeType: EPageStoreType;
-  editorRef: MutableRefObject<EditorRefApi | null>;
   getUserDetails: (userId: string) => IUserLite | undefined;
   customRealtimeEventHandlers?: TCustomEventHandlers;
   handlers: TEditorBodyHandlers;
@@ -35,7 +34,6 @@ interface UsePageEventsProps {
 export const useRealtimePageEvents = ({
   page,
   storeType,
-  editorRef,
   getUserDetails,
   customRealtimeEventHandlers,
   handlers,
@@ -43,6 +41,8 @@ export const useRealtimePageEvents = ({
   const router = useAppRouter();
   const { removePage, getPageById, getOrFetchPageInstance } = usePageStore(storeType);
   const { data: currentUser } = useUser();
+  // derived values
+  const editorRef = page.editorRef;
 
   // Helper function to safely get user display text
   const getUserDisplayText = useCallback(
@@ -178,7 +178,7 @@ export const useRealtimePageEvents = ({
           let descriptionHTML: string | null = null;
           if (page?.restoration.versionId) {
             descriptionHTML = page.restoration.descriptionHTML;
-            if (!editorRef.current) {
+            if (!editorRef) {
               page?.setVersionToBeRestored(null, null);
               page?.setRestorationStatus(false);
               dismissToast("restoring-version");
@@ -188,12 +188,12 @@ export const useRealtimePageEvents = ({
               });
               return;
             }
-            editorRef?.current?.clearEditor(true);
+            editorRef?.clearEditor(true);
 
             page?.setVersionToBeRestored(null, null);
             page?.setRestorationStatus(false);
             if (descriptionHTML) {
-              editorRef?.current?.setEditorValue(descriptionHTML);
+              editorRef?.setEditorValue(descriptionHTML);
             }
 
             dismissToast("restoring-version");

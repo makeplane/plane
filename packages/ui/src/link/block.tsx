@@ -2,7 +2,8 @@ import React, { FC } from "react";
 // plane utils
 import { calculateTimeAgo, cn, getIconForLink } from "@plane/utils";
 // plane ui
-import { CustomMenu, TContextMenuItem } from "@plane/ui";
+import { TContextMenuItem } from "../dropdowns/context-menu/root";
+import { CustomMenu } from "../dropdowns/custom-menu";
 
 export type TLinkItemBlockProps = {
   title: string;

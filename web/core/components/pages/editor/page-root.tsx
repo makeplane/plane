@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // editor
@@ -53,7 +53,6 @@ const workspacePageVersionService = new WorkspacePageVersionService();
 export const PageRoot = observer((props: TPageRootProps) => {
   const { config, handlers, page, storeType, webhookConnectionParams, workspaceSlug, customRealtimeEventHandlers } =
     props;
-  const { isNestedPagesEnabled } = usePageStore(storeType);
   // states
   const [editorReady, setEditorReady] = useState(false);
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
@@ -67,7 +66,8 @@ export const PageRoot = observer((props: TPageRootProps) => {
   // search params
   const searchParams = useSearchParams();
   // derived values
-  const { isContentEditable } = page;
+  const { isNestedPagesEnabled } = usePageStore(storeType);
+  const { isContentEditable, setEditorRef } = page;
   // page fallback
   usePageFallback({
     editorRef,
@@ -77,6 +77,16 @@ export const PageRoot = observer((props: TPageRootProps) => {
   });
   // update query params
   const { updateQueryParams } = useQueryParams();
+
+  const handleEditorReady = useCallback(
+    (status: boolean) => {
+      setEditorReady(status);
+      if (editorRef.current && !page.editorRef) {
+        setEditorRef(editorRef.current);
+      }
+    },
+    [page.editorRef, setEditorRef]
+  );
 
   const version = searchParams.get("version");
   useEffect(() => {
@@ -107,6 +117,14 @@ export const PageRoot = observer((props: TPageRootProps) => {
   };
   const currentVersionDescription = editorRef.current?.getDocument().html;
 
+  // reset editor ref on unmount
+  useEffect(
+    () => () => {
+      setEditorRef(null);
+    },
+    [setEditorRef]
+  );
+
   return (
     <>
       <PageVersionsOverlay
@@ -122,20 +140,14 @@ export const PageRoot = observer((props: TPageRootProps) => {
         restoreEnabled={isContentEditable}
         storeType={storeType}
       />
-      <PageEditorToolbarRoot
-        editorReady={editorReady}
-        editorRef={editorRef}
-        page={page}
-        storeType={storeType}
-        isSyncing={isSyncing}
-      />
+      <PageEditorToolbarRoot isSyncing={isSyncing} page={page} storeType={storeType} />
       <PageEditorBody
         config={config}
         storeType={storeType}
         editorReady={editorReady}
-        editorRef={editorRef}
+        editorForwardRef={editorRef}
         handleConnectionStatus={setHasConnectionFailed}
-        handleEditorReady={setEditorReady}
+        handleEditorReady={handleEditorReady}
         handlers={handlers}
         page={page}
         webhookConnectionParams={webhookConnectionParams}

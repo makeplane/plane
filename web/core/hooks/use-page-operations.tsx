@@ -47,7 +47,7 @@ export const usePageOperations = (
   // collaborative actions
   const { executeCollaborativeAction } = useCollaborativePageActions(props);
   // local storage
-  const { setValue: toggleFavoriteMenu, storedValue: isfavoriteMenuOpen } = useLocalStorage<boolean>(
+  const { setValue: toggleFavoriteMenu, storedValue: isFavoriteMenuOpen } = useLocalStorage<boolean>(
     IS_FAVORITE_MENU_OPEN,
     false
   );
@@ -155,7 +155,7 @@ export const usePageOperations = (
           );
         } else {
           addToFavorites().then(() => {
-            if (!isfavoriteMenuOpen) toggleFavoriteMenu(true);
+            if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: "Success!",
@@ -204,12 +204,12 @@ export const usePageOperations = (
     archived_at,
     duplicate,
     executeCollaborativeAction,
-    isfavoriteMenuOpen,
-    toggleFavoriteMenu,
     getRedirectionLink,
     is_favorite,
     is_locked,
+    isFavoriteMenuOpen,
     removePageFromFavorites,
+    toggleFavoriteMenu,
   ]);
   return {
     pageOperations,

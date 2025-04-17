@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
 // constants
 import { PAGE_DELETED } from "@plane/constants";
 // editor
@@ -23,7 +22,7 @@ type TConfirmPagesDeleteProps = {
   onClose: () => void;
   pages: TPageInstance[];
   storeType: EPageStoreType;
-  editorRef?: React.MutableRefObject<EditorRefApi | null>;
+  editorRef?: EditorRefApi | null;
 };
 
 export const MultipleDeletePagesModal: React.FC<TConfirmPagesDeleteProps> = observer((props) => {
@@ -77,9 +76,9 @@ export const MultipleDeletePagesModal: React.FC<TConfirmPagesDeleteProps> = obse
       await Promise.all(deletePromises);
 
       // Bulk delete from editor if applicable
-      if (successfullyDeletedPageIds.length > 0 && editorRef?.current) {
+      if (successfullyDeletedPageIds.length > 0 && editorRef) {
         // Pass all IDs at once for a single transaction
-        editorRef.current.findAndDeleteNode(
+        editorRef.findAndDeleteNode(
           { attribute: "entity_identifier", value: successfullyDeletedPageIds },
           "pageEmbedComponent"
         );
@@ -94,7 +93,7 @@ export const MultipleDeletePagesModal: React.FC<TConfirmPagesDeleteProps> = obse
             ? "Page deleted successfully."
             : `${successfullyDeletedPageIds.length} pages deleted successfully.`,
       });
-    } catch (error) {
+    } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",

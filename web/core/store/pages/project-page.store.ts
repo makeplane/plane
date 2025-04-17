@@ -1,10 +1,9 @@
 import set from "lodash/set";
-import unset from "lodash/unset";
 import { makeObservable, observable, runInAction, action, reaction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
 import { EUserPermissions, EUserProjectRoles } from "@plane/constants";
-import { TPage, TPageFilters, TPageNavigationTabs, TSubPageDetails } from "@plane/types";
+import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@/helpers/page.helper";
 // plane web constants
@@ -284,7 +283,6 @@ export class ProjectPageStore implements IProjectPageStore {
             set(this.data, [page.id], new ProjectPage(this.store, page));
           }
         }
-
         this.loader = undefined;
       });
 

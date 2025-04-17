@@ -61,7 +61,7 @@ export const PageDetailsHeaderExtraActions: React.FC<TPageHeaderExtraActionsProp
       {isDeployed && (
         <a
           href={publishLink}
-          className="px-3 py-1.5 bg-green-500/20 text-green-500 rounded text-xs font-medium flex items-center gap-1.5"
+          className="h-6 px-2 bg-green-500/20 text-green-500 rounded text-xs font-medium flex items-center gap-1.5"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -70,7 +70,7 @@ export const PageDetailsHeaderExtraActions: React.FC<TPageHeaderExtraActionsProp
         </a>
       )}
       {isPublishAllowed && (
-        <Button variant="outline-primary" size="sm" onClick={() => setIsPublishModalOpen(true)}>
+        <Button variant="outline-primary" size="sm" onClick={() => setIsPublishModalOpen(true)} className="h-6">
           {isDeployed ? "Unpublish" : "Publish"}
         </Button>
       )}

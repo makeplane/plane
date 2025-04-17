@@ -2,6 +2,7 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // plane imports
 import { EPageAccess } from "@plane/constants";
+import { EditorRefApi } from "@plane/editor";
 import { TDocumentPayload, TLogoProps, TNameDescriptionLoader, TPage } from "@plane/types";
 import { TChangeHandlerProps } from "@plane/ui";
 import { convertHexEmojiToDecimal } from "@plane/utils";
@@ -29,6 +30,7 @@ export type TRestorationState = {
 export type TBasePage = TPage & {
   // observables
   isSubmitting: TNameDescriptionLoader;
+  editorRef: EditorRefApi | null;
   collaborators: TCollaborator[];
   restoration: TRestorationState;
   // computed
@@ -53,6 +55,7 @@ export type TBasePage = TPage & {
   removePageFromFavorites: () => Promise<void>;
   duplicate: () => Promise<TPage | undefined>;
   mutateProperties: (data: Partial<TPage>, shouldUpdateName?: boolean) => void;
+  setEditorRef: (editorRef: EditorRefApi | null) => void;
   updateCollaborators: (collaborators: TCollaborator[]) => void;
   setVersionToBeRestored: (versionId: string | null, descriptionHTML: string | null) => void;
   setRestorationStatus: (inProgress: boolean) => void;
@@ -96,6 +99,7 @@ export type TPageInstance = TBasePage &
 export class BasePage implements TBasePage {
   // loaders
   isSubmitting: TNameDescriptionLoader = "saved";
+  editorRef: EditorRefApi | null = null;
   collaborators: TCollaborator[] = [];
   restoration: TRestorationState = {
     versionId: null,
@@ -172,6 +176,7 @@ export class BasePage implements TBasePage {
     makeObservable(this, {
       // loaders
       isSubmitting: observable.ref,
+      editorRef: observable.ref,
       // page properties
       id: observable.ref,
       name: observable.ref,
@@ -219,8 +224,9 @@ export class BasePage implements TBasePage {
       addToFavorites: action,
       removePageFromFavorites: action,
       duplicate: action,
-      updateCollaborators: action,
       mutateProperties: action,
+      setEditorRef: action,
+      updateCollaborators: action,
       setVersionToBeRestored: action,
       setRestorationStatus: action,
     });
@@ -511,25 +517,34 @@ export class BasePage implements TBasePage {
   };
 
   updatePageLogo = async (value: TChangeHandlerProps) => {
-    let logoValue = {};
-    if (value?.type === "emoji")
-      logoValue = {
-        value: convertHexEmojiToDecimal(value.value.unified),
-        url: value.value.imageUrl,
+    const originalLogoProps = { ...this.logo_props };
+    try {
+      let logoValue = {};
+      if (value?.type === "emoji")
+        logoValue = {
+          value: convertHexEmojiToDecimal(value.value.unified),
+          url: value.value.imageUrl,
+        };
+      else if (value?.type === "icon") logoValue = value.value;
+
+      const logoProps: TLogoProps = {
+        in_use: value?.type,
+        [value?.type]: logoValue,
       };
-    else if (value?.type === "icon") logoValue = value.value;
 
-    const logoProps: TLogoProps = {
-      in_use: value?.type,
-      [value?.type]: logoValue,
-    };
-
-    await this.services.update({
-      logo_props: logoProps,
-    });
-    runInAction(() => {
-      this.logo_props = logoProps;
-    });
+      runInAction(() => {
+        this.logo_props = logoProps;
+      });
+      await this.services.update({
+        logo_props: logoProps,
+      });
+    } catch (error) {
+      console.error("Error in updating page logo", error);
+      runInAction(() => {
+        this.logo_props = originalLogoProps as TLogoProps;
+      });
+      throw error;
+    }
   };
 
   /**
@@ -593,6 +608,13 @@ export class BasePage implements TBasePage {
       const value = data[key as keyof TPage];
       if (key === "name" && !shouldUpdateName) return;
       set(this, key, value);
+    });
+  };
+
+  setEditorRef = (editorRef: EditorRefApi | null) => {
+    console.log("store editorRef", editorRef);
+    runInAction(() => {
+      this.editorRef = editorRef;
     });
   };
 

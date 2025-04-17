@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { EditorRefApi, TPageEmbedConfig } from "@plane/editor";
+import { TPageEmbedConfig } from "@plane/editor";
 import { TPage } from "@plane/types";
 // icons
 import { EmptyPageIcon } from "@plane/ui";
@@ -14,7 +14,6 @@ type Props = {
   previewDisabled?: boolean;
   storeType: EPageStoreType;
   redirectLink?: string;
-  editorRef?: React.RefObject<EditorRefApi>;
   onPageDrop?: (droppedPageId: string) => void;
   isDroppable?: boolean;
   pageDetails?: TPage;

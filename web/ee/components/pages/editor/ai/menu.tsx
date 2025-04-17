@@ -1,6 +1,6 @@
 "use client";
 
-import React, { RefObject, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ChevronRight, CornerDownRight, LucideIcon, PencilLine, RefreshCcw, Sparkles } from "lucide-react";
 // plane editor
 import { EditorRefApi } from "@plane/editor";
@@ -17,7 +17,7 @@ import { AIService, TTaskPayload } from "@/services/ai.service";
 const aiService = new AIService();
 
 type Props = {
-  editorRef: RefObject<EditorRefApi>;
+  editorRef: EditorRefApi | null;
   isOpen: boolean;
   onClose: () => void;
   projectId?: string;
@@ -108,7 +108,7 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
   };
   // handle task click
   const handleClick = async (key: AI_EDITOR_TASKS) => {
-    const selection = editorRef.current?.getSelectedText();
+    const selection = editorRef?.getSelectedText();
     if (!selection || activeTask === key) return;
     setActiveTask(key);
     setResponse(undefined);
@@ -120,7 +120,7 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
   };
   // handle re-generate response
   const handleRegenerate = async () => {
-    const selection = editorRef.current?.getSelectedText();
+    const selection = editorRef?.getSelectedText();
     if (!selection || !activeTask) return;
     setIsRegenerating(true);
     await handleGenerateResponse({
@@ -138,7 +138,7 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
   // handle re-generate response
   const handleToneChange = async (key: string) => {
     const selectedTone = TONES_LIST.find((t) => t.key === key);
-    const selection = editorRef.current?.getSelectedText();
+    const selection = editorRef?.getSelectedText();
     if (!selectedTone || !selection || !activeTask) return;
     setResponse(undefined);
     setIsRegenerating(false);
@@ -157,7 +157,7 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
   // handle replace selected text with the response
   const handleInsertText = (insertOnNextLine: boolean) => {
     if (!response) return;
-    editorRef.current?.insertText(response, insertOnNextLine);
+    editorRef?.insertText(response, insertOnNextLine);
     onClose();
   };
 

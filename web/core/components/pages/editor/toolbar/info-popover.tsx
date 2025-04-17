@@ -1,28 +1,25 @@
 import { useState } from "react";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Info } from "lucide-react";
-// plane editor
-import { EditorRefApi } from "@plane/editor";
-// plane ui
+// plane imports
 import { Avatar } from "@plane/ui";
-// plane utils
 import { getFileURL, renderFormattedDate } from "@plane/utils";
 // helpers
-import { getReadTimeFromWordsCount } from "@/helpers/date-time.helper";
+import { calculateTimeAgoShort, getReadTimeFromWordsCount } from "@/helpers/date-time.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 // store types
 import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
-  editorRef: EditorRefApi | null;
   page: TPageInstance;
 };
 
-export const PageInfoPopover: React.FC<Props> = (props) => {
-  const { editorRef, page } = props;
+export const PageInfoPopover: React.FC<Props> = observer((props) => {
+  const { page } = props;
   // states
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   // refs
@@ -40,7 +37,7 @@ export const PageInfoPopover: React.FC<Props> = (props) => {
   const editorInformation = page.updated_by ? getUserDetails(page.updated_by) : undefined;
   const creatorInformation = page.owned_by ? getUserDetails(page.owned_by) : undefined;
 
-  const documentsInfo = editorRef?.getDocumentInfo() || { words: 0, characters: 0, paragraphs: 0 };
+  const documentsInfo = page.editorRef?.getDocumentInfo() || { words: 0, characters: 0, paragraphs: 0 };
 
   const secondsToReadableTime = () => {
     const wordsCount = documentsInfo.words;
@@ -72,8 +69,16 @@ export const PageInfoPopover: React.FC<Props> = (props) => {
   ];
 
   return (
-    <div onMouseEnter={() => setIsPopoverOpen(true)} onMouseLeave={() => setIsPopoverOpen(false)}>
-      <button type="button" ref={setReferenceElement} className="block">
+    <div
+      className="flex-shrink-0"
+      onMouseEnter={() => setIsPopoverOpen(true)}
+      onMouseLeave={() => setIsPopoverOpen(false)}
+    >
+      <button
+        type="button"
+        ref={setReferenceElement}
+        className="size-6 grid place-items-center rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors"
+      >
         <Info className="size-3.5" />
       </button>
       {isPopoverOpen && (
@@ -92,26 +97,24 @@ export const PageInfoPopover: React.FC<Props> = (props) => {
             ))}
           </div>
           <div className="space-y-2 mt-3">
-            {editorInformation?.display_name && (
-              <div>
-                <p className="text-xs font-medium text-custom-text-300">Edited by</p>
-                <Link
-                  href={`/${workspaceSlug?.toString()}/profile/${page.updated_by}`}
-                  className="mt-2 flex items-center gap-1.5 text-sm font-medium"
-                >
-                  <Avatar
-                    src={getFileURL(editorInformation?.avatar_url ?? "")}
-                    name={editorInformation?.display_name}
-                    className="flex-shrink-0"
-                    size="sm"
-                  />
-                  <span className="flex items-center gap-2 text-xs">
-                    <span className="font-medium">{editorInformation?.display_name}</span>{" "}
-                    <span className="text-custom-text-300">{renderFormattedDate(page.updated_at)}</span>
-                  </span>
-                </Link>
-              </div>
-            )}
+            <div>
+              <p className="text-xs font-medium text-custom-text-300">Edited by</p>
+              <Link
+                href={`/${workspaceSlug?.toString()}/profile/${page.updated_by}`}
+                className="mt-2 flex items-center gap-1.5 text-sm font-medium"
+              >
+                <Avatar
+                  src={getFileURL(editorInformation?.avatar_url ?? "")}
+                  name={editorInformation?.display_name}
+                  className="flex-shrink-0"
+                  size="sm"
+                />
+                <span>
+                  {editorInformation?.display_name}{" "}
+                  <span className="text-custom-text-300">{calculateTimeAgoShort(page.updated_at ?? "")} ago</span>
+                </span>
+              </Link>
+            </div>
             <div>
               <p className="text-xs font-medium text-custom-text-300">Created by</p>
               <Link
@@ -135,4 +138,4 @@ export const PageInfoPopover: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+});
