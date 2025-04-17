@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { AlignLeft, Briefcase, CalendarDays, Link, Paperclip, Tag, Triangle, Type, Users } from "lucide-react";
 import { TBaseActivityVerbs, TIssueActivity } from "@plane/types";
 import { DoubleCircleIcon, EpicIcon } from "@plane/ui";
-import { renderFormattedDate } from "@plane/utils";
+import { convertMinutesToHoursMinutesString, renderFormattedDate } from "@plane/utils";
 import { LabelActivityChip } from "@/components/issues/issue-detail/issue-activity/activity/actions";
 import { store } from "@/lib/store-context";
 import { getRelationActivityContent, ISSUE_RELATION_OPTIONS } from "@/plane-web/components/relations";
@@ -22,7 +22,9 @@ export type TEpicActivityFields =
   | "start_date"
   | "target_date"
   | "labels"
-  | "estimate"
+  | "estimate_points"
+  | "estimate_categories"
+  | "estimate_time"
   | "relates_to"
   | "link"
   | "attachment";
@@ -133,7 +135,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
       </>
     ),
   }),
-  estimate_updated: (activity: TIssueActivity) => ({
+  estimate_points_updated: (activity: TIssueActivity) => ({
     icon: <Triangle className={commonIconClassName} />,
     message: (
       <>
@@ -142,6 +144,27 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
       </>
     ),
   }),
+  estimate_categories_updated: (activity: TIssueActivity) => ({
+    icon: <Triangle className={commonIconClassName} />,
+    message: (
+      <>
+        {activity.new_value ? `set the estimate point to ` : `removed the estimate point `}
+        <span className={commonTextClassName}>{activity.new_value}</span>
+      </>
+    ),
+  }),
+  estimate_time_updated: (activity: TIssueActivity) => {
+    const value = convertMinutesToHoursMinutesString(Number(activity.new_value));
+    return {
+      icon: <Triangle className={commonIconClassName} />,
+      message: (
+        <>
+          {activity.new_value ? `set the estimate point to ` : `removed the estimate point `}
+          <span className={commonTextClassName}>{value}</span>
+        </>
+      ),
+    };
+  },
   relates_to_updated: (activity: TIssueActivity) => ({
     icon: activity.field ? ISSUE_RELATION_OPTIONS[activity.field as TIssueRelationTypes]?.icon(14) : <></>,
     message: (
