@@ -18,6 +18,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // local components
+import { useSubIssueOperations } from "../issue-detail-widgets/sub-issues/helper";
 import { IssueList } from "./issues-list";
 import { IssueProperty } from "./properties";
 // ui
@@ -62,6 +63,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
   const {
     subIssues: { subIssueHelpersByIssueId, setSubIssueHelpers },
   } = useIssueDetail();
+  const { fetchSubIssues } = useSubIssueOperations(EIssueServiceType.ISSUES);
   const { toggleCreateIssueModal, toggleDeleteIssueModal } = useIssueDetail(issueServiceType);
   const project = useProject();
   const { getProjectStates } = useProjectState();
@@ -123,7 +125,7 @@ export const IssueListItem: React.FC<ISubIssues> = observer((props) => {
                         e.stopPropagation();
                         if (!subIssueHelpers.issue_visibility.includes(issueId)) {
                           setSubIssueHelpers(parentIssueId, "preview_loader", issueId);
-                          await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, issueId);
+                          await fetchSubIssues(workspaceSlug, projectId, issueId);
                           setSubIssueHelpers(parentIssueId, "preview_loader", issueId);
                         }
                         setSubIssueHelpers(parentIssueId, "issue_visibility", issueId);
