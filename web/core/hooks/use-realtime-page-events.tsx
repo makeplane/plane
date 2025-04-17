@@ -67,91 +67,37 @@ export const useRealtimePageEvents = ({
       archived: ({ pageIds, data }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
-          if (pageItem)
-            Promise.resolve(pageItem.archive({ archived_at: data.archived_at, shouldSync: false })).then(() => {
-              if (page.id === pageId && data?.user_id !== currentUser?.id) {
-                setToast({
-                  type: TOAST_TYPE.INFO,
-                  title: "Page archived",
-                  message: `Page archived${getUserDisplayText(data.user_id)}`,
-                });
-              }
-            });
+          if (pageItem) pageItem.archive({ archived_at: data.archived_at, shouldSync: false });
         });
       },
-      unarchived: ({ pageIds, data }) => {
+      unarchived: ({ pageIds }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
-          if (pageItem)
-            Promise.resolve(pageItem.restore({ shouldSync: false })).then(() => {
-              if (page.id === pageId && data?.user_id !== currentUser?.id) {
-                setToast({
-                  type: TOAST_TYPE.INFO,
-                  title: "Page restored",
-                  message: `Page restored${getUserDisplayText(data.user_id)}`,
-                });
-              }
-            });
+          if (pageItem) pageItem.restore({ shouldSync: false });
         });
       },
-      locked: ({ pageIds, data }) => {
+      locked: ({ pageIds }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
-          if (pageItem)
-            Promise.resolve(pageItem.lock({ shouldSync: false, recursive: false })).then(() => {
-              if (page.id === pageId && data?.user_id !== currentUser?.id) {
-                setToast({
-                  type: TOAST_TYPE.INFO,
-                  title: "Page locked",
-                  message: `Page locked${getUserDisplayText(data.user_id)}`,
-                });
-              }
-            });
+          if (pageItem) pageItem.lock({ shouldSync: false, recursive: false });
         });
       },
-      unlocked: ({ pageIds, data }) => {
+      unlocked: ({ pageIds }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
-          if (pageItem)
-            Promise.resolve(pageItem.unlock({ shouldSync: false, recursive: false })).then(() => {
-              if (page.id === pageId && data?.user_id !== currentUser?.id) {
-                setToast({
-                  type: TOAST_TYPE.SUCCESS,
-                  title: "Page unlocked",
-                  message: `Page unlocked${getUserDisplayText(data.user_id)}`,
-                });
-              }
-            });
+          if (pageItem) pageItem.unlock({ shouldSync: false, recursive: false });
         });
       },
-      "made-public": ({ pageIds, data }) => {
+      "made-public": ({ pageIds }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
-          if (pageItem)
-            Promise.resolve(pageItem.makePublic({ shouldSync: false })).then(() => {
-              if (page.id === pageId && data?.user_id !== currentUser?.id) {
-                setToast({
-                  type: TOAST_TYPE.SUCCESS,
-                  title: "Page made public",
-                  message: `Page made public${getUserDisplayText(data.user_id)}`,
-                });
-              }
-            });
+          if (pageItem) pageItem.makePublic({ shouldSync: false });
         });
       },
-      "made-private": ({ pageIds, data }) => {
+      "made-private": ({ pageIds }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
-          if (pageItem)
-            pageItem.makePrivate({ shouldSync: false }).then(() => {
-              if (page.id === pageId && data?.user_id !== currentUser?.id) {
-                setToast({
-                  type: TOAST_TYPE.INFO,
-                  title: "Page made private",
-                  message: `Page made private${getUserDisplayText(data.user_id)}`,
-                });
-              }
-            });
+          if (pageItem) pageItem.makePrivate({ shouldSync: false });
         });
       },
       deleted: ({ pageIds, data }) => {
@@ -167,7 +113,6 @@ export const useRealtimePageEvents = ({
               });
               router.push(handlers.getRedirectionLink());
             } else if (page.id === pageId) {
-              console.log("aaya", handlers.getRedirectionLink());
               router.push(handlers.getRedirectionLink());
             }
           }
@@ -268,11 +213,6 @@ export const useRealtimePageEvents = ({
           if (pageItem)
             Promise.resolve(removePage({ pageId, shouldSync: false })).then(() => {
               if (page.id === pageId) {
-                setToast({
-                  type: TOAST_TYPE.ERROR,
-                  title: "Page deleted",
-                  message: `Page deleted${getUserDisplayText(data.user_id)}`,
-                });
                 router.push(handlers.getRedirectionLink());
               }
             });

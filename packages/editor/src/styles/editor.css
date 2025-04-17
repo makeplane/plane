@@ -514,6 +514,27 @@ p.editor-paragraph-block + p.editor-paragraph-block {
   margin: 0 !important;
 }
 
+.smooth-cursor-enabled {
+  caret-color: transparent;
+}
+
+.prosemirror-smooth-cursor {
+  position: absolute;
+  width: 2px;
+  background-color: currentColor;
+  pointer-events: none;
+  left: 0;
+  top: 0;
+  transition: transform 0.2s var(--ease-out-quart);
+  will-change: transform;
+  opacity: 0.8;
+  z-index: 1000;
+}
+
+.prosemirror-smooth-cursor--blinking {
+  animation: blink 1s step-end infinite;
+}
+
 @keyframes blink {
   from,
   to {
@@ -522,8 +543,4 @@ p.editor-paragraph-block + p.editor-paragraph-block {
   50% {
     opacity: 0;
   }
-}
-
-.custom-selection {
-  padding: 10px !important;
 }

@@ -278,10 +278,13 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     const workspacePages = allPages.filter((page) => page.workspace === currentWorkspace.id);
 
     // Compute new page IDs for each type
-    const newPublicPageIds = workspacePages
-      .filter((page) => page.access === EPageAccess.PUBLIC && !page.parent_id && !page.archived_at && !page.deleted_at)
-      .map((page) => page.id)
-      .filter((id): id is string => id !== undefined);
+    const publicPages = workspacePages.filter(
+      (page) => page.access === EPageAccess.PUBLIC && !page.parent_id && !page.archived_at && !page.deleted_at
+    );
+    const sortedPublicPages = publicPages.sort(
+      (a, b) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
+    );
+    const newPublicPageIds = sortedPublicPages.map((page) => page.id).filter((id): id is string => id !== undefined);
 
     // Get all non-archived pages for private calculation
     const nonArchivedPages = workspacePages.filter((page) => !page.archived_at && !page.deleted_at);
@@ -300,16 +303,24 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       return rootParent?.access !== EPageAccess.PRIVATE;
     });
 
-    const newPrivatePageIds = [...privateParentPages, ...privateChildPages]
-      .map((page) => page.id)
-      .filter((id): id is string => id !== undefined);
+    const combinedPrivatePages = [...privateParentPages, ...privateChildPages];
+    const sortedPrivatePages = combinedPrivatePages.sort(
+      (a, b) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
+    );
+    const newPrivatePageIds = sortedPrivatePages.map((page) => page.id).filter((id): id is string => id !== undefined);
 
     // Compute archived pages
-    const newArchivedPageIds = workspacePages
-      .filter((page) => page.archived_at && !page.deleted_at)
-      .sort((a, b) => (a.parent_id ? 1 : 0) - (b.parent_id ? 1 : 0)) // Sort parent pages first
-      .map((page) => page.id)
-      .filter((id): id is string => id !== undefined);
+    const archivedWorkspacePages = workspacePages.filter((page) => page.archived_at && !page.deleted_at);
+    const topLevelArchivedPages = archivedWorkspacePages.filter((page) => {
+      if (!page.parent_id) return true; // Include pages without parents
+      // Include pages whose root parent is not archived
+      const rootParent = this.findRootParent(page);
+      return !rootParent?.archived_at;
+    });
+    const sortedArchivedPages = topLevelArchivedPages.sort(
+      (a, b) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
+    );
+    const newArchivedPageIds = sortedArchivedPages.map((page) => page.id).filter((id): id is string => id !== undefined);
 
     // Update arrays in a single runInAction to batch updates
     runInAction(() => {

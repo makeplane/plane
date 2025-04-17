@@ -24,6 +24,7 @@ import {
   CustomTypographyExtension,
   DropHandlerExtension,
   ImageExtension,
+  SmoothCursorExtension,
   Table,
   TableCell,
   TableHeader,
@@ -41,6 +42,7 @@ import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
 type TArguments = {
   disabledExtensions: TExtensions[];
   enableHistory: boolean;
+  isSmoothCursorEnabled: boolean;
   fileHandler: TFileHandler;
   mentionHandler: TMentionHandler;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
@@ -49,7 +51,15 @@ type TArguments = {
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
-  const { disabledExtensions, enableHistory, fileHandler, mentionHandler, placeholder, tabIndex } = args;
+  const {
+    disabledExtensions,
+    enableHistory,
+    fileHandler,
+    mentionHandler,
+    placeholder,
+    tabIndex,
+    isSmoothCursorEnabled,
+  } = args;
   const extensions = [
     StarterKit.configure({
       bulletList: {
@@ -173,6 +183,10 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       disabledExtensions,
     }),
   ];
+
+  if (isSmoothCursorEnabled) {
+    extensions.push(SmoothCursorExtension);
+  }
 
   if (!disabledExtensions.includes("image")) {
     extensions.push(

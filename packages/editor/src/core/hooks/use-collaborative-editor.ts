@@ -25,6 +25,7 @@ import { useTitleEditor } from "./use-title-editor";
 export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   const {
     onTransaction,
+    isSmoothCursorEnabled,
     disabledExtensions,
     editable,
     editorClassName,
@@ -47,6 +48,8 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   // Server connection states
   const [hasServerConnectionFailed, setHasServerConnectionFailed] = useState(false);
   const [hasServerSynced, setHasServerSynced] = useState(false);
+  // State to track if initial focus has been set
+  const [initialFocusSet, setInitialFocusSet] = useState(false);
 
   // Create keyboard navigation extensions between editors
   const { setTitleEditor, setMainEditor, titleNavigationExtension, mainNavigationExtension } = useEditorNavigation();
@@ -152,6 +155,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     ],
     fileHandler,
     handleEditorReady,
+    isSmoothCursorEnabled,
     forwardedRef,
     mentionHandler,
     onTransaction,
@@ -171,6 +175,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   // Initialize title editor
   const titleEditor = useTitleEditor({
     id: id,
+    isSmoothCursorEnabled,
     editable: editable,
     provider,
     forwardedRef,
@@ -194,6 +199,21 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
       setTitleEditor(titleEditor);
     }
   }, [editor, titleEditor, setMainEditor, setTitleEditor]);
+
+  // Set initial focus based on title editor content
+  useEffect(() => {
+    // Ensure editors are initialized, sync has occurred, and initial focus hasn't been set
+    if (editor && titleEditor && (hasServerSynced || (isIndexedDbSynced && isContentInIndexedDb)) && !initialFocusSet) {
+      if (titleEditor.isEmpty) {
+        // Focus the title editor if it's empty
+        titleEditor.commands.focus("start");
+      } else {
+        editor.commands.focus("start");
+      }
+      // Mark initial focus as set to prevent re-running
+      setInitialFocusSet(true);
+    }
+  }, [editor, titleEditor, hasServerSynced, isIndexedDbSynced, initialFocusSet, isContentInIndexedDb]);
 
   return {
     editor,

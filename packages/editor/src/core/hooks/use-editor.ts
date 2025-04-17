@@ -36,6 +36,7 @@ export interface CustomEditorProps {
   fileHandler: TFileHandler;
   forwardedRef?: MutableRefObject<EditorRefApi | null>;
   handleEditorReady?: (value: boolean) => void;
+  isSmoothCursorEnabled: boolean;
   id?: string;
   initialValue?: string;
   mentionHandler: TMentionHandler;
@@ -71,6 +72,7 @@ export const useEditor = (props: CustomEditorProps) => {
     value,
     provider,
     autofocus = false,
+    isSmoothCursorEnabled = false,
   } = props;
 
   const editor = useTiptapEditor(
@@ -87,6 +89,7 @@ export const useEditor = (props: CustomEditorProps) => {
       },
       extensions: [
         ...CoreEditorExtensions({
+          isSmoothCursorEnabled,
           editable,
           disabledExtensions,
           enableHistory,

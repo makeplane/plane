@@ -15,7 +15,7 @@ import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
 // helpers
 import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser, useUserProfile } from "@/hooks/store";
 //
 import { CommentBlock } from "@/plane-web/components/comments";
 import { CommentReactions } from "./comment-reaction";
@@ -171,7 +171,7 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
               projectId={projectId?.toString() ?? ""}
               editorClassName="[&>*]:!py-0 [&>*]:!text-sm"
               parentClassName="p-2"
-              />
+            />
           </div>
           <div className="flex gap-1 self-end">
             {!isEmpty && (

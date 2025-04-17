@@ -1,8 +1,8 @@
-import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-import Image from "next/image";
-import useSWR from "swr";
 import { useMemo } from "react";
+import { observer } from "mobx-react";
+import Image from "next/image";
+import { useParams } from "next/navigation";
+import useSWR from "swr";
 // plane imports
 import { EUserPermissionsLevel, EUserWorkspaceRoles, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -34,7 +34,7 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
   const { toggleCreatePageModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   const pageStore = usePageStore(EPageStoreType.WORKSPACE);
-  const { filters, updateFilters, fetchPagesByType, publicPageIds, privatePageIds, archivedPageIds } = pageStore;
+  const { filters, fetchPagesByType, publicPageIds, privatePageIds, archivedPageIds } = pageStore;
 
   // Use SWR to fetch the data but not for rendering
   const { isLoading, data } = useSWR(
@@ -50,7 +50,6 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
   const pageIds = useMemo(() => {
     // If there's a search query, use the search results
     if (filters.searchQuery) {
-      console.log("data", data);
       return (data?.map((page) => page.id).filter(Boolean) as string[]) || [];
     }
     switch (pageType) {

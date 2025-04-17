@@ -28,13 +28,9 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
       <div className="h-[48px] flex items-end text-left">
         {!isLogoSelected && (
           <div
-            className={cn(
-              "transition-all duration-300",
-              isEditorVisible ? "opacity-0 group-hover/page-header:opacity-100" : "opacity-0",
-              {
-                "opacity-100": isTitleEmpty && isEditorVisible,
-              }
-            )}
+            className={cn("transition-all duration-300", "opacity-0 group-hover/page-header:opacity-100", {
+              "opacity-100": isTitleEmpty && isEditorVisible,
+            })}
           >
             <EmojiIconPicker
               isOpen={isLogoPickerOpen}

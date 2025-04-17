@@ -63,6 +63,7 @@ export type TUserProfile = {
   billing_address: string | undefined;
   has_billing_address: boolean;
   language: string;
+  is_smooth_cursor_enabled: boolean;
   created_at: Date | string;
   updated_at: Date | string;
 };

@@ -142,7 +142,6 @@ export class ProjectPageStore implements IProjectPageStore {
     pagesByType = pagesByType.filter((p) => p.project_ids?.includes(projectId));
 
     const pages = (pagesByType.map((page) => page.id) as string[]) || undefined;
-    console.log("pages", pages);
 
     return pages ?? undefined;
   });

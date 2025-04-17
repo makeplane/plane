@@ -50,6 +50,7 @@ export class ProfileStore implements IUserProfileStore {
       workspace_create: false,
       workspace_invite: false,
     },
+    is_smooth_cursor_enabled: false,
     is_onboarded: false,
     is_tour_completed: false,
     use_case: undefined,

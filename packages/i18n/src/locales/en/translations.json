@@ -56,8 +56,10 @@
   "something_went_wrong_please_try_again": "Something went wrong. Please try again.",
   "load_more": "Load more",
   "select_or_customize_your_interface_color_scheme": "Select or customize your interface color scheme.",
+  "select_the_cursor_motion_style_that_feels_right_for_you": "Select the cursor motion style that feels right for you.",
   "theme": "Theme",
-  "system_preference": "System preference",
+  "smooth_cursor": "Smooth Cursor",
+  "system_preference": "System Preference",
   "light": "Light",
   "dark": "Dark",
   "light_contrast": "Light high contrast",
@@ -1969,7 +1971,7 @@
     "empty_state": {
       "general": {
         "title": "Save filtered views for your project. Create as many as you need",
-        "description": "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best.",
+        "description": "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone's views and choose whichever suits their needs best.",
         "primary_button": {
           "text": "Create your first view",
           "comic": {
@@ -2252,7 +2254,7 @@
     },
     "admin": {
       "title": "Admin",
-      "description": "All permissions set to true within the workspace."
+      "description": "All permissions set to true within the workspace."
     }
   },
 
@@ -2377,9 +2379,9 @@
       "sub-title": "Let the team know what you would like them to work on.",
       "name": "Name",
       "email": "Email",
-      "about": "What’s this work item about?",
+      "about": "What's this work item about?",
       "description": "Describe what should happen",
-      "description_placeholder": "Add as much detail as you’d like to help the team identify your exact situation and needs.",
+      "description_placeholder": "Add as much detail as you'd like to help the team identify your exact situation and needs.",
       "loading": "Creating",
       "create_work_item": "Create work item",
       "errors": {
@@ -2392,7 +2394,7 @@
       }
     },
     "success": {
-      "title": "Yay! Your work item is now in the team’s queue.",
+      "title": "Yay! Your work item is now in the team's queue.",
       "description": "The team can now either approve or discard this work item from their Intake queue.",
       "primary_button": {
         "text": "Add another work item"
@@ -2407,10 +2409,10 @@
       "description": "Intake is a Plane feature that lets project admins and managers get work items from outside into their projects. ",
       "steps": {
         "step_1": "This short form lets you create a new work item in a Plane project.",
-        "step_2": "When you submit this form, a new work item is created in that project’s Intake.",
+        "step_2": "When you submit this form, a new work item is created in that project's Intake.",
         "step_3": "Someone from that project or team will review this.",
-        "step_4": "If they approve it, this work item will move to the project’s queue of work. Otherwise, it will be rejected.",
-        "step_5": "To check for the status of that work item, get in touch with the project’s manager, admin, or whoever sent you the link to this page."
+        "step_4": "If they approve it, this work item will move to the project's queue of work. Otherwise, it will be rejected.",
+        "step_5": "To check for the status of that work item, get in touch with the project's manager, admin, or whoever sent you the link to this page."
       }
     }
   }

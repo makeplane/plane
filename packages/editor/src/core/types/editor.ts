@@ -145,6 +145,7 @@ export interface IEditorProps {
   onChange?: (json: object, html: string) => void;
   onTransaction?: () => void;
   handleEditorReady?: (value: boolean) => void;
+  isSmoothCursorEnabled: boolean;
   autofocus?: boolean;
   onEnterKeyPress?: (e?: any) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
@@ -178,6 +179,7 @@ export interface ICollaborativeDocumentEditor
     performAction?: boolean
   ) => void;
   pageRestorationInProgress?: boolean;
+  isSmoothCursorEnabled: boolean;
 }
 
 // read only editor props

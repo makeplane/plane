@@ -22,7 +22,7 @@ import { PageContentBrowser, PageContentLoader } from "@/components/pages";
 import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
 // hooks
 import { useEditorMention } from "@/hooks/editor";
-import { useMember, useUser, useWorkspace } from "@/hooks/store";
+import { useMember, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
 import { type TCustomEventHandlers, useRealtimePageEvents } from "@/hooks/use-realtime-page-events";
 // plane web components
@@ -101,6 +101,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   } = props;
   // store hooks
   const { data: currentUser } = useUser();
+  const {
+    data: { is_smooth_cursor_enabled },
+  } = useUserProfile();
   const { getWorkspaceBySlug } = useWorkspace();
   // states
   const [deletePageModal, setDeletePageModal] = useState({
@@ -265,6 +268,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           </div>
 
           <CollaborativeDocumentEditorWithRef
+            isSmoothCursorEnabled={is_smooth_cursor_enabled}
             editable={isContentEditable}
             id={pageId}
             fileHandler={config.fileHandler}

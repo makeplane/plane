@@ -37,6 +37,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     tabIndex,
     user,
     updatePageProperties,
+    isSmoothCursorEnabled = false,
   } = props;
 
   const extensions: Extensions = [];
@@ -80,6 +81,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
       tabIndex,
       user,
       updatePageProperties,
+      isSmoothCursorEnabled,
     });
 
   const editorContainerClassNames = getEditorClassNames({
