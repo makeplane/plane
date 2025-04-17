@@ -13,7 +13,7 @@ import { getPageName } from "@/helpers/page.helper";
 import { usePageFilters } from "@/hooks/use-page-filters";
 
 type Props = {
-  editorRef: React.RefObject<EditorRefApi>;
+  editorRef: EditorRefApi | null;
   readOnly: boolean;
   title: string | undefined;
   updateTitle: (title: string) => void;
@@ -53,7 +53,7 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
-                editorRef.current?.setFocusAtPosition(0);
+                editorRef?.setFocusAtPosition(0);
               }
             }}
             value={title}

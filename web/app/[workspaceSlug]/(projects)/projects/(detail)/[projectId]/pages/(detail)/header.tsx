@@ -8,10 +8,10 @@ import { ICustomSearchSelectOption } from "@plane/types";
 import { Breadcrumbs, Header, CustomSearchSelect } from "@plane/ui";
 // components
 import { BreadcrumbLink, PageAccessIcon, SwitcherLabel } from "@/components/common";
-import { PageEditInformationPopover } from "@/components/pages";
+import { PageHeaderActions } from "@/components/pages/header/actions";
 // helpers
-// hooks
 import { getPageName } from "@/helpers/page.helper";
+// hooks
 import { useProject } from "@/hooks/store";
 // plane web components
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -24,21 +24,22 @@ export interface IPagesHeaderProps {
   showButton?: boolean;
 }
 
+const storeType = EPageStoreType.PROJECT;
+
 export const PageDetailsHeader = observer(() => {
   // router
   const router = useAppRouter();
   const { workspaceSlug, pageId, projectId } = useParams();
   // store hooks
   const { currentProjectDetails, loader } = useProject();
+  const { getPageById, getCurrentProjectPageIds } = usePageStore(storeType);
   const page = usePage({
     pageId: pageId?.toString() ?? "",
-    storeType: EPageStoreType.PROJECT,
+    storeType,
   });
-  const { getPageById, getCurrentProjectPageIds } = usePageStore(EPageStoreType.PROJECT);
   // derived values
   const projectPageIds = getCurrentProjectPageIds(projectId?.toString());
 
-  if (!page) return null;
   const switcherOptions = projectPageIds
     .map((id) => {
       const _page = id === pageId ? page : getPageById(id);
@@ -109,8 +110,8 @@ export const PageDetailsHeader = observer(() => {
         </div>
       </Header.LeftItem>
       <Header.RightItem>
-        <PageEditInformationPopover page={page} />
         <PageDetailsHeaderExtraActions page={page} />
+        <PageHeaderActions page={page} storeType={storeType} />
       </Header.RightItem>
     </Header>
   );

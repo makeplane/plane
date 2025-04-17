@@ -2,6 +2,7 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // plane imports
 import { EPageAccess } from "@plane/constants";
+import { EditorRefApi } from "@plane/editor";
 import { TDocumentPayload, TLogoProps, TNameDescriptionLoader, TPage } from "@plane/types";
 import { TChangeHandlerProps } from "@plane/ui";
 import { convertHexEmojiToDecimal } from "@plane/utils";
@@ -11,6 +12,7 @@ import { RootStore } from "@/plane-web/store/root.store";
 export type TBasePage = TPage & {
   // observables
   isSubmitting: TNameDescriptionLoader;
+  editorRef: EditorRefApi | null;
   // computed
   asJSON: TPage | undefined;
   isCurrentUserOwner: boolean;
@@ -32,6 +34,8 @@ export type TBasePage = TPage & {
   addToFavorites: () => Promise<void>;
   removePageFromFavorites: () => Promise<void>;
   duplicate: () => Promise<TPage | undefined>;
+  mutateProperties: (data: Partial<TPage>, shouldUpdateName?: boolean) => void;
+  setEditorRef: (editorRef: EditorRefApi | null) => void;
 };
 
 export type TBasePagePermissions = {
@@ -68,6 +72,7 @@ export type TPageInstance = TBasePage &
 export class BasePage implements TBasePage {
   // loaders
   isSubmitting: TNameDescriptionLoader = "saved";
+  editorRef: EditorRefApi | null = null;
   // page properties
   id: string | undefined;
   name: string | undefined;
@@ -125,6 +130,7 @@ export class BasePage implements TBasePage {
     makeObservable(this, {
       // loaders
       isSubmitting: observable.ref,
+      editorRef: observable.ref,
       // page properties
       id: observable.ref,
       name: observable.ref,
@@ -165,6 +171,8 @@ export class BasePage implements TBasePage {
       addToFavorites: action,
       removePageFromFavorites: action,
       duplicate: action,
+      mutateProperties: action,
+      setEditorRef: action,
     });
 
     this.rootStore = store;
@@ -426,25 +434,34 @@ export class BasePage implements TBasePage {
   };
 
   updatePageLogo = async (value: TChangeHandlerProps) => {
-    let logoValue = {};
-    if (value?.type === "emoji")
-      logoValue = {
-        value: convertHexEmojiToDecimal(value.value.unified),
-        url: value.value.imageUrl,
+    const originalLogoProps = { ...this.logo_props };
+    try {
+      let logoValue = {};
+      if (value?.type === "emoji")
+        logoValue = {
+          value: convertHexEmojiToDecimal(value.value.unified),
+          url: value.value.imageUrl,
+        };
+      else if (value?.type === "icon") logoValue = value.value;
+
+      const logoProps: TLogoProps = {
+        in_use: value?.type,
+        [value?.type]: logoValue,
       };
-    else if (value?.type === "icon") logoValue = value.value;
 
-    const logoProps: TLogoProps = {
-      in_use: value?.type,
-      [value?.type]: logoValue,
-    };
-
-    await this.services.update({
-      logo_props: logoProps,
-    });
-    runInAction(() => {
-      this.logo_props = logoProps;
-    });
+      runInAction(() => {
+        this.logo_props = logoProps;
+      });
+      await this.services.update({
+        logo_props: logoProps,
+      });
+    } catch (error) {
+      console.error("Error in updating page logo", error);
+      runInAction(() => {
+        this.logo_props = originalLogoProps as TLogoProps;
+      });
+      throw error;
+    }
   };
 
   /**
@@ -498,4 +515,23 @@ export class BasePage implements TBasePage {
    * @description duplicate the page
    */
   duplicate = async () => await this.services.duplicate();
+
+  /**
+   * @description mutate multiple properties at once
+   * @param data Partial<TPage>
+   */
+  mutateProperties = (data: Partial<TPage>, shouldUpdateName: boolean = true) => {
+    Object.keys(data).forEach((key) => {
+      const value = data[key as keyof TPage];
+      if (key === "name" && !shouldUpdateName) return;
+      set(this, key, value);
+    });
+  };
+
+  setEditorRef = (editorRef: EditorRefApi | null) => {
+    console.log("store editorRef", editorRef);
+    runInAction(() => {
+      this.editorRef = editorRef;
+    });
+  };
 }

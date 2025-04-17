@@ -15,7 +15,6 @@ import { cn } from "@/helpers/common.helper";
 
 type Props = {
   editorRef: EditorRefApi;
-  isHidden: boolean;
 };
 
 type ToolbarButtonProps = {
@@ -65,7 +64,7 @@ ToolbarButton.displayName = "ToolbarButton";
 const toolbarItems = TOOLBAR_ITEMS.document;
 
 export const PageToolbar: React.FC<Props> = (props) => {
-  const { editorRef, isHidden } = props;
+  const { editorRef } = props;
   // states
   const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
 
@@ -98,14 +97,7 @@ export const PageToolbar: React.FC<Props> = (props) => {
   );
 
   return (
-    <div
-      className={cn(
-        "flex flex-wrap items-center divide-x divide-custom-border-200 opacity-100 transition-opacity duration-200 ease-in-out",
-        {
-          "opacity-0 pointer-events-none": isHidden,
-        }
-      )}
-    >
+    <div className="flex items-center divide-x divide-custom-border-200 overflow-x-scroll">
       <CustomMenu
         customButton={
           <span className="text-custom-text-300 text-sm border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 h-7 w-24 rounded px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left">
@@ -139,20 +131,22 @@ export const PageToolbar: React.FC<Props> = (props) => {
           </CustomMenu.MenuItem>
         ))}
       </CustomMenu>
-      <ColorDropdown
-        handleColorSelect={(key, color) =>
-          editorRef.executeMenuItemCommand({
-            itemKey: key,
-            color,
-          })
-        }
-        isColorActive={(key, color) =>
-          editorRef.isMenuItemActive({
-            itemKey: key,
-            color,
-          })
-        }
-      />
+      <div className="flex-shrink-0">
+        <ColorDropdown
+          handleColorSelect={(key, color) =>
+            editorRef.executeMenuItemCommand({
+              itemKey: key,
+              color,
+            })
+          }
+          isColorActive={(key, color) =>
+            editorRef.isMenuItemActive({
+              itemKey: key,
+              color,
+            })
+          }
+        />
+      </div>
       {Object.keys(toolbarItems).map((key) => (
         <div key={key} className="flex items-center gap-0.5 px-2 first:pl-0 last:pr-0">
           {toolbarItems[key].map((item) => (

@@ -43,10 +43,10 @@ export type TEditorBodyHandlers = {
 
 type Props = {
   config: TEditorBodyConfig;
-  editorRef: React.RefObject<EditorRefApi>;
   editorReady: boolean;
+  editorForwardRef: React.RefObject<EditorRefApi>;
   handleConnectionStatus: Dispatch<SetStateAction<boolean>>;
-  handleEditorReady: Dispatch<SetStateAction<boolean>>;
+  handleEditorReady: (status: boolean) => void;
   handlers: TEditorBodyHandlers;
   page: TPageInstance;
   webhookConnectionParams: TWebhookConnectionQueryParams;
@@ -56,7 +56,7 @@ type Props = {
 export const PageEditorBody: React.FC<Props> = observer((props) => {
   const {
     config,
-    editorRef,
+    editorForwardRef,
     handleConnectionStatus,
     handleEditorReady,
     handlers,
@@ -70,7 +70,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { getUserDetails } = useMember();
 
   // derived values
-  const { id: pageId, name: pageTitle, isContentEditable, updateTitle } = page;
+  const { id: pageId, name: pageTitle, isContentEditable, updateTitle, editorRef } = page;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
   // issue-embed
   const { issueEmbedProps } = useIssueEmbed({
@@ -172,10 +172,10 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           <div className="sticky top-[72px]">
             <div className="group/page-toc relative px-page-x">
               <div className="cursor-pointer max-h-[50vh] overflow-hidden">
-                <PageContentBrowser editorRef={editorRef?.current} showOutline />
+                <PageContentBrowser editorRef={editorRef} showOutline />
               </div>
               <div className="absolute top-0 right-0 opacity-0 translate-x-1/2 pointer-events-none group-hover/page-toc:opacity-100 group-hover/page-toc:-translate-x-1/4 group-hover/page-toc:pointer-events-auto transition-all duration-300 w-52 max-h-[70vh] overflow-y-scroll vertical-scrollbar scrollbar-sm whitespace-nowrap bg-custom-background-90 p-4 rounded">
-                <PageContentBrowser editorRef={editorRef?.current} />
+                <PageContentBrowser editorRef={editorRef} />
               </div>
             </div>
           </div>
@@ -196,7 +196,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           id={pageId}
           fileHandler={config.fileHandler}
           handleEditorReady={handleEditorReady}
-          ref={editorRef}
+          ref={editorForwardRef}
           containerClassName="h-full p-0 pb-64"
           displayConfig={displayConfig}
           mentionHandler={{
