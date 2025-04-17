@@ -4,9 +4,7 @@ import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { ArrowUpToLine, Clipboard, History } from "lucide-react";
-// document editor
-import { EditorRefApi } from "@plane/editor";
-// ui
+// plane imports
 import { TContextMenuItem, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
 import { ExportPageModal, PageActions, TPageActions } from "@/components/pages";
@@ -21,19 +19,18 @@ import { EPageStoreType } from "@/plane-web/hooks/store";
 import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
-  editorRef: EditorRefApi | null;
   page: TPageInstance;
   storeType: EPageStoreType;
 };
 
 export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
-  const { editorRef, page, storeType } = props;
+  const { page, storeType } = props;
   // states
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   // router
   const router = useRouter();
   // store values
-  const { name, isContentEditable } = page;
+  const { name, isContentEditable, editorRef } = page;
   // page filters
   const { isFullWidth, handleFullWidth, isStickyToolbarEnabled, handleStickyToolbar } = usePageFilters();
   // update query params
@@ -127,10 +124,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         optionsOrder={[
           "full-screen",
           "sticky-toolbar",
-          "copy-link",
           "make-a-copy",
-          "move",
-          "toggle-lock",
           "toggle-access",
           "archive-restore",
           "delete",
