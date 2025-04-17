@@ -1,5 +1,6 @@
 # django imports
-from django.db.models import F
+from django.db.models import F, Q
+from django.db import models
 
 from plane.db.models import Workspace, Issue, Project
 from plane.ee.models import (
@@ -16,7 +17,6 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.utils.widget_graph_plot import build_widget_chart
 from plane.ee.utils.chart_validations import validate_chart_config
-
 
 # Third party imports
 from rest_framework import status
@@ -107,13 +107,6 @@ class WidgetListEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, dashboard_id, widget_id):
 
-        # query params for live update in the chart
-        group_by = request.query_params.get("group_by", None)
-        quick_filter = request.query_params.get("quick_filter", None)
-        y_axis_metric = request.query_params.get("y_axis_metric", None)
-        x_axis_property = request.query_params.get("x_axis_property", None)
-        x_axis_date_grouping = request.query_params.get("x_axis_date_grouping", None)
-
         dashboard = Dashboard.objects.filter(
             id=dashboard_id, workspace__slug=slug
         ).first()
@@ -127,6 +120,18 @@ class WidgetListEndpoint(BaseAPIView):
             dashboard_id=dashboard_id, widget_id=widget_id, workspace__slug=slug
         ).first()
         widget = Widget.objects.filter(workspace__slug=slug, id=widget_id).first()
+
+        # query params for live update in the chart
+        group_by = request.query_params.get("group_by", widget.group_by)
+        quick_filter = request.query_params.get("quick_filter", None)
+        y_axis_metric = request.query_params.get("y_axis_metric", widget.y_axis_metric)
+        x_axis_property = request.query_params.get(
+            "x_axis_property", widget.x_axis_property
+        )
+        x_axis_date_grouping = request.query_params.get(
+            "x_axis_date_grouping", widget.x_axis_date_grouping
+        )
+
         if (
             widget.y_axis_metric == Widget.YAxisMetricEnum.ESTIMATE_POINT_COUNT
             or y_axis_metric == Widget.YAxisMetricEnum.ESTIMATE_POINT_COUNT
@@ -141,7 +146,17 @@ class WidgetListEndpoint(BaseAPIView):
             )
 
         issues = (
-            Issue.issue_objects.filter(workspace__slug=slug)
+            Issue.objects.filter(
+                models.Q(issue_intake__status=1)
+                | models.Q(issue_intake__status=-1)
+                | models.Q(issue_intake__status=2)
+                | models.Q(issue_intake__isnull=True)
+            )
+            .filter(state__is_triage=False)
+            .exclude(archived_at__isnull=False)
+            .exclude(project__archived_at__isnull=False)
+            .exclude(is_draft=True)
+            .filter(workspace__slug=slug)
             .filter(
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
@@ -152,6 +167,14 @@ class WidgetListEndpoint(BaseAPIView):
                 "assignees", "labels", "issue_module__module", "issue_cycle__cycle"
             )
         )
+
+        if (
+            x_axis_property == Widget.PropertyEnum.EPICS
+            or group_by == Widget.PropertyEnum.EPICS
+        ):
+            issues = issues.filter(Q(type__isnull=False) & Q(type__is_epic=True))
+        else:
+            issues = issues.filter(Q(type__is_epic=False) | Q(type__isnull=True))
 
         # get the dashboard filter
         if dashboard.filters:
@@ -168,16 +191,12 @@ class WidgetListEndpoint(BaseAPIView):
         if dashboard_widget.filters:
             issues = issues.filter(**dashboard_widget.filters)
 
-        if (
-            not x_axis_property
-            and not widget.x_axis_property
-            and widget.chart_type != "NUMBER"
-        ):
+        if not x_axis_property and widget.chart_type != "NUMBER":
             return Response(
                 {"message": "x axis is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        if not y_axis_metric and not widget.y_axis_metric:
+        if not y_axis_metric:
             return Response(
                 {"message": "y axis is required"}, status=status.HTTP_400_BAD_REQUEST
             )
@@ -186,14 +205,10 @@ class WidgetListEndpoint(BaseAPIView):
         response = build_widget_chart(
             queryset=issues,
             chart_type=widget.chart_type,
-            x_axis=x_axis_property if x_axis_property else widget.x_axis_property,
-            y_axis=y_axis_metric if y_axis_metric else widget.y_axis_metric,
-            group_by=group_by if group_by else widget.group_by,
-            x_axis_date_grouping=(
-                x_axis_date_grouping
-                if x_axis_date_grouping
-                else widget.x_axis_date_grouping
-            ),
+            x_axis=x_axis_property,
+            y_axis=y_axis_metric,
+            group_by=group_by,
+            x_axis_date_grouping=x_axis_date_grouping,
         )
 
         return Response(response, status=status.HTTP_200_OK)

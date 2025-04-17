@@ -115,6 +115,7 @@ class Widget(BaseModel):
         WORK_ITEM_TYPES = "WORK_ITEM_TYPES", "Work Item Types"
         PROJECTS = "PROJECTS", "Projects"
         CREATED_BY = "CREATED_BY", "Created By"
+        EPICS = "EPICS", "Epics"
 
     class XAxisDateGroupingEnum(models.TextChoices):
         DAY = "DAY", "Day"

@@ -37,6 +37,7 @@ export enum EWidgetXAxisProperty {
   CREATED_BY = "CREATED_BY",
   WORK_ITEM_TYPES = "WORK_ITEM_TYPES",
   PROJECTS = "PROJECTS",
+  EPICS = "EPICS",
 }
 
 export enum EWidgetXAxisDateGrouping {
