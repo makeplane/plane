@@ -7,11 +7,15 @@ import { cn } from "@/helpers/common.helper";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components
 import { PageCollaboratorsList } from "@/plane-web/components/pages/header/collaborators-list";
+// plane web hooks
+import { EPageStoreType } from "@/plane-web/hooks/store/use-page-store";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
+  isSyncing: boolean;
   page: TPageInstance;
+  storeType: EPageStoreType;
 };
 
 export const PageEditorToolbarRoot: React.FC<Props> = observer((props) => {

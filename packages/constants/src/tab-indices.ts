@@ -1,3 +1,4 @@
+import { CUSTOMER_FORM_TAB_INDICES } from "./tab-indices-extended";
 export const ISSUE_FORM_TAB_INDICES = [
   "name",
   "description_html",
@@ -53,14 +54,7 @@ export const PROJECT_CREATE_TAB_INDICES = [
   "logo_props",
 ];
 
-export const PROJECT_CYCLE_TAB_INDICES = [
-  "name",
-  "description",
-  "date_range",
-  "cancel",
-  "submit",
-  "project_id",
-];
+export const PROJECT_CYCLE_TAB_INDICES = ["name", "description", "date_range", "cancel", "submit", "project_id"];
 
 export const PROJECT_MODULE_TAB_INDICES = [
   "name",
@@ -73,21 +67,9 @@ export const PROJECT_MODULE_TAB_INDICES = [
   "submit",
 ];
 
-export const PROJECT_VIEW_TAB_INDICES = [
-  "name",
-  "description",
-  "filters",
-  "cancel",
-  "submit",
-];
+export const PROJECT_VIEW_TAB_INDICES = ["name", "description", "filters", "cancel", "submit"];
 
-export const PROJECT_PAGE_TAB_INDICES = [
-  "name",
-  "public",
-  "private",
-  "cancel",
-  "submit",
-];
+export const PROJECT_PAGE_TAB_INDICES = ["name", "public", "private", "cancel", "submit"];
 
 export enum ETabIndices {
   ISSUE_FORM = "issue-form",
@@ -98,6 +80,7 @@ export enum ETabIndices {
   PROJECT_MODULE = "project-module",
   PROJECT_VIEW = "project-view",
   PROJECT_PAGE = "project-page",
+  CUSTOMER_FORM = "customer-form",
 }
 
 export const TAB_INDEX_MAP: Record<ETabIndices, string[]> = {
@@ -109,4 +92,5 @@ export const TAB_INDEX_MAP: Record<ETabIndices, string[]> = {
   [ETabIndices.PROJECT_MODULE]: PROJECT_MODULE_TAB_INDICES,
   [ETabIndices.PROJECT_VIEW]: PROJECT_VIEW_TAB_INDICES,
   [ETabIndices.PROJECT_PAGE]: PROJECT_PAGE_TAB_INDICES,
+  [ETabIndices.CUSTOMER_FORM]: CUSTOMER_FORM_TAB_INDICES,
 };

@@ -72,6 +72,16 @@ class Page(BaseModel):
         )
         super(Page, self).save(*args, **kwargs)
 
+    @property
+    def is_description_empty(self):
+        return (
+            self.description_html == "<p></p>"
+            or self.description_html == '<p class="editor-paragraph-block"></p>'
+            or self.description_html
+            == '<p class="editor-paragraph-block"></p><p class="editor-paragraph-block"></p>'
+            or not self.description_html
+        )
+
 
 class PageLog(BaseModel):
     TYPE_CHOICES = (
@@ -83,17 +93,21 @@ class PageLog(BaseModel):
         ("link", "Link"),
         ("cycle", "Cycle"),
         ("module", "Module"),
-        ("back_link", "Back Link"),
-        ("forward_link", "Forward Link"),
         ("page_mention", "Page Mention"),
         ("user_mention", "User Mention"),
+        (
+            "sub_page",
+            "Sub Page",
+        ),  # nested relationship where one page is a child of another.
+        (
+            "page_link",
+            "Page Link",
+        ),  # Indicates a reference or external link to another page.
     )
     transaction = models.UUIDField(default=uuid.uuid4)
     page = models.ForeignKey(Page, related_name="page_log", on_delete=models.CASCADE)
     entity_identifier = models.UUIDField(null=True)
-    entity_name = models.CharField(
-        max_length=30, verbose_name="Transaction Type"
-    )
+    entity_name = models.CharField(max_length=30, verbose_name="Transaction Type")
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="workspace_page_log"
     )
@@ -174,6 +188,8 @@ class PageVersion(BaseModel):
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
     description_json = models.JSONField(default=dict, blank=True)
+    sub_pages_data = models.JSONField(default=dict, blank=True)
+
     sub_pages_data = models.JSONField(default=dict, blank=True)
 
     class Meta:
