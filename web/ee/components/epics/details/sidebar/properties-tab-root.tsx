@@ -24,6 +24,8 @@ import { useIssueDetail, useMember, useProjectEstimates, useProjectState } from 
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issue-types/values";
 // helpers
+import { WorkItemSidebarCustomers } from "@/plane-web/components/issues/issue-details/sidebar/customer-list-root";
+import { useCustomers } from "@/plane-web/hooks/store/customers";
 import { useEpicOperations } from "../helper";
 
 type Props = {
@@ -42,6 +44,7 @@ export const EpicSidebarPropertiesRoot: FC<Props> = observer((props) => {
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const { getUserDetails } = useMember();
   const { getStateById } = useProjectState();
+  const { isCustomersFeatureEnabled } = useCustomers();
 
   // derived values
   const issue = getIssueById(epicId);
@@ -224,6 +227,10 @@ export const EpicSidebarPropertiesRoot: FC<Props> = observer((props) => {
             />
           </div>
         </div>
+
+        {isCustomersFeatureEnabled && (
+          <WorkItemSidebarCustomers workItemId={epicId} workspaceSlug={workspaceSlug} isPeekView={false} />
+        )}
 
         {issue.type_id && (
           <IssueAdditionalPropertyValuesUpdate

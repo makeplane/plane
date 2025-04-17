@@ -597,15 +597,14 @@ export class CustomerStore implements ICustomersStore {
         _workItems.forEach((item) => {
           const _workItem = this.rootStore.issue.issues.getIssueById(item.id);
           if (requestId) {
-            if (this.workItemRequestIdsMap[item.id]) {
-              // add request id to the work item
-              concat(requestId, this.workItemRequestIdsMap[item.id]);
-              const _requestCount = _workItem?.customer_request_count || 0;
-              // update counts for work items
-              this.rootStore.issue.issues.updateIssue(item.id, {
-                customer_request_count: _requestCount + 1,
-              });
-            }
+            if (!this.workItemRequestIdsMap[item.id]) set(this.workItemRequestIdsMap, [item.id], []);
+            // add request id to the work item
+            concat(requestId, this.workItemRequestIdsMap[item.id]);
+            const _requestCount = _workItem?.customer_request_count || 0;
+            // update counts for work items
+            this.rootStore.issue.issues.updateIssue(item.id, {
+              customer_request_count: _requestCount + 1,
+            });
           }
           const _customerCount = _workItem?.customer_count || 0;
           // update customer count for work items

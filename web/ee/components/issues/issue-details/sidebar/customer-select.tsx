@@ -1,9 +1,12 @@
 import React, { FC } from "react";
 import difference from "lodash/difference";
 import { observer } from "mobx-react";
+import { mutate } from "swr";
 import { PlusIcon } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button, CustomersIcon, setToast, TOAST_TYPE } from "@plane/ui";
+// plane web imports
 import { CustomerDropDown } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
 type TProps = {
@@ -40,6 +43,7 @@ export const CustomerSelect: FC<TProps> = observer((props) => {
           message: t("customers.toasts.work_item.remove.error.message"),
         });
       });
+      mutate(`WORK_ITEM_REQUESTS${workspaceSlug}_${workItemId}`);
     }
   };
 

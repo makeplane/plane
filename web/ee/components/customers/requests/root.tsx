@@ -58,7 +58,7 @@ export const CustomerRequestsRoot: FC<TProps> = observer((props) => {
         <div className="flex gap-2 items-center">
           <CustomerRequestSearch />
           {isEditable && (
-            <Button onClick={handleFormOpen} disabled={isRequestFormOpen} size="sm">
+            <Button onClick={handleFormOpen} disabled={isRequestFormOpen} size="sm" className="px-2 py-1">
               {t("customers.requests.add")}
             </Button>
           )}

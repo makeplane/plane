@@ -9,10 +9,11 @@ type TProps = {
   workspaceSlug: string;
   workItemId: string;
   disabled: boolean;
+  isTabs?: boolean;
 };
 
 export const WorkItemRequestCollapsibleContent: FC<TProps> = observer((props) => {
-  const { workspaceSlug, workItemId, disabled } = props;
+  const { workspaceSlug, workItemId, disabled, isTabs = false } = props;
 
   const {
     getFilteredWorkItemRequestIds,
@@ -32,7 +33,7 @@ export const WorkItemRequestCollapsibleContent: FC<TProps> = observer((props) =>
   }, []);
 
   return (
-    <div className="py-2 pl-9 space-y-3">
+    <div className={`py-2 space-y-3 ${isTabs ? "" : "pl-9"}`}>
       <WorkItemRequestForm
         isOpen={createUpdateRequestModalId === workItemId}
         handleClose={handleFormClose}

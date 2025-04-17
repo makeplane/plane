@@ -9,6 +9,7 @@ import { useIssueDetail } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
 import usePeekOverviewOutsideClickDetector from "@/hooks/use-peek-overview-outside-click";
 // local components
+import { useCustomers } from "@/plane-web/hooks/store";
 import { useEpics } from "@/plane-web/hooks/store/epics/use-epics";
 import { EpicDetailRoot } from "../details/root";
 import { EpicPeekOverviewError } from "./error";
@@ -59,6 +60,7 @@ export const EpicView: FC<IEpicView> = observer((props) => {
   } = useEpics();
   const { setPeekIssue: setIssuePeekIssue } = useIssueDetail();
   const { isAnyModalOpen: isAnyIssueModalOpen } = useIssueDetail();
+  const { isAnyModalOpen: isAnyCustomerModalOpen } = useCustomers();
   const issue = getIssueById(issueId);
   // remove peek id
   const removeRoutePeekId = () => {
@@ -71,7 +73,14 @@ export const EpicView: FC<IEpicView> = observer((props) => {
     issuePeekOverviewRef,
     () => {
       if (!embedIssue) {
-        if (!isAnyModalOpen && !isAnyIssueModalOpen && !deleteEpicModal && !editEpicModal && !deleteModalId) {
+        if (
+          !isAnyModalOpen &&
+          !isAnyIssueModalOpen &&
+          !deleteEpicModal &&
+          !editEpicModal &&
+          !deleteModalId &&
+          !isAnyCustomerModalOpen
+        ) {
           removeRoutePeekId();
         }
       }

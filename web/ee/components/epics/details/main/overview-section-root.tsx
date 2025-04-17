@@ -2,6 +2,7 @@
 
 import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
+import { PlusIcon } from "lucide-react";
 import { EIssueServiceType } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { Tabs } from "@plane/ui";
@@ -10,10 +11,11 @@ import { RelationActionButton, SubIssuesActionButton } from "@/components/issues
 // plane web
 import { OverviewSection } from "@/plane-web/components/common/layout/main/sections/overview-root";
 // local components
+import { useCustomers } from "@/plane-web/hooks/store";
+import { EpicCustomersRoot } from "./overview-section/customers-root";
 import { EpicIssuesOverviewRoot } from "./overview-section/issues-root";
 import { EpicOverviewWidgetModals } from "./overview-section/modals-root";
 import { EpicRelationsOverviewRoot } from "./overview-section/relation-root";
-
 type Props = {
   workspaceSlug: string;
   projectId: string;
@@ -25,6 +27,7 @@ export const EpicOverviewRoot: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, epicId, disabled = false } = props;
   // store hooks
   const { storedValue } = useLocalStorage(`tab-epic-detail-overview-${epicId}`, "issues");
+  const { toggleCreateUpdateRequestModal } = useCustomers();
 
   // Tabs
   const OVERVIEW_TABS = useMemo(
@@ -39,8 +42,29 @@ export const EpicOverviewRoot: FC<Props> = observer((props) => {
         label: "Relations",
         content: <EpicRelationsOverviewRoot workspaceSlug={workspaceSlug} epicId={epicId} />,
       },
+      {
+        key: "customer-requests",
+        label: "Customer requests",
+        content: <EpicCustomersRoot workspaceSlug={workspaceSlug} epicId={epicId} disabled={disabled} />,
+      },
     ],
-    [workspaceSlug, projectId, epicId]
+    [workspaceSlug, projectId, epicId, disabled]
+  );
+
+  // Actions
+  const OVERVIEW_ACTIONS: Record<string, React.ReactNode> = useMemo(
+    () => ({
+      issues: <SubIssuesActionButton issueId={epicId} issueServiceType={EIssueServiceType.EPICS} disabled={disabled} />,
+      relations: (
+        <RelationActionButton issueId={epicId} issueServiceType={EIssueServiceType.EPICS} disabled={disabled} />
+      ),
+      "customer-requests": (
+        <button onClick={() => toggleCreateUpdateRequestModal(epicId)}>
+          <PlusIcon className="h-4 w-4" />
+        </button>
+      ),
+    }),
+    [epicId, disabled, toggleCreateUpdateRequestModal]
   );
 
   return (
@@ -57,19 +81,7 @@ export const EpicOverviewRoot: FC<Props> = observer((props) => {
             tabClassName="px-2 py-1"
             actions={
               <div className="flex items-center justify-end gap-2">
-                {storedValue === "issues" ? (
-                  <SubIssuesActionButton
-                    issueId={epicId}
-                    issueServiceType={EIssueServiceType.EPICS}
-                    disabled={disabled}
-                  />
-                ) : (
-                  <RelationActionButton
-                    issueId={epicId}
-                    issueServiceType={EIssueServiceType.EPICS}
-                    disabled={disabled}
-                  />
-                )}
+                {storedValue ? OVERVIEW_ACTIONS[storedValue] : <></>}
               </div>
             }
           />
