@@ -220,6 +220,30 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       })
     )
       return;
+    
+      const propsToCheck = [
+        formData?.archived_at,
+        formData?.label_ids?.length,
+        formData?.assignee_ids?.length,
+        formData?.cycle_id,
+        formData?.parent_id,
+        formData?.label_ids?.length,
+        formData?.state_id,
+        formData?.target_date,
+        formData?.start_date,
+      ];
+      
+      const hasAnyProp = propsToCheck.some((value) => value !== null && value !== undefined && value !== "" && value !==0);
+
+      console.log(hasAnyProp)
+    
+    if (!hasAnyProp) {
+      setToast({
+        type: TOAST_TYPE.WARNING,
+        title: t("Missing properties"),
+        message: t("you are creating a work item without any properties"),
+      });
+    }
 
     const submitData = !data?.id
       ? formData
