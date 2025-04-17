@@ -26,6 +26,7 @@ export const PageEditorToolbarRoot: React.FC<Props> = observer((props) => {
   const { isFullWidth, isStickyToolbarEnabled } = usePageFilters();
   // derived values
   const resolvedEditorRef = editorRef.current;
+  const shouldHideToolbar = !isStickyToolbarEnabled || !isContentEditable;
 
   if (!resolvedEditorRef) return null;
 
@@ -33,16 +34,17 @@ export const PageEditorToolbarRoot: React.FC<Props> = observer((props) => {
     <div id="page-toolbar-container">
       <div
         className={cn(
-          "hidden md:flex items-center relative min-h-[52px] page-toolbar-content border-b border-custom-border-200 px-page-x transition-all duration-200 ease-in-out",
+          "hidden md:flex items-center relative min-h-[52px] page-toolbar-content px-page-x border-b border-transparent transition-all duration-200 ease-in-out",
           {
             "wide-layout": isFullWidth,
+            "border-custom-border-200": true,
           }
         )}
       >
         <div className="max-w-full w-full flex items-center justify-between">
           <div>
-            {isStickyToolbarEnabled && editorReady && isContentEditable && editorRef.current && (
-              <PageToolbar editorRef={editorRef?.current} />
+            {editorReady && resolvedEditorRef && (
+              <PageToolbar editorRef={resolvedEditorRef} isHidden={shouldHideToolbar} />
             )}
           </div>
           <PageExtraOptions editorRef={resolvedEditorRef} page={page} storeType={storeType} />

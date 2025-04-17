@@ -1,8 +1,11 @@
 import { observer } from "mobx-react";
+// plane imports
 import { EditorRefApi } from "@plane/editor";
-// components
 import { Header, EHeaderVariant } from "@plane/ui";
+// components
 import { PageExtraOptions, PageToolbar } from "@/components/pages";
+// hooks
+import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web hooks
 import { EPageStoreType } from "@/plane-web/hooks/store";
 // store
@@ -18,6 +21,8 @@ export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
   const { editorRef, page, storeType } = props;
   // derived values
   const { isContentEditable } = page;
+  // page filters
+  const { isStickyToolbarEnabled } = usePageFilters();
 
   return (
     <>
@@ -25,7 +30,7 @@ export const PageEditorMobileHeaderRoot: React.FC<Props> = observer((props) => {
         <PageExtraOptions editorRef={editorRef} page={page} storeType={storeType} />
       </Header>
       <Header variant={EHeaderVariant.TERNARY}>
-        {isContentEditable && editorRef && <PageToolbar editorRef={editorRef} />}
+        {isContentEditable && editorRef && <PageToolbar editorRef={editorRef} isHidden={!isStickyToolbarEnabled} />}
       </Header>
     </>
   );
