@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Eye, LayoutGrid, Pencil, Plus } from "lucide-react";
 // plane imports
@@ -11,6 +10,7 @@ import { Breadcrumbs, Button, CustomSearchSelect, getButtonStyling, Header, setT
 // components
 import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 // plane web components
+import { useAppRouter } from "@/hooks/use-app-router";
 import { DashboardQuickActions } from "@/plane-web/components/dashboards/quick-actions";
 import { DashboardWidgetChartTypesDropdown } from "@/plane-web/components/dashboards/widgets/dropdown";
 // plane web hooks
@@ -23,6 +23,7 @@ export const WorkspaceDashboardDetailsHeader = observer(() => {
   const [isAddingWidget, setIsAddingWidget] = useState(false);
   // navigation
   const { workspaceSlug, dashboardId } = useParams();
+  const router = useAppRouter();
   // store hooks
   const {
     getDashboardById,
@@ -64,11 +65,7 @@ export const WorkspaceDashboardDetailsHeader = observer(() => {
       return {
         value: _dashboard.id,
         query: _dashboard.name,
-        content: (
-          <Link href={`/${workspaceSlug}/dashboards/${_dashboard.id}`}>
-            <SwitcherLabel name={_dashboard.name} LabelIcon={LayoutGrid} />
-          </Link>
-        ),
+        content: <SwitcherLabel name={_dashboard.name} LabelIcon={LayoutGrid} />,
       };
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
@@ -94,7 +91,9 @@ export const WorkspaceDashboardDetailsHeader = observer(() => {
                 <CustomSearchSelect
                   label={<SwitcherLabel name={dashboardDetails?.name} LabelIcon={LayoutGrid} />}
                   value={dashboardId.toString()}
-                  onChange={() => {}}
+                  onChange={(value: string) => {
+                    router.push(`/${workspaceSlug}/dashboards/${value}`);
+                  }}
                   options={switcherOptions}
                 />
               }
@@ -130,7 +129,7 @@ export const WorkspaceDashboardDetailsHeader = observer(() => {
             dashboardId={dashboardId.toString()}
             parentRef={parentRef}
             showEdit={false}
-            customClassName="p-1 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
+            customClassName="p-1 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70 size-[26px]"
           />
         </Header.RightItem>
       )}

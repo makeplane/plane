@@ -47,7 +47,7 @@ export const DashboardWidgetChartTypesDropdown: React.FC<Props> = observer((prop
         type="button"
         ref={setReferenceElement}
         className={cn(
-          "w-full h-8 flex items-center gap-1 px-2 py-1 rounded hover:bg-custom-background-80 text-left cursor-pointer transition-colors",
+          "w-full h-7 flex items-center gap-1 px-2 py-1 rounded hover:bg-custom-background-80 text-left cursor-pointer transition-colors",
           buttonClassName
         )}
         disabled={disabled}

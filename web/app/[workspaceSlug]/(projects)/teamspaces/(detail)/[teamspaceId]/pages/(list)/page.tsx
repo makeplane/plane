@@ -28,7 +28,6 @@ const TeamspacePagesPage = observer(() => {
     getTeamspacePagesScope,
     getTeamspacePagesLoader,
     getTeamspacePagesFilters,
-    fetchTeamspacePages,
     updateTeamScope,
     updateFilters,
     clearAllFilters,
@@ -38,15 +37,6 @@ const TeamspacePagesPage = observer(() => {
   const teamspacePagesLoader = getTeamspacePagesLoader(teamspaceId);
   const teamspacePagesFilters = getTeamspacePagesFilters(teamspaceId);
   const isFiltersApplied = calculateTotalFilters(teamspacePagesFilters?.filters ?? {}) !== 0;
-  // fetch teamspace pages
-  useSWR(
-    workspaceSlug && teamspaceId ? ["teamspacePages", workspaceSlug, teamspaceId] : null,
-    () => (workspaceSlug && teamspaceId ? fetchTeamspacePages(workspaceSlug, teamspaceId) : null),
-    {
-      revalidateOnFocus: false,
-      revalidateIfStale: false,
-    }
-  );
 
   // handlers
   const handleRemoveFilter = useCallback(
