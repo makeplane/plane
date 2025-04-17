@@ -46,12 +46,15 @@ const ToolbarButton: React.FC<ToolbarButtonProps> = React.memo((props) => {
             ...item.extraProps,
           })
         }
-        className={cn("grid size-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80", {
-          "bg-custom-background-80 text-custom-text-100": isActive,
-        })}
+        className={cn(
+          "grid size-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80 transition-all duration-200 ease-in-out",
+          {
+            "bg-custom-background-80 text-custom-text-100": isActive,
+          }
+        )}
       >
         <item.icon
-          className={cn("size-4", {
+          className={cn("size-4 transition-transform duration-200", {
             "text-custom-text-100": isActive,
           })}
         />
@@ -99,72 +102,81 @@ export const PageToolbar: React.FC<Props> = (props) => {
 
   return (
     <div
-      className={cn(
-        "flex flex-wrap items-center divide-x divide-custom-border-200 opacity-100 transition-opacity duration-200 ease-in-out",
-        {
-          "opacity-0 pointer-events-none": isHidden,
-        }
-      )}
+      className={cn("flex flex-wrap items-center opacity-100 transition-opacity duration-200 ease-in-out", {
+        "opacity-0 pointer-events-none": isHidden,
+      })}
     >
-      <CustomMenu
-        customButton={
-          <span className="text-custom-text-300 text-sm border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 h-7 w-24 rounded px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left">
-            {activeTypography?.name || "Text"}
-            <ChevronDown className="flex-shrink-0 size-3" />
-          </span>
-        }
-        className="pr-2"
-        placement="bottom-start"
-        closeOnSelect
-        maxHeight="lg"
-      >
-        {TYPOGRAPHY_ITEMS.map((item) => (
-          <CustomMenu.MenuItem
-            key={item.renderKey}
-            className="flex items-center justify-between gap-2"
-            onClick={() =>
+      <div className="flex items-center divide-x divide-custom-border-200 flex-nowrap min-w-0 w-full">
+        <CustomMenu
+          customButton={
+            <span className="text-custom-text-300 text-sm border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 h-7 min-w-[6rem] max-w-[6rem] rounded px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left transition-colors duration-200">
+              <span className="truncate">{activeTypography?.name || "Text"}</span>
+              <ChevronDown className="flex-shrink-0 size-3 transition-transform duration-200" />
+            </span>
+          }
+          className="pr-2 flex-shrink-0"
+          placement="bottom-start"
+          closeOnSelect
+          maxHeight="lg"
+        >
+          {TYPOGRAPHY_ITEMS.map((item) => (
+            <CustomMenu.MenuItem
+              key={item.renderKey}
+              className="flex items-center justify-between gap-2 transition-colors duration-200"
+              onClick={() =>
+                editorRef.executeMenuItemCommand({
+                  itemKey: item.itemKey,
+                  ...item.extraProps,
+                })
+              }
+            >
+              <span className="flex items-center gap-2">
+                <item.icon className="size-3" />
+                {item.name}
+              </span>
+              {activeTypography?.itemKey === item.itemKey && (
+                <Check className="size-3 text-custom-text-300 flex-shrink-0" />
+              )}
+            </CustomMenu.MenuItem>
+          ))}
+        </CustomMenu>
+        <div className="flex-shrink-0">
+          <ColorDropdown
+            handleColorSelect={(key, color) =>
               editorRef.executeMenuItemCommand({
-                itemKey: item.itemKey,
-                ...item.extraProps,
+                itemKey: key,
+                color,
               })
             }
-          >
-            <span className="flex items-center gap-2">
-              <item.icon className="size-3" />
-              {item.name}
-            </span>
-            {activeTypography?.itemKey === item.itemKey && (
-              <Check className="size-3 text-custom-text-300 flex-shrink-0" />
-            )}
-          </CustomMenu.MenuItem>
-        ))}
-      </CustomMenu>
-      <ColorDropdown
-        handleColorSelect={(key, color) =>
-          editorRef.executeMenuItemCommand({
-            itemKey: key,
-            color,
-          })
-        }
-        isColorActive={(key, color) =>
-          editorRef.isMenuItemActive({
-            itemKey: key,
-            color,
-          })
-        }
-      />
-      {Object.keys(toolbarItems).map((key) => (
-        <div key={key} className="flex items-center gap-0.5 px-2 first:pl-0 last:pr-0">
-          {toolbarItems[key].map((item) => (
-            <ToolbarButton
-              key={item.renderKey}
-              item={item}
-              isActive={activeStates[item.renderKey]}
-              executeCommand={editorRef.executeMenuItemCommand}
-            />
+            isColorActive={(key, color) =>
+              editorRef.isMenuItemActive({
+                itemKey: key,
+                color,
+              })
+            }
+          />
+        </div>
+        <div className="flex items-center overflow-x-auto overflow-y-hidden scrollbar-hide flex-1 min-w-0">
+          {Object.keys(toolbarItems).map((key, index) => (
+            <div
+              key={key}
+              className={cn("flex items-center gap-0.5 px-2 first:pl-0 last:pr-0 flex-shrink-0", {
+                "hidden sm:flex": index > 1 && index < Object.keys(toolbarItems).length - 1,
+                "hidden xs:flex": index === Object.keys(toolbarItems).length - 1,
+              })}
+            >
+              {toolbarItems[key].map((item) => (
+                <ToolbarButton
+                  key={item.renderKey}
+                  item={item}
+                  isActive={activeStates[item.renderKey]}
+                  executeCommand={editorRef.executeMenuItemCommand}
+                />
+              ))}
+            </div>
           ))}
         </div>
-      ))}
+      </div>
     </div>
   );
 };

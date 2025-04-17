@@ -27,7 +27,7 @@ FILE_SIZE_LIMIT=5242880
 # GPT settings
 OPENAI_API_BASE="https://api.openai.com/v1" # deprecated
 OPENAI_API_KEY="sk-" # deprecated
-GPT_ENGINE="gpt-3.5-turbo" # deprecated
+GPT_ENGINE="gpt-4o-mini" # deprecated
 # Settings related to Docker
 DOCKERIZED=1  # deprecated
 # set to 1 If using the pre-configured minio setup

@@ -9,7 +9,7 @@ import { TPageNavigationTabs } from "@plane/types";
 // components
 import { PageHead } from "@/components/core";
 import { DetailedEmptyState } from "@/components/empty-state";
-import { PagesListRoot, PagesListView } from "@/components/pages";
+import { ProjectPagesListRoot, ProjectPagesListView } from "@/components/pages";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -43,7 +43,7 @@ const ProjectPagesPage = observer(() => {
 
   if (!workspaceSlug || !projectId) return <></>;
 
-  // No access to cycle
+  // No access to page
   if (currentProjectDetails?.page_view === false)
     return (
       <div className="flex items-center justify-center h-full w-full">
@@ -64,14 +64,14 @@ const ProjectPagesPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <PagesListView
+      <ProjectPagesListView
         pageType={currentPageType()}
         projectId={projectId.toString()}
         storeType={EPageStoreType.PROJECT}
         workspaceSlug={workspaceSlug.toString()}
       >
-        <PagesListRoot pageType={currentPageType()} storeType={EPageStoreType.PROJECT} />
-      </PagesListView>
+        <ProjectPagesListRoot pageType={currentPageType()} />
+      </ProjectPagesListView>
     </>
   );
 });

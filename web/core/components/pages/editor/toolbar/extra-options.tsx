@@ -1,5 +1,6 @@
 "use client";
-
+// react hooks
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // constants
 import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
@@ -25,10 +26,11 @@ type Props = {
   editorRef: EditorRefApi;
   page: TPageInstance;
   storeType: EPageStoreType;
+  isSyncing: boolean;
 };
 
 export const PageExtraOptions: React.FC<Props> = observer((props) => {
-  const { editorRef, page, storeType } = props;
+  const { editorRef, page, storeType, isSyncing } = props;
   // derived values
   const {
     archived_at,
@@ -46,6 +48,21 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
     IS_FAVORITE_MENU_OPEN,
     false
   );
+  // show/hide syncing state with animation
+  const [showSyncing, setShowSyncing] = useState(false);
+
+  useEffect(() => {
+    if (isSyncing) {
+      setShowSyncing(true);
+    } else {
+      // delay hiding to allow exit animation to complete
+      const timer = setTimeout(() => {
+        setShowSyncing(false);
+      }, 600); // Slightly longer to ensure animation completes
+      return () => clearTimeout(timer);
+    }
+  }, [isSyncing]);
+
   // favorite handler
   const handleFavorite = () => {
     if (is_favorite) {
@@ -77,6 +94,36 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
           <span>Archived at {renderFormattedDate(archived_at)}</span>
         </div>
       )}
+      {showSyncing && (
+        <div
+          className={`flex-shrink-0 flex h-7 items-center gap-2 rounded-full bg-blue-500/5 px-3 py-0.5 text-xs font-medium text-blue-500 transition-all duration-500`}
+          style={{
+            opacity: isSyncing ? 1 : 0,
+            transform: isSyncing ? "translateY(0)" : "translateY(4px)",
+            transitionTimingFunction: "var(--ease-out-quint)",
+          }}
+        >
+          <div className="relative flex-shrink-0 size-1.5 flex items-center justify-center">
+            <span
+              className="absolute inset-0 rounded-full bg-blue-500"
+              style={{
+                animation: isSyncing ? "pulse-subtle 2s infinite" : "none",
+                animationTimingFunction: "var(--ease-in-out-cubic)",
+              }}
+            />
+          </div>
+          <span
+            className="transition-opacity duration-300"
+            style={{
+              opacity: isSyncing ? 1 : 0,
+              transitionDelay: isSyncing ? "100ms" : "0ms",
+            }}
+          >
+            Syncing
+          </span>
+        </div>
+      )}
+
       {isContentEditable && !isOnline && (
         <Tooltip
           tooltipHeading="You are offline."
@@ -88,6 +135,7 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
           </div>
         </Tooltip>
       )}
+
       {canCurrentUserFavoritePage && (
         <FavoriteStar
           selected={is_favorite}
@@ -96,6 +144,7 @@ export const PageExtraOptions: React.FC<Props> = observer((props) => {
           iconClassName="text-custom-text-100"
         />
       )}
+
       <PageInfoPopover editorRef={editorRef} page={page} />
       <PageOptionsDropdown editorRef={editorRef} page={page} storeType={storeType} />
     </div>
