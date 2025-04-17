@@ -67,7 +67,7 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
   const handleLabel = async (formData: Partial<IIssueLabel>) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
 
-    const labelResponse = await labelOperations.createLabel(workspaceSlug, projectId, formData);
+    const labelResponse = await labelOperations.createLabel(workspaceSlug, formData);
     const currentLabels = [...(values || []), labelResponse.id];
     await labelOperations.updateIssue(workspaceSlug, projectId, issueId, { label_ids: currentLabels });
     handleIsCreateToggle();

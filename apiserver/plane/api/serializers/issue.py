@@ -310,7 +310,6 @@ class LabelSerializer(BaseSerializer):
         read_only_fields = [
             "id",
             "workspace",
-            "project",
             "created_by",
             "updated_by",
             "created_at",

@@ -233,14 +233,14 @@ const getPriorityColumns = (): IGroupByColumn[] => {
 };
 
 const getLabelsColumns = (isWorkspaceLevel: boolean = false): IGroupByColumn[] => {
-  const { workspaceLabels, projectLabels } = store.label;
+  const { workspaceLabels, labels } = store.label;
   // map labels to group by columns
-  const labels = [
-    ...(isWorkspaceLevel ? workspaceLabels || [] : projectLabels || []),
+  const llabels = [
+    ...(isWorkspaceLevel ? workspaceLabels || [] : labels || []),
     { id: "None", name: "None", color: "#666" },
   ];
   // map labels to group by columns
-  return labels.map((label) => ({
+  return llabels.map((label) => ({
     id: label.id,
     name: label.name,
     icon: (

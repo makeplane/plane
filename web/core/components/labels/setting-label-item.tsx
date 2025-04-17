@@ -27,7 +27,7 @@ type Props = {
   isEditable?: boolean;
 };
 
-export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
+export const SettingLabelItem: React.FC<Props> = (props) => {
   const {
     label,
     setIsUpdating,
@@ -42,14 +42,14 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
   // states
   const [isEditLabelForm, setEditLabelForm] = useState(false);
   // router
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug } = useParams();
   // store hooks
   const { updateLabel } = useLabel();
 
   const removeFromGroup = (label: IIssueLabel) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug) return;
 
-    updateLabel(workspaceSlug.toString(), projectId.toString(), label.id, {
+    updateLabel(workspaceSlug.toString(), label.id, {
       parent: null,
     });
   };

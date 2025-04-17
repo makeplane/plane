@@ -63,7 +63,7 @@ export const CycleIssuesMobileHeader = () => {
   );
 
   const { projectStates } = useProjectState();
-  const { projectLabels } = useLabel();
+  const { labels } = useLabel();
   const {
     project: { projectMemberIds },
   } = useMember();
@@ -172,7 +172,7 @@ export const CycleIssuesMobileHeader = () => {
               }
               displayFilters={issueFilters?.displayFilters ?? {}}
               handleDisplayFiltersUpdate={handleDisplayFilters}
-              labels={projectLabels}
+              labels={labels}
               memberIds={projectMemberIds ?? undefined}
               states={projectStates}
               cycleViewDisabled={!currentProjectDetails?.cycle_view}

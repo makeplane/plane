@@ -46,7 +46,7 @@ const HeaderFilters = observer((props: Props) => {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(storeType);
   const { projectStates } = useProjectState();
-  const { projectLabels } = useLabel();
+  const { labels } = useLabel();
   // derived values
   const activeLayout = issueFilters?.displayFilters?.layout;
   const layoutDisplayFiltersOptions = ISSUE_STORE_TO_FILTERS_MAP[storeType]?.[activeLayout];
@@ -124,7 +124,7 @@ const HeaderFilters = observer((props: Props) => {
           displayFilters={issueFilters?.displayFilters ?? {}}
           handleDisplayFiltersUpdate={handleDisplayFilters}
           layoutDisplayFiltersOptions={layoutDisplayFiltersOptions}
-          labels={projectLabels}
+          labels={labels}
           memberIds={projectMemberIds ?? undefined}
           projectId={projectId}
           states={projectStates}

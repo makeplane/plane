@@ -38,14 +38,6 @@ export const PROJECT_SETTINGS = {
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/states/`,
     Icon: SettingIcon,
   },
-  labels: {
-    key: "labels",
-    i18n_label: "common.labels",
-    href: `/settings/labels`,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/labels/`,
-    Icon: SettingIcon,
-  },
   estimates: {
     key: "estimates",
     i18n_label: "common.estimates",
@@ -76,7 +68,6 @@ export const PROJECT_SETTINGS_LINKS: {
   PROJECT_SETTINGS["members"],
   PROJECT_SETTINGS["features"],
   PROJECT_SETTINGS["states"],
-  PROJECT_SETTINGS["labels"],
   PROJECT_SETTINGS["estimates"],
   PROJECT_SETTINGS["automations"],
 ];
