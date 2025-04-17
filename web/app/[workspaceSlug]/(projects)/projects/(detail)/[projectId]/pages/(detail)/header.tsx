@@ -20,18 +20,6 @@ import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
 // plane web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 
-export const PageAccessIcon = (page: TPage) => (
-  <div>
-    {page.archived_at ? (
-      <ArchiveIcon className="h-2.5 w-2.5 text-custom-text-300" />
-    ) : page.access === EPageAccess.PUBLIC ? (
-      <Earth className="h-2.5 w-2.5 text-custom-text-300" />
-    ) : (
-      <Lock className="h-2.5 w-2.5 text-custom-text-300" />
-    )}
-  </div>
-);
-
 export interface IPagesHeaderProps {
   showButton?: boolean;
 }
