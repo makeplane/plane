@@ -121,26 +121,28 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         onClose={() => setIsExportModalOpen(false)}
         pageTitle={name ?? ""}
       />
-      <PageActions
-        editorRef={editorRef}
-        extraOptions={EXTRA_MENU_OPTIONS}
-        optionsOrder={[
-          "full-screen",
-          "sticky-toolbar",
-          "copy-link",
-          "make-a-copy",
-          "move",
-          "toggle-lock",
-          "toggle-access",
-          "archive-restore",
-          "delete",
-          "version-history",
-          "copy-markdown",
-          "export",
-        ]}
-        page={page}
-        storeType={storeType}
-      />
+      {editorRef && (
+        <PageActions
+          editorRef={editorRef}
+          extraOptions={EXTRA_MENU_OPTIONS}
+          optionsOrder={[
+            "full-screen",
+            "sticky-toolbar",
+            "copy-link",
+            "make-a-copy",
+            "move",
+            "toggle-lock",
+            "toggle-access",
+            "archive-restore",
+            "delete",
+            "version-history",
+            "copy-markdown",
+            "export",
+          ]}
+          page={page}
+          storeType={storeType}
+        />
+      )}
     </>
   );
 });

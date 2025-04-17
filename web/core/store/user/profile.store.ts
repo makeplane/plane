@@ -58,7 +58,7 @@ export class ProfileStore implements IUserProfileStore {
     has_billing_address: false,
     created_at: "",
     updated_at: "",
-    language: ""
+    language: "",
   };
 
   // services
@@ -102,7 +102,8 @@ export class ProfileStore implements IUserProfileStore {
       const userProfile = await this.userService.getCurrentUserProfile();
       runInAction(() => {
         this.isLoading = false;
-        this.data = userProfile;
+        this.mutateUserProfile(userProfile);
+        // this.data = userProfile;
       });
       return userProfile;
     } catch (error) {
@@ -170,7 +171,6 @@ export class ProfileStore implements IUserProfileStore {
       runInAction(() => {
         this.mutateUserProfile({ ...dataToUpdate, is_onboarded: true });
       });
-
     } catch (error) {
       runInAction(() => {
         this.error = {
@@ -180,7 +180,7 @@ export class ProfileStore implements IUserProfileStore {
       });
       throw error;
     }
-  }
+  };
 
   /**
    * @description updates the user tour completed status

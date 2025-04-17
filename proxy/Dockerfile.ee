@@ -1,0 +1,14 @@
+FROM caddy:builder AS caddy-builder
+
+RUN xcaddy build \
+        --with github.com/caddy-dns/cloudflare@1fb64108d4debf196b19d7398e763cb78c8a0f41 \
+        --with github.com/caddy-dns/digitalocean \
+        --with github.com/mholt/caddy-l4
+
+FROM caddy:alpine
+
+RUN apk add nss-tools bash curl 
+
+COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
+
+COPY Caddyfile.ee /etc/caddy/Caddyfile

@@ -38,10 +38,10 @@ import {
   insertCallout,
   setText,
 } from "@/helpers/editor-commands";
-// types
-import { CommandProps, ISlashCommandItem, TSlashCommandSectionKeys } from "@/types";
 // plane editor extensions
 import { coreEditorAdditionalSlashCommandOptions } from "@/plane-editor/extensions";
+// types
+import { CommandProps, ISlashCommandItem, TSlashCommandSectionKeys } from "@/types";
 // local types
 import { TExtensionProps, TSlashCommandAdditionalOption } from "./root";
 
