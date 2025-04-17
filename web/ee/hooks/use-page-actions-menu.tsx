@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ArchiveRestoreIcon, LockKeyhole, LockKeyholeOpen, FileOutput, ArchiveIcon } from "lucide-react";
-import { EditorRefApi } from "@plane/editor";
+import { ArchiveRestoreIcon, LockKeyhole, LockKeyholeOpen, ArchiveIcon } from "lucide-react";
 import { AlertModalCore, TContextMenuItem } from "@plane/ui";
 import { TPageActions } from "@/components/pages";
 // hooks
@@ -10,11 +9,10 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { TPageOperations } from "@/hooks/use-page-operations";
 
 // components
-import { MovePageModal, LockPageModal } from "@/plane-web/components/pages";
+import { LockPageModal } from "@/plane-web/components/pages";
 
 // hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
-import { usePageFlag } from "@/plane-web/hooks/use-page-flag";
 
 // store types
 import { TPageInstance } from "@/store/pages/base-page";
@@ -22,29 +20,21 @@ import { TPageInstance } from "@/store/pages/base-page";
 export const usePageActionsMenu = (props: {
   page: TPageInstance;
   storeType: EPageStoreType;
-  editorRef?: EditorRefApi | null;
   pageOperations: TPageOperations;
 }) => {
-  const { page, storeType, editorRef, pageOperations } = props;
+  const { page, storeType, pageOperations } = props;
   const { getPageById, getOrFetchPageInstance, isNestedPagesEnabled } = usePageStore(storeType);
-
   // states
-  const [movePageModal, setMovePageModal] = useState(false);
   const [lockPageModal, setLockPageModal] = useState(false);
   const [restorePageModal, setRestorePageModal] = useState(false);
 
   // params
   const { workspaceSlug } = useParams();
 
-  // page flag
-  const { isMovePageEnabled } = usePageFlag({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
-  });
-
   const router = useAppRouter();
 
   // derived values
-  const { is_locked, archived_at, canCurrentUserLockPage, canCurrentUserMovePage } = page;
+  const { is_locked, archived_at, canCurrentUserLockPage, editorRef } = page;
 
   // Custom menu items
   const customMenuItems: (TContextMenuItem & { key: TPageActions })[] = [
@@ -74,25 +64,16 @@ export const usePageActionsMenu = (props: {
       icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
       shouldRender: page.canCurrentUserArchivePage,
     },
-    {
-      key: "move",
-      action: () => setMovePageModal(true),
-      title: "Move",
-      icon: FileOutput,
-      shouldRender: canCurrentUserMovePage && isMovePageEnabled,
-    },
   ];
 
   // Modal components
   const ModalsComponent = observer(() => (
     <>
-      <MovePageModal isOpen={movePageModal} onClose={() => setMovePageModal(false)} page={page} storeType={storeType} />
       <LockPageModal
         editorRef={editorRef}
         page={page}
         setLockPageModal={setLockPageModal}
         lockPageModal={lockPageModal}
-        storeType={storeType}
       />
       <AlertModalCore
         variant="primary"

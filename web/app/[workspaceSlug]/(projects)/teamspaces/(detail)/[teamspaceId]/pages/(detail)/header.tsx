@@ -2,19 +2,20 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import useSWR from "swr";
 import { FileText } from "lucide-react";
 // plane imports
 import { ICustomSearchSelectOption } from "@plane/types";
 import { Breadcrumbs, CustomSearchSelect, Header, Loader, TeamsIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo, PageAccessIcon, SwitcherLabel } from "@/components/common";
-import { PageEditInformationPopover } from "@/components/pages";
+import { PageHeaderActions } from "@/components/pages/header/actions";
 // helpers
 import { getPageName } from "@/helpers/page.helper";
 // plane web hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useTeamspaces, usePage, EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+
+const storeType = EPageStoreType.TEAMSPACE;
 
 export const TeamspacePageDetailHeader: React.FC = observer(() => {
   // router
@@ -22,10 +23,10 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
   const router = useAppRouter();
   // store hooks
   const { loader, getTeamspaceById } = useTeamspaces();
-  const { getTeamspacePageIds, getPageById } = usePageStore(EPageStoreType.TEAMSPACE);
+  const { getTeamspacePageIds, getPageById } = usePageStore(storeType);
   const page = usePage({
     pageId: pageId?.toString() ?? "",
-    storeType: EPageStoreType.TEAMSPACE,
+    storeType,
   });
   // derived values
   const teamspace = getTeamspaceById(teamspaceId?.toString());
@@ -48,7 +49,8 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
 
-  if (!workspaceSlug) return;
+  if (!workspaceSlug || !page) return;
+
   return (
     <Header>
       <Header.LeftItem>
@@ -109,7 +111,9 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
           </Breadcrumbs>
         </div>
       </Header.LeftItem>
-      <Header.RightItem>{page && <PageEditInformationPopover page={page} />}</Header.RightItem>
+      <Header.RightItem>
+        <PageHeaderActions page={page} storeType={storeType} />
+      </Header.RightItem>
     </Header>
   );
 });

@@ -3,7 +3,6 @@ import { EditorRefApi } from "@plane/editor";
 import { ToggleSwitch } from "@plane/ui";
 import { getPageName } from "@/helpers/page.helper";
 import { usePageOperations } from "@/hooks/use-page-operations";
-import { EPageStoreType } from "@/plane-web/hooks/store";
 import { TPageInstance } from "@/store/pages/base-page";
 import { ConfirmationModal } from "./confirmation-modal";
 
@@ -12,19 +11,16 @@ export const LockPageModal = ({
   page,
   lockPageModal,
   setLockPageModal,
-  storeType,
 }: {
   editorRef: EditorRefApi | null | undefined;
   page: TPageInstance;
   lockPageModal: boolean;
   setLockPageModal: React.Dispatch<React.SetStateAction<boolean>>;
-  storeType: EPageStoreType;
 }) => {
   const [actionType, setActionType] = useState<boolean>(false);
   const { pageOperations } = usePageOperations({
     editorRef,
     page,
-    storeType,
   });
 
   return (

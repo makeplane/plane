@@ -14,9 +14,9 @@ import { Button, CustomMenu, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 import { PageBreadcrumbItem } from "@/components/pages";
+import { PageHeaderActions } from "@/components/pages/header/actions";
 // helpers
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
-import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -24,6 +24,8 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { PublishPageModal, CollaboratorsList } from "@/plane-web/components/pages";
 // plane web hooks
 import { EPageStoreType, usePage, usePageStore, usePublishPage } from "@/plane-web/hooks/store";
+
+const storeType = EPageStoreType.WORKSPACE;
 
 export interface IPagesHeaderProps {
   showButton?: boolean;
@@ -37,10 +39,10 @@ export const PageDetailsHeader = observer(() => {
   const router = useAppRouter();
   // store hooks
   const { allowPermissions } = useUserPermissions();
-  const { fetchParentPages } = usePageStore(EPageStoreType.WORKSPACE);
+  const { fetchParentPages } = usePageStore(storeType);
   const page = usePage({
     pageId: pageId?.toString() ?? "",
-    storeType: EPageStoreType.WORKSPACE,
+    storeType,
   });
   const { fetchWorkspacePagePublishSettings, getPagePublishSettings, publishWorkspacePage, unpublishWorkspacePage } =
     usePublishPage();
@@ -71,13 +73,13 @@ export const PageDetailsHeader = observer(() => {
   const SPACE_APP_URL = SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL;
   const publishLink = `${SPACE_APP_URL}${SPACE_BASE_PATH}/pages/${anchor}`;
 
-  const isPageLoading = page === undefined;
-
   const BreadcrumbSeparator = () => (
     <div className="flex items-center px-2 text-custom-text-300">
       <ChevronRight className="size-3" />
     </div>
   );
+
+  if (!page) return null;
 
   return (
     <>
@@ -164,37 +166,23 @@ export const PageDetailsHeader = observer(() => {
         <Header.RightItem>
           <div className="flex items-center gap-2">
             <CollaboratorsList storeType={EPageStoreType.WORKSPACE} pageId={pageId?.toString() ?? ""} />
-            {isPageLoading ? (
-              <div className="flex items-center gap-2">
-                <div className="h-7 w-16 bg-custom-background-80 rounded animate-pulse" />
-                <div className="h-7 w-20 bg-custom-background-80 rounded animate-pulse" />
-              </div>
-            ) : (
-              <>
-                {isDeployed && (
-                  <a
-                    href={publishLink}
-                    className={`px-3 py-1.5 bg-green-500/20 text-green-500 rounded text-xs font-medium flex items-center gap-1.5 
-                    transition-all duration-300 ease-out hover:bg-green-500/30`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <span className="flex-shrink-0 rounded-full size-1.5 bg-green-500" />
-                    Live
-                  </a>
-                )}
-                {isPublishAllowed && (
-                  <Button
-                    variant="outline-primary"
-                    size="sm"
-                    onClick={() => setIsPublishModalOpen(true)}
-                    className={`transition-all duration-200 hover:scale-[1.02]`}
-                  >
-                    {isDeployed ? "Unpublish" : "Publish"}
-                  </Button>
-                )}
-              </>
+            {isDeployed && (
+              <a
+                href={publishLink}
+                className="h-6 px-2 bg-green-500/20 text-green-500 rounded text-xs font-medium flex items-center gap-1.5"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span className="flex-shrink-0 rounded-full size-1.5 bg-green-500" />
+                Live
+              </a>
             )}
+            {isPublishAllowed && (
+              <Button variant="outline-primary" size="sm" onClick={() => setIsPublishModalOpen(true)} className="h-6">
+                {isDeployed ? "Unpublish" : "Publish"}
+              </Button>
+            )}
+            <PageHeaderActions page={page} storeType={storeType} />
           </div>
         </Header.RightItem>
       </Header>

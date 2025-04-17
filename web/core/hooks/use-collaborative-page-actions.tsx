@@ -4,7 +4,6 @@ import { DocumentCollaborativeEvents, TDocumentEventsClient, getServerEventName 
 // plane ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // store
-import { EPageStoreType } from "@/plane-web/hooks/store";
 import { TPageInstance } from "@/store/pages/base-page";
 
 export type CollaborativeAction = {
@@ -19,7 +18,6 @@ type CollaborativeActionEvent =
 type Props = {
   editorRef?: EditorRefApi | null;
   page: TPageInstance;
-  storeType: EPageStoreType;
 };
 
 export const useCollaborativePageActions = (props: Props) => {

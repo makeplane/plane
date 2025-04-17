@@ -2,14 +2,14 @@ import { useMemo } from "react";
 // plane imports
 import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
+import { useLocalStorage } from "@plane/hooks";
 import { EPageAccess } from "@plane/types/src/enums";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { copyUrlToClipboard } from "@plane/utils";
+// hooks
 import { useCollaborativePageActions } from "@/hooks/use-collaborative-page-actions";
 // store types
-import { EPageStoreType } from "@/plane-web/hooks/store";
 import { TPageInstance } from "@/store/pages/base-page";
-import useLocalStorage from "./use-local-storage";
 
 export type TPageOperations = {
   toggleLock: ({ recursive }: { recursive?: boolean }) => void;
@@ -24,7 +24,6 @@ export type TPageOperations = {
 type Props = {
   editorRef?: EditorRefApi | null;
   page: TPageInstance;
-  storeType: EPageStoreType;
 };
 
 export const usePageOperations = (

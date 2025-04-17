@@ -56,14 +56,12 @@ export const PageActions: React.FC<Props> = observer((props) => {
   const { pageOperations } = usePageOperations({
     editorRef,
     page,
-    storeType,
   });
 
   // Get custom menu items and modals from the environment-specific implementation
   const { customMenuItems, ModalsComponent } = usePageActionsMenu({
     page,
     storeType,
-    editorRef,
     pageOperations,
   });
 

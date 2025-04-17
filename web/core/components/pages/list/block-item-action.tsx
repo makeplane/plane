@@ -31,7 +31,6 @@ export const BlockItemAction: FC<Props> = observer((props) => {
   // page operations
   const { pageOperations } = usePageOperations({
     page,
-    storeType,
   });
   // derived values
   const { access, created_at, is_favorite, owned_by, canCurrentUserFavoritePage } = page;
