@@ -123,7 +123,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         workspaceSlug.toString(),
         projectId.toString(),
         EIssueFilterType.DISPLAY_PROPERTIES,
-        property,
+        property as IIssueDisplayProperties,
         viewId.toString()
       );
     },

@@ -18,6 +18,8 @@ import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-sta
 // types
 import { TRenderQuickActions } from "../list/list-view-types";
 import { SpreadsheetTable } from "./spreadsheet-table";
+import { useParams } from "next/navigation";
+import { useUserPermissions } from "@/hooks/store";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -59,6 +61,8 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
   const { currentProjectDetails } = useProject();
   // plane web hooks
   const isBulkOperationsEnabled = useBulkOperationStatus();
+  const { workspaceSlug } = useParams();
+  const { workspaceUserInfo } = useUserPermissions();
 
   const isEstimateEnabled: boolean = currentProjectDetails?.estimate !== null;
 
@@ -69,6 +73,12 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
         if (property === "modules" && !currentProjectDetails?.module_view) return false;
         return true;
       });
+
+  const customPropertiesForSpreadsheet = Object.keys(
+    workspaceUserInfo[workspaceSlug?.toString()]?.default_props?.display_properties?.custom_properties || {}
+  );
+
+  const combinedSpreadsheetColumnsList = [...spreadsheetColumnsList, ...customPropertiesForSpreadsheet];
 
   if (!issueIds || issueIds.length === 0)
     return (
@@ -103,7 +113,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                 containerRef={containerRef}
                 canLoadMoreIssues={canLoadMoreIssues}
                 loadMoreIssues={loadMoreIssues}
-                spreadsheetColumnsList={spreadsheetColumnsList}
+                spreadsheetColumnsList={combinedSpreadsheetColumnsList}
                 selectionHelpers={helpers}
               />
             </div>

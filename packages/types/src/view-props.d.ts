@@ -69,7 +69,8 @@ export type TIssueOrderByOptions =
   | "worker_code"
   | "-worker_code"
   | "worker_name"
-  | "-worker_name";
+  | "-worker_name"
+  | string;
 
 export type TIssueGroupingFilters = "active" | "backlog" | null;
 
@@ -175,6 +176,8 @@ export interface IIssueDisplayProperties {
   vendor_code?: boolean;
   worker_code?: boolean;
   worker_name?: boolean;
+  custom_properties?: Record<string, boolean>;
+  [key: string]: boolean;
 }
 
 export type TIssueKanbanFilters = {

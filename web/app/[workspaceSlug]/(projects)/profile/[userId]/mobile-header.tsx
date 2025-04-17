@@ -103,7 +103,7 @@ export const ProfileIssuesMobileHeader = observer(() => {
         workspaceSlug.toString(),
         undefined,
         EIssueFilterType.DISPLAY_PROPERTIES,
-        property,
+        property as IIssueDisplayProperties,
         userId.toString()
       );
     },

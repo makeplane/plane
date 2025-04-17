@@ -143,7 +143,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!projectId) return;
-      updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_PROPERTIES, property);
+      updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_PROPERTIES, property as IIssueDisplayProperties);
     },
     [projectId, updateFilters]
   );
