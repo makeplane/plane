@@ -131,20 +131,22 @@ export const PageToolbar: React.FC<Props> = (props) => {
           </CustomMenu.MenuItem>
         ))}
       </CustomMenu>
-      <ColorDropdown
-        handleColorSelect={(key, color) =>
-          editorRef.executeMenuItemCommand({
-            itemKey: key,
-            color,
-          })
-        }
-        isColorActive={(key, color) =>
-          editorRef.isMenuItemActive({
-            itemKey: key,
-            color,
-          })
-        }
-      />
+      <div className="flex-shrink-0">
+        <ColorDropdown
+          handleColorSelect={(key, color) =>
+            editorRef.executeMenuItemCommand({
+              itemKey: key,
+              color,
+            })
+          }
+          isColorActive={(key, color) =>
+            editorRef.isMenuItemActive({
+              itemKey: key,
+              color,
+            })
+          }
+        />
+      </div>
       {Object.keys(toolbarItems).map((key) => (
         <div key={key} className="flex items-center gap-0.5 px-2 first:pl-0 last:pr-0">
           {toolbarItems[key].map((item) => (
