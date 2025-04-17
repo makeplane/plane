@@ -90,7 +90,7 @@ export const PageLockControl = observer(({ page }: Props) => {
         <button
           type="button"
           onClick={toggleLock}
-          className="h-6 flex items-center gap-1 px-2 rounded text-custom-primary-100 bg-custom-primary-500/20 hover:bg-custom-primary-500/30 transition-colors"
+          className="h-6 flex items-center gap-1 px-2 rounded text-custom-primary-100 bg-custom-primary-100/20 hover:bg-custom-primary-100/30 transition-colors"
           aria-label="Locked"
         >
           <LockKeyhole className="flex-shrink-0 size-3.5 animate-lock-icon" />

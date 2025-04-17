@@ -7,16 +7,11 @@ import { ICustomSearchSelectOption } from "@plane/types";
 // ui
 import { Breadcrumbs, Header, CustomSearchSelect } from "@plane/ui";
 // components
-<<<<<<< Updated upstream
 import { BreadcrumbLink, PageAccessIcon, SwitcherLabel } from "@/components/common";
-import { PageEditInformationPopover } from "@/components/pages";
-=======
-import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 import { PageHeaderActions } from "@/components/pages/header/actions";
->>>>>>> Stashed changes
 // helpers
-// hooks
 import { getPageName } from "@/helpers/page.helper";
+// hooks
 import { useProject } from "@/hooks/store";
 // plane web components
 import { useAppRouter } from "@/hooks/use-app-router";
