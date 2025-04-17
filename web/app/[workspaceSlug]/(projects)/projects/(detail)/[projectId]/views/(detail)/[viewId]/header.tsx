@@ -2,7 +2,6 @@
 
 import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Layers, Lock } from "lucide-react";
 // plane constants
@@ -44,6 +43,7 @@ import {
   useUserPermissions,
 } from "@/hooks/store";
 // plane web
+import { useAppRouter } from "@/hooks/use-app-router";
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
@@ -51,6 +51,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const parentRef = useRef(null);
   // router
   const { workspaceSlug, projectId, viewId } = useParams();
+  const router = useAppRouter();
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -151,15 +152,10 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     ?.map((id) => {
       const _view = id === viewId ? viewDetails : getViewById(id);
       if (!_view) return;
-      const viewLink = `/${workspaceSlug}/projects/${projectId}/views/${_view.id}`;
       return {
         value: _view.id,
         query: _view.name,
-        content: (
-          <Link href={viewLink}>
-            <SwitcherLabel logo_props={_view.logo_props} name={_view.name} LabelIcon={Layers} />
-          </Link>
-        ),
+        content: <SwitcherLabel logo_props={_view.logo_props} name={_view.name} LabelIcon={Layers} />,
       };
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
@@ -186,7 +182,9 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 options={switcherOptions}
                 value={viewId}
                 label={<SwitcherLabel logo_props={viewDetails.logo_props} name={viewDetails.name} LabelIcon={Layers} />}
-                onChange={() => {}}
+                onChange={(value: string) => {
+                  router.push(`/${workspaceSlug}/projects/${projectId}/views/${value}`);
+                }}
               />
             }
           />
@@ -272,7 +270,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         <div className="hidden md:block">
           <ViewQuickActions
             parentRef={parentRef}
-            customClassName="flex-shrink-0 flex items-center justify-center size-6 bg-custom-background-80/70 rounded"
+            customClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-custom-background-80/70 rounded"
             projectId={projectId.toString()}
             view={viewDetails}
             workspaceSlug={workspaceSlug.toString()}
