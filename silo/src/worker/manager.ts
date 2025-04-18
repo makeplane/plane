@@ -176,7 +176,12 @@ export class TaskManager {
         logger.error("Error processing message:", error);
         await this.handleError(msg, error);
       }
-      await this.mq?.ackMessage(msg);
+
+      try {
+        await this.mq?.ackMessage(msg);
+      } catch (error) {
+        logger.error("Error acknowledging message:", error);
+      }
     });
   };
 
@@ -245,15 +250,19 @@ export class TaskManager {
    * @param {any} error - Error that occurred during processing
    */
   private async handleError(msg: any, error: any) {
-    if (!this.mq) return;
-    const retryCount = (msg.properties.headers.retry_count || 0) + 1;
-    if (retryCount <= this.config.retryAttempts) {
-      await new Promise((resolve) => setTimeout(resolve, this.config.retryDelay));
-      await this.mq.nackMessage(msg);
-      msg.properties.headers.retry_count = retryCount;
-    } else {
-      logger.error(`Max retry attempts reached for message: ${msg.content.toString()}`);
-      await this.mq.ackMessage(msg);
+    try {
+      if (!this.mq) return;
+      const retryCount = (msg.properties.headers.retry_count || 0) + 1;
+      if (retryCount <= this.config.retryAttempts) {
+        await new Promise((resolve) => setTimeout(resolve, this.config.retryDelay));
+        await this.mq.nackMessage(msg);
+        msg.properties.headers.retry_count = retryCount;
+      } else {
+        logger.error(`Max retry attempts reached for message: ${msg.content.toString()}`);
+        await this.mq.ackMessage(msg);
+      }
+    } catch (error) {
+      logger.error("Error acknowledging message:", error);
     }
   }
 
