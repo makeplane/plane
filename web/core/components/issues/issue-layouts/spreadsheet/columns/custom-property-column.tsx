@@ -12,7 +12,7 @@ type Props = {
 export const SpreadsheetCustomPropertiesColumn: React.FC<Props> = observer((props) => {
   const { issue, property } = props;
   const customProperties = issue?.custom_propertiess ?? [];
-  const propertyValue = customProperties.find(item => item.hasOwnProperty(property))?.[property] ?? "N/A";
+  const propertyValue = customProperties.find((item: any) => item.hasOwnProperty(property))?.[property] ?? "N/A";
 
   return (
     <Tooltip tooltipContent={propertyValue !== "N/A" ? propertyValue : "No data available"}>
