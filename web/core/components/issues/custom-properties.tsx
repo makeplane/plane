@@ -73,7 +73,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
   });
 
   if (error) {
-    return <div className="error-message">{error}</div>;
+    return <div className="text-red-500 text-sm mt-1">{error}</div>;
   }
 
   if (!Array.isArray(mergedCustomProperties) || mergedCustomProperties.length === 0) {
