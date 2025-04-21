@@ -71,6 +71,7 @@ from .issue import (
     IssueReactionLiteSerializer,
     IssueAttachmentLiteSerializer,
     IssueLinkLiteSerializer,
+    IssueCustomPropertySerializer,
 )
 
 from .module import (

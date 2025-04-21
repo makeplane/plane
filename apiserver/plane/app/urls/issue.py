@@ -25,7 +25,8 @@ from plane.app.views import (
     IssueAttachmentV2Endpoint,
     IssueBulkUpdateDateEndpoint,
     SearchAPIEndpoint,
-    SearchSingleValueAPI
+    SearchSingleValueAPI,
+    IssueCustomPropertyUpdateAPIView,
 )
 
 urlpatterns = [
@@ -331,5 +332,15 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<str:project_id>/filed_search",
         SearchSingleValueAPI.as_view(),
         name="key-codes"
-    )
+    ),
+    path(
+        'workspaces/<str:slug>/issues/<uuid:issue_id>/custom-properties/<uuid:pk>/',
+        IssueCustomPropertyUpdateAPIView.as_view(),
+        name="update-issue-custom-property",
+    ),
+        path(
+        'workspaces/<str:slug>/issues/<uuid:issue_id>/custom-properties/',
+        IssueCustomPropertyUpdateAPIView.as_view(),
+        name="create-issue-custom-property",
+    ),
 ]
