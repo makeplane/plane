@@ -1,14 +1,14 @@
+import { Menu } from "@headlessui/react";
+import { ChevronDown, MoreHorizontal } from "lucide-react";
 import * as React from "react";
 import ReactDOM from "react-dom";
-import { Menu } from "@headlessui/react";
 import { usePopper } from "react-popper";
-import { ChevronDown, MoreHorizontal } from "lucide-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
-// hooks
-import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 // helpers
 import { cn } from "../../helpers";
+// hooks
+import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 // types
 import { ICustomMenuDropdownProps, ICustomMenuItemProps } from "./helper";
 

@@ -161,7 +161,6 @@ const PageDetailsPage = observer(() => {
             config={pageRootConfig}
             handlers={pageRootHandlers}
             page={page}
-            storeType={EPageStoreType.PROJECT}
             webhookConnectionParams={webhookConnectionParams}
             workspaceSlug={workspaceSlug?.toString() ?? ""}
           />

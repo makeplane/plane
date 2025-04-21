@@ -23,8 +23,8 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
   const {
     issue: { getIssueById },
     subIssues: { setSubIssueHelpers },
-    fetchSubIssues,
     createSubIssues,
+    fetchSubIssues,
     updateSubIssue,
     deleteSubIssue,
     removeSubIssue,

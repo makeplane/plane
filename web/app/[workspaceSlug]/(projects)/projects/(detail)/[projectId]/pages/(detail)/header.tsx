@@ -1,69 +1,55 @@
 "use client";
 import { observer } from "mobx-react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArchiveIcon, Earth, FileText, Lock } from "lucide-react";
+import { FileText } from "lucide-react";
 // types
-import { EPageAccess } from "@plane/constants";
-import { ICustomSearchSelectOption, TPage } from "@plane/types";
+import { ICustomSearchSelectOption } from "@plane/types";
 // ui
 import { Breadcrumbs, Header, CustomSearchSelect } from "@plane/ui";
 // components
-import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
-import { PageEditInformationPopover } from "@/components/pages";
+import { BreadcrumbLink, PageAccessIcon, SwitcherLabel } from "@/components/common";
+import { PageHeaderActions } from "@/components/pages/header/actions";
 // helpers
-// hooks
 import { getPageName } from "@/helpers/page.helper";
+// hooks
 import { useProject } from "@/hooks/store";
 // plane web components
+import { useAppRouter } from "@/hooks/use-app-router";
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
 // plane web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 
-const PageAccessIcon = (page: TPage) => (
-  <div>
-    {page.archived_at ? (
-      <ArchiveIcon className="h-2.5 w-2.5 text-custom-text-300" />
-    ) : page.access === EPageAccess.PUBLIC ? (
-      <Earth className="h-2.5 w-2.5 text-custom-text-300" />
-    ) : (
-      <Lock className="h-2.5 w-2.5 text-custom-text-300" />
-    )}
-  </div>
-);
-
 export interface IPagesHeaderProps {
   showButton?: boolean;
 }
 
+const storeType = EPageStoreType.PROJECT;
+
 export const PageDetailsHeader = observer(() => {
   // router
+  const router = useAppRouter();
   const { workspaceSlug, pageId, projectId } = useParams();
   // store hooks
   const { currentProjectDetails, loader } = useProject();
+  const { getPageById, getCurrentProjectPageIds } = usePageStore(storeType);
   const page = usePage({
     pageId: pageId?.toString() ?? "",
-    storeType: EPageStoreType.PROJECT,
+    storeType,
   });
-  const { getPageById, getCurrentProjectPageIds } = usePageStore(EPageStoreType.PROJECT);
   // derived values
   const projectPageIds = getCurrentProjectPageIds(projectId?.toString());
 
-  if (!page) return null;
   const switcherOptions = projectPageIds
     .map((id) => {
       const _page = id === pageId ? page : getPageById(id);
       if (!_page) return;
-      const pageLink = `/${workspaceSlug}/projects/${projectId}/pages/${_page.id}`;
       return {
         value: _page.id,
         query: _page.name,
         content: (
           <div className="flex gap-2 items-center justify-between">
-            <Link href={pageLink} className="flex gap-2 items-center justify-between w-full">
-              <SwitcherLabel logo_props={_page.logo_props} name={getPageName(_page.name)} LabelIcon={FileText} />
-            </Link>
+            <SwitcherLabel logo_props={_page.logo_props} name={getPageName(_page.name)} LabelIcon={FileText} />
             <PageAccessIcon {..._page} />
           </div>
         ),
@@ -114,7 +100,9 @@ export const PageDetailsHeader = observer(() => {
                   label={
                     <SwitcherLabel logo_props={page.logo_props} name={getPageName(page.name)} LabelIcon={FileText} />
                   }
-                  onChange={() => {}}
+                  onChange={(value: string) => {
+                    router.push(`/${workspaceSlug}/projects/${projectId}/pages/${value}`);
+                  }}
                 />
               }
             />
@@ -122,8 +110,8 @@ export const PageDetailsHeader = observer(() => {
         </div>
       </Header.LeftItem>
       <Header.RightItem>
-        <PageEditInformationPopover page={page} />
         <PageDetailsHeaderExtraActions page={page} />
+        <PageHeaderActions page={page} storeType={storeType} />
       </Header.RightItem>
     </Header>
   );

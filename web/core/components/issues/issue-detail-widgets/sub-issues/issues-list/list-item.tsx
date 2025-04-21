@@ -8,6 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
 import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
 // helpers
+import { useSubIssueOperations } from "@/components/issues/issue-detail-widgets/sub-issues/helper";
 import { cn } from "@/helpers/common.helper";
 import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
@@ -16,9 +17,11 @@ import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-red
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
-// local imports
+// local components
 import { SubIssuesListItemProperties } from "./properties";
 import { SubIssuesListRoot } from "./root";
+// ui
+// import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
 
 type Props = {
   workspaceSlug: string;
@@ -57,6 +60,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
   const {
     subIssues: { subIssueHelpersByIssueId, setSubIssueHelpers },
   } = useIssueDetail();
+  const { fetchSubIssues } = useSubIssueOperations(EIssueServiceType.ISSUES);
   const { toggleCreateIssueModal, toggleDeleteIssueModal } = useIssueDetail(issueServiceType);
   const project = useProject();
   const { getProjectStates } = useProjectState();
@@ -118,7 +122,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
                         e.stopPropagation();
                         if (!subIssueHelpers.issue_visibility.includes(issueId)) {
                           setSubIssueHelpers(parentIssueId, "preview_loader", issueId);
-                          await subIssueOperations.fetchSubIssues(workspaceSlug, projectId, issueId);
+                          await fetchSubIssues(workspaceSlug, projectId, issueId);
                           setSubIssueHelpers(parentIssueId, "preview_loader", issueId);
                         }
                         setSubIssueHelpers(parentIssueId, "issue_visibility", issueId);

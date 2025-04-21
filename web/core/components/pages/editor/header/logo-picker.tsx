@@ -23,7 +23,7 @@ export const PageEditorHeaderLogoPicker: React.FC<Props> = observer((props) => {
 
   return (
     <div
-      className={cn(className, "max-h-0 pointer-events-none transition-all ease-linear duration-200", {
+      className={cn(className, "max-h-0 pointer-events-none transition-all ease-linear duration-300", {
         "max-h-[56px] pointer-events-auto": isLogoSelected,
       })}
     >

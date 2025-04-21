@@ -206,7 +206,19 @@ export class ProjectPageStore implements IProjectPageStore {
 
       const pages = await this.service.fetchAll(workspaceSlug, projectId);
       runInAction(() => {
-        for (const page of pages) if (page?.id) set(this.data, [page.id], new ProjectPage(this.store, page));
+        for (const page of pages) {
+          if (page?.id) {
+            const existingPage = this.getPageById(page.id);
+            if (existingPage) {
+              // If page already exists, update all fields except name
+              const { name, ...otherFields } = page;
+              existingPage.mutateProperties(otherFields, false);
+            } else {
+              // If new page, create a new instance with all data
+              set(this.data, [page.id], new ProjectPage(this.store, page));
+            }
+          }
+        }
         this.loader = undefined;
       });
 
@@ -238,8 +250,16 @@ export class ProjectPageStore implements IProjectPageStore {
       });
 
       const page = await this.service.fetchById(workspaceSlug, projectId, pageId);
+      const pageInstance = page?.id ? this.getPageById(page.id) : undefined;
+
       runInAction(() => {
-        if (page?.id) set(this.data, [page.id], new ProjectPage(this.store, page));
+        if (page?.id) {
+          if (pageInstance) {
+            pageInstance.mutateProperties(page, false);
+          } else {
+            set(this.data, [page.id], new ProjectPage(this.store, page));
+          }
+        }
         this.loader = undefined;
       });
 
