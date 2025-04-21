@@ -6,6 +6,42 @@ import sys
 
 
 class Command(BaseSearchIndexCommand):
+    """Manage elasticsearch index.
+
+    Available options:
+        --models: Specify the model or app to be updated in Elasticsearch
+        --create: Create the indices in Elasticsearch
+        --populate: Populate Elasticsearch indices with models data
+        --delete: Delete the indices in Elasticsearch
+        --rebuild: Delete the indices and then recreate and populate them
+        --parallel: Run populate/rebuild update multi-threaded
+        --no-parallel: Run populate/rebuild update single-threaded
+        --use-alias: Use alias with indices
+        --use-alias-keep-index: Do not delete replaced indices when used with '--rebuild' and '--use-alias'
+        --refresh: Refresh indices after populate/rebuild
+        --no-count: Do not include a total count in the summary log line
+        --chunk-size: Specify the chunk size for processing data
+        --background: Run the command in the background
+
+    Examples:
+        # Rebuild all indexes
+        python manage.py manage_search_index --rebuild
+
+        # Rebuild specific model indexes
+        python manage.py manage_search_index --models app.Model1 app.Model2 --rebuild
+
+        # Populate indexes with custom chunk size
+        python manage.py manage_search_index --populate --chunk-size 1000
+
+        # Run in background
+        python manage.py manage_search_index --rebuild --background
+
+        # Run with parallel processing
+        python manage.py manage_search_index --populate --parallel
+
+        # Populate specific models in background with custom chunk size
+        python manage.py manage_search_index --models app.Model1 app.Model2 --populate --background --chunk-size 2000
+    """
     help = 'Manage elasticsearch index.'
 
     def add_arguments(self, parser):
