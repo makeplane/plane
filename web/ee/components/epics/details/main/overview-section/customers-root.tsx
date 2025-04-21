@@ -4,7 +4,6 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane web
 import { Loader } from "@plane/ui";
-import { useIssueDetail } from "@/hooks/store";
 import { CustomerRequestEmptyState } from "@/plane-web/components/customers";
 import { WorkItemRequestCollapsibleContent } from "@/plane-web/components/issues/issue-detail-widgets";
 import { useCustomers } from "@/plane-web/hooks/store";
@@ -19,17 +18,18 @@ export const EpicCustomersRoot: FC<TProps> = observer((props) => {
   const { workspaceSlug, epicId, disabled = false } = props;
   // store hooks
   const {
-    issue: { getIssueById },
-  } = useIssueDetail();
-  const { isCustomersFeatureEnabled, toggleCreateUpdateRequestModal, fetchWorkItemRequests } = useCustomers();
+    isCustomersFeatureEnabled,
+    toggleCreateUpdateRequestModal,
+    fetchWorkItemRequests,
+    getFilteredWorkItemRequestIds,
+  } = useCustomers();
 
   const handleFormOpen = () => {
     toggleCreateUpdateRequestModal(epicId);
   };
 
   // derived values
-  const epic = getIssueById(epicId);
-  const customerRequestCount = epic?.customer_request_count || 0;
+  const requestIds = getFilteredWorkItemRequestIds(epicId);
 
   const { isLoading } = useSWR(
     workspaceSlug && epicId ? `WORK_ITEM_REQUESTS${workspaceSlug}_${epicId}` : null,
@@ -47,7 +47,7 @@ export const EpicCustomersRoot: FC<TProps> = observer((props) => {
           </Loader>
         </>
       ) : (
-        customerRequestCount === 0 && <CustomerRequestEmptyState addRequest={handleFormOpen} />
+        requestIds.length === 0 && <CustomerRequestEmptyState addRequest={handleFormOpen} />
       )}
       <WorkItemRequestCollapsibleContent workItemId={epicId} workspaceSlug={workspaceSlug} disabled={disabled} isTabs />
     </>

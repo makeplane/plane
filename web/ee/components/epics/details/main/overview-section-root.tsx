@@ -27,11 +27,11 @@ export const EpicOverviewRoot: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, epicId, disabled = false } = props;
   // store hooks
   const { storedValue } = useLocalStorage(`tab-epic-detail-overview-${epicId}`, "issues");
-  const { toggleCreateUpdateRequestModal } = useCustomers();
+  const { toggleCreateUpdateRequestModal, isCustomersFeatureEnabled } = useCustomers();
 
   // Tabs
-  const OVERVIEW_TABS = useMemo(
-    () => [
+  const OVERVIEW_TABS = useMemo(() => {
+    const _tabs = [
       {
         key: "issues",
         label: "Work items",
@@ -42,14 +42,17 @@ export const EpicOverviewRoot: FC<Props> = observer((props) => {
         label: "Relations",
         content: <EpicRelationsOverviewRoot workspaceSlug={workspaceSlug} epicId={epicId} />,
       },
-      {
+    ];
+
+    if (isCustomersFeatureEnabled) {
+      _tabs.push({
         key: "customer-requests",
         label: "Customer requests",
         content: <EpicCustomersRoot workspaceSlug={workspaceSlug} epicId={epicId} disabled={disabled} />,
-      },
-    ],
-    [workspaceSlug, projectId, epicId, disabled]
-  );
+      });
+    }
+    return _tabs;
+  }, [workspaceSlug, projectId, epicId, disabled, isCustomersFeatureEnabled]);
 
   // Actions
   const OVERVIEW_ACTIONS: Record<string, React.ReactNode> = useMemo(

@@ -30,7 +30,7 @@ export const IssueEstimateTimeActivity: FC<TIssueEstimateTimeActivity> = observe
       ends={ends}
     >
       <>
-        {activity.new_value ? `set the estimate point to ` : `removed the estimate point`}
+        {activity.new_value ? `set the estimate point to ` : `removed the estimate point `}
         {activity.new_value
           ? convertMinutesToHoursMinutesString(Number(activity.new_value))
           : convertMinutesToHoursMinutesString(Number(activity?.old_value))}
