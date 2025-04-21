@@ -1,6 +1,5 @@
 # Python import
 from uuid import uuid4
-from datetime import datetime
 
 # Third party
 from rest_framework.response import Response
