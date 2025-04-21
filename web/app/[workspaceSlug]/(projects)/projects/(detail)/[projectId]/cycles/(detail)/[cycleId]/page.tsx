@@ -2,6 +2,7 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import React, { useRef, useState } from "react";
 // components
 import { EmptyState } from "@/components/common";
 import { PageHead } from "@/components/core";
@@ -20,7 +21,8 @@ import emptyCycle from "@/public/empty-state/cycle.svg";
 const CycleDetailPage = observer(() => {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId, cycleId } = useParams();
+  const { workspaceSlug, projectId, cycleId } = useParams();  
+  const [sidebarWidth, setSidebarWidth] = useState(344);
   // store hooks
   const { getCycleById, loader } = useCycle();
   const { getProjectById } = useProject();
@@ -38,6 +40,8 @@ const CycleDetailPage = observer(() => {
   const cycle = cycleId ? getCycleById(cycleId.toString()) : undefined;
   const project = projectId ? getProjectById(projectId.toString()) : undefined;
   const pageTitle = project?.name && cycle?.name ? `${project?.name} - ${cycle?.name}` : undefined;
+  const sidebarRef = useRef<HTMLDivElement | null>(null);
+  const isResizing = useRef(false);
 
   /**
    * Toggles the sidebar
@@ -46,6 +50,37 @@ const CycleDetailPage = observer(() => {
 
   // const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    isResizing.current = true;
+  
+    document.body.style.userSelect = "none";
+
+
+    const startX = e.clientX;
+    const startWidth = sidebarRef.current?.offsetWidth || sidebarWidth;
+  
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing.current) return;
+  
+      const newWidth = startWidth - (e.clientX - startX);
+      if (newWidth >= 300 && newWidth <= 500) {
+        setSidebarWidth(newWidth);
+      }
+    };
+  
+    const handleMouseUp = () => {
+      isResizing.current = false;
+
+      document.body.style.userSelect = "";
+
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+  };
   return (
     <>
       <PageHead title={pageTitle} />
@@ -66,23 +101,29 @@ const CycleDetailPage = observer(() => {
               <CycleLayoutRoot />
             </div>
             {cycleId && !isSidebarCollapsed && (
-              <div
-                className={cn(
-                  "flex h-full w-[21.5rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 px-4 duration-300 vertical-scrollbar scrollbar-sm absolute right-0 z-[13]"
-                )}
-                style={{
-                  boxShadow:
-                    "0px 1px 4px 0px rgba(0, 0, 0, 0.06), 0px 2px 4px 0px rgba(16, 24, 40, 0.06), 0px 1px 8px -1px rgba(16, 24, 40, 0.06)",
-                }}
-              >
-                <CycleDetailsSidebar
-                  handleClose={toggleSidebar}
-                  cycleId={cycleId.toString()}
-                  projectId={projectId.toString()}
-                  workspaceSlug={workspaceSlug.toString()}
-                />
-              </div>
-            )}
+  <div
+    ref={sidebarRef}
+    className={cn(
+      "flex h-full flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 px-4 duration-300 vertical-scrollbar scrollbar-sm absolute right-0 z-[13]"
+    )}
+    style={{
+      width: sidebarWidth,
+      boxShadow:
+        "0px 1px 4px 0px rgba(0, 0, 0, 0.06), 0px 2px 4px 0px rgba(16, 24, 40, 0.06), 0px 1px 8px -1px rgba(16, 24, 40, 0.06)",
+    }}
+  >
+    <CycleDetailsSidebar
+      handleClose={toggleSidebar}
+      cycleId={cycleId.toString()}
+      projectId={projectId.toString()}
+      workspaceSlug={workspaceSlug.toString()}
+    />
+    <div
+      onMouseDown={handleMouseDown}
+      className="absolute left-0 top-0 h-full w-2 cursor-col-resize z-[14] transition-colors hover:bg-black/5 active:bg-black/10"
+    />
+  </div>
+)}
           </div>
         </>
       )}
