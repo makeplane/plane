@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // document-editor
 import {
@@ -60,7 +60,6 @@ type Props = {
   workspaceSlug: string;
   storeType: EPageStoreType;
   customRealtimeEventHandlers?: TCustomEventHandlers;
-  setIsSyncing: Dispatch<SetStateAction<boolean>>;
 };
 
 export const generateRandomColor = (input: string): HSL => {
@@ -97,7 +96,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     webhookConnectionParams,
     workspaceSlug,
     customRealtimeEventHandlers,
-    setIsSyncing,
   } = props;
   // store hooks
   const { data: currentUser } = useUser();
@@ -113,6 +111,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { getUserDetails } = useMember();
 
   const [isVisible, setIsVisible] = useState(false);
+
   // Delayed animation effect that triggers on mount
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -123,7 +122,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   }, []);
 
   // derived values
-  const { id: pageId, isContentEditable, editorRef } = page;
+  const { id: pageId, isContentEditable, editorRef, setSyncingStatus } = page;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
   // all editor embeds
   const { embedProps } = useEditorEmbeds({
@@ -161,6 +160,11 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     handlers,
   });
 
+  // Set syncing status on initial render
+  useEffect(() => {
+    setSyncingStatus("syncing");
+  }, [setSyncingStatus]);
+
   const getAIMenu = useCallback(
     ({ isOpen, onClose }: TAIMenuProps) => (
       <EditorAIMenu
@@ -180,19 +184,20 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   const handleServerError = useCallback(() => {
     handleConnectionStatus(true);
-  }, [handleConnectionStatus]);
+    setSyncingStatus("error");
+  }, [handleConnectionStatus, setSyncingStatus]);
 
-  const handleServerSyncing = useCallback(() => {
-    setIsSyncing(false);
-  }, [setIsSyncing]);
+  const handleServerSynced = useCallback(() => {
+    setSyncingStatus("synced");
+  }, [setSyncingStatus]);
 
   const serverHandler: TServerHandler = useMemo(
     () => ({
       onConnect: handleServerConnect,
       onServerError: handleServerError,
-      onServerSynced: handleServerSyncing,
+      onServerSynced: handleServerSynced,
     }),
-    [handleServerConnect, handleServerError, handleServerSyncing]
+    [handleServerConnect, handleServerError, handleServerSynced]
   );
 
   const realtimeConfig: TRealtimeConfig | undefined = useMemo(() => {

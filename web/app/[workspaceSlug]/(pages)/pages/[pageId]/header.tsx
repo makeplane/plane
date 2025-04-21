@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import useSWR from "swr";
 import { FileText, ChevronRight } from "lucide-react";
 // constants
@@ -15,11 +15,11 @@ import { Button, CustomMenu, Header } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
 import { PageBreadcrumbItem } from "@/components/pages";
 import { PageHeaderActions } from "@/components/pages/header/actions";
+import { PageSyncingBadge } from "@/components/pages/header/syncing-badge";
 // helpers
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
-import { useAppRouter } from "@/hooks/use-app-router";
 // plane web components
 import { PublishPageModal, CollaboratorsList } from "@/plane-web/components/pages";
 // plane web hooks
@@ -36,7 +36,7 @@ export const PageDetailsHeader = observer(() => {
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
   // params
   const { workspaceSlug, pageId } = useParams();
-  const router = useAppRouter();
+  const router = useRouter();
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { fetchParentPages } = usePageStore(storeType);
@@ -165,7 +165,8 @@ export const PageDetailsHeader = observer(() => {
         </Header.LeftItem>
         <Header.RightItem>
           <div className="flex items-center gap-2">
-            <CollaboratorsList storeType={EPageStoreType.WORKSPACE} pageId={pageId?.toString() ?? ""} />
+            <PageSyncingBadge syncStatus={page.isSyncingWithServer} />
+            <CollaboratorsList page={page} />
             {isDeployed && (
               <a
                 href={publishLink}

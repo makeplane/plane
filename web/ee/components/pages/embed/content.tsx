@@ -302,7 +302,7 @@ export const PageEmbedContent: React.FC<Props> = observer((props) => {
           role="button"
           data-drag-handle
           className={cn(
-            "page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors duration-150 flex items-center gap-1.5 !no-underline hover:bg-custom-background-90",
+            "page-embed cursor-pointer rounded-md py-2 px-2 my-1.5 transition-colors duration-150 flex items-center gap-1.5 !no-underline hover:bg-custom-background-90 ease",
             {
               "bg-custom-background-80": draggedInside && isDroppable,
             },

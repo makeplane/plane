@@ -1,12 +1,11 @@
 import { Extensions } from "@tiptap/core";
-import React from "react";
+import React, { useMemo } from "react";
 // components
 import { PageRenderer } from "@/components/editors";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // extensions
 import { IssueWidget } from "@/extensions";
-import { PageEmbedExtension } from "@/extensions/page-embed";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
@@ -40,26 +39,17 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     isSmoothCursorEnabled = false,
   } = props;
 
-  const extensions: Extensions = [];
-  if (embedHandler?.issue) {
-    extensions.push(
-      IssueWidget({
-        widgetCallback: embedHandler.issue.widgetCallback,
-      })
-    );
-  }
-
-  if (embedHandler?.page) {
-    extensions.push(
-      PageEmbedExtension({
-        widgetCallback: embedHandler.page.widgetCallback,
-        archivePage: embedHandler.page.archivePage,
-        unarchivePage: embedHandler.page.unarchivePage,
-        deletePage: embedHandler.page.deletePage,
-        getPageDetailsCallback: embedHandler.page.getPageDetailsCallback,
-      })
-    );
-  }
+  const extensions: Extensions = useMemo(() => {
+    const ext: Extensions = [];
+    if (embedHandler?.issue) {
+      ext.push(
+        IssueWidget({
+          widgetCallback: embedHandler.issue.widgetCallback,
+        })
+      );
+    }
+    return ext;
+  }, [embedHandler]);
 
   // use document editor
   const { editor, hasServerConnectionFailed, hasServerSynced, titleEditor, isContentInIndexedDb, isIndexedDbSynced } =
@@ -92,7 +82,6 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
 
   if (!editor || !titleEditor) return null;
 
-  // Show minimal loading state during initial IndexedDB sync
   if (!isIndexedDbSynced) {
     return null;
   }

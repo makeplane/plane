@@ -972,7 +972,7 @@ div.web-view-spinner div.bar12 {
 }
 
 .animate-text-slide-in {
-  animation: textSlideIn 400ms ease-out forwards;
+  animation: textSlideIn 600ms ease-out forwards;
 }
 
 .animate-text-fade-out {
@@ -980,7 +980,7 @@ div.web-view-spinner div.bar12 {
 }
 
 .animate-lock-icon {
-  animation: lockIconAnimation 600ms ease-out forwards;
+  animation: lockIconAnimation 1000ms ease-out forwards;
 }
 
 .animate-unlock-icon {

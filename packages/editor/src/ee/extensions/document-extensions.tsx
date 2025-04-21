@@ -1,5 +1,5 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
-import { Extension } from "@tiptap/core";
+import { Extension, Node } from "@tiptap/core";
 import { FileText } from "lucide-react";
 // ui
 import { LayersIcon } from "@plane/ui";
@@ -8,7 +8,7 @@ import { SlashCommands, TSlashCommandAdditionalOption } from "@/extensions";
 // helpers
 import { insertPageEmbed } from "@/helpers/editor-commands";
 // plane editor extensions
-import { IssueEmbedSuggestions, IssueListRenderer } from "@/plane-editor/extensions";
+import { IssueEmbedSuggestions, IssueListRenderer, PageEmbedExtension } from "@/plane-editor/extensions";
 // plane editor types
 import { TEmbedConfig } from "@/plane-editor/types";
 // types
@@ -30,7 +30,7 @@ type ExtensionConfig = {
   /** Determines if the extension should be enabled based on disabled extensions */
   isEnabled: (disabledExtensions: TExtensions[]) => boolean;
   /** Returns the extension instance(s) when enabled */
-  getExtension: (props: Props) => Extension[];
+  getExtension: (props: Props) => Extension[] | Node[];
 };
 
 /**
@@ -141,6 +141,26 @@ const extensionRegistry: ExtensionConfig[] = [
         userDetails,
       }),
     ],
+  },
+  {
+    // Page embed extension
+    isEnabled: () => true,
+    getExtension: ({ embedConfig }) => {
+      const pageConfig = embedConfig?.page;
+
+      // Only enable if widget callback exists
+      if (!pageConfig) return [];
+
+      return [
+        PageEmbedExtension({
+          widgetCallback: pageConfig.widgetCallback,
+          archivePage: pageConfig.archivePage,
+          unarchivePage: pageConfig.unarchivePage,
+          deletePage: pageConfig.deletePage,
+          getPageDetailsCallback: pageConfig.getPageDetailsCallback,
+        }),
+      ];
+    },
   },
 ];
 

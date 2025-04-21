@@ -69,6 +69,12 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
           setHasServerConnectionFailed(true);
         },
         onConnect: () => serverHandler?.onConnect?.(),
+        onStatus: (status) => {
+          if (status.status === "disconnected") {
+            serverHandler?.onServerError?.();
+            setHasServerConnectionFailed(true);
+          }
+        },
         onClose: (data) => {
           if (data.event.code === 1006) {
             serverHandler?.onServerError?.();

@@ -57,8 +57,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
   const [editorReady, setEditorReady] = useState(false);
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
   const [isVersionsOverlayOpen, setIsVersionsOverlayOpen] = useState(false);
-  // server syncing
-  const [isSyncing, setIsSyncing] = useState(true);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // router
@@ -140,7 +138,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
         restoreEnabled={isContentEditable}
         storeType={storeType}
       />
-      <PageEditorToolbarRoot isSyncing={isSyncing} page={page} storeType={storeType} />
+      <PageEditorToolbarRoot page={page} storeType={storeType} />
       <PageEditorBody
         config={config}
         storeType={storeType}
@@ -153,7 +151,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
         webhookConnectionParams={webhookConnectionParams}
         workspaceSlug={workspaceSlug}
         customRealtimeEventHandlers={customRealtimeEventHandlers}
-        setIsSyncing={setIsSyncing}
       />
     </>
   );

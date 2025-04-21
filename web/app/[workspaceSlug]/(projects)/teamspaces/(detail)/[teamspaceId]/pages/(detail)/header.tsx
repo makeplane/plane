@@ -10,9 +10,13 @@ import { Breadcrumbs, CustomSearchSelect, Header, Loader, TeamsIcon } from "@pla
 import { BreadcrumbLink, Logo, PageAccessIcon, SwitcherLabel } from "@/components/common";
 import { PageHeaderActions } from "@/components/pages/header/actions";
 // helpers
+import { PageSyncingBadge } from "@/components/pages/header/syncing-badge";
 import { getPageName } from "@/helpers/page.helper";
 // plane web hooks
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web components
+import { CollaboratorsList } from "@/plane-web/components/pages";
+// plane web hooks
 import { useTeamspaces, usePage, EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 const storeType = EPageStoreType.TEAMSPACE;
@@ -112,6 +116,8 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
         </div>
       </Header.LeftItem>
       <Header.RightItem>
+        <PageSyncingBadge syncStatus={page.isSyncingWithServer} />
+        <CollaboratorsList page={page} className="bottom-1" />
         <PageHeaderActions page={page} storeType={storeType} />
       </Header.RightItem>
     </Header>

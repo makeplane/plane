@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
@@ -34,19 +34,38 @@ export const PagesAppSidebar = observer(() => {
     workspaceSlug && pageId && pathname?.includes("/pages/") ? () => fetchParentPages(pageId.toString()) : null
   );
 
-  // Auto-expand parent pages when viewing a page
+  // Optimized parent pages expansion
+  const handleParentPagesExpansion = useCallback((parentPages: any[]) => {
+    if (!parentPages || parentPages.length === 0) return;
+
+    // Extract all valid page IDs from the parent chain
+    const parentIds = parentPages.map((page) => page.id).filter((id) => id !== undefined) as string[];
+
+    // Only add IDs that aren't already in the expanded list
+    setExpandedPageIds((prev) => {
+      // Create a Set for efficient lookup
+      const existingIds = new Set(prev);
+      let hasChanges = false;
+
+      // Check each parent ID
+      parentIds.forEach((id) => {
+        if (!existingIds.has(id)) {
+          existingIds.add(id);
+          hasChanges = true;
+        }
+      });
+
+      // Only create a new array if changes were made
+      return hasChanges ? Array.from(existingIds) : prev;
+    });
+  }, []);
+
+  // Only expand parent pages when the page changes
   useEffect(() => {
     if (parentPagesList && parentPagesList.length > 0) {
-      // Include all pages in the list (including the current page)
-      const allPageIds = parentPagesList.map((page) => page.id);
-
-      // Filter out any undefined values
-      const validPageIds = allPageIds.filter((id) => id !== undefined) as string[];
-
-      // Update expanded pages state
-      setExpandedPageIds((prev) => Array.from(new Set([...prev, ...validPageIds])));
+      handleParentPagesExpansion(parentPagesList);
     }
-  }, [parentPagesList]);
+  }, [parentPagesList, handleParentPagesExpansion]);
 
   useOutsideClickDetector(ref, () => {
     if (sidebarCollapsed === false) {

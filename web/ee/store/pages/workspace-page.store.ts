@@ -26,6 +26,10 @@ export interface IWorkspacePageStore {
   publicPageIds: string[];
   privatePageIds: string[];
   archivedPageIds: string[];
+  // filtered page type arrays
+  filteredPublicPageIds: string[];
+  filteredPrivatePageIds: string[];
+  filteredArchivedPageIds: string[];
   // computed
   isAnyPageAvailable: boolean;
   currentWorkspacePageIds: string[] | undefined;
@@ -63,6 +67,10 @@ export class WorkspacePageStore implements IWorkspacePageStore {
   publicPageIds: string[] = [];
   privatePageIds: string[] = [];
   archivedPageIds: string[] = [];
+  // filtered page type arrays
+  filteredPublicPageIds: string[] = [];
+  filteredPrivatePageIds: string[] = [];
+  filteredArchivedPageIds: string[] = [];
   // private props
   private _rootParentMap: Map<string, string | null> = new Map(); // pageId => rootParentId
   // disposers for reactions
@@ -81,6 +89,10 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       publicPageIds: observable,
       privatePageIds: observable,
       archivedPageIds: observable,
+      // filtered page type arrays
+      filteredPublicPageIds: observable,
+      filteredPrivatePageIds: observable,
+      filteredArchivedPageIds: observable,
       // computed
       currentWorkspacePageIds: computed,
       // helper actions
@@ -132,8 +144,25 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       { fireImmediately: true }
     );
 
-    // Add the disposer to clean up later
+    // Add reaction to watch for filter changes
+    const filterChangesReaction = reaction(
+      // Track filter changes
+      () => ({
+        searchQuery: this.filters.searchQuery,
+        sortKey: this.filters.sortKey,
+        sortBy: this.filters.sortBy,
+        // Deep track all filter properties
+        filters: this.filters.filters ? { ...this.filters.filters } : undefined,
+      }),
+      // Effect: update the arrays when filters change
+      () => {
+        this.updatePageTypeArrays();
+      }
+    );
+
+    // Add the disposers to clean up later
     this.disposers.push(updatePageArraysReaction);
+    this.disposers.push(filterChangesReaction);
   }
 
   /**
@@ -190,21 +219,18 @@ export class WorkspacePageStore implements IWorkspacePageStore {
   getCurrentWorkspaceFilteredPageIdsByType = computedFn((pageType: TPageNavigationTabs) => {
     const { currentWorkspace } = this.store.workspaceRoot;
     if (!currentWorkspace) return undefined;
-    // helps to filter pages based on the pageType
-    const pagesByType = filterPagesByPageType(pageType, Object.values(this?.data || {}));
-    let filteredPages = pagesByType.filter(
-      (p) =>
-        p.workspace === currentWorkspace.id &&
-        !p.parent_id &&
-        getPageName(p.name).toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
-        shouldFilterPage(p, this.filters.filters)
-    );
 
-    filteredPages = orderPages(filteredPages, this.filters.sortKey, this.filters.sortBy);
-
-    const pages = (filteredPages.map((page) => page.id) as string[]) || undefined;
-
-    return pages ?? undefined;
+    // Return the appropriate filtered array based on page type
+    switch (pageType) {
+      case "public":
+        return this.filteredPublicPageIds;
+      case "private":
+        return this.filteredPrivatePageIds;
+      case "archived":
+        return this.filteredArchivedPageIds;
+      default:
+        return [];
+    }
   });
 
   /**
@@ -224,7 +250,17 @@ export class WorkspacePageStore implements IWorkspacePageStore {
 
   updateFilters = <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => {
     runInAction(() => {
-      set(this.filters, [filterKey], filterValue);
+      // Create a new filters object to avoid direct mutation
+      const updatedFilters = { ...this.filters };
+
+      // Set the new value
+      updatedFilters[filterKey] = filterValue;
+
+      // Replace the entire filters object
+      this.filters = updatedFilters;
+
+      // Trigger update of the pages arrays
+      this.updatePageTypeArrays();
     });
   };
 
@@ -267,9 +303,14 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     if (!currentWorkspace) {
       // Clear arrays when no workspace is selected
       runInAction(() => {
+        // Clear unfiltered arrays
         this.publicPageIds = [];
         this.privatePageIds = [];
         this.archivedPageIds = [];
+        // Clear filtered arrays
+        this.filteredPublicPageIds = [];
+        this.filteredPrivatePageIds = [];
+        this.filteredArchivedPageIds = [];
       });
       return;
     }
@@ -277,56 +318,104 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     const allPages = Object.values(this.data);
     const workspacePages = allPages.filter((page) => page.workspace === currentWorkspace.id);
 
-    // Compute new page IDs for each type
+    // ---------- PUBLIC PAGES ----------
+    // Unfiltered public pages (sorted by updated_at)
     const publicPages = workspacePages.filter(
       (page) => page.access === EPageAccess.PUBLIC && !page.parent_id && !page.archived_at && !page.deleted_at
     );
     const sortedPublicPages = publicPages.sort(
-      (a, b) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
+      (a, b) => new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime()
     );
     const newPublicPageIds = sortedPublicPages.map((page) => page.id).filter((id): id is string => id !== undefined);
 
-    // Get all non-archived pages for private calculation
-    const nonArchivedPages = workspacePages.filter((page) => !page.archived_at && !page.deleted_at);
+    // Filtered public pages (with all filters applied)
+    const filteredPublicPages = publicPages.filter(
+      (page) =>
+        getPageName(page.name).toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
+        shouldFilterPage(page, this.filters.filters)
+    );
+    const sortedFilteredPublicPages = orderPages(
+      filteredPublicPages as unknown as TPage[],
+      this.filters.sortKey,
+      this.filters.sortBy
+    ) as unknown as TWorkspacePage[];
+    const newFilteredPublicPageIds = sortedFilteredPublicPages
+      .map((page) => page.id)
+      .filter((id): id is string => id !== undefined);
 
-    // Compute private pages
+    // ---------- PRIVATE PAGES ----------
+    // Unfiltered private pages (sorted by updated_at)
+    const nonArchivedPages = workspacePages.filter((page) => !page.archived_at && !page.deleted_at);
     const privateParentPages = nonArchivedPages.filter(
       (page) => page.access === EPageAccess.PRIVATE && !page.parent_id
     );
-
-    // Find child pages with non-private root parents
     const privateChildPages = nonArchivedPages.filter((page) => {
-      if (!page.parent_id || page.access !== EPageAccess.PRIVATE || !page.id) return false;
-
-      // Find root parent
+      if (page.parent_id === null || page.access !== EPageAccess.PRIVATE || !page.id) return false;
       const rootParent = this.findRootParent(page);
       return rootParent?.access !== EPageAccess.PRIVATE;
     });
-
     const combinedPrivatePages = [...privateParentPages, ...privateChildPages];
     const sortedPrivatePages = combinedPrivatePages.sort(
-      (a, b) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
+      (a, b) => new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime()
     );
     const newPrivatePageIds = sortedPrivatePages.map((page) => page.id).filter((id): id is string => id !== undefined);
 
-    // Compute archived pages
+    // Filtered private pages (with all filters applied)
+    const filteredPrivatePages = combinedPrivatePages.filter(
+      (page) =>
+        getPageName(page.name).toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
+        shouldFilterPage(page, this.filters.filters)
+    );
+    const sortedFilteredPrivatePages = orderPages(
+      filteredPrivatePages as unknown as TPage[],
+      this.filters.sortKey,
+      this.filters.sortBy
+    ) as unknown as TWorkspacePage[];
+    const newFilteredPrivatePageIds = sortedFilteredPrivatePages
+      .map((page) => page.id)
+      .filter((id): id is string => id !== undefined);
+
+    // ---------- ARCHIVED PAGES ----------
+    // Unfiltered archived pages (sorted by archived_at)
     const archivedWorkspacePages = workspacePages.filter((page) => page.archived_at && !page.deleted_at);
     const topLevelArchivedPages = archivedWorkspacePages.filter((page) => {
       if (!page.parent_id) return true; // Include pages without parents
-      // Include pages whose root parent is not archived
       const rootParent = this.findRootParent(page);
       return !rootParent?.archived_at;
     });
     const sortedArchivedPages = topLevelArchivedPages.sort(
-      (a, b) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
+      (a, b) => new Date(b.archived_at ?? 0).getTime() - new Date(a.archived_at ?? 0).getTime()
     );
-    const newArchivedPageIds = sortedArchivedPages.map((page) => page.id).filter((id): id is string => id !== undefined);
+    const newArchivedPageIds = sortedArchivedPages
+      .map((page) => page.id)
+      .filter((id): id is string => id !== undefined);
+
+    // Filtered archived pages (with all filters applied)
+    const filteredArchivedPages = topLevelArchivedPages.filter(
+      (page) =>
+        getPageName(page.name).toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
+        shouldFilterPage(page, this.filters.filters)
+    );
+    const sortedFilteredArchivedPages = orderPages(
+      filteredArchivedPages as unknown as TPage[],
+      this.filters.sortKey,
+      this.filters.sortBy
+    ) as unknown as TWorkspacePage[];
+    const newFilteredArchivedPageIds = sortedFilteredArchivedPages
+      .map((page) => page.id)
+      .filter((id): id is string => id !== undefined);
 
     // Update arrays in a single runInAction to batch updates
     runInAction(() => {
+      // Update unfiltered arrays
       this.publicPageIds = newPublicPageIds;
       this.privatePageIds = newPrivatePageIds;
       this.archivedPageIds = newArchivedPageIds;
+
+      // Update filtered arrays
+      this.filteredPublicPageIds = newFilteredPublicPageIds;
+      this.filteredPrivatePageIds = newFilteredPrivatePageIds;
+      this.filteredArchivedPageIds = newFilteredArchivedPageIds;
     });
   };
 
@@ -404,10 +493,10 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     try {
       const { workspaceSlug } = this.store.router;
       if (!workspaceSlug || !pageId) return undefined;
-      const pageInstance = this.getPageById(pageId);
+      const doesPageExist = !!this.getPageById(pageId);
 
       runInAction(() => {
-        this.loader = pageInstance ? `mutation-loader` : `init-loader`;
+        this.loader = doesPageExist ? `mutation-loader` : `init-loader`;
         this.error = undefined;
       });
 
@@ -423,6 +512,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
 
       runInAction(() => {
         if (page) {
+          const pageInstance = this.getPageById(pageId);
           if (pageInstance) {
             pageInstance.mutateProperties(page, false);
           } else {
@@ -570,7 +660,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
 
       const pages = await this.pageService.fetchPagesByType(workspaceSlug, pageType, searchQuery);
       runInAction(() => {
-        for (const page of pages)
+        for (const page of pages) {
           if (page?.id) {
             const pageInstance = this.getPageById(page.id);
             if (pageInstance) {
@@ -579,6 +669,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
               set(this.data, [page.id], new WorkspacePage(this.store, page));
             }
           }
+        }
         this.loader = undefined;
       });
 
@@ -596,26 +687,19 @@ export class WorkspacePageStore implements IWorkspacePageStore {
   };
 
   // Helper function to find the root parent of a page with caching
-  findRootParent = computedFn((page: TWorkspacePage): TWorkspacePage | undefined => {
-    if (!page.parent_id) return page;
-    if (!page.id) return undefined;
+  findRootParent = computedFn((page: TWorkspacePage): TWorkspacePage => {
+    if (!page?.id || !page?.parent_id) {
+      return page;
+    }
 
     // Check cache first
     const cachedRootId = this._rootParentMap.get(page.id);
-    if (cachedRootId === null) return undefined; // No root parent found (previous lookup)
     if (cachedRootId) return this.getPageById(cachedRootId);
 
     // Get the parent page
-    const parentId = page.parent_id;
-    if (!parentId) return undefined;
+    const parentId = page?.parent_id;
 
     const parentPage = this.getPageById(parentId);
-    if (!parentPage) {
-      if (page.id) {
-        this._rootParentMap.set(page.id, null); // Cache the miss
-      }
-      return undefined;
-    }
 
     // Recursively find the root parent
     const rootParent = this.findRootParent(parentPage);

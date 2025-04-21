@@ -1,31 +1,24 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Avatar, Tooltip } from "@plane/ui";
-// hooks
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 import { useMember, useUser } from "@/hooks/store";
-import { EPageStoreType, usePage } from "@/plane-web/hooks/store";
+import { TPageInstance } from "@/store/pages/base-page";
 
 interface CollaboratorsListProps {
-  pageId: string;
-  storeType: EPageStoreType;
+  page?: TPageInstance;
   initialVisibleCount?: number;
   expandedVisibleCount?: number;
   className?: string;
 }
 
 export const CollaboratorsList = observer((props: CollaboratorsListProps) => {
-  const { pageId, storeType, initialVisibleCount = 3, expandedVisibleCount = 7, className = "mr-3" } = props;
+  const { page, initialVisibleCount = 3, expandedVisibleCount = 7, className = "mr-3" } = props;
 
   const [isGroupHovered, setIsGroupHovered] = useState(false);
   const [hoveredUserId, setHoveredUserId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const page = usePage({
-    pageId,
-    storeType,
-  });
 
   const { getUserDetails } = useMember();
   const { data: currentUser } = useUser();
@@ -97,7 +90,7 @@ export const CollaboratorsList = observer((props: CollaboratorsListProps) => {
                   name={memberDetails.display_name}
                   src={getFileURL(memberDetails.avatar_url)}
                   fallbackBackgroundColor="#0D9488"
-                  size="base"
+                  size="md"
                 />
               </div>
             </div>
@@ -110,7 +103,7 @@ export const CollaboratorsList = observer((props: CollaboratorsListProps) => {
             position="bottom"
           >
             <div
-              className={`flex items-center justify-center rounded-full bg-custom-background-80 text-custom-text-200 text-xs font-medium ring-2 ring-custom-background-100 transition-all duration-300 ease-in-out ${
+              className={`flex items-center justify-center rounded-full bg-custom-background-80 text-custom-text-200 text-xs font-medium ring-2 ring-custom-background-100 transition-all duration-300 ease-out ${
                 isGroupHovered
                   ? "w-6 h-6 ml-2 opacity-100 translate-x-0 scale-100"
                   : "-ml-2.5 opacity-100 translate-x-0 scale-100 w-6 h-6"

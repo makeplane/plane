@@ -34,7 +34,8 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
   const { toggleCreatePageModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   const pageStore = usePageStore(EPageStoreType.WORKSPACE);
-  const { filters, fetchPagesByType, publicPageIds, privatePageIds, archivedPageIds } = pageStore;
+  const { filters, fetchPagesByType, filteredPublicPageIds, filteredArchivedPageIds, filteredPrivatePageIds } =
+    pageStore;
 
   // Use SWR to fetch the data but not for rendering
   const { isLoading, data } = useSWR(
@@ -54,15 +55,15 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
     }
     switch (pageType) {
       case "public":
-        return publicPageIds;
+        return filteredPublicPageIds;
       case "private":
-        return privatePageIds;
+        return filteredPrivatePageIds;
       case "archived":
-        return archivedPageIds;
+        return filteredArchivedPageIds;
       default:
         return [];
     }
-  }, [pageType, publicPageIds, privatePageIds, archivedPageIds, data, filters.searchQuery]);
+  }, [pageType, filteredPublicPageIds, filteredPrivatePageIds, filteredArchivedPageIds, data, filters.searchQuery]);
 
   // derived values - memoized for performance
   const hasWorkspaceMemberLevelPermissions = useMemo(

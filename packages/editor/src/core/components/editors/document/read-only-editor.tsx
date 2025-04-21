@@ -6,11 +6,12 @@ import { PageRenderer } from "@/components/editors";
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // extensions
 import { IssueWidget } from "@/extensions";
-import { PageEmbedReadOnlyExtension } from "@/extensions/page-embed";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
+// plane editor extensions
+import { PageEmbedReadOnlyExtension } from "@/plane-editor/extensions";
 // plane web types
 import { TReadOnlyEmbedConfig } from "@/plane-editor/types";
 // types

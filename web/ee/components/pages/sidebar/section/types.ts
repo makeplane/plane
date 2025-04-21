@@ -23,6 +23,7 @@ export interface SectionHeaderProps {
   isCreatingPage: TPageNavigationTabs | null;
   handleCreatePage: (pageType: TPageNavigationTabs) => void;
   buttonRef?: RefObject<HTMLButtonElement>;
+  onButtonClick?: () => void;
 }
 
 // Props for section content

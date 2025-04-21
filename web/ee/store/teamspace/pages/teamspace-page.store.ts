@@ -267,14 +267,19 @@ export class TeamspacePageStore implements ITeamspacePageStore {
           response.forEach((page) => {
             if (page?.id) {
               const pageInstance = page;
-              set(page, "description_html", this.pageMap?.[teamspaceId]?.[page.id]?.description_html);
-              set(
-                this.pageMap,
-                [teamspaceId, page.id],
-                pageInstance.team
-                  ? new TeamspacePage(this.rootStore, pageInstance)
-                  : new ProjectPage(this.rootStore, pageInstance)
-              );
+              set(page, "description_html", this.getPageById(page.id)?.description_html);
+              const existingInstance = this.getPageById(page.id);
+              if (existingInstance) {
+                existingInstance.mutateProperties(pageInstance);
+              } else {
+                set(
+                  this.pageMap,
+                  [teamspaceId, page.id],
+                  pageInstance.team
+                    ? new TeamspacePage(this.rootStore, pageInstance)
+                    : new ProjectPage(this.rootStore, pageInstance)
+                );
+              }
             }
           });
           set(this.fetchedMap, teamspaceId, true);
@@ -313,11 +318,16 @@ export class TeamspacePageStore implements ITeamspacePageStore {
       await this.teamspacePageService.fetchById(workspaceSlug, teamspaceId, pageId).then((response) => {
         runInAction(() => {
           if (response?.id) {
-            set(
-              this.pageMap,
-              [teamspaceId, pageId],
-              response.team ? new TeamspacePage(this.rootStore, response) : new ProjectPage(this.rootStore, response)
-            );
+            const existingInstance = this.getPageById(pageId);
+            if (existingInstance) {
+              existingInstance.mutateProperties(response);
+            } else {
+              set(
+                this.pageMap,
+                [teamspaceId, pageId],
+                response.team ? new TeamspacePage(this.rootStore, response) : new ProjectPage(this.rootStore, response)
+              );
+            }
           }
           set(this.loaderMap, teamspaceId, "loaded");
         });

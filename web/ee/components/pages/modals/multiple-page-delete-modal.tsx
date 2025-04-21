@@ -117,7 +117,7 @@ export const MultipleDeletePagesModal: React.FC<TConfirmPagesDeleteProps> = obse
         <div className="space-y-5">
           <p className="text-sm text-custom-text-200">
             {isMultiplePages
-              ? "The following subpages pages will be deleted permanently along with their sub pages. This action cannot be undone."
+              ? "The following pages will be deleted permanently along with their sub pages. This action cannot be undone."
               : "The following page will be deleted permanently. This action cannot be undone."}
           </p>
 

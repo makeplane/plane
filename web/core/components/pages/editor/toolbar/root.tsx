@@ -13,7 +13,6 @@ import { EPageStoreType } from "@/plane-web/hooks/store/use-page-store";
 import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
-  isSyncing: boolean;
   page: TPageInstance;
   storeType: EPageStoreType;
 };

@@ -18,5 +18,5 @@ export default function TeamspacePagesLayout({ children }: { children: ReactNode
       revalidateIfStale: false,
     }
   );
-  return <div>{children}</div>;
+  return <>{children}</>;
 }

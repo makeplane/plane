@@ -1,8 +1,8 @@
 // types
 import { Editor } from "@tiptap/react";
 import { TPage } from "@plane/types";
-import { PageEmbedExtensionAttributes } from "@/extensions/page-embed/extension-config";
 import { TEmbedItem } from "@/types";
+import { PageEmbedExtensionAttributes } from "../extensions/page-embed/extension-config";
 
 export type TEmbedConfig = {
   issue?: TIssueEmbedConfig;

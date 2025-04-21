@@ -33,6 +33,7 @@ export type TBasePage = TPage & {
   editorRef: EditorRefApi | null;
   collaborators: TCollaborator[];
   restoration: TRestorationState;
+  isSyncingWithServer: "syncing" | "synced" | "error";
   // computed
   asJSON: TPage | undefined;
   isCurrentUserOwner: boolean;
@@ -59,6 +60,7 @@ export type TBasePage = TPage & {
   updateCollaborators: (collaborators: TCollaborator[]) => void;
   setVersionToBeRestored: (versionId: string | null, descriptionHTML: string | null) => void;
   setRestorationStatus: (inProgress: boolean) => void;
+  setSyncingStatus: (status: "syncing" | "synced" | "error") => void;
 };
 
 export type TBasePagePermissions = {
@@ -106,6 +108,7 @@ export class BasePage implements TBasePage {
     descriptionHTML: null,
     inProgress: false,
   };
+  isSyncingWithServer: "syncing" | "synced" | "error" = "syncing";
   // page properties
   id: string | undefined;
   name: string | undefined;
@@ -203,6 +206,7 @@ export class BasePage implements TBasePage {
       moved_to_project: observable.ref,
       collaborators: observable,
       restoration: observable,
+      isSyncingWithServer: observable.ref,
       // helpers
       oldName: observable.ref,
       setIsSubmitting: action,
@@ -229,6 +233,7 @@ export class BasePage implements TBasePage {
       updateCollaborators: action,
       setVersionToBeRestored: action,
       setRestorationStatus: action,
+      setSyncingStatus: action,
     });
 
     this.rootStore = store;
@@ -287,6 +292,7 @@ export class BasePage implements TBasePage {
       moved_to_project: this.moved_to_project,
       is_description_empty: this.is_description_empty,
       collaborators: this.collaborators,
+      isSyncingWithServer: this.isSyncingWithServer,
       version_to_be_restored: this.restoration.versionId
         ? {
             versionId: this.restoration.versionId,
@@ -646,6 +652,12 @@ export class BasePage implements TBasePage {
         ...this.restoration,
         inProgress,
       };
+    });
+  };
+
+  setSyncingStatus = (status: "syncing" | "synced" | "error") => {
+    runInAction(() => {
+      this.isSyncingWithServer = status;
     });
   };
 }
