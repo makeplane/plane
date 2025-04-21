@@ -22,10 +22,6 @@ class ApiTokenEndpoint(BaseAPIView):
         workspace = Workspace.objects.get(slug=slug)
         expired_at = request.data.get("expired_at", None)
 
-        # Formate the date to ISO
-        formated_date = datetime.fromisoformat(expired_at)
-        expired_at = formated_date.isoformat() + "Z"
-
         # Check the user type
         user_type = 1 if request.user.is_bot else 0
 
