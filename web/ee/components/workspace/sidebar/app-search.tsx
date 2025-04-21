@@ -7,7 +7,7 @@ import { AppSearch as BaseAppSearch } from "@/ce/components/workspace/sidebar/ap
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppTheme } from "@/hooks/store";
+import { useAppTheme, useInstance } from "@/hooks/store";
 // plane web imports
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 
@@ -19,7 +19,9 @@ export const AppSearch = observer(() => {
   const { sidebarCollapsed } = useAppTheme();
   // derived values
   const isOnSearchPage = pathname.includes(`${workspaceSlug}/search`);
+  const { config } = useInstance();
 
+  if (!config?.is_elasticsearch_enabled) return <BaseAppSearch />;
   return (
     <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="ADVANCED_SEARCH" fallback={<BaseAppSearch />}>
       <Link

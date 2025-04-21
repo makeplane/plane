@@ -75,6 +75,8 @@ export interface IInstanceConfig {
   feature_flag_server_base_url?: string;
   // silo
   silo_base_url: string | undefined;
+  // elasticsearch
+  is_elasticsearch_enabled: boolean;
 }
 
 export interface IInstanceUpdate {
