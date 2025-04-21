@@ -63,6 +63,10 @@ class InitiativeEndpoint(BaseAPIView):
                         )
                         .filter(epic__project__deleted_at__isnull=True)
                         .filter(
+                            epic__project__project_projectmember__member=self.request.user
+                        )
+                        .filter(epic__project__project_projectmember__is_active=True)
+                        .filter(
                             epic__project__project_projectfeature__is_epic_enabled=True
                         )
                         .values("initiative_id")
