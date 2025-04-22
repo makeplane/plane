@@ -4,20 +4,20 @@ from typing import List
 # Third-Party Imports
 import strawberry
 from asgiref.sync import sync_to_async
+from strawberry.permission import PermissionExtension
 
 # Strawberry Imports
 from strawberry.types import Info
-from strawberry.permission import PermissionExtension
 
 # Module Imports
+from plane.db.models import Page
+from plane.graphql.permissions.project import ProjectPermission
+from plane.graphql.permissions.workspace import WorkspacePermission
+from plane.graphql.types.page import NestedParentPageLiteType
 from plane.graphql.utils.page_descendants import (
     get_all_parent_ids,
     get_descendant_page_ids,
 )
-from plane.graphql.types.page import NestedParentPageLiteType
-from plane.db.models import Page
-from plane.graphql.permissions.workspace import WorkspacePermission
-from plane.graphql.permissions.project import ProjectPermission
 
 
 @sync_to_async
@@ -62,6 +62,7 @@ class WorkspaceNestedParentPagesQuery:
         self, info: Info, slug: str, page: strawberry.ID
     ) -> List[NestedParentPageLiteType]:
         user = info.context.user
+
         parent_page_ids = await page_parent_ids(page)
 
         if not parent_page_ids:
@@ -84,6 +85,7 @@ class WorkspaceNestedChildPagesQuery:
         self, info: Info, slug: str, page: strawberry.ID
     ) -> List[NestedParentPageLiteType]:
         user = info.context.user
+
         child_page_ids = await page_child_ids(page)
 
         if not child_page_ids:
@@ -108,6 +110,7 @@ class NestedParentPagesQuery:
         self, info: Info, slug: str, project: strawberry.ID, page: strawberry.ID
     ) -> List[NestedParentPageLiteType]:
         user = info.context.user
+
         parent_page_ids = await page_parent_ids(page)
 
         if not parent_page_ids:
@@ -130,6 +133,7 @@ class NestedChildPagesQuery:
         self, info: Info, slug: str, project: strawberry.ID, page: strawberry.ID
     ) -> List[NestedParentPageLiteType]:
         user = info.context.user
+
         child_page_ids = await page_child_ids(page)
 
         if not child_page_ids:

@@ -1,24 +1,49 @@
 # Python imports
-from typing import List
 from datetime import datetime
-from django.utils import timezone
+from typing import List
 
 # Third-Party Imports
 import strawberry
 from asgiref.sync import sync_to_async
+from django.utils import timezone
+from strawberry.exceptions import GraphQLError
+from strawberry.permission import PermissionExtension
 
 # Strawberry Imports
 from strawberry.types import Info
-from strawberry.permission import PermissionExtension
-from strawberry.exceptions import GraphQLError
 
 # Module Imports
+from plane.db.models import DeployBoard, Page, UserFavorite, UserRecentVisit
 from plane.ee.bgtasks.page_update import nested_page_update
-from plane.graphql.utils.page_descendants import get_descendant_page_ids
-from plane.graphql.types.page import NestedParentPageLiteType
-from plane.db.models import Page, DeployBoard, UserFavorite, UserRecentVisit
-from plane.graphql.permissions.workspace import WorkspacePermission
 from plane.graphql.permissions.project import ProjectPermission
+from plane.graphql.permissions.workspace import WorkspacePermission
+from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
+from plane.graphql.types.page import NestedParentPageLiteType
+from plane.graphql.utils.feature_flag import _validate_feature_flag
+from plane.graphql.utils.page_descendants import get_descendant_page_ids
+
+
+# validate feature flag
+@sync_to_async
+def validate_nested_pages_feature_flag(user_id: str, workspace_slug: str) -> bool:
+    try:
+        is_feature_flagged = _validate_feature_flag(
+            user_id=user_id,
+            slug=workspace_slug,
+            feature_key=FeatureFlagsTypesEnum.NESTED_PAGES.value,
+            default_value=False,
+        )
+
+        if not is_feature_flagged:
+            message = "Feature flag not enabled"
+            error_extensions = {"code": "FEATURE_FLAG_NOT_ENABLED", "statusCode": 400}
+            raise GraphQLError(message, extensions=error_extensions)
+
+        return is_feature_flagged
+    except Exception:
+        message = "Error validating feature flag"
+        error_extensions = {"code": "ERROR_VALIDATING_FEATURE_FLAG", "statusCode": 400}
+        raise GraphQLError(message, extensions=error_extensions)
 
 
 # remove user favorite
@@ -102,6 +127,10 @@ class WorkspaceNestedChildArchivePageMutation:
         self, info: Info, slug: str, page: strawberry.ID
     ) -> List[NestedParentPageLiteType]:
         user = info.context.user
+        user_id = str(user.id)
+
+        await validate_nested_pages_feature_flag(user_id=user_id, workspace_slug=slug)
+
         child_page_ids = await page_child_ids(page)
 
         if not child_page_ids:
@@ -139,6 +168,10 @@ class WorkspaceNestedChildRestorePageMutation:
         self, info: Info, slug: str, page: strawberry.ID
     ) -> List[NestedParentPageLiteType]:
         user = info.context.user
+        user_id = str(user.id)
+
+        await validate_nested_pages_feature_flag(user_id=user_id, workspace_slug=slug)
+
         child_page_ids = await page_child_ids(page)
 
         if not child_page_ids:
@@ -177,6 +210,11 @@ class WorkspaceNestedChildDeletePageMutation:
     ) -> bool:
         try:
             user = info.context.user
+            user_id = str(user.id)
+
+            await validate_nested_pages_feature_flag(
+                user_id=user_id, workspace_slug=slug
+            )
 
             deleted_pages = await pages_with_ids(
                 user=user,
@@ -231,6 +269,10 @@ class NestedChildArchivePageMutation:
         self, info: Info, slug: str, project: strawberry.ID, page: strawberry.ID
     ) -> List[NestedParentPageLiteType]:
         user = info.context.user
+        user_id = str(user.id)
+
+        await validate_nested_pages_feature_flag(user_id=user_id, workspace_slug=slug)
+
         child_page_ids = await page_child_ids(page)
 
         if not child_page_ids:
@@ -268,6 +310,10 @@ class NestedChildRestorePageMutation:
         self, info: Info, slug: str, project: strawberry.ID, page: strawberry.ID
     ) -> List[NestedParentPageLiteType]:
         user = info.context.user
+        user_id = str(user.id)
+
+        await validate_nested_pages_feature_flag(user_id=user_id, workspace_slug=slug)
+
         child_page_ids = await page_child_ids(page)
 
         if not child_page_ids:
@@ -306,6 +352,11 @@ class NestedChildDeletePageMutation:
     ) -> bool:
         try:
             user = info.context.user
+            user_id = str(user.id)
+
+            await validate_nested_pages_feature_flag(
+                user_id=user_id, workspace_slug=slug
+            )
 
             deleted_pages = await pages_with_ids(
                 user=user,

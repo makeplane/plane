@@ -125,6 +125,9 @@ class FeatureFlagQuery:
             ),
             pi_chat=feature_flags.get(FeatureFlagsTypesEnum.PI_CHAT.value, False),
             pi_dedupe=feature_flags.get(FeatureFlagsTypesEnum.PI_DEDUPE.value, False),
+            nested_pages=feature_flags.get(
+                FeatureFlagsTypesEnum.NESTED_PAGES.value, False
+            ),
             silo=feature_flags.get(FeatureFlagsTypesEnum.SILO.value, False),
             silo_importers=feature_flags.get(
                 FeatureFlagsTypesEnum.SILO_IMPORTERS.value, False

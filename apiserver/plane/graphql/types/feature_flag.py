@@ -41,6 +41,7 @@ class FeatureFlagsTypesEnum(Enum):
     INITIATIVES = "INITIATIVES"
     PI_CHAT = "PI_CHAT"
     PI_DEDUPE = "PI_DEDUPE"
+    NESTED_PAGES = "NESTED_PAGES"
 
     # Silo importers and integrations
     SILO = "SILO"
@@ -102,6 +103,7 @@ class FeatureFlagType:
     initiatives: bool
     pi_chat: bool
     pi_dedupe: bool
+    nested_pages: bool
     # ====== silo integrations ======
     silo: bool
     silo_importers: bool
