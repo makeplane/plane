@@ -90,6 +90,7 @@ class CycleUpdatesViewSet(BaseViewSet):
                 .order_by("-created_at")
                 .values("id")[:1]
             ),
+            issue__deleted_at__isnull=True,
         ).filter(action__in=["ADDED", "UPDATED"])
         total_issues = cycle_issues.count()
         total_estimate_points = (

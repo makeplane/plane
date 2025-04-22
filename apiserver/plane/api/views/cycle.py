@@ -1220,6 +1220,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             project_id=project_id,
             workspace__slug=slug,
             issue__state__group__in=["backlog", "unstarted", "started"],
+            issue__deleted_at__isnull=True,
         )
 
         updated_cycles = []

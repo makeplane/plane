@@ -1,17 +1,37 @@
+# Python standard library imports
+from datetime import datetime
+from typing import Dict, List, Optional, Tuple, Any
+from uuid import UUID
+
 # Django imports
-from django.db.models import Sum
 from django.utils import timezone
-from django.db.models import Subquery, OuterRef
 
 # Third party imports
 from celery import shared_task
+
+# Plane imports
 from plane.db.models import Cycle
 from plane.ee.models import EntityProgress, EntityIssueStateActivity
 from plane.utils.exception_logger import log_exception
 
 
 @shared_task
-def calculate_entity_issue_state_progress(current_date=None, cycles=[]):
+def calculate_entity_issue_state_progress(
+    current_date: Optional[datetime] = None,
+    cycles: List[Tuple[UUID, UUID]] = None
+) -> Optional[List[EntityProgress]]:
+    """
+    Calculate progress for entity issues based on their state.
+
+    Args:
+        current_date: The date to calculate progress for. Defaults to yesterday.
+        cycles: List of tuples containing (cycle_id, workspace_id). If not provided, active cycles are fetched.
+
+    Returns:
+        List of EntityProgress objects or None if an exception occurred.
+    """
+    if cycles is None:
+        cycles = []
 
     if not current_date:
         current_date = timezone.now() - timezone.timedelta(days=1)
@@ -24,44 +44,53 @@ def calculate_entity_issue_state_progress(current_date=None, cycles=[]):
                 version=2,
             ).values_list("id", "workspace_id")
 
-        analytics_records = []
-        batch_size = 100
+        analytics_records: List[EntityProgress] = []
+        batch_size: int = 100
+
         for i in range(0, len(cycles), batch_size):
             batch_cycles = cycles[i:i+batch_size]
-            for cycle_id, workspace_id in batch_cycles:
-                cycle_issues = EntityIssueStateActivity.objects.filter(
-                    id=Subquery(
-                        EntityIssueStateActivity.objects.filter(
-                            cycle_id=cycle_id,
-                            entity_type="CYCLE",
-                            issue=OuterRef("issue"),
-                            created_at__lte=timezone.now(),
-                        )
-                        .order_by("-created_at")
-                        .values("id")[:1]
-                    ),
-                ).filter(action__in=["ADDED", "UPDATED"])
+            # Create a dictionary for quick lookup of workspace_id by cycle_id
+            cycle_id_to_workspace: Dict[UUID, UUID] = {
+                cycle_id: workspace_id for cycle_id, workspace_id in batch_cycles
+            }
+            cycle_ids: List[UUID] = list(cycle_id_to_workspace.keys())
 
-                total_issues = cycle_issues.count()
-                total_estimate_points = (
-                    cycle_issues.aggregate(total_estimate_points=Sum("estimate_value"))[
-                        "total_estimate_points"
-                    ]
-                    or 0
-                )
+            # Get the latest activity for each issue in each cycle with a single query using distinct
+            latest_activities = EntityIssueStateActivity.objects.filter(
+                cycle_id__in=cycle_ids,
+                entity_type="CYCLE",
+                created_at__lte=timezone.now(),
+                action__in=["ADDED", "UPDATED"],
+                issue__deleted_at__isnull=True,
+            ).order_by('cycle_id', 'issue_id', '-created_at').distinct('cycle_id', 'issue_id').values(
+                'cycle_id', 'issue_id', 'state_group', 'estimate_value'
+            )
 
-                state_groups = ["backlog", "unstarted", "started", "completed", "cancelled"]
-                state_data = {
-                    group: {
-                        "count": cycle_issues.filter(state_group=group).count(),
-                        "estimate_points": cycle_issues.filter(state_group=group).aggregate(
-                            total_estimate_points=Sum("estimate_value")
-                        )["total_estimate_points"]
-                        or 0,
-                    }
-                    for group in state_groups
-                }
-                # Prepare analytics record for bulk insert
+            # Group the activities by cycle_id
+            cycle_activities: Dict[UUID, List[Dict[str, Any]]] = {}
+            for activity in latest_activities:
+                if activity['cycle_id'] not in cycle_activities:
+                    cycle_activities[activity['cycle_id']] = []
+                cycle_activities[activity['cycle_id']].append(activity)
+
+            # Process each cycle's data
+            for cycle_id in cycle_ids:
+                activities = cycle_activities.get(cycle_id, [])
+                total_issues: int = len(activities)
+                total_estimate_points: float = sum(activity['estimate_value'] or 0 for activity in activities)
+
+                # Count issues and estimate points by state group
+                state_groups: List[str] = ["backlog", "unstarted", "started", "completed", "cancelled"]
+                state_counts: Dict[str, int] = {group: 0 for group in state_groups}
+                state_points: Dict[str, float] = {group: 0 for group in state_groups}
+
+                for activity in activities:
+                    group = activity['state_group']
+                    if group in state_groups:
+                        state_counts[group] += 1
+                        state_points[group] += activity['estimate_value'] or 0
+
+                # Create analytics record
                 analytics_records.append(
                     EntityProgress(
                         cycle_id=cycle_id,
@@ -69,31 +98,24 @@ def calculate_entity_issue_state_progress(current_date=None, cycles=[]):
                         entity_type="CYCLE",
                         total_issues=total_issues,
                         total_estimate_points=total_estimate_points,
-                        backlog_issues=state_data["backlog"]["count"],
-                        unstarted_issues=state_data["unstarted"]["count"],
-                        started_issues=state_data["started"]["count"],
-                        completed_issues=state_data["completed"]["count"],
-                        cancelled_issues=state_data["cancelled"]["count"],
-                        backlog_estimate_points=state_data["backlog"]["estimate_points"],
-                        unstarted_estimate_points=state_data["unstarted"][
-                            "estimate_points"
-                        ],
-                        started_estimate_points=state_data["started"]["estimate_points"],
-                        completed_estimate_points=state_data["completed"][
-                            "estimate_points"
-                        ],
-                        cancelled_estimate_points=state_data["cancelled"][
-                            "estimate_points"
-                        ],
+                        backlog_issues=state_counts["backlog"],
+                        unstarted_issues=state_counts["unstarted"],
+                        started_issues=state_counts["started"],
+                        completed_issues=state_counts["completed"],
+                        cancelled_issues=state_counts["cancelled"],
+                        backlog_estimate_points=state_points["backlog"],
+                        unstarted_estimate_points=state_points["unstarted"],
+                        started_estimate_points=state_points["started"],
+                        completed_estimate_points=state_points["completed"],
+                        cancelled_estimate_points=state_points["cancelled"],
                         created_at=timezone.now(),
                         updated_at=timezone.now(),
-                        workspace_id=workspace_id,
+                        workspace_id=cycle_id_to_workspace[cycle_id],
                     )
                 )
 
         return analytics_records
 
-
     except Exception as e:
         log_exception(e)
-        return
+        return None
