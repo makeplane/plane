@@ -139,7 +139,15 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
         <form className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}>
           <div
             onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !isEmpty) handleSubmit(onEnter)(e);
+              if (
+                e.key === "Enter" &&
+                !e.shiftKey &&
+                !e.ctrlKey &&
+                !e.metaKey &&
+                !isEmpty &&
+                editorRef.current?.isEditorReadyToDiscard()
+              )
+                handleSubmit(onEnter)(e);
             }}
           >
             <LiteTextEditor
@@ -161,9 +169,9 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
                 return asset_id;
               }}
               projectId={projectId?.toString() ?? ""}
-              editorClassName="[&>*]:!py-0 [&>*]:!text-sm"
+              editorClassName="[&>*]:!py-0 [&_*]:!text-sm"
               parentClassName="p-2"
-              />
+            />
           </div>
           <div className="flex gap-1 self-end">
             {!isEmpty && (
@@ -208,7 +216,7 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
             initialValue={comment.comment_html ?? ""}
             workspaceId={workspaceId}
             workspaceSlug={workspaceSlug}
-            editorClassName="[&>*]:!py-0 [&>*]:!text-sm"
+            editorClassName="[&>*]:!py-0 [&_*]:!text-sm"
             containerClassName="!py-1"
             projectId={(projectId as string) ?? ""}
           />
