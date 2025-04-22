@@ -22,6 +22,7 @@ export type TEpicActivityFields =
   | "start_date"
   | "target_date"
   | "labels"
+  | "estimate_point" /* This type is to handle all the older recorded activities for estimates. Field changed from  "estimate_point" -> `estimate_${estimate_type}`*/
   | "estimate_points"
   | "estimate_categories"
   | "estimate_time"
