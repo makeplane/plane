@@ -108,7 +108,21 @@ export const PageLockControl = observer(({ page, storeType }: Props) => {
     [toggleLock]
   );
 
-  if (!canCurrentUserLockPage) return null;
+  if (is_locked && !canCurrentUserLockPage) {
+    return (
+      <Tooltip tooltipContent="You don't have the permission to unlock this page" position="bottom">
+        <div
+          className="h-6 flex items-center gap-1 px-2 rounded text-custom-primary-100 bg-custom-primary-100/20 cursor-default"
+          aria-label="Locked"
+        >
+          <LockKeyhole className="flex-shrink-0 size-3.5" />
+          <span className="text-xs font-medium whitespace-nowrap">Locked</span>
+        </div>
+      </Tooltip>
+    );
+  }
+
+  if (!is_locked && !canCurrentUserLockPage) return null;
 
   const actionText = is_locked ? "Unlock" : "Lock";
 
@@ -119,7 +133,7 @@ export const PageLockControl = observer(({ page, storeType }: Props) => {
         <Tooltip tooltipContent="Lock page" position="bottom" disabled={showLockOptions}>
           <button
             type="button"
-            onClick={handleButtonClick} // Use the main handler
+            onClick={handleButtonClick}
             className={cn(
               "flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors",
               {
@@ -141,7 +155,9 @@ export const PageLockControl = observer(({ page, storeType }: Props) => {
           onMouseLeave={() => setIsHoveringLocked(false)}
           className={cn(
             "h-6 flex items-center gap-1 px-2 rounded text-custom-primary-100 bg-custom-primary-100/20 hover:bg-custom-primary-100/30 transition-colors duration-200 ease-in-out",
-            { "bg-custom-primary-100/30": isNestedPagesEnabled(workspaceSlug.toString()) && showLockOptions }
+            {
+              "bg-custom-primary-100/30": isNestedPagesEnabled(workspaceSlug.toString()) && showLockOptions,
+            }
           )}
           aria-label={isHoveringLocked ? "Unlock" : "Locked"}
         >
