@@ -1642,7 +1642,7 @@ def update_custom_property_activity(
                 field=f"Custom Property {custom_property_key}",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"updated the custom property ({custom_property_key}) to",
+                comment=f"updated the custom property ({custom_property_key}) to {new_value}",
                 epoch=epoch,
             )
         )
@@ -1678,7 +1678,7 @@ def create_custom_property_activity(
             field=f"Custom Property {custom_property_key}",
             project_id=project_id,
             workspace_id=workspace_id,
-            comment=f"added a custom property ({custom_property_key})",
+            comment=f"added a custom property ({custom_property_key}) with value {new_value}",
             epoch=epoch,
         )
     )
