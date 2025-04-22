@@ -75,7 +75,7 @@ LOGGING = {
         },
         "plane.exception": {
             "level": "DEBUG" if DEBUG else "ERROR",
-            "handlers": ["console"],
+            "handlers": ["console", "file"],
             "propagate": False,
         },
         "plane.external": {
