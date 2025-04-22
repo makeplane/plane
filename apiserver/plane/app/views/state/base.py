@@ -84,7 +84,7 @@ class StateViewSet(BaseViewSet):
             count = len(group_states)
 
             for index, state in enumerate(group_states, start=1):
-                state["order"] = f"{index} / {count}"
+                state["order"] = index / count
 
         grouped = request.GET.get("grouped", False)
 
