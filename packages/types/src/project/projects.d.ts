@@ -114,6 +114,7 @@ export interface IProjectMembership {
   id: string;
   member: string;
   role: TUserPermissions;
+  created_at: string;
 }
 
 export interface IProjectBulkAddFormData {
