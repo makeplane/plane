@@ -746,7 +746,6 @@ def build_custom_property_q_objects(custom_properties):
                 filter_kwargs = base_filters.copy()
                 filter_kwargs[f"{base_field}__in"] = values
                 q_object = Q(id__in=IssueCustomProperty.objects.filter(**filter_kwargs).values("issue_id"))
-        print("sjhbfhjsbdbsbhd",q_object)
         custom_filters.append(q_object)
 
     return custom_filters
