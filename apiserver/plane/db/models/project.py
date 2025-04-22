@@ -14,6 +14,7 @@ from plane.db.mixins import AuditModel
 
 # Module imports
 from .base import BaseModel
+from plane.bgtasks.deletion_task import soft_delete_pages_on_project_deletion
 
 ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
 
@@ -164,6 +165,12 @@ class Project(BaseModel):
     def save(self, *args, **kwargs):
         self.identifier = self.identifier.strip().upper()
         return super().save(*args, **kwargs)
+
+    def delete(self, using=None, *args, **kwargs):
+        delete_queryset = super().delete(using=using, *args, **kwargs)
+        soft_delete_pages_on_project_deletion.delay(self.id)
+
+        return delete_queryset
 
 
 class ProjectBaseModel(BaseModel):
