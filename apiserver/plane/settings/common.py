@@ -65,7 +65,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "crum.CurrentRequestUserMiddleware",
     "django.middleware.gzip.GZipMiddleware",
-    "plane.middleware.api_log_middleware.APITokenLogMiddleware",
+    "plane.middleware.logger.APITokenLogMiddleware",
     "oauth2_provider.middleware.OAuth2TokenMiddleware",
     "plane.middleware.logger.RequestLoggerMiddleware",
 ]
@@ -488,7 +488,8 @@ FIREBASE_CLIENT_ID = os.environ.get("FIREBASE_CLIENT_ID", "")
 FIREBASE_CLIENT_CERT_URL = os.environ.get("FIREBASE_CLIENT_CERT_URL", "")
 
 # Oauth Provider Settings
-from plane.authentication.utils import is_pkce_required # noqa
+from plane.authentication.utils import is_pkce_required  # noqa
+
 OAUTH2_PROVIDER_ACCESS_TOKEN_MODEL = "authentication.AccessToken"
 OAUTH2_PROVIDER_APPLICATION_MODEL = "authentication.Application"
 OAUTH2_PROVIDER_GRANT_MODEL = "authentication.Grant"
@@ -497,14 +498,14 @@ OAUTH2_PROVIDER_ID_TOKEN_MODEL = "authentication.IDToken"
 
 
 OAUTH2_PROVIDER = {
-    'AUTHORIZATION_CODE_EXPIRE_SECONDS': 60,  # 1 minute
-    'OAUTH2_VALIDATOR_CLASS': 'plane.authentication.views.oauth.CustomOAuth2Validator',
-    'ALLOWED_GRANT_TYPES': [
-        'authorization_code',
-        'client_credentials',
-        'refresh_token',
+    "AUTHORIZATION_CODE_EXPIRE_SECONDS": 60,  # 1 minute
+    "OAUTH2_VALIDATOR_CLASS": "plane.authentication.views.oauth.CustomOAuth2Validator",
+    "ALLOWED_GRANT_TYPES": [
+        "authorization_code",
+        "client_credentials",
+        "refresh_token",
     ],
-    'PKCE_REQUIRED': is_pkce_required,
+    "PKCE_REQUIRED": is_pkce_required,
 }
 
 # ElasticSearch settings
