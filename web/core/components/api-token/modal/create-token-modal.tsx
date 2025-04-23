@@ -12,7 +12,7 @@ import { CreateApiTokenForm, GeneratedTokenDetails } from "@/components/api-toke
 // fetch-keys
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
 // helpers
-import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { renderFormattedDate, renderFormattedTime  } from "@/helpers/date-time.helper";
 import { csvDownload } from "@/helpers/download.helper";
 // services
 import { APITokenService } from "@/services/api_token.service";
@@ -46,9 +46,9 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
     const csvData = {
       Title: data.label,
       Description: data.description,
-      Expiry: data.expired_at ? renderFormattedDate(data.expired_at)?.replace(",", " ") ?? "" : "Never expires",
-      "Secret key": data.token ?? "",
-    };
+      Expiry: data.expired_at ? `${renderFormattedDate(data.expired_at)?.replace(",", "")} at ${renderFormattedTime(data.expired_at, "12-hour")}`
+      : "Never expires",
+    };  
 
     csvDownload(csvData, `secret-key-${Date.now()}`);
   };
