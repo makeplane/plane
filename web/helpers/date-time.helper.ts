@@ -67,39 +67,6 @@ export const renderFormattedPayloadDate = (date: Date | string | undefined | nul
   return formattedDate;
 };
 
-/**
- * @returns {string | undefined} ISO 8601 formatted datetime string in UTC
- * @description Converts a given date (with or without time) into a full ISO 8601 UTC string (e.g. 2024-05-01T14:30:00Z). Optionally falls back to current time if time is midnight (00:00).
- * @param {Date | string | undefined | null} date - The date or datetime input
- * @param {boolean} fallbackTimeFromNow - If true, sets current time when input time is 00:00
- * @example renderISODateTimeUTC("2024-05-01") // "2024-05-01T14:23:00Z" (if current time is 14:23)
- */
-export const renderISODateTimeUTC = (
-  date: Date | string | undefined | null,
-  fallbackTimeFromNow: boolean = true
-): string | undefined => {
-  const parsedDate = getDate(date);
-  if (!parsedDate || !isValid(parsedDate)) return;
-
-  const finalDate = new Date(parsedDate);
-
-  if (fallbackTimeFromNow) {
-    const isMidnight =
-      finalDate.getHours() === 0 &&
-      finalDate.getMinutes() === 0 &&
-      finalDate.getSeconds() === 0 &&
-      finalDate.getMilliseconds() === 0;
-
-    if (isMidnight) {
-      const now = new Date();
-      finalDate.setHours(now.getHours(), now.getMinutes(), 0, 0);
-    }
-  }
-
-  return finalDate.toISOString(); // Always returns UTC datetime
-};
-
-
 // Format Time Helpers
 /**
  * @returns {string} formatted date in the format of hh:mm a or HH:mm
