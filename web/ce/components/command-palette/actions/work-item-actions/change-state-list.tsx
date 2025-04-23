@@ -26,7 +26,13 @@ export const ChangeWorkItemStateList = observer((props: TChangeWorkItemStateList
           projectStates.map((state) => (
             <Command.Item key={state.id} onSelect={() => handleStateChange(state.id)} className="focus:outline-none">
               <div className="flex items-center space-x-3">
-                <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
+                <StateGroupIcon
+                  stateGroup={state.group}
+                  color={state.color}
+                  height="16px"
+                  width="16px"
+                  percentage={state?.order}
+                />
                 <p>{state.name}</p>
               </div>
               <div>{state.id === currentStateId && <Check className="h-3 w-3" />}</div>

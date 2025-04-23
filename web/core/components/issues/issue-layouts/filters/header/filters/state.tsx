@@ -56,7 +56,15 @@ export const FilterState: React.FC<Props> = observer((props) => {
                     key={state.id}
                     isChecked={appliedFilters?.includes(state.id) ? true : false}
                     onClick={() => handleUpdate(state.id)}
-                    icon={<StateGroupIcon stateGroup={state.group} color={state.color} />}
+                    icon={
+                      <StateGroupIcon
+                        stateGroup={state.group}
+                        color={state.color}
+                        height="14px"
+                        width="14px"
+                        percentage={state?.order}
+                      />
+                    }
                     title={state.name}
                   />
                 ))}
