@@ -104,9 +104,21 @@ class UserMeSettingsSerializer(BaseSerializer):
                 "last_workspace_slug": (
                     workspace.slug if workspace is not None else ""
                 ),
+                "last_workspace_name": (
+                    workspace.name if workspace is not None else ""
+                ),
+                "last_workspace_logo": (
+                    workspace.logo_asset.asset_url if workspace is not None else ""
+                ),
                 "fallback_workspace_id": profile.last_workspace_id,
                 "fallback_workspace_slug": (
                     workspace.slug if workspace is not None else ""
+                ),
+                "fallback_workspace_name": (
+                    workspace.name if workspace is not None else ""
+                ),
+                "fallback_workspace_logo": (
+                    workspace.logo_asset.asset_url if workspace is not None else ""
                 ),
                 "invites": workspace_invites,
             }
