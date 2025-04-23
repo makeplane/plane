@@ -23,11 +23,12 @@ export const InboxSourcePill = (props: TInboxSourcePill) => {
   const { source } = props;
   const { workspaceSlug } = useParams();
   const sourceDetails = sourcePillMap[source];
+  if (!sourceDetails) return null;
   return (
     <WithFeatureFlagHOC flag="INTAKE_SETTINGS" workspaceSlug={workspaceSlug?.toString()} fallback={<></>}>
       <div className="relative flex gap-1 p-1.5 py-0.5 rounded bg-custom-background-80 items-center">
-        {<sourceDetails.icon className="h-3 w-3 flex-shrink-0 text-custom-text-300" />}
-        <span className="text-xs text-custom-text-300 font-medium">{sourcePillMap[source].label}</span>
+        <sourceDetails.icon className="h-3 w-3 flex-shrink-0 text-custom-text-300" />
+        <span className="text-xs text-custom-text-300 font-medium">{sourceDetails.label}</span>
       </div>
     </WithFeatureFlagHOC>
   );
