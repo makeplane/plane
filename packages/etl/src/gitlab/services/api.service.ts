@@ -126,7 +126,7 @@ export class GitLabService {
       );
       return response.data;
     } catch (error) {
-      throw error;
+      console.error("Error removing webhook from gitlab project", error);
     }
   }
 
@@ -164,7 +164,7 @@ export class GitLabService {
       const response = await this.client.get("/groups?owned=true&membership=true&pages=100");
       return response.data;
     } catch (error) {
-      throw error;
+      console.error("Error removing webhook from gitlab group", error);
     }
   }
 
