@@ -3,9 +3,9 @@ import * as React from "react";
 import { BacklogGroupIcon } from "./backlog-group-icon";
 import { CancelledGroupIcon } from "./cancelled-group-icon";
 import { CompletedGroupIcon } from "./completed-group-icon";
+import { IStateGroupIcon, STATE_GROUP_COLORS } from "./helper";
 import { StartedGroupIcon } from "./started-group-icon";
 import { UnstartedGroupIcon } from "./unstarted-group-icon";
-import { IStateGroupIcon, STATE_GROUP_COLORS } from "./helper";
 
 const iconComponents = {
   backlog: BacklogGroupIcon,
@@ -21,6 +21,7 @@ export const StateGroupIcon: React.FC<IStateGroupIcon> = ({
   stateGroup,
   height = "12px",
   width = "12px",
+  percentage,
 }) => {
   const StateIconComponent = iconComponents[stateGroup] || UnstartedGroupIcon;
 
@@ -30,6 +31,7 @@ export const StateGroupIcon: React.FC<IStateGroupIcon> = ({
       width={width}
       color={color ?? STATE_GROUP_COLORS[stateGroup]}
       className={`flex-shrink-0 ${className}`}
+      percentage={percentage}
     />
   );
 };
