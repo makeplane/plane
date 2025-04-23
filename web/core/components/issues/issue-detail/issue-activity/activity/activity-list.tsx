@@ -39,7 +39,7 @@ export const IssueActivityItem: FC<TIssueActivityItem> = observer((props) => {
   // hooks
   const {
     activity: { getActivityById },
-    comment: { },
+    comment: {},
   } = useIssueDetail();
   const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
   const activityRelations = getValidKeysFromObject(ISSUE_RELATION_OPTIONS);
@@ -62,6 +62,7 @@ export const IssueActivityItem: FC<TIssueActivityItem> = observer((props) => {
       return <IssuePriorityActivity {...componentDefaultProps} showIssue={false} />;
     case "estimate_points":
     case "estimate_categories":
+    case "estimate_point" /* This case is to handle all the older recorded activities for estimates. Field changed from  "estimate_point" -> `estimate_${estimate_type}`*/:
       return <IssueEstimateActivity {...componentDefaultProps} showIssue={false} />;
     case "parent":
       return <IssueParentActivity {...componentDefaultProps} showIssue={false} />;

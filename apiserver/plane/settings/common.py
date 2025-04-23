@@ -58,7 +58,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "crum.CurrentRequestUserMiddleware",
     "django.middleware.gzip.GZipMiddleware",
-    "plane.middleware.api_log_middleware.APITokenLogMiddleware",
+    "plane.middleware.logger.APITokenLogMiddleware",
     "plane.middleware.logger.RequestLoggerMiddleware",
 ]
 

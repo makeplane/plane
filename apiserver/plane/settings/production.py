@@ -58,6 +58,11 @@ LOGGING = {
         },
     },
     "loggers": {
+        "plane.api.request": {
+            "level": "DEBUG" if DEBUG else "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
         "plane.api": {
             "level": "DEBUG" if DEBUG else "INFO",
             "handlers": ["console"],
@@ -70,6 +75,11 @@ LOGGING = {
         },
         "plane.exception": {
             "level": "DEBUG" if DEBUG else "ERROR",
+            "handlers": ["console", "file"],
+            "propagate": False,
+        },
+        "plane.external": {
+            "level": "INFO",
             "handlers": ["console"],
             "propagate": False,
         },
