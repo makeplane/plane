@@ -17,6 +17,7 @@ from plane.db.models import Workspace, Project, IssueType, ProjectIssueType, Iss
 from plane.api.serializers import IssueTypeAPISerializer, ProjectIssueTypeAPISerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
+from plane.utils.helpers import get_boolean_value
 
 
 class IssueTypeAPIEndpoint(BaseAPIView):
@@ -172,9 +173,13 @@ class IssueTypeAPIEndpoint(BaseAPIView):
         issue_type = self.get_queryset().get(pk=type_id)
         data = request.data
 
-        if issue_type.is_default and request.data.get("is_active") == False:
+        # check if the issue type is the default issue type and if the is_active field is being updated to false
+        if (
+            issue_type.is_default
+            and get_boolean_value(request.data.get("is_active")) is False
+        ):
             return Response(
-                {"error": "Default work item type cannot be inactive"},
+                {"error": "Default work item type's is_active field cannot be false"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
