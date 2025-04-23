@@ -71,6 +71,17 @@ def get_project_default_state(project_id):
 
 
 @sync_to_async
+def get_issue(issue_id):
+    try:
+        issue = Issue.objects.get(id=issue_id)
+        return issue
+    except Issue.DoesNotExist:
+        message = "Issue not found"
+        error_extensions = {"code": "NOT_FOUND", "statusCode": 404}
+        raise GraphQLError(message, extensions=error_extensions)
+
+
+@sync_to_async
 def validate_workflow_state_issue_create(user_id, slug, project_id, state_id):
     workflow_manager = WorkflowStateManager(
         user_id=user_id, slug=slug, project_id=project_id
@@ -353,7 +364,8 @@ class IssueMutationV2:
         }
 
         # get the issue
-        issue = await sync_to_async(Issue.objects.get)(id=id)
+        issue = await get_issue(issue_id=id)
+        issue_id = str(issue.id)
 
         # get the current state id
         current_state_id = str(issue.state_id)
@@ -362,19 +374,25 @@ class IssueMutationV2:
         current_issue_activity = await convert_issue_properties_to_activity_dict(issue)
 
         # activity tacking data
+        current_activity_payload = {}
         activity_payload = {}
 
         if "name" in provided_fields and issue_input.name is not None:
             issue.name = provided_fields["name"]
             activity_payload["name"] = provided_fields["name"]
+            current_activity_payload["name"] = current_issue_activity["name"]
 
-        if "description_html" in provided_fields:
-            issue.description_html = provided_fields["description_html"]
-            activity_payload["description_html"] = provided_fields["description_html"]
+        if "descriptionHtml" in provided_fields:
+            issue.description_html = provided_fields["descriptionHtml"]
+            activity_payload["description_html"] = provided_fields["descriptionHtml"]
+            current_activity_payload["description_html"] = current_issue_activity[
+                "description_html"
+            ]
 
         if "priority" in provided_fields:
             issue.priority = provided_fields["priority"]
             activity_payload["priority"] = provided_fields["priority"]
+            current_activity_payload["priority"] = current_issue_activity["priority"]
 
         if "startDate" in provided_fields:
             if issue_input.start_date is not None:
@@ -382,30 +400,48 @@ class IssueMutationV2:
                 activity_payload["start_date"] = issue_input.start_date.strftime(
                     "%Y-%m-%d"
                 )
+                current_activity_payload["start_date"] = current_issue_activity[
+                    "start_date"
+                ]
             else:
                 issue.start_date = None
                 activity_payload["start_date"] = None
+                current_activity_payload["start_date"] = current_issue_activity[
+                    "start_date"
+                ]
+
         if "targetDate" in provided_fields:
             if issue_input.target_date is not None:
                 issue.target_date = issue_input.target_date
                 activity_payload["target_date"] = issue_input.target_date.strftime(
                     "%Y-%m-%d"
                 )
+                current_activity_payload["target_date"] = current_issue_activity[
+                    "target_date"
+                ]
             else:
                 issue.target_date = None
                 activity_payload["target_date"] = None
+                current_activity_payload["target_date"] = current_issue_activity[
+                    "target_date"
+                ]
 
         if "state" in provided_fields:
             issue.state_id = provided_fields["state"]
             activity_payload["state_id"] = provided_fields["state"]
+            current_activity_payload["state_id"] = current_issue_activity["state_id"]
 
         if "parent" in provided_fields:
             issue.parent_id = provided_fields["parent"]
             activity_payload["parent_id"] = provided_fields["parent"]
+            current_activity_payload["parent_id"] = current_issue_activity["parent_id"]
 
         if "estimate_point" in provided_fields:
             issue.estimate_point_id = provided_fields["estimate_point"]
             activity_payload["estimate_point"] = provided_fields["estimate_point"]
+            current_activity_payload["estimate_point"] = current_issue_activity[
+                "estimate_point"
+            ]
 
         # validate the workflow if the project has workflows enabled
         state_id = provided_fields["state"] if "state" in provided_fields else None
@@ -427,14 +463,20 @@ class IssueMutationV2:
 
         # updating the issue
         await sync_to_async(issue.save)()
-        issue_id = str(issue.id)
 
         # creating or updating the assignees
         assignees = (
             provided_fields["assignees"] if "assignees" in provided_fields else None
         )
-        if assignees:
-            await sync_to_async(IssueAssignee.objects.filter(issue=issue).delete)()
+        if assignees is not None:
+            current_activity_payload["assignee_ids"] = current_issue_activity[
+                "assignee_ids"
+            ]
+            activity_payload["assignee_ids"] = assignees
+
+            await sync_to_async(
+                IssueAssignee.objects.filter(issue_id=issue_id).delete
+            )()
             if len(assignees) > 0:
                 await sync_to_async(IssueAssignee.objects.bulk_create)(
                     [
@@ -453,8 +495,11 @@ class IssueMutationV2:
 
         # creating or updating the labels
         labels = provided_fields["labels"] if "labels" in provided_fields else None
-        if labels:
-            await sync_to_async(IssueLabel.objects.filter(issue=issue).delete)()
+        if labels is not None:
+            current_activity_payload["label_ids"] = current_issue_activity["label_ids"]
+            activity_payload["label_ids"] = labels
+
+            await sync_to_async(IssueLabel.objects.filter(issue_id=issue_id).delete)()
             if len(labels) > 0:
                 await sync_to_async(IssueLabel.objects.bulk_create)(
                     [
@@ -477,10 +522,10 @@ class IssueMutationV2:
             origin=info.context.request.META.get("HTTP_ORIGIN"),
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            project_id=str(project),
-            issue_id=str(issue.id),
-            actor_id=str(info.context.user.id),
-            current_instance=json.dumps(current_issue_activity),
+            project_id=project_id,
+            issue_id=issue_id,
+            actor_id=user_id,
+            current_instance=json.dumps(current_activity_payload),
             requested_data=json.dumps(activity_payload),
         )
 
