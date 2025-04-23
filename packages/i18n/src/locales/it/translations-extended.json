@@ -405,6 +405,7 @@
       },
       "applications": {
         "title": "Applicazioni",
+        "applicationId_copied": "ID applicazione copiato negli appunti",
         "clientId_copied": "ID cliente copiato negli appunti",
         "clientSecret_copied": "Secret cliente copiato negli appunti",
         "third_party_apps": "App di terze parti",
@@ -416,6 +417,7 @@
         "client_id_and_secret": "ID e Secret Cliente",
         "client_id_and_secret_description": "Copia e salva questa chiave segreta. Non potrai più vedere questa chiave dopo aver cliccato su Chiudi.",
         "client_id_and_secret_download": "Puoi scaricare un CSV con la chiave da qui.",
+        "application_id": "ID Applicazione",
         "client_id": "ID Cliente",
         "client_secret": "Secret Cliente",
         "export_as_csv": "Esporta come CSV",

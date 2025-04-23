@@ -408,6 +408,7 @@
       },
       "applications": {
         "title": "Додатки",
+        "applicationId_copied": "ID додатку скопійовано в буфер обміну",
         "clientId_copied": "ID клієнта скопійовано в буфер обміну",
         "clientSecret_copied": "Секрет клієнта скопійовано в буфер обміну",
         "third_party_apps": "Сторонні додатки",
@@ -419,6 +420,7 @@
         "client_id_and_secret": "ID та Секрет Клієнта",
         "client_id_and_secret_description": "Скопіюйте та збережіть цей секретний ключ. Ви не зможете побачити цей ключ після натискання Закрити.",
         "client_id_and_secret_download": "Ви можете завантажити CSV з ключем звідси.",
+        "application_id": "ID Додатку",
         "client_id": "ID Клієнта",
         "client_secret": "Секрет Клієнта",
         "export_as_csv": "Експорт у CSV",

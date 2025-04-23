@@ -402,6 +402,7 @@
       },
       "applications": {
         "title": "Приложения",
+        "applicationId_copied": "ID приложения скопирован в буфер обмена",
         "clientId_copied": "ID клиента скопирован в буфер обмена",
         "clientSecret_copied": "Секрет клиента скопирован в буфер обмена",
         "third_party_apps": "Сторонние приложения",
@@ -413,6 +414,7 @@
         "client_id_and_secret": "ID и Секрет Клиента",
         "client_id_and_secret_description": "Скопируйте и сохраните этот секретный ключ. Вы не сможете увидеть этот ключ после нажатия Закрыть.",
         "client_id_and_secret_download": "Вы можете скачать CSV с ключом отсюда.",
+        "application_id": "ID Приложения",
         "client_id": "ID Клиента",
         "client_secret": "Секрет Клиента",
         "export_as_csv": "Экспорт в CSV",

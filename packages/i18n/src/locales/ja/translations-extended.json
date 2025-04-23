@@ -407,6 +407,7 @@
       },
       "applications": {
         "title": "アプリケーション",
+        "applicationId_copied": "アプリケーションIDをクリップボードにコピーしました",
         "clientId_copied": "クライアントIDをクリップボードにコピーしました",
         "clientSecret_copied": "クライアントシークレットをクリップボードにコピーしました",
         "third_party_apps": "サードパーティアプリ",
@@ -418,6 +419,7 @@
         "client_id_and_secret": "クライアントIDとシークレット",
         "client_id_and_secret_description": "このシークレットキーをコピーして保存してください。閉じた後はこのキーを見ることができません。",
         "client_id_and_secret_download": "ここからキーをCSVでダウンロードできます。",
+        "application_id": "アプリケーションID",
         "client_id": "クライアントID",
         "client_secret": "クライアントシークレット",
         "export_as_csv": "CSVとしてエクスポート",

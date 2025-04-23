@@ -407,6 +407,7 @@
       },
       "applications": {
         "title": "Applications",
+        "applicationId_copied": "ID application copié dans le presse-papiers",
         "clientId_copied": "ID client copié dans le presse-papiers",
         "clientSecret_copied": "Secret client copié dans le presse-papiers",
         "third_party_apps": "Applications tierces",
@@ -418,6 +419,7 @@
         "client_id_and_secret": "ID Client et Secret",
         "client_id_and_secret_description": "Copiez et sauvegardez cette clé secrète. Vous ne pourrez plus voir cette clé après avoir cliqué sur Fermer.",
         "client_id_and_secret_download": "Vous pouvez télécharger un CSV avec la clé ici.",
+        "application_id": "ID Application",
         "client_id": "ID Client",
         "client_secret": "Secret Client",
         "export_as_csv": "Exporter en CSV",

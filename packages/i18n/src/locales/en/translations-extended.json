@@ -415,6 +415,7 @@
       },
       "applications": {
         "title": "Applications",
+        "applicationId_copied": "Application ID copied to clipboard",
         "clientId_copied": "Client ID copied to clipboard",
         "clientSecret_copied": "Client Secret copied to clipboard",
         "third_party_apps": "Third-party apps",
@@ -426,6 +427,7 @@
         "client_id_and_secret": "Client ID and Secret",
         "client_id_and_secret_description": "Copy and save this secret key in Pages. You can’t see this key again after you hit Close.",
         "client_id_and_secret_download": "You can download a CSV with the key from here.",
+        "application_id": "Application ID",
         "client_id": "Client ID",
         "client_secret": "Client Secret",
         "export_as_csv": "Export as CSV",

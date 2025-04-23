@@ -408,6 +408,7 @@
       },
       "applications": {
         "title": "Anwendungen",
+        "applicationId_copied": "Anwendungs-ID in die Zwischenablage kopiert",
         "clientId_copied": "Client-ID in die Zwischenablage kopiert",
         "clientSecret_copied": "Client-Secret in die Zwischenablage kopiert",
         "third_party_apps": "Drittanbieter-Apps",
@@ -419,6 +420,7 @@
         "client_id_and_secret": "Client-ID und Secret",
         "client_id_and_secret_description": "Kopieren und speichern Sie diesen geheimen Schlüssel. Sie können diesen Schlüssel nach dem Schließen nicht mehr sehen.",
         "client_id_and_secret_download": "Sie können eine CSV-Datei mit dem Schlüssel von hier herunterladen.",
+        "application_id": "Anwendungs-ID",
         "client_id": "Client-ID",
         "client_secret": "Client-Secret",
         "export_as_csv": "Als CSV exportieren",

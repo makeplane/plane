@@ -408,6 +408,7 @@
       },
       "applications": {
         "title": "應用程式",
+        "applicationId_copied": "應用程式ID已複製到剪貼簿",
         "clientId_copied": "客戶端ID已複製到剪貼簿",
         "clientSecret_copied": "客戶端密鑰已複製到剪貼簿",
         "third_party_apps": "第三方應用",
@@ -419,6 +420,7 @@
         "client_id_and_secret": "客戶端ID和密鑰",
         "client_id_and_secret_description": "複製並保存此密鑰。關閉後您將無法再次查看此密鑰。",
         "client_id_and_secret_download": "您可以從這裡下載包含密鑰的CSV檔案。",
+        "application_id": "應用程式ID",
         "client_id": "客戶端ID",
         "client_secret": "客戶端密鑰",
         "export_as_csv": "匯出為CSV",

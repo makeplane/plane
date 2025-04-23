@@ -426,6 +426,7 @@
       },
       "applications": {
         "title": "Aplikasyonlar",
+        "applicationId_copied": "Aplikasyon ID panoya kopyalandı",
         "clientId_copied": "Klayınt ID panoya kopyalandı",
         "clientSecret_copied": "Klayınt Sikrıt panoya kopyalandı",
         "third_party_apps": "Üçüncü parti aplikasyonlar",
@@ -437,6 +438,7 @@
         "client_id_and_secret": "Klayınt ID ve Sikrıt",
         "client_id_and_secret_description": "Bu sikrıt anahtarı Peycislere kopyalayıp kaydedin. Kapat'a bastıktan sonra bu anahtarı tekrar göremezsiniz.",
         "client_id_and_secret_download": "Anahtarı buradan CSV olarak indirebilirsiniz.",
+        "application_id": "Aplikasyon ID",
         "client_id": "Klayınt ID",
         "client_secret": "Klayınt Sikrıt",
         "export_as_csv": "CSV olarak dışa aktar",

@@ -9,7 +9,8 @@ import {
 // service types
 export type ClientOptions = {
   baseURL: string;
-  apiToken: string;
+  apiToken?: string;
+  bearerToken?: string;
 };
 
 /* ----------------- utility --------------------- */

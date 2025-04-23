@@ -407,6 +407,7 @@
       },
       "applications": {
         "title": "Aplicaciones",
+        "applicationId_copied": "ID de aplicación copiado al portapapeles",
         "clientId_copied": "ID de cliente copiado al portapapeles",
         "clientSecret_copied": "Secreto de cliente copiado al portapapeles",
         "third_party_apps": "Aplicaciones de terceros",
@@ -418,6 +419,7 @@
         "client_id_and_secret": "ID y Secreto de Cliente",
         "client_id_and_secret_description": "Copia y guarda esta clave secreta. No podrás ver esta clave después de hacer clic en Cerrar.",
         "client_id_and_secret_download": "Puedes descargar un CSV con la clave desde aquí.",
+        "application_id": "ID de Aplicación",
         "client_id": "ID de Cliente",
         "client_secret": "Secreto de Cliente",
         "export_as_csv": "Exportar como CSV",

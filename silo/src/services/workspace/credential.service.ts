@@ -1,15 +1,16 @@
 import { TWorkspaceCredential, TWorkspaceCredentialVerification } from "@plane/types";
+import { removeUndefinedFromObject } from "@/helpers/generic-helpers";
+import { logger } from "@/logger";
 import { APIService } from "@/services/api.service";
 // types
 import { ClientOptions } from "@/types";
-import { logger } from "@/logger";
-
 export class WorkspaceCredentialAPIService extends APIService {
   constructor(options: ClientOptions) {
     super(options);
   }
 
   async createWorkspaceCredential(data: Partial<TWorkspaceCredential>): Promise<TWorkspaceCredential> {
+    data = removeUndefinedFromObject(data);
     return this.post(`/api/v1/workspace-credentials/`, data)
       .then((response) => response.data)
       .catch((error) => {
@@ -22,6 +23,7 @@ export class WorkspaceCredentialAPIService extends APIService {
     credentialId: string,
     data: Partial<TWorkspaceCredential>
   ): Promise<TWorkspaceCredential> {
+    data = removeUndefinedFromObject(data);
     return this.patch(`/api/v1/workspace-credentials/${credentialId}/`, data)
       .then((response) => response.data)
       .catch((error) => {
@@ -42,6 +44,7 @@ export class WorkspaceCredentialAPIService extends APIService {
   async listWorkspaceCredentials(
     params?: Partial<Record<keyof TWorkspaceCredential, string>>
   ): Promise<TWorkspaceCredential[]> {
+    params = removeUndefinedFromObject(params);
     return this.get(`/api/v1/workspace-credentials/`, { params: params })
       .then((response) => response.data)
       .catch((error) => {

@@ -1,15 +1,16 @@
 import { TWorkspaceConnection, TWorkspaceUserConnection } from "@plane/types";
+import { removeUndefinedFromObject } from "@/helpers/generic-helpers";
+import { logger } from "@/logger";
 import { APIService } from "@/services/api.service";
 // types
 import { ClientOptions } from "@/types";
-import { logger } from "@/logger";
-
 export class WorkspaceConnectionAPIService extends APIService {
     constructor(options: ClientOptions) {
         super(options);
     }
 
     async createWorkspaceConnection(data: Partial<TWorkspaceConnection>): Promise<TWorkspaceConnection> {
+        data = removeUndefinedFromObject(data);
         return this.post(`/api/v1/workspace-connections/`, data)
             .then((response) => response.data)
             .catch((error) => {
@@ -19,6 +20,7 @@ export class WorkspaceConnectionAPIService extends APIService {
     }
 
     async updateWorkspaceConnection(connectionId: string, data: Partial<TWorkspaceConnection>): Promise<TWorkspaceConnection> {
+        data = removeUndefinedFromObject(data);
         return this.patch(`/api/v1/workspace-connections/${connectionId}/`, data)
             .then((response) => response.data)
             .catch((error) => {
@@ -46,6 +48,7 @@ export class WorkspaceConnectionAPIService extends APIService {
     }
 
     async listWorkspaceConnections(params?: Partial<Record<keyof TWorkspaceConnection, string>>): Promise<TWorkspaceConnection[]> {
+        params = removeUndefinedFromObject(params);
         return this.get(`/api/v1/workspace-connections/`, { params: params })
             .then((response) => response.data)
             .catch((error) => {

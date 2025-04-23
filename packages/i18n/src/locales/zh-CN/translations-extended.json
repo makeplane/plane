@@ -407,6 +407,7 @@
       },
       "applications": {
         "title": "应用程序",
+        "applicationId_copied": "应用ID已复制到剪贴板",
         "clientId_copied": "客户端ID已复制到剪贴板",
         "clientSecret_copied": "客户端密钥已复制到剪贴板",
         "third_party_apps": "第三方应用",
@@ -418,6 +419,7 @@
         "client_id_and_secret": "客户端ID和密钥",
         "client_id_and_secret_description": "复制并保存此密钥。关闭后您将无法再次查看此密钥。",
         "client_id_and_secret_download": "您可以从这里下载包含密钥的CSV文件。",
+        "application_id": "应用ID",
         "client_id": "客户端ID",
         "client_secret": "客户端密钥",
         "export_as_csv": "导出为CSV",

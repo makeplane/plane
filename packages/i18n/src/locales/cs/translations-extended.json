@@ -408,6 +408,7 @@
       },
       "applications": {
         "title": "Aplikace",
+        "applicationId_copied": "ID aplikace zkopírováno do schránky",
         "clientId_copied": "ID klienta zkopírováno do schránky",
         "clientSecret_copied": "Tajemství klienta zkopírováno do schránky",
         "third_party_apps": "Aplikace třetích stran",
@@ -419,6 +420,7 @@
         "client_id_and_secret": "ID a Tajemství Klienta",
         "client_id_and_secret_description": "Zkopírujte a uložte tento tajný klíč. Po kliknutí na Zavřít tento klíč již neuvidíte.",
         "client_id_and_secret_download": "Můžete si stáhnout CSV s klíčem odsud.",
+        "application_id": "ID Aplikace",
         "client_id": "ID Klienta",
         "client_secret": "Tajemství Klienta",
         "export_as_csv": "Exportovat jako CSV",
