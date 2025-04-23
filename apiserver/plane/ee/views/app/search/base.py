@@ -335,6 +335,7 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
 
         # Add search objects from filter_ methods to MultiSearch
         ms = ms.add(self.filter_issues(query, slug))
+        ms = ms.add(self.filter_epics(query, slug))
         ms = ms.add(self.filter_projects(query, slug))
         ms = ms.add(self.filter_cycles(query, slug))
         ms = ms.add(self.filter_modules(query, slug))
