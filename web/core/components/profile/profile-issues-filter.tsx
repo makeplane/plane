@@ -95,7 +95,7 @@ export const ProfileIssuesFilter = observer(() => {
         workspaceSlug.toString(),
         undefined,
         EIssueFilterType.DISPLAY_PROPERTIES,
-        property,
+        property as IIssueDisplayProperties,
         userId.toString()
       );
     },

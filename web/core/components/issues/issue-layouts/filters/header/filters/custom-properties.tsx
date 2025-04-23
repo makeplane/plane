@@ -29,8 +29,7 @@ type Props = {
 
 export const FilterCustomProperty: React.FC<Props> = observer((props) => {
   const { t } = useTranslation();
-  const { routerWorkspaceSlug } = useParams();
-  const workspaceSlug = routerWorkspaceSlug?.toString();
+  const { workspaceSlug } = useParams();
   const workspaceService = new WorkspaceService(API_BASE_URL);
   const { appliedFilters, handleUpdate, searchQuery } = props;
 
@@ -50,7 +49,7 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
         key: groupKey || '',
       };
 
-      const data = await workspaceService.getIssuesCustomProperties(workspaceSlug, params) as any;
+      const data = await workspaceService.getIssuesCustomProperties(workspaceSlug?.toString(), params) as any;
 
       // If no specific section, initialize all sections
       if (!groupKey) {

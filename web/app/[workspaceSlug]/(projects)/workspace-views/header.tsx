@@ -88,7 +88,7 @@ export const GlobalIssuesHeader = observer(() => {
         workspaceSlug.toString(),
         undefined,
         EIssueFilterType.DISPLAY_PROPERTIES,
-        property,
+        property as IIssueDisplayProperties,
         globalViewId.toString()
       );
     },

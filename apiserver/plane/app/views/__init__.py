@@ -178,6 +178,10 @@ from .issue.subscriber import (
     IssueSubscriberViewSet,
 )
 
+from .issue.custom_property import (
+    IssueCustomPropertyUpdateAPIView,
+)
+
 from .module.base import (
     ModuleViewSet,
     ModuleLinkViewSet,

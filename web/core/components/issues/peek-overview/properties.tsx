@@ -61,7 +61,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const createdByDetails = getUserDetails(issue?.created_by);
   const projectDetails = getProjectById(issue.project_id);
   const customProperties = issue?.custom_properties || [];
-  const issue_type_id = issue?.type_id || "afd30f86-5ae5-428c-aa3a-e633ea973740";
+  const issue_type_id = issue?.type_id || "";
   const isEstimateEnabled = projectDetails?.estimate;
   const stateDetails = getStateById(issue.state_id);
   const minDate = getDate(issue.start_date);
@@ -74,14 +74,13 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
     try {
       const updateRequests = updatedProperties.map((property) => {
         const customPropertyId = property?.id || "";
-        const apiUrl = `/api/v1/workspaces/${workspaceSlug}/issues/${issueId}/custom-properties/`;
+        const apiUrl = `/api/workspaces/${workspaceSlug}/issues/${issueId}/custom-properties/`;
         if (customPropertyId) {
           return axios.patch(
             `${apiUrl}${customPropertyId}/`, 
             { value: property.value },
             {
               headers: {
-                'x-api-key': 'TEST_API_TOKEN',
                 'Content-Type': 'application/json'
               }
             }

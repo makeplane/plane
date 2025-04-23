@@ -91,7 +91,7 @@ export const ProjectIssuesMobileHeader = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property as IIssueDisplayProperties);
     },
     [workspaceSlug, projectId, updateFilters]
   );

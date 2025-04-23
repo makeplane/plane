@@ -18,6 +18,7 @@ from django.db.models import (
     Subquery,
     Case,
     When,
+    JSONField
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -270,6 +271,22 @@ class IssueViewSet(BaseViewSet):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
+            )
+            .annotate(
+                custom_propertiess=Coalesce(
+                    ArrayAgg(
+                        Func(
+                            F('custom_properties__key'),
+                            F('custom_properties__value'),
+                            function="jsonb_build_object",
+                            template="%(function)s(%(expressions)s)",
+                            output_field=JSONField()  # Specify output field type
+                        ),
+                        distinct=True,
+                        filter=Q(custom_properties__key__isnull=False)
+                    ),
+                    Value([], output_field=ArrayField(JSONField()))
+                )
             )
             .filter(
                 *[

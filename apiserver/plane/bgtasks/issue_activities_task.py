@@ -1631,6 +1631,7 @@ def update_custom_property_activity(
         logging.getLogger("plane").error(error_msg)
         return
     custom_property_key = current_instance.get("key")
+    new_value=requested_data.get("value")
     if current_instance.get("value") != requested_data.get("value"):
         issue_activities.append(
             IssueActivity(
@@ -1638,11 +1639,11 @@ def update_custom_property_activity(
                 actor_id=actor_id,
                 verb="updated",
                 old_value=current_instance.get("value"),
-                new_value=requested_data.get("value"),
+                new_value=new_value,
                 field=f"Custom Property {custom_property_key}",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"updated the custom property ({custom_property_key}) to",
+                comment=f"updated the custom property ({custom_property_key}) to {new_value}",
                 epoch=epoch,
             )
         )
@@ -1668,17 +1669,18 @@ def create_custom_property_activity(
         logging.getLogger("plane").error(error_msg)
         return
     custom_property_key = requested_data.get("key")
+    new_value=requested_data.get("value")
     issue_activities.append(
         IssueActivity(
             issue_id=issue_id,
             actor_id=actor_id,
             verb="created",
             old_value="",
-            new_value=requested_data.get("value"),
+            new_value=new_value,
             field=f"Custom Property {custom_property_key}",
             project_id=project_id,
             workspace_id=workspace_id,
-            comment=f"added a custom property ({custom_property_key})",
+            comment=f"added a custom property ({custom_property_key}) with value {new_value}",
             epoch=epoch,
         )
     )

@@ -6,9 +6,12 @@ import { IIssueDisplayProperties, TIssue } from "@plane/types";
 // constants
 import { SPREADSHEET_PROPERTY_DETAILS } from "@/constants/spreadsheet";
 // hooks
-import { useEventTracker } from "@/hooks/store";
+import { useEventTracker, useUserPermissions } from "@/hooks/store";
 // components
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+import { useParams } from "next/navigation";
+import { Tags } from "lucide-react";
+import { SpreadsheetCustomPropertiesColumn } from "@/components/issues/issue-layouts/spreadsheet";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -25,10 +28,32 @@ export const IssueColumn = observer((props: Props) => {
   const pathname = usePathname();
   const tableCellRef = useRef<HTMLTableCellElement | null>(null);
   const { captureIssueEvent } = useEventTracker();
+  const { workspaceSlug } = useParams();
+  const { workspaceUserInfo } = useUserPermissions();
 
   const shouldRenderProperty = property === "estimate" ? isEstimateEnabled : true;
 
-  const { Column } = SPREADSHEET_PROPERTY_DETAILS[property];
+  const combinedPropertyDetails = {
+    ...SPREADSHEET_PROPERTY_DETAILS
+  };
+  
+  const customPropertiesForSpreadsheet = Object.keys(
+    workspaceUserInfo[workspaceSlug?.toString()]?.default_props?.display_properties?.custom_properties || {}
+  );
+  
+  customPropertiesForSpreadsheet.forEach((propertyName) => {
+    combinedPropertyDetails[propertyName] = {
+      title: propertyName,
+      ascendingOrderKey: propertyName,
+      ascendingOrderTitle: "A",
+      descendingOrderKey: `-${propertyName}`,
+      descendingOrderTitle: "Z",
+      icon: Tags,
+      Column: SpreadsheetCustomPropertiesColumn,
+    };
+  });
+
+  const { Column } = combinedPropertyDetails[property];
 
   return (
     <WithDisplayPropertiesHOC
@@ -43,7 +68,7 @@ export const IssueColumn = observer((props: Props) => {
       >
         <Column
           issue={issueDetail}
-          property={property}
+          property={property as string}
           onChange={(issue: TIssue, data: Partial<TIssue>, updates: any) =>
             updateIssue &&
             updateIssue(issue.project_id, issue.id, data).then(() => {
