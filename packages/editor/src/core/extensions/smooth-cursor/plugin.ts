@@ -1,46 +1,102 @@
-import { type Selection, Plugin, PluginKey, TextSelection } from "@tiptap/pm/state";
+import { type Selection, Plugin, PluginKey, TextSelection, Transaction } from "@tiptap/pm/state";
 import { type EditorView, Decoration, DecorationSet } from "@tiptap/pm/view";
 import { codeMarkPluginKey } from "@/extensions/code-mark/utils";
 
 export const PROSEMIRROR_SMOOTH_CURSOR_CLASS = "prosemirror-smooth-cursor";
 const BLINK_DELAY = 750;
+const FAST_TYPING_THRESHOLD = 70;
 
 export function smoothCursorPlugin({ isEditable = true } = {}): Plugin {
-  let smoothCursor: HTMLElement | null = typeof document === "undefined" ? null : document.createElement("div");
-  let rafId: number | undefined;
+  // Create cursor element only once
+  const smoothCursor: HTMLElement | null = typeof document === "undefined" ? null : document.createElement("div");
   let blinkTimeoutId: number | undefined;
+  let rafId: number | undefined;
   let isEditorFocused = false;
   let lastCursorPosition = { x: 0, y: 0 };
+  let lastDocContentSize = 0;
+  let lastFewTypingSpeeds: number[] = [];
+  let lastTypeTime = 0;
 
-  function isCodemarkCursorActive(view: EditorView) {
-    const codemarkState = codeMarkPluginKey.getState(view.state);
-    return codemarkState?.active === true;
+  // Initialize cursor
+  if (smoothCursor) {
+    smoothCursor.className = PROSEMIRROR_SMOOTH_CURSOR_CLASS;
+    smoothCursor.style.display = "none";
   }
 
-  function updateCursor(view?: EditorView, cursor?: HTMLElement) {
+  // Detect if the transaction involves content changes (typing)
+  function isTypingContentChange(tr: Transaction | null | undefined): boolean {
+    if (!tr) return false;
+    return tr.docChanged;
+  }
+
+  // Track typing speed for animation control
+  function trackTypingSpeed(): boolean {
+    const now = performance.now();
+    const timeSinceLastType = now - lastTypeTime;
+
+    if (lastTypeTime > 0 && timeSinceLastType < 1000) {
+      // Keep a rolling window of the last few typing speeds
+      lastFewTypingSpeeds.push(timeSinceLastType);
+      if (lastFewTypingSpeeds.length > 5) {
+        lastFewTypingSpeeds.shift();
+      }
+    }
+
+    lastTypeTime = now;
+
+    // Get average of recent typing speeds
+    const avgTypingSpeed =
+      lastFewTypingSpeeds.length > 0
+        ? lastFewTypingSpeeds.reduce((sum, speed) => sum + speed, 0) / lastFewTypingSpeeds.length
+        : 1000;
+
+    return avgTypingSpeed < FAST_TYPING_THRESHOLD;
+  }
+
+  function updateCursor(view?: EditorView, cursor?: HTMLElement, tr?: Transaction | null) {
     if (!view || !view.dom || view.isDestroyed || !cursor) return;
+
+    // Clear any pending animation frames
+    if (rafId !== undefined) {
+      cancelAnimationFrame(rafId);
+    }
+
+    // Hide cursor if editor is not focused
+    if (!isEditorFocused) {
+      cursor.style.display = "none";
+      return;
+    }
 
     const { state } = view;
     const { selection } = state;
+    const currentDocSize = state.doc.content.size;
+    const isTyping = isTypingContentChange(tr) || currentDocSize !== lastDocContentSize;
+    const isCodeActive = codeMarkPluginKey.getState(state)?.active === true;
 
-    // Hide cursor if not a text selection or not empty
-    if (!isTextSelection(selection) || !selection.empty) {
+    // Update content size tracker
+    lastDocContentSize = currentDocSize;
+
+    // Track typing speed when content changes
+    const isTypingFast = isTyping ? trackTypingSpeed() : false;
+
+    // Clear typing speed history after a pause in typing
+    if (!isTyping && lastFewTypingSpeeds.length > 0 && performance.now() - lastTypeTime > 500) {
+      lastFewTypingSpeeds = [];
+    }
+
+    // Hide cursor in certain conditions
+    if (!isTextSelection(selection) || !selection.empty || isCodeActive) {
       cursor.style.display = "none";
       return;
     }
-
-    if (!isEditorFocused || isCodemarkCursorActive(view)) {
-      cursor.style.display = "none";
-      return;
-    }
-
-    cursor.style.display = "block";
 
     const cursorRect = getCursorRect(view, selection.$head === selection.$from);
-    if (!cursorRect) return cursor;
+    if (!cursorRect) {
+      cursor.style.display = "none";
+      return;
+    }
 
     const editorRect = view.dom.getBoundingClientRect();
-    const className = PROSEMIRROR_SMOOTH_CURSOR_CLASS;
 
     // Calculate the exact position
     const x = cursorRect.left - editorRect.left;
@@ -49,7 +105,7 @@ export function smoothCursorPlugin({ isEditable = true } = {}): Plugin {
     // Check if cursor position has changed
     if (x !== lastCursorPosition.x || y !== lastCursorPosition.y) {
       lastCursorPosition = { x, y };
-      cursor.classList.remove(`${className}--blinking`);
+      cursor.classList.remove(`${PROSEMIRROR_SMOOTH_CURSOR_CLASS}--blinking`);
 
       // Clear existing timeout
       if (blinkTimeoutId) {
@@ -59,14 +115,23 @@ export function smoothCursorPlugin({ isEditable = true } = {}): Plugin {
       // Set new timeout for blinking
       blinkTimeoutId = window.setTimeout(() => {
         if (cursor && isEditorFocused) {
-          cursor.classList.add(`${className}--blinking`);
+          cursor.classList.add(`${PROSEMIRROR_SMOOTH_CURSOR_CLASS}--blinking`);
         }
       }, BLINK_DELAY);
     }
 
-    cursor.className = className;
+    // Make cursor visible
+    cursor.style.display = "block";
     cursor.style.height = `${cursorRect.bottom - cursorRect.top}px`;
 
+    // Control animation based on typing speed
+    if (isTypingFast) {
+      cursor.classList.add(`${PROSEMIRROR_SMOOTH_CURSOR_CLASS}--no-transition`);
+    } else {
+      cursor.classList.remove(`${PROSEMIRROR_SMOOTH_CURSOR_CLASS}--no-transition`);
+    }
+
+    // Use requestAnimationFrame for smoother performance
     rafId = requestAnimationFrame(() => {
       cursor.style.transform = `translate3d(${x}px, ${y}px, 0)`;
     });
@@ -76,13 +141,13 @@ export function smoothCursorPlugin({ isEditable = true } = {}): Plugin {
     key,
     view: (view) => {
       const doc = view.dom.ownerDocument;
-      smoothCursor = smoothCursor || document.createElement("div");
-      const cursor = smoothCursor;
+      if (!smoothCursor) return { update: () => {}, destroy: () => {} };
 
+      const cursor = smoothCursor;
+      lastDocContentSize = view.state.doc.content.size;
+
+      // Define update handler
       const update = () => {
-        if (rafId !== undefined) {
-          cancelAnimationFrame(rafId);
-        }
         updateCursor(view, cursor);
       };
 
@@ -93,35 +158,59 @@ export function smoothCursorPlugin({ isEditable = true } = {}): Plugin {
 
       const handleBlur = () => {
         isEditorFocused = false;
+        cursor.style.display = "none";
+        cursor.classList.remove(`${PROSEMIRROR_SMOOTH_CURSOR_CLASS}--blinking`);
+
         if (blinkTimeoutId) {
           window.clearTimeout(blinkTimeoutId);
         }
-        cursor.classList.remove(`${PROSEMIRROR_SMOOTH_CURSOR_CLASS}--blinking`);
-        update();
       };
 
+      // Set up resize observer
       let observer: ResizeObserver | undefined;
       if (window.ResizeObserver) {
         observer = new window.ResizeObserver(update);
         observer?.observe(view.dom);
       }
 
+      // Add document click handler to ensure cursor is hidden when clicking outside
+      const handleDocumentClick = (e: MouseEvent) => {
+        if (!view.dom.contains(e.target as Node)) {
+          cursor.style.display = "none";
+        }
+      };
+
+      // Set up event listeners
       doc.addEventListener("selectionchange", update);
       view.dom.addEventListener("focus", handleFocus);
       view.dom.addEventListener("blur", handleBlur);
+      doc.addEventListener("mousedown", handleDocumentClick);
 
       return {
-        update,
+        update: (updatedView, prevState) => {
+          const tr = updatedView.state.tr.scrollIntoView();
+          const hasDocChanged = prevState && updatedView.state.doc !== prevState.doc;
+          updateCursor(updatedView, cursor, hasDocChanged ? tr : null);
+        },
         destroy: () => {
           doc.removeEventListener("selectionchange", update);
           view.dom.removeEventListener("focus", handleFocus);
           view.dom.removeEventListener("blur", handleBlur);
+          doc.removeEventListener("mousedown", handleDocumentClick);
+
           observer?.unobserve(view.dom);
+
           if (rafId !== undefined) {
             cancelAnimationFrame(rafId);
           }
+
           if (blinkTimeoutId) {
             window.clearTimeout(blinkTimeoutId);
+          }
+
+          // Hide cursor
+          if (cursor) {
+            cursor.style.display = "none";
           }
         },
       };
@@ -135,7 +224,6 @@ export function smoothCursorPlugin({ isEditable = true } = {}): Plugin {
           }),
         ]);
       },
-
       attributes: () => ({
         class: isEditorFocused ? "smooth-cursor-enabled" : "",
       }),
@@ -157,7 +245,7 @@ function getCursorRect(
 
   range.collapse(toStart);
   const rects = range.getClientRects();
-  const rect = rects?.length ? rects[rects.length - 1] : null;
+  const rect = rects?.length ? rects[0] : null; // using first rect for better performance
   if (rect?.height) return rect;
 
   return view.coordsAtPos(view.state.selection.head);

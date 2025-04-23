@@ -531,6 +531,10 @@ p.editor-paragraph-block + p.editor-paragraph-block {
   z-index: 1000;
 }
 
+.prosemirror-smooth-cursor--no-transition {
+  transition: none !important;
+}
+
 .prosemirror-smooth-cursor--blinking {
   animation: blink 1s step-end infinite;
 }

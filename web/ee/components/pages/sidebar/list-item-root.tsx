@@ -236,7 +236,8 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
         onDrop: () => {
           setIsDragging(false);
         },
-        canDrag: () => page.canCurrentUserEditPage && page.isContentEditable,
+        canDrag: () =>
+          page.canCurrentUserEditPage && page.isContentEditable && isNestedPagesEnabled(workspaceSlug.toString()),
       }),
       dropTargetForElements({
         element,
@@ -265,7 +266,13 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
           droppedPageDetails.update({ parent_id: page.id });
         },
         canDrop: ({ source }) => {
-          if (!page.canCurrentUserEditPage || !page.isContentEditable) return false;
+          if (
+            !page.canCurrentUserEditPage ||
+            !page.isContentEditable ||
+            !isNestedPagesEnabled(workspaceSlug.toString())
+          ) {
+            return false;
+          }
           const { id: droppedPageId, parentId: droppedPageParentId } = source.data as TPageDragPayload;
           if (!droppedPageId) return false;
           const isSamePage = droppedPageId === page.id;
@@ -276,7 +283,17 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
         },
       })
     );
-  }, [expandedPageIds, getPageById, isDragging, localIsExpanded, page, pageId, setExpandedPageIds]);
+  }, [
+    expandedPageIds,
+    getPageById,
+    isDragging,
+    localIsExpanded,
+    page,
+    pageId,
+    setExpandedPageIds,
+    isNestedPagesEnabled,
+    workspaceSlug,
+  ]);
 
   if (!page) return null;
   if (page.archived_at && sectionType !== "archived") return null;

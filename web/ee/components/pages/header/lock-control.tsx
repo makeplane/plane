@@ -28,10 +28,20 @@ export const PageLockControl = observer(({ page, storeType }: Props) => {
   const [showLockOptions, setShowLockOptions] = useState(false);
   // Hover state for the locked button
   const [isHoveringLocked, setIsHoveringLocked] = useState(false);
+  // State to track if lock animation is in progress
+  const [isAnimatingLock, setIsAnimatingLock] = useState(false);
+  // Track mouse left and came back after locking
+  const [mouseReEntered, setMouseReEntered] = useState(false);
+  // Track if we just locked the page (for animations)
+  const [justLocked, setJustLocked] = useState(false);
   // derived values
   const { canCurrentUserLockPage, is_locked } = page;
   // Ref for the transition timer
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Animation timer ref
+  const animationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Just locked timer ref
+  const justLockedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Ref to store the previous value of isLocked for detecting transitions
   const prevLockedRef = useRef(is_locked);
   // Lock options ref to detect outside clicks (Restored)
@@ -50,6 +60,8 @@ export const PageLockControl = observer(({ page, storeType }: Props) => {
   useEffect(
     () => () => {
       if (timerRef.current) clearTimeout(timerRef.current);
+      if (animationTimerRef.current) clearTimeout(animationTimerRef.current);
+      if (justLockedTimerRef.current) clearTimeout(justLockedTimerRef.current);
     },
     []
   );
@@ -76,8 +88,34 @@ export const PageLockControl = observer(({ page, storeType }: Props) => {
       timerRef.current = null;
     }
 
+    if (animationTimerRef.current) {
+      clearTimeout(animationTimerRef.current);
+      animationTimerRef.current = null;
+    }
+
+    if (justLockedTimerRef.current) {
+      clearTimeout(justLockedTimerRef.current);
+      justLockedTimerRef.current = null;
+    }
+
+    if (is_locked && !prevLockedRef.current) {
+      // Just changed from unlocked to locked
+      setJustLocked(true);
+      justLockedTimerRef.current = setTimeout(() => {
+        setJustLocked(false);
+        justLockedTimerRef.current = null;
+      }, 1000); // Animation duration plus some buffer
+    }
+
     if (is_locked) {
       setDisplayState("locked");
+      setIsAnimatingLock(true);
+      setMouseReEntered(false);
+      // Animation duration for lock icon is typically 300-500ms
+      animationTimerRef.current = setTimeout(() => {
+        setIsAnimatingLock(false);
+        animationTimerRef.current = null;
+      }, 600);
     } else if (prevLockedRef.current === true) {
       setDisplayState("unlocked");
       timerRef.current = setTimeout(() => {
@@ -108,15 +146,31 @@ export const PageLockControl = observer(({ page, storeType }: Props) => {
     [toggleLock]
   );
 
+  const handleMouseEnter = useCallback(() => {
+    setIsHoveringLocked(true);
+    if (!isAnimatingLock) {
+      setMouseReEntered(true);
+    }
+  }, [isAnimatingLock]);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsHoveringLocked(false);
+  }, []);
+
+  // Common button/text styles to ensure consistent sizing
+  const buttonBaseClass =
+    "h-6 min-w-[76px] flex items-center justify-center gap-1.5 px-2 rounded transition-colors duration-200 ease-in-out";
+  const textBaseClass = "text-xs font-medium leading-none flex items-center relative top-[1px]";
+
   if (is_locked && !canCurrentUserLockPage) {
     return (
       <Tooltip tooltipContent="You don't have the permission to unlock this page" position="bottom">
         <div
-          className="h-6 flex items-center gap-1 px-2 rounded text-custom-primary-100 bg-custom-primary-100/20 cursor-default"
+          className={cn(buttonBaseClass, "text-custom-primary-100 bg-custom-primary-100/20 cursor-default")}
           aria-label="Locked"
         >
           <LockKeyhole className="flex-shrink-0 size-3.5" />
-          <span className="text-xs font-medium whitespace-nowrap">Locked</span>
+          <span className={textBaseClass}>Locked</span>
         </div>
       </Tooltip>
     );
@@ -125,6 +179,8 @@ export const PageLockControl = observer(({ page, storeType }: Props) => {
   if (!is_locked && !canCurrentUserLockPage) return null;
 
   const actionText = is_locked ? "Unlock" : "Lock";
+
+  const shouldShowHoverEffect = isHoveringLocked && !isAnimatingLock && mouseReEntered;
 
   return (
     <div className="relative">
@@ -151,67 +207,34 @@ export const PageLockControl = observer(({ page, storeType }: Props) => {
         <button
           type="button"
           onClick={handleButtonClick}
-          onMouseEnter={() => setIsHoveringLocked(true)}
-          onMouseLeave={() => setIsHoveringLocked(false)}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
           className={cn(
-            "h-6 flex items-center gap-1 px-2 rounded text-custom-primary-100 bg-custom-primary-100/20 hover:bg-custom-primary-100/30 transition-colors duration-200 ease-in-out",
-            {
-              "bg-custom-primary-100/30": isNestedPagesEnabled(workspaceSlug.toString()) && showLockOptions,
-            }
+            buttonBaseClass,
+            "text-custom-primary-100 bg-custom-primary-100/20 hover:bg-custom-primary-100/30",
+            { "bg-custom-primary-100/30": isNestedPagesEnabled(workspaceSlug.toString()) && showLockOptions }
           )}
-          aria-label={isHoveringLocked ? "Unlock" : "Locked"}
+          aria-label={shouldShowHoverEffect ? "Unlock" : "Locked"}
         >
-          <div className="relative flex-shrink-0 size-3.5 overflow-hidden">
-            <LockKeyhole
-              className={cn(
-                "absolute inset-0 size-3.5 transition-opacity duration-200 ease-in-out",
-                isHoveringLocked || (isNestedPagesEnabled(workspaceSlug.toString()) && showLockOptions)
-                  ? "opacity-0"
-                  : "opacity-100 animate-lock-icon"
-              )}
-            />
-            <LockKeyholeOpen
-              className={cn(
-                "absolute inset-0 size-3.5 transition-opacity duration-200 ease-in-out",
-                isHoveringLocked || (isNestedPagesEnabled(workspaceSlug.toString()) && showLockOptions)
-                  ? "opacity-100"
-                  : "opacity-0"
-              )}
-            />
-          </div>
-          <span className="relative text-xs font-medium whitespace-nowrap overflow-hidden transition-all duration-500 ease-out">
-            <span
-              className={cn(
-                "transition-opacity duration-200 ease-in-out",
-                isHoveringLocked || (isNestedPagesEnabled(workspaceSlug.toString()) && showLockOptions)
-                  ? "opacity-0"
-                  : "opacity-100 animate-text-slide-in"
-              )}
-            >
-              Locked
-            </span>
-            <span
-              className={cn(
-                "absolute left-0 top-0 transition-opacity duration-200 ease-in-out",
-                isHoveringLocked || (isNestedPagesEnabled(workspaceSlug.toString()) && showLockOptions)
-                  ? "opacity-100"
-                  : "opacity-0"
-              )}
-            >
-              Unlock
-            </span>
-          </span>
+          {/* Simple icon display - show one or the other */}
+          {shouldShowHoverEffect || (isNestedPagesEnabled(workspaceSlug.toString()) && showLockOptions) ? (
+            <LockKeyholeOpen className="size-3.5 flex-shrink-0" />
+          ) : (
+            <LockKeyhole className={cn("size-3.5 flex-shrink-0", justLocked && "animate-lock-icon")} />
+          )}
+
+          {/* Text element with animation only when just locked */}
+          {shouldShowHoverEffect || (isNestedPagesEnabled(workspaceSlug.toString()) && showLockOptions) ? (
+            <span className={textBaseClass}>Unlock</span>
+          ) : (
+            <span className={cn(textBaseClass, justLocked && "animate-text-slide-in")}>Locked</span>
+          )}
         </button>
       )}
       {displayState === "unlocked" && (
-        <div
-          className="h-6 flex items-center gap-1 px-2 rounded text-custom-text-200 animate-fade-out"
-          aria-label="Unlocked"
-        >
-          <LockKeyholeOpen className="flex-shrink-0 size-3.5 animate-unlock-icon" />
-          <span className="text-xs font-medium whitespace-nowrap overflow-hidden transition-all duration-500 ease-out animate-text-slide-in animate-text-fade-out">
-            Unlocked
-          </span>
+        <div className={cn(buttonBaseClass, "text-custom-text-200 animate-fade-out")} aria-label="Unlocked">
+          <LockKeyholeOpen className="size-3.5 flex-shrink-0 animate-unlock-icon" />
+          <span className={cn(textBaseClass, "animate-text-slide-in animate-text-fade-out")}>Unlocked</span>
         </div>
       )}
 
@@ -227,7 +250,7 @@ export const PageLockControl = observer(({ page, storeType }: Props) => {
                 <>
                   <button type="button" onClick={() => handleLockOption(false)} className={menuItemClasses}>
                     <LockIcon className="size-3.5 flex-shrink-0" />
-                    Just {actionText.toLowerCase()} this page
+                    <span className="text-xs leading-none flex items-center">{`Just ${actionText.toLowerCase()} this page`}</span>
                   </button>
                   <button type="button" onClick={() => handleLockOption(true)} className={menuItemClasses}>
                     {is_locked ? (
@@ -235,7 +258,7 @@ export const PageLockControl = observer(({ page, storeType }: Props) => {
                     ) : (
                       <FolderLock className="size-3.5 flex-shrink-0" />
                     )}
-                    {actionText} page and all subpages
+                    <span className="text-xs leading-none flex items-center">{`${actionText} page and all subpages`}</span>
                   </button>
                 </>
               );
