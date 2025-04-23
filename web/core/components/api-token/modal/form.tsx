@@ -13,8 +13,7 @@ import { Button, CustomSelect, Input, TextArea, ToggleSwitch, TOAST_TYPE, setToa
 import { DateDropdown } from "@/components/dropdowns";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { renderFormattedDate, renderISODateTimeUTC , renderFormattedTime } from "@/helpers/date-time.helper";
-import React = require("react");
+import { renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
 
 type Props = {
   handleClose: () => void;
@@ -52,18 +51,19 @@ const defaultValues: Partial<IApiToken> = {
   expired_at: null,
 };
 
-const getExpiryDate = (val: string): string | null | undefined => {
+const getExpiryDate = (val: string): Date | null | undefined => {
   const today = new Date();
-
   const dateToAdd = EXPIRY_DATE_OPTIONS.find((option) => option.key === val)?.value;
-
-  if (dateToAdd) {
-    const expiryDate = add(today, dateToAdd);
-
-    return renderFormattedDate(expiryDate);
-  }
-
+  if (dateToAdd) return add(today, dateToAdd);
   return null;
+};
+
+const getFormattedDate = (date: Date): Date => {
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  const seconds = now.getSeconds();
+  return add(date, { hours, minutes, seconds });
 };
 
 export const CreateApiTokenForm: React.FC<Props> = (props) => {
@@ -98,12 +98,13 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
     // if never expires is toggled on, set expired_at to null
     if (neverExpires) payload.expired_at = null;
     // if never expires is toggled off, and the user has selected a custom date, set expired_at to the custom date
-    else if (data.expired_at === "custom") payload.expired_at = renderISODateTimeUTC(customDate, true);
+    else if (data.expired_at === "custom") {
+      payload.expired_at = customDate && getFormattedDate(customDate).toISOString();
+    }
     // if never expires is toggled off, and the user has selected a predefined date, set expired_at to the predefined date
     else {
       const expiryDate = getExpiryDate(data.expired_at ?? "");
-
-      if (expiryDate) payload.expired_at = renderISODateTimeUTC(new Date(expiryDate));
+      if (expiryDate) payload.expired_at = expiryDate.toISOString();
     }
 
     await onSubmit(payload).then(() => {
@@ -115,6 +116,8 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
   const today = new Date();
   const tomorrow = add(today, { days: 1 });
   const expiredAt = watch("expired_at");
+  const expiryDate = getExpiryDate(expiredAt ?? "");
+  const customDateFormatted = customDate && getFormattedDate(customDate);
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
@@ -203,10 +206,9 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                 }}
               />
               {expiredAt === "custom" && (
-                <>
                 <div className="h-7">
                   <DateDropdown
-                    value={customDate}  
+                    value={customDate}
                     onChange={(date) => setCustomDate(date)}
                     minDate={tomorrow}
                     icon={<Calendar className="h-3 w-3" />}
@@ -215,37 +217,16 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                     disabled={neverExpires}
                   />
                 </div>
-
-                <div className="h-7">
-                <input
-                  type="time"
-                  className="h-full w-full rounded border-[0.5px] border-custom-border-300 px-2 text-sm text-custom-text-100"
-                  value={customDate?.toTimeString().slice(0, 5) ?? ""}
-                  onChange={(e) => {
-                    const [hours, minutes] = e.target.value.split(":").map(Number);
-                    if (customDate) {
-                      const updatedDate = new Date(customDate);
-                      updatedDate.setHours(hours);
-                      updatedDate.setMinutes(minutes);
-                      updatedDate.setSeconds(0);
-                      updatedDate.setMilliseconds(0);
-                      setCustomDate(updatedDate);
-                    }
-                  }}
-                  disabled={neverExpires}
-                />
-                </div>
-                </>
               )}
             </div>
             {!neverExpires && (
               <span className="text-xs text-custom-text-400">
                 {expiredAt === "custom"
                   ? customDate
-                    ? `Expires ${renderFormattedDate(customDate)} at ${renderFormattedTime(customDate, "12-hour")}`
+                    ? `Expires ${renderFormattedDate(customDateFormatted ?? "")} at ${renderFormattedTime(customDateFormatted ?? "")}`
                     : null
                   : expiredAt
-                    ? `Expires ${getExpiryDate(expiredAt ?? "")}`
+                    ? `Expires ${renderFormattedDate(expiryDate ?? "")} at ${renderFormattedTime(expiryDate ?? "")}`
                     : null}
               </span>
             )}
