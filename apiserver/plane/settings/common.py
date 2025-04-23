@@ -392,3 +392,6 @@ ATTACHMENT_MIME_TYPES = [
     "text/csv",
     "application/xml",
 ]
+
+# Seed directory path
+SEED_DIR = os.path.join(BASE_DIR, "seeds")
