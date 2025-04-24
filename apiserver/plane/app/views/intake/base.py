@@ -420,6 +420,25 @@ class IntakeIssueViewSet(BaseViewSet):
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
             ).get(pk=intake_issue.issue_id, workspace__slug=slug, project_id=project_id)
+
+            # EE start
+            # Check if state is updated then is the transition allowed
+            workflow_state_manager = WorkflowStateManager(
+                project_id=project_id, slug=slug
+            )
+            if issue_data.get(
+                "state_id", None
+            ) and not workflow_state_manager.validate_state_transition(
+                issue=issue,
+                new_state_id=issue_data.get("state_id", None),
+                user_id=request.user.id,
+            ):
+                return Response(
+                    {"error": "State transition is not allowed"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+            # EE end
+
             # Only allow guests to edit name and description
             if project_member.role <= 5:
                 issue_data = {
