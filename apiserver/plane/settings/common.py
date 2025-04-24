@@ -391,4 +391,6 @@ ATTACHMENT_MIME_TYPES = [
     "text/xml",
     "text/csv",
     "application/xml",
+    # SQL
+    "application/x-sql",
 ]
