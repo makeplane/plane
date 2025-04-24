@@ -35,12 +35,12 @@ def read_seed_file(filename):
     Returns:
         dict: Contents of the JSON file
     """
-    file_path = os.path.join(settings.SEED_DIR, filename)
+    file_path = os.path.join(settings.SEED_DIR, "data", filename)
     try:
         with open(file_path, "r") as file:
             return json.load(file)
     except FileNotFoundError:
-        print(f"Seed file {filename} not found in {settings.SEED_DIR}")
+        print(f"Seed file {filename} not found in {settings.SEED_DIR}/data")
         return None
     except json.JSONDecodeError:
         print(f"Error decoding JSON from {filename}")
@@ -126,7 +126,7 @@ def create_project_states(workspace, project_map):
             created_by_id=workspace.created_by_id,
         )
 
-        state_map[state_id] = state
+        state_map[state_id] = state.id
 
     return state_map
 
@@ -162,8 +162,11 @@ def create_project_issues(workspace, project_map, states_map, labels_map):
         _ = issue_seed.pop("id")
         labels = issue_seed.pop("labels")
         project_id = issue_seed.pop("project_id")
+        state_id = issue_seed.pop("state_id")
+
         issue = Issue.objects.create(
             **issue_seed,
+            state_id=states_map[state_id],
             project_id=project_map[project_id],
             workspace=workspace,
             created_by_id=workspace.created_by_id,
