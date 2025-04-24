@@ -15,6 +15,22 @@ Without said minimal reproduction, we won't be able to investigate all [issues](
 
 You can open a new issue with this [issue form](https://github.com/makeplane/plane/issues/new).
 
+### Naming conventions for issues
+
+When opening a new issue, please use a clear and concise title that follows this format:
+
+- For bugs: `🐛 Bug: [short description]`
+- For features: `🚀 Feature: [short description]`
+- For improvements: `🛠️ Improvement: [short description]`
+- For documentation: `📘 Docs: [short description]`
+
+**Examples:**
+- `🐛 Bug: API token expiry time not saving correctly`
+- `📘 Docs: Clarify RAM requirement for local setup`
+- `🚀 Feature: Allow custom time selection for token expiration`
+
+This helps us triage and manage issues more efficiently.
+
 ## Projects setup and Architecture
 
 ### Requirements
@@ -23,6 +39,8 @@ You can open a new issue with this [issue form](https://github.com/makeplane/pla
 - Python version 3.8+
 - Postgres version v14
 - Redis version v6.2.7
+- **Memory**: Minimum **12 GB RAM** recommended  
+  > ⚠️ Running the project on a system with only 8 GB RAM may lead to setup failures or memory crashes (especially during Docker container build/start or dependency install). Use cloud environments like GitHub Codespaces or upgrade local RAM if possible.
 
 ### Setup the project
 
