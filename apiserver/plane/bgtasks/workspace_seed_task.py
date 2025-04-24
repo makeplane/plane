@@ -99,6 +99,7 @@ def create_project_and_member(workspace: Workspace) -> Dict[int, uuid.UUID]:
                     member_id=workspace_member["member_id"],
                     role=workspace_member["role"],
                     workspace_id=workspace.id,
+                    created_by_id=workspace.created_by_id,
                 )
                 for workspace_member in workspace_members
             ]
