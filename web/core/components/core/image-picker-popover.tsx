@@ -14,7 +14,7 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // plane types
 import { EFileAssetType } from "@plane/types/src/enums";
 // ui
-import { Button, Input, Loader } from "@plane/ui";
+import { Button, Input, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
@@ -114,7 +114,16 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
           },
           image
         )
-        .then((res) => uploadCallback(res.asset_url));
+        .then((res) => uploadCallback(res.asset_url))
+        .catch((error) => {
+          console.error("Error uploading user cover image:", error);
+          setIsImageUploading(false);
+          setToast({
+            message: error?.error ?? "The image could not be uploaded",
+            type: TOAST_TYPE.ERROR,
+            title: "Image not uploaded",
+          });
+        });
     } else {
       if (!workspaceSlug) return;
       await fileService
@@ -126,7 +135,16 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
           },
           image
         )
-        .then((res) => uploadCallback(res.asset_url));
+        .then((res) => uploadCallback(res.asset_url))
+        .catch((error) => {
+          console.error("Error uploading project cover image:", error);
+          setIsImageUploading(false);
+          setToast({
+            message: error?.error ?? "The image could not be uploaded",
+            type: TOAST_TYPE.ERROR,
+            title: "Image not uploaded",
+          });
+        });
     }
   };
 
