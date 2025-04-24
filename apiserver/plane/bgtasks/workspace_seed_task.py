@@ -279,6 +279,7 @@ def workspace_seed(workspace_id: uuid.UUID) -> None:
         workspace_id: ID of the workspace to seed
     """
     try:
+        logger.info(f"Seeding workspace {workspace_id}")
         # Get the workspace
         workspace = Workspace.objects.get(id=workspace_id)
 
@@ -293,6 +294,8 @@ def workspace_seed(workspace_id: uuid.UUID) -> None:
 
         # create project issues
         create_project_issues(workspace, project_map, state_map, label_map)
+
+        logger.info(f"Workspace {workspace_id} seeded successfully")
         return
     except Exception as e:
         logger.error(f"Failed to seed workspace {workspace_id}: {str(e)}")
