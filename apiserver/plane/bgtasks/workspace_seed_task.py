@@ -121,6 +121,7 @@ def create_project_and_member(workspace: Workspace) -> Dict[int, uuid.UUID]:
                         "layout": "list",
                         "calendar_date_range": "",
                     },
+                    created_by_id=workspace.created_by_id,
                 )
                 for workspace_member in workspace_members
             ]
