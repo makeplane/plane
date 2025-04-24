@@ -83,11 +83,6 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
                 {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        if request.data.get("source") != SourceType.IN_APP:
-            return Response(
-                {"error": "Invalid source"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
         intake = Intake.objects.filter(
             workspace__slug=slug, project_id=project_id
         ).first()
@@ -131,7 +126,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
             intake_id=intake.id,
             project_id=project_id,
             issue=issue,
-            source=request.data.get("source", "IN-APP"),
+            source=SourceType.IN_APP,
         )
         # Create an Issue Activity
         issue_activity.delay(

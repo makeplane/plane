@@ -247,11 +247,6 @@ class IntakeIssueViewSet(BaseViewSet):
                 {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        if request.data.get("source") != SourceType.IN_APP:
-            return Response(
-                {"error": "Invalid source"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
         # Check for valid priority
         if request.data.get("issue", {}).get("priority", "none") not in [
             "low",
@@ -284,7 +279,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 intake_id=intake_id.id,
                 project_id=project_id,
                 issue_id=serializer.data["id"],
-                source=request.data.get("source", "IN-APP"),
+                source=SourceType.IN_APP,
             )
             # Create an Issue Activity
             issue_activity.delay(
