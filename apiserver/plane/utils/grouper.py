@@ -76,6 +76,7 @@ def issue_on_results(
     group_by: Optional[str],
     sub_group_by: Optional[str],
     slug: Optional[str] = None,
+    user_id: Optional[str] = None,
 ) -> List[Dict[str, Any]]:
     FIELD_MAPPER: Dict[str, str] = {
         "labels__id": "label_ids",
@@ -113,7 +114,9 @@ def issue_on_results(
     ]
 
     if slug:
-        if check_workspace_feature_flag(feature_key=FeatureFlag.CUSTOMERS, slug=slug):
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.CUSTOMERS, slug=slug, user_id=user_id
+        ):
             required_fields.extend(["customer_count", "customer_request_count"])
 
     if group_by in FIELD_MAPPER:

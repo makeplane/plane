@@ -276,6 +276,7 @@ class IssueViewSet(BaseViewSet):
         order_by_param = request.GET.get("order_by", "-created_at")
 
         issue_queryset = self.get_queryset().filter(**filters, **extra_filters)
+
         # Custom ordering for priority and state
 
         # Issue queryset
@@ -330,6 +331,7 @@ class IssueViewSet(BaseViewSet):
                             issues=issues,
                             sub_group_by=sub_group_by,
                             slug=slug,
+                            user_id=request.user.id,
                         ),
                         paginator_cls=SubGroupedOffsetPaginator,
                         group_by_fields=issue_group_values(
@@ -366,6 +368,7 @@ class IssueViewSet(BaseViewSet):
                         issues=issues,
                         sub_group_by=sub_group_by,
                         slug=slug,
+                        user_id=request.user.id,
                     ),
                     paginator_cls=GroupedOffsetPaginator,
                     group_by_fields=issue_group_values(
@@ -394,6 +397,7 @@ class IssueViewSet(BaseViewSet):
                     issues=issues,
                     sub_group_by=sub_group_by,
                     slug=slug,
+                    user_id=request.user.id,
                 ),
             )
 
@@ -414,8 +418,7 @@ class IssueViewSet(BaseViewSet):
                 project_id=project_id, slug=slug
             )
             if workflow_state_manager.validate_issue_creation(
-                state_id=request.data.get("state_id"),
-                user_id=request.user.id,
+                state_id=request.data.get("state_id"), user_id=request.user.id
             ):
                 return Response(
                     {"error": "You cannot create a work item in this state"},
@@ -759,10 +762,7 @@ class IssueViewSet(BaseViewSet):
             ):
                 entity_issue_state_activity_task.delay(
                     issue_cycle_data=[
-                        {
-                            "issue_id": str(issue.id),
-                            "cycle_id": str(issue.cycle_id),
-                        }
+                        {"issue_id": str(issue.id), "cycle_id": str(issue.cycle_id)}
                     ],
                     user_id=str(request.user.id),
                     slug=slug,
@@ -800,10 +800,7 @@ class IssueViewSet(BaseViewSet):
             # added a entry to remove from the entity issue state activity
             entity_issue_state_activity_task.delay(
                 issue_cycle_data=[
-                    {
-                        "issue_id": str(issue.id),
-                        "cycle_id": str(issue_cycle.cycle_id),
-                    },
+                    {"issue_id": str(issue.id), "cycle_id": str(issue_cycle.cycle_id)}
                 ],
                 user_id=str(request.user.id),
                 slug=slug,
@@ -879,9 +876,7 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
         # EE code
         # fetch all the issues with their respective cycle ids
         issues_with_cycle_ids = CycleIssue.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            issue_id__in=issue_ids,
+            workspace__slug=slug, project_id=project_id, issue_id__in=issue_ids
         )
 
         # then trigger the entity issue state activity task for each issue
@@ -890,10 +885,7 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
         ):
             entity_issue_state_activity_task.delay(
                 issue_cycle_data=[
-                    {
-                        "issue_id": str(issue_id),
-                        "cycle_id": str(cycle_id),
-                    }
+                    {"issue_id": str(issue_id), "cycle_id": str(cycle_id)}
                 ],
                 user_id=str(request.user.id),
                 slug=slug,
