@@ -20,6 +20,7 @@ from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import Intake, IntakeIssue, Issue, Project, ProjectMember, State
 from plane.utils.host import base_host
 from .base import BaseAPIView
+from plane.db.models.intake import SourceType
 
 
 class IntakeIssueAPIEndpoint(BaseAPIView):
@@ -80,6 +81,11 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
         if not request.data.get("issue", {}).get("name", False):
             return Response(
                 {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if request.data.get("source") != SourceType.IN_APP:
+            return Response(
+                {"error": "Invalid source"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         intake = Intake.objects.filter(
