@@ -41,12 +41,12 @@ class IssueStateFlatSerializer(BaseSerializer):
 
 class LabelSerializer(BaseSerializer):
     workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
-    project_detail = ProjectLiteSerializer(source="project", read_only=True)
+    project_detail = ProjectLiteSerializer(source="project", read_only=True, allow_null=True)
 
     class Meta:
         model = Label
         fields = "__all__"
-        read_only_fields = ["workspace", "project"]
+        read_only_fields = ["workspace"]
 
 
 class IssueProjectLiteSerializer(BaseSerializer):

@@ -72,7 +72,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
   const { currentProjectDetails, loader } = useProject();
-  const { projectLabels } = useLabel();
+  const { labels } = useLabel();
   const { projectStates } = useProjectState();
   const {
     project: { projectMemberIds },
@@ -250,7 +250,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                 layoutDisplayFiltersOptions={
                   activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
                 }
-                labels={projectLabels}
+                labels={labels}
                 memberIds={projectMemberIds ?? undefined}
                 states={projectStates}
                 cycleViewDisabled={!currentProjectDetails?.cycle_view}

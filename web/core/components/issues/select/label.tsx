@@ -48,7 +48,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { getProjectLabels, fetchProjectLabels } = useLabel();
+  const { getLabels, fetchLabels } = useLabel();
   const { isMobile } = usePlatformOS();
   // states
   const [query, setQuery] = useState("");
@@ -63,14 +63,14 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
     placement: placement ?? "bottom-start",
   });
 
-  const projectLabels = getProjectLabels(projectId);
+  const labels = getLabels();
 
   // derived values
   const filteredOptions =
-    query === "" ? projectLabels : projectLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase()));
+    query === "" ? labels : labels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase()));
 
   const onOpen = () => {
-    if (!projectLabels && workspaceSlug && projectId) fetchProjectLabels(workspaceSlug.toString(), projectId);
+    if (!labels && workspaceSlug) fetchLabels(workspaceSlug.toString());
     if (referenceElement) referenceElement.focus();
   };
 
@@ -131,7 +131,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
         ) : value && value.length > 0 ? (
           <span className={cn("flex items-center justify-center gap-2 text-xs h-full", buttonClassName)}>
             <IssueLabelsList
-              labels={value.map((v) => projectLabels?.find((l) => l.id === v)) ?? []}
+              labels={value.map((v) => labels?.find((l) => l.id === v)) ?? []}
               length={3}
               showLength
             />
@@ -164,10 +164,10 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
               />
             </div>
             <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
-              {projectLabels && filteredOptions ? (
+              {labels && filteredOptions ? (
                 filteredOptions.length > 0 ? (
                   filteredOptions.map((label) => {
-                    const children = projectLabels?.filter((l) => l.parent === label.id);
+                    const children = labels?.filter((l) => l.parent === label.id);
 
                     if (children.length === 0) {
                       if (!label.parent)

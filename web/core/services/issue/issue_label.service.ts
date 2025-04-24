@@ -25,24 +25,35 @@ export class IssueLabelService extends APIService {
       });
   }
 
-  async createIssueLabel(workspaceSlug: string, projectId: string, data: any): Promise<IIssueLabel> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/`, data)
+  async getLabels(workspaceSlug: string): Promise<IIssueLabel[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/issue-labels/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async patchIssueLabel(workspaceSlug: string, projectId: string, labelId: string, data: any): Promise<any> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/${labelId}/`, data)
+  async createLabel(workspaceSlug: string, projectId: string | undefined, data: any): Promise<IIssueLabel> {
+    const apiUrl = `/api/workspaces/${workspaceSlug}` + (projectId ? `/projects/` + projectId : '') + `/issue-labels/`;
+    return this.post(apiUrl, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deleteIssueLabel(workspaceSlug: string, projectId: string, labelId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/${labelId}/`)
+  async patchIssueLabel(workspaceSlug: string, projectId: string | undefined, labelId: string, data: any): Promise<any> {
+    const apiUrl = `/api/workspaces/${workspaceSlug}` + (projectId ? `/projects/` + projectId : '') + `/issue-labels/${labelId}/`;
+    return this.patch(apiUrl, data)
+    .then((response) => response?.data)
+    .catch((error) => {
+      throw error?.response?.data;
+    });
+  }
+  
+  async deleteIssueLabel(workspaceSlug: string, projectId: string | undefined, labelId: string): Promise<any> {
+    const apiUrl = `/api/workspaces/${workspaceSlug}` + (projectId ? `/projects/` + projectId : '') + `/issue-labels/${labelId}/`;
+    return this.delete(apiUrl)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
