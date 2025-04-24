@@ -350,7 +350,7 @@
   "couldnt_remove_the_project_from_favorites": "プロジェクトをお気に入りから削除できませんでした。もう一度お試しください。",
   "add_to_favorites": "お気に入りに追加",
   "remove_from_favorites": "お気に入りから削除",
-  "publish_settings": "公開設定",
+  "publish_project": "プロジェクトを公開",
   "publish": "公開",
   "copy_link": "リンクをコピー",
   "leave_project": "プロジェクトを退出",

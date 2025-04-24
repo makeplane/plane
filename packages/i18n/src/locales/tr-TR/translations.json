@@ -350,7 +350,7 @@
   "couldnt_remove_the_project_from_favorites": "Proje favorilerden kaldırılamadı. Lütfen tekrar deneyin.",
   "add_to_favorites": "Favorilere ekle",
   "remove_from_favorites": "Favorilerden kaldır",
-  "publish_settings": "Yayınlama ayarları",
+  "publish_project": "Projeyi yayımla",
   "publish": "Yayınla",
   "copy_link": "Bağlantıyı kopyala",
   "leave_project": "Projeden ayrıl",

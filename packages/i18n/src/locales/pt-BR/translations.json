@@ -350,7 +350,7 @@
   "couldnt_remove_the_project_from_favorites": "Não foi possível remover o projeto dos favoritos. Por favor, tente novamente.",
   "add_to_favorites": "Adicionar aos favoritos",
   "remove_from_favorites": "Remover dos favoritos",
-  "publish_settings": "Configurações de publicação",
+  "publish_project": "Publicar projeto",
   "publish": "Publicar",
   "copy_link": "Copiar link",
   "leave_project": "Sair do projeto",
