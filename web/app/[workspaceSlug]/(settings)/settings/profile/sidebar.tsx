@@ -1,8 +1,9 @@
 import { CircleUser, Activity, Bell, CircleUserRound, KeyRound, Settings2, Blocks } from "lucide-react";
 import { GROUPED_PROFILE_SETTINGS, PROFILE_SETTINGS_CATEGORIES } from "@plane/constants";
-import SettingsSidebar from "@/components/settings/sidebar";
+import { SettingsSidebar } from "@/components/settings";
 import { getFileURL } from "@/helpers/file.helper";
 import { useUser } from "@/hooks/store/user";
+
 type TProfileSidebarProps = {
   workspaceSlug: string;
   pathname: string;

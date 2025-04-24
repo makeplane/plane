@@ -1,6 +1,8 @@
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { cn } from "@plane/utils";
+import { useProject } from "@/hooks/store";
 
 const TABS = {
   account: {
@@ -20,11 +22,13 @@ const TABS = {
   },
 };
 
-const SettingsTabs = () => {
+const SettingsTabs = observer(() => {
   // router
   const pathname = usePathname();
   const { workspaceSlug } = useParams();
-  // derived
+  // store hooks
+  const { joinedProjectIds } = useProject();
+
   const currentTab = pathname.includes(TABS.projects.href)
     ? TABS.projects
     : pathname.includes(TABS.account.href)
@@ -35,10 +39,11 @@ const SettingsTabs = () => {
     <div className="flex w-fit min-w-fit items-center justify-between gap-1.5 rounded-md text-sm p-0.5 bg-custom-background-80/60 mt-2">
       {Object.values(TABS).map((tab) => {
         const isActive = currentTab?.key === tab.key;
+        const href = tab.key === TABS.projects.key ? `${tab.href}${joinedProjectIds[0] || ""}` : tab.href;
         return (
           <Link
             key={tab.key}
-            href={`/${workspaceSlug}${tab.href}`}
+            href={`/${workspaceSlug}${href}`}
             className={cn(
               "flex items-center justify-center p-1 min-w-fit w-full font-medium outline-none focus:outline-none cursor-pointer transition-all rounded text-custom-text-400 ",
               {
@@ -53,6 +58,6 @@ const SettingsTabs = () => {
       })}
     </div>
   );
-};
+});
 
 export default SettingsTabs;
