@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 // icons
 import { X } from "lucide-react";
 import { IState } from "@plane/types";
+import { EIconSize } from "@plane/constants";
 import { StateGroupIcon } from "@plane/ui";
 // types
 
@@ -30,7 +31,7 @@ export const AppliedStateFilters: React.FC<Props> = observer((props) => {
             <StateGroupIcon
               color={stateDetails.color}
               stateGroup={stateDetails.group}
-              size="sm"
+              size={EIconSize.SM}
               percentage={stateDetails?.order}
             />
             {stateDetails.name}

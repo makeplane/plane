@@ -11,7 +11,7 @@ import uniq from "lodash/uniq";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { ContrastIcon } from "lucide-react";
 // plane types
-import { EIssuesStoreType, ISSUE_PRIORITIES, STATE_GROUPS } from "@plane/constants";
+import { EIconSize, EIssuesStoreType, ISSUE_PRIORITIES, STATE_GROUPS } from "@plane/constants";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -199,7 +199,7 @@ const getStateColumns = (): IGroupByColumn[] | undefined => {
     name: state.name,
     icon: (
       <div className="size-4 rounded-full">
-        <StateGroupIcon stateGroup={state.group} color={state.color} size="lg" percentage={state.order} />
+        <StateGroupIcon stateGroup={state.group} color={state.color} size={EIconSize.LG} percentage={state.order} />
       </div>
     ),
     payload: { state_id: state.id },
@@ -214,7 +214,7 @@ const getStateGroupColumns = (): IGroupByColumn[] => {
     name: stateGroup.label,
     icon: (
       <div className="size-4 rounded-full">
-        <StateGroupIcon stateGroup={stateGroup.key} size="lg" />
+        <StateGroupIcon stateGroup={stateGroup.key} size={EIconSize.LG} />
       </div>
     ),
     payload: {},

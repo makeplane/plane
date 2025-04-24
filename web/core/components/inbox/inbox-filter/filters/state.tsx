@@ -2,6 +2,7 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
+import { EIconSize } from "@plane/constants";
 import { IState } from "@plane/types";
 import { Loader, StateGroupIcon } from "@plane/ui";
 // components
@@ -59,7 +60,7 @@ export const FilterState: FC<Props> = observer((props) => {
                       <StateGroupIcon
                         color={state.color}
                         stateGroup={state.group}
-                        size="sm"
+                        size={EIconSize.SM}
                         percentage={state?.order}
                       />
                     }

@@ -2,6 +2,7 @@ import { SetStateAction } from "react";
 import { observer } from "mobx-react";
 import { GripVertical, Pencil } from "lucide-react";
 // plane imports
+import { EIconSize } from "@plane/constants";
 import { IState, TStateOperationsCallbacks } from "@plane/types";
 import { StateGroupIcon } from "@plane/ui";
 // local imports
@@ -46,7 +47,7 @@ export const StateItemTitle = observer((props: TStateItemTitleProps) => {
         )}
         {/* state icon */}
         <div className="flex-shrink-0">
-          <StateGroupIcon stateGroup={state.group} color={state.color} size="xl" percentage={percentage} />
+          <StateGroupIcon stateGroup={state.group} color={state.color} size={EIconSize.XL} percentage={percentage} />
         </div>
         {/* state title and description */}
         <div className="text-sm px-2 min-h-5">
