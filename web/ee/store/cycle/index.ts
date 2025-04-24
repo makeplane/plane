@@ -1,1 +1,1 @@
-export * from "@/store/cycle.store";
+export * from "./cycle.store";
