@@ -9,6 +9,7 @@ import { TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
 import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
 // helpers
 import { useSubIssueOperations } from "@/components/issues/issue-detail-widgets/sub-issues/helper";
+import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
 import { cn } from "@/helpers/common.helper";
 import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
@@ -20,8 +21,6 @@ import { IssueIdentifier } from "@/plane-web/components/issues";
 // local components
 import { SubIssuesListItemProperties } from "./properties";
 import { SubIssuesListRoot } from "./root";
-// ui
-// import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
 
 type Props = {
   workspaceSlug: string;
@@ -56,6 +55,9 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
   const { t } = useTranslation();
   const {
     issue: { getIssueById },
+    subIssues: {
+      filters: { getSubIssueFilters },
+    },
   } = useIssueDetail(issueServiceType);
   const {
     subIssues: { subIssueHelpersByIssueId, setSubIssueHelpers },
@@ -76,6 +78,10 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
 
   const subIssueHelpers = subIssueHelpersByIssueId(parentIssueId);
   const subIssueCount = issue?.sub_issues_count ?? 0;
+
+  // derived values
+  const subIssueFilters = getSubIssueFilters(parentIssueId);
+  const displayProperties = subIssueFilters.displayProperties;
 
   //
   const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug, issue, isMobile);
@@ -147,17 +153,19 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
                   backgroundColor: currentIssueStateDetail?.color ?? "#737373",
                 }}
               />
-              <div className="flex-shrink-0">
-                {projectDetail && (
-                  <IssueIdentifier
-                    projectId={projectDetail.id}
-                    issueTypeId={issue.type_id}
-                    projectIdentifier={projectDetail.identifier}
-                    issueSequenceId={issue.sequence_id}
-                    textContainerClassName="text-xs text-custom-text-200"
-                  />
-                )}
-              </div>
+              <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
+                <div className="flex-shrink-0">
+                  {projectDetail && (
+                    <IssueIdentifier
+                      projectId={projectDetail.id}
+                      issueTypeId={issue.type_id}
+                      projectIdentifier={projectDetail.identifier}
+                      issueSequenceId={issue.sequence_id}
+                      textContainerClassName="text-xs text-custom-text-200"
+                    />
+                  )}
+                </div>
+              </WithDisplayPropertiesHOC>
               <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
                 <span className="w-full truncate text-sm text-custom-text-100">{issue.name}</span>
               </Tooltip>
@@ -175,8 +183,9 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
                 parentIssueId={parentIssueId}
                 issueId={issueId}
                 disabled={disabled}
-                subIssueOperations={subIssueOperations}
-                issueServiceType={issueServiceType}
+                updateSubIssue={subIssueOperations.updateSubIssue}
+                displayProperties={displayProperties}
+                issue={issue}
               />
             </div>
 

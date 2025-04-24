@@ -33,7 +33,8 @@ export const SubIssuesCollapsible: FC<Props> = observer((props) => {
           isOpen={isCollapsibleOpen}
           parentIssueId={issueId}
           disabled={disabled}
-          issueServiceType={issueServiceType}
+          projectId={projectId}
+          workspaceSlug={workspaceSlug}
         />
       }
       buttonClassName="w-full"

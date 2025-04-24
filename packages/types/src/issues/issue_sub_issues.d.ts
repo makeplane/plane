@@ -10,8 +10,10 @@ export type TSubIssuesStateDistribution = {
 
 export type TIssueSubIssues = {
   state_distribution: TSubIssuesStateDistribution;
-  sub_issues: TIssue[];
+  sub_issues: TSubIssueResponse;
 };
+
+export type TSubIssueResponse = TIssue[] | { [key: string]: TIssue[] };
 
 export type TIssueSubIssuesStateDistributionMap = {
   [issue_id: string]: TSubIssuesStateDistribution;
