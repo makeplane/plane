@@ -1,8 +1,8 @@
 FROM caddy:builder AS caddy-builder
 
 RUN xcaddy build \
-        --with github.com/caddy-dns/cloudflare@1fb64108d4debf196b19d7398e763cb78c8a0f41 \
-        --with github.com/caddy-dns/digitalocean \
+        --with github.com/caddy-dns/cloudflare@8cbec3f04d5b4a768c52941a5468c4b71436509e \
+        # --with github.com/caddy-dns/digitalocean@master \
         --with github.com/mholt/caddy-l4
 
 FROM caddy:alpine
