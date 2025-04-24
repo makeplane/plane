@@ -4,6 +4,7 @@ import json
 import time
 import uuid
 from typing import Dict
+import logging
 
 # Django imports
 from django.conf import settings
@@ -26,6 +27,8 @@ from plane.db.models import (
     IssueActivity,
 )
 
+logger = logging.getLogger("plane.worker")
+
 
 def read_seed_file(filename):
     """
@@ -42,10 +45,10 @@ def read_seed_file(filename):
         with open(file_path, "r") as file:
             return json.load(file)
     except FileNotFoundError:
-        print(f"Seed file {filename} not found in {settings.SEED_DIR}/data")
+        logger.error(f"Seed file {filename} not found in {settings.SEED_DIR}/data")
         return None
     except json.JSONDecodeError:
-        print(f"Error decoding JSON from {filename}")
+        logger.error(f"Error decoding JSON from {filename}")
         return None
 
 
@@ -123,6 +126,7 @@ def create_project_and_member(workspace: Workspace) -> Dict[int, uuid.UUID]:
         )
         # update map
         projects_map[project_id] = project.id
+        logger.info(f"Project {project_id} created")
 
     return projects_map
 
@@ -158,7 +162,7 @@ def create_project_states(
         )
 
         state_map[state_id] = state.id
-
+        logger.info(f"State {state_id} created")
     return state_map
 
 
@@ -191,6 +195,7 @@ def create_project_labels(
         )
         label_map[label_id] = label.id
 
+        logger.info(f"Label {label_id} created")
     return label_map
 
 
@@ -216,7 +221,7 @@ def create_project_issues(
         return
 
     for issue_seed in issue_seeds:
-        _ = issue_seed.pop("id")
+        issue_id = issue_seed.pop("id")
         labels = issue_seed.pop("labels")
         project_id = issue_seed.pop("project_id")
         state_id = issue_seed.pop("state_id")
@@ -254,6 +259,7 @@ def create_project_issues(
                 created_by_id=workspace.created_by_id,
             )
 
+        logger.info(f"Issue {issue_id} created")
     return
 
 
@@ -270,19 +276,22 @@ def workspace_seed(workspace_id: uuid.UUID) -> None:
     Args:
         workspace_id: ID of the workspace to seed
     """
-    # Get the workspace
-    workspace = Workspace.objects.get(id=workspace_id)
+    try:
+        # Get the workspace
+        workspace = Workspace.objects.get(id=workspace_id)
 
-    # Create a project with the same name as workspace
-    project_map = create_project_and_member(workspace)
+        # Create a project with the same name as workspace
+        project_map = create_project_and_member(workspace)
 
-    # Create project states
-    state_map = create_project_states(workspace, project_map)
+        # Create project states
+        state_map = create_project_states(workspace, project_map)
 
-    # Create project labels
-    label_map = create_project_labels(workspace, project_map)
+        # Create project labels
+        label_map = create_project_labels(workspace, project_map)
 
-    # create project issues
-    create_project_issues(workspace, project_map, state_map, label_map)
-
-    return
+        # create project issues
+        create_project_issues(workspace, project_map, state_map, label_map)
+        return
+    except Exception as e:
+        logger.error(f"Failed to seed workspace {workspace_id}: {str(e)}")
+        raise e
