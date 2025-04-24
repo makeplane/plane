@@ -267,8 +267,8 @@ export class ProjectPageStore implements IProjectPageStore {
         this.loader = currentPageId ? "mutation-loader" : "init-loader";
         this.error = undefined;
       });
-
-      // Conditionally create the promises array based on shouldFetchSubPages
+      
+      const page = await this.service.fetchById(workspaceSlug, projectId, pageId);
 
       // Execute the promises and handle the results
       const pageDetails = await this.service.fetchById(workspaceSlug, projectId, pageId);
@@ -277,6 +277,7 @@ export class ProjectPageStore implements IProjectPageStore {
       const pageInstance = page?.id ? this.getPageById(page.id) : undefined;
       runInAction(() => {
         if (page?.id) {
+          const pageInstance = this.getPageById(page.id);
           if (pageInstance) {
             pageInstance.mutateProperties(page, false);
           } else {
