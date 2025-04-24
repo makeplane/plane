@@ -161,11 +161,15 @@ class IssueSerializer(BaseSerializer):
                 if User.objects.filter(username=data['created_by']).exists():
                     data['created_by'] = User.objects.get(username=data['created_by'])
                 else:
+                    # Split created_by by underscore
+                    parts = data['created_by'].split('_')
+                    username = parts[1]
+                    
                     user_data = {
-                    "email": data['created_by'] + '@plane-shipsy.com',
-                    "username": data['created_by'],
-                    "role": 5,
-                    "display_name": data['created_by']
+                        "email": data['created_by'] + '@plane-shipsy.com',
+                        "username": username,
+                        "role": 5,
+                        "display_name": data.get('worker_code')
                     }
                     from plane.api.views import ProjectMemberAPIEndpoint
                     PMObj = ProjectMemberAPIEndpoint()
