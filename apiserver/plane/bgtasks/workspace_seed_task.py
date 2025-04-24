@@ -96,6 +96,15 @@ def create_project_and_member(workspace):
                     project=project,
                     user_id=workspace_member["member_id"],
                     workspace_id=workspace.id,
+                    display_filters={
+                        "group_by": None,
+                        "order_by": "sort_order",
+                        "type": None,
+                        "sub_issue": True,
+                        "show_empty_groups": True,
+                        "layout": "list",
+                        "calendar_date_range": "",
+                    },
                 )
                 for workspace_member in workspace_members
             ]
