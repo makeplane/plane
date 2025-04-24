@@ -271,7 +271,7 @@ export class IssueService extends APIService {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    queries: Partial<Record<TIssueParams, string | boolean>>
+    queries?: Partial<Record<TIssueParams, string | boolean>>
   ): Promise<TIssueSubIssues> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/${this.serviceType === EIssueServiceType.EPICS ? "issues" : "sub-issues"}/`,
