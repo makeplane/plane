@@ -42,7 +42,7 @@ def validate_feature_flag(
 
 
 def _validate_feature_flag(
-    slug: str, user_id: str, feature_key: str, default_value: bool = False
+    workspace_slug: str, user_id: str, feature_key: str, default_value: bool = False
 ):
     if (
         settings.FEATURE_FLAG_SERVER_BASE_URL
@@ -50,7 +50,11 @@ def _validate_feature_flag(
     ):
         try:
             url = f"{settings.FEATURE_FLAG_SERVER_BASE_URL}/api/feature-flags/"
-            json = {"workspace_slug": slug, "user_id": user_id, "flag_key": feature_key}
+            json = {
+                "workspace_slug": workspace_slug,
+                "user_id": user_id,
+                "flag_key": feature_key,
+            }
             headers = {
                 "content-type": "application/json",
                 "x-api-key": settings.FEATURE_FLAG_SERVER_AUTH_TOKEN,

@@ -29,7 +29,7 @@ def validate_nested_pages_feature_flag(user_id: str, workspace_slug: str) -> boo
     try:
         is_feature_flagged = _validate_feature_flag(
             user_id=user_id,
-            slug=workspace_slug,
+            workspace_slug=workspace_slug,
             feature_key=FeatureFlagsTypesEnum.NESTED_PAGES.value,
             default_value=False,
         )

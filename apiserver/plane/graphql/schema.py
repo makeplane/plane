@@ -62,6 +62,15 @@ from .queries.pages import (
     NestedChildPagesQuery,
 )
 from .queries.stickies import WorkspaceStickiesQuery
+from .queries.epics import (
+    EpicUserPropertyQuery,
+    EpicCountQuery,
+    EpicQuery,
+    EpicLinkQuery,
+    EpicAttachmentQuery,
+    EpicWorkItemsQuery,
+    EpicRelationQuery,
+)
 
 # mutations
 from .mutations.workspace import WorkspaceMutation, WorkspaceInviteMutation
@@ -115,6 +124,14 @@ from .mutations.pages import (
     NestedChildDeletePageMutation,
 )
 from .mutations.stickies import WorkspaceStickiesMutation
+from .mutations.epics import (
+    EpicUserPropertyMutation,
+    EpicMutation,
+    EpicLinkMutation,
+    EpicAttachmentMutation,
+    EpicWorkItemsMutation,
+    EpicRelationMutation,
+)
 
 
 # combined query class for all
@@ -177,6 +194,14 @@ class Query(
     NestedParentPagesQuery,
     NestedChildPagesQuery,
     WorkspaceStickiesQuery,
+    # epics
+    EpicUserPropertyQuery,
+    EpicCountQuery,
+    EpicQuery,
+    EpicLinkQuery,
+    EpicAttachmentQuery,
+    EpicWorkItemsQuery,
+    EpicRelationQuery,
 ):
     pass
 
@@ -225,6 +250,13 @@ class Mutation(
     NestedChildDeletePageMutation,
     WorkspaceStickiesMutation,
     IssueMutationV2,
+    # epics
+    EpicUserPropertyMutation,
+    EpicMutation,
+    EpicLinkMutation,
+    EpicAttachmentMutation,
+    EpicWorkItemsMutation,
+    EpicRelationMutation,
 ):
     pass
 
