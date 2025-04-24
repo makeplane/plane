@@ -163,7 +163,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
           />
         )}
       />
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full overflow-y-scroll">
         <div className="flex w-full flex-col gap-6">
           <div className="relative h-44 w-full">
             <img

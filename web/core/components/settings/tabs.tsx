@@ -6,7 +6,7 @@ const TABS = {
   account: {
     key: "account",
     label: "Account",
-    href: `/settings/account/`,
+    href: `/settings/profile/`,
   },
   workspace: {
     key: "workspace",

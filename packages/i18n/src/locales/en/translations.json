@@ -1494,7 +1494,8 @@
       "security": "Security",
       "activity": "Activity",
       "appearance": "Appearance",
-      "notifications": "Notifications"
+      "notifications": "Notifications",
+      "api-tokens": "Personal Access Tokens"
     },
     "tabs": {
       "summary": "Summary",
