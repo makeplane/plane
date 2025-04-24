@@ -9,6 +9,7 @@ export type CustomProperty = {
   is_required: boolean;
   name: string;
   id: string;
+  data_type: string;
 };
 
 type CustomPropertiesProps = {
@@ -69,6 +70,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
       is_required: customProp.is_required,
       id: customProperty ? customProperty.id : "",
       name: customProp.name,
+      data_type: customProp.data_type
     };
   });
 
@@ -126,22 +128,70 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
       setLocalError(null);
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       setValue(e.target.value);
       setLocalError(null);
     };
 
+    const renderInputByType = () => {
+      switch (property?.data_type) {
+        case 'date':
+          return (
+            <input
+              type="date"
+              value={value}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              autoFocus
+              placeholder={`Add ${property.key}`}
+              className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
+            />
+          );
+        case 'boolean':
+          return (
+            <select
+              value={value}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              autoFocus
+              className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
+            >
+              <option value="">Select {property.key}</option>
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </select>
+          );
+        case 'number':
+          return (
+            <input
+              type="number"
+              value={value}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              autoFocus
+              placeholder={`Add ${property.key}`}
+              className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
+            />
+          );
+        case 'text':
+        default:
+          return (
+            <input
+              type="text"
+              value={value}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              autoFocus
+              placeholder={`Add ${property.key}`}
+              className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
+            />
+          );
+      }
+    };
+
     return (
       <div>
-        <input
-          type="text"
-          value={value}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          autoFocus
-          placeholder={`Add ${property.key}`}
-          className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
-        />
+        {renderInputByType()}
         {localError && (
           <div className="text-red-500 text-sm mt-1">{localError}</div>
         )}
