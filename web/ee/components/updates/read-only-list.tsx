@@ -88,7 +88,7 @@ export const UpdateList = observer((props: TUpdateList) => {
             </div>
 
             {/* Update */}
-            <div className="text-base my-3">{updateData.description}</div>
+            <div className="text-base my-3 break-words w-full">{updateData.description}</div>
 
             {/* Progress */}
             <Progress completedIssues={updateData.completed_issues} totalIssues={updateData.total_issues} />

@@ -88,7 +88,7 @@ export const UpdateBlock = observer((props: TProps) => {
         key={updateData.id}
         className="relative flex updateDatas-center gap-2 border border-custom-border-100 rounded-md p-4 pb-0"
       >
-        <div className="flex-1">
+        <div className="flex-1 w-full">
           <div className="flex flex-1 items-center">
             <div className={cn(`mr-2`, {})}>
               {/* render icon here */}
@@ -124,7 +124,7 @@ export const UpdateBlock = observer((props: TProps) => {
           </div>
 
           {/* Update */}
-          <div className="text-base my-3">{updateData.description}</div>
+          <div className="text-base my-3 break-words w-full">{updateData.description}</div>
 
           {/* Progress */}
           <Progress completedIssues={updateData.completed_issues} totalIssues={updateData.total_issues} />
