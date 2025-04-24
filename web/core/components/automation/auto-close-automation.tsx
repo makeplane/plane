@@ -42,7 +42,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
       query: state.name,
       content: (
         <div className="flex items-center gap-2">
-          <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
+          <StateGroupIcon stateGroup={state.group} color={state.color} size="lg" />
           {state.name}
         </div>
       ),
@@ -149,18 +149,12 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                       label={
                         <div className="flex items-center gap-2">
                           {selectedOption ? (
-                            <StateGroupIcon
-                              stateGroup={selectedOption.group}
-                              color={selectedOption.color}
-                              height="16px"
-                              width="16px"
-                            />
+                            <StateGroupIcon stateGroup={selectedOption.group} color={selectedOption.color} size="lg" />
                           ) : currentDefaultState ? (
                             <StateGroupIcon
                               stateGroup={currentDefaultState.group}
                               color={currentDefaultState.color}
-                              height="16px"
-                              width="16px"
+                              size="lg"
                             />
                           ) : (
                             <DoubleCircleIcon className="h-3.5 w-3.5 text-custom-text-200" />

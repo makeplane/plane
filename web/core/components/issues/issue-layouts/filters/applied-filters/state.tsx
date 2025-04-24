@@ -30,8 +30,7 @@ export const AppliedStateFilters: React.FC<Props> = observer((props) => {
             <StateGroupIcon
               color={stateDetails.color}
               stateGroup={stateDetails.group}
-              height="12px"
-              width="12px"
+              size="sm"
               percentage={stateDetails?.order}
             />
             {stateDetails.name}

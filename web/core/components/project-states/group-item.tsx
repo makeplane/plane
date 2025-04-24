@@ -74,7 +74,7 @@ export const GroupItem: FC<TGroupItem> = observer((props) => {
             <ChevronDown className="w-4 h-4" />
           </div>
           <div className="flex-shrink-0 w-6 h-6 rounded flex justify-center items-center overflow-hidden">
-            <StateGroupIcon stateGroup={groupKey} height="18px" width="18px" />
+            <StateGroupIcon stateGroup={groupKey} size="xl" />
           </div>
           <div className="text-base font-medium text-custom-text-200 capitalize px-1">{groupKey}</div>
         </div>

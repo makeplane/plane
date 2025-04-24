@@ -60,8 +60,7 @@ export const FilterState: React.FC<Props> = observer((props) => {
                       <StateGroupIcon
                         stateGroup={state.group}
                         color={state.color}
-                        height="14px"
-                        width="14px"
+                        size="md"
                         percentage={state?.order}
                       />
                     }

@@ -199,7 +199,7 @@ const getStateColumns = (): IGroupByColumn[] | undefined => {
     name: state.name,
     icon: (
       <div className="size-4 rounded-full">
-        <StateGroupIcon stateGroup={state.group} color={state.color} width="16" height="16" percentage={state.order} />
+        <StateGroupIcon stateGroup={state.group} color={state.color} size="lg" percentage={state.order} />
       </div>
     ),
     payload: { state_id: state.id },
@@ -214,7 +214,7 @@ const getStateGroupColumns = (): IGroupByColumn[] => {
     name: stateGroup.label,
     icon: (
       <div className="size-4 rounded-full">
-        <StateGroupIcon stateGroup={stateGroup.key} width="16" height="16" />
+        <StateGroupIcon stateGroup={stateGroup.key} size="lg" />
       </div>
     ),
     payload: {},

@@ -59,8 +59,7 @@ export const FilterState: FC<Props> = observer((props) => {
                       <StateGroupIcon
                         color={state.color}
                         stateGroup={state.group}
-                        height="12px"
-                        width="12px"
+                        size="sm"
                         percentage={state?.order}
                       />
                     }

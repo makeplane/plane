@@ -2,8 +2,7 @@ export interface IStateGroupIcon {
   className?: string;
   color?: string;
   stateGroup: TStateGroups;
-  height?: string;
-  width?: string;
+  size?: "sm" | "md" | "lg" | "xl";
   percentage?: number;
 }
 
@@ -17,4 +16,11 @@ export const STATE_GROUP_COLORS: {
   started: "#F59E0B",
   completed: "#46A758",
   cancelled: "#9AA4BC",
+};
+
+export const STATE_GROUP_SIZES = {
+  sm: "12px",
+  md: "14px",
+  lg: "16px",
+  xl: "18px",
 };
