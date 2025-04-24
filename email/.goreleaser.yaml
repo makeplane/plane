@@ -1,0 +1,29 @@
+version: 2
+
+builds:
+  - main: ./main.go
+    id: "email-server"
+    binary: email-server
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - format: tar.gz
+    # this name template makes the OS and Arch compatible with the results of `uname`.
+    name_template: >-
+      email-server_{{- title .Os }}_
+      {{- if eq .Arch "amd64" }}amd64
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^emails:"
+      - "^data:"

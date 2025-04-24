@@ -4,6 +4,8 @@
 import os
 from urllib.parse import urlparse
 
+from datetime import timedelta
+
 
 # Third party imports
 import dj_database_url
@@ -29,7 +31,7 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
-    # Inhouse apps
+    # In house apps
     "plane.analytics",
     "plane.app",
     "plane.space",
@@ -41,8 +43,13 @@ INSTALLED_APPS = [
     "plane.license",
     "plane.api",
     "plane.authentication",
+    "plane.ee",
+    "plane.graphql",
+    "plane.payment",
     # Third-party things
+    "strawberry.django",
     "rest_framework",
+    "oauth2_provider",
     "corsheaders",
     "django_celery_beat",
 ]
@@ -59,11 +66,14 @@ MIDDLEWARE = [
     "crum.CurrentRequestUserMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "plane.middleware.logger.APITokenLogMiddleware",
+    "oauth2_provider.middleware.OAuth2TokenMiddleware",
     "plane.middleware.logger.RequestLoggerMiddleware",
 ]
 
 # Rest Framework settings
 REST_FRAMEWORK = {
+    "DEFAULT_THROTTLE_CLASSES": ["rest_framework.throttling.AnonRateThrottle"],
+    "DEFAULT_THROTTLE_RATES": {"anon": "30/minute"},
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.SessionAuthentication",
     ),
@@ -243,6 +253,7 @@ if AMQP_URL:
 else:
     CELERY_BROKER_URL = f"amqp://{RABBITMQ_USER}:{RABBITMQ_PASSWORD}@{RABBITMQ_HOST}:{RABBITMQ_PORT}/{RABBITMQ_VHOST}"
 
+
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
@@ -253,18 +264,32 @@ CELERY_IMPORTS = (
     # scheduled tasks
     "plane.bgtasks.issue_automation_task",
     "plane.bgtasks.exporter_expired_task",
+    "plane.bgtasks.data_import_task",
     "plane.bgtasks.file_asset_task",
     "plane.bgtasks.email_notification_task",
     "plane.bgtasks.api_logs_task",
     "plane.license.bgtasks.tracer",
+    "plane.license.bgtasks.version_check_task",
+    # payment tasks
+    "plane.payment.bgtasks.workspace_subscription_sync_task",
+    "plane.payment.bgtasks.free_seat_sync",
+    "plane.payment.bgtasks.update_license_task",
     # management tasks
     "plane.bgtasks.dummy_data_task",
     # issue version tasks
     "plane.bgtasks.issue_version_sync",
     "plane.bgtasks.issue_description_version_sync",
+    "plane.bgtasks.silo_data_migration_task",
+    "plane.bgtasks.silo_credentials_update_task",
+    # ee tasks
+    "plane.ee.bgtasks.entity_issue_state_progress_task",
+    "plane.ee.bgtasks.app_bot_task",
 )
 
+# Application Envs
+SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+PRO_FILE_SIZE_LIMIT = int(os.environ.get("PRO_FILE_SIZE_LIMIT", 104857600))
 
 # Unsplash Access key
 UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
@@ -290,6 +315,9 @@ SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
+# MongoDB Settings
+MONGO_DB_URL = os.environ.get("MONGO_DB_URL", False)
+
 # Cookie Settings
 SESSION_COOKIE_SECURE = secure_origins
 SESSION_COOKIE_HTTPONLY = True
@@ -298,6 +326,12 @@ SESSION_COOKIE_AGE = os.environ.get("SESSION_COOKIE_AGE", 604800)
 SESSION_COOKIE_NAME = os.environ.get("SESSION_COOKIE_NAME", "session-id")
 SESSION_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
 SESSION_SAVE_EVERY_REQUEST = os.environ.get("SESSION_SAVE_EVERY_REQUEST", "0") == "1"
+# If on cloud, set the session cookie domain to the cloud domain else None
+if os.environ.get("IS_MULTI_TENANT", "0") == "1":
+    SESSION_COOKIE_DOMAIN = os.environ.get("SESSION_COOKIE_DOMAIN", ".plane.so")
+else:
+    SESSION_COOKIE_DOMAIN = None
+
 
 # Admin Cookie
 ADMIN_SESSION_COOKIE_NAME = "admin-session-id"
@@ -315,6 +349,8 @@ ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", None)
 SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
 APP_BASE_URL = os.environ.get("APP_BASE_URL")
 LIVE_BASE_URL = os.environ.get("LIVE_BASE_URL")
+LIVE_BASE_PATH = os.environ.get("LIVE_BASE_PATH", "/live")
+LIVE_URL = f"{LIVE_BASE_URL}{LIVE_BASE_PATH}"
 WEB_URL = os.environ.get("WEB_URL")
 
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
@@ -391,4 +427,103 @@ ATTACHMENT_MIME_TYPES = [
     "text/xml",
     "text/csv",
     "application/xml",
+    "application/x-gzip",
 ]
+# Prime Server Base url
+PRIME_SERVER_BASE_URL = os.environ.get("PRIME_SERVER_BASE_URL", False)
+PRIME_SERVER_AUTH_TOKEN = os.environ.get("PRIME_SERVER_AUTH_TOKEN", "")
+
+# payment server base url
+PAYMENT_SERVER_BASE_URL = os.environ.get("PAYMENT_SERVER_BASE_URL", False)
+PAYMENT_SERVER_AUTH_TOKEN = os.environ.get("PAYMENT_SERVER_AUTH_TOKEN", "")
+
+# feature flag server base urls
+FEATURE_FLAG_SERVER_BASE_URL = os.environ.get("FEATURE_FLAG_SERVER_BASE_URL", False)
+FEATURE_FLAG_SERVER_AUTH_TOKEN = os.environ.get("FEATURE_FLAG_SERVER_AUTH_TOKEN", "")
+
+# Check if multi tenant
+IS_MULTI_TENANT = os.environ.get("IS_MULTI_TENANT", "0") == "1"
+
+# Instance Changelog URL
+INSTANCE_CHANGELOG_URL = os.environ.get("INSTANCE_CHANGELOG_URL", "")
+
+# JWT Settings
+SIMPLE_JWT = {
+    # The number of seconds the access token will be valid
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        minutes=int(os.environ.get("ACCESS_TOKEN_LIFETIME", 15))
+    ),
+    # The number of seconds the refresh token will be valid
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        days=int(os.environ.get("REFRESH_TOKEN_LIFETIME", 90))
+    ),
+    # The number of seconds the refresh token will be valid
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    # Algorithm used to sign the token
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+}
+
+# silo settings
+SILO_HOSTNAME = os.environ.get("SILO_BASE_URL", "")
+SILO_BASE_PATH = os.environ.get("SILO_BASE_PATH", "/silo")
+SILO_URL = f"{SILO_HOSTNAME}{SILO_BASE_PATH}"
+SILO_HMAC_SECRET_KEY = os.environ.get("SILO_HMAC_SECRET_KEY", "")
+
+
+# firebase settings
+IS_MOBILE_PUSH_NOTIFICATION_ENABLED = (
+    os.environ.get("IS_MOBILE_PUSH_NOTIFICATION_ENABLED", "0") == "1"
+)
+FIREBASE_PROJECT_ID = os.environ.get("FIREBASE_PROJECT_ID", "")
+FIREBASE_PRIVATE_KEY_ID = os.environ.get("FIREBASE_PRIVATE_KEY_ID", "")
+FIREBASE_PRIVATE_KEY = os.environ.get("FIREBASE_PRIVATE_KEY", "")
+FIREBASE_CLIENT_EMAIL = os.environ.get("FIREBASE_CLIENT_EMAIL", "")
+FIREBASE_CLIENT_ID = os.environ.get("FIREBASE_CLIENT_ID", "")
+FIREBASE_CLIENT_CERT_URL = os.environ.get("FIREBASE_CLIENT_CERT_URL", "")
+
+# Oauth Provider Settings
+from plane.authentication.utils import is_pkce_required  # noqa
+
+OAUTH2_PROVIDER_ACCESS_TOKEN_MODEL = "authentication.AccessToken"
+OAUTH2_PROVIDER_APPLICATION_MODEL = "authentication.Application"
+OAUTH2_PROVIDER_GRANT_MODEL = "authentication.Grant"
+OAUTH2_PROVIDER_REFRESH_TOKEN_MODEL = "authentication.RefreshToken"
+OAUTH2_PROVIDER_ID_TOKEN_MODEL = "authentication.IDToken"
+
+
+OAUTH2_PROVIDER = {
+    "AUTHORIZATION_CODE_EXPIRE_SECONDS": 60,  # 1 minute
+    "OAUTH2_VALIDATOR_CLASS": "plane.authentication.views.oauth.CustomOAuth2Validator",
+    "ALLOWED_GRANT_TYPES": [
+        "authorization_code",
+        "client_credentials",
+        "refresh_token",
+    ],
+    "PKCE_REQUIRED": is_pkce_required,
+}
+
+# ElasticSearch settings
+ELASTICSEARCH_ENABLED = os.environ.get("ELASTICSEARCH_ENABLED", "0") == "1"
+if ELASTICSEARCH_ENABLED:
+    # Elastic Search Config
+    ELASTICSEARCH_DSL = {
+        "default": {
+            "hosts": os.environ.get("ELASTICSEARCH_URL"),
+            "api_key": os.environ.get("ELASTICSEARCH_API_KEY"),
+        }
+    }
+    ELASTICSEARCH_DSL_SIGNAL_PROCESSOR = os.environ.get(
+        "ELASTICSEARCH_SIGNAL_PROCESSOR",
+        "plane.ee.documents.signal_handler.CustomCelerySignalProcessor",
+    )
+
+    INSTALLED_APPS += ["django_elasticsearch_dsl"]
+
+# Web URL
+WEB_URL = os.environ.get("WEB_URL", "http://localhost:3000")

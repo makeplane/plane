@@ -2,7 +2,7 @@ import { useState } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // components
-import { ImageFullScreenAction } from "./full-screen";
+import { ImageFullScreenActionRoot } from "./full-screen";
 
 type Props = {
   containerClassName?: string;
@@ -26,7 +26,7 @@ export const ImageToolbarRoot: React.FC<Props> = (props) => {
           "opacity-100 pointer-events-auto": isFullScreenEnabled,
         })}
       >
-        <ImageFullScreenAction
+        <ImageFullScreenActionRoot
           image={image}
           isOpen={isFullScreenEnabled}
           toggleFullScreenMode={(val) => setIsFullScreenEnabled(val)}

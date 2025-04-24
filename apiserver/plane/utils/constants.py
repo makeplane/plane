@@ -64,4 +64,6 @@ RESTRICTED_WORKSPACE_SLUGS = [
     "licenses",
     "instances",
     "instance",
+    "oauth",
+    "applications",
 ]
