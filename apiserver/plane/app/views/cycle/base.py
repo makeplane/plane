@@ -574,16 +574,12 @@ class CycleDateCheckEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        is_start_date_end_date_equal = (
-            True if str(start_date) == str(end_date) else False
-        )
         start_date = convert_to_utc(
             date=str(start_date), project_id=project_id, is_start_date=True
         )
         end_date = convert_to_utc(
             date=str(end_date),
             project_id=project_id,
-            is_start_date_end_date_equal=is_start_date_end_date_equal,
         )
 
         # Check if any cycle intersects in the given interval
