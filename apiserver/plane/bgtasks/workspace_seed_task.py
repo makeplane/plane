@@ -2,6 +2,8 @@
 import os
 import json
 import time
+import uuid
+from typing import Dict
 
 # Django imports
 from django.conf import settings
@@ -47,7 +49,18 @@ def read_seed_file(filename):
         return None
 
 
-def create_project_and_member(workspace):
+def create_project_and_member(workspace: Workspace) -> Dict[int, uuid.UUID]:
+    """Creates a project and associated members for a workspace.
+
+    Creates a new project using the workspace name and sets up all necessary
+    member associations and user properties.
+
+    Args:
+        workspace: The workspace to create the project in
+
+    Returns:
+        A mapping of seed project IDs to actual project IDs
+    """
     project_seeds = read_seed_file("projects.json")
     project_identifier = "".join(ch for ch in workspace.name if ch.isalnum())[:5]
 
@@ -56,8 +69,7 @@ def create_project_and_member(workspace):
         "member_id", "role"
     )
 
-    projects = []
-    projects_map = {}
+    projects_map: Dict[int, uuid.UUID] = {}
 
     if not project_seeds:
         return projects_map
@@ -112,14 +124,24 @@ def create_project_and_member(workspace):
         # update map
         projects_map[project_id] = project.id
 
-        projects.append(project)
-
     return projects_map
 
 
-def create_project_states(workspace, project_map):
+def create_project_states(
+    workspace: Workspace, project_map: Dict[int, uuid.UUID]
+) -> Dict[int, uuid.UUID]:
+    """Creates states for each project in the workspace.
+
+    Args:
+        workspace: The workspace containing the projects
+        project_map: Mapping of seed project IDs to actual project IDs
+
+    Returns:
+        A mapping of seed state IDs to actual state IDs
+    """
+
     state_seeds = read_seed_file("states.json")
-    state_map = {}
+    state_map: Dict[int, uuid.UUID] = {}
 
     if not state_seeds:
         return state_map
@@ -140,9 +162,20 @@ def create_project_states(workspace, project_map):
     return state_map
 
 
-def create_project_labels(workspace, project_map):
+def create_project_labels(
+    workspace: Workspace, project_map: Dict[int, uuid.UUID]
+) -> Dict[int, uuid.UUID]:
+    """Creates labels for each project in the workspace.
+
+    Args:
+        workspace: The workspace containing the projects
+        project_map: Mapping of seed project IDs to actual project IDs
+
+    Returns:
+        A mapping of seed label IDs to actual label IDs
+    """
     label_seeds = read_seed_file("labels.json")
-    label_map = {}
+    label_map: Dict[int, uuid.UUID] = {}
 
     if not label_seeds:
         return label_map
@@ -161,7 +194,22 @@ def create_project_labels(workspace, project_map):
     return label_map
 
 
-def create_project_issues(workspace, project_map, states_map, labels_map):
+def create_project_issues(
+    workspace: Workspace,
+    project_map: Dict[int, uuid.UUID],
+    states_map: Dict[int, uuid.UUID],
+    labels_map: Dict[int, uuid.UUID],
+) -> None:
+    """Creates issues and their associated records for each project.
+
+    Creates issues along with their sequences, activities, and label associations.
+
+    Args:
+        workspace: The workspace containing the projects
+        project_map: Mapping of seed project IDs to actual project IDs
+        states_map: Mapping of seed state IDs to actual state IDs
+        labels_map: Mapping of seed label IDs to actual label IDs
+    """
     issue_seeds = read_seed_file("issues.json")
 
     if not issue_seeds:
@@ -210,7 +258,18 @@ def create_project_issues(workspace, project_map, states_map, labels_map):
 
 
 @shared_task
-def workspace_seed(workspace_id):
+def workspace_seed(workspace_id: uuid.UUID) -> None:
+    """Seeds a new workspace with initial project data.
+
+    Creates a complete workspace setup including:
+    - Projects and project members
+    - Project states
+    - Project labels
+    - Issues and their associations
+
+    Args:
+        workspace_id: ID of the workspace to seed
+    """
     # Get the workspace
     workspace = Workspace.objects.get(id=workspace_id)
 

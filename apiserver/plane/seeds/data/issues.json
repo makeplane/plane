@@ -18,7 +18,7 @@
     "description_html": "<p class=\"editor-paragraph-block\"><br>A Project in Plane is where all your work comes together. Think of it as a base that organizes your work items and everything else your team needs to get things done.</p><div data-emoji-unicode=\"128204\" data-emoji-url=\"https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4cc.png\" data-logo-in-use=\"emoji\" data-background=\"light-blue\" data-block-type=\"callout-component\"><p class=\"editor-paragraph-block\"><strong>Note: </strong>This tutorial is already set up as a Project, and these cards you're reading are work items within it!</p><p class=\"editor-paragraph-block\">We're showing you how to create a new project just so you'll know exactly what to do when you're ready to start your own real one.</p></div><ol class=\"list-decimal pl-7 space-y-[--list-spacing-y] tight\" data-tight=\"true\"><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Look over at the left sidebar and find where it says <strong>Projects.</strong></p><image-component src=\"https://media.docs.plane.so/seed_assets/21.png\" width=\"395px\" height=\"362px\" id=\"7cb0d276-8686-4c8e-9f00-06a18140964d\" aspectratio=\"1.0900243309002433\"></image-component></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Hover your mouse there and you'll see a little <strong>+</strong> icon pop up - go ahead and click it!</p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">A modal opens where you can give your project a name and other details.</p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Notice the Access type<strong> </strong>options? <strong>Public</strong> means anyone (except Guest users) can see and join it, while <strong>Private</strong> keeps it just for those you invite.</p><div data-icon-color=\"#6d7b8a\" data-icon-name=\"Info\" data-emoji-unicode=\"128161\" data-emoji-url=\"https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4a1.png\" data-logo-in-use=\"emoji\" data-background=\"green\" data-block-type=\"callout-component\"><p class=\"editor-paragraph-block\"><strong>Tip:</strong> You can also quickly create a new project by using the keyboard shortcut <strong>P</strong> from anywhere in Plane!</p></div></li></ol>",
     "sort_order": 2000,
     "state_id": 2,
-    "labels": [3],
+    "labels": [2],
     "priority": "none",
     "project_id": 1
   },
@@ -42,7 +42,7 @@
     "description_stripped": "A work item is the fundamental building block of your project. Think of these as the actionable tasks that move your project forward.Ready to add something to your project's to-do list? Here's how:Click the Add work item button in the top-right corner of the Work Items page.Give your task a clear title and add any details in the description.Set up the essentials:Assign it to a team member (or yourself!)Choose a priority levelAdd start and due dates if there's a timelineTip: Save time by using the keyboard shortcut C from anywhere in your project to quickly create a new work item!Want to dive deeper into all the things you can do with work items? Check out our documentation.",
     "sort_order": 4000,
     "state_id": 1,
-    "labels": [3],
+    "labels": [2],
     "priority": "none",
     "project_id": 1
   },
@@ -66,7 +66,7 @@
     "description_stripped": "A Cycle in Plane is like a sprint - a dedicated timeframe where your team focuses on completing specific work items. It helps you break down your project into manageable chunks with clear start and end dates so everyone knows what to work on and when it needs to be done.Setup CyclesGo to the Cycles section in your project (you can find it in the left sidebar)Click the Add cycle button in the top-right cornerEnter details and set the start and end dates for your cycle.Click Create cycle and you're ready to go!Add existing work items to the Cycle or create new ones.Tip: To create a new Cycle quickly, just press Q from anywhere in your project!Want to learn more?Starting and stopping cyclesTransferring work items between cyclesTracking progress with chartsCheck out our detailed documentation for everything you need to know!",
     "sort_order": 6000,
     "state_id": 1,
-    "labels": [3],
+    "labels": [2],
     "priority": "none",
     "project_id": 1
   },
