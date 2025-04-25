@@ -20,7 +20,7 @@ export interface IWorkspaceSettingLayout {
 const pathnameToAccessKey = (pathname: string) => {
   const pathArray = pathname.replace(/^\/|\/$/g, "").split("/"); // Regex removes leading and trailing slashes
   const workspaceSlug = pathArray[0];
-  const accessKey = pathArray.slice(1).join("/");
+  const accessKey = pathArray.slice(1, 3).join("/");
   return { workspaceSlug, accessKey: `/${accessKey}` || "" };
 };
 
@@ -33,6 +33,7 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
   // derived values
   const { workspaceSlug, accessKey } = pathnameToAccessKey(pathname);
   const userWorkspaceRole = workspaceUserInfo?.[workspaceSlug.toString()]?.role;
+
   const isAuthorized =
     pathname &&
     workspaceSlug &&

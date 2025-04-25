@@ -45,7 +45,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
           state: "SUCCESS",
           element: "Workspace settings members page",
         });
-        router.push("/profile");
+        router.push(`/${workspaceSlug}/settings/account`);
       })
       .catch((err: any) =>
         setToast({

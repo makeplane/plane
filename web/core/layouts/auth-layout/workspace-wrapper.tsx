@@ -178,7 +178,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
                   <Button>Go Home</Button>
                 </Link>
               )}
-              <Link href="/profile">
+              <Link href={`/${workspaceSlug}/settings/account`}>
                 <Button variant="neutral-primary">Visit Profile</Button>
               </Link>
             </div>

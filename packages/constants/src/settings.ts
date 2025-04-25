@@ -1,5 +1,4 @@
 import { PROFILE_SETTINGS } from ".";
-import { EUserWorkspaceRoles } from "./user";
 import { WORKSPACE_SETTINGS } from "./workspace";
 
 export enum WORKSPACE_SETTINGS_CATEGORY {

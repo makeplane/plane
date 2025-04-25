@@ -37,7 +37,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
   // refs
   const ref = useRef<HTMLDivElement>(null);
   // router
-  const { userId } = useParams();
+  const { userId, workspaceSlug } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
   const { profileSidebarCollapsed, toggleProfileSidebar } = useAppTheme();
@@ -94,7 +94,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
           <div className="relative h-[110px]">
             {currentUser?.id === userId && (
               <div className="absolute right-3.5 top-3.5 grid h-5 w-5 place-items-center rounded bg-white">
-                <Link href="/profile">
+                <Link href={`/${workspaceSlug}/settings/account`}>
                   <span className="grid place-items-center text-black">
                     <Pencil className="h-3 w-3" />
                   </span>

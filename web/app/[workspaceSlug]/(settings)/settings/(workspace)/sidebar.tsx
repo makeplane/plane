@@ -46,7 +46,11 @@ export const WorkspaceSettingsSidebar = (props: TWorkspaceSettingsSidebarProps) 
       categories={WORKSPACE_SETTINGS_CATEGORIES}
       groupedSettings={GROUPED_WORKSPACE_SETTINGS}
       workspaceSlug={workspaceSlug.toString()}
-      isActive={(data: { href: string }) => pathname === `/${workspaceSlug}${data.href}/`}
+      isActive={(data: { href: string }) =>
+        data.href === "/settings"
+          ? pathname === `/${workspaceSlug}${data.href}/`
+          : new RegExp(`^/${workspaceSlug}${data.href}/`).test(pathname)
+      }
       shouldRender={(data: { key: string; access?: EUserWorkspaceRoles[] | undefined }) =>
         data.access
           ? shouldRenderSettingLink(workspaceSlug.toString(), data.key) &&

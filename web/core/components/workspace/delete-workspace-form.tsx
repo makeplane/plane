@@ -2,6 +2,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { AlertTriangle } from "lucide-react";
 // types
@@ -30,6 +31,7 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
   const { data, onClose } = props;
   // router
   const router = useAppRouter();
+  const { workspaceSlug } = useParams();
   // store hooks
   const { captureWorkspaceEvent } = useEventTracker();
   const { deleteWorkspace } = useWorkspace();
@@ -60,7 +62,7 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
     await deleteWorkspace(data.slug)
       .then(() => {
         handleClose();
-        router.push("/profile");
+        router.push(`/${workspaceSlug}/settings/account`);
         captureWorkspaceEvent({
           eventName: WORKSPACE_DELETED,
           payload: {

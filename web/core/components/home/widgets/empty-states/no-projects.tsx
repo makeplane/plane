@@ -115,7 +115,7 @@ export const NoProjectsEmptyState = observer(() => {
       flag: "visited_profile",
       cta: {
         text: "home.empty.personalize_account.cta",
-        link: "/profile",
+        link: `/${workspaceSlug}/settings/account`,
         disabled: false,
       },
     },
