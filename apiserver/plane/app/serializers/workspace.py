@@ -174,7 +174,6 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
 
         return value
 
-
     def create(self, validated_data):
         # Filtering the WorkspaceUserLink with the given url to check if the link already exists.
 
@@ -183,7 +182,7 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
         workspace_user_link = WorkspaceUserLink.objects.filter(
             url=url,
             workspace_id=validated_data.get("workspace_id"),
-            owner_id=validated_data.get("owner_id")
+            owner_id=validated_data.get("owner_id"),
         )
 
         if workspace_user_link.exists():
@@ -199,10 +198,8 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
         url = validated_data.get("url")
 
         workspace_user_link = WorkspaceUserLink.objects.filter(
-                url=url,
-                workspace_id=instance.workspace_id,
-                owner=instance.owner
-            )
+            url=url, workspace_id=instance.workspace_id, owner=instance.owner
+        )
 
         if workspace_user_link.exclude(pk=instance.id).exists():
             raise serializers.ValidationError(
@@ -211,8 +208,10 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
 
         return super().update(instance, validated_data)
 
+
 class IssueRecentVisitSerializer(serializers.ModelSerializer):
     project_identifier = serializers.SerializerMethodField()
+    is_epic = serializers.SerializerMethodField()
 
     class Meta:
         model = Issue
@@ -226,12 +225,16 @@ class IssueRecentVisitSerializer(serializers.ModelSerializer):
             "sequence_id",
             "project_id",
             "project_identifier",
+            "is_epic",
         ]
 
     def get_project_identifier(self, obj):
         project = obj.project
 
         return project.identifier if project else None
+
+    def get_is_epic(self, obj):
+        return obj.type.is_epic if obj.type else False
 
 
 class ProjectRecentVisitSerializer(serializers.ModelSerializer):
@@ -250,15 +253,9 @@ class ProjectRecentVisitSerializer(serializers.ModelSerializer):
 
 
 class WorkspacePageRecentVisitSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Page
-        fields = [
-            "id",
-            "name",
-            "logo_props",
-            "owned_by",
-        ]
+        fields = ["id", "name", "logo_props", "owned_by"]
 
 
 class PageRecentVisitSerializer(serializers.ModelSerializer):
