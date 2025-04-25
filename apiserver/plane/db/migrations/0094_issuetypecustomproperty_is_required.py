@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('db', '0093_issuecustomproperty_bool_value_and_more'),
+        ('db', '0092_issue_customer_name_issue_hub_name_issue_vendor_name_and_more'),
     ]
 
     operations = [
