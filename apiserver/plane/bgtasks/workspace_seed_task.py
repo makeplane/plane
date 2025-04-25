@@ -226,6 +226,16 @@ def create_project_issues(
         return
 
     for issue_seed in issue_seeds:
+        required_fields = ["id", "labels", "project_id", "state_id"]
+        # get the values
+        for field in required_fields:
+            if field not in issue_seed:
+                logger.error(
+                    f"Task: workspace_seed_task -> Required field '{field}' missing in issue seed"
+                )
+                continue
+
+        # get the values
         issue_id = issue_seed.pop("id")
         labels = issue_seed.pop("labels")
         project_id = issue_seed.pop("project_id")
