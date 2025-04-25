@@ -128,7 +128,7 @@ def create_project_and_member(workspace: Workspace) -> Dict[int, uuid.UUID]:
         )
         # update map
         projects_map[project_id] = project.id
-        logger.info(f"Project {project_id} created")
+        logger.info(f"Task: workspace_seed_task -> Project {project_id} created")
 
     return projects_map
 
@@ -164,7 +164,7 @@ def create_project_states(
         )
 
         state_map[state_id] = state.id
-        logger.info(f"State {state_id} created")
+        logger.info(f"Task: workspace_seed_task -> State {state_id} created")
     return state_map
 
 
@@ -197,7 +197,7 @@ def create_project_labels(
         )
         label_map[label_id] = label.id
 
-        logger.info(f"Label {label_id} created")
+        logger.info(f"Task: workspace_seed_task -> Label {label_id} created")
     return label_map
 
 
@@ -261,7 +261,7 @@ def create_project_issues(
                 created_by_id=workspace.created_by_id,
             )
 
-        logger.info(f"Issue {issue_id} created")
+        logger.info(f"Task: workspace_seed_task -> Issue {issue_id} created")
     return
 
 
@@ -279,7 +279,7 @@ def workspace_seed(workspace_id: uuid.UUID) -> None:
         workspace_id: ID of the workspace to seed
     """
     try:
-        logger.info(f"Seeding workspace {workspace_id}")
+        logger.info(f"Task: workspace_seed_task -> Seeding workspace {workspace_id}")
         # Get the workspace
         workspace = Workspace.objects.get(id=workspace_id)
 
@@ -295,8 +295,8 @@ def workspace_seed(workspace_id: uuid.UUID) -> None:
         # create project issues
         create_project_issues(workspace, project_map, state_map, label_map)
 
-        logger.info(f"Workspace {workspace_id} seeded successfully")
+        logger.info(f"Task: workspace_seed_task -> Workspace {workspace_id} seeded successfully")
         return
     except Exception as e:
-        logger.error(f"Failed to seed workspace {workspace_id}: {str(e)}")
+        logger.error(f"Task: workspace_seed_task -> Failed to seed workspace {workspace_id}: {str(e)}")
         raise e
