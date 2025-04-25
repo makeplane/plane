@@ -132,10 +132,14 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   };
 
   const addIssueToModule = async (issue: TIssue, moduleIds: string[]) => {
-    if (!workspaceSlug || !activeProjectId) return;
+    if (!workspaceSlug || !issue.project_id) return;
 
-    await issues.changeModulesInIssue(workspaceSlug.toString(), activeProjectId, issue.id, moduleIds, []);
-    moduleIds.forEach((moduleId) => fetchModuleDetails(workspaceSlug.toString(), activeProjectId, moduleId));
+    await Promise.all([
+      issues.changeModulesInIssue(workspaceSlug.toString(), issue.project_id, issue.id, moduleIds, []),
+      ...moduleIds.map(
+        (moduleId) => issue.project_id && fetchModuleDetails(workspaceSlug.toString(), issue.project_id, moduleId)
+      ),
+    ]);
   };
 
   const handleCreateMoreToggleChange = (value: boolean) => {
@@ -182,7 +186,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       if (uploadedAssetIds.length > 0) {
         await fileService.updateBulkProjectAssetsUploadStatus(
           workspaceSlug?.toString() ?? "",
-          activeProjectId ?? "",
+          response?.project_id ?? "",
           response?.id ?? "",
           {
             asset_ids: uploadedAssetIds,

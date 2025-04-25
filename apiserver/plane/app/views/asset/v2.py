@@ -683,7 +683,7 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
             # For some cases, the bulk api is called after the issue is deleted creating
             # an integrity error
             try:
-                assets.update(issue_id=entity_id)
+                assets.update(issue_id=entity_id, project_id=project_id)
             except IntegrityError:
                 pass
 
