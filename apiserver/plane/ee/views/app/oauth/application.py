@@ -26,7 +26,7 @@ class OAuthApplicationEndpoint(BaseAPIView):
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         client_secret = generate_client_secret()
-
+        request.data["client_secret"] = client_secret
         request.data["skip_authorization"] = request.data.get(
             "skip_authorization", False
         )
