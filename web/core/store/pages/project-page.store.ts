@@ -250,10 +250,10 @@ export class ProjectPageStore implements IProjectPageStore {
       });
 
       const page = await this.service.fetchById(workspaceSlug, projectId, pageId);
-      const pageInstance = page?.id ? this.getPageById(page.id) : undefined;
 
       runInAction(() => {
         if (page?.id) {
+          const pageInstance = this.getPageById(page.id);
           if (pageInstance) {
             pageInstance.mutateProperties(page, false);
           } else {

@@ -74,6 +74,12 @@ export const PageRoot = observer((props: TPageRootProps) => {
     [page.editorRef, setEditorRef]
   );
 
+  useEffect(() => {
+    setTimeout(() => {
+      setEditorRef(editorRef.current);
+    }, 0);
+  }, [isContentEditable, setEditorRef]);
+
   const version = searchParams.get("version");
   useEffect(() => {
     if (!version) {

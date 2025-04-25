@@ -350,7 +350,7 @@
   "couldnt_remove_the_project_from_favorites": "無法從我的最愛移除專案。請再試一次。",
   "add_to_favorites": "加入我的最愛",
   "remove_from_favorites": "從我的最愛移除",
-  "publish_settings": "發布設定",
+  "publish_project": "發佈專案",
   "publish": "發布",
   "copy_link": "複製連結",
   "leave_project": "離開專案",

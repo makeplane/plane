@@ -44,6 +44,7 @@ from plane.app.views.base import BaseAPIView
 from plane.utils.timezone_converter import user_timezone_converter
 from plane.utils.global_paginator import paginate
 from plane.utils.host import base_host
+from plane.db.models.intake import SourceType
 
 
 class IntakeViewSet(BaseViewSet):
@@ -278,7 +279,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 intake_id=intake_id.id,
                 project_id=project_id,
                 issue_id=serializer.data["id"],
-                source=request.data.get("source", "IN-APP"),
+                source=SourceType.IN_APP,
             )
             # Create an Issue Activity
             issue_activity.delay(
@@ -408,7 +409,6 @@ class IntakeIssueViewSet(BaseViewSet):
             )
 
             if issue_serializer.is_valid():
-
                 # Log all the updates
                 requested_data = json.dumps(issue_data, cls=DjangoJSONEncoder)
                 if issue is not None:
@@ -607,7 +607,6 @@ class IntakeIssueViewSet(BaseViewSet):
 
 
 class IntakeWorkItemDescriptionVersionEndpoint(BaseAPIView):
-
     def process_paginated_result(self, fields, results, timezone):
         paginated_data = results.values(*fields)
 

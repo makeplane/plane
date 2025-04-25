@@ -350,7 +350,7 @@
   "couldnt_remove_the_project_from_favorites": "无法从收藏中移除项目。请重试。",
   "add_to_favorites": "添加到收藏",
   "remove_from_favorites": "从收藏中移除",
-  "publish_settings": "发布设置",
+  "publish_project": "发布项目",
   "publish": "发布",
   "copy_link": "复制链接",
   "leave_project": "离开项目",

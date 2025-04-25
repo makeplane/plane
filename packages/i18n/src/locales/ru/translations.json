@@ -348,7 +348,7 @@
   "couldnt_remove_the_project_from_favorites": "Не удалось удалить проект из избранного. Попробуйте снова.",
   "add_to_favorites": "Добавить в избранное",
   "remove_from_favorites": "Удалить из избранного",
-  "publish_settings": "Настройки публикации",
+  "publish_project": "Опубликовать проект",
   "publish": "Опубликовать",
   "copy_link": "Копировать ссылку",
   "leave_project": "Покинуть проект",
