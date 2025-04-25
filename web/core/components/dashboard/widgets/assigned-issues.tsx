@@ -13,6 +13,7 @@ import {
   WidgetLoader,
   WidgetProps,
 } from "@/components/dashboard/widgets";
+import { useTranslation } from "@plane/i18n";
 import { EDurationFilters, FILTERED_ISSUES_TABS_LIST, UNFILTERED_ISSUES_TABS_LIST } from "@/constants/dashboard";
 import { getCustomDates, getRedirectionFilters, getTabKey } from "@/helpers/dashboard.helper";
 import { useDashboard } from "@/hooks/store";
@@ -25,6 +26,7 @@ const WIDGET_KEY = "assigned_issues";
 
 export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
+  const { t } = useTranslation();
   // states
   const [fetching, setFetching] = useState(false);
   // store hooks
@@ -99,7 +101,7 @@ export const AssignedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
                 href={`/${workspaceSlug}/workspace-views/assigned/${filterParams}`}
                 className="text-lg font-semibold text-custom-text-300 hover:underline"
               >
-                Assigned to you
+                {t("assigned_to_you")}
               </Link>
               <DurationFilterDropdown
                 customDates={selectedCustomDates}

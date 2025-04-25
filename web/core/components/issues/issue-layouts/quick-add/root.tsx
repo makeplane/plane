@@ -21,6 +21,7 @@ import { createIssuePayload } from "@/helpers/issue.helper";
 import { useEventTracker } from "@/hooks/store";
 // plane web components
 import { QuickAddIssueFormRoot } from "@/plane-web/components/issues";
+import { useTranslation } from "@plane/i18n";
 
 export type TQuickAddIssueForm = {
   ref: React.RefObject<HTMLFormElement>;
@@ -61,6 +62,7 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
     setIsQuickAddOpen,
     quickAddCallback,
   } = props;
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
@@ -175,7 +177,7 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
               onClick={() => handleIsOpen(true)}
             >
               <PlusIcon className="h-3.5 w-3.5 stroke-2" />
-              <span className="text-sm font-medium">New Issue</span>
+              <span className="text-sm font-medium">{t("new_issue")}</span>
             </div>
           )}
         </>

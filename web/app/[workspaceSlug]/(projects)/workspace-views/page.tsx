@@ -13,9 +13,11 @@ import { GlobalDefaultViewListItem, GlobalViewsList } from "@/components/workspa
 import { DEFAULT_GLOBAL_VIEWS_LIST } from "@/constants/workspace";
 // hooks
 import { useWorkspace } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 const WorkspaceViewsPage = observer(() => {
   const [query, setQuery] = useState("");
+  const { t } = useTranslation();
   // store
   const { currentWorkspace } = useWorkspace();
   // derived values

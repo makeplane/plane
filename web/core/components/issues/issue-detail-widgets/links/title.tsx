@@ -6,6 +6,7 @@ import { CollapsibleButton } from "@plane/ui";
 import { IssueLinksActionButton } from "@/components/issues/issue-detail-widgets";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   isOpen: boolean;
@@ -15,6 +16,7 @@ type Props = {
 
 export const IssueLinksCollapsibleTitle: FC<Props> = observer((props) => {
   const { isOpen, issueId, disabled } = props;
+  const { t } = useTranslation();
   // store hooks
   const {
     issue: { getIssueById },
@@ -38,7 +40,7 @@ export const IssueLinksCollapsibleTitle: FC<Props> = observer((props) => {
   return (
     <CollapsibleButton
       isOpen={isOpen}
-      title="Links"
+      title={t("links")}
       indicatorElement={indicatorElement}
       actionItemElement={!disabled && <IssueLinksActionButton disabled={disabled} />}
     />

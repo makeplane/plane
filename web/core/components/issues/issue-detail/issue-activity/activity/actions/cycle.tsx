@@ -8,11 +8,13 @@ import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent } from "./";
 // icons
+import { useTranslation } from "@plane/i18n";
 
 type TIssueCycleActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
 export const IssueCycleActivity: FC<TIssueCycleActivity> = observer((props) => {
   const { activityId, ends } = props;
+  const { t } = useTranslation();
   // hooks
   const {
     activity: { getActivityById },
@@ -30,7 +32,7 @@ export const IssueCycleActivity: FC<TIssueCycleActivity> = observer((props) => {
       <>
         {activity.verb === "created" ? (
           <>
-            <span>added this issue to the cycle </span>
+            <span>{t("added_issue_to_cycle")} </span>
             <a
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
@@ -42,7 +44,7 @@ export const IssueCycleActivity: FC<TIssueCycleActivity> = observer((props) => {
           </>
         ) : activity.verb === "updated" ? (
           <>
-            <span>set the cycle to </span>
+            <span>{t("set_cycle_to")} </span>
             <a
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
@@ -54,7 +56,7 @@ export const IssueCycleActivity: FC<TIssueCycleActivity> = observer((props) => {
           </>
         ) : (
           <>
-            <span>removed the issue from the cycle </span>
+            <span>{t("removed_issue_from_cycle")} </span>
             <a
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/cycles/${activity.old_identifier}`}
               target="_blank"

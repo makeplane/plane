@@ -9,8 +9,10 @@ import { useCommandPalette, useEventTracker, useUserPermissions } from "@/hooks/
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // assets
 import emptyIssue from "@/public/empty-state/issue.svg";
+import { useTranslation } from "@plane/i18n";
 
 export const ProjectViewEmptyState: React.FC = observer(() => {
+  const { t } = useTranslation();
   // store hooks
   const { toggleCreateIssueModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
@@ -31,7 +33,7 @@ export const ProjectViewEmptyState: React.FC = observer(() => {
         primaryButton={
           isCreatingIssueAllowed
             ? {
-                text: "New issue",
+                text: t("new_issue"),
                 icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
                 onClick: () => {
                   setTrackElement("View issue empty state");

@@ -18,6 +18,7 @@ from django.db.models import (
     Subquery,
     Case,
     When,
+    JSONField
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -271,6 +272,22 @@ class IssueViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                custom_propertiess=Coalesce(
+                    ArrayAgg(
+                        Func(
+                            F('custom_properties__key'),
+                            F('custom_properties__value'),
+                            function="jsonb_build_object",
+                            template="%(function)s(%(expressions)s)",
+                            output_field=JSONField()  # Specify output field type
+                        ),
+                        distinct=True,
+                        filter=Q(custom_properties__key__isnull=False)
+                    ),
+                    Value([], output_field=ArrayField(JSONField()))
+                )
+            )
             .filter(
                 *[
                     Q(
@@ -472,6 +489,10 @@ class IssueViewSet(BaseViewSet):
                     "trip_reference_number",
                     "vendor_code",
                     "worker_code",
+                    "hub_name",
+                    "customer_name",
+                    "vendor_name",
+                    "worker_name",
                     "priority",
                     "start_date",
                     "target_date",
@@ -1220,9 +1241,10 @@ class SearchAPIEndpoint(BaseAPIView):
     webhook_event = "issue"
     def get(self, request, slug):
         
-        allowed_fields = ["hub_code", "worker_code", "reference_number", "trip_reference_number", "customer_code", "vendor_code"]
+        allowed_fields = ["hub_code", "hub_name", "worker_code", "worker_name", "reference_number", "trip_reference_number", "customer_code", "customer_name", "vendor_code", "vendor_name"]
 
         field = request.GET.get("field")  # Get the single field value
+        query = request.GET.get("query")
 
         if not field:  # Ensure that 'field' is provided in the request
             return Response(
@@ -1237,14 +1259,17 @@ class SearchAPIEndpoint(BaseAPIView):
             )
 
         # Fetch values dynamically based on the requested field
+        filter_criteria = {f"{field}__icontains": query} if query else {}
+
         values = Issue.objects.filter(
-            workspace__slug=slug
+            Q(workspace__slug=slug) & Q(**filter_criteria)
+
         ).values_list(field, flat=True)
 
         unique_values = list(set(filter(None, values)))  # Remove duplicates and nulls
 
         paginator = PageNumberPagination()
-        paginator.page_size = int(request.GET.get("limit", 20))  # Default limit = 10
+        paginator.page_size = int(request.GET.get("limit", 10))  # Default limit = 10
         paginated_values = paginator.paginate_queryset(unique_values, request)
 
         # Custom pagination response

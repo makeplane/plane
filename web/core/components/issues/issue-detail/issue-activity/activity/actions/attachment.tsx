@@ -5,11 +5,13 @@ import { Paperclip } from "lucide-react";
 import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent, IssueLink } from "./";
+import { useTranslation } from "@plane/i18n";
 
 type TIssueAttachmentActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
 export const IssueAttachmentActivity: FC<TIssueAttachmentActivity> = observer((props) => {
   const { activityId, showIssue = true, ends } = props;
+  const { t } = useTranslation();
   // hooks
   const {
     activity: { getActivityById },
@@ -25,7 +27,7 @@ export const IssueAttachmentActivity: FC<TIssueAttachmentActivity> = observer((p
       ends={ends}
     >
       <>
-        {activity.verb === "created" ? `uploaded a new ` : `removed an attachment`}
+        {activity.verb === "created" ? `${t("uploaded_new")} ` : `r${t("removed_attachment")}`}
         {activity.verb === "created" && (
           <a
             href={`${activity.new_value}`}
@@ -33,10 +35,10 @@ export const IssueAttachmentActivity: FC<TIssueAttachmentActivity> = observer((p
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
           >
-            attachment
+            {t("attachment")}
           </a>
         )}
-        {showIssue && (activity.verb === "created" ? ` to ` : ` from `)}
+        {showIssue && (activity.verb === "created" ? ` ${t("to")} ` : ` ${t("from")} `)}
         {showIssue && <IssueLink activityId={activityId} />}.
       </>
     </IssueActivityBlockComponent>

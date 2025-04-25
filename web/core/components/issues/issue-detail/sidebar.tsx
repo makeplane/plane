@@ -3,6 +3,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { CalendarCheck2, CalendarClock, LayoutPanelTop, Signal, Tag, Triangle, UserCircle2, Users, Info } from "lucide-react";
+import axios from "axios";
 // ui
 import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/ui";
 // components
@@ -14,7 +15,7 @@ import {
   StateDropdown,
 } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { IssueCycleSelect, IssueLabel, IssueModuleSelect, IssueParentSelect, CustomProperties} from "@/components/issues";
+import { IssueCycleSelect, IssueLabel, IssueModuleSelect, IssueParentSelect, CustomProperties } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
@@ -27,6 +28,8 @@ import { IssueWorklogProperty } from "@/plane-web/components/issues";
 // components
 import type { TIssueOperations } from "./root";
 import { ISSUE_ADDITIONAL_PROPERTIES } from "@/constants/issue";
+import { CustomProperty } from "../custom-properties";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   workspaceSlug: string;
@@ -38,6 +41,7 @@ type Props = {
 
 export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issueOperations, isEditable } = props;
+  const { t } = useTranslation();
   // store hooks
   const { getProjectById } = useProject();
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
@@ -55,23 +59,61 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const projectDetails = getProjectById(issue.project_id);
   const stateDetails = getStateById(issue.state_id);
   const customProperties = issue?.custom_properties || [];
+  const issue_type_id = issue?.type_id || "";
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
 
   const maxDate = issue.target_date ? getDate(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
 
+  const handleCustomPropertiesUpdate = async (updatedProperties: CustomProperty[]) => {
+    try {
+      const updateRequests = updatedProperties.map((property) => {
+        const customPropertyId = property?.id || "";
+        const apiUrl = `/api/workspaces/${workspaceSlug}/issues/${issueId}/custom-properties/`;
+        if (customPropertyId) {
+          return axios.patch(
+            `${apiUrl}${customPropertyId}/`, 
+            { value: property.value },
+            {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+        } else {
+          return axios.post(
+            apiUrl, 
+            {
+              key: property.key,
+              value: property.value,
+              issue_type_custom_property: property.issue_type_custom_property,
+            },
+            {
+              headers: {
+                'x-api-key': 'TEST_API_TOKEN',
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+        }
+      });
+      await Promise.all(updateRequests);
+    } catch (error) {
+    }
+  };
+
   return (
     <>
       <div className="flex items-center h-full w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
         <div className="h-full w-full overflow-y-auto px-6">
-          <h5 className="mt-6 text-sm font-medium">Properties</h5>
+          <h5 className="mt-6 text-sm font-medium">{t("properties")}</h5>
           {/* TODO: render properties using a common component */}
           <div className={`mb-2 mt-3 space-y-2.5 ${!isEditable ? "opacity-60" : ""}`}>
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
-                <span>State</span>
+                <span>{t("state")}</span>
               </div>
               <StateDropdown
                 value={issue?.state_id}
@@ -90,7 +132,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <Users className="h-4 w-4 flex-shrink-0" />
-                <span>Assignees</span>
+                <span>{t("assignees")}</span>
               </div>
               <MemberDropdown
                 value={issue?.assignee_ids ?? undefined}
@@ -114,7 +156,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <Signal className="h-4 w-4 flex-shrink-0" />
-                <span>Priority</span>
+                <span>{t("priority")}</span>
               </div>
               <PriorityDropdown
                 value={issue?.priority}
@@ -131,7 +173,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <div className="flex h-8 items-center gap-2">
                 <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                   <UserCircle2 className="h-4 w-4 flex-shrink-0" />
-                  <span>Created by</span>
+                  <span>{t("created_by")} by</span>
                 </div>
                 <div className="w-full h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-not-allowed">
                   <ButtonAvatars showTooltip userIds={createdByDetails.id} />
@@ -143,7 +185,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <CalendarClock className="h-4 w-4 flex-shrink-0" />
-                <span>Start date</span>
+                <span>{t("start_date")}</span>
               </div>
               <DateDropdown
                 placeholder="Add start date"
@@ -169,7 +211,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
-                <span>Due date</span>
+                <span>{t("due_date")}</span>
               </div>
               <DateDropdown
                 placeholder="Add due date"
@@ -199,7 +241,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <div className="flex h-8 items-center gap-2">
                 <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                   <Triangle className="h-4 w-4 flex-shrink-0" />
-                  <span>Estimate</span>
+                  <span>{t("estimate")}</span>
                 </div>
                 <EstimateDropdown
                   value={issue?.estimate_point ?? undefined}
@@ -224,7 +266,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <div className="flex min-h-8 gap-2">
                 <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
                   <DiceIcon className="h-4 w-4 flex-shrink-0" />
-                  <span>Modules</span>
+                  <span>{t("modules")}</span>
                 </div>
                 <IssueModuleSelect
                   className="w-3/5 flex-grow"
@@ -241,7 +283,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <div className="flex h-8 items-center gap-2">
                 <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                   <ContrastIcon className="h-4 w-4 flex-shrink-0" />
-                  <span>Cycle</span>
+                  <span>{t("cycle")}</span>
                 </div>
                 <IssueCycleSelect
                   className="w-3/5 flex-grow"
@@ -257,7 +299,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <LayoutPanelTop className="h-4 w-4 flex-shrink-0" />
-                <span>Parent</span>
+                <span>{t("parent")}</span>
               </div>
               <IssueParentSelect
                 className="h-full w-3/5 flex-grow"
@@ -272,7 +314,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             <div className="flex min-h-8 gap-2">
               <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
                 <Tag className="h-4 w-4 flex-shrink-0" />
-                <span>Labels</span>
+                <span>{t("labels")}</span>
               </div>
               <div className="h-full min-h-8 w-3/5 flex-grow">
                 <IssueLabel
@@ -306,7 +348,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <div key={prop?.key} className="flex min-h-8 gap-2 align-items-center">
                   <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
                     <Info className="h-4 w-4 flex-shrink-0 mt-0.5" />
-                    <span>{prop?.title}</span>
+                    <span>{t(prop?.key)}</span>
                   </div>
                   <div className="h-full min-h-8 w-3/5 mt-1 ml-5 flex-grow">
                     <span className="text-sm">{issue[prop.key]}</span>
@@ -315,8 +357,12 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               ) : null
             )}
 
-            <CustomProperties 
-                customProperties={Array.isArray(customProperties) ? customProperties : []} 
+            <CustomProperties
+              customProperties={Array.isArray(customProperties) ? customProperties : []}
+              issue_type_id={issue_type_id}
+              workspaceSlug={workspaceSlug}
+              updateCustomProperties={handleCustomPropertiesUpdate}
+              layout="two-fifths"
             />
           </div>
         </div>

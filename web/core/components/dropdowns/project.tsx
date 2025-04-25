@@ -4,6 +4,7 @@ import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { ComboDropDown } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
@@ -76,7 +77,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
   });
   // store hooks
   const { joinedProjectIds, getProjectById } = useProject();
-
+  const { t } = useTranslation();
   const options = joinedProjectIds?.map((projectId) => {
     const projectDetails = getProjectById(projectId);
     if (renderCondition && projectDetails && !renderCondition(projectDetails)) return;
@@ -198,7 +199,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
                 className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search"
+                placeholder={t("search")}
                 displayValue={(assigned: any) => assigned?.name}
                 onKeyDown={searchInputKeyDown}
               />
@@ -228,10 +229,10 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
                     );
                   })
                 ) : (
-                  <p className="text-custom-text-400 italic py-1 px-1.5">No matching results</p>
+                  <p className="text-custom-text-400 italic py-1 px-1.5">{t("no_matching_results")}</p>
                 )
               ) : (
-                <p className="text-custom-text-400 italic py-1 px-1.5">Loading...</p>
+                <p className="text-custom-text-400 italic py-1 px-1.5">{t("loading")}</p>
               )}
             </div>
           </div>

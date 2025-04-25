@@ -11,6 +11,7 @@ import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
 import { GANTT_BREADCRUMBS_HEIGHT } from "../constants";
 import { TGanttViews } from "../types";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   blockIds: string[];
@@ -25,6 +26,7 @@ type Props = {
 export const GanttChartHeader: React.FC<Props> = observer((props) => {
   const { blockIds, fullScreenMode, handleChartView, handleToday, loaderTitle, toggleFullScreenMode, showToday } =
     props;
+  const { t } = useTranslation();
   // chart hook
   const { currentView } = useTimeLineChartStore();
 
@@ -49,7 +51,7 @@ export const GanttChartHeader: React.FC<Props> = observer((props) => {
             })}
             onClick={() => handleChartView(chartView?.key)}
           >
-            {chartView?.title}
+            {t(chartView?.key)}
           </div>
         ))}
       </div>
@@ -60,7 +62,7 @@ export const GanttChartHeader: React.FC<Props> = observer((props) => {
           className="rounded-sm p-1 px-2 text-xs hover:bg-custom-background-80"
           onClick={handleToday}
         >
-          Today
+         {t("today")}
         </button>
       )}
 

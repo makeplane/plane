@@ -6,18 +6,21 @@ import { getButtonStyling } from "@plane/ui";
 import { InboxIssueFilterSelection, InboxIssueOrderByDropdown } from "@/components/inbox/inbox-filter";
 import { FiltersDropdown } from "@/components/issues";
 import useSize from "@/hooks/use-window-size";
+import { useTranslation } from "@plane/i18n";
 
-const smallButton = <ListFilter className="size-3 " />;
-
-const largeButton = (
-  <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
-    <ListFilter className="size-3 " />
-    <span>Filters</span>
-    <ChevronDown className="size-3" strokeWidth={2} />
-  </div>
-);
 export const FiltersRoot: FC = () => {
+  const { t } = useTranslation();
   const windowSize = useSize();
+
+  const smallButton = <ListFilter className="size-3 " />;
+
+  const largeButton = (
+    <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
+      <ListFilter className="size-3 " />
+      <span>{t("filters")}</span>
+      <ChevronDown className="size-3" strokeWidth={2} />
+    </div>
+  );
 
   return (
     <div className="relative flex items-center gap-2">

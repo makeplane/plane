@@ -41,6 +41,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import { useTranslation } from "@plane/i18n";
 
 const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
   // router
@@ -64,6 +65,7 @@ const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
 };
 
 export const CycleIssuesHeader: React.FC = observer(() => {
+  const { t } = useTranslation();
   // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // router
@@ -139,7 +141,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, cycleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property as IIssueDisplayProperties, cycleId);
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
   );
@@ -250,7 +252,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               selectedLayout={activeLayout}
             />
             <FiltersDropdown
-              title="Filters"
+              title={t("filters")}
               placement="bottom-end"
               isFiltersApplied={isIssueFilterActive(issueFilters)}
             >
@@ -269,7 +271,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                 moduleViewDisabled={!currentProjectDetails?.module_view}
               />
             </FiltersDropdown>
-            <FiltersDropdown title="Display" placement="bottom-end">
+            <FiltersDropdown title={t("display")} placement="bottom-end">
               <DisplayFiltersSelection
                 layoutDisplayFiltersOptions={
                   activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
@@ -287,7 +289,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
             {canUserCreateIssue && (
               <>
                 <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
-                  Analytics
+                  {t("analytics")}
                 </Button>
                 {!isCompletedCycle && (
                   <Button
@@ -298,7 +300,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                     }}
                     size="sm"
                   >
-                    Add issue
+                    {t("add_issue")}
                   </Button>
                 )}
               </>

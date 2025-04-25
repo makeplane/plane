@@ -5,9 +5,11 @@ import { Card } from "@plane/ui";
 import { WidgetProps } from "@/components/dashboard/widgets";
 // components
 import { CollaboratorsList } from "./collaborators-list";
+import { useTranslation } from "@plane/i18n";
 
 export const RecentCollaboratorsWidget: React.FC<WidgetProps> = (props) => {
   const { dashboardId, workspaceSlug } = props;
+  const { t } = useTranslation();
   // states
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -15,7 +17,7 @@ export const RecentCollaboratorsWidget: React.FC<WidgetProps> = (props) => {
     <Card>
       <div className="flex flex-col sm:flex-row items-start justify-between mb-6">
         <div>
-          <h4 className="text-lg font-semibold text-custom-text-300">Collaborators</h4>
+          <h4 className="text-lg font-semibold text-custom-text-300">{t("collaborators")}</h4>
           <p className="mt-2 text-xs font-medium text-custom-text-300">
             View and find all members you collaborate with across projects
           </p>
@@ -24,7 +26,7 @@ export const RecentCollaboratorsWidget: React.FC<WidgetProps> = (props) => {
           <Search className="h-3.5 w-3.5 text-custom-text-400" />
           <input
             className="w-full border-none bg-transparent text-sm focus:outline-none"
-            placeholder="Search for collaborators"
+            placeholder={t("search_for_collaborators")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />

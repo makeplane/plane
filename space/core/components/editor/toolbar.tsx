@@ -9,6 +9,7 @@ import { Button, Tooltip } from "@plane/ui";
 import { TOOLBAR_ITEMS } from "@/constants/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   executeCommand: (commandKey: TEditorCommands) => void;
@@ -23,6 +24,7 @@ const toolbarItems = TOOLBAR_ITEMS.lite;
 
 export const IssueCommentToolbar: React.FC<Props> = (props) => {
   const { executeCommand, handleSubmit, isCommentEmpty, editorRef, isSubmitting, showSubmitButton } = props;
+  const { t } = useTranslation();
   // states
   const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
 
@@ -103,7 +105,7 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
               disabled={isCommentEmpty}
               loading={isSubmitting}
             >
-              Comment
+              {t("comment")}
             </Button>
           </div>
         )}

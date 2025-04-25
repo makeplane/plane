@@ -2,6 +2,7 @@
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Count
 from django.contrib.postgres.fields import ArrayField
+from rest_framework.pagination import PageNumberPagination
 from django.db.models import (
     Exists,
     F,
@@ -11,6 +12,7 @@ from django.db.models import (
     UUIDField,
     Value,
     Subquery,
+    JSONField
 )
 from django.db.models.functions import Coalesce
 from django.utils.decorators import method_decorator
@@ -290,6 +292,20 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
+                custom_propertiess=Coalesce(
+                    ArrayAgg(
+                        Func(
+                            F('custom_properties__key'),
+                            F('custom_properties__value'),
+                            function="jsonb_build_object",
+                            template="%(function)s(%(expressions)s)",
+                            output_field=JSONField()  # Specify output field type
+                        ),
+                        distinct=True,
+                        filter=Q(custom_properties__key__isnull=False)
+                    ),
+                    Value([], output_field=ArrayField(JSONField()))
+                )
             )
             .filter(
                 *[
@@ -313,19 +329,55 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 
     def listCustomProperty(self, request, slug):
         customPropertyAllowedKeys = ALLOWED_CUSTOM_PROPERTY_WORKSPACE_MAP.get(slug, [])
+        field = request.GET.get("field", "")
+        query = request.GET.get("query", "")
+
         custom_properties = IssueCustomProperty.objects.filter(key__in=customPropertyAllowedKeys)
+        if field:
+            custom_properties = custom_properties.filter(key=field)
+        if field and query:
+            custom_properties = custom_properties.filter(key=field, value__icontains=query)
+
         serializer = IssueCustomPropertySerializer(custom_properties, many=True)
 
         groupedCustomProperties = {}
         for item in serializer.data:
             key = item.get("key")
             value = item.get("value")
-            if value is None or key not in customPropertyAllowedKeys:
+            if not value or key not in customPropertyAllowedKeys:
                 continue
             groupedCustomProperties.setdefault(key, set()).add(value)
 
         groupedUniqueCustomProperties = {key: list(values) for key, values in groupedCustomProperties.items()}
-        return Response(groupedUniqueCustomProperties, status=status.HTTP_200_OK)
+        unique_values_list = [{"key": k, "values": v} for k, v in groupedUniqueCustomProperties.items()]
+
+        response_data = {}
+        if (not unique_values_list and field):
+            response_data[field] = {
+                "data": [],
+                "total_results": 0,
+                "limit": 10,
+                "total_pages": 1,
+                "page": 1
+            }
+        
+        for item in unique_values_list:
+            key = item["key"]
+            values = item["values"]
+            
+            paginator = PageNumberPagination()
+            paginator.page_size = int(request.GET.get("limit", 10))
+            paginated_values = paginator.paginate_queryset(values, request) or []
+            
+            response_data[key] = {
+                "total_results": len(values),
+                "page": paginator.page.number if hasattr(paginator, 'page') else 1,
+                "limit": paginator.page.paginator.per_page if hasattr(paginator, 'page') else len(values),
+                "total_pages": paginator.page.paginator.num_pages if hasattr(paginator, 'page') else 1,
+                "data": paginated_values
+            }
+        
+        return Response(response_data, status=status.HTTP_200_OK)
     
     def list(self, request, slug):
         filters = issue_filters(request.query_params, "GET")

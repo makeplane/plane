@@ -11,6 +11,7 @@ import { FilterHeader, FilterOption } from "@/components/issues";
 import { useCycle } from "@/hooks/store";
 // ui
 // types
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -20,6 +21,7 @@ type Props = {
 
 export const FilterCycle: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
+  const { t } = useTranslation();
 
   // hooks
   const { projectId } = useParams();
@@ -58,7 +60,7 @@ export const FilterCycle: React.FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title={`Cycle ${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("cycle")} ${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -90,7 +92,7 @@ export const FilterCycle: React.FC<Props> = observer((props) => {
                 )}
               </>
             ) : (
-              <p className="text-xs italic text-custom-text-400">No matches found</p>
+              <p className="text-xs italic text-custom-text-400">{t("no_matches_found")}</p>
             )
           ) : (
             <Loader className="space-y-2">

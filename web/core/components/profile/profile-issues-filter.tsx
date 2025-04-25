@@ -16,8 +16,10 @@ import {
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 export const ProfileIssuesFilter = observer(() => {
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, userId } = useParams();
   // store hook
@@ -93,7 +95,7 @@ export const ProfileIssuesFilter = observer(() => {
         workspaceSlug.toString(),
         undefined,
         EIssueFilterType.DISPLAY_PROPERTIES,
-        property,
+        property as IIssueDisplayProperties,
         userId.toString()
       );
     },
@@ -108,7 +110,7 @@ export const ProfileIssuesFilter = observer(() => {
         selectedLayout={activeLayout}
       />
 
-      <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
+      <FiltersDropdown title={t("filters")} placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
         <FilterSelection
           layoutDisplayFiltersOptions={
             activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.profile_issues[activeLayout] : undefined
@@ -123,7 +125,7 @@ export const ProfileIssuesFilter = observer(() => {
         />
       </FiltersDropdown>
 
-      <FiltersDropdown title="Display" placement="bottom-end">
+      <FiltersDropdown title={t("display")} placement="bottom-end">
         <DisplayFiltersSelection
           layoutDisplayFiltersOptions={
             activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.profile_issues[activeLayout] : undefined

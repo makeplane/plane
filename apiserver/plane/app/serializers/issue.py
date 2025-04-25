@@ -667,7 +667,7 @@ class IssueInboxSerializer(DynamicBaseSerializer):
 class IssueCustomPropertySerializer(BaseSerializer):
     class Meta:
         model = IssueCustomProperty
-        fields = ["key", "value", "issue_type_custom_property"]
+        fields = ["key", "value", "issue_type_custom_property", "id"]
         read_only_fields = [
             "id",
             "issue",
@@ -709,8 +709,6 @@ class IssueSerializer(DynamicBaseSerializer):
             "completed_at",
             "estimate_point",
             "trip_reference_number",
-            "vendor_code",
-            "worker_code",
             "reference_number",
             "hub_code",
             "hub_name",
@@ -720,6 +718,7 @@ class IssueSerializer(DynamicBaseSerializer):
             "vendor_code",
             "worker_code",
             "worker_name",
+            "source",
             "priority",
             "start_date",
             "target_date",
@@ -739,6 +738,7 @@ class IssueSerializer(DynamicBaseSerializer):
             "link_count",
             "is_draft",
             "archived_at",
+            "type_id",
         ]
         read_only_fields = fields
 

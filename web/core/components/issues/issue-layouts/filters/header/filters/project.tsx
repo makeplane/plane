@@ -10,6 +10,7 @@ import { Logo } from "@/components/common";
 import { FilterHeader, FilterOption } from "@/components/issues";
 // hooks
 import { useProject } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -19,6 +20,7 @@ type Props = {
 
 export const FilterProjects: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
+  const { t } = useTranslation();
   // states
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -49,7 +51,7 @@ export const FilterProjects: React.FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title={`Project${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("project")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -82,7 +84,7 @@ export const FilterProjects: React.FC<Props> = observer((props) => {
                 )}
               </>
             ) : (
-              <p className="text-xs italic text-custom-text-400">No matches found</p>
+              <p className="text-xs italic text-custom-text-400">{t("no_matches_found")}</p>
             )
           ) : (
             <Loader className="space-y-2">

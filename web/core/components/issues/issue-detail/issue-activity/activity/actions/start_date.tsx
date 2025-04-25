@@ -7,11 +7,13 @@ import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent, IssueLink } from "./";
 // helpers
+import { useTranslation } from "@plane/i18n";
 
 type TIssueStartDateActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
 export const IssueStartDateActivity: FC<TIssueStartDateActivity> = observer((props) => {
   const { activityId, showIssue = true, ends } = props;
+  const { t } = useTranslation();
   // hooks
   const {
     activity: { getActivityById },
@@ -27,13 +29,13 @@ export const IssueStartDateActivity: FC<TIssueStartDateActivity> = observer((pro
       ends={ends}
     >
       <>
-        {activity.new_value ? `set the start date to ` : `removed the start date `}
+        {activity.new_value ? `${t("set_start_date_to")} ` : `${t("removed_start_date")} `}
         {activity.new_value && (
           <>
             <span className="font-medium text-custom-text-100">{renderFormattedDate(activity.new_value)}</span>
           </>
         )}
-        {showIssue && (activity.new_value ? ` for ` : ` from `)}
+        {showIssue && (activity.new_value ? ` ${t("for")} ` : ` ${t("from")} `)}
         {showIssue && <IssueLink activityId={activityId} />}.
       </>
     </IssueActivityBlockComponent>

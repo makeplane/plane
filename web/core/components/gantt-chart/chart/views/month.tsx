@@ -9,8 +9,11 @@ import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // types
 import { IMonthView } from "../../views";
 import { getNumberOfDaysBetweenTwoDates } from "../../views/helpers";
+import { useTranslation } from "@plane/i18n";
+import { MONTHS_LIST } from "@/constants/calendar";
 
 export const MonthChartView: FC<any> = observer(() => {
+  const { t } = useTranslation();
   // chart hook
   const { currentViewData, renderView } = useTimeLineChartStore();
   const monthView: IMonthView = renderView;
@@ -49,10 +52,10 @@ export const MonthChartView: FC<any> = observer(() => {
                       left: `${SIDEBAR_WIDTH}px`,
                     }}
                   >
-                    {monthBlock?.title}
+                    {t(MONTHS_LIST[monthBlock?.month + 1].title)} {monthBlock?.year}
                     {monthBlock.today && (
                       <span className={cn("rounded ml-2 font-medium bg-custom-primary-100 px-1 text-2xs text-white")}>
-                        Current
+                        {t("current")}
                       </span>
                     )}
                   </div>

@@ -16,11 +16,13 @@ import { calculateTimeAgo } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useDashboard, useUser } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 const WIDGET_KEY = "recent_activity";
 
 export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
+  const { t } = useTranslation();
   // store hooks
   const { data: currentUser } = useUser();
   // derived values
@@ -40,7 +42,7 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
   return (
     <Card>
       <Link href={redirectionLink} className="text-lg font-semibold text-custom-text-300 hover:underline mb-4">
-        Your issue activities
+        {t("your_issue_activities")}
       </Link>
       {widgetStats.length > 0 ? (
         <div className="mt-4 space-y-6">
@@ -96,7 +98,7 @@ export const RecentActivityWidget: React.FC<WidgetProps> = observer((props) => {
               "mx-auto w-min px-2 py-1 text-xs hover:bg-custom-primary-100/20"
             )}
           >
-            View all
+            {t("view_all")}
           </Link>
         </div>
       ) : (

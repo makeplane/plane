@@ -28,6 +28,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { FilterIssueTypes } from "@/plane-web/components/issues";
 import { FilterCustomProperty } from "./custom-properties";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   filters: IIssueFilterOptions;
@@ -55,6 +56,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
     cycleViewDisabled = false,
     moduleViewDisabled = false,
   } = props;
+  const { t } = useTranslation();
   // hooks
   const { isMobile } = usePlatformOS();
   const { moduleId, cycleId } = useParams();
@@ -74,7 +76,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
           <input
             type="text"
             className="w-full bg-custom-background-90 outline-none placeholder:text-custom-text-400"
-            placeholder="Search"
+            placeholder={t("search")}
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
             autoFocus={!isMobile}
@@ -250,7 +252,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               <FilterAdditionalProperties
                 key={prop.key}
                 appliedFilters={filters[prop.key as keyof IIssueFilterOptions] ?? null} 
-                additionalPropertyTitle={prop.title}
+                additionalPropertyTitle={t(prop.key)}
                 additionalPropertyKey={prop.key} 
                 handleUpdate={(val) => handleFiltersUpdate(prop.key as keyof IIssueFilterOptions, val)} 
                 searchQuery={filtersSearchQuery}
@@ -264,7 +266,6 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
             <FilterCustomProperty
               appliedFilters={filters.custom_properties ?? null}
               handleUpdate={(val) => handleFiltersUpdate("custom_properties", val)}
-              // handleUpdate={(val) => handleFiltersUpdate("custom_properties", null, val)}
               searchQuery={filtersSearchQuery}
             />
           </div>

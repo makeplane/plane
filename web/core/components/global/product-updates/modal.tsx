@@ -1,5 +1,6 @@
 import { FC, useRef } from "react";
 import { observer } from "mobx-react-lite";
+import { useTranslation } from "@plane/i18n";
 import useSWR from "swr";
 // editor
 import { DocumentReadOnlyEditorWithRef, EditorRefApi } from "@plane/editor";
@@ -22,6 +23,7 @@ export type ProductUpdatesModalProps = {
 
 export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props) => {
   const { isOpen, handleClose } = props;
+  const { t } = useTranslation();
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // swr
@@ -37,17 +39,17 @@ export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props
       <div className="flex flex-col h-[60vh] vertical-scrollbar scrollbar-xs overflow-hidden overflow-y-scroll px-6 mx-0.5">
         {!isLoading && !!error ? (
           <div className="flex flex-col items-center justify-center w-full h-full mb-8">
-            <div className="text-lg font-medium">We are having trouble fetching the updates.</div>
+            <div className="text-lg font-medium">{t("we_are_having_trouble_fetching_the_updates")}</div>
             <div className="text-sm text-custom-text-200">
-              Please visit{" "}
+              {t("please_visit")} 
               <a
                 href="https://go.plane.so/p-changelog"
                 target="_blank"
                 className="text-sm text-custom-primary-100 font-medium hover:text-custom-primary-200 underline underline-offset-1 outline-none"
               >
-                our changelogs
+                {t("our_changelogs")}
               </a>{" "}
-              for the latest updates.
+              {t("for_the_latest_updates")}.
             </div>
           </div>
         ) : isLoading ? (

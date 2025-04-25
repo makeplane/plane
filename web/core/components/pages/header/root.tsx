@@ -16,6 +16,7 @@ import {
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useMember, useProjectPages } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   pageType: TPageNavigationTabs;
@@ -25,6 +26,7 @@ type Props = {
 
 export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
   const { pageType, projectId, workspaceSlug } = props;
+  const { t } = useTranslation();
   // store hooks
   const { filters, updateFilters, clearAllFilters } = useProjectPages();
   const {
@@ -69,7 +71,7 @@ export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
           />
           <FiltersDropdown
             icon={<ListFilter className="h-3 w-3" />}
-            title="Filters"
+            title={t("filters")}
             placement="bottom-end"
             isFiltersApplied={isFiltersApplied}
           >

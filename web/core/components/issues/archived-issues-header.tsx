@@ -12,8 +12,10 @@ import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } f
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 export const ArchivedIssuesHeader: FC = observer(() => {
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
@@ -60,7 +62,7 @@ export const ArchivedIssuesHeader: FC = observer(() => {
   const handleDisplayPropertiesUpdate = (property: Partial<IIssueDisplayProperties>) => {
     if (!workspaceSlug || !projectId) return;
 
-    updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.DISPLAY_PROPERTIES, property);
+    updateFilters(workspaceSlug.toString(), projectId.toString(), EIssueFilterType.DISPLAY_PROPERTIES, property as IIssueDisplayProperties);
   };
 
   return (
@@ -70,7 +72,7 @@ export const ArchivedIssuesHeader: FC = observer(() => {
       </div>
       {/* filter options */}
       <div className="flex items-center gap-2 px-8">
-        <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
+        <FiltersDropdown title={t("filters")} placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
           <FilterSelection
             filters={issueFilters?.filters || {}}
             handleFiltersUpdate={handleFiltersUpdate}
@@ -84,7 +86,7 @@ export const ArchivedIssuesHeader: FC = observer(() => {
             states={projectStates}
           />
         </FiltersDropdown>
-        <FiltersDropdown title="Display" placement="bottom-end">
+        <FiltersDropdown title={t("display")} placement="bottom-end">
           <DisplayFiltersSelection
             displayFilters={issueFilters?.displayFilters || {}}
             displayProperties={issueFilters?.displayProperties || {}}

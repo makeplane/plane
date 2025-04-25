@@ -15,6 +15,7 @@ import { queryParamGenerator } from "@/helpers/query-param-generator";
 import { useIssueFilter } from "@/hooks/store";
 // types
 import { TIssueQueryFilters } from "@/types/issue";
+import { useTranslation } from "@plane/i18n";
 
 type IssueFiltersDropdownProps = {
   anchor: string;
@@ -22,6 +23,7 @@ type IssueFiltersDropdownProps = {
 
 export const IssueFiltersDropdown: FC<IssueFiltersDropdownProps> = observer((props) => {
   const { anchor } = props;
+  const { t } = useTranslation();
   // router
   const router = useRouter();
   // hooks
@@ -59,7 +61,7 @@ export const IssueFiltersDropdown: FC<IssueFiltersDropdownProps> = observer((pro
 
   return (
     <div className="z-10 flex h-full w-full flex-col">
-      <FiltersDropdown title="Filters" placement="bottom-end">
+      <FiltersDropdown title={t("filters")} placement="bottom-end">
         <FilterSelection
           filters={issueFilters?.filters ?? {}}
           handleFilters={handleFilters as any}

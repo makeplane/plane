@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { Tab } from "@headlessui/react";
 import { TCreatedIssuesWidgetFilters, TCreatedIssuesWidgetResponse } from "@plane/types";
+import { useTranslation } from "@plane/i18n";
 // hooks
 import { Card } from "@plane/ui";
 import {
@@ -25,6 +26,7 @@ const WIDGET_KEY = "created_issues";
 
 export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
   const { dashboardId, workspaceSlug } = props;
+  const { t } = useTranslation();
   // states
   const [fetching, setFetching] = useState(false);
   // store hooks
@@ -96,7 +98,7 @@ export const CreatedIssuesWidget: React.FC<WidgetProps> = observer((props) => {
                 href={`/${workspaceSlug}/workspace-views/created/${filterParams}`}
                 className="text-lg font-semibold text-custom-text-300 hover:underline"
               >
-                Created by you
+                {t("created_by_you")}
               </Link>
               <DurationFilterDropdown
                 customDates={selectedCustomDates}

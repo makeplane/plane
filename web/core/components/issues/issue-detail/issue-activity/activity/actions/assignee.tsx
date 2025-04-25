@@ -6,11 +6,13 @@ import { Users } from "lucide-react";
 import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent, IssueLink } from "./";
+import { useTranslation } from "@plane/i18n";
 
 type TIssueAssigneeActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
 export const IssueAssigneeActivity: FC<TIssueAssigneeActivity> = observer((props) => {
   const { activityId, ends, showIssue = true } = props;
+  const { t } = useTranslation();
   // hooks
   const {
     activity: { getActivityById },
@@ -26,7 +28,7 @@ export const IssueAssigneeActivity: FC<TIssueAssigneeActivity> = observer((props
       ends={ends}
     >
       <>
-        {activity.old_value === "" ? `added a new assignee ` : `removed the assignee `}
+        {activity.old_value === "" ? `${t("added_assignee")} ` : `${t("removed_assignee")} `}
         <a
           href={`/${activity.workspace_detail?.slug}/profile/${activity.new_identifier ?? activity.old_identifier}`}
           target="_blank"
@@ -35,7 +37,7 @@ export const IssueAssigneeActivity: FC<TIssueAssigneeActivity> = observer((props
         >
           {activity.new_value && activity.new_value !== "" ? activity.new_value : activity.old_value}
         </a>
-        {showIssue && (activity.old_value === "" ? ` to ` : ` from `)}
+        {showIssue && (activity.old_value === "" ? ` ${t("to")} ` : ` ${t("from")} `)}
         {showIssue && <IssueLink activityId={activityId} />}.
       </>
     </IssueActivityBlockComponent>

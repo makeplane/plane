@@ -10,8 +10,10 @@ import { ViewFiltersSelection } from "@/components/views/filters/filter-selectio
 import { ViewOrderByDropdown } from "@/components/views/filters/order-by";
 // hooks
 import { useMember, useProjectView } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 export const ViewMobileHeader = observer(() => {
+  const { t } = useTranslation();
   // store hooks
   const { filters, updateFilters } = useProjectView();
   const {
@@ -40,7 +42,7 @@ export const ViewMobileHeader = observer(() => {
             isFiltersApplied={false}
             menuButton={
               <Row className="flex items-center text-sm text-custom-text-200">
-                Filters
+                {t("filters")}
                 <ChevronDown className="ml-2 h-4 w-4 text-custom-text-200" strokeWidth={2} />
               </Row>
             }

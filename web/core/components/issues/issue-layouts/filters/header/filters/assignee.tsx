@@ -11,6 +11,7 @@ import { FilterHeader, FilterOption } from "@/components/issues";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember, useUser } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -21,6 +22,7 @@ type Props = {
 
 export const FilterAssignees: React.FC<Props> = observer((props: Props) => {
   const { appliedFilters, handleUpdate, memberIds, searchQuery } = props;
+  const { t } = useTranslation();
   // states
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -53,7 +55,7 @@ export const FilterAssignees: React.FC<Props> = observer((props: Props) => {
   return (
     <>
       <FilterHeader
-        title={`Assignee${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("assignees")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -94,7 +96,7 @@ export const FilterAssignees: React.FC<Props> = observer((props: Props) => {
                 )}
               </>
             ) : (
-              <p className="text-xs italic text-custom-text-400">No matches found</p>
+              <p className="text-xs italic text-custom-text-400">{t("no_matches_found")}</p>
             )
           ) : (
             <Loader className="space-y-2">

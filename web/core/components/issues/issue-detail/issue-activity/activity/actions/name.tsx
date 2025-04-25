@@ -5,11 +5,13 @@ import { MessageSquare } from "lucide-react";
 import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent } from "./";
+import { useTranslation } from "@plane/i18n";
 
 type TIssueNameActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
 export const IssueNameActivity: FC<TIssueNameActivity> = observer((props) => {
   const { activityId, ends } = props;
+  const { t } = useTranslation();
   // hooks
   const {
     activity: { getActivityById },
@@ -24,7 +26,7 @@ export const IssueNameActivity: FC<TIssueNameActivity> = observer((props) => {
       activityId={activityId}
       ends={ends}
     >
-      <>set the name to {activity.new_value}.</>
+      <>{t("set_name_to")} {activity.new_value}.</>
     </IssueActivityBlockComponent>
   );
 });

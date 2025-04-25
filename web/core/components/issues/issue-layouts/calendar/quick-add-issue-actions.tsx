@@ -17,6 +17,7 @@ import { EIssueLayoutTypes } from "@/constants/issue";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 type TCalendarQuickAddIssueActions = {
   prePopulatedData?: Partial<TIssue>;
@@ -27,6 +28,7 @@ type TCalendarQuickAddIssueActions = {
 
 export const CalendarQuickAddIssueActions: FC<TCalendarQuickAddIssueActions> = observer((props) => {
   const { prePopulatedData, quickAddCallback, addIssuesToView, onOpen } = props;
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId, moduleId } = useParams();
   // states
@@ -117,12 +119,12 @@ export const CalendarQuickAddIssueActions: FC<TCalendarQuickAddIssueActions> = o
               customButton={
                 <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-text-350 hover:text-custom-text-300">
                   <PlusIcon className="h-3.5 w-3.5 stroke-2 flex-shrink-0" />
-                  <span className="text-sm font-medium flex-shrink-0">New issue</span>
+                  <span className="text-sm font-medium flex-shrink-0">{t("new_issue")}</span>
                 </div>
               }
             >
-              <CustomMenu.MenuItem onClick={handleNewIssue}>New issue</CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={handleExistingIssue}>Add existing issue</CustomMenu.MenuItem>
+              <CustomMenu.MenuItem onClick={handleNewIssue}>{t("new_issue")}</CustomMenu.MenuItem>
+              <CustomMenu.MenuItem onClick={handleExistingIssue}>{t("add_existing_issue")}</CustomMenu.MenuItem>
             </CustomMenu>
           </div>
         }

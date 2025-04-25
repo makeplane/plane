@@ -19,8 +19,10 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import { useTranslation } from "@plane/i18n";
 
 export const ProjectIssuesHeader = observer(() => {
+  const { t } = useTranslation();
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
@@ -120,7 +122,7 @@ export const ProjectIssuesHeader = observer(() => {
             }}
             size="sm"
           >
-            <div className="hidden sm:block">Add</div> Issue
+            <div className="hidden sm:block">{t("add")}</div> {t("issues")}
           </Button>
         ) : (
           <></>

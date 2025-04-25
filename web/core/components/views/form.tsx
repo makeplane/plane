@@ -25,6 +25,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 
 import { AccessController } from "@/plane-web/components/views/access-controller";
 import { LayoutDropDown } from "../dropdowns/layout";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   data?: IProjectView | null;
@@ -43,6 +44,7 @@ const defaultValues: Partial<IProjectView> = {
 
 export const ProjectViewForm: React.FC<Props> = observer((props) => {
   const { handleFormSubmit, handleClose, data, preLoadedData } = props;
+  const { t } = useTranslation();
   // state
   const [isOpen, setIsOpen] = useState(false);
   // store hooks
@@ -199,7 +201,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     value={value}
                     onChange={onChange}
                     hasError={Boolean(errors.name)}
-                    placeholder="Title"
+                    placeholder={t("title")}
                     className="w-full text-base"
                     tabIndex={getIndex("name")}
                     autoFocus
@@ -217,7 +219,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                 <TextArea
                   id="description"
                   name="description"
-                  placeholder="Description"
+                  placeholder={t("description")}
                   className="w-full text-base resize-none min-h-24"
                   hasError={Boolean(errors?.description)}
                   value={value}
@@ -250,7 +252,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     control={control}
                     name="filters"
                     render={({ field: { onChange, value: filters } }) => (
-                      <FiltersDropdown title="Filters" tabIndex={getIndex("filters")}>
+                      <FiltersDropdown title={t("filters")} tabIndex={getIndex("filters")}>
                         <FilterSelection
                           filters={filters ?? {}}
                           handleFiltersUpdate={(key, value) => {
@@ -286,7 +288,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     control={control}
                     name="display_properties"
                     render={({ field: { onChange: onDisplayPropertiesChange, value: displayProperties } }) => (
-                      <FiltersDropdown title="Display">
+                      <FiltersDropdown title={t("display")}>
                         <DisplayFiltersSelection
                           layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[displayFilters.layout]}
                           displayFilters={displayFilters ?? {}}
@@ -330,10 +332,10 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
       </div>
       <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
         <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={getIndex("cancel")}>
-          Cancel
+          {t("cancel")}
         </Button>
         <Button variant="primary" size="sm" type="submit" tabIndex={getIndex("submit")} loading={isSubmitting}>
-          {data ? (isSubmitting ? "Updating" : "Update View") : isSubmitting ? "Creating" : "Create View"}
+          {data ? (isSubmitting ? t("updating") : t("update_view")) : isSubmitting ? t("creating") : t("create_view")}
         </Button>
       </div>
     </form>

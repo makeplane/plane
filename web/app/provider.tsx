@@ -5,11 +5,14 @@ import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";//ui
 import { useTheme, ThemeProvider } from "next-themes";
 import { SWRConfig } from "swr";
-import { Toast } from "@plane/ui";
+import { Toast, setToast, TOAST_TYPE } from "@plane/ui";
+// Plane Imports
+import { TranslationProvider } from "@plane/i18n";
 // constants
 import { SWR_CONFIG } from "@/constants/swr-config";
 //helpers
 import { resolveGeneralTheme } from "@/helpers/theme.helper";
+import { useUser } from "@/hooks/store";
 // nprogress
 import { AppProgressBar } from "@/lib/n-progress";
 // polyfills
@@ -36,24 +39,39 @@ export const AppProvider: FC<IAppProvider> = (props) => {
   const { children } = props;
   // themes
 
-  // const router = useRouter();
   const pathname = usePathname();
+  const { signOut } = useUser();
+
+  const handleSignOut = async () => {
+    await signOut().catch(() =>
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to sign out. Please try again.",
+      })
+    );
+  };
 
   useEffect(() => {
-    // const onIncomingMessage = (event) => {
-    //   console.log('onIncomingMessage', event);
-    //   if (event.data.type === 'ROUTE_CHANGE') {
-    //     console.log(location.pathname, event.data.path);
-    //     router.replace(event.data.path);
-    //   }
-    // };
     console.log(pathname, 'pathname');
     window.parent.postMessage({ type: "ROUTE_CHANGE", path: pathname }, "*");
-    // window.addEventListener('message', onIncomingMessage);
-    // return () => {
-    //   window.removeEventListener("message", onIncomingMessage);
-    // };
   }, [pathname]);
+
+  useEffect(() => {
+    const onIncomingMessage = async (event: MessageEvent) => {
+      console.log('onIncomingMessage', event);
+      if (event.data.type === "PLANE_SIGN_OUT") {
+        try {
+          await handleSignOut();
+          window.parent.postMessage({ type: "PLANE_SIGN_OUT_SUCCESS", path: pathname }, "*");
+        } catch (err) {}
+      }
+    };
+    window.addEventListener('message', onIncomingMessage);
+    return () => {
+      window.removeEventListener("message", onIncomingMessage);
+    };
+  }, []);
 
   return (
     <>
@@ -61,15 +79,17 @@ export const AppProvider: FC<IAppProvider> = (props) => {
       <StoreProvider>
         <ThemeProvider themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]} defaultTheme="system">
           <ToastWithTheme />
-          <StoreWrapper>
-            <InstanceWrapper>
-              <IntercomProvider>
-                <PostHogProvider>
-                  <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
-                </PostHogProvider>
-              </IntercomProvider>
-            </InstanceWrapper>
-          </StoreWrapper>
+          <TranslationProvider>
+            <StoreWrapper>
+              <InstanceWrapper>
+                <IntercomProvider>
+                  <PostHogProvider>
+                    <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
+                  </PostHogProvider>
+                </IntercomProvider>
+              </InstanceWrapper>
+            </StoreWrapper>
+          </TranslationProvider>
         </ThemeProvider>
       </StoreProvider>
     </>

@@ -24,8 +24,10 @@ import {
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 export const ModuleIssuesMobileHeader = observer(() => {
+  const { t } = useTranslation();
   const [analyticsModal, setAnalyticsModal] = useState(false);
   const { currentProjectDetails } = useProject();
   const { getModuleById } = useModule();
@@ -91,7 +93,7 @@ export const ModuleIssuesMobileHeader = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, moduleId);
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property as IIssueDisplayProperties, moduleId);
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
   );
@@ -131,7 +133,7 @@ export const ModuleIssuesMobileHeader = observer(() => {
             placement="bottom-end"
             menuButton={
               <span className="flex items-center text-sm text-custom-text-200">
-                Filters
+                {t("filters")}
                 <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200" />
               </span>
             }
@@ -159,7 +161,7 @@ export const ModuleIssuesMobileHeader = observer(() => {
             placement="bottom-end"
             menuButton={
               <span className="flex items-center text-sm text-custom-text-200">
-                Display
+                {t("display")}
                 <ChevronDown className="ml-2 h-4 w-4 text-custom-text-200" />
               </span>
             }
@@ -183,7 +185,7 @@ export const ModuleIssuesMobileHeader = observer(() => {
           onClick={() => setAnalyticsModal(true)}
           className="flex flex-grow justify-center border-l border-custom-border-200 text-sm text-custom-text-200"
         >
-          Analytics
+          {t("analytics")}
         </button>
       </div>
     </div>

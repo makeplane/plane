@@ -9,6 +9,7 @@ import { Loader } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues";
 // ui
 // types
+import { useTranslation } from "@plane/i18n";
 
 const LabelIcons = ({ color }: { color: string }) => (
   <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
@@ -23,6 +24,7 @@ type Props = {
 
 export const FilterLabels: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, labels, searchQuery } = props;
+  const { t } = useTranslation();
 
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -51,7 +53,7 @@ export const FilterLabels: React.FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title={`Label${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("label")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -80,7 +82,7 @@ export const FilterLabels: React.FC<Props> = observer((props) => {
                 )}
               </>
             ) : (
-              <p className="text-xs italic text-custom-text-400">No matches found</p>
+              <p className="text-xs italic text-custom-text-400">{t("no_matches_found")}</p>
             )
           ) : (
             <Loader className="space-y-2">
