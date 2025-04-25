@@ -32,6 +32,7 @@ import { ThemeStore, IThemeStore } from "./theme.store";
 import { ITransientStore, TransientStore } from "./transient.store";
 import { IUserStore, UserStore } from "./user";
 import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
+import { IAnalyticsStoreV2, AnalyticsStoreV2 } from "./analytics-v2.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -49,6 +50,7 @@ export class CoreRootStore {
   state: IStateStore;
   label: ILabelStore;
   dashboard: IDashboardStore;
+  analyticsV2: IAnalyticsStoreV2;
   projectPages: IProjectPageStore;
   router: IRouterStore;
   commandPalette: ICommandPaletteStore;
@@ -94,6 +96,7 @@ export class CoreRootStore {
     this.transient = new TransientStore();
     this.stickyStore = new StickyStore();
     this.editorAssetStore = new EditorAssetStore();
+    this.analyticsV2 = new AnalyticsStoreV2(this);
   }
 
   resetOnSignOut() {

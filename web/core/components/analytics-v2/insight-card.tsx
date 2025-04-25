@@ -1,0 +1,46 @@
+// plane package imports
+import { Loader } from '@plane/ui'
+import { IAnalyticsResponseFieldsV2 } from '@plane/types'
+// components
+import React, { useMemo } from 'react'
+import TrendPiece from './trend-piece'
+
+export type InsightCardProps = {
+  data?: IAnalyticsResponseFieldsV2;
+  label: string;
+  isLoading?: boolean;
+}
+
+const InsightCard = (props: InsightCardProps) => {
+  const { data, label, isLoading } = props;
+  const { count, filter_count } = data || {};
+  const percentage = useMemo(() => {
+    if (count != null && filter_count != null) {
+      const result = ((count - filter_count) / count) * 100;
+      return isFinite(result) ? result : null;
+    }
+    return null;
+  }, [count, filter_count]);
+  const versus = "last month";
+
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="text-sm text-custom-text-300">{label}</div>
+      {!isLoading ? (
+        <div className="flex flex-col gap-1">
+          <div className="text-2xl font-bold text-custom-text-100">{count}</div>
+          {percentage && (
+            <div className="flex gap-1 text-xs text-custom-text-300">
+              <TrendPiece percentage={percentage} size="xs" />
+              <div>vs {versus}</div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <Loader.Item height='50px' width='100%' />
+      )}
+    </div>
+  );
+}
+
+export default InsightCard;
