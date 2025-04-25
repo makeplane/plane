@@ -75,6 +75,9 @@ def create_project_and_member(workspace: Workspace) -> Dict[int, uuid.UUID]:
     projects_map: Dict[int, uuid.UUID] = {}
 
     if not project_seeds:
+        logger.warning(
+            "Task: workspace_seed_task -> No project seeds found. Skipping project creation."
+        )
         return projects_map
 
     for project_seed in project_seeds:
@@ -295,8 +298,12 @@ def workspace_seed(workspace_id: uuid.UUID) -> None:
         # create project issues
         create_project_issues(workspace, project_map, state_map, label_map)
 
-        logger.info(f"Task: workspace_seed_task -> Workspace {workspace_id} seeded successfully")
+        logger.info(
+            f"Task: workspace_seed_task -> Workspace {workspace_id} seeded successfully"
+        )
         return
     except Exception as e:
-        logger.error(f"Task: workspace_seed_task -> Failed to seed workspace {workspace_id}: {str(e)}")
+        logger.error(
+            f"Task: workspace_seed_task -> Failed to seed workspace {workspace_id}: {str(e)}"
+        )
         raise e
