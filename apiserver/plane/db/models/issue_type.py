@@ -62,6 +62,7 @@ class ProjectIssueType(ProjectBaseModel):
 class IssueTypeCustomProperty(BaseModel):
     name = models.CharField(max_length=255)
     value = models.JSONField()
+    data_type = models.CharField(max_length=255, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_required = models.BooleanField(default=False)
     issue_type = models.ForeignKey(

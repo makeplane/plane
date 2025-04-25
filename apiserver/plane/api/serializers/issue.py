@@ -43,7 +43,7 @@ def is_uuid(value):
 class IssueCustomPropertySerializer(BaseSerializer):
     class Meta:
         model = IssueCustomProperty
-        fields = ["key", "value", "issue_type_custom_property", "id"]
+        fields = ["key", "value", "data_type", "int_value", "bool_value", "date_value", "issue_type_custom_property", "id"]
         read_only_fields = [
             "id",
             "issue",
@@ -253,6 +253,10 @@ class IssueSerializer(BaseSerializer):
                     IssueCustomProperty(
                         key=custom_property['key'],
                         value=custom_property['value'],
+                        data_type=custom_property.get('data_type'),
+                        int_value=custom_property.get('int_value'),
+                        bool_value=custom_property.get('bool_value'),
+                        date_value=custom_property.get('date_value'),
                         issue_type_custom_property=custom_property['issue_type_custom_property'],
                         issue=issue,
                         project_id=project_id,
@@ -318,6 +322,10 @@ class IssueSerializer(BaseSerializer):
                     IssueCustomProperty(
                         key=custom_property['key'],
                         value=custom_property['value'],
+                        data_type=custom_property.get('data_type'),
+                        int_value=custom_property.get('int_value'),
+                        bool_value=custom_property.get('bool_value'),
+                        date_value=custom_property.get('date_value'),
                         issue_type_custom_property=custom_property['issue_type_custom_property'],
                         issue=instance,
                         project_id=project_id,
