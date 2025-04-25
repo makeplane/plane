@@ -348,7 +348,7 @@
   "couldnt_remove_the_project_from_favorites": "Projekt konnte nicht aus den Favoriten entfernt werden. Bitte versuchen Sie es erneut.",
   "add_to_favorites": "Zu Favoriten hinzufügen",
   "remove_from_favorites": "Aus Favoriten entfernen",
-  "publish_settings": "Veröffentlichungseinstellungen",
+  "publish_project": "Projekt veröffentlichen",
   "publish": "Veröffentlichen",
   "copy_link": "Link kopieren",
   "leave_project": "Projekt verlassen",

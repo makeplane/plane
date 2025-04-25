@@ -348,7 +348,7 @@
   "couldnt_remove_the_project_from_favorites": "Không thể xóa dự án khỏi mục yêu thích. Vui lòng thử lại.",
   "add_to_favorites": "Thêm vào mục yêu thích",
   "remove_from_favorites": "Xóa khỏi mục yêu thích",
-  "publish_settings": "Cài đặt xuất bản",
+  "publish_project": "Xuất bản dự án",
   "publish": "Xuất bản",
   "copy_link": "Sao chép liên kết",
   "leave_project": "Rời dự án",

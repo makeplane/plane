@@ -348,7 +348,7 @@
   "couldnt_remove_the_project_from_favorites": "Не вдалося вилучити проєкт із вибраного. Спробуйте ще раз.",
   "add_to_favorites": "Додати у вибране",
   "remove_from_favorites": "Вилучити з вибраного",
-  "publish_settings": "Налаштування публікації",
+  "publish_project": "Опублікувати проєкт",
   "publish": "Опублікувати",
   "copy_link": "Скопіювати посилання",
   "leave_project": "Вийти з проєкту",
