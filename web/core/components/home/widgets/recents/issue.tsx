@@ -1,3 +1,6 @@
+import { observer } from "mobx-react";
+// plane constants
+import { EIssueServiceType } from "@plane/constants";
 // plane types
 import { TActivityEntityData, TIssueEntityData } from "@plane/types";
 // plane ui
@@ -18,11 +21,12 @@ type BlockProps = {
   ref: React.RefObject<HTMLDivElement>;
   workspaceSlug: string;
 };
-export const RecentIssue = (props: BlockProps) => {
+export const RecentIssue = observer((props: BlockProps) => {
   const { activity, ref, workspaceSlug } = props;
   // hooks
   const { getStateById } = useProjectState();
   const { setPeekIssue } = useIssueDetail();
+  const { setPeekIssue: setPeekEpic } = useIssueDetail(EIssueServiceType.EPICS);
   const { getProjectIdentifierById } = useProject();
   // derived values
   const issueDetails: TIssueEntityData = activity.entity_data as TIssueEntityData;
@@ -38,7 +42,20 @@ export const RecentIssue = (props: BlockProps) => {
     issueId: issueDetails?.id,
     projectIdentifier,
     sequenceId: issueDetails?.sequence_id,
+    isEpic: issueDetails?.is_epic,
   });
+
+  const handlePeekOverview = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const peekDetails = {
+      workspaceSlug,
+      projectId: issueDetails?.project_id,
+      issueId: activity.entity_data.id,
+    };
+    if (issueDetails?.is_epic) setPeekEpic(peekDetails);
+    else setPeekIssue(peekDetails);
+  };
 
   return (
     <ListItem
@@ -109,12 +126,8 @@ export const RecentIssue = (props: BlockProps) => {
       disableLink={false}
       className="bg-transparent my-auto !px-2 border-none py-3"
       itemClassName="my-auto"
-      onItemClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setPeekIssue({ workspaceSlug, projectId: issueDetails?.project_id, issueId: activity.entity_data.id });
-      }}
+      onItemClick={handlePeekOverview}
       preventDefaultNProgress
     />
   );
-};
+});
