@@ -43,7 +43,7 @@ def is_uuid(value):
 class IssueCustomPropertySerializer(BaseSerializer):
     class Meta:
         model = IssueCustomProperty
-        fields = ["key", "value", "issue_type_custom_property", "id"]
+        fields = ["key", "value", "data_type", "int_value", "bool_value", "date_value", "issue_type_custom_property", "id"]
         read_only_fields = [
             "id",
             "issue",
@@ -161,15 +161,11 @@ class IssueSerializer(BaseSerializer):
                 if User.objects.filter(username=data['created_by']).exists():
                     data['created_by'] = User.objects.get(username=data['created_by'])
                 else:
-                    # Split created_by by underscore
-                    parts = data['created_by'].split('_')
-                    username = parts[1]
-                    
                     user_data = {
-                        "email": data['created_by'] + '@plane-shipsy.com',
-                        "username": username,
-                        "role": 5,
-                        "display_name": data.get('worker_code')
+                    "email": data['created_by'] + '@plane-shipsy.com',
+                    "username": data['created_by'],
+                    "role": 5,
+                    "display_name": data['created_by']
                     }
                     from plane.api.views import ProjectMemberAPIEndpoint
                     PMObj = ProjectMemberAPIEndpoint()
@@ -257,6 +253,10 @@ class IssueSerializer(BaseSerializer):
                     IssueCustomProperty(
                         key=custom_property['key'],
                         value=custom_property['value'],
+                        data_type=custom_property.get('data_type'),
+                        int_value=custom_property.get('int_value'),
+                        bool_value=custom_property.get('bool_value'),
+                        date_value=custom_property.get('date_value'),
                         issue_type_custom_property=custom_property['issue_type_custom_property'],
                         issue=issue,
                         project_id=project_id,
@@ -322,6 +322,10 @@ class IssueSerializer(BaseSerializer):
                     IssueCustomProperty(
                         key=custom_property['key'],
                         value=custom_property['value'],
+                        data_type=custom_property.get('data_type'),
+                        int_value=custom_property.get('int_value'),
+                        bool_value=custom_property.get('bool_value'),
+                        date_value=custom_property.get('date_value'),
                         issue_type_custom_property=custom_property['issue_type_custom_property'],
                         issue=instance,
                         project_id=project_id,
