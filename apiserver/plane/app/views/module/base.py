@@ -714,6 +714,12 @@ class ModuleViewSet(BaseViewSet):
 
         current_module = module_queryset.first()
 
+        if not current_module:
+            return Response(
+                {"error": "Module not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         if current_module.archived_at:
             return Response(
                 {"error": "Archived module cannot be updated"},
