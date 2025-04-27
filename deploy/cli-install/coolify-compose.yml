@@ -63,9 +63,9 @@ x-docstore-env: &docstore-env
   BUCKET_NAME: ${BUCKET_NAME:-uploads}
   AWS_S3_BUCKET_NAME: ${BUCKET_NAME:-uploads}
 
-
-x-silo-env: &silo-env
+x-silo-env:
   # App Envs
+  &silo-env
   PORT: 3000
   BATCH_SIZE: ${BATCH_SIZE:-60}
   DEDUP_INTERVAL: ${DEDUP_INTERVAL:-3}
@@ -124,40 +124,40 @@ x-live-env: &live-env
 
 services:
   admin:
-    image: makeplane/admin-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    image: artifacts.plane.so/makeplane/admin-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: node admin/server.js admin
     deploy:
       replicas: ${ADMIN_REPLICAS:-1}
       restart_policy:
         condition: on-failure
     depends_on:
-      - api
-      - web
+    - api
+    - web
 
   web:
-    image: makeplane/web-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    image: artifacts.plane.so/makeplane/web-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: node web/server.js web
     deploy:
       replicas: ${WEB_REPLICAS:-1}
       restart_policy:
         condition: on-failure
     depends_on:
-      - api
-      - worker
+    - api
+    - worker
 
   space:
-    image: makeplane/space-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    image: artifacts.plane.so/makeplane/space-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: node space/server.js space
     deploy:
       replicas: ${SPACE_REPLICAS:-1}
       restart_policy:
         condition: on-failure
     depends_on:
-      - api
-      - web
+    - api
+    - web
 
   live:
-    image: makeplane/live-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    image: artifacts.plane.so/makeplane/live-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: node live/dist/server.js live
     environment:
       <<: [ *live-env, *redis-env ]
@@ -166,13 +166,13 @@ services:
       restart_policy:
         condition: on-failure
     depends_on:
-      - api
-      - web
+    - api
+    - web
 
   monitor:
-    image: makeplane/monitor-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    image: artifacts.plane.so/makeplane/monitor-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     volumes:
-      - 'monitor_data:/app'
+    - 'monitor_data:/app'
     environment:
       <<: [ *plane-commercial, *monitor-env ]
     deploy:
@@ -181,7 +181,7 @@ services:
         condition: on-failure
 
   api:
-    image: makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: ./bin/docker-entrypoint-api-ee.sh
     environment:
       <<: [ *plane-commercial, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
@@ -190,13 +190,13 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-      - api_logs:/code/plane/logs
+    - api_logs:/code/plane/logs
     depends_on:
-      - plane-db
-      - plane-redis
+    - plane-db
+    - plane-redis
 
   worker:
-    image: makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: ./bin/docker-entrypoint-worker.sh
     environment:
       <<: [ *plane-commercial, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
@@ -205,14 +205,14 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-      - worker_logs:/code/plane/logs
+    - worker_logs:/code/plane/logs
     depends_on:
-      - api
-      - plane-db
-      - plane-redis
+    - api
+    - plane-db
+    - plane-redis
 
   beat-worker:
-    image: makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: ./bin/docker-entrypoint-beat.sh
     environment:
       <<: [ *plane-commercial, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
@@ -221,14 +221,14 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-      - beat_worker_logs:/code/plane/logs
+    - beat_worker_logs:/code/plane/logs
     depends_on:
-      - api
-      - plane-db
-      - plane-redis
+    - api
+    - plane-db
+    - plane-redis
 
   migrator:
-    image: makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    image: artifacts.plane.so/makeplane/backend-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     command: ./bin/docker-entrypoint-migrator.sh
     environment:
       <<: [ *plane-commercial, *app-env, *pg-env, *redis-env, *rabbitmq-env, *docstore-env ]
@@ -237,10 +237,10 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-      - migrator_logs:/code/plane/logs
+    - migrator_logs:/code/plane/logs
     depends_on:
-      - plane-db
-      - plane-redis
+    - plane-db
+    - plane-redis
 
   plane-db:
     image: postgres:15.7-alpine
@@ -252,19 +252,19 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-      - pgdata:/var/lib/postgresql/data
+    - pgdata:/var/lib/postgresql/data
 
   plane-redis:
     image: valkey/valkey:7.2.5-alpine
-    environment:  
+    environment:
       <<: [ *redis-env ]
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
     volumes:
-      - redisdata:/data
-  
+    - redisdata:/data
+
   plane-mq:
     image: rabbitmq:3.13.6-management-alpine
     environment:
@@ -274,7 +274,7 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
+    - rabbitmq_data:/var/lib/rabbitmq
 
   plane-minio:
     image: minio/minio:latest
@@ -288,11 +288,11 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-      - uploads:/export
-      - minio_data:/data
+    - uploads:/export
+    - minio_data:/data
 
   silo:
-    image: makeplane/silo-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    image: artifacts.plane.so/makeplane/silo-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     restart: unless-stopped
     command: node silo/start.cjs
     environment:
@@ -300,21 +300,21 @@ services:
     deploy:
       replicas: ${SILO_REPLICAS:-1}
     depends_on:
-      - plane-redis
-      - plane-mq
-      
+    - plane-redis
+    - plane-mq
+
   # Comment this if you already have a reverse proxy running
   proxy:
-    image: makeplane/proxy-commercial:${APP_RELEASE_VERSION:-v1.x.x}
+    image: artifacts.plane.so/makeplane/proxy-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     restart: unless-stopped
     environment:
       <<: [ *plane-commercial, *proxy-env ]
     volumes:
-      - proxy_config:/config
-      - proxy_data:/data
+    - proxy_config:/config
+    - proxy_data:/data
     depends_on:
-      - web
-      - api
-      - space
-      - admin
-      - live
+    - web
+    - api
+    - space
+    - admin
+    - live
