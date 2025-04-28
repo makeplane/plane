@@ -19,17 +19,29 @@ def base_host(request: Request | HttpRequest, is_admin: bool = False, is_space: 
 
     # Admin redirections
     if is_admin:
+        admin_base_path = getattr(settings, "ADMIN_BASE_PATH", "/god-mode/")
+        if not admin_base_path.startswith("/"):
+            admin_base_path = "/" + admin_base_path
+        if not admin_base_path.endswith("/"):
+            admin_base_path += "/"
+
         if settings.ADMIN_BASE_URL:
-            return settings.ADMIN_BASE_URL
+            return settings.ADMIN_BASE_URL + admin_base_path
         else:
-            return base_origin + "/god-mode/"
+            return base_origin + admin_base_path
 
     # Space redirections
     if is_space:
+        space_base_path = getattr(settings, "SPACE_BASE_PATH", "/spaces/")
+        if not space_base_path.startswith("/"):
+            space_base_path = "/" + space_base_path
+        if not space_base_path.endswith("/"):
+            space_base_path += "/"
+
         if settings.SPACE_BASE_URL:
-            return settings.SPACE_BASE_URL
+            return settings.SPACE_BASE_URL + space_base_path
         else:
-            return base_origin + "/spaces/"
+            return base_origin + space_base_path
 
     # App Redirection
     if is_app:
