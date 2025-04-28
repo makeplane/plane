@@ -152,8 +152,12 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
                 />
                 {groupPreviewEnabled[groupKey] && (
                   <div>
-                    <FilterSearch propertyKey={groupKey} handleSectionSearch={handleSectionSearch} />
-
+                    {(groupedSection.data_type === "text" || groupedSection.data_type === "boolean") && (
+                      <FilterSearch
+                        propertyKey={groupKey}
+                        handleSectionSearch={handleSectionSearch}
+                      />
+                    )}
                     {(groupedSection.data_type === "text" || groupedSection.data_type === "boolean") && (
                       <>
                         {properties.map(property => (
