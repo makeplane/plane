@@ -55,9 +55,9 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
           dot={
             area.showDot
               ? {
-                  fill: area.fill,
-                  fillOpacity: 1,
-                }
+                fill: area.fill,
+                fillOpacity: 1,
+              }
               : false
           }
           activeDot={{
@@ -91,7 +91,6 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
       };
     });
   }, [data, xAxis.key]);
-
   return (
     <div className={className}>
       <ResponsiveContainer width="100%" height="100%">

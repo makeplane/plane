@@ -264,6 +264,35 @@ export const overviewDummyData = {
         { states: "Low", low: 35 },
         { states: "None", none: 70 }
     ] as TChartData<string, string>[],
+    work_areas: [
+        {
+            key: "resolved",
+            label: "Resolved",
+            fill: "#19803833",
+            fillOpacity: 1,
+            stackId: "bar-one",
+            showDot: false,
+            smoothCurves: true,
+            strokeColor: "#198038",
+            strokeOpacity: 1,
+        },
+        {
+            key: "unresolved",
+            label: "Unresolved",
+            fill: "#1192E833",
+            fillOpacity: 1,
+            stackId: "bar-one",
+            showDot: false,
+            smoothCurves: true,
+            strokeColor: "#1192E8",
+            strokeOpacity: 1,
+        },
+
+    ],
+    work_area_data: Array.from({ length: 10 }, (_, i) => ({
+        resolved: Math.floor(Math.random() * 20),
+        unresolved: Math.floor(Math.random() * 20),
+    })),
     sampleScatterData: {
         data: [
             { x: 10, y: 20, z: 5, "epics": 15, "dashboard": 10 },

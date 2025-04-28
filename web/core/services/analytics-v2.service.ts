@@ -33,5 +33,18 @@ export class AnalyticsV2Service extends APIService {
                 throw err?.response?.data;
             })
     }
+
+    async getAdvanceAnalyticsCharts<T extends unknown>(workspaceSlug: string, tab: TAnalyticsTabsV2Base, params?: Record<string, any>): Promise<T> {
+        return this.get(`/api/workspaces/${workspaceSlug}/advance-analytics-charts/`, {
+            params: {
+                type: tab,
+                ...params
+            }
+        })
+            .then((res) => res?.data)
+            .catch((err) => {
+                throw err?.response?.data;
+            })
+    }
 }
 
