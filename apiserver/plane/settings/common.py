@@ -345,13 +345,13 @@ CSRF_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
 CSRF_FAILURE_VIEW = "plane.authentication.views.common.csrf_failure"
 
 # Base URLs
-ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", None)
-SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
-APP_BASE_URL = os.environ.get("APP_BASE_URL")
-LIVE_BASE_URL = os.environ.get("LIVE_BASE_URL")
+ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", "")
+SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", "")
+APP_BASE_URL = os.environ.get("APP_BASE_URL", "")
+LIVE_BASE_URL = os.environ.get("LIVE_BASE_URL", "")
 LIVE_BASE_PATH = os.environ.get("LIVE_BASE_PATH", "/live")
 LIVE_URL = f"{LIVE_BASE_URL}{LIVE_BASE_PATH}"
-WEB_URL = os.environ.get("WEB_URL")
+WEB_URL = os.environ.get("WEB_URL", "")
 
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
 
