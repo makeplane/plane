@@ -563,24 +563,30 @@ def filter_logged_by(params, issue_filter, method, prefix=""):
 def filter_custom_properties(params, issue_filter, method, prefix=""):
     if method == "GET":
         raw_props = params.get("custom_properties", "")
-        custom_properties = [
-            item for item in raw_props.split("|") if item and item != "null"
-        ]
+        
+        # Check if the format uses pipes (|) for separation
+        if "|" in raw_props:
+            # Handle new format with pipe separator
+            custom_properties = [
+                item for item in raw_props.split("|") if item and item != "null"
+            ]
+        else:
+            # Handle old format with comma separator
+            custom_properties = [
+                item for item in raw_props.split(",") if item and item != "null"
+            ]
+        
         groupedCustomProperties = {}
         for row in custom_properties:
-            key, value = row.split(":", 1)
-            if key not in groupedCustomProperties:
-                groupedCustomProperties[key] = []
-            groupedCustomProperties[key].append(value)
-
+            # Handle both simple key:value and key__operator:value formats
+            if ":" in row:
+                key, value = row.split(":", 1)
+                if key not in groupedCustomProperties:
+                    groupedCustomProperties[key] = []
+                groupedCustomProperties[key].append(value)
+        
         issue_filter['custom_properties'] = groupedCustomProperties
-    #     # query = Q()
-    #     # for row in custom_properties:
-    #     #     key, value = row.split(":")
-    #     #     query &= Q(
-    #     #         Q(custom_properties__project_custom_property_id=key) &
-    #     #         Q(custom_properties__value=value)
-    #     #     )
+    
     return issue_filter
 
 def filter_character_fields(params, issue_filter, method, prefix=""):
