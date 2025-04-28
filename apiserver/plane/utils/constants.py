@@ -44,5 +44,9 @@ ALLOWED_CUSTOM_PROPERTY_WORKSPACE_MAP = {
         "Stays (in days)",
         "Approved Cost (in BRL)",
         "Invoice",
+        "TextField",
+        "Boolean",
+        "DateField",
+        "NumberField",
     ]
 }
