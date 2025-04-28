@@ -65,7 +65,7 @@ from plane.db.models import (
 class IssueCustomPropertySerializer(BaseSerializer):
     class Meta:
         model = IssueCustomProperty
-        fields = ["key", "value", "issue_type_custom_property"]
+        fields = ["key", "value", "issue_type_custom_property", "data_type"]
         read_only_fields = [
             "id",
             "issue",
@@ -377,7 +377,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         for item in unique_values_list:
             key = item["key"]
             values = item["values"]
-            data_type     = item["data_type"]
+            data_type = item["data_type"]
             
             paginator = PageNumberPagination()
             paginator.page_size = int(request.GET.get("limit", 10))
