@@ -74,8 +74,10 @@ else
     success=false
 fi
 
-# install corepack + node dependencies
-npm install -g corepack && yarn install
++ # Activate Yarn (version set in package.json)
+corepack enable yarn || success=false
++ # Install Node dependencies
++ yarn install || success=false
 
 # Summary
 echo -e "\n${YELLOW}Setup status:${NC}"

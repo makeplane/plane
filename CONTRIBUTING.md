@@ -51,32 +51,32 @@ The backend is a django project which is kept inside apiserver
 
 1. Clone the repo
 
-    ```bash
-    git clone https://github.com/makeplane/plane.git [folder-name]
-    cd [folder-name]
-    chmod +x setup.sh
-    ```
+```bash
+git clone https://github.com/makeplane/plane.git [folder-name]
+cd [folder-name]
+chmod +x setup.sh
+```
 
-1. Run setup.sh
+2. Run setup.sh
 
-    ```bash
-    ./setup.sh
-    ```
+```bash
+./setup.sh
+```
 
-1. Start the containers
+3. Start the containers
 
-    ```bash
-    docker compose -f docker-compose-local.yml up
-    ```
+```bash
+docker compose -f docker-compose-local.yml up
+```
 
-1. Start web apps:
+5. Start web apps:
 
-    ```bash
-    yarn dev
-    ```
+```bash
+yarn dev
+```
 
-1. Open your browser to http://localhost:3001/god-mode/ and register yourself as instance admin
-1. Open up your browser to http://localhost:3000 then log in using the same credentials from the previous step
+6. Open your browser to http://localhost:3001/god-mode/ and register yourself as instance admin
+7. Open up your browser to http://localhost:3000 then log in using the same credentials from the previous step
 
 That’s it! You’re all set to begin coding. Remember to refresh your browser if changes don’t auto-reload. Happy contributing! 🎉
 
