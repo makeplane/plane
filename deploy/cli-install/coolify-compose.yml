@@ -118,9 +118,12 @@ x-app-env: &app-env
   API_KEY_RATE_LIMIT: ${API_KEY_RATE_LIMIT:-60/minute}
   # Force HTTPS for handling SSL Termination
   MINIO_ENDPOINT_SSL: ${MINIO_ENDPOINT_SSL:-0}
+  # Live Server Secret Key
+  LIVE_SERVER_SECRET_KEY: ${SERVICE_PASSWORD_64_LIVESERVERSECRETKEY}
 
 x-live-env: &live-env
   API_BASE_URL: http://api:8000
+  LIVE_SERVER_SECRET_KEY: ${SERVICE_PASSWORD_64_LIVESERVERSECRETKEY
 
 services:
   admin:
