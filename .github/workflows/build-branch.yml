@@ -273,7 +273,7 @@ jobs:
         run: |
           cp ./deploy/selfhost/install.sh deploy/selfhost/setup.sh
           sed -i 's/${APP_RELEASE:-stable}/${APP_RELEASE:-'${REL_VERSION}'}/g' deploy/selfhost/docker-compose.yml
-          sed -i 's/APP_RELEASE=stable/APP_RELEASE='${REL_VERSION}'/g' deploy/selfhost/variables.env
+          # sed -i 's/APP_RELEASE=stable/APP_RELEASE='${REL_VERSION}'/g' deploy/selfhost/variables.env
 
       - name: Create Release
         id: create_release
