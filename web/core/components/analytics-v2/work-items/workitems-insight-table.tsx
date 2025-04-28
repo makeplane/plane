@@ -27,7 +27,7 @@ const WorkItemsInsightTable = observer(() => {
     const columns = useMemo(() => {
         return [
             {
-                accessorKey: "project_id",
+                accessorKey: "project__name",
                 header: () => <div className="text-left">Project</div>,
                 cell: ({ row }) => {
                     const project = getProjectById(row.original.project_id);

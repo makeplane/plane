@@ -23,17 +23,20 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "./core"
-
+} from "@plane/propel/table"
+import { Input } from "@plane/ui"
+import { Search } from "lucide-react"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    searchPlaceholder: string
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
+    searchPlaceholder,
 }: DataTableProps<TData, TValue>) {
     const [rowSelection, setRowSelection] = React.useState({})
     const [columnVisibility, setColumnVisibility] =
@@ -67,6 +70,17 @@ export function DataTable<TData, TValue>({
 
     return (
         <div className="space-y-4">
+            <div className="flex items-center gap-2">
+                <Input
+                    placeholder={searchPlaceholder}
+                    value={(table.getColumn(table.getHeaderGroups()?.[0].headers[0].id)?.getFilterValue() as string) ?? ""}
+                    onChange={(event) => {
+                        table.getColumn(table.getHeaderGroups()?.[0].headers[0].id)?.setFilterValue(event.target.value)
+                    }}
+                    className="w-30 border-none"
+                />
+                <Search className="w-4 h-4 opacity-50" />
+            </div>
             <div className="rounded-md">
                 <Table>
                     <TableHeader>
@@ -80,7 +94,7 @@ export function DataTable<TData, TValue>({
                                                 : flexRender(
                                                     header.column.columnDef.header,
                                                     header.getContext()
-                                                )}
+                                                ) as any}
                                         </TableHead>
                                     )
                                 })}
@@ -99,7 +113,7 @@ export function DataTable<TData, TValue>({
                                             {flexRender(
                                                 cell.column.columnDef.cell,
                                                 cell.getContext()
-                                            )}
+                                            ) as any}
                                         </TableCell>
                                     ))}
                                 </TableRow>

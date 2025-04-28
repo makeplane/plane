@@ -1,4 +1,4 @@
-import { DataTable } from "@plane/propel/table";
+import { DataTable } from "./data-table";
 import { AnalyticsTableDataMap, TAnalyticsTabsV2Base } from "@plane/types";
 import { TableLoader } from "./loader";
 import { ColumnDef } from "@tanstack/react-table";
@@ -24,6 +24,7 @@ export const InsightTable = <T extends Exclude<TAnalyticsTabsV2Base, "overview">
             {data ? <DataTable
                 columns={columns}
                 data={data}
+                searchPlaceholder={`${data.length} Projects`}
             /> : <div>No data</div>}
         </div>
     );

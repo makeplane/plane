@@ -1,38 +1,51 @@
-import React from 'react'
-import { LucideProps } from 'lucide-react';
-import { EUpdateStatus } from '@plane/types/src/enums';
-import { StatusOptions } from '@plane/constants';
+import { useProject } from '@/hooks/store';
+import { Loader, Logo } from '@plane/ui';
+import { cn } from '@plane/utils';
+import { Briefcase } from 'lucide-react';
 
 
 type Props = {
-    icon: React.ComponentType<LucideProps>,
-    label: string,
-    status: EUpdateStatus,
+    project: {
+        id: string,
+        completed_issues?: number,
+        total_issues?: number,
+    }
+    isLoading?: boolean
 }
-const StatusPill = ({ status }: { status: EUpdateStatus }) => {
-    const StatusIcon = StatusOptions[status].icon;
-    const statusColor = StatusOptions[status].color;
-    const statusBackgroundColor = StatusOptions[status].backgroundColor;
+const CompletionPercentage = ({ percentage }: { percentage: number }) => {
+    const percentageColor = percentage > 50 ? 'bg-green-500/30 text-green-500' : 'bg-red-500/30 text-red-500';
     return (
-        <div className='flex items-center gap-2 p-1 rounded text-xs'
-            style={{ color: statusColor, backgroundColor: statusBackgroundColor }}
+        <div className={cn('flex items-center gap-2 p-1 rounded text-xs', percentageColor)}
         >
-            <StatusIcon className='w-4 h-4' />
-            <span>{status}</span>
+            <span>{percentage}%</span>
         </div>
     )
 }
+
+
+
 const ActiveProjectItem = (props: Props) => {
-    const { icon: IconComponent, label, status } = props;
+    const { project } = props;
+    const { getProjectById } = useProject();
+    const { id, completed_issues, total_issues } = project;
+
+    const projectDetails = getProjectById(id);
+
     return (
         <div className='flex gap-2 items-center justify-between  '>
             <div className='flex items-center gap-2'>
                 <div className='rounded-xl bg-custom-background-80  w-8 h-8 flex items-center justify-center'>
-                    <IconComponent size={16} />
+                    <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                        {projectDetails?.logo_props ? <Logo logo={projectDetails?.logo_props} size={16} /> : (
+                            <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+                                <Briefcase className="h-4 w-4" />
+                            </span>
+                        )}
+                    </span>
                 </div>
-                <p className='text-sm font-medium'>{label}</p>
+                <p className='text-sm font-medium'>{projectDetails?.name}</p>
             </div>
-            <StatusPill status={status} />
+            <CompletionPercentage percentage={(completed_issues && total_issues) ? (completed_issues / total_issues * 100) : 0} />
         </div>
     )
 }
