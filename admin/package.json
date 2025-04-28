@@ -1,7 +1,7 @@
 {
   "name": "admin",
   "description": "Admin UI for Plane",
-  "version": "0.25.3",
+  "version": "0.26.0",
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
@@ -21,7 +21,6 @@
     "@plane/ui": "*",
     "@plane/utils": "*",
     "@plane/services": "*",
-    "@sentry/nextjs": "^8.54.0",
     "@tailwindcss/typography": "^0.5.9",
     "@types/lodash": "^4.17.0",
     "autoprefixer": "10.4.14",
@@ -30,7 +29,7 @@
     "lucide-react": "^0.469.0",
     "mobx": "^6.12.0",
     "mobx-react": "^9.1.1",
-    "next": "^14.2.20",
+    "next": "^14.2.26",
     "next-themes": "^0.2.1",
     "postcss": "^8.4.38",
     "react": "^18.3.1",

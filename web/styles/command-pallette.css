@@ -30,7 +30,7 @@
   background-color: rgba(var(--color-background-100));
 }
 
-[cmdk-item]:hover {
+[cmdk-item]:focus {
   background-color: rgba(var(--color-background-80));
 }
 
@@ -45,7 +45,7 @@
   background-color: transparent;
 }
 
-[cmdk-item][aria-disabled="true"]:hover,
-[cmdk-item][data-disabled="true"]:hover {
+[cmdk-item][aria-disabled="true"]:focus,
+[cmdk-item][data-disabled="true"]:focus {
   background-color: rgba(var(--color-background-80), 0.7);
 }

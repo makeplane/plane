@@ -1,22 +1,25 @@
 import { Editor } from "@tiptap/react";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // types
 import { TDisplayConfig } from "@/types";
+// components
+import { LinkViewContainer } from "./link-view-container";
 
 interface EditorContainerProps {
   children: ReactNode;
   displayConfig: TDisplayConfig;
-  editor: Editor | null;
+  editor: Editor;
   editorContainerClassName: string;
   id: string;
 }
 
 export const EditorContainer: FC<EditorContainerProps> = (props) => {
   const { children, displayConfig, editor, editorContainerClassName, id } = props;
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleContainerClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (event.target !== event.currentTarget) return;
@@ -44,15 +47,23 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
         return;
       }
 
-      // Insert a new paragraph at the end of the document
-      const endPosition = editor?.state.doc.content.size;
-      editor?.chain().insertContentAt(endPosition, { type: "paragraph" }).run();
+      // Get the last node in the document
+      const docSize = editor.state.doc.content.size;
+      const lastNodePos = editor.state.doc.resolve(Math.max(0, docSize - 2));
+      const lastNode = lastNodePos.node();
 
-      // Focus the newly added paragraph for immediate editing
-      editor
-        .chain()
-        .setTextSelection(endPosition + 1)
-        .run();
+      // Check if the last node is a  not paragraph
+      if (lastNode && lastNode.type.name !== "paragraph") {
+        // If last node is not a paragraph, insert a new paragraph at the end
+        const endPosition = editor?.state.doc.content.size;
+        editor?.chain().insertContentAt(endPosition, { type: "paragraph" }).run();
+
+        // Focus the newly added paragraph for immediate editing
+        editor
+          .chain()
+          .setTextSelection(endPosition + 1)
+          .run();
+      }
     } catch (error) {
       console.error("An error occurred while handling container click to insert new empty node at bottom:", error);
     }
@@ -66,21 +77,26 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
   };
 
   return (
-    <div
-      id={`editor-container-${id}`}
-      onClick={handleContainerClick}
-      onMouseLeave={handleContainerMouseLeave}
-      className={cn(
-        `editor-container cursor-text relative line-spacing-${displayConfig.lineSpacing ?? DEFAULT_DISPLAY_CONFIG.lineSpacing}`,
-        {
-          "active-editor": editor?.isFocused && editor?.isEditable,
-        },
-        displayConfig.fontSize ?? DEFAULT_DISPLAY_CONFIG.fontSize,
-        displayConfig.fontStyle ?? DEFAULT_DISPLAY_CONFIG.fontStyle,
-        editorContainerClassName
-      )}
-    >
-      {children}
-    </div>
+    <>
+      <div
+        ref={containerRef}
+        id={`editor-container-${id}`}
+        onClick={handleContainerClick}
+        onMouseLeave={handleContainerMouseLeave}
+        className={cn(
+          `editor-container cursor-text relative line-spacing-${displayConfig.lineSpacing ?? DEFAULT_DISPLAY_CONFIG.lineSpacing}`,
+          {
+            "active-editor": editor?.isFocused && editor?.isEditable,
+            "wide-layout": displayConfig.wideLayout,
+          },
+          displayConfig.fontSize ?? DEFAULT_DISPLAY_CONFIG.fontSize,
+          displayConfig.fontStyle ?? DEFAULT_DISPLAY_CONFIG.fontStyle,
+          editorContainerClassName
+        )}
+      >
+        {children}
+        <LinkViewContainer editor={editor} containerRef={containerRef} />
+      </div>
+    </>
   );
 };

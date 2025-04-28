@@ -56,6 +56,8 @@ from plane.db.models import (
 from plane.settings.storage import S3Storage
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
+from plane.utils.host import base_host
+from plane.bgtasks.webhook_task import model_activity
 
 
 class WorkspaceIssueAPIEndpoint(BaseAPIView):
@@ -320,6 +322,17 @@ class IssueAPIEndpoint(BaseAPIView):
                 project_id=str(project_id),
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
+            )
+
+            # Send the model activity
+            model_activity.delay(
+                model_name="issue",
+                model_id=str(serializer.data["id"]),
+                requested_data=request.data,
+                current_instance=None,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=base_host(request=request, is_app=True),
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1048,7 +1061,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
 
         # Get the storage metadata
@@ -1108,7 +1121,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
                 current_instance=json.dumps(serializer.data, cls=DjangoJSONEncoder),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
 
             # Update the attachment

@@ -1,5 +1,5 @@
 // plane types
-import { TSearchEntities } from "@plane/types";
+import { IUserLite, TSearchEntities } from "@plane/types";
 
 export type TMentionSuggestion = {
   entity_identifier: string;
@@ -20,6 +20,7 @@ export type TMentionComponentProps = Pick<TMentionSuggestion, "entity_identifier
 
 export type TReadOnlyMentionHandler = {
   renderComponent: (props: TMentionComponentProps) => React.ReactNode;
+  getMentionedEntityDetails?: (entity_identifier: string) => { display_name: string } | undefined;
 };
 
 export type TMentionHandler = TReadOnlyMentionHandler & {

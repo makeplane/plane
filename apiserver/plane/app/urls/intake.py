@@ -1,7 +1,11 @@
 from django.urls import path
 
 
-from plane.app.views import IntakeViewSet, IntakeIssueViewSet
+from plane.app.views import (
+    IntakeViewSet,
+    IntakeIssueViewSet,
+    IntakeWorkItemDescriptionVersionEndpoint,
+)
 
 
 urlpatterns = [
@@ -52,5 +56,15 @@ urlpatterns = [
             {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
         ),
         name="inbox-issue",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/intake-work-items/<uuid:work_item_id>/description-versions/",
+        IntakeWorkItemDescriptionVersionEndpoint.as_view(),
+        name="intake-work-item-versions",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/intake-work-items/<uuid:work_item_id>/description-versions/<uuid:pk>/",
+        IntakeWorkItemDescriptionVersionEndpoint.as_view(),
+        name="intake-work-item-versions",
     ),
 ]

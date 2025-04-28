@@ -32,7 +32,7 @@ from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
 from plane.bgtasks.webhook_task import webhook_activity
 from plane.utils.issue_relation_mapper import get_inverse_relation
-from plane.utils.valid_uuid import is_valid_uuid
+from plane.utils.uuid import is_valid_uuid
 
 
 # Track Changes in name
@@ -307,6 +307,10 @@ def track_labels(
 
     # Set of newly added labels
     for added_label in added_labels:
+        # validate uuids
+        if not is_valid_uuid(added_label):
+            continue
+
         label = Label.objects.get(pk=added_label)
         issue_activities.append(
             IssueActivity(
@@ -327,6 +331,10 @@ def track_labels(
 
     # Set of dropped labels
     for dropped_label in dropped_labels:
+        # validate uuids
+        if not is_valid_uuid(dropped_label):
+            continue
+
         label = Label.objects.get(pk=dropped_label)
         issue_activities.append(
             IssueActivity(
@@ -373,6 +381,10 @@ def track_assignees(
 
     bulk_subscribers = []
     for added_asignee in added_assignees:
+        # validate uuids
+        if not is_valid_uuid(added_asignee):
+            continue
+
         assignee = User.objects.get(pk=added_asignee)
         issue_activities.append(
             IssueActivity(
@@ -406,6 +418,10 @@ def track_assignees(
     )
 
     for dropped_assignee in dropped_assginees:
+        # validate uuids
+        if not is_valid_uuid(dropped_assignee):
+            continue
+
         assignee = User.objects.get(pk=dropped_assignee)
         issue_activities.append(
             IssueActivity(
@@ -466,7 +482,7 @@ def track_estimate_points(
                 ),
                 old_value=old_estimate.value if old_estimate else None,
                 new_value=new_estimate.value if new_estimate else None,
-                field="estimate_point",
+                field="estimate_" + new_estimate.estimate.type,
                 project_id=project_id,
                 workspace_id=workspace_id,
                 comment="updated the estimate point to ",

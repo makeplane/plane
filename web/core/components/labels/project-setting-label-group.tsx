@@ -7,7 +7,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 // types
 import { IIssueLabel } from "@plane/types";
 // components
-import { CreateUpdateLabelInline } from "./create-update-label-inline";
+import { CreateUpdateLabelInline, TLabelOperationsCallbacks } from "./create-update-label-inline";
 import { ICustomMenuItem, LabelItemBlock } from "./label-block/label-item-block";
 import { LabelDndHOC } from "./label-drag-n-drop-HOC";
 import { ProjectSettingLabelItem } from "./project-setting-label-item";
@@ -25,6 +25,7 @@ type Props = {
     droppedLabelId: string | undefined,
     dropAtEndOfList: boolean
   ) => void;
+  labelOperationsCallbacks: TLabelOperationsCallbacks;
   isEditable?: boolean;
 };
 
@@ -38,6 +39,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
     isLastChild,
     onDrop,
     isEditable = false,
+    labelOperationsCallbacks,
   } = props;
 
   // states
@@ -87,6 +89,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                           setLabelForm={setEditLabelForm}
                           isUpdating
                           labelToUpdate={label}
+                          labelOperationsCallbacks={labelOperationsCallbacks}
                           onClose={() => {
                             setEditLabelForm(false);
                             setIsUpdating(false);
@@ -134,6 +137,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                                   isLastChild={index === labelChildren.length - 1}
                                   onDrop={onDrop}
                                   isEditable={isEditable}
+                                  labelOperationsCallbacks={labelOperationsCallbacks}
                                 />
                               </div>
                             </div>

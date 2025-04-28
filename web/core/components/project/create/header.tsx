@@ -14,6 +14,8 @@ import { ImagePickerPopover } from "@/components/core";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getFileURL } from "@/helpers/file.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
+// plane web imports
+import { ProjectTemplateSelect } from "@/plane-web/components/projects/create/template-select";
 
 type Props = {
   handleClose: () => void;
@@ -39,6 +41,9 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
         />
       )}
 
+      <div className="absolute left-2.5 top-2.5">
+        <ProjectTemplateSelect handleModalClose={handleClose} />
+      </div>
       <div className="absolute right-2 top-2 p-2">
         <button data-posthog="PROJECT_MODAL_CLOSE" type="button" onClick={handleClose} tabIndex={getIndex("close")}>
           <X className="h-5 w-5 text-white" />

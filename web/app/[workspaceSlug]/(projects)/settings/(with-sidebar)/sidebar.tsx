@@ -28,7 +28,7 @@ export const WorkspaceSettingsSidebar = observer(() => {
         <div className="flex w-full flex-col gap-1">
           {WORKSPACE_SETTINGS_LINKS.map(
             (link) =>
-              shouldRenderSettingLink(link.key) &&
+              shouldRenderSettingLink(workspaceSlug.toString(), link.key) &&
               allowPermissions(link.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString()) && (
                 <Link key={link.key} href={`/${workspaceSlug}${link.href}`}>
                   <SidebarNavItem

@@ -1,16 +1,14 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane editor
+// plane imports
 import { DocumentReadOnlyEditorWithRef, TDisplayConfig } from "@plane/editor";
-// plane types
 import { TPageVersion } from "@plane/types";
-// plane ui
 import { Loader } from "@plane/ui";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
-import { useWorkspace } from "@/hooks/store";
+import { useMember, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
@@ -25,6 +23,8 @@ export type TVersionEditorProps = {
 
 export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props) => {
   const { activeVersion, currentVersionDescription, isCurrentVersionActive, versionDetails } = props;
+  // store hooks
+  const { getUserDetails } = useMember();
   // params
   const { workspaceSlug, projectId } = useParams();
   // store hooks
@@ -46,6 +46,7 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
   const displayConfig: TDisplayConfig = {
     fontSize,
     fontStyle,
+    wideLayout: true,
   };
 
   if (!isCurrentVersionActive && !versionDetails)
@@ -108,6 +109,7 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
       })}
       mentionHandler={{
         renderComponent: (props) => <EditorMentionsRoot {...props} />,
+        getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
       }}
       embedHandler={{
         issue: {

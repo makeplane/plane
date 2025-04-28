@@ -41,4 +41,4 @@ class WorkSpaceCreateReadUpdateDelete(AuthenticatedAPITest):
         response = self.client.post(
             url, {"name": "Plane", "slug": "pla-ne"}, format="json"
         )
-        self.assertEqual(response.status_code, status.HTTP_410_GONE)
+        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)

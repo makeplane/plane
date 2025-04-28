@@ -1,5 +1,6 @@
 // FIXME: fix this!!!
 import { Placement } from "@blueprintjs/popover2";
+import { ICustomSearchSelectOption } from "@plane/types";
 
 export interface IDropdownProps {
   customButtonClassName?: string;
@@ -43,15 +44,8 @@ interface CustomSearchSelectProps {
   footerOption?: JSX.Element;
   onChange: any;
   onClose?: () => void;
-  options:
-  | {
-    value: any;
-    query: string;
-    content: React.ReactNode;
-    disabled?: boolean;
-    tooltip?: string | React.ReactNode;
-  }[]
-  | undefined;
+  noResultsMessage?: string;
+  options?: ICustomSearchSelectOption[];
 }
 
 interface SingleValueProps {

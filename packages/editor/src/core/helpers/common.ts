@@ -44,16 +44,48 @@ export const getTrimmedHTML = (html: string) => {
   return html;
 };
 
-export const isValidHttpUrl = (string: string): boolean => {
-  let url: URL;
+export const isValidHttpUrl = (string: string): { isValid: boolean; url: string } => {
+  // List of potentially dangerous protocols to block
+  const blockedProtocols = ["javascript:", "data:", "vbscript:", "file:", "about:"];
 
+  // First try with the original string
   try {
-    url = new URL(string);
+    const url = new URL(string);
+
+    // Check for potentially dangerous protocols
+    const protocol = url.protocol.toLowerCase();
+    if (blockedProtocols.some((p) => protocol === p)) {
+      return {
+        isValid: false,
+        url: string,
+      };
+    }
+
+    // If URL has any valid protocol, return as is
+    if (url.protocol && url.protocol !== "") {
+      return {
+        isValid: true,
+        url: string,
+      };
+    }
   } catch (_) {
-    return false;
+    // Original string wasn't a valid URL - that's okay, we'll try with https
   }
 
-  return url.protocol === "http:" || url.protocol === "https:";
+  // Try again with https:// prefix
+  try {
+    const urlWithHttps = `https://${string}`;
+    new URL(urlWithHttps);
+    return {
+      isValid: true,
+      url: urlWithHttps,
+    };
+  } catch (_) {
+    return {
+      isValid: false,
+      url: string,
+    };
+  }
 };
 
 export const getParagraphCount = (editorState: EditorState | undefined) => {

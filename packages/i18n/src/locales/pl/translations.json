@@ -348,7 +348,7 @@
   "couldnt_remove_the_project_from_favorites": "Nie udało się usunąć projektu z ulubionych. Spróbuj ponownie.",
   "add_to_favorites": "Dodaj do ulubionych",
   "remove_from_favorites": "Usuń z ulubionych",
-  "publish_settings": "Ustawienia publikowania",
+  "publish_project": "Opublikuj projekt",
   "publish": "Opublikuj",
   "copy_link": "Kopiuj link",
   "leave_project": "Opuść projekt",
@@ -499,6 +499,11 @@
   "re_generate_key": "Wygeneruj klucz ponownie",
   "export": "Eksportuj",
   "member": "{count, plural, one{# członek} few{# członkowie} other{# członków}}",
+  "new_password_must_be_different_from_old_password": "Nowe hasło musi być innym niż stare hasło",
+
+  "edited": "Edytowano",
+  "bot": "Bot",
+
   "project_view": {
     "sort_by": {
       "created_at": "Utworzono dnia",
@@ -585,7 +590,7 @@
         "default": "Nie masz jeszcze żadnych ostatnich pozycji."
       },
       "filters": {
-        "all": "Wszystkie pozycje",
+        "all": "Wszystkie",
         "projects": "Projekty",
         "pages": "Strony",
         "issues": "Elementy pracy"
@@ -860,7 +865,8 @@
     "deleting": "Usuwanie",
     "pending": "Oczekujące",
     "invite": "Zaproś",
-    "view": "Widok"
+    "view": "Widok",
+    "deactivated_user": "Dezaktywowany użytkownik"
   },
   "chart": {
     "x_axis": "Oś X",
@@ -1708,21 +1714,100 @@
       }
     },
     "estimates": {
-      "title": "Włącz szacowania w projekcie",
-      "description": "Pomaga komunikować złożoność i obciążenie zespołu."
+      "label": "Szacunki",
+      "title": "Włącz szacunki dla mojego projektu",
+      "description": "Pomagają w komunikacji o złożoności i obciążeniu zespołu.",
+      "no_estimate": "Bez szacunku",
+      "new": "Nowy system szacowania",
+      "create": {
+        "custom": "Niestandardowy",
+        "start_from_scratch": "Zacznij od zera",
+        "choose_template": "Wybierz szablon",
+        "choose_estimate_system": "Wybierz system szacowania",
+        "enter_estimate_point": "Wprowadź punkt szacunkowy",
+        "step": "Krok {step} z {total}",
+        "label": "Utwórz szacunek"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Utworzono szacunek",
+            "message": "Szacunek został utworzony pomyślnie"
+          },
+          "error": {
+            "title": "Błąd tworzenia szacunku",
+            "message": "Nie udało się utworzyć nowego szacunku, spróbuj ponownie."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Zaktualizowano szacunek",
+            "message": "Szacunek został zaktualizowany w Twoim projekcie."
+          },
+          "error": {
+            "title": "Błąd aktualizacji szacunku",
+            "message": "Nie udało się zaktualizować szacunku, spróbuj ponownie"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Sukces!",
+            "message": "Szacunki zostały włączone."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Sukces!",
+            "message": "Szacunki zostały wyłączone."
+          },
+          "error": {
+            "title": "Błąd!",
+            "message": "Nie udało się wyłączyć szacunków. Spróbuj ponownie"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Punkt szacunkowy musi być większy niż 0.",
+        "unable_to_process": "Nie możemy przetworzyć Twojego żądania, spróbuj ponownie.",
+        "numeric": "Punkt szacunkowy musi być wartością liczbową.",
+        "character": "Punkt szacunkowy musi być znakiem.",
+        "empty": "Wartość szacunku nie może być pusta.",
+        "already_exists": "Wartość szacunku już istnieje.",
+        "unsaved_changes": "Masz niezapisane zmiany. Zapisz je przed kliknięciem 'gotowe'",
+        "remove_empty": "Szacunek nie może być pusty. Wprowadź wartość w każde pole lub usuń te, dla których nie masz wartości."
+      },
+      "systems": {
+        "points": {
+          "label": "Punkty",
+          "fibonacci": "Fibonacci",
+          "linear": "Liniowy",
+          "squares": "Kwadraty",
+          "custom": "Własny"
+        },
+        "categories": {
+          "label": "Kategorie",
+          "t_shirt_sizes": "Rozmiary koszulek",
+          "easy_to_hard": "Od łatwego do trudnego",
+          "custom": "Własne"
+        },
+        "time": {
+          "label": "Czas",
+          "hours": "Godziny"
+        }
+      }
     },
     "automations": {
-      "label": "Automatyzacje",
+      "label": "Automatyzacja",
       "auto-archive": {
-        "title": "Automatycznie archiwizuj zamknięte elementy",
-        "description": "Plane będzie archiwizował ukończone lub anulowane elementy.",
+        "title": "Automatyczna archiwizacja zamkniętych elementów",
+        "description": "Plane będzie automatycznie archiwizował elementy, które zostały ukończone lub anulowane.",
         "duration": "Archiwizuj elementy zamknięte dłużej niż"
       },
       "auto-close": {
-        "title": "Automatycznie zamykaj elementy",
-        "description": "Plane będzie zamykać nieaktywne elementy.",
+        "title": "Automatyczne zamykanie elementów",
+        "description": "Plane będzie automatycznie zamykał elementy, które nie zostały ukończone lub anulowane.",
         "duration": "Zamknij elementy nieaktywne dłużej niż",
-        "auto_close_status": "Stan do automatycznego zamknięcia"
+        "auto_close_status": "Status automatycznego zamknięcia"
       }
     },
     "empty_state": {
@@ -1747,6 +1832,12 @@
     "remove_filters_to_see_all_cycles": "Usuń filtry, aby wyświetlić wszystkie cykle",
     "remove_search_criteria_to_see_all_cycles": "Usuń kryteria wyszukiwania, aby wyświetlić wszystkie cykle",
     "only_completed_cycles_can_be_archived": "Można archiwizować tylko ukończone cykle",
+    "start_date": "Data początku",
+    "end_date": "Data końca",
+    "in_your_timezone": "W Twojej strefie czasowej",
+    "transfer_work_items": "Przenieś {count} elementów pracy",
+    "date_range": "Zakres dat",
+    "add_date": "Dodaj datę",
     "active_cycle": {
       "label": "Aktywny cykl",
       "progress": "Postęp",
@@ -2313,12 +2404,20 @@
       "manual": "Ręcznie"
     }
   },
+
   "cycle": {
     "label": "{count, plural, one {Cykl} few {Cykle} other {Cyklów}}",
     "no_cycle": "Brak cyklu"
   },
+
   "module": {
     "label": "{count, plural, one {Moduł} few {Moduły} other {Modułów}}",
     "no_module": "Brak modułu"
+  },
+
+  "description_versions": {
+    "last_edited_by": "Ostatnio edytowane przez",
+    "previously_edited_by": "Wcześniej edytowane przez",
+    "edited_by": "Edytowane przez"
   }
 }

@@ -180,7 +180,7 @@
   "couldnt_remove_the_project_from_favorites": "Couldn't remove the project from favorites. Please try again.",
   "add_to_favorites": "Add to favorites",
   "remove_from_favorites": "Remove from favorites",
-  "publish_settings": "Publish settings",
+  "publish_project": "Publish project",
   "publish": "Publish",
   "copy_link": "Copy link",
   "leave_project": "Leave project",
@@ -331,6 +331,9 @@
   "re_generate_key": "Re-generate key",
   "export": "Export",
   "member": "{count, plural, one{# member} other{# members}}",
+  "new_password_must_be_different_from_old_password": "New password must be different from old password",
+  "edited": "edited",
+  "bot": "Bot",
 
   "project_view": {
     "sort_by": {
@@ -421,7 +424,7 @@
         "default": "You don't have any recents yet."
       },
       "filters": {
-        "all": "All items",
+        "all": "All",
         "projects": "Projects",
         "pages": "Pages",
         "issues": "Work items"
@@ -627,7 +630,8 @@
       "clear_sorting": "Clear sorting",
       "show_weekends": "Show weekends",
       "enable": "Enable",
-      "disable": "Disable"
+      "disable": "Disable",
+      "copy_markdown": "Copy markdown"
     },
     "name": "Name",
     "discard": "Discard",
@@ -698,7 +702,8 @@
     "deleting": "Deleting",
     "pending": "Pending",
     "invite": "Invite",
-    "view": "View"
+    "view": "View",
+    "deactivated_user": "Deactivated user"
   },
 
   "chart": {
@@ -1565,8 +1570,87 @@
       }
     },
     "estimates": {
+      "label": "Estimates",
       "title": "Enable estimates for my project",
-      "description": "They help you in communicating complexity and workload of the team."
+      "description": "They help you in communicating complexity and workload of the team.",
+      "no_estimate": "No estimate",
+      "new": "New estimate system",
+      "create": {
+        "custom": "Custom",
+        "start_from_scratch": "Start from scratch",
+        "choose_template": "Choose a template",
+        "choose_estimate_system": "Choose an estimate system",
+        "enter_estimate_point": "Enter estimate",
+        "step": "Step {step} of {total}",
+        "label": "Create estimate"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Estimate created",
+            "message": "The estimate has been created successfully"
+          },
+          "error": {
+            "title": "Estimate creation failed",
+            "message": "We were unable to create the new estimate, please try again."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Estimate modified",
+            "message": "The estimate has been updated in your project."
+          },
+          "error": {
+            "title": "Estimate modification failed",
+            "message": "We were unable to modify the estimate, please try again"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Success!",
+            "message": "Estimates have been enabled."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Success!",
+            "message": "Estimates have been disabled."
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Estimate could not be disabled. Please try again"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Estimate needs to be greater than 0.",
+        "unable_to_process": "We are unable to process your request, please try again.",
+        "numeric": "Estimate needs to be a numeric value.",
+        "character": "Estimate needs to be a character value.",
+        "empty": "Estimate value cannot be empty.",
+        "already_exists": "Estimate value already exists.",
+        "unsaved_changes": "You have some unsaved changes, Please save them before clicking on done",
+        "remove_empty": "Estimate can't be empty. Enter a value in each field or remove those you don't have values for."
+      },
+      "systems": {
+        "points": {
+          "label": "Points",
+          "fibonacci": "Fibonacci",
+          "linear": "Linear",
+          "squares": "Squares",
+          "custom": "Custom"
+        },
+        "categories": {
+          "label": "Categories",
+          "t_shirt_sizes": "T-Shirt Sizes",
+          "easy_to_hard": "Easy to hard",
+          "custom": "Custom"
+        },
+        "time": {
+          "label": "Time",
+          "hours": "Hours"
+        }
+      }
     },
     "automations": {
       "label": "Automations",
@@ -1606,6 +1690,12 @@
     "remove_filters_to_see_all_cycles": "Remove the filters to see all cycles",
     "remove_search_criteria_to_see_all_cycles": "Remove the search criteria to see all cycles",
     "only_completed_cycles_can_be_archived": "Only completed cycles can be archived",
+    "start_date": "Start date",
+    "end_date": "End date",
+    "in_your_timezone": "In your timezone",
+    "transfer_work_items": "Transfer {count} work items",
+    "date_range": "Date range",
+    "add_date": "Add date",
     "active_cycle": {
       "label": "Active cycle",
       "progress": "Progress",
@@ -2197,5 +2287,11 @@
   "module": {
     "label": "{count, plural, one {Module} other {Modules}}",
     "no_module": "No module"
+  },
+
+  "description_versions": {
+    "last_edited_by": "Last edited by",
+    "previously_edited_by": "Previously edited by",
+    "edited_by": "Edited by"
   }
 }

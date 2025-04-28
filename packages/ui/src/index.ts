@@ -31,3 +31,5 @@ export * from "./card";
 export * from "./tag";
 export * from "./tabs";
 export * from "./calendar";
+export * from "./color-picker";
+export * from "./link";

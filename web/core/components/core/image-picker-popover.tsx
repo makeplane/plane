@@ -14,7 +14,7 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // plane types
 import { EFileAssetType } from "@plane/types/src/enums";
 // ui
-import { Button, Input, Loader } from "@plane/ui";
+import { Button, Input, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
@@ -114,7 +114,16 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
           },
           image
         )
-        .then((res) => uploadCallback(res.asset_url));
+        .then((res) => uploadCallback(res.asset_url))
+        .catch((error) => {
+          console.error("Error uploading user cover image:", error);
+          setIsImageUploading(false);
+          setToast({
+            message: error?.error ?? "The image could not be uploaded",
+            type: TOAST_TYPE.ERROR,
+            title: "Image not uploaded",
+          });
+        });
     } else {
       if (!workspaceSlug) return;
       await fileService
@@ -126,7 +135,16 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
           },
           image
         )
-        .then((res) => uploadCallback(res.asset_url));
+        .then((res) => uploadCallback(res.asset_url))
+        .catch((error) => {
+          console.error("Error uploading project cover image:", error);
+          setIsImageUploading(false);
+          setToast({
+            message: error?.error ?? "The image could not be uploaded",
+            type: TOAST_TYPE.ERROR,
+            title: "Image not uploaded",
+          });
+        });
     }
   };
 
@@ -149,7 +167,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
   useOutsideClickDetector(ref, handleClose);
 
   return (
-    <Popover className="relative z-20" ref={ref} tabIndex={tabIndex} onKeyDown={handleKeyDown}>
+    <Popover className="relative z-19" ref={ref} tabIndex={tabIndex} onKeyDown={handleKeyDown}>
       <Popover.Button
         className="rounded border border-custom-border-300 bg-custom-background-100 px-2 py-1 text-xs text-custom-text-200 hover:text-custom-text-100"
         onClick={handleOnClick}

@@ -28,7 +28,13 @@ type Props = {
   relationKey: TIssueRelationTypes;
   relationIssueId: string;
   disabled: boolean;
-  handleIssueCrudState: (key: "update" | "delete", issueId: string, issue?: TIssue | null) => void;
+  handleIssueCrudState: (
+    key: "update" | "delete" | "removeRelation",
+    issueId: string,
+    issue?: TIssue | null,
+    relationKey?: TIssueRelationTypes | null,
+    relationIssueId?: string | null
+  ) => void;
   issueServiceType?: TIssueServiceType;
 };
 
@@ -97,6 +103,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
     e.preventDefault();
     handleIssueCrudState("delete", relationIssueId, issue);
     toggleDeleteIssueModal(relationIssueId);
+    handleIssueCrudState("removeRelation", issueId, issue, relationKey, relationIssueId);
   };
 
   const handleCopyIssueLink = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {

@@ -39,7 +39,7 @@ from plane.db.models import (
     UserFavorite,
 )
 from plane.utils.analytics_plot import burndown_plot
-
+from plane.utils.host import base_host
 from .base import BaseAPIView
 from plane.bgtasks.webhook_task import model_activity
 
@@ -137,10 +137,14 @@ class CycleAPIEndpoint(BaseAPIView):
         )
 
     def get(self, request, slug, project_id, pk=None):
+        project = Project.objects.get(workspace__slug=slug, pk=project_id)
         if pk:
             queryset = self.get_queryset().filter(archived_at__isnull=True).get(pk=pk)
             data = CycleSerializer(
-                queryset, fields=self.fields, expand=self.expand
+                queryset,
+                fields=self.fields,
+                expand=self.expand,
+                context={"project": project},
             ).data
             return Response(data, status=status.HTTP_200_OK)
         queryset = self.get_queryset().filter(archived_at__isnull=True)
@@ -152,7 +156,11 @@ class CycleAPIEndpoint(BaseAPIView):
                 start_date__lte=timezone.now(), end_date__gte=timezone.now()
             )
             data = CycleSerializer(
-                queryset, many=True, fields=self.fields, expand=self.expand
+                queryset,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+                context={"project": project},
             ).data
             return Response(data, status=status.HTTP_200_OK)
 
@@ -163,7 +171,11 @@ class CycleAPIEndpoint(BaseAPIView):
                 request=request,
                 queryset=(queryset),
                 on_results=lambda cycles: CycleSerializer(
-                    cycles, many=True, fields=self.fields, expand=self.expand
+                    cycles,
+                    many=True,
+                    fields=self.fields,
+                    expand=self.expand,
+                    context={"project": project},
                 ).data,
             )
 
@@ -174,7 +186,11 @@ class CycleAPIEndpoint(BaseAPIView):
                 request=request,
                 queryset=(queryset),
                 on_results=lambda cycles: CycleSerializer(
-                    cycles, many=True, fields=self.fields, expand=self.expand
+                    cycles,
+                    many=True,
+                    fields=self.fields,
+                    expand=self.expand,
+                    context={"project": project},
                 ).data,
             )
 
@@ -185,7 +201,11 @@ class CycleAPIEndpoint(BaseAPIView):
                 request=request,
                 queryset=(queryset),
                 on_results=lambda cycles: CycleSerializer(
-                    cycles, many=True, fields=self.fields, expand=self.expand
+                    cycles,
+                    many=True,
+                    fields=self.fields,
+                    expand=self.expand,
+                    context={"project": project},
                 ).data,
             )
 
@@ -198,14 +218,22 @@ class CycleAPIEndpoint(BaseAPIView):
                 request=request,
                 queryset=(queryset),
                 on_results=lambda cycles: CycleSerializer(
-                    cycles, many=True, fields=self.fields, expand=self.expand
+                    cycles,
+                    many=True,
+                    fields=self.fields,
+                    expand=self.expand,
+                    context={"project": project},
                 ).data,
             )
         return self.paginate(
             request=request,
             queryset=(queryset),
             on_results=lambda cycles: CycleSerializer(
-                cycles, many=True, fields=self.fields, expand=self.expand
+                cycles,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+                context={"project": project},
             ).data,
         )
 
@@ -251,7 +279,7 @@ class CycleAPIEndpoint(BaseAPIView):
                     current_instance=None,
                     actor_id=request.user.id,
                     slug=slug,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -323,7 +351,7 @@ class CycleAPIEndpoint(BaseAPIView):
                 current_instance=current_instance,
                 actor_id=request.user.id,
                 slug=slug,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -694,7 +722,7 @@ class CycleIssueAPIEndpoint(BaseAPIView):
             ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
         # Return all Cycle Issues
         return Response(
@@ -1168,7 +1196,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
 
         return Response({"message": "Success"}, status=status.HTTP_200_OK)

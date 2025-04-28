@@ -348,7 +348,7 @@
   "couldnt_remove_the_project_from_favorites": "Nepodařilo se odstranit projekt z oblíbených. Zkuste to prosím znovu.",
   "add_to_favorites": "Přidat do oblíbených",
   "remove_from_favorites": "Odebrat z oblíbených",
-  "publish_settings": "Nastavení publikování",
+  "publish_project": "Publikovat projekt",
   "publish": "Publikovat",
   "copy_link": "Kopírovat odkaz",
   "leave_project": "Opustit projekt",
@@ -499,6 +499,7 @@
   "re_generate_key": "Znovu generovat klíč",
   "export": "Exportovat",
   "member": "{count, plural, one{# člen} few{# členové} other{# členů}}",
+  "new_password_must_be_different_from_old_password": "Nové heslo musí být odlišné od starého hesla",
 
   "project_view": {
     "sort_by": {
@@ -589,10 +590,10 @@
         "default": "Zatím nemáte žádné nedávné položky."
       },
       "filters": {
-        "all": "Všechny položky",
+        "all": "Vše",
         "projects": "Projekty",
         "pages": "Stránky",
-        "issues": "Pracovní položky"
+        "issues": "Úkoly"
       }
     },
     "new_at_plane": {
@@ -866,7 +867,8 @@
     "deleting": "Mazání",
     "pending": "Čekající",
     "invite": "Pozvat",
-    "view": "Pohled"
+    "view": "Pohled",
+    "deactivated_user": "Deaktivovaný uživatel"
   },
 
   "chart": {
@@ -1733,32 +1735,111 @@
       }
     },
     "estimates": {
-      "title": "Povolit odhady v projektu",
-      "description": "Pomáhají komunikovat složitost a vytížení týmu."
+      "label": "Odhady",
+      "title": "Povolit odhady pro můj projekt",
+      "description": "Pomáhají vám komunikovat složitost a pracovní zátěž týmu.",
+      "no_estimate": "Bez odhadu",
+      "new": "Nový systém odhadů",
+      "create": {
+        "custom": "Vlastní",
+        "start_from_scratch": "Začít od nuly",
+        "choose_template": "Vybrat šablonu",
+        "choose_estimate_system": "Vybrat systém odhadů",
+        "enter_estimate_point": "Zadat odhad",
+        "step": "Krok {step} z {total}",
+        "label": "Vytvořit odhad"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Odhad vytvořen",
+            "message": "Odhad byl úspěšně vytvořen"
+          },
+          "error": {
+            "title": "Vytvoření odhadu selhalo",
+            "message": "Nepodařilo se vytvořit nový odhad, zkuste to prosím znovu."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Odhad upraven",
+            "message": "Odhad byl aktualizován ve vašem projektu."
+          },
+          "error": {
+            "title": "Úprava odhadu selhala",
+            "message": "Nepodařilo se upravit odhad, zkuste to prosím znovu"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Úspěch!",
+            "message": "Odhady byly povoleny."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Úspěch!",
+            "message": "Odhady byly zakázány."
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Odhad nemohl být zakázán. Zkuste to prosím znovu"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Odhad musí být větší než 0.",
+        "unable_to_process": "Nemůžeme zpracovat váš požadavek, zkuste to prosím znovu.",
+        "numeric": "Odhad musí být číselná hodnota.",
+        "character": "Odhad musí být znakový.",
+        "empty": "Hodnota odhadu nemůže být prázdná.",
+        "already_exists": "Hodnota odhadu již existuje.",
+        "unsaved_changes": "Máte neuložené změny. Před kliknutím na hotovo je prosím uložte",
+        "remove_empty": "Odhad nemůže být prázdný. Zadejte hodnotu do každého pole nebo odstraňte ta, pro která nemáte hodnoty."
+      },
+      "systems": {
+        "points": {
+          "label": "Body",
+          "fibonacci": "Fibonacci",
+          "linear": "Lineární",
+          "squares": "Čtverce",
+          "custom": "Vlastní"
+        },
+        "categories": {
+          "label": "Kategorie",
+          "t_shirt_sizes": "Velikosti triček",
+          "easy_to_hard": "Od snadného po těžké",
+          "custom": "Vlastní"
+        },
+        "time": {
+          "label": "Čas",
+          "hours": "Hodiny"
+        }
+      }
     },
     "automations": {
       "label": "Automatizace",
       "auto-archive": {
-        "title": "Automaticky archivovat uzavřené položky",
-        "description": "Plane bude archivovat dokončené nebo zrušené položky.",
-        "duration": "Archivovat položky uzavřené déle než"
+        "title": "Automaticky archivovat uzavřené pracovní položky",
+        "description": "Plane bude automaticky archivovat pracovní položky, které byly dokončeny nebo zrušeny.",
+        "duration": "Automaticky archivovat pracovní položky, které jsou uzavřené po dobu"
       },
       "auto-close": {
-        "title": "Automaticky uzavírat položky",
-        "description": "Plane uzavře neaktivní položky.",
-        "duration": "Uzavřít položky neaktivní déle než",
-        "auto_close_status": "Stav pro automatické uzavření"
+        "title": "Automaticky uzavírat pracovní položky",
+        "description": "Plane automaticky uzavře pracovní položky, které nebyly dokončeny nebo zrušeny.",
+        "duration": "Automaticky uzavřít pracovní položky, které jsou neaktivní po dobu",
+        "auto_close_status": "Stav automatického uzavření"
       }
     },
 
     "empty_state": {
       "labels": {
-        "title": "Žádné štítky",
-        "description": "Vytvářejte štítky pro organizaci položek."
+        "title": "Zatím žádné štítky",
+        "description": "Vytvořte štítky pro organizaci a filtrování pracovních položek ve vašem projektu."
       },
       "estimates": {
-        "title": "Žádné systémy odhadů",
-        "description": "Vytvořte systém odhadů pro komunikaci vytížení.",
+        "title": "Zatím žádné systémy odhadů",
+        "description": "Vytvořte sadu odhadů pro komunikaci množství práce na pracovní položku.",
         "primary_button": "Přidat systém odhadů"
       }
     }
@@ -1774,6 +1855,12 @@
     "remove_filters_to_see_all_cycles": "Odeberte filtry pro zobrazení všech cyklů",
     "remove_search_criteria_to_see_all_cycles": "Odeberte kritéria pro zobrazení všech cyklů",
     "only_completed_cycles_can_be_archived": "Lze archivovat pouze dokončené cykly",
+    "start_date": "Začátek data",
+    "end_date": "Konec data",
+    "in_your_timezone": "V časovém pásmu",
+    "transfer_work_items": "Převést {count} pracovních položek",
+    "date_range": "Období data",
+    "add_date": "Přidat datum",
     "active_cycle": {
       "label": "Aktivní cyklus",
       "progress": "Pokrok",
@@ -2365,5 +2452,11 @@
   "module": {
     "label": "{count, plural, one {Modul} few {Moduly} other {Modulů}}",
     "no_module": "Žádný modul"
+  },
+
+  "description_versions": {
+    "last_edited_by": "Naposledy upraveno uživatelem",
+    "previously_edited_by": "Dříve upraveno uživatelem",
+    "edited_by": "Upraveno uživatelem"
   }
 }

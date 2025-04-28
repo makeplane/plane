@@ -350,7 +350,7 @@
   "couldnt_remove_the_project_from_favorites": "無法從我的最愛移除專案。請再試一次。",
   "add_to_favorites": "加入我的最愛",
   "remove_from_favorites": "從我的最愛移除",
-  "publish_settings": "發布設定",
+  "publish_project": "發佈專案",
   "publish": "發布",
   "copy_link": "複製連結",
   "leave_project": "離開專案",
@@ -501,6 +501,9 @@
   "re_generate_key": "重新產生金鑰",
   "export": "匯出",
   "member": "{count, plural, one{# 位成員} other{# 位成員}}",
+  "new_password_must_be_different_from_old_password": "新密碼必須與舊密碼不同",
+  "edited": "已編輯",
+  "bot": "機器人",
 
   "project_view": {
     "sort_by": {
@@ -591,7 +594,7 @@
         "default": "您還沒有任何最近項目。"
       },
       "filters": {
-        "all": "所有項目",
+        "all": "所有",
         "projects": "專案",
         "pages": "頁面",
         "issues": "工作事項"
@@ -868,7 +871,8 @@
     "deleting": "刪除中",
     "pending": "待處理",
     "invite": "邀請",
-    "view": "檢視"
+    "view": "檢視",
+    "deactivated_user": "已停用用戶"
   },
 
   "chart": {
@@ -1735,20 +1739,99 @@
       }
     },
     "estimates": {
-      "title": "為我的專案啟用評估",
-      "description": "它們可以協助您傳達團隊的複雜度和工作量。"
+      "label": "預估",
+      "title": "為我的專案啟用預估",
+      "description": "幫助你傳達團隊的複雜性和工作負荷。",
+      "no_estimate": "無預估",
+      "new": "新估算系統",
+      "create": {
+        "custom": "自訂",
+        "start_from_scratch": "從頭開始",
+        "choose_template": "選擇範本",
+        "choose_estimate_system": "選擇預估系統",
+        "enter_estimate_point": "輸入預估",
+        "step": "步驟 {step} 共 {total}",
+        "label": "建立預估"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "預估已建立",
+            "message": "預估已成功建立"
+          },
+          "error": {
+            "title": "預估建立失敗",
+            "message": "我們無法建立新的預估，請重試。"
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "預估已修改",
+            "message": "專案中的預估已更新。"
+          },
+          "error": {
+            "title": "預估修改失敗",
+            "message": "我們無法修改預估，請重試"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "成功！",
+            "message": "預估已啟用。"
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "成功！",
+            "message": "預估已停用。"
+          },
+          "error": {
+            "title": "錯誤！",
+            "message": "無法停用預估。請重試"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "預估必須大於0。",
+        "unable_to_process": "我們無法處理你的請求，請重試。",
+        "numeric": "預估必須是數值。",
+        "character": "預估必須是字元值。",
+        "empty": "預估值不能為空。",
+        "already_exists": "預估值已存在。",
+        "unsaved_changes": "你有未儲存的變更。請在點擊完成前儲存",
+        "remove_empty": "預估不能為空。在每個欄位中輸入值或移除沒有值的欄位。"
+      },
+      "systems": {
+        "points": {
+          "label": "點數",
+          "fibonacci": "費波那契數列",
+          "linear": "線性",
+          "squares": "平方數",
+          "custom": "自訂"
+        },
+        "categories": {
+          "label": "類別",
+          "t_shirt_sizes": "T恤尺寸",
+          "easy_to_hard": "簡單到困難",
+          "custom": "自訂"
+        },
+        "time": {
+          "label": "時間",
+          "hours": "小時"
+        }
+      }
     },
     "automations": {
       "label": "自動化",
       "auto-archive": {
-        "title": "自動封存已關閉的工作事項",
-        "description": "Plane 將自動封存已完成或取消的工作事項。",
-        "duration": "自動封存已關閉"
+        "title": "自動封存已關閉的工作項目",
+        "description": "Plane將自動封存已完成或已取消的工作項目。",
+        "duration": "自動封存已關閉的工作項目"
       },
       "auto-close": {
-        "title": "自動關閉工作事項",
-        "description": "Plane 將自動關閉尚未完成或取消的工作事項。",
-        "duration": "自動關閉閒置",
+        "title": "自動關閉工作項目",
+        "description": "Plane將自動關閉未完成或未取消的工作項目。",
+        "duration": "自動關閉非活動工作項目",
         "auto_close_status": "自動關閉狀態"
       }
     },
@@ -1776,6 +1859,12 @@
     "remove_filters_to_see_all_cycles": "移除篩選器以檢視所有週期",
     "remove_search_criteria_to_see_all_cycles": "移除搜尋條件以檢視所有週期",
     "only_completed_cycles_can_be_archived": "只有已完成的週期可以封存",
+    "start_date": "開始日期",
+    "end_date": "結束日期",
+    "in_your_timezone": "在您的時區",
+    "transfer_work_items": "轉移 {count} 工作事項",
+    "date_range": "日期範圍",
+    "add_date": "新增日期",
     "active_cycle": {
       "label": "使用中的週期",
       "progress": "進度",
@@ -2367,5 +2456,11 @@
   "module": {
     "label": "{count, plural, one {模組} other {模組}}",
     "no_module": "無模組"
+  },
+
+  "description_versions": {
+    "last_edited_by": "最後編輯者",
+    "previously_edited_by": "先前編輯者",
+    "edited_by": "編輯者"
   }
 }

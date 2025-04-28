@@ -51,8 +51,7 @@ from plane.db.models import (
 )
 from plane.utils.analytics_plot import burndown_plot
 from plane.bgtasks.recent_visited_task import recent_visited_task
-
-# Module imports
+from plane.utils.host import base_host
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.webhook_task import model_activity
 from plane.utils.timezone_converter import convert_to_utc, user_timezone_converter
@@ -268,7 +267,7 @@ class CycleViewSet(BaseViewSet):
         )
         datetime_fields = ["start_date", "end_date"]
         data = user_timezone_converter(
-            data, datetime_fields, request.user.user_timezone
+            data, datetime_fields, project_timezone
         )
         return Response(data, status=status.HTTP_200_OK)
 
@@ -318,9 +317,13 @@ class CycleViewSet(BaseViewSet):
                     .first()
                 )
 
+                # Fetch the project timezone
+                project = Project.objects.get(id=self.kwargs.get("project_id"))
+                project_timezone = project.timezone
+
                 datetime_fields = ["start_date", "end_date"]
                 cycle = user_timezone_converter(
-                    cycle, datetime_fields, request.user.user_timezone
+                    cycle, datetime_fields, project_timezone
                 )
 
                 # Send the model activity
@@ -331,7 +334,7 @@ class CycleViewSet(BaseViewSet):
                     current_instance=None,
                     actor_id=request.user.id,
                     slug=slug,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                 )
                 return Response(cycle, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -407,9 +410,13 @@ class CycleViewSet(BaseViewSet):
                 "created_by",
             ).first()
 
+            # Fetch the project timezone
+            project = Project.objects.get(id=self.kwargs.get("project_id"))
+            project_timezone = project.timezone
+
             datetime_fields = ["start_date", "end_date"]
             cycle = user_timezone_converter(
-                cycle, datetime_fields, request.user.user_timezone
+                cycle, datetime_fields, project_timezone
             )
 
             # Send the model activity
@@ -420,7 +427,7 @@ class CycleViewSet(BaseViewSet):
                 current_instance=current_instance,
                 actor_id=request.user.id,
                 slug=slug,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
 
             return Response(cycle, status=status.HTTP_200_OK)
@@ -480,10 +487,11 @@ class CycleViewSet(BaseViewSet):
             )
 
         queryset = queryset.first()
+        # Fetch the project timezone
+        project = Project.objects.get(id=self.kwargs.get("project_id"))
+        project_timezone = project.timezone
         datetime_fields = ["start_date", "end_date"]
-        data = user_timezone_converter(
-            data, datetime_fields, request.user.user_timezone
-        )
+        data = user_timezone_converter(data, datetime_fields, project_timezone)
 
         recent_visited_task.delay(
             slug=slug,
@@ -532,7 +540,7 @@ class CycleViewSet(BaseViewSet):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
         # TODO: Soft delete the cycle break the onetoone relationship with cycle issue
         cycle.delete()
@@ -1071,7 +1079,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
 
         return Response({"message": "Success"}, status=status.HTTP_200_OK)

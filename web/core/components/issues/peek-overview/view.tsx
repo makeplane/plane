@@ -187,7 +187,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         projectId={projectId}
                         issueId={issueId}
                         issueOperations={issueOperations}
-                        disabled={disabled || is_archived || isLocalDBIssueDescription}
+                        disabled={disabled || isLocalDBIssueDescription}
                         isArchived={is_archived}
                         isSubmitting={isSubmitting}
                         setIsSubmitting={(value) => setIsSubmitting(value)}
@@ -199,6 +199,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           projectId={projectId}
                           issueId={issueId}
                           disabled={disabled || is_archived}
+                          issueServiceType={EIssueServiceType.ISSUES}
                         />
                       </div>
 
@@ -226,7 +227,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                             projectId={projectId}
                             issueId={issueId}
                             issueOperations={issueOperations}
-                            disabled={disabled || is_archived || isLocalDBIssueDescription}
+                            disabled={disabled || isLocalDBIssueDescription}
                             isArchived={is_archived}
                             isSubmitting={isSubmitting}
                             setIsSubmitting={(value) => setIsSubmitting(value)}
@@ -238,6 +239,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                               projectId={projectId}
                               issueId={issueId}
                               disabled={disabled}
+                              issueServiceType={EIssueServiceType.ISSUES}
                             />
                           </div>
 

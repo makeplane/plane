@@ -18,8 +18,9 @@ from plane.api.serializers import IntakeIssueSerializer, IssueSerializer
 from plane.app.permissions import ProjectLitePermission
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import Intake, IntakeIssue, Issue, Project, ProjectMember, State
-
+from plane.utils.host import base_host
 from .base import BaseAPIView
+from plane.db.models.intake import SourceType
 
 
 class IntakeIssueAPIEndpoint(BaseAPIView):
@@ -125,7 +126,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
             intake_id=intake.id,
             project_id=project_id,
             issue=issue,
-            source=request.data.get("source", "IN-APP"),
+            source=SourceType.IN_APP,
         )
         # Create an Issue Activity
         issue_activity.delay(
@@ -297,7 +298,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
                     current_instance=current_instance,
                     epoch=int(timezone.now().timestamp()),
                     notification=False,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                     intake=str(intake_issue.id),
                 )
 

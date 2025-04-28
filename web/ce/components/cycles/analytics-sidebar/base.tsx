@@ -59,7 +59,7 @@ export const SidebarChart: FC<ProgressChartProps> = observer((props) => {
     }
   };
   return (
-    <>
+    <div>
       <div className="relative flex items-center justify-between gap-2 pt-4">
         <EstimateTypeDropdown value={estimateType} onChange={onChange} cycleId={cycleId} projectId={projectId} />
       </div>
@@ -92,6 +92,6 @@ export const SidebarChart: FC<ProgressChartProps> = observer((props) => {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 });

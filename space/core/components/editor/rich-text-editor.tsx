@@ -6,6 +6,8 @@ import { MakeOptional } from "@plane/types";
 import { EditorMentionsRoot } from "@/components/editor";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
+// store hooks
+import { useMember } from "@/hooks/store";
 
 interface RichTextEditorWrapperProps
   extends MakeOptional<Omit<IRichTextEditor, "fileHandler" | "mentionHandler">, "disabledExtensions"> {
@@ -16,11 +18,14 @@ interface RichTextEditorWrapperProps
 
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
   const { anchor, containerClassName, uploadFile, workspaceId, disabledExtensions, ...rest } = props;
-
+  const { getMemberById } = useMember();
   return (
     <RichTextEditorWithRef
       mentionHandler={{
         renderComponent: (props) => <EditorMentionsRoot {...props} />,
+        getMentionedEntityDetails: (id: string) => ({
+          display_name: getMemberById(id)?.member__display_name ?? "",
+        }),
       }}
       ref={ref}
       disabledExtensions={disabledExtensions ?? []}
@@ -31,7 +36,8 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
       })}
       {...rest}
       containerClassName={containerClassName}
-      editorClassName="min-h-[100px] max-h-[50vh] border-[0.5px] border-custom-border-200 rounded-md pl-3 py-2 overflow-y-scroll"
+      editorClassName="min-h-[100px] max-h-[200px] border-[0.5px] border-custom-border-300 rounded-md pl-3 py-2 overflow-hidden"
+      displayConfig={{ fontSize: "large-font" }}
     />
   );
 });

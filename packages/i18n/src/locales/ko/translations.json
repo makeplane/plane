@@ -350,7 +350,7 @@
   "couldnt_remove_the_project_from_favorites": "프로젝트를 즐겨찾기에서 제거하지 못했습니다. 다시 시도해주세요.",
   "add_to_favorites": "즐겨찾기에 추가",
   "remove_from_favorites": "즐겨찾기에서 제거",
-  "publish_settings": "설정 게시",
+  "publish_project": "프로젝트 게시",
   "publish": "게시",
   "copy_link": "링크 복사",
   "leave_project": "프로젝트 떠나기",
@@ -501,6 +501,9 @@
   "re_generate_key": "키 다시 생성",
   "export": "내보내기",
   "member": "{count, plural, one{# 멤버} other{# 멤버}}",
+  "new_password_must_be_different_from_old_password": "새 비밀번호는 이전 비밀번호와 다르게 설정해야 합니다",
+  "edited": "수정됨",
+  "bot": "봇",
 
   "project_view": {
     "sort_by": {
@@ -591,7 +594,7 @@
         "default": "아직 최근 항목이 없습니다."
       },
       "filters": {
-        "all": "모든 항목",
+        "all": "모든",
         "projects": "프로젝트",
         "pages": "페이지",
         "issues": "작업 항목"
@@ -868,7 +871,8 @@
     "deleting": "삭제 중",
     "pending": "보류 중",
     "invite": "초대",
-    "view": "보기"
+    "view": "보기",
+    "deactivated_user": "비활성화된 사용자"
   },
 
   "chart": {
@@ -1735,20 +1739,99 @@
       }
     },
     "estimates": {
-      "title": "프로젝트에 대한 추정 활성화",
-      "description": "팀의 복잡성과 작업량을 전달하는 데 도움이 됩니다."
+      "label": "추정",
+      "title": "프로젝트 추정 활성화",
+      "description": "팀의 복잡성과 작업량을 전달하는 데 도움이 됩니다.",
+      "no_estimate": "추정 없음",
+      "new": "새 추정 시스템",
+      "create": {
+        "custom": "사용자 지정",
+        "start_from_scratch": "처음부터 시작",
+        "choose_template": "템플릿 선택",
+        "choose_estimate_system": "추정 시스템 선택",
+        "enter_estimate_point": "추정 입력",
+        "step": "단계 {step}/{total}",
+        "label": "추정 생성"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "추정 생성됨",
+            "message": "추정이 성공적으로 생성되었습니다"
+          },
+          "error": {
+            "title": "추정 생성 실패",
+            "message": "새 추정을 생성할 수 없습니다. 다시 시도해 주세요."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "추정 수정됨",
+            "message": "프로젝트의 추정이 업데이트되었습니다."
+          },
+          "error": {
+            "title": "추정 수정 실패",
+            "message": "추정을 수정할 수 없습니다. 다시 시도해 주세요"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "성공!",
+            "message": "추정이 활성화되었습니다."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "성공!",
+            "message": "추정이 비활성화되었습니다."
+          },
+          "error": {
+            "title": "오류!",
+            "message": "추정을 비활성화할 수 없습니다. 다시 시도해 주세요"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "추정은 0보다 커야 합니다.",
+        "unable_to_process": "요청을 처리할 수 없습니다. 다시 시도해 주세요.",
+        "numeric": "추정은 숫자 값이어야 합니다.",
+        "character": "추정은 문자 값이어야 합니다.",
+        "empty": "추정 값은 비어있을 수 없습니다.",
+        "already_exists": "추정 값이 이미 존재합니다.",
+        "unsaved_changes": "저장되지 않은 변경 사항이 있습니다. 완료를 클릭하기 전에 저장하세요",
+        "remove_empty": "추정은 비어있을 수 없습니다. 각 필드에 값을 입력하거나 값이 없는 필드를 제거하세요."
+      },
+      "systems": {
+        "points": {
+          "label": "포인트",
+          "fibonacci": "피보나치",
+          "linear": "선형",
+          "squares": "제곱",
+          "custom": "사용자 정의"
+        },
+        "categories": {
+          "label": "카테고리",
+          "t_shirt_sizes": "티셔츠 사이즈",
+          "easy_to_hard": "쉬움에서 어려움",
+          "custom": "사용자 정의"
+        },
+        "time": {
+          "label": "시간",
+          "hours": "시간"
+        }
+      }
     },
     "automations": {
       "label": "자동화",
       "auto-archive": {
-        "title": "닫힌 작업 항목 자동 아카이브",
-        "description": "Plane은 완료되거나 취소된 작업 항목을 자동으로 아카이브합니다.",
-        "duration": "닫힌 작업 항목을 자동 아카이브"
+        "title": "완료된 작업 항목 자동 보관",
+        "description": "Plane은 완료되거나 취소된 작업 항목을 자동으로 보관합니다.",
+        "duration": "다음 기간 동안 닫힌 작업 항목 자동 보관"
       },
       "auto-close": {
         "title": "작업 항목 자동 닫기",
         "description": "Plane은 완료되거나 취소되지 않은 작업 항목을 자동으로 닫습니다.",
-        "duration": "비활성 상태인 작업 항목 자동 닫기",
+        "duration": "다음 기간 동안 비활성 작업 항목 자동 닫기",
         "auto_close_status": "자동 닫기 상태"
       }
     },
@@ -1776,6 +1859,12 @@
     "remove_filters_to_see_all_cycles": "모든 주기를 보려면 필터를 제거하세요",
     "remove_search_criteria_to_see_all_cycles": "모든 주기를 보려면 검색 기준을 제거하세요",
     "only_completed_cycles_can_be_archived": "완료된 주기만 아카이브할 수 있습니다",
+    "start_date": "시작일",
+    "end_date": "종료일",
+    "in_your_timezone": "내 시간대",
+    "transfer_work_items": "{count}개의 작업 항목 이전",
+    "date_range": "날짜 범위",
+    "add_date": "날짜 추가",
     "active_cycle": {
       "label": "활성 주기",
       "progress": "진행",
@@ -2367,5 +2456,11 @@
   "module": {
     "label": "{count, plural, one {모듈} other {모듈}}",
     "no_module": "모듈 없음"
+  },
+
+  "description_versions": {
+    "last_edited_by": "마지막 편집자",
+    "previously_edited_by": "이전 편집자",
+    "edited_by": "편집자"
   }
 }

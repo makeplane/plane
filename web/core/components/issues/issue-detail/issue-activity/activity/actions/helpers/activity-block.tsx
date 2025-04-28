@@ -53,7 +53,7 @@ export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (pr
             isMobile={isMobile}
             tooltipContent={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
           >
-            <span className="whitespace-nowrap"> {calculateTimeAgo(activity.created_at)}</span>
+            <span className="whitespace-nowrap text-custom-text-350"> {calculateTimeAgo(activity.created_at)}</span>
           </Tooltip>
         </span>
       </div>

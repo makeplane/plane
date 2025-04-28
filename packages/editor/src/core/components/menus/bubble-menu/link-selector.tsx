@@ -23,11 +23,11 @@ export const BubbleMenuLinkSelector: FC<Props> = (props) => {
   const handleLinkSubmit = useCallback(() => {
     const input = inputRef.current;
     if (!input) return;
-    let url = input.value;
+    const url = input.value;
     if (!url) return;
-    if (!url.startsWith("http")) url = `http://${url}`;
-    if (isValidHttpUrl(url)) {
-      setLinkEditor(editor, url);
+    const { isValid, url: validatedUrl } = isValidHttpUrl(url);
+    if (isValid) {
+      setLinkEditor(editor, validatedUrl);
       setIsOpen(false);
       setError(false);
     } else {

@@ -1,10 +1,10 @@
 import { mergeAttributes } from "@tiptap/core";
 import { Image } from "@tiptap/extension-image";
 // extensions
-import { UploadImageExtensionStorage } from "@/extensions";
+import { ImageExtensionStorage } from "@/plugins/image";
 
 export const CustomImageComponentWithoutProps = () =>
-  Image.extend<Record<string, unknown>, UploadImageExtensionStorage>({
+  Image.extend<Record<string, unknown>, ImageExtensionStorage>({
     name: "imageComponent",
     selectable: true,
     group: "block",
@@ -48,6 +48,8 @@ export const CustomImageComponentWithoutProps = () =>
       return {
         fileMap: new Map(),
         deletedImageSet: new Map<string, boolean>(),
+        uploadInProgress: false,
+        maxFileSize: 0,
         assetsUploadStatus: {},
       };
     },

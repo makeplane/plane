@@ -350,7 +350,7 @@
   "couldnt_remove_the_project_from_favorites": "Impossible de supprimer le projet des favoris. Veuillez réessayer.",
   "add_to_favorites": "Ajouter aux favoris",
   "remove_from_favorites": "Supprimer des favoris",
-  "publish_settings": "Paramètres de publication",
+  "publish_project": "Publier le projet",
   "publish": "Publier",
   "copy_link": "Copier le lien",
   "leave_project": "Quitter le projet",
@@ -501,6 +501,9 @@
   "re_generate_key": "Régénérer la clé",
   "export": "Exporter",
   "member": "{count, plural, one{# membre} other{# membres}}",
+  "new_password_must_be_different_from_old_password": "Le nouveau mot de passe doit être différent du mot de passe précédent",
+  "edited": "Modifié",
+  "bot": "Bot",
 
   "project_view": {
     "sort_by": {
@@ -591,7 +594,7 @@
         "default": "Vous n'avez pas encore d'éléments récents."
       },
       "filters": {
-        "all": "Tous les éléments",
+        "all": "Tous",
         "projects": "Projets",
         "pages": "Pages",
         "issues": "Éléments de travail"
@@ -867,7 +870,8 @@
     "deleting": "Suppression",
     "pending": "En attente",
     "invite": "Inviter",
-    "view": "Afficher"
+    "view": "Afficher",
+    "deactivated_user": "Utilisateur désactivé"
   },
 
   "chart": {
@@ -1733,19 +1737,98 @@
       }
     },
     "estimates": {
+      "label": "Estimations",
       "title": "Activer les estimations pour mon projet",
-      "description": "Elles vous aident à communiquer la complexité et la charge de travail de l'équipe."
+      "description": "Elles vous aident à communiquer la complexité et la charge de travail de l'équipe.",
+      "no_estimate": "Sans estimation",
+      "new": "Nouveau système d'estimation",
+      "create": {
+        "custom": "Personnalisé",
+        "start_from_scratch": "Commencer depuis zéro",
+        "choose_template": "Choisir un modèle",
+        "choose_estimate_system": "Choisir un système d'estimation",
+        "enter_estimate_point": "Saisir une estimation",
+        "step": "Étape {step} de {total}",
+        "label": "Créer une estimation"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Estimation créée",
+            "message": "L'estimation a été créée avec succès"
+          },
+          "error": {
+            "title": "Échec de la création de l'estimation",
+            "message": "Nous n'avons pas pu créer la nouvelle estimation, veuillez réessayer."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Estimation modifiée",
+            "message": "L'estimation a été mise à jour dans votre projet."
+          },
+          "error": {
+            "title": "Échec de la modification de l'estimation",
+            "message": "Nous n'avons pas pu modifier l'estimation, veuillez réessayer"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Succès !",
+            "message": "Les estimations ont été activées."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Succès !",
+            "message": "Les estimations ont été désactivées."
+          },
+          "error": {
+            "title": "Erreur !",
+            "message": "L'estimation n'a pas pu être désactivée. Veuillez réessayer"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "L'estimation doit être supérieure à 0.",
+        "unable_to_process": "Nous ne pouvons pas traiter votre demande, veuillez réessayer.",
+        "numeric": "L'estimation doit être une valeur numérique.",
+        "character": "L'estimation doit être une valeur de caractère.",
+        "empty": "La valeur de l'estimation ne peut pas être vide.",
+        "already_exists": "La valeur de l'estimation existe déjà.",
+        "unsaved_changes": "Vous avez des modifications non enregistrées. Veuillez les enregistrer avant de cliquer sur Terminé",
+        "remove_empty": "L'estimation ne peut pas être vide. Saisissez une valeur dans chaque champ ou supprimez ceux pour lesquels vous n'avez pas de valeurs."
+      },
+      "systems": {
+        "points": {
+          "label": "Points",
+          "fibonacci": "Fibonacci",
+          "linear": "Linéaire",
+          "squares": "Carrés",
+          "custom": "Personnalisé"
+        },
+        "categories": {
+          "label": "Catégories",
+          "t_shirt_sizes": "Tailles de T-Shirt",
+          "easy_to_hard": "Facile à difficile",
+          "custom": "Personnalisé"
+        },
+        "time": {
+          "label": "Temps",
+          "hours": "Heures"
+        }
+      }
     },
     "automations": {
       "label": "Automatisations",
       "auto-archive": {
         "title": "Archiver automatiquement les éléments de travail fermés",
-        "description": "Plane archivera automatiquement les éléments de travail qui ont été terminés ou annulés.",
-        "duration": "Archiver automatiquement les éléments de travail qui sont fermés depuis"
+        "description": "Plane archivera automatiquement les éléments de travail qui ont été complétés ou annulés.",
+        "duration": "Archiver automatiquement les éléments de travail fermés depuis"
       },
       "auto-close": {
         "title": "Fermer automatiquement les éléments de travail",
-        "description": "Plane fermera automatiquement les éléments de travail qui n'ont pas été terminés ou annulés.",
+        "description": "Plane fermera automatiquement les éléments de travail qui n'ont pas été complétés ou annulés.",
         "duration": "Fermer automatiquement les éléments de travail inactifs depuis",
         "auto_close_status": "Statut de fermeture automatique"
       }
@@ -1753,12 +1836,12 @@
 
     "empty_state": {
       "labels": {
-        "title": "Aucune étiquette pour le moment",
-        "description": "Créez des étiquettes pour aider à organiser et filtrer les éléments de travail dans votre projet."
+        "title": "Pas encore d'étiquettes",
+        "description": "Créez des étiquettes pour organiser et filtrer les éléments de travail dans votre projet."
       },
       "estimates": {
-        "title": "Aucun système d'estimation pour le moment",
-        "description": "Créez un ensemble d'estimations pour communiquer la quantité de travail par élément de travail.",
+        "title": "Pas encore de systèmes d'estimation",
+        "description": "Créez un ensemble d'estimations pour communiquer le volume de travail par élément de travail.",
         "primary_button": "Ajouter un système d'estimation"
       }
     }
@@ -1774,6 +1857,12 @@
     "remove_filters_to_see_all_cycles": "Supprimez les filtres pour voir tous les cycles",
     "remove_search_criteria_to_see_all_cycles": "Supprimez les critères de recherche pour voir tous les cycles",
     "only_completed_cycles_can_be_archived": "Seuls les cycles terminés peuvent être archivés",
+    "start_date": "Date de début",
+    "end_date": "Date de fin",
+    "in_your_timezone": "Dans votre fuseau horaire",
+    "transfer_work_items": "Transférer {count} éléments de travail",
+    "date_range": "Plage de dates",
+    "add_date": "Ajouter une date",
     "active_cycle": {
       "label": "Cycle actif",
       "progress": "Progression",
@@ -2365,5 +2454,11 @@
   "module": {
     "label": "{count, plural, one {Module} other {Modules}}",
     "no_module": "Pas de module"
+  },
+
+  "description_versions": {
+    "last_edited_by": "Dernière modification par",
+    "previously_edited_by": "Précédemment modifié par",
+    "edited_by": "Modifié par"
   }
 }

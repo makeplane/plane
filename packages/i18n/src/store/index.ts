@@ -165,6 +165,16 @@ export class TranslationStore {
         return import("../locales/pl/translations.json");
       case "ko":
         return import("../locales/ko/translations.json");
+      case "pt-BR":
+        return import("../locales/pt-BR/translations.json");
+      case "id":
+        return import("../locales/id/translations.json");
+      case "ro":
+        return import("../locales/ro/translations.json");
+      case "vi-VN":
+        return import("../locales/vi-VN/translations.json");
+      case "tr-TR":
+        return import("../locales/tr-TR/translations.json");
       default:
         throw new Error(`Unsupported language: ${language}`);
     }

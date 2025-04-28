@@ -352,7 +352,7 @@
   "couldnt_remove_the_project_from_favorites": "No se pudo eliminar el proyecto de favoritos. Por favor, inténtalo de nuevo.",
   "add_to_favorites": "Agregar a favoritos",
   "remove_from_favorites": "Eliminar de favoritos",
-  "publish_settings": "Configuración de publicación",
+  "publish_project": "Publicar proyecto",
   "publish": "Publicar",
   "copy_link": "Copiar enlace",
   "leave_project": "Abandonar proyecto",
@@ -503,6 +503,9 @@
   "re_generate_key": "Regenerar clave",
   "export": "Exportar",
   "member": "{count, plural, one{# miembro} other{# miembros}}",
+  "new_password_must_be_different_from_old_password": "La nueva contraseña debe ser diferente a la contraseña anterior",
+  "edited": "Modificado",
+  "bot": "Bot",
 
   "project_view": {
     "sort_by": {
@@ -593,7 +596,7 @@
         "default": "Aún no tienes elementos recientes."
       },
       "filters": {
-        "all": "Todos los elementos",
+        "all": "Todos",
         "projects": "Proyectos",
         "pages": "Páginas",
         "issues": "Elementos de trabajo"
@@ -869,7 +872,8 @@
     "deleting": "Eliminando",
     "pending": "Pendiente",
     "invite": "Invitar",
-    "view": "Ver"
+    "view": "Ver",
+    "deactivated_user": "Usuario desactivado"
   },
 
   "chart": {
@@ -1735,32 +1739,111 @@
       }
     },
     "estimates": {
-      "title": "Habilitar estimaciones para mi proyecto",
-      "description": "Ayudan a comunicar la complejidad y la carga de trabajo del equipo."
+      "label": "Estimaciones",
+      "title": "Activar estimaciones para mi proyecto",
+      "description": "Te ayudan a comunicar la complejidad y la carga de trabajo del equipo.",
+      "no_estimate": "Sin estimación",
+      "new": "Nuevo sistema de estimación",
+      "create": {
+        "custom": "Personalizado",
+        "start_from_scratch": "Comenzar desde cero",
+        "choose_template": "Elegir una plantilla",
+        "choose_estimate_system": "Elegir un sistema de estimación",
+        "enter_estimate_point": "Ingresar estimación",
+        "step": "Paso {step} de {total}",
+        "label": "Crear estimación"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Estimación creada",
+            "message": "La estimación se ha creado correctamente"
+          },
+          "error": {
+            "title": "Error al crear la estimación",
+            "message": "No pudimos crear la nueva estimación, por favor inténtalo de nuevo."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Estimación modificada",
+            "message": "La estimación se ha actualizado en tu proyecto."
+          },
+          "error": {
+            "title": "Error al modificar la estimación",
+            "message": "No pudimos modificar la estimación, por favor inténtalo de nuevo"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "¡Éxito!",
+            "message": "Las estimaciones han sido activadas."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "¡Éxito!",
+            "message": "Las estimaciones han sido desactivadas."
+          },
+          "error": {
+            "title": "¡Error!",
+            "message": "No se pudo desactivar la estimación. Por favor inténtalo de nuevo"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "La estimación debe ser mayor que 0.",
+        "unable_to_process": "No podemos procesar tu solicitud, por favor inténtalo de nuevo.",
+        "numeric": "La estimación debe ser un valor numérico.",
+        "character": "La estimación debe ser un valor de carácter.",
+        "empty": "El valor de la estimación no puede estar vacío.",
+        "already_exists": "El valor de la estimación ya existe.",
+        "unsaved_changes": "Tienes cambios sin guardar. Por favor guárdalos antes de hacer clic en Hecho",
+        "remove_empty": "La estimación no puede estar vacía. Ingresa un valor en cada campo o elimina aquellos para los que no tienes valores."
+      },
+      "systems": {
+        "points": {
+          "label": "Puntos",
+          "fibonacci": "Fibonacci",
+          "linear": "Lineal",
+          "squares": "Cuadrados",
+          "custom": "Personalizado"
+        },
+        "categories": {
+          "label": "Categorías",
+          "t_shirt_sizes": "Tallas de camiseta",
+          "easy_to_hard": "Fácil a difícil",
+          "custom": "Personalizado"
+        },
+        "time": {
+          "label": "Tiempo",
+          "hours": "Horas"
+        }
+      }
     },
     "automations": {
       "label": "Automatizaciones",
       "auto-archive": {
-        "title": "Auto-archivar elementos de trabajo cerrados",
-        "description": "Plane archivará automáticamente los elementos de trabajo que se hayan completado o cancelado.",
-        "duration": "Auto-archivar elementos de trabajo que están cerrados por"
+        "title": "Archivar automáticamente elementos de trabajo cerrados",
+        "description": "Plane archivará automáticamente los elementos de trabajo que hayan sido completados o cancelados.",
+        "duration": "Archivar automáticamente elementos de trabajo cerrados durante"
       },
       "auto-close": {
-        "title": "Auto-cerrar elementos de trabajo",
-        "description": "Plane cerrará automáticamente los elementos de trabajo que no se hayan completado o cancelado.",
-        "duration": "Auto-cerrar elementos de trabajo que están inactivos por",
-        "auto_close_status": "Estado de auto-cierre"
+        "title": "Cerrar automáticamente elementos de trabajo",
+        "description": "Plane cerrará automáticamente los elementos de trabajo que no hayan sido completados o cancelados.",
+        "duration": "Cerrar automáticamente elementos de trabajo inactivos durante",
+        "auto_close_status": "Estado de cierre automático"
       }
     },
 
     "empty_state": {
       "labels": {
         "title": "Aún no hay etiquetas",
-        "description": "Crea etiquetas para ayudar a organizar y filtrar elementos de trabajo en tu proyecto."
+        "description": "Crea etiquetas para organizar y filtrar elementos de trabajo en tu proyecto."
       },
       "estimates": {
         "title": "Aún no hay sistemas de estimación",
-        "description": "Crea un conjunto de estimaciones para comunicar la cantidad de trabajo por elemento de trabajo.",
+        "description": "Crea un conjunto de estimaciones para comunicar el volumen de trabajo por elemento de trabajo.",
         "primary_button": "Agregar sistema de estimación"
       }
     }
@@ -1776,6 +1859,12 @@
     "remove_filters_to_see_all_cycles": "Elimina los filtros para ver todos los ciclos",
     "remove_search_criteria_to_see_all_cycles": "Elimina los criterios de búsqueda para ver todos los ciclos",
     "only_completed_cycles_can_be_archived": "Solo los ciclos completados pueden ser archivados",
+    "start_date": "Fecha de inicio",
+    "end_date": "Fecha de finalización",
+    "in_your_timezone": "En tu zona horaria",
+    "transfer_work_items": "Transferir {count} elementos de trabajo",
+    "date_range": "Rango de fechas",
+    "add_date": "Agregar fecha",
     "active_cycle": {
       "label": "Ciclo activo",
       "progress": "Progreso",
@@ -2367,5 +2456,11 @@
   "module": {
     "label": "{count, plural, one {Módulo} other {Módulos}}",
     "no_module": "Sin módulo"
+  },
+
+  "description_versions": {
+    "last_edited_by": "Última edición por",
+    "previously_edited_by": "Editado anteriormente por",
+    "edited_by": "Editado por"
   }
 }

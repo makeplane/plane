@@ -7,13 +7,9 @@ from urllib.parse import urlparse
 
 # Third party imports
 import dj_database_url
-import sentry_sdk
 
 # Django imports
 from django.core.management.utils import get_random_secret_key
-from sentry_sdk.integrations.celery import CeleryIntegration
-from sentry_sdk.integrations.django import DjangoIntegration
-from sentry_sdk.integrations.redis import RedisIntegration
 from corsheaders.defaults import default_headers
 
 
@@ -26,7 +22,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
 DEBUG = int(os.environ.get("DEBUG", "0"))
 
 # Allowed Hosts
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
 
 # Application definition
 INSTALLED_APPS = [
@@ -62,7 +58,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "crum.CurrentRequestUserMiddleware",
     "django.middleware.gzip.GZipMiddleware",
-    "plane.middleware.api_log_middleware.APITokenLogMiddleware",
+    "plane.middleware.logger.APITokenLogMiddleware",
+    "plane.middleware.logger.RequestLoggerMiddleware",
 ]
 
 # Rest Framework settings
@@ -267,25 +264,6 @@ CELERY_IMPORTS = (
     "plane.bgtasks.issue_description_version_sync",
 )
 
-# Sentry Settings
-# Enable Sentry Settings
-if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get(
-    "SENTRY_DSN"
-).startswith("https://"):
-    sentry_sdk.init(
-        dsn=os.environ.get("SENTRY_DSN", ""),
-        integrations=[
-            DjangoIntegration(),
-            RedisIntegration(),
-            CeleryIntegration(monitor_beat_tasks=True),
-        ],
-        traces_sample_rate=1,
-        send_default_pii=True,
-        environment=os.environ.get("SENTRY_ENVIRONMENT", "development"),
-        profiles_sample_rate=float(os.environ.get("SENTRY_PROFILE_SAMPLE_RATE", 0)),
-    )
-
-
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
 # Unsplash Access key
@@ -337,7 +315,7 @@ ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", None)
 SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
 APP_BASE_URL = os.environ.get("APP_BASE_URL")
 LIVE_BASE_URL = os.environ.get("LIVE_BASE_URL")
-
+WEB_URL = os.environ.get("WEB_URL")
 
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
 
@@ -413,4 +391,8 @@ ATTACHMENT_MIME_TYPES = [
     "text/xml",
     "text/csv",
     "application/xml",
+    # SQL
+    "application/x-sql",
+    # Gzip
+    "application/x-gzip",
 ]

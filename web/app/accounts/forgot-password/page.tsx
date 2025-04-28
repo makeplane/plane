@@ -17,7 +17,7 @@ import { EPageTypes } from "@/helpers/authentication.helper";
 import { cn } from "@/helpers/common.helper";
 import { checkEmailValidity } from "@/helpers/string.helper";
 // hooks
-import { useEventTracker } from "@/hooks/store";
+import { useEventTracker, useInstance } from "@/hooks/store";
 import useTimer from "@/hooks/use-timer";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
@@ -48,6 +48,7 @@ const ForgotPasswordPage = observer(() => {
   const { t } = useTranslation();
   // store hooks
   const { captureEvent } = useEventTracker();
+  const { config } = useInstance();
   // hooks
   const { resolvedTheme } = useTheme();
   // timer
@@ -93,6 +94,9 @@ const ForgotPasswordPage = observer(() => {
       });
   };
 
+  // derived values
+  const enableSignUpConfig = config?.enable_signup ?? false;
+
   const logo = resolvedTheme === "light" ? BlackHorizontalLogo : WhiteHorizontalLogo;
 
   return (
@@ -101,39 +105,41 @@ const ForgotPasswordPage = observer(() => {
         <div className="absolute inset-0 z-0">
           <Image
             src={resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern}
-            className="w-full h-full object-cover"
+            className="object-cover w-full h-full"
             alt="Plane background pattern"
           />
         </div>
-        <div className="relative z-10 w-screen h-screen overflow-hidden overflow-y-auto flex flex-col">
-          <div className="container min-w-full px-10 lg:px-20 xl:px-36 flex-shrink-0 relative flex items-center justify-between pb-4 transition-all">
-            <div className="flex items-center gap-x-2 py-10">
+        <div className="relative z-10 flex flex-col w-screen h-screen overflow-hidden overflow-y-auto">
+          <div className="container relative flex items-center justify-between flex-shrink-0 min-w-full px-10 pb-4 transition-all lg:px-20 xl:px-36">
+            <div className="flex items-center py-10 gap-x-2">
               <Link href={`/`} className="h-[30px] w-[133px]">
                 <Image src={logo} alt="Plane logo" />
               </Link>
             </div>
-            <div className="flex flex-col items-end sm:items-center sm:gap-2 sm:flex-row text-center text-sm font-medium text-onboarding-text-300">
-              {t("auth.common.new_to_plane")}
-              <Link
-                href="/"
-                onClick={() => captureEvent(NAVIGATE_TO_SIGNUP, {})}
-                className="font-semibold text-custom-primary-100 hover:underline"
-              >
-                {t("auth.common.create_account")}
-              </Link>
-            </div>
+            {enableSignUpConfig && (
+              <div className="flex flex-col items-end text-sm font-medium text-center sm:items-center sm:gap-2 sm:flex-row text-onboarding-text-300">
+                {t("auth.common.new_to_plane")}
+                <Link
+                  href="/"
+                  onClick={() => captureEvent(NAVIGATE_TO_SIGNUP, {})}
+                  className="font-semibold text-custom-primary-100 hover:underline"
+                >
+                  {t("auth.common.create_account")}
+                </Link>
+              </div>
+            )}
           </div>
-          <div className="flex-grow container mx-auto max-w-lg px-10 lg:max-w-md lg:px-5 py-10 lg:pt-28 transition-all">
+          <div className="container flex-grow max-w-lg px-10 py-10 mx-auto transition-all lg:max-w-md lg:px-5 lg:pt-28">
             <div className="relative flex flex-col space-y-6">
-              <div className="text-center space-y-1 py-4">
-                <h3 className="flex gap-4 justify-center text-3xl font-bold text-onboarding-text-100">
+              <div className="py-4 space-y-1 text-center">
+                <h3 className="flex justify-center gap-4 text-3xl font-bold text-onboarding-text-100">
                   {t("auth.forgot_password.title")}
                 </h3>
                 <p className="font-medium text-onboarding-text-400">{t("auth.forgot_password.description")}</p>
               </div>
               <form onSubmit={handleSubmit(handleForgotPassword)} className="mt-5 space-y-4">
                 <div className="space-y-1">
-                  <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
+                  <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
                     {t("auth.common.email.label")}
                   </label>
                   <Controller
@@ -160,7 +166,7 @@ const ForgotPasswordPage = observer(() => {
                     )}
                   />
                   {resendTimerCode > 0 && (
-                    <p className="flex w-full items-start px-1 gap-1 text-xs font-medium text-green-700">
+                    <p className="flex items-start w-full gap-1 px-1 text-xs font-medium text-green-700">
                       <CircleCheck height={12} width={12} className="mt-0.5" />
                       {t("auth.forgot_password.email_sent")}
                     </p>

@@ -155,6 +155,11 @@ export class IssueCommentStore implements IIssueCommentStore {
         data
       );
 
+      runInAction(() => {
+        set(this.commentMap, [commentId, "updated_at"], response.updated_at);
+        set(this.commentMap, [commentId, "edited_at"], response.edited_at);
+      });
+
       return response;
     } catch (error) {
       this.rootIssueDetail.activity.fetchActivities(workspaceSlug, projectId, issueId);
