@@ -158,7 +158,7 @@ services:
 
   live:
     image: artifacts.plane.so/makeplane/live-commercial:${APP_RELEASE_VERSION:-v1.x.x}
-    command: node live/dist/server.js live
+    command: node live/dist/start.js live
     environment:
       <<: [ *live-env, *redis-env ]
     deploy:
