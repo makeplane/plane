@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { WorkspaceService } from "@/services/workspace.service";
 import { API_BASE_URL } from "@/helpers/common.helper";
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption, FilterDate, FilterNumber } from "@/components/issues";
 import { FilterSearch } from "./search-filters";
 import { useTranslation } from "@plane/i18n";
 
@@ -15,6 +15,7 @@ type CustomPropertySection = {
   total_pages?: number;
   total_results?: number;
   query?: string;
+  data_type?: string | null;
 };
 
 type CustomPropertiesState = {
@@ -48,15 +49,16 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
         query: query || '',
         key: groupKey || '',
       };
-
       const data = await workspaceService.getIssuesCustomProperties(workspaceSlug?.toString(), params) as any;
 
       // If no specific section, initialize all sections
       if (!groupKey) {
         const initialState = Object.keys(data).reduce((acc, key) => {
+          const section = data[key] || {};
           acc[key] = {
-            ...(data[key] || {}),
-            query: ''
+            ...section,
+            query: '',
+            data_type: section.data_type ?? "text",
           };
           return acc;
         }, {} as CustomPropertiesState);
@@ -76,7 +78,8 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
             data: (page ?? 0) > 1
               ? [...(prev[groupKey]?.data || []), ...(data[groupKey]?.data || [])]
               : (data[groupKey]?.data || []),
-            query: query || ''
+            query: query || '',
+            data_type: data[groupKey]?.data_type ?? "text",
           }
         }));
       }
@@ -94,7 +97,6 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
   const fetchNextPage = async (groupKey: string) => {
     const currentSection = customProperties[groupKey];
     const nextPage = (currentSection.page ?? 1) + 1;
-
     await fetchCustomProperties(
       groupKey,
       currentSection.query || '',
@@ -103,8 +105,8 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
   };
 
   const handleSectionSearch = (async (groupKey: string, query: string) => {
-      await fetchCustomProperties(groupKey, query, 1);
-    });
+    await fetchCustomProperties(groupKey, query, 1);
+  });
 
   const filteredGroupOptions = useMemo(() => {
     return Object.keys(customProperties).reduce<Record<string, CustomPropertySection>>((acc, groupKey) => {
@@ -151,27 +153,44 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
                 {groupPreviewEnabled[groupKey] && (
                   <div>
                     <FilterSearch propertyKey={groupKey} handleSectionSearch={handleSectionSearch} />
-                    {properties
-                      .map((property) => (
-                        <FilterOption
-                          key={`${groupKey}:${property}`}
-                          isChecked={appliedFilters?.includes(`${groupKey}:${property}`) ? true : false}
-                          onClick={() => handleUpdate(`${groupKey}:${property}`)}
-                          title={property}
-                        />
-                      ))}
-                    {(groupedSection.page ?? 1) < (groupedSection.total_pages ?? 1) && properties.length ? (
-                      <button
-                        onClick={() => fetchNextPage(groupKey)}
-                        className="ml-8 text-xs font-medium text-custom-primary-100 cursor-pointer"
-                      >
-                        {t("view_more")}
-                      </button>
-                    ) : null}
-                    {
-                      properties.length == 0 ?
-                      <p className="text-xs italic text-custom-text-400">{t("no_matches_found")}</p> : null
-                    }
+
+                    {(groupedSection.data_type === "text" || groupedSection.data_type === "boolean") && (
+                      <>
+                        {properties.map(property => (
+                          <FilterOption
+                            key={`${groupKey}:${property}`}
+                            isChecked={appliedFilters?.includes(`${groupKey}:${property}`) ? true : false}
+                            onClick={() => handleUpdate(`${groupKey}:${property}`)}
+                            title={property}
+                          />
+                        ))}
+                        {(groupedSection.page ?? 1) < (groupedSection.total_pages ?? 1) &&properties.length ? (
+                          <button
+                            onClick={() => fetchNextPage(groupKey)}
+                            className="ml-8 text-xs font-medium text-custom-primary-100 cursor-pointer"
+                          >
+                            {t("view_more")}
+                          </button>
+                        ) : null}
+                        {
+                          properties.length == 0 ?
+                          <p className="text-xs italic text-custom-text-400">{t("no_matches_found")}</p> : null
+                        }
+                      </>
+                    )}
+                    {groupedSection.data_type === "number" && (
+                      <FilterNumber
+                        groupKey={groupKey}
+                        onFilter={handleUpdate}
+                      />
+                    )}
+                    {groupedSection.data_type === "date" && (
+                      <FilterDate
+                        groupKey={groupKey}
+                        onFilter={handleUpdate}
+                      />
+                    )}
+
                   </div>
                 )}
               </div>
