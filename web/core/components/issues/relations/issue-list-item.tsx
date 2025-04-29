@@ -109,7 +109,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
   const handleCopyIssueLink = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
     e.preventDefault();
-    issueOperations.copyText(workItemLink);
+    issueOperations.copyLink(workItemLink);
   };
 
   const handleRemoveRelation = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {

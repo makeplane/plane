@@ -5,13 +5,7 @@ import json
 from django.db import models
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import (
-    OuterRef,
-    Subquery,
-    Q,
-    UUIDField,
-    Value,
-)
+from django.db.models import OuterRef, Subquery, Q, UUIDField, Value
 from uuid import UUID
 
 from django.db.models.functions import Coalesce

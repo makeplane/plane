@@ -26,7 +26,7 @@ export const SubIssueDisplayFilters: FC<TSubIssueDisplayFiltersProps> = observer
 
   return (
     <>
-      {layoutDisplayFiltersOptions?.display_filters && layoutDisplayFiltersOptions.display_properties.length > 0 && (
+      {layoutDisplayFiltersOptions?.display_filters && layoutDisplayFiltersOptions?.display_properties.length > 0 && (
         <FiltersDropdown
           placement="bottom-end"
           menuButton={<DisplayPropertiesIcon className="h-3.5 w-3.5 text-custom-text-100" />}
