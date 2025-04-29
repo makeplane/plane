@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 // icons
-import { Rocket, Search } from "lucide-react";
+import { Search } from "lucide-react";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // i18n
@@ -21,9 +21,9 @@ import { getTabIndex } from "@/helpers/tab-indices.helper";
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
 // services
 import { ProjectService } from "@/services/project";
+import { ParentIssuesListItem } from "./parent-issues-list-item";
 
 type Props = {
   isOpen: boolean;
@@ -179,39 +179,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                                   } ${selected ? "text-custom-text-100" : ""}`
                                 }
                               >
-                                <div className="flex flex-grow items-center gap-2 truncate">
-                                  <span
-                                    className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                    style={{
-                                      backgroundColor: issue.state__color,
-                                    }}
-                                  />
-                                  <span className="flex-shrink-0">
-                                    <IssueIdentifier
-                                      projectId={issue.project_id}
-                                      issueTypeId={issue.type_id}
-                                      projectIdentifier={issue.project__identifier}
-                                      issueSequenceId={issue.sequence_id}
-                                      textContainerClassName="text-xs text-custom-text-200"
-                                    />
-                                  </span>{" "}
-                                  <span className="truncate">{issue.name}</span>
-                                </div>
-                                <a
-                                  href={generateWorkItemLink({
-                                    workspaceSlug: workspaceSlug.toString(),
-                                    projectId: issue?.project_id,
-                                    issueId: issue?.id,
-                                    projectIdentifier: issue.project__identifier,
-                                    sequenceId: issue?.sequence_id,
-                                  })}
-                                  target="_blank"
-                                  className="z-1 relative hidden flex-shrink-0 text-custom-text-200 hover:text-custom-text-100 group-hover:block"
-                                  rel="noopener noreferrer"
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <Rocket className="h-4 w-4" />
-                                </a>
+                                <ParentIssuesListItem workspaceSlug={workspaceSlug?.toString()} issue={issue} />
                               </Combobox.Option>
                             ))}
                           </ul>

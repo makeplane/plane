@@ -225,9 +225,11 @@
   "you_do_not_have_the_permission_to_access_this_page": "Nu ai permisiunea de a accesa această pagină.",
   "something_went_wrong_please_try_again": "Ceva nu a funcționat. Te rugăm să încerci din nou.",
   "load_more": "Încarcă mai mult",
-  "select_or_customize_your_interface_color_scheme": "Selectează sau personalizează schema de culori a interfeței.",
+  "select_or_customize_your_interface_color_scheme": "Selectați sau personalizați schema de culori a interfeței dvs.",
+  "select_the_cursor_motion_style_that_feels_right_for_you": "Selectați stilul de mișcare al cursorului care vi se potrivește.",
   "theme": "Temă",
-  "system_preference": "Preferință de sistem",
+  "smooth_cursor": "Cursor lin",
+  "system_preference": "Preferință sistem",
   "light": "Luminos",
   "dark": "Întunecat",
   "light_contrast": "Luminos - contrast ridicat",
@@ -503,6 +505,76 @@
   "member": "{count, plural, one{# membru} other{# membri}}",
   "new_password_must_be_different_from_old_password": "Parola nouă trebuie să fie diferită de parola veche",
 
+  "updates": {
+    "add_update": "Adaugă actualizare",
+    "add_update_placeholder": "Adaugă actualizarea ta aici",
+    "empty": {
+      "title": "Încă nu există actualizări",
+      "description": "Poți vedea actualizările aici."
+    },
+    "delete": {
+      "title": "Șterge actualizare",
+      "confirmation": "Ești sigur că vrei să ștergi această actualizare? Această acțiune este ireversibilă.",
+      "success": {
+        "title": "Actualizare ștearsă",
+        "message": "Actualizarea a fost ștearsă cu succes."
+      },
+      "error": {
+        "title": "Actualizare năo ștearsă",
+        "message": "Actualizarea nu a putut fi ștearsă."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Actualizare actualizată",
+        "message": "Actualizarea a fost actualizată cu succes."
+      },
+      "error": {
+        "title": "Actualizare năo actualizată",
+        "message": "Actualizarea nu a putut fi actualizată."
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reacție creată",
+          "message": "Reacția a fost creată cu succes."
+        },
+        "error": {
+          "title": "Reacție năo creată",
+          "message": "Reacția nu a putut fi creată."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reacție ștearsă",
+          "message": "Reacția a fost ștearsă cu succes."
+        },
+        "error": {
+          "title": "Reacție năo ștearsă",
+          "message": "Reacția nu a putut fi ștearsă."
+        }
+      }
+    },
+    "progress": {
+      "title": "Progres",
+      "since_last_update": "De la ultima actualizare",
+      "comments": "{count, plural, one{# comentariu} other{# comentarii}}"
+    },
+    "create": {
+      "success": {
+        "title": "Actualizare creată",
+        "message": "Actualizarea a fost creată cu succes."
+      },
+      "error": {
+        "title": "Actualizare năo creată",
+        "message": "Actualizarea nu a putut fi creată."
+      }
+    }
+  },
+  
+    
+    
   "project_view": {
     "sort_by": {
       "created_at": "Creat la",

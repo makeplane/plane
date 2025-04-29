@@ -32,7 +32,9 @@ class Intake(ProjectBaseModel):
 
 
 class SourceType(models.TextChoices):
+    EMAIL = "EMAIL"
     IN_APP = "IN_APP"
+    FORMS = "FORMS"
 
 
 class IntakeIssue(ProjectBaseModel):
