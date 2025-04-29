@@ -18,6 +18,7 @@ from django.db.models import (
     Q,
     Count,
 )
+from plane.utils.build_chart import build_analytics_chart
 from datetime import timedelta
 
 
@@ -361,11 +362,27 @@ class AdvanceAnalyticsChartEndpoint(BaseAPIView):
         self.initialize_workspace(slug)
         type = request.GET.get("type", "overview")
         filters = request.GET.get("filters", {})
+        group_by = request.GET.get("group_by", None)
+        x_axis = request.GET.get("x_axis", "PRIORITY")
 
         if type == "projects":
             return Response(self.project_chart(filters), status=status.HTTP_200_OK)
 
         elif type == "work-items":
-            return Response(self.work_item_chart(filters), status=status.HTTP_200_OK)
+            queryset = (
+                Issue.issue_objects.filter(
+                    workspace__slug=self._workspace_slug,
+                    project__project_projectmember__member=self.request.user,
+                    project__project_projectmember__is_active=True,
+                )
+                .select_related("workspace", "project", "state", "parent")
+                .prefetch_related(
+                    "assignees", "labels", "issue_module__module", "issue_cycle__cycle"
+                )
+            )
+            return Response(
+                build_analytics_chart(queryset, x_axis, group_by),
+                status=status.HTTP_200_OK,
+            )
 
         return Response({"message": "Invalid type"}, status=status.HTTP_400_BAD_REQUEST)
