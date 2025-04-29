@@ -24,11 +24,13 @@ import {
   CustomTypographyExtension,
   DropHandlerExtension,
   ImageExtension,
-  ListKeymap,
+  SmoothCursorExtension,
   Table,
   TableCell,
   TableHeader,
   TableRow,
+  ListKeymap,
+  MarkdownClipboard,
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
@@ -40,6 +42,7 @@ import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
 type TArguments = {
   disabledExtensions: TExtensions[];
   enableHistory: boolean;
+  isSmoothCursorEnabled: boolean;
   fileHandler: TFileHandler;
   mentionHandler: TMentionHandler;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
@@ -48,10 +51,16 @@ type TArguments = {
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
-  const { disabledExtensions, enableHistory, fileHandler, mentionHandler, placeholder, tabIndex } = args;
-
-  return [
-    // @ts-expect-error tiptap types are incorrect
+  const {
+    disabledExtensions,
+    enableHistory,
+    fileHandler,
+    mentionHandler,
+    placeholder,
+    tabIndex,
+    isSmoothCursorEnabled,
+  } = args;
+  const extensions = [
     StarterKit.configure({
       bulletList: {
         HTMLAttributes: {
@@ -102,19 +111,13 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       autolink: true,
       linkOnPaste: true,
       protocols: ["http", "https"],
-      validate: (url: string) => isValidHttpUrl(url),
+      validate: (url: string) => isValidHttpUrl(url).isValid,
       HTMLAttributes: {
         class:
           "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
       },
     }),
     CustomTypographyExtension,
-    ImageExtension(fileHandler).configure({
-      HTMLAttributes: {
-        class: "rounded-md",
-      },
-    }),
-    CustomImageExtension(fileHandler),
     TiptapUnderline,
     TextStyle,
     TaskList.configure({
@@ -137,10 +140,11 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomCodeInlineExtension,
     Markdown.configure({
       html: true,
-      transformCopiedText: true,
+      transformCopiedText: false,
       transformPastedText: true,
       breaks: true,
     }),
+    MarkdownClipboard,
     Table,
     TableHeader,
     TableCell,
@@ -152,7 +156,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
 
         if (node.type.name === "heading") return `Heading ${node.attrs.level}`;
 
-        if (editor.storage.imageComponent.uploadInProgress) return "";
+        if (editor.storage.imageComponent?.uploadInProgress) return "";
 
         const shouldHidePlaceholder =
           editor.isActive("table") ||
@@ -167,7 +171,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
           else return placeholder(editor.isFocused, editor.getHTML());
         }
 
-        return "Press '/' for commands...";
+        return "Press '/' for commands";
       },
       includeChildren: true,
     }),
@@ -179,4 +183,22 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       disabledExtensions,
     }),
   ];
+
+  if (isSmoothCursorEnabled) {
+    extensions.push(SmoothCursorExtension);
+  }
+
+  if (!disabledExtensions.includes("image")) {
+    extensions.push(
+      ImageExtension(fileHandler).configure({
+        HTMLAttributes: {
+          class: "rounded-md",
+        },
+      }),
+      CustomImageExtension(fileHandler)
+    );
+  }
+
+  // @ts-expect-error tiptap types are incorrect
+  return extensions;
 };

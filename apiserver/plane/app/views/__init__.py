@@ -143,7 +143,7 @@ from .issue.sub_issue import SubIssuesEndpoint
 
 from .issue.subscriber import IssueSubscriberViewSet
 
-from .issue.version import IssueVersionEndpoint, IssueDescriptionVersionEndpoint
+from .issue.version import IssueVersionEndpoint, WorkItemDescriptionVersionEndpoint
 
 from .module.base import (
     ModuleViewSet,
@@ -160,11 +160,10 @@ from .api import ApiTokenEndpoint, ServiceApiTokenEndpoint
 
 from .page.base import (
     PageViewSet,
-    PageFavoriteViewSet,
     PageLogEndpoint,
-    SubPagesEndpoint,
-    PagesDescriptionViewSet,
+    PageFavoriteViewSet,
     PageDuplicateEndpoint,
+    PagesDescriptionViewSet,
 )
 from .page.version import PageVersionEndpoint
 
@@ -184,7 +183,11 @@ from .estimate.base import (
     EstimatePointEndpoint,
 )
 
-from .intake.base import IntakeViewSet, IntakeIssueViewSet
+from .intake.base import (
+    IntakeViewSet,
+    IntakeIssueViewSet,
+    IntakeWorkItemDescriptionVersionEndpoint,
+)
 
 from .analytic.base import (
     AnalyticsEndpoint,

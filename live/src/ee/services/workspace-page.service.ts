@@ -1,71 +1,14 @@
-// types
-import { TDocumentPayload, TPage } from "@plane/types";
 // services
-import { API_BASE_URL, APIService } from "../../core/services/api.service.js";
+import { BasePageService, IBasePageParams } from "@/core/services/base-page.service";
+import { WorkspacePageConfig } from "../document-types/workspace-page-handler";
 
-export class WorkspacePageService extends APIService {
-  constructor() {
-    super(API_BASE_URL);
-  }
-
-  async fetchDetails(
-    workspaceSlug: string,
-    pageId: string,
-    cookie: string
-  ): Promise<TPage> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/pages/${pageId}/`,
-      {
-        headers: {
-          Cookie: cookie,
-        },
-      }
-    )
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async fetchDescriptionBinary(
-    workspaceSlug: string,
-    pageId: string,
-    cookie: string
-  ): Promise<any> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/pages/${pageId}/description/`,
-      {
-        headers: {
-          "Content-Type": "application/octet-stream",
-          Cookie: cookie,
-        },
-        responseType: "arraybuffer",
-      }
-    )
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async updateDescription(
-    workspaceSlug: string,
-    pageId: string,
-    data: TDocumentPayload,
-    cookie: string
-  ): Promise<any> {
-    return this.patch(
-      `/api/workspaces/${workspaceSlug}/pages/${pageId}/description/`,
-      data,
-      {
-        headers: {
-          Cookie: cookie,
-        },
-      }
-    )
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error;
-      });
+export class WorkspacePageService extends BasePageService {
+  /**
+   * Gets the base URL path for workspace pages
+   */
+  protected getBasePath<TConfig extends WorkspacePageConfig>(params: IBasePageParams<TConfig>): string {
+    const { pageId, config } = params;
+    const { workspaceSlug } = config;
+    return `/api/workspaces/${workspaceSlug}/pages/${pageId}`;
   }
 }

@@ -1,11 +1,11 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // icons
-import { ArrowRight, PanelRight } from "lucide-react";
+import { PanelRight } from "lucide-react";
 // plane constants
 import {
   EIssueLayoutTypes,
@@ -18,17 +18,22 @@ import {
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
+import {
+  ICustomSearchSelectOption,
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+} from "@plane/types";
 // ui
-import { Breadcrumbs, Button, ContrastIcon, CustomMenu, Tooltip, Header } from "@plane/ui";
+import { Breadcrumbs, Button, ContrastIcon, Tooltip, Header, CustomSearchSelect } from "@plane/ui";
 // components
 import { ProjectAnalyticsModal } from "@/components/analytics";
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
+import { CycleQuickActions } from "@/components/cycles";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { isIssueFilterActive } from "@/helpers/filter.helper";
-import { truncateText } from "@/helpers/string.helper";
 // hooks
 import {
   useEventTracker,
@@ -47,28 +52,9 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 
-const CycleDropdownOption: React.FC<{ cycleId: string }> = ({ cycleId }) => {
-  // router
-  const { workspaceSlug, projectId } = useParams();
-  // store hooks
-  const { getCycleById } = useCycle();
-  // derived values
-  const cycle = getCycleById(cycleId);
-  //
-
-  if (!cycle) return null;
-
-  return (
-    <CustomMenu.MenuItem key={cycle.id}>
-      <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`} className="flex items-center gap-1.5">
-        <ContrastIcon className="h-3 w-3" />
-        {truncateText(cycle.name, 40)}
-      </Link>
-    </CustomMenu.MenuItem>
-  );
-};
-
 export const CycleIssuesHeader: React.FC = observer(() => {
+  // refs
+  const parentRef = useRef<HTMLDivElement>(null);
   // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // router
@@ -99,11 +85,11 @@ export const CycleIssuesHeader: React.FC = observer(() => {
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
-  const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
+  const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", false);
 
-  const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
+  const isSidebarCollapsed = storedValue ? (storedValue === true ? true : false) : false;
   const toggleSidebar = () => {
-    setValue(`${!isSidebarCollapsed}`);
+    setValue(!isSidebarCollapsed);
   };
 
   const handleLayoutChange = useCallback(
@@ -159,7 +145,19 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     EUserPermissionsLevel.PROJECT
   );
 
-  const issuesCount = getGroupIssueCount(undefined, undefined, false);
+  const switcherOptions = currentProjectCycleIds
+    ?.map((id) => {
+      const _cycle = id === cycleId ? cycleDetails : getCycleById(id);
+      if (!_cycle) return;
+      return {
+        value: _cycle.id,
+        query: _cycle.name,
+        content: <SwitcherLabel name={_cycle.name} LabelIcon={ContrastIcon} />,
+      };
+    })
+    .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
+
+  const workItemsCount = getGroupIssueCount(undefined, undefined, false);
 
   return (
     <>
@@ -201,39 +199,37 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               <Breadcrumbs.BreadcrumbItem
                 type="component"
                 component={
-                  <CustomMenu
+                  <CustomSearchSelect
+                    options={switcherOptions}
+                    value={cycleId}
+                    onChange={(value: string) => {
+                      router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${value}`);
+                    }}
                     label={
-                      <>
-                        <ContrastIcon className="h-3 w-3" />
-                        <div className="flex w-auto max-w-[70px] items-center gap-2 truncate sm:max-w-[200px]">
-                          <p className="truncate">{cycleDetails?.name && cycleDetails.name}</p>
-                          {issuesCount && issuesCount > 0 ? (
-                            <Tooltip
-                              isMobile={isMobile}
-                              tooltipContent={`There are ${issuesCount} ${
-                                issuesCount > 1 ? "work items" : "work item"
-                              } in this cycle`}
-                              position="bottom"
-                            >
-                              <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-custom-primary-100/20 px-2 text-center text-xs font-semibold text-custom-primary-100">
-                                {issuesCount}
-                              </span>
-                            </Tooltip>
-                          ) : null}
-                        </div>
-                      </>
+                      <div className="flex items-center gap-1">
+                        <SwitcherLabel name={cycleDetails?.name} LabelIcon={ContrastIcon} />
+                        {workItemsCount && workItemsCount > 0 ? (
+                          <Tooltip
+                            isMobile={isMobile}
+                            tooltipContent={`There are ${workItemsCount} ${
+                              workItemsCount > 1 ? "work items" : "work item"
+                            } in this cycle`}
+                            position="bottom"
+                          >
+                            <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-custom-primary-100/20 px-2 text-center text-xs font-semibold text-custom-primary-100">
+                              {workItemsCount}
+                            </span>
+                          </Tooltip>
+                        ) : null}
+                      </div>
                     }
-                    className="ml-1.5 flex-shrink-0 truncate"
-                    placement="bottom-start"
-                  >
-                    {currentProjectCycleIds?.map((cycleId) => <CycleDropdownOption key={cycleId} cycleId={cycleId} />)}
-                  </CustomMenu>
+                  />
                 }
               />
             </Breadcrumbs>
           </div>
         </Header.LeftItem>
-        <Header.RightItem>
+        <Header.RightItem className="items-center">
           <div className="hidden items-center gap-2 md:flex ">
             <LayoutSelection
               layouts={[
@@ -302,19 +298,19 @@ export const CycleIssuesHeader: React.FC = observer(() => {
             )}
             <button
               type="button"
-              className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"
+              className="p-1.5 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
               onClick={toggleSidebar}
             >
-              <ArrowRight className={`h-4 w-4 duration-300 ${isSidebarCollapsed ? "-rotate-180" : ""}`} />
+              <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
             </button>
+            <CycleQuickActions
+              parentRef={parentRef}
+              cycleId={cycleId}
+              projectId={projectId}
+              workspaceSlug={workspaceSlug}
+              customClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-custom-background-80/70 rounded"
+            />
           </div>
-          <button
-            type="button"
-            className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80 md:hidden"
-            onClick={toggleSidebar}
-          >
-            <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
-          </button>
         </Header.RightItem>
       </Header>
     </>

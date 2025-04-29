@@ -1,2 +1,2 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const shouldRenderSettingLink = (settingKey: string) => true;
+export type TRenderSettingsLink = (workspaceSlug: string, settingKey: string) => boolean;
+export const shouldRenderSettingLink: TRenderSettingsLink = (workspaceSlug, settingKey) => true;

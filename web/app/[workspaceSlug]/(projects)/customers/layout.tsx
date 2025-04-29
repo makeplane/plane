@@ -1,18 +1,34 @@
 "use client";
+import { observer } from "mobx-react";
+import { IssuePeekOverview } from "@/components/issues";
+// plane web components
+import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
+import { CustomerUpgrade } from "@/plane-web/components/customers";
+import { EpicPeekOverview } from "@/plane-web/components/epics";
+import { useCustomers } from "@/plane-web/hooks/store";
 
-import { AppHeader, ContentWrapper } from "@/components/core";
-import { useWorkspace } from "@/hooks/store";
-
-export default function WorkspaceDraftLayout({ children }: { children: React.ReactNode }) {
-  // store
-  const { currentWorkspace } = useWorkspace();
-
+const CustomersLayout = observer(({ children }: { children: React.ReactNode }) => {
+  // hooks
+  const { loader, isCustomersFeatureEnabled } = useCustomers();
   // derived values
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Customers` : undefined;
+  const shouldUpgrade =
+    isCustomersFeatureEnabled !== undefined && isCustomersFeatureEnabled === false && loader !== "init-loader";
+
   return (
-    <>
-      <AppHeader header={<></>} />
-      <ContentWrapper>{children}</ContentWrapper>
-    </>
+    <WorkspaceAccessWrapper pageKey="customers">
+      {shouldUpgrade ? (
+        <div className="h-full w-full max-w-5xl mx-auto flex items-center justify-center">
+          <CustomerUpgrade />
+        </div>
+      ) : (
+        <>
+          {children}
+          <IssuePeekOverview />
+          <EpicPeekOverview />
+        </>
+      )}
+    </WorkspaceAccessWrapper>
   );
-}
+});
+
+export default CustomersLayout;

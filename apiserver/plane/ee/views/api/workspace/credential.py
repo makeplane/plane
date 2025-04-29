@@ -58,17 +58,7 @@ class WorkspaceCredentialAPIView(BaseServiceAPIView):
 
     def get(self, request, pk=None):
         if not pk:
-            filters = {"is_active": True}
-            if "source" in request.query_params:
-                filters["source"] = request.query_params["source"]
-            if "workspace_id" in request.query_params:
-                filters["workspace_id"] = request.query_params["workspace_id"]
-            elif "workspace" in request.query_params:
-                filters["workspace_id"] = request.query_params["workspace"]
-            if "user_id" in request.query_params:
-                filters["user_id"] = request.query_params["user_id"]
-            elif "user" in request.query_params:
-                filters["user_id"] = request.query_params["user"]
+            filters = {**request.query_params.dict(), "is_active": True}
 
             credentials = (
                 WorkspaceCredential.objects.filter(**filters)

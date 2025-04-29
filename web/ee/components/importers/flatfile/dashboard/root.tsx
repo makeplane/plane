@@ -33,6 +33,7 @@ export const FlatfileDashboardRoot: FC = observer(() => {
         swrKey: "FLATFILE_IMPORTER",
         hideWorkspace: true,
         hideProject: true,
+        hideDeactivate: true,
       }}
       useImporterHook={useFlatfileImporter}
     />

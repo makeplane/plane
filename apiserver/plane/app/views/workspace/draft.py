@@ -37,6 +37,7 @@ from plane.db.models import (
 from .. import BaseViewSet
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
+from plane.utils.host import base_host
 from plane.ee.models import IssuePropertyValue, DraftIssuePropertyValue
 
 
@@ -131,8 +132,9 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             workflow_state_manager = WorkflowStateManager(
                 project_id=request.data.get("project_id", None), slug=slug
             )
-            if workflow_state_manager._validate_issue_creation(
+            if workflow_state_manager.validate_issue_creation(
                 state_id=request.data.get("state_id"),
+                user_id=request.user.id,
             ):
                 return Response(
                     {"error": "You cannot create a draft issue in this state"},
@@ -276,7 +278,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
 
             if request.data.get("cycle_id", None):
@@ -305,7 +307,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     ),
                     epoch=int(timezone.now().timestamp()),
                     notification=True,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                 )
 
             if request.data.get("module_ids", []):
@@ -335,7 +337,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                         current_instance=None,
                         epoch=int(timezone.now().timestamp()),
                         notification=True,
-                        origin=request.META.get("HTTP_ORIGIN"),
+                        origin=base_host(request=request, is_app=True),
                     )
                     for module in request.data.get("module_ids", [])
                 ]

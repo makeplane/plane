@@ -121,6 +121,7 @@ export class IssueCommentReactionStore implements IIssueCommentReactionStore {
 
       return response;
     } catch (error) {
+      console.log("error", error);
       throw error;
     }
   };
@@ -149,8 +150,9 @@ export class IssueCommentReactionStore implements IIssueCommentReactionStore {
         reaction,
       });
 
+      if (!this.commentReactions[commentId]) this.commentReactions[commentId] = {};
       runInAction(() => {
-        update(this.commentReactions, [commentId, reaction], (reactionId) => {
+        update(this.commentReactions, `${commentId}.${reaction}`, (reactionId) => {
           if (!reactionId) return [response.id];
           return concat(reactionId, response.id);
         });
@@ -159,6 +161,7 @@ export class IssueCommentReactionStore implements IIssueCommentReactionStore {
 
       return response;
     } catch (error) {
+      console.log("error", error);
       throw error;
     }
   };

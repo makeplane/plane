@@ -6,6 +6,7 @@ from plane.ee.views import (
     PagePublicEndpoint,
     PagePublicIssuesEndpoint,
     PageMetaDataEndpoint,
+    SubPagePublicEndpoint,
 )
 
 urlpatterns = [
@@ -16,6 +17,9 @@ urlpatterns = [
     ),
     path(
         "anchor/<str:anchor>/pages/", PagePublicEndpoint.as_view(), name="page-public"
+    ),
+    path(
+        "anchor/<str:anchor>/sub-pages/", SubPagePublicEndpoint.as_view(), name="sub-pages"
     ),
     path(
         "anchor/<str:anchor>/page-issues/",

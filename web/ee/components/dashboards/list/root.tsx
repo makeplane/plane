@@ -1,29 +1,63 @@
 import { observer } from "mobx-react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 // components
 import { ListLayout } from "@/components/core/list";
-import { SimpleEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState, SimpleEmptyState } from "@/components/empty-state";
+// hooks
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
-import { useWorkspaceDashboards } from "@/plane-web/hooks/store";
+import { useDashboards } from "@/plane-web/hooks/store";
 // local components
-import { WorkspaceDashboardListItem } from "./list-item";
+import { DashboardListItem } from "./list-item";
+import { DashboardsListLayoutLoader } from "./loader";
 
-export const WorkspaceDashboardsListRoot = observer(() => {
+export const DashboardsListLayoutRoot = observer(() => {
   // store hooks
-  const { loader, isAnyDashboardAvailable, currentWorkspaceDashboardIds, getDashboardById } = useWorkspaceDashboards();
+  const {
+    getDashboardById,
+    workspaceDashboards: { currentWorkspaceFetchStatus, isAnyDashboardAvailable, currentWorkspaceFilteredDashboardIds },
+  } = useDashboards();
+  // translation
+  const { t } = useTranslation();
+  // derived values
+  const listEmptyStateResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/dashboards/list" });
+  const searchEmptyStateResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/dashboards/list-search" });
+
+  if (!currentWorkspaceFetchStatus) {
+    return <DashboardsListLayoutLoader />;
+  }
 
   // no dashboards empty state
-  if (loader !== "init-loader" && !isAnyDashboardAvailable) {
+  if (!isAnyDashboardAvailable) {
     return (
       <div className="size-full grid place-items-center">
-        <SimpleEmptyState title="That doesn't" />
+        <DetailedEmptyState
+          title={t("dashboards.empty_state.dashboards_list.title")}
+          description={t("dashboards.empty_state.dashboards_list.description")}
+          assetPath={listEmptyStateResolvedPath}
+        />
+      </div>
+    );
+  }
+
+  if (currentWorkspaceFilteredDashboardIds.length === 0) {
+    return (
+      <div className="size-full grid place-items-center px-page-x">
+        <SimpleEmptyState
+          title={t("dashboards.empty_state.dashboards_search.title")}
+          description={t("dashboards.empty_state.dashboards_search.description")}
+          assetPath={searchEmptyStateResolvedPath}
+          size="lg"
+        />
       </div>
     );
   }
 
   return (
     <ListLayout>
-      {currentWorkspaceDashboardIds.map((dashboardId) => (
-        <WorkspaceDashboardListItem key={dashboardId} getDashboardDetails={getDashboardById} id={dashboardId} />
+      {currentWorkspaceFilteredDashboardIds.map((dashboardId) => (
+        <DashboardListItem key={dashboardId} getDashboardDetails={getDashboardById} id={dashboardId} />
       ))}
     </ListLayout>
   );

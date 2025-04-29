@@ -29,17 +29,45 @@ ESTIMATE_SYSTEMS.points.templates.squares.values = [
   { id: undefined, key: 9, value: "81" },
 ];
 
+ESTIMATE_SYSTEMS.time.is_available = true;
+ESTIMATE_SYSTEMS.time.is_ee = false;
+
+ESTIMATE_SYSTEMS.time.templates = {
+  ...ESTIMATE_SYSTEMS.time.templates,
+  hours: {
+    title: "Hours",
+    i18n_title: "project_settings.estimates.systems.time.hours",
+    values: [
+      { id: undefined, key: 1, value: "60" },
+      { id: undefined, key: 2, value: "120" },
+      { id: undefined, key: 3, value: "180" },
+      { id: undefined, key: 4, value: "240" },
+      { id: undefined, key: 5, value: "330" },
+      { id: undefined, key: 6, value: "390" },
+    ],
+  },
+  custom: {
+    title: "Custom",
+    i18n_title: "project_settings.estimates.systems.time.custom",
+    values: [
+      { id: undefined, key: 1, value: "60" },
+      { id: undefined, key: 2, value: "120" },
+    ],
+    hide: true,
+  },
+};
+
 export { MAX_ESTIMATE_POINT_INPUT_LENGTH, EEstimateSystem, EEstimateUpdateStages, estimateCount, ESTIMATE_SYSTEMS };
 
 export const ESTIMATE_OPTIONS_STAGE_ONE: Partial<
-  Record<EEstimateUpdateStages, { title: string; description: string }>
+  Record<EEstimateUpdateStages, { i18n_title: string; i18n_description: string }>
 > = {
   [EEstimateUpdateStages.EDIT]: {
-    title: "Add, update or remove estimates",
-    description: "Manage current system either adding, updating or removing the points or categories.",
+    i18n_title: "project_settings.estimates.edit.add_or_update.title",
+    i18n_description: "project_settings.estimates.edit.add_or_update.description",
   },
   [EEstimateUpdateStages.SWITCH]: {
-    title: "Change estimate type",
-    description: "Convert your points system to categories system and vice versa.",
+    i18n_title: "project_settings.estimates.edit.switch.title",
+    i18n_description: "project_settings.estimates.edit.switch.description",
   },
 };

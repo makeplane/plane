@@ -14,9 +14,7 @@ export const EmptyUpdates = (props: TProps) => {
       <div className="m-auto mt-[50%]">
         <Image src={ImagelLight} alt="No updates" className="w-[161px] m-auto" />
         <div className="w-fit m-auto text-lg font-medium items-center">No updates yet</div>
-        <div className="w-fit m-auto font-medium text-base text-custom-text-350">
-          You can see the cycle updates here.
-        </div>
+        <div className="w-fit m-auto font-medium text-base text-custom-text-350">You can see the updates here.</div>
         <Button className="mt-4 mx-auto" onClick={() => handleNewUpdate()}>
           Add an Update
         </Button>

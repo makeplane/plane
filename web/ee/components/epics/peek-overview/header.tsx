@@ -4,11 +4,9 @@ import { FC, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Link2, MoveDiagonal, MoveRight, Sidebar } from "lucide-react";
-// constants
+// plane imports
 import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
-// types
 import { TIssue } from "@plane/types";
-// ui
 import {
   CenterPanelIcon,
   CustomSelect,
@@ -18,14 +16,14 @@ import {
   Tooltip,
   setToast,
 } from "@plane/ui";
+import { copyUrlToClipboard } from "@plane/utils";
 // components
 import { NameDescriptionUpdateStatus } from "@/components/issues";
-// constants
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 // store hooks
-import { useAppTheme, useIssueDetail, useUserPermissions } from "@/hooks/store";
+import { useAppTheme, useIssueDetail, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 
@@ -96,18 +94,27 @@ export const EpicPeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pro
   const { updateIssue, removeIssue } = useIssuesActions(EIssuesStoreType.EPIC);
   const { allowPermissions } = useUserPermissions();
   const { epicDetailSidebarCollapsed, toggleEpicDetailSidebar } = useAppTheme();
+  const { getProjectIdentifierById } = useProject();
 
   const { isMobile } = usePlatformOS();
   // derived values
   const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
   const issue = getIssueById(issueId);
+  const projectIdentifier = issue?.project_id ? getProjectIdentifierById(issue?.project_id) : "";
 
-  const issueLink = `${workspaceSlug}/projects/${projectId}/${isArchived ? "archives/" : ""}epics/${issueId}`;
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug,
+    projectId: issue?.project_id,
+    issueId,
+    projectIdentifier,
+    sequenceId: issue?.sequence_id,
+    isArchived,
+  });
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
-    copyUrlToClipboard(issueLink).then(() => {
+    copyUrlToClipboard(workItemLink).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
@@ -147,7 +154,7 @@ export const EpicPeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pro
         </Tooltip>
 
         <Tooltip tooltipContent="Open work item in full screen" isMobile={isMobile}>
-          <Link href={`/${issueLink}`} onClick={() => removeRoutePeekId()}>
+          <Link href={workItemLink} onClick={() => removeRoutePeekId()}>
             <MoveDiagonal className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
           </Link>
         </Tooltip>

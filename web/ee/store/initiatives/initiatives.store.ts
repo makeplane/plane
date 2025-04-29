@@ -18,6 +18,7 @@ import {
 } from "@/plane-web/types/initiative/initiative";
 //
 import { RootStore } from "../root.store";
+import { IUpdateStore, UpdateStore } from "../updates/base.store";
 import { IInitiativeAttachmentStore, InitiativeAttachmentStore } from "./initiative-attachment.store";
 import { IInitiativeLinkStore, InitiativeLinkStore } from "./initiative-links.store";
 import { IInitiativeCommentActivityStore, InitiativeCommentActivityStore } from "./initiatives-comment-activity.store";
@@ -29,6 +30,7 @@ type InitiativeCollapsible = "links" | "attachments" | "projects" | "epics";
 
 export interface IInitiativeStore {
   initiativesMap: Record<string, TInitiative> | undefined;
+  initiativeIds: string[] | undefined;
   initiativesStatsMap: Record<string, TInitiativeStats> | undefined;
   initiativeLinks: IInitiativeLinkStore;
   initiativeCommentActivities: IInitiativeCommentActivityStore;
@@ -38,6 +40,7 @@ export interface IInitiativeStore {
   initiativeEpicLoader: Record<string, TLoader>;
   initiativeEpicsMap: Record<string, string[]>;
   initiativesLoader: boolean;
+  updatesStore: IUpdateStore;
 
   openCollapsibleSection: InitiativeCollapsible[];
   lastCollapsibleAction: InitiativeCollapsible | null;
@@ -100,6 +103,7 @@ export class InitiativeStore implements IInitiativeStore {
   initiativeService: InitiativeService;
   rootStore: RootStore;
   initiativeFilterStore: IInitiativeFilterStore;
+  updatesStore: IUpdateStore;
 
   constructor(_rootStore: RootStore, initiativeFilterStore: IInitiativeFilterStore) {
     makeObservable(this, {
@@ -139,6 +143,7 @@ export class InitiativeStore implements IInitiativeStore {
     this.initiativeLinks = new InitiativeLinkStore(this);
     this.initiativeCommentActivities = new InitiativeCommentActivityStore(this);
     this.initiativeAttachments = new InitiativeAttachmentStore(this);
+    this.updatesStore = new UpdateStore();
 
     // services
     this.initiativeService = new InitiativeService();
@@ -150,6 +155,10 @@ export class InitiativeStore implements IInitiativeStore {
     if (!workspaceSlug) return;
 
     return this.getGroupedInitiativeIds(workspaceSlug);
+  }
+
+  get initiativeIds() {
+    return Object.keys(this.initiativesMap ?? {});
   }
 
   getGroupedInitiativeIds = computedFn((workspaceSlug: string) => {
@@ -435,7 +444,7 @@ export class InitiativeStore implements IInitiativeStore {
 
       try {
         await Promise.all([
-          this.fetchInitiativeEpicStats(workspaceSlug, initiativeId),
+          this.fetchInitiativeEpics(workspaceSlug, initiativeId),
           this.fetchInitiativeAnalytics(workspaceSlug, initiativeId),
           this.initiativeCommentActivities.fetchActivities(workspaceSlug, initiativeId),
         ]);

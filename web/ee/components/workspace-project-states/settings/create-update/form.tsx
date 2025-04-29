@@ -2,6 +2,7 @@
 
 import { FormEvent, FC, useEffect, useState, useMemo } from "react";
 import { TwitterPicker } from "react-color";
+import { useTranslation } from "@plane/i18n";
 import { Button, Popover, Input, TextArea } from "@plane/ui";
 // plane web types
 import { TProjectState } from "@/plane-web/types/workspace-project-states";
@@ -19,6 +20,8 @@ export const ProjectStateForm: FC<TProjectStateForm> = (props) => {
   // states
   const [formData, setFromData] = useState<Partial<TProjectState> | undefined>(undefined);
   const [errors, setErrors] = useState<Partial<Record<keyof TProjectState, string>> | undefined>(undefined);
+  // hooks
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (data && !formData) setFromData(data);
@@ -99,7 +102,7 @@ export const ProjectStateForm: FC<TProjectStateForm> = (props) => {
             {buttonTitle}
           </Button>
           <Button type="button" variant="neutral-primary" size="sm" disabled={buttonDisabled} onClick={onCancel}>
-            cancel
+            {t("cancel")}
           </Button>
         </div>
       </div>

@@ -8,16 +8,17 @@ type Props = {
   userDetails: TUserDetails;
 };
 
-const renderUserCursor = (user: { color: string; name: string }): HTMLSpanElement => {
+const renderUserCursor = (user: TUserDetails): HTMLSpanElement => {
   const cursor = document.createElement("span");
 
   cursor.classList.value = "relative border-x -mx-[1px] pointer-events-none break-normal";
   cursor.setAttribute("style", `border-color: ${user.color}`);
 
   const label = document.createElement("span");
+  label.dataset.collaboratorId = user?.id;
 
   label.classList.value =
-    "absolute rounded-[3px_3px_3px_0] text-[#0d0d0d] text-xs font-semibold leading-normal -top-[1.3rem] -left-[1px] py-0.5 px-1.5 select-none whitespace-nowrap";
+    "custom-collaboration-cursor absolute rounded-[3px_3px_3px_0] text-[#0d0d0d] text-xs font-semibold leading-normal -top-[1.3rem] -left-[1px] py-0.5 px-1.5 select-none whitespace-nowrap";
   label.setAttribute("style", `background-color: ${user.color}`);
   label.insertBefore(document.createTextNode(user.name), null);
 

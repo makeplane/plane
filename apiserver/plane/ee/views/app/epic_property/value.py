@@ -154,7 +154,7 @@ class EpicPropertyValueEndpoint(BaseAPIView):
                 project_id=project_id,
                 issue_type_id=epic_type_id,
                 issue_type__is_epic=True,
-                is_active=True
+                is_active=True,
             )
 
             # Validate the data
@@ -244,7 +244,7 @@ class EpicPropertyValueEndpoint(BaseAPIView):
 
             if validator:
                 for value in values:
-                    validator(issue_property=epic_property, value=value)
+                    validator(property=epic_property, value=value)
             else:
                 raise ValidationError("Invalid property type")
 

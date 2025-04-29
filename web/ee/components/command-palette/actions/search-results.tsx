@@ -1,7 +1,8 @@
 "use client";
 
 import { Command } from "cmdk";
-import { useRouter } from "next/navigation";
+// hooks
+import { useAppRouter } from "@/hooks/use-app-router";
 // plane web helpers
 import { pagesAppCommandGroups } from "@/plane-web/components/command-palette";
 // plane web types
@@ -14,8 +15,7 @@ type Props = {
 
 export const PagesAppCommandPaletteSearchResults: React.FC<Props> = (props) => {
   const { closePalette, results } = props;
-
-  const router = useRouter();
+  const router = useAppRouter();
 
   return (
     <>
@@ -31,7 +31,7 @@ export const PagesAppCommandPaletteSearchResults: React.FC<Props> = (props) => {
                   key={item.id}
                   onSelect={() => {
                     closePalette();
-                    router.push(currentSection.path(item));
+                    router.push(currentSection.path(item, undefined));
                   }}
                   value={`${key}-${item?.id}-${item.name}-${item.project__identifier ?? ""}-${item.sequence_id ?? ""}`}
                   className="focus:outline-none"

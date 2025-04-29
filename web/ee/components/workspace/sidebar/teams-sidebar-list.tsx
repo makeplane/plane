@@ -32,12 +32,14 @@ export const SidebarTeamsList = observer(() => {
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const { allowPermissions } = useUserPermissions();
   const { toggleCreateTeamspaceModal } = useCommandPalette();
+  const { hasPageAccess } = useUserPermissions();
   const { joinedTeamSpaceIds, isTeamspacesFeatureEnabled, getTeamspaceById } = useTeamspaces();
   // local storage
   const { setValue: toggleTeamMenu, storedValue } = useLocalStorage<boolean>("is_teams_list_open", true);
   // derived values
   const isTeamspaceListItemOpen = !!storedValue;
   const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const isAuthorized = hasPageAccess(workspaceSlug?.toString() ?? "", "team_spaces");
 
   const handleLinkClick = () => {
     if (window.innerWidth < 768) {
@@ -51,6 +53,8 @@ export const SidebarTeamsList = observer(() => {
 
   // Return if teamspaces are not enabled or available
   if (!isTeamspacesFeatureEnabled || joinedTeamSpaceIds.length === 0) return null;
+
+  if (!isAuthorized) return null;
 
   return (
     <>

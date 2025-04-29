@@ -34,7 +34,7 @@ export const IssueParentSelectRoot: React.FC<TIssueParentSelect> = observer((pro
     subIssues: { setSubIssueHelpers, fetchSubIssues },
   } = useIssueDetail();
   const { getIssueTypeById } = useIssueTypes();
-  const subIssueOperations = useSubIssueOperations();
+  const subIssueOperations = useSubIssueOperations(EIssueServiceType.ISSUES);
   const epicSubIssueOperations = useSubIssueOperations(EIssueServiceType.EPICS);
 
   // derived values

@@ -16,6 +16,11 @@ import { SUPPORTED_CUSTOM_FIELD_ATTRIBUTES } from "./custom-field-etl";
 import { getFormattedDate } from "./date";
 
 export const getTargetState = (stateMap: IStateConfig[], sourceState: JiraState): ExState | undefined => {
+
+  if (!sourceState || !sourceState.id) {
+    return undefined;
+  }
+
   // Assign the external source and external id from jira and return the target state
   const targetState = stateMap.find((state: IStateConfig) => {
     if (state.source_state.id === sourceState.id) {
@@ -58,6 +63,11 @@ export const getTargetAttachments = (
 };
 
 export const getTargetPriority = (priorityMap: IPriorityConfig[], sourcePriority: JiraPriority): string | undefined => {
+
+  if (!sourcePriority || !sourcePriority.name) {
+    return undefined;
+  }
+
   const targetPriority = priorityMap.find(
     (priority: IPriorityConfig) => priority.source_priority.name === sourcePriority.name
   );

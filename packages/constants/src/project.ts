@@ -1,8 +1,7 @@
-// icons
-import {
-  TProjectAppliedDisplayFilterKeys,
-  TProjectOrderByOptions,
-} from "@plane/types";
+// plane imports
+import { IProject, TProjectAppliedDisplayFilterKeys, TProjectOrderByOptions } from "@plane/types";
+// local imports
+import { RANDOM_EMOJI_CODES } from "./emoji";
 
 export type TNetworkChoiceIconKey = "Lock" | "Globe2";
 
@@ -55,11 +54,11 @@ export const GROUP_CHOICES = {
 };
 
 export const PROJECT_AUTOMATION_MONTHS = [
-  { i18n_label: "common.months_count", value: 1 },
-  { i18n_label: "common.months_count", value: 3 },
-  { i18n_label: "common.months_count", value: 6 },
-  { i18n_label: "common.months_count", value: 9 },
-  { i18n_label: "common.months_count", value: 12 },
+  { i18n_label: "workspace_projects.common.months_count", value: 1 },
+  { i18n_label: "workspace_projects.common.months_count", value: 3 },
+  { i18n_label: "workspace_projects.common.months_count", value: 6 },
+  { i18n_label: "workspace_projects.common.months_count", value: 9 },
+  { i18n_label: "workspace_projects.common.months_count", value: 12 },
 ];
 
 export const PROJECT_UNSPLASH_COVERS = [
@@ -134,4 +133,19 @@ export const PROJECT_ERROR_MESSAGES = {
     i18n_title: "error",
     i18n_message: "workspace_projects.error.issue_delete",
   },
+};
+
+export const DEFAULT_PROJECT_FORM_VALUES: Partial<IProject> = {
+  cover_image_url: PROJECT_UNSPLASH_COVERS[Math.floor(Math.random() * PROJECT_UNSPLASH_COVERS.length)],
+  description: "",
+  logo_props: {
+    in_use: "emoji",
+    emoji: {
+      value: RANDOM_EMOJI_CODES[Math.floor(Math.random() * RANDOM_EMOJI_CODES.length)],
+    },
+  },
+  identifier: "",
+  name: "",
+  network: 2,
+  project_lead: null,
 };

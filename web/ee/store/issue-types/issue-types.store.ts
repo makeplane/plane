@@ -15,6 +15,7 @@ import {
   TWorkItemTypesPropertiesOptions,
   TEpicPropertiesOptions,
 } from "@plane/types";
+import { buildWorkItemTypeSchema } from "@plane/utils";
 // plane web services
 import {
   epicIssueTypeService,
@@ -88,6 +89,17 @@ export class IssueTypes implements IIssueTypesStore {
   }
 
   // computed functions
+  /**
+   * @description Get all work item type ids
+   * @returns {string[]}
+   */
+  getIssueTypeIds = computedFn((activeOnly: boolean) =>
+    Object.keys(this.data).filter((issueTypeId) => {
+      const issueType = this.data[issueTypeId];
+      return !activeOnly || (activeOnly && issueType.is_active);
+    })
+  );
+
   /**
    * @description Get work item type by work item type id
    * @param issueTypeId
@@ -286,9 +298,9 @@ export class IssueTypes implements IIssueTypesStore {
       const issueTypeInstance = new IssueType({
         root: this.rootStore,
         services: {
-          issueTypes: this.issueTypesService,
-          issueProperties: this.issuePropertyService,
-          issuePropertyOptions: this.issuePropertyOptionService,
+          workItemType: this.issueTypesService,
+          customProperty: this.issuePropertyService,
+          customPropertyOption: this.issuePropertyOptionService,
         },
         issueTypeData: issueType,
       });
@@ -316,9 +328,9 @@ export class IssueTypes implements IIssueTypesStore {
       const epicIssueTypeInstance = new IssueType({
         root: this.rootStore,
         services: {
-          issueTypes: this.epicIssueTypesService,
-          issueProperties: this.epicPropertyService,
-          issuePropertyOptions: this.epicPropertyOptionService,
+          workItemType: this.epicIssueTypesService,
+          customProperty: this.epicPropertyService,
+          customPropertyOption: this.epicPropertyOptionService,
         },
         issueTypeData: epicIssueType,
       });
@@ -416,6 +428,22 @@ export class IssueTypes implements IIssueTypesStore {
         for (const issue of currentProjectIssues) {
           this.rootStore.issue.issues.updateIssue(issue.id, { type_id: issueType.id });
         }
+        // get all work item templates
+        const currentProjectWorkItemTemplates =
+          this.rootStore.templatesRoot.workItemTemplates.getAllWorkItemTemplatesForProject(workspaceSlug, projectId);
+        const workItemTemplatesWithoutType = currentProjectWorkItemTemplates.filter(
+          (template) => !template.template_data.type || !template.template_data.type.id
+        );
+        // attach the new default issue type to all work item templates
+        for (const template of workItemTemplatesWithoutType) {
+          template.mutateInstance({
+            template_data: {
+              ...template.template_data,
+              type: buildWorkItemTypeSchema(issueType.id, this.getIssueTypeById),
+            },
+          });
+        }
+
         this.loader = "loaded";
       });
     } catch (error) {
@@ -475,38 +503,47 @@ export class IssueTypes implements IIssueTypesStore {
   };
 
   /**
-   * @description Get all issue types for the workspace
+   * @description Get all issue types for the workspace or project
    * @param workspaceSlug
+   * @param projectId - To fetch project level issue types
    */
-  fetchAllIssueTypes = async (workspaceSlug: string) => {
+  fetchAllIssueTypes = async (workspaceSlug: string, projectId?: string) => {
     if (!workspaceSlug) return Promise.resolve([]);
     const isIssueTypesEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace("ISSUE_TYPES", false);
     if (!isIssueTypesEnabled) return Promise.resolve([]);
-    return this.issueTypesService.fetchAll({ workspaceSlug });
+    const workItemTypeFetchService = projectId
+      ? this.issueTypesService.fetchAllProjectLevel.bind(this.issueTypesService, { workspaceSlug, projectId })
+      : this.issueTypesService.fetchAll.bind(this.issueTypesService, { workspaceSlug });
+    return workItemTypeFetchService();
   };
 
   /**
-   * @description Get all epics for the workspace
+   * @description Get all epics for the workspace or project
    * @param workspaceSlug
+   * @param projectId - To fetch project level epics
    */
-  fetchAllEpics = async (workspaceSlug: string) => {
+  fetchAllEpics = async (workspaceSlug: string, projectId?: string) => {
     if (!workspaceSlug) return Promise.resolve([]);
     const isEpicsEnabled = this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace("EPICS", false);
     if (!isEpicsEnabled) return Promise.resolve([]);
-    return this.epicIssueTypesService.fetchAll({ workspaceSlug });
+    const epicTypeFetchService = projectId
+      ? this.epicIssueTypesService.fetchAllProjectLevel.bind(this.epicIssueTypesService, { workspaceSlug, projectId })
+      : this.epicIssueTypesService.fetchAll.bind(this.epicIssueTypesService, { workspaceSlug });
+    return epicTypeFetchService();
   };
 
   /**
-   * @description Get all issue types and epics for the workspace
+   * @description Get all issue types and epics for the workspace or project
    * @param workspaceSlug
+   * @param projectId - To fetch project level issue types and epics
    */
-  fetchAll = async (workspaceSlug: string) => {
+  fetchAll = async (workspaceSlug: string, projectId?: string) => {
     if (!workspaceSlug) return;
     try {
       this.loader = "init-loader";
       this.issueTypePromise = Promise.all([
-        this.fetchAllIssueTypes(workspaceSlug),
-        this.fetchAllEpics(workspaceSlug),
+        this.fetchAllIssueTypes(workspaceSlug, projectId),
+        this.fetchAllEpics(workspaceSlug, projectId),
       ]).catch((error) => {
         throw error;
       });
@@ -634,9 +671,9 @@ export class IssueTypes implements IIssueTypesStore {
           new IssueType({
             root: this.rootStore,
             services: {
-              issueTypes: this.issueTypesService,
-              issueProperties: this.issuePropertyService,
-              issuePropertyOptions: this.issuePropertyOptionService,
+              workItemType: this.issueTypesService,
+              customProperty: this.issuePropertyService,
+              customPropertyOption: this.issuePropertyOptionService,
             },
             issueTypeData: issueType,
           })

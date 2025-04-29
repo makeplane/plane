@@ -1,6 +1,6 @@
 "use client";
 
-import { CSSProperties } from "react";
+import { CSSProperties, FC } from "react";
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import clone from "lodash/clone";
 import concat from "lodash/concat";
@@ -27,7 +27,7 @@ import {
   IWorkspaceView,
 } from "@plane/types";
 // plane ui
-import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
+import { Avatar, CycleGroupIcon, DiceIcon, ISvgIcons, PriorityIcon, StateGroupIcon } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
 // helpers
@@ -36,7 +36,7 @@ import { getFileURL } from "@/helpers/file.helper";
 // store
 import { store } from "@/lib/store-context";
 // plane web store
-import { getTeamProjectColumns } from "@/plane-web/components/issues/issue-layouts/utils";
+import { getTeamProjectColumns, SpreadSheetPropertyIconMap } from "@/plane-web/components/issues/issue-layouts/utils";
 // store
 import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/base-issues.store";
 
@@ -707,4 +707,15 @@ export const getBlockViewDetails = (
     message,
     blockStyle,
   };
+};
+
+/**
+ * This method returns the icon for Spreadsheet column headers
+ * @param iconKey
+ */
+export const SpreadSheetPropertyIcon: FC<ISvgIcons & { iconKey: string }> = (props) => {
+  const { iconKey } = props;
+  const Icon = SpreadSheetPropertyIconMap[iconKey];
+  if (!Icon) return null;
+  return <Icon {...props} />;
 };

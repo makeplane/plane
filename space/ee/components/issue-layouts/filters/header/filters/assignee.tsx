@@ -62,11 +62,12 @@ export const FilterAssignees: React.FC<Props> = observer((props: Props) => {
               <>
                 {sortedOptions.slice(0, itemsToRender).map((member) => {
                   if (!member) return null;
+                  const memberId = member.member;
                   return (
                     <FilterOption
-                      key={`assignees-${member.id}`}
-                      isChecked={appliedFilters?.includes(member.id) ? true : false}
-                      onClick={() => handleUpdate(member.id)}
+                      key={`assignees-${memberId}`}
+                      isChecked={appliedFilters?.includes(memberId) ? true : false}
+                      onClick={() => handleUpdate(memberId)}
                       icon={
                         <Avatar
                           name={member.member__display_name}

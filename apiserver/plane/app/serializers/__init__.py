@@ -93,7 +93,7 @@ from .importer import ImporterSerializer
 from .page import (
     PageSerializer,
     PageLogSerializer,
-    SubPageSerializer,
+    PageLiteSerializer,
     PageDetailSerializer,
     PageVersionSerializer,
     PageVersionDetailSerializer,

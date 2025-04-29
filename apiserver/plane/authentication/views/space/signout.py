@@ -7,6 +7,7 @@ from django.utils import timezone
 # Module imports
 from plane.authentication.utils.host import base_host, user_ip
 from plane.db.models import User
+from plane.utils.path_validator import validate_next_path
 
 
 class SignOutAuthSpaceEndpoint(View):
@@ -21,8 +22,8 @@ class SignOutAuthSpaceEndpoint(View):
             user.save()
             # Log the user out
             logout(request)
-            url = f"{base_host(request=request, is_space=True)}{next_path}"
+            url = f"{base_host(request=request, is_space=True)}{str(validate_next_path(next_path)) if next_path else ''}"
             return HttpResponseRedirect(url)
         except Exception:
-            url = f"{base_host(request=request, is_space=True)}{next_path}"
+            url = f"{base_host(request=request, is_space=True)}{str(validate_next_path(next_path)) if next_path else ''}"
             return HttpResponseRedirect(url)

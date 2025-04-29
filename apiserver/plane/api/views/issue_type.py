@@ -13,10 +13,11 @@ from rest_framework.response import Response
 # Module imports
 from plane.api.views.base import BaseAPIView
 from plane.app.permissions import ProjectEntityPermission
-from plane.db.models import Workspace, Project, IssueType, ProjectIssueType
+from plane.db.models import Workspace, Project, IssueType, ProjectIssueType, Issue
 from plane.api.serializers import IssueTypeAPISerializer, ProjectIssueTypeAPISerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
+from plane.utils.helpers import get_boolean_value
 
 
 class IssueTypeAPIEndpoint(BaseAPIView):
@@ -89,170 +90,145 @@ class IssueTypeAPIEndpoint(BaseAPIView):
             },
         }
 
+    def get_queryset(self):
+        return self.model.objects.filter(
+            workspace__slug=self.kwargs.get("slug"),
+            project_issue_types__project_id=self.kwargs.get("project_id"),
+            is_epic=False,
+        )
+
     # list issue types and get issue type by id
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def get(self, request, slug, project_id, type_id=None):
-        if self.workspace_slug and self.project_id:
-            # list of issue types
-            if self.type_id is None:
-                issue_types = self.model.objects.filter(
-                    workspace__slug=self.workspace_slug,
-                    project_issue_types__project_id=self.project_id,
-                    is_epic=False,
-                ).annotate(
-                    project_ids=Coalesce(
-                        Subquery(
-                            ProjectIssueType.objects.filter(
-                                issue_type=OuterRef("pk"), workspace__slug=slug
-                            )
-                            .values("issue_type")
-                            .annotate(project_ids=ArrayAgg("project_id", distinct=True))
-                            .values("project_ids")
-                        ),
-                        [],
-                    )
+        # list of issue types
+        if type_id is None:
+            issue_types = self.get_queryset().annotate(
+                project_ids=Coalesce(
+                    Subquery(
+                        ProjectIssueType.objects.filter(
+                            issue_type=OuterRef("pk"), workspace__slug=slug
+                        )
+                        .values("issue_type")
+                        .annotate(project_ids=ArrayAgg("project_id", distinct=True))
+                        .values("project_ids")
+                    ),
+                    [],
                 )
-                serializer = self.serializer_class(issue_types, many=True)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-
-            # getting issue type by id
-            issue_type = self.model.objects.get(
-                workspace__slug=self.workspace_slug,
-                project_issue_types__project_id=self.project_id,
-                pk=self.type_id,
-                is_epic=False,
             )
-            return self.paginate(
-                request=request,
-                queryset=(issue_types),
-                on_results=lambda issues: IssueTypeAPISerializer(
-                    issues, many=True
-                ).data,
-            )
+            serializer = self.serializer_class(issue_types, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         # getting issue type by id
-        issue_type = self.model.objects.get(
-            workspace__slug=self.workspace_slug,
-            project_issue_types__project_id=self.project_id,
-            pk=self.type_id,
-        )
+        issue_type = self.get_queryset().get(pk=type_id)
         serializer = self.serializer_class(issue_type)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # create issue type
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def post(self, request, slug, project_id):
-        if self.workspace_slug and self.project_id:
-            workspace = Workspace.objects.get(slug=self.workspace_slug)
-            project = Project.objects.get(pk=self.project_id)
+        workspace = Workspace.objects.get(slug=slug)
+        project = Project.objects.get(pk=project_id)
 
-            # check if issue type with the same external id and external source already exists
-            external_id = request.data.get("external_id")
-            external_existing_issue_type = self.model.objects.filter(
-                workspace__slug=slug,
-                project_issue_types__project=project_id,
-                external_source=request.data.get("external_source"),
-                external_id=request.data.get("external_id"),
-                is_epic=False,
-            )
-            if (
-                external_id
-                and request.data.get("external_source")
-                and external_existing_issue_type.exists()
-            ):
-                issue_type = self.model.objects.filter(
-                    workspace__slug=slug,
-                    project_issue_types__project=project_id,
-                    external_source=request.data.get("external_source"),
-                    external_id=external_id,
-                    is_epic=False,
-                ).first()
-                return Response(
-                    {
-                        "error": "Work item type with the same external id and external source already exists",
-                        "id": str(issue_type.id),
-                    },
-                    status=status.HTTP_409_CONFLICT,
-                )
+        # check if issue type with the same external id and external source already exists
+        # return the issue type id if it exists
+        external_id = request.data.get("external_id")
+        external_source = request.data.get("external_source")
+        external_existing_issue_type = (
+            self.get_queryset()
+            .filter(external_id=external_id, external_source=external_source)
+            .first()
+        )
 
-            # creating issue type
-            issue_type_serializer = self.serializer_class(data=request.data)
-            issue_type_serializer.is_valid(raise_exception=True)
-            issue_type_serializer.save(
-                workspace=workspace, logo_props=self.generate_logo_prop()
+        if external_id and external_source and external_existing_issue_type:
+            return Response(
+                {
+                    "error": "Work item type with the same external id and external source already exists",
+                    "id": str(external_existing_issue_type.id),
+                },
+                status=status.HTTP_409_CONFLICT,
             )
 
-            # adding the issue type to the project
-            project_issue_type_serializer = ProjectIssueTypeAPISerializer(
-                data={"issue_type": issue_type_serializer.data["id"]}
-            )
-            project_issue_type_serializer.is_valid(raise_exception=True)
-            project_issue_type_serializer.save(project=project, level=0)
+        # creating issue type
+        issue_type_serializer = self.serializer_class(data=request.data)
+        issue_type_serializer.is_valid(raise_exception=True)
+        issue_type_serializer.save(
+            workspace=workspace, logo_props=self.generate_logo_prop()
+        )
 
-            # getting the issue type
-            issue_type = self.model.objects.get(
-                workspace=workspace,
-                project_issue_types__project=project,
-                pk=issue_type_serializer.data["id"],
-                is_epic=False,
-            )
-            serializer = self.serializer_class(issue_type)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # adding the issue type to the project
+        project_issue_type_serializer = ProjectIssueTypeAPISerializer(
+            data={"issue_type": issue_type_serializer.data["id"]}
+        )
+        project_issue_type_serializer.is_valid(raise_exception=True)
+        project_issue_type_serializer.save(project=project, level=0)
+
+        # getting the issue type
+        issue_type = self.get_queryset().get(pk=issue_type_serializer.data["id"])
+        serializer = self.serializer_class(issue_type)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     # update issue type by id
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def patch(self, request, slug, project_id, type_id):
-        if self.workspace_slug and self.project_id and self.type_id:
-            issue_type = self.model.objects.get(
-                workspace__slug=self.workspace_slug,
-                project_issue_types__project_id=self.project_id,
-                pk=self.type_id,
-                is_epic=False,
+        issue_type = self.get_queryset().get(pk=type_id)
+        data = request.data
+
+        # check if the issue type is the default issue type and if the is_active field is being updated to false
+        if (
+            issue_type.is_default
+            and get_boolean_value(request.data.get("is_active")) is False
+        ):
+            return Response(
+                {"error": "Default work item type's is_active field cannot be false"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-            data = request.data
-            data_is_active = data.get("is_active", False)
-            update_issue_type = (
-                False if issue_type.is_default and not data_is_active else True
+        issue_type_serializer = self.serializer_class(
+            issue_type, data=data, partial=True
+        )
+        issue_type_serializer.is_valid(raise_exception=True)
+
+        # check if issue type with the same external id and external source already exists
+        external_id = request.data.get("external_id")
+        external_source = request.data.get("external_source")
+        external_existing_issue_type = (
+            self.get_queryset()
+            .filter(external_id=external_id, external_source=external_source)
+            .first()
+        )
+
+        # don't allow updating the external id if it already exists in another issue type
+        # checking if the external id is being updated to a different issue type
+        if external_id and external_existing_issue_type.id != issue_type.id:
+            return Response(
+                {
+                    "error": "Work item type with the same external id and external source already exists",
+                    "id": str(issue_type.id),
+                },
+                status=status.HTTP_409_CONFLICT,
             )
 
-            if update_issue_type:
-                issue_type_serializer = self.serializer_class(
-                    issue_type, data=data, partial=True
-                )
-                issue_type_serializer.is_valid(raise_exception=True)
-
-                # check if issue type with the same external id and external source already exists
-                external_id = request.data.get("external_id")
-                external_existing_issue_type = self.model.objects.filter(
-                    workspace__slug=slug,
-                    project_issue_types__project_id=self.project_id,
-                    external_source=request.data.get(
-                        "external_source", issue_type.external_source
-                    ),
-                    external_id=external_id,
-                    is_epic=False,
-                )
-                if (
-                    external_id
-                    and (issue_type.external_id != external_id)
-                    and external_existing_issue_type.exists()
-                ):
-                    return Response(
-                        {
-                            "error": "Work item type with the same external id and external source already exists",
-                            "id": str(issue_type.id),
-                        },
-                        status=status.HTTP_409_CONFLICT,
-                    )
-
-                issue_type_serializer.save()
-                return Response(issue_type_serializer.data, status=status.HTTP_200_OK)
+        issue_type_serializer.save()
+        return Response(issue_type_serializer.data, status=status.HTTP_200_OK)
 
     # delete issue type by id
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def delete(self, request, slug, project_id, type_id):
-        if self.workspace_slug and self.project_id and self.type_id:
-            issue_type = self.model.objects.get(pk=self.type_id, is_epic=False)
-            issue_type.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+        issue_type = self.get_queryset().get(pk=type_id)
+
+        # check if the issue type is the default issue type
+        if issue_type.is_default:
+            return Response(
+                {"error": "Default work item type cannot be deleted"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # check if the issue type is being used in any issues
+        if Issue.objects.filter(project_id=project_id, type_id=type_id).exists():
+            return Response(
+                {"error": "Work item type with existing issues cannot be deleted"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        issue_type.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

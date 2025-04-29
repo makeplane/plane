@@ -4,6 +4,7 @@ import json
 # Django imports
 from django.db.models import Q, Count, F
 from django.utils import timezone
+from django.db.models import Subquery, OuterRef
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
@@ -15,7 +16,7 @@ from plane.ee.views.base import BaseAPIView
 from plane.ee.serializers import ProjectFeatureSerializer
 from plane.ee.serializers.app.project import ProjectAttributeSerializer
 from plane.app.permissions import allow_permission, ROLE
-from plane.ee.models import ProjectFeature, ProjectAttribute
+from plane.ee.models import ProjectFeature, ProjectAttribute, EntityUpdates
 from plane.db.models import Issue, Project
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -120,7 +121,20 @@ class ProjectAttributesEndpoint(BaseAPIView):
         if project_ids:
             projects = projects.filter(id__in=project_ids)
 
-        project_attributes = ProjectAttribute.objects.filter(project__in=projects).annotate(project_name=F("project__name"))
+        project_attributes = (
+            ProjectAttribute.objects.filter(project__in=projects)
+            .annotate(project_name=F("project__name"), network=F("project__network"))
+            .annotate(
+                update_status=Subquery(
+                    EntityUpdates.objects.filter(
+                        workspace__slug=slug,
+                        project_id=OuterRef("project_id"),
+                        entity_type="PROJECT",
+                        parent__isnull=True,
+                    ).values("status")[:1]
+                )
+            )
+        )
 
         serializer = ProjectAttributeSerializer(project_attributes, many=True)
 

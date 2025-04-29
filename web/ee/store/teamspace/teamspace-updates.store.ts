@@ -1,5 +1,7 @@
 import concat from "lodash/concat";
+import find from "lodash/find";
 import orderBy from "lodash/orderBy";
+import pull from "lodash/pull";
 import set from "lodash/set";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
@@ -7,25 +9,36 @@ import { action, autorun, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { E_SORT_ORDER } from "@plane/constants";
-import { TLoader, TTeamspaceActivity, TTeamspaceReaction } from "@plane/types";
+import {
+  TIssueCommentReaction,
+  TIssueCommentReactionIdMap,
+  TIssueCommentReactionMap,
+  TLoader,
+  TTeamspaceActivity,
+  TTeamspaceReaction,
+  TIssueComment,
+} from "@plane/types";
 // plane web imports
+import { groupReactions } from "@/helpers/emoji.helper";
 import { TeamspaceUpdatesService } from "@/plane-web/services/teamspace/teamspace-updates.service";
 import { RootStore } from "@/plane-web/store/root.store";
-import { TTeamspaceComment } from "@/plane-web/types";
 
 export interface ITeamspaceUpdatesStore {
   // observables
   teamspaceActivityLoader: Record<string, TLoader>; // teamspaceId => loader
   teamspaceCommentLoader: Record<string, TLoader>; // teamspaceId => loader
   teamspaceActivityMap: Record<string, TTeamspaceActivity[]>; // teamspaceId => activities
-  teamspaceCommentsMap: Record<string, TTeamspaceComment[]>; // teamspaceId => comments
+  teamspaceCommentsMap: Record<string, TIssueComment[]>; // teamspaceId => comments
   teamspaceActivitySortOrder: E_SORT_ORDER | undefined; // teamspaceId => sortOrder
   teamspaceCommentsSortOrder: E_SORT_ORDER | undefined; // teamspaceId => sortOrder
+  commentReactions: TIssueCommentReactionIdMap;
+  commentReactionMap: TIssueCommentReactionMap;
+
   // computed functions
   getTeamspaceActivitiesLoader: (teamspaceId: string) => TLoader | undefined;
   getTeamspaceCommentsLoader: (teamspaceId: string) => TLoader | undefined;
   getTeamspaceActivities: (teamspaceId: string) => TTeamspaceActivity[] | undefined;
-  getTeamspaceComments: (teamspaceId: string) => TTeamspaceComment[] | undefined;
+  getTeamspaceComments: (teamspaceId: string) => TIssueComment[] | undefined;
   getTeamspaceActivitySortOrder: () => E_SORT_ORDER;
   getTeamspaceCommentsSortOrder: () => E_SORT_ORDER;
   // helper action
@@ -33,17 +46,17 @@ export interface ITeamspaceUpdatesStore {
   toggleTeamspaceCommentsSortOrder: () => void;
   // actions
   fetchTeamActivities: (workspaceSlug: string, teamspaceId: string) => Promise<TTeamspaceActivity[]>;
-  fetchTeamspaceComments: (workspaceSlug: string, teamspaceId: string) => Promise<TTeamspaceComment[]>;
+  fetchTeamspaceComments: (workspaceSlug: string, teamspaceId: string) => Promise<TIssueComment[]>;
   createTeamspaceComment: (
     workspaceSlug: string,
     teamspaceId: string,
-    payload: Partial<TTeamspaceComment>
-  ) => Promise<TTeamspaceComment>;
+    payload: Partial<TIssueComment>
+  ) => Promise<TIssueComment>;
   updateTeamspaceComment: (
     workspaceSlug: string,
     teamspaceId: string,
     commentId: string,
-    payload: Partial<TTeamspaceComment>
+    payload: Partial<TIssueComment>
   ) => Promise<void>;
   deleteTeamspaceComment: (workspaceSlug: string, teamspaceId: string, commentId: string) => Promise<void>;
   addCommentReaction: (
@@ -59,6 +72,9 @@ export interface ITeamspaceUpdatesStore {
     reactionId: string,
     reactionEmoji: string
   ) => Promise<void>;
+  getCommentReactionsByCommentId: (commentId: string) => { [reaction: string]: string[] } | undefined;
+  getCommentReactionById: (reactionId: string) => TIssueCommentReaction | undefined;
+  commentReactionsByUser: (commentId: string, userId: string) => TIssueCommentReaction[];
 }
 
 export class TeamspaceUpdatesStore implements ITeamspaceUpdatesStore {
@@ -66,9 +82,11 @@ export class TeamspaceUpdatesStore implements ITeamspaceUpdatesStore {
   teamspaceActivityLoader: Record<string, TLoader> = {}; // teamspaceId => loader
   teamspaceCommentLoader: Record<string, TLoader> = {}; // teamspaceId => loader
   teamspaceActivityMap: Record<string, TTeamspaceActivity[]> = {}; // teamspaceId => activities
-  teamspaceCommentsMap: Record<string, TTeamspaceComment[]> = {}; // teamspaceId => comments
+  teamspaceCommentsMap: Record<string, TIssueComment[]> = {}; // teamspaceId => comments
   teamspaceActivitySortOrder: ITeamspaceUpdatesStore["teamspaceActivitySortOrder"] = undefined; // teamspaceId => sortOrder
   teamspaceCommentsSortOrder: ITeamspaceUpdatesStore["teamspaceCommentsSortOrder"] = undefined; // teamspaceId => sortOrder
+  commentReactions: TIssueCommentReactionIdMap = {};
+  commentReactionMap: TIssueCommentReactionMap = {};
   // store
   rootStore: RootStore;
   // service
@@ -83,6 +101,8 @@ export class TeamspaceUpdatesStore implements ITeamspaceUpdatesStore {
       teamspaceActivityMap: observable,
       teamspaceActivitySortOrder: observable,
       teamspaceCommentsSortOrder: observable,
+      commentReactions: observable,
+      commentReactionMap: observable,
       // helper action
       toggleTeamspaceActivitySortOrder: action,
       toggleTeamspaceCommentsSortOrder: action,
@@ -128,6 +148,35 @@ export class TeamspaceUpdatesStore implements ITeamspaceUpdatesStore {
       }
     });
   }
+
+  // helper methods
+  getCommentReactionsByCommentId = (commentId: string) => {
+    if (!commentId) return undefined;
+    return this.commentReactions[commentId] ?? undefined;
+  };
+
+  getCommentReactionById = (reactionId: string) => {
+    if (!reactionId) return undefined;
+    return this.commentReactionMap[reactionId] ?? undefined;
+  };
+
+  commentReactionsByUser = (commentId: string, userId: string) => {
+    if (!commentId || !userId) return [];
+
+    const reactions = this.getCommentReactionsByCommentId(commentId);
+    if (!reactions) return [];
+
+    const _userReactions: TIssueCommentReaction[] = [];
+    Object.keys(reactions).forEach((reaction) => {
+      if (reactions?.[reaction])
+        reactions?.[reaction].map((reactionId) => {
+          const currentReaction = this.getCommentReactionById(reactionId);
+          if (currentReaction && currentReaction.actor === userId) _userReactions.push(currentReaction);
+        });
+    });
+
+    return _userReactions;
+  };
 
   // computed functions
   /**
@@ -188,9 +237,9 @@ export class TeamspaceUpdatesStore implements ITeamspaceUpdatesStore {
       const matchingNewActivity = newActivitiesMap.get(activity.id);
       return matchingNewActivity
         ? {
-          ...activity,
-          created_at: matchingNewActivity.created_at,
-        }
+            ...activity,
+            created_at: matchingNewActivity.created_at,
+          }
         : activity;
     });
 
@@ -264,9 +313,9 @@ export class TeamspaceUpdatesStore implements ITeamspaceUpdatesStore {
    * Fetch teamspace comments
    * @param workspaceSlug
    * @param teamspaceId
-   * @returns Promise<TTeamspaceComment[]>
+   * @returns Promise<TIssueComment[]>
    */
-  fetchTeamspaceComments = async (workspaceSlug: string, teamspaceId: string): Promise<TTeamspaceComment[]> => {
+  fetchTeamspaceComments = async (workspaceSlug: string, teamspaceId: string): Promise<TIssueComment[]> => {
     try {
       // Set loader
       set(this.teamspaceCommentLoader, teamspaceId, "init-loader");
@@ -275,6 +324,23 @@ export class TeamspaceUpdatesStore implements ITeamspaceUpdatesStore {
       // Update teamspace comments store
       runInAction(() => {
         set(this.teamspaceCommentsMap, teamspaceId, response);
+        response.map((comment) => {
+          const groupedReactions = groupReactions(comment.comment_reactions || [], "reaction");
+
+          const commentReactionIdsMap: { [reaction: string]: string[] } = {};
+
+          Object.keys(groupedReactions).map((reactionId) => {
+            const reactionIds = (groupedReactions[reactionId] || []).map((reaction) => reaction.id);
+            commentReactionIdsMap[reactionId] = reactionIds;
+          });
+
+          runInAction(() => {
+            set(this.commentReactions, comment.id, commentReactionIdsMap);
+            (comment.comment_reactions || []).forEach((reaction) =>
+              set(this.commentReactionMap, reaction.id, reaction)
+            );
+          });
+        });
       });
       return response;
     } catch (e) {
@@ -290,13 +356,13 @@ export class TeamspaceUpdatesStore implements ITeamspaceUpdatesStore {
    * @param workspaceSlug
    * @param teamspaceId
    * @param payload
-   * @returns Promise<TTeamspaceComment>
+   * @returns Promise<TIssueComment>
    */
   createTeamspaceComment = async (
     workspaceSlug: string,
     teamspaceId: string,
-    payload: Partial<TTeamspaceComment>
-  ): Promise<TTeamspaceComment> => {
+    payload: Partial<TIssueComment>
+  ): Promise<TIssueComment> => {
     try {
       // set the loader to mutation
       set(this.teamspaceCommentLoader, teamspaceId, "mutation");
@@ -329,13 +395,18 @@ export class TeamspaceUpdatesStore implements ITeamspaceUpdatesStore {
     workspaceSlug: string,
     teamspaceId: string,
     commentId: string,
-    payload: Partial<TTeamspaceComment>
+    payload: Partial<TIssueComment>
   ): Promise<void> => {
     try {
       // set the loader to mutation
       set(this.teamspaceCommentLoader, teamspaceId, "mutation");
       // Update teamspace comment
-      await this.teamspaceUpdatesService.updateTeamspaceComment(workspaceSlug, teamspaceId, commentId, payload);
+      const response = await this.teamspaceUpdatesService.updateTeamspaceComment(
+        workspaceSlug,
+        teamspaceId,
+        commentId,
+        payload
+      );
       // Update teamspace comments store
       runInAction(() => {
         // Check if teamspace comments exist
@@ -346,7 +417,7 @@ export class TeamspaceUpdatesStore implements ITeamspaceUpdatesStore {
         );
         if (teamspaceCommentIndex < 0) return;
         const teamspaceComment = this.teamspaceCommentsMap[teamspaceId][teamspaceCommentIndex];
-        this.teamspaceCommentsMap[teamspaceId][teamspaceCommentIndex] = { ...teamspaceComment, ...payload };
+        this.teamspaceCommentsMap[teamspaceId][teamspaceCommentIndex] = { ...teamspaceComment, ...response };
       });
     } catch (e) {
       console.log("error while updating teamspace Comment", e);
@@ -373,7 +444,7 @@ export class TeamspaceUpdatesStore implements ITeamspaceUpdatesStore {
         // Check if teamspace comments exist
         if (!this.teamspaceCommentsMap[teamspaceId] || !Array.isArray(this.teamspaceCommentsMap[teamspaceId])) return;
         // Find and remove teamspace comment
-        update(this.teamspaceCommentsMap, [teamspaceId], (comments: TTeamspaceComment[]) =>
+        update(this.teamspaceCommentsMap, [teamspaceId], (comments: TIssueComment[]) =>
           comments.filter((comment) => comment.id !== commentId)
         );
       });
@@ -408,17 +479,11 @@ export class TeamspaceUpdatesStore implements ITeamspaceUpdatesStore {
         payload
       );
       runInAction(() => {
-        // Check if teamspace comments exist
-        if (!this.teamspaceCommentsMap[teamspaceId] || !Array.isArray(this.teamspaceCommentsMap[teamspaceId])) return;
-        // Find and update comment reaction
-        const teamspaceCommentIndex = this.teamspaceCommentsMap[teamspaceId].findIndex(
-          (teamspaceComment) => teamspaceComment.id === commentId
-        );
-        if (teamspaceCommentIndex < 0) return;
-        const teamspaceComment = this.teamspaceCommentsMap[teamspaceId][teamspaceCommentIndex];
-        if (!teamspaceComment.comment_reactions || !Array.isArray(teamspaceComment.comment_reactions))
-          teamspaceComment.comment_reactions = [];
-        teamspaceComment.comment_reactions.push(response);
+        update(this.commentReactions, `${commentId}.${payload.reaction}`, (reactionId) => {
+          if (!reactionId) return [response.id];
+          return concat(reactionId, response.id);
+        });
+        set(this.commentReactionMap, response.id, response);
       });
       return response;
     } catch (e) {
@@ -439,10 +504,19 @@ export class TeamspaceUpdatesStore implements ITeamspaceUpdatesStore {
     workspaceSlug: string,
     teamspaceId: string,
     commentId: string,
-    reactionId: string,
+    userId: string,
     reactionEmoji: string
   ): Promise<void> => {
     try {
+      const userReactions = this.commentReactionsByUser(commentId, userId);
+      const currentReaction = find(userReactions, { actor: userId, reaction: reactionEmoji });
+
+      if (currentReaction && currentReaction.id) {
+        runInAction(() => {
+          pull(this.commentReactions[commentId][reactionEmoji], currentReaction.id);
+          delete this.commentReactionMap[reactionEmoji];
+        });
+      }
       // Delete teamspace comment reaction
       await this.teamspaceUpdatesService.deleteTeamspaceCommentReaction(
         workspaceSlug,
@@ -450,22 +524,6 @@ export class TeamspaceUpdatesStore implements ITeamspaceUpdatesStore {
         commentId,
         reactionEmoji
       );
-      runInAction(() => {
-        // Check if teamspace comments exist
-        if (!this.teamspaceCommentsMap[teamspaceId] || !Array.isArray(this.teamspaceCommentsMap[teamspaceId])) return;
-        // Find and remove comment reaction
-        const teamspaceCommentIndex = this.teamspaceCommentsMap[teamspaceId].findIndex(
-          (teamspaceComment) => teamspaceComment.id === commentId
-        );
-        if (teamspaceCommentIndex < 0) return;
-        const teamspaceComment = this.teamspaceCommentsMap[teamspaceId][teamspaceCommentIndex];
-        if (!teamspaceComment.comment_reactions || !Array.isArray(teamspaceComment.comment_reactions)) return;
-        update(
-          this.teamspaceCommentsMap[teamspaceId][teamspaceCommentIndex],
-          ["comment_reactions"],
-          (reactions: TTeamspaceReaction[]) => reactions.filter((reaction) => reaction.id !== reactionId)
-        );
-      });
     } catch (e) {
       console.error("error while deleting reaction to teamspace Comment", e);
       throw e;

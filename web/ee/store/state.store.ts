@@ -8,13 +8,18 @@ import { action, autorun, makeObservable, observable, reaction, runInAction } fr
 import { computedFn } from "mobx-utils";
 // plane imports
 import { E_FEATURE_FLAGS, E_SORT_ORDER } from "@plane/constants";
-import { TLoader } from "@plane/types";
+import {
+  TLoader,
+  IStateTransition,
+  IStateWorkFlow,
+  IStateWorkFlowResponse,
+  TWorkflowChangeHistory,
+} from "@plane/types";
 // helpers
 import { convertStringArrayToBooleanObject } from "@/helpers/array.helper";
 // store
 import { IStateStore as ICoreStateStore, StateStore as CoreStateStore } from "@/store/state.store";
 // local imports
-import { IStateTransition, IStateWorkFlow, IStateWorkFlowResponse, TWorkflowChangeHistory } from "../types";
 import { RootStore } from "./root.store";
 
 export interface IStateStore extends ICoreStateStore {
@@ -39,6 +44,7 @@ export interface IStateStore extends ICoreStateStore {
   ) => { [key: string]: boolean };
   getNextAvailableTransitionStateId: (projectId: string, parentStateId: string) => string | undefined;
   getAvailableWorkItemCreationStateIdMap: (projectId: string | null | undefined) => Record<string, boolean>;
+  getAvailableWorkItemCreationStateIds: (projectId: string | null | undefined) => string[];
   getWorkflowChangeHistorySortOrder: () => E_SORT_ORDER;
   getWorkflowChangeHistoryLoader: (projectId: string) => TLoader | undefined;
   getWorkflowChangeHistory: (projectId: string) => TWorkflowChangeHistory[] | undefined;
@@ -74,7 +80,7 @@ export interface IStateStore extends ICoreStateStore {
     parentStateId: string,
     transitionId: string,
     actorIds: string[]
-  ) => void;
+  ) => Promise<void>;
   resetWorkflowStates: (workspaceSlug: string, projectId: string) => Promise<void>;
 }
 
@@ -270,6 +276,19 @@ export class StateStore extends CoreStateStore implements IStateStore {
     return convertStringArrayToBooleanObject(
       projectStateIds.filter((projectStateId) => this.getIsWorkItemCreationAllowedForState(projectStateId))
     );
+  });
+
+  /**
+   * Returns the available project state ids based on the workflows
+   */
+  getAvailableWorkItemCreationStateIds = computedFn((projectId: string | null | undefined): string[] => {
+    const stateIdMap = this.getAvailableWorkItemCreationStateIdMap(projectId);
+    return Object.entries(stateIdMap).reduce<string[]>((allowedStateIds, [stateId, isCreationAllowed]) => {
+      if (isCreationAllowed) {
+        allowedStateIds.push(stateId);
+      }
+      return allowedStateIds;
+    }, []);
   });
 
   /**

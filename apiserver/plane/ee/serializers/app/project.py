@@ -6,17 +6,33 @@ from plane.ee.models import ProjectLink, ProjectReaction, WorkspaceActivity
 from rest_framework import serializers
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
-from plane.app.serializers import UserLiteSerializer, ProjectLiteSerializer, WorkspaceLiteSerializer
+from plane.app.serializers import (
+    UserLiteSerializer,
+    ProjectLiteSerializer,
+    WorkspaceLiteSerializer,
+)
 
 
 class ProjectAttributeSerializer(BaseSerializer):
     state_id = serializers.UUIDField(required=False)
     project_name = serializers.CharField()
+    network = serializers.IntegerField(required=False)
+    update_status = serializers.CharField(required=False)
 
     class Meta:
         model = ProjectAttribute
-        fields = ["project_id", "state_id", "priority", "start_date", "target_date", "project_name"]
-    
+        fields = [
+            "project_id",
+            "state_id",
+            "priority",
+            "start_date",
+            "target_date",
+            "project_name",
+            "network",
+            "update_status",
+        ]
+
+
 class ProjectFeatureSerializer(BaseSerializer):
     is_issue_type_enabled = serializers.BooleanField(read_only=True)
     is_time_tracking_enabled = serializers.BooleanField(read_only=True)
@@ -77,8 +93,7 @@ class ProjectLinkSerializer(BaseSerializer):
     # Validation if url already exists
     def create(self, validated_data):
         if ProjectLink.objects.filter(
-            url=validated_data.get("url"),
-            project_id=validated_data.get("project_id"),
+            url=validated_data.get("url"), project_id=validated_data.get("project_id")
         ).exists():
             raise serializers.ValidationError(
                 {"error": "URL already exists for this Project"}
@@ -122,12 +137,7 @@ class ProjectReactionSerializer(BaseSerializer):
     class Meta:
         model = ProjectReaction
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "actor",
-            "deleted_at",
-        ]
+        read_only_fields = ["workspace", "project", "actor", "deleted_at"]
 
 
 class ProjectActivitySerializer(BaseSerializer):
@@ -138,9 +148,4 @@ class ProjectActivitySerializer(BaseSerializer):
     class Meta:
         model = WorkspaceActivity
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "actor",
-            "deleted_at",
-        ]
+        read_only_fields = ["workspace", "project", "actor", "deleted_at"]

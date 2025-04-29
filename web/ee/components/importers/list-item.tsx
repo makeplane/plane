@@ -1,12 +1,10 @@
 import { FC } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // plane web components
 import { ImporterProps } from "@/plane-web/components/importers";
-// plane web hooks
-import { useFlag } from "@/plane-web/hooks/store";
-import { useTranslation } from "@plane/i18n";
 
 export type ImportersListItemProps = {
   provider: ImporterProps;
@@ -15,11 +13,8 @@ export type ImportersListItemProps = {
 
 export const ImportersListItem: FC<ImportersListItemProps> = (props) => {
   const { provider, workspaceSlug } = props;
-  const isEnabled = useFlag(workspaceSlug, provider.flag);
 
   const { t } = useTranslation();
-
-  if (!isEnabled) return null;
 
   return (
     <div

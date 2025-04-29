@@ -11,6 +11,7 @@ export interface IMemberRootStore {
   // observables
   memberMap: Record<string, IUserLite>;
   // computed actions
+  getMemberIds: () => string[];
   getUserDetails: (userId: string) => IUserLite | undefined;
   // sub-stores
   workspace: IWorkspaceMemberStore;
@@ -33,6 +34,11 @@ export class MemberRootStore implements IMemberRootStore {
     this.workspace = new WorkspaceMemberStore(this, _rootStore);
     this.project = new ProjectMemberStore(this, _rootStore);
   }
+
+  /**
+   * @description get all member ids
+   */
+  getMemberIds = computedFn(() => Object.keys(this.memberMap));
 
   /**
    * @description get user details from userId

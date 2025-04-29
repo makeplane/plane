@@ -8,6 +8,7 @@ import { TTextAlign } from "@/extensions";
 import { IMarking } from "@/helpers/scroll-to-node";
 // types
 import {
+  EventToPayloadMap,
   TAIHandler,
   TDisplayConfig,
   TDocumentEventEmitter,
@@ -32,10 +33,11 @@ export type TEditorCommands =
   | "bold"
   | "italic"
   | "underline"
-  | "strike"
+  | "strikethrough"
   | "bulleted-list"
   | "numbered-list"
   | "to-do-list"
+  | "toggle-list"
   | "quote"
   | "code"
   | "table"
@@ -46,6 +48,7 @@ export type TEditorCommands =
   | "background-color"
   | "text-align"
   | "callout"
+  | "page-embed"
   | "attachment";
 
 export type TCommandExtraProps = {
@@ -84,7 +87,7 @@ export type EditorReadOnlyRefApi = {
     json: JSONContent | null;
   };
   clearEditor: (emitUpdate?: boolean) => void;
-  setEditorValue: (content: string) => void;
+  setEditorValue: (content: string, emitUpdate?: boolean) => void;
   scrollSummary: (marking: IMarking) => void;
   getDocumentInfo: () => {
     characters: number;
@@ -92,6 +95,11 @@ export type EditorReadOnlyRefApi = {
     words: number;
   };
 };
+
+// title ref api
+export interface EditorTitleRefApi extends EditorReadOnlyRefApi {
+  setEditorValue: (content: string) => void;
+}
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
   blur: () => void;
@@ -103,6 +111,7 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   onStateChange: (callback: () => void) => () => void;
   setFocusAtPosition: (position: number) => void;
   isEditorReadyToDiscard: () => boolean;
+  editorHasSynced: () => boolean;
   getSelectedText: () => string | null;
   insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
   setProviderDocument: (value: Uint8Array) => void;
@@ -110,6 +119,16 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   getHeadings: () => IMarking[];
   emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
   listenToRealTimeUpdate: () => TDocumentEventEmitter | undefined;
+  findAndDeleteNode: (
+    {
+      attribute,
+      value,
+    }: {
+      attribute: string;
+      value: string | string[];
+    },
+    nodeName: string
+  ) => void;
 }
 
 // editor props
@@ -126,18 +145,19 @@ export interface IEditorProps {
   onChange?: (json: object, html: string) => void;
   onTransaction?: () => void;
   handleEditorReady?: (value: boolean) => void;
+  isSmoothCursorEnabled: boolean;
   autofocus?: boolean;
   onEnterKeyPress?: (e?: any) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
   value?: string | null;
+  bubbleMenuEnabled?: boolean;
 }
 export interface ILiteTextEditor extends IEditorProps {
   extensions?: Extensions;
 }
 export interface IRichTextEditor extends IEditorProps {
   extensions?: Extensions;
-  bubbleMenuEnabled?: boolean;
   dragDropEnabled?: boolean;
 }
 
@@ -152,6 +172,14 @@ export interface ICollaborativeDocumentEditor
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
+  updatePageProperties?: <T extends keyof EventToPayloadMap>(
+    pageIds: string | string[],
+    actionType: T,
+    data: EventToPayloadMap[T],
+    performAction?: boolean
+  ) => void;
+  pageRestorationInProgress?: boolean;
+  isSmoothCursorEnabled: boolean;
 }
 
 // read only editor props
@@ -196,3 +224,15 @@ export type TRealtimeConfig = {
   url: string;
   queryParams: TWebhookConnectionQueryParams;
 };
+
+export interface EditorEvents {
+  beforeCreate: never;
+  create: never;
+  update: never;
+  selectionUpdate: never;
+  transaction: never;
+  focus: never;
+  blur: never;
+  destroy: never;
+  ready: { height: number };
+}

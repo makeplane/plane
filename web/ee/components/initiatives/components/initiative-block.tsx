@@ -3,18 +3,19 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // Plane
 import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
-import { CircularProgressIndicator, ControlLink, InitiativeIcon } from "@plane/ui";
+import { ControlLink, InitiativeIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
 // hooks
-import { getProgress } from "@/helpers/common.helper";
 import { useAppTheme, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
+import { UpdateStatusPills } from "@/plane-web/components/initiatives/common/update-status";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local components
+import { useInitiativeUpdates } from "../details/sidebar/use-updates";
 import { InitiativeQuickActions } from "./quick-actions";
 import { ReadOnlyBlockProperties } from "./read-only-properties";
 
@@ -33,9 +34,11 @@ export const InitiativeBlock = observer((props: Props) => {
   const {
     initiative: { getInitiativeById, getInitiativeStatsById },
   } = useInitiatives();
+
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
+  const { handleUpdateOperations } = useInitiativeUpdates(workspaceSlug.toString(), initiativeId);
 
   const initiative = getInitiativeById(initiativeId);
   const initiativeStats = getInitiativeStatsById(initiativeId);
@@ -47,8 +50,6 @@ export const InitiativeBlock = observer((props: Props) => {
     EUserPermissionsLevel.WORKSPACE
   );
 
-  const progress = getProgress(initiativeStats?.completed_issues ?? 0, initiativeStats?.total_issues);
-
   return (
     <ListItem
       title={initiative.name}
@@ -58,16 +59,14 @@ export const InitiativeBlock = observer((props: Props) => {
           <InitiativeIcon className="size-4 text-custom-text-300" />
         </div>
       }
-      appendTitleElement={
-        <>
-          <div className="flex items-center gap-1">
-            <CircularProgressIndicator size={20} percentage={progress} strokeWidth={3} />
-            <span className="text-sm font-medium text-custom-text-300 px-1">{`${progress}%`}</span>
-          </div>
-        </>
-      }
       quickActionElement={
         <div className="flex shrink-0 items-center gap-2">
+          <UpdateStatusPills
+            handleUpdateOperations={handleUpdateOperations}
+            workspaceSlug={workspaceSlug.toString()}
+            initiativeId={initiativeId}
+            analytics={initiativeStats}
+          />
           <ControlLink
             className="relative flex w-full items-center gap-3 overflow-hidden"
             href={`/${workspaceSlug}/initiatives/${initiative.id}`}

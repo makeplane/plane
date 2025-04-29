@@ -1,22 +1,33 @@
 import { useMemo } from "react";
 import { EIssueServiceType } from "@plane/constants";
+import { TCommentsOperations, TIssueComment } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { TActivityOperations } from "@/components/issues";
-import { useEditorAsset, useIssueDetail } from "@/hooks/store";
+import { formatTextList } from "@/helpers/issue.helper";
+import { useEditorAsset, useIssueDetail, useMember, useUser } from "@/hooks/store";
 
-export const useEpicActivityOperations = (
+export const useCommentOperations = (
   workspaceSlug: string | undefined,
   projectId: string | undefined,
   epicId: string | undefined
-): TActivityOperations => {
+): TCommentsOperations => {
   // store hooks
-  const { createComment, updateComment, removeComment } = useIssueDetail(EIssueServiceType.EPICS);
+  const {
+    commentReaction: { getCommentReactionsByCommentId, commentReactionsByUser, getCommentReactionById },
+    createComment,
+    updateComment,
+    removeComment,
+    createCommentReaction,
+    removeCommentReaction,
+  } = useIssueDetail(EIssueServiceType.EPICS);
+  const { getUserDetails } = useMember();
   const { uploadEditorAsset } = useEditorAsset();
+  const { data: currentUser } = useUser();
 
-  const activityOperations: TActivityOperations = useMemo(
-    () => ({
-      createComment: async (data) => {
+  const operations = useMemo(() => {
+    // Define operations object with all methods
+    const ops = {
+      createComment: async (data: Partial<TIssueComment>) => {
         try {
           if (!workspaceSlug || !projectId || !epicId) throw new Error("Missing fields");
           const comment = await createComment(workspaceSlug, projectId, epicId, data);
@@ -35,7 +46,7 @@ export const useEpicActivityOperations = (
           });
         }
       },
-      updateComment: async (commentId, data) => {
+      updateComment: async (commentId: string, data: Partial<TIssueComment>) => {
         try {
           if (!workspaceSlug || !projectId || !epicId) throw new Error("Missing fields");
           await updateComment(workspaceSlug, projectId, epicId, commentId, data);
@@ -53,7 +64,7 @@ export const useEpicActivityOperations = (
           });
         }
       },
-      removeComment: async (commentId) => {
+      removeComment: async (commentId: string) => {
         try {
           if (!workspaceSlug || !projectId || !epicId) throw new Error("Missing fields");
           await removeComment(workspaceSlug, projectId, epicId, commentId);
@@ -71,7 +82,7 @@ export const useEpicActivityOperations = (
           });
         }
       },
-      uploadCommentAsset: async (blockId, file, commentId) => {
+      uploadCommentAsset: async (blockId: string, file: File, commentId?: string) => {
         try {
           if (!workspaceSlug || !projectId) throw new Error("Missing fields");
           const res = await uploadEditorAsset({
@@ -90,9 +101,60 @@ export const useEpicActivityOperations = (
           throw new Error("Asset upload failed. Please try again later.");
         }
       },
-    }),
-    [workspaceSlug, projectId, epicId, createComment, updateComment, uploadEditorAsset, removeComment]
-  );
+      addCommentReaction: async (commentId: string, reaction: string) => {
+        try {
+          if (!workspaceSlug || !projectId || !commentId) throw new Error("Missing fields");
+          await createCommentReaction(workspaceSlug, projectId, commentId, reaction);
+          setToast({
+            title: "Success!",
+            type: TOAST_TYPE.SUCCESS,
+            message: "Reaction created successfully",
+          });
+        } catch (error) {
+          setToast({
+            title: "Error!",
+            type: TOAST_TYPE.ERROR,
+            message: "Reaction creation failed",
+          });
+        }
+      },
+      deleteCommentReaction: async (commentId: string, reaction: string) => {
+        try {
+          if (!workspaceSlug || !projectId || !commentId || !currentUser?.id) throw new Error("Missing fields");
+          removeCommentReaction(workspaceSlug, projectId, commentId, reaction, currentUser.id);
+          setToast({
+            title: "Success!",
+            type: TOAST_TYPE.SUCCESS,
+            message: "Reaction removed successfully",
+          });
+        } catch (error) {
+          setToast({
+            title: "Error!",
+            type: TOAST_TYPE.ERROR,
+            message: "Reaction remove failed",
+          });
+        }
+      },
+      react: async (commentId: string, reactionEmoji: string, userReactions: string[]) => {
+        if (userReactions.includes(reactionEmoji)) await ops.deleteCommentReaction(commentId, reactionEmoji);
+        else await ops.addCommentReaction(commentId, reactionEmoji);
+      },
+      reactionIds: (commentId: string) => getCommentReactionsByCommentId(commentId),
+      userReactions: (commentId: string) =>
+        currentUser ? commentReactionsByUser(commentId, currentUser?.id).map((r) => r.reaction) : [],
+      getReactionUsers: (reaction: string, reactionIds: Record<string, string[]>): string => {
+        const reactionUsers = (reactionIds?.[reaction] || [])
+          .map((reactionId) => {
+            const reactionDetails = getCommentReactionById(reactionId);
+            return reactionDetails ? getUserDetails(reactionDetails.actor)?.display_name : null;
+          })
+          .filter((displayName): displayName is string => !!displayName);
+        const formattedUsers = formatTextList(reactionUsers);
+        return formattedUsers;
+      },
+    };
+    return ops;
+  }, [workspaceSlug, projectId, epicId, createComment, updateComment, uploadEditorAsset, removeComment]);
 
-  return activityOperations;
+  return operations;
 };

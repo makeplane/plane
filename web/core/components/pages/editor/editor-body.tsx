@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // document-editor
 import {
@@ -13,75 +13,132 @@ import {
 // plane types
 import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
 // plane ui
-import { Row } from "@plane/ui";
+import { ERowVariant, Row } from "@plane/ui";
 // components
+import { HSL, cn, hslToHex } from "@plane/utils";
 import { EditorMentionsRoot } from "@/components/editor";
-import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
+import { PageContentBrowser, PageContentLoader } from "@/components/pages";
 // helpers
-import { cn, LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
-import { generateRandomColor } from "@/helpers/string.helper";
+import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
 // hooks
 import { useEditorMention } from "@/hooks/editor";
-import { useUser, useWorkspace } from "@/hooks/store";
+import { useMember, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
+import { type TCustomEventHandlers, useRealtimePageEvents } from "@/hooks/use-realtime-page-events";
 // plane web components
 import { EditorAIMenu } from "@/plane-web/components/pages";
+import { MultipleDeletePagesModal } from "@/plane-web/components/pages/modals/multiple-page-delete-modal";
+// plane web store
+import { EPageStoreType } from "@/plane-web/hooks/store";
 // plane web hooks
+import { useEditorEmbeds } from "@/plane-web/hooks/use-editor-embed";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
-import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
+import { PageEditorHeaderRoot } from "./header";
 
+// Add a CSS keyframe animation
 export type TEditorBodyConfig = {
   fileHandler: TFileHandler;
 };
 
+// Define the structure of action-specific data
 export type TEditorBodyHandlers = {
   fetchEntity: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
+  getRedirectionLink: (pageId?: string) => string;
 };
 
 type Props = {
   config: TEditorBodyConfig;
-  editorRef: React.RefObject<EditorRefApi>;
   editorReady: boolean;
+  editorForwardRef: React.RefObject<EditorRefApi>;
   handleConnectionStatus: Dispatch<SetStateAction<boolean>>;
-  handleEditorReady: Dispatch<SetStateAction<boolean>>;
+  handleEditorReady: (status: boolean) => void;
   handlers: TEditorBodyHandlers;
   page: TPageInstance;
-  sidePeekVisible: boolean;
   webhookConnectionParams: TWebhookConnectionQueryParams;
   workspaceSlug: string;
+  storeType: EPageStoreType;
+  customRealtimeEventHandlers?: TCustomEventHandlers;
+};
+
+export const generateRandomColor = (input: string): HSL => {
+  // If input is falsy, generate a random seed string.
+  // The random seed is created by converting a random number to base-36 and taking a substring.
+  const seed = input || Math.random().toString(36).substring(2, 8);
+
+  const uniqueId = seed.length.toString() + seed; // Unique identifier based on string length
+  const combinedString = uniqueId + seed;
+
+  // Create a hash value from the combined string.
+  const hash = Array.from(combinedString).reduce((acc, char) => {
+    const charCode = char.charCodeAt(0);
+    return (acc << 5) - acc + charCode;
+  }, 0);
+
+  // Derive the HSL values from the hash.
+  const hue = Math.abs(hash % 360);
+  const saturation = 70; // Maintains a good amount of color
+  const lightness = 70; // Increased lightness for a pastel look
+
+  return { h: hue, s: saturation, l: lightness };
 };
 
 export const PageEditorBody: React.FC<Props> = observer((props) => {
   const {
     config,
-    editorRef,
+    editorForwardRef,
     handleConnectionStatus,
     handleEditorReady,
     handlers,
     page,
-    sidePeekVisible,
+    storeType,
     webhookConnectionParams,
     workspaceSlug,
+    customRealtimeEventHandlers,
   } = props;
   // store hooks
   const { data: currentUser } = useUser();
+  const {
+    data: { is_smooth_cursor_enabled },
+  } = useUserProfile();
   const { getWorkspaceBySlug } = useWorkspace();
+  // states
+  const [deletePageModal, setDeletePageModal] = useState({
+    visible: false,
+    pages: [page],
+  });
+  const { getUserDetails } = useMember();
+
+  const [isVisible, setIsVisible] = useState(false);
+
+  // Delayed animation effect that triggers on mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 100); // Slightly longer delay for smoother coordination
+
+    return () => clearTimeout(timer);
+  }, []);
+
   // derived values
-  const { id: pageId, name: pageTitle, isContentEditable, updateTitle } = page;
+  const { id: pageId, isContentEditable, editorRef, setSyncingStatus } = page;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
-  // issue-embed
-  const { issueEmbedProps } = useIssueEmbed({
+  // all editor embeds
+  const { embedProps } = useEditorEmbeds({
     fetchEmbedSuggestions: handlers.fetchEntity,
+    getRedirectionLink: handlers.getRedirectionLink,
     workspaceSlug,
+    page,
+    storeType,
+    setDeletePageModal,
   });
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: handlers.fetchEntity,
   });
   // editor flaggings
-  const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug);
+  const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString(), storeType);
   // page filters
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // derived values
@@ -89,9 +146,24 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     () => ({
       fontSize,
       fontStyle,
+      wideLayout: isFullWidth,
     }),
-    [fontSize, fontStyle]
+    [fontSize, fontStyle, isFullWidth]
   );
+
+  // Use the new hook to handle page events
+  const { updatePageProperties } = useRealtimePageEvents({
+    storeType,
+    page,
+    getUserDetails,
+    customRealtimeEventHandlers,
+    handlers,
+  });
+
+  // Set syncing status on initial render
+  useEffect(() => {
+    setSyncingStatus("syncing");
+  }, [setSyncingStatus]);
 
   const getAIMenu = useCallback(
     ({ isOpen, onClose }: TAIMenuProps) => (
@@ -112,14 +184,20 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   const handleServerError = useCallback(() => {
     handleConnectionStatus(true);
-  }, [handleConnectionStatus]);
+    setSyncingStatus("error");
+  }, [handleConnectionStatus, setSyncingStatus]);
+
+  const handleServerSynced = useCallback(() => {
+    setSyncingStatus("synced");
+  }, [setSyncingStatus]);
 
   const serverHandler: TServerHandler = useMemo(
     () => ({
       onConnect: handleServerConnect,
       onServerError: handleServerError,
+      onServerSynced: handleServerSynced,
     }),
-    [handleServerConnect, handleServerError]
+    [handleServerConnect, handleServerError, handleServerSynced]
   );
 
   const realtimeConfig: TRealtimeConfig | undefined = useMemo(() => {
@@ -145,46 +223,62 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     () => ({
       id: currentUser?.id ?? "",
       name: currentUser?.display_name ?? "",
-      color: generateRandomColor(currentUser?.id ?? ""),
+      color: hslToHex(generateRandomColor(currentUser?.id ?? "")),
     }),
     [currentUser?.display_name, currentUser?.id]
   );
 
-  if (pageId === undefined || !realtimeConfig) return <PageContentLoader />;
+  const blockWidthClassName = cn(
+    "block bg-transparent w-full max-w-[720px] mx-auto transition-all duration-200 ease-in-out",
+    {
+      "max-w-[1152px]": isFullWidth,
+    }
+  );
+
+  if (pageId === undefined || !realtimeConfig || realtimeConfig.queryParams.parentPageId === undefined)
+    return <PageContentLoader className={blockWidthClassName} />;
 
   return (
-    <div className="flex items-center h-full w-full overflow-y-auto">
-      <Row
-        className={cn("sticky top-0 hidden h-full flex-shrink-0 -translate-x-full py-5 duration-200 md:block", {
-          "translate-x-0": sidePeekVisible,
-          "w-[10rem] lg:w-[14rem]": !isFullWidth,
-          "w-[5%]": isFullWidth,
-        })}
-      >
-        {!isFullWidth && <PageContentBrowser editorRef={editorRef.current} />}
-      </Row>
-      <div
-        className={cn("size-full pt-5 duration-200", {
-          "md:w-[calc(100%-10rem)] xl:w-[calc(100%-28rem)]": !isFullWidth,
-          "md:w-[90%]": isFullWidth,
-        })}
-      >
-        <div className="size-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
-          <PageEditorTitle
-            editorRef={editorRef}
-            title={pageTitle}
-            updateTitle={updateTitle}
-            readOnly={!isContentEditable}
-          />
+    <Row
+      className={`relative size-full flex flex-col overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md`}
+      variant={ERowVariant.HUGGING}
+    >
+      <div id="page-content-container" className="relative w-full flex-shrink-0">
+        {/* table of content */}
+        <div className="page-summary-container absolute h-full right-0 top-[64px] z-[5]">
+          <div className="sticky top-[72px]">
+            <div className="group/page-toc relative px-page-x">
+              <div className="cursor-pointer max-h-[50vh] overflow-hidden">
+                <PageContentBrowser editorRef={editorRef} showOutline />
+              </div>
+              <div className="absolute top-0 right-0 opacity-0 translate-x-1/2 pointer-events-none group-hover/page-toc:opacity-100 group-hover/page-toc:-translate-x-1/4 group-hover/page-toc:pointer-events-auto transition-all duration-300 w-52 max-h-[70vh] overflow-y-scroll vertical-scrollbar scrollbar-sm whitespace-nowrap bg-custom-background-90 p-4 rounded">
+                <PageContentBrowser editorRef={editorRef} />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className={`${isVisible ? "animate-editor-fade-in" : "opacity-0"}`}
+          style={{
+            animation: isVisible ? "editorFadeIn 0.5s var(--ease-out-cubic) forwards" : "none",
+            animationDelay: "100ms",
+          }}
+        >
+          <div className="page-header-container group/page-header">
+            <div className={blockWidthClassName}>
+              <PageEditorHeaderRoot page={page} isEditorVisible={isVisible} />
+            </div>
+          </div>
+
           <CollaborativeDocumentEditorWithRef
             editable={isContentEditable}
             id={pageId}
+            isSmoothCursorEnabled={is_smooth_cursor_enabled}
             fileHandler={config.fileHandler}
             handleEditorReady={handleEditorReady}
-            ref={editorRef}
+            ref={editorForwardRef}
             containerClassName="h-full p-0 pb-64"
             displayConfig={displayConfig}
-            editorClassName="pl-10"
             mentionHandler={{
               searchCallback: async (query) => {
                 const res = await fetchMentions(query);
@@ -192,10 +286,11 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                 return res;
               },
               renderComponent: (props) => <EditorMentionsRoot {...props} />,
+              getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
             }}
-            embedHandler={{
-              issue: issueEmbedProps,
-            }}
+            updatePageProperties={updatePageProperties}
+            embedHandler={embedProps}
+            pageRestorationInProgress={page.restoration.inProgress}
             realtimeConfig={realtimeConfig}
             serverHandler={serverHandler}
             user={userConfig}
@@ -206,12 +301,15 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           />
         </div>
       </div>
-      <div
-        className={cn("hidden xl:block flex-shrink-0 duration-200", {
-          "w-[10rem] lg:w-[14rem]": !isFullWidth,
-          "w-[5%]": isFullWidth,
-        })}
+      <MultipleDeletePagesModal
+        editorRef={editorRef}
+        isOpen={deletePageModal.visible}
+        onClose={() => {
+          setDeletePageModal({ visible: false, pages: [] });
+        }}
+        pages={deletePageModal.pages}
+        storeType={storeType}
       />
-    </div>
+    </Row>
   );
 });

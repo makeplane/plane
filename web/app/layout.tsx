@@ -77,6 +77,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <div id="context-menu-portal" />
+        <div id="editor-portal" />
         <AppProvider>
           <DesktopAppProviderRoot />
           <div
@@ -85,8 +86,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               "app-container"
             )}
           >
-              {/* free trial banner */}
-              <FreeTrialBanner />
+            {/* free trial banner */}
+            <FreeTrialBanner />
             <div className="w-full h-full overflow-hidden relative">{children}</div>
           </div>
         </AppProvider>

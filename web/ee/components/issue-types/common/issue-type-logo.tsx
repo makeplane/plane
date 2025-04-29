@@ -4,6 +4,7 @@ import { TLogoProps } from "@plane/types";
 // ui
 import { EpicIcon, LayersIcon, LUCIDE_ICONS_LIST } from "@plane/ui";
 // helpers
+import { generateIconColors } from "@/helpers/color.helper";
 import { cn } from "@/helpers/common.helper";
 
 export type TIssueTypeLogoSize = "xs" | "sm" | "md" | "lg" | "xl";
@@ -18,15 +19,15 @@ type Props = {
 
 const iconSizeMap = {
   xs: 11,
-  sm: 12.5,
+  sm: 14,
   md: 14.5,
   lg: 18,
-  xl: 25,
+  xl: 24.5,
 };
 
 const containerSizeMap = {
   xs: 15.5,
-  sm: 18,
+  sm: 20,
   md: 21,
   lg: 25.5,
   xl: 35.5,
@@ -34,6 +35,7 @@ const containerSizeMap = {
 
 export const IssueTypeLogo: FC<Props> = (props) => {
   const { icon_props, size = "sm", containerClassName, isDefault = false, isEpic = false } = props;
+
   // derived values
   const LucideIcon = LUCIDE_ICONS_LIST.find((item) => item.name === icon_props?.name);
   const renderDefaultIcon = isDefault && (!icon_props?.name || !icon_props?.background_color);
@@ -41,13 +43,15 @@ export const IssueTypeLogo: FC<Props> = (props) => {
   // if no value, return empty fragment
   if (!icon_props?.name && !isDefault && !isEpic) return <></>;
 
+  const { foreground, background } = generateIconColors(icon_props?.background_color ?? "#000000");
+
   return (
     <>
       <span
         style={{
           height: containerSizeMap[size],
           width: containerSizeMap[size],
-          backgroundColor: icon_props?.background_color,
+          backgroundColor: isEpic ? "transparent" : background,
         }}
         className={cn(
           "flex-shrink-0 grid place-items-center rounded bg-custom-background-80",
@@ -62,13 +66,14 @@ export const IssueTypeLogo: FC<Props> = (props) => {
             width={containerSizeMap[size]}
             height={containerSizeMap[size]}
             className="text-custom-text-300 group-hover/kanban-block:text-custom-text-200"
+            color={foreground}
           />
         ) : renderDefaultIcon ? (
           <LayersIcon
             width={iconSizeMap[size]}
             height={iconSizeMap[size]}
             style={{
-              color: icon_props?.color ?? "#ffffff", // fallback color
+              color: foreground ?? "#ffffff", // fallback color
             }}
           />
         ) : (
@@ -77,7 +82,7 @@ export const IssueTypeLogo: FC<Props> = (props) => {
               style={{
                 height: iconSizeMap[size],
                 width: iconSizeMap[size],
-                color: icon_props?.color ?? "#ffffff", // fallback color
+                color: foreground ?? "#ffffff", // fallback color
               }}
             />
           )

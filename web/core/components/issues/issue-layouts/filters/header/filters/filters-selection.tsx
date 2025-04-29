@@ -18,13 +18,13 @@ import {
   FilterAssignees,
   FilterMentions,
   FilterCreatedBy,
+  FilterDueDate,
   FilterLabels,
   FilterPriority,
   FilterProjects,
   FilterStartDate,
   FilterState,
   FilterStateGroup,
-  FilterTargetDate,
   FilterCycle,
   FilterModule,
   FilterIssueGrouping,
@@ -276,7 +276,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
         {/* target_date */}
         {isFilterEnabled("target_date") && (
           <div className="py-2">
-            <FilterTargetDate
+            <FilterDueDate
               appliedFilters={filters.target_date ?? null}
               handleUpdate={(val) => handleFiltersUpdate("target_date", val)}
               searchQuery={filtersSearchQuery}

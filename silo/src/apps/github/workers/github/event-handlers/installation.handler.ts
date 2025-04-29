@@ -1,6 +1,7 @@
-import { getAPIClient } from "@/services/client";
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { GithubWebhookPayload } from "@plane/etl/github";
+import { E_GITHUB_DISCONNECT_SOURCE } from "@/apps/github/types";
+import { getAPIClient } from "@/services/client";
 
 const apiClient = getAPIClient();
 
@@ -36,6 +37,10 @@ export const handleInstallationDeletion = async (data: GithubWebhookPayload["web
 
     const connection = connections[0];
     // Delete the workspace connection associated with the team
-    await apiClient.workspaceConnection.deleteWorkspaceConnection(connection.id)
+    await apiClient.workspaceConnection.deleteWorkspaceConnection(connection.id, {
+      disconnect_source: E_GITHUB_DISCONNECT_SOURCE.WEBHOOK_DISCONNECT,
+      disconnected_by: "external-service",
+      data: data,
+    });
   }
 };

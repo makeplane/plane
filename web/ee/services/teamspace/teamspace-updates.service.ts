@@ -1,8 +1,6 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import { TTeamspaceActivity, TTeamspaceReaction } from "@plane/types";
-// plane web imports
-import { TTeamspaceComment } from "@/plane-web/types";
+import { TTeamspaceActivity, TTeamspaceReaction, TIssueComment } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -23,8 +21,8 @@ export class TeamspaceUpdatesService extends APIService {
     teamspaceId: string,
     params:
       | {
-        created_at__gt: string;
-      }
+          created_at__gt: string;
+        }
       | object = {}
   ): Promise<TTeamspaceActivity[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/history/`, {
@@ -46,8 +44,8 @@ export class TeamspaceUpdatesService extends APIService {
   async createTeamspaceComment(
     workspaceSlug: string,
     teamspaceId: string,
-    payload: Partial<TTeamspaceComment>
-  ): Promise<TTeamspaceComment> {
+    payload: Partial<TIssueComment>
+  ): Promise<TIssueComment> {
     return this.post(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/comments/`, payload)
       .then((res) => res?.data)
       .catch((err) => {
@@ -61,7 +59,7 @@ export class TeamspaceUpdatesService extends APIService {
    * @param teamspaceId
    * @returns
    */
-  async getTeamspaceComments(workspaceSlug: string, teamspaceId: string): Promise<TTeamspaceComment[]> {
+  async getTeamspaceComments(workspaceSlug: string, teamspaceId: string): Promise<TIssueComment[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/comments/`)
       .then((res) => res?.data)
       .catch((err) => {
@@ -81,8 +79,8 @@ export class TeamspaceUpdatesService extends APIService {
     workspaceSlug: string,
     teamspaceId: string,
     commentId: string,
-    payload: Partial<TTeamspaceComment>
-  ): Promise<void> {
+    payload: Partial<TIssueComment>
+  ): Promise<TIssueComment> {
     return this.patch(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/comments/${commentId}/`, payload)
       .then((res) => res?.data)
       .catch((err) => {
@@ -119,7 +117,10 @@ export class TeamspaceUpdatesService extends APIService {
     commentId: string,
     payload: Partial<TTeamspaceReaction>
   ): Promise<TTeamspaceReaction> {
-    return this.post(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/comments/${commentId}/reactions/`, payload)
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/comments/${commentId}/reactions/`,
+      payload
+    )
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
@@ -133,7 +134,11 @@ export class TeamspaceUpdatesService extends APIService {
    * @param commentId
    * @returns
    */
-  async getTeamspaceCommentReactions(workspaceSlug: string, teamspaceId: string, commentId: string): Promise<TTeamspaceReaction[]> {
+  async getTeamspaceCommentReactions(
+    workspaceSlug: string,
+    teamspaceId: string,
+    commentId: string
+  ): Promise<TTeamspaceReaction[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/comments/${commentId}/reactions/`)
       .then((res) => res?.data)
       .catch((err) => {

@@ -6,9 +6,9 @@ import { LinkIcon, MoreHorizontal, Trash2 } from "lucide-react";
 import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, copyUrlToClipboard } from "@plane/utils";
 // helpers
-import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 // Plane-web
@@ -36,15 +36,22 @@ export const EpicQuickActions: React.FC<Props> = observer((props: Props) => {
 
   // derived values
   const epic = getIssueById(epicId);
-  const epicLink = `${workspaceSlug}/projects/${epic?.project_id}/issues/${epic?.id}`;
   const projectIdentifier = getProjectIdentifierById(epic?.project_id);
+
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug,
+    projectId: epic?.project_id,
+    issueId: epic?.id,
+    projectIdentifier,
+    sequenceId: epic?.sequence_id,
+  });
 
   // handler
   const handleCopyText = () =>
-    copyUrlToClipboard(epicLink).then(() =>
+    copyUrlToClipboard(workItemLink).then(() =>
       setToast({
         type: TOAST_TYPE.INFO,
-        title: `${"common.link_copied"}!`,
+        title: `${t("common.link_copied")}!`,
         message: t("epics.epic_link_copied_to_clipboard"),
       })
     );
@@ -63,7 +70,7 @@ export const EpicQuickActions: React.FC<Props> = observer((props: Props) => {
     {
       key: "remove",
       action: () =>
-        removeEpicFromInitiative(workspaceSlug, initiativeId, epic?.id).then(() => {
+        removeEpicFromInitiative(workspaceSlug, initiativeId, epic?.id).then(async () => {
           setToast({
             title: "Success!",
             type: TOAST_TYPE.SUCCESS,

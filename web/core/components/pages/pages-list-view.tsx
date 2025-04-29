@@ -22,7 +22,7 @@ export const ProjectPagesListView: React.FC<TPageView> = observer((props) => {
   const { isAnyPageAvailable, fetchPagesList } = usePageStore(storeType);
   // fetching pages list
   useSWR(
-    workspaceSlug && projectId && pageType ? `PROJECT_PAGES_${projectId}` : null,
+    workspaceSlug && projectId && pageType ? `PROJECT_PAGES_${projectId}_${pageType}` : null,
     workspaceSlug && projectId && pageType ? () => fetchPagesList(workspaceSlug, projectId, pageType) : null
   );
 

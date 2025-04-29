@@ -1,68 +1,60 @@
 "use client";
 
-import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FileText } from "lucide-react";
-// plane types
-import { TLogoProps } from "@plane/types";
-// ui
-import {
-  Breadcrumbs,
-  EmojiIconPicker,
-  EmojiIconPickerTypes,
-  Header,
-  Loader,
-  setToast,
-  TeamsIcon,
-  TOAST_TYPE,
-} from "@plane/ui";
-// plane uitls
-import { convertHexEmojiToDecimal } from "@plane/utils";
+// plane imports
+import { ICustomSearchSelectOption } from "@plane/types";
+import { Breadcrumbs, CustomSearchSelect, Header, Loader, TeamsIcon } from "@plane/ui";
 // components
-import { BreadcrumbLink, Logo } from "@/components/common";
-import { PageEditInformationPopover } from "@/components/pages";
+import { BreadcrumbLink, Logo, PageAccessIcon, SwitcherLabel } from "@/components/common";
+import { PageHeaderActions } from "@/components/pages/header/actions";
 // helpers
+import { PageSyncingBadge } from "@/components/pages/header/syncing-badge";
 import { getPageName } from "@/helpers/page.helper";
 // plane web hooks
-import { useTeamspaces, usePage, EPageStoreType } from "@/plane-web/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
+// plane web components
+import { CollaboratorsList } from "@/plane-web/components/pages";
+// plane web hooks
+import { useTeamspaces, usePage, EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+
+const storeType = EPageStoreType.TEAMSPACE;
 
 export const TeamspacePageDetailHeader: React.FC = observer(() => {
-  // states
-  const [isOpen, setIsOpen] = useState(false);
   // router
   const { workspaceSlug, teamspaceId, pageId } = useParams();
+  const router = useAppRouter();
   // store hooks
   const { loader, getTeamspaceById } = useTeamspaces();
+  const { getTeamspacePageIds, getPageById } = usePageStore(storeType);
   const page = usePage({
     pageId: pageId?.toString() ?? "",
-    storeType: EPageStoreType.TEAMSPACE,
+    storeType,
   });
   // derived values
   const teamspace = getTeamspaceById(teamspaceId?.toString());
+  const teamspacePageIds = getTeamspacePageIds(teamspaceId?.toString());
 
-  const handlePageLogoUpdate = async (data: TLogoProps) => {
-    if (data) {
-      page
-        ?.updatePageLogo(data)
-        .then(() => {
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Logo Updated successfully.",
-          });
-        })
-        .catch(() => {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Something went wrong. Please try again.",
-          });
-        });
-    }
-  };
+  const switcherOptions = teamspacePageIds
+    ?.map((id) => {
+      const _page = id === pageId ? page : getPageById(id);
+      if (!_page) return;
+      return {
+        value: _page.id,
+        query: _page.name,
+        content: (
+          <div className="flex gap-2 items-center justify-between">
+            <SwitcherLabel logo_props={_page.logo_props} name={getPageName(_page.name)} LabelIcon={FileText} />
+            <PageAccessIcon {..._page} />
+          </div>
+        ),
+      };
+    })
+    .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
 
-  if (!workspaceSlug) return;
+  if (!workspaceSlug || !page) return;
+
   return (
     <Header>
       <Header.LeftItem>
@@ -106,60 +98,28 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
               }
             />
             <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <BreadcrumbLink
-                  label={getPageName(page?.name)}
-                  icon={
-                    <EmojiIconPicker
-                      isOpen={isOpen}
-                      handleToggle={(val: boolean) => setIsOpen(val)}
-                      className="flex items-center justify-center"
-                      buttonClassName="flex items-center justify-center"
-                      label={
-                        <>
-                          {page?.logo_props?.in_use ? (
-                            <Logo logo={page.logo_props} size={16} type="lucide" />
-                          ) : (
-                            <FileText className="size-4 text-custom-text-300" />
-                          )}
-                        </>
-                      }
-                      onChange={(val) => {
-                        let logoValue = {};
-
-                        if (val?.type === "emoji")
-                          logoValue = {
-                            value: convertHexEmojiToDecimal(val.value.unified),
-                            url: val.value.imageUrl,
-                          };
-                        else if (val?.type === "icon") logoValue = val.value;
-
-                        handlePageLogoUpdate({
-                          in_use: val?.type,
-                          [val?.type]: logoValue,
-                        }).finally(() => setIsOpen(false));
-                      }}
-                      defaultIconColor={
-                        page?.logo_props?.in_use && page.logo_props.in_use === "icon"
-                          ? page.logo_props?.icon?.color
-                          : undefined
-                      }
-                      defaultOpen={
-                        page?.logo_props?.in_use && page.logo_props?.in_use === "emoji"
-                          ? EmojiIconPickerTypes.EMOJI
-                          : EmojiIconPickerTypes.ICON
-                      }
-                      disabled={!page?.isContentEditable}
-                    />
+              type="component"
+              component={
+                <CustomSearchSelect
+                  value={pageId}
+                  options={switcherOptions}
+                  label={
+                    <SwitcherLabel logo_props={page?.logo_props} name={getPageName(page?.name)} LabelIcon={FileText} />
                   }
+                  onChange={(value: string) => {
+                    router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${value}`);
+                  }}
                 />
               }
             />
           </Breadcrumbs>
         </div>
       </Header.LeftItem>
-      <Header.RightItem>{page && <PageEditInformationPopover page={page} />}</Header.RightItem>
+      <Header.RightItem>
+        <PageSyncingBadge syncStatus={page.isSyncingWithServer} />
+        <CollaboratorsList page={page} className="bottom-1" />
+        <PageHeaderActions page={page} storeType={storeType} />
+      </Header.RightItem>
     </Header>
   );
 });

@@ -6,7 +6,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 // plane imports
 import { EProductSubscriptionEnum } from "@plane/constants";
 import { PlaneIcon } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, getSubscriptionName } from "@plane/utils";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -28,14 +28,19 @@ export const CloudEditionBadge = observer(() => {
     togglePaidPlanModal,
     handleSuccessModalToggle,
   } = useWorkspaceSubscription();
+  // derived values
+  const currentSubscription = subscriptionDetail?.product;
+  const remainingTrialDays = subscriptionDetail?.remaining_trial_days;
+  const showPaymentButton = !!subscriptionDetail?.show_payment_button;
+  const isOnTrial = !!subscriptionDetail?.is_on_trial;
 
   useEffect(() => {
     const paymentStatus = searchParams.get("payment");
-    if (paymentStatus === "success" && subscriptionDetail?.product === "PRO") {
+    if (paymentStatus === "success" && currentSubscription === EProductSubscriptionEnum.PRO) {
       router.replace(pathname, {}, { showProgressBar: false });
       handleSuccessModalToggle(true);
     }
-  }, [pathname, router, searchParams, subscriptionDetail?.product, handleSuccessModalToggle]);
+  }, [pathname, router, searchParams, currentSubscription, handleSuccessModalToggle]);
 
   const handleProPlanPurchaseModalOpen = () => {
     togglePaidPlanModal(true);
@@ -47,51 +52,44 @@ export const CloudEditionBadge = observer(() => {
     captureEvent("pro_plan_details_modal_opened", {});
   };
 
-  if (!subscriptionDetail) return null;
-
   const renderButtonText = () => {
-    switch (subscriptionDetail.product) {
-      case "FREE":
+    switch (currentSubscription) {
+      case EProductSubscriptionEnum.FREE:
         return "Upgrade plan";
-      case "PRO":
-        return `Pro trial ends
-            ${
-              subscriptionDetail.remaining_trial_days === 0 ? "today" : `in ${subscriptionDetail.remaining_trial_days}d`
-            }
+      case EProductSubscriptionEnum.PRO:
+      case EProductSubscriptionEnum.BUSINESS:
+      case EProductSubscriptionEnum.ENTERPRISE:
+        return `${getSubscriptionName(currentSubscription)} trial ends
+            ${remainingTrialDays === 0 ? "today" : `in ${remainingTrialDays}d`}
             `;
       default:
         return "Upgrade";
     }
   };
 
+  if (!subscriptionDetail || !currentSubscription) return null;
   return (
     <>
       <PaidPlanUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
-      {subscriptionDetail.show_payment_button && (
+      {showPaymentButton && (
         <SubscriptionButton
           className="min-w-24"
-          subscriptionType={EProductSubscriptionEnum.PRO}
+          subscriptionType={currentSubscription}
           handleClick={handleProPlanPurchaseModalOpen}
         >
           {renderButtonText()}
         </SubscriptionButton>
       )}
-
-      {!subscriptionDetail.show_payment_button && (
-        <SubscriptionButton
-          subscriptionType={EProductSubscriptionEnum.PRO}
-          handleClick={handlePaidPlanSuccessModalOpen}
-        >
-          {subscriptionDetail.is_on_trial ? (
-            `Pro trial ends
-            ${
-              subscriptionDetail.remaining_trial_days === 0 ? "today" : `in ${subscriptionDetail.remaining_trial_days}d`
-            }
+      {!showPaymentButton && (
+        <SubscriptionButton subscriptionType={currentSubscription} handleClick={handlePaidPlanSuccessModalOpen}>
+          {isOnTrial ? (
+            `${getSubscriptionName(currentSubscription)} trial ends
+            ${remainingTrialDays === 0 ? "today" : `in ${remainingTrialDays}d`}
             `
           ) : (
             <>
               <PlaneIcon className={cn("size-3")} />
-              Pro
+              {getSubscriptionName(currentSubscription)}
             </>
           )}
         </SubscriptionButton>

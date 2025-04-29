@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, FC } from "react";
+import { useState, FC, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useForm, FormProvider } from "react-hook-form";
 // plane imports
-import { EUserProjectRoles, PROJECT_CREATED, PROJECT_UNSPLASH_COVERS } from "@plane/constants";
+import { DEFAULT_PROJECT_FORM_VALUES, EUserProjectRoles, PROJECT_CREATED } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IProjectBulkAddFormData } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // types
@@ -12,38 +13,35 @@ import { TCreateProjectFormProps } from "@/ce/components/projects/create/root";
 // constants
 import ProjectCommonAttributes from "@/components/project/create/common-attributes";
 import ProjectCreateHeader from "@/components/project/create/header";
-// helpers
-import { getRandomEmoji } from "@/helpers/emoji.helper";
 // hooks
 import { useEventTracker, useMember, useProject, useUser, useWorkspace } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web imports
+import { useProjectCreation } from "@/plane-web/hooks/context/use-project-creation";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import { TProject } from "@/plane-web/types/projects";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+// local imports
 import ProjectAttributes from "./attributes";
+import { ProjectCreationProvider } from "./provider";
 
-const defaultValues: Partial<TProject> = {
-  cover_image_url: PROJECT_UNSPLASH_COVERS[Math.floor(Math.random() * PROJECT_UNSPLASH_COVERS.length)],
-  description: "",
-  logo_props: {
-    in_use: "emoji",
-    emoji: {
-      value: getRandomEmoji(),
-    },
-  },
-  identifier: "",
-  name: "",
-  network: 2,
-  project_lead: null,
-};
+export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) => (
+  <ProjectCreationProvider templateId={props.templateId}>
+    <CreateProjectFormBase {...props} />
+  </ProjectCreationProvider>
+));
 
-export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) => {
+export const CreateProjectFormBase: FC<TCreateProjectFormProps> = observer((props) => {
   const { setToFavorite, workspaceSlug, onClose, handleNextStep, data, updateCoverImageStatus } = props;
   // store
   const { captureProjectEvent } = useEventTracker();
   const { addProjectToFavorites, createProject } = useProject();
+  const { createProjectUsingTemplate } = useProjectAdvanced();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
+  // store hooks
+  const { t } = useTranslation();
   const { currentWorkspace } = useWorkspace();
   const {
     project: { bulkAddMembersToProject },
@@ -51,14 +49,12 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
   } = useMember();
   const { data: currentUser } = useUser();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
-  // derived values
-  const isProjectGroupingFlagEnabled = useFlag(workspaceSlug.toString(), "PROJECT_GROUPING");
-  const isProjectGroupingEnabled =
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) && isProjectGroupingFlagEnabled;
-
+  const { isMobile } = usePlatformOS();
+  // context hooks
+  const { projectTemplateId, isApplyingTemplate, handleTemplateChange } = useProjectCreation();
   // form info
   const methods = useForm<TProject>({
-    defaultValues: { ...defaultValues, ...data },
+    defaultValues: { ...DEFAULT_PROJECT_FORM_VALUES, ...data },
     reValidateMode: "onChange",
   });
   const {
@@ -67,7 +63,22 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
     reset,
     setValue,
   } = methods;
-  const { isMobile } = usePlatformOS();
+  // derived values
+  const isProjectGroupingFlagEnabled = useFlag(workspaceSlug.toString(), "PROJECT_GROUPING");
+  const isProjectGroupingEnabled =
+    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) && isProjectGroupingFlagEnabled;
+  const isLoading = isSubmitting || isApplyingTemplate;
+
+  useEffect(() => {
+    if (projectTemplateId) {
+      handleTemplateChange({
+        workspaceSlug,
+        reset,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectTemplateId]);
+
   const handleAddToFavorites = (projectId: string) => {
     if (!workspaceSlug) return;
 
@@ -82,6 +93,8 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
 
   const onSubmit = async (formData: Partial<TProject>) => {
     // Get the members payload for bulk add
+    const allowAssetStatusUpdate = !projectTemplateId;
+    const allowBulkAddMembers = isProjectGroupingEnabled || projectTemplateId;
     const membersPayload: IProjectBulkAddFormData["members"] = [];
     if (formData.members) {
       formData.members.forEach((memberId) => {
@@ -103,16 +116,20 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
       formData.cover_image_asset = null;
     }
 
-    return createProject(workspaceSlug.toString(), formData)
+    const createProjectService = projectTemplateId
+      ? createProjectUsingTemplate.bind(createProjectUsingTemplate, workspaceSlug.toString(), projectTemplateId)
+      : createProject.bind(createProject, workspaceSlug.toString());
+
+    return createProjectService(formData)
       .then(async (res) => {
-        if (coverImage) {
+        if (coverImage && allowAssetStatusUpdate) {
           await updateCoverImageStatus(res.id, coverImage);
         }
         const newPayload = {
           ...res,
           state: "SUCCESS",
         };
-        if (isProjectGroupingEnabled && membersPayload.length > 0) {
+        if (allowBulkAddMembers && membersPayload.length > 0) {
           bulkAddMembersToProject(workspaceSlug.toString(), res.id, {
             members: membersPayload,
           });
@@ -132,7 +149,7 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
         handleNextStep(res.id);
       })
       .catch((err) => {
-        Object.keys(err.data).map((key) => {
+        Object.keys(err?.data ?? {}).map((key) => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
@@ -148,6 +165,7 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
         });
       });
   };
+
   const handleClose = () => {
     onClose();
     setIsChangeInIdentifierRequired(true);
@@ -155,6 +173,7 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
       reset();
     }, 300);
   };
+
   if (!currentWorkspace) return null;
   return (
     <FormProvider {...methods}>
@@ -178,10 +197,10 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
 
           <div className="flex justify-end gap-2 pt-4 border-t border-custom-border-100">
             <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={6}>
-              Cancel
+              {t("common.cancel")}
             </Button>
-            <Button variant="primary" type="submit" size="sm" loading={isSubmitting} tabIndex={7}>
-              {isSubmitting ? "Creating" : "Create project"}
+            <Button variant="primary" type="submit" size="sm" loading={isLoading} tabIndex={7}>
+              {isSubmitting ? t("common.creating") : t("create_project")}
             </Button>
           </div>
         </form>

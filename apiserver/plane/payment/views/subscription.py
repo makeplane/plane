@@ -116,6 +116,22 @@ class PurchaseSubscriptionSeatEndpoint(BaseAPIView):
             # Get the workspace
             workspace = Workspace.objects.get(slug=slug)
 
+            workspace_license = WorkspaceLicense.objects.filter(
+                workspace=workspace
+            ).first()
+
+            if not workspace_license:
+                return Response(
+                    {"error": "Workspace license not found"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if workspace_license.is_cancelled:
+                return Response(
+                    {"error": "Subscription is cancelled, seat cannot be updated"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             quantity = request.data.get(
                 "quantity",
                 WorkspaceMember.objects.filter(
@@ -199,6 +215,24 @@ class RemoveUnusedSeatsEndpoint(BaseAPIView):
         try:
             # Get the workspace
             workspace = Workspace.objects.get(slug=slug)
+
+            workspace_license = WorkspaceLicense.objects.filter(
+                workspace=workspace
+            ).first()
+
+            # If the workspace license is not found then resync the workspace license
+            if not workspace_license:
+                return Response(
+                    {"error": "Workspace license not found"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Check if the subscription is cancelled
+            if workspace_license.is_cancelled:
+                return Response(
+                    {"error": "Subscription is cancelled, seat cannot be updated"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             # Check the active paid users in the workspace
             workspace_member_count = WorkspaceMember.objects.filter(

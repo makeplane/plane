@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { EUpdateStatus } from "@plane/types/src/enums";
 import { Button, TextArea } from "@plane/ui";
-import { EProjectUpdateStatus, TProjectUpdate } from "@/plane-web/types";
+import { TProjectUpdate } from "@/plane-web/types";
 import { StatusDropdown } from "./status-dropdown";
 
 type TProps = {
@@ -12,7 +13,7 @@ export const NewUpdate = (props: TProps) => {
   const { handleClose, handleCreate, initialValues } = props;
 
   const [input, setInput] = useState(initialValues?.description ?? "");
-  const [selectedStatus, setSelectedStatus] = useState(initialValues?.status ?? EProjectUpdateStatus.ON_TRACK);
+  const [selectedStatus, setSelectedStatus] = useState(initialValues?.status ?? EUpdateStatus.ON_TRACK);
 
   return (
     <div className="border border-custom-border-100 rounded-md p-4 flex flex-col gap-4 mb-4">

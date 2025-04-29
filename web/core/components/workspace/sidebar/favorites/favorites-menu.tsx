@@ -13,6 +13,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight, FolderPlus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { IFavorite } from "@plane/types";
@@ -54,7 +55,7 @@ export const SidebarFavoritesMenu = observer(() => {
   const { isMobile } = usePlatformOS();
 
   // local storage
-  const { setValue: toggleFavoriteMenu, storedValue } = useLocalStorage<boolean>("is_favorite_menu_open", false);
+  const { setValue: toggleFavoriteMenu, storedValue } = useLocalStorage<boolean>(IS_FAVORITE_MENU_OPEN, false);
   // derived values
   const isFavoriteMenuOpen = !!storedValue;
   // refs
@@ -251,33 +252,37 @@ export const SidebarFavoritesMenu = observer(() => {
                 orderBy(Object.values(groupedFavorites), "sequence", "desc")
                   .filter((fav) => !fav.parent)
                   .map((fav, index, { length }) => (
-                    <Tooltip
-                      key={fav.id}
-                      tooltipContent={fav?.entity_data ? fav.entity_data?.name : fav?.name}
-                      position="right"
-                      className="ml-2"
-                      disabled={!sidebarCollapsed}
-                      isMobile={isMobile}
-                    >
-                      {fav.is_folder ? (
-                        <FavoriteFolder
-                          favorite={fav}
-                          isLastChild={index === length - 1}
-                          handleRemoveFromFavorites={handleRemoveFromFavorites}
-                          handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
-                          handleDrop={handleDrop}
-                        />
-                      ) : (
-                        <FavoriteRoot
-                          workspaceSlug={workspaceSlug.toString()}
-                          favorite={fav}
-                          isLastChild={index === length - 1}
-                          parentId={undefined}
-                          handleRemoveFromFavorites={handleRemoveFromFavorites}
-                          handleDrop={handleDrop}
-                        />
+                    <>
+                      {fav?.id && (
+                        <Tooltip
+                          key={fav?.id}
+                          tooltipContent={fav?.entity_data ? fav?.entity_data?.name : fav?.name}
+                          position="right"
+                          className="ml-2"
+                          disabled={!sidebarCollapsed}
+                          isMobile={isMobile}
+                        >
+                          {fav?.is_folder ? (
+                            <FavoriteFolder
+                              favorite={fav}
+                              isLastChild={index === length - 1}
+                              handleRemoveFromFavorites={handleRemoveFromFavorites}
+                              handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
+                              handleDrop={handleDrop}
+                            />
+                          ) : (
+                            <FavoriteRoot
+                              workspaceSlug={workspaceSlug.toString()}
+                              favorite={fav}
+                              isLastChild={index === length - 1}
+                              parentId={undefined}
+                              handleRemoveFromFavorites={handleRemoveFromFavorites}
+                              handleDrop={handleDrop}
+                            />
+                          )}
+                        </Tooltip>
                       )}
-                    </Tooltip>
+                    </>
                   ))
               )}
             </Disclosure.Panel>

@@ -4,9 +4,10 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { CircleAlert, CircleCheck, RefreshCw } from "lucide-react";
-// ui
+// plane imports
 import { AlertModalCore, Button, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
+import { getSubscriptionName } from "@plane/utils";
 import { cn } from "@/helpers/common.helper";
 // plane web hooks
 import { useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web/hooks/store";
@@ -32,7 +33,7 @@ export const SelfManagedLicenseActions = observer((props: TSelfManagedLicenseAct
   // derived values
   const isSelfManaged = subscriptionDetail?.is_self_managed;
   const product = subscriptionDetail?.product;
-  const planName = product && product.charAt(0) + product.slice(1).toLowerCase();
+  const planName = product && getSubscriptionName(product);
 
   const handleSyncLicense = () => {
     setLicenseSyncStatus("syncing");
@@ -73,71 +74,74 @@ export const SelfManagedLicenseActions = observer((props: TSelfManagedLicenseAct
       });
   };
 
+  if (!isSelfManaged) return null;
   return (
-    <>
-      {isSelfManaged && (
-        <div className="flex w-full items-center px-0.5">
-          {showSyncButton && (
-            <Button
-              variant="link-neutral"
-              size="sm"
-              className="p-0 py-1 w-20 items-center justify-start underline underline-offset-2"
-              onClick={handleSyncLicense}
-              disabled={licenseSyncStatus !== "synced"}
-            >
-              {licenseSyncStatus === "synced" && "Sync plan"}
-              {licenseSyncStatus === "syncing" && (
-                <>
-                  Syncing
-                  <RefreshCw size={10} className={cn("flex-shrink-0 mt-0.5 animate-spin")} />
-                </>
-              )}
-              {licenseSyncStatus === "success" && (
-                <>
-                  Synced
-                  <CircleCheck size={10} className="flex-shrink-0 mt-0.5" />
-                </>
-              )}
-              {licenseSyncStatus === "error" && (
-                <>
-                  Sync error
-                  <CircleAlert size={10} className="flex-shrink-0 mt-0.5" />
-                </>
-              )}
-            </Button>
-          )}
-          {showDeactivateButton && (
+    <div className="flex w-full items-center px-0.5">
+      {showSyncButton && (
+        <Button
+          variant="link-neutral"
+          size="sm"
+          className="p-0 py-1 w-20 items-center justify-start underline underline-offset-2"
+          onClick={handleSyncLicense}
+          disabled={licenseSyncStatus !== "synced"}
+        >
+          {licenseSyncStatus === "synced" && "Sync plan"}
+          {licenseSyncStatus === "syncing" && (
             <>
-              <AlertModalCore
-                handleClose={() => setIsDeactivationModalOpen(false)}
-                handleSubmit={handleDeactivation}
-                isSubmitting={isDeactivating}
-                isOpen={isDeactivationModalOpen}
-                title="Delink license key"
-                content={
-                  <>
-                    All <span className="font-medium">{planName}</span> features will stop working when you do this.
-                    Proceed to reactivate this workspace with another license key or downgrade to the Free plan.
-                  </>
-                }
-                secondaryButtonText="Cancel"
-                primaryButtonText={{
-                  loading: "Delinking",
-                  default: "Delink",
-                }}
-              />
-              <Button
-                variant="link-danger"
-                size="sm"
-                className="p-0 py-1 justify-start underline decoration-dashed underline-offset-2"
-                onClick={() => setIsDeactivationModalOpen(true)}
-              >
-                Delink license key
-              </Button>
+              <RefreshCw size={10} className={cn("flex-shrink-0 mt-0.5 animate-spin transition-all duration-700")} />
+              Syncing
             </>
           )}
-        </div>
+          {licenseSyncStatus === "success" && (
+            <>
+              <CircleCheck
+                size={10}
+                className="flex-shrink-0 mt-0.5 transition-all duration-300 animate-in zoom-in-50"
+              />
+              Synced
+            </>
+          )}
+          {licenseSyncStatus === "error" && (
+            <>
+              <CircleAlert
+                size={10}
+                className="flex-shrink-0 mt-0.5 transition-all duration-300 animate-in zoom-in-50"
+              />
+              Sync error
+            </>
+          )}
+        </Button>
       )}
-    </>
+      {showDeactivateButton && (
+        <>
+          <AlertModalCore
+            handleClose={() => setIsDeactivationModalOpen(false)}
+            handleSubmit={handleDeactivation}
+            isSubmitting={isDeactivating}
+            isOpen={isDeactivationModalOpen}
+            title="Delink license key"
+            content={
+              <>
+                All <span className="font-medium">{planName}</span> features will stop working when you do this. Proceed
+                to reactivate this workspace with another license key or downgrade to the Free plan.
+              </>
+            }
+            secondaryButtonText="Cancel"
+            primaryButtonText={{
+              loading: "Delinking",
+              default: "Delink",
+            }}
+          />
+          <Button
+            variant="link-danger"
+            size="sm"
+            className="p-0 py-1 justify-start underline decoration-dashed underline-offset-2"
+            onClick={() => setIsDeactivationModalOpen(true)}
+          >
+            Delink license key
+          </Button>
+        </>
+      )}
+    </div>
   );
 });

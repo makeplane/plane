@@ -4,10 +4,10 @@ import { useParams } from "next/navigation";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TStateTransitionMap } from "@plane/types";
 import { ApproverIcon, WorkflowIcon } from "@plane/ui";
 // plane web imports
 import { useFlag } from "@/plane-web/hooks/store";
-import { TStateTransitionMap } from "@/plane-web/types";
 
 type Props = {
   currentTransitionMap?: TStateTransitionMap;
@@ -34,22 +34,28 @@ export const StateTransitionCount = observer((props: Props) => {
       {transitionsCount > 0 && (
         <>
           <div className="flex px-1 py-0.5 items-center">
-            <WorkflowIcon className="size-3.5 text-custom-text-300" strokeWidth={2} />
+            <WorkflowIcon className="flex-shrink-0 size-3.5 text-custom-text-300" strokeWidth={2} />
             <span className="text-xs font-medium text-custom-text-400 line-clamp-1 pl-1">
-              {t("workflows.workflow_states.state_change_count", { count: transitionsCount })}
+              <span className="hidden lg:block">
+                {t("workflows.workflow_states.state_change_count", { count: transitionsCount })}
+              </span>
+              <span className="block lg:hidden">{transitionsCount}</span>
             </span>
           </div>
         </>
       )}
       {uniqueApproversCount > 0 && (
         <>
-          <svg viewBox="0 0 2 2" className="h-1 w-1 text-custom-text-300">
+          <svg viewBox="0 0 2 2" className="flex-shrink-0 h-1 w-1 text-custom-text-300">
             <circle cx={1} cy={1} r={1} className="fill-current" />
           </svg>
           <div className="flex px-1 py-0.5 items-center">
-            <ApproverIcon className="size-3.5 text-custom-text-300" strokeWidth={2} />
+            <ApproverIcon className="flex-shrink-0 size-3.5 text-custom-text-300" strokeWidth={2} />
             <span className="text-xs font-medium text-custom-text-400 line-clamp-1 pl-1">
-              {t("workflows.workflow_states.movers_count", { count: uniqueApproversCount })}
+              <span className="hidden lg:block">
+                {t("workflows.workflow_states.movers_count", { count: uniqueApproversCount })}
+              </span>
+              <span className="block lg:hidden">{uniqueApproversCount}</span>
             </span>
           </div>
         </>

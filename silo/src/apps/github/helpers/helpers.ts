@@ -1,10 +1,10 @@
-import { E_INTEGRATION_KEYS, TServiceCredentials } from "@plane/etl/core";
+import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 
-import { GithubWebhookPayload } from "@plane/etl/github";
+import { GithubPullRequest } from "@plane/etl/github";
 import { TWorkspaceCredential } from "@plane/types";
 import { getAPIClient } from "@/services/client";
 import { verifyEntityConnection, verifyWorkspaceConnection } from "@/types";
-import { GithubConnectionDetails, githubEntityConnectionSchema, githubWorkspaceConnectionSchema } from "../types";
+import { githubEntityConnectionSchema, githubWorkspaceConnectionSchema } from "../types";
 
 const apiClient = getAPIClient();
 
@@ -13,12 +13,14 @@ export const getConnectionDetails = async (props: {
   credentials: TWorkspaceCredential;
   installationId: string;
   repositoryId: string;
-}): Promise<GithubConnectionDetails> => {
+}): Promise<{
+  workspaceConnection: ReturnType<typeof verifyWorkspaceConnection>;
+  entityConnection?: ReturnType<typeof verifyEntityConnection>;
+}> => {
   // Get the workspace connection for the installation
   const workspaceConnection = await apiClient.workspaceConnection.listWorkspaceConnections({
     workspace_id: props.credentials.workspace_id!,
-    connection_type: E_INTEGRATION_KEYS.GITHUB,
-    connection_id: props.accountId.toString(),
+    credential_id: props.credentials.id,
   });
 
   if (workspaceConnection.length === 0) {
@@ -32,17 +34,17 @@ export const getConnectionDetails = async (props: {
     entity_id: props.repositoryId.toString(),
   });
 
-  if (entityConnection.length === 0) {
-    throw new Error("No entity connection found for the given installation");
-  }
-
-  // Parse the config for the workspace and entity connection
+  // Parse the config for the workspace connection
   const verifiedWorkspaceConnection = verifyWorkspaceConnection(
     githubWorkspaceConnectionSchema,
     workspaceConnection[0] as any
   );
 
-  const verifiedEntityConnection = verifyEntityConnection(githubEntityConnectionSchema, entityConnection[0] as any);
+  // Only verify entity connection if it exists
+  const verifiedEntityConnection =
+    entityConnection.length > 0
+      ? verifyEntityConnection(githubEntityConnectionSchema, entityConnection[0] as any)
+      : undefined;
 
   return {
     workspaceConnection: verifiedWorkspaceConnection,
@@ -58,12 +60,9 @@ export type MergeRequestEvent =
   | "MR_MERGED"
   | "MR_CLOSED";
 
-export function classifyPullRequestEvent(
-  action: string,
-  pull_request: GithubWebhookPayload["pull-request-webhook"]
-): MergeRequestEvent | undefined {
+export function classifyPullRequestEvent(pull_request: GithubPullRequest): MergeRequestEvent | undefined {
   // Handle terminal states first
-  if (action === "closed") {
+  if (pull_request.state === "closed") {
     return pull_request.merged ? "MR_MERGED" : "MR_CLOSED";
   }
 
@@ -72,22 +71,13 @@ export function classifyPullRequestEvent(
     return "DRAFT_MR_OPENED";
   }
 
-  // Handle specific actions that indicate state
-  if (action === "ready_for_review") {
-    return "MR_READY_FOR_MERGE";
-  }
-
-  if (action === "review_requested") {
-    return "MR_REVIEW_REQUESTED";
-  }
-
   // Check if PR is ready for merge based on properties
   if (!pull_request.draft && pull_request.mergeable && pull_request.mergeable_state === "clean") {
     return "MR_READY_FOR_MERGE";
   }
 
   // Handle opened/reopened states
-  if (action === "opened" || action === "reopened") {
+  if (pull_request.state === "open") {
     return "MR_OPENED";
   }
 

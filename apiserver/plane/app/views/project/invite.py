@@ -27,8 +27,11 @@ from plane.db.models import (
     ProjectMemberInvite,
     User,
     WorkspaceMember,
+    Project,
     IssueUserProperty,
 )
+from plane.db.models.project import ProjectNetwork
+from plane.utils.host import base_host
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 
 
@@ -102,7 +105,7 @@ class ProjectInvitationsViewset(BaseViewSet):
         project_invitations = ProjectMemberInvite.objects.bulk_create(
             project_invitations, batch_size=10, ignore_conflicts=True
         )
-        current_site = request.META.get("HTTP_ORIGIN")
+        current_site = base_host(request=request, is_app=True)
 
         # Send invitations
         for invitation in project_invitations:
@@ -131,6 +134,7 @@ class UserProjectInvitationsViewset(BaseViewSet):
             .select_related("workspace", "workspace__owner", "project")
         )
 
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def create(self, request, slug):
         project_ids = request.data.get("project_ids", [])
 
@@ -139,11 +143,20 @@ class UserProjectInvitationsViewset(BaseViewSet):
             member=request.user, workspace__slug=slug, is_active=True
         )
 
-        if workspace_member.role not in [ROLE.ADMIN.value, ROLE.MEMBER.value]:
-            return Response(
-                {"error": "You do not have permission to join the project"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
+        # Get all the projects
+        projects = Project.objects.filter(
+            id__in=project_ids, workspace__slug=slug
+        ).only("id", "network")
+        # Check if user has permission to join each project
+        for project in projects:
+            if (
+                project.network == ProjectNetwork.SECRET.value
+                and workspace_member.role != ROLE.ADMIN.value
+            ):
+                return Response(
+                    {"error": "Only workspace admins can join private project"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
         workspace_role = workspace_member.role
         workspace = workspace_member.workspace

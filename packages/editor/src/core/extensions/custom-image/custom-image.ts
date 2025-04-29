@@ -22,7 +22,7 @@ declare module "@tiptap/core" {
     imageComponent: {
       insertImageComponent: ({ file, pos, event }: InsertImageComponentProps) => ReturnType;
       uploadImage: (blockId: string, file: File) => () => Promise<string> | undefined;
-      updateAssetsUploadStatus: (updatedStatus: TFileHandler["assetsUploadStatus"]) => () => void;
+      updateAssetsUploadStatus?: (updatedStatus: TFileHandler["assetsUploadStatus"]) => () => void;
       getImageSource?: (path: string) => () => Promise<string>;
       restoreImage: (src: string) => () => Promise<void>;
     };
@@ -35,6 +35,9 @@ export const getImageComponentImageFileMap = (editor: Editor) =>
 export interface UploadImageExtensionStorage {
   assetsUploadStatus: TFileHandler["assetsUploadStatus"];
   fileMap: Map<string, UploadEntity>;
+  deletedImageSet: Map<string, boolean>;
+  uploadInProgress: boolean;
+  maxFileSize: number;
 }
 
 export type UploadEntity = ({ event: "insert" } | { event: "drop"; file: File }) & { hasOpenedFileInputOnce?: boolean };

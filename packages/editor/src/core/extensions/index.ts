@@ -23,3 +23,6 @@ export * from "./quote";
 export * from "./read-only-extensions";
 export * from "./side-menu";
 export * from "./text-align";
+export * from "./clipboard";
+export * from "./smooth-cursor";
+export * from "./code-mark";

@@ -1,9 +1,9 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { E_FEATURE_FLAGS } from "@plane/constants";
-// helpers
-import { cn } from "@/helpers/common.helper";
+// plane imports
+import { E_FEATURE_FLAGS, EProductSubscriptionEnum } from "@plane/constants";
+import { cn } from "@plane/utils";
 // store
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web hooks
@@ -23,7 +23,7 @@ export const UpgradeBadge: FC<TUpgradeBadge> = observer((props) => {
   const { currentWorkspaceSubscribedPlanDetail } = useWorkspaceSubscription();
   // derived values
   const isFeatureEnabled = flag ? useFlag(workspaceSlug?.toString(), flag) : false;
-  const isSubscribedToPro = currentWorkspaceSubscribedPlanDetail?.product === "PRO";
+  const isSubscribedToPro = currentWorkspaceSubscribedPlanDetail?.product === EProductSubscriptionEnum.PRO;
 
   if (!currentWorkspaceSubscribedPlanDetail || isFeatureEnabled || isSubscribedToPro) {
     return null;

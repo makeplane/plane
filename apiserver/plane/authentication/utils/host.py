@@ -1,18 +1,16 @@
-# Python imports
-from urllib.parse import urlsplit
-
 # Django imports
 from django.conf import settings
+from django.http import HttpRequest
+# Third party imports
+from rest_framework.request import Request
 
+# Module imports
+from plane.utils.ip_address import get_client_ip
 
-def base_host(request, is_admin=False, is_space=False, is_app=False):
+def base_host(request: Request | HttpRequest, is_admin: bool = False, is_space: bool = False, is_app: bool = False) -> str:
     """Utility function to return host / origin from the request"""
     # Calculate the base origin from request
-    base_origin = str(
-        request.META.get("HTTP_ORIGIN")
-        or f"{urlsplit(request.META.get('HTTP_REFERER')).scheme}://{urlsplit(request.META.get('HTTP_REFERER')).netloc}"
-        or f"""{"https" if request.is_secure() else "http"}://{request.get_host()}"""
-    )
+    base_origin = settings.WEB_URL or settings.APP_BASE_URL
 
     # Admin redirections
     if is_admin:
@@ -38,5 +36,5 @@ def base_host(request, is_admin=False, is_space=False, is_app=False):
     return base_origin
 
 
-def user_ip(request):
-    return str(request.META.get("REMOTE_ADDR"))
+def user_ip(request: Request | HttpRequest) -> str:
+    return get_client_ip(request=request)

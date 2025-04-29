@@ -28,7 +28,7 @@ export const InitiativeDetailRoot = observer((props: Props) => {
   const [isEpicModalOpen, setIsEpicModalOpen] = useState(false);
   // store hooks
   const {
-    initiative: { getInitiativeById, updateInitiative, addEpicsToInitiative },
+    initiative: { getInitiativeById, updateInitiative, addEpicsToInitiative, fetchInitiativeAnalytics },
   } = useInitiatives();
   const { workspaceProjectIds } = useProject();
   const { allowPermissions } = useUserPermissions();
@@ -48,7 +48,8 @@ export const InitiativeDetailRoot = observer((props: Props) => {
     if (!initiativeId) return;
 
     await updateInitiative(workspaceSlug?.toString(), initiativeId, { project_ids: initiativeProjectIds })
-      .then(() => {
+      .then(async () => {
+        fetchInitiativeAnalytics(workspaceSlug, initiativeId);
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("toast.success"),
@@ -66,7 +67,8 @@ export const InitiativeDetailRoot = observer((props: Props) => {
 
   const handleAddEpicToInitiative = async (epicIds: string[]) => {
     try {
-      addEpicsToInitiative(workspaceSlug?.toString(), initiativeId, epicIds).then(() => {
+      addEpicsToInitiative(workspaceSlug?.toString(), initiativeId, epicIds).then(async () => {
+        fetchInitiativeAnalytics(workspaceSlug, initiativeId);
         setToast({
           title: t("toast.success"),
           type: TOAST_TYPE.SUCCESS,

@@ -6,6 +6,7 @@ from django.db.models import Prefetch, Q
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 
+
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
@@ -46,7 +47,9 @@ class EpicActivityEndpoint(BaseAPIView):
             .select_related("actor", "workspace", "issue", "project")
         ).order_by("created_at")
 
-        if not check_workspace_feature_flag(feature_key=FeatureFlag.EPICS, slug=slug):
+        if not check_workspace_feature_flag(
+            feature_key=FeatureFlag.EPICS, slug=slug, user_id=str(request.user.id)
+        ):
             epic_activities = epic_activities.filter(~Q(field="type"))
 
         epic_comments = (

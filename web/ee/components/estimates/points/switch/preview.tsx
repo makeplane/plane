@@ -3,6 +3,8 @@ import { observer } from "mobx-react";
 import { Info, MoveRight } from "lucide-react";
 import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
 import { Tooltip } from "@plane/ui";
+import { convertMinutesToHoursMinutesString } from "@plane/utils";
+import { EstimateInputRoot } from "@/components/estimates/inputs/root";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -17,6 +19,7 @@ type TEstimatePointItemSwitchPreview = {
   estimatePoint: TEstimatePointsObject;
   handleEstimatePoint: (value: string) => void;
   estimatePointError?: TEstimateTypeErrorObject | undefined;
+  estimateType?: TEstimateSystemKeys;
 };
 
 export const EstimatePointItemSwitchPreview: FC<TEstimatePointItemSwitchPreview> = observer((props) => {
@@ -27,6 +30,7 @@ export const EstimatePointItemSwitchPreview: FC<TEstimatePointItemSwitchPreview>
     estimatePoint: currentEstimatePoint,
     handleEstimatePoint,
     estimatePointError,
+    estimateType,
   } = props;
   // hooks
   const { asJson: estimatePoint } = useEstimatePoint(estimateId, estimatePointId);
@@ -51,8 +55,10 @@ export const EstimatePointItemSwitchPreview: FC<TEstimatePointItemSwitchPreview>
   if (!estimatePoint) return <></>;
   return (
     <div className="relative flex items-center gap-2">
-      <div className="w-full border border-custom-border-200 rounded p-2.5 bg-custom-background-90">
-        {estimatePoint?.value}
+      <div className="w-full border border-custom-border-200 rounded px-3 py-2 bg-custom-background-90 text-sm">
+        {estimateType === EEstimateSystem.TIME
+          ? convertMinutesToHoursMinutesString(Number(estimatePoint?.value))
+          : estimatePoint?.value}
       </div>
       <div className="flex-shrink-0 w-4 h-4 relative flex justify-center items-center">
         <MoveRight size={12} />
@@ -63,13 +69,10 @@ export const EstimatePointItemSwitchPreview: FC<TEstimatePointItemSwitchPreview>
           estimatePointError?.message ? `border-red-500` : `border-custom-border-200`
         )}
       >
-        <input
+        <EstimateInputRoot
+          estimateType={estimateSystemSwitchType}
+          handleEstimateInputValue={handleEstimatePointUpdate}
           value={currentEstimatePoint?.value}
-          onChange={(e) => handleEstimatePointUpdate(e.target.value)}
-          className="border-none focus:ring-0 focus:border-0 focus:outline-none p-2.5 w-full bg-transparent"
-          autoFocus
-          placeholder="Enter estimate point value"
-          {...inputProps}
         />
         {estimatePointError?.message && (
           <>

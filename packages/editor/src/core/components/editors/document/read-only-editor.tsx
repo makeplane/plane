@@ -10,6 +10,8 @@ import { IssueWidget } from "@/extensions";
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
+// plane editor extensions
+import { PageEmbedReadOnlyExtension } from "@/plane-editor/extensions";
 // plane web types
 import { TReadOnlyEmbedConfig } from "@/plane-editor/types";
 // types
@@ -55,6 +57,14 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     extensions.push(
       IssueWidget({
         widgetCallback: embedHandler.issue.widgetCallback,
+      })
+    );
+  }
+
+  if (embedHandler?.page) {
+    extensions.push(
+      PageEmbedReadOnlyExtension({
+        widgetCallback: embedHandler.page.widgetCallback,
       })
     );
   }

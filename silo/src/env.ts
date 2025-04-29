@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv";
 import { z } from "zod";
-
+import { logger } from "@/logger";
 dotenv.config();
 
 const envSchema = z.object({
@@ -13,11 +13,8 @@ const envSchema = z.object({
   AMQP_URL: z.string().default("amqp://guest:guest@localhost:5672"),
   CORS_ALLOWED_ORIGINS: z.string().default("https://app.plane.so"),
   REDIS_URL: z.string().default("redis://localhost:6379"),
-  SENTRY_DSN: z.string().optional(),
-  SENTRY_ORG: z.string().default("plane-hq"),
-  SENTRY_PROJECT: z.string().default("plane-silo"),
-  SENTRY_RELEASE_VERSION: z.string().default("1.0.0"),
   PG_SCHEMA: z.string().optional(),
+  MAX_STORE_CONNECTION_ATTEMPTS: z.string().default("20"),
   APP_BASE_URL: z
     .string()
     .default("")
@@ -52,6 +49,7 @@ const envSchema = z.object({
   GITHUB_APP_ID: z.string().optional(),
   GITHUB_CLIENT_ID: z.string().optional(),
   GITHUB_CLIENT_SECRET: z.string().optional(),
+  GITHUB_WEBHOOK_SECRET: z.string().optional(),
   GITHUB_PRIVATE_KEY: z.string().optional(),
   // GitLab Env Variables
   GITLAB_CLIENT_ID: z.string().optional(),
@@ -72,7 +70,7 @@ function validateEnv() {
   const result = envSchema.safeParse(process.env);
 
   if (!result.success) {
-    console.error("❌ Invalid environment variables:", JSON.stringify(result.error.format(), null, 4));
+    logger.error("❌ Invalid environment variables:", result.error.format());
     process.exit(1);
   }
 

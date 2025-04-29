@@ -1,4 +1,5 @@
 import { wait } from "@/helpers/delay";
+import { logger } from "@/logger";
 import { AxiosError } from "axios";
 
 export type APIRatelimitResponse = {
@@ -30,14 +31,14 @@ export async function protect<T>(fn: (...args: any[]) => Promise<T>, ...args: an
     } catch (error) {
       // Check if the error is an API rate limit error
       if (AssertAPIRateLimitResponse(error)) {
-        console.warn(`Rate limit exceeded, waiting for ${RETRY_DELAY / 1000} seconds before retrying...`);
+        logger.warn(`Rate limit exceeded, waiting for ${RETRY_DELAY / 1000} seconds before retrying...`);
         await wait(RETRY_DELAY);
         continue;
       }
 
       // Check if the error is an Axios error with status 429
       if (error instanceof AxiosError && error.response?.status === 429) {
-        console.warn(`Rate limit exceeded, waiting for ${RETRY_DELAY / 1000} seconds before retrying...`);
+        logger.warn(`Rate limit exceeded, waiting for ${RETRY_DELAY / 1000} seconds before retrying...`);
         await wait(RETRY_DELAY);
         continue;
       }

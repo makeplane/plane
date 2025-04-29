@@ -1,4 +1,5 @@
 # Third party imports
+import pytz
 from rest_framework import serializers
 
 # Module imports
@@ -18,6 +19,14 @@ class CycleSerializer(BaseSerializer):
     completed_estimates = serializers.FloatField(read_only=True)
     started_estimates = serializers.FloatField(read_only=True)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        project = self.context.get("project")
+        if project and project.timezone:
+            project_timezone = pytz.timezone(project.timezone)
+            self.fields["start_date"].timezone = project_timezone
+            self.fields["end_date"].timezone = project_timezone
+
     def validate(self, data):
         if (
             data.get("start_date", None) is not None
@@ -30,7 +39,15 @@ class CycleSerializer(BaseSerializer):
             data.get("start_date", None) is not None
             and data.get("end_date", None) is not None
         ):
-            project_id = self.initial_data.get("project_id") or self.instance.project_id
+            project_id = self.initial_data.get("project_id") or (
+                self.instance.project_id
+                if self.instance and hasattr(self.instance, "project_id")
+                else None
+            )
+
+            if not project_id:
+                raise serializers.ValidationError("Project ID is required")
+
             is_start_date_end_date_equal = (
                 True
                 if str(data.get("start_date")) == str(data.get("end_date"))

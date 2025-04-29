@@ -4,16 +4,19 @@ import React, { useRef } from "react";
 import { observer } from "mobx-react";
 // Plane
 import { EIssueServiceType } from "@plane/constants";
+import { EUpdateStatus } from "@plane/types/src/enums";
 import { CircularProgressIndicator, EpicIcon } from "@plane/ui";
 // components
 import { ListItem } from "@/components/core/list";
 // helpers
 import { cn, getProgress } from "@/helpers/common.helper";
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { IdentifierText } from "@/plane-web/components/issues";
+import { UpdateStatusIcons } from "@/plane-web/components/updates/status-icons";
 import { useEpicAnalytics } from "@/plane-web/hooks/store";
 // local components
 import { EpicProperties } from "./properties";
@@ -47,13 +50,25 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
   const projectIdentifier = issue?.project_id ? project.getProjectIdentifierById(issue?.project_id) : "";
   const issueSequenceId = issue?.sequence_id;
 
-  const progress = getProgress(initiativeEpicStats?.completed_issues, initiativeEpicStats?.total_issues);
+  const progress = getProgress(
+    (initiativeEpicStats?.completed_issues ?? 0) + (initiativeEpicStats?.cancelled_issues ?? 0),
+    initiativeEpicStats?.total_issues ?? 0
+  );
 
   if (!issue || !issue.project_id) return <></>;
+
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug,
+    projectId: issue?.project_id,
+    issueId: issue?.id,
+    projectIdentifier,
+    sequenceId: issue?.sequence_id,
+  });
+
   return (
     <ListItem
       title={issue.name}
-      itemLink={`/${workspaceSlug}/projects/${issue.project_id}/epics/${issue.id}`}
+      itemLink={workItemLink}
       prependTitleElement={
         <div
           className={cn("flex flex-shrink-0 items-center space-x-2")}
@@ -62,6 +77,7 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
             e.stopPropagation();
           }}
         >
+          <UpdateStatusIcons statusType={issue.update_status} />
           <EpicIcon className="h-4 w-4 text-custom-text-300" />
           <IdentifierText
             identifier={`${projectIdentifier}-${issueSequenceId}`}

@@ -72,8 +72,9 @@ export interface IIssueTypesStore {
   // computed
   data: Record<string, IIssueType>; // all issue type id -> issue type
   // computed functions
+  getIssueTypeIds: (activeOnly: boolean) => string[];
   getIssueTypeById: (issueTypeId: string) => IIssueType | undefined;
-  getIssuePropertyById: (issuePropertyId: string) => IIssueProperty<EIssuePropertyType> | undefined;
+  getIssuePropertyById: (customPropertyId: string) => IIssueProperty<EIssuePropertyType> | undefined;
   getProjectWorkItemPropertiesLoader: (projectId: string, entityType: EWorkItemTypeEntity) => TLoader;
   getProjectWorkItemPropertiesFetchedMap: (projectId: string, entityType: EWorkItemTypeEntity) => boolean;
   getProjectIssueTypeIds: (projectId: string) => string[];
@@ -97,13 +98,13 @@ export interface IIssueTypesStore {
     projectId: string
   ) => Promise<TWorkItemTypesPropertiesOptions>;
   fetchAllEpicPropertyData: (workspaceSlug: string, projectId: string) => Promise<TEpicPropertiesOptions>;
-  fetchAllIssueTypes: (workspaceSlug: string) => Promise<TIssueType[]>;
-  fetchAllEpics: (workspaceSlug: string) => Promise<TIssueType[]>;
+  fetchAllIssueTypes: (workspaceSlug: string, projectId?: string) => Promise<TIssueType[]>;
+  fetchAllEpics: (workspaceSlug: string, projectId?: string) => Promise<TIssueType[]>;
   // actions
   enableIssueTypes: (workspaceSlug: string, projectId: string) => Promise<void>;
   enableEpics: (workspaceSlug: string, projectId: string) => Promise<void>;
   disableEpics: (workspaceSlug: string, projectId: string) => Promise<void>;
-  fetchAll: (workspaceSlug: string) => Promise<void>;
+  fetchAll: (workspaceSlug: string, projectId?: string) => Promise<void>;
   fetchAllWorkItemTypePropertiesAndOptions: (workspaceSlug: string, projectId: string) => Promise<void | undefined>;
   fetchAllEpicPropertiesAndOptions: (workspaceSlug: string, projectId: string) => Promise<void | undefined>;
   fetchAllPropertiesAndOptions: (

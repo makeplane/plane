@@ -1,6 +1,5 @@
 # Python imports
 import json
-from django.db import connection
 
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -17,7 +16,6 @@ from django.db.models import (
     When,
     Count,
     Subquery,
-    Exists,
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -39,6 +37,7 @@ from plane.db.models import (
     Workspace,
     CycleIssue,
     ProjectIssueType,
+    ProjectMember,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
@@ -56,6 +55,13 @@ from plane.utils.grouper import issue_group_values, issue_on_results
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.ee.utils.nested_issue_children import get_all_related_issues
 from plane.ee.utils.workflow import WorkflowStateManager
+from plane.app.views.issue.version import (
+    IssueDescriptionVersion,
+    IssueDescriptionVersionDetailSerializer,
+)
+from plane.utils.global_paginator import paginate
+from plane.utils.timezone_converter import user_timezone_converter
+from plane.bgtasks.issue_description_version_task import issue_description_version_task
 
 
 class EpicViewSet(BaseViewSet):
@@ -152,8 +158,8 @@ class EpicViewSet(BaseViewSet):
             workflow_state_manager = WorkflowStateManager(
                 project_id=project_id, slug=slug
             )
-            if workflow_state_manager._validate_issue_creation(
-                state_id=request.data.get("state_id"),
+            if workflow_state_manager.validate_issue_creation(
+                state_id=request.data.get("state_id"), user_id=request.user.id
             ):
                 return Response(
                     {"error": "You cannot create a epic in this state"},
@@ -191,6 +197,13 @@ class EpicViewSet(BaseViewSet):
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
             )
+            # updated issue description version
+            issue_description_version_task.delay(
+                updated_issue=json.dumps(request.data, cls=DjangoJSONEncoder),
+                issue_id=str(serializer.data["id"]),
+                user_id=request.user.id,
+                is_creating=True,
+            )
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -198,9 +211,15 @@ class EpicViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.EPICS)
     def list(self, request, slug, project_id):
+        search = request.GET.get("search", None)
+
         filters = issue_filters(request.query_params, "GET")
         epics = self.get_queryset().filter(**filters)
         order_by_param = request.GET.get("order_by", "-created_at")
+
+        # Add search functionality
+        if search:
+            epics = epics.filter(Q(name__icontains=search))
 
         # epics queryset
         issue_queryset, order_by_param = order_issue_queryset(
@@ -348,6 +367,12 @@ class EpicViewSet(BaseViewSet):
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),
+            )
+            # updated issue description version
+            issue_description_version_task.delay(
+                updated_issue=current_instance,
+                issue_id=str(serializer.data.get("id", None)),
+                user_id=request.user.id,
             )
 
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -501,7 +526,7 @@ class EpicAnalyticsEndpoint(BaseAPIView):
             completed_issues=Count("id", filter=Q(state__group="completed")),
             cancelled_issues=Count("id", filter=Q(state__group="cancelled")),
         )
-
+        
         return Response(issues, status=status.HTTP_200_OK)
 
 
@@ -690,3 +715,228 @@ class EpicListAnalyticsEndpoint(BaseAPIView):
             )
 
         return Response(result, status=status.HTTP_200_OK)
+
+
+class EpicMetaEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
+    def get(self, request, slug, project_id, epic_id):
+        epic = Issue.objects.only("sequence_id", "project__identifier").get(
+            id=epic_id, project_id=project_id, workspace__slug=slug, type__is_epic=True
+        )
+        return Response(
+            {
+                "sequence_id": epic.sequence_id,
+                "project_identifier": epic.project.identifier,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class EpicDetailIdentifierEndpoint(BaseAPIView):
+    def strict_str_to_int(self, s):
+        if not s.isdigit() and not (s.startswith("-") and s[1:].isdigit()):
+            raise ValueError("Invalid integer string")
+        return int(s)
+
+    def get_queryset(self):
+        return (
+            Issue.objects.filter(Q(type__isnull=False) & Q(type__is_epic=True))
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("assignees", "labels")
+            .annotate(
+                cycle_id=Case(
+                    When(
+                        issue_cycle__cycle__deleted_at__isnull=True,
+                        then=F("issue_cycle__cycle_id"),
+                    ),
+                    default=None,
+                )
+            )
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(labels__id__isnull=True)
+                            & Q(label_issue__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True)
+                            & Q(issue_assignee__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(issue_module__module_id__isnull=True)
+                            & Q(issue_module__module__archived_at__isnull=True)
+                            & Q(issue_module__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+        ).distinct()
+
+    def get(self, request, slug, project_identifier, epic_identifier):
+        # Check if the issue identifier is a valid integer
+        try:
+            epic_identifier = self.strict_str_to_int(epic_identifier)
+        except ValueError:
+            return Response(
+                {"error": "Invalid issue identifier"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Fetch the project
+        project = Project.objects.get(
+            identifier__iexact=project_identifier, workspace__slug=slug
+        )
+
+        print()
+
+        # Fetch the issue
+        issue = (
+            self.get_queryset()
+            .filter(sequence_id=epic_identifier, project_id=project.id)
+            .first()
+        )
+
+        # Check if the issue exists
+        if not issue:
+            return Response(
+                {"error": "The required object does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Check if the user is a member of the project
+        if not ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project.id,
+            member=request.user,
+            is_active=True,
+        ).exists():
+            return Response(
+                {
+                    "error": "You are not allowed to view this issue",
+                    "type": project.network,
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # Serialize the issue
+        serializer = EpicDetailSerializer(issue, expand=self.expand)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class EpicDescriptionVersionEndpoint(BaseAPIView):
+
+    def process_paginated_result(self, fields, results, timezone):
+        paginated_data = results.values(*fields)
+
+        datetime_fields = ["created_at", "updated_at"]
+        paginated_data = user_timezone_converter(
+            paginated_data, datetime_fields, timezone
+        )
+
+        return paginated_data
+
+    @check_feature_flag(FeatureFlag.EPICS)
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id, epic_id, pk=None):
+        project = Project.objects.get(pk=project_id)
+        issue = Issue.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=epic_id
+        )
+
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=ROLE.GUEST.value,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+            and not issue.created_by == request.user
+        ):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if pk:
+            issue_description_version = IssueDescriptionVersion.objects.get(
+                workspace__slug=slug,
+                project_id=project_id,
+                issue_id=epic_id,
+                pk=pk,
+            )
+
+            serializer = IssueDescriptionVersionDetailSerializer(
+                issue_description_version
+            )
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        cursor = request.GET.get("cursor", None)
+
+        required_fields = [
+            "id",
+            "workspace",
+            "project",
+            "issue",
+            "last_saved_at",
+            "owned_by",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+        issue_description_versions_queryset = IssueDescriptionVersion.objects.filter(
+            workspace__slug=slug, project_id=project_id, issue_id=epic_id
+        ).order_by("-created_at")
+        paginated_data = paginate(
+            base_queryset=issue_description_versions_queryset,
+            queryset=issue_description_versions_queryset,
+            cursor=cursor,
+            on_result=lambda results: self.process_paginated_result(
+                required_fields, results, request.user.user_timezone
+            ),
+        )
+        return Response(paginated_data, status=status.HTTP_200_OK)

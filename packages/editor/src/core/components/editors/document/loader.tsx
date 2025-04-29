@@ -1,8 +1,8 @@
-// ui
+// plane imports
 import { Loader } from "@plane/ui";
 
 export const DocumentContentLoader = () => (
-  <div className="size-full px-5">
+  <div className="document-editor-loader">
     <Loader className="relative space-y-4">
       <div className="space-y-2">
         <div className="py-2">

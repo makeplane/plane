@@ -182,8 +182,7 @@ class PropertySaver:
         return self._save_value(value, "value_uuid")
 
 
-# validate the values
-def externalIssuePropertyValueValidator(issue_property, value):
+def get_property_validator(issue_property):
     # property validator initialization
     property_validator = PropertyValidator(issue_property)
     PROPERTY_VALIDATOR_MAPPER = {
@@ -200,6 +199,12 @@ def externalIssuePropertyValueValidator(issue_property, value):
 
     # get the validator
     validator = PROPERTY_VALIDATOR_MAPPER.get(issue_property.property_type)
+
+    return validator
+
+# validate the values
+def externalIssuePropertyValueValidator(issue_property, value):
+    validator = get_property_validator(issue_property)
 
     if not validator:
         raise ValidationError(

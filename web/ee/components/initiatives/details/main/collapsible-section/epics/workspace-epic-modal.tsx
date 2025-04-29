@@ -10,6 +10,7 @@ import { ISearchIssueResponse, TWorkspaceEpicsSearchParams } from "@plane/types"
 // ui
 import { Button, EpicIcon, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
+import { generateWorkItemLink } from "@/helpers/issue.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
@@ -229,7 +230,13 @@ export const WorkspaceEpicsListModal: React.FC<Props> = observer((props) => {
                                     <span className="truncate">{epic.name}</span>
                                   </div>
                                   <a
-                                    href={`/${workspaceSlug}/projects/${epic.project_id}/epics/${epic.id}`}
+                                    href={generateWorkItemLink({
+                                      workspaceSlug,
+                                      projectId: epic?.project_id,
+                                      issueId: epic?.id,
+                                      projectIdentifier: epic?.project__identifier,
+                                      sequenceId: epic?.sequence_id,
+                                    })}
                                     target="_blank"
                                     className="z-1 relative hidden flex-shrink-0 text-custom-text-200 hover:text-custom-text-100 group-hover:block"
                                     rel="noopener noreferrer"

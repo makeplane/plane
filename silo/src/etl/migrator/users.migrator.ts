@@ -43,8 +43,7 @@ export const createUsers = async (
                 await planeClient.users.markAvatarAsUploaded(avatarId);
               }
             } catch (error) {
-              console.log("Error while uploading avatar: ", user.display_name);
-              console.log(error);
+              logger.error(`Error while uploading avatar: ${user.display_name}`, error);
             }
           }
         }
@@ -77,8 +76,7 @@ export const createUsers = async (
         logger.error(`[${jobId.slice(0, 7)}] Error while creating the user: ${user.display_name}`, error);
       }
 
-      console.log("Error while creating the user: ", user.display_name);
-      console.log(error);
+      logger.error(`Error while creating the user: ${user.display_name}`, error);
     }
   });
 

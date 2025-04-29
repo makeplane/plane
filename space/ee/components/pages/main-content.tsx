@@ -5,7 +5,7 @@ import { FileText } from "lucide-react";
 // editor
 import { DocumentReadOnlyEditorWithRef, EditorRefApi } from "@plane/editor";
 // ui
-import { Logo } from "@plane/ui";
+import { ERowVariant, Logo, Row } from "@plane/ui";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
 // helpers
@@ -16,6 +16,8 @@ import { usePublish } from "@/hooks/store";
 import { IssueEmbedCard } from "@/plane-web/components/pages";
 // plane web hooks
 import { usePage, usePagesList } from "@/plane-web/hooks/store";
+// local imports
+import { PageEmbedCardRoot } from "./page/root";
 
 type Props = {
   anchor: string;
@@ -23,7 +25,7 @@ type Props = {
 
 export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
   const { anchor } = props;
-  // refs
+
   const editorRef = useRef<EditorRefApi>(null);
   // store hooks
   const publishSettings = usePublish(anchor);
@@ -46,19 +48,24 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
   if (!publishSettings || !pageDetails || !pageDetails.id) return null;
 
   return (
-    <div className="size-full flex justify-center overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md">
-      <div className="flex flex-col size-full xl:w-1/2 mt-6 xl:mt-20 px-5 md:px-10 xl:p-0 space-y-4">
-        <div className="space-y-2">
-          <div className="size-[60px] bg-custom-background-80 rounded grid place-items-center">
-            {pageDetails.logo_props?.in_use ? (
-              <Logo logo={pageDetails.logo_props} size={36} type="lucide" />
-            ) : (
-              <FileText className="size-9 text-custom-text-300" />
-            )}
+    <Row
+      className="relative size-full flex flex-col pt-[64px] overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md duration-200"
+      variant={ERowVariant.HUGGING}
+    >
+      <div id="page-content-container" className="flex flex-col size-full space-y-4">
+        <div className="w-full py-3 page-header-container">
+          <div className="space-y-2 block bg-transparent w-full max-w-[720px] mx-auto transition-all duration-200 ease-in-out">
+            <div className="size-[60px] bg-custom-background-80 rounded grid place-items-center">
+              {pageDetails.logo_props?.in_use ? (
+                <Logo logo={pageDetails.logo_props} size={36} type="lucide" />
+              ) : (
+                <FileText className="size-9 text-custom-text-300" />
+              )}
+            </div>
+            <h1 className="tracking-[-2%] font-bold text-[2rem] leading-[2.375rem] break-words">{pageDetails.name}</h1>
           </div>
-          <h1 className="text-4xl font-semibold break-words">{pageDetails.name}</h1>
         </div>
-        <div className="size-full ml-5">
+        <div className="size-full">
           <DocumentReadOnlyEditorWithRef
             ref={editorRef}
             id={pageDetails.id}
@@ -76,10 +83,14 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
               issue: {
                 widgetCallback: ({ issueId }) => <IssueEmbedCard anchor={anchor} issueId={issueId} />,
               },
+              page: {
+                widgetCallback: ({ pageId }) => <PageEmbedCardRoot pageId={pageId} />,
+                workspaceSlug: "",
+              },
             }}
           />
         </div>
       </div>
-    </div>
+    </Row>
   );
 });

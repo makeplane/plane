@@ -5,6 +5,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.permissions import ProjectEntityPermission
 from plane.app.serializers import IssueViewSerializer
+
 from plane.db.models import IssueView
 from plane.ee.views.base import BaseViewSet
 from plane.payment.flags.flag_decorator import check_feature_flag

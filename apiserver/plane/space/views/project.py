@@ -116,6 +116,7 @@ class ProjectMembersEndpoint(BaseAPIView):
                 project=deploy_board.project,
                 workspace=deploy_board.workspace,
                 is_active=True,
+                role__gt=5,
             ).values(
                 "id",
                 "member",

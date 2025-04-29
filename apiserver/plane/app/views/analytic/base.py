@@ -487,7 +487,8 @@ class ProjectStatsEndpoint(BaseAPIView):
         if "completed_issues" in requested_fields:
             annotations["completed_issues"] = (
                 Issue.issue_objects.filter(
-                    project_id=OuterRef("pk"), state__group="completed"
+                    project_id=OuterRef("pk"),
+                    state__group__in=["completed", "cancelled"],
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -521,4 +522,5 @@ class ProjectStatsEndpoint(BaseAPIView):
             )
 
         projects = projects.annotate(**annotations).values("id", *requested_fields)
+
         return Response(projects, status=status.HTTP_200_OK)

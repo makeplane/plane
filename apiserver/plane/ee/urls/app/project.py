@@ -2,7 +2,7 @@
 from django.urls import path
 
 # Module imports
-from plane.ee.views import (
+from plane.ee.views.app.project import (
     WorkspaceProjectFeatureEndpoint,
     ProjectFeatureEndpoint,
     ProjectLinkViewSet,
@@ -12,8 +12,8 @@ from plane.ee.views import (
     ProjectAttachmentV2Endpoint,
     ProjectReactionViewSet,
     ProjectActivityEndpoint,
+    ProjectTemplateUseEndpoint,
 )
-
 
 urlpatterns = [
     path(
@@ -95,6 +95,10 @@ urlpatterns = [
         ProjectAttributesEndpoint.as_view(),
         name="project-attributes",
     ),
+    # project templates
+    path(
+        "workspaces/<str:slug>/projects/use-template/",
+        ProjectTemplateUseEndpoint.as_view(),
+        name="project-templates",
+    ),
 ]
-
-

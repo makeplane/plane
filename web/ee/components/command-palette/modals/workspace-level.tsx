@@ -1,4 +1,6 @@
 import { observer } from "mobx-react";
+// plane imports
+import { SUBSCRIPTION_WITH_SEATS_MANAGEMENT } from "@plane/constants";
 // ce components
 import {
   WorkspaceLevelModals as BaseWorkspaceLevelModals,
@@ -6,13 +8,14 @@ import {
 } from "@/ce/components/command-palette/modals/workspace-level";
 // hooks
 import { useCommandPalette } from "@/hooks/store";
-// plane web imports
+// plane web components
+import { CreateUpdateCustomerModal } from "@/plane-web/components/customers/customer-modal";
 import { CreateUpdateWorkspaceDashboardModal } from "@/plane-web/components/dashboards/modals";
 import { CreateUpdateInitiativeModal } from "@/plane-web/components/initiatives/components/create-update-initiatives-modal";
 import { CreateOrUpdateTeamspaceModal } from "@/plane-web/components/teamspaces/create-update";
 import { CreateUpdateTeamspaceViewModal } from "@/plane-web/components/teamspaces/views/modals/create-update";
 import { AddSeatsModal, RemoveUnusedSeatsModal } from "@/plane-web/components/workspace/billing/manage-seats";
-import { useWorkspaceDashboards, useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { useDashboards, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps) => {
   // router
@@ -32,16 +35,23 @@ export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps)
     toggleCreateTeamspaceViewModal,
     createUpdateInitiativeModal,
     toggleCreateInitiativeModal,
+    createUpdateCustomerModal,
+    toggleCreateCustomerModal,
   } = useCommandPalette();
   const {
-    isCreateUpdateModalOpen: isWorkspaceDashboardModalOpen,
-    createUpdateModalPayload: workspaceDashboardModalPayload,
-    toggleCreateUpdateModal: toggleWorkspaceDashboardModal,
-  } = useWorkspaceDashboards();
+    workspaceDashboards: {
+      isCreateUpdateModalOpen: isWorkspaceDashboardModalOpen,
+      createUpdateModalPayload: workspaceDashboardModalPayload,
+      toggleCreateUpdateModal: toggleWorkspaceDashboardModal,
+      updateCreateUpdateModalPayload: updateWorkspaceDashboardModalPayload,
+    },
+  } = useDashboards();
   // derived values
   const isOfflineSubscription = subscriptionDetail?.is_offline_payment;
-  const isProOrBusinessWorkspace =
-    subscriptionDetail && !isOfflineSubscription && ["PRO", "BUSINESS"].includes(subscriptionDetail?.product);
+  const isSeatsManagementEnabled =
+    subscriptionDetail &&
+    !isOfflineSubscription &&
+    SUBSCRIPTION_WITH_SEATS_MANAGEMENT.includes(subscriptionDetail?.product);
 
   return (
     <>
@@ -66,9 +76,19 @@ export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps)
       <CreateUpdateWorkspaceDashboardModal
         data={workspaceDashboardModalPayload ?? undefined}
         isOpen={isWorkspaceDashboardModalOpen}
-        onClose={() => toggleWorkspaceDashboardModal(false)}
+        onClose={() => {
+          toggleWorkspaceDashboardModal(false);
+          setTimeout(() => {
+            updateWorkspaceDashboardModalPayload(null);
+          }, 300);
+        }}
       />
-      {isProOrBusinessWorkspace && (
+      <CreateUpdateCustomerModal
+        isOpen={createUpdateCustomerModal.isOpen}
+        customerId={createUpdateCustomerModal.customerId}
+        onClose={() => toggleCreateCustomerModal({ isOpen: false, customerId: undefined })}
+      />
+      {isSeatsManagementEnabled && (
         <AddSeatsModal
           data={addWorkspaceSeatsModal}
           onClose={() => {
@@ -76,7 +96,7 @@ export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps)
           }}
         />
       )}
-      {isProOrBusinessWorkspace && (
+      {isSeatsManagementEnabled && (
         <RemoveUnusedSeatsModal
           isOpen={removeUnusedSeatsConfirmationModal}
           handleClose={() => toggleRemoveUnusedSeatsConfirmationModal()}

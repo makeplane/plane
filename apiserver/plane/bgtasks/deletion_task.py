@@ -110,6 +110,17 @@ def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
         instance.save()
 
 
+@shared_task
+def soft_delete_pages_on_project_deletion(project_id):
+    from plane.db.models import Page
+
+    pages = Page.objects.filter(project_pages__project_id=project_id)
+
+    for page in pages:
+        page.deleted_at = timezone.now()
+        page.save()
+
+
 # @shared_task
 def restore_related_objects(app_label, model_name, instance_pk, using=None):
     pass

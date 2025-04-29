@@ -6,10 +6,14 @@ export abstract class APIService {
   private axiosInstance: AxiosInstance;
 
   constructor(options: ClientOptions) {
-    const { baseURL } = options;
+    const { baseURL, apiToken, bearerToken } = options;
+    const headers = {
+      ...(apiToken && { "X-API-Key": apiToken }),
+      ...(bearerToken && { "Authorization": `Bearer ${bearerToken}` }),
+    };
     this.axiosInstance = axios.create({
       baseURL,
-      headers: { "X-API-Key": options.apiToken },
+      headers,
     });
     this.setupInterceptors();
   }

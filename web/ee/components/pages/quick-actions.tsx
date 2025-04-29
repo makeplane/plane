@@ -4,8 +4,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { ArchiveRestoreIcon, ExternalLink, Link, Lock, Trash2, UsersRound } from "lucide-react";
 import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
-// helpers
-import { copyUrlToClipboard } from "@/helpers/string.helper";
+// plane imports
+import { copyUrlToClipboard } from "@plane/utils";
 // plane web components
 import { WikiDeletePageModal } from "@/plane-web/components/pages";
 // store
@@ -48,7 +48,7 @@ export const WorkspacePageQuickActions: React.FC<Props> = observer((props) => {
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "make-public-private",
-      action: access === 0 ? makePrivate : makePublic,
+      action: access === 0 ? () => makePrivate({}) : () => makePublic({}),
       title: access === 0 ? "Make private" : "Make public",
       icon: access === 0 ? Lock : UsersRound,
       shouldRender: canCurrentUserChangeAccess && !archived_at,
@@ -69,7 +69,7 @@ export const WorkspacePageQuickActions: React.FC<Props> = observer((props) => {
     },
     {
       key: "archive-restore",
-      action: archived_at ? restore : archive,
+      action: archived_at ? () => restore({}) : () => archive({}),
       title: archived_at ? "Restore" : "Archive",
       icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
       shouldRender: canCurrentUserArchivePage,

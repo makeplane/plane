@@ -1,6 +1,6 @@
-import { GithubApiProps, GithubIssue } from "../types";
 import { createAppAuth } from "@octokit/auth-app";
 import { Octokit } from "@octokit/rest";
+import { GithubApiProps, GithubIssue } from "../types";
 
 // Service connected with octokit and facilitating github data
 export class GithubService {
@@ -43,7 +43,6 @@ export class GithubService {
     const data: any = [];
 
     for await (const { data: repos } of pageRepos) {
-      // @ts-ignore
       data.push(...repos);
     }
 
@@ -102,19 +101,10 @@ export class GithubService {
     const data: any = [];
 
     for await (const { data: repos } of pageRepos) {
-      // @ts-ignore
       data.push(...repos);
     }
 
     return data;
-  }
-
-  async getPullRequest(owner: string, repo: string, pull_number: number) {
-    return this.client.pulls.get({
-      owner,
-      repo,
-      pull_number,
-    });
   }
 
   async getPullRequestWithClosingReference(

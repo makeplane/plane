@@ -77,7 +77,7 @@ export const transformIssue = (
     external_source_state_id: targetState?.external_id ?? "",
     priority: targetPriority ?? "none",
     labels: issue.fields.labels,
-    parent: issue.fields.parent?.id,
+    parent: `${projectId}_${resourceId}_${issue.fields.parent?.id}`,
     type_id: issue.fields.issuetype?.id,
   } as unknown as PlaneIssue;
 };

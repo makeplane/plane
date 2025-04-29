@@ -1,15 +1,15 @@
 # Python imports
 import json
 from datetime import datetime
+from typing import List, Optional
 
 # Django imports
 from django.utils import timezone
 from django.db.models.functions import Coalesce
-from django.db.models import Q, Value, UUIDField, F
+from django.db.models import Q, Value, UUIDField, F, Subquery, OuterRef, Prefetch
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.core.serializers.json import DjangoJSONEncoder
-
 
 # Third Party imports
 from rest_framework.response import Response
@@ -37,14 +37,23 @@ from plane.payment.flags.flag import FeatureFlag
 from plane.utils.error_codes import ERROR_CODES
 from plane.ee.utils.issue_property_validators import property_savers
 from plane.ee.utils.workflow import WorkflowStateManager
+from plane.ee.bgtasks.entity_issue_state_progress_task import (
+    entity_issue_state_activity_task,
+)
 
 
 class BulkIssueOperationsEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
 
     def create_issue_property_values(
-        self, issues, type_id, project_id, slug, workspace_id
-    ):
+        self,
+        issues: List[Issue],
+        type_id: str,
+        project_id: str,
+        slug: str,
+        workspace_id: str,
+    ) -> None:
+        """Create default property values for issues if they don't exist."""
         # Get issue properties with default values for the issue type
         issue_properties_with_default_values = IssueProperty.objects.filter(
             workspace__slug=slug,
@@ -53,59 +62,74 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
             default_value__isnull=False,
         ).exclude(default_value=[])
 
-        # Get existing properties for the issue type
-        existing_property_values = IssuePropertyValue.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            issue__type_id=type_id,
-            issue__in=issues,
-            property__issue_type__is_epic=False,
-        ).values("property_id", "issue_id")
+        if not issue_properties_with_default_values:
+            return
 
-        if issue_properties_with_default_values:
-            bulk_issue_property_values = []
-            for issue in issues:
-                # Get existing property ids
-                existing_prop_ids = [
-                    str(prop["property_id"])
-                    for prop in existing_property_values
-                    if str(prop["issue_id"]) == str(issue.id)
-                ]
+        # Get existing properties for the issue type in a single query
+        existing_property_values = set(
+            IssuePropertyValue.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                issue__type_id=type_id,
+                issue__in=issues,
+                property__issue_type__is_epic=False,
+            ).values_list("property_id", "issue_id")
+        )
 
-                # Get all missing properties
-                missing_properties = [
-                    prop
-                    for prop in issue_properties_with_default_values
-                    if str(prop.id) not in existing_prop_ids
-                ]
+        bulk_issue_property_values = []
+        for issue in issues:
+            # Get existing property ids for this issue
+            existing_prop_ids = {
+                prop_id
+                for prop_id, issue_id in existing_property_values
+                if str(issue_id) == str(issue.id)
+            }
 
+            # Get missing properties
+            missing_properties = [
+                prop
+                for prop in issue_properties_with_default_values
+                if str(prop.id) not in existing_prop_ids
+            ]
+
+            if missing_properties:
                 # Get missing property values
                 missing_prop_values = {
                     str(prop.id): prop.default_value for prop in missing_properties
                 }
 
-                if missing_prop_values:
-                    # Save the data
-                    bulk_issue_property_values.extend(
-                        property_savers(
-                            properties=missing_properties,
-                            property_values=missing_prop_values,
-                            issue_id=issue.id,
-                            workspace_id=workspace_id,
-                            project_id=project_id,
-                            existing_prop_values=[],
-                        )
+                # Save the data
+                bulk_issue_property_values.extend(
+                    property_savers(
+                        properties=missing_properties,
+                        property_values=missing_prop_values,
+                        issue_id=issue.id,
+                        workspace_id=workspace_id,
+                        project_id=project_id,
+                        existing_prop_values=[],
                     )
+                )
 
-            # Bulk create the issue property values
+        # Bulk create the issue property values
+        if bulk_issue_property_values:
             IssuePropertyValue.objects.bulk_create(
-                bulk_issue_property_values, batch_size=10
+                bulk_issue_property_values, batch_size=100
             )
+
+    def validate_dates(
+        self, start_date: Optional[str], target_date: Optional[str]
+    ) -> None:
+        """Validate start and target dates."""
+        if start_date and target_date:
+            start = datetime.strptime(start_date, "%Y-%m-%d").date()
+            target = datetime.strptime(target_date, "%Y-%m-%d").date()
+            if start > target:
+                raise ValueError(ERROR_CODES["INVALID_ISSUE_DATES"])
 
     @check_feature_flag(FeatureFlag.BULK_OPS_ONE)
     def post(self, request, slug, project_id):
         issue_ids = request.data.get("issue_ids", [])
-        if not len(issue_ids):
+        if not issue_ids:
             return Response(
                 {"error": "Issue IDs are required"}, status=status.HTTP_400_BAD_REQUEST
             )
@@ -117,7 +141,12 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
             )
             .select_related("state")
             .prefetch_related("labels", "assignees", "issue_module__module")
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .prefetch_related(
+                Prefetch(
+                    "issue_cycle",
+                    queryset=CycleIssue.objects.only("cycle_id"),
+                )
+            )
             .annotate(
                 label_ids=Coalesce(
                     ArrayAgg(
@@ -158,6 +187,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
         bulk_update_issue_labels = []
         bulk_update_issue_modules = []
         bulk_update_issue_assignees = []
+        bulk_cycle_issues = []
 
         properties = request.data.get("properties", {})
 
@@ -433,22 +463,60 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                             }
                         )
 
-            # Cycles
-            if properties.get("cycle_id", False):
-                if str(issue.cycle_id) != properties.get("cycle_id"):
-                    if issue.cycle_id is not None:
-                        # Old cycle issue to delete
-                        CycleIssue.objects.filter(
-                            issue_id=issue.id, cycle_id=issue.cycle_id
-                        ).delete()
+            # Check if the cycle id is being updated
+            if "cycle_id" in properties:
+                # If the cycle id is None, create a cycle activity to delete the cycle since the issue is being moved out of the cycle
+                if properties.get("cycle_id") is None:
+                    bulk_issue_activities.append(
+                        {
+                            "type": "cycle.activity.deleted",
+                            "requested_data": None,
+                            "current_instance": json.dumps(
+                                {
+                                    "cycle_id": (
+                                        str(issue.issue_cycle.first().cycle_id)
+                                        if issue.issue_cycle.first()
+                                        else None
+                                    )
+                                }
+                            ),
+                            "issue_id": str(issue.id),
+                            "actor_id": str(request.user.id),
+                            "project_id": str(project_id),
+                            "epoch": epoch,
+                        }
+                    )
+
+                # Get the current cycle ID if it exists
+                ci = issue.issue_cycle.first()
+                current_cycle_id = str(ci.cycle_id) if ci else ""
+
+                # If the cycle id is not None, create a cycle activity to add the cycle since the issue is being moved into a cycle
+                if properties.get(
+                    "cycle_id"
+                ) is not None and current_cycle_id != properties.get("cycle_id"):
                     # New issues to create
-                    _ = CycleIssue.objects.create(
-                        created_by_id=request.user.id,
-                        updated_by_id=request.user.id,
-                        cycle_id=properties.get("cycle_id"),
-                        issue=issue,
-                        project_id=project_id,
-                        workspace_id=workspace_id,
+                    bulk_cycle_issues.append(
+                        CycleIssue(
+                            created_by_id=request.user.id,
+                            updated_by_id=request.user.id,
+                            cycle_id=properties.get("cycle_id"),
+                            issue=issue,
+                            project_id=project_id,
+                            workspace_id=workspace_id,
+                        )
+                    )
+                    # pushed to a background job to update the entity issue state activity
+                    entity_issue_state_activity_task.delay(
+                        issue_cycle_data=[
+                            {
+                                "issue_id": str(issue.id),
+                                "cycle_id": str(properties.get("cycle_id")),
+                            }
+                        ],
+                        user_id=str(request.user.id),
+                        slug=slug,
+                        action="ADDED",
                     )
                     bulk_issue_activities.append(
                         {
@@ -459,7 +527,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                             "current_instance": json.dumps(
                                 {
                                     "cycle_id": (
-                                        str(issue.cycle_id) if issue.cycle_id else None
+                                        current_cycle_id if current_cycle_id else None
                                     )
                                 }
                             ),
@@ -498,6 +566,40 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
         # Create new modules
         ModuleIssue.objects.bulk_create(
             bulk_update_issue_modules, ignore_conflicts=True, batch_size=100
+        )
+
+        # Cycle Issues
+        if "cycle_id" in properties:
+            # Fetch all the issues with their respective cycle ids
+            issues_with_cycle_ids = CycleIssue.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                issue_id__in=issue_ids,
+            ).values_list("issue_id", "cycle_id")
+
+            # Build the issue-cycle mapping list
+            issue_cycle_data = [
+                {"issue_id": str(issue_id), "cycle_id": str(cycle_id)}
+                for issue_id, cycle_id in issues_with_cycle_ids
+            ]
+            # Trigger the background task once
+            entity_issue_state_activity_task.delay(
+                issue_cycle_data=issue_cycle_data,
+                user_id=str(request.user.id),
+                slug=slug,
+                action="REMOVED",
+            )
+
+            # Delete all cycle ids irrespective of the issue
+            CycleIssue.objects.filter(
+                issue__in=issues,
+            ).delete()
+
+        # Bulk create the cycle issues
+        CycleIssue.objects.bulk_create(
+            bulk_cycle_issues,
+            ignore_conflicts=True,
+            batch_size=100,
         )
 
         # Create new issue property values

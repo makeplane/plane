@@ -1,8 +1,8 @@
 "use client";
 
 // components
-import { WorkspaceDashboardsListRoot } from "@/plane-web/components/dashboards/list";
+import { DashboardsListLayoutRoot } from "@/plane-web/components/dashboards/list";
 
-export default function DashboardsListPage() {
-  return <WorkspaceDashboardsListRoot />;
+export default function WorkspaceDashboardsListPage() {
+  return <DashboardsListLayoutRoot />;
 }

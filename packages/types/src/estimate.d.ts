@@ -14,10 +14,7 @@ export interface IEstimatePoint {
   updated_by: string | undefined;
 }
 
-export type TEstimateSystemKeys =
-  | EEstimateSystem.POINTS
-  | EEstimateSystem.CATEGORIES
-  | EEstimateSystem.TIME;
+export type TEstimateSystemKeys = EEstimateSystem.POINTS | EEstimateSystem.CATEGORIES | EEstimateSystem.TIME;
 
 export interface IEstimate {
   id: string | undefined;
@@ -55,12 +52,14 @@ export type TEstimatePointsObject = {
 
 export type TTemplateValues = {
   title: string;
+  i18n_title: string;
   values: TEstimatePointsObject[];
   hide?: boolean;
 };
 
 export type TEstimateSystem = {
   name: string;
+  i18n_name: string;
   templates: Record<string, TTemplateValues>;
   is_available: boolean;
   is_ee: boolean;
@@ -82,6 +81,4 @@ export type TEstimateTypeErrorObject = {
   message: string | undefined;
 };
 
-export type TEstimateTypeError =
-  | Record<number, TEstimateTypeErrorObject>
-  | undefined;
+export type TEstimateTypeError = Record<number, TEstimateTypeErrorObject> | undefined;

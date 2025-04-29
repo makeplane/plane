@@ -14,7 +14,13 @@ type Props = {
   issueId: string;
   issueIds: string[];
   relationKey: TIssueRelationTypes;
-  handleIssueCrudState: (key: "update" | "delete", issueId: string, issue?: TIssue | null) => void;
+  handleIssueCrudState: (
+    key: "update" | "delete" | "removeRelation",
+    issueId: string,
+    issue?: TIssue | null,
+    relationKey?: TIssueRelationTypes | null,
+    relationIssueId?: string | null
+  ) => void;
   disabled?: boolean;
   issueServiceType?: TIssueServiceType;
 };

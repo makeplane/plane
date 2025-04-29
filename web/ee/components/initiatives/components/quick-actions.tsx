@@ -2,14 +2,11 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-// icons
 import { ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
-// ui
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
-import { cn } from "@plane/utils";
-// helpers
-import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
 import { useUser } from "@/hooks/store";
 // Plane-web
@@ -23,10 +20,11 @@ type Props = {
   initiative: TInitiative;
   workspaceSlug: string;
   disabled?: boolean;
+  customClassName?: string;
 };
 
 export const InitiativeQuickActions: React.FC<Props> = observer((props) => {
-  const { parentRef, initiative, workspaceSlug, disabled = false } = props;
+  const { parentRef, initiative, workspaceSlug, disabled = false, customClassName } = props;
   // states
   const [updateModal, setUpdateModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
@@ -104,7 +102,7 @@ export const InitiativeQuickActions: React.FC<Props> = observer((props) => {
         </div>
       )}
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
-      <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
+      <CustomMenu ellipsis placement="bottom-end" closeOnSelect buttonClassName={customClassName}>
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
           return (

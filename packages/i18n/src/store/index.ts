@@ -3,7 +3,7 @@ import get from "lodash/get";
 import merge from "lodash/merge";
 import { makeAutoObservable, runInAction } from "mobx";
 // constants
-import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, STORAGE_KEY } from "../constants";
+import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY } from "../constants";
 // core translations imports
 import coreEnExtended from "../locales/en/core-extended.json";
 import coreEn from "../locales/en/core.json";
@@ -49,14 +49,14 @@ export class TranslationStore {
   private initializeLanguage() {
     if (typeof window === "undefined") return;
 
-    const savedLocale = localStorage.getItem(STORAGE_KEY) as TLanguage;
+    const savedLocale = localStorage.getItem(LANGUAGE_STORAGE_KEY) as TLanguage;
     if (this.isValidLanguage(savedLocale)) {
       this.setLanguage(savedLocale);
       return;
     }
 
-    const browserLang = this.getBrowserLanguage();
-    this.setLanguage(browserLang);
+    // Fallback to default language
+    this.setLanguage(FALLBACK_LANGUAGE);
   }
 
   /** Loads the translations for the current language */
@@ -156,10 +156,34 @@ export class TranslationStore {
         return import("../locales/ja/translations.json");
       case "zh-CN":
         return import("../locales/zh-CN/translations.json");
+      case "zh-TW":
+        return import("../locales/zh-TW/translations.json");
       case "ru":
         return import("../locales/ru/translations.json");
       case "it":
         return import("../locales/it/translations.json");
+      case "cs":
+        return import("../locales/cs/translations.json");
+      case "sk":
+        return import("../locales/sk/translations.json");
+      case "de":
+        return import("../locales/de/translations.json");
+      case "ua":
+        return import("../locales/ua/translations.json");
+      case "pl":
+        return import("../locales/pl/translations.json");
+      case "ko":
+        return import("../locales/ko/translations.json");
+      case "pt-BR":
+        return import("../locales/pt-BR/translations.json");
+      case "id":
+        return import("../locales/id/translations.json");
+      case "ro":
+        return import("../locales/ro/translations.json");
+      case "vi-VN":
+        return import("../locales/vi-VN/translations.json");
+      case "tr-TR":
+        return import("../locales/tr-TR/translations.json");
       default:
         throw new Error(`Unsupported language: ${language}`);
     }
@@ -182,10 +206,34 @@ export class TranslationStore {
         return import("../locales/ja/translations-extended.json");
       case "zh-CN":
         return import("../locales/zh-CN/translations-extended.json");
+      case "zh-TW":
+        return import("../locales/zh-TW/translations-extended.json");
       case "ru":
         return import("../locales/ru/translations-extended.json");
       case "it":
         return import("../locales/it/translations-extended.json");
+      case "cs":
+        return import("../locales/cs/translations-extended.json");
+      case "sk":
+        return import("../locales/sk/translations-extended.json");
+      case "de":
+        return import("../locales/de/translations-extended.json");
+      case "ua":
+        return import("../locales/ua/translations-extended.json");
+      case "pl":
+        return import("../locales/pl/translations-extended.json");
+      case "ko":
+        return import("../locales/ko/translations-extended.json");
+      case "id":
+        return import("../locales/id/translations-extended.json");
+      case "ro":
+        return import("../locales/ro/translations-extended.json");
+      case "pt-BR":
+        return import("../locales/pt-BR/translations-extended.json");
+      case "vi-VN":
+        return import("../locales/vi-VN/translations-extended.json");
+      case "tr-TR":
+        return import("../locales/tr-TR/translations-extended.json");
       default:
         throw new Error(`Unsupported language: ${language}`);
     }
@@ -194,40 +242,6 @@ export class TranslationStore {
   /** Checks if the language is valid based on the supported languages */
   private isValidLanguage(lang: string | null): lang is TLanguage {
     return lang !== null && this.availableLanguages.some((l) => l.value === lang);
-  }
-
-  /** Checks if a language code is similar to any supported language */
-  private findSimilarLanguage(lang: string): TLanguage | null {
-    // Convert to lowercase for case-insensitive comparison
-    const normalizedLang = lang.toLowerCase();
-
-    // Find a supported language that includes or is included in the browser language
-    const similarLang = this.availableLanguages.find(
-      (l) => normalizedLang.includes(l.value.toLowerCase()) || l.value.toLowerCase().includes(normalizedLang)
-    );
-
-    return similarLang ? similarLang.value : null;
-  }
-
-  /** Gets the browser language based on the navigator.language */
-  private getBrowserLanguage(): TLanguage {
-    const browserLang = navigator.language;
-
-    // Check exact match first
-    if (this.isValidLanguage(browserLang)) {
-      return browserLang;
-    }
-
-    // Check base language without region code
-    const baseLang = browserLang.split("-")[0];
-    if (this.isValidLanguage(baseLang)) {
-      return baseLang as TLanguage;
-    }
-
-    // Try to find a similar language
-    const similarLang = this.findSimilarLanguage(browserLang) || this.findSimilarLanguage(baseLang);
-
-    return similarLang || FALLBACK_LANGUAGE;
   }
 
   /**
@@ -314,7 +328,7 @@ export class TranslationStore {
       }
 
       if (typeof window !== "undefined") {
-        localStorage.setItem(STORAGE_KEY, lng);
+        localStorage.setItem(LANGUAGE_STORAGE_KEY, lng);
         document.documentElement.lang = lng;
       }
 

@@ -46,6 +46,9 @@ export interface IProjectStore {
   setLastCollapsibleAction: (section: ProjectOverviewCollapsible) => void;
   toggleOpenCollapsibleSection: (section: ProjectOverviewCollapsible) => void;
 
+  // helper actions
+  processProjectAfterCreation: (workspaceSlug: string, data: TProject) => void;
+
   // fetch actions
   fetchPartialProjects: (workspaceSlug: string) => Promise<TPartialProject[]>;
   fetchProjects: (workspaceSlug: string) => Promise<TProject[]>;
@@ -105,6 +108,8 @@ export class ProjectStore implements IProjectStore {
       currentProjectDetails: computed,
       joinedProjectIds: computed,
       favoriteProjectIds: computed,
+      // helper actions
+      processProjectAfterCreation: action,
       // fetch actions
       fetchPartialProjects: action,
       fetchProjects: action,
@@ -258,6 +263,19 @@ export class ProjectStore implements IProjectStore {
     } else {
       this.openCollapsibleSection = [...this.openCollapsibleSection, section];
     }
+  };
+
+  /**
+   * @description process project after creation
+   * @param workspaceSlug
+   * @param data
+   */
+  processProjectAfterCreation = (workspaceSlug: string, data: TProject) => {
+    runInAction(() => {
+      set(this.projectMap, [data.id], data);
+      // updating the user project role in workspaceProjectsPermissions
+      set(this.rootStore.user.permission.workspaceProjectsPermissions, [workspaceSlug, data.id], data.member_role);
+    });
   };
 
   /**
@@ -494,15 +512,7 @@ export class ProjectStore implements IProjectStore {
   createProject = async (workspaceSlug: string, data: any) => {
     try {
       const response = await this.projectService.createProject(workspaceSlug, data);
-      runInAction(() => {
-        set(this.projectMap, [response.id], response);
-        // updating the user project role in workspaceProjectsPermissions
-        set(
-          this.rootStore.user.permission.workspaceProjectsPermissions,
-          [workspaceSlug, response.id],
-          response.member_role
-        );
-      });
+      this.processProjectAfterCreation(workspaceSlug, response);
       return response;
     } catch (error) {
       console.log("Failed to create project from project store");

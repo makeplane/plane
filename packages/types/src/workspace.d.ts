@@ -1,6 +1,8 @@
 import type { ICycle, IProjectMember, IUser, IUserLite, IWorkspaceViewProps, TPaginationInfo } from "@plane/types";
 import { EProductSubscriptionEnum, EUserWorkspaceRoles } from "@plane/constants"; // TODO: check if importing this over here causes circular dependency
 import { TUserPermissions } from "./enums";
+// extended imports
+import { TWorkspaceExtendedResultEntities } from "./workspace-extended";
 
 export interface IWorkspace {
   readonly id: string;
@@ -146,8 +148,7 @@ export interface IWorkspaceSearchResults {
     module: IWorkspaceDefaultSearchResult[];
     issue_view: IWorkspaceDefaultSearchResult[];
     page: IWorkspacePageSearchResult[];
-    epic: IWorkspaceIssueSearchResult[];
-  };
+  } & TWorkspaceExtendedResultEntities;
 }
 
 export interface IProductUpdateResponse {

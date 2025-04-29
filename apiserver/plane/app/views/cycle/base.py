@@ -30,6 +30,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+
+# Module imports
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import (
     CycleSerializer,
@@ -49,14 +51,15 @@ from plane.db.models import (
     ProjectMember,
     UserRecentVisit,
 )
-from plane.ee.models import EntityIssueStateActivity
 from plane.utils.analytics_plot import burndown_plot
 from plane.bgtasks.recent_visited_task import recent_visited_task
-# Module imports
+from plane.utils.host import base_host
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.webhook_task import model_activity
 from plane.utils.timezone_converter import convert_to_utc, user_timezone_converter
-
+from plane.ee.bgtasks.entity_issue_state_progress_task import (
+    entity_issue_state_activity_task,
+)
 
 class CycleViewSet(BaseViewSet):
     serializer_class = CycleSerializer
@@ -268,7 +271,7 @@ class CycleViewSet(BaseViewSet):
         )
         datetime_fields = ["start_date", "end_date"]
         data = user_timezone_converter(
-            data, datetime_fields, request.user.user_timezone
+            data, datetime_fields, project_timezone
         )
         return Response(data, status=status.HTTP_200_OK)
 
@@ -318,9 +321,13 @@ class CycleViewSet(BaseViewSet):
                     .first()
                 )
 
+                # Fetch the project timezone
+                project = Project.objects.get(id=self.kwargs.get("project_id"))
+                project_timezone = project.timezone
+
                 datetime_fields = ["start_date", "end_date"]
                 cycle = user_timezone_converter(
-                    cycle, datetime_fields, request.user.user_timezone
+                    cycle, datetime_fields, project_timezone
                 )
 
                 # Send the model activity
@@ -331,7 +338,7 @@ class CycleViewSet(BaseViewSet):
                     current_instance=None,
                     actor_id=request.user.id,
                     slug=slug,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                 )
                 return Response(cycle, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -407,9 +414,13 @@ class CycleViewSet(BaseViewSet):
                 "created_by",
             ).first()
 
+            # Fetch the project timezone
+            project = Project.objects.get(id=self.kwargs.get("project_id"))
+            project_timezone = project.timezone
+
             datetime_fields = ["start_date", "end_date"]
             cycle = user_timezone_converter(
-                cycle, datetime_fields, request.user.user_timezone
+                cycle, datetime_fields, project_timezone
             )
 
             # Send the model activity
@@ -420,7 +431,7 @@ class CycleViewSet(BaseViewSet):
                 current_instance=current_instance,
                 actor_id=request.user.id,
                 slug=slug,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
 
             return Response(cycle, status=status.HTTP_200_OK)
@@ -480,10 +491,11 @@ class CycleViewSet(BaseViewSet):
             )
 
         queryset = queryset.first()
+        # Fetch the project timezone
+        project = Project.objects.get(id=self.kwargs.get("project_id"))
+        project_timezone = project.timezone
         datetime_fields = ["start_date", "end_date"]
-        data = user_timezone_converter(
-            data, datetime_fields, request.user.user_timezone
-        )
+        data = user_timezone_converter(data, datetime_fields, project_timezone)
 
         recent_visited_task.delay(
             slug=slug,
@@ -532,7 +544,7 @@ class CycleViewSet(BaseViewSet):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
         # TODO: Soft delete the cycle break the onetoone relationship with cycle issue
         cycle.delete()
@@ -1037,6 +1049,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             project_id=project_id,
             workspace__slug=slug,
             issue__state__group__in=["backlog", "unstarted", "started"],
+            issue__deleted_at__isnull=True,
         )
 
         updated_cycles = []
@@ -1054,62 +1067,33 @@ class TransferCycleIssueEndpoint(BaseAPIView):
 
         _ = CycleIssue.objects.bulk_update(updated_cycles, ["cycle_id"], batch_size=100)
 
-        estimate_type = Project.objects.filter(
-            workspace__slug=slug,
-            pk=project_id,
-            estimate__isnull=False,
-            estimate__type="points",
-        ).exists()
+        # Trigger the entity issue state activity task for removal of issues
+        entity_issue_state_activity_task.delay(
+            issue_cycle_data=[
+                {
+                    "issue_id": str(cycle_issue.issue_id),
+                    "cycle_id": str(cycle_id),
+                }
+                for cycle_issue in cycle_issues
+            ],
+            user_id=str(self.request.user.id),
+            slug=slug,
+            action="REMOVED",
+        )
 
-        if old_cycle.first().version == 2:
-            EntityIssueStateActivity.objects.bulk_create(
-                [
-                    EntityIssueStateActivity(
-                        cycle_id=cycle_id,
-                        state_id=cycle_issue.issue.state_id,
-                        issue_id=cycle_issue.issue_id,
-                        state_group=cycle_issue.issue.state.group,
-                        action="REMOVED",
-                        entity_type="CYCLE",
-                        estimate_point_id=cycle_issue.issue.estimate_point_id,
-                        estimate_value=(
-                            cycle_issue.issue.estimate_point.value
-                            if estimate_type and cycle_issue.issue.estimate_point
-                            else None
-                        ),
-                        workspace_id=cycle_issue.workspace_id,
-                        created_by_id=request.user.id,
-                        updated_by_id=request.user.id,
-                    )
-                    for cycle_issue in cycle_issues
-                ],
-                batch_size=10,
-            )
-
-        if new_cycle.version == 2:
-            EntityIssueStateActivity.objects.bulk_create(
-                [
-                    EntityIssueStateActivity(
-                        cycle_id=new_cycle_id,
-                        state_id=cycle_issue.issue.state_id,
-                        issue_id=cycle_issue.issue_id,
-                        state_group=cycle_issue.issue.state.group,
-                        action="ADDED",
-                        entity_type="CYCLE",
-                        estimate_point_id=cycle_issue.issue.estimate_point_id,
-                        estimate_value=(
-                            cycle_issue.issue.estimate_point.value
-                            if estimate_type and cycle_issue.issue.estimate_point
-                            else None
-                        ),
-                        workspace_id=cycle_issue.workspace_id,
-                        created_by_id=request.user.id,
-                        updated_by_id=request.user.id,
-                    )
-                    for cycle_issue in cycle_issues
-                ],
-                batch_size=10,
-            )
+        # trigger the entity issue state activity task for adding issues
+        entity_issue_state_activity_task.delay(
+            issue_cycle_data=[
+                {
+                    "issue_id": str(cycle_issue.issue_id),
+                    "cycle_id": str(new_cycle_id),
+                }
+                for cycle_issue in cycle_issues
+            ],
+            user_id=str(self.request.user.id),
+            slug=slug,
+            action="ADDED",
+        )
 
         # Capture Issue Activity
         issue_activity.delay(
@@ -1126,7 +1110,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
 
         return Response({"message": "Success"}, status=status.HTTP_200_OK)

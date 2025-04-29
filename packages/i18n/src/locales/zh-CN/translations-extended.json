@@ -6,7 +6,8 @@
     "epics": "史诗",
     "upgrade_plan": "升级计划",
     "plane_pro": "Plane Pro",
-    "business": "商业版"
+    "business": "商业版",
+    "customers": "客户"
   },
 
   "workspace_dashboards": "仪表板",
@@ -53,14 +54,53 @@
     },
     "customers": {
       "heading": "客户",
-      "settings_heading": "通过客户属性管理工作。",
-      "settings_sub_heading": "从Plane上的基本客户属性开始，之后与您的CRM或支持工具集成，并通过客户属性管理工作。"
+      "settings_heading": "根据客户的重要需求管理工作。",
+      "settings_sub_heading": "将客户请求转换为工作项，根据请求分配优先级，并将工作项的状态汇总到客户记录中。很快，你将能够集成你的 CRM 或支持工具，以更好地根据客户属性管理工作。"
     },
     "empty_state": {
       "integrations": {
         "title": "未配置集成",
         "description": "配置 GitHub 和其他集成以同步您的项目工作项。"
       }
+    },
+    "estimates": {
+      "edit": {
+        "title": "编辑估算系统",
+        "add_or_update": {
+          "title": "添加、更新或删除估算",
+          "description": "通过添加、更新或删除点数或类别来管理当前系统。"
+        },
+        "switch": {
+          "title": "更改估算类型",
+          "description": "将点数系统转换为类别系统，反之亦然。"
+        }
+      },
+      "switch": "切换估算系统",
+      "current": "当前估算系统",
+      "select": "选择估算系统",
+      "toasts": {
+        "reorder": {
+          "success": {
+            "title": "估算已重新排序",
+            "message": "估算已在您的项目中重新排序。"
+          },
+          "error": {
+            "title": "估算重新排序失败",
+            "message": "我们无法重新排序估算，请重试"
+          }
+        }
+      },
+      "validation": {
+        "fill": "请填写此估算字段",
+        "repeat": "估算值不能重复"
+      }
+    },
+    "epics": {
+      "properties": {
+        "title": "属性",
+        "description": "为您的史诗添加自定义属性。"
+      },
+      "disabled": "已禁用"
     }
   },
 
@@ -364,6 +404,76 @@
         "cancel_success_message": "现在您可以删除工作空间了。",
         "cancel_error_title": "操作失败。",
         "cancel_error_message": "请重试。"
+      },
+      "applications": {
+        "title": "应用程序",
+        "applicationId_copied": "应用ID已复制到剪贴板",
+        "clientId_copied": "客户端ID已复制到剪贴板",
+        "clientSecret_copied": "客户端密钥已复制到剪贴板",
+        "third_party_apps": "第三方应用",
+        "your_apps": "您的应用",
+        "connect": "连接",
+        "connected": "已连接",
+        "app_available": "您已使此应用可用于Plane工作空间",
+        "app_available_description": "连接Plane工作空间以开始使用",
+        "client_id_and_secret": "客户端ID和密钥",
+        "client_id_and_secret_description": "复制并保存此密钥。关闭后您将无法再次查看此密钥。",
+        "client_id_and_secret_download": "您可以从这里下载包含密钥的CSV文件。",
+        "application_id": "应用ID",
+        "client_id": "客户端ID",
+        "client_secret": "客户端密钥",
+        "export_as_csv": "导出为CSV",
+        "slug_already_exists": "别名已存在",
+        "failed_to_create_application": "创建应用程序失败",
+        "upload_logo": "上传标志",
+        "app_name_title": "您将如何命名此应用",
+        "app_name_error": "应用名称为必填项",
+        "app_short_description_title": "为此应用提供简短描述",
+        "app_short_description_error": "应用简短描述为必填项",
+        "app_description_title": "同时为想了解更多的人写一个更长的描述。按 / 获取命令",
+        "app_description_error": "应用描述为必填项",
+        "app_slug_title": "应用别名",
+        "app_slug_error": "应用别名为必填项",
+        "app_maker_title": "应用制作者",
+        "app_maker_error": "应用制作者为必填项",
+        "webhook_url_title": "Webhook URL",
+        "webhook_url_error": "Webhook URL为必填项",
+        "invalid_webhook_url_error": "无效的Webhook URL",
+        "redirect_uris_title": "重定向URI",
+        "redirect_uris_error": "重定向URI为必填项",
+        "invalid_redirect_uris_error": "无效的重定向URI",
+        "redirect_uris_description": "输入应用将在用户后重定向到的URI，用空格分隔，例如 https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "授权的JavaScript来源",
+        "authorized_javascript_origins_error": "授权的JavaScript来源为必填项",
+        "invalid_authorized_javascript_origins_error": "无效的授权JavaScript来源",
+        "authorized_javascript_origins_description": "输入应用将被允许发出请求的来源，用空格分隔，例如 app.com example.com",
+        "create_app": "创建应用",
+        "update_app": "更新应用",
+        "regenerate_client_secret_description": "重新生成客户端密钥。重新生成后，您可以复制密钥或将其下载到CSV文件中。",
+        "regenerate_client_secret": "重新生成客户端密钥",
+        "regenerate_client_secret_confirm_title": "确定要重新生成客户端密钥吗？",
+        "regenerate_client_secret_confirm_description": "使用此密钥的应用将停止工作。您需要在应用中更新密钥。",
+        "regenerate_client_secret_confirm_cancel": "取消",
+        "regenerate_client_secret_confirm_regenerate": "重新生成",
+        "read_only_access_to_workspace": "对您的工作空间的只读访问",
+        "write_access_to_workspace": "对您的工作空间的写入访问",
+        "read_only_access_to_user_profile": "对您的用户配置文件的只读访问",
+        "write_access_to_user_profile": "对您的用户配置文件的写入访问",
+        "connect_app_to_workspace": "将{app}连接到您的工作空间{workspace}",
+        "user_permissions": "用户权限",
+        "user_permissions_description": "用户权限用于授予对用户配置文件的访问权限。",
+        "workspace_permissions": "工作空间权限",
+        "workspace_permissions_description": "工作空间权限用于授予对工作空间的访问权限。",
+        "with_the_permissions": "具有权限",
+        "app_consent_title": "{app}正在请求访问您的Plane工作空间和配置文件。",
+        "choose_workspace_to_connect_app_with": "选择要连接应用的工作空间",
+        "app_consent_workspace_permissions_title": "{app}想要",
+        "app_consent_user_permissions_title": "{app}还可以请求用户对以下资源的权限。这些权限将仅由用户请求和授权。",
+        "app_consent_accept_title": "通过接受",
+        "app_consent_accept_1": "您授予应用在Plane内部或外部可以使用应用的任何地方访问您的Plane数据的权限",
+        "app_consent_accept_2": "您同意{app}的隐私政策和使用条款",
+        "accepting": "接受中...",
+        "accept": "接受"
       }
     }
   },
@@ -809,7 +919,8 @@
     "multiple_connections_found": "找到多个连接，但只期望一个",
     "installation_not_found": "找不到请求的安装",
     "user_not_found": "找不到请求的用户",
-    "error_fetching_token": "获取身份验证令牌失败"
+    "error_fetching_token": "获取身份验证令牌失败",
+    "cannot_create_multiple_connections": "您已经将组织连接到工作区。请在连接新组织之前断开现有连接。"
   },
 
   "import_status": {
@@ -912,36 +1023,292 @@
     "widget": {
       "chart_types": {
         "bar_chart": {
-          "short_label": "柱形",
-          "long_label": "柱形图"
+          "short_label": "柱状",
+          "long_label": "柱状图",
+          "chart_models": {
+            "basic": "基础",
+            "stacked": "堆叠",
+            "grouped": "分组"
+          },
+          "orientation": {
+            "label": "方向",
+            "horizontal": "水平",
+            "vertical": "垂直",
+            "placeholder": "添加方向"
+          },
+          "bar_color": "柱状颜色"
         },
         "line_chart": {
           "short_label": "线形",
-          "long_label": "线形图"
+          "long_label": "线形图",
+          "chart_models": {
+            "basic": "基础",
+            "multi_line": "多线"
+          },
+          "line_color": "线条颜色",
+          "line_type": {
+            "label": "线型",
+            "solid": "实线",
+            "dashed": "虚线",
+            "placeholder": "添加线型"
+          }
         },
         "area_chart": {
           "short_label": "区域",
-          "long_label": "区域图"
+          "long_label": "区域图",
+          "chart_models": {
+            "basic": "基础",
+            "stacked": "堆叠",
+            "comparison": "对比"
+          },
+          "fill_color": "填充颜色"
         },
         "donut_chart": {
           "short_label": "环形",
-          "long_label": "环形图"
+          "long_label": "环形图",
+          "chart_models": {
+            "basic": "基础",
+            "progress": "进度"
+          },
+          "center_value": "中心值",
+          "completed_color": "完成颜色"
         },
         "pie_chart": {
           "short_label": "饼形",
-          "long_label": "饼形图"
+          "long_label": "饼形图",
+          "chart_models": {
+            "basic": "基础"
+          },
+          "group": {
+            "label": "分组切片",
+            "group_thin_pieces": "分组细小切片",
+            "minimum_threshold": {
+              "label": "最小阈值",
+              "placeholder": "添加阈值"
+            },
+            "name_group": {
+              "label": "组名",
+              "placeholder": "\"小于5%\""
+            }
+          },
+          "show_values": "显示值",
+          "value_type": {
+            "percentage": "百分比",
+            "count": "计数"
+          }
         },
         "text": {
           "short_label": "文本",
-          "long_label": "文本"
+          "long_label": "文本",
+          "alignment": {
+            "label": "文本对齐",
+            "left": "左对齐",
+            "center": "居中",
+            "right": "右对齐",
+            "placeholder": "添加文本对齐"
+          },
+          "text_color": "文本颜色"
         }
+      },
+      "color_palettes": {
+        "modern": "现代",
+        "horizon": "地平线",
+        "earthen": "土色"
+      },
+      "common": {
+        "add_widget": "添加组件",
+        "widget_title": {
+          "label": "命名此组件",
+          "placeholder": "例如，\"昨日待办\", \"全部完成\""
+        },
+        "chart_type": "图表类型",
+        "visualization_type": {
+          "label": "可视化类型",
+          "placeholder": "添加可视化类型"
+        },
+        "date_group": {
+          "label": "日期分组",
+          "placeholder": "添加日期分组"
+        },
+        "group_by": "分组依据",
+        "stack_by": "堆叠依据",
+        "daily": "每日",
+        "weekly": "每周",
+        "monthly": "每月",
+        "yearly": "每年",
+        "work_item_count": "工作项计数",
+        "estimate_point": "估算点数",
+        "pending_work_item": "待处理工作项",
+        "completed_work_item": "已完成工作项",
+        "in_progress_work_item": "进行中工作项",
+        "blocked_work_item": "已阻塞工作项",
+        "work_item_due_this_week": "本周到期工作项",
+        "work_item_due_today": "今日到期工作项",
+        "color_scheme": {
+          "label": "配色方案",
+          "placeholder": "添加配色方案"
+        },
+        "smoothing": "平滑",
+        "markers": "标记",
+        "legends": "图例",
+        "tooltips": "提示框",
+        "opacity": {
+          "label": "不透明度",
+          "placeholder": "添加不透明度"
+        },
+        "border": "边框",
+        "widget_configuration": "组件配置",
+        "configure_widget": "配置组件",
+        "guides": "指南",
+        "style": "样式",
+        "area_appearance": "区域外观",
+        "comparison_line_appearance": "比较线外观",
+        "add_property": "添加属性",
+        "add_metric": "添加指标"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。"
+          },
+          "stacked": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。",
+            "group_by": "堆叠依据缺少值。"
+          },
+          "grouped": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。",
+            "group_by": "分组依据缺少值。"
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。"
+          },
+          "multi_line": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。",
+            "group_by": "分组依据缺少值。"
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。"
+          },
+          "stacked": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。",
+            "group_by": "堆叠依据缺少值。"
+          },
+          "comparison": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。"
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。"
+          },
+          "progress": {
+            "y_axis_metric": "指标缺少值。"
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "X轴缺少值。",
+            "y_axis_metric": "指标缺少值。"
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "指标缺少值。"
+          }
+        },
+        "ask_admin": "请联系管理员配置此组件。"
       }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "创建新仪表板",
+        "update": "更新仪表板"
+      },
+      "title": {
+        "label": "命名您的仪表板。",
+        "placeholder": "\"跨项目容量\", \"按团队工作量\", \"跨所有项目状态\"",
+        "required_error": "标题为必填项"
+      },
+      "project": {
+        "label": "选择项目",
+        "placeholder": "这些项目的数据将为此仪表板提供支持。",
+        "required_error": "项目为必填项"
+      },
+      "create_dashboard": "创建仪表板",
+      "update_dashboard": "更新仪表板"
+    },
+    "delete_modal": {
+      "heading": "删除仪表板"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "在按需永久仪表板中展示您的进度。",
+        "description": "构建您需要的任何仪表板，并定制数据的显示方式，以完美呈现您的进度。",
+        "coming_soon_to_mobile": "即将登陆移动应用",
+        "card_1": {
+          "title": "适用于您的所有项目",
+          "description": "通过所有项目获得工作空间的全局视图，或者为完美查看您的进度而筛选工作数据。"
+        },
+        "card_2": {
+          "title": "适用于Plane中的任何数据",
+          "description": "超越内置分析和预制周期图表，以前所未有的方式查看团队、计划或任何其他内容。"
+        },
+        "card_3": {
+          "title": "满足您所有的数据可视化需求",
+          "description": "从多种可定制的图表中选择，具有精细控制，以您想要的方式准确查看和展示您的工作数据。"
+        },
+        "card_4": {
+          "title": "按需且永久",
+          "description": "构建一次，永久保存，数据自动刷新，范围变更的上下文标志，以及可共享的永久链接。"
+        },
+        "card_5": {
+          "title": "导出和定时通信",
+          "description": "当链接不起作用时，将您的仪表板导出为一次性PDF，或计划自动发送给利益相关者。"
+        },
+        "card_6": {
+          "title": "自动适应所有设备的布局",
+          "description": "调整组件大小以获得您想要的布局，并在移动设备、平板电脑和其他浏览器上看到完全相同的效果。"
+        }
+      },
+      "dashboards_list": {
+        "title": "在组件中可视化数据，用组件构建仪表板，并按需查看最新信息。",
+        "description": "使用自定义组件构建您的仪表板，在您指定的范围内显示数据。获取跨项目和团队的所有工作的仪表板，并与利益相关者共享永久链接以进行按需跟踪。"
+      },
+      "dashboards_search": {
+        "title": "这与仪表板名称不匹配。",
+        "description": "确保您的查询正确或尝试其他查询。"
+      },
+      "widgets_list": {
+        "title": "按照您想要的方式可视化数据。",
+        "description": "使用折线、柱状、饼图和其他格式，从您指定的数据源以您想要的方式查看数据。"
+      },
+      "widget_data": {
+        "title": "这里没有内容",
+        "description": "刷新或添加数据以在此处查看。"
+      }
+    },
+    "common": {
+      "editing": "编辑中"
     }
   },
 
   "workflows": {
     "workflow_states": {
       "work_item_creation": "允许新工作项",
+      "work_item_creation_disable_tooltip": "工作项创建在此状态中被禁用",
       "default_state": "默认状态允许所有成员创建新工作项。不能更改",
       "state_change_count": "{count, plural, one {1 个允许的状态更改} other {{count} 个允许的状态更改}}",
       "movers_count": "{count, plural, one {1 个列出的评审人} other {{count} 个列出的评审人}}",
@@ -1039,58 +1406,540 @@
 
   "customers": {
     "label": "{count, plural, one {客户} other {客户}}",
+    "dropdown": {
+      "placeholder": "选择客户",
+      "required": "请选择客户",
+      "no_selection": "没有客户"
+    },
+    "upgrade": {
+      "title": "与客户一起优先排序并管理工作。",
+      "description": "将您的工作与客户关联，并根据客户属性确定优先级。"
+    },
     "properties": {
       "default": {
-        "title": "默认属性",
-        "customer_name": "客户名称",
-        "description": "描述",
-        "email": "电子邮件",
-        "website_url": "网站链接",
-        "employees": "员工数",
-        "domain": "域名",
-        "stage": "阶段",
-        "contract_status": "合同状态",
-        "revenue": "收入"
+        "title": "默认",
+        "customer_name": {
+          "name": "客户名称",
+          "placeholder": "可以是个人或公司名称",
+          "validation": {
+            "required": "客户名称是必填项。",
+            "max_length": "客户名称不能超过255个字符。"
+          }
+        },
+        "description": {
+          "name": "描述",
+          "validation": {}
+        },
+        "email": {
+          "name": "电子邮件",
+          "placeholder": "请输入电子邮件",
+          "validation": {
+            "required": "电子邮件是必填项。",
+            "pattern": "电子邮件格式不正确。"
+          }
+        },
+        "website_url": {
+          "name": "网站",
+          "placeholder": "任何以https://开头的URL都有效。",
+          "placeholder_short": "添加网站",
+          "validation": {
+            "pattern": "无效的网站URL"
+          }
+        },
+        "employees": {
+          "name": "员工",
+          "placeholder": "如果客户是公司，请填写员工数量。",
+          "validation": {
+            "min_length": "员工数量不能小于0。",
+            "max_length": "员工数量不能大于2147483647。"
+          }
+        },
+        "size": {
+          "name": "规模",
+          "placeholder": "添加公司规模",
+          "validation": {
+            "min_length": "无效的规模"
+          }
+        },
+        "domain": {
+          "domain": "行业",
+          "placeholder": "零售、电商、金融科技、银行",
+          "placeholder_short": "添加行业",
+          "validation": {}
+        },
+        "stage": {
+          "name": "阶段",
+          "placeholder": "选择阶段",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "合同状态",
+          "placeholder": "选择合同状态",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "收入",
+          "placeholder": "这是客户的年收入。",
+          "placeholder_short": "添加收入",
+          "validation": {
+            "min_length": "收入不能小于0。",
+            "max_length": "收入不能大于2147483647。"
+          }
+        },
+        "invalid_value": "无效的收入值。"
       },
       "custom": {
         "title": "自定义属性",
-        "info": "在此处自定义您的客户属性。从不同的属性类型中选择以汇总您的客户数据。"
+        "info": "将客户的独特属性添加到Plane，以更好地管理工作项或客户记录。"
       },
       "empty_state": {
         "title": "添加自定义属性",
-        "description": "您为客户添加的新属性将显示在此处"
+        "description": "您希望手动或自动与CRM匹配的自定义属性将显示在此处。"
       },
       "add": {
         "primary_button": "添加新属性"
       }
     },
+    "stage": {
+      "lead": "潜在客户",
+      "sales_qualified_lead": "销售合格潜在客户",
+      "contract_negotiation": "合同谈判",
+      "closed_won": "已关闭，已赢得",
+      "closed_lost": "已关闭，已失去"
+    },
+    "contract_status": {
+      "active": "激活",
+      "pre_contract": "预合同",
+      "signed": "已签署",
+      "inactive": "未激活"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "未找到此客户记录。",
+        "description": "此记录的链接可能无效，或已被删除。",
+        "primary_button": "转到客户",
+        "secondary_button": "添加客户"
+      },
+      "search": {
+        "title": "似乎没有与该术语匹配的客户记录。",
+        "description": "请尝试使用其他搜索词，或者如果您确定应该看到该术语的结果，请联系我们。"
+      },
+      "list": {
+        "title": "管理客户的体量、速度和流量，基于客户对你工作的重要性。",
+        "description": "在Plane中使用“客户”功能，您可以从头开始创建新客户，并将其与您的工作相关联。稍后您将能够将它们与其他工具一起导入，包括它们的自定义属性。",
+        "primary_button": "添加第一个客户"
+      }
+    },
     "settings": {
-      "unauthorized": "您无权访问此页面。",
-      "description": "在工作流程中跟踪和管理客户关系。",
-      "enable": "启用客户功能",
+      "unauthorized": "您没有权限访问此页面。",
+      "description": "在您的工作流程中跟踪和管理与客户的关系。",
+      "enable": "启用客户",
       "toasts": {
         "enable": {
           "loading": "正在启用客户功能...",
           "success": {
-            "title": "客户功能已启用",
-            "message": "跟踪和管理客户关系。"
+            "title": "您已启用此工作区的客户功能。",
+            "message": "成员现在可以添加客户记录、将其链接到工作项等。"
           },
           "error": {
-            "title": "错误",
-            "message": "启用客户功能失败！"
+            "title": "无法启用客户功能。",
+            "message": "请稍后重试或返回此页面。如果问题仍然存在，请联系支持。"
           }
         },
         "disable": {
           "loading": "正在禁用客户功能...",
           "success": {
-            "title": "客户功能已禁用",
+            "title": "客户已禁用",
             "message": "客户功能已成功禁用！"
           },
           "error": {
             "title": "错误",
-            "message": "禁用客户功能失败！"
+            "message": "无法禁用客户功能！"
           }
         }
+      }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "无法获取客户列表。",
+          "message": "请稍后重试或刷新此页面。"
+        }
+      },
+      "copy_link": {
+        "title": "您已复制客户的直接链接。",
+        "message": "将其粘贴到任何位置，它将直接将您带到此页面。"
+      },
+      "create": {
+        "success": {
+          "title": "{customer_name} 现在可用",
+          "message": "您可以在工作项中引用此客户并跟踪来自他们的请求。",
+          "actions": {
+            "view": "查看",
+            "copy_link": "复制链接",
+            "copied": "已复制！"
+          }
+        },
+        "error": {
+          "title": "无法创建此记录。",
+          "message": "请重新保存，或将未保存的文本复制到新记录中，最好是在其他标签页中。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "成功！",
+          "message": "客户已成功更新！"
+        },
+        "error": {
+          "title": "错误！",
+          "message": "无法更新客户。请重试！"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "无法加载客户的logo。",
+          "message": "请再次保存logo，或者从头开始。"
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "您已从该客户记录中移除工作项。",
+            "message": "我们还自动将此客户从工作项中移除。"
+          },
+          "error": {
+            "title": "此次无法从该客户记录中删除工作项。",
+            "message": "请重试删除此工作项，如果问题仍然存在，请联系我们。"
+          }
+        },
+        "add": {
+          "error": {
+            "title": "无法将此工作项添加到该客户记录。",
+            "message": "请重试，或者稍后再试。如果错误仍然存在，请联系支持。"
+          },
+          "success": {
+            "title": "您已将工作项添加到该客户记录。",
+            "message": "我们还自动将此客户添加到工作项中。"
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "编辑",
+      "copy_link": "复制客户链接",
+      "delete": "删除"
+    },
+    "create": {
+      "label": "创建客户记录",
+      "loading": "创建中",
+      "cancel": "取消"
+    },
+    "update": {
+      "label": "更新客户",
+      "loading": "更新中"
+    },
+    "delete": {
+      "title": "您确定要删除客户记录 {customer_name} 吗？",
+      "description": "与此记录相关的所有数据将被永久删除。您以后无法恢复此记录。"
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "目前没有要显示的请求。",
+          "description": "从您的客户创建请求，将它们与工作项关联。",
+          "button": "添加新请求"
+        },
+        "search": {
+          "title": "似乎没有与该术语匹配的请求。",
+          "description": "请尝试使用其他搜索词，或者如果您确定应该看到该术语的结果，请联系我们。"
+        }
+      },
+      "label": "{count, plural, one {请求} other {请求}}",
+      "add": "添加请求",
+      "create": "创建请求",
+      "update": "更新请求",
+      "form": {
+        "name": {
+          "placeholder": "为此请求命名",
+          "validation": {
+            "required": "名称是必填项。",
+            "max_length": "请求名称不能超过255个字符。"
+          }
+        },
+        "description": {
+          "placeholder": "描述请求或粘贴客户从其他工具中的评论。"
+        },
+        "source": {
+          "add": "添加来源",
+          "update": "更新来源",
+          "url": {
+            "label": "URL",
+            "required": "URL是必填项",
+            "invalid": "无效的URL"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "链接已复制",
+          "message": "客户请求的链接已复制到剪贴板。"
+        },
+        "attachment": {
+          "upload": {
+            "loading": "上传附件...",
+            "success": {
+              "title": "附件上传成功",
+              "message": "附件已成功上传。"
+            },
+            "error": {
+              "title": "上传附件失败",
+              "message": "无法上传附件。"
+            }
+          },
+          "size": {
+            "error": {
+              "title": "错误！",
+              "message": "一次只能上传一个文件。"
+            }
+          },
+          "length": {
+            "message": "文件大小必须小于 {size} MB"
+          },
+          "remove": {
+            "success": {
+              "title": "附件已删除",
+              "message": "附件已成功删除"
+            },
+            "error": {
+              "title": "无法删除附件",
+              "message": "无法删除附件"
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "成功！",
+              "message": "来源已成功更新！"
+            },
+            "error": {
+              "title": "错误！",
+              "message": "无法更新来源。"
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "错误！",
+              "message": "无法将工作项添加到请求中。请重试。"
+            },
+            "success": {
+              "title": "成功！",
+              "message": "工作项已添加到请求中。"
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "请求已成功更新！",
+            "title": "成功！"
+          },
+          "error": {
+            "title": "错误！",
+            "message": "无法更新请求。请重试！"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "请求已成功创建！",
+            "title": "成功！"
+          },
+          "error": {
+            "title": "错误！",
+            "message": "无法创建请求。请重试！"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "关联工作项",
+      "link": "关联工作项",
+      "empty_state": {
+        "list": {
+          "title": "看起来您还没有将任何工作项关联到此客户。",
+          "description": "将现有工作项从任何项目中关联到此处，以便跟踪该客户。",
+          "button": "关联工作项"
+        }
+      },
+      "action": {
+        "remove_epic": "移除史诗",
+        "remove": "移除工作项"
+      }
+    },
+    "sidebar": {
+      "properties": "属性"
+    }
+  },
+
+  "templates": {
+    "settings": {
+      "title": "模板",
+      "description": "使用模板可以节省80%创建项目、工作项和页面的时间。",
+      "options": {
+        "project": {
+          "label": "项目模板"
+        },
+        "work_item": {
+          "label": "工作项模板"
+        },
+        "page": {
+          "label": "页面模板"
+        }
+      },
+      "create_template": {
+        "label": "创建模板",
+        "no_permission": {
+          "project": "联系您的项目管理员创建模板",
+          "workspace": "联系您的工作区管理员创建模板"
+        }
+      },
+      "use_template": {
+        "button": "使用模板"
+      },
+      "template_source": {
+        "workspace": {
+          "info": "源自工作区"
+        },
+        "project": {
+          "info": "源自项目"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "为您的项目模板命名。",
+              "validation": {
+                "required": "模板名称是必填项",
+                "maxLength": "模板名称应少于255个字符"
+              }
+            },
+            "description": {
+              "placeholder": "描述何时以及如何使用此模板。"
+            }
+          },
+          "name": {
+            "placeholder": "为您的项目命名。",
+            "validation": {
+              "required": "项目标题是必填项",
+              "maxLength": "项目标题应少于255个字符"
+            }
+          },
+          "description": {
+            "placeholder": "描述此项目的目的和目标。"
+          },
+          "button": {
+            "create": "创建项目模板",
+            "update": "更新项目模板"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "为您的工作项模板命名。",
+              "validation": {
+                "required": "模板名称是必填项",
+                "maxLength": "模板名称应少于255个字符"
+              }
+            },
+            "description": {
+              "placeholder": "描述何时以及如何使用此模板。"
+            }
+          },
+          "name": {
+            "placeholder": "为此工作项提供标题。",
+            "validation": {
+              "required": "工作项标题是必填项",
+              "maxLength": "工作项标题应少于255个字符"
+            }
+          },
+          "description": {
+            "placeholder": "描述此工作项，以便清楚地了解完成后您将实现什么。"
+          },
+          "button": {
+            "create": "创建工作项模板",
+            "update": "更新工作项模板"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "模板",
+        "description": "使用Plane中的项目、工作项和页面模板，您无需从头开始创建项目或手动设置工作项属性。",
+        "sub_description": "使用模板可以收回80%的管理时间。"
+      },
+      "no_templates": {
+        "button": "创建您的第一个模板"
+      },
+      "no_labels": {
+        "description": " 还没有标签。创建标签以帮助组织和筛选项目中的工作项。"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "模板已创建",
+          "message": "{templateName}，{templateType}模板，现已可用于您的工作区。"
+        },
+        "error": {
+          "title": "这次我们无法创建该模板。",
+          "message": "尝试再次保存您的详细信息或将它们复制到新模板中，最好在另一个标签页中。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "模板已更改",
+          "message": "{templateName}，{templateType}模板，已被更改。"
+        },
+        "error": {
+          "title": "我们无法保存对此模板的更改。",
+          "message": "尝试再次保存您的详细信息或稍后回到此模板。如果仍有问题，请联系我们。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "模板已删除",
+          "message": "{templateName}，{templateType}模板，已从您的工作区中删除。"
+        },
+        "error": {
+          "title": "这次我们无法删除该模板。",
+          "message": "尝试再次删除它或稍后再回来。如果那时您仍无法删除它，请联系我们。"
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "删除模板",
+      "description": {
+        "prefix": "您确定要删除模板-",
+        "suffix": "吗？与该模板相关的所有数据将被永久删除。此操作无法撤消。"
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "添加新模板",
+        "project": "添加新模板"
+      },
+      "label": {
+        "project": "选择项目模板"
+      },
+      "tooltip": {
+        "work_item": "选择工作项模板"
+      },
+      "no_results": {
+        "work_item": "未找到模板。",
+        "project": "未找到模板。"
       }
     }
   }

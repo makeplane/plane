@@ -1,47 +1,36 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { useParams } from "next/navigation";
-// plane ui
-import { Button } from "@plane/ui";
+import useSWR from "swr";
+// plane web components
+import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
+import { DashboardsFeatureFlagFallback } from "@/plane-web/components/dashboards/feature-flag-fallback";
+import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 // plane web hooks
-import { useFlag } from "@/plane-web/hooks/store";
-// images
-import Image404 from "@/public/404.svg";
+import { useDashboards } from "@/plane-web/hooks/store";
 
 export default function WorkspaceDashboardsLayout({ children }: { children: React.ReactNode }) {
   // navigation
   const { workspaceSlug } = useParams();
   // store hooks
-  const isWorkspaceDashboardsEnabled = useFlag(workspaceSlug?.toString() ?? "", "DASHBOARDS");
+  const {
+    workspaceDashboards: { fetchDashboards },
+  } = useDashboards();
 
-  if (!isWorkspaceDashboardsEnabled)
-    return (
-      <div className={`h-screen w-full overflow-hidden bg-custom-background-100`}>
-        <div className="grid h-full place-items-center p-4">
-          <div className="space-y-8 text-center">
-            <div className="relative mx-auto h-60 w-60 lg:h-80 lg:w-80">
-              <Image src={Image404} layout="fill" alt="404- Page not found" />
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold">Oops! Something went wrong.</h3>
-              <p className="text-sm text-custom-text-200">
-                Sorry, the page you are looking for cannot be found. It may have been removed, had its name changed, or
-                is temporarily unavailable.
-              </p>
-            </div>
-            <Link href="/">
-              <span className="flex justify-center">
-                <Button variant="neutral-primary" size="md">
-                  Go to Home
-                </Button>
-              </span>
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
+  useSWR(
+    workspaceSlug ? `WORKSPACE_DASHBOARDS_LIST_${workspaceSlug.toString()}` : null,
+    workspaceSlug ? () => fetchDashboards() : null
+  );
 
-  return <>{children}</>;
+  return (
+    <WorkspaceAccessWrapper pageKey="dashboards">
+      <WithFeatureFlagHOC
+        fallback={<DashboardsFeatureFlagFallback />}
+        flag="DASHBOARDS"
+        workspaceSlug={workspaceSlug?.toString() ?? ""}
+      >
+        {children}
+      </WithFeatureFlagHOC>
+    </WorkspaceAccessWrapper>
+  );
 }

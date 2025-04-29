@@ -154,6 +154,7 @@ class YourWorkQuery:
                 )
             )
             .values_list("id", flat=True)
+            .distinct()
         )
 
         # pages

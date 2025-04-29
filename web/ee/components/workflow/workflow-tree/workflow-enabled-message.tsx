@@ -29,7 +29,7 @@ export const WorkFlowEnabledMessage = observer((props: Props) => {
         <span className="text-xs font-medium">{t("workflows.workflow_enabled.label")}</span>
       </div>
       <div className="pl-4">
-        <WorkflowTree parentStateId={parentStateId} showCurrentUserName={false} />
+        <WorkflowTree parentStateId={parentStateId} />
       </div>
     </div>
   );

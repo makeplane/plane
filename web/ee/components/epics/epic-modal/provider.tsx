@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 import { EIssueServiceType } from "@plane/constants";
 // plane imports
-import { TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
+import { ISearchIssueResponse, TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { getPropertiesDefaultValues } from "@plane/utils";
 // components
@@ -27,6 +27,9 @@ const epicPropertyValuesService = new IssuePropertyValuesService(EIssueServiceTy
 export const EpicModalProvider = observer((props: TEpicModalProviderProps) => {
   const { children } = props;
   // states
+  const [workItemTemplateId, setWorkItemTemplateId] = useState<string | null>(null);
+  const [isApplyingTemplate, setIsApplyingTemplate] = useState(false);
+  const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
   const [issuePropertyValues, setIssuePropertyValues] = useState<TIssuePropertyValues>({});
   const [issuePropertyValueErrors, setIssuePropertyValueErrors] = useState<TIssuePropertyValueErrors>({});
   // plane web hooks
@@ -131,6 +134,12 @@ export const EpicModalProvider = observer((props: TEpicModalProviderProps) => {
   return (
     <IssueModalContext.Provider
       value={{
+        workItemTemplateId,
+        setWorkItemTemplateId,
+        isApplyingTemplate,
+        setIsApplyingTemplate,
+        selectedParentIssue,
+        setSelectedParentIssue,
         issuePropertyValues,
         setIssuePropertyValues,
         issuePropertyValueErrors,
@@ -139,6 +148,8 @@ export const EpicModalProvider = observer((props: TEpicModalProviderProps) => {
         getActiveAdditionalPropertiesLength,
         handlePropertyValuesValidation,
         handleCreateUpdatePropertyValues,
+        handleProjectEntitiesFetch: () => Promise.resolve(),
+        handleTemplateChange: () => Promise.resolve(),
       }}
     >
       {children}

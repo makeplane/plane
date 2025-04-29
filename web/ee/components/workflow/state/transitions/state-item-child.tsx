@@ -26,7 +26,7 @@ export const StateItemChild = observer((props: StateItemChildProps) => {
   // plane hooks
   const { t } = useTranslation();
   // states
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   // store hooks
   const {
     stateTransitionMap,
@@ -52,8 +52,6 @@ export const StateItemChild = observer((props: StateItemChildProps) => {
           <div className="flex w-full items-center gap-2 py-2.5 px-3 bg-custom-background-90">
             <div className="w-fit flex-shrink-0">
               <StateItemTitle
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
                 setUpdateStateModal={() => {}}
                 stateCount={stateCount}
                 disabled
@@ -68,7 +66,7 @@ export const StateItemChild = observer((props: StateItemChildProps) => {
                   <span className="text-xs text-custom-text-400 font-medium">
                     {isDefaultState ? (
                       <Tooltip position="left" tooltipContent={t("workflows.workflow_states.default_state")}>
-                        <Info className="size-4 text-custom-text-400 hover:text-custom-text-300 cursor-help" />
+                        <Info className="flex-shrink-0 size-4 text-custom-text-400 hover:text-custom-text-300 cursor-help" />
                       </Tooltip>
                     ) : (
                       <>{t("workflows.workflow_states.work_item_creation")}</>

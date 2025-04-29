@@ -1,27 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-import { FileText } from "lucide-react";
-// types
+import { useParams, useRouter } from "next/navigation";
+import useSWR from "swr";
+import { FileText, ChevronRight } from "lucide-react";
+// constants
 import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
-import { TLogoProps } from "@plane/types";
+// types
+import { TPage } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, EmojiIconPicker, EmojiIconPickerTypes, Header, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, CustomMenu, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink, Logo } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common";
+import { PageBreadcrumbItem } from "@/components/pages";
+import { PageHeaderActions } from "@/components/pages/header/actions";
+import { PageSyncingBadge } from "@/components/pages/header/syncing-badge";
 // helpers
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
-import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
-import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 // plane web components
-import { PublishPageModal } from "@/plane-web/components/pages";
-// plane web constants
+import { PublishPageModal, CollaboratorsList } from "@/plane-web/components/pages";
 // plane web hooks
-import { EPageStoreType, usePage, usePublishPage } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePage, usePageStore, usePublishPage } from "@/plane-web/hooks/store";
+
+const storeType = EPageStoreType.WORKSPACE;
 
 export interface IPagesHeaderProps {
   showButton?: boolean;
@@ -29,47 +33,53 @@ export interface IPagesHeaderProps {
 
 export const PageDetailsHeader = observer(() => {
   // states
-  const [isOpen, setIsOpen] = useState(false);
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
   // params
   const { workspaceSlug, pageId } = useParams();
+  const router = useRouter();
   // store hooks
   const { allowPermissions } = useUserPermissions();
+  const { fetchParentPages } = usePageStore(storeType);
   const page = usePage({
     pageId: pageId?.toString() ?? "",
-    storeType: EPageStoreType.WORKSPACE,
+    storeType,
   });
   const { fetchWorkspacePagePublishSettings, getPagePublishSettings, publishWorkspacePage, unpublishWorkspacePage } =
     usePublishPage();
-  const { anchor, isCurrentUserOwner, name, logo_props, updatePageLogo, isContentEditable } = page ?? {};
+  const { anchor, isCurrentUserOwner } = page ?? {};
   // derived values
   const isDeployed = !!anchor;
   const pagePublishSettings = getPagePublishSettings(pageId.toString());
   const isPublishAllowed =
     isCurrentUserOwner || allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
-  const handlePageLogoUpdate = async (data: TLogoProps) => {
-    if (data) {
-      updatePageLogo?.(data)
-        .then(() => {
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Logo Updated successfully.",
-          });
-        })
-        .catch(() => {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Something went wrong. Please try again.",
-          });
-        });
-    }
-  };
+  // Always fetch parent pages to keep the cache up-to-date
+  const { data: parentPagesList, isLoading: isParentPagesLoading } = useSWR(
+    workspaceSlug && pageId ? `WORKSPACE_PARENT_PAGES_LIST_${pageId.toString()}` : null,
+    workspaceSlug && pageId ? () => fetchParentPages(pageId.toString()) : null
+  );
+
+  // Transform the data once it's available using useMemo
+  const orderedParentPages = useMemo(() => {
+    if (!parentPagesList) return undefined;
+    return createOrderedParentChildArray(parentPagesList);
+  }, [parentPagesList]);
+
+  // Now use orderedParentPages instead of parentPagesList for your UI logic
+  const isRootPage = orderedParentPages?.length === 1;
+  const rootParentDetails = orderedParentPages?.[0]; // First item is the root
+  const middleParents = orderedParentPages?.slice(1, -1) ?? []; // Middle items (excluding root and current)
 
   const SPACE_APP_URL = SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL;
   const publishLink = `${SPACE_APP_URL}${SPACE_BASE_PATH}/pages/${anchor}`;
+
+  const BreadcrumbSeparator = () => (
+    <div className="flex items-center px-2 text-custom-text-300">
+      <ChevronRight className="size-3" />
+    </div>
+  );
+
+  if (!page) return null;
 
   return (
     <>
@@ -84,89 +94,138 @@ export const PageDetailsHeader = observer(() => {
       />
       <Header>
         <Header.LeftItem>
-          <div>
-            <Breadcrumbs>
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={
-                  <BreadcrumbLink
-                    href={`/${workspaceSlug}/pages`}
-                    label="Pages"
-                    icon={<FileText className="size-4 text-custom-text-300" />}
-                  />
-                }
-              />
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={
-                  <BreadcrumbLink
-                    label={getPageName(name)}
-                    icon={
-                      <EmojiIconPicker
-                        isOpen={isOpen}
-                        handleToggle={(val: boolean) => setIsOpen(val)}
-                        className="flex items-center justify-center"
-                        buttonClassName="flex items-center justify-center"
-                        label={
-                          <>
-                            {logo_props?.in_use ? (
-                              <Logo logo={logo_props} size={16} type="lucide" />
-                            ) : (
-                              <FileText className="size-4 text-custom-text-300" />
-                            )}
-                          </>
-                        }
-                        onChange={(val) => {
-                          let logoValue = {};
+          <div className="w-full overflow-hidden">
+            <div className="flex items-center">
+              <div>
+                <BreadcrumbLink
+                  href={`/${workspaceSlug}/pages`}
+                  label="Pages"
+                  icon={<FileText className="size-4 text-custom-text-300" />}
+                />
+              </div>
 
-                          if (val?.type === "emoji")
-                            logoValue = {
-                              value: convertHexEmojiToDecimal(val.value.unified),
-                              url: val.value.imageUrl,
-                            };
-                          else if (val?.type === "icon") logoValue = val.value;
-
-                          handlePageLogoUpdate({
-                            in_use: val?.type,
-                            [val?.type]: logoValue,
-                          }).finally(() => setIsOpen(false));
-                        }}
-                        defaultIconColor={
-                          logo_props?.in_use && logo_props.in_use === "icon" ? logo_props?.icon?.color : undefined
-                        }
-                        defaultOpen={
-                          logo_props?.in_use && logo_props?.in_use === "emoji"
-                            ? EmojiIconPickerTypes.EMOJI
-                            : EmojiIconPickerTypes.ICON
-                        }
-                        disabled={!isContentEditable}
+              {isParentPagesLoading ? (
+                <div className="flex items-center">
+                  <BreadcrumbSeparator />
+                  <div className="flex items-center animate-pulse">
+                    <div className="h-4 w-24 bg-custom-background-80 rounded" />
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {!isRootPage && rootParentDetails?.id && (
+                    <div className="flex items-center">
+                      <BreadcrumbSeparator />
+                      <PageBreadcrumbItem
+                        pageId={rootParentDetails.id}
+                        storeType={EPageStoreType.WORKSPACE}
+                        href={`/${workspaceSlug}/pages/${rootParentDetails.id}`}
                       />
-                    }
-                  />
-                }
-              />
-            </Breadcrumbs>
+                    </div>
+                  )}
+
+                  {middleParents.length > 0 && (
+                    <div className="flex items-center">
+                      <BreadcrumbSeparator />
+                      <CustomMenu placement="bottom-start" ellipsis>
+                        {middleParents.map(
+                          (parent, index) =>
+                            parent.id && (
+                              <div
+                                key={parent.id}
+                                style={{
+                                  paddingLeft: `${index * 16}px`,
+                                }}
+                              >
+                                <CustomMenu.MenuItem
+                                  className="flex items-center gap-1 transition-colors duration-200 ease-in-out"
+                                  onClick={() => router.push(`/${workspaceSlug}/pages/${parent.id}`)}
+                                >
+                                  <PageBreadcrumbItem
+                                    pageId={parent.id}
+                                    storeType={EPageStoreType.WORKSPACE}
+                                    showLogo
+                                  />
+                                </CustomMenu.MenuItem>
+                              </div>
+                            )
+                        )}
+                      </CustomMenu>
+                    </div>
+                  )}
+                </>
+              )}
+
+              <div className={`flex items-center animate-quickFadeIn`}>
+                <BreadcrumbSeparator />
+                <PageBreadcrumbItem pageId={pageId?.toString() ?? ""} storeType={EPageStoreType.WORKSPACE} />
+              </div>
+            </div>
           </div>
         </Header.LeftItem>
         <Header.RightItem>
-          {isDeployed && (
-            <a
-              href={publishLink}
-              className="px-3 py-1.5 bg-green-500/20 text-green-500 rounded text-xs font-medium flex items-center gap-1.5"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span className="flex-shrink-0 rounded-full size-1.5 bg-green-500" />
-              Live
-            </a>
-          )}
-          {isPublishAllowed && (
-            <Button variant="outline-primary" size="sm" onClick={() => setIsPublishModalOpen(true)}>
-              {isDeployed ? "Unpublish" : "Publish"}
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            <PageSyncingBadge syncStatus={page.isSyncingWithServer} />
+            <CollaboratorsList page={page} />
+            {isDeployed && (
+              <a
+                href={publishLink}
+                className="h-6 px-2 bg-green-500/20 text-green-500 rounded text-xs font-medium flex items-center gap-1.5"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span className="flex-shrink-0 rounded-full size-1.5 bg-green-500" />
+                Live
+              </a>
+            )}
+            {isPublishAllowed && (
+              <Button variant="outline-primary" size="sm" onClick={() => setIsPublishModalOpen(true)} className="h-6">
+                {isDeployed ? "Unpublish" : "Publish"}
+              </Button>
+            )}
+            <PageHeaderActions page={page} storeType={storeType} />
+          </div>
         </Header.RightItem>
       </Header>
     </>
   );
 });
+
+function createOrderedParentChildArray(parentPagesList: TPage[]) {
+  // If the list is empty or has only one item, return it as is
+  if (!parentPagesList || parentPagesList.length <= 1) {
+    return parentPagesList;
+  }
+
+  // Create a map for quick lookups by ID
+  const pagesMap = new Map();
+  parentPagesList.forEach((page) => {
+    pagesMap.set(page.id, page);
+  });
+
+  const rootPage = parentPagesList.find((page) => page.parent_id === null);
+
+  if (!rootPage) {
+    console.error("No root page found in the list");
+    return parentPagesList;
+  }
+
+  const result: TPage[] = [];
+
+  function buildHierarchy(currentPage: TPage) {
+    result.push(currentPage);
+
+    // Find all direct children of the current page
+    const children = parentPagesList.filter((page) => page.parent_id === currentPage.id);
+
+    // Process each child
+    children.forEach((child) => {
+      buildHierarchy(child);
+    });
+  }
+
+  // Start building from the root
+  buildHierarchy(rootPage);
+
+  return result;
+}

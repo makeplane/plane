@@ -65,6 +65,7 @@ class InstanceEndpoint(BaseAPIView):
             IS_INTERCOM_ENABLED,
             INTERCOM_APP_ID,
             SILO_BASE_URL,
+            ELASTICSEARCH_ENABLED,
         ) = get_configuration_value(
             [
                 {
@@ -149,6 +150,10 @@ class InstanceEndpoint(BaseAPIView):
                     "key": "SILO_BASE_URL",
                     "default": os.environ.get("SILO_BASE_URL", ""),
                 },
+                {
+                    "key": "ELASTICSEARCH_ENABLED",
+                    "default": os.environ.get("ELASTICSEARCH_ENABLED", "0"),
+                },
             ]
         )
 
@@ -206,6 +211,8 @@ class InstanceEndpoint(BaseAPIView):
         data["instance_changelog_url"] = settings.INSTANCE_CHANGELOG_URL
 
         data["instance_changelog_url"] = settings.INSTANCE_CHANGELOG_URL
+
+        data["is_elasticsearch_enabled"] = ELASTICSEARCH_ENABLED == "1"
 
         instance_data = serializer.data
         instance_data["workspaces_exist"] = Workspace.objects.count() >= 1

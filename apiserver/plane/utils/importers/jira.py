@@ -1,7 +1,6 @@
 import requests
 import re
 from requests.auth import HTTPBasicAuth
-from sentry_sdk import capture_exception
 from urllib.parse import urlparse, urljoin
 
 
@@ -104,6 +103,5 @@ def jira_project_issue_summary(email, api_token, project_key, hostname):
                 ]
             ),
         }
-    except Exception as e:
-        capture_exception(e)
+    except Exception:
         return {"error": "Something went wrong could not fetch information from jira"}

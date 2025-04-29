@@ -3,6 +3,7 @@
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 // plane imports
+import { SUBSCRIPTION_WITH_SEATS_MANAGEMENT } from "@plane/constants";
 import { Button, CustomMenu } from "@plane/ui";
 // ce imports
 import { TBillingActionsButtonProps } from "@/ce/components/workspace/billing/billing-actions-button";
@@ -19,12 +20,14 @@ export const BillingActionsButton = observer((props: TBillingActionsButtonProps)
   } = useWorkspaceSubscription();
   // derived values
   const isOfflineSubscription = subscriptionDetail?.is_offline_payment;
-  const isProOrBusinessWorkspace =
-    subscriptionDetail && !isOfflineSubscription && ["PRO", "BUSINESS"].includes(subscriptionDetail?.product);
+  const isSeatsManagementEnabled =
+    subscriptionDetail &&
+    !isOfflineSubscription &&
+    SUBSCRIPTION_WITH_SEATS_MANAGEMENT.includes(subscriptionDetail?.product);
 
   return (
     <>
-      {isProOrBusinessWorkspace && canPerformWorkspaceAdminActions && (
+      {isSeatsManagementEnabled && canPerformWorkspaceAdminActions && (
         <CustomMenu
           customButton={
             <Button variant="neutral-primary" size="sm" className="flex items-center justify-center gap-1">

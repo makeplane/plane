@@ -6,6 +6,12 @@ export enum EUserPermissions {
 
 export type TUserPermissions = EUserPermissions.ADMIN | EUserPermissions.MEMBER | EUserPermissions.GUEST;
 
+// project network
+export enum EProjectNetwork {
+  PRIVATE = 0,
+  PUBLIC = 2,
+}
+
 // project pages
 export enum EPageAccess {
   PUBLIC = 0,
@@ -61,4 +67,21 @@ export enum EFileAssetType {
   INITIATIVE_COMMENT_DESCRIPTION = "INITIATIVE_COMMENT_DESCRIPTION",
   PROJECT_DESCRIPTION = "PROJECT_DESCRIPTION",
   TEAM_SPACE_COMMENT_DESCRIPTION = "TEAM_SPACE_COMMENT_DESCRIPTION",
+  OAUTH_APP_LOGO = "OAUTH_APP_LOGO",
+  OAUTH_APP_DESCRIPTION = "OAUTH_APP_DESCRIPTION",
+  CUSTOMER_LOGO = "CUSTOMER_LOGO",
+  CUSTOMER_DESCRIPTION = "CUSTOMER_DESCRIPTION",
+  CUSTOMER_REQUEST_DESCRIPTION = "CUSTOMER_REQUEST_DESCRIPTION",
+}
+
+export enum EUpdateStatus {
+  OFF_TRACK = "OFF-TRACK",
+  ON_TRACK = "ON-TRACK",
+  AT_RISK = "AT-RISK",
+}
+
+export enum EUpdateEntityType {
+  PROJECT = "PROJECT",
+  EPIC = "EPIC",
+  INITIATIVE = "INITIATIVE",
 }

@@ -13,7 +13,9 @@ import {
   MODULE_UNFAVORITED,
   EUserPermissions,
   EUserPermissionsLevel,
+  IS_FAVORITE_MENU_OPEN,
 } from "@plane/constants";
+import { useLocalStorage } from "@plane/hooks";
 import { IModule } from "@plane/types";
 import {
   Card,
@@ -30,7 +32,6 @@ import { DateRangeDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
-// constants
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { generateQueryParams } from "@/helpers/router.helper";
@@ -59,6 +60,9 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const { getUserDetails } = useMember();
   const { captureEvent } = useEventTracker();
 
+  // local storage
+  const { setValue: toggleFavoriteMenu, storedValue } = useLocalStorage<boolean>(IS_FAVORITE_MENU_OPEN, false);
+
   // derived values
   const moduleDetails = getModuleById(moduleId);
   const isEditingAllowed = allowPermissions(
@@ -76,6 +80,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
     const addToFavoritePromise = addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).then(
       () => {
+        if (!storedValue) toggleFavoriteMenu(true);
         captureEvent(MODULE_FAVORITED, {
           module_id: moduleId,
           element: "Grid layout",

@@ -1,4 +1,6 @@
 import { SlackEventPayload, UnfurlMap } from "@plane/etl/slack";
+import { CONSTANTS } from "@/helpers/constants";
+import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { extractPlaneResource } from "../../helpers/parse-plane-resources";
@@ -10,14 +12,36 @@ import { createProjectLinkback } from "../../views/project-linkback";
 const apiClient = getAPIClient();
 
 export const handleSlackEvent = async (data: SlackEventPayload) => {
-  switch (data.event.type) {
-    case "message":
-      await handleMessageEvent(data);
-      break;
-    case "link_shared":
-      await handleLinkSharedEvent(data);
-    default:
-      break;
+  try {
+    switch (data.event.type) {
+      case "message":
+        await handleMessageEvent(data);
+        break;
+      case "link_shared":
+        await handleLinkSharedEvent(data);
+        break;
+      default:
+        break;
+    }
+  } catch (error: any) {
+    const details = await getConnectionDetails(data.team_id);
+    if (!details) {
+      logger.info(`[SLACK] No connection details found for team ${data.team_id}`);
+      return;
+    }
+
+    const { slackService } = details;
+
+    const isPermissionError = error?.detail?.includes(CONSTANTS.NO_PERMISSION_ERROR);
+    const errorMessage = isPermissionError
+      ? CONSTANTS.NO_PERMISSION_ERROR_MESSAGE
+      : CONSTANTS.SOMETHING_WENT_WRONG;
+
+    await slackService.sendEphemeralMessage(data.event.user, errorMessage, data.event.channel, data.event.event_ts);
+
+    if (!isPermissionError) {
+      throw error;
+    }
   }
 };
 
@@ -25,7 +49,13 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
   if (data.event.type === "message") {
     if (!data.event.thread_ts) return;
 
-    const { workspaceConnection, planeClient, slackService } = await getConnectionDetails(data.team_id);
+    const details = await getConnectionDetails(data.team_id);
+    if (!details) {
+      logger.info(`[SLACK] No connection details found for team ${data.team_id}`);
+      return;
+    }
+
+    const { workspaceConnection, planeClient, slackService } = details;
     // Get the associated entity connection with the message
     const entityConnection = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
       entity_id: data.event.thread_ts.trim().toString(),
@@ -57,7 +87,14 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
 
 export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
   if (data.event.type === "link_shared") {
-    const { workspaceConnection, planeClient, slackService } = await getConnectionDetails(data.team_id);
+    const details = await getConnectionDetails(data.team_id);
+    if (!details) {
+      logger.info(`[SLACK] No connection details found for team ${data.team_id}`);
+      return;
+    }
+
+    const { workspaceConnection, planeClient, slackService } = details;
+
     const unfurlMap: UnfurlMap = {};
 
     await Promise.all(

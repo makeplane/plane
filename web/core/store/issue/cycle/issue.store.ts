@@ -146,9 +146,9 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
     const isSidebarCollapsed = storage.get("cycle_sidebar_collapsed");
     projectId &&
       cycleId &&
-      this.rootIssueStore.rootStore.cycle.cycleMap[cycleId].version === 2 &&
+      this.rootIssueStore.rootStore.cycle.getCycleById(cycleId)?.version === 2 &&
       isSidebarCollapsed &&
-      JSON.parse(isSidebarCollapsed) === "false" &&
+      JSON.parse(isSidebarCollapsed) === false &&
       this.rootIssueStore.rootStore.cycle.fetchActiveCycleProgressPro(workspaceSlug, projectId, cycleId);
   };
 

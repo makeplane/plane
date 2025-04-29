@@ -42,7 +42,7 @@ export const DropdownOptions: React.FC<IMultiSelectDropdownOptions | ISingleSele
           isMobile={isMobile}
         />
       )}
-      <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
+      <div className={cn("max-h-48 space-y-1 overflow-y-scroll", !disableSearch && "mt-2")}>
         <>
           {options ? (
             options.length > 0 ? (
@@ -50,6 +50,7 @@ export const DropdownOptions: React.FC<IMultiSelectDropdownOptions | ISingleSele
                 <Combobox.Option
                   key={keyExtractor(option)}
                   value={keyExtractor(option)}
+                  disabled={option.disabled}
                   className={({ active, selected }) =>
                     cn(
                       "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5",
@@ -66,7 +67,7 @@ export const DropdownOptions: React.FC<IMultiSelectDropdownOptions | ISingleSele
                   {({ selected }) => (
                     <>
                       {renderItem ? (
-                        <>{renderItem({ value: keyExtractor(option), selected })}</>
+                        <>{renderItem({ value: keyExtractor(option), selected, disabled: option.disabled })}</>
                       ) : (
                         <>
                           <span className="flex-grow truncate">{option.value}</span>

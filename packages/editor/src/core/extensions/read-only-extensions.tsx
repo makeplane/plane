@@ -24,6 +24,7 @@ import {
   CustomTextAlignExtension,
   CustomCalloutReadOnlyExtension,
   CustomColorExtension,
+  MarkdownClipboard,
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
@@ -41,8 +42,7 @@ type Props = {
 export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
   const { disabledExtensions, fileHandler, mentionHandler } = props;
 
-  return [
-    // @ts-expect-error tiptap types are incorrect
+  const extensions = [
     StarterKit.configure({
       bulletList: {
         HTMLAttributes: {
@@ -87,19 +87,13 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
       autolink: true,
       linkOnPaste: true,
       protocols: ["http", "https"],
-      validate: (url: string) => isValidHttpUrl(url),
+      validate: (url: string) => isValidHttpUrl(url).isValid,
       HTMLAttributes: {
         class:
           "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
       },
     }),
     CustomTypographyExtension,
-    ReadOnlyImageExtension(fileHandler).configure({
-      HTMLAttributes: {
-        class: "rounded-md",
-      },
-    }),
-    CustomReadOnlyImageExtension(fileHandler),
     TiptapUnderline,
     TextStyle,
     TaskList.configure({
@@ -121,8 +115,9 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
     CustomCodeInlineExtension,
     Markdown.configure({
       html: true,
-      transformCopiedText: true,
+      transformCopiedText: false,
     }),
+    MarkdownClipboard,
     Table,
     TableHeader,
     TableCell,
@@ -136,4 +131,18 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
       disabledExtensions,
     }),
   ];
+
+  if (!disabledExtensions.includes("image")) {
+    extensions.push(
+      ReadOnlyImageExtension(fileHandler).configure({
+        HTMLAttributes: {
+          class: "rounded-md",
+        },
+      }),
+      CustomReadOnlyImageExtension(fileHandler)
+    );
+  }
+
+  // @ts-expect-error tiptap types are incorrect
+  return extensions;
 };

@@ -1,8 +1,8 @@
-import { GitlabUser } from "@/gitlab/types";
 import axios, { AxiosInstance } from "axios";
+import { GitlabUser } from "@/gitlab/types";
 
 export class GitLabService {
-  private client: AxiosInstance;
+  client: AxiosInstance;
 
   constructor(
     access_token: string,
@@ -114,10 +114,10 @@ export class GitLabService {
   }
 
   /**
-   * 
+   *
    * @param projectId - entityId or gitlab project id
    * @param hookId - webhookId or gitlab hook id
-   * @returns 
+   * @returns
    */
   async removeWebhookFromProject(projectId: string, hookId: string) {
     try {
@@ -126,7 +126,7 @@ export class GitLabService {
       );
       return response.data;
     } catch (error) {
-      throw error;
+      console.error("Error removing webhook from gitlab project", error);
     }
   }
 
@@ -143,10 +143,10 @@ export class GitLabService {
   }
 
   /**
-   * 
+   *
    * @param groupId - entityId or gitlab group id
    * @param hookId - webhookId or gitlab hook id
-   * @returns 
+   * @returns
    */
   async removeWebhookFromGroup(groupId: string, hookId: string) {
     try {
@@ -164,7 +164,7 @@ export class GitLabService {
       const response = await this.client.get("/groups?owned=true&membership=true&pages=100");
       return response.data;
     } catch (error) {
-      throw error;
+      console.error("Error removing webhook from gitlab group", error);
     }
   }
 

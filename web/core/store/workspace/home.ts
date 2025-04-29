@@ -1,3 +1,4 @@
+import clone from "lodash/clone";
 import orderBy from "lodash/orderBy";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
@@ -19,7 +20,7 @@ export interface IHomeStore {
   // actions
   toggleWidgetSettings: (value?: boolean) => void;
   fetchWidgets: (workspaceSlug: string) => Promise<void>;
-  reorderWidget: (workspaceSlug: string, widgetKey: string, destinationId: string, edge: string | undefined) => void;
+  reorderWidget: (workspaceSlug: string, widgetKey: string, destinationId: string, edge: string | undefined) => Promise<void>;
   toggleWidget: (workspaceSlug: string, widgetKey: string, is_enabled: boolean) => void;
 }
 
@@ -102,6 +103,7 @@ export class HomeStore implements IHomeStore {
   };
 
   reorderWidget = async (workspaceSlug: string, widgetKey: string, destinationId: string, edge: string | undefined) => {
+    const sortOrderBeforeUpdate = clone(this.widgetsMap[widgetKey]?.sort_order);
     try {
       let resultSequence = 10000;
       if (edge) {
@@ -121,14 +123,17 @@ export class HomeStore implements IHomeStore {
           }
         }
       }
-      await this.workspaceService.updateWorkspaceWidget(workspaceSlug, widgetKey, {
-        sort_order: resultSequence,
-      });
       runInAction(() => {
         set(this.widgetsMap, [widgetKey, "sort_order"], resultSequence);
       });
+      await this.workspaceService.updateWorkspaceWidget(workspaceSlug, widgetKey, {
+        sort_order: resultSequence,
+      });
     } catch (error) {
       console.error("Failed to move widget");
+      runInAction(() => {
+        set(this.widgetsMap, [widgetKey, "sort_order"], sortOrderBeforeUpdate);
+      });
       throw error;
     }
   };

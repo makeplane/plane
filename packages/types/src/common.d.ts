@@ -35,3 +35,11 @@ export type TStateAnalytics = {
 };
 
 export type TFetchStatus = "partial" | "complete" | undefined;
+
+export type ICustomSearchSelectOption = {
+  value: any;
+  query: string;
+  content: React.ReactNode;
+  disabled?: boolean;
+  tooltip?: string | React.ReactNode;
+};

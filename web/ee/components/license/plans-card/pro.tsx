@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ExternalLink } from "lucide-react";
 // plane imports
-import { TProductSubscriptionType } from "@plane/types";
+import { EProductSubscriptionEnum } from "@plane/constants";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -19,8 +19,8 @@ import { PaymentService } from "@/plane-web/services/payment.service";
 const paymentService = new PaymentService();
 
 type TProPlanCardProps = {
-  upgradeLoader: boolean;
-  handleUpgrade: (productType: TProductSubscriptionType) => void;
+  upgradeLoader: EProductSubscriptionEnum | null;
+  handleUpgrade: (selectedSubscriptionType: EProductSubscriptionEnum) => void;
 };
 
 export const ProPlanCard: React.FC<TProPlanCardProps> = observer((props: TProPlanCardProps) => {
@@ -39,7 +39,7 @@ export const ProPlanCard: React.FC<TProPlanCardProps> = observer((props: TProPla
   const isInTrialPeriod = !isSelfManaged && subscriptionDetail?.is_on_trial && !subscriptionDetail?.has_upgraded;
 
   useEffect(() => {
-    setIsLoading(upgradeLoader);
+    setIsLoading(upgradeLoader === EProductSubscriptionEnum.PRO);
   }, [upgradeLoader]);
 
   const handleSubscriptionPageRedirection = () => {
@@ -64,10 +64,9 @@ export const ProPlanCard: React.FC<TProPlanCardProps> = observer((props: TProPla
   };
 
   if (!subscriptionDetail) return null;
-
   return (
     <PlanCard
-      planName={isInTrialPeriod ? "Pro trial" : "Pro"}
+      planVariant={EProductSubscriptionEnum.PRO}
       planDescription={
         <>
           <div>Unlimited members, 1:5 Guests, Work item types, Active Cycles, and more</div>
@@ -109,12 +108,14 @@ export const ProPlanCard: React.FC<TProPlanCardProps> = observer((props: TProPla
       }
       button={
         !subscriptionDetail.is_offline_payment && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <Button
               variant="link-neutral"
-              className="cursor-pointer px-3 py-1.5 text-center text-sm font-medium outline-none"
+              className="cursor-pointer px-3 py-1.5 text-center text-xs font-medium outline-none"
               onClick={
-                !isSelfManaged && isInTrialPeriod ? () => handleUpgrade("PRO") : handleSubscriptionPageRedirection
+                !isSelfManaged && isInTrialPeriod
+                  ? () => handleUpgrade(EProductSubscriptionEnum.PRO)
+                  : handleSubscriptionPageRedirection
               }
               disabled={isLoading}
             >

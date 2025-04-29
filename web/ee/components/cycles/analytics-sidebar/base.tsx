@@ -3,6 +3,7 @@
 import { observer } from "mobx-react";
 // helpers
 import { TCycleEstimateType, TCyclePlotType } from "@plane/types";
+import { Loader } from "@plane/ui";
 import { TProgressChartData } from "@/helpers/cycle.helper";
 // local components
 import { useCycle } from "@/hooks/store";
@@ -87,12 +88,18 @@ export const SidebarChart = observer((props: TProps) => {
       </div>
       <div className="py-4">
         <div className="h-40 w-full">
-          <ActiveCycleChart
-            cycle={cycle}
-            data={(cycleProgress as TProgressChartData) || []}
-            isFullWidth
-            plotType={computedPlotType}
-          />
+          {cycleProgress ? (
+            <ActiveCycleChart
+              cycle={cycle}
+              data={(cycleProgress as TProgressChartData) || []}
+              isFullWidth
+              plotType={computedPlotType}
+            />
+          ) : (
+            <Loader className="w-full h-full pb-2">
+              <Loader.Item width="100%" height="100%" />
+            </Loader>
+          )}
         </div>
         <div className="flex items-center justify-between">
           {chartLegends.map((legend) => (

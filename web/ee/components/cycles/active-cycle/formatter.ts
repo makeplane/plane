@@ -22,7 +22,8 @@ const formatV1Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, 
     const pending = data.completion_chart[p] || 0;
     const total = (isTypeIssue ? cycle.total_issues : cycle.total_estimate_points) || 0;
     const completed = total - pending;
-    const idealDone = ideal(p, total, cycle);
+    const idealDone = ideal(p, total, cycle) || 0;
+
     return {
       date: p,
       scope: p! <= cycle.end_date! ? total : null,

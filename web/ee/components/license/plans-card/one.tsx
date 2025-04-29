@@ -2,7 +2,8 @@
 
 import { observer } from "mobx-react";
 import { ExternalLink } from "lucide-react";
-// ui
+// plane imports
+import { EProductSubscriptionEnum } from "@plane/constants";
 import { getButtonStyling } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -11,7 +12,7 @@ import { PlanCard, SelfManagedLicenseActions } from "@/plane-web/components/lice
 
 export const OnePlanCard: React.FC = observer(() => (
   <PlanCard
-    planName="One"
+    planVariant={EProductSubscriptionEnum.ONE}
     planDescription={
       <>
         <div>Active cycles, Time Tracking, Public View + Pages, ~50 Members</div>

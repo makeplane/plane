@@ -42,12 +42,15 @@ export const WorklogCreate: FC<TWorklogCreate> = (props) => {
       setLoader(false);
       handleClose && handleClose();
       return { status: "success" };
-    } catch {
+    } catch (error: any) {
       setLoader(false);
+      const errorMessage = error?.duration
+        ? "Please use hours and minutes together for longer durations."
+        : "Something went wrong. please try again.";
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: "Something went wrong. please try again.",
+        message: errorMessage,
       });
       return { status: "error" };
     }

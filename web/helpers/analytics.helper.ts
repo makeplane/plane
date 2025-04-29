@@ -3,10 +3,11 @@ import { BarDatum } from "@nivo/bar";
 // plane imports
 import { ANALYTICS_DATE_KEYS, STATE_GROUPS } from "@plane/constants";
 import { IAnalyticsData, IAnalyticsParams, IAnalyticsResponse, TStateGroups } from "@plane/types";
+import { generateRandomColor, hslToHex } from "@plane/utils";
 // constants
 import { MONTHS_LIST } from "@/constants/calendar";
 // helpers
-import { addSpaceIfCamelCase, capitalizeFirstLetter, generateRandomColor } from "@/helpers/string.helper";
+import { addSpaceIfCamelCase, capitalizeFirstLetter } from "@/helpers/string.helper";
 
 export const convertResponseToBarGraphData = (
   response: IAnalyticsData | undefined,
@@ -64,7 +65,8 @@ export const generateBarColor = (
   params: IAnalyticsParams,
   type: "x_axis" | "segment"
 ): string => {
-  let color: string | undefined = generateRandomColor(value);
+  const defaultColor = hslToHex(generateRandomColor(value));
+  let color: string | undefined = defaultColor;
 
   if (!analytics) return color;
 
@@ -91,7 +93,7 @@ export const generateBarColor = (
               : "#ced4da";
   }
 
-  return color ?? generateRandomColor(value);
+  return color ?? defaultColor;
 };
 
 export const generateDisplayName = (

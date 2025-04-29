@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // Plane
+import { Briefcase } from "lucide-react";
 import { CircularProgressIndicator, Logo } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
@@ -11,10 +12,10 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
 import Attributes from "@/plane-web/components/projects/layouts/attributes";
 // local components
+import { UpdateStatusIcons } from "@/plane-web/components/updates/status-icons";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { QuickActions } from "./quick-actions";
-import { Briefcase } from "lucide-react";
 
 type Props = {
   workspaceSlug: string;
@@ -39,17 +40,21 @@ export const ProjectItem = observer((props: Props) => {
   const progress = getProgress(projectAnalyticsCount?.completed_issues, projectAnalyticsCount?.total_issues);
 
   if (!projectDetails || !currentWorkspace) return;
+
   return (
     <ListItem
       title={projectDetails.name || projectDetails.project_name || ""}
       itemLink={`/${workspaceSlug}/projects/${projectId}/issues`}
       prependTitleElement={
-        <div className="h-6 w-6 flex-shrink-0 grid place-items-center rounded bg-custom-background-90 mr-2">
-          {projectDetails.logo_props ? (
-            <Logo logo={projectDetails.logo_props} size={14} />
-          ) : (
-            <Briefcase className="size-[14px] text-custom-text-300" />
-          )}
+        <div className="flex items-center gap-2">
+          <UpdateStatusIcons statusType={projectDetails.update_status} />
+          <div className="h-6 w-6 flex-shrink-0 grid place-items-center rounded bg-custom-background-90 mr-2">
+            {projectDetails.logo_props ? (
+              <Logo logo={projectDetails.logo_props} size={14} />
+            ) : (
+              <Briefcase className="size-[14px] text-custom-text-300" />
+            )}
+          </div>
         </div>
       }
       appendTitleElement={

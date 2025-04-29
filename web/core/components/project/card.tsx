@@ -6,7 +6,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArchiveRestoreIcon, Check, ExternalLink, LinkIcon, Lock, Settings, Trash2, UserPlus } from "lucide-react";
 // types
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
+import { useLocalStorage } from "@plane/hooks";
 import type { IProject } from "@plane/types";
 // ui
 import {
@@ -21,6 +22,7 @@ import {
   TContextMenuItem,
   FavoriteStar,
 } from "@plane/ui";
+import { copyUrlToClipboard } from "@plane/utils";
 // components
 import { Logo } from "@/components/common";
 import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from "@/components/project";
@@ -28,7 +30,6 @@ import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useMember, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -68,6 +69,11 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const hasMemberRole = project.member_role === EUserPermissions.MEMBER;
   // archive
   const isArchived = !!project.archived_at;
+  // local storage
+  const { setValue: toggleFavoriteMenu, storedValue: isFavoriteMenuOpen } = useLocalStorage<boolean>(
+    IS_FAVORITE_MENU_OPEN,
+    false
+  );
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
@@ -78,6 +84,10 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
       success: {
         title: "Success!",
         message: () => "Project added to favorites.",
+        actionItems: () => {
+          if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
+          return <></>;
+        },
       },
       error: {
         title: "Error!",

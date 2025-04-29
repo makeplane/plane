@@ -1,5 +1,6 @@
 # python imports
 from typing import Optional
+from dataclasses import dataclass, field
 from datetime import date, datetime
 
 # Third-party library imports
@@ -24,6 +25,38 @@ from plane.db.models import (
     ModuleIssue,
     IssueType,
 )
+
+
+@strawberry.input
+@dataclass
+class IssueCreateInputType:
+    name: str = field()
+    description_html: Optional[str] = field(default_factory=lambda: "<p></p>")
+    priority: Optional[str] = field(default_factory=lambda: "none")
+    labels: Optional[list[strawberry.ID]] = field(default_factory=lambda: None)
+    assignees: Optional[list[strawberry.ID]] = field(default_factory=lambda: None)
+    start_date: Optional[datetime] = field(default_factory=lambda: None)
+    target_date: Optional[datetime] = field(default_factory=lambda: None)
+    state: Optional[strawberry.ID] = field(default_factory=lambda: None)
+    parent: Optional[strawberry.ID] = field(default_factory=lambda: None)
+    estimate_point: Optional[strawberry.ID] = field(default_factory=lambda: None)
+    cycle_id: Optional[strawberry.ID] = field(default_factory=lambda: None)
+    module_ids: Optional[list[strawberry.ID]] = field(default_factory=lambda: None)
+
+
+@strawberry.input
+@dataclass
+class IssueUpdateInputType:
+    name: Optional[str] = field(default_factory=lambda: None)
+    description_html: Optional[str] = field(default_factory=lambda: None)
+    priority: Optional[str] = field(default_factory=lambda: None)
+    labels: Optional[list[strawberry.ID]] = field(default_factory=lambda: None)
+    assignees: Optional[list[strawberry.ID]] = field(default_factory=lambda: None)
+    start_date: Optional[datetime] = field(default_factory=lambda: None)
+    target_date: Optional[datetime] = field(default_factory=lambda: None)
+    state: Optional[strawberry.ID] = field(default_factory=lambda: None)
+    parent: Optional[strawberry.ID] = field(default_factory=lambda: None)
+    estimate_point: Optional[strawberry.ID] = field(default_factory=lambda: None)
 
 
 @strawberry.type

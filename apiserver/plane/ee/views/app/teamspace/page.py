@@ -43,22 +43,7 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.utils.error_codes import ERROR_CODES
 from plane.bgtasks.page_version_task import page_version
 from plane.ee.bgtasks.team_space_activities_task import team_space_activity
-
-
-def unarchive_archive_page_and_descendants(page_id, archived_at):
-    # Your SQL query
-    sql = """
-    WITH RECURSIVE descendants AS (
-        SELECT id FROM pages WHERE id = %s
-        UNION ALL
-        SELECT pages.id FROM pages, descendants WHERE pages.parent_id = descendants.id
-    )
-    UPDATE pages SET archived_at = %s WHERE id IN (SELECT id FROM descendants);
-    """
-
-    # Execute the SQL query
-    with connection.cursor() as cursor:
-        cursor.execute(sql, [page_id, archived_at])
+from plane.ee.bgtasks.page_update import nested_page_update
 
 
 class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
@@ -82,14 +67,6 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
             .prefetch_related("labels")
             .order_by("-is_favorite", "-created_at")
             .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "page_labels__label_id",
-                        distinct=True,
-                        filter=~Q(page_labels__label_id__isnull=True),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
                 project_ids=Coalesce(
                     ArrayAgg(
                         "projects__id",
@@ -306,6 +283,13 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
             epoch=int(timezone.now().timestamp()),
         )
 
+        nested_page_update.delay(
+            page_id=page.id,
+            action="deleted",
+            slug=slug,
+            user_id=request.user.id,
+        )
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -403,10 +387,20 @@ class TeamspacePageArchiveEndpoint(TeamspaceBaseEndpoint):
         UserFavorite.objects.filter(
             workspace__slug=slug, entity_identifier=pk, entity_type="page"
         ).delete()
+        current_time = datetime.now()
 
-        unarchive_archive_page_and_descendants(pk, datetime.now())
+        page.archived_at = current_time
+        page.save()
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        # archive the sub pages
+        nested_page_update.delay(
+            page_id=str(pk),
+            action="archived",
+            slug=slug,
+            user_id=request.user.id,
+        )
+
+        return Response({"archived_at": str(current_time)}, status=status.HTTP_200_OK)
 
 
 class TeamspacePageUnarchiveEndpoint(TeamspaceBaseEndpoint):
@@ -435,7 +429,15 @@ class TeamspacePageUnarchiveEndpoint(TeamspaceBaseEndpoint):
             )
 
         # Unarchive the page
-        unarchive_archive_page_and_descendants(pk, None)
+        page.archived_at = None
+        page.save()
+
+        nested_page_update.delay(
+            page_id=page.id,
+            action="unarchived",
+            slug=slug,
+            user_id=request.user.id,
+        )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -445,6 +447,7 @@ class TeamspacePageLockEndpoint(TeamspaceBaseEndpoint):
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def post(self, request, slug, team_space_id, pk):
+        action = request.data.get("action", "current-page")
         # Check the page is part of the team space
         if not TeamspacePage.objects.filter(page_id=pk, workspace__slug=slug).exists():
             return Response(
@@ -469,10 +472,19 @@ class TeamspacePageLockEndpoint(TeamspaceBaseEndpoint):
         page.is_locked = True
         page.save()
 
+        nested_page_update.delay(
+            page_id=page.id,
+            action="locked",
+            slug=slug,
+            user_id=request.user.id,
+            sub_pages=True if action == "all" else False,
+        )
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def delete(self, request, slug, team_space_id, pk):
+        action = request.data.get("action", "current-page")
         # Check the page is part of the team space
         if not TeamspacePage.objects.filter(page_id=pk, workspace__slug=slug).exists():
             return Response(
@@ -496,6 +508,14 @@ class TeamspacePageLockEndpoint(TeamspaceBaseEndpoint):
         # Unlock the page
         page.is_locked = False
         page.save()
+
+        nested_page_update.delay(
+            page_id=page.id,
+            action="unlocked",
+            slug=slug,
+            user_id=request.user.id,
+            sub_pages=True if action == "all" else False,
+        )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -578,6 +598,7 @@ class TeamspacePagesDescriptionEndpoint(TeamspaceBaseEndpoint):
                     new_value=request.data, old_value=existing_instance, page_id=pk
                 )
             # Store the updated binary data
+            page.name = request.data.get("name", page.name)
             page.description_binary = new_binary_data
             page.description_html = request.data.get("description_html")
             page.description = request.data.get("description")

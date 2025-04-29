@@ -113,12 +113,6 @@ module.exports = {
             primary: convertToRGB(" --color-background-primary"),
             error: convertToRGB(" --color-background-error"),
             DEFAULT: convertToRGB("--color-background-100"),
-            subscription: {
-              free: convertToRGB("--color-background-subscription-free"),
-              one: convertToRGB("--color-background-subscription-one"),
-              pro: convertToRGB("--color-background-subscription-pro"),
-              business: convertToRGB("--color-background-subscription-business"),
-            },
           },
           text: {
             0: "rgb(255, 255, 255)",
@@ -145,12 +139,6 @@ module.exports = {
             primary: convertToRGB("--color-text-primary"),
             error: convertToRGB("--color-text-error"),
             DEFAULT: convertToRGB("--color-text-100"),
-            subscription: {
-              free: convertToRGB("--color-text-subscription-free"),
-              one: convertToRGB("--color-text-subscription-one"),
-              pro: convertToRGB("--color-text-subscription-pro"),
-              business: convertToRGB("--color-text-subscription-business"),
-            },
           },
           border: {
             0: "rgb(255, 255, 255)",
@@ -233,6 +221,28 @@ module.exports = {
             neutral: "rgba(96, 100, 108, 0.1)",
             hover: "rgba(96, 100, 108, 0.25)",
             active: "rgba(96, 100, 108, 0.7)",
+          },
+          subscription: {
+            free: {
+              200: convertToRGB("--color-subscription-free-200"),
+              400: convertToRGB("--color-subscription-free-400"),
+            },
+            one: {
+              200: convertToRGB("--color-subscription-one-200"),
+              400: convertToRGB("--color-subscription-one-400"),
+            },
+            pro: {
+              200: convertToRGB("--color-subscription-pro-200"),
+              400: convertToRGB("--color-subscription-pro-400"),
+            },
+            business: {
+              200: convertToRGB("--color-subscription-business-200"),
+              400: convertToRGB("--color-subscription-business-400"),
+            },
+            enterprise: {
+              200: convertToRGB("--color-subscription-enterprise-200"),
+              400: convertToRGB("--color-subscription-enterprise-400"),
+            },
           },
         },
         onboarding: {
@@ -317,6 +327,7 @@ module.exports = {
         },
       }),
       screens: {
+        xs: "480px",
         "3xl": "1792px",
       },
       // scale down font sizes to 90% of default
@@ -484,6 +495,14 @@ module.exports = {
           ".px-page-x": {
             paddingLeft: "1.35rem",
             paddingRight: "1.35rem",
+          },
+        },
+        // Hide scrollbar but keep functionality
+        ".scrollbar-hide": {
+          "-ms-overflow-style": "none", /* IE and Edge */
+          "scrollbar-width": "none", /* Firefox */
+          "&::-webkit-scrollbar": {
+            display: "none", /* Chrome, Safari and Opera */
           },
         },
       };

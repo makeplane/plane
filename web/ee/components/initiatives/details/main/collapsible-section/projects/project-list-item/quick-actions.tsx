@@ -3,9 +3,7 @@ import { LinkIcon, MoreHorizontal, Trash2 } from "lucide-react";
 // Plane
 import { useTranslation } from "@plane/i18n";
 import { CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
-import { cn } from "@plane/utils";
-// helpers
-import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { cn, copyUrlToClipboard } from "@plane/utils";
 // Plane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TProject } from "@/plane-web/types/projects";
@@ -22,7 +20,6 @@ export const QuickActions: React.FC<Props> = observer((props: Props) => {
   const {
     initiative: { updateInitiative, getInitiativeById },
   } = useInitiatives();
-
   const { t } = useTranslation();
 
   // derived states
@@ -51,7 +48,7 @@ export const QuickActions: React.FC<Props> = observer((props: Props) => {
       action: () =>
         updateInitiative(workspaceSlug, initiativeId, {
           project_ids: initiative?.project_ids ? initiative?.project_ids.filter((id) => id !== project.id) : [],
-        }).then(() => {
+        }).then(async () => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",

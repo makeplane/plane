@@ -8,7 +8,11 @@ from .base import BaseAPIView
 from django.db.models import OuterRef, Func, F, Prefetch
 
 from plane.db.models import DeployBoard, Page, PageLog, Issue, IssueReaction, IssueVote
-from plane.ee.serializers import PagePublicSerializer, PagePublicMetaSerializer
+from plane.ee.serializers import (
+    PagePublicSerializer,
+    PagePublicMetaSerializer,
+    SubPagePublicSerializer,
+)
 from plane.app.serializers import IssuePublicSerializer
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
@@ -63,6 +67,40 @@ class PagePublicEndpoint(BaseAPIView):
             # Get the page object
             page = Page.objects.get(pk=deploy_board.entity_identifier)
             serializer = PagePublicSerializer(page)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {
+                    "error": "Payment required",
+                    "error_code": ErrorCodes.PAYMENT_REQUIRED.value,
+                },
+                status=status.HTTP_402_PAYMENT_REQUIRED,
+            )
+
+
+class SubPagePublicEndpoint(BaseAPIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, anchor):
+        # Get the deploy board object
+        deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="page")
+
+        # Check if the workspace has access to feature
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.PAGE_PUBLISH, slug=deploy_board.workspace.slug
+        ):
+            # Get the page object
+            page = Page.objects.filter(
+                parent_id=deploy_board.entity_identifier,
+                workspace__slug=deploy_board.workspace.slug,
+            ).annotate(
+                anchor=DeployBoard.objects.filter(
+                    entity_name="page",
+                    entity_identifier=OuterRef("pk"),
+                    workspace__slug=deploy_board.workspace.slug,
+                ).values("anchor")
+            )
+            serializer = SubPagePublicSerializer(page, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(

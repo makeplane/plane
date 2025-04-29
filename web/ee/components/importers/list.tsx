@@ -7,7 +7,6 @@ import { ImportersListItem } from "@/plane-web/components/importers";
 import { TFeatureFlags } from "@/plane-web/types/feature-flag";
 // logos
 import AsanaLogo from "@/public/services/asana.svg";
-import CSVLogo from "@/public/services/csv.svg";
 import JiraLogo from "@/public/services/jira.svg";
 import LinearLogo from "@/public/services/linear.svg";
 
@@ -44,14 +43,6 @@ export const IMPORTERS_LIST: ImporterProps[] = [
     title: "Linear",
     i18n_description: "linear_importer.linear_importer_description",
     logo: LinearLogo,
-    beta: true,
-  },
-  {
-    flag: E_FEATURE_FLAGS.FLATFILE_IMPORTER,
-    key: "csv",
-    title: "CSV Importers",
-    i18n_description: "flatfile_importer.flatfile_importer_description",
-    logo: CSVLogo,
     beta: true,
   },
   {

@@ -44,6 +44,14 @@ class FileAsset(BaseModel):
         PROJECT_ATTACHMENT = "PROJECT_ATTACHMENT"
         TEAM_SPACE_DESCRIPTION = "TEAM_SPACE_DESCRIPTION"
         TEAM_SPACE_COMMENT_DESCRIPTION = "TEAM_SPACE_COMMENT_DESCRIPTION"
+        OAUTH_APP_LOGO = "OAUTH_APP_LOGO"
+        OAUTH_APP_DESCRIPTION = "OAUTH_APP_DESCRIPTION"
+        CUSTOMER_REQUEST_ATTACHMENT = "CUSTOMER_REQUEST_ATTACHMENT"
+        CUSTOMER_LOGO = "CUSTOMER_LOGO"
+        CUSTOMER_DESCRIPTION = "CUSTOMER_DESCRIPTION"
+        CUSTOMER_REQUEST_DESCRIPTION = "CUSTOMER_REQUEST_DESCRIPTION"
+        WORKITEM_TEMPLATE_DESCRIPTION = "WORKITEM_TEMPLATE_DESCRIPTION"
+        PAGE_TEMPLATE_DESCRIPTION = "PAGE_TEMPLATE_DESCRIPTION"
 
     attributes = models.JSONField(default=dict)
     asset = models.FileField(upload_to=get_upload_path, max_length=800)
@@ -89,11 +97,14 @@ class FileAsset(BaseModel):
 
     @property
     def asset_url(self):
-        if (
-            self.entity_type == self.EntityTypeContext.WORKSPACE_LOGO
-            or self.entity_type == self.EntityTypeContext.USER_AVATAR
-            or self.entity_type == self.EntityTypeContext.USER_COVER
-            or self.entity_type == self.EntityTypeContext.PROJECT_COVER
+        if self.entity_type in (
+            self.EntityTypeContext.WORKSPACE_LOGO,
+            self.EntityTypeContext.USER_AVATAR,
+            self.EntityTypeContext.USER_COVER,
+            self.EntityTypeContext.PROJECT_COVER,
+            self.EntityTypeContext.OAUTH_APP_LOGO,
+            self.EntityTypeContext.OAUTH_APP_DESCRIPTION,
+            self.EntityTypeContext.CUSTOMER_LOGO
         ):
             return f"/api/assets/v2/static/{self.id}/"
 
@@ -105,6 +116,9 @@ class FileAsset(BaseModel):
 
         if self.entity_type == self.EntityTypeContext.INITIATIVE_ATTACHMENT:
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/initiatives/{self.entity_identifier}/attachments/{self.id}/"
+
+        if self.entity_type == FileAsset.EntityTypeContext.CUSTOMER_REQUEST_ATTACHMENT:
+            return f"/api/assets/v2/workspaces/{self.workspace.slug}/customer-requests/{self.entity_identifier}/attachments/{self.id}/"
 
         if self.entity_type in [
             self.EntityTypeContext.ISSUE_DESCRIPTION,
@@ -120,6 +134,9 @@ class FileAsset(BaseModel):
             self.EntityTypeContext.TEAM_SPACE_DESCRIPTION,
             self.EntityTypeContext.INITIATIVE_COMMENT_DESCRIPTION,
             self.EntityTypeContext.TEAM_SPACE_COMMENT_DESCRIPTION,
+            self.EntityTypeContext.CUSTOMER_DESCRIPTION,
+            self.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
+            self.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
         ]:
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/{self.id}/"
 

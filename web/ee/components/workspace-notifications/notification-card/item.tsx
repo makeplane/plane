@@ -57,7 +57,7 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
   }, [notificationList]);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "right-start",
+    placement: "left-start",
   });
 
   const getUnreadActivityIds = (notificationList: TNotification[]): string[] =>
@@ -114,7 +114,7 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
       >
         {/* Issue card header */}
         <div className="flex items-center gap-1 justify-between px-4">
-          <div className="flex-1 flex gap-2 justify-between items-center">
+          <div className="flex-1 flex h-5 gap-2 justify-between items-center">
             <span className="overflow-hidden whitespace-normal text-sm break-all truncate line-clamp-1 text-custom-text-00">
               {issue.name}
             </span>

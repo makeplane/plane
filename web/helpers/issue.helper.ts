@@ -20,6 +20,7 @@ import { IGanttBlock } from "@/components/gantt-chart";
 // helpers
 import { orderArrayBy } from "@/helpers/array.helper";
 import { getDate } from "@/helpers/date-time.helper";
+import { isEditorEmpty } from "@/helpers/editor.helper";
 
 type THandleIssuesMutation = (
   formData: Partial<TIssue>,
@@ -198,7 +199,7 @@ export const formatTextList = (TextArray: string[]): string => {
 };
 
 export const getDescriptionPlaceholderI18n = (isFocused: boolean, description: string | undefined): string => {
-  const isDescriptionEmpty = !description || description === "<p></p>" || description.trim() === "";
+  const isDescriptionEmpty = isEditorEmpty(description);
   if (!isDescriptionEmpty || isFocused) return "common.press_for_commands";
   else return "common.click_to_add_description";
 };
@@ -293,6 +294,8 @@ export const getComputedDisplayProperties = (
   modules: displayProperties?.modules ?? true,
   cycle: displayProperties?.cycle ?? true,
   issue_type: displayProperties?.issue_type ?? true,
+  customer_count: displayProperties.customer_count ?? true,
+  customer_request_count: displayProperties.customer_request_count ?? true,
 });
 
 /**
@@ -327,8 +330,8 @@ export const generateWorkItemLink = ({
   isEpic?: boolean;
 }): string => {
   const archiveIssueLink = `/${workspaceSlug}/projects/${projectId}/archives/issues/${issueId}`;
-  const epicLink = `/${workspaceSlug}/projects/${projectId}/epics/${issueId}`;
   const workItemLink = `/${workspaceSlug}/browse/${projectIdentifier}-${sequenceId}/`;
+  const epicLink = workItemLink;
 
   return isArchived ? archiveIssueLink : isEpic ? epicLink : workItemLink;
 };

@@ -1,5 +1,5 @@
 // plane imports
-import { EUserWorkspaceRoles } from "@plane/constants";
+import { EProductSubscriptionTier, EUserWorkspaceRoles } from "@plane/constants";
 // ce components
 import { useMemberColumns as useCeMemberColumns } from "@/ce/components/workspace/settings/useMemberColumns";
 // components
@@ -29,7 +29,10 @@ export const useMemberColumns = () => {
 
   return currentWorkspaceSubscribedPlanDetail
     ? {
-        columns: currentWorkspaceSubscribedPlanDetail.product === "PRO" ? eeColumns : columns,
+        columns:
+          EProductSubscriptionTier[currentWorkspaceSubscribedPlanDetail.product] >= EProductSubscriptionTier.PRO
+            ? eeColumns
+            : columns,
         workspaceSlug,
         removeMemberModal,
         setRemoveMemberModal,

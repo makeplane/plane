@@ -18,6 +18,19 @@ export class WorkspacePageService extends APIService {
       });
   }
 
+  async fetchPagesByType(workspaceSlug: string, type: string, searchQuery?: string): Promise<TPage[]> {
+    let url = `/api/workspaces/${workspaceSlug}/pages/?type=${type}`;
+    if (searchQuery) {
+      url += `&search=${searchQuery}`;
+    }
+
+    return this.get(url)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async fetchById(workspaceSlug: string, pageId: string): Promise<TPage> {
     return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/`)
       .then((response) => response?.data)
@@ -95,16 +108,20 @@ export class WorkspacePageService extends APIService {
       });
   }
 
-  async lock(workspaceSlug: string, pageId: string): Promise<void> {
-    return this.post(`/api/workspaces/${workspaceSlug}/pages/${pageId}/lock/`)
+  async lock(workspaceSlug: string, pageId: string, recursive: boolean): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/pages/${pageId}/lock/`, {
+      action: recursive ? "all" : "",
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async unlock(workspaceSlug: string, pageId: string): Promise<void> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/pages/${pageId}/lock/`)
+  async unlock(workspaceSlug: string, pageId: string, recursive: boolean): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/pages/${pageId}/lock/`, {
+      action: recursive ? "all" : "",
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -134,6 +151,22 @@ export class WorkspacePageService extends APIService {
 
   async duplicate(workspaceSlug: string, pageId: string): Promise<TPage> {
     return this.post(`/api/workspaces/${workspaceSlug}/pages/${pageId}/duplicate/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchSubPages(workspaceSlug: string, pageId: string): Promise<TPage[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/sub-pages`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchParentPages(workspaceSlug: string, pageId: string): Promise<TPage[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/parent-pages/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

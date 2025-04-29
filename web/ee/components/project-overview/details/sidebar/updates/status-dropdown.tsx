@@ -3,28 +3,28 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Rocket, TriangleAlert, CircleAlert } from "lucide-react";
+import { EUpdateStatus } from "@plane/types/src/enums";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { EProjectUpdateStatus } from "@/plane-web/types";
 
 export const StatusOptions = [
   {
-    key: EProjectUpdateStatus.ON_TRACK,
+    key: EUpdateStatus.ON_TRACK,
     icon: Rocket,
   },
   {
-    key: EProjectUpdateStatus.OFF_TRACK,
+    key: EUpdateStatus.OFF_TRACK,
     icon: CircleAlert,
   },
   {
-    key: EProjectUpdateStatus.AT_RISK,
+    key: EUpdateStatus.AT_RISK,
     icon: TriangleAlert,
   },
 ];
 export type TStatusDropdown = {
   className?: string;
   selectedStatus: string;
-  setStatus: (status: EProjectUpdateStatus) => void;
+  setStatus: (status: EUpdateStatus) => void;
 };
 
 export const StatusDropdown: FC<TStatusDropdown> = observer((props) => {
@@ -42,9 +42,9 @@ export const StatusDropdown: FC<TStatusDropdown> = observer((props) => {
         <status.icon
           size={16}
           className={cn("my-auto", {
-            "text-[#1FAD40]": status.key === EProjectUpdateStatus.ON_TRACK,
-            "text-[#CC0000]": status.key === EProjectUpdateStatus.OFF_TRACK,
-            "text-[#CC7700]": status.key === EProjectUpdateStatus.AT_RISK,
+            "text-[#1FAD40]": status.key === EUpdateStatus.ON_TRACK,
+            "text-[#CC0000]": status.key === EUpdateStatus.OFF_TRACK,
+            "text-[#CC7700]": status.key === EUpdateStatus.AT_RISK,
           })}
         />
         <div className="truncate font-medium text-sm capitalize">{status.key.replaceAll("-", " ").toLowerCase()}</div>
@@ -61,9 +61,9 @@ export const StatusDropdown: FC<TStatusDropdown> = observer((props) => {
       customButton={
         <button
           className={cn(`flex px-3 py-1 rounded-md gap-2`, {
-            "bg-[#1FAD40]/20 text-[#1FAD40]": selectedStatus === EProjectUpdateStatus.ON_TRACK,
-            "bg-[#CC0000]/20 text-[#CC0000]": selectedStatus === EProjectUpdateStatus.OFF_TRACK,
-            "bg-[#CC7700]/20 text-[#CC7700]": selectedStatus === EProjectUpdateStatus.AT_RISK,
+            "bg-[#1FAD40]/20 text-[#1FAD40]": selectedStatus === EUpdateStatus.ON_TRACK,
+            "bg-[#CC0000]/20 text-[#CC0000]": selectedStatus === EUpdateStatus.OFF_TRACK,
+            "bg-[#CC7700]/20 text-[#CC7700]": selectedStatus === EUpdateStatus.AT_RISK,
           })}
         >
           {selectedStatusObj && <selectedStatusObj.icon size={16} className="my-auto" />}

@@ -3,67 +3,56 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
-import { Crown } from "lucide-react";
-// ui
+// plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import { Button, getButtonStyling } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
-// plane web hooks
-import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { useTranslation } from "@plane/i18n";
+import { cn } from "@plane/utils";
+// plane web imports
+import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace";
 // assets
-import CustomerUpgradeDark from "@/public/empty-state/customers/customer-upgrade-dark.png";
-import CustomerUpgradeLight from "@/public/empty-state/customers/customer-upgrade-light.png";
+import CustomerUpgradeDark from "@/public/empty-state/customers/customer-upgrade-dark.webp";
+import CustomerUpgradeLight from "@/public/empty-state/customers/customer-upgrade-light.webp";
 
 export const CustomerUpgrade: FC = observer(() => {
   const { workspaceSlug } = useParams();
   const { resolvedTheme } = useTheme();
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
-  // derived values
-  const isPlaneOneInstance = subscriptionDetail?.is_self_managed && subscriptionDetail?.product === "ONE";
-  const isCustomersFeatureFlagEnabled = useFlag(workspaceSlug.toString(), E_FEATURE_FLAGS.CUSTOMERS);
-  const getUpgradeButton = () => {
-    if (isPlaneOneInstance) {
-      return (
-        <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
-          Upgrade to higher subscription
-        </a>
-      );
-    }
-
-    if (!isCustomersFeatureFlagEnabled) {
-      return (
-        <Button variant="primary" disabled>
-          Coming soon
-        </Button>
-      );
-    }
-  };
+  const { t } = useTranslation();
 
   return (
-    <div className="pr-10">
-      <div
-        className={cn("flex flex-col rounded-xl mt-5 xl:flex-row", {
-          "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),
-          "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": !resolvedTheme?.includes("dark"),
-        })}
-      >
-        <div className={cn("flex w-full flex-col  justify-center relative p-5 xl:pl-10 xl:min-h-[25rem]")}>
-          <div className="w-full xl:max-w-[300px]">
-            <div className="text-2xl/7 font-semibold mb-2 line-">Prioritize and manage work with Customers.</div>
-            <div className="text-sm">Map your work to customers and prioritize by customer attributes.</div>
-            <div className="mt-6">{getUpgradeButton()}</div>
-          </div>
+    <>
+      <div className="flex items-center justify-between gap-2 border-b border-custom-border-200 pb-3">
+        <div className="tracking-tight">
+          <h3 className="text-xl font-medium">{t("project_settings.customers.settings_heading")}</h3>
+          <span className="text-custom-sidebar-text-400 text-sm font-medium">
+            {t("project_settings.customers.settings_sub_heading")}
+          </span>
         </div>
-        <Image
-          src={resolvedTheme === "dark" ? CustomerUpgradeDark : CustomerUpgradeLight}
-          alt=""
-          className="max-h-[300px] self-end flex p-5 pb-0 xl:p-0"
-        />
       </div>
-    </div>
+      <div className="pr-10">
+        <div
+          className={cn("flex flex-col rounded-xl mt-5 xl:flex-row", {
+            "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),
+            "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": !resolvedTheme?.includes("dark"),
+          })}
+        >
+          <div className={cn("flex w-full flex-col  justify-center relative p-5 xl:pl-10 xl:min-h-[25rem]")}>
+            <div className="w-full xl:max-w-[300px]">
+              <div className="text-2xl/7 font-semibold mb-2 line-">{t("customers.upgrade.title")}</div>
+              <div className="text-sm">{t("customers.upgrade.description")}</div>
+              <div className="mt-6">
+                <UpgradeEmptyStateButton workspaceSlug={workspaceSlug?.toString()} flag={E_FEATURE_FLAGS.CUSTOMERS} />
+              </div>
+            </div>
+          </div>
+          <Image
+            src={resolvedTheme === "dark" ? CustomerUpgradeDark : CustomerUpgradeLight}
+            alt=""
+            className="max-h-[300px] w-auto self-end flex p-5 pb-0 xl:p-0"
+          />
+        </div>
+      </div>
+    </>
   );
 });

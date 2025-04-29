@@ -4,7 +4,7 @@ import { TEmbedItem, TIssueEmbedConfig } from "@plane/editor";
 // plane ui
 import { PriorityIcon } from "@plane/ui";
 // ce hooks
-import { TIssueEmbedHookProps } from "@/ce/hooks/use-issue-embed";
+import { TIssueEmbedHookProps } from "@/ce/hooks/use-editor-embed";
 // plane web components
 import { IssueEmbedCard, IssueEmbedUpgradeCard } from "@/plane-web/components/pages";
 // plane web hooks

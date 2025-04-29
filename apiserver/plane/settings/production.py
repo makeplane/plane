@@ -30,11 +30,10 @@ if not os.path.exists(LOG_DIR):
 # Logging configuration
 LOGGING = {
     "version": 1,
-    "disable_existing_loggers": False,
+    "disable_existing_loggers": True,
     "formatters": {
         "verbose": {
-            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
-            "style": "{",
+            "format": "%(asctime)s [%(process)d] %(levelname)s %(name)s: %(message)s"
         },
         "json": {
             "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
@@ -44,7 +43,7 @@ LOGGING = {
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
-            "formatter": "verbose",
+            "formatter": "json",
             "level": "INFO",
         },
         "file": {
@@ -63,15 +62,29 @@ LOGGING = {
         },
     },
     "loggers": {
-        "django": {"handlers": ["console", "file"], "level": "INFO", "propagate": True},
-        "django.request": {
-            "handlers": ["console", "file"],
-            "level": "INFO",
+        "plane.api.request": {
+            "level": "DEBUG" if DEBUG else "INFO",
+            "handlers": ["console"],
             "propagate": False,
         },
-        "plane": {
+        "plane.api": {
+            "level": "DEBUG" if DEBUG else "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "plane.worker": {
+            "level": "DEBUG" if DEBUG else "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "plane.exception": {
             "level": "DEBUG" if DEBUG else "ERROR",
             "handlers": ["console", "file"],
+            "propagate": False,
+        },
+        "plane.external": {
+            "level": "INFO",
+            "handlers": ["console"],
             "propagate": False,
         },
     },

@@ -196,7 +196,7 @@ export class InitiativeService extends APIService {
     initiativeId: string,
     commentId: string,
     payload: Partial<TInitiativeComment>
-  ): Promise<void> {
+  ): Promise<TInitiativeComment> {
     return this.patch(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/comments/${commentId}/`, payload)
       .then((res) => res?.data)
       .catch((err) => {

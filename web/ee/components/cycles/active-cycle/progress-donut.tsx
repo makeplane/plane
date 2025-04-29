@@ -18,7 +18,7 @@ const ProgressDonut = (props: Props) => {
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
-      <CircularProgressIndicator size={82} percentage={percentage} strokeWidth={3}>
+      <CircularProgressIndicator size={65} percentage={percentage} strokeWidth={3}>
         <span className="text-[20px] text-custom-primary-200 font-bold block text-center">
           {progress ? (isHovering ? days_left : `${percentage ? percentage.toFixed(0) : 0}%`) : "0%"}
         </span>

@@ -3,7 +3,6 @@ import { TaskHandler, TaskHeaders } from "@/types";
 import { PlaneWebhookData, WebhookIssueCommentPayload } from "@plane/sdk";
 import { handleIssueCommentWebhook } from "./plane-webhook-handlers/handle-comment-webhook";
 import { logger } from "@/logger";
-import { SentryInstance } from "@/sentry-config";
 
 export class PlaneSlackWebhookWorker extends TaskHandler {
   mq: MQ;
@@ -24,12 +23,10 @@ export class PlaneSlackWebhookWorker extends TaskHandler {
           break;
       }
     } catch (error) {
-      SentryInstance.captureException(error);
       logger.error(error);
     } finally {
       logger.info("[SLACK] Event Processed Successfully");
       return true;
     }
-
   }
 }

@@ -51,9 +51,29 @@ export const EXTENDED_WORKSPACE_SETTINGS = {
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/customers/`,
   },
+  applications: {
+    key: "applications",
+    i18n_label: "workspace_settings.settings.applications.title",
+    href: "/settings/applications",
+    access: [EUserWorkspaceRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/settings/applications/`),
+  },
+  templates: {
+    key: "templates",
+    i18n_label: "common.templates",
+    href: "/settings/templates",
+    access: [EUserWorkspaceRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname.includes(`${baseUrl}/settings/templates/`),
+  },
 };
 
 export const EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {
+  dashboards: {
+    key: "dashboards",
+    labelTranslationKey: "workspace_dashboards",
+    href: `/dashboards/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+  },
   "active-cycles": {
     key: "active_cycles",
     labelTranslationKey: "cycles",
@@ -72,6 +92,12 @@ export const EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string,
     href: `/teamspaces/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
   },
+  customers: {
+    key: "customers",
+    labelTranslationKey: "sidebar.customers",
+    href: `/customers`,
+    access: [EUserWorkspaceRoles.ADMIN],
+  },
 };
 
 export const EXTENDED_WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {
@@ -81,4 +107,10 @@ export const EXTENDED_WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, 
     href: `/pi-chat`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
   },
+};
+
+export const EXTENDED_WORKSPACE_RESULT_ENTITIES = {
+  epic: [],
+  team: [],
+  initiative: [],
 };

@@ -1,6 +1,8 @@
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import capitalize from "lodash/capitalize";
 import { observer } from "mobx-react";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, MoveRight } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import {
   IEstimateFormData,
   TEstimatePointsObject,
@@ -12,25 +14,35 @@ import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useEstimate } from "@/hooks/store";
 // plane web components
-import { EstimatePointItemSwitchPreview } from "@/plane-web/components/estimates";
+import { EstimatePointItemSwitchPreview, EstimateSwitchDropdown } from "@/plane-web/components/estimates";
 // plane web constants
 import { EEstimateSystem, EEstimateUpdateStages, ESTIMATE_SYSTEMS } from "@/plane-web/constants/estimates";
 
 type TEstimatePointSwitchRoot = {
   setEstimateEditType?: Dispatch<SetStateAction<TEstimateUpdateStageKeys | undefined>>;
-  estimateSystemSwitchType: TEstimateSystemKeys;
+  estimateSystemSwitchType?: TEstimateSystemKeys;
   workspaceSlug: string;
   projectId: string;
   estimateId: string;
   handleClose: () => void;
   mode?: EEstimateUpdateStages;
+  setEstimateSystemSwitchType?: Dispatch<SetStateAction<TEstimateSystemKeys | undefined>>;
 };
 
 export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((props) => {
   // props
-  const { setEstimateEditType, estimateSystemSwitchType, workspaceSlug, projectId, estimateId, handleClose } = props;
+  const {
+    setEstimateEditType,
+    estimateSystemSwitchType,
+    workspaceSlug,
+    projectId,
+    estimateId,
+    handleClose,
+    setEstimateSystemSwitchType,
+  } = props;
   // hooks
   const { asJson: estimate, estimatePointIds, estimatePointById, updateEstimateSwitch } = useEstimate(estimateId);
+  const { t } = useTranslation();
   // states
   const [estimatePoints, setEstimatePoints] = useState<TEstimatePointsObject[] | undefined>(undefined);
   const [estimatePointError, setEstimatePointError] = useState<TEstimateTypeError>(undefined);
@@ -83,7 +95,7 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
       if (estimatePoint.value && estimatePoint.value != "" && estimatePoint.value.length > 0) {
         isNonEmptyPoints.push(estimatePoint.value);
       } else {
-        handleEstimatePointError(estimatePoint.key, "", "", "Please fill this estimate point field");
+        handleEstimatePointError(estimatePoint.key, "", "", t("project_settings.estimates.validation.fill"));
       }
     });
 
@@ -92,7 +104,7 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
     estimatePoints?.map((estimatePoint) => {
       if (estimatePoint.value && estimatePoint.value != "") {
         if (repeatedValues.includes(estimatePoint.value.trim())) {
-          handleEstimatePointError(estimatePoint.key, "", "", "Estimate point value cannot be repeated");
+          handleEstimatePointError(estimatePoint.key, "", "", t("project_settings.estimates.validation.repeat"));
         } else {
           repeatedValues.push(estimatePoint.value.trim());
         }
@@ -101,17 +113,22 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
 
     // validate if fields are valid in points and time required number values and categories required string values
     const estimatePointArray: string[] = [];
-    if ([(EEstimateSystem.TIME, EEstimateSystem.POINTS)].includes(estimateSystemSwitchType)) {
+    if ([EEstimateSystem.TIME, EEstimateSystem.POINTS].includes(estimateSystemSwitchType)) {
       estimatePoints?.map((estimatePoint) => {
         if (estimateSystemSwitchType && estimatePoint.value && estimatePoint.value != "") {
           if (!isNaN(Number(estimatePoint.value))) {
             if (Number(estimatePoint.value) <= 0) {
-              handleEstimatePointError(estimatePoint.key, "", "", "Estimate point should be greater than 0.");
+              handleEstimatePointError(
+                estimatePoint.key,
+                "",
+                "",
+                t("project_settings.estimates.validation.min_length")
+              );
             } else {
               estimatePointArray.push(estimatePoint.value);
             }
           } else {
-            handleEstimatePointError(estimatePoint.key, "", "", "Estimate point value should be a number.");
+            handleEstimatePointError(estimatePoint.key, "", "", t("project_settings.estimates.validation.numeric"));
           }
         }
       });
@@ -121,7 +138,7 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
           if (estimatePoint.value.length > 0 && isNaN(Number(estimatePoint.value))) {
             estimatePointArray.push(estimatePoint.value);
           } else {
-            handleEstimatePointError(estimatePoint.key, "", "", "Estimate point value should be a string.");
+            handleEstimatePointError(estimatePoint.key, "", "", t("project_settings.estimates.validation.character"));
           }
         }
       });
@@ -164,8 +181,8 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
 
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Estimate system created",
-          message: "Created and Enabled successfully",
+          title: t("project_settings.estimates.toasts.switch.success.title"),
+          message: t("project_settings.estimates.toasts.switch.success.message"),
         });
         handleClose();
         setSwitchLoader(false);
@@ -175,8 +192,8 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "something went wrong",
+        title: t("project_settings.estimates.toasts.switch.error.title"),
+        message: t("project_settings.estimates.toasts.switch.error.message"),
       });
       setSwitchLoader(false);
     }
@@ -193,37 +210,67 @@ export const EstimatePointSwitchRoot: FC<TEstimatePointSwitchRoot> = observer((p
           >
             <ChevronLeft className="w-4 h-4" />
           </div>
-          <div className="text-xl font-medium text-custom-text-200">Switch estimate system</div>
+          <div className="text-xl font-medium text-custom-text-200">{t("project_settings.estimates.switch")}</div>
         </div>
       </div>
 
       <div className="space-y-3 px-5 pb-5">
-        <div className="text-sm font-medium flex items-center gap-2">
-          <div className="w-full">Current {estimate?.type}</div>
-          <div className="flex-shrink-0 w-4 h-4" />
-          <div className="w-full">New {estimateSystemSwitchType}</div>
+        <div className="text-sm font-medium flex items-center gap-4">
+          <div className="w-full text-custom-text-400">{t("project_settings.estimates.current")}</div>
+          <div className="flex-shrink-0 w-4" />
+          <div className="w-full text-custom-text-400">{t("project_settings.estimates.new")}</div>
         </div>
 
-        {estimatePoints.map((estimateObject, index) => (
-          <EstimatePointItemSwitchPreview
-            key={estimateObject?.id}
-            estimateId={estimateId}
-            estimatePointId={estimateObject?.id}
-            estimateSystemSwitchType={estimateSystemSwitchType}
-            estimatePoint={estimateObject}
-            handleEstimatePoint={(value: string) => handleEstimatePoints(index, value)}
-            estimatePointError={estimatePointError?.[estimateObject.key] || undefined}
-          />
-        ))}
+        <div className="font-medium flex items-center gap-2">
+          <div className="w-full border border-custom-border-200 rounded px-3 py-2 bg-custom-background-90 text-sm">
+            {capitalize(estimate?.type)}
+          </div>
+          <div className="flex-shrink-0 w-4 h-4 relative flex justify-center items-center">
+            <MoveRight size={12} />
+          </div>
+          <div className="w-full text-sm">
+            <EstimateSwitchDropdown
+              estimateType={estimateSystemSwitchType}
+              onChange={(value) => setEstimateSystemSwitchType && setEstimateSystemSwitchType(value)}
+              currentEstimateType={estimate?.type}
+            />
+          </div>
+        </div>
+        {estimateSystemSwitchType && (
+          <>
+            <div className="border-t-[0.5px] border-custom-border-200" />
+            <div className="space-y-6">
+              {estimatePoints.map((estimateObject, index) => (
+                <div key={estimateObject?.id}>
+                  <EstimatePointItemSwitchPreview
+                    key={estimateObject?.id}
+                    estimateId={estimateId}
+                    estimatePointId={estimateObject?.id}
+                    estimateSystemSwitchType={estimateSystemSwitchType}
+                    estimatePoint={estimateObject}
+                    estimateType={estimate?.type}
+                    handleEstimatePoint={(value: string) => handleEstimatePoints(index, value)}
+                    estimatePointError={estimatePointError?.[estimateObject.key] || undefined}
+                  />
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-custom-border-200">
         <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-          Cancel
+          {t("common.cancel")}
         </Button>
 
-        <Button variant="primary" size="sm" onClick={handleSwitchEstimate} disabled={switchLoader}>
-          {switchLoader ? "Updating..." : "Update"}
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={handleSwitchEstimate}
+          disabled={switchLoader || !estimateSystemSwitchType}
+        >
+          {switchLoader ? t("common.updating") : t("common.update")}
         </Button>
       </div>
     </>

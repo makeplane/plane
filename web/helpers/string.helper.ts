@@ -65,20 +65,6 @@ export const copyTextToClipboard = async (text: string) => {
   await navigator.clipboard.writeText(text);
 };
 
-/**
- * @description: This function copies the url to clipboard after prepending the origin URL to it
- * @param {string} path
- * @param {boolean} addSlash
- * @example:
- * const text = copyUrlToClipboard("path");
- * copied URL: origin_url/path
- */
-export const copyUrlToClipboard = async (path: string, addSlash: boolean = true) => {
-  const originUrl = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-
-  await copyTextToClipboard(`${originUrl}${addSlash ? "/" : ""}${path}`);
-};
-
 export const generateRandomColor = (string: string): string => {
   if (!string) return "rgb(var(--color-primary-100))";
 
@@ -236,6 +222,24 @@ export const isEmptyHtmlString = (htmlString: string, allowedHTMLTags: string[] 
   const cleanText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: allowedHTMLTags });
   // Trim the string and check if it's empty
   return cleanText.trim() === "";
+};
+
+/**
+ * @description this function returns whether a comment is empty or not by checking for the following conditions-
+ * 1. If editor content is undefined
+ * 2. If editor content is an empty string
+ * 3. If editor content is "<p></p>"
+ * @param {string | undefined} comment
+ * @returns {boolean}
+ */
+export const isEditorContentEmpty = (content: string | undefined): boolean => {
+  // return true if editor content is undefined
+  if (!content) return true;
+  return (
+    content?.trim() === "" ||
+    content === "<p></p>" ||
+    isEmptyHtmlString(content ?? "", ["img", "mention-component", "image-component", "issue-embed-component"])
+  );
 };
 
 /**

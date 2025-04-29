@@ -1,9 +1,7 @@
-export type TIssueLayouts =
-  | "list"
-  | "kanban"
-  | "calendar"
-  | "spreadsheet"
-  | "gantt_chart";
+import { TIssue } from "./issues/issue";
+import { IExtendedIssueDisplayProperties, TExtendedIssueOrderByOptions } from "./view-props-extended";
+
+export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
 
 export type TIssueGroupByOptions =
   | "state"
@@ -48,7 +46,8 @@ export type TIssueOrderByOptions =
   | "attachment_count"
   | "-attachment_count"
   | "sub_issues_count"
-  | "-sub_issues_count";
+  | "-sub_issues_count"
+  | TExtendedIssueOrderByOptions;
 
 export type TIssueGroupingFilters = "active" | "backlog" | null;
 
@@ -114,7 +113,7 @@ export interface IIssueDisplayFilterOptions {
   sub_issue?: boolean;
   type?: TIssueGroupingFilters;
 }
-export interface IIssueDisplayProperties {
+export interface IIssueDisplayProperties extends IExtendedIssueDisplayProperties {
   assignee?: boolean;
   start_date?: boolean;
   due_date?: boolean;
@@ -211,3 +210,10 @@ export interface IssuePaginationOptions {
   subGroupedBy?: TIssueGroupByOptions;
   orderBy?: TIssueOrderByOptions;
 }
+
+export type TSpreadsheetColumn = React.FC<{
+  issue: TIssue;
+  onClose: () => void;
+  onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
+  disabled: boolean;
+}>;

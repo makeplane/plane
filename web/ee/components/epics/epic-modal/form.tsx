@@ -3,7 +3,7 @@
 import React, { FC, useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { EIssueServiceType, ETabIndices, EWorkItemTypeEntity } from "@plane/constants";
 // editor
 import { EditorRefApi } from "@plane/editor";
@@ -102,18 +102,20 @@ export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
   const epicDetails = getProjectEpicDetails(routeProjectId?.toString());
 
   // form info
+  const methods = useForm<TIssue>({
+    defaultValues: { ...defaultValues, project_id: defaultProjectId, ...data },
+    reValidateMode: "onChange",
+  });
   const {
-    formState: { errors, isDirty, isSubmitting, dirtyFields },
+    formState,
+    formState: { isDirty, isSubmitting, dirtyFields },
     handleSubmit,
     reset,
     watch,
     control,
     getValues,
     setValue,
-  } = useForm<TIssue>({
-    defaultValues: { ...defaultValues, project_id: defaultProjectId, ...data },
-    reValidateMode: "onChange",
-  });
+  } = methods;
 
   const projectId = watch("project_id");
   const activeAdditionalPropertiesLength = getActiveAdditionalPropertiesLength({
@@ -255,7 +257,7 @@ export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
   }, [isDirty]);
 
   return (
-    <>
+    <FormProvider {...methods}>
       {projectId && (
         <CreateLabelModal
           isOpen={labelModal}
@@ -287,7 +289,7 @@ export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
                 <IssueTitleInput
                   control={control}
                   issueTitleRef={issueTitleRef}
-                  errors={errors}
+                  formState={formState}
                   handleFormChange={handleFormChange}
                 />
               </div>
@@ -393,6 +395,6 @@ export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
           </form>
         </div>
       </div>
-    </>
+    </FormProvider>
   );
 });

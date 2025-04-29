@@ -21,7 +21,9 @@ export const useUploader = (args: TUploaderArgs) => {
   const uploadFile = useCallback(
     async (file: File) => {
       const setImageUploadInProgress = (isUploading: boolean) => {
-        editor.storage.imageComponent.uploadInProgress = isUploading;
+        if (editor.storage.imageComponent) {
+          editor.storage.imageComponent.uploadInProgress = isUploading;
+        }
       };
       setImageUploadInProgress(true);
       setUploading(true);

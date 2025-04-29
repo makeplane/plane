@@ -225,9 +225,11 @@
   "you_do_not_have_the_permission_to_access_this_page": "このページにアクセスする権限がありません。",
   "something_went_wrong_please_try_again": "問題が発生しました。もう一度お試しください。",
   "load_more": "もっと読み込む",
-  "select_or_customize_your_interface_color_scheme": "インターフェースの配色を選択またはカスタマイズしてください。",
+  "select_or_customize_your_interface_color_scheme": "インターフェースのカラースキームを選択またはカスタマイズします。",
+  "select_the_cursor_motion_style_that_feels_right_for_you": "自分に合ったカーソル移動スタイルを選択してください。",
   "theme": "テーマ",
-  "system_preference": "システム設定に従う",
+  "smooth_cursor": "スムーズカーソル",
+  "system_preference": "システム設定",
   "light": "ライト",
   "dark": "ダーク",
   "light_contrast": "ライトハイコントラスト",
@@ -350,7 +352,7 @@
   "couldnt_remove_the_project_from_favorites": "プロジェクトをお気に入りから削除できませんでした。もう一度お試しください。",
   "add_to_favorites": "お気に入りに追加",
   "remove_from_favorites": "お気に入りから削除",
-  "publish_settings": "公開設定",
+  "publish_project": "プロジェクトを公開",
   "publish": "公開",
   "copy_link": "リンクをコピー",
   "leave_project": "プロジェクトを退出",
@@ -501,6 +503,77 @@
   "re_generate_key": "キーを再生成",
   "export": "エクスポート",
   "member": "{count, plural, other{# メンバー}}",
+  "updates": {
+    "add_update": "更新を追加",
+    "add_update_placeholder": "ここに更新を入力してください",
+    "empty": {
+      "title": "まだ更新がありません",
+      "description": "ここで更新を確認できます。"
+    },
+    "delete": {
+      "title": "更新を削除",
+      "confirmation": "この更新を削除してもよろしいですか？この操作は元に戻すことができません。",
+      "success": {
+        "title": "更新が削除されました",
+        "message": "更新が正常に削除されました。"
+      },
+      "error": {
+        "title": "更新が削除されませんでした",
+        "message": "更新を削除できませんでした。"
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "反応が作成されました",
+          "message": "反応が正常に作成されました。"
+        },
+        "error": {
+          "title": "反応が作成されませんでした",
+          "message": "反応を作成できませんでした。"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "反応が削除されました",
+          "message": "反応が正常に削除されました。"
+        },
+        "error": {
+          "title": "反応が削除されませんでした",
+          "message": "反応を削除できませんでした。"
+        }
+      }
+    },
+    "progress": {
+      "title": "進捗",
+      "since_last_update": "最後の更新以来",
+      "comments": "{count, plural, one{# コメント} other{# コメント}}"
+    },
+    "create": {
+      "success": {
+        "title": "更新が作成されました",
+        "message": "更新が正常に作成されました。"
+      },
+      "error": {
+        "title": "更新が作成されませんでした",
+        "message": "更新を作成できませんでした。"
+      }
+    },
+    "update": {
+      "success": {
+        "title": "更新が更新されました",
+        "message": "更新が正常に更新されました。"
+      },
+      "error": {
+        "title": "更新が更新されませんでした",
+        "message": "更新を更新できませんでした。"
+      }
+    }
+  },
+  
+  "new_password_must_be_different_from_old_password": "新しいパスワードは古いパスワードと異なる必要があります",
+  "edited": "編集済み",
+  "bot": "ボット",
 
   "project_view": {
     "sort_by": {
@@ -591,7 +664,7 @@
         "default": "まだ最近の項目がありません。"
       },
       "filters": {
-        "all": "すべての項目",
+        "all": "すべて",
         "projects": "プロジェクト",
         "pages": "ページ",
         "issues": "作業項目"
@@ -699,6 +772,7 @@
     "property": "プロパティ",
     "properties": "プロパティ",
     "parent": "親",
+    "page": "ページ",
     "remove": "削除",
     "archiving": "アーカイブ中",
     "archive": "アーカイブ",
@@ -856,7 +930,7 @@
     "you": "あなた",
     "upgrade_cta": {
       "higher_subscription": "高いサブスクリプションにアップグレード",
-      "talk_to_sales": "セールスに連絡"
+      "talk_to_sales": "トーク トゥ セールス"
     },
     "category": "カテゴリー",
     "categories": "カテゴリーズ",
@@ -865,7 +939,9 @@
     "delete": "デリート",
     "deleting": "デリーティング",
     "pending": "保留中",
-    "invite": "招待"
+    "invite": "招待",
+    "view": "ビュー",
+    "deactivated_user": "無効化されたユーザー"
   },
 
   "chart": {
@@ -983,7 +1059,8 @@
         "sub_issue_count": "サブ作業項目数",
         "attachment_count": "添付ファイル数",
         "created_on": "作成日",
-        "sub_issue": "サブ作業項目"
+        "sub_issue": "サブ作業項目",
+        "work_item_count": "作業項目数"
       },
       "extra": {
         "show_sub_issues": "サブ作業項目を表示",
@@ -1470,7 +1547,8 @@
             "max_length": "ワークスペース名は80文字を超えることはできません"
           },
           "company_size": {
-            "required": "会社の規模は必須です"
+            "required": "会社の規模は必須です",
+            "select_a_range": "組織の規模を選択"
           }
         }
       },
@@ -1729,20 +1807,99 @@
       }
     },
     "estimates": {
+      "label": "見積もり",
       "title": "プロジェクトの見積もりを有効にする",
-      "description": "チームの複雑さと作業負荷を伝えるのに役立ちます。"
+      "description": "チームの複雑さと作業負荷を伝えるのに役立ちます。",
+      "no_estimate": "見積もりなし",
+      "new": "新しい見積もりシステム",
+      "create": {
+        "custom": "カスタム",
+        "start_from_scratch": "最初から開始",
+        "choose_template": "テンプレートを選択",
+        "choose_estimate_system": "見積もりシステムを選択",
+        "enter_estimate_point": "見積もりを入力",
+        "step": "ステップ {step} の {total}",
+        "label": "見積もりを作成"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "見積もりを作成",
+            "message": "見積もりが正常に作成されました"
+          },
+          "error": {
+            "title": "見積もり作成に失敗",
+            "message": "新しい見積もりを作成できませんでした。もう一度お試しください。"
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "見積もりを更新",
+            "message": "プロジェクトの見積もりが更新されました。"
+          },
+          "error": {
+            "title": "見積もり更新に失敗",
+            "message": "見積もりを更新できませんでした。もう一度お試しください"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "成功！",
+            "message": "見積もりが有効になりました。"
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "成功！",
+            "message": "見積もりが無効になりました。"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "見積もりを無効にできませんでした。もう一度お試しください"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "見積もりは0より大きい必要があります。",
+        "unable_to_process": "リクエストを処理できません。もう一度お試しください。",
+        "numeric": "見積もりは数値である必要があります。",
+        "character": "見積もりは文字値である必要があります。",
+        "empty": "見積もり値は空にできません。",
+        "already_exists": "見積もり値は既に存在します。",
+        "unsaved_changes": "未保存の変更があります。完了をクリックする前に保存してください",
+        "remove_empty": "見積もりは空にできません。各フィールドに値を入力するか、値がないフィールドを削除してください。"
+      },
+      "systems": {
+        "points": {
+          "label": "ポイント",
+          "fibonacci": "フィボナッチ",
+          "linear": "リニア",
+          "squares": "二乗",
+          "custom": "カスタム"
+        },
+        "categories": {
+          "label": "カテゴリー",
+          "t_shirt_sizes": "Tシャツサイズ",
+          "easy_to_hard": "簡単から難しい",
+          "custom": "カスタム"
+        },
+        "time": {
+          "label": "時間",
+          "hours": "時間"
+        }
+      }
     },
     "automations": {
       "label": "自動化",
       "auto-archive": {
-        "title": "完了した作業項目を自動アーカイブ",
+        "title": "完了した作業項目を自動的にアーカイブ",
         "description": "Planeは完了またはキャンセルされた作業項目を自動的にアーカイブします。",
-        "duration": "次の期間完了している作業項目を自動アーカイブ"
+        "duration": "閉じられた作業項目を自動的にアーカイブ"
       },
       "auto-close": {
-        "title": "作業項目を自動クローズ",
-        "description": "Planeは完了またはキャンセルされていない作業項目を自動的にクローズします。",
-        "duration": "次の期間非アクティブな作業項目を自動クローズ",
+        "title": "作業項目を自動的に閉じる",
+        "description": "Planeは完了またはキャンセルされていない作業項目を自動的に閉じます。",
+        "duration": "非アクティブな作業項目を自動的に閉じる",
         "auto_close_status": "自動クローズステータス"
       }
     },
@@ -1770,6 +1927,12 @@
     "remove_filters_to_see_all_cycles": "すべてのサイクルを表示するにはフィルターを解除してください",
     "remove_search_criteria_to_see_all_cycles": "すべてのサイクルを表示するには検索条件を解除してください",
     "only_completed_cycles_can_be_archived": "完了したサイクルのみアーカイブできます",
+    "start_date": "開始日",
+    "end_date": "終了日",
+    "in_your_timezone": "あなたのタイムゾーン",
+    "transfer_work_items": "作業項目を転送 {count}",
+    "date_range": "日付範囲",
+    "add_date": "日付を追加",
     "active_cycle": {
       "label": "アクティブなサイクル",
       "progress": "進捗",
@@ -2361,5 +2524,11 @@
   "module": {
     "label": "{count, plural, one {モジュール} other {モジュール}}",
     "no_module": "モジュールなし"
+  },
+
+  "description_versions": {
+    "last_edited_by": "最終編集者",
+    "previously_edited_by": "以前の編集者",
+    "edited_by": "編集者"
   }
 }

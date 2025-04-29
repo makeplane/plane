@@ -2,6 +2,8 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
+// plane imports
+import { ETemplateLevel } from "@plane/constants";
 // store hooks
 import { IWorkspaceAuthWrapper } from "@/ce/layouts/workspace-wrapper";
 import { useWorkspace } from "@/hooks/store";
@@ -18,11 +20,14 @@ import {
   useWorkspaceProjectStates,
   useWorkspaceSubscription,
   useFeatureFlags,
+  useWorkItemTemplates,
+  useCustomerProperties,
+  useCustomers,
+  useProjectTemplates,
 } from "@/plane-web/hooks/store";
 // plane web types
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
-
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
   // props
   const { children } = props;
@@ -40,6 +45,10 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, fetchWorkspaceSubscribedPlan } =
     useWorkspaceSubscription();
   const { fetchAll } = useIssueTypes();
+  const { fetchAllTemplates: fetchAllWorkItemTemplates } = useWorkItemTemplates();
+  const { fetchAllTemplates: fetchAllProjectTemplates } = useProjectTemplates();
+  const { fetchAllCustomerPropertiesAndOptions } = useCustomerProperties();
+  const { isCustomersFeatureEnabled, fetchCustomers } = useCustomers();
   // derived values
   const isFreeMemberCountExceeded = subscriptionDetail?.is_free_member_count_exceeded;
   const isWorkspaceSettingsRoute = pathname.includes(`/${workspaceSlug}/settings`);
@@ -48,6 +57,8 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const isProjectStateEnabled =
     workspaceFeatures[workspaceSlug.toString()] &&
     workspaceFeatures[workspaceSlug.toString()][EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED];
+  const isProjectTemplatesEnabled = useFlag(workspaceSlug?.toString(), "PROJECT_TEMPLATES");
+  const isWorkItemTemplatesEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TEMPLATES");
 
   // fetching feature flags
   const { isLoading: flagsLoader, error: flagsError } = useSWR(
@@ -104,6 +115,41 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
       ? `WORKSPACE_TEAMSPACES_${workspaceSlug}_${isTeamspacesFeatureEnabled}`
       : null,
     workspaceSlug && isTeamspacesFeatureEnabled ? () => fetchTeamspaces(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+  // fetching customer properties
+  useSWR(
+    workspaceSlug && isCustomersFeatureEnabled ? `CUSTOMERS_${workspaceSlug}_${isCustomersFeatureEnabled}` : null,
+    workspaceSlug && isCustomersFeatureEnabled
+      ? () => fetchAllCustomerPropertiesAndOptions(workspaceSlug.toString())
+      : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  // fetch customers
+  useSWR(
+    workspaceSlug ? `CUSTOMERS_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchCustomers(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  // fetching all project templates
+  useSWR(
+    workspaceSlug && isProjectTemplatesEnabled ? ["projectTemplates", workspaceSlug, isProjectTemplatesEnabled] : null,
+    workspaceSlug && isProjectTemplatesEnabled
+      ? () => fetchAllProjectTemplates({ workspaceSlug: workspaceSlug.toString() })
+      : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  // fetching all work item templates
+  useSWR(
+    workspaceSlug && isWorkItemTemplatesEnabled
+      ? ["workItemTemplates", workspaceSlug, isWorkItemTemplatesEnabled]
+      : null,
+    workspaceSlug && isWorkItemTemplatesEnabled
+      ? () => fetchAllWorkItemTemplates({ workspaceSlug: workspaceSlug.toString(), level: ETemplateLevel.WORKSPACE })
+      : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 

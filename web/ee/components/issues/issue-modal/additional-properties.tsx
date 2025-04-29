@@ -43,7 +43,7 @@ export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps
 
   return (
     <>
-      {isWorkItemTypeEntityEnabled && (
+      {isWorkItemTypeEntityEnabled && issueTypeId && (
         <>
           {propertiesLoader === "init-loader" ? (
             <Loader className="space-y-4 py-2">
@@ -53,19 +53,15 @@ export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps
               <Loader.Item height="30px" width="50%" />
             </Loader>
           ) : (
-            <>
-              {issueTypeId && (
-                <IssueAdditionalPropertyValuesCreate
-                  issueId={issueId}
-                  issueTypeId={issueTypeId}
-                  projectId={projectId}
-                  workspaceSlug={workspaceSlug}
-                  entityType={entityType}
-                  isDraft={isDraft}
-                  issueServiceType={issueServiceType}
-                />
-              )}
-            </>
+            <IssueAdditionalPropertyValuesCreate
+              issueId={issueId}
+              issueTypeId={issueTypeId}
+              projectId={projectId}
+              workspaceSlug={workspaceSlug}
+              entityType={entityType}
+              isDraft={isDraft}
+              issueServiceType={issueServiceType}
+            />
           )}
         </>
       )}

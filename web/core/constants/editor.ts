@@ -15,6 +15,7 @@ import {
   Image,
   Italic,
   List,
+  ListCollapse,
   ListOrdered,
   ListTodo,
   LucideIcon,
@@ -93,7 +94,7 @@ export const TEXT_ALIGNMENT_ITEMS: ToolbarMenuItem<"text-align">[] = [
   },
 ];
 
-const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strike">[] = [
+const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strikethrough">[] = [
   {
     itemKey: "bold",
     renderKey: "bold",
@@ -119,7 +120,7 @@ const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strik
     editors: ["lite", "document"],
   },
   {
-    itemKey: "strike",
+    itemKey: "strikethrough",
     renderKey: "strikethrough",
     name: "Strikethrough",
     icon: Strikethrough,

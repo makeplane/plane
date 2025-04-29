@@ -1,7 +1,8 @@
 # Django imports
-from django.db import models
+from django.db import models, transaction
 from django.conf import settings
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 
 # Module imports
 from plane.db.models.base import BaseModel
@@ -104,7 +105,7 @@ class WorkspaceActivity(WorkspaceBaseModel):
 
 
 class WorkspaceCredential(BaseModel):
-    source = models.CharField(max_length=20)  # importer type
+    source = models.CharField(max_length=60)  # importer type
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="credentials"
     )
@@ -155,6 +156,14 @@ class WorkspaceConnection(BaseModel):
     connection_slug = models.TextField(null=True, blank=True)
     scopes = models.JSONField(default=list)
     config = models.JSONField(default=dict)
+    deleted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="deleted_workspace_connections",
+        null=True,
+        blank=True,
+    )
+    disconnect_meta = models.JSONField(default=dict, blank=True)
 
     class Meta:
         verbose_name = "Workspace Connection"
@@ -164,15 +173,40 @@ class WorkspaceConnection(BaseModel):
 
     def delete(self, *args, **kwargs):
         credential = self.credential
-        super().delete(*args, **kwargs)
-        # Deactivate the credential if no other connections reference it
-        if not WorkspaceConnection.objects.filter(credential=credential).exists():
-            credential.is_active = False
-            credential.save()
+        deleted_by_id = kwargs.get("deleted_by_id", None)
+        disconnect_meta = kwargs.get("disconnect_meta", None)
+
+        if deleted_by_id:
+            User = get_user_model()
+            user = User.objects.filter(id=deleted_by_id).first()
+            if user:
+                self.deleted_by = user
+
+        if disconnect_meta:
+            self.disconnect_meta = disconnect_meta
+
+        with transaction.atomic():
+            self.save(update_fields=["deleted_by", "disconnect_meta"])
+            # Remove all credentials with the same workspace_id and connection_type + "-USER"
+            user_connection_type = f"{self.connection_type}-USER"
+            WorkspaceCredential.objects.filter(
+                workspace_id=self.workspace_id, source=user_connection_type
+            ).delete()
+
+            super().delete(*args, **kwargs)
+            # Deactivate the credential if no other connections reference it
+            if (
+                credential
+                and not WorkspaceConnection.objects.filter(
+                    credential=credential
+                ).exists()
+            ):
+                credential.is_active = False
+                credential.save()
 
 
 class WorkspaceEntityConnection(BaseModel):
-    type = models.CharField(max_length=30, blank=True, null=True)
+    type = models.CharField(max_length=60, blank=True, null=True)
     workspace_connection = models.ForeignKey(
         "ee.WorkspaceConnection",
         on_delete=models.CASCADE,

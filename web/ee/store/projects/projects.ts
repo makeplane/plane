@@ -1,11 +1,18 @@
 /* eslint-disable no-useless-catch */
 
+import set from "lodash/set";
 import update from "lodash/update";
 import { action, makeObservable, observable, reaction, runInAction } from "mobx";
 // store
 import { ProjectService } from "@/plane-web/services";
-import { TProjectAttributesParams, TProjectAttributesResponse, TProjectFeatures, TProjectFeaturesList } from "@/plane-web/types";
-import { CoreRootStore } from "@/store/root.store";
+import { RootStore } from "@/plane-web/store/root.store";
+import {
+  TProject,
+  TProjectAttributesParams,
+  TProjectAttributesResponse,
+  TProjectFeatures,
+  TProjectFeaturesList,
+} from "@/plane-web/types";
 import { IProjectAttachmentStore, ProjectAttachmentStore } from "./project-details/attachment.store";
 import { IProjectLinkStore, ProjectLinkStore } from "./project-details/link.store";
 import { IProjectReactionStore, ProjectReactionStore } from "./project-details/project_reaction.store";
@@ -17,10 +24,7 @@ export interface IProjectStore {
   featuresLoader: boolean;
   features: Record<string, TProjectFeatures>; // projectId -> project features
   // computed methods
-  isProjectFeatureEnabled: (
-    projectId: string,
-    featureKey: keyof TProjectFeaturesList
-  ) => boolean;
+  isProjectFeatureEnabled: (projectId: string, featureKey: keyof TProjectFeaturesList) => boolean;
   // helpers
   getProjectFeatures: (projectId: string) => TProjectFeatures | undefined;
   // actions
@@ -30,6 +34,7 @@ export interface IProjectStore {
     data: Partial<TProjectFeaturesList>,
     shouldSync?: boolean
   ) => Promise<void>;
+  createProjectUsingTemplate: (workspaceSlug: string, templateId: string, data: Partial<TProject>) => Promise<TProject>;
   fetchProjectFeatures: (workspaceSlug: string) => Promise<void>;
   fetchProjectAttributes: (
     workspaceSlug: string,
@@ -44,19 +49,21 @@ export class ProjectStore implements IProjectStore {
   features: Record<string, TProjectFeatures> = {};
   featuresLoader: boolean = false;
   //store
-  rootStore: CoreRootStore;
+  rootStore: RootStore;
   linkStore: IProjectLinkStore;
   attachmentStore: IProjectAttachmentStore;
   updatesStore: IProjectUpdateStore;
   reactionStore: IProjectReactionStore;
   // services
   projectService;
-  constructor(public store: CoreRootStore) {
+  constructor(public store: RootStore) {
     makeObservable(this, {
       // observables
       featuresLoader: observable.ref,
       features: observable,
       // actions
+      createProjectUsingTemplate: action,
+      fetchProjectFeatures: action,
       fetchProjectAttributes: action,
     });
     this.rootStore = store;
@@ -96,10 +103,7 @@ export class ProjectStore implements IProjectStore {
    * @param { keyof TProjectFeatures } featureKey
    * @returns { boolean }
    */
-  isProjectFeatureEnabled = (
-    projectId: string,
-    featureKey: keyof TProjectFeaturesList
-  ): boolean => {
+  isProjectFeatureEnabled = (projectId: string, featureKey: keyof TProjectFeaturesList): boolean => {
     const projectFeatures = this.features[projectId];
     return projectFeatures?.[featureKey] ?? false;
   };
@@ -113,6 +117,40 @@ export class ProjectStore implements IProjectStore {
   getProjectFeatures = (projectId: string): TProjectFeatures | undefined => this.features[projectId];
 
   // actions
+  /**
+   * Creates a project in the workspace using a template
+   * @param workspaceSlug
+   * @param templateId
+   * @param data
+   * @returns Promise<TProject>
+   */
+  createProjectUsingTemplate = async (workspaceSlug: string, templateId: string, data: Partial<TProject>) => {
+    try {
+      const response = await this.projectService.createProjectUsingTemplate(workspaceSlug, templateId, data);
+      this.rootStore.projectRoot.project.processProjectAfterCreation(workspaceSlug, response);
+
+      // Get template detail to set project features
+      const template = this.rootStore.templatesRoot.projectTemplates.getTemplateById(templateId);
+      if (template && response.id) {
+        set(this.features, response.id, {
+          is_project_updates_enabled: template.template_data.is_project_updates_enabled,
+          is_epic_enabled: template.template_data.is_epic_enabled,
+          is_issue_type_enabled: template.template_data.is_issue_type_enabled,
+          is_time_tracking_enabled: template.template_data.is_time_tracking_enabled,
+          is_workflow_enabled: template.template_data.is_workflow_enabled,
+          project_id: response.id,
+        });
+      }
+      // fetch project work item types and epics
+      await this.rootStore.issueTypes.fetchAll(workspaceSlug, response.id);
+
+      return response;
+    } catch (error) {
+      console.error("Error creating project using template", error);
+      throw error;
+    }
+  };
+
   fetchProjectFeatures = async (workspaceSlug: string): Promise<void> => {
     try {
       this.featuresLoader = true;

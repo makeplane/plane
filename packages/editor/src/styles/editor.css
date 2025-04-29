@@ -1,3 +1,7 @@
+:root {
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
 .ProseMirror {
   position: relative;
   word-wrap: break-word;
@@ -8,7 +12,7 @@
   -moz-user-select: text;
   -ms-user-select: text;
   user-select: text;
-  outline: none;
+  outline: none !important;
   cursor: text;
   font-family: var(--font-style);
   font-size: var(--font-size-regular);
@@ -32,6 +36,22 @@
 
 /* Display Placeholders on every new line. */
 .ProseMirror p.is-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--color-placeholder);
+  pointer-events: none;
+  height: 0;
+}
+
+.ProseMirror h1.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--color-placeholder);
+  pointer-events: none;
+  height: 0;
+}
+
+.ProseMirror h1.is-empty::before {
   content: attr(data-placeholder);
   float: left;
   color: var(--color-placeholder);
@@ -492,4 +512,39 @@ p.editor-paragraph-block + p.editor-paragraph-block {
 /* end background colors */
 .ProseMirror .issue-embed img {
   margin: 0 !important;
+}
+
+.smooth-cursor-enabled {
+  caret-color: transparent;
+}
+
+.prosemirror-smooth-cursor {
+  position: absolute;
+  width: 2px;
+  background-color: currentColor;
+  pointer-events: none;
+  left: 0;
+  top: 0;
+  transition: transform 0.2s var(--ease-out-quart);
+  will-change: transform;
+  opacity: 0.8;
+  z-index: 1000;
+}
+
+.prosemirror-smooth-cursor--no-transition {
+  transition: none !important;
+}
+
+.prosemirror-smooth-cursor--blinking {
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  from,
+  to {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
 }

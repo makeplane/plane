@@ -44,9 +44,9 @@ export class GithubAuthService {
    * @param { string } organizationId
    * @returns { Promise<void> }
    */
-  disconnectOrganization = async (workspaceId: string, organizationId: string): Promise<void> =>
+  disconnectOrganization = async (workspaceId: string, organizationId: string, userId: string): Promise<void> =>
     await this.axiosInstance
-      .post(`/api/github/auth/organization-disconnect/${workspaceId}/${organizationId}`)
+      .post(`/api/github/auth/organization-disconnect/${workspaceId}/${organizationId}/${userId}`)
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;

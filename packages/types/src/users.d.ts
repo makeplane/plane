@@ -63,6 +63,7 @@ export type TUserProfile = {
   billing_address: string | undefined;
   has_billing_address: boolean;
   language: string;
+  is_smooth_cursor_enabled: boolean;
   created_at: Date | string;
   updated_at: Date | string;
 };
@@ -156,14 +157,7 @@ export interface IUserProfileProjectSegregation {
     id: string;
     pending_issues: number;
   }[];
-  user_data: Pick<
-    IUser,
-    | "avatar_url"
-    | "cover_image_url"
-    | "display_name"
-    | "first_name"
-    | "last_name"
-  > & {
+  user_data: Pick<IUser, "avatar_url" | "cover_image_url" | "display_name" | "first_name" | "last_name"> & {
     date_joined: Date;
     user_timezone: string;
   };

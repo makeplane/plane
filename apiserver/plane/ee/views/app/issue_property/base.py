@@ -76,6 +76,36 @@ class IssuePropertyEndpoint(BaseAPIView):
         if bulk_create_options:
             self.create_options(issue_property, bulk_create_options)
 
+    def create_or_update_options(self, issue_property, options, slug, project_id):
+        try:
+            self.handle_options_create_update(issue_property, options, slug, project_id)
+
+            # Reset the default options if the property is required
+            if issue_property.is_required:
+                self.reset_options_default(issue_property)
+            # Reset the default options if property is not multi and more than one default value
+            if (
+                not issue_property.is_multi
+                and IssuePropertyOption.objects.filter(
+                    property_id=issue_property.id,
+                    workspace_id=issue_property.workspace_id,
+                    project_id=issue_property.project_id,
+                    is_default=True,
+                    property__issue_type__is_epic=False,
+                ).count()
+                > 1
+            ):
+                self.reset_options_default(issue_property)
+            self.update_property_default_options(issue_property)
+
+        except IntegrityError:
+            return Response(
+                {
+                    "error": "An option with the same name already exists in this property"
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
+
     def reset_options_default(self, issue_property):
         # Reset all the default options
         IssuePropertyOption.objects.filter(
@@ -185,33 +215,7 @@ class IssuePropertyEndpoint(BaseAPIView):
 
             # Check if the property type is option and create the options
             if issue_property.property_type == "OPTION":
-                try:
-                    self.create_options(issue_property, options)
-                    # Reset the default options if the property is required
-                    if issue_property.is_required:
-                        self.reset_options_default(issue_property)
-                    # Reset the default options if property is not multi and more than one default value
-                    if (
-                        not issue_property.is_multi
-                        and IssuePropertyOption.objects.filter(
-                            property_id=issue_property.id,
-                            workspace_id=issue_property.workspace_id,
-                            project_id=issue_property.project_id,
-                            is_default=True,
-                            property__issue_type__is_epic=False,
-                        ).count()
-                        > 1
-                    ):
-                        self.reset_options_default(issue_property)
-                    self.update_property_default_options(issue_property)
-
-                except IntegrityError:
-                    return Response(
-                        {
-                            "error": "An option with the same name already exists in this property"
-                        },
-                        status=status.HTTP_409_CONFLICT,
-                    )
+                self.create_or_update_options(issue_property, options, slug, project_id)
 
             serializer = IssuePropertySerializer(issue_property)
             # generate the response with the new data and options
@@ -293,35 +297,7 @@ class IssuePropertyEndpoint(BaseAPIView):
         serializer.save()
 
         if issue_property.property_type == "OPTION":
-            try:
-                self.handle_options_create_update(
-                    issue_property, options, slug, project_id
-                )
-                # Reset the default options if the property is required
-                if issue_property.is_required:
-                    self.reset_options_default(issue_property)
-                # Reset the default options if property is not multi and more than one default value
-                if (
-                    not issue_property.is_multi
-                    and IssuePropertyOption.objects.filter(
-                        property_id=issue_property.id,
-                        workspace_id=issue_property.workspace_id,
-                        project_id=issue_property.project_id,
-                        is_default=True,
-                        property__issue_type__is_epic=False,
-                    ).count()
-                    > 1
-                ):
-                    self.reset_options_default(issue_property)
-                self.update_property_default_options(issue_property)
-
-            except IntegrityError:
-                return Response(
-                    {
-                        "error": "An option with the same name already exists in this property"
-                    },
-                    status=status.HTTP_409_CONFLICT,
-                )
+            self.create_or_update_options(issue_property, options, slug, project_id)
 
         response = {
             **serializer.data,

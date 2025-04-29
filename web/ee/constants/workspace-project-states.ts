@@ -16,32 +16,32 @@ export const WORKSPACE_PROJECT_STATE_GROUPS: {
 } = {
   [EProjectStateGroup.DRAFT]: {
     title: "Draft",
-    color: "#8B8D98",
+    color: "#60646C",
     background: "#F3F4F7",
   },
   [EProjectStateGroup.PLANNING]: {
     title: "Planning",
-    color: "#80838D",
+    color: "#60646C",
     background: "#C7CBD2",
   },
   [EProjectStateGroup.EXECUTION]: {
     title: "Execution",
-    color: "#FFBA18",
+    color: "#F59E0B",
     background: "#FFF3D8",
   },
   [EProjectStateGroup.MONITORING]: {
     title: "Monitoring",
-    color: "#3E63DD",
+    color: "#00838F",
     background: "#D9E4FF",
   },
   [EProjectStateGroup.COMPLETED]: {
     title: "Completed",
-    color: "#3E9B4F",
+    color: "#46A758",
     background: "#D0EDDB",
   },
   [EProjectStateGroup.CANCELLED]: {
     title: "Cancelled",
-    color: "#DC3E42",
+    color: "#9AA4BC",
     background: "#FAD7D5",
   },
 };

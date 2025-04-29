@@ -15,8 +15,10 @@ from plane.ee.views.app.initiative import (
     InitiativeEndpoint,
     InitiativeProjectEndpoint,
     InitiativeLabelEndpoint,
+    InitiativeUpdateViewSet,
+    InitiativeUpdateCommentsViewSet,
+    InitiativeUpdatesReactionViewSet,
 )
-
 
 from plane.ee.views.app.webhook import InternalWebhookEndpoint
 from plane.ee.views.app.epic import (
@@ -34,4 +36,15 @@ from plane.ee.views.app.epic_property import (
     EpicPropertyValueEndpoint,
     EpicPropertyActivityEndpoint,
     WorkspaceEpicTypeEndpoint,
+    ProjectEpicTypeEndpoint,
+)
+
+from plane.ee.views.app.search import EnhancedGlobalSearchEndpoint
+
+from plane.ee.views.app.dashboard import (
+    DashboardViewSet,
+    DashboardQuickFilterEndpoint,
+    WidgetEndpoint,
+    WidgetListEndpoint,
+    BulkWidgetEndpoint,
 )

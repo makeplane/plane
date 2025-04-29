@@ -6,7 +6,8 @@
     "epics": "エピック",
     "upgrade_plan": "プランをアップグレード",
     "plane_pro": "Plane Pro",
-    "business": "ビジネス"
+    "business": "ビジネス",
+    "customers": "顧客"
   },
 
   "workspace_dashboards": "ダッシュボード",
@@ -53,14 +54,53 @@
     },
     "customers": {
       "heading": "顧客",
-      "settings_heading": "顧客属性で業務を管理する。",
-      "settings_sub_heading": "Planeで基本的な顧客属性から始め、後でCRMやサポートツールと連携し、顧客属性で業務を管理しましょう。"
+      "settings_heading": "顧客にとって重要なことに基づいて業務を管理しましょう。",
+      "settings_sub_heading": "顧客のリクエストを作業項目に変換し、リクエストに応じて優先順位を設定し、作業項目の状態を顧客記録に反映させます。まもなく、CRMやサポートツールと統合し、顧客属性に基づいたより良い業務管理が可能になります。"
     },
     "empty_state": {
       "integrations": {
         "title": "設定された統合がありません",
         "description": "GitHubやその他の統合を設定して、プロジェクトの作業項目を同期します。"
       }
+    },
+    "estimates": {
+      "edit": {
+        "title": "見積もりシステムを編集",
+        "add_or_update": {
+          "title": "見積もりの追加、更新、削除",
+          "description": "ポイントまたはカテゴリーを追加、更新、削除して現在のシステムを管理します。"
+        },
+        "switch": {
+          "title": "見積もりタイプの変更",
+          "description": "ポイントシステムをカテゴリーシステムに変換、またはその逆を行います。"
+        }
+      },
+      "switch": "見積もりシステムの切り替え",
+      "current": "現在の見積もりシステム",
+      "select": "見積もりシステムを選択",
+      "toasts": {
+        "reorder": {
+          "success": {
+            "title": "見積もりを並べ替えました",
+            "message": "プロジェクトの見積もりが並べ替えられました。"
+          },
+          "error": {
+            "title": "見積もりの並べ替えに失敗",
+            "message": "見積もりを並べ替えできませんでした。もう一度お試しください。"
+          }
+        }
+      },
+      "validation": {
+        "fill": "この見積もりフィールドを入力してください",
+        "repeat": "見積もり値を重複させることはできません"
+      }
+    },
+    "epics": {
+      "properties": {
+        "title": "プロパティ",
+        "description": "エピックにカスタムプロパティを追加します。"
+      },
+      "disabled": "無効"
     }
   },
 
@@ -364,6 +404,76 @@
         "cancel_success_message": "ワークスペースを削除できるようになりました。",
         "cancel_error_title": "エラーが発生しました。",
         "cancel_error_message": "もう一度お試しください。"
+      },
+      "applications": {
+        "title": "アプリケーション",
+        "applicationId_copied": "アプリケーションIDをクリップボードにコピーしました",
+        "clientId_copied": "クライアントIDをクリップボードにコピーしました",
+        "clientSecret_copied": "クライアントシークレットをクリップボードにコピーしました",
+        "third_party_apps": "サードパーティアプリ",
+        "your_apps": "あなたのアプリ",
+        "connect": "接続",
+        "connected": "接続済み",
+        "app_available": "このアプリをPlaneワークスペースで使用できるようにしました",
+        "app_available_description": "使用を開始するにはPlaneワークスペースに接続してください",
+        "client_id_and_secret": "クライアントIDとシークレット",
+        "client_id_and_secret_description": "このシークレットキーをコピーして保存してください。閉じた後はこのキーを見ることができません。",
+        "client_id_and_secret_download": "ここからキーをCSVでダウンロードできます。",
+        "application_id": "アプリケーションID",
+        "client_id": "クライアントID",
+        "client_secret": "クライアントシークレット",
+        "export_as_csv": "CSVとしてエクスポート",
+        "slug_already_exists": "スラッグは既に存在します",
+        "failed_to_create_application": "アプリケーションの作成に失敗しました",
+        "upload_logo": "ロゴをアップロード",
+        "app_name_title": "このアプリの名前を入力してください",
+        "app_name_error": "アプリ名は必須です",
+        "app_short_description_title": "このアプリの短い説明を入力してください",
+        "app_short_description_error": "アプリの短い説明は必須です",
+        "app_description_title": "より詳しく知りたい人のために、長い説明も書いてください。コマンドには / を押してください",
+        "app_description_error": "アプリの説明は必須です",
+        "app_slug_title": "アプリのスラッグ",
+        "app_slug_error": "アプリのスラッグは必須です",
+        "app_maker_title": "アプリ作成者",
+        "app_maker_error": "アプリ作成者は必須です",
+        "webhook_url_title": "WebhookのURL",
+        "webhook_url_error": "WebhookのURLは必須です",
+        "invalid_webhook_url_error": "無効なWebhookのURL",
+        "redirect_uris_title": "リダイレクトURI",
+        "redirect_uris_error": "リダイレクトURIは必須です",
+        "invalid_redirect_uris_error": "無効なリダイレクトURI",
+        "redirect_uris_description": "アプリがユーザーをリダイレクトする先のURIをスペース区切りで入力してください（例：https://example.com https://example.com/）",
+        "authorized_javascript_origins_title": "許可されたJavaScriptオリジン",
+        "authorized_javascript_origins_error": "許可されたJavaScriptオリジンは必須です",
+        "invalid_authorized_javascript_origins_error": "無効な許可されたJavaScriptオリジン",
+        "authorized_javascript_origins_description": "アプリがリクエストを行うことができるオリジンをスペース区切りで入力してください（例：app.com example.com）",
+        "create_app": "アプリを作成",
+        "update_app": "アプリを更新",
+        "regenerate_client_secret_description": "クライアントシークレットを再生成します。再生成後、キーをコピーするかCSVファイルとしてダウンロードできます。",
+        "regenerate_client_secret": "クライアントシークレットを再生成",
+        "regenerate_client_secret_confirm_title": "クライアントシークレットを再生成してもよろしいですか？",
+        "regenerate_client_secret_confirm_description": "このシークレットを使用しているアプリは動作しなくなります。アプリでシークレットを更新する必要があります。",
+        "regenerate_client_secret_confirm_cancel": "キャンセル",
+        "regenerate_client_secret_confirm_regenerate": "再生成",
+        "read_only_access_to_workspace": "ワークスペースへの読み取り専用アクセス",
+        "write_access_to_workspace": "ワークスペースへの書き込みアクセス",
+        "read_only_access_to_user_profile": "ユーザープロフィールへの読み取り専用アクセス",
+        "write_access_to_user_profile": "ユーザープロフィールへの書き込みアクセス",
+        "connect_app_to_workspace": "{app}を{workspace}ワークスペースに接続",
+        "user_permissions": "ユーザー権限",
+        "user_permissions_description": "ユーザー権限は、ユーザープロフィールへのアクセスを許可するために使用されます。",
+        "workspace_permissions": "ワークスペース権限",
+        "workspace_permissions_description": "ワークスペース権限は、ワークスペースへのアクセスを許可するために使用されます。",
+        "with_the_permissions": "権限付きで",
+        "app_consent_title": "{app}があなたのPlaneワークスペースとプロフィールへのアクセスを要求しています。",
+        "choose_workspace_to_connect_app_with": "アプリを接続するワークスペースを選択してください",
+        "app_consent_workspace_permissions_title": "{app}は以下を要求しています",
+        "app_consent_user_permissions_title": "{app}は以下のリソースに対するユーザーの許可も要求できます。これらの権限はユーザーによってのみ要求され、承認されます。",
+        "app_consent_accept_title": "承認することで",
+        "app_consent_accept_1": "アプリにPlane内外でアプリを使用できる場所であなたのPlaneデータへのアクセスを許可します",
+        "app_consent_accept_2": "{app}のプライバシーポリシーと利用規約に同意します",
+        "accepting": "承認中...",
+        "accept": "承認"
       }
     }
   },
@@ -809,7 +919,8 @@
     "multiple_connections_found": "1つの接続が期待される場合に複数の接続が見つかりました",
     "installation_not_found": "要求されたインストールが見つかりませんでした",
     "user_not_found": "要求されたユーザーが見つかりませんでした",
-    "error_fetching_token": "認証トークンの取得に失敗しました"
+    "error_fetching_token": "認証トークンの取得に失敗しました",
+    "cannot_create_multiple_connections": "あなたはすでに組織をワークスペースと接続しています。新しい接続を作成する前に、既存の接続を切断してください。"
   },
 
   "import_status": {
@@ -913,35 +1024,291 @@
       "chart_types": {
         "bar_chart": {
           "short_label": "バー",
-          "long_label": "バー チャート"
+          "long_label": "バー チャート",
+          "chart_models": {
+            "basic": "ベーシック",
+            "stacked": "スタックド",
+            "grouped": "グループド"
+          },
+          "orientation": {
+            "label": "オリエンテーション",
+            "horizontal": "ホリゾンタル",
+            "vertical": "バーティカル",
+            "placeholder": "オリエンテーション アッド"
+          },
+          "bar_color": "バー カラー"
         },
         "line_chart": {
           "short_label": "ライン",
-          "long_label": "ライン チャート"
+          "long_label": "ライン チャート",
+          "chart_models": {
+            "basic": "ベーシック",
+            "multi_line": "マルチライン"
+          },
+          "line_color": "ライン カラー",
+          "line_type": {
+            "label": "ライン タイプ",
+            "solid": "ソリッド",
+            "dashed": "ダッシュド",
+            "placeholder": "ライン タイプ アッド"
+          }
         },
         "area_chart": {
           "short_label": "エリア",
-          "long_label": "エリア チャート"
+          "long_label": "エリア チャート",
+          "chart_models": {
+            "basic": "ベーシック",
+            "stacked": "スタックド",
+            "comparison": "コンパリソン"
+          },
+          "fill_color": "フィル カラー"
         },
         "donut_chart": {
           "short_label": "ドーナツ",
-          "long_label": "ドーナツ チャート"
+          "long_label": "ドーナツ チャート",
+          "chart_models": {
+            "basic": "ベーシック",
+            "progress": "プログレス"
+          },
+          "center_value": "センター バリュー",
+          "completed_color": "コンプリーテッド カラー"
         },
         "pie_chart": {
           "short_label": "パイ",
-          "long_label": "パイ チャート"
+          "long_label": "パイ チャート",
+          "chart_models": {
+            "basic": "ベーシック"
+          },
+          "group": {
+            "label": "グループド ピーセズ",
+            "group_thin_pieces": "グループ シン ピーセズ",
+            "minimum_threshold": {
+              "label": "ミニマム スレショルド",
+              "placeholder": "スレショルド アッド"
+            },
+            "name_group": {
+              "label": "ネーム グループ",
+              "placeholder": "\"レス ザン 5%\""
+            }
+          },
+          "show_values": "ショー バリューズ",
+          "value_type": {
+            "percentage": "パーセンテージ",
+            "count": "カウント"
+          }
         },
         "text": {
           "short_label": "テキスト",
-          "long_label": "テキスト"
+          "long_label": "テキスト",
+          "alignment": {
+            "label": "テキスト アラインメント",
+            "left": "レフト",
+            "center": "センター",
+            "right": "ライト",
+            "placeholder": "テキスト アラインメント アッド"
+          },
+          "text_color": "テキスト カラー"
         }
+      },
+      "color_palettes": {
+        "modern": "モダン",
+        "horizon": "ホライゾン",
+        "earthen": "アーセン"
+      },
+      "common": {
+        "add_widget": "アッド ウィジェット",
+        "widget_title": {
+          "label": "ネーム ディス ウィジェット",
+          "placeholder": "例: \"トゥードゥー イェスタデイ\", \"オール コンプリート\""
+        },
+        "chart_type": "チャート タイプ",
+        "visualization_type": {
+          "label": "ビジュアライゼーション タイプ",
+          "placeholder": "ビジュアライゼーション タイプ アッド"
+        },
+        "date_group": {
+          "label": "デート グループ",
+          "placeholder": "デート グループ アッド"
+        },
+        "group_by": "グループ バイ",
+        "stack_by": "スタック バイ",
+        "daily": "デイリー",
+        "weekly": "ウィークリー",
+        "monthly": "マンスリー",
+        "yearly": "イヤーリー",
+        "work_item_count": "ワーク アイテム カウント",
+        "estimate_point": "エスティメート ポイント",
+        "pending_work_item": "ペンディング ワーク アイテムズ",
+        "completed_work_item": "コンプリーテッド ワーク アイテムズ",
+        "in_progress_work_item": "イン プログレス ワーク アイテムズ",
+        "blocked_work_item": "ブロックド ワーク アイテムズ",
+        "work_item_due_this_week": "ワーク アイテムズ デュー ディス ウィーク",
+        "work_item_due_today": "ワーク アイテムズ デュー トゥデイ",
+        "color_scheme": {
+          "label": "カラー スキーム",
+          "placeholder": "カラー スキーム アッド"
+        },
+        "smoothing": "スムージング",
+        "markers": "マーカーズ",
+        "legends": "レジェンズ",
+        "tooltips": "ツールチップス",
+        "opacity": {
+          "label": "オパシティ",
+          "placeholder": "オパシティ アッド"
+        },
+        "border": "ボーダー",
+        "widget_configuration": "ウィジェット コンフィギュレーション",
+        "configure_widget": "コンフィギュア ウィジェット",
+        "guides": "ガイズ",
+        "style": "スタイル",
+        "area_appearance": "エリア アピアランス",
+        "comparison_line_appearance": "コンペア ライン アピアランス",
+        "add_property": "アッド プロパティ",
+        "add_metric": "アッド メトリック"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          },
+          "stacked": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー",
+            "group_by": "スタック バイ イズ ミッシング ア バリュー"
+          },
+          "grouped": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー",
+            "group_by": "グループ バイ イズ ミッシング ア バリュー"
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          },
+          "multi_line": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー",
+            "group_by": "グループ バイ イズ ミッシング ア バリュー"
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          },
+          "stacked": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー",
+            "group_by": "スタック バイ イズ ミッシング ア バリュー"
+          },
+          "comparison": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          },
+          "progress": {
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "エックス アクシス イズ ミッシング ア バリュー",
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "メトリック イズ ミッシング ア バリュー"
+          }
+        },
+        "ask_admin": "アスク ユア アドミン トゥ コンフィギュア ディス ウィジェット"
       }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "クリエイト ニュー ダッシュボード",
+        "update": "アップデート ダッシュボード"
+      },
+      "title": {
+        "label": "ネーム ユア ダッシュボード",
+        "placeholder": "\"キャパシティ アクロス プロジェクツ\", \"ワークロード バイ チーム\", \"ステート アクロス オール プロジェクツ\"",
+        "required_error": "タイトル イズ リクワイアド"
+      },
+      "project": {
+        "label": "チューズ プロジェクツ",
+        "placeholder": "データ フロム ジーズ プロジェクツ ウィル パワー ディス ダッシュボード",
+        "required_error": "プロジェクツ アー リクワイアド"
+      },
+      "create_dashboard": "クリエイト ダッシュボード",
+      "update_dashboard": "アップデート ダッシュボード"
+    },
+    "delete_modal": {
+      "heading": "デリート ダッシュボード"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "プレゼント ユア プログレス イン オンデマンド、フォーエバー ダッシュボーズ",
+        "description": "ビルド エニー ダッシュボード ユー ニード トゥ アンド カスタマイズ ハウ ユア データ ルックス フォー ザ パーフェクト プレゼンテーション オブ ユア プログレス",
+        "coming_soon_to_mobile": "カミング スーン トゥ ザ モバイル アップ",
+        "card_1": {
+          "title": "フォー オール ユア プロジェクツ",
+          "description": "ゲット ア トータル ゴッドビュー オブ ユア ワークスペース ウィズ オール ユア プロジェクツ オア スライス ユア ワーク データ フォー ザット パーフェクト ビュー ユア プログレス"
+        },
+        "card_2": {
+          "title": "フォー エニー データ イン プレーン",
+          "description": "ゴー ビヨンド アウトオブザボックス アナリティクス アンド レディメイド サイクル チャーツ トゥ ルック アット チームズ、イニシアティブス、オア エニシング エルス ライク ユー ハブント ビフォー"
+        },
+        "card_3": {
+          "title": "フォー オール ユア データ ビズ ニーズ",
+          "description": "チューズ フロム セベラル カスタマイザブル チャーツ ウィズ ファイングレインド コントロールズ トゥ シー アンド ショー ユア ワーク データ イグザクトリー ハウ ユー ウォント トゥ"
+        },
+        "card_4": {
+          "title": "オンデマンド アンド パーマネント",
+          "description": "ビルド ワンス、キープ フォーエバー ウィズ オートマティック リフレッシュズ オブ ユア データ、コンテクスチュアル フラッグズ フォー スコープ チェンジズ、アンド シェアラブル パーマリンクス"
+        },
+        "card_5": {
+          "title": "エクスポーツ アンド スケジュールド コムズ",
+          "description": "フォー ゾーズ タイムズ ウェン リンクス ドント ワーク、ゲット ユア ダッシュボーズ アウト イントゥ ワンタイム ピーディーエフス オア スケジュール ゼム トゥ ビー セント トゥ ステークホルダーズ オートマティカリー"
+        },
+        "card_6": {
+          "title": "オートレイドアウト フォー オール デバイセズ",
+          "description": "リサイズ ユア ウィジェッツ フォー ザ レイアウト ユー ウォント アンド シー イット ザ イグザクト セイム アクロス モバイル、タブレット、アンド アザー ブラウザーズ"
+        }
+      },
+      "dashboards_list": {
+        "title": "ビジュアライズ データ イン ウィジェッツ、ビルド ユア ダッシュボーズ ウィズ ウィジェッツ、アンド シー ザ レイテスト オン デマンド",
+        "description": "ビルド ユア ダッシュボーズ ウィズ カスタム ウィジェッツ ザット ショー ユア データ イン ザ スコープ ユー スペシファイ。ゲット ダッシュボーズ フォー オール ユア ワーク アクロス プロジェクツ アンド チームズ アンド シェア パーマリンクス ウィズ ステークホルダーズ フォー オンデマンド トラッキング"
+      },
+      "dashboards_search": {
+        "title": "ザット ダズント マッチ ア ダッシュボーズ ネーム",
+        "description": "メイク シュア ユア クエリー イズ ライト オア トライ アナザー クエリー"
+      },
+      "widgets_list": {
+        "title": "ビジュアライズ ユア データ ハウ ユー ウォント トゥ",
+        "description": "ユーズ ラインズ、バーズ、パイズ、アンド アザー フォーマッツ トゥ シー ユア データ ザ ウェイ ユー ウォント トゥ フロム ザ ソーセズ ユー スペシファイ"
+      },
+      "widget_data": {
+        "title": "ナッシング トゥ シー ヒア",
+        "description": "リフレッシュ オア アッド データ トゥ シー イット ヒア"
+      }
+    },
+    "common": {
+      "editing": "エディティング"
     }
   },
 
   "workflows": {
     "workflow_states": {
       "work_item_creation": "新しい作業項目を許可",
+      "work_item_creation_disable_tooltip": "作業項目の作成はこの状態では無効になっています",
       "default_state": "デフォルトの状態は、すべてのメンバーが新しい作業項目を作成できるように設定されています。これは変更できません",
       "state_change_count": "{count, plural, one {1つの許可された状態変更} other {{count}つの許可された状態変更}}",
       "movers_count": "{count, plural, one {1人のリストされたレビューア} other {{count}人のリストされたレビューア}}",
@@ -1038,59 +1405,540 @@
   },
 
   "customers": {
-    "label": "{count, plural, one {顧客} other {顧客}}",
+    "label": "{count, plural, one {顧客} other {顧客たち}}",
+    "dropdown": {
+      "placeholder": "顧客を選択",
+      "required": "顧客を選択してください",
+      "no_selection": "顧客なし"
+    },
+    "upgrade": {
+      "title": "顧客とともに優先順位をつけて業務を管理しましょう。",
+      "description": "業務を顧客に関連付け、顧客属性に基づいて優先順位を設定しましょう。"
+    },
     "properties": {
       "default": {
-        "title": "デフォルトプロパティ",
-        "customer_name": "顧客名",
-        "description": "説明",
-        "email": "メール",
-        "website_url": "ウェブサイトURL",
-        "employees": "従業員数",
-        "domain": "ドメイン",
-        "stage": "ステージ",
-        "contract_status": "契約状況",
-        "revenue": "収益"
+        "title": "デフォルトのプロパティ",
+        "customer_name": {
+          "name": "顧客名",
+          "placeholder": "これは人または企業の名前かもしれません",
+          "validation": {
+            "required": "顧客名は必須です。",
+            "max_length": "顧客名は255文字を超えてはいけません。"
+          }
+        },
+        "description": {
+          "name": "説明",
+          "validation": {}
+        },
+        "email": {
+          "name": "Eメール",
+          "placeholder": "メールアドレスを入力してください",
+          "validation": {
+            "required": "Eメールは必須です。",
+            "pattern": "無効なEメールアドレスです。"
+          }
+        },
+        "website_url": {
+          "name": "ウェブサイト",
+          "placeholder": "https://で始まる任意のURLが機能します。",
+          "placeholder_short": "ウェブサイトを追加",
+          "validation": {
+            "pattern": "無効なウェブサイトのURL"
+          }
+        },
+        "employees": {
+          "name": "従業員数",
+          "placeholder": "顧客が企業であれば従業員数を入力してください。",
+          "validation": {
+            "min_length": "従業員数は0未満であってはなりません。",
+            "max_length": "従業員数は2147483647を超えてはなりません。"
+          }
+        },
+        "size": {
+          "name": "サイズ",
+          "placeholder": "企業の規模を追加",
+          "validation": {
+            "min_length": "無効なサイズ"
+          }
+        },
+        "domain": {
+          "domain": "業界",
+          "placeholder": "小売、eコマース、フィンテック、銀行",
+          "placeholder_short": "業界を追加",
+          "validation": {}
+        },
+        "stage": {
+          "name": "ステージ",
+          "placeholder": "ステージを選択",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "契約状況",
+          "placeholder": "契約状況を選択",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "収益",
+          "placeholder": "顧客が生成した年間収益です。",
+          "placeholder_short": "収益を追加",
+          "validation": {
+            "min_length": "収益は0未満であってはなりません。"
+          }
+        },
+        "invalid_value": "無効なプロパティ値です。"
       },
       "custom": {
         "title": "カスタムプロパティ",
-        "info": "ここで顧客プロパティをカスタマイズできます。異なるプロパティタイプから選択して、顧客データを集計します。"
+        "info": "顧客の固有の属性をPlaneに追加し、作業項目や顧客記録をより適切に管理しましょう。"
       },
       "empty_state": {
         "title": "カスタムプロパティを追加",
-        "description": "顧客に追加した新しいプロパティがここに表示されます"
+        "description": "手動または自動でCRMにマッピングしたいカスタムプロパティがここに表示されます。"
       },
       "add": {
         "primary_button": "新しいプロパティを追加"
       }
     },
+    "stage": {
+      "lead": "リード",
+      "sales_qualified_lead": "営業確認済リード",
+      "contract_negotiation": "契約交渉",
+      "closed_won": "クロージング完了",
+      "closed_lost": "クロージング失敗"
+    },
+    "contract_status": {
+      "active": "アクティブ",
+      "pre_contract": "契約前",
+      "signed": "署名済み",
+      "inactive": "非アクティブ"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "この顧客レコードは見つかりませんでした。",
+        "description": "このリンクが間違っているか、レコードが削除された可能性があります。",
+        "primary_button": "顧客へ移動",
+        "secondary_button": "顧客を追加"
+      },
+      "search": {
+        "title": "その用語に一致する顧客記録が見つかりませんでした。",
+        "description": "別の検索語を試すか、その用語で結果が表示されるはずだと確信している場合はお問い合わせください。"
+      },
+      "list": {
+        "title": "顧客の重要な情報に基づいてワークフローの量、ペース、フローを管理します。",
+        "description": "Plane専用の顧客機能を使用すると、新しい顧客をゼロから作成してワークにリンクできます。まもなく、カスタム属性とともに他のツールからインポートできるようになります。",
+        "primary_button": "最初の顧客を追加"
+      }
+    },
     "settings": {
       "unauthorized": "このページにアクセスする権限がありません。",
-      "description": "ワークフローで顧客関係を追跡および管理します。",
-      "enable": "顧客を有効にする",
+      "description": "ワークフロー内で顧客との関係を監視・管理します。",
+      "enable": "顧客機能を有効にする",
       "toasts": {
         "enable": {
           "loading": "顧客機能を有効にしています...",
           "success": {
-            "title": "顧客が有効化されました",
-            "message": "顧客関係を追跡および管理します。"
+            "title": "このワークスペースに対して顧客機能を有効にしました。",
+            "message": "メンバーは今、顧客記録を追加し、それを作業項目にリンクするなど、さまざまな操作が可能になりました。"
           },
           "error": {
-            "title": "エラー",
-            "message": "顧客機能の有効化に失敗しました！"
+            "title": "顧客機能を有効にできませんでした。",
+            "message": "もう一度お試しください。それでもうまくいかない場合は、サポートに連絡してください。",
+            "action": "サポートに連絡"
           }
         },
         "disable": {
           "loading": "顧客機能を無効にしています...",
           "success": {
-            "title": "顧客が無効化されました",
-            "message": "顧客機能が正常に無効化されました！"
+            "title": "顧客が無効になりました",
+            "message": "顧客機能は正常に無効化されました！"
           },
           "error": {
             "title": "エラー",
-            "message": "顧客機能の無効化に失敗しました！"
+            "message": "顧客機能を無効にできませんでした！"
           }
         }
+      }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "顧客リストを取得できませんでした。",
+          "message": "もう一度お試しください、またはページを更新してください。"
+        }
+      },
+      "copy_link": {
+        "title": "顧客のリンクをコピーしました。",
+        "message": "どこにでも貼り付けて、このページに直接戻れます。"
+      },
+      "create": {
+        "success": {
+          "title": "{customer_name} が利用可能になりました",
+          "message": "この顧客を作業項目に参照し、リクエストを追跡できます。",
+          "actions": {
+            "view": "表示",
+            "copy_link": "リンクをコピー",
+            "copied": "コピーしました！"
+          }
+        },
+        "error": {
+          "title": "このレコードを作成できませんでした。",
+          "message": "もう一度保存してみてください、または保存していないテキストを新しい項目にコピーしてください。別のタブで試してみると良いでしょう。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "成功！",
+          "message": "顧客が正常に更新されました！"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": "顧客の更新に失敗しました。もう一度お試しください！"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "顧客のロゴを読み込めませんでした。",
+          "message": "ロゴを再保存するか、最初からやり直してください。"
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "この顧客の作業項目を削除しました。",
+            "message": "この顧客も自動的に作業項目から削除されました。"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "この顧客のレコードからその作業項目を削除できませんでした。"
+          }
+        },
+        "add": {
+          "error": {
+            "title": "この顧客の作業項目を追加できませんでした。",
+            "message": "もう一度作業項目を追加してみてください。それでもうまくいかない場合は、サポートに連絡してください。"
+          },
+          "success": {
+            "title": "作業項目をこの顧客のレコードに追加しました。",
+            "message": "この顧客も自動的に作業項目に追加されました。"
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "編集",
+      "copy_link": "顧客リンクをコピー",
+      "delete": "削除"
+    },
+    "create": {
+      "label": "顧客記録を作成",
+      "loading": "作成中",
+      "cancel": "キャンセル"
+    },
+    "update": {
+      "label": "顧客を更新",
+      "loading": "更新中"
+    },
+    "delete": {
+      "title": "顧客記録 {customer_name} を削除してもよろしいですか？",
+      "description": "この記録に関連するすべてのデータは完全に削除されます。後でこの記録を復元することはできません。"
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "まだリクエストはありません。",
+          "description": "顧客からリクエストを作成して、それらを作業項目にリンクできます。",
+          "button": "新しいリクエストを追加"
+        },
+        "search": {
+          "title": "その用語に一致するリクエストが見つかりませんでした。",
+          "description": "別の検索語を試すか、その用語で結果が表示されるはずだと確信している場合はお問い合わせください。"
+        }
+      },
+      "label": "{count, plural, one {リクエスト} other {リクエストたち}}",
+      "add": "リクエストを追加",
+      "create": "リクエストを作成",
+      "update": "リクエストを更新",
+      "form": {
+        "name": {
+          "placeholder": "このリクエストに名前を付けてください",
+          "validation": {
+            "required": "名前は必須です。",
+            "max_length": "リクエストの名前は255文字以内である必要があります。"
+          }
+        },
+        "description": {
+          "placeholder": "リクエストの性質を記述するか、他のツールからこの顧客のコメントを貼り付けてください。"
+        },
+        "source": {
+          "add": "ソースを追加",
+          "update": "ソースを更新",
+          "url": {
+            "label": "URL",
+            "required": "URLは必須です",
+            "invalid": "無効なウェブサイトのURL"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "リンクをコピーしました",
+          "message": "顧客のリクエストのリンクがクリップボードにコピーされました。"
+        },
+        "attachment": {
+          "upload": {
+            "loading": "添付ファイルのアップロード中...",
+            "success": {
+              "title": "添付ファイルのアップロード成功",
+              "message": "添付ファイルが正常にアップロードされました。"
+            },
+            "error": {
+              "title": "添付ファイルのアップロード失敗",
+              "message": "添付ファイルをアップロードできませんでした。"
+            }
+          },
+          "size": {
+            "error": {
+              "title": "エラー！",
+              "message": "一度に1つのファイルしかアップロードできません。"
+            }
+          },
+          "length": {
+            "message": "ファイルは{size}MB以内でなければなりません"
+          },
+          "remove": {
+            "success": {
+              "title": "添付ファイルを削除しました",
+              "message": "添付ファイルが正常に削除されました"
+            },
+            "error": {
+              "title": "添付ファイルを削除できません",
+              "message": "添付ファイルを削除できませんでした"
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "成功！",
+              "message": "ソースが正常に更新されました！"
+            },
+            "error": {
+              "title": "エラー！",
+              "message": "ソースを更新できませんでした。"
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "エラー！",
+              "message": "リクエストに作業項目を追加できませんでした。再試行してください。"
+            },
+            "success": {
+              "title": "成功！",
+              "message": "作業項目がリクエストに追加されました。"
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "リクエストが正常に更新されました！",
+            "title": "成功！"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "リクエストの更新に失敗しました。再試行してください！"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "リクエストが正常に作成されました！",
+            "title": "成功！"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "リクエストの作成に失敗しました。再試行してください！"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "リンクされた作業項目",
+      "link": "作業項目をリンク",
+      "empty_state": {
+        "list": {
+          "title": "まだこの顧客に作業項目をリンクしていません。",
+          "description": "既存の作業項目をここにリンクして、この顧客に関連付けて追跡できます。",
+          "button": "作業項目をリンク"
+        }
+      },
+      "action": {
+        "remove_epic": "エピックを削除",
+        "remove": "作業項目を削除"
+      }
+    },
+    "sidebar": {
+      "properties": "プロパティ"
+    }
+  },
+  "templates": {
+    "settings": {
+      "title": "テンプレート",
+      "description": "テンプレートを使用すると、プロジェクト、作業項目、ページの作成に費やす時間を80％節約できます。",
+      "options": {
+        "project": {
+          "label": "プロジェクトテンプレート"
+        },
+        "work_item": {
+          "label": "作業項目テンプレート"
+        },
+        "page": {
+          "label": "ページテンプレート"
+        }
+      },
+      "create_template": {
+        "label": "テンプレートを作成",
+        "no_permission": {
+          "project": "テンプレートを作成するには、プロジェクト管理者に連絡してください",
+          "workspace": "テンプレートを作成するには、ワークスペース管理者に連絡してください"
+        }
+      },
+      "use_template": {
+        "button": "テンプレートを使用"
+      },
+      "template_source": {
+        "workspace": {
+          "info": "ワークスペースから派生"
+        },
+        "project": {
+          "info": "プロジェクトから派生"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "プロジェクトテンプレートに名前を付けてください。",
+              "validation": {
+                "required": "テンプレート名は必須です",
+                "maxLength": "テンプレート名は255文字未満にしてください"
+              }
+            },
+            "description": {
+              "placeholder": "このテンプレートをいつ、どのように使用するかを説明してください。"
+            }
+          },
+          "name": {
+            "placeholder": "プロジェクトに名前を付けてください。",
+            "validation": {
+              "required": "プロジェクトのタイトルは必須です",
+              "maxLength": "プロジェクトのタイトルは255文字未満にしてください"
+            }
+          },
+          "description": {
+            "placeholder": "このプロジェクトの目的と目標を説明してください。"
+          },
+          "button": {
+            "create": "プロジェクトテンプレートを作成",
+            "update": "プロジェクトテンプレートを更新"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "作業項目テンプレートに名前を付けてください。",
+              "validation": {
+                "required": "テンプレート名は必須です",
+                "maxLength": "テンプレート名は255文字未満にしてください"
+              }
+            },
+            "description": {
+              "placeholder": "このテンプレートをいつ、どのように使用するかを説明してください。"
+            }
+          },
+          "name": {
+            "placeholder": "この作業項目にタイトルを付けてください。",
+            "validation": {
+              "required": "作業項目のタイトルは必須です",
+              "maxLength": "作業項目のタイトルは255文字未満にしてください"
+            }
+          },
+          "description": {
+            "placeholder": "この作業項目を完了したときに何を達成するのかが明確になるように説明してください。"
+          },
+          "button": {
+            "create": "作業項目テンプレートを作成",
+            "update": "作業項目テンプレートを更新"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "テンプレート",
+        "description": "Planeのプロジェクト、作業項目、ページテンプレートを使用すれば、ゼロからプロジェクトを作成したり、作業項目のプロパティを手動で設定したりする必要はありません。",
+        "sub_description": "テンプレートを使用すると、管理時間の80％を取り戻せます。"
+      },
+      "no_templates": {
+        "button": "最初のテンプレートを作成"
+      },
+      "no_labels": {
+        "description": " まだラベルがありません。プロジェクト内の作業項目を整理してフィルタリングするためのラベルを作成してください。"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "テンプレートが作成されました",
+          "message": "{templateType}テンプレート「{templateName}」がワークスペースで利用できるようになりました。"
+        },
+        "error": {
+          "title": "今回はそのテンプレートを作成できませんでした。",
+          "message": "詳細を再度保存するか、できれば別のタブで新しいテンプレートにコピーしてください。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "テンプレートが変更されました",
+          "message": "{templateType}テンプレート「{templateName}」が変更されました。"
+        },
+        "error": {
+          "title": "このテンプレートの変更を保存できませんでした。",
+          "message": "詳細を再度保存するか、後でこのテンプレートに戻ってください。それでも問題が続く場合は、お問い合わせください。"
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "テンプレートが削除されました",
+          "message": "{templateType}テンプレート「{templateName}」がワークスペースから削除されました。"
+        },
+        "error": {
+          "title": "今回はそのテンプレートを削除できませんでした。",
+          "message": "再度削除を試みるか、後で戻ってきてください。それでも削除できない場合は、お問い合わせください。"
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "テンプレートを削除",
+      "description": {
+        "prefix": "テンプレート「",
+        "suffix": "」を削除してもよろしいですか？テンプレートに関連するすべてのデータは完全に削除されます。このアクションは元に戻せません。"
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "新しいテンプレートを追加",
+        "project": "新しいテンプレートを追加"
+      },
+      "label": {
+        "project": "プロジェクトテンプレートを選択"
+      },
+      "tooltip": {
+        "work_item": "作業項目テンプレートを選択"
+      },
+      "no_results": {
+        "work_item": "テンプレートが見つかりません。",
+        "project": "テンプレートが見つかりません。"
       }
     }
   }

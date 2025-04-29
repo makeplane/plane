@@ -6,10 +6,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Crown } from "lucide-react";
-// ui
+// plane imports
+import { EProductSubscriptionEnum } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // assets
@@ -22,7 +22,8 @@ const Upgrade = observer(() => {
   const { resolvedTheme } = useTheme();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
   // derived values
-  const isSelfManagedUpgradeDisabled = subscriptionDetail?.is_self_managed && subscriptionDetail?.product !== "FREE";
+  const isSelfManagedUpgradeDisabled =
+    subscriptionDetail?.is_self_managed && subscriptionDetail?.product !== EProductSubscriptionEnum.FREE;
 
   return (
     <div

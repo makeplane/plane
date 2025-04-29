@@ -31,7 +31,7 @@ class StateViewSet(BaseViewSet):
 
     def update_workflow_state(self, slug, project_id, state_id):
         """Method to update the default workflow state's issue creation"""
-        if check_workspace_feature_flag(feature_key=FeatureFlag.WORKFLOWS, slug=slug):
+        if check_workspace_feature_flag(feature_key=FeatureFlag.WORKFLOWS, slug=slug, user_id=str(self.request.user.id)):
             workflow = Workflow.objects.filter(
                 workspace__slug=slug, project_id=project_id, state_id=state_id
             ).first()

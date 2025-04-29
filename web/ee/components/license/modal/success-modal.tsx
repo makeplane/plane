@@ -7,26 +7,72 @@ import { CheckCircle } from "lucide-react";
 // plane imports
 import { EProductSubscriptionEnum } from "@plane/constants";
 import { EModalWidth, ModalCore, PlaneIcon, PlaneOneIcon } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, getBaseSubscriptionName, getSubscriptionName } from "@plane/utils";
+// helpers
+import { getSubscriptionTextColor, getSuccessModalVariantStyle } from "@/components/workspace/billing/subscription";
 // plane web constants
-import { PRO_PLAN_FEATURES_MAP } from "@/plane-web/constants/license";
+import {
+  BUSINESS_PLAN_FEATURES_MAP,
+  ENTERPRISE_PLAN_FEATURES_MAP,
+  PRO_PLAN_FEATURES_MAP,
+} from "@/plane-web/constants/license";
 // plane web hooks
-import { getSubscriptionTextColor } from "@/plane-web/helpers/subscription";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
-export type TSuccessModalVariant = "PRO" | "ONE";
-
 export type PaidPlanSuccessModalProps = {
-  variant: TSuccessModalVariant;
+  variant: EProductSubscriptionEnum;
   isOpen: boolean;
   handleClose: () => void;
 };
 
+const getPlaneLogo = (variant: EProductSubscriptionEnum) => {
+  if (variant === EProductSubscriptionEnum.ONE) {
+    return <PlaneOneIcon className={cn("h-11", getSubscriptionTextColor(EProductSubscriptionEnum.ONE))} />;
+  }
+  return <PlaneIcon className={cn("size-11", getSubscriptionTextColor(variant))} />;
+};
+
+const getRecapLink = (variant: EProductSubscriptionEnum) => {
+  if (variant === EProductSubscriptionEnum.ENTERPRISE) {
+    return "https://plane.so/business";
+  }
+  if (variant === EProductSubscriptionEnum.BUSINESS) {
+    return "https://plane.so/business";
+  }
+  if (variant === EProductSubscriptionEnum.PRO) {
+    return "https://plane.so/pro";
+  }
+  if (variant === EProductSubscriptionEnum.ONE) {
+    return "https://docs.plane.so/plane-one/introduction";
+  }
+  return "https://plane.so/pricing";
+};
+
+export const getPlanFeatures = (variant: EProductSubscriptionEnum) => {
+  if (variant === EProductSubscriptionEnum.ENTERPRISE) {
+    return ENTERPRISE_PLAN_FEATURES_MAP;
+  }
+  if (variant === EProductSubscriptionEnum.BUSINESS) {
+    return BUSINESS_PLAN_FEATURES_MAP;
+  }
+  if (variant === EProductSubscriptionEnum.PRO) {
+    return PRO_PLAN_FEATURES_MAP;
+  }
+  if (variant === EProductSubscriptionEnum.ONE) {
+    return PRO_PLAN_FEATURES_MAP;
+  }
+  return [];
+};
+
 export const PaidPlanSuccessModal: FC<PaidPlanSuccessModalProps> = observer((props) => {
+  const { variant = EProductSubscriptionEnum.PRO, isOpen, handleClose } = props;
+  // router
   const { workspaceSlug } = useParams();
-  const { variant, isOpen, handleClose } = props;
   // hooks
-  const { refreshWorkspaceSubscribedPlan } = useWorkspaceSubscription();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, refreshWorkspaceSubscribedPlan } =
+    useWorkspaceSubscription();
+  // derived values
+  const isSelfHosted = !!subscriptionDetail?.is_self_managed;
 
   useEffect(() => {
     if (isOpen && workspaceSlug) {
@@ -35,36 +81,37 @@ export const PaidPlanSuccessModal: FC<PaidPlanSuccessModalProps> = observer((pro
   }, [isOpen, workspaceSlug, refreshWorkspaceSubscribedPlan]);
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.XXXL} className="rounded-xl">
+    <ModalCore
+      isOpen={isOpen}
+      handleClose={handleClose}
+      width={EModalWidth.XXXL}
+      className={getSuccessModalVariantStyle(variant)}
+    >
       <div className="py-10 px-10 ">
-        <div className="flex items-center justify-center">
-          {variant === "PRO" ? (
-            <PlaneIcon className={cn("size-11", getSubscriptionTextColor(EProductSubscriptionEnum.PRO))} />
-          ) : (
-            <PlaneOneIcon className={cn("h-11", getSubscriptionTextColor(EProductSubscriptionEnum.ONE))} />
-          )}
-        </div>
-        <div className="text-3xl font-bold leading-6 mt-4 flex justify-center items-center">
-          {variant === "PRO" ? "Awesome! 🥳" : "Awesome!"}
-        </div>
+        <div className="flex items-center justify-center">{getPlaneLogo(variant)}</div>
+        <div className="text-3xl font-bold leading-6 mt-4 flex justify-center items-center">Awesome! 🥳</div>
         <div className="mt-4 mb-6 text-center">
           <p className="text-center text-sm mb-2 px-8 text-custom-text-100">
-            {variant === "PRO"
-              ? "You have unlocked Pro on this workspace now."
-              : "You have successfully bought a One license."}
+            You have unlocked{" "}
+            <span className={cn("font-semibold", getSubscriptionTextColor(variant))}>
+              {getSubscriptionName(variant)}
+            </span>{" "}
+            on this workspace now.
           </p>
           <a
-            href={variant === "PRO" ? "https://plane.so/pro" : "https://docs.plane.so/plane-one/introduction"}
+            href={getRecapLink(variant)}
             target="_blank"
-            className="text-custom-primary-200 text-center text-sm font-semibold underline outline-none focus:outline-none"
+            className="text-custom-primary-200 text-center text-sm font-medium underline outline-none focus:outline-none"
           >
-            {variant === "PRO" ? "Recap what Pro packs anytime" : "See how to upgrade your workspace to One."}
+            Recap what {getSubscriptionName(variant)} packs anytime
           </a>
         </div>
-        <div className="py-4 px-4 border border-custom-primary-200/30 rounded-xl bg-custom-primary-200/5">
-          <div className="text-sm text-custom-text-200 font-semibold pb-2.5">Everything in Free +</div>
+        <div className="py-4 px-4 rounded-xl bg-custom-background-90/70">
+          <div className="text-sm text-custom-text-200 font-semibold pb-2.5">
+            Everything in {getBaseSubscriptionName(variant, isSelfHosted)} +
+          </div>
           <ul className="grid grid-cols-12 gap-x-4 md:gap-x-8">
-            {PRO_PLAN_FEATURES_MAP.map((feature) => (
+            {getPlanFeatures(variant).map((feature) => (
               <li key={feature?.label} className={cn("col-span-12 sm:col-span-6 relative rounded-md p-2 flex")}>
                 <div className="w-full text-sm font-medium leading-5 flex items-center">
                   <CheckCircle className="flex-shrink-0 h-4 w-4 mr-3 text-custom-text-300" />

@@ -4,6 +4,7 @@ import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane web services
+import { EProductSubscriptionEnum } from "@plane/constants";
 import { PaymentService } from "@/plane-web/services/payment.service";
 import selfHostedSubscriptionService from "@/plane-web/services/self-hosted-subscription.service";
 // plane web store
@@ -58,7 +59,7 @@ export class SelfHostedSubscriptionStore implements ISelfHostedSubscriptionStore
     if (!currentSubscription) return false;
     return (
       // currentSubscription.is_self_managed &&
-      currentSubscription.product !== "FREE" && !!currentSubscription.subscription
+      currentSubscription.product !== EProductSubscriptionEnum.FREE && !!currentSubscription.subscription
     );
   });
 

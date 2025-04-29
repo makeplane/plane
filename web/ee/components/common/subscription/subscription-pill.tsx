@@ -2,7 +2,7 @@
 import { EProductSubscriptionEnum } from "@plane/constants";
 import { IWorkspace } from "@plane/types";
 import { cn, getSubscriptionName } from "@plane/utils";
-import { getSubscriptionTextAndBackgroundColor } from "@/plane-web/helpers/subscription";
+import { getSubscriptionTextAndBackgroundColor } from "@/components/workspace/billing/subscription";
 
 type TProps = { workspace: IWorkspace };
 

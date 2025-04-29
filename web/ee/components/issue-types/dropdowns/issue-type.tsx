@@ -21,6 +21,7 @@ type TIssueTypeDropdownProps = {
   variant?: TIssueTypeDropdownVariant;
   placeholder?: string;
   optionTooltip?: TIssueTypeOptionTooltip;
+  buttonClassName?: string;
   handleIssueTypeChange: (value: string) => void;
 };
 
@@ -33,6 +34,7 @@ export const IssueTypeDropdown = observer((props: TIssueTypeDropdownProps) => {
     placeholder = "Work item type",
     handleIssueTypeChange,
     optionTooltip,
+    buttonClassName,
   } = props;
   // store hooks
   const { loader: issueTypesLoader, getProjectIssueTypes } = useIssueTypes();
@@ -107,7 +109,10 @@ export const IssueTypeDropdown = observer((props: TIssueTypeDropdownProps) => {
       onChange={handleIssueTypeChange}
       className="w-full h-full flex"
       optionsClassName="w-44 space-y-1.5"
-      buttonClassName="rounded text-sm py-0.5 bg-custom-background-100 border-[0.5px] border-custom-border-300"
+      buttonClassName={cn(
+        "rounded text-sm py-0.5 bg-custom-background-100 border-[0.5px] border-custom-border-300",
+        buttonClassName
+      )}
       disabled={disabled}
       noChevron
     />

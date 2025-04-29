@@ -5,7 +5,6 @@ from plane.app.views import (
     PageViewSet,
     PageFavoriteViewSet,
     PageLogEndpoint,
-    SubPagesEndpoint,
     PagesDescriptionViewSet,
     PageVersionEndpoint,
     PageDuplicateEndpoint,
@@ -24,6 +23,16 @@ urlpatterns = [
             {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
         ),
         name="project-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/sub-pages/",
+        PageViewSet.as_view({"get": "sub_pages"}),
+        name="project-sub-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/parent-pages/",
+        PageViewSet.as_view({"get": "parent_pages"}),
+        name="project-parent-pages",
     ),
     # favorite pages
     path(
@@ -66,11 +75,6 @@ urlpatterns = [
         name="page-transactions",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/sub-pages/",
-        SubPagesEndpoint.as_view(),
-        name="sub-page",
-    ),
-    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/description/",
         PagesDescriptionViewSet.as_view({"get": "retrieve", "patch": "partial_update"}),
         name="page-description",
@@ -90,4 +94,5 @@ urlpatterns = [
         PageDuplicateEndpoint.as_view(),
         name="page-duplicate",
     ),
+
 ]

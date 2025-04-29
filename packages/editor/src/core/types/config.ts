@@ -29,4 +29,5 @@ export type TDisplayConfig = {
   fontStyle?: TEditorFontStyle;
   fontSize?: TEditorFontSize;
   lineSpacing?: TEditorLineSpacing;
+  wideLayout?: boolean;
 };

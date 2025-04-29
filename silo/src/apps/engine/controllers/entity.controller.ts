@@ -3,6 +3,7 @@ import { Controller, Get, Post, Put, Delete, useValidateUserAuthentication } fro
 import { responseHandler } from "@/helpers/response-handler";
 import { getAPIClient } from "@/services/client";
 import { TWorkspaceEntityConnection } from "@plane/types";
+import { logger } from "@/logger";
 
 const apiClient = getAPIClient();
 
@@ -27,7 +28,7 @@ export class EntityConnectionController {
 
       return res.status(200).send(entityConnections);
     } catch (error) {
-      console.error(error);
+      logger.error("Failed to get entity connections:", error);
       return responseHandler(res, 500, error);
     }
   }
@@ -52,7 +53,7 @@ export class EntityConnectionController {
 
       return res.status(200).send(entityConnections);
     } catch (error) {
-      console.error(error);
+      logger.error("Failed to get entity connections:", error);
       return responseHandler(res, 500, error);
     }
   }
@@ -86,7 +87,7 @@ export class EntityConnectionController {
       const entityConnections = await apiClient.workspaceEntityConnection.createWorkspaceEntityConnection(payload);
       return res.status(200).send(entityConnections);
     } catch (error) {
-      console.error(error);
+      logger.error("Failed to create entity connection:", error);
       return responseHandler(res, 500, error);
     }
   }
@@ -183,7 +184,7 @@ export class EntityConnectionController {
 
       return res.status(200).send(entityConnections);
     } catch (error) {
-      console.error(error);
+      logger.error("Failed to update entity connection:", error);
       return responseHandler(res, 500, error);
     }
   }
@@ -204,6 +205,7 @@ export class EntityConnectionController {
 
       return res.status(200).send(entityConnections);
     } catch (error) {
+      logger.error("Failed to delete entity connection:", error);
       return responseHandler(res, 500, error);
     }
   }
@@ -236,6 +238,7 @@ export class EntityConnectionController {
 
       return res.status(200).send(entityConnections);
     } catch (error) {
+      logger.error("Failed to delete entity connection:", error);
       return responseHandler(res, 500, error);
     }
   }

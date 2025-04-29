@@ -2,11 +2,12 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { useParams } from "next/navigation";
+import { EWorkItemTypeEntity } from "@plane/constants";
 import { Loader } from "@plane/ui";
 // plane web components
 import { IssueTypeListItem } from "@/plane-web/components/issue-types";
 // plane web hooks
-import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 
 type TIssueTypesList = {
   onEditIssueTypeIdChange: (issueTypeId: string) => void;
@@ -19,7 +20,12 @@ export const IssueTypesList = observer((props: TIssueTypesList) => {
   // states
   const [openIssueTypeId, setOpenIssueTypeId] = useState<string | null>(null);
   // store hooks
-  const { loader: issueTypesLoader, getProjectIssueTypeIds, getProjectDefaultIssueType } = useIssueTypes();
+  const {
+    loader: issueTypesLoader,
+    getProjectIssueTypeIds,
+    getProjectDefaultIssueType,
+    getProjectWorkItemPropertiesLoader,
+  } = useIssueTypes();
   // derived states
   const currentProjectIssueTypeIds = getProjectIssueTypeIds(projectId?.toString());
   const currentProjectDefaultIssueType = getProjectDefaultIssueType(projectId?.toString());
@@ -52,9 +58,13 @@ export const IssueTypesList = observer((props: TIssueTypesList) => {
               openIssueTypeId === issueTypeId ||
               (issueTypeId === currentProjectDefaultIssueType?.id && currentProjectIssueTypeIds.length === 1)
             }
-            isCollapseDisabled={issueTypeId === currentProjectDefaultIssueType?.id && currentProjectIssueTypeIds.length === 1}
+            isCollapseDisabled={
+              issueTypeId === currentProjectDefaultIssueType?.id && currentProjectIssueTypeIds.length === 1
+            }
+            propertiesLoader={getProjectWorkItemPropertiesLoader(projectId?.toString(), EWorkItemTypeEntity.WORK_ITEM)}
             onToggle={handleIssueTypeListToggle}
             onEditIssueTypeIdChange={onEditIssueTypeIdChange}
+            getWorkItemTypeById={useIssueType}
           />
         ))}
     </div>

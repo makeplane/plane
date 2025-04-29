@@ -3,22 +3,25 @@ from asgiref.sync import sync_to_async
 from bs4 import BeautifulSoup
 
 # Module imports
-from plane.db.models import User
+from plane.db.models import User, IssueLabel, IssueAssignee
 
 
 @sync_to_async
 def get_issue_labels(issue):
-    return [
-        str(label_id) for label_id in list(issue.labels.values_list("id", flat=True))
-    ]
+    label_ids = IssueLabel.objects.filter(
+        issue=issue, deleted_at__isnull=True
+    ).values_list("label_id", flat=True)
+
+    return [str(label_id) for label_id in label_ids]
 
 
 @sync_to_async
 def get_issue_assignees(issue):
-    return [
-        str(assignee_id)
-        for assignee_id in list(issue.assignees.values_list("id", flat=True))
-    ]
+    assignee_ids = IssueAssignee.objects.filter(
+        issue=issue, deleted_at__isnull=True
+    ).values_list("assignee_id", flat=True)
+
+    return [str(assignee_id) for assignee_id in assignee_ids]
 
 
 # issue properties to activity dict
@@ -32,8 +35,8 @@ async def convert_issue_properties_to_activity_dict(issue):
         "priority": issue.priority,
         "state_id": str(issue.state_id),
         "parent_id": str(issue.parent_id) if issue.parent_id is not None else None,
-        "estimate_point": str(issue.estimate_point)
-        if issue.estimate_point is not NotImplementedError
+        "estimate_point": str(issue.estimate_point_id)
+        if issue.estimate_point_id is not None
         else None,
         "start_date": issue.start_date.strftime("%Y-%m-%d")
         if issue.start_date is not None

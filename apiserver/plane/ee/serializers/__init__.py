@@ -4,6 +4,7 @@ from .app.issue import IssueLiteSerializer
 from .app.active_cycle import WorkspaceActiveCycleSerializer
 from .app.page import (
     WorkspacePageSerializer,
+    WorkspacePageLiteSerializer,
     WorkspacePageDetailSerializer,
     WorkspacePageVersionSerializer,
     WorkspacePageVersionDetailSerializer,
@@ -14,6 +15,14 @@ from .app.issue_property import (
     IssuePropertySerializer,
     IssuePropertyOptionSerializer,
     IssuePropertyActivitySerializer,
+)
+
+from .app.customer import (
+    CustomerSerializer,
+    CustomerPropertySerializer,
+    CustomerPropertyOptionSerializer,
+    CustomerRequestSerializer,
+    CustomerRequestAttachmentV2Serializer,
 )
 from .app.worklog import IssueWorkLogSerializer
 from .app.exporter import ExporterHistorySerializer
@@ -40,7 +49,6 @@ from .app.initiative import (
     InitiativeActivitySerializer,
     InitiativeEpicSerializer,
 )
-
 
 from .app.teamspace import (
     TeamspaceSerializer,
@@ -75,9 +83,26 @@ from .app.workflow import (
     WorkflowTransitionActorSerializer,
     WorkflowTransitionActivitySerializer,
 )
+from .app.dashboard import (
+    DashboardSerializer,
+    DashboardQuickFilterSerializer,
+    WidgetSerializer,
+)
+
+from .app.template import (
+    TemplateSerializer,
+    WorkitemTemplateSerializer,
+    TemplateDataSerializer,
+    PageTemplateSerializer,
+    ProjectTemplateSerializer,
+)
 
 # Space imports
-from .space.page import PagePublicSerializer, PagePublicMetaSerializer
+from .space.page import (
+    PagePublicSerializer,
+    PagePublicMetaSerializer,
+    SubPagePublicSerializer,
+)
 from .space.views import ViewsPublicSerializer, ViewsPublicMetaSerializer
 from .space.issue import IssueCreateSerializer
 

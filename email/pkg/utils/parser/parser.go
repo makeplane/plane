@@ -44,3 +44,22 @@ func IsBacklistedDomain(email string) bool {
 	emailDomain := email[atIndex+1:]
 	return strings.Contains(blacklistedDomainsStr, emailDomain+"\n")
 }
+
+func ValidateWorkspaceAnchor(email string) (string, string) {
+	// Split the email at "@"
+	workspaceAnchor := strings.Split(email, "@")
+	if len(workspaceAnchor) == 0 {
+		return "", ""
+	}
+
+	// Split the anchor part at the last "-"
+	anchorParts := strings.SplitN(workspaceAnchor[0], "-", 2)
+	if len(anchorParts) != 2 {
+		return "", ""
+	}
+
+	workspaceSlug := anchorParts[0]
+	publishAnchor := anchorParts[1]
+
+	return publishAnchor, workspaceSlug
+}

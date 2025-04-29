@@ -279,6 +279,7 @@ class TeamspaceComment(BaseModel):
         related_name="team_space_comments",
         null=True,
     )
+    edited_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         db_table = "team_space_comments"

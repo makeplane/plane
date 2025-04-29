@@ -35,6 +35,7 @@ class Customer(BaseModel):
     email = models.EmailField(blank=True, null=True)
     website_url = models.URLField(blank=True, null=True)
     logo_props = models.JSONField(blank=True, default=dict)
+    logo_asset = models.ForeignKey("db.FileAsset", on_delete=models.SET_NULL, null=True)
     domain = models.CharField(max_length=255, blank=True, null=True)
     employees = models.IntegerField(blank=True, null=True)
     stage = models.CharField(max_length=255, blank=True, null=True)
@@ -44,8 +45,20 @@ class Customer(BaseModel):
         "db.Workspace", on_delete=models.CASCADE, related_name="customers"
     )
 
+    @property
+    def logo_url(self):
+        if self.logo_asset:
+            return self.logo_asset.asset_url
+
+        return None
+
     def save(self, *args, **kwargs):
-        self.description_stripped = strip_tags(self.description)
+        self.description_stripped = (
+            None
+            if (self.description_html == "" or self.description_html is None)
+            else strip_tags(self.description_html)
+        )
+
         super(Customer, self).save(*args, **kwargs)
 
     class Meta:
@@ -106,7 +119,7 @@ class CustomerProperty(BaseModel):
         self.name = slugify(self.display_name)
         if self._state.adding:
             # Get the maximum sequence value from the database
-            last_id = CustomerProperty.objects.filter(project=self.project).aggregate(
+            last_id = CustomerProperty.objects.aggregate(
                 largest=models.Max("sort_order")
             )["largest"]
             # if last_id is not None
@@ -223,7 +236,13 @@ class CustomerRequest(BaseModel):
     )
 
     def save(self, *args, **kwargs):
-        self.description_stripped = strip_tags(self.description)
+        # Strip the html tags using html parser
+        self.description_stripped = (
+            None
+            if (self.description_html == "" or self.description_html is None)
+            else strip_tags(self.description_html)
+        )
+
         super(CustomerRequest, self).save(*args, **kwargs)
 
     class Meta:

@@ -11,17 +11,15 @@ import {
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { TIssueActivityComment } from "@plane/types";
 // components
+import { CommentsWrapper } from "@/components/comments";
 import { ActivitySortRoot } from "@/components/issues";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 // constants
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 // local components
-import { EpicCommentCard } from "./activity/comment-card";
-import { EpicCommentCreate } from "./activity/comment-create";
-import { useEpicActivityOperations } from "./helper";
+import { useCommentOperations } from "./helper";
 
 type TEpicSidebarCommentsRootProps = {
   workspaceSlug: string;
@@ -42,13 +40,13 @@ export const EpicSidebarCommentsRoot: FC<TEpicSidebarCommentsRootProps> = observ
   // store hooks
   const {
     activity: { getActivityCommentByIssueId },
-    comment: {},
+    comment: { getCommentById },
   } = useIssueDetail(EIssueServiceType.EPICS);
 
   const { getProjectById } = useProject();
 
   // helper hooks
-  const activityOperations = useEpicActivityOperations(workspaceSlug, projectId, epicId);
+  const activityOperations = useCommentOperations(workspaceSlug, projectId, epicId);
 
   // handlers
   const toggleSortOrder = () => setSortOrder(sortOrder === E_SORT_ORDER.ASC ? E_SORT_ORDER.DESC : E_SORT_ORDER.ASC);
@@ -85,34 +83,17 @@ export const EpicSidebarCommentsRoot: FC<TEpicSidebarCommentsRootProps> = observ
         />
       }
     >
-      <div className="space-y-5 min-h-[200px] w-full">
-        {!disabled && (
-          <EpicCommentCreate
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            epicId={epicId}
-            activityOperations={activityOperations}
-            showAccessSpecifier={!!project.anchor}
-          />
-        )}
-        {sortedActivity.length > 0 &&
-          sortedActivity.map((activityComment) => {
-            const currActivityComment = activityComment as TIssueActivityComment;
-            return currActivityComment.activity_type === "COMMENT" ? (
-              <EpicCommentCard
-                key={currActivityComment.id}
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                commentId={currActivityComment.id}
-                activityOperations={activityOperations}
-                showAccessSpecifier={!!project.anchor}
-                disabled={disabled}
-              />
-            ) : (
-              <></>
-            );
-          })}
-      </div>
+      <CommentsWrapper
+        entityId={epicId}
+        activityOperations={activityOperations}
+        comments={sortedActivity
+          .filter((activityComment) => activityComment.activity_type === "COMMENT")
+          .map((comment) => comment.id)}
+        sortOrder={sortOrder ?? E_SORT_ORDER.ASC}
+        isEditingAllowed={!disabled}
+        getCommentById={getCommentById}
+        projectId={projectId}
+      />
     </SidebarContentWrapper>
   );
 });

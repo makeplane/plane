@@ -16,6 +16,10 @@ export type TFetchIssueTypesPayload = {
   workspaceSlug: string;
 };
 
+export type TFetchIssueTypesProjectLevelPayload = TFetchIssueTypesPayload & {
+  projectId: string;
+};
+
 export type TCreateIssueTypePayload = {
   workspaceSlug: string;
   projectId: string;
@@ -24,7 +28,7 @@ export type TCreateIssueTypePayload = {
 
 export type TUpdateIssueTypePayload = {
   workspaceSlug: string;
-  projectId: string;
+  projectId?: string;
   issueTypeId?: string;
   data: Partial<TIssueType>;
 };
@@ -46,10 +50,14 @@ export type TDisableIssueTypePayload = {
   issueTypeId?: string;
 };
 
-export interface IIssueTypesService {
-  fetchAll(payload: TFetchIssueTypesPayload): Promise<TIssueType[]>;
+export interface IWorkItemTypeInstanceServices {
   create?(payload: TCreateIssueTypePayload): Promise<TIssueType>;
   update?(payload: TUpdateIssueTypePayload): Promise<TIssueType>;
+}
+
+export interface IIssueTypesService extends IWorkItemTypeInstanceServices {
+  fetchAll(payload: TFetchIssueTypesPayload): Promise<TIssueType[]>;
+  fetchAllProjectLevel(payload: TFetchIssueTypesProjectLevelPayload): Promise<TIssueType[]>;
   deleteType?(payload: TDeleteIssueTypePayload): Promise<void>;
   enable?(payload: TEnableIssueTypePayload): Promise<TIssueType>;
   disable?(payload: TDisableIssueTypePayload): Promise<void>;
@@ -84,11 +92,14 @@ export type TDeleteIssuePropertyPayload = {
   customPropertyId: string;
 };
 
-export interface IIssuePropertiesService {
-  fetchAll(payload: TFetchIssuePropertiesPayload): Promise<TIssueProperty<EIssuePropertyType>[]>;
+export interface ICustomPropertiesInstanceServices {
   create(payload: TCreateIssuePropertyPayload): Promise<TIssuePropertyResponse>;
   update(payload: TUpdateIssuePropertyPayload): Promise<TIssuePropertyResponse>;
   deleteProperty(payload: TDeleteIssuePropertyPayload): Promise<void>;
+}
+
+export interface IIssuePropertiesService extends ICustomPropertiesInstanceServices {
+  fetchAll(payload: TFetchIssuePropertiesPayload): Promise<TIssueProperty<EIssuePropertyType>[]>;
 }
 
 // -------------------------- ISSUE PROPERTY OPTIONS --------------------------
@@ -112,10 +123,13 @@ export type TDeleteIssuePropertyOptionPayload = {
   issuePropertyOptionId: string;
 };
 
-export interface IIssuePropertyOptionsService {
-  fetchAll(payload: TFetchIssuePropertyOptionsPayload): Promise<TIssuePropertyOptionsPayload>;
+export interface ICustomPropertyOptionsInstanceServices {
   create(payload: TCreateIssuePropertyOptionPayload): Promise<TIssuePropertyOption>;
   deleteOption(payload: TDeleteIssuePropertyOptionPayload): Promise<void>;
+}
+
+export interface IIssuePropertyOptionsService extends ICustomPropertyOptionsInstanceServices {
+  fetchAll(payload: TFetchIssuePropertyOptionsPayload): Promise<TIssuePropertyOptionsPayload>;
 }
 
 // -------------------------- ISSUE TYPES SERVICES --------------------------
@@ -125,6 +139,15 @@ export type TIssueTypeStoreServices = {
   issueProperties: IIssuePropertiesService;
   issuePropertyOptions: IIssuePropertyOptionsService;
 };
+
+export interface ICustomPropertyStoreInstanceServices {
+  customProperty: ICustomPropertiesInstanceServices;
+  customPropertyOption: ICustomPropertyOptionsInstanceServices;
+}
+
+export interface IWorkItemTypeStoreInstanceServices extends ICustomPropertyStoreInstanceServices {
+  workItemType: IWorkItemTypeInstanceServices;
+}
 
 // -------------------------- EPIC SERVICES --------------------------
 

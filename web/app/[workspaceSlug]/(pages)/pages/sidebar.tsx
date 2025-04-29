@@ -1,6 +1,6 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -18,18 +18,54 @@ import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 export const PagesAppSidebar = observer(() => {
   // params
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, pageId } = useParams();
+  const pathname = usePathname();
+  // state
+  const [expandedPageIds, setExpandedPageIds] = useState<string[]>([]);
   // store hooks
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
-  const { fetchAllPages } = usePageStore(EPageStoreType.WORKSPACE);
+  const { fetchParentPages } = usePageStore(EPageStoreType.WORKSPACE);
   // refs
   const ref = useRef<HTMLDivElement>(null);
 
-  useSWR(workspaceSlug ? `WORKSPACE_PAGES_LIST_${workspaceSlug}` : null, workspaceSlug ? () => fetchAllPages() : null, {
-    revalidateOnFocus: false,
-    revalidateIfStale: false,
-    revalidateOnReconnect: false,
-  });
+  // Fetch parent pages if we're on a page detail view
+  const { data: parentPagesList } = useSWR(
+    workspaceSlug && pageId && pathname?.includes("/pages/") ? `PARENT_PAGES_LIST_${pageId.toString()}` : null,
+    workspaceSlug && pageId && pathname?.includes("/pages/") ? () => fetchParentPages(pageId.toString()) : null
+  );
+
+  // Optimized parent pages expansion
+  const handleParentPagesExpansion = useCallback((parentPages: any[]) => {
+    if (!parentPages || parentPages.length === 0) return;
+
+    // Extract all valid page IDs from the parent chain
+    const parentIds = parentPages.map((page) => page.id).filter((id) => id !== undefined) as string[];
+
+    // Only add IDs that aren't already in the expanded list
+    setExpandedPageIds((prev) => {
+      // Create a Set for efficient lookup
+      const existingIds = new Set(prev);
+      let hasChanges = false;
+
+      // Check each parent ID
+      parentIds.forEach((id) => {
+        if (!existingIds.has(id)) {
+          existingIds.add(id);
+          hasChanges = true;
+        }
+      });
+
+      // Only create a new array if changes were made
+      return hasChanges ? Array.from(existingIds) : prev;
+    });
+  }, []);
+
+  // Only expand parent pages when the page changes
+  useEffect(() => {
+    if (parentPagesList && parentPagesList.length > 0) {
+      handleParentPagesExpansion(parentPagesList);
+    }
+  }, [parentPagesList, handleParentPagesExpansion]);
 
   useOutsideClickDetector(ref, () => {
     if (sidebarCollapsed === false) {
@@ -69,7 +105,7 @@ export const PagesAppSidebar = observer(() => {
             "opacity-0": !sidebarCollapsed,
           })}
         />
-        <PagesAppSidebarList />
+        <PagesAppSidebarList expandedPageIds={expandedPageIds} setExpandedPageIds={setExpandedPageIds} />
         <SidebarHelpSection />
       </div>
     </div>

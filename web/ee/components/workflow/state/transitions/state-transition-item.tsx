@@ -3,10 +3,10 @@ import { observer } from "mobx-react";
 import { ChevronDown, MoveRight, Trash2 } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Collapsible, setToast, TOAST_TYPE, ApproverIcon, AlertModalCore } from "@plane/ui";
+import { Collapsible, setToast, TOAST_TYPE, ApproverIcon, AlertModalCore, Button } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { StateDropdown } from "@/components/dropdowns";
+import { MemberDropdown, StateDropdown } from "@/components/dropdowns";
 // hooks
 import { useProjectState } from "@/hooks/store";
 //
@@ -29,10 +29,16 @@ export const StateTransitionItem = observer((props: StateTransitionItemProps) =>
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { changeStateTransition, removeStateTransition, getTransitionById, getAvailableStateTransitionIds } =
-    useProjectState();
+  const {
+    changeStateTransition,
+    removeStateTransition,
+    getTransitionById,
+    getAvailableStateTransitionIds,
+    modifyStateTransitionMemberPermission,
+  } = useProjectState();
   // derived state
   const stateTransition = getTransitionById(parentStateId, transitionId);
+  const areApproversAvailable = stateTransition.approvers && stateTransition.approvers.length > 0;
 
   if (!stateTransition) return <></>;
 
@@ -42,6 +48,11 @@ export const StateTransitionItem = observer((props: StateTransitionItemProps) =>
     stateTransition.transition_state_id
   );
 
+  const handleToggle = () => {
+    if (!areApproversAvailable) return;
+    setIsOpen((prevState) => !prevState);
+  };
+
   const handleTransitionStateChange = async (val: string) => {
     try {
       await changeStateTransition(workspaceSlug, projectId, parentStateId, transitionId, val);
@@ -50,6 +61,19 @@ export const StateTransitionItem = observer((props: StateTransitionItemProps) =>
         type: TOAST_TYPE.ERROR,
         title: t("workflows.toasts.modify_state_change_rule.error.title"),
         message: t("workflows.toasts.modify_state_change_rule.error.message"),
+      });
+    }
+  };
+
+  const handleApproversUpdate = async (memberIds: string[]) => {
+    try {
+      modifyStateTransitionMemberPermission(workspaceSlug, projectId, parentStateId, transitionId, memberIds);
+      if (!isOpen) setIsOpen(true);
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("workflows.toasts.modify_state_change_rule_movers.error.title"),
+        message: t("workflows.toasts.modify_state_change_rule_movers.error.message"),
       });
     }
   };
@@ -83,9 +107,11 @@ export const StateTransitionItem = observer((props: StateTransitionItemProps) =>
       />
       <Collapsible
         isOpen={isOpen}
-        onToggle={() => setIsOpen((prevState) => !prevState)}
+        onToggle={handleToggle}
         className="w-full"
-        buttonClassName="flex w-full items-center justify-between"
+        buttonClassName={cn("flex w-full items-center justify-between", {
+          "cursor-not-allowed": !areApproversAvailable,
+        })}
         title={
           <div className="flex w-full items-center">
             <div className="flex w-full items-center justify-start gap-1 py-1">
@@ -108,42 +134,64 @@ export const StateTransitionItem = observer((props: StateTransitionItemProps) =>
                   dropdownArrow
                 />
               </div>
-              {stateTransition.approvers && stateTransition.approvers.length > 0 && (
+              {areApproversAvailable && (
                 <div className="flex gap-1 text-custom-text-400 items-center">
-                  <ApproverIcon strokeWidth={0.1} className="size-3.5 text-custom-text-300" />
+                  <ApproverIcon strokeWidth={2} className="flex-shrink-0 size-3.5 text-custom-text-300" />
                   <span className="text-xs font-medium">
-                    {t("workflows.workflow_states.movers_count", { count: stateTransition.approvers.length })}
+                    <span className="hidden lg:block">
+                      {t("workflows.workflow_states.movers_count", { count: stateTransition.approvers.length })}
+                    </span>
+                    <span className="block lg:hidden">{stateTransition.approvers.length}</span>
                   </span>
                 </div>
               )}
             </div>
             <div className="flex line-clamp-1 w-full justify-end items-center">
-              <div className="flex items-center gap-1.5">
-                <Trash2
-                  className="size-3 text-custom-text-400 hover:text-red-500 cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsDeleteModalOpen(true);
-                  }}
-                />
-                <ChevronDown
-                  strokeWidth={2}
-                  className={cn("transition-all size-4 text-custom-text-400 hover:text-custom-text-300", {
-                    "rotate-180 text-custom-text-200": isOpen,
-                  })}
-                />
+              <div className="flex items-center gap-3">
+                <div onClick={(e) => e.stopPropagation()}>
+                  <MemberDropdown
+                    projectId={projectId}
+                    value={stateTransition?.approvers ?? []}
+                    onChange={handleApproversUpdate}
+                    button={
+                      <Button variant="accent-primary" size="sm" className="text-xs px-2 py-0.5">
+                        {t("workflows.workflow_states.state_changes.movers.add")}
+                      </Button>
+                    }
+                    buttonVariant="background-with-text"
+                    optionsClassName="z-10"
+                    placement="bottom-end"
+                    multiple
+                  />
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Trash2
+                    className="size-3 text-custom-text-400 hover:text-red-500 cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsDeleteModalOpen(true);
+                    }}
+                  />
+                  <ChevronDown
+                    strokeWidth={2}
+                    className={cn("transition-all size-4 text-custom-text-400 hover:text-custom-text-300", {
+                      "rotate-180 text-custom-text-200": isOpen && areApproversAvailable,
+                      "text-custom-text-400 hover:text-custom-text-400": !areApproversAvailable,
+                    })}
+                  />
+                </div>
               </div>
             </div>
           </div>
         }
       >
-        <StateTransitionApprovers
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          parentStateId={parentStateId}
-          transitionId={transitionId}
-          stateTransition={stateTransition}
-        />
+        {areApproversAvailable && (
+          <StateTransitionApprovers
+            parentStateId={parentStateId}
+            stateTransition={stateTransition}
+            handleApproversUpdate={handleApproversUpdate}
+          />
+        )}
       </Collapsible>
     </div>
   );

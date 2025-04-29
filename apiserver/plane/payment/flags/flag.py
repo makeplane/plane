@@ -40,6 +40,7 @@ class FeatureFlag(Enum):
     TEAMSPACES = "TEAMSPACES"
     # Epics
     EPICS = "EPICS"
+    EPIC_OVERVIEW = "EPIC_OVERVIEW"
     # Workflows
     WORKFLOWS = "WORKFLOWS"
     # Project Overview
@@ -56,6 +57,20 @@ class FeatureFlag(Enum):
     MOVE_PAGES = "MOVE_PAGES"
     # cycle manual start and stop
     CYCLE_MANUAL_START_STOP = "CYCLE_MANUAL_START_STOP"
+    # workitem templates
+    WORKITEM_TEMPLATES = "WORKITEM_TEMPLATES"
+    # Page templates
+    PAGE_TEMPLATES = "PAGE_TEMPLATES"
+    # Advanced search with elasticsearch
+    ADVANCED_SEARCH = "ADVANCED_SEARCH"
+    # Customers
+    CUSTOMERS = "CUSTOMERS"
+    # Dashboards
+    DASHBOARDS = "DASHBOARDS"
+    # Nested pages
+    NESTED_PAGES = "NESTED_PAGES"
+    # Project Templates
+    PROJECT_TEMPLATES = "PROJECT_TEMPLATES"
 
 
 class AdminFeatureFlag(Enum):

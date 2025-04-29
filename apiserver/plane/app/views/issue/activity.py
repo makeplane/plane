@@ -6,15 +6,17 @@ from django.db.models import Prefetch, Q
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 
+
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
+
 
 # Module imports
 from .. import BaseAPIView
 from plane.app.serializers import IssueActivitySerializer, IssueCommentSerializer
 from plane.app.permissions import ProjectEntityPermission, allow_permission, ROLE
-from plane.db.models import IssueActivity, IssueComment, CommentReaction
+from plane.db.models import IssueActivity, IssueComment, CommentReaction, IntakeIssue
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
@@ -43,7 +45,7 @@ class IssueActivityEndpoint(BaseAPIView):
         ).order_by("created_at")
 
         if not check_workspace_feature_flag(
-            feature_key=FeatureFlag.ISSUE_TYPES, slug=slug
+            feature_key=FeatureFlag.ISSUE_TYPES, slug=slug, user_id=str(request.user.id)
         ):
             issue_activities = issue_activities.filter(~Q(field="type"))
 
@@ -65,13 +67,24 @@ class IssueActivityEndpoint(BaseAPIView):
                 )
             )
         )
-        issue_activities = IssueActivitySerializer(issue_activities, many=True).data
-        issue_comments = IssueCommentSerializer(issue_comments, many=True).data
 
         if request.GET.get("activity_type", None) == "issue-property":
+            issue_activities = issue_activities.prefetch_related(
+                Prefetch(
+                    "issue__issue_intake",
+                    queryset=IntakeIssue.objects.only(
+                        "source_email", "source", "extra"
+                    ),
+                    to_attr="source_data",
+                )
+            )
+
+            issue_activities = IssueActivitySerializer(issue_activities, many=True).data
+
             return Response(issue_activities, status=status.HTTP_200_OK)
 
         if request.GET.get("activity_type", None) == "issue-comment":
+            issue_comments = IssueCommentSerializer(issue_comments, many=True).data
             return Response(issue_comments, status=status.HTTP_200_OK)
 
         result_list = sorted(

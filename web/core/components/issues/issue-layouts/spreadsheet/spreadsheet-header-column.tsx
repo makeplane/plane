@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 //components
+import { shouldRenderColumn } from "@/plane-web/helpers/issue-filter.helper";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { HeaderColumn } from "./columns/header-column";
 
@@ -15,19 +16,12 @@ interface Props {
   isEpic?: boolean;
 }
 export const SpreadsheetHeaderColumn = observer((props: Props) => {
-  const {
-    displayProperties,
-    displayFilters,
-    property,
-    isEstimateEnabled,
-    handleDisplayFilterUpdate,
-    isEpic = false,
-  } = props;
+  const { displayProperties, displayFilters, property, handleDisplayFilterUpdate, isEpic = false } = props;
 
   //hooks
   const tableHeaderCellRef = useRef<HTMLTableCellElement | null>(null);
 
-  const shouldRenderProperty = property === "estimate" ? isEstimateEnabled : true;
+  const shouldRenderProperty = shouldRenderColumn(property);
 
   return (
     <WithDisplayPropertiesHOC

@@ -1,6 +1,6 @@
 "use client";
-
-import { FC, useRef, useState } from "react";
+import { FC, useMemo, useRef, useState } from "react";
+import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 // helpers
@@ -22,6 +22,11 @@ export const TeamspacesListSearch: FC = observer(() => {
       else setIsSearchOpen(false);
     }
   };
+
+  const debouncedUpdateSearch = useMemo(
+    () => debounce((value: string) => updateSearchQuery(value), 300),
+    [updateSearchQuery]
+  );
 
   return (
     <div className="flex items-center">
@@ -51,7 +56,7 @@ export const TeamspacesListSearch: FC = observer(() => {
           className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
           placeholder="Search"
           value={searchQuery}
-          onChange={(e) => updateSearchQuery(e.target.value)}
+          onChange={(e) => debouncedUpdateSearch(e.target.value)}
           onKeyDown={handleInputKeyDown}
         />
         {isSearchOpen && (

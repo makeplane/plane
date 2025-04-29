@@ -1,3 +1,4 @@
+import { EUpdateStatus } from "@plane/types/src/enums";
 import { TProjectUpdateReaction } from "./update_reaction";
 
 export enum EProjectUpdateStatus {
@@ -8,7 +9,7 @@ export enum EProjectUpdateStatus {
 
 export type TProjectUpdate = {
   id: string;
-  status: EProjectUpdateStatus;
+  status: EUpdateStatus;
   description: string;
   created_by: string;
   updated_at: string;

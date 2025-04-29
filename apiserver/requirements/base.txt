@@ -28,8 +28,6 @@ faker==25.0.0
 django-filter==24.2
 # json model
 jsonmodels==2.7.0
-# sentry
-sentry-sdk==2.10.0
 # storage
 django-storages==1.14.2
 # user management
@@ -47,7 +45,7 @@ scout-apm==3.1.0
 # xlsx generation
 openpyxl==3.1.2
 # logging
-python-json-logger==2.0.7
+python-json-logger==3.3.0
 # html parser
 beautifulsoup4==4.12.3
 # analytics
@@ -77,6 +75,16 @@ openfeature-sdk==0.7.0
 strawberry-graphql-django==0.48.0
 # django rest framework jwt
 djangorestframework-simplejwt==5.4.0
+# Elastic Search Integration
+elasticsearch-dsl>=8.0.0,<9.0.0
+django-elasticsearch-dsl==8.0.0
 # firebase admin
 firebase-admin==6.6.0
+# oauth toolkit
+django-oauth-toolkit==3.0.1
 
+# types
+pydantic==2.10.6
+
+# rate limiting
+django-ratelimit==4.1.0

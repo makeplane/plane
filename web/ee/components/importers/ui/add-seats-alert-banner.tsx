@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { EProductSubscriptionEnum } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // plane web imports
@@ -22,7 +23,7 @@ export const AddSeatsAlertBanner: React.FC<Props> = observer((props: Props) => {
     currentWorkspaceSubscribedPlanDetail: subscribedPlan,
     currentWorkspaceSubscriptionAvailableSeats,
   } = useWorkspaceSubscription();
-  const isFreePlan = subscribedPlan?.product == "FREE";
+  const isFreePlan = subscribedPlan?.product === EProductSubscriptionEnum.FREE;
 
   const { t } = useTranslation();
 

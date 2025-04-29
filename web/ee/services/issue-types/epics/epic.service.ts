@@ -25,6 +25,21 @@ export class EpicService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async getEpicMetaFromURL(
+    workspaceSlug: string,
+    projectId: string,
+    epicId: string
+  ): Promise<{
+    project_identifier: string;
+    sequence_id: string;
+  }> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/epics/${epicId}/meta/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }
 
 export const epicService = new EpicService();

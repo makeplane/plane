@@ -3,15 +3,20 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { CircularProgressIndicator } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { getProgress } from "@/helpers/common.helper";
 import { useEpicAnalytics } from "@/plane-web/hooks/store";
 
 type Props = {
   issueId: string;
+  className?: string;
+  size?: number;
+  showProgressText?: boolean;
+  showLabel?: boolean;
 };
 
 export const IssueStats: FC<Props> = observer((props) => {
-  const { issueId } = props;
+  const { issueId, className, size = 14, showProgressText = true, showLabel = false } = props;
 
   const { getEpicStatsById } = useEpicAnalytics();
 
@@ -22,11 +27,12 @@ export const IssueStats: FC<Props> = observer((props) => {
   const progress = getProgress(completedIssues, epicStats?.total_issues);
 
   return (
-    <>
-      <div className="flex items-center gap-1 ml-3 flex-shrink-0">
-        <CircularProgressIndicator size={20} percentage={progress} strokeWidth={3} />
-        <span className="text-sm font-medium text-custom-text-300 px-1">{`${progress}%`}</span>
+    <div className={cn("flex gap-2 items-center", className)}>
+      <CircularProgressIndicator size={size} percentage={progress} strokeWidth={3} />
+      <div className="text-xs my-auto w-auto overflow-hidden truncate ">
+        {showProgressText ? (epicStats?.total_issues ? `${completedIssues}/${epicStats?.total_issues}` : `0/0`) : ""}{" "}
+        {showLabel && `Work items`}
       </div>
-    </>
+    </div>
   );
 });

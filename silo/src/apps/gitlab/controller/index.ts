@@ -20,6 +20,7 @@ import { getAPIClient } from "@/services/client";
 import { integrationTaskManager } from "@/worker";
 import { verifyGitlabToken } from "../helpers";
 import { gitlabAuthService, getGitlabClientService } from "../services";
+import { logger } from "@/logger";
 
 const apiClient = getAPIClient();
 
@@ -45,7 +46,7 @@ export default class GitlabController {
       });
       return res.json(workspaceConnection);
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       return responseHandler(res, 500, error);
     }
   }
@@ -187,37 +188,35 @@ export default class GitlabController {
         );
       }
 
-      // Check if the workspace connection already exist
-      const workspaceConnections = await apiClient.workspaceConnection.listWorkspaceConnections({
+      /*
+       In case of Gitlab, we don't have any organization level connection, the access given is at the user level.
+       So we need to use the userId as the organizationId.
+      */
+      const organizationId = user.id.toString();
+
+      // If the user account is already connected to another workspace, return an error
+      const connections = await apiClient.workspaceConnection.listWorkspaceConnections({
         connection_type: E_INTEGRATION_KEYS.GITLAB,
-        workspace_id: authState.workspace_id,
+        connection_id: organizationId,
       });
 
-      // Get associated gitlab user
-      // If the workspace connection exist and the credential id is also the same,
-      // pass, else create the workspace connection or update the credential id
-      if (workspaceConnections.length > 0) {
-        const workspaceConnection = workspaceConnections[0];
-        if (workspaceConnection.credential_id !== credentials.id) {
-          await apiClient.workspaceConnection.updateWorkspaceConnection(workspaceConnection.id, {
-            credential_id: credentials.id,
-          });
-        }
-      } else {
-        // Create the workspace connection
-        await apiClient.workspaceConnection.createWorkspaceConnection({
-          workspace_id: authState.workspace_id,
-          target_hostname: authState.target_host,
-          source_hostname: authState.gitlab_hostname || "gitlab.com",
-          connection_type: E_INTEGRATION_KEYS.GITLAB,
-          connection_id: user.id.toString(),
-          connection_data: user,
-          credential_id: credentials.id,
-        });
+      if (connections.length > 0) {
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.CANNOT_CREATE_MULTIPLE_CONNECTIONS}`);
       }
+
+      await apiClient.workspaceConnection.createWorkspaceConnection({
+        workspace_id: authState.workspace_id,
+        target_hostname: authState.target_host,
+        source_hostname: authState.gitlab_hostname || "gitlab.com",
+        connection_type: E_INTEGRATION_KEYS.GITLAB,
+        connection_id: organizationId,
+        connection_data: user,
+        credential_id: credentials.id,
+      });
 
       return res.redirect(redirectUri);
     } catch (error) {
+      console.error(error);
       return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.GENERIC_ERROR}`);
     }
   }
@@ -228,13 +227,11 @@ export default class GitlabController {
       // Get the event type and the token
       const token = req.headers["x-gitlab-token"];
 
-      if (!verifyGitlabToken(token)) {
+      const isVerified = !verifyGitlabToken(token);
+
+      if (!isVerified) {
         return res.status(400).send({
-          message: "Webhook received",
-        });
-      } else {
-        res.status(202).send({
-          message: "Webhook received",
+          message: "Verification failed",
         });
       }
 
@@ -253,6 +250,11 @@ export default class GitlabController {
         },
         webhookEvent
       );
+
+      return res.status(202).send({
+        message: "Webhook received",
+      });
+
     } catch (error) {
       responseHandler(res, 500, error);
     }
@@ -261,9 +263,6 @@ export default class GitlabController {
   @Post("/plane-webhook")
   async planeWebhook(req: Request, res: Response) {
     try {
-      res.status(202).send({
-        message: "Webhook received",
-      });
 
       // Get the event types and delivery id
       const eventType = req.headers["x-plane-event"];
@@ -275,10 +274,12 @@ export default class GitlabController {
       const issue = req.body.data.issue;
 
       if (event == "issue") {
-        const labels = req.body.data.labels as ExIssueLabel[];
+        const labels = req.body.data.labels as ExIssueLabel[] | undefined;
         // If labels doesn't include gitlab label, then we don't need to process this event
-        if (!labels.find((label) => label.name === E_INTEGRATION_KEYS.GITLAB)) {
-          return;
+        if (!labels || !labels.find((label) => label.name === E_INTEGRATION_KEYS.GITLAB)) {
+          return res.status(202).send({
+            message: "Webhook received",
+          });
         }
       }
 
@@ -298,6 +299,10 @@ export default class GitlabController {
         },
         Number(env.DEDUP_INTERVAL)
       );
+
+      return res.status(202).send({
+        message: "Webhook received",
+      });
     } catch (error) {
       responseHandler(res, 500, error);
     }
@@ -490,7 +495,7 @@ export default class GitlabController {
 
       res.status(200).json(entityConnections);
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       responseHandler(res, 500, error);
     }
   }
@@ -535,7 +540,7 @@ export default class GitlabController {
       };
       return gitlabWebhook;
     } catch (error) {
-      console.error("error getWorkspaceWebhook", error);
+      logger.error("error getWorkspaceWebhook", error);
       throw error;
     }
   }

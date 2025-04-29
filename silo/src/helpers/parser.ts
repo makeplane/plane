@@ -19,8 +19,8 @@ export const closingMagicWords = [
 export const nonClosingMagicWords = ["ref", "references", "reference to", "part of", "related to"];
 
 export interface IssueReference {
-  identifier: string;
   sequence: number;
+  identifier: string;
 }
 
 export interface LinkedIssues {
@@ -29,14 +29,19 @@ export interface LinkedIssues {
 }
 
 export interface IssueWithReference {
-  reference: IssueReference;
   issue: ExIssue;
+  reference: IssueReference;
+}
+
+interface ParsedIssues {
+  closingRefs: string[];
+  nonClosingRefs: string[];
 }
 
 export const getReferredIssues = (title: string, description: string): LinkedIssues => {
   const { closingRefs, nonClosingRefs } = parseMagicWords(description);
 
-  const createIssueReference = (identifier: string): IssueReference => {
+  const createIssueReference = (identifier: string): IssueReference | null => {
     const match = identifier.match(/([A-Z]+)-(\d+)/);
     if (match) {
       return {
@@ -45,41 +50,28 @@ export const getReferredIssues = (title: string, description: string): LinkedIss
       };
     }
     // This should never happen if our regex is correct, but we'll handle it just in case
-    return { identifier: identifier, sequence: 0 };
+    return null;
   };
 
-  const titleRefs = createIssueReference(title);
-  const closingReferences = closingRefs.map(createIssueReference);
-  closingReferences.push(titleRefs);
-  const nonClosingReferences = nonClosingRefs.map(createIssueReference);
-
-  // Remove duplicates while preserving order
-  const uniqueReferences = (refs: IssueReference[]): IssueReference[] => {
-    const seen = new Set<string>();
-    return refs.filter((ref) => {
-      const key = `${ref.identifier}-${ref.sequence}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-  };
+  const titleRefs = createIssueReference(title) ?? [];
+  const closingReferences = uniqueReferences(closingRefs.map(createIssueReference)
+    .filter((ref) => ref !== null).concat(titleRefs));
+  const nonClosingReferences = uniqueReferences(nonClosingRefs.map(createIssueReference)
+    .filter((ref) => ref !== null)
+    .filter((ref) => !closingReferences.some((closingRef) => closingRef.identifier === ref.identifier && closingRef.sequence === ref.sequence)));
 
   return {
-    closingReferences: uniqueReferences(closingReferences),
-    nonClosingReferences: uniqueReferences(nonClosingReferences),
+    closingReferences,
+    nonClosingReferences,
   };
 };
 
-export const parseIssueReference = (title: string): string[] => {
+export const parseIssueReference = (data: string): string[] => {
   const regex = /^([A-Z]+-\d+):/;
-  const match = title.match(regex);
+  const match = data.match(regex);
   return match ? [match[1]] : [];
 };
 
-interface ParsedIssues {
-  closingRefs: string[];
-  nonClosingRefs: string[];
-}
 
 export const parseMagicWords = (title: string): ParsedIssues => {
   const closingRefs: string[] = [];
@@ -106,15 +98,27 @@ export const parseMagicWords = (title: string): ParsedIssues => {
       closingRefs.unshift(...remainingIssues);
       // Remove these issues from consideration for future iterations
       allIssues.splice(allIssues.length - remainingIssues.length, remainingIssues.length);
-    } else if (nonClosingMagicWords.includes(word) && nonClosingRefs.length === 0) {
+    } else if (nonClosingMagicWords.includes(word)) {
       nonClosingRefs.unshift(...remainingIssues);
       // Remove these issues from consideration for future iterations
       allIssues.splice(allIssues.length - remainingIssues.length, remainingIssues.length);
     }
   }
 
-  // Any remaining issues are considered non-closing refs
-  nonClosingRefs.unshift(...allIssues);
+  // Any remaining issues without a preceding magic word are not considered references
+  // Remove this line to prevent adding them as non-closing references
+  // nonClosingRefs.unshift(...allIssues);
 
   return { closingRefs, nonClosingRefs };
+};
+
+// Helper function to remove duplicates while preserving order
+const uniqueReferences = (refs: IssueReference[]): IssueReference[] => {
+  const seen = new Set<string>();
+  return refs.filter((ref) => {
+    const key = `${ref.identifier}-${ref.sequence}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 };

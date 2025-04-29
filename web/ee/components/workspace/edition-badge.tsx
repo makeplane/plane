@@ -1,17 +1,8 @@
 import { observer } from "mobx-react";
 // plane imports
-import { EProductSubscriptionEnum } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { Loader, PlaneIcon } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // plane web imports
-import { cn } from "@plane/utils";
-import { SubscriptionButton } from "@/plane-web/components/common";
-import {
-  CloudEditionBadge,
-  PaidPlanSuccessModal,
-  BusinessPlanSuccessModal,
-  SelfHostedEditionBadge,
-} from "@/plane-web/components/license";
+import { CloudEditionBadge, PaidPlanSuccessModal, SelfHostedEditionBadge } from "@/plane-web/components/license";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
@@ -22,7 +13,8 @@ export const WorkspaceEditionBadge = observer(() => {
     currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
     handleSuccessModalToggle,
   } = useWorkspaceSubscription();
-  const { t } = useTranslation();
+  // derived values
+  const isSelfHosted = subscriptionDetail?.is_self_managed;
 
   if (!subscriptionDetail)
     return (
@@ -33,32 +25,12 @@ export const WorkspaceEditionBadge = observer(() => {
 
   return (
     <>
-      {subscriptionDetail.product === "BUSINESS" ? (
-        <>
-          <BusinessPlanSuccessModal
-            isOpen={isSuccessPlanModalOpen}
-            handleClose={() => handleSuccessModalToggle(false)}
-          />
-          <SubscriptionButton
-            subscriptionType={EProductSubscriptionEnum.BUSINESS}
-            handleClick={() => handleSuccessModalToggle(true)}
-          >
-            <PlaneIcon className={cn("size-3")} />
-            <div>{t("sidebar.business")}</div>
-          </SubscriptionButton>
-        </>
-      ) : (
-        <>
-          {["PRO", "ONE"].includes(subscriptionDetail.product) && (
-            <PaidPlanSuccessModal
-              variant={subscriptionDetail.product as "PRO" | "ONE"}
-              isOpen={isSuccessPlanModalOpen}
-              handleClose={() => handleSuccessModalToggle(false)}
-            />
-          )}
-          {subscriptionDetail.is_self_managed ? <SelfHostedEditionBadge /> : <CloudEditionBadge />}
-        </>
-      )}
+      <PaidPlanSuccessModal
+        variant={subscriptionDetail.product}
+        isOpen={isSuccessPlanModalOpen}
+        handleClose={() => handleSuccessModalToggle(false)}
+      />
+      {isSelfHosted ? <SelfHostedEditionBadge /> : <CloudEditionBadge />}
     </>
   );
 });

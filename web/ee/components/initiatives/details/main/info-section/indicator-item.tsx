@@ -32,7 +32,9 @@ export const InitiativeInfoIndicatorItem: FC<Props> = observer((props) => {
     ? Object.values(omit(initiativeAnalytics, "overdue_issues")).reduce((acc, val) => acc + val, 0)
     : 0;
 
-  const completePercentage = getProgress(initiativeAnalytics?.completed_issues ?? 0, totalIssues);
+  const completedStateCount =
+    (initiativeAnalytics?.completed_issues || 0) + (initiativeAnalytics?.cancelled_issues || 0);
+  const completePercentage = getProgress(completedStateCount ?? 0, totalIssues);
 
   return (
     <div className="flex-shrink-0">

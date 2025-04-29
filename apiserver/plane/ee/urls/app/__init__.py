@@ -1,5 +1,6 @@
 from .ai import urlpatterns as ai_patterns
 from .cycle import urlpatterns as cycles_patterns
+from .dashboard import urlpatterns as dashboard_patterns
 from .draft import urlpatterns as draft_patterns
 from .epic import urlpatterns as epic_patterns
 from .issue import urlpatterns as issue_patterns
@@ -16,10 +17,15 @@ from .epic_property import urlpatterns as epic_property_patterns
 from .workflow import urlpatterns as workflow_patterns
 from .webhook import urlpatterns as webhook_patterns
 from .job import urlpatterns as import_job_patterns
+from .oauth import urlpatterns as oauth_patterns
+from .template import urlpatterns as template_patterns
+from .search import urlpatterns as search_patterns
+from .customer import urlpatterns as customer_property_patterns
 
 urlpatterns = [
     *ai_patterns,
     *cycles_patterns,
+    *dashboard_patterns,
     *draft_patterns,
     *epic_patterns,
     *issue_patterns,
@@ -38,4 +44,8 @@ urlpatterns = [
     *workflow_patterns,
     *webhook_patterns,
     *import_job_patterns,
+    *oauth_patterns,
+    *template_patterns,
+    *search_patterns,
+    *customer_property_patterns,
 ]

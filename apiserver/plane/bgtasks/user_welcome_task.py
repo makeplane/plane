@@ -3,7 +3,6 @@ from django.conf import settings
 
 # Third party imports
 from celery import shared_task
-from sentry_sdk import capture_exception
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
@@ -29,5 +28,4 @@ def send_welcome_slack(user_id, created, message):
         # Print logs if in DEBUG mode
         if settings.DEBUG:
             print(e)
-        capture_exception(e)
         return

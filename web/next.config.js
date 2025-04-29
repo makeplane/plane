@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /** @type {import("next").NextConfig} */
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 require("dotenv").config({ path: ".env" });
 
 const nextConfig = {
@@ -18,7 +19,39 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  transpilePackages: ["@plane/i18n", "@plane/propel"],
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "date-fns",
+      "@headlessui/react",
+      "@nivo/core",
+      "@nivo/bar",
+      "@nivo/line",
+      "@nivo/pie",
+      "@nivo/calendar",
+      "@nivo/scatterplot",
+      "react-color",
+      "react-day-picker",
+      "react-dropzone",
+      "react-hook-form",
+      "lodash",
+      "clsx",
+      "tailwind-merge",
+    ],
+  },
+  transpilePackages: [
+    "@plane/constants",
+    "@plane/editor",
+    "@plane/hooks",
+    "@plane/i18n",
+    "@plane/logger",
+    "@plane/propel",
+    "@plane/services",
+    "@plane/shared-state",
+    "@plane/types",
+    "@plane/ui",
+    "@plane/utils",
+  ],
   async redirects() {
     return [
       {

@@ -7,9 +7,9 @@ import (
 	"crypto/x509/pkix"
 	"encoding/base64"
 	"encoding/pem"
-	"fmt"
 	"math/big"
 	"os"
+	"plane/email/pkg/logger"
 	"time"
 )
 
@@ -17,24 +17,24 @@ func GenerateCerts() {
 	// Create keys directory
 	err := os.MkdirAll("keys", 0755)
 	if err != nil {
-		fmt.Println("Error creating directory:", err)
+		logger.Log.Errorf("failed to create keys directory: %v", err)
 		return
 	}
 
 	// Check if keys already exist
 	if keysExist() {
-		fmt.Println("Keys and certificate already exist. Skipping generation.")
+		logger.Log.Info("Keys and certificate already exist. Skipping generation.")
 		return
 	}
 
 	// Generate self-signed certificate
 	err = generateSelfSignedCert()
 	if err != nil {
-		fmt.Println("Error generating self-signed certificate:", err)
+		logger.Log.Errorf("failed to generate self-signed certificate: %v", err)
 		return
 	}
 
-	fmt.Println("Keys and certificate generated successfully.")
+	logger.Log.Info("Keys and certificate generated successfully.")
 }
 
 func keysExist() bool {

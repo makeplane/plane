@@ -1,7 +1,7 @@
 import set from "lodash/set";
-import unset from "lodash/unset";
-import { makeObservable, observable, runInAction, action, computed } from "mobx";
+import { makeObservable, observable, runInAction, action, computed, reaction } from "mobx";
 import { computedFn } from "mobx-utils";
+import { EPageAccess } from "@plane/constants";
 // types
 import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 // helpers
@@ -22,6 +22,14 @@ export interface IWorkspacePageStore {
   data: Record<string, TWorkspacePage>; // pageId => Page
   error: TError | undefined;
   filters: TPageFilters;
+  // page type arrays
+  publicPageIds: string[];
+  privatePageIds: string[];
+  archivedPageIds: string[];
+  // filtered page type arrays
+  filteredPublicPageIds: string[];
+  filteredPrivatePageIds: string[];
+  filteredArchivedPageIds: string[];
   // computed
   isAnyPageAvailable: boolean;
   currentWorkspacePageIds: string[] | undefined;
@@ -29,13 +37,20 @@ export interface IWorkspacePageStore {
   getCurrentWorkspacePageIdsByType: (pageType: TPageNavigationTabs) => string[] | undefined;
   getCurrentWorkspaceFilteredPageIdsByType: (pageType: TPageNavigationTabs) => string[] | undefined;
   getPageById: (pageId: string) => TWorkspacePage | undefined;
+  isNestedPagesEnabled: (workspaceSlug: string) => boolean;
   updateFilters: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
   clearAllFilters: () => void;
+  findRootParent: (page: TWorkspacePage) => TWorkspacePage | undefined;
+  clearRootParentCache: () => void;
   // actions
   fetchAllPages: () => Promise<TPage[] | undefined>;
-  fetchPageById: (pageId: string) => Promise<TPage | undefined>;
+  fetchPagesByType: (pageType: string, searchQuery?: string) => Promise<TPage[] | undefined>;
+  fetchParentPages: (pageId: string) => Promise<TPage[] | undefined>;
+  fetchPageDetails: (pageId: string, shouldFetchSubPages?: boolean | undefined) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
-  removePage: (pageId: string) => Promise<void>;
+  removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
+  getOrFetchPageInstance: (pageId: string) => Promise<TWorkspacePage | undefined>;
+  updatePagesInStore: (pages: TPage[]) => void;
 }
 
 export class WorkspacePageStore implements IWorkspacePageStore {
@@ -48,6 +63,18 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     sortKey: "updated_at",
     sortBy: "desc",
   };
+  // page type arrays
+  publicPageIds: string[] = [];
+  privatePageIds: string[] = [];
+  archivedPageIds: string[] = [];
+  // filtered page type arrays
+  filteredPublicPageIds: string[] = [];
+  filteredPrivatePageIds: string[] = [];
+  filteredArchivedPageIds: string[] = [];
+  // private props
+  private _rootParentMap: Map<string, string | null> = new Map(); // pageId => rootParentId
+  // disposers for reactions
+  private disposers: (() => void)[] = [];
   // services
   pageService: WorkspacePageService;
 
@@ -58,6 +85,14 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       data: observable,
       error: observable,
       filters: observable,
+      // page type arrays
+      publicPageIds: observable,
+      privatePageIds: observable,
+      archivedPageIds: observable,
+      // filtered page type arrays
+      filteredPublicPageIds: observable,
+      filteredPrivatePageIds: observable,
+      filteredArchivedPageIds: observable,
       // computed
       currentWorkspacePageIds: computed,
       // helper actions
@@ -65,12 +100,77 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       clearAllFilters: action,
       // actions
       fetchAllPages: action,
-      fetchPageById: action,
+      fetchPagesByType: action,
+      fetchParentPages: action,
+      fetchPageDetails: action,
       createPage: action,
       removePage: action,
+      updatePagesInStore: action,
     });
+
     // service
     this.pageService = new WorkspacePageService();
+
+    // Set up reactions to automatically update page type arrays
+    this.setupReactions();
+  }
+
+  /**
+   * Set up MobX reactions to automatically update the page type arrays
+   */
+  private setupReactions() {
+    // Update page arrays whenever data or workspace changes
+    const updatePageArraysReaction = reaction(
+      // Track these dependencies
+      () => ({
+        // Track the keys of the data object to detect additions/removals
+        pageIds: Object.keys(this.data),
+        // Track the version property of each page to detect updates
+        pageVersions: Object.values(this.data).map((page) => ({
+          id: page.id,
+          updated_at: page.updated_at,
+          access: page.access,
+          archived_at: page.archived_at,
+          deleted_at: page.deleted_at,
+          parent_id: page.parent_id,
+        })),
+        currentWorkspace: this.store.workspaceRoot.currentWorkspace?.id,
+      }),
+      // Effect: update the arrays
+      () => {
+        this.updatePageTypeArrays();
+      },
+      // Options: run immediately to populate arrays on initialization
+      { fireImmediately: true }
+    );
+
+    // Add reaction to watch for filter changes
+    const filterChangesReaction = reaction(
+      // Track filter changes
+      () => ({
+        searchQuery: this.filters.searchQuery,
+        sortKey: this.filters.sortKey,
+        sortBy: this.filters.sortBy,
+        // Deep track all filter properties
+        filters: this.filters.filters ? { ...this.filters.filters } : undefined,
+      }),
+      // Effect: update the arrays when filters change
+      () => {
+        this.updatePageTypeArrays();
+      }
+    );
+
+    // Add the disposers to clean up later
+    this.disposers.push(updatePageArraysReaction);
+    this.disposers.push(filterChangesReaction);
+  }
+
+  /**
+   * Clean up reactions when the store is disposed
+   */
+  dispose() {
+    this.disposers.forEach((dispose) => dispose());
+    this.disposers = [];
   }
 
   /**
@@ -102,12 +202,14 @@ export class WorkspacePageStore implements IWorkspacePageStore {
   getCurrentWorkspacePageIdsByType = computedFn((pageType: TPageNavigationTabs) => {
     const { currentWorkspace } = this.store.workspaceRoot;
     if (!currentWorkspace) return undefined;
-    // helps to filter pages based on the pageType
+
     let pagesByType = filterPagesByPageType(pageType, Object.values(this?.data || {}));
     pagesByType = pagesByType.filter((p) => p.workspace === currentWorkspace.id);
+    pagesByType = pagesByType.filter((p) => !p.parent_id);
 
-    const pages = (pagesByType.map((page) => page.id) as string[]) || undefined;
-    return pages ?? undefined;
+    const pageIds = pagesByType.map((page) => page.id).filter((id): id is string => id !== undefined);
+
+    return pageIds;
   });
 
   /**
@@ -117,19 +219,18 @@ export class WorkspacePageStore implements IWorkspacePageStore {
   getCurrentWorkspaceFilteredPageIdsByType = computedFn((pageType: TPageNavigationTabs) => {
     const { currentWorkspace } = this.store.workspaceRoot;
     if (!currentWorkspace) return undefined;
-    // helps to filter pages based on the pageType
-    const pagesByType = filterPagesByPageType(pageType, Object.values(this?.data || {}));
-    let filteredPages = pagesByType.filter(
-      (p) =>
-        p.workspace === currentWorkspace.id &&
-        getPageName(p.name).toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
-        shouldFilterPage(p, this.filters.filters)
-    );
-    filteredPages = orderPages(filteredPages, this.filters.sortKey, this.filters.sortBy);
 
-    const pages = (filteredPages.map((page) => page.id) as string[]) || undefined;
-
-    return pages ?? undefined;
+    // Return the appropriate filtered array based on page type
+    switch (pageType) {
+      case "public":
+        return this.filteredPublicPageIds;
+      case "private":
+        return this.filteredPrivatePageIds;
+      case "archived":
+        return this.filteredArchivedPageIds;
+      default:
+        return [];
+    }
   });
 
   /**
@@ -138,9 +239,28 @@ export class WorkspacePageStore implements IWorkspacePageStore {
    */
   getPageById = computedFn((pageId: string) => this.data?.[pageId] || undefined);
 
+  /**
+   * Returns true if nested pages feature is enabled
+   * @returns boolean
+   */
+  isNestedPagesEnabled = computedFn((workspaceSlug: string) => {
+    const { getFeatureFlag } = this.store.featureFlags;
+    return getFeatureFlag(workspaceSlug, "NESTED_PAGES", false);
+  });
+
   updateFilters = <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => {
     runInAction(() => {
-      set(this.filters, [filterKey], filterValue);
+      // Create a new filters object to avoid direct mutation
+      const updatedFilters = { ...this.filters };
+
+      // Set the new value
+      updatedFilters[filterKey] = filterValue;
+
+      // Replace the entire filters object
+      this.filters = updatedFilters;
+
+      // Trigger update of the pages arrays
+      this.updatePageTypeArrays();
     });
   };
 
@@ -151,6 +271,153 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     runInAction(() => {
       set(this.filters, ["filters"], {});
     });
+
+  /**
+   * Updates pages in store from an array of pages
+   * Used by SWR to keep the store in sync
+   */
+  updatePagesInStore = (pages: TPage[]) => {
+    // Clear the root parent cache when updating pages
+    this._rootParentMap.clear();
+
+    runInAction(() => {
+      for (const page of pages) {
+        if (page?.id) {
+          const pageInstance = this.getPageById(page.id);
+          if (pageInstance) {
+            pageInstance.mutateProperties(page);
+          } else {
+            set(this.data, [page.id], new WorkspacePage(this.store, page));
+          }
+        }
+      }
+    });
+  };
+
+  /**
+   * Updates the page type arrays based on the current data
+   * This is called automatically by reactions, no need to call manually
+   */
+  private updatePageTypeArrays = () => {
+    const { currentWorkspace } = this.store.workspaceRoot;
+    if (!currentWorkspace) {
+      // Clear arrays when no workspace is selected
+      runInAction(() => {
+        // Clear unfiltered arrays
+        this.publicPageIds = [];
+        this.privatePageIds = [];
+        this.archivedPageIds = [];
+        // Clear filtered arrays
+        this.filteredPublicPageIds = [];
+        this.filteredPrivatePageIds = [];
+        this.filteredArchivedPageIds = [];
+      });
+      return;
+    }
+
+    const allPages = Object.values(this.data);
+    const workspacePages = allPages.filter((page) => page.workspace === currentWorkspace.id);
+
+    // ---------- PUBLIC PAGES ----------
+    // Unfiltered public pages (sorted by updated_at)
+    const publicPages = workspacePages.filter(
+      (page) => page.access === EPageAccess.PUBLIC && !page.parent_id && !page.archived_at && !page.deleted_at
+    );
+    const sortedPublicPages = publicPages.sort(
+      (a, b) => new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime()
+    );
+    const newPublicPageIds = sortedPublicPages.map((page) => page.id).filter((id): id is string => id !== undefined);
+
+    // Filtered public pages (with all filters applied)
+    const filteredPublicPages = publicPages.filter(
+      (page) =>
+        getPageName(page.name).toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
+        shouldFilterPage(page, this.filters.filters)
+    );
+    const sortedFilteredPublicPages = orderPages(
+      filteredPublicPages as unknown as TPage[],
+      this.filters.sortKey,
+      this.filters.sortBy
+    ) as unknown as TWorkspacePage[];
+    const newFilteredPublicPageIds = sortedFilteredPublicPages
+      .map((page) => page.id)
+      .filter((id): id is string => id !== undefined);
+
+    // ---------- PRIVATE PAGES ----------
+    // Unfiltered private pages (sorted by updated_at)
+    const nonArchivedPages = workspacePages.filter((page) => !page.archived_at && !page.deleted_at);
+    const privateParentPages = nonArchivedPages.filter(
+      (page) => page.access === EPageAccess.PRIVATE && !page.parent_id
+    );
+    const privateChildPages = nonArchivedPages.filter((page) => {
+      if (page.parent_id === null || page.access !== EPageAccess.PRIVATE || !page.id) return false;
+      const rootParent = this.findRootParent(page);
+      return rootParent?.access !== EPageAccess.PRIVATE;
+    });
+    const combinedPrivatePages = [...privateParentPages, ...privateChildPages];
+    const sortedPrivatePages = combinedPrivatePages.sort(
+      (a, b) => new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime()
+    );
+    const newPrivatePageIds = sortedPrivatePages.map((page) => page.id).filter((id): id is string => id !== undefined);
+
+    // Filtered private pages (with all filters applied)
+    const filteredPrivatePages = combinedPrivatePages.filter(
+      (page) =>
+        getPageName(page.name).toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
+        shouldFilterPage(page, this.filters.filters)
+    );
+    const sortedFilteredPrivatePages = orderPages(
+      filteredPrivatePages as unknown as TPage[],
+      this.filters.sortKey,
+      this.filters.sortBy
+    ) as unknown as TWorkspacePage[];
+    const newFilteredPrivatePageIds = sortedFilteredPrivatePages
+      .map((page) => page.id)
+      .filter((id): id is string => id !== undefined);
+
+    // ---------- ARCHIVED PAGES ----------
+    // Unfiltered archived pages (sorted by archived_at)
+    const archivedWorkspacePages = workspacePages.filter((page) => page.archived_at && !page.deleted_at);
+    const topLevelArchivedPages = archivedWorkspacePages.filter((page) => {
+      if (!page.parent_id) return true; // Include pages without parents
+      const rootParent = this.findRootParent(page);
+      return !rootParent?.archived_at;
+    });
+    const sortedArchivedPages = topLevelArchivedPages.sort(
+      (a, b) => new Date(b.archived_at ?? 0).getTime() - new Date(a.archived_at ?? 0).getTime()
+    );
+    const newArchivedPageIds = sortedArchivedPages
+      .map((page) => page.id)
+      .filter((id): id is string => id !== undefined);
+
+    // Filtered archived pages (with all filters applied)
+    const filteredArchivedPages = topLevelArchivedPages.filter(
+      (page) =>
+        getPageName(page.name).toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
+        shouldFilterPage(page, this.filters.filters)
+    );
+    const sortedFilteredArchivedPages = orderPages(
+      filteredArchivedPages as unknown as TPage[],
+      this.filters.sortKey,
+      this.filters.sortBy
+    ) as unknown as TWorkspacePage[];
+    const newFilteredArchivedPageIds = sortedFilteredArchivedPages
+      .map((page) => page.id)
+      .filter((id): id is string => id !== undefined);
+
+    // Update arrays in a single runInAction to batch updates
+    runInAction(() => {
+      // Update unfiltered arrays
+      this.publicPageIds = newPublicPageIds;
+      this.privatePageIds = newPrivatePageIds;
+      this.archivedPageIds = newArchivedPageIds;
+
+      // Update filtered arrays
+      this.filteredPublicPageIds = newFilteredPublicPageIds;
+      this.filteredPrivatePageIds = newFilteredPrivatePageIds;
+      this.filteredArchivedPageIds = newFilteredArchivedPageIds;
+    });
+  };
 
   /**
    * @description fetch all the pages
@@ -170,9 +437,12 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       runInAction(() => {
         for (const page of pages)
           if (page?.id) {
-            const pageInstance = page;
-            set(page, "description_html", this.data?.[page.id]?.description_html);
-            set(this.data, [page.id], new WorkspacePage(this.store, pageInstance));
+            const pageInstance = this.getPageById(page.id);
+            if (pageInstance) {
+              pageInstance.mutateProperties(page);
+            } else {
+              set(this.data, [page.id], new WorkspacePage(this.store, page));
+            }
           }
         this.loader = undefined;
       });
@@ -191,23 +461,81 @@ export class WorkspacePageStore implements IWorkspacePageStore {
   };
 
   /**
+   * @description fetch all the parent pages of a page
+   */
+  fetchParentPages = async (pageId: string) => {
+    const { workspaceSlug } = this.store.router;
+    if (!workspaceSlug || !pageId) return undefined;
+    const response = await this.pageService.fetchParentPages(workspaceSlug, pageId);
+
+    // Store the parent pages data in the store
+    runInAction(() => {
+      for (const page of response) {
+        if (page?.id) {
+          const pageInstance = this.getPageById(page.id);
+          if (pageInstance) {
+            pageInstance.mutateProperties(page);
+          } else {
+            set(this.data, [page.id], new WorkspacePage(this.store, page));
+          }
+        }
+      }
+    });
+
+    return response;
+  };
+
+  /**
    * @description fetch the details of a page
    * @param {string} pageId
    */
-  fetchPageById = async (pageId: string) => {
+  fetchPageDetails = async (pageId: string, shouldFetchSubPages: boolean | undefined = true) => {
     try {
       const { workspaceSlug } = this.store.router;
       if (!workspaceSlug || !pageId) return undefined;
+      const doesPageExist = !!this.getPageById(pageId);
 
-      const currentPageId = this.getPageById(pageId);
       runInAction(() => {
-        this.loader = currentPageId ? `mutation-loader` : `init-loader`;
+        this.loader = doesPageExist ? `mutation-loader` : `init-loader`;
         this.error = undefined;
       });
 
-      const page = await this.pageService.fetchById(workspaceSlug, pageId);
+      const promises: Promise<any>[] = [this.pageService.fetchById(workspaceSlug, pageId)];
+
+      if (shouldFetchSubPages) {
+        promises.push(this.pageService.fetchSubPages(workspaceSlug, pageId));
+      }
+
+      const results = await Promise.all(promises);
+      const page = results[0] as TPage | undefined;
+      const subPages = shouldFetchSubPages ? (results[1] as TPage[]) : [];
+
       runInAction(() => {
-        if (page?.id) set(this.data, [page.id], new WorkspacePage(this.store, page));
+        if (page) {
+          const pageInstance = this.getPageById(pageId);
+          if (pageInstance) {
+            pageInstance.mutateProperties(page, false);
+          } else {
+            set(this.data, [pageId], new WorkspacePage(this.store, page));
+          }
+        }
+
+        if (shouldFetchSubPages) {
+          if (subPages.length) {
+            set(this.data, [pageId, "sub_pages_count"], subPages.length);
+          }
+          subPages.forEach((subPage) => {
+            if (subPage?.id) {
+              const subPageInstance = this.getPageById(subPage.id);
+              if (subPageInstance) {
+                subPageInstance.mutateProperties(subPage, false);
+              } else {
+                set(this.data, [subPage.id], new WorkspacePage(this.store, subPage));
+              }
+            }
+          });
+        }
+
         this.loader = undefined;
       });
 
@@ -239,8 +567,19 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       });
 
       const page = await this.pageService.create(workspaceSlug, pageData);
+      // Clear root parent cache when creating a new page
+      this._rootParentMap.clear();
+
       runInAction(() => {
         if (page?.id) set(this.data, [page.id], new WorkspacePage(this.store, page));
+        if (page?.parent_id) {
+          const parentPage = this.getPageById(page.parent_id);
+          if (parentPage) {
+            parentPage.mutateProperties({
+              sub_pages_count: (parentPage.sub_pages_count ?? 0) + 1,
+            });
+          }
+        }
         this.loader = undefined;
       });
 
@@ -261,13 +600,29 @@ export class WorkspacePageStore implements IWorkspacePageStore {
    * @description delete a page
    * @param {string} pageId
    */
-  removePage = async (pageId: string) => {
+  removePage = async ({ pageId, shouldSync = true }: { pageId: string; shouldSync?: boolean }) => {
     try {
       const { workspaceSlug } = this.store.router;
       if (!workspaceSlug || !pageId) return undefined;
+      const page = this.getPageById(pageId);
 
-      await this.pageService.remove(workspaceSlug, pageId);
-      runInAction(() => unset(this.data, [pageId]));
+      runInAction(() => {
+        if (pageId) {
+          page.mutateProperties({ deleted_at: new Date() });
+        }
+        if (page?.parent_id) {
+          const parentPage = this.getPageById(page.parent_id);
+          if (parentPage) {
+            parentPage.mutateProperties({
+              sub_pages_count: (parentPage.sub_pages_count ?? 1) - 1,
+            });
+          }
+        }
+      });
+
+      if (shouldSync) {
+        await this.pageService.remove(workspaceSlug, pageId);
+      }
     } catch (error) {
       runInAction(() => {
         this.loader = undefined;
@@ -278,5 +633,88 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       });
       throw error;
     }
+  };
+
+  getOrFetchPageInstance = async (pageId: string) => {
+    const pageInstance = this.getPageById(pageId);
+    if (pageInstance) {
+      return pageInstance;
+    } else {
+      const page = await this.fetchPageDetails(pageId);
+      if (page) {
+        return new WorkspacePage(this.store, page);
+      }
+    }
+  };
+
+  fetchPagesByType = async (pageType: string, searchQuery?: string) => {
+    try {
+      const { workspaceSlug } = this.store.router;
+      if (!workspaceSlug) return undefined;
+
+      const currentPageIds = this.currentWorkspacePageIds;
+      runInAction(() => {
+        this.loader = currentPageIds && currentPageIds.length > 0 ? `mutation-loader` : `init-loader`;
+        this.error = undefined;
+      });
+
+      const pages = await this.pageService.fetchPagesByType(workspaceSlug, pageType, searchQuery);
+      runInAction(() => {
+        for (const page of pages) {
+          if (page?.id) {
+            const pageInstance = this.getPageById(page.id);
+            if (pageInstance) {
+              pageInstance.mutateProperties(page);
+            } else {
+              set(this.data, [page.id], new WorkspacePage(this.store, page));
+            }
+          }
+        }
+        this.loader = undefined;
+      });
+
+      return pages;
+    } catch (error) {
+      runInAction(() => {
+        this.loader = undefined;
+        this.error = {
+          title: "Failed",
+          description: "Failed to fetch the pages, Please try again later.",
+        };
+      });
+      throw error;
+    }
+  };
+
+  // Helper function to find the root parent of a page with caching
+  findRootParent = computedFn((page: TWorkspacePage): TWorkspacePage => {
+    if (!page?.id || !page?.parent_id) {
+      return page;
+    }
+
+    // Check cache first
+    const cachedRootId = this._rootParentMap.get(page.id);
+    if (cachedRootId) return this.getPageById(cachedRootId);
+
+    // Get the parent page
+    const parentId = page?.parent_id;
+
+    const parentPage = this.getPageById(parentId);
+
+    // Recursively find the root parent
+    const rootParent = this.findRootParent(parentPage);
+
+    // Cache the result
+    if (rootParent && rootParent.id && page.id) {
+      this._rootParentMap.set(page.id, rootParent.id);
+    } else if (page.id) {
+      this._rootParentMap.set(page.id, null);
+    }
+
+    return rootParent;
+  });
+
+  clearRootParentCache = () => {
+    this._rootParentMap.clear();
   };
 }

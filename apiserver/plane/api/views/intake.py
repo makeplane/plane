@@ -2,12 +2,12 @@
 import json
 
 # Django imports
-from django.core.serializers.json import DjangoJSONEncoder
-from django.utils import timezone
-from django.db.models import Q, Value, UUIDField
-from django.db.models.functions import Coalesce
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Q, UUIDField, Value
+from django.db.models.functions import Coalesce
+from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
@@ -18,17 +18,19 @@ from plane.api.serializers import IntakeIssueSerializer, IssueSerializer
 from plane.app.permissions import ProjectLitePermission
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
-    IssueType,
     Intake,
     IntakeIssue,
     Issue,
     Project,
     ProjectMember,
     State,
+    IssueType,
 )
+from plane.utils.host import base_host
 from plane.ee.models import IntakeSetting
-
+from plane.ee.utils.workflow import WorkflowStateManager
 from .base import BaseAPIView
+from plane.db.models.intake import SourceType
 
 
 class IntakeIssueAPIEndpoint(BaseAPIView):
@@ -140,7 +142,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
             intake_id=intake.id,
             project_id=project_id,
             issue=issue,
-            source=request.data.get("source", "IN-APP"),
+            source=SourceType.IN_APP,
         )
         # Create an Issue Activity
         issue_activity.delay(
@@ -237,6 +239,23 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
             ).get(pk=issue_id, workspace__slug=slug, project_id=project_id)
+
+            # Check if state is updated then is the transition allowed
+            workflow_state_manager = WorkflowStateManager(
+                project_id=project_id, slug=slug
+            )
+            if request.data.get(
+                "state_id"
+            ) and not workflow_state_manager.validate_state_transition(
+                issue=issue,
+                new_state_id=request.data.get("state_id"),
+                user_id=request.user.id,
+            ):
+                return Response(
+                    {"error": "State transition is not allowed"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
             # Only allow guests to edit name and description
             if project_member.role <= 5:
                 issue_data = {
@@ -322,7 +341,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
                     current_instance=current_instance,
                     epoch=int(timezone.now().timestamp()),
                     notification=False,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                     intake=str(intake_issue.id),
                 )
 

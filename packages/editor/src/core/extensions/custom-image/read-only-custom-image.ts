@@ -7,7 +7,7 @@ import { CustomImageNode, UploadImageExtensionStorage } from "@/extensions/custo
 import { TReadOnlyFileHandler } from "@/types";
 
 export const CustomReadOnlyImageExtension = (props: TReadOnlyFileHandler) => {
-  const { getAssetSrc } = props;
+  const { getAssetSrc, restore: restoreImageFn } = props;
 
   return Image.extend<Record<string, unknown>, UploadImageExtensionStorage>({
     name: "imageComponent",
@@ -52,6 +52,9 @@ export const CustomReadOnlyImageExtension = (props: TReadOnlyFileHandler) => {
     addStorage() {
       return {
         fileMap: new Map(),
+        deletedImageSet: new Map<string, boolean>(),
+        uploadInProgress: false,
+        maxFileSize: 0,
         // escape markdown for images
         markdown: {
           serialize() {},
@@ -63,6 +66,9 @@ export const CustomReadOnlyImageExtension = (props: TReadOnlyFileHandler) => {
     addCommands() {
       return {
         getImageSource: (path: string) => async () => await getAssetSrc(path),
+        restoreImage: (src) => async () => {
+          await restoreImageFn(src);
+        },
       };
     },
 

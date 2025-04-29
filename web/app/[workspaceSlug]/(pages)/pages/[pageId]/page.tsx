@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -20,6 +20,7 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 // plane web services
@@ -34,10 +35,12 @@ const storeType = EPageStoreType.WORKSPACE;
 
 const PageDetailsPage = observer(() => {
   // router
+  const router = useAppRouter();
   const { workspaceSlug, pageId } = useParams();
+  // flag
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
-  const { createPage, fetchPageById } = usePageStore(storeType);
+  const { createPage, fetchPageDetails, isNestedPagesEnabled } = usePageStore(storeType);
   const page = usePage({
     pageId: pageId?.toString() ?? "",
     storeType,
@@ -60,11 +63,11 @@ const PageDetailsPage = observer(() => {
   // fetch page details
   const { error: pageDetailsError } = useSWR(
     pageId ? `PAGE_DETAILS_${pageId}` : null,
-    pageId ? () => fetchPageById(pageId.toString()) : null,
+    pageId ? () => fetchPageDetails(pageId.toString()) : null,
     {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
+      revalidateIfStale: true,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
     }
   );
   // page root handlers
@@ -84,7 +87,13 @@ const PageDetailsPage = observer(() => {
         if (!workspaceSlug) return;
         return await workspacePageVersionService.fetchVersionById(workspaceSlug.toString(), pageId, versionId);
       },
-      getRedirectionLink: (pageId) => `/${workspaceSlug}/pages/${pageId}`,
+      getRedirectionLink: (pageId) => {
+        if (pageId) {
+          return `/${workspaceSlug}/pages/${pageId}`;
+        } else {
+          return `/${workspaceSlug}/pages`;
+        }
+      },
       updateDescription: updateDescription ?? (async () => {}),
     }),
     [createPage, fetchEntityCallback, id, updateDescription, workspaceSlug]
@@ -116,14 +125,34 @@ const PageDetailsPage = observer(() => {
     () => ({
       documentType: "workspace_page",
       workspaceSlug: workspaceSlug?.toString() ?? "",
+      parentPageId: page?.parent_id,
     }),
-    [workspaceSlug]
+    [workspaceSlug, page?.parent_id]
   );
+
+  useEffect(() => {
+    if (page?.deleted_at && page?.id) {
+      router.push(pageRootHandlers.getRedirectionLink());
+    }
+  }, [page?.deleted_at, page?.id, router, pageRootHandlers]);
 
   if ((!page || !id) && !pageDetailsError)
     return (
       <div className="size-full grid place-items-center">
         <LogoSpinner />
+      </div>
+    );
+
+  if (!isNestedPagesEnabled(workspaceSlug?.toString()) && page?.parent_id)
+    return (
+      <div className="size-full flex flex-col items-center justify-center">
+        <h3 className="text-lg font-semibold text-center">Please upgrade your plan to view this nested page</h3>
+        <p className="text-sm text-custom-text-200 text-center mt-3">
+          Please upgrade your plan to view this nested page
+        </p>
+        <Link href={`/${workspaceSlug}/pages`} className={cn(getButtonStyling("neutral-primary", "md"), "mt-5")}>
+          View other Pages
+        </Link>
       </div>
     );
 

@@ -1,10 +1,10 @@
 import React, { FC } from "react";
-import { DropdownIcon } from "../icons";
 import { cn } from "../../helpers";
+import { DropdownIcon } from "../icons";
 
 type Props = {
   isOpen: boolean;
-  title: string;
+  title: React.ReactNode;
   hideChevron?: boolean;
   indicatorElement?: React.ReactNode;
   actionItemElement?: React.ReactNode;

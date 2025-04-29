@@ -36,6 +36,7 @@ from plane.ee.views.app.page import (
     WorkspacePageFavoriteEndpoint,
     WorkspacePageDuplicateEndpoint,
     MovePageEndpoint,
+    WorkspacePageRestoreEndpoint,
 )
 from plane.ee.views.app.views import (
     IssueViewEEViewSet,
@@ -56,14 +57,17 @@ from plane.ee.views.app.project import (
     ProjectFeatureEndpoint,
 )
 
+from plane.ee.views.app.customer import CustomerPropertyEndpoint
 from plane.ee.views.app.issue_property import IssuePropertyEndpoint
 from plane.ee.views.app.intake import IntakeSettingEndpoint
 from plane.ee.views.app.epic import EpicViewSet, EpicLinkViewSet
 from plane.ee.views.app.inbox import InboxViewSet
+from plane.ee.views.app.dashboard import DashboardViewSet, DashboardQuickFilterEndpoint
 
 # Space imports
 from plane.ee.views.space.page import (
     PagePublicEndpoint,
+    SubPagePublicEndpoint,
     PagePublicIssuesEndpoint,
     PageMetaDataEndpoint,
 )
@@ -112,3 +116,12 @@ from plane.ee.views.api.worklog import (
     IssueWorklogAPIEndpoint,
     ProjectWorklogAPIEndpoint,
 )
+
+from plane.ee.views.app.page.live import (
+    PagesLiveServerDescriptionViewSet,
+    PagesLiveServerSubPagesViewSet,
+)
+
+from plane.ee.views.app.search.base import EnhancedGlobalSearchEndpoint
+
+from plane.ee.views.app.workspace.asset import WorkspaceBulkAssetEndpoint

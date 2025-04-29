@@ -10,6 +10,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.ee.views.base import BaseAPIView
 from plane.db.models import IssueType, Issue, Project, ProjectIssueType
+from plane.ee.models import WorkitemTemplate
 from plane.ee.permissions import ProjectEntityPermission, WorkspaceEntityPermission
 from plane.ee.serializers import IssueTypeSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -250,10 +251,52 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
             is_epic=False,
             is_default=True,
         ).exists():
-            return Response(
-                {"error": "Default work item type already exists"},
-                status=status.HTTP_400_BAD_REQUEST,
+            # Refetch the data
+            issue_type = (
+                IssueType.objects.filter(
+                    workspace__slug=slug,
+                    project_issue_types__project_id=project_id,
+                    is_epic=False,
+                    is_default=True,
+                )
+                .annotate(
+                    issue_exists=Exists(
+                        Issue.objects.filter(project_id=project_id, type_id=OuterRef("pk"))
+                    )
+                )
+                .annotate(
+                    project_ids=Coalesce(
+                        Subquery(
+                            ProjectIssueType.objects.filter(
+                                issue_type=OuterRef("pk"), workspace__slug=slug
+                            )
+                            .values("issue_type")
+                            .annotate(project_ids=ArrayAgg("project_id", distinct=True))
+                            .values("project_ids")
+                        ),
+                        [],
+                    )
+                )
             )
+
+            work_item_type = issue_type.first()
+
+            # Update existing work item templates to use the new default issue type
+            work_item_type_template_schema = {
+                "id": str(work_item_type.id),
+                "name": work_item_type.name,
+                "logo_props": work_item_type.logo_props,
+                "is_epic": work_item_type.is_epic,
+            }
+            WorkitemTemplate.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                type__exact={},
+            ).update(type=work_item_type_template_schema)
+
+            # Serialize the data
+            serializer = IssueTypeSerializer(work_item_type)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         # Check if default issue type exists for the project
         if ProjectIssueType.objects.filter(
@@ -318,7 +361,22 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
             )
         )
 
+        work_item_type = issue_type.first()
+
+        # Update existing work item templates to use the new default issue type
+        work_item_type_template_schema = {
+            "id": str(work_item_type.id),
+            "name": work_item_type.name,
+            "logo_props": work_item_type.logo_props,
+            "is_epic": work_item_type.is_epic,
+        }
+        WorkitemTemplate.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            type__exact={},
+        ).update(type=work_item_type_template_schema)
+
         # Serialize the data
-        serializer = IssueTypeSerializer(issue_type.first())
+        serializer = IssueTypeSerializer(work_item_type)
 
         return Response(serializer.data, status=status.HTTP_200_OK)

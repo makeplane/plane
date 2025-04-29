@@ -11,6 +11,7 @@ import strawberry
 from strawberry.types import Info
 from strawberry.scalars import JSON
 from strawberry.permission import PermissionExtension
+from strawberry.exceptions import GraphQLError
 
 # Third-party imports
 from typing import Optional
@@ -38,6 +39,43 @@ from plane.db.models import (
 )
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
 from plane.graphql.utils.issue_activity import convert_issue_properties_to_activity_dict
+from plane.graphql.utils.workflow import WorkflowStateManager
+
+
+@sync_to_async
+def validate_workflow_state_issue_create(user_id, slug, project_id, state_id):
+    workflow_manager = WorkflowStateManager(
+        user_id=user_id, slug=slug, project_id=project_id
+    )
+    is_issue_creation_allowed = workflow_manager._validate_issue_creation(
+        state_id=state_id
+    )
+
+    if is_issue_creation_allowed is False:
+        message = "You cannot create an issue in this state"
+        error_extensions = {"code": "FORBIDDEN", "statusCode": 403}
+        raise GraphQLError(message, extensions=error_extensions)
+
+    return is_issue_creation_allowed
+
+
+@sync_to_async
+def validate_workflow_state_issue_update(
+    user_id, slug, project_id, current_state_id, new_state_id
+):
+    workflow_state_manager = WorkflowStateManager(
+        user_id=user_id, slug=slug, project_id=project_id
+    )
+    can_state_update = workflow_state_manager._validate_state_transition(
+        current_state_id=current_state_id, new_state_id=new_state_id
+    )
+
+    if can_state_update is False:
+        message = "You cannot update an issue in this state"
+        error_extensions = {"code": "FORBIDDEN", "statusCode": 403}
+        raise GraphQLError(message, extensions=error_extensions)
+
+    return can_state_update
 
 
 @strawberry.type
@@ -67,8 +105,20 @@ class IssueMutation:
         workspace = await sync_to_async(Workspace.objects.get)(slug=slug)
         project_details = await sync_to_async(Project.objects.get)(id=project)
 
-        issue_type_id = None
+        if state is not None:
+            is_feature_flagged = await validate_feature_flag(
+                user_id=str(user.id),
+                slug=slug,
+                feature_key=FeatureFlagsTypesEnum.WORKFLOWS.value,
+                default_value=False,
+            )
+            if is_feature_flagged:
+                await validate_workflow_state_issue_create(
+                    user_id=user.id, slug=slug, project_id=project, state_id=state
+                )
+
         # validating issue type and assigning thr default issue type
+        issue_type_id = None
         is_feature_flagged = await validate_feature_flag(
             slug=workspace.slug,
             user_id=str(user.id),
@@ -263,7 +313,25 @@ class IssueMutation:
         startDate: Optional[datetime] = None,
         targetDate: Optional[datetime] = None,
     ) -> IssuesType:
+        user = info.context.user
         issue = await sync_to_async(Issue.objects.get)(id=id)
+
+        issue_state_id = issue.state_id
+        if state and str(issue_state_id) != str(state):
+            is_feature_flagged = await validate_feature_flag(
+                user_id=str(user.id),
+                slug=slug,
+                feature_key=FeatureFlagsTypesEnum.WORKFLOWS.value,
+                default_value=False,
+            )
+            if is_feature_flagged:
+                await validate_workflow_state_issue_update(
+                    user_id=user.id,
+                    slug=slug,
+                    project_id=project,
+                    current_state_id=issue.state_id,
+                    new_state_id=state,
+                )
 
         # activity tacking data
         current_issue_activity = await convert_issue_properties_to_activity_dict(issue)

@@ -3,15 +3,12 @@
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { FileText } from "lucide-react";
-// types
-import { TLogoProps } from "@plane/types";
-// ui
-import { EmojiIconPicker, EmojiIconPickerTypes, TOAST_TYPE, setToast } from "@plane/ui";
+// plane imports
+import { EmojiIconPicker, EmojiIconPickerTypes } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
 import { ListItem } from "@/components/core/list";
 // helpers
-import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -41,26 +38,6 @@ export const WikiPageListBlock: FC<TPageListBlock> = observer((props) => {
   // platform
   const { isMobile } = usePlatformOS();
 
-  const handlePageLogoUpdate = async (data: TLogoProps) => {
-    if (data) {
-      updatePageLogo?.(data)
-        .then(() => {
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Success!",
-            message: "Logo Updated successfully.",
-          });
-        })
-        .catch(() => {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Something went wrong. Please try again.",
-          });
-        });
-    }
-  };
-
   if (!page) return null;
 
   return (
@@ -81,21 +58,7 @@ export const WikiPageListBlock: FC<TPageListBlock> = observer((props) => {
                 )}
               </>
             }
-            onChange={(val) => {
-              let logoValue = {};
-
-              if (val?.type === "emoji")
-                logoValue = {
-                  value: convertHexEmojiToDecimal(val.value.unified),
-                  url: val.value.imageUrl,
-                };
-              else if (val?.type === "icon") logoValue = val.value;
-
-              handlePageLogoUpdate({
-                in_use: val?.type,
-                [val?.type]: logoValue,
-              }).finally(() => setIsOpen(false));
-            }}
+            onChange={(val) => updatePageLogo?.(val)}
             defaultIconColor={logo_props?.in_use && logo_props.in_use === "icon" ? logo_props?.icon?.color : undefined}
             defaultOpen={
               logo_props?.in_use && logo_props?.in_use === "emoji"

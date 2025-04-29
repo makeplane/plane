@@ -15,7 +15,6 @@ type Props = {
   data: Partial<TCycleProgress>[] | null;
   plotType: string;
   estimateType: string;
-  progressLoader?: boolean;
   handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string[], redirect?: boolean) => void;
   parentWidth?: number;
 };

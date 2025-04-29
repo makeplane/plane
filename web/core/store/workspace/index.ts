@@ -1,3 +1,4 @@
+import clone from "lodash/clone";
 import set from "lodash/set";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 // types
@@ -161,11 +162,15 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    * @param data
    */
   updateWorkspace = async (workspaceSlug: string, data: Partial<IWorkspace>) =>
-    await this.workspaceService.updateWorkspace(workspaceSlug, data).then((response) => {
-      runInAction(() => {
-        set(this.workspaces, response.id, response);
-      });
-      return response;
+    await this.workspaceService.updateWorkspace(workspaceSlug, data).then((res) => {
+      if (res && res.id) {
+        runInAction(() => {
+          Object.keys(data).forEach((key) => {
+            set(this.workspaces, [res.id, key], data[key as keyof IWorkspace]);
+          });
+        });
+      }
+      return res;
     });
 
   /**
@@ -214,18 +219,30 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
     key: string,
     data: Partial<IWorkspaceSidebarNavigationItem>
   ) => {
-    try {
-      const response = await this.workspaceService.updateSidebarPreference(workspaceSlug, key, data);
+    // Store the data before update to use for reverting if needed
+    const beforeUpdateData = clone(this.navigationPreferencesMap[workspaceSlug]?.[key]);
 
+    try {
       runInAction(() => {
         this.navigationPreferencesMap[workspaceSlug] = {
           ...this.navigationPreferencesMap[workspaceSlug],
-          [key]: response,
+          [key]: {
+            ...beforeUpdateData,
+            ...data,
+          },
         };
       });
 
+      const response = await this.workspaceService.updateSidebarPreference(workspaceSlug, key, data);
       return response;
     } catch (error) {
+      // Revert to original data if API call fails
+      runInAction(() => {
+        this.navigationPreferencesMap[workspaceSlug] = {
+          ...this.navigationPreferencesMap[workspaceSlug],
+          [key]: beforeUpdateData,
+        };
+      });
       console.error("Failed to update sidebar preference:", error);
     }
   };

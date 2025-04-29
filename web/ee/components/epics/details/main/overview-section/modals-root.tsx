@@ -127,9 +127,7 @@ export const EpicOverviewWidgetModals: FC<Props> = observer((props) => {
       const isParentEpic = parentIssueTypeDetails?.is_epic;
 
       if (isParentEpic) {
-        await addSubIssueToEpic(workspaceSlug, projectId, _issue.parent_id, [_issue.id]).then(() => {
-          fetchEpicAnalytics(workspaceSlug, projectId, epicId);
-        });
+        await addSubIssueToEpic(workspaceSlug, projectId, _issue.parent_id, [_issue.id]);
       } else {
         await addSubIssue(workspaceSlug, projectId, _issue.parent_id, [_issue.id]);
       }

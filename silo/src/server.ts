@@ -1,4 +1,3 @@
-// sentry
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import * as dotenv from "dotenv";
@@ -32,8 +31,7 @@ import SlackController from "./apps/slack/controllers";
 import { env } from "./env";
 import { APIError } from "./lib";
 import { registerControllers } from "./lib/controller";
-import { expressLogger, logger } from "./logger";
-import { initializeSentry, SentryInstance } from "./sentry-config";
+import { logger } from "./logger";
 // types
 import { APIErrorResponse } from "./types";
 
@@ -69,8 +67,8 @@ export default class Server {
     this.app = express();
     this.port = Number(env.PORT);
 
-    this.setupSentry();
     this.setupMiddleware();
+    this.setupLogger();
     this.setupControllers();
     this.setupErrorHandlers();
     this.setupProcessHandlers();
@@ -92,23 +90,24 @@ export default class Server {
       );
     }
 
-    this.app.use(express.json());
+    this.app.use(express.json({ limit: "25mb" }));
     this.app.use(cookieParser());
     this.app.use(express.urlencoded({ extended: true }));
-    this.app.use(this.setupLogger());
   }
 
   private setupLogger() {
-    return expressWinston.logger({
-      winstonInstance: expressLogger,
-      msg: '"{req.method} {req.url}" {req.httpVersion}',
-      expressFormat: true,
-      colorize: true,
-      requestWhitelist: [],
-      responseWhitelist: ["statusCode"],
-      bodyBlacklist: ["password", "authorization"],
-      ignoreRoute: () => false,
-    });
+    this.app.use(
+      expressWinston.logger({
+        winstonInstance: logger,
+        msg: '"{req.method} {req.url}" {req.httpVersion}',
+        expressFormat: true,
+        colorize: true,
+        requestWhitelist: [],
+        responseWhitelist: ["statusCode"],
+        bodyBlacklist: ["password", "authorization"],
+        ignoreRoute: () => false,
+      })
+    );
   }
 
   private setupControllers(): void {
@@ -117,10 +116,6 @@ export default class Server {
 
     allControllers.forEach((controller) => registerControllers(router, controller));
     this.app.use(env.SILO_BASE_PATH || "/", router);
-  }
-
-  private setupSentry(): void {
-    initializeSentry();
   }
 
   private setupErrorHandlers(): void {
@@ -142,10 +137,6 @@ export default class Server {
 
     logger.error("Global error handler caught:", logError);
 
-    if (SentryInstance) {
-      SentryInstance.captureException(err);
-    }
-
     const response: APIErrorResponse = {
       error: env.NODE_ENV === "production" ? "Internal Server Error" : err.message,
       status: err instanceof APIError ? err.statusCode : 500,
@@ -166,16 +157,10 @@ export default class Server {
   private setupProcessHandlers(): void {
     process.on("unhandledRejection", (reason) => {
       logger.error("Unhandled Rejection at:", reason);
-      if (SentryInstance) {
-        SentryInstance.captureException(reason);
-      }
     });
 
     process.on("uncaughtException", (err) => {
       logger.error("Uncaught Exception thrown:", err);
-      if (SentryInstance) {
-        SentryInstance.captureException(err);
-      }
       process.exit(1);
     });
   }

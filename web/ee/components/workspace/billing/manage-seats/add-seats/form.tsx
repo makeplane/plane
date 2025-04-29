@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { TProrationPreview } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
+import { getSubscriptionName } from "@plane/utils";
 // plane web imports
 import {
   SelectSeatsStep,
@@ -40,9 +41,7 @@ export const AddSeatsForm: React.FC<TAddSeatsFormProps> = observer((props) => {
   // derived values
   const isSelfHosted = subscribedPlan?.is_self_managed;
   const isOnTrial = subscribedPlan?.is_on_trial;
-  const planeName = subscribedPlan?.product
-    ? subscribedPlan?.product?.charAt(0).toUpperCase() + subscribedPlan?.product?.slice(1).toLowerCase()
-    : "";
+  const planeName = subscribedPlan?.product ? getSubscriptionName(subscribedPlan?.product) : "";
 
   useEffect(() => {
     if (error) setError("");

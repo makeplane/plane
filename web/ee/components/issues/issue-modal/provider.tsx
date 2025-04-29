@@ -1,41 +1,59 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 // plane imports
-import { TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
+import { DEFAULT_WORK_ITEM_FORM_VALUES, EWorkItemTypeEntity } from "@plane/constants";
+import { ISearchIssueResponse, TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { getPropertiesDefaultValues } from "@plane/utils";
+import {
+  extractAndSanitizeCustomPropertyValuesFormData,
+  extractAndSanitizeWorkItemFormData,
+  getPropertiesDefaultValues,
+} from "@plane/utils";
+// ce imports
+import { TIssueModalProviderProps } from "@/ce/components/issues";
 // components
 import {
   IssueModalContext,
   TActiveAdditionalPropertiesProps,
   TCreateUpdatePropertyValuesProps,
+  THandleProjectEntitiesFetchProps,
+  THandleTemplateChangeProps,
   TPropertyValuesValidationProps,
 } from "@/components/issues";
 // plane web hooks
-import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
+import { useLabel, useMember, useModule, useProjectState } from "@/hooks/store";
+import { useIssuePropertiesActivity, useIssueTypes, useWorkItemTemplates } from "@/plane-web/hooks/store";
 // plane web services
 import { DraftIssuePropertyValuesService, IssuePropertyValuesService } from "@/plane-web/services/issue-types";
-
-type TIssueModalProviderProps = {
-  children: React.ReactNode;
-};
 
 const issuePropertyValuesService = new IssuePropertyValuesService();
 const draftIssuePropertyValuesService = new DraftIssuePropertyValuesService();
 
 export const IssueModalProvider = observer((props: TIssueModalProviderProps) => {
-  const { children } = props;
+  const { children, templateId, dataForPreload } = props;
   // states
+  const [workItemTemplateId, setWorkItemTemplateId] = useState<string | null>(templateId ?? null);
+  const [isApplyingTemplate, setIsApplyingTemplate] = useState<boolean>(false);
+  const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
   const [issuePropertyValues, setIssuePropertyValues] = useState<TIssuePropertyValues>({});
   const [issuePropertyValueErrors, setIssuePropertyValueErrors] = useState<TIssuePropertyValueErrors>({});
-  // plane web hooks
+  // store hooks
+  const { getProjectStateIds, getAvailableWorkItemCreationStateIds, fetchProjectStates } = useProjectState();
+  const { getProjectLabelIds, fetchProjectLabels } = useLabel();
+  const { getModulesFetchStatusByProjectId, getProjectModuleIds, fetchModules } = useModule();
+  const {
+    project: { getProjectMemberFetchStatus, getProjectMemberIds, fetchProjectMembers },
+  } = useMember();
+  const { getTemplateById } = useWorkItemTemplates();
   const {
     isWorkItemTypeEnabledForProject,
     getIssueTypeById,
     getIssueTypeProperties,
     getProjectIssueTypes,
     getProjectDefaultIssueType,
+    getProjectWorkItemPropertiesFetchedMap,
+    fetchAllPropertiesAndOptions,
   } = useIssueTypes();
   const { fetchPropertyActivities } = useIssuePropertiesActivity();
   // helpers
@@ -147,9 +165,164 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
       });
   };
 
+  /**
+   * Used to fetch all the entities for the project required for the work item modal
+   */
+  const handleProjectEntitiesFetch = useCallback(
+    async (props: THandleProjectEntitiesFetchProps) => {
+      const { workspaceSlug, templateId } = props;
+      // get template details
+      const template = getTemplateById(templateId);
+      // get work item project id from the template
+      const workItemProjectId = template?.template_data.project;
+
+      if (!workItemProjectId) return;
+
+      // Get all entities for the project
+      const entitiesToFetch = [];
+      // states
+      const projectStateIds = getProjectStateIds(workItemProjectId);
+      if (!projectStateIds) {
+        entitiesToFetch.push(fetchProjectStates(workspaceSlug, workItemProjectId));
+      }
+      // project membership
+      const isProjectMembersFetched = getProjectMemberFetchStatus(workItemProjectId);
+      if (!isProjectMembersFetched) {
+        entitiesToFetch.push(fetchProjectMembers(workspaceSlug, workItemProjectId));
+      }
+      // labels
+      const projectLabelIds = getProjectLabelIds(workItemProjectId);
+      if (!projectLabelIds) {
+        entitiesToFetch.push(fetchProjectLabels(workspaceSlug, workItemProjectId));
+      }
+      // modules
+      const modulesFetchStatus = getModulesFetchStatusByProjectId(workItemProjectId);
+      if (!modulesFetchStatus) {
+        entitiesToFetch.push(fetchModules(workspaceSlug, workItemProjectId));
+      }
+      // custom properties
+      const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug, workItemProjectId);
+      const templateWorkItemTypeId = template.template_data.type?.id;
+      if (isWorkItemTypeEnabled && templateWorkItemTypeId) {
+        const isCustomPropertiesFetched = getProjectWorkItemPropertiesFetchedMap(
+          workItemProjectId,
+          EWorkItemTypeEntity.WORK_ITEM
+        );
+        if (!isCustomPropertiesFetched) {
+          entitiesToFetch.push(
+            fetchAllPropertiesAndOptions(workspaceSlug, workItemProjectId, EWorkItemTypeEntity.WORK_ITEM)
+          );
+        }
+      }
+
+      // fetch all entities
+      await Promise.all(entitiesToFetch);
+    },
+    [
+      getTemplateById,
+      getProjectStateIds,
+      getProjectMemberFetchStatus,
+      getProjectLabelIds,
+      getModulesFetchStatusByProjectId,
+      isWorkItemTypeEnabledForProject,
+      fetchProjectStates,
+      fetchProjectMembers,
+      fetchProjectLabels,
+      fetchModules,
+      getProjectWorkItemPropertiesFetchedMap,
+      fetchAllPropertiesAndOptions,
+    ]
+  );
+
+  /**
+   * Used to handle template change in work item modal
+   */
+  const handleTemplateChange = useCallback(
+    async (props: THandleTemplateChangeProps) => {
+      const { workspaceSlug, reset, editorRef } = props;
+      // check if work item template id is available
+      if (!workItemTemplateId) return;
+      // get template details
+      const template = getTemplateById(workItemTemplateId);
+      // handle local states
+      setIsApplyingTemplate(true);
+
+      if (template) {
+        // fetch all entities required in the work item modal for the template
+        await handleProjectEntitiesFetch({ workspaceSlug, templateId: workItemTemplateId });
+
+        // Get the sanitized work item form data
+        const { valid: sanitizedWorkItemFormData } = extractAndSanitizeWorkItemFormData({
+          workItemData: template.template_data,
+          getProjectStateIds: getAvailableWorkItemCreationStateIds,
+          getProjectLabelIds,
+          getProjectModuleIds,
+          getProjectMemberIds,
+        });
+
+        // reset form values
+        reset({
+          ...DEFAULT_WORK_ITEM_FORM_VALUES,
+          ...dataForPreload,
+          ...sanitizedWorkItemFormData,
+        });
+
+        // Clear editor
+        editorRef?.current?.clearEditor();
+        // Set editor value, if available
+        if (template.template_data.description_html) {
+          editorRef?.current?.setEditorValue(template.template_data.description_html);
+        }
+
+        // Custom property values
+        const isWorkItemTypeEnabled =
+          !!template.template_data.project &&
+          isWorkItemTypeEnabledForProject(workspaceSlug, template.template_data.project);
+        const templateWorkItemTypeId = template.template_data.type?.id;
+        // Handle custom property change if work item type is enabled and available
+        if (isWorkItemTypeEnabled && templateWorkItemTypeId) {
+          const templateWorkItemType = getIssueTypeById(templateWorkItemTypeId);
+          const getPropertyById = templateWorkItemType?.getPropertyById;
+          if (getPropertyById) {
+            // Get the sanitized custom property values form data
+            const sanitizedCustomPropertyValues = extractAndSanitizeCustomPropertyValuesFormData({
+              properties: template.template_data.properties,
+              getPropertyById,
+            });
+            // Update the custom property values
+            setIssuePropertyValues({
+              ...getPropertiesDefaultValues(templateWorkItemType?.activeProperties ?? []),
+              ...sanitizedCustomPropertyValues,
+            });
+          }
+        }
+      }
+      // set is applying template to false
+      setIsApplyingTemplate(false);
+    },
+    [
+      workItemTemplateId,
+      getTemplateById,
+      handleProjectEntitiesFetch,
+      getAvailableWorkItemCreationStateIds,
+      getProjectLabelIds,
+      getProjectModuleIds,
+      getProjectMemberIds,
+      dataForPreload,
+      isWorkItemTypeEnabledForProject,
+      getIssueTypeById,
+    ]
+  );
+
   return (
     <IssueModalContext.Provider
       value={{
+        workItemTemplateId,
+        setWorkItemTemplateId,
+        isApplyingTemplate,
+        setIsApplyingTemplate,
+        selectedParentIssue,
+        setSelectedParentIssue,
         issuePropertyValues,
         setIssuePropertyValues,
         issuePropertyValueErrors,
@@ -158,6 +331,8 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
         getActiveAdditionalPropertiesLength,
         handlePropertyValuesValidation,
         handleCreateUpdatePropertyValues,
+        handleProjectEntitiesFetch,
+        handleTemplateChange,
       }}
     >
       {children}

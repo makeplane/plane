@@ -9,13 +9,9 @@ from datetime import timedelta
 
 # Third party imports
 import dj_database_url
-import sentry_sdk
 
 # Django imports
 from django.core.management.utils import get_random_secret_key
-from sentry_sdk.integrations.celery import CeleryIntegration
-from sentry_sdk.integrations.django import DjangoIntegration
-from sentry_sdk.integrations.redis import RedisIntegration
 from corsheaders.defaults import default_headers
 
 
@@ -28,7 +24,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
 DEBUG = int(os.environ.get("DEBUG", "0"))
 
 # Allowed Hosts
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
 
 # Application definition
 INSTALLED_APPS = [
@@ -53,6 +49,7 @@ INSTALLED_APPS = [
     # Third-party things
     "strawberry.django",
     "rest_framework",
+    "oauth2_provider",
     "corsheaders",
     "django_celery_beat",
 ]
@@ -68,7 +65,9 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "crum.CurrentRequestUserMiddleware",
     "django.middleware.gzip.GZipMiddleware",
-    "plane.middleware.api_log_middleware.APITokenLogMiddleware",
+    "plane.middleware.logger.APITokenLogMiddleware",
+    "oauth2_provider.middleware.OAuth2TokenMiddleware",
+    "plane.middleware.logger.RequestLoggerMiddleware",
 ]
 
 # Rest Framework settings
@@ -284,26 +283,8 @@ CELERY_IMPORTS = (
     "plane.bgtasks.silo_credentials_update_task",
     # ee tasks
     "plane.ee.bgtasks.entity_issue_state_progress_task",
+    "plane.ee.bgtasks.app_bot_task",
 )
-
-# Sentry Settings
-# Enable Sentry Settings
-if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get(
-    "SENTRY_DSN"
-).startswith("https://"):
-    sentry_sdk.init(
-        dsn=os.environ.get("SENTRY_DSN", ""),
-        integrations=[
-            DjangoIntegration(),
-            RedisIntegration(),
-            CeleryIntegration(monitor_beat_tasks=True),
-        ],
-        traces_sample_rate=1,
-        send_default_pii=True,
-        environment=os.environ.get("SENTRY_ENVIRONMENT", "development"),
-        profiles_sample_rate=float(os.environ.get("SENTRY_PROFILE_SAMPLE_RATE", 0)),
-    )
-
 
 # Application Envs
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
@@ -366,9 +347,11 @@ CSRF_FAILURE_VIEW = "plane.authentication.views.common.csrf_failure"
 # Base URLs
 ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", None)
 SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
-APP_BASE_URL = os.environ.get("APP_BASE_URL")
-LIVE_BASE_URL = os.environ.get("LIVE_BASE_URL")
-
+APP_BASE_URL = os.environ.get("APP_BASE_URL", None)
+LIVE_BASE_URL = os.environ.get("LIVE_BASE_URL", None)
+LIVE_BASE_PATH = os.environ.get("LIVE_BASE_PATH", "/live")
+LIVE_URL = f"{LIVE_BASE_URL}{LIVE_BASE_PATH}"
+WEB_URL = os.environ.get("WEB_URL", None)
 
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
 
@@ -444,6 +427,9 @@ ATTACHMENT_MIME_TYPES = [
     "text/xml",
     "text/csv",
     "application/xml",
+    # SQL
+    "application/x-sql",
+    # Gzip
     "application/x-gzip",
 ]
 # Prime Server Base url
@@ -503,3 +489,44 @@ FIREBASE_PRIVATE_KEY = os.environ.get("FIREBASE_PRIVATE_KEY", "")
 FIREBASE_CLIENT_EMAIL = os.environ.get("FIREBASE_CLIENT_EMAIL", "")
 FIREBASE_CLIENT_ID = os.environ.get("FIREBASE_CLIENT_ID", "")
 FIREBASE_CLIENT_CERT_URL = os.environ.get("FIREBASE_CLIENT_CERT_URL", "")
+
+# Oauth Provider Settings
+from plane.authentication.utils import is_pkce_required  # noqa
+
+OAUTH2_PROVIDER_ACCESS_TOKEN_MODEL = "authentication.AccessToken"
+OAUTH2_PROVIDER_APPLICATION_MODEL = "authentication.Application"
+OAUTH2_PROVIDER_GRANT_MODEL = "authentication.Grant"
+OAUTH2_PROVIDER_REFRESH_TOKEN_MODEL = "authentication.RefreshToken"
+OAUTH2_PROVIDER_ID_TOKEN_MODEL = "authentication.IDToken"
+
+
+OAUTH2_PROVIDER = {
+    "AUTHORIZATION_CODE_EXPIRE_SECONDS": 60,  # 1 minute
+    "OAUTH2_VALIDATOR_CLASS": "plane.authentication.views.oauth.CustomOAuth2Validator",
+    "ALLOWED_GRANT_TYPES": [
+        "authorization_code",
+        "client_credentials",
+        "refresh_token",
+    ],
+    "PKCE_REQUIRED": is_pkce_required,
+}
+
+# ElasticSearch settings
+ELASTICSEARCH_ENABLED = os.environ.get("ELASTICSEARCH_ENABLED", "0") == "1"
+if ELASTICSEARCH_ENABLED:
+    # Elastic Search Config
+    ELASTICSEARCH_DSL = {
+        "default": {
+            "hosts": os.environ.get("ELASTICSEARCH_URL"),
+            "api_key": os.environ.get("ELASTICSEARCH_API_KEY"),
+        }
+    }
+    ELASTICSEARCH_DSL_SIGNAL_PROCESSOR = os.environ.get(
+        "ELASTICSEARCH_SIGNAL_PROCESSOR",
+        "plane.ee.documents.signal_handler.CustomCelerySignalProcessor",
+    )
+
+    INSTALLED_APPS += ["django_elasticsearch_dsl"]
+
+# Web URL
+WEB_URL = os.environ.get("WEB_URL", "http://localhost:3000")

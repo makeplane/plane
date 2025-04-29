@@ -56,9 +56,14 @@ from plane.db.models import (
 from plane.settings.storage import S3Storage
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
+from plane.utils.host import base_host
+
+from plane.bgtasks.webhook_task import model_activity
+
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.utils.workflow import WorkflowStateManager
+
 
 
 class WorkspaceIssueAPIEndpoint(BaseAPIView):
@@ -283,11 +288,12 @@ class IssueAPIEndpoint(BaseAPIView):
             workflow_state_manager = WorkflowStateManager(
                 project_id=project_id, slug=slug
             )
-            if workflow_state_manager._validate_issue_creation(
+            if workflow_state_manager.validate_issue_creation(
                 state_id=request.data.get("state_id"),
+                user_id=request.user.id,
             ):
                 return Response(
-                    {"error": "You cannot create a issue in this state"},
+                    {"error": "You cannot create a work item in this state"},
                     status=status.HTTP_403_FORBIDDEN,
                 )
 
@@ -334,6 +340,17 @@ class IssueAPIEndpoint(BaseAPIView):
                 project_id=str(project_id),
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
+            )
+
+            # Send the model activity
+            model_activity.delay(
+                model_name="issue",
+                model_id=str(serializer.data["id"]),
+                requested_data=request.data,
+                current_instance=None,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=base_host(request=request, is_app=True),
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1130,7 +1147,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
 
         # Get the storage metadata
@@ -1190,7 +1207,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
                 current_instance=json.dumps(serializer.data, cls=DjangoJSONEncoder),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
 
             # Update the attachment

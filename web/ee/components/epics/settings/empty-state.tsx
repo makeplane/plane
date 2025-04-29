@@ -4,7 +4,8 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-// ui
+// plane imports
+import { EProductSubscriptionEnum } from "@plane/constants";
 import { Button, getButtonStyling, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -28,7 +29,8 @@ export const EpicsEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
   const { enableEpics } = useIssueTypes();
   // states
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const isSelfManagedUpgradeDisabled = subscriptionDetail?.is_self_managed && subscriptionDetail?.product !== "FREE";
+  const isSelfManagedUpgradeDisabled =
+    subscriptionDetail?.is_self_managed && subscriptionDetail?.product !== EProductSubscriptionEnum.FREE;
   // derived values
   const isEpicsSettingsEnabled = useFlag(workspaceSlug, "EPICS");
   const resolvedEmptyStatePath = `/empty-state/epics/epics-${resolvedTheme === "light" ? "light" : "dark"}.webp`;

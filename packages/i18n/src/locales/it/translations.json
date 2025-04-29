@@ -224,8 +224,10 @@
   "you_do_not_have_the_permission_to_access_this_page": "Non hai il permesso di accedere a questa pagina.",
   "something_went_wrong_please_try_again": "Qualcosa è andato storto. Per favore, riprova.",
   "load_more": "Carica di più",
-  "select_or_customize_your_interface_color_scheme": "Seleziona o personalizza lo schema dei colori dell'interfaccia.",
+  "select_or_customize_your_interface_color_scheme": "Seleziona o personalizza il tuo schema di colori dell'interfaccia.",
+  "select_the_cursor_motion_style_that_feels_right_for_you": "Seleziona lo stile di movimento del cursore più adatto a te.",
   "theme": "Tema",
+  "smooth_cursor": "Cursore fluido",
   "system_preference": "Preferenza di sistema",
   "light": "Chiaro",
   "dark": "Scuro",
@@ -349,7 +351,7 @@
   "couldnt_remove_the_project_from_favorites": "Impossibile rimuovere il progetto dai preferiti. Per favore, riprova.",
   "add_to_favorites": "Aggiungi ai preferiti",
   "remove_from_favorites": "Rimuovi dai preferiti",
-  "publish_settings": "Impostazioni di pubblicazione",
+  "publish_project": "Pubblica progetto",
   "publish": "Pubblica",
   "copy_link": "Copia link",
   "leave_project": "Lascia progetto",
@@ -500,6 +502,77 @@
   "re_generate_key": "Rigenera chiave",
   "export": "Esporta",
   "member": "{count, plural, one {# membro} other {# membri}}",
+  "updates": {
+    "add_update": "Aggiungi aggiornamento",
+    "add_update_placeholder": "Scrivi il tuo aggiornamento qui",
+    "empty": {
+      "title": "Nessun aggiornamento",
+      "description": "Puoi vedere gli aggiornamenti qui."
+    },
+    "delete": {
+      "title": "Elimina aggiornamento",
+      "confirmation": "Sei sicuro di voler eliminare questo aggiornamento? Questa azione è irreversibile.",
+      "success": {
+        "title": "Aggiornamento eliminato",
+        "message": "L'aggiornamento è stato eliminato con successo."
+      },
+      "error": {
+        "title": "Aggiornamento non eliminato",
+        "message": "L'aggiornamento non può essere eliminato."
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reazione creata",
+          "message": "Reazione creata con successo."
+        },
+        "error": {
+          "title": "Reazione non creata",
+          "message": "La reazione non può essere creata."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reazione eliminata",
+          "message": "Reazione eliminata con successo."
+        },
+        "error": {
+          "title": "Reazione non eliminata",
+          "message": "La reazione non può essere eliminata."
+        }
+      }
+    },
+    "progress": {
+      "title": "Progresso",
+      "since_last_update": "Dal ultimo aggiornamento",
+      "comments": "{count, plural, one {# commento} other {# commenti}}"
+    },
+    "create": {
+      "success": {
+        "title": "Aggiornamento creato",
+        "message": "Aggiornamento creato con successo."
+      },
+      "error": {
+        "title": "Aggiornamento non creato",
+        "message": "L'aggiornamento non può essere creato."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Aggiornamento aggiornato",
+        "message": "Aggiornamento aggiornato con successo."
+      },
+      "error": {
+        "title": "Aggiornamento non aggiornato",
+        "message": "L'aggiornamento non può essere aggiornato."
+      }
+    }
+  },
+  "new_password_must_be_different_from_old_password": "La nuova password deve essere diversa dalla password precedente",
+
+  "edited": "Modificato",
+  "bot": "Bot",
 
   "project_view": {
     "sort_by": {
@@ -590,7 +663,7 @@
         "default": "Non hai ancora elementi recenti."
       },
       "filters": {
-        "all": "Tutti gli elementi",
+        "all": "Tutti",
         "projects": "Progetti",
         "pages": "Pagine",
         "issues": "Elementi di lavoro"
@@ -693,6 +766,7 @@
     "property": "Proprietà",
     "properties": "Proprietà",
     "parent": "Principale",
+    "page": "Pagina",
     "remove": "Rimuovi",
     "archiving": "Archiviazione in corso",
     "archive": "Archivia",
@@ -862,7 +936,9 @@
     "delete": "Elimina",
     "deleting": "Eliminazione in corso",
     "pending": "In sospeso",
-    "invite": "Invita"
+    "invite": "Invita",
+    "view": "Visualizza",
+    "deactivated_user": "Utente disattivato"
   },
 
   "chart": {
@@ -980,7 +1056,8 @@
         "sub_issue_count": "Numero di sotto-elementi di lavoro",
         "attachment_count": "Numero di allegati",
         "created_on": "Creato il",
-        "sub_issue": "Sotto-elemento di lavoro"
+        "sub_issue": "Sotto-elemento di lavoro",
+        "work_item_count": "Conteggio degli elementi di lavoro"
       },
       "extra": {
         "show_sub_issues": "Mostra sotto-elementi di lavoro",
@@ -1468,7 +1545,8 @@
             "max_length": "Il nome dello spazio di lavoro non deve superare gli 80 caratteri"
           },
           "company_size": {
-            "required": "La dimensione aziendale è obbligatoria"
+            "required": "La dimensione aziendale è obbligatoria",
+            "select_a_range": "Seleziona la dimensione dell'organizzazione"
           }
         }
       },
@@ -1727,20 +1805,99 @@
       }
     },
     "estimates": {
+      "label": "Stime",
       "title": "Abilita le stime per il mio progetto",
-      "description": "Aiutano a comunicare la complessità e il carico di lavoro del team."
+      "description": "Ti aiutano a comunicare la complessità e il carico di lavoro del team.",
+      "no_estimate": "Nessuna stima",
+      "new": "Nuovo sistema di stima",
+      "create": {
+        "custom": "Personalizzato",
+        "start_from_scratch": "Inizia da zero",
+        "choose_template": "Scegli un modello",
+        "choose_estimate_system": "Scegli un sistema di stima",
+        "enter_estimate_point": "Inserisci stima",
+        "step": "Passo {step} di {total}",
+        "label": "Crea stima"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Stima creata",
+            "message": "La stima è stata creata con successo"
+          },
+          "error": {
+            "title": "Creazione stima fallita",
+            "message": "Non siamo riusciti a creare la nuova stima, riprova."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Stima modificata",
+            "message": "La stima è stata aggiornata nel tuo progetto."
+          },
+          "error": {
+            "title": "Modifica stima fallita",
+            "message": "Non siamo riusciti a modificare la stima, riprova"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Successo!",
+            "message": "Le stime sono state abilitate."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Successo!",
+            "message": "Le stime sono state disabilitate."
+          },
+          "error": {
+            "title": "Errore!",
+            "message": "Impossibile disabilitare la stima. Riprova"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "La stima deve essere maggiore di 0.",
+        "unable_to_process": "Non possiamo elaborare la tua richiesta, riprova.",
+        "numeric": "La stima deve essere un valore numerico.",
+        "character": "La stima deve essere un valore di carattere.",
+        "empty": "Il valore della stima non può essere vuoto.",
+        "already_exists": "Il valore della stima esiste già.",
+        "unsaved_changes": "Hai delle modifiche non salvate. Salva prima di cliccare su Fatto",
+        "remove_empty": "La stima non può essere vuota. Inserisci un valore in ogni campo o rimuovi quelli per cui non hai valori."
+      },
+      "systems": {
+        "points": {
+          "label": "Punti",
+          "fibonacci": "Fibonacci",
+          "linear": "Lineare",
+          "squares": "Quadrati",
+          "custom": "Personalizzato"
+        },
+        "categories": {
+          "label": "Categorie",
+          "t_shirt_sizes": "Taglie T-Shirt",
+          "easy_to_hard": "Da facile a difficile",
+          "custom": "Personalizzato"
+        },
+        "time": {
+          "label": "Tempo",
+          "hours": "Ore"
+        }
+      }
     },
     "automations": {
-      "label": "Automazioni",
+      "label": "Automatizzazioni",
       "auto-archive": {
         "title": "Archivia automaticamente gli elementi di lavoro chiusi",
-        "description": "Plane archivierà automaticamente gli elementi di lavoro che sono stati completati o annullati.",
-        "duration": "Archivia automaticamente gli elementi di lavoro chiusi da"
+        "description": "Plane archiverà automaticamente gli elementi di lavoro che sono stati completati o annullati.",
+        "duration": "Archivia automaticamente gli elementi di lavoro chiusi per"
       },
       "auto-close": {
         "title": "Chiudi automaticamente gli elementi di lavoro",
         "description": "Plane chiuderà automaticamente gli elementi di lavoro che non sono stati completati o annullati.",
-        "duration": "Chiudi automaticamente gli elementi di lavoro inattivi da",
+        "duration": "Chiudi automaticamente gli elementi di lavoro inattivi per",
         "auto_close_status": "Stato di chiusura automatica"
       }
     },
@@ -1768,6 +1925,12 @@
     "remove_filters_to_see_all_cycles": "Rimuovi i filtri per vedere tutti i cicli",
     "remove_search_criteria_to_see_all_cycles": "Rimuovi i criteri di ricerca per vedere tutti i cicli",
     "only_completed_cycles_can_be_archived": "Solo i cicli completati possono essere archiviati",
+    "start_date": "Data di inizio",
+    "end_date": "Data di fine",
+    "in_your_timezone": "Nel tuo fuso orario",
+    "transfer_work_items": "Trasferisci {count} elementi di lavoro",
+    "date_range": "Intervallo di date",
+    "add_date": "Aggiungi data",
     "active_cycle": {
       "label": "Ciclo attivo",
       "progress": "Avanzamento",
@@ -2359,5 +2522,11 @@
   "module": {
     "label": "{count, plural, one {Modulo} other {Moduli}}",
     "no_module": "Nessun modulo"
+  },
+
+  "description_versions": {
+    "last_edited_by": "Ultima modifica di",
+    "previously_edited_by": "Precedentemente modificato da",
+    "edited_by": "Modificato da"
   }
 }

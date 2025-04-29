@@ -1,4 +1,4 @@
-name: Branch Build Enterprise Cloud
+name: Branch Build Cloud
 
 on:
   workflow_dispatch:
@@ -43,14 +43,6 @@ jobs:
       gh_buildx_version: ${{ steps.set_env_variables.outputs.BUILDX_VERSION }}
       gh_buildx_platforms: ${{ steps.set_env_variables.outputs.BUILDX_PLATFORMS }}
       gh_buildx_endpoint: ${{ steps.set_env_variables.outputs.BUILDX_ENDPOINT }}
-
-      build_web: ${{ steps.changed_files.outputs.web_any_changed }}
-      build_admin: ${{ steps.changed_files.outputs.admin_any_changed }}
-      build_space: ${{ steps.changed_files.outputs.space_any_changed }}
-      build_live: ${{ steps.changed_files.outputs.live_any_changed }}
-      build_silo: ${{ steps.changed_files.outputs.silo_any_changed }}
-      build_apiserver: ${{ steps.changed_files.outputs.apiserver_any_changed }}
-      build_email: ${{ steps.changed_files.outputs.email_any_changed }}
 
       dh_img_web: ${{ steps.set_env_variables.outputs.DH_IMG_WEB }}
       dh_img_space: ${{ steps.set_env_variables.outputs.DH_IMG_SPACE }}
@@ -177,52 +169,7 @@ jobs:
 
           echo "BUILD_ARGS=$BUILD_ARGS" >> $GITHUB_OUTPUT
 
-      - id: checkout_files
-        name: Checkout Files
-        uses: actions/checkout@v4
-
-      - name: Get changed files
-        id: changed_files
-        uses: tj-actions/changed-files@v42
-        with:
-          files_yaml: |
-            apiserver:
-              - apiserver/**
-            admin:
-              - admin/**
-              - packages/**
-              - "package.json"
-              - "yarn.lock"
-              - "turbo.json"
-            space:
-              - space/**
-              - packages/**
-              - "package.json"
-              - "yarn.lock"
-              - "turbo.json"
-            web:
-              - web/**
-              - packages/**
-              - "package.json"
-              - "yarn.lock"
-              - "turbo.json"
-            live:
-              - live/**
-              - packages/**
-              - 'package.json'
-              - 'yarn.lock'
-              - 'turbo.json'
-            silo:
-              - silo/**
-              - packages/**
-              - 'package.json'
-              - 'yarn.lock'
-              - 'turbo.json'
-            email:
-              - email/**
-
   branch_build_push_admin:
-    if: ${{ needs.branch_build_setup.outputs.build_admin == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Admin Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
@@ -246,7 +193,6 @@ jobs:
           build-args: ${{ needs.branch_build_setup.outputs.build_args }}
 
   branch_build_push_web:
-    if: ${{ needs.branch_build_setup.outputs.build_web == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Web Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
@@ -275,7 +221,6 @@ jobs:
           build-args: ${{ needs.branch_build_setup.outputs.build_args }}
 
   branch_build_push_space:
-    if: ${{ needs.branch_build_setup.outputs.build_space == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Space Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
@@ -304,7 +249,6 @@ jobs:
           build-args: ${{ needs.branch_build_setup.outputs.build_args }}
 
   branch_build_push_live:
-    if: ${{ needs.branch_build_setup.outputs.build_live == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Live Collaboration Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
@@ -327,7 +271,6 @@ jobs:
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
   branch_build_push_silo:
-    if: ${{ needs.branch_build_setup.outputs.build_silo == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Silo Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
@@ -346,7 +289,6 @@ jobs:
           dockerfile-path: ./silo/Dockerfile.silo
 
   branch_build_push_apiserver:
-    if: ${{ needs.branch_build_setup.outputs.build_apiserver == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push API Server Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
@@ -367,9 +309,8 @@ jobs:
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
-  
+
   branch_build_push_email:
-    if: ${{ needs.branch_build_setup.outputs.build_email == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Email Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]

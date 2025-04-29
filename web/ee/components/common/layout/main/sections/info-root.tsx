@@ -1,7 +1,8 @@
 "use client";
 
 import React, { FC, useEffect, useState } from "react";
-// enums
+// plane imports
+import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 import { EFileAssetType } from "@plane/types/src/enums";
 // hooks
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
@@ -10,6 +11,8 @@ import { DescriptionInput, TitleInput } from "../../../input";
 import { SectionWrapper } from "../common";
 
 type TInfoSectionProps = {
+  editorReadOnlyRef?: React.RefObject<EditorReadOnlyRefApi>;
+  editorRef?: React.RefObject<EditorRefApi>;
   workspaceSlug: string;
   projectId?: string;
   itemId: string;
@@ -21,10 +24,15 @@ type TInfoSectionProps = {
   disabled?: boolean;
   fileAssetType: EFileAssetType;
   actionElement?: React.ReactNode;
+  identifierElement?: React.ReactNode;
+  iconElement?: React.ReactNode;
+  titleElement?: React.ReactNode;
 };
 
 export const InfoSection: FC<TInfoSectionProps> = (props) => {
   const {
+    editorReadOnlyRef,
+    editorRef,
     workspaceSlug,
     projectId,
     itemId,
@@ -36,6 +44,9 @@ export const InfoSection: FC<TInfoSectionProps> = (props) => {
     disabled = false,
     fileAssetType,
     actionElement,
+    identifierElement,
+    iconElement,
+    titleElement,
   } = props;
 
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
@@ -50,20 +61,31 @@ export const InfoSection: FC<TInfoSectionProps> = (props) => {
 
   return (
     <SectionWrapper>
-      <div className="flex items-center justify-between gap-2 w-full">
-        <div className="flex-grow">
-          <TitleInput
-            isSubmitting={isSubmitting}
-            setIsSubmitting={(value) => setIsSubmitting(value)}
-            onSubmit={onTitleSubmit}
-            disabled={disabled}
-            value={titleValue}
-            containerClassName="-ml-3"
-          />
+      <div className="flex w-full">
+        <div className="flex flex-col gap-2 flex-1">
+          {identifierElement && <>{identifierElement}</>}
+          <div className="flex justify-between gap-2 w-full">
+            <div className="flex flex-grow gap-3">
+              {iconElement && <>{iconElement}</>}
+              <div className="flex flex-col flex-grow gap-1">
+                <TitleInput
+                  isSubmitting={isSubmitting}
+                  setIsSubmitting={(value) => setIsSubmitting(value)}
+                  onSubmit={onTitleSubmit}
+                  disabled={disabled}
+                  value={titleValue}
+                  containerClassName="-ml-3"
+                />
+                {titleElement && <>{titleElement}</>}
+              </div>
+            </div>
+          </div>
         </div>
         {indicatorElement && <>{indicatorElement}</>}
       </div>
       <DescriptionInput
+        editorReadOnlyRef={editorReadOnlyRef}
+        editorRef={editorRef}
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         itemId={itemId}

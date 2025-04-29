@@ -1,6 +1,7 @@
-import { TStaticViewTypes } from "@plane/types";
+import { TStaticViewTypes, IWorkspaceSearchResults } from "@plane/types";
 import { EUserWorkspaceRoles } from "./user";
 import {
+  EXTENDED_WORKSPACE_RESULT_ENTITIES,
   EXTENDED_WORKSPACE_SETTINGS,
   EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS,
   EXTENDED_WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS,
@@ -81,6 +82,8 @@ export const RESTRICTED_URLS = [
   "licenses",
   "instances",
   "instance",
+  "oauth",
+  "applications",
 ];
 
 export const WORKSPACE_SETTINGS = {
@@ -88,14 +91,14 @@ export const WORKSPACE_SETTINGS = {
     key: "general",
     i18n_label: "workspace_settings.settings.general.title",
     href: `/settings`,
-    access: [EUserWorkspaceRoles.ADMIN],
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/`,
   },
   members: {
     key: "members",
     i18n_label: "workspace_settings.settings.members.title",
     href: `/settings/members`,
-    access: [EUserWorkspaceRoles.ADMIN],
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/members/`,
   },
   "billing-and-plans": {
@@ -126,7 +129,12 @@ export const WORKSPACE_SETTINGS = {
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/api-tokens/`,
   },
+  ...EXTENDED_WORKSPACE_SETTINGS,
 };
+
+export const WORKSPACE_SETTINGS_ACCESS = Object.fromEntries(
+  Object.entries(WORKSPACE_SETTINGS).map(([_, { href, access }]) => [href, access])
+);
 
 export const WORKSPACE_SETTINGS_LINKS: {
   key: string;
@@ -137,17 +145,19 @@ export const WORKSPACE_SETTINGS_LINKS: {
 }[] = [
   WORKSPACE_SETTINGS["general"],
   WORKSPACE_SETTINGS["members"],
-  EXTENDED_WORKSPACE_SETTINGS["project_states"],
+  WORKSPACE_SETTINGS["project_states"],
   WORKSPACE_SETTINGS["billing-and-plans"],
-  EXTENDED_WORKSPACE_SETTINGS["integrations"],
-  EXTENDED_WORKSPACE_SETTINGS["import"],
+  WORKSPACE_SETTINGS["integrations"],
+  WORKSPACE_SETTINGS["applications"],
+  WORKSPACE_SETTINGS["import"],
   WORKSPACE_SETTINGS["export"],
   WORKSPACE_SETTINGS["webhooks"],
   WORKSPACE_SETTINGS["api-tokens"],
-  EXTENDED_WORKSPACE_SETTINGS["worklogs"],
-  EXTENDED_WORKSPACE_SETTINGS["teamspaces"],
-  EXTENDED_WORKSPACE_SETTINGS["initiatives"],
-  EXTENDED_WORKSPACE_SETTINGS["customers"],
+  WORKSPACE_SETTINGS["worklogs"],
+  WORKSPACE_SETTINGS["teamspaces"],
+  WORKSPACE_SETTINGS["initiatives"],
+  WORKSPACE_SETTINGS["customers"],
+  WORKSPACE_SETTINGS["templates"],
 ];
 
 export const ROLE = {
@@ -303,6 +313,7 @@ export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspa
   },
 };
 export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
+  EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["dashboards"],
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["views"],
   EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["active-cycles"],
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["analytics"],
@@ -311,6 +322,7 @@ export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebar
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["archives"],
   EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["initiatives"],
   EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["teamspaces"],
+  EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["customers"],
 ];
 
 export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {
@@ -340,3 +352,17 @@ export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarN
   EXTENDED_WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["pi-chat"],
   WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["projects"],
 ];
+
+export const IS_FAVORITE_MENU_OPEN = "is_favorite_menu_open";
+export const WORKSPACE_DEFAULT_SEARCH_RESULT: IWorkspaceSearchResults = {
+  results: {
+    workspace: [],
+    project: [],
+    issue: [],
+    cycle: [],
+    module: [],
+    issue_view: [],
+    page: [],
+    ...EXTENDED_WORKSPACE_RESULT_ENTITIES,
+  },
+};

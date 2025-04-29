@@ -55,6 +55,22 @@ from .queries.version_check import VersionCheckQuery
 from .queries.timezone import TimezoneListQuery
 from .queries.asset import WorkspaceAssetQuery, ProjectAssetQuery
 from .queries.instance import InstanceQuery
+from .queries.pages import (
+    WorkspaceNestedParentPagesQuery,
+    WorkspaceNestedChildPagesQuery,
+    NestedParentPagesQuery,
+    NestedChildPagesQuery,
+)
+from .queries.stickies import WorkspaceStickiesQuery
+from .queries.epics import (
+    EpicUserPropertyQuery,
+    EpicCountQuery,
+    EpicQuery,
+    EpicLinkQuery,
+    EpicAttachmentQuery,
+    EpicWorkItemsQuery,
+    EpicRelationQuery,
+)
 
 # mutations
 from .mutations.workspace import WorkspaceMutation, WorkspaceInviteMutation
@@ -91,12 +107,30 @@ from .mutations.issues import (
     IssueCycleMutation,
     IssueLinkMutation,
     IssueAttachmentMutation,
+    IssueMutationV2,
 )
 from .mutations.device import DeviceInformationMutation
 from .mutations.asset import (
     UserAssetMutation,
     WorkspaceAssetMutation,
     ProjectAssetMutation,
+)
+from .mutations.pages import (
+    WorkspaceNestedChildArchivePageMutation,
+    WorkspaceNestedChildRestorePageMutation,
+    NestedChildArchivePageMutation,
+    NestedChildRestorePageMutation,
+    WorkspaceNestedChildDeletePageMutation,
+    NestedChildDeletePageMutation,
+)
+from .mutations.stickies import WorkspaceStickiesMutation
+from .mutations.epics import (
+    EpicUserPropertyMutation,
+    EpicMutation,
+    EpicLinkMutation,
+    EpicAttachmentMutation,
+    EpicWorkItemsMutation,
+    EpicRelationMutation,
 )
 
 
@@ -155,6 +189,19 @@ class Query(
     ProjectAssetQuery,
     InstanceQuery,
     IssueShortenedMetaInfoQuery,
+    WorkspaceNestedParentPagesQuery,
+    WorkspaceNestedChildPagesQuery,
+    NestedParentPagesQuery,
+    NestedChildPagesQuery,
+    WorkspaceStickiesQuery,
+    # epics
+    EpicUserPropertyQuery,
+    EpicCountQuery,
+    EpicQuery,
+    EpicLinkQuery,
+    EpicAttachmentQuery,
+    EpicWorkItemsQuery,
+    EpicRelationQuery,
 ):
     pass
 
@@ -195,6 +242,21 @@ class Mutation(
     WorkspaceAssetMutation,
     ProjectAssetMutation,
     IssueLinkMutation,
+    WorkspaceNestedChildArchivePageMutation,
+    WorkspaceNestedChildRestorePageMutation,
+    NestedChildArchivePageMutation,
+    NestedChildRestorePageMutation,
+    WorkspaceNestedChildDeletePageMutation,
+    NestedChildDeletePageMutation,
+    WorkspaceStickiesMutation,
+    IssueMutationV2,
+    # epics
+    EpicUserPropertyMutation,
+    EpicMutation,
+    EpicLinkMutation,
+    EpicAttachmentMutation,
+    EpicWorkItemsMutation,
+    EpicRelationMutation,
 ):
     pass
 

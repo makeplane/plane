@@ -1,13 +1,12 @@
+import { TSlackPayload } from "@plane/etl/slack";
 import { logger } from "@/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
-import { TSlackPayload } from "@plane/etl/slack";
-import { handleMessageAction } from "./handlers/message-action";
-import { handleBlockActions } from "./handlers/block-actions";
 import { MQ, Store } from "@/worker/base";
-import { handleViewSubmission } from "./handlers/view-submission";
-import { handleSlackEvent } from "./handlers/handle-message";
+import { handleBlockActions } from "./handlers/block-actions";
 import { handleCommand } from "./handlers/handle-command";
-import { SentryInstance } from "@/sentry-config";
+import { handleSlackEvent } from "./handlers/handle-message";
+import { handleMessageAction } from "./handlers/message-action";
+import { handleViewSubmission } from "./handlers/view-submission";
 
 export class SlackInteractionHandler extends TaskHandler {
   mq: MQ;
@@ -35,8 +34,6 @@ export class SlackInteractionHandler extends TaskHandler {
         case "view_submission":
           await handleViewSubmission(data);
           break;
-        case "view_closed":
-          break;
         case "event":
           await handleSlackEvent(data);
           break;
@@ -47,12 +44,10 @@ export class SlackInteractionHandler extends TaskHandler {
           break;
       }
     } catch (error) {
-      SentryInstance.captureException(error);
-      logger.error(error);
+      logger.error(`[SLACK] Error processing slack webhook: ${error}`);
     } finally {
       logger.info("[SLACK] Event Processed Successfully");
       return true;
     }
-
   }
 }

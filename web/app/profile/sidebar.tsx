@@ -9,13 +9,13 @@ import {
   ChevronLeft,
   LogOut,
   MoveLeft,
-  Plus,
-  UserPlus,
   Activity,
   Bell,
   CircleUser,
   KeyRound,
   Settings2,
+  CirclePlus,
+  Mails,
   Blocks,
 } from "lucide-react";
 // plane imports
@@ -36,14 +36,14 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 const WORKSPACE_ACTION_LINKS = [
   {
     key: "create_workspace",
-    Icon: Plus,
-    label: "Create workspace",
+    Icon: CirclePlus,
+    i18n_label: "create_workspace",
     href: "/create-workspace",
   },
   {
     key: "invitations",
-    Icon: UserPlus,
-    label: "Invitations",
+    Icon: Mails,
+    i18n_label: "workspace_invites",
     href: "/invitations",
   },
 ];
@@ -246,8 +246,8 @@ export const ProfileLayoutSidebar = observer(() => {
                       sidebarCollapsed ? "justify-center" : ""
                     }`}
                   >
-                    {<link.Icon className="h-4 w-4" />}
-                    {!sidebarCollapsed && t(link.key)}
+                    {<link.Icon className="flex-shrink-0 size-4" />}
+                    {!sidebarCollapsed && t(link.i18n_label)}
                   </div>
                 </Tooltip>
               </Link>

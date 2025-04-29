@@ -7,9 +7,9 @@ import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 import { EUserPermissionsLevel, EUserProjectRoles, EUserWorkspaceRoles } from "@plane/constants";
 import { TTeamspaceView } from "@plane/types";
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { copyUrlToClipboard } from "@plane/utils";
 // helpers
 import { cn } from "@/helpers/common.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store";
 // plane web components

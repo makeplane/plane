@@ -217,7 +217,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
 
             if validator:
                 for value in values:
-                    validator(issue_property=issue_property, value=value)
+                    validator(property=issue_property, value=value)
             else:
                 raise ValidationError("Invalid property type")
 

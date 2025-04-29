@@ -1,8 +1,9 @@
+import { E_ENTITY_CONNECTION_KEYS } from "@plane/etl/core";
 import { SlackMessageResponse } from "@plane/etl/slack";
 import { WebhookIssueCommentPayload } from "@plane/sdk";
+import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
-import { E_ENTITY_CONNECTION_KEYS } from "@plane/etl/core";
 
 const apiClient = getAPIClient();
 
@@ -18,6 +19,14 @@ const handleCommentSync = async (payload: WebhookIssueCommentPayload) => {
     entity_slug: data.data.issue,
   });
 
+  /*
+  In cases where we got a webhook from a comment, but the issues associated with the comment is not part of thread sync, which implies
+  that there is no entity connection for the issue.
+  */
+  if (!entityConnection) {
+    return;
+  }
+
   if (data.data.external_id === null) {
     // Search for the credentials of the creator
     const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
@@ -27,7 +36,10 @@ const handleCommentSync = async (payload: WebhookIssueCommentPayload) => {
     });
 
     const slackData = entityConnection.entity_data as SlackMessageResponse;
-    const { slackService } = await getConnectionDetails(slackData.message.team);
+    const details = await getConnectionDetails(slackData.message.team);
+    if (!details) return logger.info(`[SLACK] No connection details found for team ${slackData.message.team}`);
+
+    const { slackService } = details;
 
     if (credentials && credentials.length > 0 && credentials[0].source_access_token) {
       await slackService.sendMessageAsUser(

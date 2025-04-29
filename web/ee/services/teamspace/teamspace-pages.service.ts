@@ -225,7 +225,12 @@ export class TeamspacePageService extends APIService {
    * @param data
    * @returns
    */
-  async updateDescription(workspaceSlug: string, teamspaceId: string, pageId: string, data: TDocumentPayload): Promise<any> {
+  async updateDescription(
+    workspaceSlug: string,
+    teamspaceId: string,
+    pageId: string,
+    data: TDocumentPayload
+  ): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}/description/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -242,6 +247,21 @@ export class TeamspacePageService extends APIService {
    */
   async duplicate(workspaceSlug: string, teamspaceId: string, pageId: string): Promise<TPage> {
     return this.post(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}/duplicate/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Fetch sub-pages for a teamspace page
+   * @param workspaceSlug
+   * @param teamspaceId
+   * @param pageId
+   * @returns
+   */
+  async fetchSubPages(workspaceSlug: string, teamspaceId: string, pageId: string): Promise<TPage[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${pageId}/sub-pages`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

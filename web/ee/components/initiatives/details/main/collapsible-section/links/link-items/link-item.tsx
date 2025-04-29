@@ -64,7 +64,7 @@ export const IssueLinkItem: FC<TInitiativeLinkItem> = observer((props) => {
         </div>
         <div className="flex items-center gap-1 flex-shrink-0">
           <p className="p-1 text-xs align-bottom leading-5 text-custom-text-400 group-hover-text-custom-text-200">
-            {calculateTimeAgoShort(link.created_at)}
+            {calculateTimeAgoShort(link?.created_at)}
           </p>
           <span
             onClick={() => {

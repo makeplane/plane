@@ -7,6 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 // types
 import { useTranslation } from "@plane/i18n";
 import { EFileAssetType } from "@plane/types/src/enums";
+import { Loader } from "@plane/ui";
 // components
 import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
 // helpers
@@ -88,65 +89,89 @@ export const ProjectDescriptionInput: FC<ProjectDescriptionInputProps> = observe
 
   return (
     <>
-      <Controller
-        name="description_html"
-        control={control}
-        render={({ field: { onChange } }) =>
-          !disabled ? (
-            <RichTextEditor
-              id={project.id}
-              initialValue={initialValue ?? ""}
-              value={project?.description_html ?? null}
-              workspaceSlug={workspaceSlug}
-              workspaceId={workspaceId}
-              projectId={project.id}
-              searchMentionCallback={async (payload) =>
-                await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
-                  ...payload,
-                  project_id: project.id,
-                })
-              }
-              dragDropEnabled
-              onChange={(_description: object, description_html: string) => {
-                setIsSubmitting("submitting");
-                onChange(description_html);
-                debouncedFormSave();
-              }}
-              placeholder={
-                placeholder ? placeholder : (isFocused, value) => t(getDescriptionPlaceholderI18n(isFocused, value))
-              }
-              containerClassName={containerClassName}
-              uploadFile={async (blockId, file) => {
-                try {
-                  const { asset_id } = await uploadEditorAsset({
-                    blockId,
-                    data: {
-                      entity_identifier: project.id,
-                      entity_type: EFileAssetType.PROJECT_DESCRIPTION,
-                    },
-                    file,
-                    projectId: project.id,
-                    workspaceSlug,
-                  });
-                  return asset_id;
-                } catch (error) {
-                  console.log("Error in uploading project asset:", error);
-                  throw new Error("Asset upload failed. Please try again later.");
-                }
-              }}
-            />
-          ) : (
-            <RichTextReadOnlyEditor
-              id={project.id}
-              initialValue={initialValue ?? ""}
-              containerClassName={containerClassName}
-              workspaceId={workspaceId}
-              workspaceSlug={workspaceSlug}
-              projectId={project.id}
-            />
-          )
-        }
-      />
+      {project?.description_html === undefined ? (
+        <>
+          <Loader className="min-h-[120px] max-h-64 space-y-2 overflow-hidden rounded-md ">
+            <Loader.Item width="100%" height="22px" />
+            <div className="flex items-center gap-2">
+              <Loader.Item width="400px" height="22px" />
+            </div>
+            <div className="flex items-center gap-2">
+              <Loader.Item width="400px" height="22px" />
+            </div>
+            <Loader.Item width="80%" height="22px" />
+            <div className="flex items-center gap-2">
+              <Loader.Item width="50%" height="22px" />
+            </div>
+            <div className="border-0.5 absolute bottom-2 right-3.5 z-10 flex items-center gap-2">
+              <Loader.Item width="100px" height="22px" />
+              <Loader.Item width="50px" height="22px" />
+            </div>
+          </Loader>
+        </>
+      ) : (
+        <>
+          <Controller
+            name="description_html"
+            control={control}
+            render={({ field: { onChange } }) =>
+              !disabled ? (
+                <RichTextEditor
+                  id={project.id}
+                  initialValue={initialValue ?? ""}
+                  value={project?.description_html ?? null}
+                  workspaceSlug={workspaceSlug}
+                  workspaceId={workspaceId}
+                  projectId={project.id}
+                  searchMentionCallback={async (payload) =>
+                    await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+                      ...payload,
+                      project_id: project.id,
+                    })
+                  }
+                  dragDropEnabled
+                  onChange={(_description: object, description_html: string) => {
+                    setIsSubmitting("submitting");
+                    onChange(description_html);
+                    debouncedFormSave();
+                  }}
+                  placeholder={
+                    placeholder ? placeholder : (isFocused, value) => t(getDescriptionPlaceholderI18n(isFocused, value))
+                  }
+                  containerClassName={containerClassName}
+                  uploadFile={async (blockId, file) => {
+                    try {
+                      const { asset_id } = await uploadEditorAsset({
+                        blockId,
+                        data: {
+                          entity_identifier: project.id,
+                          entity_type: EFileAssetType.PROJECT_DESCRIPTION,
+                        },
+                        file,
+                        projectId: project.id,
+                        workspaceSlug,
+                      });
+                      return asset_id;
+                    } catch (error) {
+                      console.log("Error in uploading project asset:", error);
+                      throw new Error("Asset upload failed. Please try again later.");
+                    }
+                  }}
+                />
+              ) : (
+                <RichTextReadOnlyEditor
+                  id={project.id}
+                  initialValue={initialValue ?? ""}
+                  containerClassName={containerClassName}
+                  workspaceId={workspaceId}
+                  workspaceSlug={workspaceSlug}
+                  projectId={project.id}
+                />
+              )
+            }
+          />
+        </>
+      )}
     </>
   );
 });
