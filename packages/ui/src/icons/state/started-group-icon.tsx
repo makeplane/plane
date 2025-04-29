@@ -13,8 +13,13 @@ export const StartedGroupIcon: React.FC<ISvgIcons> = ({
   percentage = 100,
 }) => {
   // Ensure percentage is between 0 and 100
-  const calculatedPercentage = percentage * 100 || 100;
-  const validPercentage = Math.max(0, Math.min(100, calculatedPercentage));
+  const normalized =
+    typeof percentage === "number"
+      ? percentage <= 1
+        ? percentage * 100 // treat 0-1 as fraction
+        : percentage // already 0-100
+      : 100; // fallback
+  const validPercentage = Math.max(0, Math.min(100, normalized));
 
   // SVG parameters
   const viewBoxSize = 16;
