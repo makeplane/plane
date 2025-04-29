@@ -5,6 +5,7 @@ import { observer } from 'mobx-react'
 import { useParams } from 'next/navigation'
 import AnalyticsSectionWrapper from '../analytics-section-wrapper'
 import PriorityChart from './priority-chart'
+import { PriorityDropdown } from '@/components/dropdowns'
 
 type Props = {}
 const analyticsV2Service = new AnalyticsV2Service()
@@ -15,7 +16,13 @@ const CustomizedInsights = observer((props: Props) => {
   const workspaceSlug = params.workspaceSlug as string;
 
   return (
-    <AnalyticsSectionWrapper title={t('workspace_analytics.customized_insights')} subtitle={selectedDurationLabel} className='col-span-1'>
+    <AnalyticsSectionWrapper title={t('workspace_analytics.customized_insights')} subtitle={selectedDurationLabel} className='col-span-1'
+      actions={<PriorityDropdown
+        value={"medium"}
+        onChange={() => { }}
+        buttonVariant="border-with-text"
+      />}
+    >
       <PriorityChart />
     </AnalyticsSectionWrapper>
   )

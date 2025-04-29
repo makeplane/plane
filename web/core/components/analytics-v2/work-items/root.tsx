@@ -13,8 +13,8 @@ const WorkItems: React.FC<Props> = (props) => {
     <AnalyticsWrapper title="Work Items" >
       <div className='flex flex-col gap-14'>
         <TotalInsights analyticsType='work-items' />
-        <CustomizedInsights />
         <CreatedVsResolved />
+        <CustomizedInsights />
         <WorkItemsInsightTable />
       </div>
     </AnalyticsWrapper>
