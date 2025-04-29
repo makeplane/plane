@@ -432,6 +432,11 @@ ATTACHMENT_MIME_TYPES = [
     # Gzip
     "application/x-gzip",
 ]
+
+
+# Seed directory path
+SEED_DIR = os.path.join(BASE_DIR, "seeds")
+
 # Prime Server Base url
 PRIME_SERVER_BASE_URL = os.environ.get("PRIME_SERVER_BASE_URL", False)
 PRIME_SERVER_AUTH_TOKEN = os.environ.get("PRIME_SERVER_AUTH_TOKEN", "")
@@ -530,3 +535,4 @@ if ELASTICSEARCH_ENABLED:
 
 # Web URL
 WEB_URL = os.environ.get("WEB_URL", "http://localhost:3000")
+

@@ -49,6 +49,7 @@ from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_cookie
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.license.utils.instance_value import get_configuration_value
+from plane.bgtasks.workspace_seed_task import workspace_seed
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 from django.conf import settings
 
@@ -134,9 +135,12 @@ class WorkSpaceViewSet(BaseViewSet):
                 data = serializer.data
                 data["total_members"] = total_members
                 data["role"] = 20
-
+                
+                # seed the workspace
+                workspace_seed.delay(serializer.data["id"])
                 # Sync workspace members
                 member_sync_task.delay(slug)
+
 
                 return Response(data, status=status.HTTP_201_CREATED)
             return Response(
