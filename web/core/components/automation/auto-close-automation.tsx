@@ -149,7 +149,11 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                       label={
                         <div className="flex items-center gap-2">
                           {selectedOption ? (
-                            <StateGroupIcon stateGroup={selectedOption.group} color={selectedOption.color} size="lg" />
+                            <StateGroupIcon
+                              stateGroup={selectedOption.group}
+                              color={selectedOption.color}
+                              size={EIconSize.LG}
+                            />
                           ) : currentDefaultState ? (
                             <StateGroupIcon
                               stateGroup={currentDefaultState.group}
