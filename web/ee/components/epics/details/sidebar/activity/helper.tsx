@@ -17,7 +17,7 @@ export type TEpicActivityFields =
   | "name"
   | "description"
   | "state"
-  | "assignee"
+  | "assignees"
   | "priority"
   | "start_date"
   | "target_date"
@@ -79,7 +79,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
       </>
     ),
   }),
-  assignee_updated: (activity: TIssueActivity) => ({
+  assignees_updated: (activity: TIssueActivity) => ({
     icon: <Users className={commonIconClassName} />,
     message: (
       <>
@@ -204,7 +204,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     icon: <CustomersIcon className={commonIconClassName} />,
     message: (
       <>
-        added this work item to the customer request{" "}
+        added this epic to the customer request{" "}
         <a
           href={`/${activity.workspace_detail?.slug}/customers/${activity.new_identifier}`}
           target="_blank"
@@ -220,7 +220,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     icon: <CustomersIcon className={commonIconClassName} />,
     message: (
       <>
-        removed this work item from the customer request{" "}
+        removed this epic from the customer request{" "}
         <a
           href={`/${activity.workspace_detail?.slug}/customers/${activity.old_identifier}`}
           target="_blank"
@@ -236,7 +236,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     icon: <CustomersIcon className={commonIconClassName} />,
     message: (
       <>
-        added this work item to the customer{" "}
+        added this epic to the customer{" "}
         <a
           href={`/${activity.workspace_detail?.slug}/customers/${activity.new_identifier}`}
           target="_blank"
@@ -252,7 +252,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
     icon: <CustomersIcon className={commonIconClassName} />,
     message: (
       <>
-        removed this work item from the customer{" "}
+        removed this epic from the customer{" "}
         <a
           href={`/${activity.workspace_detail?.slug}/customers/${activity.old_identifier}`}
           target="_blank"
