@@ -56,8 +56,10 @@
   "something_went_wrong_please_try_again": "Something went wrong. Please try again.",
   "load_more": "Load more",
   "select_or_customize_your_interface_color_scheme": "Select or customize your interface color scheme.",
+  "select_the_cursor_motion_style_that_feels_right_for_you": "Select the cursor motion style that feels right for you.",
   "theme": "Theme",
-  "system_preference": "System preference",
+  "smooth_cursor": "Smooth Cursor",
+  "system_preference": "System Preference",
   "light": "Light",
   "dark": "Dark",
   "light_contrast": "Light high contrast",
@@ -335,6 +337,74 @@
   "edited": "edited",
   "bot": "Bot",
 
+  "updates": {
+    "progress": {
+      "title": "Progress",
+      "since_last_update": "Since last update",
+      "comments": "{count, plural, one{# Comment} other{# Comments}}"
+    },
+    "add_update": "Add Update",
+    "add_update_placeholder": "Add your update here",
+    "empty": {
+      "title": "No updates yet",
+      "description": "You can see the updates here."
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reaction created",
+          "message": "The reaction has been successfully created"
+        },
+        "error": {
+          "title": "Reaction not created",
+          "message": "The reaction could not be created"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reaction removed",
+          "message": "The reaction has been successfully removed"
+        },
+        "error": {
+          "title": "Reaction not removed",
+          "message": "The reaction could not be removed"
+        }
+      }
+    },
+    "create": {
+      "success": {
+        "title": "Update created",
+        "message": "The update has been successfully created"
+      },
+      "error": {
+        "title": "Update not created",
+        "message": "The update could not be created"
+      }
+    },
+    "delete": {
+      "title": "Delete update",
+      "confirmation": "Are you sure you want to delete this update? This is an irreversible action.",
+      "success": {
+        "title": "Update deleted",
+        "message": "The update has been successfully deleted"
+      },
+      "error": {
+        "title": "Update not deleted",
+        "message": "The update could not be deleted"
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Updated",
+        "message": "The update has been successfully updated"
+      },
+      "error": {
+        "title": "Update not updated",
+        "message": "The update could not be updated"
+      }
+    }
+  },
+
   "project_view": {
     "sort_by": {
       "created_at": "Created at",
@@ -503,6 +573,8 @@
     "work_item": "Work item",
     "work_items": "Work items",
     "sub_work_item": "Sub-work item",
+    "views": "Views",
+    "pages": "Pages",
     "add": "Add",
     "warning": "Warning",
     "updating": "Updating",
@@ -614,7 +686,13 @@
       "label": "Search",
       "placeholder": "Type to search",
       "no_matches_found": "No matches found",
-      "no_matching_results": "No matching results"
+      "no_matching_results": "No matching results",
+      "min_chars": "Type at least {count} characters to search",
+      "error": "Error fetching search results",
+      "no_results": {
+        "title": "No matching results",
+        "description": "Remove the search criteria to see all results"
+      }
     },
     "actions": {
       "edit": "Edit",
@@ -1895,7 +1973,7 @@
     "empty_state": {
       "general": {
         "title": "Save filtered views for your project. Create as many as you need",
-        "description": "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best.",
+        "description": "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone's views and choose whichever suits their needs best.",
         "primary_button": {
           "text": "Create your first view",
           "comic": {
@@ -2178,7 +2256,7 @@
     },
     "admin": {
       "title": "Admin",
-      "description": "All permissions set to true within the workspace."
+      "description": "All permissions set to true within the workspace."
     }
   },
 
@@ -2295,5 +2373,49 @@
     "last_edited_by": "Last edited by",
     "previously_edited_by": "Previously edited by",
     "edited_by": "Edited by"
+  },
+
+  "intake_forms": {
+    "create": {
+      "title": "Create a work item",
+      "sub-title": "Let the team know what you would like them to work on.",
+      "name": "Name",
+      "email": "Email",
+      "about": "What's this work item about?",
+      "description": "Describe what should happen",
+      "description_placeholder": "Add as much detail as you'd like to help the team identify your exact situation and needs.",
+      "loading": "Creating",
+      "create_work_item": "Create work item",
+      "errors": {
+        "name": "Name is required",
+        "name_max_length": "Name should be less than 255 characters",
+        "email": "Email is required",
+        "email_invalid": "Invalid email address",
+        "title": "Title is required",
+        "title_max_length": "Title should be less than 255 characters"
+      }
+    },
+    "success": {
+      "title": "Yay! Your work item is now in the team's queue.",
+      "description": "The team can now either approve or discard this work item from their Intake queue.",
+      "primary_button": {
+        "text": "Add another work item"
+      },
+      "secondary_button": {
+        "text": "Learn more about Intake"
+      }
+    },
+    "how_it_works": {
+      "title": "How it works?",
+      "heading": "This is an Intake form.",
+      "description": "Intake is a Plane feature that lets project admins and managers get work items from outside into their projects. ",
+      "steps": {
+        "step_1": "This short form lets you create a new work item in a Plane project.",
+        "step_2": "When you submit this form, a new work item is created in that project's Intake.",
+        "step_3": "Someone from that project or team will review this.",
+        "step_4": "If they approve it, this work item will move to the project's queue of work. Otherwise, it will be rejected.",
+        "step_5": "To check for the status of that work item, get in touch with the project's manager, admin, or whoever sent you the link to this page."
+      }
+    }
   }
 }

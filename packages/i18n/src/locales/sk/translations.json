@@ -224,8 +224,10 @@
   "something_went_wrong_please_try_again": "Niečo sa pokazilo. Skúste to prosím znova.",
   "load_more": "Načítať viac",
   "select_or_customize_your_interface_color_scheme": "Vyberte alebo prispôsobte farebnú schému rozhrania.",
+  "select_the_cursor_motion_style_that_feels_right_for_you": "Vyberte štýl pohybu kurzora, ktorý vám vyhovuje.",
   "theme": "Téma",
-  "system_preference": "Systémové predvoľby",
+  "smooth_cursor": "Plynulý kurzor",
+  "system_preference": "Systémové preferencie",
   "light": "Svetlé",
   "dark": "Tmavé",
   "light_contrast": "Svetlý vysoký kontrast",
@@ -499,6 +501,74 @@
   "re_generate_key": "Znova generovať kľúč",
   "export": "Exportovať",
   "member": "{count, plural, one{# člen} few{# členovia} other{# členov}}",
+  "updates": {
+    "add_update": "Pridať aktualizáciu",
+    "add_update_placeholder": "Vložte vašu aktualizáciu tu",
+    "empty": {
+      "title": "Ešte nie sú žiadne aktualizácie",
+      "description": "Tu môžete zobraziť aktualizácie."
+    },
+    "delete": {
+      "title": "Odstrániť aktualizáciu",
+      "confirmation": "Naozaj chcete odstrániť túto aktualizáciu? Táto akcia je neobnoviteľná.",
+      "success": {
+        "title": "Aktualizácia odstránená",
+        "message": "Aktualizácia bola úspešne odstránená."
+      },
+      "error": {
+        "title": "Aktualizáciu sa nepodarilo odstrániť",
+        "message": "Aktualizáciu sa nepodarilo odstrániť."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Aktualizácia aktualizovaná",
+        "message": "Aktualizácia bola úspešne aktualizovaná."
+      },
+      "error": {
+        "title": "Aktualizáciu sa nepodarilo aktualizovať",
+        "message": "Aktualizáciu sa nepodarilo aktualizovať."
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reakcia vytvorená",
+          "message": "Reakcia bola úspešne vytvorená."
+        },
+        "error": {
+          "title": "Reakcia sa nepodarila vytvoriť",
+          "message": "Reakcia sa nepodarila vytvoriť."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reakcia odstránená",
+          "message": "Reakcia bola úspešne odstránená."
+        },
+        "error": {
+          "title": "Reakcia sa nepodarila odstrániť",
+          "message": "Reakcia sa nepodarila odstrániť."
+        }
+      }
+    },
+    "progress": {
+      "title": "Postup",
+      "since_last_update": "Od poslednej aktualizácie",
+      "comments": "{count, plural, one{# komentár} few{# komentáre} other{# komentárov}}"
+    },
+    "create": {
+      "success": {
+        "title": "Aktualizácia vytvorená",
+        "message": "Aktualizácia bola úspešne vytvorená."
+      },
+      "error": {
+        "title": "Aktualizáciu sa nepodarilo vytvoriť",
+        "message": "Aktualizáciu sa nepodarilo vytvoriť."
+      }
+    }
+  },
+  
   "new_password_must_be_different_from_old_password": "Nové heslo musí byť odlišné od starého hesla",
   "edited": "Upravené",
   "bot": "Bot",

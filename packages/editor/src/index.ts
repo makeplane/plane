@@ -5,6 +5,7 @@ import "./styles/editor.css";
 import "./styles/table.css";
 import "./styles/github-dark.css";
 import "./styles/drag-drop.css";
+import "./styles/title-editor.css";
 
 // editors
 export {
@@ -15,6 +16,7 @@ export {
   RichTextEditorWithRef,
   RichTextReadOnlyEditorWithRef,
 } from "@/components/editors";
+export { PiChatEditor } from "./ee/components/editors";
 
 export { isCellSelection } from "@/extensions/table/table/utilities/is-cell-selection";
 
