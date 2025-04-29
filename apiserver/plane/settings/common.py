@@ -396,3 +396,6 @@ ATTACHMENT_MIME_TYPES = [
     # Gzip
     "application/x-gzip",
 ]
+
+# Seed directory path
+SEED_DIR = os.path.join(BASE_DIR, "seeds")
