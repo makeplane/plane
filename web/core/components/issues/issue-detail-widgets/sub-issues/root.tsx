@@ -21,7 +21,7 @@ export const SubIssuesCollapsible: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId, disabled = false, issueServiceType } = props;
   // store hooks
   const { openWidgets, toggleOpenWidget } = useIssueDetail(issueServiceType);
-  // derived state
+  // derived values
   const isCollapsibleOpen = openWidgets.includes("sub-issues");
 
   return (
@@ -33,7 +33,8 @@ export const SubIssuesCollapsible: FC<Props> = observer((props) => {
           isOpen={isCollapsibleOpen}
           parentIssueId={issueId}
           disabled={disabled}
-          issueServiceType={issueServiceType}
+          projectId={projectId}
+          workspaceSlug={workspaceSlug}
         />
       }
       buttonClassName="w-full"

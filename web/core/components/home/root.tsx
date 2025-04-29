@@ -12,7 +12,7 @@ import { cn } from "@/helpers/common.helper";
 import { useUserProfile, useEventTracker, useUser } from "@/hooks/store";
 import { useHome } from "@/hooks/store/use-home";
 import useSize from "@/hooks/use-window-size";
-import { IssuePeekOverview } from "../issues";
+import { HomePeekOverviewsRoot } from "@/plane-web/components/home";
 import { DashboardWidgets } from "./home-dashboard-widgets";
 import { UserGreetingsView } from "./user-greetings";
 
@@ -57,7 +57,7 @@ export const WorkspaceHomeView = observer(() => {
         </div>
       )}
       <>
-        <IssuePeekOverview />
+        <HomePeekOverviewsRoot />
         <ContentWrapper
           className={cn("gap-6 bg-custom-background-90/20", {
             "vertical-scrollbar scrollbar-lg": windowWidth >= 768,
