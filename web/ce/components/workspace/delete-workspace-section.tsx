@@ -44,7 +44,7 @@ export const DeleteWorkspaceSection: FC<TDeleteWorkspace> = observer((props) => 
             }
           >
             <div className="flex flex-col gap-4">
-              <span className="text-base tracking-tight">
+              <span className="text-base tracking-tight w-[800px]">
                 {t("workspace_settings.settings.general.delete_workspace_description")}
               </span>
               <div>

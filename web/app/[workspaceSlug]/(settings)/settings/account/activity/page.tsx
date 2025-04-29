@@ -62,7 +62,7 @@ const ProfileActivityPage = observer(() => {
     <>
       <PageHead title="Profile - Activity" />
       <ProfileSettingContentHeader title={t("activity")} />
-      {activityPages}
+      <div className="w-full">{activityPages}</div>
       {isLoadMoreVisible && (
         <div className="flex w-full items-center justify-center text-xs">
           <Button variant="accent-primary" size="sm" onClick={handleLoadMore}>

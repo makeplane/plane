@@ -10,7 +10,7 @@ interface SettingsSidebarProps {
   };
   workspaceSlug: string;
   isActive: boolean | ((data: { href: string }) => boolean);
-  shouldRender: (setting: TSettingItem) => boolean;
+  shouldRender: boolean | ((setting: TSettingItem) => boolean);
   actionIcons?: (props: { type: string; size?: number; className?: string }) => React.ReactNode;
   appendItemsToTitle?: (key: string) => React.ReactNode;
   renderChildren?: (key: string) => React.ReactNode;

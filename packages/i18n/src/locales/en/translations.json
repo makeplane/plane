@@ -1420,29 +1420,29 @@
         }
       },
       "api_tokens": {
-        "title": "API Tokens",
-        "add_token": "Add API token",
+        "title": "Personal Access Tokens",
+        "add_token": "Add personal access token",
         "create_token": "Create token",
         "never_expires": "Never expires",
         "generate_token": "Generate token",
         "generating": "Generating",
         "delete": {
-          "title": "Delete API token",
+          "title": "Delete personal access token",
           "description": "Any application using this token will no longer have the access to Plane data. This action cannot be undone.",
           "success": {
             "title": "Success!",
-            "message": "The API token has been successfully deleted"
+            "message": "The token has been successfully deleted"
           },
           "error": {
             "title": "Error!",
-            "message": "The API token could not be deleted"
+            "message": "The token could not be deleted"
           }
         }
       }
     },
     "empty_state": {
       "api_tokens": {
-        "title": "No API tokens created",
+        "title": "No personal access tokens created",
         "description": "Plane APIs can be used to integrate your data in Plane with any external system. Create a token to get started."
       },
       "webhooks": {
