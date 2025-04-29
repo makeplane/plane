@@ -29,7 +29,7 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
   const { workspaceSlug, initiativeId, disabled, toggleEpicModal, toggleProjectModal } = props;
 
   const {
-    initiative: { getInitiativeById, updateInitiative, getInitiativeEpicsById },
+    initiative: { getInitiativeById, updateInitiative, epics: {getInitiativeEpicsById} },
   } = useInitiatives();
   const { getUserDetails } = useMember();
 

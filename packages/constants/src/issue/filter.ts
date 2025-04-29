@@ -1,5 +1,10 @@
 import { IIssueDisplayProperties, ILayoutDisplayFiltersOptions, TIssueActivityComment } from "@plane/types";
-import { TIssueFilterPriorityObject, ISSUE_DISPLAY_PROPERTIES_KEYS, EIssuesStoreType } from "./common";
+import {
+  TIssueFilterPriorityObject,
+  ISSUE_DISPLAY_PROPERTIES_KEYS,
+  EIssuesStoreType,
+  SUB_ISSUES_DISPLAY_PROPERTIES_KEYS,
+} from "./common";
 
 // EE : Extended filters
 
@@ -249,24 +254,8 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       ],
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
-        group_by: [
-          "state",
-          "priority",
-          "cycle",
-          "module",
-          "labels",
-          "assignees",
-          "created_by",
-          null,
-        ],
-        order_by: [
-          "sort_order",
-          "-created_at",
-          "-updated_at",
-          "start_date",
-          "-priority",
-          "target_date",
-        ],
+        group_by: ["state", "priority", "cycle", "module", "labels", "assignees", "created_by", null],
+        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
         type: [null, "active", "backlog"],
       },
       extra_options: {
@@ -364,6 +353,19 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       display_filters: {
         order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
         type: [null, "active", "backlog"],
+      },
+      extra_options: {
+        access: true,
+        values: ["sub_issue"],
+      },
+    },
+  },
+  sub_work_items: {
+    list: {
+      display_properties: SUB_ISSUES_DISPLAY_PROPERTIES_KEYS,
+      filters: [],
+      display_filters: {
+        order_by: ["-created_at", "-updated_at", "start_date", "-priority"],
       },
       extra_options: {
         access: true,

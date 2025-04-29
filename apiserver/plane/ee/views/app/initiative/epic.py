@@ -35,6 +35,8 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.initiative_activity_task import initiative_activity
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
+from plane.utils.order_queryset import order_issue_queryset
+from collections import defaultdict
 
 
 class InitiativeEpicViewSet(BaseViewSet):
@@ -213,6 +215,31 @@ class InitiativeEpicViewSet(BaseViewSet):
                 "update_status",
             )
         )
+
+        # Ordering
+        order_by_param = request.GET.get("order_by", "-created_at")
+        group_by = request.GET.get("group_by", False)
+
+        if order_by_param:
+            epics, order_by_param = order_issue_queryset(epics, order_by_param)
+
+        # Grouping
+        if group_by:
+            result_dict = defaultdict(list)
+
+            for epic in epics:
+                if group_by == "assignees__ids":
+                    if epic["assignee_ids"]:
+                        assignee_ids = epic["assignee_ids"]
+                        for assignee_id in assignee_ids:
+                            result_dict[str(assignee_id)].append(epic)
+                    elif epic["assignee_ids"] == []:
+                        result_dict["None"].append(epic)
+
+                elif group_by:
+                    result_dict[str(epic[group_by])].append(epic)
+
+            return Response(result_dict, status=status.HTTP_200_OK)
 
         return Response(epics, status=status.HTTP_200_OK)
 

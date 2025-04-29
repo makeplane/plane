@@ -24,7 +24,7 @@ export const InitiativeCollapsibleSection: FC<Props> = observer((props) => {
   // store hooks
   const {
     initiative: {
-      getInitiativeEpicsById,
+      epics: { getInitiativeEpicsById },
       getInitiativeById,
       initiativeLinks: { getInitiativeLinks },
       initiativeAttachments: { getAttachmentsByInitiativeId },
