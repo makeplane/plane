@@ -1,7 +1,4 @@
-import {
-  ILayoutDisplayFiltersOptions,
-  TIssueActivityComment,
-} from "@plane/types";
+import { ILayoutDisplayFiltersOptions, TIssueActivityComment } from "@plane/types";
 import {
   TIssueFilterPriorityObject,
   ISSUE_DISPLAY_PROPERTIES_KEYS,
@@ -361,6 +358,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       filters: [],
       display_filters: {
         order_by: ["-created_at", "-updated_at", "start_date", "-priority"],
+        group_by: ["state", "priority", "assignees", null],
       },
       extra_options: {
         access: true,
@@ -370,9 +368,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
   },
 };
 
-export const ISSUE_STORE_TO_FILTERS_MAP: Partial<
-  Record<EIssuesStoreType, TFiltersByLayout>
-> = {
+export const ISSUE_STORE_TO_FILTERS_MAP: Partial<Record<EIssuesStoreType, TFiltersByLayout>> = {
   [EIssuesStoreType.PROJECT]: ISSUE_DISPLAY_FILTERS_BY_PAGE.issues,
 };
 
@@ -383,10 +379,7 @@ export enum EActivityFilterType {
 
 export type TActivityFilters = EActivityFilterType;
 
-export const ACTIVITY_FILTER_TYPE_OPTIONS: Record<
-  TActivityFilters,
-  { labelTranslationKey: string }
-> = {
+export const ACTIVITY_FILTER_TYPE_OPTIONS: Record<TActivityFilters, { labelTranslationKey: string }> = {
   [EActivityFilterType.ACTIVITY]: {
     labelTranslationKey: "common.updates",
   },
@@ -402,17 +395,12 @@ export type TActivityFilterOption = {
   onClick: () => void;
 };
 
-export const defaultActivityFilters: TActivityFilters[] = [
-  EActivityFilterType.ACTIVITY,
-  EActivityFilterType.COMMENT,
-];
+export const defaultActivityFilters: TActivityFilters[] = [EActivityFilterType.ACTIVITY, EActivityFilterType.COMMENT];
 
 export const filterActivityOnSelectedFilters = (
   activity: TIssueActivityComment[],
   filters: TActivityFilters[]
 ): TIssueActivityComment[] =>
-  activity.filter((activity) =>
-    filters.includes(activity.activity_type as TActivityFilters)
-  );
+  activity.filter((activity) => filters.includes(activity.activity_type as TActivityFilters));
 
 export const ENABLE_ISSUE_DEPENDENCIES = false;

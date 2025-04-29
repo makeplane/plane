@@ -4,6 +4,7 @@ import { ALL_ISSUES, EIssueFilterType, EIssueGroupByToServerOptions } from "@pla
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
+  IIssueFilterOptions,
   IIssueFilters,
   TGroupedIssueCount,
   TGroupedIssues,
@@ -22,7 +23,7 @@ export interface IWorkItemSubIssueFiltersStore {
     workspaceSlug: string,
     projectId: string,
     filterType: EIssueFilterType,
-    filters: IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    filters: IIssueDisplayFilterOptions | IIssueDisplayProperties | IIssueFilterOptions,
     parentId: string
   ) => Promise<void>;
   getSubIssueFilters: (parentId: string) => Partial<IIssueFilters>;
@@ -56,6 +57,7 @@ export class WorkItemSubIssueFiltersStore implements IWorkItemSubIssueFiltersSto
    */
   initSubIssueFilters = (parentId: string) => {
     set(this.subIssueFiltersMap, [parentId], {
+      filters: {},
       displayFilters: {},
       displayProperties: {
         key: true,
@@ -150,9 +152,20 @@ export class WorkItemSubIssueFiltersStore implements IWorkItemSubIssueFiltersSto
   };
 
   computedFilterParams = (parentId: string) => {
-    const displayFilters = this.getSubIssueFilters(parentId).displayFilters;
+    const filters = this.getSubIssueFilters(parentId);
+
+    const displayFilters = filters.displayFilters;
+    const filterOptions = filters.filters;
 
     const computedFilters: Partial<Record<TIssueParams, undefined | string[] | boolean | string>> = {
+      // issue filters
+      priority: filterOptions?.priority || undefined,
+      state: filterOptions?.state || undefined,
+      assignees: filterOptions?.assignees || undefined,
+      start_date: filterOptions?.start_date || undefined,
+      target_date: filterOptions?.target_date || undefined,
+      project: filterOptions?.project || undefined,
+      issue_type: filterOptions?.issue_type || undefined,
       order_by: displayFilters?.order_by || undefined,
       group_by: displayFilters?.group_by ? EIssueGroupByToServerOptions[displayFilters.group_by] : undefined,
     };
@@ -181,11 +194,16 @@ export class WorkItemSubIssueFiltersStore implements IWorkItemSubIssueFiltersSto
     workspaceSlug: string,
     projectId: string,
     filterType: EIssueFilterType,
-    filters: IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    filters: IIssueDisplayFilterOptions | IIssueDisplayProperties | IIssueFilterOptions,
     parentId: string
   ) => {
     const _filters = this.getSubIssueFilters(parentId);
     switch (filterType) {
+      case EIssueFilterType.FILTERS: {
+        set(this.subIssueFiltersMap, [parentId, "filters"], { ..._filters.filters, ...filters });
+        this.subIssueStore.fetchSubIssues(workspaceSlug, projectId, parentId);
+        break;
+      }
       case EIssueFilterType.DISPLAY_FILTERS: {
         set(this.subIssueFiltersMap, [parentId, "displayFilters"], { ..._filters.displayFilters, ...filters });
         this.subIssueStore.fetchSubIssues(workspaceSlug, projectId, parentId);

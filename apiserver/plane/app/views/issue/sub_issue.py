@@ -153,7 +153,7 @@ class SubIssuesEndpoint(BaseAPIView):
             result_dict = defaultdict(list)
 
             for issue in sub_issues:
-                if group_by == "assignees__ids":
+                if group_by == "assignees__id":
                     if issue["assignee_ids"]:
                         assignee_ids = issue["assignee_ids"]
                         for assignee_id in assignee_ids:

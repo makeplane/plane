@@ -1,9 +1,9 @@
 import { FC } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
+import { SlidersHorizontal } from "lucide-react";
 import { IIssueDisplayFilterOptions, ILayoutDisplayFiltersOptions, IIssueDisplayProperties } from "@plane/types";
-import { DisplayPropertiesIcon } from "@plane/ui";
-import { FilterDisplayProperties, FilterOrderBy, FiltersDropdown } from "@/components/issues";
+import { FilterDisplayProperties, FilterGroupBy, FilterOrderBy, FiltersDropdown } from "@/components/issues";
 
 type TSubIssueDisplayFiltersProps = {
   displayProperties: IIssueDisplayProperties;
@@ -29,7 +29,7 @@ export const SubIssueDisplayFilters: FC<TSubIssueDisplayFiltersProps> = observer
       {layoutDisplayFiltersOptions?.display_filters && layoutDisplayFiltersOptions?.display_properties.length > 0 && (
         <FiltersDropdown
           placement="bottom-end"
-          menuButton={<DisplayPropertiesIcon className="h-3.5 w-3.5 text-custom-text-100" />}
+          menuButton={<SlidersHorizontal className="h-3.5 w-3.5 text-custom-text-100" />}
         >
           <div
             onClick={(e) => {
@@ -45,6 +45,20 @@ export const SubIssueDisplayFilters: FC<TSubIssueDisplayFiltersProps> = observer
                 displayPropertiesToRender={layoutDisplayFiltersOptions.display_properties}
                 handleUpdate={handleDisplayPropertiesUpdate}
                 isEpic={isEpic}
+              />
+            </div>
+
+            {/* group by */}
+            <div className="py-2">
+              <FilterGroupBy
+                displayFilters={displayFilters}
+                groupByOptions={layoutDisplayFiltersOptions?.display_filters.group_by ?? []}
+                handleUpdate={(val) =>
+                  handleDisplayFiltersUpdate({
+                    group_by: val,
+                  })
+                }
+                ignoreGroupedFilters={[]}
               />
             </div>
 
