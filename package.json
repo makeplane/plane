@@ -32,5 +32,5 @@
     "@babel/helpers": "7.26.10",
     "@babel/runtime": "7.26.10"
   },
-  "packageManager": "yarn@4.9.1"
+  "packageManager": "yarn@1.22.22"
 }
