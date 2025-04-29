@@ -20,6 +20,7 @@ from django.db.models import (
 )
 from plane.utils.build_chart import build_analytics_chart
 from datetime import timedelta
+from django.db.models.functions import TruncDay
 
 
 class AdvanceAnalyticsEndpoint(BaseAPIView):
@@ -356,19 +357,133 @@ class AdvanceAnalyticsChartEndpoint(BaseAPIView):
             for key, value in data.items()
         ]
 
+    def work_item_completion_chart(self, filters, date_filter="last_30_days"):
+        # Get the base queryset
+        queryset = (
+            Issue.issue_objects.filter(
+                workspace__slug=self._workspace_slug,
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related(
+                "assignees", "labels", "issue_module__module", "issue_cycle__cycle"
+            )
+        )
+
+        # Apply any additional filters
+        if filters:
+            queryset = queryset.filter(**filters)
+
+        # Get the date range
+        today = timezone.now().date()
+        date_ranges = {
+            "today": (today, today),
+            "yesterday": (
+                today - timezone.timedelta(days=1),
+                today - timezone.timedelta(days=1),
+            ),
+            "last_30_days": (today - timezone.timedelta(days=30), today),
+            "last_3_months": (today - timezone.timedelta(days=90), today),
+        }
+
+        # Handle custom date range if provided in filters
+        if (
+            isinstance(filters, dict)
+            and "start_date" in filters
+            and "end_date" in filters
+        ):
+            try:
+                start_date = timezone.datetime.strptime(
+                    filters["start_date"], "%Y-%m-%d"
+                ).date()
+                end_date = timezone.datetime.strptime(
+                    filters["end_date"], "%Y-%m-%d"
+                ).date()
+            except ValueError:
+                return Response(
+                    {"error": "Invalid date format. Use YYYY-MM-DD"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        else:
+            start_date, end_date = date_ranges.get(
+                date_filter, date_ranges["last_30_days"]
+            )
+
+        # Get daily stats
+        daily_stats = (
+            queryset.filter(
+                Q(created_at__date__gte=start_date, created_at__date__lte=end_date)
+                | Q(
+                    completed_at__date__gte=start_date, completed_at__date__lte=end_date
+                )
+            )
+            .annotate(
+                date=TruncDay("created_at"),
+                created_count=Count(
+                    "id",
+                    filter=Q(
+                        created_at__date__gte=start_date, created_at__date__lte=end_date
+                    ),
+                ),
+                completed_count=Count(
+                    "id",
+                    filter=Q(
+                        completed_at__date__gte=start_date,
+                        completed_at__date__lte=end_date,
+                    ),
+                ),
+            )
+            .values("date", "created_count", "completed_count")
+            .order_by("date")
+        )
+
+        # Create a dictionary of existing stats
+        stats_dict = {
+            stat["date"].strftime("%Y-%m-%d"): {
+                "created_count": stat["created_count"],
+                "completed_count": stat["completed_count"],
+            }
+            for stat in daily_stats
+        }
+
+        # Generate data for all days in the range
+        data = []
+        current_date = start_date
+        while current_date <= end_date:
+            date_str = current_date.strftime("%Y-%m-%d")
+            stats = stats_dict.get(date_str, {"created_count": 0, "completed_count": 0})
+            data.append(
+                {
+                    "key": date_str,
+                    "name": date_str,
+                    "count": stats["created_count"] + stats["completed_count"],
+                    "completed_issues": stats["completed_count"],
+                    "created_issues": stats["created_count"],
+                }
+            )
+            current_date += timezone.timedelta(days=1)
+
+        schema = {
+            "completed_issues": "completed_issues",
+            "created_issues": "created_issues",
+        }
+
+        return {"data": data, "schema": schema}
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
-
         self.initialize_workspace(slug)
         type = request.GET.get("type", "overview")
         filters = request.GET.get("filters", {})
         group_by = request.GET.get("group_by", None)
         x_axis = request.GET.get("x_axis", "PRIORITY")
+        date_filter = request.GET.get("date_filter", "last_30_days")
 
         if type == "projects":
             return Response(self.project_chart(filters), status=status.HTTP_200_OK)
 
-        elif type == "work-items":
+        elif type == "custom-work-items":
             queryset = (
                 Issue.issue_objects.filter(
                     workspace__slug=self._workspace_slug,
@@ -382,6 +497,12 @@ class AdvanceAnalyticsChartEndpoint(BaseAPIView):
             )
             return Response(
                 build_analytics_chart(queryset, x_axis, group_by),
+                status=status.HTTP_200_OK,
+            )
+
+        elif type == "work-items":
+            return Response(
+                self.work_item_completion_chart(filters, date_filter),
                 status=status.HTTP_200_OK,
             )
 
