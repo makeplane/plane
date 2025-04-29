@@ -1,6 +1,6 @@
 import { API_BASE_URL } from "@plane/constants";
 import { APIService } from "./api.service";
-import { IAnalyticsResponseV2, TAnalyticsTabsV2Base } from "@plane/types";
+import { IAnalyticsResponseV2, TAnalyticsTabsV2Base, TAnalyticsGraphsV2Base } from "@plane/types";
 
 
 export class AnalyticsV2Service extends APIService {
@@ -34,7 +34,7 @@ export class AnalyticsV2Service extends APIService {
             })
     }
 
-    async getAdvanceAnalyticsCharts<T extends unknown>(workspaceSlug: string, tab: TAnalyticsTabsV2Base, params?: Record<string, any>): Promise<T> {
+    async getAdvanceAnalyticsCharts<T extends unknown>(workspaceSlug: string, tab: TAnalyticsGraphsV2Base, params?: Record<string, any>): Promise<T> {
         return this.get(`/api/workspaces/${workspaceSlug}/advance-analytics-charts/`, {
             params: {
                 type: tab,

@@ -1,5 +1,6 @@
 
 export type TAnalyticsTabsV2Base = "overview" | "work-items"
+export type TAnalyticsGraphsV2Base = "projects"
 
 
 // service types
@@ -11,6 +12,12 @@ export interface IAnalyticsResponseV2 {
 export interface IAnalyticsResponseFieldsV2 {
     count: number;
     filter_count: number;
+}
+
+export interface IAnalyticsRadarEntityV2 {
+    key: string,
+    name: string,
+    count: number
 }
 
 // table types

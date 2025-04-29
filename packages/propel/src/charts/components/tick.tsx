@@ -4,10 +4,10 @@ import React from "react";
 // Common classnames
 const AXIS_TICK_CLASSNAME = "fill-custom-text-300 text-sm";
 
-export const CustomXAxisTick = React.memo<any>(({ x, y, payload }: any) => (
+export const CustomXAxisTick = React.memo<any>(({ x, y, payload, getLabel }: any) => (
   <g transform={`translate(${x},${y})`}>
     <text y={0} dy={16} textAnchor="middle" className={AXIS_TICK_CLASSNAME}>
-      {payload.value}
+      {getLabel ? getLabel(payload.value) : payload.value}
     </text>
   </g>
 ));
@@ -20,4 +20,5 @@ export const CustomYAxisTick = React.memo<any>(({ x, y, payload }: any) => (
     </text>
   </g>
 ));
+
 CustomYAxisTick.displayName = "CustomYAxisTick";

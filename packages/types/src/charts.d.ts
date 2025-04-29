@@ -220,4 +220,9 @@ export type TRadarChartProps<K extends string, T extends string> = Pick<
 > & {
   dataKey: T;
   radars: TRadarItem<T>[];
+  angleAxis: {
+    key: keyof TChartData<K, T>;
+    label?: string;
+    strokeColor?: string;
+  };
 }

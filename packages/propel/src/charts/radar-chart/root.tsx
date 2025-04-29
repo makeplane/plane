@@ -3,9 +3,10 @@ import React, { useMemo, useState } from 'react'
 import { PolarGrid, Radar, RadarChart as CoreRadarChart, ResponsiveContainer, PolarAngleAxis, RadarProps, Tooltip, Legend } from 'recharts';
 import { CustomTooltip } from '../components/tooltip';
 import { getLegendProps } from '../components/legend';
+import { CustomXAxisTick } from '../components/tick';
 
 const RadarChart = <T extends string, K extends string>(props: TRadarChartProps<T, K>) => {
-  const { data, radars, dataKey, margin, showTooltip, legend, className } = props;
+  const { data, radars, dataKey, margin, showTooltip, legend, className, angleAxis } = props;
 
   // states
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -20,7 +21,9 @@ const RadarChart = <T extends string, K extends string>(props: TRadarChartProps<
       <ResponsiveContainer width="100%" height="100%">
         <CoreRadarChart cx="50%" cy="50%" outerRadius="80%" data={data} margin={margin}>
           <PolarGrid stroke='rgba(var(--color-border-100), 0.9)' />
-          <PolarAngleAxis dataKey={dataKey} />
+          <PolarAngleAxis dataKey={angleAxis.key}
+            tick={(props) => <CustomXAxisTick {...props} />}
+          />
           {showTooltip && (
             <Tooltip
               cursor={{
