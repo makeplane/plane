@@ -19,13 +19,13 @@ export const FilterDate: React.FC<FilterDateProps> = ({
   const apply = () => {
     let payload: string;
     switch (op) {
-      case "gt": // after
-      case "lt": // before
+      case "gt":
+      case "lt":
         if (!from) return;
         payload = `${groupKey}__${op}:${from}`;
         break;
 
-      case "eq": // on
+      case "eq":
         if (!from) return;
         payload = `${groupKey}:${from}`;
         break;
@@ -55,7 +55,7 @@ export const FilterDate: React.FC<FilterDateProps> = ({
   };
 
   return (
-    <div className="ml-8 flex items-center space-x-2">
+    <div className="flex items-center space-x-2">
       <select
         value={op}
         onChange={(e) => setOp(e.target.value as any)}
@@ -76,7 +76,7 @@ export const FilterDate: React.FC<FilterDateProps> = ({
           type="date"
           value={from}
           onChange={(e) => setFrom(e.target.value)}
-          className="border rounded p-1 text-xs"
+          className="border rounded p-1 text-xs w-40"
         />
       )}
 
@@ -87,14 +87,14 @@ export const FilterDate: React.FC<FilterDateProps> = ({
             type="date"
             value={from}
             onChange={(e) => setFrom(e.target.value)}
-            className="border rounded p-1 text-xs"
+            className="border rounded p-1 text-xs w-40"
           />
-          <span className="text-xs">and</span>
+          {/* <span className="text-xs">and</span> */}
           <input
             type="date"
             value={to}
             onChange={(e) => setTo(e.target.value)}
-            className="border rounded p-1 text-xs"
+            className="border rounded p-1 text-xs w-40"
           />
         </>
       )}
@@ -103,7 +103,7 @@ export const FilterDate: React.FC<FilterDateProps> = ({
 
       <button
         type="button"
-        className="ml-8 text-xs font-medium text-custom-primary-100 cursor-pointer"
+        className="text-xs font-medium text-blue-500 hover:text-blue-700 cursor-pointer"
         onClick={apply}
       >
         Apply

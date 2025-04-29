@@ -55,7 +55,7 @@ export const FilterNumber: React.FC<FilterNumberProps> = ({
   };
 
   return (
-    <div className="ml-8 flex items-center space-x-2">
+    <div className="flex items-center space-x-2">
       <select
         value={op}
         onChange={(e) => setOp(e.target.value as any)}
@@ -78,7 +78,8 @@ export const FilterNumber: React.FC<FilterNumberProps> = ({
           onChange={(e) =>
             setVal1(e.target.value === "" ? "" : +e.target.value)
           }
-          className="border rounded p-1 w-20 text-xs"
+          className="border rounded p-1 w-24 text-xs"
+          placeholder="Enter value"
         />
       )}
 
@@ -92,8 +93,9 @@ export const FilterNumber: React.FC<FilterNumberProps> = ({
               setVal1(e.target.value === "" ? "" : +e.target.value)
             }
             className="border rounded p-1 w-16 text-xs"
+            placeholder="Min"
           />
-          <span className="text-xs">and</span>
+          {/* <span className="text-xs">and</span> */}
           <input
             type="number"
             value={val2}
@@ -101,6 +103,7 @@ export const FilterNumber: React.FC<FilterNumberProps> = ({
               setVal2(e.target.value === "" ? "" : +e.target.value)
             }
             className="border rounded p-1 w-16 text-xs"
+            placeholder="Max"
           />
         </>
       )}
@@ -109,7 +112,7 @@ export const FilterNumber: React.FC<FilterNumberProps> = ({
 
       <button
         type="button"
-        className="ml-8 text-xs font-medium text-custom-primary-100 cursor-pointer"
+        className="text-xs font-medium text-blue-500 hover:text-blue-700 cursor-pointer"
         onClick={apply}
       >
         Apply
