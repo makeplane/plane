@@ -570,13 +570,11 @@ def filter_custom_properties(params, issue_filter, method, prefix=""):
             custom_properties = [
                 item for item in raw_props.split("|") if item and item != "null"
             ]
-            print("custom_properties",custom_properties)
         else:
             # Handle old format with comma separator
             custom_properties = [
                 item for item in raw_props.split(",") if item and item != "null"
             ]
-            print("cusoonwer",custom_properties)
         
         groupedCustomProperties = {}
         for row in custom_properties:
