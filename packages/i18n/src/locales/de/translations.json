@@ -863,7 +863,9 @@
     "pending": "Ausstehend",
     "invite": "Einladen",
     "view": "Ansicht",
-    "deactivated_user": "Deaktivierter Benutzer"
+    "deactivated_user": "Deaktivierter Benutzer",
+    "apply": "Anwenden",
+    "applying": "Wird angewendet"
   },
   "chart": {
     "x_axis": "X-Achse",

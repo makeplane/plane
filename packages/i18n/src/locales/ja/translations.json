@@ -871,7 +871,9 @@
     "pending": "保留中",
     "invite": "招待",
     "view": "ビュー",
-    "deactivated_user": "無効化されたユーザー"
+    "deactivated_user": "無効化されたユーザー",
+    "apply": "適用",
+    "applying": "適用中"
   },
 
   "chart": {

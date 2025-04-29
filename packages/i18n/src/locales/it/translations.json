@@ -869,7 +869,9 @@
     "pending": "In sospeso",
     "invite": "Invita",
     "view": "Visualizza",
-    "deactivated_user": "Utente disattivato"
+    "deactivated_user": "Utente disattivato",
+    "apply": "Applica",
+    "applying": "Applicazione"
   },
 
   "chart": {

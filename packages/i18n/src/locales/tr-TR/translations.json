@@ -872,7 +872,10 @@
     "deleting": "Siliniyor",
     "pending": "Beklemede",
     "invite": "Davet Et",
-    "view": "Görünüm"
+    "view": "Görünüm",
+    "deactivated_user": "Devre dışı bırakılmış kullanıcı",
+    "apply": "Uygula",
+    "applying": "Uygulanıyor"
   },
 
   "chart": {

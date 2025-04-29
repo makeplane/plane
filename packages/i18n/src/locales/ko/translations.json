@@ -872,7 +872,9 @@
     "pending": "보류 중",
     "invite": "초대",
     "view": "보기",
-    "deactivated_user": "비활성화된 사용자"
+    "deactivated_user": "비활성화된 사용자",
+    "apply": "적용",
+    "applying": "적용 중"
   },
 
   "chart": {

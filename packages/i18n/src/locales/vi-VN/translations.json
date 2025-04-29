@@ -864,7 +864,9 @@
     "pending": "Đang chờ xử lý",
     "invite": "Mời",
     "view": "Xem",
-    "deactivated_user": "Người dùng bị vô hiệu hóa"
+    "deactivated_user": "Người dùng bị vô hiệu hóa",
+    "apply": "Áp dụng",
+    "applying": "Đang áp dụng"
   },
   "chart": {
     "x_axis": "Trục X",

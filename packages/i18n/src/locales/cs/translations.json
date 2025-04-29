@@ -868,7 +868,9 @@
     "pending": "Čekající",
     "invite": "Pozvat",
     "view": "Pohled",
-    "deactivated_user": "Deaktivovaný uživatel"
+    "deactivated_user": "Deaktivovaný uživatel",
+    "apply": "Použít",
+    "applying": "Používání"
   },
 
   "chart": {

@@ -871,7 +871,9 @@
     "pending": "En attente",
     "invite": "Inviter",
     "view": "Afficher",
-    "deactivated_user": "Utilisateur désactivé"
+    "deactivated_user": "Utilisateur désactivé",
+    "apply": "Appliquer",
+    "applying": "Application"
   },
 
   "chart": {

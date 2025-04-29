@@ -870,7 +870,9 @@
     "pending": "Tertunda",
     "invite": "Undang",
     "view": "Lihat",
-    "deactivated_user": "Pengguna dinonaktifkan"
+    "deactivated_user": "Pengguna dinonaktifkan",
+    "apply": "Terapkan",
+    "applying": "Terapkan"
   },
 
   "chart": {
