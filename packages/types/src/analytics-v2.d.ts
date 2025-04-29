@@ -1,6 +1,7 @@
+import { TBarItem } from "./charts";
 
 export type TAnalyticsTabsV2Base = "overview" | "work-items"
-export type TAnalyticsGraphsV2Base = "projects"
+export type TAnalyticsGraphsV2Base = "projects" | "work-items" | "custom-work-items"
 
 
 // service types
@@ -18,6 +19,13 @@ export interface IAnalyticsRadarEntityV2 {
     key: string,
     name: string,
     count: number
+}
+
+// chart types
+
+export interface ICustomizedInsightsChartV2 {
+    schema: Record<string, string>;
+    data: TChartData<string, string>[];
 }
 
 // table types
