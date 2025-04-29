@@ -872,7 +872,9 @@
     "pending": "待處理",
     "invite": "邀請",
     "view": "檢視",
-    "deactivated_user": "已停用用戶"
+    "deactivated_user": "已停用用戶",
+    "apply": "應用",
+    "applying": "應用中"
   },
 
   "chart": {

@@ -703,7 +703,9 @@
     "pending": "Pending",
     "invite": "Invite",
     "view": "View",
-    "deactivated_user": "Deactivated user"
+    "deactivated_user": "Deactivated user",
+    "apply": "Apply",
+    "applying": "Applying"
   },
 
   "chart": {

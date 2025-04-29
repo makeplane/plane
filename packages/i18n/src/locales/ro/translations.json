@@ -870,7 +870,9 @@
     "pending": "În așteptare",
     "invite": "Invită",
     "view": "Vizualizează",
-    "deactivated_user": "Utilizator dezactivat"
+    "deactivated_user": "Utilizator dezactivat",
+    "apply": "Aplică",
+    "applying": "Aplicând"
   },
 
   "chart": {
