@@ -28,7 +28,15 @@ services:
     restart: unless-stopped
     networks:
       - dev_env
-    command: server /export --console-address ":9090"
+    entrypoint: >
+      /bin/sh -c "
+      mkdir -p /export/${AWS_S3_BUCKET_NAME} &&
+      minio server /export --console-address ':9090' &
+      sleep 5 &&
+      mc alias set myminio http://localhost:9000 ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} &&
+      mc mb myminio/${AWS_S3_BUCKET_NAME} -p || true
+      && tail -f /dev/null
+      "
     volumes:
       - uploads:/export
     env_file:
