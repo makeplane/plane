@@ -164,14 +164,22 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Profile(TimeAuditModel):
+    SUNDAY = 0
+    MONDAY = 1
+    TUESDAY = 2
+    WEDNESDAY = 3
+    THURSDAY = 4
+    FRIDAY = 5
+    SATURDAY = 6
+
     START_OF_THE_WEEK_CHOICES = (
-        (0, "Sunday"),
-        (1, "Monday"),
-        (2, "Tuesday"),
-        (3, "Wednesday"),
-        (4, "Thursday"),
-        (5, "Friday"),
-        (6, "Saturday"),
+        (SUNDAY, "Sunday"),
+        (MONDAY, "Monday"),
+        (TUESDAY, "Tuesday"),
+        (WEDNESDAY, "Wednesday"),
+        (THURSDAY, "Thursday"),
+        (FRIDAY, "Friday"),
+        (SATURDAY, "Saturday"),
     )
 
     id = models.UUIDField(
@@ -205,7 +213,7 @@ class Profile(TimeAuditModel):
     # language
     language = models.CharField(max_length=255, default="en")
     start_of_the_week = models.PositiveSmallIntegerField(
-        choices=START_OF_THE_WEEK_CHOICES, default=0
+        choices=START_OF_THE_WEEK_CHOICES, default=SUNDAY
     )
 
     class Meta:
