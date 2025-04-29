@@ -136,6 +136,7 @@ const createOrUpdateGitHubComment = async (
   const userCredentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
     source: E_ENTITY_CONNECTION_KEYS.GITHUB_USER,
     workspace_id: entityConnection.workspace_id,
+    user_id: comment.updated_by || comment.created_by,
   });
 
   let userGithubService = githubService;
