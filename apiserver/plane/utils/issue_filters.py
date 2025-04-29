@@ -570,11 +570,13 @@ def filter_custom_properties(params, issue_filter, method, prefix=""):
             custom_properties = [
                 item for item in raw_props.split("|") if item and item != "null"
             ]
+            print("custom_properties",custom_properties)
         else:
             # Handle old format with comma separator
             custom_properties = [
                 item for item in raw_props.split(",") if item and item != "null"
             ]
+            print("cusoonwer",custom_properties)
         
         groupedCustomProperties = {}
         for row in custom_properties:
@@ -674,7 +676,7 @@ def build_custom_property_q_objects(custom_properties):
             # Handle value conversion based on data type
             try:
                 if operator == "isbetween" and len(values) == 1:
-                    value_range = values[0].split(",")
+                    value_range = values[0].split("^")
                     if len(value_range) != 2:
                         continue
                     lower = int(value_range[0]) if data_type == "number" else value_range[0]
