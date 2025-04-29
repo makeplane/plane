@@ -18,6 +18,7 @@ from django.db.models import (
     Q,
     Count,
 )
+from plane.utils.build_chart import build_analytics_chart
 from datetime import timedelta
 
 
@@ -119,13 +120,13 @@ class AdvanceAnalyticsEndpoint(BaseAPIView):
         return {
             "total_users": self.get_filtered_counts(
                 WorkspaceMember.objects.filter(
-                    workspace__slug=self.workspace_slug, is_active=True
+                    workspace__slug=self._workspace_slug, is_active=True
                 ),
                 date_filters,
             ),
             "total_admins": self.get_filtered_counts(
                 WorkspaceMember.objects.filter(
-                    workspace__slug=self.workspace_slug,
+                    workspace__slug=self._workspace_slug,
                     role=ROLE.ADMIN.value,
                     is_active=True,
                 ),
@@ -133,7 +134,7 @@ class AdvanceAnalyticsEndpoint(BaseAPIView):
             ),
             "total_members": self.get_filtered_counts(
                 WorkspaceMember.objects.filter(
-                    workspace__slug=self.workspace_slug,
+                    workspace__slug=self._workspace_slug,
                     role=ROLE.MEMBER.value,
                     is_active=True,
                 ),
@@ -141,7 +142,7 @@ class AdvanceAnalyticsEndpoint(BaseAPIView):
             ),
             "total_guests": self.get_filtered_counts(
                 WorkspaceMember.objects.filter(
-                    workspace__slug=self.workspace_slug,
+                    workspace__slug=self._workspace_slug,
                     role=ROLE.GUEST.value,
                     is_active=True,
                 ),
@@ -172,13 +173,13 @@ class AdvanceAnalyticsEndpoint(BaseAPIView):
         return {
             "total_work_items": self.get_filtered_counts(base_queryset, date_filters),
             "started_work_items": self.get_filtered_counts(
-                base_queryset.filter(state__group=True), date_filters
+                base_queryset.filter(state__group="started"), date_filters
             ),
             "backlog_work_items": self.get_filtered_counts(
-                base_queryset.filter(state__group=True), date_filters
+                base_queryset.filter(state__group="backlog"), date_filters
             ),
             "un_started_work_items": self.get_filtered_counts(
-                base_queryset.filter(state__group=True), date_filters
+                base_queryset.filter(state__group="un-started"), date_filters
             ),
             "completed_work_items": self.get_filtered_counts(
                 base_queryset.filter(state__group="completed"), date_filters
@@ -336,14 +337,14 @@ class AdvanceAnalyticsChartEndpoint(BaseAPIView):
         total_views = IssueView.objects.filter(project_id__in=project_ids).count()
 
         data = {
-            "total_work_items": total_work_items,
-            "total_cycles": total_cycles,
-            "total_modules": total_modules,
-            "total_intake": total_intake,
-            "total_members": total_members,
-            "total_epics": total_epics,
-            "total_pages": total_pages,
-            "total_views": total_views,
+            "work_items": total_work_items,
+            "cycles": total_cycles,
+            "modules": total_modules,
+            "intake": total_intake,
+            "members": total_members,
+            "epics": total_epics,
+            "pages": total_pages,
+            "views": total_views,
         }
 
         return [
@@ -361,11 +362,27 @@ class AdvanceAnalyticsChartEndpoint(BaseAPIView):
         self.initialize_workspace(slug)
         type = request.GET.get("type", "overview")
         filters = request.GET.get("filters", {})
+        group_by = request.GET.get("group_by", None)
+        x_axis = request.GET.get("x_axis", "PRIORITY")
 
         if type == "projects":
             return Response(self.project_chart(filters), status=status.HTTP_200_OK)
 
         elif type == "work-items":
-            return Response(self.work_item_chart(filters), status=status.HTTP_200_OK)
+            queryset = (
+                Issue.issue_objects.filter(
+                    workspace__slug=self._workspace_slug,
+                    project__project_projectmember__member=self.request.user,
+                    project__project_projectmember__is_active=True,
+                )
+                .select_related("workspace", "project", "state", "parent")
+                .prefetch_related(
+                    "assignees", "labels", "issue_module__module", "issue_cycle__cycle"
+                )
+            )
+            return Response(
+                build_analytics_chart(queryset, x_axis, group_by),
+                status=status.HTTP_200_OK,
+            )
 
         return Response({"message": "Invalid type"}, status=status.HTTP_400_BAD_REQUEST)
