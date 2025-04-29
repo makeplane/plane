@@ -6,7 +6,7 @@ from plane.db.models import State
 
 
 class StateSerializer(BaseSerializer):
-    order = serializers.CharField(required=False)
+    order = serializers.FloatField(required=False)
 
     class Meta:
         model = State
