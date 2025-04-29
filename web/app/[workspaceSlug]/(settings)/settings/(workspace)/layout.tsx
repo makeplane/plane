@@ -7,10 +7,10 @@ import { usePathname } from "next/navigation";
 import { EUserWorkspaceRoles, WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
 // hooks
 import { NotAuthorizedView } from "@/components/auth-screens";
+import { CommandPalette } from "@/components/command-palette";
 import { SettingsContentWrapper } from "@/components/settings";
 import { useUserPermissions } from "@/hooks/store";
 // local components
-import { MobileWorkspaceSettingsTabs } from "./mobile-header-tabs";
 import { WorkspaceSettingsSidebar } from "./sidebar";
 
 export interface IWorkspaceSettingLayout {
@@ -42,7 +42,7 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
 
   return (
     <>
-      <MobileWorkspaceSettingsTabs />
+      <CommandPalette />
       <div className="inset-y-0 flex flex-row vertical-scrollbar scrollbar-lg h-full w-full overflow-y-auto">
         {workspaceUserInfo && !isAuthorized ? (
           <NotAuthorizedView section="settings" />
