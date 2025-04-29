@@ -95,7 +95,12 @@ export const RecentIssue = observer((props: BlockProps) => {
         <div className="flex gap-4">
           <Tooltip tooltipHeading="State" tooltipContent={state?.name ?? "State"}>
             <div>
-              <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} className="h-4 w-4 my-auto" />
+              <StateGroupIcon
+                stateGroup={state?.group ?? "backlog"}
+                color={state?.color}
+                className="h-4 w-4 my-auto"
+                percentage={state?.order}
+              />
             </div>
           </Tooltip>
           <Tooltip tooltipHeading="Priority" tooltipContent={issueDetails?.priority ?? "Priority"}>

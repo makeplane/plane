@@ -193,6 +193,15 @@ export const SUB_ISSUES_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)
   "state",
 ];
 
+export const SUB_ISSUES_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = [
+  "key",
+  "assignee",
+  "start_date",
+  "due_date",
+  "priority",
+  "state",
+];
+
 export const ISSUE_DISPLAY_PROPERTIES: {
   key: keyof IIssueDisplayProperties;
   titleTranslationKey: string;

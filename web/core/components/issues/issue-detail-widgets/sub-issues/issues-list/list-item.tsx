@@ -85,7 +85,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
 
   // derived values
   const subIssueFilters = getSubIssueFilters(parentIssueId);
-  const displayProperties = subIssueFilters.displayProperties;
+  const displayProperties = subIssueFilters.displayProperties ?? {};
 
   //
   const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug, issue, isMobile);
