@@ -21,7 +21,7 @@ export const useCustomerWorkItemOperations = (
   issueServiceType: TIssueServiceType = EIssueServiceType.ISSUES
 ): TCustomerWorkItemOperations => {
   const { updateIssue } = useIssueDetail(issueServiceType);
-  const { removeWorkItemFromCustomer } = useCustomers();
+  const { workItems: { removeWorkItemFromCustomer } } = useCustomers();
   const pathname = usePathname();
   const { t } = useTranslation();
   // derived values

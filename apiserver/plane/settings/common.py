@@ -431,6 +431,8 @@ ATTACHMENT_MIME_TYPES = [
     "application/x-sql",
     # Gzip
     "application/x-gzip",
+    # SQL
+    "application/x-sql",
 ]
 
 

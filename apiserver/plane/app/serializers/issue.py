@@ -812,7 +812,7 @@ class IssueDetailSerializer(IssueSerializer):
             if check_workspace_feature_flag(
                 feature_key=FeatureFlag.CUSTOMERS, slug=slug, user_id=user_id
             ):
-                self.fields["customer_request_count"] = serializers.IntegerField(
+                self.fields["customer_request_ids"] = serializers.ListField(
                     read_only=True
                 )
 

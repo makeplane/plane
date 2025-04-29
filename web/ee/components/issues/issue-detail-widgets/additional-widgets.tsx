@@ -15,7 +15,7 @@ export const WorkItemAdditionalWidgets: FC<TWorkItemAdditionalWidgets> = observe
 
   // derived values
   const issue = getIssueById(workItemId);
-  const shouldRenderCustomerRequest = Boolean(issue?.customer_request_count) && !issue?.is_epic;
+  const shouldRenderCustomerRequest = Boolean(issue?.customer_request_ids?.length) && !issue?.is_epic;
   return (
     <>
       {shouldRenderCustomerRequest && isCustomersFeatureEnabled && (

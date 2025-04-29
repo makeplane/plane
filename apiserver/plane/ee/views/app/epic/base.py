@@ -139,6 +139,31 @@ class EpicViewSet(BaseViewSet):
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
             )
+            .annotate(
+                customer_ids=Coalesce(
+                    ArrayAgg(
+                        "customer_request_issues__customer_id",
+                        filter=Q(
+                            customer_request_issues__deleted_at__isnull=True,
+                            customer_request_issues__customer_request__isnull=True,
+                            customer_request_issues__issue_id__isnull=False,
+                        ),
+                        distinct=True,
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                customer_request_ids=Coalesce(
+                    ArrayAgg(
+                        "customer_request_issues__customer_request_id",
+                        filter=Q(
+                            customer_request_issues__deleted_at__isnull=True,
+                            customer_request_issues__customer_request__isnull=False,
+                        ),
+                        distinct=True,
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
         ).distinct()
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -245,7 +270,11 @@ class EpicViewSet(BaseViewSet):
                         order_by=order_by_param,
                         queryset=issue_queryset,
                         on_results=lambda issues: issue_on_results(
-                            group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                            group_by=group_by,
+                            issues=issues,
+                            sub_group_by=sub_group_by,
+                            slug=slug,
+                            user_id=request.user.id,
                         ),
                         paginator_cls=SubGroupedOffsetPaginator,
                         group_by_fields=issue_group_values(
@@ -280,7 +309,11 @@ class EpicViewSet(BaseViewSet):
                     order_by=order_by_param,
                     queryset=issue_queryset,
                     on_results=lambda issues: issue_on_results(
-                        group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                        group_by=group_by,
+                        issues=issues,
+                        sub_group_by=sub_group_by,
+                        slug=slug,
+                        user_id=request.user.id,
                     ),
                     paginator_cls=GroupedOffsetPaginator,
                     group_by_fields=issue_group_values(
@@ -306,7 +339,11 @@ class EpicViewSet(BaseViewSet):
                 request=request,
                 queryset=issue_queryset,
                 on_results=lambda issues: issue_on_results(
-                    group_by=group_by, issues=issues, sub_group_by=sub_group_by
+                    group_by=group_by,
+                    issues=issues,
+                    sub_group_by=sub_group_by,
+                    slug=slug,
+                    user_id=request.user.id,
                 ),
             )
 
@@ -526,7 +563,7 @@ class EpicAnalyticsEndpoint(BaseAPIView):
             completed_issues=Count("id", filter=Q(state__group="completed")),
             cancelled_issues=Count("id", filter=Q(state__group="cancelled")),
         )
-        
+
         return Response(issues, status=status.HTTP_200_OK)
 
 
@@ -865,7 +902,6 @@ class EpicDetailIdentifierEndpoint(BaseAPIView):
 
 
 class EpicDescriptionVersionEndpoint(BaseAPIView):
-
     def process_paginated_result(self, fields, results, timezone):
         paginated_data = results.values(*fields)
 
@@ -902,10 +938,7 @@ class EpicDescriptionVersionEndpoint(BaseAPIView):
 
         if pk:
             issue_description_version = IssueDescriptionVersion.objects.get(
-                workspace__slug=slug,
-                project_id=project_id,
-                issue_id=epic_id,
-                pk=pk,
+                workspace__slug=slug, project_id=project_id, issue_id=epic_id, pk=pk
             )
 
             serializer = IssueDescriptionVersionDetailSerializer(

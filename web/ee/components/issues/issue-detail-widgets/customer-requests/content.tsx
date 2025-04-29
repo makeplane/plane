@@ -16,10 +16,9 @@ export const WorkItemRequestCollapsibleContent: FC<TProps> = observer((props) =>
   const { workspaceSlug, workItemId, disabled, isTabs = false } = props;
 
   const {
-    getFilteredWorkItemRequestIds,
+    workItems: { getFilteredWorkItemRequestIds, workItemRequestSearchQuery },
     createUpdateRequestModalId,
     toggleCreateUpdateRequestModal,
-    workItemRequestSearchQuery,
   } = useCustomers();
 
   const handleFormClose = () => {

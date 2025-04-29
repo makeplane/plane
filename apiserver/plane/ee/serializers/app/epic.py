@@ -357,9 +357,18 @@ class EpicSerializer(DynamicBaseSerializer):
 class EpicDetailSerializer(EpicSerializer):
     description_html = serializers.CharField()
     is_subscribed = serializers.BooleanField(read_only=True)
+    customer_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
+    customer_request_ids = serializers.ListField(
+        child=serializers.UUIDField(), required=False
+    )
 
     class Meta(EpicSerializer.Meta):
-        fields = EpicSerializer.Meta.fields + ["description_html", "is_subscribed"]
+        fields = EpicSerializer.Meta.fields + [
+            "description_html",
+            "is_subscribed",
+            "customer_ids",
+            "customer_request_ids",
+        ]
         read_only_fields = fields
 
 

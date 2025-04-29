@@ -246,19 +246,29 @@ class IssueViewSet(BaseViewSet):
             user_id=str(self.request.user.id),
         ):
             issues = issues.annotate(
-                customer_count=Count(
-                    "customer_request_issues",
-                    filter=Q(customer_request_issues__deleted_at__isnull=True),
-                    distinct=True,
+                customer_ids=Coalesce(
+                    ArrayAgg(
+                        "customer_request_issues__customer_id",
+                        filter=Q(
+                            customer_request_issues__deleted_at__isnull=True,
+                            customer_request_issues__customer_request__isnull=True,
+                            customer_request_issues__issue_id__isnull=False,
+                        ),
+                        distinct=True,
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
                 )
             ).annotate(
-                customer_request_count=Count(
-                    "customer_request_issues",
-                    filter=Q(
-                        customer_request_issues__deleted_at__isnull=True,
-                        customer_request_issues__customer_request__isnull=False,
+                customer_request_ids=Coalesce(
+                    ArrayAgg(
+                        "customer_request_issues__customer_request_id",
+                        filter=Q(
+                            customer_request_issues__deleted_at__isnull=True,
+                            customer_request_issues__customer_request__isnull=False,
+                        ),
+                        distinct=True,
                     ),
-                    distinct=True,
+                    Value([], output_field=ArrayField(UUIDField())),
                 )
             )
 
@@ -609,16 +619,18 @@ class IssueViewSet(BaseViewSet):
             user_id=str(request.user.id),
         ):
             issue = issue.annotate(
-                customer_request_count=Count(
-                    "customer_request_issues",
-                    filter=Q(
-                        customer_request_issues__deleted_at__isnull=True,
-                        customer_request_issues__customer_request__isnull=False,
+                customer_request_ids=Coalesce(
+                    ArrayAgg(
+                        "customer_request_issues__customer_request_id",
+                        filter=Q(
+                            customer_request_issues__deleted_at__isnull=True,
+                            customer_request_issues__customer_request__isnull=False,
+                        ),
+                        distinct=True,
                     ),
-                    distinct=True,
+                    Value([], output_field=ArrayField(UUIDField())),
                 )
             )
-
         issue = issue.first()
 
         if not issue:
@@ -965,20 +977,30 @@ class IssuePaginatedViewSet(BaseViewSet):
                 .values("count")
             )
             .annotate(
-                customer_count=Count(
-                    "customer_request_issues",
-                    filter=Q(customer_request_issues__deleted_at__isnull=True),
-                    distinct=True,
+                customer_ids=Coalesce(
+                    ArrayAgg(
+                        "customer_request_issues__customer_id",
+                        filter=Q(
+                            customer_request_issues__deleted_at__isnull=True,
+                            customer_request_issues__customer_request__isnull=True,
+                            customer_request_issues__issue_id__isnull=False,
+                        ),
+                        distinct=True,
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
                 )
             )
             .annotate(
-                customer_request_count=Count(
-                    "customer_request_issues",
-                    filter=Q(
-                        customer_request_issues__deleted_at__isnull=True,
-                        customer_request_issues__customer_request__isnull=False,
+                customer_request_ids=Coalesce(
+                    ArrayAgg(
+                        "customer_request_issues__customer_request_id",
+                        filter=Q(
+                            customer_request_issues__deleted_at__isnull=True,
+                            customer_request_issues__customer_request__isnull=False,
+                        ),
+                        distinct=True,
                     ),
-                    distinct=True,
+                    Value([], output_field=ArrayField(UUIDField())),
                 )
             )
         ).distinct()
@@ -1028,8 +1050,8 @@ class IssuePaginatedViewSet(BaseViewSet):
             "link_count",
             "attachment_count",
             "sub_issues_count",
-            "customer_count",
-            "customer_request_count",
+            "customer_ids",
+            "customer_request_ids",
             "type_id",
         ]
 
@@ -1439,13 +1461,16 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
             user_id=str(request.user.id),
         ):
             issue = issue.annotate(
-                customer_request_count=Count(
-                    "customer_request_issues",
-                    filter=Q(
-                        customer_request_issues__deleted_at__isnull=True,
-                        customer_request_issues__customer_request__isnull=False,
+                customer_request_ids=Coalesce(
+                    ArrayAgg(
+                        "customer_request_issues__customer_request_id",
+                        filter=Q(
+                            customer_request_issues__deleted_at__isnull=True,
+                            customer_request_issues__customer_request__isnull=False,
+                        ),
+                        distinct=True,
                     ),
-                    distinct=True,
+                    Value([], output_field=ArrayField(UUIDField())),
                 )
             )
 
@@ -1478,29 +1503,27 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
         the requesting user then dont show the issue
         """
 
-        if (
-            ProjectMember.objects.filter(
-                workspace__slug=slug,
-                project_id=project.id,
-                member=request.user,
-                role=5,
-                is_active=True,
-            ).exists()
-            
-        ):
+        if ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project.id,
+            member=request.user,
+            role=5,
+            is_active=True,
+        ).exists():
             # If the user is guest and trying to access and epic do not show the epic
-            if(issue.is_epic):
+            if issue.is_epic:
                 return Response(
                     {"error": "You are not allowed to view this issue"},
                     status=status.HTTP_403_FORBIDDEN,
                 )
-            elif ( not project.guest_view_all_features
-            and not issue.created_by_id == request.user.id):
+            elif (
+                not project.guest_view_all_features
+                and not issue.created_by_id == request.user.id
+            ):
                 return Response(
                     {"error": "You are not allowed to view this issue"},
                     status=status.HTTP_403_FORBIDDEN,
                 )
-
 
         recent_visited_task.delay(
             slug=slug,

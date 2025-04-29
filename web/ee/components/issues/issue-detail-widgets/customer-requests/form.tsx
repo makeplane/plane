@@ -52,8 +52,12 @@ export const WorkItemRequestForm: FC<TProps> = observer((props) => {
   // i18n
   const { t } = useTranslation();
   // hooks
-  const { createCustomerRequest, updateCustomerRequest, addWorkItemsToCustomer, toggleRequestSourceModal } =
-    useCustomers();
+  const {
+    createCustomerRequest,
+    updateCustomerRequest,
+    workItems: { addWorkItemsToCustomer },
+    toggleRequestSourceModal,
+  } = useCustomers();
   const { getWorkspaceBySlug } = useWorkspace();
   const { uploadEditorAsset } = useEditorAsset();
   // derived values

@@ -20,7 +20,9 @@ export const CustomerRequestsCollapsible: FC<TProps> = observer((props) => {
   const { workspaceSlug, workItemId, disabled } = props;
   // store hooks
   const { openWidgets, toggleOpenWidget } = useIssueDetail();
-  const { fetchWorkItemRequests } = useCustomers();
+  const {
+    workItems: { fetchWorkItemRequests },
+  } = useCustomers();
 
   // derived values
   const isCollapsibleOpen = openWidgets.includes("customer_requests");

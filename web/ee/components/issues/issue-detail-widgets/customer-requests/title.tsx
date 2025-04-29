@@ -28,7 +28,7 @@ export const CustomerRequestsCollapsibleTitle: FC<Props> = observer((props) => {
 
   // derived values
   const issue = getIssueById(workItemId);
-  const customerRequestCount = issue?.customer_request_count ?? 0;
+  const customerRequestCount = issue?.customer_request_ids?.length ?? 0;
 
   // indicator element
   const indicatorElement = useMemo(
