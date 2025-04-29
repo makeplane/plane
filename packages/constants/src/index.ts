@@ -32,3 +32,4 @@ export * from "./dashboard";
 export * from "./page";
 export * from "./emoji";
 export * from "./subscription";
+export * from "./icon";
