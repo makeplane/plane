@@ -1,6 +1,6 @@
 import { ACTIONS, ENTITIES, EntityTypeValue } from "../helpers/constants";
 import { PlainTextOption } from "../helpers/slack-options";
-import { ShortcutActionPayload } from "../types/types";
+import { E_MESSAGE_ACTION_TYPES, ShortcutActionPayload } from "../types/types";
 
 export const createProjectSelectionModal = (
   projects: Array<PlainTextOption>,
@@ -8,6 +8,7 @@ export const createProjectSelectionModal = (
   type: EntityTypeValue = ENTITIES.SHORTCUT_PROJECT_SELECTION
 ) => ({
   type: "modal",
+  callback_id: E_MESSAGE_ACTION_TYPES.CREATE_NEW_WORK_ITEM,
   private_metadata: JSON.stringify({
     entityType: type,
     entityPayload: privateMetadata,

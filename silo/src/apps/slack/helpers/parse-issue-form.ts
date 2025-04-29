@@ -1,4 +1,4 @@
-import { ParsedIssueData } from "../types/types";
+import { ParsedIssueData, ParsedLinkWorkItemData } from "../types/types";
 
 export const parseIssueFormData = (values: any): ParsedIssueData => {
   const parsed: ParsedIssueData = {
@@ -42,6 +42,31 @@ export const parseIssueFormData = (values: any): ParsedIssueData => {
       parsed.enableThreadSync = false;
       if (blockData.enable_thread_sync.selected_options.length > 0) {
         parsed.enableThreadSync = blockData.enable_thread_sync.selected_options[0].value === "true";
+      }
+    }
+  });
+
+  return parsed;
+};
+
+export const parseLinkWorkItemFormData = (values: any): ParsedLinkWorkItemData | undefined => {
+  let parsed: ParsedLinkWorkItemData | undefined = undefined
+
+  Object.entries(values).forEach(([_, blockData]: [string, any]) => {
+    if (blockData.link_work_item?.type === "external_select") {
+      const identifer = blockData?.link_work_item?.selected_option?.value;
+
+      if (!identifer) {
+        return;
+      }
+
+      const parts = identifer.split(":");
+      if (parts.length === 3) {
+        parsed = {
+          workspaceSlug: parts[0],
+          projectId: parts[1],
+          issueId: parts[2],
+        };
       }
     }
   });

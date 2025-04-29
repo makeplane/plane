@@ -156,6 +156,7 @@ export type TViewSubmissionPayload = {
   team: ISlackTeam;
   user: ISlackUser;
   api_app_id: string;
+  callback_id: string;
   token: string;
   trigger_id: string;
   view: ISlackView;

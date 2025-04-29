@@ -7,7 +7,7 @@ import {
   TSlackCommandPayload,
   TSlackPayload
 } from "@plane/etl/slack";
-import { PlaneWebhookData } from "@plane/sdk";
+import { ExIssue, PlaneWebhookData, PlaneWebhookPayloadBase } from "@plane/sdk";
 import { env } from "@/env";
 import { responseHandler } from "@/helpers/response-handler";
 import { Controller, EnsureEnabled, Get, Post, useValidateUserAuthentication } from "@/lib";
@@ -19,6 +19,7 @@ import { getConnectionDetails } from "../helpers/connection-details";
 import { ACTIONS } from "../helpers/constants";
 import { parseIssueFormData } from "../helpers/parse-issue-form";
 import { convertToSlackOptions } from "../helpers/slack-options";
+import { Store } from "@/worker/base";
 const apiClient = getAPIClient();
 
 @EnsureEnabled(E_INTEGRATION_KEYS.SLACK)
@@ -380,6 +381,31 @@ export default class SlackController {
         });
       }
 
+      if (payload.type === "block_suggestion" && payload.action_id && payload.action_id === ACTIONS.LINK_WORK_ITEM) {
+        const text = payload.value;
+        // If the action is link_work_item, parse the view to be of type
+        // LinkIssueModalView and pass it to the slack worker
+        const details = await getConnectionDetails(payload.team.id);
+        if (!details) { logger.info(`[SLACK] No connection details found for team ${payload.team.id}`); return }
+
+        const { workspaceConnection, planeClient } = details;
+        const workItems = await planeClient.issue.searchIssues(workspaceConnection.workspace_slug, text);
+
+        const filteredWorkItems = workItems.issues
+          .map((workItem) => {
+            return {
+              id: `${workItem.workspace__slug}:${workItem.project_id}:${workItem.id}`,
+              name: `[${workItem.project__identifier}-${workItem.sequence_id}] ${workItem.name}`,
+            }
+          })
+          .sort((a, b) => a.name.localeCompare(b.name));
+
+        const workItemOptions = convertToSlackOptions(filteredWorkItems);
+        return res.status(200).json({
+          options: workItemOptions,
+        });
+      }
+
       return res.status(200).json({});
     } catch (error) {
       return responseHandler(res, 500, error);
@@ -402,9 +428,70 @@ export default class SlackController {
         );
       }
 
+      if (payload.event === "issue" && !payload.activity.field.includes("_id")) {
+        const payload = req.body as PlaneWebhookPayloadBase<ExIssue>;
+
+        const id = payload.data.id;
+        const workspace = payload.data.workspace;
+        const project = payload.data.project;
+        const issue = payload.data.issue;
+
+        const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+          workspace_id: workspace,
+          project_id: project,
+          issue_id: id,
+          entity_type: E_INTEGRATION_KEYS.SLACK,
+        });
+
+        if (!entityConnection) {
+          return res.sendStatus(200);
+        }
+
+        logger.info(`[SLACK] Entity connection found for issue ${id} in workspace ${workspace} and project ${project}`);
+        // Register activity key for the particular issue
+        await this.collectActivityForStacking(payload);
+
+        // Register store task for stacking the issue
+        await integrationTaskManager.registerStoreTask(
+          {
+            route: "plane-slack-webhook",
+            jobId: payload.event,
+            type: "issue",
+          },
+          {
+            id,
+            event: payload.event,
+            workspace,
+            project,
+            issue,
+          },
+          Number(env.DEDUP_INTERVAL)
+        );
+      }
       return res.sendStatus(200);
     } catch (error) {
       return responseHandler(res, 500, error);
     }
   }
+
+  /**
+   * Collects activity for stacking the issue
+   * @param payload - The payload of the issue
+   */
+  async collectActivityForStacking(payload: PlaneWebhookPayloadBase<ExIssue>) {
+    const store = Store.getInstance()
+
+    // Create a key for the activity field
+    const key = `slack:issue:${payload.data.id}`;
+    const ttl = 60 // 1 minute
+
+    const activity = {
+      ...payload.activity,
+      timestamp: payload.data.updated_at ?? payload.data.created_at ?? new Date().toISOString(),
+    }
+
+    // Set the activity field, as we gave false, it's gonna update the field
+    await store.setList(key, JSON.stringify(activity), ttl, false);
+  }
+
 }

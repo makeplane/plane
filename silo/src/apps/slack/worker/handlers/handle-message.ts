@@ -67,7 +67,7 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
 
     const members = await planeClient.users.list(workspaceConnection.workspace_slug, eConnection.project_id ?? "");
     const userInfo = await slackService.getUserInfo(data.event.user);
-    const issueId = eConnection.entity_slug;
+    const issueId = eConnection.entity_slug ?? eConnection.issue_id;
 
     const planeUser = members.find((member) => member.email === userInfo?.user.profile.email);
 
@@ -103,24 +103,21 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
         if (resource === null) return;
 
         if (resource.type === "issue") {
+
           if (resource.workspaceSlug !== workspaceConnection.workspace_slug) return;
 
-          const issue = await planeClient.issue.getIssueByIdentifier(
+          const issue = await planeClient.issue.getIssueByIdentifierWithFields(
             workspaceConnection.workspace_slug,
             resource.projectIdentifier,
-            Number(resource.issueKey)
+            Number(resource.issueKey),
+            ["state", "project", "assignees", "labels"]
           );
-
-          const project = await planeClient.project.getProject(workspaceConnection.workspace_slug, issue.project);
-          const members = await planeClient.users.list(workspaceConnection.workspace_slug, issue.project);
-          const states = await planeClient.state.list(workspaceConnection.workspace_slug, issue.project);
+          const states = await planeClient.state.list(workspaceConnection.workspace_slug, issue.project.id ?? "");
 
           const linkBack = createSlackLinkback(
             workspaceConnection.workspace_slug,
-            project,
-            members,
-            states.results,
             issue,
+            states.results,
             false,
             true
           );

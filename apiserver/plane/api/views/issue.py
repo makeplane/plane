@@ -1,5 +1,6 @@
 # Python imports
 import json
+import re
 import uuid
 
 # Django imports
@@ -63,7 +64,6 @@ from plane.bgtasks.webhook_task import model_activity
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.utils.workflow import WorkflowStateManager
-
 
 
 class WorkspaceIssueAPIEndpoint(BaseAPIView):
@@ -289,8 +289,7 @@ class IssueAPIEndpoint(BaseAPIView):
                 project_id=project_id, slug=slug
             )
             if workflow_state_manager.validate_issue_creation(
-                state_id=request.data.get("state_id"),
-                user_id=request.user.id,
+                state_id=request.data.get("state_id"), user_id=request.user.id
             ):
                 return Response(
                     {"error": "You cannot create a work item in this state"},
@@ -1410,3 +1409,54 @@ class IssueAttachmentServerEndpoint(BaseAPIView):
             get_asset_object_metadata.delay(str(issue_attachment.id))
         issue_attachment.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class IssueSearchEndpoint(BaseAPIView):
+    """Endpoint to search across multiple fields in the issues"""
+
+    def get(self, request, slug):
+        query = request.query_params.get("search", False)
+        limit = request.query_params.get("limit", 10)
+        workspace_search = request.query_params.get("workspace_search", "false")
+        project_id = request.query_params.get("project_id", False)
+
+        if not query:
+            return Response({"issues": []}, status=status.HTTP_200_OK)
+
+        # Build search query
+        fields = ["name", "sequence_id", "project__identifier"]
+        q = Q()
+        for field in fields:
+            if field == "sequence_id":
+                # Match whole integers only (exclude decimal numbers)
+                sequences = re.findall(r"\b\d+\b", query)
+                for sequence_id in sequences:
+                    q |= Q(**{"sequence_id": sequence_id})
+            else:
+                q |= Q(**{f"{field}__icontains": query})
+
+        # Filter issues
+        issues = Issue.issue_objects.filter(
+            q,
+            project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
+            workspace__slug=slug,
+        )
+
+        # Apply project filter if not searching across workspace
+        if workspace_search == "false" and project_id:
+            issues = issues.filter(project_id=project_id)
+
+        # Get results
+        issue_results = issues.distinct().values(
+            "name",
+            "id",
+            "sequence_id",
+            "project__identifier",
+            "project_id",
+            "workspace__slug",
+            "type_id",
+        )[: int(limit)]
+
+        return Response({"issues": issue_results}, status=status.HTTP_200_OK)

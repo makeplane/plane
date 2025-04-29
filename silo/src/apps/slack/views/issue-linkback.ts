@@ -1,27 +1,25 @@
 import { env } from "@/env";
-import { ExIssue, ExProject, ExState, PlaneUser } from "@plane/sdk";
+import { ExState, IssueWithExpanded } from "@plane/sdk";
 import { formatTimestampToNaturalLanguage } from "../helpers/format-date";
 import { ACTIONS, PLANE_PRIORITIES } from "../helpers/constants";
 import { convertUnicodeToSlackEmoji } from "../helpers/emoji-converter";
 
 export const createSlackLinkback = (
   workspaceSlug: string,
-  project: ExProject,
-  members: PlaneUser[],
-  state: ExState[],
-  issue: ExIssue,
+  issue: IssueWithExpanded<["state", "project", "assignees", "labels"]>,
+  states: ExState[],
   isSynced: boolean,
-  showLogo = false
+  showLogo = false,
+  hideOverflowMenu = false,
+  asHeader = false
 ) => {
-  const targetState = state.find((s) => s.id === issue.state);
-
-  const stateList = state.map((s) => ({
+  const stateList = states.map((s) => ({
     text: {
       type: "plain_text",
       text: s.name,
       emoji: true,
     },
-    value: `${issue.project}.${issue.id}.${s.id}`,
+    value: `${issue.project.id}.${issue.id}.${s.id}`,
   }));
 
   const priorityList = PLANE_PRIORITIES.map((p) => ({
@@ -30,7 +28,7 @@ export const createSlackLinkback = (
       text: p.name,
       emoji: true,
     },
-    value: `${issue.project}.${issue.id}.${p.id}`,
+    value: `${issue.project.id}.${issue.id}.${p.id}`,
   }));
 
   // Create base blocks array
@@ -57,24 +55,24 @@ export const createSlackLinkback = (
     type: "section",
     text: {
       type: "mrkdwn",
-      text: `<${env.APP_BASE_URL}/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}| ${project.identifier}-${issue.sequence_id} ${issue.name}>`,
+      text: asHeader ? `*${issue.project.identifier}-${issue.sequence_id} ${issue.name}*` : `<${env.APP_BASE_URL}/${workspaceSlug}/projects/${issue.project.id}/issues/${issue.id}| ${issue.project.identifier}-${issue.sequence_id} ${issue.name}>`,
     },
   });
 
   // Create context elements array with only non-empty values
   const contextElements: any[] = [];
 
-  if (project.name) {
-    const emoji = project.logo_props && project.logo_props?.in_use === "emoji" && project.logo_props?.emoji && project.logo_props?.emoji?.value ? convertUnicodeToSlackEmoji(project.logo_props?.emoji?.value) : "📋";
+  if (issue.project.name) {
+    const emoji = issue.project.logo_props && issue.project.logo_props?.in_use === "emoji" && issue.project.logo_props?.emoji && issue.project.logo_props?.emoji?.value ? convertUnicodeToSlackEmoji(issue.project.logo_props?.emoji?.value) : "📋";
 
     contextElements.push({
       type: "mrkdwn",
-      text: `${emoji} <${env.APP_BASE_URL}/${workspaceSlug}/projects/${issue.project}/issues|${project.name}>`,
+      text: `${emoji} <${env.APP_BASE_URL}/${workspaceSlug}/projects/${issue.project.id}/issues|${issue.project.name}>`,
     });
   }
 
   // Add state and priority labels
-  const stateLabel = targetState ? `*State:* ${targetState.name}` : "*State:* Not set";
+  const stateLabel = issue.state ? `*State:* ${issue.state.name}` : "*State:* Not set";
   const priorityLabel = issue.priority ? `*Priority:* ${titleCaseWord(issue.priority)}` : "*Priority:* Not set";
 
   contextElements.push({
@@ -84,12 +82,11 @@ export const createSlackLinkback = (
 
   if (issue.assignees && issue.assignees.length > 0) {
     const uniqueAssignees = Array.from(new Set(issue.assignees));
-
-    const firstAssignee = members.find((m) => m.id === uniqueAssignees[0]);
+    const firstAssignee = issue.assignees.find((m) => m.id === uniqueAssignees[0].id);
 
     contextElements.push({
       type: "mrkdwn",
-      text: `*${uniqueAssignees.length > 1 ? "Assignees:" : "Assignee:"}*  ${firstAssignee?.display_name} ${uniqueAssignees.length > 1 ? `and ${uniqueAssignees.length - 1} others` : ""}`,
+      text: `*${uniqueAssignees.length > 1 ? "Assignees:" : "Assignee:"}*  ${firstAssignee?.first_name} ${uniqueAssignees.length > 1 ? `and ${uniqueAssignees.length - 1} others` : ""}`,
     });
   }
 
@@ -161,38 +158,63 @@ export const createSlackLinkback = (
   }
 
   // Add overflow menu for button actions
-  const overflowMenu = {
-    type: "overflow",
-    action_id: ACTIONS.LINKBACK_OVERFLOW_ACTIONS,
-    options: [
-      {
-        text: {
-          type: "plain_text",
-          text: "Add Link",
-          emoji: true,
+  if (!hideOverflowMenu) {
+    const overflowMenu = {
+      type: "overflow",
+      action_id: ACTIONS.LINKBACK_OVERFLOW_ACTIONS,
+      options: [
+        {
+          text: {
+            type: "plain_text",
+            text: "Add Link",
+            emoji: true,
+          },
+          value: `${issue.project.id}.${issue.id}`,
         },
-        value: `${issue.project}.${issue.id}`,
-      },
-      {
-        text: {
-          type: "plain_text",
-          text: "Comment",
-          emoji: true,
+        {
+          text: {
+            type: "plain_text",
+            text: "Comment",
+            emoji: true,
+          },
+          value: `${issue.project.id}.${issue.id}`,
         },
-        value: `${issue.project}.${issue.id}`,
-      },
-      {
-        text: {
-          type: "plain_text",
-          text: "Assign to me",
-          emoji: true,
+        {
+          text: {
+            type: "plain_text",
+            text: "Assign to me",
+            emoji: true,
+          },
+          value: `${issue.project.id}.${issue.id}`,
         },
-        value: `${issue.project}.${issue.id}`,
-      },
-    ],
-  };
+      ],
+    };
 
-  actionElements.push(overflowMenu);
+    actionElements.push(overflowMenu);
+  }
+
+  if (hideOverflowMenu) {
+    // Give a button for assign to me
+    actionElements.push({
+      type: "button",
+      text: {
+        type: "plain_text",
+        text: "Assign to me",
+      },
+      value: `${issue.project.id}.${issue.id}`,
+    });
+  }
+
+  if (asHeader) {
+    actionElements.push({
+      type: "button",
+      text: {
+        type: "plain_text",
+        text: "Open in Plane",
+      },
+      url: `${env.APP_BASE_URL}/${workspaceSlug}/projects/${issue.project.id}/issues/${issue.id}`,
+    });
+  }
 
   // Add actions block if there are any elements
   if (actionElements.length > 0) {

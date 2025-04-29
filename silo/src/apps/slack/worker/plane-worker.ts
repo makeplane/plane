@@ -1,8 +1,9 @@
 import { MQ, Store } from "@/worker/base";
 import { TaskHandler, TaskHeaders } from "@/types";
-import { PlaneWebhookData, WebhookIssueCommentPayload } from "@plane/sdk";
+import { PlaneWebhookPayload, WebhookIssueCommentPayload } from "@plane/sdk";
 import { handleIssueCommentWebhook } from "./plane-webhook-handlers/handle-comment-webhook";
 import { logger } from "@/logger";
+import { handleIssueWebhook } from "./plane-webhook-handlers/handle-issue-webhook";
 
 export class PlaneSlackWebhookWorker extends TaskHandler {
   mq: MQ;
@@ -13,9 +14,12 @@ export class PlaneSlackWebhookWorker extends TaskHandler {
     this.mq = mq;
     this.store = store;
   }
-  async handleTask(headers: TaskHeaders, data: PlaneWebhookData): Promise<boolean> {
+  async handleTask(headers: TaskHeaders, data: any): Promise<boolean> {
     try {
       switch (data.event) {
+        case "issue":
+          await handleIssueWebhook(data as PlaneWebhookPayload);
+          break
         case "issue_comment":
           await handleIssueCommentWebhook(data as WebhookIssueCommentPayload);
           break;

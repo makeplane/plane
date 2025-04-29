@@ -16,7 +16,7 @@ const handleCommentSync = async (payload: WebhookIssueCommentPayload) => {
   const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
     workspace_id: data.data.workspace,
     project_id: data.data.project,
-    entity_slug: data.data.issue,
+    issue_id: data.data.issue,
   });
 
   /*
@@ -37,20 +37,23 @@ const handleCommentSync = async (payload: WebhookIssueCommentPayload) => {
 
     const slackData = entityConnection.entity_data as SlackMessageResponse;
     const details = await getConnectionDetails(slackData.message.team);
+
     if (!details) return logger.info(`[SLACK] No connection details found for team ${slackData.message.team}`);
 
     const { slackService } = details;
 
+    const channel = typeof slackData.channel === "string" ? slackData.channel : slackData.channel?.["id"];
+
     if (credentials && credentials.length > 0 && credentials[0].source_access_token) {
       await slackService.sendMessageAsUser(
-        slackData.channel,
+        channel,
         entityConnection.entity_id ?? "",
         data.data.comment_stripped,
         credentials[0].source_access_token
       );
     } else {
       await slackService.sendThreadMessage(
-        slackData.channel,
+        channel,
         entityConnection.entity_id ?? "",
         data.data.comment_stripped
       );
