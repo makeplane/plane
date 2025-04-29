@@ -4,7 +4,7 @@ import useSWR from "swr";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 // local components
-import { DashboardsWidgetsListRoot } from "./details";
+import { DashboardsWidgetsListRoot } from "./details/root";
 import { DashboardsWidgetConfigSidebarRoot } from "./sidebar";
 
 export const WorkspaceDashboardDetailsRoot = observer(() => {
