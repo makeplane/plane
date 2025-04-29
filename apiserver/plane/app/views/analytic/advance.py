@@ -120,13 +120,13 @@ class AdvanceAnalyticsEndpoint(BaseAPIView):
         return {
             "total_users": self.get_filtered_counts(
                 WorkspaceMember.objects.filter(
-                    workspace__slug=self.workspace_slug, is_active=True
+                    workspace__slug=self._workspace_slug, is_active=True
                 ),
                 date_filters,
             ),
             "total_admins": self.get_filtered_counts(
                 WorkspaceMember.objects.filter(
-                    workspace__slug=self.workspace_slug,
+                    workspace__slug=self._workspace_slug,
                     role=ROLE.ADMIN.value,
                     is_active=True,
                 ),
@@ -134,7 +134,7 @@ class AdvanceAnalyticsEndpoint(BaseAPIView):
             ),
             "total_members": self.get_filtered_counts(
                 WorkspaceMember.objects.filter(
-                    workspace__slug=self.workspace_slug,
+                    workspace__slug=self._workspace_slug,
                     role=ROLE.MEMBER.value,
                     is_active=True,
                 ),
@@ -142,7 +142,7 @@ class AdvanceAnalyticsEndpoint(BaseAPIView):
             ),
             "total_guests": self.get_filtered_counts(
                 WorkspaceMember.objects.filter(
-                    workspace__slug=self.workspace_slug,
+                    workspace__slug=self._workspace_slug,
                     role=ROLE.GUEST.value,
                     is_active=True,
                 ),
@@ -173,13 +173,13 @@ class AdvanceAnalyticsEndpoint(BaseAPIView):
         return {
             "total_work_items": self.get_filtered_counts(base_queryset, date_filters),
             "started_work_items": self.get_filtered_counts(
-                base_queryset.filter(state__group=True), date_filters
+                base_queryset.filter(state__group="started"), date_filters
             ),
             "backlog_work_items": self.get_filtered_counts(
-                base_queryset.filter(state__group=True), date_filters
+                base_queryset.filter(state__group="backlog"), date_filters
             ),
             "un_started_work_items": self.get_filtered_counts(
-                base_queryset.filter(state__group=True), date_filters
+                base_queryset.filter(state__group="un-started"), date_filters
             ),
             "completed_work_items": self.get_filtered_counts(
                 base_queryset.filter(state__group="completed"), date_filters
@@ -337,14 +337,14 @@ class AdvanceAnalyticsChartEndpoint(BaseAPIView):
         total_views = IssueView.objects.filter(project_id__in=project_ids).count()
 
         data = {
-            "total_work_items": total_work_items,
-            "total_cycles": total_cycles,
-            "total_modules": total_modules,
-            "total_intake": total_intake,
-            "total_members": total_members,
-            "total_epics": total_epics,
-            "total_pages": total_pages,
-            "total_views": total_views,
+            "work_items": total_work_items,
+            "cycles": total_cycles,
+            "modules": total_modules,
+            "intake": total_intake,
+            "members": total_members,
+            "epics": total_epics,
+            "pages": total_pages,
+            "views": total_views,
         }
 
         return [

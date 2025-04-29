@@ -69,10 +69,7 @@ def get_x_axis_field() -> Dict[str, Tuple[str, str, Optional[Dict[str, Any]]]]:
         "TARGET_DATE": ("target_date", "target_date", None),
         "CREATED_AT": ("created_at__date", "created_at__date", None),
         "COMPLETED_AT": ("completed_at__date", "completed_at__date", None),
-        "WORK_ITEM_TYPES": ("type_id", "type__name", None),
-        "PROJECTS": ("project_id", "project__name", None),
         "CREATED_BY": ("created_by_id", "created_by__display_name", None),
-        "EPICS": ("id", "name", None),
     }
 
 
@@ -121,30 +118,6 @@ def apply_date_grouping(
         name_field = "date_group"
 
     return queryset, id_field, name_field
-
-
-def fill_missing_dates(
-    response: List[Dict[str, Any]], start_date: date, end_date: date, date_grouping: str
-) -> None:
-    current_date = start_date
-    delta = timezone.timedelta(days=1)
-
-    if date_grouping == "WEEK":
-        delta = timezone.timedelta(weeks=1)
-    elif date_grouping == "MONTH":
-        delta = timezone.timedelta(days=30)
-    elif date_grouping == "YEAR":
-        delta = timezone.timedelta(days=365)
-
-    date_set = {item["key"] for item in response}
-
-    while current_date <= end_date:
-        date_str = current_date.strftime("%Y-%m-%d")
-        if date_str not in date_set:
-            response.append({"key": date_str, "name": date_str, "count": 0})
-        current_date += delta
-
-    response.sort(key=lambda x: x["key"])
 
 
 def build_number_chart_response(
