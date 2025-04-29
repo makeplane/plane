@@ -46,11 +46,11 @@ export const FilterNumber: React.FC<FilterNumberProps> = ({
         break;
 
       case "isnull":
-        payload = `${groupKey}__isnull`;
+        payload = `${groupKey}__isnull:`;
         break;
 
       case "isnotnull":
-        payload = `${groupKey}__isnotnull`;
+        payload = `${groupKey}__isnotnull:`;
         break;
 
       default:
