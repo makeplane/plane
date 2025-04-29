@@ -43,10 +43,10 @@ export const GROUPED_WORKSPACE_SETTINGS = {
 export const GROUPED_PROFILE_SETTINGS = {
   [PROFILE_SETTINGS_CATEGORY.YOUR_PROFILE]: [
     PROFILE_SETTINGS["profile"],
+    PROFILE_SETTINGS["preferences"],
+    PROFILE_SETTINGS["notifications"],
     PROFILE_SETTINGS["security"],
     PROFILE_SETTINGS["activity"],
-    PROFILE_SETTINGS["appearance"],
-    PROFILE_SETTINGS["notifications"],
   ],
   [PROFILE_SETTINGS_CATEGORY.DEVELOPER]: [PROFILE_SETTINGS["api-tokens"]],
 };
