@@ -630,7 +630,6 @@ def build_custom_property_q_objects(custom_properties):
         key_parts = key.split('__')
         actual_key = key_parts[0]
         operator = key_parts[1] if len(key_parts) > 1 else 'in'
-        print("possdfs",operator)
 
         data_type_qs = IssueCustomProperty.objects.filter(
             key=actual_key
@@ -673,7 +672,6 @@ def build_custom_property_q_objects(custom_properties):
             q_object = Q(id__in=IssueCustomProperty.objects.filter(**filter_kwargs).values("issue_id"))
                 
         elif data_type in ["number", "date"]:
-            print("data_type",data_type)
             # Handle value conversion based on data type
             try:
                 if operator == "isbetween" and len(values) == 1:
@@ -706,11 +704,9 @@ def build_custom_property_q_objects(custom_properties):
                 q_object = Q(id__in=exists_filter) & ~Q(id__in=not_equal_filter)
             else:
                 filter_kwargs = base_filters.copy()
-                print("operwe00000000re",operator)
                 if operator in ["gte", "lte", "gt", "lt", "exact"]:
                     filter_kwargs[f"{base_field}__{operator}"] = value_input
                 elif operator in ["isnull", "isnotnull"]:
-                    print("opereat",operator)
                     filter_kwargs[f"{base_field}__isnull"] = (operator == "isnull")
                 else:
                     try:
