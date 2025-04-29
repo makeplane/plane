@@ -630,6 +630,7 @@ def build_custom_property_q_objects(custom_properties):
         key_parts = key.split('__')
         actual_key = key_parts[0]
         operator = key_parts[1] if len(key_parts) > 1 else 'in'
+        print("possdfs",operator)
 
         data_type_qs = IssueCustomProperty.objects.filter(
             key=actual_key
@@ -681,6 +682,8 @@ def build_custom_property_q_objects(custom_properties):
                         continue
                     lower = int(value_range[0]) if data_type == "number" else value_range[0]
                     upper = int(value_range[1]) if data_type == "number" else value_range[1]
+                elif operator in ["isnull", "isnotnull"]:
+                    value_input = None
                 else:
                     value_input = int(values[0]) if data_type == "number" else values[0]
             except (ValueError, TypeError):
@@ -703,10 +706,11 @@ def build_custom_property_q_objects(custom_properties):
                 q_object = Q(id__in=exists_filter) & ~Q(id__in=not_equal_filter)
             else:
                 filter_kwargs = base_filters.copy()
-                
+                print("operwe00000000re",operator)
                 if operator in ["gte", "lte", "gt", "lt", "exact"]:
                     filter_kwargs[f"{base_field}__{operator}"] = value_input
                 elif operator in ["isnull", "isnotnull"]:
+                    print("opereat",operator)
                     filter_kwargs[f"{base_field}__isnull"] = (operator == "isnull")
                 else:
                     try:
