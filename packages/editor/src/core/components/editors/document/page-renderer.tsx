@@ -51,7 +51,6 @@ export const PageRenderer = (props: IPageRenderer) => {
                 displayConfig={displayConfig}
               >
                 <EditorContentWrapper
-                  focus={false}
                   editor={titleEditor}
                   id={id + "-title"}
                   tabIndex={tabIndex}
