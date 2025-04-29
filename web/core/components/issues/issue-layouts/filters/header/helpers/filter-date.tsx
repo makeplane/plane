@@ -41,7 +41,7 @@ export const FilterDate: React.FC<FilterDateProps> = ({
 
       case "isbetween":
         if (!from || !to) return;
-        payload = `${groupKey}__isbetween:${from}-${to}`;
+        payload = `${groupKey}__isbetween:${from}^${to}`;
         break;
 
       case "isnull":

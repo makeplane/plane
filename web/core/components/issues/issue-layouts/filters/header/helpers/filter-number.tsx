@@ -42,7 +42,7 @@ export const FilterNumber: React.FC<FilterNumberProps> = ({
 
       case "isbetween":
         if (val1 === "" || val2 === "") return;
-        payload = `${groupKey}__isbetween:${val1}-${val2}`;
+        payload = `${groupKey}__isbetween:${val1}^${val2}`;
         break;
 
       case "isnull":
