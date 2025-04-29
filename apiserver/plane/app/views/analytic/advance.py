@@ -21,6 +21,7 @@ from django.db.models import (
 from plane.utils.build_chart import build_analytics_chart
 from datetime import timedelta
 from django.db.models.functions import TruncDay
+from plane.bgtasks.analytic_plot_export import export_analytics_to_csv_email
 
 
 class AdvanceAnalyticsEndpoint(BaseAPIView):
@@ -270,7 +271,7 @@ class AdvanceAnalyticsStatsEndpoint(BaseAPIView):
 
     def get_project_issues_stats(self, filters):
         qs = Issue.objects.filter(
-            project__workspace__slug=self._workspace_slug,
+            workspace__slug=self._workspace_slug,
             project__project_projectmember__member=self.request.user,
             project__project_projectmember__is_active=True,
             **filters,
@@ -507,3 +508,58 @@ class AdvanceAnalyticsChartEndpoint(BaseAPIView):
             )
 
         return Response({"message": "Invalid type"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AdvanceAnalyticsExportEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    def post(self, request, slug):
+        filters = request.GET.get("filters", {})
+
+        data = (
+            Issue.objects.filter(
+                workspace__slug=slug,
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+                **filters,
+            )
+            .values("project_id", "project__name")
+            .annotate(
+                cancelled_work_items=Count("id", filter=Q(state__group="cancelled")),
+                completed_work_items=Count("id", filter=Q(state__group="completed")),
+                backlog_work_items=Count("id", filter=Q(state__group="backlog")),
+                un_started_work_items=Count("id", filter=Q(state__group="un-started")),
+                started_work_items=Count("id", filter=Q(state__group="started")),
+            )
+            .order_by("project_id")
+        )
+
+        # Convert QuerySet to list of dictionaries for serialization
+        serialized_data = list(data)
+
+        headers = [
+            "Projects",
+            "Completed Issues",
+            "Backlog Issues",
+            "Unstarted Issues",
+            "Started Issues",
+        ]
+
+        keys = [
+            "project__name",
+            "completed_work_items",
+            "backlog_work_items",
+            "un_started_work_items",
+            "started_work_items",
+        ]
+
+        email = request.user.email
+
+        # Send serialized data to background task
+        export_analytics_to_csv_email.delay(serialized_data, headers, keys, email, slug)
+
+        return Response(
+            {
+                "message": f"Once the export is ready it will be emailed to you at {str(email)}"
+            },
+            status=status.HTTP_200_OK,
+        )
