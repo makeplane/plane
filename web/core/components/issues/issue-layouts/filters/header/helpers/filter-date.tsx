@@ -1,18 +1,22 @@
 import React, { useState } from "react";
+import { FilterHeader } from "@/components/issues";
 
 type FilterDateProps = {
   groupKey: string;
-  /** called with the final filter string, e.g. "days__lt:2025-04-01" or "days:2025-04-11" or "days__isnull" */
   onFilter: (filter: string) => void;
+  title: string;
+  isPreviewEnabled: boolean;
+  handleIsPreviewEnabled: () => void;
 };
 
 export const FilterDate: React.FC<FilterDateProps> = ({
   groupKey,
   onFilter,
+  title,
+  isPreviewEnabled,
+  handleIsPreviewEnabled,
 }) => {
-  const [op, setOp] = useState<
-    "gt" | "lt" | "eq" | "ne" | "isbetween" | "isnull" | "isnotnull"
-  >("gt");
+  const [op, setOp] = useState<"gt" | "lt" | "eq" | "ne" | "isbetween" | "isnull" | "isnotnull">("gt");
   const [from, setFrom] = useState<string>("");
   const [to, setTo] = useState<string>("");
 
@@ -55,59 +59,74 @@ export const FilterDate: React.FC<FilterDateProps> = ({
   };
 
   return (
-    <div className="flex items-center space-x-2">
-      <select
-        value={op}
-        onChange={(e) => setOp(e.target.value as any)}
-        className="border rounded p-1 text-xs"
-      >
-        <option value="gt">Is after</option>
-        <option value="lt">Is before</option>
-        <option value="eq">Is on</option>
-        <option value="ne">Is not on</option>
-        <option value="isbetween">Is between</option>
-        <option value="isnull">Is null</option>
-        <option value="isnotnull">Is not null</option>
-      </select>
-
-      {/* single-date operators */}
-      {["gt", "lt", "eq", "ne"].includes(op) && (
-        <input
-          type="date"
-          value={from}
-          onChange={(e) => setFrom(e.target.value)}
-          className="border rounded p-1 text-xs w-40"
+    <div className="w-full">
+      <div className="flex justify-between items-center">
+        <FilterHeader
+          title={title}
+          isPreviewEnabled={isPreviewEnabled}
+          handleIsPreviewEnabled={handleIsPreviewEnabled}
         />
+
+        {isPreviewEnabled && (
+          <div className="flex items-center">
+            <select
+              value={op}
+              onChange={(e) => setOp(e.target.value as any)}
+              className="text-xs text-custom-primary-100"
+            >
+              <option value="gt">Is after</option>
+              <option value="lt">Is before</option>
+              <option value="eq">Is on</option>
+              <option value="ne">Is not on</option>
+              <option value="isbetween">Is between</option>
+              <option value="isnull">Is null</option>
+              <option value="isnotnull">Is not null</option>
+            </select>
+          </div>
+        )}
+      </div>
+
+      {isPreviewEnabled && (
+        <div className="mt-4 w-full">
+          <div className="flex items-center space-x-2">
+            {["gt", "lt", "eq", "ne"].includes(op) && (
+              <input
+                type="date"
+                value={from}
+                onChange={(e) => setFrom(e.target.value)}
+                className="border rounded p-1 text-xs flex-grow"
+              />
+            )}
+
+            {op === "isbetween" && (
+              <>
+                <input
+                  type="date"
+                  value={from}
+                  onChange={(e) => setFrom(e.target.value)}
+                  className="border rounded p-1 text-xs flex-grow"
+                />
+                <input
+                  type="date"
+                  value={to}
+                  onChange={(e) => setTo(e.target.value)}
+                  className="border rounded p-1 text-xs flex-grow"
+                />
+              </>
+            )}
+
+            {(["gt", "lt", "eq", "ne", "isbetween"].includes(op)) && (
+              <button
+                type="button"
+                className="text-xs font-medium text-custom-primary-100 hover:text-custom-primary-200 cursor-pointer p-1"
+                onClick={apply}
+              >
+                Apply
+              </button>
+            )}
+          </div>
+        </div>
       )}
-
-      {/* between */}
-      {op === "isbetween" && (
-        <>
-          <input
-            type="date"
-            value={from}
-            onChange={(e) => setFrom(e.target.value)}
-            className="border rounded p-1 text-xs w-40"
-          />
-          {/* <span className="text-xs">and</span> */}
-          <input
-            type="date"
-            value={to}
-            onChange={(e) => setTo(e.target.value)}
-            className="border rounded p-1 text-xs w-40"
-          />
-        </>
-      )}
-
-      {/* null/notnull show no inputs */}
-
-      <button
-        type="button"
-        className="text-xs font-medium text-blue-500 hover:text-blue-700 cursor-pointer"
-        onClick={apply}
-      >
-        Apply
-      </button>
     </div>
   );
 };

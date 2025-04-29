@@ -143,6 +143,36 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
           {Object.keys(filteredGroupOptions).map((groupKey) => {
             const groupedSection = filteredGroupOptions[groupKey];
             const properties = filteredGroupOptions[groupKey].data || [];
+            if (groupedSection.data_type === "date") {
+              return (
+                <div key={groupKey}>
+                  <FilterDate
+                    groupKey={groupKey}
+                    onFilter={handleUpdate}
+                    title={groupKey}
+                    isPreviewEnabled={groupPreviewEnabled[groupKey]}
+                    handleIsPreviewEnabled={() => toggleGroupPreview(groupKey)}
+                  />
+                </div>
+              );
+            }
+            
+            // For number type
+            if (groupedSection.data_type === "number") {
+              return (
+                <div key={groupKey}>
+                  <FilterNumber
+                    groupKey={groupKey}
+                    onFilter={handleUpdate}
+                    title={groupKey}
+                    isPreviewEnabled={groupPreviewEnabled[groupKey]}
+                    handleIsPreviewEnabled={() => toggleGroupPreview(groupKey)}
+                  />
+                </div>
+              );
+            }
+            
+            // For text and boolean types
             return (
               <div key={groupKey}>
                 <FilterHeader
@@ -152,49 +182,32 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
                 />
                 {groupPreviewEnabled[groupKey] && (
                   <div>
-                    {(groupedSection.data_type === "text" || groupedSection.data_type === "boolean") && (
-                      <FilterSearch
-                        propertyKey={groupKey}
-                        handleSectionSearch={handleSectionSearch}
-                      />
-                    )}
-                    {(groupedSection.data_type === "text" || groupedSection.data_type === "boolean") && (
-                      <>
-                        {properties.map(property => (
-                          <FilterOption
-                            key={`${groupKey}:${property}`}
-                            isChecked={appliedFilters?.includes(`${groupKey}:${property}`) ? true : false}
-                            onClick={() => handleUpdate(`${groupKey}:${property}`)}
-                            title={property}
-                          />
-                        ))}
-                        {(groupedSection.page ?? 1) < (groupedSection.total_pages ?? 1) &&properties.length ? (
-                          <button
-                            onClick={() => fetchNextPage(groupKey)}
-                            className="ml-8 text-xs font-medium text-custom-primary-100 cursor-pointer"
-                          >
-                            {t("view_more")}
-                          </button>
-                        ) : null}
-                        {
-                          properties.length == 0 ?
-                          <p className="text-xs italic text-custom-text-400">{t("no_matches_found")}</p> : null
-                        }
-                      </>
-                    )}
-                    {groupedSection.data_type === "number" && (
-                      <FilterNumber
-                        groupKey={groupKey}
-                        onFilter={handleUpdate}
-                      />
-                    )}
-                    {groupedSection.data_type === "date" && (
-                      <FilterDate
-                        groupKey={groupKey}
-                        onFilter={handleUpdate}
-                      />
-                    )}
-
+                    <FilterSearch
+                      propertyKey={groupKey}
+                      handleSectionSearch={handleSectionSearch}
+                    />
+                    <>
+                      {properties.map(property => (
+                        <FilterOption
+                          key={`${groupKey}:${property}`}
+                          isChecked={appliedFilters?.includes(`${groupKey}:${property}`) ? true : false}
+                          onClick={() => handleUpdate(`${groupKey}:${property}`)}
+                          title={property}
+                        />
+                      ))}
+                      {(groupedSection.page ?? 1) < (groupedSection.total_pages ?? 1) && properties.length ? (
+                        <button
+                          onClick={() => fetchNextPage(groupKey)}
+                          className="ml-8 text-xs font-medium text-custom-primary-100 cursor-pointer"
+                        >
+                          {t("view_more")}
+                        </button>
+                      ) : null}
+                      {
+                        properties.length == 0 ?
+                        <p className="text-xs italic text-custom-text-400">{t("no_matches_found")}</p> : null
+                      }
+                    </>
                   </div>
                 )}
               </div>
