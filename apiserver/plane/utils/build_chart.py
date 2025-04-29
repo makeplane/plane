@@ -1,16 +1,13 @@
 from typing import Dict, Any, Tuple, Optional, List, Union
-from datetime import date
 
 
 # Django imports
-from django.utils import timezone
 from django.db.models import (
     Count,
     F,
     QuerySet,
     Aggregate,
 )
-from django.db.models.functions import TruncDay, TruncWeek, TruncMonth, TruncYear
 
 from plane.db.models import Issue
 from rest_framework.exceptions import ValidationError
@@ -31,6 +28,7 @@ x_axis_mapper = {
     "COMPLETED_AT": "COMPLETED_AT",
     "CREATED_BY": "CREATED_BY",
 }
+
 
 def get_y_axis_filter(y_axis: str) -> Dict[str, Any]:
     filter_mapping = {
@@ -100,26 +98,6 @@ def process_grouped_data(
     return list(response.values()), schema
 
 
-def apply_date_grouping(
-    queryset: QuerySet[Issue], x_axis: str, x_axis_date_grouping: str, id_field: str
-) -> Tuple[QuerySet[Issue], str, str]:
-    date_group_mapper = {
-        "DAY": TruncDay,
-        "WEEK": TruncWeek,
-        "MONTH": TruncMonth,
-        "YEAR": TruncYear,
-    }
-    name_field = id_field
-
-    trunc_function = date_group_mapper.get(x_axis_date_grouping)
-    if trunc_function:
-        queryset = queryset.annotate(date_group=trunc_function(F(id_field)))
-        id_field = "date_group"
-        name_field = "date_group"
-
-    return queryset, id_field, name_field
-
-
 def build_number_chart_response(
     queryset: QuerySet[Issue],
     y_axis_filter: Dict[str, Any],
@@ -180,6 +158,7 @@ def build_analytics_chart(
     queryset: QuerySet[Issue],
     x_axis: str,
     group_by: Optional[str] = None,
+    date_filter: Optional[str] = None,
 ) -> Dict[str, Union[List[Dict[str, Any]], Dict[str, str]]]:
 
     # Validate x_axis
@@ -206,7 +185,7 @@ def build_analytics_chart(
     if group_additional_filter or {}:
         queryset = queryset.filter(**group_additional_filter)
 
-    aggregate_func =  Count("id", distinct=True)
+    aggregate_func = Count("id", distinct=True)
 
     if group_field:
         response, schema = build_grouped_chart_response(
