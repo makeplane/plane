@@ -1,0 +1,55 @@
+name: Dockerless Build CE
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - non-docker-build
+
+jobs:
+  build_setup:
+    runs-on: ubuntu-22.04
+    outputs:
+      tag_name: ${{ steps.set_env_variables.outputs.TAG_NAME }}
+      admin_image: ${{ steps.set_env_variables.outputs.ADMIN_IMAGE }}
+    steps:
+      - name: Prepare Environment
+        id: set_env_variables
+        run: |
+          # get the selected branch/tag name and flatten it 
+          TAG_NAME=${{ github.ref_name }}
+          TAG_NAME=${TAG_NAME//\//-}
+          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_OUTPUT
+          echo "ADMIN_IMAGE=makeplane/plane-admin" >> $GITHUB_OUTPUT
+
+
+  build_admin:
+    needs: build_setup
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Export Builder Stage Content
+        run: |
+          # get the selected branch/tag name and flatten it 
+          TAG_NAME=${{ needs.build_setup.outputs.tag_name }}
+
+          # Create a temporary container from the builder stage
+          CONTAINER_ID=$(docker create --platform=linux/amd64 -q ${ADMIN_IMAGE}:${TAG_NAME})
+          
+          # Create admin-dist directory
+          mkdir -p admin-dist
+          
+          # Copy the /app contents from the container
+          docker cp $CONTAINER_ID:/app/. admin-dist/
+          
+          # Remove the temporary container
+          docker rm $CONTAINER_ID
+          
+          # Create a tar archive
+          tar -czf admin-dist.tar.gz admin-dist/
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: admin-dist
+          path: admin-dist.tar.gz
+          retention-days: 1
