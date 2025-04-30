@@ -10,11 +10,15 @@ from plane.app.serializers import DeployBoardSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.bgtasks.page_update import nested_page_update
+from plane.ee.utils.page_events import PageAction
 
 
 class ProjectPagePublishEndpoint(BaseAPIView):
+
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=Page)
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN], creator=True, field="owned_by", model=Page
+    )
     def post(self, request, slug, project_id, pk):
         workspace = Workspace.objects.get(slug=slug)
         # Fetch the page
@@ -53,7 +57,7 @@ class ProjectPagePublishEndpoint(BaseAPIView):
 
         nested_page_update.delay(
             page_id=pk,
-            action="published",
+            action=PageAction.PUBLISHED,
             project_id=project_id,
             slug=slug,
             user_id=request.user.id,
@@ -63,7 +67,9 @@ class ProjectPagePublishEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=Page)
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN], creator=True, field="owned_by", model=Page
+    )
     def patch(self, request, slug, project_id, pk):
         # Get the deploy board
         deploy_board = DeployBoard.objects.get(
@@ -106,7 +112,9 @@ class ProjectPagePublishEndpoint(BaseAPIView):
         # Return the deploy board
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=Page)
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN], creator=True, field="owned_by", model=Page
+    )
     def delete(self, request, slug, project_id, pk):
         # Get the deploy board and un publish all the sub page as well.
         deploy_board = DeployBoard.objects.get(
@@ -119,7 +127,7 @@ class ProjectPagePublishEndpoint(BaseAPIView):
 
         nested_page_update.delay(
             page_id=pk,
-            action="unpublished",
+            action=PageAction.UNPUBLISHED,
             project_id=project_id,
             slug=slug,
             user_id=request.user.id,
@@ -129,14 +137,18 @@ class ProjectPagePublishEndpoint(BaseAPIView):
 
 
 class WorkspacePagePublishEndpoint(BaseAPIView):
+
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
     @allow_permission(
-        allowed_roles=[ROLE.ADMIN], creator=True, model=Page, level="WORKSPACE"
+        allowed_roles=[ROLE.ADMIN],
+        creator=True,
+        model=Page,
+        field="owned_by",
+        level="WORKSPACE",
     )
     def post(self, request, slug, pk):
-        workspace = Workspace.objects.get(slug=slug)
         # Fetch the page
-        page = Page.objects.get(pk=pk, workspace=workspace)
+        page = Page.objects.get(pk=pk, workspace__slug=slug)
 
         # Throw error if the page is a project page
         if not page.is_global:
@@ -145,40 +157,21 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check if the page is already published
-        comments = request.data.get("is_comments_enabled", False)
-        reactions = request.data.get("is_reactions_enabled", False)
-        intake = request.data.get("intake", None)
-        votes = request.data.get("is_votes_enabled", False)
-        view_props = request.data.get("view_props", {})
-
-        # Create a deploy board for the page
-        deploy_board, _ = DeployBoard.objects.get_or_create(
-            entity_identifier=pk,
-            entity_name="page",
-            defaults={
-                "is_comments_enabled": comments,
-                "is_reactions_enabled": reactions,
-                "intake": intake,
-                "is_votes_enabled": votes,
-                "view_props": view_props,
-                "workspace": workspace,
-            },
-        )
-
         nested_page_update.delay(
             page_id=pk,
-            action="published",
+            action=PageAction.PUBLISHED,
             slug=slug,
             user_id=request.user.id,
         )
-        # Return the deploy board
-        serializer = DeployBoardSerializer(deploy_board)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
     @allow_permission(
-        allowed_roles=[ROLE.ADMIN], creator=True, model=Page, level="WORKSPACE"
+        allowed_roles=[ROLE.ADMIN],
+        creator=True,
+        model=Page,
+        field="owned_by",
+        level="WORKSPACE",
     )
     def patch(self, request, slug, pk):
         deploy_board = DeployBoard.objects.get(
@@ -217,7 +210,11 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission(
-        allowed_roles=[ROLE.ADMIN], creator=True, model=Page, level="WORKSPACE"
+        allowed_roles=[ROLE.ADMIN],
+        creator=True,
+        model=Page,
+        field="owned_by",
+        level="WORKSPACE",
     )
     def delete(self, request, slug, pk):
         # Get the deploy board and un publish all the sub page as well.
@@ -231,7 +228,7 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
 
         nested_page_update.delay(
             page_id=pk,
-            action="unpublished",
+            action=PageAction.UNPUBLISHED,
             slug=slug,
             user_id=request.user.id,
         )

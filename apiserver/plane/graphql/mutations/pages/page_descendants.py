@@ -16,6 +16,7 @@ from strawberry.types import Info
 from plane.db.models import DeployBoard, Page, UserFavorite, UserRecentVisit
 from plane.ee.bgtasks.page_update import nested_page_update
 from plane.graphql.permissions.project import ProjectPermission
+from plane.ee.utils.page_events import PageAction
 from plane.graphql.permissions.workspace import WorkspacePermission
 from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
 from plane.graphql.types.page import NestedParentPageLiteType
@@ -151,7 +152,10 @@ class WorkspaceNestedChildArchivePageMutation:
 
         for child_page_id in child_page_ids:
             nested_page_broadcast_update(
-                slug=slug, project=None, page_id=child_page_id, action="archived"
+                slug=slug,
+                project=None,
+                page_id=child_page_id,
+                action=PageAction.ARCHIVED,
             )
 
         await sync_to_async(lambda: [page.save() for page in pages])()
@@ -192,7 +196,10 @@ class WorkspaceNestedChildRestorePageMutation:
 
         for child_page_id in child_page_ids:
             nested_page_broadcast_update(
-                slug=slug, project=None, page_id=child_page_id, action="unarchived"
+                slug=slug,
+                project=None,
+                page_id=child_page_id,
+                action=PageAction.UNARCHIVED,
             )
 
         await sync_to_async(lambda: [page.save() for page in pages])()
@@ -250,7 +257,7 @@ class WorkspaceNestedChildDeletePageMutation:
                 await remove_recent_visit(slug=slug, project=None, page_id=page_id)
                 await delete_deploy_board(slug=slug, page_id=page_id)
                 nested_page_broadcast_update(
-                    slug=slug, project=None, page_id=page_id, action="deleted"
+                    slug=slug, project=None, page_id=page_id, action=PageAction.DELETED
                 )
 
             await sync_to_async(lambda: [page.save() for page in pages])()
@@ -293,7 +300,10 @@ class NestedChildArchivePageMutation:
 
         for child_page_id in child_page_ids:
             nested_page_broadcast_update(
-                slug=slug, project=project, page_id=child_page_id, action="archived"
+                slug=slug,
+                project=project,
+                page_id=child_page_id,
+                action=PageAction.ARCHIVED,
             )
 
         await sync_to_async(lambda: [page.save() for page in pages])()
@@ -334,7 +344,10 @@ class NestedChildRestorePageMutation:
 
         for child_page_id in child_page_ids:
             nested_page_broadcast_update(
-                slug=slug, project=project, page_id=child_page_id, action="unarchived"
+                slug=slug,
+                project=project,
+                page_id=child_page_id,
+                action=PageAction.UNARCHIVED,
             )
 
         await sync_to_async(lambda: [page.save() for page in pages])()
@@ -392,7 +405,10 @@ class NestedChildDeletePageMutation:
                 await remove_recent_visit(slug=slug, project=project, page_id=page_id)
                 await delete_deploy_board(slug=slug, page_id=page_id)
                 nested_page_broadcast_update(
-                    slug=slug, project=project, page_id=page_id, action="deleted"
+                    slug=slug,
+                    project=project,
+                    page_id=page_id,
+                    action=PageAction.DELETED,
                 )
 
             await sync_to_async(lambda: [page.save() for page in pages])()
