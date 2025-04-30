@@ -29,6 +29,7 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
     fetchIssueDetails = true,
     primaryButtonText,
     isProjectSelectionDisabled = false,
+    isConversionOperation = false,
   } = props;
   // ref
   const issueTitleRef = useRef<HTMLInputElement>(null);
@@ -41,7 +42,7 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
   const { workspaceSlug, projectId: routerProjectId } = useParams();
   const { projectsWithCreatePermissions } = useUser();
   const { fetchIssue } = useIssueDetail(EIssueServiceType.EPICS);
-  const { handleCreateUpdatePropertyValues } = useIssueModal();
+  const { handleCreateUpdatePropertyValues, handleConvert } = useIssueModal();
   // pathname
   const pathname = usePathname();
   // current store details
@@ -164,7 +165,10 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
     }
   };
 
-  const handleUpdateIssue = async (payload: Partial<TIssue>): Promise<TIssue | undefined> => {
+  const handleUpdateIssue = async (
+    payload: Partial<TIssue>,
+    showToast: boolean = true
+  ): Promise<TIssue | undefined> => {
     if (!workspaceSlug || !payload.project_id || !data?.id) return;
 
     try {
@@ -178,11 +182,14 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
         workspaceSlug: workspaceSlug?.toString(),
       });
 
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "Epic updated successfully.",
-      });
+      if (showToast) {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Epic updated successfully.",
+        });
+      }
+
       captureIssueEvent({
         eventName: ISSUE_UPDATED,
         payload: { ...payload, issueId: data.id, state: "SUCCESS" },
@@ -191,11 +198,13 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
       handleClose();
     } catch (error) {
       console.error(error);
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Epic could not be updated. Please try again.",
-      });
+      if (showToast) {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Epic could not be updated. Please try again.",
+        });
+      }
       captureIssueEvent({
         eventName: ISSUE_UPDATED,
         payload: { ...payload, state: "FAILED" },
@@ -214,7 +223,10 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
     try {
       if (beforeFormSubmit) await beforeFormSubmit();
       if (!data?.id) response = await handleCreateIssue(payload);
-      else response = await handleUpdateIssue(payload);
+      else {
+        if (isConversionOperation) handleConvert(workspaceSlug.toString(), data);
+        response = await handleUpdateIssue(payload, !isConversionOperation);
+      }
     } catch (error) {
       console.error(error);
       throw error;

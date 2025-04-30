@@ -1741,6 +1741,54 @@ def delete_customer_activity(
     )
 
 
+def convert_epic_to_work_item_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment="converted the epic to work item",
+            field="epic",
+            verb="converted",
+            actor_id=actor_id,
+            epoch=epoch,
+        )
+    )
+
+
+def convert_work_item_to_epic_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment="converted the work item to epic",
+            field="work_item",
+            verb="converted",
+            actor_id=actor_id,
+            epoch=epoch,
+        )
+    )
+
+
 # Receive message from room group
 @shared_task
 def issue_activity(
@@ -1811,6 +1859,8 @@ def issue_activity(
             "issue_draft.activity.deleted": delete_draft_issue_activity,
             "intake.activity.created": create_intake_activity,
             "epic.activity.created": create_epic_activity,
+            "work_item.activity.converted": convert_epic_to_work_item_activity,
+            "epic.activity.converted": convert_work_item_to_epic_activity,
             "customer.activity.created": create_customer_activity,
             "customer.activity.deleted": delete_customer_activity,
         }

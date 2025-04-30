@@ -375,3 +375,8 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
   },
   ...ADDITIONAL_SPREADSHEET_PROPERTY_DETAILS,
 };
+
+export enum EWorkItemConversionType {
+  WORK_ITEM = "work_item",
+  EPIC = "epic",
+}

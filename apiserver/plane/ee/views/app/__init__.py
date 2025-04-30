@@ -6,6 +6,7 @@ from plane.ee.views.app.issue import (
     BulkSubscribeIssuesEndpoint,
     IssueWorkLogsEndpoint,
     IssueTotalWorkLogEndpoint,
+    IssueConvertEndpoint,
 )
 
 from plane.ee.views.app.intake import ProjectInTakePublishViewSet

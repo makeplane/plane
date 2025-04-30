@@ -4,3 +4,4 @@ from .bulk_operations import (
     BulkArchiveIssuesEndpoint,
     BulkSubscribeIssuesEndpoint,
 )
+from .convert import IssueConvertEndpoint

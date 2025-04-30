@@ -94,6 +94,8 @@ export interface IBaseIssuesStore {
   addCycleToIssue: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   removeCycleFromIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 
+  addIssueToList: (issueId: string) => void;
+  removeIssueFromList: (issueId: string) => void;
   addIssuesToModule: (
     workspaceSlug: string,
     projectId: string,
