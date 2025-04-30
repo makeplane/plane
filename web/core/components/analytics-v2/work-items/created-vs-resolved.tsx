@@ -73,6 +73,8 @@ const CreatedVsResolved = observer(() => {
                 yAxis={{
                     key: "count",
                     label: "Number of Issues",
+                    offset: -30,
+                    dx: -22,
                 }}
             />
         </AnalyticsSectionWrapper>

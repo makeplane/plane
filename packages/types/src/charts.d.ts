@@ -33,6 +33,8 @@ type TChartProps<K extends string, T extends string> = {
     key: keyof TChartData<K, T>;
     label?: string;
     strokeColor?: string;
+    offset?: number;
+    dx?: number;
   };
   className?: string;
   legend?: TChartLegend;

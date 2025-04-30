@@ -41,8 +41,9 @@ const PriorityChart = observer(() => {
       yAxis={{
         key: "count",
         label: "No of Work Items",
+        offset: -40,
+        dx: -26,
       }}
-
     />
   )
 })

@@ -699,18 +699,13 @@
     "view": "View",
     "deactivated_user": "Deactivated user",
     "apply": "Apply",
-    "applying": "Applying"
+    "applying": "Applying",
+    "overview": "Overview"
   },
   "chart": {
     "x_axis": "X-axis",
     "y_axis": "Y-axis",
-    "metric": "Metric",
-    "common": {
-      "day": "Day",
-      "week": "Week",
-      "month": "Month",
-      "year": "Year"
-    }
+    "metric": "Metric"
   },
   "form": {
     "title": {

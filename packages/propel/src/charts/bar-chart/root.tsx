@@ -114,8 +114,8 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
               value: yAxis.label,
               angle: -90,
               position: "bottom",
-              offset: -24,
-              dx: -16,
+              offset: yAxis.offset || -24,
+              dx: yAxis.dx || -16,
               className: AXIS_LABEL_CLASSNAME,
             }}
             tick={(props) => <CustomYAxisTick {...props} />}
