@@ -217,30 +217,30 @@ jobs:
 
       - name: Extract All Builds
         run: |
-          # Create base directories
-          sudo mkdir -p /opt/plane/{admin,web,space,live,backend}
+          # Create local directories
+          mkdir -p plane/{admin,web,space,live,backend}
           
           # Extract and move admin build
           tar -xzf artifacts/admin-dist/admin-dist.tar.gz
-          mv admin-dist/admin-dist/* /opt/plane/admin/
+          mv admin-dist/admin-dist/* plane/admin/
           
           # Extract and move web build
           tar -xzf artifacts/web-dist/web-dist.tar.gz
-          mv web-dist/web-dist/* /opt/plane/web/
+          mv web-dist/web-dist/* plane/web/
           
           # Extract and move space build
           tar -xzf artifacts/space-dist/space-dist.tar.gz
-          mv space-dist/space-dist/* /opt/plane/space/
+          mv space-dist/space-dist/* plane/space/
           
           # Extract and move live build
           tar -xzf artifacts/live-dist/live-dist.tar.gz
-          mv live-dist/live-dist/* /opt/plane/live/
+          mv live-dist/live-dist/* plane/live/
           
           # Extract and move backend build
           tar -xzf artifacts/backend-dist/backend-dist.tar.gz
-          mv backend-dist/backend-dist/* /opt/plane/backend/
+          mv backend-dist/backend-dist/* plane/backend/
           
-          # Cleanup
+          # Cleanup extracted directories
           rm -rf *-dist artifacts
 
       - name: Configure AWS Credentials

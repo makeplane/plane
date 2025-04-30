@@ -119,14 +119,8 @@ build {
   }
 
   provisioner "file" {
-    sources = [
-      "/opt/plane/admin/",
-      "/opt/plane/web/",
-      "/opt/plane/space/",
-      "/opt/plane/live/",
-      "/opt/plane/backend/"
-    ]
-    destination = "/opt/plane/"
+    source      = "plane/"
+    destination = "/opt/plane"
   }
 
   # Set proper permissions
