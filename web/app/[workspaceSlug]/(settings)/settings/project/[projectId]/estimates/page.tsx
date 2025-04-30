@@ -29,9 +29,7 @@ const EstimatesSettingsPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div
-        className={`w-full overflow-y-auto ${canPerformProjectAdminActions ? "" : "pointer-events-none opacity-60"}`}
-      >
+      <div className={`w-full ${canPerformProjectAdminActions ? "" : "pointer-events-none opacity-60"}`}>
         <EstimateRoot
           workspaceSlug={workspaceSlug?.toString()}
           projectId={projectId?.toString()}

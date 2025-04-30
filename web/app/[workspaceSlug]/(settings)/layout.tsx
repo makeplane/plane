@@ -13,7 +13,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
           {/* Header */}
           <SettingsHeader />
           {/* Content */}
-          <ContentWrapper className="px-12 py-page-y flex">{children}</ContentWrapper>
+          <ContentWrapper className="pl-12 py-page-y flex">{children}</ContentWrapper>
         </main>
       </WorkspaceAuthWrapper>
     </AuthenticationWrapper>

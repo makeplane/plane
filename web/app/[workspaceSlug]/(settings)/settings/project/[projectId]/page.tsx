@@ -64,7 +64,7 @@ const ProjectSettingsPage = observer(() => {
         </>
       )}
 
-      <div className={`w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
+      <div className={`w-full ${isAdmin ? "" : "opacity-60"}`}>
         {currentProjectDetails && workspaceSlug && projectId && !isLoading ? (
           <ProjectDetailsForm
             project={currentProjectDetails}

@@ -10,7 +10,7 @@ import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { PasswordStrengthMeter } from "@/components/account";
 import { PageHead } from "@/components/core";
-import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
+import { ProfileSettingContentHeader } from "@/components/profile";
 // helpers
 import { authErrorHandler } from "@/helpers/authentication.helper";
 import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.helper";

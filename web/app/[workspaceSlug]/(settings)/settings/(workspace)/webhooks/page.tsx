@@ -56,7 +56,7 @@ const WebhooksListPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="w-full overflow-y-auto">
+      <div className="w-full">
         <CreateWebhookModal
           createWebhook={createWebhook}
           clearSecretKey={clearSecretKey}

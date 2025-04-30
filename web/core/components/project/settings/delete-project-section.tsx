@@ -36,7 +36,7 @@ export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => 
           >
             <Disclosure.Panel>
               <div className="flex flex-col gap-8 pt-4">
-                <span className="text-sm tracking-tight w-[800px]">
+                <span className="text-sm tracking-tight">
                   When deleting a project, all of the data and resources within that project will be permanently removed
                   and cannot be recovered.
                 </span>

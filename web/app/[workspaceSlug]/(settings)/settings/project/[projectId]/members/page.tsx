@@ -29,7 +29,7 @@ const MembersSettingsPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <section className={`w-full overflow-y-auto`}>
+      <section className={`w-full`}>
         <ProjectSettingsMemberDefaults />
         <ProjectMemberList />
       </section>

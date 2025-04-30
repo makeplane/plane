@@ -163,7 +163,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
           />
         )}
       />
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full overflow-y-scroll">
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full">
         <div className="flex w-full flex-col gap-6">
           <div className="relative h-44 w-full">
             <img
@@ -429,7 +429,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
           </div>
         </div>
       </form>
-      <Disclosure as="div" className="border-t border-custom-border-100">
+      <Disclosure as="div" className="border-t border-custom-border-100 w-full">
         {({ open }) => (
           <>
             <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">

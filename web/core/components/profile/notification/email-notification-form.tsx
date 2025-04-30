@@ -53,7 +53,7 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
   return (
     <>
       {/* Notification Settings */}
-      <div className="flex flex-col py-2">
+      <div className="flex flex-col py-2 w-full">
         <div className="flex gap-2 items-center pt-2">
           <div className="grow">
             <div className="pb-1 text-base font-medium text-custom-text-100">{t("property_changes")}</div>

@@ -35,7 +35,7 @@ export const ArchiveProjectSelection: React.FC<IArchiveProject> = (props) => {
           >
             <Disclosure.Panel>
               <div className="flex flex-col gap-8 pt-4">
-                <span className="text-sm tracking-tight w-[800px]">
+                <span className="text-sm tracking-tight">
                   Archiving a project will unlist your project from your side navigation although you will still be able
                   to access it from your projects page. You can restore the project or delete it whenever you want.
                 </span>

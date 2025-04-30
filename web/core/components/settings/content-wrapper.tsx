@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
 
 export const SettingsContentWrapper = ({ children }: { children: ReactNode }) => (
-  <div className="relative flex flex-col min-w-[60%] items-center mx-auto overflow-y-scroll px-12">{children}</div>
+  <div className="relative flex flex-col w-full items-center mx-auto h-full overflow-y-scroll px-28">{children}</div>
 );

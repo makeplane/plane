@@ -29,7 +29,7 @@ const FeaturesSettingsPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <section className={`w-full overflow-y-auto ${canPerformProjectAdminActions ? "" : "opacity-60"}`}>
+      <section className={`w-full ${canPerformProjectAdminActions ? "" : "opacity-60"}`}>
         <ProjectFeaturesList
           workspaceSlug={workspaceSlug.toString()}
           projectId={projectId.toString()}
