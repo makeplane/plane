@@ -25,6 +25,7 @@ from plane.db.models import (
 )
 from plane.utils.issue_filters import issue_filters
 from .base import BaseAPIView
+from datetime import datetime
 
 class IssueCustomPropertyUpdateAPIView(BaseAPIView):
     """
@@ -42,6 +43,33 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
         new_value = request.data.get('value')
         if new_value is None:
             new_value = "" 
+        data_type = custom_property.data_type
+        if data_type == "number":
+            try:
+                int_value = int(new_value)
+                custom_property.int_value = int_value
+            except (ValueError, TypeError):
+                custom_property.int_value = None
+        elif data_type == "boolean":
+            if new_value is None:
+                bool_value = None
+            elif isinstance(new_value, bool):
+                bool_value = new_value
+            else:
+                value_str = str(new_value).strip().lower()
+                bool_value = value_str in ["true", "1", "yes"]
+            custom_property.bool_value = bool_value
+        elif data_type == "date":
+            try:
+                # Try to parse date in standard ISO format
+                date_value = datetime.strptime(new_value, "%Y-%m-%d").date()
+                custom_property.date_value = date_value
+                custom_property.value = new_value
+            except (ValueError, TypeError):
+                return Response(
+                    {"error": f"Invalid date format. Date must be in YYYY-MM-DD format (e.g., 2025-04-24)."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
         serializer = self.serializer_class(custom_property)
         requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(serializer.data, cls=DjangoJSONEncoder)
@@ -89,6 +117,7 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
         """
         key = request.data.get('key')
         value = request.data.get('value')
+        data_type = request.data.get('data_type')
         issue_type_custom_property_id = request.data.get('issue_type_custom_property')
         if not key or not value or not issue_type_custom_property_id:
             return Response(
@@ -114,10 +143,40 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
                 {"error": "The issue must be associated with a project."},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        
+        int_value = None
+        bool_value = None
+        date_value = None
+        
+        if data_type == "number":
+            try:
+                int_value = int(value)
+            except (ValueError, TypeError):
+                int_value = None
+        
+        elif data_type == "boolean":
+            if value is None:
+                bool_value = None
+            elif isinstance(value, bool):
+                bool_value = value
+            else:
+                value_str = str(value).strip().lower()
+                bool_value = value_str in ["true", "1", "yes"]
+    
+        elif data_type == "date":
+            try:
+                # Try to parse date in standard ISO format
+                date_value = datetime.strptime(value, "%Y-%m-%d").date()
+            except (ValueError, TypeError):
+                date_value = None  # Invalid or missing date
         custom_property = IssueCustomProperty.objects.create(
             issue=issue,
             key=key,
             value=value,
+            data_type = data_type,
+            int_value=int_value,
+            bool_value=bool_value,
+            date_value=date_value,
             issue_type_custom_property=issue_type_custom_property,
             project=issue.project,
         )
