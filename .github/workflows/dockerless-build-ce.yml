@@ -77,129 +77,129 @@ jobs:
           path: admin-dist.tar.gz
           retention-days: 1
     
-  # build_web:
-  #   needs: build_setup
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - name: Export Builder Stage Content
-  #       run: |
-  #         IMAGE_NAME=${{ needs.build_setup.outputs.web_image }}
-  #         TAG_NAME=${{ needs.build_setup.outputs.tag_name }}
+  build_web:
+    needs: build_setup
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Export Builder Stage Content
+        run: |
+          IMAGE_NAME=${{ needs.build_setup.outputs.web_image }}
+          TAG_NAME=${{ needs.build_setup.outputs.tag_name }}
 
-  #         # Create a temporary container from the builder stage
-  #         CONTAINER_ID=$(docker create --platform=linux/amd64 -q ${IMAGE_NAME}:${TAG_NAME})
+          # Create a temporary container from the builder stage
+          CONTAINER_ID=$(docker create --platform=linux/amd64 -q ${IMAGE_NAME}:${TAG_NAME})
           
-  #         # Create publish directory
-  #         mkdir -p web-dist
+          # Create publish directory
+          mkdir -p web-dist
           
-  #         # Copy the /app contents from the container
-  #         docker cp $CONTAINER_ID:/app/. web-dist/
+          # Copy the /app contents from the container
+          docker cp $CONTAINER_ID:/app/. web-dist/
           
-  #         # Remove the temporary container
-  #         docker rm $CONTAINER_ID
+          # Remove the temporary container
+          docker rm $CONTAINER_ID
           
-  #         # Create a tar archive
-  #         tar -czf web-dist.tar.gz web-dist/
+          # Create a tar archive
+          tar -czf web-dist.tar.gz web-dist/
 
-  #     - name: Upload Build Artifact
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: web-dist
-  #         path: web-dist.tar.gz
-  #         retention-days: 1
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: web-dist.tar.gz
+          retention-days: 1
 
-  # build_space:
-  #   needs: build_setup
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - name: Export Builder Stage Content
-  #       run: |
-  #         IMAGE_NAME=${{ needs.build_setup.outputs.space_image }}
-  #         TAG_NAME=${{ needs.build_setup.outputs.tag_name }}
+  build_space:
+    needs: build_setup
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Export Builder Stage Content
+        run: |
+          IMAGE_NAME=${{ needs.build_setup.outputs.space_image }}
+          TAG_NAME=${{ needs.build_setup.outputs.tag_name }}
 
-  #         # Create a temporary container from the builder stage
-  #         CONTAINER_ID=$(docker create --platform=linux/amd64 -q ${IMAGE_NAME}:${TAG_NAME})
+          # Create a temporary container from the builder stage
+          CONTAINER_ID=$(docker create --platform=linux/amd64 -q ${IMAGE_NAME}:${TAG_NAME})
           
-  #         # Create publish directory
-  #         mkdir -p space-dist
+          # Create publish directory
+          mkdir -p space-dist
           
-  #         # Copy the /app contents from the container
-  #         docker cp $CONTAINER_ID:/app/. space-dist/
+          # Copy the /app contents from the container
+          docker cp $CONTAINER_ID:/app/. space-dist/
           
-  #         # Remove the temporary container
-  #         docker rm $CONTAINER_ID
+          # Remove the temporary container
+          docker rm $CONTAINER_ID
           
-  #         # Create a tar archive
-  #         tar -czf space-dist.tar.gz space-dist/
+          # Create a tar archive
+          tar -czf space-dist.tar.gz space-dist/
 
-  #     - name: Upload Build Artifact
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: space-dist
-  #         path: space-dist.tar.gz
-  #         retention-days: 1
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: space-dist
+          path: space-dist.tar.gz
+          retention-days: 1
  
-  # build_live:
-  #   needs: build_setup
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - name: Export Builder Stage Content
-  #       run: |
-  #         IMAGE_NAME=${{ needs.build_setup.outputs.live_image }}
-  #         TAG_NAME=${{ needs.build_setup.outputs.tag_name }}
+  build_live:
+    needs: build_setup
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Export Builder Stage Content
+        run: |
+          IMAGE_NAME=${{ needs.build_setup.outputs.live_image }}
+          TAG_NAME=${{ needs.build_setup.outputs.tag_name }}
 
-  #         # Create a temporary container from the builder stage
-  #         CONTAINER_ID=$(docker create --platform=linux/amd64 -q ${IMAGE_NAME}:${TAG_NAME})
+          # Create a temporary container from the builder stage
+          CONTAINER_ID=$(docker create --platform=linux/amd64 -q ${IMAGE_NAME}:${TAG_NAME})
           
-  #         # Create publish directory
-  #         mkdir -p live-dist
+          # Create publish directory
+          mkdir -p live-dist
           
-  #         # Copy the /app contents from the container
-  #         docker cp $CONTAINER_ID:/app/. live-dist/
+          # Copy the /app contents from the container
+          docker cp $CONTAINER_ID:/app/. live-dist/
           
-  #         # Remove the temporary container
-  #         docker rm $CONTAINER_ID
+          # Remove the temporary container
+          docker rm $CONTAINER_ID
           
-  #         # Create a tar archive
-  #         tar -czf live-dist.tar.gz live-dist/
+          # Create a tar archive
+          tar -czf live-dist.tar.gz live-dist/
 
-  #     - name: Upload Build Artifact
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: live-dist
-  #         path: live-dist.tar.gz
-  #         retention-days: 1
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-dist
+          path: live-dist.tar.gz
+          retention-days: 1
 
-  # build_backend:
-  #   needs: build_setup
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - name: Export Builder Stage Content
-  #       run: |
-  #         IMAGE_NAME=${{ needs.build_setup.outputs.backend_image }}
-  #         TAG_NAME=${{ needs.build_setup.outputs.tag_name }}
+  build_backend:
+    needs: build_setup
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Export Builder Stage Content
+        run: |
+          IMAGE_NAME=${{ needs.build_setup.outputs.backend_image }}
+          TAG_NAME=${{ needs.build_setup.outputs.tag_name }}
 
-  #         # Create a temporary container from the builder stage
-  #         CONTAINER_ID=$(docker create --platform=linux/amd64 -q ${IMAGE_NAME}:${TAG_NAME})
+          # Create a temporary container from the builder stage
+          CONTAINER_ID=$(docker create --platform=linux/amd64 -q ${IMAGE_NAME}:${TAG_NAME})
           
-  #         # Create publish directory
-  #         mkdir -p backend-dist
+          # Create publish directory
+          mkdir -p backend-dist
           
-  #         # Copy the /app contents from the container
-  #         docker cp $CONTAINER_ID:/code/. backend-dist/
+          # Copy the /app contents from the container
+          docker cp $CONTAINER_ID:/code/. backend-dist/
           
-  #         # Remove the temporary container
-  #         docker rm $CONTAINER_ID
+          # Remove the temporary container
+          docker rm $CONTAINER_ID
           
-  #         # Create a tar archive
-  #         tar -czf backend-dist.tar.gz backend-dist/
+          # Create a tar archive
+          tar -czf backend-dist.tar.gz backend-dist/
 
-  #     - name: Upload Build Artifact
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: backend-dist
-  #         path: backend-dist.tar.gz
-  #         retention-days: 1
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-dist
+          path: backend-dist.tar.gz
+          retention-days: 1
 
   # Job to build the appliance using hashicorp packer
   build_appliance:
@@ -219,26 +219,27 @@ jobs:
         run: |
           # Create local directories
           mkdir -p plane/{admin,web,space,live,backend}
+          mkdir -p artifacts
           
           # Extract and move admin build
-          tar -xzf artifacts/admin-dist/admin-dist.tar.gz -C plane/
-          mv plane/admin-dist/* plane/admin/
+          tar -xzf artifacts/admin-dist/admin-dist.tar.gz -C artifacts/
+          mv artifacts/admin-dist/* plane/admin/
           
-          # # Extract and move web build
-          # tar -xzf artifacts/web-dist/web-dist.tar.gz
-          # mv web-dist/* plane/web/
+          # Extract and move web build
+          tar -xzf artifacts/web-dist/web-dist.tar.gz -C artifacts/
+          mv artifacts/web-dist/* plane/web/
           
-          # # Extract and move space build
-          # tar -xzf artifacts/space-dist/space-dist.tar.gz
-          # mv space-dist/* plane/space/
+          # Extract and move space build
+          tar -xzf artifacts/space-dist/space-dist.tar.gz -C artifacts/
+          mv artifacts/space-dist/* plane/space/
           
-          # # Extract and move live build
-          # tar -xzf artifacts/live-dist/live-dist.tar.gz
-          # mv live-dist/* plane/live/
+          # Extract and move live build
+          tar -xzf artifacts/live-dist/live-dist.tar.gz -C artifacts/
+          mv artifacts/live-dist/* plane/live/
           
-          # # Extract and move backend build
-          # tar -xzf artifacts/backend-dist/backend-dist.tar.gz
-          # mv backend-dist/* plane/backend/
+          # Extract and move backend build
+          tar -xzf artifacts/backend-dist/backend-dist.tar.gz -C artifacts/
+          mv artifacts/backend-dist/* plane/backend/
           
           # Cleanup extracted directories
           rm -rf *-dist artifacts

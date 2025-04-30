@@ -132,18 +132,6 @@ build {
     ]
   }
 
-  # Add more provisioners here for:
-  # 1. Installing Docker and Docker Compose
-  # 2. Setting up Nginx configuration
-  # 3. Deploying Plane components
-  # 4. Setting up systemd services
-  
-  # Example provisioner for copying files
-  # provisioner "file" {
-  #   source      = "configs/"
-  #   destination = "/tmp/"
-  # }
-
   # Post-processor for potential AMI modifications
   post-processor "manifest" {
     output = "manifest.json"
