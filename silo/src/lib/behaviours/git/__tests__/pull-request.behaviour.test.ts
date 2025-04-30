@@ -53,6 +53,22 @@ describe("PullRequestBehaviour", () => {
     }
   };
 
+  const mockEntityConnections = [
+    {
+      id: "1",
+      type: "github",
+      workspace_connection_id: "1",
+      workspace_id: "1",
+      workspace_slug: "test-workspace",
+      project_id: "project-id",
+      config: mockConfig,
+      entity_data: {
+        project_id: "project-id",
+        project_name: "test-project",
+        project_slug: "test-project",
+      }
+    }
+  ];
   beforeEach(() => {
     service = createMockPullRequestService();
     planeClient = createMockPlaneClient();
@@ -61,7 +77,7 @@ describe("PullRequestBehaviour", () => {
       "test-workspace",
       service,
       planeClient as unknown as PlaneClient,
-      mockConfig
+      mockEntityConnections
     );
 
     // Clear all mocks before each test
@@ -252,8 +268,8 @@ describe("PullRequestBehaviour", () => {
 
       const result = await behaviour["updateSingleIssue"](
         { identifier: "PL", sequence: 123 },
-        { id: "state-1", name: "Open" },
-        mockPR
+        mockPR,
+        "MR_OPENED"
       );
 
       expect(result).toBeNull();
@@ -269,8 +285,8 @@ describe("PullRequestBehaviour", () => {
 
       const result = await behaviour["updateSingleIssue"](
         { identifier: "PL", sequence: 123 },
-        { id: "state-1", name: "Open" },
-        mockPR
+        mockPR,
+        "MR_OPENED"
       );
 
       expect(result).toBeNull();
@@ -285,8 +301,8 @@ describe("PullRequestBehaviour", () => {
 
       const result = await behaviour["updateSingleIssue"](
         { identifier: "PL", sequence: 123 },
-        { id: "state-1", name: "Open" },
-        mockPR
+        mockPR,
+        "MR_OPENED"
       );
 
       expect(result).toBeNull();
@@ -298,8 +314,8 @@ describe("PullRequestBehaviour", () => {
 
     it("should update issue state and create link successfully", async () => {
       const mockIssue = {
-        id: "issue-1",
-        project: "project-1",
+        id: "issue-id",
+        project: "project-id",
         name: "Test Issue"
       };
 
@@ -309,14 +325,19 @@ describe("PullRequestBehaviour", () => {
 
       const result = await behaviour["updateSingleIssue"](
         { identifier: "PL", sequence: 123 },
-        { id: "state-1", name: "Open" },
-        mockPR
+        mockPR,
+        "MR_OPENED"
       );
 
       expect(result).toEqual({
         reference: { identifier: "PL", sequence: 123 },
         issue: mockIssue
       });
+      expect(planeClient.issue.getIssueByIdentifier).toHaveBeenCalledWith(
+        "test-workspace",
+        "PL",
+        123
+      );
       expect(planeClient.issue.update).toHaveBeenCalled();
       expect(planeClient.issue.createLink).toHaveBeenCalled();
     });
