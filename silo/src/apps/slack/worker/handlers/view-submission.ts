@@ -3,10 +3,10 @@ import { TViewSubmissionPayload } from "@plane/etl/slack";
 import { CONSTANTS } from "@/helpers/constants";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
-import { getConnectionDetails, SlackConnectionDetails } from "../../helpers/connection-details";
+import { getConnectionDetails } from "../../helpers/connection-details";
 import { ENTITIES } from "../../helpers/constants";
 import { parseIssueFormData, parseLinkWorkItemFormData } from "../../helpers/parse-issue-form";
-import { E_MESSAGE_ACTION_TYPES, SlackPrivateMetadata } from "../../types/types";
+import { E_MESSAGE_ACTION_TYPES, SlackPrivateMetadata, TSlackConnectionDetails } from "../../types/types";
 import { createSlackLinkback } from "../../views/issue-linkback";
 import { createLinkIssueModalView } from "../../views/link-issue-modal";
 import { env } from "@/env";
@@ -16,7 +16,6 @@ import { credentials } from "amqplib";
 const apiClient = getAPIClient();
 
 export const handleViewSubmission = async (data: TViewSubmissionPayload) => {
-
   const details = await getConnectionDetails(data.team.id);
   if (!details) {
     logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
@@ -40,7 +39,10 @@ export const handleViewSubmission = async (data: TViewSubmissionPayload) => {
   }
 };
 
-export const handleLinkWorkItemViewSubmission = async (details: SlackConnectionDetails, data: TViewSubmissionPayload) => {
+export const handleLinkWorkItemViewSubmission = async (
+  details: TSlackConnectionDetails,
+  data: TViewSubmissionPayload
+) => {
   const { slackService, planeClient } = details;
 
   const linkWorkItemValues = parseLinkWorkItemFormData(data.view.state.values);
@@ -48,8 +50,12 @@ export const handleLinkWorkItemViewSubmission = async (details: SlackConnectionD
   const metadata = JSON.parse(data.view.private_metadata) as SlackPrivateMetadata<typeof ENTITIES.LINK_WORK_ITEM>;
 
   if (linkWorkItemValues) {
-    const issue = await planeClient.issue.getIssueWithFields(linkWorkItemValues.workspaceSlug, linkWorkItemValues.projectId, linkWorkItemValues.issueId, ["state", "project", "assignees", "labels"]);
-
+    const issue = await planeClient.issue.getIssueWithFields(
+      linkWorkItemValues.workspaceSlug,
+      linkWorkItemValues.projectId,
+      linkWorkItemValues.issueId,
+      ["state", "project", "assignees", "labels"]
+    );
 
     // Check if the issue is already linked to a thread
     const workspaceEntityConnection = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
@@ -62,7 +68,7 @@ export const handleLinkWorkItemViewSubmission = async (details: SlackConnectionD
       // We need to update the view in order to show that the selected issue is already linked to a thread
       const existingLink = workspaceEntityConnection[0];
       const entityData = existingLink.entity_data as any;
-      const channelName = entityData?.channel?.name || 'a channel';
+      const channelName = entityData?.channel?.name || "a channel";
       const threadLink = `https://${data.team.domain}.slack.com/archives/${entityData?.channel?.id}/p${existingLink.entity_id}`;
       const issueLink = `${env.APP_BASE_URL}/${linkWorkItemValues.workspaceSlug}/browse/${issue.project.identifier}-${issue.sequence_id}`;
 
@@ -77,12 +83,7 @@ export const handleLinkWorkItemViewSubmission = async (details: SlackConnectionD
 
       const states = await planeClient.state.list(linkWorkItemValues.workspaceSlug, linkWorkItemValues.projectId);
 
-      const linkBack = createSlackLinkback(
-        linkWorkItemValues.workspaceSlug,
-        issue,
-        states.results,
-        false
-      );
+      const linkBack = createSlackLinkback(linkWorkItemValues.workspaceSlug, issue, states.results, false);
       // Send a thread message to the channel
       const linkbackPromise = slackService.sendThreadMessage(
         metadata.entityPayload.channel.id,
@@ -92,7 +93,13 @@ export const handleLinkWorkItemViewSubmission = async (details: SlackConnectionD
         false
       );
 
-      const createLinkInPlane = planeClient.issue.createLink(linkWorkItemValues.workspaceSlug, linkWorkItemValues.projectId, issue.id, title, link);
+      const createLinkInPlane = planeClient.issue.createLink(
+        linkWorkItemValues.workspaceSlug,
+        linkWorkItemValues.projectId,
+        issue.id,
+        title,
+        link
+      );
 
       const createEntityConnection = apiClient.workspaceEntityConnection.createWorkspaceEntityConnection({
         // Main workspace connection
@@ -117,9 +124,12 @@ export const handleLinkWorkItemViewSubmission = async (details: SlackConnectionD
       }
     }
   }
-}
+};
 
-export const handleDisconnectWorkItemViewSubmission = async (details: SlackConnectionDetails, data: TViewSubmissionPayload) => {
+export const handleDisconnectWorkItemViewSubmission = async (
+  details: TSlackConnectionDetails,
+  data: TViewSubmissionPayload
+) => {
   const { workspaceConnection, slackService, planeClient } = details;
 
   const metadata = JSON.parse(data.view.private_metadata) as SlackPrivateMetadata<typeof ENTITIES.DISCONNECT_WORK_ITEM>;
@@ -136,22 +146,26 @@ export const handleDisconnectWorkItemViewSubmission = async (details: SlackConne
     // Send a message to the channel
     await slackService.sendThreadMessage(metadata.entityPayload.channel.id, metadata.entityPayload.message?.ts ?? "", {
       text: "Work item disconnected from Slack thread.",
-      blocks: []
+      blocks: [],
     });
   }
-}
+};
 
-export const handleIssueCommentViewSubmission = async (details: SlackConnectionDetails, data: TViewSubmissionPayload) => {
+export const handleIssueCommentViewSubmission = async (
+  details: TSlackConnectionDetails,
+  data: TViewSubmissionPayload
+) => {
   const { workspaceConnection, slackService, planeClient } = details;
 
-  const metadata = JSON.parse(data.view.private_metadata) as SlackPrivateMetadata<typeof ENTITIES.ISSUE_COMMENT_SUBMISSION>;
+  const metadata = JSON.parse(data.view.private_metadata) as SlackPrivateMetadata<
+    typeof ENTITIES.ISSUE_COMMENT_SUBMISSION
+  >;
 
   const thread_ts = metadata.entityPayload.message?.thread_ts;
   const channel = metadata.entityPayload.channel.id;
   const user = metadata.entityPayload.user.id;
   const value = metadata.entityPayload.value;
   const message_ts = metadata.entityPayload.message_ts;
-
 
   try {
     const values = value.split(".");
@@ -171,7 +185,7 @@ export const handleIssueCommentViewSubmission = async (details: SlackConnectionD
       const slackUser = await slackService.getUserInfo(user);
       const projectMembers = await planeClient.users.list(workspaceConnection.workspace_slug, projectId);
 
-      const member = projectMembers.find((member) => member.email === slackUser?.user.profile.email);
+      const member = projectMembers.find((member: any) => member.email === slackUser?.user.profile.email);
 
       await planeClient.issueComment.create(workspaceConnection.workspace_slug, projectId, issueId, {
         comment_html: "<p>" + comment + "</p>",
@@ -188,9 +202,7 @@ export const handleIssueCommentViewSubmission = async (details: SlackConnectionD
     }
   } catch (error: any) {
     const isPermissionError = error?.detail?.includes(CONSTANTS.NO_PERMISSION_ERROR);
-    const errorMessage = isPermissionError
-      ? CONSTANTS.NO_PERMISSION_ERROR_MESSAGE
-      : CONSTANTS.SOMETHING_WENT_WRONG;
+    const errorMessage = isPermissionError ? CONSTANTS.NO_PERMISSION_ERROR_MESSAGE : CONSTANTS.SOMETHING_WENT_WRONG;
 
     await slackService.sendEphemeralMessage(data.user.id, errorMessage, channel, thread_ts);
 
@@ -198,12 +210,17 @@ export const handleIssueCommentViewSubmission = async (details: SlackConnectionD
       throw error;
     }
   }
-}
+};
 
-export const handleIssueWeblinkViewSubmission = async (details: SlackConnectionDetails, data: TViewSubmissionPayload) => {
+export const handleIssueWeblinkViewSubmission = async (
+  details: TSlackConnectionDetails,
+  data: TViewSubmissionPayload
+) => {
   const { workspaceConnection, slackService, planeClient } = details;
 
-  const metadata = JSON.parse(data.view.private_metadata) as SlackPrivateMetadata<typeof ENTITIES.ISSUE_WEBLINK_SUBMISSION>;
+  const metadata = JSON.parse(data.view.private_metadata) as SlackPrivateMetadata<
+    typeof ENTITIES.ISSUE_WEBLINK_SUBMISSION
+  >;
 
   const thread_ts = metadata.entityPayload.message?.thread_ts;
   const user = metadata.entityPayload.user.id;
@@ -217,7 +234,6 @@ export const handleIssueWeblinkViewSubmission = async (details: SlackConnectionD
   let url = "";
 
   try {
-
     Object.entries(data.view.state.values).forEach(([_, blockData]: [string, any]) => {
       Object.entries(blockData).forEach(([_, values]: [string, any]) => {
         if (values.type === "plain_text_input") {
@@ -239,9 +255,7 @@ export const handleIssueWeblinkViewSubmission = async (details: SlackConnectionD
     }
   } catch (error: any) {
     const isPermissionError = error?.detail?.includes(CONSTANTS.NO_PERMISSION_ERROR);
-    const errorMessage = isPermissionError
-      ? CONSTANTS.NO_PERMISSION_ERROR_MESSAGE
-      : CONSTANTS.SOMETHING_WENT_WRONG;
+    const errorMessage = isPermissionError ? CONSTANTS.NO_PERMISSION_ERROR_MESSAGE : CONSTANTS.SOMETHING_WENT_WRONG;
 
     await slackService.sendEphemeralMessage(data.user.id, errorMessage, channel, thread_ts);
 
@@ -249,36 +263,38 @@ export const handleIssueWeblinkViewSubmission = async (details: SlackConnectionD
       throw error;
     }
   }
-}
+};
 
-export const handleCreateNewWorkItemViewSubmission = async (details: SlackConnectionDetails, data: TViewSubmissionPayload) => {
+export const handleCreateNewWorkItemViewSubmission = async (
+  details: TSlackConnectionDetails,
+  data: TViewSubmissionPayload
+) => {
   const { workspaceConnection, slackService, planeClient } = details;
 
   try {
     const parsedData = parseIssueFormData(data.view.state.values);
     const metadata = JSON.parse(data.view.private_metadata) as SlackPrivateMetadata;
 
-    if (metadata.entityType !== ENTITIES.SHORTCUT_PROJECT_SELECTION && metadata.entityType !== ENTITIES.COMMAND_PROJECT_SELECTION) {
+    if (
+      metadata.entityType !== ENTITIES.SHORTCUT_PROJECT_SELECTION &&
+      metadata.entityType !== ENTITIES.COMMAND_PROJECT_SELECTION
+    ) {
       logger.info(`[SLACK] Unsupported payload type: ${metadata.entityType}`);
       return;
     }
 
     const slackUser = await slackService.getUserInfo(data.user.id);
     const members = await planeClient.users.listAllUsers(workspaceConnection.workspace_slug);
-    const member = members.find(m => m.email === slackUser?.user.profile.email);
+    const member = members.find((m: any) => m.email === slackUser?.user.profile.email);
 
-    const issue = await planeClient.issue.create(
-      workspaceConnection.workspace_slug,
-      parsedData.project,
-      {
-        name: parsedData.title,
-        description_html: parsedData.description == null ? "<p></p>" : parsedData.description,
-        created_by: member?.id,
-        state: parsedData.state,
-        priority: parsedData.priority,
-        labels: parsedData.labels,
-      }
-    );
+    const issue = await planeClient.issue.create(workspaceConnection.workspace_slug, parsedData.project, {
+      name: parsedData.title,
+      description_html: parsedData.description == null ? "<p></p>" : parsedData.description,
+      created_by: member?.id,
+      state: parsedData.state,
+      priority: parsedData.priority,
+      labels: parsedData.labels,
+    });
 
     const issueWithFields = await planeClient.issue.getIssueWithFields(
       workspaceConnection.workspace_slug,
@@ -287,10 +303,7 @@ export const handleCreateNewWorkItemViewSubmission = async (details: SlackConnec
       ["state", "project", "assignees", "labels"]
     );
 
-    const states = await planeClient.state.list(
-      workspaceConnection.workspace_slug,
-      issue.project
-    );
+    const states = await planeClient.state.list(workspaceConnection.workspace_slug, issue.project);
 
     const linkBack = createSlackLinkback(
       workspaceConnection.workspace_slug,
@@ -361,13 +374,7 @@ async function handleShortcutProjectSelection(
 
   // Handle thread sync if enabled
   if (parsedData.enableThreadSync && res.ok) {
-    await createThreadConnection(
-      apiClient,
-      workspaceConnection,
-      parsedData.project,
-      issue.id,
-      res
-    );
+    await createThreadConnection(apiClient, workspaceConnection, parsedData.project, issue.id, res);
   }
 }
 
@@ -411,7 +418,12 @@ async function createThreadConnection(
   }
 }
 
-export const createIssueErrorBlocks = (issue: IssueWithExpanded<["state", "project", "assignees", "labels"]>, channelName: string, threadLink: string, issueLink: string) => {
+export const createIssueErrorBlocks = (
+  issue: IssueWithExpanded<["state", "project", "assignees", "labels"]>,
+  channelName: string,
+  threadLink: string,
+  issueLink: string
+) => {
   const errorMessage = {
     blocks: [
       {
@@ -419,15 +431,15 @@ export const createIssueErrorBlocks = (issue: IssueWithExpanded<["state", "proje
         text: {
           type: "plain_text",
           text: "Work Item Already Linked",
-          emoji: true
-        }
+          emoji: true,
+        },
       },
       {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `:warning: The work item *<${issueLink}|[${issue.project.identifier}-${issue.sequence_id}] ${issue.name}>* is already linked to another conversation in #${channelName}.`
-        }
+          text: `:warning: The work item *<${issueLink}|[${issue.project.identifier}-${issue.sequence_id}] ${issue.name}>* is already linked to another conversation in #${channelName}.`,
+        },
       },
       {
         type: "actions",
@@ -437,25 +449,24 @@ export const createIssueErrorBlocks = (issue: IssueWithExpanded<["state", "proje
             text: {
               type: "plain_text",
               text: "View Linked Thread",
-              emoji: true
+              emoji: true,
             },
             url: threadLink,
-            style: "primary"
+            style: "primary",
           },
           {
             type: "button",
             text: {
               type: "plain_text",
               text: "View Work Item",
-              emoji: true
+              emoji: true,
             },
-            url: issueLink
-          }
-        ]
-      }
-    ]
+            url: issueLink,
+          },
+        ],
+      },
+    ],
   };
 
   return errorMessage;
-}
-
+};
