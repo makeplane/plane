@@ -31,13 +31,7 @@ export const SubIssueDisplayFilters: FC<TSubIssueDisplayFiltersProps> = observer
           placement="bottom-end"
           menuButton={<SlidersHorizontal className="h-3.5 w-3.5 text-custom-text-100" />}
         >
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-            }}
-            className="vertical-scrollbar scrollbar-sm relative h-full w-full divide-y divide-custom-border-200 overflow-hidden overflow-y-auto px-2.5 max-h-[25rem] text-left"
-          >
+          <div className="vertical-scrollbar scrollbar-sm relative h-full w-full divide-y divide-custom-border-200 overflow-hidden overflow-y-auto px-2.5 max-h-[25rem] text-left">
             {/* display properties */}
             <div className="py-2">
               <FilterDisplayProperties

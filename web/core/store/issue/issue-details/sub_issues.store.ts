@@ -15,7 +15,6 @@ import {
   TIssueServiceType,
   TLoader,
   TGroupedIssues,
-  TGroupedIssueCount,
 } from "@plane/types";
 // services
 import { updatePersistentLayer } from "@/local-db/utils/utils";
@@ -52,7 +51,6 @@ export interface IIssueSubIssuesStore extends IIssueSubIssuesStoreActions {
   subIssuesStateDistribution: TIssueSubIssuesStateDistributionMap;
   subIssues: TIssueSubIssuesIdMap;
   groupedSubIssuesMap: Record<string, TGroupedIssues>;
-  groupedSubIssuesCount: TGroupedIssueCount;
   subIssueHelpers: Record<string, TSubIssueHelpers>; // parent_issue_id -> TSubIssueHelpers
   loader: TLoader;
   filters: IWorkItemSubIssueFiltersStore;
@@ -60,7 +58,7 @@ export interface IIssueSubIssuesStore extends IIssueSubIssuesStoreActions {
   stateDistributionByIssueId: (issueId: string) => TSubIssuesStateDistribution | undefined;
   subIssuesByIssueId: (issueId: string) => string[] | undefined;
   subIssueHelpersByIssueId: (issueId: string) => TSubIssueHelpers;
-  groupedSubIssuesByIssueId: (issueId: string) => TGroupedIssues | undefined;
+  getGroupedSubIssuesByIssueId: (issueId: string) => TGroupedIssues | undefined;
   // actions
   fetchOtherProjectProperties: (workspaceSlug: string, projectIds: string[]) => Promise<void>;
   setSubIssueHelpers: (parentIssueId: string, key: TSubIssueHelpersKeys, value: string) => void;
@@ -71,7 +69,6 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
   subIssuesStateDistribution: TIssueSubIssuesStateDistributionMap = {};
   subIssues: TIssueSubIssuesIdMap = {};
   groupedSubIssuesMap: Record<string, TGroupedIssues> = {};
-  groupedSubIssuesCount: TGroupedIssueCount = {};
   subIssueHelpers: Record<string, TSubIssueHelpers> = {};
   loader: TLoader = undefined;
 
@@ -98,7 +95,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       removeSubIssue: action,
       deleteSubIssue: action,
       fetchOtherProjectProperties: action,
-      groupedSubIssuesByIssueId: action,
+      getGroupedSubIssuesByIssueId: action,
     });
     this.filters = new WorkItemSubIssueFiltersStore(this);
     // root store
@@ -114,12 +111,9 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
     return this.subIssuesStateDistribution[issueId] ?? undefined;
   };
 
-  subIssuesByIssueId = (issueId: string) => {
-    if (!issueId) return undefined;
-    return this.subIssues[issueId] ?? undefined;
-  };
+  subIssuesByIssueId = (issueId: string) => this.subIssues[issueId];
 
-  groupedSubIssuesByIssueId = (issueId: string) => this.groupedSubIssuesMap[issueId] ?? undefined;
+  getGroupedSubIssuesByIssueId = (issueId: string) => this.groupedSubIssuesMap[issueId] ?? undefined;
 
   subIssueHelpersByIssueId = (issueId: string) => ({
     preview_loader: this.subIssueHelpers?.[issueId]?.preview_loader || [],
@@ -147,9 +141,6 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
     // process sub issues response
     const { issueList, groupedIssues } = this.filters.processSubIssueResponse(response.sub_issues);
 
-    // set grouped issues count
-    set(this.groupedSubIssuesMap, [parentIssueId], groupedIssues);
-
     this.rootIssueDetailStore.rootIssueStore.issues.addIssue(issueList);
 
     if (issueList && issueList.length > 0) {
@@ -163,7 +154,11 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
         sub_issues_count: issueList.length,
       });
     }
+
     runInAction(() => {
+      // set grouped issues
+      set(this.groupedSubIssuesMap, [parentIssueId], groupedIssues);
+
       set(this.subIssuesStateDistribution, parentIssueId, subIssuesStateDistribution);
       set(
         this.subIssues,

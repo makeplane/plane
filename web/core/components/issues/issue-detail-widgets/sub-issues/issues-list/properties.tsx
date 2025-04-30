@@ -43,6 +43,30 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
   maxDate?.setDate(maxDate.getDate());
   return (
     <div className="relative flex items-center gap-2">
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="state">
+        <div className="h-5 flex-shrink-0">
+          <StateDropdown
+            value={issue.state_id}
+            projectId={issue.project_id ?? undefined}
+            onChange={(val) =>
+              issue.project_id &&
+              updateSubIssue(
+                workspaceSlug,
+                issue.project_id,
+                parentIssueId,
+                issueId,
+                {
+                  state_id: val,
+                },
+                { ...issue }
+              )
+            }
+            disabled={!disabled}
+            buttonVariant="border-with-text"
+          />
+        </div>
+      </WithDisplayPropertiesHOC>
+
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_date">
         <div className="h-5 flex-shrink-0" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <DateDropdown
@@ -93,30 +117,6 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
             optionsClassName="z-30"
             disabled={!disabled}
-          />
-        </div>
-      </WithDisplayPropertiesHOC>
-
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="state">
-        <div className="h-5 flex-shrink-0">
-          <StateDropdown
-            value={issue.state_id}
-            projectId={issue.project_id ?? undefined}
-            onChange={(val) =>
-              issue.project_id &&
-              updateSubIssue(
-                workspaceSlug,
-                issue.project_id,
-                parentIssueId,
-                issueId,
-                {
-                  state_id: val,
-                },
-                { ...issue }
-              )
-            }
-            disabled={!disabled}
-            buttonVariant="border-with-text"
           />
         </div>
       </WithDisplayPropertiesHOC>

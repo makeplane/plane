@@ -91,7 +91,14 @@ export const SubWorkItemTitleActions: FC<TSubWorkItemTitleActionsProps> = observ
   );
 
   return (
-    <div className="flex gap-2">
+    // prevent click everywhere
+    <div
+      className="flex gap-2"
+      onClick={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+      }}
+    >
       <SubIssueDisplayFilters
         isEpic={issueServiceType === EIssueServiceType.EPICS}
         layoutDisplayFiltersOptions={layoutDisplayFiltersOptions}

@@ -66,6 +66,7 @@ type TGetGroupByColumns = {
   includeNone: boolean;
   isWorkspaceLevel: boolean;
   isEpic?: boolean;
+  projectId?: string;
 };
 
 // NOTE: Type of groupBy is different compared to what's being passed from the components.
@@ -76,6 +77,7 @@ export const getGroupByColumns = ({
   includeNone,
   isWorkspaceLevel,
   isEpic = false,
+  projectId,
 }: TGetGroupByColumns): IGroupByColumn[] | undefined => {
   // If no groupBy is specified and includeNone is true, return "All Issues" group
   if (!groupBy && includeNone) {
@@ -93,7 +95,7 @@ export const getGroupByColumns = ({
   if (!groupBy) return undefined;
 
   // Map of group by options to their corresponding column getter functions
-  const groupByColumnMap: Record<GroupByColumnTypes, () => IGroupByColumn[] | undefined> = {
+  const groupByColumnMap: Record<GroupByColumnTypes, (projectId?: string) => IGroupByColumn[] | undefined> = {
     project: getProjectColumns,
     cycle: getCycleColumns,
     module: getModuleColumns,
@@ -107,7 +109,7 @@ export const getGroupByColumns = ({
   };
 
   // Get and return the columns for the specified group by option
-  return groupByColumnMap[groupBy]?.();
+  return groupByColumnMap[groupBy]?.(projectId);
 };
 
 const getProjectColumns = (): IGroupByColumn[] | undefined => {
@@ -190,11 +192,12 @@ const getModuleColumns = (): IGroupByColumn[] | undefined => {
   return modules;
 };
 
-const getStateColumns = (): IGroupByColumn[] | undefined => {
-  const { projectStates } = store.state;
-  if (!projectStates) return;
+const getStateColumns = (projectId?: string): IGroupByColumn[] | undefined => {
+  const { getProjectStates, projectStates } = store.state;
+  const _states = projectId ? getProjectStates(projectId) : projectStates;
+  if (!_states) return;
   // map project states to group by columns
-  return projectStates.map((state) => ({
+  return _states.map((state) => ({
     id: state.id,
     name: state.name,
     icon: (
@@ -250,14 +253,15 @@ const getLabelsColumns = (isWorkspaceLevel: boolean = false): IGroupByColumn[] =
   }));
 };
 
-const getAssigneeColumns = (): IGroupByColumn[] | undefined => {
+const getAssigneeColumns = (projectId?: string): IGroupByColumn[] | undefined => {
   const {
-    project: { projectMemberIds },
+    project: { projectMemberIds, getProjectMemberIds },
     getUserDetails,
   } = store.memberRoot;
-  if (!projectMemberIds) return;
+  const _projectMemberIds = projectId ? getProjectMemberIds(projectId, false) : projectMemberIds;
+  if (!_projectMemberIds) return;
   // Map project member ids to group by assignee columns
-  const assigneeColumns: IGroupByColumn[] = projectMemberIds.map((memberId) => {
+  const assigneeColumns: IGroupByColumn[] = _projectMemberIds.map((memberId) => {
     const member = getUserDetails(memberId);
     return {
       id: memberId,

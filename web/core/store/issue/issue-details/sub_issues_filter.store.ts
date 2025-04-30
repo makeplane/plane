@@ -1,3 +1,4 @@
+import isEqual from "lodash/isEqual";
 import set from "lodash/set";
 import { action, makeObservable, observable } from "mobx";
 import { ALL_ISSUES, EIssueFilterType, EIssueGroupByToServerOptions } from "@plane/constants";
@@ -200,13 +201,25 @@ export class WorkItemSubIssueFiltersStore implements IWorkItemSubIssueFiltersSto
     const _filters = this.getSubIssueFilters(parentId);
     switch (filterType) {
       case EIssueFilterType.FILTERS: {
-        set(this.subIssueFiltersMap, [parentId, "filters"], { ..._filters.filters, ...filters });
-        this.subIssueStore.fetchSubIssues(workspaceSlug, projectId, parentId);
+        // check if filters are new
+        const isNewFilters = !isEqual(_filters.filters, filters);
+        if (isNewFilters) {
+          set(this.subIssueFiltersMap, [parentId, "filters"], { ..._filters.filters, ...filters });
+          this.subIssueStore.loader = "init-loader";
+          await this.subIssueStore.fetchSubIssues(workspaceSlug, projectId, parentId);
+          this.subIssueStore.loader = undefined;
+        }
         break;
       }
       case EIssueFilterType.DISPLAY_FILTERS: {
-        set(this.subIssueFiltersMap, [parentId, "displayFilters"], { ..._filters.displayFilters, ...filters });
-        this.subIssueStore.fetchSubIssues(workspaceSlug, projectId, parentId);
+        // check if display filters are new
+        const isNewDisplayFilters = !isEqual(_filters.displayFilters, filters);
+        if (isNewDisplayFilters) {
+          set(this.subIssueFiltersMap, [parentId, "displayFilters"], { ..._filters.displayFilters, ...filters });
+          this.subIssueStore.loader = "init-loader";
+          await this.subIssueStore.fetchSubIssues(workspaceSlug, projectId, parentId);
+          this.subIssueStore.loader = undefined;
+        }
         break;
       }
       case EIssueFilterType.DISPLAY_PROPERTIES:

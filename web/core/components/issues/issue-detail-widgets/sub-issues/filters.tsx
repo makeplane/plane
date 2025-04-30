@@ -33,13 +33,7 @@ export const SubIssueFilters: FC<TSubIssueFiltersProps> = observer((props) => {
   return (
     <>
       <FiltersDropdown placement="bottom-end" menuButton={<ListFilter className="h-4 w-4 text-custom-text-100" />}>
-        <div
-          className="flex max-h-[350px] flex-col overflow-hidden"
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-          }}
-        >
+        <div className="flex max-h-[350px] flex-col overflow-hidden">
           <div className="bg-custom-background-100 p-2.5 pb-0">
             <div className="flex items-center gap-1.5 rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-1.5 py-1 text-xs">
               <Search className="text-custom-text-400" size={12} strokeWidth={2} />

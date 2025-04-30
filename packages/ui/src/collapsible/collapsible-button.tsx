@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { cn } from "../../helpers";
-import { DropdownIcon } from "../icons";
+import { DropdownIcon, ISvgIcons } from "../icons";
 
 type Props = {
   isOpen: boolean;
@@ -10,6 +10,7 @@ type Props = {
   actionItemElement?: React.ReactNode;
   className?: string;
   titleClassName?: string;
+  ChevronIcon?: React.FC<ISvgIcons>;
 };
 
 export const CollapsibleButton: FC<Props> = (props) => {
@@ -21,6 +22,7 @@ export const CollapsibleButton: FC<Props> = (props) => {
     actionItemElement,
     className = "",
     titleClassName = "",
+    ChevronIcon = DropdownIcon,
   } = props;
   return (
     <div
@@ -32,7 +34,7 @@ export const CollapsibleButton: FC<Props> = (props) => {
       <div className="flex items-center gap-3.5">
         <div className="flex items-center gap-3">
           {!hideChevron && (
-            <DropdownIcon
+            <ChevronIcon
               className={cn("size-2 text-custom-text-300 hover:text-custom-text-200 duration-300", {
                 "-rotate-90": !isOpen,
               })}
