@@ -1804,7 +1804,10 @@
         }
       },
       "use_template": {
-        "button": "Usar plantilla"
+        "button": {
+          "default": "Usar plantilla",
+          "loading": "Usando"
+        }
       },
       "template_source": {
         "workspace": {
@@ -1931,7 +1934,8 @@
         "project": "Agregar nueva plantilla"
       },
       "label": {
-        "project": "Seleccionar una plantilla de proyecto"
+        "project": "Seleccionar una plantilla de proyecto",
+        "page": "Elegir desde plantilla"
       },
       "tooltip": {
         "work_item": "Seleccionar una plantilla de elemento de trabajo"

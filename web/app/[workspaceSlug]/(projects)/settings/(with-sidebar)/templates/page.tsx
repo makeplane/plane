@@ -18,7 +18,7 @@ import {
   TemplatesUpgrade,
   WorkspaceTemplatesSettingsRoot,
 } from "@/plane-web/components/templates/settings";
-import { useFlag, useProjectTemplates, useWorkItemTemplates } from "@/plane-web/hooks/store";
+import { useFlag, useProjectTemplates, useWorkItemTemplates, usePageTemplates } from "@/plane-web/hooks/store";
 
 const TemplatesWorkspaceSettingsPage = observer(() => {
   // router
@@ -28,15 +28,19 @@ const TemplatesWorkspaceSettingsPage = observer(() => {
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
-  const { isAnyWorkItemTemplatesAvailable } = useWorkItemTemplates();
   const { isAnyProjectTemplatesAvailable } = useProjectTemplates();
+  const { isAnyWorkItemTemplatesAvailable } = useWorkItemTemplates();
+  const { isAnyPageTemplatesAvailable } = usePageTemplates();
   // derived values
-  const isWorkItemTemplatesEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TEMPLATES");
-  const isWorkItemTemplatesAvailable = isAnyWorkItemTemplatesAvailable(workspaceSlug?.toString());
   const isProjectTemplatesEnabled = useFlag(workspaceSlug?.toString(), "PROJECT_TEMPLATES");
   const isProjectTemplatesAvailable = isAnyProjectTemplatesAvailable(workspaceSlug?.toString());
-  const isAnyTemplatesEnabled = isWorkItemTemplatesEnabled || isProjectTemplatesEnabled;
-  const isAnyTemplatesAvailable = isWorkItemTemplatesAvailable || isProjectTemplatesAvailable;
+  const isWorkItemTemplatesEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TEMPLATES");
+  const isWorkItemTemplatesAvailable = isAnyWorkItemTemplatesAvailable(workspaceSlug?.toString());
+  const isPageTemplatesEnabled = useFlag(workspaceSlug?.toString(), "PAGE_TEMPLATES");
+  const isPageTemplatesAvailable = isAnyPageTemplatesAvailable(workspaceSlug?.toString());
+  const isAnyTemplatesEnabled = isProjectTemplatesEnabled || isWorkItemTemplatesEnabled || isPageTemplatesEnabled;
+  const isAnyTemplatesAvailable =
+    isProjectTemplatesAvailable || isWorkItemTemplatesAvailable || isPageTemplatesAvailable;
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - ${t("common.templates")}` : undefined;
   const hasAdminPermission = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
 

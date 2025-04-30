@@ -25,7 +25,7 @@ export const TemplateListWrapper = observer((props: TemplateListWrapperProps) =>
       <h3 className="text-sm font-semibold text-custom-text-400">{t(getTemplateI18nLabel(type))}</h3>
       <div className="flex flex-col gap-4">
         {isInitializing ? (
-          <Loader>
+          <Loader className="flex flex-col gap-4">
             {Array.from({ length: 3 }).map((_, index) => (
               <Loader.Item key={index} height="70px" />
             ))}

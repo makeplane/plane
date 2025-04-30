@@ -1804,7 +1804,10 @@
         }
       },
       "use_template": {
-        "button": "テンプレートを使用"
+        "button": {
+          "default": "テンプレートを使用",
+          "loading": "使用中"
+        }
       },
       "template_source": {
         "workspace": {
@@ -1931,7 +1934,8 @@
         "project": "新しいテンプレートを追加"
       },
       "label": {
-        "project": "プロジェクトテンプレートを選択"
+        "project": "プロジェクトテンプレートを選択",
+        "page": "テンプレートから選択"
       },
       "tooltip": {
         "work_item": "作業項目テンプレートを選択"

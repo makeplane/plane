@@ -1805,7 +1805,10 @@
         }
       },
       "use_template": {
-        "button": "使用模板"
+        "button": {
+          "default": "使用模板",
+          "loading": "使用中"
+        }
       },
       "template_source": {
         "workspace": {
@@ -1932,7 +1935,8 @@
         "project": "添加新模板"
       },
       "label": {
-        "project": "选择项目模板"
+        "project": "选择项目模板",
+        "page": "从模板中选择"
       },
       "tooltip": {
         "work_item": "选择工作项模板"

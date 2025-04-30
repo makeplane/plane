@@ -82,7 +82,7 @@ export const CreateTemplatesButton = observer((props: TCreateTemplatesButtonProp
         i18n_label: getTemplateI18nLabel(ETemplateType.PAGE),
         onClick: () =>
           router.push(getCreateUpdateTemplateSettingsPath(getCreateTemplateSettingsPathProps(ETemplateType.PAGE))),
-        availableForLevels: [],
+        availableForLevels: [ETemplateLevel.WORKSPACE, ETemplateLevel.PROJECT],
       },
     ];
   }, [router, props]);

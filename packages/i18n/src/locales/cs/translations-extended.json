@@ -1806,7 +1806,10 @@
         }
       },
       "use_template": {
-        "button": "Použít šablonu"
+        "button": {
+          "default": "Použít šablonu",
+          "loading": "Používání"
+        }
       },
       "template_source": {
         "workspace": {
@@ -1933,7 +1936,8 @@
         "project": "Přidat novou šablonu"
       },
       "label": {
-        "project": "Vybrat šablonu projektu"
+        "project": "Vybrat šablonu projektu",
+        "page": "Vybrat šablonu"
       },
       "tooltip": {
         "work_item": "Vybrat šablonu pracovní položky"

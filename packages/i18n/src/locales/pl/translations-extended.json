@@ -1806,7 +1806,10 @@
         }
       },
       "use_template": {
-        "button": "Użyj szablonu"
+        "button": {
+          "default": "Użyj szablonu",
+          "loading": "Używam"
+        }
       },
       "template_source": {
         "workspace": {
@@ -1933,7 +1936,8 @@
         "project": "Dodaj nowy szablon"
       },
       "label": {
-        "project": "Wybierz szablon projektu"
+        "project": "Wybierz szablon projektu",
+        "page": "Wybierz szablon"
       },
       "tooltip": {
         "work_item": "Wybierz szablon elementu pracy"

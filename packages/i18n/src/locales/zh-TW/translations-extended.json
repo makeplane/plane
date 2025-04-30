@@ -1806,7 +1806,10 @@
         }
       },
       "use_template": {
-        "button": "使用模板"
+        "button": {
+          "default": "使用模板",
+          "loading": "使用中"
+        }
       },
       "template_source": {
         "workspace": {
@@ -1933,7 +1936,8 @@
         "project": "新增範本"
       },
       "label": {
-        "project": "選擇專案範本"
+        "project": "選擇專案範本",
+        "page": "從範本中選擇"
       },
       "tooltip": {
         "work_item": "選擇工作項目範本"

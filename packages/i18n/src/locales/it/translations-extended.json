@@ -1803,7 +1803,10 @@
         }
       },
       "use_template": {
-        "button": "Usa modello"
+        "button": {
+          "default": "Usa modello",
+          "loading": "Usa modello"
+        }
       },
       "template_source": {
         "workspace": {
@@ -1930,7 +1933,8 @@
         "project": "Aggiungi nuovo modello"
       },
       "label": {
-        "project": "Scegli un modello di progetto"
+        "project": "Scegli un modello di progetto",
+        "page": "Scegli dal modello"
       },
       "tooltip": {
         "work_item": "Scegli un modello di elemento di lavoro"

@@ -1859,7 +1859,10 @@
         }
       },
       "use_template": {
-        "button": "Use template"
+        "button": {
+          "default": "Use template",
+          "loading": "Applying"
+        }
       },
       "template_source": {
         "workspace": {
@@ -1925,6 +1928,30 @@
             "create": "Create work-item template",
             "update": "Update work-item template"
           }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Name your page template.",
+              "validation": {
+                "required": "Template name is required",
+                "maxLength": "Template name should be less than 255 characters"
+              }
+            },
+            "description": {
+              "placeholder": "Describe when and how to use this template."
+            }
+          },
+          "name": {
+            "placeholder": "Untitled page",
+            "validation": {
+              "maxLength": "Page name should be less than 255 characters"
+            }
+          },
+          "button": {
+            "create": "Create page template",
+            "update": "Update page template"
+          }
         }
       }
     },
@@ -1986,7 +2013,8 @@
         "project": "Add new template"
       },
       "label": {
-        "project": "Pick a project template"
+        "project": "Pick a project template",
+        "page": "Choose from template"
       },
       "tooltip": {
         "work_item": "Pick a work item template"

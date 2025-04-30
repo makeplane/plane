@@ -1728,7 +1728,10 @@
         }
       },
       "use_template": {
-        "button": "Usar modelo"
+        "button": {
+          "default": "Usar modelo",
+          "loading": "Usando"
+        }
       },
       "template_source": {
         "workspace": {
@@ -1856,7 +1859,8 @@
       "project": "Adicionar novo modelo"
     },
     "label": {
-      "project": "Escolher um modelo de projeto"
+      "project": "Escolher um modelo de projeto",
+      "page": "Escolher a partir do modelo"
     },
     "tooltip": {
       "work_item": "Escolher um modelo de item de trabalho"

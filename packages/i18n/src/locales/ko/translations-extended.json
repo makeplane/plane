@@ -1806,7 +1806,10 @@
         }
       },
       "use_template": {
-        "button": "템플릿 사용"
+        "button": {
+          "default": "템플릿 사용",
+          "loading": "사용 중"
+        }
       },
       "template_source": {
         "workspace": {
@@ -1933,7 +1936,8 @@
         "project": "새 템플릿 추가"
       },
       "label": {
-        "project": "프로젝트 템플릿 선택"
+        "project": "프로젝트 템플릿 선택",
+        "page": "템플릿에서 선택"
       },
       "tooltip": {
         "work_item": "작업 항목 템플릿 선택"

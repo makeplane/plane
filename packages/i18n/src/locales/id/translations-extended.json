@@ -1733,7 +1733,10 @@
         }
       },
       "use_template": {
-        "button": "Gunakan template"
+        "button": {
+          "default": "Gunakan template",
+          "loading": "Menggunakan"
+        }
       },
       "template_source": {
         "workspace": {
@@ -1860,7 +1863,8 @@
         "project": "Tambah template baru"
       },
       "label": {
-        "project": "Pilih template proyek"
+        "project": "Pilih template proyek",
+        "page": "Pilih template"
       },
       "tooltip": {
         "work_item": "Pilih template item kerja"

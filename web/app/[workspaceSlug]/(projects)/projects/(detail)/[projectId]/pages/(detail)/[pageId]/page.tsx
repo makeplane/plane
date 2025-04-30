@@ -202,6 +202,7 @@ const PageDetailsPage = observer(() => {
             page={page}
             storeType={storeType}
             webhookConnectionParams={webhookConnectionParams}
+            projectId={projectId?.toString()}
             workspaceSlug={workspaceSlug?.toString() ?? ""}
             customRealtimeEventHandlers={customRealtimeEventHandlers}
           />

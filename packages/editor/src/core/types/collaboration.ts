@@ -6,6 +6,7 @@ import { TEmbedConfig } from "@/plane-editor/types";
 import {
   EditorReadOnlyRefApi,
   EditorRefApi,
+  EditorTitleRefApi,
   TExtensions,
   TFileHandler,
   TMentionHandler,
@@ -41,8 +42,10 @@ export type TCollaborativeEditorProps = TCollaborativeEditorHookProps & {
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   mentionHandler: TMentionHandler;
+  onChange?: (description_json: object, description_html: string) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
+  titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
   updatePageProperties?: (pageId: string, messageType: string, payload?: any, performAction?: boolean) => void;
 };
 

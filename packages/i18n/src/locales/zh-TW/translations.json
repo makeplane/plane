@@ -570,7 +570,7 @@
       }
     }
   },
-  
+
   "new_password_must_be_different_from_old_password": "新密碼必須與舊密碼不同",
   "edited": "已編輯",
   "bot": "機器人",

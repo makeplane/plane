@@ -1997,7 +1997,8 @@
         "project": "Yeni şablon ekle"
       },
       "label": {
-        "project": "Bir proje şablonu seçin"
+        "project": "Bir proje şablonu seçin",
+        "page": "Şablon seç"
       },
       "tooltip": {
         "work_item": "Bir iş öğesi şablonu seçin"

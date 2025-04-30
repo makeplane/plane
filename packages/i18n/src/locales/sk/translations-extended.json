@@ -1786,10 +1786,10 @@
   "templates": {
     "settings": {
       "title": "Šablóny",
-      "description": "Ušetrite 80% času stráveného vytváraním projektov, pracovných položiek a stránok, keď používate šablóny.",
+      "description": "Ušetríte 80% času stráveného vytváraním projektov, pracovných položiek a stránok, keď použijete šablóny.",
       "options": {
         "project": {
-          "label": "Projektové šablóny"
+          "label": "Šablóny projektov"
         },
         "work_item": {
           "label": "Šablóny pracovných položiek"
@@ -1801,48 +1801,51 @@
       "create_template": {
         "label": "Vytvoriť šablónu",
         "no_permission": {
-          "project": "Kontaktujte svojho projektového administrátora pre vytvorenie šablón",
-          "workspace": "Kontaktujte svojho vorkspejs administrátora pre vytvorenie šablón"
+          "project": "Kontaktujte administrátora projektu na vytvorenie šablón",
+          "workspace": "Kontaktujte administrátora workspace na vytvorenie šablón"
         }
       },
       "use_template": {
-        "button": "Použiť šablónu"
+        "button": {
+          "default": "Použiť šablónu",
+          "loading": "Používa sa"
+        }
       },
       "template_source": {
         "workspace": {
-          "info": "Odvodené z vorkspejsu"
+          "info": "Odvodené od workspace"
         },
         "project": {
-          "info": "Odvodené z projektu"
+          "info": "Odvodené od projektu"
         }
       },
       "form": {
         "project": {
           "template": {
             "name": {
-              "placeholder": "Pomenujte svoju projektovú šablónu.",
+              "placeholder": "Pomenujte svoju šablónu projektu.",
               "validation": {
                 "required": "Názov šablóny je povinný",
-                "maxLength": "Názov šablóny by mal mať menej ako 255 znakov"
+                "maxLength": "Názov šablóny by nemal presiahnuť 255 znakov"
               }
             },
             "description": {
-              "placeholder": "Popíšte, kedy a ako používať túto šablónu."
+              "placeholder": "Popíšte, kedy a ako použiť túto šablónu."
             }
           },
           "name": {
             "placeholder": "Pomenujte svoj projekt.",
             "validation": {
               "required": "Názov projektu je povinný",
-              "maxLength": "Názov projektu by mal mať menej ako 255 znakov"
+              "maxLength": "Názov projektu by nemal presiahnuť 255 znakov"
             }
           },
           "description": {
             "placeholder": "Popíšte účel a ciele tohto projektu."
           },
           "button": {
-            "create": "Vytvoriť projektovú šablónu",
-            "update": "Aktualizovať projektovú šablónu"
+            "create": "Vytvoriť šablónu projektu",
+            "update": "Aktualizovať šablónu projektu"
           }
         },
         "work_item": {
@@ -1851,26 +1854,50 @@
               "placeholder": "Pomenujte svoju šablónu pracovnej položky.",
               "validation": {
                 "required": "Názov šablóny je povinný",
-                "maxLength": "Názov šablóny by mal mať menej ako 255 znakov"
+                "maxLength": "Názov šablóny by nemal presiahnuť 255 znakov"
               }
             },
             "description": {
-              "placeholder": "Popíšte, kedy a ako používať túto šablónu."
+              "placeholder": "Popíšte, kedy a ako použiť túto šablónu."
             }
           },
           "name": {
-            "placeholder": "Dajte tejto pracovnej položke názov.",
+            "placeholder": "Pomenujte túto pracovnú položku.",
             "validation": {
               "required": "Názov pracovnej položky je povinný",
-              "maxLength": "Názov pracovnej položky by mal mať menej ako 255 znakov"
+              "maxLength": "Názov pracovnej položky by nemal presiahnuť 255 znakov"
             }
           },
           "description": {
-            "placeholder": "Popíšte túto pracovnú položku tak, aby bolo jasné, čo dosiahnete, keď ju dokončíte."
+            "placeholder": "Popíšte, čo chcete dosiahnuť, keď dokončíte túto pracovnú položku."
           },
           "button": {
             "create": "Vytvoriť šablónu pracovnej položky",
             "update": "Aktualizovať šablónu pracovnej položky"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Pomenujte svoju šablónu stránky.",
+              "validation": {
+                "required": "Názov šablóny je povinný",
+                "maxLength": "Názov šablóny by nemal presiahnuť 255 znakov"
+              }
+            },
+            "description": {
+              "placeholder": "Popíšte, kedy a ako použiť túto šablónu."
+            }
+          },
+          "name": {
+            "placeholder": "Neznáma stránka",
+            "validation": {
+              "maxLength": "Názov stránky by nemal presiahnuť 255 znakov"
+            }
+          },
+          "button": {
+            "create": "Vytvoriť šablónu stránky",
+            "update": "Aktualizovať šablónu stránky"
           }
         }
       }
@@ -1878,45 +1905,45 @@
     "empty_state": {
       "upgrade": {
         "title": "Šablóny",
-        "description": "S projektovými šablónami, šablónami pracovných položiek a stránok v Plane nemusíte vytvárať projekt od základov ani manuálne nastavovať vlastnosti pracovných položiek.",
-        "sub_description": "Získajte späť 80% svojho administratívneho času, keď používate Šablóny."
+        "description": "S projektmi, pracovnými položkami a stránkami v Plane, nemusíte vytvárať projekty od začiatku alebo nastavovať vlastnosti pracovných položiek ručne.",
+        "sub_description": "Ušetríte 80% času, keď použijete šablóny."
       },
       "no_templates": {
-        "button": "Vytvorte svoju prvú šablónu"
+        "button": "Vytvoriť svoju prvú šablónu"
       },
       "no_labels": {
-        "description": " Zatiaľ žiadne štítky. Vytvorte štítky, ktoré pomôžu organizovať a filtrovať pracovné položky vo vašom projekte."
+        "description": "Žiadne štítky ešte neexistujú. Vytvorte štítky na pomoc organizácii a filtrovaniu pracovných položiek v projekte."
       }
     },
     "toasts": {
       "create": {
         "success": {
           "title": "Šablóna vytvorená",
-          "message": "{templateName}, šablóna typu {templateType}, je teraz k dispozícii pre váš vorkspejs."
+          "message": "{templateName}, šablóna typu {templateType}, je teraz dostupná pre váš workspace."
         },
         "error": {
-          "title": "Nemohli sme tentokrát vytvoriť túto šablónu.",
-          "message": "Skúste znova uložiť vaše údaje alebo ich skopírujte do novej šablóny, najlepšie v inej karte."
+          "title": "Nepodarilo sa vytvoriť túto šablónu.",
+          "message": "Skúste znova uložiť vaše údaje alebo ich prekopírovať do novej šablóny, preferujúc inú kartu."
         }
       },
       "update": {
         "success": {
-          "title": "Šablóna zmenená",
-          "message": "{templateName}, šablóna typu {templateType}, bola zmenená."
+          "title": "Šablóna upravená",
+          "message": "{templateName}, šablóna typu {templateType}, bola upravená."
         },
         "error": {
-          "title": "Nemohli sme uložiť zmeny do tejto šablóny.",
-          "message": "Skúste znova uložiť vaše údaje alebo sa vráťte k tejto šablóne neskôr. Ak problémy pretrvávajú, kontaktujte nás."
+          "title": "Nepodarilo sa uložiť zmeny do tejto šablóny.",
+          "message": "Skúste znova uložiť vaše údaje alebo sa vráťte k tejto šablóne neskôr. Ak stále existujú problémy, kontaktujte nás."
         }
       },
       "delete": {
         "success": {
           "title": "Šablóna odstránená",
-          "message": "{templateName}, šablóna typu {templateType}, bola teraz odstránená z vášho vorkspejsu."
+          "message": "{templateName}, šablóna typu {templateType}, bola odstránená z vašeho workspace."
         },
         "error": {
-          "title": "Nemohli sme odstrániť túto šablónu.",
-          "message": "Skúste ju odstrániť znova alebo sa k nej vráťte neskôr. Ak ju nemôžete odstrániť ani potom, kontaktujte nás."
+          "title": "Nepodarilo sa odstrániť túto šablónu.",
+          "message": "Skúste odstrániť ju znova alebo sa vráťte k nej neskôr. Ak stále nepodarí, kontaktujte nás."
         }
       }
     },
@@ -1924,18 +1951,24 @@
       "title": "Odstrániť šablónu",
       "description": {
         "prefix": "Ste si istí, že chcete odstrániť šablónu-",
-        "suffix": "? Všetky údaje súvisiace so šablónou budú natrvalo odstránené. Túto akciu nemožno vrátiť späť."
+        "suffix": "? Všetky údaje spojené s touto šablónou budú natrvalo odstránené. Tento krok nie je možné vrátiť späť."
       }
     },
     "dropdown": {
       "add": {
-        "work_item": "Vytvoriť novú šablónu"
+        "work_item": "Pridať novú šablónu",
+        "project": "Pridať novú šablónu"
+      },
+      "label": {
+        "project": "Vybrať šablónu projektu",
+        "page": "Vybrať šablónu"
       },
       "tooltip": {
-        "work_item": "Vyberte šablónu pracovnej položky"
+        "work_item": "Vybrať šablónu pracovnej položky"
       },
       "no_results": {
-        "work_item": "Žiadne šablóny nenájdené."
+        "work_item": "Žiadne šablóny neboli nájdené.",
+        "project": "Žiadne šablóny neboli nájdené."
       }
     }
   }

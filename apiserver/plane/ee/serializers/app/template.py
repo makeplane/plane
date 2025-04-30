@@ -60,6 +60,7 @@ class PageTemplateDataSerializer(BaseSerializer):
             "parent",
             "view_props",
             "logo_props",
+            "project",
         ]
         read_only_fields = fields
 

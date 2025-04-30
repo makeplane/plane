@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { ETemplateLevel, ETemplateType } from "@plane/constants";
 // plane web imports
-import { useProjectTemplates, useWorkItemTemplates } from "@/plane-web/hooks/store";
+import { useProjectTemplates, useWorkItemTemplates, usePageTemplates } from "@/plane-web/hooks/store";
 // local imports
 import { TemplateListActionWrapper } from "./action-wrapper";
 import { TemplateListItem } from "./list-item";
@@ -27,13 +27,20 @@ export const WorkspaceSettingsTemplatesListRoot = observer((props: TWorkspaceSet
     getTemplateById: getWorkItemTemplateById,
     deleteWorkItemTemplate,
   } = useWorkItemTemplates();
+  const {
+    isInitializingTemplates: isInitializingPageTemplates,
+    getAllTemplateIds: getAllPageTemplateIds,
+    getTemplateById: getPageTemplateById,
+    deletePageTemplate,
+  } = usePageTemplates();
   // derived values
   const projectTemplateIds = getAllProjectTemplateIds(workspaceSlug);
   const workItemTemplateIds = getAllWorkItemTemplateIds(workspaceSlug);
+  const pageTemplateIds = getAllPageTemplateIds(workspaceSlug);
 
   return (
-    <TemplateListActionWrapper workspaceSlug={workspaceSlug}>
-      {({ handleUseTemplateAction }) => (
+    <TemplateListActionWrapper {...props} level={ETemplateLevel.WORKSPACE}>
+      {({ selectedTemplateId, handleUseTemplateAction }) => (
         <>
           <TemplateListWrapper
             type={ETemplateType.PROJECT}
@@ -46,6 +53,7 @@ export const WorkspaceSettingsTemplatesListRoot = observer((props: TWorkspaceSet
                 templateId={templateId}
                 workspaceSlug={workspaceSlug}
                 currentLevel={ETemplateLevel.WORKSPACE}
+                selectedTemplateId={selectedTemplateId}
                 getTemplateById={getProjectTemplateById}
                 deleteTemplate={(templateId) => deleteProjectTemplate(workspaceSlug, templateId)}
                 handleUseTemplateAction={() => handleUseTemplateAction(templateId, ETemplateType.PROJECT)}
@@ -63,9 +71,28 @@ export const WorkspaceSettingsTemplatesListRoot = observer((props: TWorkspaceSet
                 templateId={templateId}
                 workspaceSlug={workspaceSlug}
                 currentLevel={ETemplateLevel.WORKSPACE}
+                selectedTemplateId={selectedTemplateId}
                 getTemplateById={getWorkItemTemplateById}
                 deleteTemplate={(templateId) => deleteWorkItemTemplate(workspaceSlug, templateId)}
                 handleUseTemplateAction={() => handleUseTemplateAction(templateId, ETemplateType.WORK_ITEM)}
+              />
+            ))}
+          </TemplateListWrapper>
+          <TemplateListWrapper
+            type={ETemplateType.PAGE}
+            isInitializing={isInitializingPageTemplates}
+            templateIds={pageTemplateIds}
+          >
+            {pageTemplateIds.map((templateId) => (
+              <TemplateListItem
+                key={templateId}
+                templateId={templateId}
+                workspaceSlug={workspaceSlug}
+                currentLevel={ETemplateLevel.WORKSPACE}
+                selectedTemplateId={selectedTemplateId}
+                getTemplateById={getPageTemplateById}
+                deleteTemplate={(templateId) => deletePageTemplate(workspaceSlug, templateId)}
+                handleUseTemplateAction={() => handleUseTemplateAction(templateId, ETemplateType.PAGE)}
               />
             ))}
           </TemplateListWrapper>

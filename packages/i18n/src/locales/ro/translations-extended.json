@@ -1733,7 +1733,10 @@
         }
       },
       "use_template": {
-        "button": "Folosește șablon"
+        "button": {
+          "default": "Folosește șablon",
+          "loading": "Folosind"
+        }
       },
       "template_source": {
         "workspace": {
@@ -1860,7 +1863,8 @@
         "project": "Adaugă șablon nou"
       },
       "label": {
-        "project": "Alege un șablon de proiect"
+        "project": "Alege un șablon de proiect",
+        "page": "Alege un șablon"
       },
       "tooltip": {
         "work_item": "Alege un șablon de element de lucru"

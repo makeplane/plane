@@ -183,7 +183,7 @@ export class BasePage implements TBasePage {
       // page properties
       id: observable.ref,
       name: observable.ref,
-      logo_props: observable.ref,
+      logo_props: observable,
       description_html: observable.ref,
       color: observable.ref,
       label_ids: observable,
@@ -330,7 +330,6 @@ export class BasePage implements TBasePage {
    */
   update = async (pageData: Partial<TPage>) => {
     const currentPage = { ...this.asJSON };
-
     try {
       runInAction(() => {
         if (pageData.parent_id && pageData.parent_id !== this.parent_id) {
