@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FilterHeader } from "@/components/issues";
-import { Input, Button, Select } from "@plane/ui";
+import { Input, Button  } from "@plane/ui";
 
 type FilterNumberProps = {
   groupKey: string;
@@ -70,9 +70,9 @@ export const FilterNumber: React.FC<FilterNumberProps> = ({
 
         {isPreviewEnabled && (
           <div className="flex items-center">
-            <Select
+            <select
               value={operator}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setOperator(e.target.value as any)}
+              onChange={(e) => setOperator(e.target.value as any)}
               className="text-xs text-custom-primary-100"
             >
               <option value="gt">Is greater than</option>
@@ -82,7 +82,7 @@ export const FilterNumber: React.FC<FilterNumberProps> = ({
               <option value="isbetween">Is between</option>
               <option value="isnull">Is null</option>
               <option value="isnotnull">Is not null</option>
-            </Select>
+            </select>
           </div>
         )}
       </div>

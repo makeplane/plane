@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FilterHeader } from "@/components/issues";
-import { Input, Button, Select } from "@plane/ui";
+import { Input, Button } from "@plane/ui";
 
 type FilterDateProps = {
   groupKey: string;
@@ -70,9 +70,9 @@ export const FilterDate: React.FC<FilterDateProps> = ({
 
         {isPreviewEnabled && (
           <div className="flex items-center">
-            <Select
+            <select
               value={operator}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setOperator(e.target.value as any)}
+              onChange={(e) => setOperator(e.target.value as any)}
               className="text-xs text-custom-primary-100"
             >
               <option value="gt">Is after</option>
@@ -82,7 +82,7 @@ export const FilterDate: React.FC<FilterDateProps> = ({
               <option value="isbetween">Is between</option>
               <option value="isnull">Is null</option>
               <option value="isnotnull">Is not null</option>
-            </Select>
+            </select>
           </div>
         )}
       </div>
