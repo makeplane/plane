@@ -30,7 +30,7 @@ export const SettingsSidebar = (props: SettingsSidebarProps) => {
   } = props;
   const { t } = useTranslation();
   return (
-    <div className="flex w-[220px] flex-col gap-2 h-full">
+    <div className="flex w-[250px] flex-col gap-2 h-full flex-shrink-0">
       {/* Header */}
       <SettingsSidebarHeader customHeader={customHeader} />
       {/* Navigation */}
