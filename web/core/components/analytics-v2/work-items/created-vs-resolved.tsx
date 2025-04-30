@@ -76,6 +76,17 @@ const CreatedVsResolved = observer(() => {
                     offset: -30,
                     dx: -22,
                 }}
+                legend={{
+                    align: "left",
+                    verticalAlign: "bottom",
+                    layout: "horizontal",
+                    wrapperStyles: {
+                        justifyContent: "start",
+                        alignContent: "start",
+                        paddingLeft: "40px",
+                        paddingTop: "10px",
+                    }
+                }}
             />
         </AnalyticsSectionWrapper>
     )

@@ -6,6 +6,7 @@ export type TChartLegend = {
   align: "left" | "center" | "right";
   verticalAlign: "top" | "middle" | "bottom";
   layout: "horizontal" | "vertical";
+  wrapperStyles?: React.CSSProperties;
 };
 
 export type TChartMargin = {
