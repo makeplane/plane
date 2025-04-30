@@ -221,26 +221,24 @@ jobs:
           mkdir -p plane/{admin,web,space,live,backend}
           
           # Extract and move admin build
-          tar -xzf artifacts/admin-dist/admin-dist.tar.gz
-
-          ls -al
-          # mv admin-dist/admin-dist/* plane/admin/
+          tar -xzf artifacts/admin-dist/admin-dist.tar.gz -C plane/
+          mv plane/admin-dist/* plane/admin/
           
           # # Extract and move web build
           # tar -xzf artifacts/web-dist/web-dist.tar.gz
-          # mv web-dist/web-dist/* plane/web/
+          # mv web-dist/* plane/web/
           
           # # Extract and move space build
           # tar -xzf artifacts/space-dist/space-dist.tar.gz
-          # mv space-dist/space-dist/* plane/space/
+          # mv space-dist/* plane/space/
           
           # # Extract and move live build
           # tar -xzf artifacts/live-dist/live-dist.tar.gz
-          # mv live-dist/live-dist/* plane/live/
+          # mv live-dist/* plane/live/
           
           # # Extract and move backend build
           # tar -xzf artifacts/backend-dist/backend-dist.tar.gz
-          # mv backend-dist/backend-dist/* plane/backend/
+          # mv backend-dist/* plane/backend/
           
           # Cleanup extracted directories
           rm -rf *-dist artifacts
