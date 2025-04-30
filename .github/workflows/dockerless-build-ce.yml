@@ -203,7 +203,7 @@ jobs:
 
   # Job to build the appliance using hashicorp packer
   build_appliance:
-    needs: [build_setup, build_admin ] #, build_web, build_space, build_live, build_backend]
+    needs: [build_setup, build_admin, build_web, build_space, build_live, build_backend]
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout Repository
