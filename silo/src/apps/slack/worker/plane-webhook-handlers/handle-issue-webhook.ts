@@ -7,7 +7,6 @@ const ignoredFieldUpdates = ["description", "attachment"];
 
 export const handleIssueWebhook = async (payload: PlaneWebhookPayload) => {
   const activities = await getActivities(payload);
-
   // Ideally we won't hit this case, but just in case
   if (activities.length === 0) {
     return;
@@ -24,14 +23,14 @@ export const handleIssueWebhook = async (payload: PlaneWebhookPayload) => {
   const message = createSlackBlocksFromActivity(activities);
   const entityData = entityConnection.entity_data as any;
 
-  const channel = entityData.channel.id;
+  const channel = entityData.channel ||  entityData.channel.id;
   const messageTs = entityData.message.ts;
 
   if (message.length === 0) {
     return;
   }
 
-  await slackService.sendThreadMessage(channel, messageTs, {
+  const response = await slackService.sendThreadMessage(channel, messageTs, {
     text: "Work Item Updated",
     blocks: message,
   });
