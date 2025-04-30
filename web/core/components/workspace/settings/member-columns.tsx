@@ -43,10 +43,10 @@ export const NameColumn: React.FC<NameProps> = (props) => {
       {({}) => (
         <div className="relative group">
           <div className="flex items-center gap-x-4 gap-y-2 w-72 justify-between">
-            <div className="flex items-center gap-x-4 gap-y-2 flex-1">
+            <div className="flex items-center gap-x-2 gap-y-2 flex-1">
               {avatar_url && avatar_url.trim() !== "" ? (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex h-6 w-6 items-center justify-center rounded-full p-4 capitalize text-white">
+                  <span className="relative flex h-6 w-6 items-center justify-center rounded-full capitalize text-white">
                     <img
                       src={getFileURL(avatar_url)}
                       className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
@@ -56,7 +56,7 @@ export const NameColumn: React.FC<NameProps> = (props) => {
                 </Link>
               ) : (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex h-6 w-6 items-center justify-center rounded-full bg-gray-700 p-4 capitalize text-white">
+                  <span className="relative flex h-4 w-4 text-xs items-center justify-center rounded-full bg-gray-700 capitalize text-white">
                     {(email ?? display_name ?? "?")[0]}
                   </span>
                 </Link>
