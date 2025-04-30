@@ -7,6 +7,22 @@ packer {
   }
 }
 
+# Variables for AWS credentials
+variable "aws_access_key" {
+  type    = string
+  default = "aws-access-key"
+}
+
+variable "aws_secret_key" {
+  type    = string
+  default = "aws-secret-access-key"
+}
+
+variable "aws_region" {
+  type    = string
+  default = "us-east-1"
+}
+
 # Local variables for reuse
 locals {
   timestamp = regex_replace(timestamp(), "[- TZ:]", "")
@@ -14,10 +30,26 @@ locals {
 
 # Source block defining the base image and configuration
 source "amazon-ebs" "plane_ce" {
+  access_key    = var.aws_access_key
+  secret_key    = var.aws_secret_key
+  region        = var.aws_region
   ami_name      = "plane-ce-${local.timestamp}"
-  instance_type = "t2.micro"
-  region        = "us-east-1"
-  
+  instance_type = "t3a.micro"
+
+  vpc_filter {
+    filters = {
+    #   "tag:Name": "plane-test-vpc"
+      "cidr": "10.22.0.0/16"
+    }
+  }
+
+  subnet_filter {
+    filters = {
+    #   "tag:Name": "plane-test-vpc-public-us-east-2a"
+      "cidr": "10.22.1.0/24"
+    }
+  }
+
   source_ami_filter {
     filters = {
       name                = "ubuntu/images/*ubuntu-jammy-22.04-amd64-server-*"
@@ -25,7 +57,7 @@ source "amazon-ebs" "plane_ce" {
       virtualization-type = "hvm"
     }
     most_recent = true
-    owners      = ["426043895157"] # Canonical's AWS account ID
+    owners      = ["099720109477"] # Canonical's AWS account ID
   }
   
   ssh_username = "ubuntu"
@@ -52,7 +84,7 @@ build {
       "sudo apt-get install -y software-properties-common",
       "sudo add-apt-repository -y ppa:deadsnakes/ppa",
       "sudo apt-get update",
-      "sudo apt-get install -y python3.12=3.12.5* python3.12-venv python3.12-dev python3-pip",
+      "sudo apt-get install -y python3.12 python3.12-venv python3.12-dev python3-pip",
       "sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1",
       "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash",
       ". $HOME/.nvm/nvm.sh",
