@@ -50,6 +50,8 @@ source "amazon-ebs" "plane_ce" {
     }
   }
 
+    associate_public_ip_address = true
+
   source_ami_filter {
     filters = {
       name                = "ubuntu/images/*ubuntu-jammy-22.04-amd64-server-*"
