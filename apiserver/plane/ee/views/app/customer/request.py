@@ -339,10 +339,16 @@ class CustomerIssuesEndpoint(BaseAPIView):
             **filters
         ).prefetch_related("customer_request", "customer")
 
-        first_issue = customer_request_issues[0]
+        customer_request_issue = customer_request_issues.first()
+
+        if customer_request_issue is None:
+            return Response(
+                {"error": "Customer request issue not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         if customer_request_id:
-            name = first_issue.customer_request.name
+            name = customer_request_issue.customer_request.name
             requested_data = json.dumps(
                 {
                     "customer_id": str(customer_id),
@@ -351,7 +357,7 @@ class CustomerIssuesEndpoint(BaseAPIView):
                 }
             )
         else:
-            name = first_issue.customer.name
+            name = customer_request_issue.customer.name
             requested_data = json.dumps(
                 {
                     "customer_id": str(customer_id),
