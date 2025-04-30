@@ -85,3 +85,15 @@ export const PROFILE_ADMINS_TAB = [
     selected: "/activity/",
   },
 ];
+
+export const PREFERENCE_OPTIONS: {
+  id: string;
+  title: string;
+  description: string;
+}[] = [
+  {
+    id: "theme",
+    title: "theme",
+    description: "select_or_customize_your_interface_color_scheme",
+  },
+];
