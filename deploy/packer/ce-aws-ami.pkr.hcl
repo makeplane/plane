@@ -25,7 +25,7 @@ variable "aws_region" {
 
 variable "ami_name_prefix" {
   type    = string
-  default = "plane-"
+  default = "plane"
 }
 
 variable "vpc_cidr" {
@@ -85,7 +85,7 @@ source "amazon-ebs" "plane_aws_ami" {
 
 # Build block defining what to install and configure
 build {
-  name = var.ami_name
+  name = "${var.ami_name_prefix}-${local.timestamp}"
   sources = [
     "source.amazon-ebs.plane_aws_ami"
   ]
