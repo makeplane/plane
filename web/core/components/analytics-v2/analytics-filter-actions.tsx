@@ -1,10 +1,11 @@
-// hooks
-import { useAnalyticsV2 } from "@/hooks/store/use-analytics-v2";
+
 // plane web components
 import { observer } from "mobx-react-lite";
 // components
 import { ProjectDropdown } from "@/components/dropdowns";
-import DurationDropdown from "./duration-dropdown";
+// hooks
+import { useAnalyticsV2 } from "@/hooks/store/use-analytics-v2";
+import DurationDropdown from "./select/duration";
 
 const AnalyticsFilterActions = observer(() => {
     const { selectedProject, selectedDuration, updateSelectedProject, updateSelectedDuration } = useAnalyticsV2()
@@ -19,6 +20,7 @@ const AnalyticsFilterActions = observer(() => {
                 buttonVariant="border-with-text"
                 multiple={false}
                 dropdownArrow
+
             />
             <DurationDropdown
                 buttonVariant="border-with-text"

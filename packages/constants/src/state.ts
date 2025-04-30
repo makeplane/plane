@@ -1,6 +1,4 @@
 "use client"
-import { EUpdateStatus } from "@plane/types/src/enums";
-import { AtRiskIcon, OffTrackIcon, OnTrackIcon } from "@plane/ui";
 export type TStateGroups = "backlog" | "unstarted" | "started" | "completed" | "cancelled";
 
 export type TDraggableData = {
@@ -80,23 +78,5 @@ export const PROGRESS_STATE_GROUPS_DETAILS = [
   },
 ];
 
-export const StatusOptions = {
-  [EUpdateStatus.ON_TRACK]: {
-    icon: OnTrackIcon,
-    color: "#1FAD40",
-    backgroundColor: "#1fad401f",
-  },
-
-  [EUpdateStatus.AT_RISK]: {
-    icon: AtRiskIcon,
-    color: "#CC7700",
-    backgroundColor: "#cc77002e",
-  },
-  [EUpdateStatus.OFF_TRACK]: {
-    icon: OffTrackIcon,
-    color: "#CC0000",
-    backgroundColor: "#cc000026",
-  },
-};
 
 export const DISPLAY_WORKFLOW_PRO_CTA = false;

@@ -1,20 +1,21 @@
 "use client";
 
+import { useMemo } from "react";
 import { observer } from "mobx-react";
+
 import { useSearchParams } from "next/navigation";
 // plane package imports
-import { ANALYTICS_TABS } from "@/plane-web/components/analytics-v2/tabs";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Tabs } from "@plane/ui";
 // components
+import AnalyticsFilterActions from "@/components/analytics-v2/analytics-filter-actions";
 import { PageHead } from "@/components/core";
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 // hooks
-import AnalyticsFilterActions from "@/components/analytics-v2/analytics-filter-actions";
 import { useCommandPalette, useEventTracker, useProject, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import { useMemo } from "react";
+import { ANALYTICS_TABS } from "@/plane-web/components/analytics-v2/tabs";
 
 const AnalyticsPage = observer(() => {
   // plane imports

@@ -23,7 +23,7 @@ export interface IAnalyticsRadarEntityV2 {
 
 // chart types
 
-export interface ICustomizedInsightsChartV2 {
+export interface IChartResponseV2 {
     schema: Record<string, string>;
     data: TChartData<string, string>[];
 }

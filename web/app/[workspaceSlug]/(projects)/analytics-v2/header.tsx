@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { BarChart2, PanelRight } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Breadcrumbs, CustomSearchSelect, Header } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // helpers

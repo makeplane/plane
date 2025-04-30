@@ -1,5 +1,4 @@
 import { cn } from '@plane/utils'
-import React from 'react'
 
 type Props = {
   title?: string,

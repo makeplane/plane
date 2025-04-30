@@ -1,43 +1,78 @@
-import { BarChart } from '@plane/propel/charts/bar-chart'
-import { LineChart } from '@plane/propel/charts/line-chart'
-import React from 'react'
-import AnalyticsSectionWrapper from '../analytics-section-wrapper'
-import { overviewDummyData } from '../temp-dummy-data'
-import { useAnalyticsV2 } from '@/hooks/store/use-analytics-v2'
-import { observer } from 'mobx-react'
-import useSWR from 'swr'
-import { AnalyticsV2Service } from '@/services/analytics-v2.service'
-import { useParams } from 'next/navigation'
-import { AreaChart } from '@plane/propel/charts/area-chart'
-import { useTranslation } from '@plane/i18n'
 
-type Props = {}
+import { useMemo } from 'react'
+import { observer } from 'mobx-react'
+import { useParams } from 'next/navigation'
+import useSWR from 'swr'
+import { useTranslation } from '@plane/i18n'
+import { AreaChart } from '@plane/propel/charts/area-chart'
+import { IChartResponseV2, TAreaItem } from '@plane/types'
+import { renderFormattedDate } from '@plane/utils'
+import { useAnalyticsV2 } from '@/hooks/store/use-analytics-v2'
+import { AnalyticsV2Service } from '@/services/analytics-v2.service'
+import AnalyticsSectionWrapper from '../analytics-section-wrapper'
+
+
+
 const analyticsV2Service = new AnalyticsV2Service()
-const CreatedVsResolved = observer((props: Props) => {
+const CreatedVsResolved = observer(() => {
     const { selectedDuration, selectedDurationLabel } = useAnalyticsV2()
     const params = useParams();
     const { t } = useTranslation()
     const workspaceSlug = params.workspaceSlug as string;
-    const { data: customizedInsightsChartData } = useSWR(
-        analyticsV2Service.getAdvanceAnalyticsCharts(workspaceSlug, 'work-items', {
-            created_at: selectedDuration
+    const { data: createdVsResolvedData } = useSWR(
+        `created-vs-resolved-${workspaceSlug}-${selectedDuration}`,
+        () => analyticsV2Service.getAdvanceAnalyticsCharts<IChartResponseV2>(workspaceSlug, 'work-items', {
+            date_filter: selectedDuration
         }),
-        analyticsV2Service.getAdvanceAnalyticsCharts
     )
+    const parsedData = useMemo(() => {
+        if (!createdVsResolvedData?.data) return []
+        return createdVsResolvedData.data.map((datum) => ({
+            ...datum,
+            [datum.key]: datum.count,
+            name: renderFormattedDate(datum.key)
+        }))
+    }, [createdVsResolvedData])
+
+    const areas: TAreaItem<string>[] = [
+        {
+            key: "completed_issues",
+            label: "Resolved",
+            fill: "#19803833",
+            fillOpacity: 1,
+            stackId: "bar-one",
+            showDot: false,
+            smoothCurves: true,
+            strokeColor: "#198038",
+            strokeOpacity: 1,
+        },
+        {
+            key: "created_issues",
+            label: "Created",
+            fill: "#1192E833",
+            fillOpacity: 1,
+            stackId: "bar-one",
+            showDot: false,
+            smoothCurves: true,
+            strokeColor: "#1192E8",
+            strokeOpacity: 1,
+        },
+
+    ]
 
     return (
         <AnalyticsSectionWrapper title={t('workspace_analytics.created_vs_resolved')} subtitle={selectedDurationLabel} className='col-span-1'>
             <AreaChart
                 className="w-full h-[350px]"
-                data={overviewDummyData.work_area_data}
-                areas={overviewDummyData.work_areas}
+                data={parsedData}
+                areas={areas}
                 xAxis={{
-                    key: "states",
-                    label: "States",
+                    key: "name",
+                    label: "Date",
                 }}
                 yAxis={{
-                    key: "no_of_projects",
-                    label: "No. of Projects",
+                    key: "count",
+                    label: "Number of Issues",
                 }}
             />
         </AnalyticsSectionWrapper>

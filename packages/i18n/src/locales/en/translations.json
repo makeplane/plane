@@ -704,7 +704,13 @@
   "chart": {
     "x_axis": "X-axis",
     "y_axis": "Y-axis",
-    "metric": "Metric"
+    "metric": "Metric",
+    "common": {
+      "day": "Day",
+      "week": "Week",
+      "month": "Month",
+      "year": "Year"
+    }
   },
   "form": {
     "title": {
