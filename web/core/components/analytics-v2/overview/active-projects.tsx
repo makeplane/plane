@@ -1,17 +1,15 @@
 import React, { useEffect } from 'react'
-import AnalyticsSectionWrapper from '../analytics-section-wrapper'
-import { overviewDummyData } from '../temp-dummy-data'
-import ActiveProjectItem from './active-project-item'
-import { EUpdateStatus } from '@plane/types/src/enums'
-import { useTranslation } from '@plane/i18n'
-import { useAnalyticsV2, useProject } from '@/hooks/store'
+import { observer } from 'mobx-react'
 import { useParams } from 'next/navigation'
 import useSWR from 'swr'
+import { useTranslation } from '@plane/i18n'
+import { EUpdateStatus } from '@plane/types/src/enums'
 import { Loader } from '@plane/ui'
-import { observer } from 'mobx-react'
-type Props = {}
+import { useAnalyticsV2, useProject } from '@/hooks/store'
+import AnalyticsSectionWrapper from '../analytics-section-wrapper'
+import ActiveProjectItem from './active-project-item'
 
-const ActiveProjects = observer((props: Props) => {
+const ActiveProjects = observer(() => {
     const { t } = useTranslation()
     const { fetchProjectAnalyticsCount } = useProject()
     const { workspaceSlug } = useParams()
@@ -26,7 +24,7 @@ const ActiveProjects = observer((props: Props) => {
                     <Loader.Item key={index} height='40px' width='100%' />
                 ))}
                 {!isProjectAnalyticsCountLoading && projectAnalyticsCount?.map((project) => (
-                    <ActiveProjectItem project={project} />
+                    <ActiveProjectItem key={project.id} project={project} />
                 ))}
             </div>
         </AnalyticsSectionWrapper>
