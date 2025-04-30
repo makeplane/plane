@@ -110,6 +110,34 @@ build {
     ]
   }
 
+  # Copy application files
+  provisioner "shell" {
+    inline = [
+      "sudo mkdir -p /opt/plane/{admin,web,space,live,backend}",
+      "sudo chown -R ubuntu:ubuntu /opt/plane"
+    ]
+  }
+
+  provisioner "file" {
+    sources = [
+      "/opt/plane/admin/",
+      "/opt/plane/web/",
+      "/opt/plane/space/",
+      "/opt/plane/live/",
+      "/opt/plane/backend/"
+    ]
+    destination = "/opt/plane/"
+  }
+
+  # Set proper permissions
+  provisioner "shell" {
+    inline = [
+      "sudo chown -R ubuntu:ubuntu /opt/plane",
+      "sudo chmod -R 755 /opt/plane",
+      "echo 'All components installed in /opt/plane:' && ls -la /opt/plane/"
+    ]
+  }
+
   # Add more provisioners here for:
   # 1. Installing Docker and Docker Compose
   # 2. Setting up Nginx configuration
