@@ -17,7 +17,8 @@ jobs:
         id: set_env_variables
         run: |
           # get the selected branch/tag name and flatten it 
-          TAG_NAME=${{ github.ref_name }}
+          # TAG_NAME=${{ github.ref_name }} # TODO: uncomment this
+          TAG_NAME=v0.26.0 # TODO: remove this
           TAG_NAME=${TAG_NAME//\//-}
           echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_OUTPUT
           echo "ADMIN_IMAGE=makeplane/plane-admin" >> $GITHUB_OUTPUT
