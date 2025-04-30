@@ -4,7 +4,7 @@
   font-family: Inter;
   font-style: normal;
   font-weight: 200;
-  src: url("fonts/Inter/inter-v13-latin-200.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  src: url("./Inter/inter-v13-latin-200.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 
 /* inter-300 - latin */
@@ -13,7 +13,7 @@
   font-family: Inter;
   font-style: normal;
   font-weight: 300;
-  src: url("fonts/Inter/inter-v13-latin-300.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  src: url("./Inter/inter-v13-latin-300.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 
 /* inter-regular - latin */
@@ -22,7 +22,7 @@
   font-family: Inter;
   font-style: normal;
   font-weight: 405;
-  src: url("fonts/Inter/inter-v13-latin-regular.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  src: url("./Inter/inter-v13-latin-regular.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 
 /* inter-500 - latin */
@@ -31,7 +31,16 @@
   font-family: Inter;
   font-style: normal;
   font-weight: 500;
-  src: url("fonts/Inter/inter-v13-latin-500.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  src: url("./Inter/inter-v13-latin-500.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* inter-600 - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 600;
+  src: url("./Inter/inter-v13-latin-600.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 
 /* inter-700 - latin */
@@ -40,7 +49,7 @@
   font-family: Inter;
   font-style: normal;
   font-weight: 700;
-  src: url("fonts/Inter/inter-v13-latin-700.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  src: url("./Inter/inter-v13-latin-700.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 
 /* inter-800 - latin */
@@ -49,7 +58,7 @@
   font-family: Inter;
   font-style: normal;
   font-weight: 800;
-  src: url("fonts/Inter/inter-v13-latin-800.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  src: url("./Inter/inter-v13-latin-800.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 
 /* material-symbols-rounded-regular - latin */
@@ -58,7 +67,7 @@
   font-family: "Material Symbols Rounded";
   font-style: normal;
   font-weight: 400;
-  src: url("fonts/Material-Symbols-Rounded/material-symbols-rounded-v168-latin-regular.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  src: url("./Material-Symbols-Rounded/material-symbols-rounded-v168-latin-regular.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 
 .material-symbols-rounded {
