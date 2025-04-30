@@ -30,10 +30,11 @@ jobs:
       - name: Export Builder Stage Content
         run: |
           # get the selected branch/tag name and flatten it 
+          IMAGE_NAME=${{ needs.build_setup.outputs.admin_image }}
           TAG_NAME=${{ needs.build_setup.outputs.tag_name }}
 
           # Create a temporary container from the builder stage
-          CONTAINER_ID=$(docker create --platform=linux/amd64 -q ${ADMIN_IMAGE}:${TAG_NAME})
+          CONTAINER_ID=$(docker create --platform=linux/amd64 -q ${IMAGE_NAME}:${TAG_NAME})
           
           # Create admin-dist directory
           mkdir -p admin-dist
