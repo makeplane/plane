@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Pencil } from "lucide-react";
 import axios from "axios";
-import { Input, Button, Select } from "@plane/ui";
+import { Input } from "@plane/ui";
 
 export type CustomProperty = {
   key: string;
@@ -147,7 +147,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
         />
       ),
       boolean: (
-        <Select
+        <select
           value={value}
           onChange={handleChange}
           onBlur={handleBlur}
@@ -157,7 +157,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
           <option value="">Select {property.key}</option>
           <option value="true">True</option>
           <option value="false">False</option>
-        </Select>
+        </select>
       ),
       number: (
         <Input
@@ -213,7 +213,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
               {editingPropertyKey === element.key ? (
                 <EditableProperty property={element} />
               ) : (
-                <Button
+                <button
                   type="button"
                   className="group flex items-center justify-between gap-2 px-2 py-0.5 rounded outline-none w-full hover:bg-custom-background-80"
                   onClick={() => setEditingPropertyKey(element.key)}
@@ -228,7 +228,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
                   <span className="p-1 flex-shrink-0 opacity-0 group-hover:opacity-100 text-custom-text-400">
                     <Pencil className="h-2.5 w-2.5 flex-shrink-0" />
                   </span>
-                </Button>
+                </button>
               )}
             </div>
           </div>
