@@ -42,7 +42,6 @@ jobs:
           echo "BACKEND_IMAGE=makeplane/plane-backend" >> $GITHUB_OUTPUT
           echo "LIVE_IMAGE=makeplane/plane-live" >> $GITHUB_OUTPUT
 
-
   build_admin:
     needs: build_setup
     runs-on: ubuntu-22.04
@@ -134,4 +133,66 @@ jobs:
         with:
           name: space-dist
           path: space-dist.tar.gz
+          retention-days: 1
+ 
+  build_live:
+    needs: build_setup
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Export Builder Stage Content
+        run: |
+          IMAGE_NAME=${{ needs.build_setup.outputs.live_image }}
+          TAG_NAME=${{ needs.build_setup.outputs.tag_name }}
+
+          # Create a temporary container from the builder stage
+          CONTAINER_ID=$(docker create --platform=linux/amd64 -q ${IMAGE_NAME}:${TAG_NAME})
+          
+          # Create publish directory
+          mkdir -p live-dist
+          
+          # Copy the /app contents from the container
+          docker cp $CONTAINER_ID:/app/. live-dist/
+          
+          # Remove the temporary container
+          docker rm $CONTAINER_ID
+          
+          # Create a tar archive
+          tar -czf live-dist.tar.gz live-dist/
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-dist
+          path: live-dist.tar.gz
+          retention-days: 1
+
+  build_backend:
+    needs: build_setup
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Export Builder Stage Content
+        run: |
+          IMAGE_NAME=${{ needs.build_setup.outputs.backend_image }}
+          TAG_NAME=${{ needs.build_setup.outputs.tag_name }}
+
+          # Create a temporary container from the builder stage
+          CONTAINER_ID=$(docker create --platform=linux/amd64 -q ${IMAGE_NAME}:${TAG_NAME})
+          
+          # Create publish directory
+          mkdir -p backend-dist
+          
+          # Copy the /app contents from the container
+          docker cp $CONTAINER_ID:/code/. backend-dist/
+          
+          # Remove the temporary container
+          docker rm $CONTAINER_ID
+          
+          # Create a tar archive
+          tar -czf backend-dist.tar.gz backend-dist/
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-dist
+          path: backend-dist.tar.gz
           retention-days: 1
