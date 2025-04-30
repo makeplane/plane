@@ -23,30 +23,42 @@ variable "aws_region" {
   default = "us-east-1"
 }
 
+variable "ami_name_prefix" {
+  type    = string
+  default = "plane-"
+}
+
+variable "vpc_cidr" {
+  type    = string
+  default = "10.22.0.0/16"
+}
+
+variable "subnet_cidr" {
+  type    = string
+  default = "10.22.1.0/24"
+}
 # Local variables for reuse
 locals {
   timestamp = regex_replace(timestamp(), "[- TZ:]", "")
 }
 
 # Source block defining the base image and configuration
-source "amazon-ebs" "plane_ce" {
+source "amazon-ebs" "plane_aws_ami" {
   access_key    = var.aws_access_key
   secret_key    = var.aws_secret_key
   region        = var.aws_region
-  ami_name      = "plane-ce-${local.timestamp}"
+  ami_name      = var.ami_name
   instance_type = "t3a.micro"
 
   vpc_filter {
     filters = {
-    #   "tag:Name": "plane-test-vpc"
-      "cidr": "10.22.0.0/16"
+      "cidr": var.vpc_cidr
     }
   }
 
   subnet_filter {
     filters = {
-    #   "tag:Name": "plane-test-vpc-public-us-east-2a"
-      "cidr": "10.22.1.0/24"
+      "cidr": var.subnet_cidr
     }
   }
 
@@ -65,7 +77,7 @@ source "amazon-ebs" "plane_ce" {
   ssh_username = "ubuntu"
   
   tags = {
-    Name        = "Plane CE"
+    Name        = "${var.ami_name_prefix}-${local.timestamp}"
     Environment = "Production"
     Builder     = "Packer"
   }
@@ -73,9 +85,9 @@ source "amazon-ebs" "plane_ce" {
 
 # Build block defining what to install and configure
 build {
-  name = "plane-ce"
+  name = var.ami_name
   sources = [
-    "source.amazon-ebs.plane_ce"
+    "source.amazon-ebs.plane_aws_ami"
   ]
 
   # Update and install basic requirements

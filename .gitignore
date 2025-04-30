@@ -92,3 +92,4 @@ dev-editor
 # Redis
 *.rdb
 *.rdb.gz
+test-packer.sh

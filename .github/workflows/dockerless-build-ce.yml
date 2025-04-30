@@ -9,6 +9,9 @@ on:
 env:
   DEFAULT_TAG_NAME: v0.26.0
   MANIFEST_BUCKET: plane-terraform-state-dev
+  AMI_NAME_PREFIX: plane-ce'
+  VPC_CIDR: ${{ vars.VPC_CIDR || '10.22.0.0/16' }}
+  SUBNET_CIDR: ${{ vars.SUBNET_CIDR || '10.22.1.0/24' }}
 
 jobs:
   build_setup:
@@ -237,11 +240,11 @@ jobs:
 
       - name: Run `packer init`
         id: init
-        run: "packer init ./image.pkr.hcl"
+        run: "packer init ./deploy/packer/ce-aws-ami.pkr.hcl"
 
       - name: Run `packer validate`
         id: validate
-        run: "packer validate ./image.pkr.hcl"
+        run: "packer validate ./deploy/packer/ce-aws-ami.pkr.hcl"
 
       - name: Run `packer build`
         id: build
@@ -249,7 +252,10 @@ jobs:
           packer build \
             -var "aws_access_key=${{ secrets.PLANE_DEV_AWS_ACCESS_KEY_ID }}" \
             -var "aws_secret_key=${{ secrets.PLANE_DEV_AWS_SECRET_ACCESS_KEY }}" \
-            ./image.pkr.hcl
+            -var "ami_name_prefix=${{ env.AMI_NAME_PREFIX }}" \
+            -var "vpc_cidr=${{ env.VPC_CIDR }}" \
+            -var "subnet_cidr=${{ env.SUBNET_CIDR }}" \
+            ./deploy/packer/ce-aws-ami.pkr.hcl
 
       - name: Extract AMI Information
         id: ami_info
