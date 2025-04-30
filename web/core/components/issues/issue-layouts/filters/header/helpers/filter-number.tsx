@@ -94,7 +94,7 @@ export const FilterNumber: React.FC<FilterNumberProps> = ({
             {["gt", "lt", "eq", "ne"].includes(operator) && (
               <Input
                 type="number"
-                value={from}
+                value={from === null ? "" : from}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setFrom(e.target.value ? +e.target.value : null)
                 }
@@ -108,7 +108,7 @@ export const FilterNumber: React.FC<FilterNumberProps> = ({
               <>
                 <Input
                   type="number"
-                  value={from}
+                  value={from === null ? "" : from}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setFrom(e.target.value ? +e.target.value : null)
                   }
@@ -117,7 +117,7 @@ export const FilterNumber: React.FC<FilterNumberProps> = ({
                 />
                 <Input
                   type="number"
-                  value={to}
+                  value={to === null ? "" : to}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setTo(e.target.value ? +e.target.value : null)
                   }
