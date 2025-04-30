@@ -107,9 +107,23 @@ export const ConnectionMapper = observer(
   (props: { selectedWorkspace: IWorkspace; connections: TWorkspaceUserConnection[] }) => {
     const { selectedWorkspace } = props;
 
-    const { connectUser, disconnectUser } = useSlackIntegration();
-    const { auth: { connectGithubUserCredential, disconnectGithubUserCredential } } = useGithubIntegration();
+    const { connectUser, disconnectUser, fetchExternalApiToken: fetchSlackExternalApiToken } = useSlackIntegration();
+    const {
+      auth: { connectGithubUserCredential, disconnectGithubUserCredential },
+      fetchExternalApiToken: fetchGithubExternalApiToken,
+    } = useGithubIntegration();
     const user = useUser();
+
+    const { isLoading: isLoadingExternalApiTokens } = useSWR(
+      selectedWorkspace ? `SLACK_EXTERNAL_API_TOKEN_${selectedWorkspace.slug}` : null,
+      selectedWorkspace
+        ? async () =>
+            Promise.all([
+              fetchSlackExternalApiToken(selectedWorkspace.slug),
+              fetchGithubExternalApiToken(selectedWorkspace.slug),
+            ])
+        : null
+    );
 
     const [connections, setConnections] = useState<TWorkspaceUserConnection[]>(props.connections);
 
@@ -149,7 +163,7 @@ export const ConnectionMapper = observer(
       <PersonalAccountConnectView
         key={connection.id}
         provider={USER_CONNECTION_PROVIDERS[connection.connection_type as TUserConnection]}
-        isConnectionLoading={false}
+        isConnectionLoading={isLoadingExternalApiTokens}
         isUserConnected={connection.isUserConnected}
         connectionSlug={connection.connection_slug || ""}
         handleConnection={handleConnection}

@@ -3,18 +3,19 @@ import { convertToSlackOptions } from "@/apps/slack/helpers/slack-options";
 import { createProjectSelectionModal } from "@/apps/slack/views";
 import { logger } from "@/logger";
 import { getConnectionDetails } from "../../helpers/connection-details";
+import { getAccountConnectionBlocks } from "../../views/account-connection";
 import { alreadyLinkedModalView, createLinkIssueModalView } from "../../views/link-issue-modal";
 import { E_MESSAGE_ACTION_TYPES } from "../../types/types";
 import { getAPIClient } from "@/services/client";
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { ENTITIES } from "../../helpers/constants";
 
-const apiClient = getAPIClient()
+const apiClient = getAPIClient();
 
 export const handleMessageAction = async (data: TMessageActionPayload) => {
   if (!data.callback_id) {
     logger.info(`[SLACK] No callback id found for message action ${data.type}`);
-    return
+    return;
   }
 
   switch (data.callback_id) {
@@ -44,6 +45,20 @@ const handleLinkWorkItem = async (data: TMessageActionPayload) => {
     return;
   }
 
+  if (details.missingUserCredentials) {
+    const { slackService } = details;
+
+    await slackService.sendEphemeralMessage(
+      data.user.id,
+      "Please connect your Slack account to Plane to use this feature.",
+      data.channel.id,
+      undefined,
+      getAccountConnectionBlocks(details)
+    );
+
+    return;
+  }
+
   const { slackService, planeClient } = details;
 
   const metadata = {
@@ -56,7 +71,7 @@ const handleLinkWorkItem = async (data: TMessageActionPayload) => {
       text: data.message.text,
       ts: data.message.ts,
     },
-  }
+  };
 
   const workspaceEntityConnections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
     workspace_connection_id: details.workspaceConnection.id,
@@ -67,8 +82,16 @@ const handleLinkWorkItem = async (data: TMessageActionPayload) => {
   let modal: any | undefined;
 
   if (workspaceEntityConnections.length > 0) {
-    const issuePromise = planeClient.issue.getIssueWithFields(workspaceEntityConnections[0].workspace_slug, workspaceEntityConnections[0].project_id!, workspaceEntityConnections[0].issue_id!, ["state", "project", "assignees", "labels"]);
-    const statesPromise = planeClient.state.list(workspaceEntityConnections[0].workspace_slug, workspaceEntityConnections[0].project_id!);
+    const issuePromise = planeClient.issue.getIssueWithFields(
+      workspaceEntityConnections[0].workspace_slug,
+      workspaceEntityConnections[0].project_id!,
+      workspaceEntityConnections[0].issue_id!,
+      ["state", "project", "assignees", "labels"]
+    );
+    const statesPromise = planeClient.state.list(
+      workspaceEntityConnections[0].workspace_slug,
+      workspaceEntityConnections[0].project_id!
+    );
 
     const [issue, states] = await Promise.all([issuePromise, statesPromise]);
 
@@ -85,13 +108,27 @@ const handleLinkWorkItem = async (data: TMessageActionPayload) => {
   } catch (error) {
     logger.error(error);
   }
-}
+};
 
 const handleCreateNewWorkItem = async (data: TMessageActionPayload) => {
   // Get the workspace connection for the associated team
   const details = await getConnectionDetails(data.team.id);
   if (!details) {
     logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
+    return;
+  }
+
+  if (details.missingUserCredentials) {
+    const { slackService } = details;
+
+    await slackService.sendEphemeralMessage(
+      data.user.id,
+      "Please connect your Slack account to Plane to use this feature.",
+      data.channel.id,
+      undefined,
+      getAccountConnectionBlocks(details)
+    );
+
     return;
   }
 
@@ -119,4 +156,4 @@ const handleCreateNewWorkItem = async (data: TMessageActionPayload) => {
   } catch (error) {
     logger.error(error);
   }
-}
+};

@@ -5,7 +5,7 @@ import {
   SlackAuthState,
   SlackUserAuthState,
   TSlackCommandPayload,
-  TSlackPayload
+  TSlackPayload,
 } from "@plane/etl/slack";
 import { ExIssue, PlaneWebhookData, PlaneWebhookPayloadBase } from "@plane/sdk";
 import { env } from "@/env";
@@ -15,7 +15,7 @@ import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { integrationTaskManager } from "@/worker";
 import { slackAuth } from "../auth/auth";
-import { getConnectionDetails } from "../helpers/connection-details";
+import { getConnectionDetails, updateUserMap } from "../helpers/connection-details";
 import { ACTIONS } from "../helpers/constants";
 import { parseIssueFormData } from "../helpers/parse-issue-form";
 import { convertToSlackOptions } from "../helpers/slack-options";
@@ -89,7 +89,7 @@ export default class SlackController {
       const connections = await apiClient.workspaceConnection.listWorkspaceConnections({
         connection_type: E_INTEGRATION_KEYS.SLACK,
         connection_id: response.team.id,
-      })
+      });
 
       // If the team is already connected to another workspace, return an error
       if (connections.length > 0) {
@@ -122,6 +122,9 @@ export default class SlackController {
           connection_data: response.team,
           credential_id: credentials.id,
           target_hostname: env.API_BASE_URL,
+          config: {
+            userMap: [],
+          },
         });
       }
 
@@ -157,8 +160,18 @@ export default class SlackController {
         return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.ERROR_FETCHING_TOKEN}`);
       }
 
+      const workspaceConnection = await apiClient.workspaceConnection.listWorkspaceConnections({
+        connection_type: E_INTEGRATION_KEYS.SLACK,
+        workspace_id: state.workspaceId,
+      });
+
+      if (!workspaceConnection || workspaceConnection.length === 0) {
+        // Create a workspace connection for the authenticated team
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.CONNECTION_NOT_FOUND}`);
+      }
+
       // Create credentials for slack for the workspace
-      await apiClient.workspaceCredential.createWorkspaceCredential({
+      const workspaceCredentialPromise = apiClient.workspaceCredential.createWorkspaceCredential({
         source: E_ENTITY_CONNECTION_KEYS.SLACK_USER,
         target_access_token: state.apiToken,
         source_access_token: response.authed_user.access_token,
@@ -166,6 +179,9 @@ export default class SlackController {
         workspace_id: state.workspaceId,
         user_id: authState.userId,
       });
+
+      const updateUserMapPromise = updateUserMap(workspaceConnection[0], authState.userId, response.authed_user.id);
+      await Promise.all([workspaceCredentialPromise, updateUserMapPromise]);
 
       return res.redirect(redirectUri);
     } catch (error) {
@@ -273,7 +289,22 @@ export default class SlackController {
       if (!credentials.length) {
         return res.status(200);
       }
+
       await apiClient.workspaceCredential.deleteWorkspaceCredential(credentials[0].id);
+
+      // Update the workspace connection to remove the user id
+      const workspaceConnection = await apiClient.workspaceConnection.listWorkspaceConnections({
+        connection_type: E_INTEGRATION_KEYS.SLACK,
+        workspace_id: workspaceId,
+      });
+
+      if (!workspaceConnection || workspaceConnection.length === 0) {
+        return res.status(200);
+      }
+
+      // Update the workspace connection to remove the user id
+      await updateUserMap(workspaceConnection[0], userId, null);
+
       return res.sendStatus(200);
     } catch (error) {
       return responseHandler(res, 500, error);
@@ -367,7 +398,10 @@ export default class SlackController {
         // If the action is issue_labels, parse the view to be of type
         // IssueModalViewFull and pass it to the slack worker
         const details = await getConnectionDetails(payload.team.id);
-        if (!details) { logger.info(`[SLACK] No connection details found for team ${payload.team.id}`); return }
+        if (!details) {
+          logger.info(`[SLACK] No connection details found for team ${payload.team.id}`);
+          return;
+        }
 
         const { workspaceConnection, planeClient } = details;
         const values = parseIssueFormData(payload.view.state.values);

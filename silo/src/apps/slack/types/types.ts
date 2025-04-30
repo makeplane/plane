@@ -1,8 +1,8 @@
-import {
-  ISlackChannel, ISlackUser, TSlackPayload
-} from "@plane/etl/slack";
+import { ISlackChannel, ISlackUser, SlackService, TSlackPayload } from "@plane/etl/slack";
 import { ENTITIES } from "../helpers/constants";
-import { PlaneActivity } from "@plane/sdk";
+import { PlaneActivity, Client as PlaneClient } from "@plane/sdk";
+import { TWorkspaceCredential } from "@plane/types";
+import { TWorkspaceConnection } from "@plane/types";
 
 export interface ParsedIssueData {
   project: string;
@@ -57,6 +57,20 @@ type EntityPayloadMapping = {
   // Add more mappings as needed
 };
 
+export type TSlackWorkspaceConnectionConfig = {
+  userMap?: {
+    planeUserId: string;
+    slackUser: string;
+  }[];
+};
+
+export type TSlackConnectionDetails = {
+  workspaceConnection: TWorkspaceConnection;
+  credentials: TWorkspaceCredential;
+  slackService: SlackService;
+  planeClient: PlaneClient;
+  missingUserCredentials?: boolean;
+};
 // Create the indexed type
 export type SlackPrivateMetadata<T extends keyof EntityPayloadMapping = keyof EntityPayloadMapping> = {
   entityType: T;
@@ -85,7 +99,6 @@ export enum E_MESSAGE_ACTION_TYPES {
   ISSUE_COMMENT_SUBMISSION = "issue_comment_submission",
 }
 
-
 export type PlaneActivityWithTimestamp = {
   timestamp: string;
 } & PlaneActivity;
@@ -93,11 +106,14 @@ export type PlaneActivityWithTimestamp = {
 export type ActivityForSlack = {
   field: string;
   actor: string;
-} & ({
-  isArrayField: true;
-  removed: string[];
-  added: string[];
-} | {
-  isArrayField: false;
-  newValue: string;
-})
+} & (
+  | {
+      isArrayField: true;
+      removed: string[];
+      added: string[];
+    }
+  | {
+      isArrayField: false;
+      newValue: string;
+    }
+);

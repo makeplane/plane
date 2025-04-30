@@ -8,6 +8,7 @@ import { createCycleLinkback } from "../../views/cycle-linkback";
 import { createSlackLinkback } from "../../views/issue-linkback";
 import { createModuleLinkback } from "../../views/module-linkback";
 import { createProjectLinkback } from "../../views/project-linkback";
+import { getAccountConnectionBlocks } from "../../views/account-connection";
 
 const apiClient = getAPIClient();
 
@@ -33,9 +34,7 @@ export const handleSlackEvent = async (data: SlackEventPayload) => {
     const { slackService } = details;
 
     const isPermissionError = error?.detail?.includes(CONSTANTS.NO_PERMISSION_ERROR);
-    const errorMessage = isPermissionError
-      ? CONSTANTS.NO_PERMISSION_ERROR_MESSAGE
-      : CONSTANTS.SOMETHING_WENT_WRONG;
+    const errorMessage = isPermissionError ? CONSTANTS.NO_PERMISSION_ERROR_MESSAGE : CONSTANTS.SOMETHING_WENT_WRONG;
 
     await slackService.sendEphemeralMessage(data.event.user, errorMessage, data.event.channel, data.event.event_ts);
 
@@ -52,6 +51,20 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
     const details = await getConnectionDetails(data.team_id);
     if (!details) {
       logger.info(`[SLACK] No connection details found for team ${data.team_id}`);
+      return;
+    }
+
+    if (details.missingUserCredentials) {
+      const { slackService } = details;
+
+      await slackService.sendEphemeralMessage(
+        data.event.user,
+        "Please connect your Slack account to Plane to use this feature.",
+        data.event.channel,
+        undefined,
+        getAccountConnectionBlocks(details)
+      );
+
       return;
     }
 

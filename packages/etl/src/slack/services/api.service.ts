@@ -76,7 +76,8 @@ export class SlackService {
     userId: string,
     text: string,
     channelId: string,
-    threadTs?: string // Optional parameter for thread timestamp
+    threadTs?: string, // Optional parameter for thread timestamp
+    blocks?: any[] // Optional blocks parameter
   ) {
     try {
       const isBotInChannel = await this.ensureBotInChannel(channelId);
@@ -87,7 +88,7 @@ export class SlackService {
       const payload: any = {
         user: userId,
         channel: channelId,
-        text: text,
+        text: text, // Always include text for fallback
       };
 
       // Include thread_ts if provided
@@ -95,10 +96,16 @@ export class SlackService {
         payload.thread_ts = threadTs;
       }
 
+      // Include blocks if provided
+      if (blocks && blocks.length > 0) {
+        payload.blocks = blocks;
+      }
+
       const res = await this.client.post("chat.postEphemeral", payload);
-      console.log(res.data);
+      return res.data;
     } catch (error) {
       console.error(error);
+      throw error; // Re-throw the error for better error handling
     }
   }
 
@@ -140,20 +147,20 @@ export class SlackService {
       const payload =
         typeof message === "string"
           ? {
-            channel: channelId,
-            thread_ts: threadTs,
-            metadata: metadata,
-            text: message,
-          }
+              channel: channelId,
+              thread_ts: threadTs,
+              metadata: metadata,
+              text: message,
+            }
           : {
-            channel: channelId,
-            thread_ts: threadTs,
-            metadata: {
-              event_type: "issue",
-              event_payload: metadata,
-            },
-            ...message,
-          };
+              channel: channelId,
+              thread_ts: threadTs,
+              metadata: {
+                event_type: "issue",
+                event_payload: metadata,
+              },
+              ...message,
+            };
 
       const isBotInChannel = await this.ensureBotInChannel(channelId);
       if (!isBotInChannel) {
@@ -185,22 +192,22 @@ export class SlackService {
       const payload =
         typeof message === "string"
           ? {
-            channel: channelId,
-            thread_ts: threadTs,
-            metadata: metadata,
-            text: message,
-            unfurl_links: unfurlLinks,
-          }
+              channel: channelId,
+              thread_ts: threadTs,
+              metadata: metadata,
+              text: message,
+              unfurl_links: unfurlLinks,
+            }
           : {
-            channel: channelId,
-            thread_ts: threadTs,
-            metadata: {
-              event_type: "issue",
-              event_payload: metadata,
-            },
-            unfurl_links: unfurlLinks,
-            ...message,
-          };
+              channel: channelId,
+              thread_ts: threadTs,
+              metadata: {
+                event_type: "issue",
+                event_payload: metadata,
+              },
+              unfurl_links: unfurlLinks,
+              ...message,
+            };
 
       const isBotInChannel = await this.ensureBotInChannel(channelId);
       if (!isBotInChannel) {

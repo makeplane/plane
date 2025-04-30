@@ -184,6 +184,7 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
     const response = await this.service.getUserConnectionURL({
       workspaceId: workspace_id,
       workspaceSlug: workspace_slug,
+      apiToken: this.externalApiToken,
       profileRedirect,
       userId,
     });
