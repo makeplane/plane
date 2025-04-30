@@ -35,6 +35,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
         handleCreateUpdatePropertyValues: () => Promise.resolve(),
         handleProjectEntitiesFetch: () => Promise.resolve(),
         handleTemplateChange: () => Promise.resolve(),
+        handleConvert: () => Promise.resolve(),
       }}
     >
       {children}
