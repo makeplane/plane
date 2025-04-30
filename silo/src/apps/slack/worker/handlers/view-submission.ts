@@ -16,7 +16,9 @@ import { credentials } from "amqplib";
 const apiClient = getAPIClient();
 
 export const handleViewSubmission = async (data: TViewSubmissionPayload) => {
-  const details = await getConnectionDetails(data.team.id);
+  const details = await getConnectionDetails(data.team.id, {
+    id: data.user.id,
+  });
   if (!details) {
     logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
     return;

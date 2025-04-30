@@ -25,7 +25,9 @@ export const handleSlackEvent = async (data: SlackEventPayload) => {
         break;
     }
   } catch (error: any) {
-    const details = await getConnectionDetails(data.team_id);
+    const details = await getConnectionDetails(data.team_id, {
+      id: data.event.user,
+    });
     if (!details) {
       logger.info(`[SLACK] No connection details found for team ${data.team_id}`);
       return;
@@ -48,7 +50,9 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
   if (data.event.type === "message") {
     if (!data.event.thread_ts) return;
 
-    const details = await getConnectionDetails(data.team_id);
+    const details = await getConnectionDetails(data.team_id, {
+      id: data.event.user,
+    });
     if (!details) {
       logger.info(`[SLACK] No connection details found for team ${data.team_id}`);
       return;
@@ -100,7 +104,9 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
 
 export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
   if (data.event.type === "link_shared") {
-    const details = await getConnectionDetails(data.team_id);
+    const details = await getConnectionDetails(data.team_id, {
+      id: data.event.user,
+    });
     if (!details) {
       logger.info(`[SLACK] No connection details found for team ${data.team_id}`);
       return;

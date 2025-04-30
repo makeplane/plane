@@ -462,7 +462,7 @@ export default class SlackController {
         );
       }
 
-      if (payload.event === "issue" && !payload.activity.field.includes("_id")) {
+      if (payload.event === "issue" && payload.activity.field && !payload.activity.field.includes("_id")) {
         const payload = req.body as PlaneWebhookPayloadBase<ExIssue>;
 
         const id = payload.data.id;

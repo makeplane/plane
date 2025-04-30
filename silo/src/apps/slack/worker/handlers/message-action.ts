@@ -13,10 +13,13 @@ import { ENTITIES } from "../../helpers/constants";
 const apiClient = getAPIClient();
 
 export const handleMessageAction = async (data: TMessageActionPayload) => {
+
+
   if (!data.callback_id) {
     logger.info(`[SLACK] No callback id found for message action ${data.type}`);
     return;
   }
+
 
   switch (data.callback_id) {
     case E_MESSAGE_ACTION_TYPES.LINK_WORK_ITEM:
@@ -39,7 +42,9 @@ const handleLinkWorkItem = async (data: TMessageActionPayload) => {
       already linked to another thread and to disconnect it first
   */
 
-  const details = await getConnectionDetails(data.team.id);
+  const details = await getConnectionDetails(data.team.id, {
+    id: data.user.id,
+  });
   if (!details) {
     logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
     return;
@@ -112,7 +117,9 @@ const handleLinkWorkItem = async (data: TMessageActionPayload) => {
 
 const handleCreateNewWorkItem = async (data: TMessageActionPayload) => {
   // Get the workspace connection for the associated team
-  const details = await getConnectionDetails(data.team.id);
+  const details = await getConnectionDetails(data.team.id, {
+    id: data.user.id,
+  });
   if (!details) {
     logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
     return;

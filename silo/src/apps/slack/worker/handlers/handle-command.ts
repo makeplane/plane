@@ -8,7 +8,9 @@ import { createProjectSelectionModal } from "../../views";
 import { getAccountConnectionBlocks } from "../../views/account-connection";
 
 export const handleCommand = async (data: TSlackCommandPayload) => {
-  const details = await getConnectionDetails(data.team_id);
+  const details = await getConnectionDetails(data.team_id, {
+    id: data.user_id,
+  });
   if (!details) {
     logger.info(`[SLACK] No connection details found for team ${data.team_id}`);
     return;
