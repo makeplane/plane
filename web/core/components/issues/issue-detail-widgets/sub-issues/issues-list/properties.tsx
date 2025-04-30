@@ -67,6 +67,23 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
         </div>
       </WithDisplayPropertiesHOC>
 
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="priority">
+        <div className="h-5 flex-shrink-0">
+          <PriorityDropdown
+            value={issue.priority}
+            onChange={(val) =>
+              issue.project_id &&
+              updateSubIssue(workspaceSlug, issue.project_id, parentIssueId, issueId, {
+                priority: val,
+              })
+            }
+            disabled={!disabled}
+            buttonVariant="border-without-text"
+            buttonClassName="border"
+          />
+        </div>
+      </WithDisplayPropertiesHOC>
+
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_date">
         <div className="h-5 flex-shrink-0" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <DateDropdown
@@ -117,23 +134,6 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
             optionsClassName="z-30"
             disabled={!disabled}
-          />
-        </div>
-      </WithDisplayPropertiesHOC>
-
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="priority">
-        <div className="h-5 flex-shrink-0">
-          <PriorityDropdown
-            value={issue.priority}
-            onChange={(val) =>
-              issue.project_id &&
-              updateSubIssue(workspaceSlug, issue.project_id, parentIssueId, issueId, {
-                priority: val,
-              })
-            }
-            disabled={!disabled}
-            buttonVariant="border-without-text"
-            buttonClassName="border"
           />
         </div>
       </WithDisplayPropertiesHOC>
