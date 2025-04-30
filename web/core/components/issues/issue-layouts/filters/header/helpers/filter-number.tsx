@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FilterHeader } from "@/components/issues";
-import { Input, Button  } from "@plane/ui";
+import { Input  } from "@plane/ui";
 
 type FilterNumberProps = {
   groupKey: string;
@@ -88,7 +88,7 @@ export const FilterNumber: React.FC<FilterNumberProps> = ({
       </div>
 
       {isPreviewEnabled && (
-        <div className="mt-4 w-full">
+        <div className="mt-2 w-full">
           <div className="flex items-center space-x-2">
             {/* single-value operators */}
             {["gt", "lt", "eq", "ne"].includes(operator) && (
@@ -126,16 +126,17 @@ export const FilterNumber: React.FC<FilterNumberProps> = ({
                 />
               </>
             )}
-
-            {["gt", "lt", "eq", "ne", "isbetween"].includes(operator) && (
-              <Button
-                type="button"
-                className="text-xs font-medium text-custom-primary-100 hover:text-custom-primary-200 cursor-pointer p-1"
-                onClick={apply}
-              >
-                Apply
-              </Button>
-            )}
+            <div className="flex justify-end flex-grow">
+              {["gt", "lt", "eq", "ne", "isbetween", "isnull", "isnotnull"].includes(operator) && (
+                <button
+                  type="button"
+                  className="text-xs font-medium text-custom-primary-100 hover:text-custom-primary-200 cursor-pointer p-1"
+                  onClick={apply}
+                >
+                  Apply
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}
