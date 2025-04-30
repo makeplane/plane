@@ -92,6 +92,9 @@ build {
 
   # Update and install basic requirements
   provisioner "shell" {
+    environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive"
+    ]
     inline = [
       "sudo apt-get update",
       "sudo apt-get upgrade -y",
