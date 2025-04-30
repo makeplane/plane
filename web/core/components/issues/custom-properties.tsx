@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Pencil } from "lucide-react";
 import axios from "axios";
+import { Input, Button, Select } from "@plane/ui";
 
 export type CustomProperty = {
   key: string;
@@ -133,65 +134,58 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
       setLocalError(null);
     };
 
-    const renderInputByType = () => {
-      switch (property?.data_type) {
-        case 'date':
-          return (
-            <input
-              type="date"
-              value={value}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              autoFocus
-              placeholder={`Add ${property.key}`}
-              className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
-            />
-          );
-        case 'boolean':
-          return (
-            <select
-              value={value}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              autoFocus
-              className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
-            >
-              <option value="">Select {property.key}</option>
-              <option value="true">True</option>
-              <option value="false">False</option>
-            </select>
-          );
-        case 'number':
-          return (
-            <input
-              type="number"
-              value={value}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              autoFocus
-              placeholder={`Add ${property.key}`}
-              className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
-            />
-          );
-        case 'text':
-        default:
-          return (
-            <input
-              type="text"
-              value={value}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              autoFocus
-              placeholder={`Add ${property.key}`}
-              className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
-            />
-          );
-      }
+    const inputComponents: Record<string, React.JSX.Element> = {
+      date: (
+        <Input
+          type="date"
+          value={value}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          autoFocus
+          placeholder={`Add ${property.key}`}
+          className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
+        />
+      ),
+      boolean: (
+        <Select
+          value={value}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          autoFocus
+          className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
+        >
+          <option value="">Select {property.key}</option>
+          <option value="true">True</option>
+          <option value="false">False</option>
+        </Select>
+      ),
+      number: (
+        <Input
+          type="number"
+          value={value}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          autoFocus
+          placeholder={`Add ${property.key}`}
+          className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
+        />
+      ),
+      text: (
+        <Input
+          type="text"
+          value={value}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          autoFocus
+          placeholder={`Add ${property.key}`}
+          className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
+        />
+      ),
     };
-
+    
     return (
       <div>
-        {renderInputByType()}
+        {inputComponents[property?.data_type as keyof typeof inputComponents] || inputComponents.text}
         {localError && (
           <div className="text-red-500 text-sm mt-1">{localError}</div>
         )}
@@ -219,7 +213,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
               {editingPropertyKey === element.key ? (
                 <EditableProperty property={element} />
               ) : (
-                <button
+                <Button
                   type="button"
                   className="group flex items-center justify-between gap-2 px-2 py-0.5 rounded outline-none w-full hover:bg-custom-background-80"
                   onClick={() => setEditingPropertyKey(element.key)}
@@ -234,7 +228,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
                   <span className="p-1 flex-shrink-0 opacity-0 group-hover:opacity-100 text-custom-text-400">
                     <Pencil className="h-2.5 w-2.5 flex-shrink-0" />
                   </span>
-                </button>
+                </Button>
               )}
             </div>
           </div>
