@@ -8,7 +8,6 @@ import { createCycleLinkback } from "../../views/cycle-linkback";
 import { createSlackLinkback } from "../../views/issue-linkback";
 import { createModuleLinkback } from "../../views/module-linkback";
 import { createProjectLinkback } from "../../views/project-linkback";
-import { getAccountConnectionBlocks } from "../../views/account-connection";
 
 const apiClient = getAPIClient();
 
@@ -53,22 +52,9 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
     const details = await getConnectionDetails(data.team_id, {
       id: data.event.user,
     });
+
     if (!details) {
       logger.info(`[SLACK] No connection details found for team ${data.team_id}`);
-      return;
-    }
-
-    if (details.missingUserCredentials) {
-      const { slackService } = details;
-
-      await slackService.sendEphemeralMessage(
-        data.event.user,
-        "Please connect your Slack account to Plane to use this feature.",
-        data.event.channel,
-        undefined,
-        getAccountConnectionBlocks(details)
-      );
-
       return;
     }
 

@@ -73,7 +73,7 @@ export default class SlackController {
     }
 
     const authState = JSON.parse(Buffer.from(slackState as string, "base64").toString("utf-8")) as SlackAuthState;
-    const redirectUri = `${env.API_BASE_URL}/${authState.workspaceSlug}/settings/integrations/slack/`;
+    const redirectUri = `${env.APP_BASE_URL}/${authState.workspaceSlug}/settings/integrations/slack/`;
 
     try {
       const { state, response } = await slackAuth.getWorkspaceAuthToken({
