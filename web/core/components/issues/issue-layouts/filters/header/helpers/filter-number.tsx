@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { FilterHeader } from "@/components/issues";
+import { Input, Button, Select } from "@plane/ui";
 
 type FilterNumberProps = {
   groupKey: string;
-  /** called with the final filter string, e.g. "invoice__gt:5" or "invoice:5" or "invoice__isnull" */
   onFilter: (filter: string) => void;
   title: string;
   isPreviewEnabled: boolean;
@@ -17,32 +17,32 @@ export const FilterNumber: React.FC<FilterNumberProps> = ({
   isPreviewEnabled,
   handleIsPreviewEnabled,
 }) => {
-  const [op, setOp] = useState<"gt" | "lt" | "eq" | "ne" | "isbetween" | "isnull" | "isnotnull">("gt");
-  const [val1, setVal1] = useState<number | "">("");
-  const [val2, setVal2] = useState<number | "">("");
+  const [operator, setOperator] = useState<"gt" | "lt" | "eq" | "ne" | "isbetween" | "isnull" | "isnotnull">("gt");
+  const [from, setFrom] = useState<number | null>(null);
+  const [to, setTo] = useState<number | null>(null);
 
   const apply = () => {
     let payload: string;
-    switch (op) {
+    switch (operator) {
       case "gt":
       case "lt":
-        if (val1 === "") return;
-        payload = `${groupKey}__${op}:${val1}`;
+        if (from === null) return;
+        payload = `${groupKey}__${operator}:${from}`;
         break;
 
       case "eq":
-        if (val1 === "") return;
-        payload = `${groupKey}:${val1}`;
+        if (from === null) return;
+        payload = `${groupKey}:${from}`;
         break;
 
       case "ne":
-        if (val1 === "") return;
-        payload = `${groupKey}__ne:${val1}`;
+        if (from === null) return;
+        payload = `${groupKey}__ne:${from}`;
         break;
 
       case "isbetween":
-        if (val1 === "" || val2 === "") return;
-        payload = `${groupKey}__isbetween:${val1}^${val2}`;
+        if (from === null || to === null) return;
+        payload = `${groupKey}__isbetween:${from}^${to}`;
         break;
 
       case "isnull":
@@ -67,12 +67,12 @@ export const FilterNumber: React.FC<FilterNumberProps> = ({
           isPreviewEnabled={isPreviewEnabled}
           handleIsPreviewEnabled={handleIsPreviewEnabled}
         />
-        
+
         {isPreviewEnabled && (
           <div className="flex items-center">
-            <select
-              value={op}
-              onChange={(e) => setOp(e.target.value as any)}
+            <Select
+              value={operator}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setOperator(e.target.value as any)}
               className="text-xs text-custom-primary-100"
             >
               <option value="gt">Is greater than</option>
@@ -82,21 +82,21 @@ export const FilterNumber: React.FC<FilterNumberProps> = ({
               <option value="isbetween">Is between</option>
               <option value="isnull">Is null</option>
               <option value="isnotnull">Is not null</option>
-            </select>
+            </Select>
           </div>
         )}
       </div>
-      
+
       {isPreviewEnabled && (
         <div className="mt-4 w-full">
           <div className="flex items-center space-x-2">
             {/* single-value operators */}
-            {["gt", "lt", "eq", "ne"].includes(op) && (
-              <input
+            {["gt", "lt", "eq", "ne"].includes(operator) && (
+              <Input
                 type="number"
-                value={val1}
-                onChange={(e) =>
-                  setVal1(e.target.value === "" ? "" : +e.target.value)
+                value={from}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setFrom(e.target.value ? +e.target.value : null)
                 }
                 className="border rounded p-1 text-xs flex-grow"
                 placeholder="Enter value"
@@ -104,22 +104,22 @@ export const FilterNumber: React.FC<FilterNumberProps> = ({
             )}
 
             {/* between needs two values */}
-            {op === "isbetween" && (
+            {operator === "isbetween" && (
               <>
-                <input
+                <Input
                   type="number"
-                  value={val1}
-                  onChange={(e) =>
-                    setVal1(e.target.value === "" ? "" : +e.target.value)
+                  value={from}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setFrom(e.target.value ? +e.target.value : null)
                   }
                   className="border rounded p-1 text-xs w-28"
                   placeholder="Min"
                 />
-                <input
+                <Input
                   type="number"
-                  value={val2}
-                  onChange={(e) =>
-                    setVal2(e.target.value === "" ? "" : +e.target.value)
+                  value={to}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setTo(e.target.value ? +e.target.value : null)
                   }
                   className="border rounded p-1 text-xs w-28"
                   placeholder="Max"
@@ -127,14 +127,14 @@ export const FilterNumber: React.FC<FilterNumberProps> = ({
               </>
             )}
 
-            {(["gt", "lt", "eq", "ne", "isbetween"].includes(op)) && (
-              <button
+            {["gt", "lt", "eq", "ne", "isbetween"].includes(operator) && (
+              <Button
                 type="button"
                 className="text-xs font-medium text-custom-primary-100 hover:text-custom-primary-200 cursor-pointer p-1"
                 onClick={apply}
               >
                 Apply
-              </button>
+              </Button>
             )}
           </div>
         </div>

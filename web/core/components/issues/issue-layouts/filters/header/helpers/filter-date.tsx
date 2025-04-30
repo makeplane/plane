@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FilterHeader } from "@/components/issues";
+import { Input, Button, Select } from "@plane/ui";
 
 type FilterDateProps = {
   groupKey: string;
@@ -16,17 +17,17 @@ export const FilterDate: React.FC<FilterDateProps> = ({
   isPreviewEnabled,
   handleIsPreviewEnabled,
 }) => {
-  const [op, setOp] = useState<"gt" | "lt" | "eq" | "ne" | "isbetween" | "isnull" | "isnotnull">("gt");
+  const [operator, setOperator] = useState<"gt" | "lt" | "eq" | "ne" | "isbetween" | "isnull" | "isnotnull">("gt");
   const [from, setFrom] = useState<string>("");
   const [to, setTo] = useState<string>("");
 
   const apply = () => {
     let payload: string;
-    switch (op) {
+    switch (operator) {
       case "gt":
       case "lt":
         if (!from) return;
-        payload = `${groupKey}__${op}:${from}`;
+        payload = `${groupKey}__${operator}:${from}`;
         break;
 
       case "eq":
@@ -34,7 +35,7 @@ export const FilterDate: React.FC<FilterDateProps> = ({
         payload = `${groupKey}:${from}`;
         break;
 
-      case "ne": // not on
+      case "ne":
         if (!from) return;
         payload = `${groupKey}__ne:${from}`;
         break;
@@ -69,9 +70,9 @@ export const FilterDate: React.FC<FilterDateProps> = ({
 
         {isPreviewEnabled && (
           <div className="flex items-center">
-            <select
-              value={op}
-              onChange={(e) => setOp(e.target.value as any)}
+            <Select
+              value={operator}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setOperator(e.target.value as any)}
               className="text-xs text-custom-primary-100"
             >
               <option value="gt">Is after</option>
@@ -81,7 +82,7 @@ export const FilterDate: React.FC<FilterDateProps> = ({
               <option value="isbetween">Is between</option>
               <option value="isnull">Is null</option>
               <option value="isnotnull">Is not null</option>
-            </select>
+            </Select>
           </div>
         )}
       </div>
@@ -89,40 +90,40 @@ export const FilterDate: React.FC<FilterDateProps> = ({
       {isPreviewEnabled && (
         <div className="mt-4 w-full">
           <div className="flex items-center space-x-2">
-            {["gt", "lt", "eq", "ne"].includes(op) && (
-              <input
+            {["gt", "lt", "eq", "ne"].includes(operator) && (
+              <Input
                 type="date"
                 value={from}
-                onChange={(e) => setFrom(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFrom(e.target.value)}
                 className="border rounded p-1 text-xs flex-grow"
               />
             )}
 
-            {op === "isbetween" && (
+            {operator === "isbetween" && (
               <>
-                <input
+                <Input
                   type="date"
                   value={from}
-                  onChange={(e) => setFrom(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFrom(e.target.value)}
                   className="border rounded p-1 text-xs flex-grow"
                 />
-                <input
+                <Input
                   type="date"
                   value={to}
-                  onChange={(e) => setTo(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTo(e.target.value)}
                   className="border rounded p-1 text-xs flex-grow"
                 />
               </>
             )}
 
-            {(["gt", "lt", "eq", "ne", "isbetween"].includes(op)) && (
-              <button
+            {["gt", "lt", "eq", "ne", "isbetween"].includes(operator) && (
+              <Button
                 type="button"
                 className="text-xs font-medium text-custom-primary-100 hover:text-custom-primary-200 cursor-pointer p-1"
                 onClick={apply}
               >
                 Apply
-              </button>
+              </Button>
             )}
           </div>
         </div>
