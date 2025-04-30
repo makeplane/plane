@@ -8,19 +8,25 @@ import { useAnalyticsV2 } from '@/hooks/store/use-analytics-v2'
 import { AnalyticsV2Service } from '@/services/analytics-v2.service'
 import { priorityBars } from '../utils'
 
+
+interface Props {
+  x_axis: string
+  y_axis: string
+  group_by?: string
+}
+
 const analyticsV2Service = new AnalyticsV2Service()
-const PriorityChart = observer(() => {
+const PriorityChart = observer((props: Props) => {
   const { selectedDuration } = useAnalyticsV2()
   const params = useParams();
-
   const workspaceSlug = params.workspaceSlug as string;
   const { data: customizedInsightsChartData } = useSWR(
-    `customized-insights-chart-${workspaceSlug}-${selectedDuration}`,
+    `customized-insights-chart-${workspaceSlug}-${selectedDuration}-${props.x_axis}-${props.y_axis}-${props.group_by}`,
     () => analyticsV2Service.getAdvanceAnalyticsCharts<IChartResponseV2>(workspaceSlug, 'custom-work-items', {
-      date_filter: selectedDuration
+      date_filter: selectedDuration,
+      // ...props
     }),
   )
-
   const parsedData = useMemo(() => {
     if (!customizedInsightsChartData?.data) return []
     return customizedInsightsChartData.data.map((datum) => ({

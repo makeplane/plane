@@ -6,6 +6,7 @@ import { CommandPaletteStore, ICommandPaletteStore } from "@/plane-web/store/com
 import { RootStore } from "@/plane-web/store/root.store";
 import { IStateStore, StateStore } from "@/plane-web/store/state.store";
 // stores
+import { IAnalyticsStoreV2, AnalyticsStoreV2 } from "./analytics-v2.store";
 import { CycleStore, ICycleStore } from "./cycle.store";
 import { CycleFilterStore, ICycleFilterStore } from "./cycle_filter.store";
 import { DashboardStore, IDashboardStore } from "./dashboard.store";
@@ -32,7 +33,6 @@ import { ThemeStore, IThemeStore } from "./theme.store";
 import { ITransientStore, TransientStore } from "./transient.store";
 import { IUserStore, UserStore } from "./user";
 import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
-import { IAnalyticsStoreV2, AnalyticsStoreV2 } from "./analytics-v2.store";
 
 enableStaticRendering(typeof window === "undefined");
 

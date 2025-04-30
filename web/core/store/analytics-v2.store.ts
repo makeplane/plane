@@ -1,7 +1,7 @@
-import { TAnalyticsTabsV2Base } from "@plane/types";
-import { CoreRootStore } from "./root.store";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { PROJECT_CREATED_AT_FILTER_OPTIONS } from "@plane/constants";
+import { IAnalyticsV2Params, TAnalyticsTabsV2Base } from "@plane/types";
+import { CoreRootStore } from "./root.store";
 
 
 type DurationType = typeof PROJECT_CREATED_AT_FILTER_OPTIONS[number]['value']

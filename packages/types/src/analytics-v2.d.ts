@@ -1,4 +1,5 @@
 import { TBarItem } from "./charts";
+import { TYAxisValues, TXAxisValues } from "@plane/types";
 
 export type TAnalyticsTabsV2Base = "overview" | "work-items"
 export type TAnalyticsGraphsV2Base = "projects" | "work-items" | "custom-work-items"
@@ -44,4 +45,8 @@ type AnalyticsTableDataMap = {
     "work-items": WorkItemInsightColumns,
 }
 
-
+export interface IAnalyticsV2Params {
+    x_axis: TXAxisValues;
+    y_axis: TYAxisValues;
+    group_by?: TXAxisValues;
+}
