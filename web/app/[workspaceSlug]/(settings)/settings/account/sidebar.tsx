@@ -1,4 +1,4 @@
-import { CircleUser, Activity, Bell, CircleUserRound, KeyRound, Settings2, Blocks } from "lucide-react";
+import { CircleUser, Activity, Bell, CircleUserRound, KeyRound, Settings2, Blocks, Lock } from "lucide-react";
 import { GROUPED_PROFILE_SETTINGS, PROFILE_SETTINGS_CATEGORIES } from "@plane/constants";
 import { SettingsSidebar } from "@/components/settings";
 import { getFileURL } from "@/helpers/file.helper";
@@ -12,11 +12,12 @@ type TProfileSidebarProps = {
 export const ProjectActionIcons = ({ type, size, className }: { type: string; size?: number; className?: string }) => {
   const icons = {
     profile: CircleUser,
-    security: KeyRound,
+    security: Lock,
     activity: Activity,
-    appearance: Settings2,
+    preferences: Settings2,
     notifications: Bell,
-    "api-tokens": Blocks,
+    "api-tokens": KeyRound,
+    connections: Blocks,
   };
 
   if (type === undefined) return null;
@@ -29,6 +30,7 @@ export const ProfileSidebar = (props: TProfileSidebarProps) => {
   const { workspaceSlug, pathname } = props;
   // store hooks
   const { data: currentUser } = useUser();
+
   return (
     <SettingsSidebar
       categories={PROFILE_SETTINGS_CATEGORIES}

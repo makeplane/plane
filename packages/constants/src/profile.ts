@@ -17,11 +17,11 @@ export const PROFILE_SETTINGS = {
     href: `/settings/account/activity`,
     highlight: (pathname: string) => pathname === "/settings/account/activity/",
   },
-  appearance: {
-    key: "appearance",
-    i18n_label: "profile.actions.appearance",
-    href: `/settings/account/appearance`,
-    highlight: (pathname: string) => pathname.includes("/settings/account/appearance"),
+  preferences: {
+    key: "preferences",
+    i18n_label: "profile.actions.preferences",
+    href: `/settings/account/preferences`,
+    highlight: (pathname: string) => pathname.includes("/settings/account/preferences"),
   },
   notifications: {
     key: "notifications",
@@ -45,7 +45,7 @@ export const PROFILE_ACTION_LINKS: {
   PROFILE_SETTINGS["profile"],
   PROFILE_SETTINGS["security"],
   PROFILE_SETTINGS["activity"],
-  PROFILE_SETTINGS["appearance"],
+  PROFILE_SETTINGS["preferences"],
   PROFILE_SETTINGS["notifications"],
   PROFILE_SETTINGS["api-tokens"],
 ];

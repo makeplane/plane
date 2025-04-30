@@ -11,7 +11,7 @@ import { setPromiseToast } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common";
 import { CustomThemeSelector, ThemeSwitch, PageHead } from "@/components/core";
-import { ProfileSettingContentHeader } from "@/components/profile";
+import { LanguageTimezone, ProfileSettingContentHeader } from "@/components/profile";
 // constants
 // helpers
 import { applyTheme, unsetCustomCssVariables } from "@/helpers/theme.helper";
@@ -61,20 +61,30 @@ const ProfileAppearancePage = observer(() => {
 
   return (
     <>
-      <PageHead title="Profile - Appearance" />
+      <PageHead title="Profile - Preferences" />
       {userProfile ? (
         <>
-          <ProfileSettingContentHeader title={t("appearance")} />
-          <div className="gap-4 py-6 sm:gap-16 w-full">
-            <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-lg font-semibold text-custom-text-100">{t("theme")}</h4>
-              <p className="text-sm text-custom-text-200">{t("select_or_customize_your_interface_color_scheme")}</p>
+          <div className="flex flex-col gap-4 md:min-w-[700px]">
+            <div>
+              <ProfileSettingContentHeader title={t("preferences")} />
+              <div className="flex gap-4 py-6 sm:gap-16 w-full justify-between">
+                <div className="col-span-12 sm:col-span-6">
+                  <h4 className="text-base font-medium text-custom-text-100">{t("theme")}</h4>
+                  <p className="text-sm text-custom-text-200">{t("select_or_customize_your_interface_color_scheme")}</p>
+                </div>
+                <div className="col-span-12 sm:col-span-6 my-auto">
+                  <ThemeSwitch value={currentTheme} onChange={handleThemeChange} />
+                  {userProfile?.theme?.theme === "custom" && (
+                    <CustomThemeSelector applyThemeChange={applyThemeChange} />
+                  )}
+                </div>
+              </div>
             </div>
-            <div className="col-span-12 sm:col-span-6">
-              <ThemeSwitch value={currentTheme} onChange={handleThemeChange} />
+            <div>
+              <ProfileSettingContentHeader title={t("language_and_time")} />
+              <LanguageTimezone />
             </div>
           </div>
-          {userProfile?.theme?.theme === "custom" && <CustomThemeSelector applyThemeChange={applyThemeChange} />}
         </>
       ) : (
         <div className="grid h-full w-full place-items-center px-4 sm:px-0">
