@@ -147,64 +147,31 @@ build {
 
 
   # Update and install basic requirements
-  # provisioner "shell" {
-  #   environment_vars = [
-  #     "DEBIAN_FRONTEND=noninteractive"
-  #   ]
-  #   inline = [
-  #     "sudo apt-get update",
-  #     "sudo apt-get upgrade -y",
-  #     "sudo apt-get install -y software-properties-common cloud-init rsyslog",
-  #     "sudo add-apt-repository -y ppa:deadsnakes/ppa",
-  #     "sudo apt-get update",
-  #     "sudo apt-get install -y python3.12 python3.12-venv python3.12-dev python3-pip",
-  #     "sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1",
-  #     "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash",
-  #     ". $HOME/.nvm/nvm.sh",
-  #     "nvm install 20",
-  #     "corepack enable yarn",
-  #     # Verify installations
-  #     "python3 --version",
-  #     "node --version",
-  #     "yarn --version",
-  #     # Enable and verify system services
-  #     "sudo systemctl enable rsyslog",
-  #     "sudo systemctl enable cloud-init",
-  #     # Add custom logging
-  # #     "sudo tee /etc/rsyslog.d/plane.conf > /dev/null <<EOL\nlocal0.* /var/log/plane.log\nEOL",
-  # #     "sudo systemctl restart rsyslog",
-  # #     # Create initialization check script
-  # #     "sudo tee /usr/local/bin/check-plane-init > /dev/null <<EOL\n#!/bin/bash\necho \"[\\$(date)] Starting Plane initialization check\" | logger -t plane-init\nfor dir in admin web space live backend; do\n  if [ ! -d \"/opt/plane/\\$dir\" ]; then\n    echo \"[\\$(date)] Error: /opt/plane/\\$dir not found\" | logger -t plane-init\n    exit 1\n  fi\ndone\necho \"[\\$(date)] Plane initialization completed successfully\" | logger -t plane-init\nEOL",
-  # #     "sudo chmod +x /usr/local/bin/check-plane-init",
-  # #     # Add to cloud-init
-  # #     "sudo tee /etc/cloud/cloud.cfg.d/99-plane-init.cfg > /dev/null <<EOL\nruncmd:\n - [ /usr/local/bin/check-plane-init ]\nEOL"
-  #   ]
-  # }
-
-  # # Copy application files
-  # provisioner "shell" {
-  #   inline = [
-  #     "sudo mkdir -p /opt/plane/{admin,web,space,live,backend}",
-  #     "sudo chown -R ubuntu:ubuntu /opt/plane"
-  #   ]
-  # }
-
-  # provisioner "file" {
-  #   source      = "plane/"
-  #   destination = "/opt/plane"
-  # }
-
-  # # Set proper permissions and verify installation
-  # provisioner "shell" {
-  #   inline = [
-  #     "sudo chown -R ubuntu:ubuntu /opt/plane",
-  #     "sudo chmod -R 755 /opt/plane",
-  #     "echo 'Verifying Plane installation...'",
-  #     "for dir in admin web space live backend; do ls -la /opt/plane/$dir; done",
-  #     "/usr/local/bin/check-plane-init",
-  #     "echo 'Installation verification complete'"
-  #   ]
-  # }
+  provisioner "shell" {
+    environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive"
+    ]
+    inline = [
+      "sudo apt-get update",
+      "sudo apt-get upgrade -y",
+      "sudo apt-get install -y software-properties-common cloud-init rsyslog",
+      "sudo add-apt-repository -y ppa:deadsnakes/ppa",
+      "sudo apt-get update",
+      "sudo apt-get install -y python3.12 python3.12-venv python3.12-dev python3-pip",
+      "sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1",
+      "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash",
+      ". $HOME/.nvm/nvm.sh",
+      "nvm install 20",
+      "corepack enable yarn",
+      # Verify installations
+      "python3 --version",
+      "node --version",
+      "yarn --version",
+      # Enable and verify system services
+      "sudo systemctl enable rsyslog",
+      "sudo systemctl enable cloud-init",
+    ]
+  }
 
   # Post-processor for potential AMI modifications
   post-processor "manifest" {
