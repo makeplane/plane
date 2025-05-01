@@ -27,7 +27,6 @@ const CustomizedInsights = observer(() => {
       actions={
         <AnalyticsV2SelectParams
           control={control}
-          params={params}
         />
       }
     >
