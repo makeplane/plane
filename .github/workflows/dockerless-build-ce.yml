@@ -226,7 +226,7 @@ jobs:
             mv artifacts/${dist}/${dist}.tar.gz plane-dist/
           done
           cp -r ./deploy/packer/envs/*.env plane-dist/
-          cp -r ./deploy/packer/svcs/*.service plane-dist/
+          cp -r ./deploy/packer/svc/*.service plane-dist/
           cp ./deploy/packer/Caddyfile-ce plane-dist/
           
           # Cleanup directories
