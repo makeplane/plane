@@ -25,6 +25,7 @@ from plane.db.models import (
 )
 from plane.utils.issue_filters import issue_filters
 from .base import BaseAPIView
+from datetime import datetime
 
 class IssueCustomPropertyUpdateAPIView(BaseAPIView):
     """
@@ -33,15 +34,62 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
 
     model = IssueCustomProperty
     serializer_class = IssueCustomPropertySerializer
-
+    
+    def _process_property_value(self, custom_property, value):
+        """
+        Process and set the appropriate typed value based on data_type.
+        Returns tuple of (custom_property, error_response) where error_response is None if successful.
+        """
+        if value is None:
+            value = ""
+        
+        data_type = custom_property.data_type or "text"
+        custom_property.value = value
+        
+        match data_type:
+            case "number":
+                try:
+                    int_value = int(value)
+                    custom_property.int_value = int_value
+                except (ValueError, TypeError):
+                    custom_property.int_value = None
+            case "boolean":
+                if value is None:
+                    bool_value = None
+                elif isinstance(value, bool):
+                    bool_value = value
+                else:
+                    value_str = str(value).strip().lower()
+                    bool_value = value_str in ["true", "1", "yes"]
+                custom_property.bool_value = bool_value
+            case "date":
+                try:
+                    # Try to parse date in standard ISO format
+                    date_value = datetime.strptime(value, "%Y-%m-%d").date()
+                    custom_property.date_value = date_value
+                except (ValueError, TypeError):
+                    return custom_property, Response(
+                        {"error": f"Invalid date format. Date must be in YYYY-MM-DD format (e.g., 2025-04-24)."},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+            case _:  # Default case for text type
+                # For text type, we just use the value field directly
+                pass
+        
+        return custom_property, None
+    
     def patch(self, request, slug, issue_id, pk):
         """
         Partially update a custom property value for a specific issue.
         """
         custom_property = get_object_or_404(IssueCustomProperty, pk=pk, issue_id=issue_id)
         new_value = request.data.get('value')
-        if new_value is None:
-            new_value = "" 
+        
+        # Process the property value using the helper method
+        custom_property, error_response = self._process_property_value(custom_property, new_value)
+        if error_response:
+            return error_response
+            
         serializer = self.serializer_class(custom_property)
         requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(serializer.data, cls=DjangoJSONEncoder)
@@ -56,7 +104,6 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
             return Response({"error": "Project not found."}, status=status.HTTP_404_NOT_FOUND)
         epoch_timestamp = int(timezone.now().timestamp())
 
-        custom_property.value = new_value
         custom_property.save()
 
         issue_activity.delay(
@@ -89,6 +136,7 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
         """
         key = request.data.get('key')
         value = request.data.get('value')
+        data_type = request.data.get('data_type')
         issue_type_custom_property_id = request.data.get('issue_type_custom_property')
         if not key or not value or not issue_type_custom_property_id:
             return Response(
@@ -114,10 +162,26 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
                 {"error": "The issue must be associated with a project."},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        
+        # Create a temporary custom property object to use with our helper method
+        temp_property = IssueCustomProperty(data_type=data_type)
+        temp_property, error_response = self._process_property_value(temp_property, value)
+        if error_response:
+            return error_response
+            
+        # Extract the typed values from the processed object
+        int_value = temp_property.int_value
+        bool_value = temp_property.bool_value
+        date_value = temp_property.date_value
+        
         custom_property = IssueCustomProperty.objects.create(
             issue=issue,
             key=key,
             value=value,
+            data_type=data_type,
+            int_value=int_value,
+            bool_value=bool_value,
+            date_value=date_value,
             issue_type_custom_property=issue_type_custom_property,
             project=issue.project,
         )
