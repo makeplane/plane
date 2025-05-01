@@ -115,6 +115,7 @@ build {
     inline = [
       "sudo chown -R ubuntu:ubuntu /opt/plane",
       "sudo chmod -R 755 /opt/plane",
+      "mkdir -p /opt/plane/{admin,web,space,live,backend}",
       # Extract the application files
       "tar -xzf /opt/plane/artifacts/admin-dist.tar.gz -C /opt/plane/admin",
       "tar -xzf /opt/plane/artifacts/web-dist.tar.gz -C /opt/plane/web",
