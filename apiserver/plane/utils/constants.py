@@ -38,7 +38,7 @@ ALLOWED_CUSTOM_PROPERTY_WORKSPACE_MAP = {
     "heineken": [
         "Stays (in days)",
         "Approved Cost (in BRL)",
-        "Invoice",  
+        "Invoice",
     ],
     "heineken-br1-dev": [
         "Stays (in days)",
