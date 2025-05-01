@@ -44,7 +44,7 @@ export const getConnectionDetails = async (
   const refreshHandler = getRefreshCredentialHandler(
     workspaceConnection.workspace_id,
     adminCredentials.user_id as string,
-    adminCredentials.target_access_token
+    adminCredentials.target_access_token as string,
   );
 
   const slackService = createSlackService(
@@ -201,7 +201,11 @@ export const updateUserMap = async (
   }
 };
 
-export const getConnectionDetailsForIssue = async (payload: PlaneWebhookPayload) => {
+/*
+ From plane sometimes we need to perform actions on behalf of a user or bot,
+ when required to perform on behalf of a user, provide the planeUserId,
+*/
+export const getConnectionDetailsForIssue = async (payload: PlaneWebhookPayload, planeUserId: string | null) => {
   const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
     workspace_id: payload.workspace,
     project_id: payload.project,
@@ -219,20 +223,38 @@ export const getConnectionDetailsForIssue = async (payload: PlaneWebhookPayload)
     return;
   }
 
-  const credentials = await apiClient.workspaceCredential.getWorkspaceCredential(workspaceConnection.credential_id);
+  let credentials: TWorkspaceCredential | null = null;
+  let isUser = false;
 
-  if (!credentials) {
-    return;
+  // If planeUserId is provided, let's check for the credentials for that particular user
+  if (planeUserId) {
+    const userCredentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
+      source: `${E_INTEGRATION_KEYS.SLACK}-USER`,
+      user_id: planeUserId,
+      workspace_id: workspaceConnection.workspace_id,
+    });
+
+    if (userCredentials && userCredentials.length > 0) {
+      credentials = userCredentials[0];
+      isUser = true;
+    }
   }
 
-  if (!credentials.source_access_token || !credentials.source_refresh_token || !credentials.target_access_token) {
+  if (!credentials) {
+    credentials = await apiClient.workspaceCredential.getWorkspaceCredential(workspaceConnection.credential_id);
+    isUser = false;
+  }
+
+  if (!credentials || !credentials.source_access_token || !credentials.source_refresh_token || !credentials.target_access_token) {
+    logger.info(`[SLACK] [GET_CONNECTION_DETAILS_FOR_ISSUE] Credentials not found for entity connection ${entityConnection.id}`);
     return;
   }
 
   const refreshHandler = getRefreshCredentialHandler(
     workspaceConnection.workspace_id,
     credentials.user_id,
-    credentials.target_access_token
+    credentials.target_access_token,
+    isUser
   );
 
   const slackService = createSlackService(

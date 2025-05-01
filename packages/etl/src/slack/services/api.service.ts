@@ -1,11 +1,10 @@
 import axios, { AxiosInstance } from "axios";
 import {
-  isSlackBotTokenResponse,
   SlackConversationHistoryResponse,
   SlackMessageResponse,
-  SlackUpdateCredential,
+  SlackTokenRefreshResponse,
   SlackUserResponse,
-  UnfurlMap,
+  UnfurlMap
 } from "../types";
 import { SlackAuthService } from "./auth.service";
 
@@ -16,7 +15,7 @@ export class SlackService {
     access_token: string,
     refresh_token: string,
     authService: SlackAuthService,
-    authCallback: ({ isBotToken, tokenResponse }: SlackUpdateCredential) => Promise<void>
+    authCallback: (tokenResponse: SlackTokenRefreshResponse) => Promise<void>
   ) {
     this.client = axios.create({
       baseURL: "https://slack.com/api/",
@@ -26,23 +25,22 @@ export class SlackService {
       },
     });
 
+
     this.client.interceptors.response.use(async (request) => {
       if (
         (request.data.ok === false && request.data.error === "token_expired") ||
         request.data.error === "invalid_auth"
       ) {
         const response = await authService.refreshToken(refresh_token);
-        let new_access_token: string;
 
-        if (isSlackBotTokenResponse(response)) {
-          new_access_token = response.access_token;
-          await authCallback({ isBotToken: true, tokenResponse: response });
-        } else {
-          new_access_token = response.authed_user.access_token;
-          await authCallback({ isBotToken: false, tokenResponse: response });
+        if (!response.ok) {
+          throw new Error("Failed to refresh token, returning error", {
+            cause: response,
+          });
         }
 
-        this.client.defaults.headers.Authorization = `Bearer ${new_access_token}`;
+        await authCallback(response);
+        this.client.defaults.headers.Authorization = `Bearer ${response.access_token}`;
         const resp = await this.client.request(request);
         return resp;
       } else {
@@ -211,7 +209,8 @@ export class SlackService {
 
       const isBotInChannel = await this.ensureBotInChannel(channelId);
       if (!isBotInChannel) {
-        throw new Error("Could not add bot to channel");
+        // If the bot is not in the channel, log it, but make the request anyway
+        console.log("Could not add bot to channel");
       }
 
       const response = await this.client.post("chat.postMessage", payload);

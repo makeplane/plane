@@ -39,19 +39,29 @@ export type SlackBotTokenResponse = {
 export type SlackUserTokenResponse = {
   ok: boolean;
   app_id: string;
-  authed_user: {
+  // Sometimes the user info comes nested in authed_user object
+  authed_user?: {
     id: string;
-    scope: string;
+    scope?: string;
     access_token: string;
-    refresh_token: string;
-    token_type: string;
+    refresh_token?: string;
+    token_type?: string;
   };
-  team: {
+  team?: {
     id: string;
     name: string;
   };
-  enterprise: null | any; // Using 'any' as we don't know the potential structure
-  is_enterprise_install: boolean;
+  enterprise?: null | any;
+  is_enterprise_install?: boolean;
+};
+
+export type SlackTokenRefreshResponse = {
+  ok: boolean;
+  access_token: string;
+  refresh_token: string;
+  user_id?: string;
+  bot_user_id?: string;
+  token_type: string;
 };
 
 export type SlackAuthPayload = {
@@ -64,16 +74,6 @@ export type SlackUserAuthPayload = {
   code: string;
 };
 
-export type SlackUpdateCredential =
-  | {
-      isBotToken: true;
-      tokenResponse: SlackBotTokenResponse;
-    }
-  | {
-      isBotToken: false;
-      tokenResponse: SlackUserTokenResponse;
-    };
-
 export function isSlackBotTokenResponse(
   response: SlackUserTokenResponse | SlackBotTokenResponse,
 ): response is SlackBotTokenResponse {
@@ -83,6 +83,11 @@ export function isSlackBotTokenResponse(
 export function isSlackUserTokenResponse(
   response: SlackUserTokenResponse | SlackBotTokenResponse,
 ): response is SlackUserTokenResponse {
+
+  if (!response.authed_user) {
+    return false;
+  }
+
   return "access_token" in response.authed_user;
 }
 

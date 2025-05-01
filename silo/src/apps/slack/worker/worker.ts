@@ -20,7 +20,13 @@ export class SlackInteractionHandler extends TaskHandler {
 
   async handleTask(headers: TaskHeaders, data: TSlackPayload): Promise<boolean> {
     logger.info(
-      `[SLACK][${headers.type.toUpperCase()}] Received webhook event from slack 🐱 --------- [${headers.route}]`
+      `[SLACK][${headers.type.toUpperCase()}] Received webhook event from slack 🐱 --------- [${headers.route}]`,
+      {
+        payload: {
+          headers,
+          data,
+        },
+      }
     );
 
     try {

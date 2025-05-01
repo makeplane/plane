@@ -1,9 +1,8 @@
-import { E_ENTITY_CONNECTION_KEYS } from "@plane/etl/core";
 import { SlackMessageResponse } from "@plane/etl/slack";
 import { WebhookIssueCommentPayload } from "@plane/sdk";
-import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
-import { getConnectionDetails } from "../../helpers/connection-details";
+import { getConnectionDetailsForIssue } from "../../helpers/connection-details";
+import { logger } from "@/logger";
 
 const apiClient = getAPIClient();
 
@@ -13,50 +12,44 @@ export const handleIssueCommentWebhook = async (payload: WebhookIssueCommentPayl
 
 const handleCommentSync = async (payload: WebhookIssueCommentPayload) => {
   const data = payload as unknown as WebhookIssueCommentPayload["created"];
-  const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
-    workspace_id: data.data.workspace,
-    project_id: data.data.project,
-    issue_id: data.data.issue,
+
+  // Return the comment if it's already connected to any exisitng connection
+  if (data.data.external_id !== null) return
+
+  logger.info("Received issue comment webhook", {
+    payload: data,
   });
 
-  /*
-  In cases where we got a webhook from a comment, but the issues associated with the comment is not part of thread sync, which implies
-  that there is no entity connection for the issue.
-  */
-  if (!entityConnection) {
+  const details = await getConnectionDetailsForIssue({
+    id: data.data.issue,
+    workspace: data.data.workspace,
+    project: data.data.project,
+    issue: data.data.issue,
+    event: payload.event,
+  }, data.data.created_by);
+
+  if (!details) {
+    logger.error("No details found for issue comment webhook", {
+      payload: data,
+    });
     return;
   }
 
-  if (data.data.external_id === null) {
-    // Search for the credentials of the creator
-    const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
-      user_id: data.data.created_by,
-      workspace_id: data.data.workspace,
-      source: E_ENTITY_CONNECTION_KEYS.SLACK_USER,
-    });
+  const { entityConnection, slackService } = details;
 
-    const slackData = entityConnection.entity_data as SlackMessageResponse;
-    const details = await getConnectionDetails(slackData.message.team);
+  const slackData = entityConnection.entity_data as SlackMessageResponse;
+  const channel = typeof slackData.channel === "string" ? slackData.channel : slackData.channel?.["id"];
 
-    if (!details) return logger.info(`[SLACK] No connection details found for team ${slackData.message.team}`);
+  const response = await slackService.sendThreadMessage(
+    channel,
+    entityConnection.entity_id ?? "",
+    data.data.comment_stripped
+  );
 
-    const { slackService } = details;
-
-    const channel = typeof slackData.channel === "string" ? slackData.channel : slackData.channel?.["id"];
-
-    if (credentials && credentials.length > 0 && credentials[0].source_access_token) {
-      await slackService.sendMessageAsUser(
-        channel,
-        entityConnection.entity_id ?? "",
-        data.data.comment_stripped,
-        credentials[0].source_access_token
-      );
-    } else {
-      await slackService.sendThreadMessage(
-        channel,
-        entityConnection.entity_id ?? "",
-        data.data.comment_stripped
-      );
-    }
-  }
+  logger.info("Slack message sent", {
+    slackMessageId: response.ts,
+    slackChannelId: channel,
+    slackThreadTs: entityConnection.entity_id,
+    slackMessage: data.data.comment_stripped,
+  });
 };

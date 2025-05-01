@@ -15,6 +15,14 @@ export class PlaneSlackWebhookWorker extends TaskHandler {
     this.store = store;
   }
   async handleTask(headers: TaskHeaders, data: any): Promise<boolean> {
+
+    logger.info(`[SLACK] [PLANE_WORKER] Received payload`, {
+      payload: {
+        headers,
+        data,
+      },
+    });
+
     try {
       switch (data.event) {
         case "issue":

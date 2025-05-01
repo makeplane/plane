@@ -170,17 +170,26 @@ export default class SlackController {
         return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.CONNECTION_NOT_FOUND}`);
       }
 
+
+      if (!response.authed_user) {
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.ERROR_FETCHING_TOKEN}`);
+      }
+
+      const userToken = response.authed_user.access_token;
+      const refreshToken = response.authed_user.refresh_token;
+      const slackUserId = response.authed_user.id;
+
       // Create credentials for slack for the workspace
       const workspaceCredentialPromise = apiClient.workspaceCredential.createWorkspaceCredential({
         source: E_ENTITY_CONNECTION_KEYS.SLACK_USER,
         target_access_token: state.apiToken,
-        source_access_token: response.authed_user.access_token,
-        source_refresh_token: response.authed_user.refresh_token,
+        source_access_token: userToken,
+        source_refresh_token: refreshToken,
         workspace_id: state.workspaceId,
         user_id: authState.userId,
       });
 
-      const updateUserMapPromise = updateUserMap(workspaceConnection[0], authState.userId, response.authed_user.id);
+      const updateUserMapPromise = updateUserMap(workspaceConnection[0], authState.userId, slackUserId);
       await Promise.all([workspaceCredentialPromise, updateUserMapPromise]);
 
       return res.redirect(redirectUri);
@@ -323,6 +332,10 @@ export default class SlackController {
       // Parse the payload
       const payload: TSlackPayload = JSON.parse(payloadStr);
 
+      logger.info(`[SLACK] [ACK_SLACK_ACTION] Received payload`, {
+        payload: payload,
+      });
+
       // Pass the payload to the slack worker, to take action
       integrationTaskManager.registerTask(
         {
@@ -345,6 +358,10 @@ export default class SlackController {
       const payload = req.body as TSlackCommandPayload;
       payload.type = "command";
 
+      logger.info(`[SLACK] [SLACK_COMMAND] Received payload`, {
+        payload: payload,
+      });
+
       integrationTaskManager.registerTask(
         {
           route: "slack-interaction",
@@ -364,6 +381,10 @@ export default class SlackController {
   async slackEvents(req: Request, res: Response) {
     try {
       const payload = req.body;
+
+      logger.info(`[SLACK] [SLACK_EVENTS] Received payload`, {
+        payload: payload,
+      });
 
       if (payload.challenge) {
         return res.status(200).json({ challenge: payload.challenge });
@@ -450,6 +471,10 @@ export default class SlackController {
   async planeEvents(req: Request, res: Response) {
     try {
       const payload = req.body as PlaneWebhookData;
+
+      logger.info(`[SLACK] [PLANE_EVENTS] Received payload`, {
+        payload: payload,
+      });
 
       if (payload.event === "issue_comment") {
         integrationTaskManager.registerTask(

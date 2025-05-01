@@ -12,7 +12,11 @@ export const handleIssueWebhook = async (payload: PlaneWebhookPayload) => {
     return;
   }
 
-  const details = await getConnectionDetailsForIssue(payload);
+  /*
+    We are passing userId as null, because we don't know the user who updated the issue,
+    and the message will be sent on behalf of the bot
+  */
+  const details = await getConnectionDetailsForIssue(payload, null);
 
   if (!details) {
     return;
