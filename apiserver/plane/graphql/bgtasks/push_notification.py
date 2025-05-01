@@ -296,7 +296,7 @@ def issue_push_notifications(notification):
         else ""
     )
 
-    title = f"{project_identifier}-" f"{issue_sequence_id} - " f"{issue_name}"
+    title = f"{project_identifier}-{issue_sequence_id} - {issue_name}"
     data = {
         "type": PushNotificationTypes.ISSUE_UPDATED.value,
         "workspaceSlug": workspace_slug,
@@ -350,8 +350,7 @@ def issue_push_notifications(notification):
     # attachment
     elif property_key == "attachment":
         body = (
-            f"{actor_name} "
-            f"{'updated a new' if new_value else 'removed an'} attachment"
+            f"{actor_name} {'updated a new' if new_value else 'removed an'} attachment"
         )
     # relations -> relates_to
     elif property_key == "relates_to":

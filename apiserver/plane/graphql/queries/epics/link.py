@@ -13,7 +13,7 @@ from plane.graphql.helpers import (
     is_project_epics_enabled,
 )
 from plane.graphql.permissions.project import ProjectBasePermission
-from plane.graphql.types.epics import EpicLinkType
+from plane.graphql.types.epics.link import EpicLinkType
 
 
 def epic_link_base_query(

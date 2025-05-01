@@ -55,11 +55,11 @@ class EpicUpdateInputType:
 
 @strawberry.type
 class EpicAnalyticsType:
-    backlog: int = field(default_factory=lambda: 0)
-    unstarted: int = field(default_factory=lambda: 0)
-    started: int = field(default_factory=lambda: 0)
-    completed: int = field(default_factory=lambda: 0)
-    cancelled: int = field(default_factory=lambda: 0)
+    backlog: Optional[int] = field(default_factory=lambda: None)
+    unstarted: Optional[int] = field(default_factory=lambda: None)
+    started: Optional[int] = field(default_factory=lambda: None)
+    completed: Optional[int] = field(default_factory=lambda: None)
+    cancelled: Optional[int] = field(default_factory=lambda: None)
 
 
 @strawberry_django.type(Issue)
@@ -142,7 +142,11 @@ class EpicType:
 
         if sub_work_items_count == 0:
             return EpicAnalyticsType(
-                backlog=0, unstarted=0, started=0, completed=0, cancelled=0
+                backlog=None,
+                unstarted=None,
+                started=None,
+                completed=None,
+                cancelled=None,
             )
 
         issues = await sync_to_async(
@@ -159,10 +163,16 @@ class EpicType:
             )
         )()
 
+        backlog = issues["backlog_issues"] if issues["backlog_issues"] else None
+        unstarted = issues["unstarted_issues"] if issues["unstarted_issues"] else None
+        started = issues["started_issues"] if issues["started_issues"] else None
+        completed = issues["completed_issues"] if issues["completed_issues"] else None
+        cancelled = issues["cancelled_issues"] if issues["cancelled_issues"] else None
+
         return EpicAnalyticsType(
-            backlog=issues["backlog_issues"],
-            unstarted=issues["unstarted_issues"],
-            started=issues["started_issues"],
-            completed=issues["completed_issues"],
-            cancelled=issues["cancelled_issues"],
+            backlog=backlog,
+            unstarted=unstarted,
+            started=started,
+            completed=completed,
+            cancelled=cancelled,
         )

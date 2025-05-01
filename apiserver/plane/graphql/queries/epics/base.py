@@ -10,16 +10,17 @@ from strawberry.scalars import JSON
 from strawberry.types import Info
 
 # Module Imports
+from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
 from plane.graphql.helpers import (
-    get_project_epics,
     get_epic,
+    get_project_epics,
     is_epic_feature_flagged,
     is_project_epics_enabled,
 )
 from plane.graphql.permissions.project import ProjectBasePermission
-from plane.graphql.types.epics import EpicCountType, EpicType
+from plane.graphql.types.epics.base import EpicCountType, EpicType
 from plane.graphql.types.paginator import PaginatorResponse
-from plane.graphql.utils.issue_filters import issue_filters
+from plane.graphql.utils.work_item_filters import work_item_filters
 from plane.graphql.utils.paginator import paginate
 
 
@@ -70,7 +71,7 @@ class EpicQuery:
         # check if the epic is enabled for the project
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
-        filters = issue_filters(filters, "POST")
+        filters = work_item_filters(filters)
 
         epics = await get_project_epics(
             workspace_slug=slug,
@@ -96,5 +97,14 @@ class EpicQuery:
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
         epic = await get_epic(workspace_slug=slug, project_id=project, epic_id=epic)
+        epic_id = str(epic.id)
+
+        recent_visited_task.delay(
+            slug=slug,
+            project_id=project,
+            user_id=user_id,
+            entity_name="issue",
+            entity_identifier=epic_id,
+        )
 
         return epic

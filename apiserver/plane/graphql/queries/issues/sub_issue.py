@@ -1,21 +1,18 @@
 # Third-Party Imports
-import strawberry
-
-# Python Standard Library Imports
-from asgiref.sync import sync_to_async
 from typing import Optional
 
-# Strawberry Imports
-from strawberry.types import Info
-from strawberry.permission import PermissionExtension
+# Python Standard Library Imports
+import strawberry
+from asgiref.sync import sync_to_async
 
+# Strawberry Imports
+from strawberry.permission import PermissionExtension
+from strawberry.types import Info
 
 # Module Imports
-from plane.graphql.types.issue import IssuesType
 from plane.db.models import Issue
-
-
 from plane.graphql.permissions.project import ProjectBasePermission
+from plane.graphql.types.issues.base import IssuesType
 from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.utils.paginator import paginate
 
