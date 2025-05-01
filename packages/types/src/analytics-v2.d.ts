@@ -1,5 +1,4 @@
 import { TBarItem } from "./charts";
-import { TYAxisValues, TXAxisValues } from "@plane/types";
 
 export type TAnalyticsTabsV2Base = "overview" | "work-items"
 export type TAnalyticsGraphsV2Base = "projects" | "work-items" | "custom-work-items"

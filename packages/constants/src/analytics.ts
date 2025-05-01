@@ -10,6 +10,8 @@ export const ANALYTICS_TABS = [
   { key: "custom", i18n_title: "workspace_analytics.tabs.custom" },
 ];
 
+
+// TODO: add translations of the labels
 export const ANALYTICS_X_AXIS_VALUES: { value: ChartXAxisProperty; label: string }[] =
   [
     {
@@ -66,7 +68,7 @@ export const ANALYTICS_Y_AXIS_VALUES: { value: ChartYAxisMetric; label: string }
   [
     {
       value: ChartYAxisMetric.WORK_ITEM_COUNT,
-      label: "Work item Count",
+      label: "Work item",
     },
     {
       value: ChartYAxisMetric.ESTIMATE_POINT_COUNT,

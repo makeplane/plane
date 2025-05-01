@@ -16,6 +16,7 @@ import {
     useReactTable,
 } from "@tanstack/react-table"
 
+import { Search } from "lucide-react"
 import {
     Table,
     TableBody,
@@ -25,7 +26,6 @@ import {
     TableRow,
 } from "@plane/propel/table"
 import { Input } from "@plane/ui"
-import { Search } from "lucide-react"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -70,7 +70,7 @@ export function DataTable<TData, TValue>({
 
     return (
         <div className="space-y-4">
-            <div className="flex items-center gap-2">
+            {table.getHeaderGroups()?.[0]?.headers?.[0]?.id && <div className="flex items-center gap-2">
                 <Input
                     placeholder={searchPlaceholder}
                     value={(table.getColumn(table.getHeaderGroups()?.[0].headers[0].id)?.getFilterValue() as string) ?? ""}
@@ -80,24 +80,22 @@ export function DataTable<TData, TValue>({
                     className="w-30 border-none"
                 />
                 <Search className="w-4 h-4 opacity-50" />
-            </div>
+            </div>}
             <div className="rounded-md">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => {
-                                    return (
-                                        <TableHead key={header.id} colSpan={header.colSpan}>
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(
-                                                    header.column.columnDef.header,
-                                                    header.getContext()
-                                                ) as any}
-                                        </TableHead>
-                                    )
-                                })}
+                                {headerGroup.headers.map((header) => (
+                                    <TableHead key={header.id} colSpan={header.colSpan}>
+                                        {header.isPlaceholder
+                                            ? null
+                                            : flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext()
+                                            ) as any}
+                                    </TableHead>
+                                ))}
                             </TableRow>
                         ))}
                     </TableHeader>

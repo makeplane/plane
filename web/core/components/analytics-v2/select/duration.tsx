@@ -1,9 +1,9 @@
 // plane package imports
 import React, { ReactNode, useRef, useState } from 'react'
 import { usePopper } from 'react-popper'
-import { Check, ChevronDown, Search } from 'lucide-react'
+import { Check, ChevronDown } from 'lucide-react'
 import { Combobox } from '@headlessui/react'
-import { PROJECT_CREATED_AT_FILTER_OPTIONS } from '@plane/constants'
+import { ANALYTICS_V2_DURATION_FILTER_OPTIONS } from '@plane/constants'
 import { useTranslation } from '@plane/i18n'
 import { ComboDropDown } from '@plane/ui'
 import { cn } from '@plane/utils'
@@ -17,7 +17,7 @@ import { useDropdown } from '@/hooks/use-dropdown'
 
 type Props = TDropdownProps & {
   value: string | null
-  onChange: (val: typeof PROJECT_CREATED_AT_FILTER_OPTIONS[number]['value']) => void
+  onChange: (val: typeof ANALYTICS_V2_DURATION_FILTER_OPTIONS[number]['value']) => void
   //optional
   button?: ReactNode
   dropdownArrow?: boolean
@@ -69,7 +69,7 @@ function DurationDropdown({
   });
   //store hooks
   const { t } = useTranslation()
-  const { handleOnClick, handleClose, searchInputKeyDown } = useDropdown({
+  const { handleOnClick, handleClose } = useDropdown({
     dropdownRef,
     inputRef,
     isOpen,
@@ -79,9 +79,9 @@ function DurationDropdown({
     setQuery
   })
   const filteredOptions =
-    query === "" ? PROJECT_CREATED_AT_FILTER_OPTIONS : PROJECT_CREATED_AT_FILTER_OPTIONS?.filter((o) => o?.name.toLowerCase().includes(query.toLowerCase()));
+    query === "" ? ANALYTICS_V2_DURATION_FILTER_OPTIONS : ANALYTICS_V2_DURATION_FILTER_OPTIONS?.filter((o) => o?.name.toLowerCase().includes(query.toLowerCase()));
 
-  const dropdownOnChange = (val: typeof PROJECT_CREATED_AT_FILTER_OPTIONS[number]["value"]) => {
+  const dropdownOnChange = (val: typeof ANALYTICS_V2_DURATION_FILTER_OPTIONS[number]["value"]) => {
     onChange(val)
     handleClose()
   }
@@ -91,7 +91,6 @@ function DurationDropdown({
     return option ? option?.name : placeholder;
 
   };
-
 
   const comboButton = (
     <>

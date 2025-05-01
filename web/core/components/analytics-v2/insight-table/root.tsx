@@ -1,7 +1,7 @@
-import { DataTable } from "./data-table";
-import { AnalyticsTableDataMap, TAnalyticsTabsV2Base } from "@plane/types";
-import { TableLoader } from "./loader";
 import { ColumnDef } from "@tanstack/react-table";
+import { AnalyticsTableDataMap, TAnalyticsTabsV2Base } from "@plane/types";
+import { DataTable } from "./data-table";
+import { TableLoader } from "./loader";
 
 
 interface InsightTableProps<T extends Exclude<TAnalyticsTabsV2Base, "overview">> {

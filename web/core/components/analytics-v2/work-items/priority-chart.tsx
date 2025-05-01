@@ -1,15 +1,17 @@
 import { useMemo } from 'react'
+import { ColumnDef } from '@tanstack/react-table'
 import { observer } from 'mobx-react'
 import { useParams } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import useSWR from 'swr'
-import { ChartXAxisDateGrouping, ChartXAxisProperty, ChartYAxisMetric, EChartModels } from '@plane/constants'
+import { ANALYTICS_Y_AXIS_VALUES, ChartXAxisDateGrouping, ChartXAxisProperty, ChartYAxisMetric, EChartModels } from '@plane/constants'
 import { BarChart } from '@plane/propel/charts/bar-chart'
 import { IChartResponseV2 } from '@plane/types'
 import { TBarItem, TChartDatum } from '@plane/types/src/charts'
 import { CHART_COLOR_PALETTES, generateExtendedColors, parseChartData } from '@/components/chart/utils'
 import { useAnalyticsV2 } from '@/hooks/store/use-analytics-v2'
 import { AnalyticsV2Service } from '@/services/analytics-v2.service'
+import { DataTable } from '../insight-table/data-table'
 interface Props {
   x_axis: ChartXAxisProperty
   y_axis: ChartYAxisMetric
@@ -43,8 +45,6 @@ const PriorityChart = observer((props: Props) => {
       resolvedTheme === "dark" ? "dark" : "light"
     ];
     const extendedColors = generateExtendedColors(baseColors ?? [], schemaKeys.length);
-
-
     if (chart_model === EChartModels.BASIC) {
       parsedBars = [
         {
@@ -94,21 +94,47 @@ const PriorityChart = observer((props: Props) => {
     return parsedBars;
   }, [chart_model, parsedData.data, parsedData.schema, resolvedTheme]);
 
+  const defaultColumns: ColumnDef<TChartDatum>[] = useMemo(() => [
+    {
+      accessorKey: "name",
+      header: () => "Name",
+    },
+    {
+      accessorKey: "count",
+      header: () => "Count",
+    },
+  ], []);
+
+  const columns: ColumnDef<TChartDatum>[] = useMemo(() => Object.keys(parsedData.schema).map((key) => ({
+    accessorKey: key,
+    header: () => parsedData.schema[key],
+  })), [parsedData.schema]);
+
+  const getYAxisLabel = useMemo(() => ANALYTICS_Y_AXIS_VALUES.find((item) => item.value === props.y_axis)?.label ?? props.y_axis, [props.y_axis]);
+
   return (
-    <BarChart
-      className="w-full h-[370px]"
-      data={parsedData.data}
-      bars={bars}
-      xAxis={{
-        key: "name",
-      }}
-      yAxis={{
-        key: "count",
-        label: "No of Work Items",
-        offset: -40,
-        dx: -26,
-      }}
-    />
+    <div className='flex flex-col gap-12 '>
+      <BarChart
+        className="w-full h-[370px]"
+        data={parsedData.data}
+        bars={bars}
+        xAxis={{
+          key: "name",
+        }}
+        yAxis={{
+          key: "count",
+          label: getYAxisLabel,
+          offset: -40,
+          dx: -26,
+        }}
+      />
+      <DataTable
+        data={parsedData.data}
+        columns={[...defaultColumns, ...columns]}
+        searchPlaceholder={`${parsedData.data.length} ${getYAxisLabel}`}
+      />
+    </div>
+
   )
 })
 

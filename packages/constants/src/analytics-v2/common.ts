@@ -5,3 +5,22 @@ export const insightsFields: Record<TAnalyticsTabsV2Base, string[]> = {
     "work-items": ["total_work_items", "started_work_items", "backlog_work_items", "un_started_work_items", "completed_work_items"],
 }
 
+
+export const ANALYTICS_V2_DURATION_FILTER_OPTIONS = [
+    {
+        name: "Yesterday",
+        value: "yesterday",
+    },
+    {
+        name: "Last 7 days",
+        value: "last_7_days",
+    },
+    {
+        name: "Last 30 days",
+        value: "last_30_days",
+    },
+    {
+        name: "Last 3 months",
+        value: "last_3_months",
+    }
+];
