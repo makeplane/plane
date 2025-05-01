@@ -34,42 +34,62 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
 
     model = IssueCustomProperty
     serializer_class = IssueCustomPropertySerializer
-
+    
+    def _process_property_value(self, custom_property, value):
+        """
+        Process and set the appropriate typed value based on data_type.
+        Returns tuple of (custom_property, error_response) where error_response is None if successful.
+        """
+        if value is None:
+            value = ""
+        
+        data_type = custom_property.data_type or "text"
+        custom_property.value = value
+        
+        match data_type:
+            case "number":
+                try:
+                    int_value = int(value)
+                    custom_property.int_value = int_value
+                except (ValueError, TypeError):
+                    custom_property.int_value = None
+            case "boolean":
+                if value is None:
+                    bool_value = None
+                elif isinstance(value, bool):
+                    bool_value = value
+                else:
+                    value_str = str(value).strip().lower()
+                    bool_value = value_str in ["true", "1", "yes"]
+                custom_property.bool_value = bool_value
+            case "date":
+                try:
+                    # Try to parse date in standard ISO format
+                    date_value = datetime.strptime(value, "%Y-%m-%d").date()
+                    custom_property.date_value = date_value
+                except (ValueError, TypeError):
+                    return custom_property, Response(
+                        {"error": f"Invalid date format. Date must be in YYYY-MM-DD format (e.g., 2025-04-24)."},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+            case _:  # Default case for text type
+                # For text type, we just use the value field directly
+                pass
+        
+        return custom_property, None
+    
     def patch(self, request, slug, issue_id, pk):
         """
         Partially update a custom property value for a specific issue.
         """
         custom_property = get_object_or_404(IssueCustomProperty, pk=pk, issue_id=issue_id)
         new_value = request.data.get('value')
-        if new_value is None:
-            new_value = "" 
-        data_type = custom_property.data_type
-        if data_type == "number":
-            try:
-                int_value = int(new_value)
-                custom_property.int_value = int_value
-            except (ValueError, TypeError):
-                custom_property.int_value = None
-        elif data_type == "boolean":
-            if new_value is None:
-                bool_value = None
-            elif isinstance(new_value, bool):
-                bool_value = new_value
-            else:
-                value_str = str(new_value).strip().lower()
-                bool_value = value_str in ["true", "1", "yes"]
-            custom_property.bool_value = bool_value
-        elif data_type == "date":
-            try:
-                # Try to parse date in standard ISO format
-                date_value = datetime.strptime(new_value, "%Y-%m-%d").date()
-                custom_property.date_value = date_value
-                custom_property.value = new_value
-            except (ValueError, TypeError):
-                return Response(
-                    {"error": f"Invalid date format. Date must be in YYYY-MM-DD format (e.g., 2025-04-24)."},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+        
+        # Process the property value using the helper method
+        custom_property, error_response = self._process_property_value(custom_property, new_value)
+        if error_response:
+            return error_response
+            
         serializer = self.serializer_class(custom_property)
         requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(serializer.data, cls=DjangoJSONEncoder)
@@ -84,7 +104,6 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
             return Response({"error": "Project not found."}, status=status.HTTP_404_NOT_FOUND)
         epoch_timestamp = int(timezone.now().timestamp())
 
-        custom_property.value = new_value
         custom_property.save()
 
         issue_activity.delay(
@@ -144,36 +163,22 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        int_value = None
-        bool_value = None
-        date_value = None
+        # Create a temporary custom property object to use with our helper method
+        temp_property = IssueCustomProperty(data_type=data_type)
+        temp_property, error_response = self._process_property_value(temp_property, value)
+        if error_response:
+            return error_response
+            
+        # Extract the typed values from the processed object
+        int_value = temp_property.int_value
+        bool_value = temp_property.bool_value
+        date_value = temp_property.date_value
         
-        if data_type == "number":
-            try:
-                int_value = int(value)
-            except (ValueError, TypeError):
-                int_value = None
-        
-        elif data_type == "boolean":
-            if value is None:
-                bool_value = None
-            elif isinstance(value, bool):
-                bool_value = value
-            else:
-                value_str = str(value).strip().lower()
-                bool_value = value_str in ["true", "1", "yes"]
-    
-        elif data_type == "date":
-            try:
-                # Try to parse date in standard ISO format
-                date_value = datetime.strptime(value, "%Y-%m-%d").date()
-            except (ValueError, TypeError):
-                date_value = None  # Invalid or missing date
         custom_property = IssueCustomProperty.objects.create(
             issue=issue,
             key=key,
             value=value,
-            data_type = data_type,
+            data_type=data_type,
             int_value=int_value,
             bool_value=bool_value,
             date_value=date_value,
