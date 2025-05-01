@@ -1,3 +1,4 @@
+import { useParams, usePathname } from "next/navigation";
 import { ArrowUpToLine, Building, CreditCard, Users, Webhook } from "lucide-react";
 import {
   EUserPermissionsLevel,
@@ -8,11 +9,6 @@ import {
 import { SettingsSidebar } from "@/components/settings";
 import { useUserPermissions } from "@/hooks/store/user";
 import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";
-
-type TWorkspaceSettingsSidebarProps = {
-  workspaceSlug: string;
-  pathname: string;
-};
 
 export const WorkspaceActionIcons = ({
   type,
@@ -37,12 +33,19 @@ export const WorkspaceActionIcons = ({
   return <Icon size={size} className={className} strokeWidth={2} />;
 };
 
+type TWorkspaceSettingsSidebarProps = {
+  isMobile?: boolean;
+};
+
 export const WorkspaceSettingsSidebar = (props: TWorkspaceSettingsSidebarProps) => {
-  const { workspaceSlug, pathname } = props;
-  // store hooks
+  const { isMobile = false } = props;
+  // router
+  const pathname = usePathname();
+  const { workspaceSlug } = useParams(); // store hooks
   const { allowPermissions } = useUserPermissions();
   return (
     <SettingsSidebar
+      isMobile={isMobile}
       categories={WORKSPACE_SETTINGS_CATEGORIES}
       groupedSettings={GROUPED_WORKSPACE_SETTINGS}
       workspaceSlug={workspaceSlug.toString()}

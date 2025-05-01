@@ -1,8 +1,11 @@
+import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
+import { cn } from "@plane/utils";
 import { SettingsSidebarHeader } from "./header";
 import SettingsSidebarNavItem, { TSettingItem } from "./nav-item";
 
 interface SettingsSidebarProps {
+  isMobile?: boolean;
   customHeader?: React.ReactNode;
   categories: string[];
   groupedSettings: {
@@ -16,8 +19,9 @@ interface SettingsSidebarProps {
   renderChildren?: (key: string) => React.ReactNode;
 }
 
-export const SettingsSidebar = (props: SettingsSidebarProps) => {
+export const SettingsSidebar = observer((props: SettingsSidebarProps) => {
   const {
+    isMobile = false,
     customHeader,
     categories,
     groupedSettings,
@@ -28,9 +32,16 @@ export const SettingsSidebar = (props: SettingsSidebarProps) => {
     appendItemsToTitle,
     renderChildren,
   } = props;
+  // hooks
   const { t } = useTranslation();
+
   return (
-    <div className="flex w-[250px] flex-col gap-2 h-full flex-shrink-0">
+    <div
+      className={cn("flex w-[250px] flex-col gap-2 h-full flex-shrink-0", {
+        "absolute left-0 top-[42px] z-50 h-fit max-h-[400px] overflow-scroll bg-custom-background-100 border border-custom-border-100 rounded shadow-sm p-4":
+          isMobile,
+      })}
+    >
       {/* Header */}
       <SettingsSidebarHeader customHeader={customHeader} />
       {/* Navigation */}
@@ -61,4 +72,4 @@ export const SettingsSidebar = (props: SettingsSidebarProps) => {
       </div>
     </div>
   );
-};
+});

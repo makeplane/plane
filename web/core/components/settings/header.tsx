@@ -22,7 +22,7 @@ export const SettingsHeader = observer(() => {
     "";
 
   return (
-    <div className="bg-custom-background-90 px-12 py-8">
+    <div className="bg-custom-background-90 px-4 py-4 md:px-12 md:py-8">
       {/* Breadcrumb */}
       <Link
         href={`/${redirectWorkspaceSlug}`}

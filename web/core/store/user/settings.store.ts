@@ -20,14 +20,17 @@ export interface IUserSettingsStore {
   error: TError | undefined;
   data: IUserSettings;
   canUseLocalDB: boolean;
+  sidebarCollapsed: boolean;
   // actions
   fetchCurrentUserSettings: () => Promise<IUserSettings | undefined>;
   toggleLocalDB: (workspaceSlug: string | undefined, projectId: string | undefined) => Promise<void>;
+  toggleSidebar: (collapsed?: boolean) => void;
 }
 
 export class UserSettingsStore implements IUserSettingsStore {
   // observables
   isLoading: boolean = false;
+  sidebarCollapsed: boolean = true;
   error: TError | undefined = undefined;
   data: IUserSettings = {
     id: undefined,
@@ -53,13 +56,19 @@ export class UserSettingsStore implements IUserSettingsStore {
       error: observable,
       data: observable,
       canUseLocalDB: observable.ref,
+      sidebarCollapsed: observable.ref,
       // actions
       fetchCurrentUserSettings: action,
       toggleLocalDB: action,
+      toggleSidebar: action,
     });
     // services
     this.userService = new UserService();
   }
+
+  toggleSidebar = (collapsed?: boolean) => {
+    this.sidebarCollapsed = collapsed ?? !this.sidebarCollapsed;
+  };
 
   toggleLocalDB = async (workspaceSlug: string | undefined, projectId: string | undefined) => {
     const currentLocalDBValue = this.canUseLocalDB;

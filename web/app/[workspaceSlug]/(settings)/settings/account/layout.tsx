@@ -1,29 +1,35 @@
 "use client";
 
 import { ReactNode } from "react";
-import { useParams, usePathname } from "next/navigation";
 // components
+import { observer } from "mobx-react";
+import { usePathname } from "next/navigation";
 import { CommandPalette } from "@/components/command-palette";
-import { SettingsContentWrapper } from "@/components/settings";
+import { SettingsContentWrapper, SettingsMobileNav } from "@/components/settings";
+import { getProfileActivePath } from "@/components/settings/helper";
 import { ProfileSidebar } from "./sidebar";
 
 type Props = {
   children: ReactNode;
 };
 
-export default function ProfileSettingsLayout(props: Props) {
+const ProfileSettingsLayout = observer((props: Props) => {
   const { children } = props;
   // router
   const pathname = usePathname();
-  const { workspaceSlug } = useParams();
 
   return (
     <>
       <CommandPalette />
+      <SettingsMobileNav hamburgerContent={ProfileSidebar} activePath={getProfileActivePath(pathname) || ""} />
       <div className="relative flex h-full w-full">
-        <ProfileSidebar workspaceSlug={workspaceSlug.toString()} pathname={pathname} />
+        <div className="hidden md:block">
+          <ProfileSidebar />
+        </div>
         <SettingsContentWrapper>{children}</SettingsContentWrapper>
       </div>
     </>
   );
-}
+});
+
+export default ProfileSettingsLayout;

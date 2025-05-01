@@ -1,4 +1,5 @@
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { PROJECT_SETTINGS_CATEGORIES, PROJECT_SETTINGS_CATEGORY } from "@plane/constants";
 import { Logo } from "@/components/common";
 
@@ -8,12 +9,12 @@ import { SettingsSidebar } from "../..";
 import { NavItemChildren } from "./nav-item-children";
 
 type TProjectSettingsSidebarProps = {
-  workspaceSlug: string;
-  pathname: string;
+  isMobile?: boolean;
 };
 
 export const ProjectSettingsSidebar = observer((props: TProjectSettingsSidebarProps) => {
-  const { workspaceSlug } = props;
+  const { isMobile = false } = props;
+  const { workspaceSlug } = useParams();
   // store hooks
   const { joinedProjectIds, projectMap } = useProject();
 
@@ -26,6 +27,7 @@ export const ProjectSettingsSidebar = observer((props: TProjectSettingsSidebarPr
 
   return (
     <SettingsSidebar
+      isMobile={isMobile}
       categories={PROJECT_SETTINGS_CATEGORIES}
       groupedSettings={{
         [PROJECT_SETTINGS_CATEGORY.PROJECTS]: groupedProject,

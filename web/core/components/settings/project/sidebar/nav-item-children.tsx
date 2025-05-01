@@ -6,7 +6,7 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useProject, useUserPermissions, useUserSettings } from "@/hooks/store";
 import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants/project";
 
 export const NavItemChildren = observer((props: { projectId: string }) => {
@@ -17,6 +17,7 @@ export const NavItemChildren = observer((props: { projectId: string }) => {
   const { getProjectById } = useProject();
   const { allowPermissions } = useUserPermissions();
   const { t } = useTranslation();
+  const { toggleSidebar } = useUserSettings();
 
   // derived values
   const currentProject = getProjectById(projectId);
@@ -48,7 +49,11 @@ export const NavItemChildren = observer((props: { projectId: string }) => {
                 workspaceSlug.toString(),
                 projectId.toString()
               ) && (
-                <Link key={link.key} href={`/${workspaceSlug}/settings/project/${projectId}${link.href}`}>
+                <Link
+                  key={link.key}
+                  href={`/${workspaceSlug}/settings/project/${projectId}${link.href}`}
+                  onClick={() => toggleSidebar(true)}
+                >
                   <div
                     className={cn(
                       "cursor-pointer relative group w-full flex items-center justify-between gap-1.5 rounded p-1 px-1.5 outline-none",

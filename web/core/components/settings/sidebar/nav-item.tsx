@@ -5,6 +5,7 @@ import { Disclosure } from "@headlessui/react";
 import { EUserWorkspaceRoles } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@/helpers/common.helper";
+import { useUserSettings } from "@/hooks/store";
 
 export type TSettingItem = {
   key: string;
@@ -30,6 +31,8 @@ const SettingsSidebarNavItem = (props: TSettingsSidebarNavItemProps) => {
   const { t } = useTranslation();
   // state
   const [isExpanded, setIsExpanded] = useState(projectId === setting.key);
+  // hooks
+  const { toggleSidebar } = useUserSettings();
   // derived
   const buttonClass = cn(
     "flex w-full items-center px-2 py-1.5 rounded text-custom-text-200 justify-between",
@@ -64,7 +67,7 @@ const SettingsSidebarNavItem = (props: TSettingsSidebarNavItemProps) => {
         {renderChildren ? (
           <div className={buttonClass}>{titleElement}</div>
         ) : (
-          <Link href={`/${workspaceSlug}/${setting.href}`} className={buttonClass}>
+          <Link href={`/${workspaceSlug}/${setting.href}`} className={buttonClass} onClick={() => toggleSidebar(true)}>
             {titleElement}
           </Link>
         )}

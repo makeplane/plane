@@ -8,7 +8,8 @@ import { EUserWorkspaceRoles, WORKSPACE_SETTINGS_ACCESS } from "@plane/constants
 // hooks
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { CommandPalette } from "@/components/command-palette";
-import { SettingsContentWrapper } from "@/components/settings";
+import { SettingsContentWrapper, SettingsMobileNav } from "@/components/settings";
+import { getWorkspaceActivePath, pathnameToAccessKey } from "@/components/settings/helper";
 import { useUserPermissions } from "@/hooks/store";
 // local components
 import { WorkspaceSettingsSidebar } from "./sidebar";
@@ -16,13 +17,6 @@ import { WorkspaceSettingsSidebar } from "./sidebar";
 export interface IWorkspaceSettingLayout {
   children: ReactNode;
 }
-
-const pathnameToAccessKey = (pathname: string) => {
-  const pathArray = pathname.replace(/^\/|\/$/g, "").split("/"); // Regex removes leading and trailing slashes
-  const workspaceSlug = pathArray[0];
-  const accessKey = pathArray.slice(1, 3).join("/");
-  return { workspaceSlug, accessKey: `/${accessKey}` || "" };
-};
 
 const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => {
   const { children } = props;
@@ -34,7 +28,7 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
   const { workspaceSlug, accessKey } = pathnameToAccessKey(pathname);
   const userWorkspaceRole = workspaceUserInfo?.[workspaceSlug.toString()]?.role;
 
-  const isAuthorized =
+  const isAuthorized: boolean | string =
     pathname &&
     workspaceSlug &&
     userWorkspaceRole &&
@@ -43,13 +37,17 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
   return (
     <>
       <CommandPalette />
+      <SettingsMobileNav
+        hamburgerContent={WorkspaceSettingsSidebar}
+        activePath={getWorkspaceActivePath(pathname) || ""}
+      />
       <div className="inset-y-0 flex flex-row vertical-scrollbar scrollbar-lg h-full w-full overflow-y-auto">
         {workspaceUserInfo && !isAuthorized ? (
           <NotAuthorizedView section="settings" />
         ) : (
           <>
             <div className="flex-shrink-0 overflow-y-hidden sm:hidden hidden md:block lg:block">
-              <WorkspaceSettingsSidebar workspaceSlug={workspaceSlug} pathname={pathname} />
+              <WorkspaceSettingsSidebar />
             </div>
             <SettingsContentWrapper>{children}</SettingsContentWrapper>
           </>

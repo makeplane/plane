@@ -1,13 +1,10 @@
+import { observer } from "mobx-react";
+import { useParams, usePathname } from "next/navigation";
 import { CircleUser, Activity, Bell, CircleUserRound, KeyRound, Settings2, Blocks, Lock } from "lucide-react";
 import { GROUPED_PROFILE_SETTINGS, PROFILE_SETTINGS_CATEGORIES } from "@plane/constants";
 import { SettingsSidebar } from "@/components/settings";
 import { getFileURL } from "@/helpers/file.helper";
 import { useUser } from "@/hooks/store/user";
-
-type TProfileSidebarProps = {
-  workspaceSlug: string;
-  pathname: string;
-};
 
 export const ProjectActionIcons = ({ type, size, className }: { type: string; size?: number; className?: string }) => {
   const icons = {
@@ -26,13 +23,21 @@ export const ProjectActionIcons = ({ type, size, className }: { type: string; si
   return <Icon size={size} className={className} strokeWidth={2} />;
 };
 
-export const ProfileSidebar = (props: TProfileSidebarProps) => {
-  const { workspaceSlug, pathname } = props;
+type TProfileSidebarProps = {
+  isMobile?: boolean;
+};
+
+export const ProfileSidebar = observer((props: TProfileSidebarProps) => {
+  const { isMobile = false } = props;
+  // router
+  const pathname = usePathname();
+  const { workspaceSlug } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
 
   return (
     <SettingsSidebar
+      isMobile={isMobile}
       categories={PROFILE_SETTINGS_CATEGORIES}
       groupedSettings={GROUPED_PROFILE_SETTINGS}
       workspaceSlug={workspaceSlug.toString()}
@@ -64,4 +69,4 @@ export const ProfileSidebar = (props: TProfileSidebarProps) => {
       shouldRender
     />
   );
-};
+});
