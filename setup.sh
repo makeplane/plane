@@ -22,14 +22,14 @@ echo -e "${BOLD}Setting up your development environment...${NC}\n"
 copy_env_file() {
     local source=$1
     local destination=$2
-    
+
     if [ ! -f "$source" ]; then
         echo -e "${RED}Error: Source file $source does not exist.${NC}"
         return 1
     fi
-    
+
     cp "$source" "$destination"
-    
+
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}✓${NC} Copied $destination"
     else
@@ -52,7 +52,7 @@ for service in "${services[@]}"; do
     if [ "$service" != "" ]; then
         prefix="./$service/"
     fi
-    
+
     copy_env_file "${prefix}.env.example" "${prefix}.env" || success=false
     
     # Special handling for silo service
@@ -62,7 +62,7 @@ done
 if [ -f "./apiserver/.env" ]; then
     echo -e "\n${YELLOW}Generating Django SECRET_KEY...${NC}"
     SECRET_KEY=$(tr -dc 'a-z0-9' < /dev/urandom | head -c50)
-    
+
     if [ -z "$SECRET_KEY" ]; then
         echo -e "${RED}Error: Failed to generate SECRET_KEY.${NC}"
         echo -e "${RED}Ensure 'tr' and 'head' commands are available on your system.${NC}"
@@ -76,6 +76,12 @@ else
     success=false
 fi
 
+# Activate Yarn (version set in package.json)
+corepack enable yarn || success=false
+# Install Node dependencies
+yarn install || success=false
+
+# Silo service env variables setup warning
 if [ "$service" == "silo" ] && [ -f "./silo/.env" ]; then        
     # Add a note about integration setup
     echo -e "\n${YELLOW}Note: Remember to configure integration credentials in silo/.env:${NC}"
