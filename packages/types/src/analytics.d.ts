@@ -1,3 +1,5 @@
+import { ChartXAxisProperty } from "@plane/constants";
+
 export interface IAnalyticsResponse {
   total: number;
   distribution: IAnalyticsData;
@@ -66,9 +68,9 @@ export type TXAxisValues =
 export type TYAxisValues = "issue_count" | "estimate";
 
 export interface IAnalyticsParams {
-  x_axis: TXAxisValues;
-  y_axis: TYAxisValues;
-  segment?: TXAxisValues | null;
+  x_axis: ChartXAxisProperty;
+  y_axis: ChartYAxisMetric;
+  segment?: ChartXAxisProperty | null;
   project?: string[] | null;
   cycle?: string | null;
   module?: string | null;

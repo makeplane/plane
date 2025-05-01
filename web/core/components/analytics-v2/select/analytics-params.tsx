@@ -1,8 +1,8 @@
 import { observer } from "mobx-react";
 import { Control, Controller } from "react-hook-form";
 // plane imports
-import { ANALYTICS_X_AXIS_VALUES } from "@plane/constants";
-import { IAnalyticsV2Params } from "@plane/types";
+import { ANALYTICS_X_AXIS_VALUES, ChartXAxisProperty, ChartYAxisMetric } from "@plane/constants";
+import { IAnalyticsV2Params, TBarItem } from "@plane/types";
 import { Row } from "@plane/ui";
 // components
 import { SelectXAxis } from "./select-x-axis";
@@ -16,8 +16,6 @@ type Props = {
 
 export const AnalyticsV2SelectParams: React.FC<Props> = observer((props) => {
   const { control, params } = props;
-
-
   const analyticsOptions = ANALYTICS_X_AXIS_VALUES;
 
   return (
@@ -33,6 +31,7 @@ export const AnalyticsV2SelectParams: React.FC<Props> = observer((props) => {
             onChange={(val: string) => {
               onChange(val);
             }}
+            hiddenOptions={[ChartYAxisMetric.ESTIMATE_POINT_COUNT]}
           />
         )}
       />

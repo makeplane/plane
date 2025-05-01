@@ -1,2 +1,63 @@
 export const LABEL_CLASSNAME = "uppercase text-custom-text-300/60 text-sm tracking-wide";
 export const AXIS_LABEL_CLASSNAME = "uppercase text-custom-text-300/60 text-sm tracking-wide";
+
+
+export enum ChartXAxisProperty {
+  STATES = "STATES",
+  STATE_GROUPS = "STATE_GROUPS",
+  LABELS = "LABELS",
+  ASSIGNEES = "ASSIGNEES",
+  ESTIMATE_POINTS = "ESTIMATE_POINTS",
+  CYCLES = "CYCLES",
+  MODULES = "MODULES",
+  PRIORITY = "PRIORITY",
+  START_DATE = "START_DATE",
+  TARGET_DATE = "TARGET_DATE",
+  CREATED_AT = "CREATED_AT",
+  COMPLETED_AT = "COMPLETED_AT",
+  CREATED_BY = "CREATED_BY",
+  WORK_ITEM_TYPES = "WORK_ITEM_TYPES",
+  PROJECTS = "PROJECTS",
+  EPICS = "EPICS",
+}
+
+export enum ChartYAxisMetric {
+  WORK_ITEM_COUNT = "WORK_ITEM_COUNT",
+  ESTIMATE_POINT_COUNT = "ESTIMATE_POINT_COUNT",
+  PENDING_WORK_ITEM_COUNT = "PENDING_WORK_ITEM_COUNT",
+  COMPLETED_WORK_ITEM_COUNT = "COMPLETED_WORK_ITEM_COUNT",
+  IN_PROGRESS_WORK_ITEM_COUNT = "IN_PROGRESS_WORK_ITEM_COUNT",
+  WORK_ITEM_DUE_THIS_WEEK_COUNT = "WORK_ITEM_DUE_THIS_WEEK_COUNT",
+  WORK_ITEM_DUE_TODAY_COUNT = "WORK_ITEM_DUE_TODAY_COUNT",
+  BLOCKED_WORK_ITEM_COUNT = "BLOCKED_WORK_ITEM_COUNT",
+}
+
+
+export enum ChartXAxisDateGrouping {
+  DAY = "DAY",
+  WEEK = "WEEK",
+  MONTH = "MONTH",
+  YEAR = "YEAR",
+}
+
+export const TO_CAPITALIZE_PROPERTIES: ChartXAxisProperty[] = [
+  ChartXAxisProperty.PRIORITY,
+  ChartXAxisProperty.STATE_GROUPS,
+];
+
+export const CHART_X_AXIS_DATE_PROPERTIES: ChartXAxisProperty[] = [
+  ChartXAxisProperty.START_DATE,
+  ChartXAxisProperty.TARGET_DATE,
+  ChartXAxisProperty.CREATED_AT,
+  ChartXAxisProperty.COMPLETED_AT,
+];
+
+
+export enum EChartModels {
+  BASIC = "BASIC",
+  STACKED = "STACKED",
+  GROUPED = "GROUPED",
+  MULTI_LINE = "MULTI_LINE",
+  COMPARISON = "COMPARISON",
+  PROGRESS = "PROGRESS",
+}

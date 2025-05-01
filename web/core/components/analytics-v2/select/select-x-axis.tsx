@@ -1,34 +1,30 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import { IAnalyticsParams, TXAxisValues } from "@plane/types";
+import { ChartXAxisProperty } from "@plane/constants";
+import { IAnalyticsParams } from "@plane/types";
 // ui
 import { CustomSelect } from "@plane/ui";
 
 type Props = {
-  value?: TXAxisValues;
+  value?: ChartXAxisProperty;
   onChange: (val: string) => void;
   params: IAnalyticsParams;
-  analyticsOptions: { value: TXAxisValues; label: string }[];
+  analyticsOptions: { value: ChartXAxisProperty; label: string }[];
+  hiddenOptions?: ChartXAxisProperty[];
 };
 
 export const SelectXAxis: React.FC<Props> = (props) => {
-  const { value, onChange, params, analyticsOptions } = props;
-
-  const { cycleId, moduleId } = useParams();
-
+  const { value, onChange, params, analyticsOptions, hiddenOptions } = props;
   return (
     <CustomSelect
       value={value}
-      label={<span>{analyticsOptions.find((v) => v.value === value)?.label || "Select X Axis"}</span>}
+      label={<span>{analyticsOptions.find((v) => v.value === value)?.label || "Add Property"}</span>}
       onChange={onChange}
       maxHeight="lg"
     >
       {analyticsOptions.map((item) => {
         if (params.segment === item.value) return null;
-        if (cycleId && item.value === "issue_cycle__cycle_id") return null;
-        if (moduleId && item.value === "issue_module__module_id") return null;
-
+        if (hiddenOptions?.includes(item.value)) return null;
         return (
           <CustomSelect.Option key={item.value} value={item.value}>
             {item.label}

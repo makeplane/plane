@@ -1,5 +1,6 @@
 // types
 import { TXAxisValues, TYAxisValues } from "@plane/types";
+import { ChartXAxisProperty, ChartYAxisMetric } from "./chart";
 
 export const ANALYTICS_TABS = [
   {
@@ -9,66 +10,66 @@ export const ANALYTICS_TABS = [
   { key: "custom", i18n_title: "workspace_analytics.tabs.custom" },
 ];
 
-export const ANALYTICS_X_AXIS_VALUES: { value: TXAxisValues; label: string }[] =
+export const ANALYTICS_X_AXIS_VALUES: { value: ChartXAxisProperty; label: string }[] =
   [
     {
-      value: "state_id",
+      value: ChartXAxisProperty.STATES,
       label: "State name",
     },
     {
-      value: "state__group",
+      value: ChartXAxisProperty.STATE_GROUPS,
       label: "State group",
     },
     {
-      value: "priority",
+      value: ChartXAxisProperty.PRIORITY,
       label: "Priority",
     },
     {
-      value: "labels__id",
+      value: ChartXAxisProperty.LABELS,
       label: "Label",
     },
     {
-      value: "assignees__id",
+      value: ChartXAxisProperty.ASSIGNEES,
       label: "Assignee",
     },
     {
-      value: "estimate_point__value",
+      value: ChartXAxisProperty.ESTIMATE_POINTS,
       label: "Estimate point",
     },
     {
-      value: "issue_cycle__cycle_id",
+      value: ChartXAxisProperty.CYCLES,
       label: "Cycle",
     },
     {
-      value: "issue_module__module_id",
+      value: ChartXAxisProperty.MODULES,
       label: "Module",
     },
     {
-      value: "completed_at",
+      value: ChartXAxisProperty.COMPLETED_AT,
       label: "Completed date",
     },
     {
-      value: "target_date",
+      value: ChartXAxisProperty.TARGET_DATE,
       label: "Due date",
     },
     {
-      value: "start_date",
+      value: ChartXAxisProperty.START_DATE,
       label: "Start date",
     },
     {
-      value: "created_at",
+      value: ChartXAxisProperty.CREATED_AT,
       label: "Created date",
     },
   ];
 
-export const ANALYTICS_Y_AXIS_VALUES: { value: TYAxisValues; label: string }[] =
+export const ANALYTICS_Y_AXIS_VALUES: { value: ChartYAxisMetric; label: string }[] =
   [
     {
-      value: "issue_count",
+      value: ChartYAxisMetric.WORK_ITEM_COUNT,
       label: "Work item Count",
     },
     {
-      value: "estimate",
+      value: ChartYAxisMetric.ESTIMATE_POINT_COUNT,
       label: "Estimate",
     },
   ];

@@ -46,7 +46,7 @@ type AnalyticsTableDataMap = {
 }
 
 export interface IAnalyticsV2Params {
-    x_axis: TXAxisValues;
-    y_axis: TYAxisValues;
-    group_by?: TXAxisValues;
+    x_axis: ChartXAxisProperty;
+    y_axis: ChartYAxisMetric;
+    group_by?: ChartXAxisProperty;
 }
