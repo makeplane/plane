@@ -12,6 +12,7 @@ env:
   AMI_NAME_PREFIX: plane-ce
   VPC_CIDR: ${{ vars.VPC_CIDR || '10.22.0.0/16' }}
   SUBNET_CIDR: ${{ vars.SUBNET_CIDR || '10.22.1.0/24' }}
+  VPC_REGION: ${{ vars.VPC_REGION || 'us-east-1' }}
   BASE_IMAGE_OWNER: ${{ vars.BASE_IMAGE_OWNER || '099720109477' }}
 
 jobs:
@@ -224,6 +225,10 @@ jobs:
           for dist in admin-dist web-dist space-dist live-dist backend-dist; do
             mv artifacts/${dist}/${dist}.tar.gz plane-dist/
           done
+          cp -r ./deploy/packer/envs/*.env plane-dist/
+          cp -r ./deploy/packer/svcs/*.service plane-dist/
+          cp ./deploy/packer/Caddyfile-ce plane-dist/
+          
           # Cleanup directories
           rm -rf artifacts 
 
@@ -232,7 +237,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.PLANE_DEV_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.PLANE_DEV_AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          aws-region: ${{ env.VPC_REGION }}
 
       - name: Download Previous Manifest
         run: |

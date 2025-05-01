@@ -119,18 +119,26 @@ build {
       # Extract the application files
       "sudo tar -xzf /opt/plane/tars/admin-dist.tar.gz -C /opt/plane/extracted",
       "sudo mv /opt/plane/extracted/admin-dist/ /opt/plane/admin",
+      "sudo cp /opt/plane/tars/admin.env /opt/plane/admin/admin.env",
 
       "sudo tar -xzf /opt/plane/tars/web-dist.tar.gz -C /opt/plane/extracted",
       "sudo mv /opt/plane/extracted/web-dist/ /opt/plane/web",
+      "sudo cp /opt/plane/tars/web.env /opt/plane/web/web.env",
 
       "sudo tar -xzf /opt/plane/tars/space-dist.tar.gz -C /opt/plane/extracted",
       "sudo mv /opt/plane/extracted/space-dist/ /opt/plane/space",
+      "sudo cp /opt/plane/tars/space.env /opt/plane/space/space.env",
 
       "sudo tar -xzf /opt/plane/tars/live-dist.tar.gz -C /opt/plane/extracted",
       "sudo mv /opt/plane/extracted/live-dist/ /opt/plane/live",
+      "sudo cp /opt/plane/tars/live.env /opt/plane/live/live.env",
 
       "sudo tar -xzf /opt/plane/tars/backend-dist.tar.gz -C /opt/plane/extracted",
       "sudo mv /opt/plane/extracted/backend-dist/ /opt/plane/backend",
+      "sudo cp /opt/plane/tars/backend.env /opt/plane/backend/backend.env",
+
+      "sudo cp /opt/plane/tars/*.service /opt/plane/",
+      "sudo cp /opt/plane/tars/Caddyfile /opt/plane/Caddyfile",
 
       "sudo rm -rf /opt/plane/extracted",
       # "sudo rm -rf /opt/plane/tars",
@@ -154,15 +162,19 @@ build {
     inline = [
       "sudo apt-get update",
       "sudo apt-get upgrade -y",
-      "sudo apt-get install -y software-properties-common cloud-init rsyslog",
+      "sudo apt-get install -y software-properties-common cloud-init rsyslog debian-keyring debian-archive-keyring apt-transport-https curl",
       "sudo add-apt-repository -y ppa:deadsnakes/ppa",
-      "sudo apt-get update",
+      "curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg",
+      "curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list",
+      "sudo apt update",
+      "sudo apt install caddy",
       "sudo apt-get install -y python3.12 python3.12-venv python3.12-dev python3-pip",
       "sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1",
       "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash",
       ". $HOME/.nvm/nvm.sh",
       "nvm install 20",
       "corepack enable yarn",
+      
       # Verify installations
       "python3 --version",
       "node --version",
