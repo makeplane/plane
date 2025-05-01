@@ -18,3 +18,5 @@ export * from "./svg-file-icon";
 export * from "./tune-icon";
 export * from "./txt-file-icon";
 export * from "./video-file-icon";
+export * from "./zip-file-icon";
+export * from "./rar-file-icon";
