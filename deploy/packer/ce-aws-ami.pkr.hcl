@@ -100,7 +100,7 @@ build {
   # Copy application files
   provisioner "shell" {
     inline = [
-      "sudo mkdir -p /opt/plane/{admin,web,space,live,backend,tars}",
+      "sudo mkdir -p /opt/plane/admin /opt/plane/web /opt/plane/space /opt/plane/live /opt/plane/backend /opt/plane/tars",
       "sudo chown -R ubuntu:ubuntu /opt/plane"
     ]
   }
@@ -117,11 +117,11 @@ build {
       "sudo chown -R ubuntu:ubuntu /opt/plane",
       "sudo chmod -R 755 /opt/plane",
       # Extract the application files
-      # "tar -xzf /opt/plane/artifacts/admin-dist.tar.gz -C /opt/plane/admin",
-      # "tar -xzf /opt/plane/artifacts/web-dist.tar.gz -C /opt/plane/web",
-      # "tar -xzf /opt/plane/artifacts/space-dist.tar.gz -C /opt/plane/space",
-      # "tar -xzf /opt/plane/artifacts/live-dist.tar.gz -C /opt/plane/live",
-      # "tar -xzf /opt/plane/artifacts/backend-dist.tar.gz -C /opt/plane/backend",
+      "tar -xzf /opt/plane/tars/admin-dist.tar.gz -C /opt/plane/admin",
+      "tar -xzf /opt/plane/tars/web-dist.tar.gz -C /opt/plane/web",
+      "tar -xzf /opt/plane/tars/space-dist.tar.gz -C /opt/plane/space",
+      "tar -xzf /opt/plane/tars/live-dist.tar.gz -C /opt/plane/live",
+      "tar -xzf /opt/plane/tars/backend-dist.tar.gz -C /opt/plane/backend",
       # Set proper permissions and verify installation
       "sudo chown -R ubuntu:ubuntu /opt/plane",
       "sudo chmod -R 755 /opt/plane",
