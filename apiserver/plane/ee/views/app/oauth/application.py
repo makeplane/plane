@@ -4,6 +4,7 @@ from rest_framework import status
 from django.utils import timezone
 from django.db.models import Case, When, Value, BooleanField, Exists, OuterRef, Q
 from oauth2_provider.generators import generate_client_secret
+from plane.silo.models.application_secret import ApplicationSecret
 
 from plane.authentication.models import (
     Application,
@@ -297,6 +298,7 @@ class OAuthApplicationPublishEndpoint(BaseAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class OAuthApplicationClientIdEndpoint(BaseAPIView):
     def get(self, request, client_id):

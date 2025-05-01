@@ -19,6 +19,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Secret Key
 SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
+AES_SECRET_KEY = os.environ.get("AES_SECRET_KEY", "")
+AES_SALT = os.environ.get("AES_SALT", "aes-salt")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", "0"))
@@ -46,6 +48,7 @@ INSTALLED_APPS = [
     "plane.ee",
     "plane.graphql",
     "plane.payment",
+    "plane.silo",
     # Third-party things
     "strawberry.django",
     "rest_framework",
@@ -284,6 +287,8 @@ CELERY_IMPORTS = (
     # ee tasks
     "plane.ee.bgtasks.entity_issue_state_progress_task",
     "plane.ee.bgtasks.app_bot_task",
+    # silo tasks
+    "plane.silo.bgtasks.integration_apps_task",
 )
 
 # Application Envs
