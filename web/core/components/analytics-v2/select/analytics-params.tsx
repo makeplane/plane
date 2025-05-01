@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { Control, Controller } from "react-hook-form";
 // plane imports
 import { ANALYTICS_X_AXIS_VALUES, ChartXAxisProperty, ChartYAxisMetric } from "@plane/constants";
-import { IAnalyticsV2Params, TBarItem } from "@plane/types";
+import { IAnalyticsV2Params } from "@plane/types";
 import { Row } from "@plane/ui";
 // components
 import { SelectXAxis } from "./select-x-axis";

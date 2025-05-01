@@ -1,7 +1,7 @@
-import { useProject } from '@/hooks/store';
+import { Briefcase } from 'lucide-react';
 import { Loader, Logo } from '@plane/ui';
 import { cn } from '@plane/utils';
-import { Briefcase } from 'lucide-react';
+import { useProject } from '@/hooks/store';
 
 
 type Props = {

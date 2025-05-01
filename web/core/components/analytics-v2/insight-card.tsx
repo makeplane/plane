@@ -1,8 +1,8 @@
 // plane package imports
-import { Loader } from '@plane/ui'
-import { IAnalyticsResponseFieldsV2 } from '@plane/types'
-// components
 import React, { useMemo } from 'react'
+import { IAnalyticsResponseFieldsV2 } from '@plane/types'
+import { Loader } from '@plane/ui'
+// components
 import TrendPiece from './trend-piece'
 
 export type InsightCardProps = {

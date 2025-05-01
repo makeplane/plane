@@ -1,17 +1,17 @@
 
 // plane package imports
+import { observer } from 'mobx-react-lite';
+import { useParams } from 'next/navigation';
+import useSWR from 'swr';
+import { insightsFields } from '@plane/constants';
 import { useTranslation } from '@plane/i18n';
 import { IAnalyticsResponseV2, TAnalyticsTabsV2Base } from '@plane/types';
-import useSWR from 'swr';
 //hooks
 import { useAnalyticsV2 } from '@/hooks/store/use-analytics-v2';
 //services
 import { AnalyticsV2Service } from '@/services/analytics-v2.service';
 // plane web components
 import InsightCard from './insight-card';
-import { observer } from 'mobx-react-lite';
-import { useParams } from 'next/navigation';
-import { insightsFields } from '@plane/constants';
 
 
 const analyticsV2Service = new AnalyticsV2Service();

@@ -1,8 +1,8 @@
 // plane package imports
+import React from 'react'
+import { TrendingDown, TrendingUp } from 'lucide-react'
 import { cn } from '@plane/utils'
 // plane web components
-import { TrendingDown, TrendingUp } from 'lucide-react'
-import React from 'react'
 
 type Props = {
     percentage: number
