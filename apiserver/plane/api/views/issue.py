@@ -64,6 +64,9 @@ from plane.bgtasks.webhook_task import model_activity
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.utils.workflow import WorkflowStateManager
+from plane.ee.bgtasks.entity_issue_state_progress_task import (
+    entity_issue_state_activity_task,
+)
 
 
 class WorkspaceIssueAPIEndpoint(BaseAPIView):
@@ -421,6 +424,22 @@ class IssueAPIEndpoint(BaseAPIView):
                         current_instance=current_instance,
                         epoch=int(timezone.now().timestamp()),
                     )
+                    cycle_issue = CycleIssue.objects.filter(issue_id=issue.id).first()
+                    if cycle_issue and (
+                        request.data.get("state_id")
+                        or request.data.get("estimate_point")
+                    ):
+                        entity_issue_state_activity_task.delay(
+                            issue_cycle_data=[
+                                {
+                                    "issue_id": str(issue.id),
+                                    "cycle_id": str(cycle_issue.cycle_id),
+                                }
+                            ],
+                            user_id=str(request.user.id),
+                            slug=slug,
+                            action="UPDATED",
+                        )
                     return Response(serializer.data, status=status.HTTP_200_OK)
                 return Response(
                     # If the serializer is not valid, respond with 400 bad
@@ -461,6 +480,22 @@ class IssueAPIEndpoint(BaseAPIView):
                         "created_by", request.user.id
                     )
                     issue.save(update_fields=["created_at", "created_by"])
+                    cycle_issue = CycleIssue.objects.filter(issue_id=issue.id).first()
+                    if cycle_issue and (
+                        request.data.get("state_id")
+                        or request.data.get("estimate_point")
+                    ):
+                        entity_issue_state_activity_task.delay(
+                            issue_cycle_data=[
+                                {
+                                    "issue_id": str(issue.id),
+                                    "cycle_id": str(cycle_issue.cycle_id),
+                                }
+                            ],
+                            user_id=str(request.user.id),
+                            slug=slug,
+                            action="UPDATED",
+                        )
 
                     issue_activity.delay(
                         type="issue.activity.created",
@@ -540,6 +575,21 @@ class IssueAPIEndpoint(BaseAPIView):
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
             )
+            cycle_issue = CycleIssue.objects.filter(issue_id=pk).first()
+            if cycle_issue and (
+                request.data.get("state_id") or request.data.get("estimate_point")
+            ):
+                entity_issue_state_activity_task.delay(
+                    issue_cycle_data=[
+                        {
+                            "issue_id": str(issue.id),
+                            "cycle_id": str(cycle_issue.cycle_id),
+                        }
+                    ],
+                    user_id=str(request.user.id),
+                    slug=slug,
+                    action="UPDATED",
+                )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -561,6 +611,18 @@ class IssueAPIEndpoint(BaseAPIView):
         current_instance = json.dumps(
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
+        cycle_issue = CycleIssue.objects.filter(issue_id=pk).first()
+        if cycle_issue:
+            # added a entry to remove from the entity issue state activity
+            entity_issue_state_activity_task.delay(
+                issue_cycle_data=[
+                    {"issue_id": str(issue.id), "cycle_id": str(cycle_issue.cycle_id)}
+                ],
+                user_id=str(request.user.id),
+                slug=slug,
+                action="REMOVED",
+            )
+        # EE code end here
         issue.delete()
         issue_activity.delay(
             type="issue.activity.deleted",
