@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { ANALYTICS_Y_AXIS_VALUES, ChartYAxisMetric } from "@plane/constants";
+import { ANALYTICS_V2_Y_AXIS_VALUES, ChartYAxisMetric } from "@plane/constants";
 import { CustomSelect } from "@plane/ui";
 // hooks
 import { useProjectEstimates } from "@/hooks/store";
@@ -41,11 +41,11 @@ export const SelectYAxis: React.FC<Props> = observer(({ value, onChange, hiddenO
   return (
     <CustomSelect
       value={value}
-      label={<span>{ANALYTICS_Y_AXIS_VALUES.find((v) => v.value === value)?.label ?? "Add Metric"}</span>}
+      label={<span>{ANALYTICS_V2_Y_AXIS_VALUES.find((v) => v.value === value)?.label ?? "Add Metric"}</span>}
       onChange={onChange}
       maxHeight="lg"
     >
-      {ANALYTICS_Y_AXIS_VALUES.filter((item) => !hiddenOptions?.includes(item.value)).map(
+      {ANALYTICS_V2_Y_AXIS_VALUES.filter((item) => !hiddenOptions?.includes(item.value)).map(
         (item) =>
           isEstimateEnabled(item.value) && (
             <CustomSelect.Option key={item.value} value={item.value}>

@@ -4,7 +4,7 @@ import { observer } from 'mobx-react'
 import { useParams } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import useSWR from 'swr'
-import { ANALYTICS_Y_AXIS_VALUES, ChartXAxisDateGrouping, ChartXAxisProperty, ChartYAxisMetric, EChartModels } from '@plane/constants'
+import { ANALYTICS_V2_Y_AXIS_VALUES, ChartXAxisDateGrouping, ChartXAxisProperty, ChartYAxisMetric, EChartModels } from '@plane/constants'
 import { BarChart } from '@plane/propel/charts/bar-chart'
 import { IChartResponseV2 } from '@plane/types'
 import { TBarItem, TChartDatum } from '@plane/types/src/charts'
@@ -110,7 +110,7 @@ const PriorityChart = observer((props: Props) => {
     header: () => parsedData.schema[key],
   })), [parsedData.schema]);
 
-  const getYAxisLabel = useMemo(() => ANALYTICS_Y_AXIS_VALUES.find((item) => item.value === props.y_axis)?.label ?? props.y_axis, [props.y_axis]);
+  const getYAxisLabel = useMemo(() => ANALYTICS_V2_Y_AXIS_VALUES.find((item) => item.value === props.y_axis)?.label ?? props.y_axis, [props.y_axis]);
 
   return (
     <div className='flex flex-col gap-12 '>
