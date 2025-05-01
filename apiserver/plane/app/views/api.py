@@ -9,11 +9,11 @@ from rest_framework import status
 from .base import BaseAPIView
 from plane.db.models import APIToken, Workspace
 from plane.app.serializers import APITokenSerializer, APITokenReadSerializer
-from plane.app.permissions import WorkspaceOwnerPermission
+from plane.app.permissions import WorkspaceEntityPermission
 
 
 class ApiTokenEndpoint(BaseAPIView):
-    permission_classes = [WorkspaceOwnerPermission]
+    permission_classes = [WorkspaceEntityPermission]
 
     def post(self, request, slug):
         label = request.data.get("label", str(uuid4().hex))
@@ -68,7 +68,7 @@ class ApiTokenEndpoint(BaseAPIView):
 
 
 class ServiceApiTokenEndpoint(BaseAPIView):
-    permission_classes = [WorkspaceOwnerPermission]
+    permission_classes = [WorkspaceEntityPermission]
 
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)

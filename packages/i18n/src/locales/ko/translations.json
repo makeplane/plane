@@ -350,7 +350,7 @@
   "couldnt_remove_the_project_from_favorites": "프로젝트를 즐겨찾기에서 제거하지 못했습니다. 다시 시도해주세요.",
   "add_to_favorites": "즐겨찾기에 추가",
   "remove_from_favorites": "즐겨찾기에서 제거",
-  "publish_settings": "설정 게시",
+  "publish_project": "프로젝트 게시",
   "publish": "게시",
   "copy_link": "링크 복사",
   "leave_project": "프로젝트 떠나기",
@@ -872,7 +872,9 @@
     "pending": "보류 중",
     "invite": "초대",
     "view": "보기",
-    "deactivated_user": "비활성화된 사용자"
+    "deactivated_user": "비활성화된 사용자",
+    "apply": "적용",
+    "applying": "적용 중"
   },
 
   "chart": {

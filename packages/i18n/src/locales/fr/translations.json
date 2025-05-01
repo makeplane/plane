@@ -350,7 +350,7 @@
   "couldnt_remove_the_project_from_favorites": "Impossible de supprimer le projet des favoris. Veuillez réessayer.",
   "add_to_favorites": "Ajouter aux favoris",
   "remove_from_favorites": "Supprimer des favoris",
-  "publish_settings": "Paramètres de publication",
+  "publish_project": "Publier le projet",
   "publish": "Publier",
   "copy_link": "Copier le lien",
   "leave_project": "Quitter le projet",
@@ -871,7 +871,9 @@
     "pending": "En attente",
     "invite": "Inviter",
     "view": "Afficher",
-    "deactivated_user": "Utilisateur désactivé"
+    "deactivated_user": "Utilisateur désactivé",
+    "apply": "Appliquer",
+    "applying": "Application"
   },
 
   "chart": {
