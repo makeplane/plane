@@ -252,6 +252,7 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
     projectId: activeProjectId,
     primaryButtonText: primaryButtonText,
     isProjectSelectionDisabled: isProjectSelectionDisabled,
+    modalTitle: isConversionOperation ? "Turn this work item into an epic" : undefined,
   };
 
   return (

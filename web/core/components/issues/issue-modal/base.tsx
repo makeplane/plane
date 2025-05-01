@@ -393,7 +393,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     onCreateMoreToggleChange: handleCreateMoreToggleChange,
     isDraft: isDraft,
     moveToIssue: moveToIssue,
-    modalTitle: modalTitle,
+    modalTitle: isConversionOperation ? "Turn this epic into a work item" : modalTitle,
     primaryButtonText: primaryButtonText,
     isDuplicateModalOpen: isDuplicateModalOpen,
     handleDuplicateIssueModal: handleDuplicateIssueModal,

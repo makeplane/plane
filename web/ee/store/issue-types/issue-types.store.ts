@@ -728,6 +728,15 @@ export class IssueTypes implements IIssueTypesStore {
         if (convertTo === EWorkItemConversionType.WORK_ITEM) {
           this.rootStore.issue.projectEpics.removeIssueFromList(workItemId);
           this.rootStore.issue.projectIssues.addIssueToList(workItemId);
+
+          const initiativeIdFromRouter = this.rootStore.router.query.initiativeId;
+          if (initiativeIdFromRouter) {
+            this.rootStore.initiativeStore.epics.removeEpicFromInitiative(
+              workspaceSlug,
+              initiativeIdFromRouter?.toString(),
+              workItemId
+            );
+          }
           // update is_epic to false
           this.rootStore.issue.issues.updateIssue(workItemId, { is_epic: false });
         } else if (convertTo === EWorkItemConversionType.EPIC) {
