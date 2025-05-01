@@ -1,5 +1,5 @@
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { Editor } from "@tiptap/core";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 // helpers
 import { DROPDOWN_NAVIGATION_KEYS, getNextValidIndex } from "@/helpers/tippy";
 // components
@@ -10,10 +10,11 @@ export type SlashCommandsMenuProps = {
   editor: Editor;
   items: TSlashCommandSection[];
   command: any;
+  query?: string;
 };
 
 export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref) => {
-  const { items: sections, command } = props;
+  const { items: sections, command, query } = props;
   // states
   const [selectedIndex, setSelectedIndex] = useState({
     section: 0,
@@ -103,7 +104,10 @@ export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref)
         sections,
         selectedIndex,
       });
-      setSelectedIndex(newIndex);
+
+      if (newIndex) {
+        setSelectedIndex(newIndex);
+      }
     },
   }));
 
@@ -138,6 +142,7 @@ export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref)
                   })
                 }
                 sectionIndex={sectionIndex}
+                query={query}
               />
             ))}
           </div>
