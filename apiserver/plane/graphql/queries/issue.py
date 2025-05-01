@@ -37,8 +37,8 @@ from plane.graphql.types.issues.issue_type import IssueTypesType
 from plane.graphql.types.issues.user_property import IssueUserPropertyType
 from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.utils.issue import issue_information_query_execute
-from plane.graphql.utils.work_item_filters import work_item_filters
 from plane.graphql.utils.paginator import paginate
+from plane.graphql.utils.work_item_filters import work_item_filters
 
 
 # issues information query
