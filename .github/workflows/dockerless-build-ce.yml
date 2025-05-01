@@ -12,6 +12,7 @@ env:
   AMI_NAME_PREFIX: plane-ce
   VPC_CIDR: ${{ vars.VPC_CIDR || '10.22.0.0/16' }}
   SUBNET_CIDR: ${{ vars.SUBNET_CIDR || '10.22.1.0/24' }}
+  BASE_IMAGE_OWNER: ${{ vars.BASE_IMAGE_OWNER || '099720109477' }}
 
 jobs:
   build_setup:
@@ -218,31 +219,13 @@ jobs:
       - name: Extract All Builds
         run: |
           # Create local directories
-          mkdir -p plane/{admin,web,space,live,backend}
-          mkdir -p artifacts
-          
-          # Extract and move admin build
-          tar -xzf artifacts/admin-dist/admin-dist.tar.gz -C artifacts/
-          mv artifacts/admin-dist/* plane/admin/
-          
-          # Extract and move web build
-          tar -xzf artifacts/web-dist/web-dist.tar.gz -C artifacts/
-          mv artifacts/web-dist/* plane/web/
-          
-          # Extract and move space build
-          tar -xzf artifacts/space-dist/space-dist.tar.gz -C artifacts/
-          mv artifacts/space-dist/* plane/space/
-          
-          # Extract and move live build
-          tar -xzf artifacts/live-dist/live-dist.tar.gz -C artifacts/
-          mv artifacts/live-dist/* plane/live/
-          
-          # Extract and move backend build
-          tar -xzf artifacts/backend-dist/backend-dist.tar.gz -C artifacts/
-          mv artifacts/backend-dist/* plane/backend/
-          
-          # Cleanup extracted directories
-          rm -rf *-dist artifacts
+          mkdir -p plane-dist
+
+          for dist in admin-dist web-dist space-dist live-dist backend-dist; do
+            mv artifacts/${dist}/${dist}.tar.gz plane-dist/
+          done
+          # Cleanup directories
+          rm -rf artifacts 
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -290,6 +273,7 @@ jobs:
             -var "ami_name_prefix=${{ env.AMI_NAME_PREFIX }}" \
             -var "vpc_cidr=${{ env.VPC_CIDR }}" \
             -var "subnet_cidr=${{ env.SUBNET_CIDR }}" \
+            -var "base_image_owner=${{ env.BASE_IMAGE_OWNER }}" \
             ./deploy/packer/ce-aws-ami.pkr.hcl
 
       - name: Extract AMI Information
