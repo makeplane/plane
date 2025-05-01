@@ -14,6 +14,10 @@ from celery import shared_task
 from django.conf import settings
 from django.utils import timezone
 from openpyxl import Workbook
+from django.db.models import Value
+from django.db.models.functions import Coalesce
+from django.db.models import Q
+from django.contrib.postgres.aggregates import ArrayAgg
 
 # Module imports
 from plane.db.models import ExporterHistory, Issue
@@ -181,6 +185,23 @@ def generate_table_row(issue):
         dateTimeConverter(issue["updated_at"]),
         dateTimeConverter(issue["completed_at"]),
         dateTimeConverter(issue["archived_at"]),
+        [
+            {
+                "comment": comment,
+                "created_at": dateConverter(created_at),
+                "created_by": (
+                    f"{created_by_first_name} {created_by_last_name}"
+                    if created_by_first_name and created_by_last_name
+                    else ""
+                ),
+            }
+            for comment, created_at, created_by_first_name, created_by_last_name in zip(
+                issue["comment_stripped"],
+                issue["comment_created_at"],
+                issue["comment_created_by_first_name"],
+                issue["comment_created_by_last_name"],
+            )
+        ],
     ]
 
 
@@ -215,6 +236,23 @@ def generate_json_row(issue):
         "Updated At": dateTimeConverter(issue["updated_at"]),
         "Completed At": dateTimeConverter(issue["completed_at"]),
         "Archived At": dateTimeConverter(issue["archived_at"]),
+        "Comments": [
+            {
+                "comment": comment,
+                "created_at": dateConverter(created_at),
+                "created_by": (
+                    f"{created_by_first_name} {created_by_last_name}"
+                    if created_by_first_name and created_by_last_name
+                    else ""
+                ),
+            }
+            for comment, created_at, created_by_first_name, created_by_last_name in zip(
+                issue["comment_stripped"],
+                issue["comment_created_at"],
+                issue["comment_created_by_first_name"],
+                issue["comment_created_by_last_name"],
+            )
+        ],
     }
 
 
@@ -317,7 +355,42 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                 )
                 .select_related("project", "workspace", "state", "parent", "created_by")
                 .prefetch_related(
-                    "assignees", "labels", "issue_cycle__cycle", "issue_module__module"
+                    "assignees",
+                    "labels",
+                    "issue_cycle__cycle",
+                    "issue_module__module",
+                    "issue_comments",
+                )
+                .annotate(
+                    comment_stripped=Coalesce(
+                        ArrayAgg(
+                            "issue_comments__comment_stripped",
+                            filter=Q(issue_comments__comment_stripped__isnull=False),
+                            order_by=["-issue_comments__created_at"],
+                        ),
+                        Value([]),
+                    ),
+                    comment_created_at=Coalesce(
+                        ArrayAgg(
+                            "issue_comments__created_at",
+                            order_by=["-issue_comments__created_at"],
+                        ),
+                        Value([]),
+                    ),
+                    comment_created_by_first_name=Coalesce(
+                        ArrayAgg(
+                            "issue_comments__created_by__first_name",
+                            order_by=["-issue_comments__created_at"],
+                        ),
+                        Value([]),
+                    ),
+                    comment_created_by_last_name=Coalesce(
+                        ArrayAgg(
+                            "issue_comments__created_by__last_name",
+                            order_by=["-issue_comments__created_at"],
+                        ),
+                        Value([]),
+                    ),
                 )
                 .values(
                     "id",
@@ -346,11 +419,16 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                     "assignees__first_name",
                     "assignees__last_name",
                     "labels__name",
+                    "comment_stripped",
+                    "comment_created_at",
+                    "comment_created_by_first_name",
+                    "comment_created_by_last_name",
                 )
             )
             .order_by("project__identifier", "sequence_id")
             .distinct()
         )
+
         # CSV header
         header = [
             "ID",
@@ -374,6 +452,7 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
             "Updated At",
             "Completed At",
             "Archived At",
+            "Comments",
         ]
 
         EXPORTER_MAPPER = {
