@@ -13,7 +13,7 @@ import { EEstimateSystem } from "@/plane-web/constants/estimates";
 
 type Props = {
   value: TYAxisValues;
-  onChange: (val: string) => void;
+  onChange: () => void;
 };
 
 export const SelectYAxis: React.FC<Props> = observer(({ value, onChange }) => {
