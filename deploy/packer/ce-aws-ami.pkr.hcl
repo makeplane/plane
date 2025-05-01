@@ -100,7 +100,7 @@ build {
   # Copy application files
   provisioner "shell" {
     inline = [
-      "sudo mkdir -p /opt/plane/admin /opt/plane/web /opt/plane/space /opt/plane/live /opt/plane/backend /opt/plane/tars",
+      "sudo mkdir -p /opt/plane/tars /opt/plane/extracted",
       "sudo chown -R ubuntu:ubuntu /opt/plane"
     ]
   }
@@ -117,18 +117,31 @@ build {
       "sudo chown -R ubuntu:ubuntu /opt/plane",
       "sudo chmod -R 755 /opt/plane",
       # Extract the application files
-      "tar -xzf /opt/plane/tars/admin-dist.tar.gz -C /opt/plane/admin",
-      "tar -xzf /opt/plane/tars/web-dist.tar.gz -C /opt/plane/web",
-      "tar -xzf /opt/plane/tars/space-dist.tar.gz -C /opt/plane/space",
-      "tar -xzf /opt/plane/tars/live-dist.tar.gz -C /opt/plane/live",
-      "tar -xzf /opt/plane/tars/backend-dist.tar.gz -C /opt/plane/backend",
+      "sudo tar -xzf /opt/plane/tars/admin-dist.tar.gz -C /opt/plane/extracted",
+      "sudo mv /opt/plane/extracted/admin-dist/ /opt/plane/admin",
+
+      "sudo tar -xzf /opt/plane/tars/web-dist.tar.gz -C /opt/plane/extracted",
+      "sudo mv /opt/plane/extracted/web-dist/ /opt/plane/web",
+
+      "sudo tar -xzf /opt/plane/tars/space-dist.tar.gz -C /opt/plane/extracted",
+      "sudo mv /opt/plane/extracted/space-dist/ /opt/plane/space",
+
+      "sudo tar -xzf /opt/plane/tars/live-dist.tar.gz -C /opt/plane/extracted",
+      "sudo mv /opt/plane/extracted/live-dist/ /opt/plane/live",
+
+      "sudo tar -xzf /opt/plane/tars/backend-dist.tar.gz -C /opt/plane/extracted",
+      "sudo mv /opt/plane/extracted/backend-dist/ /opt/plane/backend",
+
+      "sudo rm -rf /opt/plane/extracted",
+      # "sudo rm -rf /opt/plane/tars",
+
       # Set proper permissions and verify installation
       "sudo chown -R ubuntu:ubuntu /opt/plane",
       "sudo chmod -R 755 /opt/plane",
       # Verify installation
-      # "echo 'Verifying assets copied...'",
-      # "for dir in admin web space live backend; do ls -la /opt/plane/$dir; done",
-      # "echo 'Assets copied successfully'"
+      "echo 'Verifying assets copied...'",
+      "for dir in admin web space live backend; do ls -la /opt/plane/$dir; done",
+      "echo 'Assets copied successfully'"
     ]
   }
 
