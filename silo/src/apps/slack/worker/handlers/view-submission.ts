@@ -1,5 +1,5 @@
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
-import { TViewSubmissionPayload } from "@plane/etl/slack";
+import { TSlackIssueEntityData, TViewSubmissionPayload } from "@plane/etl/slack";
 import { CONSTANTS } from "@/helpers/constants";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
@@ -69,17 +69,23 @@ export const handleLinkWorkItemViewSubmission = async (
     if (workspaceEntityConnection.length > 0) {
       // We need to update the view in order to show that the selected issue is already linked to a thread
       const existingLink = workspaceEntityConnection[0];
-      const entityData = existingLink.entity_data as any;
-      const channelName = entityData?.channel?.name || "a channel";
-      const threadLink = `https://${data.team.domain}.slack.com/archives/${entityData?.channel?.id}/p${existingLink.entity_id}`;
+      const entityData = existingLink.entity_data as TSlackIssueEntityData;
+      const threadLink = `https://${data.team.domain}.slack.com/archives/${entityData.channel}/p${existingLink.entity_id}`;
       const issueLink = `${env.APP_BASE_URL}/${linkWorkItemValues.workspaceSlug}/browse/${issue.project.identifier}-${issue.sequence_id}`;
 
       // Create rich error message with links
-      const errorMessage = createIssueErrorBlocks(issue, channelName, threadLink, issueLink);
+      const errorMessage = createIssueErrorBlocks(issue, entityData.channel, threadLink, issueLink);
       const updatedModal = createLinkIssueModalView(metadata.entityPayload);
       updatedModal.blocks = [...errorMessage.blocks, ...updatedModal.blocks];
       const res = await slackService.openModal(data.trigger_id, updatedModal);
     } else {
+      const messageTs = metadata.entityPayload.message?.ts;
+
+      if (!messageTs) {
+        logger.error("No message ts found in entity payload");
+        return;
+      }
+
       const title = "Connected to Slack thread";
       const link = `https://${data.team.domain}.slack.com/archives/${metadata.entityPayload.channel.id}/p${metadata.entityPayload.message?.ts}`;
 
@@ -103,6 +109,14 @@ export const handleLinkWorkItemViewSubmission = async (
         link
       );
 
+      const entityData: TSlackIssueEntityData = {
+        channel: metadata.entityPayload.channel.id,
+        message: {
+          ts: messageTs,
+          team: data.team.id,
+        },
+      };
+
       const createEntityConnection = apiClient.workspaceEntityConnection.createWorkspaceEntityConnection({
         // Main workspace connection
         workspace_connection_id: details.workspaceConnection.id,
@@ -114,8 +128,8 @@ export const handleLinkWorkItemViewSubmission = async (
 
         // Entity identifiers
         entity_type: E_INTEGRATION_KEYS.SLACK,
-        entity_id: metadata.entityPayload.message?.ts || "",
-        entity_data: metadata.entityPayload,
+        entity_id: messageTs,
+        entity_data: entityData,
         entity_slug: issue.id,
       });
 
@@ -440,7 +454,7 @@ export const createIssueErrorBlocks = (
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `:warning: The work item *<${issueLink}|[${issue.project.identifier}-${issue.sequence_id}] ${issue.name}>* is already linked to another conversation in #${channelName}.`,
+          text: `:warning: The work item *<${issueLink}|[${issue.project.identifier}-${issue.sequence_id}] ${issue.name}>* is already linked to another conversation in <#${channelName}>.`,
         },
       },
       {

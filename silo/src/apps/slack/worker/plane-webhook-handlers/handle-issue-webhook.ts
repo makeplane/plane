@@ -2,6 +2,7 @@ import { Store } from "@/worker/base";
 import { PlaneWebhookPayload } from "@plane/sdk";
 import { getConnectionDetailsForIssue } from "../../helpers/connection-details";
 import { ActivityForSlack, PlaneActivityWithTimestamp } from "../../types/types";
+import { TSlackIssueEntityData } from "@plane/etl/slack";
 
 const ignoredFieldUpdates = ["description", "attachment"];
 
@@ -25,9 +26,9 @@ export const handleIssueWebhook = async (payload: PlaneWebhookPayload) => {
   const { slackService, entityConnection } = details;
 
   const message = createSlackBlocksFromActivity(activities);
-  const entityData = entityConnection.entity_data as any;
+  const entityData = entityConnection.entity_data as TSlackIssueEntityData;
 
-  const channel = entityData.channel ||  entityData.channel.id;
+  const channel = entityData.channel;
   const messageTs = entityData.message.ts;
 
   if (message.length === 0) {

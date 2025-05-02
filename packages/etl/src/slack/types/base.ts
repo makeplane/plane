@@ -21,6 +21,15 @@ export type TSlackMetadata = {
   incoming_webhook: Incomingwebhook;
   is_enterprise_install: boolean;
 };
+
+export type TSlackIssueEntityData = {
+  channel: string;
+  message: {
+    ts: string;
+    team: string;
+  };
+};
+
 export type Incomingwebhook = {
   url: string;
   channel: string;

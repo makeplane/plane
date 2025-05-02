@@ -1,4 +1,4 @@
-import { SlackMessageResponse } from "@plane/etl/slack";
+import { TSlackIssueEntityData } from "@plane/etl/slack";
 import { WebhookIssueCommentPayload } from "@plane/sdk";
 import { getAPIClient } from "@/services/client";
 import { getConnectionDetailsForIssue } from "../../helpers/connection-details";
@@ -37,8 +37,9 @@ const handleCommentSync = async (payload: WebhookIssueCommentPayload) => {
 
   const { entityConnection, slackService } = details;
 
-  const slackData = entityConnection.entity_data as SlackMessageResponse;
-  const channel = typeof slackData.channel === "string" ? slackData.channel : slackData.channel?.["id"];
+  const slackData = entityConnection.entity_data as TSlackIssueEntityData;
+
+  const channel = slackData.channel;
 
   const response = await slackService.sendThreadMessage(
     channel,
