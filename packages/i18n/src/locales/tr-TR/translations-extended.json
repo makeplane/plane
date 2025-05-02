@@ -918,7 +918,37 @@
     "link_personal_account": "Kişisel {providerName} hesabınızı Plane'e bağlayın.",
     "connected_slack_workspaces": "Bağlı Slack workspaceleri",
     "connected_on": "{date} tarihinde bağlandı",
-    "disconnect_workspace": "{name} workspaceini bağlantıdan kes"
+    "disconnect_workspace": "{name} workspaceini bağlantıdan kes",
+    "project_updates": {
+      "title": "Proje Güncellemeleri",
+      "description": "Projeleriniz için proje güncelleme bildirimlerini yapılandırın",
+      "add_new_project_update": "Yeni proje güncelleme bildirimi ekle",
+      "project_updates_empty_state": "Slack Kanallarına bağlı projeler burada görünecek.",
+      "project_updates_form": {
+        "title": "Proje Güncellemelerini Yapılandır",
+        "description": "İş öğeleri oluşturulduğunda Slack'te proje güncelleme bildirimleri alın",
+        "failed_to_load_channels": "Slack'ten kanallar yüklenemedi",
+        "project_dropdown": {
+          "placeholder": "Bir proje seçin",
+          "label": "Plane Projesi",
+          "no_projects": "Kullanılabilir proje yok"
+        },
+        "channel_dropdown": {
+          "label": "Slack Kanalı",
+          "placeholder": "Bir kanal seçin",
+          "no_channels": "Kullanılabilir kanal yok"
+        },
+        "all_projects_connected": "Tüm projeler zaten Slack kanallarına bağlı.",
+        "all_channels_connected": "Tüm Slack kanalları zaten projelere bağlı.",
+        "project_connection_success": "Proje bağlantısı başarıyla oluşturuldu",
+        "project_connection_updated": "Proje bağlantısı başarıyla güncellendi",
+        "project_connection_deleted": "Proje bağlantısı başarıyla silindi",
+        "failed_delete_project_connection": "Proje bağlantısı silinemedi",
+        "failed_create_project_connection": "Proje bağlantısı oluşturulamadı",
+        "failed_upserting_project_connection": "Proje bağlantısı güncellenemedi",
+        "failed_loading_project_connections": "Proje bağlantılarınızı yükleyemedik. Bu, bir ağ sorunu veya entegrasyonla ilgili bir sorundan kaynaklanıyor olabilir."
+      }
+    }
   },
 
   "file_upload": {

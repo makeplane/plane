@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
 import {
+  E_SLACK_ENTITY_TYPE,
   isUserMessage,
   SlackAuthState,
   SlackUserAuthState,
@@ -10,7 +11,7 @@ import {
 import { ExIssue, PlaneWebhookData, PlaneWebhookPayloadBase } from "@plane/sdk";
 import { env } from "@/env";
 import { responseHandler } from "@/helpers/response-handler";
-import { Controller, EnsureEnabled, Get, Post, useValidateUserAuthentication } from "@/lib";
+import { Controller, Delete, EnsureEnabled, Get, Post, Put, useValidateUserAuthentication } from "@/lib";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { integrationTaskManager } from "@/worker";
@@ -59,6 +60,91 @@ export default class SlackController {
       res.send(response);
     } catch (error) {
       responseHandler(res, 500, error);
+    }
+  }
+
+  /*
+    Endpoint to get the projects - channel mapping from the workspace connection
+  */
+  @Get("/updates/projects/:workspaceId")
+  @useValidateUserAuthentication()
+  async getProjectUpdates(req: Request, res: Response) {
+    try {
+      const { workspaceId } = req.params;
+
+      // Get the workspace connection
+      const workspaceConnections = await apiClient.workspaceConnection.listWorkspaceConnections({
+        connection_type: E_INTEGRATION_KEYS.SLACK,
+        workspace_id: workspaceId,
+      });
+
+      if (!workspaceConnections || workspaceConnections.length === 0) {
+        return res.status(400).send({
+          message: "Bad Request, expected workspace connection to be present.",
+        });
+      }
+
+      const workspaceConnection = workspaceConnections[0];
+
+      // Get the projects - channel mapping from the workspace connection
+      const projects = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+        workspace_id: workspaceId,
+        workspace_connection_id: workspaceConnection.id,
+        entity_type: E_SLACK_ENTITY_TYPE.SLACK_PROJECT_UPDATES,
+      });
+
+      return res.json(projects);
+    } catch (error) {
+      return responseHandler(res, 500, error);
+    }
+  }
+
+  @Post("/updates/projects/:workspaceId")
+  @useValidateUserAuthentication()
+  async createProjectUpdates(req: Request, res: Response) {
+    try {
+      const { workspaceId } = req.params;
+
+      // Get the workspace connection
+      const workspaceConnections = await apiClient.workspaceConnection.listWorkspaceConnections({
+        connection_type: E_INTEGRATION_KEYS.SLACK,
+        workspace_id: workspaceId,
+      });
+
+      if (!workspaceConnections || workspaceConnections.length === 0) {
+        return res.status(400).send({
+          message: "Bad Request, expected workspace connection to be present.",
+        });
+      }
+
+      const connection = await apiClient.workspaceEntityConnection.createWorkspaceEntityConnection(req.body);
+      return res.json(connection);
+    } catch (error) {
+      return responseHandler(res, 500, error);
+    }
+  }
+
+  @Put("/updates/projects/:id")
+  @useValidateUserAuthentication()
+  async updateProjectUpdates(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const connection = await apiClient.workspaceEntityConnection.updateWorkspaceEntityConnection(id, req.body);
+      return res.json(connection);
+    } catch (error) {
+      return responseHandler(res, 500, error);
+    }
+  }
+
+  @Delete("/updates/projects/:id")
+  @useValidateUserAuthentication()
+  async deleteProjectUpdates(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      await apiClient.workspaceEntityConnection.deleteWorkspaceEntityConnection(id);
+      return res.json({ message: "Project connection deleted successfully" });
+    } catch (error) {
+      return responseHandler(res, 500, error);
     }
   }
 
@@ -320,6 +406,42 @@ export default class SlackController {
     }
   }
 
+  @Get("/channels/:teamId")
+  @useValidateUserAuthentication()
+  async getChannels(req: Request, res: Response) {
+    const { teamId } = req.params;
+    const { onlyChannels } = req.query;
+
+    if (!teamId) {
+      return res.status(400).send({
+        message: "Bad Request, expected teamId to be present.",
+      });
+    }
+
+    const details = await getConnectionDetails(teamId);
+    if (!details) {
+      return res.status(400).send({
+        message: "Bad Request, expected connection details to be present.",
+      });
+    }
+
+    const { slackService } = details;
+
+    const channels = await slackService.getChannels();
+
+    if (!channels.ok) {
+      return res.status(500).send({
+        message: "Failed to fetch channels from slack",
+      });
+    }
+
+    if (onlyChannels === "true") {
+      return res.json(channels.channels.filter((channel) => channel.is_channel));
+    }
+
+    return res.json(channels.channels);
+  }
+
   @Post("/action")
   async ackSlackAction(req: Request, res: Response) {
     try {
@@ -441,7 +563,10 @@ export default class SlackController {
         // If the action is link_work_item, parse the view to be of type
         // LinkIssueModalView and pass it to the slack worker
         const details = await getConnectionDetails(payload.team.id);
-        if (!details) { logger.info(`[SLACK] No connection details found for team ${payload.team.id}`); return }
+        if (!details) {
+          logger.info(`[SLACK] No connection details found for team ${payload.team.id}`);
+          return;
+        }
 
         const { workspaceConnection, planeClient } = details;
         const workItems = await planeClient.issue.searchIssues(workspaceConnection.workspace_slug, text);
@@ -451,7 +576,7 @@ export default class SlackController {
             return {
               id: `${workItem.workspace__slug}:${workItem.project_id}:${workItem.id}`,
               name: `[${workItem.project__identifier}-${workItem.sequence_id}] ${workItem.name}`,
-            }
+            };
           })
           .sort((a, b) => a.name.localeCompare(b.name));
 
@@ -487,7 +612,7 @@ export default class SlackController {
         );
       }
 
-      if (payload.event === "issue" && payload.activity.field && !payload.activity.field.includes("_id")) {
+      if (payload.event === "issue" ) {
         const payload = req.body as PlaneWebhookPayloadBase<ExIssue>;
 
         const id = payload.data.id;
@@ -495,37 +620,79 @@ export default class SlackController {
         const project = payload.data.project;
         const issue = payload.data.issue;
 
-        const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
-          workspace_id: workspace,
-          project_id: project,
-          issue_id: id,
-          entity_type: E_INTEGRATION_KEYS.SLACK,
-        });
+        if (payload.action === "created") {
+          // Get the project entity connection
+          const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+            workspace_id: workspace,
+            project_id: project,
+            entity_type: E_SLACK_ENTITY_TYPE.SLACK_PROJECT_UPDATES,
+          });
 
-        if (!entityConnection) {
-          return res.sendStatus(200);
+          if (!entityConnection) {
+            return res.sendStatus(200);
+          }
+
+          logger.info("Entity connection found for project update webhook", {
+            project_id: project,
+            channel_id: entityConnection.entity_id,
+          });
+
+          // Register store task for stacking the issue
+          await integrationTaskManager.registerStoreTask(
+            {
+              route: "plane-slack-webhook",
+              jobId: payload.event,
+              type: "project_update",
+            },
+            {
+              id,
+              event: "project_update",
+              workspace,
+              project,
+              issue,
+            },
+            Number(env.DEDUP_INTERVAL)
+          );
+        } else if (payload.activity.field && !payload.activity.field.includes("_id")) {
+          const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+            workspace_id: workspace,
+            project_id: project,
+            issue_id: id,
+            entity_type: E_INTEGRATION_KEYS.SLACK,
+          });
+
+          if (!entityConnection) {
+            return res.sendStatus(200);
+          }
+
+          logger.info(
+            `[SLACK] Entity connection found for issue ${id} in workspace ${workspace} and project ${project}`
+          );
+          // Register activity key for the particular issue
+          await this.collectActivityForStacking(payload);
+
+          // Register store task for stacking the issue
+          await integrationTaskManager.registerStoreTask(
+            {
+              route: "plane-slack-webhook",
+              jobId: payload.event,
+              type: "issue",
+            },
+            {
+              id,
+              event: payload.event,
+              workspace,
+              project,
+              issue,
+            },
+            Number(env.DEDUP_INTERVAL)
+          );
+        } else {
+          logger.info("No operation performed for issue", {
+            action: payload.action,
+            field: payload.activity.field,
+          });
         }
-
-        logger.info(`[SLACK] Entity connection found for issue ${id} in workspace ${workspace} and project ${project}`);
-        // Register activity key for the particular issue
-        await this.collectActivityForStacking(payload);
-
-        // Register store task for stacking the issue
-        await integrationTaskManager.registerStoreTask(
-          {
-            route: "plane-slack-webhook",
-            jobId: payload.event,
-            type: "issue",
-          },
-          {
-            id,
-            event: payload.event,
-            workspace,
-            project,
-            issue,
-          },
-          Number(env.DEDUP_INTERVAL)
-        );
       }
       return res.sendStatus(200);
     } catch (error) {
@@ -538,19 +705,18 @@ export default class SlackController {
    * @param payload - The payload of the issue
    */
   async collectActivityForStacking(payload: PlaneWebhookPayloadBase<ExIssue>) {
-    const store = Store.getInstance()
+    const store = Store.getInstance();
 
     // Create a key for the activity field
     const key = `slack:issue:${payload.data.id}`;
-    const ttl = 60 // 1 minute
+    const ttl = 60; // 1 minute
 
     const activity = {
       ...payload.activity,
       timestamp: payload.data.updated_at ?? payload.data.created_at ?? new Date().toISOString(),
-    }
+    };
 
     // Set the activity field, as we gave false, it's gonna update the field
     await store.setList(key, JSON.stringify(activity), ttl, false);
   }
-
 }

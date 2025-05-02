@@ -425,7 +425,7 @@
         "app_available": "You have made this app available to use with a Plane workspace",
         "app_available_description": "Connect a Plane workspace to start using it",
         "client_id_and_secret": "Client ID and Secret",
-        "client_id_and_secret_description": "Copy and save this secret key in Pages. You can’t see this key again after you hit Close.",
+        "client_id_and_secret_description": "Copy and save this secret key in Pages. You can't see this key again after you hit Close.",
         "client_id_and_secret_download": "You can download a CSV with the key from here.",
         "application_id": "Application ID",
         "client_id": "Client ID",
@@ -476,10 +476,10 @@
         "app_consent_title": "{app} is requesting access to your Plane workspace and profile.",
         "choose_workspace_to_connect_app_with": "Choose a workspace to connect the app with",
         "app_consent_workspace_permissions_title": "{app} would like to",
-        "app_consent_user_permissions_title": "{app} can also request a user’s permission to the following resources. These permissions will be requested and authorized of and by a user only.",
+        "app_consent_user_permissions_title": "{app} can also request a user's permission to the following resources. These permissions will be requested and authorized of and by a user only.",
         "app_consent_accept_title": "By accepting, you",
         "app_consent_accept_1": "Grant the app access to your Plane data wherever you can use the app in or outside Plane",
-        "app_consent_accept_2": "Agree to {app}’s Privacy Policy and Terms Of Use",
+        "app_consent_accept_2": "Agree to {app}'s Privacy Policy and Terms Of Use",
         "accepting": "Accepting...",
         "accept": "Accept"
       }
@@ -907,14 +907,44 @@
     "link_personal_account": "Link your personal {providerName} account to Plane.",
     "connected_slack_workspaces": "Connected Slack workspaces",
     "connected_on": "Connected on {date}",
-    "disconnect_workspace": "Disconnect {name} workspace"
+    "disconnect_workspace": "Disconnect {name} workspace",
+    "project_updates": {
+      "title": "Project Notifications",
+      "description": "Configure slack channels for project notifications",
+      "add_new_project_update": "Add new project notifications",
+      "project_updates_empty_state": "Projects connected with Slack Channels will appear here.",
+      "project_updates_form": {
+        "title": "Configure Slack Channel",
+        "description": "Receive project notifications in selected Slack channel when work item is created",
+        "failed_to_load_channels": "Failed to load channels from Slack",
+        "project_dropdown": {
+          "placeholder": "Select a project",
+          "label": "Plane Project",
+          "no_projects": "No projects available"
+        },
+        "channel_dropdown": {
+          "label": "Slack Channel",
+          "placeholder": "Select a channel",
+          "no_channels": "No channels available"
+        },
+        "all_projects_connected": "All projects are already connected to Slack channels.",
+        "all_channels_connected": "All Slack channels are already connected to projects.",
+        "project_connection_success": "Project connection created successfully",
+        "project_connection_updated": "Project connection updated successfully",
+        "project_connection_deleted": "Project connection deleted successfully",
+        "failed_delete_project_connection": "Failed to delete project connection",
+        "failed_create_project_connection": "Failed to create project connection",
+        "failed_upserting_project_connection": "Failed to upsert project connection",
+        "failed_loading_project_connections": "We couldn't load your project connections. This could be due to a network issue or a problem with the integration."
+      }
+    }
   },
 
   "file_upload": {
     "upload_text": "Click here to upload file",
     "drag_drop_text": "Drag and Drop",
     "processing": "Processing",
-    "invalid": "Invalid file type",
+    "invalid_file_type": "Invalid file type",
     "missing_fields": "Missing fields",
     "success": "{fileName} Uploaded!"
   },
@@ -1359,7 +1389,7 @@
     "workflow_states": {
       "work_item_creation": "Allow new work items",
       "work_item_creation_disable_tooltip": "Work item creation is disabled for this state",
-      "default_state": "Default state lets all members create new work items. This can’t be changed",
+      "default_state": "Default state lets all members create new work items. This can't be changed",
       "state_change_count": "{count, plural, one {1 permitted state change} other {{count} permitted state changes}}",
       "movers_count": "{count, plural, one {1 listed reviewer} other {{count} listed reviewers}}",
       "state_changes": {
@@ -1376,7 +1406,7 @@
       }
     },
     "workflow_disabled": {
-      "title": "You can’t move this work item here."
+      "title": "You can't move this work item here."
     },
     "workflow_enabled": {
       "label": "State change"
@@ -1398,11 +1428,11 @@
     "confirmation_modals": {
       "reset_workflow": {
         "title": "Are you sure you want to reset this workflow?",
-        "description": "If you reset this workflow, all your state-change rules will be deleted and you will have to create them again to run them in this project."
+        "description": "If you reset this workflow, all your state-change rules will be deleted and you will have to create them again to run them for this project."
       },
       "delete_state_change": {
         "title": "Are you sure you want to delete this state-change rule?",
-        "description": "Once deleted, you can’t undo this change and you will have to set the rule again if you want it running for this project."
+        "description": "Once deleted, you can't undo this change and you will have to set the rule again if you want it running for this project."
       }
     },
     "toasts": {
@@ -1958,7 +1988,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Templates",
-        "description": "With project, work-item, and page templates in Plane, you don’t have to create a project from scratch or set work item props manually.",
+        "description": "With project, work-item, and page templates in Plane, you don't have to create a project from scratch or set work item props manually.",
         "sub_description": "Get 80% of your admin time back when you use Templates."
       },
       "no_templates": {
@@ -1975,7 +2005,7 @@
           "message": "{templateName}, the {templateType} template, is now available for your workspace."
         },
         "error": {
-          "title": "We couldn’t create that template this time.",
+          "title": "We couldn't create that template this time.",
           "message": "Try saving your details again or copy them over to a new template, preferably in another tab."
         }
       },
@@ -1985,8 +2015,8 @@
           "message": "{templateName}, the {templateType} template, was changed."
         },
         "error": {
-          "title": "We couldn’t save changes to this template.",
-          "message": "Try saving your details again or come back to this template later. If there’s trouble still, reach out to us."
+          "title": "We couldn't save changes to this template.",
+          "message": "Try saving your details again or come back to this template later. If there's trouble still, reach out to us."
         }
       },
       "delete": {
@@ -1995,8 +2025,8 @@
           "message": "{templateName}, the {templateType} template, has now been deleted from your workspace."
         },
         "error": {
-          "title": "We couldn’t delete that template this.",
-          "message": "Try deleting it again or come back to it later. If you can’t delete it then, reach out to us."
+          "title": "We couldn't delete that template this.",
+          "message": "Try deleting it again or come back to it later. If you can't delete it then, reach out to us."
         }
       }
     },

@@ -829,7 +829,37 @@
     "link_personal_account": "Vincule sua conta pessoal do {providerName} ao Plane.",
     "connected_slack_workspaces": "Workspaces do Slack conectados",
     "connected_on": "Conectado em {date}",
-    "disconnect_workspace": "Desconectar workspace {name}"
+    "disconnect_workspace": "Desconectar workspace {name}",
+    "project_updates": {
+      "title": "Atualizações de Projeto",
+      "description": "Configure notificações de atualizações de projetos para seus projetos",
+      "add_new_project_update": "Adicionar nova notificação de atualizações de projeto",
+      "project_updates_empty_state": "Projetos conectados com Canais do Slack aparecerão aqui.",
+      "project_updates_form": {
+        "title": "Configurar Atualizações de Projeto",
+        "description": "Receba notificações de atualizações de projeto no Slack quando itens de trabalho são criados",
+        "failed_to_load_channels": "Falha ao carregar canais do Slack",
+        "project_dropdown": {
+          "placeholder": "Selecione um projeto",
+          "label": "Projeto do Plane",
+          "no_projects": "Nenhum projeto disponível"
+        },
+        "channel_dropdown": {
+          "label": "Canal do Slack",
+          "placeholder": "Selecione um canal",
+          "no_channels": "Nenhum canal disponível"
+        },
+        "all_projects_connected": "Todos os projetos já estão conectados a canais do Slack.",
+        "all_channels_connected": "Todos os canais do Slack já estão conectados a projetos.",
+        "project_connection_success": "Conexão de projeto criada com sucesso",
+        "project_connection_updated": "Conexão de projeto atualizada com sucesso",
+        "project_connection_deleted": "Conexão de projeto excluída com sucesso",
+        "failed_delete_project_connection": "Falha ao excluir conexão de projeto",
+        "failed_create_project_connection": "Falha ao criar conexão de projeto",
+        "failed_upserting_project_connection": "Falha ao atualizar conexão de projeto",
+        "failed_loading_project_connections": "Não foi possível carregar suas conexões de projeto. Isso pode ser devido a um problema de rede ou um problema com a integração."
+      }
+    }
   },
 
   "file_upload": {

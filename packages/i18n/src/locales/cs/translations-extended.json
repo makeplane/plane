@@ -900,7 +900,37 @@
     "link_personal_account": "Propojte svůj osobní účet {providerName} s Plane.",
     "connected_slack_workspaces": "Propojené Slack workspaces",
     "connected_on": "Propojeno dne {date}",
-    "disconnect_workspace": "Odpojit {name} workspace"
+    "disconnect_workspace": "Odpojit {name} workspace",
+    "project_updates": {
+      "title": "Aktualizace Projektu",
+      "description": "Nakonfigurujte oznámení o aktualizacích projektů pro vaše projekty",
+      "add_new_project_update": "Přidat nové oznámení o aktualizacích projektu",
+      "project_updates_empty_state": "Projekty propojené s kanály Slack se zobrazí zde.",
+      "project_updates_form": {
+        "title": "Konfigurovat Aktualizace Projektu",
+        "description": "Přijímejte oznámení o aktualizacích projektu ve Slack, když jsou vytvořeny pracovní položky",
+        "failed_to_load_channels": "Nepodařilo se načíst kanály ze Slack",
+        "project_dropdown": {
+          "placeholder": "Vyberte projekt",
+          "label": "Plane Projekt",
+          "no_projects": "Žádné dostupné projekty"
+        },
+        "channel_dropdown": {
+          "label": "Slack Kanál",
+          "placeholder": "Vyberte kanál",
+          "no_channels": "Žádné dostupné kanály"
+        },
+        "all_projects_connected": "Všechny projekty jsou již propojeny s kanály Slack.",
+        "all_channels_connected": "Všechny kanály Slack jsou již propojeny s projekty.",
+        "project_connection_success": "Propojení projektu úspěšně vytvořeno",
+        "project_connection_updated": "Propojení projektu úspěšně aktualizováno",
+        "project_connection_deleted": "Propojení projektu úspěšně odstraněno",
+        "failed_delete_project_connection": "Nepodařilo se odstranit propojení projektu",
+        "failed_create_project_connection": "Nepodařilo se vytvořit propojení projektu",
+        "failed_upserting_project_connection": "Nepodařilo se aktualizovat propojení projektu",
+        "failed_loading_project_connections": "Nemohli jsme načíst vaše propojení projektu. Může to být způsobeno problémem se sítí nebo problémem s integrací."
+      }
+    }
   },
 
   "file_upload": {

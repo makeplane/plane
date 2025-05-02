@@ -830,7 +830,37 @@
     "link_personal_account": "Hubungkan akun {providerName} personal Anda ke Plane.",
     "connected_slack_workspaces": "Workspace Slack terhubung",
     "connected_on": "Terhubung pada {date}",
-    "disconnect_workspace": "Putuskan workspace {name}"
+    "disconnect_workspace": "Putuskan workspace {name}",
+    "project_updates": {
+      "title": "Pembaruan Proyek",
+      "description": "Konfigurasikan notifikasi pembaruan proyek untuk proyek Anda",
+      "add_new_project_update": "Tambahkan notifikasi pembaruan proyek baru",
+      "project_updates_empty_state": "Proyek yang terhubung dengan Saluran Slack akan muncul di sini.",
+      "project_updates_form": {
+        "title": "Konfigurasikan Pembaruan Proyek",
+        "description": "Terima notifikasi pembaruan proyek di Slack saat item kerja dibuat",
+        "failed_to_load_channels": "Gagal memuat saluran dari Slack",
+        "project_dropdown": {
+          "placeholder": "Pilih proyek",
+          "label": "Proyek Plane",
+          "no_projects": "Tidak ada proyek tersedia"
+        },
+        "channel_dropdown": {
+          "label": "Saluran Slack",
+          "placeholder": "Pilih saluran",
+          "no_channels": "Tidak ada saluran tersedia"
+        },
+        "all_projects_connected": "Semua proyek sudah terhubung ke saluran Slack.",
+        "all_channels_connected": "Semua saluran Slack sudah terhubung ke proyek.",
+        "project_connection_success": "Koneksi proyek berhasil dibuat",
+        "project_connection_updated": "Koneksi proyek berhasil diperbarui",
+        "project_connection_deleted": "Koneksi proyek berhasil dihapus",
+        "failed_delete_project_connection": "Gagal menghapus koneksi proyek",
+        "failed_create_project_connection": "Gagal membuat koneksi proyek",
+        "failed_upserting_project_connection": "Gagal memperbarui koneksi proyek",
+        "failed_loading_project_connections": "Kami tidak dapat memuat koneksi proyek Anda. Ini mungkin karena masalah jaringan atau masalah dengan integrasi."
+      }
+    }
   },
 
   "file_upload": {

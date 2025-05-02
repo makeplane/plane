@@ -6,9 +6,10 @@ import {
   TAppConnection,
   TSlackConfig,
   TSlackConnectionData,
+  TSlackProjectUpdatesConfig,
   TUserConnectionStatus,
 } from "@plane/etl/slack";
-import { TWorkspaceConnection } from "@plane/types";
+import { TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
 
 export class SlackIntegrationService {
   protected baseURL: string;
@@ -100,6 +101,84 @@ export class SlackIntegrationService {
   async disconnectUser(workspaceId: string, userId: string): Promise<void> {
     return this.axiosInstance
       .post(`/api/slack/user/disconnect`, { workspaceId, userId })
+      .then((res) => res.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * @description get the projects connected to channel
+   * @param { string } workspaceId
+   * @returns { Promise<TWorkspaceEntityConnection<TSlackProjectUpdatesConfig>[]> }
+   */
+  async getProjectConnections(workspaceId: string): Promise<TWorkspaceEntityConnection<TSlackProjectUpdatesConfig>[]> {
+    return this.axiosInstance
+      .get(`/api/slack/updates/projects/${workspaceId}`)
+      .then((res) => res.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * @description create the project connection
+   * @param { string } workspaceId
+   * @param { TWorkspaceEntityConnection<TSlackProjectUpdatesConfig> } projectConnection
+   * @returns { Promise<void> }
+   */
+  async createProjectConnection(
+    workspaceId: string,
+    projectConnection: TWorkspaceEntityConnection<TSlackProjectUpdatesConfig>
+  ): Promise<void> {
+    return this.axiosInstance
+      .post(`/api/slack/updates/projects/${workspaceId}`, projectConnection)
+      .then((res) => res.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * @description update the project connection
+   * @param { string } id
+   * @param { TWorkspaceEntityConnection<TSlackProjectUpdatesConfig> } projectConnection
+   * @returns { Promise<void> }
+   */
+  async updateProjectConnection(
+    id: string,
+    projectConnection: TWorkspaceEntityConnection<TSlackProjectUpdatesConfig>
+  ): Promise<void> {
+    return this.axiosInstance
+      .put(`/api/slack/updates/projects/${id}`, projectConnection)
+      .then((res) => res.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * @description delete the project connection
+   * @param { string } id
+   * @returns { Promise<void> }
+   */
+  async deleteProjectConnection(id: string): Promise<void> {
+    return this.axiosInstance
+      .delete(`/api/slack/updates/projects/${id}`)
+      .then((res) => res.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * @description get the channels
+   * @param { string } workspaceId
+   * @returns { Promise<TWorkspaceEntityConnection<TSlackProjectUpdatesConfig>[]> }
+   */
+  async getChannels(teamId: string, params?: { onlyChannels?: boolean }) {
+    return this.axiosInstance
+      .get(`/api/slack/channels/${teamId}`, { params })
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;

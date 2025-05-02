@@ -424,6 +424,63 @@ export interface SlackLinkSharedEvent {
   links: { url: string; domain: string }[];
 }
 
+// Common types used within conversations
+export interface SlackTopicPurpose {
+  value: string;
+  creator: string;
+  last_set: number;
+}
+
+// Base interface for all conversation types
+export interface BaseConversation {
+  id: string;
+  created: number;
+  is_channel: boolean;
+  is_group: boolean;
+  is_im: boolean;
+  is_archived?: boolean;
+  is_general?: boolean;
+  is_org_shared: boolean;
+  priority: number;
+}
+
+// Interface for channel/group conversations
+export interface ChannelGroupConversation extends BaseConversation {
+  name: string;
+  creator: string;
+  unlinked?: number;
+  name_normalized: string;
+  is_shared: boolean;
+  is_ext_shared: boolean;
+  pending_shared: any[];
+  is_pending_ext_shared: boolean;
+  is_member: boolean;
+  is_private: boolean;
+  is_mpim?: boolean;
+  is_open?: boolean;
+  updated?: number;
+  topic: SlackTopicPurpose;
+  purpose: SlackTopicPurpose;
+}
+
+// Interface for direct message conversations
+export interface DirectMessageConversation extends BaseConversation {
+  user: string;
+  is_user_deleted: boolean;
+}
+
+// Union type for all conversation types
+export type SlackConversation = ChannelGroupConversation | DirectMessageConversation;
+
+// The complete response type
+export interface SlackConversationListResponse {
+  ok: boolean;
+  channels: SlackConversation[];
+  response_metadata?: {
+    next_cursor?: string;
+  };
+}
+
 export interface Authorization {
   enterprise_id: string | null;
   team_id: string;

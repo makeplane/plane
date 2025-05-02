@@ -473,7 +473,7 @@
         "app_consent_accept_1": "Accordez à l'application l'accès à vos données Plane partout où vous pouvez utiliser l'application dans ou en dehors de Plane",
         "app_consent_accept_2": "Acceptez la politique de confidentialité et les conditions d'utilisation de {app}",
         "accepting": "Acceptation en cours...",
-      "accept": "Accepter"
+        "accept": "Accepter"
       }
     }
   },
@@ -899,7 +899,37 @@
     "link_personal_account": "Liez votre compte personnel {providerName} à Plane.",
     "connected_slack_workspaces": "Espaces de travail Slack connectés",
     "connected_on": "Connecté le {date}",
-    "disconnect_workspace": "Déconnecter l'espace de travail {name}"
+    "disconnect_workspace": "Déconnecter l'espace de travail {name}",
+    "project_updates": {
+      "title": "Mises à jour de Projet",
+      "description": "Configurez les notifications de mises à jour de projets pour vos projets",
+      "add_new_project_update": "Ajouter une nouvelle notification de mises à jour de projet",
+      "project_updates_empty_state": "Les projets connectés avec des Canaux Slack apparaîtront ici.",
+      "project_updates_form": {
+        "title": "Configurer les Mises à jour de Projet",
+        "description": "Recevez des notifications de mises à jour de projet dans Slack lorsque des éléments de travail sont créés",
+        "failed_to_load_channels": "Impossible de charger les canaux depuis Slack",
+        "project_dropdown": {
+          "placeholder": "Sélectionnez un projet",
+          "label": "Projet Plane",
+          "no_projects": "Aucun projet disponible"
+        },
+        "channel_dropdown": {
+          "label": "Canal Slack",
+          "placeholder": "Sélectionnez un canal",
+          "no_channels": "Aucun canal disponible"
+        },
+        "all_projects_connected": "Tous les projets sont déjà connectés à des canaux Slack.",
+        "all_channels_connected": "Tous les canaux Slack sont déjà connectés à des projets.",
+        "project_connection_success": "Connexion de projet créée avec succès",
+        "project_connection_updated": "Connexion de projet mise à jour avec succès",
+        "project_connection_deleted": "Connexion de projet supprimée avec succès",
+        "failed_delete_project_connection": "Échec de la suppression de la connexion de projet",
+        "failed_create_project_connection": "Échec de la création de la connexion de projet",
+        "failed_upserting_project_connection": "Échec de la mise à jour de la connexion de projet",
+        "failed_loading_project_connections": "Nous n'avons pas pu charger vos connexions de projet. Cela pourrait être dû à un problème de réseau ou un problème avec l'intégration."
+      }
+    }
   },
 
   "file_upload": {

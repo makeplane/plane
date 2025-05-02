@@ -900,7 +900,37 @@
     "link_personal_account": "개인 {providerName} 계정을 플레인에 연결하세요.",
     "connected_slack_workspaces": "연결된 슬랙 워크스페이스",
     "connected_on": "{date}에 연결됨",
-    "disconnect_workspace": "{name} 워크스페이스 연결 해제"
+    "disconnect_workspace": "{name} 워크스페이스 연결 해제",
+    "project_updates": {
+      "title": "프로젝트 업데이트",
+      "description": "프로젝트의 업데이트 알림을 구성하세요",
+      "add_new_project_update": "새 프로젝트 업데이트 알림 추가",
+      "project_updates_empty_state": "슬랙 채널과 연결된 프로젝트가 여기에 표시됩니다.",
+      "project_updates_form": {
+        "title": "프로젝트 업데이트 구성",
+        "description": "작업 항목이 생성될 때 슬랙에서 프로젝트 업데이트 알림 받기",
+        "failed_to_load_channels": "슬랙에서 채널을 로드하지 못했습니다",
+        "project_dropdown": {
+          "placeholder": "프로젝트 선택",
+          "label": "플레인 프로젝트",
+          "no_projects": "사용 가능한 프로젝트가 없습니다"
+        },
+        "channel_dropdown": {
+          "label": "슬랙 채널",
+          "placeholder": "채널 선택",
+          "no_channels": "사용 가능한 채널이 없습니다"
+        },
+        "all_projects_connected": "모든 프로젝트가 이미 슬랙 채널에 연결되어 있습니다.",
+        "all_channels_connected": "모든 슬랙 채널이 이미 프로젝트에 연결되어 있습니다.",
+        "project_connection_success": "프로젝트 연결이 성공적으로 생성되었습니다",
+        "project_connection_updated": "프로젝트 연결이 성공적으로 업데이트되었습니다",
+        "project_connection_deleted": "프로젝트 연결이 성공적으로 삭제되었습니다",
+        "failed_delete_project_connection": "프로젝트 연결 삭제에 실패했습니다",
+        "failed_create_project_connection": "프로젝트 연결 생성에 실패했습니다",
+        "failed_upserting_project_connection": "프로젝트 연결 업데이트에 실패했습니다",
+        "failed_loading_project_connections": "프로젝트 연결을 로드할 수 없습니다. 네트워크 문제나 통합 문제 때문일 수 있습니다."
+      }
+    }
   },
 
   "file_upload": {

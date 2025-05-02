@@ -900,7 +900,37 @@
     "link_personal_account": "Verknüpfen Sie Ihr persönliches {providerName}-Konto mit Plane.",
     "connected_slack_workspaces": "Verbundene Slack-Workspaces",
     "connected_on": "Verbunden am {date}",
-    "disconnect_workspace": "{name}-Workspace trennen"
+    "disconnect_workspace": "{name}-Workspace trennen",
+    "project_updates": {
+      "title": "Projekt-Updates",
+      "description": "Konfigurieren Sie Projekt-Update-Benachrichtigungen für Ihre Projekte",
+      "add_new_project_update": "Neue Projekt-Update-Benachrichtigung hinzufügen",
+      "project_updates_empty_state": "Mit Slack-Kanälen verbundene Projekte werden hier angezeigt.",
+      "project_updates_form": {
+        "title": "Projekt-Updates konfigurieren",
+        "description": "Erhalten Sie Projekt-Update-Benachrichtigungen in Slack, wenn Arbeitselemente erstellt werden",
+        "failed_to_load_channels": "Fehler beim Laden von Kanälen aus Slack",
+        "project_dropdown": {
+          "placeholder": "Wählen Sie ein Projekt",
+          "label": "Plane-Projekt",
+          "no_projects": "Keine Projekte verfügbar"
+        },
+        "channel_dropdown": {
+          "label": "Slack-Kanal",
+          "placeholder": "Wählen Sie einen Kanal",
+          "no_channels": "Keine Kanäle verfügbar"
+        },
+        "all_projects_connected": "Alle Projekte sind bereits mit Slack-Kanälen verbunden.",
+        "all_channels_connected": "Alle Slack-Kanäle sind bereits mit Projekten verbunden.",
+        "project_connection_success": "Projektverbindung erfolgreich erstellt",
+        "project_connection_updated": "Projektverbindung erfolgreich aktualisiert",
+        "project_connection_deleted": "Projektverbindung erfolgreich gelöscht",
+        "failed_delete_project_connection": "Fehler beim Löschen der Projektverbindung",
+        "failed_create_project_connection": "Fehler beim Erstellen der Projektverbindung",
+        "failed_upserting_project_connection": "Fehler beim Aktualisieren der Projektverbindung",
+        "failed_loading_project_connections": "Wir konnten Ihre Projektverbindungen nicht laden. Dies könnte auf ein Netzwerkproblem oder ein Problem mit der Integration zurückzuführen sein."
+      }
+    }
   },
 
   "file_upload": {

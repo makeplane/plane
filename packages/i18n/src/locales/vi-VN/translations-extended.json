@@ -830,7 +830,37 @@
     "link_personal_account": "Liên kết tài khoản {providerName} cá nhân của bạn với Plane.",
     "connected_slack_workspaces": "Các workspace Slack đã kết nối",
     "connected_on": "Đã kết nối vào {date}",
-    "disconnect_workspace": "Ngắt kết nối workspace {name}"
+    "disconnect_workspace": "Ngắt kết nối workspace {name}",
+    "project_updates": {
+      "title": "Cập Nhật Dự Án",
+      "description": "Cấu hình thông báo cập nhật dự án cho các dự án của bạn",
+      "add_new_project_update": "Thêm thông báo cập nhật dự án mới",
+      "project_updates_empty_state": "Các dự án kết nối với Kênh Slack sẽ xuất hiện ở đây.",
+      "project_updates_form": {
+        "title": "Cấu Hình Cập Nhật Dự Án",
+        "description": "Nhận thông báo cập nhật dự án trong Slack khi các mục công việc được tạo",
+        "failed_to_load_channels": "Không thể tải kênh từ Slack",
+        "project_dropdown": {
+          "placeholder": "Chọn dự án",
+          "label": "Dự Án Plane",
+          "no_projects": "Không có dự án nào khả dụng"
+        },
+        "channel_dropdown": {
+          "label": "Kênh Slack",
+          "placeholder": "Chọn kênh",
+          "no_channels": "Không có kênh nào khả dụng"
+        },
+        "all_projects_connected": "Tất cả các dự án đã được kết nối với kênh Slack.",
+        "all_channels_connected": "Tất cả các kênh Slack đã được kết nối với dự án.",
+        "project_connection_success": "Kết nối dự án được tạo thành công",
+        "project_connection_updated": "Kết nối dự án được cập nhật thành công",
+        "project_connection_deleted": "Kết nối dự án được xóa thành công",
+        "failed_delete_project_connection": "Không thể xóa kết nối dự án",
+        "failed_create_project_connection": "Không thể tạo kết nối dự án",
+        "failed_upserting_project_connection": "Không thể cập nhật kết nối dự án",
+        "failed_loading_project_connections": "Chúng tôi không thể tải kết nối dự án của bạn. Điều này có thể do sự cố mạng hoặc sự cố với tích hợp."
+      }
+    }
   },
 
   "file_upload": {

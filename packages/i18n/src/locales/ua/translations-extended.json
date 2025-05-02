@@ -900,7 +900,37 @@
     "link_personal_account": "Прив'яжіть ваш персональний аккаунт {providerName} до Плейн.",
     "connected_slack_workspaces": "Підключені воркспейси Slack",
     "connected_on": "Підключено {date}",
-    "disconnect_workspace": "Відключити воркспейс {name}"
+    "disconnect_workspace": "Відключити воркспейс {name}",
+    "project_updates": {
+      "title": "Оновлення Проєкту",
+      "description": "Налаштуйте сповіщення про оновлення проєктів для ваших проєктів",
+      "add_new_project_update": "Додати нове сповіщення про оновлення проєкту",
+      "project_updates_empty_state": "Проєкти, підключені до каналів Slack, з'являться тут.",
+      "project_updates_form": {
+        "title": "Налаштувати Оновлення Проєкту",
+        "description": "Отримуйте сповіщення про оновлення проєкту в Slack, коли створюються робочі елементи",
+        "failed_to_load_channels": "Не вдалося завантажити канали зі Slack",
+        "project_dropdown": {
+          "placeholder": "Виберіть проєкт",
+          "label": "Проєкт Plane",
+          "no_projects": "Немає доступних проєктів"
+        },
+        "channel_dropdown": {
+          "label": "Канал Slack",
+          "placeholder": "Виберіть канал",
+          "no_channels": "Немає доступних каналів"
+        },
+        "all_projects_connected": "Усі проєкти вже підключені до каналів Slack.",
+        "all_channels_connected": "Усі канали Slack вже підключені до проєктів.",
+        "project_connection_success": "З'єднання проєкту успішно створено",
+        "project_connection_updated": "З'єднання проєкту успішно оновлено",
+        "project_connection_deleted": "З'єднання проєкту успішно видалено",
+        "failed_delete_project_connection": "Не вдалося видалити з'єднання проєкту",
+        "failed_create_project_connection": "Не вдалося створити з'єднання проєкту",
+        "failed_upserting_project_connection": "Не вдалося оновити з'єднання проєкту",
+        "failed_loading_project_connections": "Ми не змогли завантажити ваші з'єднання проєкту. Це може бути пов'язано з проблемою мережі або проблемою з інтеграцією."
+      }
+    }
   },
 
   "file_upload": {

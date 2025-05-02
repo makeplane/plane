@@ -899,7 +899,37 @@
     "link_personal_account": "将您的个人 {providerName} 账户链接到 Plane。",
     "connected_slack_workspaces": "已连接的 Slack 工作区",
     "connected_on": "连接于 {date}",
-    "disconnect_workspace": "断开 {name} 工作区连接"
+    "disconnect_workspace": "断开 {name} 工作区连接",
+    "project_updates": {
+      "title": "项目更新",
+      "description": "配置项目的更新通知",
+      "add_new_project_update": "添加新的项目更新通知",
+      "project_updates_empty_state": "与 Slack 频道连接的项目将在此处显示。",
+      "project_updates_form": {
+        "title": "配置项目更新",
+        "description": "在创建工作项时在 Slack 中接收项目更新通知",
+        "failed_to_load_channels": "无法从 Slack 加载频道",
+        "project_dropdown": {
+          "placeholder": "选择项目",
+          "label": "Plane 项目",
+          "no_projects": "没有可用项目"
+        },
+        "channel_dropdown": {
+          "label": "Slack 频道",
+          "placeholder": "选择频道",
+          "no_channels": "没有可用频道"
+        },
+        "all_projects_connected": "所有项目已连接到 Slack 频道。",
+        "all_channels_connected": "所有 Slack 频道已连接到项目。",
+        "project_connection_success": "项目连接创建成功",
+        "project_connection_updated": "项目连接更新成功",
+        "project_connection_deleted": "项目连接删除成功",
+        "failed_delete_project_connection": "删除项目连接失败",
+        "failed_create_project_connection": "创建项目连接失败",
+        "failed_upserting_project_connection": "更新项目连接失败",
+        "failed_loading_project_connections": "无法加载您的项目连接。这可能是由于网络问题或集成问题。"
+      }
+    }
   },
 
   "file_upload": {
@@ -1526,7 +1556,7 @@
       },
       "list": {
         "title": "管理客户的体量、速度和流量，基于客户对你工作的重要性。",
-        "description": "在Plane中使用“客户”功能，您可以从头开始创建新客户，并将其与您的工作相关联。稍后您将能够将它们与其他工具一起导入，包括它们的自定义属性。",
+        "description": "在Plane中使用客户功能，您可以从头开始创建新客户，并将其与您的工作相关联。稍后您将能够将它们与其他工具一起导入，包括它们的自定义属性。",
         "primary_button": "添加第一个客户"
       }
     },

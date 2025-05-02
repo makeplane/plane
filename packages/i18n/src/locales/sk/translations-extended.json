@@ -900,7 +900,37 @@
     "link_personal_account": "Prepojte váš osobný {providerName} účet s Plane.",
     "connected_slack_workspaces": "Pripojené Slack vorkspejsy",
     "connected_on": "Pripojené {date}",
-    "disconnect_workspace": "Odpojiť {name} vorkspejs"
+    "disconnect_workspace": "Odpojiť {name} vorkspejs",
+    "project_updates": {
+      "title": "Aktualizácie Projektu",
+      "description": "Nakonfigurujte notifikácie o aktualizáciách projektov pre vaše projekty",
+      "add_new_project_update": "Pridať novú notifikáciu o aktualizáciách projektu",
+      "project_updates_empty_state": "Projekty pripojené s kanálmi Slack sa zobrazia tu.",
+      "project_updates_form": {
+        "title": "Konfigurovať Aktualizácie Projektu",
+        "description": "Dostávajte notifikácie o aktualizáciách projektu v Slack, keď sa vytvoria pracovné položky",
+        "failed_to_load_channels": "Nepodarilo sa načítať kanály zo Slack",
+        "project_dropdown": {
+          "placeholder": "Vyberte projekt",
+          "label": "Plane Projekt",
+          "no_projects": "Žiadne dostupné projekty"
+        },
+        "channel_dropdown": {
+          "label": "Slack Kanál",
+          "placeholder": "Vyberte kanál",
+          "no_channels": "Žiadne dostupné kanály"
+        },
+        "all_projects_connected": "Všetky projekty sú už pripojené ku kanálom Slack.",
+        "all_channels_connected": "Všetky kanály Slack sú už pripojené k projektom.",
+        "project_connection_success": "Pripojenie projektu úspešne vytvorené",
+        "project_connection_updated": "Pripojenie projektu úspešne aktualizované",
+        "project_connection_deleted": "Pripojenie projektu úspešne odstránené",
+        "failed_delete_project_connection": "Nepodarilo sa odstrániť pripojenie projektu",
+        "failed_create_project_connection": "Nepodarilo sa vytvoriť pripojenie projektu",
+        "failed_upserting_project_connection": "Nepodarilo sa aktualizovať pripojenie projektu",
+        "failed_loading_project_connections": "Nepodarilo sa načítať vaše pripojenia projektu. Môže to byť spôsobené problémom so sieťou alebo problémom s integráciou."
+      }
+    }
   },
 
   "file_upload": {

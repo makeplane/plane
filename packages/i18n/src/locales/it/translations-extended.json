@@ -897,7 +897,37 @@
     "link_personal_account": "Collega il tuo account {providerName} personale a Plane.",
     "connected_slack_workspaces": "Spazi di lavoro Slack connessi",
     "connected_on": "Connesso su {date}",
-    "disconnect_workspace": "Disconnetti {name} workspace"
+    "disconnect_workspace": "Disconnetti {name} workspace",
+    "project_updates": {
+      "title": "Aggiornamenti Progetto",
+      "description": "Configura notifiche di aggiornamenti di progetto per i tuoi progetti",
+      "add_new_project_update": "Aggiungi nuova notifica di aggiornamenti di progetto",
+      "project_updates_empty_state": "I progetti connessi ai canali Slack appariranno qui.",
+      "project_updates_form": {
+        "title": "Configura Aggiornamenti Progetto",
+        "description": "Ricevi notifiche di aggiornamenti di progetto in Slack quando vengono creati elementi di lavoro",
+        "failed_to_load_channels": "Impossibile caricare i canali da Slack",
+        "project_dropdown": {
+          "placeholder": "Seleziona un progetto",
+          "label": "Progetto Plane",
+          "no_projects": "Nessun progetto disponibile"
+        },
+        "channel_dropdown": {
+          "label": "Canale Slack",
+          "placeholder": "Seleziona un canale",
+          "no_channels": "Nessun canale disponibile"
+        },
+        "all_projects_connected": "Tutti i progetti sono già connessi a canali Slack.",
+        "all_channels_connected": "Tutti i canali Slack sono già connessi a progetti.",
+        "project_connection_success": "Connessione progetto creata con successo",
+        "project_connection_updated": "Connessione progetto aggiornata con successo",
+        "project_connection_deleted": "Connessione progetto eliminata con successo",
+        "failed_delete_project_connection": "Impossibile eliminare la connessione progetto",
+        "failed_create_project_connection": "Impossibile creare la connessione progetto",
+        "failed_upserting_project_connection": "Impossibile aggiornare la connessione progetto",
+        "failed_loading_project_connections": "Non è stato possibile caricare le tue connessioni progetto. Questo potrebbe essere dovuto a un problema di rete o un problema con l'integrazione."
+      }
+    }
   },
 
   "file_upload": {

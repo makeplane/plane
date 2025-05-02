@@ -75,13 +75,13 @@ export type SlackUserAuthPayload = {
 };
 
 export function isSlackBotTokenResponse(
-  response: SlackUserTokenResponse | SlackBotTokenResponse,
+  response: SlackUserTokenResponse | SlackBotTokenResponse
 ): response is SlackBotTokenResponse {
   return "bot_user_id" in response;
 }
 
 export function isSlackUserTokenResponse(
-  response: SlackUserTokenResponse | SlackBotTokenResponse,
+  response: SlackUserTokenResponse | SlackBotTokenResponse
 ): response is SlackUserTokenResponse {
 
   if (!response.authed_user) {
@@ -170,4 +170,16 @@ export type TAppConnection = {
 
 export type TUserConnectionStatus = {
   isConnected: boolean;
+};
+
+export const E_SLACK_ENTITY_TYPE = {
+  SLACK_PROJECT_UPDATES: "SLACK_PROJECT_UPDATES",
+};
+
+export enum E_SLACK_PROJECT_UPDATES_EVENTS {
+  NEW_WORK_ITEM_CREATED = "NEW_WORK_ITEM_CREATED",
+}
+
+export type TSlackProjectUpdatesConfig = {
+  events: E_SLACK_PROJECT_UPDATES_EVENTS[];
 };

@@ -894,7 +894,37 @@
     "link_personal_account": "Связать ваш личный аккаунт {providerName} с Plane.",
     "connected_slack_workspaces": "Подключенные рабочие пространства Slack",
     "connected_on": "Подключено {date}",
-    "disconnect_workspace": "Отключить рабочее пространство {name}"
+    "disconnect_workspace": "Отключить рабочее пространство {name}",
+    "project_updates": {
+      "title": "Обновления Проекта",
+      "description": "Настройте уведомления об обновлениях проектов для ваших проектов",
+      "add_new_project_update": "Добавить новое уведомление об обновлениях проекта",
+      "project_updates_empty_state": "Проекты, подключенные к каналам Slack, появятся здесь.",
+      "project_updates_form": {
+        "title": "Настроить Обновления Проекта",
+        "description": "Получайте уведомления об обновлениях проекта в Slack, когда создаются рабочие элементы",
+        "failed_to_load_channels": "Не удалось загрузить каналы из Slack",
+        "project_dropdown": {
+          "placeholder": "Выберите проект",
+          "label": "Проект Plane",
+          "no_projects": "Нет доступных проектов"
+        },
+        "channel_dropdown": {
+          "label": "Канал Slack",
+          "placeholder": "Выберите канал",
+          "no_channels": "Нет доступных каналов"
+        },
+        "all_projects_connected": "Все проекты уже подключены к каналам Slack.",
+        "all_channels_connected": "Все каналы Slack уже подключены к проектам.",
+        "project_connection_success": "Подключение проекта успешно создано",
+        "project_connection_updated": "Подключение проекта успешно обновлено",
+        "project_connection_deleted": "Подключение проекта успешно удалено",
+        "failed_delete_project_connection": "Не удалось удалить подключение проекта",
+        "failed_create_project_connection": "Не удалось создать подключение проекта",
+        "failed_upserting_project_connection": "Не удалось обновить подключение проекта",
+        "failed_loading_project_connections": "Мы не смогли загрузить ваши подключения проектов. Это может быть связано с проблемой сети или проблемой с интеграцией."
+      }
+    }
   },
 
   "file_upload": {

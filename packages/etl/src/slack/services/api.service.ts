@@ -233,6 +233,29 @@ export class SlackService {
     }
   }
 
+  async sendMessageToChannel(
+    channelId: string,
+    message: { text?: string; blocks?: any[] }
+  ): Promise<SlackMessageResponse> {
+    try {
+      // Check if bot is in channel
+      const isBotInChannel = await this.ensureBotInChannel(channelId);
+      if (!isBotInChannel) {
+        throw new Error("Could not add bot to channel");
+      }
+
+      const response = await this.client.post("chat.postMessage", {
+        channel: channelId,
+        text: message.text,
+        blocks: message.blocks,
+      });
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   async updateMessage(channel: string, ts: string, text: string, blocks?: any[]): Promise<SlackMessageResponse> {
     try {
       const response = await this.client.post("chat.update", {
@@ -288,6 +311,42 @@ export class SlackService {
       return res.data;
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  async getChannels() {
+    try {
+      const allChannels = [];
+      let cursor = undefined;
+      const types = "public_channel,private_channel";
+
+      do {
+        // Prepare parameters for pagination
+        const params: any = cursor ? { cursor, types } : { types };
+
+        // Make the API request with cursor if available
+        const response = await this.client.get("conversations.list", { params });
+
+        // Add channels from this page to our result array
+        if (response.data && response.data.channels && Array.isArray(response.data.channels)) {
+          allChannels.push(...response.data.channels);
+        }
+
+        // Get the next cursor if available
+        cursor = response.data?.response_metadata?.next_cursor || null;
+      } while (cursor); // Continue fetching if there's a next page
+
+      // Return the combined results with the same structure
+      return {
+        ok: true,
+        channels: allChannels,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        channels: [],
+        error: error instanceof Error ? error.message : "Failed to fetch Slack channels",
+      };
     }
   }
 }
