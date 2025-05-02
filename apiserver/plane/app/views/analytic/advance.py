@@ -371,7 +371,7 @@ class AdvanceAnalyticsExportEndpoint(BaseAPIView):
         )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
-    def get(self, request, slug):
+    def post(self, request, slug):
         self.initialize_workspace(slug)
         data = (
             Issue.issue_objects.filter(**self.filters["base_filters"])
