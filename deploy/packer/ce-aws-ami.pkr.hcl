@@ -139,7 +139,8 @@ build {
 
       "sudo cp /opt/plane/tars/*.service /opt/plane/",
       "sudo cp /opt/plane/tars/Caddyfile /opt/plane/Caddyfile",
-      "sudo cp /opt/plane/tars/setup-ce.sh /opt/plane/setup.sh",
+      "sudo cp /opt/plane/tars/setup-ce.sh /usr/local/bin/plane-setup-ce.sh",
+      "sudo chmod +x /usr/local/bin/plane-setup-ce.sh",
 
       "sudo rm -rf /opt/plane/extracted",
       # "sudo rm -rf /opt/plane/tars",
@@ -149,6 +150,7 @@ build {
       "sudo chmod -R 755 /opt/plane",
       # Verify installation
       "echo 'Verifying assets copied...'",
+      "ls -la /opt/plane",
       "for dir in admin web space live backend; do ls -la /opt/plane/$dir; done",
       "echo 'Assets copied successfully'"
     ]
@@ -162,27 +164,26 @@ build {
     ]
     inline = [
       "sudo apt-get update",
-      "sudo apt-get upgrade -y",
-      "sudo apt-get install -y software-properties-common cloud-init rsyslog debian-keyring debian-archive-keyring apt-transport-https curl",
-      "sudo add-apt-repository -y ppa:deadsnakes/ppa",
-      "curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg",
-      "curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list",
-      "sudo apt update",
-      "sudo apt install caddy",
-      "sudo apt-get install -y python3.12 python3.12-venv python3.12-dev python3-pip",
-      "sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1",
-      "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash",
-      ". $HOME/.nvm/nvm.sh",
-      "nvm install 20",
-      "corepack enable yarn",
+  #     "sudo apt-get install -y software-properties-common cloud-init rsyslog debian-keyring debian-archive-keyring apt-transport-https curl",
+  #     "sudo add-apt-repository -y ppa:deadsnakes/ppa",
+  #     "curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg",
+  #     "curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list",
+  #     "sudo apt update",
+  #     "sudo apt install caddy",
+  #     "sudo apt-get install -y python3.12 python3.12-venv python3.12-dev python3-pip",
+  #     "sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1",
+  #     "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash",
+  #     ". $HOME/.nvm/nvm.sh",
+  #     "nvm install 20",
+  #     "corepack enable yarn",
       
-      # Verify installations
-      "python3 --version",
-      "node --version",
-      "yarn --version",
-      # Enable and verify system services
-      "sudo systemctl enable rsyslog",
-      "sudo systemctl enable cloud-init",
+  #     # Verify installations
+  #     "python3 --version",
+  #     "node --version",
+  #     "yarn --version",
+  #     # Enable and verify system services
+  #     "sudo systemctl enable rsyslog",
+  #     "sudo systemctl enable cloud-init",
     ]
   }
 

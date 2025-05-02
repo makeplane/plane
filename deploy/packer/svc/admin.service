@@ -8,7 +8,7 @@ User=ubuntu
 Group=ubuntu
 WorkingDirectory=/opt/plane/admin
 EnvironmentFile=/opt/plane/admin/admin.env
-ExecStart=/usr/local/bin/node server.js
+ExecStart=/bin/bash -c 'source /home/ubuntu/.nvm/nvm.sh && nvm use 20 && node server.js'
 Restart=always
 RestartSec=10
 
