@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -48,20 +50,7 @@ class AdvanceAnalyticsEndpoint(BaseAPIView):
 
     def get_date_filters(self, date_filter):
         now = timezone.now()
-        if date_filter == "today":
-            return {
-                "current": {
-                    "gte": now.replace(hour=0, minute=0, second=0, microsecond=0),
-                    "lte": now,
-                },
-                "previous": {
-                    "gte": (now - timedelta(days=1)).replace(
-                        hour=0, minute=0, second=0, microsecond=0
-                    ),
-                    "lte": now - timedelta(days=1),
-                },
-            }
-        elif date_filter == "yesterday":
+        if date_filter == "yesterday":
             return {
                 "current": {
                     "gte": (now - timedelta(days=1)).replace(
@@ -90,6 +79,14 @@ class AdvanceAnalyticsEndpoint(BaseAPIView):
                 "previous": {
                     "gte": now - timedelta(days=60),
                     "lte": now - timedelta(days=30),
+                },
+            }
+        elif date_filter == "last_3_months":
+            return {
+                "current": {"gte": now - timedelta(days=90), "lte": now},
+                "previous": {
+                    "gte": now - timedelta(days=180),
+                    "lte": now - timedelta(days=90),
                 },
             }
         return None
@@ -193,7 +190,7 @@ class AdvanceAnalyticsEndpoint(BaseAPIView):
         self.initialize_workspace(slug)
         tab = request.GET.get("tab", "overview")
         project_ids = request.GET.get("project_ids", None)
-        date_filter = request.GET.get("date_filter", "today")
+        date_filter = request.GET.get("date_filter", "yesterday")
 
         if project_ids:
             project_ids = [str(project_id) for project_id in project_ids.split(",")]
@@ -217,64 +214,29 @@ class AdvanceAnalyticsStatsEndpoint(BaseAPIView):
 
     def initialize_workspace(self, slug):
         self._workspace_slug = slug
+        project_ids = self.request.GET.get("project_ids", None)
         self.base_filters = {
             "workspace__slug": slug,
             "project__project_projectmember__member": self.request.user,
             "project__project_projectmember__is_active": True,
         }
 
-    def project_stats(self, filters):
-        return (
-            Project.objects.filter(
-                workspace__slug=self._workspace_slug,
-                project_projectmember__member=self.request.user,
-                project_projectmember__is_active=True,
-            )
-            .annotate(
-                total_work_items=Count("project_issue", distinct=True),
-                total_cycles=Count("project_cycle", distinct=True),
-                total_modules=Count("project_module", distinct=True),
-                total_intake=Count(
-                    "project_issue",
-                    filter=Q(project_issue__issue_intake__isnull=False),
-                    distinct=True,
-                ),
-                total_members=Count(
-                    "project_projectmember",
-                    filter=Q(
-                        project_projectmember__is_active=True,
-                    ),
-                    distinct=True,
-                ),
-                total_epics=Count(
-                    "project_issue",
-                    filter=Q(project_issue__type__is_epic=True),
-                    distinct=True,
-                ),
-                total_pages=Count("project_pages", distinct=True),
-                total_views=Count("project_issueview", distinct=True),
-            )
-            .values(
-                "id",
-                "name",
-                "logo_props",
-                "total_work_items",
-                "total_cycles",
-                "total_modules",
-                "total_intake",
-                "total_members",
-                "total_epics",
-                "total_pages",
-                "total_views",
-            )
-        )
+        self.project_filters = {
+            "workspace__slug": slug,
+            "project_projectmember__member": self.request.user,
+            "project_projectmember__is_active": True,
+        }
+
+        if project_ids:
+            if isinstance(project_ids, str):
+                project_ids = [str(project_id) for project_id in project_ids.split(",")]
+            self.base_filters["project_id__in"] = project_ids
+            self.project_filters["id__in"] = project_ids
 
     def get_project_issues_stats(self, filters):
         qs = Issue.objects.filter(
-            workspace__slug=self._workspace_slug,
-            project__project_projectmember__member=self.request.user,
-            project__project_projectmember__is_active=True,
             **filters,
+            **self.base_filters,
         )
 
         return (
@@ -307,36 +269,42 @@ class AdvanceAnalyticsChartEndpoint(BaseAPIView):
 
     def initialize_workspace(self, slug):
         self._workspace_slug = slug
+        project_ids = self.request.GET.get("project_ids", None)
         self.base_filters = {
+            "workspace__slug": slug,
+            "project__project_projectmember__member": self.request.user,
+            "project__project_projectmember__is_active": True,
+        }
+
+        self.project_filters = {
             "workspace__slug": slug,
             "project_projectmember__member": self.request.user,
             "project_projectmember__is_active": True,
         }
 
-    def project_chart(self, filters):
-        project_ids = (
-            Project.objects.filter(**self.base_filters)
-            .values_list("id", flat=True)
-            .distinct()
-        )
+        if project_ids:
+            if isinstance(project_ids, str):
+                project_ids = [str(project_id) for project_id in project_ids.split(",")]
+            self.base_filters["project_id__in"] = project_ids
+            self.project_filters["id__in"] = project_ids
 
-        total_work_items = Issue.issue_objects.filter(
-            project_id__in=project_ids
-        ).count()
-        total_cycles = Cycle.objects.filter(project_id__in=project_ids).count()
-        total_modules = Module.objects.filter(project_id__in=project_ids).count()
+    def project_chart(self, filters):
+
+        total_work_items = Issue.issue_objects.filter(**self.base_filters).count()
+        total_cycles = Cycle.objects.filter(**self.base_filters).count()
+        total_modules = Module.objects.filter(**self.base_filters).count()
         total_intake = Issue.objects.filter(
-            project_id__in=project_ids, issue_intake__isnull=False
+            issue_intake__isnull=False, **self.base_filters
         ).count()
         total_members = WorkspaceMember.objects.filter(
             workspace__slug=self._workspace_slug, is_active=True
         ).count()
 
         total_epics = Issue.objects.filter(
-            project_id__in=project_ids, type__is_epic=True
+            type__is_epic=True, **self.base_filters
         ).count()
-        total_pages = ProjectPage.objects.filter(project_id__in=project_ids).count()
-        total_views = IssueView.objects.filter(project_id__in=project_ids).count()
+        total_pages = ProjectPage.objects.filter(**self.base_filters).count()
+        total_views = IssueView.objects.filter(**self.base_filters).count()
 
         data = {
             "work_items": total_work_items,
@@ -361,11 +329,7 @@ class AdvanceAnalyticsChartEndpoint(BaseAPIView):
     def work_item_completion_chart(self, filters, date_filter="last_30_days"):
         # Get the base queryset
         queryset = (
-            Issue.issue_objects.filter(
-                workspace__slug=self._workspace_slug,
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-            )
+            Issue.issue_objects.filter(**self.base_filters)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related(
                 "assignees", "labels", "issue_module__module", "issue_cycle__cycle"
@@ -379,13 +343,13 @@ class AdvanceAnalyticsChartEndpoint(BaseAPIView):
         # Get the date range
         today = timezone.now().date()
         date_ranges = {
-            "today": (today, today),
             "yesterday": (
-                today - timezone.timedelta(days=1),
-                today - timezone.timedelta(days=1),
+                today - timedelta(days=1),
+                today - timedelta(days=1),
             ),
-            "last_30_days": (today - timezone.timedelta(days=30), today),
-            "last_3_months": (today - timezone.timedelta(days=90), today),
+            "last_7_days": (today - timedelta(days=7), today),
+            "last_30_days": (today - timedelta(days=30), today),
+            "last_3_months": (today - timedelta(days=90), today),
         }
 
         # Handle custom date range if provided in filters
@@ -395,12 +359,8 @@ class AdvanceAnalyticsChartEndpoint(BaseAPIView):
             and "end_date" in filters
         ):
             try:
-                start_date = timezone.datetime.strptime(
-                    filters["start_date"], "%Y-%m-%d"
-                ).date()
-                end_date = timezone.datetime.strptime(
-                    filters["end_date"], "%Y-%m-%d"
-                ).date()
+                start_date = datetime.strptime(filters["start_date"], "%Y-%m-%d").date()
+                end_date = datetime.strptime(filters["end_date"], "%Y-%m-%d").date()
             except ValueError:
                 return Response(
                     {"error": "Invalid date format. Use YYYY-MM-DD"},
@@ -463,7 +423,7 @@ class AdvanceAnalyticsChartEndpoint(BaseAPIView):
                     "created_issues": stats["created_count"],
                 }
             )
-            current_date += timezone.timedelta(days=1)
+            current_date += timedelta(days=1)
 
         schema = {
             "completed_issues": "completed_issues",
@@ -486,11 +446,7 @@ class AdvanceAnalyticsChartEndpoint(BaseAPIView):
 
         elif type == "custom-work-items":
             queryset = (
-                Issue.issue_objects.filter(
-                    workspace__slug=self._workspace_slug,
-                    project__project_projectmember__member=self.request.user,
-                    project__project_projectmember__is_active=True,
-                )
+                Issue.issue_objects.filter(**self.base_filters)
                 .select_related("workspace", "project", "state", "parent")
                 .prefetch_related(
                     "assignees", "labels", "issue_module__module", "issue_cycle__cycle"
@@ -511,6 +467,28 @@ class AdvanceAnalyticsChartEndpoint(BaseAPIView):
 
 
 class AdvanceAnalyticsExportEndpoint(BaseAPIView):
+
+    def initialize_workspace(self, slug):
+        self._workspace_slug = slug
+        project_ids = self.request.GET.get("project_ids", None)
+        self.base_filters = {
+            "workspace__slug": slug,
+            "project__project_projectmember__member": self.request.user,
+            "project__project_projectmember__is_active": True,
+        }
+
+        self.project_filters = {
+            "workspace__slug": slug,
+            "project_projectmember__member": self.request.user,
+            "project_projectmember__is_active": True,
+        }
+
+        if project_ids:
+            if isinstance(project_ids, str):
+                project_ids = [str(project_id) for project_id in project_ids.split(",")]
+            self.base_filters["project_id__in"] = project_ids
+            self.project_filters["id__in"] = project_ids
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def post(self, request, slug):
         filters = request.GET.get("filters", {})
@@ -521,6 +499,7 @@ class AdvanceAnalyticsExportEndpoint(BaseAPIView):
                 project__project_projectmember__member=self.request.user,
                 project__project_projectmember__is_active=True,
                 **filters,
+                **self.base_filters,
             )
             .values("project_id", "project__name")
             .annotate(
