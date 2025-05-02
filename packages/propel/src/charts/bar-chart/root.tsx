@@ -79,6 +79,7 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
       )),
     [activeLegend, stackKeys, bars]
   );
+  console.log(xAxis.label, "test data")
   return (
     <div className={className}>
       <ResponsiveContainer width="100%" height="100%">
@@ -101,7 +102,7 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
             axisLine={false}
             label={{
               value: xAxis.label,
-              dy: 28,
+              dy: xAxis.dy || 28,
               className: AXIS_LABEL_CLASSNAME,
             }}
             tickCount={tickCount.x}
@@ -114,8 +115,8 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
               value: yAxis.label,
               angle: -90,
               position: "bottom",
-              offset: yAxis.offset || -24,
-              dx: yAxis.dx || -16,
+              offset: -24,
+              dx: -16,
               className: AXIS_LABEL_CLASSNAME,
             }}
             tick={(props) => <CustomYAxisTick {...props} />}

@@ -29,6 +29,7 @@ type TChartProps<K extends string, T extends string> = {
     key: keyof TChartData<K, T>;
     label?: string;
     strokeColor?: string;
+    dy?: number;
   };
   yAxis: {
     allowDecimals?: boolean;

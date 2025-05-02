@@ -113,7 +113,7 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
               xAxis.label && {
                 value: xAxis.label,
                 dy: 28,
-                className: AXIS_LABEL_CLASSNAME,
+                className: AXIS_LABEL_CLASSNAME
               }
             }
             tickCount={tickCount.x}

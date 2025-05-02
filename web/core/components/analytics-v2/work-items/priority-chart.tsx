@@ -110,20 +110,25 @@ const PriorityChart = observer((props: Props) => {
     header: () => parsedData.schema[key],
   })), [parsedData.schema]);
 
-  const getYAxisLabel = useMemo(() => ANALYTICS_V2_Y_AXIS_VALUES.find((item) => item.value === props.y_axis)?.label ?? props.y_axis, [props.y_axis]);
-
+  const yAxisLabel = useMemo(() => ANALYTICS_V2_Y_AXIS_VALUES.find((item) => item.value === props.y_axis)?.label ?? props.y_axis, [props.y_axis]);
+  const xAxisLabel = useMemo(() => props.x_axis === ChartXAxisProperty.PRIORITY ? "Priority" : props.x_axis, [props.x_axis]);
   return (
     <div className='flex flex-col gap-12 '>
       <BarChart
         className="w-full h-[370px]"
         data={parsedData.data}
         bars={bars}
+        margin={{
+          bottom: 30
+        }}
         xAxis={{
           key: "name",
+          label: xAxisLabel.replace("_", " "),
+          dy: 0,
         }}
         yAxis={{
           key: "count",
-          label: getYAxisLabel,
+          label: yAxisLabel,
           offset: -40,
           dx: -26,
         }}
@@ -131,7 +136,7 @@ const PriorityChart = observer((props: Props) => {
       <DataTable
         data={parsedData.data}
         columns={[...defaultColumns, ...columns]}
-        searchPlaceholder={`${parsedData.data.length} ${getYAxisLabel}`}
+        searchPlaceholder={`${parsedData.data.length} ${yAxisLabel}`}
       />
     </div>
 

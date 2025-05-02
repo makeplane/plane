@@ -9,10 +9,11 @@ export type InsightCardProps = {
   data?: IAnalyticsResponseFieldsV2;
   label: string;
   isLoading?: boolean;
+  versus?: string | null;
 }
 
 const InsightCard = (props: InsightCardProps) => {
-  const { data, label, isLoading } = props;
+  const { data, label, isLoading, versus } = props;
   const { count, filter_count } = data || {};
   const percentage = useMemo(() => {
     if (count != null && filter_count != null) {
@@ -21,7 +22,6 @@ const InsightCard = (props: InsightCardProps) => {
     }
     return null;
   }, [count, filter_count]);
-  const versus = "last month";
 
   return (
     <div className="flex flex-col gap-3">
@@ -32,7 +32,7 @@ const InsightCard = (props: InsightCardProps) => {
           {percentage && (
             <div className="flex gap-1 text-xs text-custom-text-300">
               <TrendPiece percentage={percentage} size="xs" />
-              <div>vs {versus}</div>
+              {versus && <div>vs {versus}</div>}
             </div>
           )}
         </div>

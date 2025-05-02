@@ -21,7 +21,7 @@ const TotalInsights: React.FC<{ analyticsType: TAnalyticsTabsV2Base }> = observe
     const params = useParams();
     const workspaceSlug = params.workspaceSlug as string;
     const { t } = useTranslation()
-    const { selectedDuration, selectedProject } = useAnalyticsV2()
+    const { selectedDuration, selectedProject, selectedDurationLabel } = useAnalyticsV2()
 
     const { data: totalInsightsData, isLoading } = useSWR(`total-insights-${analyticsType}-${selectedDuration}-${selectedProject}`,
         () => analyticsV2Service.getAdvanceAnalytics<IAnalyticsResponseV2>(workspaceSlug, analyticsType, {
@@ -34,7 +34,13 @@ const TotalInsights: React.FC<{ analyticsType: TAnalyticsTabsV2Base }> = observe
             insightsFields[analyticsType].length % 5 === 0 ? 'lg:grid-cols-5 gap-10' : 'lg:grid-cols-4 gap-8'
         )}>
             {insightsFields[analyticsType].map((item: string) => (
-                <InsightCard key={`${analyticsType}-${item}`} isLoading={isLoading} data={totalInsightsData?.[item]} label={t(`workspace_analytics.${item}`)} />
+                <InsightCard
+                    key={`${analyticsType}-${item}`}
+                    isLoading={isLoading}
+                    data={totalInsightsData?.[item]}
+                    label={t(`workspace_analytics.${item}`)}
+                    versus={selectedDurationLabel}
+                />
             ))}
         </div>
     )
