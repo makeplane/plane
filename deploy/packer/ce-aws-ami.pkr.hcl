@@ -139,8 +139,8 @@ build {
 
       "sudo cp /opt/plane/tars/*.service /opt/plane/svc/",
       "sudo cp /opt/plane/tars/Caddyfile /opt/plane/Caddyfile",
-      "sudo cp /opt/plane/tars/setup-ce.sh /usr/local/bin/plane-setup.sh",
-      "sudo chmod +x /usr/local/bin/plane-setup.sh",
+      "sudo cp /opt/plane/tars/plane-ce.sh /usr/local/bin/plane",
+      "sudo chmod +x /usr/local/bin/plane",
 
       "sudo rm -rf /opt/plane/extracted",
       # "sudo rm -rf /opt/plane/tars",

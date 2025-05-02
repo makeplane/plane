@@ -1,0 +1,37 @@
+{
+    # Global options
+    admin off
+    auto_https off
+    servers {
+		timeouts {
+			read_body 600s
+			read_header 30s
+			write 600s
+			idle 600s
+		}
+		max_header_size 25MB
+		client_ip_headers X-Forwarded-For X-Real-IP
+		trusted_proxies static 0.0.0.0/0
+	}
+}
+
+:80 {
+    request_body {
+        # 10MB
+		max_size 10485760
+	}
+
+	reverse_proxy /spaces/* localhost:3002
+	reverse_proxy /god-mode/* localhost:3003
+	reverse_proxy /live/* localhost:3004
+	reverse_proxy /api/* localhost:3005
+	reverse_proxy /auth/* localhost:3005
+	reverse_proxy /* localhost:3001
+
+    # Common settings
+    encode gzip
+    log {
+        output file /var/log/caddy/access.log
+        format json
+    }
+}
