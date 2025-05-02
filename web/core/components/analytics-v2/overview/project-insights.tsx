@@ -24,8 +24,7 @@ const ProjectInsights = observer(() => {
   const params = useParams();
   const { t } = useTranslation()
   const workspaceSlug = params.workspaceSlug as string;
-  const { selectedDuration } = useAnalyticsV2()
-  const selectedDurationLabel = useMemo(() => PROJECT_CREATED_AT_FILTER_OPTIONS.find(item => item.value === selectedDuration)?.name, [selectedDuration])
+  const { selectedDuration, selectedDurationLabel } = useAnalyticsV2()
 
   const { data: projectInsightsData } = useSWR(
     `radar-chart-${workspaceSlug}`,
@@ -33,9 +32,7 @@ const ProjectInsights = observer(() => {
       created_at: selectedDuration
     }),
   )
-
   return (
-
     <AnalyticsSectionWrapper title={`${t('workspace_analytics.project_insights')}`} subtitle={selectedDurationLabel} className='col-span-3'>
       <div className='flex gap-8'>
         {projectInsightsData && <RadarChart
@@ -62,7 +59,7 @@ const ProjectInsights = observer(() => {
         <div className='w-2/5'>
           <div className='text-sm text-custom-text-300'>{t('workspace_analytics.summary_of_projects')}</div>
           <div className=' border-b border-custom-border-100 py-2 mb-3'>{t('workspace_analytics.all_projects')}</div>
-          <div className='flex flex-col gap-2'>
+          <div className='flex flex-col gap-4'>
             <div className='flex items-center justify-between text-sm text-custom-text-300'>
               <div>{t('workspace_analytics.trend_on_charts')}</div>
               <div>{t('common.work_items')}</div>

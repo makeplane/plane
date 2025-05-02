@@ -1,9 +1,9 @@
 import { TRadarChartProps } from '@plane/types';
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { PolarGrid, Radar, RadarChart as CoreRadarChart, ResponsiveContainer, PolarAngleAxis, RadarProps, Tooltip, Legend } from 'recharts';
 import { CustomTooltip } from '../components/tooltip';
 import { getLegendProps } from '../components/legend';
-import { CustomXAxisTick } from '../components/tick';
+import { CustomRadarAxisTick } from '../components/tick';
 
 const RadarChart = <T extends string, K extends string>(props: TRadarChartProps<T, K>) => {
   const { data, radars, dataKey, margin, showTooltip, legend, className, angleAxis } = props;
@@ -22,7 +22,7 @@ const RadarChart = <T extends string, K extends string>(props: TRadarChartProps<
         <CoreRadarChart cx="50%" cy="50%" outerRadius="80%" data={data} margin={margin}>
           <PolarGrid stroke='rgba(var(--color-border-100), 0.9)' />
           <PolarAngleAxis dataKey={angleAxis.key}
-            tick={(props) => <CustomXAxisTick {...props} />}
+            tick={(props) => <CustomRadarAxisTick {...props} />}
           />
           {showTooltip && (
             <Tooltip

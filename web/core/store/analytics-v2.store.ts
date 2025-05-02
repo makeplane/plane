@@ -1,5 +1,5 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import { ANALYTICS_V2_DURATION_FILTER_OPTIONS, PROJECT_CREATED_AT_FILTER_OPTIONS } from "@plane/constants";
+import { ANALYTICS_V2_DURATION_FILTER_OPTIONS, DURATION_FILTER_OPTIONS, PROJECT_CREATED_AT_FILTER_OPTIONS } from "@plane/constants";
 import { TAnalyticsTabsV2Base } from "@plane/types";
 import { CoreRootStore } from "./root.store";
 
@@ -47,7 +47,7 @@ export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
 
 
     get selectedDurationLabel() {
-        return PROJECT_CREATED_AT_FILTER_OPTIONS.find(item => item.value === this.selectedDuration)?.name ?? null
+        return ANALYTICS_V2_DURATION_FILTER_OPTIONS.find(item => item.value === this.selectedDuration)?.name ?? null
     }
 
     updateSelectedProject = (project: string) => {

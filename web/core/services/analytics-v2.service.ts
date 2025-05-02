@@ -46,5 +46,15 @@ export class AnalyticsV2Service extends APIService {
                 throw err?.response?.data;
             })
     }
+
+    async exportAnalytics(workspaceSlug: string, params?: Record<string, any>): Promise<any> {
+        return this.post(`/api/workspaces/${workspaceSlug}/advance-analytics-export/`, {
+            params
+        })
+            .then((res) => res?.data)
+            .catch((err) => {
+                throw err?.response?.data;
+            })
+    }
 }
 

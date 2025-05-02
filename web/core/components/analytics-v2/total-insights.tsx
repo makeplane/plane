@@ -12,6 +12,7 @@ import { useAnalyticsV2 } from '@/hooks/store/use-analytics-v2';
 import { AnalyticsV2Service } from '@/services/analytics-v2.service';
 // plane web components
 import InsightCard from './insight-card';
+import { cn } from '@plane/utils';
 
 
 const analyticsV2Service = new AnalyticsV2Service();
@@ -29,7 +30,9 @@ const TotalInsights: React.FC<{ analyticsType: TAnalyticsTabsV2Base }> = observe
         }))
 
     return (
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10'>
+        <div className={cn('grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10',
+            insightsFields[analyticsType].length % 5 === 0 ? 'lg:grid-cols-5 gap-10' : 'lg:grid-cols-4 gap-8'
+        )}>
             {insightsFields[analyticsType].map((item: string) => (
                 <InsightCard key={`${analyticsType}-${item}`} isLoading={isLoading} data={totalInsightsData?.[item]} label={t(`workspace_analytics.${item}`)} />
             ))}

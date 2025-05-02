@@ -6,6 +6,7 @@ import { IAnalyticsV2Params } from '@plane/types'
 import AnalyticsSectionWrapper from '../analytics-section-wrapper'
 import { AnalyticsV2SelectParams } from '../select/analytics-params'
 import PriorityChart from './priority-chart'
+import { useParams } from 'next/navigation'
 
 const defaultValues: IAnalyticsV2Params = {
   x_axis: ChartXAxisProperty.PRIORITY,
@@ -14,6 +15,7 @@ const defaultValues: IAnalyticsV2Params = {
 
 const CustomizedInsights = observer(() => {
   const { t } = useTranslation()
+  const { workspaceSlug } = useParams();
   const { control, watch, setValue } = useForm<IAnalyticsV2Params>({
     defaultValues: {
       ...defaultValues,
@@ -33,6 +35,7 @@ const CustomizedInsights = observer(() => {
           control={control}
           setValue={setValue}
           params={params}
+          workspaceSlug={workspaceSlug.toString()}
         />
       }
     >
