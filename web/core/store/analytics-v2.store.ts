@@ -24,7 +24,7 @@ export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
     //observables
     currentTab: TAnalyticsTabsV2Base = "overview";
     selectedProject: string | null = null;
-    selectedDuration: typeof ANALYTICS_V2_DURATION_FILTER_OPTIONS[number]['value'] = "today";
+    selectedDuration: typeof ANALYTICS_V2_DURATION_FILTER_OPTIONS[number]['value'] = "last_30_days";
 
     constructor(_rootStore: CoreRootStore) {
         makeObservable(this, {
