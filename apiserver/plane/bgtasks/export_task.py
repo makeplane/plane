@@ -19,9 +19,7 @@ from django.db.models import Value
 from django.db.models.functions import Coalesce
 from django.db.models import Q
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.db.models import OuterRef, Func, F
-from django.db import models
-from django.contrib.postgres.fields import ArrayField
+from django.db.models import OuterRef, Func, F, Count
 
 # Module imports
 from plane.db.models import ExporterHistory, Issue, FileAsset
@@ -208,6 +206,8 @@ def generate_table_row(issue):
         ],
         issue["attachment_count"],
         issue["attachment_links"],
+        issue["issue_link_url"],
+        issue["issue_subscriber_count"],
     ]
 
 
@@ -359,13 +359,21 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                     project__project_projectmember__is_active=True,
                     project__archived_at__isnull=True,
                 )
-                .select_related("project", "workspace", "state", "parent", "created_by")
+                .select_related(
+                    "project",
+                    "workspace",
+                    "state",
+                    "parent",
+                    "created_by",
+                    "issue_link",
+                )
                 .prefetch_related(
                     "assignees",
                     "labels",
                     "issue_cycle__cycle",
                     "issue_module__module",
                     "issue_comments",
+                    "issue_subscribers",
                 )
                 .annotate(
                     comment_stripped=Coalesce(
@@ -419,6 +427,23 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                         Value([]),
                     )
                 )
+                .annotate(
+                    issue_link_url=Coalesce(
+                        ArrayAgg(
+                            "issue_link__url",
+                            filter=Q(issue_link__url__isnull=False),
+                            distinct=True,
+                        ),
+                        Value([]),
+                    )
+                )
+                .annotate(
+                    issue_subscriber_count=Count(
+                        "issue_subscribers",
+                        filter=Q(issue_subscribers__subscriber__isnull=False),
+                        distinct=True,
+                    )
+                )
                 .values(
                     "id",
                     "project__identifier",
@@ -452,6 +477,9 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                     "comment_created_by_last_name",
                     "attachment_count",
                     "attachment_links",
+                    "issue_link_url",
+                    "issue_subscriber_count",
+                    "estimate_point__estimate__name",
                 )
             )
             .order_by("project__identifier", "sequence_id")
@@ -484,6 +512,8 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
             "Comments",
             "Attachment Count",
             "Attachment Links",
+            "Link",
+            "Subscriber Count",
         ]
 
         EXPORTER_MAPPER = {
