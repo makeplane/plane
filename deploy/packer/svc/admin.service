@@ -1,0 +1,16 @@
+[Unit]
+Description=Plane Admin Service
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/plane/admin
+EnvironmentFile=/opt/plane/admin/admin.env
+ExecStart=/usr/local/bin/node server.js
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

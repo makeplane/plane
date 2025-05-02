@@ -1,0 +1,16 @@
+[Unit]
+Description=Plane Space Service
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/plane/space
+EnvironmentFile=/opt/plane/space/space.env
+ExecStart=/usr/local/bin/node server.js
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

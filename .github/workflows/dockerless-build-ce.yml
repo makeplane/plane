@@ -227,7 +227,8 @@ jobs:
           done
           cp -r ./deploy/packer/envs/*.env plane-dist/
           cp -r ./deploy/packer/svc/*.service plane-dist/
-          cp ./deploy/packer/Caddyfile-ce plane-dist/
+          cp ./deploy/packer/Caddyfile-ce plane-dist/Caddyfile
+          cp ./deploy/packer/setup-ce.sh plane-dist/
           
           # Cleanup directories
           rm -rf artifacts 

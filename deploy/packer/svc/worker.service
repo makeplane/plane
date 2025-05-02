@@ -1,0 +1,16 @@
+[Unit]
+Description=Plane Worker Service
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/plane/backend
+EnvironmentFile=/opt/plane/backend/backend.env
+ExecStart=/opt/plane/backend/bin/docker-entrypoint-worker.sh
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

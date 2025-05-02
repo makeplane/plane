@@ -1,0 +1,16 @@
+[Unit]
+Description=Plane Web Service
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/plane/web
+EnvironmentFile=/opt/plane/web/web.env
+ExecStart=/usr/local/bin/node server.js
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

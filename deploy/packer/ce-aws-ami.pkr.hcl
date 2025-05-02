@@ -139,6 +139,7 @@ build {
 
       "sudo cp /opt/plane/tars/*.service /opt/plane/",
       "sudo cp /opt/plane/tars/Caddyfile /opt/plane/Caddyfile",
+      "sudo cp /opt/plane/tars/setup-ce.sh /opt/plane/setup.sh",
 
       "sudo rm -rf /opt/plane/extracted",
       # "sudo rm -rf /opt/plane/tars",
