@@ -245,17 +245,6 @@ jobs:
           # Download the previous manifest from S3 if it exists
           aws s3 cp s3://${{ env.MANIFEST_BUCKET }}/plane-ce/ami/manifests/latest-manifest.json ./previous-manifest.json || true
 
-      - name: Cleanup Old AMIs
-        if: hashFiles('previous-manifest.json') != ''
-        run: |
-          OLD_AMI_ID=$(jq -r '.builds[-1].artifact_id' previous-manifest.json | cut -d ":" -f2)
-          if [ ! -z "$OLD_AMI_ID" ]; then
-            echo "Found previous AMI: $OLD_AMI_ID"
-            # Deregister the old AMI
-            aws ec2 deregister-image --image-id "$OLD_AMI_ID" || true
-            echo "Deregistered previous AMI: $OLD_AMI_ID"
-          fi
-
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
         id: setup
@@ -281,6 +270,17 @@ jobs:
             -var "subnet_cidr=${{ env.SUBNET_CIDR }}" \
             -var "base_image_owner=${{ env.BASE_IMAGE_OWNER }}" \
             ./deploy/packer/ce-aws-ami.pkr.hcl
+
+      - name: Cleanup Old AMIs
+        if: hashFiles('previous-manifest.json') != ''
+        run: |
+          OLD_AMI_ID=$(jq -r '.builds[-1].artifact_id' previous-manifest.json | cut -d ":" -f2)
+          if [ ! -z "$OLD_AMI_ID" ]; then
+            echo "Found previous AMI: $OLD_AMI_ID"
+            # Deregister the old AMI
+            aws ec2 deregister-image --image-id "$OLD_AMI_ID" || true
+            echo "Deregistered previous AMI: $OLD_AMI_ID"
+          fi
 
       - name: Extract AMI Information
         id: ami_info

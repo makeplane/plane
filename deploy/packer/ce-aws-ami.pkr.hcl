@@ -113,7 +113,7 @@ build {
   # Set proper permissions and verify installation
   provisioner "shell" {
     inline = [
-      
+      "sudo mkdir -p /opt/plane/svc",
       "sudo chown -R ubuntu:ubuntu /opt/plane",
       "sudo chmod -R 755 /opt/plane",
       # Extract the application files
@@ -137,10 +137,10 @@ build {
       "sudo mv /opt/plane/extracted/backend-dist/ /opt/plane/backend",
       "sudo cp /opt/plane/tars/backend.env /opt/plane/backend/backend.env",
 
-      "sudo cp /opt/plane/tars/*.service /opt/plane/",
+      "sudo cp /opt/plane/tars/*.service /opt/plane/svc/",
       "sudo cp /opt/plane/tars/Caddyfile /opt/plane/Caddyfile",
-      "sudo cp /opt/plane/tars/setup-ce.sh /usr/local/bin/plane-setup-ce.sh",
-      "sudo chmod +x /usr/local/bin/plane-setup-ce.sh",
+      "sudo cp /opt/plane/tars/setup-ce.sh /usr/local/bin/plane-setup.sh",
+      "sudo chmod +x /usr/local/bin/plane-setup.sh",
 
       "sudo rm -rf /opt/plane/extracted",
       # "sudo rm -rf /opt/plane/tars",
