@@ -202,16 +202,21 @@ function configure_backend(){
   local s3_region=$(ask_for_value $BACKEND_ENV_FILE "AWS_REGION")
   local s3_endpoint=$(ask_for_value $BACKEND_ENV_FILE "AWS_S3_ENDPOINT_URL")
 
+  local restart_services=false
+
   if [ -n "$redis_url" ]; then
     update_env_file $BACKEND_ENV_FILE "REDIS_URL" $redis_url
+    restart_services=true
   fi
 
   if [ -n "$postgres_url" ]; then
     update_env_file $BACKEND_ENV_FILE "DATABASE_URL" $postgres_url
+    restart_services=true
   fi
 
   if [ -n "$amqp_url" ]; then
     update_env_file $BACKEND_ENV_FILE "AMQP_URL" $amqp_url
+    restart_services=true
   fi
 
   if [ -n "$s3_bucket" ] && [ -n "$s3_access_key" ] && [ -n "$s3_secret_key" ] && [ -n "$s3_region" ] && [ -n "$s3_endpoint" ]; then
@@ -220,6 +225,11 @@ function configure_backend(){
     update_env_file $BACKEND_ENV_FILE "AWS_SECRET_ACCESS_KEY" $s3_secret_key
     update_env_file $BACKEND_ENV_FILE "AWS_REGION" $s3_region
     update_env_file $BACKEND_ENV_FILE "AWS_S3_ENDPOINT_URL" $s3_endpoint
+    restart_services=true
+  fi
+
+  if [ "$restart_services" = true ]; then
+    restart_services
   fi
 }
 
