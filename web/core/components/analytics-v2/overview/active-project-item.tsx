@@ -45,7 +45,7 @@ const ActiveProjectItem = (props: Props) => {
                 </div>
                 <p className='text-sm font-medium'>{projectDetails?.name}</p>
             </div>
-            <CompletionPercentage percentage={(completed_issues && total_issues) ? (completed_issues / total_issues * 100) : 0} />
+            <CompletionPercentage percentage={(completed_issues && total_issues) ? Math.round(completed_issues / total_issues * 100) : 0} />
         </div>
     )
 }
