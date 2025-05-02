@@ -10,6 +10,7 @@ from botocore.client import Config
 # Third party imports
 from celery import shared_task
 
+
 # Django imports
 from django.conf import settings
 from django.utils import timezone
@@ -18,9 +19,12 @@ from django.db.models import Value
 from django.db.models.functions import Coalesce
 from django.db.models import Q
 from django.contrib.postgres.aggregates import ArrayAgg
+from django.db.models import OuterRef, Func, F
+from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 # Module imports
-from plane.db.models import ExporterHistory, Issue
+from plane.db.models import ExporterHistory, Issue, FileAsset
 from plane.utils.exception_logger import log_exception
 
 
@@ -202,6 +206,8 @@ def generate_table_row(issue):
                 issue["comment_created_by_last_name"],
             )
         ],
+        issue["attachment_count"],
+        issue["attachment_links"],
     ]
 
 
@@ -392,6 +398,27 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                         Value([]),
                     ),
                 )
+                .annotate(
+                    attachment_count=FileAsset.objects.filter(
+                        issue_id=OuterRef("id"),
+                        entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                    )
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    attachment_links=Coalesce(
+                        ArrayAgg(
+                            "assets__asset",
+                            filter=Q(
+                                assets__entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT
+                            ),
+                            order_by=["-assets__created_at"],
+                        ),
+                        Value([]),
+                    )
+                )
                 .values(
                     "id",
                     "project__identifier",
@@ -423,6 +450,8 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                     "comment_created_at",
                     "comment_created_by_first_name",
                     "comment_created_by_last_name",
+                    "attachment_count",
+                    "attachment_links",
                 )
             )
             .order_by("project__identifier", "sequence_id")
@@ -453,6 +482,8 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
             "Completed At",
             "Archived At",
             "Comments",
+            "Attachment Count",
+            "Attachment Links",
         ]
 
         EXPORTER_MAPPER = {
