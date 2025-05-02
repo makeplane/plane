@@ -380,6 +380,8 @@ ATTACHMENT_MIME_TYPES = [
     "application/x-rar-compressed",
     "application/x-tar",
     "application/gzip",
+    "application/x-zip",
+    "application/x-zip-compressed",
     "application/x-7z-compressed",
     "application/x-compressed",
     "application/x-compressed-tar",
