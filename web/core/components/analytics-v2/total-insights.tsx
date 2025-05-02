@@ -7,12 +7,12 @@ import { insightsFields } from '@plane/constants';
 import { useTranslation } from '@plane/i18n';
 import { IAnalyticsResponseV2, TAnalyticsTabsV2Base } from '@plane/types';
 //hooks
+import { cn } from '@/helpers/common.helper';
 import { useAnalyticsV2 } from '@/hooks/store/use-analytics-v2';
 //services
 import { AnalyticsV2Service } from '@/services/analytics-v2.service';
 // plane web components
 import InsightCard from './insight-card';
-import { cn } from '@plane/utils';
 
 
 const analyticsV2Service = new AnalyticsV2Service();
@@ -21,12 +21,12 @@ const TotalInsights: React.FC<{ analyticsType: TAnalyticsTabsV2Base }> = observe
     const params = useParams();
     const workspaceSlug = params.workspaceSlug as string;
     const { t } = useTranslation()
-    const { selectedDuration, selectedProject, selectedDurationLabel } = useAnalyticsV2()
+    const { selectedDuration, selectedProjects, selectedDurationLabel } = useAnalyticsV2()
 
-    const { data: totalInsightsData, isLoading } = useSWR(`total-insights-${analyticsType}-${selectedDuration}-${selectedProject}`,
+    const { data: totalInsightsData, isLoading } = useSWR(`total-insights-${analyticsType}-${selectedDuration}-${selectedProjects}`,
         () => analyticsV2Service.getAdvanceAnalytics<IAnalyticsResponseV2>(workspaceSlug, analyticsType, {
             date_filter: selectedDuration,
-            ...(selectedProject ? { project_ids: selectedProject } : {})
+            ...(selectedProjects ? { project_ids: selectedProjects } : {})
         }))
 
     return (

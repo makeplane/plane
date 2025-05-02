@@ -17,11 +17,11 @@ const WorkItemsInsightTable = observer(() => {
     const params = useParams();
     const workspaceSlug = params.workspaceSlug as string;
     const { getProjectById } = useProject();
-    const { selectedDuration, selectedProject } = useAnalyticsV2()
-    const { data: workItemsData, isLoading } = useSWR(`insights-table-work-items-${selectedDuration}-${selectedProject}`,
+    const { selectedDuration, selectedProjects } = useAnalyticsV2()
+    const { data: workItemsData, isLoading } = useSWR(`insights-table-work-items-${selectedDuration}-${selectedProjects}`,
         () => analyticsV2Service.getAdvanceAnalyticsStats<WorkItemInsightColumns[]>(workspaceSlug, "work-items", {
             date_filter: selectedDuration,
-            ...(selectedProject ? { project_ids: selectedProject } : {})
+            ...(selectedProjects ? { project_ids: selectedProjects } : {})
         }))
 
     const columns = useMemo(() => [

@@ -1,5 +1,5 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import { ANALYTICS_V2_DURATION_FILTER_OPTIONS, DURATION_FILTER_OPTIONS, PROJECT_CREATED_AT_FILTER_OPTIONS } from "@plane/constants";
+import { ANALYTICS_V2_DURATION_FILTER_OPTIONS, PROJECT_CREATED_AT_FILTER_OPTIONS } from "@plane/constants";
 import { TAnalyticsTabsV2Base } from "@plane/types";
 import { CoreRootStore } from "./root.store";
 
@@ -9,21 +9,21 @@ type DurationType = typeof PROJECT_CREATED_AT_FILTER_OPTIONS[number]['value']
 export interface IAnalyticsStoreV2 {
     //observables
     currentTab: TAnalyticsTabsV2Base
-    selectedProject: string | null
+    selectedProjects: string[]
     selectedDuration: DurationType,
 
     //computed
     selectedDurationLabel: string | null,
 
     //actions
-    updateSelectedProject: (project: string) => void,
+    updateSelectedProjects: (projects: string[]) => void,
     updateSelectedDuration: (duration: DurationType) => void,
 }
 
 export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
     //observables
     currentTab: TAnalyticsTabsV2Base = "overview";
-    selectedProject: string | null = null;
+    selectedProjects: string[] = [];
     selectedDuration: typeof ANALYTICS_V2_DURATION_FILTER_OPTIONS[number]['value'] = "last_30_days";
 
     constructor(_rootStore: CoreRootStore) {
@@ -31,12 +31,12 @@ export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
             // observables
             currentTab: observable,
             selectedDuration: observable,
-            selectedProject: observable,
+            selectedProjects: observable,
             // computed
             selectedProjectLabel: computed,
             selectedDurationLabel: computed,
             // actions
-            updateSelectedProject: action,
+            updateSelectedProjects: action,
             updateSelectedDuration: action
         })
     }
@@ -50,11 +50,11 @@ export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
         return ANALYTICS_V2_DURATION_FILTER_OPTIONS.find(item => item.value === this.selectedDuration)?.name ?? null
     }
 
-    updateSelectedProject = (project: string) => {
-        const initialState = this.selectedProject;
+    updateSelectedProjects = (projects: string[]) => {
+        const initialState = this.selectedProjects;
         try {
             runInAction(() => {
-                this.selectedProject = project;
+                this.selectedProjects = projects;
             })
         } catch (error) {
             console.error("Failed to update selected project");

@@ -21,7 +21,7 @@ interface Props {
 
 const analyticsV2Service = new AnalyticsV2Service()
 const PriorityChart = observer((props: Props) => {
-  const { selectedDuration, selectedProject } = useAnalyticsV2()
+  const { selectedDuration, selectedProjects } = useAnalyticsV2()
   const params = useParams();
   const { resolvedTheme } = useTheme();
   const workspaceSlug = params.workspaceSlug as string;
@@ -29,7 +29,7 @@ const PriorityChart = observer((props: Props) => {
     `customized-insights-chart-${workspaceSlug}-${selectedDuration}-${props.x_axis}-${props.y_axis}-${props.group_by}`,
     () => analyticsV2Service.getAdvanceAnalyticsCharts<IChartResponseV2>(workspaceSlug, 'custom-work-items', {
       date_filter: selectedDuration,
-      project_ids: selectedProject,
+      project_ids: selectedProjects,
       ...props
     }),
   )
@@ -101,13 +101,15 @@ const PriorityChart = observer((props: Props) => {
     },
     {
       accessorKey: "count",
-      header: () => "Count",
+      header: () => <div className="text-right">Count</div>,
+      cell: ({ row }) => <div className="text-right">{row.original.count}</div>
     },
   ], []);
 
   const columns: ColumnDef<TChartDatum>[] = useMemo(() => Object.keys(parsedData.schema).map((key) => ({
     accessorKey: key,
-    header: () => parsedData.schema[key],
+    header: () => <div className="text-right">{parsedData.schema[key]}</div>,
+    cell: ({ row }) => <div className="text-right">{row.original[key]}</div>
   })), [parsedData.schema]);
 
   const yAxisLabel = useMemo(() => ANALYTICS_V2_Y_AXIS_VALUES.find((item) => item.value === props.y_axis)?.label ?? props.y_axis, [props.y_axis]);

@@ -47,12 +47,14 @@ export const SelectYAxis: React.FC<Props> = observer(({ value, onChange, hiddenO
       maxHeight="lg"
     >
       {options.map(
-        (item) =>
-          isEstimateEnabled(item.value) && (
+        (item) => {
+          if (hiddenOptions?.includes(item.value)) return null;
+          return isEstimateEnabled(item.value) && (
             <CustomSelect.Option key={item.value} value={item.value}>
               {item.label}
             </CustomSelect.Option>
           )
+        }
       )}
     </CustomSelect>
   );

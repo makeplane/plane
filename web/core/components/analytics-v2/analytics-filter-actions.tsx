@@ -1,26 +1,24 @@
 
 // plane web components
 import { observer } from "mobx-react-lite";
-// components
-import { ProjectDropdown } from "@/components/dropdowns";
 // hooks
+import { useProject } from "@/hooks/store";
 import { useAnalyticsV2 } from "@/hooks/store/use-analytics-v2";
+// components
 import DurationDropdown from "./select/duration";
+import { ProjectSelect } from "./select/project";
 
 const AnalyticsFilterActions = observer(() => {
-    const { selectedProject, selectedDuration, updateSelectedProject, updateSelectedDuration } = useAnalyticsV2()
-
+    const { selectedProjects, selectedDuration, updateSelectedProjects, updateSelectedDuration } = useAnalyticsV2()
+    const { workspaceProjectIds } = useProject()
     return (
         <div className="flex items-center justify-end gap-2">
-            <ProjectDropdown
-                value={selectedProject}
+            <ProjectSelect
+                value={selectedProjects}
                 onChange={(val) => {
-                    updateSelectedProject(val)
+                    updateSelectedProjects(val ?? [])
                 }}
-                buttonVariant="border-with-text"
-                multiple={false}
-                dropdownArrow
-
+                projectIds={workspaceProjectIds}
             />
             <DurationDropdown
                 buttonVariant="border-with-text"
