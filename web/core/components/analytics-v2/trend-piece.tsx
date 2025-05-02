@@ -46,7 +46,7 @@ const TrendPiece = (props: Props) => {
             ) : (
                 <TrendingDown className={config.icon} />
             )}
-            {Math.abs(percentage)}%
+            {Math.round(Math.abs(percentage))}%
         </div>
     )
 }

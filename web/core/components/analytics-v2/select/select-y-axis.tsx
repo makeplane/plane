@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { ANALYTICS_V2_Y_AXIS_VALUES, ChartYAxisMetric } from "@plane/constants";
+import { ChartYAxisMetric } from "@plane/constants";
 import { CustomSelect } from "@plane/ui";
 // hooks
 import { useProjectEstimates } from "@/hooks/store";
@@ -12,11 +12,12 @@ import { EEstimateSystem } from "@/plane-web/constants/estimates";
 
 type Props = {
   value: ChartYAxisMetric;
-  onChange: (val: string) => void;
+  onChange: (val: ChartYAxisMetric | null) => void;
   hiddenOptions?: ChartYAxisMetric[];
+  options: { value: ChartYAxisMetric; label: string }[];
 };
 
-export const SelectYAxis: React.FC<Props> = observer(({ value, onChange, hiddenOptions }) => {
+export const SelectYAxis: React.FC<Props> = observer(({ value, onChange, hiddenOptions, options }) => {
   // hooks
   const { projectId } = useParams();
   const { areEstimateEnabledByProjectId, currentActiveEstimateId, estimateById } = useProjectEstimates();
@@ -41,11 +42,11 @@ export const SelectYAxis: React.FC<Props> = observer(({ value, onChange, hiddenO
   return (
     <CustomSelect
       value={value}
-      label={<span>{ANALYTICS_V2_Y_AXIS_VALUES.find((v) => v.value === value)?.label ?? "Add Metric"}</span>}
+      label={<span>{options.find((v) => v.value === value)?.label ?? "Add Metric"}</span>}
       onChange={onChange}
       maxHeight="lg"
     >
-      {ANALYTICS_V2_Y_AXIS_VALUES.filter((item) => !hiddenOptions?.includes(item.value)).map(
+      {options.map(
         (item) =>
           isEstimateEnabled(item.value) && (
             <CustomSelect.Option key={item.value} value={item.value}>

@@ -7,12 +7,16 @@ import AnalyticsSectionWrapper from '../analytics-section-wrapper'
 import { AnalyticsV2SelectParams } from '../select/analytics-params'
 import PriorityChart from './priority-chart'
 
+const defaultValues: IAnalyticsV2Params = {
+  x_axis: ChartXAxisProperty.PRIORITY,
+  y_axis: ChartYAxisMetric.WORK_ITEM_COUNT,
+}
+
 const CustomizedInsights = observer(() => {
   const { t } = useTranslation()
-  const { control, watch } = useForm<IAnalyticsV2Params>({
+  const { control, watch, setValue } = useForm<IAnalyticsV2Params>({
     defaultValues: {
-      x_axis: ChartXAxisProperty.PRIORITY,
-      y_axis: ChartYAxisMetric.WORK_ITEM_COUNT,
+      ...defaultValues,
     },
   })
 
@@ -27,6 +31,8 @@ const CustomizedInsights = observer(() => {
       actions={
         <AnalyticsV2SelectParams
           control={control}
+          setValue={setValue}
+          params={params}
         />
       }
     >

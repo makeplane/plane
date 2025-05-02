@@ -1,21 +1,25 @@
 import { observer } from "mobx-react";
-import { Control, Controller } from "react-hook-form";
+import { Control, Controller, UseFormSetValue, useWatch } from "react-hook-form";
 // plane imports
-import { ANALYTICS_V2_X_AXIS_VALUES, ChartYAxisMetric } from "@plane/constants";
+import { ANALYTICS_V2_X_AXIS_VALUES, ANALYTICS_V2_Y_AXIS_VALUES, ChartYAxisMetric } from "@plane/constants";
 import { IAnalyticsV2Params } from "@plane/types";
 import { Row } from "@plane/ui";
 // components
 import { SelectXAxis } from "./select-x-axis";
 import { SelectYAxis } from "./select-y-axis";
+import { useMemo } from "react";
 // hooks
 
 type Props = {
   control: Control<IAnalyticsV2Params, any>;
+  setValue: UseFormSetValue<IAnalyticsV2Params>;
+  params: IAnalyticsV2Params;
 };
 
 export const AnalyticsV2SelectParams: React.FC<Props> = observer((props) => {
-  const { control } = props;
-  const analyticsOptions = ANALYTICS_V2_X_AXIS_VALUES;
+  const { control, setValue, params } = props;
+  const xAxisOptions = useMemo(() => ANALYTICS_V2_X_AXIS_VALUES.filter((option) => option.value !== params.group_by), [params.group_by]);
+  const groupByOptions = useMemo(() => ANALYTICS_V2_X_AXIS_VALUES.filter((option) => option.value !== params.x_axis), [params.x_axis]);
 
   return (
     <Row
@@ -27,9 +31,10 @@ export const AnalyticsV2SelectParams: React.FC<Props> = observer((props) => {
         render={({ field: { value, onChange } }) => (
           <SelectYAxis
             value={value}
-            onChange={(val: string) => {
+            onChange={(val: ChartYAxisMetric | null) => {
               onChange(val);
             }}
+            options={ANALYTICS_V2_Y_AXIS_VALUES}
             hiddenOptions={[ChartYAxisMetric.ESTIMATE_POINT_COUNT]}
           />
         )}
@@ -40,10 +45,10 @@ export const AnalyticsV2SelectParams: React.FC<Props> = observer((props) => {
         render={({ field: { value, onChange } }) => (
           <SelectXAxis
             value={value}
-            onChange={(val: string) => {
+            onChange={(val) => {
               onChange(val);
             }}
-            analyticsOptions={analyticsOptions}
+            options={xAxisOptions}
           />
         )}
       />
@@ -53,10 +58,12 @@ export const AnalyticsV2SelectParams: React.FC<Props> = observer((props) => {
         render={({ field: { value, onChange } }) => (
           <SelectXAxis
             value={value}
-            onChange={(val: string) => {
+            onChange={(val) => {
               onChange(val);
             }}
-            analyticsOptions={analyticsOptions}
+            options={groupByOptions}
+            placeholder="Group By"
+            allowNoValue
           />
         )}
       />
