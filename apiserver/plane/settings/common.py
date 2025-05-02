@@ -312,9 +312,13 @@ CSRF_FAILURE_VIEW = "plane.authentication.views.common.csrf_failure"
 
 # Base URLs
 ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", None)
+ADMIN_BASE_PATH = os.environ.get("ADMIN_BASE_PATH", None)
 SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
+SPACE_BASE_PATH = os.environ.get("SPACE_BASE_PATH", None)
 APP_BASE_URL = os.environ.get("APP_BASE_URL")
+APP_BASE_PATH = os.environ.get("APP_BASE_PATH", None)
 LIVE_BASE_URL = os.environ.get("LIVE_BASE_URL")
+LIVE_BASE_PATH = os.environ.get("LIVE_BASE_PATH")
 WEB_URL = os.environ.get("WEB_URL")
 
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
@@ -372,9 +376,21 @@ ATTACHMENT_MIME_TYPES = [
     "video/x-ms-wmv",
     # Archives
     "application/zip",
+    "application/x-rar",
     "application/x-rar-compressed",
     "application/x-tar",
     "application/gzip",
+    "application/x-zip",
+    "application/x-zip-compressed",
+    "application/x-7z-compressed",
+    "application/x-compressed",
+    "application/x-compressed-tar",
+    "application/x-compressed-tar-gz",
+    "application/x-compressed-tar-bz2",
+    "application/x-compressed-tar-zip",
+    "application/x-compressed-tar-7z",
+    "application/x-compressed-tar-rar",
+    "application/x-compressed-tar-zip",
     # 3D Models
     "model/gltf-binary",
     "model/gltf+json",
