@@ -376,6 +376,7 @@ ATTACHMENT_MIME_TYPES = [
     "video/x-ms-wmv",
     # Archives
     "application/zip",
+    "application/x-rar",
     "application/x-rar-compressed",
     "application/x-zip-compressed",
     "application/x-tar",
