@@ -24,8 +24,6 @@ from plane.utils.timezone_converter import user_timezone_converter
 from collections import defaultdict
 from plane.utils.host import base_host
 from plane.utils.order_queryset import order_issue_queryset
-from plane.utils.issue_filters import issue_filters
-
 
 class SubIssuesEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
@@ -150,7 +148,6 @@ class SubIssuesEndpoint(BaseAPIView):
         sub_issues = user_timezone_converter(
             sub_issues, datetime_fields, request.user.user_timezone
         )
-
         # Grouping
         if group_by:
             result_dict = defaultdict(list)
@@ -171,7 +168,6 @@ class SubIssuesEndpoint(BaseAPIView):
                 {"sub_issues": result_dict, "state_distribution": result},
                 status=status.HTTP_200_OK,
             )
-
         return Response(
             {"sub_issues": sub_issues, "state_distribution": result},
             status=status.HTTP_200_OK,
