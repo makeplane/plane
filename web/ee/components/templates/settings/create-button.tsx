@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 // plane imports
 import {
+  E_FEATURE_FLAGS,
   ETemplateLevel,
   ETemplateType,
   EUserPermissionsLevel,
@@ -19,6 +20,8 @@ import {
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
+import { useFlag } from "@/plane-web/hooks/store";
 
 type TCreateTemplatesButtonProps = {
   workspaceSlug: string;
@@ -38,6 +41,7 @@ type TCreateTemplateOption = {
   i18n_label: string;
   onClick: () => void;
   availableForLevels: ETemplateLevel[];
+  featureFlagKey: E_FEATURE_FLAGS;
 };
 
 export const CreateTemplatesButton = observer((props: TCreateTemplatesButtonProps) => {
@@ -71,18 +75,21 @@ export const CreateTemplatesButton = observer((props: TCreateTemplatesButtonProp
         onClick: () =>
           router.push(getCreateUpdateTemplateSettingsPath(getCreateTemplateSettingsPathProps(ETemplateType.PROJECT))),
         availableForLevels: [ETemplateLevel.WORKSPACE],
+        featureFlagKey: E_FEATURE_FLAGS.PROJECT_TEMPLATES,
       },
       {
         i18n_label: getTemplateI18nLabel(ETemplateType.WORK_ITEM),
         onClick: () =>
           router.push(getCreateUpdateTemplateSettingsPath(getCreateTemplateSettingsPathProps(ETemplateType.WORK_ITEM))),
         availableForLevels: [ETemplateLevel.WORKSPACE, ETemplateLevel.PROJECT],
+        featureFlagKey: E_FEATURE_FLAGS.WORKITEM_TEMPLATES,
       },
       {
         i18n_label: getTemplateI18nLabel(ETemplateType.PAGE),
         onClick: () =>
           router.push(getCreateUpdateTemplateSettingsPath(getCreateTemplateSettingsPathProps(ETemplateType.PAGE))),
         availableForLevels: [ETemplateLevel.WORKSPACE, ETemplateLevel.PROJECT],
+        featureFlagKey: E_FEATURE_FLAGS.PAGE_TEMPLATES,
       },
     ];
   }, [router, props]);
@@ -116,8 +123,9 @@ export const CreateTemplatesButton = observer((props: TCreateTemplatesButtonProp
       closeOnSelect
     >
       {CREATE_TEMPLATE_OPTIONS.map((option) => {
+        const isFeatureFlagEnabled = useFlag(props.workspaceSlug, option.featureFlagKey);
         const isAvailable = option.availableForLevels.includes(props.currentLevel);
-        if (!isAvailable) return null;
+        if (!isAvailable || !isFeatureFlagEnabled) return null;
         return (
           <CustomMenu.MenuItem key={option.i18n_label} onClick={option.onClick} disabled={!isAvailable}>
             {t(option.i18n_label)}
