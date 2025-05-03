@@ -17,12 +17,12 @@ import { FilterIssueTypes } from "@/plane-web/components/issues/filters/issue-ty
 type TSubIssueFiltersProps = {
   handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
   filters: IIssueFilterOptions;
-  projectMemberIds: string[] | undefined;
-  projectStates?: IState[];
+  memberIds: string[] | undefined;
+  states?: IState[];
 };
 
 export const SubIssueFilters: FC<TSubIssueFiltersProps> = observer((props) => {
-  const { handleFiltersUpdate, filters, projectMemberIds, projectStates } = props;
+  const { handleFiltersUpdate, filters, memberIds, states } = props;
 
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
@@ -66,7 +66,7 @@ export const SubIssueFilters: FC<TSubIssueFiltersProps> = observer((props) => {
                 appliedFilters={filters.state ?? null}
                 handleUpdate={(val) => handleFiltersUpdate("state", val)}
                 searchQuery={filtersSearchQuery}
-                states={projectStates}
+                states={states}
               />
             </div>
             {/* Projects */}
@@ -88,7 +88,7 @@ export const SubIssueFilters: FC<TSubIssueFiltersProps> = observer((props) => {
               <FilterAssignees
                 appliedFilters={filters.assignees ?? null}
                 handleUpdate={(val) => handleFiltersUpdate("assignees", val)}
-                memberIds={projectMemberIds}
+                memberIds={memberIds}
                 searchQuery={filtersSearchQuery}
               />
             </div>

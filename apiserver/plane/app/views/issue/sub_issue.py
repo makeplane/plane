@@ -114,10 +114,6 @@ class SubIssuesEndpoint(BaseAPIView):
                 sub_issues, order_by_param
             )
 
-        # Filtering
-        filters = issue_filters(request.query_params, "GET")
-        sub_issues = sub_issues.filter(**filters)
-
         # create's a dict with state group name with their respective issue id's
         result = defaultdict(list)
         for sub_issue in sub_issues:
@@ -160,7 +156,7 @@ class SubIssuesEndpoint(BaseAPIView):
             result_dict = defaultdict(list)
 
             for issue in sub_issues:
-                if group_by == "assignees__id":
+                if group_by == "assignees__ids":
                     if issue["assignee_ids"]:
                         assignee_ids = issue["assignee_ids"]
                         for assignee_id in assignee_ids:

@@ -26,7 +26,7 @@ export const SubWorkItemTitleActions: FC<TSubWorkItemTitleActionsProps> = observ
   // store hooks
   const {
     subIssues: {
-      filters: { getSubIssueFilters, updateSubIssueFilters },
+      filters: { getSubIssueFilters, updateSubWorkItemFilters },
     },
   } = useIssueDetail(issueServiceType);
   const { getProjectStates } = useProjectState();
@@ -44,23 +44,17 @@ export const SubWorkItemTitleActions: FC<TSubWorkItemTitleActionsProps> = observ
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-      updateSubIssueFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, parentId);
+      updateSubWorkItemFilters(EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, parentId);
     },
-    [workspaceSlug, projectId, parentId, updateSubIssueFilters]
+    [workspaceSlug, projectId, parentId, updateSubWorkItemFilters]
   );
 
   const handleDisplayPropertiesUpdate = useCallback(
     (updatedDisplayProperties: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-      updateSubIssueFilters(
-        workspaceSlug,
-        projectId,
-        EIssueFilterType.DISPLAY_PROPERTIES,
-        updatedDisplayProperties,
-        parentId
-      );
+      updateSubWorkItemFilters(EIssueFilterType.DISPLAY_PROPERTIES, updatedDisplayProperties, parentId);
     },
-    [workspaceSlug, projectId, parentId, updateSubIssueFilters]
+    [workspaceSlug, projectId, parentId, updateSubWorkItemFilters]
   );
 
   const handleFiltersUpdate = useCallback(
@@ -79,15 +73,9 @@ export const SubWorkItemTitleActions: FC<TSubWorkItemTitleActionsProps> = observ
         else newValues.push(value);
       }
 
-      updateSubIssueFilters(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        EIssueFilterType.FILTERS,
-        { [key]: newValues },
-        parentId
-      );
+      updateSubWorkItemFilters(EIssueFilterType.FILTERS, { [key]: newValues }, parentId);
     },
-    [workspaceSlug, projectId, subIssueFilters?.filters, updateSubIssueFilters, parentId]
+    [workspaceSlug, projectId, subIssueFilters?.filters, updateSubWorkItemFilters, parentId]
   );
 
   return (
@@ -110,8 +98,8 @@ export const SubWorkItemTitleActions: FC<TSubWorkItemTitleActionsProps> = observ
       <SubIssueFilters
         handleFiltersUpdate={handleFiltersUpdate}
         filters={subIssueFilters?.filters ?? {}}
-        projectMemberIds={projectMemberIds ?? undefined}
-        projectStates={projectStates}
+        memberIds={projectMemberIds ?? undefined}
+        states={projectStates}
       />
       {!disabled && (
         <SubIssuesActionButton issueId={parentId} disabled={disabled} issueServiceType={issueServiceType} />

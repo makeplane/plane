@@ -1,9 +1,9 @@
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
 import { GroupByColumnTypes, TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
 // hooks
-import { Loader } from "@plane/ui";
 import { getGroupByColumns, isWorkspaceLevel } from "@/components/issues/issue-layouts/utils";
 import { useIssueDetail } from "@/hooks/store";
 
@@ -30,6 +30,7 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
     workspaceSlug,
     projectId,
     parentIssueId,
+    rootIssueId,
     disabled,
     handleIssueCrudState,
     subIssueOperations,
@@ -41,25 +42,15 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
   const {
     subIssues: {
       loader,
-      getGroupedSubIssuesByIssueId,
-      filters: { getSubIssueFilters },
+      subIssuesByIssueId,
+      filters: { getSubIssueFilters, getGroupedSubWorkItems },
     },
   } = useIssueDetail(issueServiceType);
 
-  if (loader === "init-loader") {
-    return (
-      <Loader className="flex flex-col gap-2 pt-3 pl-3">
-        {[...Array(4)].map((_, index) => (
-          <Loader.Item key={index} width="100%" height="35px" />
-        ))}
-      </Loader>
-    );
-  }
-
   // derived values
-  const groupedSubIssues = getGroupedSubIssuesByIssueId(parentIssueId);
   const filters = getSubIssueFilters(parentIssueId);
-  const group_by = filters?.displayFilters?.group_by ?? null;
+  const isRootLevel = useMemo(() => rootIssueId === parentIssueId, [rootIssueId, parentIssueId]);
+  const group_by = isRootLevel ? (filters?.displayFilters?.group_by ?? null) : null;
 
   const groups = getGroupByColumns({
     groupBy: group_by as GroupByColumnTypes,
@@ -69,12 +60,24 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
     projectId,
   });
 
+  const workItemIds = useCallback(
+    (groupId: string) => {
+      if (isRootLevel) {
+        const groupedSubIssues = getGroupedSubWorkItems(rootIssueId);
+        return groupedSubIssues?.[groupId] ?? [];
+      }
+      return subIssuesByIssueId(parentIssueId) ?? [];
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [isRootLevel, parentIssueId, rootIssueId, loader]
+  );
+
   return (
     <div className="relative">
       {groups?.map((group) => (
         <SubIssuesListGroup
           key={group.id}
-          workItemIds={groupedSubIssues?.[group.id] ?? []}
+          workItemIds={workItemIds(group.id)}
           projectId={projectId}
           workspaceSlug={workspaceSlug}
           group={group}
