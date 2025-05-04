@@ -1169,6 +1169,10 @@
       "project_insights": {
         "title": "No data yet",
         "description": "Work items assigned to you, broken down by state, will show up here."
+      },
+      "created_vs_resolved": {
+        "title": "No data yet",
+        "description": "Work items created and resolved over time will show up here."
       }
     }
   },

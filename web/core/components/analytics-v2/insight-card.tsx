@@ -18,7 +18,8 @@ const InsightCard = (props: InsightCardProps) => {
   const percentage = useMemo(() => {
     if (count != null && filter_count != null) {
       const result = ((count - filter_count) / count) * 100;
-      return isFinite(result) ? result : null;
+      const isFiniteAndNotNaNOrZero = isFinite(result) && !isNaN(result) && result !== 0;
+      return isFiniteAndNotNaNOrZero ? result : null;
     }
     return null;
   }, [count, filter_count]);

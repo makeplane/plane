@@ -35,3 +35,5 @@ const AnalyticsV2EmptyState = ({
 )
 
 export default AnalyticsV2EmptyState
+
+

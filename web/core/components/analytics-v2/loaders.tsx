@@ -7,3 +7,8 @@ export const ProjectInsightsLoader = () => (
     </div>
   </div>
 );
+
+
+export const AreaChartLoader = () => (
+  <div className="h-[350px] w-full bg-custom-background-80 rounded animate-pulse" />
+);

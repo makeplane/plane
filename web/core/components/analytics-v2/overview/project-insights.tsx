@@ -11,7 +11,7 @@ import { AnalyticsV2Service } from '@/services/analytics-v2.service'
 // import useSWR from 'swr'
 import AnalyticsSectionWrapper from '../analytics-section-wrapper'
 import AnalyticsV2EmptyState from '../empty-state'
-import { ProjectInsightsLoader } from './loader'
+import { ProjectInsightsLoader } from '../loaders'
 
 const RadarChart = dynamic(() =>
   import("@plane/propel/charts/radar-chart").then((mod) => ({
