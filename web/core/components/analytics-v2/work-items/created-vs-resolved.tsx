@@ -11,7 +11,7 @@ import { useAnalyticsV2 } from '@/hooks/store/use-analytics-v2'
 import { AnalyticsV2Service } from '@/services/analytics-v2.service'
 import AnalyticsSectionWrapper from '../analytics-section-wrapper'
 import AnalyticsV2EmptyState from '../empty-state'
-import { AreaChartLoader } from '../loaders'
+import { ChartLoader } from '../loaders'
 
 
 
@@ -63,7 +63,7 @@ const CreatedVsResolved = observer(() => {
 
   return (
     <AnalyticsSectionWrapper title={t('workspace_analytics.created_vs_resolved')} subtitle={selectedDurationLabel} className='col-span-1'>
-      {isCreatedVsResolvedLoading ? <AreaChartLoader /> :
+      {isCreatedVsResolvedLoading ? <ChartLoader /> :
         parsedData && parsedData.length > 0 ?
           <AreaChart
             className="w-full h-[350px]"

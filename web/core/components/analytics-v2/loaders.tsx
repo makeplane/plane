@@ -9,6 +9,8 @@ export const ProjectInsightsLoader = () => (
 );
 
 
-export const AreaChartLoader = () => (
+export const ChartLoader = () => (
   <div className="h-[350px] w-full bg-custom-background-80 rounded animate-pulse" />
 );
+
+

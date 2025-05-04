@@ -17,7 +17,7 @@ const AnalyticsV2EmptyState = ({
 }: Props) => (
     <div
         className={cn(
-            "flex items-center justify-center min-h-full min-w-full overflow-y-auto py-10 md:px-20 px-5 border border-custom-border-100 rounded-lg",
+            "flex items-center justify-center h-full w-full overflow-y-auto py-10 md:px-20 px-5 border border-custom-border-100 rounded-lg",
             className
         )}
     >
