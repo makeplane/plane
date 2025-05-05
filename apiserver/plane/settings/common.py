@@ -381,6 +381,13 @@ LIVE_BASE_PATH = os.environ.get("LIVE_BASE_PATH", "/live/")
 
 LIVE_URL = urljoin(LIVE_BASE_URL, LIVE_BASE_PATH) if LIVE_BASE_URL else None
 
+
+SILO_BASE_URL = os.environ.get("SILO_BASE_URL", "")
+if SILO_BASE_URL and not is_valid_url(SILO_BASE_URL):
+    SILO_BASE_URL = None
+SILO_BASE_PATH = os.environ.get("SILO_BASE_PATH", "/silo")
+SILO_URL = urljoin(SILO_BASE_URL, SILO_BASE_PATH) if SILO_BASE_URL else None
+
 # WEB URL
 WEB_URL = os.environ.get("WEB_URL")
 
@@ -522,10 +529,7 @@ SIMPLE_JWT = {
     "USER_ID_CLAIM": "user_id",
 }
 
-# silo settings
-SILO_HOSTNAME = os.environ.get("SILO_BASE_URL", "")
-SILO_BASE_PATH = os.environ.get("SILO_BASE_PATH", "/silo")
-SILO_URL = f"{SILO_HOSTNAME}{SILO_BASE_PATH}"
+# silo hmac secret key
 SILO_HMAC_SECRET_KEY = os.environ.get("SILO_HMAC_SECRET_KEY", "")
 
 

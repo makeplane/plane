@@ -48,7 +48,7 @@ from plane.ee.utils.workspace_feature import (
 )
 from plane.ee.bgtasks.project_activites_task import project_activity
 from plane.app.permissions import allow_permission, ROLE
-from plane.utils.url import is_valid_http_url
+from plane.utils.url import is_valid_url
 from plane.utils.uuid import is_valid_uuid
 from plane.settings.storage import S3Storage
 from plane.utils.host import base_host
@@ -168,7 +168,7 @@ class ProjectTemplateUseEndpoint(BaseAPIView):
             return project
 
         # If the template cover asset is a url we need not do anything
-        if is_valid_http_url(project_template.cover_asset):
+        if is_valid_url(project_template.cover_asset):
             return project
 
         # if the template cover asset is valid uuid then upload the items

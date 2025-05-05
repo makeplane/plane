@@ -1,14 +1,16 @@
 import requests
 import json
-
 from bs4 import BeautifulSoup
-
+from urllib.parse import urljoin
 # Django imports
 from django.conf import settings
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
+from celery import shared_task
+
+# Module imports
 from plane.db.models import (
     Page,
     DeployBoard,
@@ -25,9 +27,7 @@ from plane.bgtasks.copy_s3_object import copy_s3_objects
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.ee.utils.page_descendants import get_descendant_page_ids
 from plane.ee.utils.page_events import PageAction
-
-# from plane.utils
-from celery import shared_task
+from plane.utils.url import get_url_components
 
 
 @shared_task
@@ -309,11 +309,18 @@ def nested_page_update(
             "data": data,
         }
 
-        if not settings.LIVE_URL:
-            return
+        live_url = get_url_components(settings.LIVE_URL)
+        if not live_url:
+            return {}
 
+        base_url = (
+            f"{live_url.get('scheme')}://{live_url.get('netloc')}{live_url.get('path')}"
+        )
+        url = urljoin(base_url, "broadcast/")
+
+        # Send the payload to the live server
         response = requests.post(
-            f"{settings.LIVE_URL}/broadcast/",
+            url,
             json=payload,
             headers={"Content-Type": "application/json"},
         )
