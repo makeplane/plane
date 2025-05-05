@@ -1,10 +1,9 @@
-export const openProjectAndScrollToSidebar = (
-  itemProjectId: string,
-  toggleProjectListOpen: (id: string, open: boolean) => void
-) => {
+import { store } from "@/lib/store-context";
+
+export const openProjectAndScrollToSidebar = (itemProjectId: string) => {
   if (!itemProjectId) return;
   // open the project list
-  toggleProjectListOpen(itemProjectId, true);
+  store.commandPalette.toggleProjectListOpen(itemProjectId, true);
   // scroll to the element
   const scrollElementId = `sidebar-${itemProjectId}-JOINED`;
   const scrollElement = document.getElementById(scrollElementId);

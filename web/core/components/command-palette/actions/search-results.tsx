@@ -6,7 +6,6 @@ import { useParams } from "next/navigation";
 // plane imports
 import { IWorkspaceSearchResults } from "@plane/types";
 // hooks
-import { useCommandPalette } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { commandGroups } from "@/plane-web/components/command-palette";
@@ -23,8 +22,6 @@ export const CommandPaletteSearchResults: React.FC<Props> = observer((props) => 
   // router
   const router = useAppRouter();
   const { projectId: routerProjectId } = useParams();
-  // command palette
-  const { toggleProjectListOpen } = useCommandPalette();
   // derived values
   const projectId = routerProjectId?.toString();
 
@@ -45,7 +42,7 @@ export const CommandPaletteSearchResults: React.FC<Props> = observer((props) => 
                     closePalette();
                     router.push(currentSection.path(item, projectId));
                     const itemProjectId = item.project_id || (item.project_ids && item.project_ids[0]) || undefined;
-                    openProjectAndScrollToSidebar(itemProjectId, toggleProjectListOpen);
+                    openProjectAndScrollToSidebar(itemProjectId);
                   }}
                   value={`${key}-${item?.id}-${item.name}-${item.project__identifier ?? ""}-${item.sequence_id ?? ""}`}
                   className="focus:outline-none"
