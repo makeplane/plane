@@ -2,11 +2,13 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Module imports
 from ..base import BaseAPIView, BaseViewSet
 from plane.db.models import FileAsset, Workspace
 from plane.app.serializers import FileAssetSerializer
+from plane.authentication.session import BaseSessionAuthentication
 
 
 class FileAssetEndpoint(BaseAPIView):
@@ -15,6 +17,8 @@ class FileAssetEndpoint(BaseAPIView):
     """
     A viewset for viewing and editing task instances.
     """
+
+    authentication_classes = [JWTAuthentication, BaseSessionAuthentication]
 
     def get(self, request, workspace_id, asset_key):
         asset_key = str(workspace_id) + "/" + asset_key
@@ -50,6 +54,8 @@ class FileAssetEndpoint(BaseAPIView):
 
 
 class FileAssetViewSet(BaseViewSet):
+    authentication_classes = [JWTAuthentication, BaseSessionAuthentication]
+
     def restore(self, request, workspace_id, asset_key):
         asset_key = str(workspace_id) + "/" + asset_key
         file_asset = FileAsset.objects.get(asset=asset_key)

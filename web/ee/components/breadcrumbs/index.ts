@@ -1,1 +1,1 @@
-export * from "ce/components/breadcrumbs";
+export * from "./project";
