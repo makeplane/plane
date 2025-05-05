@@ -3,7 +3,7 @@
 import React, { FC, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { FileText, Layers } from "lucide-react";
 import { EUserPermissionsLevel, EUserPermissions, EUserProjectRoles } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -12,7 +12,7 @@ import { Tooltip, DiceIcon, ContrastIcon, LayersIcon, Intake } from "@plane/ui";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
 // hooks
-import { useAppTheme, useProject, useUserPermissions } from "@/hooks/store";
+import { useAppTheme, useIssueDetail, useProject, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane-web constants
 
@@ -35,15 +35,21 @@ type TProjectItemsProps = {
 
 export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
   const { workspaceSlug, projectId, additionalNavigationItems, isSidebarCollapsed } = props;
+  const { workItem: workItemIdFromRoute } = useParams();
   // store hooks
   const { t } = useTranslation();
   const { toggleSidebar } = useAppTheme();
   const { getPartialProjectById } = useProject();
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
+  const {
+    issue: { getIssueIdByIdentifier, getIssueById },
+  } = useIssueDetail();
   // pathname
   const pathname = usePathname();
   // derived values
+  const workItemId = workItemIdFromRoute ? getIssueIdByIdentifier(workItemIdFromRoute?.toString()) : undefined;
+  const workItem = workItemId ? getIssueById(workItemId) : undefined;
   const project = getPartialProjectById(projectId);
   // handlers
   const handleProjectClick = () => {
@@ -134,6 +140,23 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
     return sortedNavigationItems;
   }, [workspaceSlug, projectId, baseNavigation, additionalNavigationItems]);
 
+  const isActive = useCallback(
+    (item: TNavigationItem) => {
+      // work item condition
+      const workItemCondition = workItemId && workItem && !workItem?.is_epic && workItem?.project_id === projectId;
+      // epic condition
+      const epicCondition = workItemId && workItem && workItem?.is_epic && workItem?.project_id === projectId;
+      // is active
+      const isWorkItemActive = item.i18n_key === "sidebar.work_items" && workItemCondition;
+      const isEpicActive = item.i18n_key === "sidebar.epics" && epicCondition;
+      // pathname condition
+      const isPathnameActive = pathname.includes(item.href);
+      // return
+      return isWorkItemActive || isEpicActive || isPathnameActive;
+    },
+    [pathname, workItem, workItemId, projectId]
+  );
+
   return (
     <>
       {navigationItemsMemo.map((item) => {
@@ -154,11 +177,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
             <Link href={item.href} onClick={handleProjectClick}>
               <SidebarNavItem
                 className={`pl-[18px] ${isSidebarCollapsed ? "p-0 size-7 justify-center mx-auto" : ""}`}
-                isActive={
-                  item.i18n_key === "sidebar.work_items"
-                    ? pathname.includes(item.href) || pathname.includes(`/${workspaceSlug}/browse/`)
-                    : pathname.includes(item.href)
-                }
+                isActive={!!isActive(item)}
               >
                 <div className="flex items-center gap-1.5 py-[1px]">
                   <item.icon
