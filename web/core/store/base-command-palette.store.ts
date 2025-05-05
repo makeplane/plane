@@ -116,7 +116,8 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
    * @param value
    */
   toggleProjectListOpen = (projectId: string, value?: boolean) => {
-    this.projectListOpenMap[projectId] = value || !this.projectListOpenMap[projectId];
+    if (value !== undefined) this.projectListOpenMap[projectId] = value;
+    else this.projectListOpenMap[projectId] = !this.projectListOpenMap[projectId];
   };
 
   /**
