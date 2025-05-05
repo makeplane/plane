@@ -899,7 +899,37 @@
     "link_personal_account": "あなたの個人{providerName}アカウントをPlaneにリンクします。",
     "connected_slack_workspaces": "接続済みSlackワークスペース",
     "connected_on": "{date}に接続",
-    "disconnect_workspace": "{name}ワークスペースを切断"
+    "disconnect_workspace": "{name}ワークスペースを切断",
+    "project_updates": {
+      "title": "プロジェクトアップデート",
+      "description": "プロジェクトのアップデート通知を設定します",
+      "add_new_project_update": "新しいプロジェクトアップデート通知を追加",
+      "project_updates_empty_state": "Slackチャンネルに接続されたプロジェクトがここに表示されます。",
+      "project_updates_form": {
+        "title": "プロジェクトアップデートを設定",
+        "description": "作業項目が作成されたときにSlackでプロジェクトアップデート通知を受け取る",
+        "failed_to_load_channels": "Slackからチャンネルを読み込めませんでした",
+        "project_dropdown": {
+          "placeholder": "プロジェクトを選択",
+          "label": "Planeプロジェクト",
+          "no_projects": "利用可能なプロジェクトがありません"
+        },
+        "channel_dropdown": {
+          "label": "Slackチャンネル",
+          "placeholder": "チャンネルを選択",
+          "no_channels": "利用可能なチャンネルがありません"
+        },
+        "all_projects_connected": "すべてのプロジェクトはすでにSlackチャンネルに接続されています。",
+        "all_channels_connected": "すべてのSlackチャンネルはすでにプロジェクトに接続されています。",
+        "project_connection_success": "プロジェクト接続が正常に作成されました",
+        "project_connection_updated": "プロジェクト接続が正常に更新されました",
+        "project_connection_deleted": "プロジェクト接続が正常に削除されました",
+        "failed_delete_project_connection": "プロジェクト接続の削除に失敗しました",
+        "failed_create_project_connection": "プロジェクト接続の作成に失敗しました",
+        "failed_upserting_project_connection": "プロジェクト接続の更新に失敗しました",
+        "failed_loading_project_connections": "プロジェクト接続を読み込めませんでした。ネットワークの問題または統合の問題が原因かもしれません。"
+      }
+    }
   },
 
   "file_upload": {
@@ -1804,7 +1834,10 @@
         }
       },
       "use_template": {
-        "button": "テンプレートを使用"
+        "button": {
+          "default": "テンプレートを使用",
+          "loading": "使用中"
+        }
       },
       "template_source": {
         "workspace": {
@@ -1931,7 +1964,8 @@
         "project": "新しいテンプレートを追加"
       },
       "label": {
-        "project": "プロジェクトテンプレートを選択"
+        "project": "プロジェクトテンプレートを選択",
+        "page": "テンプレートから選択"
       },
       "tooltip": {
         "work_item": "作業項目テンプレートを選択"

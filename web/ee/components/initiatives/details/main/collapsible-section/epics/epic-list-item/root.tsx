@@ -4,11 +4,11 @@ import React, { useRef } from "react";
 import { observer } from "mobx-react";
 // Plane
 import { EIssueServiceType } from "@plane/constants";
-import { EUpdateStatus } from "@plane/types/src/enums";
 import { CircularProgressIndicator, EpicIcon } from "@plane/ui";
 // components
 import { ListItem } from "@/components/core/list";
 // helpers
+import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
 import { cn, getProgress } from "@/helpers/common.helper";
 import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
@@ -19,6 +19,7 @@ import { IdentifierText } from "@/plane-web/components/issues";
 import { UpdateStatusIcons } from "@/plane-web/components/updates/status-icons";
 import { useEpicAnalytics } from "@/plane-web/hooks/store";
 // local components
+import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { EpicProperties } from "./properties";
 import { EpicQuickActions } from "./quick-action";
 
@@ -39,6 +40,14 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
   const { getEpicStatsById } = useEpicAnalytics();
   const project = useProject();
   const { isMobile } = usePlatformOS();
+  const {
+    initiative: {
+      fetchInitiativeAnalytics,
+      epics: {
+        filters: { getInitiativeEpicsFiltersById },
+      },
+    },
+  } = useInitiatives();
 
   // ref
   const parentRef = useRef(null);
@@ -46,6 +55,7 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
   // derived values
   const issue = getIssueById(epicId);
   const initiativeEpicStats = getEpicStatsById(epicId);
+  const displayProperties = getInitiativeEpicsFiltersById(initiativeId)?.displayProperties ?? {};
 
   const projectIdentifier = issue?.project_id ? project.getProjectIdentifierById(issue?.project_id) : "";
   const issueSequenceId = issue?.sequence_id;
@@ -78,12 +88,16 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
           }}
         >
           <UpdateStatusIcons statusType={issue.update_status} />
-          <EpicIcon className="h-4 w-4 text-custom-text-300" />
-          <IdentifierText
-            identifier={`${projectIdentifier}-${issueSequenceId}`}
-            enableClickToCopyIdentifier
-            textContainerClassName="text-xs text-custom-text-200"
-          />
+          <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="key">
+            <>
+              <EpicIcon className="h-4 w-4 text-custom-text-300" />
+              <IdentifierText
+                identifier={`${projectIdentifier}-${issueSequenceId}`}
+                enableClickToCopyIdentifier
+                textContainerClassName="text-xs text-custom-text-200"
+              />
+            </>
+          </WithDisplayPropertiesHOC>
         </div>
       }
       appendTitleElement={
@@ -101,6 +115,8 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
             initiativeId={initiativeId}
             epicId={epicId}
             disabled={disabled}
+            fetchInitiativeAnalytics={fetchInitiativeAnalytics}
+            displayProperties={displayProperties}
           />
           <div className={cn("hidden md:flex")}>
             <EpicQuickActions

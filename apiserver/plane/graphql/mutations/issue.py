@@ -1,43 +1,45 @@
 # Python imports
-from datetime import datetime
 import json
-
-# Django imports
-from django.utils import timezone
-from django.core import serializers
-
-# Strawberry imports
-import strawberry
-from strawberry.types import Info
-from strawberry.scalars import JSON
-from strawberry.permission import PermissionExtension
-from strawberry.exceptions import GraphQLError
+from datetime import datetime
 
 # Third-party imports
 from typing import Optional
+
+import strawberry
 from asgiref.sync import sync_to_async
 
+# Django imports
+from django.core import serializers
+from django.utils import timezone
+
+# Strawberry imports
+from strawberry.exceptions import GraphQLError
+from strawberry.permission import PermissionExtension
+from strawberry.scalars import JSON
+from strawberry.types import Info
+
 # Module imports
-from plane.graphql.utils.feature_flag import validate_feature_flag
-from plane.graphql.types.issue import IssuesType, IssueUserPropertyType
-from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
+from plane.db.models import (
+    CycleIssue,
+    Issue,
+    IssueAssignee,
+    IssueLabel,
+    IssueSubscriber,
+    IssueType,
+    IssueUserProperty,
+    ModuleIssue,
+    Project,
+    Workspace,
+)
+from plane.graphql.bgtasks.issue_activity_task import issue_activity
 from plane.graphql.permissions.project import (
     ProjectBasePermission,
     ProjectMemberPermission,
 )
-from plane.db.models import (
-    Project,
-    Issue,
-    IssueUserProperty,
-    IssueAssignee,
-    IssueLabel,
-    Workspace,
-    IssueSubscriber,
-    IssueType,
-    CycleIssue,
-    ModuleIssue,
-)
-from plane.graphql.bgtasks.issue_activity_task import issue_activity
+from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
+from plane.graphql.types.issues.base import IssuesType
+from plane.graphql.types.issues.user_property import IssueUserPropertyType
+from plane.graphql.utils.feature_flag import validate_feature_flag
 from plane.graphql.utils.issue_activity import convert_issue_properties_to_activity_dict
 from plane.graphql.utils.workflow import WorkflowStateManager
 

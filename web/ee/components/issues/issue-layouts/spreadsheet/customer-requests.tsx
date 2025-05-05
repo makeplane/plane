@@ -14,8 +14,8 @@ export const SpreadSheetCustomerRequestColumn: React.FC<TProps> = observer((prop
 
   return (
     <Row className="flex h-11 w-full items-center border-b-[0.5px] border-custom-border-200 py-1 text-xs hover:bg-custom-background-80 group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10">
-      {issue?.customer_request_count}{" "}
-      {t("customers.requests.label", { count: issue?.customer_request_count }).toLowerCase()}
+      {issue?.customer_request_ids?.length}{" "}
+      {t("customers.requests.label", { count: issue?.customer_request_ids?.length }).toLowerCase()}
     </Row>
   );
 });

@@ -3,7 +3,8 @@ import { ExIssue, ExIssueComment, PlaneUser } from "./types";
 // Common types
 type UUID = string;
 
-interface Activity {
+export interface PlaneActivity {
+  timestamp: string;
   field: string;
   new_value: string | null;
   old_value: string | null;
@@ -18,7 +19,7 @@ export interface WebhookPayloadBase {
   action: string;
   webhook_id: UUID;
   workspace_id: UUID;
-  activity: Activity;
+  activity: PlaneActivity;
 }
 
 export interface WebhookIssuePayload extends WebhookPayloadBase {
@@ -71,7 +72,7 @@ export interface PlaneWebhookPayloadBase<data = any> {
   action: string;
   webhook_id: UUID;
   workspace_id: UUID;
-  activity: Activity;
+  activity: PlaneActivity;
 }
 
 // Union type for all possible webhook payloads

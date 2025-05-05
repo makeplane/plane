@@ -216,7 +216,7 @@ export class IssueStore implements IIssueStore {
       is_draft: issue?.is_draft,
       is_subscribed: issue?.is_subscribed,
       is_epic: issue?.is_epic,
-      customer_request_count: issue?.customer_request_count,
+      customer_request_ids: issue?.customer_request_ids,
     };
 
     this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);

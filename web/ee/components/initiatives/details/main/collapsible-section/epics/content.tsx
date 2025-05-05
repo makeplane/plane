@@ -24,7 +24,7 @@ export const InitiativeEpicsCollapsibleContent: FC<Props> = observer((props) => 
   const { workspaceSlug, initiativeId, toggleEpicModal, disabled = false } = props;
   // store hooks
   const {
-    initiative: { getInitiativeEpicsById },
+    initiative: { epics: {getInitiativeEpicsById} },
   } = useInitiatives();
 
   const { t } = useTranslation();

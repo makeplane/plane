@@ -16,19 +16,19 @@ from strawberry.types import Info
 from plane.db.models import CycleIssue, Issue, IssueAssignee, IssueLabel, ModuleIssue
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
 from plane.graphql.helpers import (
+    default_work_item_type,
     get_epic,
     get_project,
     get_project_default_state,
     get_workspace,
     is_epic_feature_flagged,
     is_project_epics_enabled,
+    is_work_item_type_feature_flagged,
     is_workflow_create_allowed,
     is_workflow_feature_flagged,
-    is_work_item_type_feature_flagged,
-    default_work_item_type,
 )
 from plane.graphql.permissions.project import ProjectMemberPermission
-from plane.graphql.types.issue import IssueCreateInputType, IssuesType
+from plane.graphql.types.issues.base import IssueCreateInputType, IssuesType
 
 
 @sync_to_async

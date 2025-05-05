@@ -9,12 +9,14 @@ const envSchema = z.object({
   BATCH_SIZE: z.string().default("50"),
   PORT: z.string().default("3000"),
   DEDUP_INTERVAL: z.string().optional().default("3"),
-  DB_URL: z.string().default("postgres://postgres:password@localhost:5432/silo"),
+  DB_URL: z.string().optional(),
+  DATABASE_URL: z.string().optional(),
   AMQP_URL: z.string().default("amqp://guest:guest@localhost:5672"),
   CORS_ALLOWED_ORIGINS: z.string().default("https://app.plane.so"),
   REDIS_URL: z.string().default("redis://localhost:6379"),
   PG_SCHEMA: z.string().optional(),
   MAX_STORE_CONNECTION_ATTEMPTS: z.string().default("20"),
+  MAX_DB_CONNECTION_ATTEMPTS: z.string().default("5"),
   APP_BASE_URL: z
     .string()
     .default("")
@@ -63,6 +65,8 @@ const envSchema = z.object({
   SLACK_CLIENT_SECRET: z.string().optional(),
   // Flatfile Env Variables
   FLATFILE_API_KEY: z.string().optional(),
+  AES_SECRET_KEY: z.string().optional(),
+  AES_SALT: z.string().default("aes-salt"),
 });
 
 // Validate the environment variables

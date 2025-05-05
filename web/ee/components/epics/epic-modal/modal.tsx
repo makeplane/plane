@@ -22,6 +22,7 @@ export interface EpicModalProps {
     loading: string;
   };
   isProjectSelectionDisabled?: boolean;
+  isConversionOperation?: boolean;
 }
 
 export const CreateUpdateEpicModal: React.FC<EpicModalProps> = observer(

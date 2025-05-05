@@ -4,7 +4,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Briefcase, Sidebar } from "lucide-react";
 // plane imports
-import { EIssueServiceType, EIssuesStoreType, EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import {
+  EIssueServiceType,
+  EIssuesStoreType,
+  EUserPermissionsLevel,
+  EUserProjectRoles,
+  EWorkItemConversionType,
+} from "@plane/constants";
 import { TIssue } from "@plane/types";
 import { Breadcrumbs, EpicIcon, Header, Logo } from "@plane/ui";
 // components
@@ -16,7 +22,8 @@ import { useAppTheme, useIssueDetail, useProject, useUserPermissions } from "@/h
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // plane-web components
-import { ProjectEpicQuickActions } from "@/plane-web/components/epics";
+import { ConvertWorkItemAction, ProjectEpicQuickActions } from "@/plane-web/components/epics";
+import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 
 export const EpicItemDetailsHeader = observer(() => {
   // router
@@ -40,7 +47,9 @@ export const EpicItemDetailsHeader = observer(() => {
 
   const isEditingAllowed = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.PROJECT
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug?.toString(),
+    projectId?.toString()
   );
 
   const handleDelete = async () => {
@@ -112,6 +121,13 @@ export const EpicItemDetailsHeader = observer(() => {
       <Header.RightItem>
         {issueDetails && (
           <div ref={parentRef} className="flex items-center gap-2">
+            <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="WORK_ITEM_CONVERSION" fallback={<></>}>
+              <ConvertWorkItemAction
+                workItemId={issueDetails?.id}
+                conversionType={EWorkItemConversionType.WORK_ITEM}
+                disabled={!isEditingAllowed}
+              />
+            </WithFeatureFlagHOC>
             <ProjectEpicQuickActions
               parentRef={parentRef}
               issue={issueDetails}

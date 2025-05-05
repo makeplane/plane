@@ -98,7 +98,12 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     query: `${state?.name}`,
     content: (
       <div className="flex items-center gap-2">
-        <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} className="h-3 w-3 flex-shrink-0" />
+        <StateGroupIcon
+          stateGroup={state?.group ?? "backlog"}
+          color={state?.color}
+          className="size-4 flex-shrink-0"
+          percentage={state?.order}
+        />
         <span className="flex-grow truncate text-left">{state?.name}</span>
       </div>
     ),
@@ -179,7 +184,8 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                   <StateGroupIcon
                     stateGroup={selectedState?.group ?? "backlog"}
                     color={selectedState?.color ?? "rgba(var(--color-text-300))"}
-                    className="h-3 w-3 flex-shrink-0"
+                    className="size-4 flex-shrink-0"
+                    percentage={selectedState?.order}
                   />
                 )}
                 {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (

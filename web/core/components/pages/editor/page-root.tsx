@@ -44,6 +44,7 @@ type TPageRootProps = {
   page: TPageInstance;
   storeType: EPageStoreType;
   webhookConnectionParams: TWebhookConnectionQueryParams;
+  projectId?: string;
   workspaceSlug: string;
   customRealtimeEventHandlers?: TCustomEventHandlers;
 };
@@ -51,8 +52,16 @@ type TPageRootProps = {
 const workspacePageVersionService = new WorkspacePageVersionService();
 
 export const PageRoot = observer((props: TPageRootProps) => {
-  const { config, handlers, page, storeType, webhookConnectionParams, workspaceSlug, customRealtimeEventHandlers } =
-    props;
+  const {
+    config,
+    handlers,
+    page,
+    projectId,
+    storeType,
+    webhookConnectionParams,
+    workspaceSlug,
+    customRealtimeEventHandlers,
+  } = props;
   // states
   const [editorReady, setEditorReady] = useState(false);
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
@@ -154,6 +163,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
         handleEditorReady={handleEditorReady}
         handlers={handlers}
         page={page}
+        projectId={projectId}
         webhookConnectionParams={webhookConnectionParams}
         workspaceSlug={workspaceSlug}
         customRealtimeEventHandlers={customRealtimeEventHandlers}

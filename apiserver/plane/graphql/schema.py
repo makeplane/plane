@@ -70,6 +70,8 @@ from .queries.epics import (
     EpicAttachmentQuery,
     EpicWorkItemsQuery,
     EpicRelationQuery,
+    EpicActivityQuery,
+    EpicCommentQuery,
 )
 
 # mutations
@@ -131,6 +133,7 @@ from .mutations.epics import (
     EpicAttachmentMutation,
     EpicWorkItemsMutation,
     EpicRelationMutation,
+    EpicCommentMutation,
 )
 
 
@@ -202,6 +205,8 @@ class Query(
     EpicAttachmentQuery,
     EpicWorkItemsQuery,
     EpicRelationQuery,
+    EpicActivityQuery,
+    EpicCommentQuery,
 ):
     pass
 
@@ -257,6 +262,7 @@ class Mutation(
     EpicAttachmentMutation,
     EpicWorkItemsMutation,
     EpicRelationMutation,
+    EpicCommentMutation,
 ):
     pass
 

@@ -7,56 +7,84 @@ import { CONSTANTS } from "@/helpers/constants";
 import { logger } from "@/logger";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { ACTIONS, ENTITIES, PLANE_PRIORITIES } from "../../helpers/constants";
-import { SlackPrivateMetadata } from "../../types/types";
+import { SlackPrivateMetadata, TSlackConnectionDetails } from "../../types/types";
 import { createCommentModal } from "../../views/create-comment-modal";
 import { createWebLinkModal } from "../../views/create-weblink-modal";
 import { createSlackLinkback } from "../../views/issue-linkback";
+import { getAccountConnectionBlocks } from "../../views/account-connection";
 
 export const handleBlockActions = async (data: TBlockActionPayload) => {
   try {
-    switch (data.actions[0].action_id) {
-      case ACTIONS.PROJECT:
-        return await handleProjectSelectAction(data as TBlockActionModalPayload);
-      case ACTIONS.LINKBACK_STATE_CHANGE:
-        return await handleLinkbackStateChange(data);
-      case ACTIONS.LINKBACK_SWITCH_PRIORITY:
-        return await handleSwitchPriorityAction(data);
-      case ACTIONS.LINKBACK_SWITCH_CYCLE:
-        return await handleSwitchCycleAction(data);
-      case ACTIONS.LINKBACK_OVERFLOW_ACTIONS:
-        return await handleOverflowActions(data);
-      case ACTIONS.LINKBACK_CREATE_COMMENT:
-        return await handleCreateCommentAction(data);
-      case ACTIONS.LINKBACK_ADD_WEB_LINK:
-        return await handleCreateWebLinkAction(data);
-      default:
-        return false;
-    }
-  } catch (error: any) {
-    const details = await getConnectionDetails(data.team.id);
+    // Get connection details once at the top level
+    const details = await getConnectionDetails(data.team.id, { id: data.user.id });
     if (!details) {
       logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
       return;
     }
 
-    const { slackService } = details;
+    if (details.missingUserCredentials) {
+      const { slackService } = details;
 
-    // We only send data out of the service, so no `response` object is present
-    const isPermissionError = error?.detail?.includes(CONSTANTS.NO_PERMISSION_ERROR);
+      await slackService.sendEphemeralMessage(
+        data.user.id,
+        "Please connect your Slack account to Plane to use this feature.",
+        data.channel.id,
+        data.message?.thread_ts,
+        getAccountConnectionBlocks(details)
+      );
 
-    const errorMessage = isPermissionError
-      ? CONSTANTS.NO_PERMISSION_ERROR_MESSAGE
-      : CONSTANTS.SOMETHING_WENT_WRONG;
+      return;
+    }
 
-    await slackService.sendEphemeralMessage(data.user.id, errorMessage, data.channel.id, data.message?.thread_ts);
+    // Pass the details to each handler
+    switch (data.actions[0].action_id) {
+      case ACTIONS.PROJECT:
+        return await handleProjectSelectAction(data as TBlockActionModalPayload, details);
+      case ACTIONS.LINKBACK_STATE_CHANGE:
+        return await handleLinkbackStateChange(data, details);
+      case ACTIONS.LINKBACK_SWITCH_PRIORITY:
+        return await handleSwitchPriorityAction(data, details);
+      case ACTIONS.LINKBACK_SWITCH_CYCLE:
+        return await handleSwitchCycleAction(data, details);
+      case ACTIONS.LINKBACK_OVERFLOW_ACTIONS:
+        return await handleOverflowActions(data, details);
+      case ACTIONS.LINKBACK_CREATE_COMMENT:
+        return await handleCreateCommentAction(data, details);
+      case ACTIONS.LINKBACK_ADD_WEB_LINK:
+        return await handleCreateWebLinkAction(data, details);
+      default:
+        return false;
+    }
+  } catch (error: any) {
+    try {
+      // Get connection details for error handling
+      const details = await getConnectionDetails(data.team.id, { id: data.user.id });
+      if (!details) {
+        logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
+        return;
+      }
 
-    if (!isPermissionError) {
-      throw error;
+      const { slackService } = details;
+
+      // We only send data out of the service, so no `response` object is present
+      const isPermissionError = error?.detail?.includes(CONSTANTS.NO_PERMISSION_ERROR);
+
+      const errorMessage = isPermissionError ? CONSTANTS.NO_PERMISSION_ERROR_MESSAGE : CONSTANTS.SOMETHING_WENT_WRONG;
+
+      await slackService.sendEphemeralMessage(data.user.id, errorMessage, data.channel.id, data.message?.thread_ts);
+
+      if (!isPermissionError) {
+        throw error;
+      }
+    } catch (innerError) {
+      // Log any errors that occur during error handling
+      logger.error("[SLACK] Error during error handling:", innerError);
+      throw error; // Re-throw the original error
     }
   }
 };
 
-async function handleOverflowActions(data: TBlockActionPayload) {
+async function handleOverflowActions(data: TBlockActionPayload, details: TSlackConnectionDetails) {
   if (data.actions[0].type !== "overflow") return;
 
   const selection = data.actions[0].selected_option;
@@ -64,27 +92,21 @@ async function handleOverflowActions(data: TBlockActionPayload) {
 
   switch (selection.text.text) {
     case "Add Link":
-      return await handleCreateWebLinkAction(data);
+      return await handleCreateWebLinkAction(data, details);
     case "Comment":
-      return await handleCreateCommentAction(data);
+      return await handleCreateCommentAction(data, details);
     case "Assign to me":
-      return await handleAssignToMeAction(data);
+      return await handleAssignToMeAction(data, details);
     default:
       return false;
   }
 }
 
-async function handleSwitchCycleAction(data: TBlockActionPayload) {
+async function handleSwitchCycleAction(data: TBlockActionPayload, details: TSlackConnectionDetails) {
   if (data.actions[0].type !== "static_select") return;
 
   const selection = data.actions[0].selected_option;
   if (!selection) return;
-
-  const details = await getConnectionDetails(data.team.id);
-  if (!details) {
-    logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
-    return;
-  }
 
   const { workspaceConnection, slackService, planeClient } = details;
 
@@ -105,13 +127,8 @@ async function handleSwitchCycleAction(data: TBlockActionPayload) {
   }
 }
 
-async function handleCreateCommentAction(data: TBlockActionPayload) {
+async function handleCreateCommentAction(data: TBlockActionPayload, details: TSlackConnectionDetails) {
   if (data.actions[0].type !== "overflow") return;
-  const details = await getConnectionDetails(data.team.id);
-  if (!details) {
-    logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
-    return;
-  }
 
   const { slackService } = details;
 
@@ -134,13 +151,8 @@ async function handleCreateCommentAction(data: TBlockActionPayload) {
   }
 }
 
-async function handleCreateWebLinkAction(data: TBlockActionPayload) {
+async function handleCreateWebLinkAction(data: TBlockActionPayload, details: TSlackConnectionDetails) {
   if (data.actions[0].type !== "overflow") return;
-  const details = await getConnectionDetails(data.team.id);
-  if (!details) {
-    logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
-    return;
-  }
 
   const { slackService } = details;
 
@@ -163,7 +175,7 @@ async function handleCreateWebLinkAction(data: TBlockActionPayload) {
   }
 }
 
-async function handleSwitchPriorityAction(data: TBlockActionPayload) {
+async function handleSwitchPriorityAction(data: TBlockActionPayload, details: TSlackConnectionDetails) {
   if (data.actions[0].type !== "static_select") return;
 
   const isThreadSync =
@@ -171,12 +183,6 @@ async function handleSwitchPriorityAction(data: TBlockActionPayload) {
 
   const selection = data.actions[0].selected_option;
   if (!selection) return;
-
-  const details = await getConnectionDetails(data.team.id);
-  if (!details) {
-    logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
-    return;
-  }
 
   const { workspaceConnection, slackService, planeClient } = details;
 
@@ -189,17 +195,13 @@ async function handleSwitchPriorityAction(data: TBlockActionPayload) {
       priority: value[2],
     });
 
-    const issue = await planeClient.issue.getIssue(workspaceConnection.workspace_slug, projectId, issueId);
-    const project = await planeClient.project.getProject(workspaceConnection.workspace_slug, projectId);
+    const issue = await planeClient.issue.getIssueWithFields(workspaceConnection.workspace_slug, projectId, issueId, ["state", "project", "assignees", "labels"]);
     const states = await planeClient.state.list(workspaceConnection.workspace_slug, projectId);
-    const members = await planeClient.users.list(workspaceConnection.workspace_slug, projectId);
 
     const updatedLinkback = createSlackLinkback(
       workspaceConnection.workspace_slug,
-      project,
-      members,
-      states.results,
       issue,
+      states.results,
       isThreadSync
     );
 
@@ -226,29 +228,22 @@ async function handleSwitchPriorityAction(data: TBlockActionPayload) {
   }
 }
 
-async function handleProjectSelectAction(data: TBlockActionModalPayload) {
+async function handleProjectSelectAction(data: TBlockActionModalPayload, details: TSlackConnectionDetails) {
   if (data.actions[0].type !== "static_select") return;
 
   const selection = data.actions[0].selected_option;
   if (!selection) return;
-
-  const details = await getConnectionDetails(data.team.id);
-  if (!details) {
-    logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
-    return;
-  }
 
   const { workspaceConnection, slackService, planeClient } = details;
 
   const projects = await planeClient.project.list(workspaceConnection.workspace_slug);
   const selectedProject = await planeClient.project.getProject(workspaceConnection.workspace_slug, selection.value);
   const projectAssets = await fetchPlaneAssets(workspaceConnection.workspace_slug, selection.value, planeClient);
-  const metadata = JSON.parse(data.view.private_metadata) as SlackPrivateMetadata;
+  const metadata = JSON.parse(data.view.private_metadata) as SlackPrivateMetadata<typeof ENTITIES.SHORTCUT_PROJECT_SELECTION>;
 
   if (
-    (metadata && metadata.entityPayload.type === "message_action") ||
-    metadata.entityPayload.type === "shortcut" ||
-    metadata.entityPayload.type === "command_project_selection"
+    metadata.entityType === ENTITIES.SHORTCUT_PROJECT_SELECTION ||
+    metadata.entityType === ENTITIES.COMMAND_PROJECT_SELECTION
   ) {
     const modal = createIssueModalViewFull(
       {
@@ -257,29 +252,23 @@ async function handleProjectSelectAction(data: TBlockActionModalPayload) {
         priorityOptions: convertToSlackOptions(PLANE_PRIORITIES),
         stateOptions: convertToSlackOptions(projectAssets.states.results),
       },
-      metadata.entityType === ENTITIES.SHORTCUT_PROJECT_SELECTION && metadata.entityPayload.type === "message_action"
+      metadata.entityType === ENTITIES.SHORTCUT_PROJECT_SELECTION
         ? metadata.entityPayload.message?.text
         : "",
-      JSON.stringify({ entityType: ENTITIES.ISSUE_SUBMISSION, entityPayload: metadata.entityPayload }),
-      metadata.entityPayload.type === "command_project_selection" ? false : true
+      JSON.stringify({ entityType: metadata.entityType, entityPayload: metadata.entityPayload }),
+      metadata.entityPayload.type !== ENTITIES.COMMAND_PROJECT_SELECTION
     );
 
     await slackService.updateModal(data.view.id, modal);
   }
 }
 
-async function handleLinkbackStateChange(data: TBlockActionPayload) {
+async function handleLinkbackStateChange(data: TBlockActionPayload, details: TSlackConnectionDetails) {
   if (data.actions[0].type === "static_select") {
     const isThreadSync =
       data.message && data.message.text && data.message.text.includes("Synced with Plane") ? true : false;
     const selection = data.actions[0].selected_option;
     if (!selection) return;
-
-    const details = await getConnectionDetails(data.team.id);
-    if (!details) {
-      logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
-      return;
-    }
 
     const { workspaceConnection, slackService, planeClient } = details;
 
@@ -295,17 +284,13 @@ async function handleLinkbackStateChange(data: TBlockActionPayload) {
         state: stateId,
       });
 
-      const issue = await planeClient.issue.getIssue(workspaceConnection.workspace_slug, projectId, issueId);
-      const project = await planeClient.project.getProject(workspaceConnection.workspace_slug, projectId);
+      const issue = await planeClient.issue.getIssueWithFields(workspaceConnection.workspace_slug, projectId, issueId, ["state", "project", "assignees", "labels"]);
       const states = await planeClient.state.list(workspaceConnection.workspace_slug, projectId);
-      const members = await planeClient.users.list(workspaceConnection.workspace_slug, projectId);
 
       const updatedLinkback = createSlackLinkback(
         workspaceConnection.workspace_slug,
-        project,
-        members,
-        states.results,
         issue,
+        states.results,
         isThreadSync
       );
 
@@ -333,14 +318,8 @@ async function handleLinkbackStateChange(data: TBlockActionPayload) {
   }
 }
 
-async function handleAssignToMeAction(data: TBlockActionPayload) {
+async function handleAssignToMeAction(data: TBlockActionPayload, details: TSlackConnectionDetails) {
   if (data.actions[0].type !== "overflow") return;
-
-  const details = await getConnectionDetails(data.team.id);
-  if (!details) {
-    logger.info(`[SLACK] No connection details found for team ${data.team.id}`);
-    return;
-  }
 
   const { workspaceConnection, slackService, planeClient } = details;
 

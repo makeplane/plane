@@ -2,7 +2,7 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { EWorkItemTypeEntity } from "@plane/constants";
+import { EWorkItemConversionType, EWorkItemTypeEntity } from "@plane/constants";
 import {
   TLoader,
   TIssueType,
@@ -24,6 +24,7 @@ import {
   issuePropertyOptionService,
   issuePropertyService,
   issueTypeService,
+  epicService,
 } from "@/plane-web/services/issue-types";
 // plane web stores
 import { IssueType } from "@/plane-web/store/issue-types";
@@ -67,6 +68,7 @@ export class IssueTypes implements IIssueTypesStore {
       fetchAllEpicPropertiesAndOptions: action,
       createType: action,
       deleteType: action,
+      convertWorkItem: action,
     });
     // root store
     this.rootStore = store;
@@ -700,6 +702,50 @@ export class IssueTypes implements IIssueTypesStore {
       await this.issueTypesService.deleteType({ workspaceSlug, projectId, issueTypeId: typeId });
       set(this.issueTypes, typeId, undefined);
       this.loader = "loaded";
+    } catch (error) {
+      this.loader = "loaded";
+      throw error;
+    }
+  };
+
+  /**
+   * @description Convert a work item type to another work item type
+   * @param workspaceSlug
+   * @param projectId
+   * @param workItemId
+   * @param convertTo
+   */
+  convertWorkItem = async (
+    workspaceSlug: string,
+    projectId: string,
+    workItemId: string,
+    convertTo: EWorkItemConversionType
+  ) => {
+    if (!workspaceSlug || !projectId || !workItemId || !convertTo) return;
+    try {
+      await epicService.convertWorkItemType(workspaceSlug, projectId, workItemId, convertTo);
+      runInAction(() => {
+        if (convertTo === EWorkItemConversionType.WORK_ITEM) {
+          this.rootStore.issue.projectEpics.removeIssueFromList(workItemId);
+          this.rootStore.issue.projectIssues.addIssueToList(workItemId);
+
+          const initiativeIdFromRouter = this.rootStore.router.query.initiativeId;
+          if (initiativeIdFromRouter) {
+            this.rootStore.initiativeStore.epics.removeEpicFromInitiative(
+              workspaceSlug,
+              initiativeIdFromRouter?.toString(),
+              workItemId
+            );
+          }
+          // update is_epic to false
+          this.rootStore.issue.issues.updateIssue(workItemId, { is_epic: false });
+        } else if (convertTo === EWorkItemConversionType.EPIC) {
+          this.rootStore.issue.projectIssues.removeIssueFromList(workItemId);
+          this.rootStore.issue.projectEpics.addIssueToList(workItemId);
+          // update is_epic to true
+          this.rootStore.issue.issues.updateIssue(workItemId, { is_epic: true });
+        }
+      });
     } catch (error) {
       this.loader = "loaded";
       throw error;

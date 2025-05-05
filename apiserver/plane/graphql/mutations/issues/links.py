@@ -2,23 +2,23 @@
 import json
 from typing import Optional
 
-# Strawberry imports
+# Third-party imports
 import strawberry
-from strawberry.types import Info
-from strawberry.permission import PermissionExtension
+from asgiref.sync import sync_to_async
 
 # Django imports
 from django.core.validators import URLValidator
 from django.utils import timezone
 
-# Third-party imports
-from asgiref.sync import sync_to_async
+# Strawberry imports
+from strawberry.permission import PermissionExtension
+from strawberry.types import Info
 
 # Module imports
-from plane.graphql.permissions.project import ProjectMemberPermission
-from plane.db.models import Workspace, IssueLink
-from plane.graphql.types.issues.link import IssueLinkType
+from plane.db.models import IssueLink, Workspace
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
+from plane.graphql.permissions.project import ProjectMemberPermission
+from plane.graphql.types.issues.link import IssueLinkType
 
 
 @sync_to_async

@@ -1,4 +1,5 @@
 // plane imports
+import { EWorkItemConversionType } from "@plane/constants";
 import { TEpicAnalytics, TEpicStats } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
@@ -40,6 +41,20 @@ export class EpicService extends APIService {
         throw error?.response?.data;
       });
   }
-}
 
+  async convertWorkItemType(
+    workspaceSlug: string,
+    projectId: string,
+    entityId: string,
+    entityType: EWorkItemConversionType
+  ): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/conversion/${entityId}/`, {
+      conversion_type: entityType,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+}
 export const epicService = new EpicService();

@@ -18,7 +18,7 @@ import {
   TemplatesUpgrade,
   ProjectTemplatesSettingsRoot,
 } from "@/plane-web/components/templates/settings";
-import { useFlag, useWorkItemTemplates } from "@/plane-web/hooks/store";
+import { useFlag, usePageTemplates, useWorkItemTemplates } from "@/plane-web/hooks/store";
 
 const TemplatesProjectSettingsPage = observer(() => {
   // router
@@ -29,14 +29,21 @@ const TemplatesProjectSettingsPage = observer(() => {
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { getProjectById } = useProject();
   const { isAnyWorkItemTemplatesAvailableForProject } = useWorkItemTemplates();
+  const { isAnyPageTemplatesAvailableForProject } = usePageTemplates();
   // derived values
   const isWorkItemTemplatesEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TEMPLATES");
+  const isPageTemplatesEnabled = useFlag(workspaceSlug?.toString(), "PAGE_TEMPLATES");
   const isWorkItemTemplatesAvailableForProject = isAnyWorkItemTemplatesAvailableForProject(
     workspaceSlug?.toString(),
     projectId?.toString()
   );
-  const isAnyTemplatesEnabled = isWorkItemTemplatesEnabled;
-  const isAnyTemplatesAvailableForProject = isWorkItemTemplatesAvailableForProject;
+  const isPageTemplatesAvailableForProject = isAnyPageTemplatesAvailableForProject(
+    workspaceSlug?.toString(),
+    projectId?.toString()
+  );
+  const isAnyTemplatesEnabled = isWorkItemTemplatesEnabled || isPageTemplatesEnabled;
+  const isAnyTemplatesAvailableForProject =
+    isWorkItemTemplatesAvailableForProject || isPageTemplatesAvailableForProject;
   const currentProjectDetails = getProjectById(projectId?.toString());
   const pageTitle = currentProjectDetails?.name
     ? `${currentProjectDetails.name} - ${t("common.templates")}`

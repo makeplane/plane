@@ -6,6 +6,9 @@ import {
   ExcludedProps,
   ExIssue,
   ExIssueAttachment,
+  IssueSearchResponse,
+  ExpandableFields,
+  IssueWithExpanded,
   Optional,
   Paginated,
 } from "@/types/types";
@@ -21,6 +24,37 @@ export class IssueService extends APIService {
     issueSequence: number
   ): Promise<ExIssue> {
     return this.get(`/api/v1/workspaces/${workspaceSlug}/issues/${projectIdentifier}-${issueSequence.toString()}/`)
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getIssueByIdentifierWithFields(
+    workspaceSlug: string,
+    projectIdentifier: string,
+    issueSequence: number,
+    expand: (keyof ExpandableFields)[]
+  ): Promise<IssueWithExpanded<typeof expand>> {
+    return this.get(`/api/v1/workspaces/${workspaceSlug}/issues/${projectIdentifier}-${issueSequence.toString()}/?expand=${expand.join(",")}`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async searchIssues(
+    workspaceSlug: string,
+    query: string,
+    projectId?: string
+  ): Promise<{ issues: IssueSearchResponse[] }> {
+    return this.get(`/api/v1/workspaces/${workspaceSlug}/issues/search/`, {
+      params: {
+        search: query,
+        project_id: projectId,
+        workspace_search: !projectId,
+      },
+    })
       .then((response) => response.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -196,6 +230,14 @@ export class IssueService extends APIService {
 
   async getIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<ExIssue> {
     return this.get(`/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getIssueWithFields(workspaceSlug: string, projectId: string, issueId: string, expand: (keyof ExpandableFields)[]): Promise<IssueWithExpanded<typeof expand>> {
+    return this.get(`/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/?expand=${expand.join(",")}`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

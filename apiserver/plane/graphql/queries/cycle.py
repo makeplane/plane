@@ -1,36 +1,34 @@
-# Python imports
+# Python Standard Library Imports
 from typing import Optional
-import pytz
 
 # Third-Party Imports
+import pytz
 import strawberry
 
-# Python Standard Library Imports
-from asgiref.sync import sync_to_async
-
 # Django Imports
+from asgiref.sync import sync_to_async
+from django.db.models import Case, CharField, Exists, OuterRef, Q, Subquery, Value, When
 from django.utils import timezone
-from django.db.models import Q, Exists, OuterRef, Subquery, Case, When, Value, CharField
 
 # Strawberry Imports
-from strawberry.types import Info
-from strawberry.scalars import JSON
 from strawberry.permission import PermissionExtension
+from strawberry.scalars import JSON
+from strawberry.types import Info
 
 # Module Imports
-from plane.db.models import Project, Cycle, Issue, CycleUserProperties, UserFavorite
+from plane.db.models import Cycle, CycleUserProperties, Issue, Project, UserFavorite
+from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
+from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.cycle import CycleType, CycleUserPropertyType
-from plane.graphql.types.issue import (
-    IssuesInformationType,
+from plane.graphql.types.issues.base import (
     IssuesInformationObjectType,
+    IssuesInformationType,
     IssuesType,
 )
-from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.paginator import PaginatorResponse
-from plane.graphql.utils.issue_filters import issue_filters
-from plane.graphql.utils.paginator import paginate
 from plane.graphql.utils.issue import issue_information_query_execute
-from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
+from plane.graphql.utils.paginator import paginate
+from plane.graphql.utils.work_item_filters import work_item_filters
 
 
 @sync_to_async
@@ -225,7 +223,7 @@ class CycleIssuesInformationQuery:
         groupBy: Optional[str] = None,
         orderBy: Optional[str] = "-created_at",
     ) -> IssuesInformationType:
-        filters = issue_filters(filters, "POST")
+        filters = work_item_filters(filters)
 
         # all issues tab information
         (all_issue_count, all_issue_group_info) = await issue_information_query_execute(
@@ -300,7 +298,7 @@ class CycleIssueQuery:
         cursor: Optional[str] = None,
         type: Optional[str] = "all",
     ) -> PaginatorResponse[IssuesType]:
-        filters = issue_filters(filters, "POST")
+        filters = work_item_filters(filters)
 
         # Filter issues based on the type
         if type == "backlog":

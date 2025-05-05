@@ -1,10 +1,11 @@
 import { ACTIONS, ENTITIES } from "../helpers/constants";
-import { MetadataPayloadShort } from "../types/types";
+import { E_MESSAGE_ACTION_TYPES, MetadataPayloadShort } from "../types/types";
 
 export const createCommentModal = (payload: MetadataPayloadShort) => {
   return {
     type: "modal",
     private_metadata: JSON.stringify({ entityType: ENTITIES.ISSUE_COMMENT_SUBMISSION, entityPayload: payload }),
+    callback_id: E_MESSAGE_ACTION_TYPES.ISSUE_COMMENT_SUBMISSION,
     title: {
       type: "plain_text",
       text: "Create Comment",

@@ -830,7 +830,37 @@
     "link_personal_account": "Liên kết tài khoản {providerName} cá nhân của bạn với Plane.",
     "connected_slack_workspaces": "Các workspace Slack đã kết nối",
     "connected_on": "Đã kết nối vào {date}",
-    "disconnect_workspace": "Ngắt kết nối workspace {name}"
+    "disconnect_workspace": "Ngắt kết nối workspace {name}",
+    "project_updates": {
+      "title": "Cập Nhật Dự Án",
+      "description": "Cấu hình thông báo cập nhật dự án cho các dự án của bạn",
+      "add_new_project_update": "Thêm thông báo cập nhật dự án mới",
+      "project_updates_empty_state": "Các dự án kết nối với Kênh Slack sẽ xuất hiện ở đây.",
+      "project_updates_form": {
+        "title": "Cấu Hình Cập Nhật Dự Án",
+        "description": "Nhận thông báo cập nhật dự án trong Slack khi các mục công việc được tạo",
+        "failed_to_load_channels": "Không thể tải kênh từ Slack",
+        "project_dropdown": {
+          "placeholder": "Chọn dự án",
+          "label": "Dự Án Plane",
+          "no_projects": "Không có dự án nào khả dụng"
+        },
+        "channel_dropdown": {
+          "label": "Kênh Slack",
+          "placeholder": "Chọn kênh",
+          "no_channels": "Không có kênh nào khả dụng"
+        },
+        "all_projects_connected": "Tất cả các dự án đã được kết nối với kênh Slack.",
+        "all_channels_connected": "Tất cả các kênh Slack đã được kết nối với dự án.",
+        "project_connection_success": "Kết nối dự án được tạo thành công",
+        "project_connection_updated": "Kết nối dự án được cập nhật thành công",
+        "project_connection_deleted": "Kết nối dự án được xóa thành công",
+        "failed_delete_project_connection": "Không thể xóa kết nối dự án",
+        "failed_create_project_connection": "Không thể tạo kết nối dự án",
+        "failed_upserting_project_connection": "Không thể cập nhật kết nối dự án",
+        "failed_loading_project_connections": "Chúng tôi không thể tải kết nối dự án của bạn. Điều này có thể do sự cố mạng hoặc sự cố với tích hợp."
+      }
+    }
   },
 
   "file_upload": {
@@ -1709,7 +1739,7 @@
   "templates": {
     "settings": {
       "title": "Mẫu",
-      "description": "Tiết kiệm 80% thời gian dành cho việc tạo dự án, mục công việc và trang khi bạn sử dụng mẫu.",
+      "description": "Lưu 80% thời gian đã tiêu tốn trong việc tạo dự án, mục công việc và trang khi bạn sử dụng các mẫu.",
       "options": {
         "project": {
           "label": "Mẫu dự án"
@@ -1724,19 +1754,22 @@
       "create_template": {
         "label": "Tạo mẫu",
         "no_permission": {
-          "project": "Liên hệ với quản trị viên dự án để tạo mẫu",
-          "workspace": "Liên hệ với quản trị viên workspace để tạo mẫu"
+          "project": "Liên hệ quản trị dự án của bạn để tạo mẫu",
+          "workspace": "Liên hệ quản trị workspace của bạn để tạo mẫu"
         }
       },
       "use_template": {
-        "button": "Sử dụng mẫu"
+        "button": {
+          "default": "Sử dụng mẫu",
+          "loading": "Đang áp dụng"
+        }
       },
       "template_source": {
         "workspace": {
-          "info": "Bắt nguồn từ workspace"
+          "info": "Được thừa kế từ workspace"
         },
         "project": {
-          "info": "Bắt nguồn từ dự án"
+          "info": "Được thừa kế từ dự án"
         }
       },
       "form": {
@@ -1746,22 +1779,22 @@
               "placeholder": "Đặt tên cho mẫu dự án của bạn.",
               "validation": {
                 "required": "Tên mẫu là bắt buộc",
-                "maxLength": "Tên mẫu nên ít hơn 255 ký tự"
+                "maxLength": "Tên mẫu không nên vượt quá 255 ký tự"
               }
             },
             "description": {
-              "placeholder": "Mô tả khi nào và làm thế nào để sử dụng mẫu này."
+              "placeholder": "Mô tả khi và cách sử dụng mẫu này."
             }
           },
           "name": {
             "placeholder": "Đặt tên cho dự án của bạn.",
             "validation": {
-              "required": "Tiêu đề dự án là bắt buộc",
-              "maxLength": "Tiêu đề dự án nên ít hơn 255 ký tự"
+              "required": "Tên dự án là bắt buộc",
+              "maxLength": "Tên dự án không nên vượt quá 255 ký tự"
             }
           },
           "description": {
-            "placeholder": "Mô tả mục đích và mục tiêu của dự án này."
+            "placeholder": "Mô tả mục tiêu và mục tiêu của dự án này."
           },
           "button": {
             "create": "Tạo mẫu dự án",
@@ -1774,26 +1807,50 @@
               "placeholder": "Đặt tên cho mẫu mục công việc của bạn.",
               "validation": {
                 "required": "Tên mẫu là bắt buộc",
-                "maxLength": "Tên mẫu nên ít hơn 255 ký tự"
+                "maxLength": "Tên mẫu không nên vượt quá 255 ký tự"
               }
             },
             "description": {
-              "placeholder": "Mô tả khi nào và làm thế nào để sử dụng mẫu này."
+              "placeholder": "Mô tả khi và cách sử dụng mẫu này."
             }
           },
           "name": {
-            "placeholder": "Đặt tiêu đề cho mục công việc này.",
+            "placeholder": "Đặt tên cho mục công việc của bạn.",
             "validation": {
-              "required": "Tiêu đề mục công việc là bắt buộc",
-              "maxLength": "Tiêu đề mục công việc nên ít hơn 255 ký tự"
+              "required": "Tên mục công việc là bắt buộc",
+              "maxLength": "Tên mục công việc không nên vượt quá 255 ký tự"
             }
           },
           "description": {
-            "placeholder": "Mô tả mục công việc này để rõ ràng những gì bạn sẽ hoàn thành khi bạn hoàn tất nó."
+            "placeholder": "Mô tả mục công việc này để rõ ràng những gì bạn sẽ hoàn thành khi hoàn tất điều này."
           },
           "button": {
             "create": "Tạo mẫu mục công việc",
             "update": "Cập nhật mẫu mục công việc"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Đặt tên cho mẫu trang của bạn.",
+              "validation": {
+                "required": "Tên mẫu là bắt buộc",
+                "maxLength": "Tên mẫu không nên vượt quá 255 ký tự"
+              }
+            },
+            "description": {
+              "placeholder": "Mô tả khi và cách sử dụng mẫu này."
+            }
+          },
+          "name": {
+            "placeholder": "Trang không có tên",
+            "validation": {
+              "maxLength": "Tên trang không nên vượt quá 255 ký tự"
+            }
+          },
+          "button": {
+            "create": "Tạo mẫu trang",
+            "update": "Cập nhật mẫu trang"
           }
         }
       }
@@ -1801,45 +1858,45 @@
     "empty_state": {
       "upgrade": {
         "title": "Mẫu",
-        "description": "Với mẫu dự án, mục công việc và trang trong Plane, bạn không cần tạo dự án từ đầu hoặc thiết lập thuộc tính mục công việc thủ công.",
-        "sub_description": "Lấy lại 80% thời gian quản trị của bạn khi bạn sử dụng Mẫu."
+        "description": "Với mẫu dự án, mẫu mục công việc và mẫu trang trong Plane, bạn không phải tạo dự án từ đầu hoặc thiết lập thuộc tính mục công việc theo cách thủ công.",
+        "sub_description": "Nhận lại 80% thời gian quản lý của bạn khi bạn sử dụng Mẫu."
       },
       "no_templates": {
-        "button": "Tạo mẫu đầu tiên của bạn"
+        "button": "Tạo mẫu của bạn"
       },
       "no_labels": {
-        "description": " Chưa có nhãn nào. Tạo nhãn để giúp tổ chức và lọc các mục công việc trong dự án của bạn."
+        "description": "Chưa có nhãn nào. Tạo nhãn để giúp tổ chức và lọc mục công việc trong dự án của bạn."
       }
     },
     "toasts": {
       "create": {
         "success": {
-          "title": "Đã tạo mẫu",
-          "message": "{templateName}, mẫu {templateType}, hiện đã có sẵn cho workspace của bạn."
+          "title": "Mẫu đã được tạo",
+          "message": "{templateName}, mẫu {templateType}, hiện có sẵn cho workspace của bạn."
         },
         "error": {
-          "title": "Chúng tôi không thể tạo mẫu đó lúc này.",
-          "message": "Hãy thử lưu chi tiết của bạn lại hoặc sao chép chúng sang một mẫu mới, tốt nhất là trong một tab khác."
+          "title": "Chúng tôi không thể tạo mẫu đó lần này.",
+          "message": "Thử lưu lại chi tiết của bạn hoặc sao chép chúng sang mẫu mới, nhất quán trong một tab khác."
         }
       },
       "update": {
         "success": {
-          "title": "Đã thay đổi mẫu",
+          "title": "Mẫu đã được thay đổi",
           "message": "{templateName}, mẫu {templateType}, đã được thay đổi."
         },
         "error": {
           "title": "Chúng tôi không thể lưu thay đổi cho mẫu này.",
-          "message": "Hãy thử lưu chi tiết của bạn lại hoặc quay lại mẫu này sau. Nếu vẫn còn vấn đề, hãy liên hệ với chúng tôi."
+          "message": "Thử lưu lại chi tiết của bạn hoặc quay lại mẫu này sau. Nếu vẫn còn vấn đề, liên hệ với chúng tôi."
         }
       },
       "delete": {
         "success": {
-          "title": "Đã xóa mẫu",
-          "message": "{templateName}, mẫu {templateType}, đã bị xóa khỏi workspace của bạn."
+          "title": "Mẫu đã được xóa",
+          "message": "{templateName}, mẫu {templateType}, đã được xóa khỏi workspace của bạn."
         },
         "error": {
-          "title": "Chúng tôi không thể xóa mẫu đó.",
-          "message": "Hãy thử xóa lại hoặc quay lại sau. Nếu bạn không thể xóa nó sau đó, hãy liên hệ với chúng tôi."
+          "title": "Chúng tôi không thể xóa mẫu đó lần này.",
+          "message": "Thử xóa nó lại hoặc quay lại nó sau. Nếu vẫn còn vấn đề, liên hệ với chúng tôi."
         }
       }
     },
@@ -1848,6 +1905,23 @@
       "description": {
         "prefix": "Bạn có chắc chắn muốn xóa mẫu-",
         "suffix": "? Tất cả dữ liệu liên quan đến mẫu sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác."
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Thêm mẫu mới",
+        "project": "Thêm mẫu mới"
+      },
+      "label": {
+        "project": "Chọn mẫu dự án",
+        "page": "Chọn từ mẫu"
+      },
+      "tooltip": {
+        "work_item": "Chọn mẫu mục công việc"
+      },
+      "no_results": {
+        "work_item": "Không tìm thấy mẫu.",
+        "project": "Không tìm thấy mẫu."
       }
     }
   }

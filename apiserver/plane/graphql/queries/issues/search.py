@@ -1,10 +1,9 @@
 # Python imports
 import re
+from typing import Optional
 
 # Third-Party Imports
 import strawberry
-
-from typing import Optional
 
 # Python Standard Library Imports
 from asgiref.sync import sync_to_async
@@ -13,13 +12,15 @@ from asgiref.sync import sync_to_async
 from django.db.models import Q
 
 # Strawberry Imports
-from strawberry.types import Info
 from strawberry.permission import PermissionExtension
+from strawberry.types import Info
+
+from plane.db.models import Issue
 
 # Module Imports
+from plane.graphql.helpers import is_epic_feature_flagged, is_project_epics_enabled
 from plane.graphql.permissions.workspace import WorkspaceBasePermission
-from plane.db.models import Issue
-from plane.graphql.types.issue import IssueLiteType
+from plane.graphql.types.issues.base import IssueLiteType
 from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.utils.paginator import paginate
 
@@ -50,13 +51,54 @@ class IssuesSearchQuery:
         subIssues: Optional[bool] = False,
         search: Optional[str] = None,
         cursor: Optional[str] = None,
+        is_epic_related: Optional[bool] = False,
     ) -> PaginatorResponse[IssueLiteType]:
-        issue_queryset = Issue.issue_objects.filter(
-            workspace__slug=slug,
-            project__project_projectmember__member=info.context.user,
-            project__project_projectmember__is_active=True,
-            project__archived_at__isnull=True,
+        user = info.context.user
+        user_id = str(user.id)
+
+        issue_queryset = (
+            Issue.objects.filter(workspace__slug=slug)
+            # issue intake filters
+            .filter(
+                Q(issue_intake__status=1)
+                | Q(issue_intake__status=-1)
+                | Q(issue_intake__status=2)
+                | Q(issue_intake__isnull=True)
+            )
+            # old intake filters
+            .filter(state__is_triage=False)
+            # archived filters
+            .filter(archived_at__isnull=True)
+            # deleted filters
+            .filter(deleted_at__isnull=True)
+            # draft filters
+            .filter(is_draft=False)
+            .filter(
+                project__project_projectmember__member=user_id,
+                project__project_projectmember__is_active=True,
+            )
+            .filter(project__archived_at__isnull=True)
         )
+
+        # epic filters
+        is_epics_required = False
+        epic_feature_flagged = False
+        epic_project_enabled = False
+        if is_epic_related:
+            epic_feature_flagged = await is_epic_feature_flagged(
+                user_id=user_id, workspace_slug=slug, raise_exception=False
+            )
+            if epic_feature_flagged:
+                epic_project_enabled = await is_project_epics_enabled(
+                    workspace_slug=slug, project_id=project, raise_exception=False
+                )
+                if epic_project_enabled:
+                    is_epics_required = True
+
+        if is_epics_required is False:
+            issue_queryset = issue_queryset.filter(
+                Q(type__is_epic=False) | Q(type__isnull=True)
+            )
 
         # workspace issues
         if project:
@@ -105,13 +147,23 @@ class IssuesSearchQuery:
             lambda: list(
                 issue_queryset.filter(q)
                 .distinct()
-                .values("id", "sequence_id", "name", "project", "project__identifier")
+                .values(
+                    "id",
+                    "sequence_id",
+                    "name",
+                    "project",
+                    "project__identifier",
+                    "type__is_epic",
+                )
             )
         )()
 
         for issue in issues:
             issue["project_identifier"] = issue["project__identifier"]
             del issue["project__identifier"]
+
+            issue["is_epic"] = issue["type__is_epic"] and epic_project_enabled or False
+            del issue["type__is_epic"]
 
         listed_issues: list[IssueLiteType] = [
             IssueLiteType(**issue) for issue in issues

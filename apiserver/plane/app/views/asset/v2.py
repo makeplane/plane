@@ -249,8 +249,18 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
 
         if entity_type in (
             FileAsset.EntityTypeContext.TEAM_SPACE_DESCRIPTION,
+            FileAsset.EntityTypeContext.TEAM_SPACE_COMMENT_DESCRIPTION,
             FileAsset.EntityTypeContext.OAUTH_APP_DESCRIPTION,
             FileAsset.EntityTypeContext.OAUTH_APP_LOGO,
+            FileAsset.EntityTypeContext.INITIATIVE_DESCRIPTION,
+            FileAsset.EntityTypeContext.INITIATIVE_ATTACHMENT,
+            FileAsset.EntityTypeContext.INITIATIVE_COMMENT_DESCRIPTION,
+            FileAsset.EntityTypeContext.CUSTOMER_REQUEST_ATTACHMENT,
+            FileAsset.EntityTypeContext.CUSTOMER_LOGO,
+            FileAsset.EntityTypeContext.CUSTOMER_DESCRIPTION,
+            FileAsset.EntityTypeContext.CUSTOMER_REQUEST_DESCRIPTION,
+            FileAsset.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
+            FileAsset.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
         ):
             return {"entity_identifier": entity_id}
 

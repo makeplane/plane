@@ -1,4 +1,5 @@
 from .ai import urlpatterns as ai_patterns
+from .asset import urlpatterns as asset_patterns
 from .cycle import urlpatterns as cycles_patterns
 from .dashboard import urlpatterns as dashboard_patterns
 from .draft import urlpatterns as draft_patterns
@@ -24,6 +25,7 @@ from .customer import urlpatterns as customer_property_patterns
 
 urlpatterns = [
     *ai_patterns,
+    *asset_patterns,
     *cycles_patterns,
     *dashboard_patterns,
     *draft_patterns,

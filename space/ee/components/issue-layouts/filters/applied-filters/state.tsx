@@ -3,6 +3,8 @@
 import { observer } from "mobx-react";
 // icons
 import { X } from "lucide-react";
+// plane imports
+import { EIconSize } from "@plane/constants";
 // ui
 import { StateGroupIcon } from "@plane/ui";
 // hooks
@@ -27,7 +29,7 @@ export const AppliedStateFilters: React.FC<Props> = observer((props) => {
 
         return (
           <div key={stateId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
-            <StateGroupIcon color={stateDetails.color} stateGroup={stateDetails.group} height="12px" width="12px" />
+            <StateGroupIcon color={stateDetails.color} stateGroup={stateDetails.group} size={EIconSize.SM} />
             {stateDetails.name}
             <button
               type="button"

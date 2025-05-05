@@ -41,7 +41,6 @@ def calculate_entity_issue_state_progress(
             cycles = Cycle.objects.filter(
                 start_date__lte=timezone.now(),
                 end_date__gte=(timezone.now() + timezone.timedelta(days=1)),
-                version=2,
             ).values_list("id", "workspace_id")
 
         analytics_records: List[EntityProgress] = []
@@ -62,6 +61,7 @@ def calculate_entity_issue_state_progress(
                 created_at__lte=timezone.now(),
                 action__in=["ADDED", "UPDATED"],
                 issue__deleted_at__isnull=True,
+                issue__issue_cycle__deleted_at__isnull=True,
             ).order_by('cycle_id', 'issue_id', '-created_at').distinct('cycle_id', 'issue_id').values(
                 'cycle_id', 'issue_id', 'state_group', 'estimate_value'
             )

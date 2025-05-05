@@ -9,9 +9,7 @@ import { ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TBaseTemplateWithData } from "@plane/types";
 import { AlertModalCore, ContextMenu, CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
-// helpers
-import { getCreateUpdateTemplateSettingsPath, getTemplateTypeI18nName } from "@plane/utils";
-import { cn } from "@/helpers/common.helper";
+import { cn, getCreateUpdateTemplateSettingsPath, getTemplateTypeI18nName } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports

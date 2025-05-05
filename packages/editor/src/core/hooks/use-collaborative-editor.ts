@@ -24,6 +24,7 @@ import { useTitleEditor } from "./use-title-editor";
  */
 export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   const {
+    onChange,
     onTransaction,
     isSmoothCursorEnabled,
     disabledExtensions,
@@ -41,6 +42,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     realtimeConfig,
     serverHandler,
     tabIndex,
+    titleRef,
     user,
     updatePageProperties,
   } = props;
@@ -164,6 +166,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     isSmoothCursorEnabled,
     forwardedRef,
     mentionHandler,
+    onChange,
     onTransaction,
     placeholder,
     provider,
@@ -180,11 +183,11 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
 
   // Initialize title editor
   const titleEditor = useTitleEditor({
-    id: id,
+    id,
     isSmoothCursorEnabled,
-    editable: editable,
+    editable,
     provider,
-    forwardedRef,
+    titleRef,
     updatePageProperties,
     extensions: [
       // Collaboration extension for title field

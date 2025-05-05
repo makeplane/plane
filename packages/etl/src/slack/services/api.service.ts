@@ -1,11 +1,10 @@
 import axios, { AxiosInstance } from "axios";
 import {
-  isSlackBotTokenResponse,
   SlackConversationHistoryResponse,
   SlackMessageResponse,
-  SlackUpdateCredential,
+  SlackTokenRefreshResponse,
   SlackUserResponse,
-  UnfurlMap,
+  UnfurlMap
 } from "../types";
 import { SlackAuthService } from "./auth.service";
 
@@ -16,7 +15,7 @@ export class SlackService {
     access_token: string,
     refresh_token: string,
     authService: SlackAuthService,
-    authCallback: ({ isBotToken, tokenResponse }: SlackUpdateCredential) => Promise<void>
+    authCallback: (tokenResponse: SlackTokenRefreshResponse) => Promise<void>
   ) {
     this.client = axios.create({
       baseURL: "https://slack.com/api/",
@@ -26,23 +25,22 @@ export class SlackService {
       },
     });
 
+
     this.client.interceptors.response.use(async (request) => {
       if (
         (request.data.ok === false && request.data.error === "token_expired") ||
         request.data.error === "invalid_auth"
       ) {
         const response = await authService.refreshToken(refresh_token);
-        let new_access_token: string;
 
-        if (isSlackBotTokenResponse(response)) {
-          new_access_token = response.access_token;
-          await authCallback({ isBotToken: true, tokenResponse: response });
-        } else {
-          new_access_token = response.authed_user.access_token;
-          await authCallback({ isBotToken: false, tokenResponse: response });
+        if (!response.ok) {
+          throw new Error("Failed to refresh token, returning error", {
+            cause: response,
+          });
         }
 
-        this.client.defaults.headers.Authorization = `Bearer ${new_access_token}`;
+        await authCallback(response);
+        this.client.defaults.headers.Authorization = `Bearer ${response.access_token}`;
         const resp = await this.client.request(request);
         return resp;
       } else {
@@ -76,7 +74,8 @@ export class SlackService {
     userId: string,
     text: string,
     channelId: string,
-    threadTs?: string // Optional parameter for thread timestamp
+    threadTs?: string, // Optional parameter for thread timestamp
+    blocks?: any[] // Optional blocks parameter
   ) {
     try {
       const isBotInChannel = await this.ensureBotInChannel(channelId);
@@ -87,7 +86,7 @@ export class SlackService {
       const payload: any = {
         user: userId,
         channel: channelId,
-        text: text,
+        text: text, // Always include text for fallback
       };
 
       // Include thread_ts if provided
@@ -95,10 +94,16 @@ export class SlackService {
         payload.thread_ts = threadTs;
       }
 
+      // Include blocks if provided
+      if (blocks && blocks.length > 0) {
+        payload.blocks = blocks;
+      }
+
       const res = await this.client.post("chat.postEphemeral", payload);
-      console.log(res.data);
+      return res.data;
     } catch (error) {
       console.error(error);
+      throw error; // Re-throw the error for better error handling
     }
   }
 
@@ -140,20 +145,20 @@ export class SlackService {
       const payload =
         typeof message === "string"
           ? {
-            channel: channelId,
-            thread_ts: threadTs,
-            metadata: metadata,
-            text: message,
-          }
+              channel: channelId,
+              thread_ts: threadTs,
+              metadata: metadata,
+              text: message,
+            }
           : {
-            channel: channelId,
-            thread_ts: threadTs,
-            metadata: {
-              event_type: "issue",
-              event_payload: metadata,
-            },
-            ...message,
-          };
+              channel: channelId,
+              thread_ts: threadTs,
+              metadata: {
+                event_type: "issue",
+                event_payload: metadata,
+              },
+              ...message,
+            };
 
       const isBotInChannel = await this.ensureBotInChannel(channelId);
       if (!isBotInChannel) {
@@ -185,26 +190,27 @@ export class SlackService {
       const payload =
         typeof message === "string"
           ? {
-            channel: channelId,
-            thread_ts: threadTs,
-            metadata: metadata,
-            text: message,
-            unfurl_links: unfurlLinks,
-          }
+              channel: channelId,
+              thread_ts: threadTs,
+              metadata: metadata,
+              text: message,
+              unfurl_links: unfurlLinks,
+            }
           : {
-            channel: channelId,
-            thread_ts: threadTs,
-            metadata: {
-              event_type: "issue",
-              event_payload: metadata,
-            },
-            unfurl_links: unfurlLinks,
-            ...message,
-          };
+              channel: channelId,
+              thread_ts: threadTs,
+              metadata: {
+                event_type: "issue",
+                event_payload: metadata,
+              },
+              unfurl_links: unfurlLinks,
+              ...message,
+            };
 
       const isBotInChannel = await this.ensureBotInChannel(channelId);
       if (!isBotInChannel) {
-        throw new Error("Could not add bot to channel");
+        // If the bot is not in the channel, log it, but make the request anyway
+        console.log("Could not add bot to channel");
       }
 
       const response = await this.client.post("chat.postMessage", payload);
@@ -224,6 +230,29 @@ export class SlackService {
       });
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  async sendMessageToChannel(
+    channelId: string,
+    message: { text?: string; blocks?: any[] }
+  ): Promise<SlackMessageResponse> {
+    try {
+      // Check if bot is in channel
+      const isBotInChannel = await this.ensureBotInChannel(channelId);
+      if (!isBotInChannel) {
+        throw new Error("Could not add bot to channel");
+      }
+
+      const response = await this.client.post("chat.postMessage", {
+        channel: channelId,
+        text: message.text,
+        blocks: message.blocks,
+      });
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
   }
 
@@ -282,6 +311,42 @@ export class SlackService {
       return res.data;
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  async getChannels() {
+    try {
+      const allChannels = [];
+      let cursor = undefined;
+      const types = "public_channel,private_channel";
+
+      do {
+        // Prepare parameters for pagination
+        const params: any = cursor ? { cursor, types } : { types };
+
+        // Make the API request with cursor if available
+        const response = await this.client.get("conversations.list", { params });
+
+        // Add channels from this page to our result array
+        if (response.data && response.data.channels && Array.isArray(response.data.channels)) {
+          allChannels.push(...response.data.channels);
+        }
+
+        // Get the next cursor if available
+        cursor = response.data?.response_metadata?.next_cursor || null;
+      } while (cursor); // Continue fetching if there's a next page
+
+      // Return the combined results with the same structure
+      return {
+        ok: true,
+        channels: allChannels,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        channels: [],
+        error: error instanceof Error ? error.message : "Failed to fetch Slack channels",
+      };
     }
   }
 }

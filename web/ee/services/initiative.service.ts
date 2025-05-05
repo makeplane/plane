@@ -1,4 +1,4 @@
-import { TEpicStats, TIssue } from "@plane/types";
+import { TEpicStats, TIssue, TIssueParams } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
 import {
@@ -303,8 +303,14 @@ export class InitiativeService extends APIService {
 
   // initiative epics
   // list
-  async fetchInitiativeEpics(workspaceSlug: string, initiativeId: string): Promise<TIssue[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/epics/`)
+  async fetchInitiativeEpics(
+    workspaceSlug: string,
+    initiativeId: string,
+    queries?: Partial<Record<TIssueParams, string | boolean>>
+  ): Promise<TIssue[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/epics/`, {
+      params: queries,
+    })
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;

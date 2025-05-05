@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Check } from "lucide-react";
 // plane imports
+import { EIconSize } from "@plane/constants";
 import { StateGroupIcon, Tooltip, Spinner } from "@plane/ui";
 // ce imports
 import {
@@ -54,7 +55,7 @@ export const ChangeWorkItemStateList = observer((props: TChangeWorkItemStateList
                   disabled={isDisabled}
                 >
                   <div className="flex items-center space-x-3">
-                    <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
+                    <StateGroupIcon stateGroup={state.group} color={state.color} size={EIconSize.MD} />
                     <p>{state.name}</p>
                   </div>
                   <div>{isSelected && <Check className="h-3 w-3" />}</div>

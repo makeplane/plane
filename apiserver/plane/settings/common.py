@@ -19,6 +19,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Secret Key
 SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
+AES_SECRET_KEY = os.environ.get("AES_SECRET_KEY", "")
+AES_SALT = os.environ.get("AES_SALT", "aes-salt")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", "0"))
@@ -46,6 +48,7 @@ INSTALLED_APPS = [
     "plane.ee",
     "plane.graphql",
     "plane.payment",
+    "plane.silo",
     # Third-party things
     "strawberry.django",
     "rest_framework",
@@ -284,6 +287,8 @@ CELERY_IMPORTS = (
     # ee tasks
     "plane.ee.bgtasks.entity_issue_state_progress_task",
     "plane.ee.bgtasks.app_bot_task",
+    # silo tasks
+    "plane.silo.bgtasks.integration_apps_task",
 )
 
 # Application Envs
@@ -346,11 +351,20 @@ CSRF_FAILURE_VIEW = "plane.authentication.views.common.csrf_failure"
 
 # Base URLs
 ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", None)
+ADMIN_BASE_PATH = os.environ.get("ADMIN_BASE_PATH", None)
+
 SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
+SPACE_BASE_PATH = os.environ.get("SPACE_BASE_PATH", None)
+
 APP_BASE_URL = os.environ.get("APP_BASE_URL", None)
+APP_BASE_PATH = os.environ.get("APP_BASE_PATH", None)
+
 LIVE_BASE_URL = os.environ.get("LIVE_BASE_URL", None)
-LIVE_BASE_PATH = os.environ.get("LIVE_BASE_PATH", "/live")
-LIVE_URL = f"{LIVE_BASE_URL}{LIVE_BASE_PATH}"
+LIVE_BASE_PATH = os.environ.get("LIVE_BASE_PATH", None)
+
+SILO_BASE_URL = os.environ.get("SILO_BASE_URL", None)
+SILO_BASE_PATH = os.environ.get("SILO_BASE_PATH", None)
+
 WEB_URL = os.environ.get("WEB_URL", None)
 
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
@@ -408,9 +422,21 @@ ATTACHMENT_MIME_TYPES = [
     "video/x-ms-wmv",
     # Archives
     "application/zip",
+    "application/x-rar",
     "application/x-rar-compressed",
     "application/x-tar",
     "application/gzip",
+    "application/x-zip",
+    "application/x-zip-compressed",
+    "application/x-7z-compressed",
+    "application/x-compressed",
+    "application/x-compressed-tar",
+    "application/x-compressed-tar-gz",
+    "application/x-compressed-tar-bz2",
+    "application/x-compressed-tar-zip",
+    "application/x-compressed-tar-7z",
+    "application/x-compressed-tar-rar",
+    "application/x-compressed-tar-zip",
     # 3D Models
     "model/gltf-binary",
     "model/gltf+json",
@@ -431,7 +457,14 @@ ATTACHMENT_MIME_TYPES = [
     "application/x-sql",
     # Gzip
     "application/x-gzip",
+    # SQL
+    "application/x-sql",
 ]
+
+
+# Seed directory path
+SEED_DIR = os.path.join(BASE_DIR, "seeds")
+
 # Prime Server Base url
 PRIME_SERVER_BASE_URL = os.environ.get("PRIME_SERVER_BASE_URL", False)
 PRIME_SERVER_AUTH_TOKEN = os.environ.get("PRIME_SERVER_AUTH_TOKEN", "")

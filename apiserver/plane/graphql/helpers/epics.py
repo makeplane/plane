@@ -69,28 +69,66 @@ def epic_base_query(
 
 
 @sync_to_async
-def is_epic_feature_flagged(user_id: str, workspace_slug: str):
-    return _validate_feature_flag(
-        user_id=user_id,
-        workspace_slug=workspace_slug,
-        feature_key=FeatureFlagsTypesEnum.EPICS.value,
-        default_value=False,
-    )
+def is_epic_feature_flagged(
+    user_id: str, workspace_slug: str, raise_exception: bool = True
+):
+    try:
+        is_feature_flagged = _validate_feature_flag(
+            user_id=user_id,
+            workspace_slug=workspace_slug,
+            feature_key=FeatureFlagsTypesEnum.EPICS.value,
+            default_value=False,
+        )
+
+        if not is_feature_flagged:
+            if raise_exception:
+                message = "Epic feature flag is not enabled for the workspace"
+                error_extensions = {
+                    "code": "EPIC_FEATURE_FLAG_NOT_ENABLED",
+                    "statusCode": 400,
+                }
+                raise GraphQLError(message, extensions=error_extensions)
+            return False
+        return is_feature_flagged
+    except Exception:
+        if raise_exception:
+            message = "Error checking if epic feature flag is enabled"
+            error_extensions = {"code": "SOMETHING_WENT_WRONG", "statusCode": 400}
+            raise GraphQLError(message, extensions=error_extensions)
+        return False
 
 
 @sync_to_async
-def is_project_epics_enabled(workspace_slug: str, project_id: str):
+def is_project_epics_enabled(
+    workspace_slug: str, project_id: str, raise_exception: bool = True
+):
     """
     Check if the epic feature flag is enabled for the workspace and project
     """
-    project_feature = ProjectFeature.objects.filter(
-        workspace__slug=workspace_slug, project_id=project_id
-    ).first()
+    try:
+        project_feature = ProjectFeature.objects.filter(
+            workspace__slug=workspace_slug, project_id=project_id
+        ).first()
 
-    if not project_feature:
+        if not project_feature.is_epic_enabled:
+            if raise_exception:
+                message = "Project epics are not enabled"
+                error_extensions = {"code": "EPIC_NOT_ENABLED", "statusCode": 400}
+                raise GraphQLError(message, extensions=error_extensions)
+            return False
+        return project_feature.is_epic_enabled
+    except ProjectFeature.DoesNotExist:
+        if raise_exception:
+            message = "Project feature not found"
+            error_extensions = {"code": "NOT_FOUND", "statusCode": 404}
+            raise GraphQLError(message, extensions=error_extensions)
         return False
-
-    return project_feature.is_epic_enabled or False
+    except Exception:
+        if raise_exception:
+            message = "Error checking if project epics are enabled"
+            error_extensions = {"code": "SOMETHING_WENT_WRONG", "statusCode": 400}
+            raise GraphQLError(message, extensions=error_extensions)
+        return False
 
 
 @sync_to_async

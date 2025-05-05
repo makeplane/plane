@@ -20,8 +20,7 @@ export const EpicCustomersRoot: FC<TProps> = observer((props) => {
   const {
     isCustomersFeatureEnabled,
     toggleCreateUpdateRequestModal,
-    fetchWorkItemRequests,
-    getFilteredWorkItemRequestIds,
+    workItems: { fetchWorkItemRequests, getFilteredWorkItemRequestIds },
   } = useCustomers();
 
   const handleFormOpen = () => {

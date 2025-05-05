@@ -1,19 +1,17 @@
 # Third-Party Imports
 import strawberry
-
-# Python Standard Library Imports
 from asgiref.sync import sync_to_async
 
 # Strawberry Imports
-from strawberry.types import Info
-from strawberry.permission import PermissionExtension
 from strawberry.exceptions import GraphQLError
+from strawberry.permission import PermissionExtension
+from strawberry.types import Info
 
 # Module Imports
-from plane.graphql.utils.roles import Roles
-from plane.graphql.types.issue import IssueShortenedMetaInfo
-from plane.db.models import Project, ProjectMember, Issue
+from plane.db.models import Issue, Project, ProjectMember
 from plane.graphql.permissions.workspace import WorkspacePermission
+from plane.graphql.types.issues.meta import IssueShortenedMetaInfo
+from plane.graphql.utils.roles import Roles
 
 
 @sync_to_async
@@ -51,14 +49,14 @@ def get_project_id(workspace_slug, project_identifier):
 
 
 @sync_to_async
-def get_issue_id(workspace_slug, project_id, issue_sequence):
+def get_issue_id(workspace_slug: str, project_id: str, issue_sequence: str):
     try:
-        issue = Issue.issue_objects.only("id").get(
+        issue = Issue.objects.only("id", "type").get(
             workspace__slug=workspace_slug,
             project_id=project_id,
             sequence_id=issue_sequence,
         )
-        return issue.id
+        return issue.id, issue.type.is_epic if issue.type else False
     except Issue.DoesNotExist:
         message = "Issue not found."
         error_extensions = {"code": "ISSUE_NOT_FOUND", "statusCode": 404}
@@ -99,6 +97,10 @@ class IssueShortenedMetaInfoQuery:
 
         project_id = await get_project_id(workspace_slug, project_identifier)
 
-        issue_id = await get_issue_id(workspace_slug, project_id, issue_sequence)
+        issue_id, is_epic = await get_issue_id(
+            workspace_slug, project_id, issue_sequence
+        )
 
-        return IssueShortenedMetaInfo(project=str(project_id), work_item=str(issue_id))
+        return IssueShortenedMetaInfo(
+            project=str(project_id), work_item=str(issue_id), is_epic=is_epic
+        )

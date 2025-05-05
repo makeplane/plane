@@ -187,6 +187,7 @@ class WorkspaceAppInstallation(BaseModel):
             username = f"{self.workspace.slug}_{self.application.slug}_bot"
             self.app_bot = User.objects.create(
                 username=username,
+                display_name=f"{self.application.name} Bot",
                 first_name=f"{self.application.name}",
                 last_name="Bot",
                 is_bot=True,

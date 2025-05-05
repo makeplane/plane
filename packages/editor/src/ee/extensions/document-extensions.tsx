@@ -19,7 +19,7 @@ import { CustomCollaborationCursor } from "./collaboration-cursor";
 type Props = {
   disabledExtensions?: TExtensions[];
   embedConfig: TEmbedConfig | undefined;
-  provider: HocuspocusProvider;
+  provider?: HocuspocusProvider;
   userDetails: TUserDetails;
 };
 
@@ -30,7 +30,7 @@ type ExtensionConfig = {
   /** Determines if the extension should be enabled based on disabled extensions */
   isEnabled: (disabledExtensions: TExtensions[]) => boolean;
   /** Returns the extension instance(s) when enabled */
-  getExtension: (props: Props) => Extension[] | Node[];
+  getExtension: (props: Props) => Extension[] | Node[] | undefined;
 };
 
 /**
@@ -135,12 +135,13 @@ const extensionRegistry: ExtensionConfig[] = [
   {
     // Collaboration cursor extension
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("collaboration-cursor"),
-    getExtension: ({ provider, userDetails }) => [
-      CustomCollaborationCursor({
-        provider,
-        userDetails,
-      }),
-    ],
+    getExtension: ({ provider, userDetails }) =>
+      provider && [
+        CustomCollaborationCursor({
+          provider,
+          userDetails,
+        }),
+      ],
   },
   {
     // Page embed extension
@@ -171,10 +172,11 @@ export const DocumentEditorAdditionalExtensions = (props: Props) => {
   const { disabledExtensions = [] } = props;
 
   // Filter enabled extensions and flatten the result
-  const extensions = extensionRegistry
+  const extensions: Extension[] = extensionRegistry
     .filter((config) => config.isEnabled(disabledExtensions))
     .map((config) => config.getExtension(props))
-    .flat();
+    .flat()
+    .filter((extension): extension is Extension => extension !== undefined);
 
   return extensions;
 };

@@ -42,7 +42,7 @@ const handlePullRequestOpened = async (data: GithubPullRequestDedupPayload) => {
   // Get the workspace connection for the installation
   const accountId = data.accountId;
 
-  const { workspaceConnection, entityConnection } = await getConnectionDetails({
+  const { workspaceConnection, allEntityConnectionsForRepository } = await getConnectionDetails({
     accountId: accountId.toString(),
     credentials: planeCredentials as TServiceCredentials,
     installationId: data.installationId.toString(),
@@ -63,7 +63,7 @@ const handlePullRequestOpened = async (data: GithubPullRequestDedupPayload) => {
       installationId: data.installationId.toString(),
     }),
     planeClient,
-    entityConnection?.config || {}
+    allEntityConnectionsForRepository
   );
 
   await pullRequestBehaviour.handleEvent({

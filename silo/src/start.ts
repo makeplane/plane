@@ -1,12 +1,16 @@
+import DB from "@/db/client";
 import { importTaskManger, integrationTaskManager, celeryProducer } from "@/worker";
 import { logger } from "./logger";
 import Server from "./server";
 import { Store } from "./worker/base";
+
 (async () => {
   try {
     const store = Store.getInstance();
     await store.connect();
-
+    // connect to db
+    const db = DB.getInstance();
+    await db.init();
     // Start the worker for taking over the migration jobs
     logger.info("Warming up worker instance, connecting services... ♨️");
 

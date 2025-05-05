@@ -29,6 +29,7 @@ export interface IssuesModalProps {
   };
   isProjectSelectionDisabled?: boolean;
   templateId?: string;
+  isConversionOperation?: boolean;
 }
 
 export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((props) => {

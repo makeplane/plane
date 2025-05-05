@@ -899,7 +899,37 @@
     "link_personal_account": "Vincula tu cuenta personal de {providerName} a Plane",
     "connected_slack_workspaces": "Espacios de trabajo de Slack conectados",
     "connected_on": "Conectado el {date}",
-    "disconnect_workspace": "Desconectar espacio de trabajo {name}"
+    "disconnect_workspace": "Desconectar espacio de trabajo {name}",
+    "project_updates": {
+      "title": "Actualizaciones de Proyecto",
+      "description": "Configura notificaciones de actualizaciones de proyectos para tus proyectos",
+      "add_new_project_update": "Añadir nueva notificación de actualizaciones de proyecto",
+      "project_updates_empty_state": "Los proyectos conectados con Canales de Slack aparecerán aquí.",
+      "project_updates_form": {
+        "title": "Configurar Actualizaciones de Proyecto",
+        "description": "Recibir notificaciones de actualizaciones de proyecto en Slack cuando se crean elementos de trabajo",
+        "failed_to_load_channels": "Error al cargar canales de Slack",
+        "project_dropdown": {
+          "placeholder": "Seleccionar un proyecto",
+          "label": "Proyecto de Plane",
+          "no_projects": "No hay proyectos disponibles"
+        },
+        "channel_dropdown": {
+          "label": "Canal de Slack",
+          "placeholder": "Seleccionar un canal",
+          "no_channels": "No hay canales disponibles"
+        },
+        "all_projects_connected": "Todos los proyectos ya están conectados a canales de Slack.",
+        "all_channels_connected": "Todos los canales de Slack ya están conectados a proyectos.",
+        "project_connection_success": "Conexión de proyecto creada exitosamente",
+        "project_connection_updated": "Conexión de proyecto actualizada exitosamente",
+        "project_connection_deleted": "Conexión de proyecto eliminada exitosamente",
+        "failed_delete_project_connection": "Error al eliminar conexión de proyecto",
+        "failed_create_project_connection": "Error al crear conexión de proyecto",
+        "failed_upserting_project_connection": "Error al actualizar conexión de proyecto",
+        "failed_loading_project_connections": "No pudimos cargar tus conexiones de proyecto. Esto podría deberse a un problema de red o un problema con la integración."
+      }
+    }
   },
 
   "file_upload": {
@@ -1804,7 +1834,10 @@
         }
       },
       "use_template": {
-        "button": "Usar plantilla"
+        "button": {
+          "default": "Usar plantilla",
+          "loading": "Usando"
+        }
       },
       "template_source": {
         "workspace": {
@@ -1931,7 +1964,8 @@
         "project": "Agregar nueva plantilla"
       },
       "label": {
-        "project": "Seleccionar una plantilla de proyecto"
+        "project": "Seleccionar una plantilla de proyecto",
+        "page": "Elegir desde plantilla"
       },
       "tooltip": {
         "work_item": "Seleccionar una plantilla de elemento de trabajo"

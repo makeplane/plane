@@ -113,11 +113,15 @@ class WorkspaceCredential(BaseModel):
         "db.User", on_delete=models.CASCADE, related_name="credentials"
     )
     # Source being the type of importer where issues are imported example: jira
+    source_identifier = models.CharField(max_length=255, null=True, blank=True)
+    source_authorization_type = models.CharField(max_length=255, null=True, blank=True)
     source_auth_email = models.EmailField(null=True, blank=True)
     source_access_token = models.TextField(null=True, blank=True)
     source_refresh_token = models.TextField(null=True, blank=True)
     source_hostname = models.TextField(null=True, blank=True)
     # Target being Plane where issues are imported to.
+    target_identifier = models.CharField(max_length=255, null=True, blank=True)
+    target_authorization_type = models.CharField(max_length=255, null=True, blank=True)
     target_access_token = models.TextField(null=True, blank=True)
     target_refresh_token = models.TextField(null=True, blank=True)
     target_hostname = models.TextField(null=True, blank=True)

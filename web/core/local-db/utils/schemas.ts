@@ -32,8 +32,8 @@ export const issueSchema: Schema = {
   assignee_ids: "TEXT",
   module_ids: "TEXT",
   description_html: "TEXT",
-  customer_count: "INTEGER",
-  customer_request_count: "INTEGER",
+  customer_ids: "TEXT",
+  customer_request_ids: "TEXT",
   is_local_update: "INTEGER",
 };
 

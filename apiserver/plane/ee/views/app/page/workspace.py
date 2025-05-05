@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 # Django imports
 from django.db.models import Exists, OuterRef, Q, Subquery, Count, F, Func
+from django.utils import timezone
 from django.http import StreamingHttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -40,6 +41,7 @@ from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.ee.utils.page_events import PageAction
 
 
 class WorkspacePageViewSet(BaseViewSet):
@@ -93,6 +95,13 @@ class WorkspacePageViewSet(BaseViewSet):
             serializer.save(is_global=True)
             # capture the page transaction
             page_transaction.delay(request.data, None, serializer.data["id"])
+            if serializer.data.get("parent_id"):
+                nested_page_update.delay(
+                    page_id=serializer.data["id"],
+                    action=PageAction.SUB_PAGE,
+                    slug=slug,
+                    user_id=request.user.id,
+                )
             page = self.get_queryset().filter(pk=serializer.data["id"]).first()
             serializer = WorkspacePageDetailSerializer(page)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -115,7 +124,7 @@ class WorkspacePageViewSet(BaseViewSet):
             if "parent_id" in request.data:
                 nested_page_update.delay(
                     page_id=page.id,
-                    action="moved_internally",
+                    action=PageAction.MOVED_INTERNALLY,
                     slug=slug,
                     user_id=request.user.id,
                     extra={"old_parent_id": page.parent_id, "new_parent_id": parent},
@@ -164,6 +173,11 @@ class WorkspacePageViewSet(BaseViewSet):
     def retrieve(self, request, slug, pk=None):
         page = self.get_queryset().filter(pk=pk).first()
 
+        if not page:
+            return Response(
+                {"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
         if page.parent_id and (
             not check_workspace_feature_flag(
                 feature_key=FeatureFlag.NESTED_PAGES,
@@ -200,7 +214,7 @@ class WorkspacePageViewSet(BaseViewSet):
         page.save()
         nested_page_update.delay(
             page_id=page.id,
-            action="locked",
+            action=PageAction.LOCKED,
             slug=slug,
             user_id=request.user.id,
             sub_pages=True if action == "all" else False,
@@ -217,7 +231,7 @@ class WorkspacePageViewSet(BaseViewSet):
 
         nested_page_update.delay(
             page_id=page.id,
-            action="unlocked",
+            action=PageAction.UNLOCKED,
             slug=slug,
             user_id=request.user.id,
             sub_pages=True if action == "all" else False,
@@ -245,7 +259,7 @@ class WorkspacePageViewSet(BaseViewSet):
         page.save()
         nested_page_update.delay(
             page_id=page.id,
-            action="made-public" if access == 0 else "made-private",
+            action=PageAction.MADE_PUBLIC if access == 0 else PageAction.MADE_PRIVATE,
             slug=slug,
             user_id=request.user.id,
         )
@@ -308,7 +322,7 @@ class WorkspacePageViewSet(BaseViewSet):
         # archive the sub pages
         nested_page_update.delay(
             page_id=str(pk),
-            action="archived",
+            action=PageAction.ARCHIVED,
             slug=slug,
             user_id=request.user.id,
         )
@@ -343,7 +357,7 @@ class WorkspacePageViewSet(BaseViewSet):
 
         nested_page_update.delay(
             page_id=page.id,
-            action="unarchived",
+            action=PageAction.UNARCHIVED,
             slug=slug,
             user_id=request.user.id,
         )
@@ -385,7 +399,7 @@ class WorkspacePageViewSet(BaseViewSet):
 
         nested_page_update.delay(
             page_id=page.id,
-            action="deleted",
+            action=PageAction.DELETED,
             slug=slug,
             user_id=request.user.id,
         )
@@ -427,7 +441,7 @@ class WorkspacePageDuplicateEndpoint(BaseAPIView):
         # update the descendants pages with the current page
         nested_page_update.delay(
             page_id=pk,
-            action="duplicated",
+            action=PageAction.DUPLICATED,
             slug=slug,
             user_id=request.user.id,
         )
@@ -576,7 +590,6 @@ class WorkspacePageRestoreEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def post(self, request, slug, page_id, pk):
 
-        page = Page.objects.get(pk=page_id, workspace__slug=slug)
         page_version = PageVersion.objects.get(pk=pk, page_id=page_id)
 
         # Get the latest sub pages data
@@ -599,11 +612,9 @@ class WorkspacePageRestoreEndpoint(BaseAPIView):
         # Find pages that need to be deleted (in latest but not in old version)
         pages_to_delete = set(latest_sub_pages) - set(version_sub_page_ids)
 
+
         # get the datetime at which the page was deleted and restore the page at that time with their children
         pages_to_restore = Page.all_objects.filter(id__in=pages_to_restore)
-
-        # Collect all restored page IDs
-        restored_page_ids = set()
 
         for page in pages_to_restore:
             # Restore the parent page first
@@ -611,47 +622,74 @@ class WorkspacePageRestoreEndpoint(BaseAPIView):
             page.deleted_at = None
             page.parent_id = page_id
             page.save()
-            restored_page_ids.add(page.id)
 
             if deleted_at_time:
+                # Get all descendant pages using the recursive function
                 descendant_pages = Page.objects.raw(
                     """
-                    SELECT * FROM pages WHERE parent_id = %s AND deleted_at BETWEEN %s AND %s
+                    WITH RECURSIVE descendants AS (
+                        SELECT id FROM pages WHERE parent_id = %s AND deleted_at BETWEEN %s AND %s
+                        UNION ALL
+                        SELECT pages.id FROM pages, descendants 
+                        WHERE pages.parent_id = descendants.id 
+                        AND pages.deleted_at BETWEEN %s AND %s
+                    )
+                    SELECT id FROM descendants;
                     """,
-                    [page.id, deleted_at_time, deleted_at_time + timedelta(minutes=2)],
+                    [
+                        page.id,
+                        deleted_at_time,
+                        deleted_at_time + timedelta(minutes=2),
+                        deleted_at_time,
+                        deleted_at_time + timedelta(minutes=2),
+                    ],
                 )
 
-                # restore the descendant pages
-                for descendant_page in descendant_pages:
-                    descendant_page.deleted_at = None
-                    descendant_page.save()
-                    restored_page_ids.add(descendant_page.id)
-            else:
-                # If deleted_at is None, just get all descendant pages
-                descendant_pages = Page.objects.filter(parent_id=page.id)
-                for descendant_page in descendant_pages:
-                    descendant_page.deleted_at = None
-                    descendant_page.save()
-                    restored_page_ids.add(descendant_page.id)
+                # Get list of descendant page IDs
+                descendant_page_ids = [str(row.id) for row in descendant_pages]
 
-        # Restore page versions for all restored pages
-        for pages_id in restored_page_ids:
-            page = Page.objects.get(id=pages_id)
-            if page.deleted_at:
-                # Get versions created within 2 minutes of deletion for this specific page
-                versions_to_restore = PageVersion.objects.filter(
-                    page_id=pages_id,
-                    last_saved_at__gte=page.deleted_at,
-                    last_saved_at__lte=page.deleted_at + timedelta(minutes=2),
+                # restore the descendant pages by bulk update
+                Page.all_objects.filter(id__in=descendant_page_ids).update(
+                    deleted_at=None, updated_at=timezone.now(), updated_by=request.user
                 )
-                # Restore versions for this page
-                versions_to_restore.update(deleted_at=None)
+                # restore the corresponding version of the descendant pages
+                PageVersion.all_objects.filter(
+                    page_id__in=descendant_page_ids + [str(page.id)],
+                    workspace__slug=slug,
+                ).update(deleted_at=None, updated_at=timezone.now(), updated_by=request.user)
 
         # delete the pages that need to be deleted
-        Page.objects.filter(id__in=pages_to_delete).delete()
+        if pages_to_delete:
+            pages_to_delete_ids = list(pages_to_delete)
+
+            # Get all nested children recursively using raw SQL (whose deleted at is null)
+            nested_children = Page.objects.raw(
+                """
+                WITH RECURSIVE nested_children AS (
+                    SELECT id, parent_id
+                    FROM pages
+                    WHERE parent_id = ANY(%s) AND deleted_at IS NULL
+
+                    UNION
+
+                    SELECT p.id, p.parent_id
+                    FROM pages p
+                    INNER JOIN nested_children nc ON p.parent_id = nc.id
+                    WHERE p.deleted_at IS NULL
+                )
+                SELECT id FROM nested_children
+                """,
+                [pages_to_delete_ids],
+            )
+
+            nested_child_ids = [str(row.id) for row in nested_children]
+            pages_to_delete_ids.extend(nested_child_ids)
+
+            Page.objects.filter(id__in=pages_to_delete_ids).delete()
+
         nested_page_update.delay(
             page_id=page_id,
-            action="restored",
+            action=PageAction.RESTORED,
             slug=slug,
             user_id=request.user.id,
             extra={

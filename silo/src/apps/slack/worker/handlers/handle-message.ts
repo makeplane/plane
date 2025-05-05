@@ -24,7 +24,9 @@ export const handleSlackEvent = async (data: SlackEventPayload) => {
         break;
     }
   } catch (error: any) {
-    const details = await getConnectionDetails(data.team_id);
+    const details = await getConnectionDetails(data.team_id, {
+      id: data.event.user,
+    });
     if (!details) {
       logger.info(`[SLACK] No connection details found for team ${data.team_id}`);
       return;
@@ -33,9 +35,7 @@ export const handleSlackEvent = async (data: SlackEventPayload) => {
     const { slackService } = details;
 
     const isPermissionError = error?.detail?.includes(CONSTANTS.NO_PERMISSION_ERROR);
-    const errorMessage = isPermissionError
-      ? CONSTANTS.NO_PERMISSION_ERROR_MESSAGE
-      : CONSTANTS.SOMETHING_WENT_WRONG;
+    const errorMessage = isPermissionError ? CONSTANTS.NO_PERMISSION_ERROR_MESSAGE : CONSTANTS.SOMETHING_WENT_WRONG;
 
     await slackService.sendEphemeralMessage(data.event.user, errorMessage, data.event.channel, data.event.event_ts);
 
@@ -49,7 +49,10 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
   if (data.event.type === "message") {
     if (!data.event.thread_ts) return;
 
-    const details = await getConnectionDetails(data.team_id);
+    const details = await getConnectionDetails(data.team_id, {
+      id: data.event.user,
+    });
+
     if (!details) {
       logger.info(`[SLACK] No connection details found for team ${data.team_id}`);
       return;
@@ -67,7 +70,7 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
 
     const members = await planeClient.users.list(workspaceConnection.workspace_slug, eConnection.project_id ?? "");
     const userInfo = await slackService.getUserInfo(data.event.user);
-    const issueId = eConnection.entity_slug;
+    const issueId = eConnection.entity_slug ?? eConnection.issue_id;
 
     const planeUser = members.find((member) => member.email === userInfo?.user.profile.email);
 
@@ -87,7 +90,9 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
 
 export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
   if (data.event.type === "link_shared") {
-    const details = await getConnectionDetails(data.team_id);
+    const details = await getConnectionDetails(data.team_id, {
+      id: data.event.user,
+    });
     if (!details) {
       logger.info(`[SLACK] No connection details found for team ${data.team_id}`);
       return;
@@ -103,24 +108,21 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
         if (resource === null) return;
 
         if (resource.type === "issue") {
+
           if (resource.workspaceSlug !== workspaceConnection.workspace_slug) return;
 
-          const issue = await planeClient.issue.getIssueByIdentifier(
+          const issue = await planeClient.issue.getIssueByIdentifierWithFields(
             workspaceConnection.workspace_slug,
             resource.projectIdentifier,
-            Number(resource.issueKey)
+            Number(resource.issueKey),
+            ["state", "project", "assignees", "labels"]
           );
-
-          const project = await planeClient.project.getProject(workspaceConnection.workspace_slug, issue.project);
-          const members = await planeClient.users.list(workspaceConnection.workspace_slug, issue.project);
-          const states = await planeClient.state.list(workspaceConnection.workspace_slug, issue.project);
+          const states = await planeClient.state.list(workspaceConnection.workspace_slug, issue.project.id ?? "");
 
           const linkBack = createSlackLinkback(
             workspaceConnection.workspace_slug,
-            project,
-            members,
-            states.results,
             issue,
+            states.results,
             false,
             true
           );

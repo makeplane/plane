@@ -7,6 +7,7 @@ import {
   SlackUserTokenResponse,
   SlackUserAuthState,
   SlackUserAuthPayload,
+  SlackTokenRefreshResponse,
 } from "../types";
 import { getUserAuthScopes, getWorkspaceAuthScopes } from "../helpers";
 
@@ -99,7 +100,7 @@ export class SlackAuthService {
 
   async refreshToken(
     refreshToken: string,
-  ): Promise<SlackUserTokenResponse | SlackBotTokenResponse> {
+  ): Promise<SlackTokenRefreshResponse> {
     const url = "https://slack.com/api/oauth.v2.access";
 
     const formData = new FormData();

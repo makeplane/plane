@@ -22,8 +22,7 @@ export const CustomerRequestSearch: FC<TProps> = observer((props) => {
   const {
     customerRequestSearchQuery,
     updateCustomerRequestSearchQuery,
-    workItemRequestSearchQuery,
-    updateWorkItemRequestSearchQuery,
+    workItems: { workItemRequestSearchQuery, updateWorkItemRequestSearchQuery },
   } = useCustomers();
   // refs
   const inputRef = useRef<HTMLInputElement>(null);

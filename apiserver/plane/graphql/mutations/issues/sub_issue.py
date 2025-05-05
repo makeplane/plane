@@ -2,22 +2,22 @@
 import json
 from typing import Optional
 
+# Third-party imports
+import strawberry
+from asgiref.sync import sync_to_async
+
 # Django imports
 from django.utils import timezone
 
 # Strawberry imports
-import strawberry
-from strawberry.types import Info
 from strawberry.permission import PermissionExtension
-
-# Third-party imports
-from asgiref.sync import sync_to_async
+from strawberry.types import Info
 
 # Module imports
-from plane.graphql.permissions.project import ProjectMemberPermission
 from plane.db.models import Issue
-from plane.graphql.types.issue import IssuesType
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
+from plane.graphql.permissions.project import ProjectMemberPermission
+from plane.graphql.types.issues.base import IssuesType
 
 
 # create methods

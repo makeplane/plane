@@ -1,44 +1,44 @@
 # Third-Party Imports
-import strawberry
-
-# Python Standard Library Imports
-from asgiref.sync import sync_to_async
 from typing import Optional
 
-# Strawberry Imports
-from strawberry.types import Info
-from strawberry.scalars import JSON
-from strawberry.permission import PermissionExtension
-from strawberry.exceptions import GraphQLError
+# Python Standard Library Imports
+import strawberry
+from asgiref.sync import sync_to_async
 
 # Django Imports
 from django.db.models import Prefetch, Q
 
+# Strawberry Imports
+from strawberry.exceptions import GraphQLError
+from strawberry.permission import PermissionExtension
+from strawberry.scalars import JSON
+from strawberry.types import Info
+
 # Module Imports
-from plane.graphql.types.issue import (
-    IssuesInformationType,
-    IssuesInformationObjectType,
-    IssuesType,
-    IssueUserPropertyType,
-    IssueCommentActivityType,
-    IssuePropertyActivityType,
-    IssueTypesType,
-)
 from plane.db.models import (
+    CommentReaction,
     Issue,
     IssueActivity,
-    IssueUserProperty,
     IssueComment,
-    CommentReaction,
     IssueType,
+    IssueUserProperty,
 )
-from plane.graphql.utils.issue_filters import issue_filters
-from plane.graphql.permissions.workspace import WorkspaceBasePermission
-from plane.graphql.permissions.project import ProjectBasePermission
-from plane.graphql.types.paginator import PaginatorResponse
-from plane.graphql.utils.paginator import paginate
-from plane.graphql.utils.issue import issue_information_query_execute
 from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
+from plane.graphql.permissions.project import ProjectBasePermission
+from plane.graphql.permissions.workspace import WorkspaceBasePermission
+from plane.graphql.types.issues.activity import IssuePropertyActivityType
+from plane.graphql.types.issues.base import (
+    IssuesInformationObjectType,
+    IssuesInformationType,
+    IssuesType,
+)
+from plane.graphql.types.issues.comment import IssueCommentActivityType
+from plane.graphql.types.issues.issue_type import IssueTypesType
+from plane.graphql.types.issues.user_property import IssueUserPropertyType
+from plane.graphql.types.paginator import PaginatorResponse
+from plane.graphql.utils.issue import issue_information_query_execute
+from plane.graphql.utils.paginator import paginate
+from plane.graphql.utils.work_item_filters import work_item_filters
 
 
 # issues information query
@@ -56,7 +56,7 @@ class IssuesInformationQuery:
         groupBy: Optional[str] = None,
         orderBy: Optional[str] = "-created_at",
     ) -> IssuesInformationType:
-        filters = issue_filters(filters, "POST")
+        filters = work_item_filters(filters)
 
         # all issues tab information
         (all_issue_count, all_issue_group_info) = await issue_information_query_execute(
@@ -137,7 +137,7 @@ class IssueQuery:
         cursor: Optional[str] = None,
         type: Optional[str] = "all",
     ) -> PaginatorResponse[IssuesType]:
-        filters = issue_filters(filters, "POST")
+        filters = work_item_filters(filters)
 
         # Filter issues based on the type
         if type == "backlog":
@@ -311,15 +311,20 @@ class WorkspaceIssuesQuery:
         orderBy: Optional[str] = "-created_at",
         cursor: Optional[str] = None,
     ) -> list[IssuesType]:
+        user = info.context.user
+        user_id = str(user.id)
+
+        filters = work_item_filters(filters)
+
         workspace_issues = await sync_to_async(list)(
             Issue.issue_objects.filter(
-                project__project_projectmember__member=info.context.user,
-                project__projectmember__is_active=True,
                 workspace__slug=slug,
+                project__project_projectmember__member_id=user_id,
+                project__project_projectmember__is_active=True,
             )
+            .filter(**filters)
             .select_related("actor", "issue", "project", "workspace")
             .order_by(orderBy, "-created_at")
-            .filter(**filters)
         )
 
         return paginate(results_object=workspace_issues, cursor=cursor)

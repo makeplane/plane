@@ -5,7 +5,13 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { Link2, MoveDiagonal, MoveRight, Sidebar } from "lucide-react";
 // plane imports
-import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import {
+  EIssueServiceType,
+  EIssuesStoreType,
+  EUserProjectRoles,
+  EUserPermissionsLevel,
+  EWorkItemConversionType,
+} from "@plane/constants";
 import { TIssue } from "@plane/types";
 import {
   CenterPanelIcon,
@@ -29,6 +35,8 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { WithFeatureFlagHOC } from "../../feature-flags";
+import { ConvertWorkItemAction } from "../conversions";
 import { ProjectEpicQuickActions } from "../epic-quick-action";
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
@@ -192,6 +200,9 @@ export const EpicPeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pro
       <div className="flex items-center gap-x-4">
         <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
         <div className="flex items-center gap-4">
+          <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="WORK_ITEM_CONVERSION" fallback={<></>}>
+            <ConvertWorkItemAction workItemId={issueId} conversionType={EWorkItemConversionType.WORK_ITEM} />
+          </WithFeatureFlagHOC>
           <Tooltip tooltipContent="Copy link" isMobile={isMobile}>
             <button type="button" onClick={handleCopyText}>
               <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />

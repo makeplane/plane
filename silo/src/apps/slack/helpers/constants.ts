@@ -13,8 +13,11 @@ export const ACTIONS = {
   LINKBACK_COMMENT_SUBMIT: "comment_submit",
   LINKBACK_ADD_WEB_LINK: "add_web_link",
   LINKBACK_OVERFLOW_ACTIONS: "linkback_overflow_actions",
+
   ENABLE_THREAD_SYNC: "enable_thread_sync",
   ASSIGN_TO_ME: "assign_to_me",
+
+  LINK_WORK_ITEM: "link_work_item",
 };
 
 export type EntityType = keyof typeof ENTITIES;
@@ -26,6 +29,8 @@ export const ENTITIES = {
   ISSUE_SUBMISSION: "issue_submission",
   ISSUE_COMMENT_SUBMISSION: "issue_comment_submission",
   ISSUE_WEBLINK_SUBMISSION: "issue_weblink_submission",
+  LINK_WORK_ITEM: "link_work_item",
+  DISCONNECT_WORK_ITEM: "disconnect_work_item",
 } as const;
 
 export const PLANE_PRIORITIES = [

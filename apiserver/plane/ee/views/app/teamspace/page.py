@@ -11,7 +11,6 @@ from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.http import StreamingHttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db import connection
 from django.utils import timezone
 
 # Third party imports
@@ -44,7 +43,7 @@ from plane.utils.error_codes import ERROR_CODES
 from plane.bgtasks.page_version_task import page_version
 from plane.ee.bgtasks.team_space_activities_task import team_space_activity
 from plane.ee.bgtasks.page_update import nested_page_update
-
+from plane.ee.utils.page_events import PageAction
 
 class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
     permission_classes = [TeamspacePermission]
@@ -285,7 +284,7 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
 
         nested_page_update.delay(
             page_id=page.id,
-            action="deleted",
+            action=PageAction.DELETED,
             slug=slug,
             user_id=request.user.id,
         )
@@ -395,7 +394,7 @@ class TeamspacePageArchiveEndpoint(TeamspaceBaseEndpoint):
         # archive the sub pages
         nested_page_update.delay(
             page_id=str(pk),
-            action="archived",
+            action=PageAction.ARCHIVED,
             slug=slug,
             user_id=request.user.id,
         )
@@ -434,7 +433,7 @@ class TeamspacePageUnarchiveEndpoint(TeamspaceBaseEndpoint):
 
         nested_page_update.delay(
             page_id=page.id,
-            action="unarchived",
+            action=PageAction.UNARCHIVED,
             slug=slug,
             user_id=request.user.id,
         )
@@ -474,7 +473,7 @@ class TeamspacePageLockEndpoint(TeamspaceBaseEndpoint):
 
         nested_page_update.delay(
             page_id=page.id,
-            action="locked",
+            action=PageAction.LOCKED,
             slug=slug,
             user_id=request.user.id,
             sub_pages=True if action == "all" else False,
@@ -511,7 +510,7 @@ class TeamspacePageLockEndpoint(TeamspaceBaseEndpoint):
 
         nested_page_update.delay(
             page_id=page.id,
-            action="unlocked",
+            action=PageAction.UNLOCKED,
             slug=slug,
             user_id=request.user.id,
             sub_pages=True if action == "all" else False,

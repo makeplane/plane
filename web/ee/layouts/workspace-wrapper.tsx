@@ -23,6 +23,7 @@ import {
   useWorkItemTemplates,
   useCustomerProperties,
   useCustomers,
+  usePageTemplates,
   useProjectTemplates,
 } from "@/plane-web/hooks/store";
 // plane web types
@@ -45,8 +46,9 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, fetchWorkspaceSubscribedPlan } =
     useWorkspaceSubscription();
   const { fetchAll } = useIssueTypes();
-  const { fetchAllTemplates: fetchAllWorkItemTemplates } = useWorkItemTemplates();
   const { fetchAllTemplates: fetchAllProjectTemplates } = useProjectTemplates();
+  const { fetchAllTemplates: fetchAllWorkItemTemplates } = useWorkItemTemplates();
+  const { fetchAllTemplates: fetchAllPageTemplates } = usePageTemplates();
   const { fetchAllCustomerPropertiesAndOptions } = useCustomerProperties();
   const { isCustomersFeatureEnabled, fetchCustomers } = useCustomers();
   // derived values
@@ -59,6 +61,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceFeatures[workspaceSlug.toString()][EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED];
   const isProjectTemplatesEnabled = useFlag(workspaceSlug?.toString(), "PROJECT_TEMPLATES");
   const isWorkItemTemplatesEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TEMPLATES");
+  const isPageTemplatesEnabled = useFlag(workspaceSlug?.toString(), "PAGE_TEMPLATES");
 
   // fetching feature flags
   const { isLoading: flagsLoader, error: flagsError } = useSWR(
@@ -149,6 +152,15 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
       : null,
     workspaceSlug && isWorkItemTemplatesEnabled
       ? () => fetchAllWorkItemTemplates({ workspaceSlug: workspaceSlug.toString(), level: ETemplateLevel.WORKSPACE })
+      : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  // fetching all page templates
+  useSWR(
+    workspaceSlug && isPageTemplatesEnabled ? ["pageTemplates", workspaceSlug, isPageTemplatesEnabled] : null,
+    workspaceSlug && isPageTemplatesEnabled
+      ? () => fetchAllPageTemplates({ workspaceSlug: workspaceSlug.toString(), level: ETemplateLevel.WORKSPACE })
       : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );

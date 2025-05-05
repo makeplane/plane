@@ -1,4 +1,4 @@
-import { SlackUpdateCredential } from "../types";
+import { SlackTokenRefreshResponse } from "../types";
 import { SlackService } from "./api.service";
 import { SlackAuthService } from "./auth.service";
 
@@ -25,10 +25,7 @@ export const createSlackService = (
   accessToken: string | undefined,
   refreshToken: string | undefined,
   authService: SlackAuthService | undefined,
-  authCallback: ({
-    isBotToken,
-    tokenResponse,
-  }: SlackUpdateCredential) => Promise<void>,
+  authCallback: (tokenResponse: SlackTokenRefreshResponse) => Promise<void>,
 ): SlackService => {
   if (!accessToken || !refreshToken || !authService || !authCallback) {
     throw new Error(

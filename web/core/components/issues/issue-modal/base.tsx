@@ -39,6 +39,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     modalTitle,
     primaryButtonText,
     isProjectSelectionDisabled = false,
+    isConversionOperation = false,
   } = props;
   const issueStoreType = useIssueStoreType();
 
@@ -72,7 +73,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     removeSubIssue,
   } = useIssueDetail();
   const { removeSubIssue: removeEpicSubIssue } = useIssueDetail(EIssueServiceType.EPICS);
-  const { handleCreateUpdatePropertyValues } = useIssueModal();
+  const { handleCreateUpdatePropertyValues, handleConvert } = useIssueModal();
   const { getProjectByIdentifier } = useProject();
   const { getIssueTypeById } = useIssueTypes();
   // pathname
@@ -270,7 +271,10 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     }
   };
 
-  const handleUpdateIssue = async (payload: Partial<TIssue>): Promise<TIssue | undefined> => {
+  const handleUpdateIssue = async (
+    payload: Partial<TIssue>,
+    showToast: boolean = true
+  ): Promise<TIssue | undefined> => {
     if (!workspaceSlug || !payload.project_id || !data?.id) return;
 
     try {
@@ -311,11 +315,13 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         isDraft: isDraft,
       });
 
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: t("success"),
-        message: t("issue_updated_successfully"),
-      });
+      if (showToast) {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("success"),
+          message: t("issue_updated_successfully"),
+        });
+      }
       captureIssueEvent({
         eventName: ISSUE_UPDATED,
         payload: { ...payload, issueId: data.id, state: "SUCCESS" },
@@ -324,11 +330,13 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       handleClose();
     } catch (error: any) {
       console.error(error);
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: t("error"),
-        message: error?.error ?? t("issue_could_not_be_updated"),
-      });
+      if (showToast) {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("error"),
+          message: error?.error ?? t("issue_could_not_be_updated"),
+        });
+      }
       captureIssueEvent({
         eventName: ISSUE_UPDATED,
         payload: { ...payload, state: "FAILED" },
@@ -347,7 +355,11 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     try {
       if (beforeFormSubmit) await beforeFormSubmit();
       if (!data?.id) response = await handleCreateIssue(payload, is_draft_issue);
-      else response = await handleUpdateIssue(payload);
+      else {
+        // if the issue is being converted, handle the conversion
+        if (isConversionOperation) handleConvert(workspaceSlug.toString(), data);
+        response = await handleUpdateIssue(payload);
+      }
     } catch (error) {
       console.error(error);
       throw error;
@@ -375,13 +387,13 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     },
     onAssetUpload: handleUpdateUploadedAssetIds,
     onClose: handleClose,
-    onSubmit: (payload) => handleFormSubmit(payload, isDraft),
+    onSubmit: (payload, is_draft_issue = false) => handleFormSubmit(payload, is_draft_issue),
     projectId: activeProjectId,
     isCreateMoreToggleEnabled: createMore,
     onCreateMoreToggleChange: handleCreateMoreToggleChange,
     isDraft: isDraft,
     moveToIssue: moveToIssue,
-    modalTitle: modalTitle,
+    modalTitle: isConversionOperation ? "Turn this epic into a work item" : modalTitle,
     primaryButtonText: primaryButtonText,
     isDuplicateModalOpen: isDuplicateModalOpen,
     handleDuplicateIssueModal: handleDuplicateIssueModal,

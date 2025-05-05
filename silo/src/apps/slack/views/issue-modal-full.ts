@@ -7,9 +7,11 @@ import {
   PlainTextInputBlock,
   StaticSelectInputBlock,
 } from "./custom-blocks";
+import { E_MESSAGE_ACTION_TYPES } from "../types/types";
 
 export type IssueModalViewFull = {
   type: "modal";
+  callback_id: string;
   private_metadata: string;
   title: PlainTextElement;
   submit: PlainTextElement;
@@ -44,6 +46,7 @@ export const createIssueModalViewFull = (
   showThreadSync: boolean = true
 ): IssueModalViewFull => ({
   type: "modal",
+  callback_id: E_MESSAGE_ACTION_TYPES.CREATE_NEW_WORK_ITEM,
   private_metadata: privateMetadata,
   title: {
     type: "plain_text",
@@ -177,30 +180,30 @@ export const createIssueModalViewFull = (
     },
     ...(showThreadSync
       ? [
-          {
-            type: "input",
-            optional: true,
-            element: {
-              type: "checkboxes",
-              options: [
-                {
-                  text: {
-                    type: "plain_text",
-                    text: "Sync slack comments with plane comments and vice versa",
-                    emoji: true,
-                  },
-                  value: "true",
+        {
+          type: "input",
+          optional: true,
+          element: {
+            type: "checkboxes",
+            options: [
+              {
+                text: {
+                  type: "plain_text",
+                  text: "Sync slack comments with plane comments and vice versa",
+                  emoji: true,
                 },
-              ],
-              action_id: "enable_thread_sync",
-            },
-            label: {
-              type: "plain_text",
-              text: "Thread Sync",
-              emoji: true,
-            },
+                value: "true",
+              },
+            ],
+            action_id: "enable_thread_sync",
           },
-        ]
+          label: {
+            type: "plain_text",
+            text: "Thread Sync",
+            emoji: true,
+          },
+        },
+      ]
       : []),
   ],
 });

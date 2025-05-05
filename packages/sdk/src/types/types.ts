@@ -1,10 +1,3 @@
-import {
-  // issue types
-  ExIssueType,
-  ExIssueProperty,
-  ExIssuePropertyOption,
-  ExIssuePropertyValue,
-} from "./issue-types";
 
 // service types
 export type ClientOptions = {
@@ -90,6 +83,17 @@ type IIsssue = {
   labels: string[];
   type_id: string | undefined;
 };
+
+export type ExpandableFields = {
+  state: ExState;
+  project: ExProject;
+  assignees: ExUser[];
+  labels: ExIssueLabel[];
+}
+// Create a type that can handle both expanded and unexpanded fields
+export type IssueWithExpanded<T extends Array<keyof ExpandableFields>> = Omit<ExIssue, T[number]> &
+  Pick<ExpandableFields, T[number]>;
+
 
 export type TStateGroups = "backlog" | "unstarted" | "started" | "completed" | "cancelled";
 
@@ -339,6 +343,16 @@ export interface AttachmentResponse {
   upload_data: UploadData;
   attachment: Attachment;
   asset_url: string;
+}
+
+export interface IssueSearchResponse {
+  name: string;
+  id: string;
+  sequence_id: number;
+  project__identifier: string;
+  project_id: string;
+  workspace__slug: string;
+  type_id: string | null;
 }
 
 export interface ExAsset {

@@ -30,7 +30,7 @@ export interface IBaseTemplateStore<T extends TBaseTemplateWithData> {
 
 export abstract class BaseTemplateStore<T extends TBaseTemplateWithData> implements IBaseTemplateStore<T> {
   // observables
-  loader: IBaseTemplateStore<T>["loader"] = "init-loader";
+  loader: IBaseTemplateStore<T>["loader"] = undefined;
   fetchStatusMap: IBaseTemplateStore<T>["fetchStatusMap"] = {};
   templates: IBaseTemplateStore<T>["templates"] = {};
   // root store
@@ -42,7 +42,7 @@ export abstract class BaseTemplateStore<T extends TBaseTemplateWithData> impleme
     const { root, createTemplateInstance } = store;
 
     // properties
-    this.loader = "init-loader";
+    this.loader = undefined;
     this.fetchStatusMap = {};
     this.templates = {};
 

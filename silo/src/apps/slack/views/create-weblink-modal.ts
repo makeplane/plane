@@ -1,9 +1,10 @@
 import { ENTITIES } from "../helpers/constants";
-import { MetadataPayloadShort } from "../types/types";
+import { E_MESSAGE_ACTION_TYPES, MetadataPayloadShort } from "../types/types";
 
 export const createWebLinkModal = (payload: MetadataPayloadShort) => {
   return {
     type: "modal",
+    callback_id: E_MESSAGE_ACTION_TYPES.ISSUE_WEBLINK_SUBMISSION,
     private_metadata: JSON.stringify({ entityType: ENTITIES.ISSUE_WEBLINK_SUBMISSION, entityPayload: payload }),
     title: {
       type: "plain_text",

@@ -16,7 +16,9 @@ export const WorkItemSidebarCustomers: FC<TWorkItemSidebarCustomerList> = observ
   const { workItemId, workspaceSlug, isPeekView = false } = props;
 
   // hooks
-  const { fetchWorkItemCustomers } = useCustomers();
+  const {
+    workItems: { fetchWorkItemCustomers },
+  } = useCustomers();
 
   // fetch issue property values
   const { isLoading } = useSWR(

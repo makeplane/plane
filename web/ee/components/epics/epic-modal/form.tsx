@@ -57,6 +57,7 @@ export interface EpicFormProps {
     loading: string;
   };
   isProjectSelectionDisabled?: boolean;
+  modalTitle?: string;
 }
 
 export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
@@ -72,6 +73,7 @@ export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
       default: `${data?.id ? "Update" : "Save"}`,
       loading: `${data?.id ? "Updating" : "Saving"}`,
     },
+    modalTitle = `${data?.id ? "Update epic" : "Create epic"}`,
   } = props;
 
   // states
@@ -277,9 +279,7 @@ export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
             className="flex flex-col w-full"
           >
             <div className="p-5 rounded-t-lg bg-custom-background-100">
-              <h3 className="text-xl font-medium text-custom-text-200 pb-2">
-                {data?.id ? "Update epic" : "Create epic"}
-              </h3>
+              <h3 className="text-xl font-medium text-custom-text-200 pb-2">{modalTitle}</h3>
               <div className="flex items-center justify-between pt-2 pb-4">
                 <div className="flex items-center gap-x-1">
                   <IssueProjectSelect control={control} disabled handleFormChange={handleFormChange} />

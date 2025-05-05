@@ -2,7 +2,7 @@
 import strawberry
 
 # Module Imports
-from plane.graphql.types.issue import IssuesType
+from plane.graphql.types.issues.base import IssuesType
 
 
 @strawberry.type

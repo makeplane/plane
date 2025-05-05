@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 import {
   CollaborativeDocumentEditorWithRef,
   EditorRefApi,
+  EditorTitleRefApi,
   TAIMenuProps,
   TDisplayConfig,
   TFileHandler,
@@ -14,8 +15,8 @@ import {
 import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
 // plane ui
 import { ERowVariant, Row } from "@plane/ui";
+import { cn, HSL, hslToHex, isCommentEmpty } from "@plane/utils";
 // components
-import { HSL, cn, hslToHex } from "@plane/utils";
 import { EditorMentionsRoot } from "@/components/editor";
 import { PageContentBrowser, PageContentLoader } from "@/components/pages";
 // helpers
@@ -57,6 +58,7 @@ type Props = {
   handlers: TEditorBodyHandlers;
   page: TPageInstance;
   webhookConnectionParams: TWebhookConnectionQueryParams;
+  projectId?: string;
   workspaceSlug: string;
   storeType: EPageStoreType;
   customRealtimeEventHandlers?: TCustomEventHandlers;
@@ -94,25 +96,31 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     page,
     storeType,
     webhookConnectionParams,
+    projectId,
     workspaceSlug,
     customRealtimeEventHandlers,
   } = props;
+  // states
+  const [isDescriptionEmpty, setIsDescriptionEmpty] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [deletePageModal, setDeletePageModal] = useState({
+    visible: false,
+    pages: [page],
+  });
+  // refs
+  const titleEditorRef = useRef<EditorTitleRefApi>(null);
   // store hooks
   const { data: currentUser } = useUser();
   const {
     data: { is_smooth_cursor_enabled },
   } = useUserProfile();
   const { getWorkspaceBySlug } = useWorkspace();
-  // states
-  const [deletePageModal, setDeletePageModal] = useState({
-    visible: false,
-    pages: [page],
-  });
   const { getUserDetails } = useMember();
-
-  const [isVisible, setIsVisible] = useState(false);
-
-  // Delayed animation effect that triggers on mount
+  // derived values
+  const { id: pageId, isContentEditable, editorRef, setSyncingStatus } = page;
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
+  const isTitleEmpty = !page.name || page.name.trim() === "";
+  // Simple animation effect that triggers on mount
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(true);
@@ -121,9 +129,6 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     return () => clearTimeout(timer);
   }, []);
 
-  // derived values
-  const { id: pageId, isContentEditable, editorRef, setSyncingStatus } = page;
-  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
   // all editor embeds
   const { embedProps } = useEditorEmbeds({
     fetchEmbedSuggestions: handlers.fetchEntity,
@@ -235,8 +240,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     }
   );
 
-  if (pageId === undefined || !realtimeConfig || realtimeConfig.queryParams.parentPageId === undefined)
-    return <PageContentLoader className={blockWidthClassName} />;
+  const isPageLoading =
+    pageId === undefined || !realtimeConfig || realtimeConfig.queryParams.parentPageId === undefined;
+  if (isPageLoading) return <PageContentLoader className={blockWidthClassName} />;
 
   return (
     <Row
@@ -266,7 +272,14 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
         >
           <div className="page-header-container group/page-header">
             <div className={blockWidthClassName}>
-              <PageEditorHeaderRoot page={page} isEditorVisible={isVisible} />
+              <PageEditorHeaderRoot
+                titleEditorRef={titleEditorRef}
+                isEditorContentEmpty={isDescriptionEmpty && isTitleEmpty}
+                isPageLoading={isPageLoading}
+                page={page}
+                projectId={projectId}
+                workspaceSlug={workspaceSlug}
+              />
             </div>
           </div>
 
@@ -277,6 +290,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             fileHandler={config.fileHandler}
             handleEditorReady={handleEditorReady}
             ref={editorForwardRef}
+            titleRef={titleEditorRef}
             containerClassName="h-full p-0 pb-64"
             displayConfig={displayConfig}
             mentionHandler={{
@@ -287,6 +301,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               },
               renderComponent: (props) => <EditorMentionsRoot {...props} />,
               getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
+            }}
+            onChange={(_json, html) => {
+              setIsDescriptionEmpty(isCommentEmpty(html));
             }}
             updatePageProperties={updatePageProperties}
             embedHandler={embedProps}

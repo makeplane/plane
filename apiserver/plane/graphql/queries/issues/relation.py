@@ -1,20 +1,18 @@
 # Third-Party Imports
 import strawberry
-
-
-# Python Standard Library Imports
 from asgiref.sync import sync_to_async
 
 # Django Imports
-from django.db.models import Q, Value, CharField
+from django.db.models import CharField, Q, Value
 
 # Strawberry Imports
-from strawberry.types import Info
 from strawberry.permission import PermissionExtension
+from strawberry.types import Info
 
 # Module Imports
+from plane.db.models import IssueRelation
+from plane.graphql.helpers import work_item_base_query
 from plane.graphql.permissions.project import ProjectBasePermission
-from plane.db.models import IssueRelation, Issue
 from plane.graphql.types.issues.relation import IssueRelationType
 
 
@@ -31,6 +29,7 @@ class IssueRelationQuery:
         issue_relation_query = (
             IssueRelation.objects.filter(workspace__slug=slug)
             .filter(project__id=project)
+            .filter(deleted_at__isnull=True)
             .filter(
                 project__project_projectmember__member=info.context.user,
                 project__project_projectmember__is_active=True,
@@ -59,9 +58,11 @@ class IssueRelationQuery:
 
         # constructing the issue query
         issue_queryset = (
-            Issue.issue_objects.filter(workspace__slug=slug)
+            work_item_base_query(workspace_slug=slug, project_id=project)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels")
+            .filter(archived_at__isnull=True)
+            .filter(deleted_at__isnull=True)
         )
 
         # getting all blocking issues

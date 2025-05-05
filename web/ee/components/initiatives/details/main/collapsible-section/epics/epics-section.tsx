@@ -1,13 +1,13 @@
 "use client";
 import React from "react";
 import { observer } from "mobx-react";
-import { Plus } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // plane web
 import { CollapsibleDetailSection } from "@/plane-web/components/common/layout/main/sections/collapsible-root";
 // local components
 import { InitiativeEpicsCollapsibleContent } from "./content";
+import { EpicsTitleActions } from "./title-actions";
 
 type Props = {
   workspaceSlug: string;
@@ -27,19 +27,12 @@ export const EpicsSection: React.FC<Props> = observer((props) => {
     <CollapsibleDetailSection
       title={t("common.epics")}
       actionItemElement={
-        !disabled && (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              toggleEpicModal();
-            }}
-            disabled={disabled}
-          >
-            <Plus className="h-4 w-4" />
-          </button>
-        )
+        <EpicsTitleActions
+          disabled={disabled}
+          toggleEpicModal={toggleEpicModal}
+          initiativeId={initiativeId}
+          workspaceSlug={workspaceSlug}
+        />
       }
       count={count}
       collapsibleContent={

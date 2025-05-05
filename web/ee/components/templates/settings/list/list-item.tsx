@@ -1,10 +1,10 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
+import { Loader as Spinner } from "lucide-react";
 // plane imports
 import { ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TBaseTemplateWithData } from "@plane/types";
-// components
 import { Button } from "@plane/ui";
 // plane web imports
 import { useWorkspace } from "@/hooks/store";
@@ -16,13 +16,22 @@ type TemplateListItemProps<T extends TBaseTemplateWithData> = {
   templateId: string;
   workspaceSlug: string;
   currentLevel: ETemplateLevel;
+  selectedTemplateId: string | null;
   getTemplateById: IBaseTemplateStore<T>["getTemplateById"];
   deleteTemplate: (templateId: string) => Promise<void>;
   handleUseTemplateAction: () => void;
 };
 
 export const TemplateListItem = observer(<T extends TBaseTemplateWithData>(props: TemplateListItemProps<T>) => {
-  const { templateId, workspaceSlug, currentLevel, getTemplateById, deleteTemplate, handleUseTemplateAction } = props;
+  const {
+    templateId,
+    workspaceSlug,
+    currentLevel,
+    selectedTemplateId,
+    getTemplateById,
+    deleteTemplate,
+    handleUseTemplateAction,
+  } = props;
   // refs
   const parentRef = useRef<HTMLDivElement>(null);
   // plane hooks
@@ -54,8 +63,12 @@ export const TemplateListItem = observer(<T extends TBaseTemplateWithData>(props
           className="rounded py-1 focus:bg-custom-background-100 focus:text-custom-text-200"
           size="sm"
           onClick={handleUseTemplateAction}
+          disabled={!!selectedTemplateId}
         >
-          {t("templates.settings.use_template.button")}
+          {selectedTemplateId === templateId
+            ? t("templates.settings.use_template.button.loading")
+            : t("templates.settings.use_template.button.default")}
+          {selectedTemplateId === templateId && <Spinner className="size-3 animate-spin" />}
         </Button>
         <TemplateQuickActions
           templateId={templateId}

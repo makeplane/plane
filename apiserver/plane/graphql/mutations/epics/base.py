@@ -31,7 +31,11 @@ from plane.graphql.helpers import (
     is_project_workflow_enabled,
 )
 from plane.graphql.permissions.project import ProjectPermission, Roles
-from plane.graphql.types.epics import EpicCreateInputType, EpicType, EpicUpdateInputType
+from plane.graphql.types.epics.base import (
+    EpicCreateInputType,
+    EpicType,
+    EpicUpdateInputType,
+)
 from plane.graphql.utils.issue_activity import convert_issue_properties_to_activity_dict
 
 

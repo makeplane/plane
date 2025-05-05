@@ -21,7 +21,7 @@ from plane.graphql.helpers import (
     is_project_epics_enabled,
 )
 from plane.graphql.permissions.project import ProjectBasePermission
-from plane.graphql.types.epics import EpicRelationType
+from plane.graphql.types.epics.relation import EpicRelationType
 
 
 @strawberry.type
@@ -58,6 +58,7 @@ class EpicRelationQuery:
         epic_work_item_relation_query = (
             IssueRelation.objects.filter(workspace__slug=workspace_slug)
             .filter(project__id=project_id)
+            .filter(deleted_at__isnull=True)
             .filter(
                 project__project_projectmember__member_id=user_id,
                 project__project_projectmember__is_active=True,
@@ -86,9 +87,11 @@ class EpicRelationQuery:
 
         # constructing the work item query
         work_item_queryset = (
-            Issue.issue_objects.filter(workspace__slug=slug)
+            Issue.objects.filter(workspace__slug=slug)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels")
+            .filter(archived_at__isnull=True)
+            .filter(deleted_at__isnull=True)
         )
 
         # getting all blocking work items

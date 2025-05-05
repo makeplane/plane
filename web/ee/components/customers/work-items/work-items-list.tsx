@@ -26,7 +26,7 @@ export const WorkItemsList: FC<TProps> = observer((props) => {
   // i18n
   const { t } = useTranslation();
   // hooks
-  const { getCustomerWorkItemIds, addWorkItemsToCustomer } = useCustomers();
+  const { getCustomerWorkItemIds, workItems: {addWorkItemsToCustomer} } = useCustomers();
   const { allowPermissions } = useUserPermissions();
   // derived values
   const workItemIds = getCustomerWorkItemIds(customerId);

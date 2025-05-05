@@ -1,33 +1,33 @@
+# Python Standard Library Imports
+from typing import Optional
+
 # Third-Party Imports
 import strawberry
-from typing import Optional
 from asgiref.sync import sync_to_async
 
 # Strawberry Imports
-from strawberry.types import Info
-from strawberry.scalars import JSON
+# Strawberry Imports
 from strawberry.permission import PermissionExtension
-
-# Django Imports
-from django.db.models import Q
+from strawberry.scalars import JSON
+from strawberry.types import Info
 
 # Module Imports
-from plane.graphql.types.workspace import (
-    WorkspaceType,
-    WorkspaceMemberType,
-    WorkspaceYourWorkType,
-)
-from plane.db.models import Workspace, WorkspaceMember, Issue, Project, Page
-from plane.graphql.utils.issue_filters import issue_filters
-from plane.graphql.types.issue import (
-    IssuesInformationType,
+from plane.db.models import Issue, Page, Project, Workspace, WorkspaceMember
+from plane.graphql.permissions.workspace import IsAuthenticated, WorkspaceBasePermission
+from plane.graphql.types.issues.base import (
     IssuesInformationObjectType,
+    IssuesInformationType,
     IssuesType,
 )
-from plane.graphql.permissions.workspace import WorkspaceBasePermission, IsAuthenticated
 from plane.graphql.types.paginator import PaginatorResponse
-from plane.graphql.utils.paginator import paginate
+from plane.graphql.types.workspace import (
+    WorkspaceMemberType,
+    WorkspaceType,
+    WorkspaceYourWorkType,
+)
 from plane.graphql.utils.issue import issue_information_query_execute
+from plane.graphql.utils.paginator import paginate
+from plane.graphql.utils.work_item_filters import work_item_filters
 
 
 @strawberry.type
@@ -74,7 +74,7 @@ class WorkspaceIssuesInformationQuery:
         groupBy: Optional[str] = None,
         orderBy: Optional[str] = "-created_at",
     ) -> IssuesInformationType:
-        filters = issue_filters(filters, "POST")
+        filters = work_item_filters(filters)
 
         (issue_count, issue_group_info) = await issue_information_query_execute(
             user=info.context.user,
@@ -109,7 +109,7 @@ class WorkspaceIssuesQuery:
         orderBy: Optional[str] = "-created_at",
         cursor: Optional[str] = None,
     ) -> PaginatorResponse[IssuesType]:
-        filters = issue_filters(filters, "POST")
+        filters = work_item_filters(filters)
 
         issues = await sync_to_async(list)(
             Issue.issue_objects.filter(workspace__slug=slug)
@@ -134,41 +134,41 @@ class YourWorkQuery:
         extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def yourWork(self, info: Info, slug: str) -> WorkspaceYourWorkType:
+        user = info.context.user
+        user_id = str(user.id)
+
         # projects
         projects = await sync_to_async(list)(
             Project.objects.filter(
                 workspace__slug=slug,
-                project_projectmember__member=info.context.user,
+                project_projectmember__member_id=user_id,
                 project_projectmember__is_active=True,
             ).values_list("id", flat=True)
         )
 
         # issues
+        filters = {"assignees": [user_id]}
+        filters = work_item_filters(filters)
         issues = await sync_to_async(list)(
-            Issue.issue_objects.filter(workspace__slug=slug)
-            .filter(
-                Q(
-                    project__project_projectmember__member=info.context.user,
-                    project__project_projectmember__is_active=True,
-                    assignees__in=[info.context.user],
-                )
+            Issue.issue_objects.filter(
+                workspace__slug=slug,
+                project__project_projectmember__member_id=user_id,
+                project__project_projectmember__is_active=True,
             )
+            .filter(**filters)
             .values_list("id", flat=True)
             .distinct()
         )
 
         # pages
         pages = await sync_to_async(list)(
-            Page.objects.filter(workspace__slug=slug)
-            .filter(
-                Q(
-                    projects__project_projectmember__member=info.context.user,
-                    projects__project_projectmember__is_active=True,
-                    archived_at__isnull=True,
-                    owned_by=info.context.user,
-                )
-            )
-            .values_list("id", flat=True)
+            Page.objects.filter(
+                workspace__slug=slug,
+                projects__project_projectmember__member_id=user_id,
+                projects__project_projectmember__is_active=True,
+                archived_at__isnull=True,
+                owned_by_id=user_id,
+            ).values_list("id", flat=True)
         )
 
         your_work = WorkspaceYourWorkType(

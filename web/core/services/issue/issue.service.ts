@@ -267,9 +267,15 @@ export class IssueService extends APIService {
       });
   }
 
-  async subIssues(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssueSubIssues> {
+  async subIssues(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    queries?: Partial<Record<TIssueParams, string | boolean>>
+  ): Promise<TIssueSubIssues> {
     return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/${this.serviceType === EIssueServiceType.EPICS ? "issues" : "sub-issues"}/`
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/${this.serviceType === EIssueServiceType.EPICS ? "issues" : "sub-issues"}/`,
+      { params: queries }
     )
       .then((response) => response?.data)
       .catch((error) => {

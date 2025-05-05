@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { AlignLeft, Briefcase, CalendarDays, Link, Paperclip, Tag, Triangle, Type, Users } from "lucide-react";
 import { TBaseActivityVerbs, TIssueActivity } from "@plane/types";
-import { DoubleCircleIcon, EpicIcon } from "@plane/ui";
+import { DoubleCircleIcon, EpicIcon, CustomersIcon } from "@plane/ui";
 import { convertMinutesToHoursMinutesString, renderFormattedDate } from "@plane/utils";
 import { LabelActivityChip } from "@/components/issues/issue-detail/issue-activity/activity/actions";
 import { store } from "@/lib/store-context";
@@ -17,7 +17,7 @@ export type TEpicActivityFields =
   | "name"
   | "description"
   | "state"
-  | "assignee"
+  | "assignees"
   | "priority"
   | "start_date"
   | "target_date"
@@ -28,7 +28,9 @@ export type TEpicActivityFields =
   | "estimate_time"
   | "relates_to"
   | "link"
-  | "attachment";
+  | "attachment"
+  | "customer_request"
+  | "customer";
 
 export type TEpicActivityVerbs = TBaseActivityVerbs;
 
@@ -77,7 +79,7 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
       </>
     ),
   }),
-  assignee_updated: (activity: TIssueActivity) => ({
+  assignees_updated: (activity: TIssueActivity) => ({
     icon: <Users className={commonIconClassName} />,
     message: (
       <>
@@ -197,5 +199,69 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
   attachment_deleted: () => ({
     icon: <Paperclip className={commonIconClassName} />,
     message: <>deleted the attachment</>,
+  }),
+  customer_request_created: (activity: TIssueActivity) => ({
+    icon: <CustomersIcon className={commonIconClassName} />,
+    message: (
+      <>
+        added this epic to the customer request{" "}
+        <a
+          href={`/${activity.workspace_detail?.slug}/customers/${activity.new_identifier}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+        >
+          <span className="truncate">{activity.new_value}</span>
+        </a>
+      </>
+    ),
+  }),
+  customer_request_deleted: (activity: TIssueActivity) => ({
+    icon: <CustomersIcon className={commonIconClassName} />,
+    message: (
+      <>
+        removed this epic from the customer request{" "}
+        <a
+          href={`/${activity.workspace_detail?.slug}/customers/${activity.old_identifier}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+        >
+          <span className="truncate">{activity.old_value}</span>
+        </a>
+      </>
+    ),
+  }),
+  customer_created: (activity: TIssueActivity) => ({
+    icon: <CustomersIcon className={commonIconClassName} />,
+    message: (
+      <>
+        added this epic to the customer{" "}
+        <a
+          href={`/${activity.workspace_detail?.slug}/customers/${activity.new_identifier}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+        >
+          <span className="truncate">{activity.new_value}</span>
+        </a>
+      </>
+    ),
+  }),
+  customer_deleted: (activity: TIssueActivity) => ({
+    icon: <CustomersIcon className={commonIconClassName} />,
+    message: (
+      <>
+        removed this epic from the customer{" "}
+        <a
+          href={`/${activity.workspace_detail?.slug}/customers/${activity.old_identifier}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
+        >
+          <span className="truncate">{activity.old_value}</span>
+        </a>
+      </>
+    ),
   }),
 };

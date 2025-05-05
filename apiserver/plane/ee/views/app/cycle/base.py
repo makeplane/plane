@@ -24,14 +24,14 @@ class CycleIssueStateAnalyticsEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, cycle_id):
         workspace = Workspace.objects.get(slug=slug)
-        
+
         # Get the cycle to check if it has ended
         cycle = Cycle.objects.get(pk=cycle_id)
-        
+
         cycle_state_progress = EntityProgress.objects.filter(
             cycle_id=cycle_id, entity_type="CYCLE", workspace__slug=slug
         ).order_by("progress_date")
-        
+
         current_time = timezone.now()
         cycle_not_ended = cycle.end_date > current_time
 
@@ -40,8 +40,10 @@ class CycleIssueStateAnalyticsEndpoint(BaseAPIView):
             # Check if EntityProgress exists for yesterday's date
             yesterday = current_time - timezone.timedelta(days=1)
             yesterday_progress = EntityProgress.objects.filter(
-                progress_date=yesterday, cycle_id=cycle_id,
-                entity_type="CYCLE", workspace__slug=slug
+                progress_date=yesterday.date(),
+                cycle_id=cycle_id,
+                entity_type="CYCLE",
+                workspace__slug=slug,
             ).exists()
 
             # If it doesn't exist, calculate the progress for yesterday
@@ -62,21 +64,20 @@ class CycleIssueStateAnalyticsEndpoint(BaseAPIView):
         else:
             # Cycle has ended, check if we have data for the end date
             end_date_progress = EntityProgress.objects.filter(
-                progress_date=cycle.end_date.date(), 
+                progress_date=cycle.end_date.date(),
                 cycle_id=cycle_id,
-                entity_type="CYCLE", 
-                workspace__slug=slug
+                entity_type="CYCLE",
+                workspace__slug=slug,
             ).exists()
-            
+
             # If end date progress doesn't exist, calculate it
             if not end_date_progress:
                 end_date_data = calculate_entity_issue_state_progress(
-                    current_date=cycle.end_date, 
-                    cycles=[(cycle_id, workspace.id)]
+                    current_date=cycle.end_date, cycles=[(cycle_id, workspace.id)]
                 )
                 cycle_state_progress = list(cycle_state_progress) + end_date_data
 
         return Response(
             EntityProgressSerializer(cycle_state_progress, many=True).data,
-            status=status.HTTP_200_OK
+            status=status.HTTP_200_OK,
         )

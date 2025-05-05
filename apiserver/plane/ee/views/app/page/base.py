@@ -12,6 +12,7 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.bgtasks.page_update import nested_page_update
+from plane.ee.utils.page_events import PageAction
 
 # Third party imports
 from rest_framework import status
@@ -95,7 +96,7 @@ class MovePageEndpoint(BaseAPIView):
         # update the descendants pages
         nested_page_update.delay(
             page_id=pk,
-            action="moved",
+            action=PageAction.MOVED,
             project_id=project_id,
             slug=slug,
             user_id=request.user.id,
