@@ -24,6 +24,7 @@ export type TNavigationItem = {
   shouldRender: boolean;
   sortOrder: number;
   i18n_key: string;
+  key: string;
 };
 
 type TProjectItemsProps = {
@@ -64,6 +65,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
     (workspaceSlug: string, projectId: string): TNavigationItem[] => [
       {
         i18n_key: "sidebar.work_items",
+        key: "work_items",
         name: "Work items",
         href: `/${workspaceSlug}/projects/${projectId}/issues`,
         icon: LayersIcon,
@@ -73,6 +75,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
       },
       {
         i18n_key: "sidebar.cycles",
+        key: "cycles",
         name: "Cycles",
         href: `/${workspaceSlug}/projects/${projectId}/cycles`,
         icon: ContrastIcon,
@@ -82,6 +85,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
       },
       {
         i18n_key: "sidebar.modules",
+        key: "modules",
         name: "Modules",
         href: `/${workspaceSlug}/projects/${projectId}/modules`,
         icon: DiceIcon,
@@ -91,6 +95,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
       },
       {
         i18n_key: "sidebar.views",
+        key: "views",
         name: "Views",
         href: `/${workspaceSlug}/projects/${projectId}/views`,
         icon: Layers,
@@ -100,6 +105,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
       },
       {
         i18n_key: "sidebar.pages",
+        key: "pages",
         name: "Pages",
         href: `/${workspaceSlug}/projects/${projectId}/pages`,
         icon: FileText,
@@ -109,6 +115,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
       },
       {
         i18n_key: "sidebar.intake",
+        key: "intake",
         name: "Intake",
         href: `/${workspaceSlug}/projects/${projectId}/inbox`,
         icon: Intake,
@@ -147,8 +154,8 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
       // epic condition
       const epicCondition = workItemId && workItem && workItem?.is_epic && workItem?.project_id === projectId;
       // is active
-      const isWorkItemActive = item.i18n_key === "sidebar.work_items" && workItemCondition;
-      const isEpicActive = item.i18n_key === "sidebar.epics" && epicCondition;
+      const isWorkItemActive = item.key === "work_items" && workItemCondition;
+      const isEpicActive = item.key === "epics" && epicCondition;
       // pathname condition
       const isPathnameActive = pathname.includes(item.href);
       // return
