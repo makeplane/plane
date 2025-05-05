@@ -76,7 +76,9 @@ def nested_page_update(
 
         if action == PageAction.ARCHIVED:
             Page.objects.filter(id__in=descendants_ids).update(
-                archived_at=timezone.now(), updated_at=timezone.now(), updated_by=user_id
+                archived_at=timezone.now(),
+                updated_at=timezone.now(),
+                updated_by=user_id,
             )
             UserFavorite.objects.filter(
                 entity_type="page",
@@ -86,19 +88,29 @@ def nested_page_update(
             ).delete(soft=False)
 
         elif action == PageAction.UNARCHIVED:
-            Page.objects.filter(id__in=descendants_ids).update(archived_at=None, updated_at=timezone.now(), updated_by=user_id)
+            Page.objects.filter(id__in=descendants_ids).update(
+                archived_at=None, updated_at=timezone.now(), updated_by=user_id
+            )
 
         elif action == PageAction.LOCKED:
-            Page.objects.filter(id__in=descendants_ids).update(is_locked=True, updated_at=timezone.now(), updated_by=user_id)
+            Page.objects.filter(id__in=descendants_ids).update(
+                is_locked=True, updated_at=timezone.now(), updated_by=user_id
+            )
 
         elif action == PageAction.UNLOCKED:
-            Page.objects.filter(id__in=descendants_ids).update(is_locked=False, updated_at=timezone.now(), updated_by=user_id)
+            Page.objects.filter(id__in=descendants_ids).update(
+                is_locked=False, updated_at=timezone.now(), updated_by=user_id
+            )
 
         elif action == PageAction.MADE_PUBLIC:
-            Page.objects.filter(id__in=descendants_ids).update(access=0, updated_at=timezone.now(), updated_by=user_id)
+            Page.objects.filter(id__in=descendants_ids).update(
+                access=0, updated_at=timezone.now(), updated_by=user_id
+            )
 
         elif action == PageAction.MADE_PRIVATE:
-            Page.objects.filter(id__in=descendants_ids).update(access=1, updated_at=timezone.now(), updated_by=user_id)
+            Page.objects.filter(id__in=descendants_ids).update(
+                access=1, updated_at=timezone.now(), updated_by=user_id
+            )
 
         elif action == PageAction.PUBLISHED:
             # remove the page ids which are already published from the array
@@ -157,8 +169,7 @@ def nested_page_update(
         elif action == PageAction.DUPLICATED:
             old_to_new_page_mapping = {}
             pages_to_duplicate = Page.objects.filter(
-                id__in=descendants_ids + [page_id],
-                workspace__slug=slug,
+                id__in=descendants_ids + [page_id], workspace__slug=slug
             )
 
             # First, duplicate all pages without setting parent_id
@@ -233,20 +244,30 @@ def nested_page_update(
             if new_project_id:
                 # Update the project id for the project pages
                 ProjectPage.objects.filter(page_id__in=descendants_ids).update(
-                    project_id=new_project_id, updated_at=timezone.now(), updated_by=user_id
+                    project_id=new_project_id,
+                    updated_at=timezone.now(),
+                    updated_by=user_id,
                 )
 
                 # Update the project id for the file assets
                 FileAsset.objects.filter(
                     page_id__in=descendants_ids, project_id=project_id
-                ).update(project_id=new_project_id, updated_at=timezone.now(), updated_by=user_id)
+                ).update(
+                    project_id=new_project_id,
+                    updated_at=timezone.now(),
+                    updated_by=user_id,
+                )
 
                 # Update the project id for the deploy board
                 DeployBoard.objects.filter(
                     entity_identifier__in=descendants_ids,
                     entity_name="page",
                     project_id=project_id,
-                ).update(project_id=new_project_id, updated_at=timezone.now(), updated_by=user_id)
+                ).update(
+                    project_id=new_project_id,
+                    updated_at=timezone.now(),
+                    updated_by=user_id,
+                )
 
                 # Background job to handle favorites
                 for descendant_id in descendants_ids:
@@ -287,6 +308,9 @@ def nested_page_update(
             "user_id": str(user_id) if user_id else None,
             "data": data,
         }
+
+        if not settings.LIVE_URL:
+            return
 
         response = requests.post(
             f"{settings.LIVE_URL}/broadcast/",

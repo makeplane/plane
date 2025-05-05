@@ -360,7 +360,12 @@ APP_BASE_URL = os.environ.get("APP_BASE_URL", None)
 APP_BASE_PATH = os.environ.get("APP_BASE_PATH", None)
 
 LIVE_BASE_URL = os.environ.get("LIVE_BASE_URL", None)
-LIVE_BASE_PATH = os.environ.get("LIVE_BASE_PATH", None)
+LIVE_BASE_PATH = os.environ.get("LIVE_BASE_PATH", "")
+
+if LIVE_BASE_URL:
+    LIVE_URL = f"{LIVE_BASE_URL}{LIVE_BASE_PATH}"
+else:
+    LIVE_URL = None
 
 SILO_BASE_URL = os.environ.get("SILO_BASE_URL", None)
 SILO_BASE_PATH = os.environ.get("SILO_BASE_PATH", None)
