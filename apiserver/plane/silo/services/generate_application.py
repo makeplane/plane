@@ -6,7 +6,7 @@ from oauth2_provider.generators import generate_client_secret
 from plane.silo.models.application_secret import ApplicationSecret
 from django.db import models
 from logging import getLogger
-
+from plane.utils.encryption import encrypt
 logger = getLogger("plane.silo.services.generate_application")
 
 
@@ -33,7 +33,7 @@ def generate_application(
         "description_html": app_data["description_html"],
         "short_description": app_data["short_description"],
         "company_name": user.display_name,
-        "redirect_uris": [f"{settings.SILO_URL}/api/{app_key}/plane-oauth/callback"],
+        "redirect_uris": f"{settings.SILO_URL}/api/{app_key}/plane-oauth/callback",
         "skip_authorization": True,
         "client_type": "confidential",
         "authorization_grant_type": "authorization-code",
@@ -46,9 +46,13 @@ def generate_application(
     if application:
         # Application already exists, update client_secret
         application.client_secret = client_secret
+        application.redirect_uris = f"{settings.SILO_URL}/api/{app_key}/plane-oauth/callback"
         application.save()
     else:
         application = application_model.objects.create(**application_data)
+    
+    encrypted_data = encrypt(client_secret)
+    client_secret = f"{encrypted_data['iv']}:{encrypted_data['ciphertext']}:{encrypted_data['tag']}"
 
     application_secret_model.objects.bulk_create(
         [
