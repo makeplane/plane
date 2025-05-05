@@ -1,10 +1,9 @@
 // plane package imports
 import React, { ReactNode } from 'react'
-import { Briefcase, Calendar } from 'lucide-react'
+import { Calendar } from 'lucide-react'
 import { ANALYTICS_V2_DURATION_FILTER_OPTIONS } from '@plane/constants'
 import { useTranslation } from '@plane/i18n'
 import { CustomSearchSelect } from '@plane/ui'
-import { cn } from '@plane/utils'
 // plane web components
 // components
 import { TDropdownProps } from '@/components/dropdowns/types'
@@ -22,25 +21,11 @@ type Props = TDropdownProps & {
 }
 
 function DurationDropdown({
-  buttonClassName,
-  buttonContainerClassName,
-  buttonVariant,
-  className,
-  disabled,
-  hideIcon,
   placeholder = "Duration",
-  onClose,
-  placement,
   onChange,
-  showTooltip = false,
-  dropdownArrow = false,
-  dropdownArrowClassName = "",
-  button,
-  renderByDefault = true,
-  tabIndex,
   value
 }: Props) {
-  const { t } = useTranslation()
+  useTranslation()
 
   const options = ANALYTICS_V2_DURATION_FILTER_OPTIONS.map((option) => ({
     value: option.value,

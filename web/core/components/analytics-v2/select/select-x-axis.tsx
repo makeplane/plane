@@ -1,11 +1,8 @@
 "use client";
 
-import { Briefcase } from "lucide-react";
 import { ChartXAxisProperty } from "@plane/constants";
-import { IAnalyticsV2Params } from "@plane/types";
 // ui
 import { CustomSelect } from "@plane/ui";
-import { cn } from "@plane/utils";
 
 type Props = {
   value?: ChartXAxisProperty;
@@ -18,7 +15,7 @@ type Props = {
 };
 
 export const SelectXAxis: React.FC<Props> = (props) => {
-  const { value, onChange, options, hiddenOptions, placeholder, allowNoValue, label } = props;
+  const { value, onChange, options, hiddenOptions, allowNoValue, label } = props;
   return (
     <CustomSelect
       value={value}
