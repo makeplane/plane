@@ -19,11 +19,13 @@ from django.db.models import Value
 from django.db.models.functions import Coalesce
 from django.db.models import Q
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.db.models import OuterRef, Func, F, Count
+from django.db.models import OuterRef, Func, F
+from django.db.models.functions import Concat
 
 # Module imports
 from plane.db.models import ExporterHistory, Issue, FileAsset
 from plane.utils.exception_logger import log_exception
+# from plane.app.serializers import IssueAttachmentLiteSerializer
 
 
 def dateTimeConverter(time):
@@ -171,11 +173,6 @@ def generate_table_row(issue):
             if issue["created_by__first_name"] and issue["created_by__last_name"]
             else ""
         ),
-        (
-            f"{issue['assignees__first_name']} {issue['assignees__last_name']}"
-            if issue["assignees__first_name"] and issue["assignees__last_name"]
-            else ""
-        ),
         issue["labels__name"] if issue["labels__name"] else "",
         issue["issue_cycle__cycle__name"],
         dateConverter(issue["issue_cycle__cycle__start_date"]),
@@ -204,10 +201,10 @@ def generate_table_row(issue):
                 issue["comment_created_by_last_name"],
             )
         ],
-        issue["attachment_count"],
-        issue["attachment_links"],
-        issue["issue_link_url"],
-        issue["issue_subscriber_count"],
+        issue["attachment_count"] if issue["attachment_count"] else "",
+        issue["issue_link_url"] if issue["issue_link_url"] else "",
+        issue["estimate_point__estimate__name"],
+        issue["assignee"] if issue["assignee"] else "",
     ]
 
 
@@ -368,12 +365,7 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                     "issue_link",
                 )
                 .prefetch_related(
-                    "assignees",
-                    "labels",
-                    "issue_cycle__cycle",
-                    "issue_module__module",
-                    "issue_comments",
-                    "issue_subscribers",
+                    "labels", "issue_cycle__cycle", "issue_module__module"
                 )
                 .annotate(
                     comment_stripped=Coalesce(
@@ -381,6 +373,7 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                             "issue_comments__comment_stripped",
                             filter=Q(issue_comments__comment_stripped__isnull=False),
                             order_by=["-issue_comments__created_at"],
+                            distinct=True,
                         ),
                         Value([]),
                     ),
@@ -388,6 +381,7 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                         ArrayAgg(
                             "issue_comments__created_at",
                             order_by=["-issue_comments__created_at"],
+                            distinct=True,
                         ),
                         Value([]),
                     ),
@@ -395,6 +389,7 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                         ArrayAgg(
                             "issue_comments__created_by__first_name",
                             order_by=["-issue_comments__created_at"],
+                            distinct=True,
                         ),
                         Value([]),
                     ),
@@ -402,6 +397,7 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                         ArrayAgg(
                             "issue_comments__created_by__last_name",
                             order_by=["-issue_comments__created_at"],
+                            distinct=True,
                         ),
                         Value([]),
                     ),
@@ -416,18 +412,6 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                     .values("count")
                 )
                 .annotate(
-                    attachment_links=Coalesce(
-                        ArrayAgg(
-                            "assets__asset",
-                            filter=Q(
-                                assets__entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT
-                            ),
-                            order_by=["-assets__created_at"],
-                        ),
-                        Value([]),
-                    )
-                )
-                .annotate(
                     issue_link_url=Coalesce(
                         ArrayAgg(
                             "issue_link__url",
@@ -438,10 +422,20 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                     )
                 )
                 .annotate(
-                    issue_subscriber_count=Count(
-                        "issue_subscribers",
-                        filter=Q(issue_subscribers__subscriber__isnull=False),
-                        distinct=True,
+                    assignee=Coalesce(
+                        ArrayAgg(
+                            Concat(
+                                F("assignees__first_name"),
+                                Value(" "),
+                                F("assignees__last_name"),
+                            ),
+                            filter=Q(
+                                assignees__first_name__isnull=False,
+                                assignees__last_name__isnull=False,
+                            ),
+                            distinct=True,
+                        ),
+                        Value([]),
                     )
                 )
                 .values(
@@ -468,18 +462,15 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                     "issue_module__module__target_date",
                     "created_by__first_name",
                     "created_by__last_name",
-                    "assignees__first_name",
-                    "assignees__last_name",
                     "labels__name",
                     "comment_stripped",
                     "comment_created_at",
                     "comment_created_by_first_name",
                     "comment_created_by_last_name",
                     "attachment_count",
-                    "attachment_links",
                     "issue_link_url",
-                    "issue_subscriber_count",
                     "estimate_point__estimate__name",
+                    "assignee",
                 )
             )
             .order_by("project__identifier", "sequence_id")
@@ -497,7 +488,6 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
             "Target Date",
             "Priority",
             "Created By",
-            "Assignee",
             "Labels",
             "Cycle Name",
             "Cycle Start Date",
@@ -511,9 +501,9 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
             "Archived At",
             "Comments",
             "Attachment Count",
-            "Attachment Links",
             "Link",
-            "Subscriber Count",
+            "Estimate",
+            "Assignees",
         ]
 
         EXPORTER_MAPPER = {
