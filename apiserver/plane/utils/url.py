@@ -1,6 +1,7 @@
 # Python imports
+import re
 from typing import Optional
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 
 
 def is_valid_url(url: str) -> bool:
@@ -53,3 +54,26 @@ def get_url_components(url: str) -> Optional[dict]:
         "fragment": result.fragment,
     }
 
+
+def normalize_url_path(url: str) -> str:
+    """
+    Normalize the path component of a URL by replacing multiple consecutive slashes with a single slash.
+
+    This function preserves the protocol, domain, query parameters, and fragments of the URL,
+    only modifying the path portion to ensure there are no duplicate slashes.
+
+    Args:
+        url (str): The input URL string to normalize.
+
+    Returns:
+        str: The normalized URL with redundant slashes in the path removed.
+
+    Example:
+        >>> normalize_url_path('https://example.com//foo///bar//baz?x=1#frag')
+        'https://example.com/foo/bar/baz?x=1#frag'
+    """
+    parts = urlparse(url)
+    # Normalize the path
+    normalized_path = re.sub(r"/+", "/", parts.path)
+    # Reconstruct the URL
+    return urlunparse(parts._replace(path=normalized_path))

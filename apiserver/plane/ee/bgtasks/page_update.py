@@ -27,8 +27,7 @@ from plane.bgtasks.copy_s3_object import copy_s3_objects
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.ee.utils.page_descendants import get_descendant_page_ids
 from plane.ee.utils.page_events import PageAction
-from plane.utils.url import get_url_components
-
+from plane.utils.url import normalize_url_path
 
 @shared_task
 def replace_page_id(old_to_new_page_mapping, page_id):
@@ -309,14 +308,11 @@ def nested_page_update(
             "data": data,
         }
 
-        live_url = get_url_components(settings.LIVE_URL)
+        live_url = settings.LIVE_URL
         if not live_url:
             return {}
 
-        base_url = (
-            f"{live_url.get('scheme')}://{live_url.get('netloc')}{live_url.get('path')}"
-        )
-        url = urljoin(base_url, "broadcast/")
+        url = normalize_url_path(f"{live_url}/broadcast/")
 
         # Send the payload to the live server
         response = requests.post(
