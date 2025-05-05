@@ -35,7 +35,7 @@ type TProjectItemsProps = {
 
 export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
   const { workspaceSlug, projectId, additionalNavigationItems, isSidebarCollapsed } = props;
-  const { workItem: workItemIdFromRoute } = useParams();
+  const { workItem: workItemIdentifierFromRoute } = useParams();
   // store hooks
   const { t } = useTranslation();
   const { toggleSidebar } = useAppTheme();
@@ -48,7 +48,9 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
   // pathname
   const pathname = usePathname();
   // derived values
-  const workItemId = workItemIdFromRoute ? getIssueIdByIdentifier(workItemIdFromRoute?.toString()) : undefined;
+  const workItemId = workItemIdentifierFromRoute
+    ? getIssueIdByIdentifier(workItemIdentifierFromRoute?.toString())
+    : undefined;
   const workItem = workItemId ? getIssueById(workItemId) : undefined;
   const project = getPartialProjectById(projectId);
   // handlers
