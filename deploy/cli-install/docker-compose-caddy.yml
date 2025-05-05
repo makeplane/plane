@@ -74,6 +74,7 @@ x-silo-env: &silo-env
 
   # Authentication
   SILO_HMAC_SECRET_KEY: ${SILO_HMAC_SECRET_KEY:-tnbbvj6ATPvze4zaygdujxg4dpk4hqx0WDW}
+  AES_SECRET_KEY: ${AES_SECRET_KEY:-wvRonyo2xksk00E2h0hAbR5pFETQwbBK}
 
   # Feature Flag Envs
   FEATURE_FLAG_SERVER_BASE_URL: ${FEATURE_FLAG_SERVER_BASE_URL}
@@ -110,6 +111,7 @@ x-app-env: &app-env
   PAYMENT_SERVER_BASE_URL: ${PAYMENT_SERVER_BASE_URL:-http://monitor:8080}
   # Enternal Services Config
   SILO_HMAC_SECRET_KEY: ${SILO_HMAC_SECRET_KEY:-tnbbvj6ATPvze4zaygdujxg4dpk4hqx0WDW}
+  AES_SECRET_KEY: ${AES_SECRET_KEY:-wvRonyo2xksk00E2h0hAbR5pFETQwbBK}
   # API key rate limit
   API_KEY_RATE_LIMIT: ${API_KEY_RATE_LIMIT:-60/minute}
   # Force HTTPS for handling SSL Termination
