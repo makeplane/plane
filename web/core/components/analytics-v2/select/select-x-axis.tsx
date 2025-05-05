@@ -1,5 +1,6 @@
 "use client";
 
+import { Briefcase } from "lucide-react";
 import { ChartXAxisProperty } from "@plane/constants";
 import { IAnalyticsV2Params } from "@plane/types";
 // ui
@@ -13,14 +14,15 @@ type Props = {
   placeholder?: string;
   hiddenOptions?: ChartXAxisProperty[];
   allowNoValue?: boolean;
+  label?: string | JSX.Element;
 };
 
 export const SelectXAxis: React.FC<Props> = (props) => {
-  const { value, onChange, options, hiddenOptions, placeholder, allowNoValue } = props;
+  const { value, onChange, options, hiddenOptions, placeholder, allowNoValue, label } = props;
   return (
     <CustomSelect
       value={value}
-      label={<span className={cn("text-custom-text-200", value && "text-custom-text-100")}>{options.find((v) => v.value === value)?.label || placeholder || "Add Property"}</span>}
+      label={label}
       onChange={onChange}
       maxHeight="lg"
     >

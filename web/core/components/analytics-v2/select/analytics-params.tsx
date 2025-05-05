@@ -2,12 +2,13 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Control, Controller, UseFormSetValue, useWatch } from "react-hook-form";
 // plane imports
-import { Download } from "lucide-react";
+import { Briefcase, Calendar, Download, Filter, SlidersHorizontal } from "lucide-react";
 import { ANALYTICS_V2_X_AXIS_VALUES, ANALYTICS_V2_Y_AXIS_VALUES, ChartYAxisMetric } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IAnalyticsV2Params } from "@plane/types";
 import { Button, Row, setToast, TOAST_TYPE } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { AnalyticsV2Service } from "@/services/analytics-v2.service";
 import { SelectXAxis } from "./select-x-axis";
 import { SelectYAxis } from "./select-y-axis";
@@ -49,7 +50,7 @@ export const AnalyticsV2SelectParams: React.FC<Props> = observer((props) => {
   return (
     <div className="flex  justify-between w-full">
       <Row
-        className={`flex items-center gap-3`}
+        className={`flex items-center gap-2`}
       >
         <Controller
           name="y_axis"
@@ -74,6 +75,10 @@ export const AnalyticsV2SelectParams: React.FC<Props> = observer((props) => {
               onChange={(val) => {
                 onChange(val);
               }}
+              label={<div className="flex items-center gap-2">
+                <Calendar className="w-3 h-3" />
+                <span className={cn("text-custom-text-200", value && "text-custom-text-100")}>{xAxisOptions.find((v) => v.value === value)?.label || "Add Property"}</span>
+              </div>}
               options={xAxisOptions}
             />
           )}
@@ -87,6 +92,10 @@ export const AnalyticsV2SelectParams: React.FC<Props> = observer((props) => {
               onChange={(val) => {
                 onChange(val);
               }}
+              label={<div className="flex items-center gap-2">
+                <SlidersHorizontal className="w-3 h-3" />
+                <span className={cn("text-custom-text-200", value && "text-custom-text-100")}>{groupByOptions.find((v) => v.value === value)?.label || "Add Property"}</span>
+              </div>}
               options={groupByOptions}
               placeholder="Group By"
               allowNoValue

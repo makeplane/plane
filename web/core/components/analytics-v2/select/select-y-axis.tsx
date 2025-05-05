@@ -3,6 +3,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
+import { Briefcase } from "lucide-react";
 import { ChartYAxisMetric } from "@plane/constants";
 import { CustomSelect } from "@plane/ui";
 // hooks
@@ -42,7 +43,12 @@ export const SelectYAxis: React.FC<Props> = observer(({ value, onChange, hiddenO
   return (
     <CustomSelect
       value={value}
-      label={<span>{options.find((v) => v.value === value)?.label ?? "Add Metric"}</span>}
+      label={
+        <div className="flex items-center gap-2">
+          <Briefcase className="w-3 h-3" />
+          <span>{options.find((v) => v.value === value)?.label ?? "Add Metric"}</span>
+        </div>
+      }
       onChange={onChange}
       maxHeight="lg"
     >

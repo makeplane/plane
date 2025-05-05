@@ -79,7 +79,7 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
       )),
     [activeLegend, stackKeys, bars]
   );
-  console.log(xAxis.label, "test data")
+
   return (
     <div className={className}>
       <ResponsiveContainer width="100%" height="100%">

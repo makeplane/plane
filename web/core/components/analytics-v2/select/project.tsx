@@ -2,6 +2,7 @@
 
 import { observer } from "mobx-react";
 // hooks
+import { Briefcase } from "lucide-react";
 import { CustomSearchSelect } from "@plane/ui";
 import { useProject } from "@/hooks/store";
 // ui
@@ -37,13 +38,16 @@ export const ProjectSelect: React.FC<Props> = observer((props) => {
       onChange={(val: string[]) => onChange(val)}
       options={options}
       label={
-        <div className="truncate">
-          {value && value.length > 0
-            ? projectIds
-              ?.filter((p) => value.includes(p))
-              .map((p) => getProjectById(p)?.name)
-              .join(", ")
-            : "All projects"}
+        <div className="flex items-center gap-2 p-1 ">
+          <Briefcase className="w-4 h-4" />
+          {value && value.length > 3 ?
+            `3+ projects`
+            : value && value.length > 0
+              ? projectIds
+                ?.filter((p) => value.includes(p))
+                .map((p) => getProjectById(p)?.name)
+                .join(", ")
+              : "All projects"}
         </div>
       }
       multiple
