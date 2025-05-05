@@ -15,7 +15,7 @@ cat <<"EOF"
 |_|   |_|\__,_|_| |_|\___|        ////      
                                   ////      
 --------------------------------------------
-Project management tool from the future
+           Project management tool          
 --------------------------------------------
 EOF
 }
@@ -34,6 +34,7 @@ function install_python(){
   sudo apt-get update
   sudo apt-get install -y python3.12 python3.12-venv python3.12-dev python3-pip
   sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1
+  sudo apt-get install -y libpq-dev libffi-dev
 
 }
 
@@ -43,6 +44,7 @@ function install_caddy(){
   curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
   sudo apt-get update
   sudo apt-get install caddy
+  sudo service caddy stop
   sudo cp /opt/plane/Caddyfile /etc/caddy/Caddyfile
 }
 
@@ -50,7 +52,7 @@ function install_backend_dependencies(){
   local backend_dir=/opt/plane/backend
   python3 -m venv $backend_dir/.venv
   source $backend_dir/.venv/bin/activate
-  pip install -r $backend_dir/requirements.txt
+  pip install -r $backend_dir/requirements.txt --compile
   deactivate
 }
 
@@ -66,7 +68,6 @@ function create_services(){
   sudo mkdir -p /var/log/plane
   sudo chown -R ubuntu:ubuntu /var/log/plane
   sudo chmod 755 /var/log/plane
-
 
   sudo systemctl enable admin.service
   sudo systemctl enable web.service
@@ -119,33 +120,101 @@ function install_prerequisites() {
 
 }
 
-function start_services(){
-  for service in admin web space live api worker beat-worker; do
-    sudo service $service start
-    if [ $? -ne 0 ]; then
-      echo "Failed to start $service"
-    else
-      echo "Started $service"
-    fi
+function show_spinner(){
+  local pid=$1
+  local delay=0.25
+  local spin='⣷⣯⣟⡿⢿⣻⣽⣾'
+  local charwidth=1
+  local i=0
+  local j=0
+  local GREEN='\e[32m'
+  local RED='\e[31m'
+  local NC='\e[0m'
+  local message=$2
+  local final_message=${message/Starting/Started}
+  final_message=${final_message/Stopping/Stopped}
+
+  while ps -p $pid > /dev/null; do
+    local i=$(( (i + 1) % ${#spin} ))
+    local j=$(( j + 1 ))
+    printf "\r\033[K[${GREEN}${spin:$i:$charwidth}${NC}] $message..."
+    sleep $delay
   done
+
+  wait $pid
+  local exit_status=$?
+  
+  if [ $exit_status -eq 0 ]; then
+    printf "\r\033[K[${GREEN}✓${NC}] $final_message\n"
+  else
+    printf "\r\033[K[${RED}✗${NC}] $final_message\n"
+  fi
+}
+
+function start_single_service(){
+  local services=(admin web space live api worker beat-worker caddy)
+  service_name=$1
+  if [[ ! " ${services[@]} " =~ " ${service_name} " ]]; then
+    echo "Invalid service name: $service_name"
+    exit 1
+  fi
+
+  sudo service $service_name start &
+  show_spinner $! "Starting $service_name"
+  local status=$?
+  if [ $status -ne 0 ]; then
+    return 1
+  fi
+  return 0
+}
+
+function stop_single_service(){
+  local services=(admin web space live api worker beat-worker caddy)
+  service_name=$1
+  if [[ ! " ${services[@]} " =~ " ${service_name} " ]]; then
+    echo "Invalid service name: $service_name"
+    exit 1
+  fi
+
+  sudo service $service_name stop &
+  show_spinner $! "Stopping $service_name"
+  local status=$?
+  if [ $status -ne 0 ]; then
+    return 1
+  fi
+  return 0
+}
+
+function start_services(){
+  local services=(admin web space live api worker beat-worker caddy)
+
+  if [ $# -eq 2 ]; then 
+    service_name=$2
+    start_single_service $service_name
+  else
+    for service in ${services[@]}; do
+      start_single_service $service
+    done
+  fi
 }
 
 function stop_services(){
-  for service in admin web space live api worker beat-worker; do
-    sudo service $service stop
-    if [ $? -ne 0 ]; then
-      echo "Failed to stop $service"
-    else
-      echo "Stopped $service"
-    fi
+  local services=(admin web space live api worker beat-worker caddy)
 
-  done
+  if [ $# -eq 2 ]; then
+    service_name=$2
+    stop_single_service $service_name
+  else
+    for service in ${services[@]}; do
+      stop_single_service $service
+    done
+  fi
 }
 
 function restart_services(){
-  stop_services
+  stop_services "$@"
   create_services
-  start_services
+  start_services "$@"
 }
 
 function service_status(){
@@ -263,7 +332,21 @@ function main(){
   action=$1
 
   if [ -z "$action" ]; then
-    echo "Usage: $0 <install|start|stop|restart|status|logs|configure>"
+    echo "Usage: $0 command [options]"
+    echo "Commands:"
+    echo "    $0 install                        # installs the prerequisites"
+    echo "    $0 configure                      # configure backend"
+    echo "    $0 start                          # start all services"
+    echo "    $0 start <service>                # start specific service"
+    echo "    $0 stop                           # stop all services"
+    echo "    $0 stop <service>                 # stop specific service"
+    echo "    $0 restart                        # restart all services"
+    echo "    $0 restart <service>              # restart specific service"
+    echo "    $0 status <service>               # get status of specific service"
+    echo "    $0 logs <service>                 # get logs of specific service"
+    echo ""
+    echo "Available services:"
+    echo "    admin, web, space, live, api, worker, beat-worker, caddy"
     exit 1
   fi
 
@@ -278,7 +361,7 @@ function main(){
       ;;
     "start")
       echo "Starting services"
-      start_services
+      start_services "$@"
       if [ $? -ne 0 ]; then
         echo "Failed to start services"
         exit 1
@@ -286,7 +369,8 @@ function main(){
       ;;
     "stop")
       echo "Stopping services"
-      stop_services
+      stop_services "$@"
+
       if [ $? -ne 0 ]; then
         echo "Failed to stop services"
         exit 1
@@ -294,7 +378,7 @@ function main(){
       ;;
     "restart")
       echo "Restarting services"
-      restart_services
+      restart_services "$@"
       if [ $? -ne 0 ]; then
         echo "Failed to restart services"
         exit 1
