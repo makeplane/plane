@@ -1,13 +1,18 @@
-import {
-  ILayoutDisplayFiltersOptions,
-  TIssueActivityComment,
-} from "@plane/types";
+import { IIssueDisplayProperties, ILayoutDisplayFiltersOptions, TIssueActivityComment } from "@plane/types";
 import {
   TIssueFilterPriorityObject,
   ISSUE_DISPLAY_PROPERTIES_KEYS,
   EIssuesStoreType,
   SUB_ISSUES_DISPLAY_PROPERTIES_KEYS,
 } from "./common";
+
+// EE : Extended filters
+
+import {
+  ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE,
+  EActivityFilterTypeEE,
+  shouldRenderActivity,
+} from "./filter-extended";
 
 import { TIssueLayout } from "./layout";
 
@@ -368,12 +373,12 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       },
     },
   },
+  ...ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE, // EE: Additional issue display filters by page.
 };
 
-export const ISSUE_STORE_TO_FILTERS_MAP: Partial<
-  Record<EIssuesStoreType, TFiltersByLayout>
-> = {
+export const ISSUE_STORE_TO_FILTERS_MAP: Partial<Record<EIssuesStoreType, TFiltersByLayout>> = {
   [EIssuesStoreType.PROJECT]: ISSUE_DISPLAY_FILTERS_BY_PAGE.issues,
+  [EIssuesStoreType.EPIC]: ISSUE_DISPLAY_FILTERS_BY_PAGE.epics,
 };
 
 export enum EActivityFilterType {
@@ -381,18 +386,18 @@ export enum EActivityFilterType {
   COMMENT = "COMMENT",
 }
 
-export type TActivityFilters = EActivityFilterType;
+export type TActivityFilters = EActivityFilterType | EActivityFilterTypeEE.WORKLOG; // EE: Worklog filter.
 
-export const ACTIVITY_FILTER_TYPE_OPTIONS: Record<
-  TActivityFilters,
-  { labelTranslationKey: string }
-> = {
+export const ACTIVITY_FILTER_TYPE_OPTIONS: Record<TActivityFilters, { labelTranslationKey: string }> = {
   [EActivityFilterType.ACTIVITY]: {
     labelTranslationKey: "common.updates",
   },
   [EActivityFilterType.COMMENT]: {
     labelTranslationKey: "common.comments",
   },
+  [EActivityFilterTypeEE.WORKLOG]: {
+    labelTranslationKey: "common.worklogs",
+  }, // EE: Worklog filter.
 };
 
 export type TActivityFilterOption = {
@@ -405,14 +410,15 @@ export type TActivityFilterOption = {
 export const defaultActivityFilters: TActivityFilters[] = [
   EActivityFilterType.ACTIVITY,
   EActivityFilterType.COMMENT,
+  EActivityFilterTypeEE.WORKLOG, // EE: worklog filter.
 ];
 
 export const filterActivityOnSelectedFilters = (
   activity: TIssueActivityComment[],
   filters: TActivityFilters[]
 ): TIssueActivityComment[] =>
-  activity.filter((activity) =>
-    filters.includes(activity.activity_type as TActivityFilters)
+  activity.filter(
+    (activity) => filters.some((filter) => shouldRenderActivity(activity, filter)) // EE: Render activity based on the selected filters.
   );
 
-export const ENABLE_ISSUE_DEPENDENCIES = false;
+export const ENABLE_ISSUE_DEPENDENCIES = true; // EE: enabled only in EE

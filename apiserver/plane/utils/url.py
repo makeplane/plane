@@ -52,3 +52,4 @@ def get_url_components(url: str) -> Optional[dict]:
         "query": result.query,
         "fragment": result.fragment,
     }
+

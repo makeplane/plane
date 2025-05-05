@@ -224,7 +224,9 @@
   "something_went_wrong_please_try_again": "Что-то пошло не так. Пожалуйста, попробуйте еще раз.",
   "load_more": "Загрузить еще",
   "select_or_customize_your_interface_color_scheme": "Выберите или настройте цветовую схему интерфейса.",
+  "select_the_cursor_motion_style_that_feels_right_for_you": "Выберите стиль движения курсора, который подходит именно вам.",
   "theme": "Тема",
+  "smooth_cursor": "Плавный курсор",
   "system_preference": "Системные настройки",
   "light": "Светлая",
   "dark": "Темная",
@@ -499,6 +501,18 @@
   "re_generate_key": "Перегенерировать ключ",
   "export": "Экспорт",
   "member": "{count, plural, one{# участник} few{# участника} other{# участников}}",
+  "updates": {
+    "add_update": "Добавить обновление",
+    "add_update_placeholder": "Введите ваше обновление здесь",
+    "empty": {
+      "title": "Еще нет обновлений",
+      "description": "Вы можете здесь просматривать обновления."
+    },
+    "delete": {
+      "title": "Удалить обновление",
+      "confirmation": "Вы уверены, что хотите удалить это обновление? Это действие нельзя отменить."
+    }
+  },
   "new_password_must_be_different_from_old_password": "Новое пароль должен отличаться от старого пароля",
   "edited": "Редактировано",
   "bot": "Бот",

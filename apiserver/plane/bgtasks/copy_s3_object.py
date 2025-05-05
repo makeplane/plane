@@ -69,9 +69,6 @@ def sync_with_external_service(entity_name, description_html):
             "variant": "rich" if entity_name == "PAGE" else "document",
         }
 
-        if not settings.LIVE_URL:
-            return {}
-
         live_url = get_url_components(settings.LIVE_URL)
         if not live_url:
             return {}

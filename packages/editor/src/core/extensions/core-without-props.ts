@@ -3,11 +3,18 @@ import TaskList from "@tiptap/extension-task-list";
 import TextStyle from "@tiptap/extension-text-style";
 import TiptapUnderline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
-// extensions
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
+// plane editor extensions
+import {
+  CoreEditorAdditionalExtensionsWithoutProps,
+  DocumentEditorAdditionalExtensionsWithoutProps,
+} from "@/plane-editor/extensions/core/without-props";
+// extensions
+import { CustomCalloutExtensionConfig } from "./callout/extension-config";
 import { CustomCodeBlockExtensionWithoutProps } from "./code/without-props";
 import { CustomCodeInlineExtension } from "./code-inline";
+import { CustomColorExtension } from "./custom-color";
 import { CustomLinkExtension } from "./custom-link";
 import { CustomHorizontalRule } from "./horizontal-rule";
 import { ImageExtensionWithoutProps } from "./image";
@@ -17,10 +24,6 @@ import { CustomMentionExtensionConfig } from "./mentions/extension-config";
 import { CustomQuoteExtension } from "./quote";
 import { TableHeader, TableCell, TableRow, Table } from "./table";
 import { CustomTextAlignExtension } from "./text-align";
-import { CustomCalloutExtensionConfig } from "./callout/extension-config";
-import { CustomColorExtension } from "./custom-color";
-// plane editor extensions
-import { CoreEditorAdditionalExtensionsWithoutProps } from "@/plane-editor/extensions/core/without-props";
 
 export const CoreEditorExtensionsWithoutProps = [
   StarterKit.configure({
@@ -104,4 +107,7 @@ export const CoreEditorExtensionsWithoutProps = [
   ...CoreEditorAdditionalExtensionsWithoutProps,
 ];
 
-export const DocumentEditorExtensionsWithoutProps = [IssueWidgetWithoutProps()];
+export const DocumentEditorExtensionsWithoutProps = [
+  IssueWidgetWithoutProps(),
+  ...DocumentEditorAdditionalExtensionsWithoutProps,
+];
