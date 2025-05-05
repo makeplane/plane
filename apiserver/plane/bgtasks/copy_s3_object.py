@@ -3,7 +3,7 @@ import uuid
 import base64
 import requests
 from bs4 import BeautifulSoup
-
+from urllib.parse import urljoin
 # Django imports
 from django.conf import settings
 
@@ -12,6 +12,7 @@ from plane.db.models import FileAsset, Page, Issue
 from plane.utils.exception_logger import log_exception
 from plane.settings.storage import S3Storage
 from celery import shared_task
+from plane.utils.url import get_url_components
 
 
 def get_entity_id_field(entity_type, entity_id):
@@ -67,11 +68,17 @@ def sync_with_external_service(entity_name, description_html):
             "description_html": description_html,
             "variant": "rich" if entity_name == "PAGE" else "document",
         }
-        if not settings.LIVE_URL:
+
+        live_url = get_url_components(settings.LIVE_URL)
+        if not live_url:
             return {}
-        response = requests.post(
-            f"{settings.LIVE_URL}/convert-document/", json=data, headers=None
+
+        base_url = (
+            f"{live_url.get('scheme')}://{live_url.get('netloc')}{live_url.get('path')}"
         )
+        url = urljoin(base_url, "convert-document/")
+
+        response = requests.post(url, json=data, headers=None)
         if response.status_code == 200:
             return response.json()
     except requests.RequestException as e:

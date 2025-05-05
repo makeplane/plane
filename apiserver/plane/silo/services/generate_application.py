@@ -1,12 +1,22 @@
+# Python imports
+from logging import getLogger
+from urllib.parse import urljoin
+
+# Django imports
+from django.conf import settings
+from django.db import models
+
+# Third Party imports
+from oauth2_provider.generators import generate_client_secret
+
+# Module imports
 from plane.silo.utils.constants import APPLICATIONS
 from plane.db.models import User
-from django.conf import settings
 from plane.authentication.models import Application
-from oauth2_provider.generators import generate_client_secret
 from plane.silo.models.application_secret import ApplicationSecret
-from django.db import models
-from logging import getLogger
 from plane.utils.encryption import encrypt
+from plane.utils.url import get_url_components
+
 logger = getLogger("plane.silo.services.generate_application")
 
 
@@ -27,13 +37,23 @@ def generate_application(
     user = user_model.objects.get(id=user_id)
 
     client_secret = generate_client_secret()
+
+    silo_url = get_url_components(settings.SILO_URL)
+    if not silo_url:
+        raise ValueError("SILO_URL is not set")
+    
+    base_url = (
+        f"{silo_url.get('scheme')}://{silo_url.get('netloc')}{silo_url.get('path')}"
+    )
+    redirect_uris = urljoin(base_url, f"/api/{app_key}/plane-oauth/callback")
+
     application_data = {
         "name": app_data["name"],
         "slug": app_slug,
         "description_html": app_data["description_html"],
         "short_description": app_data["short_description"],
         "company_name": user.display_name,
-        "redirect_uris": f"{settings.SILO_URL}/api/{app_key}/plane-oauth/callback",
+        "redirect_uris": redirect_uris,
         "skip_authorization": True,
         "client_type": "confidential",
         "authorization_grant_type": "authorization-code",
@@ -46,7 +66,7 @@ def generate_application(
     if application:
         # Application already exists, update client_secret
         application.client_secret = client_secret
-        application.redirect_uris = f"{settings.SILO_URL}/api/{app_key}/plane-oauth/callback"
+        application.redirect_uris = redirect_uris
         application.save()
     else:
         application = application_model.objects.create(**application_data)
