@@ -3,7 +3,7 @@
 # Python imports
 import os
 from urllib.parse import urlparse
-
+from urllib.parse import urljoin
 
 # Third party imports
 import dj_database_url
@@ -340,7 +340,7 @@ if LIVE_BASE_URL and not is_valid_url(LIVE_BASE_URL):
     LIVE_BASE_URL = None
 LIVE_BASE_PATH = os.environ.get("LIVE_BASE_PATH", "/live/")
 
-LIVE_URL = f"{LIVE_BASE_URL}{LIVE_BASE_PATH}" if LIVE_BASE_URL else None
+LIVE_URL = urljoin(LIVE_BASE_URL, LIVE_BASE_PATH) if LIVE_BASE_URL else None
 
 # WEB URL
 WEB_URL = os.environ.get("WEB_URL")
