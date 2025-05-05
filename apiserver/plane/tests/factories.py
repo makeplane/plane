@@ -3,8 +3,8 @@ from uuid import uuid4
 from django.utils import timezone
 
 from plane.db.models import (
-    User, 
-    Workspace, 
+    User,
+    Workspace,
     WorkspaceMember,
     Project,
     ProjectMember
@@ -16,7 +16,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = User
         django_get_or_create = ('email',)
-    
+
     id = factory.LazyFunction(uuid4)
     email = factory.Sequence(lambda n: f'user{n}@plane.so')
     password = factory.PostGenerationMethodCall('set_password', 'password')
@@ -32,7 +32,7 @@ class WorkspaceFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Workspace
         django_get_or_create = ('slug',)
-    
+
     id = factory.LazyFunction(uuid4)
     name = factory.Sequence(lambda n: f'Workspace {n}')
     slug = factory.Sequence(lambda n: f'workspace-{n}')
@@ -45,7 +45,7 @@ class WorkspaceMemberFactory(factory.django.DjangoModelFactory):
     """Factory for creating WorkspaceMember instances"""
     class Meta:
         model = WorkspaceMember
-    
+
     id = factory.LazyFunction(uuid4)
     workspace = factory.SubFactory(WorkspaceFactory)
     member = factory.SubFactory(UserFactory)
@@ -59,7 +59,7 @@ class ProjectFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Project
         django_get_or_create = ('name', 'workspace')
-    
+
     id = factory.LazyFunction(uuid4)
     name = factory.Sequence(lambda n: f'Project {n}')
     workspace = factory.SubFactory(WorkspaceFactory)
@@ -73,10 +73,10 @@ class ProjectMemberFactory(factory.django.DjangoModelFactory):
     """Factory for creating ProjectMember instances"""
     class Meta:
         model = ProjectMember
-    
+
     id = factory.LazyFunction(uuid4)
     project = factory.SubFactory(ProjectFactory)
     member = factory.SubFactory(UserFactory)
     role = 20  # Admin role by default
     created_at = factory.LazyFunction(timezone.now)
-    updated_at = factory.LazyFunction(timezone.now) 
+    updated_at = factory.LazyFunction(timezone.now)

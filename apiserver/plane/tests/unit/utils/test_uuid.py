@@ -25,16 +25,16 @@ class TestUUIDUtils:
         """Test convert_uuid_to_integer function"""
         # Create a known UUID
         test_uuid = uuid.UUID("f47ac10b-58cc-4372-a567-0e02b2c3d479")
-        
+
         # Convert to integer
         result = convert_uuid_to_integer(test_uuid)
-        
+
         # Check that the result is an integer
         assert isinstance(result, int)
-        
+
         # Ensure consistent results with the same input
         assert convert_uuid_to_integer(test_uuid) == result
-        
+
         # Different UUIDs should produce different integers
         different_uuid = uuid.UUID("550e8400-e29b-41d4-a716-446655440000")
         assert convert_uuid_to_integer(different_uuid) != result
@@ -44,6 +44,6 @@ class TestUUIDUtils:
         # Test with a UUID string
         test_uuid_str = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
         test_uuid = uuid.UUID(test_uuid_str)
-        
+
         # Should get the same result whether passing UUID or string
-        assert convert_uuid_to_integer(test_uuid) == convert_uuid_to_integer(test_uuid_str) 
+        assert convert_uuid_to_integer(test_uuid) == convert_uuid_to_integer(test_uuid_str)
