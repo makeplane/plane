@@ -34,6 +34,7 @@ function install_python(){
   sudo apt-get update
   sudo apt-get install -y python3.12 python3.12-venv python3.12-dev python3-pip
   sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1
+
 }
 
 function install_caddy(){
@@ -43,6 +44,14 @@ function install_caddy(){
   sudo apt-get update
   sudo apt-get install caddy
   sudo cp /opt/plane/Caddyfile /etc/caddy/Caddyfile
+}
+
+function install_backend_dependencies(){
+  local backend_dir=/opt/plane/backend
+  python3 -m venv $backend_dir/.venv
+  source $backend_dir/.venv/bin/activate
+  pip install -r $backend_dir/requirements.txt
+  deactivate
 }
 
 function create_services(){
@@ -94,6 +103,12 @@ function install_prerequisites() {
   create_services
   if [ $? -ne 0 ]; then
     echo "Failed to create services"
+    exit 1
+  fi
+
+  install_backend_dependencies
+  if [ $? -ne 0 ]; then
+    echo "Failed to install backend dependencies"
     exit 1
   fi
 
@@ -160,6 +175,7 @@ function update_env_file(){
     exit 1
   fi
 }
+
 function get_env_var(){
   local ENV_FILE=$1
   local KEY=$2
@@ -186,6 +202,9 @@ function ask_for_value(){
 }
 
 function configure_backend(){
+  # ask for app_domain
+  local app_domain=$(ask_for_value $BACKEND_ENV_FILE "APP_DOMAIN")
+
   # ask for redis_url
   local redis_url=$(ask_for_value $BACKEND_ENV_FILE "REDIS_URL")
 

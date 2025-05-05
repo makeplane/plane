@@ -8,7 +8,8 @@ User=ubuntu
 Group=ubuntu
 WorkingDirectory=/opt/plane/backend
 EnvironmentFile=/opt/plane/backend/backend.env
-ExecStart=/opt/plane/backend/bin/docker-entrypoint-beat.sh
+ExecStartPre=/bin/bash -c 'cd /opt/plane/backend && source .venv/bin/activate'
+ExecStart=/bin/bash -c 'cd /opt/plane/backend && source .venv/bin/activate && exec bin/docker-entrypoint-beat.sh'
 Restart=always
 RestartSec=10
 
