@@ -13,6 +13,10 @@ from django.core.management.utils import get_random_secret_key
 from corsheaders.defaults import default_headers
 
 
+# Module imports
+from plane.utils.url import is_valid_url
+
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Secret Key
@@ -310,20 +314,35 @@ CSRF_TRUSTED_ORIGINS = cors_allowed_origins
 CSRF_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
 CSRF_FAILURE_VIEW = "plane.authentication.views.common.csrf_failure"
 
-# Base URLs
+######  Base URLs ######
+
+# Admin Base URL
 ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", None)
+if ADMIN_BASE_URL and not is_valid_url(ADMIN_BASE_URL):
+    ADMIN_BASE_URL = None
 ADMIN_BASE_PATH = os.environ.get("ADMIN_BASE_PATH", "/god-mode/")
 
+# Space Base URL
 SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
+if SPACE_BASE_URL and not is_valid_url(SPACE_BASE_URL):
+    SPACE_BASE_URL = None
 SPACE_BASE_PATH = os.environ.get("SPACE_BASE_PATH", "/spaces/")
 
+# App Base URL
 APP_BASE_URL = os.environ.get("APP_BASE_URL", None)
+if APP_BASE_URL and not is_valid_url(APP_BASE_URL):
+    APP_BASE_URL = None
 APP_BASE_PATH = os.environ.get("APP_BASE_PATH", "/")
 
+# Live Base URL
 LIVE_BASE_URL = os.environ.get("LIVE_BASE_URL", None)
+if LIVE_BASE_URL and not is_valid_url(LIVE_BASE_URL):
+    LIVE_BASE_URL = None
 LIVE_BASE_PATH = os.environ.get("LIVE_BASE_PATH", "/live/")
-LIVE_URL = f"{LIVE_BASE_URL}{LIVE_BASE_PATH}"
 
+LIVE_URL = f"{LIVE_BASE_URL}{LIVE_BASE_PATH}" if LIVE_BASE_URL else None
+
+# WEB URL
 WEB_URL = os.environ.get("WEB_URL")
 
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))

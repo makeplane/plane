@@ -67,10 +67,12 @@ def sync_with_external_service(entity_name, description_html):
             "description_html": description_html,
             "variant": "rich" if entity_name == "PAGE" else "document",
         }
+
+        if not settings.LIVE_URL:
+            return {}
+
         response = requests.post(
-            f"{settings.LIVE_BASE_URL}/convert-document/",
-            json=data,
-            headers=None,
+            f"{settings.LIVE_URL}/convert-document/", json=data, headers=None
         )
         if response.status_code == 200:
             return response.json()
