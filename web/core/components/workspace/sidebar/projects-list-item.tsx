@@ -24,7 +24,7 @@ import { LeaveProjectModal, PublishProjectModal } from "@/components/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppTheme, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
+import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane-web components
 import { ProjectNavigationRoot } from "@/plane-web/components/sidebar";
@@ -64,12 +64,13 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const { getPartialProjectById } = useProject();
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
+  const { projectListOpenMap, toggleProjectListOpen } = useCommandPalette();
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
   const [publishModalOpen, setPublishModal] = useState(false);
   const [isMenuActive, setIsMenuActive] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [isProjectListOpen, setIsProjectListOpen] = useState(false);
+  const isProjectListOpen = !!projectListOpenMap[projectId];
   const [instruction, setInstruction] = useState<"DRAG_OVER" | "DRAG_BELOW" | undefined>(undefined);
   // refs
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
@@ -79,6 +80,8 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId: URLProjectId } = useParams();
   // derived values
   const project = getPartialProjectById(projectId);
+  // toggle project list open
+  const setIsProjectListOpen = (value: boolean) => toggleProjectListOpen(projectId, value);
   // auth
   const isAdmin = allowPermissions(
     [EUserPermissions.ADMIN],
@@ -198,7 +201,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
     if (URLProjectId === project.id) setIsProjectListOpen(true);
   }, [URLProjectId]);
 
-  const handleItemClick = () => setIsProjectListOpen((prev) => !prev);
+  const handleItemClick = () => setIsProjectListOpen(!isProjectListOpen);
   return (
     <>
       <PublishProjectModal isOpen={publishModalOpen} project={project} onClose={() => setPublishModal(false)} />
