@@ -221,7 +221,7 @@ class PageViewSet(BaseViewSet):
         project = Project.objects.get(pk=project_id)
 
         """
-        if the role is guest and guest_view_all_features is false and owned by is not 
+        if the role is guest and guest_view_all_features is false and owned by is not
         the requesting user then dont show the page
         """
 
@@ -531,16 +531,10 @@ class PageViewSet(BaseViewSet):
         page_ids = get_all_parent_ids(page_id)
 
         pages = Page.objects.filter(
-            workspace__slug=slug,
-            projects__id=project_id,
-            id__in=page_ids,
+            workspace__slug=slug, projects__id=project_id, id__in=page_ids
         ).annotate(
             project_ids=Coalesce(
-                ArrayAgg(
-                    "projects__id",
-                    distinct=True,
-                    filter=~Q(projects__id=True),
-                ),
+                ArrayAgg("projects__id", distinct=True, filter=~Q(projects__id=True)),
                 Value([], output_field=ArrayField(UUIDField())),
             )
         )
@@ -709,6 +703,50 @@ class PagesDescriptionViewSet(BaseViewSet):
 class PageDuplicateEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def post(self, request, slug, project_id, page_id):
+        page = Page.objects.filter(
+            pk=page_id, workspace__slug=slug, projects__id=project_id
+        ).first()
+
+        # check for permission
+        if page.access == Page.PRIVATE_ACCESS and page.owned_by_id != request.user.id:
+            return Response(
+                {"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN
+            )
+
+        # get all the project ids where page is present
+        project_ids = ProjectPage.objects.filter(page_id=page_id).values_list(
+            "project_id", flat=True
+        )
+
+        page.pk = None
+        page.name = f"{page.name} (Copy)"
+        page.description_binary = None
+        page.owned_by = request.user
+        page.created_by = request.user
+        page.updated_by = request.user
+        page.save()
+
+        for project_id in project_ids:
+            ProjectPage.objects.create(
+                workspace_id=page.workspace_id,
+                project_id=project_id,
+                page_id=page.id,
+                created_by_id=page.created_by_id,
+                updated_by_id=page.updated_by_id,
+            )
+
+        page_transaction.delay(
+            {"description_html": page.description_html}, None, page.id
+        )
+
+        # Copy the s3 objects uploaded in the page
+        copy_s3_objects.delay(
+            entity_name="PAGE",
+            entity_identifier=page.id,
+            project_id=project_id,
+            slug=slug,
+            user_id=request.user.id,
+        )
 
         # update the descendants pages with the current page
         nested_page_update.delay(
@@ -718,4 +756,5 @@ class PageDuplicateEndpoint(BaseAPIView):
             slug=slug,
             user_id=request.user.id,
         )
+
         return Response(status=status.HTTP_204_NO_CONTENT)

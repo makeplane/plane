@@ -3,6 +3,7 @@ import uuid
 import base64
 import requests
 from bs4 import BeautifulSoup
+
 # Django imports
 from django.conf import settings
 

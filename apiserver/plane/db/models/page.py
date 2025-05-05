@@ -17,6 +17,11 @@ def get_view_props():
 
 
 class Page(BaseModel):
+    PRIVATE_ACCESS = 1
+    PUBLIC_ACCESS = 0
+
+    ACCESS_CHOICES = ((PRIVATE_ACCESS, "Private"), (PUBLIC_ACCESS, "Public"))
+
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="pages"
     )
