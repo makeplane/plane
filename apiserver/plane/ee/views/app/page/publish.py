@@ -14,7 +14,6 @@ from plane.ee.utils.page_events import PageAction
 
 
 class ProjectPagePublishEndpoint(BaseAPIView):
-
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
     @allow_permission(
         allowed_roles=[ROLE.ADMIN], creator=True, field="owned_by", model=Page
@@ -118,9 +117,7 @@ class ProjectPagePublishEndpoint(BaseAPIView):
     def delete(self, request, slug, project_id, pk):
         # Get the deploy board and un publish all the sub page as well.
         deploy_board = DeployBoard.objects.get(
-            entity_identifier=pk,
-            entity_name="page",
-            workspace__slug=slug,
+            entity_identifier=pk, entity_name="page", workspace__slug=slug
         )
         # Delete the deploy board
         deploy_board.delete()
@@ -137,7 +134,6 @@ class ProjectPagePublishEndpoint(BaseAPIView):
 
 
 class WorkspacePagePublishEndpoint(BaseAPIView):
-
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
     @allow_permission(
         allowed_roles=[ROLE.ADMIN],
@@ -150,6 +146,11 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
         # Fetch the page
         page = Page.objects.get(pk=pk, workspace__slug=slug)
 
+        if not page:
+            return Response(
+                {"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
         # Throw error if the page is a project page
         if not page.is_global:
             return Response(
@@ -157,13 +158,17 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        nested_page_update.delay(
-            page_id=pk,
-            action=PageAction.PUBLISHED,
-            slug=slug,
-            user_id=request.user.id,
+        # Create a deploy board for the page
+        deploy_board, _ = DeployBoard.objects.get_or_create(
+            entity_identifier=pk, entity_name="page", workspace_id=page.workspace_id
         )
-        return Response(status=status.HTTP_204_NO_CONTENT)
+
+        nested_page_update.delay(
+            page_id=pk, action=PageAction.PUBLISHED, slug=slug, user_id=request.user.id
+        )
+        # Return the deploy board
+        serializer = DeployBoardSerializer(deploy_board)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
     @allow_permission(
@@ -219,9 +224,7 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
     def delete(self, request, slug, pk):
         # Get the deploy board and un publish all the sub page as well.
         deploy_board = DeployBoard.objects.get(
-            entity_identifier=pk,
-            entity_name="page",
-            workspace__slug=slug,
+            entity_identifier=pk, entity_name="page", workspace__slug=slug
         )
         # Delete the deploy board
         deploy_board.delete()
