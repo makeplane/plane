@@ -1,8 +1,7 @@
 export const openProjectAndScrollToSidebar = (
-  item: any,
+  itemProjectId: string,
   toggleProjectListOpen: (id: string, open: boolean) => void
 ) => {
-  const itemProjectId = item.project_id || (item.project_ids && item.project_ids[0]) || undefined;
   if (!itemProjectId) return;
   // open the project list
   toggleProjectListOpen(itemProjectId, true);
