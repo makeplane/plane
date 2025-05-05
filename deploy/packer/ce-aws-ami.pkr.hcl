@@ -164,6 +164,7 @@ build {
     ]
     inline = [
       "sudo apt-get update",
+      "/usr/local/bin/plane install"
   #     "sudo apt-get install -y software-properties-common cloud-init rsyslog debian-keyring debian-archive-keyring apt-transport-https curl",
   #     "sudo add-apt-repository -y ppa:deadsnakes/ppa",
   #     "curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg",

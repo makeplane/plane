@@ -13,5 +13,12 @@ ExecStart=/bin/bash -c 'cd /opt/plane/backend && source .venv/bin/activate && ex
 Restart=always
 RestartSec=10
 
+# Logging configuration
+StandardOutput=append:/var/log/plane/worker.log
+StandardError=append:/var/log/plane/worker.error.log
+SyslogIdentifier=plane-worker
+LogRateLimitIntervalSec=0
+LogRateLimitBurst=0
+
 [Install]
 WantedBy=multi-user.target

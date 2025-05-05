@@ -12,5 +12,12 @@ ExecStart=/bin/bash -c 'source /home/ubuntu/.nvm/nvm.sh && nvm use 20 && node ad
 Restart=always
 RestartSec=10
 
+# Logging configuration
+StandardOutput=append:/var/log/plane/admin.log
+StandardError=append:/var/log/plane/admin.error.log
+SyslogIdentifier=plane-admin
+LogRateLimitIntervalSec=0
+LogRateLimitBurst=0
+
 [Install]
 WantedBy=multi-user.target

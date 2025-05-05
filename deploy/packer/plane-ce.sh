@@ -63,6 +63,11 @@ function create_services(){
   sudo systemctl start rsyslog
   sudo systemctl start cloud-init
 
+  sudo mkdir -p /var/log/plane
+  sudo chown -R ubuntu:ubuntu /var/log/plane
+  sudo chmod 755 /var/log/plane
+
+
   sudo systemctl enable admin.service
   sudo systemctl enable web.service
   sudo systemctl enable space.service

@@ -12,5 +12,12 @@ ExecStart=/bin/bash -c 'source /home/ubuntu/.nvm/nvm.sh && nvm use 20 && node we
 Restart=always
 RestartSec=10
 
+# Logging configuration
+StandardOutput=append:/var/log/plane/web.log
+StandardError=append:/var/log/plane/web.error.log
+SyslogIdentifier=plane-web
+LogRateLimitIntervalSec=0
+LogRateLimitBurst=0
+
 [Install]
 WantedBy=multi-user.target
