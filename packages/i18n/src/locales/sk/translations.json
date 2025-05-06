@@ -502,7 +502,6 @@
   "new_password_must_be_different_from_old_password": "Nové heslo musí byť odlišné od starého hesla",
   "edited": "Upravené",
   "bot": "Bot",
-
   "project_view": {
     "sort_by": {
       "created_at": "Vytvorené dňa",
@@ -510,12 +509,10 @@
       "name": "Názov"
     }
   },
-
   "toast": {
     "success": "Úspech!",
     "error": "Chyba!"
   },
-
   "links": {
     "toasts": {
       "created": {
@@ -544,7 +541,6 @@
       }
     }
   },
-
   "home": {
     "empty": {
       "quickstart_guide": "Váš sprievodca rýchlym štartom",
@@ -612,7 +608,6 @@
     "title": "Domov",
     "star_us_on_github": "Ohodnoťte nás na GitHube"
   },
-
   "link": {
     "modal": {
       "url": {
@@ -626,7 +621,6 @@
       }
     }
   },
-
   "common": {
     "all": "Všetko",
     "states": "Stavy",
@@ -874,20 +868,17 @@
     "apply": "Použiť",
     "applying": "Používanie"
   },
-
   "chart": {
     "x_axis": "Os X",
     "y_axis": "Os Y",
     "metric": "Metrika"
   },
-
   "form": {
     "title": {
       "required": "Názov je povinný",
       "max_length": "Názov by mal byť kratší ako {length} znakov"
     }
   },
-
   "entity": {
     "grouping_title": "Zoskupenie {entity}",
     "priority": "Priorita {entity}",
@@ -911,7 +902,6 @@
       "failed": "Chyba pri pridávaní {entity}"
     }
   },
-
   "epic": {
     "all": "Všetky epiky",
     "label": "{count, plural, one {Epika} few {Epiky} other {Epík}}",
@@ -929,7 +919,6 @@
       "required": "Názov epiky je povinný."
     }
   },
-
   "issue": {
     "label": "{count, plural, one {Pracovná položka} few {Pracovné položky} other {Pracovných položiek}}",
     "all": "Všetky pracovné položky",
@@ -1096,7 +1085,6 @@
     },
     "open_in_full_screen": "Otvoriť pracovnú položku na celú obrazovku"
   },
-
   "attachment": {
     "error": "Súbor sa nedá pripojiť. Skúste to prosím znova.",
     "only_one_file_allowed": "Je možné nahrať iba jeden súbor naraz.",
@@ -1104,7 +1092,6 @@
     "drag_and_drop": "Pretiahnite súbor kamkoľvek pre nahratie",
     "delete": "Zmazať prílohu"
   },
-
   "label": {
     "select": "Vybrať štítok",
     "create": {
@@ -1114,7 +1101,6 @@
       "type": "Zadajte pre vytvorenie nového štítka"
     }
   },
-
   "sub_work_item": {
     "update": {
       "success": "Podriadená pracovná položka bola úspešne aktualizovaná",
@@ -1125,7 +1111,6 @@
       "error": "Chyba pri odstraňovaní podriadenej položky"
     }
   },
-
   "view": {
     "label": "{count, plural, one {Pohľad} few {Pohľady} other {Pohľadov}}",
     "create": {
@@ -1135,7 +1120,6 @@
       "label": "Aktualizovať pohľad"
     }
   },
-
   "inbox_issue": {
     "status": {
       "pending": {
@@ -1221,7 +1205,6 @@
       }
     }
   },
-
   "workspace_creation": {
     "heading": "Vytvorte si pracovný priestor",
     "subheading": "Na používanie Plane musíte vytvoriť alebo sa pripojiť k pracovnému priestoru.",
@@ -1273,7 +1256,6 @@
       }
     }
   },
-
   "workspace_dashboard": {
     "empty_state": {
       "general": {
@@ -1289,7 +1271,6 @@
       }
     }
   },
-
   "workspace_analytics": {
     "label": "Analytika",
     "page_label": "{workspace} - Analytika",
@@ -1332,9 +1313,39 @@
           }
         }
       }
-    }
+    },
+    "empty_state_v2": {
+      "customized_insights": {
+        "description": "Pracovné položky priradené vám, rozdelené podľa stavu, sa zobrazia tu.",
+        "title": "Zatiaľ žiadne údaje"
+      },
+      "created_vs_resolved": {
+        "description": "Pracovné položky vytvorené a vyriešené v priebehu času sa zobrazia tu.",
+        "title": "Zatiaľ žiadne údaje"
+      },
+      "project_insights": {
+        "title": "Zatiaľ žiadne údaje",
+        "description": "Pracovné položky priradené vám, rozdelené podľa stavu, sa zobrazia tu."
+      }
+    },
+    "created_vs_resolved": "Vytvorené vs Vyriešené",
+    "customized_insights": "Prispôsobené prehľady",
+    "backlog_work_items": "Pracovné položky v backlogu",
+    "active_projects": "Aktívne projekty",
+    "trend_on_charts": "Trend na grafoch",
+    "all_projects": "Všetky projekty",
+    "summary_of_projects": "Súhrn projektov",
+    "project_insights": "Prehľad projektu",
+    "started_work_items": "Spustené pracovné položky",
+    "total_work_items": "Celkový počet pracovných položiek",
+    "total_projects": "Celkový počet projektov",
+    "total_admins": "Celkový počet administrátorov",
+    "total_users": "Celkový počet používateľov",
+    "total_intake": "Celkový príjem",
+    "un_started_work_items": "Nespustené pracovné položky",
+    "total_guests": "Celkový počet hostí",
+    "completed_work_items": "Dokončené pracovné položky"
   },
-
   "workspace_projects": {
     "label": "{count, plural, one {Projekt} few {Projekty} other {Projektov}}",
     "create": {
@@ -1409,7 +1420,6 @@
       }
     }
   },
-
   "workspace_views": {
     "add_view": "Pridať pohľad",
     "empty_state": {
@@ -1444,7 +1454,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "label": "Nastavenia pracovného priestoru",
     "page_label": "{workspace} - Všeobecné nastavenia",
@@ -1625,7 +1634,6 @@
       }
     }
   },
-
   "profile": {
     "label": "Profil",
     "page_label": "Vaša práca",
@@ -1688,7 +1696,6 @@
       }
     }
   },
-
   "project_settings": {
     "general": {
       "enter_project_id": "Zadajte ID projektu",
@@ -1834,7 +1841,6 @@
         "auto_close_status": "Stav pre automatické uzatvorenie"
       }
     },
-
     "empty_state": {
       "labels": {
         "title": "Žiadne štítky",
@@ -1847,7 +1853,6 @@
       }
     }
   },
-
   "project_cycles": {
     "add_cycle": "Pridať cyklus",
     "more_details": "Viac detailov",
@@ -1973,7 +1978,6 @@
       }
     }
   },
-
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -2002,7 +2006,6 @@
       }
     }
   },
-
   "project_module": {
     "add_module": "Pridať modul",
     "update_module": "Aktualizovať modul",
@@ -2056,7 +2059,6 @@
       }
     }
   },
-
   "project_views": {
     "empty_state": {
       "general": {
@@ -2076,7 +2078,6 @@
       }
     }
   },
-
   "project_page": {
     "empty_state": {
       "general": {
@@ -2106,7 +2107,6 @@
       }
     }
   },
-
   "command_k": {
     "empty_state": {
       "search": {
@@ -2114,7 +2114,6 @@
       }
     }
   },
-
   "issue_relation": {
     "empty_state": {
       "search": {
@@ -2125,7 +2124,6 @@
       }
     }
   },
-
   "issue_comment": {
     "empty_state": {
       "general": {
@@ -2134,7 +2132,6 @@
       }
     }
   },
-
   "notification": {
     "label": "Schránka",
     "page_label": "{workspace} - Schránka",
@@ -2191,7 +2188,6 @@
       "custom": "Vlastné"
     }
   },
-
   "active_cycle": {
     "empty_state": {
       "progress": {
@@ -2211,7 +2207,6 @@
       }
     }
   },
-
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -2274,7 +2269,6 @@
       }
     }
   },
-
   "stickies": {
     "title": "Vaše poznámky",
     "placeholder": "kliknutím začnite písať",
@@ -2332,7 +2326,6 @@
       }
     }
   },
-
   "role_details": {
     "guest": {
       "title": "Hosť",
@@ -2347,7 +2340,6 @@
       "description": "Má všetky oprávnenia v priestore."
     }
   },
-
   "user_roles": {
     "product_or_project_manager": "Produktový/Projektový manažér",
     "development_or_engineering": "Vývoj/Inžinierstvo",
@@ -2360,7 +2352,6 @@
     "human_resources": "Ľudské zdroje",
     "other": "Iné"
   },
-
   "importer": {
     "github": {
       "title": "GitHub",
@@ -2371,7 +2362,6 @@
       "description": "Importujte položky a epiky z Jira."
     }
   },
-
   "exporter": {
     "csv": {
       "title": "CSV",
@@ -2400,7 +2390,6 @@
     "created": "Vytvorené",
     "subscribed": "Odobierané"
   },
-
   "themes": {
     "theme_options": {
       "system_preference": {
@@ -2446,17 +2435,14 @@
       "manual": "Manuálne"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {Cyklus} few {Cykly} other {Cyklov}}",
     "no_cycle": "Žiadny cyklus"
   },
-
   "module": {
     "label": "{count, plural, one {Modul} few {Moduly} other {Modulov}}",
     "no_module": "Žiadny modul"
   },
-
   "description_versions": {
     "last_edited_by": "Naposledy upravené používateľom",
     "previously_edited_by": "Predtým upravené používateľom",

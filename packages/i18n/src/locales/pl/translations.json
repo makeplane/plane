@@ -500,10 +500,8 @@
   "export": "Eksportuj",
   "member": "{count, plural, one{# członek} few{# członkowie} other{# członków}}",
   "new_password_must_be_different_from_old_password": "Nowe hasło musi być innym niż stare hasło",
-
   "edited": "Edytowano",
   "bot": "Bot",
-
   "project_view": {
     "sort_by": {
       "created_at": "Utworzono dnia",
@@ -1315,7 +1313,38 @@
           }
         }
       }
-    }
+    },
+    "empty_state_v2": {
+      "customized_insights": {
+        "description": "Przypisane do Ciebie elementy pracy, podzielone według stanu, pojawią się tutaj.",
+        "title": "Brak danych"
+      },
+      "created_vs_resolved": {
+        "description": "Elementy pracy utworzone i rozwiązane w czasie pojawią się tutaj.",
+        "title": "Brak danych"
+      },
+      "project_insights": {
+        "title": "Brak danych",
+        "description": "Przypisane do Ciebie elementy pracy, podzielone według stanu, pojawią się tutaj."
+      }
+    },
+    "created_vs_resolved": "Utworzone vs Rozwiązane",
+    "customized_insights": "Dostosowane informacje",
+    "backlog_work_items": "Elementy pracy w backlogu",
+    "active_projects": "Aktywne projekty",
+    "trend_on_charts": "Trend na wykresach",
+    "all_projects": "Wszystkie projekty",
+    "summary_of_projects": "Podsumowanie projektów",
+    "project_insights": "Wgląd w projekt",
+    "started_work_items": "Rozpoczęte elementy pracy",
+    "total_work_items": "Łączna liczba elementów pracy",
+    "total_projects": "Łączna liczba projektów",
+    "total_admins": "Łączna liczba administratorów",
+    "total_users": "Łączna liczba użytkowników",
+    "total_intake": "Całkowity dochód",
+    "un_started_work_items": "Nierozpoczęte elementy pracy",
+    "total_guests": "Łączna liczba gości",
+    "completed_work_items": "Ukończone elementy pracy"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projekt} few {Projekty} other {Projektów}}",
@@ -2406,17 +2435,14 @@
       "manual": "Ręcznie"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {Cykl} few {Cykle} other {Cyklów}}",
     "no_cycle": "Brak cyklu"
   },
-
   "module": {
     "label": "{count, plural, one {Moduł} few {Moduły} other {Modułów}}",
     "no_module": "Brak modułu"
   },
-
   "description_versions": {
     "last_edited_by": "Ostatnio edytowane przez",
     "previously_edited_by": "Wcześniej edytowane przez",

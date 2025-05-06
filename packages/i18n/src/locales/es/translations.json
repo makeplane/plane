@@ -18,7 +18,6 @@
     "pro": "Pro",
     "upgrade": "Mejorar"
   },
-
   "auth": {
     "common": {
       "email": {
@@ -168,7 +167,6 @@
       }
     }
   },
-
   "submit": "Enviar",
   "cancel": "Cancelar",
   "loading": "Cargando",
@@ -506,7 +504,6 @@
   "new_password_must_be_different_from_old_password": "La nueva contraseña debe ser diferente a la contraseña anterior",
   "edited": "Modificado",
   "bot": "Bot",
-
   "project_view": {
     "sort_by": {
       "created_at": "Creado el",
@@ -514,12 +511,10 @@
       "name": "Nombre"
     }
   },
-
   "toast": {
     "success": "¡Éxito!",
     "error": "¡Error!"
   },
-
   "links": {
     "toasts": {
       "created": {
@@ -548,7 +543,6 @@
       }
     }
   },
-
   "home": {
     "empty": {
       "quickstart_guide": "Guía de inicio rápido",
@@ -616,7 +610,6 @@
     "title": "Inicio",
     "star_us_on_github": "Danos una estrella en GitHub"
   },
-
   "link": {
     "modal": {
       "url": {
@@ -630,7 +623,6 @@
       }
     }
   },
-
   "common": {
     "all": "Todo",
     "states": "Estados",
@@ -877,20 +869,17 @@
     "apply": "Aplicar",
     "applying": "Aplicando"
   },
-
   "chart": {
     "x_axis": "Eje X",
     "y_axis": "Eje Y",
     "metric": "Métrica"
   },
-
   "form": {
     "title": {
       "required": "El título es obligatorio",
       "max_length": "El título debe tener menos de {length} caracteres"
     }
   },
-
   "entity": {
     "grouping_title": "Agrupación de {entity}",
     "priority": "Prioridad de {entity}",
@@ -914,7 +903,6 @@
       "failed": "Error al agregar {entity}"
     }
   },
-
   "epic": {
     "all": "Todos los Epics",
     "label": "{count, plural, one {Epic} other {Epics}}",
@@ -932,7 +920,6 @@
       "required": "El título del epic es obligatorio."
     }
   },
-
   "issue": {
     "label": "{count, plural, one {Elemento de trabajo} other {Elementos de trabajo}}",
     "all": "Todos los elementos de trabajo",
@@ -1099,7 +1086,6 @@
     },
     "open_in_full_screen": "Abrir elemento de trabajo en pantalla completa"
   },
-
   "attachment": {
     "error": "No se pudo adjuntar el archivo. Intenta subirlo de nuevo.",
     "only_one_file_allowed": "Solo se puede subir un archivo a la vez.",
@@ -1107,7 +1093,6 @@
     "drag_and_drop": "Arrastra y suelta en cualquier lugar para subir",
     "delete": "Eliminar archivo adjunto"
   },
-
   "label": {
     "select": "Seleccionar etiqueta",
     "create": {
@@ -1117,7 +1102,6 @@
       "type": "Escribe para agregar una nueva etiqueta"
     }
   },
-
   "sub_work_item": {
     "update": {
       "success": "Sub-elemento actualizado correctamente",
@@ -1128,7 +1112,6 @@
       "error": "Error al eliminar el sub-elemento"
     }
   },
-
   "view": {
     "label": "{count, plural, one {Vista} other {Vistas}}",
     "create": {
@@ -1138,7 +1121,6 @@
       "label": "Actualizar vista"
     }
   },
-
   "inbox_issue": {
     "status": {
       "pending": {
@@ -1224,7 +1206,6 @@
       }
     }
   },
-
   "workspace_creation": {
     "heading": "Crea tu espacio de trabajo",
     "subheading": "Para comenzar a usar Plane, necesitas crear o unirte a un espacio de trabajo.",
@@ -1276,7 +1257,6 @@
       }
     }
   },
-
   "workspace_dashboard": {
     "empty_state": {
       "general": {
@@ -1292,7 +1272,6 @@
       }
     }
   },
-
   "workspace_analytics": {
     "label": "Análisis",
     "page_label": "{workspace} - Análisis",
@@ -1335,9 +1314,39 @@
           }
         }
       }
-    }
+    },
+    "empty_state_v2": {
+      "customized_insights": {
+        "description": "Los elementos de trabajo asignados a ti, desglosados por estado, aparecerán aquí.",
+        "title": "Aún no hay datos"
+      },
+      "created_vs_resolved": {
+        "description": "Los elementos de trabajo creados y resueltos con el tiempo aparecerán aquí.",
+        "title": "Aún no hay datos"
+      },
+      "project_insights": {
+        "title": "Aún no hay datos",
+        "description": "Los elementos de trabajo asignados a ti, desglosados por estado, aparecerán aquí."
+      }
+    },
+    "created_vs_resolved": "Creado vs Resuelto",
+    "customized_insights": "Información personalizada",
+    "backlog_work_items": "Elementos de trabajo en backlog",
+    "active_projects": "Proyectos activos",
+    "trend_on_charts": "Tendencia en gráficos",
+    "all_projects": "Todos los proyectos",
+    "summary_of_projects": "Resumen de proyectos",
+    "project_insights": "Información del proyecto",
+    "started_work_items": "Elementos de trabajo iniciados",
+    "total_work_items": "Total de elementos de trabajo",
+    "total_projects": "Total de proyectos",
+    "total_admins": "Total de administradores",
+    "total_users": "Total de usuarios",
+    "total_intake": "Ingreso total",
+    "un_started_work_items": "Elementos de trabajo no iniciados",
+    "total_guests": "Total de invitados",
+    "completed_work_items": "Elementos de trabajo completados"
   },
-
   "workspace_projects": {
     "label": "{count, plural, one {Proyecto} other {Proyectos}}",
     "create": {
@@ -1411,7 +1420,6 @@
       }
     }
   },
-
   "workspace_views": {
     "add_view": "Agregar vista",
     "empty_state": {
@@ -1446,7 +1454,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "label": "Configuración del espacio de trabajo",
     "page_label": "{workspace} - Configuración general",
@@ -1628,7 +1635,6 @@
       }
     }
   },
-
   "profile": {
     "label": "Perfil",
     "page_label": "Tu trabajo",
@@ -1691,7 +1697,6 @@
       }
     }
   },
-
   "project_settings": {
     "general": {
       "enter_project_id": "Ingresa el ID del proyecto",
@@ -1837,7 +1842,6 @@
         "auto_close_status": "Estado de cierre automático"
       }
     },
-
     "empty_state": {
       "labels": {
         "title": "Aún no hay etiquetas",
@@ -1850,7 +1854,6 @@
       }
     }
   },
-
   "project_cycles": {
     "add_cycle": "Agregar ciclo",
     "more_details": "Más detalles",
@@ -1976,7 +1979,6 @@
       }
     }
   },
-
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -2005,7 +2007,6 @@
       }
     }
   },
-
   "project_module": {
     "add_module": "Agregar Módulo",
     "update_module": "Actualizar Módulo",
@@ -2059,7 +2060,6 @@
       }
     }
   },
-
   "project_views": {
     "empty_state": {
       "general": {
@@ -2079,7 +2079,6 @@
       }
     }
   },
-
   "project_page": {
     "empty_state": {
       "general": {
@@ -2109,7 +2108,6 @@
       }
     }
   },
-
   "command_k": {
     "empty_state": {
       "search": {
@@ -2117,7 +2115,6 @@
       }
     }
   },
-
   "issue_relation": {
     "empty_state": {
       "search": {
@@ -2128,7 +2125,6 @@
       }
     }
   },
-
   "issue_comment": {
     "empty_state": {
       "general": {
@@ -2137,7 +2133,6 @@
       }
     }
   },
-
   "notification": {
     "label": "Bandeja de entrada",
     "page_label": "{workspace} - Bandeja de entrada",
@@ -2194,7 +2189,6 @@
       "custom": "Personalizado"
     }
   },
-
   "active_cycle": {
     "empty_state": {
       "progress": {
@@ -2214,7 +2208,6 @@
       }
     }
   },
-
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -2277,7 +2270,6 @@
       }
     }
   },
-
   "stickies": {
     "title": "Tus notas adhesivas",
     "placeholder": "haz clic para escribir aquí",
@@ -2335,7 +2327,6 @@
       }
     }
   },
-
   "role_details": {
     "guest": {
       "title": "Invitado",
@@ -2350,7 +2341,6 @@
       "description": "Todos los permisos establecidos como verdaderos dentro del espacio de trabajo."
     }
   },
-
   "user_roles": {
     "product_or_project_manager": "Gerente de Producto / Proyecto",
     "development_or_engineering": "Desarrollo / Ingeniería",
@@ -2363,7 +2353,6 @@
     "human_resources": "Recursos Humanos",
     "other": "Otro"
   },
-
   "importer": {
     "github": {
       "title": "GitHub",
@@ -2374,7 +2363,6 @@
       "description": "Importa elementos de trabajo y epics desde proyectos y epics de Jira."
     }
   },
-
   "exporter": {
     "csv": {
       "title": "CSV",
@@ -2403,7 +2391,6 @@
     "created": "Creados",
     "subscribed": "Suscritos"
   },
-
   "themes": {
     "theme_options": {
       "system_preference": {
@@ -2449,17 +2436,14 @@
       "manual": "Manual"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {Ciclo} other {Ciclos}}",
     "no_cycle": "Sin ciclo"
   },
-
   "module": {
     "label": "{count, plural, one {Módulo} other {Módulos}}",
     "no_module": "Sin módulo"
   },
-
   "description_versions": {
     "last_edited_by": "Última edición por",
     "previously_edited_by": "Editado anteriormente por",
