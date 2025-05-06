@@ -306,7 +306,6 @@ export class IssueStore implements IIssueStore {
       : this.rootIssueDetailStore.rootIssueStore.issueDetail;
 
     if (!issue || !projectId || !issueId) throw new Error("Issue not found");
-    this.rootIssueDetailStore.rootIssueStore.issues.addIssueIdentifier(issueIdentifier, issueId);
 
     const issuePayload = this.addIssueToStore(issue);
     this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);
