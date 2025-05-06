@@ -173,14 +173,21 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
               No workspace found with the URL. It may not exist or you lack authorization to view it.
             </p>
             <div className="flex items-center justify-center gap-2 pt-4">
-              {allWorkspaces && allWorkspaces.length > 1 && (
+              {allWorkspaces && allWorkspaces.length > 0 && (
                 <Link href="/">
                   <Button>Go Home</Button>
                 </Link>
               )}
-              <Link href={`/${workspaceSlug}/settings/account`}>
-                <Button variant="neutral-primary">Visit Profile</Button>
-              </Link>
+              {allWorkspaces?.length > 0 && (
+                <Link href={`/${allWorkspaces[0].slug}/settings/account`}>
+                  <Button variant="neutral-primary">Visit Profile</Button>
+                </Link>
+              )}
+              {allWorkspaces && allWorkspaces.length === 0 && (
+                <Link href={`/`}>
+                  <Button variant="neutral-primary">Create new workspace</Button>
+                </Link>
+              )}
             </div>
           </div>
 

@@ -13,7 +13,7 @@ import { MembersLayoutLoader } from "@/components/ui/loader/layouts/members-layo
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 // constants
 // hooks
-import { useEventTracker, useMember, useUser, useUserPermissions } from "@/hooks/store";
+import { useEventTracker, useMember, useUser, useUserPermissions, useUserSettings, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useMemberColumns } from "@/plane-web/components/workspace/settings/useMemberColumns";
 
@@ -33,6 +33,8 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   } = useMember();
   const { leaveWorkspace } = useUserPermissions();
   const { captureEvent } = useEventTracker();
+  const { getWorkspaceRedirectionUrl } = useWorkspace();
+  const { fetchCurrentUserSettings } = useUserSettings();
   const { t } = useTranslation();
   // derived values
 
@@ -40,12 +42,13 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
     if (!workspaceSlug || !currentUser) return;
 
     await leaveWorkspace(workspaceSlug.toString())
-      .then(() => {
+      .then(async () => {
+        await fetchCurrentUserSettings();
+        router.push(getWorkspaceRedirectionUrl());
         captureEvent(WORKSPACE_MEMBER_LEAVE, {
           state: "SUCCESS",
           element: "Workspace settings members page",
         });
-        router.push(`/${workspaceSlug}/settings/account`);
       })
       .catch((err: any) =>
         setToast({

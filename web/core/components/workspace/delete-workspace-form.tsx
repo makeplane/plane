@@ -2,7 +2,6 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { AlertTriangle } from "lucide-react";
 // types
@@ -14,7 +13,7 @@ import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // hooks
 import { cn } from "@plane/utils";
-import { useEventTracker, useWorkspace } from "@/hooks/store";
+import { useEventTracker, useUserSettings, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
@@ -31,11 +30,12 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
   const { data, onClose } = props;
   // router
   const router = useAppRouter();
-  const { workspaceSlug } = useParams();
   // store hooks
   const { captureWorkspaceEvent } = useEventTracker();
   const { deleteWorkspace } = useWorkspace();
   const { t } = useTranslation();
+  const { getWorkspaceRedirectionUrl } = useWorkspace();
+  const { fetchCurrentUserSettings } = useUserSettings();
   // form info
   const {
     control,
@@ -60,9 +60,10 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
     if (!data || !canDelete) return;
 
     await deleteWorkspace(data.slug)
-      .then(() => {
+      .then(async () => {
+        await fetchCurrentUserSettings();
         handleClose();
-        router.push(`/${workspaceSlug}/settings/account`);
+        router.push(getWorkspaceRedirectionUrl());
         captureWorkspaceEvent({
           eventName: WORKSPACE_DELETED,
           payload: {
