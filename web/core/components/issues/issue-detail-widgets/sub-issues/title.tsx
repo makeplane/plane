@@ -33,10 +33,7 @@ export const SubIssuesCollapsibleTitle: FC<Props> = observer((props) => {
   const { t } = useTranslation();
   // store hooks
   const {
-    subIssues: {
-      subIssuesByIssueId,
-      stateDistributionByIssueId,
-    },
+    subIssues: { subIssuesByIssueId, stateDistributionByIssueId },
   } = useIssueDetail(issueServiceType);
   // derived values
   const subIssuesDistribution = stateDistributionByIssueId(parentIssueId);
@@ -63,7 +60,6 @@ export const SubIssuesCollapsibleTitle: FC<Props> = observer((props) => {
       }
       actionItemElement={
         <SubWorkItemTitleActions
-          workspaceSlug={workspaceSlug}
           projectId={projectId}
           parentId={parentIssueId}
           disabled={disabled}

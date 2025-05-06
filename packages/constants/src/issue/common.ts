@@ -379,4 +379,5 @@ export const FILTER_TO_ISSUE_MAP: Partial<Record<keyof IIssueFilterOptions, keyo
   project: "project_id",
   state: "state_id",
   issue_type: "type_id",
+  state_group: "state__group",
 } as const;

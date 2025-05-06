@@ -2,6 +2,7 @@
 
 import { CSSProperties, FC } from "react";
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
+import { isEmpty } from "lodash";
 import clone from "lodash/clone";
 import concat from "lodash/concat";
 import isEqual from "lodash/isEqual";
@@ -25,6 +26,7 @@ import {
   IProjectView,
   TGroupedIssues,
   IWorkspaceView,
+  IIssueDisplayFilterOptions,
 } from "@plane/types";
 // plane ui
 import { Avatar, CycleGroupIcon, DiceIcon, ISvgIcons, PriorityIcon, StateGroupIcon } from "@plane/ui";
@@ -39,6 +41,7 @@ import { store } from "@/lib/store-context";
 import { getTeamProjectColumns, SpreadSheetPropertyIconMap } from "@/plane-web/components/issues/issue-layouts/utils";
 // store
 import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/base-issues.store";
+import { DEFAULT_DISPLAY_PROPERTIES } from "@/store/issue/issue-details/sub_issues_filter.store";
 
 export const HIGHLIGHT_CLASS = "highlight";
 export const HIGHLIGHT_WITH_LINE = "highlight-with-line";
@@ -56,6 +59,11 @@ export type IssueUpdates = {
     ADD: string[];
     REMOVE: string[];
   };
+};
+
+type TGetColumns = {
+  isWorkspaceLevel?: boolean;
+  projectId?: string;
 };
 
 export const isWorkspaceLevel = (type: EIssuesStoreType) =>
@@ -95,21 +103,24 @@ export const getGroupByColumns = ({
   if (!groupBy) return undefined;
 
   // Map of group by options to their corresponding column getter functions
-  const groupByColumnMap: Record<GroupByColumnTypes, (projectId?: string) => IGroupByColumn[] | undefined> = {
+  const groupByColumnMap: Record<
+    GroupByColumnTypes,
+    ({ isWorkspaceLevel, projectId }: TGetColumns) => IGroupByColumn[] | undefined
+  > = {
     project: getProjectColumns,
     cycle: getCycleColumns,
     module: getModuleColumns,
     state: getStateColumns,
     "state_detail.group": getStateGroupColumns,
     priority: getPriorityColumns,
-    labels: () => getLabelsColumns(isWorkspaceLevel),
+    labels: getLabelsColumns,
     assignees: getAssigneeColumns,
     created_by: getCreatedByColumns,
     team_project: getTeamProjectColumns,
   };
 
   // Get and return the columns for the specified group by option
-  return groupByColumnMap[groupBy]?.(projectId);
+  return groupByColumnMap[groupBy]?.({ isWorkspaceLevel, projectId });
 };
 
 const getProjectColumns = (): IGroupByColumn[] | undefined => {
@@ -192,7 +203,7 @@ const getModuleColumns = (): IGroupByColumn[] | undefined => {
   return modules;
 };
 
-const getStateColumns = (projectId?: string): IGroupByColumn[] | undefined => {
+const getStateColumns = ({ projectId }: TGetColumns): IGroupByColumn[] | undefined => {
   const { getProjectStates, projectStates } = store.state;
   const _states = projectId ? getProjectStates(projectId) : projectStates;
   if (!_states) return;
@@ -235,7 +246,7 @@ const getPriorityColumns = (): IGroupByColumn[] => {
   }));
 };
 
-const getLabelsColumns = (isWorkspaceLevel: boolean = false): IGroupByColumn[] => {
+const getLabelsColumns = ({ isWorkspaceLevel }: TGetColumns): IGroupByColumn[] => {
   const { workspaceLabels, projectLabels } = store.label;
   // map labels to group by columns
   const labels = [
@@ -253,23 +264,40 @@ const getLabelsColumns = (isWorkspaceLevel: boolean = false): IGroupByColumn[] =
   }));
 };
 
-const getAssigneeColumns = (projectId?: string): IGroupByColumn[] | undefined => {
+const getAssigneeColumns = ({ isWorkspaceLevel, projectId }: TGetColumns): IGroupByColumn[] | undefined => {
+  const assigneeColumns: IGroupByColumn[] = [];
   const {
     project: { projectMemberIds, getProjectMemberIds },
     getUserDetails,
   } = store.memberRoot;
-  const _projectMemberIds = projectId ? getProjectMemberIds(projectId, false) : projectMemberIds;
-  if (!_projectMemberIds) return;
-  // Map project member ids to group by assignee columns
-  const assigneeColumns: IGroupByColumn[] = _projectMemberIds.map((memberId) => {
-    const member = getUserDetails(memberId);
-    return {
-      id: memberId,
-      name: member?.display_name || "",
-      icon: <Avatar name={member?.display_name} src={getFileURL(member?.avatar_url ?? "")} size="md" />,
-      payload: { assignee_ids: [memberId] },
-    };
-  });
+  // if workspace level
+  if (isWorkspaceLevel) {
+    const { workspaceMemberIds } = store.memberRoot.workspace;
+    if (!workspaceMemberIds) return;
+    workspaceMemberIds.forEach((memberId) => {
+      const member = getUserDetails(memberId);
+      assigneeColumns.push({
+        id: memberId,
+        name: member?.display_name || "",
+        icon: <Avatar name={member?.display_name} src={getFileURL(member?.avatar_url ?? "")} size="md" />,
+        payload: { assignee_ids: [memberId] },
+      });
+    });
+  } else {
+    // if project level
+    const _projectMemberIds = projectId ? getProjectMemberIds(projectId, false) : projectMemberIds;
+    if (!_projectMemberIds) return;
+    // Map project member ids to group by assignee columns
+    _projectMemberIds.forEach((memberId) => {
+      const member = getUserDetails(memberId);
+      assigneeColumns.push({
+        id: memberId,
+        name: member?.display_name || "",
+        icon: <Avatar name={member?.display_name} src={getFileURL(member?.avatar_url ?? "")} size="md" />,
+        payload: { assignee_ids: [memberId] },
+      });
+    });
+  }
   assigneeColumns.push({ id: "None", name: "None", icon: <Avatar size="md" />, payload: {} });
   return assigneeColumns;
 };
@@ -723,3 +751,42 @@ export const SpreadSheetPropertyIcon: FC<ISvgIcons & { iconKey: string }> = (pro
   if (!Icon) return null;
   return <Icon {...props} />;
 };
+
+/**
+ * This method returns if the filters are applied
+ * @param filters
+ * @returns
+ */
+export const isDisplayFiltersApplied = (filters: Partial<IIssueFilters>): boolean => {
+  const isDisplayPropertiesApplied = Object.keys(DEFAULT_DISPLAY_PROPERTIES).some(
+    (key) => !filters.displayProperties?.[key as keyof IIssueDisplayProperties]
+  );
+
+  const isDisplayFiltersApplied = Object.keys(filters.displayFilters ?? {}).some((key) => {
+    const value = filters.displayFilters?.[key as keyof IIssueDisplayFilterOptions];
+    if (!value) return false;
+    // -create_at is the default order
+    if (key === "order_by") {
+      return value !== "-created_at";
+    }
+    return true;
+  });
+
+  return isDisplayPropertiesApplied || isDisplayFiltersApplied;
+};
+
+/**
+ * This method returns if the filters are applied
+ * @param filters
+ * @returns
+ */
+export const isFiltersApplied = (filters: IIssueFilterOptions): boolean =>
+  Object.keys(filters).some((key) => {
+    if (filters[key as keyof IIssueFilterOptions]) {
+      if (Array.isArray(filters[key as keyof IIssueFilterOptions])) {
+        return !isEmpty(filters[key as keyof IIssueFilterOptions]);
+      }
+      return true;
+    }
+    return true;
+  });

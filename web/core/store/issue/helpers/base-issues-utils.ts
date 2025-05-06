@@ -356,11 +356,8 @@ export const updateFilters = (
     case EIssueFilterType.FILTERS: {
       const updatedFilters = filters as IIssueFilterOptions;
       _filters.filters = { ..._filters.filters, ...updatedFilters };
-      runInAction(() => {
-        Object.keys(updatedFilters).forEach((_key) => {
-          set(filtersMap, [workItemId, "filters", _key], updatedFilters[_key as keyof IIssueFilterOptions]);
-        });
-      });
+      set(filtersMap, [workItemId, "filters"], { ..._filters.filters, ...updatedFilters });
+      break;
     }
     case EIssueFilterType.DISPLAY_FILTERS: {
       set(filtersMap, [workItemId, "displayFilters"], { ..._filters.displayFilters, ...filters });

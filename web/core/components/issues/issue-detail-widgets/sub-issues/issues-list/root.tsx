@@ -1,9 +1,12 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { ListFilter } from "lucide-react";
 import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
 import { GroupByColumnTypes, TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
 // hooks
+import { Button } from "@plane/ui";
+import { SectionEmptyState } from "@/components/empty-state";
 import { getGroupByColumns, isWorkspaceLevel } from "@/components/issues/issue-layouts/utils";
 import { useIssueDetail } from "@/hooks/store";
 
@@ -41,9 +44,8 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
   // store hooks
   const {
     subIssues: {
-      loader,
       subIssuesByIssueId,
-      filters: { getSubIssueFilters, getGroupedSubWorkItems },
+      filters: { getSubIssueFilters, getGroupedSubWorkItems, getFilteredSubWorkItems, resetFilters },
     },
   } = useIssueDetail(issueServiceType);
 
@@ -51,6 +53,7 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
   const filters = getSubIssueFilters(parentIssueId);
   const isRootLevel = useMemo(() => rootIssueId === parentIssueId, [rootIssueId, parentIssueId]);
   const group_by = isRootLevel ? (filters?.displayFilters?.group_by ?? null) : null;
+  const filteredSubWorkItemsCount = (getFilteredSubWorkItems(rootIssueId, filters.filters ?? {}) ?? []).length;
 
   const groups = getGroupByColumns({
     groupBy: group_by as GroupByColumnTypes,
@@ -63,33 +66,57 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
   const workItemIds = useCallback(
     (groupId: string) => {
       if (isRootLevel) {
-        const groupedSubIssues = getGroupedSubWorkItems(rootIssueId);
+        const groupedSubIssues = getGroupedSubWorkItems(parentIssueId);
         return groupedSubIssues?.[groupId] ?? [];
       }
-      return subIssuesByIssueId(parentIssueId) ?? [];
+      const subIssueIds = subIssuesByIssueId(parentIssueId);
+      return subIssueIds ?? [];
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isRootLevel, parentIssueId, rootIssueId, loader]
+    [isRootLevel, subIssuesByIssueId, parentIssueId, getGroupedSubWorkItems]
   );
+
+  const isSubWorkItems = issueServiceType === EIssueServiceType.ISSUES;
 
   return (
     <div className="relative">
-      {groups?.map((group) => (
-        <SubIssuesListGroup
-          key={group.id}
-          workItemIds={workItemIds(group.id)}
-          projectId={projectId}
-          workspaceSlug={workspaceSlug}
-          group={group}
-          serviceType={issueServiceType}
-          disabled={disabled}
-          parentIssueId={parentIssueId}
-          handleIssueCrudState={handleIssueCrudState}
-          subIssueOperations={subIssueOperations}
-          storeType={storeType}
-          spacingLeft={spacingLeft}
+      {filteredSubWorkItemsCount > 0 ? (
+        groups?.map((group) => (
+          <SubIssuesListGroup
+            key={group.id}
+            workItemIds={workItemIds(group.id)}
+            projectId={projectId}
+            workspaceSlug={workspaceSlug}
+            group={group}
+            serviceType={issueServiceType}
+            disabled={disabled}
+            parentIssueId={parentIssueId}
+            handleIssueCrudState={handleIssueCrudState}
+            subIssueOperations={subIssueOperations}
+            storeType={storeType}
+            spacingLeft={spacingLeft}
+          />
+        ))
+      ) : (
+        <SectionEmptyState
+          title={
+            !isSubWorkItems
+              ? "You don't have work items that match the filters you've applied."
+              : "You don't have sub-work items that match the filters you've applied."
+          }
+          description={
+            !isSubWorkItems
+              ? "To see all work items, clear all applied filters."
+              : "To see all sub-work items, clear all applied filters."
+          }
+          icon={<ListFilter />}
+          customClassName={storeType !== EIssuesStoreType.EPIC ? "border-none" : ""}
+          actionElement={
+            <Button variant="neutral-primary" size="sm" onClick={() => resetFilters(rootIssueId)}>
+              Clear filters
+            </Button>
+          }
         />
-      ))}
+      )}
     </div>
   );
 });

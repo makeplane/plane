@@ -16,12 +16,11 @@ type TSubWorkItemTitleActionsProps = {
   disabled: boolean;
   issueServiceType?: TIssueServiceType;
   parentId: string;
-  workspaceSlug: string;
   projectId: string;
 };
 
 export const SubWorkItemTitleActions: FC<TSubWorkItemTitleActionsProps> = observer((props) => {
-  const { disabled, issueServiceType = EIssueServiceType.ISSUES, parentId, workspaceSlug, projectId } = props;
+  const { disabled, issueServiceType = EIssueServiceType.ISSUES, parentId, projectId } = props;
 
   // store hooks
   const {
@@ -43,23 +42,20 @@ export const SubWorkItemTitleActions: FC<TSubWorkItemTitleActionsProps> = observ
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !projectId) return;
       updateSubWorkItemFilters(EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, parentId);
     },
-    [workspaceSlug, projectId, parentId, updateSubWorkItemFilters]
+    [updateSubWorkItemFilters, parentId]
   );
 
   const handleDisplayPropertiesUpdate = useCallback(
     (updatedDisplayProperties: Partial<IIssueDisplayProperties>) => {
-      if (!workspaceSlug || !projectId) return;
       updateSubWorkItemFilters(EIssueFilterType.DISPLAY_PROPERTIES, updatedDisplayProperties, parentId);
     },
-    [workspaceSlug, projectId, parentId, updateSubWorkItemFilters]
+    [updateSubWorkItemFilters, parentId]
   );
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId) return;
       const newValues = subIssueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
@@ -75,13 +71,13 @@ export const SubWorkItemTitleActions: FC<TSubWorkItemTitleActionsProps> = observ
 
       updateSubWorkItemFilters(EIssueFilterType.FILTERS, { [key]: newValues }, parentId);
     },
-    [workspaceSlug, projectId, subIssueFilters?.filters, updateSubWorkItemFilters, parentId]
+    [subIssueFilters?.filters, updateSubWorkItemFilters, parentId]
   );
 
   return (
     // prevent click everywhere
     <div
-      className="flex gap-2"
+      className="flex gap-2 items-center"
       onClick={(e) => {
         e.stopPropagation();
         e.preventDefault();
@@ -100,6 +96,7 @@ export const SubWorkItemTitleActions: FC<TSubWorkItemTitleActionsProps> = observ
         filters={subIssueFilters?.filters ?? {}}
         memberIds={projectMemberIds ?? undefined}
         states={projectStates}
+        layoutDisplayFiltersOptions={layoutDisplayFiltersOptions}
       />
       {!disabled && (
         <SubIssuesActionButton issueId={parentId} disabled={disabled} issueServiceType={issueServiceType} />

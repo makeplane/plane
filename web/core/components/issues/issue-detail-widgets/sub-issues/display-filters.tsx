@@ -1,9 +1,11 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { SlidersHorizontal } from "lucide-react";
 import { IIssueDisplayFilterOptions, ILayoutDisplayFiltersOptions, IIssueDisplayProperties } from "@plane/types";
+import { cn } from "@plane/utils";
 import { FilterDisplayProperties, FilterGroupBy, FilterOrderBy, FiltersDropdown } from "@/components/issues";
+import { isDisplayFiltersApplied } from "@/components/issues/issue-layouts/utils";
 
 type TSubIssueDisplayFiltersProps = {
   displayProperties: IIssueDisplayProperties;
@@ -24,12 +26,27 @@ export const SubIssueDisplayFilters: FC<TSubIssueDisplayFiltersProps> = observer
     displayFilters,
   } = props;
 
+  const isFilterApplied = useMemo(
+    () => isDisplayFiltersApplied({ displayProperties, displayFilters }),
+    [displayProperties, displayFilters]
+  );
+
   return (
     <>
       {layoutDisplayFiltersOptions?.display_filters && layoutDisplayFiltersOptions?.display_properties.length > 0 && (
         <FiltersDropdown
           placement="bottom-end"
-          menuButton={<SlidersHorizontal className="h-3.5 w-3.5 text-custom-text-100" />}
+          menuButton={
+            <div
+              className={cn(
+                "p-1 rounded  relative transition-all duration-200",
+                isFilterApplied && "bg-custom-primary-60/20"
+              )}
+            >
+              {isFilterApplied && <span className="p-1 rounded-full bg-custom-primary-100 absolute -top-1 -right-1" />}
+              <SlidersHorizontal className="h-3.5 w-3.5 text-custom-text-100" />
+            </div>
+          }
         >
           <div className="vertical-scrollbar scrollbar-sm relative h-full w-full divide-y divide-custom-border-200 overflow-hidden overflow-y-auto px-2.5 max-h-[25rem] text-left">
             {/* display properties */}

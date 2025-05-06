@@ -8,9 +8,21 @@ import {
   IIssueFilterOptions,
   IIssueFilters,
   TGroupedIssues,
+  TIssue,
 } from "@plane/types";
 import { getFilteredWorkItems, getGroupedWorkItemIds, updateFilters } from "../helpers/base-issues-utils";
-import { IIssueSubIssuesStore, IssueSubIssuesStore } from "./sub_issues.store";
+import { IssueSubIssuesStore } from "./sub_issues.store";
+
+export const DEFAULT_DISPLAY_PROPERTIES = {
+  key: true,
+  issue_type: true,
+  assignee: true,
+  start_date: true,
+  due_date: true,
+  labels: true,
+  priority: true,
+  state: true,
+};
 
 export interface IWorkItemSubIssueFiltersStore {
   subIssueFilters: Record<string, Partial<IIssueFilters>>;
@@ -21,7 +33,9 @@ export interface IWorkItemSubIssueFiltersStore {
     workItemId: string
   ) => void;
   getGroupedSubWorkItems: (workItemId: string) => TGroupedIssues;
+  getFilteredSubWorkItems: (workItemId: string, filters: IIssueFilterOptions) => TIssue[];
   getSubIssueFilters: (workItemId: string) => Partial<IIssueFilters>;
+  resetFilters: (workItemId: string) => void;
 }
 
 export class WorkItemSubIssueFiltersStore implements IWorkItemSubIssueFiltersStore {
@@ -50,7 +64,7 @@ export class WorkItemSubIssueFiltersStore implements IWorkItemSubIssueFiltersSto
    */
   getSubIssueFilters = (workItemId: string) => {
     if (!this.subIssueFilters[workItemId]) {
-      this.initSubIssueFilters(workItemId);
+      this.initializeFilters(workItemId);
     }
     return this.subIssueFilters[workItemId];
   };
@@ -59,18 +73,10 @@ export class WorkItemSubIssueFiltersStore implements IWorkItemSubIssueFiltersSto
    * @description This method is used to initialize the sub issue filters
    * @param workItemId
    */
-  initSubIssueFilters = (workItemId: string) => {
-    set(this.subIssueFilters, [workItemId], {
-      displayProperties: {
-        key: true,
-        issue_type: true,
-        assignee: true,
-        start_date: true,
-        due_date: true,
-        labels: true,
-        priority: true,
-      },
-    });
+  initializeFilters = (workItemId: string) => {
+    set(this.subIssueFilters, [workItemId, "displayProperties"], DEFAULT_DISPLAY_PROPERTIES);
+    set(this.subIssueFilters, [workItemId, "filters"], {});
+    set(this.subIssueFilters, [workItemId, "displayFilters"], {});
   };
 
   /**
@@ -94,20 +100,41 @@ export class WorkItemSubIssueFiltersStore implements IWorkItemSubIssueFiltersSto
    * @returns
    */
   getGroupedSubWorkItems = computedFn((parentWorkItemId: string) => {
-    const subIssueIds = this.subIssueStore.subIssuesByIssueId(parentWorkItemId);
-    const workItems = this.subIssueStore.rootIssueDetailStore.rootIssueStore.issues.getIssuesByIds(
-      subIssueIds,
-      "un-archived"
-    );
-
     const subIssueFilters = this.getSubIssueFilters(parentWorkItemId);
-    const orderByKey = subIssueFilters.displayFilters?.order_by;
-    const groupByKey = subIssueFilters.displayFilters?.group_by;
 
-    const filteredWorkItems = getFilteredWorkItems(workItems, subIssueFilters.filters);
+    const filteredWorkItems = this.getFilteredSubWorkItems(parentWorkItemId, subIssueFilters.filters ?? {});
+
+    // get group by and order by
+    const groupByKey = subIssueFilters.displayFilters?.group_by;
+    const orderByKey = subIssueFilters.displayFilters?.order_by;
 
     const groupedWorkItemIds = getGroupedWorkItemIds(filteredWorkItems, groupByKey, orderByKey);
 
     return groupedWorkItemIds;
   });
+
+  /**
+   * @description This method is used to get the filtered sub work items
+   * @param workItemId
+   * @returns
+   */
+  getFilteredSubWorkItems = computedFn((workItemId: string, filters: IIssueFilterOptions) => {
+    const subIssueIds = this.subIssueStore.subIssuesByIssueId(workItemId);
+    const workItems = this.subIssueStore.rootIssueDetailStore.rootIssueStore.issues.getIssuesByIds(
+      subIssueIds,
+      "un-archived"
+    );
+
+    const filteredWorkItems = getFilteredWorkItems(workItems, filters);
+
+    return filteredWorkItems;
+  });
+
+  /**
+   * @description This method is used to reset the filters
+   * @param workItemId
+   */
+  resetFilters = (workItemId: string) => {
+    this.initializeFilters(workItemId);
+  };
 }
