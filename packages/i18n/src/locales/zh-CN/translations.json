@@ -366,7 +366,7 @@
   "projects_and_issues": "项目和工作项",
   "projects_and_issues_description": "在此项目中开启或关闭这些功能。",
   "cycles_description": "为每个项目设置时间框，并根据需要调整周期。一个周期可以是两周，下一个周期是一周。",
-  "modules_description": "将工作组织为子项目，并指定专门的负责人和被分配人。",
+  "modules_description": "将工作组织为子项目，并指定专门的负责人和受理人。",
   "views_description": "保存自定义排序、筛选和显示选项，或与团队共享。",
   "pages_description": "创建和编辑自由格式的内容：笔记、文档，任何内容。",
   "intake_description": "允许非成员提交 Bug、反馈和建议，且不会干扰您的工作流程。",
