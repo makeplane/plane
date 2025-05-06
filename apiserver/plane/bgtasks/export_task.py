@@ -300,9 +300,8 @@ def generate_json(header, project_id, issues, files):
 def generate_xlsx(header, project_id, issues, files):
     rows = [header]
     for issue in issues:
-        print(issue, "Issue from xlsx")
         row = generate_table_row(issue)
-        print(row, "Row")
+
         update_table_row(rows, row)
     xlsx_file = create_xlsx_file(rows)
     files.append((f"{project_id}.xlsx", xlsx_file))
