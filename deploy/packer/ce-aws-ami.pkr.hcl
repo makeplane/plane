@@ -124,31 +124,39 @@ build {
       "sudo mkdir -p /opt/plane/svc",
       "sudo chown -R ubuntu:ubuntu /opt/plane",
       "sudo chmod -R 755 /opt/plane",
-      # Extract the application files
-      "echo 'Depacking admin files...'",
-      "sudo tar -xzf /opt/plane/tars/admin-dist.tar.gz -C /opt/plane/extracted",
-      "sudo mv /opt/plane/extracted/admin-dist/ /opt/plane/admin",
-      "sudo cp /opt/plane/tars/admin.env /opt/plane/admin/admin.env",
 
-      "echo 'Depacking web files...'",
-      "sudo tar -xzf /opt/plane/tars/web-dist.tar.gz -C /opt/plane/extracted",
-      "sudo mv /opt/plane/extracted/web-dist/ /opt/plane/web",
-      "sudo cp /opt/plane/tars/web.env /opt/plane/web/web.env",
+      for dir in admin web space live backend; do
+        "echo 'Depacking ${dir} files...'",
+        "sudo tar -xzf /opt/plane/tars/${dir}-dist.tar.gz -C /opt/plane/extracted",
+        "sudo mv /opt/plane/extracted/${dir}-dist/ /opt/plane/${dir}",
+        "sudo cp /opt/plane/tars/${dir}.env /opt/plane/${dir}/${dir}.env",
+      done
 
-      "echo 'Depacking space files...'",
-      "sudo tar -xzf /opt/plane/tars/space-dist.tar.gz -C /opt/plane/extracted",
-      "sudo mv /opt/plane/extracted/space-dist/ /opt/plane/space",
-      "sudo cp /opt/plane/tars/space.env /opt/plane/space/space.env",
+      # # Extract the application files
+      # "echo 'Depacking admin files...'",
+      # "sudo tar -xzf /opt/plane/tars/admin-dist.tar.gz -C /opt/plane/extracted",
+      # "sudo mv /opt/plane/extracted/admin-dist/ /opt/plane/admin",
+      # "sudo cp /opt/plane/tars/admin.env /opt/plane/admin/admin.env",
 
-      "echo 'Depacking live files...'",
-      "sudo tar -xzf /opt/plane/tars/live-dist.tar.gz -C /opt/plane/extracted",
-      "sudo mv /opt/plane/extracted/live-dist/ /opt/plane/live",
-      "sudo cp /opt/plane/tars/live.env /opt/plane/live/live.env",
+      # "echo 'Depacking web files...'",
+      # "sudo tar -xzf /opt/plane/tars/web-dist.tar.gz -C /opt/plane/extracted",
+      # "sudo mv /opt/plane/extracted/web-dist/ /opt/plane/web",
+      # "sudo cp /opt/plane/tars/web.env /opt/plane/web/web.env",
 
-      "echo 'Depacking backend files...'",    
-      "sudo tar -xzf /opt/plane/tars/backend-dist.tar.gz -C /opt/plane/extracted",
-      "sudo mv /opt/plane/extracted/backend-dist/ /opt/plane/backend",
-      "sudo cp /opt/plane/tars/backend.env /opt/plane/backend/backend.env",
+      # "echo 'Depacking space files...'",
+      # "sudo tar -xzf /opt/plane/tars/space-dist.tar.gz -C /opt/plane/extracted",
+      # "sudo mv /opt/plane/extracted/space-dist/ /opt/plane/space",
+      # "sudo cp /opt/plane/tars/space.env /opt/plane/space/space.env",
+
+      # "echo 'Depacking live files...'",
+      # "sudo tar -xzf /opt/plane/tars/live-dist.tar.gz -C /opt/plane/extracted",
+      # "sudo mv /opt/plane/extracted/live-dist/ /opt/plane/live",
+      # "sudo cp /opt/plane/tars/live.env /opt/plane/live/live.env",
+
+      # "echo 'Depacking backend files...'",    
+      # "sudo tar -xzf /opt/plane/tars/backend-dist.tar.gz -C /opt/plane/extracted",
+      # "sudo mv /opt/plane/extracted/backend-dist/ /opt/plane/backend",
+      # "sudo cp /opt/plane/tars/backend.env /opt/plane/backend/backend.env",
 
       "echo 'Copying services...'",
       "sudo cp /opt/plane/tars/*.service /opt/plane/svc/",
@@ -176,17 +184,16 @@ build {
     ]
   }
 
-  # provisioner "shell" {
-  #   environment_vars = [
-  #     "DEBIAN_FRONTEND=noninteractive",
-  #     "TERM=xterm-256color"
-  #   ]
-  #   inline = [
-  #     ". /usr/local/bin/plane",
-  #     "install_prerequisites",
-  #     "plane stop"
-  #   ]
-  # }
+  provisioner "shell" {
+    environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive",
+      "TERM=xterm-256color"
+    ]
+    inline = [
+      "bash -c '. /usr/local/bin/plane && install_prerequisites'",
+      "bash -c '/usr/local/bin/plane stop'",
+    ]
+  }
 
   provisioner "shell" {
     environment_vars = [
