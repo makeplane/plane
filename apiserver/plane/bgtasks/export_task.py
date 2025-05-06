@@ -58,7 +58,6 @@ def create_xlsx_file(data):
     workbook = Workbook()
     sheet = workbook.active
 
-    print(data, "Data")
     for row in data:
         sheet.append(row)
 
@@ -171,72 +170,58 @@ def generate_table_row(issue):
         dateConverter(issue["target_date"]),
         issue["priority"],
         issue["created_by"],
-        issue["labels"] if issue["labels"] else "",
+        ", ".join(issue["labels"]) if issue["labels"] else "",
         issue.get("cycle_name", ""),
         issue.get("cycle_start_date", ""),
         issue.get("cycle_end_date", ""),
-        issue.get("module_name", ""),
+        ", ".join(issue.get("module_name", "")) if issue.get("module_name") else "",
         dateTimeConverter(issue["created_at"]),
         dateTimeConverter(issue["updated_at"]),
         dateTimeConverter(issue["completed_at"]),
         dateTimeConverter(issue["archived_at"]),
-        issue["comments"],
+        ", ".join(
+            [
+                f"{comment['comment']} ({comment['created_at']} by {comment['created_by']})"
+                for comment in issue["comments"]
+            ]
+        )
+        if issue["comments"]
+        else "",
         issue["estimate"] if issue["estimate"] else "",
-        issue["link"] if issue["link"] else "",
-        issue["assignees"] if issue["assignees"] else "",
-        issue["subscribers_count"] if issue["subscribers_count"] else "",
+        ", ".join(issue["link"]) if issue["link"] else "",
+        ", ".join(issue["assignees"]) if issue["assignees"] else "",
         issue["attachment_count"] if issue["attachment_count"] else "",
-        issue["attachment_links"] if issue["attachment_links"] else "",
+        ", ".join(issue["attachment_links"]) if issue["attachment_links"] else "",
     ]
 
 
 def generate_json_row(issue):
-    print("generate_json_row", issue)
     return {
-        "ID": f"""{issue["project__identifier"]}-{issue["sequence_id"]}""",
-        "Project": issue["project__name"],
+        "ID": f"""{issue["project_identifier"]}-{issue["sequence_id"]}""",
+        "Project": issue["project_name"],
         "Name": issue["name"],
-        "Description": issue["description_stripped"],
-        "State": issue["state__name"],
+        "Description": issue["description"],
+        "State": issue["state_name"],
         "Start Date": dateConverter(issue["start_date"]),
         "Target Date": dateConverter(issue["target_date"]),
         "Priority": issue["priority"],
-        "Created By": (
-            f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
-            if issue["created_by__first_name"] and issue["created_by__last_name"]
-            else ""
-        ),
-        "Assignee": (
-            f"{issue['assignees__first_name']} {issue['assignees__last_name']}"
-            if issue["assignees__first_name"] and issue["assignees__last_name"]
-            else ""
-        ),
-        "Labels": issue["labels__name"] if issue["labels__name"] else "",
-        "Cycle Name": issue["issue_cycle__cycle__name"],
-        "Cycle Start Date": dateConverter(issue["issue_cycle__cycle__start_date"]),
-        "Cycle End Date": dateConverter(issue["issue_cycle__cycle__end_date"]),
-        "Module Name": issue["issue_module__module__name"],
+        "Created By": (f"{issue['created_by']}" if issue["created_by"] else ""),
+        "Assignee": issue["assignees"],
+        "Labels": issue["labels"],
+        "Cycle Name": issue["cycle_name"],
+        "Cycle Start Date": issue["cycle_start_date"],
+        "Cycle End Date": issue["cycle_end_date"],
+        "Module Name": issue["module_name"],
         "Created At": dateTimeConverter(issue["created_at"]),
         "Updated At": dateTimeConverter(issue["updated_at"]),
         "Completed At": dateTimeConverter(issue["completed_at"]),
         "Archived At": dateTimeConverter(issue["archived_at"]),
-        "Comments": [
-            {
-                "comment": comment,
-                "created_at": dateConverter(created_at),
-                "created_by": (
-                    f"{created_by_first_name} {created_by_last_name}"
-                    if created_by_first_name and created_by_last_name
-                    else ""
-                ),
-            }
-            for comment, created_at, created_by_first_name, created_by_last_name in zip(
-                issue["comment_stripped"],
-                issue["comment_created_at"],
-                issue["comment_created_by_first_name"],
-                issue["comment_created_by_last_name"],
-            )
-        ],
+        "Comments": issue["comments"],
+        "Estimate": issue["estimate"],
+        "Link": issue["link"],
+        "Subscribers Count": issue["subscribers_count"],
+        "Attachment Count": issue["attachment_count"],
+        "Attachment Links": issue["attachment_links"],
     }
 
 
@@ -306,9 +291,7 @@ def generate_csv(header, project_id, issues, files):
 def generate_json(header, project_id, issues, files):
     rows = []
     for issue in issues:
-        print(issue, "Issue")
         row = generate_json_row(issue)
-        print(row, "Row")
         update_json_row(rows, row)
     json_file = create_json_file(rows)
     files.append((f"{project_id}.json", json_file))
@@ -317,7 +300,9 @@ def generate_json(header, project_id, issues, files):
 def generate_xlsx(header, project_id, issues, files):
     rows = [header]
     for issue in issues:
+        print(issue, "Issue from xlsx")
         row = generate_table_row(issue)
+        print(row, "Row")
         update_table_row(rows, row)
     xlsx_file = create_xlsx_file(rows)
     files.append((f"{project_id}.xlsx", xlsx_file))
@@ -378,9 +363,15 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                 "archived_at": issue.archived_at,
                 "module_name": [
                     module.module.name for module in issue.issue_module.all()
-                ],
+                ]
+                if issue.issue_module.exists()
+                else None,
                 "created_by": f"{issue.created_by.first_name} {issue.created_by.last_name}",
-                "labels": [label.name for label in issue.labels.all().distinct()],
+                "labels": [
+                    label.name
+                    for label in issue.labels.all().distinct()
+                    if issue.labels.exists()
+                ],
                 "comments": [
                     {
                         "comment": comment.comment_stripped,
@@ -388,15 +379,23 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                         "created_by": f"{comment.created_by.first_name} {comment.created_by.last_name}",
                     }
                     for comment in issue.issue_comments.all().distinct()
-                ],
+                ]
+                if issue.issue_comments.exists()
+                else None,
                 "estimate": issue.estimate_point.estimate.name
                 if issue.estimate_point
                 else "",
-                "link": [link.url for link in issue.issue_link.all().distinct()],
+                "link": [
+                    link.url
+                    for link in issue.issue_link.all().distinct()
+                    if issue.issue_link.exists()
+                ],
                 "assignees": [
                     f"{assignee.first_name} {assignee.last_name}"
                     for assignee in issue.assignees.all().distinct()
-                ],
+                ]
+                if issue.assignees.exists()
+                else None,
                 "subscribers_count": issue.issue_subscribers.count(),
                 "attachment_count": FileAsset.objects.filter(
                     issue_id=issue.id,
