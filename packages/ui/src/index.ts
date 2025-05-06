@@ -34,3 +34,4 @@ export * from "./tabs";
 export * from "./calendar";
 export * from "./color-picker";
 export * from "./link";
+export * from "./beta";
