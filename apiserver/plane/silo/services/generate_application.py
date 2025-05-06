@@ -1,6 +1,5 @@
 # Python imports
 from logging import getLogger
-from urllib.parse import urljoin
 
 # Django imports
 from django.conf import settings
@@ -15,7 +14,6 @@ from plane.db.models import User
 from plane.authentication.models import Application
 from plane.silo.models.application_secret import ApplicationSecret
 from plane.utils.encryption import encrypt
-from plane.utils.url import get_url_components
 
 logger = getLogger("plane.silo.services.generate_application")
 
@@ -38,14 +36,7 @@ def generate_application(
 
     client_secret = generate_client_secret()
 
-    silo_url = get_url_components(settings.SILO_URL)
-    if not silo_url:
-        raise ValueError("SILO_URL is not set")
-    
-    base_url = (
-        f"{silo_url.get('scheme')}://{silo_url.get('netloc')}{silo_url.get('path')}"
-    )
-    redirect_uris = urljoin(base_url, f"/api/{app_key}/plane-oauth/callback")
+    redirect_uris = f"{settings.SILO_URL}/api/{app_key}/plane-oauth/callback"
 
     application_data = {
         "name": app_data["name"],
@@ -70,9 +61,11 @@ def generate_application(
         application.save()
     else:
         application = application_model.objects.create(**application_data)
-    
+
     encrypted_data = encrypt(client_secret)
-    client_secret = f"{encrypted_data['iv']}:{encrypted_data['ciphertext']}:{encrypted_data['tag']}"
+    client_secret = (
+        f"{encrypted_data['iv']}:{encrypted_data['ciphertext']}:{encrypted_data['tag']}"
+    )
 
     application_secret_model.objects.bulk_create(
         [
