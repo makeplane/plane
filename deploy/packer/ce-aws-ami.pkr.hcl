@@ -170,15 +170,15 @@ build {
 
 
   # Update and install basic requirements
-  provisioner "shell" {
-    environment_vars = [
-      "DEBIAN_FRONTEND=noninteractive"
-    ]
-    inline = [
-      # "sudo apt-get update",
-      "/usr/local/bin/plane install"
-    ]
-  }
+  # provisioner "shell" {
+  #   environment_vars = [
+  #     "DEBIAN_FRONTEND=noninteractive"
+  #   ]
+  #   inline = [
+  #     # "sudo apt-get update",
+  #     "/usr/local/bin/plane install"
+  #   ]
+  # }
 
   # Post-processor for potential AMI modifications
   post-processor "manifest" {
