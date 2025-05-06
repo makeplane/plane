@@ -3,6 +3,7 @@ import set from "lodash/set";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 // types
 import { computedFn } from "mobx-utils";
+import { EUserPermissions } from "@plane/constants";
 import { IWorkspaceSidebarNavigationItem, IWorkspace, IWorkspaceSidebarNavigation } from "@plane/types";
 // services
 import { WorkspaceService } from "@/plane-web/services";
@@ -20,6 +21,7 @@ export interface IWorkspaceRootStore {
   // computed
   currentWorkspace: IWorkspace | null;
   workspacesCreatedByCurrentUser: IWorkspace[] | null;
+  currentUserAdninWorkspaces: IWorkspace[] | null;
   navigationPreferencesMap: Record<string, IWorkspaceSidebarNavigation>;
   // computed actions
   getWorkspaceBySlug: (workspaceSlug: string) => IWorkspace | null;
@@ -68,6 +70,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       // computed
       currentWorkspace: computed,
       workspacesCreatedByCurrentUser: computed,
+      currentUserAdninWorkspaces: computed,
       // computed actions
       getWorkspaceBySlug: action,
       getWorkspaceById: action,
@@ -110,6 +113,17 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
     const user = this.user.data;
     if (!user) return null;
     const userWorkspaces = Object.values(this.workspaces ?? {})?.filter((w) => w.created_by === user?.id);
+    return userWorkspaces || null;
+  }
+
+  /**
+   * computed value of all the workspaces where current user is admin
+   */
+  get currentUserAdninWorkspaces() {
+    if (!this.workspaces) return null;
+    const user = this.user.data;
+    if (!user) return null;
+    const userWorkspaces = Object.values(this.workspaces ?? {})?.filter((w) => w.role === EUserPermissions.ADMIN);
     return userWorkspaces || null;
   }
 

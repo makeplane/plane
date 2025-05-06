@@ -504,6 +504,9 @@
   "new_password_must_be_different_from_old_password": "新しいパスワードは古いパスワードと異なる必要があります",
   "edited": "編集済み",
   "bot": "ボット",
+  "choose_workspace_for_integration": "このアプリケーションに接続するワークスペースを選択してください",
+  "integrations_description": "Planeのアプリケーションは、管理者であるワークスペースに接続する必要があります。",
+  "create_a_new_workspace": "新しいワークスペースを作成",
 
   "project_view": {
     "sort_by": {

@@ -502,6 +502,9 @@
   "new_password_must_be_different_from_old_password": "Mật khẩu mới phải khác mật khẩu cũ",
   "edited": "đã chỉnh sửa",
   "bot": "bot",
+  "choose_workspace_for_integration": "Chọn không gian làm việc để kết nối ứng dụng này",
+  "integrations_description": "Ứng dụng làm việc với Plane phải kết nối với không gian làm việc mà bạn là quản trị viên.",
+  "create_a_new_workspace": "Tạo không gian làm việc mới",
 
   "project_view": {
     "sort_by": {

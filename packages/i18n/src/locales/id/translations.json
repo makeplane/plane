@@ -502,6 +502,9 @@
   "export": "Ekspor",
   "member": "{count, plural, one{# anggota} other{# anggota}}",
   "new_password_must_be_different_from_old_password": "Kata sandi baru harus berbeda dari kata sandi lama",
+  "choose_workspace_for_integration": "Pilih ruang kerja untuk menghubungkan aplikasi ini",
+  "integrations_description": "Aplikasi yang bekerja dengan Plane harus menghubungkan ke ruang kerja di mana Anda adalah admin.",
+  "create_a_new_workspace": "Buat ruang kerja baru",
 
   "project_view": {
     "sort_by": {

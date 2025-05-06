@@ -504,6 +504,9 @@
   "new_password_must_be_different_from_old_password": "Yeni şifre eski şifreden farklı olmalı",
   "edited": "düzenlendi",
   "bot": "Bot",
+  "choose_workspace_for_integration": "Bu uygulamayı bağlamak için bir çalışma alanı seçin",
+  "integrations_description": "Plane ile çalışan uygulamalar, yönetici olduğunuz bir çalışma alanına bağlanmalıdır.",
+  "create_a_new_workspace": "Yeni bir çalışma alanı oluştur",
 
   "project_view": {
     "sort_by": {

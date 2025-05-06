@@ -334,6 +334,9 @@
   "new_password_must_be_different_from_old_password": "New password must be different from old password",
   "edited": "edited",
   "bot": "Bot",
+  "choose_workspace_for_integration": "Choose a workspace to connect this app to",
+  "integrations_description": "Apps that work with Plane must connect to a workspace where you are an admin.",
+  "create_a_new_workspace": "Create a new workspace",
 
   "project_view": {
     "sort_by": {

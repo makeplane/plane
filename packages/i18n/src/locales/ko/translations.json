@@ -504,6 +504,9 @@
   "new_password_must_be_different_from_old_password": "새 비밀번호는 이전 비밀번호와 다르게 설정해야 합니다",
   "edited": "수정됨",
   "bot": "봇",
+  "choose_workspace_for_integration": "이 앱에 연결할 작업 공간을 선택하세요",
+  "integrations_description": "Plane의 앱은 관리자인 작업 공간에 연결해야 합니다.",
+  "create_a_new_workspace": "새 작업 공간 만들기",
 
   "project_view": {
     "sort_by": {

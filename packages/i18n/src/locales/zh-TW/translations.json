@@ -504,6 +504,9 @@
   "new_password_must_be_different_from_old_password": "新密碼必須與舊密碼不同",
   "edited": "已編輯",
   "bot": "機器人",
+  "choose_workspace_for_integration": "選擇工作區以連接此應用程式",
+  "integrations_description": "與 Plane 一起工作的應用程式必須連接到您是管理員的工作區",
+  "create_a_new_workspace": "建立新的工作區",
 
   "project_view": {
     "sort_by": {

@@ -502,6 +502,9 @@
   "new_password_must_be_different_from_old_password": "Nové heslo musí byť odlišné od starého hesla",
   "edited": "Upravené",
   "bot": "Bot",
+  "choose_workspace_for_integration": "Vyberte pracovný priestor pre pripojenie tejto aplikácie",
+  "integrations_description": "Aplikácie, ktoré fungujú s Plane, musia byť pripojené k pracovnom priestoru, kde ste správca.",
+  "create_a_new_workspace": "Vytvoriť nový pracovný priestor",
 
   "project_view": {
     "sort_by": {

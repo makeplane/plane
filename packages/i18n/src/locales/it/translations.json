@@ -504,6 +504,9 @@
 
   "edited": "Modificato",
   "bot": "Bot",
+  "choose_workspace_for_integration": "Scegli uno spazio di lavoro per connettere questa app",
+  "integrations_description": "Le app che funzionano con Plane devono connettersi a uno spazio di lavoro dove sei amministratore.",
+  "create_a_new_workspace": "Crea uno spazio di lavoro nuovo",
 
   "project_view": {
     "sort_by": {

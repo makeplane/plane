@@ -506,6 +506,9 @@
   "new_password_must_be_different_from_old_password": "La nueva contraseña debe ser diferente a la contraseña anterior",
   "edited": "Modificado",
   "bot": "Bot",
+  "choose_workspace_for_integration": "Elige un espacio de trabajo para conectar esta app",
+  "integrations_description": "Las apps que funcionan con Plane deben conectarse a un espacio de trabajo donde eres administrador.",
+  "create_a_new_workspace": "Crear un nuevo espacio de trabajo",
 
   "project_view": {
     "sort_by": {

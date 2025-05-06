@@ -502,6 +502,9 @@
   "export": "Exportă",
   "member": "{count, plural, one{# membru} other{# membri}}",
   "new_password_must_be_different_from_old_password": "Parola nouă trebuie să fie diferită de parola veche",
+  "choose_workspace_for_integration": "Alegeți un spațiu de lucru pentru a conecta această aplicație",
+  "integrations_description": "Aplicațiile care funcționează cu Plane trebuie să se conecteze la un spațiu de lucru unde sunteți administrator.",
+  "create_a_new_workspace": "Creați un nou spațiu de lucru",
 
   "project_view": {
     "sort_by": {

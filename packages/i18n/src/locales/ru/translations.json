@@ -502,6 +502,9 @@
   "new_password_must_be_different_from_old_password": "Новое пароль должен отличаться от старого пароля",
   "edited": "Редактировано",
   "bot": "Бот",
+  "choose_workspace_for_integration": "Выберите рабочее пространство для подключения этого приложения", 
+  "integrations_description": "Приложения, которые работают с Plane, должны быть подключены к рабочему пространству, где вы являетесь администратором.",
+  "create_a_new_workspace": "Создать новое рабочее пространство",
 
   "project_view": {
     "sort_by": {
