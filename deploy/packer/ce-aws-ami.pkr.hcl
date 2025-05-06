@@ -54,7 +54,7 @@ source "amazon-ebs" "plane_aws_ami" {
   secret_key    = var.aws_secret_key
   region        = var.aws_region
   ami_name      = "${var.ami_name_prefix}-${local.timestamp}"
-  instance_type = "t3a.micro"
+  instance_type = "t3a.small"
 
   vpc_filter {
     filters = {
@@ -117,35 +117,47 @@ build {
       "sudo chown -R ubuntu:ubuntu /opt/plane",
       "sudo chmod -R 755 /opt/plane",
       # Extract the application files
+      "echo 'Depacking admin files...'",
       "sudo tar -xzf /opt/plane/tars/admin-dist.tar.gz -C /opt/plane/extracted",
       "sudo mv /opt/plane/extracted/admin-dist/ /opt/plane/admin",
       "sudo cp /opt/plane/tars/admin.env /opt/plane/admin/admin.env",
 
+      "echo 'Depacking web files...'",
       "sudo tar -xzf /opt/plane/tars/web-dist.tar.gz -C /opt/plane/extracted",
       "sudo mv /opt/plane/extracted/web-dist/ /opt/plane/web",
       "sudo cp /opt/plane/tars/web.env /opt/plane/web/web.env",
 
+      "echo 'Depacking space files...'",
       "sudo tar -xzf /opt/plane/tars/space-dist.tar.gz -C /opt/plane/extracted",
       "sudo mv /opt/plane/extracted/space-dist/ /opt/plane/space",
       "sudo cp /opt/plane/tars/space.env /opt/plane/space/space.env",
 
+      "echo 'Depacking live files...'",
       "sudo tar -xzf /opt/plane/tars/live-dist.tar.gz -C /opt/plane/extracted",
       "sudo mv /opt/plane/extracted/live-dist/ /opt/plane/live",
       "sudo cp /opt/plane/tars/live.env /opt/plane/live/live.env",
 
+      "echo 'Depacking backend files...'",    
       "sudo tar -xzf /opt/plane/tars/backend-dist.tar.gz -C /opt/plane/extracted",
       "sudo mv /opt/plane/extracted/backend-dist/ /opt/plane/backend",
       "sudo cp /opt/plane/tars/backend.env /opt/plane/backend/backend.env",
 
+      "echo 'Copying services...'",
       "sudo cp /opt/plane/tars/*.service /opt/plane/svc/",
+
+      "echo 'Copying Caddyfile...'",
       "sudo cp /opt/plane/tars/Caddyfile /opt/plane/Caddyfile",
+
+      "echo 'Copying plane-ce.sh...'",
       "sudo cp /opt/plane/tars/plane-ce.sh /usr/local/bin/plane",
       "sudo chmod +x /usr/local/bin/plane",
 
+      "echo 'Removing extracted files...'",
       "sudo rm -rf /opt/plane/extracted",
       # "sudo rm -rf /opt/plane/tars",
 
       # Set proper permissions and verify installation
+      "echo 'Setting proper permissions...'",
       "sudo chown -R ubuntu:ubuntu /opt/plane",
       "sudo chmod -R 755 /opt/plane",
       # Verify installation

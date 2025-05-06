@@ -2,6 +2,7 @@
 
 DEBIAN_FRONTEND=noninteractive
 BACKEND_ENV_FILE=/opt/plane/backend/backend.env
+TERM=xterm-256color
 
 function welcome() {
 clear
@@ -36,6 +37,7 @@ function show_spinner(){
   final_message=${final_message/Stopping/Stopped}
   final_message=${final_message/Installing/Installed}
   final_message=${final_message/Updating/Updated}
+  final_message=${final_message/Adding/Added}
 
   # Clear temp log
   echo "" > "$temp_log"
