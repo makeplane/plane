@@ -458,12 +458,12 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
 
         files = []
         if multiple:
+            project_dict = defaultdict(list)
+            for issue in issues_data:
+                project_dict[str(issue["project_id"])].append(issue)
+
             for project_id in project_ids:
-                issues = [
-                    issue
-                    for issue in issues_data
-                    if str(issue["project_id"]) == str(project_id)
-                ]
+                issues = project_dict.get(str(project_id), [])
 
                 exporter = EXPORTER_MAPPER.get(provider)
                 if exporter is not None:
