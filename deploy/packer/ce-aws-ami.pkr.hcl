@@ -163,8 +163,8 @@ build {
       "DEBIAN_FRONTEND=noninteractive"
     ]
     inline = [
-      "sudo apt-get update",
-      # "/usr/local/bin/plane install"
+      # "sudo apt-get update",
+      "/usr/local/bin/plane install"
     ]
   }
 

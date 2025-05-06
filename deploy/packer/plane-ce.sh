@@ -20,39 +20,194 @@ cat <<"EOF"
 EOF
 }
 
+function show_spinner(){
+  local pid=$1
+  local delay=0.25
+  local spin='⣷⣯⣟⡿⢿⣻⣽⣾'
+  local charwidth=1
+  local i=0
+  local j=0
+  local GREEN='\e[32m'
+  local RED='\e[31m'
+  local NC='\e[0m'
+  local message=$2
+  local temp_log="/tmp/plane_install_temp.log"
+  local final_message=${message/Starting/Started}
+  final_message=${final_message/Stopping/Stopped}
+  final_message=${final_message/Installing/Installed}
+  final_message=${final_message/Updating/Updated}
+
+  # Clear temp log
+  echo "" > "$temp_log"
+
+  while ps -p $pid > /dev/null; do
+    local i=$(( (i + 1) % ${#spin} ))
+    local j=$(( j + 1 ))
+    printf "\r\033[K[${GREEN}${spin:$i:$charwidth}${NC}] $message..."
+    sleep $delay
+  done
+
+  wait $pid
+  local exit_status=$?
+  
+  if [ $exit_status -eq 0 ]; then
+    printf "\r\033[K[${GREEN}✓${NC}] $final_message\n"
+  else
+    printf "\r\033[K[${RED}✗${NC}] $final_message\n"
+    if [ -f "$temp_log" ]; then
+      echo -e "\nError details:"
+      cat "$temp_log"
+      echo ""
+    fi
+    return 1
+  fi
+  return 0
+}
+
 function install_nvm(){
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+  # Capture both stdout and stderr to temp log
+  curl -s -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Installing nvm"
+  if [ $? -ne 0 ]; then
+    return 1
+  fi
   . $HOME/.nvm/nvm.sh
-  nvm install 20
-  npm install -g yarn
+  nvm install 20 > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Installing node"
+  if [ $? -ne 0 ]; then
+    return 1
+  fi
+
+  . $HOME/.nvm/nvm.sh
+  npm install -g yarn > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Installing yarn"
+  if [ $? -ne 0 ]; then
+    return 1
+  fi
+  return 0
 }
 
 function install_python(){
-  sudo apt-get update
-  sudo apt-get install -y software-properties-common cloud-init rsyslog debian-keyring debian-archive-keyring apt-transport-https curl
-  sudo add-apt-repository -y ppa:deadsnakes/ppa
-  sudo apt-get update
-  sudo apt-get install -y python3.12 python3.12-venv python3.12-dev python3-pip
-  sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1
-  sudo apt-get install -y libpq-dev libffi-dev
+  # First update apt and install essential packages
+  sudo apt-get update -y > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Updating package lists for python"
+  if [ $? -ne 0 ]; then
+    return 1
+  fi
 
+  # Install core dependencies first
+  sudo apt-get install -y software-properties-common python3-apt apt-transport-https ca-certificates > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Installing core dependencies for python"
+  if [ $? -ne 0 ]; then
+    return 1
+  fi
+
+  # Verify python3-apt installation
+  if ! dpkg -l | grep -q python3-apt; then
+    echo "Failed to install python3-apt. This is required for repository management."
+    return 1
+  fi
+
+  # Add deadsnakes PPA using add-apt-repository
+  sudo add-apt-repository -y ppa:deadsnakes/ppa > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Adding Python repository"
+  if [ $? -ne 0 ]; then
+    return 1
+  fi
+
+  # Update again after adding new repository
+  sudo apt-get update > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Updating package lists"
+  if [ $? -ne 0 ]; then
+    return 1
+  fi
+
+  # Install Python 3.12 and its development packages
+  sudo apt-get install -y python3.12 python3.12-venv python3.12-dev python3-pip > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Installing Python 3.12"
+  if [ $? -ne 0 ]; then
+    return 1
+  fi
+
+  # Set Python 3.12 as the default python3
+  sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1 > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Setting Python 3.12 as default"
+  if [ $? -ne 0 ]; then
+    return 1
+  fi
+
+  # Install additional development dependencies
+  sudo apt-get install -y build-essential libpq-dev libffi-dev > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Installing development dependencies"
+  if [ $? -ne 0 ]; then
+    return 1
+  fi
+
+  # Verify Python installation
+  if ! command -v python3 &> /dev/null; then
+    echo "Python installation failed. Python3 command not found."
+    return 1
+  fi
+
+  # Verify pip installation
+  if ! command -v pip3 &> /dev/null; then
+    echo "Pip installation failed. pip3 command not found."
+    return 1
+  fi
+
+  return 0
 }
 
 function install_caddy(){
-  sudo apt-get install -y debian-keyring debian-archive-keyring apt-transport-https curl
-  curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-  curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
-  sudo apt-get update
-  sudo apt-get install caddy
-  sudo service caddy stop
-  sudo cp /opt/plane/Caddyfile /etc/caddy/Caddyfile
+  sudo apt-get update -y > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Updating apt for Caddy"
+  if [ $? -ne 0 ]; then
+    return 1
+  fi
+  sudo apt-get install -y debian-keyring debian-archive-keyring apt-transport-https curl > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Installing Caddy dependencies"
+  if [ $? -ne 0 ]; then
+    echo "Failed to install Caddy dependencies"
+    return 1
+  fi
+  curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor --yes -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg > /tmp/plane_install_temp.log 2>&1
+  curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list > /tmp/plane_install_temp.log 2>&1
+  sudo apt-get update > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Updating apt for Caddy"
+  if [ $? -ne 0 ]; then
+    echo "Failed to update apt for Caddy"
+    return 1
+  fi
+  sudo apt-get install caddy > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Installing Caddy"
+  if [ $? -ne 0 ]; then
+    echo "Failed to install Caddy"
+    return 1
+  fi
+  sudo service caddy stop > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Stopping Caddy"
+  if [ $? -ne 0 ]; then
+    echo "Failed to stop Caddy"
+    return 1
+  fi
+  sudo cp /opt/plane/Caddyfile /etc/caddy/Caddyfile > /tmp/plane_install_temp.log 2>&1
 }
 
 function install_backend_dependencies(){
   local backend_dir=/opt/plane/backend
-  python3 -m venv $backend_dir/.venv
+  python3 -m venv $backend_dir/.venv > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Creating virtual environment"
+  if [ $? -ne 0 ]; then
+    echo "Failed to create virtual environment"
+    exit 1
+  fi
   source $backend_dir/.venv/bin/activate
-  pip install -r $backend_dir/requirements.txt --compile
+  pip install -r $backend_dir/requirements.txt --compile > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Installing backend dependencies"
+  if [ $? -ne 0 ]; then
+    echo "Failed to install backend dependencies"
+    exit 1
+  fi
   deactivate
 }
 
@@ -80,75 +235,45 @@ function create_services(){
 }
 
 function install_prerequisites() {
-  echo "Installing prerequisites"
+  install_caddy
+  if [ $? -ne 0 ]; then
+    echo -e "\n${RED}Installation failed during Caddy setup${NC}"
+    exit 1
+  fi
+
   install_nvm
   if [ $? -ne 0 ]; then
-    echo "Failed to install nvm"
+    echo -e "\n${RED}Installation failed during Node.js setup${NC}"
     exit 1
   fi
 
   install_python
   if [ $? -ne 0 ]; then
-    echo "Failed to install python"
+    echo -e "\n${RED}Installation failed during Python setup${NC}"
     exit 1
   fi
-
-  install_caddy
-  if [ $? -ne 0 ]; then
-    echo "Failed to install caddy"
-    exit 1
-  fi
-
-  source ~/.nvm/nvm.sh
-  node --version
-  npm -v
-  yarn --version
-  python3 --version
-  caddy version
 
   create_services
   if [ $? -ne 0 ]; then
-    echo "Failed to create services"
+    echo -e "\n${RED}Installation failed during service creation${NC}"
     exit 1
   fi
 
   install_backend_dependencies
   if [ $? -ne 0 ]; then
-    echo "Failed to install backend dependencies"
+    echo -e "\n${RED}Installation failed during backend dependencies setup${NC}"
     exit 1
   fi
 
-}
-
-function show_spinner(){
-  local pid=$1
-  local delay=0.25
-  local spin='⣷⣯⣟⡿⢿⣻⣽⣾'
-  local charwidth=1
-  local i=0
-  local j=0
-  local GREEN='\e[32m'
-  local RED='\e[31m'
-  local NC='\e[0m'
-  local message=$2
-  local final_message=${message/Starting/Started}
-  final_message=${final_message/Stopping/Stopped}
-
-  while ps -p $pid > /dev/null; do
-    local i=$(( (i + 1) % ${#spin} ))
-    local j=$(( j + 1 ))
-    printf "\r\033[K[${GREEN}${spin:$i:$charwidth}${NC}] $message..."
-    sleep $delay
-  done
-
-  wait $pid
-  local exit_status=$?
-  
-  if [ $exit_status -eq 0 ]; then
-    printf "\r\033[K[${GREEN}✓${NC}] $final_message\n"
-  else
-    printf "\r\033[K[${RED}✗${NC}] $final_message\n"
-  fi
+  # Show installed versions
+  echo -e "\n${GREEN}Installation completed successfully!${NC}"
+  echo -e "\nInstalled versions:"
+  source ~/.nvm/nvm.sh
+  echo "Node.js: $(node --version)"
+  echo "npm: $(npm -v)"
+  echo "Yarn: $(yarn --version)"
+  echo "Python: $(python3 --version)"
+  echo "Caddy: $(caddy version | head -n1)"
 }
 
 function start_single_service(){
