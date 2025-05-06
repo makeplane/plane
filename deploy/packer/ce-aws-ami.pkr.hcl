@@ -197,6 +197,7 @@ build {
       "/usr/local/bin/plane install",
       "sudo systemctl enable ssh",
       "sudo systemctl start ssh"
+      "/usr/local/bin/plane stop"
     ]
   }
 

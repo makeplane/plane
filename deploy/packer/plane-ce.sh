@@ -285,8 +285,51 @@ function create_services(){
 
 }
 
-function install_prerequisites() {
+function setup_welcome_message() {
+  # Create a custom MOTD file
+  sudo tee /etc/update-motd.d/99-plane-welcome > /dev/null << 'EOF'
+#!/bin/bash
 
+# Colors
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+cat << "BANNER"
+--------------------------------------------
+ ____  _                          ///////// 
+|  _ \| | __ _ _ __   ___         ///////// 
+| |_) | |/ _` | '_ \ / _ \   /////    ///// 
+|  __/| | (_| | | | |  __/   /////    ///// 
+|_|   |_|\__,_|_| |_|\___|        ////      
+                                  ////      
+--------------------------------------------
+           Project management tool          
+--------------------------------------------
+BANNER
+
+echo -e "${GREEN}Welcome to Plane CE Server!${NC}"
+echo -e "${BLUE}Available commands:${NC}"
+echo "  plane start   - Start all services"
+echo "  plane stop    - Stop all services"
+echo "  plane status  - Check services status"
+echo "  plane logs    - View service logs"
+echo "  plane config  - Configure Plane"
+echo ""
+echo "For more information, visit: https://docs.plane.so"
+echo "--------------------------------------------"
+EOF
+
+  # Make the MOTD script executable
+  sudo chmod +x /etc/update-motd.d/99-plane-welcome
+
+  # Remove default MOTD files that we don't need
+  sudo rm -f /etc/update-motd.d/10-help-text
+  sudo rm -f /etc/update-motd.d/50-motd-news
+  sudo rm -f /etc/update-motd.d/99-esm
+}
+
+function install_prerequisites() {
   validate_and_fix_python
   if [ $? -ne 0 ]; then
     echo -e "\n${RED}Python yet to be installed${NC}"
@@ -320,6 +363,12 @@ function install_prerequisites() {
   if [ $? -ne 0 ]; then
     echo -e "\n${RED}Installation failed during backend dependencies setup${NC}"
     exit 1
+  fi
+
+  setup_welcome_message
+  if [ $? -ne 0 ]; then
+    echo -e "\n${RED}Failed to setup welcome message${NC}"
+    # exit 1
   fi
 
   # Show installed versions
