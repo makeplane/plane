@@ -10,7 +10,7 @@ const Overview: React.FC = () => (
   <AnalyticsWrapper title="Overview" >
     <div className='flex flex-col gap-14'>
       <TotalInsights analyticsType='overview' />
-      <div className='gap-14 grid grid-cols-5'>
+      <div className='gap-14 grid grid-cols-1 md:grid-cols-5 '>
         <ProjectInsights />
         <ActiveProjects />
       </div>

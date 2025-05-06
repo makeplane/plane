@@ -1,9 +1,7 @@
-import { useMemo } from 'react'
 import { observer } from 'mobx-react'
 import dynamic from 'next/dynamic'
 import { useParams } from 'next/navigation'
 import useSWR from 'swr'
-import { PROJECT_CREATED_AT_FILTER_OPTIONS } from '@plane/constants'
 import { useTranslation } from '@plane/i18n'
 import { TChartData } from '@plane/types'
 import { useAnalyticsV2 } from '@/hooks/store/use-analytics-v2'
@@ -37,7 +35,7 @@ const ProjectInsights = observer(() => {
 
 
   return (
-    <AnalyticsSectionWrapper title={`${t('workspace_analytics.project_insights')}`} subtitle={selectedDurationLabel} className='col-span-3'>
+    <AnalyticsSectionWrapper title={`${t('workspace_analytics.project_insights')}`} subtitle={selectedDurationLabel} className='md:col-span-3'>
       {isLoadingProjectInsight ? <ProjectInsightsLoader /> :
         projectInsightsData && projectInsightsData?.length == 0 ?
           <AnalyticsV2EmptyState
@@ -45,9 +43,9 @@ const ProjectInsights = observer(() => {
             description={t('workspace_analytics.empty_state_v2.project_insights.description')}
             className='h-[200px]'
           /> :
-          <div className='flex gap-8'>
+          <div className='lg:flex gap-8'>
             {projectInsightsData && <RadarChart
-              className='h-[350px] w-3/5'
+              className='h-[350px] w-full lg:w-3/5'
               data={projectInsightsData}
               dataKey='key'
               radars={[{
@@ -67,7 +65,7 @@ const ProjectInsights = observer(() => {
                 key: 'name',
               }}
             />}
-            <div className='w-2/5'>
+            <div className='w-full lg:w-2/5'>
               <div className='text-sm text-custom-text-300'>{t('workspace_analytics.summary_of_projects')}</div>
               <div className=' border-b border-custom-border-100 py-2 mb-3'>{t('workspace_analytics.all_projects')}</div>
               <div className='flex flex-col gap-4'>

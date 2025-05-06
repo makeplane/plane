@@ -17,7 +17,7 @@ const ActiveProjects = observer(() => {
         fields: "total_work_items,total_completed_work_items"
     }) : null)
     return (
-        <AnalyticsSectionWrapper title={`${t('workspace_analytics.active_projects')}`} subtitle={selectedDurationLabel} className='col-span-2'>
+        <AnalyticsSectionWrapper title={`${t('workspace_analytics.active_projects')}`} subtitle={selectedDurationLabel} className='md:col-span-2'>
             <div className='flex flex-col gap-4'>
                 {isProjectAnalyticsCountLoading && Array.from({ length: 5 }).map((_, index) => (
                     <Loader.Item key={index} height='40px' width='100%' />
