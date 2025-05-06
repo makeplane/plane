@@ -99,6 +99,10 @@ build {
 
   # Copy application files
   provisioner "shell" {
+    environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive",
+      "TERM=xterm-256color"
+    ]
     inline = [
       "sudo mkdir -p /opt/plane/tars /opt/plane/extracted",
       "sudo chown -R ubuntu:ubuntu /opt/plane"
@@ -112,6 +116,10 @@ build {
 
   # Set proper permissions and verify installation
   provisioner "shell" {
+    environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive",
+      "TERM=xterm-256color"
+    ]
     inline = [
       "sudo mkdir -p /opt/plane/svc",
       "sudo chown -R ubuntu:ubuntu /opt/plane",
@@ -170,7 +178,8 @@ build {
 
   provisioner "shell" {
     environment_vars = [
-      "DEBIAN_FRONTEND=noninteractive"
+      "DEBIAN_FRONTEND=noninteractive",
+      "TERM=xterm-256color"
     ]
     inline = [
       "sudo apt-get update",
@@ -180,7 +189,8 @@ build {
   # Update and install basic requirements
   provisioner "shell" {
     environment_vars = [
-      "DEBIAN_FRONTEND=noninteractive"
+      "DEBIAN_FRONTEND=noninteractive",
+      "TERM=xterm-256color"
     ]
     inline = [
       # "sudo apt-get update",

@@ -43,6 +43,26 @@ function show_spinner(){
   # Clear temp log
   echo "" > "$temp_log"
 
+  # Check if running in CI environment
+  if [ -n "$CI" ]; then
+    echo "🔄 $message..."
+    wait $pid
+    local exit_status=$?
+    if [ $exit_status -eq 0 ]; then
+      echo "✅ $final_message"
+    else
+      echo "❌ $final_message"
+      if [ -f "$temp_log" ]; then
+        echo -e "\nError details:"
+        cat "$temp_log"
+        echo ""
+      fi
+      return 1
+    fi
+    return 0
+  fi
+
+  # Interactive environment with spinner
   while ps -p $pid > /dev/null; do
     local i=$(( (i + 1) % ${#spin} ))
     local j=$(( j + 1 ))
@@ -139,7 +159,7 @@ function install_nvm(){
   fi
   . $HOME/.nvm/nvm.sh
   nvm install 20 > /tmp/plane_install_temp.log 2>&1 &
-  show_spinner $! "Installing node"
+  show_spinner $! "Installing node 20"
   if [ $? -ne 0 ]; then
     return 1
   fi
@@ -156,7 +176,7 @@ function install_nvm(){
 function install_python(){
   # First update apt and install essential packages
   sudo apt-get update -y > /tmp/plane_install_temp.log 2>&1 &
-  show_spinner $! "Updating package lists for python"
+  show_spinner $! "Updating system packages"
   if [ $? -ne 0 ]; then
     return 1
   fi
@@ -183,7 +203,7 @@ function install_python(){
 
   # Update again after adding new repository
   sudo apt-get update > /tmp/plane_install_temp.log 2>&1 &
-  show_spinner $! "Updating package lists"
+  show_spinner $! "Updating system packages for deadsnakes PPA"
   if [ $? -ne 0 ]; then
     return 1
   fi
