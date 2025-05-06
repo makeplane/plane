@@ -16,7 +16,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 
-import { Search } from "lucide-react"
+import { Search, X } from "lucide-react"
 import { useTranslation } from "@plane/i18n"
 import {
   Table,
@@ -27,6 +27,7 @@ import {
   TableRow,
 } from "@plane/propel/table"
 import { Input } from "@plane/ui"
+import { cn } from "@plane/utils"
 import AnalyticsV2EmptyState from "../empty-state"
 
 interface DataTableProps<TData, TValue> {
@@ -48,6 +49,8 @@ export function DataTable<TData, TValue>({
   )
   const [sorting, setSorting] = React.useState<SortingState>([])
   const { t } = useTranslation()
+  const inputRef = React.useRef<HTMLInputElement>(null)
+  const [isSearchOpen, setIsSearchOpen] = React.useState(false)
 
   const table = useReactTable({
     data,
@@ -73,17 +76,59 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      {table.getHeaderGroups()?.[0]?.headers?.[0]?.id && <div className="flex items-center gap-2">
-        <Input
-          placeholder={searchPlaceholder}
-          value={(table.getColumn(table.getHeaderGroups()?.[0].headers[0].id)?.getFilterValue() as string) ?? ""}
-          onChange={(event) => {
-            table.getColumn(table.getHeaderGroups()?.[0].headers[0].id)?.setFilterValue(event.target.value)
-          }}
-          className="w-30 border-none"
-        />
-        <Search className="w-4 h-4 opacity-50" />
-      </div>}
+
+      <div className="max-w-[300px] relative flex items-center gap-4 ">
+        {table.getHeaderGroups()?.[0]?.headers?.[0]?.id && <div className="flex items-center gap-2 text-sm text-custom-text-400 whitespace-nowrap">
+          {searchPlaceholder}
+        </div>}
+        {!isSearchOpen && (
+          <button
+            type="button"
+            className="-mr-5 p-2 hover:bg-custom-background-80 rounded text-custom-text-400 grid place-items-center"
+            onClick={() => {
+              setIsSearchOpen(true);
+              inputRef.current?.focus();
+            }}
+          >
+            <Search className="h-3.5 w-3.5" />
+          </button>
+        )}
+        <div
+          className={cn(
+            "mr-auto flex items-center justify-start gap-1 rounded-md border border-transparent bg-custom-background-100 text-custom-text-400 w-0 transition-[width] ease-linear overflow-hidden opacity-0",
+            {
+              "w-64 px-2.5 py-1.5 border-custom-border-200 opacity-100": isSearchOpen,
+            }
+          )}
+        >
+          <Search className="h-3.5 w-3.5" />
+          <input
+            ref={inputRef}
+            className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
+            placeholder="Search"
+            value={table.getColumn(table.getHeaderGroups()?.[0].headers[0].id)?.getFilterValue() as string}
+            onChange={(e) => table.getColumn(table.getHeaderGroups()?.[0].headers[0].id)?.setFilterValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setIsSearchOpen(true)
+              }
+            }}
+          />
+          {isSearchOpen && (
+            <button
+              type="button"
+              className="grid place-items-center"
+              onClick={() => {
+                table.getColumn(table.getHeaderGroups()?.[0].headers[0].id)?.setFilterValue("");
+                setIsSearchOpen(false);
+              }}
+            >
+              <X className="h-3 w-3" />
+            </button>
+          )}
+        </div>
+      </div>
+
       <div className="rounded-md">
         <Table>
           <TableHeader>
