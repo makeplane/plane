@@ -38,6 +38,7 @@ function show_spinner(){
   final_message=${final_message/Installing/Installed}
   final_message=${final_message/Updating/Updated}
   final_message=${final_message/Adding/Added}
+  final_message=${final_message/Reinstalling/Reinstalled}
 
   # Clear temp log
   echo "" > "$temp_log"
@@ -64,6 +65,69 @@ function show_spinner(){
     return 1
   fi
   return 0
+}
+
+function validate_and_fix_python(){
+  local python_version=$(python3 --version)
+  if [ $? -ne 0 ]; then
+    echo "Failed to get Python version"
+    return 1
+  fi
+
+  # check if python3-apt is installed
+  if ! dpkg -l | grep -q python3-apt; then
+    echo "python3-apt is not installed"
+    return 1
+  fi
+
+  sudo apt install --reinstall python3-apt > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Reinstalling python3-apt"
+  if [ $? -ne 0 ]; then
+    echo "Failed to reinstall python3-apt"
+    exit 1
+  fi
+
+  if [ -f "/usr/lib/python3/dist-packages/apt_pkg.cpython-310-x86_64-linux-gnu.so" ] && 
+      [ ! -f "/usr/lib/python3/dist-packages/apt_pkg.cpython-312-x86_64-linux-gnu.so" ]; then
+    sudo ln -s /usr/lib/python3/dist-packages/apt_pkg.cpython-310-x86_64-linux-gnu.so /usr/lib/python3/dist-packages/apt_pkg.cpython-312-x86_64-linux-gnu.so
+  fi
+
+  return 0
+}
+
+function install_caddy(){
+  sudo apt-get update -y > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Updating apt for Caddy"
+  if [ $? -ne 0 ]; then
+    return 1
+  fi
+  sudo apt-get install -y debian-keyring debian-archive-keyring apt-transport-https curl > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Installing Caddy dependencies"
+  if [ $? -ne 0 ]; then
+    echo "Failed to install Caddy dependencies"
+    return 1
+  fi
+  curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor --yes -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg > /tmp/plane_install_temp.log 2>&1
+  curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list > /tmp/plane_install_temp.log 2>&1
+  sudo apt-get update > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Updating apt for Caddy"
+  if [ $? -ne 0 ]; then
+    echo "Failed to update apt for Caddy"
+    return 1
+  fi
+  sudo apt-get install caddy > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Installing Caddy"
+  if [ $? -ne 0 ]; then
+    echo "Failed to install Caddy"
+    return 1
+  fi
+  sudo service caddy stop > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Stopping Caddy"
+  if [ $? -ne 0 ]; then
+    echo "Failed to stop Caddy"
+    return 1
+  fi
+  sudo cp /opt/plane/Caddyfile /etc/caddy/Caddyfile > /tmp/plane_install_temp.log 2>&1
 }
 
 function install_nvm(){
@@ -131,9 +195,9 @@ function install_python(){
     return 1
   fi
 
-  # Set Python 3.12 as the default python3
-  sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1 > /tmp/plane_install_temp.log 2>&1 &
-  show_spinner $! "Setting Python 3.12 as default"
+  # Instead of changing system Python, create a symlink in /usr/local/bin
+  sudo ln -sf /usr/bin/python3.12 /usr/local/bin/python3 > /tmp/plane_install_temp.log 2>&1 &
+  show_spinner $! "Creating Python symlink"
   if [ $? -ne 0 ]; then
     return 1
   fi
@@ -158,41 +222,6 @@ function install_python(){
   fi
 
   return 0
-}
-
-function install_caddy(){
-  sudo apt-get update -y > /tmp/plane_install_temp.log 2>&1 &
-  show_spinner $! "Updating apt for Caddy"
-  if [ $? -ne 0 ]; then
-    return 1
-  fi
-  sudo apt-get install -y debian-keyring debian-archive-keyring apt-transport-https curl > /tmp/plane_install_temp.log 2>&1 &
-  show_spinner $! "Installing Caddy dependencies"
-  if [ $? -ne 0 ]; then
-    echo "Failed to install Caddy dependencies"
-    return 1
-  fi
-  curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor --yes -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg > /tmp/plane_install_temp.log 2>&1
-  curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list > /tmp/plane_install_temp.log 2>&1
-  sudo apt-get update > /tmp/plane_install_temp.log 2>&1 &
-  show_spinner $! "Updating apt for Caddy"
-  if [ $? -ne 0 ]; then
-    echo "Failed to update apt for Caddy"
-    return 1
-  fi
-  sudo apt-get install caddy > /tmp/plane_install_temp.log 2>&1 &
-  show_spinner $! "Installing Caddy"
-  if [ $? -ne 0 ]; then
-    echo "Failed to install Caddy"
-    return 1
-  fi
-  sudo service caddy stop > /tmp/plane_install_temp.log 2>&1 &
-  show_spinner $! "Stopping Caddy"
-  if [ $? -ne 0 ]; then
-    echo "Failed to stop Caddy"
-    return 1
-  fi
-  sudo cp /opt/plane/Caddyfile /etc/caddy/Caddyfile > /tmp/plane_install_temp.log 2>&1
 }
 
 function install_backend_dependencies(){
@@ -237,6 +266,12 @@ function create_services(){
 }
 
 function install_prerequisites() {
+
+  validate_and_fix_python
+  if [ $? -ne 0 ]; then
+    echo -e "\n${RED}Python yet to be installed${NC}"
+  fi
+
   install_caddy
   if [ $? -ne 0 ]; then
     echo -e "\n${RED}Installation failed during Caddy setup${NC}"
