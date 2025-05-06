@@ -202,7 +202,6 @@ jobs:
           name: backend-dist
           path: backend-dist.tar.gz
           retention-days: 1
-
   # Job to build the appliance using hashicorp packer
   build_appliance:
     needs: [build_setup, build_admin, build_web, build_space, build_live, build_backend]
@@ -265,7 +264,7 @@ jobs:
           packer build \
             -var "aws_access_key=${{ secrets.PLANE_DEV_AWS_ACCESS_KEY_ID }}" \
             -var "aws_secret_key=${{ secrets.PLANE_DEV_AWS_SECRET_ACCESS_KEY }}" \
-            -var "ami_name_prefix=${{ env.AMI_NAME_PREFIX }}" \
+            -var "ami_name_prefix=${{ env.AMI_NAME_PREFIX }}-${{ needs.build_setup.outputs.tag_name }}" \
             -var "vpc_cidr=${{ env.VPC_CIDR }}" \
             -var "subnet_cidr=${{ env.SUBNET_CIDR }}" \
             -var "base_image_owner=${{ env.BASE_IMAGE_OWNER }}" \

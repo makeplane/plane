@@ -54,7 +54,7 @@ source "amazon-ebs" "plane_aws_ami" {
   secret_key    = var.aws_secret_key
   region        = var.aws_region
   ami_name      = "${var.ami_name_prefix}-${local.timestamp}"
-  instance_type = "t3a.small"
+  instance_type = "t3a.medium"
 
   vpc_filter {
     filters = {

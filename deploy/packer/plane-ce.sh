@@ -417,6 +417,11 @@ function service_logs(){
     echo "Usage: logs <service_name>"
     exit 1
   fi
+  sudo journalctl -u $1 -f
+  if [ $? -ne 0 ]; then
+    echo "Failed to get logs for $1"
+    exit 1
+  fi
 }
 
 function update_env_file(){
