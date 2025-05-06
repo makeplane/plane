@@ -1,18 +1,25 @@
 # Django imports
 from django.conf import settings
 from django.http import HttpRequest
+
 # Third party imports
 from rest_framework.request import Request
 
 # Module imports
 from plane.utils.ip_address import get_client_ip
 
-def base_host(request: Request | HttpRequest, is_admin: bool = False, is_space: bool = False, is_app: bool = False) -> str:
+
+def base_host(
+    request: Request | HttpRequest,
+    is_admin: bool = False,
+    is_space: bool = False,
+    is_app: bool = False,
+) -> str:
     """Utility function to return host / origin from the request"""
     # Calculate the base origin from request
     base_origin = settings.WEB_URL or settings.APP_BASE_URL
 
-    # Admin redirections
+    # Admin redirection
     if is_admin:
         admin_base_path = getattr(settings, "ADMIN_BASE_PATH", "/god-mode/")
         if not admin_base_path.startswith("/"):
@@ -25,7 +32,7 @@ def base_host(request: Request | HttpRequest, is_admin: bool = False, is_space: 
         else:
             return base_origin + admin_base_path
 
-    # Space redirections
+    # Space redirection
     if is_space:
         space_base_path = getattr(settings, "SPACE_BASE_PATH", "/spaces/")
         if not space_base_path.startswith("/"):
