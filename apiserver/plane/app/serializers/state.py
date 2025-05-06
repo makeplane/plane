@@ -1,11 +1,13 @@
 # Module imports
 from .base import BaseSerializer
-
+from rest_framework import serializers
 
 from plane.db.models import State
 
 
 class StateSerializer(BaseSerializer):
+    order = serializers.FloatField(required=False)
+
     class Meta:
         model = State
         fields = [
@@ -18,6 +20,7 @@ class StateSerializer(BaseSerializer):
             "default",
             "description",
             "sequence",
+            "order",
         ]
         read_only_fields = ["workspace", "project"]
 

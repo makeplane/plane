@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // ui
+import { EIconSize } from "@plane/constants";
 import { Loader, StateGroupIcon } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/filters/helpers";
@@ -51,7 +52,7 @@ export const FilterState: React.FC<Props> = observer((props) => {
                     key={state.id}
                     isChecked={appliedFilters?.includes(state.id) ? true : false}
                     onClick={() => handleUpdate(state.id)}
-                    icon={<StateGroupIcon stateGroup={state.group} color={state.color} />}
+                    icon={<StateGroupIcon stateGroup={state.group} color={state.color} size={EIconSize.MD} />}
                     title={state.name}
                   />
                 ))}

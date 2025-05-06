@@ -56,10 +56,20 @@ LOGGING = {
         }
     },
     "loggers": {
+        "plane.api.request": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
         "plane.api": {"level": "INFO", "handlers": ["console"], "propagate": False},
         "plane.worker": {"level": "INFO", "handlers": ["console"], "propagate": False},
         "plane.exception": {
             "level": "ERROR",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "plane.external": {
+            "level": "INFO",
             "handlers": ["console"],
             "propagate": False,
         },
