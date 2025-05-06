@@ -30,7 +30,7 @@ const TotalInsights: React.FC<{ analyticsType: TAnalyticsTabsV2Base }> = observe
         }))
 
     return (
-        <div className={cn('grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10',
+        <div className={cn('grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-10',
             insightsFields[analyticsType].length % 5 === 0 ? 'lg:grid-cols-5 gap-10' : 'lg:grid-cols-4 gap-8'
         )}>
             {insightsFields[analyticsType].map((item: string) => (
