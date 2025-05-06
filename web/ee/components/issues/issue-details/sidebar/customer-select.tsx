@@ -19,10 +19,12 @@ type TProps = {
 export const CustomerSelect: FC<TProps> = observer((props) => {
   const { workItemId, value, workspaceSlug, compact = false } = props;
   // hooks
-  const { addWorkItemsToCustomer, removeWorkItemFromCustomer } = useCustomers();
+  const {
+    workItems: { addWorkItemsToCustomer, removeWorkItemFromCustomer },
+  } = useCustomers();
   const { t } = useTranslation();
 
-  const handleChange = (_value: string | string[]) => {
+  const handleChange = async (_value: string | string[]) => {
     // get the newly added customer id
     const addedCustomerIds = difference(_value, value || []);
     const removedCustomerIds = difference(value || [], _value);
@@ -36,7 +38,7 @@ export const CustomerSelect: FC<TProps> = observer((props) => {
       });
     }
     if (removedCustomerIds.length) {
-      removeWorkItemFromCustomer(workspaceSlug, removedCustomerIds[0], workItemId).catch(() => {
+      await removeWorkItemFromCustomer(workspaceSlug, removedCustomerIds[0], workItemId).catch(() => {
         setToast({
           title: t("toast.error"),
           type: TOAST_TYPE.ERROR,

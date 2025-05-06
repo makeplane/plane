@@ -47,8 +47,8 @@ export const addIssueToPersistanceLayer = async (issue: TIssue) => {
       "label_ids",
       "module_ids",
       "type_id",
-      "customer_count",
-      "customer_request_count",
+      "customer_ids",
+      "customer_request_ids",
       "description_html",
     ]);
     await updateIssue({ ...issuePartial, is_local_update: 1 });

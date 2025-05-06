@@ -105,7 +105,9 @@ export const SearchItems: {
     ),
     path: (page: IWorkspacePageEnhancedSearchResult) => {
       const redirectProjectId = page?.project_ids?.[0];
-      return `/${page?.workspace_slug}/projects/${redirectProjectId}/pages/${page?.id}`;
+      return redirectProjectId
+        ? `/${page?.workspace_slug}/projects/${redirectProjectId}/pages/${page?.id}`
+        : `/${page?.workspace_slug}/pages/${page?.id}`;
     },
     title: "Pages",
   },

@@ -5,11 +5,28 @@ import { getConnectionDetails } from "../../helpers/connection-details";
 import { ENTITIES } from "../../helpers/constants";
 import { convertToSlackOptions } from "../../helpers/slack-options";
 import { createProjectSelectionModal } from "../../views";
+import { getAccountConnectionBlocks } from "../../views/account-connection";
 
 export const handleCommand = async (data: TSlackCommandPayload) => {
-  const details = await getConnectionDetails(data.team_id);
+  const details = await getConnectionDetails(data.team_id, {
+    id: data.user_id,
+  });
   if (!details) {
     logger.info(`[SLACK] No connection details found for team ${data.team_id}`);
+    return;
+  }
+
+  if (details.missingUserCredentials) {
+    const { slackService } = details;
+
+    await slackService.sendEphemeralMessage(
+      data.user_id,
+      "Please connect your Slack account to Plane to use this feature.",
+      data.channel_id,
+      undefined,
+      getAccountConnectionBlocks(details)
+    );
+
     return;
   }
 
@@ -38,9 +55,7 @@ export const handleCommand = async (data: TSlackCommandPayload) => {
     }
   } catch (error: any) {
     const isPermissionError = error?.detail?.includes(CONSTANTS.NO_PERMISSION_ERROR);
-    const errorMessage = isPermissionError
-      ? CONSTANTS.NO_PERMISSION_ERROR_MESSAGE
-      : CONSTANTS.SOMETHING_WENT_WRONG;
+    const errorMessage = isPermissionError ? CONSTANTS.NO_PERMISSION_ERROR_MESSAGE : CONSTANTS.SOMETHING_WENT_WRONG;
 
     await slackService.sendEphemeralMessage(data.user_id, errorMessage, data.channel_id);
   }

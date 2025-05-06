@@ -2,6 +2,7 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
+import { EIconSize } from "@plane/constants";
 import { IState } from "@plane/types";
 import { Loader, StateGroupIcon } from "@plane/ui";
 // components
@@ -55,7 +56,14 @@ export const FilterState: FC<Props> = observer((props) => {
                     key={state?.id}
                     isChecked={filterValue?.includes(state?.id) ? true : false}
                     onClick={() => handleInboxIssueFilters("state", handleFilterValue(state.id))}
-                    icon={<StateGroupIcon color={state.color} stateGroup={state.group} height="12px" width="12px" />}
+                    icon={
+                      <StateGroupIcon
+                        color={state.color}
+                        stateGroup={state.group}
+                        size={EIconSize.SM}
+                        percentage={state?.order}
+                      />
+                    }
                     title={state.name}
                   />
                 ))}

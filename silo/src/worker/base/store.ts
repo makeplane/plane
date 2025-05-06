@@ -115,6 +115,10 @@ export class Store extends EventEmitter {
     return await this.client.get(key);
   }
 
+  public async getList(key: string): Promise<string[] | null> {
+    return await this.client.lRange(key, 0, -1);
+  }
+
   public async set(key: string, value: string, ttl?: number, NX = true): Promise<boolean> {
     this.jobs.push(key);
 
@@ -124,6 +128,29 @@ export class Store extends EventEmitter {
     } else {
       const acquired = await this.client.set(key, value, NX ? { NX: true } : {});
       return acquired === "OK";
+    }
+  }
+
+  public async setList(key: string, value: string, ttl?: number, NX = true): Promise<boolean> {
+    try {
+      const exists = await this.client.exists(key) > 0;
+      if (NX && exists) return false;
+
+      // Atomic operation: delete if exists, then push new items
+      const multi = this.client.multi();
+
+      // Push the value to the list
+      multi.rPush(key, value);
+
+      // Set the expiration time
+      if (ttl) multi.expire(key, ttl);
+
+      // Execute the transaction
+      await multi.exec();
+      return true;
+    } catch (error) {
+      logger.error(`Error in setList for key ${key}:`, error);
+      return false;
     }
   }
 

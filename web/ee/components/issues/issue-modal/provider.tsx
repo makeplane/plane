@@ -2,8 +2,9 @@ import React, { useCallback, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 // plane imports
-import { DEFAULT_WORK_ITEM_FORM_VALUES, EWorkItemTypeEntity } from "@plane/constants";
-import { ISearchIssueResponse, TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
+import { DEFAULT_WORK_ITEM_FORM_VALUES, EWorkItemConversionType, EWorkItemTypeEntity } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { ISearchIssueResponse, TIssue, TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import {
   extractAndSanitizeCustomPropertyValuesFormData,
@@ -39,6 +40,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
   const [issuePropertyValues, setIssuePropertyValues] = useState<TIssuePropertyValues>({});
   const [issuePropertyValueErrors, setIssuePropertyValueErrors] = useState<TIssuePropertyValueErrors>({});
   // store hooks
+  const { t } = useTranslation();
   const { getProjectStateIds, getAvailableWorkItemCreationStateIds, fetchProjectStates } = useProjectState();
   const { getProjectLabelIds, fetchProjectLabels } = useLabel();
   const { getModulesFetchStatusByProjectId, getProjectModuleIds, fetchModules } = useModule();
@@ -49,6 +51,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
   const {
     isWorkItemTypeEnabledForProject,
     getIssueTypeById,
+    convertWorkItem,
     getIssueTypeProperties,
     getProjectIssueTypes,
     getProjectDefaultIssueType,
@@ -314,6 +317,31 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
     ]
   );
 
+  /**
+   * Used to handle work item conversion
+   */
+  const handleConvert = async (workspaceSlug: string, data: Partial<TIssue> | undefined) => {
+    if (data?.id && data?.project_id) {
+      await convertWorkItem(workspaceSlug.toString(), data.project_id, data?.id, EWorkItemConversionType.WORK_ITEM)
+        .then(() => {
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: t("success"),
+            message: "Epic converted to work item successfully",
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("error"),
+            message: "Epic could not be converted to work item. Please try again.",
+          });
+          throw error;
+        });
+    }
+  };
+
   return (
     <IssueModalContext.Provider
       value={{
@@ -333,6 +361,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
         handleCreateUpdatePropertyValues,
         handleProjectEntitiesFetch,
         handleTemplateChange,
+        handleConvert,
       }}
     >
       {children}

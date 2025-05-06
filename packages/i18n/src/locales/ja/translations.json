@@ -570,7 +570,7 @@
       }
     }
   },
-  
+
   "new_password_must_be_different_from_old_password": "新しいパスワードは古いパスワードと異なる必要があります",
   "edited": "編集済み",
   "bot": "ボット",
@@ -941,7 +941,9 @@
     "pending": "保留中",
     "invite": "招待",
     "view": "ビュー",
-    "deactivated_user": "無効化されたユーザー"
+    "deactivated_user": "無効化されたユーザー",
+    "apply": "適用",
+    "applying": "適用中"
   },
 
   "chart": {

@@ -13,7 +13,7 @@ from strawberry.exceptions import GraphQLError
 # Module imports
 from plane.ee.models import EpicUserProperties
 from plane.graphql.permissions.project import ProjectPermission, Roles
-from plane.graphql.types.epics import (
+from plane.graphql.types.epics.user_property import (
     EpicUserPropertyType,
     EpicUserPropertyCreateInputType,
 )

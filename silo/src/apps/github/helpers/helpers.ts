@@ -1,9 +1,9 @@
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 
 import { GithubPullRequest } from "@plane/etl/github";
-import { TWorkspaceCredential } from "@plane/types";
+import { TWorkspaceCredential, TWorkspaceEntityConnection } from "@plane/types";
 import { getAPIClient } from "@/services/client";
-import { verifyEntityConnection, verifyWorkspaceConnection } from "@/types";
+import { verifyEntityConnection, verifyEntityConnections, verifyWorkspaceConnection } from "@/types";
 import { githubEntityConnectionSchema, githubWorkspaceConnectionSchema } from "../types";
 
 const apiClient = getAPIClient();
@@ -15,6 +15,7 @@ export const getConnectionDetails = async (props: {
   repositoryId: string;
 }): Promise<{
   workspaceConnection: ReturnType<typeof verifyWorkspaceConnection>;
+  allEntityConnectionsForRepository: ReturnType<typeof verifyEntityConnections>;
   entityConnection?: ReturnType<typeof verifyEntityConnection>;
 }> => {
   // Get the workspace connection for the installation
@@ -28,7 +29,7 @@ export const getConnectionDetails = async (props: {
   }
 
   // Get the entity connection for the given repository
-  const entityConnection = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
+  const entityConnections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
     workspace_id: props.credentials.workspace_id!,
     entity_type: E_INTEGRATION_KEYS.GITHUB,
     entity_id: props.repositoryId.toString(),
@@ -42,13 +43,16 @@ export const getConnectionDetails = async (props: {
 
   // Only verify entity connection if it exists
   const verifiedEntityConnection =
-    entityConnection.length > 0
-      ? verifyEntityConnection(githubEntityConnectionSchema, entityConnection[0] as any)
+    entityConnections.length > 0
+      ? verifyEntityConnection(githubEntityConnectionSchema, entityConnections[0] as any)
       : undefined;
+
+  const verifiedEntityConnections = verifyEntityConnections(githubEntityConnectionSchema, entityConnections as any);
 
   return {
     workspaceConnection: verifiedWorkspaceConnection,
     entityConnection: verifiedEntityConnection,
+    allEntityConnectionsForRepository: verifiedEntityConnections,
   };
 };
 

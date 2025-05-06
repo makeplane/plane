@@ -900,7 +900,37 @@
     "link_personal_account": "Połącz swoje osobiste konto {providerName} z Plane.",
     "connected_slack_workspaces": "Połączone workspejsy Slack",
     "connected_on": "Połączono {date}",
-    "disconnect_workspace": "Odłącz workspace {name}"
+    "disconnect_workspace": "Odłącz workspace {name}",
+    "project_updates": {
+      "title": "Aktualizacje Projektu",
+      "description": "Skonfiguruj powiadomienia o aktualizacjach projektów dla swoich projektów",
+      "add_new_project_update": "Dodaj nowe powiadomienie o aktualizacjach projektu",
+      "project_updates_empty_state": "Projekty połączone z kanałami Slack pojawią się tutaj.",
+      "project_updates_form": {
+        "title": "Skonfiguruj Aktualizacje Projektu",
+        "description": "Otrzymuj powiadomienia o aktualizacjach projektu w Slack, gdy tworzone są elementy pracy",
+        "failed_to_load_channels": "Nie udało się załadować kanałów ze Slack",
+        "project_dropdown": {
+          "placeholder": "Wybierz projekt",
+          "label": "Projekt Plane",
+          "no_projects": "Brak dostępnych projektów"
+        },
+        "channel_dropdown": {
+          "label": "Kanał Slack",
+          "placeholder": "Wybierz kanał",
+          "no_channels": "Brak dostępnych kanałów"
+        },
+        "all_projects_connected": "Wszystkie projekty są już połączone z kanałami Slack.",
+        "all_channels_connected": "Wszystkie kanały Slack są już połączone z projektami.",
+        "project_connection_success": "Połączenie projektu utworzone pomyślnie",
+        "project_connection_updated": "Połączenie projektu zaktualizowane pomyślnie",
+        "project_connection_deleted": "Połączenie projektu usunięte pomyślnie",
+        "failed_delete_project_connection": "Nie udało się usunąć połączenia projektu",
+        "failed_create_project_connection": "Nie udało się utworzyć połączenia projektu",
+        "failed_upserting_project_connection": "Nie udało się zaktualizować połączenia projektu",
+        "failed_loading_project_connections": "Nie mogliśmy załadować twoich połączeń projektu. Może to być spowodowane problemem z siecią lub problemem z integracją."
+      }
+    }
   },
 
   "file_upload": {
@@ -1806,7 +1836,10 @@
         }
       },
       "use_template": {
-        "button": "Użyj szablonu"
+        "button": {
+          "default": "Użyj szablonu",
+          "loading": "Używam"
+        }
       },
       "template_source": {
         "workspace": {
@@ -1933,7 +1966,8 @@
         "project": "Dodaj nowy szablon"
       },
       "label": {
-        "project": "Wybierz szablon projektu"
+        "project": "Wybierz szablon projektu",
+        "page": "Wybierz szablon"
       },
       "tooltip": {
         "work_item": "Wybierz szablon elementu pracy"

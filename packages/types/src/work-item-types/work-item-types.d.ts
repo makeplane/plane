@@ -1,5 +1,5 @@
 // types
-import { EIssuePropertyType, EWorkItemTypeEntity } from "@plane/constants";
+import { EIssuePropertyType, EWorkItemTypeEntity, EWorkItemConversionType } from "@plane/constants";
 import {
   TLoader,
   TIssuePropertyPayload,
@@ -114,4 +114,11 @@ export interface IIssueTypesStore {
   ) => Promise<void | undefined>;
   createType: (typeData: Partial<TIssueType>) => Promise<TIssueType | undefined>;
   deleteType: (typeId: string) => Promise<void>;
+  // convert actions
+  convertWorkItem: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    convertTo: EWorkItemConversionType
+  ) => Promise<void>;
 }

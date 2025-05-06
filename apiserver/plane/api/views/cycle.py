@@ -846,6 +846,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                         issue_cycle__deleted_at__isnull=True,
+                        issue_cycle__issue__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -857,6 +858,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                         issue_cycle__deleted_at__isnull=True,
+                        issue_cycle__issue__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -905,6 +907,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                 )
             )
         )
+        old_cycle = old_cycle.first()
 
         estimate_type = Project.objects.filter(
             workspace__slug=slug,
@@ -1024,7 +1027,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             )
 
             estimate_completion_chart = burndown_plot(
-                queryset=old_cycle.first(),
+                queryset=old_cycle,
                 slug=slug,
                 project_id=project_id,
                 plot_type="points",
@@ -1172,7 +1175,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
 
         # Pass the new_cycle queryset to burndown_plot
         completion_chart = burndown_plot(
-            queryset=old_cycle.first(),
+            queryset=old_cycle,
             slug=slug,
             project_id=project_id,
             plot_type="issues",
@@ -1184,12 +1187,12 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
         ).first()
 
         current_cycle.progress_snapshot = {
-            "total_issues": old_cycle.first().total_issues,
-            "completed_issues": old_cycle.first().completed_issues,
-            "cancelled_issues": old_cycle.first().cancelled_issues,
-            "started_issues": old_cycle.first().started_issues,
-            "unstarted_issues": old_cycle.first().unstarted_issues,
-            "backlog_issues": old_cycle.first().backlog_issues,
+            "total_issues": old_cycle.total_issues,
+            "completed_issues": old_cycle.completed_issues,
+            "cancelled_issues": old_cycle.cancelled_issues,
+            "started_issues": old_cycle.started_issues,
+            "unstarted_issues": old_cycle.unstarted_issues,
+            "backlog_issues": old_cycle.backlog_issues,
             "distribution": {
                 "labels": label_distribution_data,
                 "assignees": assignee_distribution_data,

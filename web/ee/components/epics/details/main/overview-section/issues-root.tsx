@@ -4,15 +4,14 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EIssueServiceType } from "@plane/constants";
-import { TIssue } from "@plane/types";
+import { TIssue, TSubIssueOperations } from "@plane/types";
 import { getButtonStyling, LayersIcon } from "@plane/ui";
 // components
 import { SubIssuesActionButton } from "@/components/issues";
 import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
 import { useSubIssueOperations } from "@/components/issues/issue-detail-widgets/sub-issues/helper";
+import { SubIssuesListRoot } from "@/components/issues/issue-detail-widgets/sub-issues/issues-list/root";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
-import { TSubIssueOperations } from "@/components/issues/sub-issues";
-import { IssueList } from "@/components/issues/sub-issues/issues-list";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -63,7 +62,6 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
   });
   // params
   const { initiativeId } = useParams();
-  // store hooks
   const {
     issue: { getIssueById },
     peekIssue: epicPeekIssue,
@@ -138,7 +136,6 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
   const issue = getIssueById(epicId);
   const shouldRenderUpdateIssueModal = issueCrudState?.update?.toggle && issueCrudState?.update?.issue;
   const hasSubIssues = (issue?.sub_issues_count ?? 0) > 0;
-
   const fetchInitiativeAnalyticsIfNeeded = async () => {
     if (initiativeId && epicPeekIssue?.issueId) {
       await fetchInitiativeAnalytics(workspaceSlug, initiativeId?.toString());
@@ -188,7 +185,8 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
 
   return (
     <>
-      <IssueList
+      {/* Display list when group is none */}
+      <SubIssuesListRoot
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         parentIssueId={epicId}

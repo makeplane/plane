@@ -25,7 +25,9 @@ export const EpicQuickActions: React.FC<Props> = observer((props: Props) => {
   const { workspaceSlug, initiativeId, epicId, disabled } = props;
   //  store hooks
   const {
-    initiative: { removeEpicFromInitiative },
+    initiative: {
+      epics: { removeEpicFromInitiative },
+    },
   } = useInitiatives();
   const {
     issue: { getIssueById },

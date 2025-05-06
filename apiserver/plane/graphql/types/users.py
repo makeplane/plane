@@ -3,6 +3,9 @@ from typing import Optional
 from datetime import datetime
 from asgiref.sync import sync_to_async
 
+# Django Imports
+from django.db.models import Q
+
 # Strawberry imports
 import strawberry
 import strawberry_django
@@ -109,6 +112,7 @@ class UserFavoriteEntityData:
     id: Optional[strawberry.ID]
     name: Optional[str]
     logo_props: Optional[JSON]
+    is_epic: Optional[bool] = False
 
 
 @strawberry_django.type(UserFavorite)
@@ -257,12 +261,21 @@ class UserRecentVisitType:
             return None
         # where entity_identifier is issue id and entity_name is issue
         elif self.entity_identifier and self.entity_name == "issue":
-            issue = await sync_to_async(
-                Issue.objects.filter(id=self.entity_identifier).first
-            )()
+            issue_base_query = Issue.objects.filter(id=self.entity_identifier)
+            issue = await sync_to_async(issue_base_query.first)()
             if issue:
+                epic_issue = await sync_to_async(
+                    issue_base_query.filter(
+                        project__project_projectfeature__is_epic_enabled=True
+                    )
+                    .filter(Q(type__isnull=False) & Q(type__is_epic=True))
+                    .first
+                )()
                 return UserFavoriteEntityData(
-                    id=issue.id, name=issue.name, logo_props=None
+                    id=issue.id,
+                    name=issue.name,
+                    logo_props=None,
+                    is_epic=epic_issue is not None,
                 )
             return None
         # where entity_identifier is issue_view id and entity_name is issue_view

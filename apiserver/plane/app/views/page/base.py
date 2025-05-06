@@ -51,7 +51,7 @@ from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.page_version_task import page_version
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.copy_s3_object import copy_s3_objects
-from plane.ee.bgtasks.page_update import nested_page_update
+from plane.ee.bgtasks.page_update import nested_page_update, PageAction
 from plane.ee.utils.page_descendants import get_all_parent_ids
 
 
@@ -136,6 +136,15 @@ class PageViewSet(BaseViewSet):
             serializer.save()
             # capture the page transaction
             page_transaction.delay(request.data, None, serializer.data["id"])
+            if serializer.data.get("parent_id"):
+                nested_page_update.delay(
+                    page_id=serializer.data["id"],
+                    action=PageAction.SUB_PAGE,
+                    project_id=project_id,
+                    slug=slug,
+                    user_id=request.user.id,
+                )
+
             page = self.get_queryset().get(pk=serializer.data["id"])
             serializer = PageDetailSerializer(page)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -162,7 +171,7 @@ class PageViewSet(BaseViewSet):
             if "parent_id" in request.data:
                 nested_page_update.delay(
                     page_id=page.id,
-                    action="moved_internally",
+                    action=PageAction.MOVED_INTERNALLY,
                     project_id=project_id,
                     slug=slug,
                     extra={"old_parent_id": page.parent_id, "new_parent_id": parent},
@@ -212,7 +221,7 @@ class PageViewSet(BaseViewSet):
         project = Project.objects.get(pk=project_id)
 
         """
-        if the role is guest and guest_view_all_features is false and owned by is not 
+        if the role is guest and guest_view_all_features is false and owned by is not
         the requesting user then dont show the page
         """
 
@@ -263,7 +272,7 @@ class PageViewSet(BaseViewSet):
 
         nested_page_update.delay(
             page_id=page.id,
-            action="locked",
+            action=PageAction.LOCKED,
             project_id=project_id,
             slug=slug,
             sub_pages=True if action == "all" else False,
@@ -283,7 +292,7 @@ class PageViewSet(BaseViewSet):
 
         nested_page_update.delay(
             page_id=page.id,
-            action="unlocked",
+            action=PageAction.UNLOCKED,
             project_id=project_id,
             slug=slug,
             sub_pages=True if action == "all" else False,
@@ -315,7 +324,7 @@ class PageViewSet(BaseViewSet):
         page.save()
         nested_page_update.delay(
             page_id=page.id,
-            action="made-public" if access == 0 else "made-private",
+            action=PageAction.MADE_PUBLIC if access == 0 else PageAction.MADE_PRIVATE,
             project_id=project_id,
             slug=slug,
             user_id=request.user.id,
@@ -390,7 +399,7 @@ class PageViewSet(BaseViewSet):
         # archive the sub pages
         nested_page_update.delay(
             page_id=str(pk),
-            action="archived",
+            action=PageAction.ARCHIVED,
             project_id=project_id,
             slug=slug,
             user_id=request.user.id,
@@ -427,7 +436,7 @@ class PageViewSet(BaseViewSet):
 
         nested_page_update.delay(
             page_id=page.id,
-            action="unarchived",
+            action=PageAction.UNARCHIVED,
             project_id=project_id,
             slug=slug,
             user_id=request.user.id,
@@ -486,7 +495,7 @@ class PageViewSet(BaseViewSet):
 
         nested_page_update.delay(
             page_id=page.id,
-            action="deleted",
+            action=PageAction.DELETED,
             project_id=project_id,
             slug=slug,
             user_id=request.user.id,
@@ -522,20 +531,13 @@ class PageViewSet(BaseViewSet):
         page_ids = get_all_parent_ids(page_id)
 
         pages = Page.objects.filter(
-            workspace__slug=slug,
-            projects__id=project_id,
-            id__in=page_ids,
+            workspace__slug=slug, projects__id=project_id, id__in=page_ids
         ).annotate(
             project_ids=Coalesce(
-                ArrayAgg(
-                    "projects__id",
-                    distinct=True,
-                    filter=~Q(projects__id=True),
-                ),
+                ArrayAgg("projects__id", distinct=True, filter=~Q(projects__id=True)),
                 Value([], output_field=ArrayField(UUIDField())),
             )
         )
-
 
         # Convert queryset to a dictionary keyed by id
         page_map = {str(page.id): page for page in pages}
@@ -701,13 +703,23 @@ class PagesDescriptionViewSet(BaseViewSet):
 class PageDuplicateEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def post(self, request, slug, project_id, page_id):
+        page = Page.objects.get(
+            id=page_id, workspace__slug=slug, projects__id=project_id
+        )
+
+        # check for permission
+        if page.access == Page.PRIVATE_ACCESS and page.owned_by_id != request.user.id:
+            return Response(
+                {"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN
+            )
 
         # update the descendants pages with the current page
         nested_page_update.delay(
             page_id=page_id,
-            action="duplicated",
+            action=PageAction.DUPLICATED,
             project_id=project_id,
             slug=slug,
             user_id=request.user.id,
         )
+
         return Response(status=status.HTTP_204_NO_CONTENT)

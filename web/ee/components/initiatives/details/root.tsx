@@ -28,7 +28,12 @@ export const InitiativeDetailRoot = observer((props: Props) => {
   const [isEpicModalOpen, setIsEpicModalOpen] = useState(false);
   // store hooks
   const {
-    initiative: { getInitiativeById, updateInitiative, addEpicsToInitiative, fetchInitiativeAnalytics },
+    initiative: {
+      getInitiativeById,
+      updateInitiative,
+      fetchInitiativeAnalytics,
+      epics: { addEpicsToInitiative },
+    },
   } = useInitiatives();
   const { workspaceProjectIds } = useProject();
   const { allowPermissions } = useUserPermissions();

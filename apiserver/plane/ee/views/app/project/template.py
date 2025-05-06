@@ -1,6 +1,7 @@
 # Python imports
 import json
 import uuid
+import re
 
 # Django imports
 from django.db import IntegrityError
@@ -9,6 +10,7 @@ from django.db.models import OuterRef, Exists, Subquery, Prefetch
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third party imports
+from rest_framework.request import Request
 from rest_framework import serializers, status
 from rest_framework.response import Response
 
@@ -46,7 +48,7 @@ from plane.ee.utils.workspace_feature import (
 )
 from plane.ee.bgtasks.project_activites_task import project_activity
 from plane.app.permissions import allow_permission, ROLE
-from plane.utils.url import is_valid_http_url
+from plane.utils.url import is_valid_url
 from plane.utils.uuid import is_valid_uuid
 from plane.settings.storage import S3Storage
 from plane.utils.host import base_host
@@ -127,10 +129,37 @@ class ProjectTemplateUseEndpoint(BaseAPIView):
             .distinct()
         )
 
-    def handle_project_asset(self, project_template, project, request):
+    def validate_and_extract_asset_id(self, url) -> bool | str:
+        """
+        Validate and extract the asset ID from the given URL.
+
+        Args:
+            url (str): The URL to validate and extract the asset ID from.
+
+        Returns:
+            bool | str: False if the URL is invalid, otherwise the extracted asset ID.
+        """
+        url_pattern = r"^/api/assets/v2/static/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/?$"
+
+        pattern_match = re.match(url_pattern, url)
+        if not pattern_match:
+            return False
+
+        # Extract the UUID part
+        potential_uuid = pattern_match.group(1)
+
+        if is_valid_uuid(potential_uuid):
+            return potential_uuid
+
+        return False
+
+    def handle_project_asset(
+        self, project_template: ProjectTemplate, project: Project, request: Request
+    ):
         # Using external API to fetch a random image
         if project.cover_image:
             return project
+
         # If the project cover asset is not set or is different from the template cover asset
         if (
             project.cover_image_asset
@@ -139,15 +168,16 @@ class ProjectTemplateUseEndpoint(BaseAPIView):
             return project
 
         # If the template cover asset is a url we need not do anything
-        if is_valid_http_url(project_template.cover_asset):
+        if is_valid_url(project_template.cover_asset):
             return project
 
         # if the template cover asset is valid uuid then upload the items
-        if is_valid_uuid(project_template.cover_asset):
+        asset_id = self.validate_and_extract_asset_id(project_template.cover_asset)
+        if asset_id:
             storage = S3Storage(request=request)
             new_asset_key = f"{project.workspace_id}/{uuid.uuid4().hex}"
             # save the duplicate asset as project
-            asset = FileAsset.objects.get(pk=project_template.cover_asset)
+            asset = FileAsset.objects.get(pk=asset_id)
             # copy the asset
             storage.copy_object(asset.asset, new_asset_key)
 

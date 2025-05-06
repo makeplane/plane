@@ -19,7 +19,9 @@ export const SidebarCustomersList: FC<TProps> = observer((props) => {
   const { isPeekView, workspaceSlug, workItemId } = props;
   // hooks
   const { t } = useTranslation();
-  const { getWorkItemCustomerIds } = useCustomers();
+  const {
+    workItems: { getWorkItemCustomerIds },
+  } = useCustomers();
   const { allowPermissions } = useUserPermissions();
 
   // derived values

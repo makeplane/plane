@@ -22,6 +22,7 @@ from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.timezone_converter import user_timezone_converter
 from plane.app.permissions import allow_permission, ROLE
 from collections import defaultdict
+from plane.utils.order_queryset import order_issue_queryset
 
 
 class EpicIssuesEndpoint(BaseAPIView):
@@ -101,8 +102,18 @@ class EpicIssuesEndpoint(BaseAPIView):
             .order_by("-created_at")
         )
 
+        # Ordering
+        order_by_param = request.GET.get("order_by", "-created_at")
+        group_by = request.GET.get("group_by", False)
+
+        if order_by_param:
+            epic_issues, order_by_param = order_issue_queryset(
+                epic_issues, order_by_param
+            )
+
         # create's a dict with state group name with their respective issue id's
         result = defaultdict(list)
+
         for sub_issue in epic_issues:
             result[sub_issue.state_group].append(str(sub_issue.id))
 
@@ -138,6 +149,26 @@ class EpicIssuesEndpoint(BaseAPIView):
         epic_issues = user_timezone_converter(
             epic_issues, datetime_fields, request.user.user_timezone
         )
+        if group_by:
+            result_dict = defaultdict(list)
+
+            for issue in epic_issues:
+                if group_by == "assignees__id":
+                    if issue["assignee_ids"]:
+                        assignee_ids = issue["assignee_ids"]
+                        for assignee_id in assignee_ids:
+                            result_dict[str(assignee_id)].append(issue)
+                    elif issue["assignee_ids"] == []:
+                        result_dict["None"].append(issue)
+
+                elif group_by:
+                    result_dict[str(issue[group_by])].append(issue)
+
+            return Response(
+                {"sub_issues": result_dict, "state_distribution": result},
+                status=status.HTTP_200_OK,
+            )
+
         return Response(
             {"sub_issues": epic_issues, "state_distribution": result},
             status=status.HTTP_200_OK,

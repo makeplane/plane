@@ -10,6 +10,7 @@ import "./styles/title-editor.css";
 // editors
 export {
   CollaborativeDocumentEditorWithRef,
+  DocumentEditorWithRef,
   DocumentReadOnlyEditorWithRef,
   LiteTextEditorWithRef,
   LiteTextReadOnlyEditorWithRef,

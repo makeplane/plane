@@ -10,7 +10,7 @@ from strawberry.types import Info
 from plane.ee.models import EpicUserProperties
 from plane.graphql.helpers import is_epic_feature_flagged, is_project_epics_enabled
 from plane.graphql.permissions.project import ProjectPermission
-from plane.graphql.types.epics import EpicUserPropertyType
+from plane.graphql.types.epics.user_property import EpicUserPropertyType
 
 
 @strawberry.type

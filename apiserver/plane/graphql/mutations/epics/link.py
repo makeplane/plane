@@ -22,7 +22,7 @@ from strawberry.types import Info
 from plane.db.models import IssueLink
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
 from plane.graphql.permissions.project import ProjectPermission
-from plane.graphql.types.epics import (
+from plane.graphql.types.epics.link import (
     EpicLinkCreateInputType,
     EpicLinkType,
     EpicLinkUpdateInputType,
@@ -202,7 +202,7 @@ class EpicLinkMutation:
             epoch=int(timezone.now().timestamp()),
             notification=True,
             project_id=project,
-            issue_id=epic_link_id,
+            issue_id=epic,
             actor_id=user_id,
             current_instance=None,
             requested_data=json.dumps(epic_link_activity_payload),

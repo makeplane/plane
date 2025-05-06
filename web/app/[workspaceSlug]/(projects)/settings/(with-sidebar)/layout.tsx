@@ -22,11 +22,11 @@ export interface IWorkspaceSettingLayout {
 
 const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => {
   const { children } = props;
-
-  const { workspaceUserInfo } = useUserPermissions();
+  // navigation
   const pathname = usePathname();
   const [workspaceSlug, suffix, route] = pathname.replace(/^\/|\/$/g, "").split("/"); // Regex removes leading and trailing slashes
-
+  // store hooks
+  const { workspaceUserInfo } = useUserPermissions();
   // derived values
   const userWorkspaceRole = workspaceUserInfo?.[workspaceSlug.toString()]?.role;
   const isAuthorized =

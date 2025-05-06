@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType, EWorkItemConversionType } from "@plane/constants";
 // plane imports
-import { ISearchIssueResponse, TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
+import { useTranslation } from "@plane/i18n";
+import { ISearchIssueResponse, TIssue, TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { getPropertiesDefaultValues } from "@plane/utils";
 // components
@@ -33,8 +34,10 @@ export const EpicModalProvider = observer((props: TEpicModalProviderProps) => {
   const [issuePropertyValues, setIssuePropertyValues] = useState<TIssuePropertyValues>({});
   const [issuePropertyValueErrors, setIssuePropertyValueErrors] = useState<TIssuePropertyValueErrors>({});
   // plane web hooks
-  const { isEpicEnabledForProject, getIssueTypeById, getIssueTypeProperties, getProjectEpicId } = useIssueTypes();
+  const { isEpicEnabledForProject, getIssueTypeById, getIssueTypeProperties, getProjectEpicId, convertWorkItem } =
+    useIssueTypes();
   const { fetchPropertyActivities } = useIssuePropertiesActivity();
+  const { t } = useTranslation();
   // helpers
   const getIssueTypeIdOnProjectChange = (projectId: string) => {
     // get active issue types for the project
@@ -131,6 +134,31 @@ export const EpicModalProvider = observer((props: TEpicModalProviderProps) => {
       });
   };
 
+  /**
+   * Used to handle work item conversion
+   */
+  const handleConvert = async (workspaceSlug: string, data: Partial<TIssue> | undefined) => {
+    if (data?.id && data?.project_id) {
+      await convertWorkItem(workspaceSlug.toString(), data.project_id, data?.id, EWorkItemConversionType.EPIC)
+        .then(() => {
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: t("success"),
+            message: "Work item converted to epic successfully",
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("error"),
+            message: "Work item could not be converted to epic. Please try again.",
+          });
+          throw error;
+        });
+    }
+  };
+
   return (
     <IssueModalContext.Provider
       value={{
@@ -150,6 +178,7 @@ export const EpicModalProvider = observer((props: TEpicModalProviderProps) => {
         handleCreateUpdatePropertyValues,
         handleProjectEntitiesFetch: () => Promise.resolve(),
         handleTemplateChange: () => Promise.resolve(),
+        handleConvert,
       }}
     >
       {children}

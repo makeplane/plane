@@ -3,7 +3,7 @@ import strawberry_django
 
 # Module Imports
 from plane.db.models import IssueRelation
-from plane.graphql.types.issue import IssuesType
+from .base import IssuesType
 
 
 @strawberry_django.type(IssueRelation)

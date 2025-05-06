@@ -12,14 +12,14 @@ from strawberry.types import Info
 # Module Imports
 from plane.db.models import Issue
 from plane.graphql.helpers import (
+    get_epic,
     get_project,
     get_workspace,
     is_epic_feature_flagged,
     is_project_epics_enabled,
-    get_epic,
 )
 from plane.graphql.permissions.project import ProjectBasePermission
-from plane.graphql.types.issue import IssuesType
+from plane.graphql.types.issues.base import IssuesType
 from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.utils.paginator import paginate
 

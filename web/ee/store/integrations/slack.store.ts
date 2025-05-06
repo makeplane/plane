@@ -2,8 +2,8 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // types
-import { TSlackConfig, TSlackConnectionData } from "@plane/etl/slack";
-import { TWorkspaceConnection } from "@plane/types";
+import { SlackConversation, TSlackConfig, TSlackConnectionData, TSlackProjectUpdatesConfig } from "@plane/etl/slack";
+import { TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
 // plane web services
 import { SlackIntegrationService } from "@/plane-web/services/integrations/slack.service";
 // plane web store
@@ -16,6 +16,7 @@ export interface ISlackStore extends IntegrationBaseStore {
   isAppConnectionLoading: boolean;
   isUserConnectionLoading: boolean;
   appConnections: Record<string, TWorkspaceConnection<TSlackConfig, TSlackConnectionData>>;
+  projectConnections: Record<string, TWorkspaceEntityConnection<TSlackProjectUpdatesConfig>[]>;
   isUserConnected: boolean;
   webhookConnection: Record<string, boolean>; // workspaceId -> boolean
   // computed
@@ -24,9 +25,20 @@ export interface ISlackStore extends IntegrationBaseStore {
   appConnectionIds: string[] | undefined;
   // helper actions
   getAppByConnectionId: (connectionId: string) => TWorkspaceConnection<TSlackConfig, TSlackConnectionData> | undefined;
+  getProjectConnectionsByWorkspaceId: (
+    workspaceId: string
+  ) => TWorkspaceEntityConnection<TSlackProjectUpdatesConfig>[] | undefined;
   // actions
   fetchAppConnections: (workspaceId?: string) => Promise<void>;
+  fetchProjectConnections: (workspaceId?: string) => Promise<void>;
+  createProjectConnection: (projectConnection: TWorkspaceEntityConnection<TSlackProjectUpdatesConfig>) => Promise<void>;
+  updateProjectConnection: (
+    id: string,
+    projectConnection: TWorkspaceEntityConnection<TSlackProjectUpdatesConfig>
+  ) => Promise<void>;
+  deleteProjectConnection: (id: string) => Promise<void>;
   fetchUserConnectionStatus: (workspaceId?: string) => Promise<void>;
+  fetchSlackChannels: (connectionId: string) => Promise<SlackConversation[]>;
   connectApp: () => Promise<string>;
   disconnectApp: (connectionId: string) => Promise<void>;
   connectUser: (workspaceId?: string, workspaceSlug?: string, profileRedirect?: boolean) => Promise<string>;
@@ -37,7 +49,10 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
   // observables
   isAppConnectionLoading: boolean = true;
   isUserConnectionLoading: boolean = true;
+  // Connections
   appConnections: Record<string, TWorkspaceConnection<TSlackConfig, TSlackConnectionData>> = {}; // connection id -> app connection
+  projectConnections: Record<string, TWorkspaceEntityConnection<TSlackProjectUpdatesConfig>[]> = {}; // workspaceId -> project connections
+  // Status
   isUserConnected: boolean = false;
   webhookConnection: Record<string, boolean> = {};
   // service
@@ -51,6 +66,7 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
       isAppConnectionLoading: observable.ref,
       isUserConnectionLoading: observable.ref,
       appConnections: observable,
+      projectConnections: observable,
       isUserConnected: observable,
       webhookConnection: observable,
       // computed
@@ -70,7 +86,6 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
     // service instance
     this.service = new SlackIntegrationService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
   }
-
   // computed
   get isAppConnected() {
     return Object.keys(this.appConnections).length > 0;
@@ -92,6 +107,7 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
 
   // helper actions
   getAppByConnectionId = (connectionId: string) => this.appConnections[connectionId];
+  getProjectConnectionsByWorkspaceId = (workspaceId: string) => this.projectConnections[workspaceId];
 
   // actions
   /**
@@ -184,6 +200,7 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
     const response = await this.service.getUserConnectionURL({
       workspaceId: workspace_id,
       workspaceSlug: workspace_slug,
+      apiToken: this.externalApiToken,
       profileRedirect,
       userId,
     });
@@ -200,5 +217,75 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
     if (!workspace || !userId) throw new Error("Workspace ID and User ID are required");
     await this.service.disconnectUser(workspace, userId);
     set(this, "isUserConnected", false);
+  };
+
+  /**
+   * @description fetch the projects
+   * @returns { Promise<void> }
+   */
+  fetchProjectConnections = async (): Promise<void> => {
+    const workspaceId = this.rootStore.workspaceRoot.currentWorkspace?.id;
+    if (!workspaceId) throw new Error("Workspace ID is required");
+    const response = await this.service.getProjectConnections(workspaceId);
+    set(this, ["projectConnections", workspaceId], response);
+  };
+
+  /**
+   * @description create the project connection
+   * @param { TWorkspaceEntityConnection<TSlackProjectUpdatesConfig> } projectConnection - The project connection
+   * @returns { Promise<void> }
+   */
+  createProjectConnection = async (
+    projectConnection: TWorkspaceEntityConnection<TSlackProjectUpdatesConfig>
+  ): Promise<void> => {
+    const workspaceId = this.rootStore.workspaceRoot.currentWorkspace?.id;
+    if (!workspaceId) throw new Error("Workspace ID is required");
+    const response = await this.service.createProjectConnection(workspaceId, projectConnection);
+    set(this, ["projectConnections", workspaceId], [...this.projectConnections[workspaceId], response]);
+  };
+
+  /**
+   * @description update the project connection
+   * @param { TWorkspaceEntityConnection<TSlackProjectUpdatesConfig> } projectConnection - The project connection
+   * @returns { Promise<void> }
+   */
+  updateProjectConnection = async (
+    id: string,
+    projectConnection: TWorkspaceEntityConnection<TSlackProjectUpdatesConfig>
+  ): Promise<void> => {
+    const workspaceId = this.rootStore.workspaceRoot.currentWorkspace?.id;
+    if (!workspaceId) throw new Error("Workspace ID is required");
+    const response = await this.service.updateProjectConnection(id, projectConnection);
+    set(
+      this,
+      ["projectConnections", workspaceId],
+      this.projectConnections[workspaceId].map((pc) => (pc.id === id ? response : pc))
+    );
+  };
+
+  /**
+   * @description delete the project connection
+   * @param { string } id - The project connection ID
+   * @returns { Promise<void> }
+   */
+  deleteProjectConnection = async (id: string): Promise<void> => {
+    const workspaceId = this.rootStore.workspaceRoot.currentWorkspace?.id;
+    if (!workspaceId) throw new Error("Workspace ID is required");
+    await this.service.deleteProjectConnection(id);
+    set(
+      this,
+      ["projectConnections", workspaceId],
+      this.projectConnections[workspaceId].filter((pc) => pc.id !== id)
+    );
+  };
+
+  /**
+   * description fetch the channels
+   * @param { string } connectionId - The connection ID
+   * @returns { Promise<SlackConversation[]> }
+   */
+  fetchSlackChannels = async (connectionId: string): Promise<SlackConversation[]> => {
+    const response = await this.service.getChannels(connectionId, { onlyChannels: true });
+    return response;
   };
 }

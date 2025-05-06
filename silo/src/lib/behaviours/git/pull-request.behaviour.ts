@@ -8,10 +8,18 @@ import { env } from "@/env";
 import { CONSTANTS, E_STATE_MAP_KEYS } from "@/helpers/constants";
 import { getReferredIssues, IssueReference, IssueWithReference } from "@/helpers/parser";
 import { logger } from "@/logger";
-import { IPullRequestConfig, IPullRequestService, IPullRequestDetails, TPullRequestError, IPullRequestEventData, IGitComment } from "@/types/behaviours/git";
+import { verifyEntityConnections } from "@/types";
+import { IPullRequestService, IPullRequestDetails, TPullRequestError, IPullRequestEventData, IGitComment } from "@/types/behaviours/git";
 import { Either, left, right } from '@/types/either';
 
+/**
+ * Pull Request Behaviour
+ * This behaviour addresses how a PR event is handled for any integration
+ */
+
 export class PullRequestBehaviour {
+  // projectId and PR state map
+  private readonly projectIdToPRStateMap: Record<string, Record<string, { id: string; name: string }>>;
   constructor(
     // Identifiers
     private readonly providerName: string,
@@ -21,9 +29,12 @@ export class PullRequestBehaviour {
     private readonly service: IPullRequestService,
     private readonly planeClient: Client,
 
-    // Configuration
-    private readonly config?: IPullRequestConfig
-  ) { }
+    // entity connections
+    private readonly entityConnections: ReturnType<typeof verifyEntityConnections>,
+
+  ) {
+    this.projectIdToPRStateMap = this.getProjectIdToPRStateMap();
+  }
 
   /**
    * Handle a pull request event
@@ -45,7 +56,10 @@ export class PullRequestBehaviour {
       }
 
       const event = this.classifyPullRequestEvent(pullRequestDetails);
-      const targetState = this.getTargetStateForEvent(event);
+      if (!event) {
+        logger.info('No event found, skipping...');
+        return;
+      }
 
       // Determine which references to process
       const isClosingEvent = [E_STATE_MAP_KEYS.MR_CLOSED, E_STATE_MAP_KEYS.MR_MERGED].includes(event as E_STATE_MAP_KEYS);
@@ -55,8 +69,8 @@ export class PullRequestBehaviour {
 
       const updateResults = await this.updateReferencedIssues(
         referredIssues,
-        targetState,
-        pullRequestDetails
+        pullRequestDetails,
+        event
       );
 
       const validIssues = updateResults.filter((result): result is IssueWithReference => result !== null);
@@ -121,52 +135,47 @@ export class PullRequestBehaviour {
     return undefined;
   }
 
-  /**
-   * Get the target state for an event
-   * @param event - The event
-   * @returns The target state
-   */
-  private getTargetStateForEvent(event: string | undefined): { id: string; name: string } | null {
-    if (!event) {
-      return null;
-    }
-
-    const targetState = this.config?.states?.mergeRequestEventMapping?.[event];
-    if (!targetState) {
-      logger.error(`Target state not found for event ${event}`);
-      return null;
-    }
-    return targetState;
-  }
 
   /**
    * Update the referenced issues
    * @param references - The references
-   * @param targetState - The target state
    * @param prDetails - The pull request details
+   * @param event - The PR event
    * @returns The updated issues
    */
   private async updateReferencedIssues(
     references: IssueReference[],
-    targetState: { id: string; name: string } | null,
-    prDetails: IPullRequestDetails
+    prDetails: IPullRequestDetails,
+    event: string
   ): Promise<(IssueWithReference | null)[]> {
     return Promise.all(
-      references.map(reference => this.updateSingleIssue(reference, targetState, prDetails))
+      references.map(reference => this.updateSingleIssue(reference, prDetails, event))
     );
+  }
+
+  private getProjectIdToPRStateMap() {
+    if (!this.entityConnections) {
+      return {};
+    }
+    return this.entityConnections.reduce((acc, entityConnection) => {
+      if (entityConnection.project_id) {
+        acc[entityConnection.project_id.toString()] = entityConnection.config?.states?.mergeRequestEventMapping;
+      }
+      return acc;
+    }, {} as Record<string, Record<string, { id: string; name: string }>>);
   }
 
   /**
    * Update a single issue
    * @param reference - The reference
-   * @param targetState - The target state
    * @param prDetails - The pull request details
+   * @param event - The PR event
    * @returns The updated issue
    */
   private async updateSingleIssue(
     reference: IssueReference,
-    targetState: { id: string; name: string } | null,
-    prDetails: IPullRequestDetails
+    prDetails: IPullRequestDetails,
+    event: string
   ): Promise<IssueWithReference | null> {
     let issue: ExIssue | null = null;
 
@@ -177,6 +186,9 @@ export class PullRequestBehaviour {
         reference.sequence
       );
 
+      // get the PR state for the event from projectId and PR state map
+      // for gitlab we get the state from config directly
+      const targetState = this.projectIdToPRStateMap[issue.project][event];
       if (targetState) {
         await this.planeClient.issue.update(
           this.workspaceSlug,

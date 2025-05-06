@@ -39,6 +39,9 @@ from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 from plane.utils.host import base_host
 from plane.ee.models import IssuePropertyValue, DraftIssuePropertyValue
+from plane.ee.bgtasks.entity_issue_state_progress_task import (
+    entity_issue_state_activity_task,
+)
 
 
 class WorkspaceDraftIssueViewSet(BaseViewSet):
@@ -289,6 +292,17 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     workspace_id=draft_issue.workspace_id,
                     created_by_id=draft_issue.created_by_id,
                     updated_by_id=draft_issue.updated_by_id,
+                )
+                entity_issue_state_activity_task.delay(
+                    issue_cycle_data=[
+                        {
+                            "issue_id": str(serializer.data.get("id")),
+                            "cycle_id": str(request.data.get("cycle_id")),
+                        }
+                    ],
+                    user_id=str(request.user.id),
+                    slug=slug,
+                    action="ADDED",
                 )
                 # Capture Issue Activity
                 issue_activity.delay(

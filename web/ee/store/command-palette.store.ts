@@ -44,7 +44,6 @@ export class CommandPaletteStore extends BaseCommandPaletteStore implements ICom
       createUpdateTeamspaceViewModal: observable,
       createUpdateInitiativeModal: observable,
       createUpdateCustomerModal: observable,
-
       // computed
       isAnyModalOpen: computed,
       // actions

@@ -830,7 +830,37 @@
     "link_personal_account": "Leagă contul tău personal {providerName} de Plane.",
     "connected_slack_workspaces": "Workspace-uri Slack conectate",
     "connected_on": "Conectat pe {date}",
-    "disconnect_workspace": "Deconectează workspace-ul {name}"
+    "disconnect_workspace": "Deconectează workspace-ul {name}",
+    "project_updates": {
+      "title": "Actualizări Proiect",
+      "description": "Configurează notificări de actualizări ale proiectelor pentru proiectele tale",
+      "add_new_project_update": "Adaugă o nouă notificare de actualizări proiect",
+      "project_updates_empty_state": "Proiectele conectate cu Canale Slack vor apărea aici.",
+      "project_updates_form": {
+        "title": "Configurează Actualizări Proiect",
+        "description": "Primește notificări de actualizări proiect în Slack când sunt create elemente de lucru",
+        "failed_to_load_channels": "Nu s-au putut încărca canalele din Slack",
+        "project_dropdown": {
+          "placeholder": "Selectează un proiect",
+          "label": "Proiect Plane",
+          "no_projects": "Nu există proiecte disponibile"
+        },
+        "channel_dropdown": {
+          "label": "Canal Slack",
+          "placeholder": "Selectează un canal",
+          "no_channels": "Nu există canale disponibile"
+        },
+        "all_projects_connected": "Toate proiectele sunt deja conectate la canale Slack.",
+        "all_channels_connected": "Toate canalele Slack sunt deja conectate la proiecte.",
+        "project_connection_success": "Conexiunea proiectului a fost creată cu succes",
+        "project_connection_updated": "Conexiunea proiectului a fost actualizată cu succes",
+        "project_connection_deleted": "Conexiunea proiectului a fost ștearsă cu succes",
+        "failed_delete_project_connection": "Nu s-a putut șterge conexiunea proiectului",
+        "failed_create_project_connection": "Nu s-a putut crea conexiunea proiectului",
+        "failed_upserting_project_connection": "Nu s-a putut actualiza conexiunea proiectului",
+        "failed_loading_project_connections": "Nu am putut încărca conexiunile proiectelor tale. Acest lucru ar putea fi din cauza unei probleme de rețea sau a unei probleme cu integrarea."
+      }
+    }
   },
 
   "file_upload": {
@@ -1733,7 +1763,10 @@
         }
       },
       "use_template": {
-        "button": "Folosește șablon"
+        "button": {
+          "default": "Folosește șablon",
+          "loading": "Folosind"
+        }
       },
       "template_source": {
         "workspace": {
@@ -1860,7 +1893,8 @@
         "project": "Adaugă șablon nou"
       },
       "label": {
-        "project": "Alege un șablon de proiect"
+        "project": "Alege un șablon de proiect",
+        "page": "Alege un șablon"
       },
       "tooltip": {
         "work_item": "Alege un șablon de element de lucru"

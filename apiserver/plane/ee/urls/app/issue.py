@@ -6,6 +6,7 @@ from plane.ee.views.app import (
     BulkSubscribeIssuesEndpoint,
     IssueWorkLogsEndpoint,
     IssueTotalWorkLogEndpoint,
+    IssueConvertEndpoint,
 )
 
 urlpatterns = [
@@ -39,4 +40,11 @@ urlpatterns = [
         IssueTotalWorkLogEndpoint.as_view(),
         name="issue-work-logs",
     ),
+    # Issue Convertion Endpoint
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/conversion/<uuid:entity_id>/",
+        IssueConvertEndpoint.as_view(),
+        name="issue-conversion",
+    ),
+    # End Issue Convertion Endpoint
 ]

@@ -3,6 +3,7 @@
 import React, { useMemo, useState } from "react";
 import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
+import { EIconSize } from "@plane/constants";
 import { IState } from "@plane/types";
 // components
 import { Loader, StateGroupIcon } from "@plane/ui";
@@ -56,7 +57,14 @@ export const FilterState: React.FC<Props> = observer((props) => {
                     key={state.id}
                     isChecked={appliedFilters?.includes(state.id) ? true : false}
                     onClick={() => handleUpdate(state.id)}
-                    icon={<StateGroupIcon stateGroup={state.group} color={state.color} />}
+                    icon={
+                      <StateGroupIcon
+                        stateGroup={state.group}
+                        color={state.color}
+                        size={EIconSize.MD}
+                        percentage={state?.order}
+                      />
+                    }
                     title={state.name}
                   />
                 ))}

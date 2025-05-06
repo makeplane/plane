@@ -41,7 +41,12 @@ export const CustomerRequestListItem: FC<TProps> = observer((props) => {
   // i18n
   const { t } = useTranslation();
   // hooks
-  const { getRequestById, addWorkItemsToCustomer, updateCustomerRequest, toggleRequestSourceModal } = useCustomers();
+  const {
+    getRequestById,
+    updateCustomerRequest,
+    toggleRequestSourceModal,
+    workItems: { addWorkItemsToCustomer },
+  } = useCustomers();
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const request = getRequestById(requestId);

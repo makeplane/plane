@@ -2,7 +2,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 // plane web imports
 import { ETemplateLevel } from "@plane/constants";
-import { useWorkItemTemplates } from "@/plane-web/hooks/store";
+import { usePageTemplates, useWorkItemTemplates } from "@/plane-web/hooks/store";
 // local imports
 import { ProjectSettingsTemplatesListRoot } from "./list";
 import { NoTemplatesEmptyState } from "./no-templates";
@@ -17,10 +17,13 @@ export const ProjectTemplatesSettingsRoot: FC<TProjectTemplatesSettingsRootProps
   // store hooks
   const { isInitializingTemplates: isInitializingWorkItemTemplates, isAnyWorkItemTemplatesAvailableForProject } =
     useWorkItemTemplates();
+  const { isInitializingTemplates: isInitializingPageTemplates, isAnyPageTemplatesAvailableForProject } =
+    usePageTemplates();
   // derived values
   const isWorkItemTemplatesAvailable = isAnyWorkItemTemplatesAvailableForProject(workspaceSlug, projectId);
-  const isInitializingTemplates = isInitializingWorkItemTemplates;
-  const isAnyTemplatesAvailable = isWorkItemTemplatesAvailable;
+  const isPageTemplatesAvailable = isAnyPageTemplatesAvailableForProject(workspaceSlug, projectId);
+  const isInitializingTemplates = isInitializingWorkItemTemplates || isInitializingPageTemplates;
+  const isAnyTemplatesAvailable = isWorkItemTemplatesAvailable || isPageTemplatesAvailable;
 
   if (!isInitializingTemplates && !isAnyTemplatesAvailable) {
     return (

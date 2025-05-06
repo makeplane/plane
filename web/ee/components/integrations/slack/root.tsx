@@ -11,6 +11,7 @@ import { InstallationCard, PersonalAccountInstallationCard } from "@/plane-web/c
 import { useSlackIntegration } from "@/plane-web/hooks/store/integrations/use-slack";
 // assets
 import SlackLogo from "@/public/services/slack.png";
+import { ProjectUpdatesRoot } from "./sections";
 
 export const SlackIntegrationRoot = observer(() => {
   // router
@@ -116,6 +117,7 @@ export const SlackIntegrationRoot = observer(() => {
               return <ConnectedAppCard key={appId} data={app} handleDisconnect={handleAppDisconnect} />;
             })}
           </div>
+          <ProjectUpdatesRoot connectionId={getAppByConnectionId(appConnectionIds?.[0])?.id!} />
         </div>
       )}
     </>

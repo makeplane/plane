@@ -3,6 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
+import { EIconSize } from "@plane/constants";
 import { StateGroupIcon, Tag } from "@plane/ui";
 // hooks
 import { useProjectInbox, useProjectState } from "@/hooks/store";
@@ -30,7 +31,7 @@ export const InboxIssueAppliedFiltersState: FC = observer(() => {
         return (
           <div key={value} className="relative flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
             <div className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden">
-              <StateGroupIcon color={optionDetail.color} stateGroup={optionDetail.group} height="12px" width="12px" />
+              <StateGroupIcon color={optionDetail.color} stateGroup={optionDetail.group} size={EIconSize.SM} />
             </div>
             <div className="text-xs truncate">{optionDetail?.name}</div>
             <div

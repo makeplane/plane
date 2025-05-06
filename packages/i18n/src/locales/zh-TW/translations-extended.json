@@ -900,7 +900,37 @@
     "link_personal_account": "將您的個人 {providerName} 帳戶連接到 Plane。",
     "connected_slack_workspaces": "已連接的 Slack 工作區",
     "connected_on": "連接於 {date}",
-    "disconnect_workspace": "斷開 {name} 工作區"
+    "disconnect_workspace": "斷開 {name} 工作區",
+    "project_updates": {
+      "title": "專案更新",
+      "description": "為您的專案配置更新通知",
+      "add_new_project_update": "添加新的專案更新通知",
+      "project_updates_empty_state": "與 Slack 頻道連接的專案將在此處顯示。",
+      "project_updates_form": {
+        "title": "配置專案更新",
+        "description": "在創建工作項時在 Slack 中接收專案更新通知",
+        "failed_to_load_channels": "無法從 Slack 加載頻道",
+        "project_dropdown": {
+          "placeholder": "選擇專案",
+          "label": "Plane 專案",
+          "no_projects": "沒有可用專案"
+        },
+        "channel_dropdown": {
+          "label": "Slack 頻道",
+          "placeholder": "選擇頻道",
+          "no_channels": "沒有可用頻道"
+        },
+        "all_projects_connected": "所有專案已連接到 Slack 頻道。",
+        "all_channels_connected": "所有 Slack 頻道已連接到專案。",
+        "project_connection_success": "專案連接創建成功",
+        "project_connection_updated": "專案連接更新成功",
+        "project_connection_deleted": "專案連接刪除成功",
+        "failed_delete_project_connection": "刪除專案連接失敗",
+        "failed_create_project_connection": "創建專案連接失敗",
+        "failed_upserting_project_connection": "更新專案連接失敗",
+        "failed_loading_project_connections": "無法加載您的專案連接。這可能是由於網絡問題或集成問題。"
+      }
+    }
   },
 
   "file_upload": {
@@ -1806,7 +1836,10 @@
         }
       },
       "use_template": {
-        "button": "使用模板"
+        "button": {
+          "default": "使用模板",
+          "loading": "使用中"
+        }
       },
       "template_source": {
         "workspace": {
@@ -1933,7 +1966,8 @@
         "project": "新增範本"
       },
       "label": {
-        "project": "選擇專案範本"
+        "project": "選擇專案範本",
+        "page": "從範本中選擇"
       },
       "tooltip": {
         "work_item": "選擇工作項目範本"

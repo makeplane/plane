@@ -1,14 +1,16 @@
 import requests
 import json
-
 from bs4 import BeautifulSoup
-
+from urllib.parse import urljoin
 # Django imports
 from django.conf import settings
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
+from celery import shared_task
+
+# Module imports
 from plane.db.models import (
     Page,
     DeployBoard,
@@ -24,11 +26,8 @@ from plane.ee.bgtasks.move_page import move_page
 from plane.bgtasks.copy_s3_object import copy_s3_objects
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.ee.utils.page_descendants import get_descendant_page_ids
-
-
-# from plane.utils
-from celery import shared_task
-
+from plane.ee.utils.page_events import PageAction
+from plane.utils.url import normalize_url_path
 
 @shared_task
 def replace_page_id(old_to_new_page_mapping, page_id):
@@ -74,9 +73,11 @@ def nested_page_update(
         if sub_pages:
             descendants_ids = get_descendant_page_ids(page_id)
 
-        if action == "archived":
+        if action == PageAction.ARCHIVED:
             Page.objects.filter(id__in=descendants_ids).update(
-                archived_at=timezone.now()
+                archived_at=timezone.now(),
+                updated_at=timezone.now(),
+                updated_by=user_id,
             )
             UserFavorite.objects.filter(
                 entity_type="page",
@@ -85,29 +86,42 @@ def nested_page_update(
                 workspace__slug=slug,
             ).delete(soft=False)
 
-        elif action == "unarchived":
-            Page.objects.filter(id__in=descendants_ids).update(archived_at=None)
+        elif action == PageAction.UNARCHIVED:
+            Page.objects.filter(id__in=descendants_ids).update(
+                archived_at=None, updated_at=timezone.now(), updated_by=user_id
+            )
 
-        elif action == "locked":
-            Page.objects.filter(id__in=descendants_ids).update(is_locked=True)
+        elif action == PageAction.LOCKED:
+            Page.objects.filter(id__in=descendants_ids).update(
+                is_locked=True, updated_at=timezone.now(), updated_by=user_id
+            )
 
-        elif action == "unlocked":
-            Page.objects.filter(id__in=descendants_ids).update(is_locked=False)
+        elif action == PageAction.UNLOCKED:
+            Page.objects.filter(id__in=descendants_ids).update(
+                is_locked=False, updated_at=timezone.now(), updated_by=user_id
+            )
 
-        elif action == "made-public":
-            Page.objects.filter(id__in=descendants_ids).update(access=0)
+        elif action == PageAction.MADE_PUBLIC:
+            Page.objects.filter(id__in=descendants_ids).update(
+                access=0, updated_at=timezone.now(), updated_by=user_id
+            )
 
-        elif action == "made-private":
-            Page.objects.filter(id__in=descendants_ids).update(access=1)
+        elif action == PageAction.MADE_PRIVATE:
+            Page.objects.filter(id__in=descendants_ids).update(
+                access=1, updated_at=timezone.now(), updated_by=user_id
+            )
 
-        elif action == "published":
+        elif action == PageAction.PUBLISHED:
             # remove the page ids which are already published from the array
+            page_ids = descendants_ids + [page_id]
             published_page_ids = set(
                 DeployBoard.objects.filter(
-                    entity_identifier__in=descendants_ids,
+                    entity_identifier__in=page_ids,
                     entity_name="page",
                     workspace__slug=slug,
-                ).values_list("entity_identifier", flat=True)
+                )
+                .exclude(entity_identifier__in=page_ids)
+                .values_list("entity_identifier", flat=True)
             )
 
             # Filter out already published IDs
@@ -144,18 +158,17 @@ def nested_page_update(
                 for item in response_data
             ]
 
-        elif action == "unpublished":
+        elif action == PageAction.UNPUBLISHED:
             DeployBoard.objects.filter(
                 entity_identifier__in=descendants_ids,
                 entity_name="page",
                 workspace__slug=slug,
             ).delete()
 
-        elif action == "duplicated":
+        elif action == PageAction.DUPLICATED:
             old_to_new_page_mapping = {}
             pages_to_duplicate = Page.objects.filter(
-                id__in=descendants_ids + [page_id],
-                workspace__slug=slug,
+                id__in=descendants_ids + [page_id], workspace__slug=slug
             )
 
             # First, duplicate all pages without setting parent_id
@@ -216,7 +229,7 @@ def nested_page_update(
 
             data = {"new_page_id": str(old_to_new_page_mapping[page_id].id)}
 
-        elif action == "moved":
+        elif action == PageAction.MOVED:
             new_project_id = extra["new_project_id"]
             parent_id = extra["parent_id"]
             new_page_id = extra["new_page_id"]
@@ -224,32 +237,42 @@ def nested_page_update(
 
             # update the sub pages with the new page id of the duplicated page
             Page.objects.filter(parent_id=page_id, workspace__slug=slug).update(
-                parent_id=new_page_id
+                parent_id=new_page_id, updated_at=timezone.now(), updated_by=user_id
             )
 
             if new_project_id:
                 # Update the project id for the project pages
                 ProjectPage.objects.filter(page_id__in=descendants_ids).update(
-                    project_id=new_project_id
+                    project_id=new_project_id,
+                    updated_at=timezone.now(),
+                    updated_by=user_id,
                 )
 
                 # Update the project id for the file assets
                 FileAsset.objects.filter(
                     page_id__in=descendants_ids, project_id=project_id
-                ).update(project_id=new_project_id)
+                ).update(
+                    project_id=new_project_id,
+                    updated_at=timezone.now(),
+                    updated_by=user_id,
+                )
 
                 # Update the project id for the deploy board
                 DeployBoard.objects.filter(
                     entity_identifier__in=descendants_ids,
                     entity_name="page",
                     project_id=project_id,
-                ).update(project_id=new_project_id)
+                ).update(
+                    project_id=new_project_id,
+                    updated_at=timezone.now(),
+                    updated_by=user_id,
+                )
 
                 # Background job to handle favorites
                 for descendant_id in descendants_ids:
                     move_page.delay(descendant_id, project_id, new_project_id)
 
-        elif action == "moved_internally":
+        elif action == PageAction.MOVED_INTERNALLY:
             new_parent_id = extra["new_parent_id"]
             old_parent_id = extra["old_parent_id"]
             data = {
@@ -257,7 +280,7 @@ def nested_page_update(
                 "old_parent_id": str(old_parent_id) if old_parent_id else None,
             }
 
-        elif action == "deleted":
+        elif action == PageAction.DELETED:
             # delete all the descendants
             Page.objects.filter(id__in=descendants_ids).delete()
             # delete the page version history
@@ -269,7 +292,7 @@ def nested_page_update(
                 entity_name="workspace_page",
             ).delete(soft=False)
 
-        elif action == "restored":
+        elif action == PageAction.RESTORED:
             data = {"deleted_page_ids": extra["deleted_page_ids"]}
 
         descendants_ids = [str(ids) for ids in descendants_ids]
@@ -285,8 +308,15 @@ def nested_page_update(
             "data": data,
         }
 
+        live_url = settings.LIVE_URL
+        if not live_url:
+            return {}
+
+        url = normalize_url_path(f"{live_url}/broadcast/")
+
+        # Send the payload to the live server
         response = requests.post(
-            f"{settings.LIVE_URL}/broadcast/",
+            url,
             json=payload,
             headers={"Content-Type": "application/json"},
         )

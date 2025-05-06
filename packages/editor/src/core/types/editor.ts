@@ -98,7 +98,7 @@ export type EditorReadOnlyRefApi = {
 
 // title ref api
 export interface EditorTitleRefApi extends EditorReadOnlyRefApi {
-  setEditorValue: (content: string) => void;
+  setEditorValue: EditorReadOnlyRefApi["setEditorValue"];
 }
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
@@ -161,8 +161,7 @@ export interface IRichTextEditor extends IEditorProps {
   dragDropEnabled?: boolean;
 }
 
-export interface ICollaborativeDocumentEditor
-  extends Omit<IEditorProps, "initialValue" | "onChange" | "onEnterKeyPress" | "value"> {
+export interface ICollaborativeDocumentEditor extends Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> {
   aiHandler?: TAIHandler;
   bubbleMenuEnabled?: boolean;
   editable: boolean;
@@ -179,7 +178,16 @@ export interface ICollaborativeDocumentEditor
     performAction?: boolean
   ) => void;
   pageRestorationInProgress?: boolean;
-  isSmoothCursorEnabled: boolean;
+  titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
+}
+
+export interface IDocumentEditor extends Omit<IEditorProps, "onEnterKeyPress" | "value"> {
+  aiHandler?: TAIHandler;
+  bubbleMenuEnabled?: boolean;
+  embedHandler: TEmbedConfig;
+  handleEditorReady?: (value: boolean) => void;
+  id: string;
+  user: TUserDetails;
 }
 
 // read only editor props

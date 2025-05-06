@@ -38,7 +38,7 @@ export const handleMergeRequest = async (data: GitlabMergeRequestEvent) => {
     const result = await getConnectionAndCredentials(data);
     if (!result) return;
 
-    const [{ workspaceConnection }, credentials] = result;
+    const [{ workspaceConnection, projectConnections }, credentials] = result;
 
     const planeClient = new Client({
       apiToken: credentials.target_access_token!,
@@ -65,13 +65,14 @@ export const handleMergeRequest = async (data: GitlabMergeRequestEvent) => {
     );
 
     const pullRequestBehaviour = new PullRequestBehaviour(
-      "gitlab",
+      E_INTEGRATION_KEYS.GITLAB,
       workspaceConnection.workspace_slug,
       gitlabService,
       planeClient,
+      projectConnections || []
     );
 
-    console.log(data);
+    logger.info(`[GITLAB] Handling merge request: ${data.object_attributes.iid}`, { data });
 
     await pullRequestBehaviour.handleEvent({
       owner: data.project.path_with_namespace,

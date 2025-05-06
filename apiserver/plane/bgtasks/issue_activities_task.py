@@ -497,10 +497,11 @@ def track_estimate_points(
             else None
         )
 
-        if new_estimate is None:
-            field = "estimate_" + old_estimate.estimate.type
-        else:
-            field = "estimate_" + new_estimate.estimate.type
+        field = (
+            "estimate_" + old_estimate.estimate.type
+            if new_estimate is None
+            else "estimate_" + new_estimate.estimate.type
+        )
 
         issue_activities.append(
             IssueActivity(
@@ -624,10 +625,10 @@ def track_type(
 
     if new_type_id != old_type_id:
         verb = "updated" if new_type_id else "deleted"
-        old_type_id = (
+        old_type = (
             IssueType.objects.filter(pk=old_type_id).first() if old_type_id else None
         )
-        new_type_id = (
+        new_type = (
             IssueType.objects.filter(pk=new_type_id).first() if new_type_id else None
         )
 
@@ -636,14 +637,14 @@ def track_type(
                 issue_id=issue_id,
                 actor_id=actor_id,
                 verb=verb,
-                old_value=old_type_id.name if old_type_id else None,
-                new_value=new_type_id.name if new_type_id else None,
+                old_value=old_type.name if old_type else None,
+                new_value=new_type.name if new_type else None,
                 field="type",
                 project_id=project_id,
                 workspace_id=workspace_id,
                 comment="",
-                old_identifier=old_type_id.id if old_type_id else None,
-                new_identifier=new_type_id.id if new_type_id else None,
+                old_identifier=old_type_id if old_type else None,
+                new_identifier=new_type_id if new_type else None,
                 epoch=epoch,
             )
         )
@@ -1685,10 +1686,11 @@ def create_customer_activity(
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
 
-    if requested_data.get("customer_request_id") is not None:
-        field = "customer_request"
-    elif requested_data.get("customer_request_id") is None:
-        field = "customer"
+    field = (
+        "customer_request"
+        if requested_data.get("customer_request_id") is not None
+        else "customer"
+    )
 
     issue_activities.append(
         IssueActivity(
@@ -1719,10 +1721,11 @@ def delete_customer_activity(
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
 
-    if requested_data.get("customer_request_id") is not None:
-        field = "customer_request"
-    elif requested_data.get("customer_request_id") is None:
-        field = "customer"
+    field = (
+        "customer_request"
+        if requested_data.get("customer_request_id") is not None
+        else "customer"
+    )
 
     issue_activities.append(
         IssueActivity(
@@ -1736,6 +1739,54 @@ def delete_customer_activity(
             old_value=requested_data.get("name"),
             field=field,
             old_identifier=requested_data.get("customer_id"),
+            epoch=epoch,
+        )
+    )
+
+
+def convert_epic_to_work_item_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment="converted the epic to work item",
+            field="epic",
+            verb="converted",
+            actor_id=actor_id,
+            epoch=epoch,
+        )
+    )
+
+
+def convert_work_item_to_epic_activity(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project_id=project_id,
+            workspace_id=workspace_id,
+            comment="converted the work item to epic",
+            field="work_item",
+            verb="converted",
+            actor_id=actor_id,
             epoch=epoch,
         )
     )
@@ -1811,6 +1862,8 @@ def issue_activity(
             "issue_draft.activity.deleted": delete_draft_issue_activity,
             "intake.activity.created": create_intake_activity,
             "epic.activity.created": create_epic_activity,
+            "work_item.activity.converted": convert_epic_to_work_item_activity,
+            "epic.activity.converted": convert_work_item_to_epic_activity,
             "customer.activity.created": create_customer_activity,
             "customer.activity.deleted": delete_customer_activity,
         }
@@ -1837,16 +1890,12 @@ def issue_activity(
                     event=(
                         "issue_comment"
                         if activity.field == "comment"
-                        else "intake_issue"
-                        if intake
-                        else "issue"
+                        else "intake_issue" if intake else "issue"
                     ),
                     event_id=(
                         activity.issue_comment_id
                         if activity.field == "comment"
-                        else intake
-                        if intake
-                        else activity.issue_id
+                        else intake if intake else activity.issue_id
                     ),
                     verb=activity.verb,
                     field=(

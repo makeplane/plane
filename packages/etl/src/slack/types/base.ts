@@ -21,6 +21,15 @@ export type TSlackMetadata = {
   incoming_webhook: Incomingwebhook;
   is_enterprise_install: boolean;
 };
+
+export type TSlackIssueEntityData = {
+  channel: string;
+  message: {
+    ts: string;
+    team: string;
+  };
+};
+
 export type Incomingwebhook = {
   url: string;
   channel: string;
@@ -156,6 +165,7 @@ export type TViewSubmissionPayload = {
   team: ISlackTeam;
   user: ISlackUser;
   api_app_id: string;
+  callback_id: string;
   token: string;
   trigger_id: string;
   view: ISlackView;
@@ -412,6 +422,63 @@ export interface SlackLinkSharedEvent {
   is_bot_user_member: boolean;
   event_ts: string;
   links: { url: string; domain: string }[];
+}
+
+// Common types used within conversations
+export interface SlackTopicPurpose {
+  value: string;
+  creator: string;
+  last_set: number;
+}
+
+// Base interface for all conversation types
+export interface BaseConversation {
+  id: string;
+  created: number;
+  is_channel: boolean;
+  is_group: boolean;
+  is_im: boolean;
+  is_archived?: boolean;
+  is_general?: boolean;
+  is_org_shared: boolean;
+  priority: number;
+}
+
+// Interface for channel/group conversations
+export interface ChannelGroupConversation extends BaseConversation {
+  name: string;
+  creator: string;
+  unlinked?: number;
+  name_normalized: string;
+  is_shared: boolean;
+  is_ext_shared: boolean;
+  pending_shared: any[];
+  is_pending_ext_shared: boolean;
+  is_member: boolean;
+  is_private: boolean;
+  is_mpim?: boolean;
+  is_open?: boolean;
+  updated?: number;
+  topic: SlackTopicPurpose;
+  purpose: SlackTopicPurpose;
+}
+
+// Interface for direct message conversations
+export interface DirectMessageConversation extends BaseConversation {
+  user: string;
+  is_user_deleted: boolean;
+}
+
+// Union type for all conversation types
+export type SlackConversation = ChannelGroupConversation | DirectMessageConversation;
+
+// The complete response type
+export interface SlackConversationListResponse {
+  ok: boolean;
+  channels: SlackConversation[];
+  response_metadata?: {
+    next_cursor?: string;
+  };
 }
 
 export interface Authorization {

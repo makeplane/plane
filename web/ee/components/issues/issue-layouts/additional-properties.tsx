@@ -15,12 +15,18 @@ export const WorkItemLayoutAdditionalProperties: FC<TWorkItemLayoutAdditionalPro
   const { t } = useTranslation();
   // hooks
   const { isMobile } = usePlatformOS();
-  const { isCustomersFeatureEnabled } = useCustomers();
+  const {
+    isCustomersFeatureEnabled,
+    workItems: { getCustomerCountByWorkItemId },
+  } = useCustomers();
+
+  const customerCount = getCustomerCountByWorkItemId(issue.id);
 
   const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
     e.stopPropagation();
     e.preventDefault();
   };
+
   return (
     <>
       {/* Customer Request Count */}
@@ -28,12 +34,12 @@ export const WorkItemLayoutAdditionalProperties: FC<TWorkItemLayoutAdditionalPro
         displayProperties={displayProperties}
         displayPropertyKey="customer_request_count"
         shouldRenderProperty={(properties) =>
-          !!properties.customer_request_count && !!issue.customer_request_count && !!isCustomersFeatureEnabled
+          !!properties.customer_request_count && !!issue.customer_request_ids?.length && !!isCustomersFeatureEnabled
         }
       >
         <Tooltip
           tooltipHeading={t("issue.display.properties.customer_request_count")}
-          tooltipContent={`${issue.customer_request_count}`}
+          tooltipContent={`${issue.customer_request_ids?.length ?? 0}`}
           isMobile={isMobile}
           renderByDefault={false}
         >
@@ -43,7 +49,7 @@ export const WorkItemLayoutAdditionalProperties: FC<TWorkItemLayoutAdditionalPro
             onClick={handleEventPropagation}
           >
             <CustomerRequestIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
-            <div className="text-xs">{issue.customer_request_count}</div>
+            <div className="text-xs">{issue.customer_request_ids?.length ?? 0}</div>
           </div>
         </Tooltip>
       </WithDisplayPropertiesHOC>
@@ -52,12 +58,12 @@ export const WorkItemLayoutAdditionalProperties: FC<TWorkItemLayoutAdditionalPro
         displayProperties={displayProperties}
         displayPropertyKey="customer_count"
         shouldRenderProperty={(properties) =>
-          !!properties.customer_count && !!issue.customer_count && !!isCustomersFeatureEnabled
+          !!properties.customer_count && !!customerCount && !!isCustomersFeatureEnabled
         }
       >
         <Tooltip
           tooltipHeading={t("issue.display.properties.customer_count")}
-          tooltipContent={`${issue.customer_count}`}
+          tooltipContent={`${customerCount}`}
           isMobile={isMobile}
           renderByDefault={false}
         >
@@ -67,7 +73,7 @@ export const WorkItemLayoutAdditionalProperties: FC<TWorkItemLayoutAdditionalPro
             onClick={handleEventPropagation}
           >
             <CustomersIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
-            <div className="text-xs">{issue.customer_count}</div>
+            <div className="text-xs">{customerCount}</div>
           </div>
         </Tooltip>
       </WithDisplayPropertiesHOC>

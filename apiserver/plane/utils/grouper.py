@@ -117,7 +117,7 @@ def issue_on_results(
         if check_workspace_feature_flag(
             feature_key=FeatureFlag.CUSTOMERS, slug=slug, user_id=user_id
         ):
-            required_fields.extend(["customer_count", "customer_request_count"])
+            required_fields.extend(["customer_ids", "customer_request_ids"])
 
     if group_by in FIELD_MAPPER:
         original_list.remove(FIELD_MAPPER[group_by])

@@ -90,7 +90,6 @@ class TemplateBaseEndpoint(BaseAPIView):
         """
                 Validates JSON fields in the page template data.
 
-        <<<<<<< HEAD
                 Args:
                     template_date (dict): Request data for page template.
 
@@ -117,7 +116,6 @@ class TemplateBaseEndpoint(BaseAPIView):
         """
                 Validates JSON fields in the page template data.
 
-        <<<<<<< HEAD
                 Args:
                     template_date (dict): Request data for page template.
 

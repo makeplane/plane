@@ -1,4 +1,3 @@
-import concat from "lodash/concat";
 import orderBy from "lodash/orderBy";
 import remove from "lodash/remove";
 import set from "lodash/set";
@@ -10,13 +9,11 @@ import { computedFn } from "mobx-utils";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { CustomerRequestsService, CustomerService } from "@plane/services";
 import {
-  TCustomerWorkItem,
   TCustomer,
   TCustomerRequest,
   TLoader,
   TCustomerRequestCreateResponse,
   TCustomerRequestAttachment,
-  TIssue,
   TCustomerPayload,
   TCustomerPaginationOptions,
   TCustomerListQuery,
@@ -28,9 +25,9 @@ import { convertToEpoch } from "@plane/utils";
 import { RootStore } from "@/plane-web/store/root.store";
 import { EWorkspaceFeatureLoader, EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { RequestAttachmentStore } from "./attachment.store";
+import { WorkItemCustomersStore } from "./work-item-customers.store";
 
 export interface ICustomersStore {
-  attachment: RequestAttachmentStore;
   // observables
   loader: TLoader;
   isAnyModalOpen: boolean;
@@ -41,21 +38,17 @@ export interface ICustomersStore {
   customerIds: string[];
   customerSearchQuery: string;
   customerRequestSearchQuery: string;
-  workItemRequestSearchQuery: string;
   attachmentDeleteModalId: string | null;
   paginationOptions: TCustomerPaginationOptions;
   isCustomersFeatureEnabled: boolean | undefined;
   customerDetailSidebarCollapsed: boolean | undefined;
-  workItemRequestIdsMap: Record<string, string[]>;
   customerWorkItemFilters: TCustomerWorkItemFilters;
   requestDeleteModalId: string | null;
   requestSourceModalId: string | null;
   createUpdateRequestModalId: string | null;
-  workItemCustomerIds: Record<string, string[]>;
   // helper actions
   updateSearchQuery: (query: string) => void;
   updateCustomerRequestSearchQuery: (query: string) => void;
-  updateWorkItemRequestSearchQuery: (query: string) => void;
   toggleDeleteAttachmentModal: (requestId: string | null) => void;
   toggleCustomerDetailSidebar: (collapsed?: boolean) => void;
   updateCustomerWorkItemFilters: (filter: TCustomerWorkItemFilter, value: string) => void;
@@ -72,7 +65,6 @@ export interface ICustomersStore {
   getCustomerById: (customerId: string) => TCustomer | undefined;
   fetchCustomerRequests: (workspaceSlug: string, customerId: string) => Promise<TCustomerRequest[]>;
   getFilteredCustomerRequestIds: (customerId: string) => string[];
-  getFilteredWorkItemRequestIds: (workItemId: string) => string[];
   getCustomerWorkItemIds: (customerId: string) => string[] | undefined;
   createCustomerRequest: (
     workspaceSlug: string,
@@ -93,22 +85,9 @@ export interface ICustomersStore {
   ) => Promise<void>;
   getRequestById: (requestId: string) => TCustomerRequest | undefined;
   fetchCustomerWorkItems: (workspaceSlug: string, customerId: string) => Promise<void>;
-  addWorkItemsToCustomer: (
-    workspacesSlug: string,
-    customerId: string,
-    workItemIds: string[],
-    requestId?: string
-  ) => Promise<TIssue[]>;
-  removeWorkItemFromCustomer: (
-    workspacesSlug: string,
-    customerId: string,
-    workItemId: string,
-    requestId?: string
-  ) => Promise<void>;
-  fetchWorkItemCustomers: (workspaceSlug: string, workItemId: string) => Promise<string[]>;
-  fetchWorkItemRequests: (workspaceSlug: string, workItemId: string) => Promise<TCustomerRequest[]>;
-  getWorkItemRequestIds: (workItemId: string) => string[];
-  getWorkItemCustomerIds: (workItemId: string) => string[];
+  // stores
+  attachment: RequestAttachmentStore;
+  workItems: WorkItemCustomersStore;
 }
 
 export class CustomerStore implements ICustomersStore {
@@ -132,12 +111,14 @@ export class CustomerStore implements ICustomersStore {
   createUpdateRequestModalId: string | null = null;
   requestSourceModalId: string | null = null;
   workItemCustomerIds: Record<string, string[]> = {};
+
   // services
   customerService: CustomerService;
   customerRequestService: CustomerRequestsService;
   // store
   rootStore: RootStore;
   attachment: RequestAttachmentStore;
+  workItems: WorkItemCustomersStore;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -167,7 +148,6 @@ export class CustomerStore implements ICustomersStore {
       // helper actions
       updateSearchQuery: action,
       updateCustomerRequestSearchQuery: action,
-      updateWorkItemRequestSearchQuery: action,
       toggleDeleteAttachmentModal: action,
       toggleCustomerDetailSidebar: action,
       updateCustomerWorkItemFilters: action,
@@ -182,19 +162,15 @@ export class CustomerStore implements ICustomersStore {
       createCustomer: action,
       updateCustomer: action,
       updateCustomerRequest: action,
-      addWorkItemsToCustomer: action,
-      removeWorkItemFromCustomer: action,
       deleteCustomer: action,
       createCustomerRequest: action,
       deleteCustomerRequest: action,
-      fetchWorkItemCustomers: action,
-      fetchWorkItemRequests: action,
-      getWorkItemRequestIds: action,
     });
 
     // store
     this.rootStore = _rootStore;
     this.attachment = new RequestAttachmentStore(this);
+    this.workItems = new WorkItemCustomersStore(this, this.rootStore);
 
     // service
     this.customerService = new CustomerService();
@@ -461,7 +437,7 @@ export class CustomerStore implements ICustomersStore {
    * @param customerId
    * @param requestId
    */
-  getRequestById = computedFn((requestId: string) => this.requestsMap[requestId]);
+  getRequestById = computedFn((requestId: string): TCustomerRequest | undefined => this.requestsMap[requestId]);
 
   /**
    * @description Get all the request ids for a customer
@@ -475,7 +451,7 @@ export class CustomerStore implements ICustomersStore {
 
     const filteredRequests = this.customerRequestIdsMap[customerId]
       .map((requestId) => this.getRequestById(requestId))
-      .filter(Boolean)
+      .filter((request): request is TCustomerRequest => request !== undefined)
       .filter((request) => request.name.toLocaleLowerCase().includes(this.customerRequestSearchQuery));
     return orderBy(filteredRequests, (e) => convertToEpoch(e.created_at), ["desc"]).map((e) => e.id);
   });
@@ -492,7 +468,7 @@ export class CustomerStore implements ICustomersStore {
 
     const filteredRequests = this.workItemRequestIdsMap[workItemId]
       .map((requestId) => this.getRequestById(requestId))
-      .filter(Boolean)
+      .filter((request): request is TCustomerRequest => request !== undefined)
       .filter((request) => request.name.toLocaleLowerCase().includes(this.workItemRequestSearchQuery));
     return filteredRequests.map((request) => request.id);
   });
@@ -518,7 +494,7 @@ export class CustomerStore implements ICustomersStore {
     workItemId?: string
   ): Promise<void> => {
     const request = this.getRequestById(requestId);
-    const _workItemIds = request.work_item_ids || workItemId ? [workItemId] : [];
+    const _workItemIds = request?.work_item_ids || workItemId ? [workItemId] : [];
     await this.customerRequestService.destroy(workspaceSlug, customerId, requestId);
     runInAction(() => {
       delete this.requestsMap[requestId];
@@ -536,9 +512,10 @@ export class CustomerStore implements ICustomersStore {
         // remove request form the work item
         remove(this.workItemRequestIdsMap[workItemId], (id) => id === requestId);
         // update counts for work item
-        const requestCount = this.rootStore.issue.issues.getIssueById(workItemId)?.customer_request_count || 0;
+        const _workItem = this.rootStore.issue.issues.getIssueById(workItemId);
+        const _workItemCustomerRequestIds = _workItem?.customer_request_ids || [];
         this.rootStore.issue.issues.updateIssue(workItemId, {
-          customer_request_count: requestCount > 0 ? requestCount - 1 : 0,
+          customer_request_ids: _workItemCustomerRequestIds.filter((id) => id !== requestId),
         });
       }
     });
@@ -562,205 +539,10 @@ export class CustomerStore implements ICustomersStore {
     }
   };
 
-  /**
-   * Add work item to request
-   * @param workspacesSlug
-   * @param requestId
-   * @param workItemIds
-   */
-  addWorkItemsToCustomer = async (
-    workspacesSlug: string,
-    customerId: string,
-    workItemIds: string[],
-    requestId?: string
-  ): Promise<TCustomerWorkItem[]> => {
-    try {
-      const _params = requestId ? { customer_request_id: requestId } : undefined;
-      const response = await this.customerService.addWorkItemToCustomer(
-        workspacesSlug,
-        customerId,
-        workItemIds,
-        _params
-      );
-      const _workItems: TCustomerWorkItem[] = response.map((item) => ({ ...item, customer_request_id: requestId }));
-      // add work items to the issue store
-      this.rootStore.issue.issues.addIssue(_workItems);
-      runInAction(() => {
-        // update request data if work item is added to the request
-        if (requestId) {
-          update(this.requestsMap, [requestId], (request: TCustomerRequest) => ({
-            ...request,
-            work_item_ids: [...workItemIds, ...(request.work_item_ids || [])],
-          }));
-        }
-        // update counts and data for work items
-        _workItems.forEach((item) => {
-          const _workItem = this.rootStore.issue.issues.getIssueById(item.id);
-          if (requestId) {
-            if (!this.workItemRequestIdsMap[item.id]) set(this.workItemRequestIdsMap, [item.id], []);
-            // add request id to the work item
-            concat(requestId, this.workItemRequestIdsMap[item.id]);
-            const _requestCount = _workItem?.customer_request_count || 0;
-            // update counts for work items
-            this.rootStore.issue.issues.updateIssue(item.id, {
-              customer_request_count: _requestCount + 1,
-            });
-          }
-          const _customerCount = _workItem?.customer_count || 0;
-          // update customer count for work items
-          this.rootStore.issue.issues.updateIssue(item.id, {
-            customer_count: _customerCount + 1,
-          });
-          if (this.workItemCustomerIds[item.id]) {
-            update(this.workItemCustomerIds, [item.id], (ids: string[]) => uniq([...ids, customerId]));
-          } else set(this.workItemCustomerIds, [item.id], [customerId]);
-        });
-        if (this.customerWorkItemIdsMap[customerId]) {
-          update(this.customerWorkItemIdsMap, [customerId], (ids: string[]) => [...workItemIds, ...ids]);
-        } else set(this.customerWorkItemIdsMap, [customerId], workItemIds);
-      });
-      return response;
-    } catch (error) {
-      console.error("CustomerStore->addWorkItemsToRequest", error);
-      throw error;
-    }
-  };
-
-  /**
-   * @description Update requests
-   */
-  removeWorkItemFromRequests = (workItemId: string) => {
-    // remove work item from all requests
-    Object.values(this.requestsMap).forEach((request) => {
-      if (request.work_item_ids) {
-        remove(request.work_item_ids, (id) => id === workItemId);
-      }
-    });
-  };
-
-  /**
-   * @description Remove work item from request
-   * @param workspaceSlug
-   * @param customerId
-   * @param requestId
-   * @param workItemId
-   */
-  removeWorkItemFromCustomer = async (
-    workspaceSlug: string,
-    customerId: string,
-    workItemId: string,
-    requestId?: string
-  ): Promise<void> => {
-    try {
-      const _params = requestId ? { customer_request_id: requestId } : undefined;
-      await this.customerService.removeWorkItemFromCustomer(workspaceSlug, customerId, workItemId, _params);
-      const _requestId = requestId;
-      runInAction(async () => {
-        if (_requestId) {
-          const _workItemIds = this.requestsMap[_requestId]?.work_item_ids;
-          remove(_workItemIds, (id) => id === workItemId);
-          update(this.requestsMap, [_requestId], (request: TCustomerRequest) => ({
-            ...request,
-            issue_ids: _workItemIds,
-          }));
-          // update count for work item if request is removed
-          const requestCount = this.rootStore.issue.issues.getIssueById(workItemId)?.customer_request_count || 0;
-          this.rootStore.issue.issues.updateIssue(workItemId, {
-            customer_request_count: requestCount > 0 ? requestCount - 1 : 0,
-          });
-        } else {
-          // check if requests are related to the work item and remove from all of them
-          this.removeWorkItemFromRequests(workItemId);
-        }
-        // fetch updated work items
-        await this.fetchCustomerWorkItems(workspaceSlug, customerId);
-        // remove request from the work item
-        remove(this.workItemRequestIdsMap[workItemId], (id) => id === _requestId);
-      });
-      remove(this.workItemCustomerIds[workItemId], (id) => id === customerId);
-      // update customer count for work item
-      const customerCount = this.rootStore.issue.issues.getIssueById(workItemId)?.customer_count || 0;
-      this.rootStore.issue.issues.updateIssue(workItemId, {
-        customer_count: customerCount > 0 ? customerCount - 1 : 0,
-      });
-    } catch (error) {
-      console.error("CustomerStore->removeWorkItemFromCustomer", error);
-      throw error;
-    }
-  };
-
-  /**
-   * Fetch customers list
-   * @param workspaceSlug
-   * @param workItemId
-   * @returns
-   */
-  fetchWorkItemCustomers = async (workspaceSlug: string, workItemId: string): Promise<string[]> => {
-    try {
-      const response = await this.customerService.getWorkItemCustomers(workspaceSlug, workItemId);
-      runInAction(() => {
-        set(this.workItemCustomerIds, [workItemId], response);
-      });
-      return response;
-    } catch (error) {
-      console.error("CustomerStore", error);
-      throw error;
-    }
-  };
-
-  /**
-   * Fetch all requests related to a customers
-   * @param workspaceSlug
-   * @param workItemId
-   * @returns
-   */
-  fetchWorkItemRequests = async (workspaceSlug: string, workItemId: string): Promise<TCustomerRequest[]> => {
-    try {
-      const response = await this.customerRequestService.listWorkItemRequests(workspaceSlug, workItemId);
-      runInAction(async () => {
-        const _requestIds: string[] = [];
-        const attachmentPromises: Promise<TCustomerRequestAttachment[]>[] = [];
-        if (response.length) {
-          response.forEach((request) => {
-            _requestIds.push(request.id);
-            if (this.requestsMap[request.id]) {
-              update(this.requestsMap, [request.id], (data) => ({ ...data, ...request }));
-            } else set(this.requestsMap, [request.id], request);
-
-            if (request.attachment_count)
-              attachmentPromises.push(this.attachment.fetchAttachments(workspaceSlug, request.id));
-          });
-          set(this.workItemRequestIdsMap, [workItemId], uniq(_requestIds));
-          await Promise.all(attachmentPromises);
-        }
-      });
-      return response;
-    } catch (error) {
-      console.error("CustomerStore", error);
-      throw error;
-    }
-  };
-
-  /**
-   * @description Get work item customer ids
-   * @param workItemId
-   */
-  getWorkItemCustomerIds = computedFn((workItemId: string): string[] => {
-    const customerIds = this.workItemCustomerIds[workItemId] ?? [];
-    return uniq(customerIds);
-  });
-
-  getWorkItemRequestIds = (workItemId: string): string[] => {
-    const requestIds = this.workItemRequestIdsMap[workItemId] ?? [];
-    return requestIds;
-  };
-
   // helper actions
   updateSearchQuery = action((query: string) => (this.customerSearchQuery = query));
 
   updateCustomerRequestSearchQuery = action((query: string) => (this.customerRequestSearchQuery = query));
-
-  updateWorkItemRequestSearchQuery = action((query: string) => (this.workItemRequestSearchQuery = query));
 
   toggleDeleteAttachmentModal = (attachmentId: string | null) => (this.attachmentDeleteModalId = attachmentId);
 

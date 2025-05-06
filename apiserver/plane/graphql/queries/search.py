@@ -1,37 +1,42 @@
 # Python imports
 import re
-
-# Third-Party Imports
-import strawberry
-from asgiref.sync import sync_to_async
-
-# Python Standard Library Imports
 from typing import Optional
 
-# Strawberry Imports
-from strawberry.types import Info
-from strawberry.permission import PermissionExtension
+# Python Standard Library Imports
+import strawberry
+
+# Third-Party Imports
+from asgiref.sync import sync_to_async
 
 # Django Imports
 from django.db.models import Exists, OuterRef, Q
 
+# Strawberry Imports
+from strawberry.permission import PermissionExtension
+from strawberry.types import Info
+
 # Module Imports
-from plane.graphql.types.search import GlobalSearchType
 from plane.db.models import (
-    Issue,
-    Project,
-    Page,
-    Module,
     Cycle,
+    Issue,
+    Module,
+    Page,
+    Project,
     ProjectMember,
     WorkspaceMember,
 )
-from plane.graphql.types.project import ProjectLiteType
-from plane.graphql.types.issue import IssueLiteType
-from plane.graphql.types.page import PageLiteType
-from plane.graphql.types.module import ModuleLiteType
-from plane.graphql.types.cycle import CycleLiteType
+from plane.graphql.helpers import (
+    epic_base_query,
+    is_epic_feature_flagged,
+    is_project_epics_enabled,
+)
 from plane.graphql.permissions.workspace import WorkspaceBasePermission
+from plane.graphql.types.cycle import CycleLiteType
+from plane.graphql.types.issues.base import IssueLiteType
+from plane.graphql.types.module import ModuleLiteType
+from plane.graphql.types.page import PageLiteType
+from plane.graphql.types.project import ProjectLiteType
+from plane.graphql.types.search import GlobalSearchType
 
 
 @sync_to_async
@@ -236,6 +241,56 @@ async def filter_pages(
     return pages
 
 
+async def filter_epics(
+    query: str, slug: str, user, project: Optional[strawberry.ID] = None
+) -> list[IssueLiteType]:
+    user_id = str(user.id)
+
+    epic_feature_flagged = await is_epic_feature_flagged(
+        user_id=user_id, workspace_slug=slug, raise_exception=False
+    )
+    if epic_feature_flagged is False:
+        return []
+
+    if project:
+        project_epics_enabled = await is_project_epics_enabled(
+            workspace_slug=slug, project_id=project, raise_exception=False
+        )
+        if project_epics_enabled is False:
+            return []
+
+    fields = ["name", "sequence_id", "project__identifier"]
+    q = Q()
+    for field in fields:
+        if field == "sequence_id":
+            sequences = re.findall(r"\b\d+\b", query)
+            for sequence_id in sequences:
+                q |= Q(**{"sequence_id": sequence_id})
+        else:
+            q |= Q(**{f"{field}__icontains": query})
+
+    epic_query = epic_base_query(workspace_slug=slug, user_id=user.id)
+    if project:
+        epic_query = epic_base_query(
+            workspace_slug=slug, project_id=project, user_id=user.id
+        )
+
+    epics = await sync_to_async(
+        lambda: list(
+            epic_query.filter(q)
+            .filter(project__project_projectfeature__is_epic_enabled=True)
+            .distinct()
+            .values("id", "sequence_id", "name", "project", "project__identifier")
+        )
+    )()
+
+    for epic in epics:
+        epic["project_identifier"] = epic["project__identifier"]
+        del epic["project__identifier"]
+
+    return [IssueLiteType(**epic) for epic in epics]
+
+
 @strawberry.type
 class GlobalSearchQuery:
     @strawberry.field(
@@ -252,9 +307,10 @@ class GlobalSearchQuery:
         include_unjoined_projects: Optional[bool] = False,
     ) -> GlobalSearchType:
         user = info.context.user
+
         if not query:
             return GlobalSearchType(
-                projects=[], issues=[], modules=[], cycles=[], pages=[]
+                projects=[], issues=[], modules=[], cycles=[], pages=[], epics=[]
             )
 
         projects = await filter_projects(
@@ -264,6 +320,7 @@ class GlobalSearchQuery:
         modules = await filter_modules(query, slug, user, project, module, cycle)
         cycles = await filter_cycles(query, slug, user, project, module, cycle)
         pages = await filter_pages(query, slug, user, project, module, cycle)
+        epics = await filter_epics(query, slug, user, project)
 
         # Return the GlobalSearchType with the list of ProjectLiteType objects
         return GlobalSearchType(
@@ -272,4 +329,5 @@ class GlobalSearchQuery:
             modules=modules,
             cycles=cycles,
             pages=pages,
+            epics=epics,
         )

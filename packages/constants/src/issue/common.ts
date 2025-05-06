@@ -176,6 +176,15 @@ export const EPICS_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = 
   (key) => !["cycle", "modules", "issue_type"].includes(key)
 );
 
+export const SUB_ISSUES_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = [
+  "key",
+  "assignee",
+  "start_date",
+  "due_date",
+  "priority",
+  "state",
+];
+
 export const ISSUE_DISPLAY_PROPERTIES: {
   key: keyof IIssueDisplayProperties;
   titleTranslationKey: string;
@@ -366,3 +375,8 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
   },
   ...ADDITIONAL_SPREADSHEET_PROPERTY_DETAILS,
 };
+
+export enum EWorkItemConversionType {
+  WORK_ITEM = "work_item",
+  EPIC = "epic",
+}

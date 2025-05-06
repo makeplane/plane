@@ -16,6 +16,7 @@ import { EpicCustomersRoot } from "./overview-section/customers-root";
 import { EpicIssuesOverviewRoot } from "./overview-section/issues-root";
 import { EpicOverviewWidgetModals } from "./overview-section/modals-root";
 import { EpicRelationsOverviewRoot } from "./overview-section/relation-root";
+import { SubWorkItemsActions } from "./overview-section/work-items-actions";
 type Props = {
   workspaceSlug: string;
   projectId: string;
@@ -57,7 +58,15 @@ export const EpicOverviewRoot: FC<Props> = observer((props) => {
   // Actions
   const OVERVIEW_ACTIONS: Record<string, React.ReactNode> = useMemo(
     () => ({
-      issues: <SubIssuesActionButton issueId={epicId} issueServiceType={EIssueServiceType.EPICS} disabled={disabled} />,
+      issues: (
+        <SubWorkItemsActions
+          workItemId={epicId}
+          workItemServiceType={EIssueServiceType.EPICS}
+          projectId={projectId}
+          workspaceSlug={workspaceSlug}
+          disabled={disabled}
+        />
+      ),
       relations: (
         <RelationActionButton issueId={epicId} issueServiceType={EIssueServiceType.EPICS} disabled={disabled} />
       ),
@@ -67,7 +76,7 @@ export const EpicOverviewRoot: FC<Props> = observer((props) => {
         </button>
       ),
     }),
-    [epicId, disabled, toggleCreateUpdateRequestModal]
+    [epicId, projectId, workspaceSlug, disabled, toggleCreateUpdateRequestModal]
   );
 
   return (

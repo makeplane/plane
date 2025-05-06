@@ -23,7 +23,7 @@ export const useEpicUpdates = (workspaceSlug: string, projectId: string, epicId:
     comments: { patchComment: _patchComment, fetchComments: _fetchComments },
   } = useUpdateDetail(EUpdateEntityType.EPIC);
   const {
-    initiative: { fetchInitiativeEpics, fetchInitiativeAnalytics },
+    initiative: { epics: {fetchInitiativeEpics}, fetchInitiativeAnalytics },
   } = useInitiatives();
   const { data: currentUser } = useUser();
   const pathName = usePathname();
