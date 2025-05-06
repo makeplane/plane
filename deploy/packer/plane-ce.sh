@@ -310,11 +310,11 @@ BANNER
 
 echo -e "${GREEN}Welcome to Plane CE Server!${NC}"
 echo -e "${BLUE}Available commands:${NC}"
-echo "  plane start   - Start all services"
-echo "  plane stop    - Stop all services"
-echo "  plane status  - Check services status"
-echo "  plane logs    - View service logs"
-echo "  plane config  - Configure Plane"
+echo "  plane start       - Start all services"
+echo "  plane stop        - Stop all services"
+echo "  plane status      - Check services status"
+echo "  plane logs        - View service logs"
+echo "  plane configure   - Configure Plane"
 echo ""
 echo "For more information, visit: https://docs.plane.so"
 echo "--------------------------------------------"
@@ -855,7 +855,6 @@ function configure_backend(){
   configure_backend_wizard
 }
 
-
 function main(){
   welcome
 
@@ -864,7 +863,6 @@ function main(){
   if [ -z "$action" ]; then
     echo "Usage: $0 command [options]"
     echo "Commands:"
-    echo "    $0 install                        # installs the prerequisites"
     echo "    $0 configure                      # configure backend"
     echo "    $0 start                          # start all services"
     echo "    $0 start <service>                # start specific service"
@@ -881,14 +879,6 @@ function main(){
   fi
 
   case $action in
-    "install")
-      echo "Installing prerequisites"
-      install_prerequisites
-      if [ $? -ne 0 ]; then
-        echo "Failed to install prerequisites"
-        exit 1
-      fi
-      ;;
     "start")
       echo "Starting services"
       start_services "$@"
@@ -900,7 +890,6 @@ function main(){
     "stop")
       echo "Stopping services"
       stop_services "$@"
-
       if [ $? -ne 0 ]; then
         echo "Failed to stop services"
         exit 1
@@ -941,4 +930,7 @@ function main(){
   esac
 }
 
-main "$@"
+# Only run main if not being sourced
+if ! (return 0 2>/dev/null); then
+  main "$@"
+fi

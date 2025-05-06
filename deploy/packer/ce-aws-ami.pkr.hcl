@@ -194,10 +194,11 @@ build {
     ]
     inline = [
       # "sudo apt-get update",
-      "/usr/local/bin/plane install",
+      "source /usr/local/bin/plane",
+      "install_prerequisites",
       "sudo systemctl enable ssh",
-      "sudo systemctl start ssh"
-      "/usr/local/bin/plane stop"
+      "sudo systemctl start ssh",
+      "plane stop"
     ]
   }
 
