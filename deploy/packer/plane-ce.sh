@@ -316,16 +316,13 @@ function create_services(){
   sudo systemctl start cloud-init
 
   sudo mkdir -p /var/log/plane
+  local services=(admin web space live api worker beat-worker caddy)
+  for service in ${services[@]}; do
+    sudo touch /var/log/plane/${service}.log
+  done
   sudo chown -R ubuntu:ubuntu /var/log/plane
-  sudo chmod 755 /var/log/plane
-
-  sudo systemctl enable admin.service
-  sudo systemctl enable web.service
-  sudo systemctl enable space.service
-  sudo systemctl enable live.service
-  sudo systemctl enable api.service
-  sudo systemctl enable worker.service
-  sudo systemctl enable beat-worker.service
+  sudo chmod -R 755 /var/log/plane
+  sudo chmod 644 /var/log/plane/*.log
 
 }
 
@@ -390,6 +387,7 @@ function start_single_service(){
     exit 1
   fi
 
+  sudo systemctl enable ${service_name}.service > /dev/null 2>&1
   sudo service $service_name start &
   show_spinner $! "Starting $service_name"
   local status=$?
@@ -407,6 +405,7 @@ function stop_single_service(){
     exit 1
   fi
 
+  sudo systemctl disable ${service_name}.service > /dev/null 2>&1
   sudo service $service_name stop &
   show_spinner $! "Stopping $service_name"
   local status=$?
@@ -444,7 +443,6 @@ function stop_services(){
 
 function restart_services(){
   stop_services "$@"
-  create_services
   start_services "$@"
 }
 

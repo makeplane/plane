@@ -180,11 +180,11 @@ build {
   provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
-      "TERM=xterm-256color"
+      "TERM=xterm-256color",
+      "CI=true"
     ]
     inline = [
       "bash -c '. /usr/local/bin/plane && install_prerequisites'",
-      "bash -c '/usr/local/bin/plane stop'",
     ]
   }
 
