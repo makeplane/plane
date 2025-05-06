@@ -41,8 +41,12 @@ export const CommandPaletteSearchResults: React.FC<Props> = observer((props) => 
                   onSelect={() => {
                     closePalette();
                     router.push(currentSection.path(item, projectId));
-                    const itemProjectId = item.project_id || (item.project_ids && item.project_ids[0]) || undefined;
-                    openProjectAndScrollToSidebar(itemProjectId);
+                    const itemProjectId =
+                      item?.project_id ||
+                      (Array.isArray(item?.project_ids) && item?.project_ids?.length > 0
+                        ? item?.project_ids[0]
+                        : undefined);
+                    if (itemProjectId) openProjectAndScrollToSidebar(itemProjectId);
                   }}
                   value={`${key}-${item?.id}-${item.name}-${item.project__identifier ?? ""}-${item.sequence_id ?? ""}`}
                   className="focus:outline-none"
