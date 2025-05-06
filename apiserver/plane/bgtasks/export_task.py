@@ -58,6 +58,7 @@ def create_xlsx_file(data):
     workbook = Workbook()
     sheet = workbook.active
 
+    print(data, "Data")
     for row in data:
         sheet.append(row)
 
@@ -161,50 +162,28 @@ def upload_to_s3(zip_file, workspace_id, token_id, slug):
 
 def generate_table_row(issue):
     return [
-        f"""{issue["project__identifier"]}-{issue["sequence_id"]}""",
-        issue["project__name"],
+        f"""{issue["project_identifier"]}-{issue["sequence_id"]}""",
+        issue["project_name"],
         issue["name"],
-        issue["description_stripped"],
-        issue["state__name"],
+        issue["description"],
+        issue["state_name"],
         dateConverter(issue["start_date"]),
         dateConverter(issue["target_date"]),
         issue["priority"],
-        (
-            f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
-            if issue["created_by__first_name"] and issue["created_by__last_name"]
-            else ""
-        ),
-        issue["labels__name"] if issue["labels__name"] else "",
-        issue["issue_cycle__cycle__name"],
-        dateConverter(issue["issue_cycle__cycle__start_date"]),
-        dateConverter(issue["issue_cycle__cycle__end_date"]),
-        issue["issue_module__module__name"],
-        dateConverter(issue["issue_module__module__start_date"]),
-        dateConverter(issue["issue_module__module__target_date"]),
+        issue["created_by"],
+        issue["labels"] if issue["labels"] else "",
+        issue.get("cycle_name", ""),
+        issue.get("cycle_start_date", ""),
+        issue.get("cycle_end_date", ""),
+        issue.get("module_name", ""),
         dateTimeConverter(issue["created_at"]),
         dateTimeConverter(issue["updated_at"]),
         dateTimeConverter(issue["completed_at"]),
         dateTimeConverter(issue["archived_at"]),
-        [
-            {
-                "comment": comment,
-                "created_at": dateConverter(created_at),
-                "created_by": (
-                    f"{created_by_first_name} {created_by_last_name}"
-                    if created_by_first_name and created_by_last_name
-                    else ""
-                ),
-            }
-            for comment, created_at, created_by_first_name, created_by_last_name in zip(
-                issue["comment_stripped"],
-                issue["comment_created_at"],
-                issue["comment_created_by_first_name"],
-                issue["comment_created_by_last_name"],
-            )
-        ],
-        issue["estimate_point__estimate__name"],
-        issue["issue_link_url"] if issue["issue_link_url"] else "",
-        issue["assignee"] if issue["assignee"] else "",
+        issue["comments"],
+        issue["estimate"] if issue["estimate"] else "",
+        issue["link"] if issue["link"] else "",
+        issue["assignees"] if issue["assignees"] else "",
         issue["subscribers_count"] if issue["subscribers_count"] else "",
         issue["attachment_count"] if issue["attachment_count"] else "",
         issue["attachment_links"] if issue["attachment_links"] else "",
@@ -212,6 +191,7 @@ def generate_table_row(issue):
 
 
 def generate_json_row(issue):
+    print("generate_json_row", issue)
     return {
         "ID": f"""{issue["project__identifier"]}-{issue["sequence_id"]}""",
         "Project": issue["project__name"],
@@ -236,8 +216,6 @@ def generate_json_row(issue):
         "Cycle Start Date": dateConverter(issue["issue_cycle__cycle__start_date"]),
         "Cycle End Date": dateConverter(issue["issue_cycle__cycle__end_date"]),
         "Module Name": issue["issue_module__module__name"],
-        "Module Start Date": dateConverter(issue["issue_module__module__start_date"]),
-        "Module Target Date": dateConverter(issue["issue_module__module__target_date"]),
         "Created At": dateTimeConverter(issue["created_at"]),
         "Updated At": dateTimeConverter(issue["updated_at"]),
         "Completed At": dateTimeConverter(issue["completed_at"]),
@@ -328,7 +306,9 @@ def generate_csv(header, project_id, issues, files):
 def generate_json(header, project_id, issues, files):
     rows = []
     for issue in issues:
+        print(issue, "Issue")
         row = generate_json_row(issue)
+        print(row, "Row")
         update_json_row(rows, row)
     json_file = create_json_file(rows)
     files.append((f"{project_id}.json", json_file))
@@ -351,169 +331,98 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
         exporter_instance.save(update_fields=["status"])
 
         workspace_issues = (
-            (
-                Issue.objects.filter(
-                    workspace__id=workspace_id,
-                    project_id__in=project_ids,
-                    project__project_projectmember__member=exporter_instance.initiated_by_id,
-                    project__project_projectmember__is_active=True,
-                    project__archived_at__isnull=True,
-                )
-                .select_related(
-                    "project",
-                    "workspace",
-                    "state",
-                    "parent",
-                    "created_by",
-                    "issue_link",
-                )
-                .prefetch_related(
-                    "labels", "issue_cycle__cycle", "issue_module__module"
-                )
-                .annotate(
-                    comment_stripped=Coalesce(
-                        ArrayAgg(
-                            "issue_comments__comment_stripped",
-                            filter=Q(issue_comments__comment_stripped__isnull=False),
-                            order_by=["-issue_comments__created_at"],
-                            distinct=True,
-                        ),
-                        Value([]),
-                    ),
-                    comment_created_at=Coalesce(
-                        ArrayAgg(
-                            "issue_comments__created_at",
-                            order_by=["-issue_comments__created_at"],
-                            distinct=True,
-                        ),
-                        Value([]),
-                    ),
-                    comment_created_by_first_name=Coalesce(
-                        ArrayAgg(
-                            "issue_comments__created_by__first_name",
-                            order_by=["-issue_comments__created_at"],
-                            distinct=True,
-                        ),
-                        Value([]),
-                    ),
-                    comment_created_by_last_name=Coalesce(
-                        ArrayAgg(
-                            "issue_comments__created_by__last_name",
-                            order_by=["-issue_comments__created_at"],
-                            distinct=True,
-                        ),
-                        Value([]),
-                    ),
-                )
-                .annotate(
-                    issue_link_url=Coalesce(
-                        ArrayAgg(
-                            "issue_link__url",
-                            filter=Q(issue_link__url__isnull=False),
-                            distinct=True,
-                        ),
-                        Value([]),
-                    )
-                )
-                .annotate(
-                    assignee=Coalesce(
-                        ArrayAgg(
-                            Concat(
-                                F("assignees__first_name"),
-                                Value(" "),
-                                F("assignees__last_name"),
-                            ),
-                            filter=Q(
-                                assignees__first_name__isnull=False,
-                                assignees__last_name__isnull=False,
-                            ),
-                            distinct=True,
-                        ),
-                        Value([]),
-                    )
-                )
-                .annotate(
-                    subscribers_count=Count(
-                        "issue_subscribers",
-                        filter=Q(issue_subscribers__deleted_at__isnull=True),
-                        distinct=True,
-                    )
-                )
-                .annotate(
-                    attachment_count=FileAsset.objects.filter(
-                        issue_id=OuterRef("id"),
-                        entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
-                    )
-                    .order_by()
-                    .annotate(count=Func(F("id"), function="Count"))
-                    .values("count")
-                )
-                .annotate(
-                    attachment_links=Coalesce(
-                        ArrayAgg(
-                            Concat(
-                                Value("/api/assets/v2/workspaces/"),
-                                F("workspace_id"),
-                                Value("/projects/"),
-                                F("project_id"),
-                                Value("/issues/"),
-                                F("id"),
-                                Value("/attachments/"),
-                                F("assets__id"),
-                                Value("/"),
-                                output_field=models.CharField(),
-                            ),
-                            filter=Q(
-                                assets__entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
-                                assets__id__isnull=False,
-                            ),
-                            distinct=True,
-                        ),
-                        Value([]),
-                    )
-                )
-                .values(
-                    "id",
-                    "project__identifier",
-                    "project__name",
-                    "project__id",
-                    "sequence_id",
-                    "name",
-                    "description_stripped",
-                    "priority",
-                    "start_date",
-                    "target_date",
-                    "state__name",
-                    "created_at",
-                    "updated_at",
-                    "completed_at",
-                    "archived_at",
-                    "issue_cycle__cycle__name",
-                    "issue_cycle__cycle__start_date",
-                    "issue_cycle__cycle__end_date",
-                    "issue_module__module__name",
-                    "issue_module__module__start_date",
-                    "issue_module__module__target_date",
-                    "created_by__first_name",
-                    "created_by__last_name",
-                    "labels__name",
-                    "comment_stripped",
-                    "comment_created_at",
-                    "comment_created_by_first_name",
-                    "comment_created_by_last_name",
-                    "estimate_point__estimate__name",
-                    "issue_link_url",
-                    "assignee",
-                    "subscribers_count",
-                    "attachment_count",
-                    "attachment_links",
-                )
+            Issue.objects.filter(
+                workspace__id=workspace_id,
+                project_id__in=project_ids,
+                project__project_projectmember__member=exporter_instance.initiated_by_id,
+                project__project_projectmember__is_active=True,
+                project__archived_at__isnull=True,
             )
-            .order_by("project__identifier", "sequence_id")
-            .distinct()
+            .select_related(
+                "project",
+                "workspace",
+                "state",
+                "parent",
+                "created_by",
+                "estimate_point",
+            )
+            .prefetch_related(
+                "labels",
+                "issue_cycle__cycle",
+                "issue_module__module",
+                "issue_comments",
+                "assignees",
+                "issue_subscribers",
+                "issue_link",
+            )
         )
 
-        # CSV header
+        issues_data = []
+
+        for issue in workspace_issues:
+            issue_data = {
+                "id": issue.id,
+                "project_identifier": issue.project.identifier,
+                "project_name": issue.project.name,
+                "project_id": issue.project.id,
+                "sequence_id": issue.sequence_id,
+                "name": issue.name,
+                "description": issue.description_stripped,
+                "priority": issue.priority,
+                "start_date": issue.start_date,
+                "target_date": issue.target_date,
+                "state_name": issue.state.name if issue.state else None,
+                "created_at": issue.created_at,
+                "updated_at": issue.updated_at,
+                "completed_at": issue.completed_at,
+                "archived_at": issue.archived_at,
+                "module_name": [
+                    module.module.name for module in issue.issue_module.all()
+                ],
+                "created_by": f"{issue.created_by.first_name} {issue.created_by.last_name}",
+                "labels": [label.name for label in issue.labels.all().distinct()],
+                "comments": [
+                    {
+                        "comment": comment.comment_stripped,
+                        "created_at": dateConverter(comment.created_at),
+                        "created_by": f"{comment.created_by.first_name} {comment.created_by.last_name}",
+                    }
+                    for comment in issue.issue_comments.all().distinct()
+                ],
+                "estimate": issue.estimate_point.estimate.name
+                if issue.estimate_point
+                else "",
+                "link": [link.url for link in issue.issue_link.all().distinct()],
+                "assignees": [
+                    f"{assignee.first_name} {assignee.last_name}"
+                    for assignee in issue.assignees.all().distinct()
+                ],
+                "subscribers_count": issue.issue_subscribers.count(),
+                "attachment_count": FileAsset.objects.filter(
+                    issue_id=issue.id,
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                ).count(),
+                "attachment_links": [
+                    f"/api/assets/v2/workspaces/{issue.workspace.slug}/projects/{issue.project_id}/issues/{issue.id}/attachments/{asset.id}/"
+                    for asset in FileAsset.objects.filter(
+                        issue_id=issue.id,
+                        entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                    )
+                ],
+            }
+
+            # Get prefetched cycles and modules
+            cycles = list(issue.issue_cycle.all())
+
+            # Update cycle data
+            for cycle in cycles:
+                issue_data["cycle_name"] = cycle.cycle.name
+                issue_data["cycle_start_date"] = dateConverter(cycle.cycle.start_date)
+                issue_data["cycle_end_date"] = dateConverter(cycle.cycle.end_date)
+
+            issues_data.append(issue_data)
+
+            # CSV header
         header = [
             "ID",
             "Project",
@@ -529,8 +438,6 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
             "Cycle Start Date",
             "Cycle End Date",
             "Module Name",
-            "Module Start Date",
-            "Module Target Date",
             "Created At",
             "Updated At",
             "Completed At",
@@ -553,7 +460,7 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
         files = []
         if multiple:
             for project_id in project_ids:
-                issues = workspace_issues.filter(project__id=project_id)
+                issues = issues_data.filter(project__id=project_id)
                 exporter = EXPORTER_MAPPER.get(provider)
                 if exporter is not None:
                     exporter(header, project_id, issues, files)
@@ -561,7 +468,7 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
         else:
             exporter = EXPORTER_MAPPER.get(provider)
             if exporter is not None:
-                exporter(header, workspace_id, workspace_issues, files)
+                exporter(header, workspace_id, issues_data, files)
 
         zip_buffer = create_zip_file(files)
         upload_to_s3(zip_buffer, workspace_id, token_id, slug)
