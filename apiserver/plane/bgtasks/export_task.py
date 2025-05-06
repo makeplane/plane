@@ -15,14 +15,9 @@ from celery import shared_task
 from django.conf import settings
 from django.utils import timezone
 from openpyxl import Workbook
-from django.db.models import Value
-from django.db.models.functions import Coalesce
-from django.db.models import Q
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.db.models import OuterRef, Func, F, Count
-from django.db.models.functions import Concat
-from django.db import models
+from django.db.models import F
 
+from collections import defaultdict
 
 # Module imports
 from plane.db.models import ExporterHistory, Issue, FileAsset
@@ -190,6 +185,7 @@ def generate_table_row(issue):
         issue["estimate"] if issue["estimate"] else "",
         ", ".join(issue["link"]) if issue["link"] else "",
         ", ".join(issue["assignees"]) if issue["assignees"] else "",
+        issue["subscribers_count"] if issue["subscribers_count"] else "",
         issue["attachment_count"] if issue["attachment_count"] else "",
         ", ".join(issue["attachment_links"]) if issue["attachment_links"] else "",
     ]
@@ -283,6 +279,7 @@ def generate_csv(header, project_id, issues, files):
     rows = [header]
     for issue in issues:
         row = generate_table_row(issue)
+
         update_table_row(rows, row)
     csv_file = create_csv_file(rows)
     files.append((f"{project_id}.csv", csv_file))
@@ -341,9 +338,19 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
             )
         )
 
+        file_assets = FileAsset.objects.filter(
+            issue_id__in=workspace_issues.values_list("id", flat=True)
+        ).annotate(work_item_id=F("issue_id"), asset_id=F("id"))
+
+        attachment_dict = defaultdict(list)
+        for asset in file_assets:
+            attachment_dict[asset.work_item_id].append(asset.asset_id)
+
         issues_data = []
 
         for issue in workspace_issues:
+            attachments = attachment_dict.get(issue.id, [])
+
             issue_data = {
                 "id": issue.id,
                 "project_identifier": issue.project.identifier,
@@ -396,16 +403,10 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                 if issue.assignees.exists()
                 else None,
                 "subscribers_count": issue.issue_subscribers.count(),
-                "attachment_count": FileAsset.objects.filter(
-                    issue_id=issue.id,
-                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
-                ).count(),
+                "attachment_count": len(attachments),
                 "attachment_links": [
-                    f"/api/assets/v2/workspaces/{issue.workspace.slug}/projects/{issue.project_id}/issues/{issue.id}/attachments/{asset.id}/"
-                    for asset in FileAsset.objects.filter(
-                        issue_id=issue.id,
-                        entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
-                    )
+                    f"/api/assets/v2/workspaces/{issue.workspace.slug}/projects/{issue.project_id}/issues/{issue.id}/attachments/{asset}/"
+                    for asset in attachments
                 ],
             }
 
