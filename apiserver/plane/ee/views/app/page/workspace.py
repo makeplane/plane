@@ -438,6 +438,16 @@ class WorkspacePageDuplicateEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def post(self, request, slug, pk):
+        page = Page.objects.get(
+            id=pk, workspace__slug=slug
+        )
+
+        # check for permission
+        if page.access == Page.PRIVATE_ACCESS and page.owned_by_id != request.user.id:
+            return Response(
+                {"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN
+            )
+
         # update the descendants pages with the current page
         nested_page_update.delay(
             page_id=pk,
