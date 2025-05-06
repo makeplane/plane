@@ -182,19 +182,7 @@ build {
       "TERM=xterm-256color"
     ]
     inline = [
-      "sudo apt-get update",
-      "sudo apt-get install -y python3-apt"  # Install basic requirements
-    ]
-  }
-  # Update and install basic requirements
-  provisioner "shell" {
-    environment_vars = [
-      "DEBIAN_FRONTEND=noninteractive",
-      "TERM=xterm-256color"
-    ]
-    inline = [
-      # "sudo apt-get update",
-      "source /usr/local/bin/plane",
+      ". /usr/local/bin/plane",
       "install_prerequisites",
       "sudo systemctl enable ssh",
       "sudo systemctl start ssh",
