@@ -176,17 +176,26 @@ build {
     ]
   }
 
+  # provisioner "shell" {
+  #   environment_vars = [
+  #     "DEBIAN_FRONTEND=noninteractive",
+  #     "TERM=xterm-256color"
+  #   ]
+  #   inline = [
+  #     ". /usr/local/bin/plane",
+  #     "install_prerequisites",
+  #     "plane stop"
+  #   ]
+  # }
+
   provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
       "TERM=xterm-256color"
     ]
     inline = [
-      ". /usr/local/bin/plane",
-      "install_prerequisites",
       "sudo systemctl enable ssh",
-      "sudo systemctl start ssh",
-      "plane stop"
+      "sudo systemctl start ssh"
     ]
   }
 
