@@ -49,7 +49,6 @@ export class WorkItemSubIssueFiltersStore implements IWorkItemSubIssueFiltersSto
     makeObservable(this, {
       subIssueFilters: observable,
       updateSubWorkItemFilters: action,
-      getGroupedSubWorkItems: action,
       getSubIssueFilters: action,
     });
 

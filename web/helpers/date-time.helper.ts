@@ -412,15 +412,22 @@ export const generateDateArray = (startDate: string | Date, endDate: string | Da
  * @returns Date object representing the calculated date
  */
 export const processRelativeDate = (value: string): Date => {
-  const [amount, unit] = value.split("_");
+  const [amountStr, unit] = value.split("_");
+  const amount = parseInt(amountStr, 10);
+  if (isNaN(amount)) {
+    throw new Error(`Invalid relative amount: ${amountStr}`);
+  }
   const date = new Date();
 
   switch (unit) {
+    case "days":
+      date.setDate(date.getDate() + amount);
+      break;
     case "weeks":
-      date.setDate(date.getDate() + parseInt(amount) * 7);
+      date.setDate(date.getDate() + amount * 7);
       break;
     case "months":
-      date.setMonth(date.getMonth() + parseInt(amount));
+      date.setMonth(date.getMonth() + amount);
       break;
     default:
       throw new Error(`Unsupported time unit: ${unit}`);
@@ -462,9 +469,9 @@ export const checkDateCriteria = (dateToCheck: Date | null, filterDate: Date, ty
   if (!dateToCheck) return false;
 
   const checkDate = new Date(dateToCheck);
-  // Reset time components for date-only comparison
-  checkDate.setHours(0, 0, 0, 0);
-  filterDate.setHours(0, 0, 0, 0);
+  const normalizedCheck = new Date(checkDate.setHours(0, 0, 0, 0));
+  const normalizedFilter = new Date(filterDate.getTime());
+  normalizedFilter.setHours(0, 0, 0, 0);
 
-  return type === "after" ? checkDate >= filterDate : checkDate <= filterDate;
+  return type === "after" ? normalizedCheck >= normalizedFilter : normalizedCheck <= normalizedFilter;
 };

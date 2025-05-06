@@ -31,7 +31,8 @@ export const SubIssueFilters: FC<TSubIssueFiltersProps> = observer((props) => {
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 
-  const isFilterEnabled = (filter: keyof IIssueFilterOptions) => layoutDisplayFiltersOptions?.filters.includes(filter);
+  const isFilterEnabled = (filter: keyof IIssueFilterOptions) =>
+    !!layoutDisplayFiltersOptions?.filters.includes(filter);
   const isFilterApplied = useMemo(() => isFiltersApplied(filters), [filters]);
   // hooks
   const { t } = useTranslation();

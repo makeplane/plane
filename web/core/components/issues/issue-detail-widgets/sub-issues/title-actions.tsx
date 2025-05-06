@@ -1,4 +1,5 @@
 import { FC, useCallback } from "react";
+import cloneDeep from "lodash/cloneDeep";
 import { observer } from "mobx-react";
 import { EIssueFilterType, EIssueServiceType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import {
@@ -56,7 +57,7 @@ export const SubWorkItemTitleActions: FC<TSubWorkItemTitleActionsProps> = observ
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      const newValues = subIssueFilters?.filters?.[key] ?? [];
+      const newValues = cloneDeep(subIssueFilters?.filters?.[key]) ?? [];
 
       if (Array.isArray(value)) {
         // this validation is majorly for the filter start_date, target_date custom

@@ -209,8 +209,13 @@ export const checkIssueDateFilter = (
 
   // Issue should match all the date filters (AND operation)
   return dateFilters.every((filterValue) => {
-    const { type, date } = parseDateFilter(filterValue);
-    return checkDateCriteria(new Date(issueDate), date, type);
+    const parsed = parseDateFilter(filterValue);
+    if (!parsed?.date || !parsed?.type) {
+      // ignore invalid filter instead of failing the whole evaluation
+      console.warn(`[filters] Ignoring unparsable date filter "${filterValue}"`);
+      return true;
+    }
+    return checkDateCriteria(new Date(issueDate), parsed.date, parsed.type);
   });
 };
 
@@ -319,7 +324,8 @@ export const getGroupedWorkItemIds = (
     const value = item[groupKey];
     if (Array.isArray(value)) {
       if (value.length === 0) return "None";
-      return value;
+      // Sort & join to build deterministic set-like key
+      return value.slice().sort().join(",");
     }
     return value ?? "None";
   });
@@ -346,10 +352,11 @@ export const updateFilters = (
   filters: IIssueDisplayFilterOptions | IIssueDisplayProperties | IIssueFilterOptions,
   workItemId: string
 ) => {
+  const existingFilters = filtersMap[workItemId] ?? {};
   const _filters = {
-    filters: filtersMap[workItemId].filters,
-    displayFilters: filtersMap[workItemId].displayFilters,
-    displayProperties: filtersMap[workItemId].displayProperties,
+    filters: existingFilters.filters,
+    displayFilters: existingFilters.displayFilters,
+    displayProperties: existingFilters.displayProperties,
   };
 
   switch (filterType) {

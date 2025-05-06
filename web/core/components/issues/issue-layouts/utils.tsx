@@ -781,12 +781,7 @@ export const isDisplayFiltersApplied = (filters: Partial<IIssueFilters>): boolea
  * @returns
  */
 export const isFiltersApplied = (filters: IIssueFilterOptions): boolean =>
-  Object.keys(filters).some((key) => {
-    if (filters[key as keyof IIssueFilterOptions]) {
-      if (Array.isArray(filters[key as keyof IIssueFilterOptions])) {
-        return !isEmpty(filters[key as keyof IIssueFilterOptions]);
-      }
-      return true;
-    }
-    return true;
+  Object.values(filters).some((value) => {
+    if (Array.isArray(value)) return value.length > 0;
+    return value !== undefined && value !== null && value !== "";
   });

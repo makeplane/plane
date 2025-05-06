@@ -63,7 +63,7 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
     projectId,
   });
 
-  const workItemIds = useCallback(
+  const getWorkItemIds = useCallback(
     (groupId: string) => {
       if (isRootLevel) {
         const groupedSubIssues = getGroupedSubWorkItems(parentIssueId);
@@ -83,7 +83,7 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
         groups?.map((group) => (
           <SubIssuesListGroup
             key={group.id}
-            workItemIds={workItemIds(group.id)}
+            workItemIds={getWorkItemIds(group.id)}
             projectId={projectId}
             workspaceSlug={workspaceSlug}
             group={group}
