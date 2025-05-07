@@ -22,7 +22,8 @@ class ProjectInTakePublishViewSet(BaseViewSet):
     def get_intake_email_domain(self):
         return os.environ.get("EMAIL_DOMAIN", "example.com")
 
-    @check_feature_flag(FeatureFlag.INTAKE_PUBLISH)
+    @check_feature_flag(FeatureFlag.INTAKE_FORM)
+    @check_feature_flag(FeatureFlag.INTAKE_EMAIL)
     def regenerate(self, request, slug, project_id, type=None):
         # generate the entity name
         entity_name = (

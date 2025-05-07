@@ -27,6 +27,7 @@ from plane.db.models import (
 )
 from plane.app.permissions import allow_permission, ROLE
 from plane.ee.serializers.app.intake import IntakeSettingSerializer
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 
 
 class IntakeSettingEndpoint(BaseAPIView):
@@ -54,7 +55,7 @@ class IntakeSettingEndpoint(BaseAPIView):
         api_token = APIToken.objects.filter(
             user=user, user_type=1, workspace_id=workspace.id
         ).first()
-        
+
         # create api token if not exists
         if not api_token:
             api_token = APIToken.objects.create(
@@ -68,37 +69,37 @@ class IntakeSettingEndpoint(BaseAPIView):
         try:
             # Create or retrieve the user for the intake bot
             user = self.get_create_user(workspace)
-            
+
             # Create or get API token
             _ = self.get_create_api_token(user, workspace)
-            
+
             # Add user to workspace as admin if not already a member
             workspace_member = WorkspaceMember.objects.filter(
-                workspace_id=workspace.id,
-                member_id=user.id,
-                role=ROLE.ADMIN.value
+                workspace_id=workspace.id, member_id=user.id, role=ROLE.ADMIN.value
             ).first()
-            
+
             if not workspace_member:
                 WorkspaceMember.objects.create(
-                    workspace_id=workspace.id,
-                    member_id=user.id,
-                    role=ROLE.ADMIN.value
+                    workspace_id=workspace.id, member_id=user.id, role=ROLE.ADMIN.value
                 )
-            
+
             # Get all project IDs in a single query
-            project_ids = list(Project.objects.filter(workspace__slug=slug).values_list("pk", flat=True))
-            
+            project_ids = list(
+                Project.objects.filter(workspace__slug=slug).values_list(
+                    "pk", flat=True
+                )
+            )
+
             # Create project members in bulk if they don't exist
             if project_ids:
                 existing_members = set(
                     ProjectMember.objects.filter(
                         workspace_id=workspace.id,
                         member_id=user.id,
-                        project_id__in=project_ids
+                        project_id__in=project_ids,
                     ).values_list("project_id", flat=True)
                 )
-                
+
                 new_members = [
                     ProjectMember(
                         project_id=project_id,
@@ -111,21 +112,20 @@ class IntakeSettingEndpoint(BaseAPIView):
                     for project_id in project_ids
                     if project_id not in existing_members
                 ]
-                
+
                 if new_members:
                     ProjectMember.objects.bulk_create(
-                        new_members,
-                        batch_size=100,
-                        ignore_conflicts=True
+                        new_members, batch_size=100, ignore_conflicts=True
                     )
-            
+
             return True
         except Exception as e:
             # Log the error here if needed
             raise e
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
-    @check_feature_flag(FeatureFlag.INTAKE_SETTINGS)
+    @check_feature_flag(FeatureFlag.INTAKE_FORM)
+    @check_feature_flag(FeatureFlag.INTAKE_EMAIL)
     def get(self, request, slug, project_id):
         intake = Intake.objects.filter(
             workspace__slug=slug, project_id=project_id
@@ -158,17 +158,21 @@ class IntakeSettingEndpoint(BaseAPIView):
             entity_name__in=["intake", "intake_email"],
         ).values("entity_name", "anchor")
 
+        data = IntakeSettingSerializer(intake_setting).data
+
+        data["anchors"] = {}
+
         for deployboard in deployboards:
             if deployboard["entity_name"] == "intake_email":
-                deployboard["anchor"] = (
-                    f"{slug}-{deployboard['anchor']}@{self.get_intake_email_domain()}"
-                )
-
-        data = IntakeSettingSerializer(intake_setting).data
-        data["anchors"] = {
-            deployboard["entity_name"]: deployboard["anchor"]
-            for deployboard in deployboards
-        }
+                if check_workspace_feature_flag(FeatureFlag.INTAKE_EMAIL, slug):
+                    data["anchors"]["intake_email"] = (
+                        f"{slug}-{deployboard['anchor']}@{self.get_intake_email_domain()}"
+                    )
+            elif deployboard["entity_name"] == "intake":
+                if check_workspace_feature_flag(FeatureFlag.INTAKE_FORM, slug):
+                    data["anchors"][deployboard["entity_name"]] = deployboard["anchor"]
+            else:
+                data["anchors"] = {}
 
         return Response(data, status=status.HTTP_200_OK)
 
@@ -182,6 +186,26 @@ class IntakeSettingEndpoint(BaseAPIView):
         if not intake:
             return Response(
                 {"error": "Intake does not exist"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Check if the form or email is enabled
+        request_data = request.data.copy()
+
+        if request_data.get("is_form_enabled") and not check_workspace_feature_flag(
+            FeatureFlag.INTAKE_FORM, slug
+        ):
+            return Response(
+                {"error": "INTAKE_FORM is not enabled"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Only keep email enabled if feature flag is active
+        if request_data.get("is_email_enabled") and not check_workspace_feature_flag(
+            FeatureFlag.INTAKE_EMAIL, slug
+        ):
+            return Response(
+                {"error": "INTAKE_EMAIL is not enabled"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # If the intake setting exists, update it
@@ -246,9 +270,8 @@ class IntakeSettingEndpoint(BaseAPIView):
                     f"{slug}-{deployboard['anchor']}@{self.get_intake_email_domain()}"
                 )
 
-        # Validate the intake setting data
         serializer = IntakeSettingSerializer(
-            intake_setting, data=request.data, partial=True
+            intake_setting, data=request_data, partial=True
         )
         if serializer.is_valid():
             serializer.save()

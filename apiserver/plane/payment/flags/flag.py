@@ -34,6 +34,10 @@ class FeatureFlag(Enum):
     INTAKE_PUBLISH = "INTAKE_PUBLISH"
     # Intake settings
     INTAKE_SETTINGS = "INTAKE_SETTINGS"
+    # Intake form
+    INTAKE_FORM = "INTAKE_FORM"
+    # Intake email
+    INTAKE_EMAIL = "INTAKE_EMAIL"
     # Initiatives
     INITIATIVES = "INITIATIVES"
     # Team space
