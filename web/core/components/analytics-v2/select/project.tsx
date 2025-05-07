@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 import { Briefcase } from "lucide-react";
 // plane package imports
-import { CustomSearchSelect } from "@plane/ui";
+import { CustomSearchSelect, Logo } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store";
 
@@ -26,7 +26,7 @@ export const ProjectSelect: React.FC<Props> = observer((props) => {
       query: `${projectDetails?.name} ${projectDetails?.identifier}`,
       content: (
         <div className="flex items-center gap-2 max-w-[300px]">
-          <span className="text-[0.65rem] text-custom-text-200 flex-shrink-0">{projectDetails?.identifier}</span>
+          {projectDetails?.logo_props ? <Logo logo={projectDetails?.logo_props} size={16} /> : <Briefcase className="w-4 h-4" />}
           <span className="flex-grow truncate">{projectDetails?.name}</span>
         </div>
       ),
