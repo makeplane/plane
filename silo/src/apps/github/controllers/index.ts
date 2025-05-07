@@ -751,6 +751,12 @@ export const logGithubWebhookPayload = (
 
 function verifyGithubWebhook(req: Request, res: Response, next: NextFunction) {
   try {
+
+    // If the webhook secret is not set, we don't need to verify the signature
+    if (!env.GITHUB_WEBHOOK_SECRET) {
+      return next()
+    }
+
     const signature = req.headers["x-hub-signature-256"];
     const event = req.headers["x-github-event"];
     const id = req.headers["x-github-delivery"];
