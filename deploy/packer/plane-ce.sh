@@ -6,14 +6,38 @@ TERM=xterm-256color
 
 PLANE_SERVICES=(admin web space live api worker beat-worker caddy)
 
-# if the user is not ubuntu, switch to ubuntu
-# if [ "$USER" != "ubuntu" ]; then
-#   sudo su - ubuntu
-# fi
+# Function to ensure we're running as ubuntu user
+function ensure_ubuntu_user() {
+  # Check if ubuntu user exists
+  if ! id -u ubuntu >/dev/null 2>&1; then
+    echo "Creating ubuntu user..."
+    useradd -m -s /bin/bash ubuntu
+    echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/ubuntu
+    chmod 0440 /etc/sudoers.d/ubuntu
+  fi
+
+  # If we're not running as ubuntu user, re-run the script as ubuntu
+  if [ "$(id -un)" != "ubuntu" ]; then
+    echo "Switching to ubuntu user..."
+    exec su - ubuntu -c "bash $0 $*"
+  fi
+}
+
+# Call this at the start of any function that needs to run as ubuntu
+function ensure_running_as_ubuntu() {
+  if [ "$(id -un)" != "ubuntu" ]; then
+    echo "This command must be run as ubuntu user"
+    exec su - ubuntu -c "bash $0 $*"
+  fi
+}
 
 function welcome() {
 clear
 
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+printf "${BLUE}"
 cat <<"EOF"
 --------------------------------------------
  ____  _                          ///////// 
@@ -26,6 +50,7 @@ cat <<"EOF"
            Project management tool          
 --------------------------------------------
 EOF
+printf "${NC}"
 }
 
 function setup_welcome_message() {
@@ -55,6 +80,7 @@ echo -e "${GREEN}Welcome to Plane CE Server!${NC}"
 echo -e "${BLUE}Available commands:${NC}"
 echo "  plane start       - Start all services"
 echo "  plane stop        - Stop all services"
+echo "  plane restart     - Restart all services"
 echo "  plane status      - Check services status"
 echo "  plane logs        - View service logs"
 echo "  plane configure   - Configure Plane"
@@ -340,6 +366,8 @@ function create_services(){
 }
 
 function install_prerequisites() {
+  ensure_running_as_ubuntu
+
   validate_and_fix_python
   if [ $? -ne 0 ]; then
     echo -e "\n${RED}Python yet to be installed${NC}"
@@ -930,6 +958,9 @@ function upgrade_services(){
 }
 
 function main(){
+  # Ensure we're running as ubuntu user first
+  ensure_ubuntu_user "$@"
+
   welcome
 
   action=$1
@@ -956,6 +987,7 @@ function main(){
 
   case $action in
     "start")
+      ensure_running_as_ubuntu
       echo "Starting services"
       start_services "$@"
       if [ $? -ne 0 ]; then
@@ -964,6 +996,7 @@ function main(){
       fi
       ;;
     "stop")
+      ensure_running_as_ubuntu
       echo "Stopping services"
       stop_services "$@"
       if [ $? -ne 0 ]; then
@@ -972,6 +1005,7 @@ function main(){
       fi
       ;;
     "restart")
+      ensure_running_as_ubuntu
       echo "Restarting services"
       restart_services "$@"
       if [ $? -ne 0 ]; then
@@ -980,6 +1014,7 @@ function main(){
       fi
       ;;
     "configure")
+      ensure_running_as_ubuntu
       echo "Configuring backend"
       configure_backend
       if [ $? -ne 0 ]; then
@@ -988,6 +1023,7 @@ function main(){
       fi
       ;;
     "upgrade")
+      ensure_running_as_ubuntu
       upgrade_services
       if [ $? -ne 0 ]; then
         echo "Failed to upgrade services"
@@ -995,12 +1031,14 @@ function main(){
       fi
       ;;
     "status")
+      ensure_running_as_ubuntu
       service_status "$@"
       if [ $? -ne 0 ]; then
         exit 1
       fi
       ;;
     "logs")
+      ensure_running_as_ubuntu
       service_logs "$@"
       if [ $? -ne 0 ]; then
         exit 1

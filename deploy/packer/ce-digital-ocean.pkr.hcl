@@ -162,19 +162,19 @@ build {
     ]
   }
 
-  # provisioner "shell" {
-  #   environment_vars = [
-  #     "DEBIAN_FRONTEND=noninteractive",
-  #     "TERM=xterm-256color",
-  #     "CI=true",
-  #     "HISTSIZE=0",
-  #     "HISTFILESIZE=0",
-  #     "HISTFILE=/dev/null"
-  #   ]
-  #   inline = [
-  #     "su - ubuntu -c '. /usr/local/bin/plane && install_prerequisites'"
-  #   ]
-  # }
+  provisioner "shell" {
+    environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive",
+      "TERM=xterm-256color",
+      "CI=true",
+      "HISTSIZE=0",
+      "HISTFILESIZE=0",
+      "HISTFILE=/dev/null"
+    ]
+    inline = [
+      "su - ubuntu -c '. /usr/local/bin/plane && install_prerequisites'"
+    ]
+  }
 
   provisioner "shell" {
     environment_vars = [
