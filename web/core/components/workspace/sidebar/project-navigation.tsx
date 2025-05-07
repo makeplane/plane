@@ -104,7 +104,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
       {
         i18n_key: "sidebar.intake",
         name: "Intake",
-        href: `/${workspaceSlug}/projects/${projectId}/inbox`,
+        href: `/${workspaceSlug}/projects/${projectId}/intake`,
         icon: Intake,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: project.inbox_view,
