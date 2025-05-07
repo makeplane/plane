@@ -4,6 +4,8 @@ DEBIAN_FRONTEND=noninteractive
 BACKEND_ENV_FILE=/opt/plane/backend/backend.env
 TERM=xterm-256color
 
+PLANE_SERVICES=(admin web space live api worker beat-worker caddy)
+
 function welcome() {
 clear
 
@@ -307,7 +309,10 @@ function install_backend_dependencies(){
 }
 
 function create_services(){
-  sudo cp /opt/plane/svc/*.service /etc/systemd/system/
+  for file in /opt/plane/svc/*.service; do
+    sudo cp $file /etc/systemd/system/plane-${file##*/}
+  done
+  # Enable services
   sudo systemctl daemon-reload
   sudo systemctl enable rsyslog
   sudo systemctl enable cloud-init
@@ -316,8 +321,7 @@ function create_services(){
   sudo systemctl start cloud-init
 
   sudo mkdir -p /var/log/plane
-  local services=(admin web space live api worker beat-worker caddy)
-  for service in ${services[@]}; do
+  for service in ${PLANE_SERVICES[@]}; do
     sudo touch /var/log/plane/${service}.log
   done
   sudo chown -R ubuntu:ubuntu /var/log/plane
@@ -380,16 +384,21 @@ function install_prerequisites() {
 }
 
 function start_single_service(){
-  local services=(admin web space live api worker beat-worker caddy)
   service_name=$1
-  if [[ ! " ${services[@]} " =~ " ${service_name} " ]]; then
+  if [[ ! " ${PLANE_SERVICES[@]} " =~ " ${service_name} " ]]; then
     echo "Invalid service name: $service_name"
     exit 1
   fi
 
-  sudo systemctl enable ${service_name}.service > /dev/null 2>&1
-  sudo service $service_name start &
-  show_spinner $! "Starting $service_name"
+  if [ "$service_name" = "caddy" ]; then
+    sudo systemctl enable caddy.service > /dev/null 2>&1
+    sudo service caddy start &
+    show_spinner $! "Starting Caddy"
+  else
+    sudo systemctl enable plane-${service_name}.service > /dev/null 2>&1
+    sudo service plane-${service_name} start &
+    show_spinner $! "Starting ${service_name}"
+  fi
   local status=$?
   if [ $status -ne 0 ]; then
     return 1
@@ -398,16 +407,21 @@ function start_single_service(){
 }
 
 function stop_single_service(){
-  local services=(admin web space live api worker beat-worker caddy)
   service_name=$1
-  if [[ ! " ${services[@]} " =~ " ${service_name} " ]]; then
+  if [[ ! " ${PLANE_SERVICES[@]} " =~ " ${service_name} " ]]; then
     echo "Invalid service name: $service_name"
     exit 1
   fi
 
-  sudo systemctl disable ${service_name}.service > /dev/null 2>&1
-  sudo service $service_name stop &
-  show_spinner $! "Stopping $service_name"
+  if [ "$service_name" = "caddy" ]; then
+    sudo systemctl disable caddy.service > /dev/null 2>&1
+    sudo service caddy stop &
+    show_spinner $! "Stopping Caddy"
+  else
+    sudo systemctl disable plane-${service_name}.service > /dev/null 2>&1
+    sudo service plane-${service_name} stop &
+    show_spinner $! "Stopping ${service_name}"
+  fi
   local status=$?
   if [ $status -ne 0 ]; then
     return 1
@@ -416,26 +430,22 @@ function stop_single_service(){
 }
 
 function start_services(){
-  local services=(admin web space live api worker beat-worker caddy)
-
   if [ $# -eq 2 ]; then 
     service_name=$2
     start_single_service $service_name
   else
-    for service in ${services[@]}; do
+    for service in ${PLANE_SERVICES[@]}; do
       start_single_service $service
     done
   fi
 }
 
 function stop_services(){
-  local services=(admin web space live api worker beat-worker caddy)
-
   if [ $# -eq 2 ]; then
     service_name=$2
     stop_single_service $service_name
   else
-    for service in ${services[@]}; do
+    for service in ${PLANE_SERVICES[@]}; do
       stop_single_service $service
     done
   fi
@@ -447,26 +457,75 @@ function restart_services(){
 }
 
 function service_status(){
-  if [ $# -ne 1 ]; then
-    echo "Usage: status <service_name>"
-    exit 1
-  fi
+  shift
+  if [ $# -ge 1 ]; then
+    service_name=$1
+    if [[ ! " ${PLANE_SERVICES[@]} " =~ " ${service_name} " ]]; then
+      echo "Invalid service name: $service_name"
+      exit 1
+    fi
 
-  sudo systemctl status $1
-  if [ $? -ne 0 ]; then
-    echo "Failed to get status of $1"
-    exit 1
+    if [ "$service_name" = "caddy" ]; then
+      sudo systemctl status caddy
+    else
+      sudo systemctl status plane-${service_name}
+    fi
+    if [ $? -ne 0 ]; then
+      echo "Failed to get status of $service_name"
+      exit 1
+    fi
+  else
+    # Show status for all services
+    welcome
+    echo "Status of all Plane services:"
+    echo "┌──────────────┬────────────┐"
+    echo "│ Service      │ Status     │"
+    echo "├──────────────┴────────────┘"
+    
+    for service in ${PLANE_SERVICES[@]}; do
+      status="inactive"
+      if [ "$service" = "caddy" ]; then
+        if sudo systemctl is-active caddy >/dev/null 2>&1; then
+          status="active"
+        fi
+      else
+        if sudo systemctl is-active plane-${service} >/dev/null 2>&1; then
+          status="active"
+        fi
+      fi
+      printf "│ %-12s │ %-10s │\n" "$service" "$status"
+    done
+    
+    echo "└──────────────┴────────────┘"
   fi
 }
 
 function service_logs(){
-  if [ $# -ne 1 ]; then
-    echo "Usage: logs <service_name>"
+  shift
+  if [ $# -ge 1 ]; then
+    service_name=$1
+    if [[ ! " ${PLANE_SERVICES[@]} " =~ " ${service_name} " ]]; then
+      echo "Invalid service name: $service_name"
+      exit 1
+    fi
+  else
+    echo "Usage: logs <service_name> [-f|--follow]"
     exit 1
   fi
-  sudo journalctl -u $1 -f
+
+  log_follow=""
+  # if the second argument is -f or --follow, then set log_follow to -f
+  if [ $# -eq 2 ] && { [ "$2" = "-f" ] || [ "$2" = "--follow" ]; }; then
+    log_follow="-f"
+  fi
+
+  if [ "$service_name" = "caddy" ]; then
+    sudo journalctl -u caddy $log_follow
+  else
+    sudo journalctl -u plane-${service_name} $log_follow
+  fi
   if [ $? -ne 0 ]; then
-    echo "Failed to get logs for $1"
+    echo "Failed to get logs for $service_name"
     exit 1
   fi
 }
@@ -868,6 +927,7 @@ function main(){
     echo "    $0 stop <service>                 # stop specific service"
     echo "    $0 restart                        # restart all services"
     echo "    $0 restart <service>              # restart specific service"
+    echo "    $0 status                         # get status of all services"
     echo "    $0 status <service>               # get status of specific service"
     echo "    $0 logs <service>                 # get logs of specific service"
     echo ""
@@ -910,18 +970,14 @@ function main(){
       fi
       ;;
     "status")
-      echo "Getting status of $2"
-      service_status $2
+      service_status "$@"
       if [ $? -ne 0 ]; then
-        echo "Failed to get status of $2"
         exit 1
       fi
       ;;
     "logs")
-      echo "Getting logs of $2"
-      service_logs $2
+      service_logs "$@"
       if [ $? -ne 0 ]; then
-        echo "Failed to get logs of $2"
         exit 1
       fi
       ;;
