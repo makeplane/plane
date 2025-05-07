@@ -224,8 +224,10 @@
   "something_went_wrong_please_try_again": "Terjadi kesalahan. Silakan coba lagi.",
   "load_more": "Muat lebih banyak",
   "select_or_customize_your_interface_color_scheme": "Pilih atau sesuaikan skema warna antarmuka Anda.",
+  "select_the_cursor_motion_style_that_feels_right_for_you": "Pilih gaya gerakan kursor yang terasa tepat untuk Anda.",
   "theme": "Tema",
-  "system_preference": "Preferensi sistem",
+  "smooth_cursor": "Kursor Halus",
+  "system_preference": "Preferensi Sistem",
   "light": "Terang",
   "dark": "Gelap",
   "light_contrast": "Kontras tinggi terang",
@@ -500,6 +502,74 @@
   "export": "Ekspor",
   "member": "{count, plural, one{# anggota} other{# anggota}}",
   "new_password_must_be_different_from_old_password": "Kata sandi baru harus berbeda dari kata sandi lama",
+  "updates": {
+    "add_update": "Tambahkan update",
+    "add_update_placeholder": "Tambahkan update Anda di sini",
+    "empty": {
+      "title": "Belum ada update",
+      "description": "Anda dapat melihat update di sini."
+    },
+    "delete": {
+      "title": "Hapus update",
+      "confirmation": "Apakah Anda yakin ingin menghapus update ini? Aksi ini tidak dapat dibatalkan.",
+      "success": {
+        "title": "Update berhasil dihapus",
+        "message": "Update berhasil dihapus."
+      },
+      "error": {
+        "title": "Update tidak berhasil dihapus",
+        "message": "Update tidak berhasil dihapus."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Update berhasil diperbarui",
+        "message": "Update berhasil diperbarui."
+      },
+      "error": {
+        "title": "Update tidak berhasil diperbarui",
+        "message": "Update tidak berhasil diperbarui."
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reaksi berhasil dibuat",
+          "message": "Reaksi berhasil dibuat."
+        },
+        "error": {
+          "title": "Reaksi tidak berhasil dibuat",
+          "message": "Reaksi tidak berhasil dibuat."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reaksi berhasil dihapus",
+          "message": "Reaksi berhasil dihapus."
+        },
+        "error": {
+          "title": "Reaksi tidak berhasil dihapus",
+          "message": "Reaksi tidak berhasil dihapus."
+        }
+      }
+    },
+    "progress": {
+      "title": "Progres",
+      "since_last_update": "Sejak update terakhir",
+      "comments": "{count, plural, one{# komentar} other{# komentar}}"
+    },
+    "create": {
+      "success": {
+        "title": "Update berhasil dibuat",
+        "message": "Update berhasil dibuat."
+      },
+      "error": {
+        "title": "Update tidak berhasil dibuat",
+        "message": "Update tidak berhasil dibuat."
+      }
+    }
+  },
+
   "project_view": {
     "sort_by": {
       "created_at": "Dibuat pada",

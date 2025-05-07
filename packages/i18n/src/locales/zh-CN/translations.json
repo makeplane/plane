@@ -224,7 +224,9 @@
   "something_went_wrong_please_try_again": "出现错误。请重试。",
   "load_more": "加载更多",
   "select_or_customize_your_interface_color_scheme": "选择或自定义您的界面配色方案。",
+  "select_the_cursor_motion_style_that_feels_right_for_you": "选择适合您的光标移动样式。",
   "theme": "主题",
+  "smooth_cursor": "平滑光标",
   "system_preference": "系统偏好",
   "light": "浅色",
   "dark": "深色",
@@ -499,6 +501,74 @@
   "re_generate_key": "重新生成密钥",
   "export": "导出",
   "member": "{count, plural, other{# 成员}}",
+  "updates": {
+    "add_update": "添加更新",
+    "add_update_placeholder": "在这里输入您的更新",
+    "empty": {
+      "title": "还没有更新",
+      "description": "您可以在这里查看更新。"
+    },
+    "delete": {
+      "title": "删除更新",
+      "confirmation": "您确定要删除此更新吗？此操作是不可逆的。",
+      "success": {
+        "title": "更新已删除",
+        "message": "更新已成功删除。"
+      },
+      "error": {
+        "title": "更新未删除",
+        "message": "更新未删除。"
+      }
+    },
+    "update": {
+      "success": {
+        "title": "更新已更新",
+        "message": "更新已成功更新。"
+      },
+      "error": {
+        "title": "更新未更新",
+        "message": "更新未更新。"
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "反应已创建",
+          "message": "反应已成功创建。"
+        },
+        "error": {
+          "title": "反应未创建",
+          "message": "反应未创建。"
+        }
+      }
+    },
+    "remove": {
+      "success": {
+        "title": "反应已移除",
+        "message": "反应已成功移除。"
+      },
+      "error": {
+        "title": "反应未移除",
+        "message": "反应未移除。"
+      }
+    },
+    "progress": {
+      "title": "进度",
+      "since_last_update": "自上次更新以来",
+      "comments": "{count, plural, other{# 评论}}"
+    },
+    "create": {
+      "success": {
+        "title": "更新已创建",
+        "message": "更新已成功创建。"
+      },
+      "error": {
+        "title": "更新未创建",
+        "message": "更新未创建。"
+      }
+    }
+  },
+  
   "new_password_must_be_different_from_old_password": "新密码必须不同于旧密码",
   "edited": "已编辑",
   "bot": "机器人",
