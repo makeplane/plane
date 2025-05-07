@@ -65,6 +65,15 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
       source_access_token: data.installationId.toString(),
     });
 
+    if (!planeCredentials) {
+      logger.info("[GITHUB][ISSUE] No plane credentials found, skipping", {
+        installationId: data.installationId,
+        accountId: data.accountId,
+        repositoryId: data.repositoryId,
+      });
+      return;
+    }
+
     const { workspaceConnection, entityConnection } = await getConnectionDetails({
       accountId: data.accountId.toString(),
       credentials: planeCredentials as TWorkspaceCredential,
