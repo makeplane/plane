@@ -7,14 +7,21 @@ import { CONSTANTS } from "@/helpers/constants";
 import { logger } from "@/logger";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { ACTIONS, ENTITIES, PLANE_PRIORITIES } from "../../helpers/constants";
-import { SlackPrivateMetadata, TSlackConnectionDetails } from "../../types/types";
+import { E_MESSAGE_ACTION_TYPES, SlackPrivateMetadata, TSlackConnectionDetails } from "../../types/types";
 import { createCommentModal } from "../../views/create-comment-modal";
 import { createWebLinkModal } from "../../views/create-weblink-modal";
 import { createSlackLinkback } from "../../views/issue-linkback";
 import { getAccountConnectionBlocks } from "../../views/account-connection";
 
+const shouldSkipActions = (data: TBlockActionPayload) => {
+  const excludedActions = [E_MESSAGE_ACTION_TYPES.CONNECT_ACCOUNT];
+  return excludedActions.includes(data?.actions?.[0]?.action_id as E_MESSAGE_ACTION_TYPES);
+};
+
 export const handleBlockActions = async (data: TBlockActionPayload) => {
   try {
+    if (shouldSkipActions(data)) return;
+
     // Get connection details once at the top level
     const details = await getConnectionDetails(data.team.id, { id: data.user.id });
     if (!details) {
@@ -120,7 +127,7 @@ async function handleSwitchCycleAction(data: TBlockActionPayload, details: TSlac
 
     await slackService.sendEphemeralMessage(
       data.user.id,
-      `Issue cycle successfully updated to ${selection.text.text}. 😄`,
+      `Issue *cycle* successfully updated to *${selection.text.text}*`,
       data.channel.id,
       data.message?.thread_ts
     );
@@ -211,20 +218,12 @@ async function handleSwitchPriorityAction(data: TBlockActionPayload, details: TS
       });
     }
 
-    if (data.message?.thread_ts) {
-      await slackService.sendEphemeralMessage(
-        data.user.id,
-        `Issue state successfully updated to ${selection.text.text}.`,
-        data.channel.id,
-        data.message?.thread_ts
-      );
-    } else {
-      await slackService.sendThreadMessage(
-        data.channel.id,
-        data.container.message_ts,
-        `Issue state successfully updated to ${selection.text.text}.`
-      );
-    }
+    await slackService.sendEphemeralMessage(
+      data.user.id,
+      `Issue *priority* successfully updated to *${selection.text.text}*`,
+      data.channel.id,
+      data.message?.thread_ts
+    );
   }
 }
 
@@ -300,20 +299,12 @@ async function handleLinkbackStateChange(data: TBlockActionPayload, details: TSl
         });
       }
 
-      if (data.message?.thread_ts) {
-        await slackService.sendEphemeralMessage(
-          data.user.id,
-          `Issue state successfully updated to ${stateFull.name}. 😄`,
-          data.channel.id,
-          data.message?.thread_ts
-        );
-      } else {
-        await slackService.sendThreadMessage(
-          data.channel.id,
-          data.container.message_ts,
-          `Issue state successfully updated to ${stateFull.name}. 😄`
-        );
-      }
+      await slackService.sendEphemeralMessage(
+        data.user.id,
+        `Issue *state* successfully updated to *${stateFull.name}*`,
+        data.channel.id,
+        data.message?.thread_ts
+      );
     }
   }
 }
@@ -337,20 +328,12 @@ async function handleAssignToMeAction(data: TBlockActionPayload, details: TSlack
         assignees: [member.id],
       });
 
-      if (data.message?.thread_ts) {
-        await slackService.sendEphemeralMessage(
-          data.user.id,
-          `Issue successfully assigned to you.`,
-          data.channel.id,
-          data.message?.thread_ts
-        );
-      } else {
-        await slackService.sendThreadMessage(
-          data.channel.id,
-          data.container.message_ts,
-          `Issue successfully assigned to you.`
-        );
-      }
+      await slackService.sendEphemeralMessage(
+        data.user.id,
+        `Issue successfully *assigned* to you.`,
+        data.channel.id,
+        data.message?.thread_ts
+      );
     }
   }
 }
