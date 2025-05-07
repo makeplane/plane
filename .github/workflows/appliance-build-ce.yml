@@ -233,6 +233,13 @@ jobs:
           # Cleanup directories
           rm -rf artifacts 
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.PLANE_DEV_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.PLANE_DEV_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.VPC_REGION }}
+
       - name: Download Previous Manifest
         run: |
           # Download the previous manifest from S3 if it exists
@@ -265,9 +272,9 @@ jobs:
         id: ami_info
         run: |
           # Extract AMI ID and other details from manifest
-          AMI_ID=$(jq -r '.builds[-1].artifact_id' ce-digital-ocean-manifest.json | cut -d ":" -f2)
-          AMI_NAME=$(jq -r '.builds[-1].custom_data.ami_name' ce-digital-ocean-manifest.json)
-          REGION=$(jq -r '.builds[-1].custom_data.region' ce-digital-ocean-manifest.json)
+          DROPLET_ID=$(jq -r '.builds[-1].artifact_id' ce-digital-ocean-manifest.json | cut -d ":" -f2)
+          DROPLET_NAME=$(jq -r '.builds[-1].name' ce-digital-ocean-manifest.json)
+          DROPLET_REGION=$(jq -r '.builds[-1].artifact_id' ce-digital-ocean-manifest.json | cut -d ":" -f1)
           BUILD_TIME=$(jq -r '.builds[-1].custom_data.build_time' ce-digital-ocean-manifest.json)
           
           # Add git information to manifest
@@ -278,14 +285,14 @@ jobs:
              ce-digital-ocean-manifest.json > enhanced-ce-digital-ocean-manifest.json
           mv enhanced-ce-digital-ocean-manifest.json ce-digital-ocean-manifest.json
           
-          echo "AMI_ID=${AMI_ID}" >> $GITHUB_OUTPUT
-          echo "AMI_NAME=${AMI_NAME}" >> $GITHUB_OUTPUT
-          echo "REGION=${REGION}" >> $GITHUB_OUTPUT
+          echo "AMI_ID=${DROPLET_ID}" >> $GITHUB_OUTPUT
+          echo "AMI_NAME=${DROPLET_NAME}" >> $GITHUB_OUTPUT
+          echo "REGION=${DROPLET_REGION}" >> $GITHUB_OUTPUT
           
           echo "✅ AMI built successfully!"
-          echo "🔹 AMI ID: ${AMI_ID}"
-          echo "🔹 AMI Name: ${AMI_NAME}"
-          echo "🔹 Region: ${REGION}"
+          echo "🔹 AMI ID: ${DROPLET_ID}"
+          echo "🔹 AMI Name: ${DROPLET_NAME}"
+          echo "🔹 Region: ${DROPLET_REGION}"
           echo "🔹 Build Time: ${BUILD_TIME}"
 
       - name: Store Manifest in S3
