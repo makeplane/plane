@@ -41,7 +41,7 @@ const WorkspacePickerPage = observer(() => {
           <div className="font-medium text-custom-text-300 max-w-[450px] text-center">
             {t("integrations_description")}
           </div>
-          <div className="overflow-y-auto vertical-scrollbar scrollbar-sm mb-10">
+          <div className="overflow-y-auto vertical-scrollbar scrollbar-sm mb-10 w-full md:w-fit">
             <WorkspacePicker />
           </div>
         </div>
