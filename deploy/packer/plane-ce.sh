@@ -325,7 +325,10 @@ function create_services(){
   for service in ${PLANE_SERVICES[@]}; do
     sudo touch /var/log/plane/${service}.log
   done
-  sudo chown -R ubuntu:ubuntu /var/log/plane
+  # if current user is ubuntu, then chown the logs to ubuntu
+  if [ "$USER" = "ubuntu" ]; then
+    sudo chown -R ubuntu:ubuntu /var/log/plane
+  fi
   sudo chmod -R 755 /var/log/plane
   sudo chmod 644 /var/log/plane/*.log
 

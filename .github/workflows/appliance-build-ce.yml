@@ -1,4 +1,4 @@
-name: Dockerless Build CE
+name: Appliance Build CE
 
 on:
   workflow_dispatch:

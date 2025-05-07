@@ -84,7 +84,6 @@ build {
     ]
     inline = [
       "sudo mkdir -p /opt/plane/svc",
-      "sudo chown -R ubuntu:ubuntu /opt/plane",
       "sudo chmod -R 755 /opt/plane",
 
       # Extract the application files
@@ -129,7 +128,6 @@ build {
 
       # Set proper permissions and verify installation
       "echo 'Setting proper permissions...'",
-      "sudo chown -R ubuntu:ubuntu /opt/plane",
       "sudo chmod -R 755 /opt/plane",
       # Verify installation
       "echo 'Verifying assets copied...'",
