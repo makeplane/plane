@@ -76,6 +76,8 @@ export interface IUserSettings {
   workspace: {
     last_workspace_id: string | undefined;
     last_workspace_slug: string | undefined;
+    last_workspace_name: string | undefined;
+    last_workspace_logo: string | undefined;
     fallback_workspace_id: string | undefined;
     fallback_workspace_slug: string | undefined;
     invites: number | undefined;
@@ -155,14 +157,7 @@ export interface IUserProfileProjectSegregation {
     id: string;
     pending_issues: number;
   }[];
-  user_data: Pick<
-    IUser,
-    | "avatar_url"
-    | "cover_image_url"
-    | "display_name"
-    | "first_name"
-    | "last_name"
-  > & {
+  user_data: Pick<IUser, "avatar_url" | "cover_image_url" | "display_name" | "first_name" | "last_name"> & {
     date_joined: Date;
     user_timezone: string;
   };
