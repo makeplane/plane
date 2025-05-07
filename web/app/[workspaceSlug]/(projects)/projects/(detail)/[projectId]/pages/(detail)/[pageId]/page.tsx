@@ -128,7 +128,6 @@ const PageDetailsPage = observer(() => {
       documentType: "project_page",
       projectId: projectId?.toString() ?? "",
       workspaceSlug: workspaceSlug?.toString() ?? "",
-      parentPageId: null,
     }),
     [projectId, workspaceSlug]
   );

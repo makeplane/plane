@@ -125,9 +125,8 @@ const PageDetailsPage = observer(() => {
     () => ({
       documentType: "workspace_page",
       workspaceSlug: workspaceSlug?.toString() ?? "",
-      parentPageId: page?.parent_id,
     }),
-    [workspaceSlug, page?.parent_id]
+    [workspaceSlug]
   );
 
   useEffect(() => {

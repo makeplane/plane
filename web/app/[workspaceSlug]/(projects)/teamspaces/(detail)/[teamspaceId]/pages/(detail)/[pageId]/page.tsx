@@ -119,7 +119,6 @@ const TeamspacePageDetailsPage = observer(() => {
       documentType: "teamspace_page",
       teamspaceId,
       workspaceSlug,
-      parentPageId: null,
     }),
     [teamspaceId, workspaceSlug]
   );
