@@ -37,7 +37,7 @@ export const SettingsHeader = observer(() => {
         >
           <ChevronLeftIcon className="h-4 w-4  my-auto" />
         </button>
-        <div className="text-sm my-auto font-semibold">{t("back_to_workspace")}</div>
+        <div className="text-sm my-auto font-semibold text-custom-text-200">{t("back_to_workspace")}</div>
         {/* Last workspace */}
         <div className="flex items-center gap-1">
           <WorkspaceLogo
@@ -56,7 +56,7 @@ export const SettingsHeader = observer(() => {
       <div className="flex flex-col gap-2">
         {/* Description */}
         <div className="text-custom-text-100 font-semibold text-2xl">{t("settings")}</div>
-        <div className="text-custom-text-300 text-base">{t("settings_description")}</div>
+        <div className="text-custom-text-200 text-base">{t("settings_description")}</div>
         {/* Actions */}
         <SettingsTabs />
       </div>

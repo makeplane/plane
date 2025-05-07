@@ -48,7 +48,7 @@ export const SettingsSidebar = observer((props: SettingsSidebarProps) => {
       <div className="divide-y divide-custom-border-100 overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto vertical-scrollbar">
         {categories.map((category) => (
           <div key={category} className="py-3">
-            <span className="text-sm font-semibold text-custom-text-400 capitalize mb-2">{t(category)}</span>
+            <span className="text-sm font-semibold text-custom-text-350 capitalize mb-2">{t(category)}</span>
             {groupedSettings[category].length > 0 && (
               <div className="relative flex flex-col gap-0.5 overflow-y-scroll h-full mt-2">
                 {groupedSettings[category].map(
