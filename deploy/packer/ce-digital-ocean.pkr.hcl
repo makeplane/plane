@@ -28,8 +28,6 @@ locals {
   timestamp = regex_replace(timestamp(), "[- TZ:]", "")
 }
 
-
-
 source "digitalocean" "plane_do_droplet" {
   api_token    = var.do_token
   image        = "ubuntu-22-04-x64"
@@ -49,7 +47,6 @@ build {
     "source.digitalocean.plane_do_droplet"
   ]
 
-  # Copy application files
   provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
@@ -64,9 +61,29 @@ build {
       "ufw allow http",
       "ufw allow https",
       "ufw allow ssh",
-      "sudo mkdir -p /opt/plane/tars /opt/plane/extracted"
+      "useradd -m -s /bin/bash ubuntu",
+      "echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/ubuntu",
+      "chmod 0440 /etc/sudoers.d/ubuntu",
+      "mkdir -p /home/ubuntu/.ssh",
+      "chown -R ubuntu:ubuntu /home/ubuntu/.ssh"
     ]
   }
+
+  provisioner "shell" {
+    environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive",
+      "TERM=xterm-256color",
+      "CI=true",
+      "HISTSIZE=0",
+      "HISTFILESIZE=0",
+      "HISTFILE=/dev/null"
+    ]
+    inline = [
+      "sudo mkdir -p /opt/plane/tars /opt/plane/extracted",
+      "sudo chown -R ubuntu:ubuntu /opt/plane"
+    ]
+  }
+  # Copy application files
 
   provisioner "file" {
     source      = "plane-dist/"
@@ -78,12 +95,14 @@ build {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
       "TERM=xterm-256color",
+      "CI=true",
       "HISTSIZE=0",
       "HISTFILESIZE=0",
       "HISTFILE=/dev/null"
     ]
     inline = [
       "sudo mkdir -p /opt/plane/svc",
+      "sudo chown -R ubuntu:ubuntu /opt/plane",
       "sudo chmod -R 755 /opt/plane",
 
       # Extract the application files
@@ -128,6 +147,7 @@ build {
 
       # Set proper permissions and verify installation
       "echo 'Setting proper permissions...'",
+      "sudo chown -R ubuntu:ubuntu /opt/plane",
       "sudo chmod -R 755 /opt/plane",
       # Verify installation
       "echo 'Verifying assets copied...'",
@@ -187,5 +207,11 @@ build {
   post-processor "manifest" {
     output = "ce-digital-ocean-manifest.json"
     strip_path = true
+    custom_data = {
+      "ami_name": "${var.ami_name_prefix}-${local.timestamp}",
+      "region": "${var.do_region}",
+      "environment": "production",
+      "built_by": "packer"
+    }
   }
 } 
