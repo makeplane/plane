@@ -13,6 +13,8 @@ env:
   VPC_CIDR: ${{ vars.VPC_CIDR || '10.22.0.0/16' }}
   SUBNET_CIDR: ${{ vars.SUBNET_CIDR || '10.22.1.0/24' }}
   VPC_REGION: ${{ vars.VPC_REGION || 'us-east-1' }}
+  DO_TOKEN: ${{ secrets.PLANE_DEV_DIGITAL_OCEAN_TOKEN || 'do-token' }}
+  DO_REGION: ${{ vars.PLANE_DEV_DIGITAL_OCEAN_REGION || 'BLR1' }}
   BASE_IMAGE_OWNER: ${{ vars.BASE_IMAGE_OWNER || '099720109477' }}
 
 jobs:
@@ -203,7 +205,7 @@ jobs:
           path: backend-dist.tar.gz
           retention-days: 1
   # Job to build the appliance using hashicorp packer
-  build_appliance:
+  build_do_appliance:
     needs: [build_setup, build_admin, build_web, build_space, build_live, build_backend]
     runs-on: ubuntu-22.04
     steps:
@@ -232,17 +234,10 @@ jobs:
           # Cleanup directories
           rm -rf artifacts 
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.PLANE_DEV_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.PLANE_DEV_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.VPC_REGION }}
-
-      - name: Download Previous Manifest
-        run: |
-          # Download the previous manifest from S3 if it exists
-          aws s3 cp s3://${{ env.MANIFEST_BUCKET }}/plane-ce/ami/manifests/latest-manifest.json ./previous-manifest.json || true
+      # - name: Download Previous Manifest
+      #   run: |
+      #     # Download the previous manifest from S3 if it exists
+      #     aws s3 cp s3://${{ env.MANIFEST_BUCKET }}/plane-ce/ami/manifests/latest-manifest.json ./previous-manifest.json || true
 
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
@@ -252,69 +247,66 @@ jobs:
 
       - name: Run `packer init`
         id: init
-        run: "packer init ./deploy/packer/ce-aws-ami.pkr.hcl"
+        run: "packer init ./deploy/packer/ce-digital-ocean.pkr.hcl"
 
       - name: Run `packer validate`
         id: validate
-        run: "packer validate ./deploy/packer/ce-aws-ami.pkr.hcl"
+        run: "packer validate ./deploy/packer/ce-digital-ocean.pkr.hcl"
 
       - name: Run `packer build`
         id: build
         run: |
           packer build \
-            -var "aws_access_key=${{ secrets.PLANE_DEV_AWS_ACCESS_KEY_ID }}" \
-            -var "aws_secret_key=${{ secrets.PLANE_DEV_AWS_SECRET_ACCESS_KEY }}" \
+            -var "do_token=${{ env.DO_TOKEN }}" \
+            -var "do_region=${{ env.DO_REGION }}" \
             -var "ami_name_prefix=${{ env.AMI_NAME_PREFIX }}-${{ needs.build_setup.outputs.tag_name }}" \
-            -var "vpc_cidr=${{ env.VPC_CIDR }}" \
-            -var "subnet_cidr=${{ env.SUBNET_CIDR }}" \
-            -var "base_image_owner=${{ env.BASE_IMAGE_OWNER }}" \
-            ./deploy/packer/ce-aws-ami.pkr.hcl
+            ./deploy/packer/ce-digital-ocean.pkr.hcl
 
-      - name: Cleanup Old AMIs
-        if: hashFiles('previous-manifest.json') != ''
-        run: |
-          OLD_AMI_ID=$(jq -r '.builds[-1].artifact_id' previous-manifest.json | cut -d ":" -f2)
-          if [ ! -z "$OLD_AMI_ID" ]; then
-            echo "Found previous AMI: $OLD_AMI_ID"
-            # Deregister the old AMI
-            aws ec2 deregister-image --image-id "$OLD_AMI_ID" || true
-            echo "Deregistered previous AMI: $OLD_AMI_ID"
-          fi
+      # - name: Cleanup Old AMIs
+      #   if: hashFiles('previous-manifest.json') != ''
+      #   run: |
+      #     OLD_AMI_ID=$(jq -r '.builds[-1].artifact_id' previous-manifest.json | cut -d ":" -f2)
+      #     if [ ! -z "$OLD_AMI_ID" ]; then
+      #       echo "Found previous AMI: $OLD_AMI_ID"
+      #       # Deregister the old AMI
+      #       aws ec2 deregister-image --image-id "$OLD_AMI_ID" || true
+      #       echo "Deregistered previous AMI: $OLD_AMI_ID"
+      #     fi
 
-      - name: Extract AMI Information
-        id: ami_info
-        run: |
-          # Extract AMI ID and other details from manifest
-          AMI_ID=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2)
-          AMI_NAME=$(jq -r '.builds[-1].custom_data.ami_name' manifest.json)
-          REGION=$(jq -r '.builds[-1].custom_data.region' manifest.json)
-          BUILD_TIME=$(jq -r '.builds[-1].custom_data.build_time' manifest.json)
+      # - name: Extract AMI Information
+      #   id: ami_info
+      #   run: |
+      #     # Extract AMI ID and other details from manifest
+      #     AMI_ID=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2)
+      #     AMI_NAME=$(jq -r '.builds[-1].custom_data.ami_name' manifest.json)
+      #     REGION=$(jq -r '.builds[-1].custom_data.region' manifest.json)
+      #     BUILD_TIME=$(jq -r '.builds[-1].custom_data.build_time' manifest.json)
           
-          # Add git information to manifest
-          jq --arg branch "${{ github.ref_name }}" \
-             --arg commit "${{ github.sha }}" \
-             --arg build_time "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
-             '.builds[-1].custom_data += {git_branch: $branch, git_commit: $commit, build_timestamp: $build_time}' \
-             manifest.json > enhanced-manifest.json
-          mv enhanced-manifest.json manifest.json
+      #     # Add git information to manifest
+      #     jq --arg branch "${{ github.ref_name }}" \
+      #        --arg commit "${{ github.sha }}" \
+      #        --arg build_time "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+      #        '.builds[-1].custom_data += {git_branch: $branch, git_commit: $commit, build_timestamp: $build_time}' \
+      #        manifest.json > enhanced-manifest.json
+      #     mv enhanced-manifest.json manifest.json
           
-          echo "AMI_ID=${AMI_ID}" >> $GITHUB_OUTPUT
-          echo "AMI_NAME=${AMI_NAME}" >> $GITHUB_OUTPUT
-          echo "REGION=${REGION}" >> $GITHUB_OUTPUT
+      #     echo "AMI_ID=${AMI_ID}" >> $GITHUB_OUTPUT
+      #     echo "AMI_NAME=${AMI_NAME}" >> $GITHUB_OUTPUT
+      #     echo "REGION=${REGION}" >> $GITHUB_OUTPUT
           
-          echo "✅ AMI built successfully!"
-          echo "🔹 AMI ID: ${AMI_ID}"
-          echo "🔹 AMI Name: ${AMI_NAME}"
-          echo "🔹 Region: ${REGION}"
-          echo "🔹 Build Time: ${BUILD_TIME}"
+      #     echo "✅ AMI built successfully!"
+      #     echo "🔹 AMI ID: ${AMI_ID}"
+      #     echo "🔹 AMI Name: ${AMI_NAME}"
+      #     echo "🔹 Region: ${REGION}"
+      #     echo "🔹 Build Time: ${BUILD_TIME}"
 
-      - name: Store Manifest in S3
-        run: |
-          # Store the current manifest as latest
-          aws s3 cp manifest.json s3://${{ env.MANIFEST_BUCKET }}/plane-ce/ami/manifests/latest-manifest.json
+      # - name: Store Manifest in S3
+      #   run: |
+      #     # Store the current manifest as latest
+      #     aws s3 cp manifest.json s3://${{ env.MANIFEST_BUCKET }}/plane-ce/ami/manifests/latest-manifest.json
           
-          # Also store a versioned copy
-          aws s3 cp manifest.json "s3://${{ env.MANIFEST_BUCKET }}/plane-ce/ami/manifests/manifest-${{ github.sha }}.json"
+      #     # Also store a versioned copy
+      #     aws s3 cp manifest.json "s3://${{ env.MANIFEST_BUCKET }}/plane-ce/ami/manifests/manifest-${{ github.sha }}.json"
 
       - name: Upload Build Manifest as Artifact
         uses: actions/upload-artifact@v4
@@ -323,22 +315,162 @@ jobs:
           path: manifest.json
           retention-days: 30
 
-      - name: Create Build Summary
-        run: |
-          echo "### 🚀 Plane CE AMI Build Summary" >> $GITHUB_STEP_SUMMARY
-          echo "| Detail | Value |" >> $GITHUB_STEP_SUMMARY
-          echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
-          echo "| AMI ID | \`${{ steps.ami_info.outputs.AMI_ID }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| AMI Name | \`${{ steps.ami_info.outputs.AMI_NAME }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Region | \`${{ steps.ami_info.outputs.REGION }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Git Branch | \`${{ github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Git Commit | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
+      # - name: Create Build Summary
+      #   run: |
+      #     echo "### 🚀 Plane CE AMI Build Summary" >> $GITHUB_STEP_SUMMARY
+      #     echo "| Detail | Value |" >> $GITHUB_STEP_SUMMARY
+      #     echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
+      #     echo "| AMI ID | \`${{ steps.ami_info.outputs.AMI_ID }}\` |" >> $GITHUB_STEP_SUMMARY
+      #     echo "| AMI Name | \`${{ steps.ami_info.outputs.AMI_NAME }}\` |" >> $GITHUB_STEP_SUMMARY
+      #     echo "| Region | \`${{ steps.ami_info.outputs.REGION }}\` |" >> $GITHUB_STEP_SUMMARY
+      #     echo "| Git Branch | \`${{ github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
+      #     echo "| Git Commit | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
 
-      - name: Tag AMI
-        run: |
-          aws ec2 create-tags \
-            --resources ${{ steps.ami_info.outputs.AMI_ID }} \
-            --tags \
-              Key=GitBranch,Value=${{ github.ref_name }} \
-              Key=GitCommit,Value=${{ github.sha }} \
-              Key=BuildTime,Value=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+      # - name: Tag AMI
+      #   run: |
+      #     aws ec2 create-tags \
+      #       --resources ${{ steps.ami_info.outputs.AMI_ID }} \
+      #       --tags \
+      #         Key=GitBranch,Value=${{ github.ref_name }} \
+      #         Key=GitCommit,Value=${{ github.sha }} \
+      #         Key=BuildTime,Value=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+  # build_aws_appliance:
+  #   needs: [build_setup, build_admin, build_web, build_space, build_live, build_backend]
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v4
+
+  #     - name: Download All Artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         pattern: '*-dist'
+  #         path: artifacts
+
+  #     - name: Extract All Builds
+  #       run: |
+  #         # Create local directories
+  #         mkdir -p plane-dist
+
+  #         for dist in admin-dist web-dist space-dist live-dist backend-dist; do
+  #           mv artifacts/${dist}/${dist}.tar.gz plane-dist/
+  #         done
+  #         cp -r ./deploy/packer/envs/*.env plane-dist/
+  #         cp -r ./deploy/packer/svc/*.service plane-dist/
+  #         cp ./deploy/packer/Caddyfile-ce plane-dist/Caddyfile
+  #         cp ./deploy/packer/plane-ce.sh plane-dist/
+          
+  #         # Cleanup directories
+  #         rm -rf artifacts 
+
+  #     - name: Configure AWS Credentials
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         aws-access-key-id: ${{ secrets.PLANE_DEV_AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.PLANE_DEV_AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: ${{ env.VPC_REGION }}
+
+  #     - name: Download Previous Manifest
+  #       run: |
+  #         # Download the previous manifest from S3 if it exists
+  #         aws s3 cp s3://${{ env.MANIFEST_BUCKET }}/plane-ce/ami/manifests/latest-manifest.json ./previous-manifest.json || true
+
+  #     - name: Setup `packer`
+  #       uses: hashicorp/setup-packer@main
+  #       id: setup
+  #       with:
+  #         version: latest
+
+  #     - name: Run `packer init`
+  #       id: init
+  #       run: "packer init ./deploy/packer/ce-aws-ami.pkr.hcl"
+
+  #     - name: Run `packer validate`
+  #       id: validate
+  #       run: "packer validate ./deploy/packer/ce-aws-ami.pkr.hcl"
+
+  #     - name: Run `packer build`
+  #       id: build
+  #       run: |
+  #         packer build \
+  #           -var "aws_access_key=${{ secrets.PLANE_DEV_AWS_ACCESS_KEY_ID }}" \
+  #           -var "aws_secret_key=${{ secrets.PLANE_DEV_AWS_SECRET_ACCESS_KEY }}" \
+  #           -var "ami_name_prefix=${{ env.AMI_NAME_PREFIX }}-${{ needs.build_setup.outputs.tag_name }}" \
+  #           -var "vpc_cidr=${{ env.VPC_CIDR }}" \
+  #           -var "subnet_cidr=${{ env.SUBNET_CIDR }}" \
+  #           -var "base_image_owner=${{ env.BASE_IMAGE_OWNER }}" \
+  #           ./deploy/packer/ce-aws-ami.pkr.hcl
+
+  #     - name: Cleanup Old AMIs
+  #       if: hashFiles('previous-manifest.json') != ''
+  #       run: |
+  #         OLD_AMI_ID=$(jq -r '.builds[-1].artifact_id' previous-manifest.json | cut -d ":" -f2)
+  #         if [ ! -z "$OLD_AMI_ID" ]; then
+  #           echo "Found previous AMI: $OLD_AMI_ID"
+  #           # Deregister the old AMI
+  #           aws ec2 deregister-image --image-id "$OLD_AMI_ID" || true
+  #           echo "Deregistered previous AMI: $OLD_AMI_ID"
+  #         fi
+
+  #     - name: Extract AMI Information
+  #       id: ami_info
+  #       run: |
+  #         # Extract AMI ID and other details from manifest
+  #         AMI_ID=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2)
+  #         AMI_NAME=$(jq -r '.builds[-1].custom_data.ami_name' manifest.json)
+  #         REGION=$(jq -r '.builds[-1].custom_data.region' manifest.json)
+  #         BUILD_TIME=$(jq -r '.builds[-1].custom_data.build_time' manifest.json)
+          
+  #         # Add git information to manifest
+  #         jq --arg branch "${{ github.ref_name }}" \
+  #            --arg commit "${{ github.sha }}" \
+  #            --arg build_time "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+  #            '.builds[-1].custom_data += {git_branch: $branch, git_commit: $commit, build_timestamp: $build_time}' \
+  #            manifest.json > enhanced-manifest.json
+  #         mv enhanced-manifest.json manifest.json
+          
+  #         echo "AMI_ID=${AMI_ID}" >> $GITHUB_OUTPUT
+  #         echo "AMI_NAME=${AMI_NAME}" >> $GITHUB_OUTPUT
+  #         echo "REGION=${REGION}" >> $GITHUB_OUTPUT
+          
+  #         echo "✅ AMI built successfully!"
+  #         echo "🔹 AMI ID: ${AMI_ID}"
+  #         echo "🔹 AMI Name: ${AMI_NAME}"
+  #         echo "🔹 Region: ${REGION}"
+  #         echo "🔹 Build Time: ${BUILD_TIME}"
+
+  #     - name: Store Manifest in S3
+  #       run: |
+  #         # Store the current manifest as latest
+  #         aws s3 cp manifest.json s3://${{ env.MANIFEST_BUCKET }}/plane-ce/ami/manifests/latest-manifest.json
+          
+  #         # Also store a versioned copy
+  #         aws s3 cp manifest.json "s3://${{ env.MANIFEST_BUCKET }}/plane-ce/ami/manifests/manifest-${{ github.sha }}.json"
+
+  #     - name: Upload Build Manifest as Artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: packer-manifest
+  #         path: manifest.json
+  #         retention-days: 30
+
+  #     - name: Create Build Summary
+  #       run: |
+  #         echo "### 🚀 Plane CE AMI Build Summary" >> $GITHUB_STEP_SUMMARY
+  #         echo "| Detail | Value |" >> $GITHUB_STEP_SUMMARY
+  #         echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
+  #         echo "| AMI ID | \`${{ steps.ami_info.outputs.AMI_ID }}\` |" >> $GITHUB_STEP_SUMMARY
+  #         echo "| AMI Name | \`${{ steps.ami_info.outputs.AMI_NAME }}\` |" >> $GITHUB_STEP_SUMMARY
+  #         echo "| Region | \`${{ steps.ami_info.outputs.REGION }}\` |" >> $GITHUB_STEP_SUMMARY
+  #         echo "| Git Branch | \`${{ github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
+  #         echo "| Git Commit | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
+
+  #     - name: Tag AMI
+  #       run: |
+  #         aws ec2 create-tags \
+  #           --resources ${{ steps.ami_info.outputs.AMI_ID }} \
+  #           --tags \
+  #             Key=GitBranch,Value=${{ github.ref_name }} \
+  #             Key=GitCommit,Value=${{ github.sha }} \
+  #             Key=BuildTime,Value=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
