@@ -347,9 +347,17 @@ class AdvanceAnalyticsExportEndpoint(AdvanceAnalyticsBaseView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def post(self, request, slug):
         self.initialize_workspace(slug, type="chart")
-        data = (
-            Issue.issue_objects.filter(**self.filters["base_filters"])
-            .values("project_id", "project__name")
+        queryset = Issue.issue_objects.filter(**self.filters["base_filters"])
+
+        # Apply date range filter if available
+        if self.filters["chart_period_range"]:
+            start_date, end_date = self.filters["chart_period_range"]
+            queryset = queryset.filter(
+                created_at__date__gte=start_date, created_at__date__lte=end_date
+            )
+
+        queryset = (
+            queryset.values("project_id", "project__name")
             .annotate(
                 cancelled_work_items=Count("id", filter=Q(state__group="cancelled")),
                 completed_work_items=Count("id", filter=Q(state__group="completed")),
@@ -360,15 +368,8 @@ class AdvanceAnalyticsExportEndpoint(AdvanceAnalyticsBaseView):
             .order_by("project_id")
         )
 
-        # Apply date range filter if available
-        if self.filters["chart_period_range"]:
-            start_date, end_date = self.filters["chart_period_range"]
-            data = data.filter(
-                created_at__date__gte=start_date, created_at__date__lte=end_date
-            )
-
         # Convert QuerySet to list of dictionaries for serialization
-        serialized_data = list(data)
+        serialized_data = list(queryset)
 
         headers = [
             "Projects",
