@@ -1,11 +1,12 @@
 "use client";
 
 import { observer } from "mobx-react";
-// hooks
 import { Briefcase } from "lucide-react";
+// plane package imports
 import { CustomSearchSelect } from "@plane/ui";
+// hooks
 import { useProject } from "@/hooks/store";
-// ui
+
 
 type Props = {
   value: string[] | undefined;

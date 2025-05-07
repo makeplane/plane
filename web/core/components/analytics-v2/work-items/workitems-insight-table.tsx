@@ -4,18 +4,24 @@ import { observer } from 'mobx-react';
 import { useParams } from 'next/navigation';
 import useSWR from 'swr';
 import { Briefcase } from 'lucide-react';
+// plane package imports
 import { WorkItemInsightColumns, AnalyticsTableDataMap } from '@plane/types';
+// plane web components
 import { Logo } from '@/components/common/logo';
+// hooks
 import { useAnalyticsV2 } from '@/hooks/store/use-analytics-v2';
 import { useProject } from '@/hooks/store/use-project';
 import { AnalyticsV2Service } from '@/services/analytics-v2.service';
+// plane web components
 import { InsightTable } from '../insight-table';
 
 const analyticsV2Service = new AnalyticsV2Service();
 
 const WorkItemsInsightTable = observer(() => {
+    // router
     const params = useParams();
     const workspaceSlug = params.workspaceSlug as string;
+    // store hooks
     const { getProjectById } = useProject();
     const { selectedDuration, selectedProjects } = useAnalyticsV2()
     const { data: workItemsData, isLoading } = useSWR(`insights-table-work-items-${selectedDuration}-${selectedProjects}`,
@@ -23,7 +29,7 @@ const WorkItemsInsightTable = observer(() => {
             date_filter: selectedDuration,
             ...(selectedProjects ? { project_ids: selectedProjects } : {})
         }))
-
+    // derived values
     const columns = useMemo(() => [
         {
             accessorKey: "project__name",

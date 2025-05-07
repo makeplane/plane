@@ -2,11 +2,14 @@ import { observer } from 'mobx-react'
 import dynamic from 'next/dynamic'
 import { useParams } from 'next/navigation'
 import useSWR from 'swr'
+// plane package imports
 import { useTranslation } from '@plane/i18n'
 import { TChartData } from '@plane/types'
+// hooks
 import { useAnalyticsV2 } from '@/hooks/store/use-analytics-v2'
+// services
 import { AnalyticsV2Service } from '@/services/analytics-v2.service'
-// import useSWR from 'swr'
+// plane web components
 import AnalyticsSectionWrapper from '../analytics-section-wrapper'
 import AnalyticsV2EmptyState from '../empty-state'
 import { ProjectInsightsLoader } from '../loaders'

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { Dialog, Transition } from "@headlessui/react";
+// plane package imports
 import { IProject } from "@plane/types";
-
+// plane web components
 import { WorkItemsModalMainContent } from "./content";
 import { WorkItemsModalHeader } from "./header";
 

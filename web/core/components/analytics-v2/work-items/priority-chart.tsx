@@ -4,12 +4,15 @@ import { observer } from 'mobx-react'
 import { useParams } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import useSWR from 'swr'
+// plane package imports
 import { ANALYTICS_V2_X_AXIS_VALUES, ANALYTICS_V2_Y_AXIS_VALUES, ChartXAxisDateGrouping, ChartXAxisProperty, ChartYAxisMetric, EChartModels } from '@plane/constants'
 import { useTranslation } from '@plane/i18n'
 import { BarChart } from '@plane/propel/charts/bar-chart'
 import { IChartResponseV2 } from '@plane/types'
 import { TBarItem, TChartDatum } from '@plane/types/src/charts'
+// plane web components
 import { CHART_COLOR_PALETTES, generateExtendedColors, parseChartData } from '@/components/chart/utils'
+// hooks
 import { useProjectState } from '@/hooks/store'
 import { useAnalyticsV2 } from '@/hooks/store/use-analytics-v2'
 import { useWorkspaceIssueProperties } from '@/hooks/use-workspace-issue-properties'
@@ -18,6 +21,10 @@ import AnalyticsV2EmptyState from '../empty-state'
 import { DataTable } from '../insight-table/data-table'
 import { ChartLoader } from '../loaders'
 import { generateBarColor } from './utils'
+
+
+
+
 interface Props {
   x_axis: ChartXAxisProperty
   y_axis: ChartYAxisMetric
@@ -28,11 +35,13 @@ interface Props {
 const analyticsV2Service = new AnalyticsV2Service()
 const PriorityChart = observer((props: Props) => {
   const { x_axis, y_axis, group_by } = props;
-  const { selectedDuration, selectedProjects } = useAnalyticsV2()
-  const params = useParams();
-  const { resolvedTheme } = useTheme();
   const { t } = useTranslation()
+  // store hooks
+  const { selectedDuration, selectedProjects } = useAnalyticsV2()
   const { workspaceStates } = useProjectState()
+  const { resolvedTheme } = useTheme();
+  // router
+  const params = useParams();
 
   const workspaceSlug = params.workspaceSlug as string;
   useWorkspaceIssueProperties(workspaceSlug);

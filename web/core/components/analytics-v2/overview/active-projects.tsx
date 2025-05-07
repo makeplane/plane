@@ -2,9 +2,12 @@ import React from 'react'
 import { observer } from 'mobx-react'
 import { useParams } from 'next/navigation'
 import useSWR from 'swr'
+// plane package imports
 import { useTranslation } from '@plane/i18n'
 import { Loader } from '@plane/ui'
+// plane web hooks
 import { useAnalyticsV2, useProject } from '@/hooks/store'
+// plane web components
 import AnalyticsSectionWrapper from '../analytics-section-wrapper'
 import ActiveProjectItem from './active-project-item'
 

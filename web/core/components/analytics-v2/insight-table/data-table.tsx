@@ -15,8 +15,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-
 import { Search, X } from "lucide-react"
+// plane package imports
 import { useTranslation } from "@plane/i18n"
 import {
   Table,
@@ -26,8 +26,8 @@ import {
   TableHeader,
   TableRow,
 } from "@plane/propel/table"
-import { Input } from "@plane/ui"
 import { cn } from "@plane/utils"
+// plane web components
 import AnalyticsV2EmptyState from "../empty-state"
 
 interface DataTableProps<TData, TValue> {

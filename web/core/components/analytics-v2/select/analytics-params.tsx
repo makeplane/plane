@@ -1,18 +1,18 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Control, Controller, UseFormSetValue } from "react-hook-form";
-// plane imports
 import { Calendar, Download, SlidersHorizontal } from "lucide-react";
+// plane package imports
 import { ANALYTICS_V2_X_AXIS_VALUES, ANALYTICS_V2_Y_AXIS_VALUES, ChartYAxisMetric } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IAnalyticsV2Params } from "@plane/types";
-import { Button, Row, setToast, TOAST_TYPE } from "@plane/ui";
-// components
+import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
+// plane web components
 import { AnalyticsV2Service } from "@/services/analytics-v2.service";
 import { SelectXAxis } from "./select-x-axis";
 import { SelectYAxis } from "./select-y-axis";
-// hooks
+
 
 type Props = {
   control: Control<IAnalyticsV2Params, unknown>;

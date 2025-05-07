@@ -3,12 +3,16 @@ import { useMemo } from 'react'
 import { observer } from 'mobx-react'
 import { useParams } from 'next/navigation'
 import useSWR from 'swr'
+// plane package imports
 import { useTranslation } from '@plane/i18n'
 import { AreaChart } from '@plane/propel/charts/area-chart'
-import { IChartResponseV2, TAreaItem } from '@plane/types'
+import { IChartResponseV2 } from '@plane/types'
 import { renderFormattedDate } from '@plane/utils'
+// hooks
 import { useAnalyticsV2 } from '@/hooks/store/use-analytics-v2'
+// services
 import { AnalyticsV2Service } from '@/services/analytics-v2.service'
+// plane web components
 import AnalyticsSectionWrapper from '../analytics-section-wrapper'
 import AnalyticsV2EmptyState from '../empty-state'
 import { ChartLoader } from '../loaders'
