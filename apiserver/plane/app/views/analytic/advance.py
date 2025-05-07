@@ -19,23 +19,25 @@ from django.db.models import (
 )
 from plane.utils.build_chart import build_analytics_chart
 from datetime import timedelta
-from django.db.models.functions import TruncDay
 from plane.bgtasks.analytic_plot_export import export_analytics_to_csv_email
 from plane.utils.date_utils import (
     get_analytics_filters,
 )
 
 
-class AdvanceAnalyticsEndpoint(BaseAPIView):
-    def initialize_workspace(self, slug):
+class AdvanceAnalyticsBaseView(BaseAPIView):
+    def initialize_workspace(self, slug, type):
         self._workspace_slug = slug
         self.filters = get_analytics_filters(
             slug=slug,
+            type=type,
             user=self.request.user,
             date_filter=self.request.GET.get("date_filter", None),
             project_ids=self.request.GET.get("project_ids", None),
         )
 
+
+class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
     def get_filtered_counts(self, queryset):
         def get_filtered_count():
             if self.filters["analytics_date_range"]:
@@ -124,7 +126,7 @@ class AdvanceAnalyticsEndpoint(BaseAPIView):
                 base_queryset.filter(state__group="backlog")
             ),
             "un_started_work_items": self.get_filtered_counts(
-                base_queryset.filter(state__group="un-started")
+                base_queryset.filter(state__group="unstarted")
             ),
             "completed_work_items": self.get_filtered_counts(
                 base_queryset.filter(state__group="completed")
@@ -133,7 +135,7 @@ class AdvanceAnalyticsEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
-        self.initialize_workspace(slug)
+        self.initialize_workspace(slug, type="analytics")
         tab = request.GET.get("tab", "overview")
 
         if tab == "overview":
@@ -151,16 +153,7 @@ class AdvanceAnalyticsEndpoint(BaseAPIView):
         return Response({"message": "Invalid tab"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AdvanceAnalyticsStatsEndpoint(BaseAPIView):
-    def initialize_workspace(self, slug):
-        self._workspace_slug = slug
-        self.filters = get_analytics_filters(
-            slug=slug,
-            user=self.request.user,
-            date_filter=self.request.GET.get("date_filter", None),
-            project_ids=self.request.GET.get("project_ids", None),
-        )
-
+class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
     def get_project_issues_stats(self):
         # Get the base queryset with workspace and project filters
         base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"])
@@ -178,7 +171,7 @@ class AdvanceAnalyticsStatsEndpoint(BaseAPIView):
                 cancelled_work_items=Count("id", filter=Q(state__group="cancelled")),
                 completed_work_items=Count("id", filter=Q(state__group="completed")),
                 backlog_work_items=Count("id", filter=Q(state__group="backlog")),
-                un_started_work_items=Count("id", filter=Q(state__group="un-started")),
+                un_started_work_items=Count("id", filter=Q(state__group="unstarted")),
                 started_work_items=Count("id", filter=Q(state__group="started")),
             )
             .order_by("project_id")
@@ -186,7 +179,7 @@ class AdvanceAnalyticsStatsEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
-        self.initialize_workspace(slug)
+        self.initialize_workspace(slug, type="chart")
         type = request.GET.get("type", "work-items")
 
         if type == "work-items":
@@ -198,16 +191,7 @@ class AdvanceAnalyticsStatsEndpoint(BaseAPIView):
         return Response({"message": "Invalid type"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AdvanceAnalyticsChartEndpoint(BaseAPIView):
-    def initialize_workspace(self, slug):
-        self._workspace_slug = slug
-        self.filters = get_analytics_filters(
-            slug=slug,
-            user=self.request.user,
-            date_filter=self.request.GET.get("date_filter", None),
-            project_ids=self.request.GET.get("project_ids", None),
-        )
-
+class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
     def project_chart(self):
         # Get the base queryset with workspace and project filters
         base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"])
@@ -275,20 +259,19 @@ class AdvanceAnalyticsChartEndpoint(BaseAPIView):
                 created_at__date__gte=start_date, created_at__date__lte=end_date
             )
 
-        # Get daily stats
+        # Get daily stats with optimized query
         daily_stats = (
-            queryset.annotate(
-                date=TruncDay("created_at"),
-                created_count=Count("id", filter=Q(created_at__isnull=False)),
+            queryset.values("created_at__date")
+            .annotate(
+                created_count=Count("id"),
                 completed_count=Count("id", filter=Q(completed_at__isnull=False)),
             )
-            .values("date", "created_count", "completed_count")
-            .order_by("date")
+            .order_by("created_at__date")
         )
 
-        # Create a dictionary of existing stats
+        # Create a dictionary of existing stats with summed counts
         stats_dict = {
-            stat["date"].strftime("%Y-%m-%d"): {
+            stat["created_at__date"].strftime("%Y-%m-%d"): {
                 "created_count": stat["created_count"],
                 "completed_count": stat["completed_count"],
             }
@@ -321,7 +304,7 @@ class AdvanceAnalyticsChartEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
-        self.initialize_workspace(slug)
+        self.initialize_workspace(slug, type="chart")
         type = request.GET.get("type", "projects")
         group_by = request.GET.get("group_by", None)
         x_axis = request.GET.get("x_axis", "PRIORITY")
@@ -360,19 +343,10 @@ class AdvanceAnalyticsChartEndpoint(BaseAPIView):
         return Response({"message": "Invalid type"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AdvanceAnalyticsExportEndpoint(BaseAPIView):
-    def initialize_workspace(self, slug):
-        self._workspace_slug = slug
-        self.filters = get_analytics_filters(
-            slug=slug,
-            user=self.request.user,
-            date_filter=self.request.GET.get("date_filter", None),
-            project_ids=self.request.GET.get("project_ids", None),
-        )
-
+class AdvanceAnalyticsExportEndpoint(AdvanceAnalyticsBaseView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
-    def get(self, request, slug):
-        self.initialize_workspace(slug)
+    def post(self, request, slug):
+        self.initialize_workspace(slug, type="chart")
         data = (
             Issue.issue_objects.filter(**self.filters["base_filters"])
             .values("project_id", "project__name")
@@ -380,7 +354,7 @@ class AdvanceAnalyticsExportEndpoint(BaseAPIView):
                 cancelled_work_items=Count("id", filter=Q(state__group="cancelled")),
                 completed_work_items=Count("id", filter=Q(state__group="completed")),
                 backlog_work_items=Count("id", filter=Q(state__group="backlog")),
-                un_started_work_items=Count("id", filter=Q(state__group="un-started")),
+                un_started_work_items=Count("id", filter=Q(state__group="unstarted")),
                 started_work_items=Count("id", filter=Q(state__group="started")),
             )
             .order_by("project_id")

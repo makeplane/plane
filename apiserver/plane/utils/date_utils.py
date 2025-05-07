@@ -120,13 +120,14 @@ def get_chart_period_range(date_filter=None):
     return period_ranges.get(date_filter, period_ranges["last_7_days"])
 
 
-def get_analytics_filters(slug, user, date_filter=None, project_ids=None):
+def get_analytics_filters(slug, user, type, date_filter=None, project_ids=None):
     """
     Get combined project and date filters for analytics endpoints
 
     Args:
         slug: The workspace slug
         user: The current user
+        type: The type of filter ("analytics" or "chart")
         date_filter: Optional date filter string
         project_ids: Optional list of project IDs
 
@@ -160,9 +161,15 @@ def get_analytics_filters(slug, user, date_filter=None, project_ids=None):
         base_filters["project_id__in"] = project_ids
         project_filters["id__in"] = project_ids
 
-    # Get date range filters
-    analytics_date_range = get_analytics_date_range(date_filter)
-    chart_period_range = get_chart_period_range(date_filter)
+    # Initialize date range variables
+    analytics_date_range = None
+    chart_period_range = None
+
+    # Get date range filters based on type
+    if type == "analytics":
+        analytics_date_range = get_analytics_date_range(date_filter)
+    elif type == "chart":
+        chart_period_range = get_chart_period_range(date_filter)
 
     return {
         "base_filters": base_filters,
