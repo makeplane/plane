@@ -8,7 +8,7 @@ import {
   TSlackCommandPayload,
   TSlackPayload,
 } from "@plane/etl/slack";
-import { ExIssue, PlaneWebhookData, PlaneWebhookPayloadBase } from "@plane/sdk";
+import { E_PLANE_WEBHOOK_ACTION, E_PLANE_WEBHOOK_EVENT, ExIssue, PlaneWebhookData, PlaneWebhookPayloadBase } from "@plane/sdk";
 import { env } from "@/env";
 import { responseHandler } from "@/helpers/response-handler";
 import { Controller, Delete, EnsureEnabled, Get, Post, Put, useValidateUserAuthentication } from "@/lib";
@@ -598,10 +598,11 @@ export default class SlackController {
       const payload = req.body as PlaneWebhookData;
 
       logger.info(`[SLACK] [PLANE_EVENTS] Received payload`, {
+        headers: req.headers,
         payload: payload,
       });
 
-      if (payload.event === "issue_comment") {
+      if (payload.event === E_PLANE_WEBHOOK_EVENT.ISSUE_COMMENT) {
         integrationTaskManager.registerTask(
           {
             route: "plane-slack-webhook",
@@ -612,7 +613,7 @@ export default class SlackController {
         );
       }
 
-      if (payload.event === "issue" ) {
+      if (payload.event === E_PLANE_WEBHOOK_EVENT.ISSUE) {
         const payload = req.body as PlaneWebhookPayloadBase<ExIssue>;
 
         const id = payload.data.id;
@@ -620,7 +621,13 @@ export default class SlackController {
         const project = payload.data.project;
         const issue = payload.data.issue;
 
-        if (payload.action === "created") {
+        /*
+          Checking for the field is important, because from plane sometimes reactions and links are sent with
+          action as created, but when the issue is created, the field is not null.
+        */
+        const isIssueCreated = payload.action === E_PLANE_WEBHOOK_ACTION.CREATED && payload.activity.field == null;
+
+        if (isIssueCreated) {
           // Get the project entity connection
           const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
             workspace_id: workspace,

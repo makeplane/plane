@@ -71,7 +71,12 @@ export const createSlackBlocksFromActivity = (fields: ActivityForSlack[]) => {
         }
       }
     } else {
-      message += `\n• *${cleanField}* updated to *${field.newValue}*`;
+      if (field.field === "reaction") {
+        const emoji = String.fromCodePoint(parseInt(field.newValue));
+        message += `\n• *${field.actor}* reacted with *${emoji}*`;
+      } else {
+        message += `\n• *${cleanField}* updated to *${field.newValue}*`;
+      }
     }
   });
 
