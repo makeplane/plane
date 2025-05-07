@@ -57,10 +57,6 @@ build {
       "HISTFILE=/dev/null"
     ]
     inline = [
-      "ufw --force enable",
-      "ufw allow http",
-      "ufw allow https",
-      "ufw allow ssh",
       "useradd -m -s /bin/bash ubuntu",
       "echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/ubuntu",
       "chmod 0440 /etc/sudoers.d/ubuntu",
@@ -69,6 +65,15 @@ build {
     ]
   }
 
+  provisioner "shell" {
+    inline = [
+      "sudo ufw --force enable",
+      "sudo ufw allow http",
+      "sudo ufw allow https",
+      "sudo ufw allow ssh",
+    ]
+  }
+   
   provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
@@ -157,19 +162,19 @@ build {
     ]
   }
 
-  provisioner "shell" {
-    environment_vars = [
-      "DEBIAN_FRONTEND=noninteractive",
-      "TERM=xterm-256color",
-      "CI=true",
-      "HISTSIZE=0",
-      "HISTFILESIZE=0",
-      "HISTFILE=/dev/null"
-    ]
-    inline = [
-      "bash -c '. /usr/local/bin/plane && install_prerequisites'",
-    ]
-  }
+  # provisioner "shell" {
+  #   environment_vars = [
+  #     "DEBIAN_FRONTEND=noninteractive",
+  #     "TERM=xterm-256color",
+  #     "CI=true",
+  #     "HISTSIZE=0",
+  #     "HISTFILESIZE=0",
+  #     "HISTFILE=/dev/null"
+  #   ]
+  #   inline = [
+  #     "su - ubuntu -c '. /usr/local/bin/plane && install_prerequisites'"
+  #   ]
+  # }
 
   provisioner "shell" {
     environment_vars = [

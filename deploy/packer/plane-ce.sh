@@ -6,6 +6,11 @@ TERM=xterm-256color
 
 PLANE_SERVICES=(admin web space live api worker beat-worker caddy)
 
+# if the user is not ubuntu, switch to ubuntu
+# if [ "$USER" != "ubuntu" ]; then
+#   sudo su - ubuntu
+# fi
+
 function welcome() {
 clear
 

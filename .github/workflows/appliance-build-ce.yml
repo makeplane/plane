@@ -272,10 +272,10 @@ jobs:
         id: ami_info
         run: |
           # Extract AMI ID and other details from manifest
-          AMI_ID=$(jq -r '.builds[-1].artifact_id' ce-aws-ami-manifest.json | cut -d ":" -f2)
-          AMI_NAME=$(jq -r '.builds[-1].custom_data.ami_name' ce-aws-ami-manifest.json)
-          REGION=$(jq -r '.builds[-1].custom_data.region' ce-aws-ami-manifest.json)
-          BUILD_TIME=$(jq -r '.builds[-1].build_time' ce-aws-ami-manifest.json)
+          AMI_ID=$(jq -r '.builds[-1].artifact_id' ce-digital-ocean-manifest.json | cut -d ":" -f2)
+          AMI_NAME=$(jq -r '.builds[-1].custom_data.ami_name' ce-digital-ocean-manifest.json)
+          REGION=$(jq -r '.builds[-1].custom_data.region' ce-digital-ocean-manifest.json)
+          BUILD_TIME=$(jq -r '.builds[-1].build_time' ce-digital-ocean-manifest.json)
           
           # Add git information to manifest
           jq --arg branch "${{ github.ref_name }}" \
@@ -309,6 +309,16 @@ jobs:
           name: ce-digital-ocean-manifest
           path: ce-digital-ocean-manifest.json
           retention-days: 30
+
+      - name: Create Build Summary
+        run: |
+          echo "### 🚀 Plane CE Digital Ocean Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "| Detail | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
+          echo "| Droplet ID | \`${{ steps.ami_info.outputs.AMI_ID }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Droplet Name | \`${{ steps.ami_info.outputs.AMI_NAME }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Droplet Region | \`${{ steps.ami_info.outputs.REGION }}\` |" >> $GITHUB_STEP_SUMMARY
+
 
   # build_aws_appliance:
   #   needs: [build_setup, build_admin, build_web, build_space, build_live, build_backend]
@@ -430,6 +440,15 @@ jobs:
   #         path: ce-aws-ami-manifest.json
   #         retention-days: 30
 
+  #     - name: Create Build Summary
+  #       run: |
+  #         echo "### 🚀 Plane CE AWS Build Summary" >> $GITHUB_STEP_SUMMARY
+  #         echo "| Detail | Value |" >> $GITHUB_STEP_SUMMARY
+  #         echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
+  #         echo "| AMI ID | \`${{ steps.ami_info.outputs.AMI_ID }}\` |" >> $GITHUB_STEP_SUMMARY
+  #         echo "| AMI Name | \`${{ steps.ami_info.outputs.AMI_NAME }}\` |" >> $GITHUB_STEP_SUMMARY
+  #         echo "| Region | \`${{ steps.ami_info.outputs.REGION }}\` |" >> $GITHUB_STEP_SUMMARY
+
   #     - name: Tag AMI
   #       run: |
   #         aws ec2 create-tags \
@@ -438,25 +457,3 @@ jobs:
   #             Key=GitBranch,Value=${{ github.ref_name }} \
   #             Key=GitCommit,Value=${{ github.sha }} \
   #             Key=BuildTime,Value=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-
-  # build_summary:
-  #   needs: [build_do_appliance, build_aws_appliance]
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - name: Create Build Summary
-  #       run: |
-  #         echo "### 🚀 Plane CE Build Summary" >> $GITHUB_STEP_SUMMARY
-  #         echo "| Detail | Value |" >> $GITHUB_STEP_SUMMARY
-  #         echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
-  #         echo "| AWS AMI ||" >> $GITHUB_STEP_SUMMARY
-  #         echo "| AWS AMI ID | \`${{ needs.build_aws_appliance.outputs.AMI_ID }}\` |" >> $GITHUB_STEP_SUMMARY
-  #         echo "| AWS AMI Name | \`${{ needs.build_aws_appliance.outputs.AMI_NAME }}\` |" >> $GITHUB_STEP_SUMMARY
-  #         echo "| AWS Region | \`${{ needs.build_aws_appliance.outputs.REGION }}\` |" >> $GITHUB_STEP_SUMMARY
-  #         echo "| Digital Ocean Droplet ||" >> $GITHUB_STEP_SUMMARY
-  #         echo "| Droplet ID | \`${{ needs.build_do_appliance.outputs.AMI_ID }}\` |" >> $GITHUB_STEP_SUMMARY
-  #         echo "| Droplet Name | \`${{ needs.build_do_appliance.outputs.AMI_NAME }}\` |" >> $GITHUB_STEP_SUMMARY
-  #         echo "| Droplet Region | \`${{ needs.build_do_appliance.outputs.REGION }}\` |" >> $GITHUB_STEP_SUMMARY
-  #         echo "| Commit Details ||" >> $GITHUB_STEP_SUMMARY
-  #         echo "| Git Branch | \`${{ github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
-  #         echo "| Git Commit | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
-
