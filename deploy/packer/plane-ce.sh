@@ -53,6 +53,7 @@ echo "  plane stop        - Stop all services"
 echo "  plane status      - Check services status"
 echo "  plane logs        - View service logs"
 echo "  plane configure   - Configure Plane"
+echo "  plane upgrade     - Upgrade Plane version"
 echo ""
 echo "For more information, visit: https://docs.plane.so"
 echo "--------------------------------------------"
@@ -912,6 +913,14 @@ function configure_backend(){
   configure_backend_wizard
 }
 
+function upgrade_services(){
+  echo ""
+  echo ""
+  echo "This command will be available in the upcoming release."
+  echo ""
+  echo ""
+}
+
 function main(){
   welcome
 
@@ -930,6 +939,7 @@ function main(){
     echo "    $0 status                         # get status of all services"
     echo "    $0 status <service>               # get status of specific service"
     echo "    $0 logs <service>                 # get logs of specific service"
+    echo "    $0 upgrade                        # upgrade services"
     echo ""
     echo "Available services:"
     echo "    admin, web, space, live, api, worker, beat-worker, caddy"
@@ -966,6 +976,13 @@ function main(){
       configure_backend
       if [ $? -ne 0 ]; then
         echo "Failed to configure backend"
+        exit 1
+      fi
+      ;;
+    "upgrade")
+      upgrade_services
+      if [ $? -ne 0 ]; then
+        echo "Failed to upgrade services"
         exit 1
       fi
       ;;
