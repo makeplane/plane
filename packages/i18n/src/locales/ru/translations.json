@@ -367,12 +367,12 @@
   "work_management": "Управление рабочими элементами",
   "projects_and_issues": "Проекты и рабочие элементы",
   "projects_and_issues_description": "Включить/отключить для этого проекта",
-  "cycles_description": "Группировка рабочих элементов по временным интервалам с возможностью изменения периодичности.",
-  "modules_description": "Группировка рабочих элементов в подпроекты с собственными руководителями и назначенными.",
-  "views_description": "Сохранение сортировок, фильтров и отображений для повторного использования или совместного доступа.",
-  "pages_description": "Создание любых текстовых материалов",
-  "intake_description": "Отслеживание рабочих элементов, на которые вы подписаны. Включите для получения уведомлений.",
-  "time_tracking_description": "Учет времени, затраченного на рабочие элементы и проекты.",
+  "cycles_description": "Ограничьте работу по времени для каждого проекта и при необходимости изменяйте период. Один цикл может длиться 2 недели, следующий — 1 неделю.",
+  "modules_description": "Организуйте работу в подпроекты с назначенными руководителями и исполнителями.",
+  "views_description": "Сохраните пользовательские сортировки, фильтры и параметры отображения или поделитесь ими с командой.",
+  "pages_description": "Создавайте и редактируйте свободный контент: заметки, документы, что угодно.",
+  "intake_description": "Позвольте участникам вне команды сообщать об ошибках, оставлять отзывы и предложения, не нарушая ваш рабочий процесс.",
+  "time_tracking_description": "Записывайте время, потраченное на рабочие элементы и проекты.",
   "work_management_description": "Управление рабочими элементами и проектами",
   "documentation": "Документация",
   "message_support": "Написать в поддержку",
@@ -516,7 +516,6 @@
   "new_password_must_be_different_from_old_password": "Новое пароль должен отличаться от старого пароля",
   "edited": "Редактировано",
   "bot": "Бот",
-
   "project_view": {
     "sort_by": {
       "created_at": "Дата создания",
@@ -524,12 +523,10 @@
       "name": "Имя"
     }
   },
-
   "toast": {
     "success": "Успех!",
     "error": "Ошибка!"
   },
-
   "links": {
     "toasts": {
       "created": {
@@ -558,7 +555,6 @@
       }
     }
   },
-
   "home": {
     "empty": {
       "quickstart_guide": "Руководство по началу работы",
@@ -626,7 +622,6 @@
     "title": "Главная",
     "star_us_on_github": "Оцените нас на GitHub"
   },
-
   "link": {
     "modal": {
       "url": {
@@ -640,7 +635,6 @@
       }
     }
   },
-
   "common": {
     "all": "Все",
     "states": "Статусы",
@@ -888,20 +882,17 @@
     "apply": "Применить",
     "applying": "Применение"
   },
-
   "chart": {
     "x_axis": "Ось X",
     "y_axis": "Ось Y",
     "metric": "Метрика"
   },
-
   "form": {
     "title": {
       "required": "Название обязательно",
       "max_length": "Название должно быть короче {length} символов"
     }
   },
-
   "entity": {
     "grouping_title": "Группировка {entity}",
     "priority": "Приоритет {entity}",
@@ -925,7 +916,6 @@
       "failed": "Ошибка добавления {entity}"
     }
   },
-
   "epic": {
     "all": "Все эпики",
     "label": "{count, plural, one {Эпик} other {Эпики}}",
@@ -943,7 +933,6 @@
       "required": "Название эпика обязательно"
     }
   },
-
   "issue": {
     "label": "{count, plural, one {Рабочий элемент} other {Рабочие элементы}}",
     "all": "Все рабочие элементы",
@@ -1110,7 +1099,6 @@
     },
     "open_in_full_screen": "Открыть рабочий элемент в полном экране"
   },
-
   "attachment": {
     "error": "Ошибка прикрепления файла",
     "only_one_file_allowed": "Можно загрузить только один файл",
@@ -1118,7 +1106,6 @@
     "drag_and_drop": "Перетащите файл для загрузки",
     "delete": "Удалить вложение"
   },
-
   "label": {
     "select": "Выбрать метку",
     "create": {
@@ -1128,7 +1115,6 @@
       "type": "Введите новую метку"
     }
   },
-
   "sub_work_item": {
     "update": {
       "success": "Подэлемент успешно обновлен",
@@ -1139,7 +1125,6 @@
       "error": "Ошибка удаления подэлемента"
     }
   },
-
   "view": {
     "label": "{count, plural, one {Представление} other {Представления}}",
     "create": {
@@ -1149,7 +1134,6 @@
       "label": "Обновить представление"
     }
   },
-
   "inbox_issue": {
     "status": {
       "pending": {
@@ -1235,7 +1219,6 @@
       }
     }
   },
-
   "workspace_creation": {
     "heading": "Создайте рабочее пространство",
     "subheading": "Чтобы начать использовать Plane, создайте или присоединитесь к рабочему пространству.",
@@ -1287,7 +1270,6 @@
       }
     }
   },
-
   "workspace_dashboard": {
     "empty_state": {
       "general": {
@@ -1303,7 +1285,6 @@
       }
     }
   },
-
   "workspace_analytics": {
     "label": "Аналитика",
     "page_label": "{workspace} - Аналитика",
@@ -1348,7 +1329,6 @@
       }
     }
   },
-
   "workspace_projects": {
     "label": "{count, plural, one {Проект} other {Проекты}}",
     "create": {
@@ -1423,7 +1403,6 @@
       }
     }
   },
-
   "workspace_views": {
     "add_view": "Добавить представление",
     "empty_state": {
@@ -1458,7 +1437,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "label": "Настройки пространства",
     "page_label": "{workspace} - Основные настройки",
@@ -1640,7 +1618,6 @@
       }
     }
   },
-
   "profile": {
     "label": "Профиль",
     "page_label": "Ваша работа",
@@ -1703,7 +1680,6 @@
       }
     }
   },
-
   "project_settings": {
     "general": {
       "enter_project_id": "Введите ID проекта",
@@ -1849,7 +1825,6 @@
         "auto_close_status": "Статус автоматического закрытия"
       }
     },
-
     "empty_state": {
       "labels": {
         "title": "Нет меток",
@@ -1862,7 +1837,6 @@
       }
     }
   },
-
   "project_cycles": {
     "add_cycle": "Добавить цикл",
     "more_details": "Подробнее",
@@ -1988,7 +1962,6 @@
       }
     }
   },
-
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -2017,7 +1990,6 @@
       }
     }
   },
-
   "project_module": {
     "add_module": "Добавить модуль",
     "update_module": "Обновить модуль",
@@ -2071,7 +2043,6 @@
       }
     }
   },
-
   "project_views": {
     "empty_state": {
       "general": {
@@ -2091,7 +2062,6 @@
       }
     }
   },
-
   "project_page": {
     "empty_state": {
       "general": {
@@ -2121,7 +2091,6 @@
       }
     }
   },
-
   "command_k": {
     "empty_state": {
       "search": {
@@ -2129,7 +2098,6 @@
       }
     }
   },
-
   "issue_relation": {
     "empty_state": {
       "search": {
@@ -2140,7 +2108,6 @@
       }
     }
   },
-
   "issue_comment": {
     "empty_state": {
       "general": {
@@ -2149,7 +2116,6 @@
       }
     }
   },
-
   "notification": {
     "label": "Входящие",
     "page_label": "{workspace} - Входящие",
@@ -2206,7 +2172,6 @@
       "custom": "Другое"
     }
   },
-
   "active_cycle": {
     "empty_state": {
       "progress": {
@@ -2226,7 +2191,6 @@
       }
     }
   },
-
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -2289,7 +2253,6 @@
       }
     }
   },
-
   "stickies": {
     "title": "Ваши стикеры",
     "placeholder": "нажмите, чтобы написать",
@@ -2347,7 +2310,6 @@
       }
     }
   },
-
   "role_details": {
     "guest": {
       "title": "Гость",
@@ -2362,7 +2324,6 @@
       "description": "Полные права доступа в рамках рабочего пространства."
     }
   },
-
   "user_roles": {
     "product_or_project_manager": "Продукт / Проект менеджер",
     "development_or_engineering": "Разработка / Инжиниринг",
@@ -2375,7 +2336,6 @@
     "human_resources": "HR / Кадры",
     "other": "Другое"
   },
-
   "importer": {
     "github": {
       "title": "GitHub",
@@ -2386,7 +2346,6 @@
       "description": "Импорт рабочих элементов и эпиков из проектов Jira."
     }
   },
-
   "exporter": {
     "csv": {
       "title": "CSV",
@@ -2415,7 +2374,6 @@
     "created": "Созданные",
     "subscribed": "Подписанные"
   },
-
   "themes": {
     "theme_options": {
       "system_preference": {
@@ -2461,17 +2419,14 @@
       "manual": "Вручную"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {Цикл} other {Циклы}}",
     "no_cycle": "Нет цикла"
   },
-
   "module": {
     "label": "{count, plural, one {Модуль} other {Модули}}",
     "no_module": "Нет модуля"
   },
-
   "description_versions": {
     "last_edited_by": "Последнее редактирование",
     "previously_edited_by": "Ранее отредактировано",

@@ -367,12 +367,12 @@
   "work_management": "Správa práce",
   "projects_and_issues": "Projekty a pracovní položky",
   "projects_and_issues_description": "Aktivujte nebo deaktivujte tyto funkce v projektu.",
-  "cycles_description": "Časově ohraničte práci podle potřeby a měňte frekvenci mezi obdobími.",
-  "modules_description": "Seskupujte práci do podobných podprojektů s vlastními vedoucími a přiřazenými osobami.",
-  "views_description": "Uložte řazení, filtry a zobrazovací možnosti pro pozdější použití nebo sdílení.",
-  "pages_description": "Pište cokoli, jako obvykle.",
-  "intake_description": "Zůstaňte v obraze u pracovních položek, které odebíráte. Aktivujte toto pro zasílání oznámení.",
-  "time_tracking_description": "Sledujte čas strávený na pracovních položkách a projektech.",
+  "cycles_description": "Časově vymezte práci podle projektu a podle potřeby upravte období. Jeden cyklus může trvat 2 týdny, další jen 1 týden.",
+  "modules_description": "Organizujte práci do podprojektů s vyhrazenými vedoucími a přiřazenými osobami.",
+  "views_description": "Uložte vlastní řazení, filtry a možnosti zobrazení nebo je sdílejte se svým týmem.",
+  "pages_description": "Vytvářejte a upravujte volně strukturovaný obsah – poznámky, dokumenty, cokoli.",
+  "intake_description": "Umožněte nečlenům sdílet chyby, zpětnou vazbu a návrhy, aniž by narušili váš pracovní postup.",
+  "time_tracking_description": "Zaznamenávejte čas strávený na pracovních položkách a projektech.",
   "work_management_description": "Spravujte svou práci a projekty snadno.",
   "documentation": "Dokumentace",
   "message_support": "Kontaktovat podporu",
@@ -502,7 +502,6 @@
   "export": "Exportovat",
   "member": "{count, plural, one{# člen} few{# členové} other{# členů}}",
   "new_password_must_be_different_from_old_password": "Nové heslo musí být odlišné od starého hesla",
-
   "updates": {
     "progress": {
       "title": "Průběh",
@@ -577,12 +576,10 @@
       "name": "Název"
     }
   },
-
   "toast": {
     "success": "Úspěch!",
     "error": "Chyba!"
   },
-
   "links": {
     "toasts": {
       "created": {
@@ -611,7 +608,6 @@
       }
     }
   },
-
   "home": {
     "empty": {
       "quickstart_guide": "Váš průvodce rychlým startem",
@@ -679,7 +675,6 @@
     "title": "Domů",
     "star_us_on_github": "Ohodnoťte nás na GitHubu"
   },
-
   "link": {
     "modal": {
       "url": {
@@ -693,7 +688,6 @@
       }
     }
   },
-
   "common": {
     "all": "Vše",
     "states": "Stavy",
@@ -941,20 +935,17 @@
     "apply": "Použít",
     "applying": "Používání"
   },
-
   "chart": {
     "x_axis": "Osa X",
     "y_axis": "Osa Y",
     "metric": "Metrika"
   },
-
   "form": {
     "title": {
       "required": "Název je povinný",
       "max_length": "Název by měl být kratší než {length} znaků"
     }
   },
-
   "entity": {
     "grouping_title": "Seskupení {entity}",
     "priority": "Priorita {entity}",
@@ -978,7 +969,6 @@
       "failed": "Chyba při přidávání {entity}"
     }
   },
-
   "epic": {
     "all": "Všechny epiky",
     "label": "{count, plural, one {Epik} other {Epiky}}",
@@ -996,7 +986,6 @@
       "required": "Název epiku je povinný."
     }
   },
-
   "issue": {
     "label": "{count, plural, one {Pracovní položka} few {Pracovní položky} other {Pracovních položek}}",
     "all": "Všechny pracovní položky",
@@ -1163,7 +1152,6 @@
     },
     "open_in_full_screen": "Otevřít pracovní položku na celou obrazovku"
   },
-
   "attachment": {
     "error": "Soubor nelze připojit. Zkuste to prosím znovu.",
     "only_one_file_allowed": "Je možné nahrát pouze jeden soubor najednou.",
@@ -1171,7 +1159,6 @@
     "drag_and_drop": "Přetáhněte soubor kamkoli pro nahrání",
     "delete": "Smazat přílohu"
   },
-
   "label": {
     "select": "Vybrat štítek",
     "create": {
@@ -1181,7 +1168,6 @@
       "type": "Zadejte pro vytvoření nového štítku"
     }
   },
-
   "sub_work_item": {
     "update": {
       "success": "Podřízená pracovní položka úspěšně aktualizována",
@@ -1192,7 +1178,6 @@
       "error": "Chyba při odebírání podřízené položky"
     }
   },
-
   "view": {
     "label": "{count, plural, one {Pohled} few {Pohledy} other {Pohledů}}",
     "create": {
@@ -1202,7 +1187,6 @@
       "label": "Aktualizovat pohled"
     }
   },
-
   "inbox_issue": {
     "status": {
       "pending": {
@@ -1288,7 +1272,6 @@
       }
     }
   },
-
   "workspace_creation": {
     "heading": "Vytvořte si pracovní prostor",
     "subheading": "Pro používání Plane musíte vytvořit nebo se připojit k pracovnímu prostoru.",
@@ -1340,7 +1323,6 @@
       }
     }
   },
-
   "workspace_dashboard": {
     "empty_state": {
       "general": {
@@ -1356,7 +1338,6 @@
       }
     }
   },
-
   "workspace_analytics": {
     "label": "Analytika",
     "page_label": "{workspace} - Analytika",
@@ -1401,7 +1382,6 @@
       }
     }
   },
-
   "workspace_projects": {
     "label": "{count, plural, one {Projekt} few {Projekty} other {Projektů}}",
     "create": {
@@ -1476,7 +1456,6 @@
       }
     }
   },
-
   "workspace_views": {
     "add_view": "Přidat pohled",
     "empty_state": {
@@ -1511,7 +1490,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "label": "Nastavení pracovního prostoru",
     "page_label": "{workspace} - Obecná nastavení",
@@ -1693,7 +1671,6 @@
       }
     }
   },
-
   "profile": {
     "label": "Profil",
     "page_label": "Vaše práce",
@@ -1756,7 +1733,6 @@
       }
     }
   },
-
   "project_settings": {
     "general": {
       "enter_project_id": "Zadejte ID projektu",
@@ -1902,7 +1878,6 @@
         "auto_close_status": "Stav automatického uzavření"
       }
     },
-
     "empty_state": {
       "labels": {
         "title": "Zatím žádné štítky",
@@ -1915,7 +1890,6 @@
       }
     }
   },
-
   "project_cycles": {
     "add_cycle": "Přidat cyklus",
     "more_details": "Více detailů",
@@ -2041,7 +2015,6 @@
       }
     }
   },
-
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -2070,7 +2043,6 @@
       }
     }
   },
-
   "project_module": {
     "add_module": "Přidat modul",
     "update_module": "Aktualizovat modul",
@@ -2124,7 +2096,6 @@
       }
     }
   },
-
   "project_views": {
     "empty_state": {
       "general": {
@@ -2144,7 +2115,6 @@
       }
     }
   },
-
   "project_page": {
     "empty_state": {
       "general": {
@@ -2174,7 +2144,6 @@
       }
     }
   },
-
   "command_k": {
     "empty_state": {
       "search": {
@@ -2182,7 +2151,6 @@
       }
     }
   },
-
   "issue_relation": {
     "empty_state": {
       "search": {
@@ -2193,7 +2161,6 @@
       }
     }
   },
-
   "issue_comment": {
     "empty_state": {
       "general": {
@@ -2202,7 +2169,6 @@
       }
     }
   },
-
   "notification": {
     "label": "Schránka",
     "page_label": "{workspace} - Schránka",
@@ -2259,7 +2225,6 @@
       "custom": "Vlastní"
     }
   },
-
   "active_cycle": {
     "empty_state": {
       "progress": {
@@ -2279,7 +2244,6 @@
       }
     }
   },
-
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -2342,7 +2306,6 @@
       }
     }
   },
-
   "stickies": {
     "title": "Vaše poznámky",
     "placeholder": "kliknutím začněte psát",
@@ -2400,7 +2363,6 @@
       }
     }
   },
-
   "role_details": {
     "guest": {
       "title": "Host",
@@ -2415,7 +2377,6 @@
       "description": "Má všechna oprávnění v prostoru."
     }
   },
-
   "user_roles": {
     "product_or_project_manager": "Produktový/Projektový manažer",
     "development_or_engineering": "Vývoj/Inženýrství",
@@ -2428,7 +2389,6 @@
     "human_resources": "Lidské zdroje",
     "other": "Jiné"
   },
-
   "importer": {
     "github": {
       "title": "GitHub",
@@ -2439,7 +2399,6 @@
       "description": "Importujte položky a epiky z Jira."
     }
   },
-
   "exporter": {
     "csv": {
       "title": "CSV",
@@ -2468,7 +2427,6 @@
     "created": "Vytvořeno",
     "subscribed": "Odebíráno"
   },
-
   "themes": {
     "theme_options": {
       "system_preference": {
@@ -2514,17 +2472,14 @@
       "manual": "Ručně"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {Cyklus} few {Cykly} other {Cyklů}}",
     "no_cycle": "Žádný cyklus"
   },
-
   "module": {
     "label": "{count, plural, one {Modul} few {Moduly} other {Modulů}}",
     "no_module": "Žádný modul"
   },
-
   "description_versions": {
     "last_edited_by": "Naposledy upraveno uživatelem",
     "previously_edited_by": "Dříve upraveno uživatelem",

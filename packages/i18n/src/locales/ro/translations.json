@@ -18,7 +18,6 @@
     "pro": "Pro",
     "upgrade": "Treci la versiunea superioară"
   },
-
   "auth": {
     "common": {
       "email": {
@@ -168,7 +167,6 @@
       }
     }
   },
-
   "submit": "Trimite",
   "cancel": "Anulează",
   "loading": "Se încarcă",
@@ -369,12 +367,12 @@
   "work_management": "Gestionare muncă",
   "projects_and_issues": "Proiecte și activități",
   "projects_and_issues_description": "Activează sau dezactivează aceste opțiuni pentru proiect.",
-  "cycles_description": "Împarte munca în unități de timp pentru fiecare proiect și modifică frecvența după cum consideri.",
-  "modules_description": "Grupează munca în sub-proiecte cu lideri și responsabili proprii.",
-  "views_description": "Salvează sortările, filtrele și opțiunile de afișare pentru mai târziu sau pentru a le distribui.",
-  "pages_description": "Scrie orice, cum știi tu să scrii.",
-  "intake_description": "Rămâi la curent cu activitățile la care ești abonat. Activează pentru notificări.",
-  "time_tracking_description": "Urmărește timpul petrecut pe activități și proiecte.",
+  "cycles_description": "Stabilește perioade de timp pentru fiecare proiect și ajustează-le după cum este necesar. Un ciclu poate dura 2 săptămâni, următorul 1 săptămână.",
+  "modules_description": "Organizează munca în sub-proiecte cu lideri și responsabili dedicați.",
+  "views_description": "Salvează sortările, filtrele și opțiunile de afișare personalizate sau distribuie-le echipei tale.",
+  "pages_description": "Creează și editează conținut liber: note, documente, orice.",
+  "intake_description": "Permite utilizatorilor care nu sunt membri să trimită erori, feedback și sugestii fără a perturba fluxul de lucru.",
+  "time_tracking_description": "Înregistrează timpul petrecut pe activități și proiecte.",
   "work_management_description": "Gestionează-ți munca și proiectele cu ușurință.",
   "documentation": "Documentație",
   "message_support": "Trimite mesaj la suport",
@@ -504,7 +502,6 @@
   "export": "Exportă",
   "member": "{count, plural, one{# membru} other{# membri}}",
   "new_password_must_be_different_from_old_password": "Parola nouă trebuie să fie diferită de parola veche",
-
   "updates": {
     "add_update": "Adaugă actualizare",
     "add_update_placeholder": "Adaugă actualizarea ta aici",
@@ -580,12 +577,10 @@
       "name": "Nume"
     }
   },
-
   "toast": {
     "success": "Succes!",
     "error": "Eroare!"
   },
-
   "links": {
     "toasts": {
       "created": {
@@ -614,7 +609,6 @@
       }
     }
   },
-
   "home": {
     "empty": {
       "quickstart_guide": "Ghid de pornire rapidă",
@@ -682,7 +676,6 @@
     "title": "Acasă",
     "star_us_on_github": "Dă-ne o stea pe GitHub"
   },
-
   "link": {
     "modal": {
       "url": {
@@ -696,7 +689,6 @@
       }
     }
   },
-
   "common": {
     "all": "Toate",
     "states": "Stări",
@@ -944,20 +936,17 @@
     "apply": "Aplică",
     "applying": "Aplicând"
   },
-
   "chart": {
     "x_axis": "axa-X",
     "y_axis": "axa-Y",
     "metric": "Indicator"
   },
-
   "form": {
     "title": {
       "required": "Titlul este obligatoriu",
       "max_length": "Titlul trebuie să conțină mai puțin de {length} caractere"
     }
   },
-
   "entity": {
     "grouping_title": "Grupare {entity}",
     "priority": "Prioritate {entity}",
@@ -981,7 +970,6 @@
       "failed": "Eroare la adăugarea {entity}"
     }
   },
-
   "epic": {
     "all": "Toate Sarcinile majore",
     "label": "{count, plural, one {Sarcină majoră} other {Sarcini majore}}",
@@ -999,7 +987,6 @@
       "required": "Titlul sarcinii majore este obligatoriu."
     }
   },
-
   "issue": {
     "label": "{count, plural, one {Activitate} other {Activități}}",
     "all": "Toate activitățile",
@@ -1166,7 +1153,6 @@
     },
     "open_in_full_screen": "Deschide activitatea pe tot ecranul"
   },
-
   "attachment": {
     "error": "Fișierul nu a putut fi atașat. Încearcă să încarci din nou.",
     "only_one_file_allowed": "Se poate încărca doar un fișier o dată.",
@@ -1174,7 +1160,6 @@
     "drag_and_drop": "Trage și plasează oriunde pentru a încărca",
     "delete": "Șterge atașamentul"
   },
-
   "label": {
     "select": "Selectează eticheta",
     "create": {
@@ -1184,7 +1169,6 @@
       "type": "Tastează pentru a adăuga o etichetă nouă"
     }
   },
-
   "sub_work_item": {
     "update": {
       "success": "Sub-activitatea a fost actualizată cu succes",
@@ -1195,7 +1179,6 @@
       "error": "Eroare la eliminarea sub-activității"
     }
   },
-
   "view": {
     "label": "{count, plural, one {Perspectivă} other {Perspective}}",
     "create": {
@@ -1205,7 +1188,6 @@
       "label": "Actualizează perspectiva"
     }
   },
-
   "inbox_issue": {
     "status": {
       "pending": {
@@ -1291,7 +1273,6 @@
       }
     }
   },
-
   "workspace_creation": {
     "heading": "Creează spațiul tău de lucru",
     "subheading": "Pentru a începe să folosești Plane, trebuie să creezi sau să te alături unui spațiu de lucru.",
@@ -1343,7 +1324,6 @@
       }
     }
   },
-
   "workspace_dashboard": {
     "empty_state": {
       "general": {
@@ -1359,7 +1339,6 @@
       }
     }
   },
-
   "workspace_analytics": {
     "label": "Statistici",
     "page_label": "{workspace} - Statistici",
@@ -1404,7 +1383,6 @@
       }
     }
   },
-
   "workspace_projects": {
     "label": "{count, plural, one {Proiect} other {Proiecte}}",
     "create": {
@@ -1479,7 +1457,6 @@
       }
     }
   },
-
   "workspace_views": {
     "add_view": "Adaugă perspectivă",
     "empty_state": {
@@ -1514,7 +1491,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "label": "Setări spațiu de lucru",
     "page_label": "{workspace} - Setări generale",
@@ -1696,7 +1672,6 @@
       }
     }
   },
-
   "profile": {
     "label": "Profil",
     "page_label": "Munca ta",
@@ -1759,7 +1734,6 @@
       }
     }
   },
-
   "project_settings": {
     "general": {
       "enter_project_id": "Introdu ID-ul proiectului",
@@ -1905,7 +1879,6 @@
         "auto_close_status": "Stare închidere automată"
       }
     },
-
     "empty_state": {
       "labels": {
         "title": "Nicio etichetă încă",
@@ -1918,7 +1891,6 @@
       }
     }
   },
-
   "project_cycles": {
     "add_cycle": "Adaugă ciclu",
     "more_details": "Mai multe detalii",
@@ -2038,7 +2010,6 @@
       }
     }
   },
-
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -2067,7 +2038,6 @@
       }
     }
   },
-
   "project_module": {
     "add_module": "Adaugă Modul",
     "update_module": "Actualizează Modul",
@@ -2121,7 +2091,6 @@
       }
     }
   },
-
   "project_views": {
     "empty_state": {
       "general": {
@@ -2141,7 +2110,6 @@
       }
     }
   },
-
   "project_page": {
     "empty_state": {
       "general": {
@@ -2171,7 +2139,6 @@
       }
     }
   },
-
   "command_k": {
     "empty_state": {
       "search": {
@@ -2179,7 +2146,6 @@
       }
     }
   },
-
   "issue_relation": {
     "empty_state": {
       "search": {
@@ -2190,7 +2156,6 @@
       }
     }
   },
-
   "issue_comment": {
     "empty_state": {
       "general": {
@@ -2199,7 +2164,6 @@
       }
     }
   },
-
   "notification": {
     "label": "Căsuță de mesaje",
     "page_label": "{workspace} - Căsuță de mesaje",
@@ -2256,7 +2220,6 @@
       "custom": "Personalizat"
     }
   },
-
   "active_cycle": {
     "empty_state": {
       "progress": {
@@ -2276,7 +2239,6 @@
       }
     }
   },
-
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -2339,7 +2301,6 @@
       }
     }
   },
-
   "stickies": {
     "title": "Notițele tale",
     "placeholder": "click pentru a scrie aici",
@@ -2397,7 +2358,6 @@
       }
     }
   },
-
   "role_details": {
     "guest": {
       "title": "Invitat",
@@ -2412,7 +2372,6 @@
       "description": "Toate permisiunile setate pe adevărat în cadrul workspace-ului."
     }
   },
-
   "user_roles": {
     "product_or_project_manager": "Manager de produs / proiect",
     "development_or_engineering": "Dezvoltare / Inginerie",
@@ -2425,7 +2384,6 @@
     "human_resources": "Resurse umane",
     "other": "Altceva"
   },
-
   "importer": {
     "github": {
       "title": "Github",
@@ -2436,7 +2394,6 @@
       "description": "Importă activități și episoade din proiectele și episoadele Jira."
     }
   },
-
   "exporter": {
     "csv": {
       "title": "CSV",
@@ -2465,7 +2422,6 @@
     "created": "Create",
     "subscribed": "Urmărite"
   },
-
   "themes": {
     "theme_options": {
       "system_preference": {
@@ -2511,17 +2467,14 @@
       "manual": "Manual"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {Ciclu} other {Cicluri}}",
     "no_cycle": "Niciun ciclu"
   },
-
   "module": {
     "label": "{count, plural, one {Modul} other {Module}}",
     "no_module": "Niciun modul"
   },
-
   "description_versions": {
     "last_edited_by": "Ultima editare de către",
     "previously_edited_by": "Editat anterior de către",
