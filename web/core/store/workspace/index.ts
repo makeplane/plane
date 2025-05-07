@@ -21,7 +21,7 @@ export interface IWorkspaceRootStore {
   // computed
   currentWorkspace: IWorkspace | null;
   workspacesCreatedByCurrentUser: IWorkspace[] | null;
-  currentUserAdninWorkspaces: IWorkspace[] | null;
+  currentUserAdminWorkspaces: IWorkspace[] | null;
   navigationPreferencesMap: Record<string, IWorkspaceSidebarNavigation>;
   // computed actions
   getWorkspaceBySlug: (workspaceSlug: string) => IWorkspace | null;
@@ -70,7 +70,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       // computed
       currentWorkspace: computed,
       workspacesCreatedByCurrentUser: computed,
-      currentUserAdninWorkspaces: computed,
+      currentUserAdminWorkspaces: computed,
       // computed actions
       getWorkspaceBySlug: action,
       getWorkspaceById: action,
@@ -119,7 +119,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
   /**
    * computed value of all the workspaces where current user is admin
    */
-  get currentUserAdninWorkspaces() {
+  get currentUserAdminWorkspaces() {
     if (!this.workspaces) return null;
     const user = this.user.data;
     if (!user) return null;

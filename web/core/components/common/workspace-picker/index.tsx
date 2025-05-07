@@ -17,7 +17,7 @@ export const WorkspacePicker = () => {
   const searchParams = useSearchParams();
   const nextPath = searchParams.get("next_path");
   // store
-  const { loader, currentUserAdninWorkspaces } = useWorkspace();
+  const { loader, currentUserAdminWorkspaces } = useWorkspace();
   const { t } = useTranslation();
   // state
   const [selectedWorkspace, setSelectedWorkspace] = useState<string | null>(null);
@@ -25,7 +25,7 @@ export const WorkspacePicker = () => {
   const { resolvedTheme } = useTheme();
   const image = resolvedTheme === "dark" ? DarkImage : LightImage;
 
-  if (!loader && currentUserAdninWorkspaces?.length === 0) {
+  if (!loader && currentUserAdminWorkspaces?.length === 0) {
     return (
       <div className="relative flex flex-col gap-4 h-full w-full justify-center px-8 pb-8 items-center">
         <div className="text-3xl font-bold text-center">{t("no_workspaces_to_connect")}</div>
@@ -73,7 +73,7 @@ export const WorkspacePicker = () => {
             </Loader>
           )}
           {!loader &&
-            currentUserAdninWorkspaces?.map((workspace) => (
+            currentUserAdminWorkspaces?.map((workspace) => (
               <div key={workspace.id} className="w-full bg-custom-background-100 rounded">
                 <Link
                   href={`/${workspace.slug}${nextPath || ""}`}
