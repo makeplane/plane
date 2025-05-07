@@ -19,12 +19,13 @@ type Props = {
   setValue: UseFormSetValue<IAnalyticsV2Params>;
   params: IAnalyticsV2Params;
   workspaceSlug: string;
+  classNames?: string;
 };
 
 const analyticsV2Service = new AnalyticsV2Service()
 
 export const AnalyticsV2SelectParams: React.FC<Props> = observer((props) => {
-  const { control, params, workspaceSlug } = props;
+  const { control, params, workspaceSlug, classNames } = props;
   const { t } = useTranslation();
   const xAxisOptions = useMemo(() => ANALYTICS_V2_X_AXIS_VALUES.filter((option) => option.value !== params.group_by), [params.group_by]);
   const groupByOptions = useMemo(() => ANALYTICS_V2_X_AXIS_VALUES.filter((option) => option.value !== params.x_axis), [params.x_axis]);
@@ -48,8 +49,8 @@ export const AnalyticsV2SelectParams: React.FC<Props> = observer((props) => {
       );
   };
   return (
-    <div className="flex  justify-between w-full">
-      <Row
+    <div className={cn("flex justify-between w-full", classNames)}>
+      <div
         className={`flex items-center gap-2`}
       >
         <Controller
@@ -102,7 +103,7 @@ export const AnalyticsV2SelectParams: React.FC<Props> = observer((props) => {
             />
           )}
         />
-      </Row>
+      </div>
       <Button variant="accent-primary" prependIcon={<Download className="h-3.5 w-3.5" />} onClick={exportAnalytics}>
         <div>{t("exporter.csv.short_description")}</div>
       </Button>

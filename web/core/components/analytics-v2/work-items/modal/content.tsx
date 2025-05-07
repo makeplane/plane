@@ -17,7 +17,7 @@ type Props = {
 };
 
 export const WorkItemsModalMainContent: React.FC<Props> = observer((props) => {
-  const { projectDetails } = props;
+  const { projectDetails, fullScreen } = props;
   const { updateSelectedProjects } = useAnalyticsV2()
   const [isProjectConfigured, setIsProjectConfigured] = useState(false)
 
@@ -32,9 +32,9 @@ export const WorkItemsModalMainContent: React.FC<Props> = observer((props) => {
   return (
     <Tab.Group as={React.Fragment}>
       <div className='flex flex-col gap-14 p-6 overflow-y-auto'>
-        <TotalInsights analyticsType='work-items' />
+        <TotalInsights analyticsType='work-items' peekView={!fullScreen} />
         <CreatedVsResolved />
-        <CustomizedInsights />
+        <CustomizedInsights peekView={!fullScreen} />
         <WorkItemsInsightTable />
       </div>
     </Tab.Group>

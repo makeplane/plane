@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { ChartXAxisProperty, ChartYAxisMetric } from '@plane/constants'
 import { useTranslation } from '@plane/i18n'
 import { IAnalyticsV2Params } from '@plane/types'
+import { cn } from '@plane/utils'
 import AnalyticsSectionWrapper from '../analytics-section-wrapper'
 import { AnalyticsV2SelectParams } from '../select/analytics-params'
 import PriorityChart from './priority-chart'
@@ -13,7 +14,7 @@ const defaultValues: IAnalyticsV2Params = {
   y_axis: ChartYAxisMetric.WORK_ITEM_COUNT,
 }
 
-const CustomizedInsights = observer(() => {
+const CustomizedInsights = observer(({ peekView }: { peekView?: boolean }) => {
   const { t } = useTranslation()
   const { workspaceSlug } = useParams();
   const { control, watch, setValue } = useForm<IAnalyticsV2Params>({
@@ -30,6 +31,7 @@ const CustomizedInsights = observer(() => {
 
   return (
     <AnalyticsSectionWrapper title={t('workspace_analytics.customized_insights')} className='col-span-1'
+      headerClassName={cn(peekView ? 'flex-col items-start' : '')}
       actions={
         <AnalyticsV2SelectParams
           control={control}

@@ -17,7 +17,7 @@ import InsightCard from './insight-card';
 
 const analyticsV2Service = new AnalyticsV2Service();
 
-const TotalInsights: React.FC<{ analyticsType: TAnalyticsTabsV2Base }> = observer(({ analyticsType }) => {
+const TotalInsights: React.FC<{ analyticsType: TAnalyticsTabsV2Base, peekView?: boolean }> = observer(({ analyticsType, peekView }) => {
     const params = useParams();
     const workspaceSlug = params.workspaceSlug as string;
     const { t } = useTranslation()
@@ -28,10 +28,13 @@ const TotalInsights: React.FC<{ analyticsType: TAnalyticsTabsV2Base }> = observe
             date_filter: selectedDuration,
             ...(selectedProjects ? { project_ids: selectedProjects } : {})
         }))
-
     return (
         <div className={cn('grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-10',
-            insightsFields[analyticsType].length % 5 === 0 ? 'lg:grid-cols-5 gap-10' : 'lg:grid-cols-4 gap-8'
+            !peekView
+                ? insightsFields[analyticsType].length % 5 === 0
+                    ? 'lg:grid-cols-5 gap-10'
+                    : 'lg:grid-cols-4 gap-8'
+                : 'grid-cols-2'
         )}>
             {insightsFields[analyticsType].map((item: string) => (
                 <InsightCard
