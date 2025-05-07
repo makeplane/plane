@@ -15,12 +15,12 @@ from celery import shared_task
 from django.conf import settings
 from django.utils import timezone
 from openpyxl import Workbook
-from django.db.models import F
+from django.db.models import F, Prefetch
 
 from collections import defaultdict
 
 # Module imports
-from plane.db.models import ExporterHistory, Issue, FileAsset
+from plane.db.models import ExporterHistory, Issue, FileAsset, Label, User
 from plane.utils.exception_logger import log_exception
 
 
@@ -333,6 +333,16 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                 "issue_module__module",
                 "issue_comments",
                 "assignees",
+                Prefetch(
+                    "assignees",
+                    queryset=User.objects.only("first_name", "last_name").distinct(),
+                    to_attr="assignee_details",
+                ),
+                Prefetch(
+                    "labels",
+                    queryset=Label.objects.only("name").distinct(),
+                    to_attr="label_details",
+                ),
                 "issue_subscribers",
                 "issue_link",
             )
@@ -369,39 +379,25 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                 "archived_at": issue.archived_at,
                 "module_name": [
                     module.module.name for module in issue.issue_module.all()
-                ]
-                if issue.issue_module.exists()
-                else None,
-                "created_by": f"{issue.created_by.first_name} {issue.created_by.last_name}",
-                "labels": [
-                    label.name
-                    for label in issue.labels.all().distinct()
-                    if issue.labels.exists()
                 ],
+                "created_by": f"{issue.created_by.first_name} {issue.created_by.last_name}",
+                "labels": [label.name for label in issue.label_details],
                 "comments": [
                     {
                         "comment": comment.comment_stripped,
                         "created_at": dateConverter(comment.created_at),
                         "created_by": f"{comment.created_by.first_name} {comment.created_by.last_name}",
                     }
-                    for comment in issue.issue_comments.all().distinct()
-                ]
-                if issue.issue_comments.exists()
-                else None,
+                    for comment in issue.issue_comments.all()
+                ],
                 "estimate": issue.estimate_point.estimate.name
                 if issue.estimate_point
                 else "",
-                "link": [
-                    link.url
-                    for link in issue.issue_link.all().distinct()
-                    if issue.issue_link.exists()
-                ],
+                "link": [link.url for link in issue.issue_link.all()],
                 "assignees": [
                     f"{assignee.first_name} {assignee.last_name}"
-                    for assignee in issue.assignees.all().distinct()
-                ]
-                if issue.assignees.exists()
-                else None,
+                    for assignee in issue.assignee_details
+                ],
                 "subscribers_count": issue.issue_subscribers.count(),
                 "attachment_count": len(attachments),
                 "attachment_links": [
