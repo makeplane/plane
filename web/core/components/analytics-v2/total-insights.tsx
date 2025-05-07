@@ -26,7 +26,7 @@ const TotalInsights: React.FC<{ analyticsType: TAnalyticsTabsV2Base, peekView?: 
     const { data: totalInsightsData, isLoading } = useSWR(`total-insights-${analyticsType}-${selectedDuration}-${selectedProjects}`,
         () => analyticsV2Service.getAdvanceAnalytics<IAnalyticsResponseV2>(workspaceSlug, analyticsType, {
             date_filter: selectedDuration,
-            ...(selectedProjects ? { project_ids: selectedProjects } : {})
+            ...(selectedProjects ? { project_ids: selectedProjects.join(',') } : {})
         }))
     return (
         <div className={cn('grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-10',

@@ -50,7 +50,7 @@ const PriorityChart = observer((props: Props) => {
     `customized-insights-chart-${workspaceSlug}-${selectedDuration}-${props.x_axis}-${props.y_axis}-${props.group_by}`,
     () => analyticsV2Service.getAdvanceAnalyticsCharts<IChartResponseV2>(workspaceSlug, 'custom-work-items', {
       date_filter: selectedDuration,
-      project_ids: selectedProjects,
+      project_ids: selectedProjects?.join(','),
       ...props
     }),
   )

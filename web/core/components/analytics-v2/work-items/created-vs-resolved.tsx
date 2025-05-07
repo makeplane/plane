@@ -21,14 +21,15 @@ import { ChartLoader } from '../loaders'
 
 const analyticsV2Service = new AnalyticsV2Service()
 const CreatedVsResolved = observer(() => {
-  const { selectedDuration, selectedDurationLabel } = useAnalyticsV2()
+  const { selectedDuration, selectedDurationLabel, selectedProjects } = useAnalyticsV2()
   const params = useParams();
   const { t } = useTranslation()
   const workspaceSlug = params.workspaceSlug as string;
   const { data: createdVsResolvedData, isLoading: isCreatedVsResolvedLoading } = useSWR(
     `created-vs-resolved-${workspaceSlug}-${selectedDuration}`,
     () => analyticsV2Service.getAdvanceAnalyticsCharts<IChartResponseV2>(workspaceSlug, 'work-items', {
-      date_filter: selectedDuration
+      date_filter: selectedDuration,
+      project_ids: selectedProjects?.join(','),
     }),
   )
   const parsedData = useMemo(() => {

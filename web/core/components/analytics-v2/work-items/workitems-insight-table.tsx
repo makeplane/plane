@@ -27,7 +27,7 @@ const WorkItemsInsightTable = observer(() => {
     const { data: workItemsData, isLoading } = useSWR(`insights-table-work-items-${selectedDuration}-${selectedProjects}`,
         () => analyticsV2Service.getAdvanceAnalyticsStats<WorkItemInsightColumns[]>(workspaceSlug, "work-items", {
             date_filter: selectedDuration,
-            ...(selectedProjects ? { project_ids: selectedProjects } : {})
+            ...(selectedProjects ? { project_ids: selectedProjects.join(',') } : {})
         }))
     // derived values
     const columns = useMemo(() => [
