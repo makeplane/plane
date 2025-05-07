@@ -30,24 +30,7 @@ export const AnalyticsV2SelectParams: React.FC<Props> = observer((props) => {
   const xAxisOptions = useMemo(() => ANALYTICS_V2_X_AXIS_VALUES.filter((option) => option.value !== params.group_by), [params.group_by]);
   const groupByOptions = useMemo(() => ANALYTICS_V2_X_AXIS_VALUES.filter((option) => option.value !== params.x_axis), [params.x_axis]);
 
-  const exportAnalytics = () => {
-    analyticsV2Service
-      .exportAnalytics(workspaceSlug, params)
-      .then((res) => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: res.message,
-        });
-      })
-      .catch(() =>
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "There was some error in exporting the analytics. Please try again.",
-        })
-      );
-  };
+
   return (
     <div className={cn("flex justify-between w-full", classNames)}>
       <div
@@ -104,9 +87,6 @@ export const AnalyticsV2SelectParams: React.FC<Props> = observer((props) => {
           )}
         />
       </div>
-      <Button variant="accent-primary" prependIcon={<Download className="h-3.5 w-3.5" />} onClick={exportAnalytics}>
-        <div>{t("exporter.csv.short_description")}</div>
-      </Button>
     </div>
 
   );

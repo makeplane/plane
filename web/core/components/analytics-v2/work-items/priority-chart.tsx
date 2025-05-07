@@ -5,12 +5,14 @@ import { useParams } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import useSWR from 'swr'
 // plane package imports
+import { Download } from 'lucide-react'
 import { ANALYTICS_V2_X_AXIS_VALUES, ANALYTICS_V2_Y_AXIS_VALUES, ChartXAxisDateGrouping, ChartXAxisProperty, ChartYAxisMetric, EChartModels } from '@plane/constants'
 import { useTranslation } from '@plane/i18n'
 import { BarChart } from '@plane/propel/charts/bar-chart'
 import { IChartResponseV2 } from '@plane/types'
 import { TBarItem, TChartDatum } from '@plane/types/src/charts'
 // plane web components
+import { Button, setToast, TOAST_TYPE } from '@plane/ui'
 import { CHART_COLOR_PALETTES, generateExtendedColors, parseChartData } from '@/components/chart/utils'
 // hooks
 import { useProjectState } from '@/hooks/store'
@@ -54,6 +56,24 @@ const PriorityChart = observer((props: Props) => {
       ...props
     }),
   )
+  const exportAnalytics = () => {
+    analyticsV2Service
+      .exportAnalytics(workspaceSlug, params)
+      .then((res) => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: res.message,
+        });
+      })
+      .catch(() =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "There was some error in exporting the analytics. Please try again.",
+        })
+      );
+  };
   const parsedData = useMemo(() => parseChartData(priorityChartData, props.x_axis, props.group_by, props.x_axis_date_grouping)
     , [priorityChartData, props.x_axis, props.group_by, props.x_axis_date_grouping])
   const chart_model = props.group_by ? EChartModels.STACKED : EChartModels.BASIC;
@@ -168,6 +188,9 @@ const PriorityChart = observer((props: Props) => {
               data={parsedData.data}
               columns={[...defaultColumns, ...columns]}
               searchPlaceholder={`${parsedData.data.length} ${yAxisLabel}`}
+              actions={<Button variant="accent-primary" prependIcon={<Download className="h-3.5 w-3.5" />} onClick={exportAnalytics}>
+                <div>{t("exporter.csv.short_description")}</div>
+              </Button>}
             />
           </> :
           <AnalyticsV2EmptyState
