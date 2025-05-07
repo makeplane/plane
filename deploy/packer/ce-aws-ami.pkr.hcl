@@ -201,7 +201,7 @@ build {
 
   # Post-processor for potential AMI modifications
   post-processor "manifest" {
-    output = "manifest.json"
+    output = "ce-aws-ami-manifest.json"
     strip_path = true
   }
 } 

@@ -28,29 +28,23 @@ locals {
   timestamp = regex_replace(timestamp(), "[- TZ:]", "")
 }
 
-data "digitalocean-image" "ubuntu_22_04" {
-    api_token    = var.do_token
-    name_regex = "ubuntu-22-04-x64"
-    region     = var.do_region
-    type       = "distribution"
-    latest     = true
-}
 
-locals {
-    image_id = data.digitalocean-image.ubuntu_22_04.image_id
-}
 
 source "digitalocean" "plane_do_droplet" {
   api_token    = var.do_token
-  image        = local.image_id
+  image        = "ubuntu-22-04-x64"
   region       = var.do_region
   size         = "s-2vcpu-4gb"
   ssh_username = "root"
+  droplet_name = "${var.ami_name_prefix}-${local.timestamp}"
+  snapshot_name = "${var.ami_name_prefix}-${local.timestamp}"
+  tags = [
+    "plane-ce",
+  ]
 }
 
 # Build block defining what to install and configure
 build {
-  name = "${var.ami_name_prefix}-${local.timestamp}"
   sources = [
     "source.digitalocean.plane_do_droplet"
   ]
@@ -59,11 +53,18 @@ build {
   provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
-      "TERM=xterm-256color"
+      "TERM=xterm-256color",
+      "CI=true",
+      "HISTSIZE=0",
+      "HISTFILESIZE=0",
+      "HISTFILE=/dev/null"
     ]
     inline = [
-      "sudo mkdir -p /opt/plane/tars /opt/plane/extracted",
-      "sudo chown -R ubuntu:ubuntu /opt/plane"
+      "ufw --force enable",
+      "ufw allow http",
+      "ufw allow https",
+      "ufw allow ssh",
+      "sudo mkdir -p /opt/plane/tars /opt/plane/extracted"
     ]
   }
 
@@ -76,7 +77,10 @@ build {
   provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
-      "TERM=xterm-256color"
+      "TERM=xterm-256color",
+      "HISTSIZE=0",
+      "HISTFILESIZE=0",
+      "HISTFILE=/dev/null"
     ]
     inline = [
       "sudo mkdir -p /opt/plane/svc",
@@ -139,7 +143,10 @@ build {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
       "TERM=xterm-256color",
-      "CI=true"
+      "CI=true",
+      "HISTSIZE=0",
+      "HISTFILESIZE=0",
+      "HISTFILE=/dev/null"
     ]
     inline = [
       "bash -c '. /usr/local/bin/plane && install_prerequisites'",
@@ -149,7 +156,11 @@ build {
   provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
-      "TERM=xterm-256color"
+      "TERM=xterm-256color",
+      "CI=true",
+      "HISTSIZE=0",
+      "HISTFILESIZE=0",
+      "HISTFILE=/dev/null"
     ]
     inline = [
       "sudo systemctl enable ssh",
@@ -157,9 +168,26 @@ build {
     ]
   }
 
+  provisioner "shell" {
+    environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive",
+      "TERM=xterm-256color",
+      "CI=true",
+      "HISTSIZE=0",
+      "HISTFILESIZE=0",
+      "HISTFILE=/dev/null"
+    ]
+    inline = [
+      "curl -L https://github.com/digitalocean/marketplace-partners/raw/master/scripts/90-cleanup.sh | bash",
+      "sudo apt-get purge droplet-agent -y",
+      "sudo rm -rf /var/log/*.log",
+      "curl -L https://github.com/digitalocean/marketplace-partners/raw/master/scripts/99-img-check.sh | bash",
+    ]
+  }
+
   # Post-processor for potential AMI modifications
   post-processor "manifest" {
-    output = "manifest.json"
+    output = "ce-digital-ocean-manifest.json"
     strip_path = true
   }
 } 
