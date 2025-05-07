@@ -165,7 +165,7 @@ class PageTemplateEndpoint(TemplateBaseEndpoint):
 
 
 class PageProjectTemplateEndpoint(TemplateBaseEndpoint):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
     @check_feature_flag(FeatureFlag.PAGE_TEMPLATES)
     def get(self, request, slug, project_id):
         templates = Template.objects.filter(

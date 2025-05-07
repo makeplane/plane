@@ -166,7 +166,7 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
 
 
 class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
     def get(self, request, slug, project_id):
         templates = Template.objects.filter(
@@ -185,7 +185,7 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
         serializer = TemplateDataSerializer(templates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], level="PROJECT")
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
     def post(self, request, slug, project_id):
         # get the template data
@@ -234,7 +234,7 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
             template.delete()
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], level="PROJECT")
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
     def patch(self, request, slug, project_id, pk):
         template = Template.objects.get(
@@ -264,7 +264,7 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
+    @allow_permission([ROLE.ADMIN], level="PROJECT")
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
     def delete(self, request, slug, project_id, pk):
         template = Template.objects.get(
