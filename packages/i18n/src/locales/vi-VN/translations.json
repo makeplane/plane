@@ -505,6 +505,9 @@
   "choose_workspace_for_integration": "Chọn không gian làm việc để kết nối ứng dụng này",
   "integrations_description": "Ứng dụng làm việc với Plane phải kết nối với không gian làm việc mà bạn là quản trị viên.",
   "create_a_new_workspace": "Tạo không gian làm việc mới",
+  "learn_more_about_workspaces": "Tìm hiểu thêm về không gian làm việc",
+  "no_workspaces_to_connect": "Không có không gian làm việc để kết nối",
+  "no_workspaces_to_connect_description": "Bạn cần tạo không gian làm việc để kết nối ứng dụng này",
 
   "project_view": {
     "sort_by": {

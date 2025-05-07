@@ -506,6 +506,9 @@
   "choose_workspace_for_integration": "Wybierz przestrzeń roboczą do połączenia tej aplikacji",
   "integrations_description": "Aplikacje, które działają z Plane, muszą być połączone z przestrzenią roboczą, w której jesteś administratorem.",
   "create_a_new_workspace": "Utwórz nową przestrzeń roboczą",
+  "learn_more_about_workspaces": "Dowiedz się więcej o przestrzeniach roboczych",
+  "no_workspaces_to_connect": "Brak przestrzeni roboczych do połączenia",
+  "no_workspaces_to_connect_description": "Musisz utworzyć przestrzeń roboczą, aby móc połączyć integracje i szablony",
 
   "project_view": {
     "sort_by": {

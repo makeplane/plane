@@ -505,6 +505,9 @@
   "choose_workspace_for_integration": "Vyberte pracovný priestor pre pripojenie tejto aplikácie",
   "integrations_description": "Aplikácie, ktoré fungujú s Plane, musia byť pripojené k pracovnom priestoru, kde ste správca.",
   "create_a_new_workspace": "Vytvoriť nový pracovný priestor",
+  "learn_more_about_workspaces": "Zjistit více o pracovních prostorech",
+  "no_workspaces_to_connect": "Žádné pracovní prostory k připojení",
+  "no_workspaces_to_connect_description": "Musíte vytvořit pracovní prostor, abyste mohli připojit integraci a šablony",
 
   "project_view": {
     "sort_by": {

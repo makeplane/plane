@@ -36,15 +36,7 @@ const WorkspacePickerPage = observer(() => {
           </Link>
           <div className="text-sm text-custom-text-100">{currentUser?.email}</div>
         </div>
-        <div className="relative flex flex-col gap-4 h-full w-full justify-center px-8 pb-8 items-center">
-          <div className="text-3xl font-bold text-center">{t("choose_workspace_for_integration")}</div>
-          <div className="font-medium text-custom-text-300 max-w-[450px] text-center">
-            {t("integrations_description")}
-          </div>
-          <div className="overflow-y-auto vertical-scrollbar scrollbar-sm mb-10 w-full md:w-fit">
-            <WorkspacePicker />
-          </div>
-        </div>
+        <WorkspacePicker />
       </div>
     </AuthenticationWrapper>
   );

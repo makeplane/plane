@@ -507,6 +507,9 @@
   "choose_workspace_for_integration": "Choisissez un espace de travail pour connecter cette application",
   "integrations_description": "Les applications qui fonctionnent avec Plane doivent se connecter à un espace de travail où vous êtes administrateur.",
   "create_a_new_workspace": "Créer un nouvel espace de travail",
+  "learn_more_about_workspaces": "En savoir plus sur les espaces de travail",
+  "no_workspaces_to_connect": "Aucun espace de travail à connecter",
+  "no_workspaces_to_connect_description": "Vous devez créer un espace de travail pour pouvoir connecter des intégrations et des modèles",
 
   "project_view": {
     "sort_by": {
