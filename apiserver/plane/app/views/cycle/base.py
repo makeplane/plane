@@ -268,6 +268,7 @@ class CycleViewSet(BaseViewSet):
             "status",
             "version",
             "created_by",
+            "created_at",
         )
         datetime_fields = ["start_date", "end_date"]
         data = user_timezone_converter(data, datetime_fields, project_timezone)
@@ -315,6 +316,7 @@ class CycleViewSet(BaseViewSet):
                         "assignee_ids",
                         "status",
                         "created_by",
+                        "created_at",
                     )
                     .first()
                 )
