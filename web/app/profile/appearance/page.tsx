@@ -10,13 +10,13 @@ import { IUserTheme } from "@plane/types";
 import { setPromiseToast } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common";
-import { CustomThemeSelector, ThemeSwitch, PageHead } from "@/components/core";
-import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
-// constants
+import { ThemeSwitch, PageHead } from "@/components/core";
+import { ProfileSettingContentHeader, ProfileSettingContentWrapper, StartOfWeekPreference } from "@/components/profile";
 // helpers
 import { applyTheme, unsetCustomCssVariables } from "@/helpers/theme.helper";
 // hooks
 import { useUserProfile } from "@/hooks/store";
+
 const ProfileAppearancePage = observer(() => {
   const { t } = useTranslation();
   const { setTheme } = useTheme();
@@ -74,7 +74,7 @@ const ProfileAppearancePage = observer(() => {
               <ThemeSwitch value={currentTheme} onChange={handleThemeChange} />
             </div>
           </div>
-          {userProfile?.theme?.theme === "custom" && <CustomThemeSelector applyThemeChange={applyThemeChange} />}
+          <StartOfWeekPreference />
         </ProfileSettingContentWrapper>
       ) : (
         <div className="grid h-full w-full place-items-center px-4 sm:px-0">
