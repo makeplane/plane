@@ -11,7 +11,7 @@ import { ANALYTICS_V2_X_AXIS_VALUES, ANALYTICS_V2_Y_AXIS_VALUES, ChartXAxisDateG
 import { useTranslation } from '@plane/i18n'
 import { BarChart } from '@plane/propel/charts/bar-chart'
 import { IChartResponseV2 } from '@plane/types'
-import { TBarItem, TChartDatum } from '@plane/types/src/charts'
+import { TBarItem, TChart, TChartData, TChartDatum } from '@plane/types/src/charts'
 // plane web components
 import { Button } from '@plane/ui'
 import { CHART_COLOR_PALETTES, generateExtendedColors, parseChartData } from '@/components/chart/utils'
@@ -50,17 +50,18 @@ const PriorityChart = observer((props: Props) => {
 
   const { data: priorityChartData, isLoading: priorityChartLoading } = useSWR(
     `customized-insights-chart-${workspaceSlug}-${selectedDuration}-${props.x_axis}-${props.y_axis}-${props.group_by}`,
-    () => analyticsV2Service.getAdvanceAnalyticsCharts<IChartResponseV2>(workspaceSlug, 'custom-work-items', {
+    () => analyticsV2Service.getAdvanceAnalyticsCharts<TChart>(workspaceSlug, 'custom-work-items', {
       date_filter: selectedDuration,
       project_ids: selectedProjects?.join(','),
       ...props
     }),
   )
-  const parsedData = useMemo(() => parseChartData(priorityChartData, props.x_axis, props.group_by, props.x_axis_date_grouping)
+  const parsedData = useMemo(() => priorityChartData && parseChartData(priorityChartData, props.x_axis, props.group_by, props.x_axis_date_grouping)
     , [priorityChartData, props.x_axis, props.group_by, props.x_axis_date_grouping])
   const chart_model = props.group_by ? EChartModels.STACKED : EChartModels.BASIC;
 
   const bars: TBarItem<string>[] = useMemo(() => {
+    if (!parsedData) return [];
     let parsedBars: TBarItem<string>[];
     const schemaKeys = Object.keys(parsedData.schema);
     const baseColors = CHART_COLOR_PALETTES[0]?.[
@@ -119,7 +120,7 @@ const PriorityChart = observer((props: Props) => {
       parsedBars = [];
     }
     return parsedBars;
-  }, [chart_model, group_by, parsedData.data, parsedData.schema, resolvedTheme, workspaceStates, x_axis, y_axis]);
+  }, [chart_model, group_by, parsedData, resolvedTheme, workspaceStates, x_axis, y_axis]);
 
   const defaultColumns: ColumnDef<TChartDatum>[] = useMemo(() => [
     {
@@ -133,11 +134,11 @@ const PriorityChart = observer((props: Props) => {
     },
   ], []);
 
-  const columns: ColumnDef<TChartDatum>[] = useMemo(() => Object.keys(parsedData.schema).map((key) => ({
+  const columns: ColumnDef<TChartDatum>[] = useMemo(() => parsedData ? Object.keys(parsedData?.schema ?? {}).map((key) => ({
     accessorKey: key,
     header: () => <div className="text-right">{parsedData.schema[key]}</div>,
     cell: ({ row }) => <div className="text-right">{row.original[key]}</div>
-  })), [parsedData.schema]);
+  })) : [], [parsedData]);
 
   const csvConfig = mkConfig({
     fieldSeparator: ',',
@@ -161,7 +162,7 @@ const PriorityChart = observer((props: Props) => {
   return (
     <div className='flex flex-col gap-12 '>
       {priorityChartLoading ? <ChartLoader /> :
-        parsedData.data && parsedData.data.length > 0 ?
+        parsedData?.data && parsedData.data.length > 0 ?
           <>
             <BarChart
               className="w-full h-[370px]"

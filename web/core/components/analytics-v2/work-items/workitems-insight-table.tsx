@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import useSWR from 'swr';
 import { Briefcase } from 'lucide-react';
 // plane package imports
+import { useTranslation } from '@plane/i18n';
 import { WorkItemInsightColumns, AnalyticsTableDataMap } from '@plane/types';
 // plane web components
 import { Logo } from '@/components/common/logo';
@@ -14,7 +15,6 @@ import { useProject } from '@/hooks/store/use-project';
 import { AnalyticsV2Service } from '@/services/analytics-v2.service';
 // plane web components
 import { InsightTable } from '../insight-table';
-import { useTranslation } from '@plane/i18n';
 
 const analyticsV2Service = new AnalyticsV2Service();
 

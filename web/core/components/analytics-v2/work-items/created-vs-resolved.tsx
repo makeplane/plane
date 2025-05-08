@@ -6,7 +6,7 @@ import useSWR from 'swr'
 // plane package imports
 import { useTranslation } from '@plane/i18n'
 import { AreaChart } from '@plane/propel/charts/area-chart'
-import { IChartResponseV2 } from '@plane/types'
+import { IChartResponseV2, TChartData } from '@plane/types'
 import { renderFormattedDate } from '@plane/utils'
 // hooks
 import { useAnalyticsV2 } from '@/hooks/store/use-analytics-v2'
@@ -34,12 +34,12 @@ const CreatedVsResolved = observer(() => {
       project_ids: selectedProjects?.join(','),
     }),
   )
-  const parsedData = useMemo(() => {
+  const parsedData: TChartData<string, string>[] = useMemo(() => {
     if (!createdVsResolvedData?.data) return []
     return createdVsResolvedData.data.map((datum) => ({
       ...datum,
       [datum.key]: datum.count,
-      name: renderFormattedDate(datum.key)
+      name: renderFormattedDate(datum.key) ?? datum.key
     }))
   }, [createdVsResolvedData])
 

@@ -41,13 +41,19 @@ export const ScatterChart = React.memo(<K extends string, T extends string>(prop
     const [activePoint, setActivePoint] = useState<string | null>(null);
     const [activeLegend, setActiveLegend] = useState<string | null>(null);
     // derived values
-    const itemKeys = useMemo(() => scatterPoints.map((point) => point.key), [scatterPoints]);
-    const itemLabels: Record<string, string> = useMemo(
-        () => scatterPoints.reduce((acc, point) => ({ ...acc, [point.key]: point.label }), {}),
+    const itemKeys = useMemo(
+        () => Array.from(scatterPoints, point => point.key),
         [scatterPoints]
     );
-    const itemDotColors = useMemo(() => scatterPoints.reduce((acc, point) => ({ ...acc, [point.key]: point.fill }), {}), [scatterPoints]);
+    const itemLabels = useMemo(
+        () => Object.fromEntries(scatterPoints.map(point => [point.key, point.label])),
+        [scatterPoints]
+    );
 
+    const itemDotColors = useMemo(
+        () => Object.fromEntries(scatterPoints.map(point => [point.key, point.fill])),
+        [scatterPoints]
+    );
     const renderPoints = useMemo(
         () =>
             scatterPoints.map((point) => (

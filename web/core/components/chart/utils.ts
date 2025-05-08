@@ -154,7 +154,7 @@ export const parseChartData = (
   const updatedWidgetData: TChartDatum[] = widgetData.map((datum) => {
     const keys = Object.keys(datum);
     const missingKeys = allKeys.filter((key) => !keys.includes(key));
-    const missingValues: Record<string, number> = missingKeys.reduce((acc, key) => ({ ...acc, [key]: 0 }), {});
+    const missingValues: Record<string, number> = Object.fromEntries(missingKeys.map(key => [key, 0]));
 
     if (xAxisProperty) {
       // capitalize first letter if xAxisProperty is in TO_CAPITALIZE_PROPERTIES and no groupByProperty is set

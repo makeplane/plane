@@ -1,4 +1,5 @@
 import * as React from "react";
+import { ColumnDef } from "@tanstack/react-table";
 import {
     Table,
     TableBody,
@@ -10,7 +11,7 @@ import {
 import { Loader } from "@plane/ui";
 
 interface TableSkeletonProps {
-    columns: any[];
+    columns: ColumnDef<any>[];
     rows: number;
 }
 
