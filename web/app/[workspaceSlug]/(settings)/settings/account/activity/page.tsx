@@ -50,12 +50,15 @@ const ProfileActivityPage = observer(() => {
 
   if (isEmpty) {
     return (
-      <DetailedEmptyState
-        title={t("profile.empty_state.activity.title")}
-        description={t("profile.empty_state.activity.description")}
-        assetPath={resolvedPath}
-        className="w-full !p-0 justify-start items-start"
-      />
+      <>
+        <ProfileSettingContentHeader title={t("activity")} />
+        <DetailedEmptyState
+          title={t("profile.empty_state.activity.title")}
+          description={t("profile.empty_state.activity.description")}
+          assetPath={resolvedPath}
+          className="w-full !px-0 py-4 justify-start items-start"
+        />
+      </>
     );
   }
 
