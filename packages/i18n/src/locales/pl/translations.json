@@ -365,12 +365,12 @@
   "work_management": "Zarządzanie pracą",
   "projects_and_issues": "Projekty i elementy pracy",
   "projects_and_issues_description": "Włączaj lub wyłączaj te funkcje w projekcie.",
-  "cycles_description": "Ograniczaj pracę w czasie, zmieniaj częstotliwość pomiędzy okresami.",
-  "modules_description": "Grupuj pracę w podobne podprojekty z własnymi leaderami i przypisanymi osobami.",
-  "views_description": "Zapisuj sortowanie, filtry i opcje wyświetlania do późniejszego użytku lub udostępniania.",
-  "pages_description": "Pisz dowolne treści w standardowej formie.",
-  "intake_description": "Śledź zgłoszenia, aby mieć wgląd w nowe zadania i prośby.",
-  "time_tracking_description": "Rejestruj czas spędzony na poszczególnych elementach pracy i projektach.",
+  "cycles_description": "Określ ramy czasowe pracy dla każdego projektu i dostosuj okres w razie potrzeby. Jeden cykl może trwać 2 tygodnie, a następny 1 tydzień.",
+  "modules_description": "Organizuj pracę w podprojekty z dedykowanymi liderami i przypisanymi osobami.",
+  "views_description": "Zapisz niestandardowe sortowania, filtry i opcje wyświetlania lub udostępnij je zespołowi.",
+  "pages_description": "Twórz i edytuj treści o swobodnej formie – notatki, dokumenty, cokolwiek.",
+  "intake_description": "Pozwól osobom spoza zespołu zgłaszać błędy, opinie i sugestie bez zakłócania przepływu pracy.",
+  "time_tracking_description": "Rejestruj czas spędzony na elementach pracy i projektach.",
   "work_management_description": "Łatwo zarządzaj swoją pracą i projektami.",
   "documentation": "Dokumentacja",
   "message_support": "Skontaktuj się z pomocą",
@@ -500,10 +500,8 @@
   "export": "Eksportuj",
   "member": "{count, plural, one{# członek} few{# członkowie} other{# członków}}",
   "new_password_must_be_different_from_old_password": "Nowe hasło musi być innym niż stare hasło",
-
   "edited": "Edytowano",
   "bot": "Bot",
-
   "project_view": {
     "sort_by": {
       "created_at": "Utworzono dnia",
@@ -866,7 +864,9 @@
     "pending": "Oczekujące",
     "invite": "Zaproś",
     "view": "Widok",
-    "deactivated_user": "Dezaktywowany użytkownik"
+    "deactivated_user": "Dezaktywowany użytkownik",
+    "apply": "Zastosuj",
+    "applying": "Zastosowanie"
   },
   "chart": {
     "x_axis": "Oś X",
@@ -2404,17 +2404,14 @@
       "manual": "Ręcznie"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {Cykl} few {Cykle} other {Cyklów}}",
     "no_cycle": "Brak cyklu"
   },
-
   "module": {
     "label": "{count, plural, one {Moduł} few {Moduły} other {Modułów}}",
     "no_module": "Brak modułu"
   },
-
   "description_versions": {
     "last_edited_by": "Ostatnio edytowane przez",
     "previously_edited_by": "Wcześniej edytowane przez",

@@ -52,7 +52,7 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
       <Link
         id={`inbox-issue-list-item-${issue.id}`}
         key={`${projectId}_${issue.id}`}
-        href={`/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}&inboxIssueId=${issue.id}`}
+        href={`/${workspaceSlug}/projects/${projectId}/intake?currentTab=${currentTab}&inboxIssueId=${issue.id}`}
         onClick={(e) => handleIssueRedirection(e, issue.id)}
       >
         <Row

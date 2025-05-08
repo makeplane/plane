@@ -10,10 +10,12 @@ import {
   JpgIcon,
   PdfIcon,
   PngIcon,
+  RarIcon,
   SheetIcon,
   SvgIcon,
   TxtIcon,
   VideoIcon,
+  ZipIcon,
 } from "@/components/icons/attachment";
 
 export const getFileIcon = (fileType: string, size: number = 28) => {
@@ -52,6 +54,10 @@ export const getFileIcon = (fileType: string, size: number = 28) => {
       return <VideoIcon height={size} width={size} />;
     case "mkv":
       return <VideoIcon height={size} width={size} />;
+    case "zip":
+      return <ZipIcon height={size} width={size} />;
+    case "rar":
+      return <RarIcon height={size} width={size} />;
 
     default:
       return <DefaultIcon height={size} width={size} />;

@@ -63,6 +63,7 @@ export type TIssueModalContext = {
   handleCreateUpdatePropertyValues: (props: TCreateUpdatePropertyValuesProps) => Promise<void>;
   handleProjectEntitiesFetch: (props: THandleProjectEntitiesFetchProps) => Promise<void>;
   handleTemplateChange: (props: THandleTemplateChangeProps) => Promise<void>;
+  handleConvert: (workspaceSlug: string, data: Partial<TIssue>) => Promise<void>;
 };
 
 export const IssueModalContext = createContext<TIssueModalContext | undefined>(undefined);
