@@ -162,7 +162,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
           setUploadedAssetIds([]);
         }
         if (!createMore) {
-          router.push(`/${workspaceSlug}/projects/${projectId}/inbox/?currentTab=open&inboxIssueId=${res?.issue?.id}`);
+          router.push(`/${workspaceSlug}/projects/${projectId}/intake/?currentTab=open&inboxIssueId=${res?.issue?.id}`);
           handleModalClose();
         } else {
           descriptionEditorRef?.current?.clearEditor();
