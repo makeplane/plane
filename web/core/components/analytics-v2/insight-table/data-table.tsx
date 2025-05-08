@@ -6,6 +6,7 @@ import {
   ColumnFiltersState,
   SortingState,
   VisibilityState,
+  Table as TanstackTable,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -28,13 +29,14 @@ import {
 } from "@plane/propel/table"
 import { cn } from "@plane/utils"
 // plane web components
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path"
 import AnalyticsV2EmptyState from "../empty-state"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   searchPlaceholder: string
-  actions?: React.ReactNode
+  actions?: (table: TanstackTable<TData>) => React.ReactNode
 }
 
 export function DataTable<TData, TValue>({
@@ -53,6 +55,8 @@ export function DataTable<TData, TValue>({
   const { t } = useTranslation()
   const inputRef = React.useRef<HTMLInputElement>(null)
   const [isSearchOpen, setIsSearchOpen] = React.useState(false)
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics-v2/empty-table" });
+
 
   const table = useReactTable({
     data,
@@ -130,7 +134,7 @@ export function DataTable<TData, TValue>({
             )}
           </div>
         </div>
-        {actions && <div>{actions}</div>}
+        {actions && <div>{actions(table)}</div>}
       </div>
 
       <div className="rounded-md">
@@ -176,6 +180,7 @@ export function DataTable<TData, TValue>({
                       title={t('workspace_analytics.empty_state_v2.customized_insights.title')}
                       description={t('workspace_analytics.empty_state_v2.customized_insights.description')}
                       className="border-0"
+                      assetPath={resolvedPath}
                     />
                   </div>
                 </TableCell>

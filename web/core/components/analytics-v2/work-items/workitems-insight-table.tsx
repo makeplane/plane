@@ -14,6 +14,7 @@ import { useProject } from '@/hooks/store/use-project';
 import { AnalyticsV2Service } from '@/services/analytics-v2.service';
 // plane web components
 import { InsightTable } from '../insight-table';
+import { useTranslation } from '@plane/i18n';
 
 const analyticsV2Service = new AnalyticsV2Service();
 
@@ -21,6 +22,7 @@ const WorkItemsInsightTable = observer(() => {
     // router
     const params = useParams();
     const workspaceSlug = params.workspaceSlug as string;
+    const { t } = useTranslation();
     // store hooks
     const { getProjectById } = useProject();
     const { selectedDuration, selectedProjects } = useAnalyticsV2()
@@ -30,10 +32,18 @@ const WorkItemsInsightTable = observer(() => {
             ...(selectedProjects ? { project_ids: selectedProjects.join(',') } : {})
         }))
     // derived values
+    const columnsLabels: Record<string, string> = {
+        backlog_work_items: t("workspace_projects.state.backlog"),
+        started_work_items: t("workspace_projects.state.started"),
+        un_started_work_items: t("workspace_projects.state.unstarted"),
+        completed_work_items: t("workspace_projects.state.completed"),
+        cancelled_work_items: t("workspace_projects.state.cancelled"),
+        project__name: t("common.project")
+    }
     const columns = useMemo(() => [
         {
             accessorKey: "project__name",
-            header: () => <div className="text-left">Project</div>,
+            header: () => <div className="text-left">{columnsLabels["project__name"]}</div>,
             cell: ({ row }) => {
                 const project = getProjectById(row.original.project_id);
                 return <div className='flex items-center gap-2'>
@@ -44,31 +54,31 @@ const WorkItemsInsightTable = observer(() => {
                     )}
                     {project?.name}
                 </div>
-            }
+            },
         },
         {
             accessorKey: "backlog_work_items",
-            header: () => <div className="text-right">Backlog</div>,
+            header: () => <div className="text-right">{columnsLabels["backlog_work_items"]}</div>,
             cell: ({ row }) => <div className="text-right">{row.original.backlog_work_items}</div>
         },
         {
             accessorKey: "started_work_items",
-            header: () => <div className="text-right">Started</div>,
+            header: () => <div className="text-right">{columnsLabels["started_work_items"]}</div>,
             cell: ({ row }) => <div className="text-right">{row.original.started_work_items}</div>
         },
         {
             accessorKey: "un_started_work_items",
-            header: () => <div className="text-right">Unstarted</div>,
+            header: () => <div className="text-right">{columnsLabels["un_started_work_items"]}</div>,
             cell: ({ row }) => <div className="text-right">{row.original.un_started_work_items}</div>
         },
         {
             accessorKey: "completed_work_items",
-            header: () => <div className="text-right">Completed</div>,
+            header: () => <div className="text-right">{columnsLabels["completed_work_items"]}</div>,
             cell: ({ row }) => <div className="text-right">{row.original.completed_work_items}</div>
         },
         {
             accessorKey: "cancelled_work_items",
-            header: () => <div className="text-right">Cancelled</div>,
+            header: () => <div className="text-right">{columnsLabels["cancelled_work_items"]}</div>,
             cell: ({ row }) => <div className="text-right">{row.original.cancelled_work_items}</div>
         }
     ] as ColumnDef<AnalyticsTableDataMap["work-items"]>[], [getProjectById])
@@ -79,6 +89,7 @@ const WorkItemsInsightTable = observer(() => {
             data={workItemsData}
             isLoading={isLoading}
             columns={columns}
+            columnsLabels={columnsLabels}
         />
     )
 })

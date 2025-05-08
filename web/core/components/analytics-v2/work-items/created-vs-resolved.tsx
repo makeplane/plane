@@ -11,6 +11,7 @@ import { renderFormattedDate } from '@plane/utils'
 // hooks
 import { useAnalyticsV2 } from '@/hooks/store/use-analytics-v2'
 // services
+import { useResolvedAssetPath } from '@/hooks/use-resolved-asset-path'
 import { AnalyticsV2Service } from '@/services/analytics-v2.service'
 // plane web components
 import AnalyticsSectionWrapper from '../analytics-section-wrapper'
@@ -25,6 +26,7 @@ const CreatedVsResolved = observer(() => {
   const params = useParams();
   const { t } = useTranslation()
   const workspaceSlug = params.workspaceSlug as string;
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics-v2/empty-chart-area" });
   const { data: createdVsResolvedData, isLoading: isCreatedVsResolvedLoading } = useSWR(
     `created-vs-resolved-${workspaceSlug}-${selectedDuration}`,
     () => analyticsV2Service.getAdvanceAnalyticsCharts<IChartResponseV2>(workspaceSlug, 'work-items', {
@@ -100,6 +102,7 @@ const CreatedVsResolved = observer(() => {
             title={t('workspace_analytics.empty_state_v2.created_vs_resolved.title')}
             description={t('workspace_analytics.empty_state_v2.created_vs_resolved.description')}
             className='h-[350px]'
+            assetPath={resolvedPath}
           />
       }
     </AnalyticsSectionWrapper>

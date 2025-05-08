@@ -1,12 +1,11 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Control, Controller, UseFormSetValue } from "react-hook-form";
-import { Calendar, Download, SlidersHorizontal } from "lucide-react";
+import { Calendar, SlidersHorizontal } from "lucide-react";
 // plane package imports
 import { ANALYTICS_V2_X_AXIS_VALUES, ANALYTICS_V2_Y_AXIS_VALUES, ChartYAxisMetric } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IAnalyticsV2Params } from "@plane/types";
-import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web components
 import { AnalyticsV2Service } from "@/services/analytics-v2.service";
@@ -22,11 +21,8 @@ type Props = {
   classNames?: string;
 };
 
-const analyticsV2Service = new AnalyticsV2Service()
-
 export const AnalyticsV2SelectParams: React.FC<Props> = observer((props) => {
-  const { control, params, workspaceSlug, classNames } = props;
-  const { t } = useTranslation();
+  const { control, params, classNames } = props;
   const xAxisOptions = useMemo(() => ANALYTICS_V2_X_AXIS_VALUES.filter((option) => option.value !== params.group_by), [params.group_by]);
   const groupByOptions = useMemo(() => ANALYTICS_V2_X_AXIS_VALUES.filter((option) => option.value !== params.x_axis), [params.x_axis]);
 

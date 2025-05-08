@@ -8,6 +8,7 @@ import { TChartData } from '@plane/types'
 // hooks
 import { useAnalyticsV2 } from '@/hooks/store/use-analytics-v2'
 // services
+import { useResolvedAssetPath } from '@/hooks/use-resolved-asset-path'
 import { AnalyticsV2Service } from '@/services/analytics-v2.service'
 // plane web components
 import AnalyticsSectionWrapper from '../analytics-section-wrapper'
@@ -28,6 +29,8 @@ const ProjectInsights = observer(() => {
   const { t } = useTranslation()
   const workspaceSlug = params.workspaceSlug as string;
   const { selectedDuration, selectedDurationLabel, selectedProjects } = useAnalyticsV2()
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics-v2/empty-chart-radar" });
+
 
   const { data: projectInsightsData, isLoading: isLoadingProjectInsight } = useSWR(
     `radar-chart-${workspaceSlug}`,
@@ -45,7 +48,8 @@ const ProjectInsights = observer(() => {
           <AnalyticsV2EmptyState
             title={t('workspace_analytics.empty_state_v2.project_insights.title')}
             description={t('workspace_analytics.empty_state_v2.project_insights.description')}
-            className='h-[200px]'
+            className='h-[300px]'
+            assetPath={resolvedPath}
           /> :
           <div className='lg:flex gap-8'>
             {projectInsightsData && <RadarChart

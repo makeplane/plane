@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
-import { ColumnDef } from '@tanstack/react-table'
+import { ColumnDef, Row, Table } from '@tanstack/react-table'
+import { mkConfig, generateCsv, download } from 'export-to-csv'
 import { observer } from 'mobx-react'
 import { useParams } from 'next/navigation'
 import { useTheme } from 'next-themes'
@@ -12,12 +13,12 @@ import { BarChart } from '@plane/propel/charts/bar-chart'
 import { IChartResponseV2 } from '@plane/types'
 import { TBarItem, TChartDatum } from '@plane/types/src/charts'
 // plane web components
-import { Button, setToast, TOAST_TYPE } from '@plane/ui'
+import { Button } from '@plane/ui'
 import { CHART_COLOR_PALETTES, generateExtendedColors, parseChartData } from '@/components/chart/utils'
 // hooks
 import { useProjectState } from '@/hooks/store'
 import { useAnalyticsV2 } from '@/hooks/store/use-analytics-v2'
-import { useWorkspaceIssueProperties } from '@/hooks/use-workspace-issue-properties'
+import { useResolvedAssetPath } from '@/hooks/use-resolved-asset-path'
 import { AnalyticsV2Service } from '@/services/analytics-v2.service'
 import AnalyticsV2EmptyState from '../empty-state'
 import { DataTable } from '../insight-table/data-table'
@@ -38,15 +39,14 @@ const analyticsV2Service = new AnalyticsV2Service()
 const PriorityChart = observer((props: Props) => {
   const { x_axis, y_axis, group_by } = props;
   const { t } = useTranslation()
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics-v2/empty-chart-bar" });
   // store hooks
   const { selectedDuration, selectedProjects } = useAnalyticsV2()
   const { workspaceStates } = useProjectState()
   const { resolvedTheme } = useTheme();
   // router
   const params = useParams();
-
   const workspaceSlug = params.workspaceSlug as string;
-  useWorkspaceIssueProperties(workspaceSlug);
 
   const { data: priorityChartData, isLoading: priorityChartLoading } = useSWR(
     `customized-insights-chart-${workspaceSlug}-${selectedDuration}-${props.x_axis}-${props.y_axis}-${props.group_by}`,
@@ -56,24 +56,6 @@ const PriorityChart = observer((props: Props) => {
       ...props
     }),
   )
-  const exportAnalytics = () => {
-    analyticsV2Service
-      .exportAnalytics(workspaceSlug, params)
-      .then((res) => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: res.message,
-        });
-      })
-      .catch(() =>
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "There was some error in exporting the analytics. Please try again.",
-        })
-      );
-  };
   const parsedData = useMemo(() => parseChartData(priorityChartData, props.x_axis, props.group_by, props.x_axis_date_grouping)
     , [priorityChartData, props.x_axis, props.group_by, props.x_axis_date_grouping])
   const chart_model = props.group_by ? EChartModels.STACKED : EChartModels.BASIC;
@@ -157,6 +139,22 @@ const PriorityChart = observer((props: Props) => {
     cell: ({ row }) => <div className="text-right">{row.original[key]}</div>
   })), [parsedData.schema]);
 
+  const csvConfig = mkConfig({
+    fieldSeparator: ',',
+    filename: `${workspaceSlug}-analytics`,
+    decimalSeparator: '.',
+    useKeysAsHeaders: true,
+  })
+
+  const exportCSV = (rows: Row<TChartDatum>[]) => {
+    const rowData = rows.map((row) => ({
+      name: row.original.name,
+      count: row.original.count
+    }))
+    const csv = generateCsv(csvConfig)(rowData)
+    download(csvConfig)(csv)
+  }
+
   const yAxisLabel = useMemo(() => ANALYTICS_V2_Y_AXIS_VALUES.find((item) => item.value === props.y_axis)?.label ?? props.y_axis, [props.y_axis]);
   const xAxisLabel = useMemo(() => ANALYTICS_V2_X_AXIS_VALUES.find((item) => item.value === props.x_axis)?.label ?? props.x_axis, [props.x_axis]);
 
@@ -188,7 +186,7 @@ const PriorityChart = observer((props: Props) => {
               data={parsedData.data}
               columns={[...defaultColumns, ...columns]}
               searchPlaceholder={`${parsedData.data.length} ${yAxisLabel}`}
-              actions={<Button variant="accent-primary" prependIcon={<Download className="h-3.5 w-3.5" />} onClick={exportAnalytics}>
+              actions={(table: Table<TChartDatum>) => <Button variant="accent-primary" prependIcon={<Download className="h-3.5 w-3.5" />} onClick={() => exportCSV(table.getFilteredRowModel().rows)}>
                 <div>{t("exporter.csv.short_description")}</div>
               </Button>}
             />
@@ -197,6 +195,7 @@ const PriorityChart = observer((props: Props) => {
             title={t('workspace_analytics.empty_state_v2.customized_insights.title')}
             description={t('workspace_analytics.empty_state_v2.customized_insights.description')}
             className='h-[350px]'
+            assetPath={resolvedPath}
           />
       }
     </div>
