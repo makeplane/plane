@@ -296,7 +296,7 @@ jobs:
   build_appliance:
     name: Build Appliance
     runs-on: ubuntu-22.04
-    needs: [branch_build_setup, publish_release]
+    needs: [branch_build_setup, branch_build_push_admin, branch_build_push_web, branch_build_push_space, branch_build_push_live, branch_build_push_apiserver, branch_build_push_proxy]
     steps:
       - name: Build Appliance
         uses: ./actions/appliance-build-ce.yml
