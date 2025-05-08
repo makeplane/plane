@@ -546,20 +546,31 @@ function service_logs(){
       exit 1
     fi
   else
-    echo "Usage: logs <service_name> [-f|--follow]"
+    echo "Usage: logs <service_name> [-f|--follow] [-e|--error]"
     exit 1
   fi
 
   log_follow=""
-  # if the second argument is -f or --follow, then set log_follow to -f
-  if [ $# -eq 2 ] && { [ "$2" = "-f" ] || [ "$2" = "--follow" ]; }; then
-    log_follow="-f"
+  error_log=""
+  num_lines="-n 100"
+  
+  if [ $# -ge 2 ]; then
+    for arg in "$@"; do
+      case $arg in
+        -f|--follow)
+          log_follow="-f"
+          ;;
+        -e|--error)
+          error_log=".error"
+          ;;
+      esac
+    done
   fi
 
   if [ "$service_name" = "caddy" ]; then
     sudo journalctl -u caddy $log_follow
   else
-    sudo journalctl -u plane-${service_name} $log_follow
+    sudo tail ${num_lines} ${log_follow} /var/log/plane/${service_name}${error_log}.log
   fi
   if [ $? -ne 0 ]; then
     echo "Failed to get logs for $service_name"
