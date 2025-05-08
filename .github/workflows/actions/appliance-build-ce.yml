@@ -1,20 +1,81 @@
 name: Appliance Build CE
 
 on:
-  workflow_dispatch:
-  # push:
-  #   branches:
-  #     - non-docker-build
-
+  workflow_call:
+    inputs:
+      release_tag:
+        type: string
+        required: true
+        default: v0.26.0
+      build_aws_appliance:
+        type: boolean
+        required: true
+        default: true
+      build_do_appliance:
+        type: boolean
+        required: true
+        default: true
+      ami_name_prefix:
+        type: string
+        required: true
+        default: plane-ce
+      aws_manifest_bucket:
+        type: string
+        required: true
+        default: plane-terraform-state-dev
+      aws_vpc_cidr:
+        type: string
+        required: true
+        default: 10.22.0.0/16
+      aws_subnet_cidr:
+        type: string
+        required: true
+        default: 10.22.1.0/24
+      aws_vpc_region:
+        type: string
+        required: true
+        default: us-east-1
+      aws_base_image_owner:
+        type: string
+        required: true
+        default: 099720109477
+      do_region:
+        type: string
+        required: true
+        default: BLR1
+    secrets:
+      aws_access_key:
+        type: string
+        required: true
+      aws_secret_key:
+        type: string
+        required: true
+      do_token:
+        type: string
+        required: true
+    outputs:
+      aws_image_id:
+        description: "AWS image ID"
+        value: ${{ jobs.build_aws_appliance.outputs.aws_image_id }}
+      aws_image_name:
+        description: "AWS image name"
+        value: ${{ jobs.build_aws_appliance.outputs.aws_image_name }}
+      do_image_id:
+        description: "Digital Ocean image ID"
+        value: ${{ jobs.build_do_appliance.outputs.do_image_id }}
+      do_image_name:
+        description: "Digital Ocean image name"
+        value: ${{ jobs.build_do_appliance.outputs.do_image_name }}
+        
 env:
-  DEFAULT_TAG_NAME: v0.26.0
-  MANIFEST_BUCKET: plane-terraform-state-dev
-  AMI_NAME_PREFIX: plane-ce
-  VPC_CIDR: ${{ vars.VPC_CIDR || '10.22.0.0/16' }}
-  SUBNET_CIDR: ${{ vars.SUBNET_CIDR || '10.22.1.0/24' }}
-  VPC_REGION: ${{ vars.VPC_REGION || 'us-east-1' }}
-  DO_REGION: ${{ vars.PLANE_DEV_DIGITAL_OCEAN_REGION || 'BLR1' }}
-  BASE_IMAGE_OWNER: ${{ vars.BASE_IMAGE_OWNER || '099720109477' }}
+  RELEASE_TAG: ${{ inputs.release_tag }}
+  AWS_MANIFEST_BUCKET: ${{ inputs.manifest_bucket }}
+  AMI_NAME_PREFIX: ${{ inputs.ami_name_prefix }}
+  AWS_VPC_CIDR: ${{ inputs.aws_vpc_cidr }}
+  AWS_SUBNET_CIDR: ${{ inputs.aws_subnet_cidr }}
+  AWS_VPC_REGION: ${{ inputs.aws_vpc_region }}
+  AWS_BASE_IMAGE_OWNER: ${{ inputs.aws_base_image_owner }}
+  DO_REGION: ${{ inputs.do_region }}
 
 jobs:
   build_setup:
@@ -32,12 +93,7 @@ jobs:
         run: |
           #  if the action is workflow_dispatch, then use the github.ref_name
           
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            TAG_NAME=${{ github.ref_name }}
-          else
-            # get the selected branch/tag name and flatten it 
-            TAG_NAME=${{ env.DEFAULT_TAG_NAME }}
-          fi
+          TAG_NAME=${{ env.RELEASE_TAG }}
 
           TAG_NAME=${TAG_NAME//\//-}
 
@@ -205,8 +261,12 @@ jobs:
           retention-days: 1
   
   build_do_appliance:
+    if: inputs.build_do_appliance == true
     needs: [build_setup, build_admin, build_web, build_space, build_live, build_backend]
     runs-on: ubuntu-22.04
+    outputs:
+      do_image_id: ${{ steps.ami_info.outputs.AMI_ID }}
+      do_image_name: ${{ steps.ami_info.outputs.AMI_NAME }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -236,14 +296,14 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.PLANE_DEV_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.PLANE_DEV_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.VPC_REGION }}
+          aws-access-key-id: ${{ secrets.aws_access_key }}
+          aws-secret-access-key: ${{ secrets.aws_secret_key }}
+          aws-region: ${{ env.AWS_VPC_REGION }}
 
       - name: Download Previous Manifest
         run: |
           # Download the previous manifest from S3 if it exists
-          aws s3 cp s3://${{ env.MANIFEST_BUCKET }}/plane-ce/ami/manifests/ce-digital-ocean-latest-manifest.json ./ce-digital-ocean-previous-manifest.json || true
+          aws s3 cp s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-ce/ami/manifests/ce-digital-ocean-latest-manifest.json ./ce-digital-ocean-previous-manifest.json || true
 
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
@@ -263,7 +323,7 @@ jobs:
         id: build
         run: |
           packer build \
-            -var "do_token=${{ secrets.PLANE_DEV_DIGITAL_OCEAN_TOKEN }}" \
+            -var "do_token=${{ secrets.do_token }}" \
             -var "do_region=${{ env.DO_REGION }}" \
             -var "ami_name_prefix=${{ env.AMI_NAME_PREFIX }}-${{ needs.build_setup.outputs.tag_name }}" \
             ./deploy/packer/ce-digital-ocean.pkr.hcl
@@ -298,30 +358,25 @@ jobs:
       - name: Store Manifest in S3
         run: |
           # Store the current manifest as latest
-          aws s3 cp ce-digital-ocean-manifest.json s3://${{ env.MANIFEST_BUCKET }}/plane-ce/ami/manifests/ce-digital-ocean-latest-manifest.json
+          aws s3 cp ce-digital-ocean-manifest.json s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-ce/ami/manifests/ce-digital-ocean-latest-manifest.json
           
           # Also store a versioned copy
-          aws s3 cp ce-digital-ocean-manifest.json "s3://${{ env.MANIFEST_BUCKET }}/plane-ce/ami/manifests/ce-digital-ocean-manifest-${{ github.sha }}.json"
+          aws s3 cp ce-digital-ocean-manifest.json "s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-ce/ami/manifests/ce-digital-ocean-manifest-${{ github.sha }}.json"
 
       - name: Upload Build Manifest as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ce-digital-ocean-manifest
           path: ce-digital-ocean-manifest.json
-          retention-days: 30
-
-      - name: Create Build Summary
-        run: |
-          echo "### 🚀 Plane CE Digital Ocean Build Summary" >> $GITHUB_STEP_SUMMARY
-          echo "| Detail | Value |" >> $GITHUB_STEP_SUMMARY
-          echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
-          echo "| Droplet ID | \`${{ steps.ami_info.outputs.AMI_ID }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Droplet Name | \`${{ steps.ami_info.outputs.AMI_NAME }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Droplet Region | \`${{ steps.ami_info.outputs.REGION }}\` |" >> $GITHUB_STEP_SUMMARY
+          retention-days: 5
 
   build_aws_appliance:
+    if: inputs.build_aws_appliance == true
     needs: [build_setup, build_admin, build_web, build_space, build_live, build_backend]
     runs-on: ubuntu-22.04
+    outputs:
+      aws_image_id: ${{ steps.ami_info.outputs.AMI_ID }}
+      aws_image_name: ${{ steps.ami_info.outputs.AMI_NAME }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -351,14 +406,14 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.PLANE_DEV_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.PLANE_DEV_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.VPC_REGION }}
+          aws-access-key-id: ${{ secrets.aws_access_key }}
+          aws-secret-access-key: ${{ secrets.aws_secret_key }}
+          aws-region: ${{ env.AWS_VPC_REGION }}
 
       - name: Download Previous Manifest
         run: |
           # Download the previous manifest from S3 if it exists
-          aws s3 cp s3://${{ env.MANIFEST_BUCKET }}/plane-ce/ami/manifests/ce-aws-ami-latest-manifest.json ./ce-aws-ami-previous-manifest.json || true
+          aws s3 cp s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-ce/ami/manifests/ce-aws-ami-latest-manifest.json ./ce-aws-ami-previous-manifest.json || true
 
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
@@ -378,12 +433,12 @@ jobs:
         id: build
         run: |
           packer build \
-            -var "aws_access_key=${{ secrets.PLANE_DEV_AWS_ACCESS_KEY_ID }}" \
-            -var "aws_secret_key=${{ secrets.PLANE_DEV_AWS_SECRET_ACCESS_KEY }}" \
+            -var "aws_access_key=${{ secrets.aws_access_key }}" \
+            -var "aws_secret_key=${{ secrets.aws_secret_key }}" \
             -var "ami_name_prefix=${{ env.AMI_NAME_PREFIX }}-${{ needs.build_setup.outputs.tag_name }}" \
-            -var "vpc_cidr=${{ env.VPC_CIDR }}" \
-            -var "subnet_cidr=${{ env.SUBNET_CIDR }}" \
-            -var "base_image_owner=${{ env.BASE_IMAGE_OWNER }}" \
+            -var "vpc_cidr=${{ env.AWS_VPC_CIDR }}" \
+            -var "subnet_cidr=${{ env.AWS_SUBNET_CIDR }}" \
+            -var "base_image_owner=${{ env.AWS_BASE_IMAGE_OWNER }}" \
             ./deploy/packer/ce-aws-ami.pkr.hcl
 
       - name: Cleanup Old AMIs
@@ -427,26 +482,17 @@ jobs:
       - name: Store Manifest in S3
         run: |
           # Store the current manifest as latest
-          aws s3 cp ce-aws-ami-manifest.json s3://${{ env.MANIFEST_BUCKET }}/plane-ce/ami/manifests/ce-aws-ami-latest-manifest.json
+          aws s3 cp ce-aws-ami-manifest.json s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-ce/ami/manifests/ce-aws-ami-latest-manifest.json
           
           # Also store a versioned copy
-          aws s3 cp ce-aws-ami-manifest.json "s3://${{ env.MANIFEST_BUCKET }}/plane-ce/ami/manifests/ce-aws-ami-manifest-${{ github.sha }}.json"
+          aws s3 cp ce-aws-ami-manifest.json "s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-ce/ami/manifests/ce-aws-ami-manifest-${{ github.sha }}.json"
 
       - name: Upload Build Manifest as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ce-aws-ami-manifest
           path: ce-aws-ami-manifest.json
-          retention-days: 30
-
-      - name: Create Build Summary
-        run: |
-          echo "### 🚀 Plane CE AWS Build Summary" >> $GITHUB_STEP_SUMMARY
-          echo "| Detail | Value |" >> $GITHUB_STEP_SUMMARY
-          echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
-          echo "| AMI ID | \`${{ steps.ami_info.outputs.AMI_ID }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| AMI Name | \`${{ steps.ami_info.outputs.AMI_NAME }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Region | \`${{ steps.ami_info.outputs.REGION }}\` |" >> $GITHUB_STEP_SUMMARY
+          retention-days: 5
 
       - name: Tag AMI
         run: |

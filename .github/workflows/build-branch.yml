@@ -292,3 +292,25 @@ jobs:
             ${{ github.workspace }}/deploy/selfhost/restore.sh
             ${{ github.workspace }}/deploy/selfhost/docker-compose.yml
             ${{ github.workspace }}/deploy/selfhost/variables.env
+
+  build_appliance:
+    name: Build Appliance
+    runs-on: ubuntu-22.04
+    needs: [branch_build_setup, publish_release]
+    steps:
+      - name: Build Appliance
+        uses: ./actions/appliance-build-ce.yml
+        with:
+          release_tag: ${{ needs.branch_build_setup.outputs.release_version }}
+          build_aws_appliance: false
+          build_do_appliance: true
+          ami_name_prefix: plane-ce
+          aws_manifest_bucket: plane-terraform-state-dev
+          aws_vpc_cidr: 10.22.0.0/16
+          aws_subnet_cidr: 10.22.1.0/24
+          aws_vpc_region: us-east-1
+          aws_base_image_owner: 099720109477
+          do_region: BLR1
+          aws_access_key: ${{ secrets.PLANE_DEV_AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.PLANE_DEV_AWS_SECRET_ACCESS_KEY }}
+          do_token: ${{ secrets.PLANE_DEV_DIGITAL_OCEAN_TOKEN }}
