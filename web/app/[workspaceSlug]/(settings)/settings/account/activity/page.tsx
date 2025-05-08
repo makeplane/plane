@@ -54,6 +54,7 @@ const ProfileActivityPage = observer(() => {
         title={t("profile.empty_state.activity.title")}
         description={t("profile.empty_state.activity.description")}
         assetPath={resolvedPath}
+        className="w-full !p-0 justify-start items-start"
       />
     );
   }

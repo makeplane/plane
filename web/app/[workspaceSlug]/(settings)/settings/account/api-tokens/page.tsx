@@ -87,6 +87,7 @@ const ApiTokensPage = observer(() => {
                 title={t("workspace_settings.empty_state.api_tokens.title")}
                 description={t("workspace_settings.empty_state.api_tokens.description")}
                 assetPath={resolvedPath}
+                className="w-full !px-0 justify-start items-start"
               />
             </div>
           </div>
