@@ -71,3 +71,53 @@ export const PROFILE_ADMINS_TAB = [
     selected: "/activity/",
   },
 ];
+
+/**
+ * @description The start of the week for the user
+ * @enum {number}
+ */
+export enum EStartOfTheWeek {
+  SUNDAY = 0,
+  MONDAY = 1,
+  TUESDAY = 2,
+  WEDNESDAY = 3,
+  THURSDAY = 4,
+  FRIDAY = 5,
+  SATURDAY = 6,
+}
+
+/**
+ * @description The options for the start of the week
+ * @type {Array<{value: EStartOfTheWeek, label: string}>}
+ * @constant
+ */
+export const START_OF_THE_WEEK_OPTIONS = [
+  {
+    value: EStartOfTheWeek.SUNDAY,
+    label: "Sunday",
+  },
+  {
+    value: EStartOfTheWeek.MONDAY,
+    label: "Monday",
+  },
+  {
+    value: EStartOfTheWeek.TUESDAY,
+    label: "Tuesday",
+  },
+  {
+    value: EStartOfTheWeek.WEDNESDAY,
+    label: "Wednesday",
+  },
+  {
+    value: EStartOfTheWeek.THURSDAY,
+    label: "Thursday",
+  },
+  {
+    value: EStartOfTheWeek.FRIDAY,
+    label: "Friday",
+  },
+  {
+    value: EStartOfTheWeek.SATURDAY,
+    label: "Saturday",
+  },
+];
