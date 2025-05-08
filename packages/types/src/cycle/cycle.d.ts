@@ -104,6 +104,7 @@ export interface ICycle extends TProgressSnapshot {
   project_detail: IProjectDetails;
   progress: any[];
   version: number;
+  created_at?: string;
 }
 
 export interface CycleIssueResponse {

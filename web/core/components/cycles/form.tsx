@@ -149,7 +149,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                     <DateRangeDropdown
                       buttonVariant="border-with-text"
                       className="h-7"
-                      minDate={new Date()}
+                      minDate={new Date(data?.created_at ?? new Date())}
                       value={{
                         from: getDate(startDateValue),
                         to: getDate(endDateValue),
