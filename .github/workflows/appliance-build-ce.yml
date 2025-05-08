@@ -77,7 +77,7 @@ jobs:
           echo "BACKEND_IMAGE=makeplane/plane-backend" >> $GITHUB_OUTPUT
           echo "LIVE_IMAGE=makeplane/plane-live" >> $GITHUB_OUTPUT
 
-  build_admin:
+  package_admin:
     needs: build_setup
     runs-on: ubuntu-22.04
     steps:
@@ -108,7 +108,7 @@ jobs:
           path: admin-dist.tar.gz
           retention-days: 1
     
-  build_web:
+  package_web:
     needs: build_setup
     runs-on: ubuntu-22.04
     steps:
@@ -139,7 +139,7 @@ jobs:
           path: web-dist.tar.gz
           retention-days: 1
 
-  build_space:
+  package_space:
     needs: build_setup
     runs-on: ubuntu-22.04
     steps:
@@ -170,7 +170,7 @@ jobs:
           path: space-dist.tar.gz
           retention-days: 1
  
-  build_live:
+  package_live:
     needs: build_setup
     runs-on: ubuntu-22.04
     steps:
@@ -201,7 +201,7 @@ jobs:
           path: live-dist.tar.gz
           retention-days: 1
 
-  build_backend:
+  package_backend:
     needs: build_setup
     runs-on: ubuntu-22.04
     steps:
@@ -234,7 +234,7 @@ jobs:
   
   build_do_appliance:
     if: inputs.build_do_appliance == true
-    needs: [build_setup, build_admin, build_web, build_space, build_live, build_backend]
+    needs: [build_setup, package_admin, package_web, package_space, package_live, package_backend]
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout Repository
@@ -350,7 +350,7 @@ jobs:
 
   build_aws_appliance:
     if: inputs.build_aws_appliance == true
-    needs: [build_setup, build_admin, build_web, build_space, build_live, build_backend]
+    needs: [build_setup, package_admin, package_web, package_space, package_live, package_backend]
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout Repository
