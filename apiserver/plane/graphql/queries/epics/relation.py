@@ -12,13 +12,14 @@ from strawberry.permission import PermissionExtension
 from strawberry.types import Info
 
 # Module Imports
-from plane.db.models import Issue, IssueRelation
+from plane.db.models import IssueRelation
 from plane.graphql.helpers import (
     get_epic,
     get_project,
     get_workspace,
     is_epic_feature_flagged,
     is_project_epics_enabled,
+    work_item_base_query,
 )
 from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.epics.relation import EpicRelationType
@@ -87,7 +88,7 @@ class EpicRelationQuery:
 
         # constructing the work item query
         work_item_queryset = (
-            Issue.objects.filter(workspace__slug=slug)
+            work_item_base_query(workspace_slug=slug)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels")
             .filter(archived_at__isnull=True)
