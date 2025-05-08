@@ -33,18 +33,12 @@ export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
             selectedDuration: observable,
             selectedProjects: observable,
             // computed
-            selectedProjectLabel: computed,
             selectedDurationLabel: computed,
             // actions
             updateSelectedProjects: action,
             updateSelectedDuration: action
         })
     }
-
-    get selectedProjectLabel() { // TODO: get the project label from the project id
-        return "All Projects"
-    }
-
 
     get selectedDurationLabel() {
         return ANALYTICS_V2_DURATION_FILTER_OPTIONS.find(item => item.value === this.selectedDuration)?.name ?? null
@@ -63,7 +57,6 @@ export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
     }
 
     updateSelectedDuration = (duration: DurationType) => {
-        const initialState = this.selectedDuration;
         try {
             runInAction(() => {
                 this.selectedDuration = duration;

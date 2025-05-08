@@ -41,7 +41,7 @@ export interface WorkItemInsightColumns {
     started_work_items: number;
 }
 
-type AnalyticsTableDataMap = {
+export type AnalyticsTableDataMap = {
     "work-items": WorkItemInsightColumns,
 }
 
