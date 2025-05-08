@@ -14,7 +14,7 @@ export const SettingsHeader = observer(() => {
   // hooks
   const { data: currentUserSettings } = useUserSettings();
   const { t } = useTranslation();
-
+  const { isScrolled } = useUserSettings();
   // redirect url for normal mode
   const redirectWorkspaceSlug =
     currentUserSettings?.workspace?.last_workspace_slug ||
@@ -22,41 +22,58 @@ export const SettingsHeader = observer(() => {
     "";
 
   return (
-    <div className="bg-custom-background-90 px-4 py-4 md:px-12 md:py-8">
+    <div
+      className={cn(
+        "bg-custom-background-90 px-4 py-4 gap-2 md:px-12 md:py-8 transition-all duration-300 ease-in-out",
+        {
+          "flex flex-row gap-4": isScrolled,
+        }
+      )}
+    >
       {/* Breadcrumb */}
       <Link
         href={`/${redirectWorkspaceSlug}`}
-        className="group flex items-center gap-2 text-custom-text-300 mb-4 border border-transparent hover:bg-custom-background-100 hover:border-custom-border-200 w-fit pr-2 rounded-lg "
+        className={cn(
+          "group flex  gap-2 text-custom-text-300 mb-4 border border-transparent hover:bg-custom-background-100 hover:border-custom-border-200 w-fit rounded-lg",
+          !isScrolled ? "items-center pr-2" : ""
+        )}
       >
         <button
           className={cn(
             getButtonStyling("neutral-primary", "sm"),
-            "rounded-lg p-1 hover:bg-custom-background-100 hover:border-custom-border-200",
-            "group-hover:bg-custom-background-100 group-hover:border-transparent"
+            "h-6 w-6 rounded-lg p-1 hover:bg-custom-background-100 hover:border-custom-border-200",
+            "group-hover:bg-custom-background-100 group-hover:border-transparent",
+            isScrolled ? "my-1" : ""
           )}
         >
-          <ChevronLeftIcon className="h-4 w-4  my-auto" />
+          <ChevronLeftIcon className={cn("h-4 w-4", !isScrolled ? "my-auto" : "")} />
         </button>
-        <div className="text-sm my-auto font-semibold text-custom-text-200">{t("back_to_workspace")}</div>
-        {/* Last workspace */}
-        <div className="flex items-center gap-1">
-          <WorkspaceLogo
-            workspace={{
-              logo_url: currentUserSettings?.workspace?.last_workspace_logo || "",
-              name: currentUserSettings?.workspace?.last_workspace_name || "",
-            }}
-            size="sm"
-            className="my-auto"
-          />
-          <div className="text-xs my-auto text-custom-text-100 font-semibold">
-            {currentUserSettings?.workspace?.last_workspace_name}
+        <div
+          className={cn("flex gap-2 h-full w-full transition-[height] duration-300  ease-in-out", {
+            "h-0 w-0 overflow-hidden": isScrolled,
+          })}
+        >
+          <div className="text-sm my-auto font-semibold text-custom-text-200">{t("back_to_workspace")}</div>
+          {/* Last workspace */}
+          <div className="flex items-center gap-1">
+            <WorkspaceLogo
+              workspace={{
+                logo_url: currentUserSettings?.workspace?.last_workspace_logo || "",
+                name: currentUserSettings?.workspace?.last_workspace_name || "",
+              }}
+              size="sm"
+              className="my-auto"
+            />
+            <div className="text-xs my-auto text-custom-text-100 font-semibold">
+              {currentUserSettings?.workspace?.last_workspace_name}
+            </div>
           </div>
         </div>
       </Link>
       <div className="flex flex-col gap-2">
         {/* Description */}
         <div className="text-custom-text-100 font-semibold text-2xl">{t("settings")}</div>
-        <div className="text-custom-text-200 text-base">{t("settings_description")}</div>
+        {!isScrolled && <div className="text-custom-text-200 text-base">{t("settings_description")}</div>}
         {/* Actions */}
         <SettingsTabs />
       </div>

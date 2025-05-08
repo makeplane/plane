@@ -21,10 +21,12 @@ export interface IUserSettingsStore {
   data: IUserSettings;
   canUseLocalDB: boolean;
   sidebarCollapsed: boolean;
+  isScrolled: boolean;
   // actions
   fetchCurrentUserSettings: () => Promise<IUserSettings | undefined>;
   toggleLocalDB: (workspaceSlug: string | undefined, projectId: string | undefined) => Promise<void>;
   toggleSidebar: (collapsed?: boolean) => void;
+  toggleIsScrolled: (isScrolled?: boolean) => void;
 }
 
 export class UserSettingsStore implements IUserSettingsStore {
@@ -32,6 +34,7 @@ export class UserSettingsStore implements IUserSettingsStore {
   isLoading: boolean = false;
   sidebarCollapsed: boolean = true;
   error: TError | undefined = undefined;
+  isScrolled: boolean = false;
   data: IUserSettings = {
     id: undefined,
     email: undefined,
@@ -57,17 +60,24 @@ export class UserSettingsStore implements IUserSettingsStore {
       data: observable,
       canUseLocalDB: observable.ref,
       sidebarCollapsed: observable.ref,
+      isScrolled: observable.ref,
       // actions
       fetchCurrentUserSettings: action,
       toggleLocalDB: action,
       toggleSidebar: action,
+      toggleIsScrolled: action,
     });
     // services
     this.userService = new UserService();
   }
 
+  // actions
   toggleSidebar = (collapsed?: boolean) => {
     this.sidebarCollapsed = collapsed ?? !this.sidebarCollapsed;
+  };
+
+  toggleIsScrolled = (isScrolled?: boolean) => {
+    this.isScrolled = isScrolled ?? !this.isScrolled;
   };
 
   toggleLocalDB = async (workspaceSlug: string | undefined, projectId: string | undefined) => {
