@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { observer } from "mobx-react";
 import { Matcher } from "react-day-picker";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
@@ -10,6 +11,7 @@ import { ComboDropDown, Calendar } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate, getDate } from "@/helpers/date-time.helper";
 // hooks
+import { useUserProfile } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";
 // components
 import { DropdownButton } from "./buttons";
@@ -33,7 +35,7 @@ type Props = TDropdownProps & {
   renderByDefault?: boolean;
 };
 
-export const DateDropdown: React.FC<Props> = (props) => {
+export const DateDropdown: React.FC<Props> = observer((props) => {
   const {
     buttonClassName = "",
     buttonContainerClassName,
@@ -62,6 +64,10 @@ export const DateDropdown: React.FC<Props> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  // hooks
+  const {
+    data: { start_of_the_week: startOfWeek },
+  } = useUserProfile();
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -186,6 +192,7 @@ export const DateDropdown: React.FC<Props> = (props) => {
                 disabled={disabledDays}
                 mode="single"
                 fixedWeeks
+                weekStartsOn={startOfWeek}
               />
             </div>
           </Combobox.Options>,
@@ -193,4 +200,4 @@ export const DateDropdown: React.FC<Props> = (props) => {
         )}
     </ComboDropDown>
   );
-};
+});
