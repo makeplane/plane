@@ -30,7 +30,7 @@ export const GlobalIssuesHeader = observer(() => {
     issuesFilter: { filters, updateFilters },
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { getViewDetailsById } = useGlobalView();
-  const { workspaceLabels } = useLabel();
+  const { allWorkspaceLabels } = useLabel();
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
@@ -124,7 +124,7 @@ export const GlobalIssuesHeader = observer(() => {
                   handleFiltersUpdate={handleFiltersUpdate}
                   displayFilters={issueFilters?.displayFilters ?? {}}
                   handleDisplayFiltersUpdate={handleDisplayFilters}
-                  labels={workspaceLabels ?? undefined}
+                  labels={allWorkspaceLabels ?? undefined}
                   memberIds={workspaceMemberIds ?? undefined}
                 />
               </FiltersDropdown>

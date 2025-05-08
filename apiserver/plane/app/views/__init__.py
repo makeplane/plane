@@ -61,7 +61,7 @@ from .workspace.invite import (
     WorkspaceJoinEndpoint,
     UserWorkspaceInvitationsViewSet,
 )
-from .workspace.label import WorkspaceLabelsEndpoint
+from .workspace.label import WorkspaceLabelViewSet, WorkspaceLabelsEndpoint
 from .workspace.state import WorkspaceStatesEndpoint
 from .workspace.user import (
     UserLastProjectWithWorkspaceEndpoint,

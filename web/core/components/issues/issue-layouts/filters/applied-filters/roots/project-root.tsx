@@ -22,7 +22,7 @@ export const ProjectAppliedFiltersRoot: React.FC<TProjectAppliedFiltersRootProps
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
-  const { projectLabels } = useLabel();
+  const { labels } = useLabel();
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(storeType);
@@ -79,7 +79,7 @@ export const ProjectAppliedFiltersRoot: React.FC<TProjectAppliedFiltersRootProps
           appliedFilters={appliedFilters}
           handleClearAllFilters={handleClearAllFilters}
           handleRemoveFilter={handleRemoveFilter}
-          labels={projectLabels ?? []}
+          labels={labels ?? []}
           states={projectStates}
           alwaysAllowEditing
         />
