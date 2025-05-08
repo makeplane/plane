@@ -6,3 +6,4 @@ from .links import IssueLinkMutation
 from .module import IssueModuleMutation
 from .relation import IssueRelationMutation
 from .sub_issue import SubIssueMutation
+from .comment_reaction import WorkItemCommentReactionMutation

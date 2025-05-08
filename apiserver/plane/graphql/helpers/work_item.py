@@ -1,8 +1,14 @@
 # Python imports
 from typing import Optional
 
+# Third Party Imports
+from asgiref.sync import sync_to_async
+
 # Django Imports
 from django.db.models import Q
+
+# Strawberry Imports
+from strawberry.exceptions import GraphQLError
 
 # Module Imports
 from plane.db.models import Issue
@@ -54,3 +60,25 @@ def work_item_base_query(
         )
 
     return work_item_base_query
+
+
+@sync_to_async
+def get_work_item(
+    workspace_slug: str,
+    work_item_id: str,
+    project_id: Optional[str] = None,
+    user_id: Optional[str] = None,
+):
+    """
+    Get the work item for the given project and work item id
+    """
+    base_query = work_item_base_query(
+        workspace_slug=workspace_slug, project_id=project_id, user_id=user_id
+    )
+
+    try:
+        return base_query.get(id=work_item_id)
+    except Issue.DoesNotExist:
+        message = "Work item not found"
+        error_extensions = {"code": "NOT_FOUND", "statusCode": 404}
+        raise GraphQLError(message, extensions=error_extensions)
