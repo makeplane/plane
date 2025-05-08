@@ -1,5 +1,7 @@
+import { EStartOfTheWeek } from "@plane/constants";
 // helpers
 import { ICalendarDate, ICalendarPayload } from "@/components/issues";
+import { DAYS_LIST } from "@/constants/calendar";
 import { getWeekNumberOfDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // types
 
@@ -92,3 +94,10 @@ export const generateCalendarData = (currentStructure: ICalendarPayload | null, 
 
   return calendarData;
 };
+
+export const getOrderedDays = (startOfWeek: EStartOfTheWeek) =>
+  Object.values(DAYS_LIST).sort((a, b) => {
+    const dayA = (7 + a.value - startOfWeek) % 7;
+    const dayB = (7 + b.value - startOfWeek) % 7;
+    return dayA - dayB;
+  });

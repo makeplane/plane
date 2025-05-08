@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
-
-// constants
-import { DAYS_LIST } from "@/constants/calendar";
+// helpers
+import { getOrderedDays } from "@/helpers/calendar.helper";
+// hooks
+import { useUserProfile } from "@/hooks/store";
 
 type Props = {
   isLoading: boolean;
@@ -10,6 +11,13 @@ type Props = {
 
 export const CalendarWeekHeader: React.FC<Props> = observer((props) => {
   const { isLoading, showWeekends } = props;
+  // hooks
+  const {
+    data: { start_of_the_week: startOfWeek },
+  } = useUserProfile();
+
+  // derived
+  const orderedDays = getOrderedDays(startOfWeek);
 
   return (
     <div
@@ -20,8 +28,8 @@ export const CalendarWeekHeader: React.FC<Props> = observer((props) => {
       {isLoading && (
         <div className="absolute h-[1.5px] w-3/4 animate-[bar-loader_2s_linear_infinite] bg-custom-primary-100" />
       )}
-      {Object.values(DAYS_LIST).map((day) => {
-        if (!showWeekends && (day.shortTitle === "Sat" || day.shortTitle === "Sun")) return null;
+      {orderedDays.map((day) => {
+        if (!showWeekends && (day.value === 0 || day.value === 6)) return null;
 
         return (
           <div

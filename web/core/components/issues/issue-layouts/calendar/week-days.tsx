@@ -1,9 +1,12 @@
 import { observer } from "mobx-react";
 import { TGroupedIssues, TIssue, TIssueMap, TPaginationData } from "@plane/types";
+import { cn } from "@plane/utils";
 // components
 import { CalendarDayTile } from "@/components/issues";
 // helpers
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+// hooks
+import { useUserProfile } from "@/hooks/store";
 // types
 import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import { ICycleIssuesFilter } from "@/store/issue/cycle";
@@ -65,20 +68,38 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
     canEditProperties,
     isEpic = false,
   } = props;
+  // hooks
+  const {
+    data: { start_of_the_week: startOfWeek },
+  } = useUserProfile();
 
   const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
   const showWeekends = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
 
   if (!week) return null;
 
+  const shouldShowDay = (dayDate: Date) => {
+    if (showWeekends) return true;
+    const day = dayDate.getDay();
+    return !(day === 0 || day === 6);
+  };
+
+  const sortedWeekDays = Object.values(week).sort((a, b) => {
+    const dayA = (7 + a.date.getDay() - startOfWeek) % 7;
+    const dayB = (7 + b.date.getDay() - startOfWeek) % 7;
+    return dayA - dayB;
+  });
+
   return (
     <div
-      className={`grid divide-custom-border-200 md:divide-x-[0.5px] ${showWeekends ? "grid-cols-7" : "grid-cols-5"} ${
-        calendarLayout === "month" ? "" : "h-full"
-      }`}
+      className={cn("grid divide-custom-border-200 md:divide-x-[0.5px]", {
+        "grid-cols-7": showWeekends,
+        "grid-cols-5": !showWeekends,
+        "h-full": calendarLayout !== "month",
+      })}
     >
-      {Object.values(week).map((date: ICalendarDate) => {
-        if (!showWeekends && (date.date.getDay() === 0 || date.date.getDay() === 6)) return null;
+      {sortedWeekDays.map((date: ICalendarDate) => {
+        if (!shouldShowDay(date.date)) return null;
 
         return (
           <CalendarDayTile
