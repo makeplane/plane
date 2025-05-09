@@ -1,6 +1,7 @@
 "use client";
 
 import { Command } from "cmdk";
+import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { IWorkspaceSearchResults } from "@plane/types";
@@ -8,13 +9,15 @@ import { IWorkspaceSearchResults } from "@plane/types";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { commandGroups } from "@/plane-web/components/command-palette";
+// helpers
+import { openProjectAndScrollToSidebar } from "./helper";
 
 type Props = {
   closePalette: () => void;
   results: IWorkspaceSearchResults;
 };
 
-export const CommandPaletteSearchResults: React.FC<Props> = (props) => {
+export const CommandPaletteSearchResults: React.FC<Props> = observer((props) => {
   const { closePalette, results } = props;
   // router
   const router = useAppRouter();
@@ -38,6 +41,12 @@ export const CommandPaletteSearchResults: React.FC<Props> = (props) => {
                   onSelect={() => {
                     closePalette();
                     router.push(currentSection.path(item, projectId));
+                    const itemProjectId =
+                      item?.project_id ||
+                      (Array.isArray(item?.project_ids) && item?.project_ids?.length > 0
+                        ? item?.project_ids[0]
+                        : undefined);
+                    if (itemProjectId) openProjectAndScrollToSidebar(itemProjectId);
                   }}
                   value={`${key}-${item?.id}-${item.name}-${item.project__identifier ?? ""}-${item.sequence_id ?? ""}`}
                   className="focus:outline-none"
@@ -54,4 +63,4 @@ export const CommandPaletteSearchResults: React.FC<Props> = (props) => {
       })}
     </>
   );
-};
+});
