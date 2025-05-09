@@ -1049,7 +1049,9 @@
     "multiple_connections_found": "Beberapa koneksi ditemukan saat hanya satu yang diharapkan",
     "installation_not_found": "Instalasi yang diminta tidak dapat ditemukan",
     "user_not_found": "Pengguna yang diminta tidak dapat ditemukan",
-    "error_fetching_token": "Gagal mengambil token autentikasi"
+    "error_fetching_token": "Gagal mengambil token autentikasi",
+    "invalid_app_credentials": "Informasi autentikasi aplikasi yang diberikan tidak valid",
+    "invalid_app_installation_id": "Gagal menginstal aplikasi"
   },
 
   "import_status": {

@@ -1048,7 +1048,9 @@
     "multiple_connections_found": "Várias conexões foram encontradas quando apenas uma era esperada",
     "installation_not_found": "A instalação solicitada não pôde ser encontrada",
     "user_not_found": "O usuário solicitado não pôde ser encontrado",
-    "error_fetching_token": "Falha ao buscar token de autenticação"
+    "error_fetching_token": "Falha ao buscar token de autenticação",
+    "invalid_app_credentials": "As credenciais da aplicação fornecidas são inválidas",
+    "invalid_app_installation_id": "Falha ao instalar a aplicação"
   },
 
   "import_status": {

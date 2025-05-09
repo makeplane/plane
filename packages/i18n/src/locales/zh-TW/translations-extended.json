@@ -1049,7 +1049,9 @@
     "multiple_connections_found": "在只期望一個連接時找到了多個連接",
     "installation_not_found": "找不到請求的安裝",
     "user_not_found": "找不到請求的用戶",
-    "error_fetching_token": "獲取認證令牌失敗"
+    "error_fetching_token": "獲取認證令牌失敗",
+    "invalid_app_credentials": "提供的應用憑證無效",
+    "invalid_app_installation_id": "安裝應用失敗"
   },
 
   "import_status": {

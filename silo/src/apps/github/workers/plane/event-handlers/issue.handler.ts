@@ -1,3 +1,4 @@
+import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS } from "@plane/etl/core";
 import {
   createGithubService,
   GithubIssue,
@@ -10,11 +11,12 @@ import { TWorkspaceCredential } from "@plane/types";
 import { GithubEntityConnection, GithubWorkspaceConnection } from "@/apps/github/types";
 import { env } from "@/env";
 import { getConnectionDetailsForPlane } from "@/helpers/connection";
+import { getPlaneAPIClient } from "@/helpers/plane-api-client";
+import { getPlaneAppDetails } from "@/helpers/plane-app-details";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
-import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS } from "@plane/etl/core";
 
 const apiClient = getAPIClient();
 
@@ -52,10 +54,8 @@ const handleIssueSync = async (store: Store, payload: PlaneWebhookPayload) => {
       return
     }
 
-    const planeClient = new PlaneClient({
-      baseURL: workspaceConnection.target_hostname,
-      apiToken: credentials.target_access_token,
-    });
+    // Get the Plane API client
+    const planeClient = await getPlaneAPIClient(credentials, E_INTEGRATION_KEYS.GITHUB);
 
     // Create or update issue in GitHub
     const githubService = createGithubService(

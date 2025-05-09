@@ -1,12 +1,13 @@
 import { E_INTEGRATION_KEYS, TServiceCredentials } from "@plane/etl/core";
 import { GithubPullRequestDedupPayload } from "@plane/etl/github";
-import { Client as PlaneClient } from "@plane/sdk";
 import { getConnectionDetails } from "@/apps/github/helpers/helpers";
 import { GithubIntegrationService } from "@/apps/github/services/github.service";
 import {
   PullRequestWebhookActions
 } from "@/apps/github/types";
 import { env } from "@/env";
+import { getPlaneAPIClient } from "@/helpers/plane-api-client";
+import { getPlaneAppDetails } from "@/helpers/plane-app-details";
 import { PullRequestBehaviour } from "@/lib/behaviours";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
@@ -49,10 +50,8 @@ const handlePullRequestOpened = async (data: GithubPullRequestDedupPayload) => {
     repositoryId: data.repositoryId.toString(),
   });
 
-  const planeClient = new PlaneClient({
-    baseURL: env.API_BASE_URL,
-    apiToken: planeCredentials.target_access_token,
-  });
+  // Get the Plane API client
+  const planeClient = await getPlaneAPIClient(planeCredentials, E_INTEGRATION_KEYS.GITHUB);
 
   const pullRequestBehaviour = new PullRequestBehaviour(
     E_INTEGRATION_KEYS.GITHUB,

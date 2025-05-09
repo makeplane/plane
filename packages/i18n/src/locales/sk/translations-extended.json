@@ -1049,7 +1049,9 @@
     "multiple_connections_found": "Bolo nájdených viacero pripojení, keď sa očakávalo iba jedno",
     "installation_not_found": "Požadovaná inštalácia nebola nájdená",
     "user_not_found": "Požadovaný používateľ nebol nájdený",
-    "error_fetching_token": "Zlyhalo načítanie autentifikačného tokenu"
+    "error_fetching_token": "Zlyhalo načítanie autentifikačného tokenu",
+    "invalid_app_credentials": "Poskytnuté údaje aplikácie sú neplatné",
+    "invalid_app_installation_id": "Nepodarilo sa nainštalovať aplikáciu"
   },
 
   "import_status": {

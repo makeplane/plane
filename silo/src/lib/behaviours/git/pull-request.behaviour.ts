@@ -188,7 +188,7 @@ export class PullRequestBehaviour {
 
       // get the PR state for the event from projectId and PR state map
       // for gitlab we get the state from config directly
-      const targetState = this.projectIdToPRStateMap[issue.project][event];
+      const targetState = this.projectIdToPRStateMap[issue.project]?.[event];
       if (targetState) {
         await this.planeClient.issue.update(
           this.workspaceSlug,

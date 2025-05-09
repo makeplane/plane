@@ -95,4 +95,16 @@ export class GithubAuthService {
       .catch((error) => {
         throw error?.response?.data;
       });
+
+  /**
+   * @description get plane app details
+   * @returns { Promise<{ appId: string; clientId: string }> }
+   */
+  getPlaneAppDetails = async (): Promise<{ appId: string; clientId: string }> =>
+    await this.axiosInstance
+      .get(`/api/github/plane-app-details`)
+      .then((res) => res.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
 }

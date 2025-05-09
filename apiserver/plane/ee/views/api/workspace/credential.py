@@ -17,7 +17,7 @@ from plane.ee.serializers import WorkspaceCredentialAPISerializer
 class WorkspaceCredentialAPIView(BaseServiceAPIView):
     def _refresh_credential_token(self, credential):
         """
-        Refresh the target access token for a given credential
+        Refresh the target access token for a given credential if it is not an OAuth credential
 
         Args:
             credential (WorkspaceCredential): Credential to refresh
@@ -25,7 +25,7 @@ class WorkspaceCredentialAPIView(BaseServiceAPIView):
         Returns:
             WorkspaceCredential: Updated credential
         """
-        if credential.target_access_token:
+        if credential.target_access_token and not credential.target_authorization_type:
             try:
                 # Check existing token
                 api_token = APIToken.objects.filter(

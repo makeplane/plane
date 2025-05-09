@@ -1049,7 +1049,9 @@
     "installation_not_found": "找不到请求的安装",
     "user_not_found": "找不到请求的用户",
     "error_fetching_token": "获取身份验证令牌失败",
-    "cannot_create_multiple_connections": "您已经将组织连接到工作区。请在连接新组织之前断开现有连接。"
+    "cannot_create_multiple_connections": "您已经将组织连接到工作区。请在连接新组织之前断开现有连接。",
+    "invalid_app_credentials": "提供的应用凭证无效",
+    "invalid_app_installation_id": "安装应用失败"
   },
 
   "import_status": {

@@ -1049,7 +1049,9 @@
     "multiple_connections_found": "Znaleziono wiele połączeń, gdy oczekiwano tylko jednego",
     "installation_not_found": "Nie można znaleźć żądanej instalacji",
     "user_not_found": "Nie można znaleźć żądanego użytkownika",
-    "error_fetching_token": "Nie udało się pobrać tokenu uwierzytelniającego"
+    "error_fetching_token": "Nie udało się pobrać tokenu uwierzytelniającego",
+    "invalid_app_credentials": "Podane poświadczenia aplikacji są nieprawidłowe",
+    "invalid_app_installation_id": "Nie udało się zainstalować aplikacji"
   },
 
   "import_status": {

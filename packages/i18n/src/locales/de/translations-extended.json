@@ -1049,7 +1049,9 @@
     "multiple_connections_found": "Es wurden mehrere Verbindungen gefunden, obwohl nur eine erwartet wurde",
     "installation_not_found": "Die angeforderte Installation konnte nicht gefunden werden",
     "user_not_found": "Der angeforderte Benutzer konnte nicht gefunden werden",
-    "error_fetching_token": "Fehler beim Abrufen des Authentifizierungstokens"
+    "error_fetching_token": "Fehler beim Abrufen des Authentifizierungstokens",
+    "invalid_app_credentials": "Die bereitgestellten App-Anmeldeinformationen sind ungültig",
+    "invalid_app_installation_id": "Fehler beim Installieren der App"
   },
 
   "import_status": {

@@ -1050,7 +1050,9 @@
     "installation_not_found": "要求されたインストールが見つかりませんでした",
     "user_not_found": "要求されたユーザーが見つかりませんでした",
     "error_fetching_token": "認証トークンの取得に失敗しました",
-    "cannot_create_multiple_connections": "あなたはすでに組織をワークスペースと接続しています。新しい接続を作成する前に、既存の接続を切断してください。"
+    "cannot_create_multiple_connections": "あなたはすでに組織をワークスペースと接続しています。新しい接続を作成する前に、既存の接続を切断してください。",
+    "invalid_app_credentials": "提供されたアプリの資格情報が無効です",
+    "invalid_app_installation_id": "アプリのインストールに失敗しました"
   },
 
   "import_status": {

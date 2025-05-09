@@ -1049,7 +1049,9 @@
     "multiple_connections_found": "Знайдено кілька підключень, коли очікувалося лише одне",
     "installation_not_found": "Запитана інсталяція не знайдена",
     "user_not_found": "Запитаний користувач не знайдений",
-    "error_fetching_token": "Не вдалося отримати токен аутентифікації"
+    "error_fetching_token": "Не вдалося отримати токен аутентифікації",
+    "invalid_app_credentials": "Наданий токен аутентифікації недійсний",
+    "invalid_app_installation_id": "Не вдалося встановити застосунок"
   },
 
   "import_status": {

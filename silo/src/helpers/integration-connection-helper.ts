@@ -176,21 +176,57 @@ class IntegrationConnectionHelper {
     workspace_id,
     user_id,
     source,
+    source_identifier,
+    source_authorization_type,
     source_access_token,
     target_access_token,
+    target_refresh_token,
+    target_identifier,
+    target_authorization_type,
   }: {
     workspace_id: string;
     user_id: string;
     source: string;
+    source_identifier?: string;
+    source_authorization_type?: string;
     source_access_token: string;
     target_access_token: string;
+    target_refresh_token?: string;
+    target_identifier?: string;
+    target_authorization_type?: string;
   }): Promise<TWorkspaceCredential> {
     return this.apiClient.workspaceCredential.createWorkspaceCredential({
       workspace_id,
       user_id,
       source,
+      source_identifier,
+      source_authorization_type,
       source_access_token,
       target_access_token,
+      target_refresh_token,
+      target_identifier,
+      target_authorization_type,
+    });
+  }
+
+  async updateWorkspaceCredential({
+    credential_id,
+    source_access_token,
+    source_refresh_token,
+    target_access_token,
+    target_refresh_token,
+  }: {
+    credential_id: string;
+    source_access_token?: string;
+    source_refresh_token?: string;
+    target_access_token?: string;
+    target_refresh_token?: string;
+  }): Promise<TWorkspaceCredential> {
+    return this.apiClient.workspaceCredential.updateWorkspaceCredential(credential_id, {
+      source_access_token,
+      source_refresh_token,
+      target_access_token,
+      target_refresh_token,
     });
   }
 

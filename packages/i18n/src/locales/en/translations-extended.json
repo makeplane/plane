@@ -1058,7 +1058,9 @@
     "cannot_create_multiple_connections": "You have already connected your organization with a workspace. Please disconnect the existing connection before connecting a new one.",
     "installation_not_found": "The requested installation could not be found",
     "user_not_found": "The requested user could not be found",
-    "error_fetching_token": "Failed to fetch authentication token"
+    "error_fetching_token": "Failed to fetch authentication token",
+    "invalid_app_credentials": "The provided app credentials are invalid",
+    "invalid_app_installation_id": "Failed to install the app"
   },
 
   "import_status": {

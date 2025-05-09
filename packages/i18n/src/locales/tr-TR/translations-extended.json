@@ -1066,7 +1066,9 @@
     "cannot_create_multiple_connections": "Organizasyonunuzu zaten bir workspeysle konnekt ettiniz. Lütfen yeni bir konnekşın yapmadan önce mevcut konnekşını diskonnekt edin.",
     "installation_not_found": "İstenilen kurulum bulunamadı",
     "user_not_found": "İstenilen kullanıcı bulunamadı",
-    "error_fetching_token": "Kimlik doğrulama tokeni alınamadı"
+    "error_fetching_token": "Kimlik doğrulama tokeni alınamadı",
+    "invalid_app_credentials": "Sağlanan uygulama kimlik bilgileri geçersiz",
+    "invalid_app_installation_id": "Uygulama yüklenemedi"
   },
 
   "import_status": {

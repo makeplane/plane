@@ -1039,7 +1039,9 @@
     "multiple_connections_found": "Nhiều kết nối đã được tìm thấy khi chỉ mong đợi một kết nối",
     "installation_not_found": "Không thể tìm thấy cài đặt được yêu cầu",
     "user_not_found": "Không thể tìm thấy người dùng được yêu cầu",
-    "error_fetching_token": "Không thể lấy mã thông báo xác thực"
+    "error_fetching_token": "Không thể lấy mã thông báo xác thực",
+    "invalid_app_credentials": "Các thông tin xác thực ứng dụng đã cung cấp không hợp lệ",
+    "invalid_app_installation_id": "Không thể cài đặt ứng dụng"
   },
 
   "import_status": {

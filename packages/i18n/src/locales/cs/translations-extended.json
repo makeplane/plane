@@ -1050,7 +1050,9 @@
     "installation_not_found": "Požadovaná instalace nebyla nalezena",
     "user_not_found": "Požadovaný uživatel nebyl nalezen",
     "error_fetching_token": "Nepodařilo se získat autentizační token",
-    "cannot_create_multiple_connections": "Už jste připojili svou organizaci s pracovním prostorem. Prosím, odpojte existující připojení před připojením nového."
+    "cannot_create_multiple_connections": "Už jste připojili svou organizaci s pracovním prostorem. Prosím, odpojte existující připojení před připojením nového.",
+    "invalid_app_credentials": "Poskytnuté přihlašovací údaje aplikace jsou neplatné",
+    "invalid_app_installation_id": "Nepodařilo se nainstalovat aplikaci"
   },
 
   "import_status": {
