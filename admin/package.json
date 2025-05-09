@@ -17,6 +17,7 @@
     "@headlessui/react": "^1.7.19",
     "@plane/constants": "*",
     "@plane/hooks": "*",
+    "@plane/propel": "*",
     "@plane/services": "*",
     "@plane/types": "*",
     "@plane/ui": "*",

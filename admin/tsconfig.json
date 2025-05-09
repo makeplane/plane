@@ -7,6 +7,7 @@
       "@/*": ["core/*"],
       "@/public/*": ["public/*"],
       "@/plane-admin/*": ["ee/*"],
+      "@/styles/*": ["styles/*"],
       "@/ce/*": ["ce/*"]
     }
   },

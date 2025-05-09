@@ -1,4 +1,4 @@
-import { IIssueDisplayProperties, ILayoutDisplayFiltersOptions, TIssueActivityComment } from "@plane/types";
+import { ILayoutDisplayFiltersOptions, TIssueActivityComment } from "@plane/types";
 import {
   TIssueFilterPriorityObject,
   ISSUE_DISPLAY_PROPERTIES_KEYS,
@@ -363,9 +363,10 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
   sub_work_items: {
     list: {
       display_properties: SUB_ISSUES_DISPLAY_PROPERTIES_KEYS,
-      filters: [],
+      filters: ["priority", "state", "project", "issue_type", "assignees", "start_date", "target_date"],
       display_filters: {
         order_by: ["-created_at", "-updated_at", "start_date", "-priority"],
+        group_by: ["state", "priority", "assignees", null],
       },
       extra_options: {
         access: true,

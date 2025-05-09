@@ -1,4 +1,10 @@
-import { TIssueGroupByOptions, TIssueOrderByOptions, IIssueDisplayProperties } from "@plane/types";
+import {
+  TIssueGroupByOptions,
+  TIssueOrderByOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TIssue,
+} from "@plane/types";
 import {
   ADDITIONAL_SPREADSHEET_PROPERTY_DETAILS,
   ADDITIONAL_SPREADSHEET_PROPERTY_LIST,
@@ -375,6 +381,20 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
   },
   ...ADDITIONAL_SPREADSHEET_PROPERTY_DETAILS,
 };
+
+// Map filter keys to their corresponding issue property keys
+export const FILTER_TO_ISSUE_MAP: Partial<Record<keyof IIssueFilterOptions, keyof TIssue>> = {
+  assignees: "assignee_ids",
+  created_by: "created_by",
+  labels: "label_ids",
+  priority: "priority",
+  cycle: "cycle_id",
+  module: "module_ids",
+  project: "project_id",
+  state: "state_id",
+  issue_type: "type_id",
+  state_group: "state__group",
+} as const;
 
 export enum EWorkItemConversionType {
   WORK_ITEM = "work_item",

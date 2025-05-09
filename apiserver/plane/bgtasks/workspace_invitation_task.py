@@ -93,7 +93,7 @@ def workspace_invitation(email, workspace_id, token, current_site, inviter):
         )
         msg.attach_alternative(html_content, "text/html")
         msg.send()
-        logging.getLogger("plane").info("Email sent successfully")
+        logging.getLogger("plane.worker").info("Email sent successfully")
 
         # Send message on slack as well
         if settings.SLACK_BOT_TOKEN:

@@ -3,7 +3,8 @@ import { TIssuePriorities } from "../issues";
 import { TIssueAttachment } from "./issue_attachment";
 import { TIssueLink } from "./issue_link";
 import { TIssueReaction, IIssuePublicReaction, IPublicVote } from "./issue_reaction";
-import { TIssueRelationTypes, TIssuePublicComment } from "@/plane-web/types";
+import { TIssueRelationTypes } from "./issue_relation";
+import { TIssuePublicComment } from "./activity/issue_comment";
 import { TWorkItemExtended, TWorkItemDetailExtended } from "./issue-extended";
 import { EUpdateStatus } from "../enums";
 
@@ -67,6 +68,7 @@ export type TIssue = TBaseIssue &
     tempId?: string;
     // sourceIssueId is used to store the original issue id when creating a copy of an issue. Used in cloning property values. It is not a part of the API response.
     sourceIssueId?: string;
+    state__group?: string | null;
     update_status?: EUpdateStatus | undefined;
   };
 
