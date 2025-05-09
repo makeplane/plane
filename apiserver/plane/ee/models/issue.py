@@ -3,7 +3,7 @@ from django.db import models
 from django.conf import settings
 
 # Module imports
-from plane.db.models import ProjectBaseModel, Issue, BaseModel
+from plane.db.models import ProjectBaseModel, Issue, BaseModel, Page
 
 
 def get_default_properties():
@@ -342,3 +342,17 @@ class EpicUserProperties(ProjectBaseModel):
     def __str__(self):
         """Return properties status of the epic"""
         return str(self.user)
+
+
+class WorkItemPage(ProjectBaseModel):
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="workitem_pages")
+    page = models.ForeignKey(Page, on_delete=models.CASCADE, related_name="workitem_pages")
+
+    class Meta:
+        verbose_name = "Work Item Page"
+        verbose_name_plural = "Work Item Pages"
+        db_table = "workitem_pages"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.issue.name} {self.page.name}"
