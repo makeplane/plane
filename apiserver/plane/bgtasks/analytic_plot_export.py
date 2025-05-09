@@ -459,7 +459,7 @@ def analytic_export_task(email, data, slug):
 
         csv_buffer = generate_csv_from_rows(rows)
         send_export_email(email, slug, csv_buffer, rows)
-        logging.getLogger("plane").info("Email sent succesfully.")
+        logging.getLogger("plane.worker").info("Email sent successfully.")
         return
     except Exception as e:
         log_exception(e)
