@@ -5,8 +5,9 @@ from rest_framework import serializers
 from plane.authentication.models import Application, ApplicationCategory
 
 
-class PublishedApplicationSerializer(serializers.ModelSerializer):   
+class PublishedApplicationSerializer(serializers.ModelSerializer):
     attachments = serializers.SerializerMethodField()
+    categories = serializers.SerializerMethodField()
 
     class Meta:
         model = Application
@@ -17,25 +18,28 @@ class PublishedApplicationSerializer(serializers.ModelSerializer):
             "short_description",
             "description_html",
             "logo_url",
-            "website_url",
             "company_name",
             "privacy_policy_url",
             "terms_of_service_url",
             "contact_email",
             "support_url",
             "categories",
-            "attachments",
             "setup_url",
             "video_url",
+            "attachments",
         ]
 
     def get_attachments(self, obj):
+        return [attachment.asset_url for attachment in obj.attachments.all()]
+
+    def get_categories(self, obj):
         return [
             {
-                "id": attachment.id,
-                "url": attachment.asset_url,
+                "id": category.id,
+                "name": category.name,
+                "description": category.description,
             }
-            for attachment in obj.attachments.all()
+            for category in obj.categories.all()
         ]
 
 

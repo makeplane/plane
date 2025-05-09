@@ -75,11 +75,19 @@ class OAuthApplicationEndpoint(BaseAPIView):
             "name",
             "short_description",
             "description_html",
-            "logo_image_asset",
+            "logo_asset",
+            "company_name",
             "webhook_url",
             "redirect_uris",
             "allowed_origins",
-            "company_name",
+            "attachments",
+            "categories",
+            "privacy_policy_url",
+            "terms_of_service_url",
+            "contact_email",
+            "support_url",
+            "setup_url",
+            "video_url",
         }
 
         # Filter the request data to only include allowed fields
@@ -115,6 +123,11 @@ class OAuthApplicationEndpoint(BaseAPIView):
                 applications = Application.objects.filter(
                     Q(application_owners__workspace__slug=slug)
                     | Q(published_at__isnull=False)
+                ).select_related(
+                    "logo_asset"
+                ).prefetch_related(
+                    "attachments",
+                    "categories"
                 )
                 # Annotate with ownership information
                 applications = applications.annotate(
@@ -142,9 +155,16 @@ class OAuthApplicationEndpoint(BaseAPIView):
                 return Response(serialised_applications.data, status=status.HTTP_200_OK)
 
             # Single application case
-            application = Application.objects.get(
+            application = Application.objects.filter(
                 id=pk, application_owners__workspace__slug=slug
-            )
+            ).select_related(
+                "logo_asset",
+            ).first()
+
+            if not application:
+                return Response(
+                    {"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND
+                )
 
             # Add ownership and installation info
             application.is_owned = application.application_owners.filter(

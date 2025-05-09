@@ -11,12 +11,25 @@ from plane.authentication.models.oauth import (
     WorkspaceAppInstallation,
     ApplicationCategory,
 )
+from plane.db.models import FileAsset
 
 
 class ApplicationSerializer(BaseSerializer):
     is_owned = serializers.BooleanField(read_only=True)
     is_installed = serializers.BooleanField(read_only=True)
     logo_url = serializers.CharField(read_only=True)
+    attachments_urls = serializers.SerializerMethodField()
+    attachments = serializers.PrimaryKeyRelatedField(
+        queryset=FileAsset.objects.all(),
+        many=True,
+        required=False
+    )
+    categories = serializers.PrimaryKeyRelatedField(
+        queryset=ApplicationCategory.objects.all(),
+        many=True,
+        required=False
+    )
+
     class Meta:
         model = Application
         fields = "__all__"
@@ -27,11 +40,12 @@ class ApplicationSerializer(BaseSerializer):
                 parsed = html.fromstring(data["description_html"])
                 parsed_str = html.tostring(parsed, encoding="unicode")
                 data["description_html"] = parsed_str
-            
             return data
         except Exception:
             raise serializers.ValidationError("Invalid HTML passed")
 
+    def get_attachments_urls(self, obj):
+        return [attachment.asset_url for attachment in obj.attachments.all()]
 
 class AccessTokenSerializer(BaseSerializer):
     class Meta:

@@ -25,7 +25,8 @@ class PublishedApplicationEndpoint(BaseAPIView):
         ).select_related(
             "logo_asset"
         ).prefetch_related(
-            "attachments"
+            "attachments",
+            "categories"
         )
 
     def get(self, request: Request, pk: Optional[str] = None) -> Response:

@@ -4,11 +4,11 @@ import React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { CircleCheckBig } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { TUserApplication } from "@plane/types";
 import { Button } from "@plane/ui";
-import { ApplicationTileMenuOptions } from "@/plane-web/components/marketplace";
 import { getFileURL } from "@/helpers/file.helper";
-import { useTranslation } from "@plane/i18n";
+import { ApplicationTileMenuOptions } from "@/plane-web/components/marketplace";
 
 // display app details like name, logo, description
 // button and more options to edit, delete, publish
@@ -26,7 +26,14 @@ export const AppTile: React.FC<AppTileProps> = (props) => {
         <div className="flex items-center justify-between border-b border-custom-border-100 py-5">
             <div className="flex flex-col space-y-2">
                 <div className="flex items-center space-x-2">
-                    <img src={app?.logo_url ? getFileURL(app.logo_url) : ""} alt={app.name} className="w-8 h-8 rounded-full" />
+                    {
+                        app?.logo_url ?
+                            <img src={getFileURL(app.logo_url)} alt={app.name} className="w-8 h-8 rounded-full" />
+                            :
+                            <div className="w-8 h-8 rounded-full bg-custom-background-200 flex items-center justify-center">
+                                <div className="text-lg font-medium">{app.name.charAt(0)}</div>
+                            </div>
+                    }
                     <div className="text-lg font-medium">{app.name}</div>
                 </div>
                 <div className="text-sm">{app.short_description}</div>
