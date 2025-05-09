@@ -17,6 +17,7 @@ from plane.db.models import BaseModel, User, WorkspaceMember, ProjectMember, Pro
 from plane.app.permissions.base import ROLE
 
 from plane.utils.html_processor import strip_tags
+from plane.authentication.bgtasks.app_webhook_url_updates import app_webhook_url_updates
 
 
 # oauth models
@@ -88,6 +89,11 @@ class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
             if (self.description_html == "" or self.description_html is None)
             else strip_tags(self.description_html)
         )
+
+        if not self._state.adding:
+            old_instance = Application.objects.get(id=self.id)
+            if self.webhook_url != old_instance.webhook_url:
+                app_webhook_url_updates.delay(self.id)
 
         super(Application, self).save(*args, **kwargs)
 

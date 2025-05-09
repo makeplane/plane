@@ -14,42 +14,46 @@ from oauth2_provider.oauth2_validators import OAuth2Validator
 from rest_framework import exceptions, status
 
 # Local application imports
+from plane.db.models.webhook import Webhook
 from plane.authentication.adapter.error import AUTHENTICATION_ERROR_CODES
-from plane.authentication.models import AccessToken, WorkspaceAppInstallation, Application
+from plane.authentication.models import AccessToken, WorkspaceAppInstallation
 from plane.authentication.rate_limit import (
     add_ratelimit_headers,
     auth_ratelimit_key,
-    token_ratelimit_key
+    token_ratelimit_key,
 )
-
+from plane.utils.exception_logger import log_exception
 
 TOKEN_RATE_LIMIT = "5/m"
+
 
 class OAuthTokenEndpoint(TokenView):
     """OAuth token endpoint with rate limiting (5/minute)"""
 
     @method_decorator(
         ratelimit(
-            key=token_ratelimit_key, rate=TOKEN_RATE_LIMIT, block=False, group='token'
+            key=token_ratelimit_key, rate=TOKEN_RATE_LIMIT, block=False, group="token"
         )
     )
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         # Check if rate limited before proceeding
-        if getattr(request, 'limited', False):
+        if getattr(request, "limited", False):
             return JsonResponse(
                 {
                     "error_code": AUTHENTICATION_ERROR_CODES["RATE_LIMIT_EXCEEDED"],
-                    "error_message": "Too many requests, please try again later."
+                    "error_message": "Too many requests, please try again later.",
                 },
-                status=status.HTTP_429_TOO_MANY_REQUESTS
+                status=status.HTTP_429_TOO_MANY_REQUESTS,
             )
 
         response = super().dispatch(request, *args, **kwargs)
         return add_ratelimit_headers(
-            request, response, TOKEN_RATE_LIMIT, token_ratelimit_key, group='token'
+            request, response, TOKEN_RATE_LIMIT, token_ratelimit_key, group="token"
         )
 
-    def create_token_response(self, request: HttpRequest) -> Tuple[int, Dict[str, str], bytes, int]:
+    def create_token_response(
+        self, request: HttpRequest
+    ) -> Tuple[int, Dict[str, str], bytes, int]:
         token_response = super().create_token_response(request)
         _, headers, token_data, status_code = token_response
         token_data = json.loads(token_data)
@@ -59,9 +63,7 @@ class OAuthTokenEndpoint(TokenView):
         if access_token:
             token = AccessToken.objects.get(token=access_token)
             application_id = token.application_id
-            app_installation_id = request.POST.get(
-                "app_installation_id"
-            )
+            app_installation_id = request.POST.get("app_installation_id")
             grant_type = request.POST.get("grant_type")
 
             if app_installation_id:
@@ -73,9 +75,15 @@ class OAuthTokenEndpoint(TokenView):
                     token.delete()
                     raise exceptions.ValidationError("Workspace application not found")
 
-                if workspace_app_installation.status == WorkspaceAppInstallation.Status.PENDING:
-                    workspace_app_installation.status = WorkspaceAppInstallation.Status.INSTALLED
+                if (
+                    workspace_app_installation.status
+                    == WorkspaceAppInstallation.Status.PENDING
+                ):
+                    workspace_app_installation.status = (
+                        WorkspaceAppInstallation.Status.INSTALLED
+                    )
                     workspace_app_installation.save()
+                    self._create_webhook(workspace_app_installation)
 
                 if grant_type == "client_credentials":
                     token.user = workspace_app_installation.app_bot
@@ -85,31 +93,61 @@ class OAuthTokenEndpoint(TokenView):
 
         return token_response
 
+    def _create_webhook(self, workspace_app_installation: WorkspaceAppInstallation):
+        try:
+            if workspace_app_installation.application.webhook_url:
+                is_new_webhook = True
+                webhook = Webhook()
+                if workspace_app_installation.webhook:
+                    webhook = workspace_app_installation.webhook
+                    is_new_webhook = False
+
+                webhook.url = workspace_app_installation.application.webhook_url
+                webhook.is_active = True
+                # In future, below config comes from the app installation screen
+                webhook.project = True
+                webhook.issue = True
+                webhook.module = True
+                webhook.cycle = True
+                webhook.issue_comment = True
+                webhook.workspace_id = workspace_app_installation.workspace_id
+                webhook.created_by_id = workspace_app_installation.installed_by_id
+                webhook.updated_by_id = workspace_app_installation.installed_by_id
+                webhook.save(disable_auto_set_user=True)
+
+                if is_new_webhook:
+                    workspace_app_installation.webhook = webhook
+                    workspace_app_installation.save()
+        except Exception as e:
+            log_exception(e)
+
 
 AUTHORIZE_RATE_LIMIT = "10/m"
+
 
 class CustomAuthorizationView(AuthorizationView):
     """OAuth authorization view with rate limiting (10/minute)"""
 
     @method_decorator(
         ratelimit(
-            key=auth_ratelimit_key, rate=AUTHORIZE_RATE_LIMIT,
-            block=False, group='auth'
+            key=auth_ratelimit_key, rate=AUTHORIZE_RATE_LIMIT, block=False, group="auth"
         )
     )
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         # Check if rate limited before proceeding
-        if getattr(request, 'limited', False):
+        if getattr(request, "limited", False):
             return JsonResponse(
                 {
                     "error_code": AUTHENTICATION_ERROR_CODES["RATE_LIMIT_EXCEEDED"],
-                    "error_message": "Too many requests, please try again later."
+                    "error_message": "Too many requests, please try again later.",
                 },
-                status=status.HTTP_429_TOO_MANY_REQUESTS
+                status=status.HTTP_429_TOO_MANY_REQUESTS,
             )
 
         response = super().dispatch(request, *args, **kwargs)
-        return add_ratelimit_headers(request, response, AUTHORIZE_RATE_LIMIT, auth_ratelimit_key, group='auth')
+        return add_ratelimit_headers(
+            request, response, AUTHORIZE_RATE_LIMIT, auth_ratelimit_key, group="auth"
+        )
 
     def handle_no_permission(self) -> HttpResponseRedirect:
         # Redirect to login with the current URL as the next path
@@ -133,10 +171,17 @@ class CustomAuthorizationView(AuthorizationView):
                 redirect_to = f"{redirect_to}?{additional_params}"
         return super().redirect(redirect_to, application)
 
+
 class CustomOAuth2Validator(OAuth2Validator):
-    def validate_grant_type(self, client_id, grant_type, client, request, *args, **kwargs):
+    def validate_grant_type(
+        self, client_id, grant_type, client, request, *args, **kwargs
+    ):
         """
         Allow both authorization_code and client_credentials regardless of grant type
         """
-        allowed_grant_types = ['authorization_code', 'client_credentials', 'refresh_token']
+        allowed_grant_types = [
+            "authorization_code",
+            "client_credentials",
+            "refresh_token",
+        ]
         return grant_type in allowed_grant_types
