@@ -1,4 +1,5 @@
 import { observable, action, makeObservable } from "mobx";
+import { computedFn } from "mobx-utils";
 import {
   EIssuesStoreType,
   TCreateModalStoreTypes,
@@ -27,6 +28,7 @@ export interface IBaseCommandPaletteStore {
   createIssueStoreType: TCreateModalStoreTypes;
   allStickiesModal: boolean;
   projectListOpenMap: Record<string, boolean>;
+  getIsProjectListOpen: (projectId: string) => boolean;
   // toggle actions
   toggleCommandPaletteModal: (value?: boolean) => void;
   toggleShortcutModal: (value?: boolean) => void;
@@ -109,6 +111,8 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
         this.allStickiesModal
     );
   }
+  // computedFn
+  getIsProjectListOpen = computedFn((projectId: string) => this.projectListOpenMap[projectId]);
 
   /**
    * Toggles the project list open state

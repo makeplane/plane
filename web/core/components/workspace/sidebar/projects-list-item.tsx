@@ -64,13 +64,13 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const { getPartialProjectById } = useProject();
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
-  const { projectListOpenMap, toggleProjectListOpen } = useCommandPalette();
+  const { getIsProjectListOpen, toggleProjectListOpen } = useCommandPalette();
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
   const [publishModalOpen, setPublishModal] = useState(false);
   const [isMenuActive, setIsMenuActive] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const isProjectListOpen = !!projectListOpenMap[projectId];
+  const isProjectListOpen = getIsProjectListOpen(projectId);
   const [instruction, setInstruction] = useState<"DRAG_OVER" | "DRAG_BELOW" | undefined>(undefined);
   // refs
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
