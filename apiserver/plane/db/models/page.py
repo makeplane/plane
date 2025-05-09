@@ -58,6 +58,9 @@ class Page(BaseModel):
     moved_to_page = models.UUIDField(null=True, blank=True)
     moved_to_project = models.UUIDField(null=True, blank=True)
 
+    external_id = models.CharField(max_length=255, null=True)
+    external_source = models.CharField(max_length=255, null=True)
+
     class Meta:
         verbose_name = "Page"
         verbose_name_plural = "Pages"
