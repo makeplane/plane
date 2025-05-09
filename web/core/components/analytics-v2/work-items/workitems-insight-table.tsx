@@ -31,12 +31,12 @@ const WorkItemsInsightTable = observer(() => {
     () =>
       analyticsV2Service.getAdvanceAnalyticsStats<WorkItemInsightColumns[]>(workspaceSlug, "work-items", {
         date_filter: selectedDuration,
-        ...(selectedProjects ? { project_ids: selectedProjects.join(",") } : {}),
+        ...(selectedProjects?.length > 0 ? { project_ids: selectedProjects.join(",") } : {}),
       })
   );
   // derived values
   const columnsLabels: Record<string, string> = {
-    backlog_work_items: t("workspace_projects.state.backlog"),
+    backlog_work_items: t("workspace_projects.statex.backlog"),
     started_work_items: t("workspace_projects.state.started"),
     un_started_work_items: t("workspace_projects.state.unstarted"),
     completed_work_items: t("workspace_projects.state.completed"),

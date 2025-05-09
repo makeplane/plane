@@ -29,7 +29,7 @@ const CreatedVsResolved = observer(() => {
     () =>
       analyticsV2Service.getAdvanceAnalyticsCharts<IChartResponseV2>(workspaceSlug, "work-items", {
         date_filter: selectedDuration,
-        project_ids: selectedProjects?.join(","),
+        ...(selectedProjects?.length > 0 && { project_ids: selectedProjects?.join(",") }),
       })
   );
   const parsedData: TChartData<string, string>[] = useMemo(() => {

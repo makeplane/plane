@@ -33,7 +33,7 @@ const ProjectInsights = observer(() => {
   const { data: projectInsightsData, isLoading: isLoadingProjectInsight } = useSWR(`radar-chart-${workspaceSlug}`, () =>
     analyticsV2Service.getAdvanceAnalyticsCharts<TChartData<string, string>[]>(workspaceSlug, "projects", {
       created_at: selectedDuration,
-      project_ids: selectedProjects?.join(","),
+      ...(selectedProjects?.length > 0 && { project_ids: selectedProjects?.join(",") }),
     })
   );
 

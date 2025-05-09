@@ -58,7 +58,7 @@ const PriorityChart = observer((props: Props) => {
     () =>
       analyticsV2Service.getAdvanceAnalyticsCharts<TChart>(workspaceSlug, "custom-work-items", {
         date_filter: selectedDuration,
-        project_ids: selectedProjects?.join(","),
+        ...(selectedProjects?.length > 0 && { project_ids: selectedProjects?.join(",") }),
         ...props,
       })
   );

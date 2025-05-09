@@ -27,7 +27,7 @@ const TotalInsights: React.FC<{ analyticsType: TAnalyticsTabsV2Base; peekView?: 
       () =>
         analyticsV2Service.getAdvanceAnalytics<IAnalyticsResponseV2>(workspaceSlug, analyticsType, {
           date_filter: selectedDuration,
-          ...(selectedProjects ? { project_ids: selectedProjects.join(",") } : {}),
+          ...(selectedProjects?.length > 0 ? { project_ids: selectedProjects.join(",") } : {}),
         })
     );
     return (
