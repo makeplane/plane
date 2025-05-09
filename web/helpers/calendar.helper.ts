@@ -95,9 +95,16 @@ export const generateCalendarData = (currentStructure: ICalendarPayload | null, 
   return calendarData;
 };
 
-export const getOrderedDays = (startOfWeek: EStartOfTheWeek) =>
-  Object.values(DAYS_LIST).sort((a, b) => {
-    const dayA = (7 + a.value - startOfWeek) % 7;
-    const dayB = (7 + b.value - startOfWeek) % 7;
+/**
+ * Returns a new array sorted by the startOfWeek.
+ * @param items Array of items to sort.
+ * @param getDayIndex Function to get the day index (0-6) from an item.
+ * @param startOfWeek The day to start the week on.
+ */
+export function getOrderedDays<T>(items: T[], getDayIndex: (item: T) => number, startOfWeek: EStartOfTheWeek): T[] {
+  return [...items].sort((a, b) => {
+    const dayA = (7 + getDayIndex(a) - startOfWeek) % 7;
+    const dayB = (7 + getDayIndex(b) - startOfWeek) % 7;
     return dayA - dayB;
   });
+}

@@ -3,20 +3,10 @@ import { EStartOfTheWeek } from "@plane/constants";
 import { WeekMonthDataType, ChartDataType, TGanttViews } from "../types";
 
 // constants
-export const generateWeeks = (startOfWeek: EStartOfTheWeek = EStartOfTheWeek.SUNDAY): WeekMonthDataType[] => {
-  const allDays: WeekMonthDataType[] = [
-    { key: 0, shortTitle: "sun", title: "sunday", abbreviation: "Su" },
-    { key: 1, shortTitle: "mon", title: "monday", abbreviation: "M" },
-    { key: 2, shortTitle: "tue", title: "tuesday", abbreviation: "T" },
-    { key: 3, shortTitle: "wed", title: "wednesday", abbreviation: "W" },
-    { key: 4, shortTitle: "thurs", title: "thursday", abbreviation: "Th" },
-    { key: 5, shortTitle: "fri", title: "friday", abbreviation: "F" },
-    { key: 6, shortTitle: "sat", title: "saturday", abbreviation: "Sa" },
-  ];
-
-  // Reorder the array based on startOfWeek
-  return [...allDays.slice(startOfWeek), ...allDays.slice(0, startOfWeek)];
-};
+export const generateWeeks = (startOfWeek: EStartOfTheWeek = EStartOfTheWeek.SUNDAY): WeekMonthDataType[] => [
+  ...weeks.slice(startOfWeek),
+  ...weeks.slice(0, startOfWeek),
+];
 
 export const weeks: WeekMonthDataType[] = [
   { key: 0, shortTitle: "sun", title: "sunday", abbreviation: "Su" },

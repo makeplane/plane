@@ -10,7 +10,7 @@ import { IUserTheme } from "@plane/types";
 import { setPromiseToast } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common";
-import { ThemeSwitch, PageHead } from "@/components/core";
+import { ThemeSwitch, PageHead, CustomThemeSelector } from "@/components/core";
 import { ProfileSettingContentHeader, ProfileSettingContentWrapper, StartOfWeekPreference } from "@/components/profile";
 // helpers
 import { applyTheme, unsetCustomCssVariables } from "@/helpers/theme.helper";
@@ -74,6 +74,7 @@ const ProfileAppearancePage = observer(() => {
               <ThemeSwitch value={currentTheme} onChange={handleThemeChange} />
             </div>
           </div>
+          {userProfile?.theme?.theme === "custom" && <CustomThemeSelector applyThemeChange={applyThemeChange} />}
           <StartOfWeekPreference />
         </ProfileSettingContentWrapper>
       ) : (

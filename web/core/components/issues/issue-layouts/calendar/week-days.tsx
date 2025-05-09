@@ -5,6 +5,7 @@ import { cn } from "@plane/utils";
 // components
 import { CalendarDayTile } from "@/components/issues";
 // helpers
+import { getOrderedDays } from "@/helpers/calendar.helper";
 import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
 import { useUserProfile } from "@/hooks/store";
@@ -84,11 +85,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
     return !(day === 0 || day === 6);
   };
 
-  const sortedWeekDays = Object.values(week).sort((a, b) => {
-    const dayA = (7 + a.date.getDay() - startOfWeek) % 7;
-    const dayB = (7 + b.date.getDay() - startOfWeek) % 7;
-    return dayA - dayB;
-  });
+  const sortedWeekDays = getOrderedDays(Object.values(week), (item) => item.date.getDay(), startOfWeek);
 
   return (
     <div
