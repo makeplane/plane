@@ -12,7 +12,7 @@ from plane.utils.issue_search import search_issues
 
 
 class IssueSearchEndpoint(BaseAPIView):
-    def filter_isues_by_project(self, project_id: int, issues: QuerySet) -> QuerySet:
+    def filter_issues_by_project(self, project_id: int, issues: QuerySet) -> QuerySet:
         """
         Filter issues by project
         """
@@ -120,7 +120,7 @@ class IssueSearchEndpoint(BaseAPIView):
         )
 
         if workspace_search == "false":
-            issues = self.filter_isues_by_project(project_id, issues)
+            issues = self.filter_issues_by_project(project_id, issues)
 
         if query:
             issues = self.search_issues_by_query(query, issues)
