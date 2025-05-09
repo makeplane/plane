@@ -41,7 +41,8 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
   const subIssueOperations: TSubIssueOperations = useMemo(
     () => ({
       copyLink: (path) => {
-        copyUrlToClipboard(`/${path}`).then(() => {
+        const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+        copyUrlToClipboard(`${originURL}${path}`).then(() => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: t("common.link_copied"),
