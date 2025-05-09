@@ -18,7 +18,6 @@
     "pro": "Pro",
     "upgrade": "Aggiorna"
   },
-
   "auth": {
     "common": {
       "email": {
@@ -366,12 +365,12 @@
   "work_management": "Gestione del lavoro",
   "projects_and_issues": "Progetti ed elementi di lavoro",
   "projects_and_issues_description": "Attiva o disattiva queste opzioni per questo progetto.",
-  "cycles_description": "Definisci i cicli di lavoro per progetto e modifica la frequenza da un periodo all'altro.",
-  "modules_description": "Raggruppa il lavoro in configurazioni simili a sotto-progetti con i propri responsabili e assegnatari.",
-  "views_description": "Salva ordinamenti, filtri e opzioni di visualizzazione per dopo o condividili.",
-  "pages_description": "Scrivi qualsiasi cosa, come faresti normalmente.",
-  "intake_description": "Rimani aggiornato sugli elementi di lavoro a cui sei iscritto. Abilita questa opzione per ricevere notifiche.",
-  "time_tracking_description": "Traccia il tempo speso sugli elementi di lavoro e sui progetti.",
+  "cycles_description": "Definisci il tempo di lavoro per progetto e adatta il periodo secondo necessità. Un ciclo può durare 2 settimane, il successivo 1 settimana.",
+  "modules_description": "Organizza il lavoro in sotto-progetti con responsabili e assegnatari dedicati.",
+  "views_description": "Salva ordinamenti, filtri e opzioni di visualizzazione personalizzati o condividili con il tuo team.",
+  "pages_description": "Crea e modifica contenuti liberi: appunti, documenti, qualsiasi cosa.",
+  "intake_description": "Consenti ai non membri di segnalare bug, feedback e suggerimenti senza interrompere il tuo flusso di lavoro.",
+  "time_tracking_description": "Registra il tempo trascorso su elementi di lavoro e progetti.",
   "work_management_description": "Gestisci il tuo lavoro e i tuoi progetti con facilità.",
   "documentation": "Documentazione",
   "message_support": "Contatta il supporto",
@@ -501,7 +500,6 @@
   "export": "Esporta",
   "member": "{count, plural, one {# membro} other {# membri}}",
   "new_password_must_be_different_from_old_password": "La nuova password deve essere diversa dalla password precedente",
-
   "edited": "Modificato",
   "bot": "Bot",
   "choose_workspace_for_integration": "Scegli uno spazio di lavoro per connettere questa app",
@@ -518,12 +516,10 @@
       "name": "Nome"
     }
   },
-
   "toast": {
     "success": "Successo!",
     "error": "Errore!"
   },
-
   "links": {
     "toasts": {
       "created": {
@@ -552,7 +548,6 @@
       }
     }
   },
-
   "home": {
     "empty": {
       "quickstart_guide": "La tua guida rapida",
@@ -620,7 +615,6 @@
     "title": "Home",
     "star_us_on_github": "Metti una stella su GitHub"
   },
-
   "link": {
     "modal": {
       "url": {
@@ -634,7 +628,6 @@
       }
     }
   },
-
   "common": {
     "all": "Tutti",
     "states": "Stati",
@@ -879,20 +872,17 @@
     "apply": "Applica",
     "applying": "Applicazione"
   },
-
   "chart": {
     "x_axis": "Asse X",
     "y_axis": "Asse Y",
     "metric": "Metrica"
   },
-
   "form": {
     "title": {
       "required": "Il titolo è obbligatorio",
       "max_length": "Il titolo deve contenere meno di {length} caratteri"
     }
   },
-
   "entity": {
     "grouping_title": "Raggruppamento di {entity}",
     "priority": "Priorità di {entity}",
@@ -916,7 +906,6 @@
       "failed": "Errore nell'aggiunta di {entity}"
     }
   },
-
   "epic": {
     "all": "Tutti gli Epic",
     "label": "{count, plural, one {Epic} other {Epic}}",
@@ -934,7 +923,6 @@
       "required": "Il titolo dell'Epic è obbligatorio."
     }
   },
-
   "issue": {
     "label": "{count, plural, one {Elemento di lavoro} other {Elementi di lavoro}}",
     "all": "Tutti gli elementi di lavoro",
@@ -1101,7 +1089,6 @@
     },
     "open_in_full_screen": "Apri l'elemento di lavoro a schermo intero"
   },
-
   "attachment": {
     "error": "Impossibile allegare il file. Riprova a caricarlo.",
     "only_one_file_allowed": "È possibile caricare un solo file alla volta.",
@@ -1109,7 +1096,6 @@
     "drag_and_drop": "Trascina e rilascia ovunque per caricare",
     "delete": "Elimina allegato"
   },
-
   "label": {
     "select": "Seleziona etichetta",
     "create": {
@@ -1119,7 +1105,6 @@
       "type": "Digita per aggiungere una nuova etichetta"
     }
   },
-
   "sub_work_item": {
     "update": {
       "success": "Sotto-elemento di lavoro aggiornato con successo",
@@ -1130,7 +1115,6 @@
       "error": "Errore nella rimozione del sotto-elemento di lavoro"
     }
   },
-
   "view": {
     "label": "{count, plural, one {Visualizzazione} other {Visualizzazioni}}",
     "create": {
@@ -1140,7 +1124,6 @@
       "label": "Aggiorna visualizzazione"
     }
   },
-
   "inbox_issue": {
     "status": {
       "pending": {
@@ -1226,7 +1209,6 @@
       }
     }
   },
-
   "workspace_creation": {
     "heading": "Crea il tuo spazio di lavoro",
     "subheading": "Per iniziare a usare Plane, devi creare o unirti a uno spazio di lavoro.",
@@ -1278,7 +1260,6 @@
       }
     }
   },
-
   "workspace_dashboard": {
     "empty_state": {
       "general": {
@@ -1294,7 +1275,6 @@
       }
     }
   },
-
   "workspace_analytics": {
     "label": "Analisi",
     "page_label": "{workspace} - Analisi",
@@ -1339,7 +1319,6 @@
       }
     }
   },
-
   "workspace_projects": {
     "label": "{count, plural, one {Progetto} other {Progetti}}",
     "create": {
@@ -1414,7 +1393,6 @@
       }
     }
   },
-
   "workspace_views": {
     "add_view": "Aggiungi visualizzazione",
     "empty_state": {
@@ -1449,7 +1427,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "label": "Impostazioni dello spazio di lavoro",
     "page_label": "{workspace} - Impostazioni generali",
@@ -1631,7 +1608,6 @@
       }
     }
   },
-
   "profile": {
     "label": "Profilo",
     "page_label": "Il tuo lavoro",
@@ -1694,7 +1670,6 @@
       }
     }
   },
-
   "project_settings": {
     "general": {
       "enter_project_id": "Inserisci l'ID del progetto",
@@ -1840,7 +1815,6 @@
         "auto_close_status": "Stato di chiusura automatica"
       }
     },
-
     "empty_state": {
       "labels": {
         "title": "Nessuna etichetta ancora",
@@ -1853,7 +1827,6 @@
       }
     }
   },
-
   "project_cycles": {
     "add_cycle": "Aggiungi ciclo",
     "more_details": "Altri dettagli",
@@ -1979,7 +1952,6 @@
       }
     }
   },
-
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -2008,7 +1980,6 @@
       }
     }
   },
-
   "project_module": {
     "add_module": "Aggiungi Modulo",
     "update_module": "Aggiorna Modulo",
@@ -2062,7 +2033,6 @@
       }
     }
   },
-
   "project_views": {
     "empty_state": {
       "general": {
@@ -2082,7 +2052,6 @@
       }
     }
   },
-
   "project_page": {
     "empty_state": {
       "general": {
@@ -2112,7 +2081,6 @@
       }
     }
   },
-
   "command_k": {
     "empty_state": {
       "search": {
@@ -2120,7 +2088,6 @@
       }
     }
   },
-
   "issue_relation": {
     "empty_state": {
       "search": {
@@ -2131,7 +2098,6 @@
       }
     }
   },
-
   "issue_comment": {
     "empty_state": {
       "general": {
@@ -2140,7 +2106,6 @@
       }
     }
   },
-
   "notification": {
     "label": "Notifiche",
     "page_label": "{workspace} - Notifiche",
@@ -2197,7 +2162,6 @@
       "custom": "Personalizzato"
     }
   },
-
   "active_cycle": {
     "empty_state": {
       "progress": {
@@ -2217,7 +2181,6 @@
       }
     }
   },
-
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -2280,7 +2243,6 @@
       }
     }
   },
-
   "stickies": {
     "title": "I tuoi stickies",
     "placeholder": "clicca per scrivere qui",
@@ -2338,7 +2300,6 @@
       }
     }
   },
-
   "role_details": {
     "guest": {
       "title": "Ospite",
@@ -2353,7 +2314,6 @@
       "description": "Tutti i permessi impostati su true all'interno dello spazio di lavoro."
     }
   },
-
   "user_roles": {
     "product_or_project_manager": "Product / Project Manager",
     "development_or_engineering": "Sviluppo / Ingegneria",
@@ -2366,7 +2326,6 @@
     "human_resources": "Risorse umane",
     "other": "Altro"
   },
-
   "importer": {
     "github": {
       "title": "Github",
@@ -2377,7 +2336,6 @@
       "description": "Importa elementi di lavoro ed epic dai progetti e dagli epic di Jira."
     }
   },
-
   "exporter": {
     "csv": {
       "title": "CSV",
@@ -2406,7 +2364,6 @@
     "created": "Creati",
     "subscribed": "Iscritti"
   },
-
   "themes": {
     "theme_options": {
       "system_preference": {
@@ -2452,17 +2409,14 @@
       "manual": "Manuale"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {Ciclo} other {Cicli}}",
     "no_cycle": "Nessun ciclo"
   },
-
   "module": {
     "label": "{count, plural, one {Modulo} other {Moduli}}",
     "no_module": "Nessun modulo"
   },
-
   "description_versions": {
     "last_edited_by": "Ultima modifica di",
     "previously_edited_by": "Precedentemente modificato da",

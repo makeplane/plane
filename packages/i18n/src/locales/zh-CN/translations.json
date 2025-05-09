@@ -18,7 +18,6 @@
     "pro": "专业版",
     "upgrade": "升级"
   },
-
   "auth": {
     "common": {
       "email": {
@@ -168,7 +167,6 @@
       }
     }
   },
-
   "submit": "提交",
   "cancel": "取消",
   "loading": "加载中",
@@ -367,12 +365,12 @@
   "work_management": "工作管理",
   "projects_and_issues": "项目和工作项",
   "projects_and_issues_description": "在此项目中开启或关闭这些功能。",
-  "cycles_description": "根据项目需要设置时间框，可以根据不同时期更改频率。",
-  "modules_description": "将工作分组为类似子项目的设置，具有各自的负责人和分配者。",
-  "views_description": "保存排序、筛选和显示选项以供后续使用或分享。",
-  "pages_description": "像写任何东西一样写任何东西。",
-  "intake_description": "及时了解您订阅的工作项。启用此功能以获取通知。",
-  "time_tracking_description": "跟踪工作项和项目的时间消耗。",
+  "cycles_description": "为每个项目设置时间框，并根据需要调整周期。一个周期可以是两周，下一个周期是一周。",
+  "modules_description": "将工作组织为子项目，并指定专门的负责人和受理人。",
+  "views_description": "保存自定义排序、筛选和显示选项，或与团队共享。",
+  "pages_description": "创建和编辑自由格式的内容：笔记、文档，任何内容。",
+  "intake_description": "允许非成员提交 Bug、反馈和建议，且不会干扰您的工作流程。",
+  "time_tracking_description": "记录在工作项和项目上花费的时间。",
   "work_management_description": "轻松管理您的工作和项目。",
   "documentation": "文档",
   "message_support": "联系支持",
@@ -518,12 +516,10 @@
       "name": "名称"
     }
   },
-
   "toast": {
     "success": "成功！",
     "error": "错误！"
   },
-
   "links": {
     "toasts": {
       "created": {
@@ -552,7 +548,6 @@
       }
     }
   },
-
   "home": {
     "empty": {
       "quickstart_guide": "快速入门指南",
@@ -620,7 +615,6 @@
     "title": "首页",
     "star_us_on_github": "在GitHub上为我们加星"
   },
-
   "link": {
     "modal": {
       "url": {
@@ -634,7 +628,6 @@
       }
     }
   },
-
   "common": {
     "all": "全部",
     "states": "状态",
@@ -881,20 +874,17 @@
     "apply": "应用",
     "applying": "应用中"
   },
-
   "chart": {
     "x_axis": "X轴",
     "y_axis": "Y轴",
     "metric": "指标"
   },
-
   "form": {
     "title": {
       "required": "标题为必填项",
       "max_length": "标题应少于 {length} 个字符"
     }
   },
-
   "entity": {
     "grouping_title": "{entity}分组",
     "priority": "{entity}优先级",
@@ -918,7 +908,6 @@
       "failed": "添加{entity}时出错"
     }
   },
-
   "epic": {
     "all": "所有史诗",
     "label": "{count, plural, one {史诗} other {史诗}}",
@@ -936,7 +925,6 @@
       "required": "史诗标题为必填项"
     }
   },
-
   "issue": {
     "label": "{count, plural, one {工作项} other {工作项}}",
     "all": "所有工作项",
@@ -1103,7 +1091,6 @@
     },
     "open_in_full_screen": "在全屏中打开工作项"
   },
-
   "attachment": {
     "error": "无法附加文件。请重新上传。",
     "only_one_file_allowed": "一次只能上传一个文件。",
@@ -1111,7 +1098,6 @@
     "drag_and_drop": "拖放到任意位置以上传",
     "delete": "删除附件"
   },
-
   "label": {
     "select": "选择标签",
     "create": {
@@ -1121,7 +1107,6 @@
       "type": "输入以添加新标签"
     }
   },
-
   "sub_work_item": {
     "update": {
       "success": "子工作项更新成功",
@@ -1132,7 +1117,6 @@
       "error": "移除子工作项时出错"
     }
   },
-
   "view": {
     "label": "{count, plural, one {视图} other {视图}}",
     "create": {
@@ -1142,7 +1126,6 @@
       "label": "更新视图"
     }
   },
-
   "inbox_issue": {
     "status": {
       "pending": {
@@ -1228,7 +1211,6 @@
       }
     }
   },
-
   "workspace_creation": {
     "heading": "创建您的工作区",
     "subheading": "要开始使用 Plane，您需要创建或加入一个工作区。",
@@ -1280,7 +1262,6 @@
       }
     }
   },
-
   "workspace_dashboard": {
     "empty_state": {
       "general": {
@@ -1296,7 +1277,6 @@
       }
     }
   },
-
   "workspace_analytics": {
     "label": "分析",
     "page_label": "{workspace} - 分析",
@@ -1341,7 +1321,6 @@
       }
     }
   },
-
   "workspace_projects": {
     "label": "{count, plural, one {项目} other {项目}}",
     "create": {
@@ -1415,7 +1394,6 @@
       }
     }
   },
-
   "workspace_views": {
     "add_view": "添加视图",
     "empty_state": {
@@ -1450,7 +1428,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "label": "工作区设置",
     "page_label": "{workspace} - 常规设置",
@@ -1632,7 +1609,6 @@
       }
     }
   },
-
   "profile": {
     "label": "个人资料",
     "page_label": "您的工作",
@@ -1695,7 +1671,6 @@
       }
     }
   },
-
   "project_settings": {
     "general": {
       "enter_project_id": "输入项目 ID",
@@ -1822,7 +1797,6 @@
         "auto_close_status": "自动关闭状态"
       }
     },
-
     "empty_state": {
       "labels": {
         "title": "尚无标签",
@@ -1835,7 +1809,6 @@
       }
     }
   },
-
   "project_cycles": {
     "add_cycle": "添加周期",
     "more_details": "更多详情",
@@ -1961,7 +1934,6 @@
       }
     }
   },
-
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -1990,7 +1962,6 @@
       }
     }
   },
-
   "project_module": {
     "add_module": "添加模块",
     "update_module": "更新模块",
@@ -2044,7 +2015,6 @@
       }
     }
   },
-
   "project_views": {
     "empty_state": {
       "general": {
@@ -2064,7 +2034,6 @@
       }
     }
   },
-
   "project_page": {
     "empty_state": {
       "general": {
@@ -2094,7 +2063,6 @@
       }
     }
   },
-
   "command_k": {
     "empty_state": {
       "search": {
@@ -2102,7 +2070,6 @@
       }
     }
   },
-
   "issue_relation": {
     "empty_state": {
       "search": {
@@ -2113,7 +2080,6 @@
       }
     }
   },
-
   "issue_comment": {
     "empty_state": {
       "general": {
@@ -2122,7 +2088,6 @@
       }
     }
   },
-
   "notification": {
     "label": "收件箱",
     "page_label": "{workspace} - 收件箱",
@@ -2179,7 +2144,6 @@
       "custom": "自定义"
     }
   },
-
   "active_cycle": {
     "empty_state": {
       "progress": {
@@ -2199,7 +2163,6 @@
       }
     }
   },
-
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -2262,7 +2225,6 @@
       }
     }
   },
-
   "stickies": {
     "title": "您的便签",
     "placeholder": "点击此处输入",
@@ -2320,7 +2282,6 @@
       }
     }
   },
-
   "role_details": {
     "guest": {
       "title": "访客",
@@ -2335,7 +2296,6 @@
       "description": "在工作区内所有权限均设置为允许。"
     }
   },
-
   "user_roles": {
     "product_or_project_manager": "产品/项目经理",
     "development_or_engineering": "开发/工程",
@@ -2348,7 +2308,6 @@
     "human_resources": "人力资源",
     "other": "其他"
   },
-
   "importer": {
     "github": {
       "title": "GitHub",
@@ -2359,7 +2318,6 @@
       "description": "从 Jira 项目和史诗导入工作项和史诗。"
     }
   },
-
   "exporter": {
     "csv": {
       "title": "CSV",
@@ -2388,7 +2346,6 @@
     "created": "已创建",
     "subscribed": "已订阅"
   },
-
   "themes": {
     "theme_options": {
       "system_preference": {
@@ -2434,17 +2391,14 @@
       "manual": "手动"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {周期} other {周期}}",
     "no_cycle": "无周期"
   },
-
   "module": {
     "label": "{count, plural, one {模块} other {模块}}",
     "no_module": "无模块"
   },
-
   "description_versions": {
     "last_edited_by": "最后编辑者",
     "previously_edited_by": "之前编辑者",

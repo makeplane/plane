@@ -18,7 +18,6 @@
     "pro": "프로",
     "upgrade": "업그레이드"
   },
-
   "auth": {
     "common": {
       "email": {
@@ -168,7 +167,6 @@
       }
     }
   },
-
   "submit": "제출",
   "cancel": "취소",
   "loading": "로딩 중",
@@ -367,12 +365,12 @@
   "work_management": "작업 관리",
   "projects_and_issues": "프로젝트 및 작업 항목",
   "projects_and_issues_description": "이 프로젝트에서 이들을 켜거나 끕니다.",
-  "cycles_description": "프로젝트별로 작업을 시간 상자로 나누고, 한 기간에서 다음 기간으로 빈도를 변경합니다.",
-  "modules_description": "작업을 하위 프로젝트와 같은 설정으로 그룹화하고, 각 설정에 리드와 담당자를 지정합니다.",
-  "views_description": "정렬, 필터 및 표시 옵션을 나중에 저장하거나 공유합니다.",
-  "pages_description": "무엇이든 작성하세요.",
-  "intake_description": "구독한 작업 항목에 대한 최신 정보를 유지하세요. 알림을 받으려면 이 기능을 활성화하세요.",
-  "time_tracking_description": "작업 항목 및 프로젝트에 소요된 시간을 추적합니다.",
+  "cycles_description": "프로젝트별로 작업 시간을 설정하고 필요에 따라 기간을 조정하세요. 한 주기는 2주일일 수 있고, 다음은 1주일일 수 있습니다.",
+  "modules_description": "작업을 전담 리더와 담당자가 있는 하위 프로젝트로 구성하세요.",
+  "views_description": "사용자 정의 정렬, 필터 및 표시 옵션을 저장하거나 팀과 공유하세요.",
+  "pages_description": "자유 형식의 콘텐츠를 작성하고 편집하세요. 메모, 문서, 무엇이든 가능합니다.",
+  "intake_description": "비회원이 버그, 피드백, 제안을 공유할 수 있도록 하되, 워크플로우를 방해하지 않도록 합니다.",
+  "time_tracking_description": "작업 항목 및 프로젝트에 소요된 시간을 기록하세요.",
   "work_management_description": "작업 및 프로젝트를 쉽게 관리합니다.",
   "documentation": "문서",
   "message_support": "지원 메시지",
@@ -518,12 +516,10 @@
       "name": "이름"
     }
   },
-
   "toast": {
     "success": "성공!",
     "error": "오류!"
   },
-
   "links": {
     "toasts": {
       "created": {
@@ -552,7 +548,6 @@
       }
     }
   },
-
   "home": {
     "empty": {
       "quickstart_guide": "빠른 시작 가이드",
@@ -620,7 +615,6 @@
     "title": "홈",
     "star_us_on_github": "GitHub에서 별표"
   },
-
   "link": {
     "modal": {
       "url": {
@@ -634,7 +628,6 @@
       }
     }
   },
-
   "common": {
     "all": "모두",
     "states": "상태",
@@ -882,20 +875,17 @@
     "apply": "적용",
     "applying": "적용 중"
   },
-
   "chart": {
     "x_axis": "X축",
     "y_axis": "Y축",
     "metric": "메트릭"
   },
-
   "form": {
     "title": {
       "required": "제목이 필요합니다",
       "max_length": "제목은 {length}자 미만이어야 합니다"
     }
   },
-
   "entity": {
     "grouping_title": "{entity} 그룹화",
     "priority": "{entity} 우선순위",
@@ -919,7 +909,6 @@
       "failed": "{entity} 추가 중 오류 발생"
     }
   },
-
   "epic": {
     "all": "모든 에픽",
     "label": "{count, plural, one {에픽} other {에픽}}",
@@ -937,7 +926,6 @@
       "required": "에픽 제목이 필요합니다."
     }
   },
-
   "issue": {
     "label": "{count, plural, one {작업 항목} other {작업 항목}}",
     "all": "모든 작업 항목",
@@ -1104,7 +1092,6 @@
     },
     "open_in_full_screen": "작업 항목을 전체 화면으로 열기"
   },
-
   "attachment": {
     "error": "파일을 첨부할 수 없습니다. 다시 업로드하세요.",
     "only_one_file_allowed": "한 번에 하나의 파일만 업로드할 수 있습니다.",
@@ -1112,7 +1099,6 @@
     "drag_and_drop": "업로드하려면 아무 곳에나 드래그 앤 드롭하세요",
     "delete": "첨부 파일 삭제"
   },
-
   "label": {
     "select": "레이블 선택",
     "create": {
@@ -1122,7 +1108,6 @@
       "type": "새 레이블을 추가하려면 입력하세요"
     }
   },
-
   "sub_work_item": {
     "update": {
       "success": "하위 작업 항목이 성공적으로 업데이트되었습니다",
@@ -1133,7 +1118,6 @@
       "error": "하위 작업 항목 제거 중 오류 발생"
     }
   },
-
   "view": {
     "label": "{count, plural, one {뷰} other {뷰}}",
     "create": {
@@ -1143,7 +1127,6 @@
       "label": "뷰 업데이트"
     }
   },
-
   "inbox_issue": {
     "status": {
       "pending": {
@@ -1229,7 +1212,6 @@
       }
     }
   },
-
   "workspace_creation": {
     "heading": "작업 공간 생성",
     "subheading": "Plane을 사용하려면 작업 공간을 생성하거나 참여해야 합니다.",
@@ -1281,7 +1263,6 @@
       }
     }
   },
-
   "workspace_dashboard": {
     "empty_state": {
       "general": {
@@ -1297,7 +1278,6 @@
       }
     }
   },
-
   "workspace_analytics": {
     "label": "분석",
     "page_label": "{workspace} - 분석",
@@ -1342,7 +1322,6 @@
       }
     }
   },
-
   "workspace_projects": {
     "label": "{count, plural, one {프로젝트} other {프로젝트}}",
     "create": {
@@ -1417,7 +1396,6 @@
       }
     }
   },
-
   "workspace_views": {
     "add_view": "뷰 추가",
     "empty_state": {
@@ -1452,7 +1430,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "label": "작업 공간 설정",
     "page_label": "{workspace} - 일반 설정",
@@ -1634,7 +1611,6 @@
       }
     }
   },
-
   "profile": {
     "label": "프로필",
     "page_label": "나의 작업",
@@ -1697,7 +1673,6 @@
       }
     }
   },
-
   "project_settings": {
     "general": {
       "enter_project_id": "프로젝트 ID 입력",
@@ -1843,7 +1818,6 @@
         "auto_close_status": "자동 닫기 상태"
       }
     },
-
     "empty_state": {
       "labels": {
         "title": "레이블 없음",
@@ -1856,7 +1830,6 @@
       }
     }
   },
-
   "project_cycles": {
     "add_cycle": "주기 추가",
     "more_details": "자세히 보기",
@@ -1982,7 +1955,6 @@
       }
     }
   },
-
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -2011,7 +1983,6 @@
       }
     }
   },
-
   "project_module": {
     "add_module": "모듈 추가",
     "update_module": "모듈 업데이트",
@@ -2065,7 +2036,6 @@
       }
     }
   },
-
   "project_views": {
     "empty_state": {
       "general": {
@@ -2085,7 +2055,6 @@
       }
     }
   },
-
   "project_page": {
     "empty_state": {
       "general": {
@@ -2115,7 +2084,6 @@
       }
     }
   },
-
   "command_k": {
     "empty_state": {
       "search": {
@@ -2123,7 +2091,6 @@
       }
     }
   },
-
   "issue_relation": {
     "empty_state": {
       "search": {
@@ -2134,7 +2101,6 @@
       }
     }
   },
-
   "issue_comment": {
     "empty_state": {
       "general": {
@@ -2143,7 +2109,6 @@
       }
     }
   },
-
   "notification": {
     "label": "받은 편지함",
     "page_label": "{workspace} - 받은 편지함",
@@ -2200,7 +2165,6 @@
       "custom": "사용자 정의"
     }
   },
-
   "active_cycle": {
     "empty_state": {
       "progress": {
@@ -2220,7 +2184,6 @@
       }
     }
   },
-
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -2283,7 +2246,6 @@
       }
     }
   },
-
   "stickies": {
     "title": "나의 스티키",
     "placeholder": "여기에 입력하려면 클릭하세요",
@@ -2341,7 +2303,6 @@
       }
     }
   },
-
   "role_details": {
     "guest": {
       "title": "게스트",
@@ -2356,7 +2317,6 @@
       "description": "작업 공간 내에서 모든 권한이 true로 설정됨."
     }
   },
-
   "user_roles": {
     "product_or_project_manager": "제품 / 프로젝트 관리자",
     "development_or_engineering": "개발 / 엔지니어링",
@@ -2369,7 +2329,6 @@
     "human_resources": "인사 / 자원",
     "other": "기타"
   },
-
   "importer": {
     "github": {
       "title": "Github",
@@ -2380,7 +2339,6 @@
       "description": "Jira 프로젝트 및 에픽에서 작업 항목과 에픽을 가져옵니다."
     }
   },
-
   "exporter": {
     "csv": {
       "title": "CSV",
@@ -2409,7 +2367,6 @@
     "created": "생성됨",
     "subscribed": "구독됨"
   },
-
   "themes": {
     "theme_options": {
       "system_preference": {
@@ -2455,17 +2412,14 @@
       "manual": "수동"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {주기} other {주기}}",
     "no_cycle": "주기 없음"
   },
-
   "module": {
     "label": "{count, plural, one {모듈} other {모듈}}",
     "no_module": "모듈 없음"
   },
-
   "description_versions": {
     "last_edited_by": "마지막 편집자",
     "previously_edited_by": "이전 편집자",
