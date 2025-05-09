@@ -19,21 +19,26 @@ type Props = {
 
 export const WorkItemsModalMainContent: React.FC<Props> = observer((props) => {
   const { projectDetails, fullScreen } = props;
-  const { updateSelectedProjects } = useAnalyticsV2()
-  const [isProjectConfigured, setIsProjectConfigured] = useState(false)
+  const { updateSelectedProjects } = useAnalyticsV2();
+  const [isProjectConfigured, setIsProjectConfigured] = useState(false);
 
   useEffect(() => {
     if (!projectDetails?.id) return;
-    updateSelectedProjects([projectDetails?.id ?? ''])
-    setIsProjectConfigured(true)
-  }, [projectDetails?.id, updateSelectedProjects])
+    updateSelectedProjects([projectDetails?.id ?? ""]);
+    setIsProjectConfigured(true);
+  }, [projectDetails?.id, updateSelectedProjects]);
 
-  if (!isProjectConfigured) return <div className="flex justify-center items-center h-full"><Spinner /></div>
+  if (!isProjectConfigured)
+    return (
+      <div className="flex h-full items-center justify-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <Tab.Group as={React.Fragment}>
-      <div className='flex flex-col gap-14 p-6 overflow-y-auto'>
-        <TotalInsights analyticsType='work-items' peekView={!fullScreen} />
+      <div className="flex flex-col gap-14 overflow-y-auto p-6">
+        <TotalInsights analyticsType="work-items" peekView={!fullScreen} />
         <CreatedVsResolved />
         <CustomizedInsights peekView={!fullScreen} />
         <WorkItemsInsightTable />

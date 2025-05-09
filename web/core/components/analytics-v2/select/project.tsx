@@ -7,7 +7,6 @@ import { CustomSearchSelect, Logo } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store";
 
-
 type Props = {
   value: string[] | undefined;
   onChange: (val: string[] | null) => void;
@@ -25,8 +24,12 @@ export const ProjectSelect: React.FC<Props> = observer((props) => {
       value: projectDetails?.id,
       query: `${projectDetails?.name} ${projectDetails?.identifier}`,
       content: (
-        <div className="flex items-center gap-2 max-w-[300px]">
-          {projectDetails?.logo_props ? <Logo logo={projectDetails?.logo_props} size={16} /> : <Briefcase className="w-4 h-4" />}
+        <div className="flex max-w-[300px] items-center gap-2">
+          {projectDetails?.logo_props ? (
+            <Logo logo={projectDetails?.logo_props} size={16} />
+          ) : (
+            <Briefcase className="h-4 w-4" />
+          )}
           <span className="flex-grow truncate">{projectDetails?.name}</span>
         </div>
       ),
@@ -40,15 +43,15 @@ export const ProjectSelect: React.FC<Props> = observer((props) => {
       options={options}
       label={
         <div className="flex items-center gap-2 p-1 ">
-          <Briefcase className="w-4 h-4" />
-          {value && value.length > 3 ?
-            `3+ projects`
+          <Briefcase className="h-4 w-4" />
+          {value && value.length > 3
+            ? `3+ projects`
             : value && value.length > 0
-              ? projectIds
+            ? projectIds
                 ?.filter((p) => value.includes(p))
                 .map((p) => getProjectById(p)?.name)
                 .join(", ")
-              : "All projects"}
+            : "All projects"}
         </div>
       }
       multiple

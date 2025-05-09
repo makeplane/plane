@@ -5,7 +5,7 @@ export const ProjectInsightsLoader = () => (
     <Loader className="h-full w-full">
       <Loader.Item height="100%" width="100%" />
     </Loader>
-    <div className="h-full w-full flex flex-col gap-1">
+    <div className="flex h-full w-full flex-col gap-1">
       <Loader className="h-12 w-full">
         <Loader.Item height="100%" width="100%" />
       </Loader>
@@ -21,5 +21,3 @@ export const ChartLoader = () => (
     <Loader.Item height="100%" width="100%" />
   </Loader>
 );
-
-

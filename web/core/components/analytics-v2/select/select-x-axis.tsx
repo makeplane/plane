@@ -16,12 +16,7 @@ type Props = {
 export const SelectXAxis: React.FC<Props> = (props) => {
   const { value, onChange, options, hiddenOptions, allowNoValue, label } = props;
   return (
-    <CustomSelect
-      value={value}
-      label={label}
-      onChange={onChange}
-      maxHeight="lg"
-    >
+    <CustomSelect value={value} label={label} onChange={onChange} maxHeight="lg">
       {allowNoValue && <CustomSelect.Option value={null}>No value</CustomSelect.Option>}
       {options.map((item) => {
         if (hiddenOptions?.includes(item.value)) return null;

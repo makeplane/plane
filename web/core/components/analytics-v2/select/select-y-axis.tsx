@@ -45,23 +45,23 @@ export const SelectYAxis: React.FC<Props> = observer(({ value, onChange, hiddenO
       value={value}
       label={
         <div className="flex items-center gap-2">
-          <Briefcase className="w-3 h-3" />
+          <Briefcase className="h-3 w-3" />
           <span>{options.find((v) => v.value === value)?.label ?? "Add Metric"}</span>
         </div>
       }
       onChange={onChange}
       maxHeight="lg"
     >
-      {options.map(
-        (item) => {
-          if (hiddenOptions?.includes(item.value)) return null;
-          return isEstimateEnabled(item.value) && (
+      {options.map((item) => {
+        if (hiddenOptions?.includes(item.value)) return null;
+        return (
+          isEstimateEnabled(item.value) && (
             <CustomSelect.Option key={item.value} value={item.value}>
               {item.label}
             </CustomSelect.Option>
           )
-        }
-      )}
+        );
+      })}
     </CustomSelect>
   );
 });

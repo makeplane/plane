@@ -19,7 +19,7 @@ export const WorkItemsModalHeader: React.FC<Props> = observer((props) => {
       <div className="flex items-center gap-2">
         <button
           type="button"
-          className="hidden md:grid place-items-center p-1 text-custom-text-200 hover:text-custom-text-100"
+          className="hidden place-items-center p-1 text-custom-text-200 hover:text-custom-text-100 md:grid"
           onClick={() => setFullScreen((prevData) => !prevData)}
         >
           {fullScreen ? <Shrink size={14} strokeWidth={2} /> : <Expand size={14} strokeWidth={2} />}
