@@ -36,7 +36,7 @@ const WorkItemsInsightTable = observer(() => {
   );
   // derived values
   const columnsLabels: Record<string, string> = {
-    backlog_work_items: t("workspace_projects.statex.backlog"),
+    backlog_work_items: t("workspace_projects.state.backlog"),
     started_work_items: t("workspace_projects.state.started"),
     un_started_work_items: t("workspace_projects.state.unstarted"),
     completed_work_items: t("workspace_projects.state.completed"),

@@ -31,20 +31,11 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
   const [activeLegend, setActiveLegend] = useState<string | null>(null);
 
   // derived values
-  const itemKeys = useMemo(
-    () => Array.from(areas, area => area.key),
-    [areas]
-  );
+  const itemKeys = useMemo(() => Array.from(areas, (area) => area.key), [areas]);
 
-  const itemLabels = useMemo(
-    () => Object.fromEntries(areas.map(area => [area.key, area.label])),
-    [areas]
-  );
+  const itemLabels = useMemo(() => Object.fromEntries(areas.map((area) => [area.key, area.label])), [areas]);
 
-  const itemDotColors = useMemo(
-    () => Object.fromEntries(areas.map(area => [area.key, area.fill])),
-    [areas]
-  );
+  const itemDotColors = useMemo(() => Object.fromEntries(areas.map((area) => [area.key, area.fill])), [areas]);
   const renderAreas = useMemo(
     () =>
       areas.map((area) => (
@@ -63,9 +54,9 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
           dot={
             area.showDot
               ? {
-                fill: area.fill,
-                fillOpacity: 1,
-              }
+                  fill: area.fill,
+                  fillOpacity: 1,
+                }
               : false
           }
           activeDot={{
@@ -85,7 +76,7 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
     // get the last data point
     const lastPoint = data[data.length - 1];
     // for the y-value in the last point, use its yAxis key value
-    const lastYValue = lastPoint[yAxis.key] || 0;
+    const lastYValue = lastPoint[yAxis.key] ?? 0;
     // create data for a straight line that has points at each x-axis position
     return data.map((item, index) => {
       // calculate the y value for this point on the straight line
@@ -121,7 +112,7 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
               xAxis.label && {
                 value: xAxis.label,
                 dy: 28,
-                className: AXIS_LABEL_CLASSNAME
+                className: AXIS_LABEL_CLASSNAME,
               }
             }
             tickCount={tickCount.x}

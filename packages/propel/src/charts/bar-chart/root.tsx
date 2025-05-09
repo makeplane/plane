@@ -102,7 +102,7 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
             axisLine={false}
             label={{
               value: xAxis.label,
-              dy: xAxis.dy || 28,
+              dy: xAxis.dy ?? 28,
               className: AXIS_LABEL_CLASSNAME,
             }}
             tickCount={tickCount.x}
