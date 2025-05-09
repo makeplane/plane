@@ -70,6 +70,7 @@ export type TIssue = TBaseIssue &
     sourceIssueId?: string;
     state__group?: string | null;
     update_status?: EUpdateStatus | undefined;
+    state__group?: string | null;
   };
 
 export type TIssueMap = {

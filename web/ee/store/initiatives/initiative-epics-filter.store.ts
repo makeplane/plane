@@ -1,22 +1,30 @@
 import set from "lodash/set";
-import { action, makeObservable, observable } from "mobx";
+import { action, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 import { EIssueFilterType } from "@plane/constants";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilters, TIssueParams } from "@plane/types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  IIssueFilters,
+  TIssue,
+} from "@plane/types";
+import { getFilteredWorkItems, getGroupedWorkItemIds, updateFilters } from "@/store/issue/helpers/base-issues-utils";
+import { DEFAULT_DISPLAY_PROPERTIES } from "@/store/issue/issue-details/sub_issues_filter.store";
 import { InitiativeEpicStore } from "./initiative-epics.store";
 
 export interface IInitiativeEpicsFilterStore {
   initiativeEpicsFiltersMap: Record<string, Partial<IIssueFilters>>;
   getInitiativeEpicsFiltersById: (initiativeId: string) => Partial<IIssueFilters> | undefined;
-  updateSubIssueFilters: (
+  updateEpicsFilters: (
     workspaceSlug: string,
     filterType: EIssueFilterType,
     filters: IIssueDisplayFilterOptions | IIssueDisplayProperties,
     initiativeId: string
   ) => Promise<void>;
-
-  // helpers
-  computedFilterParams: (initiativeId: string) => Partial<Record<TIssueParams, boolean | string>>;
-
+  getGroupedEpics: (initiativeId: string) => Record<string, string[]>;
+  getFilteredEpics: (initiativeId: string, filters: IIssueFilterOptions) => TIssue[];
+  resetFilters: (workItemId: string) => void;
   // store
   initiativeEpicStore: InitiativeEpicStore;
 }
@@ -28,8 +36,11 @@ export class InitiativeEpicsFilterStore implements IInitiativeEpicsFilterStore {
   constructor(initiativeEpicStore: InitiativeEpicStore) {
     makeObservable(this, {
       initiativeEpicsFiltersMap: observable,
-      updateSubIssueFilters: action,
+      updateEpicsFilters: action,
       getInitiativeEpicsFiltersById: action,
+      getGroupedEpics: action,
+      getFilteredEpics: action,
+      resetFilters: action,
     });
 
     this.initiativeEpicStore = initiativeEpicStore;
@@ -39,20 +50,10 @@ export class InitiativeEpicsFilterStore implements IInitiativeEpicsFilterStore {
    * Initialize the initiative epics filters
    * @param initiativeId - The initiative id
    */
-  initInitiativeEpicsFilters = (initiativeId: string) => {
-    set(this.initiativeEpicsFiltersMap, [initiativeId], {
-      displayFilters: {},
-      displayProperties: {
-        key: true,
-        issue_type: true,
-        assignee: true,
-        start_date: true,
-        due_date: true,
-        labels: true,
-        priority: true,
-        state: true,
-      },
-    });
+  initializeFilters = (initiativeId: string) => {
+    set(this.initiativeEpicsFiltersMap, [initiativeId, "displayProperties"], DEFAULT_DISPLAY_PROPERTIES);
+    set(this.initiativeEpicsFiltersMap, [initiativeId, "filters"], {});
+    set(this.initiativeEpicsFiltersMap, [initiativeId, "displayFilters"], {});
   };
 
   /**
@@ -63,7 +64,7 @@ export class InitiativeEpicsFilterStore implements IInitiativeEpicsFilterStore {
   getInitiativeEpicsFiltersById = (initiativeId: string) => {
     // initialize the filters if no exists before
     if (!this.initiativeEpicsFiltersMap?.[initiativeId]) {
-      this.initInitiativeEpicsFilters(initiativeId);
+      this.initializeFilters(initiativeId);
     }
     return this.initiativeEpicsFiltersMap?.[initiativeId];
   };
@@ -75,54 +76,54 @@ export class InitiativeEpicsFilterStore implements IInitiativeEpicsFilterStore {
    * @param filters - The filters
    * @param initiativeId - The initiative id
    */
-  updateSubIssueFilters = async (
+  updateEpicsFilters = async (
     workspaceSlug: string,
     filterType: EIssueFilterType,
     filters: IIssueDisplayFilterOptions | IIssueDisplayProperties,
     initiativeId: string
   ) => {
-    const _filters = this.getInitiativeEpicsFiltersById(initiativeId);
-    switch (filterType) {
-      case EIssueFilterType.DISPLAY_FILTERS: {
-        set(this.initiativeEpicsFiltersMap, [initiativeId, "displayFilters"], {
-          ..._filters.displayFilters,
-          ...filters,
-        });
-        this.initiativeEpicStore.fetchInitiativeEpics(workspaceSlug, initiativeId);
-        break;
-      }
-      case EIssueFilterType.DISPLAY_PROPERTIES:
-        set(this.initiativeEpicsFiltersMap, [initiativeId, "displayProperties"], {
-          ..._filters.displayProperties,
-          ...filters,
-        });
-        break;
-    }
+    runInAction(() => {
+      updateFilters(this.initiativeEpicsFiltersMap, filterType, filters, initiativeId);
+    });
   };
 
   /**
-   * Compute the filter params for the initiative epics
-   * @param initiativeId - The initiative id
-   * @returns The computed filter params
+   * @description This method is used to get the grouped epics
+   * @param parentWorkItemId
+   * @returns
    */
-  computedFilterParams = (initiativeId: string) => {
-    const displayFilters = this.getInitiativeEpicsFiltersById(initiativeId).displayFilters;
+  getGroupedEpics = computedFn((parentWorkItemId: string) => {
+    const epicsFilters = this.getInitiativeEpicsFiltersById(parentWorkItemId);
+    // get group by and order by
+    const orderByKey = epicsFilters.displayFilters?.order_by;
+    const groupByKey = epicsFilters.displayFilters?.group_by;
 
-    const computedFilters: Partial<Record<TIssueParams, undefined | string[] | boolean | string>> = {
-      order_by: displayFilters?.order_by || undefined,
-    };
+    const filteredEpics = this.getFilteredEpics(parentWorkItemId, epicsFilters.filters ?? {});
 
-    const issueFiltersParams: Partial<Record<TIssueParams, boolean | string>> = {};
-    Object.keys(computedFilters).forEach((key) => {
-      const _key = key as TIssueParams;
-      const _value: string | boolean | string[] | undefined = computedFilters[_key];
-      const nonEmptyArrayValue = Array.isArray(_value) && _value.length === 0 ? undefined : _value;
-      if (nonEmptyArrayValue != undefined)
-        issueFiltersParams[_key] = Array.isArray(nonEmptyArrayValue)
-          ? nonEmptyArrayValue.join(",")
-          : nonEmptyArrayValue;
-    });
+    const groupedEpics = getGroupedWorkItemIds(filteredEpics, groupByKey, orderByKey);
 
-    return issueFiltersParams;
+    return groupedEpics;
+  });
+
+  /**
+   * @description This method is used to get the filtered epics
+   * @param initiativeId
+   * @returns
+   */
+  getFilteredEpics = computedFn((initiativeId: string, filters: IIssueFilterOptions) => {
+    const epicIds = this.initiativeEpicStore.getInitiativeEpicsById(initiativeId);
+    const epics = this.initiativeEpicStore.rootStore.issue.issues.getIssuesByIds(epicIds, "un-archived");
+
+    const filteredEpics = getFilteredWorkItems(epics, filters);
+
+    return filteredEpics;
+  });
+
+  /**
+   * @description This method is used to reset the filters
+   * @param initiativeId
+   */
+  resetFilters = (initiativeId: string) => {
+    this.initializeFilters(initiativeId);
   };
 }
