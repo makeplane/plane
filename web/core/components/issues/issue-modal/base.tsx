@@ -358,7 +358,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       else {
         // if the issue is being converted, handle the conversion
         if (isConversionOperation) handleConvert(workspaceSlug.toString(), data);
-        response = await handleUpdateIssue(payload);
+        response = await handleUpdateIssue(payload, !isConversionOperation);
       }
     } catch (error) {
       console.error(error);

@@ -14,10 +14,13 @@ import {
   TCreateUpdatePropertyValuesProps,
   TPropertyValuesValidationProps,
 } from "@/components/issues";
+// plane web components
+import { ConversionToastActionItems } from "@/plane-web/components/issues";
 // plane web hooks
 import { useIssuePropertiesActivity, useIssueTypes } from "@/plane-web/hooks/store";
 // plane web services
 import { IssuePropertyValuesService } from "@/plane-web/services/issue-types";
+// local components
 
 type TEpicModalProviderProps = {
   children: React.ReactNode;
@@ -145,6 +148,7 @@ export const EpicModalProvider = observer((props: TEpicModalProviderProps) => {
             type: TOAST_TYPE.SUCCESS,
             title: t("success"),
             message: "Work item converted to epic successfully",
+            actionItems: <ConversionToastActionItems workspaceSlug={workspaceSlug} workItemId={data?.id} />,
           });
         })
         .catch((error) => {
