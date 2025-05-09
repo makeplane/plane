@@ -118,10 +118,10 @@ export interface IBaseIssuesStore {
 }
 
 // This constant maps the group by keys to the respective issue property that the key relies on
-const ISSUE_GROUP_BY_KEY: Record<TIssueDisplayFilterOptions, keyof TIssue> = {
+export const ISSUE_GROUP_BY_KEY: Record<TIssueDisplayFilterOptions, keyof TIssue> = {
   project: "project_id",
   state: "state_id",
-  "state_detail.group": "state_id" as keyof TIssue, // state_detail.group is only being used for state_group display,
+  "state_detail.group": "state__group" as keyof TIssue, // state_detail.group is only being used for state_group display,
   priority: "priority",
   labels: "label_ids",
   created_by: "created_by",

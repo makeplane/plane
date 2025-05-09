@@ -1,7 +1,7 @@
 "use client";
 import React, { FC, useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
 import { TIssue, TIssueServiceType } from "@plane/types";
 // components
 import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
@@ -117,6 +117,7 @@ export const SubIssuesCollapsibleContent: FC<Props> = observer((props) => {
     <>
       {subIssueHelpers.issue_visibility.includes(parentIssueId) && (
         <SubIssuesListRoot
+          storeType={EIssuesStoreType.PROJECT}
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           parentIssueId={parentIssueId}
