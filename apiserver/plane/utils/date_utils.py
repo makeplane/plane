@@ -106,6 +106,9 @@ def get_chart_period_range(date_filter=None):
     Returns:
         tuple: A tuple containing (start_date, end_date) as date objects
     """
+    if not date_filter:
+        return None
+
     today = timezone.now().date()
     period_ranges = {
         "yesterday": (
