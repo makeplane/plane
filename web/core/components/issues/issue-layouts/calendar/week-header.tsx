@@ -1,4 +1,5 @@
 import { observer } from "mobx-react";
+import { EStartOfTheWeek } from "@plane/constants";
 // helpers
 import { getOrderedDays } from "@/helpers/calendar.helper";
 // hooks
@@ -12,9 +13,8 @@ type Props = {
 export const CalendarWeekHeader: React.FC<Props> = observer((props) => {
   const { isLoading, showWeekends } = props;
   // hooks
-  const {
-    data: { start_of_the_week: startOfWeek },
-  } = useUserProfile();
+  const { data } = useUserProfile();
+  const startOfWeek = data?.start_of_the_week ?? EStartOfTheWeek.SUNDAY;
 
   // derived
   const orderedDays = getOrderedDays(startOfWeek);

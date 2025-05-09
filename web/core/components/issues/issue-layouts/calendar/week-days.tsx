@@ -1,4 +1,5 @@
 import { observer } from "mobx-react";
+import { EStartOfTheWeek } from "@plane/constants";
 import { TGroupedIssues, TIssue, TIssueMap, TPaginationData } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -69,9 +70,8 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
     isEpic = false,
   } = props;
   // hooks
-  const {
-    data: { start_of_the_week: startOfWeek },
-  } = useUserProfile();
+  const { data } = useUserProfile();
+  const startOfWeek = data?.start_of_the_week ?? EStartOfTheWeek.SUNDAY;
 
   const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
   const showWeekends = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;

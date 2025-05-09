@@ -6,6 +6,7 @@ import { usePopper } from "react-popper";
 import { CalendarDays, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // ui
+import { EStartOfTheWeek } from "@plane/constants";
 import { ComboDropDown, Calendar } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -65,9 +66,8 @@ export const DateDropdown: React.FC<Props> = observer((props) => {
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   // hooks
-  const {
-    data: { start_of_the_week: startOfWeek },
-  } = useUserProfile();
+  const { data } = useUserProfile();
+  const startOfWeek = data?.start_of_the_week ?? EStartOfTheWeek.SUNDAY;
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);

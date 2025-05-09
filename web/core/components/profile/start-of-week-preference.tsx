@@ -26,13 +26,17 @@ export const StartOfWeekPreference = observer(() => {
           value={userProfile.start_of_the_week}
           label={getStartOfWeekLabel(userProfile.start_of_the_week)}
           onChange={(val: number) => {
-            updateUserProfile({ start_of_the_week: val }).then(() => {
-              setToast({
-                type: TOAST_TYPE.SUCCESS,
-                title: "Success",
-                message: "First day of the week updated successfully",
+            updateUserProfile({ start_of_the_week: val })
+              .then(() => {
+                setToast({
+                  type: TOAST_TYPE.SUCCESS,
+                  title: "Success",
+                  message: "First day of the week updated successfully",
+                });
+              })
+              .catch(() => {
+                setToast({ type: TOAST_TYPE.ERROR, title: "Update failed", message: "Please try again later." });
               });
-            });
           }}
           input
           maxHeight="lg"
