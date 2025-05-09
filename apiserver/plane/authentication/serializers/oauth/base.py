@@ -9,6 +9,7 @@ from plane.authentication.models.oauth import (
     IDToken,
     ApplicationOwner,
     WorkspaceAppInstallation,
+    ApplicationCategory,
 )
 
 
@@ -65,4 +66,10 @@ class WorkspaceAppInstallationSerializer(BaseSerializer):
 class ApplicationOwnerSerializer(BaseSerializer):
     class Meta:
         model = ApplicationOwner
+        fields = "__all__"
+
+
+class ApplicationCategorySerializer(BaseSerializer):
+    class Meta:
+        model = ApplicationCategory
         fields = "__all__"

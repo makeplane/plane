@@ -252,6 +252,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             FileAsset.EntityTypeContext.TEAM_SPACE_COMMENT_DESCRIPTION,
             FileAsset.EntityTypeContext.OAUTH_APP_DESCRIPTION,
             FileAsset.EntityTypeContext.OAUTH_APP_LOGO,
+            FileAsset.EntityTypeContext.OAUTH_APP_ATTACHMENT,
             FileAsset.EntityTypeContext.INITIATIVE_DESCRIPTION,
             FileAsset.EntityTypeContext.INITIATIVE_ATTACHMENT,
             FileAsset.EntityTypeContext.INITIATIVE_COMMENT_DESCRIPTION,
@@ -261,6 +262,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             FileAsset.EntityTypeContext.CUSTOMER_REQUEST_DESCRIPTION,
             FileAsset.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
             FileAsset.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
+            FileAsset.EntityTypeContext.TEMPLATE_ATTACHMENT,
         ):
             return {"entity_identifier": entity_id}
 
@@ -517,7 +519,10 @@ class StaticFileAssetEndpoint(BaseAPIView):
             FileAsset.EntityTypeContext.WORKSPACE_LOGO,
             FileAsset.EntityTypeContext.PROJECT_COVER,
             FileAsset.EntityTypeContext.OAUTH_APP_LOGO,
-            FileAsset.EntityTypeContext.CUSTOMER_LOGO
+            FileAsset.EntityTypeContext.CUSTOMER_LOGO,
+            FileAsset.EntityTypeContext.OAUTH_APP_DESCRIPTION,
+            FileAsset.EntityTypeContext.OAUTH_APP_ATTACHMENT,
+            FileAsset.EntityTypeContext.TEMPLATE_ATTACHMENT,
         ]:
             return Response(
                 {"error": "Invalid entity type.", "status": False},

@@ -46,12 +46,14 @@ class FileAsset(BaseModel):
         TEAM_SPACE_COMMENT_DESCRIPTION = "TEAM_SPACE_COMMENT_DESCRIPTION"
         OAUTH_APP_LOGO = "OAUTH_APP_LOGO"
         OAUTH_APP_DESCRIPTION = "OAUTH_APP_DESCRIPTION"
+        OAUTH_APP_ATTACHMENT = "OAUTH_APP_ATTACHMENT"
         CUSTOMER_REQUEST_ATTACHMENT = "CUSTOMER_REQUEST_ATTACHMENT"
         CUSTOMER_LOGO = "CUSTOMER_LOGO"
         CUSTOMER_DESCRIPTION = "CUSTOMER_DESCRIPTION"
         CUSTOMER_REQUEST_DESCRIPTION = "CUSTOMER_REQUEST_DESCRIPTION"
         WORKITEM_TEMPLATE_DESCRIPTION = "WORKITEM_TEMPLATE_DESCRIPTION"
         PAGE_TEMPLATE_DESCRIPTION = "PAGE_TEMPLATE_DESCRIPTION"
+        TEMPLATE_ATTACHMENT = "TEMPLATE_ATTACHMENT"
 
     attributes = models.JSONField(default=dict)
     asset = models.FileField(upload_to=get_upload_path, max_length=800)
@@ -104,7 +106,9 @@ class FileAsset(BaseModel):
             self.EntityTypeContext.PROJECT_COVER,
             self.EntityTypeContext.OAUTH_APP_LOGO,
             self.EntityTypeContext.OAUTH_APP_DESCRIPTION,
-            self.EntityTypeContext.CUSTOMER_LOGO
+            self.EntityTypeContext.OAUTH_APP_ATTACHMENT,
+            self.EntityTypeContext.CUSTOMER_LOGO,
+            self.EntityTypeContext.TEMPLATE_ATTACHMENT,
         ):
             return f"/api/assets/v2/static/{self.id}/"
 

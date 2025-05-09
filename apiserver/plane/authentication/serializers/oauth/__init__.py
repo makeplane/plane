@@ -5,5 +5,6 @@ from .base import (
     RefreshTokenSerializer,
     IDTokenSerializer,
     ApplicationOwnerSerializer,
-    WorkspaceAppInstallationSerializer
+    WorkspaceAppInstallationSerializer,
+    ApplicationCategorySerializer,
 )

@@ -7,6 +7,7 @@ from plane.ee.views.app.oauth import (
     OAuthApplicationInstallEndpoint,
     OAuthApplicationPublishEndpoint,
     OAuthApplicationClientIdEndpoint,
+    OAuthApplicationCategoryEndpoint,
 )
 
 urlpatterns = [
@@ -44,5 +45,10 @@ urlpatterns = [
         "applications/<str:client_id>/",
         OAuthApplicationClientIdEndpoint.as_view(),
         name="application-client-id",
+    ),
+    path(
+        "application-categories/",
+        OAuthApplicationCategoryEndpoint.as_view(),
+        name="application-categories",
     ),
 ]

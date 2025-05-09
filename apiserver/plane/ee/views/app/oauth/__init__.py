@@ -5,4 +5,5 @@ from .application import (
     OAuthApplicationInstallEndpoint,
     OAuthApplicationPublishEndpoint,
     OAuthApplicationClientIdEndpoint,
+    OAuthApplicationCategoryEndpoint,
 )

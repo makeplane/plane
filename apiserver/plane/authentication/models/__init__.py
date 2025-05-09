@@ -5,5 +5,6 @@ from .oauth import (
     RefreshToken,
     IDToken,
     ApplicationOwner,
-    WorkspaceAppInstallation
+    WorkspaceAppInstallation,
+    ApplicationCategory,
 )

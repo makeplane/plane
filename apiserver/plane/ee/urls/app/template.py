@@ -9,6 +9,7 @@ from plane.ee.views.app.template import (
     PageTemplateEndpoint,
     PageProjectTemplateEndpoint,
     AssetCopyEndpoint,
+    TemplateCategoryEndpoint,
 )
 
 
@@ -67,5 +68,10 @@ urlpatterns = [
         "workspaces/<str:slug>/assets/copy/",
         AssetCopyEndpoint.as_view(),
         name="asset_copy",
+    ),
+    path(
+        "template-categories/",
+        TemplateCategoryEndpoint.as_view(),
+        name="template_categories",
     ),
 ]

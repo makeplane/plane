@@ -30,6 +30,7 @@ urlpatterns = [
     # this is a webhook endpoint for email intake - this endpoint should not be exposed to ingress
     path("intake/email/", IntakeEmailWebhookEndpoint.as_view()),
     path("intake/email/attachments/", IntakeEmailAttachmentEndpoint.as_view()),
+    path("marketplace/", include("plane.marketplace.urls")),
 ]
 
 

@@ -46,6 +46,23 @@ class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
     publish_requested_at = models.DateTimeField(null=True)
     company_name = models.CharField(max_length=255)
     webhook_url = models.URLField(max_length=800, null=True, blank=True)
+    attachments = models.ManyToManyField(
+        "db.FileAsset",
+        related_name="applications",
+        through="authentication.ApplicationAttachment",
+        blank=True
+    )
+    categories = models.ManyToManyField(
+        "authentication.ApplicationCategory",
+        related_name="applications",
+        blank=True,
+    )
+    privacy_policy_url = models.URLField(max_length=800, null=True, blank=True)
+    terms_of_service_url = models.URLField(max_length=800, null=True, blank=True)
+    contact_email = models.EmailField(max_length=255, null=True, blank=True)
+    support_url = models.URLField(max_length=800, null=True, blank=True)
+    setup_url = models.CharField(max_length=800, null=True, blank=True)
+    video_url = models.URLField(max_length=800, null=True, blank=True)
 
     objects = ApplicationManager()
 
@@ -168,6 +185,12 @@ class WorkspaceAppInstallation(BaseModel):
         "db.User", related_name="app_bots", on_delete=models.SET_NULL, null=True
     )
     status = models.CharField(max_length=255, default=Status.PENDING)
+    webhook = models.ForeignKey(
+        "db.Webhook",
+        related_name="workspace_app_installations",
+        on_delete=models.SET_NULL,
+        null=True,
+    )
 
     class Meta:
         verbose_name = "Workspace app installation"
@@ -215,3 +238,38 @@ class WorkspaceAppInstallation(BaseModel):
                 ignore_conflicts=True,
             )
         super(WorkspaceAppInstallation, self).save(*args, **kwargs)
+
+
+class ApplicationAttachment(BaseModel):
+    application = models.ForeignKey(
+        "authentication.Application",
+        related_name="application_attachments",
+        on_delete=models.CASCADE,
+    )
+    file_asset = models.ForeignKey(
+        "db.FileAsset",
+        related_name="application_attachments",
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        verbose_name = "Application attachment"
+        verbose_name_plural = "Application attachments"
+        db_table = "oauth_application_attachments"
+    
+    @property
+    def file_asset_url(self):
+        # Return the file asset url if it exists
+        if self.file_asset:
+            return self.file_asset.asset_url
+        return None
+
+class ApplicationCategory(BaseModel):
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField(null=True, blank=True)
+    logo_props = models.JSONField(default=dict)
+    class Meta:
+        db_table = "oauth_application_categories"
+        verbose_name = "Application Category"
+        verbose_name_plural = "Application Categories"
+        ordering = ("-created_at",)

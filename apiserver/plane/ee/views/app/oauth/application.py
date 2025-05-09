@@ -1,22 +1,26 @@
 # standard imports
-from rest_framework.response import Response
-from rest_framework import status
+from django.db.models import BooleanField, Case, Exists, OuterRef, Q, Value, When
 from django.utils import timezone
-from django.db.models import Case, When, Value, BooleanField, Exists, OuterRef, Q
-from oauth2_provider.generators import generate_client_secret
-from plane.silo.models.application_secret import ApplicationSecret
 
+# third-party imports
+from oauth2_provider.generators import generate_client_secret
+from rest_framework import status
+from rest_framework.response import Response
+
+# local imports
+from plane.app.permissions import WorkSpaceAdminPermission
 from plane.authentication.models import (
     Application,
-    WorkspaceAppInstallation,
     ApplicationOwner,
+    WorkspaceAppInstallation,
+    ApplicationCategory,
 )
 from plane.authentication.serializers import (
-    ApplicationSerializer,
     ApplicationOwnerSerializer,
+    ApplicationSerializer,
     WorkspaceAppInstallationSerializer,
+    ApplicationCategorySerializer,
 )
-from plane.app.permissions import WorkSpaceAdminPermission
 from plane.db.models.workspace import Workspace
 from plane.ee.views.base import BaseAPIView
 
@@ -311,3 +315,10 @@ class OAuthApplicationClientIdEndpoint(BaseAPIView):
             )
         serialised_application = ApplicationSerializer(application)
         return Response(serialised_application.data, status=status.HTTP_200_OK)
+
+
+class OAuthApplicationCategoryEndpoint(BaseAPIView):
+    def get(self, request):
+        application_categories = ApplicationCategory.objects.all()
+        serializer = ApplicationCategorySerializer(application_categories, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

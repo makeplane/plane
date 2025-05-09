@@ -90,4 +90,4 @@ from .dashboard import (
     Widget,
 )
 
-from .template import Template, WorkitemTemplate, PageTemplate, ProjectTemplate
+from .template import Template, WorkitemTemplate, PageTemplate, ProjectTemplate, TemplateCategory
