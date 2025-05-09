@@ -135,8 +135,8 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
                 value: yAxis.label,
                 angle: -90,
                 position: "bottom",
-                offset: yAxis.offset || -24,
-                dx: yAxis.dx || -16,
+                offset: yAxis.offset ?? -24,
+                dx: yAxis.dx ?? -16,
                 className: AXIS_LABEL_CLASSNAME,
               }
             }

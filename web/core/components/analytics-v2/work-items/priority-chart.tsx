@@ -7,14 +7,14 @@ import { useTheme } from 'next-themes'
 import useSWR from 'swr'
 // plane package imports
 import { Download } from 'lucide-react'
-import { ANALYTICS_V2_X_AXIS_VALUES, ANALYTICS_V2_Y_AXIS_VALUES, ChartXAxisDateGrouping, ChartXAxisProperty, ChartYAxisMetric, EChartModels } from '@plane/constants'
+import { ANALYTICS_V2_X_AXIS_VALUES, ANALYTICS_V2_Y_AXIS_VALUES, CHART_COLOR_PALETTES, ChartXAxisDateGrouping, ChartXAxisProperty, ChartYAxisMetric, EChartModels } from '@plane/constants'
 import { useTranslation } from '@plane/i18n'
 import { BarChart } from '@plane/propel/charts/bar-chart'
 import { IChartResponseV2 } from '@plane/types'
 import { TBarItem, TChart, TChartData, TChartDatum } from '@plane/types/src/charts'
 // plane web components
 import { Button } from '@plane/ui'
-import { CHART_COLOR_PALETTES, generateExtendedColors, parseChartData } from '@/components/chart/utils'
+import { generateExtendedColors, parseChartData } from '@/components/chart/utils'
 // hooks
 import { useProjectState } from '@/hooks/store'
 import { useAnalyticsV2 } from '@/hooks/store/use-analytics-v2'

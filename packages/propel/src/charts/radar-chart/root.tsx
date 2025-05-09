@@ -1,15 +1,15 @@
-import { TRadarChartProps } from '@plane/types';
 import { useMemo, useState } from 'react'
-import { PolarGrid, Radar, RadarChart as CoreRadarChart, ResponsiveContainer, PolarAngleAxis, RadarProps, Tooltip, Legend } from 'recharts';
-import { CustomTooltip } from '../components/tooltip';
+import { PolarGrid, Radar, RadarChart as CoreRadarChart, ResponsiveContainer, PolarAngleAxis, Tooltip, Legend } from 'recharts';
+import { TRadarChartProps } from '@plane/types';
 import { getLegendProps } from '../components/legend';
 import { CustomRadarAxisTick } from '../components/tick';
+import { CustomTooltip } from '../components/tooltip';
 
 const RadarChart = <T extends string, K extends string>(props: TRadarChartProps<T, K>) => {
-  const { data, radars, dataKey, margin, showTooltip, legend, className, angleAxis } = props;
+  const { data, radars, margin, showTooltip, legend, className, angleAxis } = props;
 
   // states
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [, setActiveIndex] = useState<number | null>(null);
   const [activeLegend, setActiveLegend] = useState<string | null>(null);
 
   const itemKeys = useMemo(() => radars.map((radar) => radar.key), [radars]);
