@@ -58,7 +58,7 @@ def user_activation_email(current_site, user_id):
 
         msg.attach_alternative(html_content, "text/html")
         msg.send()
-        logging.getLogger("plane").info("Email sent successfully.")
+        logging.getLogger("plane.worker").info("Email sent successfully.")
         return
     except Exception as e:
         log_exception(e)

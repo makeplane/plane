@@ -75,7 +75,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     if (workspaceSlug && projectId && currentTab && filteredInboxIssueIds.length > 0) {
       if (inboxIssueId === undefined) {
         router.push(
-          `/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}&inboxIssueId=${filteredInboxIssueIds[0]}`
+          `/${workspaceSlug}/projects/${projectId}/intake?currentTab=${currentTab}&inboxIssueId=${filteredInboxIssueIds[0]}`
         );
       }
     }
@@ -95,7 +95,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
               onClick={() => {
                 if (currentTab != option?.key) {
                   handleCurrentTab(workspaceSlug, projectId, option?.key);
-                  router.push(`/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${option?.key}`);
+                  router.push(`/${workspaceSlug}/projects/${projectId}/intake?currentTab=${option?.key}`);
                 }
               }}
             >

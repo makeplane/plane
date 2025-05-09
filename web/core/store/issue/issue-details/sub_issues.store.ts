@@ -4,6 +4,7 @@ import set from "lodash/set";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
 import { EIssueServiceType } from "@plane/constants";
 // types
 import {
@@ -14,8 +15,6 @@ import {
   TSubIssuesStateDistribution,
   TIssueServiceType,
   TLoader,
-  TGroupedIssues,
-  TGroupedIssueCount,
 } from "@plane/types";
 // services
 import { updatePersistentLayer } from "@/local-db/utils/utils";
@@ -51,8 +50,6 @@ export interface IIssueSubIssuesStore extends IIssueSubIssuesStoreActions {
   // observables
   subIssuesStateDistribution: TIssueSubIssuesStateDistributionMap;
   subIssues: TIssueSubIssuesIdMap;
-  groupedSubIssuesMap: Record<string, TGroupedIssues>;
-  groupedSubIssuesCount: TGroupedIssueCount;
   subIssueHelpers: Record<string, TSubIssueHelpers>; // parent_issue_id -> TSubIssueHelpers
   loader: TLoader;
   filters: IWorkItemSubIssueFiltersStore;
@@ -60,7 +57,6 @@ export interface IIssueSubIssuesStore extends IIssueSubIssuesStoreActions {
   stateDistributionByIssueId: (issueId: string) => TSubIssuesStateDistribution | undefined;
   subIssuesByIssueId: (issueId: string) => string[] | undefined;
   subIssueHelpersByIssueId: (issueId: string) => TSubIssueHelpers;
-  groupedSubIssuesByIssueId: (issueId: string) => TGroupedIssues | undefined;
   // actions
   fetchOtherProjectProperties: (workspaceSlug: string, projectIds: string[]) => Promise<void>;
   setSubIssueHelpers: (parentIssueId: string, key: TSubIssueHelpersKeys, value: string) => void;
@@ -70,8 +66,6 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
   // observables
   subIssuesStateDistribution: TIssueSubIssuesStateDistributionMap = {};
   subIssues: TIssueSubIssuesIdMap = {};
-  groupedSubIssuesMap: Record<string, TGroupedIssues> = {};
-  groupedSubIssuesCount: TGroupedIssueCount = {};
   subIssueHelpers: Record<string, TSubIssueHelpers> = {};
   loader: TLoader = undefined;
 
@@ -88,7 +82,6 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       subIssuesStateDistribution: observable,
       subIssues: observable,
       subIssueHelpers: observable,
-      groupedSubIssuesMap: observable,
       loader: observable.ref,
       // actions
       setSubIssueHelpers: action,
@@ -98,7 +91,6 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       removeSubIssue: action,
       deleteSubIssue: action,
       fetchOtherProjectProperties: action,
-      groupedSubIssuesByIssueId: action,
     });
     this.filters = new WorkItemSubIssueFiltersStore(this);
     // root store
@@ -114,12 +106,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
     return this.subIssuesStateDistribution[issueId] ?? undefined;
   };
 
-  subIssuesByIssueId = (issueId: string) => {
-    if (!issueId) return undefined;
-    return this.subIssues[issueId] ?? undefined;
-  };
-
-  groupedSubIssuesByIssueId = (issueId: string) => this.groupedSubIssuesMap[issueId] ?? undefined;
+  subIssuesByIssueId = computedFn((issueId: string) => this.subIssues[issueId]);
 
   subIssueHelpersByIssueId = (issueId: string) => ({
     preview_loader: this.subIssueHelpers?.[issueId]?.preview_loader || [],
@@ -138,20 +125,17 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
   };
 
   fetchSubIssues = async (workspaceSlug: string, projectId: string, parentIssueId: string) => {
-    // get filter params
-    const filterParams = this.filters.computedFilterParams(parentIssueId);
-    const response = await this.issueService.subIssues(workspaceSlug, projectId, parentIssueId, filterParams);
+    this.loader = "init-loader";
+
+    const response = await this.issueService.subIssues(workspaceSlug, projectId, parentIssueId);
 
     const subIssuesStateDistribution = response?.state_distribution ?? {};
 
-    // process sub issues response
-    const { issueList, groupedIssues } = this.filters.processSubIssueResponse(response.sub_issues);
-
-    // set grouped issues count
-    set(this.groupedSubIssuesMap, [parentIssueId], groupedIssues);
+    const issueList = (response.sub_issues ?? []) as TIssue[];
 
     this.rootIssueDetailStore.rootIssueStore.issues.addIssue(issueList);
 
+    // fetch other issues states and members when sub-issues are from different project
     if (issueList && issueList.length > 0) {
       const otherProjectIds = uniq(
         issueList.map((issue) => issue.project_id).filter((id) => !!id && id !== projectId)
@@ -163,6 +147,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
         sub_issues_count: issueList.length,
       });
     }
+
     runInAction(() => {
       set(this.subIssuesStateDistribution, parentIssueId, subIssuesStateDistribution);
       set(
@@ -171,6 +156,8 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
         issueList.map((issue) => issue.id)
       );
     });
+
+    this.loader = undefined;
     return response;
   };
 
