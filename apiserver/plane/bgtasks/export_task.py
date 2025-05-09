@@ -10,14 +10,18 @@ from botocore.client import Config
 # Third party imports
 from celery import shared_task
 
+
 # Django imports
 from django.conf import settings
 from django.utils import timezone
 from django.db.models import Q
 from openpyxl import Workbook
+from django.db.models import F, Prefetch
+
+from collections import defaultdict
 
 # Module imports
-from plane.db.models import ExporterHistory, Issue
+from plane.db.models import ExporterHistory, Issue, FileAsset, Label, User
 from plane.utils.exception_logger import log_exception
 
 
@@ -153,69 +157,68 @@ def upload_to_s3(zip_file, workspace_id, token_id, slug):
 
 def generate_table_row(issue):
     return [
-        f"""{issue["project__identifier"]}-{issue["sequence_id"]}""",
-        issue["project__name"],
+        f"""{issue["project_identifier"]}-{issue["sequence_id"]}""",
+        issue["project_name"],
         issue["name"],
-        issue["description_stripped"],
-        issue["state__name"],
+        issue["description"],
+        issue["state_name"],
         dateConverter(issue["start_date"]),
         dateConverter(issue["target_date"]),
         issue["priority"],
-        (
-            f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
-            if issue["created_by__first_name"] and issue["created_by__last_name"]
-            else ""
-        ),
-        (
-            f"{issue['assignees__first_name']} {issue['assignees__last_name']}"
-            if issue["assignees__first_name"] and issue["assignees__last_name"]
-            else ""
-        ),
-        issue["labels__name"] if issue["labels__name"] else "",
-        issue["issue_cycle__cycle__name"],
-        dateConverter(issue["issue_cycle__cycle__start_date"]),
-        dateConverter(issue["issue_cycle__cycle__end_date"]),
-        issue["issue_module__module__name"],
-        dateConverter(issue["issue_module__module__start_date"]),
-        dateConverter(issue["issue_module__module__target_date"]),
+        issue["created_by"],
+        ", ".join(issue["labels"]) if issue["labels"] else "",
+        issue.get("cycle_name", ""),
+        issue.get("cycle_start_date", ""),
+        issue.get("cycle_end_date", ""),
+        ", ".join(issue.get("module_name", "")) if issue.get("module_name") else "",
         dateTimeConverter(issue["created_at"]),
         dateTimeConverter(issue["updated_at"]),
         dateTimeConverter(issue["completed_at"]),
         dateTimeConverter(issue["archived_at"]),
+        ", ".join(
+            [
+                f"{comment['comment']} ({comment['created_at']} by {comment['created_by']})"
+                for comment in issue["comments"]
+            ]
+        )
+        if issue["comments"]
+        else "",
+        issue["estimate"] if issue["estimate"] else "",
+        ", ".join(issue["link"]) if issue["link"] else "",
+        ", ".join(issue["assignees"]) if issue["assignees"] else "",
+        issue["subscribers_count"] if issue["subscribers_count"] else "",
+        issue["attachment_count"] if issue["attachment_count"] else "",
+        ", ".join(issue["attachment_links"]) if issue["attachment_links"] else "",
     ]
 
 
 def generate_json_row(issue):
     return {
-        "ID": f"""{issue["project__identifier"]}-{issue["sequence_id"]}""",
-        "Project": issue["project__name"],
+        "ID": f"""{issue["project_identifier"]}-{issue["sequence_id"]}""",
+        "Project": issue["project_name"],
         "Name": issue["name"],
-        "Description": issue["description_stripped"],
-        "State": issue["state__name"],
+        "Description": issue["description"],
+        "State": issue["state_name"],
         "Start Date": dateConverter(issue["start_date"]),
         "Target Date": dateConverter(issue["target_date"]),
         "Priority": issue["priority"],
-        "Created By": (
-            f"{issue['created_by__first_name']} {issue['created_by__last_name']}"
-            if issue["created_by__first_name"] and issue["created_by__last_name"]
-            else ""
-        ),
-        "Assignee": (
-            f"{issue['assignees__first_name']} {issue['assignees__last_name']}"
-            if issue["assignees__first_name"] and issue["assignees__last_name"]
-            else ""
-        ),
-        "Labels": issue["labels__name"] if issue["labels__name"] else "",
-        "Cycle Name": issue["issue_cycle__cycle__name"],
-        "Cycle Start Date": dateConverter(issue["issue_cycle__cycle__start_date"]),
-        "Cycle End Date": dateConverter(issue["issue_cycle__cycle__end_date"]),
-        "Module Name": issue["issue_module__module__name"],
-        "Module Start Date": dateConverter(issue["issue_module__module__start_date"]),
-        "Module Target Date": dateConverter(issue["issue_module__module__target_date"]),
+        "Created By": (f"{issue['created_by']}" if issue["created_by"] else ""),
+        "Assignee": issue["assignees"],
+        "Labels": issue["labels"],
+        "Cycle Name": issue["cycle_name"],
+        "Cycle Start Date": issue["cycle_start_date"],
+        "Cycle End Date": issue["cycle_end_date"],
+        "Module Name": issue["module_name"],
         "Created At": dateTimeConverter(issue["created_at"]),
         "Updated At": dateTimeConverter(issue["updated_at"]),
         "Completed At": dateTimeConverter(issue["completed_at"]),
         "Archived At": dateTimeConverter(issue["archived_at"]),
+        "Comments": issue["comments"],
+        "Estimate": issue["estimate"],
+        "Link": issue["link"],
+        "Subscribers Count": issue["subscribers_count"],
+        "Attachment Count": issue["attachment_count"],
+        "Attachment Links": issue["attachment_links"],
     }
 
 
@@ -277,6 +280,7 @@ def generate_csv(header, project_id, issues, files):
     rows = [header]
     for issue in issues:
         row = generate_table_row(issue)
+
         update_table_row(rows, row)
     csv_file = create_csv_file(rows)
     files.append((f"{project_id}.csv", csv_file))
@@ -295,6 +299,7 @@ def generate_xlsx(header, project_id, issues, files):
     rows = [header]
     for issue in issues:
         row = generate_table_row(issue)
+
         update_table_row(rows, row)
     xlsx_file = create_xlsx_file(rows)
     files.append((f"{project_id}.xlsx", xlsx_file))
@@ -308,57 +313,112 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
         exporter_instance.save(update_fields=["status"])
 
         workspace_issues = (
-            (
-                Issue.objects.filter(
-                    workspace__id=workspace_id,
-                    project_id__in=project_ids,
-                    project__project_projectmember__member=exporter_instance.initiated_by_id,
-                    project__project_projectmember__is_active=True,
-                    project__archived_at__isnull=True,
-                )
-                .filter(Q(type__isnull=True) | Q(type__is_epic=False))
-                .select_related(
-                    "project", "workspace", "state", "parent", "created_by"
-                )
-                .prefetch_related(
-                    "assignees",
-                    "labels",
-                    "issue_cycle__cycle",
-                    "issue_module__module",
-                )
-                .values(
-                    "id",
-                    "project__identifier",
-                    "project__name",
-                    "project__id",
-                    "sequence_id",
-                    "name",
-                    "description_stripped",
-                    "priority",
-                    "start_date",
-                    "target_date",
-                    "state__name",
-                    "created_at",
-                    "updated_at",
-                    "completed_at",
-                    "archived_at",
-                    "issue_cycle__cycle__name",
-                    "issue_cycle__cycle__start_date",
-                    "issue_cycle__cycle__end_date",
-                    "issue_module__module__name",
-                    "issue_module__module__start_date",
-                    "issue_module__module__target_date",
-                    "created_by__first_name",
-                    "created_by__last_name",
-                    "assignees__first_name",
-                    "assignees__last_name",
-                    "labels__name",
-                )
+            Issue.objects.filter(
+                workspace__id=workspace_id,
+                project_id__in=project_ids,
+                project__project_projectmember__member=exporter_instance.initiated_by_id,
+                project__project_projectmember__is_active=True,
+                project__archived_at__isnull=True,
             )
-            .order_by("project__identifier", "sequence_id")
-            .distinct()
+            .select_related(
+                "project",
+                "workspace",
+                "state",
+                "parent",
+                "created_by",
+                "estimate_point",
+            )
+            .prefetch_related(
+                "labels",
+                "issue_cycle__cycle",
+                "issue_module__module",
+                "issue_comments",
+                "assignees",
+                Prefetch(
+                    "assignees",
+                    queryset=User.objects.only("first_name", "last_name").distinct(),
+                    to_attr="assignee_details",
+                ),
+                Prefetch(
+                    "labels",
+                    queryset=Label.objects.only("name").distinct(),
+                    to_attr="label_details",
+                ),
+                "issue_subscribers",
+                "issue_link",
+            )
         )
-        # CSV header
+
+        file_assets = FileAsset.objects.filter(
+            issue_id__in=workspace_issues.values_list("id", flat=True)
+        ).annotate(work_item_id=F("issue_id"), asset_id=F("id"))
+
+        attachment_dict = defaultdict(list)
+        for asset in file_assets:
+            attachment_dict[asset.work_item_id].append(asset.asset_id)
+
+        issues_data = []
+
+        for issue in workspace_issues:
+            attachments = attachment_dict.get(issue.id, [])
+
+            issue_data = {
+                "id": issue.id,
+                "project_identifier": issue.project.identifier,
+                "project_name": issue.project.name,
+                "project_id": issue.project.id,
+                "sequence_id": issue.sequence_id,
+                "name": issue.name,
+                "description": issue.description_stripped,
+                "priority": issue.priority,
+                "start_date": issue.start_date,
+                "target_date": issue.target_date,
+                "state_name": issue.state.name if issue.state else None,
+                "created_at": issue.created_at,
+                "updated_at": issue.updated_at,
+                "completed_at": issue.completed_at,
+                "archived_at": issue.archived_at,
+                "module_name": [
+                    module.module.name for module in issue.issue_module.all()
+                ],
+                "created_by": f"{issue.created_by.first_name} {issue.created_by.last_name}",
+                "labels": [label.name for label in issue.label_details],
+                "comments": [
+                    {
+                        "comment": comment.comment_stripped,
+                        "created_at": dateConverter(comment.created_at),
+                        "created_by": f"{comment.created_by.first_name} {comment.created_by.last_name}",
+                    }
+                    for comment in issue.issue_comments.all()
+                ],
+                "estimate": issue.estimate_point.estimate.name
+                if issue.estimate_point
+                else "",
+                "link": [link.url for link in issue.issue_link.all()],
+                "assignees": [
+                    f"{assignee.first_name} {assignee.last_name}"
+                    for assignee in issue.assignee_details
+                ],
+                "subscribers_count": issue.issue_subscribers.count(),
+                "attachment_count": len(attachments),
+                "attachment_links": [
+                    f"/api/assets/v2/workspaces/{issue.workspace.slug}/projects/{issue.project_id}/issues/{issue.id}/attachments/{asset}/"
+                    for asset in attachments
+                ],
+            }
+
+            # Get prefetched cycles and modules
+            cycles = list(issue.issue_cycle.all())
+
+            # Update cycle data
+            for cycle in cycles:
+                issue_data["cycle_name"] = cycle.cycle.name
+                issue_data["cycle_start_date"] = dateConverter(cycle.cycle.start_date)
+                issue_data["cycle_end_date"] = dateConverter(cycle.cycle.end_date)
+
+            issues_data.append(issue_data)
+
+            # CSV header
         header = [
             "ID",
             "Project",
@@ -369,18 +429,22 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
             "Target Date",
             "Priority",
             "Created By",
-            "Assignee",
             "Labels",
             "Cycle Name",
             "Cycle Start Date",
             "Cycle End Date",
             "Module Name",
-            "Module Start Date",
-            "Module Target Date",
             "Created At",
             "Updated At",
             "Completed At",
             "Archived At",
+            "Comments",
+            "Estimate",
+            "Link",
+            "Assignees",
+            "Subscribers Count",
+            "Attachment Count",
+            "Attachment Links",
         ]
 
         EXPORTER_MAPPER = {
@@ -391,8 +455,13 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
 
         files = []
         if multiple:
+            project_dict = defaultdict(list)
+            for issue in issues_data:
+                project_dict[str(issue["project_id"])].append(issue)
+
             for project_id in project_ids:
-                issues = workspace_issues.filter(project__id=project_id)
+                issues = project_dict.get(str(project_id), [])
+
                 exporter = EXPORTER_MAPPER.get(provider)
                 if exporter is not None:
                     exporter(header, project_id, issues, files)
@@ -400,7 +469,7 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
         else:
             exporter = EXPORTER_MAPPER.get(provider)
             if exporter is not None:
-                exporter(header, workspace_id, workspace_issues, files)
+                exporter(header, workspace_id, issues_data, files)
 
         zip_buffer = create_zip_file(files)
         upload_to_s3(zip_buffer, workspace_id, token_id, slug)
