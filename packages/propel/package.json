@@ -9,7 +9,8 @@
   },
   "exports": {
     "./ui/*": "./src/ui/*.tsx",
-    "./charts/*": "./src/charts/*/index.ts"
+    "./charts/*": "./src/charts/*/index.ts",
+    "./styles/fonts": "./src/styles/fonts/index.css"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.1",

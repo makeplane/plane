@@ -3,18 +3,16 @@
 import { ReactNode } from "react";
 import { ThemeProvider, useTheme } from "next-themes";
 import { SWRConfig } from "swr";
-// ui
+// plane imports
 import { ADMIN_BASE_PATH, DEFAULT_SWR_CONFIG } from "@plane/constants";
 import { Toast } from "@plane/ui";
 import { resolveGeneralTheme } from "@plane/utils";
-// constants
-// helpers
 // lib
 import { InstanceProvider } from "@/lib/instance-provider";
 import { StoreProvider } from "@/lib/store-provider";
 import { UserProvider } from "@/lib/user-provider";
 // styles
-import "./globals.css";
+import "@/styles/globals.css";
 
 const ToastWithTheme = () => {
   const { resolvedTheme } = useTheme();
