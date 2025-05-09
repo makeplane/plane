@@ -123,7 +123,7 @@ class TemplateDataSerializer(BaseSerializer):
         fields = [
             "id",
             "name",
-            "description_html",
+            "short_description",
             "template_type",
             "workspace",
             "project",

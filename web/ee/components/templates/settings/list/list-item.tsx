@@ -47,8 +47,8 @@ export const TemplateListItem = observer(<T extends TBaseTemplateWithData>(props
     <div className="flex items-center justify-between gap-4 p-3 border border-custom-border-200 rounded-lg bg-custom-background-90/60">
       <div className="flex flex-col w-full truncate">
         <div className="text-sm font-medium text-custom-text-100 truncate">{template.name}</div>
-        {template.description_html && (
-          <div className="text-xs font-medium text-custom-text-300 truncate">{template.description_html}</div>
+        {template.short_description && (
+          <div className="text-xs font-medium text-custom-text-300 truncate">{template.short_description}</div>
         )}
       </div>
       <div className="flex flex-shrink-0 items-center gap-3">

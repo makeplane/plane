@@ -71,7 +71,7 @@ class PageTemplateEndpoint(TemplateBaseEndpoint):
         template = Template.objects.create(
             workspace=workspace,
             name=request.data.get("name", ""),
-            description_html=request.data.get("description_html", ""),
+            short_description=request.data.get("short_description", ""),
             description=request.data.get("description", ""),
             template_type=Template.TemplateType.PAGE,
         )
@@ -197,7 +197,7 @@ class PageProjectTemplateEndpoint(TemplateBaseEndpoint):
         # create a new template
         template = Template.objects.create(
             name=request.data.get("name", ""),
-            description_html=request.data.get("description_html", ""),
+            short_description=request.data.get("short_description", ""),
             description=request.data.get("description", ""),
             template_type=Template.TemplateType.PAGE,
             project_id=project_id,

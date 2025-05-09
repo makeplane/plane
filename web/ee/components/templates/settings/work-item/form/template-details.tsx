@@ -61,12 +61,12 @@ export const TemplateDetails = observer(() => {
       {/* Template Description */}
       <div className="space-y-1">
         <Controller
-          name="template.description_html"
+          name="template.short_description"
           control={control}
           render={({ field: { value, onChange, ref } }) => (
             <TextArea
-              id="template.description_html"
-              name="template.description_html"
+              id="template.short_description"
+              name="template.short_description"
               value={value}
               onChange={onChange}
               ref={ref}

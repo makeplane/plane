@@ -101,5 +101,5 @@ export const getCreateUpdateTemplateSettingsPath = (props: TCreateTemplateSettin
 export const extractTemplateBasicFormData = (template: TBaseTemplateWithData) => ({
   id: template.id,
   name: template.name,
-  description_html: template.description_html,
+  short_description: template.short_description,
 });

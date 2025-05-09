@@ -221,7 +221,7 @@ export const workItemTemplateFormDataToData = ({
 
   return {
     name: template.name,
-    description_html: template.description_html,
+    short_description: template.short_description,
     template_type: ETemplateType.WORK_ITEM,
     template_data: buildWorkItemTemplateSchema({
       workspaceId,

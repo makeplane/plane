@@ -38,7 +38,7 @@ const DEFAULT_PAGE_TEMPLATE_FORM_VALUES: TPageTemplateForm = {
   template: {
     id: "",
     name: "",
-    description_html: "",
+    short_description: "",
   },
   page: {
     id: undefined,
