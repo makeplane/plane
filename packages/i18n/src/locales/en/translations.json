@@ -336,73 +336,7 @@
   "new_password_must_be_different_from_old_password": "New password must be different from old password",
   "edited": "edited",
   "bot": "Bot",
-  "updates": {
-    "progress": {
-      "title": "Progress",
-      "since_last_update": "Since last update",
-      "comments": "{count, plural, one{# Comment} other{# Comments}}"
-    },
-    "add_update": "Add Update",
-    "add_update_placeholder": "Add your update here",
-    "empty": {
-      "title": "No updates yet",
-      "description": "You can see the updates here."
-    },
-    "reaction": {
-      "create": {
-        "success": {
-          "title": "Reaction created",
-          "message": "The reaction has been successfully created"
-        },
-        "error": {
-          "title": "Reaction not created",
-          "message": "The reaction could not be created"
-        }
-      },
-      "remove": {
-        "success": {
-          "title": "Reaction removed",
-          "message": "The reaction has been successfully removed"
-        },
-        "error": {
-          "title": "Reaction not removed",
-          "message": "The reaction could not be removed"
-        }
-      }
-    },
-    "create": {
-      "success": {
-        "title": "Update created",
-        "message": "The update has been successfully created"
-      },
-      "error": {
-        "title": "Update not created",
-        "message": "The update could not be created"
-      }
-    },
-    "delete": {
-      "title": "Delete update",
-      "confirmation": "Are you sure you want to delete this update? This is an irreversible action.",
-      "success": {
-        "title": "Update deleted",
-        "message": "The update has been successfully deleted"
-      },
-      "error": {
-        "title": "Update not deleted",
-        "message": "The update could not be deleted"
-      }
-    },
-    "update": {
-      "success": {
-        "title": "Updated",
-        "message": "The update has been successfully updated"
-      },
-      "error": {
-        "title": "Update not updated",
-        "message": "The update could not be updated"
-      }
-    }
-  },
+
 
   "project_view": {
     "sort_by": {

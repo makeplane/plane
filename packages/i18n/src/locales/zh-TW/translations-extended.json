@@ -25,6 +25,74 @@
     "templates": "模板"
   },
 
+  "updates": {
+    "add_update": "新增更新",
+    "add_update_placeholder": "在此輸入您的更新",
+    "empty": {
+      "title": "尚無更新",
+      "description": "您可以在此查看更新。"
+    },
+    "delete": {
+      "title": "刪除更新",
+      "confirmation": "您確定要刪除此更新嗎？此操作是不可逆的。",
+      "success": {
+        "title": "更新已刪除",
+        "message": "更新已成功刪除。"
+      },
+      "error": {
+        "title": "更新未刪除",
+        "message": "更新未刪除。"
+      }
+    },
+    "update": {
+      "success": {
+        "title": "更新已更新",
+        "message": "更新已成功更新。"
+      },
+      "error": {
+        "title": "更新未更新",
+        "message": "更新未更新。"
+      }
+    },
+    "progress": {
+      "title": "進度",
+      "since_last_update": "自最後更新以來",
+      "comments": "{count, plural, one{# 評論} other{# 評論}}"
+    },
+    "create": {
+      "success": {
+        "title": "更新已創建",
+        "message": "更新已成功創建。"
+      },
+      "error": {
+        "title": "更新未創建",
+        "message": "更新未創建。"
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "反應已創建",
+          "message": "反應已成功創建。"
+        },
+        "error": {
+          "title": "反應未創建",
+          "message": "反應未創建。"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "反應已移除",
+          "message": "反應已成功移除。"
+        },
+        "error": {
+          "title": "反應未移除",
+          "message": "反應未移除。"
+        }
+      }
+    }
+  },
+
   "issue": {
     "relation": {
       "start_before": "在之前開始",

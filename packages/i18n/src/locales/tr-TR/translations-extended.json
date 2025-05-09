@@ -25,6 +25,72 @@
     "templates": "Şablonlar"
   },
 
+  "updates": {
+    "add_update": "Güncelleme Ekle",
+    "add_update_placeholder": "Buraya güncelleme ekleyin",
+    "empty": {
+      "title": "Henüz güncelleme yok",
+      "description": "Burada güncellemelere göz atabilirsiniz."
+    },
+    "create": {
+      "success": {
+        "title": "Güncelleme oluşturuldu",
+        "message": "Güncelleme başarıyla oluşturuldu."
+      },
+      "error": {
+        "title": "Güncelleme oluşturulamadı",
+        "message": "Güncelleme oluşturulamadı. Lütfen tekrar deneyin."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Güncelleme güncellendi",
+        "message": "Güncelleme başarıyla güncellendi."
+      },
+      "error": {
+        "title": "Güncelleme güncellenemedi",
+        "message": "Güncelleme güncellenemedi. Lütfen tekrar deneyin."
+      }
+    },
+    "delete": {
+      "success": {
+        "title": "Güncelleme silindi",
+        "message": "Güncelleme başarıyla silindi."
+      },
+      "error": {
+        "title": "Güncelleme silinemedi",
+        "message": "Güncelleme silinemedi. Lütfen tekrar deneyin."
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reaksiyon oluşturuldu",
+          "message": "Reaksiyon başarıyla oluşturuldu."
+        },
+        "error": {
+          "title": "Reaksiyon oluşturulamadı",
+          "message": "Reaksiyon oluşturulamadı. Lütfen tekrar deneyin."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reaksiyon silindi",
+          "message": "Reaksiyon başarıyla silindi."
+        },
+        "error": {
+          "title": "Reaksiyon silinemedi",
+          "message": "Reaksiyon silinemedi. Lütfen tekrar deneyin."
+        }
+      }
+    },
+    "progress": {
+      "title": "İlerleme",
+      "since_last_update": "Son güncellemeden beri",
+      "comments": "{count, plural, one{# yorum} other{# yorum}}"
+    }
+  },
+  
   "issue": {
     "relation": {
       "start_before": "Starts Bifor",

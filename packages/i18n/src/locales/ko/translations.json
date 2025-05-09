@@ -501,73 +501,7 @@
   "re_generate_key": "키 다시 생성",
   "export": "내보내기",
   "member": "{count, plural, one{# 멤버} other{# 멤버}}",
-  "updates": {
-    "add_update": "업데이트 추가",
-    "add_update_placeholder": "여기에 업데이트를 입력하세요",
-    "empty": {
-      "title": "아직 업데이트가 없습니다",
-      "description": "여기에서 업데이트를 확인할 수 있습니다."
-    },
-    "delete": {
-      "title": "업데이트 삭제",
-      "confirmation": "이 업데이트를 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.",
-      "success": {
-        "title": "업데이트가 삭제되었습니다",
-        "message": "업데이트가 성공적으로 삭제되었습니다."
-      },
-      "error": {
-        "title": "업데이트 삭제 실패",
-        "message": "업데이트를 삭제할 수 없습니다."
-      }
-    },
-    "reaction": {
-      "create": {
-        "success": {
-          "title": "반응이 생성되었습니다",
-          "message": "반응이 성공적으로 생성되었습니다."
-        },
-        "error": {
-          "title": "반응 생성 실패",
-          "message": "반응을 생성할 수 없습니다."
-        }
-      },
-      "remove": {
-        "success": {
-          "title": "반응이 삭제되었습니다",
-          "message": "반응이 성공적으로 삭제되었습니다."
-        },
-        "error": {
-          "title": "반응 삭제 실패",
-          "message": "반응을 삭제할 수 없습니다."
-        }
-      }
-    },
-    "progress": {
-      "title": "진행 상태",
-      "since_last_update": "마지막 업데이트부터",
-      "comments": "{count, plural, one{# 댓글} other{# 댓글}}"
-    },
-    "create": {
-      "success": {
-        "title": "업데이트가 생성되었습니다",
-        "message": "업데이트가 성공적으로 생성되었습니다."
-      },
-      "error": {
-        "title": "업데이트 생성 실패",
-        "message": "업데이트를 생성할 수 없습니다."
-      }
-    },
-    "update": {
-      "success": {
-        "title": "업데이트가 업데이트되었습니다",
-        "message": "업데이트가 성공적으로 업데이트되었습니다."
-      },
-      "error": {
-        "title": "업데이트 업데이트 실패",
-        "message": "업데이트를 업데이트할 수 없습니다."
-      }
-    }
-  },
+
   
   "new_password_must_be_different_from_old_password": "새 비밀번호는 이전 비밀번호와 다르게 설정해야 합니다",
   "edited": "수정됨",

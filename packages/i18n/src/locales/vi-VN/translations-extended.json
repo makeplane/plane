@@ -25,6 +25,64 @@
     "templates": "Mẫu"
   },
 
+  "updates": {
+    "add_update": "Thêm cập nhật",
+    "add_update_placeholder": "Thêm cập nhật của bạn ở đây",
+    "empty": {
+      "title": "Chưa có cập nhật",
+      "description": "Bạn có thể xem cập nhật ở đây."
+    },
+    "create": {
+      "success": {
+        "title": "Cập nhật đã được tạo",
+        "message": "Cập nhật đã được tạo thành công."
+      },
+      "error": {
+        "title": "Không thể tạo cập nhật",
+        "message": "Không thể tạo cập nhật. Vui lòng thử lại!"
+      }
+    },
+    "update": {
+      "success": {  
+        "title": "Cập nhật đã được cập nhật",
+        "message": "Cập nhật đã được cập nhật thành công."
+      },
+      "error": {
+        "title": "Không thể cập nhật cập nhật",
+        "message": "Không thể cập nhật cập nhật. Vui lòng thử lại!"
+      }
+    },
+    "delete": {
+      "success": {
+        "title": "Cập nhật đã được xóa",
+        "message": "Cập nhật đã được xóa thành công."
+      },
+      "error": {
+        "title": "Không thể xóa cập nhật",
+        "message": "Không thể xóa cập nhật. Vui lòng thử lại!"
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reaction đã được tạo",
+          "message": "Reaction đã được tạo thành công."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reaction đã được xóa",
+          "message": "Reaction đã được xóa thành công."
+        }
+      }
+    },
+    "progress": {
+      "title": "Tiến độ",
+      "since_last_update": "Từ lần cập nhật cuối cùng",
+      "comments": "{count, plural, one{# bình luận} other{# bình luận}}"
+    }
+  },  
+
   "issue": {
     "relation": {
       "start_before": "Bắt đầu Trước",

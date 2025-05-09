@@ -24,6 +24,75 @@
     "workflows": "ワークフロー"
   },
 
+  "updates": {
+    "add_update": "更新を追加",
+    "add_update_placeholder": "ここに更新を入力してください",
+    "empty": {
+      "title": "まだ更新がありません",
+      "description": "ここで更新を確認できます。"
+    },
+    "delete": {
+      "title": "更新を削除",
+      "confirmation": "この更新を削除してもよろしいですか？この操作は元に戻すことができません。",
+      "success": {
+        "title": "更新が削除されました",
+        "message": "更新が正常に削除されました。"
+      },
+      "error": {
+        "title": "更新が削除されませんでした",
+        "message": "更新を削除できませんでした。"
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "反応が作成されました",
+          "message": "反応が正常に作成されました。"
+        },
+        "error": {
+          "title": "反応が作成されませんでした",
+          "message": "反応を作成できませんでした。"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "反応が削除されました",
+          "message": "反応が正常に削除されました。"
+        },
+        "error": {
+          "title": "反応が削除されませんでした",
+          "message": "反応を削除できませんでした。"
+        }
+      }
+    },
+    "progress": {
+      "title": "進捗",
+      "since_last_update": "最後の更新以来",
+      "comments": "{count, plural, one{# コメント} other{# コメント}}"
+    },
+    "create": {
+      "success": {
+        "title": "更新が作成されました",
+        "message": "更新が正常に作成されました。"
+      },
+      "error": {
+        "title": "更新が作成されませんでした",
+        "message": "更新を作成できませんでした。"
+      }
+    },
+    "update": {
+      "success": {
+        "title": "更新が更新されました",
+        "message": "更新が正常に更新されました。"
+      },
+      "error": {
+        "title": "更新が更新されませんでした",
+        "message": "更新を更新できませんでした。"
+      }
+    }
+  },
+
+
   "issue": {
     "relation": {
       "start_before": "開始前",
