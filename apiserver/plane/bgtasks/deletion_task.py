@@ -18,7 +18,8 @@ def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
     # Get the model class using app registry
     model_class = apps.get_model(app_label, model_name)
 
-    # Get the instance using all_objects to ensure we can get even if it's already soft deleted
+    # Get the instance using all_objects to ensure
+    # we can get even if it's already soft deleted
     try:
         instance = model_class.all_objects.get(pk=instance_pk)
     except model_class.DoesNotExist:
@@ -107,6 +108,17 @@ def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
     if hasattr(instance, "deleted_at") and not instance.deleted_at:
         instance.deleted_at = timezone.now()
         instance.save()
+
+
+@shared_task
+def soft_delete_pages_on_project_deletion(project_id):
+    from plane.db.models import Page
+
+    pages = Page.objects.filter(project_pages__project_id=project_id)
+
+    for page in pages:
+        page.deleted_at = timezone.now()
+        page.save()
 
 
 # @shared_task

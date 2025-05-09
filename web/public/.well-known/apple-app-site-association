@@ -1,0 +1,19 @@
+{
+  "applinks":{
+    "apps":[],
+    "details":[
+      {
+        "appID": "66BZC97RPM.com.plane.so",
+        "paths": ["NOT /admin/*", "*"]
+      },
+      {
+        "appID": "66BZC97RPM.com.plane.so.staging",
+        "paths": ["NOT /admin/*", "*"]
+      },
+      {
+        "appID": "66BZC97RPM.com.plane.so.development",
+        "paths": ["NOT /admin/*", "*"]
+      }
+    ]
+  }
+}

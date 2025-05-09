@@ -3,6 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
+// import { Kanban, List } from "lucide-react";
 // ui
 import { SITES_ISSUE_LAYOUTS } from "@plane/constants";
 // plane i18n
@@ -19,6 +20,16 @@ import { IssueLayoutIcon } from "./layout-icon";
 type Props = {
   anchor: string;
 };
+
+// TODO: use from packages/constants and handle icons
+// export const SITES_ISSUE_LAYOUTS: {
+//   key: TIssueLayout;
+//   title: string;
+//   icon: any;
+// }[] = [
+//   { key: "list", title: "List", icon: List },
+//   { key: "kanban", title: "Kanban", icon: Kanban },
+// ];
 
 export const IssuesLayoutSelection: FC<Props> = observer((props) => {
   const { anchor } = props;

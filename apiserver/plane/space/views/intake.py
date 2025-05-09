@@ -12,7 +12,14 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseViewSet
-from plane.db.models import IntakeIssue, Issue, IssueLink, FileAsset, DeployBoard
+from plane.db.models import (
+    IntakeIssue,
+    Issue,
+    IssueLink,
+    FileAsset,
+    DeployBoard,
+    IssueType,
+)
 from plane.app.serializers import (
     IssueSerializer,
     IntakeIssueSerializer,
@@ -131,6 +138,11 @@ class IntakeIssuePublicViewSet(BaseViewSet):
                 {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST
             )
 
+        issue_type = IssueType.objects.filter(
+            project_issue_types__project_id=project_deploy_board.project_id,
+            is_default=True,
+        ).first()
+
         # create an issue
         issue = Issue.objects.create(
             name=request.data.get("issue", {}).get("name"),
@@ -140,6 +152,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             ),
             priority=request.data.get("issue", {}).get("priority", "low"),
             project_id=project_deploy_board.project_id,
+            type=issue_type,
         )
 
         # Create an Issue Activity
