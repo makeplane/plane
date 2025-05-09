@@ -1,10 +1,12 @@
 import { observer } from 'mobx-react'
 import { useParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
+// plane package imports
 import { ChartXAxisProperty, ChartYAxisMetric } from '@plane/constants'
 import { useTranslation } from '@plane/i18n'
 import { IAnalyticsV2Params } from '@plane/types'
 import { cn } from '@plane/utils'
+// plane web components
 import AnalyticsSectionWrapper from '../analytics-section-wrapper'
 import { AnalyticsV2SelectParams } from '../select/analytics-params'
 import PriorityChart from './priority-chart'

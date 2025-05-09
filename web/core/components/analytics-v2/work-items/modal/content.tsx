@@ -3,9 +3,10 @@ import { observer } from "mobx-react";
 import { Tab } from "@headlessui/react";
 // plane package imports
 import { IProject } from "@plane/types";
-// components
 import { Spinner } from "@plane/ui";
+// hooks
 import { useAnalyticsV2 } from "@/hooks/store";
+// plane web components
 import TotalInsights from "../../total-insights";
 import CreatedVsResolved from "../created-vs-resolved";
 import CustomizedInsights from "../customized-insights";

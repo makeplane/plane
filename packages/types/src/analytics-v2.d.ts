@@ -1,4 +1,5 @@
-import { TBarItem } from "./charts";
+import { ChartXAxisProperty, ChartYAxisMetric } from "@plane/constants";
+import { TChartData } from "./charts";
 
 export type TAnalyticsTabsV2Base = "overview" | "work-items"
 export type TAnalyticsGraphsV2Base = "projects" | "work-items" | "custom-work-items"
@@ -40,7 +41,7 @@ export interface WorkItemInsightColumns {
     started_work_items: number;
 }
 
-type AnalyticsTableDataMap = {
+export type AnalyticsTableDataMap = {
     "work-items": WorkItemInsightColumns,
 }
 

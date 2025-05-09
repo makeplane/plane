@@ -3,12 +3,17 @@ import { useMemo } from 'react'
 import { observer } from 'mobx-react'
 import { useParams } from 'next/navigation'
 import useSWR from 'swr'
+// plane package imports
 import { useTranslation } from '@plane/i18n'
 import { AreaChart } from '@plane/propel/charts/area-chart'
-import { IChartResponseV2, TAreaItem } from '@plane/types'
+import { IChartResponseV2, TChartData } from '@plane/types'
 import { renderFormattedDate } from '@plane/utils'
+// hooks
 import { useAnalyticsV2 } from '@/hooks/store/use-analytics-v2'
+// services
+import { useResolvedAssetPath } from '@/hooks/use-resolved-asset-path'
 import { AnalyticsV2Service } from '@/services/analytics-v2.service'
+// plane web components
 import AnalyticsSectionWrapper from '../analytics-section-wrapper'
 import AnalyticsV2EmptyState from '../empty-state'
 import { ChartLoader } from '../loaders'
@@ -17,22 +22,24 @@ import { ChartLoader } from '../loaders'
 
 const analyticsV2Service = new AnalyticsV2Service()
 const CreatedVsResolved = observer(() => {
-  const { selectedDuration, selectedDurationLabel } = useAnalyticsV2()
+  const { selectedDuration, selectedDurationLabel, selectedProjects } = useAnalyticsV2()
   const params = useParams();
   const { t } = useTranslation()
   const workspaceSlug = params.workspaceSlug as string;
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics-v2/empty-chart-area" });
   const { data: createdVsResolvedData, isLoading: isCreatedVsResolvedLoading } = useSWR(
     `created-vs-resolved-${workspaceSlug}-${selectedDuration}`,
     () => analyticsV2Service.getAdvanceAnalyticsCharts<IChartResponseV2>(workspaceSlug, 'work-items', {
-      date_filter: selectedDuration
+      date_filter: selectedDuration,
+      project_ids: selectedProjects?.join(','),
     }),
   )
-  const parsedData = useMemo(() => {
+  const parsedData: TChartData<string, string>[] = useMemo(() => {
     if (!createdVsResolvedData?.data) return []
     return createdVsResolvedData.data.map((datum) => ({
       ...datum,
       [datum.key]: datum.count,
-      name: renderFormattedDate(datum.key)
+      name: renderFormattedDate(datum.key) ?? datum.key
     }))
   }, [createdVsResolvedData])
 
@@ -95,6 +102,7 @@ const CreatedVsResolved = observer(() => {
             title={t('workspace_analytics.empty_state_v2.created_vs_resolved.title')}
             description={t('workspace_analytics.empty_state_v2.created_vs_resolved.description')}
             className='h-[350px]'
+            assetPath={resolvedPath}
           />
       }
     </AnalyticsSectionWrapper>

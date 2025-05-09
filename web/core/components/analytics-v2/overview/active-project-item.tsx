@@ -1,6 +1,8 @@
 import { Briefcase } from 'lucide-react';
-import { Loader, Logo } from '@plane/ui';
+// plane package imports
+import { Logo } from '@plane/ui';
 import { cn } from '@plane/utils';
+// plane web hooks
 import { useProject } from '@/hooks/store';
 
 
@@ -30,6 +32,8 @@ const ActiveProjectItem = (props: Props) => {
     const { id, completed_issues, total_issues } = project;
 
     const projectDetails = getProjectById(id);
+
+    if (!projectDetails) return null;
 
     return (
         <div className='flex gap-2 items-center justify-between  '>

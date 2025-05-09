@@ -1,18 +1,17 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Control, Controller, UseFormSetValue } from "react-hook-form";
-// plane imports
-import { Calendar, Download, SlidersHorizontal } from "lucide-react";
+import { Calendar, SlidersHorizontal } from "lucide-react";
+// plane package imports
 import { ANALYTICS_V2_X_AXIS_VALUES, ANALYTICS_V2_Y_AXIS_VALUES, ChartYAxisMetric } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IAnalyticsV2Params } from "@plane/types";
-import { Button, Row, setToast, TOAST_TYPE } from "@plane/ui";
-// components
 import { cn } from "@plane/utils";
+// plane web components
 import { AnalyticsV2Service } from "@/services/analytics-v2.service";
 import { SelectXAxis } from "./select-x-axis";
 import { SelectYAxis } from "./select-y-axis";
-// hooks
+
 
 type Props = {
   control: Control<IAnalyticsV2Params, unknown>;
@@ -22,32 +21,12 @@ type Props = {
   classNames?: string;
 };
 
-const analyticsV2Service = new AnalyticsV2Service()
-
 export const AnalyticsV2SelectParams: React.FC<Props> = observer((props) => {
-  const { control, params, workspaceSlug, classNames } = props;
-  const { t } = useTranslation();
+  const { control, params, classNames } = props;
   const xAxisOptions = useMemo(() => ANALYTICS_V2_X_AXIS_VALUES.filter((option) => option.value !== params.group_by), [params.group_by]);
   const groupByOptions = useMemo(() => ANALYTICS_V2_X_AXIS_VALUES.filter((option) => option.value !== params.x_axis), [params.x_axis]);
 
-  const exportAnalytics = () => {
-    analyticsV2Service
-      .exportAnalytics(workspaceSlug, params)
-      .then((res) => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: res.message,
-        });
-      })
-      .catch(() =>
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "There was some error in exporting the analytics. Please try again.",
-        })
-      );
-  };
+
   return (
     <div className={cn("flex justify-between w-full", classNames)}>
       <div
@@ -104,9 +83,6 @@ export const AnalyticsV2SelectParams: React.FC<Props> = observer((props) => {
           )}
         />
       </div>
-      <Button variant="accent-primary" prependIcon={<Download className="h-3.5 w-3.5" />} onClick={exportAnalytics}>
-        <div>{t("exporter.csv.short_description")}</div>
-      </Button>
     </div>
 
   );

@@ -2,8 +2,7 @@
 
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 // plane package imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -18,6 +17,8 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { ANALYTICS_TABS } from "@/plane-web/components/analytics-v2/tabs";
 
 const AnalyticsPage = observer(() => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   // plane imports
   const { t } = useTranslation();
   // store hooks
@@ -43,7 +44,11 @@ const AnalyticsPage = observer(() => {
     key: tab.key,
     label: t(tab.i18nKey),
     content: <tab.content />,
-  })), [t]);
+    onClick: () => {
+      router.push(`?tab=${tab.key}`);
+    }
+  })), [router, t]);
+  const defaultTab = searchParams.get("tab") || ANALYTICS_TABS[0].key;
 
   return (
     <>
@@ -55,7 +60,7 @@ const AnalyticsPage = observer(() => {
               <Tabs
                 tabs={tabs}
                 storageKey={`analytics-page-${currentWorkspace?.id}`}
-                defaultTab={ANALYTICS_TABS[0].key}
+                defaultTab={defaultTab}
                 size="md"
                 tabListContainerClassName="px-6 py-2 border-b border-custom-border-200 flex items-center justify-between"
                 tabListClassName="my-2 max-w-36"
