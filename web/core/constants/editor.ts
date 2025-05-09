@@ -15,6 +15,7 @@ import {
   Image,
   Italic,
   List,
+  ListCollapse,
   ListOrdered,
   ListTodo,
   LucideIcon,
