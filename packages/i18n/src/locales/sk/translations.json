@@ -1313,7 +1313,38 @@
           }
         }
       }
-    }
+    },
+    "empty_state_v2": {
+      "customized_insights": {
+        "description": "Pracovné položky priradené vám, rozdelené podľa stavu, sa zobrazia tu.",
+        "title": "Zatiaľ žiadne údaje"
+      },
+      "created_vs_resolved": {
+        "description": "Pracovné položky vytvorené a vyriešené v priebehu času sa zobrazia tu.",
+        "title": "Zatiaľ žiadne údaje"
+      },
+      "project_insights": {
+        "title": "Zatiaľ žiadne údaje",
+        "description": "Pracovné položky priradené vám, rozdelené podľa stavu, sa zobrazia tu."
+      }
+    },
+    "created_vs_resolved": "Vytvorené vs Vyriešené",
+    "customized_insights": "Prispôsobené prehľady",
+    "backlog_work_items": "Pracovné položky v backlogu",
+    "active_projects": "Aktívne projekty",
+    "trend_on_charts": "Trend na grafoch",
+    "all_projects": "Všetky projekty",
+    "summary_of_projects": "Súhrn projektov",
+    "project_insights": "Prehľad projektu",
+    "started_work_items": "Spustené pracovné položky",
+    "total_work_items": "Celkový počet pracovných položiek",
+    "total_projects": "Celkový počet projektov",
+    "total_admins": "Celkový počet administrátorov",
+    "total_users": "Celkový počet používateľov",
+    "total_intake": "Celkový príjem",
+    "un_started_work_items": "Nespustené pracovné položky",
+    "total_guests": "Celkový počet hostí",
+    "completed_work_items": "Dokončené pracovné položky"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projekt} few {Projekty} other {Projektov}}",

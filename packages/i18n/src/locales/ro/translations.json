@@ -1311,7 +1311,38 @@
           }
         }
       }
-    }
+    },
+    "empty_state_v2": {
+      "customized_insights": {
+        "description": "Elementele de lucru atribuite ție, împărțite pe stări, vor apărea aici.",
+        "title": "Nu există date încă"
+      },
+      "created_vs_resolved": {
+        "description": "Elementele de lucru create și rezolvate în timp vor apărea aici.",
+        "title": "Nu există date încă"
+      },
+      "project_insights": {
+        "title": "Nu există date încă",
+        "description": "Elementele de lucru atribuite ție, împărțite pe stări, vor apărea aici."
+      }
+    },
+    "created_vs_resolved": "Creat vs Rezolvat",
+    "customized_insights": "Perspective personalizate",
+    "backlog_work_items": "Elemente de lucru din backlog",
+    "active_projects": "Proiecte active",
+    "trend_on_charts": "Tendință în grafice",
+    "all_projects": "Toate proiectele",
+    "summary_of_projects": "Sumarul proiectelor",
+    "project_insights": "Informații despre proiect",
+    "started_work_items": "Elemente de lucru începute",
+    "total_work_items": "Totalul elementelor de lucru",
+    "total_projects": "Total proiecte",
+    "total_admins": "Total administratori",
+    "total_users": "Total utilizatori",
+    "total_intake": "Venit total",
+    "un_started_work_items": "Elemente de lucru neîncepute",
+    "total_guests": "Total invitați",
+    "completed_work_items": "Elemente de lucru finalizate"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Proiect} other {Proiecte}}",

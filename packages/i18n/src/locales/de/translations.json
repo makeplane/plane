@@ -1311,7 +1311,38 @@
           }
         }
       }
-    }
+    },
+    "empty_state_v2": {
+      "customized_insights": {
+        "description": "Ihnen zugewiesene Arbeitselemente, aufgeschlüsselt nach Status, werden hier angezeigt.",
+        "title": "Noch keine Daten"
+      },
+      "created_vs_resolved": {
+        "description": "Im Laufe der Zeit erstellte und gelöste Arbeitselemente werden hier angezeigt.",
+        "title": "Noch keine Daten"
+      },
+      "project_insights": {
+        "title": "Noch keine Daten",
+        "description": "Ihnen zugewiesene Arbeitselemente, aufgeschlüsselt nach Status, werden hier angezeigt."
+      }
+    },
+    "created_vs_resolved": "Erstellt vs Gelöst",
+    "customized_insights": "Individuelle Einblicke",
+    "backlog_work_items": "Backlog-Arbeitselemente",
+    "active_projects": "Aktive Projekte",
+    "trend_on_charts": "Trend in Diagrammen",
+    "all_projects": "Alle Projekte",
+    "summary_of_projects": "Projektübersicht",
+    "project_insights": "Projekteinblicke",
+    "started_work_items": "Begonnene Arbeitselemente",
+    "total_work_items": "Gesamte Arbeitselemente",
+    "total_projects": "Gesamtprojekte",
+    "total_admins": "Gesamtanzahl der Admins",
+    "total_users": "Gesamtanzahl der Benutzer",
+    "total_intake": "Gesamteinnahmen",
+    "un_started_work_items": "Nicht begonnene Arbeitselemente",
+    "total_guests": "Gesamtanzahl der Gäste",
+    "completed_work_items": "Abgeschlossene Arbeitselemente"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projekt} few {Projekte} other {Projekte}}",

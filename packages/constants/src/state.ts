@@ -1,3 +1,4 @@
+"use client"
 export type TStateGroups = "backlog" | "unstarted" | "started" | "completed" | "cancelled";
 
 export type TDraggableData = {
@@ -76,5 +77,6 @@ export const PROGRESS_STATE_GROUPS_DETAILS = [
     color: "#A3A3A3",
   },
 ];
+
 
 export const DISPLAY_WORKFLOW_PRO_CTA = false;

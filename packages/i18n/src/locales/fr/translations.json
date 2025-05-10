@@ -1312,7 +1312,38 @@
           }
         }
       }
-    }
+    },
+    "empty_state_v2": {
+      "customized_insights": {
+        "description": "Les éléments de travail qui vous sont assignés, répartis par état, s'afficheront ici.",
+        "title": "Pas encore de données"
+      },
+      "created_vs_resolved": {
+        "description": "Les éléments de travail créés et résolus au fil du temps s'afficheront ici.",
+        "title": "Pas encore de données"
+      },
+      "project_insights": {
+        "title": "Pas encore de données",
+        "description": "Les éléments de travail qui vous sont assignés, répartis par état, s'afficheront ici."
+      }
+    },
+    "created_vs_resolved": "Créé vs Résolu",
+    "customized_insights": "Informations personnalisées",
+    "backlog_work_items": "Éléments de travail en backlog",
+    "active_projects": "Projets actifs",
+    "trend_on_charts": "Tendance sur les graphiques",
+    "all_projects": "Tous les projets",
+    "summary_of_projects": "Résumé des projets",
+    "project_insights": "Aperçus du projet",
+    "started_work_items": "Éléments de travail commencés",
+    "total_work_items": "Total des éléments de travail",
+    "total_projects": "Total des projets",
+    "total_admins": "Total des administrateurs",
+    "total_users": "Nombre total d'utilisateurs",
+    "total_intake": "Revenu total",
+    "un_started_work_items": "Éléments de travail non commencés",
+    "total_guests": "Nombre total d'invités",
+    "completed_work_items": "Éléments de travail terminés"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projet} other {Projets}}",

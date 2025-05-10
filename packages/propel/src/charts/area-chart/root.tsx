@@ -29,14 +29,13 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
   // states
   const [activeArea, setActiveArea] = useState<string | null>(null);
   const [activeLegend, setActiveLegend] = useState<string | null>(null);
-  // derived values
-  const itemKeys = useMemo(() => areas.map((area) => area.key), [areas]);
-  const itemLabels: Record<string, string> = useMemo(
-    () => areas.reduce((acc, area) => ({ ...acc, [area.key]: area.label }), {}),
-    [areas]
-  );
-  const itemDotColors = useMemo(() => areas.reduce((acc, area) => ({ ...acc, [area.key]: area.fill }), {}), [areas]);
 
+  // derived values
+  const itemKeys = useMemo(() => Array.from(areas, (area) => area.key), [areas]);
+
+  const itemLabels = useMemo(() => Object.fromEntries(areas.map((area) => [area.key, area.label])), [areas]);
+
+  const itemDotColors = useMemo(() => Object.fromEntries(areas.map((area) => [area.key, area.fill])), [areas]);
   const renderAreas = useMemo(
     () =>
       areas.map((area) => (
@@ -77,7 +76,7 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
     // get the last data point
     const lastPoint = data[data.length - 1];
     // for the y-value in the last point, use its yAxis key value
-    const lastYValue = lastPoint[yAxis.key] || 0;
+    const lastYValue = lastPoint[yAxis.key] ?? 0;
     // create data for a straight line that has points at each x-axis position
     return data.map((item, index) => {
       // calculate the y value for this point on the straight line
@@ -91,7 +90,6 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
       };
     });
   }, [data, xAxis.key]);
-
   return (
     <div className={className}>
       <ResponsiveContainer width="100%" height="100%">
@@ -128,8 +126,8 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
                 value: yAxis.label,
                 angle: -90,
                 position: "bottom",
-                offset: -24,
-                dx: -16,
+                offset: yAxis.offset ?? -24,
+                dx: yAxis.dx ?? -16,
                 className: AXIS_LABEL_CLASSNAME,
               }
             }
