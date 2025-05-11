@@ -31,11 +31,20 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
   const [activeLegend, setActiveLegend] = useState<string | null>(null);
 
   // derived values
-  const itemKeys = useMemo(() => Array.from(areas, (area) => area.key), [areas]);
+  const { itemKeys, itemLabels, itemDotColors } = useMemo(() => {
+    const keys: string[] = [];
+    const labels: Record<string, string> = {};
+    const colors: Record<string, string> = {};
 
-  const itemLabels = useMemo(() => Object.fromEntries(areas.map((area) => [area.key, area.label])), [areas]);
+    for (const area of areas) {
+      keys.push(area.key);
+      labels[area.key] = area.label;
+      colors[area.key] = area.fill;
+    }
 
-  const itemDotColors = useMemo(() => Object.fromEntries(areas.map((area) => [area.key, area.fill])), [areas]);
+    return { itemKeys: keys, itemLabels: labels, itemDotColors: colors };
+  }, [areas]);
+
   const renderAreas = useMemo(
     () =>
       areas.map((area) => (

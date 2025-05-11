@@ -1,9 +1,17 @@
-import { useMemo, useState } from 'react'
-import { PolarGrid, Radar, RadarChart as CoreRadarChart, ResponsiveContainer, PolarAngleAxis, Tooltip, Legend } from 'recharts';
-import { TRadarChartProps } from '@plane/types';
-import { getLegendProps } from '../components/legend';
-import { CustomRadarAxisTick } from '../components/tick';
-import { CustomTooltip } from '../components/tooltip';
+import { useMemo, useState } from "react";
+import {
+  PolarGrid,
+  Radar,
+  RadarChart as CoreRadarChart,
+  ResponsiveContainer,
+  PolarAngleAxis,
+  Tooltip,
+  Legend,
+} from "recharts";
+import { TRadarChartProps } from "@plane/types";
+import { getLegendProps } from "../components/legend";
+import { CustomRadarAxisTick } from "../components/tick";
+import { CustomTooltip } from "../components/tooltip";
 
 const RadarChart = <T extends string, K extends string>(props: TRadarChartProps<T, K>) => {
   const { data, radars, margin, showTooltip, legend, className, angleAxis } = props;
@@ -12,18 +20,25 @@ const RadarChart = <T extends string, K extends string>(props: TRadarChartProps<
   const [, setActiveIndex] = useState<number | null>(null);
   const [activeLegend, setActiveLegend] = useState<string | null>(null);
 
-  const itemKeys = useMemo(() => radars.map((radar) => radar.key), [radars]);
-  const itemLabels = useMemo(() => radars.reduce((acc, radar) => ({ ...acc, [radar.key]: radar.name }), {}), [radars]);
-  const itemDotColors = useMemo(() => radars.reduce((acc, radar) => ({ ...acc, [radar.key]: radar.stroke }), {}), [radars]);
+  const { itemKeys, itemLabels, itemDotColors } = useMemo(() => {
+    const keys: string[] = [];
+    const labels: Record<string, string> = {};
+    const colors: Record<string, string> = {};
+
+    for (const radar of radars) {
+      keys.push(radar.key);
+      labels[radar.key] = radar.name;
+      colors[radar.key] = radar.stroke ?? radar.fill ?? "#000000";
+    }
+    return { itemKeys: keys, itemLabels: labels, itemDotColors: colors };
+  }, [radars]);
 
   return (
     <div className={className}>
       <ResponsiveContainer width="100%" height="100%">
         <CoreRadarChart cx="50%" cy="50%" outerRadius="80%" data={data} margin={margin}>
-          <PolarGrid stroke='rgba(var(--color-border-100), 0.9)' />
-          <PolarAngleAxis dataKey={angleAxis.key}
-            tick={(props) => <CustomRadarAxisTick {...props} />}
-          />
+          <PolarGrid stroke="rgba(var(--color-border-100), 0.9)" />
+          <PolarAngleAxis dataKey={angleAxis.key} tick={(props) => <CustomRadarAxisTick {...props} />} />
           {showTooltip && (
             <Tooltip
               cursor={{
@@ -71,11 +86,10 @@ const RadarChart = <T extends string, K extends string>(props: TRadarChartProps<
               dot={radar.dot}
             />
           ))}
-
         </CoreRadarChart>
       </ResponsiveContainer>
     </div>
-  )
-}
+  );
+};
 
 export { RadarChart };
