@@ -15,7 +15,7 @@ export const CalendarWeekHeader: React.FC<Props> = observer((props) => {
   const { isLoading, showWeekends } = props;
   // hooks
   const { data } = useUserProfile();
-  const startOfWeek = data?.start_of_the_week ?? EStartOfTheWeek.SUNDAY;
+  const startOfWeek = data?.start_of_the_week;
 
   // derived
   const orderedDays = getOrderedDays(Object.values(DAYS_LIST), (item) => item.value, startOfWeek);
@@ -30,7 +30,8 @@ export const CalendarWeekHeader: React.FC<Props> = observer((props) => {
         <div className="absolute h-[1.5px] w-3/4 animate-[bar-loader_2s_linear_infinite] bg-custom-primary-100" />
       )}
       {orderedDays.map((day) => {
-        if (!showWeekends && (day.value === 0 || day.value === 6)) return null;
+        if (!showWeekends && (day.value === EStartOfTheWeek.SUNDAY || day.value === EStartOfTheWeek.SATURDAY))
+          return null;
 
         return (
           <div

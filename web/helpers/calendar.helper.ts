@@ -101,7 +101,11 @@ export const generateCalendarData = (currentStructure: ICalendarPayload | null, 
  * @param getDayIndex Function to get the day index (0-6) from an item.
  * @param startOfWeek The day to start the week on.
  */
-export function getOrderedDays<T>(items: T[], getDayIndex: (item: T) => number, startOfWeek: EStartOfTheWeek): T[] {
+export function getOrderedDays<T>(
+  items: T[],
+  getDayIndex: (item: T) => number,
+  startOfWeek: EStartOfTheWeek = EStartOfTheWeek.SUNDAY
+): T[] {
   return [...items].sort((a, b) => {
     const dayA = (7 + getDayIndex(a) - startOfWeek) % 7;
     const dayB = (7 + getDayIndex(b) - startOfWeek) % 7;

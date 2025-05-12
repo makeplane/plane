@@ -91,7 +91,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
     updateAllBlocksOnChartChangeWhileDragging,
   } = useTimeLineChartStore();
   const { data } = useUserProfile();
-  const startOfWeek = data?.start_of_the_week ?? EStartOfTheWeek.SUNDAY;
+  const startOfWeek = data?.start_of_the_week;
 
   const updateCurrentViewRenderPayload = (side: null | "left" | "right", view: TGanttViews, targetDate?: Date) => {
     const selectedCurrentView: TGanttViews = view;

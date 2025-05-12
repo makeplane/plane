@@ -67,7 +67,7 @@ export const DateDropdown: React.FC<Props> = observer((props) => {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   // hooks
   const { data } = useUserProfile();
-  const startOfWeek = data?.start_of_the_week ?? EStartOfTheWeek.SUNDAY;
+  const startOfWeek = data?.start_of_the_week;
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);

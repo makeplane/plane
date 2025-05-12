@@ -72,7 +72,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
   } = props;
   // hooks
   const { data } = useUserProfile();
-  const startOfWeek = data?.start_of_the_week ?? EStartOfTheWeek.SUNDAY;
+  const startOfWeek = data?.start_of_the_week;
 
   const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
   const showWeekends = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
