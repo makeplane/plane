@@ -125,7 +125,7 @@ export const EpicItemDetailsHeader = observer(() => {
               <ConvertWorkItemAction
                 workItemId={issueDetails?.id}
                 conversionType={EWorkItemConversionType.WORK_ITEM}
-                disabled={!isEditingAllowed}
+                disabled={!isEditingAllowed || !!issueDetails?.archived_at}
               />
             </WithFeatureFlagHOC>
             <ProjectEpicQuickActions

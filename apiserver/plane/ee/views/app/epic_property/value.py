@@ -201,6 +201,13 @@ class EpicPropertyValueEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.EPICS)
     def patch(self, request, slug, project_id, epic_id, property_id):
         try:
+            issue = Issue.objects.get(pk=epic_id)
+
+            if issue.archived_at is not None:
+                return Response(
+                    {"error": "Archived epic's properties cannot be updated"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
             # Get the epic property
             epic_property = IssueProperty.objects.get(
                 workspace__slug=slug,

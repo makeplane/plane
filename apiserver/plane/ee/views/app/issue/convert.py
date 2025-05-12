@@ -16,6 +16,12 @@ class IssueConvertEndpoint(BaseAPIView):
 
         issue = Issue.objects.get(id=entity_id)
 
+        if issue.archived_at is not None:
+            return Response(
+                {"error": "Archived work items cannot be converted"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         if conversion_type == "epic":
             issue_type = IssueType.objects.filter(
                 workspace__slug=slug,
