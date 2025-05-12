@@ -12,8 +12,14 @@ export * from "./state";
 export * from "./string";
 export * from "./theme";
 export * from "./workspace";
-export * from "./work-item";
-
-export * from "./get-icon-for-link";
-
+export * from "./teamspace";
+export * from "./work-item-types";
+export * from "./work-item-properties";
 export * from "./subscription";
+export * from "./subscription-extented";
+export * from "./workspace";
+export * from "./templates";
+export * from "./work-item";
+export * from "./get-icon-for-link";
+export * from "./subscription";
+export * from "./workflow";
