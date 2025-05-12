@@ -1,8 +1,15 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from django.utils import timezone
+from typing import Dict, Optional, List, Union, Tuple, Any
+
+from plane.db.models import User
 
 
-def get_analytics_date_range(date_filter=None, start_date=None, end_date=None):
+def get_analytics_date_range(
+    date_filter: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+) -> Optional[Dict[str, Dict[str, datetime]]]:
     """
     Get date range for analytics with current and previous periods for comparison.
     Returns a dictionary with current and previous date ranges.
@@ -90,7 +97,9 @@ def get_analytics_date_range(date_filter=None, start_date=None, end_date=None):
     return None
 
 
-def get_chart_period_range(date_filter=None):
+def get_chart_period_range(
+    date_filter: Optional[str] = None,
+) -> Optional[Tuple[date, date]]:
     """
     Get date range for chart visualization.
     Returns a tuple of (start_date, end_date) for the specified period.
@@ -123,7 +132,13 @@ def get_chart_period_range(date_filter=None):
     return period_ranges.get(date_filter, period_ranges["last_7_days"])
 
 
-def get_analytics_filters(slug, user, type, date_filter=None, project_ids=None):
+def get_analytics_filters(
+    slug: str,
+    user: User,
+    type: str,
+    date_filter: Optional[str] = None,
+    project_ids: Optional[Union[str, List[str]]] = None,
+) -> Dict[str, Any]:
     """
     Get combined project and date filters for analytics endpoints
 
@@ -132,7 +147,7 @@ def get_analytics_filters(slug, user, type, date_filter=None, project_ids=None):
         user: The current user
         type: The type of filter ("analytics" or "chart")
         date_filter: Optional date filter string
-        project_ids: Optional list of project IDs
+        project_ids: Optional list of project IDs or comma-separated string of project IDs
 
     Returns:
         dict: A dictionary containing:

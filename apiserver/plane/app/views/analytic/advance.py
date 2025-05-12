@@ -1,5 +1,9 @@
 from rest_framework.response import Response
 from rest_framework import status
+from typing import Dict, List, Any
+from datetime import timedelta
+from django.db.models import QuerySet, Q, Count
+from django.http import HttpRequest
 
 from plane.app.views.base import BaseAPIView
 from plane.app.permissions import ROLE, allow_permission
@@ -24,9 +28,13 @@ from plane.utils.date_utils import (
     get_analytics_filters,
 )
 
+from plane.utils.build_chart import build_analytics_chart
+from plane.bgtasks.analytic_plot_export import export_analytics_to_csv_email
+from plane.utils.date_utils import get_analytics_filters
+
 
 class AdvanceAnalyticsBaseView(BaseAPIView):
-    def initialize_workspace(self, slug, type):
+    def initialize_workspace(self, slug: str, type: str) -> None:
         self._workspace_slug = slug
         self.filters = get_analytics_filters(
             slug=slug,
@@ -38,8 +46,9 @@ class AdvanceAnalyticsBaseView(BaseAPIView):
 
 
 class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
-    def get_filtered_counts(self, queryset):
-        def get_filtered_count():
+
+    def get_filtered_counts(self, queryset: QuerySet) -> Dict[str, int]:
+        def get_filtered_count() -> int:
             if self.filters["analytics_date_range"]:
                 return queryset.filter(
                     created_at__gte=self.filters["analytics_date_range"]["current"][
@@ -51,7 +60,7 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
                 ).count()
             return queryset.count()
 
-        def get_previous_count():
+        def get_previous_count() -> int:
             if self.filters["analytics_date_range"] and self.filters[
                 "analytics_date_range"
             ].get("previous"):
@@ -70,7 +79,7 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
             "filter_count": get_previous_count(),
         }
 
-    def get_overview_data(self):
+    def get_overview_data(self) -> Dict[str, Dict[str, int]]:
         return {
             "total_users": self.get_filtered_counts(
                 WorkspaceMember.objects.filter(
@@ -114,7 +123,8 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
             ),
         }
 
-    def get_work_items_stats(self):
+
+    def get_work_items_stats(self) -> Dict[str, Dict[str, int]]:
         base_queryset = Issue.objects.filter(**self.filters["base_filters"])
 
         return {
@@ -134,7 +144,7 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
         }
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
-    def get(self, request, slug):
+    def get(self, request: HttpRequest, slug: str) -> Response:
         self.initialize_workspace(slug, type="analytics")
         tab = request.GET.get("tab", "overview")
 
@@ -154,7 +164,7 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
 
 
 class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
-    def get_project_issues_stats(self):
+    def get_project_issues_stats(self) -> QuerySet:
         # Get the base queryset with workspace and project filters
         base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"])
 
@@ -178,7 +188,7 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
         )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
-    def get(self, request, slug):
+    def get(self, request: HttpRequest, slug: str) -> Response:
         self.initialize_workspace(slug, type="chart")
         type = request.GET.get("type", "work-items")
 
@@ -192,9 +202,10 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
 
 
 class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
-    def project_chart(self):
+    def project_chart(self) -> List[Dict[str, Any]]:
         # Get the base queryset with workspace and project filters
         base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"])
+        date_filter = {}
 
         # Apply date range filter if available
         if self.filters["chart_period_range"]:
@@ -204,7 +215,7 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
                 "created_at__date__lte": end_date,
             }
 
-        total_work_items = base_queryset.count()
+        total_work_items = base_queryset.filter(**date_filter).count()
         total_cycles = Cycle.objects.filter(
             **self.filters["base_filters"], **date_filter
         ).count()
@@ -243,7 +254,7 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
             for key, value in data.items()
         ]
 
-    def work_item_completion_chart(self):
+    def work_item_completion_chart(self) -> Dict[str, Any]:
         # Get the base queryset
         queryset = (
             Issue.issue_objects.filter(**self.filters["base_filters"])
@@ -303,7 +314,7 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
         return {"data": data, "schema": schema}
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
-    def get(self, request, slug):
+    def get(self, request: HttpRequest, slug: str) -> Response:
         self.initialize_workspace(slug, type="chart")
         type = request.GET.get("type", "projects")
         group_by = request.GET.get("group_by", None)
@@ -345,7 +356,7 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
 
 class AdvanceAnalyticsExportEndpoint(AdvanceAnalyticsBaseView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
-    def post(self, request, slug):
+    def post(self, request: HttpRequest, slug: str) -> Response:
         self.initialize_workspace(slug, type="chart")
         queryset = Issue.issue_objects.filter(**self.filters["base_filters"])
 
