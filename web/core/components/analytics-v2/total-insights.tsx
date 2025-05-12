@@ -41,7 +41,7 @@ const TotalInsights: React.FC<{ analyticsType: TAnalyticsTabsV2Base; peekView?: 
             : "grid-cols-2"
         )}
       >
-        {insightsFields[analyticsType].map((item: string) => (
+        {insightsFields[analyticsType]?.map((item: string) => (
           <InsightCard
             key={`${analyticsType}-${item}`}
             isLoading={isLoading}

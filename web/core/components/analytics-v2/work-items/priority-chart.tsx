@@ -191,7 +191,7 @@ const PriorityChart = observer((props: Props) => {
             xAxis={{
               key: "name",
               label: xAxisLabel.replace("_", " "),
-              dy: 0,
+              dy: 30,
             }}
             yAxis={{
               key: "count",

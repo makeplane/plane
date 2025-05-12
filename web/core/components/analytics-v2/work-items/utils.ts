@@ -9,11 +9,12 @@ interface ParamsProps {
 }
 
 export const generateBarColor = (
-  value: string,
+  value: string | null | undefined,
   params: ParamsProps,
   baseColors: string[],
   workspaceStates?: IState[]
 ): string => {
+  if (!value) return baseColors[0];
   let color = baseColors[0];
   // Priority
   if (params.x_axis === ChartXAxisProperty.PRIORITY) {
@@ -39,14 +40,6 @@ export const generateBarColor = (
         const index = Math.abs(value.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)) % baseColors.length;
         color = baseColors[index];
       }
-    }
-  }
-
-  // Label
-  if (params.x_axis === ChartXAxisProperty.LABELS) {
-    const label = workspaceStates?.find((l) => l.id === value);
-    if (label) {
-      color = label.color;
     }
   }
 

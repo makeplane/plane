@@ -278,7 +278,7 @@ export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspa
   analytics: {
     key: "analytics",
     labelTranslationKey: "analytics",
-    href: `/analytics-v2/`,
+    href: `/analytics/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
   },
   drafts: {

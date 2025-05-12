@@ -99,9 +99,10 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
               className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
               placeholder="Search"
               value={table.getColumn(table.getHeaderGroups()?.[0].headers[0].id)?.getFilterValue() as string}
-              onChange={(e) =>
-                table.getColumn(table.getHeaderGroups()?.[0].headers[0].id)?.setFilterValue(e.target.value)
-              }
+              onChange={(e) => {
+                const columnId = table.getHeaderGroups()?.[0]?.headers?.[0]?.id;
+                if (columnId) table.getColumn(columnId)?.setFilterValue(e.target.value);
+              }}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   setIsSearchOpen(true);
@@ -113,7 +114,10 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
                 type="button"
                 className="grid place-items-center"
                 onClick={() => {
-                  table.getColumn(table.getHeaderGroups()?.[0].headers[0].id)?.setFilterValue("");
+                  const columnId = table.getHeaderGroups()?.[0]?.headers?.[0]?.id;
+                  if (columnId) {
+                    table.getColumn(columnId)?.setFilterValue("");
+                  }
                   setIsSearchOpen(false);
                 }}
               >

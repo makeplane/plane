@@ -55,7 +55,7 @@ export const SidebarWorkspaceMenu = observer(() => {
     {
       key: "analytics",
       labelTranslationKey: "sidebar.analytics",
-      href: `/${workspaceSlug}/analytics-v2/`,
+      href: `/${workspaceSlug}/analytics/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
       Icon: BarChart2,
     },
