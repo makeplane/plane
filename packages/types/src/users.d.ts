@@ -1,3 +1,4 @@
+import { EStartOfTheWeek } from "@plane/constants";
 import { IIssueActivity, TIssuePriorities, TStateGroups } from ".";
 import { TUserPermissions } from "./enums";
 
@@ -64,6 +65,7 @@ export type TUserProfile = {
   language: string;
   created_at: Date | string;
   updated_at: Date | string;
+  start_of_the_week: EStartOfTheWeek;
 };
 
 export interface IInstanceAdminStatus {
@@ -155,14 +157,7 @@ export interface IUserProfileProjectSegregation {
     id: string;
     pending_issues: number;
   }[];
-  user_data: Pick<
-    IUser,
-    | "avatar_url"
-    | "cover_image_url"
-    | "display_name"
-    | "first_name"
-    | "last_name"
-  > & {
+  user_data: Pick<IUser, "avatar_url" | "cover_image_url" | "display_name" | "first_name" | "last_name"> & {
     date_joined: Date;
     user_timezone: string;
   };
