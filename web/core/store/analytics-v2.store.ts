@@ -1,9 +1,9 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import { ANALYTICS_V2_DURATION_FILTER_OPTIONS, PROJECT_CREATED_AT_FILTER_OPTIONS } from "@plane/constants";
+import { ANALYTICS_V2_DURATION_FILTER_OPTIONS } from "@plane/constants";
 import { TAnalyticsTabsV2Base } from "@plane/types";
 import { CoreRootStore } from "./root.store";
 
-type DurationType = (typeof PROJECT_CREATED_AT_FILTER_OPTIONS)[number]["value"];
+type DurationType = (typeof ANALYTICS_V2_DURATION_FILTER_OPTIONS)[number]["value"];
 
 export interface IAnalyticsStoreV2 {
   //observables
@@ -12,7 +12,7 @@ export interface IAnalyticsStoreV2 {
   selectedDuration: DurationType;
 
   //computed
-  selectedDurationLabel: string | null;
+  selectedDurationLabel: DurationType | null;
 
   //actions
   updateSelectedProjects: (projects: string[]) => void;
@@ -22,8 +22,8 @@ export interface IAnalyticsStoreV2 {
 export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
   //observables
   currentTab: TAnalyticsTabsV2Base = "overview";
-  selectedProjects: string[] = [];
-  selectedDuration: (typeof ANALYTICS_V2_DURATION_FILTER_OPTIONS)[number]["value"] = "last_30_days";
+  selectedProjects: DurationType[] = [];
+  selectedDuration: DurationType = "last_30_days";
 
   constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
