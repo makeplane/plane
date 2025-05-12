@@ -2,12 +2,15 @@ import { Editor, mergeAttributes } from "@tiptap/core";
 import { Image } from "@tiptap/extension-image";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import { v4 as uuidv4 } from "uuid";
+// constants
+import { ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
 // extensions
 import { CustomImageNode } from "@/extensions/custom-image";
 // helpers
+import { isFileValid } from "@/helpers/file";
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // plugins
-import { TrackImageDeletionPlugin, TrackImageRestorationPlugin, isFileValid } from "@/plugins/image";
+import { TrackImageDeletionPlugin, TrackImageRestorationPlugin } from "@/plugins/image";
 // types
 import { TFileHandler } from "@/types";
 
@@ -146,6 +149,7 @@ export const CustomImageExtension = (props: TFileHandler) => {
             if (
               props?.file &&
               !isFileValid({
+                acceptedMimeTypes: ACCEPTED_IMAGE_MIME_TYPES,
                 file: props.file,
                 maxFileSize,
               })
