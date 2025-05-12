@@ -1,87 +1,87 @@
-import { DragEvent, useCallback, useEffect, useState } from "react";
 import { Editor } from "@tiptap/core";
+import { DragEvent, useCallback, useEffect, useState } from "react";
 // extensions
-import { insertImagesSafely } from "@/extensions/drop";
+import { insertFilesSafely } from "@/extensions/drop";
 // plugins
-import { isFileValid } from "@/plugins/image";
+import { isFileValid } from "@/helpers/file";
+// types
+import { TEditorCommands } from "@/types";
 
 type TUploaderArgs = {
-  blockId: string;
-  editor: Editor;
-  loadImageFromFileSystem: (file: string) => void;
+  acceptedMimeTypes: string[];
+  editorCommand: (file: File) => Promise<string>;
+  handleProgressStatus?: (isUploading: boolean) => void;
+  loadFileFromFileSystem?: (file: string) => void;
   maxFileSize: number;
-  onUpload: (url: string) => void;
+  onUpload: (url: string, file: File) => void;
 };
 
 export const useUploader = (args: TUploaderArgs) => {
-  const { blockId, editor, loadImageFromFileSystem, maxFileSize, onUpload } = args;
+  const { acceptedMimeTypes, editorCommand, handleProgressStatus, loadFileFromFileSystem, maxFileSize, onUpload } =
+    args;
   // states
-  const [uploading, setUploading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const uploadFile = useCallback(
     async (file: File) => {
-      const setImageUploadInProgress = (isUploading: boolean) => {
-        if (editor.storage.imageComponent) {
-          editor.storage.imageComponent.uploadInProgress = isUploading;
-        }
-      };
-      setImageUploadInProgress(true);
-      setUploading(true);
-      const fileNameTrimmed = trimFileName(file.name);
-      const fileWithTrimmedName = new File([file], fileNameTrimmed, { type: file.type });
+      handleProgressStatus?.(true);
+      setIsUploading(true);
       const isValid = isFileValid({
-        file: fileWithTrimmedName,
+        acceptedMimeTypes,
+        file,
         maxFileSize,
       });
       if (!isValid) {
-        setImageUploadInProgress(false);
+        handleProgressStatus?.(false);
+        setIsUploading(false);
         return;
       }
       try {
-        const reader = new FileReader();
-        reader.onload = () => {
-          if (reader.result) {
-            loadImageFromFileSystem(reader.result as string);
-          } else {
-            console.error("Failed to read the file: reader.result is null");
-          }
-        };
-        reader.onerror = () => {
-          console.error("Error reading file");
-        };
-        reader.readAsDataURL(fileWithTrimmedName);
-        // @ts-expect-error - TODO: fix typings, and don't remove await from
-        // here for now
-        const url: string = await editor?.commands.uploadImage(blockId, fileWithTrimmedName);
+        if (loadFileFromFileSystem) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            if (reader.result) {
+              loadFileFromFileSystem(reader.result as string);
+            } else {
+              console.error("Failed to read the file: reader.result is null");
+            }
+          };
+          reader.onerror = () => {
+            console.error("Error reading file");
+          };
+          reader.readAsDataURL(file);
+        }
+        const url: string = await editorCommand(file);
 
         if (!url) {
-          throw new Error("Something went wrong while uploading the image");
+          throw new Error("Something went wrong while uploading the file.");
         }
-        onUpload(url);
-      } catch (errPayload: any) {
-        console.log(errPayload);
+        onUpload(url, file);
+      } catch (errPayload) {
         const error = errPayload?.response?.data?.error || "Something went wrong";
         console.error(error);
       } finally {
-        setImageUploadInProgress(false);
-        setUploading(false);
+        handleProgressStatus?.(false);
+        setIsUploading(false);
       }
     },
-    [onUpload]
+    [acceptedMimeTypes, editorCommand, handleProgressStatus, loadFileFromFileSystem, maxFileSize, onUpload]
   );
 
-  return { uploading, uploadFile };
+  return { isUploading, uploadFile };
 };
 
 type TDropzoneArgs = {
+  acceptedMimeTypes: string[];
   editor: Editor;
   maxFileSize: number;
   pos: number;
+  type: Extract<TEditorCommands, "attachment" | "image">;
   uploader: (file: File) => Promise<void>;
 };
 
 export const useDropZone = (args: TDropzoneArgs) => {
-  const { editor, maxFileSize, pos, uploader } = args;
+  const { acceptedMimeTypes, editor, maxFileSize, pos, type, uploader } = args;
   // states
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [draggedInside, setDraggedInside] = useState<boolean>(false);
@@ -112,83 +112,79 @@ export const useDropZone = (args: TDropzoneArgs) => {
         return;
       }
       const filesList = e.dataTransfer.files;
-      await uploadFirstImageAndInsertRemaining({
+      await uploadFirstFileAndInsertRemaining({
+        acceptedMimeTypes,
         editor,
         filesList,
         maxFileSize,
         pos,
+        type,
         uploader,
       });
     },
-    [uploader, editor, pos]
+    [acceptedMimeTypes, editor, maxFileSize, pos, type, uploader]
   );
+  const onDragEnter = useCallback(() => setDraggedInside(true), []);
+  const onDragLeave = useCallback(() => setDraggedInside(false), []);
 
-  const onDragEnter = () => {
-    setDraggedInside(true);
+  return {
+    isDragging,
+    draggedInside,
+    onDragEnter,
+    onDragLeave,
+    onDrop,
   };
-
-  const onDragLeave = () => {
-    setDraggedInside(false);
-  };
-
-  return { isDragging, draggedInside, onDragEnter, onDragLeave, onDrop };
 };
 
-function trimFileName(fileName: string, maxLength = 100) {
-  if (fileName.length > maxLength) {
-    const extension = fileName.split(".").pop();
-    const nameWithoutExtension = fileName.slice(0, -(extension?.length ?? 0 + 1));
-    const allowedNameLength = maxLength - (extension?.length ?? 0) - 1; // -1 for the dot
-    return `${nameWithoutExtension.slice(0, allowedNameLength)}.${extension}`;
-  }
-
-  return fileName;
-}
-
-type TMultipleImagesArgs = {
+type TMultipleFileArgs = {
+  acceptedMimeTypes: string[];
   editor: Editor;
   filesList: FileList;
   maxFileSize: number;
   pos: number;
+  type: Extract<TEditorCommands, "attachment" | "image">;
   uploader: (file: File) => Promise<void>;
 };
 
-// Upload the first image and insert the remaining images for uploading multiple image
-// post insertion of image-component
-export async function uploadFirstImageAndInsertRemaining(args: TMultipleImagesArgs) {
-  const { editor, filesList, maxFileSize, pos, uploader } = args;
+// Upload the first file and insert the remaining ones for uploading multiple files
+export const uploadFirstFileAndInsertRemaining = async (args: TMultipleFileArgs) => {
+  const { acceptedMimeTypes, editor, filesList, maxFileSize, pos, type, uploader } = args;
   const filteredFiles: File[] = [];
   for (let i = 0; i < filesList.length; i += 1) {
-    const item = filesList.item(i);
+    const file = filesList.item(i);
     if (
-      item &&
-      item.type.indexOf("image") !== -1 &&
+      file &&
       isFileValid({
-        file: item,
+        acceptedMimeTypes,
+        file,
         maxFileSize,
       })
     ) {
-      filteredFiles.push(item);
+      filteredFiles.push(file);
     }
   }
   if (filteredFiles.length !== filesList.length) {
-    console.warn("Some files were not images and have been ignored.");
+    console.warn("Some files were invalid and have been ignored.");
   }
   if (filteredFiles.length === 0) {
-    console.error("No image files found to upload");
+    console.error("No files found to upload.");
     return;
   }
 
-  // Upload the first image
+  // Upload the first file
   const firstFile = filteredFiles[0];
   uploader(firstFile);
-
-  // Insert the remaining images
+  // Insert the remaining files
   const remainingFiles = filteredFiles.slice(1);
-
   if (remainingFiles.length > 0) {
     const docSize = editor.state.doc.content.size;
-    const posOfNextImageToBeInserted = Math.min(pos + 1, docSize);
-    insertImagesSafely({ editor, files: remainingFiles, initialPos: posOfNextImageToBeInserted, event: "drop" });
+    const posOfNextFileToBeInserted = Math.min(pos + 1, docSize);
+    insertFilesSafely({
+      editor,
+      files: remainingFiles,
+      initialPos: posOfNextFileToBeInserted,
+      event: "drop",
+      type,
+    });
   }
-}
+};
