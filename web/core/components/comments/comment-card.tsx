@@ -161,9 +161,8 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
                 return asset_id;
               }}
               projectId={projectId?.toString() ?? ""}
-              editorClassName="[&>*]:!py-0 [&>*]:!text-sm"
               parentClassName="p-2"
-              />
+            />
           </div>
           <div className="flex gap-1 self-end">
             {!isEmpty && (
@@ -208,7 +207,6 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
             initialValue={comment.comment_html ?? ""}
             workspaceId={workspaceId}
             workspaceSlug={workspaceSlug}
-            editorClassName="[&>*]:!py-0 [&>*]:!text-sm"
             containerClassName="!py-1"
             projectId={(projectId as string) ?? ""}
           />
