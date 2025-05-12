@@ -21,19 +21,24 @@ export const generateBarColor = (
       value === "urgent"
         ? "#ef4444"
         : value === "high"
-        ? "#f97316"
-        : value === "medium"
-        ? "#eab308"
-        : value === "low"
-        ? "#22c55e"
-        : "#ced4da";
+          ? "#f97316"
+          : value === "medium"
+            ? "#eab308"
+            : value === "low"
+              ? "#22c55e"
+              : "#ced4da";
   }
 
   // State
   if (params.x_axis === ChartXAxisProperty.STATES) {
-    const state = workspaceStates?.find((s) => s.id === value);
-    if (state) {
-      color = state.color;
+    if (workspaceStates && workspaceStates.length > 0) {
+      const state = workspaceStates.find((s) => s.id === value);
+      if (state) {
+        color = state.color;
+      } else {
+        const index = Math.abs(value.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)) % baseColors.length;
+        color = baseColors[index];
+      }
     }
   }
 
