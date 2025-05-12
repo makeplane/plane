@@ -28,11 +28,11 @@ const CustomTooltip = ({ active, payload, label, plotType, endDate }: Props) => 
             </svg>
           )}
         </p>
-        <div className="flex flex-col space-y-2">
+        <div className="flex flex-col space-y-2 pb-2 border-b">
           <span className="flex text-xs text-custom-text-300 gap-1">
             <PlannedState className="my-auto" width="14" height="14" />
-            <span className="font-semibold">{Math.round(payload.ideal) || 0}</span>
-            <span> planned</span>
+            <span className="font-semibold">{Math.round(payload.scope) || 0}</span>
+            <span>scope</span>
           </span>
           <span className="flex text-xs text-custom-text-300 gap-1 items-center">
             <InProgressState className="my-auto items-center" width="14" height="14" />
@@ -49,6 +49,19 @@ const CustomTooltip = ({ active, payload, label, plotType, endDate }: Props) => 
               {plotType === "burndown" ? payload.scope - payload.completed || 0 : payload.completed || 0}
             </span>
             <span> {plotType === "burndown" ? "pending" : "done"}</span>
+          </span>
+        </div>
+        <div className="flex flex-col space-y-2">
+          <span className="flex text-xs text-custom-text-300 gap-1 items-center ml-0.5">
+            {plotType !== "burndown" ? (
+              <PendingState className="my-auto" width="12" height="12" />
+            ) : (
+              <DoneState className="my-auto" width="12" height="12" />
+            )}
+            <span className="font-semibold">
+              {plotType !== "burndown" ? payload.scope - payload.completed || 0 : payload.completed || 0}
+            </span>
+            <span> {plotType !== "burndown" ? "pending" : "done"}</span>
           </span>
         </div>
       </Card>

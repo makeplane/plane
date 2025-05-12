@@ -78,6 +78,11 @@ const Summary = observer((props: Props) => {
       },
     ],
     secondaryStates: [
+      {
+        group: plotType !== "burndown" ? "Pending" : "Done",
+        key: plotType !== "burndown" ? "pending" : "completed",
+        states: plotType !== "burndown" ? ["started", "unstarted", "backlog", "cancelled"] : ["completed"],
+      },
       { group: "Unstarted", key: "unstarted", states: ["unstarted"] },
       { group: "Backlog", key: "backlog", states: ["backlog"] },
     ],
@@ -102,7 +107,7 @@ const Summary = observer((props: Props) => {
             {isBehind ? <TrendingDown className=" mr-2" /> : <TrendingUp className=" mr-2" />}
             <div className="text-md font-medium  flex-1">
               {isBehind ? "Trailing" : "Leading"} by{" "}
-              {Math.round(Math.abs((dataToday?.ideal ?? 0) - (dataToday?.actual ?? 0)))}{" "}
+              {Math.round(Math.abs((dataToday?.ideal || 0) - (dataToday?.actual || 0)))}{" "}
               {Math.abs((dataToday?.ideal ?? 0) - (dataToday?.actual ?? 0)) > 1
                 ? `${ESTIMATE_TYPE[estimateType]}s`
                 : ESTIMATE_TYPE[estimateType]}
@@ -171,7 +176,10 @@ const Summary = observer((props: Props) => {
             key={index}
             onClick={() => {
               if (groupedProjectStates) {
-                const states = groupedProjectStates[group.key].map((state) => state.id);
+                const states = group.states?.reduce(
+                  (acc, state) => acc.concat(groupedProjectStates[state].map((state) => state.id)),
+                  [] as string[]
+                );
                 handleFiltersUpdate("state", states, true);
               }
             }}
