@@ -162,6 +162,9 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
               }}
               projectId={projectId?.toString() ?? ""}
               parentClassName="p-2"
+              displayConfig={{
+                fontSize: "small-font",
+              }}
             />
           </div>
           <div className="flex gap-1 self-end">
@@ -209,6 +212,9 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
             workspaceSlug={workspaceSlug}
             containerClassName="!py-1"
             projectId={(projectId as string) ?? ""}
+            displayConfig={{
+              fontSize: "small-font",
+            }}
           />
           <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
         </div>
