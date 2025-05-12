@@ -201,7 +201,7 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
                 "created_at__date__lte": end_date,
             }
 
-        total_work_items = base_queryset.count()
+        total_work_items = base_queryset.filter(**date_filter).count()
         total_cycles = Cycle.objects.filter(
             **self.filters["base_filters"], **date_filter
         ).count()

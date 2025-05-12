@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from django.utils import timezone
 from typing import Dict, Optional, List, Union, Tuple, Any
 
@@ -99,7 +99,7 @@ def get_analytics_date_range(
 
 def get_chart_period_range(
     date_filter: Optional[str] = None,
-) -> Optional[Tuple[datetime.date, datetime.date]]:
+) -> Optional[Tuple[date, date]]:
     """
     Get date range for chart visualization.
     Returns a tuple of (start_date, end_date) for the specified period.
