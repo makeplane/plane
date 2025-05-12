@@ -30,11 +30,13 @@ const ProjectInsights = observer(() => {
   const { selectedDuration, selectedDurationLabel, selectedProjects } = useAnalyticsV2();
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics-v2/empty-chart-radar" });
 
-  const { data: projectInsightsData, isLoading: isLoadingProjectInsight } = useSWR(`radar-chart-${workspaceSlug}`, () =>
-    analyticsV2Service.getAdvanceAnalyticsCharts<TChartData<string, string>[]>(workspaceSlug, "projects", {
-      created_at: selectedDuration,
-      ...(selectedProjects?.length > 0 && { project_ids: selectedProjects?.join(",") }),
-    })
+  const { data: projectInsightsData, isLoading: isLoadingProjectInsight } = useSWR(
+    `radar-chart-${workspaceSlug}-${selectedDuration}-${selectedProjects}`,
+    () =>
+      analyticsV2Service.getAdvanceAnalyticsCharts<TChartData<string, string>[]>(workspaceSlug, "projects", {
+        date_filter: selectedDuration,
+        ...(selectedProjects?.length > 0 && { project_ids: selectedProjects?.join(",") }),
+      })
   );
 
   return (
