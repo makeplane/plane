@@ -1,1 +1,1 @@
-export * from "ce/components/instance";
+export * from "./maintenance-message";

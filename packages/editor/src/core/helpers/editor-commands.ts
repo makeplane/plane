@@ -12,37 +12,31 @@ export const setText = (editor: Editor, range?: Range) => {
 
 export const toggleHeadingOne = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 1 }).run();
-  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleHeading({ level: 1 }).run();
 };
 
 export const toggleHeadingTwo = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 2 }).run();
-  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleHeading({ level: 2 }).run();
 };
 
 export const toggleHeadingThree = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 3 }).run();
-  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleHeading({ level: 3 }).run();
 };
 
 export const toggleHeadingFour = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 4 }).run();
-  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleHeading({ level: 4 }).run();
 };
 
 export const toggleHeadingFive = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 5 }).run();
-  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleHeading({ level: 5 }).run();
 };
 
 export const toggleHeadingSix = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 6 }).run();
-  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleHeading({ level: 6 }).run();
 };
 
@@ -209,4 +203,17 @@ export const insertHorizontalRule = (editor: Editor, range?: Range) => {
 export const insertCallout = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).insertCallout().run();
   else editor.chain().focus().insertCallout().run();
+};
+
+export const insertPageEmbed = (
+  data: {
+    pageId: string;
+    position?: number;
+    workspaceSlug: string;
+  },
+  editor: Editor,
+  range?: Range
+) => {
+  if (range) editor.chain().focus().deleteRange(range).insertPageEmbed(data).run();
+  else editor.chain().focus().insertPageEmbed(data).run();
 };

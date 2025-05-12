@@ -23,7 +23,6 @@ export const DEFAULT_DISPLAY_PROPERTIES = {
   priority: true,
   state: true,
 };
-
 export interface IWorkItemSubIssueFiltersStore {
   subIssueFilters: Record<string, Partial<IIssueFilters>>;
   // helpers methods
@@ -50,6 +49,8 @@ export class WorkItemSubIssueFiltersStore implements IWorkItemSubIssueFiltersSto
       subIssueFilters: observable,
       updateSubWorkItemFilters: action,
       getSubIssueFilters: action,
+      getFilteredSubWorkItems: action,
+      resetFilters: action,
     });
 
     // root store

@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 class BaseSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(read_only=True)
+    deleted_at = serializers.ReadOnlyField()
 
 
 class DynamicBaseSerializer(BaseSerializer):
