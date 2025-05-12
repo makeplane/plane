@@ -134,13 +134,13 @@ export const WORKSPACE_SETTINGS_LINKS: {
   access: EUserWorkspaceRoles[];
   highlight: (pathname: string, baseUrl: string) => boolean;
 }[] = [
-    WORKSPACE_SETTINGS["general"],
-    WORKSPACE_SETTINGS["members"],
-    WORKSPACE_SETTINGS["billing-and-plans"],
-    WORKSPACE_SETTINGS["export"],
-    WORKSPACE_SETTINGS["webhooks"],
-    WORKSPACE_SETTINGS["api-tokens"],
-  ];
+  WORKSPACE_SETTINGS["general"],
+  WORKSPACE_SETTINGS["members"],
+  WORKSPACE_SETTINGS["billing-and-plans"],
+  WORKSPACE_SETTINGS["export"],
+  WORKSPACE_SETTINGS["webhooks"],
+  WORKSPACE_SETTINGS["api-tokens"],
+];
 
 export const ROLE = {
   [EUserWorkspaceRoles.GUEST]: "Guest",
@@ -237,23 +237,23 @@ export const DEFAULT_GLOBAL_VIEWS_LIST: {
   key: TStaticViewTypes;
   i18n_label: string;
 }[] = [
-    {
-      key: "all-issues",
-      i18n_label: "default_global_view.all_issues",
-    },
-    {
-      key: "assigned",
-      i18n_label: "default_global_view.assigned",
-    },
-    {
-      key: "created",
-      i18n_label: "default_global_view.created",
-    },
-    {
-      key: "subscribed",
-      i18n_label: "default_global_view.subscribed",
-    },
-  ];
+  {
+    key: "all-issues",
+    i18n_label: "default_global_view.all_issues",
+  },
+  {
+    key: "assigned",
+    i18n_label: "default_global_view.assigned",
+  },
+  {
+    key: "created",
+    i18n_label: "default_global_view.created",
+  },
+  {
+    key: "subscribed",
+    i18n_label: "default_global_view.subscribed",
+  },
+];
 
 export interface IWorkspaceSidebarNavigationItem {
   key: string;

@@ -40,14 +40,18 @@ const AnalyticsPage = observer(() => {
     EUserPermissionsLevel.WORKSPACE
   );
 
-  const tabs = useMemo(() => ANALYTICS_TABS.map((tab) => ({
-    key: tab.key,
-    label: t(tab.i18nKey),
-    content: <tab.content />,
-    onClick: () => {
-      router.push(`?tab=${tab.key}`);
-    }
-  })), [router, t]);
+  const tabs = useMemo(
+    () =>
+      ANALYTICS_TABS.map((tab) => ({
+        key: tab.key,
+        label: t(tab.i18nKey),
+        content: <tab.content />,
+        onClick: () => {
+          router.push(`?tab=${tab.key}`);
+        },
+      })),
+    [router, t]
+  );
   const defaultTab = searchParams.get("tab") || ANALYTICS_TABS[0].key;
 
   return (

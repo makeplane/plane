@@ -10,7 +10,8 @@
   "exports": {
     "./ui/*": "./src/ui/*.tsx",
     "./charts/*": "./src/charts/*/index.ts",
-    "./table": "./src/table/index.ts"
+    "./table": "./src/table/index.ts",
+    "./styles/fonts": "./src/styles/fonts/index.css"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.1",

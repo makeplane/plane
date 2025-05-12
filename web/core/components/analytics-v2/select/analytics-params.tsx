@@ -12,7 +12,6 @@ import { AnalyticsV2Service } from "@/services/analytics-v2.service";
 import { SelectXAxis } from "./select-x-axis";
 import { SelectYAxis } from "./select-y-axis";
 
-
 type Props = {
   control: Control<IAnalyticsV2Params, unknown>;
   setValue: UseFormSetValue<IAnalyticsV2Params>;
@@ -23,15 +22,18 @@ type Props = {
 
 export const AnalyticsV2SelectParams: React.FC<Props> = observer((props) => {
   const { control, params, classNames } = props;
-  const xAxisOptions = useMemo(() => ANALYTICS_V2_X_AXIS_VALUES.filter((option) => option.value !== params.group_by), [params.group_by]);
-  const groupByOptions = useMemo(() => ANALYTICS_V2_X_AXIS_VALUES.filter((option) => option.value !== params.x_axis), [params.x_axis]);
-
+  const xAxisOptions = useMemo(
+    () => ANALYTICS_V2_X_AXIS_VALUES.filter((option) => option.value !== params.group_by),
+    [params.group_by]
+  );
+  const groupByOptions = useMemo(
+    () => ANALYTICS_V2_X_AXIS_VALUES.filter((option) => option.value !== params.x_axis),
+    [params.x_axis]
+  );
 
   return (
-    <div className={cn("flex justify-between w-full", classNames)}>
-      <div
-        className={`flex items-center gap-2`}
-      >
+    <div className={cn("flex w-full justify-between", classNames)}>
+      <div className={`flex items-center gap-2`}>
         <Controller
           name="y_axis"
           control={control}
@@ -55,10 +57,14 @@ export const AnalyticsV2SelectParams: React.FC<Props> = observer((props) => {
               onChange={(val) => {
                 onChange(val);
               }}
-              label={<div className="flex items-center gap-2">
-                <Calendar className="w-3 h-3" />
-                <span className={cn("text-custom-text-200", value && "text-custom-text-100")}>{xAxisOptions.find((v) => v.value === value)?.label || "Add Property"}</span>
-              </div>}
+              label={
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-3 w-3" />
+                  <span className={cn("text-custom-text-200", value && "text-custom-text-100")}>
+                    {xAxisOptions.find((v) => v.value === value)?.label || "Add Property"}
+                  </span>
+                </div>
+              }
               options={xAxisOptions}
             />
           )}
@@ -72,10 +78,14 @@ export const AnalyticsV2SelectParams: React.FC<Props> = observer((props) => {
               onChange={(val) => {
                 onChange(val);
               }}
-              label={<div className="flex items-center gap-2">
-                <SlidersHorizontal className="w-3 h-3" />
-                <span className={cn("text-custom-text-200", value && "text-custom-text-100")}>{groupByOptions.find((v) => v.value === value)?.label || "Add Property"}</span>
-              </div>}
+              label={
+                <div className="flex items-center gap-2">
+                  <SlidersHorizontal className="h-3 w-3" />
+                  <span className={cn("text-custom-text-200", value && "text-custom-text-100")}>
+                    {groupByOptions.find((v) => v.value === value)?.label || "Add Property"}
+                  </span>
+                </div>
+              }
               options={groupByOptions}
               placeholder="Group By"
               allowNoValue
@@ -84,6 +94,5 @@ export const AnalyticsV2SelectParams: React.FC<Props> = observer((props) => {
         />
       </div>
     </div>
-
   );
 });

@@ -1,16 +1,16 @@
 // plane package imports
-import React, { useMemo } from 'react'
-import { IAnalyticsResponseFieldsV2 } from '@plane/types'
-import { Loader } from '@plane/ui'
+import React, { useMemo } from "react";
+import { IAnalyticsResponseFieldsV2 } from "@plane/types";
+import { Loader } from "@plane/ui";
 // components
-import TrendPiece from './trend-piece'
+import TrendPiece from "./trend-piece";
 
 export type InsightCardProps = {
   data?: IAnalyticsResponseFieldsV2;
   label: string;
   isLoading?: boolean;
   versus?: string | null;
-}
+};
 
 const InsightCard = (props: InsightCardProps) => {
   const { data, label, isLoading, versus } = props;
@@ -38,10 +38,10 @@ const InsightCard = (props: InsightCardProps) => {
           )}
         </div>
       ) : (
-        <Loader.Item height='50px' width='100%' />
+        <Loader.Item height="50px" width="100%" />
       )}
     </div>
   );
-}
+};
 
 export default InsightCard;

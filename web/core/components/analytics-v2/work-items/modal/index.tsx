@@ -7,7 +7,6 @@ import { IProject } from "@plane/types";
 import { WorkItemsModalMainContent } from "./content";
 import { WorkItemsModalHeader } from "./header";
 
-
 type Props = {
   isOpen: boolean;
   onClose: () => void;
@@ -38,12 +37,14 @@ export const WorkItemsModal: React.FC<Props> = observer((props) => {
           <div className="fixed inset-0 z-20 h-full w-full overflow-y-auto">
             <Dialog.Panel>
               <div
-                className={`fixed right-0 top-0 z-20 h-full bg-custom-background-100 shadow-custom-shadow-md ${fullScreen ? "w-full p-2" : "w-full sm:w-full md:w-1/2"
-                  }`}
+                className={`fixed right-0 top-0 z-20 h-full bg-custom-background-100 shadow-custom-shadow-md ${
+                  fullScreen ? "w-full p-2" : "w-full sm:w-full md:w-1/2"
+                }`}
               >
                 <div
-                  className={`flex h-full flex-col overflow-hidden border-custom-border-200 bg-custom-background-100 text-left ${fullScreen ? "rounded-lg border" : "border-l"
-                    }`}
+                  className={`flex h-full flex-col overflow-hidden border-custom-border-200 bg-custom-background-100 text-left ${
+                    fullScreen ? "rounded-lg border" : "border-l"
+                  }`}
                 >
                   <WorkItemsModalHeader
                     fullScreen={fullScreen}
@@ -51,10 +52,7 @@ export const WorkItemsModal: React.FC<Props> = observer((props) => {
                     setFullScreen={setFullScreen}
                     title={projectDetails?.name ?? ""}
                   />
-                  <WorkItemsModalMainContent
-                    fullScreen={fullScreen}
-                    projectDetails={projectDetails}
-                  />
+                  <WorkItemsModalMainContent fullScreen={fullScreen} projectDetails={projectDetails} />
                 </div>
               </div>
             </Dialog.Panel>

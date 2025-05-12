@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -15,48 +15,32 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
-import { Search, X } from "lucide-react"
+} from "@tanstack/react-table";
+import { Search, X } from "lucide-react";
 // plane package imports
-import { useTranslation } from "@plane/i18n"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@plane/propel/table"
-import { cn } from "@plane/utils"
+import { useTranslation } from "@plane/i18n";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@plane/propel/table";
+import { cn } from "@plane/utils";
 // plane web components
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path"
-import AnalyticsV2EmptyState from "../empty-state"
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+import AnalyticsV2EmptyState from "../empty-state";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  searchPlaceholder: string
-  actions?: (table: TanstackTable<TData>) => React.ReactNode
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  searchPlaceholder: string;
+  actions?: (table: TanstackTable<TData>) => React.ReactNode;
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-  searchPlaceholder,
-  actions,
-}: DataTableProps<TData, TValue>) {
-  const [rowSelection, setRowSelection] = React.useState({})
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const { t } = useTranslation()
-  const inputRef = React.useRef<HTMLInputElement>(null)
-  const [isSearchOpen, setIsSearchOpen] = React.useState(false)
+export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, actions }: DataTableProps<TData, TValue>) {
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const { t } = useTranslation();
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const [isSearchOpen, setIsSearchOpen] = React.useState(false);
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics-v2/empty-table" });
-
 
   const table = useReactTable({
     data,
@@ -78,19 +62,21 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-  })
+  });
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between w-full">
-        <div className="max-w-[300px] relative flex items-center gap-4 ">
-          {table.getHeaderGroups()?.[0]?.headers?.[0]?.id && <div className="flex items-center gap-2 text-sm text-custom-text-400 whitespace-nowrap">
-            {searchPlaceholder}
-          </div>}
+      <div className="flex w-full items-center justify-between">
+        <div className="relative flex max-w-[300px] items-center gap-4 ">
+          {table.getHeaderGroups()?.[0]?.headers?.[0]?.id && (
+            <div className="flex items-center gap-2 whitespace-nowrap text-sm text-custom-text-400">
+              {searchPlaceholder}
+            </div>
+          )}
           {!isSearchOpen && (
             <button
               type="button"
-              className="-mr-5 p-2 hover:bg-custom-background-80 rounded text-custom-text-400 grid place-items-center"
+              className="-mr-5 grid place-items-center rounded p-2 text-custom-text-400 hover:bg-custom-background-80"
               onClick={() => {
                 setIsSearchOpen(true);
                 inputRef.current?.focus();
@@ -101,9 +87,9 @@ export function DataTable<TData, TValue>({
           )}
           <div
             className={cn(
-              "mr-auto flex items-center justify-start gap-1 rounded-md border border-transparent bg-custom-background-100 text-custom-text-400 w-0 transition-[width] ease-linear overflow-hidden opacity-0",
+              "mr-auto flex w-0 items-center justify-start gap-1 overflow-hidden rounded-md border border-transparent bg-custom-background-100 text-custom-text-400 opacity-0 transition-[width] ease-linear",
               {
-                "w-64 px-2.5 py-1.5 border-custom-border-200 opacity-100": isSearchOpen,
+                "w-64 border-custom-border-200 px-2.5 py-1.5 opacity-100": isSearchOpen,
               }
             )}
           >
@@ -113,10 +99,12 @@ export function DataTable<TData, TValue>({
               className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
               placeholder="Search"
               value={table.getColumn(table.getHeaderGroups()?.[0].headers[0].id)?.getFilterValue() as string}
-              onChange={(e) => table.getColumn(table.getHeaderGroups()?.[0].headers[0].id)?.setFilterValue(e.target.value)}
+              onChange={(e) =>
+                table.getColumn(table.getHeaderGroups()?.[0].headers[0].id)?.setFilterValue(e.target.value)
+              }
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  setIsSearchOpen(true)
+                  setIsSearchOpen(true);
                 }
               }}
             />
@@ -146,10 +134,7 @@ export function DataTable<TData, TValue>({
                   <TableHead key={header.id} colSpan={header.colSpan}>
                     {header.isPlaceholder
                       ? null
-                      : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      ) as any}
+                      : (flexRender(header.column.columnDef.header, header.getContext()) as any)}
                   </TableHead>
                 ))}
               </TableRow>
@@ -158,16 +143,10 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length > 0 ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      ) as any}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext()) as any}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -175,10 +154,10 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="p-0">
-                  <div className="flex justify-center items-center w-full h-[350px] border border-custom-border-100 ">
+                  <div className="flex h-[350px] w-full items-center justify-center border border-custom-border-100 ">
                     <AnalyticsV2EmptyState
-                      title={t('workspace_analytics.empty_state_v2.customized_insights.title')}
-                      description={t('workspace_analytics.empty_state_v2.customized_insights.description')}
+                      title={t("workspace_analytics.empty_state_v2.customized_insights.title")}
+                      description={t("workspace_analytics.empty_state_v2.customized_insights.description")}
                       className="border-0"
                       assetPath={resolvedPath}
                     />
@@ -190,5 +169,5 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
     </div>
-  )
+  );
 }

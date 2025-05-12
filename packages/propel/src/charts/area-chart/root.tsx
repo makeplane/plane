@@ -31,20 +31,20 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
   const [activeLegend, setActiveLegend] = useState<string | null>(null);
 
   // derived values
-  const itemKeys = useMemo(
-    () => Array.from(areas, area => area.key),
-    [areas]
-  );
+  const { itemKeys, itemLabels, itemDotColors } = useMemo(() => {
+    const keys: string[] = [];
+    const labels: Record<string, string> = {};
+    const colors: Record<string, string> = {};
 
-  const itemLabels = useMemo(
-    () => Object.fromEntries(areas.map(area => [area.key, area.label])),
-    [areas]
-  );
+    for (const area of areas) {
+      keys.push(area.key);
+      labels[area.key] = area.label;
+      colors[area.key] = area.fill;
+    }
 
-  const itemDotColors = useMemo(
-    () => Object.fromEntries(areas.map(area => [area.key, area.fill])),
-    [areas]
-  );
+    return { itemKeys: keys, itemLabels: labels, itemDotColors: colors };
+  }, [areas]);
+
   const renderAreas = useMemo(
     () =>
       areas.map((area) => (
@@ -63,9 +63,9 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
           dot={
             area.showDot
               ? {
-                fill: area.fill,
-                fillOpacity: 1,
-              }
+                  fill: area.fill,
+                  fillOpacity: 1,
+                }
               : false
           }
           activeDot={{
@@ -85,7 +85,7 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
     // get the last data point
     const lastPoint = data[data.length - 1];
     // for the y-value in the last point, use its yAxis key value
-    const lastYValue = lastPoint[yAxis.key] || 0;
+    const lastYValue = lastPoint[yAxis.key] ?? 0;
     // create data for a straight line that has points at each x-axis position
     return data.map((item, index) => {
       // calculate the y value for this point on the straight line
@@ -121,7 +121,7 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
               xAxis.label && {
                 value: xAxis.label,
                 dy: 28,
-                className: AXIS_LABEL_CLASSNAME
+                className: AXIS_LABEL_CLASSNAME,
               }
             }
             tickCount={tickCount.x}
@@ -135,8 +135,8 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
                 value: yAxis.label,
                 angle: -90,
                 position: "bottom",
-                offset: yAxis.offset || -24,
-                dx: yAxis.dx || -16,
+                offset: yAxis.offset ?? -24,
+                dx: yAxis.dx ?? -16,
                 className: AXIS_LABEL_CLASSNAME,
               }
             }
