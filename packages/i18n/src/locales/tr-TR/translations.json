@@ -1314,7 +1314,38 @@
           }
         }
       }
-    }
+    },
+    "empty_state_v2": {
+      "customized_insights": {
+        "description": "Size atanan iş öğeleri, duruma göre ayrılarak burada gösterilecektir.",
+        "title": "Henüz veri yok"
+      },
+      "created_vs_resolved": {
+        "description": "Zaman içinde oluşturulan ve çözümlenen iş öğeleri burada gösterilecektir.",
+        "title": "Henüz veri yok"
+      },
+      "project_insights": {
+        "title": "Henüz veri yok",
+        "description": "Size atanan iş öğeleri, duruma göre ayrılarak burada gösterilecektir."
+      }
+    },
+    "created_vs_resolved": "Oluşturulan vs Çözülen",
+    "customized_insights": "Özelleştirilmiş İçgörüler",
+    "backlog_work_items": "Backlog iş öğeleri",
+    "active_projects": "Aktif Projeler",
+    "trend_on_charts": "Grafiklerdeki eğilim",
+    "all_projects": "Tüm Projeler",
+    "summary_of_projects": "Projelerin Özeti",
+    "project_insights": "Proje İçgörüleri",
+    "started_work_items": "Başlatılan iş öğeleri",
+    "total_work_items": "Toplam iş öğesi",
+    "total_projects": "Toplam Proje",
+    "total_admins": "Toplam Yönetici",
+    "total_users": "Toplam Kullanıcı",
+    "total_intake": "Toplam Gelir",
+    "un_started_work_items": "Başlanmamış iş öğeleri",
+    "total_guests": "Toplam Misafir",
+    "completed_work_items": "Tamamlanmış iş öğeleri"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Proje} other {Projeler}}",

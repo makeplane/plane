@@ -1313,7 +1313,38 @@
           }
         }
       }
-    }
+    },
+    "empty_state_v2": {
+      "customized_insights": {
+        "description": "Назначенные вам рабочие элементы, разбитые по статусам, появятся здесь.",
+        "title": "Данных пока нет"
+      },
+      "created_vs_resolved": {
+        "description": "Созданные и решённые со временем рабочие элементы появятся здесь.",
+        "title": "Данных пока нет"
+      },
+      "project_insights": {
+        "title": "Данных пока нет",
+        "description": "Назначенные вам рабочие элементы, разбитые по статусам, появятся здесь."
+      }
+    },
+    "created_vs_resolved": "Создано vs Решено",
+    "customized_insights": "Индивидуальные аналитические данные",
+    "backlog_work_items": "Элементы работы в бэклоге",
+    "active_projects": "Активные проекты",
+    "trend_on_charts": "Тренд на графиках",
+    "all_projects": "Все проекты",
+    "summary_of_projects": "Сводка по проектам",
+    "project_insights": "Аналитика проекта",
+    "started_work_items": "Начатые рабочие элементы",
+    "total_work_items": "Общее количество рабочих элементов",
+    "total_projects": "Всего проектов",
+    "total_admins": "Всего администраторов",
+    "total_users": "Всего пользователей",
+    "total_intake": "Общий доход",
+    "un_started_work_items": "Не начатые рабочие элементы",
+    "total_guests": "Всего гостей",
+    "completed_work_items": "Завершённые рабочие элементы"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Проект} other {Проекты}}",

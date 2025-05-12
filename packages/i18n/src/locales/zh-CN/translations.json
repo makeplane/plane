@@ -1312,7 +1312,38 @@
           }
         }
       }
-    }
+    },
+    "empty_state_v2": {
+      "customized_insights": {
+        "description": "分配给您的工作项将按状态分类显示在此处。",
+        "title": "暂无数据"
+      },
+      "created_vs_resolved": {
+        "description": "随着时间推移创建和解决的工作项将显示在此处。",
+        "title": "暂无数据"
+      },
+      "project_insights": {
+        "title": "暂无数据",
+        "description": "分配给您的工作项将按状态分类显示在此处。"
+      }
+    },
+    "created_vs_resolved": "已创建 vs 已解决",
+    "customized_insights": "自定义洞察",
+    "backlog_work_items": "待办工作项",
+    "active_projects": "活跃项目",
+    "trend_on_charts": "图表趋势",
+    "all_projects": "所有项目",
+    "summary_of_projects": "项目概览",
+    "project_insights": "项目洞察",
+    "started_work_items": "已开始的工作项",
+    "total_work_items": "工作项总数",
+    "total_projects": "项目总数",
+    "total_admins": "管理员总数",
+    "total_users": "用户总数",
+    "total_intake": "总收入",
+    "un_started_work_items": "未开始的工作项",
+    "total_guests": "访客总数",
+    "completed_work_items": "已完成的工作项"
   },
   "workspace_projects": {
     "label": "{count, plural, one {项目} other {项目}}",

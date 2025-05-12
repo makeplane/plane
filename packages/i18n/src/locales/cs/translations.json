@@ -1311,7 +1311,38 @@
           }
         }
       }
-    }
+    },
+    "empty_state_v2": {
+      "customized_insights": {
+        "description": "Pracovní položky přiřazené vám, rozdělené podle stavu, se zde zobrazí.",
+        "title": "Zatím žádná data"
+      },
+      "created_vs_resolved": {
+        "description": "Pracovní položky vytvořené a vyřešené v průběhu času se zde zobrazí.",
+        "title": "Zatím žádná data"
+      },
+      "project_insights": {
+        "title": "Zatím žádná data",
+        "description": "Pracovní položky přiřazené vám, rozdělené podle stavu, se zde zobrazí."
+      }
+    },
+    "created_vs_resolved": "Vytvořeno vs Vyřešeno",
+    "customized_insights": "Přizpůsobené přehledy",
+    "backlog_work_items": "Pracovní položky v backlogu",
+    "active_projects": "Aktivní projekty",
+    "trend_on_charts": "Trend na grafech",
+    "all_projects": "Všechny projekty",
+    "summary_of_projects": "Souhrn projektů",
+    "project_insights": "Přehled projektu",
+    "started_work_items": "Zahájené pracovní položky",
+    "total_work_items": "Celkový počet pracovních položek",
+    "total_projects": "Celkový počet projektů",
+    "total_admins": "Celkový počet administrátorů",
+    "total_users": "Celkový počet uživatelů",
+    "total_intake": "Celkový příjem",
+    "un_started_work_items": "Nezahájené pracovní položky",
+    "total_guests": "Celkový počet hostů",
+    "completed_work_items": "Dokončené pracovní položky"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projekt} few {Projekty} other {Projektů}}",
