@@ -15,6 +15,7 @@ interface TSubIssuesListGroupProps {
   serviceType: TIssueServiceType;
   disabled: boolean;
   parentIssueId: string;
+  rootIssueId: string;
   handleIssueCrudState: (
     key: "create" | "existing" | "update" | "delete",
     issueId: string,
@@ -31,6 +32,7 @@ export const SubIssuesListGroup: FC<TSubIssuesListGroupProps> = observer((props)
     serviceType,
     disabled,
     parentIssueId,
+    rootIssueId,
     projectId,
     workspaceSlug,
     handleIssueCrudState,
@@ -79,7 +81,7 @@ export const SubIssuesListGroup: FC<TSubIssuesListGroupProps> = observer((props)
               workspaceSlug={workspaceSlug}
               projectId={projectId}
               parentIssueId={parentIssueId}
-              rootIssueId={parentIssueId}
+              rootIssueId={rootIssueId}
               issueId={workItemId}
               disabled={disabled}
               handleIssueCrudState={handleIssueCrudState}
