@@ -25,7 +25,7 @@ const CreatedVsResolved = observer(() => {
   const workspaceSlug = params.workspaceSlug as string;
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics-v2/empty-chart-area" });
   const { data: createdVsResolvedData, isLoading: isCreatedVsResolvedLoading } = useSWR(
-    `created-vs-resolved-${workspaceSlug}-${selectedDuration}`,
+    `created-vs-resolved-${workspaceSlug}-${selectedDuration}-${selectedProjects}`,
     () =>
       analyticsV2Service.getAdvanceAnalyticsCharts<IChartResponseV2>(workspaceSlug, "work-items", {
         date_filter: selectedDuration,

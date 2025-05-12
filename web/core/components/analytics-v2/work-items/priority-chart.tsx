@@ -54,7 +54,7 @@ const PriorityChart = observer((props: Props) => {
   const workspaceSlug = params.workspaceSlug as string;
 
   const { data: priorityChartData, isLoading: priorityChartLoading } = useSWR(
-    `customized-insights-chart-${workspaceSlug}-${selectedDuration}-${props.x_axis}-${props.y_axis}-${props.group_by}`,
+    `customized-insights-chart-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${props.x_axis}-${props.y_axis}-${props.group_by}`,
     () =>
       analyticsV2Service.getAdvanceAnalyticsCharts<TChart>(workspaceSlug, "custom-work-items", {
         date_filter: selectedDuration,

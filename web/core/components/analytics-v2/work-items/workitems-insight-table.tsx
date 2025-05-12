@@ -27,7 +27,7 @@ const WorkItemsInsightTable = observer(() => {
   const { getProjectById } = useProject();
   const { selectedDuration, selectedProjects } = useAnalyticsV2();
   const { data: workItemsData, isLoading } = useSWR(
-    `insights-table-work-items-${selectedDuration}-${selectedProjects}`,
+    `insights-table-work-items-${workspaceSlug}-${selectedDuration}-${selectedProjects}`,
     () =>
       analyticsV2Service.getAdvanceAnalyticsStats<WorkItemInsightColumns[]>(workspaceSlug, "work-items", {
         date_filter: selectedDuration,
