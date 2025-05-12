@@ -50,7 +50,7 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
   } = useIssueDetail(issueServiceType);
 
   // derived values
-  const filters = getSubIssueFilters(parentIssueId);
+  const filters = getSubIssueFilters(rootIssueId);
   const isRootLevel = useMemo(() => rootIssueId === parentIssueId, [rootIssueId, parentIssueId]);
   const group_by = isRootLevel ? (filters?.displayFilters?.group_by ?? null) : null;
   const filteredSubWorkItemsCount = (getFilteredSubWorkItems(rootIssueId, filters.filters ?? {}) ?? []).length;
@@ -66,37 +66,20 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
   const getWorkItemIds = useCallback(
     (groupId: string) => {
       if (isRootLevel) {
-        const groupedSubIssues = getGroupedSubWorkItems(parentIssueId);
+        const groupedSubIssues = getGroupedSubWorkItems(rootIssueId);
         return groupedSubIssues?.[groupId] ?? [];
       }
       const subIssueIds = subIssuesByIssueId(parentIssueId);
       return subIssueIds ?? [];
     },
-    [isRootLevel, subIssuesByIssueId, parentIssueId, getGroupedSubWorkItems]
+    [isRootLevel, subIssuesByIssueId, rootIssueId, getGroupedSubWorkItems, parentIssueId]
   );
 
   const isSubWorkItems = issueServiceType === EIssueServiceType.ISSUES;
 
   return (
     <div className="relative">
-      {filteredSubWorkItemsCount > 0 ? (
-        groups?.map((group) => (
-          <SubIssuesListGroup
-            key={group.id}
-            workItemIds={getWorkItemIds(group.id)}
-            projectId={projectId}
-            workspaceSlug={workspaceSlug}
-            group={group}
-            serviceType={issueServiceType}
-            disabled={disabled}
-            parentIssueId={parentIssueId}
-            handleIssueCrudState={handleIssueCrudState}
-            subIssueOperations={subIssueOperations}
-            storeType={storeType}
-            spacingLeft={spacingLeft}
-          />
-        ))
-      ) : (
+      {isRootLevel && filteredSubWorkItemsCount === 0 ? (
         <SectionEmptyState
           title={
             !isSubWorkItems
@@ -116,6 +99,24 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
             </Button>
           }
         />
+      ) : (
+        groups?.map((group) => (
+          <SubIssuesListGroup
+            key={group.id}
+            workItemIds={getWorkItemIds(group.id)}
+            projectId={projectId}
+            workspaceSlug={workspaceSlug}
+            group={group}
+            serviceType={issueServiceType}
+            disabled={disabled}
+            parentIssueId={parentIssueId}
+            rootIssueId={rootIssueId}
+            handleIssueCrudState={handleIssueCrudState}
+            subIssueOperations={subIssueOperations}
+            storeType={storeType}
+            spacingLeft={spacingLeft}
+          />
+        ))
       )}
     </div>
   );
