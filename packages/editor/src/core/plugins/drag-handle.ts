@@ -10,10 +10,10 @@ const verticalEllipsisIcon =
 
 const generalSelectors = [
   "li",
-  "p:not(:first-child)",
+  "p.editor-paragraph-block:not(:first-child)",
   ".code-block",
   "blockquote",
-  "h1, h2, h3, h4, h5, h6",
+  "h1.editor-heading-block, h2.editor-heading-block, h3.editor-heading-block, h4.editor-heading-block, h5.editor-heading-block, h6.editor-heading-block",
   "[data-type=horizontalRule]",
   ".table-wrapper",
   ".issue-embed",
