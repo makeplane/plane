@@ -33,6 +33,7 @@ export const useUploader = (args: TUploaderArgs) => {
       });
       if (!isValid) {
         handleProgressStatus?.(false);
+        setIsUploading(false);
         return;
       }
       try {
@@ -64,7 +65,7 @@ export const useUploader = (args: TUploaderArgs) => {
         setIsUploading(false);
       }
     },
-    [onUpload]
+    [acceptedMimeTypes, editorCommand, handleProgressStatus, loadFileFromFileSystem, maxFileSize, onUpload]
   );
 
   return { isUploading, uploadFile };
@@ -121,7 +122,7 @@ export const useDropZone = (args: TDropzoneArgs) => {
         uploader,
       });
     },
-    [uploader, editor, pos]
+    [acceptedMimeTypes, editor, maxFileSize, pos, type, uploader]
   );
   const onDragEnter = useCallback(() => setDraggedInside(true), []);
   const onDragLeave = useCallback(() => setDraggedInside(false), []);
