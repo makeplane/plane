@@ -9,7 +9,6 @@ export const DEFAULT_DISPLAY_CONFIG: TDisplayConfig = {
 };
 
 export const ACCEPTED_IMAGE_MIME_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"];
-export const ACCEPTED_IMAGE_EXTENSIONS = ACCEPTED_IMAGE_MIME_TYPES.map((type) => `.${type.split("/")[1]}`);
 
 export const ACCEPTED_ATTACHMENT_MIME_TYPES = [
   "image/jpeg",
@@ -61,4 +60,3 @@ export const ACCEPTED_ATTACHMENT_MIME_TYPES = [
   "text/csv",
   "application/xml",
 ];
-export const ACCEPTED_ATTACHMENT_EXTENSIONS = ACCEPTED_ATTACHMENT_MIME_TYPES.map((type) => `.${type.split("/")[1]}`);

@@ -3,7 +3,7 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
-import { ACCEPTED_IMAGE_EXTENSIONS, ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
+import { ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
 // extensions
 import { CustoBaseImageNodeViewProps, getImageComponentImageFileMap } from "@/extensions/custom-image";
 // hooks
@@ -180,7 +180,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         ref={fileInputRef}
         hidden
         type="file"
-        accept={ACCEPTED_IMAGE_EXTENSIONS.join(",")}
+        accept={ACCEPTED_IMAGE_MIME_TYPES.join(",")}
         onChange={onFileChange}
         multiple
       />
