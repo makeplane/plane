@@ -2,6 +2,7 @@ import cloneDeep from "lodash/cloneDeep";
 import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // types
+import { EStartOfTheWeek } from "@plane/constants";
 import { IUserTheme, TUserProfile } from "@plane/types";
 // services
 import { UserService } from "@/services/user.service";
@@ -60,6 +61,7 @@ export class ProfileStore implements IUserProfileStore {
     created_at: "",
     updated_at: "",
     language: "",
+    start_of_the_week: EStartOfTheWeek.SUNDAY,
   };
 
   // services

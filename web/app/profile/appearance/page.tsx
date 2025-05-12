@@ -6,7 +6,7 @@ import { useTranslation } from "@plane/i18n";
 import { PreferencesList } from "@/components/appearance/list";
 import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
-import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
+import { ProfileSettingContentHeader, ProfileSettingContentWrapper, StartOfWeekPreference } from "@/components/profile";
 // hooks
 import { useUserProfile } from "@/hooks/store";
 
@@ -22,6 +22,7 @@ const ProfileAppearancePage = observer(() => {
         <ProfileSettingContentWrapper>
           <ProfileSettingContentHeader title={t("appearance")} />
           <PreferencesList />
+          <StartOfWeekPreference />
         </ProfileSettingContentWrapper>
       ) : (
         <div className="grid h-full w-full place-items-center px-4 sm:px-0">

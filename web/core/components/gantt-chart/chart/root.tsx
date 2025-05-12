@@ -1,10 +1,13 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { EStartOfTheWeek } from "@plane/constants";
 // components
 import { GanttChartHeader, GanttChartMainContent } from "@/components/gantt-chart";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
+import { useUserProfile } from "@/hooks/store";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
 import { SIDEBAR_WIDTH } from "../constants";
@@ -87,6 +90,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
     updateRenderView,
     updateAllBlocksOnChartChangeWhileDragging,
   } = useTimeLineChartStore();
+  const { data } = useUserProfile();
+  const startOfWeek = data?.start_of_the_week;
 
   const updateCurrentViewRenderPayload = (side: null | "left" | "right", view: TGanttViews, targetDate?: Date) => {
     const selectedCurrentView: TGanttViews = view;
@@ -98,7 +103,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
     if (selectedCurrentViewData === undefined) return;
 
     const currentViewHelpers = timelineViewHelpers[selectedCurrentView];
-    const currentRender = currentViewHelpers.generateChart(selectedCurrentViewData, side, targetDate);
+    const currentRender = currentViewHelpers.generateChart(selectedCurrentViewData, side, targetDate, startOfWeek);
     const mergeRenderPayloads = currentViewHelpers.mergeRenderPayloads as (
       a: IWeekBlock[] | IMonthView | IMonthBlock[],
       b: IWeekBlock[] | IMonthView | IMonthBlock[]

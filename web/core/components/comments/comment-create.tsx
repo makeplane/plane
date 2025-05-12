@@ -137,6 +137,9 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
                 }}
                 showToolbarInitially={showToolbarInitially}
                 parentClassName="p-2"
+                displayConfig={{
+                  fontSize: "small-font",
+                }}
               />
             )}
           />

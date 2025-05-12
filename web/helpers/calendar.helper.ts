@@ -1,5 +1,7 @@
+import { EStartOfTheWeek } from "@plane/constants";
 // helpers
 import { ICalendarDate, ICalendarPayload } from "@/components/issues";
+import { DAYS_LIST } from "@/constants/calendar";
 import { getWeekNumberOfDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // types
 
@@ -92,3 +94,21 @@ export const generateCalendarData = (currentStructure: ICalendarPayload | null, 
 
   return calendarData;
 };
+
+/**
+ * Returns a new array sorted by the startOfWeek.
+ * @param items Array of items to sort.
+ * @param getDayIndex Function to get the day index (0-6) from an item.
+ * @param startOfWeek The day to start the week on.
+ */
+export function getOrderedDays<T>(
+  items: T[],
+  getDayIndex: (item: T) => number,
+  startOfWeek: EStartOfTheWeek = EStartOfTheWeek.SUNDAY
+): T[] {
+  return [...items].sort((a, b) => {
+    const dayA = (7 + getDayIndex(a) - startOfWeek) % 7;
+    const dayB = (7 + getDayIndex(b) - startOfWeek) % 7;
+    return dayA - dayB;
+  });
+}
