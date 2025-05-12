@@ -102,6 +102,9 @@ export const NotificationContent: FC<{
                 workspaceId={workspaceId}
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
+                displayConfig={{
+                  fontSize: "small-font",
+                }}
               />
             </div>
           )}
