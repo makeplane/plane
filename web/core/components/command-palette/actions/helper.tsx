@@ -16,7 +16,9 @@ export const openProjectAndScrollToSidebar = (itemProjectId: string | undefined)
       scrollElement.scrollIntoView({ behavior: "smooth", block: "start" });
       // Restart the highlight animation every time
       scrollElement.style.animation = "none";
+      // Trigger a reflow to ensure the animation is restarted
       void scrollElement.offsetWidth;
+      // Restart the highlight animation
       scrollElement.style.animation = "highlight 2s ease-in-out";
     });
   }

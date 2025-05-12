@@ -17,6 +17,11 @@ def get_view_props():
 
 
 class Page(BaseModel):
+    PRIVATE_ACCESS = 1
+    PUBLIC_ACCESS = 0
+
+    ACCESS_CHOICES = ((PRIVATE_ACCESS, "Private"), (PUBLIC_ACCESS, "Public"))
+
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="pages"
     )
@@ -52,6 +57,9 @@ class Page(BaseModel):
     )
     moved_to_page = models.UUIDField(null=True, blank=True)
     moved_to_project = models.UUIDField(null=True, blank=True)
+
+    external_id = models.CharField(max_length=255, null=True, blank=True)
+    external_source = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         verbose_name = "Page"
@@ -91,9 +99,7 @@ class PageLog(BaseModel):
     transaction = models.UUIDField(default=uuid.uuid4)
     page = models.ForeignKey(Page, related_name="page_log", on_delete=models.CASCADE)
     entity_identifier = models.UUIDField(null=True)
-    entity_name = models.CharField(
-        max_length=30, verbose_name="Transaction Type"
-    )
+    entity_name = models.CharField(max_length=30, verbose_name="Transaction Type")
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="workspace_page_log"
     )

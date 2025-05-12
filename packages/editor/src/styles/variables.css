@@ -233,7 +233,9 @@
     padding-left: var(--normal-content-margin);
     padding-right: var(--normal-content-margin);
   }
+}
 
+@container page-content-container (max-width: 930px) {
   .page-summary-container {
     display: none;
   }

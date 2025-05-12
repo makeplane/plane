@@ -6,8 +6,12 @@ from plane.app.views import (
     AnalyticViewViewset,
     SavedAnalyticEndpoint,
     ExportAnalyticsEndpoint,
+    AdvanceAnalyticsEndpoint,
+    AdvanceAnalyticsStatsEndpoint,
+    AdvanceAnalyticsChartEndpoint,
     DefaultAnalyticsEndpoint,
     ProjectStatsEndpoint,
+    AdvanceAnalyticsExportEndpoint,
 )
 
 
@@ -48,5 +52,25 @@ urlpatterns = [
         "workspaces/<str:slug>/project-stats/",
         ProjectStatsEndpoint.as_view(),
         name="project-analytics",
+    ),
+    path(
+        "workspaces/<str:slug>/advance-analytics/",
+        AdvanceAnalyticsEndpoint.as_view(),
+        name="advance-analytics",
+    ),
+    path(
+        "workspaces/<str:slug>/advance-analytics-stats/",
+        AdvanceAnalyticsStatsEndpoint.as_view(),
+        name="advance-analytics-stats",
+    ),
+    path(
+        "workspaces/<str:slug>/advance-analytics-charts/",
+        AdvanceAnalyticsChartEndpoint.as_view(),
+        name="advance-analytics-chart",
+    ),
+    path(
+        "workspaces/<str:slug>/advance-analytics-export/",
+        AdvanceAnalyticsExportEndpoint.as_view(),
+        name="advance-analytics-export",
     ),
 ]

@@ -36,7 +36,7 @@ type TProjectItemsProps = {
 
 export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
   const { workspaceSlug, projectId, additionalNavigationItems, isSidebarCollapsed } = props;
-  const { workItem: workItemIdFromRoute } = useParams();
+  const { workItem: workItemIdentifierFromRoute } = useParams();
   // store hooks
   const { t } = useTranslation();
   const { toggleSidebar } = useAppTheme();
@@ -49,7 +49,9 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
   // pathname
   const pathname = usePathname();
   // derived values
-  const workItemId = workItemIdFromRoute ? getIssueIdByIdentifier(workItemIdFromRoute?.toString()) : undefined;
+  const workItemId = workItemIdentifierFromRoute
+    ? getIssueIdByIdentifier(workItemIdentifierFromRoute?.toString())
+    : undefined;
   const workItem = workItemId ? getIssueById(workItemId) : undefined;
   const project = getPartialProjectById(projectId);
   // handlers
@@ -117,7 +119,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
         i18n_key: "sidebar.intake",
         key: "intake",
         name: "Intake",
-        href: `/${workspaceSlug}/projects/${projectId}/inbox`,
+        href: `/${workspaceSlug}/projects/${projectId}/intake`,
         icon: Intake,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: project.inbox_view,

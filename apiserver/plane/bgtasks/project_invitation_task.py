@@ -76,7 +76,7 @@ def project_invitation(email, project_id, token, current_site, invitor):
 
         msg.attach_alternative(html_content, "text/html")
         msg.send()
-        logging.getLogger("plane").info("Email sent successfully.")
+        logging.getLogger("plane.worker").info("Email sent successfully.")
         return
     except (Project.DoesNotExist, ProjectMemberInvite.DoesNotExist):
         return
