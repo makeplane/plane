@@ -17,6 +17,7 @@ export interface ILinearDataStore {
   linearTeams: Record<string, LinearTeam>; // teamId -> team
   linearStates: Record<string, Record<string, LinearState>>; // teamId -> stateId -> state
   linearIssueCount: Record<string, number>; // teamId -> issueCount
+  linearDataSummary: Record<string, Record<string, number>>; // teamId -> entity -> count
   additionalUsersData: IAdditionalUsersResponse;
   // computed
   linearOrganizationId: string;
@@ -32,6 +33,7 @@ export interface ILinearDataStore {
   fetchLinearTeams: (workspaceId: string, userId: string) => Promise<LinearTeam[] | undefined>;
   fetchLinearTeamStates: (workspaceId: string, userId: string, teamId: string) => Promise<LinearState[] | undefined>;
   fetchLinearTeamIssueCount: (workspaceId: string, userId: string, teamId: string) => Promise<number | undefined>;
+  fetchLinearTeamDataSummary: (workspaceId: string, userId: string, teamId: string) => Promise<Record<string, number> | undefined>;
   fetchAdditionalUsers: (
     workspaceId: string,
     userId: string,
@@ -48,6 +50,7 @@ export class LinearDataStore implements ILinearDataStore {
   linearTeams: Record<string, LinearTeam> = {}; // teamId -> team
   linearStates: Record<string, Record<string, LinearState>> = {}; // teamId -> stateId -> state
   linearIssueCount: Record<string, number> = {}; // teamId -> issueCount
+  linearDataSummary: Record<string, Record<string, number>> = {}; // teamId -> entity -> count
   additionalUsersData: IAdditionalUsersResponse = {
     additionalUserCount: 0,
     occupiedUserCount: 0,
@@ -143,6 +146,13 @@ export class LinearDataStore implements ILinearDataStore {
    * @returns { number }
    */
   getLinearIssueCountByTeamId = computedFn((teamId: string): number => this.linearIssueCount[teamId] || 0);
+
+  /**
+   * @description Returns the data summary by team id
+   * @param { string } teamId
+   * @returns { Record<string, number> }
+   */
+  getLinearDataSummaryByTeamId = computedFn((teamId: string): Record<string, number> => this.linearDataSummary[teamId] || {});
 
   // actions
   /**
@@ -251,6 +261,34 @@ export class LinearDataStore implements ILinearDataStore {
       }
       this.isLoading = false;
       return issueCount;
+    } catch (error) {
+      this.error = error as unknown as object;
+      this.isLoading = false;
+    }
+  };
+
+  /**
+   * @description Fetches the data summary by team id
+   * @param { string } workspaceId
+   * @param { string } userId
+   * @param { string } teamId
+   * @returns { Promise<number | undefined> }
+   */
+  fetchLinearTeamDataSummary = async (
+    workspaceId: string,
+    userId: string,
+    teamId: string
+  ): Promise<Record<string, number> | undefined> => {
+    try {
+      const dataSummary = await this.service.getDataSummary(workspaceId, userId, teamId);
+      if (dataSummary) {
+        runInAction(() => {
+          if (!this.linearDataSummary[teamId]) this.linearDataSummary[teamId] = {};
+          this.linearDataSummary[teamId] = dataSummary;
+        });
+      }
+      this.isLoading = false;
+      return dataSummary;
     } catch (error) {
       this.error = error as unknown as object;
       this.isLoading = false;

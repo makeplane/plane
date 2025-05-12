@@ -12,13 +12,13 @@ import { LinearComment } from "..";
 
 export type LinearProps =
   | {
-      isPAT: false;
-      accessToken: string;
-    }
+    isPAT: false;
+    accessToken: string;
+  }
   | {
-      isPAT: true;
-      apiKey: string;
-    };
+    isPAT: true;
+    apiKey: string;
+  };
 
 // Utility function for sleep
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -48,7 +48,6 @@ export class LinearService {
         return await request();
       } catch (error) {
         error = error as LinearError;
-        // @ts-ignore
         if (error instanceof RatelimitedLinearError) {
           await sleep(60000); // Wait for 1 minute before retrying
         } else {
@@ -160,6 +159,10 @@ export class LinearService {
     return await this.rateLimitedRequest(() => team.projects());
   }
 
+  async getProject(projectId: string) {
+    return await this.rateLimitedRequest(() => this.linearClient.project(projectId));
+  }
+
   async getTeamIssues(teamId: string, cursor?: string) {
     return await this.rateLimitedRequest(() =>
       this.linearClient.issues({
@@ -231,25 +234,180 @@ export class LinearService {
     ];
   }
 
+  async getIssueByIdentifier(identifier: string) {
+    const parts = identifier.split('-');
+    if (parts.length !== 2) {
+      throw new Error(`Invalid issue identifier format: ${identifier}. Expected format: PRJ-123`);
+    }
+
+    const [projectIdentifier, sequenceNumber] = parts;
+
+    const issues = await this.linearClient.issues({
+      filter: {
+        team: { key: { eq: projectIdentifier } },
+        number: { eq: parseInt(sequenceNumber, 10) }
+      },
+    });
+
+    // Return the first matching issue or null if not found
+    if (issues.nodes.length === 0) {
+      return null;
+    }
+
+    return issues.nodes[0];
+  }
+
+  async getDocuments(teamId: string) {
+    const team = await this.getTeam(teamId);
+    const projects = await team.projects();
+
+    const docs = await this.linearClient.documents({
+      filter: {
+        project: { id: { in: projects.nodes.map((project) => project.id) } },
+      },
+    });
+
+    return docs.nodes;
+  }
+
   private breakAndGetIds(comment: Comment) {
     if (
-      // @ts-ignore
+      // @ts-expect-error
       comment._issue &&
-      // @ts-ignore
+      // @ts-expect-error
       comment._issue.id &&
-      // @ts-ignore
+      // @ts-expect-error
       comment._user &&
-      // @ts-ignore
+      // @ts-expect-error
       comment._user.id
     ) {
       return {
-        // @ts-ignore
+        // @ts-expect-error
         issue_id: comment._issue.id,
 
-        // @ts-ignore
+        // @ts-expect-error
         user_id: comment._user.id,
       };
     }
+  }
+
+  /**
+   * Get counts for various Linear entities within a team
+   * @param teamId The Linear team ID
+   * @returns Record containing count for each entity type
+   */
+  async getLinearDataSummary(teamId: string): Promise<Record<string, number>> {
+    // Define the response type for the GraphQL query - we keep this for type safety
+    type TeamEntitiesResponse = {
+      team: {
+        issueCount: number;
+        states: {
+          nodes: Array<{ id: string }>;
+        };
+        cycles: {
+          nodes: Array<{ id: string }>;
+        };
+        labels: {
+          nodes: Array<{ id: string }>;
+        };
+        projects: {
+          nodes: Array<{
+            id: string;
+            documents?: {
+              nodes: Array<{ id: string }>;
+            };
+          }>;
+        };
+      };
+    };
+
+    // Get counts for all entities in one query
+    const query = `
+    query TeamEntityCounts {
+      team(id: "${teamId}") {
+        issueCount
+        states {
+          nodes {
+            id
+          }
+        }
+        cycles {
+          nodes {
+            id
+          }
+        }
+        labels {
+          nodes {
+            id
+          }
+        }
+        projects {
+          nodes {
+            id
+            documents {
+              nodes {
+                id
+              }
+            }
+          }
+        }
+      }
+    }
+    `;
+
+    // Execute the query with rate limiting and proper type annotation
+    const response = await this.rateLimitedRequest(() =>
+      this.linearClient.client.request<TeamEntitiesResponse, any>(query)
+    );
+
+    // Initialize the counts object
+    const counts: Record<string, number> = {};
+
+    // Define entity paths and their corresponding names in the result
+    const entityMappings = [
+      { path: 'issueCount', name: 'issues' },
+      { path: 'states.nodes', name: 'states' },
+      { path: 'cycles.nodes', name: 'cycles' },
+      { path: 'labels.nodes', name: 'labels' },
+      { path: 'projects.nodes', name: 'projects' }
+    ];
+
+    // Process each entity mapping
+    entityMappings.forEach(mapping => {
+      // Get the value at the path
+      const pathParts = mapping.path.split('.');
+      let value: any = response.team;
+
+      for (const part of pathParts) {
+        if (value && value[part] !== undefined) {
+          value = value[part];
+        } else {
+          value = null;
+          break;
+        }
+      }
+
+      // Count based on the type of value
+      if (typeof value === 'number') {
+        counts[mapping.name] = value;
+      } else if (Array.isArray(value)) {
+        counts[mapping.name] = value.length;
+      } else {
+        counts[mapping.name] = 0;
+      }
+    });
+
+    // Special handling for documents (nested count across projects)
+    counts.documents = 0;
+    if (response.team?.projects?.nodes) {
+      response.team.projects.nodes.forEach(project => {
+        if (project.documents?.nodes) {
+          counts.documents += project.documents.nodes.length;
+        }
+      });
+    }
+
+    return counts;
   }
 }
 

@@ -12,6 +12,7 @@ import { PlaneGithubWebhookWorker } from "@/apps/github/workers/plane";
 import { GitlabWebhookWorker } from "@/apps/gitlab";
 import { JiraDataMigrator } from "@/apps/jira-importer/migrator/jira.migrator";
 import { JiraDataCenterMigrator } from "@/apps/jira-server-importer/migrator";
+import { LinearDocsMigrator } from "@/apps/linear-importer/migrator/linear-docs.migrator";
 import { LinearDataMigrator } from "@/apps/linear-importer/migrator/linear.migrator";
 import { PlaneSlackWebhookWorker } from "@/apps/slack/worker/plane-worker";
 import { SlackInteractionHandler } from "@/apps/slack/worker/worker";
@@ -42,6 +43,8 @@ class WorkerFactory {
         return new JiraDataCenterMigrator(mq, store);
       case "linear":
         return new LinearDataMigrator(mq, store);
+      case "linear_docs":
+        return new LinearDocsMigrator(mq, store);
       case "asana":
         return new AsanaDataMigrator(mq, store);
       case "github-webhook":

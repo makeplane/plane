@@ -52,8 +52,10 @@ class PageSerializer(BaseSerializer):
             "label_ids",
             "project_ids",
             "anchor",
+            "external_id",
+            "external_source",
             "parent_id",
-            "sub_pages_count",
+            "sub_pages_count"
         ]
         read_only_fields = ["workspace", "owned_by", "anchor"]
 

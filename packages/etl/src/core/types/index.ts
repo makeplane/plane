@@ -14,6 +14,7 @@ import {
   ExModule,
   ExIssueType,
   ExIssuePropertyOption,
+  ExPage,
 } from "@plane/sdk";
 
 export type TServiceCredentials = {
@@ -109,4 +110,8 @@ export type PlaneEntities = {
   issue_properties?: Partial<ExIssueProperty>[];
   issue_property_options?: Partial<ExIssuePropertyOption>[];
   issue_property_values?: TIssuePropertyValuesPayload;
+};
+
+export type PlanePageEntity = {
+  pages: Partial<ExPage>[];
 };

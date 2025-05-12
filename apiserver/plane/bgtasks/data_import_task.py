@@ -1,10 +1,11 @@
 # Third party imports
 from celery import shared_task
-from django.db import transaction
-import traceback
 import requests
+from django.db import transaction
 from django.conf import settings
 
+import logging
+from plane.utils.exception_logger import log_exception
 from plane.api.serializers.issue import IssueSerializer
 from plane.db.models.issue import Issue, IssueLink, IssueComment
 from plane.db.models.project import Project
@@ -12,49 +13,76 @@ from plane.db.models.cycle import CycleIssue
 from plane.db.models.module import ModuleIssue
 from plane.db.models.workspace import Workspace
 from plane.db.models.asset import FileAsset
+from plane.db.models.page import Page, ProjectPage
 from plane.ee.models import IssueProperty, IssuePropertyValue
-from django.conf import settings
+
+logger = logging.getLogger("plane.worker")
 
 
-def update_job_batch_completion(job_id, total_issues=0, imported_issues=0):
-    """Update the job report with batch and issue counts"""
+def dispatch_job_completion(job_id, phase="issues"):
+    """Dispatch the job completion to silo service"""
     try:
-        from plane.ee.models import ImportJob, ImportReport
-        from django.utils import timezone
+        silo_url = settings.SILO_URL.rstrip("/")
+        endpoint = f"{silo_url}/api/jobs/{job_id}/finished/"
 
-        # Get the job and its report
-        job = ImportJob.objects.select_related('report').get(pk=job_id)
-        if job and job.report:
-            # Update batch count
-            job.report.imported_batch_count = (job.report.imported_batch_count or 0) + 1
+        response = requests.post(
+            endpoint,
+            json={"jobId": job_id, "phase": phase},
+            headers={"Content-Type": "application/json"},
+        )
 
-            # Update issue counts
-            job.report.total_issue_count = (job.report.total_issue_count or 0) + total_issues
-            job.report.imported_issue_count = (job.report.imported_issue_count or 0) + imported_issues
-            job.report.errored_issue_count = (job.report.errored_issue_count or 0) + (total_issues - imported_issues)
+        if response.status_code != 200:
+            print(f"Error updating job batch completion: {response.text}")
 
-            job.report.updated_at = timezone.now()
-
-            # Save all changes
-            job.report.save(update_fields=[
-                'imported_batch_count',
-                'total_issue_count',
-                'imported_issue_count',
-                'errored_issue_count',
-                'updated_at'
-            ])
-
-            # Check if all batches are processed and update job status
-            if job.report.imported_batch_count >= job.report.total_batch_count:
-                job.status = ImportJob.JobStatus.FINISHED
-                job.report.end_time = timezone.now()
-                job.save(update_fields=['status'])
-                job.report.save(update_fields=['end_time'])
-
-    except ImportJob.DoesNotExist:
-        print(f"Job not found with id: {job_id}")
     except Exception as e:
         print(f"Failed to update job batch completion: {str(e)}")
+
+
+def update_job_batch_completion(
+    job_id, total_issues=0, imported_issues=0, phase="issues"
+):
+    """Update the job report with batch and issue counts"""
+    try:
+        from plane.ee.models import ImportJob
+        from django.utils import timezone
+
+        # Use F() expressions to handle concurrency safely
+        from django.db.models import F
+        from django.db.models.functions import Coalesce
+
+        # Get the job and its report
+        job = ImportJob.objects.select_related("report").get(pk=job_id)
+
+        # Get the model class from the instance
+        ReportModel = job.report.__class__
+
+        # Update counters atomically at database level
+        ReportModel.objects.filter(id=job.report.id).update(
+            # Coalesce handles NULL values by replacing them with 0 before adding
+            imported_batch_count=Coalesce(F("imported_batch_count"), 0) + 1,
+            total_issue_count=Coalesce(F("total_issue_count"), 0) + total_issues,
+            imported_issue_count=Coalesce(F("imported_issue_count"), 0)
+            + imported_issues,
+            errored_issue_count=Coalesce(F("errored_issue_count"), 0)
+            + (total_issues - imported_issues),
+            updated_at=timezone.now(),
+        )
+
+        # Refresh the object to get updated values
+        job.report.refresh_from_db()
+
+        # Check if all batches are processed and update job status
+        if job.report.imported_batch_count >= job.report.total_batch_count:
+            """
+                We'll make an api call to silo, such that silo can perform
+                any additional processing along with marking the job as finished
+            """
+            dispatch_job_completion(job_id, phase)
+
+    except ImportJob.DoesNotExist:
+        log_exception(f"Job not found with id: {job_id}")
+    except Exception as e:
+        log_exception(f"Failed to update job batch completion: {str(e)}")
 
 
 def process_single_issue(slug, project, user_id, issue_data):
@@ -71,7 +99,7 @@ def process_single_issue(slug, project, user_id, issue_data):
             )
 
             if not serializer.is_valid():
-                print(f"Error processing issue: {serializer.errors}")
+                log_exception(f"Error processing issue: {serializer.errors}")
                 return None
 
             external_id = issue_data.get("external_id")
@@ -116,8 +144,7 @@ def process_single_issue(slug, project, user_id, issue_data):
 
             return issue
     except Exception as e:
-        print(traceback.print_exc())
-        print(f"Error processing issue: {str(e)}")
+        log_exception(f"Error processing issue: {str(e)}")
         return None
 
 
@@ -361,64 +388,229 @@ def process_issue_property_values(issue, issue_property_values):
         )
 
 
+def process_issues(slug, project, user_id, issue_list):
+    """
+    Process issues for import
+    Args:
+        slug (str): Workspace slug
+        project (Project): Project object
+        user_id (str): User ID
+        issue_list (list): List of issue data dictionaries
+    Returns:
+        tuple: (imported_issues_count, total_issues_count, external_id_map)
+    """
+    external_id_map = {}
+    total_issues = len(issue_list)
+    imported_issues = 0
+
+    if not issue_list:
+        return imported_issues, total_issues, external_id_map
+
+    # First pass: Create/Update parent issues
+    with transaction.atomic():
+        for issue_data in issue_list:
+            if issue_data.get("parent") is None:
+                issue = process_single_issue(slug, project, user_id, issue_data)
+                if issue:
+                    imported_issues += 1
+                    if issue_data.get("external_id"):
+                        external_id_map[issue_data["external_id"]] = str(issue.id)
+
+    # Second pass: Create/Update child issues
+    with transaction.atomic():
+        for issue_data in issue_list:
+            if issue_data.get("parent") is not None:
+                parent_external_id = issue_data["parent"]
+                if parent_external_id in external_id_map:
+                    issue_data["parent"] = external_id_map[parent_external_id]
+                else:
+                    parent_issue = Issue.objects.filter(
+                        project_id=project.id,
+                        workspace__slug=slug,
+                        external_id=parent_external_id,
+                        external_source=issue_data.get("external_source"),
+                    ).first()
+                    issue_data["parent"] = (
+                        str(parent_issue.id) if parent_issue else None
+                    )
+
+                issue = process_single_issue(slug, project, user_id, issue_data)
+                if issue:
+                    imported_issues += 1
+                    if issue_data.get("external_id"):
+                        external_id_map[issue_data["external_id"]] = str(issue.id)
+
+    return imported_issues, total_issues, external_id_map
+
+
+def process_pages(slug, project_id, user_id, page_list):
+    """
+    Process pages for import with bulk operations
+    Args:
+        slug (str): Workspace slug
+        project_id (str): Project ID
+        user_id (str): User ID
+        page_list (list): List of page data dictionaries
+    Returns:
+        tuple: (imported_pages_count, total_pages_count)
+    """
+    total_pages = len(page_list)
+    imported_pages = 0
+
+    if not page_list:
+        return imported_pages, total_pages
+
+    # Get workspace id from slug
+    workspace = Workspace.objects.get(slug=slug)
+
+    # Pages to create vs update
+    pages_to_create = []
+    pages_to_update = []
+
+    # First, identify existing pages by external id
+    external_ids_map = {
+        (p.get("external_id"), p.get("external_source")): p
+        for p in page_list
+        if p.get("external_id") and p.get("external_source")
+    }
+
+    # Get all existing pages in one query
+    if external_ids_map:
+        existing_pages = Page.objects.filter(
+            workspace__id=workspace.id,
+            projects__id=project_id,
+            external_id__in=[key[0] for key in external_ids_map.keys()],
+            external_source__in=list(set(key[1] for key in external_ids_map.keys())),
+        )
+
+        # Create lookup map for existing pages
+        existing_pages_map = {
+            (page.external_id, page.external_source): page for page in existing_pages
+        }
+    else:
+        existing_pages_map = {}
+
+    # Process each page for bulk operations
+    with transaction.atomic():
+        # Handle updates first
+        for key, page_data in external_ids_map.items():
+            if key in existing_pages_map:
+                # Update case
+                page = existing_pages_map[key]
+                for field, value in page_data.items():
+                    # Skip fields that shouldn't be directly updated
+                    if field in [
+                        "id",
+                        "created_at",
+                        "updated_at",
+                        "created_by",
+                        "projects",
+                    ]:
+                        continue
+                    setattr(page, field, value)
+                pages_to_update.append(page)
+            else:
+                # New pages to create
+                new_page = Page(
+                    workspace_id=workspace.id,
+                    name=page_data.get("name", "Untitled Page"),
+                    external_id=page_data.get("external_id"),
+                    external_source=page_data.get("external_source"),
+                    description=page_data.get("description", {}),
+                    description_html=page_data.get("description_html", "<p></p>"),
+                    description_binary=page_data.get("description_binary"),
+                    owned_by_id=user_id,
+                    created_by_id=user_id,
+                    updated_by_id=user_id,
+                )
+                pages_to_create.append(new_page)
+
+        # For pages without external ids
+        for page_data in [
+            p
+            for p in page_list
+            if not (p.get("external_id") and p.get("external_source"))
+        ]:
+            new_page = Page(
+                workspace_id=workspace.id,
+                name=page_data.get("name", "Untitled Page"),
+                external_id=page_data.get("external_id"),
+                external_source=page_data.get("external_source"),
+                description=page_data.get("description", {}),
+                description_html=page_data.get("description_html", "<p></p>"),
+                description_binary=page_data.get("description_binary"),
+                owned_by_id=user_id,
+                created_by_id=user_id,
+                updated_by_id=user_id,
+            )
+            pages_to_create.append(new_page)
+
+        # Bulk update existing pages
+        if pages_to_update:
+            fields_to_update = [
+                "name",
+                "description",
+                "description_html",
+                "description_binary",
+                "owned_by_id",
+                "updated_by_id",
+            ]
+            Page.objects.bulk_update(pages_to_update, fields_to_update, batch_size=100)
+            imported_pages += len(pages_to_update)
+
+        # Bulk create new pages
+        if pages_to_create:
+            created_pages = Page.objects.bulk_create(pages_to_create, batch_size=100)
+            imported_pages += len(created_pages)
+
+            ProjectPage.objects.bulk_create(
+                [
+                    ProjectPage(
+                        page=page, project_id=project_id, workspace_id=workspace.id
+                    )
+                    for page in created_pages
+                ],
+                batch_size=1000,
+            )
+
+    return imported_pages, total_pages
+
+
 @shared_task
 def import_data(slug, project_id, user_id, job_id, payload):
     """
-    Import issues into a project
+    Import issues and pages into a project
     Args:
         slug (str): Workspace slug
         project_id (str): Project ID
         user_id (str): User ID
         job_id (str): Job ID for tracking batch completion
-        payload (list): List of issues to import
+        payload (dict): Dictionary containing lists of 'issues' and 'pages'.
     """
     try:
         project = Project.objects.get(pk=project_id)
-        external_id_map = {}
-        total_issues = len(payload)
-        imported_issues = 0
 
-        # First pass: Create/Update all parent issues (where parent is None)
-        with transaction.atomic():
-            for issue_data in payload:
-                if issue_data.get("parent") is None:
-                    issue = process_single_issue(slug, project, user_id, issue_data)
-                    if issue:
-                        imported_issues += 1
-                        if issue_data.get("external_id"):
-                            external_id_map[issue_data["external_id"]] = str(issue.id)
+        # Process issues
+        issue_list = payload.get("issues")
+        if issue_list:
+            imported_issues, total_issues, external_id_map = process_issues(
+                slug, project, user_id, issue_list
+            )
+            update_job_batch_completion(job_id, total_issues, imported_issues, "issues")
 
-        # Second pass: Create/Update all child issues
-        with transaction.atomic():
-            for issue_data in payload:
-                if issue_data.get("parent") is not None:
-                    # Replace parent external_id with actual issue id
-                    parent_external_id = issue_data["parent"]
-                    if parent_external_id in external_id_map:
-                        issue_data["parent"] = external_id_map[parent_external_id]
-                    else:
-                        # Check if parent exists in database
-                        parent_issue = Issue.objects.filter(
-                            project_id=project_id,
-                            workspace__slug=slug,
-                            external_id=parent_external_id,
-                            external_source=issue_data.get("external_source"),
-                        ).first()
-                        if parent_issue:
-                            issue_data["parent"] = str(parent_issue.id)
-                        else:
-                            issue_data["parent"] = None
+        # Process pages
+        page_list = payload.get("pages")
+        if page_list:
+            imported_pages, total_pages = process_pages(
+                slug, project_id, user_id, page_list
+            )
+            update_job_batch_completion(job_id, total_pages, imported_pages, "pages")
 
-                    issue = process_single_issue(slug, project, user_id, issue_data)
-                    if issue:
-                        imported_issues += 1
-                        if issue_data.get("external_id"):
-                            external_id_map[issue_data["external_id"]] = str(issue.id)
-
-        update_job_batch_completion(job_id, total_issues, imported_issues)
+        logger.info(
+            f"Processed {imported_issues}/{total_issues} issues and {imported_pages}/{total_pages} pages."
+        )
         return True
     except Exception as e:
-        print(traceback.print_exc())
-        print(f"Error importing data: {str(e)}")
-        update_job_batch_completion(job_id, total_issues, 0)  # All issues failed
+        # Assuming there's error handling in the calling code
+        log_exception(f"Error in import_data: {str(e)}")
         return False

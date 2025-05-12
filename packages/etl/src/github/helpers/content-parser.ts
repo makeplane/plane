@@ -1,8 +1,8 @@
-import TurndownService from "turndown";
-import { marked } from "marked";
-import { PlaneUser, Client as PlaneClient } from "@plane/sdk";
-import { parse, HTMLElement } from "node-html-parser";
 import axios from "axios";
+import { marked } from "marked";
+import { parse, HTMLElement } from "node-html-parser";
+import TurndownService from "turndown";
+import { PlaneUser, Client as PlaneClient } from "@plane/sdk";
 import { GithubService } from "../services";
 
 interface ImageComponent {
@@ -173,7 +173,7 @@ export class ContentParser {
       // Upload using AssetService
       const assetId = await options.planeClient.assets.uploadAsset(
         options.workspaceSlug,
-        // @ts-ignore
+        // @ts-expect-error
         blob,
         "image",
         blob.size,

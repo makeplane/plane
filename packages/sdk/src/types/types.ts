@@ -265,6 +265,13 @@ export type ExCycle = ICycle &
     issues: string[];
   };
 
+export type ExPage = ExBase & {
+  name: string;
+  description_html: string;
+  external_id: string;
+  external_source: string;
+};
+
 type ExUser = {
   id: string;
   first_name: string;

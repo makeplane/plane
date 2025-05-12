@@ -340,7 +340,7 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
     job.project_id
   );
 
-  const generatedPayload = await generateIssuePayload({
+  const generatedIssuePayload = await generateIssuePayload({
     jobId: job.id,
     meta,
     issueProcessIndex,
@@ -366,9 +366,12 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
     planeIssuePropertyValues: issue_property_values ? issue_property_values : {},
   });
 
+  const payload = {
+    issues: generatedIssuePayload,
+  }
 
   await celeryProducer.registerTask(
-    generatedPayload,
+    payload,
     job.workspace_slug,
     job.project_id,
     job.id,

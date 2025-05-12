@@ -69,6 +69,22 @@ export class LinearService {
   }
 
   /**
+   * @description get project issues count
+   * @property workspaceId: string
+   * @property userId: string
+   * @property teamId: string
+   * @returns { Promise<{ issueCount: number; documentCount: number } | undefined> }
+   */
+  async getDataSummary(workspaceId: string, userId: string, teamId: string): Promise<{ issueCount: number; documentCount: number } | undefined> {
+    return this.axiosInstance
+      .post(`/api/linear/data-summary`, { workspaceId, userId, teamId })
+      .then((res) => res.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
    * @description get additional users while import
    * @property workspaceId: string
    * @property userId: string

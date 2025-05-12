@@ -9,13 +9,12 @@ import {
   ExIssueProperty,
   ExIssuePropertyOption,
   ExIssuePropertyValue,
-  ExIssueType,
-  Client as PlaneClient,
+  ExIssueType, Client as PlaneClient,
   PlaneUser,
   TIssuePropertyRelationType,
   TIssuePropertyType,
   TIssuePropertyTypeKeys,
-  UploadData,
+  UploadData
 } from "@plane/sdk";
 import { TWorkspaceCredential } from "@plane/types";
 import { env } from "@/env";

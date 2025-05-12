@@ -9,7 +9,7 @@
 import { Request, Response } from "express";
 
 import { TImporterKeys, TIntegrationKeys } from "@plane/etl/core";
-import { resetJobIfStarted, updateJobWithReport } from "@/helpers/job";
+import { resetJobIfStarted } from "@/helpers/job";
 import { responseHandler } from "@/helpers/response-handler";
 import { Controller, Get, Post, Put, useValidateUserAuthentication } from "@/lib";
 import { getAPIClient } from "@/services/client";
@@ -58,7 +58,7 @@ export class JobController {
         if (req.query.source) {
           jobs = await client.importJob.listImportJobs({
             workspace_id: req.query.workspaceId as string,
-            source: req.query.source as TImporterKeys & TIntegrationKeys
+            source: req.query.source as TImporterKeys & TIntegrationKeys,
           });
         } else {
           jobs = await client.importJob.listImportJobs({
@@ -99,34 +99,6 @@ export class JobController {
     }
   }
 
-  @Post("/:id/batch-complete")
-  async updateJobBatchComplete(req: Request, res: Response) {
-    try {
-      const job = await client.importJob.getImportJob(req.params.id);
-      if (!job.report_id) return res.status(400).json({ message: "Report id not found" });
-      const report = await client.importReport.getImportReport(job.report_id);
-      if (report.completed_batch_count != null && report.total_batch_count != null) {
-        if (report.completed_batch_count + 1 >= report.total_batch_count) {
-
-          await updateJobWithReport(job.id, report.id, {
-            status: "FINISHED",
-          }, {
-            end_time: new Date().toISOString(),
-            transformed_batch_count: report.total_batch_count,
-            completed_batch_count: report.total_batch_count,
-          });
-        } else {
-          await client.importReport.updateImportReport(report.id, {
-            completed_batch_count: report.completed_batch_count + 1,
-          });
-        }
-      }
-      res.status(200).json({ message: "Job updated successfully" });
-    } catch (error: any) {
-      responseHandler(res, 500, error);
-    }
-  }
-
   @Post("/cancel")
   @useValidateUserAuthentication()
   async cancelJob(req: Request, res: Response) {
@@ -146,8 +118,35 @@ export class JobController {
         return;
       }
 
-      await client.importJob.updateImportJob(body.jobId, { status: "CANCELLED", cancelled_at: new Date().toISOString() });
+      await client.importJob.updateImportJob(body.jobId, {
+        status: "CANCELLED",
+        cancelled_at: new Date().toISOString(),
+      });
       res.status(200).json({ message: "Job cancelled successfully" });
+    } catch (error: any) {
+      responseHandler(res, 500, error);
+    }
+  }
+
+  @Post("/:id/finished")
+  async updateJobFinished(req: Request, res: Response) {
+    try {
+      const jobId = req.params.id;
+      const phase = req.body.phase;
+      // Look up for the job to ensure the job exists and is valid
+      const job = await client.importJob.getImportJob(jobId);
+      if (!job) return res.status(400).json({ message: "Job not found" });
+
+      // Dispatch an event for the importer to handle any sort of post job processing
+      await importTaskManger.registerTask(
+        {
+          route: job.source.toLowerCase(),
+          jobId: job.id,
+          type: "finished",
+        },
+        { phase }
+      );
+      res.status(200).json({ message: "Job updated successfully" });
     } catch (error: any) {
       responseHandler(res, 500, error);
     }
@@ -197,7 +196,7 @@ export class JobController {
       await client.importJob.updateImportJob(job.id, {
         status: "CREATED",
         cancelled_at: null,
-        error_metadata: undefined
+        error_metadata: undefined,
       });
 
       await resetJobIfStarted(job);
@@ -210,6 +209,7 @@ export class JobController {
         },
         {}
       );
+
       res.status(200).json({ message: "Job initiated successfully" });
     } catch (error: any) {
       responseHandler(res, 500, error);

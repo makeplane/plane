@@ -1,6 +1,6 @@
+import { Issue, IssueLabel, User } from "@linear/sdk";
 import { LinearService } from "@/linear/services";
 import { LinearComment, LinearCycle, LinearIssueAttachment, LinearProject } from "@/linear/types";
-import { Issue, IssueLabel, User } from "@linear/sdk";
 
 export async function pullUsers(client: LinearService, teamId: string): Promise<User[]> {
   const members = await client.getTeamMembers(teamId);
@@ -70,6 +70,17 @@ export async function pullProjects(client: LinearService, teamId: string): Promi
     throw Error(`Could not fetch projects, something went wrong`);
   }
   return projects;
+}
+
+export async function pullDocuments(client: LinearService, teamId: string): Promise<any[]> {
+  const documents: any[] = [];
+  try {
+    const teamDocuments = await client.getDocuments(teamId);
+    documents.push(...teamDocuments);
+  } catch (e) {
+    throw Error(`Could not fetch documents, something went wrong`);
+  }
+  return documents;
 }
 
 // export const pullCommentsForIssue = async (

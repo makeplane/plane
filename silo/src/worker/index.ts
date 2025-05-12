@@ -5,6 +5,7 @@ export const importTaskManger = new TaskManager({
   workerTypes: {
     jira: "jira",
     linear: "linear",
+    linear_docs: "linear_docs",
     asana: "asana",
     jira_server: "jira_server",
     flatfile: "flatfile",
