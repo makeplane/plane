@@ -1322,3 +1322,14 @@ input[type="color"].custom-color-picker {
   --ease-in-out-expo: cubic-bezier(1, 0, 0, 1);
   --ease-in-out-circ: cubic-bezier(0.785, 0.135, 0.15, 0.86);
 }
+
+@keyframes highlight {
+  0% {
+    background-color: rgba(var(--color-background-90), 1);
+    border-radius: 4px;
+  }
+  100% {
+    background-color: transparent;
+    border-radius: 4px;
+  }
+}

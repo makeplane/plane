@@ -39,6 +39,7 @@ export const ProjectNavigationRoot: FC<TProjectItemsRootProps> = observer((props
   const additionalNavigationItems = (workspaceSlug: string, projectId: string): TNavigationItem[] => [
     {
       name: "Overview",
+      key: "overview",
       href: `/${workspaceSlug}/projects/${projectId}/overview/`,
       icon: RssIcon,
       access: [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
@@ -49,6 +50,7 @@ export const ProjectNavigationRoot: FC<TProjectItemsRootProps> = observer((props
     },
     {
       name: "Epics",
+      key: "epics",
       href: `/${workspaceSlug}/projects/${projectId}/epics`,
       icon: EpicIcon,
       access: [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
