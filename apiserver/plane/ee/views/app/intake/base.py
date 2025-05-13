@@ -177,7 +177,8 @@ class IntakeSettingEndpoint(BaseAPIView):
         return Response(data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN], level="PROJECT")
-    @check_feature_flag(FeatureFlag.INTAKE_SETTINGS)
+    @check_feature_flag(FeatureFlag.INTAKE_FORM)
+    @check_feature_flag(FeatureFlag.INTAKE_EMAIL)
     def patch(self, request, slug, project_id):
         intake = Intake.objects.filter(
             workspace__slug=slug, project_id=project_id

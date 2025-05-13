@@ -30,10 +30,7 @@ class FeatureFlag(Enum):
     CYCLE_PROGRESS_CHARTS = "CYCLE_PROGRESS_CHARTS"
     # Pro file size limit
     FILE_SIZE_LIMIT_PRO = "FILE_SIZE_LIMIT_PRO"
-    # Intake publish
-    INTAKE_PUBLISH = "INTAKE_PUBLISH"
-    # Intake settings
-    INTAKE_SETTINGS = "INTAKE_SETTINGS"
+
     # Intake form
     INTAKE_FORM = "INTAKE_FORM"
     # Intake email
