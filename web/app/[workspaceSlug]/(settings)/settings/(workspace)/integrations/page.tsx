@@ -29,12 +29,12 @@ const WorkspaceIntegrationsPage = observer(() => {
 
   if (!isAdmin)
     return (
-      <>
+      <div className="w-full">
         <PageHead title={pageTitle} />
         <div className="mt-10 flex h-full w-full justify-center">
           <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
         </div>
-      </>
+      </div>
     );
 
   const { data: appIntegrations } = useSWR(workspaceSlug && isAdmin ? APP_INTEGRATIONS : null, () =>

@@ -14,6 +14,7 @@ import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { CountChip } from "@/components/common";
 import { PageHead } from "@/components/core";
+import { SettingsContentWrapper } from "@/components/settings";
 import { WorkspaceMembersList } from "@/components/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -99,7 +100,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
   }
 
   return (
-    <>
+    <SettingsContentWrapper size="lg">
       <PageHead title={pageTitle} />
       <SendWorkspaceInvitationModal
         isOpen={inviteModal}
@@ -137,7 +138,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
         </div>
         <WorkspaceMembersList searchQuery={searchQuery} isAdmin={canPerformWorkspaceAdminActions} />
       </section>
-    </>
+    </SettingsContentWrapper>
   );
 });
 

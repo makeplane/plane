@@ -34,7 +34,6 @@ export const ProfileSidebar = observer((props: TProfileSidebarProps) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
-
   return (
     <SettingsSidebar
       isMobile={isMobile}

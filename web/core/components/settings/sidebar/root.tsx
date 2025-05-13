@@ -45,7 +45,7 @@ export const SettingsSidebar = observer((props: SettingsSidebarProps) => {
       {/* Header */}
       <SettingsSidebarHeader customHeader={customHeader} />
       {/* Navigation */}
-      <div className="divide-y divide-custom-border-100 overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto vertical-scrollbar">
+      <div className="divide-y divide-custom-border-100 overflow-x-hidden scrollbar-sm h-full w-full">
         {categories.map((category) => (
           <div key={category} className="py-3">
             <span className="text-sm font-semibold text-custom-text-350 capitalize mb-2">{t(category)}</span>

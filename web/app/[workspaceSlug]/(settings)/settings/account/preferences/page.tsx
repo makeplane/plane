@@ -19,7 +19,7 @@ const ProfileAppearancePage = observer(() => {
       <PageHead title="Profile - Preferences" />
       {userProfile ? (
         <>
-          <div className="flex flex-col gap-4 w-full md:min-w-[700px]">
+          <div className="flex flex-col gap-4 w-full">
             <div>
               <ProfileSettingContentHeader title={t("preferences")} />
               <PreferencesList />

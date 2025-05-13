@@ -8,6 +8,7 @@ import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { EstimateRoot } from "@/components/estimates";
 // hooks
+import { SettingsContentWrapper } from "@/components/settings";
 import { useProject, useUserPermissions } from "@/hooks/store";
 
 const EstimatesSettingsPage = observer(() => {
@@ -27,7 +28,7 @@ const EstimatesSettingsPage = observer(() => {
   }
 
   return (
-    <>
+    <SettingsContentWrapper>
       <PageHead title={pageTitle} />
       <div className={`w-full ${canPerformProjectAdminActions ? "" : "pointer-events-none opacity-60"}`}>
         <EstimateRoot
@@ -36,7 +37,7 @@ const EstimatesSettingsPage = observer(() => {
           isAdmin={canPerformProjectAdminActions}
         />
       </div>
-    </>
+    </SettingsContentWrapper>
   );
 });
 

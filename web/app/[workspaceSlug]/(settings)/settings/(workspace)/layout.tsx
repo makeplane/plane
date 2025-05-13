@@ -8,7 +8,7 @@ import { EUserWorkspaceRoles, WORKSPACE_SETTINGS_ACCESS } from "@plane/constants
 // hooks
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { CommandPalette } from "@/components/command-palette";
-import { SettingsContentWrapper, SettingsMobileNav } from "@/components/settings";
+import { SettingsMobileNav } from "@/components/settings";
 import { getWorkspaceActivePath, pathnameToAccessKey } from "@/components/settings/helper";
 import { useUserPermissions } from "@/hooks/store";
 // local components
@@ -49,7 +49,7 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
             <div className="flex-shrink-0 overflow-y-hidden sm:hidden hidden md:block lg:block">
               <WorkspaceSettingsSidebar />
             </div>
-            <SettingsContentWrapper>{children}</SettingsContentWrapper>
+            {children}
           </>
         )}
       </div>

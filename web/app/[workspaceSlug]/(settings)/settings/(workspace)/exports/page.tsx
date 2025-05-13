@@ -8,6 +8,7 @@ import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import ExportGuide from "@/components/exporter/guide";
 // helpers
+import { SettingsContentWrapper } from "@/components/settings";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
@@ -33,7 +34,7 @@ const ExportsPage = observer(() => {
   }
 
   return (
-    <>
+    <SettingsContentWrapper size="lg">
       <PageHead title={pageTitle} />
       <div
         className={cn("w-full", {
@@ -45,7 +46,7 @@ const ExportsPage = observer(() => {
         </div>
         <ExportGuide />
       </div>
-    </>
+    </SettingsContentWrapper>
   );
 });
 

@@ -1,9 +1,15 @@
 import { ReactNode, useEffect, useRef } from "react";
 import throttle from "lodash/throttle";
 import { observer } from "mobx-react";
+import { cn } from "@plane/utils";
 import { useUserSettings } from "@/hooks/store";
 
-export const SettingsContentWrapper = observer(({ children }: { children: ReactNode }) => {
+type TProps = {
+  children: ReactNode;
+  size?: "lg" | "md";
+};
+export const SettingsContentWrapper = observer((props: TProps) => {
+  const { children, size = "md" } = props;
   // refs
   const ref = useRef<HTMLDivElement>(null);
   const scrolledRef = useRef(false);
@@ -41,10 +47,16 @@ export const SettingsContentWrapper = observer(({ children }: { children: ReactN
 
   return (
     <div
-      className="relative flex flex-col w-full items-center mx-auto h-full min-h-full overflow-y-scroll py-4 md:px-28 md:py-0 !pb-20"
+      className={cn(
+        "relative flex flex-col w-full items-center mx-auto h-full min-h-full overflow-y-scroll py-4 md:py-0",
+        {
+          "p-4 max-w-[800px] 2xl:max-w-[1000px]": size === "md",
+          "md:px-16": size === "lg",
+        }
+      )}
       ref={ref}
     >
-      {children}
+      <div className="pb-20 w-full">{children}</div>
     </div>
   );
 });

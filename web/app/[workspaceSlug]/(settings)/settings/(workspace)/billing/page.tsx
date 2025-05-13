@@ -6,6 +6,7 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 // hooks
+import { SettingsContentWrapper } from "@/components/settings";
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web components
 import { BillingRoot } from "@/plane-web/components/workspace";
@@ -23,10 +24,10 @@ const BillingSettingsPage = observer(() => {
   }
 
   return (
-    <>
+    <SettingsContentWrapper size="lg">
       <PageHead title={pageTitle} />
       <BillingRoot />
-    </>
+    </SettingsContentWrapper>
   );
 });
 

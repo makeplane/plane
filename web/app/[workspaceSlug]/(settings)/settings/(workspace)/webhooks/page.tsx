@@ -12,6 +12,7 @@ import { Button } from "@plane/ui";
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { DetailedEmptyState } from "@/components/empty-state";
+import { SettingsContentWrapper } from "@/components/settings";
 import { WebhookSettingsLoader } from "@/components/ui";
 import { WebhooksList, CreateWebhookModal } from "@/components/web-hooks";
 // hooks
@@ -54,7 +55,7 @@ const WebhooksListPage = observer(() => {
   if (!webhooks) return <WebhookSettingsLoader />;
 
   return (
-    <>
+    <SettingsContentWrapper>
       <PageHead title={pageTitle} />
       <div className="w-full">
         <CreateWebhookModal
@@ -86,15 +87,21 @@ const WebhooksListPage = observer(() => {
             </div>
             <div className="h-full w-full flex items-center justify-center">
               <DetailedEmptyState
+                className="!px-0 py-5"
                 title={t("workspace_settings.empty_state.webhooks.title")}
                 description={t("workspace_settings.empty_state.webhooks.description")}
                 assetPath={resolvedPath}
+                size="sm"
+                primaryButton={{
+                  text: t("workspace_settings.settings.webhooks.add_webhook"),
+                  onClick: () => setShowCreateWebhookModal(true),
+                }}
               />
             </div>
           </div>
         )}
       </div>
-    </>
+    </SettingsContentWrapper>
   );
 });
 

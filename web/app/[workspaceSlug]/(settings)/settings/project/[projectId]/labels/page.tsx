@@ -10,6 +10,7 @@ import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { ProjectSettingsLabelList } from "@/components/labels";
 // hooks
+import { SettingsContentWrapper } from "@/components/settings";
 import { useProject, useUserPermissions } from "@/hooks/store";
 
 const LabelsSettingsPage = observer(() => {
@@ -45,12 +46,12 @@ const LabelsSettingsPage = observer(() => {
   }
 
   return (
-    <>
+    <SettingsContentWrapper>
       <PageHead title={pageTitle} />
       <div ref={scrollableContainerRef} className="h-full w-full gap-10">
         <ProjectSettingsLabelList />
       </div>
-    </>
+    </SettingsContentWrapper>
   );
 });
 

@@ -4,7 +4,6 @@ import { ReactNode } from "react";
 // components
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-import { CommandPalette } from "@/components/command-palette";
 import { SettingsContentWrapper, SettingsMobileNav } from "@/components/settings";
 import { getProfileActivePath } from "@/components/settings/helper";
 import { ProfileSidebar } from "./sidebar";
@@ -20,7 +19,6 @@ const ProfileSettingsLayout = observer((props: Props) => {
 
   return (
     <>
-      <CommandPalette />
       <SettingsMobileNav hamburgerContent={ProfileSidebar} activePath={getProfileActivePath(pathname) || ""} />
       <div className="relative flex h-full w-full">
         <div className="hidden md:block">

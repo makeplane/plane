@@ -123,7 +123,8 @@ export const PrevExports = observer((props: Props) => {
                 title={t("workspace_settings.empty_state.exports.title")}
                 description={t("workspace_settings.empty_state.exports.description")}
                 assetPath={resolvedPath}
-                className="w-full !px-0 !py-4"
+                className="w-full !px-0"
+                size="sm"
               />
             </div>
           )

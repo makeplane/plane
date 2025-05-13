@@ -8,6 +8,7 @@ import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { ProjectFeaturesList } from "@/components/project";
 // hooks
+import { SettingsContentWrapper } from "@/components/settings";
 import { useProject, useUserPermissions } from "@/hooks/store";
 
 const FeaturesSettingsPage = observer(() => {
@@ -27,7 +28,7 @@ const FeaturesSettingsPage = observer(() => {
   }
 
   return (
-    <>
+    <SettingsContentWrapper>
       <PageHead title={pageTitle} />
       <section className={`w-full ${canPerformProjectAdminActions ? "" : "opacity-60"}`}>
         <ProjectFeaturesList
@@ -36,7 +37,7 @@ const FeaturesSettingsPage = observer(() => {
           isAdmin={canPerformProjectAdminActions}
         />
       </section>
-    </>
+    </SettingsContentWrapper>
   );
 });
 

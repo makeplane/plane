@@ -7,8 +7,8 @@ import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/ui/src/button";
 import { cn } from "@plane/utils";
 import { useUserSettings } from "@/hooks/store";
+import { WorkspaceLogo } from "../workspace";
 import SettingsTabs from "./tabs";
-import WorkspaceLogo from "./workspace-logo";
 
 export const SettingsHeader = observer(() => {
   // hooks
@@ -34,8 +34,8 @@ export const SettingsHeader = observer(() => {
       <Link
         href={`/${redirectWorkspaceSlug}`}
         className={cn(
-          "group flex  gap-2 text-custom-text-300 mb-4 border border-transparent hover:bg-custom-background-100 hover:border-custom-border-200 w-fit rounded-lg",
-          !isScrolled ? "items-center pr-2" : ""
+          "group flex  gap-2 text-custom-text-300 mb-4 border border-transparent w-fit rounded-lg",
+          !isScrolled ? "hover:bg-custom-background-100 hover:border-custom-border-200 items-center pr-2" : ""
         )}
       >
         <button
@@ -57,12 +57,9 @@ export const SettingsHeader = observer(() => {
           {/* Last workspace */}
           <div className="flex items-center gap-1">
             <WorkspaceLogo
-              workspace={{
-                logo_url: currentUserSettings?.workspace?.last_workspace_logo || "",
-                name: currentUserSettings?.workspace?.last_workspace_name || "",
-              }}
-              size="sm"
-              className="my-auto"
+              name={currentUserSettings?.workspace?.last_workspace_name || ""}
+              logo={currentUserSettings?.workspace?.last_workspace_logo || ""}
+              classNames="my-auto size-4 text-xs"
             />
             <div className="text-xs my-auto text-custom-text-100 font-semibold">
               {currentUserSettings?.workspace?.last_workspace_name}

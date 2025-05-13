@@ -11,6 +11,7 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
+import { SettingsContentWrapper } from "@/components/settings";
 import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "@/components/web-hooks";
 // hooks
 import { useUserPermissions, useWebhook, useWorkspace } from "@/hooks/store";
@@ -87,7 +88,7 @@ const WebhookDetailsPage = observer(() => {
     );
 
   return (
-    <>
+    <SettingsContentWrapper>
       <PageHead title={pageTitle} />
       <DeleteWebhookModal isOpen={deleteWebhookModal} onClose={() => setDeleteWebhookModal(false)} />
       <div className="w-full space-y-8 overflow-y-auto">
@@ -96,7 +97,7 @@ const WebhookDetailsPage = observer(() => {
         </div>
         {currentWebhook && <WebhookDeleteSection openDeleteModal={() => setDeleteWebhookModal(true)} />}
       </div>
-    </>
+    </SettingsContentWrapper>
   );
 });
 

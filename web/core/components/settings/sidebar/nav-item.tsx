@@ -47,7 +47,9 @@ const SettingsSidebarNavItem = (props: TSettingsSidebarNavItemProps) => {
   const titleElement = (
     <>
       <div className="flex items-center gap-1.5 overflow-hidden">
-        {setting.icon ? setting.icon : actionIcons && actionIcons({ type: setting.key, size: 16 })}
+        {setting.icon
+          ? setting.icon
+          : actionIcons && actionIcons({ type: setting.key, size: 16, className: "w-4 h-4" })}
         <div className="text-sm font-medium truncate">{t(setting.i18n_label)}</div>
       </div>
       {appendItemsToTitle?.(setting.key)}

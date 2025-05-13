@@ -13,6 +13,7 @@ import { NotAuthorizedView } from "@/components/auth-screens";
 import { AutoArchiveAutomation, AutoCloseAutomation } from "@/components/automation";
 import { PageHead } from "@/components/core";
 // hooks
+import { SettingsContentWrapper } from "@/components/settings";
 import { useProject, useUserPermissions } from "@/hooks/store";
 
 const AutomationSettingsPage = observer(() => {
@@ -47,7 +48,7 @@ const AutomationSettingsPage = observer(() => {
   }
 
   return (
-    <>
+    <SettingsContentWrapper>
       <PageHead title={pageTitle} />
       <section className={`w-full ${canPerformProjectAdminActions ? "" : "opacity-60"}`}>
         <div className="flex flex-col items-start border-b border-custom-border-100 pb-3.5">
@@ -56,7 +57,7 @@ const AutomationSettingsPage = observer(() => {
         <AutoArchiveAutomation handleChange={handleChange} />
         <AutoCloseAutomation handleChange={handleChange} />
       </section>
-    </>
+    </SettingsContentWrapper>
   );
 });
 

@@ -56,13 +56,13 @@ const ApiTokensPage = observer(() => {
   }
 
   return (
-    <>
+    <div className="w-full">
       <PageHead title={pageTitle} />
       <CreateApiTokenModal isOpen={isCreateTokenModalOpen} onClose={() => setIsCreateTokenModalOpen(false)} />
       <section className="w-full">
         {tokens.length > 0 ? (
           <>
-            <div className="flex items-center justify-between border-b border-custom-border-200 pb-3.5">
+            <div className="flex items-center justify-between border-b border-custom-border-100 pb-3.5">
               <h3 className="text-xl font-medium">{t("workspace_settings.settings.api_tokens.title")}</h3>
               <Button variant="primary" onClick={() => setIsCreateTokenModalOpen(true)}>
                 {t("workspace_settings.settings.api_tokens.add_token")}
@@ -76,7 +76,7 @@ const ApiTokensPage = observer(() => {
           </>
         ) : (
           <div className="flex h-full w-full flex-col">
-            <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 pb-3.5">
+            <div className="flex items-center justify-between gap-4 border-b border-custom-border-100 pb-3.5">
               <h3 className="text-xl font-medium">{t("workspace_settings.settings.api_tokens.title")}</h3>
               <Button variant="primary" onClick={() => setIsCreateTokenModalOpen(true)}>
                 {t("workspace_settings.settings.api_tokens.add_token")}
@@ -87,13 +87,18 @@ const ApiTokensPage = observer(() => {
                 title={t("workspace_settings.empty_state.api_tokens.title")}
                 description={t("workspace_settings.empty_state.api_tokens.description")}
                 assetPath={resolvedPath}
-                className="w-full !px-0 justify-start items-start"
+                className="w-full !px-0 justify-center mx-auto"
+                size="sm"
+                primaryButton={{
+                  text: t("workspace_settings.settings.api_tokens.add_token"),
+                  onClick: () => setIsCreateTokenModalOpen(true),
+                }}
               />
             </div>
           </div>
         )}
       </section>
-    </>
+    </div>
   );
 });
 

@@ -50,15 +50,16 @@ const ProfileActivityPage = observer(() => {
 
   if (isEmpty) {
     return (
-      <>
+      <div className="flex h-full w-full flex-col">
         <ProfileSettingContentHeader title={t("activity")} />
         <DetailedEmptyState
           title={t("profile.empty_state.activity.title")}
           description={t("profile.empty_state.activity.description")}
           assetPath={resolvedPath}
-          className="w-full !px-0 py-4 justify-start items-start"
+          className="w-full !px-0 justify-center mx-auto min-h-fit"
+          size="sm"
         />
-      </>
+      </div>
     );
   }
 

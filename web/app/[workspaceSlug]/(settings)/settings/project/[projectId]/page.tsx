@@ -16,8 +16,8 @@ import {
   ProjectDetailsFormLoader,
 } from "@/components/project";
 // hooks
+import { SettingsContentWrapper } from "@/components/settings";
 import { useProject, useUserPermissions } from "@/hooks/store";
-
 const ProjectSettingsPage = observer(() => {
   // states
   const [selectProject, setSelectedProject] = useState<string | null>(null);
@@ -45,7 +45,7 @@ const ProjectSettingsPage = observer(() => {
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - General Settings` : undefined;
 
   return (
-    <>
+    <SettingsContentWrapper>
       <PageHead title={pageTitle} />
       {currentProjectDetails && workspaceSlug && projectId && (
         <>
@@ -89,7 +89,7 @@ const ProjectSettingsPage = observer(() => {
           </>
         )}
       </div>
-    </>
+    </SettingsContentWrapper>
   );
 });
 

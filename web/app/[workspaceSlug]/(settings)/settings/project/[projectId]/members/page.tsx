@@ -7,6 +7,7 @@ import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { ProjectMemberList, ProjectSettingsMemberDefaults } from "@/components/project";
 // hooks
+import { SettingsContentWrapper } from "@/components/settings";
 import { useProject, useUserPermissions } from "@/hooks/store";
 
 const MembersSettingsPage = observer(() => {
@@ -27,13 +28,13 @@ const MembersSettingsPage = observer(() => {
   }
 
   return (
-    <>
+    <SettingsContentWrapper size="lg">
       <PageHead title={pageTitle} />
       <section className={`w-full`}>
         <ProjectSettingsMemberDefaults />
         <ProjectMemberList />
       </section>
-    </>
+    </SettingsContentWrapper>
   );
 });
 

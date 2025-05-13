@@ -4,8 +4,7 @@ import { ReactNode, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // components
-import { CommandPalette } from "@/components/command-palette";
-import { SettingsContentWrapper, SettingsMobileNav } from "@/components/settings";
+import { SettingsMobileNav } from "@/components/settings";
 import { getProjectActivePath } from "@/components/settings/helper";
 import { ProjectSettingsSidebar } from "@/components/settings/project/sidebar";
 import { useProject } from "@/hooks/store";
@@ -33,12 +32,11 @@ const ProjectSettingsLayout = observer((props: Props) => {
 
   return (
     <>
-      <CommandPalette />
       <SettingsMobileNav hamburgerContent={ProjectSettingsSidebar} activePath={getProjectActivePath(pathname) || ""} />
       <ProjectAuthWrapper workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()}>
         <div className="relative flex h-full w-full">
           <div className="hidden md:block">{projectId && <ProjectSettingsSidebar />}</div>
-          <SettingsContentWrapper>{children}</SettingsContentWrapper>
+          {children}
         </div>
       </ProjectAuthWrapper>
     </>
