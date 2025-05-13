@@ -49,8 +49,6 @@ export class WorkItemSubIssueFiltersStore implements IWorkItemSubIssueFiltersSto
       subIssueFilters: observable,
       updateSubWorkItemFilters: action,
       getSubIssueFilters: action,
-      getFilteredSubWorkItems: action,
-      resetFilters: action,
     });
 
     // root store
