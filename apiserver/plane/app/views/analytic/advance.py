@@ -17,6 +17,17 @@ from plane.db.models import (
     ProjectPage,
 )
 
+from django.db.models import (
+    Q,
+    Count,
+)
+from plane.utils.build_chart import build_analytics_chart
+from datetime import timedelta
+from plane.bgtasks.analytic_plot_export import export_analytics_to_csv_email
+from plane.utils.date_utils import (
+    get_analytics_filters,
+)
+
 from plane.utils.build_chart import build_analytics_chart
 from plane.bgtasks.analytic_plot_export import export_analytics_to_csv_email
 from plane.utils.date_utils import get_analytics_filters
@@ -35,6 +46,7 @@ class AdvanceAnalyticsBaseView(BaseAPIView):
 
 
 class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
+
     def get_filtered_counts(self, queryset: QuerySet) -> Dict[str, int]:
         def get_filtered_count() -> int:
             if self.filters["analytics_date_range"]:
@@ -110,6 +122,7 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
                 )
             ),
         }
+
 
     def get_work_items_stats(self) -> Dict[str, Dict[str, int]]:
         base_queryset = Issue.objects.filter(**self.filters["base_filters"])
@@ -193,6 +206,7 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
         # Get the base queryset with workspace and project filters
         base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"])
         date_filter = {}
+
         # Apply date range filter if available
         if self.filters["chart_period_range"]:
             start_date, end_date = self.filters["chart_period_range"]

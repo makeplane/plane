@@ -1,7 +1,14 @@
+
+
+// ============================================================
+// Chart Base 
+// ============================================================
+export * from "./common";
 export type TChartLegend = {
   align: "left" | "center" | "right";
   verticalAlign: "top" | "middle" | "bottom";
   layout: "horizontal" | "vertical";
+  wrapperStyles?: React.CSSProperties;
 };
 
 export type TChartMargin = {
@@ -22,6 +29,7 @@ type TChartProps<K extends string, T extends string> = {
     key: keyof TChartData<K, T>;
     label?: string;
     strokeColor?: string;
+    dy?: number;
   };
   yAxis: {
     allowDecimals?: boolean;
@@ -29,6 +37,8 @@ type TChartProps<K extends string, T extends string> = {
     key: keyof TChartData<K, T>;
     label?: string;
     strokeColor?: string;
+    offset?: number;
+    dx?: number;
   };
   className?: string;
   legend?: TChartLegend;
@@ -39,6 +49,10 @@ type TChartProps<K extends string, T extends string> = {
   };
   showTooltip?: boolean;
 };
+
+// ============================================================
+// Bar Chart 
+// ============================================================
 
 export type TBarItem<T extends string> = {
   key: T;
@@ -56,6 +70,10 @@ export type TBarChartProps<K extends string, T extends string> = TChartProps<K, 
   barSize?: number;
 };
 
+// ============================================================
+// Line Chart 
+// ============================================================
+
 export type TLineItem<T extends string> = {
   key: T;
   label: string;
@@ -70,6 +88,25 @@ export type TLineItem<T extends string> = {
 export type TLineChartProps<K extends string, T extends string> = TChartProps<K, T> & {
   lines: TLineItem<T>[];
 };
+
+// ============================================================
+// Scatter Chart 
+// ============================================================
+
+export type TScatterPointItem<T extends string> = {
+  key: T;
+  label: string;
+  fill: string;
+  stroke: string;
+};
+
+export type TScatterChartProps<K extends string, T extends string> = TChartProps<K, T> & {
+  scatterPoints: TScatterPointItem<T>[];
+};
+
+// ============================================================
+// Area Chart 
+// ============================================================
 
 export type TAreaItem<T extends string> = {
   key: T;
@@ -91,6 +128,10 @@ export type TAreaChartProps<K extends string, T extends string> = TChartProps<K,
     strokeColor: string;
   };
 };
+
+// ============================================================
+// Pie Chart 
+// ============================================================
 
 export type TCellItem<T extends string> = {
   key: T;
@@ -119,6 +160,10 @@ export type TPieChartProps<K extends string, T extends string> = Pick<
   customLegend?: (props: any) => React.ReactNode;
 };
 
+// ============================================================
+// Tree Map 
+// ============================================================
+
 export type TreeMapItem = {
   name: string;
   value: number;
@@ -126,13 +171,13 @@ export type TreeMapItem = {
   textClassName?: string;
   icon?: React.ReactElement;
 } & (
-  | {
+    | {
       fillColor: string;
     }
-  | {
+    | {
       fillClassName: string;
     }
-);
+  );
 
 export type TreeMapChartProps = {
   data: TreeMapItem[];
@@ -158,3 +203,32 @@ export type TContentVisibility = {
   top: TTopSectionConfig;
   bottom: TBottomSectionConfig;
 };
+
+// ============================================================
+// Radar Chart
+// ============================================================
+
+export type TRadarItem<T extends string> = {
+  key: T;
+  name: string;
+  fill?: string;
+  stroke?: string;
+  fillOpacity?: number;
+  dot?: {
+    r: number;
+    fillOpacity: number;
+  }
+}
+
+export type TRadarChartProps<K extends string, T extends string> = Pick<
+  TChartProps<K, T>,
+  "className" | "showTooltip" | "margin" | "data" | "legend"
+> & {
+  dataKey: T;
+  radars: TRadarItem<T>[];
+  angleAxis: {
+    key: keyof TChartData<K, T>;
+    label?: string;
+    strokeColor?: string;
+  };
+}

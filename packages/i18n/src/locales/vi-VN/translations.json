@@ -1314,7 +1314,38 @@
           }
         }
       }
-    }
+    },
+    "empty_state_v2": {
+      "customized_insights": {
+        "description": "Các hạng mục công việc được giao cho bạn, phân loại theo trạng thái, sẽ hiển thị tại đây.",
+        "title": "Chưa có dữ liệu"
+      },
+      "created_vs_resolved": {
+        "description": "Các hạng mục công việc được tạo và giải quyết theo thời gian sẽ hiển thị tại đây.",
+        "title": "Chưa có dữ liệu"
+      },
+      "project_insights": {
+        "title": "Chưa có dữ liệu",
+        "description": "Các hạng mục công việc được giao cho bạn, phân loại theo trạng thái, sẽ hiển thị tại đây."
+      }
+    },
+    "created_vs_resolved": "Đã tạo vs Đã giải quyết",
+    "customized_insights": "Thông tin chi tiết tùy chỉnh",
+    "backlog_work_items": "Các hạng mục công việc tồn đọng",
+    "active_projects": "Dự án đang hoạt động",
+    "trend_on_charts": "Xu hướng trên biểu đồ",
+    "all_projects": "Tất cả dự án",
+    "summary_of_projects": "Tóm tắt dự án",
+    "project_insights": "Thông tin chi tiết dự án",
+    "started_work_items": "Hạng mục công việc đã bắt đầu",
+    "total_work_items": "Tổng số hạng mục công việc",
+    "total_projects": "Tổng số dự án",
+    "total_admins": "Tổng số quản trị viên",
+    "total_users": "Tổng số người dùng",
+    "total_intake": "Tổng thu",
+    "un_started_work_items": "Hạng mục công việc chưa bắt đầu",
+    "total_guests": "Tổng số khách",
+    "completed_work_items": "Hạng mục công việc đã hoàn thành"
   },
   "workspace_projects": {
     "label": "{count, plural, one {dự án} other {dự án}}",

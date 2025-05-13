@@ -62,3 +62,4 @@ export * from "./workspace-extended";
 export * from "./updates";
 export * from "./etl";
 export * from "./payment-extended";
+export * from "./analytics-v2";

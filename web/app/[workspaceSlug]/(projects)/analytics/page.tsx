@@ -1,24 +1,24 @@
 "use client";
 
-import React, { Fragment } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { useSearchParams } from "next/navigation";
-import { Tab } from "@headlessui/react";
+import { useRouter, useSearchParams } from "next/navigation";
 // plane package imports
-import { ANALYTICS_TABS, EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Header, EHeaderVariant } from "@plane/ui";
+import { Tabs } from "@plane/ui";
 // components
-import { CustomAnalytics, ScopeAndDemand } from "@/components/analytics";
+import AnalyticsFilterActions from "@/components/analytics-v2/analytics-filter-actions";
 import { PageHead } from "@/components/core";
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+import { ANALYTICS_TABS } from "@/plane-web/components/analytics-v2/tabs";
 
 const AnalyticsPage = observer(() => {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const analytics_tab = searchParams.get("analytics_tab");
   // plane imports
   const { t } = useTranslation();
   // store hooks
@@ -40,44 +40,38 @@ const AnalyticsPage = observer(() => {
     EUserPermissionsLevel.WORKSPACE
   );
 
-  // TODO: refactor loader implementation
+  const tabs = useMemo(
+    () =>
+      ANALYTICS_TABS.map((tab) => ({
+        key: tab.key,
+        label: t(tab.i18nKey),
+        content: <tab.content />,
+        onClick: () => {
+          router.push(`?tab=${tab.key}`);
+        },
+      })),
+    [router, t]
+  );
+  const defaultTab = searchParams.get("tab") || ANALYTICS_TABS[0].key;
+
   return (
     <>
       <PageHead title={pageTitle} />
       {workspaceProjectIds && (
         <>
           {workspaceProjectIds.length > 0 || loader === "init-loader" ? (
-            <div className="flex h-full flex-col overflow-hidden bg-custom-background-100">
-              <Tab.Group as={Fragment} defaultIndex={analytics_tab === "custom" ? 1 : 0}>
-                <Header variant={EHeaderVariant.SECONDARY}>
-                  <Tab.List as="div" className="flex space-x-2 h-full">
-                    {ANALYTICS_TABS.map((tab) => (
-                      <Tab key={tab.key} as={Fragment}>
-                        {({ selected }) => (
-                          <button
-                            className={`text-sm group relative flex items-center gap-1 h-full px-3 cursor-pointer transition-all font-medium outline-none  ${
-                              selected ? "text-custom-primary-100 " : "hover:text-custom-text-200"
-                            }`}
-                          >
-                            {t(tab.i18n_title)}
-                            <div
-                              className={`border absolute bottom-0 right-0 left-0 rounded-t-md ${selected ? "border-custom-primary-100" : "border-transparent group-hover:border-custom-border-200"}`}
-                            />
-                          </button>
-                        )}
-                      </Tab>
-                    ))}
-                  </Tab.List>
-                </Header>
-                <Tab.Panels as={Fragment}>
-                  <Tab.Panel as={Fragment}>
-                    <ScopeAndDemand fullScreen />
-                  </Tab.Panel>
-                  <Tab.Panel as={Fragment}>
-                    <CustomAnalytics fullScreen />
-                  </Tab.Panel>
-                </Tab.Panels>
-              </Tab.Group>
+            <div className="flex h-full overflow-hidden bg-custom-background-100 justify-between items-center  ">
+              <Tabs
+                tabs={tabs}
+                storageKey={`analytics-page-${currentWorkspace?.id}`}
+                defaultTab={defaultTab}
+                size="md"
+                tabListContainerClassName="px-6 py-2 border-b border-custom-border-200 flex items-center justify-between"
+                tabListClassName="my-2 max-w-36"
+                tabPanelClassName="h-full w-full overflow-hidden overflow-y-auto"
+                storeInLocalStorage={false}
+                actions={<AnalyticsFilterActions />}
+              />
             </div>
           ) : (
             <DetailedEmptyState

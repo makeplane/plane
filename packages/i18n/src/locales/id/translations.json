@@ -1314,7 +1314,38 @@
           }
         }
       }
-    }
+    },
+    "empty_state_v2": {
+      "customized_insights": {
+        "description": "Item pekerjaan yang ditugaskan kepada Anda, dipecah berdasarkan status, akan muncul di sini.",
+        "title": "Belum ada data"
+      },
+      "created_vs_resolved": {
+        "description": "Item pekerjaan yang dibuat dan diselesaikan dari waktu ke waktu akan muncul di sini.",
+        "title": "Belum ada data"
+      },
+      "project_insights": {
+        "title": "Belum ada data",
+        "description": "Item pekerjaan yang ditugaskan kepada Anda, dipecah berdasarkan status, akan muncul di sini."
+      }
+    },
+    "created_vs_resolved": "Dibuat vs Diselesaikan",
+    "customized_insights": "Wawasan yang Disesuaikan",
+    "backlog_work_items": "Item pekerjaan backlog",
+    "active_projects": "Proyek Aktif",
+    "trend_on_charts": "Tren pada grafik",
+    "all_projects": "Semua Proyek",
+    "summary_of_projects": "Ringkasan Proyek",
+    "project_insights": "Wawasan Proyek",
+    "started_work_items": "Item pekerjaan yang telah dimulai",
+    "total_work_items": "Total item pekerjaan",
+    "total_projects": "Total Proyek",
+    "total_admins": "Total Admin",
+    "total_users": "Total Pengguna",
+    "total_intake": "Total Pemasukan",
+    "un_started_work_items": "Item pekerjaan yang belum dimulai",
+    "total_guests": "Total Tamu",
+    "completed_work_items": "Item pekerjaan yang telah selesai"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Proyek} other {Proyek}}",

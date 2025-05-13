@@ -1,14 +1,14 @@
 "use client";
-
+// components
 import { AppHeader, ContentWrapper } from "@/components/core";
-import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
+// plane web components
 import { WorkspaceAnalyticsHeader } from "./header";
 
 export default function WorkspaceAnalyticsLayout({ children }: { children: React.ReactNode }) {
   return (
-    <WorkspaceAccessWrapper pageKey="analytics">
+    <>
       <AppHeader header={<WorkspaceAnalyticsHeader />} />
       <ContentWrapper>{children}</ContentWrapper>
-    </WorkspaceAccessWrapper>
+    </>
   );
 }

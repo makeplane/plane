@@ -1315,7 +1315,38 @@
           }
         }
       }
-    }
+    },
+    "empty_state_v2": {
+      "customized_insights": {
+        "description": "Призначені вам робочі елементи, розбиті за станом, з’являться тут.",
+        "title": "Ще немає даних"
+      },
+      "created_vs_resolved": {
+        "description": "Створені та вирішені з часом робочі елементи з’являться тут.",
+        "title": "Ще немає даних"
+      },
+      "project_insights": {
+        "title": "Ще немає даних",
+        "description": "Призначені вам робочі елементи, розбиті за станом, з’являться тут."
+      }
+    },
+    "created_vs_resolved": "Створено vs Вирішено",
+    "customized_insights": "Персоналізовані аналітичні дані",
+    "backlog_work_items": "Робочі елементи у беклозі",
+    "active_projects": "Активні проєкти",
+    "trend_on_charts": "Тенденція на графіках",
+    "all_projects": "Усі проєкти",
+    "summary_of_projects": "Зведення проєктів",
+    "project_insights": "Аналітика проєкту",
+    "started_work_items": "Розпочаті робочі елементи",
+    "total_work_items": "Усього робочих елементів",
+    "total_projects": "Усього проєктів",
+    "total_admins": "Усього адміністраторів",
+    "total_users": "Усього користувачів",
+    "total_intake": "Загальний дохід",
+    "un_started_work_items": "Нерозпочаті робочі елементи",
+    "total_guests": "Усього гостей",
+    "completed_work_items": "Завершені робочі елементи"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Проєкт} few {Проєкти} other {Проєктів}}",
