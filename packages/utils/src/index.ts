@@ -1,4 +1,5 @@
 export * from "./array";
+export * from "./attachment";
 export * from "./auth";
 export * from "./datetime";
 export * from "./color";
@@ -16,4 +17,3 @@ export * from "./work-item";
 export * from "./get-icon-for-link";
 
 export * from "./subscription";
-

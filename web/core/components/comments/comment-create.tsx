@@ -125,7 +125,7 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
                 }}
                 ref={editorRef}
                 initialValue={value ?? "<p></p>"}
-                containerClassName="min-h-min [&_p]:!p-0 [&_p]:!text-sm"
+                containerClassName="min-h-min"
                 onChange={(comment_json, comment_html) => onChange(comment_html)}
                 accessSpecifier={accessValue ?? EIssueCommentAccessSpecifier.INTERNAL}
                 handleAccessChange={onAccessChange}
@@ -137,6 +137,9 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
                 }}
                 showToolbarInitially={showToolbarInitially}
                 parentClassName="p-2"
+                displayConfig={{
+                  fontSize: "small-font",
+                }}
               />
             )}
           />

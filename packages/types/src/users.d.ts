@@ -1,3 +1,4 @@
+import { EStartOfTheWeek } from "@plane/constants";
 import { IIssueActivity, TIssuePriorities, TStateGroups } from ".";
 import { TUserPermissions } from "./enums";
 
@@ -64,6 +65,7 @@ export type TUserProfile = {
   language: string;
   created_at: Date | string;
   updated_at: Date | string;
+  start_of_the_week: EStartOfTheWeek;
 };
 
 export interface IInstanceAdminStatus {

@@ -43,3 +43,4 @@ export * from "./home";
 export * from "./stickies";
 export * from "./utils";
 export * from "./payment";
+export * from "./analytics-v2";

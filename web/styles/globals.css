@@ -1,4 +1,4 @@
-@import url("fonts/main.css");
+@import "@plane/propel/styles/fonts";
 
 @tailwind base;
 @tailwind components;
@@ -941,4 +941,15 @@ div.web-view-spinner div.bar12 {
 
 .animate-fade-out {
   animation: fadeOut 500ms ease-in 100ms forwards;
+}
+
+@keyframes highlight {
+  0% {
+    background-color: rgba(var(--color-background-90), 1);
+    border-radius: 4px;
+  }
+  100% {
+    background-color: transparent;
+    border-radius: 4px;
+  }
 }

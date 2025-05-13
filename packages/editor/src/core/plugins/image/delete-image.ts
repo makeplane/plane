@@ -37,20 +37,16 @@ export const TrackImageDeletionPlugin = (editor: Editor, deleteImage: DeleteImag
 
         removedImages.forEach(async (node) => {
           const src = node.attrs.src;
-          editor.storage[nodeType].deletedImageSet.set(src, true);
-          await onNodeDeleted(src, deleteImage);
+          editor.storage[nodeType].deletedImageSet?.set(src, true);
+          if (!src) return;
+          try {
+            await deleteImage(src);
+          } catch (error) {
+            console.error("Error deleting image:", error);
+          }
         });
       });
 
       return null;
     },
   });
-
-async function onNodeDeleted(src: string, deleteImage: DeleteImage): Promise<void> {
-  if (!src) return;
-  try {
-    await deleteImage(src);
-  } catch (error) {
-    console.error("Error deleting image: ", error);
-  }
-}

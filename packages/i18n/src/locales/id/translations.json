@@ -18,7 +18,6 @@
     "pro": "Pro",
     "upgrade": "Upgrade"
   },
-
   "auth": {
     "common": {
       "email": {
@@ -168,7 +167,6 @@
       }
     }
   },
-
   "submit": "Kirim",
   "cancel": "Batal",
   "loading": "Memuat",
@@ -367,12 +365,12 @@
   "work_management": "Manajemen kerja",
   "projects_and_issues": "Proyek dan item kerja",
   "projects_and_issues_description": "Aktifkan atau nonaktifkan ini untuk proyek ini.",
-  "cycles_description": "Batasi waktu kerja sesuai keinginan Anda per proyek dan ubah frekuensi dari satu periode ke periode berikutnya.",
-  "modules_description": "Kerja kelompok menjadi pengaturan sub-proyek dengan pemimpin dan penugasnya sendiri.",
-  "views_description": "Simpan jenis, filter, dan opsi tampilan untuk nanti atau bagikan.",
-  "pages_description": "Tulis apapun seperti yang Anda tulis.",
-  "intake_description": "Tetap terhubung dengan item kerja yang Anda ikuti. Aktifkan ini untuk mendapatkan pemberitahuan.",
-  "time_tracking_description": "Lacak waktu yang dihabiskan untuk item kerja dan proyek.",
+  "cycles_description": "Tetapkan batas waktu kerja per proyek dan sesuaikan periode waktunya sesuai kebutuhan. Satu siklus bisa 2 minggu, berikutnya 1 minggu.",
+  "modules_description": "Atur pekerjaan ke dalam sub-proyek dengan pemimpin dan penanggung jawab khusus.",
+  "views_description": "Simpan pengurutan, filter, dan opsi tampilan khusus atau bagikan dengan tim Anda.",
+  "pages_description": "Buat dan edit konten bebas bentuk: catatan, dokumen, apa saja.",
+  "intake_description": "Izinkan non-anggota membagikan bug, masukan, dan saran tanpa mengganggu alur kerja Anda.",
+  "time_tracking_description": "Catat waktu yang dihabiskan untuk item kerja dan proyek.",
   "work_management_description": "Kelola pekerjaan dan proyek Anda dengan mudah.",
   "documentation": "Dokumentasi",
   "message_support": "Pesan dukungan",
@@ -502,7 +500,6 @@
   "export": "Ekspor",
   "member": "{count, plural, one{# anggota} other{# anggota}}",
   "new_password_must_be_different_from_old_password": "Kata sandi baru harus berbeda dari kata sandi lama",
-
   "project_view": {
     "sort_by": {
       "created_at": "Dibuat pada",
@@ -510,12 +507,10 @@
       "name": "Nama"
     }
   },
-
   "toast": {
     "success": "Sukses!",
     "error": "Kesalahan!"
   },
-
   "links": {
     "toasts": {
       "created": {
@@ -544,7 +539,6 @@
       }
     }
   },
-
   "home": {
     "empty": {
       "quickstart_guide": "Panduan pemula Anda",
@@ -612,7 +606,6 @@
     "title": "Beranda",
     "star_us_on_github": "Bintang kami di GitHub"
   },
-
   "link": {
     "modal": {
       "url": {
@@ -626,7 +619,6 @@
       }
     }
   },
-
   "common": {
     "all": "Semua",
     "states": "Negara-negara",
@@ -874,20 +866,17 @@
     "apply": "Terapkan",
     "applying": "Terapkan"
   },
-
   "chart": {
     "x_axis": "Sumbu-X",
     "y_axis": "Sumbu-Y",
     "metric": "Metrik"
   },
-
   "form": {
     "title": {
       "required": "Judul wajib diisi",
       "max_length": "Judul harus kurang dari {length} karakter"
     }
   },
-
   "entity": {
     "grouping_title": "Pengelompokan {entity}",
     "priority": "Prioritas {entity}",
@@ -911,7 +900,6 @@
       "failed": "Terjadi kesalahan saat menambahkan {entity}"
     }
   },
-
   "epic": {
     "all": "Semua Epik",
     "label": "{count, plural, one {Epik} other {Epik}}",
@@ -929,7 +917,6 @@
       "required": "Judul epik wajib diisi."
     }
   },
-
   "issue": {
     "label": "{count, plural, one {Item Kerja} other {Item Kerja}}",
     "all": "Semua Item Kerja",
@@ -1096,7 +1083,6 @@
     },
     "open_in_full_screen": "Buka item kerja dalam layar penuh"
   },
-
   "attachment": {
     "error": "File tidak dapat dilampirkan. Coba unggah lagi.",
     "only_one_file_allowed": "Hanya satu file yang dapat diunggah pada satu waktu.",
@@ -1104,7 +1090,6 @@
     "drag_and_drop": "Seret dan jatuhkan di mana saja untuk mengunggah",
     "delete": "Hapus lampiran"
   },
-
   "label": {
     "select": "Pilih label",
     "create": {
@@ -1114,7 +1099,6 @@
       "type": "Ketik untuk menambah label baru"
     }
   },
-
   "sub_work_item": {
     "update": {
       "success": "Sub-item kerja berhasil diperbarui",
@@ -1125,7 +1109,6 @@
       "error": "Kesalahan saat menghapus sub-item kerja"
     }
   },
-
   "view": {
     "label": "{count, plural, one {Tampilan} other {Tampilan}}",
     "create": {
@@ -1135,7 +1118,6 @@
       "label": "Perbarui Tampilan"
     }
   },
-
   "inbox_issue": {
     "status": {
       "pending": {
@@ -1221,7 +1203,6 @@
       }
     }
   },
-
   "workspace_creation": {
     "heading": "Buat ruang kerja Anda",
     "subheading": "Untuk mulai menggunakan Plane, Anda perlu membuat atau bergabung dengan ruang kerja.",
@@ -1273,7 +1254,6 @@
       }
     }
   },
-
   "workspace_dashboard": {
     "empty_state": {
       "general": {
@@ -1289,7 +1269,6 @@
       }
     }
   },
-
   "workspace_analytics": {
     "label": "Analitik",
     "page_label": "{workspace} - Analitik",
@@ -1332,9 +1311,39 @@
           }
         }
       }
-    }
+    },
+    "empty_state_v2": {
+      "customized_insights": {
+        "description": "Item pekerjaan yang ditugaskan kepada Anda, dipecah berdasarkan status, akan muncul di sini.",
+        "title": "Belum ada data"
+      },
+      "created_vs_resolved": {
+        "description": "Item pekerjaan yang dibuat dan diselesaikan dari waktu ke waktu akan muncul di sini.",
+        "title": "Belum ada data"
+      },
+      "project_insights": {
+        "title": "Belum ada data",
+        "description": "Item pekerjaan yang ditugaskan kepada Anda, dipecah berdasarkan status, akan muncul di sini."
+      }
+    },
+    "created_vs_resolved": "Dibuat vs Diselesaikan",
+    "customized_insights": "Wawasan yang Disesuaikan",
+    "backlog_work_items": "Item pekerjaan backlog",
+    "active_projects": "Proyek Aktif",
+    "trend_on_charts": "Tren pada grafik",
+    "all_projects": "Semua Proyek",
+    "summary_of_projects": "Ringkasan Proyek",
+    "project_insights": "Wawasan Proyek",
+    "started_work_items": "Item pekerjaan yang telah dimulai",
+    "total_work_items": "Total item pekerjaan",
+    "total_projects": "Total Proyek",
+    "total_admins": "Total Admin",
+    "total_users": "Total Pengguna",
+    "total_intake": "Total Pemasukan",
+    "un_started_work_items": "Item pekerjaan yang belum dimulai",
+    "total_guests": "Total Tamu",
+    "completed_work_items": "Item pekerjaan yang telah selesai"
   },
-
   "workspace_projects": {
     "label": "{count, plural, one {Proyek} other {Proyek}}",
     "create": {
@@ -1409,7 +1418,6 @@
       }
     }
   },
-
   "workspace_views": {
     "add_view": "Tambah tampilan",
     "empty_state": {
@@ -1444,7 +1452,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "label": "Pengaturan ruang kerja",
     "page_label": "{workspace} - Pengaturan Umum",
@@ -1626,7 +1633,6 @@
       }
     }
   },
-
   "profile": {
     "label": "Profil",
     "page_label": "Pekerjaan Anda",
@@ -1689,7 +1695,6 @@
       }
     }
   },
-
   "project_settings": {
     "general": {
       "enter_project_id": "Masukkan ID proyek",
@@ -1835,7 +1840,6 @@
         "auto_close_status": "Status penutupan otomatis"
       }
     },
-
     "empty_state": {
       "labels": {
         "title": "Belum ada label",
@@ -1848,7 +1852,6 @@
       }
     }
   },
-
   "project_cycles": {
     "add_cycle": "Tambah siklus",
     "more_details": "Detail lebih lanjut",
@@ -1968,7 +1971,6 @@
       }
     }
   },
-
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -1997,7 +1999,6 @@
       }
     }
   },
-
   "project_module": {
     "add_module": "Tambah Modul",
     "update_module": "Perbarui Modul",
@@ -2051,7 +2052,6 @@
       }
     }
   },
-
   "project_views": {
     "empty_state": {
       "general": {
@@ -2071,7 +2071,6 @@
       }
     }
   },
-
   "project_page": {
     "empty_state": {
       "general": {
@@ -2101,7 +2100,6 @@
       }
     }
   },
-
   "command_k": {
     "empty_state": {
       "search": {
@@ -2109,7 +2107,6 @@
       }
     }
   },
-
   "issue_relation": {
     "empty_state": {
       "search": {
@@ -2120,7 +2117,6 @@
       }
     }
   },
-
   "issue_comment": {
     "empty_state": {
       "general": {
@@ -2129,7 +2125,6 @@
       }
     }
   },
-
   "notification": {
     "label": "Kotak Masuk",
     "page_label": "{workspace} - Kotak Masuk",
@@ -2186,7 +2181,6 @@
       "custom": "Kustom"
     }
   },
-
   "active_cycle": {
     "empty_state": {
       "progress": {
@@ -2206,7 +2200,6 @@
       }
     }
   },
-
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -2269,7 +2262,6 @@
       }
     }
   },
-
   "stickies": {
     "title": "Catatan tempel Anda",
     "placeholder": "klik untuk mengetik di sini",
@@ -2327,7 +2319,6 @@
       }
     }
   },
-
   "role_details": {
     "guest": {
       "title": "Tamu",
@@ -2342,7 +2333,6 @@
       "description": "Semua izin diatur ke true dalam ruang kerja."
     }
   },
-
   "user_roles": {
     "product_or_project_manager": "Manajer Produk / Proyek",
     "development_or_engineering": "Pengembangan / Rekayasa",
@@ -2355,7 +2345,6 @@
     "human_resources": "Sumber Daya Manusia",
     "other": "Lainnya"
   },
-
   "importer": {
     "github": {
       "title": "Github",
@@ -2366,7 +2355,6 @@
       "description": "Impor item kerja dan epik dari proyek dan epik Jira."
     }
   },
-
   "exporter": {
     "csv": {
       "title": "CSV",
@@ -2395,7 +2383,6 @@
     "created": "Dibuat",
     "subscribed": "Disubscribe"
   },
-
   "themes": {
     "theme_options": {
       "system_preference": {
@@ -2441,17 +2428,14 @@
       "manual": "Manual"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {Siklus} other {Siklus}}",
     "no_cycle": "Tidak ada siklus"
   },
-
   "module": {
     "label": "{count, plural, one {Modul} other {Modul}}",
     "no_module": "Tidak ada modul"
   },
-
   "description_versions": {
     "last_edited_by": "Terakhir disunting oleh",
     "previously_edited_by": "Sebelumnya disunting oleh",

@@ -144,6 +144,9 @@ export const CommentCard: React.FC<Props> = observer((props) => {
               ref={showEditorRef}
               id={comment.id}
               initialValue={comment.comment_html}
+              displayConfig={{
+                fontSize: "small-font",
+              }}
             />
             <CommentReactions anchor={anchor} commentId={comment.id} />
           </div>

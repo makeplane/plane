@@ -6,7 +6,8 @@
     "paths": {
       "@/*": ["core/*"],
       "@/public/*": ["public/*"],
-      "@/plane-admin/*": ["ce/*"]
+      "@/plane-admin/*": ["ce/*"],
+      "@/styles/*": ["styles/*"]
     }
   },
   "include": ["next-env.d.ts", "next.config.js", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
