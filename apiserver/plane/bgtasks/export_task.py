@@ -19,7 +19,7 @@ from django.db.models import F, Prefetch
 from collections import defaultdict
 
 # Module imports
-from plane.db.models import ExporterHistory, Issue, FileAsset, Label, User
+from plane.db.models import ExporterHistory, Issue, FileAsset, Label, User, IssueComment
 from plane.ee.models import CustomerRequestIssue
 from plane.utils.exception_logger import log_exception
 
@@ -327,6 +327,21 @@ def get_property_value(property_type, property_value):
         return ""
 
 
+def get_created_by(object: Issue | IssueComment) -> str:
+    """
+    Get the created by of the issue or issue comment.
+
+    Args:
+        object (Issue | IssueComment): The issue or issue comment object.
+
+    Returns:
+        str: The created by of the issue or issue comment.
+    """
+    if object.created_by:
+        return f"{object.created_by.first_name} {object.created_by.last_name}"
+    else:
+        return ""
+
 @shared_task
 def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, slug):
     try:
@@ -428,13 +443,13 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                 "module_name": [
                     module.module.name for module in issue.issue_module.all()
                 ],
-                "created_by": f"{issue.created_by.first_name} {issue.created_by.last_name}",
+                "created_by": get_created_by(issue),
                 "labels": [label.name for label in issue.label_details],
                 "comments": [
-                    {
+                    {+
                         "comment": comment.comment_stripped,
                         "created_at": dateConverter(comment.created_at),
-                        "created_by": f"{comment.created_by.first_name} {comment.created_by.last_name}",
+                        "created_by": get_created_by(comment),
                     }
                     for comment in issue.issue_comments.all()
                 ],
