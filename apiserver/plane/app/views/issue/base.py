@@ -282,10 +282,19 @@ class IssueViewSet(BaseViewSet):
             extra_filters = {"updated_at__gt": request.GET.get("updated_at__gt")}
 
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
-        filters = issue_filters(request.query_params, "GET")
+        query_params = request.query_params.copy()
+        sub_issue = query_params.get("sub_issue", None)
+        query_params.pop("sub_issue", None)
+
+        filters = issue_filters(query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
 
         issue_queryset = self.get_queryset().filter(**filters, **extra_filters)
+        if sub_issue is not None and sub_issue == "false":
+            # If sub_issue is false, show the issues which are attached to epic as well.
+            issue_queryset = issue_queryset.filter(
+                Q(parent__isnull=True) | Q(parent__type__is_epic=True)
+            )
 
         # Custom ordering for priority and state
 
