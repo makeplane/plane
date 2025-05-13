@@ -48,6 +48,12 @@ class Template(WorkspaceBaseModel):
         blank=True,
     )
     short_description = models.TextField(blank=True, null=True)
+    privacy_policy_url = models.URLField(max_length=800, null=True, blank=True)
+    terms_of_service_url = models.URLField(max_length=800, null=True, blank=True)
+    contact_email = models.EmailField(max_length=255, null=True, blank=True)
+    support_url = models.URLField(max_length=800, null=True, blank=True)
+    video_url = models.URLField(max_length=800, null=True, blank=True)
+    keywords = models.JSONField(default=list)
 
     class Meta:
         db_table = "templates"
