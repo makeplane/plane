@@ -33,6 +33,7 @@ import { APIError } from "./lib";
 import { registerControllers } from "./lib/controller";
 import { logger } from "./logger";
 // types
+import { OAuthRoutes, registerOAuthStrategies } from "./services/oauth";
 import { APIErrorResponse } from "./types";
 
 export default class Server {
@@ -57,6 +58,7 @@ export default class Server {
       GithubController,
       JiraDataCenterController,
       CSVController,
+      OAuthRoutes,
     ],
   };
 
@@ -72,6 +74,7 @@ export default class Server {
     this.setupControllers();
     this.setupErrorHandlers();
     this.setupProcessHandlers();
+    registerOAuthStrategies();
   }
 
   private setupMiddleware(): void {

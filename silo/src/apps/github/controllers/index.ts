@@ -163,7 +163,8 @@ export default class GithubController {
 
       if (!workspace_id || !workspace_slug || !plane_api_token || !user_id || !plane_app_installation_id) {
         return res.status(400).send({
-          message: "Bad Request, expected workspace_id, workspace_slug, plane_api_token, user_id and plane_app_installation_id be present.",
+          message:
+            "Bad Request, expected workspace_id, workspace_slug, plane_api_token, user_id and plane_app_installation_id be present.",
         });
       }
 
@@ -395,7 +396,9 @@ export default class GithubController {
     }
 
     // continue the user callback flow for github
-    const githubState: GithubPlaneOAuthState = JSON.parse(Buffer.from(encodedGithubState as string, "base64").toString());
+    const githubState: GithubPlaneOAuthState = JSON.parse(
+      Buffer.from(encodedGithubState as string, "base64").toString()
+    );
 
     const { github_code, encoded_github_state } = githubState;
 
@@ -453,10 +456,7 @@ export default class GithubController {
         return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.USER_NOT_FOUND}`);
       }
 
-      const planeClient = await getPlaneAPIClient(
-        credential,
-        E_INTEGRATION_KEYS.GITHUB
-      );
+      const planeClient = await getPlaneAPIClient(credential, E_INTEGRATION_KEYS.GITHUB);
 
       const users: PlaneUser[] = await planeClient.users.listAllUsers(authState.workspace_slug);
       const planeUser = users.find((user) => user.id === authState.user_id);
@@ -484,10 +484,12 @@ export default class GithubController {
         source_identifier: user.id.toString(),
         source_authorization_type: ESourceAuthorizationType.TOKEN,
         source_access_token: accessToken,
+        source_refresh_token: "",
         target_access_token: tokenResponse.access_token,
         target_refresh_token: tokenResponse.refresh_token,
         target_authorization_type: EOAuthGrantType.AUTHORIZATION_CODE,
         target_identifier: credential.target_identifier,
+        source_hostname: "",
       });
 
       // update the workspace connection for the user
@@ -525,7 +527,7 @@ export default class GithubController {
       const githubState: GithubPlaneOAuthState = {
         github_code: code as string,
         encoded_github_state: queryState as string,
-      }
+      };
 
       const { planeAppClientId, planeAppClientSecret } = await getPlaneAppDetails(E_INTEGRATION_KEYS.GITHUB);
       if (!planeAppClientId || !planeAppClientSecret) {
@@ -856,10 +858,9 @@ export const logGithubWebhookPayload = (
 
 function verifyGithubWebhook(req: Request, res: Response, next: NextFunction) {
   try {
-
     // If the webhook secret is not set, we don't need to verify the signature
     if (!env.GITHUB_WEBHOOK_SECRET) {
-      return next()
+      return next();
     }
 
     const signature = req.headers["x-hub-signature-256"];

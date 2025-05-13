@@ -10,7 +10,10 @@ import { planeOAuthService } from "@/services/oauth/auth";
  * @param credential - The workspace credential for the application connection
  * @param appName - The name of the app
  */
-export const getPlaneAPIClient = async (credential: TWorkspaceCredential, appName: E_INTEGRATION_KEYS) => {
+export const getPlaneAPIClient = async (
+  credential: TWorkspaceCredential,
+  appName: E_INTEGRATION_KEYS
+): Promise<PlaneClient> => {
   try {
     const baseURL = env.API_BASE_URL;
     // checks if the credential is not an OAuth credential

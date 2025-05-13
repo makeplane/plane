@@ -4,7 +4,12 @@ import { env } from "@/env";
 import { getTokenCacheKey } from "@/helpers/cache-keys";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { logger } from "@/logger";
-import { PlaneOAuthTokenOptions, PlaneOAuthTokenResponse, EOAuthGrantType as PlaneOAuthGrantType } from "@/types/oauth";
+import {
+  PlaneOAuthTokenOptions,
+  PlaneOAuthTokenResponse,
+  EOAuthGrantType as PlaneOAuthGrantType,
+  PlaneOAuthAppInstallation,
+} from "@/types/oauth";
 import { Store } from "@/worker/base";
 
 /**
@@ -27,14 +32,13 @@ class PlaneOAuthService {
       (response) => response,
       (error: AxiosError) => {
         if (error.response) {
-          logger.error('OAuth request failed:', error.response.data);
-          throw new Error('OAuth request failed');
+          logger.error("OAuth request failed:", error.response.data);
+          throw new Error("OAuth request failed");
         }
         throw error;
       }
     );
   }
-
 
   /**
    * Generate a token from the OAuth service based on the grant type
@@ -44,7 +48,8 @@ class PlaneOAuthService {
    */
   async generateToken(tokenOptions: PlaneOAuthTokenOptions): Promise<PlaneOAuthTokenResponse> {
     try {
-      const { client_id, client_secret, grant_type, code, code_verifier, app_installation_id, redirect_uri, user_id } = tokenOptions;
+      const { client_id, client_secret, grant_type, code, code_verifier, app_installation_id, redirect_uri, user_id } =
+        tokenOptions;
 
       if (!client_id || !client_secret || !grant_type || !app_installation_id) {
         throw new Error("Client ID, Client Secret, Grant Type, and App Installation ID are required");
@@ -57,7 +62,13 @@ class PlaneOAuthService {
           if (!code || !redirect_uri) {
             throw new Error("Code and Redirect URI are required for authorization code grant type");
           }
-          tokenResponse = await this.getAuthorizationCodeToken(client_id, client_secret, code, redirect_uri, code_verifier);
+          tokenResponse = await this.getAuthorizationCodeToken(
+            client_id,
+            client_secret,
+            code,
+            redirect_uri,
+            code_verifier
+          );
           cacheKey = getTokenCacheKey(app_installation_id, grant_type, user_id);
           break;
         }
@@ -79,13 +90,16 @@ class PlaneOAuthService {
 
       return tokenResponse;
     } catch (error) {
-      logger.error('Get token failed:', error);
+      logger.error("Get token failed:", error);
       throw error;
     }
   }
 
-
-  async getOAuthToken(credential: TWorkspaceCredential, appClientId: string, appClientSecret: string): Promise<PlaneOAuthTokenResponse> {
+  async getOAuthToken(
+    credential: TWorkspaceCredential,
+    appClientId: string,
+    appClientSecret: string
+  ): Promise<PlaneOAuthTokenResponse> {
     // check if the token is in the cache if not make a request to the api based on the authorization type
     // store the token in the cache and in the database
     // return the token
@@ -94,7 +108,11 @@ class PlaneOAuthService {
       throw new Error("Target Identifier or Target Authorization Type not available for the credential");
     }
 
-    const cacheKey = getTokenCacheKey(credential.target_identifier, credential.target_authorization_type as PlaneOAuthGrantType, credential.user_id);
+    const cacheKey = getTokenCacheKey(
+      credential.target_identifier,
+      credential.target_authorization_type as PlaneOAuthGrantType,
+      credential.user_id
+    );
     const token = await this.store.get(cacheKey);
     if (token) {
       return JSON.parse(token) as PlaneOAuthTokenResponse;
@@ -105,7 +123,11 @@ class PlaneOAuthService {
         if (!credential.target_refresh_token) {
           throw new Error("Refresh Token not available for the credential for authorization code grant type");
         }
-        const tokenResponse = await this.getAccessTokenFromRefreshToken(credential.target_refresh_token, appClientId, appClientSecret);
+        const tokenResponse = await this.getAccessTokenFromRefreshToken(
+          credential.target_refresh_token,
+          appClientId,
+          appClientSecret
+        );
         await this.setTokenInCache(cacheKey, tokenResponse);
         await integrationConnectionHelper.updateWorkspaceCredential({
           credential_id: credential.id,
@@ -116,7 +138,11 @@ class PlaneOAuthService {
       }
 
       case PlaneOAuthGrantType.CLIENT_CREDENTIALS: {
-        const tokenResponse = await this.getClientCredentialsToken(appClientId, appClientSecret, credential.target_identifier);
+        const tokenResponse = await this.getClientCredentialsToken(
+          appClientId,
+          appClientSecret,
+          credential.target_identifier
+        );
         await this.setTokenInCache(cacheKey, tokenResponse);
         await integrationConnectionHelper.updateWorkspaceCredential({
           credential_id: credential.id,
@@ -130,7 +156,6 @@ class PlaneOAuthService {
     }
   }
 
-
   /**
    * Get a token from the OAuth service based on the refresh token
    * @param refreshToken - The refresh token
@@ -138,7 +163,11 @@ class PlaneOAuthService {
    * @param clientSecret - The client secret
    * @returns The token response | PlaneOAuthTokenResponse
    */
-  async getAccessTokenFromRefreshToken(refreshToken: string, clientId: string, clientSecret: string): Promise<PlaneOAuthTokenResponse> {
+  async getAccessTokenFromRefreshToken(
+    refreshToken: string,
+    clientId: string,
+    clientSecret: string
+  ): Promise<PlaneOAuthTokenResponse> {
     try {
       const data = new URLSearchParams({
         grant_type: "refresh_token",
@@ -156,7 +185,7 @@ class PlaneOAuthService {
 
       return response.data;
     } catch (error) {
-      logger.error('Refresh token request failed:', error);
+      logger.error("Refresh token request failed:", error);
       throw error;
     }
   }
@@ -179,7 +208,7 @@ class PlaneOAuthService {
 
       return `${this.baseURL}/authorize-app/?${data.toString()}`;
     } catch (error) {
-      logger.error('Failed to generate OAuth redirect URL:', error);
+      logger.error("Failed to generate OAuth redirect URL:", error);
       throw error;
     }
   }
@@ -189,10 +218,28 @@ class PlaneOAuthService {
       if (!credential.target_identifier || !credential.target_authorization_type || !credential.user_id) {
         throw new Error("Target Identifier, Target Authorization Type, and User ID are required to delete a token");
       }
-      const cacheKey = getTokenCacheKey(credential.target_identifier, credential.target_authorization_type as PlaneOAuthGrantType, credential.user_id);
+      const cacheKey = getTokenCacheKey(
+        credential.target_identifier,
+        credential.target_authorization_type as PlaneOAuthGrantType,
+        credential.user_id
+      );
       await this.store.del(cacheKey);
     } catch (error) {
-      logger.error('Failed to delete token from cache:', error);
+      logger.error("Failed to delete token from cache:", error);
+      throw error;
+    }
+  }
+
+  async getAppInstallation(token: string, appInstallationId: string): Promise<PlaneOAuthAppInstallation> {
+    try {
+      const response = await this.axiosInstance.get(`${this.baseURL}/app-installation/?id=${appInstallationId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data?.[0];
+    } catch (error) {
+      logger.error("Failed to get app installations:", error);
       throw error;
     }
   }
@@ -212,8 +259,8 @@ class PlaneOAuthService {
     try {
       return Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
     } catch (error) {
-      logger.error('Failed to generate basic auth token:', error);
-      throw new Error('Failed to generate authentication token');
+      logger.error("Failed to generate basic auth token:", error);
+      throw new Error("Failed to generate authentication token");
     }
   }
 
@@ -233,14 +280,14 @@ class PlaneOAuthService {
       const response = await this.axiosInstance.post(`${this.baseURL}/token/`, data, {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
-          "Authorization": `Basic ${this.getBasicAuthToken(clientId, clientSecret)}`,
+          Authorization: `Basic ${this.getBasicAuthToken(clientId, clientSecret)}`,
           "Cache-Control": "no-cache",
         },
       });
 
       return response.data;
     } catch (error) {
-      logger.error('Client credentials token request failed:', error);
+      logger.error("Client credentials token request failed:", error);
       throw error;
     }
   }
@@ -252,7 +299,13 @@ class PlaneOAuthService {
    * @param code - The authorization code
    * @returns The authorization code token | PlaneOAuthTokenResponse
    */
-  private async getAuthorizationCodeToken(clientId: string, clientSecret: string, code: string, redirectUri: string, codeVerifier?: string) {
+  private async getAuthorizationCodeToken(
+    clientId: string,
+    clientSecret: string,
+    code: string,
+    redirectUri: string,
+    codeVerifier?: string
+  ) {
     try {
       const data = new URLSearchParams({
         grant_type: "authorization_code",
@@ -272,11 +325,10 @@ class PlaneOAuthService {
 
       return response.data;
     } catch (error) {
-      logger.error('Authorization code token request failed:', error);
+      logger.error("Authorization code token request failed:", error);
       throw error;
     }
   }
-
 }
 
 export const planeOAuthService = new PlaneOAuthService();

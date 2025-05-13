@@ -68,6 +68,10 @@ const envSchema = z.object({
   // AES Env Variables
   AES_SECRET_KEY: z.string().optional(),
   AES_SALT: z.string().default("aes-salt"),
+
+  // Internal Plane App Env Variables
+  PRD_AGENT_CLIENT_ID: z.string().optional(),
+  PRD_AGENT_CLIENT_SECRET: z.string().optional(),
 });
 
 // Validate the environment variables

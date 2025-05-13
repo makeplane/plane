@@ -33,7 +33,20 @@ class WorkspaceConnectionAPIView(BaseServiceAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        serializer = WorkspaceConnectionAPISerializer(data={**request.data})
+        # Check if the workspace connection already exists
+        workspace_connection = WorkspaceConnection.objects.filter(
+            workspace_id=request.data.get("workspace_id"),
+            connection_type=request.data.get("connection_type"),
+            deleted_at__isnull=True,
+        ).first()
+
+        if not workspace_connection:
+            serializer = WorkspaceConnectionAPISerializer(data={**request.data})
+        else:
+            serializer = WorkspaceConnectionAPISerializer(
+                workspace_connection, data=request.data, partial=True
+            )
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

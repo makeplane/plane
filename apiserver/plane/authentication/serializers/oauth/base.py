@@ -12,6 +12,7 @@ from plane.authentication.models.oauth import (
     ApplicationCategory,
 )
 from plane.db.models import FileAsset
+from plane.app.serializers.workspace import WorkspaceLiteSerializer
 
 
 class ApplicationSerializer(BaseSerializer):
@@ -20,14 +21,10 @@ class ApplicationSerializer(BaseSerializer):
     logo_url = serializers.CharField(read_only=True)
     attachments_urls = serializers.SerializerMethodField()
     attachments = serializers.PrimaryKeyRelatedField(
-        queryset=FileAsset.objects.all(),
-        many=True,
-        required=False
+        queryset=FileAsset.objects.all(), many=True, required=False
     )
     categories = serializers.PrimaryKeyRelatedField(
-        queryset=ApplicationCategory.objects.all(),
-        many=True,
-        required=False
+        queryset=ApplicationCategory.objects.all(), many=True, required=False
     )
 
     class Meta:
@@ -46,6 +43,7 @@ class ApplicationSerializer(BaseSerializer):
 
     def get_attachments_urls(self, obj):
         return [attachment.asset_url for attachment in obj.attachments.all()]
+
 
 class AccessTokenSerializer(BaseSerializer):
     class Meta:
@@ -72,6 +70,8 @@ class IDTokenSerializer(BaseSerializer):
 
 
 class WorkspaceAppInstallationSerializer(BaseSerializer):
+    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
+
     class Meta:
         model = WorkspaceAppInstallation
         fields = "__all__"

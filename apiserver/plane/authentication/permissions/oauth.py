@@ -33,7 +33,7 @@ class OauthApplicationWorkspacePermission(BasePermission):
             return True
 
         # Check if application has access to the specific workspace
-        application = request.client
+        application = request.auth.application
         if application:
             application_installation = WorkspaceAppInstallation.objects.filter(
                 application=application,

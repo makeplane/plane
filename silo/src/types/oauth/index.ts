@@ -15,7 +15,6 @@ export type PlaneOAuthTokenOptions = {
   user_id?: string;
 };
 
-
 export type PlaneOAuthTokenResponse = {
   access_token: string;
   expires_in: number;
@@ -24,8 +23,27 @@ export type PlaneOAuthTokenResponse = {
   refresh_token: string;
 };
 
-
 export enum ESourceAuthorizationType {
   TOKEN = "token",
   OAUTH = "oauth",
 }
+
+export type PlaneOAuthAppInstallation = {
+  id: string;
+  workspace_detail: {
+    name: string;
+    slug: string;
+    id: string;
+    logo_url: string | null;
+  };
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  status: string;
+  created_by: string | null;
+  updated_by: string | null;
+  workspace: string;
+  application: string;
+  installed_by: string;
+  app_bot: string;
+};

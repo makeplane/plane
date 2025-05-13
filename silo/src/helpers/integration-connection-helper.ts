@@ -1,9 +1,14 @@
 // This file is a wrapper for the db connection for silo tables in plane
 // this accepts data in single format for all integrations/importers and returns the data in single format
 
-import { TImportJob, TImportReport, TWorkspaceConnection, TWorkspaceCredential, TWorkspaceEntityConnection } from "@plane/types";
+import {
+  TImportJob,
+  TImportReport,
+  TWorkspaceConnection,
+  TWorkspaceCredential,
+  TWorkspaceEntityConnection,
+} from "@plane/types";
 import { APIClient, getAPIClient } from "@/services/client";
-
 
 class IntegrationConnectionHelper {
   private apiClient: APIClient;
@@ -45,7 +50,6 @@ class IntegrationConnectionHelper {
       source_hostname,
     });
   }
-
 
   // get single workspace connection
   async getWorkspaceConnection({
@@ -120,6 +124,18 @@ class IntegrationConnectionHelper {
     });
   }
 
+  async updateWorkspaceConnection({
+    workspace_connection_id,
+    config,
+  }: {
+    workspace_connection_id: string;
+    config: object;
+  }): Promise<TWorkspaceConnection> {
+    return this.apiClient.workspaceConnection.updateWorkspaceConnection(workspace_connection_id, {
+      config,
+    });
+  }
+
   async getWorkspaceEntityConnection({
     workspace_connection_id,
     entity_id,
@@ -143,7 +159,7 @@ class IntegrationConnectionHelper {
   }): Promise<TWorkspaceEntityConnection[]> {
     return this.apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
       workspace_connection_id,
-      entity_type
+      entity_type,
     });
   }
 
@@ -179,10 +195,12 @@ class IntegrationConnectionHelper {
     source_identifier,
     source_authorization_type,
     source_access_token,
+    source_refresh_token,
     target_access_token,
     target_refresh_token,
     target_identifier,
     target_authorization_type,
+    source_hostname,
   }: {
     workspace_id: string;
     user_id: string;
@@ -190,10 +208,12 @@ class IntegrationConnectionHelper {
     source_identifier?: string;
     source_authorization_type?: string;
     source_access_token: string;
+    source_refresh_token: string;
     target_access_token: string;
     target_refresh_token?: string;
     target_identifier?: string;
     target_authorization_type?: string;
+    source_hostname: string;
   }): Promise<TWorkspaceCredential> {
     return this.apiClient.workspaceCredential.createWorkspaceCredential({
       workspace_id,
@@ -202,10 +222,12 @@ class IntegrationConnectionHelper {
       source_identifier,
       source_authorization_type,
       source_access_token,
+      source_refresh_token,
       target_access_token,
       target_refresh_token,
       target_identifier,
       target_authorization_type,
+      source_hostname,
     });
   }
 
@@ -215,18 +237,21 @@ class IntegrationConnectionHelper {
     source_refresh_token,
     target_access_token,
     target_refresh_token,
+    source_hostname,
   }: {
     credential_id: string;
     source_access_token?: string;
     source_refresh_token?: string;
     target_access_token?: string;
     target_refresh_token?: string;
+    source_hostname?: string;
   }): Promise<TWorkspaceCredential> {
     return this.apiClient.workspaceCredential.updateWorkspaceCredential(credential_id, {
       source_access_token,
       source_refresh_token,
       target_access_token,
       target_refresh_token,
+      source_hostname,
     });
   }
 
@@ -239,7 +264,6 @@ class IntegrationConnectionHelper {
     source?: string;
     credential_id?: string;
   }): Promise<TWorkspaceCredential> {
-
     if (credential_id) {
       return this.apiClient.workspaceCredential.getWorkspaceCredential(credential_id);
     }
@@ -252,7 +276,7 @@ class IntegrationConnectionHelper {
       workspace_id,
       source,
     });
-    return credentials[0];
+    return credentials?.[0];
   }
 
   async getWorkspaceCredentials({
@@ -264,6 +288,22 @@ class IntegrationConnectionHelper {
   }): Promise<TWorkspaceCredential[]> {
     return this.apiClient.workspaceCredential.listWorkspaceCredentials({
       workspace_id,
+      source,
+    });
+  }
+
+  async getUserWorkspaceCredentials({
+    workspace_id,
+    user_id,
+    source,
+  }: {
+    workspace_id: string;
+    user_id: string;
+    source: string;
+  }): Promise<TWorkspaceCredential[]> {
+    return this.apiClient.workspaceCredential.listWorkspaceCredentials({
+      workspace_id,
+      user_id,
       source,
     });
   }
@@ -319,11 +359,7 @@ class IntegrationConnectionHelper {
     });
   }
 
-  async getImportReport({
-    report_id,
-  }: {
-    report_id: string;
-  }): Promise<TImportReport> {
+  async getImportReport({ report_id }: { report_id: string }): Promise<TImportReport> {
     return this.apiClient.importReport.getImportReport(report_id);
   }
 
@@ -333,7 +369,7 @@ class IntegrationConnectionHelper {
     status,
     success_metadata,
     error_metadata,
-    cancelled_at
+    cancelled_at,
   }: {
     job_id: string;
     status?: string;
@@ -368,8 +404,6 @@ class IntegrationConnectionHelper {
       status,
     });
   }
-
-
 }
 
 export const integrationConnectionHelper = new IntegrationConnectionHelper();
