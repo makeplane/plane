@@ -14,14 +14,13 @@ from celery import shared_task
 # Django imports
 from django.conf import settings
 from django.utils import timezone
-from django.db.models import Q
 from openpyxl import Workbook
 from django.db.models import F, Prefetch
-
 from collections import defaultdict
 
 # Module imports
 from plane.db.models import ExporterHistory, Issue, FileAsset, Label, User
+from plane.ee.models import CustomerRequestIssue
 from plane.utils.exception_logger import log_exception
 
 
@@ -189,6 +188,10 @@ def generate_table_row(issue):
         issue["subscribers_count"] if issue["subscribers_count"] else "",
         issue["attachment_count"] if issue["attachment_count"] else "",
         ", ".join(issue["attachment_links"]) if issue["attachment_links"] else "",
+        issue["is_epic"] if issue["is_epic"] else "",
+        issue["issue_type"] if issue["issue_type"] else "",
+        ", ".join(issue["customer_details"]) if issue["customer_details"] else "",
+        ", ".join(issue["custom_properties"]) if issue["custom_properties"] else "",
     ]
 
 
@@ -205,10 +208,10 @@ def generate_json_row(issue):
         "Created By": (f"{issue['created_by']}" if issue["created_by"] else ""),
         "Assignee": issue["assignees"],
         "Labels": issue["labels"],
-        "Cycle Name": issue["cycle_name"],
-        "Cycle Start Date": issue["cycle_start_date"],
-        "Cycle End Date": issue["cycle_end_date"],
-        "Module Name": issue["module_name"],
+        "Cycle Name": issue.get("cycle_name", ""),
+        "Cycle Start Date": issue.get("cycle_start_date", ""),
+        "Cycle End Date": issue.get("cycle_end_date", ""),
+        "Module Name": issue.get("module_name", ""),
         "Created At": dateTimeConverter(issue["created_at"]),
         "Updated At": dateTimeConverter(issue["updated_at"]),
         "Completed At": dateTimeConverter(issue["completed_at"]),
@@ -219,6 +222,10 @@ def generate_json_row(issue):
         "Subscribers Count": issue["subscribers_count"],
         "Attachment Count": issue["attachment_count"],
         "Attachment Links": issue["attachment_links"],
+        "Is Epic": issue["is_epic"],
+        "Work Item Type": issue["issue_type"],
+        "Customers": issue["customer_details"],
+        "Custom Properties": issue["custom_properties"],
     }
 
 
@@ -305,6 +312,21 @@ def generate_xlsx(header, project_id, issues, files):
     files.append((f"{project_id}.xlsx", xlsx_file))
 
 
+def get_property_value(property_type, property_value):
+    if property_type == "TEXT":
+        return property_value.value_text
+    elif property_type == "DECIMAL":
+        return property_value.value_decimal
+    elif property_type == "DATETIME":
+        return property_value.value_datetime
+    elif property_type == "BOOLEAN":
+        return property_value.value_boolean
+    elif property_type == "OPTION":
+        return property_value.value_option.name
+    else:
+        return ""
+
+
 @shared_task
 def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, slug):
     try:
@@ -327,6 +349,7 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                 "parent",
                 "created_by",
                 "estimate_point",
+                "type",
             )
             .prefetch_related(
                 "labels",
@@ -334,6 +357,15 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                 "issue_module__module",
                 "issue_comments",
                 "assignees",
+                "type__properties",
+                "type__properties__values",
+                Prefetch(
+                    "customer_request_issues",
+                    queryset=CustomerRequestIssue.objects.only("customer__name").filter(
+                        customer_request_id__isnull=True
+                    ),
+                    to_attr="customer_request_issue_details",
+                ),
                 Prefetch(
                     "assignees",
                     queryset=User.objects.only("first_name", "last_name").distinct(),
@@ -360,7 +392,22 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
         issues_data = []
 
         for issue in workspace_issues:
+            # Get all attachments of the issue
             attachments = attachment_dict.get(issue.id, [])
+
+            # Get all custome properties of the issue
+            all_customer_properties = []
+            for issue_property in issue.type.properties.all():
+                values = []
+                for issue_property_value in issue_property.values.filter(
+                    issue_id=issue.id
+                ):
+                    value = get_property_value(
+                        issue_property.property_type, issue_property_value
+                    )
+                    values.append(value)
+
+                all_customer_properties.append(f"{issue_property.name}: {values}")
 
             issue_data = {
                 "id": issue.id,
@@ -405,6 +452,13 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                     f"/api/assets/v2/workspaces/{issue.workspace.slug}/projects/{issue.project_id}/issues/{issue.id}/attachments/{asset}/"
                     for asset in attachments
                 ],
+                "is_epic": issue.type.is_epic if issue.type else False,
+                "issue_type": issue.type.name if issue.type else None,
+                "customer_details": [
+                    customer_request_issue.customer.name
+                    for customer_request_issue in issue.customer_request_issue_details
+                ],
+                "custom_properties": all_customer_properties,
             }
 
             # Get prefetched cycles and modules
@@ -445,6 +499,10 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
             "Subscribers Count",
             "Attachment Count",
             "Attachment Links",
+            "Is Epic",
+            "Work Item Type",
+            "Customers",
+            "Custom Properties",
         ]
 
         EXPORTER_MAPPER = {
