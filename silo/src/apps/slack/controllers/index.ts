@@ -15,12 +15,12 @@ import { Controller, Delete, EnsureEnabled, Get, Post, Put, useValidateUserAuthe
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { integrationTaskManager } from "@/worker";
+import { Store } from "@/worker/base";
 import { slackAuth } from "../auth/auth";
 import { getConnectionDetails, updateUserMap } from "../helpers/connection-details";
 import { ACTIONS } from "../helpers/constants";
 import { parseIssueFormData } from "../helpers/parse-issue-form";
 import { convertToSlackOptions } from "../helpers/slack-options";
-import { Store } from "@/worker/base";
 const apiClient = getAPIClient();
 
 @EnsureEnabled(E_INTEGRATION_KEYS.SLACK)
@@ -572,12 +572,10 @@ export default class SlackController {
         const workItems = await planeClient.issue.searchIssues(workspaceConnection.workspace_slug, text);
 
         const filteredWorkItems = workItems.issues
-          .map((workItem) => {
-            return {
-              id: `${workItem.workspace__slug}:${workItem.project_id}:${workItem.id}`,
-              name: `[${workItem.project__identifier}-${workItem.sequence_id}] ${workItem.name}`,
-            };
-          })
+          .map((workItem) => ({
+            id: `${workItem.workspace__slug}:${workItem.project_id}:${workItem.id}`,
+            name: `[${workItem.project__identifier}-${workItem.sequence_id}] ${workItem.name}`,
+          }))
           .sort((a, b) => a.name.localeCompare(b.name));
 
         const workItemOptions = convertToSlackOptions(filteredWorkItems);
