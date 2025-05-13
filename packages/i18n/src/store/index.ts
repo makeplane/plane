@@ -5,6 +5,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 // constants
 import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY } from "../constants";
 // core translations imports
+import coreEnExtended from "../locales/en/core-extended.json";
 import coreEn from "../locales/en/core.json";
 // types
 import { TLanguage, ILanguageOption, ITranslations } from "../types";
@@ -17,7 +18,7 @@ import { TLanguage, ILanguageOption, ITranslations } from "../types";
 export class TranslationStore {
   // Core translations that are always loaded
   private coreTranslations: ITranslations = {
-    en: coreEn,
+    en: merge({}, coreEn, coreEnExtended),
   };
   // List of translations for each language
   private translations: ITranslations = {};
@@ -116,10 +117,18 @@ export class TranslationStore {
     if (this.loadedLanguages.has(language)) return;
 
     try {
-      const translations = await this.importLanguageFile(language);
+      const [translations, translationsExtended] = await Promise.all([
+        this.importLanguageFile(language),
+        this.importLanguageFileExtended(language),
+      ]);
       runInAction(() => {
         // Use lodash merge for deep merging
-        this.translations[language] = merge({}, this.coreTranslations[language] || {}, translations.default);
+        this.translations[language] = merge(
+          {},
+          this.coreTranslations[language] || {},
+          translations.default,
+          translationsExtended.default
+        );
         // Add to loaded languages
         this.loadedLanguages.add(language);
         // Clear cache
@@ -175,6 +184,56 @@ export class TranslationStore {
         return import("../locales/vi-VN/translations.json");
       case "tr-TR":
         return import("../locales/tr-TR/translations.json");
+      default:
+        throw new Error(`Unsupported language: ${language}`);
+    }
+  }
+
+  /**
+   * Imports the extended translations for the given language
+   * @param language - The language to import the translations for
+   * @returns {Promise<any>}
+   */
+  private importLanguageFileExtended(language: TLanguage): Promise<any> {
+    switch (language) {
+      case "en":
+        return import("../locales/en/translations-extended.json");
+      case "fr":
+        return import("../locales/fr/translations-extended.json");
+      case "es":
+        return import("../locales/es/translations-extended.json");
+      case "ja":
+        return import("../locales/ja/translations-extended.json");
+      case "zh-CN":
+        return import("../locales/zh-CN/translations-extended.json");
+      case "zh-TW":
+        return import("../locales/zh-TW/translations-extended.json");
+      case "ru":
+        return import("../locales/ru/translations-extended.json");
+      case "it":
+        return import("../locales/it/translations-extended.json");
+      case "cs":
+        return import("../locales/cs/translations-extended.json");
+      case "sk":
+        return import("../locales/sk/translations-extended.json");
+      case "de":
+        return import("../locales/de/translations-extended.json");
+      case "ua":
+        return import("../locales/ua/translations-extended.json");
+      case "pl":
+        return import("../locales/pl/translations-extended.json");
+      case "ko":
+        return import("../locales/ko/translations-extended.json");
+      case "id":
+        return import("../locales/id/translations-extended.json");
+      case "ro":
+        return import("../locales/ro/translations-extended.json");
+      case "pt-BR":
+        return import("../locales/pt-BR/translations-extended.json");
+      case "vi-VN":
+        return import("../locales/vi-VN/translations-extended.json");
+      case "tr-TR":
+        return import("../locales/tr-TR/translations-extended.json");
       default:
         throw new Error(`Unsupported language: ${language}`);
     }

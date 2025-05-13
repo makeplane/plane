@@ -82,6 +82,7 @@ tmp/
 
 ## packages
 dist
+.flatfile
 .temp/
 deploy/selfhost/plane-app/
 
@@ -93,3 +94,10 @@ dev-editor
 # Redis
 *.rdb
 *.rdb.gz
+
+# Monitor
+monitor/prime.key
+monitor/prime.key.pub
+monitor.db
+
+.cursorrules

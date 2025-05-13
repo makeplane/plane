@@ -6,9 +6,12 @@ from smtplib import (
     SMTPSenderRefused,
     SMTPServerDisconnected,
 )
+import requests
+import os
 
 # Django imports
 from django.core.mail import BadHeaderError, EmailMultiAlternatives, get_connection
+from django.conf import settings
 
 # Third party imports
 from rest_framework import status
@@ -21,7 +24,11 @@ from plane.license.models import InstanceConfiguration
 from plane.license.api.serializers import InstanceConfigurationSerializer
 from plane.license.utils.encryption import encrypt_data
 from plane.utils.cache import cache_response, invalidate_cache
-from plane.license.utils.instance_value import get_email_configuration
+from plane.license.utils.instance_value import (
+    get_email_configuration,
+    get_configuration_value,
+)
+from plane.payment.flags.flag import AdminFeatureFlag
 
 
 class InstanceConfigurationEndpoint(BaseAPIView):
@@ -36,11 +43,12 @@ class InstanceConfigurationEndpoint(BaseAPIView):
     @invalidate_cache(path="/api/instances/configurations/", user=False)
     @invalidate_cache(path="/api/instances/", user=False)
     def patch(self, request):
+        # Get all the configurations
         configurations = InstanceConfiguration.objects.filter(
             key__in=request.data.keys()
         )
-
         bulk_configurations = []
+        # Check if the configuration is for SAML or OIDC
         for configuration in configurations:
             value = request.data.get(configuration.key, configuration.value)
             if configuration.is_encrypted:
@@ -147,3 +155,59 @@ class EmailCredentialCheckEndpoint(BaseAPIView):
                 {"error": "Could not send email. Please check your configuration"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class AdminFeatureFlagEndpoint(BaseAPIView):
+    permission_classes = [InstanceAdminPermission]
+
+    def get(self, request):
+        try:
+            url = f"{settings.FEATURE_FLAG_SERVER_BASE_URL}/api/workspaces/licenses/"
+
+            headers = {
+                "content-type": "application/json",
+                "x-api-key": settings.FEATURE_FLAG_SERVER_AUTH_TOKEN,
+            }
+
+            response = requests.post(url, headers=headers)
+            response.raise_for_status()
+
+            value = response.json().get("values", False)
+            ## Check if the configuration is already initialized
+            (IS_OIDC_ENABLED, IS_SAML_ENABLED) = get_configuration_value(
+                [
+                    {
+                        "key": "IS_OIDC_ENABLED",
+                        "default": os.environ.get("IS_OIDC_ENABLED", "0"),
+                    },
+                    {
+                        "key": "IS_SAML_ENABLED",
+                        "default": os.environ.get("IS_SAML_ENABLED", "0"),
+                    },
+                ]
+            )
+
+            # If any of the configuration in enabled or the feature flag is enabled then return True
+            flag_value = value or IS_OIDC_ENABLED == "1" or IS_SAML_ENABLED == "1"
+
+            data = {flag.value: flag_value for flag in AdminFeatureFlag}
+            return Response(data, status=response.status_code)
+        except requests.exceptions.RequestException:
+            ## Check if the configuration is already initialized
+            (IS_OIDC_ENABLED, IS_SAML_ENABLED) = get_configuration_value(
+                [
+                    {
+                        "key": "IS_OIDC_ENABLED",
+                        "default": os.environ.get("IS_OIDC_ENABLED", "0"),
+                    },
+                    {
+                        "key": "IS_SAML_ENABLED",
+                        "default": os.environ.get("IS_SAML_ENABLED", "0"),
+                    },
+                ]
+            )
+
+            # If any of the configuration in enabled or the feature flag is enabled then return True
+            flag_value = IS_OIDC_ENABLED == "1" or IS_SAML_ENABLED == "1"
+            data = {flag.value: flag_value for flag in AdminFeatureFlag}
+            return Response(data, status=status.HTTP_200_OK)
