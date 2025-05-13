@@ -46,7 +46,6 @@ export const ProjectNavigationRoot: FC<TProjectItemsRootProps> = observer((props
       shouldRender: !!isProjectOverviewEnabled,
       sortOrder: -2,
       i18n_key: "common.overview",
-      key: "overview",
     },
     {
       name: "Epics",
@@ -57,7 +56,6 @@ export const ProjectNavigationRoot: FC<TProjectItemsRootProps> = observer((props
       shouldRender: !!isEpicsEnabled,
       sortOrder: -1,
       i18n_key: "sidebar.epics",
-      key: "epics",
     },
   ];
 
