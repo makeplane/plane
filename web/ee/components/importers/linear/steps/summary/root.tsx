@@ -30,13 +30,7 @@ export const SummaryRoot: FC = observer(() => {
     handleDashboardView,
     handleStepper,
     resetImporterData,
-    data: {
-      linearStateIdsByTeamId,
-      additionalUsersData,
-      fetchAdditionalUsers,
-      fetchLinearTeamDataSummary,
-      linearDataSummary,
-    },
+    data: { additionalUsersData, fetchAdditionalUsers, fetchLinearTeamDataSummary, linearDataSummary },
     // setDashboardView,
   } = useLinearImporter();
   const { t } = useTranslation();
@@ -106,9 +100,10 @@ export const SummaryRoot: FC = observer(() => {
     workspaceId && userId && linearTeamId
       ? `IMPORTER_LINEAR_DATA_SUMMARY_${workspaceId}_${userId}_${linearTeamId}`
       : null;
+
   const { isLoading: isLinearTeamDataSummaryLoading } = useSWR(
-    key,
-    key ? () => fetchLinearTeamDataSummary(workspaceId, userId, linearTeamId) : null,
+    workspaceId && userId && linearTeamId ? key : null,
+    workspaceId && userId && linearTeamId ? () => fetchLinearTeamDataSummary(workspaceId, userId, linearTeamId) : null,
     { errorRetryCount: 0 }
   );
 
