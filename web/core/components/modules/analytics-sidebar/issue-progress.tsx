@@ -149,7 +149,7 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
 
   if (!moduleDetails) return <></>;
   return (
-    <div className="border-t border-custom-border-200 space-y-4 py-4 px-3">
+    <div className="border-t border-custom-border-200 space-y-4 py-5">
       <Disclosure defaultOpen={isModuleDateValid ? true : false}>
         {({ open }) => (
           <div className="space-y-6">
@@ -157,7 +157,7 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
             {isModuleDateValid ? (
               <div className="relative w-full flex justify-between items-center gap-2">
                 <Disclosure.Button className="relative flex items-center gap-2 w-full">
-                  <div className="font-medium text-custom-text-200 text-sm">{t("progress")}</div>
+                  <div className="font-medium text-custom-text-200 text-sm">{t("common.progress")}</div>
                   {progressHeaderPercentage > 0 && (
                     <div className="flex h-5 w-9 items-center justify-center rounded bg-amber-500/20 text-xs font-medium text-amber-500">{`${progressHeaderPercentage}%`}</div>
                   )}
