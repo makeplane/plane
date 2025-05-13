@@ -1,5 +1,5 @@
 import { Extension } from "@tiptap/core";
-import codemark from "prosemirror-codemark";
+import { codemark } from "@/extensions/code-mark";
 
 export const CustomCodeMarkPlugin = Extension.create({
   name: "codemarkPlugin",

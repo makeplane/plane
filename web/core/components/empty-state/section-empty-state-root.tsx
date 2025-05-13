@@ -1,8 +1,6 @@
 "use client";
-
 import { FC } from "react";
 import { cn } from "@plane/utils";
-
 type Props = {
   icon: React.ReactNode;
   title: string;

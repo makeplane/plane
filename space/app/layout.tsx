@@ -33,6 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="robots" content="noindex, nofollow" />
       </head>
       <body>
+        <div id="editor-portal" />
         <AppProvider>
           <>{children}</>
         </AppProvider>
