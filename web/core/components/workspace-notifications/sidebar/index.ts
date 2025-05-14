@@ -6,3 +6,5 @@ export * from "./header";
 export * from "./filters";
 
 export * from "./notification-card";
+
+export * from "./root";
