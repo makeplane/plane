@@ -21,7 +21,7 @@ import {
   UsersIcon,
 } from "lucide-react";
 import { IIssueActivity } from "@plane/types";
-import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon, Intake } from "@plane/ui";
+import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon, Intake, EpicIcon } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { generateWorkItemLink } from "@/helpers/issue.helper";
@@ -303,7 +303,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <LayersIcon width={12} height={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <EpicIcon width={12} height={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   labels: {
     message: (activity, showIssue, workspaceSlug) => {
