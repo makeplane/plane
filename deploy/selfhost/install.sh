@@ -539,7 +539,9 @@ function backup_container_dir() {
     cd $BACKUP_FOLDER
     tar -czf ${SERVICE_FOLDER}.tar.gz $SERVICE_FOLDER/
     local tar_status=$?
-    rm -rf $SERVICE_FOLDER/
+    if [ $tar_status -eq 0 ]; then
+        rm -rf $SERVICE_FOLDER/
+    fi
     cd - > /dev/null
 
     if [ $tar_status -ne 0 ]; then
@@ -561,10 +563,10 @@ function backupData() {
         exit 1
     fi
 
-    backup_container_dir "$BACKUP_FOLDER" "plane-db" "/var/lib/postgresql/data" "pgdata"
-    backup_container_dir "$BACKUP_FOLDER" "plane-minio" "/export" "uploads"
-    backup_container_dir "$BACKUP_FOLDER" "plane-mq" "/var/lib/rabbitmq" "rabbitmq_data"
-    backup_container_dir "$BACKUP_FOLDER" "plane-redis" "/data" "redisdata"
+    backup_container_dir "$BACKUP_FOLDER" "plane-db" "/var/lib/postgresql/data" "pgdata" || exit 1
+    backup_container_dir "$BACKUP_FOLDER" "plane-minio" "/export" "uploads" || exit 1
+    backup_container_dir "$BACKUP_FOLDER" "plane-mq" "/var/lib/rabbitmq" "rabbitmq_data" || exit 1
+    backup_container_dir "$BACKUP_FOLDER" "plane-redis" "/data" "redisdata" || exit 1
 
     echo ""
     echo "Backup completed successfully. Backup files are stored in $BACKUP_FOLDER"
