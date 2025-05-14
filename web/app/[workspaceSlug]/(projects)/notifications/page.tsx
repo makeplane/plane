@@ -11,8 +11,7 @@ import { NotificationsRoot } from "@/components/workspace-notifications";
 import { useWorkspace } from "@/hooks/store";
 
 const WorkspaceDashboardPage = observer(() => {
-  const params = useParams();
-  const workspaceSlug = typeof params.workspaceSlug === "string" ? params.workspaceSlug : undefined;
+  const { workspaceSlug } = useParams();
   // plane hooks
   const { t } = useTranslation();
   // hooks
@@ -25,7 +24,7 @@ const WorkspaceDashboardPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <NotificationsRoot workspaceSlug={workspaceSlug} />
+      <NotificationsRoot workspaceSlug={workspaceSlug?.toString()} />
     </>
   );
 });
