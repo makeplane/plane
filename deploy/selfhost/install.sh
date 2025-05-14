@@ -536,11 +536,11 @@ function backup_container_dir() {
     fi
 
     # Create tar.gz of the data
-    cd $BACKUP_FOLDER
-    tar -czf ${SERVICE_FOLDER}.tar.gz $SERVICE_FOLDER/
+    cd "$BACKUP_FOLDER"
+    tar -czf "${SERVICE_FOLDER}.tar.gz" "$SERVICE_FOLDER/"
     local tar_status=$?
     if [ $tar_status -eq 0 ]; then
-        rm -rf $SERVICE_FOLDER/
+        rm -rf "$SERVICE_FOLDER/"
     fi
     cd - > /dev/null
 
