@@ -69,10 +69,10 @@ class IssueSearchEndpoint(BaseAPIView):
         """
         Filter root issues only
         """
-        issue = Issue.issue_objects.filter(pk=issue_id).first()
+        issue = Issue.objects.filter(pk=issue_id).first()
         if issue:
             issues = issues.filter(~Q(pk=issue_id), parent__isnull=True)
-        if issue.parent:
+        if issue and issue.parent:
             issues = issues.filter(~Q(pk=issue.parent_id))
         return issues
 
