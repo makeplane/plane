@@ -196,15 +196,7 @@ const activityDetails: {
       if (activity.verb === "created")
         return (
           <>
-            uploaded a new{" "}
-            <a
-              href={`${activity.new_value}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
-            >
-              attachment
-            </a>
+            uploaded a new attachment
             {showIssue && (
               <>
                 {" "}
