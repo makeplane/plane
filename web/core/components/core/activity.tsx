@@ -288,6 +288,23 @@ const activityDetails: {
     },
     icon: <LayersIcon width={12} height={12} className="text-custom-text-200" aria-hidden="true" />,
   },
+  epic: {
+    message: (activity) => {
+      if (activity.verb === "created")
+        return (
+          <>
+            created <IssueLink activity={activity} />
+          </>
+        );
+      else
+        return (
+          <>
+            deleted <IssueLink activity={activity} />
+          </>
+        );
+    },
+    icon: <LayersIcon width={12} height={12} className="text-custom-text-200" aria-hidden="true" />,
+  },
   labels: {
     message: (activity, showIssue, workspaceSlug) => {
       if (activity.old_value === "")
@@ -735,10 +752,11 @@ type ActivityMessageProps = {
 export const ActivityMessage = ({ activity, showIssue = false }: ActivityMessageProps) => {
   // router params
   const { workspaceSlug } = useParams();
+  const activityField = activity.field ?? "issue";
 
   return (
     <>
-      {activityDetails[activity.field as keyof typeof activityDetails]?.message(
+      {activityDetails[activityField as keyof typeof activityDetails]?.message(
         activity,
         showIssue,
         workspaceSlug ? workspaceSlug.toString() : (activity.workspace_detail?.slug ?? "")
