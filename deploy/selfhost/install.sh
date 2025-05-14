@@ -522,11 +522,11 @@ function backup_container_dir() {
     fi
 
     # Create a temporary directory for the backup
-    mkdir -p $BACKUP_FOLDER/$SERVICE_FOLDER
+    mkdir -p "$BACKUP_FOLDER/$SERVICE_FOLDER"
 
     # Copy the data directory from the running container
     echo "Copying $CONTAINER_NAME data directory..."
-    docker cp -q $CONTAINER_ID:$CONTAINER_DATA_DIR/. $BACKUP_FOLDER/$SERVICE_FOLDER/
+    docker cp -q "$CONTAINER_ID:$CONTAINER_DATA_DIR/." "$BACKUP_FOLDER/$SERVICE_FOLDER/"
     local cp_status=$?
 
     if [ $cp_status -ne 0 ]; then
@@ -539,7 +539,7 @@ function backup_container_dir() {
     cd $BACKUP_FOLDER
     tar -czf ${SERVICE_FOLDER}.tar.gz $SERVICE_FOLDER/
     local tar_status=$?
-    # rm -rf $SERVICE_FOLDER/
+    rm -rf $SERVICE_FOLDER/
     cd - > /dev/null
 
     if [ $tar_status -ne 0 ]; then
@@ -547,7 +547,7 @@ function backup_container_dir() {
         return 1
     fi
 
-    echo "Successfully backed up RabbitMQ data"
+    echo "Successfully backed up $SERVICE_FOLDER data"
 }
 
 function backupData() {
