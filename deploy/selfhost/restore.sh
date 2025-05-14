@@ -66,8 +66,10 @@ function restoreData() {
         exit 1
     fi
 
+    local volume_suffix
+    volume_suffix="_pgdata|_redisdata|_uploads|_rabbitmq_data"
     local volumes
-    volumes=$(docker volume ls -f "name=plane-app" --format "{{.Name}}" | grep -E "_pgdata|_redisdata|_uploads")
+    volumes=$(docker volume ls -f "name=plane-app" --format "{{.Name}}" | grep -E "$volume_suffix")
     # Check if there are any matching volumes
     if [ -z "$volumes" ]; then
         echo ".....No volumes found starting with 'plane-app'"
@@ -87,7 +89,7 @@ function restoreData() {
             echo "Found $BACKUP_FILE"
 
             local docVol
-            docVol=$(docker volume ls -f "name=$restoreVolName" --format "{{.Name}}" | grep -E "_pgdata|_redisdata|_uploads")
+            docVol=$(docker volume ls -f "name=$restoreVolName" --format "{{.Name}}" | grep -E "$volume_suffix")
 
             if [ -z "$docVol" ]; then
                 echo "Skipping: No volume found with name $restoreVolName"
