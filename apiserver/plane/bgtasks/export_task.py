@@ -25,7 +25,7 @@ from plane.db.models import ExporterHistory, Issue, FileAsset, Label, User, Issu
 from plane.utils.exception_logger import log_exception
 
 
-def dateTimeConverter(time: datetime) -> str:
+def dateTimeConverter(time: datetime) -> str | None:
     """
     Convert a datetime object to a formatted string.
     """
@@ -33,7 +33,7 @@ def dateTimeConverter(time: datetime) -> str:
         return time.strftime("%a, %d %b %Y %I:%M:%S %Z%z")
 
 
-def dateConverter(time: date) -> str:
+def dateConverter(time: date) -> str | None:
     """
     Convert a date object to a formatted string.
     """
