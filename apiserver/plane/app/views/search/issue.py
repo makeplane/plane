@@ -155,7 +155,7 @@ class IssueSearchEndpoint(BaseAPIView):
             issues = self.search_issues_and_excluding_parent(issues_and_epics, issue_id)
 
         if issue_relation == "true" and issue_id:
-            issues = self.filter_issues_excluding_related_issues(issue_id, issues)
+            issues = self.filter_issues_excluding_related_issues(issue_id, issues_and_epics)
 
         if sub_issue == "true" and issue_id:
             issues = self.filter_root_issues_only(issue_id, issues)
