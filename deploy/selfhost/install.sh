@@ -366,7 +366,7 @@ function startServices() {
 
     local api_container_id=$(docker container ls -q -f "name=$SERVICE_FOLDER-api")
     local idx2=0
-    while ! docker logs $api_container_id 2>&1 | grep -m 1 -i "Application startup complete" | grep -q ".";
+    while ! docker exec $api_container_id python3 -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/')" > /dev/null 2>&1;
     do
         local message=">> Waiting for API Service to Start"
         local dots=$(printf '%*s' $idx2 | tr ' ' '.')    
