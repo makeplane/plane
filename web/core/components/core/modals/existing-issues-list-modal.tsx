@@ -322,7 +322,12 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                   </Combobox.Options>
                 </Combobox>
                 <div className="flex justify-between items-center">
-                  <Button variant="link-primary" size="sm" onClick={handleSelectIssues} disabled={issues.length === 0}>
+                  <Button
+                    variant="link-primary"
+                    size="sm"
+                    onClick={handleSelectIssues}
+                    disabled={filteredIssues.length === 0}
+                  >
                     {selectedIssues.length === issues.length
                       ? t("issue.select.deselect_all")
                       : t("issue.select.select_all")}
@@ -331,11 +336,15 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                     <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                       {t("common.cancel")}
                     </Button>
-                    {selectedIssues.length > 0 && (
-                      <Button variant="primary" size="sm" onClick={onSubmit} loading={isSubmitting}>
-                        {isSubmitting ? t("common.adding") : t("issue.select.add_selected")}
-                      </Button>
-                    )}
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={onSubmit}
+                      loading={isSubmitting}
+                      disabled={isSubmitting || selectedIssues.length === 0}
+                    >
+                      {isSubmitting ? t("common.adding") : t("issue.select.add_selected")}
+                    </Button>
                   </div>
                 </div>
               </Dialog.Panel>
