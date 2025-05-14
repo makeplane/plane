@@ -26,7 +26,7 @@ export const IssueEstimateActivity: FC<TIssueEstimateActivity> = observer((props
       ends={ends}
     >
       <>
-        {activity.new_value ? `set the estimate point to ` : `removed the estimate point`}
+        {activity.new_value ? `set the estimate point to ` : `removed the estimate point `}
         {activity.new_value ? activity.new_value : activity?.old_value}
         {showIssue && (activity.new_value ? ` to ` : ` from `)}
         {showIssue && <IssueLink activityId={activityId} />}.

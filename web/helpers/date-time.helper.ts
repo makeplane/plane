@@ -388,19 +388,19 @@ export const generateDateArray = (startDate: string | Date, endDate: string | Da
   const start = new Date(startDate);
   // start.setDate(start.getDate() + 1);
   const end = new Date(endDate);
-  end.setDate(end.getDate() + 1);
+  end.setDate(end.getDate() + 2);
 
   // Create an empty array to store the dates
   const dateArray = [];
 
   // Use a while loop to generate dates between the range
   while (start <= end) {
-    // Increment the date by 1 day (86400000 milliseconds)
-    start.setDate(start.getDate() + 1);
     // Push the current date (converted to ISO string for consistency)
     dateArray.push({
       date: new Date(start).toISOString().split("T")[0],
     });
+    // Increment the date by 1 day (86400000 milliseconds)
+    start.setDate(start.getDate() + 1);
   }
 
   return dateArray;

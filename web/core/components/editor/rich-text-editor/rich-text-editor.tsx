@@ -9,12 +9,15 @@ import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 // store hooks
-import { useMember } from "@/hooks/store";
+import { useMember, useUserProfile } from "@/hooks/store";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
 interface RichTextEditorWrapperProps
-  extends MakeOptional<Omit<IRichTextEditor, "fileHandler" | "mentionHandler">, "disabledExtensions"> {
+  extends MakeOptional<
+    Omit<IRichTextEditor, "fileHandler" | "mentionHandler" | "isSmoothCursorEnabled">,
+    "disabledExtensions"
+  > {
   searchMentionCallback: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
   workspaceSlug: string;
   workspaceId: string;
@@ -35,6 +38,9 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   } = props;
   // store hooks
   const { getUserDetails } = useMember();
+  const {
+    data: { is_smooth_cursor_enabled },
+  } = useUserProfile();
   // editor flaggings
   const { richTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // use editor mention
@@ -54,6 +60,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         workspaceId,
         workspaceSlug,
       })}
+      isSmoothCursorEnabled={is_smooth_cursor_enabled}
       mentionHandler={{
         searchCallback: async (query) => {
           const res = await fetchMentions(query);

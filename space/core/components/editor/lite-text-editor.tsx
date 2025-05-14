@@ -10,7 +10,10 @@ import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
 
 interface LiteTextEditorWrapperProps
-  extends MakeOptional<Omit<ILiteTextEditor, "fileHandler" | "mentionHandler">, "disabledExtensions"> {
+  extends MakeOptional<
+    Omit<ILiteTextEditor, "fileHandler" | "mentionHandler" | "isSmoothCursorEnabled">,
+    "disabledExtensions"
+  > {
   anchor: string;
   workspaceId: string;
   isSubmitting?: boolean;
@@ -49,6 +52,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         mentionHandler={{
           renderComponent: (props) => <EditorMentionsRoot {...props} />,
         }}
+        isSmoothCursorEnabled={false}
         {...rest}
         // overriding the containerClassName to add relative class passed
         containerClassName={cn(containerClassName, "relative")}

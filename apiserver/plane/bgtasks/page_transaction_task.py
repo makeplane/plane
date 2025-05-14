@@ -44,8 +44,15 @@ def page_transaction(new_value, old_value, page_id):
         new_transactions = []
         deleted_transaction_ids = set()
 
-        # TODO - Add "issue-embed-component", "img", "todo" components
-        components = ["mention-component"]
+        # TODO - "todo" components
+        components = [
+            "mention-component",
+            "issue-embed-component",
+            "page-embed-component",
+            "page-link-component",
+            "image-component",
+        ]
+
         for component in components:
             old_mentions = extract_components(old_value, component)
             new_mentions = extract_components(new_value, component)
@@ -59,7 +66,9 @@ def page_transaction(new_value, old_value, page_id):
                     transaction=mention["id"],
                     page_id=page_id,
                     entity_identifier=mention["entity_identifier"],
-                    entity_name=mention["entity_name"],
+                    entity_name=(
+                        mention["entity_name"] if mention["entity_name"] else "issue"
+                    ),
                     workspace_id=page.workspace_id,
                     created_at=timezone.now(),
                     updated_at=timezone.now(),

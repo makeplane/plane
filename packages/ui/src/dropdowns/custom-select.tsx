@@ -70,7 +70,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
             <button
               ref={setReferenceElement}
               type="button"
-              className={`flex items-center justify-between gap-1 text-xs ${
+              className={`flex items-center justify-between gap-1 text-xs rounded ${
                 disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
               } ${customButtonClassName}`}
               onClick={toggleDropdown}

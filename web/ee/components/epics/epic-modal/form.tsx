@@ -1,0 +1,400 @@
+"use client";
+
+import React, { FC, useState, useRef, useEffect } from "react";
+import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
+import { FormProvider, useForm } from "react-hook-form";
+import { EIssueServiceType, ETabIndices, EWorkItemTypeEntity } from "@plane/constants";
+// editor
+import { EditorRefApi } from "@plane/editor";
+// types
+import type { TIssue, ISearchIssueResponse } from "@plane/types";
+// hooks
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+// components
+import {
+  IssueDescriptionEditor,
+  IssueProjectSelect,
+  IssueTitleInput,
+} from "@/components/issues/issue-modal/components";
+import { CreateLabelModal } from "@/components/labels";
+// helpers
+import { cn } from "@/helpers/common.helper";
+import { getChangedIssuefields } from "@/helpers/issue-modal.helper";
+import { getTabIndex } from "@/helpers/tab-indices.helper";
+// hooks
+import { useIssueModal } from "@/hooks/context/use-issue-modal";
+import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useIssueTypes } from "@/plane-web/hooks/store";
+import { IssueAdditionalProperties } from "../../issues";
+import { EpicDefaultProperties } from "./components";
+
+const defaultValues: Partial<TIssue> = {
+  project_id: "",
+  type_id: null,
+  name: "",
+  description_html: "",
+  estimate_point: null,
+  state_id: "",
+  priority: "none",
+  assignee_ids: [],
+  label_ids: [],
+  start_date: null,
+  target_date: null,
+};
+
+export interface EpicFormProps {
+  data?: Partial<TIssue>;
+  issueTitleRef: React.MutableRefObject<HTMLInputElement | null>;
+  onAssetUpload: (assetId: string) => void;
+  onChange?: (formData: Partial<TIssue> | null) => void;
+  onClose: () => void;
+  onSubmit: (values: Partial<TIssue>) => Promise<void>;
+  projectId: string;
+  primaryButtonText?: {
+    default: string;
+    loading: string;
+  };
+  isProjectSelectionDisabled?: boolean;
+  modalTitle?: string;
+}
+
+export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
+  const {
+    data,
+    issueTitleRef,
+    onAssetUpload,
+    onChange,
+    onClose,
+    onSubmit,
+    projectId: defaultProjectId,
+    primaryButtonText = {
+      default: `${data?.id ? "Update" : "Save"}`,
+      loading: `${data?.id ? "Updating" : "Saving"}`,
+    },
+    modalTitle = `${data?.id ? "Update epic" : "Create epic"}`,
+  } = props;
+
+  // states
+  const [labelModal, setLabelModal] = useState(false);
+  const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
+  const [gptAssistantModal, setGptAssistantModal] = useState(false);
+
+  // refs
+  const editorRef = useRef<EditorRefApi>(null);
+  const submitBtnRef = useRef<HTMLButtonElement | null>(null);
+  const formRef = useRef<HTMLFormElement | null>(null);
+
+  // router
+  const { workspaceSlug, projectId: routeProjectId } = useParams();
+
+  // store hooks
+  const { getProjectById } = useProject();
+  const { getIssueTypeIdOnProjectChange, getActiveAdditionalPropertiesLength, handlePropertyValuesValidation } =
+    useIssueModal();
+  const { isMobile } = usePlatformOS();
+  const { getProjectEpicDetails } = useIssueTypes();
+
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail();
+  const { getStateById } = useProjectState();
+
+  const epicDetails = getProjectEpicDetails(routeProjectId?.toString());
+
+  // form info
+  const methods = useForm<TIssue>({
+    defaultValues: { ...defaultValues, project_id: defaultProjectId, ...data },
+    reValidateMode: "onChange",
+  });
+  const {
+    formState,
+    formState: { isDirty, isSubmitting, dirtyFields },
+    handleSubmit,
+    reset,
+    watch,
+    control,
+    getValues,
+    setValue,
+  } = methods;
+
+  const projectId = watch("project_id");
+  const activeAdditionalPropertiesLength = getActiveAdditionalPropertiesLength({
+    projectId: projectId,
+    workspaceSlug: workspaceSlug?.toString(),
+    watch: watch,
+  });
+
+  // derived values
+
+  const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
+
+  //reset few fields on projectId change
+  useEffect(() => {
+    if (isDirty) {
+      const formData = getValues();
+      reset({
+        ...defaultValues,
+        project_id: projectId,
+        name: formData.name,
+        description_html: formData.description_html,
+        priority: formData.priority,
+        start_date: formData.start_date,
+        target_date: formData.target_date,
+      });
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId]);
+
+  // Update the issue type id when the project id changes
+  useEffect(() => {
+    const issueTypeId = watch("type_id");
+
+    // if issue type id is present or project not available, return
+    if (issueTypeId || !projectId) return;
+
+    // get issue type id on project change
+    const issueTypeIdOnProjectChange = getIssueTypeIdOnProjectChange(projectId);
+    if (issueTypeIdOnProjectChange) setValue("type_id", issueTypeIdOnProjectChange, { shouldValidate: true });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, projectId]);
+
+  const handleFormSubmit = async (formData: Partial<TIssue>) => {
+    // Check if the editor is ready to discard
+    if (!editorRef.current?.isEditorReadyToDiscard()) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Editor is not ready to discard changes.",
+      });
+      return;
+    }
+
+    // check for required properties validation
+    if (
+      !handlePropertyValuesValidation({
+        projectId: projectId,
+        workspaceSlug: workspaceSlug?.toString(),
+        watch: watch,
+      })
+    )
+      return;
+
+    const submitData = !data?.id
+      ? formData
+      : {
+          ...getChangedIssuefields(formData, dirtyFields as { [key: string]: boolean | undefined }),
+          project_id: getValues<"project_id">("project_id"),
+          id: data.id,
+          description_html: formData.description_html ?? "<p></p>",
+          type_id: getValues<"type_id">("type_id"),
+        };
+
+    // this condition helps to move the issues from draft to project issues
+    if (formData.hasOwnProperty("is_draft")) submitData.is_draft = formData.is_draft;
+
+    await onSubmit(submitData)
+      .then(() => {
+        setGptAssistantModal(false);
+        reset({
+          ...defaultValues,
+          project_id: getValues<"project_id">("project_id"),
+          type_id: getValues<"type_id">("type_id"),
+          description_html: data?.description_html ?? "<p></p>",
+        });
+        editorRef?.current?.clearEditor();
+        onClose();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const condition =
+    (watch("name") && watch("name") !== "") || (watch("description_html") && watch("description_html") !== "<p></p>");
+
+  const handleFormChange = () => {
+    if (!onChange) return;
+
+    if (isDirty && condition) onChange(watch());
+    else onChange(null);
+  };
+
+  // executing this useEffect when the parent_id coming from the component prop
+  useEffect(() => {
+    const parentId = watch("parent_id") || undefined;
+    if (!parentId) return;
+    if (parentId === selectedParentIssue?.id || selectedParentIssue) return;
+
+    const issue = getIssueById(parentId);
+    if (!issue) return;
+
+    const projectDetails = getProjectById(issue.project_id);
+    if (!projectDetails) return;
+
+    const stateDetails = getStateById(issue.state_id);
+
+    setSelectedParentIssue({
+      id: issue.id,
+      name: issue.name,
+      project_id: issue.project_id,
+      project__identifier: projectDetails.identifier,
+      project__name: projectDetails.name,
+      sequence_id: issue.sequence_id,
+      type_id: issue.type_id,
+      state__color: stateDetails?.color,
+    } as ISearchIssueResponse);
+  }, [watch, getIssueById, getProjectById, selectedParentIssue, getStateById]);
+
+  // executing this useEffect when isDirty changes
+  useEffect(() => {
+    if (!onChange) return;
+
+    if (isDirty && condition) onChange(watch());
+    else onChange(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDirty]);
+
+  return (
+    <FormProvider {...methods}>
+      {projectId && (
+        <CreateLabelModal
+          isOpen={labelModal}
+          handleClose={() => setLabelModal(false)}
+          projectId={projectId}
+          onSuccess={(response) => {
+            setValue<"label_ids">("label_ids", [...watch("label_ids"), response.id]);
+            handleFormChange();
+          }}
+        />
+      )}
+      <div className="flex gap-2 bg-transparent">
+        <div className="rounded-lg w-full">
+          <form
+            ref={formRef}
+            onSubmit={handleSubmit((data) => handleFormSubmit(data))}
+            className="flex flex-col w-full"
+          >
+            <div className="p-5 rounded-t-lg bg-custom-background-100">
+              <h3 className="text-xl font-medium text-custom-text-200 pb-2">{modalTitle}</h3>
+              <div className="flex items-center justify-between pt-2 pb-4">
+                <div className="flex items-center gap-x-1">
+                  <IssueProjectSelect control={control} disabled handleFormChange={handleFormChange} />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <IssueTitleInput
+                  control={control}
+                  issueTitleRef={issueTitleRef}
+                  formState={formState}
+                  handleFormChange={handleFormChange}
+                />
+              </div>
+            </div>
+            <div
+              className={cn(
+                "pb-4 space-y-3 bg-custom-background-100",
+                activeAdditionalPropertiesLength > 4 &&
+                  "max-h-[45vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
+              )}
+            >
+              <div className="px-5">
+                <IssueDescriptionEditor
+                  control={control}
+                  isDraft={false}
+                  issueName={watch("name")}
+                  issueId={data?.id}
+                  descriptionHtmlData={data?.description_html}
+                  editorRef={editorRef}
+                  submitBtnRef={submitBtnRef}
+                  gptAssistantModal={gptAssistantModal}
+                  workspaceSlug={workspaceSlug?.toString()}
+                  projectId={projectId}
+                  handleFormChange={handleFormChange}
+                  handleDescriptionHTMLDataChange={(description_html) =>
+                    setValue<"description_html">("description_html", description_html)
+                  }
+                  setGptAssistantModal={setGptAssistantModal}
+                  handleGptAssistantClose={() => reset(getValues())}
+                  onAssetUpload={onAssetUpload}
+                  onClose={onClose}
+                />
+              </div>
+              <div
+                className={cn(
+                  "px-5",
+                  activeAdditionalPropertiesLength <= 4 &&
+                    "max-h-[25vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
+                )}
+              >
+                {projectId && epicDetails?.id && (
+                  <IssueAdditionalProperties
+                    issueId={data?.id ?? data?.sourceIssueId}
+                    issueTypeId={epicDetails?.id}
+                    projectId={projectId}
+                    workspaceSlug={workspaceSlug?.toString()}
+                    entityType={EWorkItemTypeEntity.EPIC}
+                    issueServiceType={EIssueServiceType.EPICS}
+                  />
+                )}
+              </div>
+            </div>
+            <div className="px-4 py-3 border-t-[0.5px] border-custom-border-200 shadow-custom-shadow-xs rounded-b-lg bg-custom-background-100">
+              <div className="pb-3 border-b-[0.5px] border-custom-border-200">
+                <EpicDefaultProperties
+                  control={control}
+                  id={data?.id}
+                  projectId={projectId}
+                  workspaceSlug={workspaceSlug?.toString()}
+                  selectedParentIssue={selectedParentIssue}
+                  startDate={watch("start_date")}
+                  targetDate={watch("target_date")}
+                  parentId={watch("parent_id")}
+                  isDraft={false}
+                  handleFormChange={handleFormChange}
+                  setLabelModal={setLabelModal}
+                  setSelectedParentIssue={setSelectedParentIssue}
+                />
+              </div>
+              <div className="flex items-center justify-end gap-4 py-3">
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="neutral-primary"
+                    size="sm"
+                    onClick={() => {
+                      if (editorRef.current?.isEditorReadyToDiscard()) {
+                        onClose();
+                      } else {
+                        setToast({
+                          type: TOAST_TYPE.ERROR,
+                          title: "Error!",
+                          message: "Editor is still processing changes. Please wait before proceeding.",
+                        });
+                      }
+                    }}
+                    tabIndex={getIndex("discard_button")}
+                  >
+                    Discard
+                  </Button>
+                  <Button
+                    variant="primary"
+                    type="submit"
+                    size="sm"
+                    ref={submitBtnRef}
+                    loading={isSubmitting}
+                    tabIndex={getIndex("submit_button")}
+                  >
+                    {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </FormProvider>
+  );
+});

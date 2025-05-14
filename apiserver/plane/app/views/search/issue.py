@@ -108,6 +108,7 @@ class IssueSearchEndpoint(BaseAPIView):
         issue_relation = request.query_params.get("issue_relation", "false")
         cycle = request.query_params.get("cycle", "false")
         module = request.query_params.get("module", False)
+        epic = request.query_params.get("epic", "false")
         sub_issue = request.query_params.get("sub_issue", "false")
         target_date = request.query_params.get("target_date", True)
         issue_id = request.query_params.get("issue_id", False)
@@ -117,10 +118,28 @@ class IssueSearchEndpoint(BaseAPIView):
             project__project_projectmember__member=self.request.user,
             project__project_projectmember__is_active=True,
             project__archived_at__isnull=True,
+            project__deleted_at__isnull=True,
+        )
+
+        issues_and_epics = (
+            Issue.objects.filter(
+                workspace__slug=slug,
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+                project__archived_at__isnull=True,
+                project__deleted_at__isnull=True,
+            )
+            .filter(deleted_at__isnull=True)
+            .filter(state__is_triage=False)
+            .exclude(archived_at__isnull=False)
+            .exclude(project__archived_at__isnull=False)
+            .exclude(is_draft=True)
         )
 
         if workspace_search == "false":
             issues = self.filter_issues_by_project(project_id, issues)
+
+            issues_and_epics = issues_and_epics.filter(project_id=project_id)
 
         if query:
             issues = self.search_issues_by_query(query, issues)
@@ -133,6 +152,17 @@ class IssueSearchEndpoint(BaseAPIView):
 
         if sub_issue == "true" and issue_id:
             issues = self.filter_root_issues_only(issue_id, issues)
+
+        if epic == "true":
+            issues = search_issues(query, issues_and_epics)
+
+        if epic == "true" and issue_id:
+            issue = Issue.issue_objects.filter(pk=issue_id).first()
+
+            if issue:
+                issues = issues.filter(
+                    ~Q(pk=issue_id), ~Q(pk=issue.parent_id), ~Q(parent_id=issue_id)
+                )
 
         if cycle == "true":
             issues = self.exclude_issues_in_cycles(issues)
@@ -161,6 +191,7 @@ class IssueSearchEndpoint(BaseAPIView):
                 "state__name",
                 "state__group",
                 "state__color",
+                "type_id",
             )[:100],
             status=status.HTTP_200_OK,
         )
