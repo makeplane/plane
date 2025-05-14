@@ -111,6 +111,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
     };
     // if unsplash or a pre-defined image is uploaded, delete the old uploaded asset
     if (formData.cover_image_url?.startsWith("http")) {
+      userPayload.cover_image_url = formData.cover_image_url;
       userPayload.cover_image = formData.cover_image_url;
       userPayload.cover_image_asset = null;
     }

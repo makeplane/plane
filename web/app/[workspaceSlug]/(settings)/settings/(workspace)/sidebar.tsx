@@ -5,6 +5,8 @@ import {
   GROUPED_WORKSPACE_SETTINGS,
   WORKSPACE_SETTINGS_CATEGORIES,
   EUserWorkspaceRoles,
+  EUserPermissions,
+  WORKSPACE_SETTINGS_CATEGORY,
 } from "@plane/constants";
 import { SettingsSidebar } from "@/components/settings";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -43,10 +45,15 @@ export const WorkspaceSettingsSidebar = (props: TWorkspaceSettingsSidebarProps) 
   const pathname = usePathname();
   const { workspaceSlug } = useParams(); // store hooks
   const { allowPermissions } = useUserPermissions();
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+
   return (
     <SettingsSidebar
       isMobile={isMobile}
-      categories={WORKSPACE_SETTINGS_CATEGORIES}
+      categories={WORKSPACE_SETTINGS_CATEGORIES.filter(
+        (category) =>
+          isAdmin || ![WORKSPACE_SETTINGS_CATEGORY.FEATURES, WORKSPACE_SETTINGS_CATEGORY.DEVELOPER].includes(category)
+      )}
       groupedSettings={GROUPED_WORKSPACE_SETTINGS}
       workspaceSlug={workspaceSlug.toString()}
       isActive={(data: { href: string }) =>

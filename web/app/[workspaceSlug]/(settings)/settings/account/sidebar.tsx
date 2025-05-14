@@ -1,10 +1,16 @@
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { CircleUser, Activity, Bell, CircleUserRound, KeyRound, Settings2, Blocks, Lock } from "lucide-react";
-import { GROUPED_PROFILE_SETTINGS, PROFILE_SETTINGS_CATEGORIES } from "@plane/constants";
+import {
+  EUserPermissions,
+  EUserPermissionsLevel,
+  GROUPED_PROFILE_SETTINGS,
+  PROFILE_SETTINGS_CATEGORIES,
+  PROFILE_SETTINGS_CATEGORY,
+} from "@plane/constants";
 import { SettingsSidebar } from "@/components/settings";
 import { getFileURL } from "@/helpers/file.helper";
-import { useUser } from "@/hooks/store/user";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 
 export const ProjectActionIcons = ({ type, size, className }: { type: string; size?: number; className?: string }) => {
   const icons = {
@@ -34,10 +40,15 @@ export const ProfileSidebar = observer((props: TProfileSidebarProps) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
+
+  const { allowPermissions } = useUserPermissions();
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   return (
     <SettingsSidebar
       isMobile={isMobile}
-      categories={PROFILE_SETTINGS_CATEGORIES}
+      categories={PROFILE_SETTINGS_CATEGORIES.filter(
+        (category) => isAdmin || category !== PROFILE_SETTINGS_CATEGORY.DEVELOPER
+      )}
       groupedSettings={GROUPED_PROFILE_SETTINGS}
       workspaceSlug={workspaceSlug.toString()}
       isActive={(data: { href: string }) => pathname === `/${workspaceSlug}${data.href}/`}
