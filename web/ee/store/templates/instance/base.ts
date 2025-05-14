@@ -175,7 +175,12 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
   update = action(async (templateData: Partial<T>): Promise<void> => {
     if (!this.id) return;
     try {
-      const updatedTemplate = await this.updateActionCallback(this.id, templateData);
+      const updatedTemplate = await this.updateActionCallback(this.id, {
+        // Include project and workspace to route update request to correct service
+        project: this.project,
+        workspace: this.workspace,
+        ...templateData,
+      });
       this.mutateInstance(updatedTemplate);
     } catch (error) {
       console.error("BaseTemplateInstance.update -> error", error);
