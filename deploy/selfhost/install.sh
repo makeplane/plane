@@ -508,43 +508,69 @@ function viewLogs(){
         echo "INVALID SERVICE NAME SUPPLIED"
     fi
 }
-function backupSingleVolume() {
-    backupFolder=$1
-    selectedVolume=$2
-    # Backup data from Docker volume to the backup folder
-    # docker run --rm -v "$selectedVolume":/source -v "$backupFolder":/backup busybox sh -c 'cp -r /source/* /backup/'
-    local tobereplaced="plane-app_"
-    local replacewith=""
+function backup_container_dir() {
+    local BACKUP_FOLDER=$1
+    local CONTAINER_NAME=$2
+    local CONTAINER_DATA_DIR=$3
+    local SERVICE_FOLDER=$4
 
-    local svcName="${selectedVolume//$tobereplaced/$replacewith}"
+    echo "Backing up $CONTAINER_NAME data..."
+    local CONTAINER_ID=$(/bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH ps -q $CONTAINER_NAME")
+    if [ -z "$CONTAINER_ID" ]; then
+        echo "Error: $CONTAINER_NAME container not found. Make sure the services are running."
+        return 1
+    fi
 
-    docker run --rm \
-        -e TAR_NAME="$svcName" \
-        -v "$selectedVolume":/"$svcName" \
-        -v "$backupFolder":/backup \
-        busybox sh -c 'tar -czf "/backup/${TAR_NAME}.tar.gz" /${TAR_NAME}'
+    # Create a temporary directory for the backup
+    mkdir -p "$BACKUP_FOLDER/$SERVICE_FOLDER"
+
+    # Copy the data directory from the running container
+    echo "Copying $CONTAINER_NAME data directory..."
+    docker cp -q "$CONTAINER_ID:$CONTAINER_DATA_DIR/." "$BACKUP_FOLDER/$SERVICE_FOLDER/"
+    local cp_status=$?
+
+    if [ $cp_status -ne 0 ]; then
+        echo "Error: Failed to copy $SERVICE_FOLDER data"
+        rm -rf $BACKUP_FOLDER/$SERVICE_FOLDER
+        return 1
+    fi
+
+    # Create tar.gz of the data
+    cd "$BACKUP_FOLDER"
+    tar -czf "${SERVICE_FOLDER}.tar.gz" "$SERVICE_FOLDER/"
+    local tar_status=$?
+    if [ $tar_status -eq 0 ]; then
+        rm -rf "$SERVICE_FOLDER/"
+    fi
+    cd - > /dev/null
+
+    if [ $tar_status -ne 0 ]; then
+        echo "Error: Failed to create tar archive"
+        return 1
+    fi
+
+    echo "Successfully backed up $SERVICE_FOLDER data"
 }
+
 function backupData() {
     local datetime=$(date +"%Y%m%d-%H%M")
     local BACKUP_FOLDER=$PLANE_INSTALL_DIR/backup/$datetime
     mkdir -p "$BACKUP_FOLDER"
 
-    volumes=$(docker volume ls -f "name=$SERVICE_FOLDER" --format "{{.Name}}" | grep -E "_pgdata|_redisdata|_uploads")
-    # Check if there are any matching volumes
-    if [ -z "$volumes" ]; then
-        echo "No volumes found starting with '$SERVICE_FOLDER'"
+    # Check if docker-compose.yml exists
+    if [ ! -f "$DOCKER_FILE_PATH" ]; then
+        echo "Error: docker-compose.yml not found at $DOCKER_FILE_PATH"
         exit 1
     fi
 
-    for vol in $volumes; do
-        echo "Backing Up $vol"
-        backupSingleVolume "$BACKUP_FOLDER" "$vol"
-    done
+    backup_container_dir "$BACKUP_FOLDER" "plane-db" "/var/lib/postgresql/data" "pgdata" || exit 1
+    backup_container_dir "$BACKUP_FOLDER" "plane-minio" "/export" "uploads" || exit 1
+    backup_container_dir "$BACKUP_FOLDER" "plane-mq" "/var/lib/rabbitmq" "rabbitmq_data" || exit 1
+    backup_container_dir "$BACKUP_FOLDER" "plane-redis" "/data" "redisdata" || exit 1
 
     echo ""
     echo "Backup completed successfully. Backup files are stored in $BACKUP_FOLDER"
     echo ""
-
 }
 function askForAction() {
     local DEFAULT_ACTION=$1
