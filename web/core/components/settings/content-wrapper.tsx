@@ -47,13 +47,10 @@ export const SettingsContentWrapper = observer((props: TProps) => {
 
   return (
     <div
-      className={cn(
-        "relative flex flex-col w-full items-center mx-auto h-full min-h-full overflow-y-scroll py-4 md:py-0",
-        {
-          "p-4 max-w-[800px] 2xl:max-w-[1000px]": size === "md",
-          "md:px-16": size === "lg",
-        }
-      )}
+      className={cn("flex flex-col w-full items-center mx-auto h-full min-h-full overflow-y-scroll py-4 md:py-0", {
+        "p-4 max-w-[800px] 2xl:max-w-[1000px]": size === "md",
+        "md:px-16": size === "lg",
+      })}
       ref={ref}
     >
       <div className="pb-20 w-full">{children}</div>
