@@ -50,6 +50,8 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
       currentUserProfile?.onboarding_step?.workspace_join) ||
     false;
 
+  const pathnameWithNextPath = pathname && nextPath ? `${pathname}?next_path=${nextPath}` : pathname;
+
   const getWorkspaceRedirectionUrl = (): string => {
     let redirectionRoute = "/profile";
 
@@ -90,7 +92,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
         router.push(currentRedirectRoute);
         return <></>;
       } else {
-        router.push("/onboarding");
+        router.push(pathnameWithNextPath ? `/onboarding?next_path=${pathnameWithNextPath}` : `/onboarding`);
         return <></>;
       }
     }
@@ -98,7 +100,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
   if (pageType === EPageTypes.ONBOARDING) {
     if (!currentUser?.id) {
-      router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
+      router.push(`/${pathnameWithNextPath ? `?next_path=${pathnameWithNextPath}` : ``}`);
       return <></>;
     } else {
       if (currentUser && currentUserProfile?.id && isUserOnboard) {
@@ -111,7 +113,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
   if (pageType === EPageTypes.SET_PASSWORD) {
     if (!currentUser?.id) {
-      router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
+      router.push(`/${pathnameWithNextPath ? `?next_path=${pathnameWithNextPath}` : ``}`);
       return <></>;
     } else {
       if (currentUser && !currentUser?.is_password_autoset && currentUserProfile?.id && isUserOnboard) {
@@ -126,11 +128,11 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     if (currentUser?.id) {
       if (currentUserProfile && currentUserProfile?.id && isUserOnboard) return <>{children}</>;
       else {
-        router.push(`/onboarding`);
+        router.push(pathnameWithNextPath ? `/onboarding?next_path=${pathnameWithNextPath}` : `/onboarding`);
         return <></>;
       }
     } else {
-      router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
+      router.push(`/${pathnameWithNextPath ? `?next_path=${pathnameWithNextPath}` : ``}`);
       return <></>;
     }
   }
