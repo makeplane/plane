@@ -2,17 +2,17 @@
 
 import { ReactNode } from "react";
 import { useParams } from "next/navigation";
-// plane web layouts
-import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
+// hooks
+import { useProjectResources } from "@/plane-web/hooks/use-project-resources";
 
 const ProjectDetailLayout = ({ children }: { children: ReactNode }) => {
   // router
   const { workspaceSlug, projectId } = useParams();
-  return (
-    <ProjectAuthWrapper workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()}>
-      {children}
-    </ProjectAuthWrapper>
-  );
+
+  // Load project resources
+  useProjectResources(workspaceSlug?.toString(), projectId?.toString());
+
+  return children;
 };
 
 export default ProjectDetailLayout;
