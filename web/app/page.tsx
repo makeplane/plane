@@ -5,16 +5,15 @@ import Image from "next/image";
 import Link from "next/link";
 // ui
 import { useTheme } from "next-themes";
-// components
-import { NAVIGATE_TO_SIGNUP } from "@plane/constants";
+// plane imports
+import { NAVIGATE_TO_SIGNUP, EAuthModes, EAuthPageTypes } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { AuthRoot } from "@/components/account";
-import { PageHead } from "@/components/core";
-// constants
-// helpers
-import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
+// components
+import { AuthRoot } from "@/components/account/auth-forms/auth-root";
+import { PageHead } from "@/components/core/page-title";
 // hooks
-import { useEventTracker, useInstance } from "@/hooks/store";
+import { useEventTracker } from "@/hooks/store/use-event-tracker";
+import { useInstance } from "@/hooks/store/use-instance";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 // wrappers
@@ -40,7 +39,7 @@ const HomePage = observer(() => {
 
   return (
     <DefaultLayout>
-      <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>
+      <AuthenticationWrapper pageType={EAuthPageTypes.NON_AUTHENTICATED}>
         <>
           <div className="relative w-screen h-screen overflow-hidden">
             <PageHead title={t("auth.common.login") + " - Plane"} />

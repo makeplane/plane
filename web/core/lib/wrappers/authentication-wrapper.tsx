@@ -4,15 +4,18 @@ import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams, usePathname } from "next/navigation";
 import useSWR from "swr";
+// plane imports
+import { EAuthPageTypes } from "@plane/constants";
 // components
-import { LogoSpinner } from "@/components/common";
-// helpers
-import { EPageTypes } from "@/helpers/authentication.helper";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
-import { useUser, useUserProfile, useUserSettings, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser } from "@/hooks/store/user/user-user";
+import { useUserProfile } from "@/hooks/store/user/user-user-profile";
+import { useUserSettings } from "@/hooks/store/user/user-user-settings";
 import { useAppRouter } from "@/hooks/use-app-router";
 
-type TPageType = EPageTypes;
+type TPageType = EAuthPageTypes;
 
 type TAuthenticationWrapper = {
   children: ReactNode;
@@ -30,7 +33,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
   const searchParams = useSearchParams();
   const nextPath = searchParams.get("next_path");
   // props
-  const { children, pageType = EPageTypes.AUTHENTICATED } = props;
+  const { children, pageType = EAuthPageTypes.AUTHENTICATED } = props;
   // hooks
   const { isLoading: isUserLoading, data: currentUser, fetchCurrentUser } = useUser();
   const { data: currentUserProfile } = useUserProfile();
@@ -80,9 +83,9 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
       </div>
     );
 
-  if (pageType === EPageTypes.PUBLIC) return <>{children}</>;
+  if (pageType === EAuthPageTypes.PUBLIC) return <>{children}</>;
 
-  if (pageType === EPageTypes.NON_AUTHENTICATED) {
+  if (pageType === EAuthPageTypes.NON_AUTHENTICATED) {
     if (!currentUser?.id) return <>{children}</>;
     else {
       if (currentUserProfile?.id && isUserOnboard) {
@@ -96,7 +99,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     }
   }
 
-  if (pageType === EPageTypes.ONBOARDING) {
+  if (pageType === EAuthPageTypes.ONBOARDING) {
     if (!currentUser?.id) {
       router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
       return <></>;
@@ -109,7 +112,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     }
   }
 
-  if (pageType === EPageTypes.SET_PASSWORD) {
+  if (pageType === EAuthPageTypes.SET_PASSWORD) {
     if (!currentUser?.id) {
       router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
       return <></>;
@@ -122,7 +125,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     }
   }
 
-  if (pageType === EPageTypes.AUTHENTICATED) {
+  if (pageType === EAuthPageTypes.AUTHENTICATED) {
     if (currentUser?.id) {
       if (currentUserProfile && currentUserProfile?.id && isUserOnboard) return <>{children}</>;
       else {

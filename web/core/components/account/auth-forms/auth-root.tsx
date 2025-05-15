@@ -9,10 +9,10 @@ import {
   AuthBanner,
   AuthEmailForm,
   AuthPasswordForm,
-  OAuthOptions,
-  TermsAndConditions,
   AuthUniqueCodeForm,
-} from "@/components/account";
+} from "@/components/account/auth-forms";
+import { OAuthOptions } from "@/components/account/oauth/oauth-options";
+import { TermsAndConditions } from "@/components/account/terms-and-conditions";
 // helpers
 import {
   EAuthModes,
@@ -23,7 +23,7 @@ import {
   authErrorHandler,
 } from "@/helpers/authentication.helper";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { AuthService } from "@/services/auth.service";

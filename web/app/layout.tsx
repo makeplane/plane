@@ -5,11 +5,9 @@ import "@/styles/globals.css";
 import "@/styles/command-pallette.css";
 import "@/styles/emoji.css";
 import "@/styles/react-day-picker.css";
-// meta data info
-
-import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
-// helpers
-import { API_BASE_URL, cn } from "@/helpers/common.helper";
+// Plane Imports
+import { SITE_DESCRIPTION, SITE_NAME, API_BASE_URL } from "@plane/constants";
+import { cn } from "@plane/utils";
 // local
 import { AppProvider } from "./provider";
 
