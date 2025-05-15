@@ -81,8 +81,8 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                         </div>
                       )}
 
-                      <span className="ring-6 flex h-6 w-6 items-center justify-center rounded-full bg-custom-background-80 text-custom-text-200 ring-white">
-                        <MessageSquare className="h-6 w-6 !text-2xl text-custom-text-200" aria-hidden="true" />
+                      <span className="ring-6 flex h-6 w-6 p-2 items-center justify-center rounded-full bg-custom-background-80 text-custom-text-200 ring-white">
+                        <MessageSquare className="!text-2xl text-custom-text-200" aria-hidden="true" />
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">
