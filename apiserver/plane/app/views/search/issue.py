@@ -144,6 +144,9 @@ class IssueSearchEndpoint(BaseAPIView):
         # Filter issues and epics by query
         if epic == "true":
             issues = self.search_issues_by_query(query, issues_and_epics)
+        
+        if parent == "true":
+            issues = self.search_issues_by_query(query, issues_and_epics)
 
         if query:
             issues = self.search_issues_by_query(query, issues)
