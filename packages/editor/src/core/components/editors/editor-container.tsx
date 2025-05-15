@@ -52,8 +52,8 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
       const lastNodePos = editor.state.doc.resolve(Math.max(0, docSize - 2));
       const lastNode = lastNodePos.node();
 
-      // Check if the last node is a  not paragraph
-      if (lastNode && lastNode.type.name !== "paragraph") {
+      // Check if its last node and add new node
+      if (lastNode) {
         // If last node is not a paragraph, insert a new paragraph at the end
         const endPosition = editor?.state.doc.content.size;
         editor?.chain().insertContentAt(endPosition, { type: "paragraph" }).run();
