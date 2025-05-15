@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useRef } from "react";
 import { Editor } from "@tiptap/react";
-import tippy, { Instance } from "tippy.js";
 import { Copy, LucideIcon, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useRef } from "react";
+import tippy, { Instance } from "tippy.js";
+import { TExtensions } from "@/types";
 
 interface BlockMenuProps {
   editor: Editor;
+  disabledExtensions?: TExtensions[];
 }
 
 export const BlockMenu = (props: BlockMenuProps) => {

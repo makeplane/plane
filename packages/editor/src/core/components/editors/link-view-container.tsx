@@ -3,6 +3,7 @@ import { Editor, useEditorState } from "@tiptap/react";
 import { FC, useCallback, useEffect, useState } from "react";
 // components
 import { LinkView, LinkViewProps } from "@/components/links";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
 interface LinkViewContainerProps {
   editor: Editor;
@@ -17,7 +18,7 @@ export const LinkViewContainer: FC<LinkViewContainerProps> = ({ editor, containe
   const editorState = useEditorState({
     editor,
     selector: ({ editor }: { editor: Editor }) => ({
-      linkExtensionStorage: editor.storage.link,
+      linkExtensionStorage: getExtensionStorage(editor, "link"),
     }),
   });
 
@@ -109,7 +110,7 @@ export const LinkViewContainer: FC<LinkViewContainerProps> = ({ editor, containe
 
   // Close link view when bubble menu opens
   useEffect(() => {
-    if (editorState.linkExtensionStorage.isBubbleMenuOpen && isOpen) {
+    if (editorState.linkExtensionStorage?.isBubbleMenuOpen && isOpen) {
       setIsOpen(false);
     }
   }, [editorState.linkExtensionStorage, isOpen]);

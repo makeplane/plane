@@ -3,7 +3,7 @@ import { Editor } from "@tiptap/react";
 import { EditorContainer, EditorContentWrapper } from "@/components/editors";
 import { AIFeaturesMenu, BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // types
-import { TAIHandler, TDisplayConfig } from "@/types";
+import { TAIHandler, TDisplayConfig, TExtensions } from "@/types";
 
 type IPageRenderer = {
   aiHandler?: TAIHandler;
@@ -13,10 +13,20 @@ type IPageRenderer = {
   editorContainerClassName: string;
   id: string;
   tabIndex?: number;
+  disabledExtensions: TExtensions[];
 };
 
 export const PageRenderer = (props: IPageRenderer) => {
-  const { aiHandler, bubbleMenuEnabled, displayConfig, editor, editorContainerClassName, id, tabIndex } = props;
+  const {
+    aiHandler,
+    bubbleMenuEnabled,
+    displayConfig,
+    editor,
+    editorContainerClassName,
+    id,
+    tabIndex,
+    disabledExtensions,
+  } = props;
 
   return (
     <div className="frame-renderer flex-grow w-full">
@@ -30,7 +40,7 @@ export const PageRenderer = (props: IPageRenderer) => {
         {editor.isEditable && (
           <div>
             {bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
-            <BlockMenu editor={editor} />
+            <BlockMenu editor={editor} disabledExtensions={disabledExtensions} />
             <AIFeaturesMenu menu={aiHandler?.menu} />
           </div>
         )}
