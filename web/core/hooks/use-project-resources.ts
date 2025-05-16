@@ -1,7 +1,5 @@
-import { useEffect } from "react";
 import useSWR from "swr";
 // hooks
-import { ETimeLineTypeType } from "@/components/gantt-chart/contexts";
 import {
   useCycle,
   useLabel,
@@ -14,7 +12,6 @@ import {
   useUserPermissions,
 } from "@/hooks/store";
 // local
-import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 import { persistence } from "@/local-db/storage.sqlite";
 
 export const useProjectCoreResources = (workspaceSlug?: string, projectId?: string) => {
@@ -22,7 +19,6 @@ export const useProjectCoreResources = (workspaceSlug?: string, projectId?: stri
   const { fetchProjectDetails } = useProject();
   const { fetchAllCycles } = useCycle();
   const { fetchModulesSlim, fetchModules } = useModule();
-  const { initGantt } = useTimeLineChart(ETimeLineTypeType.MODULE);
   const { fetchViews } = useProjectView();
   const {
     project: { fetchProjectMembers },
@@ -30,12 +26,6 @@ export const useProjectCoreResources = (workspaceSlug?: string, projectId?: stri
   const { fetchProjectStates } = useProjectState();
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
-
-  // Initialize module timeline chart
-  useEffect(() => {
-    initGantt();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // Sync issues
   useSWR(
@@ -118,4 +108,8 @@ export const useProjectCoreResources = (workspaceSlug?: string, projectId?: stri
     workspaceSlug && projectId ? () => fetchViews(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
+
+  return {
+    isLoading: false,
+  };
 };
