@@ -122,7 +122,7 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
 
 
     def get_work_items_stats(self) -> Dict[str, Dict[str, int]]:
-        base_queryset = Issue.objects.filter(**self.filters["base_filters"])
+        base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"])
 
         return {
             "total_work_items": self.get_filtered_counts(base_queryset),
