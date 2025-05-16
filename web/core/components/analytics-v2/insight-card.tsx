@@ -30,12 +30,12 @@ const InsightCard = (props: InsightCardProps) => {
       {!isLoading ? (
         <div className="flex flex-col gap-1">
           <div className="text-2xl font-bold text-custom-text-100">{count}</div>
-          {percentage && (
+          {/* {percentage && (
             <div className="flex gap-1 text-xs text-custom-text-300">
               <TrendPiece percentage={percentage} size="xs" />
               {versus && <div>vs {versus}</div>}
             </div>
-          )}
+          )} */}
         </div>
       ) : (
         <Loader.Item height="50px" width="100%" />

@@ -47,7 +47,7 @@ const TotalInsights: React.FC<{ analyticsType: TAnalyticsTabsV2Base; peekView?: 
             isLoading={isLoading}
             data={totalInsightsData?.[item]}
             label={t(`workspace_analytics.${item}`)}
-            // versus={selectedDurationLabel}
+            versus={selectedDurationLabel}
           />
         ))}
       </div>
