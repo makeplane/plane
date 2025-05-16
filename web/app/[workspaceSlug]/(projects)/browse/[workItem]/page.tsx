@@ -46,7 +46,7 @@ const IssueDetailsPage = observer(() => {
       : null
   );
   const issueId = data?.id;
-  const projectId = data?.project_id ?? "";
+  const projectId = data?.project_id;
   // derived values
   const issue = getIssueById(issueId?.toString() || "") || undefined;
   const project = (issue?.project_id && getProjectById(issue?.project_id)) || undefined;
@@ -54,7 +54,7 @@ const IssueDetailsPage = observer(() => {
   const pageTitle = project && issue ? `${project?.identifier}-${issue?.sequence_id} ${issue?.name}` : undefined;
 
   // Load project resources when needed
-  useProjectResources(workspaceSlug?.toString(), projectId);
+  useProjectResources(workspaceSlug?.toString(), projectId?.toString());
 
   useEffect(() => {
     const handleToggleIssueDetailSidebar = () => {
