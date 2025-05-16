@@ -19,17 +19,19 @@ import { ChartLoader } from "../loaders";
 
 const analyticsV2Service = new AnalyticsV2Service();
 const CreatedVsResolved = observer(() => {
-  const { selectedDuration, selectedDurationLabel, selectedProjects } = useAnalyticsV2();
+  const { selectedDuration, selectedDurationLabel, selectedProjects, selectedCycle, selectedModule } = useAnalyticsV2();
   const params = useParams();
   const { t } = useTranslation();
   const workspaceSlug = params.workspaceSlug as string;
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics-v2/empty-chart-area" });
   const { data: createdVsResolvedData, isLoading: isCreatedVsResolvedLoading } = useSWR(
-    `created-vs-resolved-${workspaceSlug}-${selectedDuration}-${selectedProjects}`,
+    `created-vs-resolved-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}`,
     () =>
       analyticsV2Service.getAdvanceAnalyticsCharts<IChartResponseV2>(workspaceSlug, "work-items", {
         // date_filter: selectedDuration,
         ...(selectedProjects?.length > 0 && { project_ids: selectedProjects?.join(",") }),
+        ...(selectedCycle ? { cycle_id: selectedCycle } : {}),
+        ...(selectedModule ? { module_id: selectedModule } : {}),
       })
   );
   const parsedData: TChartData<string, string>[] = useMemo(() => {

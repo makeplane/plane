@@ -20,14 +20,17 @@ const TotalInsights: React.FC<{ analyticsType: TAnalyticsTabsV2Base; peekView?: 
     const params = useParams();
     const workspaceSlug = params.workspaceSlug as string;
     const { t } = useTranslation();
-    const { selectedDuration, selectedProjects, selectedDurationLabel } = useAnalyticsV2();
+    const { selectedDuration, selectedProjects, selectedDurationLabel, selectedCycle, selectedModule } =
+      useAnalyticsV2();
 
     const { data: totalInsightsData, isLoading } = useSWR(
-      `total-insights-${analyticsType}-${selectedDuration}-${selectedProjects}`,
+      `total-insights-${analyticsType}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}`,
       () =>
         analyticsV2Service.getAdvanceAnalytics<IAnalyticsResponseV2>(workspaceSlug, analyticsType, {
           // date_filter: selectedDuration,
           ...(selectedProjects?.length > 0 ? { project_ids: selectedProjects.join(",") } : {}),
+          ...(selectedCycle ? { cycle_id: selectedCycle } : {}),
+          ...(selectedModule ? { module_id: selectedModule } : {}),
         })
     );
     return (

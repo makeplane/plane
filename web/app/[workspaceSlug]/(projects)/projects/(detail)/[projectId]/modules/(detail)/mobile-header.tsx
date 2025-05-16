@@ -21,6 +21,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 import { CustomMenu } from "@plane/ui";
 // components
 import { ProjectAnalyticsModal } from "@/components/analytics";
+import { WorkItemsModal } from "@/components/analytics-v2/work-items/modal";
 import {
   DisplayFiltersSelection,
   FilterSelection,
@@ -106,10 +107,11 @@ export const ModuleIssuesMobileHeader = observer(() => {
 
   return (
     <div className="block md:hidden">
-      <ProjectAnalyticsModal
+      <WorkItemsModal
         isOpen={analyticsModal}
         onClose={() => setAnalyticsModal(false)}
         moduleDetails={moduleDetails ?? undefined}
+        projectDetails={currentProjectDetails}
       />
       <div className="flex justify-evenly border-b border-custom-border-200 bg-custom-background-100 py-2">
         <CustomMenu

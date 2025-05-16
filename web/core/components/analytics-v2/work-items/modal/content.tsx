@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Tab } from "@headlessui/react";
 // plane package imports
-import { IProject } from "@plane/types";
+import { ICycle, IModule, IProject } from "@plane/types";
 import { Spinner } from "@plane/ui";
 // hooks
 import { useAnalyticsV2 } from "@/hooks/store";
@@ -15,20 +15,48 @@ import WorkItemsInsightTable from "../workitems-insight-table";
 type Props = {
   fullScreen: boolean;
   projectDetails: IProject | undefined;
+  cycleDetails: ICycle | undefined;
+  moduleDetails: IModule | undefined;
 };
 
 export const WorkItemsModalMainContent: React.FC<Props> = observer((props) => {
-  const { projectDetails, fullScreen } = props;
-  const { updateSelectedProjects } = useAnalyticsV2();
-  const [isProjectConfigured, setIsProjectConfigured] = useState(false);
+  const { projectDetails, cycleDetails, moduleDetails, fullScreen } = props;
+  const { updateSelectedProjects, updateSelectedCycle, updateSelectedModule } = useAnalyticsV2();
+  const [isModalConfigured, setIsModalConfigured] = useState(false);
 
   useEffect(() => {
-    if (!projectDetails?.id) return;
-    updateSelectedProjects([projectDetails?.id ?? ""]);
-    setIsProjectConfigured(true);
-  }, [projectDetails?.id, updateSelectedProjects]);
+    // Handle project selection
+    if (projectDetails?.id) {
+      updateSelectedProjects([projectDetails.id]);
+    }
 
-  if (!isProjectConfigured)
+    // Handle cycle selection
+    if (cycleDetails?.id) {
+      updateSelectedCycle(cycleDetails.id);
+    }
+
+    // Handle module selection
+    if (moduleDetails?.id) {
+      updateSelectedModule(moduleDetails.id);
+    }
+    setIsModalConfigured(true);
+
+    // Cleanup fields
+    return () => {
+      updateSelectedProjects([]);
+      updateSelectedCycle("");
+      updateSelectedModule("");
+    };
+  }, [
+    projectDetails?.id,
+    cycleDetails?.id,
+    moduleDetails?.id,
+    updateSelectedProjects,
+    updateSelectedCycle,
+    updateSelectedModule,
+  ]);
+
+  if (!isModalConfigured)
     return (
       <div className="flex h-full items-center justify-center">
         <Spinner />

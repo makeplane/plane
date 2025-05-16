@@ -25,13 +25,15 @@ const WorkItemsInsightTable = observer(() => {
   const { t } = useTranslation();
   // store hooks
   const { getProjectById } = useProject();
-  const { selectedDuration, selectedProjects } = useAnalyticsV2();
+  const { selectedDuration, selectedProjects, selectedCycle, selectedModule } = useAnalyticsV2();
   const { data: workItemsData, isLoading } = useSWR(
-    `insights-table-work-items-${workspaceSlug}-${selectedDuration}-${selectedProjects}`,
+    `insights-table-work-items-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}`,
     () =>
       analyticsV2Service.getAdvanceAnalyticsStats<WorkItemInsightColumns[]>(workspaceSlug, "work-items", {
         // date_filter: selectedDuration,
         ...(selectedProjects?.length > 0 ? { project_ids: selectedProjects.join(",") } : {}),
+        ...(selectedCycle ? { cycle_id: selectedCycle } : {}),
+        ...(selectedModule ? { module_id: selectedModule } : {}),
       })
   );
   // derived values

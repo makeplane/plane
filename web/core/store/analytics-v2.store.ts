@@ -10,6 +10,8 @@ export interface IAnalyticsStoreV2 {
   currentTab: TAnalyticsTabsV2Base;
   selectedProjects: string[];
   selectedDuration: DurationType;
+  selectedCycle: string;
+  selectedModule: string;
 
   //computed
   selectedDurationLabel: DurationType | null;
@@ -17,6 +19,8 @@ export interface IAnalyticsStoreV2 {
   //actions
   updateSelectedProjects: (projects: string[]) => void;
   updateSelectedDuration: (duration: DurationType) => void;
+  updateSelectedCycle: (cycle: string) => void;
+  updateSelectedModule: (module: string) => void;
 }
 
 export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
@@ -24,18 +28,24 @@ export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
   currentTab: TAnalyticsTabsV2Base = "overview";
   selectedProjects: DurationType[] = [];
   selectedDuration: DurationType = "last_30_days";
+  selectedCycle: string = "";
+  selectedModule: string = "";
 
-  constructor(_rootStore: CoreRootStore) {
+  constructor() {
     makeObservable(this, {
       // observables
       currentTab: observable.ref,
       selectedDuration: observable.ref,
       selectedProjects: observable.ref,
+      selectedCycle: observable.ref,
+      selectedModule: observable.ref,
       // computed
       selectedDurationLabel: computed,
       // actions
       updateSelectedProjects: action,
       updateSelectedDuration: action,
+      updateSelectedCycle: action,
+      updateSelectedModule: action,
     });
   }
 
@@ -44,7 +54,6 @@ export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
   }
 
   updateSelectedProjects = (projects: string[]) => {
-    const initialState = this.selectedProjects;
     try {
       runInAction(() => {
         this.selectedProjects = projects;
@@ -64,5 +73,17 @@ export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
       console.error("Failed to update selected duration");
       throw error;
     }
+  };
+
+  updateSelectedCycle = (cycle: string) => {
+    runInAction(() => {
+      this.selectedCycle = cycle;
+    });
+  };
+
+  updateSelectedModule = (module: string) => {
+    runInAction(() => {
+      this.selectedModule = module;
+    });
   };
 }

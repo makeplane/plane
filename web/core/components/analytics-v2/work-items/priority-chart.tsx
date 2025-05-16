@@ -46,7 +46,7 @@ const PriorityChart = observer((props: Props) => {
   const { t } = useTranslation();
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics-v2/empty-chart-bar" });
   // store hooks
-  const { selectedDuration, selectedProjects } = useAnalyticsV2();
+  const { selectedDuration, selectedProjects, selectedCycle, selectedModule } = useAnalyticsV2();
   const { workspaceStates } = useProjectState();
   const { resolvedTheme } = useTheme();
   // router
@@ -54,11 +54,13 @@ const PriorityChart = observer((props: Props) => {
   const workspaceSlug = params.workspaceSlug as string;
 
   const { data: priorityChartData, isLoading: priorityChartLoading } = useSWR(
-    `customized-insights-chart-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${props.x_axis}-${props.y_axis}-${props.group_by}`,
+    `customized-insights-chart-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${props.x_axis}-${props.y_axis}-${props.group_by}`,
     () =>
       analyticsV2Service.getAdvanceAnalyticsCharts<TChart>(workspaceSlug, "custom-work-items", {
         // date_filter: selectedDuration,
         ...(selectedProjects?.length > 0 && { project_ids: selectedProjects?.join(",") }),
+        ...(selectedCycle ? { cycle_id: selectedCycle } : {}),
+        ...(selectedModule ? { module_id: selectedModule } : {}),
         ...props,
       })
   );
