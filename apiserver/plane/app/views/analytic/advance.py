@@ -1,9 +1,10 @@
 from rest_framework.response import Response
 from rest_framework import status
 from typing import Dict, List, Any
-from datetime import timedelta
 from django.db.models import QuerySet, Q, Count
 from django.http import HttpRequest
+from django.db.models.functions import TruncMonth
+from django.utils import timezone
 
 from plane.app.views.base import BaseAPIView
 from plane.app.permissions import ROLE, allow_permission
@@ -15,14 +16,10 @@ from plane.db.models import (
     Module,
     IssueView,
     ProjectPage,
+    Workspace
 )
 
-from django.db.models import (
-    Q,
-    Count,
-)
 from plane.utils.build_chart import build_analytics_chart
-from datetime import timedelta
 from plane.bgtasks.analytic_plot_export import export_analytics_to_csv_email
 from plane.utils.date_utils import (
     get_analytics_filters,
@@ -263,6 +260,7 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
                 "assignees", "labels", "issue_module__module", "issue_cycle__cycle"
             )
         )
+
         # Apply date range filter if available
         if self.filters["chart_period_range"]:
             start_date, end_date = self.filters["chart_period_range"]
@@ -270,41 +268,54 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
                 created_at__date__gte=start_date, created_at__date__lte=end_date
             )
 
-        # Get daily stats with optimized query
-        daily_stats = (
-            queryset.values("created_at__date")
+        # Annotate by month and count
+        monthly_stats = (
+            queryset.annotate(month=TruncMonth("created_at"))
+            .values("month")
             .annotate(
                 created_count=Count("id"),
                 completed_count=Count("id", filter=Q(completed_at__isnull=False)),
             )
-            .order_by("created_at__date")
+            .order_by("month")
         )
 
-        # Create a dictionary of existing stats with summed counts
+        # Create dictionary of month -> counts
         stats_dict = {
-            stat["created_at__date"].strftime("%Y-%m-%d"): {
+            stat["month"].strftime("%Y-%m-%d"): {
                 "created_count": stat["created_count"],
                 "completed_count": stat["completed_count"],
             }
-            for stat in daily_stats
+            for stat in monthly_stats
         }
 
-        # Generate data for all days in the range
+        # Generate monthly data (ensure months with 0 count are included)
         data = []
-        current_date = start_date
-        while current_date <= end_date:
-            date_str = current_date.strftime("%Y-%m-%d")
+        workspace = Workspace.objects.get(slug=self._workspace_slug)
+        start_date = workspace.created_at.date().replace(day=1)
+        # include the current date at the end
+        end_date = timezone.now().date()
+        last_month = end_date.replace(day=1)
+        current_month = start_date
+
+        while current_month <= last_month:
+            date_str = current_month.strftime("%Y-%m-%d")
             stats = stats_dict.get(date_str, {"created_count": 0, "completed_count": 0})
             data.append(
                 {
                     "key": date_str,
                     "name": date_str,
-                    "count": stats["created_count"] + stats["completed_count"],
+                    "count": stats[
+                        "created_count"
+                    ],  # <- Total created issues in that month
                     "completed_issues": stats["completed_count"],
                     "created_issues": stats["created_count"],
                 }
             )
-            current_date += timedelta(days=1)
+            # Move to next month
+            if current_month.month == 12:
+                current_month = current_month.replace(year=current_month.year + 1, month=1)
+            else:
+                current_month = current_month.replace(month=current_month.month + 1)
 
         schema = {
             "completed_issues": "completed_issues",

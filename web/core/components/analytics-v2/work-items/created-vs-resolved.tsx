@@ -28,7 +28,7 @@ const CreatedVsResolved = observer(() => {
     `created-vs-resolved-${workspaceSlug}-${selectedDuration}-${selectedProjects}`,
     () =>
       analyticsV2Service.getAdvanceAnalyticsCharts<IChartResponseV2>(workspaceSlug, "work-items", {
-        date_filter: selectedDuration,
+        // date_filter: selectedDuration,
         ...(selectedProjects?.length > 0 && { project_ids: selectedProjects?.join(",") }),
       })
   );
