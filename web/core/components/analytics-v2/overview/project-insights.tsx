@@ -34,7 +34,7 @@ const ProjectInsights = observer(() => {
     `radar-chart-${workspaceSlug}-${selectedDuration}-${selectedProjects}`,
     () =>
       analyticsV2Service.getAdvanceAnalyticsCharts<TChartData<string, string>[]>(workspaceSlug, "projects", {
-        date_filter: selectedDuration,
+        // date_filter: selectedDuration,
         ...(selectedProjects?.length > 0 && { project_ids: selectedProjects?.join(",") }),
       })
   );
