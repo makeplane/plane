@@ -33,9 +33,9 @@ declare module "@tiptap/core" {
 }
 
 export const getImageComponentImageFileMap = (editor: Editor) =>
-  (editor.storage.imageComponent as UploadImageExtensionStorage | undefined)?.fileMap;
+  (editor.storage.imageComponent as CustomImageExtensionStorage | undefined)?.fileMap;
 
-export interface UploadImageExtensionStorage {
+export interface CustomImageExtensionStorage {
   assetsUploadStatus: TFileHandler["assetsUploadStatus"];
   fileMap: Map<string, UploadEntity>;
   deletedImageSet: Map<string, boolean>;
@@ -55,7 +55,7 @@ export const CustomImageExtension = (props: TFileHandler) => {
     validation: { maxFileSize },
   } = props;
 
-  return Image.extend<Record<string, unknown>, UploadImageExtensionStorage>({
+  return Image.extend<Record<string, unknown>, CustomImageExtensionStorage>({
     name: "imageComponent",
     selectable: true,
     group: "block",
