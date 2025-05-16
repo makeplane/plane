@@ -16,9 +16,13 @@ from plane.db.models import (
     Module,
     IssueView,
     ProjectPage,
-    Workspace
+    Workspace,
+    CycleIssue,
+    ModuleIssue,
 )
-
+from django.db import models
+from django.db.models import F, Case, When, OuterRef, Value
+from django.db.models.functions import Concat
 from plane.utils.build_chart import build_analytics_chart
 from plane.bgtasks.analytic_plot_export import export_analytics_to_csv_email
 from plane.utils.date_utils import (
@@ -73,7 +77,7 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
 
         return {
             "count": get_filtered_count(),
-            "filter_count": get_previous_count(),
+            # "filter_count": get_previous_count(),
         }
 
     def get_overview_data(self) -> Dict[str, Dict[str, int]]:
@@ -120,9 +124,25 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
             ),
         }
 
-
-    def get_work_items_stats(self) -> Dict[str, Dict[str, int]]:
-        base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"])
+    def get_work_items_stats(
+        self, cycle_id=None, module_id=None
+    ) -> Dict[str, Dict[str, int]]:
+        """
+        Returns work item stats for the workspace, or filtered by cycle_id or module_id if provided.
+        """
+        base_queryset = None
+        if cycle_id is not None:
+            cycle_issues = CycleIssue.objects.filter(
+                **self.filters["base_filters"], cycle_id=cycle_id
+            ).values_list("issue_id", flat=True)
+            base_queryset = Issue.issue_objects.filter(id__in=cycle_issues)
+        elif module_id is not None:
+            module_issues = ModuleIssue.objects.filter(
+                **self.filters["base_filters"], module_id=module_id
+            ).values_list("issue_id", flat=True)
+            base_queryset = Issue.issue_objects.filter(id__in=module_issues)
+        else:
+            base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"])
 
         return {
             "total_work_items": self.get_filtered_counts(base_queryset),
@@ -150,13 +170,14 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
                 self.get_overview_data(),
                 status=status.HTTP_200_OK,
             )
-
         elif tab == "work-items":
+            # Optionally accept cycle_id or module_id as query params
+            cycle_id = request.GET.get("cycle_id", None)
+            module_id = request.GET.get("module_id", None)
             return Response(
-                self.get_work_items_stats(),
+                self.get_work_items_stats(cycle_id=cycle_id, module_id=module_id),
                 status=status.HTTP_200_OK,
             )
-
         return Response({"message": "Invalid tab"}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -184,14 +205,68 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
             .order_by("project_id")
         )
 
+    def get_work_items_stats(
+        self, cycle_id=None, module_id=None
+    ) -> Dict[str, Dict[str, int]]:
+        base_queryset = None
+        if cycle_id is not None:
+            cycle_issues = CycleIssue.objects.filter(
+                **self.filters["base_filters"], cycle_id=cycle_id
+            ).values_list("issue_id", flat=True)
+            base_queryset = Issue.issue_objects.filter(id__in=cycle_issues)
+        elif module_id is not None:
+            module_issues = ModuleIssue.objects.filter(
+                **self.filters["base_filters"], module_id=module_id
+            ).values_list("issue_id", flat=True)
+            base_queryset = Issue.issue_objects.filter(id__in=module_issues)
+        else:
+            base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"])
+
+        return (
+            base_queryset.annotate(display_name=F("assignees__display_name"))
+            .annotate(assignee_id=F("assignees__id"))
+            .annotate(avatar=F("assignees__avatar"))
+            .annotate(
+                avatar_url=Case(
+                    # If `avatar_asset` exists, use it to generate the asset URL
+                    When(
+                        assignees__avatar_asset__isnull=False,
+                        then=Concat(
+                            Value("/api/assets/v2/static/"),
+                            "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                            Value("/"),
+                        ),
+                    ),
+                    # If `avatar_asset` is None, fall back to using `avatar` field directly
+                    When(
+                        assignees__avatar_asset__isnull=True, then="assignees__avatar"
+                    ),
+                    default=Value(None),
+                    output_field=models.CharField(),
+                )
+            )
+            .values("display_name", "assignee_id", "avatar_url")
+            .annotate(
+                cancelled_work_items=Count("id", filter=Q(state__group="cancelled")),
+                completed_work_items=Count("id", filter=Q(state__group="completed")),
+                backlog_work_items=Count("id", filter=Q(state__group="backlog")),
+                un_started_work_items=Count("id", filter=Q(state__group="unstarted")),
+                started_work_items=Count("id", filter=Q(state__group="started")),
+            )
+            .order_by("display_name")
+        )
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request: HttpRequest, slug: str) -> Response:
         self.initialize_workspace(slug, type="chart")
         type = request.GET.get("type", "work-items")
 
         if type == "work-items":
+            # Optionally accept cycle_id or module_id as query params
+            cycle_id = request.GET.get("cycle_id", None)
+            module_id = request.GET.get("module_id", None)
             return Response(
-                self.get_project_issues_stats(),
+                self.get_work_items_stats(cycle_id=cycle_id, module_id=module_id),
                 status=status.HTTP_200_OK,
             )
 
@@ -251,7 +326,7 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
             for key, value in data.items()
         ]
 
-    def work_item_completion_chart(self) -> Dict[str, Any]:
+    def work_item_completion_chart(self, cycle_id=None, module_id=None) -> Dict[str, Any]:
         # Get the base queryset
         queryset = (
             Issue.issue_objects.filter(**self.filters["base_filters"])
@@ -260,6 +335,17 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
                 "assignees", "labels", "issue_module__module", "issue_cycle__cycle"
             )
         )
+
+        if cycle_id is not None:
+            cycle_issues = CycleIssue.objects.filter(
+                **self.filters["base_filters"], cycle_id=cycle_id
+            ).values_list("issue_id", flat=True)
+            queryset = queryset.filter(id__in=cycle_issues)
+        elif module_id is not None:
+            module_issues = ModuleIssue.objects.filter(
+                **self.filters["base_filters"], module_id=module_id
+            ).values_list("issue_id", flat=True)
+            queryset = queryset.filter(id__in=module_issues)
 
         # Apply date range filter if available
         if self.filters["chart_period_range"]:
@@ -304,16 +390,16 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
                 {
                     "key": date_str,
                     "name": date_str,
-                    "count": stats[
-                        "created_count"
-                    ],  # <- Total created issues in that month
+                    "count": stats["created_count"],
                     "completed_issues": stats["completed_count"],
                     "created_issues": stats["created_count"],
                 }
             )
             # Move to next month
             if current_month.month == 12:
-                current_month = current_month.replace(year=current_month.year + 1, month=1)
+                current_month = current_month.replace(
+                    year=current_month.year + 1, month=1
+                )
             else:
                 current_month = current_month.replace(month=current_month.month + 1)
 
@@ -330,12 +416,13 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
         type = request.GET.get("type", "projects")
         group_by = request.GET.get("group_by", None)
         x_axis = request.GET.get("x_axis", "PRIORITY")
+        cycle_id = request.GET.get("cycle_id", None)
+        module_id = request.GET.get("module_id", None)
 
         if type == "projects":
             return Response(self.project_chart(), status=status.HTTP_200_OK)
 
         elif type == "custom-work-items":
-            # Get the base queryset
             queryset = (
                 Issue.issue_objects.filter(**self.filters["base_filters"])
                 .select_related("workspace", "state", "parent")
@@ -343,6 +430,19 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
                     "assignees", "labels", "issue_module__module", "issue_cycle__cycle"
                 )
             )
+
+            # Apply cycle/module filters if present
+            if cycle_id is not None:
+                cycle_issues = CycleIssue.objects.filter(
+                    **self.filters["base_filters"], cycle_id=cycle_id
+                ).values_list("issue_id", flat=True)
+                queryset = queryset.filter(id__in=cycle_issues)
+
+            elif module_id is not None:
+                module_issues = ModuleIssue.objects.filter(
+                    **self.filters["base_filters"], module_id=module_id
+                ).values_list("issue_id", flat=True)
+                queryset = queryset.filter(id__in=module_issues)
 
             # Apply date range filter if available
             if self.filters["chart_period_range"]:
@@ -357,66 +457,12 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
             )
 
         elif type == "work-items":
+            # Optionally accept cycle_id or module_id as query params
+            cycle_id = request.GET.get("cycle_id", None)
+            module_id = request.GET.get("module_id", None)
             return Response(
-                self.work_item_completion_chart(),
+                self.work_item_completion_chart(cycle_id=cycle_id, module_id=module_id),
                 status=status.HTTP_200_OK,
             )
 
         return Response({"message": "Invalid type"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class AdvanceAnalyticsExportEndpoint(AdvanceAnalyticsBaseView):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
-    def post(self, request: HttpRequest, slug: str) -> Response:
-        self.initialize_workspace(slug, type="chart")
-        queryset = Issue.issue_objects.filter(**self.filters["base_filters"])
-
-        # Apply date range filter if available
-        if self.filters["chart_period_range"]:
-            start_date, end_date = self.filters["chart_period_range"]
-            queryset = queryset.filter(
-                created_at__date__gte=start_date, created_at__date__lte=end_date
-            )
-
-        queryset = (
-            queryset.values("project_id", "project__name")
-            .annotate(
-                cancelled_work_items=Count("id", filter=Q(state__group="cancelled")),
-                completed_work_items=Count("id", filter=Q(state__group="completed")),
-                backlog_work_items=Count("id", filter=Q(state__group="backlog")),
-                un_started_work_items=Count("id", filter=Q(state__group="unstarted")),
-                started_work_items=Count("id", filter=Q(state__group="started")),
-            )
-            .order_by("project_id")
-        )
-
-        # Convert QuerySet to list of dictionaries for serialization
-        serialized_data = list(queryset)
-
-        headers = [
-            "Projects",
-            "Completed Issues",
-            "Backlog Issues",
-            "Unstarted Issues",
-            "Started Issues",
-        ]
-
-        keys = [
-            "project__name",
-            "completed_work_items",
-            "backlog_work_items",
-            "un_started_work_items",
-            "started_work_items",
-        ]
-
-        email = request.user.email
-
-        # Send serialized data to background task
-        export_analytics_to_csv_email.delay(serialized_data, headers, keys, email, slug)
-
-        return Response(
-            {
-                "message": f"Once the export is ready it will be emailed to you at {str(email)}"
-            },
-            status=status.HTTP_200_OK,
-        )
