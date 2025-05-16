@@ -45,6 +45,7 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
     immediatelyRender: true,
     shouldRerenderOnTransaction: false,
     content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
+    parseOptions: { preserveWhitespace: true },
     editorProps: {
       ...CoreReadOnlyEditorProps({
         editorClassName,
@@ -70,7 +71,7 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
   // for syncing swr data on tab refocus etc
   useEffect(() => {
     if (initialValue === null || initialValue === undefined) return;
-    if (editor && !editor.isDestroyed) editor?.commands.setContent(initialValue, false, { preserveWhitespace: "full" });
+    if (editor && !editor.isDestroyed) editor?.commands.setContent(initialValue, false, { preserveWhitespace: true });
   }, [editor, initialValue]);
 
   useImperativeHandle(forwardedRef, () => ({
@@ -78,7 +79,7 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
       editor?.chain().setMeta("skipImageDeletion", true).clearContent(emitUpdate).run();
     },
     setEditorValue: (content: string, emitUpdate = false) => {
-      editor?.commands.setContent(content, emitUpdate, { preserveWhitespace: "full" });
+      editor?.commands.setContent(content, emitUpdate, { preserveWhitespace: true });
     },
     getMarkDown: (): string => {
       const markdownOutput = editor?.storage.markdown.getMarkdown();

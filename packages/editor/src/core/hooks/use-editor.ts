@@ -77,11 +77,12 @@ export const useEditor = (props: CustomEditorProps) => {
       immediatelyRender: false,
       shouldRerenderOnTransaction: false,
       autofocus,
+      parseOptions: { preserveWhitespace: true },
       editorProps: {
         ...CoreEditorProps({
           editorClassName,
+          ...editorProps,
         }),
-        ...editorProps,
       },
       extensions: [
         ...CoreEditorExtensions({
@@ -113,7 +114,7 @@ export const useEditor = (props: CustomEditorProps) => {
     if (value == null) return;
     if (editor && !editor.isDestroyed && !editor.storage.imageComponent?.uploadInProgress) {
       try {
-        editor.commands.setContent(value, false, { preserveWhitespace: "full" });
+        editor.commands.setContent(value, false, { preserveWhitespace: true });
         if (editor.state.selection) {
           const docLength = editor.state.doc.content.size;
           const relativePosition = Math.min(editor.state.selection.from, docLength - 1);
@@ -146,7 +147,7 @@ export const useEditor = (props: CustomEditorProps) => {
         editor?.chain().setMeta("skipImageDeletion", true).clearContent(emitUpdate).run();
       },
       setEditorValue: (content: string, emitUpdate = false) => {
-        editor?.commands.setContent(content, emitUpdate, { preserveWhitespace: "full" });
+        editor?.commands.setContent(content, emitUpdate, { preserveWhitespace: true });
       },
       setEditorValueAtCursorPosition: (content: string) => {
         if (editor?.state.selection) {
