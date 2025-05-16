@@ -19,14 +19,14 @@ const AnalyticsFilterActions = observer(() => {
         }}
         projectIds={workspaceProjectIds}
       />
-      <DurationDropdown
+      {/* <DurationDropdown
         buttonVariant="border-with-text"
         value={selectedDuration}
         onChange={(val) => {
           updateSelectedDuration(val);
         }}
         dropdownArrow
-      />
+      /> */}
     </div>
   );
 });
