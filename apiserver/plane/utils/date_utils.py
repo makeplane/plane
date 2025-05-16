@@ -165,6 +165,8 @@ def get_analytics_filters(
         "workspace__slug": slug,
         "project__project_projectmember__member": user,
         "project__project_projectmember__is_active": True,
+        "project__deleted_at__isnull": True,
+        "project__archived_at__isnull": True,
     }
 
     # Project filters
@@ -172,6 +174,8 @@ def get_analytics_filters(
         "workspace__slug": slug,
         "project_projectmember__member": user,
         "project_projectmember__is_active": True,
+        "project__deleted_at__isnull": True,
+        "project__archived_at__isnull": True,
     }
 
     # Add project IDs to filters if provided
