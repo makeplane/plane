@@ -99,7 +99,7 @@ const IssueDetailsPage = observer(() => {
         workspaceSlug &&
         projectId &&
         issueId && (
-          <ProjectAuthWrapper workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()}>
+          <ProjectAuthWrapper workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()}>
             <IssueDetailRoot
               workspaceSlug={workspaceSlug.toString()}
               projectId={projectId.toString()}
