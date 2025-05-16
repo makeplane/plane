@@ -10,7 +10,8 @@ import { CustomImageNode } from "@/extensions/custom-image";
 import { isFileValid } from "@/helpers/file";
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // plugins
-import { TrackImageDeletionPlugin, TrackImageRestorationPlugin } from "@/plugins/image";
+import { TrackFileDeletionPlugin } from "@/plugins/file/delete";
+import { TrackFileRestorationPlugin } from "@/plugins/file/restore";
 // types
 import { TFileHandler } from "@/types";
 
@@ -104,8 +105,8 @@ export const CustomImageExtension = (props: TFileHandler) => {
 
     addProseMirrorPlugins() {
       return [
-        TrackImageDeletionPlugin(this.editor, deleteImageFn, this.name),
-        TrackImageRestorationPlugin(this.editor, restoreImageFn, this.name),
+        TrackFileDeletionPlugin(this.editor, deleteImageFn, this.name, "deletedImageSet"),
+        TrackFileRestorationPlugin(this.editor, restoreImageFn, this.name, "deletedImageSet"),
       ];
     },
 
@@ -152,6 +153,7 @@ export const CustomImageExtension = (props: TFileHandler) => {
                 acceptedMimeTypes: ACCEPTED_IMAGE_MIME_TYPES,
                 file: props.file,
                 maxFileSize,
+                onError: (_error, message) => alert(message),
               })
             ) {
               return false;

@@ -5,7 +5,9 @@ import { CustomImageNode } from "@/extensions";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // plugins
-import { ImageExtensionStorage, TrackImageDeletionPlugin, TrackImageRestorationPlugin } from "@/plugins/image";
+import { TrackFileDeletionPlugin } from "@/plugins/file/delete";
+import { TrackFileRestorationPlugin } from "@/plugins/file/restore";
+import { ImageExtensionStorage } from "@/plugins/image";
 // types
 import { TFileHandler } from "@/types";
 
@@ -27,8 +29,8 @@ export const ImageExtension = (fileHandler: TFileHandler) => {
 
     addProseMirrorPlugins() {
       return [
-        TrackImageDeletionPlugin(this.editor, deleteImageFn, this.name),
-        TrackImageRestorationPlugin(this.editor, restoreImageFn, this.name),
+        TrackFileDeletionPlugin(this.editor, deleteImageFn, this.name, "deletedImageSet"),
+        TrackFileRestorationPlugin(this.editor, restoreImageFn, this.name, "deletedImageSet"),
       ];
     },
 

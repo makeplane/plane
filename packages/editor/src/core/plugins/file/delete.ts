@@ -1,18 +1,23 @@
 import { Editor } from "@tiptap/core";
 import { EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
-// plugins
-import { type ImageNode } from "@/plugins/image";
 // types
-import { DeleteImage } from "@/types";
+import { TFileHandler } from "@/types";
+// local imports
+import { TFileNode } from "./types";
 
-export const TrackImageDeletionPlugin = (editor: Editor, deleteImage: DeleteImage, nodeType: string): Plugin =>
+export const TrackFileDeletionPlugin = (
+  editor: Editor,
+  deleteHandler: TFileHandler["delete"],
+  nodeType: string,
+  fileSetName: string
+): Plugin =>
   new Plugin({
     key: new PluginKey(`delete-${nodeType}`),
     appendTransaction: (transactions: readonly Transaction[], oldState: EditorState, newState: EditorState) => {
-      const newImageSources = new Set<string>();
+      const newFileSources = new Set<string>();
       newState.doc.descendants((node) => {
         if (node.type.name === nodeType) {
-          newImageSources.add(node.attrs.src);
+          newFileSources.add(node.attrs.src);
         }
       });
 
@@ -22,27 +27,26 @@ export const TrackImageDeletionPlugin = (editor: Editor, deleteImage: DeleteImag
         // transaction could be a selection
         if (!transaction.docChanged) return;
 
-        const removedImages: ImageNode[] = [];
+        const removedFiles: TFileNode[] = [];
 
         // iterate through all the nodes in the old state
         oldState.doc.descendants((oldNode) => {
-          // if the node is not an image, then return as no point in checking
+          // if the node doesn't match, then return as no point in checking
           if (oldNode.type.name !== nodeType) return;
-
           // Check if the node has been deleted or replaced
-          if (!newImageSources.has(oldNode.attrs.src)) {
-            removedImages.push(oldNode as ImageNode);
+          if (!newFileSources.has(oldNode.attrs.src)) {
+            removedFiles.push(oldNode as TFileNode);
           }
         });
 
-        removedImages.forEach(async (node) => {
+        removedFiles.forEach(async (node) => {
           const src = node.attrs.src;
-          editor.storage[nodeType].deletedImageSet?.set(src, true);
+          editor.storage[nodeType][fileSetName]?.set(src, true);
           if (!src) return;
           try {
-            await deleteImage(src);
+            await deleteHandler(src);
           } catch (error) {
-            console.error("Error deleting image:", error);
+            console.error("Error deleting file:", error);
           }
         });
       });
