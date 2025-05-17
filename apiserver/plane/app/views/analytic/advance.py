@@ -125,7 +125,7 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
         }
 
     def get_work_items_stats(
-        self, cycle_id=None, module_id=None
+        self, cycle_id=None, module_id=None, project_id=None
     ) -> Dict[str, Dict[str, int]]:
         """
         Returns work item stats for the workspace, or filtered by cycle_id or module_id if provided.
@@ -141,6 +141,10 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
                 **self.filters["base_filters"], module_id=module_id
             ).values_list("issue_id", flat=True)
             base_queryset = Issue.issue_objects.filter(id__in=module_issues)
+        elif project_id is not None:
+            base_queryset = Issue.issue_objects.filter(
+                **self.filters["base_filters"], project_id=project_id
+            )
         else:
             base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"])
 
@@ -174,8 +178,11 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
             # Optionally accept cycle_id or module_id as query params
             cycle_id = request.GET.get("cycle_id", None)
             module_id = request.GET.get("module_id", None)
+            project_id = request.GET.get("project_id", None)
             return Response(
-                self.get_work_items_stats(cycle_id=cycle_id, module_id=module_id),
+                self.get_work_items_stats(
+                    cycle_id=cycle_id, module_id=module_id, project_id=project_id
+                ),
                 status=status.HTTP_200_OK,
             )
         return Response({"message": "Invalid tab"}, status=status.HTTP_400_BAD_REQUEST)
@@ -206,7 +213,7 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
         )
 
     def get_work_items_stats(
-        self, cycle_id=None, module_id=None
+        self, cycle_id=None, module_id=None, project_id=None
     ) -> Dict[str, Dict[str, int]]:
         base_queryset = None
         if cycle_id is not None:
@@ -219,8 +226,29 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
                 **self.filters["base_filters"], module_id=module_id
             ).values_list("issue_id", flat=True)
             base_queryset = Issue.issue_objects.filter(id__in=module_issues)
+        elif project_id is not None:
+            base_queryset = Issue.issue_objects.filter(
+                **self.filters["base_filters"], project_id=project_id
+            )
         else:
             base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"])
+            return (
+                base_queryset.values("project_id", "project__name")
+                .annotate(
+                    cancelled_work_items=Count(
+                        "id", filter=Q(state__group="cancelled")
+                    ),
+                    completed_work_items=Count(
+                        "id", filter=Q(state__group="completed")
+                    ),
+                    backlog_work_items=Count("id", filter=Q(state__group="backlog")),
+                    un_started_work_items=Count(
+                        "id", filter=Q(state__group="unstarted")
+                    ),
+                    started_work_items=Count("id", filter=Q(state__group="started")),
+                )
+                .order_by("project_id")
+            )
 
         return (
             base_queryset.annotate(display_name=F("assignees__display_name"))
@@ -265,8 +293,11 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
             # Optionally accept cycle_id or module_id as query params
             cycle_id = request.GET.get("cycle_id", None)
             module_id = request.GET.get("module_id", None)
+            project_id = request.GET.get("project_id", None)
             return Response(
-                self.get_work_items_stats(cycle_id=cycle_id, module_id=module_id),
+                self.get_work_items_stats(
+                    cycle_id=cycle_id, module_id=module_id, project_id=project_id
+                ),
                 status=status.HTTP_200_OK,
             )
 
@@ -326,7 +357,9 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
             for key, value in data.items()
         ]
 
-    def work_item_completion_chart(self, cycle_id=None, module_id=None) -> Dict[str, Any]:
+    def work_item_completion_chart(
+        self, cycle_id=None, module_id=None, project_id=None
+    ) -> Dict[str, Any]:
         # Get the base queryset
         queryset = (
             Issue.issue_objects.filter(**self.filters["base_filters"])
@@ -340,12 +373,31 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
             cycle_issues = CycleIssue.objects.filter(
                 **self.filters["base_filters"], cycle_id=cycle_id
             ).values_list("issue_id", flat=True)
+            cycle = Cycle.objects.filter(id=cycle_id).first()
+            if cycle.start_date:
+                start_date = cycle.start_date.date().replace(day=1)
+            else:
+                return {"data": [], "schema": {}}
             queryset = queryset.filter(id__in=cycle_issues)
         elif module_id is not None:
             module_issues = ModuleIssue.objects.filter(
                 **self.filters["base_filters"], module_id=module_id
             ).values_list("issue_id", flat=True)
+            module = Module.objects.filter(id=module_id).first()
+            if module.start_date:
+                start_date = module.start_date.replace(day=1)
+            else:
+                return {"data": [], "schema": {}}
             queryset = queryset.filter(id__in=module_issues)
+        elif project_id is not None:
+            project = Project.objects.filter(id=project_id).first()
+            if project.created_at:
+                start_date = project.created_at.date().replace(day=1)
+            else:
+                return {"data": [], "schema": {}}
+        else:
+            workspace = Workspace.objects.get(slug=self._workspace_slug)
+            start_date = workspace.created_at.date().replace(day=1)
 
         # Apply date range filter if available
         if self.filters["chart_period_range"]:
@@ -376,8 +428,6 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
 
         # Generate monthly data (ensure months with 0 count are included)
         data = []
-        workspace = Workspace.objects.get(slug=self._workspace_slug)
-        start_date = workspace.created_at.date().replace(day=1)
         # include the current date at the end
         end_date = timezone.now().date()
         last_month = end_date.replace(day=1)
@@ -418,6 +468,7 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
         x_axis = request.GET.get("x_axis", "PRIORITY")
         cycle_id = request.GET.get("cycle_id", None)
         module_id = request.GET.get("module_id", None)
+        project_id = request.GET.get("project_id", None)
 
         if type == "projects":
             return Response(self.project_chart(), status=status.HTTP_200_OK)
@@ -444,6 +495,9 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
                 ).values_list("issue_id", flat=True)
                 queryset = queryset.filter(id__in=module_issues)
 
+            elif project_id is not None:
+                queryset = queryset.filter(project_id=project_id)
+
             # Apply date range filter if available
             if self.filters["chart_period_range"]:
                 start_date, end_date = self.filters["chart_period_range"]
@@ -460,8 +514,11 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
             # Optionally accept cycle_id or module_id as query params
             cycle_id = request.GET.get("cycle_id", None)
             module_id = request.GET.get("module_id", None)
+            project_id = request.GET.get("project_id", None)
             return Response(
-                self.work_item_completion_chart(cycle_id=cycle_id, module_id=module_id),
+                self.work_item_completion_chart(
+                    cycle_id=cycle_id, module_id=module_id, project_id=project_id
+                ),
                 status=status.HTTP_200_OK,
             )
 
