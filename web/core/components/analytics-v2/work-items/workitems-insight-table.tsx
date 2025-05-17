@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Row } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -39,6 +39,11 @@ const WorkItemsInsightTable = observer(() => {
         ...(isPeekView ? { peek_view: true } : {}),
       })
   );
+  const showDisplayName = useMemo(() => {
+    if (isPeekView && (selectedCycle || selectedModule)) return true;
+    return false;
+  }, [selectedCycle, selectedModule, isPeekView]);
+  console.log("showDisplayName", showDisplayName, selectedCycle, selectedModule, isPeekView);
   // derived values
   const columnsLabels = useMemo(
     () => ({
@@ -55,7 +60,7 @@ const WorkItemsInsightTable = observer(() => {
   const columns = useMemo(
     () =>
       [
-        !isPeekView
+        !showDisplayName
           ? {
               accessorKey: "project__name",
               header: () => <div className="text-left">{columnsLabels["project__name"]}</div>,
@@ -76,7 +81,7 @@ const WorkItemsInsightTable = observer(() => {
           : {
               accessorKey: "display_name",
               header: () => <div className="text-left">{columnsLabels["display_name"]}</div>,
-              cell: ({ row }) => (
+              cell: ({ row }: { row: Row<WorkItemInsightColumns> }) => (
                 <div className="text-left">
                   <div className="flex items-center gap-2">
                     {row.original.avatar_url && row.original.avatar_url !== "" ? (
@@ -128,7 +133,7 @@ const WorkItemsInsightTable = observer(() => {
           cell: ({ row }) => <div className="text-right">{row.original.cancelled_work_items}</div>,
         },
       ] as ColumnDef<AnalyticsTableDataMap["work-items"]>[],
-    [columnsLabels, getProjectById, isPeekView, t]
+    [columnsLabels, getProjectById, isPeekView, showDisplayName, t]
   );
 
   return (
