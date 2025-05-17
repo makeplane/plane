@@ -39,10 +39,6 @@ const WorkItemsInsightTable = observer(() => {
         ...(isPeekView ? { peek_view: true } : {}),
       })
   );
-  const showDisplayName = useMemo(() => {
-    if (isPeekView && (selectedCycle || selectedModule)) return true;
-    return false;
-  }, [selectedCycle, selectedModule, isPeekView]);
   // derived values
   const columnsLabels = useMemo(
     () => ({
@@ -59,7 +55,7 @@ const WorkItemsInsightTable = observer(() => {
   const columns = useMemo(
     () =>
       [
-        !showDisplayName
+        !isPeekView
           ? {
               accessorKey: "project__name",
               header: () => <div className="text-left">{columnsLabels["project__name"]}</div>,
@@ -132,7 +128,7 @@ const WorkItemsInsightTable = observer(() => {
           cell: ({ row }) => <div className="text-right">{row.original.cancelled_work_items}</div>,
         },
       ] as ColumnDef<AnalyticsTableDataMap["work-items"]>[],
-    [columnsLabels, getProjectById, isPeekView, showDisplayName, t]
+    [columnsLabels, getProjectById, isPeekView, t]
   );
 
   return (
