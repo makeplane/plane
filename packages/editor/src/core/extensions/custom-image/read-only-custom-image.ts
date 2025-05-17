@@ -2,14 +2,14 @@ import { mergeAttributes } from "@tiptap/core";
 import { Image } from "@tiptap/extension-image";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 // components
-import { CustomImageNode, UploadImageExtensionStorage } from "@/extensions/custom-image";
+import { CustomImageNode, CustomImageExtensionStorage } from "@/extensions/custom-image";
 // types
 import { TReadOnlyFileHandler } from "@/types";
 
 export const CustomReadOnlyImageExtension = (props: TReadOnlyFileHandler) => {
   const { getAssetSrc, restore: restoreImageFn } = props;
 
-  return Image.extend<Record<string, unknown>, UploadImageExtensionStorage>({
+  return Image.extend<Record<string, unknown>, CustomImageExtensionStorage>({
     name: "imageComponent",
     selectable: false,
     group: "block",
