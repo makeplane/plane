@@ -43,7 +43,6 @@ const WorkItemsInsightTable = observer(() => {
     if (isPeekView && (selectedCycle || selectedModule)) return true;
     return false;
   }, [selectedCycle, selectedModule, isPeekView]);
-  console.log("showDisplayName", showDisplayName, selectedCycle, selectedModule, isPeekView);
   // derived values
   const columnsLabels = useMemo(
     () => ({
