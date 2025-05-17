@@ -21,10 +21,12 @@ type Props = {
 
 export const WorkItemsModalMainContent: React.FC<Props> = observer((props) => {
   const { projectDetails, cycleDetails, moduleDetails, fullScreen } = props;
-  const { updateSelectedProjects, updateSelectedCycle, updateSelectedModule } = useAnalyticsV2();
+  const { updateSelectedProjects, updateSelectedCycle, updateSelectedModule, updateIsPeekView } = useAnalyticsV2();
   const [isModalConfigured, setIsModalConfigured] = useState(false);
 
   useEffect(() => {
+    updateIsPeekView(true);
+
     // Handle project selection
     if (projectDetails?.id) {
       updateSelectedProjects([projectDetails.id]);
@@ -46,6 +48,7 @@ export const WorkItemsModalMainContent: React.FC<Props> = observer((props) => {
       updateSelectedProjects([]);
       updateSelectedCycle("");
       updateSelectedModule("");
+      updateIsPeekView(false);
     };
   }, [
     projectDetails?.id,
@@ -54,6 +57,7 @@ export const WorkItemsModalMainContent: React.FC<Props> = observer((props) => {
     updateSelectedProjects,
     updateSelectedCycle,
     updateSelectedModule,
+    updateIsPeekView,
   ]);
 
   if (!isModalConfigured)

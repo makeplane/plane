@@ -12,6 +12,7 @@ export interface IAnalyticsStoreV2 {
   selectedDuration: DurationType;
   selectedCycle: string;
   selectedModule: string;
+  isPeekView?: boolean;
 
   //computed
   selectedDurationLabel: DurationType | null;
@@ -21,6 +22,7 @@ export interface IAnalyticsStoreV2 {
   updateSelectedDuration: (duration: DurationType) => void;
   updateSelectedCycle: (cycle: string) => void;
   updateSelectedModule: (module: string) => void;
+  updateIsPeekView: (isPeekView: boolean) => void;
 }
 
 export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
@@ -30,7 +32,7 @@ export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
   selectedDuration: DurationType = "last_30_days";
   selectedCycle: string = "";
   selectedModule: string = "";
-
+  isPeekView: boolean = false;
   constructor() {
     makeObservable(this, {
       // observables
@@ -46,6 +48,7 @@ export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
       updateSelectedDuration: action,
       updateSelectedCycle: action,
       updateSelectedModule: action,
+      updateIsPeekView: action,
     });
   }
 
@@ -84,6 +87,12 @@ export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
   updateSelectedModule = (module: string) => {
     runInAction(() => {
       this.selectedModule = module;
+    });
+  };
+
+  updateIsPeekView = (isPeekView: boolean) => {
+    runInAction(() => {
+      this.isPeekView = isPeekView;
     });
   };
 }
