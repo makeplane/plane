@@ -23,7 +23,7 @@ const analyticsV2Service = new AnalyticsV2Service();
 const WorkItemsInsightTable = observer(() => {
   // router
   const params = useParams();
-  const workspaceSlug = params.workspaceSlug as string;
+  const workspaceSlug = params.workspaceSlug.toString();
   const { t } = useTranslation();
   // store hooks
   const { getProjectById } = useProject();

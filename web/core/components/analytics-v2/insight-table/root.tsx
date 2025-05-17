@@ -21,7 +21,7 @@ export const InsightTable = <T extends Exclude<TAnalyticsTabsV2Base, "overview">
   const { data, isLoading, columns, columnsLabels } = props;
   const params = useParams();
   const { t } = useTranslation();
-  const workspaceSlug = params.workspaceSlug as string;
+  const workspaceSlug = params.workspaceSlug.toString();
   if (isLoading) {
     return <TableLoader columns={columns} rows={5} />;
   }

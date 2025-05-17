@@ -18,7 +18,7 @@ const analyticsV2Service = new AnalyticsV2Service();
 const TotalInsights: React.FC<{ analyticsType: TAnalyticsTabsV2Base; peekView?: boolean }> = observer(
   ({ analyticsType, peekView }) => {
     const params = useParams();
-    const workspaceSlug = params.workspaceSlug as string;
+    const workspaceSlug = params.workspaceSlug.toString();
     const { t } = useTranslation();
     const { selectedDuration, selectedProjects, selectedDurationLabel, selectedCycle, selectedModule, isPeekView } =
       useAnalyticsV2();

@@ -51,7 +51,7 @@ const PriorityChart = observer((props: Props) => {
   const { resolvedTheme } = useTheme();
   // router
   const params = useParams();
-  const workspaceSlug = params.workspaceSlug as string;
+  const workspaceSlug = params.workspaceSlug.toString();
 
   const { data: priorityChartData, isLoading: priorityChartLoading } = useSWR(
     `customized-insights-chart-${workspaceSlug}-${selectedDuration}-
