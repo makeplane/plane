@@ -28,7 +28,7 @@ export interface IAnalyticsStoreV2 {
 export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
   //observables
   currentTab: TAnalyticsTabsV2Base = "overview";
-  selectedProjects: DurationType[] = [];
+  selectedProjects: string[] = [];
   selectedDuration: DurationType = "last_30_days";
   selectedCycle: string = "";
   selectedModule: string = "";
@@ -41,6 +41,7 @@ export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
       selectedProjects: observable.ref,
       selectedCycle: observable.ref,
       selectedModule: observable.ref,
+      isPeekView: observable.ref,
       // computed
       selectedDurationLabel: computed,
       // actions

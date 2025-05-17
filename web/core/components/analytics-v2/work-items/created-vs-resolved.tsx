@@ -19,10 +19,11 @@ import { ChartLoader } from "../loaders";
 
 const analyticsV2Service = new AnalyticsV2Service();
 const CreatedVsResolved = observer(() => {
-  const { selectedDuration, selectedDurationLabel, selectedProjects, selectedCycle, selectedModule, isPeekView } = useAnalyticsV2();
+  const { selectedDuration, selectedDurationLabel, selectedProjects, selectedCycle, selectedModule, isPeekView } =
+    useAnalyticsV2();
   const params = useParams();
   const { t } = useTranslation();
-  const workspaceSlug = params.workspaceSlug as string;
+  const workspaceSlug = params.workspaceSlug.toString();
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics-v2/empty-chart-area" });
   const { data: createdVsResolvedData, isLoading: isCreatedVsResolvedLoading } = useSWR(
     `created-vs-resolved-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}`,

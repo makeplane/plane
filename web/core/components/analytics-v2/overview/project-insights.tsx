@@ -26,7 +26,7 @@ const analyticsV2Service = new AnalyticsV2Service();
 const ProjectInsights = observer(() => {
   const params = useParams();
   const { t } = useTranslation();
-  const workspaceSlug = params.workspaceSlug as string;
+  const workspaceSlug = params.workspaceSlug.toString();
   const { selectedDuration, selectedDurationLabel, selectedProjects, selectedCycle, selectedModule, isPeekView } =
     useAnalyticsV2();
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics-v2/empty-chart-radar" });
