@@ -370,7 +370,7 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
                 **self.filters["base_filters"], cycle_id=cycle_id
             ).values_list("issue_id", flat=True)
             cycle = Cycle.objects.filter(id=cycle_id).first()
-            if cycle.start_date:
+            if cycle and cycle.start_date:
                 start_date = cycle.start_date.date()
                 end_date = cycle.end_date.date()
             else:
@@ -381,7 +381,7 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
                 **self.filters["base_filters"], module_id=module_id
             ).values_list("issue_id", flat=True)
             module = Module.objects.filter(id=module_id).first()
-            if module.start_date:
+            if module and module.start_date:
                 start_date = module.start_date
                 end_date = module.target_date
             else:
