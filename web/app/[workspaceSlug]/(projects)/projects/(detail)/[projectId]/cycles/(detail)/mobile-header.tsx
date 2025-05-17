@@ -19,7 +19,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 // ui
 import { CustomMenu } from "@plane/ui";
 // components
-import { ProjectAnalyticsModal } from "@/components/analytics";
+import { WorkItemsModal } from "@/components/analytics-v2/work-items/modal";
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, IssueLayoutIcon } from "@/components/issues";
 // helpers
 import { isIssueFilterActive } from "@/helpers/filter.helper";
@@ -123,7 +123,8 @@ export const CycleIssuesMobileHeader = () => {
 
   return (
     <>
-      <ProjectAnalyticsModal
+      <WorkItemsModal
+        projectDetails={currentProjectDetails}
         isOpen={analyticsModal}
         onClose={() => setAnalyticsModal(false)}
         cycleDetails={cycleDetails ?? undefined}
