@@ -5,6 +5,8 @@ import { FC, useState } from "react";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { InboxIssueCreateRoot } from "@/components/inbox/modals/create-modal";
+// hooks
+import useKeypress from "@/hooks/use-keypress";
 
 type TInboxIssueCreateModalRoot = {
   workspaceSlug: string;
@@ -20,13 +22,16 @@ export const InboxIssueCreateModalRoot: FC<TInboxIssueCreateModalRoot> = (props)
   // handlers
   const handleDuplicateIssueModal = (value: boolean) => setIsDuplicateModalOpen(value);
 
+  useKeypress("Escape", () => {
+    if (modalState) {
+      handleModalClose();
+      setIsDuplicateModalOpen(false);
+    }
+  });
+
   return (
     <ModalCore
       isOpen={modalState}
-      handleClose={() => {
-        handleModalClose();
-        setIsDuplicateModalOpen(false);
-      }}
       position={EModalPosition.TOP}
       width={isDuplicateModalOpen ? EModalWidth.VIXL : EModalWidth.XXXXL}
       className="!bg-transparent rounded-lg shadow-none transition-[width] ease-linear"

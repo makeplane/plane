@@ -13,6 +13,7 @@ import { ModuleForm } from "@/components/modules";
 // constants
 // hooks
 import { useEventTracker, useModule, useProject } from "@/hooks/store";
+import useKeypress from "@/hooks/use-keypress";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
@@ -142,8 +143,12 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
       setActiveProject(projectId ?? workspaceProjectIds?.[0] ?? null);
   }, [activeProject, data, projectId, workspaceProjectIds, isOpen]);
 
+  useKeypress("Escape", () => {
+    if (isOpen) handleClose();
+  });
+
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
+    <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       <ModuleForm
         handleFormSubmit={handleFormSubmit}
         handleClose={handleClose}
