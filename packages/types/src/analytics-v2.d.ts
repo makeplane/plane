@@ -41,6 +41,7 @@ export interface WorkItemInsightColumns {
   // because of the peek view, we will display the name of the project instead of project__name
   display_name?: string;
   avatar_url?: string;
+  assignee_id?: string;
 }
 
 export type AnalyticsTableDataMap = {

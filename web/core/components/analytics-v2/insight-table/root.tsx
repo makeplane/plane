@@ -35,7 +35,7 @@ export const InsightTable = <T extends Exclude<TAnalyticsTabsV2Base, "overview">
 
   const exportCSV = (rows: Row<AnalyticsTableDataMap[T]>[]) => {
     const rowData: any = rows.map((row) => {
-      const { project_id, ...exportableData } = row.original;
+      const { project_id, avatar_url, assignee_id, ...exportableData } = row.original;
       return Object.fromEntries(
         Object.entries(exportableData).map(([key, value]) => {
           if (columnsLabels?.[key]) {
