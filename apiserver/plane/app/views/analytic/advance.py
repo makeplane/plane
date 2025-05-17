@@ -281,9 +281,10 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
             # Optionally accept cycle_id or module_id as query params
             cycle_id = request.GET.get("cycle_id", None)
             module_id = request.GET.get("module_id", None)
+            peek_view = request.GET.get("peek_view", False)
             return Response(
                 self.get_work_items_stats(
-                    cycle_id=cycle_id, module_id=module_id
+                    cycle_id=cycle_id, module_id=module_id, peek_view=peek_view
                 ),
                 status=status.HTTP_200_OK,
             )
@@ -377,8 +378,13 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
                 return {"data": [], "schema": {}}
             queryset = queryset.filter(id__in=module_issues)
         elif peek_view:
-            project_ids = self.filters["project_filters"].keys()
-            project_id = project_ids[0]
+            project_ids_str = self.request.GET.get("project_ids")
+            if project_ids_str:
+                project_id_list = [pid.strip() for pid in project_ids_str.split(",") if pid.strip()]
+            else:
+                project_id_list = []
+                return {"data": [], "schema": {}}
+            project_id = project_id_list[0]
             project = Project.objects.filter(id=project_id).first()
             if project.created_at:
                 start_date = project.created_at.date().replace(day=1)
@@ -482,7 +488,6 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
                     **self.filters["base_filters"], module_id=module_id
                 ).values_list("issue_id", flat=True)
                 queryset = queryset.filter(id__in=module_issues)
-
 
             # Apply date range filter if available
             if self.filters["chart_period_range"]:
