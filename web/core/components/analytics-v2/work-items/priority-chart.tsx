@@ -162,10 +162,20 @@ const PriorityChart = observer((props: Props) => {
   });
 
   const exportCSV = (rows: Row<TChartDatum>[]) => {
-    const rowData = rows.map((row) => ({
-      name: row.original.name,
-      count: row.original.count,
-    }));
+    const rowData = rows.map((row) => {
+      const otherFields = Object.keys(row.original).filter((key) => key !== "name" && key !== "count" && key !== "key");
+      return {
+        name: row.original.name,
+        count: row.original.count,
+        ...otherFields.reduce(
+          (acc, key) => {
+            acc[parsedData?.schema[key] ?? key] = row.original[key];
+            return acc;
+          },
+          {} as Record<string, string | number>
+        ),
+      };
+    });
     const csv = generateCsv(csvConfig)(rowData);
     download(csvConfig)(csv);
   };
