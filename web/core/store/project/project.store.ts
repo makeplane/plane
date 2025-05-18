@@ -293,7 +293,7 @@ export class ProjectStore implements IProjectStore {
           update(this.projectMap, [project.id], (p) => ({ ...p, ...project }));
         });
         this.loader = "loaded";
-        this.fetchStatus = "partial";
+        if (!this.fetchStatus) this.fetchStatus = "partial";
       });
       return projectsResponse;
     } catch (error) {
