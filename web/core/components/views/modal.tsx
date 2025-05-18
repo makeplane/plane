@@ -10,6 +10,7 @@ import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@p
 import { ProjectViewForm } from "@/components/views";
 // hooks
 import { useProjectView } from "@/hooks/store";
+import useKeypress from "@/hooks/use-keypress";
 
 type Props = {
   data?: IProjectView | null;
@@ -65,8 +66,12 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
     else await handleUpdateView(formData);
   };
 
+  useKeypress("Escape", () => {
+    if (isOpen) handleClose();
+  });
+
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
+    <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       <ProjectViewForm
         data={data}
         handleClose={handleClose}
