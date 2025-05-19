@@ -122,7 +122,9 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   );
   // fetching customer properties
   useSWR(
-    workspaceSlug && isCustomersFeatureEnabled ? `CUSTOMERS_${workspaceSlug}_${isCustomersFeatureEnabled}` : null,
+    workspaceSlug && isCustomersFeatureEnabled
+      ? `CUSTOMER_PROPERTIES_${workspaceSlug}_${isCustomersFeatureEnabled}`
+      : null,
     workspaceSlug && isCustomersFeatureEnabled
       ? () => fetchAllCustomerPropertiesAndOptions(workspaceSlug.toString())
       : null,
@@ -131,8 +133,8 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
 
   // fetch customers
   useSWR(
-    workspaceSlug ? `CUSTOMERS_${workspaceSlug}` : null,
-    workspaceSlug ? () => fetchCustomers(workspaceSlug.toString()) : null,
+    workspaceSlug && isCustomersFeatureEnabled ? `CUSTOMERS_${workspaceSlug}_${isCustomersFeatureEnabled}` : null,
+    workspaceSlug && isCustomersFeatureEnabled ? () => fetchCustomers(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
