@@ -70,7 +70,7 @@ class ImportJob(BaseModel):
     success_metadata = models.JSONField(default=dict)
     error_metadata = models.JSONField(default=dict)
 
-     # relation map
+    # relation map
     relation_map = models.JSONField(default=dict)
 
     class Meta:
