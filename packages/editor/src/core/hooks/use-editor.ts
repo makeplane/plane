@@ -143,7 +143,7 @@ export const useEditor = (props: CustomEditorProps) => {
       },
       getCurrentCursorPosition: () => editor?.state.selection.from,
       clearEditor: (emitUpdate = false) => {
-        editor?.chain().setMeta("skipImageDeletion", true).clearContent(emitUpdate).run();
+        editor?.chain().setMeta("skipFileDeletion", true).clearContent(emitUpdate).run();
       },
       setEditorValue: (content: string, emitUpdate = false) => {
         editor?.commands.setContent(content, emitUpdate, { preserveWhitespace: "full" });

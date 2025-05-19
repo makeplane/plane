@@ -22,8 +22,8 @@ export const TrackFileDeletionPlugin = (
       });
 
       transactions.forEach((transaction) => {
-        // if the transaction has meta of skipImageDeletion get to true, then return (like while clearing the editor content programatically)
-        if (transaction.getMeta("skipImageDeletion")) return;
+        // if the transaction has meta of skipFileDeletion get to true, then return (like while clearing the editor content programatically)
+        if (transaction.getMeta("skipFileDeletion")) return;
         // transaction could be a selection
         if (!transaction.docChanged) return;
 
