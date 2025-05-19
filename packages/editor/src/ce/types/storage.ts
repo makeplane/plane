@@ -1,8 +1,8 @@
 import { HeadingExtensionStorage } from "@/extensions";
 import { CustomImageExtensionStorage } from "@/extensions/custom-image";
 import { CustomLinkStorage } from "@/extensions/custom-link";
+import { ImageExtensionStorage } from "@/extensions/image";
 import { MentionExtensionStorage } from "@/extensions/mentions";
-import { ImageExtensionStorage } from "@/plugins/image";
 
 export type ExtensionStorageMap = {
   imageComponent: CustomImageExtensionStorage;

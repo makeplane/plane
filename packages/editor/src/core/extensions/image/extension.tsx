@@ -7,9 +7,13 @@ import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-par
 // plugins
 import { TrackFileDeletionPlugin } from "@/plugins/file/delete";
 import { TrackFileRestorationPlugin } from "@/plugins/file/restore";
-import { ImageExtensionStorage } from "@/plugins/image";
 // types
 import { TFileHandler } from "@/types";
+
+export type ImageExtensionStorage = {
+  deletedImageSet: Map<string, boolean>;
+  uploadInProgress: boolean;
+};
 
 export const ImageExtension = (fileHandler: TFileHandler) => {
   const {
