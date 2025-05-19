@@ -279,6 +279,12 @@ const activityDetails: {
             created <IssueLink activity={activity} />
           </>
         );
+      else if (activity.verb === "converted")
+        return (
+          <>
+            converted <IssueLink activity={activity} /> to an epic
+          </>
+        );
       else
         return (
           <>
