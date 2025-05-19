@@ -39,8 +39,8 @@ export const findTableAncestor = (node: Node | null): HTMLTableElement | null =>
 };
 
 export const getTrimmedHTML = (html: string) => {
-  html = html.replace(/^(<p><\/p>)+/, "");
-  html = html.replace(/(<p><\/p>)+$/, "");
+  html = html.replace(/^<p><\/p>+/, "");
+  html = html.replace(/<p><\/p>+$/, "");
   return html;
 };
 
