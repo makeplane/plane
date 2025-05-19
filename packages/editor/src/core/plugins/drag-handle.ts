@@ -1,7 +1,6 @@
 import { Fragment, Slice, Node, Schema } from "@tiptap/pm/model";
 import { NodeSelection } from "@tiptap/pm/state";
-// @ts-expect-error __serializeForClipboard's is not exported
-import { __serializeForClipboard, EditorView } from "@tiptap/pm/view";
+import { EditorView } from "@tiptap/pm/view";
 // extensions
 import { SideMenuHandleOptions, SideMenuPluginProps } from "@/extensions";
 
@@ -20,6 +19,7 @@ const generalSelectors = [
   ".image-component",
   ".image-upload-component",
   ".editor-callout-component",
+  ".page-embed-component",
 ].join(", ");
 
 const maxScrollSpeed = 20;
@@ -142,8 +142,10 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
   };
 
   const handleDragStart = (event: DragEvent, view: EditorView) => {
-    const { listType: listTypeFromDragStart } = handleNodeSelection(event, view, true, options);
-    listType = listTypeFromDragStart;
+    const result = handleNodeSelection(event, view, true, options);
+    if (result) {
+      listType = result.listType;
+    }
     isDragging = true;
     lastClientY = event.clientY;
     scroll();
@@ -167,7 +169,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       return;
     }
 
-    const scrollableParent = getScrollParent(dragHandleElement);
+    const scrollableParent = getScrollParent(dragHandleElement!);
     if (!scrollableParent) return;
 
     const scrollRegionUp = options.scrollThreshold.up;
@@ -193,7 +195,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       scrollableParent.scrollBy({ top: currentScrollSpeed });
     }
 
-    scrollAnimationFrame = requestAnimationFrame(scroll);
+    scrollAnimationFrame = requestAnimationFrame(scroll) as unknown as null;
   }
 
   let dragHandleElement: HTMLElement | null = null;
@@ -408,9 +410,11 @@ const handleNodeSelection = (
     }
 
     const slice = view.state.selection.content();
-    const { dom, text } = __serializeForClipboard(view, slice);
+    const { dom, text } = view.serializeForClipboard(slice);
 
     if (event instanceof DragEvent) {
+      if (!event.dataTransfer) return;
+
       event.dataTransfer.clearData();
       event.dataTransfer.setData("text/html", dom.innerHTML);
       event.dataTransfer.setData("text/plain", text);

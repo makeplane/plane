@@ -21,7 +21,7 @@ export const ThemeSwitch: FC<Props> = (props) => {
       value={value}
       label={
         value ? (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full">
             <div
               className="border-1 relative flex h-4 w-4 rotate-45 transform items-center justify-center rounded-full border"
               style={{

@@ -139,6 +139,8 @@ export const WORKSPACE_LABELS = (workspaceSlug: string) => `WORKSPACE_LABELS_${w
 export const PROJECT_GITHUB_REPOSITORY = (projectId: string) => `PROJECT_GITHUB_REPOSITORY_${projectId.toUpperCase()}`;
 
 // cycles
+export const WORKSPACE_ACTIVE_CYCLES_LIST = (workspaceSlug: string, cursor: string, per_page: string) =>
+  `WORKSPACE_ACTIVE_CYCLES_LIST_${workspaceSlug.toUpperCase()}_${cursor.toUpperCase()}_${per_page.toUpperCase()}`;
 export const CYCLES_LIST = (projectId: string) => `CYCLE_LIST_${projectId.toUpperCase()}`;
 export const INCOMPLETE_CYCLES_LIST = (projectId: string) => `INCOMPLETE_CYCLES_LIST_${projectId.toUpperCase()}`;
 export const CURRENT_CYCLE_LIST = (projectId: string) => `CURRENT_CYCLE_LIST_${projectId.toUpperCase()}`;
@@ -273,3 +275,10 @@ export const COMMENT_REACTION_LIST = (workspaceSlug: string, projectId: string, 
 export const API_TOKENS_LIST = (workspaceSlug: string) => `API_TOKENS_LIST_${workspaceSlug.toUpperCase()}`;
 export const API_TOKEN_DETAILS = (workspaceSlug: string, tokenId: string) =>
   `API_TOKEN_DETAILS_${workspaceSlug.toUpperCase()}_${tokenId.toUpperCase()}`;
+
+
+// marketplace
+export const APPLICATIONS_LIST = (workspaceSlug: string) => `APPLICATIONS_LIST_${workspaceSlug.toUpperCase()}`;
+export const APPLICATION_DETAILS = (applicationId: string) => `APPLICATION_DETAILS_${applicationId.toUpperCase()}`;
+export const APPLICATION_BY_CLIENT_ID = (clientId: string) => `APPLICATION_BY_CLIENT_ID_${clientId.toUpperCase()}`;
+export const APPLICATION_CATEGORIES_LIST = () => `APPLICATION_CATEGORIES_LIST`;

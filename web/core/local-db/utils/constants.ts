@@ -1,4 +1,4 @@
-export const ARRAY_FIELDS = ["label_ids", "assignee_ids", "module_ids"];
+export const ARRAY_FIELDS = ["label_ids", "assignee_ids", "module_ids", "customer_ids", "customer_request_ids"];
 
 export const BOOLEAN_FIELDS = ["is_draft"];
 
