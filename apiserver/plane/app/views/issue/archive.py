@@ -12,10 +12,10 @@ from django.views.decorators.gzip import gzip_page
 from rest_framework import status
 from rest_framework.response import Response
 
-from plane.app.permissions import ProjectEntityPermission
+# Module imports
 from plane.app.serializers import (
-    IssueFlatSerializer,
     IssueSerializer,
+    IssueFlatSerializer,
     IssueDetailSerializer,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
@@ -41,6 +41,7 @@ from plane.utils.host import base_host
 
 # Module imports
 from .. import BaseViewSet, BaseAPIView
+from plane.app.permissions import ProjectEntityPermission
 
 
 class IssueArchiveViewSet(BaseViewSet):
@@ -55,6 +56,7 @@ class IssueArchiveViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .filter(Q(type__isnull=True) | Q(type__is_epic=False))
             .filter(deleted_at__isnull=True)
             .filter(archived_at__isnull=False)
             .filter(project_id=self.kwargs.get("project_id"))
@@ -244,7 +246,10 @@ class IssueArchiveViewSet(BaseViewSet):
         )
         if issue.state.group not in ["completed", "cancelled"]:
             return Response(
-                {"error": "Can only archive completed or cancelled state group issue"},
+                {
+                    "error_code": ERROR_CODES["INVALID_ARCHIVE_STATE_GROUP"],
+                    "error_message": "INVALID_ARCHIVE_STATE_GROUP",
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
         issue_activity.delay(

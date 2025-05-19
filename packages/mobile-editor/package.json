@@ -1,0 +1,28 @@
+{
+  "name": "@plane/mobile-editor",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@plane/editor": "*",
+    "lucide-react": "^0.454.0",
+    "react": "^18.3.1",
+    "react-cookie": "^7.2.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@plane/eslint-config": "*",
+    "@plane/tailwind-config": "*",
+    "@plane/types": "*",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.2.18",
+    "@vitejs/plugin-react": "^4.3.1",
+    "globals": "^15.9.0",
+    "vite": "6.2.7",
+    "vite-plugin-node-polyfills": "^0.22.0"
+  }
+}

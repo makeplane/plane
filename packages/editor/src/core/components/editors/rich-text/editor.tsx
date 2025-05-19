@@ -8,7 +8,13 @@ import { SideMenuExtension, SlashCommands } from "@/extensions";
 import { EditorRefApi, IRichTextEditor } from "@/types";
 
 const RichTextEditor = (props: IRichTextEditor) => {
-  const { disabledExtensions, dragDropEnabled, bubbleMenuEnabled = true, extensions: externalExtensions = [] } = props;
+  const {
+    disabledExtensions,
+    dragDropEnabled,
+    bubbleMenuEnabled = true,
+    extensions: externalExtensions = [],
+    isSmoothCursorEnabled,
+  } = props;
 
   const getExtensions = useCallback(() => {
     const extensions = [
@@ -30,7 +36,7 @@ const RichTextEditor = (props: IRichTextEditor) => {
   }, [dragDropEnabled, disabledExtensions, externalExtensions]);
 
   return (
-    <EditorWrapper {...props} extensions={getExtensions()}>
+    <EditorWrapper {...props} extensions={getExtensions()} isSmoothCursorEnabled={isSmoothCursorEnabled}>
       {(editor) => <>{editor && bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}</>}
     </EditorWrapper>
   );

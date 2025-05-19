@@ -24,11 +24,12 @@ import {
   CustomTypographyExtension,
   DropHandlerExtension,
   ImageExtension,
-  ListKeymap,
+  SmoothCursorExtension,
   Table,
   TableCell,
   TableHeader,
   TableRow,
+  ListKeymap,
   MarkdownClipboard,
 } from "@/extensions";
 // helpers
@@ -41,6 +42,7 @@ import { TExtensions, TFileHandler, TMentionHandler } from "@/types";
 type TArguments = {
   disabledExtensions: TExtensions[];
   enableHistory: boolean;
+  isSmoothCursorEnabled: boolean;
   fileHandler: TFileHandler;
   mentionHandler: TMentionHandler;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
@@ -49,8 +51,15 @@ type TArguments = {
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
-  const { disabledExtensions, enableHistory, fileHandler, mentionHandler, placeholder, tabIndex } = args;
-
+  const {
+    disabledExtensions,
+    enableHistory,
+    fileHandler,
+    mentionHandler,
+    placeholder,
+    tabIndex,
+    isSmoothCursorEnabled,
+  } = args;
   const extensions = [
     StarterKit.configure({
       bulletList: {
@@ -162,7 +171,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
           else return placeholder(editor.isFocused, editor.getHTML());
         }
 
-        return "Press '/' for commands...";
+        return "Press '/' for commands";
       },
       includeChildren: true,
     }),
@@ -175,6 +184,10 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       fileHandler,
     }),
   ];
+
+  if (isSmoothCursorEnabled) {
+    extensions.push(SmoothCursorExtension);
+  }
 
   if (!disabledExtensions.includes("image")) {
     extensions.push(

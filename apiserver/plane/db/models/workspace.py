@@ -425,6 +425,10 @@ class WorkspaceUserPreference(BaseModel):
         DRAFTS = "drafts", "Drafts"
         YOUR_WORK = "your_work", "Your Work"
         ARCHIVES = "archives", "Archives"
+        TEAM_SPACES = "team_spaces", "Team Spaces"
+        INITIATIVES = "initiatives", "Initiatives"
+        CUSTOMERS = "customers", "Customers"
+        DASHBOARDS = "dashboards", "Dashboards"
 
     workspace = models.ForeignKey(
         "db.Workspace",
