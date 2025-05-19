@@ -138,6 +138,7 @@ const WorkItemsInsightTable = observer(() => {
       isLoading={isLoading}
       columns={columns}
       columnsLabels={columnsLabels}
+      headerText={isPeekView ? columnsLabels["display_name"] : columnsLabels["project__name"]}
     />
   );
 });

@@ -220,7 +220,7 @@ const PriorityChart = observer((props: Props) => {
           <DataTable
             data={parsedData.data}
             columns={[...defaultColumns, ...columns]}
-            searchPlaceholder={`${parsedData.data.length} ${yAxisLabel}`}
+            searchPlaceholder={`${parsedData.data.length} ${xAxisLabel}`}
             actions={(table: Table<TChartDatum>) => (
               <Button
                 variant="accent-primary"
