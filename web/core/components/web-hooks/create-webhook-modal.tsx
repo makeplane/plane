@@ -9,6 +9,8 @@ import { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { csvDownload } from "@/helpers/download.helper";
+// hooks
+import useKeypress from "@/hooks/use-keypress";
 // components
 import { WebhookForm } from "./form";
 import { GeneratedHookDetails } from "./generated-hook-details";
@@ -93,16 +95,12 @@ export const CreateWebhookModal: React.FC<ICreateWebhookModal> = (props) => {
     }, 350);
   };
 
+  useKeypress("Escape", () => {
+    if (isOpen && !generatedWebhook) handleClose();
+  });
+
   return (
-    <ModalCore
-      isOpen={isOpen}
-      handleClose={() => {
-        if (!generatedWebhook) handleClose();
-      }}
-      position={EModalPosition.TOP}
-      width={EModalWidth.XXL}
-      className="p-4 pb-0"
-    >
+    <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL} className="p-4 pb-0">
       {!generatedWebhook ? (
         <WebhookForm onSubmit={handleCreateWebhook} handleClose={handleClose} />
       ) : (

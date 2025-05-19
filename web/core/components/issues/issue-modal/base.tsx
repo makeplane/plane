@@ -375,7 +375,6 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   return (
     <ModalCore
       isOpen={isOpen}
-      handleClose={() => handleClose(true)}
       position={EModalPosition.TOP}
       width={isDuplicateModalOpen ? EModalWidth.VIXL : EModalWidth.XXXXL}
       className="!bg-transparent rounded-lg shadow-none transition-[width] ease-linear"

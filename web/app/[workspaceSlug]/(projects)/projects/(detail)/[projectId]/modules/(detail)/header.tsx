@@ -25,7 +25,7 @@ import {
 // ui
 import { Breadcrumbs, Button, DiceIcon, Tooltip, Header, CustomSearchSelect } from "@plane/ui";
 // components
-import { ProjectAnalyticsModal } from "@/components/analytics";
+import { WorkItemsModal } from "@/components/analytics-v2/work-items/modal";
 import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // helpers
@@ -155,10 +155,11 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
 
   return (
     <>
-      <ProjectAnalyticsModal
+      <WorkItemsModal
         isOpen={analyticsModal}
         onClose={() => setAnalyticsModal(false)}
         moduleDetails={moduleDetails ?? undefined}
+        projectDetails={currentProjectDetails}
       />
       <Header>
         <Header.LeftItem>

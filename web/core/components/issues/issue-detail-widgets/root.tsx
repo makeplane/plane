@@ -2,15 +2,13 @@
 
 import React, { FC } from "react";
 // plane imports
-import { TIssueServiceType } from "@plane/types";
+import { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // components
 import {
   IssueDetailWidgetActionButtons,
   IssueDetailWidgetCollapsibles,
   IssueDetailWidgetModals,
 } from "@/components/issues/issue-detail-widgets";
-
-export type TWorkItemWidgets = "sub-work-items" | "relations" | "links" | "attachments";
 
 type Props = {
   workspaceSlug: string;

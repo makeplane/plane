@@ -21,7 +21,7 @@ export const InsightTable = <T extends Exclude<TAnalyticsTabsV2Base, "overview">
   const { data, isLoading, columns, columnsLabels } = props;
   const params = useParams();
   const { t } = useTranslation();
-  const workspaceSlug = params.workspaceSlug as string;
+  const workspaceSlug = params.workspaceSlug.toString();
   if (isLoading) {
     return <TableLoader columns={columns} rows={5} />;
   }
@@ -35,7 +35,7 @@ export const InsightTable = <T extends Exclude<TAnalyticsTabsV2Base, "overview">
 
   const exportCSV = (rows: Row<AnalyticsTableDataMap[T]>[]) => {
     const rowData: any = rows.map((row) => {
-      const { project_id, ...exportableData } = row.original;
+      const { project_id, avatar_url, assignee_id, ...exportableData } = row.original;
       return Object.fromEntries(
         Object.entries(exportableData).map(([key, value]) => {
           if (columnsLabels?.[key]) {
