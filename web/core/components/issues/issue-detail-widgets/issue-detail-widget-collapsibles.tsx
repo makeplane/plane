@@ -9,12 +9,12 @@ import {
   LinksCollapsible,
   RelationsCollapsible,
   SubIssuesCollapsible,
-  TWorkItemWidgets,
 } from "@/components/issues/issue-detail-widgets";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // Plane-web
-import { WorkItemAdditionalWidgets } from "@/plane-web/components/issues/issue-detail-widgets";
+import { TWorkItemWidgets } from "@/plane-web/components/issues/issue-detail-widgets";
+import { WorkItemAdditionalWidgetCollapsibles } from "@/plane-web/components/issues/issue-detail-widgets/collapsibles";
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 
 type Props = {
@@ -87,11 +87,13 @@ export const IssueDetailWidgetCollapsibles: FC<Props> = observer((props) => {
           issueServiceType={issueServiceType}
         />
       )}
-      <WorkItemAdditionalWidgets
-        workspaceSlug={workspaceSlug}
+      <WorkItemAdditionalWidgetCollapsibles
+        disabled={disabled}
+        hideWidgets={hideWidgets ?? []}
+        issueServiceType={issueServiceType}
         projectId={projectId}
         workItemId={issueId}
-        disabled={disabled}
+        workspaceSlug={workspaceSlug}
       />
     </div>
   );

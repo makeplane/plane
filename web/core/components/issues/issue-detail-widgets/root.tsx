@@ -9,8 +9,8 @@ import {
   IssueDetailWidgetCollapsibles,
   IssueDetailWidgetModals,
 } from "@/components/issues/issue-detail-widgets";
-
-export type TWorkItemWidgets = "sub-work-items" | "relations" | "links" | "attachments";
+// plane web imports
+import { TWorkItemWidgets } from "@/plane-web/components/issues/issue-detail-widgets";
 
 type Props = {
   workspaceSlug: string;

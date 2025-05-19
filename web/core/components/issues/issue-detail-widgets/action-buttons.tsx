@@ -12,8 +12,10 @@ import {
   RelationActionButton,
   SubIssuesActionButton,
   IssueDetailWidgetButton,
-  TWorkItemWidgets,
 } from "@/components/issues/issue-detail-widgets";
+// plane web imports
+import { TWorkItemWidgets } from "@/plane-web/components/issues/issue-detail-widgets";
+import { WorkItemAdditionalWidgetActionButtons } from "@/plane-web/components/issues/issue-detail-widgets/action-buttons";
 
 type Props = {
   workspaceSlug: string;
@@ -88,6 +90,14 @@ export const IssueDetailWidgetActionButtons: FC<Props> = (props) => {
           issueServiceType={issueServiceType}
         />
       )}
+      <WorkItemAdditionalWidgetActionButtons
+        disabled={disabled}
+        hideWidgets={hideWidgets ?? []}
+        issueServiceType={issueServiceType}
+        projectId={projectId}
+        workItemId={issueId}
+        workspaceSlug={workspaceSlug}
+      />
     </div>
   );
 };

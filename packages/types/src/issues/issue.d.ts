@@ -119,8 +119,6 @@ export type TBulkOperationsPayload = {
   properties: Partial<TBulkIssueProperties>;
 };
 
-export type TIssueDetailWidget = "sub-issues" | "relations" | "links" | "attachments";
-
 export type TIssueServiceType = EIssueServiceType.ISSUES | EIssueServiceType.EPICS | EIssueServiceType.WORK_ITEMS;
 
 export interface IPublicIssue
