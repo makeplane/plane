@@ -216,7 +216,8 @@ class PlaneOAuthService {
   async deleteTokenFromCache(credential: TWorkspaceCredential) {
     try {
       if (!credential.target_identifier || !credential.target_authorization_type || !credential.user_id) {
-        throw new Error("Target Identifier, Target Authorization Type, and User ID are required to delete a token");
+        logger.error("Skipping deletion of token from cache for credential:", credential.id);
+        return;
       }
       const cacheKey = getTokenCacheKey(
         credential.target_identifier,
