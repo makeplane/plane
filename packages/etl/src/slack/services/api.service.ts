@@ -322,7 +322,12 @@ export class SlackService {
 
       do {
         // Prepare parameters for pagination
-        const params: any = cursor ? { cursor, types } : { types };
+        const params: any= {
+          types,
+          exclude_archived: true,
+          limit: 999,
+          ...(cursor ? { cursor } : {})
+        };
 
         // Make the API request with cursor if available
         const response = await this.client.get("conversations.list", { params });

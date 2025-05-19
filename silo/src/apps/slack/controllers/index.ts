@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { validate as uuidValidate } from 'uuid';
 import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
 import {
   E_SLACK_ENTITY_TYPE,
@@ -600,6 +601,8 @@ export default class SlackController {
         payload: payload,
       });
 
+      const isUUID = (id: string | null) => id && uuidValidate(id)
+
       if (payload.event === E_PLANE_WEBHOOK_EVENT.ISSUE_COMMENT) {
         integrationTaskManager.registerTask(
           {
@@ -658,7 +661,7 @@ export default class SlackController {
             },
             Number(env.DEDUP_INTERVAL)
           );
-        } else if (payload.activity.field && !payload.activity.field.includes("_id")) {
+        } else if (payload.activity.field && !payload.activity.field.includes("_id") && !isUUID(payload.activity.old_value) && !isUUID(payload.activity.new_value)) {
           const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
             workspace_id: workspace,
             project_id: project,
