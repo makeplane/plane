@@ -4,7 +4,7 @@ import React, { FC } from "react";
 import { Layers, Link, Paperclip, Waypoints } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TIssueServiceType } from "@plane/types";
+import { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // components
 import {
   IssueAttachmentActionButton,
@@ -14,7 +14,6 @@ import {
   IssueDetailWidgetButton,
 } from "@/components/issues/issue-detail-widgets";
 // plane web imports
-import { TWorkItemWidgets } from "@/plane-web/components/issues/issue-detail-widgets";
 import { WorkItemAdditionalWidgetActionButtons } from "@/plane-web/components/issues/issue-detail-widgets/action-buttons";
 
 type Props = {

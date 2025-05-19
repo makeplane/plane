@@ -8,8 +8,8 @@ import {
   TIssueLink,
   TIssueReaction,
   TIssueServiceType,
+  TWorkItemWidgets,
 } from "@plane/types";
-import { TWorkItemWidgets } from "@/plane-web/components/issues/issue-detail-widgets";
 // plane web store
 import {
   IIssueActivityStore,

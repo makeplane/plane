@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { ISearchIssueResponse, TIssue, TIssueServiceType } from "@plane/types";
+import { ISearchIssueResponse, TIssue, TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "@/components/core";
@@ -8,7 +8,6 @@ import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web imports
-import { TWorkItemWidgets } from "@/plane-web/components/issues/issue-detail-widgets";
 import { WorkItemAdditionalWidgetModals } from "@/plane-web/components/issues/issue-detail-widgets/modals";
 // local imports
 import { IssueLinkCreateUpdateModal } from "../issue-detail/links/create-update-link-modal";

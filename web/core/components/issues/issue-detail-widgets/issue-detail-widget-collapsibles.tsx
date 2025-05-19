@@ -2,7 +2,7 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { TIssueServiceType } from "@plane/types";
+import { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // components
 import {
   AttachmentsCollapsible,
@@ -13,7 +13,6 @@ import {
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // Plane-web
-import { TWorkItemWidgets } from "@/plane-web/components/issues/issue-detail-widgets";
 import { WorkItemAdditionalWidgetCollapsibles } from "@/plane-web/components/issues/issue-detail-widgets/collapsibles";
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 
