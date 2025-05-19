@@ -31,7 +31,7 @@ const ActiveProjects = observer(() => {
       subtitle={selectedDurationLabel}
       className="md:col-span-2"
     >
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 h-[350px] overflow-auto">
         {isProjectAnalyticsCountLoading &&
           Array.from({ length: 5 }).map((_, index) => <Loader.Item key={index} height="40px" width="100%" />)}
         {!isProjectAnalyticsCountLoading &&
