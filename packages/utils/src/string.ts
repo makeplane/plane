@@ -246,20 +246,21 @@ export const checkURLValidity = (url: string): boolean => {
 };
 
 /**
- * Combines array elements with a separator and adds 'and' before the last element
+ * Combines array elements with a separator and adds a conjunction before the last element
  * @param array Array of strings to combine
  * @param separator Separator to use between elements (default: ", ")
- * @returns Combined string with 'and' before the last element
+ * @param conjunction Conjunction to use before last element (default: "and")
+ * @returns Combined string with conjunction before the last element
  */
-export const joinWithAnd = (array: string[], separator: string = ", "): string => {
+export const joinWithConjunction = (array: string[], separator: string = ", ", conjunction: string = "and"): string => {
   if (!array || array.length === 0) return "";
   if (array.length === 1) return array[0];
-  if (array.length === 2) return `${array[0]} and ${array[1]}`;
+  if (array.length === 2) return `${array[0]} ${conjunction} ${array[1]}`;
 
   const lastElement = array[array.length - 1];
   const elementsExceptLast = array.slice(0, -1);
 
-  return `${elementsExceptLast.join(separator)}${separator}and ${lastElement}`;
+  return `${elementsExceptLast.join(separator)}${separator}${conjunction} ${lastElement}`;
 };
 
 // Browser-only clipboard functions
