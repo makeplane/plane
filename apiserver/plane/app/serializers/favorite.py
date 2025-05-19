@@ -53,6 +53,7 @@ def get_entity_model_and_serializer(entity_type):
     }
     return entity_map.get(entity_type, (None, None))
 
+
 class UserFavoriteSerializer(serializers.ModelSerializer):
     entity_data = serializers.SerializerMethodField()
 

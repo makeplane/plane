@@ -135,7 +135,7 @@ def issue_on_results(
                 default=None,
                 output_field=JSONField(),
             ),
-            filter=Q(votes__isnull=False,votes__deleted_at__isnull=True),
+            filter=Q(votes__isnull=False, votes__deleted_at__isnull=True),
             distinct=True,
         ),
         reaction_items=ArrayAgg(
@@ -169,7 +169,9 @@ def issue_on_results(
                 default=None,
                 output_field=JSONField(),
             ),
-            filter=Q(issue_reactions__isnull=False, issue_reactions__deleted_at__isnull=True),
+            filter=Q(
+                issue_reactions__isnull=False, issue_reactions__deleted_at__isnull=True
+            ),
             distinct=True,
         ),
     ).values(*required_fields, "vote_items", "reaction_items")
