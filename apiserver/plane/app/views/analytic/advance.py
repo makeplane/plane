@@ -42,7 +42,6 @@ class AdvanceAnalyticsBaseView(BaseAPIView):
 
 
 class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
-
     def get_filtered_counts(self, queryset: QuerySet) -> Dict[str, int]:
         def get_filtered_count() -> int:
             if self.filters["analytics_date_range"]:

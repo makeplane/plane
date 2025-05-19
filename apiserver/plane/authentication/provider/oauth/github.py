@@ -36,21 +36,23 @@ class GitHubOAuthProvider(OauthAdapter):
         redirect_uri=None,
         is_mobile=False,
     ):
-        GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, GITHUB_ORGANIZATION_ID = get_configuration_value(
-            [
-                {
-                    "key": "GITHUB_CLIENT_ID",
-                    "default": os.environ.get("GITHUB_CLIENT_ID"),
-                },
-                {
-                    "key": "GITHUB_CLIENT_SECRET",
-                    "default": os.environ.get("GITHUB_CLIENT_SECRET"),
-                },
-                {
-                    "key": "GITHUB_ORGANIZATION_ID",
-                    "default": os.environ.get("GITHUB_ORGANIZATION_ID"),
-                },
-            ]
+        GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, GITHUB_ORGANIZATION_ID = (
+            get_configuration_value(
+                [
+                    {
+                        "key": "GITHUB_CLIENT_ID",
+                        "default": os.environ.get("GITHUB_CLIENT_ID"),
+                    },
+                    {
+                        "key": "GITHUB_CLIENT_SECRET",
+                        "default": os.environ.get("GITHUB_CLIENT_SECRET"),
+                    },
+                    {
+                        "key": "GITHUB_ORGANIZATION_ID",
+                        "default": os.environ.get("GITHUB_ORGANIZATION_ID"),
+                    },
+                ]
+            )
         )
 
         if not (GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET):
@@ -151,7 +153,10 @@ class GitHubOAuthProvider(OauthAdapter):
 
     def is_user_in_organization(self, github_username):
         headers = {"Authorization": f"Bearer {self.token_data.get('access_token')}"}
-        response = requests.get(f"{self.org_membership_url}/{self.organization_id}/memberships/{github_username}", headers=headers)
+        response = requests.get(
+            f"{self.org_membership_url}/{self.organization_id}/memberships/{github_username}",
+            headers=headers,
+        )
         return response.status_code == 200  # 200 means the user is a member
 
     def set_user_data(self):
@@ -167,7 +172,6 @@ class GitHubOAuthProvider(OauthAdapter):
                     error_code=AUTHENTICATION_ERROR_CODES["GITHUB_USER_NOT_IN_ORG"],
                     error_message="GITHUB_USER_NOT_IN_ORG",
                 )
-
 
         email = self.__get_email(headers=headers)
         super().set_user_data(

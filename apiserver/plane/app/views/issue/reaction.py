@@ -17,6 +17,7 @@ from plane.db.models import IssueReaction
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.host import base_host
 
+
 class IssueReactionViewSet(BaseViewSet):
     serializer_class = IssueReactionSerializer
     model = IssueReaction

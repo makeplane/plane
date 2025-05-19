@@ -21,6 +21,7 @@ from plane.authentication.adapter.error import (
 )
 from plane.utils.path_validator import validate_next_path
 
+
 class SignInAuthEndpoint(View):
     def post(self, request):
         next_path = request.POST.get("next_path")

@@ -18,6 +18,7 @@ from plane.authentication.adapter.error import (
 )
 from plane.utils.path_validator import validate_next_path
 
+
 class GitHubOauthInitiateEndpoint(View):
     def get(self, request):
         # Get host and next path
