@@ -29,6 +29,7 @@ from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_relation_mapper import get_actual_relation
 from plane.utils.host import base_host
 
+
 class IssueRelationViewSet(BaseViewSet):
     serializer_class = IssueRelationSerializer
     model = IssueRelation

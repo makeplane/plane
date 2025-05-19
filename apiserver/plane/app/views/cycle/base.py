@@ -1119,14 +1119,13 @@ class CycleUserPropertiesEndpoint(BaseAPIView):
 class CycleProgressEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, cycle_id):
-
         cycle = Cycle.objects.filter(
             workspace__slug=slug, project_id=project_id, id=cycle_id
         ).first()
         if not cycle:
             return Response(
                 {"error": "Cycle not found"}, status=status.HTTP_404_NOT_FOUND
-            ) 
+            )
         aggregate_estimates = (
             Issue.issue_objects.filter(
                 estimate_point__estimate__type="points",
@@ -1177,7 +1176,7 @@ class CycleProgressEndpoint(BaseAPIView):
                 ),
             )
         )
-        if cycle.progress_snapshot:      
+        if cycle.progress_snapshot:
             backlog_issues = cycle.progress_snapshot.get("backlog_issues", 0)
             unstarted_issues = cycle.progress_snapshot.get("unstarted_issues", 0)
             started_issues = cycle.progress_snapshot.get("started_issues", 0)
