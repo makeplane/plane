@@ -296,6 +296,12 @@ const activityDetails: {
             created <IssueLink activity={activity} />
           </>
         );
+      else if (activity.verb === "converted")
+        return (
+          <>
+            converted <IssueLink activity={activity} /> to a work item
+          </>
+        );
       else
         return (
           <>
