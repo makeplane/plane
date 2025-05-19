@@ -1,23 +1,5 @@
 import { ExIssue } from "@plane/sdk";
 
-export const closingMagicWords = [
-  "close",
-  "closes",
-  "closed",
-  "closing fix",
-  "fixes",
-  "fixed",
-  "resolve",
-  "resolves",
-  "resolved",
-  "resolving complete",
-  "completes",
-  "completing",
-  "completed",
-];
-
-export const nonClosingMagicWords = ["ref", "references", "reference to", "part of", "related to"];
-
 export interface IssueReference {
   sequence: number;
   identifier: string;
@@ -33,32 +15,44 @@ export interface IssueWithReference {
   reference: IssueReference;
 }
 
-interface ParsedIssues {
-  closingRefs: string[];
-  nonClosingRefs: string[];
-}
+// PLANE-123
+const ALL_PLANE_ISSUE_REGEX = /([A-Z0-9]+)-(\d+)/g;
 
-export const getReferredIssues = (title: string, description: string): LinkedIssues => {
-  const { closingRefs, nonClosingRefs } = parseMagicWords(description);
+// [PLANE-123] - Plane issue wrapped in square brackets
+const CLOSED_PLANE_ISSUE_REGEX = /\[([A-Z0-9]+)-(\d+)\]/g;
 
-  const createIssueReference = (identifier: string): IssueReference | null => {
-    const match = identifier.match(/([A-Z]+)-(\d+)/);
-    if (match) {
-      return {
-        identifier: match[1],
-        sequence: parseInt(match[2], 10),
-      };
+/**
+ * Get all the issues referenced in the text
+ * Example text: This PR closes [PLANE-123] and references ABC-456, DEF-789ABC
+ *
+ * Out of these, the parser identifies the following:
+ * - Closing issues: [PLANE-123] => Closes as the issue is wrapped in square brackets
+ * - Non-closing issues: ABC-456, DEF-789
+ *
+ * @param text - This PR closes [PLANE-123] and references ABC-456, DEF-789ABC
+ * @returns - An object containing the closing and non-closing references
+ */
+export const getReferredIssues = (text: string): LinkedIssues => {
+  const closingReferences: IssueReference[] = [];
+  const nonClosingReferences: IssueReference[] = [];
+
+  const allIssues = extractIssues(text, ALL_PLANE_ISSUE_REGEX);
+  const closedIssues = extractIssues(text, CLOSED_PLANE_ISSUE_REGEX);
+
+  const visitedIssues = new Set<string>();
+
+  for (const issue of closedIssues) {
+    closingReferences.push(createPlaneIssueReference(issue));
+    visitedIssues.add(issue);
+  }
+
+  for (const issue of allIssues) {
+    if (visitedIssues.has(issue)) {
+      continue;
     }
-    // This should never happen if our regex is correct, but we'll handle it just in case
-    return null;
-  };
-
-  const titleRefs = createIssueReference(title) ?? [];
-  const closingReferences = uniqueReferences(closingRefs.map(createIssueReference)
-    .filter((ref) => ref !== null).concat(titleRefs));
-  const nonClosingReferences = uniqueReferences(nonClosingRefs.map(createIssueReference)
-    .filter((ref) => ref !== null)
-    .filter((ref) => !closingReferences.some((closingRef) => closingRef.identifier === ref.identifier && closingRef.sequence === ref.sequence)));
+    nonClosingReferences.push(createPlaneIssueReference(issue));
+    visitedIssues.add(issue);
+  }
 
   return {
     closingReferences,
@@ -66,59 +60,24 @@ export const getReferredIssues = (title: string, description: string): LinkedIss
   };
 };
 
-export const parseIssueReference = (data: string): string[] => {
-  const regex = /^([A-Z]+-\d+):/;
-  const match = data.match(regex);
-  return match ? [match[1]] : [];
+/**
+ * Helper function to extract issue references using a regex pattern
+ * @param text - The text to search for issues
+ * @param pattern - The regex pattern to match issues
+ * @returns Array of matched issue strings
+ */
+const extractIssues = (text: string, pattern: RegExp): string[] => {
+  return (text.match(pattern) || [])
+    // Remove the square brackets from closed issues for consistency
+    .map((issue) => issue.replace(/[\[\]]/g, ""))
+    .filter((issue): issue is string => issue != null);
 };
 
-
-export const parseMagicWords = (title: string): ParsedIssues => {
-  const closingRefs: string[] = [];
-  const nonClosingRefs: string[] = [];
-
-  // Find all issue references in the title
-  const allIssues = title.match(/[A-Z]+-\d+/g) || [];
-
-  // Find all magic words in the title
-  const allMagicWords = [...closingMagicWords, ...nonClosingMagicWords];
-  const magicWordsRegex = new RegExp(`\\b(${allMagicWords.join("|")})\\b`, "gi");
-  const magicWordMatches = [...title.matchAll(magicWordsRegex)];
-
-  // Process magic words in reverse order
-  for (let i = magicWordMatches.length - 1; i >= 0; i--) {
-    const match = magicWordMatches[i];
-    const word = match[1].toLowerCase();
-    const startIndex = match.index! + match[0].length;
-
-    // Find issues that appear after this magic word
-    const remainingIssues = allIssues.filter((issue) => title.indexOf(issue) >= startIndex);
-
-    if (closingMagicWords.includes(word)) {
-      closingRefs.unshift(...remainingIssues);
-      // Remove these issues from consideration for future iterations
-      allIssues.splice(allIssues.length - remainingIssues.length, remainingIssues.length);
-    } else if (nonClosingMagicWords.includes(word)) {
-      nonClosingRefs.unshift(...remainingIssues);
-      // Remove these issues from consideration for future iterations
-      allIssues.splice(allIssues.length - remainingIssues.length, remainingIssues.length);
-    }
-  }
-
-  // Any remaining issues without a preceding magic word are not considered references
-  // Remove this line to prevent adding them as non-closing references
-  // nonClosingRefs.unshift(...allIssues);
-
-  return { closingRefs, nonClosingRefs };
+const createPlaneIssueReference = (issue: string): IssueReference => {
+  const [identifier, sequence] = issue.split("-");
+  return {
+    identifier,
+    sequence: parseInt(sequence),
+  };
 };
 
-// Helper function to remove duplicates while preserving order
-const uniqueReferences = (refs: IssueReference[]): IssueReference[] => {
-  const seen = new Set<string>();
-  return refs.filter((ref) => {
-    const key = `${ref.identifier}-${ref.sequence}`;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
-};
