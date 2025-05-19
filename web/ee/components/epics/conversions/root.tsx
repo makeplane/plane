@@ -59,6 +59,7 @@ export const ConvertWorkItemAction: FC<Props> = observer((props) => {
   const handleConvert = () => {
     if (conversionType === EWorkItemConversionType.WORK_ITEM) toggleEpicToWorkItemModal(workItemId);
     else toggleWorkItemToEpicModal(workItemId);
+    toggleConversionWarningModal(null);
   };
 
   const handleOnClick = () => {
