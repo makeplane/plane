@@ -21,7 +21,7 @@ import {
   UsersIcon,
 } from "lucide-react";
 import { IIssueActivity } from "@plane/types";
-import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon, Intake } from "@plane/ui";
+import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon, Intake, EpicIcon } from "@plane/ui";
 // helpers
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { generateWorkItemLink } from "@/helpers/issue.helper";
@@ -271,6 +271,12 @@ const activityDetails: {
             created <IssueLink activity={activity} />
           </>
         );
+      else if (activity.verb === "converted")
+        return (
+          <>
+            converted <IssueLink activity={activity} /> to an epic
+          </>
+        );
       else
         return (
           <>
@@ -279,6 +285,29 @@ const activityDetails: {
         );
     },
     icon: <LayersIcon width={12} height={12} className="text-custom-text-200" aria-hidden="true" />,
+  },
+  epic: {
+    message: (activity) => {
+      if (activity.verb === "created")
+        return (
+          <>
+            created <IssueLink activity={activity} />
+          </>
+        );
+      else if (activity.verb === "converted")
+        return (
+          <>
+            converted <IssueLink activity={activity} /> to a work item
+          </>
+        );
+      else
+        return (
+          <>
+            deleted <IssueLink activity={activity} />
+          </>
+        );
+    },
+    icon: <EpicIcon width={12} height={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   labels: {
     message: (activity, showIssue, workspaceSlug) => {
@@ -727,10 +756,11 @@ type ActivityMessageProps = {
 export const ActivityMessage = ({ activity, showIssue = false }: ActivityMessageProps) => {
   // router params
   const { workspaceSlug } = useParams();
+  const activityField = activity.field ?? "issue";
 
   return (
     <>
-      {activityDetails[activity.field as keyof typeof activityDetails]?.message(
+      {activityDetails[activityField as keyof typeof activityDetails]?.message(
         activity,
         showIssue,
         workspaceSlug ? workspaceSlug.toString() : (activity.workspace_detail?.slug ?? "")

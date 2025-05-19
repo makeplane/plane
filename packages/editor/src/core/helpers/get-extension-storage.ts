@@ -1,23 +1,8 @@
 import { Editor } from "@tiptap/core";
-import {
-  CustomLinkStorage,
-  HeadingExtensionStorage,
-  MentionExtensionStorage,
-  UploadImageExtensionStorage,
-} from "@/extensions";
-import { ImageExtensionStorage } from "@/plugins/image";
+// plane editor types
+import { ExtensionStorageMap } from "@/plane-editor/types/storage";
 
-type ExtensionNames = "imageComponent" | "image" | "link" | "headingList" | "mention";
-
-interface ExtensionStorageMap {
-  imageComponent: UploadImageExtensionStorage;
-  image: ImageExtensionStorage;
-  link: CustomLinkStorage;
-  headingList: HeadingExtensionStorage;
-  mention: MentionExtensionStorage;
-}
-
-export const getExtensionStorage = <K extends ExtensionNames>(
+export const getExtensionStorage = <K extends keyof ExtensionStorageMap>(
   editor: Editor,
   extensionName: K
 ): ExtensionStorageMap[K] => editor.storage[extensionName];
