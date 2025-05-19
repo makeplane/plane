@@ -5,7 +5,7 @@ import { TIssueLink } from "./issue_link";
 import { TIssueReaction, IIssuePublicReaction, IPublicVote } from "./issue_reaction";
 import { TIssueRelationTypes } from "./issue_relation";
 import { TIssuePublicComment } from "./activity/issue_comment";
-import { TWorkItemExtended, TWorkItemDetailExtended } from "./issue-extended";
+import { TWorkItemExtended, TWorkItemWidgetsExtended } from "./issue-extended";
 import { EUpdateStatus } from "../enums";
 
 // new issue structure types
@@ -70,7 +70,6 @@ export type TIssue = TBaseIssue &
     sourceIssueId?: string;
     state__group?: string | null;
     update_status?: EUpdateStatus | undefined;
-    state__group?: string | null;
   };
 
 export type TIssueMap = {
@@ -126,8 +125,7 @@ export type TBulkOperationsPayload = {
   properties: Partial<TBulkIssueProperties>;
 };
 
-
-export type TWorkItemWidgets = "sub-work-items" | "relations" | "links" | "attachments" | TWorkItemDetailExtended;
+export type TWorkItemWidgets = "sub-work-items" | "relations" | "links" | "attachments" | TWorkItemWidgetsExtended;
 
 export type TIssueServiceType = EIssueServiceType.ISSUES | EIssueServiceType.EPICS | EIssueServiceType.WORK_ITEMS;
 

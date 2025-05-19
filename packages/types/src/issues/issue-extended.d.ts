@@ -3,4 +3,4 @@ export type TWorkItemExtended = {
   customer_request_ids?: string[];
 };
 
-export type TWorkItemDetailExtended = "customer_requests";
+export type TWorkItemWidgetsExtended = "customer_requests";
