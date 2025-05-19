@@ -1,5 +1,7 @@
 import { Editor } from "@tiptap/core";
 import { EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
+// plane editor types
+import { ExtensionFileSetStorageKey } from "@/plane-editor/types/storage";
 // types
 import { TFileHandler } from "@/types";
 // local imports
@@ -9,7 +11,7 @@ export const TrackFileDeletionPlugin = (
   editor: Editor,
   deleteHandler: TFileHandler["delete"],
   nodeType: string,
-  fileSetName: string
+  fileSetName: ExtensionFileSetStorageKey
 ): Plugin =>
   new Plugin({
     key: new PluginKey(`delete-${nodeType}`),

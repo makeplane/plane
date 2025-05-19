@@ -11,3 +11,5 @@ export type ExtensionStorageMap = {
   headingList: HeadingExtensionStorage;
   mention: MentionExtensionStorage;
 };
+
+export type ExtensionFileSetStorageKey = Extract<keyof ImageExtensionStorage, "deletedImageSet">;
