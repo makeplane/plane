@@ -96,6 +96,11 @@ export const PREFERENCE_OPTIONS: {
     title: "theme",
     description: "select_or_customize_your_interface_color_scheme",
   },
+  {
+    id: "start_of_week",
+    title: "First day of the week",
+    description: "This will change how all calendars in your app look.",
+  },
 ];
 
 /**
