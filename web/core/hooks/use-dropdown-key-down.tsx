@@ -21,7 +21,7 @@ export const useDropdownKeyDown: TUseDropdownKeyDown = (onEnterKeyDown, onEscKey
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLElement>) => {
-      if (event.key === "Enter") {
+      if (event.key === "Enter" && !event.nativeEvent.isComposing) {
         stopEventPropagation(event);
         onEnterKeyDown();
       } else if (event.key === "Escape") {
