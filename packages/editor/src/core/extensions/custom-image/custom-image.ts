@@ -8,6 +8,7 @@ import { ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
 import { CustomImageNode } from "@/extensions/custom-image";
 // helpers
 import { isFileValid } from "@/helpers/file";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // plugins
 import { TrackImageDeletionPlugin, TrackImageRestorationPlugin } from "@/plugins/image";
@@ -32,10 +33,9 @@ declare module "@tiptap/core" {
   }
 }
 
-export const getImageComponentImageFileMap = (editor: Editor) =>
-  (editor.storage.imageComponent as UploadImageExtensionStorage | undefined)?.fileMap;
+export const getImageComponentImageFileMap = (editor: Editor) => getExtensionStorage(editor, "imageComponent")?.fileMap;
 
-export interface UploadImageExtensionStorage {
+export interface CustomImageExtensionStorage {
   assetsUploadStatus: TFileHandler["assetsUploadStatus"];
   fileMap: Map<string, UploadEntity>;
   deletedImageSet: Map<string, boolean>;
@@ -55,7 +55,7 @@ export const CustomImageExtension = (props: TFileHandler) => {
     validation: { maxFileSize },
   } = props;
 
-  return Image.extend<Record<string, unknown>, UploadImageExtensionStorage>({
+  return Image.extend<Record<string, unknown>, CustomImageExtensionStorage>({
     name: "imageComponent",
     selectable: true,
     group: "block",
