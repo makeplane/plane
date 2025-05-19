@@ -126,7 +126,7 @@ export const EpicPeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pro
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
-        message: "Work item link copied to clipboard.",
+        message: "Epic link copied to clipboard.",
       });
     });
   };

@@ -95,4 +95,6 @@ export const FEATURE_TO_BASE_PLAN_MAP = {
   [E_FEATURE_FLAGS.WORKITEM_TEMPLATES]: EProductSubscriptionEnum.PRO,
   [E_FEATURE_FLAGS.DASHBOARDS]: EProductSubscriptionEnum.PRO,
   [E_FEATURE_FLAGS.SILO_INTEGRATIONS]: EProductSubscriptionEnum.PRO,
+  [E_FEATURE_FLAGS.EPICS]: EProductSubscriptionEnum.PRO,
+  [E_FEATURE_FLAGS.PROJECT_UPDATES]: EProductSubscriptionEnum.PRO,
 };
