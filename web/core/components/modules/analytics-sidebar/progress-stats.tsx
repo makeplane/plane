@@ -103,7 +103,7 @@ export const AssigneeStatComponent = observer((props: TAssigneeStatComponent) =>
                 key={`unassigned-${index}`}
                 title={
                   <div className="flex items-center gap-2">
-                    <div className="h-4 w-4 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
+                    <div className="h-4 w-4 rounded-full border-2 border-custom-border-200 bg-custom-background-90">
                       <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
                     </div>
                     <span>{t("no_assignee")}</span>
@@ -116,7 +116,7 @@ export const AssigneeStatComponent = observer((props: TAssigneeStatComponent) =>
         })
       ) : (
         <div className="flex h-full flex-col items-center justify-center gap-2">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-80">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-90">
             <Image src={emptyMembers} className="h-12 w-12" alt="empty members" />
           </div>
           <h6 className="text-base text-custom-text-300">{t("no_assignees_yet")}</h6>
@@ -178,7 +178,7 @@ export const LabelStatComponent = observer((props: TLabelStatComponent) => {
         })
       ) : (
         <div className="flex h-full flex-col items-center justify-center gap-2">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-80">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-90">
             <Image src={emptyLabel} className="h-12 w-12" alt="empty label" />
           </div>
           <h6 className="text-base text-custom-text-300">No labels yet</h6>
@@ -223,16 +223,16 @@ export const StateStatComponent = observer((props: TStateStatComponent) => {
 
 const progressStats = [
   {
+    key: "stat-states",
+    title: "States",
+  },
+  {
     key: "stat-assignees",
     title: "Assignees",
   },
   {
     key: "stat-labels",
     title: "Labels",
-  },
-  {
-    key: "stat-states",
-    title: "States",
   },
 ];
 
@@ -344,6 +344,14 @@ export const ModuleProgressStats: FC<TModuleProgressStats> = observer((props) =>
           ))}
         </Tab.List>
         <Tab.Panels className="py-3 text-custom-text-200">
+          <Tab.Panel key={"stat-states"}>
+            <StateStatComponent
+              distribution={distributionStateData}
+              totalIssuesCount={totalIssuesCount}
+              isEditable={isEditable}
+              handleFiltersUpdate={handleFiltersUpdate}
+            />
+          </Tab.Panel>
           <Tab.Panel key={"stat-assignees"}>
             <AssigneeStatComponent
               distribution={distributionAssigneeData}
@@ -357,14 +365,6 @@ export const ModuleProgressStats: FC<TModuleProgressStats> = observer((props) =>
               distribution={distributionLabelData}
               isEditable={isEditable}
               filters={filters}
-              handleFiltersUpdate={handleFiltersUpdate}
-            />
-          </Tab.Panel>
-          <Tab.Panel key={"stat-states"}>
-            <StateStatComponent
-              distribution={distributionStateData}
-              totalIssuesCount={totalIssuesCount}
-              isEditable={isEditable}
               handleFiltersUpdate={handleFiltersUpdate}
             />
           </Tab.Panel>
