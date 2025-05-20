@@ -49,14 +49,14 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
     issue: { getIssueById },
   } = useIssueDetail();
 
-  const { projectPermissionsByWorkspaceSlugAndProjectId } = useUserPermissions();
+  const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { getProjectById } = useProject();
   const { data: currentUser } = useUser();
   // derived values
   const issue = issueId ? getIssueById(issueId) : undefined;
-  const currentUserProjectRole = projectPermissionsByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
-  const isAdmin = (currentUserProjectRole ?? EUserPermissions.GUEST) === EUserPermissions.ADMIN;
-  const isGuest = (currentUserProjectRole ?? EUserPermissions.GUEST) === EUserPermissions.GUEST;
+  const currentUserProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
+  const isAdmin = currentUserProjectRole === EUserPermissions.ADMIN;
+  const isGuest = currentUserProjectRole === EUserPermissions.GUEST;
   const isAssigned = issue?.assignee_ids && currentUser?.id ? issue?.assignee_ids.includes(currentUser?.id) : false;
   const isWorklogButtonEnabled = !isIntakeIssue && !isGuest && (isAdmin || isAssigned);
   // toggle filter

@@ -1,34 +1,28 @@
 import { useState } from "react";
-import { useParams } from "next/navigation";
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { IWorkspaceMember } from "@plane/types";
+import { IWorkspaceMember, TProjectMembership } from "@plane/types";
+// components
 import { AccountTypeColumn, NameColumn } from "@/components/project/settings/member-columns";
+// hooks
 import { useUser, useUserPermissions } from "@/hooks/store";
 
-export interface RowData {
+export interface RowData extends Pick<TProjectMembership, "original_role"> {
   member: IWorkspaceMember;
-  role: EUserPermissions;
 }
 
-export const useProjectColumns = () => {
+type TUseProjectColumnsProps = {
+  projectId: string;
+  workspaceSlug: string;
+};
+
+export const useProjectColumns = (props: TUseProjectColumnsProps) => {
+  const { projectId, workspaceSlug } = props;
   // states
   const [removeMemberModal, setRemoveMemberModal] = useState<RowData | null>(null);
-
-  const { workspaceSlug, projectId } = useParams();
-
+  // store hooks
   const { data: currentUser } = useUser();
-  const { allowPermissions, projectUserInfo } = useUserPermissions();
-
-  const currentProjectRole =
-    (projectUserInfo?.[workspaceSlug.toString()]?.[projectId.toString()]?.role as unknown as EUserPermissions) ??
-    EUserPermissions.GUEST;
-
-  const getFormattedDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-
-    const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "long", day: "numeric" };
-    return date.toLocaleDateString("en-US", options);
-  };
+  const { allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   // derived values
   const isAdmin = allowPermissions(
     [EUserPermissions.ADMIN],
@@ -36,6 +30,15 @@ export const useProjectColumns = () => {
     workspaceSlug.toString(),
     projectId.toString()
   );
+  const currentProjectRole =
+    getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug.toString(), projectId.toString()) ?? EUserPermissions.GUEST;
+
+  const getFormattedDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+
+    const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "long", day: "numeric" };
+    return date.toLocaleDateString("en-US", options);
+  };
 
   const columns = [
     {
@@ -76,5 +79,5 @@ export const useProjectColumns = () => {
       tdRender: (rowData: RowData) => <div>{getFormattedDate(rowData?.member?.joining_date || "")}</div>,
     },
   ];
-  return { columns, workspaceSlug, projectId, removeMemberModal, setRemoveMemberModal };
+  return { columns, removeMemberModal, setRemoveMemberModal };
 };

@@ -2,26 +2,24 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { ChevronDown, Plus, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { ROLE, PROJECT_MEMBER_ADDED, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// ui
 import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
-// constants
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
-// plane-web constants
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
+  projectId: string;
+  workspaceSlug: string;
 };
 
 type member = {
@@ -43,14 +41,14 @@ const defaultValues: FormValues = {
 };
 
 export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
-  const { isOpen, onClose, onSuccess } = props;
-  // router
-  const { workspaceSlug, projectId } = useParams();
+  const { isOpen, onClose, onSuccess, projectId, workspaceSlug } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { captureEvent } = useEventTracker();
-  const { projectUserInfo } = useUserPermissions();
+  const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const {
-    project: { projectMemberIds, bulkAddMembersToProject },
+    project: { getProjectMemberDetails, bulkAddMembersToProject },
     workspace: { workspaceMemberIds, getWorkspaceMemberDetails },
   } = useMember();
   // form info
@@ -62,19 +60,15 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     handleSubmit,
     control,
   } = useForm<FormValues>();
-
   const { fields, append, remove } = useFieldArray({
     control,
     name: "members",
   });
-
-  const { t } = useTranslation();
-
-  const currentProjectRole = projectUserInfo?.[workspaceSlug?.toString()]?.[projectId?.toString()]?.role;
-
+  // derived values
+  const currentProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
   const uninvitedPeople = workspaceMemberIds?.filter((userId) => {
-    const isInvited = projectMemberIds?.find((u) => u === userId);
-
+    const projectMemberDetails = getProjectMemberDetails(userId, projectId);
+    const isInvited = projectMemberDetails?.member.id && projectMemberDetails?.original_role;
     return !isInvited;
   });
 
@@ -180,7 +174,6 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     const isGuestOROwner = [EUserPermissions.ADMIN, EUserPermissions.GUEST].includes(
       currentMemberWorkspaceRole as EUserPermissions
     );
-
 
     return Object.fromEntries(
       Object.entries(ROLE).filter(([key]) => !isGuestOROwner || [currentMemberWorkspaceRole].includes(parseInt(key)))

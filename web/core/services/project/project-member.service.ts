@@ -1,5 +1,5 @@
 // types
-import type { IProjectBulkAddFormData, IProjectMember, IProjectMembership } from "@plane/types";
+import type { IProjectBulkAddFormData, TProjectMembership } from "@plane/types";
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
@@ -9,7 +9,7 @@ export class ProjectMemberService extends APIService {
     super(API_BASE_URL);
   }
 
-  async fetchProjectMembers(workspaceSlug: string, projectId: string): Promise<IProjectMembership[]> {
+  async fetchProjectMembers(workspaceSlug: string, projectId: string): Promise<TProjectMembership[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -21,7 +21,7 @@ export class ProjectMemberService extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: IProjectBulkAddFormData
-  ): Promise<IProjectMembership[]> {
+  ): Promise<TProjectMembership[]> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -29,7 +29,7 @@ export class ProjectMemberService extends APIService {
       });
   }
 
-  async projectMemberMe(workspaceSlug: string, projectId: string): Promise<IProjectMember> {
+  async projectMemberMe(workspaceSlug: string, projectId: string): Promise<TProjectMembership> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/project-members/me/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -37,7 +37,7 @@ export class ProjectMemberService extends APIService {
       });
   }
 
-  async getProjectMember(workspaceSlug: string, projectId: string, memberId: string): Promise<IProjectMember> {
+  async getProjectMember(workspaceSlug: string, projectId: string, memberId: string): Promise<TProjectMembership> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/${memberId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -49,8 +49,8 @@ export class ProjectMemberService extends APIService {
     workspaceSlug: string,
     projectId: string,
     memberId: string,
-    data: Partial<IProjectMember>
-  ): Promise<IProjectMember> {
+    data: Partial<TProjectMembership>
+  ): Promise<TProjectMembership> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/${memberId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {

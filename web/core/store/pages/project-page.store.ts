@@ -115,7 +115,7 @@ export class ProjectPageStore implements IProjectPageStore {
    */
   get canCurrentUserCreatePage() {
     const { workspaceSlug, projectId } = this.store.router;
-    const currentUserProjectRole = this.store.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
+    const currentUserProjectRole = this.store.user.permission.getProjectRoleByWorkspaceSlugAndProjectId(
       workspaceSlug?.toString() || "",
       projectId?.toString() || ""
     );
