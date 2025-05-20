@@ -462,9 +462,6 @@ module.exports = {
         "onboarding-gradient-300": "var( --gradient-onboarding-300)",
       },
     },
-    fontFamily: {
-      custom: ["Inter", "sans-serif"],
-    },
   },
   plugins: [
     require("tailwindcss-animate"),
