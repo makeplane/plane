@@ -47,6 +47,7 @@ class IssueRelationViewSet(BaseViewSet):
             .order_by("-created_at")
             .distinct()
         )
+
         # get all blocking issues
         blocking_issues = issue_relations.filter(
             relation_type="blocked_by", related_issue_id=issue_id
@@ -98,63 +99,68 @@ class IssueRelationViewSet(BaseViewSet):
         ).values_list("related_issue_id", flat=True)
 
         queryset = (
-            Issue.issue_objects.filter(workspace__slug=slug)
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels", "issue_module__module")
-            .annotate(
-                cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
+            (
+                Issue.objects.filter(workspace__slug=slug)
+                .filter(project__deleted_at__isnull=True)
+                .select_related("workspace", "project", "state", "parent")
+                .prefetch_related("assignees", "labels", "issue_module__module")
+                .annotate(
+                    cycle_id=Subquery(
+                        CycleIssue.objects.filter(
+                            issue=OuterRef("id"), deleted_at__isnull=True
+                        ).values("cycle_id")[:1]
+                    )
+                )
+                .annotate(
+                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    attachment_count=FileAsset.objects.filter(
+                        issue_id=OuterRef("id"),
+                        entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                    )
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    label_ids=Coalesce(
+                        ArrayAgg(
+                            "labels__id",
+                            distinct=True,
+                            filter=Q(
+                                ~Q(labels__id__isnull=True)
+                                & (Q(label_issue__deleted_at__isnull=True))
+                            ),
+                        ),
+                        Value([], output_field=ArrayField(UUIDField())),
+                    ),
+                    assignee_ids=Coalesce(
+                        ArrayAgg(
+                            "assignees__id",
+                            distinct=True,
+                            filter=Q(
+                                ~Q(assignees__id__isnull=True)
+                                & Q(assignees__member_project__is_active=True)
+                                & Q(issue_assignee__deleted_at__isnull=True)
+                            ),
+                        ),
+                        Value([], output_field=ArrayField(UUIDField())),
+                    ),
                 )
             )
-            .annotate(
-                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=FileAsset.objects.filter(
-                    issue_id=OuterRef("id"),
-                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "labels__id",
-                        distinct=True,
-                        filter=Q(
-                            ~Q(labels__id__isnull=True)
-                            & (Q(label_issue__deleted_at__isnull=True))
-                        ),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=Q(
-                            ~Q(assignees__id__isnull=True)
-                            & Q(assignees__member_project__is_active=True)
-                            & Q(issue_assignee__deleted_at__isnull=True)
-                        ),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-            )
-        ).distinct()
+            .annotate(is_epic=F("type__is_epic"))
+            .distinct()
+        )
 
         # Fields
         fields = [
@@ -172,6 +178,8 @@ class IssueRelationViewSet(BaseViewSet):
             "created_by",
             "updated_by",
             "relation_type",
+            "type_id",
+            "is_epic",
         ]
 
         response_data = {

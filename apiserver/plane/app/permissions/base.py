@@ -2,7 +2,6 @@ from plane.db.models import WorkspaceMember, ProjectMember
 from functools import wraps
 from rest_framework.response import Response
 from rest_framework import status
-
 from enum import Enum
 
 
@@ -12,14 +11,20 @@ class ROLE(Enum):
     GUEST = 5
 
 
-def allow_permission(allowed_roles, level="PROJECT", creator=False, model=None):
+def allow_permission(
+    allowed_roles,
+    level="PROJECT",
+    creator=False,
+    field="created_by",
+    model=None,
+):
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(instance, request, *args, **kwargs):
-            # Check for creator if required
+            # Check for ownership if required
             if creator and model:
                 obj = model.objects.filter(
-                    id=kwargs["pk"], created_by=request.user
+                    id=kwargs["pk"], **{field: request.user}
                 ).exists()
                 if obj:
                     return view_func(instance, request, *args, **kwargs)

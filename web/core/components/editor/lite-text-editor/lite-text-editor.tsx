@@ -14,7 +14,7 @@ import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 // store hooks
-import { useMember } from "@/hooks/store";
+import { useMember, useUserProfile } from "@/hooks/store";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // plane web services
@@ -22,7 +22,10 @@ import { WorkspaceService } from "@/plane-web/services";
 const workspaceService = new WorkspaceService();
 
 interface LiteTextEditorWrapperProps
-  extends MakeOptional<Omit<ILiteTextEditor, "fileHandler" | "mentionHandler">, "disabledExtensions"> {
+  extends MakeOptional<
+    Omit<ILiteTextEditor, "fileHandler" | "mentionHandler" | "isSmoothCursorEnabled">,
+    "disabledExtensions"
+  > {
   workspaceSlug: string;
   workspaceId: string;
   projectId?: string;
@@ -74,6 +77,9 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         issue_id: issue_id,
       }),
   });
+  const {
+    data: { is_smooth_cursor_enabled },
+  } = useUserProfile();
   // editor config
   const { getEditorFileHandlers } = useEditorConfig();
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
@@ -98,6 +104,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           workspaceId,
           workspaceSlug,
         })}
+        isSmoothCursorEnabled={is_smooth_cursor_enabled}
         mentionHandler={{
           searchCallback: async (query) => {
             const res = await fetchMentions(query);

@@ -119,3 +119,47 @@ def convert_utc_to_project_timezone(utc_datetime, project_id):
     local_datetime = utc_datetime.astimezone(local_tz)
 
     return local_datetime
+
+
+def get_current_time(timezone_str):
+    """
+    Get current time for a specific timezone
+    """
+    try:
+        tz = pytz.timezone(timezone_str)
+        utc_now = datetime.now(pytz.UTC)
+        current_datetime = utc_now.astimezone(tz)
+        return current_datetime
+
+    except pytz.exceptions.UnknownTimeZoneError as e:
+        raise ValueError(f"Invalid timezone: {str(e)}")
+
+
+def convert_to_utc_with_timestamp(project_id, date):
+    """
+    Convert a date to UTC based on project timezone
+    """
+
+    # Retrieve the project's timezone using the project ID
+    project = Project.objects.get(id=project_id)
+    project_timezone = project.timezone
+    if not date or not project_timezone:
+        raise ValueError("Both date and timezone must be provided.")
+
+    # Parse the string into a date object
+    current_date = datetime.strptime(date, "%Y-%m-%d").date()
+    local_datetime = datetime.combine(
+        current_date, get_current_time(project.timezone).time()
+    )
+
+    # Get the project's timezone
+    local_tz = pytz.timezone(project_timezone)
+
+    # Localize the datetime to the project's timezone
+    localized_datetime = local_tz.localize(local_datetime)
+
+    # Convert the localized datetime to UTC
+    utc_datetime = localized_datetime.astimezone(pytz.utc)
+
+    # Return the UTC datetime for storage
+    return utc_datetime
