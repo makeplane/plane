@@ -19,6 +19,7 @@ from plane.db.models import (
     Workspace,
     CycleIssue,
     ModuleIssue,
+    ProjectMember,
 )
 from django.db import models
 from django.db.models import F, Case, When, Value
@@ -75,32 +76,27 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
         }
 
     def get_overview_data(self) -> Dict[str, Dict[str, int]]:
+        members_query = WorkspaceMember.objects.filter(
+            workspace__slug=self._workspace_slug, is_active=True
+        )
+
+        if self.request.GET.get("project_ids", None):
+            project_ids = self.request.GET.get("project_ids", None)
+            project_ids = [str(project_id) for project_id in project_ids.split(",")]
+            members_query = ProjectMember.objects.filter(
+                project_id__in=project_ids, is_active=True
+            )
+
         return {
-            "total_users": self.get_filtered_counts(
-                WorkspaceMember.objects.filter(
-                    workspace__slug=self._workspace_slug, is_active=True
-                )
-            ),
+            "total_users": self.get_filtered_counts(members_query),
             "total_admins": self.get_filtered_counts(
-                WorkspaceMember.objects.filter(
-                    workspace__slug=self._workspace_slug,
-                    role=ROLE.ADMIN.value,
-                    is_active=True,
-                )
+                members_query.filter(role=ROLE.ADMIN.value)
             ),
             "total_members": self.get_filtered_counts(
-                WorkspaceMember.objects.filter(
-                    workspace__slug=self._workspace_slug,
-                    role=ROLE.MEMBER.value,
-                    is_active=True,
-                )
+                members_query.filter(role=ROLE.MEMBER.value)
             ),
             "total_guests": self.get_filtered_counts(
-                WorkspaceMember.objects.filter(
-                    workspace__slug=self._workspace_slug,
-                    role=ROLE.GUEST.value,
-                    is_active=True,
-                )
+                members_query.filter(role=ROLE.GUEST.value)
             ),
             "total_projects": self.get_filtered_counts(
                 Project.objects.filter(**self.filters["project_filters"])
@@ -113,7 +109,7 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
             ),
             "total_intake": self.get_filtered_counts(
                 Issue.objects.filter(**self.filters["base_filters"]).filter(
-                    issue_intake__isnull=False
+                    issue_intake__status__in=["-2", "0"]
                 )
             ),
         }
