@@ -478,11 +478,9 @@ def issue_export_task(
                     }
                     for comment in issue.issue_comments.all()
                 ],
-                "estimate": (
-                    issue.estimate_point.estimate.name
-                    if issue.estimate_point and issue.estimate_point.estimate
-                    else ""
-                ),
+                "estimate": issue.estimate_point.value
+                if issue.estimate_point and issue.estimate_point.value
+                else "",
                 "link": [link.url for link in issue.issue_link.all()],
                 "assignees": [
                     f"{assignee.first_name} {assignee.last_name}"
