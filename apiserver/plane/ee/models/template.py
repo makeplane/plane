@@ -457,7 +457,7 @@ class WorkitemState(PydanticBaseModel):
     name: str = Field(..., max_length=255)
     description: Optional[str] = Field("", max_length=255)
     color: str = Field(..., max_length=255)
-    sequence: int
+    sequence: float
     default: bool = False
     group: str = Field(..., max_length=255)
 
