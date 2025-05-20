@@ -15,9 +15,6 @@ import { ETimeLineTypeType } from "@/components/gantt-chart/contexts";
 import { useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
-// local
-import { useProjectResources } from "@/plane-web/hooks/use-project-resources";
-// plane web constants
 
 interface IProjectAuthWrapper {
   workspaceSlug: string;
@@ -60,8 +57,6 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     initGantt();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useProjectResources(workspaceSlug?.toString(), projectId?.toString());
 
   // permissions
   const canPerformEmptyStateActions = allowPermissions(
