@@ -150,6 +150,7 @@ class IssueSearchEndpoint(BaseAPIView):
 
         if query:
             issues = self.search_issues_by_query(query, issues)
+            issues_and_epics = self.search_issues_by_query(query, issues_and_epics)
 
         if epic == "true" and issue_id:
             issues = self.search_issues_and_excluding_parent(issues_and_epics, issue_id)
