@@ -4,21 +4,16 @@ import { ReactNodeViewRenderer } from "@tiptap/react";
 import { CustomImageNode } from "@/extensions";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
-// plugins
-import { TrackFileDeletionPlugin } from "@/plugins/file/delete";
-import { TrackFileRestorationPlugin } from "@/plugins/file/restore";
 // types
 import { TFileHandler } from "@/types";
 
 export type ImageExtensionStorage = {
   deletedImageSet: Map<string, boolean>;
-  uploadInProgress: boolean;
 };
 
 export const ImageExtension = (fileHandler: TFileHandler) => {
   const {
     getAssetSrc,
-    delete: deleteImageFn,
     restore: restoreImageFn,
     validation: { maxFileSize },
   } = fileHandler;
@@ -29,13 +24,6 @@ export const ImageExtension = (fileHandler: TFileHandler) => {
         ArrowDown: insertEmptyParagraphAtNodeBoundaries("down", this.name),
         ArrowUp: insertEmptyParagraphAtNodeBoundaries("up", this.name),
       };
-    },
-
-    addProseMirrorPlugins() {
-      return [
-        TrackFileDeletionPlugin(this.editor, deleteImageFn, this.name, "deletedImageSet"),
-        TrackFileRestorationPlugin(this.editor, restoreImageFn, this.name, "deletedImageSet"),
-      ];
     },
 
     onCreate(this) {
@@ -60,7 +48,6 @@ export const ImageExtension = (fileHandler: TFileHandler) => {
     addStorage() {
       return {
         deletedImageSet: new Map<string, boolean>(),
-        uploadInProgress: false,
         maxFileSize,
       };
     },

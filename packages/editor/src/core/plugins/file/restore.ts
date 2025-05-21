@@ -1,55 +1,66 @@
 import { Editor } from "@tiptap/core";
 import { EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
-// plane editor types
-import { ExtensionFileSetStorageKey } from "@/plane-editor/types/storage";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
+// plane editor imports
+import { NODE_FILE_MAP } from "@/plane-editor/constants/utility";
 // types
 import { TFileHandler } from "@/types";
 // local imports
 import { TFileNode } from "./types";
 
-export const TrackFileRestorationPlugin = (
-  editor: Editor,
-  restoreHandler: TFileHandler["restore"],
-  nodeType: string,
-  fileSetName: ExtensionFileSetStorageKey
-): Plugin =>
+export const TrackFileRestorationPlugin = (editor: Editor, restoreHandler: TFileHandler["restore"]): Plugin =>
   new Plugin({
-    key: new PluginKey(`restore-${nodeType}`),
+    key: new PluginKey("restore-utility"),
     appendTransaction: (transactions: readonly Transaction[], oldState: EditorState, newState: EditorState) => {
-      const oldFileSources = new Set<string>();
+      if (!transactions.some((tr) => tr.docChanged)) return null;
+
+      const oldFileSources: {
+        [key: string]: Set<string> | undefined;
+      } = {};
       oldState.doc.descendants((node) => {
-        if (node.type.name === nodeType) {
-          oldFileSources.add(node.attrs.src);
+        const nodeType = node.type.name;
+        const nodeFileSetDetails = NODE_FILE_MAP[nodeType];
+        if (nodeFileSetDetails) {
+          if (oldFileSources[nodeType]) {
+            oldFileSources[nodeType].add(node.attrs.src);
+          } else {
+            oldFileSources[nodeType] = new Set([node.attrs.src]);
+          }
         }
       });
 
-      transactions.forEach((transaction) => {
-        if (!transaction.docChanged) return;
-
+      transactions.forEach(() => {
         const addedFiles: TFileNode[] = [];
 
         newState.doc.descendants((node, pos) => {
-          if (node.type.name !== nodeType) return;
+          const nodeType = node.type.name;
+          const isAValidNode = NODE_FILE_MAP[nodeType];
+          // if the node doesn't match, then return as no point in checking
+          if (!isAValidNode) return;
           if (pos < 0 || pos > newState.doc.content.size) return;
-          if (oldFileSources.has(node.attrs.src)) return;
+          if (oldFileSources[nodeType]?.has(node.attrs.src)) return;
           // if the src is just a id (private bucket), then we don't need to handle restore from here but
           // only while it fails to load
-          if (nodeType === "imageComponent" && !node.attrs.src?.startsWith("http")) return;
+          if (nodeType === CORE_EXTENSIONS.CUSTOM_IMAGE && !node.attrs.src?.startsWith("http")) return;
           addedFiles.push(node as TFileNode);
         });
 
         addedFiles.forEach(async (node) => {
+          const nodeType = node.type.name;
           const src = node.attrs.src;
-          const wasDeleted = editor.storage[nodeType][fileSetName].get(src);
-          if (!src) return;
+          const nodeFileSetDetails = NODE_FILE_MAP[nodeType];
+          const extensionFileSetStorage = editor.storage[nodeType]?.[nodeFileSetDetails.fileSetName];
+          const wasDeleted = extensionFileSetStorage?.get(src);
+          if (!nodeFileSetDetails || !src) return;
           if (wasDeleted === undefined) {
-            editor.storage[nodeType][fileSetName].set(src, false);
+            extensionFileSetStorage?.set(src, false);
           } else if (wasDeleted === true) {
             try {
               await restoreHandler(src);
-              editor.storage[nodeType][fileSetName].set(src, false);
+              extensionFileSetStorage?.set(src, false);
             } catch (error) {
-              console.error("Error restoring file:", error);
+              console.error("Error restoring file via restore utility plugin:", error);
             }
           }
         });

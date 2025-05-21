@@ -7,12 +7,13 @@ import TextStyle from "@tiptap/extension-text-style";
 import TiptapUnderline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import {
   CustomCalloutExtension,
   CustomCodeBlockExtension,
   CustomCodeInlineExtension,
-  CustomCodeMarkPlugin,
   CustomColorExtension,
   CustomHorizontalRule,
   CustomImageExtension,
@@ -30,9 +31,11 @@ import {
   TableHeader,
   TableRow,
   MarkdownClipboard,
+  UtilityExtension,
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
@@ -127,7 +130,6 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
         class: "",
       },
     }),
-    CustomCodeMarkPlugin,
     CustomCodeInlineExtension,
     Markdown.configure({
       html: true,
@@ -147,7 +149,8 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
 
         if (node.type.name === "heading") return `Heading ${node.attrs.level}`;
 
-        if (editor.storage.imageComponent?.uploadInProgress) return "";
+        const isUploadInProgress = getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.uploadInProgress;
+        if (isUploadInProgress) return "";
 
         const shouldHidePlaceholder =
           editor.isActive("table") ||
@@ -169,6 +172,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CharacterCount,
     CustomTextAlignExtension,
     CustomCalloutExtension,
+    UtilityExtension(fileHandler),
     CustomColorExtension,
     ...CoreEditorAdditionalExtensions({
       disabledExtensions,

@@ -75,7 +75,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     // @ts-expect-error - TODO: fix typings, and don't remove await from here for now
     editorCommand: async (file) => await editor?.commands.uploadImage(imageEntityId, file),
     handleProgressStatus: (isUploading) => {
-      editor.storage.imageComponent.uploadInProgress = isUploading;
+      editor.storage.utility.uploadInProgress = isUploading;
     },
     loadFileFromFileSystem: loadImageFromFileSystem,
     maxFileSize,

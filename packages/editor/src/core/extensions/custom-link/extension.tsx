@@ -1,6 +1,9 @@
 import { Mark, markPasteRule, mergeAttributes, PasteRuleMatch } from "@tiptap/core";
 import { Plugin } from "@tiptap/pm/state";
 import { find, registerCustomProtocol, reset } from "linkifyjs";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
+// local imports
 import { autolink } from "./helpers/autolink";
 import { clickHandler } from "./helpers/clickHandler";
 import { pasteHandler } from "./helpers/pasteHandler";
@@ -79,7 +82,7 @@ export type CustomLinkStorage = {
 };
 
 export const CustomLinkExtension = Mark.create<LinkOptions, CustomLinkStorage>({
-  name: "link",
+  name: CORE_EXTENSIONS.CUSTOM_LINK,
 
   priority: 1000,
 

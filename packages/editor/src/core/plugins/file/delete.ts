@@ -1,54 +1,61 @@
 import { Editor } from "@tiptap/core";
 import { EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
-// plane editor types
-import { ExtensionFileSetStorageKey } from "@/plane-editor/types/storage";
+// plane editor imports
+import { NODE_FILE_MAP } from "@/plane-editor/constants/utility";
 // types
 import { TFileHandler } from "@/types";
 // local imports
 import { TFileNode } from "./types";
 
-export const TrackFileDeletionPlugin = (
-  editor: Editor,
-  deleteHandler: TFileHandler["delete"],
-  nodeType: string,
-  fileSetName: ExtensionFileSetStorageKey
-): Plugin =>
+export const TrackFileDeletionPlugin = (editor: Editor, deleteHandler: TFileHandler["delete"]): Plugin =>
   new Plugin({
-    key: new PluginKey(`delete-${nodeType}`),
+    key: new PluginKey("delete-utility"),
     appendTransaction: (transactions: readonly Transaction[], oldState: EditorState, newState: EditorState) => {
-      const newFileSources = new Set<string>();
+      const newFileSources: {
+        [nodeType: string]: Set<string> | undefined;
+      } = {};
+      if (!transactions.some((tr) => tr.docChanged)) return null;
+
       newState.doc.descendants((node) => {
-        if (node.type.name === nodeType) {
-          newFileSources.add(node.attrs.src);
+        const nodeType = node.type.name;
+        const nodeFileSetDetails = NODE_FILE_MAP[nodeType];
+        if (nodeFileSetDetails) {
+          if (newFileSources[nodeType]) {
+            newFileSources[nodeType].add(node.attrs.src);
+          } else {
+            newFileSources[nodeType] = new Set([node.attrs.src]);
+          }
         }
       });
 
       transactions.forEach((transaction) => {
-        // if the transaction has meta of skipFileDeletion get to true, then return (like while clearing the editor content programatically)
+        // if the transaction has meta of skipFileDeletion set to true, then return (like while clearing the editor content programmatically)
         if (transaction.getMeta("skipFileDeletion")) return;
-        // transaction could be a selection
-        if (!transaction.docChanged) return;
 
         const removedFiles: TFileNode[] = [];
 
         // iterate through all the nodes in the old state
-        oldState.doc.descendants((oldNode) => {
+        oldState.doc.descendants((node) => {
+          const nodeType = node.type.name;
+          const isAValidNode = NODE_FILE_MAP[nodeType];
           // if the node doesn't match, then return as no point in checking
-          if (oldNode.type.name !== nodeType) return;
+          if (!isAValidNode) return;
           // Check if the node has been deleted or replaced
-          if (!newFileSources.has(oldNode.attrs.src)) {
-            removedFiles.push(oldNode as TFileNode);
+          if (!newFileSources[nodeType]?.has(node.attrs.src)) {
+            removedFiles.push(node as TFileNode);
           }
         });
 
         removedFiles.forEach(async (node) => {
+          const nodeType = node.type.name;
           const src = node.attrs.src;
-          editor.storage[nodeType][fileSetName]?.set(src, true);
-          if (!src) return;
+          const nodeFileSetDetails = NODE_FILE_MAP[nodeType];
+          if (!nodeFileSetDetails || !src) return;
           try {
+            editor.storage[nodeType][nodeFileSetDetails.fileSetName]?.set(src, true);
             await deleteHandler(src);
           } catch (error) {
-            console.error("Error deleting file:", error);
+            console.error("Error deleting file via delete utility plugin:", error);
           }
         });
       });

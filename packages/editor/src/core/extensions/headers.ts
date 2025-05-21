@@ -1,5 +1,7 @@
 import { Extension } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
 export interface IMarking {
   type: "heading";
@@ -13,7 +15,7 @@ export type HeadingExtensionStorage = {
 };
 
 export const HeadingListExtension = Extension.create<any, HeadingExtensionStorage>({
-  name: "headingList",
+  name: CORE_EXTENSIONS.HEADINGS_LIST,
 
   addStorage() {
     return {

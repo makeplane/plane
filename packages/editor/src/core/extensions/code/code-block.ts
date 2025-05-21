@@ -1,5 +1,7 @@
 import { mergeAttributes, Node, textblockTypeInputRule } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
 export interface CodeBlockOptions {
   /**
@@ -25,7 +27,7 @@ export interface CodeBlockOptions {
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    codeBlock: {
+    [CORE_EXTENSIONS.CODE_BLOCK]: {
       /**
        * Set a code block
        */
@@ -42,7 +44,7 @@ export const backtickInputRegex = /^```([a-z]+)?[\s\n]$/;
 export const tildeInputRegex = /^~~~([a-z]+)?[\s\n]$/;
 
 export const CodeBlock = Node.create<CodeBlockOptions>({
-  name: "codeBlock",
+  name: CORE_EXTENSIONS.CODE_BLOCK,
 
   addOptions() {
     return {

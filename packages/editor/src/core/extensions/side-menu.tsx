@@ -1,6 +1,8 @@
 import { Extension } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { EditorView } from "@tiptap/pm/view";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // plugins
 import { AIHandlePlugin } from "@/plugins/ai-handle";
 import { DragHandlePlugin, nodeDOMAtCoords } from "@/plugins/drag-handle";
@@ -33,7 +35,7 @@ export const SideMenuExtension = (props: Props) => {
   const { aiEnabled, dragDropEnabled } = props;
 
   return Extension.create({
-    name: "editorSideMenu",
+    name: CORE_EXTENSIONS.SIDE_MENU,
     addProseMirrorPlugins() {
       return [
         SideMenu({

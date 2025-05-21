@@ -19,11 +19,13 @@ import {
   toggleHeader,
   toggleHeaderCell,
 } from "@tiptap/pm/tables";
-
-import { tableControls } from "@/extensions/table/table/table-controls";
-import { TableView } from "@/extensions/table/table/table-view";
-import { createTable } from "@/extensions/table/table/utilities/create-table";
-import { deleteTableWhenAllCellsSelected } from "@/extensions/table/table/utilities/delete-table-when-all-cells-selected";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
+// local imports
+import { tableControls } from "./table-controls";
+import { TableView } from "./table-view";
+import { createTable } from "./utilities/create-table";
+import { deleteTableWhenAllCellsSelected } from "./utilities/delete-table-when-all-cells-selected";
 import { insertLineAboveTableAction } from "./utilities/insert-line-above-table-action";
 import { insertLineBelowTableAction } from "./utilities/insert-line-below-table-action";
 
@@ -38,7 +40,7 @@ export interface TableOptions {
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    table: {
+    [CORE_EXTENSIONS.TABLE]: {
       insertTable: (options?: {
         rows?: number;
         cols?: number;
@@ -79,7 +81,7 @@ declare module "@tiptap/core" {
 }
 
 export const Table = Node.create({
-  name: "table",
+  name: CORE_EXTENSIONS.TABLE,
 
   addOptions() {
     return {

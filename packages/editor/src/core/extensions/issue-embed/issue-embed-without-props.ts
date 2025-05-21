@@ -1,8 +1,10 @@
 import { mergeAttributes, Node } from "@tiptap/core";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
 export const IssueWidgetWithoutProps = () =>
   Node.create({
-    name: "issue-embed-component",
+    name: CORE_EXTENSIONS.WORK_ITEM_EMBED,
     group: "block",
     atom: true,
     selectable: true,

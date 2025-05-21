@@ -2,6 +2,8 @@ import { Editor, Range, Extension } from "@tiptap/core";
 import { ReactRenderer } from "@tiptap/react";
 import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
 import tippy from "tippy.js";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { CommandListInstance } from "@/helpers/tippy";
 // types
@@ -20,7 +22,7 @@ export type TSlashCommandAdditionalOption = ISlashCommandItem & {
 };
 
 const Command = Extension.create<SlashCommandOptions>({
-  name: "slash-command",
+  name: CORE_EXTENSIONS.SLASH_COMMANDS,
   addOptions() {
     return {
       suggestion: {
