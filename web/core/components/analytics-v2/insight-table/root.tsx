@@ -13,7 +13,7 @@ interface InsightTableProps<T extends Exclude<TAnalyticsTabsV2Base, "overview">>
   isLoading?: boolean;
   columns: ColumnDef<AnalyticsTableDataMap[T]>[];
   columnsLabels?: Record<string, string>;
-  headerText?: string;
+  headerText: string;
 }
 
 export const InsightTable = <T extends Exclude<TAnalyticsTabsV2Base, "overview">>(
