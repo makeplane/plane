@@ -14,7 +14,7 @@ import {
 // local
 import { persistence } from "@/local-db/storage.sqlite";
 
-export const useProjectCoreResources = (workspaceSlug?: string, projectId?: string) => {
+export const useProjectCoreResources = (workspaceSlug: string | undefined, projectId: string | undefined) => {
   const { fetchUserProjectInfo } = useUserPermissions();
   const { fetchProjectDetails } = useProject();
   const { fetchAllCycles } = useCycle();
