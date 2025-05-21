@@ -22,10 +22,10 @@ export const TrackFileRestorationPlugin = (editor: Editor, restoreHandler: TFile
         const nodeType = node.type.name;
         const nodeFileSetDetails = NODE_FILE_MAP[nodeType];
         if (nodeFileSetDetails) {
-          if (oldFileSources[nodeType]) {
-            oldFileSources[nodeType].add(node.attrs.src);
+          if (oldFileSources.nodeType) {
+            oldFileSources.nodeType.add(node.attrs.src);
           } else {
-            oldFileSources[nodeType] = new Set([node.attrs.src]);
+            oldFileSources.nodeType = new Set([node.attrs.src]);
           }
         }
       });

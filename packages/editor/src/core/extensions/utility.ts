@@ -1,5 +1,8 @@
 import { Extension } from "@tiptap/core";
+// prosemirror plugins
 import codemark from "prosemirror-codemark";
+// helpers
+import { restorePublicImages } from "@/helpers/image-helpers";
 // plugins
 import { DropHandlerPlugin } from "@/plugins/drop";
 import { FilePlugins } from "@/plugins/file/root";
@@ -27,6 +30,7 @@ type Props = {
 
 export const UtilityExtension = (props: Props) => {
   const { fileHandler, isEditable } = props;
+  const { restore: restoreImageFn } = fileHandler;
 
   return Extension.create<Record<string, unknown>, UtilityExtensionStorage>({
     name: "utility",
@@ -43,6 +47,10 @@ export const UtilityExtension = (props: Props) => {
         MarkdownClipboardPlugin(this.editor),
         DropHandlerPlugin(this.editor),
       ];
+    },
+
+    onCreate() {
+      restorePublicImages(this.editor, restoreImageFn);
     },
 
     addStorage() {

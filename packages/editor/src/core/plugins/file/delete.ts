@@ -20,10 +20,10 @@ export const TrackFileDeletionPlugin = (editor: Editor, deleteHandler: TFileHand
         const nodeType = node.type.name;
         const nodeFileSetDetails = NODE_FILE_MAP[nodeType];
         if (nodeFileSetDetails) {
-          if (newFileSources[nodeType]) {
-            newFileSources[nodeType].add(node.attrs.src);
+          if (newFileSources.nodeType) {
+            newFileSources.nodeType.add(node.attrs.src);
           } else {
-            newFileSources[nodeType] = new Set([node.attrs.src]);
+            newFileSources.nodeType = new Set([node.attrs.src]);
           }
         }
       });

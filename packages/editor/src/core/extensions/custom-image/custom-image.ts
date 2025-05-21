@@ -97,23 +97,6 @@ export const CustomImageExtension = (props: TFileHandler) => {
       };
     },
 
-    onCreate(this) {
-      const imageSources = new Set<string>();
-      this.editor.state.doc.descendants((node) => {
-        if (node.type.name === this.name) {
-          if (!node.attrs.src?.startsWith("http")) return;
-          imageSources.add(node.attrs.src);
-        }
-      });
-      imageSources.forEach(async (src) => {
-        try {
-          await restoreImageFn(src);
-        } catch (error) {
-          console.error("Error restoring image: ", error);
-        }
-      });
-    },
-
     addStorage() {
       return {
         fileMap: new Map(),

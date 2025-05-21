@@ -14,7 +14,6 @@ export type ImageExtensionStorage = {
 export const ImageExtension = (fileHandler: TFileHandler) => {
   const {
     getAssetSrc,
-    restore: restoreImageFn,
     validation: { maxFileSize },
   } = fileHandler;
 
@@ -24,24 +23,6 @@ export const ImageExtension = (fileHandler: TFileHandler) => {
         ArrowDown: insertEmptyParagraphAtNodeBoundaries("down", this.name),
         ArrowUp: insertEmptyParagraphAtNodeBoundaries("up", this.name),
       };
-    },
-
-    onCreate(this) {
-      const imageSources = new Set<string>();
-      this.editor.state.doc.descendants((node) => {
-        if (node.type.name === this.name) {
-          if (!node.attrs.src?.startsWith("http")) return;
-
-          imageSources.add(node.attrs.src);
-        }
-      });
-      imageSources.forEach(async (src) => {
-        try {
-          await restoreImageFn(src);
-        } catch (error) {
-          console.error("Error restoring image: ", error);
-        }
-      });
     },
 
     // storage to keep track of image states Map<src, isDeleted>
