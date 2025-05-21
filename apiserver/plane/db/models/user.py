@@ -107,7 +107,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
 
     # email validation
-    is_email_valid = models.BooleanField(default=True)
+    is_email_valid = models.BooleanField(default=False)
 
     # masking
     masked_at = models.DateTimeField(null=True)
