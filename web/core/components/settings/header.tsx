@@ -24,18 +24,29 @@ export const SettingsHeader = observer(() => {
   return (
     <div
       className={cn(
-        "bg-custom-background-90 px-4 py-4 gap-2 md:px-12 md:py-8 transition-all duration-300 ease-in-out",
+        "bg-custom-background-90 px-4 py-4 gap-2 md:px-12 md:py-8 transition-all duration-300 ease-in-out relative",
         {
-          "flex flex-row gap-4": isScrolled,
+          "!pt-4 flex md:flex-col": isScrolled,
         }
       )}
     >
+      <Link
+        href={`/${redirectWorkspaceSlug}`}
+        className={cn(
+          getButtonStyling("neutral-primary", "sm"),
+          "md:absolute left-2 top-9 group flex  gap-2 text-custom-text-300 mb-4 border border-transparent w-fit rounded-lg ",
+          "h-6 w-6 rounded-lg p-1 bg-custom-background-100 border-custom-border-200 ",
+          isScrolled ? "my-1 " : "hidden p-0 overflow-hidden items-center pr-2 border-none"
+        )}
+      >
+        <ChevronLeftIcon className={cn("h-4 w-4", !isScrolled ? "my-auto h-0" : "")} />
+      </Link>
       {/* Breadcrumb */}
       <Link
         href={`/${redirectWorkspaceSlug}`}
         className={cn(
           "group flex  gap-2 text-custom-text-300 mb-4 border border-transparent w-fit rounded-lg",
-          !isScrolled ? "hover:bg-custom-background-100 hover:border-custom-border-200 items-center pr-2" : ""
+          !isScrolled ? "hover:bg-custom-background-100 hover:border-custom-border-200 items-center pr-2 " : " h-0"
         )}
       >
         <button
@@ -43,7 +54,7 @@ export const SettingsHeader = observer(() => {
             getButtonStyling("neutral-primary", "sm"),
             "h-6 w-6 rounded-lg p-1 hover:bg-custom-background-100 hover:border-custom-border-200",
             "group-hover:bg-custom-background-100 group-hover:border-transparent",
-            isScrolled ? "my-1" : ""
+            { "h-0 hidden": isScrolled }
           )}
         >
           <ChevronLeftIcon className={cn("h-4 w-4", !isScrolled ? "my-auto" : "")} />
