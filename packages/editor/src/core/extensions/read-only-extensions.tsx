@@ -25,6 +25,7 @@ import {
   CustomCalloutReadOnlyExtension,
   CustomColorExtension,
   MarkdownClipboard,
+  UtilityExtension,
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
@@ -127,6 +128,10 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
     CustomColorExtension,
     CustomTextAlignExtension,
     CustomCalloutReadOnlyExtension,
+    UtilityExtension({
+      isEditable: false,
+      fileHandler,
+    }),
     ...CoreReadOnlyEditorAdditionalExtensions({
       disabledExtensions,
     }),

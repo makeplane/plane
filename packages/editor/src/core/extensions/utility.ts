@@ -1,10 +1,9 @@
 import { Extension } from "@tiptap/core";
 import codemark from "prosemirror-codemark";
 // plugins
-import { TrackFileDeletionPlugin } from "@/plugins/file/delete";
-import { TrackFileRestorationPlugin } from "@/plugins/file/restore";
+import { FilePlugins } from "@/plugins/file/root";
 // types
-import { TFileHandler } from "@/types";
+import { TFileHandler, TReadOnlyFileHandler } from "@/types";
 
 declare module "@tiptap/core" {
   interface Commands {
@@ -19,23 +18,31 @@ export interface UtilityExtensionStorage {
   uploadInProgress: boolean;
 }
 
-export const UtilityExtension = (props: TFileHandler) => {
-  const { assetsUploadStatus, delete: deleteFileHandler, restore: restoreFileHandler } = props;
+type Props = {
+  fileHandler: TFileHandler | TReadOnlyFileHandler;
+  isEditable: boolean;
+};
+
+export const UtilityExtension = (props: Props) => {
+  const { fileHandler, isEditable } = props;
 
   return Extension.create<Record<string, unknown>, UtilityExtensionStorage>({
     name: "utility",
 
     addProseMirrorPlugins() {
       return [
-        TrackFileDeletionPlugin(this.editor, deleteFileHandler),
-        TrackFileRestorationPlugin(this.editor, restoreFileHandler),
+        ...FilePlugins({
+          editor: this.editor,
+          isEditable,
+          fileHandler,
+        }),
         ...codemark({ markType: this.editor.schema.marks.code }),
       ];
     },
 
     addStorage() {
       return {
-        assetsUploadStatus,
+        assetsUploadStatus: isEditable && "assetsUploadStatus" in fileHandler ? fileHandler.assetsUploadStatus : {},
         uploadInProgress: false,
       };
     },

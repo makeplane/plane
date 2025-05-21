@@ -172,7 +172,10 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CharacterCount,
     CustomTextAlignExtension,
     CustomCalloutExtension,
-    UtilityExtension(fileHandler),
+    UtilityExtension({
+      isEditable: true,
+      fileHandler,
+    }),
     CustomColorExtension,
     ...CoreEditorAdditionalExtensions({
       disabledExtensions,
