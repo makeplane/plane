@@ -10,6 +10,7 @@ import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@p
 import { ProjectViewForm } from "@/components/views";
 // hooks
 import { useProjectView } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import useKeypress from "@/hooks/use-keypress";
 
 type Props = {
@@ -23,6 +24,8 @@ type Props = {
 
 export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
   const { data, isOpen, onClose, preLoadedData, workspaceSlug, projectId } = props;
+  // router
+  const router = useAppRouter();
   // store hooks
   const { createView, updateView } = useProjectView();
 
@@ -32,8 +35,9 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
 
   const handleCreateView = async (payload: IProjectView) => {
     await createView(workspaceSlug, projectId, payload)
-      .then(() => {
+      .then((res) => {
         handleClose();
+        router.push(`/${workspaceSlug}/projects/${projectId}/views/${res.id}`);
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
