@@ -19,6 +19,30 @@
 	email {$CERT_EMAIL:admin@example.com}
 	acme_ca {$CERT_ACME_CA} 
 	{$CERT_ACME_DNS}
+	layer4 {
+		:10025 {
+			route {
+				proxy {
+					upstream email:10025
+				}
+			}
+		}
+		:10465 {
+			route {
+				tls
+				proxy {
+					upstream email:10465
+				}
+			}
+		}
+		:10587 {
+			route {
+				proxy {
+					upstream email:10587
+				}
+			}
+		}
+	}
 	servers {
 		timeouts {
 			read_body 600s

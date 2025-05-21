@@ -43,11 +43,13 @@ EXPOSE 10025 10465 10587
 # create a user and group - app-user
 RUN addgroup -S app-group && adduser -S app-user -G app-group
 
-RUN chown -R app-user:app-group /opt/email && \
+RUN mkdir -p /opt/email/tls && \
+	chown -R app-user:app-group /opt/email && \
 	chmod 755 /opt/email/emails && \
-	chmod 777 /opt/email/keys
+	chmod 777 /opt/email/keys && \
+	chmod 777 /opt/email/tls
 
-VOLUME [ "/opt/email/keys" ]
+VOLUME [ "/opt/email/tls" ]
 
 USER app-user
 
