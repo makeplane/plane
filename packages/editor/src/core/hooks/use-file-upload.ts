@@ -1,9 +1,9 @@
 import { Editor } from "@tiptap/core";
 import { DragEvent, useCallback, useEffect, useState } from "react";
-// extensions
-import { insertFilesSafely } from "@/extensions/drop";
-// plugins
+// helpers
 import { EFileError, isFileValid } from "@/helpers/file";
+// plugins
+import { insertFilesSafely } from "@/plugins/drop";
 // types
 import { TEditorCommands } from "@/types";
 

@@ -24,7 +24,6 @@ import {
   CustomTextAlignExtension,
   CustomCalloutReadOnlyExtension,
   CustomColorExtension,
-  MarkdownClipboard,
   UtilityExtension,
 } from "@/extensions";
 // helpers
@@ -118,7 +117,6 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
       html: true,
       transformCopiedText: false,
     }),
-    MarkdownClipboard,
     Table,
     TableHeader,
     TableCell,

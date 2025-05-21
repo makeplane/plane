@@ -1,7 +1,9 @@
 import { Extension } from "@tiptap/core";
 import codemark from "prosemirror-codemark";
 // plugins
+import { DropHandlerPlugin } from "@/plugins/drop";
 import { FilePlugins } from "@/plugins/file/root";
+import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
 // types
 import { TFileHandler, TReadOnlyFileHandler } from "@/types";
 
@@ -28,6 +30,7 @@ export const UtilityExtension = (props: Props) => {
 
   return Extension.create<Record<string, unknown>, UtilityExtensionStorage>({
     name: "utility",
+    priority: 1000,
 
     addProseMirrorPlugins() {
       return [
@@ -37,6 +40,8 @@ export const UtilityExtension = (props: Props) => {
           fileHandler,
         }),
         ...codemark({ markType: this.editor.schema.marks.code }),
+        MarkdownClipboardPlugin(this.editor),
+        DropHandlerPlugin(this.editor),
       ];
     },
 

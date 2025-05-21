@@ -23,14 +23,12 @@ import {
   CustomQuoteExtension,
   CustomTextAlignExtension,
   CustomTypographyExtension,
-  DropHandlerExtension,
   ImageExtension,
   ListKeymap,
   Table,
   TableCell,
   TableHeader,
   TableRow,
-  MarkdownClipboard,
   UtilityExtension,
 } from "@/extensions";
 // helpers
@@ -92,7 +90,6 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       ...(enableHistory ? {} : { history: false }),
     }),
     CustomQuoteExtension,
-    DropHandlerExtension,
     CustomHorizontalRule.configure({
       HTMLAttributes: {
         class: "py-4 border-custom-border-400",
@@ -137,7 +134,6 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       transformPastedText: true,
       breaks: true,
     }),
-    MarkdownClipboard,
     Table,
     TableHeader,
     TableCell,
