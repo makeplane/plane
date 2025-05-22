@@ -263,6 +263,15 @@ export const joinWithConjunction = (array: string[], separator: string = ", ", c
   return `${elementsExceptLast.join(separator)}${separator}${conjunction} ${lastElement}`;
 };
 
+/**
+ * @description Ensures a URL has a protocol
+ * @param {string} url
+ * @returns {string}
+ * @example
+ * ensureUrlHasProtocol("example.com") => "http://example.com"
+ */
+export const ensureUrlHasProtocol = (url: string): string => (url.startsWith("http") ? url : `http://${url}`);
+
 // Browser-only clipboard functions
 // let copyTextToClipboard: (text: string) => Promise<void>;
 
