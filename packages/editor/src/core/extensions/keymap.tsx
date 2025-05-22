@@ -8,7 +8,7 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 declare module "@tiptap/core" {
   // eslint-disable-next-line no-unused-vars
   interface Commands<ReturnType> {
-    customkeymap: {
+    customKeymap: {
       /**
        * Select text between node boundaries
        */
@@ -61,7 +61,7 @@ function autoJoin(tr: Transaction, newTr: Transaction, nodeTypes: NodeType[]) {
 }
 
 export const CustomKeymap = Extension.create({
-  name: "CustomKeymap",
+  name: "customKeymap",
 
   addCommands() {
     return {

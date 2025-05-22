@@ -12,7 +12,7 @@ interface LinkViewContainerProps {
 export const LinkViewContainer: FC<LinkViewContainerProps> = ({ editor, containerRef }) => {
   const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
   const [isOpen, setIsOpen] = useState(false);
-  const [virtualElement, setVirtualElement] = useState<any>(null);
+  const [virtualElement, setVirtualElement] = useState<Element | null>(null);
 
   const editorState = useEditorState({
     editor,

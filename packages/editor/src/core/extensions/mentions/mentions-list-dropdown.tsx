@@ -1,7 +1,7 @@
 "use client";
 
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { Editor } from "@tiptap/react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 // plane utils
 import { cn } from "@plane/utils";
@@ -61,7 +61,9 @@ export const MentionsListDropdown = forwardRef((props: MentionsListDropdownProps
         sections,
         selectedIndex,
       });
-      setSelectedIndex(newIndex);
+      if (newIndex) {
+        setSelectedIndex(newIndex);
+      }
     },
   }));
 
@@ -79,7 +81,9 @@ export const MentionsListDropdown = forwardRef((props: MentionsListDropdownProps
       setIsLoading(true);
       try {
         const sectionsResponse = await searchCallback?.(query);
-        setSections(sectionsResponse);
+        if (sectionsResponse) {
+          setSections(sectionsResponse);
+        }
       } catch (error) {
         console.error("Failed to fetch suggestions:", error);
       } finally {

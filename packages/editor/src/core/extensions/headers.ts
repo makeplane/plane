@@ -14,7 +14,7 @@ export type HeadingExtensionStorage = {
   headings: IMarking[];
 };
 
-export const HeadingListExtension = Extension.create<any, HeadingExtensionStorage>({
+export const HeadingListExtension = Extension.create<unknown, HeadingExtensionStorage>({
   name: CORE_EXTENSIONS.HEADINGS_LIST,
 
   addStorage() {

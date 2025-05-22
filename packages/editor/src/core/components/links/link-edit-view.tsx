@@ -51,7 +51,9 @@ export const LinkEditView = ({ viewProps }: LinkEditViewProps) => {
         if (!hasSubmitted.current && !linkRemoved && initialUrl === "") {
           try {
             removeLink();
-          } catch (e) {}
+          } catch (e) {
+            console.error("Error removing link", e);
+          }
         }
       },
     [linkRemoved, initialUrl]

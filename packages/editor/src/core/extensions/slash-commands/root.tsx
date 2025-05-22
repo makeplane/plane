@@ -1,7 +1,7 @@
 import { Editor, Range, Extension } from "@tiptap/core";
 import { ReactRenderer } from "@tiptap/react";
 import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
-import tippy from "tippy.js";
+import tippy, { Instance } from "tippy.js";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
@@ -61,7 +61,7 @@ const Command = Extension.create<SlashCommandOptions>({
 
 const renderItems = () => {
   let component: ReactRenderer<CommandListInstance, SlashCommandsMenuProps> | null = null;
-  let popup: any | null = null;
+  let popup: Instance | null = null;
   return {
     onStart: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
       component = new ReactRenderer<CommandListInstance, SlashCommandsMenuProps>(SlashCommandsMenu, {

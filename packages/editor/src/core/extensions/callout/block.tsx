@@ -1,5 +1,5 @@
-import React, { useState } from "react";
 import { NodeViewContent, NodeViewProps, NodeViewWrapper } from "@tiptap/react";
+import React, { useState } from "react";
 // constants
 import { COLORS_LIST } from "@/constants/common";
 // local components

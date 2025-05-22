@@ -79,12 +79,12 @@ export const toggleCodeBlock = (editor: Editor, range?: Range) => {
     const text = editor.state.doc.textBetween(from, to, "\n");
     const isMultiline = text.includes("\n");
 
-    // if the selection is not a range i.e. empty, then simply convert it into a code block
+    // if the selection is not a range i.e. empty, then simply convert it into a codeBlock
     if (editor.state.selection.empty) {
       editor.chain().focus().toggleCodeBlock().run();
     } else if (isMultiline) {
       // if the selection is multiline, then also replace the text content with
-      // a code block
+      // a codeBlock
       editor.chain().focus().deleteRange({ from, to }).insertContentAt(from, `\`\`\`\n${text}\n\`\`\``).run();
     } else {
       // if the selection is single line, then simply convert it into inline

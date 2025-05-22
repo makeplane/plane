@@ -1,5 +1,5 @@
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { Editor } from "@tiptap/core";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 // helpers
 import { DROPDOWN_NAVIGATION_KEYS, getNextValidIndex } from "@/helpers/tippy";
 // components
@@ -103,7 +103,9 @@ export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref)
         sections,
         selectedIndex,
       });
-      setSelectedIndex(newIndex);
+      if (newIndex) {
+        setSelectedIndex(newIndex);
+      }
     },
   }));
 

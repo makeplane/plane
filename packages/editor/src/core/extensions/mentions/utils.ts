@@ -1,7 +1,7 @@
 import { Editor } from "@tiptap/core";
-import { SuggestionOptions } from "@tiptap/suggestion";
 import { ReactRenderer } from "@tiptap/react";
-import tippy from "tippy.js";
+import { SuggestionOptions } from "@tiptap/suggestion";
+import tippy, { Instance } from "tippy.js";
 // helpers
 import { CommandListInstance } from "@/helpers/tippy";
 // types
@@ -15,7 +15,7 @@ export const renderMentionsDropdown =
   () => {
     const { searchCallback } = props;
     let component: ReactRenderer<CommandListInstance, MentionsListDropdownProps> | null = null;
-    let popup: any | null = null;
+    let popup: Instance | null = null;
 
     return {
       onStart: (props: { editor: Editor; clientRect: DOMRect }) => {

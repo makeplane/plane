@@ -69,7 +69,7 @@ export const isValidHttpUrl = (string: string): { isValid: boolean; url: string 
         url: string,
       };
     }
-  } catch (_) {
+  } catch {
     // Original string wasn't a valid URL - that's okay, we'll try with https
   }
 
@@ -81,7 +81,7 @@ export const isValidHttpUrl = (string: string): { isValid: boolean; url: string 
       isValid: true,
       url: urlWithHttps,
     };
-  } catch (_) {
+  } catch {
     return {
       isValid: false,
       url: string,

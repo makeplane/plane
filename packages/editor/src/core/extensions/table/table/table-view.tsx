@@ -1,12 +1,11 @@
-import { h } from "jsx-dom-cjs";
-import { Node as ProseMirrorNode, ResolvedPos } from "@tiptap/pm/model";
-import { Decoration, NodeView } from "@tiptap/pm/view";
-import tippy, { Instance, Props } from "tippy.js";
-
 import { Editor } from "@tiptap/core";
+import { Node as ProseMirrorNode, ResolvedPos } from "@tiptap/pm/model";
 import { CellSelection, TableMap, updateColumnsOnResize } from "@tiptap/pm/tables";
-
+import { Decoration, NodeView } from "@tiptap/pm/view";
+import { h } from "jsx-dom-cjs";
 import { icons } from "src/core/extensions/table/table/icons";
+import tippy, { Instance, Props } from "tippy.js";
+// constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 
 type ToolboxItem = {
@@ -31,10 +30,10 @@ export function updateColumns(
   if (!row) return;
 
   for (let i = 0, col = 0; i < row.childCount; i += 1) {
-    const { colspan, colwidth } = row.child(i).attrs;
+    const { colspan, colWidth } = row.child(i).attrs;
 
     for (let j = 0; j < colspan; j += 1, col += 1) {
-      const hasWidth = overrideCol === col ? overrideValue : colwidth && colwidth[j];
+      const hasWidth = overrideCol === col ? overrideValue : colWidth && colWidth[j];
       const cssWidth = hasWidth ? `${hasWidth}px` : "";
 
       totalWidth += hasWidth || cellMinWidth;
@@ -86,7 +85,7 @@ function setCellsBackgroundColor(editor: Editor, color: { backgroundColor: strin
   return editor
     .chain()
     .focus()
-    .updateAttributes("tableCell", {
+    .updateAttributes(CORE_EXTENSIONS.TABLE_CELL, {
       background: color.backgroundColor,
       textColor: color.textColor,
     })

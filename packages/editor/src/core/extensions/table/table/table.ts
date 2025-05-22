@@ -19,6 +19,7 @@ import {
   toggleHeader,
   toggleHeaderCell,
 } from "@tiptap/pm/tables";
+import { Decoration } from "@tiptap/pm/view";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // local imports
@@ -251,7 +252,7 @@ export const Table = Node.create({
     return ({ editor, getPos, node, decorations }) => {
       const { cellMinWidth } = this.options;
 
-      return new TableView(node, cellMinWidth, decorations as any, editor, getPos as () => number);
+      return new TableView(node, cellMinWidth, decorations as Decoration[], editor, getPos as () => number);
     };
   },
 

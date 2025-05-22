@@ -17,7 +17,7 @@ export const ImageExtension = (fileHandler: TFileHandler) => {
     validation: { maxFileSize },
   } = fileHandler;
 
-  return ImageExt.extend<any, ImageExtensionStorage>({
+  return ImageExt.extend<unknown, ImageExtensionStorage>({
     addKeyboardShortcuts() {
       return {
         ArrowDown: insertEmptyParagraphAtNodeBoundaries("down", this.name),

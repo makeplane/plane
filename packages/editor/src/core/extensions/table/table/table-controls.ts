@@ -1,5 +1,5 @@
 import { findParentNode } from "@tiptap/core";
-import { Plugin, PluginKey, TextSelection } from "@tiptap/pm/state";
+import { Plugin, PluginKey, TextSelection, Transaction } from "@tiptap/pm/state";
 import { DecorationSet, Decoration } from "@tiptap/pm/view";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
@@ -112,7 +112,7 @@ class TableControlsState {
     };
   }
 
-  apply(tr: any) {
+  apply(tr: Transaction) {
     const actions = tr.getMeta(key);
 
     if (actions?.setHoveredTable !== undefined) {

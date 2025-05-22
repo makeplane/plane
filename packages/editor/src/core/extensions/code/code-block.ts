@@ -128,7 +128,7 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
     return {
       "Mod-Alt-c": () => this.editor.commands.toggleCodeBlock(),
 
-      // remove code block when at start of document or code block is empty
+      // remove codeBlock when at start of document or codeBlock is empty
       Backspace: () => {
         try {
           const { empty, $anchor } = this.editor.state.selection;
