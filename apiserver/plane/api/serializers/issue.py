@@ -160,12 +160,15 @@ class IssueSerializer(BaseSerializer):
         else:
             try:
                 # Then assign it to default assignee, if it is a valid assignee
-                if default_assignee_id is not None and ProjectMember.objects.filter(
-                    member_id=default_assignee_id,
-                    project_id=project_id,
-                    role__gte=15,
-                    is_active=True
-                ).exists():
+                if (
+                    default_assignee_id is not None
+                    and ProjectMember.objects.filter(
+                        member_id=default_assignee_id,
+                        project_id=project_id,
+                        role__gte=15,
+                        is_active=True,
+                    ).exists()
+                ):
                     IssueAssignee.objects.create(
                         assignee_id=default_assignee_id,
                         issue=issue,
