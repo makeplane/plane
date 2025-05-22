@@ -242,7 +242,7 @@ export const useEditor = (props: CustomEditorProps) => {
           const safePosition = Math.max(0, Math.min(position, docSize));
           editor
             .chain()
-            .insertContentAt(safePosition, [{ type: "paragraph" }])
+            .insertContentAt(safePosition, [{ type: CORE_EXTENSIONS.PARAGRAPH }])
             .focus()
             .run();
         } catch (error) {

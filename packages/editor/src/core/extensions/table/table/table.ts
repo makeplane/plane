@@ -221,8 +221,8 @@ export const Table = Node.create({
   addKeyboardShortcuts() {
     return {
       Tab: () => {
-        if (this.editor.isActive("table")) {
-          if (this.editor.isActive("listItem") || this.editor.isActive("taskItem")) {
+        if (this.editor.isActive(CORE_EXTENSIONS.TABLE)) {
+          if (this.editor.isActive(CORE_EXTENSIONS.LIST_ITEM) || this.editor.isActive(CORE_EXTENSIONS.TASK_ITEM)) {
             return false;
           }
           if (this.editor.commands.goToNextCell()) {

@@ -1,6 +1,8 @@
 import { Editor } from "@tiptap/core";
 import { Fragment, Node } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
 export const MarkdownClipboardPlugin = (editor: Editor): Plugin =>
   new Plugin({
@@ -8,7 +10,7 @@ export const MarkdownClipboardPlugin = (editor: Editor): Plugin =>
     props: {
       clipboardTextSerializer: (slice) => {
         const markdownSerializer = editor.storage.markdown.serializer;
-        const isTableRow = slice.content.firstChild?.type?.name === "tableRow";
+        const isTableRow = slice.content.firstChild?.type?.name === CORE_EXTENSIONS.TABLE_ROW;
         const nodeSelect = slice.openStart === 0 && slice.openEnd === 0;
 
         if (nodeSelect) {
@@ -43,7 +45,7 @@ export const MarkdownClipboardPlugin = (editor: Editor): Plugin =>
 
           while (currentNode && currentDepth > 1 && currentNode.content?.firstChild) {
             if (currentNode.content?.childCount > 1) {
-              if (currentNode.content.firstChild?.type?.name === "listItem") {
+              if (currentNode.content.firstChild?.type?.name === CORE_EXTENSIONS.LIST_ITEM) {
                 return currentParent;
               } else {
                 return currentNode.content;

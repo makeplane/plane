@@ -21,8 +21,8 @@ export const EnterKeyExtension = (onEnterKeyPress?: () => void) =>
         "Shift-Enter": ({ editor }) =>
           editor.commands.first(({ commands }) => [
             () => commands.newlineInCode(),
-            () => commands.splitListItem("listItem"),
-            () => commands.splitListItem("taskItem"),
+            () => commands.splitListItem(CORE_EXTENSIONS.LIST_ITEM),
+            () => commands.splitListItem(CORE_EXTENSIONS.TASK_ITEM),
             () => commands.createParagraphNear(),
             () => commands.liftEmptyBlock(),
             () => commands.splitBlock(),

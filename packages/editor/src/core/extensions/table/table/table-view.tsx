@@ -7,6 +7,7 @@ import { Editor } from "@tiptap/core";
 import { CellSelection, TableMap, updateColumnsOnResize } from "@tiptap/pm/tables";
 
 import { icons } from "src/core/extensions/table/table/icons";
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
 type ToolboxItem = {
   label: string;
@@ -104,12 +105,12 @@ function setTableRowBackgroundColor(editor: Editor, color: { backgroundColor: st
 
   // Find the depth of the table row node
   let rowDepth = hoveredCell.depth;
-  while (rowDepth > 0 && hoveredCell.node(rowDepth).type.name !== "tableRow") {
+  while (rowDepth > 0 && hoveredCell.node(rowDepth).type.name !== CORE_EXTENSIONS.TABLE_ROW) {
     rowDepth--;
   }
 
   // If we couldn't find a tableRow node, we can't set the background color
-  if (hoveredCell.node(rowDepth).type.name !== "tableRow") {
+  if (hoveredCell.node(rowDepth).type.name !== CORE_EXTENSIONS.TABLE_ROW) {
     return false;
   }
 

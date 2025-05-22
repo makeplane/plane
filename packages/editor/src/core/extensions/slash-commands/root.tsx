@@ -36,11 +36,11 @@ const Command = Extension.create<SlashCommandOptions>({
           const parentNode = selection.$from.node(selection.$from.depth);
           const blockType = parentNode.type.name;
 
-          if (blockType === "codeBlock") {
+          if (blockType === CORE_EXTENSIONS.CODE_BLOCK) {
             return false;
           }
 
-          if (editor.isActive("table")) {
+          if (editor.isActive(CORE_EXTENSIONS.TABLE)) {
             return false;
           }
 

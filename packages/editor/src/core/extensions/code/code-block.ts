@@ -120,7 +120,7 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
       toggleCodeBlock:
         (attributes) =>
         ({ commands }) =>
-          commands.toggleNode(this.name, "paragraph", attributes),
+          commands.toggleNode(this.name, CORE_EXTENSIONS.PARAGRAPH, attributes),
     };
   },
 
@@ -261,7 +261,7 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
                 return false;
               }
 
-              if (this.editor.isActive("code")) {
+              if (this.editor.isActive(CORE_EXTENSIONS.CODE_INLINE)) {
                 // Check if it's an inline code block
                 event.preventDefault();
                 const text = event.clipboardData.getData("text/plain");

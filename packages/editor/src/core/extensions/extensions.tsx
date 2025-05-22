@@ -143,16 +143,16 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       placeholder: ({ editor, node }) => {
         if (!editor.isEditable) return "";
 
-        if (node.type.name === "heading") return `Heading ${node.attrs.level}`;
+        if (node.type.name === CORE_EXTENSIONS.HEADING) return `Heading ${node.attrs.level}`;
 
         const isUploadInProgress = getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.uploadInProgress;
         if (isUploadInProgress) return "";
 
         const shouldHidePlaceholder =
-          editor.isActive("table") ||
-          editor.isActive("codeBlock") ||
-          editor.isActive("image") ||
-          editor.isActive("imageComponent");
+          editor.isActive(CORE_EXTENSIONS.TABLE) ||
+          editor.isActive(CORE_EXTENSIONS.CODE_BLOCK) ||
+          editor.isActive(CORE_EXTENSIONS.IMAGE) ||
+          editor.isActive(CORE_EXTENSIONS.CUSTOM_IMAGE);
 
         if (shouldHidePlaceholder) return "";
 

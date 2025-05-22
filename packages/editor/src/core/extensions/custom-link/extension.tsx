@@ -49,7 +49,7 @@ export interface LinkOptions {
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    link: {
+    [CORE_EXTENSIONS.CUSTOM_LINK]: {
       /**
        * Set a link mark
        */

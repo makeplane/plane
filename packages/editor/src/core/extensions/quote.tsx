@@ -1,4 +1,6 @@
 import Blockquote from "@tiptap/extension-blockquote";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
 export const CustomQuoteExtension = Blockquote.extend({
   addKeyboardShortcuts() {
@@ -10,7 +12,7 @@ export const CustomQuoteExtension = Blockquote.extend({
 
           if (!parent) return false;
 
-          if (parent.type.name !== "blockquote") {
+          if (parent.type.name !== CORE_EXTENSIONS.BLOCKQUOTE) {
             return false;
           }
           if ($from.pos !== $to.pos) return false;
