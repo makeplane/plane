@@ -7,11 +7,11 @@ import { EditorRefApi } from "@plane/editor";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { ColorDropdown } from "@/components/pages";
 // constants
 import { TOOLBAR_ITEMS, TYPOGRAPHY_ITEMS, ToolbarMenuItem } from "@/constants/editor";
 // helpers
-import { cn } from "@/helpers/common.helper";
 
 type Props = {
   editorRef: EditorRefApi;

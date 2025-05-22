@@ -1,10 +1,9 @@
 "use client";
 import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
+import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // plane imports
-import { copyUrlToClipboard } from "@plane/utils";
 // helpers
-import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 

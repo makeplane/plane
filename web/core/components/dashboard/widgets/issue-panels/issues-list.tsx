@@ -5,6 +5,7 @@ import { TAssignedIssuesWidgetResponse, TCreatedIssuesWidgetResponse, TIssue, TI
 // hooks
 // components
 import { Loader, getButtonStyling } from "@plane/ui";
+import { cn } from "@plane/utils";
 import {
   AssignedCompletedIssueListItem,
   AssignedIssuesEmptyState,
@@ -18,7 +19,6 @@ import {
 } from "@/components/dashboard/widgets";
 // ui
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { getRedirectionFilters } from "@/helpers/dashboard.helper";
 // hooks
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";

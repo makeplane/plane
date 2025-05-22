@@ -15,13 +15,12 @@ import { useTranslation } from "@plane/i18n";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { truncateText, getUserRole } from "@plane/utils";
 // components
 import { EmptyState } from "@/components/common";
 import { WorkspaceLogo } from "@/components/workspace/logo";
 import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
 // helpers
-import { truncateText } from "@/helpers/string.helper";
-import { getUserRole } from "@/helpers/user.helper";
 // hooks
 import { useEventTracker, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

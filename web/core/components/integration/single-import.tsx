@@ -10,7 +10,7 @@ import { CustomMenu } from "@plane/ui";
 // icons
 // helpers
 
-import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { renderFormattedDate } from "@plane/utils";
 // types
 // constants
 

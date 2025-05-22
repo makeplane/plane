@@ -6,10 +6,10 @@ import { useTranslation } from "@plane/i18n";
 import { TCycleEstimateType } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
+import { getDate } from "@plane/utils";
 import ProgressChart from "@/components/core/sidebar/progress-chart";
 import { EstimateTypeDropdown, validateCycleSnapshot } from "@/components/cycles";
 // helpers
-import { getDate } from "@/helpers/date-time.helper";
 // hooks
 import { useCycle } from "@/hooks/store";
 

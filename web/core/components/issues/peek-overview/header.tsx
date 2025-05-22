@@ -18,12 +18,10 @@ import {
   Tooltip,
   setToast,
 } from "@plane/ui";
-import { copyUrlToClipboard } from "@plane/utils";
+import { copyUrlToClipboard, cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { IssueSubscription, NameDescriptionUpdateStatus } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
 // store hooks
 import { useIssueDetail, useProject, useProjectState, useUser } from "@/hooks/store";
 // hooks

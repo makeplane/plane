@@ -1,13 +1,12 @@
 import cloneDeep from "lodash/cloneDeep";
 import set from "lodash/set";
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
+import { EUserPermissions, API_BASE_URL } from "@plane/constants";
 // types
-import { EUserPermissions } from "@plane/constants";
 import { IUser } from "@plane/types";
 import { TUserPermissions } from "@plane/types/src/enums";
 // constants
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
 // services

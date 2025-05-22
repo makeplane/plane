@@ -2,9 +2,9 @@ import React from "react";
 import { eachDayOfInterval, isValid } from "date-fns";
 import { TModuleCompletionChartDistribution } from "@plane/types";
 // ui
+import { getDate, renderFormattedDateWithoutYear } from "@plane/utils";
 import { LineGraph } from "@/components/ui";
 // helpers
-import { getDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
 //types
 
 type Props = {

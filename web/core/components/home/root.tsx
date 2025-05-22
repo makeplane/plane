@@ -4,10 +4,10 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { PRODUCT_TOUR_COMPLETED } from "@plane/constants";
 import { ContentWrapper } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { TourRoot } from "@/components/onboarding";
 // constants
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useUserProfile, useEventTracker, useUser } from "@/hooks/store";
 import { useHome } from "@/hooks/store/use-home";

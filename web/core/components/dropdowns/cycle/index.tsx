@@ -7,7 +7,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { ComboDropDown, ContrastIcon } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useCycle } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";

@@ -7,11 +7,10 @@ import { Control, Controller } from "react-hook-form";
 import { ETabIndices } from "@plane/constants";
 // types
 import { TIssue } from "@plane/types";
+import { shouldRenderProject, getTabIndex } from "@plane/utils";
 // components
 import { ProjectDropdown } from "@/components/dropdowns";
 // helpers
-import { shouldRenderProject } from "@/helpers/project.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // store hooks
 import { useUser } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

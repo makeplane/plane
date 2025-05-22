@@ -10,11 +10,11 @@ import { TRecentProjectsWidgetResponse } from "@plane/types";
 // plane ui
 import { Avatar, AvatarGroup, Card } from "@plane/ui";
 // components
+import { getFileURL } from "@plane/utils";
 import { Logo } from "@/components/common";
 import { WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
 // constants
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import {
   useEventTracker,

@@ -1,8 +1,8 @@
 import cloneDeep from "lodash/cloneDeep";
 import uniqBy from "lodash/uniqBy";
 //
+import type { ChartDataType } from "@plane/types";
 import { months } from "../data";
-import { ChartDataType } from "../types";
 import { getNumberOfDaysBetweenTwoDates, getNumberOfDaysInMonth } from "./helpers";
 import { getWeeksBetweenTwoDates, IWeekBlock } from "./week-view";
 

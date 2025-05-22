@@ -9,13 +9,14 @@ import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { Eye, EyeOff } from "lucide-react";
 // plane imports
+import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { PasswordStrengthMeter } from "@/components/account";
+import { getPasswordStrength } from "@plane/utils";
+import { PasswordStrengthMeter } from "@/components/account/password-strength-meter";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
-import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.helper";
 // hooks
 import { useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

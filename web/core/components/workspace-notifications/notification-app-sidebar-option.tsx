@@ -4,9 +4,9 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
+import { getNumberCount } from "@plane/utils";
 import { CountChip } from "@/components/common/count-chip";
 // helpers
-import { getNumberCount } from "@/helpers/string.helper";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store";
 

@@ -3,7 +3,7 @@ import { Tab } from "@headlessui/react";
 // helpers
 import { EDurationFilters, FILTERED_ISSUES_TABS_LIST, UNFILTERED_ISSUES_TABS_LIST } from "@plane/constants";
 import { TIssuesListTypes } from "@plane/types";
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // types
 // constants
 

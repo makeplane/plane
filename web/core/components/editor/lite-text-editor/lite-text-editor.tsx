@@ -7,10 +7,9 @@ import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef, TFileHandler } fr
 import { useTranslation } from "@plane/i18n";
 // components
 import { MakeOptional } from "@plane/types";
+import { cn, isCommentEmpty } from "@plane/utils";
 import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 // store hooks

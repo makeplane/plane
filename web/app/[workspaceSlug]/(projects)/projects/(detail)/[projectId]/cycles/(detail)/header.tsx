@@ -8,12 +8,12 @@ import { useParams } from "next/navigation";
 import { PanelRight } from "lucide-react";
 // plane constants
 import {
-  EIssueLayoutTypes,
   EIssueFilterType,
+  EIssueLayoutTypes,
   EIssuesStoreType,
-  ISSUE_DISPLAY_FILTERS_BY_PAGE,
   EUserPermissions,
   EUserPermissionsLevel,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
 } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
@@ -25,26 +25,25 @@ import {
   IIssueFilterOptions,
 } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, ContrastIcon, Tooltip, Header, CustomSearchSelect } from "@plane/ui";
+import { Breadcrumbs, Button, ContrastIcon, CustomSearchSelect, Header, Tooltip } from "@plane/ui";
 // components
+import { cn, isIssueFilterActive } from "@plane/utils";
 import { WorkItemsModal } from "@/components/analytics-v2/work-items/modal";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 import { CycleQuickActions } from "@/components/cycles";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import {
-  useEventTracker,
+  useCommandPalette,
   useCycle,
+  useEventTracker,
+  useIssues,
   useLabel,
   useMember,
   useProject,
   useProjectState,
-  useIssues,
-  useCommandPalette,
   useUserPermissions,
 } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
