@@ -1,10 +1,10 @@
 # Python imports
-import os
 import uuid
 from django.db import transaction
 
 # Django imports
 from django.contrib.auth.hashers import make_password
+from django.conf import settings
 
 # Third party imports
 from rest_framework import status
@@ -32,7 +32,7 @@ from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 
 class IntakeSettingEndpoint(BaseAPIView):
     def get_intake_email_domain(self):
-        return os.environ.get("INTAKE_EMAIL_DOMAIN", "example.com")
+        return settings.INTAKE_EMAIL_DOMAIN
 
     def get_create_user(self, workspace) -> User:
         workspace_user_email = f"{workspace.id}-intake@plane.so"
@@ -165,9 +165,9 @@ class IntakeSettingEndpoint(BaseAPIView):
         for deployboard in deployboards:
             if deployboard["entity_name"] == "intake_email":
                 if check_workspace_feature_flag(FeatureFlag.INTAKE_EMAIL, slug):
-                    data["anchors"]["intake_email"] = (
-                        f"{slug}-{deployboard['anchor']}@{self.get_intake_email_domain()}"
-                    )
+                    data["anchors"][
+                        "intake_email"
+                    ] = f"{slug}-{deployboard['anchor']}@{self.get_intake_email_domain()}"
             elif deployboard["entity_name"] == "intake":
                 if check_workspace_feature_flag(FeatureFlag.INTAKE_FORM, slug):
                     data["anchors"][deployboard["entity_name"]] = deployboard["anchor"]

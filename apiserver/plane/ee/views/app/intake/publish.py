@@ -1,6 +1,8 @@
 # Python imports
 from uuid import uuid4
-import os
+
+# Django imports
+from django.conf import settings
 
 # Third party imports
 from rest_framework.response import Response
@@ -20,7 +22,7 @@ class ProjectInTakePublishViewSet(BaseViewSet):
     models = Intake
 
     def get_intake_email_domain(self):
-        return os.environ.get("EMAIL_DOMAIN", "example.com")
+        return settings.INTAKE_EMAIL_DOMAIN
 
     @check_feature_flag(FeatureFlag.INTAKE_FORM)
     @check_feature_flag(FeatureFlag.INTAKE_EMAIL)

@@ -34,7 +34,6 @@ x-proxy-env: &proxy-env
   LISTEN_SMTP_PORT_465: ${LISTEN_SMTP_PORT_465:-465}
   LISTEN_SMTP_PORT_587: ${LISTEN_SMTP_PORT_587:-587}
 
-
 x-pg-env: &pg-env
   POSTGRES_USER: ${POSTGRES_USER:-plane}
   POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-plane}
@@ -128,6 +127,8 @@ x-app-env: &app-env
   MINIO_ENDPOINT_SSL: ${MINIO_ENDPOINT_SSL:-0}
   # Live Server Secret Key
   LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY:-htbqvBJAgpm9bzvf3r4urJer0ENReatceh}
+  # Intake Email Domain
+  INTAKE_EMAIL_DOMAIN: ${INTAKE_EMAIL_DOMAIN:-example.com}
 
 x-live-env: &live-env
   API_BASE_URL: ${API_BASE_URL:-http://api:8000}
