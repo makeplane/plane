@@ -220,6 +220,7 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
         # Get the base queryset
         queryset = (
             Issue.issue_objects.filter(**self.filters["base_filters"])
+            .filter(project_id=project_id)
             .select_related("workspace", "state", "parent")
             .prefetch_related(
                 "assignees", "labels", "issue_module__module", "issue_cycle__cycle"
@@ -373,6 +374,7 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
         if type == "custom-work-items":
             queryset = (
                 Issue.issue_objects.filter(**self.filters["base_filters"])
+                .filter(project_id=project_id)
                 .select_related("workspace", "state", "parent")
                 .prefetch_related(
                     "assignees", "labels", "issue_module__module", "issue_cycle__cycle"
