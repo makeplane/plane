@@ -17,7 +17,7 @@ x-monitor-env: &monitor-env
 
 x-email-env: &email-env
   SMTP_DOMAIN: ${SMTP_DOMAIN:-0.0.0.0}
-  EMAIL_SAVE_ENDPOINT: http://api:8000/intake/email
+  EMAIL_SAVE_ENDPOINT: http://api:8000/intake/email/
   TLS_CERT_PATH: ${TLS_CERT_PATH:-}
   TLS_PRIV_KEY_PATH: ${TLS_PRIV_KEY_PATH:-}
 
