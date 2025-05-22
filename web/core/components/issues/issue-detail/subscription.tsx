@@ -5,7 +5,7 @@ import isNil from "lodash/isNil";
 import { observer } from "mobx-react";
 import { Bell, BellOff } from "lucide-react";
 // plane-i18n
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // UI
 import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
@@ -16,17 +16,18 @@ export type TIssueSubscription = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
+  serviceType?: EIssueServiceType;
 };
 
 export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
-  const { workspaceSlug, projectId, issueId } = props;
+  const { workspaceSlug, projectId, issueId, serviceType = EIssueServiceType.ISSUES } = props;
   const { t } = useTranslation();
   // hooks
   const {
     subscription: { getSubscriptionByIssueId },
     createSubscription,
     removeSubscription,
-  } = useIssueDetail();
+  } = useIssueDetail(serviceType);
   // state
   const [loading, setLoading] = useState(false);
   // hooks
@@ -53,12 +54,12 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
           : t("issue.subscription.actions.subscribed"),
       });
       setLoading(false);
-    } catch (error) {
+    } catch {
       setLoading(false);
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("toast.error"),
-        message: t("commons.error.message"),
+        message: t("common.error.message"),
       });
     }
   };
@@ -78,7 +79,7 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
         variant="outline-primary"
         className="hover:!bg-custom-primary-100/20"
         onClick={handleSubscription}
-        disabled={!isEditable}
+        disabled={!isEditable || loading}
       >
         {loading ? (
           <span>
