@@ -9,7 +9,7 @@ import { IIssueLabel } from "@plane/types";
 // ui
 import { CustomMenu, DragHandle } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // components
 import { LabelName } from "./label-name";
 

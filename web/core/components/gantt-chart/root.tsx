@@ -1,7 +1,7 @@
 import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 // components
-import { ChartViewRoot, IBlockUpdateData, IBlockUpdateDependencyData } from "@/components/gantt-chart";
+import type { ChartViewRoot, IBlockUpdateData, IBlockUpdateDependencyData } from "@plane/types";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 

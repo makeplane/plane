@@ -1,11 +1,12 @@
 import { ReactNode } from "react";
 import zxcvbn from "zxcvbn";
+// plane imports
 import {
   E_PASSWORD_STRENGTH,
-  SPACE_PASSWORD_CRITERIA,
   PASSWORD_MIN_LENGTH,
   EErrorAlertType,
   EAuthErrorCodes,
+  TAuthErrorInfo,
 } from "@plane/constants";
 
 /**
@@ -30,49 +31,28 @@ export type PasswordCriterion = {
 /**
  * @description Password strength criteria
  */
-export const PASSWORD_CRITERIA: PasswordCriterion[] = [
-  { regex: /[a-z]/, description: "lowercase" },
-  { regex: /[A-Z]/, description: "uppercase" },
-  { regex: /[0-9]/, description: "number" },
-  { regex: /[^a-zA-Z0-9]/, description: "special character" },
+export const PASSWORD_CRITERIA = [
+  {
+    key: "min_8_char",
+    label: "Min 8 characters",
+    isCriteriaValid: (password: string) => password.length >= PASSWORD_MIN_LENGTH,
+  },
+  // {
+  //   key: "min_1_upper_case",
+  //   label: "Min 1 upper-case letter",
+  //   isCriteriaValid: (password: string) => PASSWORD_NUMBER_REGEX.test(password),
+  // },
+  // {
+  //   key: "min_1_number",
+  //   label: "Min 1 number",
+  //   isCriteriaValid: (password: string) => PASSWORD_CHAR_CAPS_REGEX.test(password),
+  // },
+  // {
+  //   key: "min_1_special_char",
+  //   label: "Min 1 special character",
+  //   isCriteriaValid: (password: string) => PASSWORD_SPECIAL_CHAR_REGEX.test(password),
+  // },
 ];
-
-/**
- * @description Checks if password meets all criteria
- * @param {string} password - Password to check
- * @returns {boolean} Whether password meets all criteria
- */
-export const checkPasswordCriteria = (password: string): boolean =>
-  PASSWORD_CRITERIA.every((criterion) => criterion.regex.test(password));
-
-/**
- * @description Checks password strength against criteria
- * @param {string} password - Password to check
- * @returns {PasswordStrength} Password strength level
- * @example
- * checkPasswordStrength("abc") // returns PasswordStrength.WEAK
- * checkPasswordStrength("Abc123!@#") // returns PasswordStrength.STRONG
- */
-export const checkPasswordStrength = (password: string): PasswordStrength => {
-  if (!password || password.length === 0) return PasswordStrength.EMPTY;
-  if (password.length < PASSWORD_MIN_LENGTH) return PasswordStrength.WEAK;
-
-  const criteriaCount = PASSWORD_CRITERIA.filter((criterion) => criterion.regex.test(password)).length;
-
-  const zxcvbnScore = zxcvbn(password).score;
-
-  if (criteriaCount <= 1 || zxcvbnScore <= 1) return PasswordStrength.WEAK;
-  if (criteriaCount === 2 || zxcvbnScore === 2) return PasswordStrength.FAIR;
-  if (criteriaCount === 3 || zxcvbnScore === 3) return PasswordStrength.GOOD;
-  return PasswordStrength.STRONG;
-};
-
-export type TAuthErrorInfo = {
-  type: EErrorAlertType;
-  code: EAuthErrorCodes;
-  title: string;
-  message: ReactNode;
-};
 
 // Password strength check
 export const getPasswordStrength = (password: string): E_PASSWORD_STRENGTH => {
@@ -89,9 +69,9 @@ export const getPasswordStrength = (password: string): E_PASSWORD_STRENGTH => {
     return passwordStrength;
   }
 
-  const passwordCriteriaValidation = SPACE_PASSWORD_CRITERIA.map((criteria) =>
-    criteria.isCriteriaValid(password)
-  ).every((criterion) => criterion);
+  const passwordCriteriaValidation = PASSWORD_CRITERIA.map((criteria) => criteria.isCriteriaValid(password)).every(
+    (criterion) => criterion
+  );
   const passwordStrengthScore = zxcvbn(password).score;
 
   if (passwordCriteriaValidation === false || passwordStrengthScore <= 2) {

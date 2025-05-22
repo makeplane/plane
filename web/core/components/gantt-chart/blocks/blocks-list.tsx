@@ -1,6 +1,6 @@
 import { FC } from "react";
 //
-import { IBlockUpdateDependencyData } from "../types";
+import type { IBlockUpdateDependencyData } from "@plane/types";
 import { GanttChartBlock } from "./block";
 
 export type GanttChartBlocksProps = {

@@ -11,9 +11,8 @@ import { useOutsideClickDetector } from "@plane/hooks";
 import { TIssue } from "@plane/types";
 // ui
 import { Tooltip, ControlLink } from "@plane/ui";
+import { cn, generateWorkItemLink } from "@plane/utils";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useIssues, useProject, useProjectState } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";

@@ -12,7 +12,7 @@ import {
 // ui
 import { ContrastIcon, DiceIcon } from "@plane/ui";
 // helpers
-import { generateWorkItemLink } from "@/helpers/issue.helper";
+import { generateWorkItemLink } from "@plane/utils";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 

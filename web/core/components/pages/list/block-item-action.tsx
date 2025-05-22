@@ -5,11 +5,10 @@ import { observer } from "mobx-react";
 import { Earth, Info, Lock, Minus } from "lucide-react";
 // ui
 import { Avatar, FavoriteStar, Tooltip } from "@plane/ui";
+import { renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { PageActions } from "@/components/pages";
 // helpers
-import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 import { usePageOperations } from "@/hooks/use-page-operations";

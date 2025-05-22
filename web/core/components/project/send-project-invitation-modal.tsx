@@ -13,7 +13,7 @@ import { useTranslation } from "@plane/i18n";
 import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL } from "@plane/utils";
 // hooks
 import { useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
 // plane-web constants

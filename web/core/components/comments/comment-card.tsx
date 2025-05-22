@@ -11,9 +11,9 @@ import { useTranslation } from "@plane/i18n";
 import { TIssueComment, TCommentsOperations } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // components
+import { isCommentEmpty } from "@plane/utils";
 import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
 // helpers
-import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useUser } from "@/hooks/store";
 //

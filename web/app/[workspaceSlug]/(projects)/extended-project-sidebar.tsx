@@ -8,12 +8,11 @@ import { Plus, Search } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
-import { cn, copyUrlToClipboard } from "@plane/utils";
+import { cn, copyUrlToClipboard, orderJoinedProjects } from "@plane/utils";
 // components
 import { CreateProjectModal } from "@/components/project";
 import { SidebarProjectsListItem } from "@/components/workspace";
 // hooks
-import { orderJoinedProjects } from "@/helpers/project.helper";
 import { useAppTheme, useProject, useUserPermissions } from "@/hooks/store";
 import useExtendedSidebarOutsideClickDetector from "@/hooks/use-extended-sidebar-overview-outside-click";
 import { TProject } from "@/plane-web/types";

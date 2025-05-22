@@ -1,12 +1,12 @@
 // plane imports
 import { IFavorite } from "@plane/types";
 // components
+import { getPageName } from "@plane/utils";
 import {
   generateFavoriteItemLink,
   getFavoriteItemIcon,
 } from "@/components/workspace/sidebar/favorites/favorite-items/common";
 // helpers
-import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { useProject, useProjectView, useCycle, useModule } from "@/hooks/store";
 // plane web hooks

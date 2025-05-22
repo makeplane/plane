@@ -6,7 +6,7 @@ import { insightsFields } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IAnalyticsResponseV2, TAnalyticsTabsV2Base } from "@plane/types";
 //hooks
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 import { useAnalyticsV2 } from "@/hooks/store/use-analytics-v2";
 //services
 import { AnalyticsV2Service } from "@/services/analytics-v2.service";

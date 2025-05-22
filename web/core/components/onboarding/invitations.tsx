@@ -7,11 +7,10 @@ import { ROLE, MEMBER_ACCEPTED } from "@plane/constants";
 import { IWorkspaceMemberInvitation } from "@plane/types";
 // ui
 import { Button, Checkbox, Spinner } from "@plane/ui";
+import { truncateText, getUserRole } from "@plane/utils";
 // constants
 // helpers
 import { WorkspaceLogo } from "@/components/workspace/logo";
-import { truncateText } from "@/helpers/string.helper";
-import { getUserRole } from "@/helpers/user.helper";
 // hooks
 import { useEventTracker, useUserSettings, useWorkspace } from "@/hooks/store";
 // services

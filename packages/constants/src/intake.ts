@@ -95,3 +95,32 @@ export const INBOX_ISSUE_SORT_BY_OPTIONS = [
     i18n_label: "common.sort.desc",
   },
 ];
+
+export enum EPastDurationFilters {
+  TODAY = "today",
+  YESTERDAY = "yesterday",
+  LAST_7_DAYS = "last_7_days",
+  LAST_30_DAYS = "last_30_days",
+}
+
+export const PAST_DURATION_FILTER_OPTIONS: {
+  name: string;
+  value: string;
+}[] = [
+  {
+    name: "Today",
+    value: EPastDurationFilters.TODAY,
+  },
+  {
+    name: "Yesterday",
+    value: EPastDurationFilters.YESTERDAY,
+  },
+  {
+    name: "Last 7 days",
+    value: EPastDurationFilters.LAST_7_DAYS,
+  },
+  {
+    name: "Last 30 days",
+    value: EPastDurationFilters.LAST_30_DAYS,
+  },
+];

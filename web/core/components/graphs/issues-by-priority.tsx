@@ -3,9 +3,9 @@ import { Theme, linearGradientDef } from "@nivo/core";
 import { ISSUE_PRIORITIES } from "@plane/constants";
 // components
 import { TIssuePriorities } from "@plane/types";
+import { capitalizeFirstLetter } from "@plane/utils";
 import { BarGraph } from "@/components/ui";
 // helpers
-import { capitalizeFirstLetter } from "@/helpers/string.helper";
 
 // gradients for work items by priority widget graph bars
 export const PRIORITY_GRAPH_GRADIENTS = [

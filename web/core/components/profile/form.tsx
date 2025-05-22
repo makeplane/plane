@@ -9,12 +9,12 @@ import { useTranslation, SUPPORTED_LANGUAGES } from "@plane/i18n";
 import type { IUser, TUserProfile } from "@plane/types";
 import { Button, CustomSelect, Input, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
+import { getFileURL } from "@plane/utils";
 import { DeactivateAccountModal } from "@/components/account";
 import { ImagePickerPopover, UserImageUploadModal } from "@/components/core";
 import { TimezoneSelect } from "@/components/global";
 // constants
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useUser, useUserProfile } from "@/hooks/store";
 

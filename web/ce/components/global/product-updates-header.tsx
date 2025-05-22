@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTranslation } from "@plane/i18n";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // assets
 import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
 // package.json

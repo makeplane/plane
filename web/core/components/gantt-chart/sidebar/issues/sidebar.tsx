@@ -3,10 +3,10 @@
 import { RefObject, useState } from "react";
 import { observer } from "mobx-react";
 // ui
+import type { IBlockUpdateData } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
-import { IBlockUpdateData } from "@/components/gantt-chart/types";
 import { GanttLayoutLIstItem } from "@/components/ui";
 //hooks
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";

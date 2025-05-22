@@ -2,9 +2,9 @@
 
 import { observer } from "mobx-react";
 // ui
+import type { IBlockUpdateData } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
-import { IBlockUpdateData } from "@/components/gantt-chart";
 // hooks
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 //

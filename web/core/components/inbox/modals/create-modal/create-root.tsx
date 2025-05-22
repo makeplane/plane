@@ -10,12 +10,11 @@ import { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 import { Button, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import { renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // components
 import { InboxIssueTitle, InboxIssueDescription, InboxIssueProperties } from "@/components/inbox/modals/create-modal";
 // constants
 // helpers
-import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useEventTracker, useProject, useProjectInbox, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

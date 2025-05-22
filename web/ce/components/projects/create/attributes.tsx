@@ -7,10 +7,10 @@ import { IProject } from "@plane/types";
 // ui
 import { CustomSelect } from "@plane/ui";
 // components
+import { getTabIndex } from "@plane/utils";
 import { MemberDropdown } from "@/components/dropdowns";
 import { ProjectNetworkIcon } from "@/components/project";
 // helpers
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 
 type Props = {
   isMobile?: boolean;

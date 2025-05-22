@@ -1,10 +1,9 @@
 import clone from "lodash/clone";
 import set from "lodash/set";
 import { makeObservable, observable, runInAction, action } from "mobx";
-import { TInboxIssue, TInboxIssueStatus, EInboxIssueSource } from "@plane/constants";
+import { TInboxIssue, TInboxIssueStatus, EInboxIssueSource, EInboxIssueStatus } from "@plane/constants";
 import { TIssue, TInboxDuplicateIssueDetails } from "@plane/types";
 // helpers
-import { EInboxIssueStatus } from "@/helpers/inbox.helper";
 // local db
 import { addIssueToPersistanceLayer } from "@/local-db/utils/utils";
 // services

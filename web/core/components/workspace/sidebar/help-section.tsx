@@ -8,9 +8,9 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { CustomMenu, Tooltip, ToggleSwitch } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { ProductUpdatesModal } from "@/components/global";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useCommandPalette, useInstance, useTransient, useUserSettings } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

@@ -1,9 +1,9 @@
 // plane ui
 import { getButtonStyling } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { ProIcon } from "@/components/common";
 // helpers
-import { cn } from "@/helpers/common.helper";
 
 export const IssueEmbedUpgradeCard: React.FC<any> = (props) => (
   <div

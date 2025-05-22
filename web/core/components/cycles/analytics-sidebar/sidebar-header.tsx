@@ -4,24 +4,19 @@ import React, { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import {
-  ArchiveIcon,
-  ArchiveRestoreIcon,
   ArrowRight,
   ChevronRight,
-  EllipsisIcon,
-  LinkIcon,
-  Trash2,
 } from "lucide-react";
 // Plane Imports
 import { CYCLE_STATUS, CYCLE_UPDATED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ICycle } from "@plane/types";
-import { CustomMenu, setToast, TOAST_TYPE } from "@plane/ui";
-import { copyUrlToClipboard } from "@plane/utils";
+import { setToast, TOAST_TYPE } from "@plane/ui";
+import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns";
 // helpers
-import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
+//
 // hooks
 import { useCycle, useEventTracker, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

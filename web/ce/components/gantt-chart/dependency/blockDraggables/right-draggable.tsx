@@ -1,5 +1,5 @@
 import { RefObject } from "react";
-import { IGanttBlock } from "@/components/gantt-chart";
+import type { IGanttBlock } from "@plane/types";
 
 type RightDependencyDraggableProps = {
   block: IGanttBlock;

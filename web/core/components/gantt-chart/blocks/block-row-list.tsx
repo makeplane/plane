@@ -1,11 +1,11 @@
 import { FC } from "react";
 // components
+import type { IBlockUpdateData, IGanttBlock } from "@plane/types";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 // hooks
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // types
 import { BLOCK_HEIGHT } from "../constants";
-import { IBlockUpdateData, IGanttBlock } from "../types";
 import { BlockRow } from "./block-row";
 
 export type GanttChartBlocksProps = {

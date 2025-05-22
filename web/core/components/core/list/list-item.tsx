@@ -3,7 +3,7 @@ import React, { FC } from "react";
 // ui
 import { ControlLink, Row, Tooltip } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 

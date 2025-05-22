@@ -4,13 +4,12 @@ import { FileText } from "lucide-react";
 import { TActivityEntityData, TPageEntityData } from "@plane/types";
 // plane ui
 import { Avatar, Logo } from "@plane/ui";
+import { calculateTimeAgo, getFileURL, getPageName } from "@plane/utils";
 // plane utils
-import { getFileURL } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
 // helpers
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
-import { getPageName } from "@/helpers/page.helper";
+//
 // hooks
 import { useMember } from "@/hooks/store";
 

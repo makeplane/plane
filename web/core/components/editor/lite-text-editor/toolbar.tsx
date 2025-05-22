@@ -10,9 +10,9 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { Button, Tooltip } from "@plane/ui";
 // constants
+import { cn } from "@plane/utils";
 import { TOOLBAR_ITEMS, ToolbarMenuItem } from "@/constants/editor";
 // helpers
-import { cn } from "@/helpers/common.helper";
 
 type Props = {
   accessSpecifier?: EIssueCommentAccessSpecifier;

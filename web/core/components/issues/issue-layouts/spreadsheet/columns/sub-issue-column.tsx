@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { TIssue } from "@plane/types";
 // helpers
 import { Row } from "@plane/ui";
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";

@@ -5,14 +5,14 @@ import { addDays } from "date-fns";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 // ui
+import type { IBlockUpdateData, IGanttBlock } from "@plane/types";
 import { Tooltip } from "@plane/ui";
 // helpers
-import { renderFormattedDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { renderFormattedDate, renderFormattedPayloadDate } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
-import { IBlockUpdateData, IGanttBlock } from "../types";
 
 type Props = {
   block: IGanttBlock;

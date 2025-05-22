@@ -1,8 +1,8 @@
 import { getWeekOfMonth, isValid } from "date-fns";
 import { CHART_X_AXIS_DATE_PROPERTIES, ChartXAxisDateGrouping, ChartXAxisProperty, TO_CAPITALIZE_PROPERTIES } from "@plane/constants";
 import { TChart, TChartDatum } from "@plane/types";
-import { capitalizeFirstLetter, hexToHsl, hslToHex, renderFormattedDate } from "@plane/utils";
-import { renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
+import { capitalizeFirstLetter, hexToHsl, hslToHex, renderFormattedDate, renderFormattedDateWithoutYear } from "@plane/utils";
+//
 
 const getDateGroupingName = (date: string, dateGrouping: ChartXAxisDateGrouping): string => {
   if (!date || ["none", "null"].includes(date.toLowerCase())) return "None";

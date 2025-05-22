@@ -10,11 +10,11 @@ import type { TCycleGroups } from "@plane/types";
 // ui
 import { CircularProgressIndicator } from "@plane/ui";
 // components
+import { generateQueryParams } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
 import { CycleQuickActions } from "@/components/cycles/";
 import { CycleListItemAction } from "@/components/cycles/list";
 // helpers
-import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
 import { useCycle } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

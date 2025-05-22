@@ -1,8 +1,8 @@
 import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
-// helpers
+// plane imports
 import { IIssueFilters } from "@plane/types";
-import { getDate } from "./date-time.helper";
-// import { IIssueFilterOptions } from "@plane/types";
+// local imports
+import { getDate } from "./datetime";
 
 /**
  * @description calculates the total number of filters applied
@@ -21,6 +21,7 @@ export const calculateTotalFilters = <T>(filters: T): number =>
         })
         .reduce((curr, prev) => curr + prev, 0)
     : 0;
+
 /**
  * @description checks if the date satisfies the filter
  * @param {Date} date

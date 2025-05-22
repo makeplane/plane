@@ -4,9 +4,9 @@ import { FC } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
+import { GOD_MODE_URL } from "@plane/constants";
 import { Button } from "@plane/ui";
 // helpers
-import { GOD_MODE_URL } from "@/helpers/common.helper";
 // images
 // assets
 import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";

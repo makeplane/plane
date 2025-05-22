@@ -1,25 +1,8 @@
 import { subDays } from "date-fns";
-import { renderFormattedPayloadDate } from "./date-time.helper";
-
-export enum EInboxIssueCurrentTab {
-  OPEN = "open",
-  CLOSED = "closed",
-}
-
-export enum EInboxIssueStatus {
-  PENDING = -2,
-  DECLINED = -1,
-  SNOOZED = 0,
-  ACCEPTED = 1,
-  DUPLICATE = 2,
-}
-
-export enum EPastDurationFilters {
-  TODAY = "today",
-  YESTERDAY = "yesterday",
-  LAST_7_DAYS = "last_7_days",
-  LAST_30_DAYS = "last_30_days",
-}
+// plane imports
+import { EPastDurationFilters } from "@plane/constants";
+// local imports
+import { renderFormattedPayloadDate } from "./datetime";
 
 export const getCustomDates = (duration: EPastDurationFilters): string => {
   const today = new Date();
@@ -49,25 +32,3 @@ export const getCustomDates = (duration: EPastDurationFilters): string => {
     }
   }
 };
-
-export const PAST_DURATION_FILTER_OPTIONS: {
-  name: string;
-  value: string;
-}[] = [
-  {
-    name: "Today",
-    value: EPastDurationFilters.TODAY,
-  },
-  {
-    name: "Yesterday",
-    value: EPastDurationFilters.YESTERDAY,
-  },
-  {
-    name: "Last 7 days",
-    value: EPastDurationFilters.LAST_7_DAYS,
-  },
-  {
-    name: "Last 30 days",
-    value: EPastDurationFilters.LAST_30_DAYS,
-  },
-];

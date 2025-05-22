@@ -8,9 +8,8 @@ import { useTranslation } from "@plane/i18n";
 import { TIssueServiceType } from "@plane/types";
 // ui
 import { Tooltip, TOAST_TYPE, setToast, CustomMenu } from "@plane/ui";
-import { calculateTimeAgo, getIconForLink } from "@plane/utils";
+import { calculateTimeAgo, getIconForLink, copyTextToClipboard } from "@plane/utils";
 // helpers
-import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

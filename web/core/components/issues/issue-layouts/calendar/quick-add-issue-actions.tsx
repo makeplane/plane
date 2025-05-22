@@ -14,10 +14,10 @@ import { ISearchIssueResponse, TIssue } from "@plane/types";
 // ui
 import { CustomMenu, setPromiseToast } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { ExistingIssuesListModal } from "@/components/core";
 import { QuickAddIssueRoot } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 

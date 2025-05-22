@@ -5,6 +5,7 @@ import { LayoutPanelTop } from "lucide-react";
 import { ETabIndices } from "@plane/constants";
 import { ISearchIssueResponse, TIssue } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
+import { renderFormattedPayloadDate, getDate, getTabIndex } from "@plane/utils";
 // components
 import {
   CycleDropdown,
@@ -18,8 +19,6 @@ import {
 import { ParentIssuesListModal } from "@/components/issues";
 import { IssueLabelSelect } from "@/components/issues/select";
 // helpers
-import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useProjectEstimates } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

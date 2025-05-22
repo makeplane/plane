@@ -6,10 +6,9 @@ import { IUser } from "@plane/types";
 // hooks
 // ui
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { cn, formatTextList } from "@plane/utils";
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { renderEmoji } from "@/helpers/emoji.helper";
-import { formatTextList } from "@/helpers/issue.helper";
 import { useIssueDetail, useMember } from "@/hooks/store";
 // types
 import { ReactionSelector } from "./reaction-selector";

@@ -2,11 +2,11 @@ import { RefObject } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // components
+import type { ChartDataType, IBlockUpdateData, IGanttBlock } from "@plane/types";
 import { Row, ERowVariant } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { MultipleSelectGroupAction } from "@/components/core";
-import { ChartDataType, IBlockUpdateData, IGanttBlock } from "@/components/gantt-chart";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // constants

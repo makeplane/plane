@@ -8,10 +8,10 @@ import { Check, Info } from "lucide-react";
 // ui
 import { CircularProgressIndicator } from "@plane/ui";
 // components
+import { generateQueryParams } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
 import { ModuleListItemAction, ModuleQuickActions } from "@/components/modules";
 // helpers
-import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
 import { useModule } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

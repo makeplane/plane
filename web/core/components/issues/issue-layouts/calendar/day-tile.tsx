@@ -5,18 +5,17 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import { observer } from "mobx-react";
+import { TGroupedIssues, TIssue, TIssueMap, TPaginationData, ICalendarDate } from "@plane/types";
 // types
-import { TGroupedIssues, TIssue, TIssueMap, TPaginationData } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { CalendarIssueBlocks, ICalendarDate } from "@/components/issues";
+import { cn, renderFormattedPayloadDate } from "@plane/utils";
+import { CalendarIssueBlocks } from "@/components/issues/issue-layouts/calendar";
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 // helpers
 import { MONTHS_LIST } from "@/constants/calendar";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // types
 import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import { ICycleIssuesFilter } from "@/store/issue/cycle";

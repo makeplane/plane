@@ -6,6 +6,7 @@ import { useTranslation } from "@plane/i18n";
 import { IIssueFilterOptions, IIssueLabel, IState } from "@plane/types";
 // components
 import { Tag } from "@plane/ui";
+import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 import {
   AppliedCycleFilters,
   AppliedDateFilters,
@@ -19,7 +20,6 @@ import {
 } from "@/components/issues";
 // constants
 // helpers
-import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 // plane web components

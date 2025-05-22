@@ -10,7 +10,7 @@ import { TWorkspaceDraftIssue } from "@plane/types";
 import { Row, TContextMenuItem, Tooltip } from "@plane/ui";
 // constants
 // helper
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme, useProject, useWorkspaceDraftIssues } from "@/hooks/store";
 // plane-web components

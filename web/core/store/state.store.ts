@@ -6,7 +6,7 @@ import { computedFn } from "mobx-utils";
 import { STATE_GROUPS } from "@plane/constants";
 import { IState } from "@plane/types";
 // helpers
-import { sortStates } from "@/helpers/state.helper";
+import { sortStates } from "@plane/utils";
 // plane web
 import { syncIssuesWithDeletedStates } from "@/local-db/utils/load-workspace";
 import { ProjectStateService } from "@/plane-web/services/project/project-state.service";

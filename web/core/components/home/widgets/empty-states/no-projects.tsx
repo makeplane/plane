@@ -8,9 +8,8 @@ import { Briefcase, Check, Hotel, Users, X } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { cn, getFileURL } from "@plane/utils";
 // helpers
-import { cn } from "@plane/utils";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import {
   useCommandPalette,

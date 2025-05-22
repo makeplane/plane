@@ -1,4 +1,5 @@
 // services
+import { API_BASE_URL } from "@plane/constants";
 import type {
   CycleDateCheckData,
   ICycle,
@@ -8,7 +9,6 @@ import type {
   TProgressSnapshot,
   TCycleEstimateDistribution,
 } from "@plane/types";
-import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
 
 export class CycleService extends APIService {

@@ -3,7 +3,8 @@ import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // components
-import { ChartDataType, IBlockUpdateDependencyData, IGanttBlock, TGanttViews } from "@/components/gantt-chart";
+import type { ChartDataType, IBlockUpdateDependencyData, IGanttBlock, TGanttViews } from "@plane/types";
+import { renderFormattedPayloadDate } from "@plane/utils";
 import { currentViewDataWithView } from "@/components/gantt-chart/data";
 import {
   getDateFromPositionOnGantt,
@@ -11,7 +12,6 @@ import {
   getPositionFromDate,
 } from "@/components/gantt-chart/views/helpers";
 // helpers
-import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // store
 import { RootStore } from "@/plane-web/store/root.store";
 

@@ -159,3 +159,7 @@ export interface ISearchIssueResponse {
   workspace__slug: string;
   type_id: string;
 }
+
+export type TPartialProject = IPartialProject;
+
+export type TProject =  TPartialProject & IProject;

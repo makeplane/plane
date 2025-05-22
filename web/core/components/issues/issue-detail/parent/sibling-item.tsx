@@ -6,7 +6,7 @@ import Link from "next/link";
 // ui
 import { CustomMenu } from "@plane/ui";
 // helpers
-import { generateWorkItemLink } from "@/helpers/issue.helper";
+import { generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 // plane web components

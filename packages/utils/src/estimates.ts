@@ -1,5 +1,5 @@
 // plane web constants
-import { EEstimateSystem } from "@/plane-web/constants/estimates";
+import { EEstimateSystem } from "@plane/constants";
 
 export const isEstimatePointValuesRepeated = (
   estimatePoints: string[],

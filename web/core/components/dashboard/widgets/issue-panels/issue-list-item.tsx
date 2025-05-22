@@ -6,10 +6,8 @@ import { observer } from "mobx-react";
 import { TIssue, TWidgetIssue } from "@plane/types";
 // ui
 import { Avatar, AvatarGroup, ControlLink, PriorityIcon } from "@plane/ui";
+import { findTotalDaysInRange, getDate, renderFormattedDate, getFileURL, generateWorkItemLink } from "@plane/utils";
 // helpers
-import { findTotalDaysInRange, getDate, renderFormattedDate } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useMember, useProject } from "@/hooks/store";
 // plane web components

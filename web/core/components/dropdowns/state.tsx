@@ -10,7 +10,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { ComboDropDown, Spinner, StateGroupIcon } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useProjectState } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";

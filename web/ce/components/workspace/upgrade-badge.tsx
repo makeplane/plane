@@ -1,7 +1,7 @@
 import { FC } from "react";
 // helpers
 import { useTranslation } from "@plane/i18n";
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 type TUpgradeBadge = {
   className?: string;

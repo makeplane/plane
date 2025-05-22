@@ -9,9 +9,9 @@ import { Transition, Dialog } from "@headlessui/react";
 import { allTimeIn30MinutesInterval12HoursFormat } from "@plane/constants";
 import { Button, CustomSelect } from "@plane/ui";
 // components
+import { getDate } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns";
 // helpers
-import { getDate } from "@/helpers/date-time.helper";
 
 type TNotificationSnoozeModal = {
   isOpen: boolean;

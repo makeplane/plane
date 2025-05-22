@@ -4,10 +4,10 @@ import { useTranslation } from "@plane/i18n";
 import { TViewFilterProps } from "@plane/types";
 // components
 import { Tag } from "@plane/ui";
+import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 import { AppliedDateFilters, AppliedMembersFilters } from "@/components/common/applied-filters";
 // constants
 // helpers
-import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 import { AppliedAccessFilters } from "./access";
 // types
 

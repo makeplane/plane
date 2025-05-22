@@ -9,7 +9,7 @@ import { ETabIndices } from "@plane/constants";
 // types
 import { ISearchIssueResponse, TIssue } from "@plane/types";
 // helpers
-import { getTabIndex } from "@/helpers/tab-indices.helper";
+import { getTabIndex } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components

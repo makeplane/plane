@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 // icons
 import { History, MessageSquare } from "lucide-react";
 import { IUserActivityResponse } from "@plane/types";
+import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // hooks
 // components
 import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
@@ -12,8 +13,6 @@ import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/ric
 // ui
 import { ActivitySettingsLoader } from "@/components/ui";
 // helpers
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useUser, useWorkspace } from "@/hooks/store";
 

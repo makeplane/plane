@@ -7,13 +7,12 @@ import { ListFilter, Search, X } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import type { TModuleFilters } from "@plane/types";
+import { cn, calculateTotalFilters } from "@plane/utils";
 // components
 import { ArchiveTabsList } from "@/components/archives";
 import { FiltersDropdown } from "@/components/issues";
 import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modules";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useMember, useModuleFilter } from "@/hooks/store";
 

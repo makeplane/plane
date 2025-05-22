@@ -5,9 +5,9 @@ import { PieChart } from "@plane/propel/charts/pie-chart";
 import { IUserProfileData, IUserStateDistribution } from "@plane/types";
 // ui
 import { Card } from "@plane/ui";
+import { capitalizeFirstLetter } from "@plane/utils";
 import { ProfileEmptyState } from "@/components/ui";
 // helpers
-import { capitalizeFirstLetter } from "@/helpers/string.helper";
 // image
 import stateGraph from "@/public/empty-state/state_graph.svg";
 

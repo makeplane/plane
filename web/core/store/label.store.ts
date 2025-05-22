@@ -5,7 +5,7 @@ import { computedFn } from "mobx-utils";
 // types
 import { IIssueLabel, IIssueLabelTree } from "@plane/types";
 // helpers
-import { buildTree } from "@/helpers/array.helper";
+import { buildTree } from "@plane/utils";
 // services
 import { syncIssuesWithDeletedLabels } from "@/local-db/utils/load-workspace";
 import { IssueLabelService } from "@/services/issue";

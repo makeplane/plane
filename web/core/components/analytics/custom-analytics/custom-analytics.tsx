@@ -6,11 +6,11 @@ import useSWR from "swr";
 import { IAnalyticsParams } from "@plane/types";
 // services
 // components
+import { cn } from "@plane/utils";
 import { CustomAnalyticsSelectBar, CustomAnalyticsMainContent, CustomAnalyticsSidebar } from "@/components/analytics";
 // types
 // fetch-keys
 import { ANALYTICS } from "@/constants/fetch-keys";
-import { cn } from "@/helpers/common.helper";
 import { useAppTheme } from "@/hooks/store";
 import { hideFloatingBot, showFloatingBot } from "@/plane-web/helpers/pi-chat.helper";
 import { AnalyticsService } from "@/services/analytics.service";

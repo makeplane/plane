@@ -1,5 +1,5 @@
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
+import { API_BASE_URL } from "@plane/constants";
 // plane web constants
 import { AI_EDITOR_TASKS } from "@/plane-web/constants/ai";
 // services

@@ -7,10 +7,10 @@ import { IWorkspaceIntegration } from "@plane/types";
 // hooks
 // components
 import { Button, CustomSearchSelect, ToggleSwitch } from "@plane/ui";
+import { truncateText } from "@plane/utils";
 import { SelectRepository, TFormValues, TIntegrationSteps } from "@/components/integration";
 // ui
 // helpers
-import { truncateText } from "@/helpers/string.helper";
 import { useProject } from "@/hooks/store";
 // types
 

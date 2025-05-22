@@ -4,10 +4,10 @@ import { TActivityEntityData, TProjectEntityData } from "@plane/types";
 // plane ui
 import { Logo } from "@plane/ui";
 // components
+import { calculateTimeAgo } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
 import { MemberDropdown } from "@/components/dropdowns";
 // helpers
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
 
 type BlockProps = {
   activity: TActivityEntityData;

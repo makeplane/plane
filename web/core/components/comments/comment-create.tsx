@@ -7,12 +7,11 @@ import { EIssueCommentAccessSpecifier } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
 // plane types
 import { TIssueComment, TCommentsOperations } from "@plane/types";
+import { cn, isCommentEmpty } from "@plane/utils";
 // components
 import { LiteTextEditor } from "@/components/editor";
 // constants
-import { cn } from "@/helpers/common.helper";
 // helpers
-import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 // services

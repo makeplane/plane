@@ -6,7 +6,7 @@ import { IProject } from "@plane/types";
 // ui
 import { Button } from "@plane/ui";
 // helpers
-import { getTabIndex } from "@/helpers/tab-indices.helper";
+import { getTabIndex } from "@plane/utils";
 
 type Props = {
   handleClose: () => void;

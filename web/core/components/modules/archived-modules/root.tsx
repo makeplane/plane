@@ -6,11 +6,11 @@ import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 import { TModuleFilters } from "@plane/types";
 // components
+import { calculateTotalFilters } from "@plane/utils";
 import { DetailedEmptyState } from "@/components/empty-state";
 import { ArchivedModulesView, ModuleAppliedFiltersList } from "@/components/modules";
 import { CycleModuleListLayout } from "@/components/ui";
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useModule, useModuleFilter } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

@@ -11,12 +11,11 @@ import { useOutsideClickDetector } from "@plane/hooks";
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
 // ui
 import { ControlLink, Row, Tooltip } from "@plane/ui";
+import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { MultipleSelectEntityAction } from "@/components/core";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 // helper
-import { cn } from "@/helpers/common.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useIssues, useProject } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";

@@ -9,7 +9,7 @@ import { TInboxIssueSortingOrderByKeys, TInboxIssueSortingSortByKeys } from "@pl
 import { CustomMenu, getButtonStyling } from "@plane/ui";
 // constants
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
 import useSize from "@/hooks/use-window-size";

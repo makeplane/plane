@@ -4,7 +4,7 @@ import { FC, ReactNode } from "react";
 import { Network } from "lucide-react";
 // hooks
 import { Tooltip } from "@plane/ui";
-import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@/helpers/date-time.helper";
+import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // ui

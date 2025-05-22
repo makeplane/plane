@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { Search } from "lucide-react";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme, useCommandPalette } from "@/hooks/store";
 

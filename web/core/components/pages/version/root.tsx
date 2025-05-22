@@ -2,9 +2,9 @@ import { observer } from "mobx-react";
 // plane types
 import { TPageVersion } from "@plane/types";
 // components
+import { cn } from "@plane/utils";
 import { PageVersionsMainContent, PageVersionsSidebarRoot, TVersionEditorProps } from "@/components/pages";
 // helpers
-import { cn } from "@/helpers/common.helper";
 
 type Props = {
   activeVersion: string | null;

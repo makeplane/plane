@@ -2,11 +2,9 @@ import { observable, action, makeObservable, runInAction, computed } from "mobx"
 
 // helpers
 import { computedFn } from "mobx-utils";
-import { ICalendarPayload, ICalendarWeek } from "@/components/issues";
-import { generateCalendarData } from "@/helpers/calendar.helper";
+import { ICalendarPayload, ICalendarWeek } from "@plane/types";
+import { generateCalendarData, getWeekNumberOfDate } from "@plane/utils";
 // types
-import { getWeekNumberOfDate } from "@/helpers/date-time.helper";
-
 export interface ICalendarStore {
   calendarFilters: {
     activeMonthDate: Date;

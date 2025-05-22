@@ -1,5 +1,5 @@
-// helpers
-import { getFileURL } from "@/helpers/file.helper";
+// local imports
+import { getFileURL } from "./file";
 
 type TEditorSrcArgs = {
   assetId: string;

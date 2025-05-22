@@ -1,8 +1,8 @@
 import useSWR from "swr";
 // fetch keys
+import { groupReactions } from "@plane/utils";
 import { COMMENT_REACTION_LIST } from "@/constants/fetch-keys";
 // services
-import { groupReactions } from "@/helpers/emoji.helper";
 import { useUser } from "@/hooks/store";
 import { IssueReactionService } from "@/services/issue";
 // helpers

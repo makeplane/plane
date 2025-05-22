@@ -1,6 +1,7 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { GripVertical, Pencil, Trash2 } from "lucide-react";
+import { EEstimateSystem, estimateCount } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
 // components
@@ -9,7 +10,6 @@ import { EstimatePointUpdate } from "@/components/estimates/points";
 // plane web components
 import { EstimatePointDelete } from "@/plane-web/components/estimates";
 // plane web constants
-import { EEstimateSystem, estimateCount } from "@/plane-web/constants/estimates";
 
 type TEstimatePointItemPreview = {
   workspaceSlug: string;

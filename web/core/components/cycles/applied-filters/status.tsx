@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { X } from "lucide-react";
 import { CYCLE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 type Props = {
   handleRemove: (val: string) => void;

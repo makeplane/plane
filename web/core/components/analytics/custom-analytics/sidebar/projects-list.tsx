@@ -5,9 +5,9 @@ import { Contrast, LayoutGrid, Users, Loader as Spinner } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
 // components
+import { truncateText } from "@plane/utils";
 import { Logo } from "@/components/common";
 // helpers
-import { truncateText } from "@/helpers/string.helper";
 // hooks
 import { useProject } from "@/hooks/store";
 

@@ -12,10 +12,9 @@ import { CircleCheck } from "lucide-react";
 import { FORGOT_PASS_LINK, NAVIGATE_TO_SIGNUP } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, Input, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
+import { cn, checkEmailValidity } from "@plane/utils";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
-import { cn } from "@/helpers/common.helper";
-import { checkEmailValidity } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useInstance } from "@/hooks/store";
 import useTimer from "@/hooks/use-timer";

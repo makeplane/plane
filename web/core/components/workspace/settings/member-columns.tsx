@@ -10,7 +10,7 @@ import { IUser, IWorkspaceMember } from "@plane/types";
 import { CustomSelect, PopoverMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember, useUser, useUserPermissions } from "@/hooks/store";
 // plane web constants

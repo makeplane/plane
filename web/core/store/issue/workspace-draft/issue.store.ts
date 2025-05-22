@@ -22,7 +22,7 @@ import {
 } from "@plane/types";
 // constants
 // helpers
-import { getCurrentDateTimeInISO, convertToISODateString } from "@/helpers/date-time.helper";
+import { getCurrentDateTimeInISO, convertToISODateString } from "@plane/utils";
 // local-db
 import { addIssueToPersistanceLayer } from "@/local-db/utils/utils";
 // services

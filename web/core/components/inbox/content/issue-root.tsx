@@ -9,6 +9,7 @@ import { EditorRefApi } from "@plane/editor";
 import { TIssue, TNameDescriptionLoader } from "@plane/types";
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { getTextContent } from "@plane/utils";
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 import { InboxIssueContentProperties } from "@/components/inbox/content";
 import {
@@ -20,7 +21,6 @@ import {
   IssueAttachmentRoot,
 } from "@/components/issues";
 // helpers
-import { getTextContent } from "@/helpers/editor.helper";
 // hooks
 import { useEventTracker, useIssueDetail, useMember, useProject, useProjectInbox, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";

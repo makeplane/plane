@@ -3,7 +3,7 @@ import { useParams } from "next/navigation";
 // plane types
 import { TSearchEntities } from "@plane/types";
 // helpers
-import { getBase64Image } from "@/helpers/file.helper";
+import { getBase64Image } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store";
 // plane web hooks

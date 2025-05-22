@@ -3,12 +3,10 @@ import { observer } from "mobx-react";
 import { CalendarCheck2 } from "lucide-react";
 // types
 import { TIssue } from "@plane/types";
+import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 // hooks
 import { useProjectState } from "@/hooks/store";
 
