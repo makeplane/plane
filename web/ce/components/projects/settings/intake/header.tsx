@@ -4,6 +4,7 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { RefreshCcw } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, Button, Intake, Header } from "@plane/ui";
 // components
@@ -12,7 +13,6 @@ import { InboxIssueCreateModalRoot } from "@/components/inbox";
 // hooks
 import { useProject, useProjectInbox, useUserPermissions } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
-import { useTranslation } from "@plane/i18n";
 
 export const ProjectInboxHeader: FC = observer(() => {
   const { t } = useTranslation();
