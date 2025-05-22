@@ -143,9 +143,9 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
           render={() => (
             <CustomSelect
               value={rowData.original_role?.toString()}
-              onChange={(value: EUserProjectRoles) => {
+              onChange={async (value: EUserProjectRoles) => {
                 if (!workspaceSlug) return;
-                updateMemberRole(workspaceSlug.toString(), projectId.toString(), rowData.member.id, value).catch(
+                await updateMemberRole(workspaceSlug.toString(), projectId.toString(), rowData.member.id, value).catch(
                   (err) => {
                     console.log(err, "err");
                     const error = err.error;

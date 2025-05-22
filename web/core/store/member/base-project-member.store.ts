@@ -277,12 +277,9 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
       runInAction(() => {
         set(this.projectMemberMap, [projectId, userId, "original_role"], role);
         set(this.projectMemberMap, [projectId, userId, "role"], updatedProjectRole);
-        if (isCurrentUser)
-          set(
-            this.rootStore.user.permission.workspaceProjectsPermissions,
-            [workspaceSlug, projectId, "original_role"],
-            role
-          );
+        if (isCurrentUser) {
+          set(this.rootStore.user.permission.workspaceProjectsPermissions, [workspaceSlug, projectId], role);
+        }
         set(this.rootStore.user.permission.projectUserInfo, [workspaceSlug, projectId, "role"], updatedProjectRole);
       });
       const response = await this.projectMemberService.updateProjectMember(
@@ -302,7 +299,7 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
         if (isCurrentUser) {
           set(
             this.rootStore.user.permission.workspaceProjectsPermissions,
-            [workspaceSlug, projectId, "original_role"],
+            [workspaceSlug, projectId],
             membershipBeforeUpdate?.original_role
           );
           set(

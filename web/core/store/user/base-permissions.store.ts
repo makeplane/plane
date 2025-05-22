@@ -44,11 +44,11 @@ export interface IBaseUserPermissionStore {
     onPermissionAllowed?: () => boolean
   ) => boolean;
   // actions
-  fetchUserWorkspaceInfo: (workspaceSlug: string) => Promise<IWorkspaceMemberMe | undefined>;
+  fetchUserWorkspaceInfo: (workspaceSlug: string) => Promise<IWorkspaceMemberMe>;
   leaveWorkspace: (workspaceSlug: string) => Promise<void>;
-  fetchUserProjectInfo: (workspaceSlug: string, projectId: string) => Promise<TProjectMembership | undefined>;
-  fetchUserProjectPermissions: (workspaceSlug: string) => Promise<IUserProjectsRole | undefined>;
-  joinProject: (workspaceSlug: string, projectId: string) => Promise<void | undefined>;
+  fetchUserProjectInfo: (workspaceSlug: string, projectId: string) => Promise<TProjectMembership>;
+  fetchUserProjectPermissions: (workspaceSlug: string) => Promise<IUserProjectsRole>;
+  joinProject: (workspaceSlug: string, projectId: string) => Promise<void>;
   leaveProject: (workspaceSlug: string, projectId: string) => Promise<void>;
   hasPageAccess: (workspaceSlug: string, key: string) => boolean;
 }
@@ -208,9 +208,9 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
   /**
    * @description Fetches the user's workspace information
    * @param { string } workspaceSlug
-   * @returns { Promise<void | undefined> }
+   * @returns { Promise<IWorkspaceMemberMe | undefined> }
    */
-  fetchUserWorkspaceInfo = async (workspaceSlug: string): Promise<IWorkspaceMemberMe | undefined> => {
+  fetchUserWorkspaceInfo = async (workspaceSlug: string): Promise<IWorkspaceMemberMe> => {
     try {
       this.loader = true;
       const response = await workspaceService.workspaceMemberMe(workspaceSlug);
@@ -251,9 +251,9 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
    * @description Fetches the user's project information
    * @param { string } workspaceSlug
    * @param { string } projectId
-   * @returns { Promise<void | undefined> }
+   * @returns { Promise<TProjectMembership | undefined> }
    */
-  fetchUserProjectInfo = async (workspaceSlug: string, projectId: string): Promise<TProjectMembership | undefined> => {
+  fetchUserProjectInfo = async (workspaceSlug: string, projectId: string): Promise<TProjectMembership> => {
     try {
       const response = await projectMemberService.projectMemberMe(workspaceSlug, projectId);
       if (response) {
@@ -272,9 +272,9 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
   /**
    * @description Fetches the user's project permissions
    * @param { string } workspaceSlug
-   * @returns { Promise<void | undefined> }
+   * @returns { Promise<IUserProjectsRole | undefined> }
    */
-  fetchUserProjectPermissions = async (workspaceSlug: string): Promise<IUserProjectsRole | undefined> => {
+  fetchUserProjectPermissions = async (workspaceSlug: string): Promise<IUserProjectsRole> => {
     try {
       const response = await workspaceService.getWorkspaceUserProjectsRole(workspaceSlug);
       runInAction(() => {
@@ -291,9 +291,9 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
    * @description Joins a project
    * @param { string } workspaceSlug
    * @param { string } projectId
-   * @returns { Promise<void | undefined> }
+   * @returns { Promise<void> }
    */
-  joinProject = async (workspaceSlug: string, projectId: string): Promise<void | undefined> => {
+  joinProject = async (workspaceSlug: string, projectId: string): Promise<void> => {
     try {
       const response = await userService.joinProject(workspaceSlug, [projectId]);
       const projectMemberRole = this.getWorkspaceRoleByWorkspaceSlug(workspaceSlug) ?? EUserPermissions.MEMBER;
@@ -302,7 +302,6 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
           set(this.workspaceProjectsPermissions, [workspaceSlug, projectId], projectMemberRole);
         });
       }
-      return response;
     } catch (error) {
       console.error("Error user joining the project", error);
       throw error;
@@ -313,7 +312,7 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
    * @description Leaves a project
    * @param { string } workspaceSlug
    * @param { string } projectId
-   * @returns { Promise<void | undefined> }
+   * @returns { Promise<void> }
    */
   leaveProject = async (workspaceSlug: string, projectId: string): Promise<void> => {
     try {
