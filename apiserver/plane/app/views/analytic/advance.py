@@ -162,13 +162,21 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
             )
 
         return (
-            base_queryset.values("project_id", "project__name")
-            .annotate(
+            base_queryset.annotate(
                 cancelled_work_items=Count("id", filter=Q(state__group="cancelled")),
                 completed_work_items=Count("id", filter=Q(state__group="completed")),
                 backlog_work_items=Count("id", filter=Q(state__group="backlog")),
                 un_started_work_items=Count("id", filter=Q(state__group="unstarted")),
                 started_work_items=Count("id", filter=Q(state__group="started")),
+            )
+            .values(
+                "project_id",
+                "project__name",
+                "cancelled_work_items",
+                "completed_work_items",
+                "backlog_work_items",
+                "un_started_work_items",
+                "started_work_items",
             )
             .order_by("project_id")
         )
@@ -176,13 +184,22 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
     def get_work_items_stats(self) -> Dict[str, Dict[str, int]]:
         base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"])
         return (
-            base_queryset.values("project_id", "project__name")
+            base_queryset
             .annotate(
                 cancelled_work_items=Count("id", filter=Q(state__group="cancelled")),
                 completed_work_items=Count("id", filter=Q(state__group="completed")),
                 backlog_work_items=Count("id", filter=Q(state__group="backlog")),
                 un_started_work_items=Count("id", filter=Q(state__group="unstarted")),
                 started_work_items=Count("id", filter=Q(state__group="started")),
+            )
+            .values(
+                "project_id",
+                "project__name",
+                "cancelled_work_items",
+                "completed_work_items",
+                "backlog_work_items",
+                "un_started_work_items",
+                "started_work_items",
             )
             .order_by("project_id")
         )
@@ -254,9 +271,7 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
             for key, value in data.items()
         ]
 
-    def work_item_completion_chart(
-        self
-    ) -> Dict[str, Any]:
+    def work_item_completion_chart(self) -> Dict[str, Any]:
         # Get the base queryset
         queryset = (
             Issue.issue_objects.filter(**self.filters["base_filters"])
@@ -305,9 +320,7 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
 
         while current_month <= last_month:
             date_str = current_month.strftime("%Y-%m-%d")
-            stats = stats_dict.get(
-                date_str, {"created_count": 0, "completed_count": 0}
-            )
+            stats = stats_dict.get(date_str, {"created_count": 0, "completed_count": 0})
             data.append(
                 {
                     "key": date_str,
