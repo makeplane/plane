@@ -38,10 +38,16 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
           `/api/workspaces/${workspaceSlug}/issue-type/${issue_type_id}/custom-properties/`,
         );
         setissueTypeCustomProperties(response.data);
+        setError(null);
       } catch (error) {
         setError("Failed to load custom properties.");
       }
     };
+
+    if (!issue_type_id) {
+      setError("Invalid Issue Type");
+      return;
+    }
 
     getIssueTypeCustomProperties();
   }, [workspaceSlug, issue_type_id]);
