@@ -15,7 +15,7 @@ export enum CORE_EXTENSIONS {
   GAP_CURSOR = "gapCursor",
   HARD_BREAK = "hardBreak",
   HEADING = "heading",
-  HEADINGS_LIST = "headingList",
+  HEADINGS_LIST = "headingsList",
   HISTORY = "history",
   HORIZONTAL_RULE = "horizontalRule",
   IMAGE = "image",
