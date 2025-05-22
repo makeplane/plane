@@ -748,7 +748,8 @@
         "message": "Bir hata oluştu. Lütfen tekrar deneyin."
       },
       "required": "Bu alan gereklidir",
-      "entity_required": "{entity} gereklidir"
+      "entity_required": "{entity} gereklidir",
+      "restricted_entity": "{entity} kısıtlanmıştır"
     },
     "update_link": "Bağlantıyı güncelle",
     "attach": "Ekle",

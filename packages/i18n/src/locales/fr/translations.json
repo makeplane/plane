@@ -748,7 +748,8 @@
         "message": "Quelque chose s'est mal passé. Veuillez réessayer."
       },
       "required": "Ce champ est obligatoire",
-      "entity_required": "{entity} est requis"
+      "entity_required": "{entity} est requis",
+      "restricted_entity": "{entity} est restreint"
     },
     "update_link": "Mettre à jour le lien",
     "attach": "Joindre",

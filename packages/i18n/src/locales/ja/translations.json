@@ -748,7 +748,8 @@
         "message": "問題が発生しました。もう一度お試しください。"
       },
       "required": "この項目は必須です",
-      "entity_required": "{entity}は必須です"
+      "entity_required": "{entity}は必須です",
+      "restricted_entity": "{entity} は制限されています"
     },
     "update_link": "リンクを更新",
     "attach": "添付",

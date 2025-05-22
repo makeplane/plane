@@ -743,7 +743,8 @@
         "message": "Qualcosa è andato storto. Per favore, riprova."
       },
       "required": "Questo campo è obbligatorio",
-      "entity_required": "{entity} è obbligatorio"
+      "entity_required": "{entity} è obbligatorio",
+      "restricted_entity": "{entity} è limitato"
     },
     "update_link": "Aggiorna link",
     "attach": "Allega",

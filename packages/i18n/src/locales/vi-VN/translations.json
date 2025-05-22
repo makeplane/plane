@@ -748,7 +748,8 @@
         "message": "Đã xảy ra lỗi. Vui lòng thử lại."
       },
       "required": "Trường này là bắt buộc",
-      "entity_required": "{entity} là bắt buộc"
+      "entity_required": "{entity} là bắt buộc",
+      "restricted_entity": "{entity} bị hạn chế"
     },
     "update_link": "Cập nhật liên kết",
     "attach": "Đính kèm",

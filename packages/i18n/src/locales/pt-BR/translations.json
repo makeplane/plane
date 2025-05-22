@@ -748,7 +748,8 @@
         "message": "Algo deu errado. Por favor, tente novamente."
       },
       "required": "Este campo é obrigatório",
-      "entity_required": "{entity} é obrigatório"
+      "entity_required": "{entity} é obrigatório",
+      "restricted_entity": "{entity} está restrito"
     },
     "update_link": "Atualizar link",
     "attach": "Anexar",
