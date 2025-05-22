@@ -162,21 +162,12 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
             )
 
         return (
-            base_queryset.annotate(
+            base_queryset.values("project_id", "project__name").annotate(
                 cancelled_work_items=Count("id", filter=Q(state__group="cancelled")),
                 completed_work_items=Count("id", filter=Q(state__group="completed")),
                 backlog_work_items=Count("id", filter=Q(state__group="backlog")),
                 un_started_work_items=Count("id", filter=Q(state__group="unstarted")),
                 started_work_items=Count("id", filter=Q(state__group="started")),
-            )
-            .values(
-                "project_id",
-                "project__name",
-                "cancelled_work_items",
-                "completed_work_items",
-                "backlog_work_items",
-                "un_started_work_items",
-                "started_work_items",
             )
             .order_by("project_id")
         )
@@ -185,21 +176,13 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
         base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"])
         return (
             base_queryset
+            .values("project_id", "project__name")
             .annotate(
                 cancelled_work_items=Count("id", filter=Q(state__group="cancelled")),
                 completed_work_items=Count("id", filter=Q(state__group="completed")),
                 backlog_work_items=Count("id", filter=Q(state__group="backlog")),
                 un_started_work_items=Count("id", filter=Q(state__group="unstarted")),
                 started_work_items=Count("id", filter=Q(state__group="started")),
-            )
-            .values(
-                "project_id",
-                "project__name",
-                "cancelled_work_items",
-                "completed_work_items",
-                "backlog_work_items",
-                "un_started_work_items",
-                "started_work_items",
             )
             .order_by("project_id")
         )

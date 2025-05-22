@@ -121,24 +121,17 @@ class ProjectAdvanceAnalyticsStatsEndpoint(ProjectAdvanceAnalyticsBaseView):
             )
 
         return (
-            base_queryset.annotate(
+            base_queryset.values("project_id", "project__name")
+            .annotate(
                 cancelled_work_items=Count("id", filter=Q(state__group="cancelled")),
                 completed_work_items=Count("id", filter=Q(state__group="completed")),
                 backlog_work_items=Count("id", filter=Q(state__group="backlog")),
                 un_started_work_items=Count("id", filter=Q(state__group="unstarted")),
                 started_work_items=Count("id", filter=Q(state__group="started")),
             )
-            .values(
-                "project_id",
-                "project__name",
-                "cancelled_work_items",
-                "completed_work_items",
-                "backlog_work_items",
-                "un_started_work_items",
-                "started_work_items",
-            )
             .order_by("project_id")
         )
+
     def get_work_items_stats(
         self, project_id, cycle_id=None, module_id=None
     ) -> Dict[str, Dict[str, int]]:
@@ -180,6 +173,7 @@ class ProjectAdvanceAnalyticsStatsEndpoint(ProjectAdvanceAnalyticsBaseView):
                     output_field=models.CharField(),
                 )
             )
+            .values("display_name", "assignee_id", "avatar_url")
             .annotate(
                 cancelled_work_items=Count(
                     "id", filter=Q(state__group="cancelled"), distinct=True
@@ -196,16 +190,6 @@ class ProjectAdvanceAnalyticsStatsEndpoint(ProjectAdvanceAnalyticsBaseView):
                 started_work_items=Count(
                     "id", filter=Q(state__group="started"), distinct=True
                 ),
-            )
-            .values(
-                "display_name",
-                "assignee_id",
-                "avatar_url",
-                "cancelled_work_items",
-                "completed_work_items",
-                "backlog_work_items",
-                "un_started_work_items",
-                "started_work_items",
             )
             .order_by("display_name")
         )
