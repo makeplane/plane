@@ -2,7 +2,6 @@
 
 import { FC, ReactNode, useEffect } from "react";
 import { observer } from "mobx-react";
-import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -13,24 +12,9 @@ import { LogoSpinner } from "@/components/common";
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 import { ETimeLineTypeType } from "@/components/gantt-chart/contexts";
 // hooks
-import {
-  useCommandPalette,
-  useCycle,
-  useEventTracker,
-  useLabel,
-  useMember,
-  useModule,
-  useProject,
-  useProjectEstimates,
-  useProjectState,
-  useProjectView,
-  useUserPermissions,
-} from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
-// local
-import { persistence } from "@/local-db/storage.sqlite";
-// plane web constants
 
 interface IProjectAuthWrapper {
   workspaceSlug: string;
@@ -46,18 +30,9 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
-  const { fetchUserProjectInfo, allowPermissions, projectUserInfo } = useUserPermissions();
-  const { loader, getProjectById, fetchProjectDetails } = useProject();
-  const { fetchAllCycles } = useCycle();
-  const { fetchModulesSlim, fetchModules } = useModule();
+  const { allowPermissions, projectUserInfo } = useUserPermissions();
+  const { loader, getProjectById } = useProject();
   const { initGantt } = useTimeLineChart(ETimeLineTypeType.MODULE);
-  const { fetchViews } = useProjectView();
-  const {
-    project: { fetchProjectMembers },
-  } = useMember();
-  const { fetchProjectStates } = useProjectState();
-  const { fetchProjectLabels } = useLabel();
-  const { getProjectEstimates } = useProjectEstimates();
 
   // helper hooks
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/projects" });
@@ -82,80 +57,6 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     initGantt();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_SYNC_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
-    workspaceSlug && projectId
-      ? () => {
-          persistence.syncIssues(projectId.toString());
-        }
-      : null,
-    {
-      revalidateIfStale: true,
-      revalidateOnFocus: true,
-      revalidateOnReconnect: true,
-      refreshInterval: 5 * 60 * 1000,
-    }
-  );
-
-  // fetching project details
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_DETAILS_${workspaceSlug.toString()}_${projectId.toString()}` : null,
-    workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug.toString(), projectId.toString()) : null
-  );
-
-  // fetching user project member information
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_ME_INFORMATION_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchUserProjectInfo(workspaceSlug.toString(), projectId.toString()) : null
-  );
-  // fetching project labels
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_LABELS_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchProjectLabels(workspaceSlug.toString(), projectId.toString()) : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
-  );
-  // fetching project members
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_MEMBERS_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchProjectMembers(workspaceSlug.toString(), projectId.toString()) : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
-  );
-  // fetching project states
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_STATES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchProjectStates(workspaceSlug.toString(), projectId.toString()) : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
-  );
-  // fetching project estimates
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_ESTIMATES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => getProjectEstimates(workspaceSlug.toString(), projectId.toString()) : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
-  );
-  // fetching project cycles
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_ALL_CYCLES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchAllCycles(workspaceSlug.toString(), projectId.toString()) : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
-  );
-  // fetching project modules
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_MODULES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId
-      ? async () => {
-          await fetchModulesSlim(workspaceSlug.toString(), projectId.toString());
-          await fetchModules(workspaceSlug.toString(), projectId.toString());
-        }
-      : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
-  );
-  // fetching project views
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_VIEWS_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchViews(workspaceSlug.toString(), projectId.toString()) : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
-  );
 
   // permissions
   const canPerformEmptyStateActions = allowPermissions(
