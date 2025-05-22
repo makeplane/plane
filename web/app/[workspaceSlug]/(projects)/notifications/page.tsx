@@ -8,8 +8,8 @@ import useSWR from "swr";
 import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
-import { LogoSpinner } from "@/components/common";
-import { PageHead } from "@/components/core";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { PageHead } from "@/components/core/page-title";
 import { SimpleEmptyState } from "@/components/empty-state";
 import { InboxContentRoot } from "@/components/inbox";
 import { IssuePeekOverview } from "@/components/issues";

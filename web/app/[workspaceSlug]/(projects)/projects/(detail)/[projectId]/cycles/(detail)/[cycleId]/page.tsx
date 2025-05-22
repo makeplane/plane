@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
 import { EmptyState } from "@/components/common";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { CycleDetailsSidebar } from "@/components/cycles";
 import useCyclesDetails from "@/components/cycles/active-cycle/use-cycles-details";
 import { CycleLayoutRoot } from "@/components/issues/issue-layouts";

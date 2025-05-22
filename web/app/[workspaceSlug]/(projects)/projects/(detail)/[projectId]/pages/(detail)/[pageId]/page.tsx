@@ -14,7 +14,7 @@ import { getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { LogoSpinner } from "@/components/common";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { IssuePeekOverview } from "@/components/issues";
 import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages";
 // hooks

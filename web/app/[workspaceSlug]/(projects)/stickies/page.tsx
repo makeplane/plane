@@ -1,7 +1,7 @@
 "use client";
 
 // components
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { StickiesInfinite } from "@/components/stickies";
 
 export default function WorkspaceStickiesPage() {

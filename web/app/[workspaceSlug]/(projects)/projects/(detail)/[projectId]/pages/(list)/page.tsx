@@ -7,7 +7,7 @@ import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TPageNavigationTabs } from "@plane/types";
 // components
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state";
 import { PagesListRoot, PagesListView } from "@/components/pages";
 // hooks

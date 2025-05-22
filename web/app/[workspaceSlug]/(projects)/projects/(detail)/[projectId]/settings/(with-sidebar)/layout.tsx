@@ -2,7 +2,7 @@
 
 import { FC, ReactNode } from "react";
 // components
-import { AppHeader } from "@/components/core";
+import { AppHeader } from "@/components/core/app-header";
 // local components
 import { ProjectSettingHeader } from "../header";
 import { ProjectSettingsSidebar } from "./sidebar";

@@ -10,7 +10,7 @@ import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
 import { resolveGeneralTheme } from "@plane/utils";
 // components
 import { AuthenticationMethodCard } from "@/components/authentication";
-import { PageHeader } from "@/components/common";
+import { PageHeader } from "@/components/common/page-header";
 // hooks
 import { useInstance } from "@/hooks/store";
 // icons

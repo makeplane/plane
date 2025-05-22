@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 // components
 import { useTranslation } from "@plane/i18n";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { WorkspaceDetails } from "@/components/workspace";
 // hooks
 import { useWorkspace } from "@/hooks/store";

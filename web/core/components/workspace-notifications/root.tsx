@@ -8,7 +8,7 @@ import { NOTIFICATION_TABS, TNotificationTab } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { Header, Row, ERowVariant, EHeaderVariant, ContentWrapper } from "@plane/ui";
-import { CountChip } from "@/components/common";
+import { CountChip } from "@/components/common/count-chip";
 import {
   NotificationsLoader,
   NotificationEmptyState,

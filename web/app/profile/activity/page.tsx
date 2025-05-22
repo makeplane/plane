@@ -6,7 +6,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@plane/ui";
 // components
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state";
 import {
   ProfileActivityListPage,

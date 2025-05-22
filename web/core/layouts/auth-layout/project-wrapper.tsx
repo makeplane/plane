@@ -6,10 +6,10 @@ import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// components
 import { EProjectNetwork } from "@plane/types/src/enums";
-import { JoinProject } from "@/components/auth-screens";
-import { LogoSpinner } from "@/components/common";
+// components
+import { JoinProject } from "@/components/auth-screens/join-project";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 import { ETimeLineTypeType } from "@/components/gantt-chart/contexts";
 // hooks
@@ -30,7 +30,6 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
-// plane web constants
 
 interface IProjectAuthWrapper {
   workspaceSlug: string;

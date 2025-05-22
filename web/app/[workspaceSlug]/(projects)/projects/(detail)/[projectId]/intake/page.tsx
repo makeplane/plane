@@ -5,7 +5,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserProjectRoles } from "@plane/constants/src/user";
 import { useTranslation } from "@plane/i18n";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state";
 import { InboxIssueRoot } from "@/components/inbox";
 // helpers

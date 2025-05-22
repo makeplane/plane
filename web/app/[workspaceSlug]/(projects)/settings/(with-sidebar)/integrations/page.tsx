@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { SingleIntegrationCard } from "@/components/integration";
 import { IntegrationAndImportExportBanner, IntegrationsSettingsLoader } from "@/components/ui";
 // constants

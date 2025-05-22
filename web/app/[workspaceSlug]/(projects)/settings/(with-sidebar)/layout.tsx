@@ -2,14 +2,14 @@
 
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
-// components
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
+// plane constants
 import { EUserWorkspaceRoles, WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { AppHeader } from "@/components/core";
+// components
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { AppHeader } from "@/components/core/app-header";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
-// plane web constants
 // local components
 import { WorkspaceSettingHeader } from "../header";
 import { MobileWorkspaceSettingsTabs } from "./mobile-header-tabs";

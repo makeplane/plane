@@ -9,7 +9,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { PasswordStrengthMeter } from "@/components/account";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
 // helpers
 import { authErrorHandler } from "@/helpers/authentication.helper";

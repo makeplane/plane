@@ -11,7 +11,7 @@ import { GITHUB_REDIRECTED } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // constants
 // hooks
 import { useEventTracker } from "@/hooks/store";

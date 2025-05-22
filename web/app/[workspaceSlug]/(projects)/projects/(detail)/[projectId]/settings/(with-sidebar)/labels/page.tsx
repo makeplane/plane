@@ -7,7 +7,7 @@ import { observer } from "mobx-react";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { ProjectSettingsLabelList } from "@/components/labels";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";

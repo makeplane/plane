@@ -1,9 +1,10 @@
 "use client";
 
 import { ReactNode } from "react";
-// components
+// plane ui
 import { Row } from "@plane/ui";
-import { SidebarHamburgerToggle } from "@/components/core";
+// local components
+import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
 
 export interface AppHeaderProps {
   header: ReactNode;

@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks

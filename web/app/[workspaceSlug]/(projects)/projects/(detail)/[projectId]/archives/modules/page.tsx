@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { ArchivedModuleLayoutRoot, ArchivedModulesHeader } from "@/components/modules";
 // hooks
 import { useProject } from "@/hooks/store";

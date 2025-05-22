@@ -10,7 +10,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state";
 import { WebhookSettingsLoader } from "@/components/ui";
 import { WebhooksList, CreateWebhookModal } from "@/components/web-hooks";

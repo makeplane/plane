@@ -8,7 +8,7 @@ import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TModuleFilters } from "@plane/types";
 // components
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state";
 import { ModuleAppliedFiltersList, ModulesListView } from "@/components/modules";
 // helpers

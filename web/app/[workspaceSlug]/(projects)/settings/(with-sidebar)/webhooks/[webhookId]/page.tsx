@@ -10,7 +10,7 @@ import { IWebhook } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "@/components/web-hooks";
 // hooks
 import { useUserPermissions, useWebhook, useWorkspace } from "@/hooks/store";

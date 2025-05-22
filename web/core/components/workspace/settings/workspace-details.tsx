@@ -11,8 +11,8 @@ import { IWorkspace } from "@plane/types";
 import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard } from "@plane/utils";
 // components
-import { LogoSpinner } from "@/components/common";
-import { WorkspaceImageUploadModal } from "@/components/core";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { WorkspaceImageUploadModal } from "@/components/core/modals/workspace-image-upload-modal";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks

@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import IntegrationGuide from "@/components/integration/guide";
 // hooks
 import { useUserPermissions, useWorkspace } from "@/hooks/store";

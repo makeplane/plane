@@ -13,7 +13,7 @@ import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { CountChip } from "@/components/common";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { WorkspaceMembersList } from "@/components/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";

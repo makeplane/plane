@@ -11,7 +11,7 @@ import { Button } from "@plane/ui";
 // component
 import { ApiTokenListItem, CreateApiTokenModal } from "@/components/api-token";
 import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state";
 import { APITokenSettingsLoader } from "@/components/ui";
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";

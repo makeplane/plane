@@ -11,7 +11,7 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { AutoArchiveAutomation, AutoCloseAutomation } from "@/components/automation";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
 

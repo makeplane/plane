@@ -7,7 +7,7 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // components
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { DownloadActivityButton, WorkspaceActivityListPage } from "@/components/profile";
 // hooks
 import { useUserPermissions } from "@/hooks/store";

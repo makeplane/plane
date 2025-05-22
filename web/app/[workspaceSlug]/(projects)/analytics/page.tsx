@@ -9,7 +9,7 @@ import { useTranslation } from "@plane/i18n";
 import { Tabs } from "@plane/ui";
 // components
 import AnalyticsFilterActions from "@/components/analytics-v2/analytics-filter-actions";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useUserPermissions, useWorkspace } from "@/hooks/store";

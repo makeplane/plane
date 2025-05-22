@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 // component
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 // hooks
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web components

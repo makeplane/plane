@@ -1,19 +1,21 @@
 "use client";
 
-// ui
 import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ChevronDown, PanelRight } from "lucide-react";
+// plane imports
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IUserProfileProjectSegregation } from "@plane/types";
 import { Breadcrumbs, Header, CustomMenu, UserActivityIcon } from "@plane/ui";
-import { BreadcrumbLink } from "@/components/common";
 // components
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { ProfileIssuesFilter } from "@/components/profile";
+// helpers
 import { cn } from "@/helpers/common.helper";
+// hooks
 import { useAppTheme, useUser, useUserPermissions } from "@/hooks/store";
 
 type TUserProfileHeader = {

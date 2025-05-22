@@ -10,7 +10,7 @@ import { useTranslation } from "@plane/i18n";
 import { Header, EHeaderVariant } from "@plane/ui";
 // components
 import { CustomAnalytics, ScopeAndDemand } from "@/components/analytics";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useUserPermissions, useWorkspace } from "@/hooks/store";

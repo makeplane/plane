@@ -4,7 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
-import { CountChip } from "@/components/common";
+import { CountChip } from "@/components/common/count-chip";
 // helpers
 import { getNumberCount } from "@/helpers/string.helper";
 // hooks

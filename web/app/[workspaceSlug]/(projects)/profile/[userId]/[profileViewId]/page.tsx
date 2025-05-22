@@ -3,7 +3,7 @@
 import React from "react";
 import { useParams } from "next/navigation";
 // components
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { ProfileIssuesPage } from "@/components/profile/profile-issues";
 
 const ProfilePageHeader = {

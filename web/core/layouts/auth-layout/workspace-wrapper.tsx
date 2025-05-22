@@ -13,7 +13,7 @@ import { LogOut } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { Button, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // components
-import { LogoSpinner } from "@/components/common";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
 import { useMember, useProject, useProjectState, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";

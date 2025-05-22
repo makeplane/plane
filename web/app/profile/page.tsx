@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // components
 import { LogoSpinner } from "@/components/common";
-import { PageHead } from "@/components/core";
+import { PageHead } from "@/components/core/page-title";
 import { ProfileSettingContentWrapper, ProfileForm } from "@/components/profile";
 // hooks
 import { useUser } from "@/hooks/store";

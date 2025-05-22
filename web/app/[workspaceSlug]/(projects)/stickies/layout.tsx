@@ -1,6 +1,7 @@
 "use client";
 
-import { AppHeader, ContentWrapper } from "@/components/core";
+import { AppHeader } from "@/components/core/app-header";
+import { ContentWrapper } from "@/components/core/content-wrapper";
 import { WorkspaceStickyHeader } from "./header";
 
 export default function WorkspaceStickiesLayout({ children }: { children: React.ReactNode }) {
