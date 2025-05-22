@@ -142,7 +142,7 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
           rules={{ required: "Role is required." }}
           render={() => (
             <CustomSelect
-              value={rowData.original_role?.toString()}
+              value={rowData.original_role}
               onChange={async (value: EUserProjectRoles) => {
                 if (!workspaceSlug) return;
                 await updateMemberRole(workspaceSlug.toString(), projectId.toString(), rowData.member.id, value).catch(

@@ -278,7 +278,11 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
         set(this.projectMemberMap, [projectId, userId, "original_role"], role);
         set(this.projectMemberMap, [projectId, userId, "role"], updatedProjectRole);
         if (isCurrentUser) {
-          set(this.rootStore.user.permission.workspaceProjectsPermissions, [workspaceSlug, projectId], role);
+          set(
+            this.rootStore.user.permission.workspaceProjectsPermissions,
+            [workspaceSlug, projectId],
+            updatedProjectRole
+          );
         }
         set(this.rootStore.user.permission.projectUserInfo, [workspaceSlug, projectId, "role"], updatedProjectRole);
       });

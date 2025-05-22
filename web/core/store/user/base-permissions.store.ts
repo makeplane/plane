@@ -193,7 +193,11 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
         this.getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId)) as EUserPermissions | undefined;
     }
 
-    if (currentUserRole && allowPermissions.includes(currentUserRole as TUserPermissions)) {
+    if (typeof currentUserRole === "string") {
+      currentUserRole = parseInt(currentUserRole);
+    }
+
+    if (currentUserRole && typeof currentUserRole === "number" && allowPermissions.includes(currentUserRole)) {
       if (onPermissionAllowed) {
         return onPermissionAllowed();
       } else {
