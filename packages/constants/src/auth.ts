@@ -69,9 +69,9 @@ export enum EErrorAlertType {
 
 export type TAuthErrorInfo = {
   type: EErrorAlertType;
-  code: EAdminAuthErrorCodes;
+  code: EAuthErrorCodes;
   title: string;
-  message: any;
+  message: React.ReactNode;
 };
 
 export enum EAdminAuthErrorCodes {

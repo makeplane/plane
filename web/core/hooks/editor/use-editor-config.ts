@@ -2,7 +2,7 @@ import { useCallback } from "react";
 // plane editor
 import { TFileHandler, TReadOnlyFileHandler } from "@plane/editor";
 // helpers
-import { getEditorAssetSrc } from "@/helpers/editor.helper";
+import { getEditorAssetSrc } from "@plane/utils";
 // hooks
 import { useEditorAsset } from "@/hooks/store";
 // plane web hooks

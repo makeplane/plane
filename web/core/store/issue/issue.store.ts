@@ -6,7 +6,7 @@ import { computedFn } from "mobx-utils";
 // types
 import { TIssue } from "@plane/types";
 // helpers
-import { getCurrentDateTimeInISO } from "@/helpers/date-time.helper";
+import { getCurrentDateTimeInISO } from "@plane/utils";
 import { rootStore } from "@/lib/store-context";
 // services
 import { deleteIssueFromLocal } from "@/local-db/utils/load-issues";

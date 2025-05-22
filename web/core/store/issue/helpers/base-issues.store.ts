@@ -29,11 +29,10 @@ import {
   TGroupedIssueCount,
   TPaginationData,
   TBulkOperationsPayload,
+  IBlockUpdateDependencyData,
 } from "@plane/types";
-// components
-import { IBlockUpdateDependencyData } from "@/components/gantt-chart";
 // helpers
-import { convertToISODateString } from "@/helpers/date-time.helper";
+import { convertToISODateString } from "@plane/utils";
 // local-db
 import { SPECIAL_ORDER_BY } from "@/local-db/utils/query-constructor";
 import { updatePersistentLayer } from "@/local-db/utils/utils";

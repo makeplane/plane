@@ -4,16 +4,16 @@ import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { LayersIcon, SquareUser, Users } from "lucide-react";
 // plane types
+import { EEstimateSystem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ICycle } from "@plane/types";
 // plane ui
 import { Avatar, AvatarGroup, TextArea } from "@plane/ui";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember, useProjectEstimates } from "@/hooks/store";
 // plane web constants
-import { EEstimateSystem } from "@/plane-web/constants/estimates";
 
 type Props = {
   projectId: string;

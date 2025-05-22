@@ -1,3 +1,7 @@
+// plane imports
+import { RANDOM_EMOJI_CODES } from "@plane/constants";
+import { LUCIDE_ICONS_LIST } from "@plane/ui";
+
 /**
  * Converts a hyphen-separated hexadecimal emoji code to its decimal representation
  * @param {string} emojiUnified - The unified emoji code in hexadecimal format (e.g., "1f600" or "1f1e6-1f1e8")
@@ -41,24 +45,46 @@ export const emojiCodeToUnicode = (emoji: string): string => {
 
 /**
  * Groups reactions by a specified key
- * @param {T[]} reactions - Array of reaction objects
+ * @param {any[]} reactions - Array of reaction objects
  * @param {string} key - Key to group reactions by
  * @returns {Object} Object with reactions grouped by the specified key
- * @example
- * const reactions = [{ reaction: "👍", id: 1 }, { reaction: "👍", id: 2 }, { reaction: "❤️", id: 3 }];
- * groupReactions(reactions, "reaction") // returns { "👍": [{ reaction: "👍", id: 1 }, { reaction: "👍", id: 2 }], "❤️": [{ reaction: "❤️", id: 3 }] }
  */
-export const groupReactions = <T extends { reaction: string }>(reactions: T[], key: string): { [key: string]: T[] } => {
+export const groupReactions: (reactions: any[], key: string) => { [key: string]: any[] } = (
+  reactions: any,
+  key: string
+) => {
+  if (!Array.isArray(reactions)) {
+    console.error("Expected an array of reactions, but got:", reactions);
+    return {};
+  }
+
   const groupedReactions = reactions.reduce(
-    (acc: { [key: string]: T[] }, reaction: T) => {
-      if (!acc[reaction[key as keyof T] as string]) {
-        acc[reaction[key as keyof T] as string] = [];
+    (acc: any, reaction: any) => {
+      if (!reaction || typeof reaction !== "object" || !Object.prototype.hasOwnProperty.call(reaction, key)) {
+        console.warn("Skipping undefined reaction or missing key:", reaction);
+        return acc; // Skip undefined reactions or those without the specified key
       }
-      acc[reaction[key as keyof T] as string].push(reaction);
+
+      if (!acc[reaction[key]]) {
+        acc[reaction[key]] = [];
+      }
+      acc[reaction[key]].push(reaction);
       return acc;
     },
-    {} as { [key: string]: T[] }
+    {} as { [key: string]: any[] }
   );
 
   return groupedReactions;
 };
+
+/**
+ * Returns a random emoji code from the RANDOM_EMOJI_CODES array
+ * @returns {string} A random emoji code
+ */
+export const getRandomEmoji = (): string => RANDOM_EMOJI_CODES[Math.floor(Math.random() * RANDOM_EMOJI_CODES.length)];
+
+/**
+ * Returns a random icon name from the LUCIDE_ICONS_LIST array
+ */
+export const getRandomIconName = (): string =>
+  LUCIDE_ICONS_LIST[Math.floor(Math.random() * LUCIDE_ICONS_LIST.length)].name;

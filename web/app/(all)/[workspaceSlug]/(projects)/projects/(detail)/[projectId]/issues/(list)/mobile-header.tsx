@@ -20,6 +20,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 // ui
 import { CustomMenu } from "@plane/ui";
 // components
+import { isIssueFilterActive } from "@plane/utils";
 import { WorkItemsModal } from "@/components/analytics-v2/work-items/modal";
 import {
   DisplayFiltersSelection,
@@ -28,7 +29,6 @@ import {
   IssueLayoutIcon,
 } from "@/components/issues/issue-layouts";
 // helpers
-import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 

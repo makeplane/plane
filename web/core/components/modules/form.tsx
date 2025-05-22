@@ -8,13 +8,11 @@ import { useTranslation } from "@plane/i18n";
 import { IModule } from "@plane/types";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
+import { getDate, renderFormattedPayloadDate, shouldRenderProject, getTabIndex } from "@plane/utils";
 // components
 import { DateRangeDropdown, ProjectDropdown, MemberDropdown } from "@/components/dropdowns";
 import { ModuleStatusSelect } from "@/components/modules";
 // helpers
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { shouldRenderProject } from "@/helpers/project.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // types
 
 type Props = {

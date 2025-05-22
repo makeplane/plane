@@ -3,10 +3,10 @@ import { useParams } from "next/navigation";
 // components
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { renderFormattedDate } from "@plane/utils";
 import { Logo } from "@/components/common";
 // constants
 // helpers
-import { renderFormattedDate } from "@/helpers/date-time.helper";
 // hooks
 import { useCycle, useMember, useModule, useProject } from "@/hooks/store";
 

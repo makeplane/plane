@@ -6,6 +6,7 @@ import { EUserPermissionsLevel, PRODUCT_TOUR_COMPLETED, EUserPermissions } from 
 import { useTranslation } from "@plane/i18n";
 import { ContentWrapper } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { DashboardWidgets } from "@/components/dashboard";
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 import { IssuePeekOverview } from "@/components/issues";
@@ -13,7 +14,6 @@ import { TourRoot } from "@/components/onboarding";
 import { UserGreetingsView } from "@/components/user";
 // constants
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import {
   useCommandPalette,

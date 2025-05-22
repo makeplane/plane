@@ -2,9 +2,9 @@
 import { useTranslation } from "@plane/i18n";
 import { Card } from "@plane/ui";
 // components
+import { getFileURL } from "@plane/utils";
 import { ProfileEmptyState } from "@/components/ui";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
 // image
 import emptyUsers from "@/public/empty-state/empty_users.svg";
 

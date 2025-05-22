@@ -7,7 +7,7 @@ import { useTranslation } from "@plane/i18n";
 import { IFavorite } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 type Props = {
   ref: React.MutableRefObject<HTMLDivElement | null>;

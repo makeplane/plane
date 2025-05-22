@@ -4,9 +4,9 @@ import { IDefaultAnalyticsUser } from "@plane/types";
 // plane ui
 import { Card } from "@plane/ui";
 // components
+import { getFileURL } from "@plane/utils";
 import { BarGraph, ProfileEmptyState } from "@/components/ui";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
 // image
 import emptyBarGraph from "@/public/empty-state/empty_bar_graph.svg";
 

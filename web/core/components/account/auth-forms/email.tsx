@@ -8,10 +8,8 @@ import { CircleAlert, XCircle } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { IEmailCheckData } from "@plane/types";
 import { Button, Input, Spinner } from "@plane/ui";
+import { cn, checkEmailValidity } from "@plane/utils";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { checkEmailValidity } from "@/helpers/string.helper";
-
 type TAuthEmailForm = {
   defaultEmail: string;
   onSubmit: (data: IEmailCheckData) => Promise<void>;

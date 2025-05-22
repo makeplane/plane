@@ -8,12 +8,10 @@ import { History } from "lucide-react";
 import { TRecentActivityWidgetResponse } from "@plane/types";
 // components
 import { Card, Avatar, getButtonStyling } from "@plane/ui";
+import { cn, calculateTimeAgo, getFileURL } from "@plane/utils";
 import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
 import { RecentActivityEmptyState, WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useDashboard, useUser } from "@/hooks/store";
 

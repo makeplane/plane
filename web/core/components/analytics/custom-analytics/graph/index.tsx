@@ -5,12 +5,11 @@ import { BarDatum } from "@nivo/bar";
 // components
 import { IAnalyticsParams, IAnalyticsResponse } from "@plane/types";
 import { Tooltip } from "@plane/ui";
+import { findStringWithMostCharacters, getFileURL } from "@plane/utils";
 // ui
 import { BarGraph } from "@/components/ui";
 // helpers
 import { generateBarColor, generateDisplayName, renderChartDynamicLabel } from "@/helpers/analytics.helper";
-import { findStringWithMostCharacters } from "@/helpers/array.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // types
 import { CustomTooltip } from "./custom-tooltip";
 

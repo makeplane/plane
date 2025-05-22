@@ -6,20 +6,19 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
+import { USER_DETAILS, E_ONBOARDING_STEP_1, E_ONBOARDING_STEP_2, E_PASSWORD_STRENGTH, getPasswordStrength } from "@plane/constants";
 // types
-import { USER_DETAILS, E_ONBOARDING_STEP_1, E_ONBOARDING_STEP_2 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 // ui
 import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { getFileURL } from "@plane/utils";
 import { PasswordStrengthMeter } from "@/components/account";
 import { UserImageUploadModal } from "@/components/core";
 import { OnboardingHeader, SwitchAccountDropdown } from "@/components/onboarding";
 // constants
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
-import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.helper";
 // hooks
 import { useEventTracker, useUser, useUserProfile } from "@/hooks/store";
 // assets

@@ -5,10 +5,10 @@ import { CalendarClock } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
 // components
+import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { PriorityDropdown, MemberDropdown, StateDropdown, DateDropdown } from "@/components/dropdowns";
 // hooks
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 
 type Props = {
   workspaceSlug: string;

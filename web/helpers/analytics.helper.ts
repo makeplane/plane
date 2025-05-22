@@ -4,9 +4,11 @@ import { BarDatum } from "@nivo/bar";
 import { ANALYTICS_DATE_KEYS, STATE_GROUPS } from "@plane/constants";
 import { IAnalyticsData, IAnalyticsParams, IAnalyticsResponse, TStateGroups } from "@plane/types";
 // constants
+import { addSpaceIfCamelCase, capitalizeFirstLetter, generateRandomColor } from "@plane/utils";
 import { MONTHS_LIST } from "@/constants/calendar";
 // helpers
-import { addSpaceIfCamelCase, capitalizeFirstLetter, generateRandomColor } from "@/helpers/string.helper";
+
+// ------------ DEPRECATED (REMOVE ONCE ANALYTICS V2 IS STABLE) ------------
 
 export const convertResponseToBarGraphData = (
   response: IAnalyticsData | undefined,

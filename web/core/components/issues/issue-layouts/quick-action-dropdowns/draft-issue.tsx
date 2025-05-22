@@ -6,16 +6,16 @@ import { observer } from "mobx-react";
 // icons
 import { Pencil, Trash2 } from "lucide-react";
 // types
-import { EIssuesStoreType,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 // ui
 import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 // constant
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker, useIssues, useUserPermissions } from "@/hooks/store";
 // types

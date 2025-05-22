@@ -5,7 +5,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { ComboDropDown } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";

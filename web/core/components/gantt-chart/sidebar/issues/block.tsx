@@ -1,10 +1,11 @@
 import { observer } from "mobx-react";
 // components
+import type { IGanttBlock } from "@plane/types";
 import { Row } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { MultipleSelectEntityAction } from "@/components/core";
 import { IssueGanttSidebarBlock } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
@@ -12,7 +13,6 @@ import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // constants
 import { BLOCK_HEIGHT, GANTT_SELECT_GROUP } from "../../constants";
 // types
-import { IGanttBlock } from "../../types";
 
 type Props = {
   block: IGanttBlock;
