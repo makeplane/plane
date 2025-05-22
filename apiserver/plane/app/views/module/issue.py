@@ -36,6 +36,7 @@ from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPagina
 from .. import BaseViewSet
 from plane.utils.host import base_host
 
+
 class ModuleIssueViewSet(BaseViewSet):
     serializer_class = ModuleIssueSerializer
     model = ModuleIssue
@@ -280,7 +281,11 @@ class ModuleIssueViewSet(BaseViewSet):
                 issue_id=str(issue_id),
                 project_id=str(project_id),
                 current_instance=json.dumps(
-                    {"module_name": module_issue.first().module.name if (module_issue.first() and module_issue.first().module) else None}
+                    {
+                        "module_name": module_issue.first().module.name
+                        if (module_issue.first() and module_issue.first().module)
+                        else None
+                    }
                 ),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,

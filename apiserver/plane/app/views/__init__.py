@@ -203,7 +203,6 @@ from .analytic.advance import (
     AdvanceAnalyticsEndpoint,
     AdvanceAnalyticsStatsEndpoint,
     AdvanceAnalyticsChartEndpoint,
-    AdvanceAnalyticsExportEndpoint,
 )
 
 from .notification.base import (
