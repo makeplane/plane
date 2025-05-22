@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from plane.api.serializers import IssueTypeCustomPropertySerializer
 from plane.db.models import Workspace, IssueTypeCustomProperty
-from .base import BaseAPIView
+from plane.app.views import BaseAPIView
 
 class IssueTypeCustomPropertyAPIEndpoint(BaseAPIView):
     def get(self, request, slug, issue_type, pk=None):
