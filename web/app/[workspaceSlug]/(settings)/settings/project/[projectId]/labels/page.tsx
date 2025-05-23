@@ -39,7 +39,7 @@ const LabelsSettingsPage = observer(() => {
         element,
       })
     );
-  }, [scrollableContainerRef?.current]);
+  }, []);
 
   if (workspaceUserInfo && !canPerformProjectMemberActions) {
     return <NotAuthorizedView section="settings" isProjectView />;

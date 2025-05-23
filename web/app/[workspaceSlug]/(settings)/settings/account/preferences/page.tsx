@@ -16,7 +16,7 @@ const ProfileAppearancePage = observer(() => {
 
   return (
     <>
-      <PageHead title="Profile - Preferences" />
+      <PageHead title={`${t("profile.label")} - ${t("preferences")}`} />
       {userProfile ? (
         <>
           <div className="flex flex-col gap-4 w-full">

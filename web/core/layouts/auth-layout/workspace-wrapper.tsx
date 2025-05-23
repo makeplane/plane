@@ -11,8 +11,9 @@ import useSWRImmutable from "swr/immutable";
 // ui
 import { LogOut } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { Button, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { Button, getButtonStyling, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { LogoSpinner } from "@/components/common";
 // hooks
 import { useMember, useProject, useProjectState, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
@@ -174,18 +175,21 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
             </p>
             <div className="flex items-center justify-center gap-2 pt-4">
               {allWorkspaces && allWorkspaces.length > 0 && (
-                <Link href="/">
-                  <Button>Go Home</Button>
+                <Link href="/" className={cn(getButtonStyling("primary", "md"))}>
+                  Go Home
                 </Link>
               )}
               {allWorkspaces?.length > 0 && (
-                <Link href={`/${allWorkspaces[0].slug}/settings/account`}>
-                  <Button variant="neutral-primary">Visit Profile</Button>
+                <Link
+                  href={`/${allWorkspaces[0].slug}/settings/account`}
+                  className={cn(getButtonStyling("neutral-primary", "md"))}
+                >
+                  Visit Profile
                 </Link>
               )}
               {allWorkspaces && allWorkspaces.length === 0 && (
-                <Link href={`/`}>
-                  <Button variant="neutral-primary">Create new workspace</Button>
+                <Link href={`/`} className={cn(getButtonStyling("neutral-primary", "md"))}>
+                  Create new workspace
                 </Link>
               )}
             </div>

@@ -46,8 +46,8 @@ export const NavItemChildren = observer((props: { projectId: string }) => {
               allowPermissions(
                 link.access,
                 EUserPermissionsLevel.PROJECT,
-                workspaceSlug.toString(),
-                projectId.toString()
+                workspaceSlug?.toString() ?? "",
+                projectId?.toString() ?? ""
               ) && (
                 <Link
                   key={link.key}

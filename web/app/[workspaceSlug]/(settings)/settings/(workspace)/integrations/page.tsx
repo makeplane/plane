@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { PageHead } from "@/components/core";
 import { SingleIntegrationCard } from "@/components/integration";
+import { SettingsContentWrapper } from "@/components/settings";
 import { IntegrationAndImportExportBanner, IntegrationsSettingsLoader } from "@/components/ui";
 // constants
 import { APP_INTEGRATIONS } from "@/constants/fetch-keys";
@@ -29,12 +30,14 @@ const WorkspaceIntegrationsPage = observer(() => {
 
   if (!isAdmin)
     return (
-      <div className="w-full">
-        <PageHead title={pageTitle} />
-        <div className="mt-10 flex h-full w-full justify-center">
-          <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
+      <SettingsContentWrapper size="lg">
+        <div className="w-full">
+          <PageHead title={pageTitle} />
+          <div className="mt-10 flex h-full w-full justify-center">
+            <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
+          </div>
         </div>
-      </div>
+      </SettingsContentWrapper>
     );
 
   const { data: appIntegrations } = useSWR(workspaceSlug && isAdmin ? APP_INTEGRATIONS : null, () =>
@@ -42,7 +45,7 @@ const WorkspaceIntegrationsPage = observer(() => {
   );
 
   return (
-    <>
+    <SettingsContentWrapper size="lg">
       <PageHead title={pageTitle} />
       <section className="w-full overflow-y-auto">
         <IntegrationAndImportExportBanner bannerName="Integrations" />
@@ -56,7 +59,7 @@ const WorkspaceIntegrationsPage = observer(() => {
           )}
         </div>
       </section>
-    </>
+    </SettingsContentWrapper>
   );
 });
 

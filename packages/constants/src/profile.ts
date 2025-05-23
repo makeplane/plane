@@ -21,7 +21,7 @@ export const PROFILE_SETTINGS = {
     key: "preferences",
     i18n_label: "profile.actions.preferences",
     href: `/settings/account/preferences`,
-    highlight: (pathname: string) => pathname.includes("/settings/account/preferences"),
+    highlight: (pathname: string) => pathname === "/settings/account/preferences",
   },
   notifications: {
     key: "notifications",
