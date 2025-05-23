@@ -1108,6 +1108,18 @@
     "remove": {
       "success": "Untergeordnetes Arbeitselement erfolgreich entfernt",
       "error": "Fehler beim Entfernen des untergeordneten Elements"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Sie haben keine untergeordneten Arbeitselemente, die den von Ihnen angewendeten Filtern entsprechen.",
+        "description": "Um alle untergeordneten Arbeitselemente anzuzeigen, entfernen Sie alle angewendeten Filter.",
+        "action": "Filter entfernen"
+      },
+      "list_filters": {
+        "title": "Sie haben keine Arbeitselemente, die den von Ihnen angewendeten Filtern entsprechen.",
+        "description": "Um alle Arbeitselemente anzuzeigen, entfernen Sie alle angewendeten Filter.",
+        "action": "Filter entfernen"
+      }
     }
   },
   "view": {

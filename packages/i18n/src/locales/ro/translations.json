@@ -1108,6 +1108,18 @@
     "remove": {
       "success": "Sub-activitatea a fost eliminată cu succes",
       "error": "Eroare la eliminarea sub-activității"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Nu ai sub-elemente de lucru care corespund filtrelor pe care le-ai aplicat.",
+        "description": "Pentru a vedea toate sub-elementele de lucru, șterge toate filtrele aplicate.",
+        "action": "Șterge filtrele"
+      },
+      "list_filters": {
+        "title": "Nu ai elemente de lucru care corespund filtrelor pe care le-ai aplicat.",
+        "description": "Pentru a vedea toate elementele de lucru, șterge toate filtrele aplicate.",
+        "action": "Șterge filtrele"
+      }
     }
   },
   "view": {

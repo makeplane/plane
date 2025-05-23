@@ -1110,6 +1110,18 @@
     "remove": {
       "success": "Podrzędny element pracy usunięto pomyślnie",
       "error": "Błąd podczas usuwania elementu podrzędnego"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Nie masz elementów podrzędnych, które pasują do filtrów, które zastosowałeś.",
+        "description": "Aby zobaczyć wszystkie elementy podrzędne, wyczyść wszystkie zastosowane filtry.",
+        "action": "Wyczyść filtry"
+      },
+      "list_filters": {
+        "title": "Nie masz elementów pracy, które pasują do filtrów, które zastosowałeś.",
+        "description": "Aby zobaczyć wszystkie elementy pracy, wyczyść wszystkie zastosowane filtry.",
+        "action": "Wyczyść filtry"
+      }
     }
   },
   "view": {

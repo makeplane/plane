@@ -1109,6 +1109,18 @@
     "remove": {
       "success": "子工作项移除成功",
       "error": "移除子工作项时出错"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "您没有符合您应用的过滤器的子工作项。",
+        "description": "要查看所有子工作项，请清除所有应用的过滤器。",
+        "action": "清除过滤器"
+      },
+      "list_filters": {
+        "title": "您没有符合您应用的过滤器的工作项。",
+        "description": "要查看所有工作项，请清除所有应用的过滤器。",
+        "action": "清除过滤器"
+      }
     }
   },
   "view": {

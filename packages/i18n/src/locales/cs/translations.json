@@ -1108,6 +1108,18 @@
     "remove": {
       "success": "Podřízená pracovní položka úspěšně odebrána",
       "error": "Chyba při odebírání podřízené položky"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Nemáte podřízené pracovní položky, které odpovídají použitým filtrům.",
+        "description": "Chcete-li zobrazit všechny podřízené pracovní položky, odstraňte všechny použité filtry.",
+        "action": "Odstranit filtry"
+      },
+      "list_filters": {
+        "title": "Nemáte pracovní položky, které odpovídají použitým filtrům.",
+        "description": "Chcete-li zobrazit všechny pracovní položky, odstraňte všechny použité filtry.",
+        "action": "Odstranit filtry"
+      }
     }
   },
   "view": {
