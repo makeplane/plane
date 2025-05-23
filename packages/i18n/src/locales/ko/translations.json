@@ -748,7 +748,8 @@
         "message": "문제가 발생했습니다. 다시 시도해주세요."
       },
       "required": "이 필드는 필수입니다",
-      "entity_required": "{entity}가 필요합니다"
+      "entity_required": "{entity}가 필요합니다",
+      "restricted_entity": "{entity}은(는) 제한되어 있습니다"
     },
     "update_link": "링크 업데이트",
     "attach": "첨부",
@@ -1109,6 +1110,18 @@
     "remove": {
       "success": "하위 작업 항목이 성공적으로 제거되었습니다",
       "error": "하위 작업 항목 제거 중 오류 발생"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "적용된 필터에 일치하는 하위 작업 항목이 없습니다.",
+        "description": "모든 하위 작업 항목을 보려면 모든 적용된 필터를 지우세요.",
+        "action": "필터 지우기"
+      },
+      "list_filters": {
+        "title": "적용된 필터에 일치하는 작업 항목이 없습니다.",
+        "description": "모든 작업 항목을 보려면 모든 적용된 필터를 지우세요.",
+        "action": "필터 지우기"
+      }
     }
   },
   "view": {

@@ -748,7 +748,8 @@
         "message": "發生錯誤。請再試一次。"
       },
       "required": "此欄位為必填",
-      "entity_required": "{entity} 為必填"
+      "entity_required": "{entity} 為必填",
+      "restricted_entity": "{entity}已被限制"
     },
     "update_link": "更新連結",
     "attach": "附加",
@@ -1109,6 +1110,18 @@
     "remove": {
       "success": "子工作事項移除成功",
       "error": "移除子工作事項時發生錯誤"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "您沒有符合您應用過的過濾器的子工作事項。",
+        "description": "要查看所有子工作事項，請清除所有應用過的過濾器。",
+        "action": "清除過濾器"
+      },
+      "list_filters": {
+        "title": "您沒有符合您應用過的過濾器的工作事項。",
+        "description": "要查看所有工作事項，請清除所有應用過的過濾器。",
+        "action": "清除過濾器"
+      }
     }
   },
   "view": {

@@ -225,7 +225,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
             )}
           />
           <div className="border-0.5 z-10 flex items-center justify-end gap-2 p-3">
-            {issueName && issueName.trim() !== "" && config?.has_openai_configured && (
+            {issueName && issueName.trim() !== "" && config?.has_llm_configured && (
               <button
                 type="button"
                 className={`flex items-center gap-1 rounded bg-custom-background-90 hover:bg-custom-background-80 px-1.5 py-1 text-xs ${
@@ -244,7 +244,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                 )}
               </button>
             )}
-            {config?.has_openai_configured && projectId && (
+            {config?.has_llm_configured && projectId && (
               <GptAssistantPopover
                 isOpen={gptAssistantModal}
                 handleClose={() => {

@@ -57,14 +57,18 @@ const PriorityChart = observer((props: Props) => {
     `customized-insights-chart-${workspaceSlug}-${selectedDuration}-
     ${selectedProjects}-${selectedCycle}-${selectedModule}-${props.x_axis}-${props.y_axis}-${props.group_by}-${isPeekView}`,
     () =>
-      analyticsV2Service.getAdvanceAnalyticsCharts<TChart>(workspaceSlug, "custom-work-items", {
-        // date_filter: selectedDuration,
-        ...(selectedProjects?.length > 0 && { project_ids: selectedProjects?.join(",") }),
-        ...(selectedCycle ? { cycle_id: selectedCycle } : {}),
-        ...(selectedModule ? { module_id: selectedModule } : {}),
-        ...(isPeekView ? { peek_view: true } : {}),
-        ...props,
-      })
+      analyticsV2Service.getAdvanceAnalyticsCharts<TChart>(
+        workspaceSlug,
+        "custom-work-items",
+        {
+          // date_filter: selectedDuration,
+          ...(selectedProjects?.length > 0 && { project_ids: selectedProjects?.join(",") }),
+          ...(selectedCycle ? { cycle_id: selectedCycle } : {}),
+          ...(selectedModule ? { module_id: selectedModule } : {}),
+          ...props,
+        },
+        isPeekView
+      )
   );
   const parsedData = useMemo(
     () =>

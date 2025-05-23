@@ -106,6 +106,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=255, default="UTC", choices=USER_TIMEZONE_CHOICES
     )
 
+    # email validation
+    is_email_valid = models.BooleanField(default=False)
+
+    # masking
+    masked_at = models.DateTimeField(null=True)
+
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
 
