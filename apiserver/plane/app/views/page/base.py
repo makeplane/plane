@@ -2,17 +2,26 @@
 import json
 import base64
 from datetime import datetime
-from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
-from django.db import connection
-from django.db.models import Exists, OuterRef, Q, Value, UUIDField
-from django.utils.decorators import method_decorator
-from django.views.decorators.gzip import gzip_page
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import (
+    Exists,
+    OuterRef,
+    Q,
+    Value,
+    UUIDField,
+    Func,
+    F,
+    Count,
+    Subquery,
+)
 from django.http import StreamingHttpResponse
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models.functions import Coalesce
+from django.utils import timezone
+
 
 # Third party imports
 from rest_framework import status
@@ -23,7 +32,7 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import (
     PageLogSerializer,
     PageSerializer,
-    SubPageSerializer,
+    PageLiteSerializer,
     PageDetailSerializer,
 )
 from plane.db.models import (
@@ -34,6 +43,7 @@ from plane.db.models import (
     ProjectPage,
     Project,
     UserRecentVisit,
+    DeployBoard,
 )
 from plane.utils.error_codes import ERROR_CODES
 from ..base import BaseAPIView, BaseViewSet
@@ -41,22 +51,8 @@ from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.page_version_task import page_version
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.copy_s3_object import copy_s3_objects
-
-
-def unarchive_archive_page_and_descendants(page_id, archived_at):
-    # Your SQL query
-    sql = """
-    WITH RECURSIVE descendants AS (
-        SELECT id FROM pages WHERE id = %s
-        UNION ALL
-        SELECT pages.id FROM pages, descendants WHERE pages.parent_id = descendants.id
-    )
-    UPDATE pages SET archived_at = %s WHERE id IN (SELECT id FROM descendants);
-    """
-
-    # Execute the SQL query
-    with connection.cursor() as cursor:
-        cursor.execute(sql, [page_id, archived_at])
+from plane.ee.bgtasks.page_update import nested_page_update, PageAction
+from plane.ee.utils.page_descendants import get_all_parent_ids
 
 
 class PageViewSet(BaseViewSet):
@@ -80,7 +76,7 @@ class PageViewSet(BaseViewSet):
                 projects__project_projectmember__is_active=True,
                 projects__archived_at__isnull=True,
             )
-            .filter(parent__isnull=True)
+            .filter(moved_to_page__isnull=True)
             .filter(Q(owned_by=self.request.user) | Q(access=0))
             .prefetch_related("projects")
             .select_related("workspace")
@@ -113,6 +109,13 @@ class PageViewSet(BaseViewSet):
                 ),
             )
             .filter(project=True)
+            .annotate(
+                anchor=DeployBoard.objects.filter(
+                    entity_name="page",
+                    entity_identifier=OuterRef("pk"),
+                    workspace__slug=self.kwargs.get("slug"),
+                ).values("anchor")
+            )
             .distinct()
         )
 
@@ -133,6 +136,15 @@ class PageViewSet(BaseViewSet):
             serializer.save()
             # capture the page transaction
             page_transaction.delay(request.data, None, serializer.data["id"])
+            if serializer.data.get("parent_id"):
+                nested_page_update.delay(
+                    page_id=serializer.data["id"],
+                    action=PageAction.SUB_PAGE,
+                    project_id=project_id,
+                    slug=slug,
+                    user_id=request.user.id,
+                )
+
             page = self.get_queryset().get(pk=serializer.data["id"])
             serializer = PageDetailSerializer(page)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -150,10 +162,20 @@ class PageViewSet(BaseViewSet):
                     {"error": "Page is locked"}, status=status.HTTP_400_BAD_REQUEST
                 )
 
-            parent = request.data.get("parent", None)
+            parent = request.data.get("parent_id", None)
             if parent:
                 _ = Page.objects.get(
                     pk=parent, workspace__slug=slug, projects__id=project_id
+                )
+
+            if "parent_id" in request.data:
+                nested_page_update.delay(
+                    page_id=page.id,
+                    action=PageAction.MOVED_INTERNALLY,
+                    project_id=project_id,
+                    slug=slug,
+                    extra={"old_parent_id": page.parent_id, "new_parent_id": parent},
+                    user_id=request.user.id,
                 )
 
             # Only update access if the page owner is the requesting  user
@@ -238,18 +260,29 @@ class PageViewSet(BaseViewSet):
             )
             return Response(data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN], model=Page, creator=True)
+    @allow_permission([ROLE.ADMIN], model=Page, creator=True, field="owned_by")
     def lock(self, request, slug, project_id, pk):
+        action = request.data.get("action", "current-page")
         page = Page.objects.filter(
             pk=pk, workspace__slug=slug, projects__id=project_id
         ).first()
 
         page.is_locked = True
         page.save()
+
+        nested_page_update.delay(
+            page_id=page.id,
+            action=PageAction.LOCKED,
+            project_id=project_id,
+            slug=slug,
+            sub_pages=True if action == "all" else False,
+            user_id=request.user.id,
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN], model=Page, creator=True)
+    @allow_permission([ROLE.ADMIN], model=Page, creator=True, field="owned_by")
     def unlock(self, request, slug, project_id, pk):
+        action = request.data.get("action", "current-page")
         page = Page.objects.filter(
             pk=pk, workspace__slug=slug, projects__id=project_id
         ).first()
@@ -257,9 +290,18 @@ class PageViewSet(BaseViewSet):
         page.is_locked = False
         page.save()
 
+        nested_page_update.delay(
+            page_id=page.id,
+            action=PageAction.UNLOCKED,
+            project_id=project_id,
+            slug=slug,
+            sub_pages=True if action == "all" else False,
+            user_id=request.user.id,
+        )
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN], model=Page, creator=True)
+    @allow_permission([ROLE.ADMIN], model=Page, creator=True, field="owned_by")
     def access(self, request, slug, project_id, pk):
         access = request.data.get("access", 0)
         page = Page.objects.filter(
@@ -280,11 +322,45 @@ class PageViewSet(BaseViewSet):
 
         page.access = access
         page.save()
+        nested_page_update.delay(
+            page_id=page.id,
+            action=PageAction.MADE_PUBLIC if access == 0 else PageAction.MADE_PRIVATE,
+            project_id=project_id,
+            slug=slug,
+            user_id=request.user.id,
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
-        queryset = self.get_queryset()
+        search = request.query_params.get("search")
+        page_type = request.query_params.get("type", "public")
+
+        sub_pages_count = (
+            Page.objects.filter(parent=OuterRef("id"))
+            .order_by()
+            .values("parent")
+            .annotate(count=Count("id"))
+            .values("count")[:1]
+        )
+
+        filters = Q()
+        if search:
+            filters &= Q(name__icontains=search)
+
+        if page_type == "private":
+            filters &= Q(access=1)
+        elif page_type == "archived":
+            filters &= Q(archived_at__isnull=False)
+        elif page_type == "public":
+            filters &= Q(parent__isnull=True)
+
+        queryset = (
+            self.get_queryset()
+            .annotate(sub_pages_count=Subquery(sub_pages_count))
+            .filter(filters)
+        )
+
         project = Project.objects.get(pk=project_id)
         if (
             ProjectMember.objects.filter(
@@ -297,10 +373,11 @@ class PageViewSet(BaseViewSet):
             and not project.guest_view_all_features
         ):
             queryset = queryset.filter(owned_by=request.user)
+
         pages = PageSerializer(queryset, many=True).data
         return Response(pages, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN], model=Page, creator=True)
+    @allow_permission([ROLE.ADMIN], model=Page, creator=True, field="owned_by")
     def archive(self, request, slug, project_id, pk):
         page = Page.objects.get(pk=pk, workspace__slug=slug, projects__id=project_id)
 
@@ -316,20 +393,31 @@ class PageViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        UserFavorite.objects.filter(
-            entity_type="page",
-            entity_identifier=pk,
-            project_id=project_id,
-            workspace__slug=slug,
-        ).delete()
+        page.archived_at = timezone.now()
+        page.save()
 
-        unarchive_archive_page_and_descendants(pk, datetime.now())
+        # archive the sub pages
+        nested_page_update.delay(
+            page_id=str(pk),
+            action=PageAction.ARCHIVED,
+            project_id=project_id,
+            slug=slug,
+            user_id=request.user.id,
+        )
 
         return Response({"archived_at": str(datetime.now())}, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN], model=Page, creator=True)
+    @allow_permission([ROLE.ADMIN], model=Page, creator=True, field="owned_by")
     def unarchive(self, request, slug, project_id, pk):
         page = Page.objects.get(pk=pk, workspace__slug=slug, projects__id=project_id)
+
+        # check if the parent page is still archived, if its archived then throw error.
+        parent_page = Page.objects.filter(pk=page.parent_id).first()
+        if parent_page and parent_page.archived_at:
+            return Response(
+                {"error": "The parent page should be restored first"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # only the owner or admin can un archive the page
         if (
@@ -343,16 +431,20 @@ class PageViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # if parent page is archived then the page will be un archived breaking the hierarchy
-        if page.parent_id and page.parent.archived_at:
-            page.parent = None
-            page.save(update_fields=["parent"])
+        page.archived_at = None
+        page.save()
 
-        unarchive_archive_page_and_descendants(pk, None)
+        nested_page_update.delay(
+            page_id=page.id,
+            action=PageAction.UNARCHIVED,
+            project_id=project_id,
+            slug=slug,
+            user_id=request.user.id,
+        )
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN], model=Page, creator=True)
+    @allow_permission([ROLE.ADMIN], model=Page, creator=True, field="owned_by")
     def destroy(self, request, slug, project_id, pk):
         page = Page.objects.get(pk=pk, workspace__slug=slug, projects__id=project_id)
 
@@ -396,7 +488,65 @@ class PageViewSet(BaseViewSet):
             entity_identifier=pk,
             entity_name="page",
         ).delete(soft=False)
+        # Delete the deploy board
+        DeployBoard.objects.filter(
+            entity_name="page", entity_identifier=pk, workspace__slug=slug
+        ).delete()
+
+        nested_page_update.delay(
+            page_id=page.id,
+            action=PageAction.DELETED,
+            project_id=project_id,
+            slug=slug,
+            user_id=request.user.id,
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def sub_pages(self, request, slug, project_id, page_id):
+        pages = (
+            Page.all_objects.filter(
+                workspace__slug=slug, projects__id=project_id, parent_id=page_id
+            )
+            .annotate(
+                project_ids=Coalesce(
+                    ArrayAgg(
+                        "projects__id", distinct=True, filter=~Q(projects__id=True)
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                )
+            )
+            .annotate(
+                sub_pages_count=Page.objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+        )
+        serializer = PageLiteSerializer(pages, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def parent_pages(self, request, slug, project_id, page_id):
+        page_ids = get_all_parent_ids(page_id)
+
+        pages = Page.objects.filter(
+            workspace__slug=slug, projects__id=project_id, id__in=page_ids
+        ).annotate(
+            project_ids=Coalesce(
+                ArrayAgg("projects__id", distinct=True, filter=~Q(projects__id=True)),
+                Value([], output_field=ArrayField(UUIDField())),
+            )
+        )
+
+        # Convert queryset to a dictionary keyed by id
+        page_map = {str(page.id): page for page in pages}
+
+        # Rebuild ordered list based on page_ids
+        ordered_pages = [page_map[str(pid)] for pid in page_ids if str(pid) in page_map]
+
+        serializer = PageLiteSerializer(ordered_pages, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class PageFavoriteViewSet(BaseViewSet):
@@ -461,23 +611,6 @@ class PageLogEndpoint(BaseAPIView):
         # Delete the transaction object
         transaction.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class SubPagesEndpoint(BaseAPIView):
-    @method_decorator(gzip_page)
-    def get(self, request, slug, project_id, page_id):
-        pages = (
-            PageLog.objects.filter(
-                page_id=page_id,
-                workspace__slug=slug,
-                entity_name__in=["forward_link", "back_link"],
-            )
-            .select_related("project")
-            .select_related("workspace")
-        )
-        return Response(
-            SubPageSerializer(pages, many=True).data, status=status.HTTP_200_OK
-        )
 
 
 class PagesDescriptionViewSet(BaseViewSet):
@@ -551,6 +684,7 @@ class PagesDescriptionViewSet(BaseViewSet):
                     new_value=request.data, old_value=existing_instance, page_id=pk
                 )
             # Store the updated binary data
+            page.name = request.data.get("name", page.name)
             page.description_binary = new_binary_data
             page.description_html = request.data.get("description_html")
             page.description = request.data.get("description")
@@ -569,9 +703,9 @@ class PagesDescriptionViewSet(BaseViewSet):
 class PageDuplicateEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def post(self, request, slug, project_id, page_id):
-        page = Page.objects.filter(
-            pk=page_id, workspace__slug=slug, projects__id=project_id
-        ).first()
+        page = Page.objects.get(
+            id=page_id, workspace__slug=slug, projects__id=project_id
+        )
 
         # check for permission
         if page.access == Page.PRIVATE_ACCESS and page.owned_by_id != request.user.id:
@@ -579,52 +713,13 @@ class PageDuplicateEndpoint(BaseAPIView):
                 {"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN
             )
 
-        # get all the project ids where page is present
-        project_ids = ProjectPage.objects.filter(page_id=page_id).values_list(
-            "project_id", flat=True
-        )
-
-        page.pk = None
-        page.name = f"{page.name} (Copy)"
-        page.description_binary = None
-        page.owned_by = request.user
-        page.created_by = request.user
-        page.updated_by = request.user
-        page.save()
-
-        for project_id in project_ids:
-            ProjectPage.objects.create(
-                workspace_id=page.workspace_id,
-                project_id=project_id,
-                page_id=page.id,
-                created_by_id=page.created_by_id,
-                updated_by_id=page.updated_by_id,
-            )
-
-        page_transaction.delay(
-            {"description_html": page.description_html}, None, page.id
-        )
-
-        # Copy the s3 objects uploaded in the page
-        copy_s3_objects.delay(
-            entity_name="PAGE",
-            entity_identifier=page.id,
+        # update the descendants pages with the current page
+        nested_page_update.delay(
+            page_id=page_id,
+            action=PageAction.DUPLICATED,
             project_id=project_id,
             slug=slug,
             user_id=request.user.id,
         )
 
-        page = (
-            Page.objects.filter(pk=page.id)
-            .annotate(
-                project_ids=Coalesce(
-                    ArrayAgg(
-                        "projects__id", distinct=True, filter=~Q(projects__id=True)
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                )
-            )
-            .first()
-        )
-        serializer = PageDetailSerializer(page)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_204_NO_CONTENT)

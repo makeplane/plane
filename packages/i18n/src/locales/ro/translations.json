@@ -223,9 +223,11 @@
   "you_do_not_have_the_permission_to_access_this_page": "Nu ai permisiunea de a accesa această pagină.",
   "something_went_wrong_please_try_again": "Ceva nu a funcționat. Te rugăm să încerci din nou.",
   "load_more": "Încarcă mai mult",
-  "select_or_customize_your_interface_color_scheme": "Selectează sau personalizează schema de culori a interfeței.",
+  "select_or_customize_your_interface_color_scheme": "Selectați sau personalizați schema de culori a interfeței dvs.",
+  "select_the_cursor_motion_style_that_feels_right_for_you": "Selectați stilul de mișcare al cursorului care vi se potrivește.",
   "theme": "Temă",
-  "system_preference": "Preferință de sistem",
+  "smooth_cursor": "Cursor lin",
+  "system_preference": "Preferință sistem",
   "light": "Luminos",
   "dark": "Întunecat",
   "light_contrast": "Luminos - contrast ridicat",
@@ -500,6 +502,7 @@
   "export": "Exportă",
   "member": "{count, plural, one{# membru} other{# membri}}",
   "new_password_must_be_different_from_old_password": "Parola nouă trebuie să fie diferită de parola veche",
+
   "project_view": {
     "sort_by": {
       "created_at": "Creat la",

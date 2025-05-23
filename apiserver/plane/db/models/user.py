@@ -11,10 +11,15 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from django.conf import settings
+
+# Third party imports
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
 
 # Module imports
 from plane.db.models import FileAsset
-from ..mixins import TimeAuditModel
+from plane.db.mixins import TimeAuditModel
 
 
 def get_default_onboarding():
@@ -32,6 +37,12 @@ def get_mobile_default_onboarding():
         "workspace_create": False,
         "workspace_join": False,
     }
+
+
+class BotTypeEnum(models.TextChoices):
+    SLACK_BOT = "SLACK_BOT", "Slack Bot"
+    GITHUB_BOT = "GITHUB_BOT", "Github Bot"
+    INTAKE_BOT = "INTAKE_BOT", "Intake Bot"
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -275,3 +286,22 @@ def create_user_notification(sender, instance, created, **kwargs):
             mention=False,
             issue_completed=False,
         )
+
+
+@receiver(post_save, sender=User)
+def send_welcome_slack(sender, instance, created, **kwargs):
+    try:
+        if created and not instance.is_bot:
+            # Send message on slack as well
+            if settings.SLACK_BOT_TOKEN:
+                client = WebClient(token=settings.SLACK_BOT_TOKEN)
+                try:
+                    _ = client.chat_postMessage(
+                        channel="#trackers",
+                        text=f"New user {instance.email} has signed up and begun the onboarding journey.",
+                    )
+                except SlackApiError as e:
+                    print(f"Got an error: {e.response['error']}")
+        return
+    except Exception:
+        return

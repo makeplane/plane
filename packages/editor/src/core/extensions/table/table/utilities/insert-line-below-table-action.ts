@@ -4,7 +4,7 @@ import { findParentNodeOfType } from "@/helpers/common";
 
 export const insertLineBelowTableAction: KeyboardShortcutCommand = ({ editor }) => {
   // Check if the current selection or the closest node is a table
-  if (!editor.isActive("table")) return false;
+  if (!editor.isActive("table") || editor.isActive("list")) return false;
 
   try {
     // Get the current selection
