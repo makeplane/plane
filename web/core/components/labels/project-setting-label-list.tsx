@@ -106,6 +106,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                 title={t("project_settings.empty_state.labels.title")}
                 description={t("project_settings.empty_state.labels.description")}
                 assetPath={resolvedPath}
+                className="w-full !px-0 !py-4"
               />
             </div>
           ) : (

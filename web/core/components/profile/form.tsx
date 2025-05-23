@@ -1,18 +1,20 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { ChevronDown, CircleUserRound } from "lucide-react";
+import { ChevronDown, CircleUserRound, InfoIcon } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { USER_ROLES } from "@plane/constants";
-import { useTranslation, SUPPORTED_LANGUAGES } from "@plane/i18n";
+import { useTranslation } from "@plane/i18n";
 import type { IUser, TUserProfile } from "@plane/types";
 import { Button, CustomSelect, Input, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
+import { getButtonStyling } from "@plane/ui/src/button";
+import { cn } from "@plane/utils";
 import { DeactivateAccountModal } from "@/components/account";
 import { ImagePickerPopover, UserImageUploadModal } from "@/components/core";
-import { TimezoneSelect } from "@/components/global";
-// constants
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
@@ -39,6 +41,7 @@ export type TProfileFormProps = {
 
 export const ProfileForm = observer((props: TProfileFormProps) => {
   const { user, profile } = props;
+  const { workspaceSlug } = useParams();
   // states
   const [isLoading, setIsLoading] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
@@ -73,12 +76,6 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
   const { data: currentUser, updateCurrentUser } = useUser();
   const { updateUserProfile } = useUserProfile();
 
-  const getLanguageLabel = (value: string) => {
-    const selectedLanguage = SUPPORTED_LANGUAGES.find((l) => l.value === value);
-    if (!selectedLanguage) return value;
-    return selectedLanguage.label;
-  };
-
   const handleProfilePictureDelete = async (url: string | null | undefined) => {
     if (!url) return;
     await updateCurrentUser({
@@ -111,17 +108,16 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
       last_name: formData.last_name,
       avatar_url: formData.avatar_url,
       display_name: formData?.display_name,
-      user_timezone: formData.user_timezone,
     };
     // if unsplash or a pre-defined image is uploaded, delete the old uploaded asset
     if (formData.cover_image_url?.startsWith("http")) {
+      userPayload.cover_image_url = formData.cover_image_url;
       userPayload.cover_image = formData.cover_image_url;
       userPayload.cover_image_asset = null;
     }
 
     const profilePayload: Partial<TUserProfile> = {
       role: formData.role,
-      language: formData.language,
     };
 
     const updateCurrentUserDetail = updateCurrentUser(userPayload).finally(() => setIsLoading(false));
@@ -163,7 +159,17 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
           />
         )}
       />
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="w-full flex text-custom-primary-200 bg-custom-primary-100/10 rounded-md p-2 gap-2 items-center mb-4">
+        <InfoIcon className="h-4 w-4 flex-shrink-0" />
+        <div className="text-sm font-medium flex-1">{t("settings_moved_to_preferences")}</div>
+        <Link
+          href={`/${workspaceSlug}/settings/account/preferences`}
+          className={cn(getButtonStyling("neutral-primary", "sm"))}
+        >
+          {t("go_to_preferences")}
+        </Link>
+      </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full">
         <div className="flex w-full flex-col gap-6">
           <div className="relative h-44 w-full">
             <img
@@ -368,59 +374,6 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
             </div>
           </div>
           <div className="flex flex-col gap-1">
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-4">
-              <div className="flex flex-col gap-1">
-                <h4 className="text-sm font-medium text-custom-text-200">
-                  {t("timezone")}&nbsp;
-                  <span className="text-red-500">*</span>
-                </h4>
-                <Controller
-                  name="user_timezone"
-                  control={control}
-                  rules={{ required: "Please select a timezone" }}
-                  render={({ field: { value, onChange } }) => (
-                    <TimezoneSelect
-                      value={value}
-                      onChange={(value: string) => {
-                        onChange(value);
-                      }}
-                      error={Boolean(errors.user_timezone)}
-                    />
-                  )}
-                />
-                {errors.user_timezone && <span className="text-xs text-red-500">{errors.user_timezone.message}</span>}
-              </div>
-              <div className="flex flex-col gap-1">
-                <div className="flex gap-2 items-center">
-                  <h4 className="text-sm font-medium text-custom-text-200">{t("language")} </h4>
-                  <div className="w-fit cursor-pointer rounded-2xl text-custom-primary-200 bg-custom-primary-100/20 text-center font-medium outline-none text-xs px-2">
-                    Alpha
-                  </div>
-                </div>
-                <Controller
-                  control={control}
-                  name="language"
-                  rules={{ required: "Please select a language" }}
-                  render={({ field: { value, onChange } }) => (
-                    <CustomSelect
-                      value={value}
-                      label={value ? getLanguageLabel(value) : "Select a language"}
-                      onChange={onChange}
-                      buttonClassName={errors.language ? "border-red-500" : "border-none"}
-                      className="rounded-md border-[0.5px] !border-custom-border-200"
-                      optionsClassName="w-full"
-                      input
-                    >
-                      {SUPPORTED_LANGUAGES.map((item) => (
-                        <CustomSelect.Option key={item.value} value={item.value}>
-                          {item.label}
-                        </CustomSelect.Option>
-                      ))}
-                    </CustomSelect>
-                  )}
-                />
-              </div>
-            </div>
             <div className="flex items-center justify-between pt-6 pb-8">
               <Button variant="primary" type="submit" loading={isLoading}>
                 {isLoading ? t("saving") : t("save_changes")}
@@ -429,7 +382,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
           </div>
         </div>
       </form>
-      <Disclosure as="div" className="border-t border-custom-border-100">
+      <Disclosure as="div" className="border-t border-custom-border-100 w-full">
         {({ open }) => (
           <>
             <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
