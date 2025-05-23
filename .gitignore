@@ -53,6 +53,8 @@ mediafiles
 .env
 .DS_Store
 logs/
+htmlcov/
+.coverage
 
 node_modules/
 assets/dist/
