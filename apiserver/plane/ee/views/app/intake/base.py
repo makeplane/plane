@@ -164,12 +164,16 @@ class IntakeSettingEndpoint(BaseAPIView):
 
         for deployboard in deployboards:
             if deployboard["entity_name"] == "intake_email":
-                if check_workspace_feature_flag(FeatureFlag.INTAKE_EMAIL, slug):
+                if check_workspace_feature_flag(
+                    FeatureFlag.INTAKE_EMAIL, slug, user_id=request.user.id
+                ):
                     data["anchors"][
                         "intake_email"
                     ] = f"{slug}-{deployboard['anchor']}@{self.get_intake_email_domain()}"
             elif deployboard["entity_name"] == "intake":
-                if check_workspace_feature_flag(FeatureFlag.INTAKE_FORM, slug):
+                if check_workspace_feature_flag(
+                    FeatureFlag.INTAKE_FORM, slug, user_id=request.user.id
+                ):
                     data["anchors"][deployboard["entity_name"]] = deployboard["anchor"]
             else:
                 data["anchors"] = {}
