@@ -212,7 +212,9 @@ export const SidebarFavoritesMenu = observer(() => {
               )}
               onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)}
               aria-label={t(
-                isFavoriteMenuOpen ? "aria_labels.close_favorites_menu" : "aria_labels.open_favorites_menu"
+                isFavoriteMenuOpen
+                  ? "aria_labels.projects_sidebar.close_favorites_menu"
+                  : "aria_labels.projects_sidebar.open_favorites_menu"
               )}
             >
               <span className="text-sm font-semibold">{t("favorites")}</span>
@@ -226,7 +228,7 @@ export const SidebarFavoritesMenu = observer(() => {
                     setCreateNewFolder(true);
                     if (!isFavoriteMenuOpen) toggleFavoriteMenu(!isFavoriteMenuOpen);
                   }}
-                  aria-label={t("aria_labels.create_favorites_folder")}
+                  aria-label={t("aria_labels.projects_sidebar.create_favorites_folder")}
                 >
                   <FolderPlus className="size-3" />
                 </button>
@@ -237,7 +239,9 @@ export const SidebarFavoritesMenu = observer(() => {
                 className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0 grid place-items-center"
                 onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)}
                 aria-label={t(
-                  isFavoriteMenuOpen ? "aria_labels.close_favorites_menu" : "aria_labels.open_favorites_menu"
+                  isFavoriteMenuOpen
+                    ? "aria_labels.projects_sidebar.close_favorites_menu"
+                    : "aria_labels.projects_sidebar.open_favorites_menu"
                 )}
               >
                 <ChevronRight

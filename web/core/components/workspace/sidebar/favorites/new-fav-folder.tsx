@@ -138,7 +138,7 @@ export const NewFavoriteFolder = observer((props: TProps) => {
             <Input
               className="w-full"
               placeholder={t("new_folder")}
-              aria-label={t("aria_labels.enter_folder_name")}
+              aria-label={t("aria_labels.projects_sidebar.enter_folder_name")}
               {...field}
             />
           )}

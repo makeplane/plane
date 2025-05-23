@@ -61,7 +61,9 @@ export const SidebarMenuItems = observer(() => {
           })}
           id="extended-sidebar-toggle"
           aria-label={t(
-            extendedSidebarCollapsed ? "aria_labels.open_extended_sidebar" : "aria_labels.close_extended_sidebar"
+            extendedSidebarCollapsed
+              ? "aria_labels.projects_sidebar.open_extended_sidebar"
+              : "aria_labels.projects_sidebar.close_extended_sidebar"
           )}
         >
           <Ellipsis className="flex-shrink-0 size-4" />

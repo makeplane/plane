@@ -83,7 +83,7 @@ export const SidebarDropdown = observer(() => {
                 "group/menu-button flex items-center justify-between gap-1 p-1 truncate rounded text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:outline-none",
                 { "flex-grow": !sidebarCollapsed }
               )}
-              aria-label={t("aria_labels.open_workspace_switcher")}
+              aria-label={t("aria_labels.projects_sidebar.open_workspace_switcher")}
             >
               <div className="flex-grow flex items-center gap-2 truncate">
                 <WorkspaceLogo logo={activeWorkspace?.logo_url} name={activeWorkspace?.name} />
@@ -190,7 +190,7 @@ export const SidebarDropdown = observer(() => {
         <Menu.Button
           className="grid place-items-center outline-none"
           ref={setReferenceElement}
-          aria-label={t("aria_labels.open_user_menu")}
+          aria-label={t("aria_labels.projects_sidebar.open_user_menu")}
         >
           <Avatar
             name={currentUser?.display_name}

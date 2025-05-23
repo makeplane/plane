@@ -244,7 +244,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                     )}
                     customButtonClassName="grid place-items-center"
                     placement="bottom-start"
-                    ariaLabel={t("aria_labels.toggle_quick_actions_menu")}
+                    ariaLabel={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
                   >
                     <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favorite)}>
                       <span className="flex items-center justify-start gap-2">
@@ -268,7 +268,9 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                         "inline-block": isMenuActive,
                       }
                     )}
-                    aria-label={t(open ? "aria_labels.close_folder" : "aria_labels.open_folder")}
+                    aria-label={t(
+                      open ? "aria_labels.projects_sidebar.close_folder" : "aria_labels.projects_sidebar.open_folder"
+                    )}
                   >
                     <ChevronRight
                       className={cn("size-3 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {

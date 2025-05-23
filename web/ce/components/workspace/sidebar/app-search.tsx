@@ -24,7 +24,7 @@ export const AppSearch = observer(() => {
         }
       )}
       onClick={() => toggleCommandPaletteModal(true)}
-      aria-label={t("aria_labels.open_command_palette")}
+      aria-label={t("aria_labels.projects_sidebar.open_command_palette")}
     >
       <Search className="size-4 text-custom-sidebar-text-300" />
     </button>

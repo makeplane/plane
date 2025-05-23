@@ -30,7 +30,7 @@ export const WorkspaceEditionBadge = observer(() => {
           className="w-fit min-w-24 cursor-pointer rounded-2xl px-2 py-1 text-center text-sm font-medium outline-none"
           onClick={() => setIsPaidPlanPurchaseModalOpen(true)}
           aria-haspopup="dialog"
-          aria-label={t("aria_labels.edition_badge")}
+          aria-label={t("aria_labels.projects_sidebar.edition_badge")}
         >
           Community
         </Button>

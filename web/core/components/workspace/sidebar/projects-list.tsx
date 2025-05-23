@@ -174,7 +174,9 @@ export const SidebarProjectsList: FC = observer(() => {
                 )}
                 onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
                 aria-label={t(
-                  isAllProjectsListOpen ? "aria_labels.close_projects_menu" : "aria_labels.open_projects_menu"
+                  isAllProjectsListOpen
+                    ? "aria_labels.projects_sidebar.close_projects_menu"
+                    : "aria_labels.projects_sidebar.open_projects_menu"
                 )}
               >
                 <Tooltip tooltipHeading={t("projects")} tooltipContent="" position="right" disabled={!isCollapsed}>
@@ -198,7 +200,7 @@ export const SidebarProjectsList: FC = observer(() => {
                           setTrackElement(`APP_SIDEBAR_JOINED_BLOCK`);
                           setIsProjectModalOpen(true);
                         }}
-                        aria-label={t("aria_labels.create_new_project")}
+                        aria-label={t("aria_labels.projects_sidebar.create_new_project")}
                       >
                         <Plus className="size-3" />
                       </button>
@@ -210,7 +212,9 @@ export const SidebarProjectsList: FC = observer(() => {
                     className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
                     onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
                     aria-label={t(
-                      isAllProjectsListOpen ? "aria_labels.close_projects_menu" : "aria_labels.open_projects_menu"
+                      isAllProjectsListOpen
+                        ? "aria_labels.projects_sidebar.close_projects_menu"
+                        : "aria_labels.projects_sidebar.open_projects_menu"
                     )}
                   >
                     <ChevronRight

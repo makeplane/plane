@@ -26,7 +26,7 @@ export const WorkspaceLogo = (props: Props) => {
         <img
           src={getFileURL(props.logo)}
           className="absolute left-0 top-0 h-full w-full rounded object-cover"
-          alt={t("aria_labels.workspace_logo")}
+          alt={t("aria_labels.projects_sidebar.workspace_logo")}
         />
       ) : (
         (props.name?.[0] ?? "...")

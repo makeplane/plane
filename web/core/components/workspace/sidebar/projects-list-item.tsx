@@ -285,7 +285,9 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                         "justify-center": isSidebarCollapsed,
                       })}
                       aria-label={
-                        isProjectListOpen ? t("aria_labels.close_project_menu") : t("aria_labels.open_project_menu")
+                        isProjectListOpen
+                          ? t("aria_labels.projects_sidebar.close_project_menu")
+                          : t("aria_labels.projects_sidebar.open_project_menu")
                       }
                     >
                       <div className="size-4 grid place-items-center flex-shrink-0">
@@ -313,7 +315,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                   )}
                   customButtonClassName="grid place-items-center"
                   placement="bottom-start"
-                  ariaLabel={t("aria_labels.toggle_quick_actions_menu")}
+                  ariaLabel={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
                   useCaptureForOutsideClick
                 >
                   {/* TODO: Removed is_favorite logic due to the optimization in projects API */}
@@ -387,7 +389,11 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     }
                   )}
                   onClick={() => setIsProjectListOpen(!isProjectListOpen)}
-                  aria-label={t(isProjectListOpen ? "aria_labels.close_project_menu" : "aria_labels.open_project_menu")}
+                  aria-label={t(
+                    isProjectListOpen
+                      ? "aria_labels.projects_sidebar.close_project_menu"
+                      : "aria_labels.projects_sidebar.open_project_menu"
+                  )}
                 >
                   <ChevronRight
                     className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
