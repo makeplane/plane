@@ -6,7 +6,7 @@ Django==4.2.14
 djangorestframework==3.15.2
 # postgres 
 psycopg==3.1.18
-psycopg-binary==3.2.2
+psycopg-binary==3.1.18
 psycopg-c==3.1.18
 dj-database-url==2.1.0
 # redis
