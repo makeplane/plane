@@ -46,7 +46,9 @@ export const SidebarQuickActions = observer(() => {
 
   const handleMouseEnter = () => {
     // if enter before time out clear the timeout
-    timeoutRef?.current && clearTimeout(timeoutRef.current);
+    if (timeoutRef?.current) {
+      clearTimeout(timeoutRef.current);
+    }
     setIsDraftButtonOpen(true);
   };
 

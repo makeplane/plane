@@ -14,6 +14,7 @@ import { ICustomMenuDropdownProps, ICustomMenuItemProps } from "./helper";
 
 const CustomMenu = (props: ICustomMenuDropdownProps) => {
   const {
+    ariaLabel,
     buttonClassName = "",
     customButtonClassName = "",
     customButtonTabIndex = 0,
@@ -75,7 +76,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     e.stopPropagation();
     e.preventDefault();
     isOpen ? closeDropdown() : openDropdown();
-    if (menuButtonOnClick) menuButtonOnClick();
+    menuButtonOnClick?.();
   };
 
   const handleMouseEnter = () => {
@@ -147,6 +148,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                 className={customButtonClassName}
                 tabIndex={customButtonTabIndex}
                 disabled={disabled}
+                aria-label={ariaLabel}
               >
                 {customButton}
               </button>
@@ -164,6 +166,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                       disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
                     } ${buttonClassName}`}
                     tabIndex={customButtonTabIndex}
+                    aria-label={ariaLabel}
                   >
                     <MoreHorizontal className={`h-3.5 w-3.5 ${verticalEllipsis ? "rotate-90" : ""}`} />
                   </button>
@@ -183,6 +186,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                     onClick={handleMenuButtonClick}
                     tabIndex={customButtonTabIndex}
                     disabled={disabled}
+                    aria-label={ariaLabel}
                   >
                     {label}
                     {!noChevron && <ChevronDown className="h-3.5 w-3.5" />}

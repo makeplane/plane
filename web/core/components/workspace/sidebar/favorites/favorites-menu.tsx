@@ -34,13 +34,12 @@ import { getInstructionFromPayload, TargetData } from "./favorites.helpers";
 import { NewFavoriteFolder } from "./new-fav-folder";
 
 export const SidebarFavoritesMenu = observer(() => {
-  //state
+  // states
   const [createNewFolder, setCreateNewFolder] = useState<boolean | string | null>(null);
-
   const [isDragging, setIsDragging] = useState(false);
-
+  // navigation
+  const { workspaceSlug } = useParams();
   // store hooks
-  const { t } = useTranslation();
   const { sidebarCollapsed } = useAppTheme();
   const {
     favoriteIds,
@@ -50,17 +49,17 @@ export const SidebarFavoritesMenu = observer(() => {
     reOrderFavorite,
     moveFavoriteToFolder,
   } = useFavorite();
-  const { workspaceSlug } = useParams();
-
+  // translation
+  const { t } = useTranslation();
+  // platform hooks
   const { isMobile } = usePlatformOS();
-
   // local storage
   const { setValue: toggleFavoriteMenu, storedValue } = useLocalStorage<boolean>(IS_FAVORITE_MENU_OPEN, false);
   // derived values
   const isFavoriteMenuOpen = !!storedValue;
   // refs
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const elementRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const elementRef = useRef<HTMLDivElement>(null);
 
   const handleMoveToFolder = (sourceId: string, destinationId: string) => {
     moveFavoriteToFolder(workspaceSlug.toString(), sourceId, {
@@ -131,6 +130,7 @@ export const SidebarFavoritesMenu = observer(() => {
         });
       });
   };
+
   const handleRemoveFromFavoritesFolder = (favoriteId: string) => {
     removeFromFavoriteFolder(workspaceSlug.toString(), favoriteId).catch(() => {
       setToast({
@@ -151,7 +151,7 @@ export const SidebarFavoritesMenu = observer(() => {
         });
       });
     },
-    [workspaceSlug, reOrderFavorite]
+    [workspaceSlug, reOrderFavorite, t]
   );
 
   useEffect(() => {
@@ -190,37 +190,68 @@ export const SidebarFavoritesMenu = observer(() => {
     <>
       <Disclosure as="div" defaultOpen ref={containerRef}>
         {!sidebarCollapsed && (
-          <Disclosure.Button
+          <div
             ref={elementRef}
-            as="button"
             className={cn(
-              "sticky top-0 bg-custom-sidebar-background-100 z-10 group/workspace-button w-full px-2 py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-sm font-semibold",
+              "group/favorites-button w-full flex items-center justify-between px-2 py-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90",
               {
-                "bg-custom-sidebar-background-80 opacity-60": isDragging,
+                "p-0 justify-center w-fit mx-auto bg-custom-sidebar-background-90 hover:bg-custom-sidebar-background-80":
+                  sidebarCollapsed,
               }
             )}
           >
-            <span onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)} className="flex-1 text-start">
-              {t("favorites")}
-            </span>
-            <span className="flex flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded p-0.5 ">
+            <Disclosure.Button
+              as="button"
+              type="button"
+              className={cn(
+                "w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400",
+                {
+                  "!text-center w-8 px-2 py-1.5 justify-center": sidebarCollapsed,
+                  "bg-custom-sidebar-background-80 opacity-60": isDragging,
+                }
+              )}
+              onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)}
+              aria-label={t(
+                isFavoriteMenuOpen
+                  ? "aria_labels.projects_sidebar.close_favorites_menu"
+                  : "aria_labels.projects_sidebar.open_favorites_menu"
+              )}
+            >
+              <span className="text-sm font-semibold">{t("favorites")}</span>
+            </Disclosure.Button>
+            <div className="flex items-center opacity-0 pointer-events-none group-hover/favorites-button:opacity-100 group-hover/favorites-button:pointer-events-auto">
               <Tooltip tooltipHeading={t("create_folder")} tooltipContent="">
-                <FolderPlus
+                <button
+                  type="button"
+                  className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0 grid place-items-center"
                   onClick={() => {
                     setCreateNewFolder(true);
                     if (!isFavoriteMenuOpen) toggleFavoriteMenu(!isFavoriteMenuOpen);
                   }}
-                  className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform")}
-                />
+                  aria-label={t("aria_labels.projects_sidebar.create_favorites_folder")}
+                >
+                  <FolderPlus className="size-3" />
+                </button>
               </Tooltip>
-              <ChevronRight
+              <Disclosure.Button
+                as="button"
+                type="button"
+                className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0 grid place-items-center"
                 onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)}
-                className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
-                  "rotate-90": isFavoriteMenuOpen,
-                })}
-              />
-            </span>
-          </Disclosure.Button>
+                aria-label={t(
+                  isFavoriteMenuOpen
+                    ? "aria_labels.projects_sidebar.close_favorites_menu"
+                    : "aria_labels.projects_sidebar.open_favorites_menu"
+                )}
+              >
+                <ChevronRight
+                  className={cn("flex-shrink-0 size-3 transition-all", {
+                    "rotate-90": isFavoriteMenuOpen,
+                  })}
+                />
+              </Disclosure.Button>
+            </div>
+          </div>
         )}
         <Transition
           show={isFavoriteMenuOpen}

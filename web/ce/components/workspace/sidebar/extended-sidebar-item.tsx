@@ -55,7 +55,7 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
   const sidebarPreference = getNavigationPreferences(workspaceSlug.toString());
   const isPinned = sidebarPreference?.[item.key]?.is_pinned;
 
-  const handleLinkClick = () => toggleExtendedSidebar();
+  const handleLinkClick = () => toggleExtendedSidebar(true);
 
   if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())) {
     return null;
