@@ -29,6 +29,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
   const router = useAppRouter();
   const searchParams = useSearchParams();
   const nextPath = searchParams.get("next_path");
+  const appSlug = searchParams.get("app_slug");
   // props
   const { children, pageType = EPageTypes.AUTHENTICATED } = props;
   // hooks
@@ -42,6 +43,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     shouldRetryOnError: false,
   });
 
+  const pathnameWithAppSlug = appSlug ? `${pathname}?app_slug=${appSlug}` : pathname;
   const isUserOnboard =
     currentUserProfile?.is_onboarded ||
     (currentUserProfile?.onboarding_step?.profile_complete &&
@@ -98,7 +100,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
   if (pageType === EPageTypes.ONBOARDING) {
     if (!currentUser?.id) {
-      router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
+      router.push(`/${pathnameWithAppSlug ? `?next_path=${pathnameWithAppSlug}` : ``}`);
       return <></>;
     } else {
       if (currentUser && currentUserProfile?.id && isUserOnboard) {
@@ -111,7 +113,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
   if (pageType === EPageTypes.SET_PASSWORD) {
     if (!currentUser?.id) {
-      router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
+      router.push(`/${pathnameWithAppSlug ? `?next_path=${pathnameWithAppSlug}` : ``}`);
       return <></>;
     } else {
       if (currentUser && !currentUser?.is_password_autoset && currentUserProfile?.id && isUserOnboard) {
@@ -130,7 +132,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
         return <></>;
       }
     } else {
-      router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
+      router.push(`/${pathnameWithAppSlug ? `?next_path=${pathnameWithAppSlug}` : ``}`);
       return <></>;
     }
   }
