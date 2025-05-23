@@ -158,11 +158,8 @@ export class InitiativeEpicStore implements IInitiativeEpicStore {
         };
       });
 
-      // get computed filters
-      const queries = this.filters.computedFilterParams(initiativeId);
-
       // fetch the initiative epics
-      const response = await this.initiativeService.fetchInitiativeEpics(workspaceSlug, initiativeId, queries);
+      const response = await this.initiativeService.fetchInitiativeEpics(workspaceSlug, initiativeId);
 
       const transformedResponse = response.map((epic) => ({
         ...epic,

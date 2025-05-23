@@ -2,17 +2,19 @@
 import { action, computed, makeObservable, observable, runInAction, set } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { TLoader, TUserApplication } from "@plane/types";
+import { TLoader, TUserApplication, TApplicationCategory } from "@plane/types";
 // services
 import { ApplicationService } from "@/plane-web/services/marketplace/application.service";
+import { CategoryService } from "@/plane-web/services/marketplace/category.service";
 // store
 import { RootStore } from "@/plane-web/store/root.store";
-
 
 export interface IApplicationStore {
     // observables
     applicationsLoader: TLoader;
     applicationsMap: Record<string, Record<string, TUserApplication>>; // key: workspaceId | value: <applicationId, application>
+    categoriesLoader: TLoader;
+    allApplicationCategories: TApplicationCategory[];
     // computed functions
     getApplicationsLoader: (applicationId: string) => TLoader | undefined;
     getApplicationsForWorkspace: (workspaceSlug: string) => TUserApplication[] | undefined;
@@ -25,14 +27,18 @@ export interface IApplicationStore {
     deleteApplication: (applicationId: string) => Promise<TUserApplication | undefined>;
     regenerateApplicationSecret: (applicationId: string) => Promise<TUserApplication | undefined>;
     checkApplicationSlug: (slug: string) => Promise<any>;
+    fetchApplicationCategories: () => Promise<TApplicationCategory[] | undefined>;
 }
 
 export class ApplicationStore implements IApplicationStore {
     // observables
     applicationsLoader: TLoader = "init-loader";
     applicationsMap: Record<string, Record<string, TUserApplication>> = {}; // key: workspaceId | value: applicationsMap
+    categoriesLoader: TLoader = "init-loader";
+    allApplicationCategories: TApplicationCategory[] = [];
     // service
     applicationService: ApplicationService;
+    categoryService: CategoryService;
     // store
     rootStore: RootStore;
 
@@ -41,10 +47,8 @@ export class ApplicationStore implements IApplicationStore {
             // observables
             applicationsLoader: observable,
             applicationsMap: observable,
-            // computed functions
-            // getApplicationsLoader: computed,
-            // getApplicationsForWorkspace: computed,
-            // getApplicationById: computed,
+            categoriesLoader: observable,
+            allApplicationCategories: observable,
             // actions
             fetchApplications: action,
             fetchApplication: action,
@@ -53,9 +57,11 @@ export class ApplicationStore implements IApplicationStore {
             deleteApplication: action,
             regenerateApplicationSecret: action,
             checkApplicationSlug: action,
+            fetchApplicationCategories: action,
         });
         // service
         this.applicationService = new ApplicationService();
+        this.categoryService = new CategoryService();
         // store
         this.rootStore = _rootStore;
     }
@@ -278,6 +284,28 @@ export class ApplicationStore implements IApplicationStore {
         } catch (error) {
             console.log(error);
             throw error;
+        }
+    }
+
+    /**
+     * Fetch all application categories
+     * @returns The application categories
+     */
+    fetchApplicationCategories = async (): Promise<TApplicationCategory[] | undefined> => {
+        this.categoriesLoader = "init-loader";
+        try {
+            const response = await this.categoryService.getApplicationCategories();
+            if (response) {
+                runInAction(() => {
+                    this.allApplicationCategories = response;
+                })
+            }
+            return response;
+        } catch (error) {
+            console.log(error);
+            throw error;
+        } finally {
+            this.categoriesLoader = "loaded"
         }
     }
 }

@@ -178,7 +178,11 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
           <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="WORK_ITEM_CONVERSION" fallback={<></>}>
-            <ConvertWorkItemAction workItemId={issueId} conversionType={EWorkItemConversionType.EPIC} />
+            <ConvertWorkItemAction
+              workItemId={issueId}
+              conversionType={EWorkItemConversionType.EPIC}
+              disabled={disabled || isArchived}
+            />
           </WithFeatureFlagHOC>
           <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
             <button type="button" onClick={handleCopyText}>

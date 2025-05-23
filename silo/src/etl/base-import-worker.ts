@@ -45,6 +45,26 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
     return JSON.parse(cachedJobData);
   }
 
+  async markJobAsFinished(jobId: string, data: any) {
+    const client = getAPIClient();
+
+    // Get the job and the report
+    const job = await client.importJob.getImportJob(jobId);
+    const report = await client.importReport.getImportReport(job.report_id);
+
+    // Update the job and the report
+    await Promise.all([
+      client.importJob.updateImportJob(jobId, {
+        status: "FINISHED",
+      }),
+      client.importReport.updateImportReport(report.id, {
+        end_time: new Date().toISOString(),
+        transformed_batch_count: report.total_batch_count,
+        completed_batch_count: report.total_batch_count,
+      })
+    ]);
+  }
+
   async handleTask(headers: TaskHeaders, data: any): Promise<boolean> {
     try {
       const job = await this.getJobInfo(headers.jobId);
@@ -55,6 +75,11 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
         jobId: headers.jobId,
         workspaceId,
       });
+
+      if (job.cancelled_at) {
+        await batchLock.releaseLock();
+        return true;
+      }
 
       // For transform/push operations, check if we can acquire the lock
       const currentBatch = await batchLock.getCurrentBatch();
@@ -68,12 +93,6 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
       // Try to acquire lock for this batch
       const acquired = await batchLock.acquireLock(data.meta?.batchId || "initiate");
       if (!acquired) {
-        await this.pushToQueue(headers, data);
-        return true;
-      }
-
-      if (job.cancelled_at) {
-        await batchLock.releaseLock();
         return true;
       }
 
@@ -143,6 +162,12 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
               `[${headers.route.toUpperCase()}][${headers.jobId.slice(0, 7)}] Finished pushing data to batch 🚀 ------------------- [${data.meta.batchId}]`
             );
             return true;
+
+          case "finished":
+            this.markJobAsFinished(headers.jobId, data);
+            await batchLock.releaseLock();
+            return true;
+
           default:
             break;
         }

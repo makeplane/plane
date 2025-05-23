@@ -198,6 +198,12 @@ from .analytic.base import (
     ProjectStatsEndpoint,
 )
 
+from .analytic.advance import (
+    AdvanceAnalyticsEndpoint,
+    AdvanceAnalyticsStatsEndpoint,
+    AdvanceAnalyticsChartEndpoint,
+)
+
 from .notification.base import (
     NotificationViewSet,
     UnreadNotificationEndpoint,

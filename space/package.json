@@ -24,6 +24,7 @@
     "@plane/constants": "*",
     "@plane/editor": "*",
     "@plane/i18n": "*",
+    "@plane/propel": "*",
     "@plane/services": "*",
     "@plane/types": "*",
     "@plane/ui": "*",

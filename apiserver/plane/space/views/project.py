@@ -33,7 +33,7 @@ class DeployBoardPublicSettingsEndpoint(BaseAPIView):
 
         if deploy_board.entity_name == "intake" and not (
             check_workspace_feature_flag(
-                feature_key=FeatureFlag.INTAKE_PUBLISH, slug=deploy_board.workspace.slug
+                feature_key=FeatureFlag.INTAKE_FORM, slug=deploy_board.workspace.slug
             )
             and IntakeSetting.objects.filter(
                 workspace=deploy_board.workspace,

@@ -70,6 +70,9 @@ class ImportJob(BaseModel):
     success_metadata = models.JSONField(default=dict)
     error_metadata = models.JSONField(default=dict)
 
+    # relation map
+    relation_map = models.JSONField(default=dict)
+
     class Meta:
         verbose_name = "Import Job"
         verbose_name_plural = "Import Jobs"

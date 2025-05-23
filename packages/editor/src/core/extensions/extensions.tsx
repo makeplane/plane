@@ -181,6 +181,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomColorExtension,
     ...CoreEditorAdditionalExtensions({
       disabledExtensions,
+      fileHandler,
     }),
   ];
 

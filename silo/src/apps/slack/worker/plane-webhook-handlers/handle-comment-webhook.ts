@@ -35,22 +35,30 @@ const handleCommentSync = async (payload: WebhookIssueCommentPayload) => {
     return;
   }
 
-  const { entityConnection, slackService } = details;
+  const { isUser, entityConnection, slackService } = details;
 
   const slackData = entityConnection.entity_data as TSlackIssueEntityData;
 
   const channel = slackData.channel;
 
+  let comment = data.data.comment_stripped;
+
+  // If we don't have the credentials of the user, in that case we'll add the user's information to the comment
+  if (!isUser && payload.activity.actor) {
+    const displayName = payload.activity.actor.display_name;
+    comment = `*From ${displayName}*\n\n${comment}`;
+  }
+
   const response = await slackService.sendThreadMessage(
     channel,
     entityConnection.entity_id ?? "",
-    data.data.comment_stripped
+    comment
   );
 
   logger.info("Slack message sent", {
     slackMessageId: response.ts,
     slackChannelId: channel,
     slackThreadTs: entityConnection.entity_id,
-    slackMessage: data.data.comment_stripped,
+    slackMessage: comment,
   });
 };

@@ -1,7 +1,8 @@
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { GithubWebhookPayload } from "@plane/etl/github";
 import { E_GITHUB_DISCONNECT_SOURCE } from "@/apps/github/types";
 import { getAPIClient } from "@/services/client";
+import { planeOAuthService } from "@/services/oauth/auth";
 
 const apiClient = getAPIClient();
 
@@ -42,5 +43,19 @@ export const handleInstallationDeletion = async (data: GithubWebhookPayload["web
       disconnected_by: "external-service",
       data: data,
     });
+
+    // delete the token from the cache
+    await planeOAuthService.deleteTokenFromCache(credential);
+    // delete the associated users token
+    const userCredentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
+      source: E_ENTITY_CONNECTION_KEYS.GITHUB_USER,
+      workspace_id: credential.workspace_id,
+    });
+
+    if (userCredentials.length > 0) {
+      userCredentials.forEach(async (userCredential) => {
+        await planeOAuthService.deleteTokenFromCache(userCredential);
+      });
+    }
   }
 };

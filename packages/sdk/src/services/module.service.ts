@@ -15,6 +15,14 @@ export class ModuleService extends APIService {
       });
   }
 
+  async getModuleByExternalId(slug: string, projectId: string, externalId: string, externalSource: string): Promise<ExModule> {
+    return this.get(`/api/v1/workspaces/${slug}/projects/${projectId}/modules/?external_id=${externalId}&external_source=${externalSource}`)
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async list(slug: string, projectId: string): Promise<Paginated<ExModule>> {
     return this.get(`/api/v1/workspaces/${slug}/projects/${projectId}/modules/`)
       .then((response) => response.data)

@@ -25,6 +25,74 @@
     "templates": "Темплейти"
   },
 
+  "updates": {
+    "add_update": "Додати оновлення",
+    "add_update_placeholder": "Додайте ваше оновлення тут",
+    "empty": {
+      "title": "Ще немає оновлень",
+      "description": "Ви можете тут переглядати оновлення."
+    },
+    "delete": {
+      "title": "Видалити оновлення",
+      "confirmation": "Ви впевнені, що хочете видалити це оновлення? Це дія є незворотним.",
+      "success": {
+        "title": "Оновлення видалено",
+        "message": "Оновлення було успішно видалено."
+      },
+      "error": {
+        "title": "Оновлення не видалено",
+        "message": "Оновлення не видалено."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Оновлення оновлено",
+        "message": "Оновлення було успішно оновлено."
+      },
+      "error": {
+        "title": "Оновлення не оновлено",
+        "message": "Оновлення не оновлено."
+      }
+    },
+    "progress": {
+      "title": "Прогрес",
+      "since_last_update": "Від останнього оновлення",
+      "comments": "{count, plural, one{# коментар} few{# коментарі} other{# коментарів}}"
+    },
+    "create": {
+      "success": {
+        "title": "Оновлення створено",
+        "message": "Оновлення було успішно створено."
+      },
+      "error": {
+        "title": "Оновлення не створено",
+        "message": "Оновлення не створено."
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Реакція створена",
+          "message": "Реакція була успішно створена."
+        },
+        "error": {
+          "title": "Реакцію не створено",
+          "message": "Реакцію не створено."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Реакція видалена",
+          "message": "Реакція була успішно видалена."
+        },
+        "error": {
+          "title": "Реакцію не видалено",
+          "message": "Реакцію не видалено."
+        }
+      }
+    }
+  },
+
   "issue": {
     "relation": {
       "start_before": "Стартує Перед",
@@ -474,7 +542,38 @@
         "app_consent_accept_1": "Ви надаєте додатку доступ до ваших даних Plane скрізь, де ви можете використовувати додаток всередині або поза Plane",
         "app_consent_accept_2": "Ви погоджуєтесь з Політикою конфіденційності та Умовами використання {app}",
         "accepting": "Прийняття...",
-        "accept": "Прийняти"
+        "accept": "Прийняти",
+        "categories": "Категорії",
+        "select_app_categories": "Виберіть категорії додатку",
+        "categories_title": "Категорії",
+        "categories_error": "Категорії обов'язкові",
+        "invalid_categories_error": "Недійсні категорії",
+        "categories_description": "Виберіть категорії, які найкраще описують додаток",
+        "privacy_policy_url_title": "URL Політики конфіденційності",
+        "privacy_policy_url_error": "URL Політики конфіденційності обов'язковий",
+        "invalid_privacy_policy_url_error": "Недійсний URL Політики конфіденційності",
+        "terms_of_service_url_title": "URL Умов використання",
+        "terms_of_service_url_error": "URL Умов використання обов'язковий",
+        "invalid_terms_of_service_url_error": "Недійсний URL Умов використання",
+        "support_url_title": "URL підтримки",
+        "support_url_error": "URL підтримки обов'язковий",
+        "invalid_support_url_error": "Недійсний URL підтримки",
+        "video_url_title": "URL відео",
+        "video_url_error": "URL відео обов'язковий",
+        "invalid_video_url_error": "Недійсний URL відео",
+        "setup_url_title": "URL налаштування",
+        "setup_url_error": "URL налаштування обов'язковий",
+        "invalid_setup_url_error": "Недійсний URL налаштування",
+        "contact_email_title": "Email контакту",
+        "contact_email_error": "Email контакту обов'язковий",
+        "invalid_contact_email_error": "Недійсний email контакту",
+        "upload_attachments": "Завантажити вкладення",
+        "uploading_images": "Завантаження {count} зображення{count, plural, one {s} other {s}}",
+        "drop_images_here": "Перетягніть зображення сюди",
+        "click_to_upload_images": "Натисніть, щоб завантажити зображення",
+        "invalid_file_or_exceeds_size_limit": "Недійсний файл або перевищує ліміт розміру ({size} MB)",
+        "uploading": "Завантаження...",
+        "upload_and_save": "Завантажити та зберегти"
       }
     }
   },
@@ -950,7 +1049,9 @@
     "multiple_connections_found": "Знайдено кілька підключень, коли очікувалося лише одне",
     "installation_not_found": "Запитана інсталяція не знайдена",
     "user_not_found": "Запитаний користувач не знайдений",
-    "error_fetching_token": "Не вдалося отримати токен аутентифікації"
+    "error_fetching_token": "Не вдалося отримати токен аутентифікації",
+    "invalid_app_credentials": "Наданий токен аутентифікації недійсний",
+    "invalid_app_installation_id": "Не вдалося встановити застосунок"
   },
 
   "import_status": {

@@ -126,7 +126,7 @@ export const EpicPeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pro
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Link Copied!",
-        message: "Work item link copied to clipboard.",
+        message: "Epic link copied to clipboard.",
       });
     });
   };
@@ -201,7 +201,11 @@ export const EpicPeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pro
         <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
         <div className="flex items-center gap-4">
           <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="WORK_ITEM_CONVERSION" fallback={<></>}>
-            <ConvertWorkItemAction workItemId={issueId} conversionType={EWorkItemConversionType.WORK_ITEM} />
+            <ConvertWorkItemAction
+              workItemId={issueId}
+              conversionType={EWorkItemConversionType.WORK_ITEM}
+              disabled={!isEditingAllowed || isArchived}
+            />
           </WithFeatureFlagHOC>
           <Tooltip tooltipContent="Copy link" isMobile={isMobile}>
             <button type="button" onClick={handleCopyText}>

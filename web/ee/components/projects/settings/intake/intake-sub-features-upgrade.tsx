@@ -21,9 +21,10 @@ type Props = {
   showDefault?: boolean;
   featureList: TIntakeFeatureList;
   isTooltip?: boolean;
+  className?: string;
 };
 const IntakeSubFeaturesUpgrade = observer((props: Props) => {
-  const { projectId, showDefault = true, featureList, isTooltip = false } = props;
+  const { projectId, showDefault = true, featureList, isTooltip = false, className = "" } = props;
   const { workspaceSlug } = useParams();
   const { allowPermissions } = useUserPermissions();
   const [isPaidPlanModalOpen, togglePaidPlanModal] = useState(false);
@@ -41,7 +42,7 @@ const IntakeSubFeaturesUpgrade = observer((props: Props) => {
   return (
     <>
       <PaidPlanUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
-      <div className={cn(isTooltip ? "divide-y divide-custom-border-200/50" : "mt-3")}>
+      <div className={cn(isTooltip ? "divide-y divide-custom-border-200/50" : "mt-3", className)}>
         {Object.keys(featureList)
           .filter((featureKey) => featureKey !== "in-app" || showDefault)
           .map((featureKey) => {

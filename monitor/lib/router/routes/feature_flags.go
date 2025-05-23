@@ -57,6 +57,7 @@ func addSyncRoutes(controller *fiber.App, api *prime_api.IPrimeMonitorApi, key s
 
 func addWorkspaceLicensRoutes(controller *fiber.App, api *prime_api.IPrimeMonitorApi, key string) {
 	controller.Get("/workspaces/:workspaceId/licenses/", handlers.GetWorkspaceLicenseHandler(*api, key))
+	controller.Post("/licenses/:workspaceId/workspace-delete/", handlers.CheckDeleteWorkspaceProductHandler(*api, key))
 }
 
 func addWorkspaceProductRoutes(controller *fiber.App, api *prime_api.IPrimeMonitorApi, key string) {

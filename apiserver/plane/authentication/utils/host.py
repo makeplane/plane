@@ -21,7 +21,9 @@ def base_host(
 
     # Admin redirection
     if is_admin:
-        admin_base_path = getattr(settings, "ADMIN_BASE_PATH", "/god-mode/")
+        admin_base_path = getattr(settings, "ADMIN_BASE_PATH", None)
+        if not isinstance(admin_base_path, str):
+            admin_base_path = "/god-mode/"
         if not admin_base_path.startswith("/"):
             admin_base_path = "/" + admin_base_path
         if not admin_base_path.endswith("/"):
@@ -34,7 +36,9 @@ def base_host(
 
     # Space redirection
     if is_space:
-        space_base_path = getattr(settings, "SPACE_BASE_PATH", "/spaces/")
+        space_base_path = getattr(settings, "SPACE_BASE_PATH", None)
+        if not isinstance(space_base_path, str):
+            space_base_path = "/spaces/"
         if not space_base_path.startswith("/"):
             space_base_path = "/" + space_base_path
         if not space_base_path.endswith("/"):

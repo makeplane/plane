@@ -1,53 +1,61 @@
 
-
-
 # Required DNS Records for Receiving Mail Server
 
-## 1. MX Record (Essential)
-```
-Type: MX
-Host: yourdomain.com
-Value: mail.yourdomain.com
-Priority: 10
-TTL: 3600
-```
 
-## 2. A Record (Essential)
+## 1. A Record 
+> `HOST-DOMAIN` points to the server running the email service  (e.g `plane.example.com`).  
+This can also be replaced with CNAME record of cloud load balancer. 
 ```
 Type: A
-Host: mail.yourdomain.com
-Value: YOUR_SERVER_IP
-TTL: 3600
+Host: <host-domain>
+Value: <public-ip-address>
+TTL: Auto | 3600
 ```
 
-## 3. rDNS/PTR Record (Important)
+## 2. MX Record
+> `MAIL-DOMAIN` refers to incoming email domain e.g. `intake.example.com`
 ```
-# Set this through your hosting provider/server provider
-YOUR_SERVER_IP.in-addr.arpa. IN PTR mail.yourdomain.com.
+Type: MX
+Host: <mail-domain>
+Value: <host-domain>
+Priority: 10
+TTL: Auto | 3600
 ```
 
-## 4. SPF Record (Recommended)
+## 3. SPF Record
 ```
 Type: TXT
-Host: yourdomain.com
-Value: v=spf1 ip4:YOUR_SERVER_IP -all
-TTL: 3600
+Host: <mail-domain>
+Value: "v=spf1 ip4:<A-record-ip-host-domain> -all"
+TTL: Auto | 3600
 ```
+
+## 4. DMARC Record
+```
+Type: TXT
+Host: _dmarc.<mail-domain>
+Value: "v=DMARC1; p=reject; rua=mailto:<valid-email-addr>"
+TTL: Auto | 3600
+```
+
+
 
 ## Verification Commands
 ```bash
-# Verify MX record
-dig MX yourdomain.com
-
 # Verify A record
-dig A mail.yourdomain.com
+dig A <mail-domain>
 
-# Verify PTR record
-dig -x YOUR_SERVER_IP
+# Verify MX record
+dig MX <mail-domain>
 
 # Verify SPF record
-dig TXT yourdomain.com
+dig TXT <mail-domain>
+
+# Verify DMARC record
+dig TXT _dmarc.<mail-domain>
 ```
+
+You can also visit `https://mxtoolbox.com/` to know the issues with your DNS records configuration. 
 
 ## Common Issues and Solutions
 
@@ -60,16 +68,13 @@ dig TXT yourdomain.com
    - Verify IP address is correct
    - Ensure mail subdomain matches MX record
 
-3. PTR Record Issues:
-   - Must match your mail server hostname
-   - Set through hosting provider
-   - Essential for preventing spam classification
 
-4. Testing Mail Server Setup:
+## Testing Mail Server Setup:
 ```bash
 # Test SMTP connection
-telnet mail.yourdomain.com 25
+telnet <host-domain> 25
+telnet <host-domain> 465
+telnet <host-domain> 587
 
-# Test with real email
-swaks --to test@yourdomain.com --server mail.yourdomain.com
+
 ```

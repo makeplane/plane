@@ -49,7 +49,8 @@ export class PullRequestBehaviour {
       }
       const pullRequestDetails = pullRequestResult.data;
 
-      const references = getReferredIssues(pullRequestDetails.title, pullRequestDetails.description);
+      const pullRequestText = `${pullRequestDetails.title}\n${pullRequestDetails.description}`;
+      const references = getReferredIssues(pullRequestText);
       if (references.closingReferences.length === 0 && references.nonClosingReferences.length === 0) {
         logger.info('No issue references found, skipping...');
         return;
@@ -188,7 +189,7 @@ export class PullRequestBehaviour {
 
       // get the PR state for the event from projectId and PR state map
       // for gitlab we get the state from config directly
-      const targetState = this.projectIdToPRStateMap[issue.project][event];
+      const targetState = this.projectIdToPRStateMap[issue.project]?.[event];
       if (targetState) {
         await this.planeClient.issue.update(
           this.workspaceSlug,

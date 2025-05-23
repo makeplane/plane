@@ -25,6 +25,74 @@
     "templates": "模板"
   },
 
+  "updates": {
+    "add_update": "新增更新",
+    "add_update_placeholder": "在此輸入您的更新",
+    "empty": {
+      "title": "尚無更新",
+      "description": "您可以在此查看更新。"
+    },
+    "delete": {
+      "title": "刪除更新",
+      "confirmation": "您確定要刪除此更新嗎？此操作是不可逆的。",
+      "success": {
+        "title": "更新已刪除",
+        "message": "更新已成功刪除。"
+      },
+      "error": {
+        "title": "更新未刪除",
+        "message": "更新未刪除。"
+      }
+    },
+    "update": {
+      "success": {
+        "title": "更新已更新",
+        "message": "更新已成功更新。"
+      },
+      "error": {
+        "title": "更新未更新",
+        "message": "更新未更新。"
+      }
+    },
+    "progress": {
+      "title": "進度",
+      "since_last_update": "自最後更新以來",
+      "comments": "{count, plural, one{# 評論} other{# 評論}}"
+    },
+    "create": {
+      "success": {
+        "title": "更新已創建",
+        "message": "更新已成功創建。"
+      },
+      "error": {
+        "title": "更新未創建",
+        "message": "更新未創建。"
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "反應已創建",
+          "message": "反應已成功創建。"
+        },
+        "error": {
+          "title": "反應未創建",
+          "message": "反應未創建。"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "反應已移除",
+          "message": "反應已成功移除。"
+        },
+        "error": {
+          "title": "反應未移除",
+          "message": "反應未移除。"
+        }
+      }
+    }
+  },
+
   "issue": {
     "relation": {
       "start_before": "在之前開始",
@@ -474,7 +542,38 @@
         "app_consent_accept_1": "您授予應用在Plane內部或外部可以使用應用的任何地方存取您的Plane資料的權限",
         "app_consent_accept_2": "您同意{app}的隱私政策和使用條款",
         "accepting": "接受中...",
-        "accept": "接受"
+        "accept": "接受",
+        "categories": "類別",
+        "select_app_categories": "選擇應用類別",
+        "categories_title": "類別",
+        "categories_error": "類別是必填項",
+        "invalid_categories_error": "無效的類別",
+        "categories_description": "選擇最能描述應用的類別",
+        "privacy_policy_url_title": "隱私政策URL",
+        "privacy_policy_url_error": "隱私政策URL是必填項",
+        "invalid_privacy_policy_url_error": "無效的隱私政策URL",
+        "terms_of_service_url_title": "使用條款URL",
+        "terms_of_service_url_error": "使用條款URL是必填項",
+        "invalid_terms_of_service_url_error": "無效的使用條款URL",
+        "support_url_title": "支持URL",
+        "support_url_error": "支持URL是必填項",
+        "invalid_support_url_error": "無效的支持URL",
+        "video_url_title": "視頻URL",
+        "video_url_error": "視頻URL是必填項",
+        "invalid_video_url_error": "無效的視頻URL",
+        "setup_url_title": "設置URL",
+        "setup_url_error": "設置URL是必填項",
+        "invalid_setup_url_error": "無效的設置URL",
+        "contact_email_title": "聯絡電子郵件",
+        "contact_email_error": "聯絡電子郵件是必填項",
+        "invalid_contact_email_error": "無效的聯絡電子郵件",
+        "upload_attachments": "上傳附件",
+        "uploading_images": "上傳 {count, plural, one {張圖片} other {張圖片}}",
+        "drop_images_here": "將圖片拖到這裡",
+        "click_to_upload_images": "點擊上傳圖片",
+        "invalid_file_or_exceeds_size_limit": "無效的文件或超過大小限制 ({size} MB)",
+        "uploading": "上傳中...",
+        "upload_and_save": "上傳並保存"
       }
     }
   },
@@ -950,7 +1049,9 @@
     "multiple_connections_found": "在只期望一個連接時找到了多個連接",
     "installation_not_found": "找不到請求的安裝",
     "user_not_found": "找不到請求的用戶",
-    "error_fetching_token": "獲取認證令牌失敗"
+    "error_fetching_token": "獲取認證令牌失敗",
+    "invalid_app_credentials": "提供的應用憑證無效",
+    "invalid_app_installation_id": "安裝應用失敗"
   },
 
   "import_status": {

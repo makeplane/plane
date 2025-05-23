@@ -25,6 +25,72 @@
     "templates": "Şablonlar"
   },
 
+  "updates": {
+    "add_update": "Güncelleme Ekle",
+    "add_update_placeholder": "Buraya güncelleme ekleyin",
+    "empty": {
+      "title": "Henüz güncelleme yok",
+      "description": "Burada güncellemelere göz atabilirsiniz."
+    },
+    "create": {
+      "success": {
+        "title": "Güncelleme oluşturuldu",
+        "message": "Güncelleme başarıyla oluşturuldu."
+      },
+      "error": {
+        "title": "Güncelleme oluşturulamadı",
+        "message": "Güncelleme oluşturulamadı. Lütfen tekrar deneyin."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Güncelleme güncellendi",
+        "message": "Güncelleme başarıyla güncellendi."
+      },
+      "error": {
+        "title": "Güncelleme güncellenemedi",
+        "message": "Güncelleme güncellenemedi. Lütfen tekrar deneyin."
+      }
+    },
+    "delete": {
+      "success": {
+        "title": "Güncelleme silindi",
+        "message": "Güncelleme başarıyla silindi."
+      },
+      "error": {
+        "title": "Güncelleme silinemedi",
+        "message": "Güncelleme silinemedi. Lütfen tekrar deneyin."
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reaksiyon oluşturuldu",
+          "message": "Reaksiyon başarıyla oluşturuldu."
+        },
+        "error": {
+          "title": "Reaksiyon oluşturulamadı",
+          "message": "Reaksiyon oluşturulamadı. Lütfen tekrar deneyin."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reaksiyon silindi",
+          "message": "Reaksiyon başarıyla silindi."
+        },
+        "error": {
+          "title": "Reaksiyon silinemedi",
+          "message": "Reaksiyon silinemedi. Lütfen tekrar deneyin."
+        }
+      }
+    },
+    "progress": {
+      "title": "İlerleme",
+      "since_last_update": "Son güncellemeden beri",
+      "comments": "{count, plural, one{# yorum} other{# yorum}}"
+    }
+  },
+  
   "issue": {
     "relation": {
       "start_before": "Starts Bifor",
@@ -492,7 +558,38 @@
         "app_consent_accept_1": "Aplikasyona Pleyn içinde veya dışında kullanabileceğiniz her yerde Pleyn verilerinize erişim izni verirsiniz",
         "app_consent_accept_2": "{app}'in Gizlilik Politikası ve Kullanım Koşullarını kabul edersiniz",
         "accepting": "Kabul ediliyor...",
-        "accept": "Kabul et"
+        "accept": "Kabul et",
+        "categories": "Kategoriler",
+        "select_app_categories": "Aplikasyon kategorilerini seçin",
+        "categories_title": "Kategoriler",
+        "categories_error": "Kategoriler gerekli",
+        "invalid_categories_error": "Geçersiz kategoriler",
+        "categories_description": "En iyi açıklamayı veren kategorileri seçin",
+        "privacy_policy_url_title": "Gizlilik Politikası URL",
+        "privacy_policy_url_error": "Gizlilik Politikası URL gerekli",
+        "invalid_privacy_policy_url_error": "Geçersiz gizlilik politikası URL",
+        "terms_of_service_url_title": "Hizmet Şartları URL",
+        "terms_of_service_url_error": "Hizmet Şartları URL gerekli",
+        "invalid_terms_of_service_url_error": "Geçersiz hizmet şartları URL",
+        "support_url_title": "Destek URL",
+        "support_url_error": "Destek URL gerekli",
+        "invalid_support_url_error": "Geçersiz destek URL",
+        "video_url_title": "Video URL",
+        "video_url_error": "Video URL gerekli",
+        "invalid_video_url_error": "Geçersiz video URL",
+        "setup_url_title": "Kurulum URL",
+        "setup_url_error": "Kurulum URL gerekli",
+        "invalid_setup_url_error": "Geçersiz kurulum URL",
+        "contact_email_title": "İletişim Email",
+        "contact_email_error": "İletişim Email gerekli",
+        "invalid_contact_email_error": "Geçersiz iletişim email",
+        "upload_attachments": "Ekleri yükle",
+        "uploading_images": "{count, plural, one {Yükleniyor {count} görsel} other {Yükleniyor {count} görsel}}",
+        "drop_images_here": "Görselleri buraya bırakın",
+        "click_to_upload_images": "Görselleri yüklemek için tıklayın",
+        "invalid_file_or_exceeds_size_limit": "Geçersiz dosya veya boyut sınırını aşıyor ({size} MB)",
+        "uploading": "Yükleniyor...",
+        "upload_and_save": "Yükle ve kaydet"
       }
     }
   },
@@ -969,7 +1066,9 @@
     "cannot_create_multiple_connections": "Organizasyonunuzu zaten bir workspeysle konnekt ettiniz. Lütfen yeni bir konnekşın yapmadan önce mevcut konnekşını diskonnekt edin.",
     "installation_not_found": "İstenilen kurulum bulunamadı",
     "user_not_found": "İstenilen kullanıcı bulunamadı",
-    "error_fetching_token": "Kimlik doğrulama tokeni alınamadı"
+    "error_fetching_token": "Kimlik doğrulama tokeni alınamadı",
+    "invalid_app_credentials": "Sağlanan uygulama kimlik bilgileri geçersiz",
+    "invalid_app_installation_id": "Uygulama yüklenemedi"
   },
 
   "import_status": {

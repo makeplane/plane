@@ -211,7 +211,7 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
             <ConvertWorkItemAction
               workItemId={issue?.id}
               conversionType={EWorkItemConversionType.EPIC}
-              disabled={!isEditable}
+              disabled={!isEditable || !!issue?.archived_at}
             />
           </WithFeatureFlagHOC>
           <div className="flex flex-wrap items-center gap-2.5 text-custom-text-300">

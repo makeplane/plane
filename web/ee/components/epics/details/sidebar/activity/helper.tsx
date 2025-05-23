@@ -1,5 +1,16 @@
 import { ReactNode } from "react";
-import { AlignLeft, Briefcase, CalendarDays, Link, Paperclip, Tag, Triangle, Type, Users } from "lucide-react";
+import {
+  AlignLeft,
+  ArrowRightLeft,
+  Briefcase,
+  CalendarDays,
+  Link,
+  Paperclip,
+  Tag,
+  Triangle,
+  Type,
+  Users,
+} from "lucide-react";
 import { TBaseActivityVerbs, TIssueActivity } from "@plane/types";
 import { DoubleCircleIcon, EpicIcon, CustomersIcon } from "@plane/ui";
 import { convertMinutesToHoursMinutesString, renderFormattedDate } from "@plane/utils";
@@ -30,7 +41,8 @@ export type TEpicActivityFields =
   | "link"
   | "attachment"
   | "customer_request"
-  | "customer";
+  | "customer"
+  | "work_item";
 
 export type TEpicActivityVerbs = TBaseActivityVerbs;
 
@@ -261,6 +273,31 @@ export const EPIC_UPDATES_HELPER_MAP: Partial<TEpicActivityDetailsHelperMap> = {
         >
           <span className="truncate">{activity.old_value}</span>
         </a>
+      </>
+    ),
+  }),
+  work_item_converted: (activity: TIssueActivity) => ({
+    icon: <ArrowRightLeft className={commonIconClassName} />,
+    message: (
+      <>
+        converted{" "}
+        <span
+          className={commonTextClassName}
+        >{`${activity?.project_detail?.identifier}-${activity?.issue_detail?.sequence_id}`}</span>{" "}
+        to epic.
+      </>
+    ),
+  }),
+  epic_converted: (activity: TIssueActivity) => ({
+    icon: <ArrowRightLeft className={commonIconClassName} />,
+
+    message: (
+      <>
+        converted{" "}
+        <span
+          className={commonTextClassName}
+        >{`${activity?.project_detail?.identifier}-${activity?.issue_detail?.sequence_id}`}</span>{" "}
+        to work item.
       </>
     ),
   }),

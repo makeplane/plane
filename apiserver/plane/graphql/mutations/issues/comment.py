@@ -21,7 +21,7 @@ from plane.graphql.types.issues.comment import IssueCommentActivityType
 
 @strawberry.type
 class IssueCommentMutation:
-    # adding issue comment deprecated in favor of add_issue_comment_v2
+    # Deprecated: adding issue comment in favor of add_issue_comment_v2
     @strawberry.mutation(
         extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
     )

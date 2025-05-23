@@ -57,9 +57,9 @@ export const getConnectionDetails = async (
   // Try to get user credentials
   const userCredentials = slackUser
     ? await getCredentialsWithFallback(
-        workspaceConnection as unknown as TWorkspaceConnection<TSlackWorkspaceConnectionConfig>,
-        slackUser
-      )
+      workspaceConnection as unknown as TWorkspaceConnection<TSlackWorkspaceConnectionConfig>,
+      slackUser
+    )
     : null;
 
   // Use user credentials if available, otherwise use admin credentials
@@ -267,5 +267,6 @@ export const getConnectionDetailsForIssue = async (payload: PlaneWebhookPayload,
   return {
     entityConnection,
     slackService,
+    isUser,
   };
 };

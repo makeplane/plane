@@ -282,10 +282,14 @@ export type TWorkspaceCredential = {
   source: string;
   workspace_id: string;
   user_id: string;
+  source_identifier?: string | null;
+  source_authorization_type?: string | null;
   source_auth_email?: string | null;
   source_access_token?: string | null;
   source_refresh_token?: string | null;
   source_hostname?: string | null;
+  target_identifier?: string | null;
+  target_authorization_type?: string | null;
   target_access_token?: string | null;
   target_refresh_token?: string | null;
   target_hostname?: string | null;

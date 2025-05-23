@@ -240,8 +240,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     }
   );
 
-  const isPageLoading =
-    pageId === undefined || !realtimeConfig || realtimeConfig.queryParams.parentPageId === undefined;
+  const isPageLoading = pageId === undefined || !realtimeConfig;
   if (isPageLoading) return <PageContentLoader className={blockWidthClassName} />;
 
   return (

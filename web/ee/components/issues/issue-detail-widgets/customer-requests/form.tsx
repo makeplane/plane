@@ -12,6 +12,8 @@ import { Button, EModalPosition, EModalWidth, Input, ModalCore, setToast, TOAST_
 import { RichTextEditor } from "@/components/editor";
 import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
+import useKeypress from "@/hooks/use-keypress";
+
 import {
   AddAttachmentButton,
   CustomerDropDown,
@@ -142,11 +144,15 @@ export const WorkItemRequestForm: FC<TProps> = observer((props) => {
     if (data?.link) setLink(data.link);
   }, [data]);
 
+  useKeypress("Escape", () => {
+    if (isOpen) handleClose();
+  });
+
   if (!isOpen) return null;
 
   return (
     <>
-      <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXXL}>
+      <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXXL}>
         <SourceCreateUpdateModal id={workItemId} setLinkData={setLink} preloadedData={{ url: link }} />
         <div className="p-4">
           <h3 className="text-xl font-medium text-custom-text-200">

@@ -1,3 +1,4 @@
+import { EStartOfTheWeek } from "@plane/constants";
 import { IIssueActivity, TIssuePriorities, TStateGroups } from ".";
 import { TUserPermissions } from "./enums";
 
@@ -66,6 +67,7 @@ export type TUserProfile = {
   is_smooth_cursor_enabled: boolean;
   created_at: Date | string;
   updated_at: Date | string;
+  start_of_the_week: EStartOfTheWeek;
 };
 
 export interface IInstanceAdminStatus {

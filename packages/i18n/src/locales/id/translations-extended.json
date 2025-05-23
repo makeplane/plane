@@ -25,6 +25,74 @@
     "templates": "Templat"
   },
 
+  "updates": {
+    "add_update": "Tambahkan update",
+    "add_update_placeholder": "Tambahkan update Anda di sini",
+    "empty": {
+      "title": "Belum ada update",
+      "description": "Anda dapat melihat update di sini."
+    },
+    "delete": {
+      "title": "Hapus update",
+      "confirmation": "Apakah Anda yakin ingin menghapus update ini? Aksi ini tidak dapat dibatalkan.",
+      "success": {
+        "title": "Update berhasil dihapus",
+        "message": "Update berhasil dihapus."
+      },
+      "error": {
+        "title": "Update tidak berhasil dihapus",
+        "message": "Update tidak berhasil dihapus."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Update berhasil diperbarui",
+        "message": "Update berhasil diperbarui."
+      },
+      "error": {
+        "title": "Update tidak berhasil diperbarui",
+        "message": "Update tidak berhasil diperbarui."
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reaksi berhasil dibuat",
+          "message": "Reaksi berhasil dibuat."
+        },
+        "error": {
+          "title": "Reaksi tidak berhasil dibuat",
+          "message": "Reaksi tidak berhasil dibuat."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reaksi berhasil dihapus",
+          "message": "Reaksi berhasil dihapus."
+        },
+        "error": {
+          "title": "Reaksi tidak berhasil dihapus",
+          "message": "Reaksi tidak berhasil dihapus."
+        }
+      }
+    },
+    "progress": {
+      "title": "Progres",
+      "since_last_update": "Sejak update terakhir",
+      "comments": "{count, plural, one{# komentar} other{# komentar}}"
+    },
+    "create": {
+      "success": {
+        "title": "Update berhasil dibuat",
+        "message": "Update berhasil dibuat."
+      },
+      "error": {
+        "title": "Update tidak berhasil dibuat",
+        "message": "Update tidak berhasil dibuat."
+      }
+    }
+  },
+  
   "issue": {
     "relation": {
       "start_before": "Mulai Sebelum",
@@ -405,6 +473,107 @@
         "cancel_success_message": "Anda sekarang dapat menghapus workspace.",
         "cancel_error_title": "Itu tidak berhasil.",
         "cancel_error_message": "Silakan coba lagi."
+      },
+      "applications": {
+        "title": "Aplikasi",
+        "applicationId_copied": "ID aplikasi disalin ke clipboard",
+        "clientId_copied": "ID klien disalin ke clipboard",
+        "clientSecret_copied": "Kunci rahasia klien disalin ke clipboard",
+        "third_party_apps": "Aplikasi pihak ketiga",
+        "your_apps": "Aplikasi Anda",
+        "connect": "Koneksi",
+        "connected": "Terhubung",
+        "app_available": "Anda telah membuat aplikasi ini tersedia untuk digunakan dengan workspace Plane",
+        "app_available_description": "Hubungkan workspace Plane untuk mulai menggunakannya",
+        "client_id_and_secret": "ID klien dan Rahasia",
+        "client_id_and_secret_description": "Salin dan simpan kunci rahasia ini di Pages. Anda tidak dapat melihat kunci ini lagi setelah Anda menutupnya.",
+        "client_id_and_secret_download": "Anda dapat mengunduh CSV dengan kunci dari sini.",
+        "application_id": "ID Aplikasi",
+        "client_id": "ID Klien",
+        "client_secret": "Rahasia Klien",
+        "export_as_csv": "Ekspor sebagai CSV",
+        "slug_already_exists": "Slug sudah ada",
+        "failed_to_create_application": "Gagal membuat aplikasi",
+        "upload_logo": "Unggah Logo",
+        "app_name_title": "Apa nama Anda untuk aplikasi ini",
+        "app_name_error": "Nama aplikasi diperlukan",
+        "app_short_description_title": "Berikan aplikasi ini deskripsi singkat",
+        "app_short_description_error": "Deskripsi aplikasi singkat diperlukan",
+        "app_description_title": "Tulis deskripsi yang lebih panjang untuk orang yang ingin mengetahui lebih lanjut. Tekan / untuk perintah",
+        "app_description_error": "Deskripsi aplikasi diperlukan",
+        "app_slug_title": "Slug aplikasi",
+        "app_slug_error": "Slug aplikasi diperlukan",
+        "app_maker_title": "Pembuat aplikasi",
+        "app_maker_error": "Pembuat aplikasi diperlukan",
+        "webhook_url_title": "URL Webhook",
+        "webhook_url_error": "URL Webhook diperlukan",
+        "invalid_webhook_url_error": "URL Webhook tidak valid",
+        "redirect_uris_title": "Redirect URIs",
+        "redirect_uris_error": "Redirect URIs diperlukan",
+        "invalid_redirect_uris_error": "Redirect URIs tidak valid",
+        "redirect_uris_description": "Masukkan URI yang dipisahkan oleh spasi di mana aplikasi akan diarahkan setelah pengguna e.g https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "Authorized Javascript Origins",
+        "authorized_javascript_origins_error": "Authorized Javascript Origins diperlukan",
+        "invalid_authorized_javascript_origins_error": "Authorized Javascript Origins tidak valid",
+        "authorized_javascript_origins_description": "Masukkan URI yang dipisahkan oleh spasi di mana aplikasi akan diizinkan untuk membuat permintaan e.g app.com example.com",
+        "create_app": "Buat aplikasi",
+        "update_app": "Perbarui aplikasi",
+        "regenerate_client_secret_description": "Regenerate kunci rahasia klien. Jika Anda menghasilkan kunci rahasia, Anda dapat menyalin kunci atau mengunduhnya ke file CSV setelah itu.",
+        "regenerate_client_secret": "Regenerate kunci rahasia klien",
+        "regenerate_client_secret_confirm_title": "Apakah Anda yakin ingin menghasilkan kembali kunci rahasia klien?",
+        "regenerate_client_secret_confirm_description": "Aplikasi yang menggunakan kunci rahasia ini akan berhenti bekerja. Anda perlu memperbarui kunci rahasia di aplikasi.",
+        "regenerate_client_secret_confirm_cancel": "Batalkan",
+        "regenerate_client_secret_confirm_regenerate": "Regenerate",
+        "read_only_access_to_workspace": "Akses baca-saja ke workspace Anda",
+        "write_access_to_workspace": "Akses tulis ke workspace Anda",
+        "read_only_access_to_user_profile": "Akses baca-saja ke profil pengguna Anda",
+        "write_access_to_user_profile": "Akses tulis ke profil pengguna Anda",
+        "connect_app_to_workspace": "Koneksikan {app} ke workspace Anda {workspace}",
+        "user_permissions": "Izin pengguna",
+        "user_permissions_description": "Izin pengguna digunakan untuk memberikan akses ke profil pengguna.",
+        "workspace_permissions": "Izin workspace",
+        "workspace_permissions_description": "Izin workspace digunakan untuk memberikan akses ke workspace.",
+        "with_the_permissions": "dengan izin",
+        "app_consent_title": "{app} meminta akses ke workspace Anda dan profil Plane.",
+        "choose_workspace_to_connect_app_with": "Pilih workspace untuk menghubungkan aplikasi",
+        "app_consent_workspace_permissions_title": "{app} ingin",
+        "app_consent_user_permissions_title": "{app} juga dapat meminta izin pengguna untuk sumber daya berikut. Izin ini akan diminta dan diotorisasi hanya oleh pengguna.",
+        "app_consent_accept_title": "Dengan menerima, Anda",
+        "app_consent_accept_1": "Berikan akses ke data Plane Anda di mana pun Anda dapat menggunakan aplikasi di dalam atau di luar Plane",
+        "app_consent_accept_2": "Setuju dengan {app}'s Privacy Policy dan Terms Of Use",
+        "accepting": "Menerima...",
+        "accept": "Menerima",
+        "categories": "Kategori",
+        "select_app_categories": "Pilih kategori aplikasi",
+        "categories_title": "Kategori",
+        "categories_error": "Kategori diperlukan",
+        "invalid_categories_error": "Kategori tidak valid",
+        "categories_description": "Pilih kategori yang paling sesuai dengan aplikasi",
+        "privacy_policy_url_title": "URL Privacy Policy",
+        "privacy_policy_url_error": "URL Privacy Policy diperlukan",
+        "invalid_privacy_policy_url_error": "URL Privacy Policy tidak valid",
+        "terms_of_service_url_title": "URL Terms of Service",
+        "terms_of_service_url_error": "URL Terms of Service diperlukan",
+        "invalid_terms_of_service_url_error": "URL Terms of Service tidak valid",
+        "support_url_title": "URL Support",
+        "support_url_error": "URL Support diperlukan",
+        "invalid_support_url_error": "URL Support tidak valid",
+        "video_url_title": "URL Video",
+        "video_url_error": "URL Video diperlukan",
+        "invalid_video_url_error": "URL Video tidak valid",
+        "setup_url_title": "URL Setup",
+        "setup_url_error": "URL Setup diperlukan",
+        "invalid_setup_url_error": "URL Setup tidak valid",
+        "contact_email_title": "Email Kontak",
+        "contact_email_error": "Email Kontak diperlukan",
+        "invalid_contact_email_error": "Email Kontak tidak valid",
+        "upload_attachments": "Unggah Lampiran",
+        "uploading_images": "Mengunggah {count} Gambar{count, plural, one {s} other {s}}",
+        "drop_images_here": "Letakkan gambar di sini",
+        "click_to_upload_images": "Klik untuk mengunggah gambar",
+        "invalid_file_or_exceeds_size_limit": "File tidak valid atau melebihi batas ukuran ({size} MB)",
+        "uploading": "Mengunggah...",
+        "upload_and_save": "Unggah dan Simpan"
       }
     }
   },
@@ -880,7 +1049,9 @@
     "multiple_connections_found": "Beberapa koneksi ditemukan saat hanya satu yang diharapkan",
     "installation_not_found": "Instalasi yang diminta tidak dapat ditemukan",
     "user_not_found": "Pengguna yang diminta tidak dapat ditemukan",
-    "error_fetching_token": "Gagal mengambil token autentikasi"
+    "error_fetching_token": "Gagal mengambil token autentikasi",
+    "invalid_app_credentials": "Informasi autentikasi aplikasi yang diberikan tidak valid",
+    "invalid_app_installation_id": "Gagal menginstal aplikasi"
   },
 
   "import_status": {

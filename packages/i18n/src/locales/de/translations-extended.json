@@ -25,6 +25,74 @@
     "templates": "Vorlagen"
   },
 
+  "updates": {
+    "add_update": "Aktualisieren",
+    "add_update_placeholder": "Schreiben Sie Ihre Aktualisierung hier",
+    "empty": {
+      "title": "Noch keine Aktualisierungen",
+      "description": "Sie können hier Aktualisierungen sehen."
+    },
+    "delete": {
+      "title": "Aktualisierung löschen",
+      "confirmation": "Sie sind dabei, diese Aktualisierung zu löschen. Diese Aktion ist unumkehrbar.",
+      "success": {
+        "title": "Aktualisierung gelöscht",
+        "message": "Die Aktualisierung wurde erfolgreich gelöscht"
+      },
+      "error": {
+        "title": "Aktualisierung nicht gelöscht",
+        "message": "Die Aktualisierung konnte nicht gelöscht werden"
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reaktion erstellt",
+          "message": "Reaktion wurde erfolgreich erstellt"
+        },
+        "error": {
+          "title": "Reaktion nicht erstellt",
+          "message": "Reaktion konnte nicht erstellt werden"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reaktion entfernt",
+          "message": "Reaktion wurde erfolgreich entfernt"
+        },
+        "error": {
+          "title": "Reaktion nicht entfernt",
+          "message": "Reaktion konnte nicht entfernt werden"
+        }
+      }
+    },
+    "progress": {
+      "title": "Fortschritt",
+      "since_last_update": "Seit der letzten Aktualisierung",
+      "comments": "{count, plural, one{# Kommentar} few{# Kommentare} other{# Kommentare}}"
+    },
+    "create": {
+      "success": {
+        "title": "Aktualisierung erstellt",
+        "message": "Aktualisierung wurde erfolgreich erstellt"
+      },
+      "error": {
+        "title": "Aktualisierung nicht erstellt",
+        "message": "Aktualisierung konnte nicht erstellt werden"
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Aktualisierung aktualisiert",
+        "message": "Aktualisierung wurde erfolgreich aktualisiert"
+      },
+      "error": {
+        "title": "Aktualisierung nicht aktualisiert",
+        "message": "Aktualisierung konnte nicht aktualisiert werden"
+      }
+    }
+  },
+
   "issue": {
     "relation": {
       "start_before": "Beginnt Vor",
@@ -474,7 +542,38 @@
         "app_consent_accept_1": "Gewähren Sie der App Zugriff auf Ihre Plane-Daten, wo immer Sie die App innerhalb oder außerhalb von Plane verwenden können",
         "app_consent_accept_2": "Stimmen Sie der Datenschutzerklärung und den Nutzungsbedingungen von {app} zu",
         "accepting": "Wird akzeptiert...",
-        "accept": "Akzeptieren"
+        "accept": "Akzeptieren",
+        "categories": "Kategorien",
+        "select_app_categories": "App-Kategorien auswählen",
+        "categories_title": "Kategorien",
+        "categories_error": "Kategorien sind erforderlich",
+        "invalid_categories_error": "Ungültige Kategorien",
+        "categories_description": "Wählen Sie die Kategorien, die am besten zu der App passen",
+        "privacy_policy_url_title": "Datenschutzerklärung URL",
+        "privacy_policy_url_error": "Datenschutzerklärung URL ist erforderlich",
+        "invalid_privacy_policy_url_error": "Ungültige Datenschutzerklärung URL",
+        "terms_of_service_url_title": "Nutzungsbedingungen URL",
+        "terms_of_service_url_error": "Nutzungsbedingungen URL ist erforderlich",
+        "invalid_terms_of_service_url_error": "Ungültige Nutzungsbedingungen URL",
+        "support_url_title": "Support-URL",
+        "support_url_error": "Support-URL ist erforderlich",
+        "invalid_support_url_error": "Ungültige Support-URL",
+        "video_url_title": "Video-URL",
+        "video_url_error": "Video-URL ist erforderlich",
+        "invalid_video_url_error": "Ungültige Video-URL",
+        "setup_url_title": "Setup-URL",
+        "setup_url_error": "Setup-URL ist erforderlich",
+        "invalid_setup_url_error": "Ungültige Setup-URL",
+        "contact_email_title": "Kontakt-Email",
+        "contact_email_error": "Kontakt-Email ist erforderlich",
+        "invalid_contact_email_error": "Ungültige Kontakt-Email",
+        "upload_attachments": "Dateien hochladen",
+        "uploading_images": "Uploading {count} Image{count, plural, one {s} other {s}}",
+        "drop_images_here": "Dateien hier ablegen",
+        "click_to_upload_images": "Dateien hochladen",
+        "invalid_file_or_exceeds_size_limit": "Ungültige Datei oder überschreitet die Größe ({size} MB)",
+        "uploading": "Hochladen...",
+        "upload_and_save": "Hochladen und speichern"
       }
     }
   },
@@ -950,7 +1049,9 @@
     "multiple_connections_found": "Es wurden mehrere Verbindungen gefunden, obwohl nur eine erwartet wurde",
     "installation_not_found": "Die angeforderte Installation konnte nicht gefunden werden",
     "user_not_found": "Der angeforderte Benutzer konnte nicht gefunden werden",
-    "error_fetching_token": "Fehler beim Abrufen des Authentifizierungstokens"
+    "error_fetching_token": "Fehler beim Abrufen des Authentifizierungstokens",
+    "invalid_app_credentials": "Die bereitgestellten App-Anmeldeinformationen sind ungültig",
+    "invalid_app_installation_id": "Fehler beim Installieren der App"
   },
 
   "import_status": {

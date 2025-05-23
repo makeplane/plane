@@ -3,6 +3,7 @@
   "pi_chat": "Pi Chat",
   "in_app": "In-app",
   "forms": "Forms",
+  
 
   "common": {
     "worklogs": "Worklogs",
@@ -27,6 +28,74 @@
         "customer_request_count": "Customer request count",
         "customer": "Customer",
         "requests": "Customer request"
+      }
+    }
+  },
+
+  "updates": {
+    "progress": {
+      "title": "Progress",
+      "since_last_update": "Since last update",
+      "comments": "{count, plural, one{# Comment} other{# Comments}}"
+    },
+    "add_update": "Add Update",
+    "add_update_placeholder": "Add your update here",
+    "empty": {
+      "title": "No updates yet",
+      "description": "You can see the updates here."
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reaction created",
+          "message": "The reaction has been successfully created"
+        },
+        "error": {
+          "title": "Reaction not created",
+          "message": "The reaction could not be created"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reaction removed",
+          "message": "The reaction has been successfully removed"
+        },
+        "error": {
+          "title": "Reaction not removed",
+          "message": "The reaction could not be removed"
+        }
+      }
+    },
+    "create": {
+      "success": {
+        "title": "Update created",
+        "message": "The update has been successfully created"
+      },
+      "error": {
+        "title": "Update not created",
+        "message": "The update could not be created"
+      }
+    },
+    "delete": {
+      "title": "Delete update",
+      "confirmation": "Are you sure you want to delete this update? This is an irreversible action.",
+      "success": {
+        "title": "Update deleted",
+        "message": "The update has been successfully deleted"
+      },
+      "error": {
+        "title": "Update not deleted",
+        "message": "The update could not be deleted"
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Updated",
+        "message": "The update has been successfully updated"
+      },
+      "error": {
+        "title": "Update not updated",
+        "message": "The update could not be updated"
       }
     }
   },
@@ -481,7 +550,38 @@
         "app_consent_accept_1": "Grant the app access to your Plane data wherever you can use the app in or outside Plane",
         "app_consent_accept_2": "Agree to {app}'s Privacy Policy and Terms Of Use",
         "accepting": "Accepting...",
-        "accept": "Accept"
+        "accept": "Accept",
+        "categories": "Categories",
+        "select_app_categories": "Select app categories",
+        "categories_title": "Categories",
+        "categories_error": "Categories are required",
+        "invalid_categories_error": "Invalid categories",
+        "categories_description": "Select the categories that best describe the app",
+        "privacy_policy_url_title": "Privacy Policy URL",
+        "privacy_policy_url_error": "Privacy Policy URL is required",
+        "invalid_privacy_policy_url_error": "Invalid privacy policy URL",
+        "terms_of_service_url_title": "Terms of Service URL",
+        "terms_of_service_url_error": "Terms of Service URL is required",
+        "invalid_terms_of_service_url_error": "Invalid terms of service URL",
+        "support_url_title": "Support URL",
+        "support_url_error": "Support URL is required",
+        "invalid_support_url_error": "Invalid support URL",
+        "video_url_title": "Video URL",
+        "video_url_error": "Video URL is required",
+        "invalid_video_url_error": "Invalid video URL",
+        "setup_url_title": "Setup URL",
+        "setup_url_error": "Setup URL is required",
+        "invalid_setup_url_error": "Invalid setup URL",
+        "contact_email_title": "Contact Email",
+        "contact_email_error": "Contact Email is required",
+        "invalid_contact_email_error": "Invalid contact email",
+        "upload_attachments": "Upload Attachments",
+        "uploading_images": "Uploading {count} Image{count, plural, one {s} other {s}}",
+        "drop_images_here": "Drop images here",
+        "click_to_upload_images": "Click to upload images",
+        "invalid_file_or_exceeds_size_limit": "Invalid file or exceeds size limit ({size} MB)",
+        "uploading": "Uploading...",
+        "upload_and_save": "Upload & Save"
       }
     }
   },
@@ -958,7 +1058,9 @@
     "cannot_create_multiple_connections": "You have already connected your organization with a workspace. Please disconnect the existing connection before connecting a new one.",
     "installation_not_found": "The requested installation could not be found",
     "user_not_found": "The requested user could not be found",
-    "error_fetching_token": "Failed to fetch authentication token"
+    "error_fetching_token": "Failed to fetch authentication token",
+    "invalid_app_credentials": "The provided app credentials are invalid",
+    "invalid_app_installation_id": "Failed to install the app"
   },
 
   "import_status": {

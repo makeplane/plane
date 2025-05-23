@@ -4,6 +4,8 @@ import { useParams } from "next/navigation";
 // plane
 import { useTranslation } from "@plane/i18n";
 import { EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+// hooks
+import useKeypress from "@/hooks/use-keypress";
 // Plane web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TInitiative } from "@/plane-web/types/initiative";
@@ -114,10 +116,13 @@ export const CreateUpdateInitiativeModal = observer((props: Props) => {
       });
   };
 
+  useKeypress("Escape", () => {
+    if (isOpen) handleModalClearAndClose();
+  });
+
   return (
     <ModalCore
       isOpen={isOpen}
-      handleClose={() => handleClose()}
       position={EModalPosition.TOP}
       width={EModalWidth.XXXXL}
       className="rounded-lg shadow-none transition-[width] ease-linear"

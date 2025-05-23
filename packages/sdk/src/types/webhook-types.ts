@@ -62,6 +62,17 @@ export interface WebhookIssueCommentPayload extends WebhookPayloadBase {
   };
 }
 
+export enum E_PLANE_WEBHOOK_EVENT {
+  ISSUE = "issue",
+  ISSUE_COMMENT = "issue_comment",
+}
+
+export enum E_PLANE_WEBHOOK_ACTION {
+  CREATED = "created",
+  UPDATED = "updated",
+  DELETED = "deleted",
+}
+
 // Union type for all possible webhook payloads
 export type PlaneWebhookData = WebhookIssuePayload | WebhookIssueCommentPayload;
 

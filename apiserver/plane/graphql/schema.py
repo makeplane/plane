@@ -47,6 +47,7 @@ from .queries.issues import (
     IssueAttachmentQuery,
     IssueLinkQuery,
     IssueShortenedMetaInfoQuery,
+    WorkItemCommentReactionQuery,
 )
 from .queries.dashboard import userInformationQuery
 from .queries.external import UnsplashImagesQuery, ProjectCoversQuery
@@ -110,6 +111,7 @@ from .mutations.issues import (
     IssueLinkMutation,
     IssueAttachmentMutation,
     IssueMutationV2,
+    WorkItemCommentReactionMutation,
 )
 from .mutations.device import DeviceInformationMutation
 from .mutations.asset import (
@@ -197,6 +199,8 @@ class Query(
     NestedParentPagesQuery,
     NestedChildPagesQuery,
     WorkspaceStickiesQuery,
+    # work items
+    WorkItemCommentReactionQuery,
     # epics
     EpicUserPropertyQuery,
     EpicCountQuery,
@@ -255,6 +259,8 @@ class Mutation(
     NestedChildDeletePageMutation,
     WorkspaceStickiesMutation,
     IssueMutationV2,
+    # work items
+    WorkItemCommentReactionMutation,
     # epics
     EpicUserPropertyMutation,
     EpicMutation,

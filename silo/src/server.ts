@@ -33,6 +33,7 @@ import { APIError } from "./lib";
 import { registerControllers } from "./lib/controller";
 import { logger } from "./logger";
 // types
+import { OAuthRoutes, registerOAuthStrategies } from "./services/oauth";
 import { APIErrorResponse } from "./types";
 
 export default class Server {
@@ -57,6 +58,7 @@ export default class Server {
       GithubController,
       JiraDataCenterController,
       CSVController,
+      OAuthRoutes,
     ],
   };
 
@@ -72,23 +74,20 @@ export default class Server {
     this.setupControllers();
     this.setupErrorHandlers();
     this.setupProcessHandlers();
+    registerOAuthStrategies();
   }
 
   private setupMiddleware(): void {
     // take the cors allowed origins from env, split by comma
     const origins = env.CORS_ALLOWED_ORIGINS?.split(",").map((origin) => origin.trim()) || [];
-
-    for (const origin of origins) {
-      logger.info(`Adding CORS allowed origin: ${origin}`);
-      this.app.use(
-        cors({
-          origin,
-          credentials: true,
-          methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-          allowedHeaders: ["Content-Type", "Authorization", "x-api-key"],
-        })
-      );
-    }
+    this.app.use(
+      cors({
+        origin: origins,
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization", "x-api-key"],
+      })
+    );
 
     this.app.use(express.json({ limit: "25mb" }));
     this.app.use(cookieParser());

@@ -637,3 +637,35 @@ func DeactivateLicense(api prime_api.IPrimeMonitorApi, key string) func(*fiber.C
 		})
 	}
 }
+
+func CheckDeleteWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func(*fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) (err error) {
+		// Get the workspace id from the URL
+		workspaceId := ctx.Params("workspaceId")
+
+		license := &db.License{}
+		record := db.Db.Model(&db.License{}).Where("workspace_id = ?", workspaceId).First(&license)
+
+		if record.Error != nil {
+			ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+				"message": "No license found for the workspace",
+				"status":  true,
+			})
+			return nil
+		}
+
+		if license.ProductType != "FREE" {
+			ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message": "Workspace is not on a free plan",
+				"status":  false,
+			})
+			return nil
+		}
+
+		// Send the response back to the client
+		return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+			"message": "Workspace is on a free plan",
+			"status":  true,
+		})
+	}
+}

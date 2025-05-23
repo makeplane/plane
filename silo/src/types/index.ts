@@ -67,23 +67,3 @@ export type ClientOptions = {
   hmacPrivateKey: string;
   serviceName: string;
 };
-
-
-export type PlaneOAuthTokenOptions = {
-  client_id: string;
-  client_secret: string;
-  redirect_uri?: string;
-  code?: string;
-  code_verifier?: string;
-  grant_type?: "authorization_code" | "client_credentials";
-  refresh_token?: string;
-};
-
-
-export type PlaneOAuthTokenResponse = {
-  access_token: string;
-  expires_in: number;
-  token_type: string;
-  scope: string;
-  refresh_token: string;
-};

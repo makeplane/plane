@@ -4,6 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EIssueServiceType, EIssuesStoreType, EWorkItemConversionType } from "@plane/constants";
+import { AlertModalCore, EModalPosition, EModalWidth } from "@plane/ui";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues";
 // hooks
@@ -33,6 +34,8 @@ export const ConvertWorkItemAction: FC<Props> = observer((props) => {
     issue: { getIssueById },
     isWorkItemToEpicModalOpen,
     toggleWorkItemToEpicModal,
+    isConversionWarningModalOpen,
+    toggleConversionWarningModal,
     setPeekIssue,
   } = useIssueDetail();
   const { getProjectFeatures } = useProjectAdvanced();
@@ -53,16 +56,41 @@ export const ConvertWorkItemAction: FC<Props> = observer((props) => {
     setPeekIssue(undefined);
     setEpicPeek(undefined);
   };
-  const handleClick = () => {
+  const handleConvert = () => {
     if (conversionType === EWorkItemConversionType.WORK_ITEM) toggleEpicToWorkItemModal(workItemId);
     else toggleWorkItemToEpicModal(workItemId);
+    toggleConversionWarningModal(null);
+  };
+
+  const handleOnClick = () => {
+    if (conversionType === EWorkItemConversionType.WORK_ITEM) handleConvert();
+    else toggleConversionWarningModal(workItemId);
   };
 
   if (!isEpicsEnabled) return null;
 
   return (
     <>
-      <ConvertWorkItemIcon handleOnClick={handleClick} disabled={disabled} conversionType={conversionType} />
+      <ConvertWorkItemIcon conversionType={conversionType} handleOnClick={handleOnClick} disabled={disabled} />
+
+      {isConversionWarningModalOpen === workItemId && conversionType === EWorkItemConversionType.EPIC && (
+        <AlertModalCore
+          isOpen={!!isConversionWarningModalOpen}
+          handleClose={() => toggleConversionWarningModal(null)}
+          handleSubmit={handleConvert}
+          isSubmitting={false}
+          title="Convert this work item to epic?"
+          content="This will detach any associated cycles, modules, and parent items connected to it."
+          primaryButtonText={{
+            default: "Continue",
+            loading: "Loading",
+          }}
+          variant="primary"
+          secondaryButtonText="Cancel"
+          width={EModalWidth.LG}
+          position={EModalPosition.TOP}
+        />
+      )}
 
       {issue && isEpicToWorkItemModalOpen === workItemId && conversionType === EWorkItemConversionType.WORK_ITEM && (
         <CreateUpdateIssueModal
@@ -78,7 +106,7 @@ export const ConvertWorkItemAction: FC<Props> = observer((props) => {
           fetchIssueDetails={false}
           primaryButtonText={{
             default: "Convert to work item",
-            loading: "Converting...",
+            loading: "Converting",
           }}
           withDraftIssueWrapper={false}
           isConversionOperation
@@ -98,7 +126,7 @@ export const ConvertWorkItemAction: FC<Props> = observer((props) => {
           isConversionOperation
           primaryButtonText={{
             default: "Convert to epic",
-            loading: "Converting...",
+            loading: "Converting",
           }}
         />
       )}

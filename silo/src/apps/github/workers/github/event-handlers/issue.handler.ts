@@ -5,10 +5,12 @@ import {
   transformGitHubIssue,
   WebhookGitHubIssue,
 } from "@plane/etl/github";
-import { ExIssue, Client as PlaneClient } from "@plane/sdk";
+import { ExIssue } from "@plane/sdk";
 import { TWorkspaceCredential } from "@plane/types";
 import { getConnectionDetails } from "@/apps/github/helpers/helpers";
 import { env } from "@/env";
+import { getPlaneAPIClient } from "@/helpers/plane-api-client";
+import { getPlaneAppDetails } from "@/helpers/plane-app-details";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { Store } from "@/worker/base";
@@ -65,6 +67,15 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
       source_access_token: data.installationId.toString(),
     });
 
+    if (!planeCredentials) {
+      logger.info("[GITHUB][ISSUE] No plane credentials found, skipping", {
+        installationId: data.installationId,
+        accountId: data.accountId,
+        repositoryId: data.repositoryId,
+      });
+      return;
+    }
+
     const { workspaceConnection, entityConnection } = await getConnectionDetails({
       accountId: data.accountId.toString(),
       credentials: planeCredentials as TWorkspaceCredential,
@@ -76,10 +87,8 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
       throw new Error("Target hostname not found");
     }
 
-    const planeClient = new PlaneClient({
-      baseURL: workspaceConnection.target_hostname,
-      apiToken: planeCredentials.target_access_token!,
-    });
+    // If the Plane GitHub App client ID or client secret is not found, return
+    const planeClient = await getPlaneAPIClient(planeCredentials, E_INTEGRATION_KEYS.GITHUB);
 
     let issue: ExIssue | null = null;
 
@@ -97,7 +106,7 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
         data.issueNumber.toString(),
         E_INTEGRATION_KEYS.GITHUB
       );
-    } catch (error) {}
+    } catch (error) { }
 
     const planeUsers = await planeClient.users.list(entityConnection.workspace_slug, entityConnection.project_id ?? "");
 

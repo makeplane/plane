@@ -24,6 +24,74 @@
     "workflows": "Flux de travail"
   },
 
+  "updates": {
+    "add_update": "Ajouter une mise à jour",
+    "add_update_placeholder": "Ajoutez votre mise à jour ici",
+    "empty": {
+      "title": "Aucune mise à jour",
+      "description": "Vous pouvez voir les mises à jour ici."
+    },
+    "delete": {
+      "title": "Supprimer la mise à jour",
+      "confirmation": "Êtes-vous sûr de vouloir supprimer cette mise à jour ? Cette action est irréversible.",
+      "success": {
+        "title": "Mise à jour supprimée",
+        "message": "La mise à jour a été supprimée avec succès."
+      },
+      "error": {
+        "title": "Mise à jour non supprimée",
+        "message": "La mise à jour n'a pas pu être supprimée."
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Réaction créée",
+          "message": "Réaction créée avec succès."
+        },
+        "error": {
+          "title": "Réaction non créée",
+          "message": "La réaction n'a pas pu être créée."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Réaction supprimée",
+          "message": "Réaction supprimée avec succès."
+        },
+        "error": {
+          "title": "Réaction non supprimée",
+          "message": "La réaction n'a pas pu être supprimée."
+        }
+      }
+    },
+    "progress": {
+      "title": "Progrès",
+      "since_last_update": "Depuis la dernière mise à jour",
+      "comments": "{count, plural, one{# commentaire} other{# commentaires}}"
+    },
+    "create": {
+      "success": {
+        "title": "Mise à jour créée",
+        "message": "Mise à jour créée avec succès."
+      },
+      "error": {
+        "title": "Mise à jour non créée",
+        "message": "La mise à jour n'a pas pu être créée."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Mise à jour mise à jour",
+        "message": "Mise à jour mise à jour avec succès."
+      },
+      "error": {
+        "title": "Mise à jour non mise à jour",
+        "message": "La mise à jour n'a pas pu être mise à jour."
+      }
+    }
+  },
+
   "issue": {
     "relation": {
       "start_before": "Commence avant",
@@ -473,7 +541,38 @@
         "app_consent_accept_1": "Accordez à l'application l'accès à vos données Plane partout où vous pouvez utiliser l'application dans ou en dehors de Plane",
         "app_consent_accept_2": "Acceptez la politique de confidentialité et les conditions d'utilisation de {app}",
         "accepting": "Acceptation en cours...",
-        "accept": "Accepter"
+        "accept": "Accepter",
+        "categories": "Catégories",
+        "select_app_categories": "Sélectionner les catégories de l'application",
+        "categories_title": "Catégories",
+        "categories_error": "Les catégories sont requises",
+        "invalid_categories_error": "Catégories invalides",
+        "categories_description": "Sélectionnez les catégories qui décrivent le mieux l'application",
+        "privacy_policy_url_title": "URL de la politique de confidentialité",
+        "privacy_policy_url_error": "La URL de la politique de confidentialité est requise",
+        "invalid_privacy_policy_url_error": "URL de la politique de confidentialité invalide",
+        "terms_of_service_url_title": "URL des conditions d'utilisation",
+        "terms_of_service_url_error": "Les conditions d'utilisation sont requises",
+        "invalid_terms_of_service_url_error": "URL des conditions d'utilisation invalide",
+        "support_url_title": "URL de support",
+        "support_url_error": "Le support est requis",
+        "invalid_support_url_error": "URL de support invalide",
+        "video_url_title": "URL de la vidéo",
+        "video_url_error": "La URL de la vidéo est requise",
+        "invalid_video_url_error": "URL de la vidéo invalide",
+        "setup_url_title": "URL de configuration",
+        "setup_url_error": "La URL de configuration est requise",
+        "invalid_setup_url_error": "URL de configuration invalide",
+        "contact_email_title": "Email de contact",
+        "contact_email_error": "L'email de contact est requis",
+        "invalid_contact_email_error": "Email de contact invalide",
+        "upload_attachments": "Télécharger des pièces jointes",
+        "uploading_images": "Téléchargement de {count} Image{count, plural, one {s} other {s}}",
+        "drop_images_here": "Glisser-déposer les images ici",
+        "click_to_upload_images": "Cliquer pour télécharger les images",
+        "invalid_file_or_exceeds_size_limit": "Fichier invalide ou dépasse la limite de taille ({size} MB)",
+        "uploading": "Téléchargement...",
+        "upload_and_save": "Télécharger et enregistrer"
       }
     }
   },
@@ -950,7 +1049,9 @@
     "installation_not_found": "L'installation demandée n'a pas pu être trouvée",
     "user_not_found": "L'utilisateur demandé n'a pas pu être trouvé",
     "error_fetching_token": "Échec de la récupération du jeton d'authentification",
-    "cannot_create_multiple_connections": "Vous avez déjà connecté votre organisation avec un espace de travail. Veuillez déconnecter la connexion existante avant de connecter une nouvelle."
+    "cannot_create_multiple_connections": "Vous avez déjà connecté votre organisation avec un espace de travail. Veuillez déconnecter la connexion existante avant de connecter une nouvelle.",
+    "invalid_app_credentials": "Les informations d'identification de l'application fournies sont invalides",
+    "invalid_app_installation_id": "Échec de l'installation de l'application"
   },
 
   "import_status": {

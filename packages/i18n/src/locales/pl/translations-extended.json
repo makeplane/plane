@@ -25,6 +25,74 @@
     "templates": "Szablony"
   },
 
+  "updates": {
+    "add_update": "Dodaj aktualizację",
+    "add_update_placeholder": "Dodaj swoją aktualizację tutaj",
+    "empty": {
+      "title": "Nie ma jeszcze aktualizacji",
+      "description": "Możesz tutaj zobaczyć aktualizacje."
+    },
+    "delete": {
+      "title": "Usuń aktualizację",
+      "confirmation": "Czy na pewno chcesz usunąć tę aktualizację? Ta operacja jest nieodwracalna.",
+      "success": {
+        "title": "Aktualizacja została usunięta",
+        "message": "Aktualizacja została pomyślnie usunięta."
+      },
+      "error": {
+        "title": "Aktualizacja nie została usunięta",
+        "message": "Nie udało się usunąć aktualizacji."
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reakcja została dodana",
+          "message": "Reakcja została pomyślnie dodana."
+        },
+        "error": {
+          "title": "Reakcja nie została dodana",
+          "message": "Nie udało się dodać reakcji."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reakcja została usunięta",
+          "message": "Reakcja została pomyślnie usunięta."
+        },
+        "error": {
+          "title": "Reakcja nie została usunięta",
+          "message": "Nie udało się usunąć reakcji."
+        }
+      }
+    },
+    "progress": {
+      "title": "Postęp",
+      "since_last_update": "Od ostatniej aktualizacji",
+      "comments": "{count, plural, one{# komentarz} other{# komentarze}}"
+    },
+    "create": {
+      "success": {
+        "title": "Aktualizacja została stworzona",
+        "message": "Aktualizacja została pomyślnie stworzona."
+      },
+      "error": {
+        "title": "Aktualizacja nie została stworzona",
+        "message": "Nie udało się stworzyć aktualizacji."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Aktualizacja została zaktualizowana",
+        "message": "Aktualizacja została pomyślnie zaktualizowana."
+      },
+      "error": {
+        "title": "Aktualizacja nie została zaktualizowana",
+        "message": "Nie udało się zaktualizować aktualizacji."
+      }
+    }
+  },
+
   "issue": {
     "relation": {
       "start_before": "Zaczyna przed",
@@ -474,7 +542,38 @@
         "app_consent_accept_1": "Udzielasz aplikacji dostępu do Twoich danych Plane wszędzie tam, gdzie możesz używać aplikacji w lub poza Plane",
         "app_consent_accept_2": "Zgadzasz się na Politykę Prywatności i Warunki Użytkowania {app}",
         "accepting": "Akceptowanie...",
-        "accept": "Akceptuj"
+        "accept": "Akceptuj",
+        "categories": "Kategorie",
+        "select_app_categories": "Wybierz kategorie aplikacji",
+        "categories_title": "Kategorie",
+        "categories_error": "Kategorie są wymagane",
+        "invalid_categories_error": "Nieprawidłowe kategorie",
+        "categories_description": "Wybierz kategorie, które najlepiej opisują aplikację",
+        "privacy_policy_url_title": "URL Polityki Prywatności",
+        "privacy_policy_url_error": "URL Polityki Prywatności jest wymagany",
+        "invalid_privacy_policy_url_error": "Nieprawidłowy URL Polityki Prywatności",
+        "terms_of_service_url_title": "URL Warunków Użytkowania",
+        "terms_of_service_url_error": "URL Warunków Użytkowania jest wymagany",
+        "invalid_terms_of_service_url_error": "Nieprawidłowy URL Warunków Użytkowania",
+        "support_url_title": "URL Obsługi",
+        "support_url_error": "URL Obsługi jest wymagany",
+        "invalid_support_url_error": "Nieprawidłowy URL Obsługi",
+        "video_url_title": "URL Filmu",
+        "video_url_error": "URL Filmu jest wymagany",
+        "invalid_video_url_error": "Nieprawidłowy URL Filmu",
+        "setup_url_title": "URL Konfiguracji",
+        "setup_url_error": "URL Konfiguracji jest wymagany",
+        "invalid_setup_url_error": "Nieprawidłowy URL Konfiguracji",
+        "contact_email_title": "Email kontaktu",
+        "contact_email_error": "Email kontaktu jest wymagany",
+        "invalid_contact_email_error": "Nieprawidłowy email kontaktu",
+        "upload_attachments": "Prześlij załączniki",
+        "uploading_images": "Przesyłanie {count} obrazu{count, plural, one {s} other {s}}",
+        "drop_images_here": "Rzucaj obrazy tutaj",
+        "click_to_upload_images": "Kliknij, aby przesłać obrazy",
+        "invalid_file_or_exceeds_size_limit": "Nieprawidłowy plik lub przekracza limit rozmiaru ({size} MB)",
+        "uploading": "Przesyłanie...",
+        "upload_and_save": "Prześlij i zapisz"
       }
     }
   },
@@ -950,7 +1049,9 @@
     "multiple_connections_found": "Znaleziono wiele połączeń, gdy oczekiwano tylko jednego",
     "installation_not_found": "Nie można znaleźć żądanej instalacji",
     "user_not_found": "Nie można znaleźć żądanego użytkownika",
-    "error_fetching_token": "Nie udało się pobrać tokenu uwierzytelniającego"
+    "error_fetching_token": "Nie udało się pobrać tokenu uwierzytelniającego",
+    "invalid_app_credentials": "Podane poświadczenia aplikacji są nieprawidłowe",
+    "invalid_app_installation_id": "Nie udało się zainstalować aplikacji"
   },
 
   "import_status": {

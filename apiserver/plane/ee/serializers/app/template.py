@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 # Module imports
 from plane.app.serializers import BaseSerializer
-from plane.ee.models import Template, WorkitemTemplate, PageTemplate, ProjectTemplate
+from plane.ee.models import Template, WorkitemTemplate, PageTemplate, ProjectTemplate, TemplateCategory
 
 
 class TemplateSerializer(BaseSerializer):
@@ -123,7 +123,7 @@ class TemplateDataSerializer(BaseSerializer):
         fields = [
             "id",
             "name",
-            "description_html",
+            "short_description",
             "template_type",
             "workspace",
             "project",
@@ -144,3 +144,9 @@ class TemplateDataSerializer(BaseSerializer):
                 return ProjectTemplateDataSerializer(obj.template_data[0]).data
 
         return {}
+
+
+class TemplateCategorySerializer(BaseSerializer):
+    class Meta:
+        model = TemplateCategory
+        fields = "__all__"

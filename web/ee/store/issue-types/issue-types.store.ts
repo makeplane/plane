@@ -723,6 +723,11 @@ export class IssueTypes implements IIssueTypesStore {
   ) => {
     if (!workspaceSlug || !projectId || !workItemId || !convertTo) return;
     try {
+      const detailStore =
+        convertTo === EWorkItemConversionType.WORK_ITEM
+          ? this.rootStore.issue.issueDetail
+          : this.rootStore.issue.epicDetail;
+
       await epicService.convertWorkItemType(workspaceSlug, projectId, workItemId, convertTo);
       runInAction(() => {
         if (convertTo === EWorkItemConversionType.WORK_ITEM) {
@@ -739,11 +744,13 @@ export class IssueTypes implements IIssueTypesStore {
           }
           // update is_epic to false
           this.rootStore.issue.issues.updateIssue(workItemId, { is_epic: false });
+          detailStore.fetchActivities(workspaceSlug, projectId, workItemId);
         } else if (convertTo === EWorkItemConversionType.EPIC) {
           this.rootStore.issue.projectIssues.removeIssueFromList(workItemId);
           this.rootStore.issue.projectEpics.addIssueToList(workItemId);
           // update is_epic to true
           this.rootStore.issue.issues.updateIssue(workItemId, { is_epic: true });
+          detailStore.fetchActivities(workspaceSlug, projectId, workItemId);
         }
       });
     } catch (error) {

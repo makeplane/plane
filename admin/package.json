@@ -10,6 +10,7 @@
     "build": "next build",
     "preview": "next build && next start",
     "start": "next start",
+    "format": "prettier --write .",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:errors": "eslint . --ext .ts,.tsx --quiet"
   },
@@ -17,6 +18,7 @@
     "@headlessui/react": "^1.7.19",
     "@plane/constants": "*",
     "@plane/hooks": "*",
+    "@plane/propel": "*",
     "@plane/services": "*",
     "@plane/types": "*",
     "@plane/ui": "*",

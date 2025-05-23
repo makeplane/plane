@@ -3,7 +3,7 @@ import React, { FC, useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
 import { TIssue, TSubIssueOperations } from "@plane/types";
 import { getButtonStyling, LayersIcon } from "@plane/ui";
 // components
@@ -119,9 +119,6 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
   useEffect(() => {
     handleFetchSubIssues();
 
-    return () => {
-      handleFetchSubIssues();
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [epicId]);
 
@@ -185,7 +182,6 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
 
   return (
     <>
-      {/* Display list when group is none */}
       <SubIssuesListRoot
         workspaceSlug={workspaceSlug}
         projectId={projectId}
@@ -196,6 +192,7 @@ export const EpicIssuesOverviewRoot: FC<Props> = observer((props) => {
         handleIssueCrudState={handleIssueCrudState}
         subIssueOperations={epicSubIssuesOperation}
         issueServiceType={EIssueServiceType.EPICS}
+        storeType={EIssuesStoreType.EPIC}
       />
 
       {shouldRenderDeleteIssueModal && (

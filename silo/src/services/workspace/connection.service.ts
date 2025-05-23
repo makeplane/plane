@@ -9,6 +9,7 @@ export class WorkspaceConnectionAPIService extends APIService {
         super(options);
     }
 
+    //TODO: Rename this to createOrUpdateWorkspaceConnection
     async createWorkspaceConnection(data: Partial<TWorkspaceConnection>): Promise<TWorkspaceConnection> {
         data = removeUndefinedFromObject(data);
         return this.post(`/api/v1/workspace-connections/`, data)

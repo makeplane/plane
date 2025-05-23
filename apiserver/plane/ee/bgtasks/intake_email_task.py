@@ -100,7 +100,7 @@ def intake_email(message):
 
         # Check if workspace has feature flag enabled
         if not check_workspace_feature_flag(
-            feature_key=FeatureFlag.INTAKE_PUBLISH, slug=workspace_slug
+            feature_key=FeatureFlag.INTAKE_EMAIL, slug=workspace_slug
         ):
             return
 

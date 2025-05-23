@@ -2,7 +2,6 @@ import pg from "pg";
 import { env } from "@/env";
 import { logger } from "@/logger";
 
-
 /**
  * Database class
  * @description This class is used to connect to the database and execute queries
@@ -16,7 +15,7 @@ class DB {
   private pool?: pg.Pool;
   private isConnected = false;
 
-  private constructor() { }
+  private constructor() {}
 
   public static getInstance(): DB {
     if (!DB.instance) {

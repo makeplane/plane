@@ -58,7 +58,7 @@ class IssueRelationQuery:
 
         # constructing the issue query
         issue_queryset = (
-            work_item_base_query(workspace_slug=slug, project_id=project)
+            work_item_base_query(workspace_slug=slug)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels")
             .filter(archived_at__isnull=True)

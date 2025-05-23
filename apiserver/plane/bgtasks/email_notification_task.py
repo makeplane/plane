@@ -309,7 +309,7 @@ def send_email_notification(
                 )
                 msg.attach_alternative(html_content, "text/html")
                 msg.send()
-                logging.getLogger("plane").info("Email Sent Successfully")
+                logging.getLogger("plane.worker").info("Email Sent Successfully")
 
                 # Update the logs
                 EmailNotificationLog.objects.filter(
@@ -325,7 +325,7 @@ def send_email_notification(
                 release_lock(lock_id=lock_id)
                 return
         else:
-            logging.getLogger("plane").info("Duplicate email received skipping")
+            logging.getLogger("plane.worker").info("Duplicate email received skipping")
             return
     except (Issue.DoesNotExist, User.DoesNotExist):
         release_lock(lock_id=lock_id)

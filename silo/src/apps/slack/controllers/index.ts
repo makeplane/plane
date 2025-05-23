@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { validate as uuidValidate } from 'uuid';
 import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
 import {
   E_SLACK_ENTITY_TYPE,
@@ -8,19 +9,19 @@ import {
   TSlackCommandPayload,
   TSlackPayload,
 } from "@plane/etl/slack";
-import { ExIssue, PlaneWebhookData, PlaneWebhookPayloadBase } from "@plane/sdk";
+import { E_PLANE_WEBHOOK_ACTION, E_PLANE_WEBHOOK_EVENT, ExIssue, PlaneWebhookData, PlaneWebhookPayloadBase } from "@plane/sdk";
 import { env } from "@/env";
 import { responseHandler } from "@/helpers/response-handler";
 import { Controller, Delete, EnsureEnabled, Get, Post, Put, useValidateUserAuthentication } from "@/lib";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { integrationTaskManager } from "@/worker";
+import { Store } from "@/worker/base";
 import { slackAuth } from "../auth/auth";
 import { getConnectionDetails, updateUserMap } from "../helpers/connection-details";
 import { ACTIONS } from "../helpers/constants";
 import { parseIssueFormData } from "../helpers/parse-issue-form";
 import { convertToSlackOptions } from "../helpers/slack-options";
-import { Store } from "@/worker/base";
 const apiClient = getAPIClient();
 
 @EnsureEnabled(E_INTEGRATION_KEYS.SLACK)
@@ -572,12 +573,10 @@ export default class SlackController {
         const workItems = await planeClient.issue.searchIssues(workspaceConnection.workspace_slug, text);
 
         const filteredWorkItems = workItems.issues
-          .map((workItem) => {
-            return {
-              id: `${workItem.workspace__slug}:${workItem.project_id}:${workItem.id}`,
-              name: `[${workItem.project__identifier}-${workItem.sequence_id}] ${workItem.name}`,
-            };
-          })
+          .map((workItem) => ({
+            id: `${workItem.workspace__slug}:${workItem.project_id}:${workItem.id}`,
+            name: `[${workItem.project__identifier}-${workItem.sequence_id}] ${workItem.name}`,
+          }))
           .sort((a, b) => a.name.localeCompare(b.name));
 
         const workItemOptions = convertToSlackOptions(filteredWorkItems);
@@ -598,10 +597,13 @@ export default class SlackController {
       const payload = req.body as PlaneWebhookData;
 
       logger.info(`[SLACK] [PLANE_EVENTS] Received payload`, {
+        headers: req.headers,
         payload: payload,
       });
 
-      if (payload.event === "issue_comment") {
+      const isUUID = (id: string | null) => id && uuidValidate(id)
+
+      if (payload.event === E_PLANE_WEBHOOK_EVENT.ISSUE_COMMENT) {
         integrationTaskManager.registerTask(
           {
             route: "plane-slack-webhook",
@@ -612,7 +614,7 @@ export default class SlackController {
         );
       }
 
-      if (payload.event === "issue" ) {
+      if (payload.event === E_PLANE_WEBHOOK_EVENT.ISSUE) {
         const payload = req.body as PlaneWebhookPayloadBase<ExIssue>;
 
         const id = payload.data.id;
@@ -620,7 +622,13 @@ export default class SlackController {
         const project = payload.data.project;
         const issue = payload.data.issue;
 
-        if (payload.action === "created") {
+        /*
+          Checking for the field is important, because from plane sometimes reactions and links are sent with
+          action as created, but when the issue is created, the field is not null.
+        */
+        const isIssueCreated = payload.action === E_PLANE_WEBHOOK_ACTION.CREATED && payload.activity.field == null;
+
+        if (isIssueCreated) {
           // Get the project entity connection
           const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
             workspace_id: workspace,
@@ -653,7 +661,7 @@ export default class SlackController {
             },
             Number(env.DEDUP_INTERVAL)
           );
-        } else if (payload.activity.field && !payload.activity.field.includes("_id")) {
+        } else if (payload.activity.field && !payload.activity.field.includes("_id") && !isUUID(payload.activity.old_value) && !isUUID(payload.activity.new_value)) {
           const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
             workspace_id: workspace,
             project_id: project,

@@ -40,13 +40,22 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
   // states
   const [activeBar, setActiveBar] = useState<string | null>(null);
   const [activeLegend, setActiveLegend] = useState<string | null>(null);
+
   // derived values
-  const stackKeys = useMemo(() => bars.map((bar) => bar.key), [bars]);
-  const stackLabels: Record<string, string> = useMemo(
-    () => bars.reduce((acc, bar) => ({ ...acc, [bar.key]: bar.label }), {}),
-    [bars]
-  );
-  const stackDotColors = useMemo(() => bars.reduce((acc, bar) => ({ ...acc, [bar.key]: bar.fill }), {}), [bars]);
+  const { stackKeys, stackLabels, stackDotColors } = useMemo(() => {
+    const keys: string[] = [];
+    const labels: Record<string, string> = {};
+    const colors: Record<string, string> = {};
+
+    for (const bar of bars) {
+      keys.push(bar.key);
+      labels[bar.key] = bar.label;
+      // For tooltip, we need a string color. If fill is a function, use a default color
+      colors[bar.key] = typeof bar.fill === "function" ? "#000000" : bar.fill;
+    }
+
+    return { stackKeys: keys, stackLabels: labels, stackDotColors: colors };
+  }, [bars]);
 
   const renderBars = useMemo(
     () =>
@@ -102,7 +111,7 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
             axisLine={false}
             label={{
               value: xAxis.label,
-              dy: 28,
+              dy: xAxis.dy ?? 28,
               className: AXIS_LABEL_CLASSNAME,
             }}
             tickCount={tickCount.x}

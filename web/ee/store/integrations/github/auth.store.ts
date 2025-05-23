@@ -9,6 +9,7 @@ import { GithubAuthorizeState, GithubUserAuthState } from "@plane/etl/github";
 // plane web services
 import { GithubAuthService } from "@/plane-web/services/integrations/github";
 // plane web store
+import { ApplicationService } from "@/plane-web/services/marketplace";
 import { IGithubStore } from "@/plane-web/store/integrations";
 // plane web types
 import { TGithubWorkspaceConnection, TGithubWorkspaceUserConnection } from "@/plane-web/types/integrations";
@@ -46,7 +47,7 @@ export class GithubAuthStore implements IGithubAuthStore {
   githubUserCredentialsMap: Record<string, Record<string, TGithubWorkspaceUserConnection>> = {}; // workspaceId -> userId -> TGithubWorkspaceUserConnection
   // service
   private service: GithubAuthService;
-
+  private applicationService: ApplicationService;
   constructor(protected store: IGithubStore) {
     makeObservable(this, {
       // observables
@@ -65,6 +66,7 @@ export class GithubAuthStore implements IGithubAuthStore {
     });
 
     this.service = new GithubAuthService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
+    this.applicationService = new ApplicationService();
   }
 
   // computed
@@ -156,12 +158,19 @@ export class GithubAuthStore implements IGithubAuthStore {
 
       if (!workspaceId || !workspaceSlug || !externalApiToken || !userId) return undefined;
 
+      // create app installation and get the installation id
+      // send installation id as well in the state payload
+      // TOOD: get the app id from backend env
+      const appDetails = await this.service.getPlaneAppDetails();
+      const appInstallation = await this.applicationService.installApplication(workspaceSlug, appDetails.appId);
+
       const payload: GithubAuthorizeState = {
         workspace_id: workspaceId,
         workspace_slug: workspaceSlug,
         plane_api_token: externalApiToken,
         target_host: targetHostname,
         user_id: userId,
+        plane_app_installation_id: appInstallation?.id,
       };
       const response = await this.service.connectOrganization(payload);
       await this.store.fetchWebhookConnection(`${SILO_BASE_PATH}/api/github/plane-webhook`);

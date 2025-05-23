@@ -13,6 +13,6 @@ export type TPageTemplateFormData = Pick<TPage, "description_html" | "id" | "log
 };
 
 export type TPageTemplateForm = {
-  template: Pick<TPageTemplate, "id" | "name" | "description_html">;
+  template: Pick<TPageTemplate, "id" | "name" | "short_description">;
   page: TPageTemplateFormData;
 };

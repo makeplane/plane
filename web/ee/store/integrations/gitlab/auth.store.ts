@@ -119,6 +119,7 @@ export class GitlabAuthStore implements IGitlabAuthStore {
         workspace_slug: workspaceSlug,
         plane_api_token: externalApiToken,
         gitlab_hostname: "gitlab.com",
+        source_hostname: "gitlab.com",
         target_host: targetHostname,
       };
       const response = await this.service.connectOrganization(payload);

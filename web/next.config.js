@@ -55,6 +55,11 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: "/:workspaceSlug/projects/:projectId/inbox",
+        destination: "/:workspaceSlug/projects/:projectId/intake",
+        permanent: true,
+      },
+      {
         source: "/accounts/sign-up",
         destination: "/sign-up",
         permanent: true,

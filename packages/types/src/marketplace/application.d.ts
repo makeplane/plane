@@ -16,6 +16,15 @@ export type TApplication = {
     redirect_uris: string;
     allowed_origins: string;
     webhook_url?: string;
+    contact_email?: string;
+    attachments: string[];
+    categories: string[];
+    attachments_urls: string[];
+    privacy_policy_url?: string;
+    terms_of_service_url?: string;
+    support_url?: string;
+    setup_url?: string;
+    video_url?: string;
     created_at: string;
 };
 
@@ -50,4 +59,10 @@ export type TApplicationPublishDetails = {
     privacy_policy_tnc_url: string;
     document_urls: string;
     photo_urls: string;
+}
+
+export type TApplicationCategory = {
+    id: string;
+    name: string;
+    description: string;
 }

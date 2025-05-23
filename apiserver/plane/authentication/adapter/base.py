@@ -18,6 +18,7 @@ from plane.bgtasks.user_activation_email_task import user_activation_email
 from plane.utils.host import base_host
 from plane.utils.ip_address import get_client_ip
 
+
 class Adapter:
     """Common interface for all auth providers"""
 

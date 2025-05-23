@@ -405,3 +405,73 @@ export const generateDateArray = (startDate: string | Date, endDate: string | Da
 
   return dateArray;
 };
+
+/**
+ * Processes relative date strings like "1_weeks", "2_months" etc and returns a Date
+ * @param value The relative date string (e.g., "1_weeks", "2_months")
+ * @returns Date object representing the calculated date
+ */
+export const processRelativeDate = (value: string): Date => {
+  const [amountStr, unit] = value.split("_");
+  const amount = parseInt(amountStr, 10);
+  if (isNaN(amount)) {
+    throw new Error(`Invalid relative amount: ${amountStr}`);
+  }
+  const date = new Date();
+
+  switch (unit) {
+    case "days":
+      date.setDate(date.getDate() + amount);
+      break;
+    case "weeks":
+      date.setDate(date.getDate() + amount * 7);
+      break;
+    case "months":
+      date.setMonth(date.getMonth() + amount);
+      break;
+    default:
+      throw new Error(`Unsupported time unit: ${unit}`);
+  }
+
+  return date;
+};
+
+/**
+ * Parses a date filter string and returns the comparison type and date
+ * @param filterValue The date filter string (e.g., "1_weeks;after;fromnow" or "2024-12-01;after")
+ * @returns Object containing the comparison type and target date
+ */
+export const parseDateFilter = (filterValue: string): { type: "after" | "before"; date: Date } => {
+  const parts = filterValue.split(";");
+  const dateStr = parts[0];
+  const type = parts[1] as "after" | "before";
+
+  let date: Date;
+  if (dateStr.includes("_")) {
+    // Handle relative dates (e.g., "1_weeks;after;fromnow")
+    date = processRelativeDate(dateStr);
+  } else {
+    // Handle absolute dates (e.g., "2024-12-01;after")
+    date = new Date(dateStr);
+  }
+
+  return { type, date };
+};
+
+/**
+ * Checks if a date meets the filter criteria
+ * @param dateToCheck The date to check
+ * @param filterDate The filter date to compare against
+ * @param type The type of comparison ('after' or 'before')
+ * @returns boolean indicating if the date meets the criteria
+ */
+export const checkDateCriteria = (dateToCheck: Date | null, filterDate: Date, type: "after" | "before"): boolean => {
+  if (!dateToCheck) return false;
+
+  const checkDate = new Date(dateToCheck);
+  const normalizedCheck = new Date(checkDate.setHours(0, 0, 0, 0));
+  const normalizedFilter = new Date(filterDate.getTime());
+  normalizedFilter.setHours(0, 0, 0, 0);
+
+  return type === "after" ? normalizedCheck >= normalizedFilter : normalizedCheck <= normalizedFilter;
+};

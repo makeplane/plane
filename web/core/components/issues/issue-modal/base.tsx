@@ -358,7 +358,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       else {
         // if the issue is being converted, handle the conversion
         if (isConversionOperation) handleConvert(workspaceSlug.toString(), data);
-        response = await handleUpdateIssue(payload);
+        response = await handleUpdateIssue(payload, !isConversionOperation);
       }
     } catch (error) {
       console.error(error);
@@ -404,7 +404,6 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   return (
     <ModalCore
       isOpen={isOpen}
-      handleClose={() => handleClose(true)}
       position={EModalPosition.TOP}
       width={isDuplicateModalOpen ? EModalWidth.VIXL : EModalWidth.XXXXL}
       className="!bg-transparent rounded-lg shadow-none transition-[width] ease-linear"

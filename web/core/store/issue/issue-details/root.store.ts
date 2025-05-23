@@ -7,8 +7,8 @@ import {
   TIssueCommentReaction,
   TIssueLink,
   TIssueReaction,
-  TIssueDetailWidget,
   TIssueServiceType,
+  TWorkItemWidgets,
 } from "@plane/types";
 // plane web store
 import {
@@ -70,8 +70,8 @@ export interface IIssueDetail
   relationKey: TIssueRelationTypes | null;
   issueLinkData: TIssueLink | null;
   issueCrudOperationState: TIssueCrudOperationState;
-  openWidgets: TIssueDetailWidget[];
-  lastWidgetAction: TIssueDetailWidget | null;
+  openWidgets: TWorkItemWidgets[];
+  lastWidgetAction: TWorkItemWidgets | null;
   isCreateIssueModalOpen: boolean;
   isIssueLinkModalOpen: boolean;
   isParentIssueModalOpen: string | null;
@@ -82,6 +82,7 @@ export interface IIssueDetail
   attachmentDeleteModalId: string | null;
   isWorkItemToEpicModalOpen: string | null;
   isEpicToWorkItemModalOpen: string | null;
+  isConversionWarningModalOpen: string | null;
   // computed
   isAnyModalOpen: boolean;
   // helper actions
@@ -97,13 +98,14 @@ export interface IIssueDetail
   toggleRelationModal: (issueId: string | null, relationType: TIssueRelationTypes | null) => void;
   toggleSubIssuesModal: (value: string | null) => void;
   toggleDeleteAttachmentModal: (attachmentId: string | null) => void;
-  setOpenWidgets: (state: TIssueDetailWidget[]) => void;
-  setLastWidgetAction: (action: TIssueDetailWidget) => void;
-  toggleOpenWidget: (state: TIssueDetailWidget) => void;
+  setOpenWidgets: (state: TWorkItemWidgets[]) => void;
+  setLastWidgetAction: (action: TWorkItemWidgets) => void;
+  toggleOpenWidget: (state: TWorkItemWidgets) => void;
   setRelationKey: (relationKey: TIssueRelationTypes | null) => void;
   setIssueCrudOperationState: (state: TIssueCrudOperationState) => void;
   toggleWorkItemToEpicModal: (value: string | null) => void;
   toggleEpicToWorkItemModal: (value: string | null) => void;
+  toggleConversionWarningModal: (value: string | null) => void;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -135,8 +137,8 @@ export class IssueDetail implements IIssueDetail {
       issue: undefined,
     },
   };
-  openWidgets: TIssueDetailWidget[] = ["sub-issues", "links", "attachments"];
-  lastWidgetAction: TIssueDetailWidget | null = null;
+  openWidgets: TWorkItemWidgets[] = ["sub-work-items", "links", "attachments"];
+  lastWidgetAction: TWorkItemWidgets | null = null;
   isCreateIssueModalOpen: boolean = false;
   isIssueLinkModalOpen: boolean = false;
   isParentIssueModalOpen: string | null = null;
@@ -147,6 +149,7 @@ export class IssueDetail implements IIssueDetail {
   attachmentDeleteModalId: string | null = null;
   isWorkItemToEpicModalOpen: string | null = null;
   isEpicToWorkItemModalOpen: string | null = null;
+  isConversionWarningModalOpen: string | null = null;
   // service type
   serviceType: TIssueServiceType;
   // store
@@ -181,6 +184,7 @@ export class IssueDetail implements IIssueDetail {
       lastWidgetAction: observable.ref,
       isWorkItemToEpicModalOpen: observable.ref,
       isEpicToWorkItemModalOpen: observable.ref,
+      isConversionWarningModalOpen: observable.ref,
       // computed
       isAnyModalOpen: computed,
       // action
@@ -201,6 +205,7 @@ export class IssueDetail implements IIssueDetail {
       toggleOpenWidget: action,
       setRelationKey: action,
       setIssueCrudOperationState: action,
+      toggleConversionWarningModal: action,
     });
 
     // store
@@ -230,7 +235,8 @@ export class IssueDetail implements IIssueDetail {
       !!this.isSubIssuesModalOpen ||
       !!this.attachmentDeleteModalId ||
       !!this.isWorkItemToEpicModalOpen ||
-      !!this.isEpicToWorkItemModalOpen
+      !!this.isEpicToWorkItemModalOpen ||
+      !!this.isConversionWarningModalOpen
     );
   }
 
@@ -250,14 +256,14 @@ export class IssueDetail implements IIssueDetail {
     (this.isRelationModalOpen = { issueId, relationType });
   toggleSubIssuesModal = (issueId: string | null) => (this.isSubIssuesModalOpen = issueId);
   toggleDeleteAttachmentModal = (attachmentId: string | null) => (this.attachmentDeleteModalId = attachmentId);
-  setOpenWidgets = (state: TIssueDetailWidget[]) => {
+  setOpenWidgets = (state: TWorkItemWidgets[]) => {
     this.openWidgets = state;
     if (this.lastWidgetAction) this.lastWidgetAction = null;
   };
-  setLastWidgetAction = (action: TIssueDetailWidget) => {
+  setLastWidgetAction = (action: TWorkItemWidgets) => {
     this.openWidgets = [action];
   };
-  toggleOpenWidget = (state: TIssueDetailWidget) => {
+  toggleOpenWidget = (state: TWorkItemWidgets) => {
     if (this.openWidgets && this.openWidgets.includes(state))
       this.openWidgets = this.openWidgets.filter((s) => s !== state);
     else this.openWidgets = [state, ...this.openWidgets];
@@ -265,6 +271,7 @@ export class IssueDetail implements IIssueDetail {
   setIssueLinkData = (issueLinkData: TIssueLink | null) => (this.issueLinkData = issueLinkData);
   toggleWorkItemToEpicModal = (value: string | null) => (this.isWorkItemToEpicModalOpen = value);
   toggleEpicToWorkItemModal = (value: string | null) => (this.isEpicToWorkItemModalOpen = value);
+  toggleConversionWarningModal = (value: string | null) => (this.isConversionWarningModalOpen = value);
   // issue
   fetchIssue = async (
     workspaceSlug: string,

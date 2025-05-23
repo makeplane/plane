@@ -11,6 +11,8 @@ import { getConnectionDetails } from "@/apps/github/helpers/helpers";
 import { GithubEntityConnection } from "@/apps/github/types";
 
 import { env } from "@/env";
+import { getPlaneAPIClient } from "@/helpers/plane-api-client";
+import { getPlaneAppDetails } from "@/helpers/plane-app-details";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { Store } from "@/worker/base";
@@ -70,10 +72,7 @@ export const syncCommentWithPlane = async (
 
   if (!entityConnection) return;
 
-  const planeClient = new PlaneClient({
-    apiToken: planeCredentials.target_access_token!,
-    baseURL: workspaceConnection.target_hostname,
-  });
+  const planeClient = await getPlaneAPIClient(planeCredentials, E_INTEGRATION_KEYS.GITHUB);
 
   const ghService = createGithubService(env.GITHUB_APP_ID, env.GITHUB_PRIVATE_KEY, data.installation.id.toString());
   const commentHtml = await ghService.getCommentHtml(
@@ -104,7 +103,7 @@ export const syncCommentWithPlane = async (
       data.comment.id.toString(),
       E_INTEGRATION_KEYS.GITHUB
     );
-  } catch (error) {}
+  } catch (error) { }
 
   const planeComment = await transformGitHubComment(
     data.comment as unknown as WebhookGitHubComment,

@@ -25,6 +25,74 @@
     "templates": "템플릿"
   },
 
+  "updates": {
+    "add_update": "업데이트 추가",
+    "add_update_placeholder": "여기에 업데이트를 입력하세요",
+    "empty": {
+      "title": "아직 업데이트가 없습니다",
+      "description": "여기에서 업데이트를 확인할 수 있습니다."
+    },
+    "delete": {
+      "title": "업데이트 삭제",
+      "confirmation": "이 업데이트를 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.",
+      "success": {
+        "title": "업데이트가 삭제되었습니다",
+        "message": "업데이트가 성공적으로 삭제되었습니다."
+      },
+      "error": {
+        "title": "업데이트 삭제 실패",
+        "message": "업데이트를 삭제할 수 없습니다."
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "반응이 생성되었습니다",
+          "message": "반응이 성공적으로 생성되었습니다."
+        },
+        "error": {
+          "title": "반응 생성 실패",
+          "message": "반응을 생성할 수 없습니다."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "반응이 삭제되었습니다",
+          "message": "반응이 성공적으로 삭제되었습니다."
+        },
+        "error": {
+          "title": "반응 삭제 실패",
+          "message": "반응을 삭제할 수 없습니다."
+        }
+      }
+    },
+    "progress": {
+      "title": "진행 상태",
+      "since_last_update": "마지막 업데이트부터",
+      "comments": "{count, plural, one{# 댓글} other{# 댓글}}"
+    },
+    "create": {
+      "success": {
+        "title": "업데이트가 생성되었습니다",
+        "message": "업데이트가 성공적으로 생성되었습니다."
+      },
+      "error": {
+        "title": "업데이트 생성 실패",
+        "message": "업데이트를 생성할 수 없습니다."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "업데이트가 업데이트되었습니다",
+        "message": "업데이트가 성공적으로 업데이트되었습니다."
+      },
+      "error": {
+        "title": "업데이트 업데이트 실패",
+        "message": "업데이트를 업데이트할 수 없습니다."
+      }
+    }
+  },
+
   "issue": {
     "relation": {
       "start_before": "시작 이전",
@@ -474,7 +542,38 @@
         "app_consent_accept_1": "앱이 Plane 내부 또는 외부에서 사용할 수 있는 곳에서 귀하의 Plane 데이터에 접근할 수 있도록 허용합니다",
         "app_consent_accept_2": "{app}의 개인정보 보호정책 및 이용 약관에 동의합니다",
         "accepting": "수락 중...",
-        "accept": "수락"
+        "accept": "수락",
+        "categories": "카테고리",
+        "select_app_categories": "앱 카테고리 선택",
+        "categories_title": "카테고리",
+        "categories_error": "카테고리는 필수입니다",
+        "invalid_categories_error": "유효하지 않은 카테고리",
+        "categories_description": "앱을 가장 잘 설명하는 카테고리를 선택하세요",
+        "privacy_policy_url_title": "개인정보 보호 정책 URL",
+        "privacy_policy_url_error": "개인정보 보호 정책 URL은 필수입니다",
+        "invalid_privacy_policy_url_error": "유효하지 않은 개인정보 보호 정책 URL",
+        "terms_of_service_url_title": "이용 약관 URL",
+        "terms_of_service_url_error": "이용 약관 URL은 필수입니다",
+        "invalid_terms_of_service_url_error": "유효하지 않은 이용 약관 URL",
+        "support_url_title": "지원 URL",
+        "support_url_error": "지원 URL은 필수입니다",
+        "invalid_support_url_error": "유효하지 않은 지원 URL",
+        "video_url_title": "비디오 URL",
+        "video_url_error": "비디오 URL은 필수입니다",
+        "invalid_video_url_error": "유효하지 않은 비디오 URL",
+        "setup_url_title": "설정 URL",
+        "setup_url_error": "설정 URL은 필수입니다",
+        "invalid_setup_url_error": "유효하지 않은 설정 URL",
+        "contact_email_title": "연락처 이메일",
+        "contact_email_error": "연락처 이메일은 필수입니다",
+        "invalid_contact_email_error": "유효하지 않은 연락처 이메일",
+        "upload_attachments": "첨부 파일 업로드",
+        "uploading_images": "업로드 중 {count} 이미지{count, plural, one {s} other {s}}",
+        "drop_images_here": "이미지를 여기에 놓으세요",
+        "click_to_upload_images": "이미지를 클릭하여 업로드",
+        "invalid_file_or_exceeds_size_limit": "유효하지 않은 파일 또는 크기 제한 초과 ({size} MB)",
+        "uploading": "업로드 중...",
+        "upload_and_save": "업로드 및 저장"
       }
     }
   },
@@ -950,7 +1049,9 @@
     "multiple_connections_found": "하나만 예상했을 때 여러 연결이 발견되었습니다",
     "installation_not_found": "요청한 인스톨레이션을 찾을 수 없습니다",
     "user_not_found": "요청한 사용자를 찾을 수 없습니다",
-    "error_fetching_token": "인증 토큰 가져오기에 실패했습니다"
+    "error_fetching_token": "인증 토큰 가져오기에 실패했습니다",
+    "invalid_app_credentials": "제공된 앱 자격 증명이 유효하지 않습니다",
+    "invalid_app_installation_id": "앱 설치에 실패했습니다"
   },
 
   "import_status": {

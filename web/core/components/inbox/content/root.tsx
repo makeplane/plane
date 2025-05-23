@@ -45,7 +45,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
 
   useEffect(() => {
     if (!isIssueAvailable && inboxIssueId && !isNotificationEmbed) {
-      router.replace(`/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}`);
+      router.replace(`/${workspaceSlug}/projects/${projectId}/intake?currentTab=${currentTab}`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isIssueAvailable, isNotificationEmbed]);

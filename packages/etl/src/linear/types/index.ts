@@ -10,8 +10,10 @@ import {
   WorkflowState,
   Organization,
   Project,
+  Document,
 } from "@linear/sdk";
-import { ExProject, ExState } from "@plane/sdk";
+import { Client, ExProject, ExState } from "@plane/sdk";
+import { LinearService } from "../services";
 
 export type LinearAuthState = {
   workspaceId: string;
@@ -24,6 +26,12 @@ export type LinearAuthPayload = {
   state: string;
   code: string;
 };
+
+export enum E_LinearDocsMigratorStep {
+  PULL = "pull",
+  TRANSFORM = "transform",
+  PUSH = "push",
+}
 
 export type LinearAuthProps = {
   clientId: string;
@@ -50,7 +58,7 @@ export interface LinearConfig {
   // plane properties
   planeProject: ExProject;
   state: IStateConfig[];
-  skipUserImport: boolean
+  skipUserImport: boolean;
 }
 
 export interface IStateConfig {
@@ -75,6 +83,16 @@ export interface LinearEntity {
   labels: IssueLabel[];
 }
 
+export interface LinearDocumentEntity {
+  documents: Document[];
+}
+
+export interface LinearDocumentEntity {
+  documents: Document[];
+}
+
+export type LinearDocument = Document;
+
 export type LinearCycle = {
   cycle: Cycle;
   issues: Issue[];
@@ -85,16 +103,28 @@ export type LinearProject = {
   issues: Issue[];
 };
 
+export type LinearContentParserConfig = {
+  planeClient: Client;
+  linearService: LinearService;
+  workspaceSlug: string;
+  projectId: string;
+  fileDownloadHeaders: Record<string, string>;
+  apiBaseUrl: string;
+  appBaseUrl?: string;
+  userMap: Map<string, string>;
+};
+
 export type LinearComment = Comment & { issue_id: string; user_id: string };
 export type LinearIssueAttachment = Attachment & { issue_id: string };
 
-export type {
-  Team as LinearTeam,
-  WorkflowState as LinearState,
-  Organization as LinearOrganization,
-};
+export type { Team as LinearTeam, WorkflowState as LinearState, Organization as LinearOrganization };
 
 // Define the Linear migrator class
 export type TLinearIssueWithChildren = Issue & {
   children?: TLinearIssueWithChildren[];
 };
+
+export enum E_LINEAR_IMPORT_PHASE {
+  ISSUES = "issues",
+  PAGES = "pages",
+}

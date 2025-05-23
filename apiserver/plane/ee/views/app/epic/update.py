@@ -14,6 +14,7 @@ from plane.ee.serializers import UpdatesSerializer, UpdateReactionSerializer
 from plane.db.models import Workspace, Issue
 from plane.ee.views.base import BaseAPIView
 from plane.ee.models import EntityUpdates, UpdateReaction, EntityTypeEnum
+from plane.ee.utils.nested_issue_children import get_all_related_issues
 
 
 class EpicsUpdateViewSet(BaseAPIView):
@@ -28,9 +29,11 @@ class EpicsUpdateViewSet(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id, epic_id):
         workspace = Workspace.objects.get(slug=slug)
-        sub_issues = Issue.objects.filter(
-            workspace__slug=slug, parent_id=epic_id
-        ).aggregate(
+        issue_ids = get_all_related_issues(epic_id)
+
+        sub_issues = Issue.objects.filter(id__in=issue_ids, workspace__slug=slug)
+
+        sub_issues = sub_issues.aggregate(
             total_sub_issues=Count("id"),
             completed_sub_issues=Count("id", filter=Q(state__group="completed")),
             cancelled_sub_issues=Count("id", filter=Q(state__group="cancelled")),

@@ -22,6 +22,74 @@
     "workflows": "Flussi di lavoro"
   },
 
+  "updates": {
+    "add_update": "Aggiungi aggiornamento",
+    "add_update_placeholder": "Scrivi il tuo aggiornamento qui",
+    "empty": {
+      "title": "Nessun aggiornamento",
+      "description": "Puoi vedere gli aggiornamenti qui."
+    },
+    "delete": {
+      "title": "Elimina aggiornamento",
+      "confirmation": "Sei sicuro di voler eliminare questo aggiornamento? Questa azione è irreversibile.",
+      "success": {
+        "title": "Aggiornamento eliminato",
+        "message": "L'aggiornamento è stato eliminato con successo."
+      },
+      "error": {
+        "title": "Aggiornamento non eliminato",
+        "message": "L'aggiornamento non può essere eliminato."
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reazione creata",
+          "message": "Reazione creata con successo."
+        },
+        "error": {
+          "title": "Reazione non creata",
+          "message": "La reazione non può essere creata."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reazione eliminata",
+          "message": "Reazione eliminata con successo."
+        },
+        "error": {
+          "title": "Reazione non eliminata",
+          "message": "La reazione non può essere eliminata."
+        }
+      }
+    },
+    "progress": {
+      "title": "Progresso",
+      "since_last_update": "Dal ultimo aggiornamento",
+      "comments": "{count, plural, one {# commento} other {# commenti}}"
+    },
+    "create": {
+      "success": {
+        "title": "Aggiornamento creato",
+        "message": "Aggiornamento creato con successo."
+      },
+      "error": {
+        "title": "Aggiornamento non creato",
+        "message": "L'aggiornamento non può essere creato."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Aggiornamento aggiornato",
+        "message": "Aggiornamento aggiornato con successo."
+      },
+      "error": {
+        "title": "Aggiornamento non aggiornato",
+        "message": "L'aggiornamento non può essere aggiornato."
+      }
+    }
+  },
+
   "issue": {
     "relation": {
       "start_before": "Inizia prima",
@@ -471,7 +539,38 @@
         "app_consent_accept_1": "Concedi all'app l'accesso ai tuoi dati Plane ovunque tu possa utilizzare l'app dentro o fuori Plane",
         "app_consent_accept_2": "Accetti la Privacy Policy e i Termini d'Uso di {app}",
         "accepting": "Accettazione in corso...",
-        "accept": "Accetta"
+        "accept": "Accetta",
+        "categories": "Categorie",
+        "select_app_categories": "Seleziona categorie di app",
+        "categories_title": "Categorie",
+        "categories_error": "Le categorie sono obbligatorie",
+        "invalid_categories_error": "Categorie non valide",
+        "categories_description": "Seleziona le categorie che meglio descrivono l'app",
+        "privacy_policy_url_title": "URL della Privacy Policy",
+        "privacy_policy_url_error": "La URL della Privacy Policy è obbligatoria",
+        "invalid_privacy_policy_url_error": "URL della Privacy Policy non valido",
+        "terms_of_service_url_title": "URL dei Termini di Servizio",
+        "terms_of_service_url_error": "I Termini di Servizio sono obbligatori",
+        "invalid_terms_of_service_url_error": "URL dei Termini di Servizio non valido",
+        "support_url_title": "URL di Supporto",
+        "support_url_error": "L'URL di supporto è obbligatorio",
+        "invalid_support_url_error": "URL di supporto non valido",
+        "video_url_title": "URL del Video",
+        "video_url_error": "Il URL del video è obbligatorio",
+        "invalid_video_url_error": "URL del video non valido",
+        "setup_url_title": "URL di Setup",
+        "setup_url_error": "Il URL di setup è obbligatorio",
+        "invalid_setup_url_error": "URL di setup non valido",
+        "contact_email_title": "Email di contatto",
+        "contact_email_error": "L'email di contatto è obbligatoria",
+        "invalid_contact_email_error": "Email di contatto non valida",
+        "upload_attachments": "Carica allegati",
+        "uploading_images": "Caricamento di {count} Immagine{count, plural, one {s} other {s}}",
+        "drop_images_here": "Rilascia le immagini qui",
+        "click_to_upload_images": "Clicca per caricare le immagini",
+        "invalid_file_or_exceeds_size_limit": "File non valido o supera il limite di dimensione ({size} MB)",
+        "uploading": "Caricamento...",
+        "upload_and_save": "Carica e salva"
       }
     }
   },
@@ -948,7 +1047,9 @@
     "installation_not_found": "L'installazione richiesta non è stata trovata",
     "user_not_found": "L'utente richiesto non è stato trovato",
     "error_fetching_token": "Impossibile ottenere il token di autenticazione",
-    "cannot_create_multiple_connections": "Hai già connesso la tua organizzazione con uno spazio di lavoro. Per favore disconnetti la connessione esistente prima di connettere una nuova."
+    "cannot_create_multiple_connections": "Hai già connesso la tua organizzazione con uno spazio di lavoro. Per favore disconnetti la connessione esistente prima di connettere una nuova.",
+    "invalid_app_credentials": "Le credenziali dell'app fornite non sono valide",
+    "invalid_app_installation_id": "Impossibile installare l'app"
   },
 
   "import_status": {

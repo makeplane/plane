@@ -14,6 +14,7 @@ import {
   ExModule,
   ExIssueType,
   ExIssuePropertyOption,
+  ExPage,
 } from "@plane/sdk";
 
 export type TServiceCredentials = {
@@ -53,6 +54,7 @@ export enum E_INTEGRATION_KEYS {
   GITHUB = "GITHUB",
   GITLAB = "GITLAB",
   SLACK = "SLACK",
+  PRD_AGENT = "PRD_AGENT",
 }
 export type TIntegrationKeys = keyof typeof E_INTEGRATION_KEYS;
 
@@ -60,6 +62,14 @@ export enum E_ENTITY_CONNECTION_KEYS {
   SLACK_USER = "SLACK-USER",
   GITHUB_USER = "GITHUB-USER",
   GITLAB_USER = "GITLAB-USER",
+  PRD_AGENT_USER = "PRD_AGENT-USER",
+}
+
+export enum E_INTEGRATION_ENTITY_CONNECTION_MAP {
+  GITHUB = E_ENTITY_CONNECTION_KEYS.GITHUB_USER,
+  GITLAB = E_ENTITY_CONNECTION_KEYS.GITLAB_USER,
+  SLACK = E_ENTITY_CONNECTION_KEYS.SLACK_USER,
+  PRD_AGENT = E_ENTITY_CONNECTION_KEYS.PRD_AGENT_USER,
 }
 
 export type TEntityConnectionKeys = keyof typeof E_ENTITY_CONNECTION_KEYS;
@@ -109,4 +119,8 @@ export type PlaneEntities = {
   issue_properties?: Partial<ExIssueProperty>[];
   issue_property_options?: Partial<ExIssuePropertyOption>[];
   issue_property_values?: TIssuePropertyValuesPayload;
+};
+
+export type PlanePageEntity = {
+  pages: Partial<ExPage>[];
 };

@@ -32,11 +32,28 @@ class Template(WorkspaceBaseModel):
     )
     is_published = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
-    categories = models.JSONField(default=dict)
+    categories = models.ManyToManyField(
+        "ee.TemplateCategory",
+        related_name="templates",
+        blank=True,
+    )
     company_name = models.CharField(max_length=255, blank=True)
     supported_languages = models.JSONField(default=dict)
     support = models.JSONField(default=dict)
     resources = models.JSONField(default=dict)
+    attachments = models.ManyToManyField(
+        "db.FileAsset",
+        related_name="templates",
+        through="ee.TemplateAttachment",
+        blank=True,
+    )
+    short_description = models.TextField(blank=True, null=True)
+    privacy_policy_url = models.URLField(max_length=800, null=True, blank=True)
+    terms_of_service_url = models.URLField(max_length=800, null=True, blank=True)
+    contact_email = models.EmailField(max_length=255, null=True, blank=True)
+    support_url = models.URLField(max_length=800, null=True, blank=True)
+    video_url = models.URLField(max_length=800, null=True, blank=True)
+    keywords = models.JSONField(default=list)
 
     class Meta:
         db_table = "templates"
@@ -52,6 +69,37 @@ class Template(WorkspaceBaseModel):
             else strip_tags(self.description_html)
         )
         super(Template, self).save(*args, **kwargs)
+
+
+class TemplateAttachment(BaseModel):
+    template = models.ForeignKey(
+        "ee.Template",
+        on_delete=models.CASCADE,
+        related_name="template_attachments",
+    )
+    file_asset = models.ForeignKey(
+        "db.FileAsset",
+        on_delete=models.CASCADE,
+        related_name="template_attachments",
+    )
+
+    class Meta:
+        db_table = "template_attachments"
+        verbose_name = "Template Attachment"
+        verbose_name_plural = "Template Attachments"
+        ordering = ("-created_at",)
+
+
+class TemplateCategory(BaseModel):
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField(blank=True)
+    logo_props = models.JSONField(default=dict)
+
+    class Meta:
+        db_table = "template_categories"
+        verbose_name = "Template Category"
+        verbose_name_plural = "Template Categories"
+        ordering = ("-created_at",)
 
 
 class WorkitemTemplate(WorkspaceBaseModel):
@@ -409,7 +457,7 @@ class WorkitemState(PydanticBaseModel):
     name: str = Field(..., max_length=255)
     description: Optional[str] = Field("", max_length=255)
     color: str = Field(..., max_length=255)
-    sequence: int
+    sequence: float
     default: bool = False
     group: str = Field(..., max_length=255)
 

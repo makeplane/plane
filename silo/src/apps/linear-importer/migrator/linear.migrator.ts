@@ -3,19 +3,22 @@ import { PlaneEntities } from "@plane/etl/core";
 import {
   pullComments,
   pullCycles,
-  pullIssues,
   pullLabels,
   pullProjects,
   pullUsers,
   TLinearIssueWithChildren,
   LinearConfig,
   LinearEntity,
+  pullIssues,
+  E_LinearDocsMigratorStep,
+  E_LINEAR_IMPORT_PHASE,
 } from "@plane/etl/linear";
 import { TImportJob } from "@plane/types";
 import { env } from "@/env";
 import { BaseDataMigrator } from "@/etl/base-import-worker";
 import { getRandomColor } from "@/helpers/generic-helpers";
 import { getJobCredentials, getJobData, resetJobIfStarted, updateJobWithReport } from "@/helpers/job";
+import { importTaskManger } from "@/worker";
 import { MQ, Store } from "@/worker/base";
 import { TBatch } from "@/worker/types";
 import { createLinearClient, filterCyclesForIssues } from "../helpers/migration-helpers";
@@ -233,6 +236,24 @@ export class LinearDataMigrator extends BaseDataMigrator<LinearConfig, LinearEnt
     }
 
     return finalBatches;
+  }
+
+  async markJobAsFinished(jobId: string, data: any): Promise<void> {
+    const phase = data.phase;
+
+    if (phase === E_LINEAR_IMPORT_PHASE.ISSUES) {
+      // Dispatch docs importer job
+      await importTaskManger.registerTask(
+        {
+          route: "linear_docs",
+          jobId: jobId,
+          type: E_LinearDocsMigratorStep.PULL,
+        },
+        {}
+      );
+    } else if (phase === E_LINEAR_IMPORT_PHASE.PAGES) {
+      await super.markJobAsFinished(jobId, data);
+    }
   }
 }
 

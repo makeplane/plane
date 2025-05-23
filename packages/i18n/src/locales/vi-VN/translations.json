@@ -367,12 +367,12 @@
   "work_management": "Quản lý công việc",
   "projects_and_issues": "Dự án và mục công việc",
   "projects_and_issues_description": "Bật hoặc tắt các tính năng này trong dự án này. Có thể thay đổi theo thời gian phù hợp với nhu cầu.",
-  "cycles_description": "Thiết lập khung thời gian cho dự án theo nhu cầu, có thể thay đổi tần suất theo các khoảng thời gian khác nhau.",
-  "modules_description": "Nhóm công việc thành cấu trúc giống như các dự án con, với người phụ trách và người được phân công riêng.",
-  "views_description": "Lưu các tùy chọn sắp xếp, lọc và hiển thị để sử dụng hoặc chia sẻ sau này.",
-  "pages_description": "Viết bất cứ thứ gì giống như viết bất cứ thứ gì.",
-  "intake_description": "Cập nhật những mục công việc bạn đã đăng ký. Bật tính năng này để nhận thông báo.",
-  "time_tracking_description": "Theo dõi thời gian dành cho mục công việc và dự án.",
+  "cycles_description": "Thiết lập thời gian làm việc theo dự án và điều chỉnh thời gian nếu cần. Một chu kỳ có thể là 2 tuần, chu kỳ tiếp theo là 1 tuần.",
+  "modules_description": "Tổ chức công việc thành các dự án con với người lãnh đạo và người được phân công riêng.",
+  "views_description": "Lưu các tùy chọn sắp xếp, lọc và hiển thị tùy chỉnh hoặc chia sẻ chúng với nhóm của bạn.",
+  "pages_description": "Tạo và chỉnh sửa nội dung tự do: ghi chú, tài liệu, bất cứ thứ gì.",
+  "intake_description": "Cho phép người không phải thành viên chia sẻ lỗi, phản hồi và đề xuất mà không làm gián đoạn quy trình làm việc của bạn.",
+  "time_tracking_description": "Ghi lại thời gian dành cho các mục công việc và dự án.",
   "work_management_description": "Quản lý công việc và dự án của bạn một cách dễ dàng.",
   "documentation": "Tài liệu",
   "message_support": "Liên hệ hỗ trợ",
@@ -504,7 +504,6 @@
   "new_password_must_be_different_from_old_password": "Mật khẩu mới phải khác mật khẩu cũ",
   "edited": "đã chỉnh sửa",
   "bot": "bot",
-
   "project_view": {
     "sort_by": {
       "created_at": "Thời gian tạo",
@@ -1315,7 +1314,38 @@
           }
         }
       }
-    }
+    },
+    "empty_state_v2": {
+      "customized_insights": {
+        "description": "Các hạng mục công việc được giao cho bạn, phân loại theo trạng thái, sẽ hiển thị tại đây.",
+        "title": "Chưa có dữ liệu"
+      },
+      "created_vs_resolved": {
+        "description": "Các hạng mục công việc được tạo và giải quyết theo thời gian sẽ hiển thị tại đây.",
+        "title": "Chưa có dữ liệu"
+      },
+      "project_insights": {
+        "title": "Chưa có dữ liệu",
+        "description": "Các hạng mục công việc được giao cho bạn, phân loại theo trạng thái, sẽ hiển thị tại đây."
+      }
+    },
+    "created_vs_resolved": "Đã tạo vs Đã giải quyết",
+    "customized_insights": "Thông tin chi tiết tùy chỉnh",
+    "backlog_work_items": "Các hạng mục công việc tồn đọng",
+    "active_projects": "Dự án đang hoạt động",
+    "trend_on_charts": "Xu hướng trên biểu đồ",
+    "all_projects": "Tất cả dự án",
+    "summary_of_projects": "Tóm tắt dự án",
+    "project_insights": "Thông tin chi tiết dự án",
+    "started_work_items": "Hạng mục công việc đã bắt đầu",
+    "total_work_items": "Tổng số hạng mục công việc",
+    "total_projects": "Tổng số dự án",
+    "total_admins": "Tổng số quản trị viên",
+    "total_users": "Tổng số người dùng",
+    "total_intake": "Tổng thu",
+    "un_started_work_items": "Hạng mục công việc chưa bắt đầu",
+    "total_guests": "Tổng số khách",
+    "completed_work_items": "Hạng mục công việc đã hoàn thành"
   },
   "workspace_projects": {
     "label": "{count, plural, one {dự án} other {dự án}}",
@@ -2405,17 +2435,14 @@
       "manual": "Thủ công"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {chu kỳ} other {chu kỳ}}",
     "no_cycle": "Không có chu kỳ"
   },
-
   "module": {
     "label": "{count, plural, one {mô-đun} other {mô-đun}}",
     "no_module": "Không có mô-đun"
   },
-
   "description_versions": {
     "last_edited_by": "Chỉnh sửa lần cuối bởi",
     "previously_edited_by": "Trước đây được chỉnh sửa bởi",

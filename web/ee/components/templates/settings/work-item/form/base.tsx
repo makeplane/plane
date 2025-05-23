@@ -46,7 +46,7 @@ const DEFAULT_WORK_ITEM_TEMPLATE_FORM_VALUES: TWorkItemTemplateForm = {
   template: {
     id: "",
     name: "",
-    description_html: "",
+    short_description: "",
   },
   work_item: {
     name: "",

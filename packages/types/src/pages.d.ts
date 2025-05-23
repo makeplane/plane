@@ -94,7 +94,6 @@ export type TWebhookConnectionQueryParams = {
   projectId?: string;
   teamspaceId?: string;
   workspaceSlug: string;
-  parentPageId: string | undefined | null;
 };
 
 export type TPublicPageResponse = Pick<

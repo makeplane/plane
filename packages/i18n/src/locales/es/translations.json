@@ -18,7 +18,6 @@
     "pro": "Pro",
     "upgrade": "Mejorar"
   },
-
   "auth": {
     "common": {
       "email": {
@@ -168,7 +167,6 @@
       }
     }
   },
-
   "submit": "Enviar",
   "cancel": "Cancelar",
   "loading": "Cargando",
@@ -371,12 +369,12 @@
   "work_management": "Gestión del trabajo",
   "projects_and_issues": "Proyectos y elementos de trabajo",
   "projects_and_issues_description": "Activa o desactiva estos en este proyecto.",
-  "cycles_description": "Organiza el trabajo en períodos de tiempo según lo consideres conveniente por proyecto y cambia la frecuencia de un período a otro.",
-  "modules_description": "Agrupa el trabajo en configuraciones similares a subproyectos con sus propios líderes y asignados.",
-  "views_description": "Guarda ordenamientos, filtros y opciones de visualización para más tarde o compártelos.",
-  "pages_description": "Escribe cualquier cosa como escribirías cualquier cosa.",
-  "intake_description": "Mantente al tanto de los elementos de trabajo a los que estás suscrito. Activa esto para recibir notificaciones.",
-  "time_tracking_description": "Rastrea el tiempo dedicado a elementos de trabajo y proyectos.",
+  "cycles_description": "Organiza el trabajo por proyecto en períodos de tiempo y ajusta la duración según sea necesario. Un ciclo puede ser de 2 semanas y el siguiente de 1 semana.",
+  "modules_description": "Organiza el trabajo en subproyectos con líderes y responsables dedicados.",
+  "views_description": "Guarda ordenamientos, filtros y opciones de visualización personalizadas o compártelos con tu equipo.",
+  "pages_description": "Crea y edita contenido libre; notas, documentos, lo que sea.",
+  "intake_description": "Permite que personas ajenas al equipo compartan errores, comentarios y sugerencias sin interrumpir tu flujo de trabajo.",
+  "time_tracking_description": "Registra el tiempo dedicado a elementos de trabajo y proyectos.",
   "work_management_description": "Gestiona tu trabajo y proyectos con facilidad.",
   "documentation": "Documentación",
   "message_support": "Mensaje al soporte",
@@ -505,77 +503,9 @@
   "re_generate_key": "Regenerar clave",
   "export": "Exportar",
   "member": "{count, plural, one{# miembro} other{# miembros}}",
-  "updates": {
-    "add_update": "Agregar actualización",
-    "add_update_placeholder": "Escribe tu actualización aquí",
-    "empty": {
-      "title": "Aún no hay actualizaciones",
-      "description": "Puedes ver las actualizaciones aquí."
-    },
-    "delete": {
-      "title": "Eliminar actualización",
-      "confirmation": "¿Estás seguro de querer eliminar esta actualización? Esta acción es irreversible.",
-      "success": {
-        "title": "Actualización eliminada",
-        "message": "La actualización se ha eliminado correctamente"
-      },
-      "error": {
-        "title": "Actualización no eliminada",
-        "message": "La actualización no se pudo eliminar"
-      }
-    },
-    "reaction": {
-      "create": {
-        "success": {
-          "title": "Reacción creada",
-          "message": "Reacción creada con éxito"
-        },
-        "error": {
-          "title": "Reacción no creada",
-          "message": "No se pudo crear la reacción"
-        }
-      },
-      "remove": {
-        "success": {
-          "title": "Reacción eliminada",
-          "message": "Reacción eliminada con éxito"
-        },
-        "error": {
-          "title": "Reacción no eliminada",
-          "message": "No se pudo eliminar la reacción"
-        }
-      }
-    },
-    "progress": {
-      "title": "Progreso",
-      "since_last_update": "Desde la última actualización",
-      "comments": "{count, plural, one{# comentario} other{# comentarios}}"
-    },
-    "create": {
-      "success": {
-        "title": "Actualización creada",
-        "message": "Actualización creada con éxito"
-      },
-      "error": {
-        "title": "Actualización no creada",
-        "message": "No se pudo crear la actualización"
-      }
-    },
-    "update": {
-      "success": {
-        "title": "Actualización actualizada",
-        "message": "Actualización actualizada con éxito"
-      },
-      "error": {
-        "title": "Actualización no actualizada",
-        "message": "No se pudo actualizar la actualización"
-      }
-    }
-  },
   "new_password_must_be_different_from_old_password": "La nueva contraseña debe ser diferente a la contraseña anterior",
   "edited": "Modificado",
   "bot": "Bot",
-
   "project_view": {
     "sort_by": {
       "created_at": "Creado el",
@@ -583,12 +513,10 @@
       "name": "Nombre"
     }
   },
-
   "toast": {
     "success": "¡Éxito!",
     "error": "¡Error!"
   },
-
   "links": {
     "toasts": {
       "created": {
@@ -617,7 +545,6 @@
       }
     }
   },
-
   "home": {
     "empty": {
       "quickstart_guide": "Guía de inicio rápido",
@@ -685,7 +612,6 @@
     "title": "Inicio",
     "star_us_on_github": "Danos una estrella en GitHub"
   },
-
   "link": {
     "modal": {
       "url": {
@@ -699,7 +625,6 @@
       }
     }
   },
-
   "common": {
     "all": "Todo",
     "states": "Estados",
@@ -946,20 +871,17 @@
     "apply": "Aplicar",
     "applying": "Aplicando"
   },
-
   "chart": {
     "x_axis": "Eje X",
     "y_axis": "Eje Y",
     "metric": "Métrica"
   },
-
   "form": {
     "title": {
       "required": "El título es obligatorio",
       "max_length": "El título debe tener menos de {length} caracteres"
     }
   },
-
   "entity": {
     "grouping_title": "Agrupación de {entity}",
     "priority": "Prioridad de {entity}",
@@ -983,7 +905,6 @@
       "failed": "Error al agregar {entity}"
     }
   },
-
   "epic": {
     "all": "Todos los Epics",
     "label": "{count, plural, one {Epic} other {Epics}}",
@@ -1001,7 +922,6 @@
       "required": "El título del epic es obligatorio."
     }
   },
-
   "issue": {
     "label": "{count, plural, one {Elemento de trabajo} other {Elementos de trabajo}}",
     "all": "Todos los elementos de trabajo",
@@ -1168,7 +1088,6 @@
     },
     "open_in_full_screen": "Abrir elemento de trabajo en pantalla completa"
   },
-
   "attachment": {
     "error": "No se pudo adjuntar el archivo. Intenta subirlo de nuevo.",
     "only_one_file_allowed": "Solo se puede subir un archivo a la vez.",
@@ -1176,7 +1095,6 @@
     "drag_and_drop": "Arrastra y suelta en cualquier lugar para subir",
     "delete": "Eliminar archivo adjunto"
   },
-
   "label": {
     "select": "Seleccionar etiqueta",
     "create": {
@@ -1186,7 +1104,6 @@
       "type": "Escribe para agregar una nueva etiqueta"
     }
   },
-
   "sub_work_item": {
     "update": {
       "success": "Sub-elemento actualizado correctamente",
@@ -1197,7 +1114,6 @@
       "error": "Error al eliminar el sub-elemento"
     }
   },
-
   "view": {
     "label": "{count, plural, one {Vista} other {Vistas}}",
     "create": {
@@ -1207,7 +1123,6 @@
       "label": "Actualizar vista"
     }
   },
-
   "inbox_issue": {
     "status": {
       "pending": {
@@ -1293,7 +1208,6 @@
       }
     }
   },
-
   "workspace_creation": {
     "heading": "Crea tu espacio de trabajo",
     "subheading": "Para comenzar a usar Plane, necesitas crear o unirte a un espacio de trabajo.",
@@ -1345,7 +1259,6 @@
       }
     }
   },
-
   "workspace_dashboard": {
     "empty_state": {
       "general": {
@@ -1361,7 +1274,6 @@
       }
     }
   },
-
   "workspace_analytics": {
     "label": "Análisis",
     "page_label": "{workspace} - Análisis",
@@ -1404,9 +1316,39 @@
           }
         }
       }
-    }
+    },
+    "empty_state_v2": {
+      "customized_insights": {
+        "description": "Los elementos de trabajo asignados a ti, desglosados por estado, aparecerán aquí.",
+        "title": "Aún no hay datos"
+      },
+      "created_vs_resolved": {
+        "description": "Los elementos de trabajo creados y resueltos con el tiempo aparecerán aquí.",
+        "title": "Aún no hay datos"
+      },
+      "project_insights": {
+        "title": "Aún no hay datos",
+        "description": "Los elementos de trabajo asignados a ti, desglosados por estado, aparecerán aquí."
+      }
+    },
+    "created_vs_resolved": "Creado vs Resuelto",
+    "customized_insights": "Información personalizada",
+    "backlog_work_items": "Elementos de trabajo en backlog",
+    "active_projects": "Proyectos activos",
+    "trend_on_charts": "Tendencia en gráficos",
+    "all_projects": "Todos los proyectos",
+    "summary_of_projects": "Resumen de proyectos",
+    "project_insights": "Información del proyecto",
+    "started_work_items": "Elementos de trabajo iniciados",
+    "total_work_items": "Total de elementos de trabajo",
+    "total_projects": "Total de proyectos",
+    "total_admins": "Total de administradores",
+    "total_users": "Total de usuarios",
+    "total_intake": "Ingreso total",
+    "un_started_work_items": "Elementos de trabajo no iniciados",
+    "total_guests": "Total de invitados",
+    "completed_work_items": "Elementos de trabajo completados"
   },
-
   "workspace_projects": {
     "label": "{count, plural, one {Proyecto} other {Proyectos}}",
     "create": {
@@ -1480,7 +1422,6 @@
       }
     }
   },
-
   "workspace_views": {
     "add_view": "Agregar vista",
     "empty_state": {
@@ -1515,7 +1456,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "label": "Configuración del espacio de trabajo",
     "page_label": "{workspace} - Configuración general",
@@ -1697,7 +1637,6 @@
       }
     }
   },
-
   "profile": {
     "label": "Perfil",
     "page_label": "Tu trabajo",
@@ -1760,7 +1699,6 @@
       }
     }
   },
-
   "project_settings": {
     "general": {
       "enter_project_id": "Ingresa el ID del proyecto",
@@ -1906,7 +1844,6 @@
         "auto_close_status": "Estado de cierre automático"
       }
     },
-
     "empty_state": {
       "labels": {
         "title": "Aún no hay etiquetas",
@@ -1919,7 +1856,6 @@
       }
     }
   },
-
   "project_cycles": {
     "add_cycle": "Agregar ciclo",
     "more_details": "Más detalles",
@@ -2045,7 +1981,6 @@
       }
     }
   },
-
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -2074,7 +2009,6 @@
       }
     }
   },
-
   "project_module": {
     "add_module": "Agregar Módulo",
     "update_module": "Actualizar Módulo",
@@ -2128,7 +2062,6 @@
       }
     }
   },
-
   "project_views": {
     "empty_state": {
       "general": {
@@ -2148,7 +2081,6 @@
       }
     }
   },
-
   "project_page": {
     "empty_state": {
       "general": {
@@ -2178,7 +2110,6 @@
       }
     }
   },
-
   "command_k": {
     "empty_state": {
       "search": {
@@ -2186,7 +2117,6 @@
       }
     }
   },
-
   "issue_relation": {
     "empty_state": {
       "search": {
@@ -2197,7 +2127,6 @@
       }
     }
   },
-
   "issue_comment": {
     "empty_state": {
       "general": {
@@ -2206,7 +2135,6 @@
       }
     }
   },
-
   "notification": {
     "label": "Bandeja de entrada",
     "page_label": "{workspace} - Bandeja de entrada",
@@ -2263,7 +2191,6 @@
       "custom": "Personalizado"
     }
   },
-
   "active_cycle": {
     "empty_state": {
       "progress": {
@@ -2283,7 +2210,6 @@
       }
     }
   },
-
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -2346,7 +2272,6 @@
       }
     }
   },
-
   "stickies": {
     "title": "Tus notas adhesivas",
     "placeholder": "haz clic para escribir aquí",
@@ -2404,7 +2329,6 @@
       }
     }
   },
-
   "role_details": {
     "guest": {
       "title": "Invitado",
@@ -2419,7 +2343,6 @@
       "description": "Todos los permisos establecidos como verdaderos dentro del espacio de trabajo."
     }
   },
-
   "user_roles": {
     "product_or_project_manager": "Gerente de Producto / Proyecto",
     "development_or_engineering": "Desarrollo / Ingeniería",
@@ -2432,7 +2355,6 @@
     "human_resources": "Recursos Humanos",
     "other": "Otro"
   },
-
   "importer": {
     "github": {
       "title": "GitHub",
@@ -2443,7 +2365,6 @@
       "description": "Importa elementos de trabajo y epics desde proyectos y epics de Jira."
     }
   },
-
   "exporter": {
     "csv": {
       "title": "CSV",
@@ -2472,7 +2393,6 @@
     "created": "Creados",
     "subscribed": "Suscritos"
   },
-
   "themes": {
     "theme_options": {
       "system_preference": {
@@ -2518,17 +2438,14 @@
       "manual": "Manual"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {Ciclo} other {Ciclos}}",
     "no_cycle": "Sin ciclo"
   },
-
   "module": {
     "label": "{count, plural, one {Módulo} other {Módulos}}",
     "no_module": "Sin módulo"
   },
-
   "description_versions": {
     "last_edited_by": "Última edición por",
     "previously_edited_by": "Editado anteriormente por",

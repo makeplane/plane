@@ -1,12 +1,15 @@
-import { FC } from "react";
+import { FC, useCallback } from "react";
+import cloneDeep from "lodash/cloneDeep";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 // plane imports
 import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // components
 import { SubIssueDisplayFilters } from "@/components/issues/issue-detail-widgets/sub-issues";
+import { SubIssueFilters } from "@/components/issues/issue-detail-widgets/sub-issues/filters";
 // hooks
+import { useMember } from "@/hooks/store";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
 type TEpicsTitleActionsProps = {
@@ -23,10 +26,16 @@ export const EpicsTitleActions: FC<TEpicsTitleActionsProps> = observer((props) =
   const {
     initiative: {
       epics: {
-        filters: { getInitiativeEpicsFiltersById, updateSubIssueFilters },
+        filters: { getInitiativeEpicsFiltersById, updateEpicsFilters },
       },
     },
   } = useInitiatives();
+
+  const {
+    workspace: { getWorkspaceMemberIds },
+  } = useMember();
+
+  const memberIds = getWorkspaceMemberIds(workspaceSlug);
 
   // derived values
   const epicsFilters = getInitiativeEpicsFiltersById(initiativeId);
@@ -34,14 +43,34 @@ export const EpicsTitleActions: FC<TEpicsTitleActionsProps> = observer((props) =
   const displayFilters = epicsFilters?.displayFilters;
 
   const handleDisplayPropertiesUpdate = (updatedDisplayProperties: Partial<IIssueDisplayProperties>) => {
-    updateSubIssueFilters(workspaceSlug, EIssueFilterType.DISPLAY_PROPERTIES, updatedDisplayProperties, initiativeId);
+    updateEpicsFilters(workspaceSlug, EIssueFilterType.DISPLAY_PROPERTIES, updatedDisplayProperties, initiativeId);
   };
 
   const handleDisplayFiltersUpdate = (updatedDisplayFilters: Partial<IIssueDisplayFilterOptions>) => {
-    updateSubIssueFilters(workspaceSlug, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilters, initiativeId);
+    updateEpicsFilters(workspaceSlug, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilters, initiativeId);
   };
 
-  const layoutDisplayFiltersOptions = ISSUE_DISPLAY_FILTERS_BY_PAGE.sub_work_items.list;
+  const handleFiltersUpdate = useCallback(
+    (key: keyof IIssueFilterOptions, value: string | string[]) => {
+      if (!workspaceSlug) return;
+      const newValues = cloneDeep(epicsFilters?.filters?.[key]) ?? [];
+
+      if (Array.isArray(value)) {
+        // this validation is majorly for the filter start_date, target_date custom
+        value.forEach((val) => {
+          if (!newValues.includes(val)) newValues.push(val);
+          else newValues.splice(newValues.indexOf(val), 1);
+        });
+      } else {
+        if (epicsFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        else newValues.push(value);
+      }
+      updateEpicsFilters(workspaceSlug, EIssueFilterType.FILTERS, { [key]: newValues }, initiativeId);
+    },
+    [workspaceSlug, epicsFilters?.filters, updateEpicsFilters, initiativeId]
+  );
+
+  const layoutDisplayFiltersOptions = ISSUE_DISPLAY_FILTERS_BY_PAGE.initiatives.list;
 
   const handlePropagation = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -58,10 +87,18 @@ export const EpicsTitleActions: FC<TEpicsTitleActionsProps> = observer((props) =
         handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
         handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
       />
+      <SubIssueFilters
+        handleFiltersUpdate={handleFiltersUpdate}
+        filters={epicsFilters?.filters ?? {}}
+        memberIds={memberIds ?? undefined}
+        layoutDisplayFiltersOptions={layoutDisplayFiltersOptions}
+      />
       {!disabled && (
-        <button type="button" onClick={() => toggleEpicModal()}>
-          <Plus className="h-4 w-4" />
-        </button>
+        <div>
+          <button type="button" onClick={() => toggleEpicModal()}>
+            <Plus className="h-4 w-4" />
+          </button>
+        </div>
       )}
     </div>
   );

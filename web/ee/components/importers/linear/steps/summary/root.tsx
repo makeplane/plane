@@ -30,7 +30,7 @@ export const SummaryRoot: FC = observer(() => {
     handleDashboardView,
     handleStepper,
     resetImporterData,
-    data: { linearStateIdsByTeamId, additionalUsersData, fetchAdditionalUsers },
+    data: { additionalUsersData, fetchAdditionalUsers, fetchLinearTeamDataSummary, linearDataSummary },
     // setDashboardView,
   } = useLinearImporter();
   const { t } = useTranslation();
@@ -46,8 +46,6 @@ export const SummaryRoot: FC = observer(() => {
   const userId = user?.id || undefined;
   const planeProjectId = importerData[E_LINEAR_IMPORTER_STEPS.SELECT_PLANE_PROJECT]?.projectId;
   const linearTeamId = importerData[E_LINEAR_IMPORTER_STEPS.CONFIGURE_LINEAR]?.teamId;
-  const linearStates = (linearTeamId && linearStateIdsByTeamId(linearTeamId)) || [];
-
   const handleUserSkipToggle = (flag: boolean) => {
     setuserSkipToggle(flag);
     handleSyncJobConfig("skipUserImport", flag);
@@ -98,8 +96,29 @@ export const SummaryRoot: FC = observer(() => {
     { errorRetryCount: 0 }
   );
 
+  const key =
+    workspaceId && userId && linearTeamId
+      ? `IMPORTER_LINEAR_DATA_SUMMARY_${workspaceId}_${userId}_${linearTeamId}`
+      : null;
+
+  const { isLoading: isLinearTeamDataSummaryLoading } = useSWR(
+    workspaceId && userId && linearTeamId ? key : null,
+    workspaceId && userId && linearTeamId ? () => fetchLinearTeamDataSummary(workspaceId, userId, linearTeamId) : null,
+    { errorRetryCount: 0 }
+  );
+
   const extraSeatRequired = additionalUsersData?.additionalUserCount - currentWorkspaceSubscriptionAvailableSeats;
   const isNextBtnDisabled = Boolean(extraSeatRequired > 0 && !userSkipToggle);
+
+  if (isLinearTeamDataSummaryLoading) {
+    return (
+      <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col gap-4">
+        {Array.from({ length: 5 }).map((_, index) => (
+          <Loader.Item key={index} height="40px" width="100%" />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
@@ -110,14 +129,13 @@ export const SummaryRoot: FC = observer(() => {
           <div>{t("importers.migrating")}</div>
         </div>
         <div className="divide-y divide-custom-border-200">
-          <div className="relative grid grid-cols-2 items-center p-3 text-sm">
-            <div className="text-custom-text-200">{t("work_items")}</div>
-            <div>{configData?.teamDetail?.issueCount || 0} {t("work_items")}</div>
-          </div>
-          <div className="relative grid grid-cols-2 items-center p-3 text-sm">
-            <div className="text-custom-text-200">{t("common.states")}</div>
-            <div>{linearStates?.length || 0} {t("common.states")}</div>
-          </div>
+          {linearTeamId &&
+            Object.entries(linearDataSummary[linearTeamId]).map(([key, count]) => (
+              <div key={key} className="relative grid grid-cols-2 items-center p-3 text-sm">
+                <div className="text-custom-text-200">{key.charAt(0).toUpperCase() + key.slice(1)}</div>
+                <div>{count.toString()}</div>
+              </div>
+            ))}
         </div>
       </div>
 

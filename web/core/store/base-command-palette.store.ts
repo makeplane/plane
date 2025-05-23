@@ -1,4 +1,5 @@
 import { observable, action, makeObservable } from "mobx";
+import { computedFn } from "mobx-utils";
 import {
   EIssuesStoreType,
   TCreateModalStoreTypes,
@@ -26,6 +27,8 @@ export interface IBaseCommandPaletteStore {
   isBulkDeleteIssueModalOpen: boolean;
   createIssueStoreType: TCreateModalStoreTypes;
   allStickiesModal: boolean;
+  projectListOpenMap: Record<string, boolean>;
+  getIsProjectListOpen: (projectId: string) => boolean;
   // toggle actions
   toggleCommandPaletteModal: (value?: boolean) => void;
   toggleShortcutModal: (value?: boolean) => void;
@@ -38,6 +41,7 @@ export interface IBaseCommandPaletteStore {
   toggleDeleteIssueModal: (value?: boolean) => void;
   toggleBulkDeleteIssueModal: (value?: boolean) => void;
   toggleAllStickiesModal: (value?: boolean) => void;
+  toggleProjectListOpen: (projectId: string, value?: boolean) => void;
 }
 
 export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStore {
@@ -54,6 +58,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   createPageModal: TCreatePageModal = DEFAULT_CREATE_PAGE_MODAL_DATA;
   createIssueStoreType: TCreateModalStoreTypes = EIssuesStoreType.PROJECT;
   allStickiesModal: boolean = false;
+  projectListOpenMap: Record<string, boolean> = {};
 
   constructor() {
     makeObservable(this, {
@@ -70,6 +75,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       createPageModal: observable,
       createIssueStoreType: observable,
       allStickiesModal: observable,
+      projectListOpenMap: observable,
       // projectPages: computed,
       // toggle actions
       toggleCommandPaletteModal: action,
@@ -83,6 +89,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       toggleDeleteIssueModal: action,
       toggleBulkDeleteIssueModal: action,
       toggleAllStickiesModal: action,
+      toggleProjectListOpen: action,
     });
   }
 
@@ -104,6 +111,18 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
         this.allStickiesModal
     );
   }
+  // computedFn
+  getIsProjectListOpen = computedFn((projectId: string) => this.projectListOpenMap[projectId]);
+
+  /**
+   * Toggles the project list open state
+   * @param projectId
+   * @param value
+   */
+  toggleProjectListOpen = (projectId: string, value?: boolean) => {
+    if (value !== undefined) this.projectListOpenMap[projectId] = value;
+    else this.projectListOpenMap[projectId] = !this.projectListOpenMap[projectId];
+  };
 
   /**
    * Toggles the command palette modal

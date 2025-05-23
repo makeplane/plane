@@ -7,18 +7,23 @@ import {
   createGithubUserService,
   GithubAuthorizeState,
   GithubInstallation,
+  GithubPlaneOAuthState,
   GithubRepository,
   GithubUserAuthState,
   GithubWebhookPayload,
 } from "@plane/etl/github";
-import { Client, ExIssue, ExIssueComment, ExIssueLabel, PlaneUser, PlaneWebhookPayloadBase } from "@plane/sdk";
+import { ExIssue, ExIssueComment, ExIssueLabel, PlaneUser, PlaneWebhookPayloadBase } from "@plane/sdk";
 import { TWorkspaceConnection } from "@plane/types";
 import { env } from "@/env";
-import { createOrUpdateCredentials } from "@/helpers/credential";
+import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
+import { getPlaneAPIClient } from "@/helpers/plane-api-client";
+import { getPlaneAppDetails } from "@/helpers/plane-app-details";
 import { responseHandler } from "@/helpers/response-handler";
 import { Controller, EnsureEnabled, Get, Middleware, Post, useValidateUserAuthentication } from "@/lib";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
+import { planeOAuthService } from "@/services/oauth";
+import { EOAuthGrantType, ESourceAuthorizationType } from "@/types/oauth";
 import { integrationTaskManager } from "@/worker";
 import { E_GITHUB_DISCONNECT_SOURCE, GithubUserMap } from "../types";
 
@@ -134,6 +139,9 @@ export default class GithubController {
           userId
         );
 
+        // delete the token from the cache
+        await planeOAuthService.deleteTokenFromCache(credential);
+
         return res.sendStatus(200);
       } catch (error: any) {
         logger.error("Failed to delete GitHub installation:", error);
@@ -151,11 +159,12 @@ export default class GithubController {
   @useValidateUserAuthentication()
   async getAuthURL(req: Request, res: Response) {
     try {
-      const { workspace_id, workspace_slug, plane_api_token, user_id } = req.body;
+      const { workspace_id, workspace_slug, plane_api_token, user_id, plane_app_installation_id } = req.body;
 
-      if (!workspace_id || !workspace_slug || !plane_api_token || !user_id) {
+      if (!workspace_id || !workspace_slug || !plane_api_token || !user_id || !plane_app_installation_id) {
         return res.status(400).send({
-          message: "Bad Request, expected workspace_id, workspace_slug and plane_api_token be present.",
+          message:
+            "Bad Request, expected workspace_id, workspace_slug, plane_api_token, user_id and plane_app_installation_id be present.",
         });
       }
 
@@ -176,6 +185,7 @@ export default class GithubController {
           plane_api_token: plane_api_token,
           user_id: user_id,
           target_host: env.API_BASE_URL,
+          plane_app_installation_id: plane_app_installation_id,
         })
       );
     } catch (error) {
@@ -209,12 +219,33 @@ export default class GithubController {
         return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.CANNOT_CREATE_MULTIPLE_CONNECTIONS}`);
       }
 
+      // use plane_app_installation_id in the state payload and clientid and secret to generate the token
+      const { planeAppClientId, planeAppClientSecret } = await getPlaneAppDetails(E_INTEGRATION_KEYS.GITHUB);
+      if (!planeAppClientId || !planeAppClientSecret) {
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.INVALID_APP_CREDENTIALS}`);
+      }
+
+      if (!authState.plane_app_installation_id) {
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.INVALID_APP_INSTALLATION_ID}`);
+      }
+
+      const tokenResponse = await planeOAuthService.generateToken({
+        client_id: planeAppClientId,
+        client_secret: planeAppClientSecret,
+        grant_type: EOAuthGrantType.CLIENT_CREDENTIALS,
+        app_installation_id: authState.plane_app_installation_id,
+      });
+
       const { id: insertedId } = await apiClient.workspaceCredential.createWorkspaceCredential({
         source: E_INTEGRATION_KEYS.GITHUB,
         workspace_id: authState.workspace_id,
         user_id: authState.user_id,
+        source_identifier: installation_id as string,
+        source_authorization_type: ESourceAuthorizationType.TOKEN,
         source_access_token: installation_id as string,
-        target_access_token: authState.plane_api_token,
+        target_access_token: tokenResponse.access_token,
+        target_identifier: authState.plane_app_installation_id,
+        target_authorization_type: EOAuthGrantType.CLIENT_CREDENTIALS,
       });
 
       // Create github service from the installation id
@@ -318,6 +349,9 @@ export default class GithubController {
         },
       });
 
+      // delete the token from the cache
+      await planeOAuthService.deleteTokenFromCache(credentials[0]);
+
       return res.sendStatus(200);
     } catch (error) {
       return responseHandler(res, 500, error);
@@ -350,16 +384,25 @@ export default class GithubController {
     }
   }
 
-  @Get("/auth/user/callback")
-  async authUserCallback(req: Request, res: Response) {
-    const { code, state: queryState } = req.query;
+  // this endpoint will receive the code from the oauth authorize flow
+  // then exchange the code for the access token and continue the user callback flow
+  @Get("/plane-oauth/callback")
+  async OAuthCallback(req: Request, res: Response) {
+    const { code: oauthCode, state: encodedGithubState } = req.query;
 
     // Check if the request is valid, with the data received
-    if (!code || !queryState) {
+    if (!oauthCode || !encodedGithubState) {
       return res.status(400).send("Invalid request callback");
     }
 
-    const authState: GithubUserAuthState = JSON.parse(Buffer.from(queryState as string, "base64").toString());
+    // continue the user callback flow for github
+    const githubState: GithubPlaneOAuthState = JSON.parse(
+      Buffer.from(encodedGithubState as string, "base64").toString()
+    );
+
+    const { github_code, encoded_github_state } = githubState;
+
+    const authState: GithubUserAuthState = JSON.parse(Buffer.from(encoded_github_state as string, "base64").toString());
     let redirectUri = `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/github/`;
 
     if (authState.profile_redirect) {
@@ -368,7 +411,7 @@ export default class GithubController {
 
     try {
       const { response, state } = await githubAuthService.getUserAccessToken({
-        code: code as string,
+        code: github_code as string,
         state: authState,
       });
 
@@ -400,7 +443,7 @@ export default class GithubController {
       }
 
       const credential = credentials[0];
-      if (!credential.source_access_token || !credential.target_access_token) {
+      if (!credential.source_access_token || !credential.target_access_token || !credential.target_identifier) {
         return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.INSTALLATION_NOT_FOUND}`);
       }
 
@@ -413,30 +456,41 @@ export default class GithubController {
         return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.USER_NOT_FOUND}`);
       }
 
-      const planeClient = new Client({
-        apiToken: credential.target_access_token,
-        baseURL: connection.target_hostname ?? env.API_BASE_URL,
-      });
+      const planeClient = await getPlaneAPIClient(credential, E_INTEGRATION_KEYS.GITHUB);
 
       const users: PlaneUser[] = await planeClient.users.listAllUsers(authState.workspace_slug);
       const planeUser = users.find((user) => user.id === authState.user_id);
 
-      const credentialData = {
-        source: E_ENTITY_CONNECTION_KEYS.GITHUB_USER,
-        source_access_token: accessToken,
+      // get the token from plane oauth service
+      const { planeAppClientId, planeAppClientSecret } = await getPlaneAppDetails(E_INTEGRATION_KEYS.GITHUB);
+      if (!planeAppClientId || !planeAppClientSecret) {
+        return res.status(400).send("Invalid app credentials");
+      }
+      // generate the token for the user
+      const tokenResponse = await planeOAuthService.generateToken({
+        client_id: planeAppClientId,
+        client_secret: planeAppClientSecret,
+        grant_type: EOAuthGrantType.AUTHORIZATION_CODE,
+        code: oauthCode as string,
+        redirect_uri: `${env.SILO_API_BASE_URL}${env.SILO_BASE_PATH}/api/github/plane-oauth/callback`,
+        app_installation_id: credential.target_identifier,
+        user_id: authState.user_id,
+      });
+
+      await integrationConnectionHelper.createOrUpdateWorkspaceCredential({
         workspace_id: state.workspace_id,
         user_id: state.user_id,
-        target_access_token: state.plane_api_token,
-      };
-
-      if (credential) {
-        await createOrUpdateCredentials(
-          state.workspace_id,
-          state.user_id,
-          E_ENTITY_CONNECTION_KEYS.GITHUB_USER,
-          credentialData
-        );
-      }
+        source: E_ENTITY_CONNECTION_KEYS.GITHUB_USER,
+        source_identifier: user.id.toString(),
+        source_authorization_type: ESourceAuthorizationType.TOKEN,
+        source_access_token: accessToken,
+        source_refresh_token: "",
+        target_access_token: tokenResponse.access_token,
+        target_refresh_token: tokenResponse.refresh_token,
+        target_authorization_type: EOAuthGrantType.AUTHORIZATION_CODE,
+        target_identifier: credential.target_identifier,
+        source_hostname: "",
+      });
 
       // update the workspace connection for the user
       if (planeUser) {
@@ -448,6 +502,46 @@ export default class GithubController {
       }
 
       return res.redirect(redirectUri);
+    } catch (error) {
+      logger.error("Failed to create GitHub connection:", error);
+      return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.GENERIC_ERROR}`);
+    }
+  }
+
+  @Get("/auth/user/callback")
+  async authUserCallback(req: Request, res: Response) {
+    const { code, state: queryState } = req.query;
+    // Check if the request is valid, with the data received
+    if (!code || !queryState) {
+      return res.status(400).send("Invalid request callback");
+    }
+
+    const authState: GithubUserAuthState = JSON.parse(Buffer.from(queryState as string, "base64").toString());
+    let redirectUri = `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/github/`;
+
+    try {
+      if (authState.profile_redirect) {
+        redirectUri = `${env.APP_BASE_URL}/profile/connections/?workspaceId=${authState.workspace_id}`;
+      }
+
+      const githubState: GithubPlaneOAuthState = {
+        github_code: code as string,
+        encoded_github_state: queryState as string,
+      };
+
+      const { planeAppClientId, planeAppClientSecret } = await getPlaneAppDetails(E_INTEGRATION_KEYS.GITHUB);
+      if (!planeAppClientId || !planeAppClientSecret) {
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.INVALID_APP_CREDENTIALS}`);
+      }
+
+      const siloAppOAuthCallbackURL = `${env.SILO_API_BASE_URL}${env.SILO_BASE_PATH}/api/github/plane-oauth/callback`;
+      const authorizationURL = planeOAuthService.getPlaneOAuthRedirectUrl(
+        planeAppClientId,
+        siloAppOAuthCallbackURL,
+        Buffer.from(JSON.stringify(githubState)).toString("base64")
+      );
+
+      return res.redirect(authorizationURL);
     } catch (error) {
       logger.error("Failed to create GitHub connection:", error);
       return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.GENERIC_ERROR}`);
@@ -566,6 +660,19 @@ export default class GithubController {
       // Fetch data for all the installation Ids
       await Promise.all(repoPromises);
       res.status(200).json(repositories);
+    } catch (error) {
+      return responseHandler(res, 500, error);
+    }
+  }
+
+  @Get("/plane-app-details")
+  async getPlaneAppDetails(req: Request, res: Response) {
+    try {
+      const { planeAppId, planeAppClientId } = await getPlaneAppDetails(E_INTEGRATION_KEYS.GITHUB);
+      res.status(200).json({
+        appId: planeAppId,
+        clientId: planeAppClientId,
+      });
     } catch (error) {
       return responseHandler(res, 500, error);
     }
@@ -751,10 +858,9 @@ export const logGithubWebhookPayload = (
 
 function verifyGithubWebhook(req: Request, res: Response, next: NextFunction) {
   try {
-
     // If the webhook secret is not set, we don't need to verify the signature
     if (!env.GITHUB_WEBHOOK_SECRET) {
-      return next()
+      return next();
     }
 
     const signature = req.headers["x-hub-signature-256"];

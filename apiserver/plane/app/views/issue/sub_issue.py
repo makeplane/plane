@@ -25,6 +25,7 @@ from collections import defaultdict
 from plane.utils.host import base_host
 from plane.utils.order_queryset import order_issue_queryset
 
+
 class SubIssuesEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
 

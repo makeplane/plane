@@ -367,11 +367,11 @@
   "work_management": "Arbeitsverwaltung",
   "projects_and_issues": "Projekte und Arbeitselemente",
   "projects_and_issues_description": "Aktivieren oder deaktivieren Sie diese Funktionen im Projekt.",
-  "cycles_description": "Begrenzen Sie die Arbeit zeitlich bei Bedarf und ändern Sie die Häufigkeit zwischen Zeiträumen.",
-  "modules_description": "Gruppieren Sie die Arbeit in ähnliche Unterprojekte mit eigenen Leitern und zugewiesenen Personen.",
-  "views_description": "Speichern Sie Sortierungen, Filter und Anzeigeoptionen für die spätere Verwendung oder zum Teilen.",
-  "pages_description": "Schreiben Sie alles Mögliche, wie gewohnt.",
-  "intake_description": "Bleiben Sie über abonnierte Arbeitselemente informiert. Aktivieren Sie diese Option, um Benachrichtigungen zu erhalten.",
+  "cycles_description": "Zeitlich begrenzen Sie die Arbeit pro Projekt und passen Sie den Zeitraum bei Bedarf an. Ein Zyklus kann 2 Wochen dauern, der nächste nur 1 Woche.",
+  "modules_description": "Organisieren Sie die Arbeit in Unterprojekte mit eigenen Leitern und Zuständigen.",
+  "views_description": "Speichern Sie benutzerdefinierte Sortierungen, Filter und Anzeigeoptionen oder teilen Sie sie mit Ihrem Team.",
+  "pages_description": "Erstellen und bearbeiten Sie frei formulierte Inhalte – Notizen, Dokumente, alles Mögliche.",
+  "intake_description": "Erlauben Sie Nicht-Mitgliedern, Bugs, Feedback und Vorschläge zu teilen – ohne Ihren Arbeitsablauf zu stören.",
   "time_tracking_description": "Erfassen Sie die auf Arbeitselemente und Projekte verwendete Zeit.",
   "work_management_description": "Verwalten Sie Ihre Arbeit und Projekte mühelos.",
   "documentation": "Dokumentation",
@@ -501,73 +501,6 @@
   "re_generate_key": "Schlüssel neu generieren",
   "export": "Exportieren",
   "member": "{count, plural, one{# Mitglied} few{# Mitglieder} other{# Mitglieder}}",
-  "updates": {
-    "add_update": "Aktualisieren",
-    "add_update_placeholder": "Schreiben Sie Ihre Aktualisierung hier",
-    "empty": {
-      "title": "Noch keine Aktualisierungen",
-      "description": "Sie können hier Aktualisierungen sehen."
-    },
-    "delete": {
-      "title": "Aktualisierung löschen",
-      "confirmation": "Sie sind dabei, diese Aktualisierung zu löschen. Diese Aktion ist unumkehrbar.",
-      "success": {
-        "title": "Aktualisierung gelöscht",
-        "message": "Die Aktualisierung wurde erfolgreich gelöscht"
-      },
-      "error": {
-        "title": "Aktualisierung nicht gelöscht",
-        "message": "Die Aktualisierung konnte nicht gelöscht werden"
-      }
-    },
-    "reaction": {
-      "create": {
-        "success": {
-          "title": "Reaktion erstellt",
-          "message": "Reaktion wurde erfolgreich erstellt"
-        },
-        "error": {
-          "title": "Reaktion nicht erstellt",
-          "message": "Reaktion konnte nicht erstellt werden"
-        }
-      },
-      "remove": {
-        "success": {
-          "title": "Reaktion entfernt",
-          "message": "Reaktion wurde erfolgreich entfernt"
-        },
-        "error": {
-          "title": "Reaktion nicht entfernt",
-          "message": "Reaktion konnte nicht entfernt werden"
-        }
-      }
-    },
-    "progress": {
-      "title": "Fortschritt",
-      "since_last_update": "Seit der letzten Aktualisierung",
-      "comments": "{count, plural, one{# Kommentar} few{# Kommentare} other{# Kommentare}}"
-    },
-    "create": {
-      "success": {
-        "title": "Aktualisierung erstellt",
-        "message": "Aktualisierung wurde erfolgreich erstellt"
-      },
-      "error": {
-        "title": "Aktualisierung nicht erstellt",
-        "message": "Aktualisierung konnte nicht erstellt werden"
-      }
-    },
-    "update": {
-      "success": {
-        "title": "Aktualisierung aktualisiert",
-        "message": "Aktualisierung wurde erfolgreich aktualisiert"
-      },
-      "error": {
-        "title": "Aktualisierung nicht aktualisiert",
-        "message": "Aktualisierung konnte nicht aktualisiert werden"
-      }
-    }
-  },
   "new_password_must_be_different_from_old_password": "Das neue Passwort muss von dem alten Passwort abweichen",
   "edited": "Bearbeitet",
   "bot": "Bot",
@@ -1383,7 +1316,38 @@
           }
         }
       }
-    }
+    },
+    "empty_state_v2": {
+      "customized_insights": {
+        "description": "Ihnen zugewiesene Arbeitselemente, aufgeschlüsselt nach Status, werden hier angezeigt.",
+        "title": "Noch keine Daten"
+      },
+      "created_vs_resolved": {
+        "description": "Im Laufe der Zeit erstellte und gelöste Arbeitselemente werden hier angezeigt.",
+        "title": "Noch keine Daten"
+      },
+      "project_insights": {
+        "title": "Noch keine Daten",
+        "description": "Ihnen zugewiesene Arbeitselemente, aufgeschlüsselt nach Status, werden hier angezeigt."
+      }
+    },
+    "created_vs_resolved": "Erstellt vs Gelöst",
+    "customized_insights": "Individuelle Einblicke",
+    "backlog_work_items": "Backlog-Arbeitselemente",
+    "active_projects": "Aktive Projekte",
+    "trend_on_charts": "Trend in Diagrammen",
+    "all_projects": "Alle Projekte",
+    "summary_of_projects": "Projektübersicht",
+    "project_insights": "Projekteinblicke",
+    "started_work_items": "Begonnene Arbeitselemente",
+    "total_work_items": "Gesamte Arbeitselemente",
+    "total_projects": "Gesamtprojekte",
+    "total_admins": "Gesamtanzahl der Admins",
+    "total_users": "Gesamtanzahl der Benutzer",
+    "total_intake": "Gesamteinnahmen",
+    "un_started_work_items": "Nicht begonnene Arbeitselemente",
+    "total_guests": "Gesamtanzahl der Gäste",
+    "completed_work_items": "Abgeschlossene Arbeitselemente"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projekt} few {Projekte} other {Projekte}}",
@@ -2474,17 +2438,14 @@
       "manual": "Manuell"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {Zyklus} few {Zyklen} other {Zyklen}}",
     "no_cycle": "Kein Zyklus"
   },
-
   "module": {
     "label": "{count, plural, one {Modul} few {Module} other {Module}}",
     "no_module": "Kein Modul"
   },
-
   "description_versions": {
     "last_edited_by": "Zuletzt bearbeitet von",
     "previously_edited_by": "Zuvor bearbeitet von",

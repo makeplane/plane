@@ -49,7 +49,7 @@ class OAuthTokenRateThrottle(SimpleRateThrottle):
             return None  # Allow the request if it's not OauthAuthenticated
 
         # Get the access token
-        access_token = request.access_token
+        access_token = request.auth
         ident = access_token.id
 
         return f"oauth_api_throttle_{ident}"

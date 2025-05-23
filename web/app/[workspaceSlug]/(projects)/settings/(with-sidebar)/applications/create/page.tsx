@@ -4,13 +4,14 @@ import { observer } from "mobx-react";
 
 // component
 import { useParams } from "next/navigation";
+import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TUserApplication } from "@plane/types";
 import { Breadcrumbs, setToast, TOAST_TYPE } from "@plane/ui";
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { BreadcrumbLink } from "@/components/common";
 import { PageHead } from "@/components/core";
-import { getAssetIdFromUrl } from "@/helpers/file.helper";
+import { APPLICATION_CATEGORIES_LIST } from "@/constants/fetch-keys";
 // hooks
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web components
@@ -21,21 +22,20 @@ const ApplicationCreatePage = observer(() => {
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
-  const { createApplication } = useApplications();
+  const { createApplication, fetchApplicationCategories } = useApplications();
   const { workspaceSlug } = useParams();
   // derived values
   const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Create Application` : undefined;
 
-  // state
+  const { data: categories } = useSWR(APPLICATION_CATEGORIES_LIST(), async () =>
+    fetchApplicationCategories()
+  );
 
   const handleFormSubmit = async (data: Partial<TUserApplication>) => {
     try {
       if (!data) return;
-      if (data.logo_url) {
-        data.logo_asset = getAssetIdFromUrl(data.logo_url);
-      }
-      const response = await createApplication(data);
+    const response = await createApplication(data);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success",

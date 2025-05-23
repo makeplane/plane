@@ -108,9 +108,8 @@ class LinearController {
   /**
    * @description fetching linear team issues count
    */
-  @Post("/team-issue-count")
-  @useValidateUserAuthentication()
-  async getTeamIssuesCount(req: Request, res: Response) {
+  @Post("/data-summary")
+  async getDataSummary(req: Request, res: Response) {
     try {
       const { workspaceId, userId, teamId } = req.body;
       if (!workspaceId || !userId || !teamId) {
@@ -119,8 +118,8 @@ class LinearController {
         });
       }
       const linearServiceInstance = await createLinearClient(workspaceId, userId);
-      const teams = await linearServiceInstance.getNumberOfIssues(teamId);
-      res.json(teams);
+      const summary = await linearServiceInstance.getLinearDataSummary(teamId);
+      res.json(summary);
     } catch (error: any) {
       logger.error(error);
       responseHandler(res, 500, error);

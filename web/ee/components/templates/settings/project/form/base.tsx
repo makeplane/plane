@@ -58,7 +58,7 @@ export const DEFAULT_PROJECT_TEMPLATE_FORM_DATA: TProjectTemplateForm = {
   template: {
     id: "",
     name: "",
-    description_html: "",
+    short_description: "",
   },
   project: {
     // basics

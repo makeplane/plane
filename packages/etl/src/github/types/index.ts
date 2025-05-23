@@ -42,6 +42,7 @@ export type GithubAuthorizeState = {
   user_id: string;
   plane_api_token: string;
   target_host: string;
+  plane_app_installation_id?: string;
 };
 
 export type GithubUserAuthState = Omit<GithubAuthorizeState, "plane_api_token"> & {
@@ -95,3 +96,8 @@ export type UserAuthParams = {
 };
 
 export type GithubApiProps = AppAuthParams | UserAuthParams;
+
+export type GithubPlaneOAuthState = {
+  github_code: string;
+  encoded_github_state: string;
+};

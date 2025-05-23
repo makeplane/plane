@@ -48,3 +48,4 @@ export * from "./enhanced-search";
 export * from "./customers";
 export * from "./projects-extended";
 export * from "./state-extended";
+export * from "./analytics-v2";

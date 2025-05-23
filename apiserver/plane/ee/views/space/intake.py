@@ -49,7 +49,7 @@ class IntakeMetaPublishedIssueEndpoint(BaseAPIView):
             )
 
         if check_workspace_feature_flag(
-            feature_key=FeatureFlag.INTAKE_PUBLISH, slug=deploy_board.workspace.slug
+            feature_key=FeatureFlag.INTAKE_FORM, slug=deploy_board.workspace.slug
         ):
             try:
                 project_id = deploy_board.project_id
@@ -93,7 +93,7 @@ class IntakePublishedIssueEndpoint(BaseAPIView):
 
         # Check if the workspace has access to feature
         if check_workspace_feature_flag(
-            feature_key=FeatureFlag.INTAKE_PUBLISH, slug=deploy_board.workspace.slug
+            feature_key=FeatureFlag.INTAKE_FORM, slug=deploy_board.workspace.slug
         ):
             intake = Intake.objects.filter(
                 workspace_id=deploy_board.workspace_id,
@@ -186,7 +186,7 @@ class IntakeEmailAttachmentEndpoint(BaseAPIView):
 
         # Check if workspace has feature flag enabled
         if not check_workspace_feature_flag(
-            feature_key=FeatureFlag.INTAKE_PUBLISH, slug=workspace_slug
+            feature_key=FeatureFlag.INTAKE_EMAIL, slug=workspace_slug
         ):
             return Response(
                 {"error": "Payment required"}, status=status.HTTP_402_PAYMENT_REQUIRED

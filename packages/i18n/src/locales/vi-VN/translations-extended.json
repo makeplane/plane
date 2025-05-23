@@ -25,6 +25,64 @@
     "templates": "Mẫu"
   },
 
+  "updates": {
+    "add_update": "Thêm cập nhật",
+    "add_update_placeholder": "Thêm cập nhật của bạn ở đây",
+    "empty": {
+      "title": "Chưa có cập nhật",
+      "description": "Bạn có thể xem cập nhật ở đây."
+    },
+    "create": {
+      "success": {
+        "title": "Cập nhật đã được tạo",
+        "message": "Cập nhật đã được tạo thành công."
+      },
+      "error": {
+        "title": "Không thể tạo cập nhật",
+        "message": "Không thể tạo cập nhật. Vui lòng thử lại!"
+      }
+    },
+    "update": {
+      "success": {  
+        "title": "Cập nhật đã được cập nhật",
+        "message": "Cập nhật đã được cập nhật thành công."
+      },
+      "error": {
+        "title": "Không thể cập nhật cập nhật",
+        "message": "Không thể cập nhật cập nhật. Vui lòng thử lại!"
+      }
+    },
+    "delete": {
+      "success": {
+        "title": "Cập nhật đã được xóa",
+        "message": "Cập nhật đã được xóa thành công."
+      },
+      "error": {
+        "title": "Không thể xóa cập nhật",
+        "message": "Không thể xóa cập nhật. Vui lòng thử lại!"
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reaction đã được tạo",
+          "message": "Reaction đã được tạo thành công."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reaction đã được xóa",
+          "message": "Reaction đã được xóa thành công."
+        }
+      }
+    },
+    "progress": {
+      "title": "Tiến độ",
+      "since_last_update": "Từ lần cập nhật cuối cùng",
+      "comments": "{count, plural, one{# bình luận} other{# bình luận}}"
+    }
+  },  
+
   "issue": {
     "relation": {
       "start_before": "Bắt đầu Trước",
@@ -405,6 +463,107 @@
         "cancel_success_message": "Bây giờ bạn có thể xóa workspace.",
         "cancel_error_title": "Điều đó không hoạt động.",
         "cancel_error_message": "Vui lòng thử lại."
+      },
+      "applications": {
+        "title": "Ứng dụng",
+        "applicationId_copied": "ID ứng dụng đã được sao chép vào clipboard",
+        "clientId_copied": "ID khách hàng đã được sao chép vào clipboard",
+        "clientSecret_copied": "Secret khách hàng đã được sao chép vào clipboard",
+        "third_party_apps": "Ứng dụng thứ ba",
+        "your_apps": "Ứng dụng của bạn",
+        "connect": "Kết nối",
+        "connected": "Đã kết nối",
+        "app_available": "Bạn đã làm cho ứng dụng này có sẵn để sử dụng với một workspace Plane",
+        "app_available_description": "Kết nối một workspace Plane để bắt đầu sử dụng nó",
+        "client_id_and_secret": "ID khách hàng và Secret",
+        "client_id_and_secret_description": "Sao chép và lưu khóa bí mật này trong Pages. Bạn không thể nhìn thấy khóa này lại sau khi bạn đóng.",
+        "client_id_and_secret_download": "Bạn có thể tải xuống một CSV với khóa từ đây.",
+        "application_id": "ID ứng dụng",
+        "client_id": "ID khách hàng",
+        "client_secret": "Secret khách hàng",
+        "export_as_csv": "Xuất ra CSV",
+        "slug_already_exists": "Slug đã tồn tại",
+        "failed_to_create_application": "Không thể tạo ứng dụng",
+        "upload_logo": "Tải lên Logo",
+        "app_name_title": "Bạn sẽ gọi ứng dụng này là gì",
+        "app_name_error": "Tên ứng dụng là bắt buộc",
+        "app_short_description_title": "Đưa ra một mô tả ngắn cho ứng dụng này",
+        "app_short_description_error": "Mô tả ngắn ứng dụng là bắt buộc",
+        "app_description_title": "Viết thêm một mô tả dài hơn cho những người muốn biết thêm. Nhấn / để thực hiện lệnh",
+        "app_description_error": "Mô tả ứng dụng là bắt buộc",
+        "app_slug_title": "Slug ứng dụng",
+        "app_slug_error": "Slug ứng dụng là bắt buộc",
+        "app_maker_title": "Người tạo ứng dụng",
+        "app_maker_error": "Người tạo ứng dụng là bắt buộc",
+        "webhook_url_title": "URL Webhook",
+        "webhook_url_error": "URL Webhook là bắt buộc",
+        "invalid_webhook_url_error": "URL Webhook không hợp lệ",
+        "redirect_uris_title": "Redirect URIs",
+        "redirect_uris_error": "Redirect URIs là bắt buộc",
+        "invalid_redirect_uris_error": "Redirect URIs không hợp lệ",
+        "redirect_uris_description": "Nhập các URI cách nhau bởi dấu cách mà ứng dụng sẽ chuyển hướng sau khi người dùng e.g https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "Authorized Javascript Origins",
+        "authorized_javascript_origins_error": "Authorized Javascript Origins là bắt buộc",
+        "invalid_authorized_javascript_origins_error": "Authorized Javascript Origins không hợp lệ",
+        "authorized_javascript_origins_description": "Nhập các nguồn cách nhau bởi dấu cách mà ứng dụng sẽ được phép thực hiện yêu cầu e.g app.com example.com",
+        "create_app": "Tạo ứng dụng",
+        "update_app": "Cập nhật ứng dụng",
+        "regenerate_client_secret_description": "Tạo lại khóa bí mật. Nếu bạn tạo lại khóa, bạn có thể sao chép khóa hoặc tải xuống nó thành một tệp CSV ngay sau đó.",
+        "regenerate_client_secret": "Tạo lại khóa bí mật",
+        "regenerate_client_secret_confirm_title": "Bạn có chắc chắn muốn tạo lại khóa bí mật?",
+        "regenerate_client_secret_confirm_description": "Ứng dụng sử dụng khóa này sẽ ngừng hoạt động. Bạn sẽ cần cập nhật khóa trong ứng dụng.",
+        "regenerate_client_secret_confirm_cancel": "Hủy bỏ",
+        "regenerate_client_secret_confirm_regenerate": "Regenerate",
+        "read_only_access_to_workspace": "Truy cập chỉ đọc vào workspace của bạn",
+        "write_access_to_workspace": "Truy cập viết vào workspace của bạn",
+        "read_only_access_to_user_profile": "Truy cập chỉ đọc vào hồ sơ người dùng của bạn",
+        "write_access_to_user_profile": "Truy cập viết vào hồ sơ người dùng của bạn",
+        "connect_app_to_workspace": "Kết nối {app} vào workspace của bạn {workspace}",
+        "user_permissions": "Quyền người dùng",
+        "user_permissions_description": "Quyền người dùng được sử dụng để cấp quyền truy cập vào hồ sơ người dùng.",
+        "workspace_permissions": "Quyền workspace",
+        "workspace_permissions_description": "Quyền workspace được sử dụng để cấp quyền truy cập vào workspace.",
+        "with_the_permissions": "với quyền",
+        "app_consent_title": "{app} đang yêu cầu truy cập vào workspace Plane của bạn và hồ sơ.",
+        "choose_workspace_to_connect_app_with": "Chọn một workspace để kết nối ứng dụng",
+        "app_consent_workspace_permissions_title": "{app} muốn",
+        "app_consent_user_permissions_title": "{app} cũng có thể yêu cầu quyền của người dùng cho các tài nguyên sau. Các quyền này sẽ được yêu cầu và được cấp phép chỉ bởi một người dùng.",
+        "app_consent_accept_title": "Bằng cách chấp nhận, bạn",
+        "app_consent_accept_1": "Cấp quyền truy cập vào dữ liệu Plane của bạn ở bất kỳ đâu bạn có thể sử dụng ứng dụng bên trong hoặc ngoài Plane",
+        "app_consent_accept_2": "Đồng ý với Chính sách bảo mật và Điều khoản sử dụng của {app}",
+        "accepting": "Đang chấp nhận...",
+        "accept": "Chấp nhận",
+        "categories": "Danh mục",
+        "select_app_categories": "Chọn danh mục ứng dụng",
+        "categories_title": "Danh mục",
+        "categories_error": "Danh mục là bắt buộc",
+        "invalid_categories_error": "Danh mục không hợp lệ",
+        "categories_description": "Chọn các danh mục phù hợp nhất với ứng dụng",
+        "privacy_policy_url_title": "URL Chính sách bảo mật",
+        "privacy_policy_url_error": "URL Chính sách bảo mật là bắt buộc",
+        "invalid_privacy_policy_url_error": "URL Chính sách bảo mật không hợp lệ",
+        "terms_of_service_url_title": "URL Điều khoản sử dụng",
+        "terms_of_service_url_error": "URL Điều khoản sử dụng là bắt buộc",
+        "invalid_terms_of_service_url_error": "URL Điều khoản sử dụng không hợp lệ",
+        "support_url_title": "URL Hỗ trợ",
+        "support_url_error": "URL Hỗ trợ là bắt buộc",
+        "invalid_support_url_error": "URL Hỗ trợ không hợp lệ",
+        "video_url_title": "URL Video",
+        "video_url_error": "URL Video là bắt buộc",
+        "invalid_video_url_error": "URL Video không hợp lệ",
+        "setup_url_title": "URL Cài đặt",
+        "setup_url_error": "URL Cài đặt là bắt buộc",
+        "invalid_setup_url_error": "URL Cài đặt không hợp lệ",
+        "contact_email_title": "Email Liên hệ",
+        "contact_email_error": "Email Liên hệ là bắt buộc",
+        "invalid_contact_email_error": "Email Liên hệ không hợp lệ",
+        "upload_attachments": "Tải lên tệp đính kèm",
+        "uploading_images": "Tải lên {count, plural, one {hình ảnh} other {hình ảnh}}",
+        "drop_images_here": "Đặt hình ảnh vào đây",
+        "click_to_upload_images": "Nhấp để tải lên hình ảnh",
+        "invalid_file_or_exceeds_size_limit": "Tệp không hợp lệ hoặc vượt quá giới hạn kích thước ({size} MB)",
+        "uploading": "Đang tải lên...",
+        "upload_and_save": "Tải lên và lưu"
       }
     }
   },
@@ -880,7 +1039,9 @@
     "multiple_connections_found": "Nhiều kết nối đã được tìm thấy khi chỉ mong đợi một kết nối",
     "installation_not_found": "Không thể tìm thấy cài đặt được yêu cầu",
     "user_not_found": "Không thể tìm thấy người dùng được yêu cầu",
-    "error_fetching_token": "Không thể lấy mã thông báo xác thực"
+    "error_fetching_token": "Không thể lấy mã thông báo xác thực",
+    "invalid_app_credentials": "Các thông tin xác thực ứng dụng đã cung cấp không hợp lệ",
+    "invalid_app_installation_id": "Không thể cài đặt ứng dụng"
   },
 
   "import_status": {

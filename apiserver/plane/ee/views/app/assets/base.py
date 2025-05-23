@@ -48,6 +48,8 @@ class DuplicateAssetEndpoint(BaseAPIView):
             FileAsset.EntityTypeContext.TEAM_SPACE_DESCRIPTION,
             FileAsset.EntityTypeContext.OAUTH_APP_DESCRIPTION,
             FileAsset.EntityTypeContext.OAUTH_APP_LOGO,
+            FileAsset.EntityTypeContext.OAUTH_APP_ATTACHMENT,
+            FileAsset.EntityTypeContext.TEMPLATE_ATTACHMENT,
         ):
             return {"entity_identifier": entity_id}
 

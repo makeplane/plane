@@ -11,6 +11,7 @@ export type GitLabAuthorizeState = {
   workspace_id: string;
   plane_api_token: string;
   gitlab_hostname: string;
+  source_hostname?: string; // generic field for oauth controller migration
   target_host: string;
 };
 

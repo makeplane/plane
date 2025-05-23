@@ -25,6 +25,7 @@ from plane.authentication.adapter.error import (
 )
 from plane.utils.path_validator import validate_next_path
 
+
 class MagicGenerateSpaceEndpoint(APIView):
     permission_classes = [AllowAny]
 
@@ -37,7 +38,6 @@ class MagicGenerateSpaceEndpoint(APIView):
                 error_message="INSTANCE_NOT_CONFIGURED",
             )
             return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
-
 
         email = request.data.get("email", "").strip().lower()
         try:

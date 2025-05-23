@@ -100,7 +100,7 @@ export const EpicOverviewWidgetModals: FC<Props> = observer((props) => {
 
   const handleExistingIssuesModalClose = () => {
     handleIssueCrudState("existing", null, null);
-    setLastWidgetAction("sub-issues");
+    setLastWidgetAction("sub-work-items");
     toggleSubIssuesModal(null);
   };
 
@@ -115,7 +115,7 @@ export const EpicOverviewWidgetModals: FC<Props> = observer((props) => {
   const handleCreateUpdateModalClose = () => {
     handleIssueCrudState("create", null, null);
     toggleCreateIssueModal(false);
-    setLastWidgetAction("sub-issues");
+    setLastWidgetAction("sub-work-items");
   };
 
   // derived values

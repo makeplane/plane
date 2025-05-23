@@ -3,8 +3,9 @@ import { TIssuePriorities } from "../issues";
 import { TIssueAttachment } from "./issue_attachment";
 import { TIssueLink } from "./issue_link";
 import { TIssueReaction, IIssuePublicReaction, IPublicVote } from "./issue_reaction";
-import { TIssueRelationTypes, TIssuePublicComment } from "@/plane-web/types";
-import { TWorkItemExtended, TWorkItemDetailExtended } from "./issue-extended";
+import { TIssueRelationTypes } from "./issue_relation";
+import { TIssuePublicComment } from "./activity/issue_comment";
+import { TWorkItemExtended, TWorkItemWidgetsExtended } from "./issue-extended";
 import { EUpdateStatus } from "../enums";
 
 // new issue structure types
@@ -67,6 +68,7 @@ export type TIssue = TBaseIssue &
     tempId?: string;
     // sourceIssueId is used to store the original issue id when creating a copy of an issue. Used in cloning property values. It is not a part of the API response.
     sourceIssueId?: string;
+    state__group?: string | null;
     update_status?: EUpdateStatus | undefined;
   };
 
@@ -123,7 +125,7 @@ export type TBulkOperationsPayload = {
   properties: Partial<TBulkIssueProperties>;
 };
 
-export type TIssueDetailWidget = "sub-issues" | "relations" | "links" | "attachments" | TWorkItemDetailExtended;
+export type TWorkItemWidgets = "sub-work-items" | "relations" | "links" | "attachments" | TWorkItemWidgetsExtended;
 
 export type TIssueServiceType = EIssueServiceType.ISSUES | EIssueServiceType.EPICS | EIssueServiceType.WORK_ITEMS;
 

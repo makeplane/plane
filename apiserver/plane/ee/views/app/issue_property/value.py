@@ -201,6 +201,14 @@ class IssuePropertyValueEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def patch(self, request, slug, project_id, issue_id, property_id):
         try:
+            issue = Issue.objects.get(pk=issue_id)
+
+            if issue.archived_at is not None:
+                return Response(
+                    {"error": "Archived work items cannot be updated"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
             # Get the issue property
             issue_property = IssueProperty.objects.get(
                 workspace__slug=slug,

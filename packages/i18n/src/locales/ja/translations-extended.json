@@ -24,6 +24,75 @@
     "workflows": "ワークフロー"
   },
 
+  "updates": {
+    "add_update": "更新を追加",
+    "add_update_placeholder": "ここに更新を入力してください",
+    "empty": {
+      "title": "まだ更新がありません",
+      "description": "ここで更新を確認できます。"
+    },
+    "delete": {
+      "title": "更新を削除",
+      "confirmation": "この更新を削除してもよろしいですか？この操作は元に戻すことができません。",
+      "success": {
+        "title": "更新が削除されました",
+        "message": "更新が正常に削除されました。"
+      },
+      "error": {
+        "title": "更新が削除されませんでした",
+        "message": "更新を削除できませんでした。"
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "反応が作成されました",
+          "message": "反応が正常に作成されました。"
+        },
+        "error": {
+          "title": "反応が作成されませんでした",
+          "message": "反応を作成できませんでした。"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "反応が削除されました",
+          "message": "反応が正常に削除されました。"
+        },
+        "error": {
+          "title": "反応が削除されませんでした",
+          "message": "反応を削除できませんでした。"
+        }
+      }
+    },
+    "progress": {
+      "title": "進捗",
+      "since_last_update": "最後の更新以来",
+      "comments": "{count, plural, one{# コメント} other{# コメント}}"
+    },
+    "create": {
+      "success": {
+        "title": "更新が作成されました",
+        "message": "更新が正常に作成されました。"
+      },
+      "error": {
+        "title": "更新が作成されませんでした",
+        "message": "更新を作成できませんでした。"
+      }
+    },
+    "update": {
+      "success": {
+        "title": "更新が更新されました",
+        "message": "更新が正常に更新されました。"
+      },
+      "error": {
+        "title": "更新が更新されませんでした",
+        "message": "更新を更新できませんでした。"
+      }
+    }
+  },
+
+
   "issue": {
     "relation": {
       "start_before": "開始前",
@@ -473,7 +542,38 @@
         "app_consent_accept_1": "アプリにPlane内外でアプリを使用できる場所であなたのPlaneデータへのアクセスを許可します",
         "app_consent_accept_2": "{app}のプライバシーポリシーと利用規約に同意します",
         "accepting": "承認中...",
-        "accept": "承認"
+        "accept": "承認",
+        "categories": "カテゴリー",
+        "select_app_categories": "アプリのカテゴリーを選択",
+        "categories_title": "カテゴリー",
+        "categories_error": "カテゴリーは必須です",
+        "invalid_categories_error": "無効なカテゴリー",
+        "categories_description": "アプリを最もよく説明するカテゴリーを選択してください",
+        "privacy_policy_url_title": "プライバシーポリシーURL",
+        "privacy_policy_url_error": "プライバシーポリシーURLは必須です",
+        "invalid_privacy_policy_url_error": "無効なプライバシーポリシーURL",
+        "terms_of_service_url_title": "利用規約URL",
+        "terms_of_service_url_error": "利用規約URLは必須です",
+        "invalid_terms_of_service_url_error": "無効な利用規約URL",
+        "support_url_title": "サポートURL",
+        "support_url_error": "サポートURLは必須です",
+        "invalid_support_url_error": "無効なサポートURL",
+        "video_url_title": "ビデオURL",
+        "video_url_error": "ビデオURLは必須です",
+        "invalid_video_url_error": "無効なビデオURL",
+        "setup_url_title": "セットアップURL",
+        "setup_url_error": "セットアップURLは必須です",
+        "invalid_setup_url_error": "無効なセットアップURL",
+        "contact_email_title": "連絡先メール",
+        "contact_email_error": "連絡先メールは必須です",
+        "invalid_contact_email_error": "無効な連絡先メール",
+        "upload_attachments": "添付ファイルをアップロード",
+        "uploading_images": "アップロード中 {count} 画像{count, plural, one {s} other {s}}",
+        "drop_images_here": "画像をここにドラッグ&ドロップ",
+        "click_to_upload_images": "画像をクリックしてアップロード",
+        "invalid_file_or_exceeds_size_limit": "無効なファイルまたはサイズの制限を超えています ({size} MB)",
+        "uploading": "アップロード中...",
+        "upload_and_save": "アップロードして保存"
       }
     }
   },
@@ -950,7 +1050,9 @@
     "installation_not_found": "要求されたインストールが見つかりませんでした",
     "user_not_found": "要求されたユーザーが見つかりませんでした",
     "error_fetching_token": "認証トークンの取得に失敗しました",
-    "cannot_create_multiple_connections": "あなたはすでに組織をワークスペースと接続しています。新しい接続を作成する前に、既存の接続を切断してください。"
+    "cannot_create_multiple_connections": "あなたはすでに組織をワークスペースと接続しています。新しい接続を作成する前に、既存の接続を切断してください。",
+    "invalid_app_credentials": "提供されたアプリの資格情報が無効です",
+    "invalid_app_installation_id": "アプリのインストールに失敗しました"
   },
 
   "import_status": {

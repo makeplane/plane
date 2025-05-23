@@ -1,10 +1,10 @@
-import { Store } from "@/worker/base";
+import { TSlackIssueEntityData } from "@plane/etl/slack";
 import { PlaneWebhookPayload } from "@plane/sdk";
+import { Store } from "@/worker/base";
 import { getConnectionDetailsForIssue } from "../../helpers/connection-details";
 import { ActivityForSlack, PlaneActivityWithTimestamp } from "../../types/types";
-import { TSlackIssueEntityData } from "@plane/etl/slack";
 
-const ignoredFieldUpdates = ["description", "attachment"];
+const ignoredFieldUpdates = ["description", "attachment", "sort_order"];
 
 export const handleIssueWebhook = async (payload: PlaneWebhookPayload) => {
   const activities = await getActivities(payload);
@@ -35,7 +35,7 @@ export const handleIssueWebhook = async (payload: PlaneWebhookPayload) => {
     return;
   }
 
-  const response = await slackService.sendThreadMessage(channel, messageTs, {
+  await slackService.sendThreadMessage(channel, messageTs, {
     text: "Work Item Updated",
     blocks: message,
   });
@@ -55,9 +55,7 @@ export const createSlackBlocksFromActivity = (fields: ActivityForSlack[]) => {
   }
 
   fields.forEach((field) => {
-    const capitalize = (str: string) => {
-      return str.charAt(0).toUpperCase() + str.slice(1);
-    };
+    const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
     const cleanField = capitalize(field.field.replace("_", " "));
 
     if (field.isArrayField) {
@@ -71,7 +69,12 @@ export const createSlackBlocksFromActivity = (fields: ActivityForSlack[]) => {
         }
       }
     } else {
-      message += `\n• *${cleanField}* updated to *${field.newValue}*`;
+      if (field.field === "reaction") {
+        const emoji = String.fromCodePoint(parseInt(field.newValue));
+        message += `\n• *${field.actor}* reacted with *${emoji}*`;
+      } else {
+        message += `\n• *${cleanField}* updated to *${field.newValue}*`;
+      }
     }
   });
 

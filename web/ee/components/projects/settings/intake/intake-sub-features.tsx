@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Copy, ExternalLink, RefreshCcw } from "lucide-react";
-import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { E_FEATURE_FLAGS, EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
 import { TInboxForm } from "@plane/types";
 import { Button, Loader, setPromiseToast, setToast, TOAST_TYPE, ToggleSwitch, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -11,6 +11,8 @@ import { TProperties } from "@/ce/constants";
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 import { useProject, useProjectInbox, useUserPermissions } from "@/hooks/store";
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
+import IntakeSubFeaturesUpgrade from "./intake-sub-features-upgrade";
 import { RenewModal } from "./renew-modal";
 
 export type TIntakeFeatureList = {
@@ -34,6 +36,11 @@ const IntakeSubFeatures = observer((props: Props) => {
   const { fetchIntakeForms, toggleIntakeForms, regenerateIntakeForms, intakeForms } = useProjectInbox();
   const { isUpdatingProject } = useProject();
   const { allowPermissions } = useUserPermissions();
+  const isFeatureAllowed = {
+    email: useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_EMAIL),
+    form: useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_FORM),
+    in_app: true,
+  };
 
   // fetching intake forms
   useSWR(
@@ -109,6 +116,17 @@ const IntakeSubFeatures = observer((props: Props) => {
                 : settings?.anchors?.[feature.key];
             const key = `is_${featureKey}_enabled`;
 
+            if (!isFeatureAllowed[featureKey as keyof typeof isFeatureAllowed])
+              return (
+                <IntakeSubFeaturesUpgrade
+                  key={featureKey}
+                  projectId={projectId}
+                  featureList={{
+                    [featureKey]: feature,
+                  }}
+                  className="mt-0"
+                />
+              );
             return (
               <div key={featureKey} className="gap-x-8 gap-y-3 bg-custom-background-100 py-3">
                 <div key={featureKey} className={cn("flex justify-between gap-2", {})}>

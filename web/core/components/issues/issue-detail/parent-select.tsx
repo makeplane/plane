@@ -70,7 +70,6 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
         isOpen={isParentIssueModalOpen === issueId}
         handleClose={() => toggleParentIssueModal(null)}
         onChange={(issue: any) => handleParentIssue(issue?.id)}
-        searchEpic
       />
       <button
         type="button"

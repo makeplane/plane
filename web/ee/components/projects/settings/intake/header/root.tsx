@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { RefreshCcw } from "lucide-react";
 // plane imports
-import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserProjectRoles, EUserPermissionsLevel, E_FEATURE_FLAGS } from "@plane/constants";
 import { Breadcrumbs, Button, Intake, Header, Popover, Loader } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
@@ -27,8 +27,9 @@ export const ProjectInboxHeader: FC = observer(() => {
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { intakeForms, fetchIntakeForms } = useProjectInbox();
-  const isAdvancedIntakeEnabled = useFlag(workspaceSlug.toString(), "INTAKE_SETTINGS");
-
+  const isEmailEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_EMAIL);
+  const isFormEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_FORM);
+  const isAdvancedIntakeEnabled = isEmailEnabled || isFormEnabled;
   const { currentProjectDetails, loader: currentProjectDetailsLoader, isUpdatingProject } = useProject();
   const { loader } = useProjectInbox();
 

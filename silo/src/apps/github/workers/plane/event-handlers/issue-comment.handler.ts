@@ -1,17 +1,17 @@
-import { MQ, Store } from "@/worker/base";
+import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { createGithubService, GithubService, ContentParser } from "@plane/etl/github";
+import { ExIssue, ExIssueComment, PlaneWebhookPayload } from "@plane/sdk";
+import { TWorkspaceCredential } from "@plane/types";
 import { GithubEntityConnection, GithubWorkspaceConnection } from "@/apps/github/types";
 import { env } from "@/env";
 import { getConnectionDetailsForPlane } from "@/helpers/connection";
+import { getPlaneAPIClient } from "@/helpers/plane-api-client";
+import { getPlaneAppDetails } from "@/helpers/plane-app-details";
 import { logger } from "@/logger";
-import { TaskHeaders } from "@/types";
-// plane imports
-import { ExIssue, ExIssueComment, Client as PlaneClient, PlaneWebhookPayload } from "@plane/sdk";
-import { createGithubService, GithubService, ContentParser } from "@plane/etl/github";
-
-import { imagePrefix } from "./issue.handler";
 import { getAPIClient } from "@/services/client";
-import { TWorkspaceCredential } from "@plane/types";
-import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { TaskHeaders } from "@/types";
+import { MQ, Store } from "@/worker/base";
+import { imagePrefix } from "./issue.handler";
 
 const apiClient = getAPIClient();
 
@@ -50,10 +50,8 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
       return
     }
 
-    const planeClient = new PlaneClient({
-      baseURL: workspaceConnection.target_hostname,
-      apiToken: credentials.target_access_token,
-    });
+    // Get the Plane API client
+    const planeClient = await getPlaneAPIClient(credentials, E_INTEGRATION_KEYS.GITHUB);
 
     // Get the issue associated with the comment
     const issue = await planeClient.issue.getIssue(
@@ -68,7 +66,7 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
 
     if(!credentials.source_access_token) {
       logger.error("Source access token not found");
-      return  
+      return;
     }
 
     const githubService = createGithubService(

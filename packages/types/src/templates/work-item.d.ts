@@ -79,6 +79,6 @@ export type TWorkItemTemplateFormData = Pick<
 >;
 
 export type TWorkItemTemplateForm = {
-  template: Pick<TWorkItemTemplate, "id" | "name" | "description_html">;
+  template: Pick<TWorkItemTemplate, "id" | "name" | "short_description">;
   work_item: TWorkItemTemplateFormData;
 };

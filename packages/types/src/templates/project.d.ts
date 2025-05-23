@@ -127,6 +127,6 @@ export type TProjectTemplateFormData = Pick<
   };
 
 export type TProjectTemplateForm = {
-  template: Pick<TProjectTemplate, "id" | "name" | "description_html">;
+  template: Pick<TProjectTemplate, "id" | "name" | "short_description">;
   project: TProjectTemplateFormData;
 };

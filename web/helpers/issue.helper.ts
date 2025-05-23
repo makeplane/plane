@@ -305,9 +305,11 @@ export const getComputedDisplayProperties = (
  */
 export const getIssuesShouldFallbackToServer = (queries: any) => {
   // If there is expand query and is not grouped then fallback to server
-  if (!isEmpty(queries.expand as string) && !queries.group_by) return true;
+  if (!isEmpty(queries?.expand as string) && !queries?.group_by) return true;
   // If query has mentions then fallback to server
-  if (!isEmpty(queries.mentions)) return true;
+  if (!isEmpty(queries?.mentions)) return true;
+  // If query has sub_issue as false then fallback to server
+  if (queries?.sub_issue === false) return true;
 
   return false;
 };

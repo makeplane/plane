@@ -1,8 +1,9 @@
-import { IStateConfig, LinearComment, LinearCycle } from "@/linear/types";
-import { Issue, IssueLabel, User } from "@linear/sdk";
-import { ExCycle, ExIssueAttachment, ExIssueComment, ExIssue as PlaneIssue, PlaneUser } from "@plane/sdk";
-import { getFormattedDate, getTargetState } from "../helpers";
+import { Issue, IssueLabel, User, Document } from "@linear/sdk";
+import { ExCycle, ExIssueAttachment, ExIssueComment, ExPage, ExIssue as PlaneIssue, PlaneUser } from "@plane/sdk";
 import { E_IMPORTER_KEYS } from "@/core";
+import { IStateConfig, LinearComment, LinearCycle } from "@/linear/types";
+import { getFormattedDate, getTargetState, getContentParser } from "../helpers";
+import { LinearContentParserConfig } from "../types";
 
 export const transformIssue = async (
   issue: Issue,
@@ -48,7 +49,7 @@ export const transformIssue = async (
     target_date: getFormattedDate(issue.dueDate?.toString()),
     start_date: getFormattedDate(issue.startedAt?.toString()),
     created_at: issue.createdAt,
-    // @ts-ignore
+    // @ts-expect-error
     state: targetState.id ?? "",
     // external_source_state_id: targetState?.external_id ?? "",
     priority: issue.priority == 0 ? "none" : issue.priorityLabel.toLowerCase(),
@@ -124,10 +125,20 @@ export const transformCycle = (cycle: LinearCycle): Partial<ExCycle> => ({
   issues: cycle.issues.map((issue) => issue.id),
 });
 
+export const transformDocument = async (document: Document, options: LinearContentParserConfig): Promise<Partial<ExPage>> => {
+  const content = document.content ?? "<p></p>";
+  const linearContentParser = getContentParser(options);
+  const contentHtml = await linearContentParser.toPlaneHtml(content);
+  return {
+    name: document.title,
+    description_html: contentHtml,
+  };
+};
+
 const breakAndGetAssignee = async (issue: Issue, users: User[]): Promise<string | undefined> => {
-  // @ts-ignore
+  // @ts-expect-error
   if (issue._assignee) {
-    // @ts-ignore
+    // @ts-expect-error
     const assigneeId = issue._assignee.id;
     const user = users.find((u) => u.id === assigneeId);
     if (user) {
@@ -142,7 +153,7 @@ const breakAndGetAssignee = async (issue: Issue, users: User[]): Promise<string 
 };
 
 const breakAndGetParent = (issue: Issue): string | undefined => {
-  // @ts-ignore
+  // @ts-expect-error
   const parent = issue._parent;
   if (parent) {
     return parent.id;
@@ -150,9 +161,9 @@ const breakAndGetParent = (issue: Issue): string | undefined => {
 };
 
 const breakAndGetCreator = (issue: Issue, users: User[]): string | undefined => {
-  // @ts-ignore
+  // @ts-expect-error
   if (issue._creator) {
-    // @ts-ignore
+    // @ts-expect-error
     const creatorId = issue._creator.id;
     const user = users.find((u) => u.id === creatorId);
     return user?.displayName;
@@ -160,9 +171,9 @@ const breakAndGetCreator = (issue: Issue, users: User[]): string | undefined => 
 };
 
 const breakAndGetState = (issue: Issue): string | undefined => {
-  // @ts-ignore
+  // @ts-expect-error
   if (issue._state) {
-    // @ts-ignore
+    // @ts-expect-error
     return issue._state.id;
   }
 };

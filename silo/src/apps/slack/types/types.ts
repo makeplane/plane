@@ -96,6 +96,7 @@ export enum E_MESSAGE_ACTION_TYPES {
   DISCONNECT_WORK_ITEM = "disconnect_work_item",
   ISSUE_WEBLINK_SUBMISSION = "issue_weblink_submission",
   ISSUE_COMMENT_SUBMISSION = "issue_comment_submission",
+  CONNECT_ACCOUNT = "connect_account",
 }
 
 export type PlaneActivityWithTimestamp = {

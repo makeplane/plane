@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { TSlackConnectionDetails } from "../types/types";
+import { E_MESSAGE_ACTION_TYPES, TSlackConnectionDetails } from "../types/types";
 
 export const getAccountConnectionBlocks = (details: TSlackConnectionDetails) => {
   return [
@@ -15,6 +15,7 @@ export const getAccountConnectionBlocks = (details: TSlackConnectionDetails) => 
       elements: [
         {
           type: "button",
+          action_id: E_MESSAGE_ACTION_TYPES.CONNECT_ACCOUNT,
           text: {
             type: "plain_text",
             text: "Connect Account",

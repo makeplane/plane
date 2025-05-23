@@ -3,6 +3,8 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "@plane/i18n";
 import { Button, Input, ModalCore } from "@plane/ui";
+// hooks
+import useKeypress from "@/hooks/use-keypress";
 import { useCustomers } from "@/plane-web/hooks/store";
 
 export type TLinkFormData = {
@@ -49,8 +51,13 @@ export const SourceCreateUpdateModal: FC<TProps> = observer((props) => {
     if (requestSourceModalId) reset({ ...defaultValues, ...preloadedData });
     return () => reset(defaultValues);
   }, [preloadedData, reset, requestSourceModalId]);
+
+  useKeypress("Escape", () => {
+    if (requestSourceModalId === id) handleClose();
+  });
+
   return (
-    <ModalCore isOpen={requestSourceModalId === id} handleClose={handleClose}>
+    <ModalCore isOpen={requestSourceModalId === id}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
           <h3 className="text-xl font-medium text-custom-text-200">

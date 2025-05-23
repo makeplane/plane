@@ -1,6 +1,8 @@
 "use client";
 
 import { Command } from "cmdk";
+// components
+import { openProjectAndScrollToSidebar } from "@/components/command-palette/actions/helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web helpers
@@ -32,6 +34,12 @@ export const PagesAppCommandPaletteSearchResults: React.FC<Props> = (props) => {
                   onSelect={() => {
                     closePalette();
                     router.push(currentSection.path(item, undefined));
+                    const itemProjectId =
+                      item?.project_id ||
+                      (Array.isArray(item?.project_ids) && item?.project_ids?.length > 0
+                        ? item?.project_ids[0]
+                        : undefined);
+                    if (itemProjectId) openProjectAndScrollToSidebar(itemProjectId);
                   }}
                   value={`${key}-${item?.id}-${item.name}-${item.project__identifier ?? ""}-${item.sequence_id ?? ""}`}
                   className="focus:outline-none"

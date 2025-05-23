@@ -157,7 +157,7 @@ class Command(BaseCommand):
             },
             # Deprecated, use LLM_MODEL
             {
-                "key": "GPT_ENGINE",  
+                "key": "GPT_ENGINE",
                 "value": os.environ.get("GPT_ENGINE", "gpt-3.5-turbo"),
                 "category": "SMTP",
                 "is_encrypted": False,

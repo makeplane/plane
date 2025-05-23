@@ -27,6 +27,7 @@ import { useLabel, useMember, useModule, useProjectState } from "@/hooks/store";
 import { useIssuePropertiesActivity, useIssueTypes, useWorkItemTemplates } from "@/plane-web/hooks/store";
 // plane web services
 import { DraftIssuePropertyValuesService, IssuePropertyValuesService } from "@/plane-web/services/issue-types";
+import { ConversionToastActionItems } from "../conversion-toast-action-items";
 
 const issuePropertyValuesService = new IssuePropertyValuesService();
 const draftIssuePropertyValuesService = new DraftIssuePropertyValuesService();
@@ -328,6 +329,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
             type: TOAST_TYPE.SUCCESS,
             title: t("success"),
             message: "Epic converted to work item successfully",
+            actionItems: <ConversionToastActionItems workspaceSlug={workspaceSlug} workItemId={data?.id} />,
           });
         })
         .catch((error) => {

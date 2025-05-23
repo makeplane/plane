@@ -1,4 +1,4 @@
-@import url("fonts/main.css");
+@import "@plane/propel/styles/fonts";
 
 @tailwind base;
 @tailwind components;
@@ -991,6 +991,17 @@ div.web-view-spinner div.bar12 {
   animation: fadeOut 500ms ease-in 100ms forwards;
 }
 
+@keyframes highlight {
+  0% {
+    background-color: rgba(var(--color-background-90), 1);
+    border-radius: 4px;
+  }
+  100% {
+    background-color: transparent;
+    border-radius: 4px;
+  }
+}
+
 /* Desktop application */
 html.todesktop body {
   height: 100vh;
@@ -1310,4 +1321,15 @@ input[type="color"].custom-color-picker {
   --ease-in-out-quint: cubic-bezier(0.86, 0, 0.07, 1);
   --ease-in-out-expo: cubic-bezier(1, 0, 0, 1);
   --ease-in-out-circ: cubic-bezier(0.785, 0.135, 0.15, 0.86);
+}
+
+@keyframes highlight {
+  0% {
+    background-color: rgba(var(--color-background-90), 1);
+    border-radius: 4px;
+  }
+  100% {
+    background-color: transparent;
+    border-radius: 4px;
+  }
 }

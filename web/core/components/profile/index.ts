@@ -6,3 +6,4 @@ export * from "./time";
 export * from "./profile-setting-content-wrapper";
 export * from "./profile-setting-content-header";
 export * from "./form";
+export * from "./start-of-week-preference";
