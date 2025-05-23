@@ -193,7 +193,7 @@ class IntakeSettingEndpoint(BaseAPIView):
         request_data = request.data.copy()
 
         if request_data.get("is_form_enabled") and not check_workspace_feature_flag(
-            FeatureFlag.INTAKE_FORM, slug
+            FeatureFlag.INTAKE_FORM, slug, user_id=request.user.id
         ):
             return Response(
                 {"error": "INTAKE_FORM is not enabled"},
@@ -202,7 +202,7 @@ class IntakeSettingEndpoint(BaseAPIView):
 
         # Only keep email enabled if feature flag is active
         if request_data.get("is_email_enabled") and not check_workspace_feature_flag(
-            FeatureFlag.INTAKE_EMAIL, slug
+            FeatureFlag.INTAKE_EMAIL, slug, user_id=request.user.id
         ):
             return Response(
                 {"error": "INTAKE_EMAIL is not enabled"},
