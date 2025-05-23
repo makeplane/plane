@@ -57,7 +57,7 @@ class Command(BaseCommand):
             "description_html",
             "attachments",
             "company_name",
-            "support_email",
+            "contact_email",
             "categories",
         ]
 
