@@ -57,7 +57,7 @@ class InstanceEndpoint(BaseAPIView):
             POSTHOG_API_KEY,
             POSTHOG_HOST,
             UNSPLASH_ACCESS_KEY,
-            OPENAI_API_KEY,
+            LLM_API_KEY,
             IS_INTERCOM_ENABLED,
             INTERCOM_APP_ID,
         ) = get_configuration_value(
@@ -112,8 +112,8 @@ class InstanceEndpoint(BaseAPIView):
                     "default": os.environ.get("UNSPLASH_ACCESS_KEY", ""),
                 },
                 {
-                    "key": "OPENAI_API_KEY",
-                    "default": os.environ.get("OPENAI_API_KEY", ""),
+                    "key": "LLM_API_KEY",
+                    "default": os.environ.get("LLM_API_KEY", ""),
                 },
                 # Intercom settings
                 {
@@ -151,7 +151,7 @@ class InstanceEndpoint(BaseAPIView):
         data["has_unsplash_configured"] = bool(UNSPLASH_ACCESS_KEY)
 
         # Open AI settings
-        data["has_openai_configured"] = bool(OPENAI_API_KEY)
+        data["has_llm_configured"] = bool(LLM_API_KEY)
 
         # File size settings
         data["file_size_limit"] = float(os.environ.get("FILE_SIZE_LIMIT", 5242880))
