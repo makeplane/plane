@@ -7,8 +7,8 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Button, ContrastIcon, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
-import { CyclesViewHeader } from "@/components/cycles";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { CyclesViewHeader } from "@/components/cycles/cycle-list/cycle-view-header";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

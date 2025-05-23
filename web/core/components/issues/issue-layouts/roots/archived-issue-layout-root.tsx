@@ -2,12 +2,14 @@ import React, { Fragment } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// mobx store
-// components
+// plane constants
 import { EIssuesStoreType } from "@plane/constants";
-import { LogoSpinner } from "@/components/common";
-import { ArchivedIssueListLayout, ArchivedIssueAppliedFiltersRoot, IssuePeekOverview } from "@/components/issues";
-// ui
+// components
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { ArchivedIssueAppliedFiltersRoot } from "@/components/issues/issue-layouts/filters/applied-filters/archived-issue-applied-filters-root";
+import { ArchivedIssueListLayout } from "@/components/issues/issue-layouts/list/archived-issue-list-layout";
+import { IssuePeekOverview } from "@/components/issues/issue-layouts/peek-overview";
+// hooks
 import { useIssues } from "@/hooks/store";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 

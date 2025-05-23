@@ -16,7 +16,7 @@ import { IUserProfileProjectSegregation } from "@plane/types";
 // plane ui
 import { Loader, Tooltip } from "@plane/ui";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";

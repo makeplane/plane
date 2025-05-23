@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // hooks
 import { useProject } from "@/hooks/store";
 

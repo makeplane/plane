@@ -6,8 +6,9 @@ import { ChevronDown } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { Collapsible } from "@plane/ui";
-import { CountChip } from "@/components/common";
-import { MembersSettingsLoader } from "@/components/ui";
+// components
+import { CountChip } from "@/components/common/count-chip";
+import { MembersSettingsLoader } from "@/components/ui/members-settings-loader";
 import { WorkspaceInvitationsListItem, WorkspaceMembersListItem } from "@/components/workspace";
 // hooks
 import { useMember } from "@/hooks/store";
@@ -66,7 +67,9 @@ export const WorkspaceMembersList: FC<{ searchQuery: string; isAdmin: boolean }>
           title={
             <div className="flex w-full items-center justify-between pt-4">
               <div className="flex">
-                <h4 className="text-xl font-medium pt-2 pb-2">{t("workspace_settings.settings.members.pending_invites")}</h4>
+                <h4 className="text-xl font-medium pt-2 pb-2">
+                  {t("workspace_settings.settings.members.pending_invites")}
+                </h4>
                 {searchedInvitationsIds && (
                   <CountChip count={searchedInvitationsIds.length} className="h-5  m-auto ml-2" />
                 )}

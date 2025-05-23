@@ -6,7 +6,7 @@ import useSWR from "swr";
 // plane constants
 import { EIssueLayoutTypes, EIssuesStoreType } from "@plane/constants";
 // components
-import { LogoSpinner } from "@/components/common";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 import { TransferIssues, TransferIssuesModal } from "@/components/cycles";
 import {
   CycleAppliedFiltersRoot,

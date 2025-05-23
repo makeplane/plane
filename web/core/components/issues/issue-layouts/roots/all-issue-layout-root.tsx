@@ -9,23 +9,25 @@ import {
   EIssueLayoutTypes,
   EIssueFilterType,
   EIssuesStoreType,
-  ISSUE_DISPLAY_FILTERS_BY_PAGE
-,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
+  EUserPermissions,
+  EUserPermissionsLevel,
+} from "@plane/constants";
 import { IIssueDisplayFilterOptions } from "@plane/types";
-// hooks
 // components
-import { EmptyState } from "@/components/common";
-import { SpreadsheetView } from "@/components/issues/issue-layouts";
+import { EmptyState } from "@/components/common/empty-state";
 import { AllIssueQuickActions } from "@/components/issues/issue-layouts/quick-action-dropdowns";
-import { SpreadsheetLayoutLoader } from "@/components/ui";
+import { SpreadsheetView } from "@/components/issues/issue-layouts/spreadsheet-view";
+import { SpreadsheetLayoutLoader } from "@/components/ui/spreadsheet-layout-loader";
 // hooks
 import { useGlobalView, useIssues, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
-// store
+// assets
 import emptyView from "@/public/empty-state/view.svg";
+// components
 import { IssuePeekOverview } from "../../peek-overview";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { TRenderQuickActions } from "../list/list-view-types";
