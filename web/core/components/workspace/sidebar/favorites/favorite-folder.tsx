@@ -17,10 +17,9 @@ import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
 import { PenSquare, Star, MoreHorizontal, ChevronRight, GripVertical } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-
-// plane helpers
+// plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-// ui
+import { useTranslation } from "@plane/i18n";
 import { IFavorite, InstructionType } from "@plane/types";
 import { CustomMenu, Tooltip, DropIndicator, FavoriteFolderIcon, DragHandle } from "@plane/ui";
 // helpers
@@ -29,7 +28,7 @@ import { cn } from "@/helpers/common.helper";
 import { useAppTheme } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// constants
+// local imports
 import { FavoriteRoot } from "./favorite-items";
 import { getCanDrop, getInstructionFromPayload } from "./favorites.helpers";
 import { NewFavoriteFolder } from "./new-fav-folder";
@@ -54,10 +53,11 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
   const [isDragging, setIsDragging] = useState(false);
   const [folderToRename, setFolderToRename] = useState<string | boolean | null>(null);
   const [instruction, setInstruction] = useState<InstructionType | undefined>(undefined);
-
   // refs
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
   const elementRef = useRef<HTMLDivElement | null>(null);
+  // translation
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (favorite.children === undefined && workspaceSlug) {
@@ -231,11 +231,11 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                       <span
                         ref={actionSectionRef}
                         className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
-                        onClick={() => setIsMenuActive(!isMenuActive)}
                       >
-                        <MoreHorizontal className="size-4" />
+                        <MoreHorizontal className="size-3" />
                       </span>
                     }
+                    menuButtonOnClick={() => setIsMenuActive(!isMenuActive)}
                     className={cn(
                       "opacity-0 pointer-events-none flex-shrink-0 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
                       {
@@ -244,6 +244,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                     )}
                     customButtonClassName="grid place-items-center"
                     placement="bottom-start"
+                    ariaLabel={t("aria_labels.toggle_quick_actions_menu")}
                   >
                     <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favorite)}>
                       <span className="flex items-center justify-start gap-2">
@@ -267,9 +268,10 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                         "inline-block": isMenuActive,
                       }
                     )}
+                    aria-label={t(open ? "aria_labels.close_folder" : "aria_labels.open_folder")}
                   >
                     <ChevronRight
-                      className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
+                      className={cn("size-3 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
                         "rotate-90": open,
                       })}
                     />

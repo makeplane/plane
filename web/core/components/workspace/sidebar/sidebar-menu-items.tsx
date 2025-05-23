@@ -8,6 +8,7 @@ import {
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS,
   WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS,
 } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
@@ -20,9 +21,10 @@ export const SidebarMenuItems = observer(() => {
   // routers
   const { workspaceSlug } = useParams();
   // store hooks
-  const { sidebarCollapsed, toggleExtendedSidebar } = useAppTheme();
+  const { sidebarCollapsed, extendedSidebarCollapsed, toggleExtendedSidebar } = useAppTheme();
   const { getNavigationPreferences } = useWorkspace();
-
+  // translation
+  const { t } = useTranslation();
   // derived values
   const currentWorkspaceNavigationPreferences = getNavigationPreferences(workspaceSlug.toString());
 
@@ -39,31 +41,33 @@ export const SidebarMenuItems = observer(() => {
   );
 
   return (
-    <>
-      <div
-        className={cn("flex flex-col gap-0.5", {
-          "space-y-0": sidebarCollapsed,
-        })}
-      >
-        {WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS.map((item, _index) => (
-          <SidebarItem key={`static_${_index}`} item={item} />
-        ))}
-        {sortedNavigationItems.map((item, _index) => (
-          <SidebarItem key={`dynamic_${_index}`} item={item} />
-        ))}
-        <SidebarNavItem className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}>
-          <button
-            onClick={() => toggleExtendedSidebar()}
-            className={cn("flex items-center gap-1.5 text-sm font-medium flex-grow text-custom-text-350", {
-              "justify-center": sidebarCollapsed,
-            })}
-            id="extended-sidebar-toggle"
-          >
-            <Ellipsis className="size-4" />
-            {!sidebarCollapsed && <span>More</span>}
-          </button>
-        </SidebarNavItem>
-      </div>
-    </>
+    <div
+      className={cn("flex flex-col gap-0.5", {
+        "space-y-0": sidebarCollapsed,
+      })}
+    >
+      {WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS.map((item, _index) => (
+        <SidebarItem key={`static_${_index}`} item={item} />
+      ))}
+      {sortedNavigationItems.map((item, _index) => (
+        <SidebarItem key={`dynamic_${_index}`} item={item} />
+      ))}
+      <SidebarNavItem className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}>
+        <button
+          type="button"
+          onClick={() => toggleExtendedSidebar()}
+          className={cn("flex items-center gap-1.5 text-sm font-medium flex-grow text-custom-text-350", {
+            "justify-center": sidebarCollapsed,
+          })}
+          id="extended-sidebar-toggle"
+          aria-label={t(
+            extendedSidebarCollapsed ? "aria_labels.open_extended_sidebar" : "aria_labels.close_extended_sidebar"
+          )}
+        >
+          <Ellipsis className="flex-shrink-0 size-4" />
+          {!sidebarCollapsed && <span>More</span>}
+        </button>
+      </SidebarNavItem>
+    </div>
   );
 });

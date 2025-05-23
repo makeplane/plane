@@ -184,13 +184,13 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
           const sourceId = source?.data?.id as string | undefined;
           const destinationId = self?.data?.id as string | undefined;
 
-          handleOnProjectDrop && handleOnProjectDrop(sourceId, destinationId, currentInstruction === "DRAG_BELOW");
+          handleOnProjectDrop?.(sourceId, destinationId, currentInstruction === "DRAG_BELOW");
 
           highlightIssueOnDrop(`sidebar-${sourceId}-${projectListType}`);
         },
       })
     );
-  }, [projectRef?.current, dragHandleRef?.current, projectId, isLastChild, projectListType, handleOnProjectDrop]);
+  }, [projectId, isLastChild, projectListType, handleOnProjectDrop]);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
   useOutsideClickDetector(projectRef, () => projectRef?.current?.classList?.remove(HIGHLIGHT_CLASS));
@@ -284,6 +284,9 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                       className={cn("flex-grow flex items-center gap-1.5 text-left select-none w-full", {
                         "justify-center": isSidebarCollapsed,
                       })}
+                      aria-label={
+                        isProjectListOpen ? t("aria_labels.close_project_menu") : t("aria_labels.open_project_menu")
+                      }
                     >
                       <div className="size-4 grid place-items-center flex-shrink-0">
                         <Logo logo={project.logo_props} size={16} />
@@ -310,6 +313,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                   )}
                   customButtonClassName="grid place-items-center"
                   placement="bottom-start"
+                  ariaLabel={t("aria_labels.toggle_quick_actions_menu")}
                   useCaptureForOutsideClick
                 >
                   {/* TODO: Removed is_favorite logic due to the optimization in projects API */}
@@ -383,6 +387,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     }
                   )}
                   onClick={() => setIsProjectListOpen(!isProjectListOpen)}
+                  aria-label={t(isProjectListOpen ? "aria_labels.close_project_menu" : "aria_labels.open_project_menu")}
                 >
                   <ChevronRight
                     className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
