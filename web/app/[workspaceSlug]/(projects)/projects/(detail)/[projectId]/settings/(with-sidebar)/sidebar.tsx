@@ -5,27 +5,31 @@ import range from "lodash/range";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
+// plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// ui
 import { Loader } from "@plane/ui";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
-// plane web constants
+// plane web imports
 import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants/project";
+import { getProjectSettingsPageLabelI18nKey } from "@/plane-web/helpers/project-settings";
 
 export const ProjectSettingsSidebar = observer(() => {
+  // router
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
-  // mobx store
-  const { allowPermissions, projectUserInfo } = useUserPermissions();
-
+  // plane hooks
   const { t } = useTranslation();
-
+  // store hooks
+  const { allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   // derived values
-  const currentProjectRole = projectUserInfo?.[workspaceSlug?.toString()]?.[projectId?.toString()]?.role;
+  const currentProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(
+    workspaceSlug?.toString(),
+    projectId?.toString()
+  );
 
   if (!currentProjectRole) {
     return (
@@ -61,7 +65,7 @@ export const ProjectSettingsSidebar = observer(() => {
                     isActive={link.highlight(pathname, `/${workspaceSlug}/projects/${projectId}`)}
                     className="text-sm font-medium px-4 py-2"
                   >
-                    {t(link.i18n_label)}
+                    {t(getProjectSettingsPageLabelI18nKey(link.key, link.i18n_label))}
                   </SidebarNavItem>
                 </Link>
               )

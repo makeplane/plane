@@ -2,15 +2,15 @@
 
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
-// components
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
+// plane imports
 import { EUserWorkspaceRoles, WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
+// components
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { AppHeader } from "@/components/core";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
-// plane web constants
-// local components
+// local imports
 import { WorkspaceSettingHeader } from "../header";
 import { MobileWorkspaceSettingsTabs } from "./mobile-header-tabs";
 import { WorkspaceSettingsSidebar } from "./sidebar";
@@ -21,13 +21,13 @@ export interface IWorkspaceSettingLayout {
 
 const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => {
   const { children } = props;
-
-  const { workspaceUserInfo } = useUserPermissions();
+  // router
   const pathname = usePathname();
   const [workspaceSlug, suffix, route] = pathname.replace(/^\/|\/$/g, "").split("/"); // Regex removes leading and trailing slashes
-
+  // store hooks
+  const { workspaceUserInfo, getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   // derived values
-  const userWorkspaceRole = workspaceUserInfo?.[workspaceSlug.toString()]?.role;
+  const userWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug.toString());
   const isAuthorized =
     pathname &&
     workspaceSlug &&

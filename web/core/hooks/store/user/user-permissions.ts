@@ -1,8 +1,8 @@
 import { useContext } from "react";
 // mobx store
 import { StoreContext } from "@/lib/store-context";
-// types
-import { IUserPermissionStore } from "@/store/user/permissions.store";
+// plane web imports
+import { IUserPermissionStore } from "@/plane-web/store/user/permission.store";
 
 export const useUserPermissions = (): IUserPermissionStore => {
   const context = useContext(StoreContext);

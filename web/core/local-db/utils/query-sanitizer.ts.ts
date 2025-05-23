@@ -12,10 +12,7 @@ export const sanitizeWorkItemQueries = (
   // Get current project details and user id and role for the project
   const currentProject = rootStore.projectRoot.project.getProjectById(projectId);
   const currentUserId = rootStore.user.data?.id;
-  const currentUserRole = rootStore.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
-    workspaceSlug,
-    projectId
-  );
+  const currentUserRole = rootStore.user.permission.getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
 
   // Only apply this restriction for guests when guest_view_all_features is disabled
   if (

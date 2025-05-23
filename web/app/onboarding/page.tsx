@@ -74,7 +74,6 @@ const OnboardingPage = observer(() => {
     await finishUserOnboarding()
       .then(() => {
         captureEvent(USER_ONBOARDING_COMPLETED, {
-          // user_role: user.role,
           email: user.email,
           user_id: user.id,
           status: "SUCCESS",

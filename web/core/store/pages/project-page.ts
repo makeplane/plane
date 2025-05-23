@@ -73,7 +73,7 @@ export class ProjectPage extends BasePage implements TProjectPage {
     if (!workspaceSlug || !this.project_ids?.length) return;
     let highestRole: EUserPermissions | undefined = undefined;
     this.project_ids.map((projectId) => {
-      const currentUserProjectRole = this.rootStore.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(
+      const currentUserProjectRole = this.rootStore.user.permission.getProjectRoleByWorkspaceSlugAndProjectId(
         workspaceSlug?.toString() || "",
         projectId?.toString() || ""
       );
