@@ -1,19 +1,14 @@
-import React, { FC, useMemo, useRef, useState } from "react";
-import sortBy from "lodash/sortBy";
-// headless ui
 import { Combobox } from "@headlessui/react";
-// popper-js
+import sortBy from "lodash/sortBy";
+import React, { FC, useMemo, useRef, useState } from "react";
 import { usePopper } from "react-popper";
-// plane helpers
+// plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-// components
+// local imports
+import { cn } from "../../helpers";
+import { useDropdownKeyPressed } from "../hooks/use-dropdown-key-pressed";
 import { DropdownButton } from "./common";
 import { DropdownOptions } from "./common/options";
-// hooks
-import { useDropdownKeyPressed } from "../hooks/use-dropdown-key-pressed";
-// helper
-import { cn } from "../../helpers";
-// types
 import { IMultiSelectDropdown } from "./dropdown";
 
 export const MultiSelectDropdown: FC<IMultiSelectDropdown> = (props) => {
@@ -118,7 +113,10 @@ export const MultiSelectDropdown: FC<IMultiSelectDropdown> = (props) => {
       ref={dropdownRef}
       value={value}
       onChange={onChange}
-      className={cn("h-full", containerClassName)}
+      className={cn(
+        "h-full",
+        typeof containerClassName === "function" ? containerClassName(isOpen) : containerClassName
+      )}
       tabIndex={tabIndex}
       multiple
       onKeyDown={handleKeyDown}
