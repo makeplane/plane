@@ -51,7 +51,7 @@ class ProjectTemplateEndpoint(TemplateBaseEndpoint):
                 queryset=ProjectTemplate.objects.filter(workspace__slug=slug),
                 to_attr="template_data",
             )
-        )
+        ).prefetch_related("attachments", "categories")
         serializer = TemplateDataSerializer(templates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -61,20 +61,22 @@ class ProjectTemplateEndpoint(TemplateBaseEndpoint):
         # workspace home
         workspace = Workspace.objects.get(slug=slug)
         # get the template data
-        template_data = request.data.get("template_data", {})
+        template_data = request.data.pop("template_data", {})
         # validate project fields
         success, errors = self.validate_project_fields(template_data)
         if not success:
             return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
         # create a new template only after validation is successful
-        template = Template.objects.create(
-            workspace=workspace,
-            name=request.data.get("name", ""),
-            short_description=request.data.get("short_description", ""),
-            description=request.data.get("description", ""),
-            template_type=Template.TemplateType.PROJECT,
-        )
+        template_serializer = TemplateSerializer(data=request.data)
+        if template_serializer.is_valid():
+            template = template_serializer.save(
+                workspace=workspace, template_type=Template.TemplateType.PROJECT
+            )
+        else:
+            return Response(
+                template_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
 
         data = {
             "template": str(template.id),
@@ -110,7 +112,7 @@ class ProjectTemplateEndpoint(TemplateBaseEndpoint):
         template = Template.objects.get(
             workspace__slug=slug, template_type=Template.TemplateType.PROJECT, pk=pk
         )
-        template_data = request.data.pop("template_data")
+        template_data = request.data.pop("template_data", {})
 
         template_serializer = TemplateSerializer(
             template, data=request.data, partial=True

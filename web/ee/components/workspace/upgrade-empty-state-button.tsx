@@ -2,7 +2,12 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Crown } from "lucide-react";
 // plane imports
-import { EProductSubscriptionEnum, EProductSubscriptionTier, FEATURE_TO_BASE_PLAN_MAP } from "@plane/constants";
+import {
+  EProductSubscriptionEnum,
+  EProductSubscriptionTier,
+  FEATURE_TO_BASE_PLAN_MAP,
+  TSupportedFlagsForUpgrade,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TProductSubscriptionType } from "@plane/types";
 import { Button, getButtonStyling } from "@plane/ui";
@@ -10,11 +15,9 @@ import { Button, getButtonStyling } from "@plane/ui";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
-type TSupportedFeatureFlags = keyof typeof FEATURE_TO_BASE_PLAN_MAP;
-
 type TUpgradeEmptyStateButtonProps = {
   workspaceSlug: string;
-  flag: TSupportedFeatureFlags;
+  flag: TSupportedFlagsForUpgrade;
 };
 
 export const UpgradeEmptyStateButton: FC<TUpgradeEmptyStateButtonProps> = observer(

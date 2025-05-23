@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 // plane imports
-import { ETemplateLevel } from "@plane/constants";
+import { E_FEATURE_FLAGS, ETemplateLevel } from "@plane/constants";
 // plane web imports
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { IssueModalProvider } from "@/plane-web/components/issues/issue-modal";
@@ -20,8 +20,8 @@ const CreateWorkspaceLevelWorkItemTemplatePage = observer(() => {
   return (
     <WithFeatureFlagHOC
       workspaceSlug={workspaceSlug?.toString()}
-      flag="WORKITEM_TEMPLATES"
-      fallback={<TemplatesUpgrade />}
+      flag={E_FEATURE_FLAGS.WORKITEM_TEMPLATES}
+      fallback={<TemplatesUpgrade flag={E_FEATURE_FLAGS.WORKITEM_TEMPLATES} />}
     >
       <IssueModalProvider>
         <CreateUpdateWorkItemTemplate

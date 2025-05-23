@@ -25,4 +25,8 @@ export class WorkItemTemplateInstance
   get canCurrentUserDeleteTemplate() {
     return this.getUserRoleForTemplateInstance === EUserPermissions.ADMIN;
   }
+
+  get canCurrentUserPublishTemplate() {
+    return false;
+  }
 }

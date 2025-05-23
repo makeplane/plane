@@ -3,7 +3,6 @@
   "pi_chat": "Pi Chat",
   "in_app": "In-app",
   "forms": "Forms",
-  
 
   "common": {
     "worklogs": "Worklogs",
@@ -2083,6 +2082,82 @@
           "button": {
             "create": "Create page template",
             "update": "Update page template"
+          }
+        },
+        "publish": {
+          "action": "Publish to Marketplace",
+          "title": "Make your template discoverable and recognizable.",
+          "name": {
+            "label": "Name of template",
+            "placeholder": "Name your template",
+            "validation": {
+              "required": "Template name is required",
+              "maxLength": "Template name should be less than 255 characters"
+            }
+          },
+          "short_description": {
+            "label": "Short description",
+            "placeholder": "This template is great for Project Managers who manage several projects at the same time.",
+            "validation": {
+              "required": "Short description is required"
+            }
+          },
+          "description": {
+            "label": "Description",
+            "placeholder": "Enhance productivity and streamline communication with our Speech-To-Text integration.\n• Real-time transcription: Convert spoken words into accurate text instantly.\n• Task and comment creation: Add tasks, descriptions, and comments through voice commands.",
+            "validation": {
+              "required": "Description is required"
+            }
+          },
+          "category": {
+            "label": "Category",
+            "placeholder": "Choose where you think this fits best. You can choose more than one.",
+            "validation": {
+              "required": "At least one category is required"
+            }
+          },
+          "keywords": {
+            "label": "Keywords",
+            "placeholder": "Use terms that you think your users will search for when looking for this template."
+          },
+          "company_name": {
+            "label": "Company name",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Company name is required",
+              "maxLength": "Company name should be less than 255 characters"
+            }
+          },
+          "contact_email": {
+            "label": "Support email",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Invalid email address",
+              "required": "Support email is required",
+              "maxLength": "Support email should be less than 255 characters"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Link to your privacy policy",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "Invalid URL",
+              "maxLength": "URL should be less than 800 characters"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Link to your terms of use",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "Invalid URL",
+              "maxLength": "URL should be less than 800 characters"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Include pictures you think will make viewers of this template.",
+            "validation": {
+              "required": "At least one screenshot is required"
+            }
           }
         }
       }

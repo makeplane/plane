@@ -1998,6 +1998,106 @@
             "create": "Criar modelo de item de trabalho",
             "update": "Atualizar modelo de item de trabalho"
           }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Nomeie swoj szablon strony.",
+              "validation": {
+                "required": "Nazwa szablonu jest wymagana",
+                "maxLength": "Nazwa szablonu powinna mieć mniej niż 255 znaków"
+              }
+            },
+            "description": {
+              "placeholder": "Opisz, kiedy i jak używać tego szablonu."
+            }
+          },
+          "name": {
+            "placeholder": "Nieznana strona",
+            "validation": {
+              "maxLength": "Nazwa strony powinna mieć mniej niż 255 znaków"
+            }
+          },
+          "button": {
+            "create": "Utwórz szablon strony",
+            "update": "Aktualizuj szablon strony"
+          }
+        },
+        "publish": {
+          "action": "Publicar modelo",
+          "title": "Upewnij się, że szablon jest odkrywalny i rozpoznawalny.",
+          "name": {
+            "label": "Nazwa szablonu",
+            "placeholder": "Nazwij swoj szablon",
+            "validation": {
+              "required": "Nazwa szablonu jest wymagana",
+              "maxLength": "Nazwa szablonu powinna mieć mniej niż 255 znaków"
+            }
+          },
+          "short_description": {
+            "label": "Krótki opis",
+            "placeholder": "Ten szablon jest idealny dla menedżerów projektów, którzy zarządzają wieloma projektami jednocześnie.",
+            "validation": {
+              "required": "Krótki opis jest wymagany"
+            }
+          },
+          "description": {
+            "label": "Opis",
+            "placeholder": "Aumente a produtividade e otimize a comunicação com nossa integração de Fala-para-Texto.\n• Transcrição em tempo real: Converta palavras faladas em texto preciso instantaneamente.\n• Criação de tarefas e comentários: Adicione tarefas, descrições e comentários através de comandos de voz.",
+            "validation": {
+              "required": "Opis jest wymagany"
+            }
+          },
+          "category": {
+            "label": "Kategoria",
+            "placeholder": "Wybierz, gdzie uważasz, że pasuje najlepiej. Możesz wybrać więcej niż jedną.",
+            "validation": {
+              "required": "Przynajmniej jedna kategoria jest wymagana"
+            }
+          },
+          "keywords": {
+            "label": "Słowa kluczowe",
+            "placeholder": "Użyj terminów, które uważasz, że użytkownicy będą szukać podczas wyszukiwania tego szablonu."
+          },
+          "company_name": {
+            "label": "Nazwa firmy",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Nazwa firmy jest wymagana",
+              "maxLength": "Nazwa firmy powinna mieć mniej niż 255 znaków"
+            }
+          },
+          "contact_email": {
+            "label": "Email podpory",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Nieprawidłowy adres e-mail",
+              "required": "Email podpory jest wymagany",
+              "maxLength": "Email podpory powinien mieć mniej niż 255 znaków"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Link do Twojej polityki prywatności",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "Nieprawidłowy URL",
+              "maxLength": "URL powinien mieć mniej niż 800 znaków"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Link do Twoich warunków użycia",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "Nieprawidłowy URL",
+              "maxLength": "URL powinien mieć mniej niż 800 znaków"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Dołącz dokumenty i obrazy, które uważasz, że sprawią, że widzowie tego szablonu będą zainteresowani.",
+            "validation": {
+              "required": "Przynajmniej jedno zrzut ekranu jest wymagane"
+            }
+          }
         }
       }
     },

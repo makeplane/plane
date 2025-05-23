@@ -90,7 +90,7 @@
       "comments": "{count, plural, one{# yorum} other{# yorum}}"
     }
   },
-  
+
   "issue": {
     "relation": {
       "start_before": "Starts Bifor",
@@ -2064,6 +2064,106 @@
           "button": {
             "create": "İş-öğesi şablonu oluştur",
             "update": "İş-öğesi şablonunu güncelle"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Sayfa şablonunuzu adlandırın.",
+              "validation": {
+                "required": "Şablon adı gereklidir",
+                "maxLength": "Şablon adı 255 karakterden az olmalıdır"
+              }
+            },
+            "description": {
+              "placeholder": "Bu şablonun ne zaman ve nasıl kullanılacağını açıklayın."
+            }
+          },
+          "name": {
+            "placeholder": "Başlıksız sayfa",
+            "validation": {
+              "maxLength": "Sayfa adı 255 karakterden az olmalıdır"
+            }
+          },
+          "button": {
+            "create": "Sayfa şablonu oluştur",
+            "update": "Sayfa şablonunu güncelle"
+          }
+        },
+        "publish": {
+          "action": "Şablonu yayınla",
+          "title": "Şablonunuzu keşfedilebilir ve tanınabilir yapın.",
+          "name": {
+            "label": "Şablon adı",
+            "placeholder": "Şablonunuzu adlandırın",
+            "validation": {
+              "required": "Şablon adı gereklidir",
+              "maxLength": "Şablon adı 255 karakterden az olmalıdır"
+            }
+          },
+          "short_description": {
+            "label": "Kısa açıklama",
+            "placeholder": "Bu şablon, aynı anda birden fazla projeyi yöneten Proje Yöneticileri için mükemmeldir.",
+            "validation": {
+              "required": "Kısa açıklama gereklidir"
+            }
+          },
+          "description": {
+            "label": "Açıklama",
+            "placeholder": "Konuşma-Metin entegrasyonumuzla üretkenliği artırın ve iletişimi kolaylaştırın.\n• Gerçek zamanlı dönüştürme: Söylenen kelimeleri anında doğru metne dönüştürün.\n• Görev ve yorum oluşturma: Sesli komutlarla görevler, açıklamalar ve yorumlar ekleyin.",
+            "validation": {
+              "required": "Açıklama gereklidir"
+            }
+          },
+          "category": {
+            "label": "Kategori",
+            "placeholder": "En uygun olduğunu düşündüğünüz yeri seçin. Birden fazla seçim yapabilirsiniz.",
+            "validation": {
+              "required": "En az bir kategori gereklidir"
+            }
+          },
+          "keywords": {
+            "label": "Anahtar kelimeler",
+            "placeholder": "Kullanıcılarınızın bu şablonu ararken arayacağını düşündüğünüz terimleri kullanın."
+          },
+          "company_name": {
+            "label": "Şirket adı",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Şirket adı gereklidir",
+              "maxLength": "Şirket adı 255 karakterden az olmalıdır"
+            }
+          },
+          "contact_email": {
+            "label": "Destek e-postası",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Geçersiz e-posta adresi",
+              "required": "Destek e-postası gereklidir",
+              "maxLength": "Destek e-postası 255 karakterden az olmalıdır"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Gizlilik politikası bağlantısı",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "Geçersiz URL",
+              "maxLength": "URL 800 karakterden az olmalıdır"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Kullanım koşulları bağlantısı",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "Geçersiz URL",
+              "maxLength": "URL 800 karakterden az olmalıdır"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Bu şablonun görüntüleyicilerini etkileyeceğini düşündüğünüz belgeleri ve resimleri ekleyin.",
+            "validation": {
+              "required": "En az bir ekran görüntüsü gereklidir"
+            }
           }
         }
       }

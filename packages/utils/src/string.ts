@@ -245,6 +245,33 @@ export const checkURLValidity = (url: string): boolean => {
   return urlPattern.test(url);
 };
 
+/**
+ * Combines array elements with a separator and adds a conjunction before the last element
+ * @param array Array of strings to combine
+ * @param separator Separator to use between elements (default: ", ")
+ * @param conjunction Conjunction to use before last element (default: "and")
+ * @returns Combined string with conjunction before the last element
+ */
+export const joinWithConjunction = (array: string[], separator: string = ", ", conjunction: string = "and"): string => {
+  if (!array || array.length === 0) return "";
+  if (array.length === 1) return array[0];
+  if (array.length === 2) return `${array[0]} ${conjunction} ${array[1]}`;
+
+  const lastElement = array[array.length - 1];
+  const elementsExceptLast = array.slice(0, -1);
+
+  return `${elementsExceptLast.join(separator)}${separator}${conjunction} ${lastElement}`;
+};
+
+/**
+ * @description Ensures a URL has a protocol
+ * @param {string} url
+ * @returns {string}
+ * @example
+ * ensureUrlHasProtocol("example.com") => "http://example.com"
+ */
+export const ensureUrlHasProtocol = (url: string): string => (url.startsWith("http") ? url : `http://${url}`);
+
 // Browser-only clipboard functions
 // let copyTextToClipboard: (text: string) => Promise<void>;
 

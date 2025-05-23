@@ -3,8 +3,8 @@
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 // plane web imports
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-import { IssueModalProvider } from "@/plane-web/components/issues/issue-modal";
 import { TemplatesUpgrade } from "@/plane-web/components/templates/settings";
 import { CreateUpdateProjectTemplate } from "@/plane-web/components/templates/settings/project";
 
@@ -18,12 +18,10 @@ const CreateProjectTemplatePage = observer(() => {
   return (
     <WithFeatureFlagHOC
       workspaceSlug={workspaceSlug?.toString()}
-      flag="PROJECT_TEMPLATES"
-      fallback={<TemplatesUpgrade />}
+      flag={E_FEATURE_FLAGS.PROJECT_TEMPLATES}
+      fallback={<TemplatesUpgrade flag={E_FEATURE_FLAGS.PROJECT_TEMPLATES} />}
     >
-      <IssueModalProvider>
-        <CreateUpdateProjectTemplate workspaceSlug={workspaceSlug?.toString()} templateId={templateId ?? undefined} />
-      </IssueModalProvider>
+      <CreateUpdateProjectTemplate workspaceSlug={workspaceSlug?.toString()} templateId={templateId ?? undefined} />
     </WithFeatureFlagHOC>
   );
 });

@@ -104,7 +104,17 @@ class PublishedTemplateMetaEndpoint(BaseAPIView):
     model = Template
     serializer_class = PublishedTemplateMetaSerializer
 
+    def get_queryset(self) -> QuerySet[Template]:
+        queryset = self.model.objects.filter(
+            is_published=True,
+            is_verified=True,
+            template_type=Template.TemplateType.PROJECT
+        ).prefetch_related(
+            "categories",
+        )
+        return queryset
+
     def get(self, request: Request, pk: uuid.UUID) -> Response:
-        template = self.model.objects.get(id=pk)
+        template = self.get_queryset().get(id=pk)
         serialised_template = self.serializer_class(template)
         return Response(serialised_template.data, status=status.HTTP_200_OK)

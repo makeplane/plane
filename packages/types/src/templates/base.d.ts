@@ -1,5 +1,5 @@
 // plane imports
-import { ETemplateType } from "@plane/constants";
+import { ETemplateType, TEMPLATE_KEYWORDS } from "@plane/constants";
 import { CompleteOrEmpty, TLogoProps } from "@plane/types";
 
 export type TTemplateCategory = {
@@ -7,6 +7,9 @@ export type TTemplateCategory = {
   name: string;
   description: string | undefined;
   logo_props: CompleteOrEmpty<TLogoProps>;
+  // timestamp
+  created_at: string;
+  updated_at: string;
 };
 
 export type TTemplateAttachment = {
@@ -14,6 +17,8 @@ export type TTemplateAttachment = {
   template_id: string;
   file_asset_id: string;
 };
+
+export type TTemplateKeywords = (typeof TEMPLATE_KEYWORDS)[number];
 
 export type TBaseTemplate<T extends ETemplateType, D extends Record<string, unknown> = Record<string, unknown>> = {
   id: string;
@@ -24,9 +29,14 @@ export type TBaseTemplate<T extends ETemplateType, D extends Record<string, unkn
   // publish
   is_published: boolean;
   description_html: string | undefined;
-  category_ids: Pick<TTemplateCategory, "id">[];
+  categories: string[];
+  keywords: TTemplateKeywords[];
   company_name: string | undefined;
-  attachment_ids: Pick<TTemplateAttachment, "id">[];
+  contact_email: string | undefined;
+  privacy_policy_url: string | undefined;
+  terms_of_service_url: string | undefined;
+  attachments: string[];
+  attachments_urls: string[];
   // workspace
   workspace: string;
   // project
@@ -37,3 +47,21 @@ export type TBaseTemplate<T extends ETemplateType, D extends Record<string, unkn
 };
 
 export type TBaseTemplateWithData = TBaseTemplate<ETemplateType, Record<string, unknown>>;
+
+export type TPublishTemplateForm<T extends ETemplateType, D extends Record<string, unknown>> = Pick<
+  TBaseTemplate<T, D>,
+  | "id"
+  | "name"
+  | "short_description"
+  | "description_html"
+  | "categories"
+  | "company_name"
+  | "contact_email"
+  | "keywords"
+  | "privacy_policy_url"
+  | "terms_of_service_url"
+  | "attachments"
+  | "attachments_urls"
+>;
+
+export type TPublishTemplateFormWithData = TPublishTemplateForm<ETemplateType, Record<string, unknown>>;

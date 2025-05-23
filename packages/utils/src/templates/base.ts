@@ -95,6 +95,24 @@ export const getCreateUpdateTemplateSettingsPath = (props: TCreateTemplateSettin
   }
 };
 
+export type TPublishTemplateSettingsPathProps = TCreateTemplateSettingsPathProps & {
+  templateId: string;
+};
+
+/**
+ * Gets the path for the publish template settings page
+ * @param workspaceSlug - The slug of the workspace
+ * @param type - The type of the template
+ * @param level - The level of the template (workspace or project)
+ * @param projectId - The ID of the project (optional for workspace templates)
+ * @param templateId - The ID of the template
+ * @returns The path for the publish template settings page
+ */
+export const getPublishTemplateSettingsPath = (props: TPublishTemplateSettingsPathProps) => {
+  const createUpdateSettingsPath = getCreateUpdateTemplateSettingsPath(props);
+  return `${createUpdateSettingsPath}/${props.templateId}/publish`;
+};
+
 /**
  * Extracts the basic template form data
  */

@@ -2003,6 +2003,106 @@
             "create": "Creează șablon de element de lucru",
             "update": "Actualizează șablon de element de lucru"
           }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Numele șablonului paginii.",
+              "validation": {
+                "required": "Numele șablonului este obligatoriu",
+                "maxLength": "Numele șablonului trebuie să fie mai mic de 255 de caractere"
+              }
+            },
+            "description": {
+              "placeholder": "Descrie când și cum să folosești acest șablon."
+            }
+          },
+          "name": {
+            "placeholder": "Pagina fără nume",
+            "validation": {
+              "maxLength": "Numele paginii trebuie să fie mai mic de 255 de caractere"
+            }
+          },
+          "button": {
+            "create": "Creează șablon de pagină",
+            "update": "Actualizează șablon de pagină"
+          }
+        },
+        "publish": {
+          "action": "Publică șablonul",
+          "title": "Faceți-vă șablonul detectabil și recunoscut.",
+          "name": {
+            "label": "Numele șablonului",
+            "placeholder": "Numele șablonului",
+            "validation": {
+              "required": "Numele șablonului este obligatoriu",
+              "maxLength": "Numele șablonului trebuie să fie mai mic de 255 de caractere"
+            }
+          },
+          "short_description": {
+            "label": "Descriere scurtă",
+            "placeholder": "Acest șablon este excelent pentru managerii proiectelor care gestionează mai multe proiecte în același timp.",
+            "validation": {
+              "required": "Descrierea scurtă este obligatorie"
+            }
+          },
+          "description": {
+            "label": "Descriere",
+            "placeholder": "Îmbunătățiți productivitatea și optimizați comunicarea cu integrarea noastră Vorbire-În-Text.\n• Transcriere în timp real: Convertiți cuvintele rostite în text precis instantaneu.\n• Crearea sarcinilor și comentariilor: Adăugați sarcini, descrieri și comentarii prin comenzi vocale.",
+            "validation": {
+              "required": "Descrierea este obligatorie"
+            }
+          },
+          "category": {
+            "label": "Categorie",
+            "placeholder": "Alege unde crezi că acest șablon încalcă cel mai bine. Poți alege mai multe.",
+            "validation": {
+              "required": "Cel puțin o categorie este obligatorie"
+            }
+          },
+          "keywords": {
+            "label": "Cuvinte cheie",
+            "placeholder": "Folosește termeni care crezi că utilizatorii vor căuta atunci când vor căuta acest șablon."
+          },
+          "company_name": {
+            "label": "Numele companiei",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Numele companiei este obligatoriu",
+              "maxLength": "Numele companiei trebuie să fie mai mic de 255 de caractere"
+            }
+          },
+          "contact_email": {
+            "label": "Email de suport",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Adresa email-ului este invalidă",
+              "required": "Adresa email-ului este obligatorie",
+              "maxLength": "Adresa email-ului trebuie să fie mai mică de 255 de caractere"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Link către politică de confidențialitate",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "URL-ul este invalid",
+              "maxLength": "URL-ul trebuie să fie mai mic de 800 de caractere"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Link către termenii de utilizare",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "URL-ul este invalid",
+              "maxLength": "URL-ul trebuie să fie mai mic de 800 de caractere"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Include documente și capturi de ecran care credeți că vor face vizualizatorii acestui șablon mai interesanți.",
+            "validation": {
+              "required": "Cel puțin o captură de ecran este obligatorie"
+            }
+          }
         }
       }
     },

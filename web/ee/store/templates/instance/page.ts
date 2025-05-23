@@ -22,4 +22,8 @@ export class PageTemplateInstance extends BaseTemplateInstance<TPageTemplate> im
   get canCurrentUserDeleteTemplate() {
     return this.getUserRoleForTemplateInstance === EUserPermissions.ADMIN;
   }
+
+  get canCurrentUserPublishTemplate() {
+    return false;
+  }
 }

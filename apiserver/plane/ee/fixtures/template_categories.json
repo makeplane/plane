@@ -1,0 +1,66 @@
+[
+  {
+    "model": "ee.templatecategory",
+    "pk": "b3a9e04f-6f50-4eff-9cb4-8f1a27d09217",
+    "fields": {
+      "created_at": "2025-05-07T12:13:08.283Z",
+      "updated_at": "2025-05-07T12:13:08.283Z",
+      "name": "Engineering",
+      "description": "Engineering Templates",
+      "logo_props": {
+        "in_use": "logo",
+        "logo": {
+          "url": "https://plane.so/_next/static/media/plane-pure-white-full-logo.5dc58187.svg"
+        }
+      }
+    }
+  },
+  {
+    "model": "ee.templatecategory",
+    "pk": "a8c6b35d-bfcf-4c29-9a3f-0a6b71cd8b3e",
+    "fields": {
+      "created_at": "2025-05-07T12:13:08.283Z",
+      "updated_at": "2025-05-07T12:13:08.283Z",
+      "name": "Design",
+      "description": "Design Templates",
+      "logo_props": {
+        "in_use": "logo",
+        "logo": {
+          "url": "https://plane.so/_next/static/media/plane-pure-white-full-logo.5dc58187.svg"
+        }
+      }
+    }
+  },
+  {
+    "model": "ee.templatecategory",
+    "pk": "47d4c96f-0b72-4f88-9c4e-e6e1c1a04bd9",
+    "fields": {
+      "created_at": "2025-05-07T12:13:08.283Z",
+      "updated_at": "2025-05-07T12:13:08.283Z",
+      "name": "Marketing",
+      "description": "Marketing Templates",
+      "logo_props": {
+        "in_use": "logo",
+        "logo": {
+          "url": "https://plane.so/_next/static/media/plane-pure-white-full-logo.5dc58187.svg"
+        }
+      }
+    }
+  },
+  {
+    "model": "ee.templatecategory",
+    "pk": "9e37f8e3-2a4b-4713-bdc3-5b689b8c5d77",
+    "fields": {
+      "created_at": "2025-05-07T12:13:08.283Z",
+      "updated_at": "2025-05-07T12:13:08.283Z",
+      "name": "Sales",
+      "description": "Sales Templates",
+      "logo_props": {
+        "in_use": "logo",
+        "logo": {
+          "url": "https://plane.so/_next/static/media/plane-pure-white-full-logo.5dc58187.svg"
+        }
+      }
+    }
+  }
+]

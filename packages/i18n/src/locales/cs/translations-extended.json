@@ -25,72 +25,72 @@
     "templates": "Šablony"
   },
 
-    "updates": {
-      "progress": {
-        "title": "Průběh",
-        "since_last_update": "Od poslední aktualizace",
-        "comments": "{count, plural, one{# komentář} other{# komentářů}}"
-      },
-      "add_update": "Přidat aktualizaci",
-      "add_update_placeholder": "Napište svou aktualizaci zde",
-      "empty": {
-        "title": "Zatím žádné aktualizace",
-        "description": "Můžete zde vidět aktualizace."
-      },
-      "reaction": {
-        "create": {
-          "success": {
-            "title": "Reakce vytvořena",
-            "message": "Reakce byla úspěšně vytvořena"
-          },
-          "error": {
-            "title": "Reakce nebyla vytvořena",
-            "message": "Reakce se nepodařilo vytvořit"
-          }
-        },
-        "remove": {
-          "success": {
-            "title": "Reakce odstraněna",
-            "message": "Reakce byla úspěšně odstraněna"
-          },
-          "error": {
-            "title": "Reakce nebyla odstraněna",
-            "message": "Reakce se nepodařilo odstranit"
-          }
-        }
-      },
+  "updates": {
+    "progress": {
+      "title": "Průběh",
+      "since_last_update": "Od poslední aktualizace",
+      "comments": "{count, plural, one{# komentář} other{# komentářů}}"
+    },
+    "add_update": "Přidat aktualizaci",
+    "add_update_placeholder": "Napište svou aktualizaci zde",
+    "empty": {
+      "title": "Zatím žádné aktualizace",
+      "description": "Můžete zde vidět aktualizace."
+    },
+    "reaction": {
       "create": {
         "success": {
-          "title": "Aktualizace vytvořena",
-          "message": "Aktualizace byla úspěšně vytvořena"
+          "title": "Reakce vytvořena",
+          "message": "Reakce byla úspěšně vytvořena"
         },
         "error": {
-          "title": "Aktualizace nebyla vytvořena",
-          "message": "Aktualizace se nepodařilo vytvořit"
+          "title": "Reakce nebyla vytvořena",
+          "message": "Reakce se nepodařilo vytvořit"
         }
       },
-      "delete": {
-        "title": "Smazat aktualizaci",
-        "confirmation": "Opravdu chcete smazat tuto aktualizaci? Tato akce je nevratná.",
+      "remove": {
         "success": {
-          "title": "Aktualizace smazána",
-          "message": "Aktualizace byla úspěšně smazána"
+          "title": "Reakce odstraněna",
+          "message": "Reakce byla úspěšně odstraněna"
         },
         "error": {
-          "title": "Aktualizace nebyla smazána",
-          "message": "Aktualizace se nepodařilo smazat"
-        }
-      },
-      "update": {
-        "success": {
-          "title": "Aktualizace aktualizována",
-          "message": "Aktualizace byla úspěšně aktualizována"
-        },
-        "error": {
-          "title": "Aktualizace nebyla aktualizována",
-          "message": "Aktualizace se nepodařilo aktualizovat"
+          "title": "Reakce nebyla odstraněna",
+          "message": "Reakce se nepodařilo odstranit"
         }
       }
+    },
+    "create": {
+      "success": {
+        "title": "Aktualizace vytvořena",
+        "message": "Aktualizace byla úspěšně vytvořena"
+      },
+      "error": {
+        "title": "Aktualizace nebyla vytvořena",
+        "message": "Aktualizace se nepodařilo vytvořit"
+      }
+    },
+    "delete": {
+      "title": "Smazat aktualizaci",
+      "confirmation": "Opravdu chcete smazat tuto aktualizaci? Tato akce je nevratná.",
+      "success": {
+        "title": "Aktualizace smazána",
+        "message": "Aktualizace byla úspěšně smazána"
+      },
+      "error": {
+        "title": "Aktualizace nebyla smazána",
+        "message": "Aktualizace se nepodařilo smazat"
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Aktualizace aktualizována",
+        "message": "Aktualizace byla úspěšně aktualizována"
+      },
+      "error": {
+        "title": "Aktualizace nebyla aktualizována",
+        "message": "Aktualizace se nepodařilo aktualizovat"
+      }
+    }
   },
 
   "issue": {
@@ -2005,6 +2005,106 @@
           "button": {
             "create": "Vytvořit šablonu pracovní položky",
             "update": "Aktualizovat šablonu pracovní položky"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Pojmenujte svou šablonu stránky.",
+              "validation": {
+                "required": "Název šablony je povinný",
+                "maxLength": "Název šablony by měl být kratší než 255 znaků"
+              }
+            },
+            "description": {
+              "placeholder": "Popište, kdy a jak tuto šablonu použít."
+            }
+          },
+          "name": {
+            "placeholder": "Neznámá stránka",
+            "validation": {
+              "maxLength": "Název stránky by měl být kratší než 255 znaků"
+            }
+          },
+          "button": {
+            "create": "Vytvořit šablonu stránky",
+            "update": "Aktualizovat šablonu stránky"
+          }
+        },
+        "publish": {
+          "action": "Publikovat šablonu",
+          "title": "Uložte svou šablonu, aby byla pro vaše uživatele dostupná.",
+          "name": {
+            "label": "Název šablony",
+            "placeholder": "Pojmenujte svou šablonu",
+            "validation": {
+              "required": "Název šablony je povinný",
+              "maxLength": "Název šablony by měl být kratší než 255 znaků"
+            }
+          },
+          "short_description": {
+            "label": "Kráký popis",
+            "placeholder": "Tato šablona je skvělá pro manažery projektů, kteří spravují několik projektů najednou.",
+            "validation": {
+              "required": "Kráký popis je povinný"
+            }
+          },
+          "description": {
+            "label": "Popis",
+            "placeholder": "Vylepšete produktivitu a zjednodušte komunikaci s naší integrací rozpoznávání řeči.\n• Instantní přepis: Převádí hlas na přesný text okamžitě.\n• Vytvoření úkolu a komentáře: Vytvořte úkoly, popisy a komentáře pomocí hlasových příkazů.",
+            "validation": {
+              "required": "Popis je povinný"
+            }
+          },
+          "category": {
+            "label": "Category",
+            "placeholder": "Choose where you think this fits best. You can choose more than one.",
+            "validation": {
+              "required": "Musíte vybrat alespoň jednu kategorii"
+            }
+          },
+          "keywords": {
+            "label": "Klíčová slova",
+            "placeholder": "Použijte termíny, které si myslíte, že vaši uživatele při hledání této šablony použijí."
+          },
+          "company_name": {
+            "label": "Název společnosti",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Název společnosti je povinný",
+              "maxLength": "Název společnosti by měl být kratší než 255 znaků"
+            }
+          },
+          "contact_email": {
+            "label": "Email podpory",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Neplatná emailová adresa",
+              "required": "Email podpory je povinný",
+              "maxLength": "Email podpory by měl být kratší než 255 znaků"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Odkaz na vaši ochranu osobních údajů",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "Neplatná URL",
+              "maxLength": "URL by měla být kratší než 800 znaků"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Odkaz na vaše podmínky použití",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "Neplatná URL",
+              "maxLength": "URL by měla být kratší než 800 znaků"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Připojte dokumenty a obrázky, které si myslíte, že vypadnou při zobrazení této šablony.",
+            "validation": {
+              "required": "Musíte přidat alespoň jeden screenshot"
+            }
           }
         }
       }

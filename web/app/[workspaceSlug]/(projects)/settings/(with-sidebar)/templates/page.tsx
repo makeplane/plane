@@ -4,7 +4,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { ETemplateLevel, EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
+import { E_FEATURE_FLAGS, ETemplateLevel, EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
 // component
 import { useTranslation } from "@plane/i18n";
 import { NotAuthorizedView } from "@/components/auth-screens";
@@ -69,8 +69,8 @@ const TemplatesWorkspaceSettingsPage = observer(() => {
         )}
       </div>
       <WithFeatureFlagHOC
-        flag="WORKITEM_TEMPLATES"
-        fallback={<TemplatesUpgrade />}
+        flag={E_FEATURE_FLAGS.WORKITEM_TEMPLATES}
+        fallback={<TemplatesUpgrade flag={E_FEATURE_FLAGS.WORKITEM_TEMPLATES} />}
         workspaceSlug={workspaceSlug?.toString()}
       >
         <WorkspaceTemplatesSettingsRoot workspaceSlug={workspaceSlug?.toString()} />

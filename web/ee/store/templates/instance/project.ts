@@ -25,4 +25,13 @@ export class ProjectTemplateInstance
   get canCurrentUserDeleteTemplate() {
     return this.getUserRoleForTemplateInstance === EUserPermissions.ADMIN;
   }
+
+  get canCurrentUserPublishTemplate() {
+    const workspaceSlug = this.getWorkspaceSlugForTemplateInstance;
+    if (!workspaceSlug) return false;
+    return (
+      this.rootStore.featureFlags.getFeatureFlag(workspaceSlug, "PROJECT_TEMPLATES_PUBLISH", false) &&
+      this.getUserRoleForTemplateInstance === EUserPermissions.ADMIN
+    );
+  }
 }
