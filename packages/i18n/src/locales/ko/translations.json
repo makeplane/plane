@@ -748,7 +748,8 @@
         "message": "문제가 발생했습니다. 다시 시도해주세요."
       },
       "required": "이 필드는 필수입니다",
-      "entity_required": "{entity}가 필요합니다"
+      "entity_required": "{entity}가 필요합니다",
+      "restricted_entity": "{entity}은(는) 제한되어 있습니다"
     },
     "update_link": "링크 업데이트",
     "attach": "첨부",

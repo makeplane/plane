@@ -747,8 +747,9 @@
         "title": "Помилка!",
         "message": "Щось пішло не так. Будь ласка, спробуйте ще раз."
       },
-      "required": "Це поле є обов’язковим",
-      "entity_required": "{entity} є обов’язковим"
+      "required": "Це поле є обов'язковим",
+      "entity_required": "{entity} є обов'язковим",
+      "restricted_entity": "{entity} обмежено"
     },
     "update_link": "Оновити посилання",
     "attach": "Прикріпити",

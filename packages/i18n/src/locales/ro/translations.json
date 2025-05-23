@@ -746,7 +746,8 @@
         "message": "Ceva a funcționat greșit. Te rugăm să încerci din nou."
       },
       "required": "Acest câmp este obligatoriu",
-      "entity_required": "{entity} este obligatoriu"
+      "entity_required": "{entity} este obligatoriu",
+      "restricted_entity": "{entity} este restricționat"
     },
     "update_link": "Actualizează link-ul",
     "attach": "Atașează",

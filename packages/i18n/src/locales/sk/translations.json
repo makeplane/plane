@@ -748,7 +748,8 @@
         "message": "Niečo sa pokazilo. Skúste to prosím znova."
       },
       "required": "Toto pole je povinné",
-      "entity_required": "{entity} je povinná"
+      "entity_required": "{entity} je povinná",
+      "restricted_entity": "{entity} je obmedzený"
     },
     "update_link": "Aktualizovať odkaz",
     "attach": "Pripojiť",

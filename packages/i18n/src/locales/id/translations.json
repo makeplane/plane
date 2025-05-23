@@ -746,7 +746,8 @@
         "message": "Sesuatu telah salah. Silakan coba lagi."
       },
       "required": "Bidang ini diperlukan",
-      "entity_required": "{entity} diperlukan"
+      "entity_required": "{entity} diperlukan",
+      "restricted_entity": "{entity} dibatasi"
     },
     "update_link": "Perbarui tautan",
     "attach": "Lampirkan",

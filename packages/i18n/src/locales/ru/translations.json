@@ -748,7 +748,8 @@
         "message": "Что-то пошло не так. Попробуйте позже."
       },
       "required": "Это поле обязательно",
-      "entity_required": "{entity} обязательно"
+      "entity_required": "{entity} обязательно",
+      "restricted_entity": "{entity} ограничен"
     },
     "update_link": "обновить ссылку",
     "attach": "Прикрепить",

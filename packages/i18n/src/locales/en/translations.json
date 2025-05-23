@@ -580,7 +580,8 @@
         "message": "Something went wrong. Please try again."
       },
       "required": "This field is required",
-      "entity_required": "{entity} is required"
+      "entity_required": "{entity} is required",
+      "restricted_entity": "{entity} is restricted"
     },
     "update_link": "Update link",
     "attach": "Attach",
