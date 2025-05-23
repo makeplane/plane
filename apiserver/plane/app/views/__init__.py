@@ -205,6 +205,12 @@ from .analytic.advance import (
     AdvanceAnalyticsChartEndpoint,
 )
 
+from .analytic.project_analytics import (
+    ProjectAdvanceAnalyticsEndpoint,
+    ProjectAdvanceAnalyticsStatsEndpoint,
+    ProjectAdvanceAnalyticsChartEndpoint,
+)
+
 from .notification.base import (
     NotificationViewSet,
     UnreadNotificationEndpoint,
