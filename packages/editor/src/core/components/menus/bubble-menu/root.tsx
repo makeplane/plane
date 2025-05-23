@@ -18,6 +18,7 @@ import {
 } from "@/components/menus";
 // constants
 import { COLORS_LIST } from "@/constants/common";
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import { isCellSelection } from "@/extensions/table/table/utilities/is-cell-selection";
 // local components
@@ -90,8 +91,8 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
       if (
         empty ||
         !editor.isEditable ||
-        editor.isActive("image") ||
-        editor.isActive("imageComponent") ||
+        editor.isActive(CORE_EXTENSIONS.IMAGE) ||
+        editor.isActive(CORE_EXTENSIONS.CUSTOM_IMAGE) ||
         isNodeSelection(selection) ||
         isCellSelection(selection) ||
         isSelecting

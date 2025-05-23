@@ -1,5 +1,7 @@
 import { isNodeSelection, mergeAttributes, Node, nodeInputRule } from "@tiptap/core";
 import { NodeSelection, TextSelection } from "@tiptap/pm/state";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
 export interface HorizontalRuleOptions {
   HTMLAttributes: Record<string, any>;
@@ -7,7 +9,7 @@ export interface HorizontalRuleOptions {
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    horizontalRule: {
+    [CORE_EXTENSIONS.HORIZONTAL_RULE]: {
       /**
        * Add a horizontal rule
        */
@@ -17,7 +19,7 @@ declare module "@tiptap/core" {
 }
 
 export const CustomHorizontalRule = Node.create<HorizontalRuleOptions>({
-  name: "horizontalRule",
+  name: CORE_EXTENSIONS.HORIZONTAL_RULE,
 
   addOptions() {
     return {

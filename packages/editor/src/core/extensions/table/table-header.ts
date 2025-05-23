@@ -1,11 +1,12 @@
 import { mergeAttributes, Node } from "@tiptap/core";
-
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 export interface TableHeaderOptions {
   HTMLAttributes: Record<string, any>;
 }
 
 export const TableHeader = Node.create<TableHeaderOptions>({
-  name: "tableHeader",
+  name: CORE_EXTENSIONS.TABLE_HEADER,
 
   addOptions() {
     return {

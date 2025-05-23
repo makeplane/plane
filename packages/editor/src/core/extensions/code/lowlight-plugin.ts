@@ -88,7 +88,7 @@ export function LowlightPlugin({
     throw Error("You should provide an instance of lowlight to use the code-block-lowlight extension");
   }
 
-  const lowlightPlugin: Plugin<any> = new Plugin({
+  const lowlightPlugin: Plugin = new Plugin({
     key: new PluginKey("lowlight"),
 
     state: {

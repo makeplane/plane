@@ -1,5 +1,4 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
-import { Extensions } from "@tiptap/core";
 import { AnyExtension } from "@tiptap/core";
 import { SlashCommands } from "@/extensions";
 // plane editor types

@@ -1,13 +1,20 @@
-import { HeadingExtensionStorage } from "@/extensions";
-import { CustomImageExtensionStorage } from "@/extensions/custom-image";
-import { CustomLinkStorage } from "@/extensions/custom-link";
-import { MentionExtensionStorage } from "@/extensions/mentions";
-import { ImageExtensionStorage } from "@/plugins/image";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
+// extensions
+import { type HeadingExtensionStorage } from "@/extensions";
+import { type CustomImageExtensionStorage } from "@/extensions/custom-image";
+import { type CustomLinkStorage } from "@/extensions/custom-link";
+import { type ImageExtensionStorage } from "@/extensions/image";
+import { type MentionExtensionStorage } from "@/extensions/mentions";
+import { type UtilityExtensionStorage } from "@/extensions/utility";
 
 export type ExtensionStorageMap = {
-  imageComponent: CustomImageExtensionStorage;
-  image: ImageExtensionStorage;
-  link: CustomLinkStorage;
-  headingList: HeadingExtensionStorage;
-  mention: MentionExtensionStorage;
+  [CORE_EXTENSIONS.CUSTOM_IMAGE]: CustomImageExtensionStorage;
+  [CORE_EXTENSIONS.IMAGE]: ImageExtensionStorage;
+  [CORE_EXTENSIONS.CUSTOM_LINK]: CustomLinkStorage;
+  [CORE_EXTENSIONS.HEADINGS_LIST]: HeadingExtensionStorage;
+  [CORE_EXTENSIONS.MENTION]: MentionExtensionStorage;
+  [CORE_EXTENSIONS.UTILITY]: UtilityExtensionStorage;
 };
+
+export type ExtensionFileSetStorageKey = Extract<keyof ImageExtensionStorage, "deletedImageSet">;

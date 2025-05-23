@@ -1,7 +1,7 @@
 import { mergeAttributes } from "@tiptap/core";
 import { Image } from "@tiptap/extension-image";
-// extensions
-import { ImageExtensionStorage } from "@/plugins/image";
+// local imports
+import { ImageExtensionStorage } from "./extension";
 
 export const CustomImageComponentWithoutProps = () =>
   Image.extend<Record<string, unknown>, ImageExtensionStorage>({
@@ -48,9 +48,7 @@ export const CustomImageComponentWithoutProps = () =>
       return {
         fileMap: new Map(),
         deletedImageSet: new Map<string, boolean>(),
-        uploadInProgress: false,
         maxFileSize: 0,
-        assetsUploadStatus: {},
       };
     },
   });

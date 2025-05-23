@@ -1,4 +1,6 @@
 import { Extension, InputRule } from "@tiptap/core";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 import {
   TypographyOptions,
   emDash,
@@ -23,7 +25,7 @@ import {
 } from "./inputRules";
 
 export const CustomTypographyExtension = Extension.create<TypographyOptions>({
-  name: "typography",
+  name: CORE_EXTENSIONS.TYPOGRAPHY,
 
   addInputRules() {
     const rules: InputRule[] = [];

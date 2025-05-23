@@ -1,6 +1,8 @@
 import { EditorState, Selection } from "@tiptap/pm/state";
-// plane utils
+// plane imports
 import { cn } from "@plane/utils";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
 interface EditorClassNames {
   noBorder?: boolean;
@@ -67,7 +69,7 @@ export const isValidHttpUrl = (string: string): { isValid: boolean; url: string 
         url: string,
       };
     }
-  } catch (_) {
+  } catch {
     // Original string wasn't a valid URL - that's okay, we'll try with https
   }
 
@@ -79,7 +81,7 @@ export const isValidHttpUrl = (string: string): { isValid: boolean; url: string 
       isValid: true,
       url: urlWithHttps,
     };
-  } catch (_) {
+  } catch {
     return {
       isValid: false,
       url: string,
@@ -91,7 +93,7 @@ export const getParagraphCount = (editorState: EditorState | undefined) => {
   if (!editorState) return 0;
   let paragraphCount = 0;
   editorState.doc.descendants((node) => {
-    if (node.type.name === "paragraph" && node.content.size > 0) paragraphCount++;
+    if (node.type.name === CORE_EXTENSIONS.PARAGRAPH && node.content.size > 0) paragraphCount++;
   });
   return paragraphCount;
 };

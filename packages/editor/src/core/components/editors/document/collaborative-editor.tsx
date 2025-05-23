@@ -7,7 +7,7 @@ import { DocumentContentLoader, PageRenderer } from "@/components/editors";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // extensions
-import { IssueWidget } from "@/extensions";
+import { WorkItemEmbedExtension } from "@/extensions";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
@@ -41,7 +41,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   const extensions: Extensions = [];
   if (embedHandler?.issue) {
     extensions.push(
-      IssueWidget({
+      WorkItemEmbedExtension({
         widgetCallback: embedHandler.issue.widgetCallback,
       })
     );

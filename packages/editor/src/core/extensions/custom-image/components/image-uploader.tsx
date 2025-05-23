@@ -4,6 +4,7 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react";
 import { cn } from "@plane/utils";
 // constants
 import { ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import { CustoBaseImageNodeViewProps, getImageComponentImageFileMap } from "@/extensions/custom-image";
 // hooks
@@ -57,7 +58,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
           // control cursor position after upload
           const nextNode = editor.state.doc.nodeAt(pos + 1);
 
-          if (nextNode && nextNode.type.name === "paragraph") {
+          if (nextNode && nextNode.type.name === CORE_EXTENSIONS.PARAGRAPH) {
             // If there is a paragraph node after the image component, move the focus to the next node
             editor.commands.setTextSelection(pos + 1);
           } else {
@@ -75,7 +76,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     // @ts-expect-error - TODO: fix typings, and don't remove await from here for now
     editorCommand: async (file) => await editor?.commands.uploadImage(imageEntityId, file),
     handleProgressStatus: (isUploading) => {
-      editor.storage.imageComponent.uploadInProgress = isUploading;
+      editor.storage.utility.uploadInProgress = isUploading;
     },
     loadFileFromFileSystem: loadImageFromFileSystem,
     maxFileSize,
@@ -85,6 +86,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     acceptedMimeTypes: ACCEPTED_IMAGE_MIME_TYPES,
     editor,
     maxFileSize,
+    onInvalidFile: (_error, message) => alert(message),
     pos: getPos(),
     type: "image",
     uploader: uploadFile,
@@ -123,6 +125,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         editor,
         filesList,
         maxFileSize,
+        onInvalidFile: (_error, message) => alert(message),
         pos: getPos(),
         type: "image",
         uploader: uploadFile,

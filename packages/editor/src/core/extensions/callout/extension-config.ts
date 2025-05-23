@@ -1,6 +1,8 @@
 import { Node, mergeAttributes } from "@tiptap/core";
-import { Node as NodeType } from "@tiptap/pm/model";
 import { MarkdownSerializerState } from "@tiptap/pm/markdown";
+import { Node as NodeType } from "@tiptap/pm/model";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // types
 import { EAttributeNames, TCalloutBlockAttributes } from "./types";
 // utils
@@ -9,14 +11,14 @@ import { DEFAULT_CALLOUT_BLOCK_ATTRIBUTES } from "./utils";
 // Extend Tiptap's Commands interface
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    calloutComponent: {
+    [CORE_EXTENSIONS.CALLOUT]: {
       insertCallout: () => ReturnType;
     };
   }
 }
 
 export const CustomCalloutExtensionConfig = Node.create({
-  name: "calloutComponent",
+  name: CORE_EXTENSIONS.CALLOUT,
   group: "block",
   content: "block+",
 
