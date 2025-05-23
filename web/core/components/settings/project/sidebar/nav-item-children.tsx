@@ -41,7 +41,7 @@ export const NavItemChildren = observer((props: { projectId: string }) => {
       <div className="flex flex-col gap-2">
         <div className="flex w-full flex-col gap-1">
           {PROJECT_SETTINGS_LINKS.map((link) => {
-            const isActive = link.highlight(pathname, `/${workspaceSlug}/settings/project/${projectId}`);
+            const isActive = link.highlight(pathname, `/${workspaceSlug}/settings/projects/${projectId}`);
             return (
               allowPermissions(
                 link.access,
@@ -51,7 +51,7 @@ export const NavItemChildren = observer((props: { projectId: string }) => {
               ) && (
                 <Link
                   key={link.key}
-                  href={`/${workspaceSlug}/settings/project/${projectId}${link.href}`}
+                  href={`/${workspaceSlug}/settings/projects/${projectId}${link.href}`}
                   onClick={() => toggleSidebar(true)}
                 >
                   <div

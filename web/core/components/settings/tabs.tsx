@@ -18,7 +18,7 @@ const TABS = {
   projects: {
     key: "projects",
     label: "Projects",
-    href: `/settings/project/`,
+    href: `/settings/projects/`,
   },
 };
 

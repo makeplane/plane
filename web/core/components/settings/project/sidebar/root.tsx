@@ -21,7 +21,7 @@ export const ProjectSettingsSidebar = observer((props: TProjectSettingsSidebarPr
   const groupedProject = joinedProjectIds.map((projectId) => ({
     key: projectId,
     i18n_label: projectMap[projectId].name,
-    href: `/settings/project/${projectId}`,
+    href: `/settings/projects/${projectId}`,
     icon: <Logo logo={projectMap[projectId].logo_props} />,
   }));
 
