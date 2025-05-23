@@ -131,11 +131,20 @@ const PriorityChart = observer((props: Props) => {
     return parsedBars;
   }, [chart_model, group_by, parsedData, resolvedTheme, workspaceStates, x_axis, y_axis]);
 
+  const yAxisLabel = useMemo(
+    () => ANALYTICS_V2_Y_AXIS_VALUES.find((item) => item.value === props.y_axis)?.label ?? props.y_axis,
+    [props.y_axis]
+  );
+  const xAxisLabel = useMemo(
+    () => ANALYTICS_V2_X_AXIS_VALUES.find((item) => item.value === props.x_axis)?.label ?? props.x_axis,
+    [props.x_axis]
+  );
+
   const defaultColumns: ColumnDef<TChartDatum>[] = useMemo(
     () => [
       {
         accessorKey: "name",
-        header: () => "Name",
+        header: () => xAxisLabel,
       },
       {
         accessorKey: "count",
@@ -143,7 +152,7 @@ const PriorityChart = observer((props: Props) => {
         cell: ({ row }) => <div className="text-right">{row.original.count}</div>,
       },
     ],
-    []
+    [xAxisLabel]
   );
 
   const columns: ColumnDef<TChartDatum>[] = useMemo(
@@ -187,15 +196,6 @@ const PriorityChart = observer((props: Props) => {
     download(csvConfig)(csv);
   };
 
-  const yAxisLabel = useMemo(
-    () => ANALYTICS_V2_Y_AXIS_VALUES.find((item) => item.value === props.y_axis)?.label ?? props.y_axis,
-    [props.y_axis]
-  );
-  const xAxisLabel = useMemo(
-    () => ANALYTICS_V2_X_AXIS_VALUES.find((item) => item.value === props.x_axis)?.label ?? props.x_axis,
-    [props.x_axis]
-  );
-
   return (
     <div className="flex flex-col gap-12 ">
       {priorityChartLoading ? (
@@ -224,7 +224,7 @@ const PriorityChart = observer((props: Props) => {
           <DataTable
             data={parsedData.data}
             columns={[...defaultColumns, ...columns]}
-            searchPlaceholder={`${parsedData.data.length} ${yAxisLabel}`}
+            searchPlaceholder={`${parsedData.data.length} ${xAxisLabel}`}
             actions={(table: Table<TChartDatum>) => (
               <Button
                 variant="accent-primary"
