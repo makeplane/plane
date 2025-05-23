@@ -5,12 +5,11 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from plane.api.serializers import IssueTypeCustomPropertySerializer
-from plane.db.models import Workspace, IssueTypeCustomProperty
+from plane.db.models import IssueTypeCustomProperty
 from plane.app.views import BaseAPIView
 
 class IssueTypeCustomPropertyAPIEndpoint(BaseAPIView):
     def get(self, request, slug, issue_type, pk=None):
-        workspace = Workspace.objects.get(slug=slug)
         properties = IssueTypeCustomProperty.objects.filter(
             issue_type_id=issue_type
         )
@@ -30,7 +29,6 @@ class IssueTypeCustomPropertyAPIEndpoint(BaseAPIView):
                     "issue_type_id": issue_type
                 }
             )
-            print(serializer.is_valid())
             if serializer.is_valid():
                 serializer.save()
                 return Response(
