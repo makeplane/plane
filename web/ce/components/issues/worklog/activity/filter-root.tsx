@@ -1,11 +1,11 @@
 "use client";
 
 import { FC } from "react";
+import { useTranslation } from "@plane/i18n";
 // components
 import { ActivityFilter } from "@/components/issues";
 // plane web constants
 import { TActivityFilters, ACTIVITY_FILTER_TYPE_OPTIONS, TActivityFilterOption } from "@/plane-web/constants/issues";
-import { useTranslation } from "@plane/i18n";
 
 export type TActivityFilterRoot = {
   selectedFilters: TActivityFilters[];
