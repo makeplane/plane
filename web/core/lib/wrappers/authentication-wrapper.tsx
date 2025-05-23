@@ -29,6 +29,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
   const router = useAppRouter();
   const searchParams = useSearchParams();
   const nextPath = searchParams.get("next_path");
+  const appSlug = searchParams.get("app_slug");
   // props
   const { children, pageType = EPageTypes.AUTHENTICATED } = props;
   // hooks
@@ -42,6 +43,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     shouldRetryOnError: false,
   });
 
+  const pathnameWithAppSlug = appSlug ? `${pathname}?app_slug=${appSlug}` : pathname;
   const isUserOnboard =
     currentUserProfile?.is_onboarded ||
     (currentUserProfile?.onboarding_step?.profile_complete &&
@@ -49,8 +51,6 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
       currentUserProfile?.onboarding_step?.workspace_invite &&
       currentUserProfile?.onboarding_step?.workspace_join) ||
     false;
-
-  const pathnameWithNextPath = pathname && nextPath ? `${pathname}?next_path=${nextPath}` : pathname;
 
   const getWorkspaceRedirectionUrl = (): string => {
     let redirectionRoute = "/profile";
@@ -92,7 +92,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
         router.push(currentRedirectRoute);
         return <></>;
       } else {
-        router.push(pathnameWithNextPath ? `/onboarding?next_path=${pathnameWithNextPath}` : `/onboarding`);
+        router.push("/onboarding");
         return <></>;
       }
     }
@@ -100,7 +100,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
   if (pageType === EPageTypes.ONBOARDING) {
     if (!currentUser?.id) {
-      router.push(`/${pathnameWithNextPath ? `?next_path=${pathnameWithNextPath}` : ``}`);
+      router.push(`/${pathnameWithAppSlug ? `?next_path=${pathnameWithAppSlug}` : ``}`);
       return <></>;
     } else {
       if (currentUser && currentUserProfile?.id && isUserOnboard) {
@@ -113,7 +113,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
 
   if (pageType === EPageTypes.SET_PASSWORD) {
     if (!currentUser?.id) {
-      router.push(`/${pathnameWithNextPath ? `?next_path=${pathnameWithNextPath}` : ``}`);
+      router.push(`/${pathnameWithAppSlug ? `?next_path=${pathnameWithAppSlug}` : ``}`);
       return <></>;
     } else {
       if (currentUser && !currentUser?.is_password_autoset && currentUserProfile?.id && isUserOnboard) {
@@ -128,11 +128,11 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     if (currentUser?.id) {
       if (currentUserProfile && currentUserProfile?.id && isUserOnboard) return <>{children}</>;
       else {
-        router.push(pathnameWithNextPath ? `/onboarding?next_path=${pathnameWithNextPath}` : `/onboarding`);
+        router.push(`/onboarding`);
         return <></>;
       }
     } else {
-      router.push(`/${pathnameWithNextPath ? `?next_path=${pathnameWithNextPath}` : ``}`);
+      router.push(`/${pathnameWithAppSlug ? `?next_path=${pathnameWithAppSlug}` : ``}`);
       return <></>;
     }
   }
