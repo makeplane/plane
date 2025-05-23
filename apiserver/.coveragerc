@@ -1,0 +1,25 @@
+[run]
+source = plane
+omit =
+    */tests/*
+    */migrations/*
+    */settings/*
+    */wsgi.py
+    */asgi.py
+    */urls.py
+    manage.py
+    */admin.py
+    */apps.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    if self.debug:
+    raise NotImplementedError
+    if __name__ == .__main__.
+    pass
+    raise ImportError
+
+[html]
+directory = htmlcov 
