@@ -12,19 +12,19 @@ import { SettingsSidebar } from "@/components/settings";
 import { getFileURL } from "@/helpers/file.helper";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 
-export const ProjectActionIcons = ({ type, size, className }: { type: string; size?: number; className?: string }) => {
-  const icons = {
-    profile: CircleUser,
-    security: Lock,
-    activity: Activity,
-    preferences: Settings2,
-    notifications: Bell,
-    "api-tokens": KeyRound,
-    connections: Blocks,
-  };
+const ICONS = {
+  profile: CircleUser,
+  security: Lock,
+  activity: Activity,
+  preferences: Settings2,
+  notifications: Bell,
+  "api-tokens": KeyRound,
+  connections: Blocks,
+};
 
+export const ProjectActionIcons = ({ type, size, className }: { type: string; size?: number; className?: string }) => {
   if (type === undefined) return null;
-  const Icon = icons[type as keyof typeof icons];
+  const Icon = ICONS[type as keyof typeof ICONS];
   if (!Icon) return null;
   return <Icon size={size} className={className} strokeWidth={2} />;
 };
@@ -50,7 +50,7 @@ export const ProfileSidebar = observer((props: TProfileSidebarProps) => {
         (category) => isAdmin || category !== PROFILE_SETTINGS_CATEGORY.DEVELOPER
       )}
       groupedSettings={GROUPED_PROFILE_SETTINGS}
-      workspaceSlug={workspaceSlug.toString()}
+      workspaceSlug={workspaceSlug?.toString() ?? ""}
       isActive={(data: { href: string }) => pathname === `/${workspaceSlug}${data.href}/`}
       customHeader={
         <div className="flex items-center gap-2">

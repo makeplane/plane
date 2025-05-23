@@ -12,13 +12,13 @@ export const SettingsSidebarHeader = (props: { customHeader?: React.ReactNode })
         <div className="flex w-full gap-3 items-center justify-between pr-2">
           <div className="flex w-full gap-3 items-center overflow-hidden">
             <WorkspaceLogo
-              logo={currentWorkspace.logo_url}
-              name={currentWorkspace.name}
+              logo={currentWorkspace.logo_url ?? ""}
+              name={currentWorkspace.name ?? ""}
               classNames="size-8 border border-custom-border-200"
             />
             <div className="w-full overflow-hidden">
               <div className="text-base font-medium text-custom-text-200 truncate text-ellipsis ">
-                {currentWorkspace.name}
+                {currentWorkspace.name ?? "Workspace"}
               </div>
               <div className="text-sm text-custom-text-300 capitalize">
                 {getUserRole(currentWorkspace.role)?.toLowerCase() || "guest"}

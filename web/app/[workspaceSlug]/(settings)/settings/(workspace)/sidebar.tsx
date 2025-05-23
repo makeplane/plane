@@ -12,6 +12,14 @@ import { SettingsSidebar } from "@/components/settings";
 import { useUserPermissions } from "@/hooks/store/user";
 import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";
 
+const ICONS = {
+  general: Building,
+  members: Users,
+  export: ArrowUpToLine,
+  "billing-and-plans": CreditCard,
+  webhooks: Webhook,
+};
+
 export const WorkspaceActionIcons = ({
   type,
   size,
@@ -21,16 +29,8 @@ export const WorkspaceActionIcons = ({
   size?: number;
   className?: string;
 }) => {
-  const icons = {
-    general: Building,
-    members: Users,
-    export: ArrowUpToLine,
-    "billing-and-plans": CreditCard,
-    webhooks: Webhook,
-  };
-
   if (type === undefined) return null;
-  const Icon = icons[type as keyof typeof icons];
+  const Icon = ICONS[type as keyof typeof ICONS];
   if (!Icon) return null;
   return <Icon size={size} className={className} strokeWidth={2} />;
 };
