@@ -26,7 +26,7 @@ const ProjectSettingsLayout = observer((props: Props) => {
   useEffect(() => {
     if (projectId) return;
     if (joinedProjectIds.length > 0) {
-      router.push(`/${workspaceSlug}/settings/project/${joinedProjectIds[0]}`);
+      router.push(`/${workspaceSlug}/settings/projects/${joinedProjectIds[0]}`);
     }
   }, [joinedProjectIds, router, workspaceSlug, projectId]);
 
