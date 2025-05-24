@@ -2,6 +2,7 @@ from django.urls import path
 
 from .views import (
     PublishedApplicationEndpoint,
+    PublishedApplicationBySlugEndpoint,
     ApplicationCategoryEndpoint,
     TemplateCategoryEndpoint,
     PublishedTemplateEndpoint,
@@ -19,6 +20,11 @@ urlpatterns = [
         "published-applications/<uuid:pk>/",
         PublishedApplicationEndpoint.as_view(),
         name="published-application-detail",
+    ),
+    path(
+        "published-applications/<str:slug>/",
+        PublishedApplicationBySlugEndpoint.as_view(),
+        name="published-application-detail-by-slug",
     ),
     path(
         "application-categories/",

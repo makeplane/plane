@@ -20,13 +20,12 @@ class PublishedApplicationEndpoint(BaseAPIView):
     serializer_class = PublishedApplicationSerializer
 
     def get_queryset(self) -> QuerySet[Application]:
-        return self.model.objects.filter(
-            published_at__isnull=False,
-        ).select_related(
-            "logo_asset"
-        ).prefetch_related(
-            "attachments",
-            "categories"
+        return (
+            self.model.objects.filter(
+                published_at__isnull=False,
+            )
+            .select_related("logo_asset")
+            .prefetch_related("attachments", "categories")
         )
 
     def get(self, request: Request, pk: Optional[str] = None) -> Response:
@@ -42,6 +41,26 @@ class PublishedApplicationEndpoint(BaseAPIView):
         return Response(serialised_applications.data, status=status.HTTP_200_OK)
 
 
+class PublishedApplicationBySlugEndpoint(BaseAPIView):
+    permission_classes = [AllowAny]
+    model = Application
+    serializer_class = PublishedApplicationSerializer
+
+    def get_queryset(self) -> QuerySet[Application]:
+        return (
+            self.model.objects.filter(
+                published_at__isnull=False,
+            )
+            .select_related("logo_asset")
+            .prefetch_related("attachments", "categories")
+        )
+
+    def get(self, request: Request, slug: Optional[str] = None) -> Response:
+        application: Application = self.get_queryset().get(slug=slug)
+        serialised_application = PublishedApplicationSerializer(application)
+        return Response(serialised_application.data, status=status.HTTP_200_OK)
+
+
 class ApplicationCategoryEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
     model = ApplicationCategory
@@ -52,4 +71,6 @@ class ApplicationCategoryEndpoint(BaseAPIView):
         serialised_application_categories = self.serializer_class(
             application_categories, many=True
         )
-        return Response(serialised_application_categories.data, status=status.HTTP_200_OK)
+        return Response(
+            serialised_application_categories.data, status=status.HTTP_200_OK
+        )
