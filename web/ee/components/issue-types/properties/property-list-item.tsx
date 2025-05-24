@@ -256,7 +256,10 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
         setIssuePropertyData(issuePropertyDetail);
       })
       .finally(() => {
-        resetOptions();
+        // reset options after mobx computed value is updated
+        requestAnimationFrame(() => {
+          resetOptions();
+        });
         setIsSubmitting(false);
       });
   };
