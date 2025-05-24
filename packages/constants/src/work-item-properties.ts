@@ -172,8 +172,7 @@ export const DROPDOWN_ATTRIBUTES: Partial<{
   ],
 };
 
-export const ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS: Partial<TIssuePropertySettingsConfigurationsDetails> =
-{
+export const ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS: Partial<TIssuePropertySettingsConfigurationsDetails> = {
   TEXT: [
     {
       keyToUpdate: ["display_format"],
@@ -227,3 +226,5 @@ export const ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS: Partial<TIssuePropertySetti
     },
   ],
 };
+
+export const RESTRICTED_WORK_ITEM_PROPERTY_DISPLAY_NAMES = ["state", "due date", "cycle", "modules"];

@@ -502,7 +502,6 @@
   "export": "Ekspor",
   "member": "{count, plural, one{# anggota} other{# anggota}}",
   "new_password_must_be_different_from_old_password": "Kata sandi baru harus berbeda dari kata sandi lama",
-
   "project_view": {
     "sort_by": {
       "created_at": "Dibuat pada",

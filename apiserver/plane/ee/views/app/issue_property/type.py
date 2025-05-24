@@ -102,6 +102,18 @@ class IssueTypeEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def post(self, request, slug, project_id):
+        issue_types = IssueType.objects.filter(
+            workspace__slug=slug,
+            project_issue_types__project_id=project_id,
+            is_epic=False,
+        ).values_list("name", flat=True)
+
+        if request.data.get("name") in issue_types:
+            return Response(
+                {"error": "Issue type with this name already exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Fetch the project
         project = Project.objects.get(pk=project_id)
         # Create a new issue type
@@ -261,7 +273,9 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
                 )
                 .annotate(
                     issue_exists=Exists(
-                        Issue.objects.filter(project_id=project_id, type_id=OuterRef("pk"))
+                        Issue.objects.filter(
+                            project_id=project_id, type_id=OuterRef("pk")
+                        )
                     )
                 )
                 .annotate(
@@ -289,9 +303,7 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
                 "is_epic": work_item_type.is_epic,
             }
             WorkitemTemplate.objects.filter(
-                project_id=project_id,
-                workspace__slug=slug,
-                type__exact={},
+                project_id=project_id, workspace__slug=slug, type__exact={}
             ).update(type=work_item_type_template_schema)
 
             # Serialize the data
@@ -371,9 +383,7 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
             "is_epic": work_item_type.is_epic,
         }
         WorkitemTemplate.objects.filter(
-            project_id=project_id,
-            workspace__slug=slug,
-            type__exact={},
+            project_id=project_id, workspace__slug=slug, type__exact={}
         ).update(type=work_item_type_template_schema)
 
         # Serialize the data

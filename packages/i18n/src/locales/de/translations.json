@@ -504,7 +504,6 @@
   "new_password_must_be_different_from_old_password": "Das neue Passwort muss von dem alten Passwort abweichen",
   "edited": "Bearbeitet",
   "bot": "Bot",
-
   "project_view": {
     "sort_by": {
       "created_at": "Erstellt am",

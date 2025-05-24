@@ -502,7 +502,6 @@
   "export": "Exportă",
   "member": "{count, plural, one{# membru} other{# membri}}",
   "new_password_must_be_different_from_old_password": "Parola nouă trebuie să fie diferită de parola veche",
-
   "project_view": {
     "sort_by": {
       "created_at": "Creat la",

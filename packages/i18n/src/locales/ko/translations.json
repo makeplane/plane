@@ -501,8 +501,6 @@
   "re_generate_key": "키 다시 생성",
   "export": "내보내기",
   "member": "{count, plural, one{# 멤버} other{# 멤버}}",
-
-  
   "new_password_must_be_different_from_old_password": "새 비밀번호는 이전 비밀번호와 다르게 설정해야 합니다",
   "edited": "수정됨",
   "bot": "봇",
