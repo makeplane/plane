@@ -346,6 +346,11 @@
         "primary_button": {
           "text": "Vezi alte Inițiative"
         }
+      },
+      "epics": {
+        "title": "Nu ai epice care să se potrivească cu filtrele pe care le-ai aplicat.",
+        "subHeading": "Pentru a vedea toate epicele, șterge toate filtrele aplicate.",
+        "action": "Șterge filtrele"
       }
     }
   },

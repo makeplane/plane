@@ -69,12 +69,12 @@ export const InitiativeEpicsCollapsibleContent: FC<Props> = observer((props) => 
           ))
         ) : (
           <SectionEmptyState
-            heading="You don’t have epics that match the filters you have applied."
-            subHeading="To see all epics, clear all applied filters."
+            heading={t("initiatives.empty_state.epics.title")}
+            subHeading={t("initiatives.empty_state.epics.subHeading")}
             icon={<ListFilter />}
             actionElement={
               <Button variant="neutral-primary" size="sm" onClick={() => resetFilters(initiativeId)}>
-                Clear filters
+                {t("initiatives.empty_state.epics.action")}
               </Button>
             }
           />

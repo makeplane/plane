@@ -353,6 +353,11 @@
         "primary_button": {
           "text": "View other Initiatives"
         }
+      },
+      "epics": {
+        "title": "You don't have epics that match the filters you have applied.",
+        "subHeading": "To see all epics, clear all applied filters.",
+        "action": "Clear filters"
       }
     }
   },

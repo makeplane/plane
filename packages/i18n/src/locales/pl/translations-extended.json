@@ -346,6 +346,11 @@
         "primary_button": {
           "text": "Zobacz inne Inicjatywy"
         }
+      },
+      "epics": {
+        "title": "Nie masz inicjatyw, które pasują do filtrów, które zastosowałeś.",
+        "subHeading": "Aby zobaczyć wszystkie inicjatywy, usuń wszystkie zastosowane filtry.",
+        "action": "Usuń filtry"
       }
     }
   },

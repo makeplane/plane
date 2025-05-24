@@ -345,6 +345,11 @@
         "primary_button": {
           "text": "Ver outras Iniciativas"
         }
+      },
+      "epics": {
+        "title": "Não há iniciativas que correspondem aos filtros que você aplicou.",
+        "subHeading": "Para ver todas as iniciativas, limpe todos os filtros aplicados.",
+        "action": "Limpar filtros"
       }
     }
   },

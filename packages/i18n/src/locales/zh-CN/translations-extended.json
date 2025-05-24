@@ -345,6 +345,11 @@
         "primary_button": {
           "text": "查看其他计划"
         }
+      },
+      "epics": {
+        "title": "没有匹配的史诗",
+        "subHeading": "要查看所有史诗，请清除所有应用的筛选器。",
+        "action": "清除筛选器"
       }
     }
   },

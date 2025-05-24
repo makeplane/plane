@@ -345,6 +345,11 @@
         "primary_button": {
           "text": "Ver otras Iniciativas"
         }
+      },
+      "epics": {
+        "title": "No tienes Epics que coincidan con los filtros que has aplicado.",
+        "subHeading": "Para ver todos los Epics, elimina todos los filtros aplicados.",
+        "action": "Eliminar filtros"
       }
     }
   },

@@ -343,6 +343,11 @@
         "primary_button": {
           "text": "Visualizza altre iniziative"
         }
+      },
+      "epics": {
+        "title": "Non hai epiche che corrispondono ai filtri che hai applicato.",
+        "subHeading": "Per vedere tutte le epiche, cancella tutti i filtri applicati.",
+        "action": "Cancella filtri"
       }
     }
   },

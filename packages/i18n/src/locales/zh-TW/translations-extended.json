@@ -346,6 +346,11 @@
         "primary_button": {
           "text": "查看其他倡議"
         }
+      },
+      "epics": {
+        "title": "沒有匹配的史詩",
+        "subHeading": "要查看所有史詩，請清除所有應用的篩選器。",
+        "action": "清除篩選器"
       }
     }
   },

@@ -346,6 +346,11 @@
         "primary_button": {
           "text": "Zobraziť iné Iniciatívy"
         }
+      },
+      "epics": {
+        "title": "Nemáte žiadne epiky, ktoré by zodpovedali filtrom, ktoré ste použili.",
+        "subHeading": "Aby ste videli všetky epiky, vymažte všetky použité filtre.",
+        "action": "Vymazať filtre"
       }
     }
   },

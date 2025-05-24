@@ -346,6 +346,11 @@
         "primary_button": {
           "text": "Andere Initiativen anzeigen"
         }
+      },
+      "epics": {
+        "title": "Sie haben keine Epics, die den von Ihnen angewendeten Filtern entsprechen.",
+        "subHeading": "Um alle Epics zu sehen, löschen Sie alle angewendeten Filter.",
+        "action": "Alle Filter löschen"
       }
     }
   },

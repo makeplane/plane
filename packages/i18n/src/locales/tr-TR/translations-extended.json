@@ -362,6 +362,11 @@
         "primary_button": {
           "text": "Diğer İnisiyatifleri Görüntüle"
         }
+      },
+      "epics": {
+        "title": "Eşleşen epik yok",
+        "subHeading": "Tüm epikleri görmek için tüm uygulanan filtreleri temizleyin.",
+        "action": "Filtreleri temizle"
       }
     }
   },

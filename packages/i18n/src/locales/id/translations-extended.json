@@ -346,6 +346,11 @@
         "primary_button": {
           "text": "Lihat Inisiatif lain"
         }
+      },
+      "epics": {
+        "title": "Anda tidak memiliki epik yang cocok dengan filter yang Anda terapkan.",
+        "subHeading": "Untuk melihat semua epik, hapus semua filter yang diterapkan.",
+        "action": "Hapus filter"
       }
     }
   },

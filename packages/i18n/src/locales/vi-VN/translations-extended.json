@@ -336,6 +336,11 @@
         "primary_button": {
           "text": "Xem Sáng kiến khác"
         }
+      },
+      "epics": {
+        "title": "Không có sáng kiến phù hợp",
+        "subHeading": "Tạo một sáng kiến mới thay thế.",
+        "action": "Tạo sáng kiến"
       }
     }
   },
