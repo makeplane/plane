@@ -12,7 +12,7 @@ type TUseDropdownKeyDown = {
 export const useDropdownKeyDown: TUseDropdownKeyDown = (onOpen, onClose, isOpen, selectActiveItem?) => {
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLElement>) => {
-      if (event.key === "Enter") {
+      if (event.key === "Enter" && !event.nativeEvent.isComposing) {
         if (!isOpen) {
           event.stopPropagation();
           onOpen();
