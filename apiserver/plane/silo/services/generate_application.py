@@ -30,6 +30,12 @@ def generate_application(
     adds the application owner to the application
     and create a new application secret
     """
+
+    # check if application secret already exists skip if it does
+    if application_secret_model.objects.filter(key=f"x-{app_key}-id").exists():
+        logger.info(f"Application for {app_key} already exists, skipping...")
+        return None
+    
     app_data = APPLICATIONS[app_key]
     app_slug = app_data["slug"]
     user = user_model.objects.get(id=user_id)
@@ -101,14 +107,11 @@ def create_applications(
     user_model = user_model or User
     # create applications
     for app_key in APPLICATIONS.keys():
-        if not application_secret_model.objects.filter(key=f"x-{app_key}-id").exists():
-            logger.info(f"Creating application for {app_key}")
-            generate_application(
-                user_id,
-                app_key,
-                application_model,
-                application_secret_model,
-                user_model,
-            )
-        else:
-            logger.info(f"Application for {app_key} already exists, skipping...")
+          logger.info(f"Creating application for {app_key}")
+          generate_application(
+              user_id,
+              app_key,
+              application_model,
+              application_secret_model,
+              user_model,
+          )
