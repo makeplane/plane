@@ -169,7 +169,7 @@ class Parent(PydanticBaseModel):
                 Type(**v)
             except Exception:
                 raise ValueError(
-                    "If 'type' is a dictionary, it must either be empty or conform to Type model"
+                    "If 'type' is a dictionary, it must either be empty or conform to Type model"  # noqa: E501
                 )
         return v
 
@@ -477,14 +477,7 @@ class WorkitemState(PydanticBaseModel):
 
 
 class Member(PydanticBaseModel):
-    member_id: UUID4
-    role: int
-
-    @field_validator("role")
-    def validate_role(cls, role: int) -> int:
-        if role not in [5, 15, 20]:
-            raise ValueError("Invalid role")
-        return role
+    id: UUID4
 
 
 class IntakeSettings(PydanticBaseModel):

@@ -5,7 +5,6 @@ import random
 from celery import shared_task
 
 # Module imports
-from plane.app.permissions import ROLE
 from plane.db.models import (
     Estimate,
     EstimatePoint,
@@ -13,9 +12,6 @@ from plane.db.models import (
     Label,
     Project,
     ProjectIssueType,
-    WorkspaceMember,
-    ProjectMember,
-    IssueUserProperty,
 )
 from plane.ee.models import (
     IssueProperty,
@@ -23,7 +19,6 @@ from plane.ee.models import (
     ProjectTemplate,
     PropertyTypeEnum,
 )
-from plane.bgtasks.project_add_user_email_task import project_add_user_email
 
 
 def get_random_color():
@@ -165,81 +160,6 @@ def create_epics(epic_data, project_id, workspace_id):
             )
 
 
-def create_members(template_members, project_id, workspace_id, user_id, host):
-    # get workspace members
-    workspace_member_roles = {
-        member.get("member_id"): member.get("role")
-        for member in WorkspaceMember.objects.filter(
-            workspace_id=workspace_id, member_id__in=template_members.keys()
-        ).values("member_id", "role")
-    }
-
-    # get project members
-    project_members = (
-        ProjectMember.objects.filter(
-            workspace_id=workspace_id, member_id__in=workspace_member_roles.keys()
-        )
-        .values("member_id", "sort_order")
-        .order_by("sort_order")
-    )
-
-    # Loop through members and create
-    bulk_project_members = []
-    bulk_issue_props = []
-    for member in template_members:
-        member_id = member.get("member_id")
-
-        # if the user is not part of workspace continue
-        if member_id not in workspace_member_roles:
-            continue
-
-        # get the workspace member role
-        workspace_member_role = workspace_member_roles[str(member_id)]
-        sort_order = [
-            project_member.get("sort_order")
-            for project_member in project_members
-            if str(project_member.get("member_id")) == str(member.get("member_id"))
-        ]
-
-        # Create a new project member
-        bulk_project_members.append(
-            ProjectMember(
-                member_id=member.get("member_id"),
-                role=ROLE.GUEST.value
-                if workspace_member_role == ROLE.GUEST.value
-                else member.get("role"),
-                project_id=project_id,
-                workspace_id=workspace_id,
-                sort_order=(sort_order[0] - 10000 if len(sort_order) else 65535),
-            )
-        )
-
-        # Create a new issue property
-        bulk_issue_props.append(
-            IssueUserProperty(
-                user_id=member.get("member_id"),
-                project_id=project_id,
-                workspace_id=workspace_id,
-            )
-        )
-
-        # Bulk create the project members and issue properties
-        project_members = ProjectMember.objects.bulk_create(
-            bulk_project_members, batch_size=10, ignore_conflicts=True
-        )
-        _ = IssueUserProperty.objects.bulk_create(
-            bulk_issue_props, batch_size=10, ignore_conflicts=True
-        )
-
-        # send email to project members
-        [
-            project_add_user_email.delay(host, project_member.id, user_id)
-            for project_member in project_members
-        ]
-
-        return
-
-
 @shared_task
 def create_project_from_template(template_id, project_id, user_id, host):
     # get
@@ -262,8 +182,3 @@ def create_project_from_template(template_id, project_id, user_id, host):
     # create epics
     if project_template.epics:
         create_epics(project_template.epics, project_id, workspace_id)
-
-    if project_template.members:
-        create_members(
-            project_template.members, project_id, workspace_id, user_id, host
-        )

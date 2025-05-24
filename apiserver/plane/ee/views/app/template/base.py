@@ -17,6 +17,7 @@ from plane.ee.models.template import (
     WorkitemType,
     WorkitemState,
     IntakeSettings,
+    Member,
 )
 
 
@@ -88,13 +89,13 @@ class TemplateBaseEndpoint(BaseAPIView):
 
     def validate_page_fields(self, template_date):
         """
-                Validates JSON fields in the page template data.
+        Validates JSON fields in the page template data.
 
-                Args:
-                    template_date (dict): Request data for page template.
+        Args:
+            template_date (dict): Request data for page template.
 
-                Returns:
-                    tuple: (is_valid, errors)
+        Returns:
+            tuple: (is_valid, errors)
         """
         validation_map = {"parent": PageParent}
 
@@ -114,13 +115,13 @@ class TemplateBaseEndpoint(BaseAPIView):
 
     def validate_project_fields(self, template_date):
         """
-                Validates JSON fields in the page template data.
+        Validates JSON fields in the page template data.
 
-                Args:
-                    template_date (dict): Request data for page template.
+        Args:
+            template_date (dict): Request data for page template.
 
-                Returns:
-                    tuple: (is_valid, errors)
+        Returns:
+            tuple: (is_valid, errors)
         """
         validation_map = {
             "project_state": ProjectState,
@@ -130,6 +131,7 @@ class TemplateBaseEndpoint(BaseAPIView):
             "workitem_types": WorkitemType,
             "epics": Epic,
             "intake_settings": IntakeSettings,
+            "members": Member,
         }
 
         validation_errors = {}
