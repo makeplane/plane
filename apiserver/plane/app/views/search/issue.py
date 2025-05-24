@@ -8,6 +8,7 @@ from django.db.models import Q, QuerySet
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.request import Request
+
 # Module imports
 from .base import BaseAPIView
 from plane.db.models import Issue, ProjectMember, IssueRelation
@@ -51,7 +52,8 @@ class IssueSearchEndpoint(BaseAPIView):
         """
         Filter issues excluding related issues
         """
-        issue = Issue.issue_objects.filter(pk=issue_id).first()
+        issue = Issue.objects.filter(pk=issue_id).first()
+
         related_issue_ids = (
             IssueRelation.objects.filter(Q(related_issue=issue) | Q(issue=issue))
             .values_list("issue_id", "related_issue_id")
@@ -61,7 +63,7 @@ class IssueSearchEndpoint(BaseAPIView):
         related_issue_ids = [item for sublist in related_issue_ids for item in sublist]
 
         if issue:
-            issues = issues.exclude(pk__in=related_issue_ids, pk=issue_id)
+            issues = issues.exclude(pk__in=related_issue_ids)
 
         return issues
 
@@ -101,6 +103,16 @@ class IssueSearchEndpoint(BaseAPIView):
         issues = issues.filter(target_date__isnull=True)
         return issues
 
+    def filter_issues_and_epics_by_excluding_given_issue_id(
+        self, query, issue_id: str, issues_and_epics: QuerySet
+    ) -> QuerySet:
+        """
+        Filter issues and epics by excluding the given issue
+        """
+        issues = search_issues(query, issues_and_epics)
+
+        return issues.exclude(pk=issue_id)
+
     def get(self, request: Request, slug: str, project_id: UUID):
         query = request.query_params.get("search", False)
         workspace_search = request.query_params.get("workspace_search", "false")
@@ -112,6 +124,7 @@ class IssueSearchEndpoint(BaseAPIView):
         sub_issue = request.query_params.get("sub_issue", "false")
         target_date = request.query_params.get("target_date", True)
         issue_id = request.query_params.get("issue_id", False)
+        convert = request.query_params.get("convert", False)
 
         issues = Issue.issue_objects.filter(
             workspace__slug=slug,
@@ -139,12 +152,14 @@ class IssueSearchEndpoint(BaseAPIView):
         # Filter issues and epics by project
         if workspace_search == "false":
             issues = self.filter_issues_by_project(project_id, issues)
-            issues_and_epics = self.filter_issues_by_project(project_id, issues_and_epics)
+            issues_and_epics = self.filter_issues_by_project(
+                project_id, issues_and_epics
+            )
 
         # Filter issues and epics by query
         if epic == "true":
             issues = self.search_issues_by_query(query, issues_and_epics)
-        
+
         if parent == "true":
             issues = self.search_issues_by_query(query, issues_and_epics)
 
@@ -159,7 +174,9 @@ class IssueSearchEndpoint(BaseAPIView):
             issues = self.search_issues_and_excluding_parent(issues_and_epics, issue_id)
 
         if issue_relation == "true" and issue_id:
-            issues = self.filter_issues_excluding_related_issues(issue_id, issues_and_epics)
+            issues = self.filter_issues_excluding_related_issues(
+                issue_id, issues_and_epics
+            )
 
         if sub_issue == "true" and issue_id:
             issues = self.filter_root_issues_only(issue_id, issues)
@@ -173,6 +190,10 @@ class IssueSearchEndpoint(BaseAPIView):
         if target_date == "none":
             issues = self.filter_issues_without_target_date(issues)
 
+        if convert == "true" and issue_id:
+            issues = self.filter_issues_and_epics_by_excluding_given_issue_id(
+                query, issue_id, issues_and_epics
+            )
         if ProjectMember.objects.filter(
             project_id=project_id, member=self.request.user, is_active=True, role=5
         ).exists():
