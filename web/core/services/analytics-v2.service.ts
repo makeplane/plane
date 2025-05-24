@@ -10,14 +10,18 @@ export class AnalyticsV2Service extends APIService {
   async getAdvanceAnalytics<T extends IAnalyticsResponseV2>(
     workspaceSlug: string,
     tab: TAnalyticsTabsV2Base,
-    params?: Record<string, any>
+    params?: Record<string, any>,
+    isPeekView?: boolean
   ): Promise<T> {
-    return this.get(`/api/workspaces/${workspaceSlug}/advance-analytics/`, {
-      params: {
-        tab,
-        ...params,
-      },
-    })
+    return this.get(
+      this.processUrl<TAnalyticsTabsV2Base>("advance-analytics", workspaceSlug, tab, params, isPeekView),
+      {
+        params: {
+          tab,
+          ...params,
+        },
+      }
+    )
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
@@ -27,9 +31,17 @@ export class AnalyticsV2Service extends APIService {
   async getAdvanceAnalyticsStats<T>(
     workspaceSlug: string,
     tab: Exclude<TAnalyticsTabsV2Base, "overview">,
-    params?: Record<string, any>
+    params?: Record<string, any>,
+    isPeekView?: boolean
   ): Promise<T> {
-    return this.get(`/api/workspaces/${workspaceSlug}/advance-analytics-stats/`, {
+    const processedUrl = this.processUrl<Exclude<TAnalyticsTabsV2Base, "overview">>(
+      "advance-analytics-stats",
+      workspaceSlug,
+      tab,
+      params,
+      isPeekView
+    );
+    return this.get(processedUrl, {
       params: {
         type: tab,
         ...params,
@@ -44,9 +56,17 @@ export class AnalyticsV2Service extends APIService {
   async getAdvanceAnalyticsCharts<T>(
     workspaceSlug: string,
     tab: TAnalyticsGraphsV2Base,
-    params?: Record<string, any>
+    params?: Record<string, any>,
+    isPeekView?: boolean
   ): Promise<T> {
-    return this.get(`/api/workspaces/${workspaceSlug}/advance-analytics-charts/`, {
+    const processedUrl = this.processUrl<TAnalyticsGraphsV2Base>(
+      "advance-analytics-charts",
+      workspaceSlug,
+      tab,
+      params,
+      isPeekView
+    );
+    return this.get(processedUrl, {
       params: {
         type: tab,
         ...params,
@@ -56,5 +76,20 @@ export class AnalyticsV2Service extends APIService {
       .catch((err) => {
         throw err?.response?.data;
       });
+  }
+
+  processUrl<T extends string>(
+    endpoint: string,
+    workspaceSlug: string,
+    tab: T,
+    params?: Record<string, any>,
+    isPeekView?: boolean
+  ) {
+    let processedUrl = `/api/workspaces/${workspaceSlug}`;
+    if (isPeekView && tab === "work-items") {
+      const projectId = params?.project_ids.split(",")[0];
+      processedUrl += `/projects/${projectId}`;
+    }
+    return `${processedUrl}/${endpoint}`;
   }
 }

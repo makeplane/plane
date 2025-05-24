@@ -26,13 +26,17 @@ const TotalInsights: React.FC<{ analyticsType: TAnalyticsTabsV2Base; peekView?: 
     const { data: totalInsightsData, isLoading } = useSWR(
       `total-insights-${analyticsType}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}`,
       () =>
-        analyticsV2Service.getAdvanceAnalytics<IAnalyticsResponseV2>(workspaceSlug, analyticsType, {
-          // date_filter: selectedDuration,
-          ...(selectedProjects?.length > 0 ? { project_ids: selectedProjects.join(",") } : {}),
-          ...(selectedCycle ? { cycle_id: selectedCycle } : {}),
-          ...(selectedModule ? { module_id: selectedModule } : {}),
-          ...(isPeekView ? { peek_view: true } : {}),
-        })
+        analyticsV2Service.getAdvanceAnalytics<IAnalyticsResponseV2>(
+          workspaceSlug,
+          analyticsType,
+          {
+            // date_filter: selectedDuration,
+            ...(selectedProjects?.length > 0 ? { project_ids: selectedProjects.join(",") } : {}),
+            ...(selectedCycle ? { cycle_id: selectedCycle } : {}),
+            ...(selectedModule ? { module_id: selectedModule } : {}),
+          },
+          isPeekView
+        )
     );
     return (
       <div

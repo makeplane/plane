@@ -586,7 +586,8 @@
         "message": "Something went wrong. Please try again."
       },
       "required": "This field is required",
-      "entity_required": "{entity} is required"
+      "entity_required": "{entity} is required",
+      "restricted_entity": "{entity} is restricted"
     },
     "update_link": "Update link",
     "attach": "Attach",
@@ -956,6 +957,18 @@
     "remove": {
       "success": "Sub-work item removed successfully",
       "error": "Error removing sub-work item"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "You don't have sub-work items that match the filters you've applied.",
+        "description": "To see all sub-work items, clear all applied filters.",
+        "action": "Clear filters"
+      },
+      "list_filters": {
+        "title": "You don't have work items that match the filters you've applied.",
+        "description": "To see all work items, clear all applied filters.",
+        "action": "Clear filters"
+      }
     }
   },
   "view": {

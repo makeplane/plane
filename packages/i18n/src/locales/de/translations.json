@@ -751,7 +751,8 @@
         "message": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
       },
       "required": "Dieses Feld ist erforderlich",
-      "entity_required": "{entity} ist erforderlich"
+      "entity_required": "{entity} ist erforderlich",
+      "restricted_entity": "{entity} ist eingeschränkt"
     },
     "update_link": "Link aktualisieren",
     "attach": "Anhängen",
@@ -1112,6 +1113,18 @@
     "remove": {
       "success": "Untergeordnetes Arbeitselement erfolgreich entfernt",
       "error": "Fehler beim Entfernen des untergeordneten Elements"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Sie haben keine untergeordneten Arbeitselemente, die den von Ihnen angewendeten Filtern entsprechen.",
+        "description": "Um alle untergeordneten Arbeitselemente anzuzeigen, entfernen Sie alle angewendeten Filter.",
+        "action": "Filter entfernen"
+      },
+      "list_filters": {
+        "title": "Sie haben keine Arbeitselemente, die den von Ihnen angewendeten Filtern entsprechen.",
+        "description": "Um alle Arbeitselemente anzuzeigen, entfernen Sie alle angewendeten Filter.",
+        "action": "Filter entfernen"
+      }
     }
   },
   "view": {

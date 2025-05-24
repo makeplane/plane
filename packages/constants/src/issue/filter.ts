@@ -363,7 +363,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
   sub_work_items: {
     list: {
       display_properties: SUB_ISSUES_DISPLAY_PROPERTIES_KEYS,
-      filters: ["priority", "state", "project", "issue_type", "assignees", "start_date", "target_date"],
+      filters: ["priority", "state", "issue_type", "assignees", "start_date", "target_date"],
       display_filters: {
         order_by: ["-created_at", "-updated_at", "start_date", "-priority"],
         group_by: ["state", "priority", "assignees", null],

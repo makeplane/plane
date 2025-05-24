@@ -750,7 +750,8 @@
         "message": "問題が発生しました。もう一度お試しください。"
       },
       "required": "この項目は必須です",
-      "entity_required": "{entity}は必須です"
+      "entity_required": "{entity}は必須です",
+      "restricted_entity": "{entity} は制限されています"
     },
     "update_link": "リンクを更新",
     "attach": "添付",
@@ -1110,6 +1111,18 @@
     "remove": {
       "success": "サブ作業項目を削除しました",
       "error": "サブ作業項目の削除中にエラーが発生しました"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "適用されたフィルターに一致するサブ作業項目がありません。",
+        "description": "すべてのサブ作業項目を表示するには、すべての適用されたフィルターをクリアしてください。",
+        "action": "フィルターをクリア"
+      },
+      "list_filters": {
+        "title": "適用されたフィルターに一致する作業項目がありません。",
+        "description": "すべての作業項目を表示するには、すべての適用されたフィルターをクリアしてください。",
+        "action": "フィルターをクリア"
+      }
     }
   },
   "view": {

@@ -209,7 +209,7 @@
                     {% for actor_comment in comment.actor_comments.new_value %} 
                     <tr>
                       <td>
-                        <div style=" padding: 6px 10px; margin-left: 10px; background-color: white; font-size: 0.8rem; color: #525252; margin-top: 5px; border-radius: 4px; display: flex; align-items: center; " >
+                        <div style=" padding: 6px 10px; margin-left: 10px; background-color: white; font-size: 0.8rem; color: #525252; margin-top: 5px; border-radius: 4px; overflow-x: scroll; max-width: 430px;" >
                           <p> {{ actor_comment|safe }} </p>
                         </div>
                       </td>

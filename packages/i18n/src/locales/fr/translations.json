@@ -750,7 +750,8 @@
         "message": "Quelque chose s'est mal passé. Veuillez réessayer."
       },
       "required": "Ce champ est obligatoire",
-      "entity_required": "{entity} est requis"
+      "entity_required": "{entity} est requis",
+      "restricted_entity": "{entity} est restreint"
     },
     "update_link": "Mettre à jour le lien",
     "attach": "Joindre",
@@ -1110,6 +1111,18 @@
     "remove": {
       "success": "Sous-élément de travail supprimé avec succès",
       "error": "Erreur lors de la suppression du sous-élément de travail"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Vous n'avez pas de sous-éléments de travail qui correspondent aux filtres que vous avez appliqués.",
+        "description": "Pour voir tous les sous-éléments de travail, effacer tous les filtres appliqués.",
+        "action": "Effacer les filtres"
+      },
+      "list_filters": {
+        "title": "Vous n'avez pas d'éléments de travail qui correspondent aux filtres que vous avez appliqués.",
+        "description": "Pour voir tous les éléments de travail, effacer tous les filtres appliqués.",
+        "action": "Effacer les filtres"
+      }
     }
   },
   "view": {

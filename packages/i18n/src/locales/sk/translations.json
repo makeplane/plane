@@ -751,7 +751,8 @@
         "message": "Niečo sa pokazilo. Skúste to prosím znova."
       },
       "required": "Toto pole je povinné",
-      "entity_required": "{entity} je povinná"
+      "entity_required": "{entity} je povinná",
+      "restricted_entity": "{entity} je obmedzený"
     },
     "update_link": "Aktualizovať odkaz",
     "attach": "Pripojiť",
@@ -1112,6 +1113,18 @@
     "remove": {
       "success": "Podriadená pracovná položka bola úspešne odstránená",
       "error": "Chyba pri odstraňovaní podriadenej položky"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Nemáte podriadené pracovné položky, ktoré zodpovedajú použitým filtrom.",
+        "description": "Pre zobrazenie všetkých podriadených pracovných položiek vymažte všetky použité filtre.",
+        "action": "Vymazať filtre"
+      },
+      "list_filters": {
+        "title": "Nemáte pracovné položky, ktoré zodpovedajú použitým filtrom.",
+        "description": "Pre zobrazenie všetkých pracovných položiek vymažte všetky použité filtre.",
+        "action": "Vymazať filtre"
+      }
     }
   },
   "view": {
