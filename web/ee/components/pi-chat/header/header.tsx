@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { PanelRight, SquarePen } from "lucide-react";
-import { Button } from "@plane/ui";
+import { ChevronDown, PanelRight, SquarePen } from "lucide-react";
+import { BetaBadge, Button, PiChatLogo } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { TAiModels } from "@/plane-web/types";
@@ -33,8 +33,12 @@ export const Header = observer((props: THeaderProps) => {
   return (
     <div className="flex justify-between h-8">
       {/* Breadcrumb */}
-      <ModelsDropdown models={models} setActiveModel={setActiveModel} activeModel={activeModel} />
 
+      <button className="flex rounded gap-1">
+        <PiChatLogo className="size-5 text-custom-text-300 fill-current m-auto align-center" />
+        <span className="font-medium text-sm my-auto"> Pi Chat (GPT-4o)</span>
+        <BetaBadge />
+      </button>
       {/* Actions */}
       {!isSidePanelOpen && (
         <div className="flex gap-2">
