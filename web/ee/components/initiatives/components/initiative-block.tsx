@@ -94,6 +94,7 @@ export const InitiativeBlock = observer((props: Props) => {
       }
       isMobile={isMobile}
       parentRef={parentRef}
+      itemClassName={"!overflow-visible flex-wrap md:flex-nowrap"}
     />
   );
 });
