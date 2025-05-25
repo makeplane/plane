@@ -4,7 +4,8 @@ import { MessageSquare } from "lucide-react";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // components
-import { IssueActivityBlockComponent, IssueLink } from "./";
+import { IssueActivityBlockComponent } from "./helpers/activity-block";
+import { IssueLink } from "./helpers/issue-link";
 
 type TIssueDescriptionActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 

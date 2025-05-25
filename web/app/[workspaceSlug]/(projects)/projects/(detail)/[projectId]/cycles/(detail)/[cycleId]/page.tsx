@@ -6,8 +6,8 @@ import { useParams } from "next/navigation";
 import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
 import useCyclesDetails from "@/components/cycles/active-cycle/use-cycles-details";
-import { CycleDetailsSidebar } from "@/components/cycles/cycle-details/cycle-details-sidebar";
-import { CycleLayoutRoot } from "@/components/issues/issue-layouts/cycle-layout-root";
+import { CycleDetailsSidebar } from "@/components/cycles/analytics-sidebar/root";
+import { CycleLayoutRoot } from "@/components/issues/issue-layouts/roots/cycle-layout-root";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks

@@ -3,16 +3,6 @@ import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { useTranslation } from "@plane/i18n";
 import { IEmailCheckData } from "@plane/types";
-// components
-import {
-  AuthHeader,
-  AuthBanner,
-  AuthEmailForm,
-  AuthPasswordForm,
-  AuthUniqueCodeForm,
-} from "@/components/account/auth-forms";
-import { OAuthOptions } from "@/components/account/oauth/oauth-options";
-import { TermsAndConditions } from "@/components/account/terms-and-conditions";
 // helpers
 import {
   EAuthModes,
@@ -27,6 +17,14 @@ import { useInstance } from "@/hooks/store/use-instance";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { AuthService } from "@/services/auth.service";
+// components
+import { OAuthOptions } from "../oauth/oauth-options";
+import { TermsAndConditions } from "../terms-and-conditions";
+import { AuthBanner } from "./auth-banner";
+import { AuthHeader } from "./auth-header";
+import { AuthEmailForm } from "./email";
+import { AuthPasswordForm } from "./password";
+import { AuthUniqueCodeForm } from "./unique-code";
 
 const authService = new AuthService();
 

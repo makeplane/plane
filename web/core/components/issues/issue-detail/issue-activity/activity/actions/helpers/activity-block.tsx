@@ -2,16 +2,15 @@
 
 import { FC, ReactNode } from "react";
 import { Network } from "lucide-react";
-// hooks
+// plane imports
 import { Tooltip } from "@plane/ui";
+// hooks
 import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@/helpers/date-time.helper";
 import { useIssueDetail } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// ui
 // components
 import { IssueCreatorDisplay } from "@/plane-web/components/issues";
-import { IssueUser } from "../";
-// helpers
+import { IssueUser } from "./issue-user";
 
 type TIssueActivityBlockComponent = {
   icon?: ReactNode;

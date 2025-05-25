@@ -9,7 +9,7 @@ import { LayersIcon } from "@plane/ui";
 import { capitalizeFirstLetter } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store";
 // local imports
-import { IssueActivityBlockComponent } from "./";
+import { IssueActivityBlockComponent } from "./helpers/activity-block";
 
 type TIssueDefaultActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 

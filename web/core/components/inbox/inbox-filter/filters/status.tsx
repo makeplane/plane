@@ -4,7 +4,8 @@ import { observer } from "mobx-react";
 import { INBOX_STATUS, TInboxIssueStatus } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader } from "@/components/issues/issue-layouts/filters/header/helpers/filter-header";
+import { FilterOption } from "@/components/issues/issue-layouts/filters/header/helpers/filter-option";
 // constants
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
