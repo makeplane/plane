@@ -203,7 +203,12 @@ from .analytic.advance import (
     AdvanceAnalyticsEndpoint,
     AdvanceAnalyticsStatsEndpoint,
     AdvanceAnalyticsChartEndpoint,
-    AdvanceAnalyticsExportEndpoint,
+)
+
+from .analytic.project_analytics import (
+    ProjectAdvanceAnalyticsEndpoint,
+    ProjectAdvanceAnalyticsStatsEndpoint,
+    ProjectAdvanceAnalyticsChartEndpoint,
 )
 
 from .notification.base import (

@@ -748,7 +748,8 @@
         "message": "Đã xảy ra lỗi. Vui lòng thử lại."
       },
       "required": "Trường này là bắt buộc",
-      "entity_required": "{entity} là bắt buộc"
+      "entity_required": "{entity} là bắt buộc",
+      "restricted_entity": "{entity} bị hạn chế"
     },
     "update_link": "Cập nhật liên kết",
     "attach": "Đính kèm",
@@ -1108,6 +1109,18 @@
     "remove": {
       "success": "Đã xóa mục công việc con thành công",
       "error": "Đã xảy ra lỗi khi xóa mục công việc con"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Bạn không có mục công việc con nào phù hợp với các bộ lọc mà bạn đã áp dụng.",
+        "description": "Để xem tất cả các mục công việc con, hãy xóa tất cả các bộ lọc đã áp dụng.",
+        "action": "Xóa bộ lọc"
+      },
+      "list_filters": {
+        "title": "Bạn không có mục công việc nào phù hợp với các bộ lọc mà bạn đã áp dụng.",
+        "description": "Để xem tất cả các mục công việc, hãy xóa tất cả các bộ lọc đã áp dụng.",
+        "action": "Xóa bộ lọc"
+      }
     }
   },
   "view": {

@@ -129,7 +129,7 @@ def get_chart_period_range(
         "last_3_months": (today - timedelta(days=90), today),
     }
 
-    return period_ranges.get(date_filter, period_ranges["last_7_days"])
+    return period_ranges.get(date_filter, None)
 
 
 def get_analytics_filters(
@@ -165,6 +165,8 @@ def get_analytics_filters(
         "workspace__slug": slug,
         "project__project_projectmember__member": user,
         "project__project_projectmember__is_active": True,
+        "project__deleted_at__isnull": True,
+        "project__archived_at__isnull": True,
     }
 
     # Project filters
@@ -172,6 +174,8 @@ def get_analytics_filters(
         "workspace__slug": slug,
         "project_projectmember__member": user,
         "project_projectmember__is_active": True,
+        "deleted_at__isnull": True,
+        "archived_at__isnull": True,
     }
 
     # Add project IDs to filters if provided

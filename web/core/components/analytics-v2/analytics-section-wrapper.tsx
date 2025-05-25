@@ -17,7 +17,7 @@ const AnalyticsSectionWrapper: React.FC<Props> = (props) => {
         {title && (
           <div className="flex  items-center gap-2 ">
             <h1 className={"text-lg font-medium"}>{title}</h1>
-            {subtitle && <p className="text-lg text-custom-text-300"> • {subtitle}</p>}
+            {/* {subtitle && <p className="text-lg text-custom-text-300"> • {subtitle}</p>} */}
           </div>
         )}
         {actions}

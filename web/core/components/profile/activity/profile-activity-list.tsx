@@ -113,16 +113,7 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                 </div>
               );
 
-            const message =
-              activityItem.verb === "created" &&
-              !["cycles", "modules", "attachment", "link", "estimate"].includes(activityItem.field) &&
-              !activityItem.field ? (
-                <span>
-                  created <IssueLink activity={activityItem} />
-                </span>
-              ) : (
-                <ActivityMessage activity={activityItem} showIssue />
-              );
+            const message = <ActivityMessage activity={activityItem} showIssue />;
 
             if ("field" in activityItem && activityItem.field !== "updated_by")
               return (

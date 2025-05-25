@@ -98,11 +98,7 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
       key: "GITHUB_ORGANIZATION_ID",
       type: "text",
       label: "Organization ID",
-      description: (
-        <>
-          The organization github ID.
-        </>
-      ),
+      description: <>The organization github ID.</>,
       placeholder: "123456789",
       error: Boolean(errors.GITHUB_ORGANIZATION_ID),
       required: false,

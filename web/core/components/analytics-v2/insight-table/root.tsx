@@ -13,15 +13,16 @@ interface InsightTableProps<T extends Exclude<TAnalyticsTabsV2Base, "overview">>
   isLoading?: boolean;
   columns: ColumnDef<AnalyticsTableDataMap[T]>[];
   columnsLabels?: Record<string, string>;
+  headerText: string;
 }
 
 export const InsightTable = <T extends Exclude<TAnalyticsTabsV2Base, "overview">>(
   props: InsightTableProps<T>
 ): React.ReactElement => {
-  const { data, isLoading, columns, columnsLabels } = props;
+  const { data, isLoading, columns, columnsLabels, headerText } = props;
   const params = useParams();
   const { t } = useTranslation();
-  const workspaceSlug = params.workspaceSlug as string;
+  const workspaceSlug = params.workspaceSlug.toString();
   if (isLoading) {
     return <TableLoader columns={columns} rows={5} />;
   }
@@ -35,7 +36,7 @@ export const InsightTable = <T extends Exclude<TAnalyticsTabsV2Base, "overview">
 
   const exportCSV = (rows: Row<AnalyticsTableDataMap[T]>[]) => {
     const rowData: any = rows.map((row) => {
-      const { project_id, ...exportableData } = row.original;
+      const { project_id, avatar_url, assignee_id, ...exportableData } = row.original;
       return Object.fromEntries(
         Object.entries(exportableData).map(([key, value]) => {
           if (columnsLabels?.[key]) {
@@ -55,7 +56,7 @@ export const InsightTable = <T extends Exclude<TAnalyticsTabsV2Base, "overview">
         <DataTable
           columns={columns}
           data={data}
-          searchPlaceholder={`${data.length} Projects`}
+          searchPlaceholder={`${data.length} ${headerText}`}
           actions={(table: Table<AnalyticsTableDataMap[T]>) => (
             <Button
               variant="accent-primary"

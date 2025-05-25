@@ -46,21 +46,29 @@ const PriorityChart = observer((props: Props) => {
   const { t } = useTranslation();
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics-v2/empty-chart-bar" });
   // store hooks
-  const { selectedDuration, selectedProjects } = useAnalyticsV2();
+  const { selectedDuration, selectedProjects, selectedCycle, selectedModule, isPeekView } = useAnalyticsV2();
   const { workspaceStates } = useProjectState();
   const { resolvedTheme } = useTheme();
   // router
   const params = useParams();
-  const workspaceSlug = params.workspaceSlug as string;
+  const workspaceSlug = params.workspaceSlug.toString();
 
   const { data: priorityChartData, isLoading: priorityChartLoading } = useSWR(
-    `customized-insights-chart-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${props.x_axis}-${props.y_axis}-${props.group_by}`,
+    `customized-insights-chart-${workspaceSlug}-${selectedDuration}-
+    ${selectedProjects}-${selectedCycle}-${selectedModule}-${props.x_axis}-${props.y_axis}-${props.group_by}-${isPeekView}`,
     () =>
-      analyticsV2Service.getAdvanceAnalyticsCharts<TChart>(workspaceSlug, "custom-work-items", {
-        date_filter: selectedDuration,
-        ...(selectedProjects?.length > 0 && { project_ids: selectedProjects?.join(",") }),
-        ...props,
-      })
+      analyticsV2Service.getAdvanceAnalyticsCharts<TChart>(
+        workspaceSlug,
+        "custom-work-items",
+        {
+          // date_filter: selectedDuration,
+          ...(selectedProjects?.length > 0 && { project_ids: selectedProjects?.join(",") }),
+          ...(selectedCycle ? { cycle_id: selectedCycle } : {}),
+          ...(selectedModule ? { module_id: selectedModule } : {}),
+          ...props,
+        },
+        isPeekView
+      )
   );
   const parsedData = useMemo(
     () =>
@@ -123,11 +131,20 @@ const PriorityChart = observer((props: Props) => {
     return parsedBars;
   }, [chart_model, group_by, parsedData, resolvedTheme, workspaceStates, x_axis, y_axis]);
 
+  const yAxisLabel = useMemo(
+    () => ANALYTICS_V2_Y_AXIS_VALUES.find((item) => item.value === props.y_axis)?.label ?? props.y_axis,
+    [props.y_axis]
+  );
+  const xAxisLabel = useMemo(
+    () => ANALYTICS_V2_X_AXIS_VALUES.find((item) => item.value === props.x_axis)?.label ?? props.x_axis,
+    [props.x_axis]
+  );
+
   const defaultColumns: ColumnDef<TChartDatum>[] = useMemo(
     () => [
       {
         accessorKey: "name",
-        header: () => "Name",
+        header: () => xAxisLabel,
       },
       {
         accessorKey: "count",
@@ -135,7 +152,7 @@ const PriorityChart = observer((props: Props) => {
         cell: ({ row }) => <div className="text-right">{row.original.count}</div>,
       },
     ],
-    []
+    [xAxisLabel]
   );
 
   const columns: ColumnDef<TChartDatum>[] = useMemo(
@@ -158,22 +175,26 @@ const PriorityChart = observer((props: Props) => {
   });
 
   const exportCSV = (rows: Row<TChartDatum>[]) => {
-    const rowData = rows.map((row) => ({
-      name: row.original.name,
-      count: row.original.count,
-    }));
+    const rowData = rows.map((row) => {
+      const hiddenFields = ["key", "avatar_url", "assignee_id", "project_id"];
+      const otherFields = Object.keys(row.original).filter(
+        (key) => key !== "name" && key !== "count" && !hiddenFields.includes(key) && !key.includes("id")
+      );
+      return {
+        name: row.original.name,
+        count: row.original.count,
+        ...otherFields.reduce(
+          (acc, key) => {
+            acc[parsedData?.schema[key] ?? key] = row.original[key];
+            return acc;
+          },
+          {} as Record<string, string | number>
+        ),
+      };
+    });
     const csv = generateCsv(csvConfig)(rowData);
     download(csvConfig)(csv);
   };
-
-  const yAxisLabel = useMemo(
-    () => ANALYTICS_V2_Y_AXIS_VALUES.find((item) => item.value === props.y_axis)?.label ?? props.y_axis,
-    [props.y_axis]
-  );
-  const xAxisLabel = useMemo(
-    () => ANALYTICS_V2_X_AXIS_VALUES.find((item) => item.value === props.x_axis)?.label ?? props.x_axis,
-    [props.x_axis]
-  );
 
   return (
     <div className="flex flex-col gap-12 ">
@@ -203,7 +224,7 @@ const PriorityChart = observer((props: Props) => {
           <DataTable
             data={parsedData.data}
             columns={[...defaultColumns, ...columns]}
-            searchPlaceholder={`${parsedData.data.length} ${yAxisLabel}`}
+            searchPlaceholder={`${parsedData.data.length} ${xAxisLabel}`}
             actions={(table: Table<TChartDatum>) => (
               <Button
                 variant="accent-primary"

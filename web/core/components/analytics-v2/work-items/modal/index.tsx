@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane package imports
-import { IProject } from "@plane/types";
+import { ICycle, IModule, IProject } from "@plane/types";
 // plane web components
 import { WorkItemsModalMainContent } from "./content";
 import { WorkItemsModalHeader } from "./header";
@@ -11,10 +11,12 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   projectDetails?: IProject | undefined;
+  cycleDetails?: ICycle | undefined;
+  moduleDetails?: IModule | undefined;
 };
 
 export const WorkItemsModal: React.FC<Props> = observer((props) => {
-  const { isOpen, onClose, projectDetails } = props;
+  const { isOpen, onClose, projectDetails, moduleDetails, cycleDetails } = props;
 
   const [fullScreen, setFullScreen] = useState(false);
 
@@ -51,8 +53,15 @@ export const WorkItemsModal: React.FC<Props> = observer((props) => {
                     handleClose={handleClose}
                     setFullScreen={setFullScreen}
                     title={projectDetails?.name ?? ""}
+                    cycle={cycleDetails}
+                    module={moduleDetails}
                   />
-                  <WorkItemsModalMainContent fullScreen={fullScreen} projectDetails={projectDetails} />
+                  <WorkItemsModalMainContent
+                    fullScreen={fullScreen}
+                    projectDetails={projectDetails}
+                    cycleDetails={cycleDetails}
+                    moduleDetails={moduleDetails}
+                  />
                 </div>
               </div>
             </Dialog.Panel>

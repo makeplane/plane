@@ -27,7 +27,7 @@ import {
 // ui
 import { Breadcrumbs, Button, ContrastIcon, Tooltip, Header, CustomSearchSelect } from "@plane/ui";
 // components
-import { ProjectAnalyticsModal } from "@/components/analytics";
+import { WorkItemsModal } from "@/components/analytics-v2/work-items/modal";
 import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 import { CycleQuickActions } from "@/components/cycles";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
@@ -161,7 +161,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
 
   return (
     <>
-      <ProjectAnalyticsModal
+      <WorkItemsModal
+        projectDetails={currentProjectDetails}
         isOpen={analyticsModal}
         onClose={() => setAnalyticsModal(false)}
         cycleDetails={cycleDetails ?? undefined}

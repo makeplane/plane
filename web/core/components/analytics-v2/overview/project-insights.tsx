@@ -26,17 +26,22 @@ const analyticsV2Service = new AnalyticsV2Service();
 const ProjectInsights = observer(() => {
   const params = useParams();
   const { t } = useTranslation();
-  const workspaceSlug = params.workspaceSlug as string;
-  const { selectedDuration, selectedDurationLabel, selectedProjects } = useAnalyticsV2();
+  const workspaceSlug = params.workspaceSlug.toString();
+  const { selectedDuration, selectedDurationLabel, selectedProjects, selectedCycle, selectedModule, isPeekView } =
+    useAnalyticsV2();
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics-v2/empty-chart-radar" });
 
   const { data: projectInsightsData, isLoading: isLoadingProjectInsight } = useSWR(
-    `radar-chart-${workspaceSlug}-${selectedDuration}-${selectedProjects}`,
+    `radar-chart-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}`,
     () =>
       analyticsV2Service.getAdvanceAnalyticsCharts<TChartData<string, string>[]>(workspaceSlug, "projects", {
-        date_filter: selectedDuration,
+        // date_filter: selectedDuration,
         ...(selectedProjects?.length > 0 && { project_ids: selectedProjects?.join(",") }),
-      })
+        ...(selectedCycle ? { cycle_id: selectedCycle } : {}),
+        ...(selectedModule ? { module_id: selectedModule } : {}),
+      },
+        isPeekView
+      )
   );
 
   return (
