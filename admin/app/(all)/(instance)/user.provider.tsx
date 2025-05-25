@@ -19,6 +19,7 @@ export const UserProvider: FC<IUserProvider> = observer(({ children }) => {
   useSWR("CURRENT_USER", () => fetchCurrentUser(), {
     shouldRetryOnError: false,
   });
+
   useSWR("INSTANCE_ADMINS", () => fetchInstanceAdmins());
 
   useEffect(() => {
