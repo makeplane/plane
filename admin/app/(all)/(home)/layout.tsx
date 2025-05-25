@@ -8,9 +8,6 @@ import PlaneBackgroundPatternDark from "public/auth/background-pattern-dark.svg"
 import PlaneBackgroundPattern from "public/auth/background-pattern.svg";
 import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.png";
 import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.png";
-// providers
-import { InstanceProvider } from "./instance.provider";
-import { UserProvider } from "./user.provider";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const { resolvedTheme } = useTheme();
@@ -33,11 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="absolute inset-0 z-0">
           <Image src={patternBackground} className="w-screen h-full object-cover" alt="Plane background pattern" />
         </div>
-        <div className="relative z-10 flex-grow">
-          <InstanceProvider>
-            <UserProvider>{children}</UserProvider>
-          </InstanceProvider>
-        </div>
+        <div className="relative z-10 flex-grow">{children}</div>
       </div>
     </div>
   );
