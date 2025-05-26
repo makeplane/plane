@@ -168,4 +168,7 @@ def fetch_and_encode_favicon(
 
     except Exception as e:
         print(f"Failed to fetch favicon: {e}")
-        return None
+        return {
+            "favicon_url": None,
+            "favicon_base64": f"data:image/svg+xml;base64,{DEFAULT_FAVICON}",
+        }
