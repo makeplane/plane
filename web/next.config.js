@@ -55,6 +55,16 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: "/:workspaceSlug/projects/:projectId/settings/:path*",
+        destination: "/:workspaceSlug/settings/projects/:projectId/:path*",
+        permanent: true,
+      },
+      {
+        source: "/:workspaceSlug/settings/api-tokens",
+        destination: "/:workspaceSlug/settings/account/api-tokens",
+        permanent: true,
+      },
+      {
         source: "/:workspaceSlug/projects/:projectId/inbox",
         destination: "/:workspaceSlug/projects/:projectId/intake",
         permanent: true,
