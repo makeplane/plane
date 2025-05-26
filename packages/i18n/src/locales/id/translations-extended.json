@@ -2128,6 +2128,16 @@
       },
       "no_labels": {
         "description": " Belum ada label. Buat label untuk membantu mengatur dan memfilter item kerja dalam proyek Anda."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Tidak ada template yang dapat Anda akses.",
+          "description": "Silakan buat template"
+        },
+        "no_results": {
+          "title": "Itu tidak cocok dengan template.",
+          "description": "Coba cari dengan istilah lain."
+        }
       }
     },
     "toasts": {

@@ -2132,6 +2132,16 @@
       },
       "no_labels": {
         "description": " No labels yet. Create labels to help organize and filter work items in you project."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Neexistují žádné šablony, ke kterým máte přístup.",
+          "description": "Prosím vytvořte šablonu"
+        },
+        "no_results": {
+          "title": "To neodpovídá žádné šabloně.",
+          "description": "Zkuste hledat s jinými termíny."
+        }
       }
     },
     "toasts": {

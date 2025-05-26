@@ -2131,6 +2131,16 @@
       },
       "no_labels": {
         "description": " Noch keine Labels vorhanden. Erstellen Sie Labels, um Arbeitsaufgaben in Ihrem Projekt zu organisieren und zu filtern."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Es gibt keine Vorlagen, auf die Sie Zugriff haben.",
+          "description": "Bitte erstellen Sie eine Vorlage"
+        },
+        "no_results": {
+          "title": "Das entspricht keiner Vorlage.",
+          "description": "Versuchen Sie es mit anderen Suchbegriffen."
+        }
       }
     },
     "toasts": {

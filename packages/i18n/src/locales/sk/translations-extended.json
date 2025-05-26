@@ -2131,6 +2131,16 @@
       },
       "no_labels": {
         "description": "Žiadne štítky ešte neexistujú. Vytvorte štítky na pomoc organizácii a filtrovaniu pracovných položiek v projekte."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Neexistujú žiadne šablóny, ku ktorým máte prístup.",
+          "description": "Prosím, vytvorte šablónu"
+        },
+        "no_results": {
+          "title": "To sa nezhoduje so žiadnou šablónou.",
+          "description": "Skúste hľadať pomocou iných výrazov."
+        }
       }
     },
     "toasts": {

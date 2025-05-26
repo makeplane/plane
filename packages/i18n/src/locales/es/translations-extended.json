@@ -2129,6 +2129,16 @@
       },
       "no_labels": {
         "description": " Aún no hay etiquetas. Crea etiquetas para ayudar a organizar y filtrar elementos de trabajo en tu proyecto."
+      },
+      "page": {
+        "no_templates": {
+          "title": "No hay plantillas a las que tengas acceso.",
+          "description": "Por favor, crea una plantilla"
+        },
+        "no_results": {
+          "title": "Eso no coincide con ninguna plantilla.",
+          "description": "Intenta buscar con otros términos."
+        }
       }
     },
     "toasts": {

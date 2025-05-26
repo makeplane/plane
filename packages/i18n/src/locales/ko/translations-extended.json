@@ -2131,6 +2131,16 @@
       },
       "no_labels": {
         "description": " 아직 라벨이 없습니다. 프로젝트의 워크 아이템을 구성하고 필터링하는 데 도움이 되는 라벨을 만드세요."
+      },
+      "page": {
+        "no_templates": {
+          "title": "액세스할 수 있는 템플릿이 없습니다.",
+          "description": "템플릿을 생성해 주세요"
+        },
+        "no_results": {
+          "title": "템플릿과 일치하지 않습니다.",
+          "description": "다른 용어로 검색해 보세요."
+        }
       }
     },
     "toasts": {

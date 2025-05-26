@@ -2190,6 +2190,16 @@
       },
       "no_labels": {
         "description": "Henüz etiket yok. Projenizde iş öğelerini düzenlemek ve filtrelemek için etiketler oluşturun."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Erişiminiz olan şablon yok.",
+          "description": "Lütfen bir şablon oluşturun"
+        },
+        "no_results": {
+          "title": "Bu bir şablonla eşleşmedi.",
+          "description": "Başka terimlerle arama yapmayı deneyin."
+        }
       }
     },
     "toasts": {

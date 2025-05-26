@@ -2114,6 +2114,16 @@
       },
       "no_labels": {
         "description": "Chưa có nhãn nào. Tạo nhãn để giúp tổ chức và lọc mục công việc trong dự án của bạn."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Không có mẫu nào mà bạn có quyền truy cập.",
+          "description": "Vui lòng tạo một mẫu"
+        },
+        "no_results": {
+          "title": "Điều đó không khớp với mẫu nào.",
+          "description": "Thử tìm kiếm bằng các thuật ngữ khác."
+        }
       }
     },
     "toasts": {

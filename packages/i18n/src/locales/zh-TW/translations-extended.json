@@ -2131,6 +2131,16 @@
       },
       "no_labels": {
         "description": " 尚無標籤。創建標籤以幫助組織和篩選專案中的工作項目。"
+      },
+      "page": {
+        "no_templates": {
+          "title": "您沒有訪問任何模板。",
+          "description": "請創建一個模板"
+        },
+        "no_results": {
+          "title": "沒有找到模板。",
+          "description": "嘗試使用其他術語搜索。"
+        }
       }
     },
     "toasts": {

@@ -2130,6 +2130,16 @@
       },
       "no_labels": {
         "description": " 还没有标签。创建标签以帮助组织和筛选项目中的工作项。"
+      },
+      "page": {
+        "no_templates": {
+          "title": "您没有访问任何模板。",
+          "description": "请创建一个模板"
+        },
+        "no_results": {
+          "title": "没有找到模板。",
+          "description": "尝试使用其他术语搜索。"
+        }
       }
     },
     "toasts": {

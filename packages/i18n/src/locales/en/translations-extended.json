@@ -2184,6 +2184,16 @@
       },
       "no_labels": {
         "description": " No labels yet. Create labels to help organize and filter work items in you project."
+      },
+      "page": {
+        "no_templates": {
+          "title": "There are no templates you have access to.",
+          "description": "Please create a template"
+        },
+        "no_results": {
+          "title": "That didn't match a template.",
+          "description": "Try searching by other terms."
+        }
       }
     },
     "toasts": {

@@ -2131,6 +2131,16 @@
       },
       "no_labels": {
         "description": " Brak etykiet. Utwórz etykiety, aby pomóc zorganizować i filtrować elementy pracy w Twoim projekcie."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Nie ma szablonów, do których masz dostęp.",
+          "description": "Proszę utwórz szablon"
+        },
+        "no_results": {
+          "title": "To nie pasuje do żadnego szablonu.",
+          "description": "Spróbuj wyszukać innymi terminami."
+        }
       }
     },
     "toasts": {

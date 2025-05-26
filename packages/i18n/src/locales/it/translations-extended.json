@@ -2128,6 +2128,16 @@
       },
       "no_labels": {
         "description": " Nessuna etichetta ancora. Crea etichette per aiutare a organizzare e filtrare gli elementi di lavoro nel tuo progetto."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Non ci sono modelli a cui hai accesso.",
+          "description": "Per favore crea un modello"
+        },
+        "no_results": {
+          "title": "Questo non corrisponde a nessun modello.",
+          "description": "Prova a cercare con altri termini."
+        }
       }
     },
     "toasts": {

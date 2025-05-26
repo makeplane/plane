@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Check, Search, Shapes } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import type { EditorTitleRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
+import { TPageTemplate } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { Button, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -15,6 +16,7 @@ import { getEditorContentWithReplacedImageAssets } from "@/helpers/editor.helper
 // plane web hooks
 import { usePageTemplates } from "@/plane-web/hooks/store";
 // store
+import { IBaseTemplateInstance } from "@/plane-web/store/templates";
 import { TPageInstance } from "@/store/pages/base-page";
 
 type TTemplateSelectModalProps = {
@@ -85,6 +87,71 @@ export const TemplateSelectModal: React.FC<TTemplateSelectModalProps> = observer
     setIsApplyingTemplate(false);
   };
 
+  const renderEmptyState = useCallback(() => {
+    if (allPageTemplates.length === 0) {
+      return (
+        <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
+          <SimpleEmptyState
+            title={t("templates.empty_state.page.no_templates.title")}
+            description={t("templates.empty_state.page.no_templates.description")}
+          />
+        </div>
+      );
+    }
+
+    if (filteredTemplates.length === 0) {
+      return (
+        <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
+          <SimpleEmptyState
+            title={t("templates.empty_state.page.no_results.title")}
+            description={t("templates.empty_state.page.no_results.description")}
+          />
+        </div>
+      );
+    }
+
+    return null;
+  }, [allPageTemplates.length, filteredTemplates.length, t]);
+
+  const renderTemplateOption = useCallback(
+    (template: IBaseTemplateInstance<TPageTemplate>) => {
+      const isTemplateSelected = selectedTemplateId === template.id;
+      return (
+        <Combobox.Option
+          key={template.id}
+          value={template.id}
+          className={({ active }) =>
+            cn(
+              "flex items-center justify-between gap-2 truncate w-full cursor-pointer select-none rounded-md p-2 text-custom-text-200 transition-colors",
+              {
+                "bg-custom-background-80": active,
+                "text-custom-text-100": isTemplateSelected,
+              }
+            )
+          }
+        >
+          <div className="flex items-center gap-2 truncate">
+            <span className="flex-shrink-0 size-4 grid place-items-center">
+              {isTemplateSelected ? (
+                <Check className="size-4 text-custom-text-100" />
+              ) : (
+                <Shapes className="size-4 text-custom-text-100" />
+              )}
+            </span>
+            <p className="text-sm truncate">{template.name}</p>
+          </div>
+        </Combobox.Option>
+      );
+    },
+    [selectedTemplateId]
+  );
+
+  const renderTemplateList = useCallback(() => {
+    const emptyState = renderEmptyState();
+    if (emptyState) return emptyState;
+    return <ul className="px-2 text-custom-text-100">{filteredTemplates.map(renderTemplateOption)}</ul>;
+  }, [filteredTemplates, renderEmptyState, renderTemplateOption]);
+
   return (
     <ModalCore isOpen={isOpen} width={EModalWidth.LG} position={EModalPosition.TOP} handleClose={onClose}>
       <Combobox
@@ -110,52 +177,8 @@ export const TemplateSelectModal: React.FC<TTemplateSelectModalProps> = observer
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-
         <Combobox.Options static className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto">
-          {filteredTemplates.length === 0 ? (
-            <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
-              <SimpleEmptyState
-                title={t("workspace_projects.empty_state.filter.title")}
-                description={t("workspace_projects.empty_state.filter.description")}
-              />
-            </div>
-          ) : (
-            <ul
-              className={cn("text-custom-text-100", {
-                "px-2": filteredTemplates.length > 0,
-              })}
-            >
-              {filteredTemplates.map((template) => {
-                const isTemplateSelected = selectedTemplateId === template.id;
-                return (
-                  <Combobox.Option
-                    key={template.id}
-                    value={template.id}
-                    className={({ active }) =>
-                      cn(
-                        "flex items-center justify-between gap-2 truncate w-full cursor-pointer select-none rounded-md p-2 text-custom-text-200 transition-colors",
-                        {
-                          "bg-custom-background-80": active,
-                          "text-custom-text-100": isTemplateSelected,
-                        }
-                      )
-                    }
-                  >
-                    <div className="flex items-center gap-2 truncate">
-                      <span className="flex-shrink-0 size-4 grid place-items-center">
-                        {isTemplateSelected ? (
-                          <Check className="size-4 text-custom-text-100" />
-                        ) : (
-                          <Shapes className="size-4 text-custom-text-100" />
-                        )}
-                      </span>
-                      <p className="text-sm truncate">{template.name}</p>
-                    </div>
-                  </Combobox.Option>
-                );
-              })}
-            </ul>
-          )}
+          {renderTemplateList()}
         </Combobox.Options>
       </Combobox>
       <div className="flex items-center justify-end gap-2 p-3">
