@@ -211,7 +211,7 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
         data = {
             "template": str(template.id),
             "project_id": project_id,
-            **request.data.get("template_data", {}),
+            **template_data,
         }
         # create a new work item template
         serializer = WorkitemTemplateSerializer(data=data)
