@@ -24,7 +24,7 @@ const MembersSettingsPage = observer(() => {
   const canPerformProjectMemberActions = isProjectMemberOrAdmin || isWorkspaceAdmin;
 
   if (workspaceUserInfo && !canPerformProjectMemberActions) {
-    return <NotAuthorizedView section="settings" isProjectView />;
+    return <NotAuthorizedView section="settings" isProjectView className="h-auto" />;
   }
 
   return (

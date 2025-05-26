@@ -43,7 +43,7 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
       />
       <div className="inset-y-0 flex flex-row vertical-scrollbar scrollbar-lg h-full w-full overflow-y-auto">
         {workspaceUserInfo && !isAuthorized ? (
-          <NotAuthorizedView section="settings" />
+          <NotAuthorizedView section="settings" className="h-auto" />
         ) : (
           <>
             <div className="flex-shrink-0 overflow-y-hidden sm:hidden hidden md:block lg:block">

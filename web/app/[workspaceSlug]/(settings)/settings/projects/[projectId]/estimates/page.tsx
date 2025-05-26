@@ -24,7 +24,7 @@ const EstimatesSettingsPage = observer(() => {
   if (!workspaceSlug || !projectId) return <></>;
 
   if (workspaceUserInfo && !canPerformProjectAdminActions) {
-    return <NotAuthorizedView section="settings" isProjectView />;
+    return <NotAuthorizedView section="settings" isProjectView className="h-auto" />;
   }
 
   return (

@@ -3,12 +3,12 @@
 import { observer } from "mobx-react";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import IntegrationGuide from "@/components/integration/guide";
 // hooks
 import { SettingsContentWrapper } from "@/components/settings";
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
-// plane web hooks
 
 const ImportsPage = observer(() => {
   // router
@@ -19,15 +19,7 @@ const ImportsPage = observer(() => {
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Imports` : undefined;
 
-  if (!isAdmin)
-    return (
-      <>
-        <PageHead title={pageTitle} />
-        <div className="mt-10 flex h-full w-full justify-center p-4">
-          <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
-        </div>
-      </>
-    );
+  if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
 
   return (
     <SettingsContentWrapper size="lg">

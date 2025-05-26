@@ -96,7 +96,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
 
   // if user is not authorized to view this page
   if (workspaceUserInfo && !canPerformWorkspaceMemberActions) {
-    return <NotAuthorizedView section="settings" />;
+    return <NotAuthorizedView section="settings" className="h-auto" />;
   }
 
   return (

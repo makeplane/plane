@@ -20,7 +20,7 @@ const BillingSettingsPage = observer(() => {
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Billing & Plans` : undefined;
 
   if (workspaceUserInfo && !canPerformWorkspaceAdminActions) {
-    return <NotAuthorizedView section="settings" />;
+    return <NotAuthorizedView section="settings" className="h-auto" />;
   }
 
   return (

@@ -44,7 +44,7 @@ const AutomationSettingsPage = observer(() => {
   const pageTitle = projectDetails?.name ? `${projectDetails?.name} - Automations` : undefined;
 
   if (workspaceUserInfo && !canPerformProjectAdminActions) {
-    return <NotAuthorizedView section="settings" isProjectView />;
+    return <NotAuthorizedView section="settings" isProjectView className="h-auto" />;
   }
 
   return (

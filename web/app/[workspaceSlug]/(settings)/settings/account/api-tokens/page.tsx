@@ -48,7 +48,7 @@ const ApiTokensPage = observer(() => {
     : undefined;
 
   if (workspaceUserInfo && !canPerformWorkspaceAdminActions) {
-    return <NotAuthorizedView section="settings" />;
+    return <NotAuthorizedView section="settings" className="h-auto" />;
   }
 
   if (!tokens) {
