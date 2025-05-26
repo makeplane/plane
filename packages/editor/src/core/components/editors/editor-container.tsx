@@ -59,13 +59,7 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
         // Only insert a new paragraph if the last node is not an empty paragraph and not a doc node
         if (!isLastNodeEmptyParagraph && lastNode.type.name !== "doc") {
           const endPosition = editor?.state.doc.content.size;
-          editor?.chain().insertContentAt(endPosition, { type: "paragraph" }).run();
-
-          // Focus the newly added paragraph for immediate editing
-          editor
-            .chain()
-            .setTextSelection(endPosition + 1)
-            .run();
+          editor?.chain().insertContentAt(endPosition, { type: "paragraph" }).focus("end").run();
         }
       }
     } catch (error) {
