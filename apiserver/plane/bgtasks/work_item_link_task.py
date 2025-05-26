@@ -131,9 +131,9 @@ def find_favicon_url(soup, base_url):
         if response.status_code == 200:
             return fallback_url
     except Exception:
-        return DEFAULT_FAVICON
+        return None
 
-    return DEFAULT_FAVICON
+    return None
 
 
 def fetch_and_encode_favicon(favicon_url, headers):
