@@ -5,8 +5,11 @@ import * as Y from "yjs";
 // plane editor
 import { CoreEditorExtensionsWithoutProps, DocumentEditorExtensionsWithoutProps } from "@plane/editor/lib";
 
-const DOCUMENT_EDITOR_EXTENSIONS = [...CoreEditorExtensionsWithoutProps, ...DocumentEditorExtensionsWithoutProps];
-const documentEditorSchema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);
+export const DOCUMENT_EDITOR_EXTENSIONS = [
+  ...CoreEditorExtensionsWithoutProps,
+  ...DocumentEditorExtensionsWithoutProps,
+];
+export const documentEditorSchema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);
 
 /**
  * Extracts the text content from an HTML string

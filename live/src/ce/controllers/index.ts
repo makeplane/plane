@@ -1,6 +1,6 @@
 // Export all controllers from this barrel file
-
 import { CollaborationController } from "./collaboration.controller";
+import { LiveDocumentController } from "./live-document.controller";
 import { DocumentController } from "./document.controller";
 import { HealthController } from "./health.controller";
 
@@ -9,7 +9,7 @@ export const CONTROLLERS = {
   CORE: [HealthController],
 
   // Document management controllers
-  DOCUMENT: [DocumentController],
+  DOCUMENT: [DocumentController, LiveDocumentController],
 
   // WebSocket controllers for real-time functionality
   WEBSOCKET: [CollaborationController],

@@ -210,7 +210,7 @@ class PageViewSet(BaseViewSet):
         except Page.DoesNotExist:
             return Response(
                 {
-                    "error": "Access cannot be updated since this page is owned by someone else"
+                    "error": "Page not found"
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )

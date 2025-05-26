@@ -40,7 +40,7 @@ const PageDetailsPage = observer(() => {
   const router = useAppRouter();
   const { workspaceSlug, projectId, pageId } = useParams();
   // store hooks
-  const { createPage, fetchPageDetails, movePage } = usePageStore(storeType);
+  const { createPage, fetchPageDetails, getOrFetchPageInstance, removePageInstance } = usePageStore(storeType);
   const page = usePage({
     pageId: pageId?.toString() ?? "",
     storeType,
@@ -141,22 +141,19 @@ const PageDetailsPage = observer(() => {
           const newProjectId = data.new_project_id;
           const newPageId = data.new_page_id;
 
-          // Call the actual movePage implementation
+          // remove the old page instance from the store
           if (pageIds.includes(page?.id ?? "")) {
-            movePage({
-              workspaceSlug: workspaceSlug?.toString() || "",
-              pageId: page?.id || "",
-              projectId: projectId?.toString() || "",
-              newProjectId: newProjectId,
-              shouldSync: false,
-            });
+            removePageInstance(page?.id ?? "");
           }
 
-          router.push(`/${workspaceSlug}/projects/${newProjectId}/pages/${newPageId}`);
+          // get the new page instance from the store
+          await getOrFetchPageInstance({ pageId: newPageId, projectId: newProjectId });
+
+          router.replace(`/${workspaceSlug}/projects/${newProjectId}/pages/${newPageId}`);
         }
       },
     }),
-    [workspaceSlug, projectId, router, page?.id, movePage]
+    [workspaceSlug, router, getOrFetchPageInstance, removePageInstance, page?.id]
   );
 
   useEffect(() => {

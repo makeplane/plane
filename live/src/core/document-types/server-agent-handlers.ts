@@ -1,6 +1,6 @@
 import { BasePageHandler } from "@/core/document-types/base-page/handlers";
+import { ServerAgentService } from "@/core/services/server-agent.service";
 import { HocusPocusServerContext } from "@/core/types/common";
-import { ServerAgentService } from "@/plane-live/services/server-agent.service";
 
 interface ServerAgentConfig {}
 

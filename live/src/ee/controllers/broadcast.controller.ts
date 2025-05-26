@@ -14,7 +14,7 @@ import { findAllElementsRecursive, insertNodeAfter, deleteNode } from "@/core/ut
 // logger
 import { manualLogger } from "@/core/helpers/logger";
 // agents
-import { serverAgentManager } from "@/ee/agents/server-agent";
+import { serverAgentManager } from "@/core/agents/server-agent";
 // broadcast
 import { broadcastMessageToPage } from "@/ee/lib/utils/broadcast-message";
 

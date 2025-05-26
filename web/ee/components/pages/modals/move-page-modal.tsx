@@ -32,7 +32,6 @@ export const MovePageModal: React.FC<TMovePageModalProps> = observer((props) => 
   const moveButtonRef = useRef<HTMLButtonElement>(null);
   // navigation
   const { workspaceSlug, projectId } = useParams();
-  const router = useAppRouter();
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -74,7 +73,6 @@ export const MovePageModal: React.FC<TMovePageModalProps> = observer((props) => 
     })
       .then(() => {
         handleClose();
-        router.push(`/${workspaceSlug}/projects/${newProjectId}/pages/${id}`);
       })
       .catch(() =>
         setToast({

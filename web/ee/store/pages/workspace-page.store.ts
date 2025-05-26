@@ -49,7 +49,8 @@ export interface IWorkspacePageStore {
   fetchPageDetails: (pageId: string, shouldFetchSubPages?: boolean | undefined) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
   removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
-  getOrFetchPageInstance: (pageId: string) => Promise<TWorkspacePage | undefined>;
+  getOrFetchPageInstance: ({ pageId }: { pageId: string }) => Promise<TWorkspacePage | undefined>;
+  removePageInstance: (pageId: string) => void;
   updatePagesInStore: (pages: TPage[]) => void;
 }
 
@@ -635,7 +636,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     }
   };
 
-  getOrFetchPageInstance = async (pageId: string) => {
+  getOrFetchPageInstance = async ({ pageId }: { pageId: string }) => {
     const pageInstance = this.getPageById(pageId);
     if (pageInstance) {
       return pageInstance;
@@ -645,6 +646,10 @@ export class WorkspacePageStore implements IWorkspacePageStore {
         return new WorkspacePage(this.store, page);
       }
     }
+  };
+
+  removePageInstance = (pageId: string) => {
+    delete this.data[pageId];
   };
 
   fetchPagesByType = async (pageType: string, searchQuery?: string) => {
