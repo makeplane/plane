@@ -57,4 +57,16 @@ describe("getReferredIssues", () => {
       { identifier: "WEB", sequence: 1011 },
     ]);
   });
+
+  it("should correctly handle duplicate closing and non-closing references", () => {
+    const title = "[WEB-4075] fix: member issue";
+    const description = `
+  [WEB-4075](https://app.plane.so/plane/browse/WEB-4075/)
+  // references WEB-4066, WEB-4066
+  `;
+    const result = getReferredIssues(title + "\n" + description);
+
+    expect(result.closingReferences).toEqual([{ identifier: "WEB", sequence: 4075 }]);
+    expect(result.nonClosingReferences).toEqual([{ identifier: "WEB", sequence: 4066 }]);
+  });
 });

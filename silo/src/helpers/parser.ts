@@ -42,6 +42,9 @@ export const getReferredIssues = (text: string): LinkedIssues => {
   const visitedIssues = new Set<string>();
 
   for (const issue of closedIssues) {
+    if (visitedIssues.has(issue)) {
+      continue;
+    }
     closingReferences.push(createPlaneIssueReference(issue));
     visitedIssues.add(issue);
   }
@@ -66,12 +69,11 @@ export const getReferredIssues = (text: string): LinkedIssues => {
  * @param pattern - The regex pattern to match issues
  * @returns Array of matched issue strings
  */
-const extractIssues = (text: string, pattern: RegExp): string[] => {
-  return (text.match(pattern) || [])
+const extractIssues = (text: string, pattern: RegExp): string[] =>
+  (text.match(pattern) || [])
     // Remove the square brackets from closed issues for consistency
     .map((issue) => issue.replace(/[\[\]]/g, ""))
     .filter((issue): issue is string => issue != null);
-};
 
 const createPlaneIssueReference = (issue: string): IssueReference => {
   const [identifier, sequence] = issue.split("-");
@@ -80,4 +82,3 @@ const createPlaneIssueReference = (issue: string): IssueReference => {
     sequence: parseInt(sequence),
   };
 };
-
