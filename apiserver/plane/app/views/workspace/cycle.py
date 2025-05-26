@@ -12,6 +12,7 @@ from plane.app.permissions import WorkspaceViewerPermission
 from plane.app.serializers.cycle import CycleSerializer
 from plane.utils.timezone_converter import user_timezone_converter
 
+
 class WorkspaceCyclesEndpoint(BaseAPIView):
     permission_classes = [WorkspaceViewerPermission]
 

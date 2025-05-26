@@ -5,7 +5,9 @@ from plane.db.models import Workspace
 
 
 class Command(BaseCommand):
-    help = "Updates the slug of a soft-deleted workspace by appending the epoch timestamp"
+    help = (
+        "Updates the slug of a soft-deleted workspace by appending the epoch timestamp"
+    )
 
     def add_arguments(self, parser):
         parser.add_argument(

@@ -75,6 +75,7 @@ const ProfileAppearancePage = observer(() => {
             </div>
           </div>
           {userProfile?.theme?.theme === "custom" && <CustomThemeSelector applyThemeChange={applyThemeChange} />}
+          <StartOfWeekPreference />
         </ProfileSettingContentWrapper>
       ) : (
         <div className="grid h-full w-full place-items-center px-4 sm:px-0">

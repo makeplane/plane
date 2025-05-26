@@ -148,7 +148,6 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
 
         return value
 
-
     def create(self, validated_data):
         # Filtering the WorkspaceUserLink with the given url to check if the link already exists.
 
@@ -157,7 +156,7 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
         workspace_user_link = WorkspaceUserLink.objects.filter(
             url=url,
             workspace_id=validated_data.get("workspace_id"),
-            owner_id=validated_data.get("owner_id")
+            owner_id=validated_data.get("owner_id"),
         )
 
         if workspace_user_link.exists():
@@ -173,10 +172,8 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
         url = validated_data.get("url")
 
         workspace_user_link = WorkspaceUserLink.objects.filter(
-                url=url,
-                workspace_id=instance.workspace_id,
-                owner=instance.owner
-            )
+            url=url, workspace_id=instance.workspace_id, owner=instance.owner
+        )
 
         if workspace_user_link.exclude(pk=instance.id).exists():
             raise serializers.ValidationError(
@@ -184,6 +181,7 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
             )
 
         return super().update(instance, validated_data)
+
 
 class IssueRecentVisitSerializer(serializers.ModelSerializer):
     project_identifier = serializers.SerializerMethodField()

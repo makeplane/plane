@@ -17,6 +17,7 @@ from plane.db.models import IssueLink
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.host import base_host
 
+
 class IssueLinkViewSet(BaseViewSet):
     permission_classes = [ProjectEntityPermission]
 

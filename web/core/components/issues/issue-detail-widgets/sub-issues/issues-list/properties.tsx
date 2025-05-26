@@ -62,7 +62,10 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
               )
             }
             disabled={!disabled}
-            buttonVariant="border-with-text"
+            buttonVariant="transparent-without-text"
+            buttonClassName="hover:bg-transparent px-0"
+            iconSize="size-5"
+            showTooltip
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -80,33 +83,7 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
             disabled={!disabled}
             buttonVariant="border-without-text"
             buttonClassName="border"
-          />
-        </div>
-      </WithDisplayPropertiesHOC>
-
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_date">
-        <div className="h-5 flex-shrink-0" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-          <DateDropdown
-            value={issue.start_date ?? null}
-            onChange={(val) =>
-              issue.project_id &&
-              updateSubIssue(
-                workspaceSlug,
-                issue.project_id,
-                parentIssueId,
-                issueId,
-                {
-                  start_date: val ? renderFormattedPayloadDate(val) : null,
-                },
-                { ...issue }
-              )
-            }
-            maxDate={maxDate}
-            placeholder={t("common.order_by.start_date")}
-            icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
-            buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
-            optionsClassName="z-30"
-            disabled={!disabled}
+            showTooltip
           />
         </div>
       </WithDisplayPropertiesHOC>
