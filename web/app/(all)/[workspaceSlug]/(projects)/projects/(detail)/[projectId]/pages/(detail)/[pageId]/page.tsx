@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -20,23 +20,30 @@ import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
+import { type TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 // plane web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 // services
 import { ProjectPageService, ProjectPageVersionService } from "@/services/page";
+
 const workspaceService = new WorkspaceService();
 const projectPageService = new ProjectPageService();
 const projectPageVersionService = new ProjectPageVersionService();
 
+const storeType = EPageStoreType.PROJECT;
+
 const PageDetailsPage = observer(() => {
+  // router
+  const router = useAppRouter();
   const { workspaceSlug, projectId, pageId } = useParams();
   // store hooks
-  const { createPage, fetchPageDetails } = usePageStore(EPageStoreType.PROJECT);
+  const { createPage, fetchPageDetails, movePage } = usePageStore(storeType);
   const page = usePage({
     pageId: pageId?.toString() ?? "",
-    storeType: EPageStoreType.PROJECT,
+    storeType,
   });
   const { getWorkspaceBySlug } = useWorkspace();
   const { uploadEditorAsset } = useEditorAsset();
@@ -57,9 +64,7 @@ const PageDetailsPage = observer(() => {
   // fetch page details
   const { error: pageDetailsError } = useSWR(
     workspaceSlug && projectId && pageId ? `PAGE_DETAILS_${pageId}` : null,
-    workspaceSlug && projectId && pageId
-      ? () => fetchPageDetails(workspaceSlug?.toString(), projectId?.toString(), pageId.toString())
-      : null,
+    workspaceSlug && projectId && pageId ? () => fetchPageDetails(projectId?.toString(), pageId.toString()) : null,
     {
       revalidateIfStale: true,
       revalidateOnFocus: true,
@@ -127,6 +132,39 @@ const PageDetailsPage = observer(() => {
     [projectId, workspaceSlug]
   );
 
+  // Custom event handlers specific to project pages
+  const customRealtimeEventHandlers: TCustomEventHandlers = useMemo(
+    () => ({
+      moved: async ({ pageIds, data }) => {
+        if (data.new_project_id && data.new_page_id) {
+          // For project pages, handle the move to a different project
+          const newProjectId = data.new_project_id;
+          const newPageId = data.new_page_id;
+
+          // Call the actual movePage implementation
+          if (pageIds.includes(page?.id ?? "")) {
+            movePage({
+              workspaceSlug: workspaceSlug?.toString() || "",
+              pageId: page?.id || "",
+              projectId: projectId?.toString() || "",
+              newProjectId: newProjectId,
+              shouldSync: false,
+            });
+          }
+
+          router.push(`/${workspaceSlug}/projects/${newProjectId}/pages/${newPageId}`);
+        }
+      },
+    }),
+    [workspaceSlug, projectId, router, page?.id, movePage]
+  );
+
+  useEffect(() => {
+    if (page?.deleted_at && page?.id) {
+      router.back();
+    }
+  }, [page?.deleted_at, page?.id, router]);
+
   if ((!page || !id) && !pageDetailsError)
     return (
       <div className="size-full grid place-items-center">
@@ -161,8 +199,11 @@ const PageDetailsPage = observer(() => {
             config={pageRootConfig}
             handlers={pageRootHandlers}
             page={page}
+            storeType={storeType}
             webhookConnectionParams={webhookConnectionParams}
+            projectId={projectId?.toString()}
             workspaceSlug={workspaceSlug?.toString() ?? ""}
+            customRealtimeEventHandlers={customRealtimeEventHandlers}
           />
           <IssuePeekOverview />
         </div>

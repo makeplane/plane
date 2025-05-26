@@ -14,6 +14,7 @@ import { SidebarNavItem } from "@/components/sidebar";
 import { useAppTheme, useUserPermissions } from "@/hooks/store";
 // plane web imports
 import { UpgradeBadge } from "@/plane-web/components/workspace";
+import { isSidebarFeatureEnabled } from "@/plane-web/helpers/dashboard.helper";
 
 export type SidebarWorkspaceMenuItemProps = {
   item: {
@@ -47,6 +48,8 @@ export const SidebarWorkspaceMenuItem: FC<SidebarWorkspaceMenuItemProps> = obser
     return null;
   }
 
+  if (!isSidebarFeatureEnabled(item.key, workspaceSlug.toString())) return null;
+
   const isActive = item.href === pathname;
 
   return (
@@ -72,7 +75,7 @@ export const SidebarWorkspaceMenuItem: FC<SidebarWorkspaceMenuItemProps> = obser
           </div>
           {!sidebarCollapsed && item.key === "active_cycles" && (
             <div className="flex-shrink-0">
-              <UpgradeBadge />
+              <UpgradeBadge flag="WORKSPACE_ACTIVE_CYCLES" />
             </div>
           )}
         </SidebarNavItem>

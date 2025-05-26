@@ -7,7 +7,7 @@ import { BarChart2, Briefcase, Layers } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // ui
 import { EUserWorkspaceRoles } from "@plane/constants";
-import { ContrastIcon } from "@plane/ui";
+import { ContrastIcon, InitiativeIcon, TeamsIcon } from "@plane/ui";
 // components
 import { SidebarWorkspaceMenuHeader, SidebarWorkspaceMenuItem } from "@/components/workspace/sidebar";
 // helpers
@@ -31,6 +31,20 @@ export const SidebarWorkspaceMenu = observer(() => {
   }, [sidebarCollapsed, toggleWorkspaceMenu]);
 
   const SIDEBAR_WORKSPACE_MENU_ITEMS = [
+    {
+      key: "initiatives",
+      labelTranslationKey: "sidebar.initiatives",
+      href: `/${workspaceSlug}/initiatives/`,
+      access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+      Icon: InitiativeIcon,
+    },
+    {
+      key: "teamspaces",
+      labelTranslationKey: "sidebar.teamspaces",
+      href: `/${workspaceSlug}/teamspaces/`,
+      access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+      Icon: TeamsIcon,
+    },
     {
       key: "projects",
       labelTranslationKey: "sidebar.projects",

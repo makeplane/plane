@@ -30,6 +30,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "peerDependencies": {
+    "nanoid": "^3.3.8",
     "react": "^18.3.1",
     "react-dom": "18.3.1"
   },
@@ -43,9 +44,13 @@
     "@tiptap/extension-blockquote": "2.10.4",
     "@tiptap/extension-character-count": "2.11.0",
     "@tiptap/extension-collaboration": "2.11.0",
+    "@tiptap/extension-collaboration-cursor": "2.11.0",
+    "@tiptap/extension-text": "2.11.0",
+    "@tiptap/extension-document": "2.11.0",
+    "@tiptap/extension-heading": "2.11.0",
     "@tiptap/extension-image": "2.11.0",
-    "@tiptap/extension-list-item": "2.11.0",
     "@tiptap/extension-mention": "2.11.0",
+    "@tiptap/extension-paragraph": "2.10.4",
     "@tiptap/extension-placeholder": "2.11.0",
     "@tiptap/extension-task-item": "2.11.0",
     "@tiptap/extension-task-list": "2.11.0",
@@ -64,7 +69,9 @@
     "lowlight": "^3.0.0",
     "lucide-react": "^0.469.0",
     "prosemirror-codemark": "^0.4.2",
+    "prosemirror-safari-ime-span": "^1.0.2",
     "prosemirror-utils": "^1.2.2",
+    "smooth-scroll-into-view-if-needed": "^2.0.2",
     "tippy.js": "^6.3.7",
     "tiptap-markdown": "^0.8.10",
     "uuid": "^10.0.0",
@@ -83,6 +90,9 @@
     "postcss": "^8.4.38",
     "tsup": "^8.4.0",
     "typescript": "5.3.3"
+  },
+  "resolutions": {
+    "nanoid": "^3.3.8"
   },
   "keywords": [
     "editor",

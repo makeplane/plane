@@ -37,6 +37,23 @@ class FileAsset(BaseModel):
         PROJECT_COVER = "PROJECT_COVER"
         DRAFT_ISSUE_ATTACHMENT = "DRAFT_ISSUE_ATTACHMENT"
         DRAFT_ISSUE_DESCRIPTION = "DRAFT_ISSUE_DESCRIPTION"
+        INITIATIVE_DESCRIPTION = "INITIATIVE_DESCRIPTION"
+        INITIATIVE_ATTACHMENT = "INITIATIVE_ATTACHMENT"
+        INITIATIVE_COMMENT_DESCRIPTION = "INITIATIVE_COMMENT_DESCRIPTION"
+        PROJECT_DESCRIPTION = "PROJECT_DESCRIPTION"
+        PROJECT_ATTACHMENT = "PROJECT_ATTACHMENT"
+        TEAM_SPACE_DESCRIPTION = "TEAM_SPACE_DESCRIPTION"
+        TEAM_SPACE_COMMENT_DESCRIPTION = "TEAM_SPACE_COMMENT_DESCRIPTION"
+        OAUTH_APP_LOGO = "OAUTH_APP_LOGO"
+        OAUTH_APP_DESCRIPTION = "OAUTH_APP_DESCRIPTION"
+        OAUTH_APP_ATTACHMENT = "OAUTH_APP_ATTACHMENT"
+        CUSTOMER_REQUEST_ATTACHMENT = "CUSTOMER_REQUEST_ATTACHMENT"
+        CUSTOMER_LOGO = "CUSTOMER_LOGO"
+        CUSTOMER_DESCRIPTION = "CUSTOMER_DESCRIPTION"
+        CUSTOMER_REQUEST_DESCRIPTION = "CUSTOMER_REQUEST_DESCRIPTION"
+        WORKITEM_TEMPLATE_DESCRIPTION = "WORKITEM_TEMPLATE_DESCRIPTION"
+        PAGE_TEMPLATE_DESCRIPTION = "PAGE_TEMPLATE_DESCRIPTION"
+        TEMPLATE_ATTACHMENT = "TEMPLATE_ATTACHMENT"
 
     attributes = models.JSONField(default=dict)
     asset = models.FileField(upload_to=get_upload_path, max_length=800)
@@ -82,23 +99,49 @@ class FileAsset(BaseModel):
 
     @property
     def asset_url(self):
-        if (
-            self.entity_type == self.EntityTypeContext.WORKSPACE_LOGO
-            or self.entity_type == self.EntityTypeContext.USER_AVATAR
-            or self.entity_type == self.EntityTypeContext.USER_COVER
-            or self.entity_type == self.EntityTypeContext.PROJECT_COVER
+        if self.entity_type in (
+            self.EntityTypeContext.WORKSPACE_LOGO,
+            self.EntityTypeContext.USER_AVATAR,
+            self.EntityTypeContext.USER_COVER,
+            self.EntityTypeContext.PROJECT_COVER,
+            self.EntityTypeContext.OAUTH_APP_LOGO,
+            self.EntityTypeContext.OAUTH_APP_DESCRIPTION,
+            self.EntityTypeContext.OAUTH_APP_ATTACHMENT,
+            self.EntityTypeContext.CUSTOMER_LOGO,
+            self.EntityTypeContext.TEMPLATE_ATTACHMENT,
         ):
             return f"/api/assets/v2/static/{self.id}/"
 
         if self.entity_type == self.EntityTypeContext.ISSUE_ATTACHMENT:
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.issue_id}/attachments/{self.id}/"
 
+        if self.entity_type == self.EntityTypeContext.PROJECT_ATTACHMENT:
+            return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/attachments/{self.id}/"
+
+        if self.entity_type == self.EntityTypeContext.INITIATIVE_ATTACHMENT:
+            return f"/api/assets/v2/workspaces/{self.workspace.slug}/initiatives/{self.entity_identifier}/attachments/{self.id}/"
+
+        if self.entity_type == FileAsset.EntityTypeContext.CUSTOMER_REQUEST_ATTACHMENT:
+            return f"/api/assets/v2/workspaces/{self.workspace.slug}/customer-requests/{self.entity_identifier}/attachments/{self.id}/"
+
         if self.entity_type in [
             self.EntityTypeContext.ISSUE_DESCRIPTION,
             self.EntityTypeContext.COMMENT_DESCRIPTION,
             self.EntityTypeContext.PAGE_DESCRIPTION,
             self.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION,
+            self.EntityTypeContext.PROJECT_DESCRIPTION,
         ]:
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/{self.id}/"
+
+        if self.entity_type in [
+            self.EntityTypeContext.INITIATIVE_DESCRIPTION,
+            self.EntityTypeContext.TEAM_SPACE_DESCRIPTION,
+            self.EntityTypeContext.INITIATIVE_COMMENT_DESCRIPTION,
+            self.EntityTypeContext.TEAM_SPACE_COMMENT_DESCRIPTION,
+            self.EntityTypeContext.CUSTOMER_DESCRIPTION,
+            self.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
+            self.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
+        ]:
+            return f"/api/assets/v2/workspaces/{self.workspace.slug}/{self.id}/"
 
         return None

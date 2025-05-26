@@ -18,6 +18,7 @@ import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssues, useEventTracker, useProjectState, useUserPermissions, useProject } from "@/hooks/store";
 // types
+import { useIssueType } from "@/plane-web/hooks/store";
 import { IQuickActionProps } from "../list/list-view-types";
 
 export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
@@ -46,6 +47,8 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
   const { allowPermissions } = useUserPermissions();
   const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
+  // plane web hooks
+  const issueTypeDetail = useIssueType(issue.type_id);
   // derived values
   const stateDetails = getStateById(issue.state_id);
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
@@ -106,7 +109,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
         setTrackElement(activeLayout);
         setCreateUpdateIssueModal(true);
       },
-      shouldRender: isEditingAllowed,
+      shouldRender: isEditingAllowed && issueTypeDetail?.is_active,
     },
     {
       key: "open-in-new-tab",
