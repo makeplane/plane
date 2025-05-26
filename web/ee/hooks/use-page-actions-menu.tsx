@@ -87,7 +87,7 @@ export const usePageActionsMenu = (props: {
             // Traverse up the parent chain until we reach the root
             while (currentPage?.parent_id) {
               // Get the parent page
-              currentPage = (await getOrFetchPageInstance(currentPage.parent_id)) as TPageInstance;
+              currentPage = (await getOrFetchPageInstance({ pageId: currentPage.parent_id })) as TPageInstance;
               // If we found an archived parent, remember it
               if (currentPage?.archived_at) {
                 lastArchivedParent = currentPage;

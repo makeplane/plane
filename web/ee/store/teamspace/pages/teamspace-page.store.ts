@@ -402,7 +402,11 @@ export class TeamspacePageStore implements ITeamspacePageStore {
       }
     }
   };
+
   removePageInstance = (pageId: string) => {
-    delete this.data[pageId];
+    const page = this.getPageById(pageId);
+    if (page && page.team) {
+      delete this.pageMap[page.team][pageId];
+    }
   };
 }
