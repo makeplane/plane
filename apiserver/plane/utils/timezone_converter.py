@@ -35,9 +35,7 @@ def user_timezone_converter(queryset, datetime_fields, user_timezone):
         return queryset_values
 
 
-def convert_to_utc(
-    date, project_id, is_start_date=False
-):
+def convert_to_utc(date, project_id, is_start_date=False):
     """
     Converts a start date string to the project's local timezone at 12:00 AM
     and then converts it to UTC for storage.

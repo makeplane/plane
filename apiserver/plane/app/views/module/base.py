@@ -63,6 +63,7 @@ from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.host import base_host
 
+
 class ModuleViewSet(BaseViewSet):
     model = Module
     webhook_event = "module"

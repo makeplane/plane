@@ -8,6 +8,7 @@ import boto3
 from botocore.client import Config
 from uuid import UUID
 from datetime import datetime, date
+
 # Third party imports
 from celery import shared_task
 
@@ -90,8 +91,11 @@ def create_zip_file(files: List[tuple[str, str | bytes]]) -> io.BytesIO:
     zip_buffer.seek(0)
     return zip_buffer
 
+
 # TODO: Change the upload_to_s3 function to use the new storage method with entry in file asset table
-def upload_to_s3(zip_file: io.BytesIO, workspace_id: UUID, token_id: str, slug: str) -> None:
+def upload_to_s3(
+    zip_file: io.BytesIO, workspace_id: UUID, token_id: str, slug: str
+) -> None:
     """
     Upload a ZIP file to S3 and generate a presigned URL.
     """
@@ -308,7 +312,12 @@ def update_table_row(rows: List[List[str]], row: List[str]) -> None:
         rows.append(row)
 
 
-def generate_csv(header: List[str], project_id: str, issues: List[dict], files: List[tuple[str, str | bytes]]) -> None:
+def generate_csv(
+    header: List[str],
+    project_id: str,
+    issues: List[dict],
+    files: List[tuple[str, str | bytes]],
+) -> None:
     """
     Generate CSV export for all the passed issues.
     """
@@ -320,7 +329,12 @@ def generate_csv(header: List[str], project_id: str, issues: List[dict], files: 
     files.append((f"{project_id}.csv", csv_file))
 
 
-def generate_json(header: List[str], project_id: str, issues: List[dict], files: List[tuple[str, str | bytes]]) -> None:
+def generate_json(
+    header: List[str],
+    project_id: str,
+    issues: List[dict],
+    files: List[tuple[str, str | bytes]],
+) -> None:
     """
     Generate JSON export for all the passed issues.
     """
@@ -332,7 +346,12 @@ def generate_json(header: List[str], project_id: str, issues: List[dict], files:
     files.append((f"{project_id}.json", json_file))
 
 
-def generate_xlsx(header: List[str], project_id: str, issues: List[dict], files: List[tuple[str, str | bytes]]) -> None:
+def generate_xlsx(
+    header: List[str],
+    project_id: str,
+    issues: List[dict],
+    files: List[tuple[str, str | bytes]],
+) -> None:
     """
     Generate XLSX export for all the passed issues.
     """
@@ -355,7 +374,14 @@ def get_created_by(obj: Issue | IssueComment) -> str:
 
 
 @shared_task
-def issue_export_task(provider: str, workspace_id: UUID, project_ids: List[str], token_id: str, multiple: bool, slug: str):
+def issue_export_task(
+    provider: str,
+    workspace_id: UUID,
+    project_ids: List[str],
+    token_id: str,
+    multiple: bool,
+    slug: str,
+):
     """
     Export issues from the workspace.
     provider (str): The provider to export the issues to csv | json | xlsx.
@@ -408,7 +434,7 @@ def issue_export_task(provider: str, workspace_id: UUID, project_ids: List[str],
         # Get the attachments for the issues
         file_assets = FileAsset.objects.filter(
             issue_id__in=workspace_issues.values_list("id", flat=True),
-            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
         ).annotate(work_item_id=F("issue_id"), asset_id=F("id"))
 
         # Create a dictionary to store the attachments for the issues
@@ -452,8 +478,8 @@ def issue_export_task(provider: str, workspace_id: UUID, project_ids: List[str],
                     }
                     for comment in issue.issue_comments.all()
                 ],
-                "estimate": issue.estimate_point.estimate.name
-                if issue.estimate_point and issue.estimate_point.estimate
+                "estimate": issue.estimate_point.value
+                if issue.estimate_point and issue.estimate_point.value
                 else "",
                 "link": [link.url for link in issue.issue_link.all()],
                 "assignees": [
