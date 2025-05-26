@@ -79,28 +79,22 @@ def crawl_work_item_link_title_and_favicon(url):
             "favicon_url": favicon_url,
         }
 
-        return json.dumps(result, indent=2)
+        return result
 
     except requests.RequestException as e:
-        return json.dumps(
-            {
-                "error": f"Request failed: {str(e)}",
-                "title": None,
-                "favicon": None,
-                "url": url,
-            },
-            indent=2,
-        )
+        return {
+            "error": f"Request failed: {str(e)}",
+            "title": None,
+            "favicon": None,
+            "url": url,
+        }
     except Exception as e:
-        return json.dumps(
-            {
-                "error": f"Unexpected error: {str(e)}",
-                "title": None,
-                "favicon": None,
-                "url": url,
-            },
-            indent=2,
-        )
+        return {
+            "error": f"Unexpected error: {str(e)}",
+            "title": None,
+            "favicon": None,
+            "url": url,
+        }
 
 
 def find_favicon_url(soup, base_url):
