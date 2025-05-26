@@ -17,7 +17,7 @@ import { IUserProfileProjectSegregation } from "@plane/types";
 import { Loader, Tooltip } from "@plane/ui";
 import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // helpers
 // hooks
 import { useAppTheme, useProject, useUser } from "@/hooks/store";

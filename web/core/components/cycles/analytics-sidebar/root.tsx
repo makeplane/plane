@@ -5,9 +5,10 @@ import { observer } from "mobx-react";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { CycleAnalyticsProgress, CycleSidebarHeader, CycleSidebarDetails } from "@/components/cycles";
-// hooks
 import useCyclesDetails from "../active-cycle/use-cycles-details";
+import { CycleAnalyticsProgress } from "./issue-progress";
+import { CycleSidebarDetails } from "./sidebar-details";
+import { CycleSidebarHeader } from "./sidebar-header";
 
 type Props = {
   handleClose: () => void;

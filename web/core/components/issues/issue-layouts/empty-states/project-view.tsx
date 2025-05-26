@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
 import { PlusIcon } from "lucide-react";
-// components
-import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { EmptyState } from "@/components/common";
 // constants
+import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+// components
+import { EmptyState } from "@/components/common/empty-state";
 // hooks
 import { useCommandPalette, useEventTracker, useUserPermissions } from "@/hooks/store";
 // assets

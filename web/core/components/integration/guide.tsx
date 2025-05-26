@@ -16,7 +16,10 @@ import { IImporterService } from "@plane/types";
 // ui
 import { Button } from "@plane/ui";
 // components
-import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "@/components/integration";
+import { DeleteImportModal } from "@/components/integration/delete-import-modal";
+import { GithubImporterRoot } from "@/components/integration/github";
+import { JiraImporterRoot } from "@/components/integration/jira";
+import { SingleImport } from "@/components/integration/single-import";
 import { ImportExportSettingsLoader } from "@/components/ui";
 // constants
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";

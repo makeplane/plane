@@ -4,11 +4,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
 import { cn } from "@plane/utils";
-import { EmptyState } from "@/components/common";
+import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
-import { CycleDetailsSidebar } from "@/components/cycles";
 import useCyclesDetails from "@/components/cycles/active-cycle/use-cycles-details";
-import { CycleLayoutRoot } from "@/components/issues/issue-layouts";
+import { CycleDetailsSidebar } from "@/components/cycles/analytics-sidebar/root";
+import { CycleLayoutRoot } from "@/components/issues/issue-layouts/roots/cycle-layout-root";
 // helpers
 // hooks
 import { useCycle, useProject } from "@/hooks/store";

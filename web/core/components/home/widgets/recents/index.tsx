@@ -13,8 +13,8 @@ import { LayersIcon } from "@plane/ui";
 import { ContentOverflowWrapper } from "@/components/core/content-overflow-HOC";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
-import { RecentsEmptyState } from "../empty-states";
-import { EWidgetKeys, WidgetLoader } from "../loaders";
+import { RecentsEmptyState } from "../empty-states/recents";
+import { EWidgetKeys, WidgetLoader } from "../loaders/loader";
 import { FiltersDropdown } from "./filters";
 import { RecentIssue } from "./issue";
 import { RecentPage } from "./page";

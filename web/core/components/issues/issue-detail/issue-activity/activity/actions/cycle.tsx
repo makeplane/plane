@@ -6,8 +6,7 @@ import { observer } from "mobx-react";
 import { ContrastIcon } from "@plane/ui";
 import { useIssueDetail } from "@/hooks/store";
 // components
-import { IssueActivityBlockComponent } from "./";
-// icons
+import { IssueActivityBlockComponent } from "./helpers/activity-block";
 
 type TIssueCycleActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
