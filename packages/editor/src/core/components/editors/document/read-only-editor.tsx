@@ -83,6 +83,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
       editor={editor}
       editorContainerClassName={cn(editorContainerClassName, "document-editor")}
       id={id}
+      disabledExtensions={disabledExtensions}
     />
   );
 };
