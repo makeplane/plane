@@ -14,6 +14,12 @@
   "pi_chat": "PIチャット",
   "in_app": "アプリ内",
   "forms": "フォーム",
+  "choose_workspace_for_integration": "このアプリケーションに接続するワークスペースを選択してください",
+  "integrations_description": "Planeのアプリケーションは、管理者であるワークスペースに接続する必要があります。",
+  "create_a_new_workspace": "新しいワークスペースを作成",
+  "learn_more_about_workspaces": "ワークスペースについて詳しくはこちら",
+  "no_workspaces_to_connect": "接続するワークスペースがありません",
+  "no_workspaces_to_connect_description": "接続するワークスペースを作成する必要があります",
 
   "common": {
     "worklogs": "作業ログ",

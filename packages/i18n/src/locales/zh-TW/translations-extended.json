@@ -14,6 +14,12 @@
   "pi_chat": "Pi 聊天",
   "in_app": "應用內",
   "forms": "表單",
+  "choose_workspace_for_integration": "選擇工作區以連接此應用程式",
+  "integrations_description": "與 Plane 一起工作的應用程式必須連接到您是管理員的工作區",
+  "create_a_new_workspace": "建立新的工作區",
+  "learn_more_about_workspaces": "了解更多關於工作區的資訊",
+  "no_workspaces_to_connect": "沒有工作區可連接",
+  "no_workspaces_to_connect_description": "您需要建立工作區才能連接整合和模板",
 
   "common": {
     "worklogs": "工作日誌",

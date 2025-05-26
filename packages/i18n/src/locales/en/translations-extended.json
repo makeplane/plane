@@ -3,6 +3,12 @@
   "pi_chat": "Pi Chat",
   "in_app": "In-app",
   "forms": "Forms",
+  "choose_workspace_for_integration": "Choose a workspace to connect this app to",
+  "integrations_description": "Apps that work with Plane must connect to a workspace where you are an admin.",
+  "create_a_new_workspace": "Create a new workspace",
+  "learn_more_about_workspaces": "Learn more about workspaces",
+  "no_workspaces_to_connect": "No workspaces to connect",
+  "no_workspaces_to_connect_description": "You will need to create a workspace to be able to connect integrations and templates",
 
   "common": {
     "worklogs": "Worklogs",

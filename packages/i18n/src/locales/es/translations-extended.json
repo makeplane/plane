@@ -14,6 +14,12 @@
   "pi_chat": "PI Chat",
   "in_app": "En la aplicación",
   "forms": "Formularios",
+  "choose_workspace_for_integration": "Elige un espacio de trabajo para conectar esta app",
+  "integrations_description": "Las apps que funcionan con Plane deben conectarse a un espacio de trabajo donde eres administrador.",
+  "create_a_new_workspace": "Crear un nuevo espacio de trabajo",
+  "learn_more_about_workspaces": "Aprende más sobre espacios de trabajo",
+  "no_workspaces_to_connect": "No hay espacios de trabajo para conectar",
+  "no_workspaces_to_connect_description": "Necesitarás crear un espacio de trabajo para poder conectar integraciones y plantillas",
 
   "common": {
     "worklogs": "Registros de trabajo",

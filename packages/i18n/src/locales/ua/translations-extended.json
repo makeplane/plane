@@ -14,6 +14,12 @@
   "pi_chat": "Пі Чат",
   "in_app": "В-апп",
   "forms": "Форми",
+  "choose_workspace_for_integration": "Виберіть робочий простір для підключення цієї програми",
+  "integrations_description": "Програми, які працюють з Plane, повинні бути підключені до робочого простору, де ви є адміністратором.",
+  "create_a_new_workspace": "Створити новий робочий простір",
+  "learn_more_about_workspaces": "Дізнатися більше про робочі простори",
+  "no_workspaces_to_connect": "Немає робочих просторів для підключення",
+  "no_workspaces_to_connect_description": "Ви повинні створити робочий простір, щоб підключити інтеграції та шаблони",
 
   "common": {
     "worklogs": "Ворклоги",

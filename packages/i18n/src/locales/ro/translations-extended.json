@@ -14,7 +14,12 @@
   "pi_chat": "Pi Chat",
   "in_app": "În-app",
   "forms": "Formulare",
-
+  "choose_workspace_for_integration": "Alegeți un spațiu de lucru pentru a conecta această aplicație",
+  "integrations_description": "Aplicațiile care funcționează cu Plane trebuie să se conecteze la un spațiu de lucru unde sunteți administrator.",
+  "create_a_new_workspace": "Creați un nou spațiu de lucru",
+  "no_workspaces_to_connect": "Nu există spații de lucru pentru a conecta",
+  "no_workspaces_to_connect_description": "Trebuie să creați un spațiu de lucru pentru a putea conecta integrări și modele",
+  "learn_more_about_workspaces": "Află mai multe despre spațiile de lucru",
   "common": {
     "worklogs": "Jurnale de lucru",
     "live": "Live",

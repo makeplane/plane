@@ -14,7 +14,13 @@
   "pi_chat": "Obrolan Pi",
   "in_app": "Dalam Aplikasi",
   "forms": "Formulir",
-
+  "choose_workspace_for_integration": "Pilih ruang kerja untuk menghubungkan aplikasi ini",
+  "integrations_description": "Aplikasi yang bekerja dengan Plane harus menghubungkan ke ruang kerja di mana Anda adalah admin.",
+  "create_a_new_workspace": "Buat ruang kerja baru",
+  "learn_more_about_workspaces": "Pelajari lebih lanjut tentang ruang kerja",
+  "no_workspaces_to_connect": "Tidak ada ruang kerja untuk menghubungkan",
+  "no_workspaces_to_connect_description": "Anda perlu membuat ruang kerja untuk dapat menghubungkan integrasi dan template",
+  
   "common": {
     "worklogs": "Log Kerja",
     "live": "Langsung",

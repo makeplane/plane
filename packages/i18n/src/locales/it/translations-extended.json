@@ -12,6 +12,12 @@
   "pi_chat": "Pi Chat",
   "in_app": "In-app",
   "forms": "Moduli",
+  "choose_workspace_for_integration": "Scegli uno spazio di lavoro per connettere questa app",
+  "integrations_description": "Le app che funzionano con Plane devono connettersi a uno spazio di lavoro dove sei amministratore.",
+  "create_a_new_workspace": "Crea uno spazio di lavoro nuovo",
+  "learn_more_about_workspaces": "Scopri di più sui tuoi spazi di lavoro",
+  "no_workspaces_to_connect": "Nessuno spazio di lavoro per connettere",
+  "no_workspaces_to_connect_description": "Devi creare uno spazio di lavoro per poter connettere le integrazioni e i modelli",
 
   "common": {
     "worklogs": "Registrazioni di lavoro",

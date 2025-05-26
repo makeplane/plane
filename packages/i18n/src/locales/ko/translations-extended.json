@@ -14,6 +14,12 @@
   "pi_chat": "파이 챗",
   "in_app": "인앱",
   "forms": "폼스",
+  "choose_workspace_for_integration": "이 앱에 연결할 작업 공간을 선택하세요",
+  "integrations_description": "Plane의 앱은 관리자인 작업 공간에 연결해야 합니다.",
+  "create_a_new_workspace": "새 작업 공간 만들기",
+  "learn_more_about_workspaces": "작업 공간에 대해 자세히 알아보기",
+  "no_workspaces_to_connect": "연결할 작업 공간이 없습니다",
+  "no_workspaces_to_connect_description": "연결할 작업 공간을 만들어야 합니다",
 
   "common": {
     "worklogs": "워크로그",

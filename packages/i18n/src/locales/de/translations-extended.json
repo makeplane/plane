@@ -14,7 +14,13 @@
   "pi_chat": "Pi Tschät",
   "in_app": "In-äpp",
   "forms": "Forms",
-
+  "choose_workspace_for_integration": "Wählen Sie einen Arbeitsbereich aus, um diese App zu verbinden",
+  "integrations_description": "Apps, die mit Plane arbeiten, müssen einen Arbeitsbereich verbinden, in dem Sie ein Administrator sind.",
+  "create_a_new_workspace": "Neuen Arbeitsbereich erstellen",
+  "learn_more_about_workspaces": "Mehr über Arbeitsbereiche erfahren",
+  "no_workspaces_to_connect": "Keine Arbeitsbereiche zum Verbinden",
+  "no_workspaces_to_connect_description": "Sie müssen einen Arbeitsbereich erstellen, um Integrationen und Vorlagen zu verbinden",
+  
   "common": {
     "worklogs": "Arbeitsberichte",
     "live": "Live",
