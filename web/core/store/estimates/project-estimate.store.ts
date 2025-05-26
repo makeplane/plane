@@ -27,6 +27,7 @@ export interface IProjectEstimateStore {
   currentActiveEstimateId: string | undefined;
   currentActiveEstimate: IEstimate | undefined;
   archivedEstimateIds: string[] | undefined;
+  currentProjectEstimate: TEstimateSystemKeys | undefined;
   areEstimateEnabledByProjectId: (projectId: string) => boolean;
   estimateIdsByProjectId: (projectId: string) => string[] | undefined;
   currentActiveEstimateIdByProjectId: (projectId: string) => string | undefined;
@@ -63,6 +64,7 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       currentActiveEstimateId: computed,
       currentActiveEstimate: computed,
       archivedEstimateIds: computed,
+      currentProjectEstimate: computed,
       // actions
       getWorkspaceEstimates: action,
       getProjectEstimates: action,
@@ -73,6 +75,11 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
   }
 
   // computed
+
+  get currentProjectEstimate(): TEstimateSystemKeys | undefined {
+    return this.currentActiveEstimateId ? this.estimates[this.currentActiveEstimateId]?.type : undefined;
+  }
+
   /**
    * @description get current active estimate id for a project
    * @returns { string | undefined }
