@@ -4,8 +4,10 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urljoin
 import base64
-import json
 import ipaddress
+from typing import Dict, Any
+from typing import Optional
+
 
 from plane.db.models import IssueLink
 
@@ -14,7 +16,7 @@ DEFAULT_FAVICON = "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoP
 
 
 @shared_task
-def crawl_work_item_link_title(id, url):
+def crawl_work_item_link_title(id: str, url: str) -> None:
     meta_data = crawl_work_item_link_title_and_favicon(url)
     issue_link = IssueLink.objects.get(id=id)
 
@@ -23,7 +25,7 @@ def crawl_work_item_link_title(id, url):
     issue_link.save()
 
 
-def crawl_work_item_link_title_and_favicon(url):
+def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
     """
     Crawls a URL to extract the title and favicon.
 
@@ -90,7 +92,9 @@ def crawl_work_item_link_title_and_favicon(url):
         }
 
 
-def find_favicon_url(soup, base_url):
+def find_favicon_url(soup: BeautifulSoup, base_url: str) -> Optional[str]:
+    print(soup, "PRint soup")
+    print(base_url, "BaseURL")
     """
     Find the favicon URL from HTML soup.
 
@@ -129,7 +133,9 @@ def find_favicon_url(soup, base_url):
     return None
 
 
-def fetch_and_encode_favicon(headers, soup, url):
+def fetch_and_encode_favicon(
+    headers: Dict[str, str], soup: BeautifulSoup, url: str
+) -> Optional[Dict[str, str]]:
     """
     Fetch favicon and encode it as base64.
 
