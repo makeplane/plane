@@ -61,22 +61,15 @@ def crawl_work_item_link_title_and_favicon(url):
         title_tag = soup.find("title")
         title = title_tag.get_text().strip() if title_tag else "No title found"
 
-        # Find favicon URL
-        favicon_url = find_favicon_url(soup, url)
-
         # Fetch and encode favicon
-        favicon_base64 = (
-            fetch_and_encode_favicon(favicon_url, headers)
-            if favicon_url
-            else DEFAULT_FAVICON
-        )
+        favicon_base64 = fetch_and_encode_favicon(headers, soup, url)
 
         # Prepare result
         result = {
             "title": title,
-            "favicon": favicon_base64,
+            "favicon": favicon_base64["favicon_base64"],
             "url": url,
-            "favicon_url": favicon_url,
+            "favicon_url": favicon_base64["favicon_url"],
         }
 
         return result
@@ -136,7 +129,7 @@ def find_favicon_url(soup, base_url):
     return None
 
 
-def fetch_and_encode_favicon(favicon_url, headers):
+def fetch_and_encode_favicon(headers, soup, url):
     """
     Fetch favicon and encode it as base64.
 
@@ -148,6 +141,10 @@ def fetch_and_encode_favicon(favicon_url, headers):
         str: Base64 encoded favicon with data URI prefix or None
     """
     try:
+        favicon_url = find_favicon_url(soup, url)
+        if favicon_url is None:
+            favicon_url = DEFAULT_FAVICON
+
         response = requests.get(favicon_url, headers=headers, timeout=10)
         response.raise_for_status()
 
@@ -158,7 +155,10 @@ def fetch_and_encode_favicon(favicon_url, headers):
         favicon_base64 = base64.b64encode(response.content).decode("utf-8")
 
         # Return as data URI
-        return f"data:{content_type};base64,{favicon_base64}"
+        return {
+            "favicon_url": favicon_url,
+            "favicon_base64": f"data:{content_type};base64,{favicon_base64}",
+        }
 
     except Exception as e:
         print(f"Failed to fetch favicon: {e}")
