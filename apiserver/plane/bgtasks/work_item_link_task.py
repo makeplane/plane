@@ -93,8 +93,6 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
 
 
 def find_favicon_url(soup: BeautifulSoup, base_url: str) -> Optional[str]:
-    print(soup, "PRint soup")
-    print(base_url, "BaseURL")
     """
     Find the favicon URL from HTML soup.
 
