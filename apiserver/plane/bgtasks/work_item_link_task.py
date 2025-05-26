@@ -16,8 +16,9 @@ DEFAULT_FAVICON = "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoP
 def crawl_work_item_link_title(id, url):
     meta_data = crawl_work_item_link_title_and_favicon(url)
     issue_link = IssueLink.objects.get(id=id)
-    issue_link.title = meta_data["title"]
+
     issue_link.metadata = meta_data
+
     issue_link.save()
 
 

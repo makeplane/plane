@@ -45,7 +45,7 @@ class IssueLinkViewSet(BaseViewSet):
         serializer = IssueLinkSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id)
-            crawl_work_item_link_title.delay(
+            crawl_work_item_link_title(
                 serializer.data.get("id"), serializer.data.get("url")
             )
             issue_activity.delay(
@@ -59,6 +59,10 @@ class IssueLinkViewSet(BaseViewSet):
                 notification=True,
                 origin=base_host(request=request, is_app=True),
             )
+
+            issue_link = self.get_queryset().get(id=serializer.data.get("id"))
+            serializer = IssueLinkSerializer(issue_link)
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -70,9 +74,14 @@ class IssueLinkViewSet(BaseViewSet):
         current_instance = json.dumps(
             IssueLinkSerializer(issue_link).data, cls=DjangoJSONEncoder
         )
+
         serializer = IssueLinkSerializer(issue_link, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+            crawl_work_item_link_title(
+                serializer.data.get("id"), serializer.data.get("url")
+            )
+
             issue_activity.delay(
                 type="link.activity.updated",
                 requested_data=requested_data,
@@ -84,6 +93,9 @@ class IssueLinkViewSet(BaseViewSet):
                 notification=True,
                 origin=base_host(request=request, is_app=True),
             )
+            issue_link = self.get_queryset().get(id=serializer.data.get("id"))
+            serializer = IssueLinkSerializer(issue_link)
+
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
