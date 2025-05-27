@@ -17,10 +17,10 @@ type TProps = {
 export const EstimateTypeDropdown = observer((props: TProps) => {
   const { value, onChange, projectId, cycleId, showDefault = false } = props;
   const { getIsPointsDataAvailable } = useCycle();
-  const { areEstimateEnabledByProjectId, currentProjectEstimate } = useProjectEstimates();
+  const { areEstimateEnabledByProjectId, currentProjectEstimateType } = useProjectEstimates();
   const isCurrentProjectEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId) ? true : false;
   return (getIsPointsDataAvailable(cycleId) || isCurrentProjectEstimateEnabled) &&
-    currentProjectEstimate !== EEstimateSystem.CATEGORIES ? (
+    currentProjectEstimateType !== EEstimateSystem.CATEGORIES ? (
     <div className="relative flex items-center gap-2">
       <CustomSelect
         value={value}
