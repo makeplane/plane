@@ -37,6 +37,7 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
     toggleEditEpicModal,
     toggleDeleteEpicModal,
     isPeekMode = false,
+    portalElement,
   } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -139,7 +140,15 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
         }}
       />
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
-      <CustomMenu ellipsis chevronClassName="size-5" placement="bottom-end">
+      <CustomMenu
+        ellipsis
+        portalElement={portalElement}
+        chevronClassName="size-5"
+        placement="bottom-end"
+        menuItemsClassName="z-[14]"
+        useCaptureForOutsideClick
+        closeOnSelect
+      >
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
           return (
