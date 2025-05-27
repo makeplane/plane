@@ -54,7 +54,7 @@ const IssueDetailsPage = observer(() => {
   const issueLoader = !issue || isLoading;
   const pageTitle = project && issue ? `${project?.identifier}-${issue?.sequence_id} ${issue?.name}` : undefined;
 
-  useWorkItemProperties(projectId ?? "", workspaceSlug.toString(), issueId ?? "");
+  useWorkItemProperties(projectId, workspaceSlug.toString(), issueId);
 
   useEffect(() => {
     const handleToggleIssueDetailSidebar = () => {
