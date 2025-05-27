@@ -147,28 +147,14 @@ def fetch_and_encode_favicon(
     try:
         favicon_url = find_favicon_url(soup, url)
         if favicon_url is None:
-            # Use default favicon directly
             return {
                 "favicon_url": None,
                 "favicon_base64": f"data:image/svg+xml;base64,{DEFAULT_FAVICON}",
             }
-        
+
         response = requests.get(favicon_url, headers=headers, timeout=10)
         response.raise_for_status()
 
-        # Get content type
-        content_type = response.headers.get("content-type", "image/x-icon")
-
-        # Convert to base64
-        favicon_base64 = base64.b64encode(response.content).decode("utf-8")
-
-        # Return as data URI
-        return {
-            "favicon_url": favicon_url,
-            "favicon_base64": f"data:{content_type};base64,{favicon_base64}",
-        }
-    except Exception as e:
-        ...
         # Get content type
         content_type = response.headers.get("content-type", "image/x-icon")
 
