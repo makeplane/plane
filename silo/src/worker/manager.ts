@@ -84,14 +84,14 @@ interface JobWorkerConfig {
  */
 type TaskProps =
   | {
-    type: "mq";
-    headers: TaskHeaders;
-    data: any;
-  }
+      type: "mq";
+      headers: TaskHeaders;
+      data: any;
+    }
   | {
-    type: "store";
-    event: string;
-  };
+      type: "store";
+      event: string;
+    };
 
 /**
  * Main task management class that handles worker lifecycle and task distribution
@@ -164,26 +164,17 @@ export class TaskManager {
       try {
         const data = JSON.parse(msg.content.toString());
         const headers = msg.properties.headers;
+        logger.info("Received message:", headers);
         const props: TaskProps = {
           type: "mq",
           headers: headers.headers,
           data: data,
         };
-        try {
-          await this.handleTask(props);
-        } catch (error) {
-          await this.handleError(msg, error);
-          logger.error("Error handling task", error);
-        }
+        await this.handleTask(props);
       } catch (error) {
         logger.error("Error processing message:", error);
-        await this.handleError(msg, error);
-      }
-
-      try {
+      } finally {
         await this.mq?.ackMessage(msg);
-      } catch (error) {
-        logger.error("Error acknowledging message:", error);
       }
     });
   };
@@ -243,29 +234,6 @@ export class TaskManager {
         return;
       }
       await worker.handleTask(props.headers, props.data);
-    }
-  }
-
-  /**
-   * Handles errors during task processing with retry mechanism
-   * @private
-   * @param {any} msg - Message object from queue
-   * @param {any} error - Error that occurred during processing
-   */
-  private async handleError(msg: any, error: any) {
-    try {
-      if (!this.mq) return;
-      const retryCount = (msg.properties.headers.retry_count || 0) + 1;
-      if (retryCount <= this.config.retryAttempts) {
-        await new Promise((resolve) => setTimeout(resolve, this.config.retryDelay));
-        await this.mq.nackMessage(msg);
-        msg.properties.headers.retry_count = retryCount;
-      } else {
-        logger.error(`Max retry attempts reached for message: ${msg.content.toString()}`);
-        await this.mq.ackMessage(msg);
-      }
-    } catch (error) {
-      logger.error("Error acknowledging message:", error);
     }
   }
 
