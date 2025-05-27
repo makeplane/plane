@@ -61,7 +61,7 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
 
         # Extract title
         title_tag = soup.find("title")
-        title = title_tag.get_text().strip() if title_tag else "No title found"
+        title = title_tag.get_text().strip() if title_tag else None
 
         # Fetch and encode favicon
         favicon_base64 = fetch_and_encode_favicon(headers, soup, url)
