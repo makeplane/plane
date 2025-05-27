@@ -39,6 +39,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   } = props;
 
   const extensions: Extensions = [];
+
   if (embedHandler?.issue) {
     extensions.push(
       WorkItemEmbedExtension({
