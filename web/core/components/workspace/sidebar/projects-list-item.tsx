@@ -311,6 +311,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                   customButtonClassName="grid place-items-center"
                   placement="bottom-start"
                   useCaptureForOutsideClick
+                  closeOnSelect
                 >
                   {/* TODO: Removed is_favorite logic due to the optimization in projects API */}
                   {/* {isAuthorized && (

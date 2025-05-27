@@ -31,13 +31,17 @@ const WorkItemsInsightTable = observer(() => {
   const { data: workItemsData, isLoading } = useSWR(
     `insights-table-work-items-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}`,
     () =>
-      analyticsV2Service.getAdvanceAnalyticsStats<WorkItemInsightColumns[]>(workspaceSlug, "work-items", {
-        // date_filter: selectedDuration,
-        ...(selectedProjects?.length > 0 ? { project_ids: selectedProjects.join(",") } : {}),
-        ...(selectedCycle ? { cycle_id: selectedCycle } : {}),
-        ...(selectedModule ? { module_id: selectedModule } : {}),
-        ...(isPeekView ? { peek_view: true } : {}),
-      })
+      analyticsV2Service.getAdvanceAnalyticsStats<WorkItemInsightColumns[]>(
+        workspaceSlug,
+        "work-items",
+        {
+          // date_filter: selectedDuration,
+          ...(selectedProjects?.length > 0 ? { project_ids: selectedProjects.join(",") } : {}),
+          ...(selectedCycle ? { cycle_id: selectedCycle } : {}),
+          ...(selectedModule ? { module_id: selectedModule } : {}),
+        },
+        isPeekView
+      )
   );
   // derived values
   const columnsLabels = useMemo(
@@ -138,6 +142,7 @@ const WorkItemsInsightTable = observer(() => {
       isLoading={isLoading}
       columns={columns}
       columnsLabels={columnsLabels}
+      headerText={isPeekView ? columnsLabels["display_name"] : columnsLabels["project__name"]}
     />
   );
 });
