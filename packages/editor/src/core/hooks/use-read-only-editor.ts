@@ -12,6 +12,7 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 import { CoreReadOnlyEditorProps } from "@/props";
 // types
 import type { EditorReadOnlyRefApi, TExtensions, TReadOnlyFileHandler, TReadOnlyMentionHandler } from "@/types";
+import { CORE_EDITOR_META } from "@/constants/meta";
 
 interface CustomReadOnlyEditorProps {
   disabledExtensions: TExtensions[];
@@ -75,7 +76,7 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
 
   useImperativeHandle(forwardedRef, () => ({
     clearEditor: (emitUpdate = false) => {
-      editor?.chain().setMeta("skipFileDeletion", true).clearContent(emitUpdate).run();
+      editor?.chain().setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true).clearContent(emitUpdate).run();
     },
     setEditorValue: (content: string, emitUpdate = false) => {
       editor?.commands.setContent(content, emitUpdate, { preserveWhitespace: "full" });

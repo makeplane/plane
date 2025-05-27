@@ -26,6 +26,7 @@ import type {
   TExtensions,
   TMentionHandler,
 } from "@/types";
+import { CORE_EDITOR_META } from "@/constants/meta";
 
 export interface CustomEditorProps {
   editable: boolean;
@@ -149,7 +150,7 @@ export const useEditor = (props: CustomEditorProps) => {
       },
       getCurrentCursorPosition: () => editor?.state.selection.from,
       clearEditor: (emitUpdate = false) => {
-        editor?.chain().setMeta("skipFileDeletion", true).clearContent(emitUpdate).run();
+        editor?.chain().setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true).clearContent(emitUpdate).run();
       },
       setEditorValue: (content: string, emitUpdate = false) => {
         editor?.commands.setContent(content, emitUpdate, { preserveWhitespace: "full" });
