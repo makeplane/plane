@@ -9,9 +9,11 @@ import { TFileHandler } from "@/types";
 // local imports
 import { TFileNode } from "./types";
 
+const RESTORE_PLUGIN_KEY = new PluginKey("restore-utility");
+
 export const TrackFileRestorationPlugin = (editor: Editor, restoreHandler: TFileHandler["restore"]): Plugin =>
   new Plugin({
-    key: new PluginKey("restore-utility"),
+    key: RESTORE_PLUGIN_KEY,
     appendTransaction: (transactions: readonly Transaction[], oldState: EditorState, newState: EditorState) => {
       if (!transactions.some((tr) => tr.docChanged)) return null;
 
@@ -22,10 +24,10 @@ export const TrackFileRestorationPlugin = (editor: Editor, restoreHandler: TFile
         const nodeType = node.type.name;
         const nodeFileSetDetails = NODE_FILE_MAP[nodeType];
         if (nodeFileSetDetails) {
-          if (oldFileSources.nodeType) {
-            oldFileSources.nodeType.add(node.attrs.src);
+          if (oldFileSources[nodeType]) {
+            oldFileSources[nodeType].add(node.attrs.src);
           } else {
-            oldFileSources.nodeType = new Set([node.attrs.src]);
+            oldFileSources[nodeType] = new Set([node.attrs.src]);
           }
         }
       });

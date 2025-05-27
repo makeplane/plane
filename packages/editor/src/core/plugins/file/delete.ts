@@ -7,9 +7,11 @@ import { TFileHandler } from "@/types";
 // local imports
 import { TFileNode } from "./types";
 
+const DELETE_PLUGIN_KEY = new PluginKey("delete-utility");
+
 export const TrackFileDeletionPlugin = (editor: Editor, deleteHandler: TFileHandler["delete"]): Plugin =>
   new Plugin({
-    key: new PluginKey("delete-utility"),
+    key: DELETE_PLUGIN_KEY,
     appendTransaction: (transactions: readonly Transaction[], oldState: EditorState, newState: EditorState) => {
       const newFileSources: {
         [nodeType: string]: Set<string> | undefined;
@@ -20,10 +22,10 @@ export const TrackFileDeletionPlugin = (editor: Editor, deleteHandler: TFileHand
         const nodeType = node.type.name;
         const nodeFileSetDetails = NODE_FILE_MAP[nodeType];
         if (nodeFileSetDetails) {
-          if (newFileSources.nodeType) {
-            newFileSources.nodeType.add(node.attrs.src);
+          if (newFileSources[nodeType]) {
+            newFileSources[nodeType].add(node.attrs.src);
           } else {
-            newFileSources.nodeType = new Set([node.attrs.src]);
+            newFileSources[nodeType] = new Set([node.attrs.src]);
           }
         }
       });
