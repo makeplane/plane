@@ -27,7 +27,7 @@
     "@types/node": "^20.14.9",
     "@types/reflect-metadata": "^0.1.0",
     "@types/ws": "^8.5.10",
-    "tsup": "8.3.0",
+    "tsup": "^8.5.0",
     "typescript": "^5.3.3"
   },
   "peerDependencies": {

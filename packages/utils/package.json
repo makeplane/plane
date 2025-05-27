@@ -29,7 +29,7 @@
     "@types/node": "^22.5.4",
     "@types/react": "^18.3.11",
     "@types/zxcvbn": "^4.4.5",
-    "tsup": "8.3.0",
+    "tsup": "^8.5.0",
     "typescript": "^5.3.3"
   }
 }
