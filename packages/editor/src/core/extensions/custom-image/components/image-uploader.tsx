@@ -9,6 +9,7 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 import { CustoBaseImageNodeViewProps, getImageComponentImageFileMap } from "@/extensions/custom-image";
 // hooks
 import { useUploader, useDropZone, uploadFirstFileAndInsertRemaining } from "@/hooks/use-file-upload";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
 type CustomImageUploaderProps = CustoBaseImageNodeViewProps & {
   maxFileSize: number;
@@ -76,7 +77,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     // @ts-expect-error - TODO: fix typings, and don't remove await from here for now
     editorCommand: async (file) => await editor?.commands.uploadImage(imageEntityId, file),
     handleProgressStatus: (isUploading) => {
-      editor.storage.utility.uploadInProgress = isUploading;
+      getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY).uploadInProgress = isUploading;
     },
     loadFileFromFileSystem: loadImageFromFileSystem,
     maxFileSize,

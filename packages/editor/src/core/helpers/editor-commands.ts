@@ -12,40 +12,10 @@ export const setText = (editor: Editor, range?: Range) => {
   else editor.chain().focus().setNode(CORE_EXTENSIONS.PARAGRAPH).run();
 };
 
-export const toggleHeadingOne = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).setNode(CORE_EXTENSIONS.HEADING, { level: 1 }).run();
+export const toggleHeading = (editor: Editor, level: 1 | 2 | 3 | 4 | 5 | 6, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).setNode(CORE_EXTENSIONS.HEADING, { level }).run();
   // @ts-expect-error tiptap types are incorrect
-  else editor.chain().focus().toggleHeading({ level: 1 }).run();
-};
-
-export const toggleHeadingTwo = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).setNode(CORE_EXTENSIONS.HEADING, { level: 2 }).run();
-  // @ts-expect-error tiptap types are incorrect
-  else editor.chain().focus().toggleHeading({ level: 2 }).run();
-};
-
-export const toggleHeadingThree = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).setNode(CORE_EXTENSIONS.HEADING, { level: 3 }).run();
-  // @ts-expect-error tiptap types are incorrect
-  else editor.chain().focus().toggleHeading({ level: 3 }).run();
-};
-
-export const toggleHeadingFour = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).setNode(CORE_EXTENSIONS.HEADING, { level: 4 }).run();
-  // @ts-expect-error tiptap types are incorrect
-  else editor.chain().focus().toggleHeading({ level: 4 }).run();
-};
-
-export const toggleHeadingFive = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).setNode(CORE_EXTENSIONS.HEADING, { level: 5 }).run();
-  // @ts-expect-error tiptap types are incorrect
-  else editor.chain().focus().toggleHeading({ level: 5 }).run();
-};
-
-export const toggleHeadingSix = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).setNode(CORE_EXTENSIONS.HEADING, { level: 6 }).run();
-  // @ts-expect-error tiptap types are incorrect
-  else editor.chain().focus().toggleHeading({ level: 6 }).run();
+  else editor.chain().focus().toggleHeading({ level }).run();
 };
 
 export const toggleBold = (editor: Editor, range?: Range) => {

@@ -37,12 +37,7 @@ import {
   toggleBold,
   toggleBulletList,
   toggleCodeBlock,
-  toggleHeadingFive,
-  toggleHeadingFour,
-  toggleHeadingOne,
-  toggleHeadingSix,
-  toggleHeadingThree,
-  toggleHeadingTwo,
+  toggleHeading,
   toggleItalic,
   toggleOrderedList,
   toggleStrike,
@@ -72,53 +67,39 @@ export const TextItem = (editor: Editor): EditorMenuItem<"text"> => ({
   icon: CaseSensitive,
 });
 
-export const HeadingOneItem = (editor: Editor): EditorMenuItem<"h1"> => ({
-  key: "h1",
-  name: "Heading 1",
-  isActive: () => editor.isActive(CORE_EXTENSIONS.HEADING, { level: 1 }),
-  command: () => toggleHeadingOne(editor),
-  icon: Heading1,
+type SupportedHeadingLevels = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+
+const HeadingItem = <T extends SupportedHeadingLevels>(
+  editor: Editor,
+  level: 1 | 2 | 3 | 4 | 5 | 6,
+  key: T,
+  name: string,
+  icon: LucideIcon
+): EditorMenuItem<T> => ({
+  key,
+  name,
+  isActive: () => editor.isActive(CORE_EXTENSIONS.HEADING, { level }),
+  command: () => toggleHeading(editor, level),
+  icon,
 });
 
-export const HeadingTwoItem = (editor: Editor): EditorMenuItem<"h2"> => ({
-  key: "h2",
-  name: "Heading 2",
-  isActive: () => editor.isActive(CORE_EXTENSIONS.HEADING, { level: 2 }),
-  command: () => toggleHeadingTwo(editor),
-  icon: Heading2,
-});
+export const HeadingOneItem = (editor: Editor): EditorMenuItem<"h1"> =>
+  HeadingItem(editor, 1, "h1", "Heading 1", Heading1);
 
-export const HeadingThreeItem = (editor: Editor): EditorMenuItem<"h3"> => ({
-  key: "h3",
-  name: "Heading 3",
-  isActive: () => editor.isActive(CORE_EXTENSIONS.HEADING, { level: 3 }),
-  command: () => toggleHeadingThree(editor),
-  icon: Heading3,
-});
+export const HeadingTwoItem = (editor: Editor): EditorMenuItem<"h2"> =>
+  HeadingItem(editor, 2, "h2", "Heading 2", Heading2);
 
-export const HeadingFourItem = (editor: Editor): EditorMenuItem<"h4"> => ({
-  key: "h4",
-  name: "Heading 4",
-  isActive: () => editor.isActive(CORE_EXTENSIONS.HEADING, { level: 4 }),
-  command: () => toggleHeadingFour(editor),
-  icon: Heading4,
-});
+export const HeadingThreeItem = (editor: Editor): EditorMenuItem<"h3"> =>
+  HeadingItem(editor, 3, "h3", "Heading 3", Heading3);
 
-export const HeadingFiveItem = (editor: Editor): EditorMenuItem<"h5"> => ({
-  key: "h5",
-  name: "Heading 5",
-  isActive: () => editor.isActive(CORE_EXTENSIONS.HEADING, { level: 5 }),
-  command: () => toggleHeadingFive(editor),
-  icon: Heading5,
-});
+export const HeadingFourItem = (editor: Editor): EditorMenuItem<"h4"> =>
+  HeadingItem(editor, 4, "h4", "Heading 4", Heading4);
 
-export const HeadingSixItem = (editor: Editor): EditorMenuItem<"h6"> => ({
-  key: "h6",
-  name: "Heading 6",
-  isActive: () => editor.isActive(CORE_EXTENSIONS.HEADING, { level: 6 }),
-  command: () => toggleHeadingSix(editor),
-  icon: Heading6,
-});
+export const HeadingFiveItem = (editor: Editor): EditorMenuItem<"h5"> =>
+  HeadingItem(editor, 5, "h5", "Heading 5", Heading5);
+
+export const HeadingSixItem = (editor: Editor): EditorMenuItem<"h6"> =>
+  HeadingItem(editor, 6, "h6", "Heading 6", Heading6);
 
 export const BoldItem = (editor: Editor): EditorMenuItem<"bold"> => ({
   key: "bold",

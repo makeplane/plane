@@ -146,6 +146,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
         if (node.type.name === CORE_EXTENSIONS.HEADING) return `Heading ${node.attrs.level}`;
 
         const isUploadInProgress = getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.uploadInProgress;
+
         if (isUploadInProgress) return "";
 
         const shouldHidePlaceholder =
