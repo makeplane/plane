@@ -3,7 +3,7 @@ import get from "lodash/get";
 import merge from "lodash/merge";
 import { makeAutoObservable, runInAction } from "mobx";
 // constants
-import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY } from "../constants";
+import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY, TranslationFiles } from "../constants";
 // core translations imports
 import coreEn from "../locales/en/core.json";
 // types
@@ -137,18 +137,15 @@ export class TranslationStore {
    * @returns Promise that resolves to merged translations
    */
   private async importAndMergeFiles(language: TLanguage, files: string[]): Promise<any> {
-    const importPromises = files.map((file) => import(`../locales/${language}/${file}.json`));
+    try {
+      const importPromises = files.map((file) => import(`../locales/${language}/${file}.json`));
 
-    const modules = await Promise.all(importPromises);
-    const merged = modules.reduce(
-      (acc, module) => ({
-        ...acc,
-        ...module.default,
-      }),
-      {}
-    );
-
-    return { default: merged };
+      const modules = await Promise.all(importPromises);
+      const merged = modules.reduce((acc, module) => merge(acc, module.default), {});
+      return { default: merged };
+    } catch (error) {
+      throw new Error(`Failed to import and merge files for ${language}: ${error}`);
+    }
   }
 
   /**
@@ -157,32 +154,8 @@ export class TranslationStore {
    * @returns {Promise<any>}
    */
   private async importLanguageFile(language: TLanguage): Promise<any> {
-    const files = ["translations", "accessibility"];
-
-    switch (language) {
-      case "en":
-      case "fr":
-      case "es":
-      case "ja":
-      case "zh-CN":
-      case "zh-TW":
-      case "ru":
-      case "it":
-      case "cs":
-      case "sk":
-      case "de":
-      case "ua":
-      case "pl":
-      case "ko":
-      case "pt-BR":
-      case "id":
-      case "ro":
-      case "vi-VN":
-      case "tr-TR":
-        return this.importAndMergeFiles(language, files);
-      default:
-        throw new Error(`Unsupported language: ${language}`);
-    }
+    const files = Object.values(TranslationFiles);
+    return this.importAndMergeFiles(language, files);
   }
 
   /** Checks if the language is valid based on the supported languages */

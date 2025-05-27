@@ -24,4 +24,13 @@ export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
   { label: "Türkçe", value: "tr-TR" },
 ];
 
+/**
+ * Enum for translation file names
+ * These are the JSON files that contain translations each category
+ */
+export enum TranslationFiles {
+  TRANSLATIONS = "translations",
+  ACCESSIBILITY = "accessibility",
+}
+
 export const LANGUAGE_STORAGE_KEY = "userLanguage";
