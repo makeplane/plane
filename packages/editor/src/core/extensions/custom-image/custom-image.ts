@@ -1,5 +1,5 @@
 import { Editor, mergeAttributes } from "@tiptap/core";
-import { Image } from "@tiptap/extension-image";
+import { Image as BaseImageExtension } from "@tiptap/extension-image";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import { v4 as uuidv4 } from "uuid";
 // constants
@@ -50,7 +50,7 @@ export const CustomImageExtension = (props: TFileHandler) => {
     validation: { maxFileSize },
   } = props;
 
-  return Image.extend<Record<string, unknown>, CustomImageExtensionStorage>({
+  return BaseImageExtension.extend<Record<string, unknown>, CustomImageExtensionStorage>({
     name: CORE_EXTENSIONS.CUSTOM_IMAGE,
     selectable: true,
     group: "block",

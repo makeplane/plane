@@ -72,12 +72,12 @@ export const CoreEditorExtensionsWithoutProps = [
         "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
     },
   }),
-  ImageExtensionWithoutProps().configure({
+  ImageExtensionWithoutProps.configure({
     HTMLAttributes: {
       class: "rounded-md",
     },
   }),
-  CustomImageComponentWithoutProps(),
+  CustomImageComponentWithoutProps,
   TiptapUnderline,
   TextStyle,
   TaskList.configure({
