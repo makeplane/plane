@@ -2,11 +2,13 @@ import { Extension } from "@tiptap/core";
 import { NodeType } from "@tiptap/pm/model";
 import { Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
 import { canJoin } from "@tiptap/pm/transform";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
 declare module "@tiptap/core" {
   // eslint-disable-next-line no-unused-vars
   interface Commands<ReturnType> {
-    customkeymap: {
+    customKeymap: {
       /**
        * Select text between node boundaries
        */
@@ -59,7 +61,7 @@ function autoJoin(tr: Transaction, newTr: Transaction, nodeTypes: NodeType[]) {
 }
 
 export const CustomKeymap = Extension.create({
-  name: "CustomKeymap",
+  name: "customKeymap",
 
   addCommands() {
     return {
@@ -87,9 +89,9 @@ export const CustomKeymap = Extension.create({
           const newTr = newState.tr;
 
           const joinableNodes = [
-            newState.schema.nodes["orderedList"],
-            newState.schema.nodes["taskList"],
-            newState.schema.nodes["bulletList"],
+            newState.schema.nodes[CORE_EXTENSIONS.ORDERED_LIST],
+            newState.schema.nodes[CORE_EXTENSIONS.TASK_LIST],
+            newState.schema.nodes[CORE_EXTENSIONS.BULLET_LIST],
           ];
 
           let joined = false;

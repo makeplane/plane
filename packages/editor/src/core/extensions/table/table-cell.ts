@@ -1,11 +1,12 @@
 import { mergeAttributes, Node } from "@tiptap/core";
-
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 export interface TableCellOptions {
   HTMLAttributes: Record<string, any>;
 }
 
 export const TableCell = Node.create<TableCellOptions>({
-  name: "tableCell",
+  name: CORE_EXTENSIONS.TABLE_CELL,
 
   addOptions() {
     return {

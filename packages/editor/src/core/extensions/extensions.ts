@@ -7,12 +7,13 @@ import TextStyle from "@tiptap/extension-text-style";
 import TiptapUnderline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import {
   CustomCalloutExtension,
   CustomCodeBlockExtension,
   CustomCodeInlineExtension,
-  CustomCodeMarkPlugin,
   CustomColorExtension,
   CustomHorizontalRule,
   CustomImageExtension,
@@ -22,17 +23,17 @@ import {
   CustomQuoteExtension,
   CustomTextAlignExtension,
   CustomTypographyExtension,
-  DropHandlerExtension,
   ImageExtension,
   ListKeymap,
   Table,
   TableCell,
   TableHeader,
   TableRow,
-  MarkdownClipboard,
+  UtilityExtension,
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
@@ -49,7 +50,7 @@ type TArguments = {
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
-  const { disabledExtensions, enableHistory, fileHandler, mentionHandler, placeholder, tabIndex } = args;
+  const { disabledExtensions, enableHistory, fileHandler, mentionHandler, placeholder, tabIndex, editable } = args;
 
   const extensions = [
     StarterKit.configure({
@@ -89,7 +90,6 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       ...(enableHistory ? {} : { history: false }),
     }),
     CustomQuoteExtension,
-    DropHandlerExtension,
     CustomHorizontalRule.configure({
       HTMLAttributes: {
         class: "py-4 border-custom-border-400",
@@ -127,7 +127,6 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
         class: "",
       },
     }),
-    CustomCodeMarkPlugin,
     CustomCodeInlineExtension,
     Markdown.configure({
       html: true,
@@ -135,7 +134,6 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       transformPastedText: true,
       breaks: true,
     }),
-    MarkdownClipboard,
     Table,
     TableHeader,
     TableCell,
@@ -145,15 +143,17 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       placeholder: ({ editor, node }) => {
         if (!editor.isEditable) return "";
 
-        if (node.type.name === "heading") return `Heading ${node.attrs.level}`;
+        if (node.type.name === CORE_EXTENSIONS.HEADING) return `Heading ${node.attrs.level}`;
 
-        if (editor.storage.imageComponent?.uploadInProgress) return "";
+        const isUploadInProgress = getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.uploadInProgress;
+
+        if (isUploadInProgress) return "";
 
         const shouldHidePlaceholder =
-          editor.isActive("table") ||
-          editor.isActive("codeBlock") ||
-          editor.isActive("image") ||
-          editor.isActive("imageComponent");
+          editor.isActive(CORE_EXTENSIONS.TABLE) ||
+          editor.isActive(CORE_EXTENSIONS.CODE_BLOCK) ||
+          editor.isActive(CORE_EXTENSIONS.IMAGE) ||
+          editor.isActive(CORE_EXTENSIONS.CUSTOM_IMAGE);
 
         if (shouldHidePlaceholder) return "";
 
@@ -169,6 +169,10 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CharacterCount,
     CustomTextAlignExtension,
     CustomCalloutExtension,
+    UtilityExtension({
+      isEditable: editable,
+      fileHandler,
+    }),
     CustomColorExtension,
     ...CoreEditorAdditionalExtensions({
       disabledExtensions,
