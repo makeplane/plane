@@ -10,6 +10,7 @@ import {
   EUserPermissionsLevel,
   TUserPermissions,
   TUserPermissionsLevel,
+  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS,
 } from "@plane/constants";
 import { IProjectMember, IUserProjectsRole, IWorkspaceMemberMe } from "@plane/types";
 // plane web types
@@ -54,6 +55,7 @@ export interface IUserPermissionStore {
   fetchUserProjectPermissions: (workspaceSlug: string) => Promise<IUserProjectsRole | undefined>;
   joinProject: (workspaceSlug: string, projectId: string) => Promise<void | undefined>;
   leaveProject: (workspaceSlug: string, projectId: string) => Promise<void>;
+  hasPageAccess: (workspaceSlug: string, key: string) => boolean;
 }
 
 export class UserPermissionStore implements IUserPermissionStore {
@@ -107,6 +109,20 @@ export class UserPermissionStore implements IUserPermissionStore {
       return this.workspaceProjectsPermissions?.[workspaceSlug]?.[projectId] || undefined;
     }
   );
+
+  /**
+   * @description Returns whether the user has the permission to access a page
+   * @param { string } page
+   * @returns { boolean }
+   */
+  hasPageAccess = computedFn((workspaceSlug: string, key: string): boolean => {
+    if (!workspaceSlug || !key) return false;
+    const settings = WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS.find((item) => item.key === key);
+    if (settings) {
+      return this.allowPermissions(settings.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug);
+    }
+    return false;
+  });
 
   // action helpers
   /**

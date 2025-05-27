@@ -1,0 +1,18 @@
+export enum EWorkItemTypeEntity {
+  WORK_ITEM = "WORK_ITEM",
+  EPIC = "EPIC",
+}
+
+export const DEFAULT_BACKGROUND_COLORS = [
+  "#EF5974",
+  "#FF7474",
+  "#FC964D",
+  "#1FA191",
+  "#6DBCF5",
+  "#748AFF",
+  "#4C49F8",
+  "#5D407A",
+  "#999AA0",
+];
+
+export const RESTRICTED_WORK_ITEM_TYPES = ["task"];

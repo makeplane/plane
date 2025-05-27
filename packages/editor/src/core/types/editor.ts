@@ -8,6 +8,7 @@ import { TTextAlign } from "@/extensions";
 import { IMarking } from "@/helpers/scroll-to-node";
 // types
 import {
+  EventToPayloadMap,
   TAIHandler,
   TDisplayConfig,
   TDocumentEventEmitter,
@@ -36,6 +37,7 @@ export type TEditorCommands =
   | "bulleted-list"
   | "numbered-list"
   | "to-do-list"
+  | "toggle-list"
   | "quote"
   | "code"
   | "table"
@@ -46,6 +48,7 @@ export type TEditorCommands =
   | "background-color"
   | "text-align"
   | "callout"
+  | "page-embed"
   | "attachment";
 
 export type TCommandExtraProps = {
@@ -93,6 +96,11 @@ export type EditorReadOnlyRefApi = {
   };
 };
 
+// title ref api
+export interface EditorTitleRefApi extends EditorReadOnlyRefApi {
+  setEditorValue: EditorReadOnlyRefApi["setEditorValue"];
+}
+
 export interface EditorRefApi extends EditorReadOnlyRefApi {
   blur: () => void;
   scrollToNodeViaDOMCoordinates: (behavior?: ScrollBehavior, position?: number) => void;
@@ -103,6 +111,7 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   onStateChange: (callback: () => void) => () => void;
   setFocusAtPosition: (position: number) => void;
   isEditorReadyToDiscard: () => boolean;
+  editorHasSynced: () => boolean;
   getSelectedText: () => string | null;
   insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
   setProviderDocument: (value: Uint8Array) => void;
@@ -110,6 +119,16 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   getHeadings: () => IMarking[];
   emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
   listenToRealTimeUpdate: () => TDocumentEventEmitter | undefined;
+  findAndDeleteNode: (
+    {
+      attribute,
+      value,
+    }: {
+      attribute: string;
+      value: string | string[];
+    },
+    nodeName: string
+  ) => void;
 }
 
 // editor props
@@ -126,6 +145,7 @@ export interface IEditorProps {
   onChange?: (json: object, html: string) => void;
   onTransaction?: () => void;
   handleEditorReady?: (value: boolean) => void;
+  isSmoothCursorEnabled: boolean;
   autofocus?: boolean;
   onEnterKeyPress?: (e?: any) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
@@ -141,8 +161,7 @@ export interface IRichTextEditor extends IEditorProps {
   dragDropEnabled?: boolean;
 }
 
-export interface ICollaborativeDocumentEditor
-  extends Omit<IEditorProps, "initialValue" | "onChange" | "onEnterKeyPress" | "value"> {
+export interface ICollaborativeDocumentEditor extends Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> {
   aiHandler?: TAIHandler;
   bubbleMenuEnabled?: boolean;
   editable: boolean;
@@ -151,6 +170,23 @@ export interface ICollaborativeDocumentEditor
   id: string;
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
+  user: TUserDetails;
+  updatePageProperties?: <T extends keyof EventToPayloadMap>(
+    pageIds: string | string[],
+    actionType: T,
+    data: EventToPayloadMap[T],
+    performAction?: boolean
+  ) => void;
+  pageRestorationInProgress?: boolean;
+  titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
+}
+
+export interface IDocumentEditor extends Omit<IEditorProps, "onEnterKeyPress" | "value"> {
+  aiHandler?: TAIHandler;
+  bubbleMenuEnabled?: boolean;
+  embedHandler: TEmbedConfig;
+  handleEditorReady?: (value: boolean) => void;
+  id: string;
   user: TUserDetails;
 }
 
