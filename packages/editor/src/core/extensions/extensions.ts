@@ -50,7 +50,7 @@ type TArguments = {
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
-  const { disabledExtensions, enableHistory, fileHandler, mentionHandler, placeholder, tabIndex } = args;
+  const { disabledExtensions, enableHistory, fileHandler, mentionHandler, placeholder, tabIndex, editable } = args;
 
   const extensions = [
     StarterKit.configure({
@@ -170,7 +170,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomTextAlignExtension,
     CustomCalloutExtension,
     UtilityExtension({
-      isEditable: true,
+      isEditable: editable,
       fileHandler,
     }),
     CustomColorExtension,
