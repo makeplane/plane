@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
@@ -10,7 +11,7 @@ type Props = {
   classNames?: string;
 };
 
-export const WorkspaceLogo = (props: Props) => {
+export const WorkspaceLogo = observer((props: Props) => {
   // translation
   const { t } = useTranslation();
 
@@ -33,4 +34,4 @@ export const WorkspaceLogo = (props: Props) => {
       )}
     </div>
   );
-};
+});

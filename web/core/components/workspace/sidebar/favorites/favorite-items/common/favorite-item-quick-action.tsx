@@ -1,5 +1,6 @@
 "use client";
 import React, { FC } from "react";
+import { observer } from "mobx-react";
 import { MoreHorizontal, Star } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -16,7 +17,7 @@ type Props = {
   handleRemoveFromFavorites: (favorite: IFavorite) => void;
 };
 
-export const FavoriteItemQuickAction: FC<Props> = (props) => {
+export const FavoriteItemQuickAction: FC<Props> = observer((props) => {
   const { ref, isMenuActive, onChange, handleRemoveFromFavorites, favorite } = props;
   // translation
   const { t } = useTranslation();
@@ -50,4 +51,4 @@ export const FavoriteItemQuickAction: FC<Props> = (props) => {
       </CustomMenu.MenuItem>
     </CustomMenu>
   );
-};
+});

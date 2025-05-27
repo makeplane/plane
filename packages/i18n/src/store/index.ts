@@ -3,7 +3,7 @@ import get from "lodash/get";
 import merge from "lodash/merge";
 import { makeAutoObservable, runInAction } from "mobx";
 // constants
-import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY, TranslationFiles } from "../constants";
+import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY, ETranslationFiles } from "../constants";
 // core translations imports
 import coreEn from "../locales/en/core.json";
 // types
@@ -154,7 +154,7 @@ export class TranslationStore {
    * @returns {Promise<any>}
    */
   private async importLanguageFile(language: TLanguage): Promise<any> {
-    const files = Object.values(TranslationFiles);
+    const files = Object.values(ETranslationFiles);
     return this.importAndMergeFiles(language, files);
   }
 
