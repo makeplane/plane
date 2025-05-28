@@ -36,7 +36,7 @@ export const SettingsHeader = observer(() => {
           getButtonStyling("neutral-primary", "sm"),
           "md:absolute left-2 top-9 group flex  gap-2 text-custom-text-300 mb-4 border border-transparent w-fit rounded-lg ",
           "h-6 w-6 rounded-lg p-1 bg-custom-background-100 border-custom-border-200 ",
-          isScrolled ? "my-1 " : "hidden p-0 overflow-hidden items-center pr-2 border-none"
+          isScrolled ? "-mt-2 " : "hidden p-0 overflow-hidden items-center pr-2 border-none"
         )}
       >
         <ChevronLeftIcon className={cn("h-4 w-4", !isScrolled ? "my-auto h-0" : "")} />
@@ -46,7 +46,7 @@ export const SettingsHeader = observer(() => {
         href={`/${redirectWorkspaceSlug}`}
         className={cn(
           "group flex  gap-2 text-custom-text-300 mb-4 border border-transparent w-fit rounded-lg",
-          !isScrolled ? "hover:bg-custom-background-100 hover:border-custom-border-200 items-center pr-2 " : " h-0"
+          !isScrolled ? "hover:bg-custom-background-100 hover:border-custom-border-200 items-center pr-2 " : " h-0 m-0"
         )}
       >
         <button
