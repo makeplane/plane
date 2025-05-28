@@ -7,7 +7,7 @@ import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import IntegrationGuide from "@/components/integration/guide";
 // hooks
-import { SettingsContentWrapper } from "@/components/settings";
+import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
 
 const ImportsPage = observer(() => {
@@ -25,9 +25,7 @@ const ImportsPage = observer(() => {
     <SettingsContentWrapper size="lg">
       <PageHead title={pageTitle} />
       <section className="w-full">
-        <div className="flex items-center border-b border-custom-border-100 pb-3.5">
-          <h3 className="text-xl font-medium">Imports</h3>
-        </div>
+        <SettingsHeading title="Imports" />
         <IntegrationGuide />
       </section>
     </SettingsContentWrapper>

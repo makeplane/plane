@@ -8,7 +8,7 @@ import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import ExportGuide from "@/components/exporter/guide";
 // helpers
-import { SettingsContentWrapper } from "@/components/settings";
+import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
@@ -41,9 +41,10 @@ const ExportsPage = observer(() => {
           "opacity-60": !canPerformWorkspaceMemberActions,
         })}
       >
-        <div className="flex items-center border-b border-custom-border-100 pb-3.5">
-          <h3 className="text-xl font-medium">{t("workspace_settings.settings.exports.title")}</h3>
-        </div>
+        <SettingsHeading
+          title={t("workspace_settings.settings.exports.title")}
+          description="Export your project data in various formats and access your export history with download links."
+        />
         <ExportGuide />
       </div>
     </SettingsContentWrapper>

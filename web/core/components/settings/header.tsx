@@ -6,20 +6,16 @@ import { ChevronLeftIcon } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/ui/src/button";
 import { cn } from "@plane/utils";
-import { useUserSettings } from "@/hooks/store";
+import { useUserSettings, useWorkspace } from "@/hooks/store";
 import { WorkspaceLogo } from "../workspace";
 import SettingsTabs from "./tabs";
 
 export const SettingsHeader = observer(() => {
   // hooks
-  const { data: currentUserSettings } = useUserSettings();
   const { t } = useTranslation();
+  const { currentWorkspace } = useWorkspace();
   const { isScrolled } = useUserSettings();
   // redirect url for normal mode
-  const redirectWorkspaceSlug =
-    currentUserSettings?.workspace?.last_workspace_slug ||
-    currentUserSettings?.workspace?.fallback_workspace_slug ||
-    "";
 
   return (
     <div
@@ -31,7 +27,7 @@ export const SettingsHeader = observer(() => {
       )}
     >
       <Link
-        href={`/${redirectWorkspaceSlug}`}
+        href={`/${currentWorkspace?.slug}`}
         className={cn(
           getButtonStyling("neutral-primary", "sm"),
           "md:absolute left-2 top-9 group flex  gap-2 text-custom-text-300 mb-4 border border-transparent w-fit rounded-lg ",
@@ -43,7 +39,7 @@ export const SettingsHeader = observer(() => {
       </Link>
       {/* Breadcrumb */}
       <Link
-        href={`/${redirectWorkspaceSlug}`}
+        href={`/${currentWorkspace?.slug}`}
         className={cn(
           "group flex  gap-2 text-custom-text-300 mb-4 border border-transparent w-fit rounded-lg",
           !isScrolled ? "hover:bg-custom-background-100 hover:border-custom-border-200 items-center pr-2 " : " h-0 m-0"
@@ -68,13 +64,11 @@ export const SettingsHeader = observer(() => {
           {/* Last workspace */}
           <div className="flex items-center gap-1">
             <WorkspaceLogo
-              name={currentUserSettings?.workspace?.last_workspace_name || ""}
-              logo={currentUserSettings?.workspace?.last_workspace_logo || ""}
+              name={currentWorkspace?.name || ""}
+              logo={currentWorkspace?.logo_url || ""}
               classNames="my-auto size-4 text-xs"
             />
-            <div className="text-xs my-auto text-custom-text-100 font-semibold">
-              {currentUserSettings?.workspace?.last_workspace_name}
-            </div>
+            <div className="text-xs my-auto text-custom-text-100 font-semibold">{currentWorkspace?.name}</div>
           </div>
         </div>
       </Link>

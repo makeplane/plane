@@ -9,6 +9,7 @@ import {
 import { TBillingFrequency, TProductBillingFrequency } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
+import { SettingsHeading } from "@/components/settings";
 import { getSubscriptionTextColor } from "@/components/workspace/billing/subscription";
 // local imports
 import { PlansComparison } from "./comparison/root";
@@ -56,11 +57,10 @@ export const BillingRoot = observer(() => {
 
   return (
     <section className="relative size-full flex flex-col overflow-y-auto scrollbar-hide">
-      <div>
-        <div className="flex items-center">
-          <h3 className="text-xl font-medium flex gap-4">Billing and plans</h3>
-        </div>
-      </div>
+      <SettingsHeading
+        title="Billing and plans"
+        description="Choose your plan, manage subscriptions, and easily upgrade as your needs grow."
+      />
 
       <div
         className={cn(

@@ -7,12 +7,11 @@ import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { DetailedEmptyState } from "@/components/empty-state";
-import { SettingsContentWrapper } from "@/components/settings";
+import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
 import { WebhookSettingsLoader } from "@/components/ui";
 import { WebhooksList, CreateWebhookModal } from "@/components/web-hooks";
 // hooks
@@ -67,24 +66,20 @@ const WebhooksListPage = observer(() => {
             setShowCreateWebhookModal(false);
           }}
         />
+        <SettingsHeading
+          title={t("workspace_settings.settings.webhooks.title")}
+          description="Automate notifications to external services when project events occur."
+          button={{
+            label: t("workspace_settings.settings.webhooks.add_webhook"),
+            onClick: () => setShowCreateWebhookModal(true),
+          }}
+        />
         {Object.keys(webhooks).length > 0 ? (
           <div className="flex h-full w-full flex-col">
-            <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 pb-3.5">
-              <div className="text-xl font-medium">{t("workspace_settings.settings.webhooks.title")}</div>
-              <Button variant="primary" size="sm" onClick={() => setShowCreateWebhookModal(true)}>
-                {t("workspace_settings.settings.webhooks.add_webhook")}
-              </Button>
-            </div>
             <WebhooksList />
           </div>
         ) : (
           <div className="flex h-full w-full flex-col">
-            <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 pb-3.5">
-              <div className="text-xl font-medium">{t("workspace_settings.settings.webhooks.title")}</div>
-              <Button variant="primary" size="sm" onClick={() => setShowCreateWebhookModal(true)}>
-                {t("workspace_settings.settings.webhooks.add_webhook")}
-              </Button>
-            </div>
             <div className="h-full w-full flex items-center justify-center">
               <DetailedEmptyState
                 className="!px-0 py-5"

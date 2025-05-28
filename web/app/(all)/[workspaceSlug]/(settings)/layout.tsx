@@ -2,7 +2,7 @@
 
 import { CommandPalette } from "@/components/command-palette";
 import { ContentWrapper } from "@/components/core";
-import { SettingsHeader } from "@/components/settings";
+import { SettingsContentLayout, SettingsHeader } from "@/components/settings";
 import { AuthenticationWrapper } from "@/lib/wrappers";
 import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
 
@@ -15,7 +15,9 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
           {/* Header */}
           <SettingsHeader />
           {/* Content */}
-          <ContentWrapper className="px-4 md:pl-12 md:py-page-y md:flex w-full">{children}</ContentWrapper>
+          <ContentWrapper className="px-4 md:pl-12 md:py-page-y md:flex w-full">
+            <SettingsContentLayout>{children}</SettingsContentLayout>
+          </ContentWrapper>
         </main>
       </WorkspaceAuthWrapper>
     </AuthenticationWrapper>

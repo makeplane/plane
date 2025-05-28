@@ -9,7 +9,7 @@ import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { ProjectStateRoot } from "@/components/project-states";
 // hook
-import { SettingsContentWrapper } from "@/components/settings";
+import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
 import { useProject, useUserPermissions } from "@/hooks/store";
 
 const StatesSettingsPage = observer(() => {
@@ -36,9 +36,7 @@ const StatesSettingsPage = observer(() => {
     <SettingsContentWrapper>
       <PageHead title={pageTitle} />
       <div className="w-full">
-        <div className="flex items-center border-b border-custom-border-100">
-          <h3 className="text-xl font-medium">{t("common.states")}</h3>
-        </div>
+        <SettingsHeading title={t("common.states")} />
         {workspaceSlug && projectId && (
           <ProjectStateRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
         )}
