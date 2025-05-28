@@ -57,7 +57,7 @@ const ProfileActivityPage = observer(() => {
           description={t("profile.empty_state.activity.description")}
           assetPath={resolvedPath}
           className="w-full !px-0 justify-center mx-auto min-h-fit"
-          size="sm"
+          size="md"
         />
       </div>
     );

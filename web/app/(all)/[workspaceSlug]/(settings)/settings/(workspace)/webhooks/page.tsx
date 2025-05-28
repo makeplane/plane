@@ -91,7 +91,7 @@ const WebhooksListPage = observer(() => {
                 title={t("workspace_settings.empty_state.webhooks.title")}
                 description={t("workspace_settings.empty_state.webhooks.description")}
                 assetPath={resolvedPath}
-                size="sm"
+                size="md"
                 primaryButton={{
                   text: t("workspace_settings.settings.webhooks.add_webhook"),
                   onClick: () => setShowCreateWebhookModal(true),

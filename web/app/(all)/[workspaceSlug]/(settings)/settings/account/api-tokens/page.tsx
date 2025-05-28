@@ -88,7 +88,7 @@ const ApiTokensPage = observer(() => {
                 description={t("workspace_settings.empty_state.api_tokens.description")}
                 assetPath={resolvedPath}
                 className="w-full !px-0 justify-center mx-auto"
-                size="sm"
+                size="md"
                 primaryButton={{
                   text: t("workspace_settings.settings.api_tokens.add_token"),
                   onClick: () => setIsCreateTokenModalOpen(true),

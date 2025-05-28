@@ -23,6 +23,7 @@ export const EstimateEmptyScreen: FC<TEstimateEmptyScreen> = (props) => {
       title={t("project_settings.empty_state.estimates.title")}
       description={t("project_settings.empty_state.estimates.description")}
       assetPath={resolvedPath}
+      className="w-full !px-0 !py-4"
       primaryButton={{
         text: t("project_settings.empty_state.estimates.primary_button"),
         onClick: onButtonClick,
