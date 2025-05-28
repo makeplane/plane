@@ -1,23 +1,96 @@
 import { TAnalyticsTabsV2Base } from "@plane/types";
 import { ChartXAxisProperty, ChartYAxisMetric } from "../chart";
 
-export const insightsFields: Record<TAnalyticsTabsV2Base, string[]> = {
+export interface IInsightField {
+  key: string;
+  i18nKey: string;
+  i18nProps?: {
+    entity?: string;
+    entityPlural?: string;
+    [key: string]: any;
+  };
+}
+
+export const insightsFields: Record<TAnalyticsTabsV2Base, IInsightField[]> = {
   overview: [
-    "total_users",
-    "total_admins",
-    "total_members",
-    "total_guests",
-    "total_projects",
-    "total_work_items",
-    "total_cycles",
-    "total_intake",
+    {
+      key: "total_users",
+      i18nKey: "workspace_analytics.total",
+      i18nProps: {
+        entity: "Users",
+      },
+    },
+    {
+      key: "total_admins",
+      i18nKey: "workspace_analytics.total",
+      i18nProps: {
+        entity: "Admins",
+      },
+    },
+    {
+      key: "total_members",
+      i18nKey: "workspace_analytics.total",
+      i18nProps: {
+        entity: "Members",
+      },
+    },
+    {
+      key: "total_guests",
+      i18nKey: "workspace_analytics.total",
+      i18nProps: {
+        entity: "Guests",
+      },
+    },
+    {
+      key: "total_projects",
+      i18nKey: "workspace_analytics.total",
+      i18nProps: {
+        entity: "Projects",
+      },
+    },
+    {
+      key: "total_work_items",
+      i18nKey: "workspace_analytics.total",
+      i18nProps: {
+        entity: "work items",
+      },
+    },
+    {
+      key: "total_cycles",
+      i18nKey: "workspace_analytics.total",
+      i18nProps: {
+        entity: "Cycles",
+      },
+    },
+    {
+      key: "total_intake",
+      i18nKey: "workspace_analytics.total",
+      i18nProps: {
+        entity: "Intake",
+      },
+    },
   ],
   "work-items": [
-    "total_work_items",
-    "started_work_items",
-    "backlog_work_items",
-    "un_started_work_items",
-    "completed_work_items",
+    {
+      key: "total_work_items",
+      i18nKey: "workspace_analytics.total",
+    },
+    {
+      key: "started_work_items",
+      i18nKey: "workspace_analytics.started_work_items",
+    },
+    {
+      key: "backlog_work_items",
+      i18nKey: "workspace_analytics.backlog_work_items",
+    },
+    {
+      key: "un_started_work_items",
+      i18nKey: "workspace_analytics.un_started_work_items",
+    },
+    {
+      key: "completed_work_items",
+      i18nKey: "workspace_analytics.completed_work_items",
+    },
   ],
 };
 

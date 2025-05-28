@@ -1,5 +1,5 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import { ANALYTICS_V2_DURATION_FILTER_OPTIONS } from "@plane/constants";
+import { ANALYTICS_V2_DURATION_FILTER_OPTIONS, EIssuesStoreType } from "@plane/constants";
 import { TAnalyticsTabsV2Base } from "@plane/types";
 import { CoreRootStore } from "./root.store";
 
