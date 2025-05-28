@@ -171,7 +171,7 @@ class ProjectMemberViewSet(BaseViewSet):
         ).select_related("project", "member", "workspace")
 
         serializer = ProjectMemberRoleSerializer(
-            project_members, fields=("id", "member", "role", "created_at"), many=True
+            project_members, fields=("id", "member", "role"), many=True
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
