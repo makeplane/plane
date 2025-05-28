@@ -4,8 +4,8 @@ import useSWR from "swr";
 // components
 import { useTranslation } from "@plane/i18n";
 import { PageHead } from "@/components/core";
-import { ProfileSettingContentHeader } from "@/components/profile";
 import { EmailNotificationForm } from "@/components/profile/notification";
+import { SettingsHeading } from "@/components/settings";
 import { EmailSettingsLoader } from "@/components/ui";
 // services
 import { UserService } from "@/services/user.service";
@@ -26,9 +26,10 @@ export default function ProfileNotificationPage() {
   return (
     <>
       <PageHead title={`${t("profile.label")} - ${t("notifications")}`} />
-      <ProfileSettingContentHeader
-        title={t("email_notifications")}
-        description={t("stay_in_the_loop_on_issues_you_are_subscribed_to_enable_this_to_get_notified")}
+
+      <SettingsHeading
+        title={t("account_settings.notifications.heading")}
+        description={t("account_settings.notifications.description")}
       />
       <EmailNotificationForm data={data} />
     </>

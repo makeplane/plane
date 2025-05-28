@@ -8,8 +8,9 @@ import { Button } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core";
 import { DetailedEmptyState } from "@/components/empty-state";
-import { ProfileActivityListPage, ProfileSettingContentHeader } from "@/components/profile";
+import { ProfileActivityListPage } from "@/components/profile";
 // hooks
+import { SettingsHeading } from "@/components/settings";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 const PER_PAGE = 100;
@@ -51,7 +52,10 @@ const ProfileActivityPage = observer(() => {
   if (isEmpty) {
     return (
       <div className="flex h-full w-full flex-col">
-        <ProfileSettingContentHeader title={t("activity")} />
+        <SettingsHeading
+          title={t("account_settings.activity.heading")}
+          description={t("account_settings.activity.description")}
+        />
         <DetailedEmptyState
           title={t("profile.empty_state.activity.title")}
           description={t("profile.empty_state.activity.description")}
@@ -66,7 +70,10 @@ const ProfileActivityPage = observer(() => {
   return (
     <>
       <PageHead title="Profile - Activity" />
-      <ProfileSettingContentHeader title={t("activity")} />
+      <SettingsHeading
+        title={t("account_settings.activity.heading")}
+        description={t("account_settings.activity.description")}
+      />
       <div className="w-full">{activityPages}</div>
       {isLoadMoreVisible && (
         <div className="flex w-full items-center justify-center text-xs">

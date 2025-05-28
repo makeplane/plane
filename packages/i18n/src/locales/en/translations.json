@@ -1308,6 +1308,28 @@
       }
     }
   },
+  "account_settings": {
+    "profile":{},
+    "preferences":{
+      "heading": "Preferences",
+      "description": "Customize your app experience the way you work"
+    },
+    "notifications":{
+      "heading": "Email notifications",
+      "description": "Stay in the loop on Work items you are subscribed to. Enable this to get notified."    
+    },
+    "security":{
+      "heading": "Security"
+    },
+    "api_tokens":{
+      "heading": "Personal Access Tokens",
+      "description": "Generate secure API tokens to integrate your data with external systems and applications."
+    },
+    "activity":{
+      "heading": "Activity",
+      "description": "Track your recent actions and changes across all projects and work items."
+    }
+  },
   "workspace_settings": {
     "label": "Workspace settings",
     "page_label": "{workspace} - General settings",
@@ -1374,12 +1396,16 @@
         }
       },
       "billing_and_plans": {
+        "heading": "Billing & Plans",
+        "description":"Choose your plan, manage subscriptions, and easily upgrade as your needs grow.",
         "title": "Billing & Plans",
         "current_plan": "Current plan",
         "free_plan": "You are currently using the free plan",
         "view_plans": "View plans"
       },
       "exports": {
+        "heading": "Exports",
+        "description": "Export your project data in various formats and access your export history with download links.",
         "title": "Exports",
         "exporting": "Exporting",
         "previous_exports": "Previous exports",
@@ -1401,6 +1427,8 @@
         }
       },
       "webhooks": {
+        "heading": "Webhooks",
+        "description": "Automate notifications to external services when project events occur.",
         "title": "Webhooks",
         "add_webhook": "Add webhook",
         "modal": {
@@ -1588,6 +1616,8 @@
       }
     },
     "states": {
+      "heading": "States",
+      "description": "Define and customize workflow states to track the progress of your work items.",
       "describe_this_state_for_your_members": "Describe this state for your members.",
       "empty_state": {
         "title": "No states available for the {groupKey} group",
@@ -1595,6 +1625,8 @@
       }
     },
     "labels": {
+      "heading": "Labels",
+      "description": "Create custom labels to categorize and organize your work items",
       "label_title": "Label title",
       "label_title_is_required": "Label title is required",
       "label_max_char": "Label name should not exceed 255 characters",
@@ -1603,9 +1635,11 @@
       }
     },
     "estimates": {
+      "heading": "Estimates",
+      "description": "Set up estimation systems to track and communicate the effort required for each work item.",
       "label": "Estimates",
       "title": "Enable estimates for my project",
-      "description": "They help you in communicating complexity and workload of the team.",
+      "enable_description": "They help you in communicating complexity and workload of the team.",
       "no_estimate": "No estimate",
       "new": "New estimate system",
       "create": {
@@ -1687,6 +1721,8 @@
     },
     "automations": {
       "label": "Automations",
+      "heading": "Automations",
+      "description": "Configure automated actions to streamline your project management workflow and reduce manual tasks.",
       "auto-archive": {
         "title": "Auto-archive closed work items",
         "description": "Plane will auto archive work items that have been completed or canceled.",

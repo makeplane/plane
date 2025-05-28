@@ -77,7 +77,8 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
         onClose={() => setSelectDeleteLabel(null)}
       />
       <SettingsHeading
-        title={t("common.labels")}
+        title={t("project_settings.labels.heading")}
+        description={t("project_settings.labels.description")}
         button={{
           label: t("common.add_label"),
           onClick: newLabel,

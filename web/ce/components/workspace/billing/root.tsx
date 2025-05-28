@@ -6,6 +6,7 @@ import {
   EProductSubscriptionEnum,
   SUBSCRIPTION_WITH_BILLING_FREQUENCY,
 } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TBillingFrequency, TProductBillingFrequency } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -21,6 +22,7 @@ export const BillingRoot = observer(() => {
   const [productBillingFrequency, setProductBillingFrequency] = useState<TProductBillingFrequency>(
     DEFAULT_PRODUCT_BILLING_FREQUENCY
   );
+  const { t } = useTranslation();
 
   /**
    * Retrieves the billing frequency for a given subscription type
@@ -58,8 +60,8 @@ export const BillingRoot = observer(() => {
   return (
     <section className="relative size-full flex flex-col overflow-y-auto scrollbar-hide">
       <SettingsHeading
-        title="Billing and plans"
-        description="Choose your plan, manage subscriptions, and easily upgrade as your needs grow."
+        title={t("workspace_settings.settings.billing_and_plans.heading")}
+        description={t("workspace_settings.settings.billing_and_plans.description")}
       />
 
       <div

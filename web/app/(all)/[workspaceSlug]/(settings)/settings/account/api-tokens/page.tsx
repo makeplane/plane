@@ -7,12 +7,12 @@ import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
 // component
 import { ApiTokenListItem, CreateApiTokenModal } from "@/components/api-token";
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { DetailedEmptyState } from "@/components/empty-state";
+import { SettingsHeading } from "@/components/settings";
 import { APITokenSettingsLoader } from "@/components/ui";
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
 // store hooks
@@ -62,12 +62,14 @@ const ApiTokensPage = observer(() => {
       <section className="w-full">
         {tokens.length > 0 ? (
           <>
-            <div className="flex items-center justify-between border-b border-custom-border-100 pb-3.5">
-              <h3 className="text-xl font-medium">{t("workspace_settings.settings.api_tokens.title")}</h3>
-              <Button variant="primary" onClick={() => setIsCreateTokenModalOpen(true)}>
-                {t("workspace_settings.settings.api_tokens.add_token")}
-              </Button>
-            </div>
+            <SettingsHeading
+              title={t("account_settings.api_tokens.heading")}
+              description={t("account_settings.api_tokens.description")}
+              button={{
+                label: t("workspace_settings.settings.api_tokens.add_token"),
+                onClick: () => setIsCreateTokenModalOpen(true),
+              }}
+            />
             <div>
               {tokens.map((token) => (
                 <ApiTokenListItem key={token.id} token={token} />
@@ -76,12 +78,14 @@ const ApiTokensPage = observer(() => {
           </>
         ) : (
           <div className="flex h-full w-full flex-col">
-            <div className="flex items-center justify-between gap-4 border-b border-custom-border-100 pb-3.5">
-              <h3 className="text-xl font-medium">{t("workspace_settings.settings.api_tokens.title")}</h3>
-              <Button variant="primary" onClick={() => setIsCreateTokenModalOpen(true)}>
-                {t("workspace_settings.settings.api_tokens.add_token")}
-              </Button>
-            </div>
+            <SettingsHeading
+              title={t("account_settings.api_tokens.heading")}
+              description={t("account_settings.api_tokens.description")}
+              button={{
+                label: t("workspace_settings.settings.api_tokens.add_token"),
+                onClick: () => setIsCreateTokenModalOpen(true),
+              }}
+            />
             <div className="h-full w-full flex items-center justify-center">
               <DetailedEmptyState
                 title={t("workspace_settings.empty_state.api_tokens.title")}

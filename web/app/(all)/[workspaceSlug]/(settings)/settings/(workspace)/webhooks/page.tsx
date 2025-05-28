@@ -68,7 +68,7 @@ const WebhooksListPage = observer(() => {
         />
         <SettingsHeading
           title={t("workspace_settings.settings.webhooks.title")}
-          description="Automate notifications to external services when project events occur."
+          description={t("workspace_settings.settings.webhooks.description")}
           button={{
             label: t("workspace_settings.settings.webhooks.add_webhook"),
             onClick: () => setShowCreateWebhookModal(true),

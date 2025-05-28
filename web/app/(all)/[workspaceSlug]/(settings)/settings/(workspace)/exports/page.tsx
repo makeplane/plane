@@ -42,8 +42,8 @@ const ExportsPage = observer(() => {
         })}
       >
         <SettingsHeading
-          title={t("workspace_settings.settings.exports.title")}
-          description="Export your project data in various formats and access your export history with download links."
+          title={t("workspace_settings.settings.exports.heading")}
+          description={t("workspace_settings.settings.exports.description")}
         />
         <ExportGuide />
       </div>

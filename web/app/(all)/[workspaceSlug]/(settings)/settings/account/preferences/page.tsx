@@ -8,6 +8,7 @@ import { PageHead } from "@/components/core";
 import { PreferencesList } from "@/components/preferences/list";
 import { LanguageTimezone, ProfileSettingContentHeader } from "@/components/profile";
 // hooks
+import { SettingsHeading } from "@/components/settings";
 import { useUserProfile } from "@/hooks/store";
 const ProfileAppearancePage = observer(() => {
   const { t } = useTranslation();
@@ -21,7 +22,10 @@ const ProfileAppearancePage = observer(() => {
         <>
           <div className="flex flex-col gap-4 w-full">
             <div>
-              <ProfileSettingContentHeader title={t("preferences")} />
+              <SettingsHeading
+                title={t("account_settings.preferences.heading")}
+                description={t("account_settings.preferences.description")}
+              />
               <PreferencesList />
             </div>
             <div>
