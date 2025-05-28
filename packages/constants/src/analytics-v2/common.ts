@@ -17,56 +17,56 @@ export const insightsFields: Record<TAnalyticsTabsV2Base, IInsightField[]> = {
       key: "total_users",
       i18nKey: "workspace_analytics.total",
       i18nProps: {
-        entity: "Users",
+        entity: "common.users",
       },
     },
     {
       key: "total_admins",
       i18nKey: "workspace_analytics.total",
       i18nProps: {
-        entity: "Admins",
+        entity: "common.admins",
       },
     },
     {
       key: "total_members",
       i18nKey: "workspace_analytics.total",
       i18nProps: {
-        entity: "Members",
+        entity: "common.members",
       },
     },
     {
       key: "total_guests",
       i18nKey: "workspace_analytics.total",
       i18nProps: {
-        entity: "Guests",
+        entity: "common.guests",
       },
     },
     {
       key: "total_projects",
       i18nKey: "workspace_analytics.total",
       i18nProps: {
-        entity: "Projects",
+        entity: "common.projects",
       },
     },
     {
       key: "total_work_items",
       i18nKey: "workspace_analytics.total",
       i18nProps: {
-        entity: "work items",
+        entity: "common.work_items",
       },
     },
     {
       key: "total_cycles",
       i18nKey: "workspace_analytics.total",
       i18nProps: {
-        entity: "Cycles",
+        entity: "common.cycles",
       },
     },
     {
       key: "total_intake",
       i18nKey: "workspace_analytics.total",
       i18nProps: {
-        entity: "Intake",
+        entity: "sidebar.intake",
       },
     },
   ],

@@ -61,7 +61,10 @@ const TotalInsights: React.FC<{
               ? storeType === EIssuesStoreType.EPIC
                 ? t(item.i18nKey, { entity: t("common.epics") })
                 : t(item.i18nKey, { entity: t("common.work_items") })
-              : t(item.i18nKey, { ...item.i18nProps })
+              : t(item.i18nKey, {
+                  ...item.i18nProps,
+                  entity: item.i18nProps?.entity && t(item.i18nProps?.entity),
+                })
           }
           versus={selectedDurationLabel}
         />
