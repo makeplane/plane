@@ -53,7 +53,8 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
         }
 
         # Fetch the main page
-        response = requests.get(url, headers=headers, timeout=10)
+        response = requests.get(url, headers=headers, timeout=2)
+
         response.raise_for_status()
 
         # Parse HTML
@@ -61,7 +62,7 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
 
         # Extract title
         title_tag = soup.find("title")
-        title = title_tag.get_text().strip() if title_tag else "No title found"
+        title = title_tag.get_text().strip() if title_tag else None
 
         # Fetch and encode favicon
         favicon_base64 = fetch_and_encode_favicon(headers, soup, url)
@@ -122,7 +123,7 @@ def find_favicon_url(soup: BeautifulSoup, base_url: str) -> Optional[str]:
 
     # Check if fallback exists
     try:
-        response = requests.head(fallback_url, timeout=5)
+        response = requests.head(fallback_url, timeout=2)
         if response.status_code == 200:
             return fallback_url
     except Exception:
@@ -147,9 +148,12 @@ def fetch_and_encode_favicon(
     try:
         favicon_url = find_favicon_url(soup, url)
         if favicon_url is None:
-            favicon_url = DEFAULT_FAVICON
+            return {
+                "favicon_url": None,
+                "favicon_base64": f"data:image/svg+xml;base64,{DEFAULT_FAVICON}",
+            }
 
-        response = requests.get(favicon_url, headers=headers, timeout=10)
+        response = requests.get(favicon_url, headers=headers, timeout=2)
         response.raise_for_status()
 
         # Get content type

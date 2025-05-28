@@ -134,7 +134,14 @@ export const NewFavoriteFolder = observer((props: TProps) => {
           name="name"
           control={control}
           rules={{ required: true }}
-          render={({ field }) => <Input className="w-full" placeholder={t("new_folder")} {...field} />}
+          render={({ field }) => (
+            <Input
+              className="w-full"
+              placeholder={t("new_folder")}
+              aria-label={t("aria_labels.projects_sidebar.enter_folder_name")}
+              {...field}
+            />
+          )}
         />
       </form>
     </div>

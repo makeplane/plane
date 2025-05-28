@@ -1,6 +1,8 @@
 import { findParentNode } from "@tiptap/core";
-import { Plugin, PluginKey, TextSelection } from "@tiptap/pm/state";
+import { Plugin, PluginKey, TextSelection, Transaction } from "@tiptap/pm/state";
 import { DecorationSet, Decoration } from "@tiptap/pm/view";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
 const key = new PluginKey("tableControls");
 
@@ -17,16 +19,14 @@ export function tableControls() {
     },
     props: {
       handleTripleClickOn(view, pos, node, nodePos, event, direct) {
-        if (node.type.name === 'tableCell') {
+        if (node.type.name === CORE_EXTENSIONS.TABLE_CELL) {
           event.preventDefault();
           const $pos = view.state.doc.resolve(pos);
           const line = $pos.parent;
           const linePos = $pos.start();
           const start = linePos;
           const end = linePos + line.nodeSize - 1;
-          const tr = view.state.tr.setSelection(
-            TextSelection.create(view.state.doc, start, end)
-          );
+          const tr = view.state.tr.setSelection(TextSelection.create(view.state.doc, start, end));
           view.dispatch(tr);
           return true;
         }
@@ -52,12 +52,12 @@ export function tableControls() {
 
           if (!pos || pos.pos < 0 || pos.pos > view.state.doc.content.size) return;
 
-          const table = findParentNode((node) => node.type.name === "table")(
+          const table = findParentNode((node) => node.type.name === CORE_EXTENSIONS.TABLE)(
             TextSelection.create(view.state.doc, pos.pos)
           );
-          const cell = findParentNode((node) => node.type.name === "tableCell" || node.type.name === "tableHeader")(
-            TextSelection.create(view.state.doc, pos.pos)
-          );
+          const cell = findParentNode((node) =>
+            [CORE_EXTENSIONS.TABLE_CELL, CORE_EXTENSIONS.TABLE_HEADER].includes(node.type.name as CORE_EXTENSIONS)
+          )(TextSelection.create(view.state.doc, pos.pos));
 
           if (!table || !cell) return;
 
@@ -112,7 +112,7 @@ class TableControlsState {
     };
   }
 
-  apply(tr: any) {
+  apply(tr: Transaction) {
     const actions = tr.getMeta(key);
 
     if (actions?.setHoveredTable !== undefined) {

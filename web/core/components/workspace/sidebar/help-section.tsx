@@ -175,8 +175,13 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                 isCollapsed ? "w-full" : ""
               }`}
               onClick={() => toggleSidebar()}
+              aria-label={t(
+                isCollapsed
+                  ? "aria_labels.projects_sidebar.expand_sidebar"
+                  : "aria_labels.projects_sidebar.collapse_sidebar"
+              )}
             >
-              <MoveLeft className={`h-4 w-4 duration-300 ${isCollapsed ? "rotate-180" : ""}`} />
+              <MoveLeft className={`size-4 duration-300 ${isCollapsed ? "rotate-180" : ""}`} />
             </button>
           </Tooltip>
         </div>
