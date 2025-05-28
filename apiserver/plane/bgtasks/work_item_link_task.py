@@ -53,7 +53,7 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
         }
 
         # Fetch the main page
-        response = requests.get(url, headers=headers, timeout=10)
+        response = requests.get(url, headers=headers, timeout=2)
         response.raise_for_status()
 
         # Parse HTML
