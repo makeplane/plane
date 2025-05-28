@@ -127,7 +127,10 @@ export class ProjectMemberStore implements IProjectMemberStore {
     const memberDetails: IProjectMemberDetails = {
       id: projectMember.id,
       role: projectMember.role,
-      member: this.memberRoot?.memberMap?.[projectMember.member],
+      member: {
+        ...this.memberRoot?.memberMap?.[projectMember.member],
+        joining_date: projectMember.created_at,
+      },
     };
     return memberDetails;
   });
