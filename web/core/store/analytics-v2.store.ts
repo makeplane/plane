@@ -5,7 +5,7 @@ import { CoreRootStore } from "./root.store";
 
 type DurationType = (typeof ANALYTICS_V2_DURATION_FILTER_OPTIONS)[number]["value"];
 
-export interface IAnalyticsStoreV2 {
+export interface IBaseAnalyticsStoreV2 {
   //observables
   currentTab: TAnalyticsTabsV2Base;
   selectedProjects: string[];
@@ -25,7 +25,7 @@ export interface IAnalyticsStoreV2 {
   updateIsPeekView: (isPeekView: boolean) => void;
 }
 
-export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
+export abstract class BaseAnalyticsStoreV2 implements IBaseAnalyticsStoreV2 {
   //observables
   currentTab: TAnalyticsTabsV2Base = "overview";
   selectedProjects: string[] = [];
@@ -38,7 +38,7 @@ export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
       // observables
       currentTab: observable.ref,
       selectedDuration: observable.ref,
-      selectedProjects: observable.ref,
+      selectedProjects: observable,
       selectedCycle: observable.ref,
       selectedModule: observable.ref,
       isPeekView: observable.ref,
