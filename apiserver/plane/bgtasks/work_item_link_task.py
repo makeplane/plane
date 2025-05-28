@@ -55,13 +55,6 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
         # Fetch the main page
         response = requests.get(url, headers=headers, timeout=2)
 
-        if requests.Timeout:
-            return {
-                "titile": None,
-                "favicon": f"data:image/svg+xml;base64,{DEFAULT_FAVICON}",
-                "url": url,
-                "error": f"Request Timeout",
-            }
         response.raise_for_status()
 
         # Parse HTML
@@ -161,13 +154,6 @@ def fetch_and_encode_favicon(
             }
 
         response = requests.get(favicon_url, headers=headers, timeout=2)
-        if requests.Timeout:
-            return {
-                "title": None,
-                "favicon": f"data:image/svg+xml;base64,{DEFAULT_FAVICON}",
-                "url": url,
-                "error": f"Request Timeout",
-            }
         response.raise_for_status()
 
         # Get content type
