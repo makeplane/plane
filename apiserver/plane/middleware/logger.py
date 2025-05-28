@@ -83,6 +83,32 @@ class APITokenLogMiddleware:
         self.process_request(request, response, request_body)
         return response
 
+    def _safe_decode_body(self, content):
+        """
+        Safely decodes request/response body content, handling binary data.
+        Returns None if content is None, or a string representation of the content.
+        """
+        # If the content is None, return None
+        if content is None:
+            return None
+
+        # If the content is an empty bytes object, return None
+        if content == b"":
+            return None
+
+        # Check if content is binary by looking for common binary file signatures
+        if (
+            content.startswith(b"\x89PNG")
+            or content.startswith(b"\xff\xd8\xff")
+            or content.startswith(b"%PDF")
+        ):
+            return "[Binary Content]"
+
+        try:
+            return content.decode("utf-8")
+        except UnicodeDecodeError:
+            return "[Could not decode content]"
+
     def process_request(self, request, response, request_body):
         api_key_header = "X-Api-Key"
         api_key = request.headers.get(api_key_header)
@@ -95,9 +121,13 @@ class APITokenLogMiddleware:
                     method=request.method,
                     query_params=request.META.get("QUERY_STRING", ""),
                     headers=str(request.headers),
-                    body=(request_body.decode("utf-8") if request_body else None),
+                    body=(
+                        self._safe_decode_body(request_body) if request_body else None
+                    ),
                     response_body=(
-                        response.content.decode("utf-8") if response.content else None
+                        self._safe_decode_body(response.content)
+                        if response.content
+                        else None
                     ),
                     response_code=response.status_code,
                     ip_address=get_client_ip(request=request),

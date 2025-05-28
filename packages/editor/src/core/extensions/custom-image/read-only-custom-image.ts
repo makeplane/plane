@@ -1,6 +1,8 @@
 import { mergeAttributes } from "@tiptap/core";
-import { Image } from "@tiptap/extension-image";
+import { Image as BaseImageExtension } from "@tiptap/extension-image";
 import { ReactNodeViewRenderer } from "@tiptap/react";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // components
 import { CustomImageNode, CustomImageExtensionStorage } from "@/extensions/custom-image";
 // types
@@ -9,8 +11,8 @@ import { TReadOnlyFileHandler } from "@/types";
 export const CustomReadOnlyImageExtension = (props: TReadOnlyFileHandler) => {
   const { getAssetSrc, restore: restoreImageFn } = props;
 
-  return Image.extend<Record<string, unknown>, CustomImageExtensionStorage>({
-    name: "imageComponent",
+  return BaseImageExtension.extend<Record<string, unknown>, CustomImageExtensionStorage>({
+    name: CORE_EXTENSIONS.CUSTOM_IMAGE,
     selectable: false,
     group: "block",
     atom: true,
@@ -53,13 +55,11 @@ export const CustomReadOnlyImageExtension = (props: TReadOnlyFileHandler) => {
       return {
         fileMap: new Map(),
         deletedImageSet: new Map<string, boolean>(),
-        uploadInProgress: false,
         maxFileSize: 0,
         // escape markdown for images
         markdown: {
           serialize() {},
         },
-        assetsUploadStatus: {},
       };
     },
 

@@ -743,7 +743,8 @@
         "message": "Qualcosa è andato storto. Per favore, riprova."
       },
       "required": "Questo campo è obbligatorio",
-      "entity_required": "{entity} è obbligatorio"
+      "entity_required": "{entity} è obbligatorio",
+      "restricted_entity": "{entity} è limitato"
     },
     "update_link": "Aggiorna link",
     "attach": "Allega",
@@ -1107,6 +1108,18 @@
     "remove": {
       "success": "Sotto-elemento di lavoro rimosso con successo",
       "error": "Errore nella rimozione del sotto-elemento di lavoro"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Non hai sotto-elementi di lavoro che corrispondono ai filtri che hai applicato.",
+        "description": "Per vedere tutti i sotto-elementi di lavoro, cancella tutti i filtri applicati.",
+        "action": "Cancella filtri"
+      },
+      "list_filters": {
+        "title": "Non hai elementi di lavoro che corrispondono ai filtri che hai applicato.",
+        "description": "Per vedere tutti gli elementi di lavoro, cancella tutti i filtri applicati.",
+        "action": "Cancella filtri"
+      }
     }
   },
   "view": {

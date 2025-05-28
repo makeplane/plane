@@ -746,7 +746,8 @@
         "message": "Ceva a funcționat greșit. Te rugăm să încerci din nou."
       },
       "required": "Acest câmp este obligatoriu",
-      "entity_required": "{entity} este obligatoriu"
+      "entity_required": "{entity} este obligatoriu",
+      "restricted_entity": "{entity} este restricționat"
     },
     "update_link": "Actualizează link-ul",
     "attach": "Atașează",
@@ -1108,6 +1109,18 @@
     "remove": {
       "success": "Sub-activitatea a fost eliminată cu succes",
       "error": "Eroare la eliminarea sub-activității"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Nu ai sub-elemente de lucru care corespund filtrelor pe care le-ai aplicat.",
+        "description": "Pentru a vedea toate sub-elementele de lucru, șterge toate filtrele aplicate.",
+        "action": "Șterge filtrele"
+      },
+      "list_filters": {
+        "title": "Nu ai elemente de lucru care corespund filtrelor pe care le-ai aplicat.",
+        "description": "Pentru a vedea toate elementele de lucru, șterge toate filtrele aplicate.",
+        "action": "Șterge filtrele"
+      }
     }
   },
   "view": {

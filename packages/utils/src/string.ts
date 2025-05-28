@@ -87,36 +87,6 @@ export const copyUrlToClipboard = async (path: string) => {
 };
 
 /**
- * @description Generates a deterministic HSL color based on input string
- * @param {string} string - Input string to generate color from
- * @returns {string} HSL color string
- * @example
- * generateRandomColor("hello") // returns consistent HSL color for "hello"
- * generateRandomColor("") // returns "rgb(var(--color-primary-100))"
- */
-export const generateRandomColor = (string: string): string => {
-  if (!string) return "rgb(var(--color-primary-100))";
-
-  string = `${string}`;
-
-  const uniqueId = string.length.toString() + string;
-  const combinedString = uniqueId + string;
-
-  const hash = Array.from(combinedString).reduce((acc, char) => {
-    const charCode = char.charCodeAt(0);
-    return (acc << 5) - acc + charCode;
-  }, 0);
-
-  const hue = hash % 360;
-  const saturation = 70;
-  const lightness = 60;
-
-  const randomColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-
-  return randomColor;
-};
-
-/**
  * @description Gets first character of first word or first characters of first two words
  * @param {string} str - Input string
  * @returns {string} First character(s)
@@ -274,6 +244,33 @@ export const checkURLValidity = (url: string): boolean => {
 
   return urlPattern.test(url);
 };
+
+/**
+ * Combines array elements with a separator and adds a conjunction before the last element
+ * @param array Array of strings to combine
+ * @param separator Separator to use between elements (default: ", ")
+ * @param conjunction Conjunction to use before last element (default: "and")
+ * @returns Combined string with conjunction before the last element
+ */
+export const joinWithConjunction = (array: string[], separator: string = ", ", conjunction: string = "and"): string => {
+  if (!array || array.length === 0) return "";
+  if (array.length === 1) return array[0];
+  if (array.length === 2) return `${array[0]} ${conjunction} ${array[1]}`;
+
+  const lastElement = array[array.length - 1];
+  const elementsExceptLast = array.slice(0, -1);
+
+  return `${elementsExceptLast.join(separator)}${separator}${conjunction} ${lastElement}`;
+};
+
+/**
+ * @description Ensures a URL has a protocol
+ * @param {string} url
+ * @returns {string}
+ * @example
+ * ensureUrlHasProtocol("example.com") => "http://example.com"
+ */
+export const ensureUrlHasProtocol = (url: string): string => (url.startsWith("http") ? url : `http://${url}`);
 
 // Browser-only clipboard functions
 // let copyTextToClipboard: (text: string) => Promise<void>;

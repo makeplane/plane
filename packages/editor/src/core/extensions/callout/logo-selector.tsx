@@ -1,9 +1,6 @@
-// plane helpers
-import { convertHexEmojiToDecimal } from "@plane/utils";
-// plane ui
+// plane imports
 import { EmojiIconPicker, EmojiIconPickerTypes, Logo, TEmojiLogoProps } from "@plane/ui";
-// plane utils
-import { cn } from "@plane/utils";
+import { cn, convertHexEmojiToDecimal } from "@plane/utils";
 // types
 import { TCalloutBlockAttributes } from "./types";
 // utils

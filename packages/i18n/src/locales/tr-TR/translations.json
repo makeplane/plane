@@ -748,7 +748,8 @@
         "message": "Bir hata oluştu. Lütfen tekrar deneyin."
       },
       "required": "Bu alan gereklidir",
-      "entity_required": "{entity} gereklidir"
+      "entity_required": "{entity} gereklidir",
+      "restricted_entity": "{entity} kısıtlanmıştır"
     },
     "update_link": "Bağlantıyı güncelle",
     "attach": "Ekle",
@@ -1111,6 +1112,18 @@
     "remove": {
       "success": "Alt iş öğesi başarıyla kaldırıldı",
       "error": "Alt iş öğesi kaldırılırken hata oluştu"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Alt iş öğelerinizin filtreleriyle eşleşmiyor.",
+        "description": "Tüm alt iş öğelerini görmek için tüm uygulanan filtreleri temizleyin.",
+        "action": "Filtreleri temizle"
+      },
+      "list_filters": {
+        "title": "İş öğelerinizin filtreleriyle eşleşmiyor.",
+        "description": "Tüm iş öğelerini görmek için tüm uygulanan filtreleri temizleyin.",
+        "action": "Filtreleri temizle"
+      }
     }
   },
   "view": {

@@ -16,7 +16,7 @@ export function clickHandler(options: ClickHandlerOptions): Plugin {
         }
 
         let a = event.target as HTMLElement;
-        const els = [];
+        const els: HTMLElement[] = [];
 
         while (a?.nodeName !== "DIV") {
           els.push(a);
