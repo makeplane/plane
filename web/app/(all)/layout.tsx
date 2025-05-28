@@ -23,9 +23,9 @@ export const viewport: Viewport = {
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <section>
+    <>
       <PreloadResources />
       {children}
-    </section>
+    </>
   );
 }

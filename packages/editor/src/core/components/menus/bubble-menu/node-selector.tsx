@@ -1,6 +1,6 @@
-import { Dispatch, FC, SetStateAction } from "react";
 import { Editor } from "@tiptap/react";
 import { Check, ChevronDown } from "lucide-react";
+import { Dispatch, FC, SetStateAction } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // components

@@ -1,15 +1,16 @@
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { Editor } from "@tiptap/core";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 // helpers
 import { DROPDOWN_NAVIGATION_KEYS, getNextValidIndex } from "@/helpers/tippy";
 // components
+import { ISlashCommandItem } from "@/types";
 import { TSlashCommandSection } from "./command-items-list";
 import { CommandMenuItem } from "./command-menu-item";
 
 export type SlashCommandsMenuProps = {
   editor: Editor;
   items: TSlashCommandSection[];
-  command: any;
+  command: (item: ISlashCommandItem) => void;
 };
 
 export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref) => {
@@ -103,7 +104,9 @@ export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref)
         sections,
         selectedIndex,
       });
-      setSelectedIndex(newIndex);
+      if (newIndex) {
+        setSelectedIndex(newIndex);
+      }
     },
   }));
 

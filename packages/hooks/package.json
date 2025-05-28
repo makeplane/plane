@@ -22,7 +22,7 @@
     "@plane/eslint-config": "*",
     "@types/node": "^22.5.4",
     "@types/react": "^18.3.11",
-    "tsup": "^8.4.0",
+    "tsup": "8.4.0",
     "typescript": "^5.3.3"
   }
 }
