@@ -1,4 +1,4 @@
-import { action, observable, makeObservable } from "mobx";
+import { action, observable, makeObservable, runInAction } from "mobx";
 
 export interface IThemeStore {
   // observables
@@ -26,7 +26,7 @@ export interface IThemeStore {
 export class ThemeStore implements IThemeStore {
   // observables
   sidebarCollapsed: boolean | undefined = undefined;
-  extendedSidebarCollapsed: boolean | undefined = undefined;
+  extendedSidebarCollapsed: boolean | undefined = true;
   extendedProjectSidebarCollapsed: boolean | undefined = undefined;
   profileSidebarCollapsed: boolean | undefined = undefined;
   workspaceAnalyticsSidebarCollapsed: boolean | undefined = undefined;
@@ -78,12 +78,11 @@ export class ThemeStore implements IThemeStore {
    * @param collapsed
    */
   toggleExtendedSidebar = (collapsed?: boolean) => {
-    if (collapsed === undefined) {
-      this.extendedSidebarCollapsed = !this.extendedSidebarCollapsed;
-    } else {
-      this.extendedSidebarCollapsed = collapsed;
-    }
-    localStorage.setItem("extended_sidebar_collapsed", this.extendedSidebarCollapsed.toString());
+    const updatedState = collapsed ?? !this.extendedSidebarCollapsed;
+    runInAction(() => {
+      this.extendedSidebarCollapsed = updatedState;
+    });
+    localStorage.setItem("extended_sidebar_collapsed", updatedState.toString());
   };
 
   /**
