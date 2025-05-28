@@ -7,7 +7,7 @@ import { CustomImageBlock, CustomImageUploader, ImageAttributes } from "@/extens
 // helpers
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
-export type CustoBaseImageNodeViewProps = {
+export type CustomBaseImageNodeViewProps = {
   getPos: () => number;
   editor: Editor;
   node: NodeViewProps["node"] & {
@@ -17,7 +17,7 @@ export type CustoBaseImageNodeViewProps = {
   selected: boolean;
 };
 
-export type CustomImageNodeProps = NodeViewProps & CustoBaseImageNodeViewProps;
+export type CustomImageNodeProps = NodeViewProps & CustomBaseImageNodeViewProps;
 
 export const CustomImageNode = (props: CustomImageNodeProps) => {
   const { getPos, editor, node, updateAttributes, selected } = props;
