@@ -868,7 +868,10 @@
     "view": "Ver",
     "deactivated_user": "Usuario desactivado",
     "apply": "Aplicar",
-    "applying": "Aplicando"
+    "applying": "Aplicando",
+    "users": "Usuarios",
+    "admins": "Administradores",
+    "guests": "Invitados"
   },
   "chart": {
     "x_axis": "Eje X",

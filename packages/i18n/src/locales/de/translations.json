@@ -865,7 +865,10 @@
     "view": "Ansicht",
     "deactivated_user": "Deaktivierter Benutzer",
     "apply": "Anwenden",
-    "applying": "Wird angewendet"
+    "applying": "Wird angewendet",
+    "users": "Benutzer",
+    "admins": "Administratoren",
+    "guests": "Gäste"
   },
   "chart": {
     "x_axis": "X-Achse",

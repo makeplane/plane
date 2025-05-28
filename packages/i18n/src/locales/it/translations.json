@@ -864,7 +864,10 @@
     "view": "Visualizza",
     "deactivated_user": "Utente disattivato",
     "apply": "Applica",
-    "applying": "Applicazione"
+    "applying": "Applicazione",
+    "users": "Utenti",
+    "admins": "Amministratori",
+    "guests": "Ospiti"
   },
   "chart": {
     "x_axis": "Asse X",

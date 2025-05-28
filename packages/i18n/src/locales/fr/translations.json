@@ -866,7 +866,10 @@
     "view": "Afficher",
     "deactivated_user": "Utilisateur désactivé",
     "apply": "Appliquer",
-    "applying": "Application"
+    "applying": "Application",
+    "users": "Utilisateurs",
+    "admins": "Administrateurs",
+    "guests": "Invités"
   },
   "chart": {
     "x_axis": "Axe X",

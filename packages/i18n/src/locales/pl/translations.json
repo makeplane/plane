@@ -867,7 +867,10 @@
     "view": "Widok",
     "deactivated_user": "Dezaktywowany użytkownik",
     "apply": "Zastosuj",
-    "applying": "Zastosowanie"
+    "applying": "Zastosowanie",
+    "users": "Użytkownicy",
+    "admins": "Administratorzy",
+    "guests": "Goście"
   },
   "chart": {
     "x_axis": "Oś X",

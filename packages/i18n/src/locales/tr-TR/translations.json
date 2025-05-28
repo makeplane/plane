@@ -868,7 +868,10 @@
     "view": "Görünüm",
     "deactivated_user": "Devre dışı bırakılmış kullanıcı",
     "apply": "Uygula",
-    "applying": "Uygulanıyor"
+    "applying": "Uygulanıyor",
+    "users": "Kullanıcılar",
+    "admins": "Yöneticiler",
+    "guests": "Misafirler"
   },
   "chart": {
     "x_axis": "X ekseni",

@@ -867,7 +867,10 @@
     "view": "Zobraziť",
     "deactivated_user": "Deaktivovaný používateľ",
     "apply": "Použiť",
-    "applying": "Používanie"
+    "applying": "Používanie",
+    "users": "Používatelia",
+    "admins": "Administrátori",
+    "guests": "Hostia"
   },
   "chart": {
     "x_axis": "Os X",

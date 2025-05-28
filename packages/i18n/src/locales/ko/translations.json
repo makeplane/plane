@@ -867,7 +867,10 @@
     "view": "보기",
     "deactivated_user": "비활성화된 사용자",
     "apply": "적용",
-    "applying": "적용 중"
+    "applying": "적용 중",
+    "users": "사용자",
+    "admins": "관리자",
+    "guests": "게스트"
   },
   "chart": {
     "x_axis": "X축",

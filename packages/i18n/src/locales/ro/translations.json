@@ -865,7 +865,10 @@
     "view": "Vizualizează",
     "deactivated_user": "Utilizator dezactivat",
     "apply": "Aplică",
-    "applying": "Aplicând"
+    "applying": "Aplicând",
+    "users": "Utilizatori",
+    "admins": "Administratori",
+    "guests": "Invitați"
   },
   "chart": {
     "x_axis": "axa-X",

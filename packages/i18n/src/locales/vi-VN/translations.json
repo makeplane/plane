@@ -866,7 +866,10 @@
     "view": "Xem",
     "deactivated_user": "Người dùng bị vô hiệu hóa",
     "apply": "Áp dụng",
-    "applying": "Đang áp dụng"
+    "applying": "Đang áp dụng",
+    "users": "Người dùng",
+    "admins": "Quản trị viên",
+    "guests": "Khách"
   },
   "chart": {
     "x_axis": "Trục X",

@@ -865,7 +865,10 @@
     "view": "Pohled",
     "deactivated_user": "Deaktivovaný uživatel",
     "apply": "Použít",
-    "applying": "Používání"
+    "applying": "Používání",
+    "users": "Uživatelé",
+    "admins": "Administrátoři",
+    "guests": "Hosté"
   },
   "chart": {
     "x_axis": "Osa X",

@@ -866,7 +866,10 @@
     "view": "查看",
     "deactivated_user": "已停用用户",
     "apply": "应用",
-    "applying": "应用中"
+    "applying": "应用中",
+    "users": "用户",
+    "admins": "管理员",
+    "guests": "访客"
   },
   "chart": {
     "x_axis": "X轴",

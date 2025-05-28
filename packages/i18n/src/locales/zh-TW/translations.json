@@ -867,7 +867,10 @@
     "view": "檢視",
     "deactivated_user": "已停用用戶",
     "apply": "應用",
-    "applying": "應用中"
+    "applying": "應用中",
+    "users": "使用者",
+    "admins": "管理員",
+    "guests": "訪客"
   },
   "chart": {
     "x_axis": "X 軸",
