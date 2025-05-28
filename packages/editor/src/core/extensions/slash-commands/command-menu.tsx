@@ -3,13 +3,14 @@ import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffec
 // helpers
 import { DROPDOWN_NAVIGATION_KEYS, getNextValidIndex } from "@/helpers/tippy";
 // components
+import { ISlashCommandItem } from "@/types";
 import { TSlashCommandSection } from "./command-items-list";
 import { CommandMenuItem } from "./command-menu-item";
 
 export type SlashCommandsMenuProps = {
   editor: Editor;
   items: TSlashCommandSection[];
-  command: any;
+  command: (item: ISlashCommandItem) => void;
   query?: string;
 };
 

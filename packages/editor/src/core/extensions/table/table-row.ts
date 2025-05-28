@@ -1,11 +1,13 @@
 import { mergeAttributes, Node } from "@tiptap/core";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
 export interface TableRowOptions {
   HTMLAttributes: Record<string, any>;
 }
 
 export const TableRow = Node.create<TableRowOptions>({
-  name: "tableRow",
+  name: CORE_EXTENSIONS.TABLE_ROW,
 
   addOptions() {
     return {

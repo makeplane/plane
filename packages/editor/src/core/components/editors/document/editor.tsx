@@ -5,7 +5,7 @@ import { PageRenderer } from "@/components/editors";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // extensions
-import { HeadingListExtension, IssueWidget, SideMenuExtension } from "@/extensions";
+import { HeadingListExtension, WorkItemEmbedExtension, SideMenuExtension } from "@/extensions";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
@@ -36,7 +36,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
     const additionalExtensions: Extensions = [];
     if (embedHandler?.issue) {
       additionalExtensions.push(
-        IssueWidget({
+        WorkItemEmbedExtension({
           widgetCallback: embedHandler.issue.widgetCallback,
         })
       );

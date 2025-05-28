@@ -1,17 +1,16 @@
 import { Editor, mergeAttributes } from "@tiptap/core";
-import { Image } from "@tiptap/extension-image";
+import { Image as BaseImageExtension } from "@tiptap/extension-image";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import { v4 as uuidv4 } from "uuid";
 // constants
 import { ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import { CustomImageNode } from "@/extensions/custom-image";
 // helpers
 import { isFileValid } from "@/helpers/file";
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
-// plugins
-import { TrackImageDeletionPlugin, TrackImageRestorationPlugin } from "@/plugins/image";
 // types
 import { TFileHandler } from "@/types";
 
@@ -23,23 +22,21 @@ export type InsertImageComponentProps = {
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    imageComponent: {
+    [CORE_EXTENSIONS.CUSTOM_IMAGE]: {
       insertImageComponent: ({ file, pos, event }: InsertImageComponentProps) => ReturnType;
       uploadImage: (blockId: string, file: File) => () => Promise<string> | undefined;
-      updateAssetsUploadStatus?: (updatedStatus: TFileHandler["assetsUploadStatus"]) => () => void;
       getImageSource?: (path: string) => () => Promise<string>;
       restoreImage: (src: string) => () => Promise<void>;
     };
   }
 }
 
-export const getImageComponentImageFileMap = (editor: Editor) => getExtensionStorage(editor, "imageComponent")?.fileMap;
+export const getImageComponentImageFileMap = (editor: Editor) =>
+  getExtensionStorage(editor, CORE_EXTENSIONS.CUSTOM_IMAGE)?.fileMap;
 
 export interface CustomImageExtensionStorage {
-  assetsUploadStatus: TFileHandler["assetsUploadStatus"];
   fileMap: Map<string, UploadEntity>;
   deletedImageSet: Map<string, boolean>;
-  uploadInProgress: boolean;
   maxFileSize: number;
 }
 
@@ -47,16 +44,14 @@ export type UploadEntity = ({ event: "insert" } | { event: "drop"; file: File })
 
 export const CustomImageExtension = (props: TFileHandler) => {
   const {
-    assetsUploadStatus,
     getAssetSrc,
     upload,
-    delete: deleteImageFn,
     restore: restoreImageFn,
     validation: { maxFileSize },
   } = props;
 
-  return Image.extend<Record<string, unknown>, CustomImageExtensionStorage>({
-    name: "imageComponent",
+  return BaseImageExtension.extend<Record<string, unknown>, CustomImageExtensionStorage>({
+    name: CORE_EXTENSIONS.CUSTOM_IMAGE,
     selectable: true,
     group: "block",
     atom: true,
@@ -102,41 +97,15 @@ export const CustomImageExtension = (props: TFileHandler) => {
       };
     },
 
-    addProseMirrorPlugins() {
-      return [
-        TrackImageDeletionPlugin(this.editor, deleteImageFn, this.name),
-        TrackImageRestorationPlugin(this.editor, restoreImageFn, this.name),
-      ];
-    },
-
-    onCreate(this) {
-      const imageSources = new Set<string>();
-      this.editor.state.doc.descendants((node) => {
-        if (node.type.name === this.name) {
-          if (!node.attrs.src?.startsWith("http")) return;
-          imageSources.add(node.attrs.src);
-        }
-      });
-      imageSources.forEach(async (src) => {
-        try {
-          await restoreImageFn(src);
-        } catch (error) {
-          console.error("Error restoring image: ", error);
-        }
-      });
-    },
-
     addStorage() {
       return {
         fileMap: new Map(),
         deletedImageSet: new Map<string, boolean>(),
-        uploadInProgress: false,
         maxFileSize,
         // escape markdown for images
         markdown: {
           serialize() {},
         },
-        assetsUploadStatus,
       };
     },
 
@@ -152,6 +121,7 @@ export const CustomImageExtension = (props: TFileHandler) => {
                 acceptedMimeTypes: ACCEPTED_IMAGE_MIME_TYPES,
                 file: props.file,
                 maxFileSize,
+                onError: (_error, message) => alert(message),
               })
             ) {
               return false;
@@ -195,9 +165,6 @@ export const CustomImageExtension = (props: TFileHandler) => {
         uploadImage: (blockId, file) => async () => {
           const fileUrl = await upload(blockId, file);
           return fileUrl;
-        },
-        updateAssetsUploadStatus: (updatedStatus) => () => {
-          this.storage.assetsUploadStatus = updatedStatus;
         },
         getImageSource: (path) => async () => await getAssetSrc(path),
         restoreImage: (src) => async () => {

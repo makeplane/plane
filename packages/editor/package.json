@@ -68,7 +68,6 @@
     "linkifyjs": "^4.1.3",
     "lowlight": "^3.0.0",
     "lucide-react": "^0.469.0",
-    "prosemirror-codemark": "^0.4.2",
     "prosemirror-safari-ime-span": "^1.0.2",
     "prosemirror-utils": "^1.2.2",
     "smooth-scroll-into-view-if-needed": "^2.0.2",
@@ -88,7 +87,7 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.2.18",
     "postcss": "^8.4.38",
-    "tsup": "^8.4.0",
+    "tsup": "8.4.0",
     "typescript": "5.3.3"
   },
   "resolutions": {

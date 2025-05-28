@@ -19,11 +19,11 @@ import { CustomLinkExtension } from "./custom-link";
 import { CustomHorizontalRule } from "./horizontal-rule";
 import { ImageExtensionWithoutProps } from "./image";
 import { CustomImageComponentWithoutProps } from "./image/image-component-without-props";
-import { IssueWidgetWithoutProps } from "./issue-embed/issue-embed-without-props";
 import { CustomMentionExtensionConfig } from "./mentions/extension-config";
 import { CustomQuoteExtension } from "./quote";
 import { TableHeader, TableCell, TableRow, Table } from "./table";
 import { CustomTextAlignExtension } from "./text-align";
+import { WorkItemEmbedExtensionConfig } from "./work-item-embed/extension-config";
 
 export const CoreEditorExtensionsWithoutProps = [
   StarterKit.configure({
@@ -75,12 +75,12 @@ export const CoreEditorExtensionsWithoutProps = [
         "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
     },
   }),
-  ImageExtensionWithoutProps().configure({
+  ImageExtensionWithoutProps.configure({
     HTMLAttributes: {
       class: "rounded-md",
     },
   }),
-  CustomImageComponentWithoutProps(),
+  CustomImageComponentWithoutProps,
   TiptapUnderline,
   TextStyle,
   TaskList.configure({
@@ -108,6 +108,6 @@ export const CoreEditorExtensionsWithoutProps = [
 ];
 
 export const DocumentEditorExtensionsWithoutProps = [
-  IssueWidgetWithoutProps(),
+  WorkItemEmbedExtensionConfig,
   ...DocumentEditorAdditionalExtensionsWithoutProps,
 ];

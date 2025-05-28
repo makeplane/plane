@@ -4,6 +4,7 @@ import { FC, ReactNode, useRef } from "react";
 import { cn } from "@plane/utils";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // types
 import { TDisplayConfig } from "@/types";
 // components
@@ -36,12 +37,12 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
       if (
         currentNode.content.size === 0 && // Check if the current node is empty
         !(
-          editor.isActive("orderedList") ||
-          editor.isActive("bulletList") ||
-          editor.isActive("taskItem") ||
-          editor.isActive("table") ||
-          editor.isActive("blockquote") ||
-          editor.isActive("codeBlock")
+          editor.isActive(CORE_EXTENSIONS.ORDERED_LIST) ||
+          editor.isActive(CORE_EXTENSIONS.BULLET_LIST) ||
+          editor.isActive(CORE_EXTENSIONS.TASK_ITEM) ||
+          editor.isActive(CORE_EXTENSIONS.TABLE) ||
+          editor.isActive(CORE_EXTENSIONS.BLOCKQUOTE) ||
+          editor.isActive(CORE_EXTENSIONS.CODE_BLOCK)
         ) // Check if it's an empty node within an orderedList, bulletList, taskItem, table, quote or code block
       ) {
         return;
@@ -53,10 +54,10 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
       const lastNode = lastNodePos.node();
 
       // Check if the last node is a  not paragraph
-      if (lastNode && lastNode.type.name !== "paragraph") {
+      if (lastNode && lastNode.type.name !== CORE_EXTENSIONS.PARAGRAPH) {
         // If last node is not a paragraph, insert a new paragraph at the end
         const endPosition = editor?.state.doc.content.size;
-        editor?.chain().insertContentAt(endPosition, { type: "paragraph" }).run();
+        editor?.chain().insertContentAt(endPosition, { type: CORE_EXTENSIONS.PARAGRAPH }).run();
 
         // Focus the newly added paragraph for immediate editing
         editor
