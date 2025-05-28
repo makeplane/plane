@@ -7,9 +7,10 @@ import { ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import { CustoBaseImageNodeViewProps, getImageComponentImageFileMap } from "@/extensions/custom-image";
+// helpers
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // hooks
 import { useUploader, useDropZone, uploadFirstFileAndInsertRemaining } from "@/hooks/use-file-upload";
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
 type CustomImageUploaderProps = CustoBaseImageNodeViewProps & {
   maxFileSize: number;
@@ -79,7 +80,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
 
   const handleProgressStatus = useCallback(
     (isUploading: boolean) => {
-      editor.storage.imageComponent.uploadInProgress = isUploading;
+      getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY).uploadInProgress = isUploading;
     },
     [editor]
   );
