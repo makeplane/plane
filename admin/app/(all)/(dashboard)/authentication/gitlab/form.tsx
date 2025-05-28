@@ -8,14 +8,10 @@ import { IFormattedInstanceConfiguration, TInstanceGitlabAuthenticationConfigura
 import { Button, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import {
-  CodeBlock,
-  ConfirmDiscardModal,
-  ControllerInput,
-  CopyField,
-  TControllerInputFormField,
-  TCopyField,
-} from "@/components/common";
+import { CodeBlock } from "@/components/common/code-block";
+import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
+import { ControllerInput, TControllerInputFormField } from "@/components/common/controller-input";
+import { CopyField, TCopyField } from "@/components/common/copy-field";
 // hooks
 import { useInstance } from "@/hooks/store";
 
