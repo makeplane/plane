@@ -74,7 +74,15 @@ export const useUploader = (args: TUploaderArgs) => {
         setIsUploading(false);
       }
     },
-    [acceptedMimeTypes, editorCommand, handleProgressStatus, loadFileFromFileSystem, maxFileSize, onUpload]
+    [
+      acceptedMimeTypes,
+      editorCommand,
+      handleProgressStatus,
+      loadFileFromFileSystem,
+      maxFileSize,
+      onInvalidFile,
+      onUpload,
+    ]
   );
 
   return { isUploading, uploadFile };

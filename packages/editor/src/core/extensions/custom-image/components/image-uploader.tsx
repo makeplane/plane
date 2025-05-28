@@ -71,14 +71,25 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     },
     [imageComponentImageFileMap, imageEntityId, updateAttributes, getPos]
   );
+
+  const uploadImageEditorCommand = useCallback(
+    async (file: File) => await editor?.commands.uploadImage(imageEntityId ?? "", file),
+    [editor, imageEntityId]
+  );
+
+  const handleProgressStatus = useCallback(
+    (isUploading: boolean) => {
+      editor.storage.imageComponent.uploadInProgress = isUploading;
+    },
+    [editor]
+  );
+
   // hooks
   const { isUploading: isImageBeingUploaded, uploadFile } = useUploader({
     acceptedMimeTypes: ACCEPTED_IMAGE_MIME_TYPES,
     // @ts-expect-error - TODO: fix typings, and don't remove await from here for now
-    editorCommand: async (file) => await editor?.commands.uploadImage(imageEntityId, file),
-    handleProgressStatus: (isUploading) => {
-      getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY).uploadInProgress = isUploading;
-    },
+    editorCommand: uploadImageEditorCommand,
+    handleProgressStatus: handleProgressStatus,
     loadFileFromFileSystem: loadImageFromFileSystem,
     maxFileSize,
     onUpload,
