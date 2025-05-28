@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { Pencil, Trash2, Copy } from "lucide-react";
+import { Pencil, Trash2, Copy, Link } from "lucide-react";
 import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssueServiceType } from "@plane/types";
@@ -37,7 +37,7 @@ export const IssueLinkItem: FC<TIssueLinkItem> = observer((props) => {
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
 
-  const Icon = getIconForLink(linkDetail.url);
+  // const Icon = getIconForLink(linkDetail.url);
   const faviconUrl: string | undefined = linkDetail.metadata?.favicon;
   const linkTitle: string | undefined = linkDetail.metadata?.title;
 
@@ -55,7 +55,7 @@ export const IssueLinkItem: FC<TIssueLinkItem> = observer((props) => {
           {faviconUrl ? (
             <img src={faviconUrl} alt="favicon" className="size-4" />
           ) : (
-            <Icon className="size-4 flex-shrink-0 stroke-2 text-custom-text-350 group-hover:text-custom-text-100" />
+            <Link className="size-4 text-custom-text-350 group-hover:text-custom-text-100" />
           )}
           <Tooltip tooltipContent={linkDetail.url} isMobile={isMobile}>
             <a
