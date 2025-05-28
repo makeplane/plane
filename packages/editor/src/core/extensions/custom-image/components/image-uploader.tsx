@@ -6,13 +6,14 @@ import { cn } from "@plane/utils";
 import { ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
-import { CustoBaseImageNodeViewProps, getImageComponentImageFileMap } from "@/extensions/custom-image";
+import { CustomBaseImageNodeViewProps, getImageComponentImageFileMap } from "@/extensions/custom-image";
 // helpers
+import { EFileError } from "@/helpers/file";
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // hooks
 import { useUploader, useDropZone, uploadFirstFileAndInsertRemaining } from "@/hooks/use-file-upload";
 
-type CustomImageUploaderProps = CustoBaseImageNodeViewProps & {
+type CustomImageUploaderProps = CustomBaseImageNodeViewProps & {
   maxFileSize: number;
   loadImageFromFileSystem: (file: string) => void;
   failedToLoadImage: boolean;
@@ -95,11 +96,16 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     maxFileSize,
     onUpload,
   });
+
+  const handleInvalidFile = useCallback((_error: EFileError, message: string) => {
+    alert(message);
+  }, []);
+
   const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({
     acceptedMimeTypes: ACCEPTED_IMAGE_MIME_TYPES,
     editor,
     maxFileSize,
-    onInvalidFile: (_error, message) => alert(message),
+    onInvalidFile: handleInvalidFile,
     pos: getPos(),
     type: "image",
     uploader: uploadFile,
