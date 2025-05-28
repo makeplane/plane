@@ -1,4 +1,5 @@
-import { computed, makeObservable } from "mobx";
+import set from "lodash/set";
+import { action, computed, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // constants
 import { EPageAccess, EUserPermissions } from "@plane/constants";
@@ -32,13 +33,13 @@ export class ProjectPage extends BasePage implements TProjectPage {
         if (!workspaceSlug || !projectId || !page.id) throw new Error("Missing required fields.");
         await projectPageService.updateAccess(workspaceSlug, projectId, page.id, payload);
       },
-      lock: async () => {
+      lock: async (recursive: boolean) => {
         if (!workspaceSlug || !projectId || !page.id) throw new Error("Missing required fields.");
-        await projectPageService.lock(workspaceSlug, projectId, page.id);
+        await projectPageService.lock(workspaceSlug, projectId, page.id, recursive);
       },
-      unlock: async () => {
+      unlock: async (recursive: boolean) => {
         if (!workspaceSlug || !projectId || !page.id) throw new Error("Missing required fields.");
-        await projectPageService.unlock(workspaceSlug, projectId, page.id);
+        await projectPageService.unlock(workspaceSlug, projectId, page.id, recursive);
       },
       archive: async () => {
         if (!workspaceSlug || !projectId || !page.id) throw new Error("Missing required fields.");
@@ -55,6 +56,8 @@ export class ProjectPage extends BasePage implements TProjectPage {
     });
     makeObservable(this, {
       // computed
+      parentPageIds: computed,
+      subPageIds: computed,
       canCurrentUserAccessPage: computed,
       canCurrentUserEditPage: computed,
       canCurrentUserDuplicatePage: computed,
@@ -65,7 +68,34 @@ export class ProjectPage extends BasePage implements TProjectPage {
       canCurrentUserFavoritePage: computed,
       canCurrentUserMovePage: computed,
       isContentEditable: computed,
+      // actions
+      fetchSubPages: action,
     });
+  }
+
+  get parentPageIds() {
+    const immediateParent = this.parent_id;
+    if (!immediateParent) return [];
+    const parentPageIds = [immediateParent];
+    let parent = this.rootStore.workspacePages.data[immediateParent];
+    while (parent?.parent_id) {
+      parentPageIds.push(parent.parent_id);
+      parent = this.rootStore.workspacePages.data[parent.parent_id];
+    }
+    return parentPageIds.filter((id): id is string => id !== undefined);
+  }
+
+  get subPageIds() {
+    const pages = Object.values(this.rootStore.projectPages.data);
+    const subPageIds = pages
+      .filter((page) => page.parent_id === this.id && !page.deleted_at)
+      .map((page) => page.id)
+      .filter((id): id is string => id !== undefined);
+    return subPageIds;
+  }
+
+  get subPages() {
+    return this.subPageIds.map((id) => this.rootStore.projectPages.data[id]);
   }
 
   private getHighestRoleAcrossProjects = computedFn((): EUserPermissions | undefined => {
@@ -180,4 +210,22 @@ export class ProjectPage extends BasePage implements TProjectPage {
     const { workspaceSlug } = this.rootStore.router;
     return `/${workspaceSlug}/projects/${this.project_ids?.[0]}/pages/${this.id}`;
   });
+
+  fetchSubPages = async () => {
+    try {
+      const { workspaceSlug } = this.rootStore.router ?? {};
+      const projectId = this.project_ids?.[0];
+      if (!workspaceSlug || !projectId || !this.id) throw new Error("Required fields not found");
+      const subPages = await projectPageService.fetchSubPages(workspaceSlug, projectId, this.id);
+
+      runInAction(() => {
+        for (const page of subPages) {
+          if (page?.id) set(this.rootStore.projectPages.data, [page.id], new ProjectPage(this.rootStore, page));
+        }
+      });
+    } catch (error) {
+      console.error("Error in fetching sub-pages", error);
+      throw error;
+    }
+  };
 }

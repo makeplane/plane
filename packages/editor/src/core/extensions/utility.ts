@@ -1,6 +1,4 @@
 import { Extension } from "@tiptap/core";
-// prosemirror plugins
-import codemark from "prosemirror-codemark";
 // helpers
 import { restorePublicImages } from "@/helpers/image-helpers";
 // plugins
@@ -9,6 +7,8 @@ import { FilePlugins } from "@/plugins/file/root";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
 // types
 import { TFileHandler, TReadOnlyFileHandler } from "@/types";
+// prosemirror plugins
+import { codemark } from "./code-mark";
 
 declare module "@tiptap/core" {
   interface Commands {
