@@ -145,6 +145,7 @@ class WorkitemTemplate(WorkspaceBaseModel):
 class Type(PydanticBaseModel):
     id: UUID4
     name: str = Field(..., max_length=255)
+    description: Optional[str] = Field("", max_length=255)
     logo_props: dict
     is_epic: bool
 
@@ -396,6 +397,7 @@ class ProjectState(PydanticBaseModel):
 class WorkitemProperty(PydanticBaseModel):
     id: UUID4
     display_name: str = Field(..., max_length=255)
+    description: Optional[str] = Field("")
     property_type: str
     relation_type: Optional[str] = None
     logo_props: Dict
@@ -427,6 +429,7 @@ class WorkitemProperty(PydanticBaseModel):
 class WorkitemType(PydanticBaseModel):
     id: UUID4
     name: str = Field(..., max_length=255)
+    description: Optional[str] = Field("")
     logo_props: dict
     is_epic: bool
     is_default: bool = False

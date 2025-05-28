@@ -285,6 +285,7 @@ export const buildWorkItemTypeSchema = (
   return {
     id: workItemType.id,
     name: workItemType.name,
+    description: workItemType.description,
     logo_props: workItemType.logo_props,
     is_epic: workItemType.is_epic,
   };
@@ -391,6 +392,7 @@ export const buildCustomPropertySchema = (
     id: property.id,
     name: property.name,
     display_name: property.display_name,
+    description: property.description,
     property_type: property.property_type,
     relation_type: property.relation_type,
     logo_props: property.logo_props,

@@ -166,6 +166,7 @@ export const buildProjectWorkItemTypesSchema = (
     workItemTypesSchema.push({
       id: baseWorkItemTypeSchema.id,
       name: baseWorkItemTypeSchema.name,
+      description: baseWorkItemTypeSchema.description,
       logo_props: baseWorkItemTypeSchema.logo_props,
       is_epic: baseWorkItemTypeSchema.is_epic,
       is_default: workItemType.is_default,

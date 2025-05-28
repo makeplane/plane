@@ -13,7 +13,7 @@ import {
   CompleteOrEmpty,
 } from "@plane/types";
 
-export type TWorkItemTypeSchema = Pick<TIssueType, "id" | "name" | "logo_props" | "is_epic">;
+export type TWorkItemTypeSchema = Pick<TIssueType, "id" | "name" | "description" | "logo_props" | "is_epic">;
 
 export type TWorkItemStateSchema = Pick<Partial<IState>, "id" | "name" | "group">;
 
@@ -33,6 +33,7 @@ export type TCustomPropertySchema = Pick<
   | "id"
   | "name"
   | "display_name"
+  | "description"
   | "property_type"
   | "relation_type"
   | "logo_props"
