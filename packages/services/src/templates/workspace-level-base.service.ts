@@ -3,7 +3,7 @@ import { API_BASE_URL, ETemplateType } from "@plane/constants";
 import { PartialDeep, TBaseTemplateWithData } from "@plane/types";
 // local imports
 import { APIService } from "../api.service";
-import { buildWorkspaceLevelTemplateApiUrl } from "./utils";
+import { buildWorkspaceLevelTemplateApiUrl, TCopyTemplateResponse } from "./utils";
 /**
  * Service class for managing workspace level templates
  * @extends {APIService}
@@ -84,6 +84,23 @@ export abstract class WorkspaceLevelTemplateServiceBase<T extends TBaseTemplateW
    */
   async destroy(workspaceSlug: string, templateId: string): Promise<void> {
     return this.delete(buildWorkspaceLevelTemplateApiUrl(workspaceSlug, this.templateType, templateId))
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Copies a workspace level template
+   * @param workspaceSlug The slug of the workspace to copy the template to
+   * @param templateId The ID of the template to copy
+   * @returns A promise that resolves to the copied workspace level template
+   * @throws {Error} If the API request fails
+   */
+  async copy(workspaceSlug: string, templateId: string): Promise<TCopyTemplateResponse> {
+    return this.post(`${buildWorkspaceLevelTemplateApiUrl(workspaceSlug, this.templateType)}copy/`, {
+      template_id: templateId,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

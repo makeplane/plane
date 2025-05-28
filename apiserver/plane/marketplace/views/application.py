@@ -67,7 +67,9 @@ class ApplicationCategoryEndpoint(BaseAPIView):
     serializer_class = ApplicationCategorySerializer
 
     def get(self, request: Request) -> Response:
-        application_categories: QuerySet[ApplicationCategory] = self.model.objects.all()
+        application_categories: QuerySet[ApplicationCategory] = self.model.objects.filter(
+            is_active=True
+        )
         serialised_application_categories = self.serializer_class(
             application_categories, many=True
         )

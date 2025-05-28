@@ -8,8 +8,13 @@ from plane.ee.models import TemplateCategory, Template
 class TemplateCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = TemplateCategory
-        fields = "__all__"
-
+        fields = [
+            "id",
+            "name",
+            "description",
+            "logo_props",
+            "is_active",
+        ]
 
 class PublishedTemplateSerializer(DynamicBaseSerializer):
     attachments = serializers.SerializerMethodField()
@@ -27,6 +32,8 @@ class PublishedTemplateSerializer(DynamicBaseSerializer):
             "categories",
             "attachments",
             "keywords",
+            "website",
+            "company_name",
         ]
 
     def get_attachments(self, obj):
@@ -50,7 +57,6 @@ class PublishedTemplateDetailSerializer(PublishedTemplateSerializer):
             "updated_at",
             "description_stripped",
             "description_html",
-            "company_name",
             "supported_languages",
             "privacy_policy_url",
             "terms_of_service_url",
@@ -73,6 +79,7 @@ class PublishedTemplateMetaSerializer(serializers.ModelSerializer):
             "description_stripped",
             "short_description",
             "categories",
+            "keywords",
         ]
 
     def get_categories(self, obj):

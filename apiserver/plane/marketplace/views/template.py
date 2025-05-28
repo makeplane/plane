@@ -26,7 +26,9 @@ class TemplateCategoryEndpoint(BaseAPIView):
     serializer_class = TemplateCategorySerializer
 
     def get(self, request: Request) -> Response:
-        template_categories: QuerySet[TemplateCategory] = self.model.objects.all()
+        template_categories: QuerySet[TemplateCategory] = self.model.objects.filter(
+            is_active=True
+        )
         serialised_template_categories = self.serializer_class(
             template_categories, many=True
         )

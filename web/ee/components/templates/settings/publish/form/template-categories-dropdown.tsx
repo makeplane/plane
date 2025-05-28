@@ -18,9 +18,9 @@ export const TemplateCategoriesDropdown: React.FC<TSelectCategoriesProps> = obse
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { sortedTemplateCategories, getTemplateCategoryById } = useTemplateHelper();
+  const { sortedActiveTemplateCategories, getTemplateCategoryById } = useTemplateHelper();
   // derived values
-  const options = sortedTemplateCategories.map((category) => ({
+  const options = sortedActiveTemplateCategories.map((category) => ({
     data: category.id,
     value: category.name,
   }));

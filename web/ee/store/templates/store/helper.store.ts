@@ -3,9 +3,8 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { TEMPLATE_KEYWORDS } from "@plane/constants";
 import { TemplateHelperService } from "@plane/services";
-import { TTemplateCategory, TTemplateKeywords } from "@plane/types";
+import { TTemplateCategory } from "@plane/types";
 // plane web imports
 import { RootStore } from "@/plane-web/store/root.store";
 
@@ -13,11 +12,10 @@ export interface ITemplateHelperStore {
   // observables
   templateCategories: Record<string, TTemplateCategory>;
   // computed
-  sortedTemplateCategories: TTemplateCategory[];
+  sortedActiveTemplateCategories: TTemplateCategory[];
   // computed functions
   getIsTemplatePublishEnabled: (workspaceSlug: string) => boolean;
   getTemplateCategoryById: (id: string) => TTemplateCategory | undefined;
-  getTemplateKeywords: () => readonly TTemplateKeywords[];
   // actions
   fetchTemplateCategories: () => Promise<void>;
 }
@@ -46,15 +44,18 @@ export class TemplateHelperStore implements ITemplateHelperStore {
       // observables
       templateCategories: observable,
       // computed
-      sortedTemplateCategories: computed,
+      sortedActiveTemplateCategories: computed,
       // actions
       fetchTemplateCategories: action,
     });
   }
 
   // computed
-  get sortedTemplateCategories() {
-    return orderBy(Object.values(this.templateCategories), ["created_at"], ["desc"]);
+  get sortedActiveTemplateCategories() {
+    const activeTemplateCategories = Object.values(this.templateCategories).filter(
+      (templateCategory) => templateCategory.is_active
+    );
+    return orderBy(activeTemplateCategories, ["created_at"], ["desc"]);
   }
 
   // computed functions
@@ -78,12 +79,6 @@ export class TemplateHelperStore implements ITemplateHelperStore {
    * @returns The template category
    */
   getTemplateCategoryById = computedFn((id: string) => this.templateCategories[id]);
-
-  /**
-   * @description Get all template keywords
-   * @returns The template keywords
-   */
-  getTemplateKeywords = computedFn(() => TEMPLATE_KEYWORDS);
 
   // actions
   /**

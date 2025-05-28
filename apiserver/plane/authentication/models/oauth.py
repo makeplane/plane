@@ -64,6 +64,7 @@ class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
     support_url = models.URLField(max_length=800, null=True, blank=True)
     setup_url = models.CharField(max_length=800, null=True, blank=True)
     video_url = models.URLField(max_length=800, null=True, blank=True)
+    website = models.URLField(max_length=800, null=True, blank=True)
 
     objects = ApplicationManager()
 
@@ -274,6 +275,8 @@ class ApplicationCategory(BaseModel):
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(null=True, blank=True)
     logo_props = models.JSONField(default=dict)
+    is_active = models.BooleanField(default=True)
+
     class Meta:
         db_table = "oauth_application_categories"
         verbose_name = "Application Category"

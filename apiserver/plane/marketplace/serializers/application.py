@@ -46,4 +46,10 @@ class PublishedApplicationSerializer(serializers.ModelSerializer):
 class ApplicationCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ApplicationCategory
-        fields = "__all__"
+        fields = [
+            "id",
+            "name",
+            "description",
+            "logo_props",
+            "is_active",
+        ]

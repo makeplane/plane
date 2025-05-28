@@ -1,6 +1,10 @@
 // plane imports
 import { ETemplateType } from "@plane/constants";
 
+export type TCopyTemplateResponse = {
+  template_id: string;
+};
+
 /**
  * Maps template types to their corresponding API path segments
  */

@@ -54,6 +54,7 @@ class Template(WorkspaceBaseModel):
     support_url = models.URLField(max_length=800, null=True, blank=True)
     video_url = models.URLField(max_length=800, null=True, blank=True)
     keywords = models.JSONField(default=list)
+    website = models.URLField(max_length=800, null=True, blank=True)
 
     class Meta:
         db_table = "templates"
@@ -94,6 +95,7 @@ class TemplateCategory(BaseModel):
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True)
     logo_props = models.JSONField(default=dict)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         db_table = "template_categories"

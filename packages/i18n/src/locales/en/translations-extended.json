@@ -2129,7 +2129,19 @@
           },
           "keywords": {
             "label": "Keywords",
-            "placeholder": "Use terms that you think your users will search for when looking for this template."
+            "placeholder": "Use terms that you think your users will search for when looking for this template.",
+            "helperText": "Separate keywords with commas (,)",
+            "validation": {
+              "required": "At least one keyword is required"
+            }
+          },
+          "website": {
+            "label": "Website URL",
+            "placeholder": "https://plane.so",
+            "validation": {
+              "invalid": "Invalid URL",
+              "maxLength": "URL should be less than 800 characters"
+            }
           },
           "company_name": {
             "label": "Company name",
@@ -2140,12 +2152,11 @@
             }
           },
           "contact_email": {
-            "label": "Support email",
+            "label": "Contact email",
             "placeholder": "help@plane.so",
             "validation": {
               "invalid": "Invalid email address",
-              "required": "Support email is required",
-              "maxLength": "Support email should be less than 255 characters"
+              "maxLength": "Contact email should be less than 255 characters"
             }
           },
           "privacy_policy_url": {

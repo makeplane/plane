@@ -339,6 +339,6 @@ class OAuthApplicationClientIdEndpoint(BaseAPIView):
 
 class OAuthApplicationCategoryEndpoint(BaseAPIView):
     def get(self, request):
-        application_categories = ApplicationCategory.objects.all()
+        application_categories = ApplicationCategory.objects.filter(is_active=True)
         serializer = ApplicationCategorySerializer(application_categories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

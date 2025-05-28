@@ -35,6 +35,7 @@ const DEFAULT_PUBLISH_TEMPLATE_FORM_VALUES: TPublishTemplateFormWithData = {
   terms_of_service_url: "",
   attachments: [],
   attachments_urls: [],
+  website: "",
 };
 
 export const PublishTemplateFormRoot = observer(

@@ -8,6 +8,6 @@ from plane.ee.serializers.app.template import TemplateCategorySerializer
 
 class TemplateCategoryEndpoint(BaseAPIView):
     def get(self, request):
-        template_categories = TemplateCategory.objects.all()
+        template_categories = TemplateCategory.objects.filter(is_active=True)
         serializer = TemplateCategorySerializer(template_categories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

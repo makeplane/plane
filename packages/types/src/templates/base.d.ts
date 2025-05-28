@@ -1,5 +1,5 @@
 // plane imports
-import { ETemplateType, TEMPLATE_KEYWORDS } from "@plane/constants";
+import { ETemplateType } from "@plane/constants";
 import { CompleteOrEmpty, TLogoProps } from "@plane/types";
 
 export type TTemplateCategory = {
@@ -7,6 +7,7 @@ export type TTemplateCategory = {
   name: string;
   description: string | undefined;
   logo_props: CompleteOrEmpty<TLogoProps>;
+  is_active: boolean;
   // timestamp
   created_at: string;
   updated_at: string;
@@ -18,8 +19,6 @@ export type TTemplateAttachment = {
   file_asset_id: string;
 };
 
-export type TTemplateKeywords = (typeof TEMPLATE_KEYWORDS)[number];
-
 export type TBaseTemplate<T extends ETemplateType, D extends Record<string, unknown> = Record<string, unknown>> = {
   id: string;
   name: string;
@@ -30,13 +29,14 @@ export type TBaseTemplate<T extends ETemplateType, D extends Record<string, unkn
   is_published: boolean;
   description_html: string | undefined;
   categories: string[];
-  keywords: TTemplateKeywords[];
+  keywords: string[];
   company_name: string | undefined;
   contact_email: string | undefined;
   privacy_policy_url: string | undefined;
   terms_of_service_url: string | undefined;
   attachments: string[];
   attachments_urls: string[];
+  website: string | undefined;
   // workspace
   workspace: string;
   // project
@@ -62,6 +62,7 @@ export type TPublishTemplateForm<T extends ETemplateType, D extends Record<strin
   | "terms_of_service_url"
   | "attachments"
   | "attachments_urls"
+  | "website"
 >;
 
 export type TPublishTemplateFormWithData = TPublishTemplateForm<ETemplateType, Record<string, unknown>>;

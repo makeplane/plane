@@ -50,6 +50,7 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
   terms_of_service_url: T["terms_of_service_url"];
   attachments: T["attachments"];
   attachments_urls: T["attachments_urls"];
+  website: T["website"];
   workspace: T["workspace"];
   project: T["project"];
   created_at: T["created_at"];
@@ -80,6 +81,7 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
     this.terms_of_service_url = baseTemplateData.terms_of_service_url;
     this.attachments = baseTemplateData.attachments;
     this.attachments_urls = baseTemplateData.attachments_urls;
+    this.website = baseTemplateData.website;
     this.workspace = baseTemplateData.workspace;
     this.project = baseTemplateData.project;
     this.created_at = baseTemplateData.created_at;
@@ -108,6 +110,7 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
       terms_of_service_url: observable.ref,
       attachments: observable,
       attachments_urls: observable,
+      website: observable.ref,
       workspace: observable.ref,
       project: observable.ref,
       created_at: observable.ref,
@@ -144,6 +147,7 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
       terms_of_service_url: this.terms_of_service_url,
       attachments: this.attachments,
       attachments_urls: this.attachments_urls,
+      website: this.website,
       workspace: this.workspace,
       project: this.project,
       created_at: this.created_at,
@@ -171,6 +175,7 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
       terms_of_service_url: this.terms_of_service_url,
       attachments: this.attachments,
       attachments_urls: this.attachments_urls,
+      website: this.website,
     };
   }
 
