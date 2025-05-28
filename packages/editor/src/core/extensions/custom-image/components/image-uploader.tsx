@@ -90,7 +90,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     acceptedMimeTypes: ACCEPTED_IMAGE_MIME_TYPES,
     // @ts-expect-error - TODO: fix typings, and don't remove await from here for now
     editorCommand: uploadImageEditorCommand,
-    handleProgressStatus: handleProgressStatus,
+    handleProgressStatus,
     loadFileFromFileSystem: loadImageFromFileSystem,
     maxFileSize,
     onUpload,
