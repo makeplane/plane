@@ -467,6 +467,7 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
                 location=OpenApiParameter.PATH,
             ),
         ],
+        request={},
         responses={
             204: OpenApiResponse(description="Project archived"),
             401: UNAUTHORIZED_RESPONSE,
@@ -486,6 +487,7 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
         tags=["Projects"],
         summary="Unarchive Project",
         description="Unarchive an existing project",
+        request={},
         parameters=[
             OpenApiParameter(
                 name="slug",

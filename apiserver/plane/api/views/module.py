@@ -10,6 +10,12 @@ from django.core.serializers.json import DjangoJSONEncoder
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+from drf_spectacular.utils import (
+    extend_schema,
+    OpenApiParameter,
+    OpenApiTypes,
+    OpenApiResponse,
+)
 
 # Module imports
 from plane.api.serializers import (
@@ -34,6 +40,10 @@ from plane.db.models import (
 from .base import BaseAPIView
 from plane.bgtasks.webhook_task import model_activity
 from plane.utils.host import base_host
+from plane.utils.openapi_spec_helpers import (
+    UNAUTHORIZED_RESPONSE,
+    FORBIDDEN_RESPONSE,
+)
 
 
 class ModuleAPIEndpoint(BaseAPIView):
@@ -573,6 +583,30 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             .order_by(self.kwargs.get("order_by", "-created_at"))
         )
 
+    @extend_schema(
+        operation_id="get_archived_modules",
+        tags=["Modules"],
+        summary="Get archived modules",
+        description="Get archived modules",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        request={},
+        responses={
+            200: OpenApiResponse(
+                description="Archived modules", response=ModuleSerializer
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Project not found"),
+        },
+    )
     def get(self, request, slug, project_id, pk):
         return self.paginate(
             request=request,
@@ -582,6 +616,42 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             ).data,
         )
 
+    @extend_schema(
+        operation_id="archive_module",
+        tags=["Modules"],
+        summary="Archive module",
+        description="Archive module",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="module_id",
+                description="Module ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        request={},
+        responses={
+            204: OpenApiResponse(description="Module archived"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Module not found"),
+        },
+    )
     def post(self, request, slug, project_id, pk):
         module = Module.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
         if module.status not in ["completed", "cancelled"]:
@@ -599,6 +669,41 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @extend_schema(
+        operation_id="unarchive_module",
+        tags=["Modules"],
+        summary="Unarchive module",
+        description="Unarchive module",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="module_id",
+                description="Module ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        responses={
+            204: OpenApiResponse(description="Module unarchived"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Module not found"),
+        },
+    )
     def delete(self, request, slug, project_id, pk):
         module = Module.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
         module.archived_at = None

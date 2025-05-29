@@ -59,6 +59,12 @@ from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
 from plane.bgtasks.webhook_task import model_activity
+from drf_spectacular.utils import (
+    extend_schema,
+    OpenApiParameter,
+    OpenApiTypes,
+    OpenApiResponse,
+)
 
 
 class WorkspaceIssueAPIEndpoint(BaseAPIView):
@@ -925,6 +931,41 @@ class IssueCommentAPIEndpoint(BaseAPIView):
 class IssueActivityAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
 
+    @extend_schema(
+        operation_id="get_issue_activities",
+        tags=["Issues"],
+        summary="Get issue activities",
+        description="Get issue activities",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="issue_id",
+                description="Issue ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="Issue activities",
+                response=IssueActivitySerializer,
+            ),
+        },
+    )
     def get(self, request, slug, project_id, issue_id, pk=None):
         issue_activities = (
             IssueActivity.objects.filter(
@@ -1139,6 +1180,91 @@ class IssueAttachmentEndpoint(BaseAPIView):
 class IssueSearchEndpoint(BaseAPIView):
     """Endpoint to search across multiple fields in the issues"""
 
+    @extend_schema(
+        operation_id="search_issues",
+        tags=["Issues"],
+        summary="Search issues",
+        description="Search issues",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="search",
+                description="Search query",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+            ),
+            OpenApiParameter(
+                name="limit",
+                description="Limit",
+                required=False,
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.QUERY,
+            ),
+            OpenApiParameter(
+                name="workspace_search",
+                description="Workspace search",
+                required=False,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.QUERY,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=False,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.QUERY,
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="Issues",
+                response={
+                    "type": "object",
+                    "properties": {
+                        "issues": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "description": "Issue name",
+                                    },
+                                    "id": {
+                                        "type": "string",
+                                        "description": "Issue ID",
+                                    },
+                                    "sequence_id": {
+                                        "type": "string",
+                                        "description": "Issue sequence ID",
+                                    },
+                                    "project__identifier": {
+                                        "type": "string",
+                                        "description": "Project identifier",
+                                    },
+                                    "project_id": {
+                                        "type": "string",
+                                        "description": "Project ID",
+                                    },
+                                    "workspace__slug": {
+                                        "type": "string",
+                                        "description": "Workspace slug",
+                                    },
+                                },
+                            },
+                        }
+                    },
+                },
+            ),
+        },
+    )
     def get(self, request, slug):
         query = request.query_params.get("search", False)
         limit = request.query_params.get("limit", 10)
@@ -1181,7 +1307,6 @@ class IssueSearchEndpoint(BaseAPIView):
             "project__identifier",
             "project_id",
             "workspace__slug",
-            "type_id",
         )[: int(limit)]
 
         return Response({"issues": issue_results}, status=status.HTTP_200_OK)
