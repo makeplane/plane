@@ -18,17 +18,25 @@ const analyticsV2Service = new AnalyticsV2Service();
 const TotalInsights: React.FC<{ analyticsType: TAnalyticsTabsV2Base; peekView?: boolean }> = observer(
   ({ analyticsType, peekView }) => {
     const params = useParams();
-    const workspaceSlug = params.workspaceSlug as string;
+    const workspaceSlug = params.workspaceSlug.toString();
     const { t } = useTranslation();
-    const { selectedDuration, selectedProjects, selectedDurationLabel } = useAnalyticsV2();
+    const { selectedDuration, selectedProjects, selectedDurationLabel, selectedCycle, selectedModule, isPeekView } =
+      useAnalyticsV2();
 
     const { data: totalInsightsData, isLoading } = useSWR(
-      `total-insights-${analyticsType}-${selectedDuration}-${selectedProjects}`,
+      `total-insights-${analyticsType}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}`,
       () =>
-        analyticsV2Service.getAdvanceAnalytics<IAnalyticsResponseV2>(workspaceSlug, analyticsType, {
-          date_filter: selectedDuration,
-          ...(selectedProjects?.length > 0 ? { project_ids: selectedProjects.join(",") } : {}),
-        })
+        analyticsV2Service.getAdvanceAnalytics<IAnalyticsResponseV2>(
+          workspaceSlug,
+          analyticsType,
+          {
+            // date_filter: selectedDuration,
+            ...(selectedProjects?.length > 0 ? { project_ids: selectedProjects.join(",") } : {}),
+            ...(selectedCycle ? { cycle_id: selectedCycle } : {}),
+            ...(selectedModule ? { module_id: selectedModule } : {}),
+          },
+          isPeekView
+        )
     );
     return (
       <div

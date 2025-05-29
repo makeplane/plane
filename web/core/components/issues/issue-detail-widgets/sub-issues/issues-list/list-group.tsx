@@ -45,7 +45,7 @@ export const SubIssuesListGroup: FC<TSubIssuesListGroupProps> = observer((props)
   const isAllIssues = group.id === ALL_ISSUES;
 
   // states
-  const [isCollapsibleOpen, setIsCollapsibleOpen] = useState(isAllIssues);
+  const [isCollapsibleOpen, setIsCollapsibleOpen] = useState(true);
 
   if (!workItemIds.length) return null;
 

@@ -160,7 +160,7 @@ export const Avatar: React.FC<Props> = (props) => {
               color: fallbackTextColor ?? "#ffffff",
             }}
           >
-            {name ? name[0].toUpperCase() : fallbackText ?? "?"}
+            {name?.[0]?.toUpperCase() ?? fallbackText ?? "?"}
           </div>
         )}
       </div>

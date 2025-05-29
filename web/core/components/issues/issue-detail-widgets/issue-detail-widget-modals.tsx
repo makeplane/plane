@@ -1,18 +1,19 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { ISearchIssueResponse, TIssue, TIssueServiceType } from "@plane/types";
+import { ISearchIssueResponse, TIssue, TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "@/components/core";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
-
+// plane web imports
+import { WorkItemAdditionalWidgetModals } from "@/plane-web/components/issues/issue-detail-widgets/modals";
+// local imports
 import { IssueLinkCreateUpdateModal } from "../issue-detail/links/create-update-link-modal";
 // helpers
 import { useLinkOperations } from "./links/helper";
 import { useSubIssueOperations } from "./sub-issues/helper";
-import { TWorkItemWidgets } from ".";
 
 type Props = {
   workspaceSlug: string;
@@ -65,7 +66,7 @@ export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
 
   const handleExistingIssuesModalClose = () => {
     handleIssueCrudState("existing", null, null);
-    setLastWidgetAction("sub-issues");
+    setLastWidgetAction("sub-work-items");
     toggleSubIssuesModal(null);
   };
 
@@ -80,7 +81,7 @@ export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
   const handleCreateUpdateModalClose = () => {
     handleIssueCrudState("create", null, null);
     toggleCreateIssueModal(false);
-    setLastWidgetAction("sub-issues");
+    setLastWidgetAction("sub-work-items");
   };
 
   const handleCreateUpdateModalOnSubmit = async (_issue: TIssue) => {
@@ -190,6 +191,14 @@ export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
           workspaceLevelToggle
         />
       )}
+
+      <WorkItemAdditionalWidgetModals
+        hideWidgets={hideWidgets ?? []}
+        issueServiceType={issueServiceType}
+        projectId={projectId}
+        workItemId={issueId}
+        workspaceSlug={workspaceSlug}
+      />
     </>
   );
 });

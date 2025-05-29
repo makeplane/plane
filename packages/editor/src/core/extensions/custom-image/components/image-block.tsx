@@ -3,7 +3,7 @@ import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from
 // plane utils
 import { cn } from "@plane/utils";
 // extensions
-import { CustoBaseImageNodeViewProps, ImageToolbarRoot } from "@/extensions/custom-image";
+import { CustomBaseImageNodeViewProps, ImageToolbarRoot } from "@/extensions/custom-image";
 import { ImageUploadStatus } from "./upload-status";
 
 const MIN_SIZE = 100;
@@ -38,7 +38,7 @@ const ensurePixelString = <TDefault,>(value: Pixel | TDefault | number | undefin
   return value;
 };
 
-type CustomImageBlockProps = CustoBaseImageNodeViewProps & {
+type CustomImageBlockProps = CustomBaseImageNodeViewProps & {
   imageFromFileSystem: string | undefined;
   setFailedToLoadImage: (isError: boolean) => void;
   editorContainer: HTMLDivElement | null;

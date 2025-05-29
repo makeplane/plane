@@ -748,7 +748,8 @@
         "message": "Algo deu errado. Por favor, tente novamente."
       },
       "required": "Este campo é obrigatório",
-      "entity_required": "{entity} é obrigatório"
+      "entity_required": "{entity} é obrigatório",
+      "restricted_entity": "{entity} está restrito"
     },
     "update_link": "Atualizar link",
     "attach": "Anexar",
@@ -1109,6 +1110,18 @@
     "remove": {
       "success": "Sub-item de trabalho removido com sucesso",
       "error": "Erro ao remover sub-item de trabalho"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Você não tem sub-itens de trabalho que correspondem aos filtros que você aplicou.",
+        "description": "Para ver todos os sub-itens de trabalho, limpe todos os filtros aplicados.",
+        "action": "Limpar filtros"
+      },
+      "list_filters": {
+        "title": "Você não tem itens de trabalho que correspondem aos filtros que você aplicou.",
+        "description": "Para ver todos os itens de trabalho, limpe todos os filtros aplicados.",
+        "action": "Limpar filtros"
+      }
     }
   },
   "view": {

@@ -13,6 +13,7 @@ import { CycleForm } from "@/components/cycles";
 // constants
 // hooks
 import { useEventTracker, useCycle, useProject } from "@/hooks/store";
+import useKeypress from "@/hooks/use-keypress";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
@@ -180,8 +181,12 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
       setActiveProject(projectId ?? workspaceProjectIds?.[0] ?? null);
   }, [activeProject, data, projectId, workspaceProjectIds, isOpen]);
 
+  useKeypress("Escape", () => {
+    if (isOpen) handleClose();
+  });
+
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
+    <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       <CycleForm
         handleFormSubmit={handleFormSubmit}
         handleClose={handleClose}

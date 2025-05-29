@@ -1,9 +1,9 @@
 import { Editor } from "@tiptap/core";
 import { DragEvent, useCallback, useEffect, useState } from "react";
-// extensions
-import { insertFilesSafely } from "@/extensions/drop";
+// helpers
+import { EFileError, isFileValid } from "@/helpers/file";
 // plugins
-import { isFileValid } from "@/helpers/file";
+import { insertFilesSafely } from "@/plugins/drop";
 // types
 import { TEditorCommands } from "@/types";
 
@@ -13,12 +13,20 @@ type TUploaderArgs = {
   handleProgressStatus?: (isUploading: boolean) => void;
   loadFileFromFileSystem?: (file: string) => void;
   maxFileSize: number;
+  onInvalidFile: (error: EFileError, message: string) => void;
   onUpload: (url: string, file: File) => void;
 };
 
 export const useUploader = (args: TUploaderArgs) => {
-  const { acceptedMimeTypes, editorCommand, handleProgressStatus, loadFileFromFileSystem, maxFileSize, onUpload } =
-    args;
+  const {
+    acceptedMimeTypes,
+    editorCommand,
+    handleProgressStatus,
+    loadFileFromFileSystem,
+    maxFileSize,
+    onInvalidFile,
+    onUpload,
+  } = args;
   // states
   const [isUploading, setIsUploading] = useState(false);
 
@@ -30,6 +38,7 @@ export const useUploader = (args: TUploaderArgs) => {
         acceptedMimeTypes,
         file,
         maxFileSize,
+        onError: onInvalidFile,
       });
       if (!isValid) {
         handleProgressStatus?.(false);
@@ -65,7 +74,15 @@ export const useUploader = (args: TUploaderArgs) => {
         setIsUploading(false);
       }
     },
-    [acceptedMimeTypes, editorCommand, handleProgressStatus, loadFileFromFileSystem, maxFileSize, onUpload]
+    [
+      acceptedMimeTypes,
+      editorCommand,
+      handleProgressStatus,
+      loadFileFromFileSystem,
+      maxFileSize,
+      onInvalidFile,
+      onUpload,
+    ]
   );
 
   return { isUploading, uploadFile };
@@ -75,13 +92,14 @@ type TDropzoneArgs = {
   acceptedMimeTypes: string[];
   editor: Editor;
   maxFileSize: number;
+  onInvalidFile: (error: EFileError, message: string) => void;
   pos: number;
   type: Extract<TEditorCommands, "attachment" | "image">;
   uploader: (file: File) => Promise<void>;
 };
 
 export const useDropZone = (args: TDropzoneArgs) => {
-  const { acceptedMimeTypes, editor, maxFileSize, pos, type, uploader } = args;
+  const { acceptedMimeTypes, editor, maxFileSize, onInvalidFile, pos, type, uploader } = args;
   // states
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [draggedInside, setDraggedInside] = useState<boolean>(false);
@@ -117,12 +135,13 @@ export const useDropZone = (args: TDropzoneArgs) => {
         editor,
         filesList,
         maxFileSize,
+        onInvalidFile,
         pos,
         type,
         uploader,
       });
     },
-    [acceptedMimeTypes, editor, maxFileSize, pos, type, uploader]
+    [acceptedMimeTypes, editor, maxFileSize, onInvalidFile, pos, type, uploader]
   );
   const onDragEnter = useCallback(() => setDraggedInside(true), []);
   const onDragLeave = useCallback(() => setDraggedInside(false), []);
@@ -141,6 +160,7 @@ type TMultipleFileArgs = {
   editor: Editor;
   filesList: FileList;
   maxFileSize: number;
+  onInvalidFile: (error: EFileError, message: string) => void;
   pos: number;
   type: Extract<TEditorCommands, "attachment" | "image">;
   uploader: (file: File) => Promise<void>;
@@ -148,7 +168,7 @@ type TMultipleFileArgs = {
 
 // Upload the first file and insert the remaining ones for uploading multiple files
 export const uploadFirstFileAndInsertRemaining = async (args: TMultipleFileArgs) => {
-  const { acceptedMimeTypes, editor, filesList, maxFileSize, pos, type, uploader } = args;
+  const { acceptedMimeTypes, editor, filesList, maxFileSize, onInvalidFile, pos, type, uploader } = args;
   const filteredFiles: File[] = [];
   for (let i = 0; i < filesList.length; i += 1) {
     const file = filesList.item(i);
@@ -158,6 +178,7 @@ export const uploadFirstFileAndInsertRemaining = async (args: TMultipleFileArgs)
         acceptedMimeTypes,
         file,
         maxFileSize,
+        onError: onInvalidFile,
       })
     ) {
       filteredFiles.push(file);

@@ -22,12 +22,12 @@ export const SubIssuesCollapsible: FC<Props> = observer((props) => {
   // store hooks
   const { openWidgets, toggleOpenWidget } = useIssueDetail(issueServiceType);
   // derived values
-  const isCollapsibleOpen = openWidgets.includes("sub-issues");
+  const isCollapsibleOpen = openWidgets.includes("sub-work-items");
 
   return (
     <Collapsible
       isOpen={isCollapsibleOpen}
-      onToggle={() => toggleOpenWidget("sub-issues")}
+      onToggle={() => toggleOpenWidget("sub-work-items")}
       title={
         <SubIssuesCollapsibleTitle
           isOpen={isCollapsibleOpen}

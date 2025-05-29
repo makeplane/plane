@@ -153,12 +153,8 @@ class Workspace(BaseModel):
         return None
 
     def delete(
-            self,
-            using: Optional[str] = None,
-            soft: bool = True,
-            *args: Any,
-            **kwargs: Any
-        ):
+        self, using: Optional[str] = None, soft: bool = True, *args: Any, **kwargs: Any
+    ):
         """
         Override the delete method to append epoch timestamp to the slug when soft deleting.
 
@@ -172,7 +168,7 @@ class Workspace(BaseModel):
         result = super().delete(using=using, soft=soft, *args, **kwargs)
 
         # If it's a soft delete and the model still exists (not hard deleted)
-        if soft and hasattr(self, 'deleted_at') and self.deleted_at:
+        if soft and hasattr(self, "deleted_at") and self.deleted_at:
             # Use the deleted_at timestamp to update the slug
             deletion_timestamp: int = int(self.deleted_at.timestamp())
             self.slug = f"{self.slug}__{deletion_timestamp}"
