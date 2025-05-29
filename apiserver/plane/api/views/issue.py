@@ -1,6 +1,7 @@
 # Python imports
 import json
 import uuid
+import re
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
@@ -1133,3 +1134,54 @@ class IssueAttachmentEndpoint(BaseAPIView):
             get_asset_object_metadata.delay(str(issue_attachment.id))
         issue_attachment.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class IssueSearchEndpoint(BaseAPIView):
+    """Endpoint to search across multiple fields in the issues"""
+
+    def get(self, request, slug):
+        query = request.query_params.get("search", False)
+        limit = request.query_params.get("limit", 10)
+        workspace_search = request.query_params.get("workspace_search", "false")
+        project_id = request.query_params.get("project_id", False)
+
+        if not query:
+            return Response({"issues": []}, status=status.HTTP_200_OK)
+
+        # Build search query
+        fields = ["name", "sequence_id", "project__identifier"]
+        q = Q()
+        for field in fields:
+            if field == "sequence_id":
+                # Match whole integers only (exclude decimal numbers)
+                sequences = re.findall(r"\b\d+\b", query)
+                for sequence_id in sequences:
+                    q |= Q(**{"sequence_id": sequence_id})
+            else:
+                q |= Q(**{f"{field}__icontains": query})
+
+        # Filter issues
+        issues = Issue.issue_objects.filter(
+            q,
+            project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
+            project__archived_at__isnull=True,
+            workspace__slug=slug,
+        )
+
+        # Apply project filter if not searching across workspace
+        if workspace_search == "false" and project_id:
+            issues = issues.filter(project_id=project_id)
+
+        # Get results
+        issue_results = issues.distinct().values(
+            "name",
+            "id",
+            "sequence_id",
+            "project__identifier",
+            "project_id",
+            "workspace__slug",
+            "type_id",
+        )[: int(limit)]
+
+        return Response({"issues": issue_results}, status=status.HTTP_200_OK)

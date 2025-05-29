@@ -8,9 +8,15 @@ from plane.api.views import (
     IssueActivityAPIEndpoint,
     WorkspaceIssueAPIEndpoint,
     IssueAttachmentEndpoint,
+    IssueSearchEndpoint,
 )
 
 urlpatterns = [
+    path(
+        "workspaces/<str:slug>/issues/search/",
+        IssueSearchEndpoint.as_view(),
+        name="issue-search",
+    ),
     path(
         "workspaces/<str:slug>/issues/<str:project__identifier>-<str:issue__identifier>/",
         WorkspaceIssueAPIEndpoint.as_view(),

@@ -10,6 +10,7 @@ from .issue import (
     IssueCommentAPIEndpoint,
     IssueActivityAPIEndpoint,
     IssueAttachmentEndpoint,
+    IssueSearchEndpoint,
 )
 
 from .cycle import (
@@ -25,6 +26,10 @@ from .module import (
     ModuleArchiveUnarchiveAPIEndpoint,
 )
 
-from .member import ProjectMemberAPIEndpoint
+from .member import ProjectMemberAPIEndpoint, WorkspaceMemberAPIEndpoint
 
 from .intake import IntakeIssueAPIEndpoint
+
+from .asset import UserAssetEndpoint, UserServerAssetEndpoint, GenericAssetEndpoint
+
+from .user import UserEndpoint
