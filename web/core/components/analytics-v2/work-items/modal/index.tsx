@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane package imports
 import { ICycle, IModule, IProject } from "@plane/types";
+import { useAnalyticsV2 } from "@/hooks/store";
 // plane web components
 import { WorkItemsModalMainContent } from "./content";
 import { WorkItemsModalHeader } from "./header";
@@ -13,16 +14,21 @@ type Props = {
   projectDetails?: IProject | undefined;
   cycleDetails?: ICycle | undefined;
   moduleDetails?: IModule | undefined;
+  isEpic?: boolean;
 };
 
 export const WorkItemsModal: React.FC<Props> = observer((props) => {
-  const { isOpen, onClose, projectDetails, moduleDetails, cycleDetails } = props;
-
+  const { isOpen, onClose, projectDetails, moduleDetails, cycleDetails, isEpic } = props;
+  const { updateIsEpic } = useAnalyticsV2();
   const [fullScreen, setFullScreen] = useState(false);
 
   const handleClose = () => {
     onClose();
   };
+
+  useEffect(() => {
+    updateIsEpic(isEpic ?? false);
+  }, [isEpic, updateIsEpic]);
 
   return (
     <Transition.Root appear show={isOpen} as={React.Fragment}>

@@ -13,7 +13,7 @@ export interface IBaseAnalyticsStoreV2 {
   selectedCycle: string;
   selectedModule: string;
   isPeekView?: boolean;
-
+  isEpic?: boolean;
   //computed
   selectedDurationLabel: DurationType | null;
 
@@ -23,6 +23,7 @@ export interface IBaseAnalyticsStoreV2 {
   updateSelectedCycle: (cycle: string) => void;
   updateSelectedModule: (module: string) => void;
   updateIsPeekView: (isPeekView: boolean) => void;
+  updateIsEpic: (isEpic: boolean) => void;
 }
 
 export abstract class BaseAnalyticsStoreV2 implements IBaseAnalyticsStoreV2 {
@@ -33,6 +34,7 @@ export abstract class BaseAnalyticsStoreV2 implements IBaseAnalyticsStoreV2 {
   selectedCycle: string = "";
   selectedModule: string = "";
   isPeekView: boolean = false;
+  isEpic: boolean = false;
   constructor() {
     makeObservable(this, {
       // observables
@@ -42,6 +44,7 @@ export abstract class BaseAnalyticsStoreV2 implements IBaseAnalyticsStoreV2 {
       selectedCycle: observable.ref,
       selectedModule: observable.ref,
       isPeekView: observable.ref,
+      isEpic: observable.ref,
       // computed
       selectedDurationLabel: computed,
       // actions
@@ -50,6 +53,7 @@ export abstract class BaseAnalyticsStoreV2 implements IBaseAnalyticsStoreV2 {
       updateSelectedCycle: action,
       updateSelectedModule: action,
       updateIsPeekView: action,
+      updateIsEpic: action,
     });
   }
 
@@ -94,6 +98,12 @@ export abstract class BaseAnalyticsStoreV2 implements IBaseAnalyticsStoreV2 {
   updateIsPeekView = (isPeekView: boolean) => {
     runInAction(() => {
       this.isPeekView = isPeekView;
+    });
+  };
+
+  updateIsEpic = (isEpic: boolean) => {
+    runInAction(() => {
+      this.isEpic = isEpic;
     });
   };
 }
