@@ -5,8 +5,4 @@ export interface IAnalyticsStoreV2 extends IBaseAnalyticsStoreV2 {
   //observables
 }
 
-export class AnalyticsStoreV2 extends BaseAnalyticsStoreV2 {
-  constructor() {
-    super();
-  }
-}
+export class AnalyticsStoreV2 extends BaseAnalyticsStoreV2 {}
