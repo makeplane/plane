@@ -42,6 +42,16 @@ from plane.utils.analytics_plot import burndown_plot
 from plane.utils.host import base_host
 from .base import BaseAPIView
 from plane.bgtasks.webhook_task import model_activity
+from drf_spectacular.utils import (
+    extend_schema,
+    OpenApiParameter,
+    OpenApiTypes,
+    OpenApiResponse,
+)
+from plane.utils.openapi_spec_helpers import (
+    UNAUTHORIZED_RESPONSE,
+    FORBIDDEN_RESPONSE,
+)
 
 
 class CycleAPIEndpoint(BaseAPIView):
@@ -509,6 +519,38 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
+    @extend_schema(
+        operation_id="get_archived_cycles",
+        tags=["Cycles"],
+        summary="Get archived cycles",
+        description="Get archived cycles",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        request={},
+        responses={
+            200: OpenApiResponse(
+                description="Archived cycles",
+                response=CycleSerializer,
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Project not found"),
+        },
+    )
     def get(self, request, slug, project_id):
         return self.paginate(
             request=request,
@@ -518,6 +560,43 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             ).data,
         )
 
+    @extend_schema(
+        operation_id="archive_cycle",
+        tags=["Cycles"],
+        summary="Archive cycle",
+        description="Archive cycle",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="cycle_id",
+                description="Cycle ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        request={},
+        responses={
+            204: OpenApiResponse(description="Cycle archived"),
+            400: OpenApiResponse(description="Cycle cannot be archived"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Cycle not found"),
+        },
+    )
     def post(self, request, slug, project_id, cycle_id):
         cycle = Cycle.objects.get(
             pk=cycle_id, project_id=project_id, workspace__slug=slug
@@ -537,6 +616,42 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @extend_schema(
+        operation_id="unarchive_cycle",
+        tags=["Cycles"],
+        summary="Unarchive cycle",
+        description="Unarchive cycle",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="cycle_id",
+                description="Cycle ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        request={},
+        responses={
+            204: OpenApiResponse(description="Cycle unarchived"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Cycle not found"),
+        },
+    )
     def delete(self, request, slug, project_id, cycle_id):
         cycle = Cycle.objects.get(
             pk=cycle_id, project_id=project_id, workspace__slug=slug
@@ -764,6 +879,75 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
 
     permission_classes = [ProjectEntityPermission]
 
+    @extend_schema(
+        operation_id="transfer_cycle_issues",
+        tags=["Cycles"],
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="cycle_id",
+                description="Cycle ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        request={
+            "type": "object",
+            "required": ["new_cycle_id"],
+            "properties": {
+                "new_cycle_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "ID of the target cycle to transfer issues to",
+                },
+            },
+        },
+        responses={
+            200: OpenApiResponse(
+                description="Issues transferred successfully",
+                response={
+                    "type": "object",
+                    "properties": {
+                        "message": {
+                            "type": "string",
+                            "description": "Success message",
+                        },
+                    },
+                },
+            ),
+            400: OpenApiResponse(
+                description="Bad request",
+                response={
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string",
+                            "description": "Error message",
+                        },
+                    },
+                },
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Cycle not found"),
+        },
+        summary="Transfer issues to a new cycle",
+        description="Transfer issues from the current cycle to a new cycle",
+    )
     def post(self, request, slug, project_id, cycle_id):
         new_cycle_id = request.data.get("new_cycle_id", False)
 

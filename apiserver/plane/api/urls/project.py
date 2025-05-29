@@ -15,7 +15,9 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/archive/",
-        ProjectArchiveUnarchiveAPIEndpoint.as_view(),
+        ProjectArchiveUnarchiveAPIEndpoint.as_view(
+            http_method_names=["post", "delete"]
+        ),
         name="project-archive-unarchive",
     ),
 ]

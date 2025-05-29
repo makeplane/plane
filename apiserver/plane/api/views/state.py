@@ -4,13 +4,22 @@ from django.db import IntegrityError
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+from drf_spectacular.utils import (
+    extend_schema,
+    OpenApiParameter,
+    OpenApiTypes,
+    OpenApiResponse,
+)
 
+# Module imports
 from plane.api.serializers import StateSerializer
 from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import Issue, State
-
-# Module imports
 from .base import BaseAPIView
+from plane.utils.openapi_spec_helpers import (
+    UNAUTHORIZED_RESPONSE,
+    FORBIDDEN_RESPONSE,
+)
 
 
 class StateAPIEndpoint(BaseAPIView):
@@ -33,6 +42,38 @@ class StateAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
+    @extend_schema(
+        operation_id="create_state",
+        tags=["States"],
+        summary="Create State",
+        description="Create a new state for a project",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="State created",
+                response=StateSerializer,
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Project not found"),
+            409: OpenApiResponse(description="State with the same name already exists"),
+        },
+    )
     def post(self, request, slug, project_id):
         try:
             serializer = StateSerializer(
@@ -80,6 +121,34 @@ class StateAPIEndpoint(BaseAPIView):
                 status=status.HTTP_409_CONFLICT,
             )
 
+    @extend_schema(
+        operation_id="get_state",
+        tags=["States"],
+        summary="Get State",
+        description="Get a state for a project",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="State retrieved",
+                response=StateSerializer,
+            ),
+        },
+    )
     def get(self, request, slug, project_id, state_id=None):
         if state_id:
             serializer = StateSerializer(
@@ -96,6 +165,34 @@ class StateAPIEndpoint(BaseAPIView):
             ).data,
         )
 
+    @extend_schema(
+        operation_id="delete_state",
+        tags=["States"],
+        summary="Delete State",
+        description="Delete a state for a project",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        responses={
+            204: OpenApiResponse(description="State deleted"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="State not found"),
+        },
+    )
     def delete(self, request, slug, project_id, state_id):
         state = State.objects.get(
             is_triage=False, pk=state_id, project_id=project_id, workspace__slug=slug
@@ -119,6 +216,34 @@ class StateAPIEndpoint(BaseAPIView):
         state.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @extend_schema(
+        operation_id="update_state",
+        tags=["States"],
+        summary="Update State",
+        description="Update a state for a project",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="State updated",
+                response=StateSerializer,
+            ),
+        },
+    )
     def patch(self, request, slug, project_id, state_id=None):
         state = State.objects.get(
             workspace__slug=slug, project_id=project_id, pk=state_id
