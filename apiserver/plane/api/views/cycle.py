@@ -146,6 +146,21 @@ class CycleAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
+    @extend_schema(
+        operation_id="get_cycles",
+        tags=["Cycles"],
+        summary="Get cycles",
+        description="Get cycles",
+        responses={
+            200: OpenApiResponse(
+                description="Cycles",
+                response=CycleSerializer,
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Project not found"),
+        },
+    )
     def get(self, request, slug, project_id, pk=None):
         project = Project.objects.get(workspace__slug=slug, pk=project_id)
         if pk:
@@ -247,6 +262,52 @@ class CycleAPIEndpoint(BaseAPIView):
             ).data,
         )
 
+    @extend_schema(
+        operation_id="create_cycle",
+        tags=["Cycles"],
+        summary="Create cycle",
+        description="Create cycle",
+        request={
+            "application/json": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Cycle Name",
+                        "maxLength": 255,
+                        "example": "Cycle 1",
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Cycle Description",
+                        "nullable": True,
+                        "example": "This is a cycle description",
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Start Date",
+                        "nullable": True,
+                        "example": "2025-01-01T00:00:00Z",
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "End Date",
+                        "nullable": True,
+                        "example": "2025-01-01T00:00:00Z",
+                    },
+                },
+            },
+        },
+        responses={
+            201: OpenApiResponse(
+                description="Cycle created",
+                response=CycleSerializer,
+            ),
+        },
+    )
     def post(self, request, slug, project_id):
         if (
             request.data.get("start_date", None) is None
@@ -301,6 +362,51 @@ class CycleAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+    @extend_schema(
+        operation_id="update_cycle",
+        tags=["Cycles"],
+        summary="Update cycle",
+        description="Update cycle",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Cycle Name",
+                        "maxLength": 255,
+                        "example": "Cycle 1",
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Cycle Description",
+                        "nullable": True,
+                        "example": "This is a cycle description",
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Start Date",
+                        "nullable": True,
+                        "example": "2025-01-01T00:00:00Z",
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "End Date",
+                        "nullable": True,
+                        "example": "2025-01-01T00:00:00Z",
+                    },
+                },
+            }
+        },
+        responses={
+            200: OpenApiResponse(
+                description="Cycle updated",
+                response=CycleSerializer,
+            ),
+        },
+    )
     def patch(self, request, slug, project_id, pk):
         cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
 
@@ -366,6 +472,18 @@ class CycleAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @extend_schema(
+        operation_id="delete_cycle",
+        tags=["Cycles"],
+        summary="Delete cycle",
+        description="Delete cycle",
+        responses={
+            204: OpenApiResponse(description="Cycle deleted"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Cycle not found"),
+        },
+    )
     def delete(self, request, slug, project_id, pk):
         cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         if cycle.owned_by_id != request.user.id and (
@@ -524,22 +642,6 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         tags=["Cycles"],
         summary="Get archived cycles",
         description="Get archived cycles",
-        parameters=[
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="project_id",
-                description="Project ID",
-                required=True,
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
-            ),
-        ],
         request={},
         responses={
             200: OpenApiResponse(
@@ -565,29 +667,6 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         tags=["Cycles"],
         summary="Archive cycle",
         description="Archive cycle",
-        parameters=[
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="project_id",
-                description="Project ID",
-                required=True,
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="cycle_id",
-                description="Cycle ID",
-                required=True,
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
-            ),
-        ],
         request={},
         responses={
             204: OpenApiResponse(description="Cycle archived"),
@@ -621,29 +700,6 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         tags=["Cycles"],
         summary="Unarchive cycle",
         description="Unarchive cycle",
-        parameters=[
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="project_id",
-                description="Project ID",
-                required=True,
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="cycle_id",
-                description="Cycle ID",
-                required=True,
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
-            ),
-        ],
         request={},
         responses={
             204: OpenApiResponse(description="Cycle unarchived"),
@@ -698,6 +754,12 @@ class CycleIssueAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
+    @extend_schema(
+        operation_id="get_cycle_issues",
+        tags=["Cycles"],
+        summary="Get cycle issues",
+        description="Get cycle issues",
+    )
     def get(self, request, slug, project_id, cycle_id, issue_id=None):
         # Get
         if issue_id:
@@ -759,6 +821,37 @@ class CycleIssueAPIEndpoint(BaseAPIView):
             ).data,
         )
 
+    @extend_schema(
+        operation_id="add_cycle_issues",
+        tags=["Cycles"],
+        summary="Add cycle issues",
+        description="Add cycle issues",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "issues": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid",
+                            "description": "Issue ID",
+                        },
+                    },
+                },
+            },
+        },
+        responses={
+            200: OpenApiResponse(
+                description="Cycle issues added",
+                response=CycleIssueSerializer,
+            ),
+            400: OpenApiResponse(description="Issues are required"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Cycle not found"),
+        },
+    )
     def post(self, request, slug, project_id, cycle_id):
         issues = request.data.get("issues", [])
 
@@ -845,6 +938,12 @@ class CycleIssueAPIEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
+    @extend_schema(
+        operation_id="delete_cycle_issue",
+        tags=["Cycles"],
+        summary="Delete cycle issue",
+        description="Delete cycle issue",
+    )
     def delete(self, request, slug, project_id, cycle_id, issue_id):
         cycle_issue = CycleIssue.objects.get(
             issue_id=issue_id,
