@@ -1,3 +1,5 @@
+from rest_framework import serializers
+
 # Module imports
 from plane.db.models import User
 
@@ -5,6 +7,11 @@ from .base import BaseSerializer
 
 
 class UserLiteSerializer(BaseSerializer):
+    avatar_url = serializers.CharField(
+        help_text="Avatar URL",
+        read_only=True,
+    )
+
     class Meta:
         model = User
         fields = [
