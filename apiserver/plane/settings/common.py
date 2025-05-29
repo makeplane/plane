@@ -509,7 +509,4 @@ if ENABLE_DRF_SPECTACULAR:
                 }
             },
         ],
-        "EXTENSIONS_INFO": {
-            "plane.utils.openapi_spec_helpers.APIKeyAuthenticationExtension": {},
-        },
     }
