@@ -456,6 +456,47 @@ if ENABLE_DRF_SPECTACULAR:
         "PREPROCESSING_HOOKS": [
             "plane.utils.openapi_spec_helpers.preprocess_filter_api_v1_paths",
         ],
+        "POSTPROCESSING_HOOKS": [
+            "plane.utils.openapi_spec_helpers.postprocess_assign_tags",
+        ],
+        "TAGS": [
+            {
+                "name": "Projects",
+                "description": "Project management endpoints - create, update, delete, and manage projects"
+            },
+            {
+                "name": "Issues", 
+                "description": "Issue management endpoints - create, update, assign, and track issues"
+            },
+            {
+                "name": "Cycles",
+                "description": "Sprint/Cycle management endpoints - manage development cycles and sprints"
+            },
+            {
+                "name": "Modules",
+                "description": "Module management endpoints - organize work into modules and roadmaps"
+            },
+            {
+                "name": "States",
+                "description": "Issue state management endpoints - manage workflow states"
+            },
+            {
+                "name": "Labels",
+                "description": "Issue label management endpoints - categorize and organize issues"
+            },
+            {
+                "name": "Members",
+                "description": "Project member management endpoints - manage team access and roles"
+            },
+            {
+                "name": "Assets",
+                "description": "Asset management endpoints - upload, manage, and serve files and media"
+            },
+            {
+                "name": "Users",
+                "description": "User management endpoints - manage user profiles and preferences"
+            }
+        ],
         "AUTHENTICATION_WHITELIST": [
             "plane.api.middleware.api_authentication.APIKeyAuthentication",
         ],
