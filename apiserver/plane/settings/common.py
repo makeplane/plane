@@ -466,8 +466,8 @@ if ENABLE_DRF_SPECTACULAR:
                 "description": "Project management endpoints - create, update, delete, and manage projects",
             },
             {
-                "name": "Issues",
-                "description": "Issue management endpoints - create, update, assign, and track issues",
+                "name": "Work Items",
+                "description": "Work item management endpoints - create, update, assign, and track work items",
             },
             {
                 "name": "Cycles",
@@ -479,7 +479,7 @@ if ENABLE_DRF_SPECTACULAR:
             },
             {
                 "name": "States",
-                "description": "Issue state management endpoints - manage workflow states",
+                "description": "Work item state management endpoints - manage workflow states",
             },
             {
                 "name": "Labels",

@@ -260,7 +260,7 @@ def project_docs(**kwargs):
 def issue_docs(**kwargs):
     """Decorator for issue-related endpoints"""
     defaults = {
-        "tags": ["Issues"],
+        "tags": ["Work Items"],
         "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
         "responses": {
             401: UNAUTHORIZED_RESPONSE,
@@ -324,7 +324,7 @@ def postprocess_assign_tags(result, generator, request, public):
                 "/projects/{project_id}/issues/",
                 "/issue-attachments/",
             ],
-            "tag": "Issues",
+            "tag": "Work Items",
         },
         {
             "patterns": ["/projects/{project_id}/states/", "/states/{state_id}/"],
