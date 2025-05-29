@@ -439,3 +439,31 @@ ATTACHMENT_MIME_TYPES = [
 
 # Seed directory path
 SEED_DIR = os.path.join(BASE_DIR, "seeds")
+
+ENABLE_DRF_SPECTACULAR = os.environ.get("ENABLE_DRF_SPECTACULAR", "0") == "1"
+
+if ENABLE_DRF_SPECTACULAR:
+    INSTALLED_APPS.append("drf_spectacular")
+    REST_FRAMEWORK["DEFAULT_SCHEMA_CLASS"] = "drf_spectacular.openapi.AutoSchema"
+    SPECTACULAR_SETTINGS = {
+        "TITLE": "Plane API",
+        "DESCRIPTION": "Plane External API",
+        "VERSION": "1.0.0",
+        "SERVE_INCLUDE_SCHEMA": False,
+        "SCHEMA_PATH_PREFIX": "/api/v1/",
+        "AUTHENTICATION_WHITELIST": [
+            "plane.api.middleware.api_authentication.APIKeyAuthentication",
+        ],
+        "SECURITY": [
+            {
+                "apiKeyAuth": {
+                    "type": "apiKey",
+                    "in": "header",
+                    "name": "X-API-Key",
+                }
+            },
+        ],
+        "EXTENSIONS_INFO": {
+            "plane.utils.openapi_spec_helpers.APIKeyAuthenticationExtension": {},
+        },
+    }
