@@ -4,11 +4,13 @@ from plane.api.views import ProjectAPIEndpoint, ProjectArchiveUnarchiveAPIEndpoi
 
 urlpatterns = [
     path(
-        "workspaces/<str:slug>/projects/", ProjectAPIEndpoint.as_view(), name="project"
+        "workspaces/<str:slug>/projects/",
+        ProjectAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        name="project",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:pk>/",
-        ProjectAPIEndpoint.as_view(),
+        ProjectAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="project",
     ),
     path(

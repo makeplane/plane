@@ -1,5 +1,6 @@
 # Python imports
 import json
+import inspect
 
 # Django imports
 from django.db import IntegrityError
@@ -11,9 +12,13 @@ from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
+from drf_spectacular.utils import (
+    extend_schema,
+    OpenApiParameter,
+    OpenApiTypes,
+    OpenApiResponse,
+)
 
-from plane.api.serializers import ProjectSerializer
-from plane.app.permissions import ProjectBasePermission
 
 # Module imports
 from plane.db.models import (
@@ -31,6 +36,9 @@ from plane.db.models import (
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from .base import BaseAPIView
 from plane.utils.host import base_host
+from plane.api.serializers import ProjectSerializer
+from plane.app.permissions import ProjectBasePermission
+from plane.utils.openapi_spec_helpers import UNAUTHORIZED_RESPONSE, FORBIDDEN_RESPONSE
 
 
 class ProjectAPIEndpoint(BaseAPIView):
@@ -104,7 +112,37 @@ class ProjectAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
+    @extend_schema(
+        parameters=[
+            # Parameters for list operation
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="List of projects or project details",
+                response=ProjectSerializer,
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Project not found"),
+        },
+    )
     def get(self, request, slug, pk=None):
+        """
+        List all projects in a workspace if pk is None, otherwise retrieve a specific project.
+
+        When pk is None:
+        Returns a list of all projects in the workspace.
+
+        When pk is provided:
+        Returns the details of a specific project.
+        """
         if pk is None:
             sort_order_query = ProjectMember.objects.filter(
                 member=request.user,
@@ -136,6 +174,31 @@ class ProjectAPIEndpoint(BaseAPIView):
         serializer = ProjectSerializer(project, fields=self.fields, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        operation_id="create_project",
+        tags=["Projects"],
+        summary="Create Project",
+        description="Create a new project",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        responses={
+            201: OpenApiResponse(
+                description="Project created",
+                response=ProjectSerializer,
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Workspace not found"),
+            409: OpenApiResponse(description="Project name already taken"),
+        },
+    )
     def post(self, request, slug):
         try:
             workspace = Workspace.objects.get(slug=slug)
@@ -251,6 +314,31 @@ class ProjectAPIEndpoint(BaseAPIView):
                 status=status.HTTP_409_CONFLICT,
             )
 
+    @extend_schema(
+        operation_id="update_project",
+        tags=["Projects"],
+        summary="Update Project",
+        description="Update an existing project",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="Project updated",
+                response=ProjectSerializer,
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Project not found"),
+            409: OpenApiResponse(description="Project name already taken"),
+        },
+    )
     def patch(self, request, slug, pk):
         try:
             workspace = Workspace.objects.get(slug=slug)
@@ -318,6 +406,27 @@ class ProjectAPIEndpoint(BaseAPIView):
                 status=status.HTTP_409_CONFLICT,
             )
 
+    @extend_schema(
+        operation_id="delete_project",
+        tags=["Projects"],
+        summary="Delete Project",
+        description="Delete an existing project",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        responses={
+            204: OpenApiResponse(description="Project deleted"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Project not found"),
+        },
+    )
     def delete(self, request, slug, pk):
         project = Project.objects.get(pk=pk, workspace__slug=slug)
         # Delete the user favorite cycle
@@ -344,6 +453,27 @@ class ProjectAPIEndpoint(BaseAPIView):
 class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectBasePermission]
 
+    @extend_schema(
+        operation_id="archive_project",
+        tags=["Projects"],
+        summary="Archive Project",
+        description="Archive an existing project",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        responses={
+            204: OpenApiResponse(description="Project archived"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Project not found"),
+        },
+    )
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         project.archived_at = timezone.now()
@@ -351,6 +481,27 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
         UserFavorite.objects.filter(workspace__slug=slug, project=project_id).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @extend_schema(
+        operation_id="unarchive_project",
+        tags=["Projects"],
+        summary="Unarchive Project",
+        description="Unarchive an existing project",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        responses={
+            204: OpenApiResponse(description="Project unarchived"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Project not found"),
+        },
+    )
     def delete(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         project.archived_at = None

@@ -459,43 +459,48 @@ if ENABLE_DRF_SPECTACULAR:
         "POSTPROCESSING_HOOKS": [
             "plane.utils.openapi_spec_helpers.postprocess_assign_tags",
         ],
+        "SERVERS": [{"url": "/api/v1", "description": "API v1"}],
         "TAGS": [
             {
                 "name": "Projects",
-                "description": "Project management endpoints - create, update, delete, and manage projects"
+                "description": "Project management endpoints - create, update, delete, and manage projects",
             },
             {
-                "name": "Issues", 
-                "description": "Issue management endpoints - create, update, assign, and track issues"
+                "name": "Issues",
+                "description": "Issue management endpoints - create, update, assign, and track issues",
             },
             {
                 "name": "Cycles",
-                "description": "Sprint/Cycle management endpoints - manage development cycles and sprints"
+                "description": "Sprint/Cycle management endpoints - manage development cycles and sprints",
             },
             {
                 "name": "Modules",
-                "description": "Module management endpoints - organize work into modules and roadmaps"
+                "description": "Module management endpoints - organize work into modules and roadmaps",
             },
             {
                 "name": "States",
-                "description": "Issue state management endpoints - manage workflow states"
+                "description": "Issue state management endpoints - manage workflow states",
             },
             {
                 "name": "Labels",
-                "description": "Issue label management endpoints - categorize and organize issues"
+                "description": "Issue label management endpoints - categorize and organize issues",
             },
             {
                 "name": "Members",
-                "description": "Project member management endpoints - manage team access and roles"
+                "description": "Project member management endpoints - manage team access and roles",
             },
             {
                 "name": "Assets",
-                "description": "Asset management endpoints - upload, manage, and serve files and media"
+                "description": "Asset management endpoints - upload, manage, and serve files and media",
             },
             {
                 "name": "Users",
-                "description": "User management endpoints - manage user profiles and preferences"
-            }
+                "description": "User management endpoints - manage user profiles and preferences",
+            },
+            {
+                "name": "Intake",
+                "description": "Intake management endpoints - manage intake issues and intake issue details",
+            },
         ],
         "AUTHENTICATION_WHITELIST": [
             "plane.api.middleware.api_authentication.APIKeyAuthentication",
@@ -512,4 +517,5 @@ if ENABLE_DRF_SPECTACULAR:
         "EXTENSIONS_INFO": {
             "plane.utils.openapi_spec_helpers.APIKeyAuthenticationExtension": {},
         },
+        "SCHEMA_CACHE_TIMEOUT": 0,  # disables caching
     }
