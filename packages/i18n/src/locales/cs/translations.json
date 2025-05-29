@@ -2459,5 +2459,9 @@
     "last_edited_by": "Naposledy upraveno uživatelem",
     "previously_edited_by": "Dříve upraveno uživatelem",
     "edited_by": "Upraveno uživatelem"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane se nespustil. To může být způsobeno tím, že se jeden nebo více služeb Plane nepodařilo spustit.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Vyberte View Logs z setup.sh a Docker logů, abyste si byli jisti."
   }
 }

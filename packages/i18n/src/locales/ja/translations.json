@@ -2459,5 +2459,9 @@
     "last_edited_by": "最終編集者",
     "previously_edited_by": "以前の編集者",
     "edited_by": "編集者"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Planeが起動しませんでした。これは1つまたは複数のPlaneサービスの起動に失敗したことが原因である可能性があります。",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "setup.shとDockerログからView Logsを選択して確認してください。"
   }
 }

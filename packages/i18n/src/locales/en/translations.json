@@ -2295,5 +2295,9 @@
     "last_edited_by": "Last edited by",
     "previously_edited_by": "Previously edited by",
     "edited_by": "Edited by"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane didn&apos;t start up. This could be because one or more Plane services failed to start.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Choose View Logs from setup.sh and Docker logs to be sure."
   }
 }

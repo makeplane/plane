@@ -2460,5 +2460,9 @@
     "last_edited_by": "Останнє редагування",
     "previously_edited_by": "Раніше відредаговано",
     "edited_by": "Відредаговано"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane не запустився. Це може бути через те, що один або декілька сервісів Plane не змогли запуститися.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Виберіть View Logs з setup.sh та логів Docker, щоб переконатися."
   }
 }
