@@ -44,42 +44,42 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/links/",
-        IssueLinkAPIEndpoint.as_view(),
+        IssueLinkAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="link",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/links/<uuid:pk>/",
-        IssueLinkAPIEndpoint.as_view(),
+        IssueLinkAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="link",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/comments/",
-        IssueCommentAPIEndpoint.as_view(),
+        IssueCommentAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="comment",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/comments/<uuid:pk>/",
-        IssueCommentAPIEndpoint.as_view(),
+        IssueCommentAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="comment",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/activities/",
-        IssueActivityAPIEndpoint.as_view(),
+        IssueActivityAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="activity",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/activities/<uuid:pk>/",
-        IssueActivityAPIEndpoint.as_view(),
+        IssueActivityAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="activity",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/",
-        IssueAttachmentEndpoint.as_view(),
+        IssueAttachmentEndpoint.as_view(http_method_names=["get", "post"]),
         name="attachment",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
-        IssueAttachmentEndpoint.as_view(),
+        IssueAttachmentEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="issue-attachment",
     ),
 ]

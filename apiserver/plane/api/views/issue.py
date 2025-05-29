@@ -59,17 +59,20 @@ from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
 from plane.bgtasks.webhook_task import model_activity
-from drf_spectacular.utils import (
-    extend_schema,
-    OpenApiParameter,
-    OpenApiResponse,
-)
-from drf_spectacular.types import OpenApiTypes
+
 from plane.utils.openapi_spec_helpers import (
     UNAUTHORIZED_RESPONSE,
     FORBIDDEN_RESPONSE,
 )
 
+# drf-spectacular imports
+from drf_spectacular.utils import (
+    extend_schema,
+    OpenApiParameter,
+    OpenApiResponse,
+    OpenApiExample,
+)
+from drf_spectacular.types import OpenApiTypes
 
 class WorkspaceIssueAPIEndpoint(BaseAPIView):
     """
@@ -927,6 +930,38 @@ class IssueLinkAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
+    @extend_schema(
+        operation_id="get_issue_links",
+        tags=["Issue Links"],
+        summary="Get issue links",
+        description="Get all issue links in a project.",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="issue_id",
+                description="Issue ID",
+                required=True,
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="Issue links",
+                response=IssueLinkSerializer,
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Issue not found"),
+        },
+    )
     def get(self, request, slug, project_id, issue_id, pk=None):
         if pk is None:
             issue_links = self.get_queryset()
@@ -946,6 +981,50 @@ class IssueLinkAPIEndpoint(BaseAPIView):
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        operation_id="create_issue_link",
+        tags=["Issue Links"],
+        summary="Create an issue link",
+        description="Create a new issue link in a project.",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "url": {"type": "string"},
+                    "title": {"type": "string"},
+                    "metadata": {"type": "object"},
+                },
+                "required": ["url", "title", "metadata"],
+            },
+        },
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="issue_id",
+                description="Issue ID",
+                required=True,
+            ),
+        ],
+        responses={
+            201: OpenApiResponse(
+                description="Issue link created successfully",
+                response=IssueLinkSerializer,
+            ),
+            400: OpenApiResponse(description="Invalid request data"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Issue not found"),
+        },
+    )
     def post(self, request, slug, project_id, issue_id):
         serializer = IssueLinkSerializer(data=request.data)
         if serializer.is_valid():
@@ -966,6 +1045,55 @@ class IssueLinkAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @extend_schema(
+        operation_id="update_issue_link",
+        tags=["Issue Links"],
+        summary="Update an issue link",
+        description="Update an issue link in a project.",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "url": {"type": "string"},
+                    "title": {"type": "string"},
+                    "metadata": {"type": "object"},
+                },
+                "required": ["url", "title", "metadata"],
+            },
+        },
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="issue_id",
+                description="Issue ID",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="pk",
+                description="Issue link ID",
+                required=True,
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="Issue link updated successfully",
+                response=IssueLinkSerializer,
+            ),
+            400: OpenApiResponse(description="Invalid request data"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Issue link not found"),
+        },
+    )
     def patch(self, request, slug, project_id, issue_id, pk):
         issue_link = IssueLink.objects.get(
             workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
@@ -989,6 +1117,40 @@ class IssueLinkAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @extend_schema(
+        operation_id="delete_issue_link",
+        tags=["Issue Links"],
+        summary="Delete an issue link",
+        description="Delete an issue link in a project.",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="issue_id",
+                description="Issue ID",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="pk",
+                description="Issue link ID",
+                required=True,
+            ),
+        ],
+        responses={
+            204: OpenApiResponse(description="Issue link deleted successfully"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Issue link not found"),
+        },
+    )
     def delete(self, request, slug, project_id, issue_id, pk):
         issue_link = IssueLink.objects.get(
             workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
@@ -1046,6 +1208,38 @@ class IssueCommentAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
+    @extend_schema(
+        operation_id="get_issue_comments",
+        tags=["Issue Comments"],
+        summary="Get issue comments",
+        description="Get all comments for an issue.",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="issue_id",
+                description="Issue ID",
+                required=True,
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="Issue comments",
+                response=IssueCommentSerializer,
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Issue not found"),
+        },
+    )
     def get(self, request, slug, project_id, issue_id, pk=None):
         if pk:
             issue_comment = self.get_queryset().get(pk=pk)
@@ -1061,6 +1255,46 @@ class IssueCommentAPIEndpoint(BaseAPIView):
             ).data,
         )
 
+    @extend_schema(
+        operation_id="create_issue_comment",
+        tags=["Issue Comments"],
+        summary="Create an issue comment",
+        description="Create a new comment for an issue.",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {"comment_html": {"type": "string"}},
+                "required": ["comment_html"],
+            },
+        },
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="issue_id",
+                description="Issue ID",
+                required=True,
+            ),
+        ],
+        responses={
+            201: OpenApiResponse(
+                description="Issue comment created successfully",
+                response=IssueCommentSerializer,
+            ),
+            400: OpenApiResponse(description="Invalid request data"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Issue not found"),
+        },
+    )
     def post(self, request, slug, project_id, issue_id):
         # Validation check if the issue already exists
         if (
@@ -1112,6 +1346,51 @@ class IssueCommentAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @extend_schema(
+        operation_id="update_issue_comment",
+        tags=["Issue Comments"],
+        summary="Update an issue comment",
+        description="Update an existing comment for an issue.",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {"comment_html": {"type": "string"}},
+                "required": ["comment_html"],
+            },
+        },
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="issue_id",
+                description="Issue ID",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="pk",
+                description="Issue comment ID",
+                required=True,
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="Issue comment updated successfully",
+                response=IssueCommentSerializer,
+            ),
+            400: OpenApiResponse(description="Invalid request data"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Issue comment not found"),
+        }
+    )
     def patch(self, request, slug, project_id, issue_id, pk):
         issue_comment = IssueComment.objects.get(
             workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
@@ -1159,6 +1438,40 @@ class IssueCommentAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @extend_schema(
+        operation_id="delete_issue_comment",
+        tags=["Issue Comments"],
+        summary="Delete an issue comment",
+        description="Delete an existing comment for an issue.",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="issue_id",
+                description="Issue ID",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="pk",
+                description="Issue comment ID",
+                required=True,
+            ),
+        ],
+        responses={
+            204: OpenApiResponse(description="Issue comment deleted successfully"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Issue comment not found"),
+        }
+    )
     def delete(self, request, slug, project_id, issue_id, pk):
         issue_comment = IssueComment.objects.get(
             workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
@@ -1215,6 +1528,9 @@ class IssueActivityAPIEndpoint(BaseAPIView):
                 description="Issue activities",
                 response=IssueActivitySerializer,
             ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Issue not found"),
         },
     )
     def get(self, request, slug, project_id, issue_id, pk=None):
@@ -1250,6 +1566,130 @@ class IssueAttachmentEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
     model = FileAsset
 
+    @extend_schema(
+        operation_id="get_issue_attachment",
+        tags=["Issues"],
+        summary="Get issue attachment",
+        description="""
+        Get an issue attachment.
+        """,
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="issue_id",
+                description="Issue ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="pk",
+                description="Issue Attachment ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Original filename of the asset",
+                    },
+                    "type": {"type": "string", "description": "MIME type of the file"},
+                    "size": {"type": "integer", "description": "File size in bytes"},
+                    "external_id": {
+                        "type": "string",
+                        "description": "External identifier for the asset (for integration tracking)",
+                    },
+                    "external_source": {
+                        "type": "string",
+                        "description": "External source system (for integration tracking)",
+                    },
+                },
+            },
+        },
+        responses={
+            200: OpenApiResponse(
+                description="Presigned download URL generated successfully",
+                examples=[
+                    OpenApiExample(
+                        name="Issue Attachment Response",
+                        value={
+                            "upload_data": {
+                                "url": "https://s3.amazonaws.com/bucket/file.pdf?signed-url",
+                                "fields": {
+                                    "key": "file.pdf",
+                                    "AWSAccessKeyId": "AKIAIOSFODNN7EXAMPLE",
+                                    "policy": "EXAMPLE",
+                                    "signature": "EXAMPLE",
+                                    "acl": "public-read",
+                                    "Content-Type": "application/pdf",
+                                },
+                            },
+                            "asset_id": "550e8400-e29b-41d4-a716-446655440000",
+                            "asset_url": "https://s3.amazonaws.com/bucket/file.pdf?signed-url",
+                            "attachment": {
+                                "id": "550e8400-e29b-41d4-a716-446655440000",
+                                "name": "file.pdf",
+                                "type": "application/pdf",
+                                "size": 1234567890,
+                                "url": "https://s3.amazonaws.com/bucket/file.pdf?signed-url",
+                            },
+                        },
+                    )
+                ],
+            ),
+            400: OpenApiResponse(
+                description="Validation error",
+                examples=[
+                    OpenApiExample(
+                        name="Missing required fields",
+                        value={
+                            "error": "Name and size are required fields.",
+                            "status": False,
+                        },
+                    ),
+                    OpenApiExample(
+                        name="Invalid file type",
+                        value={"error": "Invalid file type.", "status": False},
+                    ),
+                ],
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(
+                description="Issue or Project or Workspace not found",
+                examples=[
+                    OpenApiExample(
+                        name="Workspace not found",
+                        value={"error": "Workspace not found"},
+                    ),
+                    OpenApiExample(
+                        name="Project not found", value={"error": "Project not found"}
+                    ),
+                    OpenApiExample(
+                        name="Issue not found", value={"error": "Issue not found"}
+                    ),
+                ],
+            ),
+        },
+    )
     def post(self, request, slug, project_id, issue_id):
         name = request.data.get("name")
         type = request.data.get("type", False)
@@ -1337,6 +1777,46 @@ class IssueAttachmentEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
+    @extend_schema(
+        operation_id="delete_issue_attachment",
+        tags=["Issue Attachments"],
+        summary="Delete an issue attachment",
+        description="Delete an issue attachment",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="issue_id",
+                description="Issue ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="pk",
+                description="Issue Attachment ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        responses={
+            204: OpenApiResponse(description="Issue attachment deleted successfully"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Issue attachment not found"),
+        },
+    )
     def delete(self, request, slug, project_id, issue_id, pk):
         issue_attachment = FileAsset.objects.get(
             pk=pk, workspace__slug=slug, project_id=project_id
@@ -1363,6 +1843,28 @@ class IssueAttachmentEndpoint(BaseAPIView):
         issue_attachment.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @extend_schema(
+        operation_id="get_issue_attachment",
+        tags=["Issue Attachments"],
+        summary="Get an issue attachment",
+        description="Get an issue attachment",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="Issue attachment",
+                response=IssueAttachmentSerializer,
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Issue attachment not found"),
+        },
+    )
     def get(self, request, slug, project_id, issue_id, pk=None):
         if pk:
             # Get the asset
@@ -1397,6 +1899,47 @@ class IssueAttachmentEndpoint(BaseAPIView):
         serializer = IssueAttachmentSerializer(issue_attachments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        operation_id="upload_issue_attachment",
+        tags=["Issue Attachments"],
+        summary="Upload an issue attachment",
+        description="Upload an issue attachment",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="issue_id",
+                description="Issue ID",
+                required=True,
+                type=OpenApiTypes.UUID,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        request={
+            'application/json': {
+                'type': 'object',
+                'properties': {
+                    'file': {'type': 'string', 'format': 'binary'}
+                }
+            }
+        },
+        responses={
+            200: OpenApiResponse(description="Issue attachment uploaded successfully"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Issue attachment not found"),
+        },
+    )
     def patch(self, request, slug, project_id, issue_id, pk):
         issue_attachment = FileAsset.objects.get(
             pk=pk, workspace__slug=slug, project_id=project_id
