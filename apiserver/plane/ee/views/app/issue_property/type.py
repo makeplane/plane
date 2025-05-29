@@ -173,11 +173,22 @@ class IssueTypeEndpoint(BaseAPIView):
             is_epic=False,
             pk=pk,
         )
+        issue_types = IssueType.objects.filter(
+            workspace__slug=slug,
+            project_issue_types__project_id=project_id,
+            is_epic=False,
+        ).values_list("name", flat=True)
 
         # Default cannot be made in active
         if issue_type.is_default and not request.data.get("is_active"):
             return Response(
                 {"error": "Default work item type cannot be inactive"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if request.data.get("name") in issue_types:
+            return Response(
+                {"error": "Issue type with this name already exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
