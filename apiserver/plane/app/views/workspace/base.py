@@ -43,6 +43,7 @@ from django.views.decorators.vary import vary_on_cookie
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.workspace_seed_task import workspace_seed
+from plane.utils.url import contains_url
 
 
 class WorkSpaceViewSet(BaseViewSet):
@@ -106,6 +107,12 @@ class WorkSpaceViewSet(BaseViewSet):
             if len(name) > 80 or len(slug) > 48:
                 return Response(
                     {"error": "The maximum length for name is 80 and for slug is 48"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if contains_url(name):
+                return Response(
+                    {"error": "Name cannot contain a URL"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
