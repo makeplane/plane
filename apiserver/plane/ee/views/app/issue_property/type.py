@@ -306,6 +306,10 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
                 project_id=project_id, workspace__slug=slug, type__exact={}
             ).update(type=work_item_type_template_schema)
 
+            # Update the project
+            project.is_issue_type_enabled = True
+            project.save()
+
             # Serialize the data
             serializer = IssueTypeSerializer(work_item_type)
             return Response(serializer.data, status=status.HTTP_200_OK)

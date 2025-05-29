@@ -68,6 +68,7 @@ def create_workitem_types(workitem_type_data, project_id, workspace_id):
         issue_type = IssueType.objects.create(
             workspace_id=workspace_id,
             name=type["name"],
+            description=type.get("description", ""),
             is_default=type.get("is_default", False),
             logo_props=type.get("logo_props", {}),
         )
@@ -84,6 +85,7 @@ def create_workitem_types(workitem_type_data, project_id, workspace_id):
                 project_id=project_id,
                 issue_type_id=issue_type.id,
                 display_name=property["display_name"],
+                description=property.get("description", ""),
                 property_type=property["property_type"],
                 relation_type=property.get("relation_type"),
                 sort_order=random.randint(0, 65535),
@@ -118,7 +120,11 @@ def create_workitem_types(workitem_type_data, project_id, workspace_id):
 
 def create_epics(epic_data, project_id, workspace_id):
     issue_type = IssueType.objects.create(
-        workspace_id=workspace_id, name=epic_data["name"], is_epic=True, level=1
+        workspace_id=workspace_id,
+        name=epic_data["name"],
+        description=epic_data.get("description", ""),
+        is_epic=True,
+        level=1,
     )
 
     ProjectIssueType.objects.create(
@@ -130,6 +136,7 @@ def create_epics(epic_data, project_id, workspace_id):
             project_id=project_id,
             issue_type_id=issue_type.id,
             display_name=property["display_name"],
+            description=property.get("description", ""),
             property_type=property["property_type"],
             relation_type=property.get("relation_type"),
             sort_order=random.randint(0, 65535),

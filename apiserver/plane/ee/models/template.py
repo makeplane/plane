@@ -145,7 +145,7 @@ class WorkitemTemplate(WorkspaceBaseModel):
 class Type(PydanticBaseModel):
     id: UUID4
     name: str = Field(..., max_length=255)
-    description: Optional[str] = Field("", max_length=255)
+    description: Optional[str] = Field("")
     logo_props: dict
     is_epic: bool
 
