@@ -267,4 +267,17 @@ def issue_docs(**kwargs):
         }
     }
     defaults.update(kwargs)
-    return extend_schema(**defaults) 
+    return extend_schema(**defaults)
+
+# Preprocessing hooks for schema filtering
+def preprocess_filter_api_v1_paths(endpoints):
+    """
+    Preprocessing hook to filter endpoints to only include /api/v1/ paths.
+    This ensures only API v1 endpoints are included in the generated schema.
+    """
+    filtered_endpoints = []
+    for (path, path_regex, method, callback) in endpoints:
+        # Only include paths that start with /api/v1/
+        if path.startswith('/api/v1/'):
+            filtered_endpoints.append((path, path_regex, method, callback))
+    return filtered_endpoints 

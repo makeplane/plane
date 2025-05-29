@@ -440,7 +440,7 @@ ATTACHMENT_MIME_TYPES = [
 # Seed directory path
 SEED_DIR = os.path.join(BASE_DIR, "seeds")
 
-ENABLE_DRF_SPECTACULAR = os.environ.get("ENABLE_DRF_SPECTACULAR", "0") == "1"
+ENABLE_DRF_SPECTACULAR = os.environ.get("ENABLE_DRF_SPECTACULAR", "1") == "1"
 
 if ENABLE_DRF_SPECTACULAR:
     INSTALLED_APPS.append("drf_spectacular")
@@ -451,6 +451,11 @@ if ENABLE_DRF_SPECTACULAR:
         "VERSION": "1.0.0",
         "SERVE_INCLUDE_SCHEMA": False,
         "SCHEMA_PATH_PREFIX": "/api/v1/",
+        "SCHEMA_PATH_PREFIX_TRIM": True,
+        "SCHEMA_PATH_PREFIX_INSERT": "",
+        "PREPROCESSING_HOOKS": [
+            "plane.utils.openapi_spec_helpers.preprocess_filter_api_v1_paths",
+        ],
         "AUTHENTICATION_WHITELIST": [
             "plane.api.middleware.api_authentication.APIKeyAuthentication",
         ],
