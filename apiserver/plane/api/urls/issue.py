@@ -24,12 +24,12 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/",
-        IssueAPIEndpoint.as_view(),
+        IssueAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="issue",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:pk>/",
-        IssueAPIEndpoint.as_view(),
+        IssueAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="issue",
     ),
     path(

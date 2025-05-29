@@ -179,6 +179,7 @@ class ProjectAPIEndpoint(BaseAPIView):
         tags=["Projects"],
         summary="Create Project",
         description="Create a new project",
+        request=ProjectSerializer,
         parameters=[
             OpenApiParameter(
                 name="slug",

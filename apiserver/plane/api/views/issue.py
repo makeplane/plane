@@ -62,8 +62,12 @@ from plane.bgtasks.webhook_task import model_activity
 from drf_spectacular.utils import (
     extend_schema,
     OpenApiParameter,
-    OpenApiTypes,
     OpenApiResponse,
+)
+from drf_spectacular.types import OpenApiTypes
+from plane.utils.openapi_spec_helpers import (
+    UNAUTHORIZED_RESPONSE,
+    FORBIDDEN_RESPONSE,
 )
 
 
@@ -150,7 +154,48 @@ class IssueAPIEndpoint(BaseAPIView):
             .order_by(self.kwargs.get("order_by", "-created_at"))
         ).distinct()
 
+    @extend_schema(
+        operation_id="get_work_item",
+        tags=["Work Items"],
+        summary="Work Item retrieve endpoints",
+        description="""
+        List all work items in a project if pk is None, otherwise retrieve a specific work item.
+
+        When pk is None:
+        Returns a list of all work items in the project.
+
+        When pk is provided:
+        Returns the details of a specific work item.
+        """,
+        parameters=[
+            # Parameters for list operation
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="List of issues or issue details",
+                response=IssueSerializer,
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Issue not found"),
+        },
+    )
     def get(self, request, slug, project_id, pk=None):
+
         external_id = request.GET.get("external_id")
         external_source = request.GET.get("external_source")
 
@@ -274,6 +319,24 @@ class IssueAPIEndpoint(BaseAPIView):
             ).data,
         )
 
+    @extend_schema(
+        operation_id="create_work_item",
+        tags=["Work Items"],
+        summary="Create an work item",
+        description="Create a new work item in the project.",
+        request=IssueSerializer,
+        responses={
+            201: OpenApiResponse(
+                description="Work Item created successfully", response=IssueSerializer
+            ),
+            400: OpenApiResponse(
+                description="Invalid request data", response=IssueSerializer
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Project not found"),
+        },
+    )
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
 
@@ -344,6 +407,24 @@ class IssueAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @extend_schema(
+        operation_id="update_work_item",
+        tags=["Work Items"],
+        summary="Update an work item",
+        description="Update an work item in the project.",
+        request=IssueSerializer,
+        responses={
+            200: OpenApiResponse(
+                description="Work Item updated successfully", response=IssueSerializer
+            ),
+            400: OpenApiResponse(
+                description="Invalid request data", response=IssueSerializer
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Work Item not found"),
+        },
+    )
     def put(self, request, slug, project_id):
         # Get the entities required for putting the issue, external_id and
         # external_source are must to identify the issue here
@@ -454,6 +535,24 @@ class IssueAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+    @extend_schema(
+        operation_id="patch_work_item",
+        tags=["Work Items"],
+        summary="Patch an work item",
+        description="Patch an existing work item in the project.",
+        request=IssueSerializer,
+        responses={
+            200: OpenApiResponse(
+                description="Work Item patched successfully", response=IssueSerializer
+            ),
+            400: OpenApiResponse(
+                description="Invalid request data", response=IssueSerializer
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Work Item not found"),
+        },
+    )
     def patch(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         project = Project.objects.get(pk=project_id)
@@ -501,6 +600,18 @@ class IssueAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @extend_schema(
+        operation_id="delete_work_item",
+        tags=["Work Items"],
+        summary="Delete an work item",
+        description="Delete an existing work item in the project.",
+        responses={
+            204: OpenApiResponse(description="Work Item deleted successfully"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Work Item not found"),
+        },
+    )
     def delete(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         if issue.created_by_id != request.user.id and (
@@ -513,7 +624,7 @@ class IssueAPIEndpoint(BaseAPIView):
             ).exists()
         ):
             return Response(
-                {"error": "Only admin or creator can delete the issue"},
+                {"error": "Only admin or creator can delete the work item"},
                 status=status.HTTP_403_FORBIDDEN,
             )
         current_instance = json.dumps(
