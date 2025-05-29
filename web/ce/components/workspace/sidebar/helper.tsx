@@ -1,4 +1,4 @@
-import { BarChart2, Briefcase, Home, Inbox, Layers, PenSquare } from "lucide-react";
+import { BarChart2, Briefcase, Home, Inbox, Layers, PenSquare, Tag } from "lucide-react";
 import { ArchiveIcon, ContrastIcon, UserActivityIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 
@@ -10,6 +10,8 @@ export const getSidebarNavigationItemIcon = (key: string, className: string = ""
       return <Inbox className={cn("size-4 flex-shrink-0", className)} />;
     case "projects":
       return <Briefcase className={cn("size-4 flex-shrink-0", className)} />;
+    case "labels":
+      return <Tag className={cn("size-4 flex-shrink-0", className)} />;
     case "views":
       return <Layers className={cn("size-4 flex-shrink-0", className)} />;
     case "active_cycles":

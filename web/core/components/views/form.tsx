@@ -50,7 +50,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
   // store hooks
   const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
-  const { projectLabels } = useLabel();
+  const { labels } = useLabel();
   const {
     project: { projectMemberIds },
   } = useMember();
@@ -275,7 +275,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                             });
                           }}
                           layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[displayFilters.layout]}
-                          labels={projectLabels ?? undefined}
+                          labels={labels ?? undefined}
                           memberIds={projectMemberIds ?? undefined}
                           states={projectStates}
                           cycleViewDisabled={!currentProjectDetails?.cycle_view}
@@ -325,7 +325,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                 appliedFilters={selectedFilters}
                 handleClearAllFilters={clearAllFilters}
                 handleRemoveFilter={handleRemoveFilter}
-                labels={projectLabels ?? []}
+                labels={labels ?? []}
                 states={projectStates}
               />
             </div>

@@ -34,7 +34,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
   } = useIssues(EIssuesStoreType.DRAFT);
   const { currentProjectDetails, loader } = useProject();
   const { projectStates } = useProjectState();
-  const { projectLabels } = useLabel();
+  const { labels } = useLabel();
   const {
     project: { projectMemberIds },
   } = useMember();
@@ -137,7 +137,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
               }
-              labels={projectLabels}
+              labels={labels}
               memberIds={projectMemberIds ?? undefined}
               states={projectStates}
               cycleViewDisabled={!currentProjectDetails?.cycle_view}

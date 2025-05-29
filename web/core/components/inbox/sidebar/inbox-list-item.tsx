@@ -32,7 +32,7 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
   const selectedInboxIssueId = searchParams.get("inboxIssueId");
   // store
   const { currentTab, getIssueInboxByIssueId } = useProjectInbox();
-  const { projectLabels } = useLabel();
+  const { labels } = useLabel();
   const { isMobile } = usePlatformOS();
   const { getUserDetails } = useMember();
   const inboxIssue = getIssueInboxByIssueId(inboxIssueId);
@@ -100,7 +100,7 @@ export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) 
               ) : (
                 <>
                   {(issue.label_ids ?? []).map((labelId) => {
-                    const labelDetails = projectLabels?.find((l) => l.id === labelId);
+                    const labelDetails = labels?.find((l) => l.id === labelId);
                     if (!labelDetails) return null;
                     return (
                       <div

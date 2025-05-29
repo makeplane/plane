@@ -31,7 +31,7 @@ const defaultValues: Partial<IIssueLabel> = {
 };
 
 export const CreateUpdateLabelInline = observer(
-  forwardRef<HTMLDivElement, TCreateUpdateLabelInlineProps>(function CreateUpdateLabelInline(props, ref) {
+forwardRef<HTMLDivElement, TCreateUpdateLabelInlineProps>(function CreateUpdateLabelInline(props, ref) {
     const { labelForm, setLabelForm, isUpdating, labelOperationsCallbacks, labelToUpdate, onClose } = props;
     // form info
     const {

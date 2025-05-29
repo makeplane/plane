@@ -357,7 +357,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
           projectId
         );
         // fetching other project labels
-        this.rootIssueDetailStore.rootIssueStore.rootStore.label.fetchProjectLabels(workspaceSlug, projectId);
+        this.rootIssueDetailStore.rootIssueStore.rootStore.label.fetchLabels(workspaceSlug);
         // fetching other project cycles
         this.rootIssueDetailStore.rootIssueStore.rootStore.cycle.fetchAllCycles(workspaceSlug, projectId);
         // fetching other project modules

@@ -63,7 +63,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const { currentProjectDetails, loader } = useProject();
   const { projectViewIds, getViewById } = useProjectView();
   const { projectStates } = useProjectState();
-  const { projectLabels } = useLabel();
+  const { labels } = useLabel();
   const {
     project: { projectMemberIds },
   } = useMember();
@@ -230,7 +230,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                   activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
                 }
                 projectId={projectId.toString()}
-                labels={projectLabels}
+                labels={labels}
                 memberIds={projectMemberIds ?? undefined}
                 states={projectStates}
                 cycleViewDisabled={!currentProjectDetails?.cycle_view}

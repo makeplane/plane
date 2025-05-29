@@ -21,16 +21,10 @@ class Label(WorkspaceBaseModel):
 
     class Meta:
         constraints = [
-            # Enforce uniqueness of name when project is NULL and deleted_at is NULL
-            models.UniqueConstraint(
-                fields=["name"],
-                condition=Q(project__isnull=True, deleted_at__isnull=True),
-                name="unique_name_when_project_null_and_not_deleted",
-            ),
             # Enforce uniqueness of project and name when project is not NULL and deleted_at is NULL
             models.UniqueConstraint(
                 fields=["project", "name"],
-                condition=Q(project__isnull=False, deleted_at__isnull=True),
+                condition=Q(deleted_at__isnull=True),
                 name="unique_project_name_when_not_deleted",
             ),
         ]

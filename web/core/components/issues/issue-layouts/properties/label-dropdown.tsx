@@ -75,21 +75,21 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
-  //hooks
-  const { fetchProjectLabels, getProjectLabels, createLabel } = useLabel();
+  //hooks33
+  const { fetchLabels, getLabels, createLabel } = useLabel();
   const { isMobile } = usePlatformOS();
-  const storeLabels = getProjectLabels(projectId);
+  const storeLabels = getLabels();
   const { allowPermissions } = useUserPermissions();
 
   const canCreateLabel =
     projectId && allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
 
-  let projectLabels: IIssueLabel[] = defaultOptions;
-  if (storeLabels && storeLabels.length > 0) projectLabels = storeLabels;
+  let labels: IIssueLabel[] = defaultOptions;
+  if (storeLabels && storeLabels.length > 0) labels = storeLabels;
 
   const options = useMemo(
     () =>
-      projectLabels.map((label) => ({
+      labels.filter(l => !projectId || !l.project_id || l.project_id == projectId).map((label) => ({
         value: label?.id,
         query: label?.name,
         content: (
@@ -104,7 +104,7 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
           </div>
         ),
       })),
-    [projectLabels]
+    [labels]
   );
 
   const filteredOptions = useMemo(
@@ -126,9 +126,10 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
   });
 
   const onOpen = useCallback(() => {
-    if (!storeLabels && workspaceSlug && projectId)
-      fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
-  }, [storeLabels, workspaceSlug, projectId, fetchProjectLabels]);
+    if (!storeLabels && workspaceSlug)
+      setIsLoading(true);
+      fetchLabels(workspaceSlug).finally(() => setIsLoading(false));
+  }, [storeLabels, workspaceSlug, projectId, fetchLabels]);
 
   const toggleDropdown = useCallback(() => {
     if (!isOpen) onOpen();
