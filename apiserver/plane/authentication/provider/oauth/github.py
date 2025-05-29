@@ -18,7 +18,7 @@ from plane.authentication.adapter.error import (
 class GitHubOAuthProvider(OauthAdapter):
     token_url = "https://github.com/login/oauth/access_token"
     userinfo_url = "https://api.github.com/user"
-    org_membership_url = f"https://api.github.com/orgs"
+    org_membership_url = "https://api.github.com/orgs"
 
     provider = "github"
     scope = "read:user user:email"

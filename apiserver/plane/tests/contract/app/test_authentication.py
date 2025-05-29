@@ -6,7 +6,7 @@ from django.utils import timezone
 from rest_framework import status
 from django.test import Client
 from django.core.exceptions import ValidationError
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from plane.db.models import User
 from plane.settings.redis import redis_instance

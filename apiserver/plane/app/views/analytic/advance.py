@@ -16,8 +16,6 @@ from plane.db.models import (
     IssueView,
     ProjectPage,
     Workspace,
-    CycleIssue,
-    ModuleIssue,
     ProjectMember,
 )
 from plane.utils.build_chart import build_analytics_chart

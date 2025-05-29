@@ -11,7 +11,6 @@ from drf_spectacular.utils import (
 )
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.extensions import OpenApiAuthenticationExtension
-from rest_framework import status
 
 
 # Authentication Extensions

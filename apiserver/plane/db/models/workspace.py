@@ -1,9 +1,6 @@
 # Python imports
-from django.db.models.functions import Ln
 import pytz
-import time
-from django.utils import timezone
-from typing import Optional, Any, Tuple, Dict
+from typing import Optional, Any
 
 # Django imports
 from django.conf import settings

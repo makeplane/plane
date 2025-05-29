@@ -1,7 +1,5 @@
 # Third party imports
 from rest_framework import serializers
-from rest_framework import status
-from rest_framework.response import Response
 
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer

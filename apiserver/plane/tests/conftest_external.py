@@ -1,6 +1,5 @@
 import pytest
 from unittest.mock import MagicMock, patch
-from django.conf import settings
 
 
 @pytest.fixture

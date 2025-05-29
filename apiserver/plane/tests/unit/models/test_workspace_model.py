@@ -1,7 +1,7 @@
 import pytest
 from uuid import uuid4
 
-from plane.db.models import Workspace, WorkspaceMember, User
+from plane.db.models import Workspace, WorkspaceMember
 
 
 @pytest.mark.unit
