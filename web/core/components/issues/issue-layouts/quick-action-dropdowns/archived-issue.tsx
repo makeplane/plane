@@ -54,8 +54,8 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((
     isDeletingAllowed: isEditingAllowed,
     isRestoringAllowed: !!isRestoringAllowed,
     setTrackElement,
-    setIssueToEdit: () => {}, // Not used in archived issues
-    setCreateUpdateIssueModal: () => {}, // Not used in archived issues
+    setIssueToEdit: () => {},
+    setCreateUpdateIssueModal: () => {},
     setDeleteIssueModal,
     handleRestore,
     handleDelete,

@@ -131,10 +131,14 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
       }
     };
 
-    if (isNestedOpen) {
-      window.addEventListener("keydown", handleKeyDown);
+    if (isNestedOpen && nestedMenuRef.current) {
+      const menuElement = nestedMenuRef.current;
+      menuElement.addEventListener("keydown", handleKeyDown);
+      // Ensure the menu can receive keyboard events
+      menuElement.setAttribute("tabindex", "-1");
+      menuElement.focus();
       return () => {
-        window.removeEventListener("keydown", handleKeyDown);
+        menuElement.removeEventListener("keydown", handleKeyDown);
       };
     }
   }, [isNestedOpen, activeNestedIndex, renderedNestedItems, hasNestedItems, closeNestedMenu]);
