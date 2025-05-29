@@ -12,6 +12,7 @@ from django.contrib.postgres.fields import ArrayField
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+from drf_spectacular.utils import extend_schema, OpenApiResponse
 
 # Module imports
 from plane.api.serializers import IntakeIssueSerializer, IssueSerializer
@@ -21,6 +22,10 @@ from plane.db.models import Intake, IntakeIssue, Issue, Project, ProjectMember, 
 from plane.utils.host import base_host
 from .base import BaseAPIView
 from plane.db.models.intake import SourceType
+from plane.utils.openapi_spec_helpers import (
+    UNAUTHORIZED_RESPONSE,
+    FORBIDDEN_RESPONSE,
+)
 
 
 class IntakeIssueAPIEndpoint(BaseAPIView):
@@ -61,6 +66,20 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
             .order_by(self.kwargs.get("order_by", "-created_at"))
         )
 
+    @extend_schema(
+        operation_id="get_intake_issues",
+        tags=["Intake"],
+        summary="Get intake issues",
+        description="Get intake issues",
+        responses={
+            200: OpenApiResponse(
+                description="Intake issues", response=IntakeIssueSerializer
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Project not found"),
+        },
+    )
     def get(self, request, slug, project_id, issue_id=None):
         if issue_id:
             intake_issue_queryset = self.get_queryset().get(issue_id=issue_id)
@@ -77,6 +96,62 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
             ).data,
         )
 
+    @extend_schema(
+        operation_id="create_intake_issue",
+        tags=["Intake"],
+        summary="Create intake issue",
+        description="Create intake issue",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "issue": {
+                        "type": "object",
+                        "properties": {
+                            "issue": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "description": "Issue name",
+                                        "maxLength": 255,
+                                        "example": "Issue 1",
+                                    },
+                                    "description_html": {
+                                        "type": "string",
+                                        "description": "Issue description HTML",
+                                        "nullable": True,
+                                        "example": "<p>This is an issue description</p>",
+                                    },
+                                    "priority": {
+                                        "type": "string",
+                                        "description": "Issue priority",
+                                        "enum": [
+                                            "low",
+                                            "medium",
+                                            "high",
+                                            "urgent",
+                                            "none",
+                                        ],
+                                        "example": "low",
+                                    },
+                                },
+                            }
+                        },
+                    },
+                },
+            },
+        },
+        responses={
+            201: OpenApiResponse(
+                description="Intake issue created", response=IntakeIssueSerializer
+            ),
+            400: OpenApiResponse(description="Invalid request"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Project not found"),
+        },
+    )
     def post(self, request, slug, project_id):
         if not request.data.get("issue", {}).get("name", False):
             return Response(
@@ -143,6 +218,42 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
         serializer = IntakeIssueSerializer(intake_issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        operation_id="update_intake_issue",
+        tags=["Intake"],
+        summary="Update intake issue",
+        description="Update intake issue",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "issue": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "Issue name",
+                                "maxLength": 255,
+                                "example": "Issue 1",
+                            },
+                            "description_html": {
+                                "type": "string",
+                                "description": "Issue description HTML",
+                                "nullable": True,
+                                "example": "<p>This is an issue description</p>",
+                            },
+                            "priority": {
+                                "type": "string",
+                                "description": "Issue priority",
+                                "enum": ["low", "medium", "high", "urgent", "none"],
+                                "example": "low",
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    )
     def patch(self, request, slug, project_id, issue_id):
         intake = Intake.objects.filter(
             workspace__slug=slug, project_id=project_id
@@ -309,6 +420,18 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
                 IntakeIssueSerializer(intake_issue).data, status=status.HTTP_200_OK
             )
 
+    @extend_schema(
+        operation_id="delete_intake_issue",
+        tags=["Intake"],
+        summary="Delete intake issue",
+        description="Delete intake issue",
+        responses={
+            204: OpenApiResponse(description="Intake issue deleted"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Intake issue not found"),
+        },
+    )
     def delete(self, request, slug, project_id, issue_id):
         intake = Intake.objects.filter(
             workspace__slug=slug, project_id=project_id

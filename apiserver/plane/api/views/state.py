@@ -47,22 +47,48 @@ class StateAPIEndpoint(BaseAPIView):
         tags=["States"],
         summary="Create State",
         description="Create a new state for a project",
-        parameters=[
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="project_id",
-                description="Project ID",
-                required=True,
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
-            ),
-        ],
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "State name",
+                        "maxLength": 255,
+                        "example": "State 1",
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "State description",
+                        "nullable": True,
+                        "example": "This is a state description",
+                    },
+                    "color": {
+                        "type": "string",
+                        "description": "State color",
+                        "example": "#000000",
+                    },
+                    "group": {
+                        "type": "string",
+                        "description": "State group",
+                        "enum": [
+                            "backlog",
+                            "unstarted",
+                            "started",
+                            "completed",
+                            "cancelled",
+                            "triage",
+                        ],
+                        "example": "backlog",
+                    },
+                    "default": {
+                        "type": "boolean",
+                        "description": "Default state",
+                        "example": False,
+                    },
+                },
+            },
+        },
         responses={
             200: OpenApiResponse(
                 description="State created",
@@ -126,22 +152,6 @@ class StateAPIEndpoint(BaseAPIView):
         tags=["States"],
         summary="Get State",
         description="Get a state for a project",
-        parameters=[
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="project_id",
-                description="Project ID",
-                required=True,
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
-            ),
-        ],
         responses={
             200: OpenApiResponse(
                 description="State retrieved",
@@ -170,22 +180,6 @@ class StateAPIEndpoint(BaseAPIView):
         tags=["States"],
         summary="Delete State",
         description="Delete a state for a project",
-        parameters=[
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="project_id",
-                description="Project ID",
-                required=True,
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
-            ),
-        ],
         responses={
             204: OpenApiResponse(description="State deleted"),
             401: UNAUTHORIZED_RESPONSE,
@@ -221,27 +215,56 @@ class StateAPIEndpoint(BaseAPIView):
         tags=["States"],
         summary="Update State",
         description="Update a state for a project",
-        parameters=[
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="project_id",
-                description="Project ID",
-                required=True,
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
-            ),
-        ],
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "State name",
+                        "maxLength": 255,
+                        "example": "State 1",
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "State description",
+                        "nullable": True,
+                        "example": "This is a state description",
+                    },
+                    "color": {
+                        "type": "string",
+                        "description": "State color",
+                        "example": "#000000",
+                    },
+                    "group": {
+                        "type": "string",
+                        "description": "State group",
+                        "enum": [
+                            "backlog",
+                            "unstarted",
+                            "started",
+                            "completed",
+                            "cancelled",
+                            "triage",
+                        ],
+                        "example": "backlog",
+                    },
+                    "default": {
+                        "type": "boolean",
+                        "description": "Default state",
+                        "example": False,
+                    },
+                },
+            },
+        },
         responses={
             200: OpenApiResponse(
                 description="State updated",
                 response=StateSerializer,
             ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="State not found"),
         },
     )
     def patch(self, request, slug, project_id, state_id=None):

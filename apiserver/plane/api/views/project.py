@@ -1,6 +1,5 @@
 # Python imports
 import json
-import inspect
 
 # Django imports
 from django.db import IntegrityError
@@ -113,16 +112,10 @@ class ProjectAPIEndpoint(BaseAPIView):
         )
 
     @extend_schema(
-        parameters=[
-            # Parameters for list operation
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-        ],
+        operation_id="list_projects",
+        tags=["Projects"],
+        summary="List Projects",
+        description="List all projects in a workspace",
         responses={
             200: OpenApiResponse(
                 description="List of projects or project details",
@@ -179,16 +172,68 @@ class ProjectAPIEndpoint(BaseAPIView):
         tags=["Projects"],
         summary="Create Project",
         description="Create a new project",
-        request=ProjectSerializer,
-        parameters=[
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-        ],
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Project name",
+                        "maxLength": 255,
+                        "example": "Project 1",
+                    },
+                    "identifier": {
+                        "type": "string",
+                        "description": "Project identifier",
+                        "maxLength": 255,
+                        "example": "project-1",
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Project description",
+                        "nullable": True,
+                        "example": "This is a project description",
+                    },
+                    "project_lead": {
+                        "type": "string",
+                        "description": "Project lead",
+                        "format": "uuid",
+                        "example": "123e4567-e89b-12d3-a456-426614174000",
+                    },
+                    "intake_view": {
+                        "type": "boolean",
+                        "description": "Intake view",
+                        "example": False,
+                    },
+                    "module_view": {
+                        "type": "boolean",
+                        "description": "Module view",
+                        "example": True,
+                    },
+                    "cycle_view": {
+                        "type": "boolean",
+                        "description": "Cycle view",
+                        "example": True,
+                    },
+                    "issue_views_view": {
+                        "type": "boolean",
+                        "description": "Issue views view",
+                        "example": True,
+                    },
+                    "page_view": {
+                        "type": "boolean",
+                        "description": "Page view",
+                        "example": True,
+                    },
+                    "network": {
+                        "type": "integer",
+                        "description": "Network",
+                        "enum": [0, 2],
+                        "example": 2,
+                    },
+                },
+            },
+        },
         responses={
             201: OpenApiResponse(
                 description="Project created",

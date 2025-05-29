@@ -43,4 +43,9 @@ urlpatterns = [
         CycleArchiveUnarchiveAPIEndpoint.as_view(http_method_names=["post"]),
         name="cycle-archive-unarchive",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/archived-cycles/<uuid:pk>/unarchive/",
+        CycleArchiveUnarchiveAPIEndpoint.as_view(http_method_names=["delete"]),
+        name="cycle-archive-unarchive",
+    ),
 ]

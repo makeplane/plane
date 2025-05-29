@@ -12,8 +12,6 @@ from rest_framework import status
 from rest_framework.response import Response
 from drf_spectacular.utils import (
     extend_schema,
-    OpenApiParameter,
-    OpenApiTypes,
     OpenApiResponse,
 )
 
@@ -146,6 +144,82 @@ class ModuleAPIEndpoint(BaseAPIView):
             .order_by(self.kwargs.get("order_by", "-created_at"))
         )
 
+    @extend_schema(
+        operation_id="create_module",
+        tags=["Modules"],
+        summary="Create module",
+        description="Create module",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Module name",
+                        "maxLength": 255,
+                        "example": "Module 1",
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Module description",
+                        "nullable": True,
+                        "example": "This is a module description",
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Start date",
+                        "nullable": True,
+                        "example": "2025-01-01T00:00:00Z",
+                    },
+                    "target_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Target date",
+                        "nullable": True,
+                        "example": "2025-01-01T00:00:00Z",
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Module status",
+                        "enum": [
+                            "backlog",
+                            "planned",
+                            "in-progress",
+                            "paused",
+                            "completed",
+                            "cancelled",
+                        ],
+                        "example": "planned",
+                    },
+                    "lead": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Lead user ID",
+                        "nullable": True,
+                        "example": "123e4567-e89b-12d3-a456-426614174000",
+                    },
+                    "members": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid",
+                            "description": "Member user ID",
+                        },
+                    },
+                },
+            }
+        },
+        responses={
+            201: OpenApiResponse(
+                description="Module created", response=ModuleSerializer
+            ),
+            400: OpenApiResponse(description="Invalid request"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Project not found"),
+        },
+    )
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         serializer = ModuleSerializer(
@@ -192,6 +266,73 @@ class ModuleAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @extend_schema(
+        operation_id="update_module",
+        tags=["Modules"],
+        summary="Update module",
+        description="Update module",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Module name",
+                        "maxLength": 255,
+                        "example": "Module 1",
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Module description",
+                        "nullable": True,
+                        "example": "This is a module description",
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Start date",
+                        "nullable": True,
+                        "example": "2025-01-01T00:00:00Z",
+                    },
+                    "target_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Target date",
+                        "nullable": True,
+                        "example": "2025-01-01T00:00:00Z",
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "Module status",
+                        "enum": [
+                            "backlog",
+                            "planned",
+                            "in-progress",
+                            "paused",
+                            "completed",
+                            "cancelled",
+                        ],
+                        "example": "planned",
+                    },
+                    "lead": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "Lead user ID",
+                        "nullable": True,
+                        "example": "123e4567-e89b-12d3-a456-426614174000",
+                    },
+                    "members": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid",
+                            "description": "Member user ID",
+                        },
+                    },
+                },
+            },
+        },
+    )
     def patch(self, request, slug, project_id, pk):
         module = Module.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
 
@@ -243,6 +384,18 @@ class ModuleAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @extend_schema(
+        operation_id="get_module",
+        tags=["Modules"],
+        summary="Get module",
+        description="Get modules",
+        responses={
+            200: OpenApiResponse(description="Module", response=ModuleSerializer),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Project not found"),
+        },
+    )
     def get(self, request, slug, project_id, pk=None):
         if pk:
             queryset = self.get_queryset().filter(archived_at__isnull=True).get(pk=pk)
@@ -258,6 +411,12 @@ class ModuleAPIEndpoint(BaseAPIView):
             ).data,
         )
 
+    @extend_schema(
+        operation_id="delete_module",
+        tags=["Modules"],
+        summary="Delete module",
+        description="Delete module",
+    )
     def delete(self, request, slug, project_id, pk):
         module = Module.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         if module.created_by_id != request.user.id and (
@@ -343,6 +502,18 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
+    @extend_schema(
+        operation_id="get_module_issues",
+        tags=["Modules"],
+        summary="Get module issues",
+        description="Get module issues",
+        responses={
+            200: OpenApiResponse(description="Module issues", response=IssueSerializer),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Project not found"),
+        },
+    )
     def get(self, request, slug, project_id, module_id):
         order_by = request.GET.get("order_by", "created_at")
         issues = (
@@ -389,6 +560,33 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
             ).data,
         )
 
+    @extend_schema(
+        operation_id="add_module_issues",
+        tags=["Modules"],
+        summary="Add module issues",
+        description="Add module issues",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "issues": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid",
+                            "description": "Issue ID",
+                        },
+                    },
+                },
+            },
+        },
+        responses={
+            200: OpenApiResponse(
+                description="Module issues added", response=ModuleIssueSerializer
+            ),
+            400: OpenApiResponse(description="Invalid request"),
+        },
+    )
     def post(self, request, slug, project_id, module_id):
         issues = request.data.get("issues", [])
         if not len(issues):
@@ -469,6 +667,18 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
+    @extend_schema(
+        operation_id="delete_module_issue",
+        tags=["Modules"],
+        summary="Delete module issue",
+        description="Delete module issue",
+        responses={
+            204: OpenApiResponse(description="Module issue deleted"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Module issue not found"),
+        },
+    )
     def delete(self, request, slug, project_id, module_id, issue_id):
         module_issue = ModuleIssue.objects.get(
             workspace__slug=slug,
@@ -588,15 +798,6 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         tags=["Modules"],
         summary="Get archived modules",
         description="Get archived modules",
-        parameters=[
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-        ],
         request={},
         responses={
             200: OpenApiResponse(
@@ -621,32 +822,10 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         tags=["Modules"],
         summary="Archive module",
         description="Archive module",
-        parameters=[
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="project_id",
-                description="Project ID",
-                required=True,
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="module_id",
-                description="Module ID",
-                required=True,
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
-            ),
-        ],
         request={},
         responses={
             204: OpenApiResponse(description="Module archived"),
+            400: OpenApiResponse(description="Invalid request"),
             401: UNAUTHORIZED_RESPONSE,
             403: FORBIDDEN_RESPONSE,
             404: OpenApiResponse(description="Module not found"),
@@ -674,29 +853,6 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         tags=["Modules"],
         summary="Unarchive module",
         description="Unarchive module",
-        parameters=[
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="project_id",
-                description="Project ID",
-                required=True,
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="module_id",
-                description="Module ID",
-                required=True,
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
-            ),
-        ],
         responses={
             204: OpenApiResponse(description="Module unarchived"),
             401: UNAUTHORIZED_RESPONSE,
