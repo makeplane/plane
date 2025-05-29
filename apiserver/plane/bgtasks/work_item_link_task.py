@@ -1,3 +1,7 @@
+# Python imports
+import logging
+
+
 # Third party imports
 from celery import shared_task
 import requests
@@ -7,9 +11,10 @@ import base64
 import ipaddress
 from typing import Dict, Any
 from typing import Optional
-
-
 from plane.db.models import IssueLink
+from plane.utils.exception_logger import log_exception
+
+logger = logging.getLogger("plane.worker")
 
 
 DEFAULT_FAVICON = "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWxpbmstaWNvbiBsdWNpZGUtbGluayI+PHBhdGggZD0iTTEwIDEzYTUgNSAwIDAgMCA3LjU0LjU0bDMtM2E1IDUgMCAwIDAtNy4wNy03LjA3bC0xLjcyIDEuNzEiLz48cGF0aCBkPSJNMTQgMTFhNSA1IDAgMCAwLTcuNTQtLjU0bC0zIDNhNSA1IDAgMCAwIDcuMDcgNy4wN2wxLjcxLTEuNzEiLz48L3N2Zz4="  # noqa: E501
@@ -78,6 +83,7 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
         return result
 
     except requests.RequestException as e:
+        log_exception(e)
         return {
             "error": f"Request failed: {str(e)}",
             "title": None,
@@ -85,6 +91,7 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
             "url": url,
         }
     except Exception as e:
+        log_exception(e)
         return {
             "error": f"Unexpected error: {str(e)}",
             "title": None,
@@ -124,9 +131,11 @@ def find_favicon_url(soup: BeautifulSoup, base_url: str) -> Optional[str]:
     # Check if fallback exists
     try:
         response = requests.head(fallback_url, timeout=2)
+        response.raise_for_status()
         if response.status_code == 200:
             return fallback_url
-    except Exception:
+    except requests.RequestException as e:
+        log_exception(e)
         return None
 
     return None
@@ -169,7 +178,7 @@ def fetch_and_encode_favicon(
         }
 
     except Exception as e:
-        print(f"Failed to fetch favicon: {e}")
+        logger.warning(f"Failed to fetch favicon: {e}")
         return {
             "favicon_url": None,
             "favicon_base64": f"data:image/svg+xml;base64,{DEFAULT_FAVICON}",
