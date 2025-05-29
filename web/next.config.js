@@ -58,27 +58,29 @@ const nextConfig = {
     },
   },
   webpack: (config, { dev, isServer }) => {
-    if (!dev) {
-      // Enhanced tree shaking
+    // Apply aggressive optimizations only for client-side production builds
+    if (!dev && !isServer) {
+      // Enhanced tree shaking (client-side only)
       config.optimization.usedExports = true;
       config.optimization.sideEffects = false;
       config.optimization.providedExports = true;
       config.optimization.concatenateModules = true;
 
-      // More aggressive chunk splitting
+      // Client-side chunk splitting strategy
       config.optimization.splitChunks = {
         chunks: "all",
         minSize: 20000,
-        maxSize: 200000, // Reduced from 244000
+        maxSize: 300000, // Increased from 200000 to reduce chunk fragmentation
         maxAsyncRequests: 30,
         maxInitialRequests: 25,
         cacheGroups: {
-          // Framework chunks
+          // Framework chunks (React ecosystem)
           react: {
             test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
             name: "react",
             chunks: "all",
             priority: 40,
+            enforce: true,
           },
           // Large UI libraries
           ui: {
@@ -87,19 +89,21 @@ const nextConfig = {
             chunks: "all",
             priority: 35,
           },
-          // Chart libraries (lazy loaded)
+          // Chart libraries (async loading for better performance)
           charts: {
             test: /[\\/]node_modules[\\/](@nivo|recharts)[\\/]/,
             name: "charts",
             chunks: "async", // Only load when needed
             priority: 30,
+            enforce: true,
           },
-          // Editor libraries (lazy loaded)
+          // Editor libraries (async loading)
           editor: {
             test: /[\\/]node_modules[\\/](@tiptap|prosemirror|@plane\/editor)[\\/]/,
             name: "editor",
             chunks: "async", // Only load when needed
             priority: 30,
+            enforce: true,
           },
           // Date/time libraries
           date: {
@@ -134,12 +138,12 @@ const nextConfig = {
         },
       };
 
-      // Additional optimizations
+      // Additional client-side optimizations
       config.optimization.moduleIds = "deterministic";
       config.optimization.chunkIds = "deterministic";
     }
 
-    // Resolve optimizations
+    // Universal optimizations (both client and server)
     config.resolve.alias = {
       ...config.resolve.alias,
       // Reduce bundle size by aliasing to smaller alternatives where possible
