@@ -1,7 +1,11 @@
+# Django imports
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
+from django.template.defaultfilters import slugify
+
+
 # Third party imports
 from rest_framework import serializers
-from rest_framework import status
-from rest_framework.response import Response
 
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer
@@ -25,10 +29,7 @@ from plane.db.models import (
     WorkspaceUserPreference,
 )
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
-
-# Django imports
-from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
+from plane.utils.url import clean_value
 
 
 class WorkSpaceSerializer(DynamicBaseSerializer):
@@ -40,7 +41,30 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
         # Check if the slug is restricted
         if value in RESTRICTED_WORKSPACE_SLUGS:
             raise serializers.ValidationError("Slug is not valid")
-        return value
+
+        # Clean the slug
+        slug = clean_value(value)
+
+        # If the slug is empty, return an error
+        if not slug:
+            raise serializers.ValidationError("Slug cannot be empty")
+
+        # Slugify the slug
+        slug = slugify(slug)
+
+        # Return the slug
+        return slug
+
+    def validate_name(self, value):
+        # Clean the name
+        name = clean_value(value)
+
+        # If the name is empty, return an error
+        if not name:
+            raise serializers.ValidationError("Name cannot be empty")
+
+        # Return the name
+        return name
 
     class Meta:
         model = Workspace

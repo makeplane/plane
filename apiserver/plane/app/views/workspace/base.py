@@ -92,8 +92,6 @@ class WorkSpaceViewSet(BaseViewSet):
                     status=status.HTTP_403_FORBIDDEN,
                 )
 
-            serializer = WorkSpaceSerializer(data=request.data)
-
             slug = request.data.get("slug", False)
             name = request.data.get("name", False)
 
@@ -108,6 +106,9 @@ class WorkSpaceViewSet(BaseViewSet):
                     {"error": "The maximum length for name is 80 and for slug is 48"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+
+            # Validate the serializer
+            serializer = WorkSpaceSerializer(data=request.data)
 
             if serializer.is_valid(raise_exception=True):
                 serializer.save(owner=request.user)

@@ -77,3 +77,31 @@ def normalize_url_path(url: str) -> str:
     normalized_path = re.sub(r"/+", "/", parts.path)
     # Reconstruct the URL
     return urlunparse(parts._replace(path=normalized_path))
+
+
+def clean_value(value: str) -> str:
+    """
+    Clean the value by removing URLs and domain patterns.
+
+    Args:
+        value (str): The value to clean.
+
+    Returns:
+        str: The cleaned value.
+    """
+
+    if not value:
+        return value
+
+    url_pattern = r"(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"  # noqa
+
+    # Remove URLs and domains
+    cleaned_value = re.sub(url_pattern, "", value)
+
+    # Keep only alphanumeric characters and spaces
+    cleaned_value = re.sub(r"[^a-zA-Z0-9\s]", "", cleaned_value)
+
+    # Remove extra spaces and trim
+    cleaned_value = " ".join(cleaned_value.split())
+
+    return cleaned_value

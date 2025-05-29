@@ -3,11 +3,18 @@ from rest_framework import serializers
 
 # Module import
 from plane.db.models import Account, Profile, User, Workspace, WorkspaceMemberInvite
-
+from plane.utils.url import clean_value
 from .base import BaseSerializer
 
 
 class UserSerializer(BaseSerializer):
+
+    def validate_first_name(self, value):
+        return clean_value(value)
+
+    def validate_last_name(self, value):
+        return clean_value(value)
+
     class Meta:
         model = User
         # Exclude password field from the serializer
