@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { RESTRICTED_WORK_ITEM_TYPES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssueType } from "@plane/types";
 import { Button, Input, TextArea } from "@plane/ui";
@@ -32,9 +31,6 @@ export const CreateOrUpdateIssueTypeForm: React.FC<Props> = observer((props) => 
     const newErrors: { name?: string } = {};
     if (!data.name || data.name.trim() === "") {
       newErrors.name = t("common.errors.entity_required", { entity: t("common.name") });
-    }
-    if (data.name && RESTRICTED_WORK_ITEM_TYPES.includes(data.name.toLowerCase())) {
-      newErrors.name = t("common.errors.restricted_entity", { entity: t("common.name") });
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
