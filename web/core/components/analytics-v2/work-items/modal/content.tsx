@@ -17,11 +17,13 @@ type Props = {
   projectDetails: IProject | undefined;
   cycleDetails: ICycle | undefined;
   moduleDetails: IModule | undefined;
+  isEpic?: boolean;
 };
 
 export const WorkItemsModalMainContent: React.FC<Props> = observer((props) => {
-  const { projectDetails, cycleDetails, moduleDetails, fullScreen } = props;
-  const { updateSelectedProjects, updateSelectedCycle, updateSelectedModule, updateIsPeekView } = useAnalyticsV2();
+  const { projectDetails, cycleDetails, moduleDetails, fullScreen, isEpic } = props;
+  const { updateSelectedProjects, updateSelectedCycle, updateSelectedModule, updateIsPeekView, updateIsEpic } =
+    useAnalyticsV2();
   const [isModalConfigured, setIsModalConfigured] = useState(false);
 
   useEffect(() => {
@@ -41,6 +43,11 @@ export const WorkItemsModalMainContent: React.FC<Props> = observer((props) => {
     if (moduleDetails?.id) {
       updateSelectedModule(moduleDetails.id);
     }
+
+    if (isEpic) {
+      updateIsEpic(true);
+    }
+
     setIsModalConfigured(true);
 
     // Cleanup fields
@@ -49,6 +56,7 @@ export const WorkItemsModalMainContent: React.FC<Props> = observer((props) => {
       updateSelectedCycle("");
       updateSelectedModule("");
       updateIsPeekView(false);
+      updateIsEpic(false);
     };
   }, [
     projectDetails?.id,
@@ -57,6 +65,8 @@ export const WorkItemsModalMainContent: React.FC<Props> = observer((props) => {
     updateSelectedProjects,
     updateSelectedCycle,
     updateSelectedModule,
+    isEpic,
+    updateIsEpic,
     updateIsPeekView,
   ]);
 

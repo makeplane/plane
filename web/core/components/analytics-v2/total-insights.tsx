@@ -18,13 +18,19 @@ const analyticsV2Service = new AnalyticsV2Service();
 const TotalInsights: React.FC<{
   analyticsType: TAnalyticsTabsV2Base;
   peekView?: boolean;
-  storeType?: EIssuesStoreType;
-}> = observer(({ analyticsType, peekView, storeType = EIssuesStoreType.PROJECT }) => {
+}> = observer(({ analyticsType, peekView }) => {
   const params = useParams();
   const workspaceSlug = params.workspaceSlug.toString();
   const { t } = useTranslation();
-  const { selectedDuration, selectedProjects, selectedDurationLabel, selectedCycle, selectedModule, isPeekView } =
-    useAnalyticsV2();
+  const {
+    selectedDuration,
+    selectedProjects,
+    selectedDurationLabel,
+    selectedCycle,
+    selectedModule,
+    isPeekView,
+    isEpic,
+  } = useAnalyticsV2();
   const { data: totalInsightsData, isLoading } = useSWR(
     `total-insights-${analyticsType}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}`,
     () =>
@@ -58,7 +64,7 @@ const TotalInsights: React.FC<{
           data={totalInsightsData?.[item.key]}
           label={
             analyticsType === "work-items"
-              ? storeType === EIssuesStoreType.EPIC
+              ? isEpic
                 ? t(item.i18nKey, { entity: t("common.epics") })
                 : t(item.i18nKey, { entity: t("common.work_items") })
               : t(item.i18nKey, {
