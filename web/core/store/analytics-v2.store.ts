@@ -1,11 +1,11 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import { ANALYTICS_V2_DURATION_FILTER_OPTIONS } from "@plane/constants";
+import { ANALYTICS_V2_DURATION_FILTER_OPTIONS, EIssuesStoreType } from "@plane/constants";
 import { TAnalyticsTabsV2Base } from "@plane/types";
 import { CoreRootStore } from "./root.store";
 
 type DurationType = (typeof ANALYTICS_V2_DURATION_FILTER_OPTIONS)[number]["value"];
 
-export interface IAnalyticsStoreV2 {
+export interface IBaseAnalyticsStoreV2 {
   //observables
   currentTab: TAnalyticsTabsV2Base;
   selectedProjects: string[];
@@ -13,7 +13,7 @@ export interface IAnalyticsStoreV2 {
   selectedCycle: string;
   selectedModule: string;
   isPeekView?: boolean;
-
+  isEpic?: boolean;
   //computed
   selectedDurationLabel: DurationType | null;
 
@@ -23,9 +23,10 @@ export interface IAnalyticsStoreV2 {
   updateSelectedCycle: (cycle: string) => void;
   updateSelectedModule: (module: string) => void;
   updateIsPeekView: (isPeekView: boolean) => void;
+  updateIsEpic: (isEpic: boolean) => void;
 }
 
-export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
+export abstract class BaseAnalyticsStoreV2 implements IBaseAnalyticsStoreV2 {
   //observables
   currentTab: TAnalyticsTabsV2Base = "overview";
   selectedProjects: string[] = [];
@@ -33,15 +34,17 @@ export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
   selectedCycle: string = "";
   selectedModule: string = "";
   isPeekView: boolean = false;
+  isEpic: boolean = false;
   constructor() {
     makeObservable(this, {
       // observables
       currentTab: observable.ref,
       selectedDuration: observable.ref,
-      selectedProjects: observable.ref,
+      selectedProjects: observable,
       selectedCycle: observable.ref,
       selectedModule: observable.ref,
       isPeekView: observable.ref,
+      isEpic: observable.ref,
       // computed
       selectedDurationLabel: computed,
       // actions
@@ -50,6 +53,7 @@ export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
       updateSelectedCycle: action,
       updateSelectedModule: action,
       updateIsPeekView: action,
+      updateIsEpic: action,
     });
   }
 
@@ -94,6 +98,12 @@ export class AnalyticsStoreV2 implements IAnalyticsStoreV2 {
   updateIsPeekView = (isPeekView: boolean) => {
     runInAction(() => {
       this.isPeekView = isPeekView;
+    });
+  };
+
+  updateIsEpic = (isEpic: boolean) => {
+    runInAction(() => {
+      this.isEpic = isEpic;
     });
   };
 }

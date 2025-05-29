@@ -102,6 +102,7 @@ const HeaderFilters = observer((props: Props) => {
         isOpen={analyticsModal}
         onClose={() => setAnalyticsModal(false)}
         projectDetails={currentProjectDetails ?? undefined}
+        isEpic={storeType === EIssuesStoreType.EPIC}
       />
       <LayoutSelection
         layouts={[
