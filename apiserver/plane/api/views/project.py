@@ -373,6 +373,13 @@ class ProjectAPIEndpoint(BaseAPIView):
                 type=OpenApiTypes.STR,
                 location=OpenApiParameter.PATH,
             ),
+            OpenApiParameter(
+                name="pk",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
         ],
         responses={
             200: OpenApiResponse(
@@ -465,6 +472,13 @@ class ProjectAPIEndpoint(BaseAPIView):
                 type=OpenApiTypes.STR,
                 location=OpenApiParameter.PATH,
             ),
+            OpenApiParameter(
+                name="pk",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
         ],
         responses={
             204: OpenApiResponse(description="Project deleted"),
@@ -512,8 +526,14 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
                 type=OpenApiTypes.STR,
                 location=OpenApiParameter.PATH,
             ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
         ],
-        request={},
         responses={
             204: OpenApiResponse(description="Project archived"),
             401: UNAUTHORIZED_RESPONSE,

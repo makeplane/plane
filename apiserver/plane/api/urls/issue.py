@@ -49,7 +49,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/links/<uuid:pk>/",
-        IssueLinkAPIEndpoint.as_view(http_method_names=["get", "delete"]),
+        IssueLinkAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="link",
     ),
     path(
@@ -59,7 +59,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/comments/<uuid:pk>/",
-        IssueCommentAPIEndpoint.as_view(http_method_names=["get", "delete"]),
+        IssueCommentAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="comment",
     ),
     path(
