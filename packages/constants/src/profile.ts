@@ -1,9 +1,13 @@
-export const PROFILE_ACTION_LINKS: {
+import { EXTENDED_PROFILE_ACTION_LINKS } from "./profile-extended";
+
+type TProfileActionLink = {
   key: string;
   i18n_label: string;
   href: string;
   highlight: (pathname: string) => boolean;
-}[] = [
+};
+
+export const PROFILE_ACTION_LINKS: TProfileActionLink[] = [
   {
     key: "profile",
     i18n_label: "profile.actions.profile",
@@ -34,6 +38,7 @@ export const PROFILE_ACTION_LINKS: {
     href: `/profile/notifications`,
     highlight: (pathname: string) => pathname === "/profile/notifications/",
   },
+  ...EXTENDED_PROFILE_ACTION_LINKS,
 ];
 
 export const PROFILE_VIEWER_TAB = [

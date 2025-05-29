@@ -9,6 +9,7 @@ import type {
   TLogoProps,
   TStateGroups,
 } from "..";
+import type { TProjectIssuesSearchParams as TProjectIssuesSearchParamsExtended } from "./project-extended";
 import { TUserPermissions } from "../enums";
 
 export interface IPartialProject {
@@ -132,7 +133,7 @@ export interface GithubRepositoriesResponse {
   total_count: number;
 }
 
-export type TProjectIssuesSearchParams = {
+export type TProjectIssuesSearchParams = TProjectIssuesSearchParamsExtended & {
   search: string;
   parent?: boolean;
   issue_relation?: boolean;

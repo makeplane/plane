@@ -179,7 +179,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     projectId &&
     hasPermissionToCurrentProject === false
   )
-    return <JoinProject />;
+    return <JoinProject projectId={projectId} />;
 
   // check if the project info is not found.
   if (loader === "loaded" && projectId && !!hasPermissionToCurrentProject === false)
