@@ -1,0 +1,79 @@
+from django.urls import path
+
+from plane.api.views import (
+    IssueAPIEndpoint,
+    LabelAPIEndpoint,
+    IssueLinkAPIEndpoint,
+    IssueCommentAPIEndpoint,
+    IssueActivityAPIEndpoint,
+    WorkspaceIssueAPIEndpoint,
+    IssueAttachmentEndpoint,
+)
+
+urlpatterns = [
+    path(
+        "workspaces/<str:slug>/workitems/<str:project__identifier>-<str:issue__identifier>/",
+        WorkspaceIssueAPIEndpoint.as_view(),
+        name="workitem-by-identifier",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workitems/",
+        IssueAPIEndpoint.as_view(),
+        name="workitem",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workitems/<uuid:pk>/",
+        IssueAPIEndpoint.as_view(),
+        name="workitem",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/labels/",
+        LabelAPIEndpoint.as_view(),
+        name="workitem-label",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/labels/<uuid:pk>/",
+        LabelAPIEndpoint.as_view(),
+        name="workitem-label",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workitems/<uuid:issue_id>/links/",
+        IssueLinkAPIEndpoint.as_view(),
+        name="workitem-link",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workitems/<uuid:issue_id>/links/<uuid:pk>/",
+        IssueLinkAPIEndpoint.as_view(),
+        name="workitem-link",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workitems/<uuid:issue_id>/comments/",
+        IssueCommentAPIEndpoint.as_view(),
+        name="workitem-comment",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workitems/<uuid:issue_id>/comments/<uuid:pk>/",
+        IssueCommentAPIEndpoint.as_view(),
+        name="workitem-comment",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workitems/<uuid:issue_id>/activities/",
+        IssueActivityAPIEndpoint.as_view(),
+        name="workitem-activity",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workitems/<uuid:issue_id>/activities/<uuid:pk>/",
+        IssueActivityAPIEndpoint.as_view(),
+        name="workitem-activity",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workitems/<uuid:issue_id>/issue-attachments/",
+        IssueAttachmentEndpoint.as_view(),
+        name="workitem-attachment",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workitems/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
+        IssueAttachmentEndpoint.as_view(),
+        name="workitem-attachment",
+    ),
+]
