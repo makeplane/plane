@@ -47,7 +47,7 @@ export const ProjectIssuesMobileHeader = observer(() => {
   };
   const { currentProjectDetails } = useProject();
   const { projectStates } = useProjectState();
-  const { projectLabels } = useLabel();
+  const { labels } = useLabel();
 
   // store hooks
   const {
@@ -157,7 +157,7 @@ export const ProjectIssuesMobileHeader = observer(() => {
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
               }
-              labels={projectLabels}
+              labels={labels}
               memberIds={projectMemberIds ?? undefined}
               states={projectStates}
               cycleViewDisabled={!currentProjectDetails?.cycle_view}

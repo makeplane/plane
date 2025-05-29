@@ -20,7 +20,7 @@ export const InboxIssueFilterSelection: FC = observer(() => {
   const {
     project: { projectMemberIds },
   } = useMember();
-  const { projectLabels } = useLabel();
+  const { labels } = useLabel();
   const { projectStates } = useProjectState();
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
@@ -79,7 +79,7 @@ export const InboxIssueFilterSelection: FC = observer(() => {
         </div>
         {/* Labels */}
         <div className="py-2">
-          <FilterLabels searchQuery={filtersSearchQuery} labels={projectLabels ?? []} />
+          <FilterLabels searchQuery={filtersSearchQuery} labels={labels ?? []} />
         </div>
         {/* Created at */}
         <div className="py-2">

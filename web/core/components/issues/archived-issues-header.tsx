@@ -24,7 +24,7 @@ export const ArchivedIssuesHeader: FC = observer(() => {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const { projectStates } = useProjectState();
-  const { projectLabels } = useLabel();
+  const { labels } = useLabel();
   const {
     project: { projectMemberIds },
   } = useMember();
@@ -83,7 +83,7 @@ export const ArchivedIssuesHeader: FC = observer(() => {
             layoutDisplayFiltersOptions={
               activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.archived_issues[activeLayout] : undefined
             }
-            labels={projectLabels}
+            labels={labels}
             memberIds={projectMemberIds ?? undefined}
             states={projectStates}
           />

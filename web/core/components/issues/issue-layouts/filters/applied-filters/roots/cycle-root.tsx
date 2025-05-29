@@ -17,7 +17,7 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.CYCLE);
 
-  const { projectLabels } = useLabel();
+  const { labels } = useLabel();
   const { projectStates } = useProjectState();
   // derived values
   const userFilters = issueFilters?.filters;
@@ -83,7 +83,7 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
           appliedFilters={appliedFilters}
           handleClearAllFilters={handleClearAllFilters}
           handleRemoveFilter={handleRemoveFilter}
-          labels={projectLabels ?? []}
+          labels={labels ?? []}
           states={projectStates}
         />
       </Header.LeftItem>

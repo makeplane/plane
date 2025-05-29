@@ -76,7 +76,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const { setTrackElement } = useEventTracker();
   const { currentProjectDetails, loader } = useProject();
   const { projectStates } = useProjectState();
-  const { labels } = useLabel();
+  const { projectLabels } = useLabel();
   const {
     project: { projectMemberIds },
   } = useMember();
@@ -256,7 +256,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                 }
                 displayFilters={issueFilters?.displayFilters ?? {}}
                 handleDisplayFiltersUpdate={handleDisplayFilters}
-                labels={labels}
+                labels={projectLabels}
                 memberIds={projectMemberIds ?? undefined}
                 states={projectStates}
                 cycleViewDisabled={!currentProjectDetails?.cycle_view}
