@@ -670,6 +670,46 @@ class LabelAPIEndpoint(BaseAPIView):
             .order_by(self.kwargs.get("order_by", "-created_at"))
         )
 
+    @extend_schema(
+        operation_id="create_label",
+        tags=["Labels"],
+        summary="Create a label",
+        description="Create a new label in the project.",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "name": {"type": "string"},
+                    "color": {"type": "string"},
+                    "description": {"type": "string"},
+                },
+                "required": ["name", "color", "description"],
+            },
+        },
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+            ),
+        ],
+        responses={
+            201: OpenApiResponse(
+                description="Label created successfully", response=LabelSerializer
+            ),
+            400: OpenApiResponse(
+                description="Invalid request data", response=LabelSerializer
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Project not found"),
+        },
+    )
     def post(self, request, slug, project_id):
         try:
             serializer = LabelSerializer(data=request.data)
@@ -715,6 +755,33 @@ class LabelAPIEndpoint(BaseAPIView):
                 status=status.HTTP_409_CONFLICT,
             )
 
+    @extend_schema(
+        operation_id="get_labels",
+        tags=["Labels"],
+        summary="Get labels",
+        description="Get all labels in the project.",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="Labels",
+                response=LabelSerializer,
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Project not found"),
+        },
+    )
     def get(self, request, slug, project_id, pk=None):
         if pk is None:
             return self.paginate(
@@ -728,6 +795,50 @@ class LabelAPIEndpoint(BaseAPIView):
         serializer = LabelSerializer(label, fields=self.fields, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        operation_id="update_label",
+        tags=["Labels"],
+        summary="Update a label",
+        description="Update a label in the project.",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "name": {"type": "string"},
+                    "color": {"type": "string"},
+                    "description": {"type": "string"},
+                },
+            }
+        },
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="pk",
+                description="Label ID",
+                required=True,
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="Label updated successfully", response=LabelSerializer
+            ),
+            400: OpenApiResponse(
+                description="Invalid request data", response=LabelSerializer
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Label not found"),
+        },
+    )
     def patch(self, request, slug, project_id, pk=None):
         label = self.get_queryset().get(pk=pk)
         serializer = LabelSerializer(label, data=request.data, partial=True)
@@ -755,6 +866,35 @@ class LabelAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @extend_schema(
+        operation_id="delete_label",
+        tags=["Labels"],
+        summary="Delete a label",
+        description="Delete a label in the project.",
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+            ),
+            OpenApiParameter(
+                name="pk",
+                description="Label ID",
+                required=True,
+            ),
+        ],
+        responses={
+            204: OpenApiResponse(description="Label deleted successfully"),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: OpenApiResponse(description="Label not found"),
+        },
+    )
     def delete(self, request, slug, project_id, pk=None):
         label = self.get_queryset().get(pk=pk)
         label.delete()

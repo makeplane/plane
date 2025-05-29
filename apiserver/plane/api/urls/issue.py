@@ -34,12 +34,12 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/labels/",
-        LabelAPIEndpoint.as_view(),
+        LabelAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="label",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/labels/<uuid:pk>/",
-        LabelAPIEndpoint.as_view(),
+        LabelAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="label",
     ),
     path(

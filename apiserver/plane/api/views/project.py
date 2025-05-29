@@ -113,12 +113,23 @@ class ProjectAPIEndpoint(BaseAPIView):
         )
 
     @extend_schema(
+        operation_id="get_projects",
+        tags=["Projects"],
+        summary="Get projects",
+        description="Get all projects in a workspace.",
         parameters=[
             # Parameters for list operation
             OpenApiParameter(
                 name="slug",
                 description="Workspace slug",
                 required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="pk",
+                description="Project ID",
+                required=False,
                 type=OpenApiTypes.STR,
                 location=OpenApiParameter.PATH,
             ),
@@ -328,6 +339,13 @@ class ProjectAPIEndpoint(BaseAPIView):
                 type=OpenApiTypes.STR,
                 location=OpenApiParameter.PATH,
             ),
+            OpenApiParameter(
+                name="pk",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
         ],
         responses={
             200: OpenApiResponse(
@@ -420,6 +438,13 @@ class ProjectAPIEndpoint(BaseAPIView):
                 type=OpenApiTypes.STR,
                 location=OpenApiParameter.PATH,
             ),
+            OpenApiParameter(
+                name="pk",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
         ],
         responses={
             204: OpenApiResponse(description="Project deleted"),
@@ -467,8 +492,14 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
                 type=OpenApiTypes.STR,
                 location=OpenApiParameter.PATH,
             ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
         ],
-        request={},
         responses={
             204: OpenApiResponse(description="Project archived"),
             401: UNAUTHORIZED_RESPONSE,
