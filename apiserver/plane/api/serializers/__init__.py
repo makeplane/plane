@@ -33,8 +33,8 @@ from .module import (
 )
 from .intake import (
     IntakeIssueSerializer,
-    CreateIntakeIssueRequestSerializer,
-    UpdateIntakeIssueRequestSerializer,
+    IntakeIssueCreateSerializer,
+    IntakeIssueUpdateSerializer,
 )
 from .estimate import EstimatePointSerializer
 from .asset import (

@@ -19,85 +19,6 @@ def preprocess_filter_api_v1_paths(endpoints):
     return filtered
 
 
-def postprocess_assign_tags(result, generator, request, public):
-    """
-    Post-process the OpenAPI schema to assign tags to endpoints based on URL patterns.
-    Tags are defined in SPECTACULAR_SETTINGS["TAGS"].
-    """
-    # Define tag mapping based on URL patterns - ORDER MATTERS (most specific first)
-    tag_mappings = [
-        {
-            "patterns": [
-                "/projects/{project_id}/intake-issues/{",
-                "/intake-issues/",
-            ],
-            "tag": "Intake",
-        },
-        {
-            "patterns": [
-                "/projects/{project_id}/cycles/",
-                "/cycles/{cycle_id}/",
-                "/archived-cycles/",
-                "/cycle-issues/",
-                "/transfer-issues/",
-                "/transfer/",
-            ],
-            "tag": "Cycles",
-        },
-        {
-            "patterns": [
-                "/projects/{project_id}/modules/",
-                "/modules/{module_id}/",
-                "/archived-modules/",
-                "/module-issues/",
-            ],
-            "tag": "Modules",
-        },
-        {
-            "patterns": [
-                "/projects/{project_id}/issues/",
-                "/issue-attachments/",
-            ],
-            "tag": "Work Items",
-        },
-        {
-            "patterns": ["/projects/{project_id}/states/", "/states/{state_id}/"],
-            "tag": "States",
-        },
-        {"patterns": ["/projects/{project_id}/labels/", "/labels/{"], "tag": "Labels"},
-        {"patterns": ["/members/", "/members/{"], "tag": "Members"},
-        {"patterns": ["/assets/", "/user-assets/", "/generic-asset"], "tag": "Assets"},
-        {"patterns": ["/users/", "/users/{"], "tag": "Users"},
-        {"patterns": ["/projects/", "/projects/{", "/archive/"], "tag": "Projects"},
-    ]
-
-    # Assign tags to endpoints based on URL patterns
-    for path, path_info in result.get("paths", {}).items():
-        for method, operation in path_info.items():
-            if method.upper() in ["GET", "POST", "PATCH", "DELETE"]:
-                # Find the appropriate tag - check most specific patterns first
-                assigned_tag = "General"  # Default tag
-
-                for tag_info in tag_mappings:
-                    for pattern in tag_info["patterns"]:
-                        if pattern in path:
-                            assigned_tag = tag_info["tag"]
-                            break
-                    if assigned_tag != "General":
-                        break
-
-                # Assign the tag
-                operation["tags"] = [assigned_tag]
-
-                # Add better summaries based on method and path
-                if "summary" not in operation:
-                    operation["summary"] = generate_operation_summary(
-                        method.upper(), path, assigned_tag
-                    )
-
-    return result
-
-
 def generate_operation_summary(method, path, tag):
     """
     Generate a human-readable summary for an operation.
@@ -128,4 +49,4 @@ def generate_operation_summary(method, path, tag):
     if "transfer" in path.lower():
         return f'Transfer {tag.rstrip("s")}'
 
-    return method_summaries.get(method, f"{method} {resource}") 
+    return method_summaries.get(method, f"{method} {resource}")

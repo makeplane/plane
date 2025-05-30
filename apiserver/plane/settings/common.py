@@ -451,15 +451,13 @@ if ENABLE_DRF_SPECTACULAR:
         "VERSION": "1.0.0",
         "SERVE_INCLUDE_SCHEMA": False,
         "SCHEMA_PATH_PREFIX": "/api/v1/",
-        "SCHEMA_PATH_PREFIX_TRIM": True,
-        "SCHEMA_PATH_PREFIX_INSERT": "",
         "PREPROCESSING_HOOKS": [
             "plane.utils.openapi.hooks.preprocess_filter_api_v1_paths",
         ],
-        # "POSTPROCESSING_HOOKS": [
-        #     "plane.utils.openapi.hooks.postprocess_assign_tags",
-        # ],
-        "SERVERS": [{"url": "/api/v1", "description": "API v1"}],
+        "SERVERS": [
+            {"url": "http://localhost:8000", "description": "API v1"},
+            {"url": "https://api.plane.so", "description": "API v1"},
+        ],
         "TAGS": [
             {
                 "name": "Projects",

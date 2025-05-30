@@ -3,8 +3,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import (
     extend_schema,
-    OpenApiParameter,
-    OpenApiTypes,
     OpenApiResponse,
 )
 
@@ -27,15 +25,6 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="get_workspace_members",
         tags=["Members"],
-        parameters=[
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-        ],
         responses={
             200: OpenApiResponse(
                 description="List of workspace members with their roles",
@@ -97,22 +86,6 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="get_project_members",
         tags=["Members"],
-        parameters=[
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="project_id",
-                description="Project ID",
-                required=True,
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
-            ),
-        ],
         responses={
             200: OpenApiResponse(
                 description="List of project members with their roles",

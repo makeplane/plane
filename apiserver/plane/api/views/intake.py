@@ -18,8 +18,8 @@ from drf_spectacular.utils import OpenApiResponse
 from plane.api.serializers import (
     IntakeIssueSerializer,
     IssueSerializer,
-    CreateIntakeIssueRequestSerializer,
-    UpdateIntakeIssueRequestSerializer,
+    IntakeIssueCreateSerializer,
+    IntakeIssueUpdateSerializer,
 )
 from plane.app.permissions import ProjectLitePermission
 from plane.bgtasks.issue_activities_task import issue_activity
@@ -101,7 +101,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
 
     @intake_docs(
         operation_id="create_intake_issue",
-        request=CreateIntakeIssueRequestSerializer,
+        request=IntakeIssueCreateSerializer,
         responses={
             201: OpenApiResponse(
                 description="Intake issue created", response=IntakeIssueSerializer
@@ -182,7 +182,13 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
 
     @intake_docs(
         operation_id="update_intake_issue",
-        request=UpdateIntakeIssueRequestSerializer,
+        request=IntakeIssueUpdateSerializer,
+        responses={
+            200: OpenApiResponse(
+                description="Intake issue updated", response=IntakeIssueSerializer
+            ),
+            400: OpenApiResponse(description="Invalid request"),
+        },
     )
     def patch(self, request, slug, project_id, issue_id):
         """Update intake issue
@@ -297,7 +303,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
 
         # Only project admins and members can edit intake issue attributes
         if project_member.role > 15:
-            serializer = IntakeIssueSerializer(
+            serializer = IntakeIssueUpdateSerializer(
                 intake_issue, data=request.data, partial=True
             )
             current_instance = json.dumps(
@@ -347,7 +353,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
                     origin=base_host(request=request, is_app=True),
                     intake=str(intake_issue.id),
                 )
-
+                serializer = IntakeIssueSerializer(intake_issue)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
