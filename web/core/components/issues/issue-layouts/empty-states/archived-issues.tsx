@@ -72,7 +72,7 @@ export const ProjectArchivedEmptyState: React.FC = observer(() => {
           assetPath={archivedIssuesResolvedPath}
           primaryButton={{
             text: t("project_issues.empty_state.no_archived_issues.primary_button.text"),
-            onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/settings/automations`),
+            onClick: () => router.push(`/${workspaceSlug}/settings/projects/${projectId}/automations`),
             disabled: !canPerformEmptyStateActions,
           }}
         />

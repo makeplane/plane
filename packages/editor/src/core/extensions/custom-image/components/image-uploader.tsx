@@ -86,6 +86,10 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     [editor]
   );
 
+  const handleInvalidFile = useCallback((_error: EFileError, _file: File, message: string) => {
+    alert(message);
+  }, []);
+
   // hooks
   const { isUploading: isImageBeingUploaded, uploadFile } = useUploader({
     acceptedMimeTypes: ACCEPTED_IMAGE_MIME_TYPES,
@@ -94,18 +98,12 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     handleProgressStatus,
     loadFileFromFileSystem: loadImageFromFileSystem,
     maxFileSize,
+    onInvalidFile: handleInvalidFile,
     onUpload,
   });
 
-  const handleInvalidFile = useCallback((_error: EFileError, message: string) => {
-    alert(message);
-  }, []);
-
   const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({
-    acceptedMimeTypes: ACCEPTED_IMAGE_MIME_TYPES,
     editor,
-    maxFileSize,
-    onInvalidFile: handleInvalidFile,
     pos: getPos(),
     type: "image",
     uploader: uploadFile,
@@ -140,11 +138,8 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         return;
       }
       await uploadFirstFileAndInsertRemaining({
-        acceptedMimeTypes: ACCEPTED_IMAGE_MIME_TYPES,
         editor,
         filesList,
-        maxFileSize,
-        onInvalidFile: (_error, message) => alert(message),
         pos: getPos(),
         type: "image",
         uploader: uploadFile,

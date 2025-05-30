@@ -1,5 +1,5 @@
-import type { ICycle, IProjectMember, IUser, IUserLite, IWorkspaceViewProps, TPaginationInfo } from "@plane/types";
-import { EProductSubscriptionEnum, EUserWorkspaceRoles } from "@plane/constants"; // TODO: check if importing this over here causes circular dependency
+import type { ICycle, TProjectMembership, IUser, IUserLite, IWorkspaceViewProps, TPaginationInfo } from "@plane/types";
+import { EUserWorkspaceRoles, EProductSubscriptionEnum } from "@plane/constants"; // TODO: check if importing this over here causes circular dependency
 import { TUserPermissions } from "./enums";
 // extended imports
 import { TWorkspaceExtendedResultEntities } from "./workspace-extended";
@@ -98,7 +98,7 @@ export interface IWorkspaceMemberMe {
 
 export interface ILastActiveWorkspaceDetails {
   workspace_details: IWorkspace;
-  project_details?: IProjectMember[];
+  project_details?: TProjectMembership[];
 }
 
 export interface IWorkspaceDefaultSearchResult {
@@ -313,13 +313,3 @@ export type TImporterCredentialValidation = TWorkspaceCredentialVerification & {
 export type TWorkspaceEpicsSearchParams = {
   initiative_id?: string;
 };
-
-export interface IWorkspaceSidebarNavigationItem {
-  key?: string;
-  is_pinned: boolean;
-  sort_order: number;
-}
-
-export interface IWorkspaceSidebarNavigation {
-  [key: string]: IWorkspaceSidebarNavigationItem;
-}

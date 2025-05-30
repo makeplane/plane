@@ -54,7 +54,7 @@ const ProjectPagesPage = observer(() => {
           primaryButton={{
             text: t("disabled_project.empty_state.page.primary_button.text"),
             onClick: () => {
-              router.push(`/${workspaceSlug}/projects/${projectId}/settings/features`);
+              router.push(`/${workspaceSlug}/settings/projects/${projectId}/features`);
             },
             disabled: !canPerformEmptyStateActions,
           }}

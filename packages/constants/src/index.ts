@@ -37,6 +37,7 @@ export * from "./page";
 export * from "./subscription";
 export * from "./emoji";
 export * from "./subscription";
+export * from "./settings";
 export * from "./icon";
 export * from "./errors-extended";
 export * from "./file-extended";

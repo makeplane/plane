@@ -22,6 +22,13 @@
       "collapse_sidebar": "Comprimi barra laterale",
       "expand_sidebar": "Espandi barra laterale",
       "edition_badge": "Apri modal piani a pagamento"
+    },
+    "auth_forms": {
+      "clear_email": "Cancella email",
+      "show_password": "Mostra password",
+      "hide_password": "Nascondi password",
+      "close_alert": "Chiudi avviso",
+      "close_popover": "Chiudi popover"
     }
   }
 }

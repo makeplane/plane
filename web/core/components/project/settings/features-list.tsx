@@ -6,6 +6,7 @@ import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 import { ToggleSwitch, Tooltip, setPromiseToast } from "@plane/ui";
 // hooks
+import { SettingsHeading } from "@/components/settings";
 import { useEventTracker, useProject, useUser } from "@/hooks/store";
 import { ProjectFeatureChildren } from "@/plane-web/components/projects/settings";
 // plane web imports
@@ -68,14 +69,11 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
     <div className="space-y-6">
       {Object.entries(PROJECT_FEATURES_LIST).map(([featureSectionKey, feature]) => (
         <div key={featureSectionKey} className="">
-          <div className="flex flex-col justify-center pb-2 border-b border-custom-border-100">
-            <h3 className="text-xl font-medium">{t(feature.key)}</h3>
-            <h4 className="text-sm leading-5 text-custom-text-200">{t(`${feature.key}_description`)}</h4>
-          </div>
+          <SettingsHeading title={t(feature.key)} description={t(`${feature.key}_description`)} />
           {Object.entries(feature.featureList).map(([featureItemKey, featureItem]) => (
             <div
               key={featureItemKey}
-              className="gap-x-8 gap-y-2 border-b border-custom-border-100 bg-custom-background-100 pb-2 pt-4"
+              className="gap-x-8 gap-y-2 border-b border-custom-border-100 bg-custom-background-100 py-4"
             >
               <div key={featureItemKey} className="flex items-center justify-between">
                 <div className="flex items-start gap-3">

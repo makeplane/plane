@@ -85,6 +85,7 @@ export const useEditor = (props: CustomEditorProps) => {
       immediatelyRender: false,
       shouldRerenderOnTransaction: false,
       autofocus,
+      parseOptions: { preserveWhitespace: true },
       editorProps: {
         ...CoreEditorProps({
           editorClassName,
@@ -124,7 +125,7 @@ export const useEditor = (props: CustomEditorProps) => {
       const isUploadInProgress = getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.uploadInProgress;
       if (!editor.isDestroyed && !isUploadInProgress) {
         try {
-          editor.commands.setContent(value, false, { preserveWhitespace: "full" });
+          editor.commands.setContent(value, false, { preserveWhitespace: true });
           if (editor.state.selection) {
             const docLength = editor.state.doc.content.size;
             const relativePosition = Math.min(editor.state.selection.from, docLength - 1);
@@ -167,7 +168,7 @@ export const useEditor = (props: CustomEditorProps) => {
           ?.chain()
           .setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true)
           .setMeta(CORE_EDITOR_META.INTENTIONAL_DELETION, true)
-          .setContent(content, emitUpdate, { preserveWhitespace: "full" })
+          .setContent(content, emitUpdate, { preserveWhitespace: true })
           .run();
       },
       setEditorValueAtCursorPosition: (content: string) => {

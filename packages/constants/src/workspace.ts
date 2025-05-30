@@ -122,13 +122,6 @@ export const WORKSPACE_SETTINGS = {
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/webhooks/`,
   },
-  "api-tokens": {
-    key: "api-tokens",
-    i18n_label: "workspace_settings.settings.api_tokens.title",
-    href: `/settings/api-tokens`,
-    access: [EUserWorkspaceRoles.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/api-tokens/`,
-  },
   ...EXTENDED_WORKSPACE_SETTINGS,
 };
 
@@ -152,7 +145,6 @@ export const WORKSPACE_SETTINGS_LINKS: {
   WORKSPACE_SETTINGS["import"],
   WORKSPACE_SETTINGS["export"],
   WORKSPACE_SETTINGS["webhooks"],
-  WORKSPACE_SETTINGS["api-tokens"],
   WORKSPACE_SETTINGS["worklogs"],
   WORKSPACE_SETTINGS["teamspaces"],
   WORKSPACE_SETTINGS["initiatives"],

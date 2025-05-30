@@ -21,6 +21,7 @@ export interface IWorkspaceRootStore {
   currentWorkspace: IWorkspace | null;
   workspacesCreatedByCurrentUser: IWorkspace[] | null;
   navigationPreferencesMap: Record<string, IWorkspaceSidebarNavigation>;
+  getWorkspaceRedirectionUrl: () => string;
   // computed actions
   getWorkspaceBySlug: (workspaceSlug: string) => IWorkspace | null;
   getWorkspaceById: (workspaceId: string) => IWorkspace | null;
@@ -91,6 +92,25 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
     this.webhook = new WebhookStore(_rootStore);
     this.apiToken = new ApiTokenStore(_rootStore);
   }
+
+  /**
+   * get the workspace redirection url based on the last and fallback workspace_slug
+   */
+  getWorkspaceRedirectionUrl = () => {
+    let redirectionRoute = "/create-workspace";
+    // validate the last and fallback workspace_slug
+    const currentWorkspaceSlug =
+      this.user.userSettings?.data?.workspace?.last_workspace_slug ||
+      this.user.userSettings?.data?.workspace?.fallback_workspace_slug;
+
+    // validate the current workspace_slug is available in the user's workspace list
+    const isCurrentWorkspaceValid = Object.values(this.workspaces || {}).findIndex(
+      (workspace) => workspace.slug === currentWorkspaceSlug
+    );
+
+    if (isCurrentWorkspaceValid >= 0) redirectionRoute = `/${currentWorkspaceSlug}`;
+    return redirectionRoute;
+  };
 
   /**
    * computed value of current workspace based on workspace slug saved in the query store

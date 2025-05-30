@@ -12,6 +12,7 @@ export interface IUserLite {
   id: string;
   is_bot: boolean;
   last_name: string;
+  joining_date?: string;
 }
 export interface IUser extends IUserLite {
   // only for uploading the cover image
@@ -80,6 +81,8 @@ export interface IUserSettings {
   workspace: {
     last_workspace_id: string | undefined;
     last_workspace_slug: string | undefined;
+    last_workspace_name: string | undefined;
+    last_workspace_logo: string | undefined;
     fallback_workspace_id: string | undefined;
     fallback_workspace_slug: string | undefined;
     invites: number | undefined;

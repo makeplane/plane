@@ -3,6 +3,7 @@ import csv
 import io
 import os
 from datetime import date
+import uuid
 import requests
 from dateutil.relativedelta import relativedelta
 
@@ -41,6 +42,7 @@ from plane.db.models import (
     Workspace,
     WorkspaceMember,
     WorkspaceTheme,
+    Profile,
 )
 from plane.ee.models import WorkspaceLicense
 from plane.app.permissions import ROLE, allow_permission
@@ -169,10 +171,18 @@ class WorkSpaceViewSet(BaseViewSet):
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
 
+    def remove_last_workspace_ids_from_user_settings(self, id: uuid.UUID) -> None:
+        """
+        Remove the last workspace id from the user settings
+        """
+        Profile.objects.filter(last_workspace_id=id).update(last_workspace_id=None)
+        return
+
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def destroy(self, request, *args, **kwargs):
         # Get the workspace
         workspace = self.get_object()
+        self.remove_last_workspace_ids_from_user_settings(workspace.id)
 
         # Fetch the workspace subcription
         if settings.PAYMENT_SERVER_BASE_URL:

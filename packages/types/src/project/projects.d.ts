@@ -1,14 +1,5 @@
 import { EUserProjectRoles } from "@plane/constants";
-import type {
-  IProjectViewProps,
-  IUser,
-  IUserLite,
-  IUserMemberLite,
-  IWorkspace,
-  IWorkspaceLite,
-  TLogoProps,
-  TStateGroups,
-} from "..";
+import type { IUser, IUserLite, IWorkspace, TLogoProps, TStateGroups } from "..";
 import type { TProjectIssuesSearchParams as TProjectIssuesSearchParamsExtended } from "./project-extended";
 import { TUserPermissions } from "../enums";
 
@@ -92,30 +83,20 @@ export interface IProjectMemberLite {
   member_id: string;
 }
 
-export interface IProjectMember {
-  id: string;
-  member: IUserMemberLite;
-  project: IProjectLite;
-  workspace: IWorkspaceLite;
-  comment: string;
-  role: TUserPermissions;
-
-  preferences: ProjectPreferences;
-
-  view_props: IProjectViewProps;
-  default_props: IProjectViewProps;
-
-  created_at: Date;
-  updated_at: Date;
-  created_by: string;
-  updated_by: string;
-}
-
-export interface IProjectMembership {
-  id: string;
+export type TProjectMembership = {
   member: string;
-  role: TUserPermissions;
-}
+  role: TUserPermissions | EUserProjectRoles;
+  created_at: string;
+} & (
+  | {
+      id: string;
+      original_role: EUserProjectRoles;
+    }
+  | {
+      id: null;
+      original_role: null;
+    }
+);
 
 export interface IProjectBulkAddFormData {
   members: { role: TUserPermissions | EUserProjectRoles; member_id: string }[];
