@@ -41,6 +41,20 @@ export const handleIssueWebhook = async (payload: PlaneWebhookPayload) => {
   });
 };
 
+// Message formatter function
+const formatMessage = (field: string, cleanField: string, newValue: string, actor: string): string => {
+  switch (field) {
+    case "link":
+      return `\n• *${actor}* added link ${newValue}`;
+    case "reaction": {
+      const emoji = String.fromCodePoint(parseInt(newValue));
+      return `\n• *${actor}* reacted with *${emoji}*`;
+    }
+    default:
+      return `\n• *${actor}* updated *${cleanField}* to *${newValue}*`;
+  }
+};
+
 export const createSlackBlocksFromActivity = (fields: ActivityForSlack[]) => {
   // Sort the fields so that array fields are at the end
   fields.sort((a, b) => (a.isArrayField ? 1 : -1));
@@ -55,8 +69,7 @@ export const createSlackBlocksFromActivity = (fields: ActivityForSlack[]) => {
   }
 
   fields.forEach((field) => {
-    const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
-    const cleanField = capitalize(field.field.replace("_", " "));
+    const cleanField = field.field.replace("_", " ");
 
     if (field.isArrayField) {
       if (field.added.length > 0 || field.removed.length > 0) {
@@ -69,12 +82,7 @@ export const createSlackBlocksFromActivity = (fields: ActivityForSlack[]) => {
         }
       }
     } else {
-      if (field.field === "reaction") {
-        const emoji = String.fromCodePoint(parseInt(field.newValue));
-        message += `\n• *${field.actor}* reacted with *${emoji}*`;
-      } else {
-        message += `\n• *${cleanField}* updated to *${field.newValue}*`;
-      }
+      message += formatMessage(field.field, cleanField, field.newValue, field.actor);
     }
   });
 
