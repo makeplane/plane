@@ -2,6 +2,7 @@
 
 from django.conf import settings
 from django.urls import include, path, re_path
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 handler404 = "plane.app.views.error_404.custom_404_view"
 
@@ -14,6 +15,15 @@ urlpatterns = [
     path("", include("plane.web.urls")),
 ]
 
+if settings.ENABLE_DRF_SPECTACULAR:
+    urlpatterns += [
+        path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+        path(
+            "api/schema/swagger-ui/",
+            SpectacularSwaggerView.as_view(url_name="schema"),
+            name="swagger-ui",
+        ),
+    ]
 
 if settings.DEBUG:
     try:

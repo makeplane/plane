@@ -30,7 +30,11 @@ from plane.db.models import (
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from .base import BaseAPIView
 from plane.utils.host import base_host
-from plane.api.serializers import ProjectSerializer
+from plane.api.serializers import (
+    ProjectSerializer,
+    ProjectCreateSerializer,
+    ProjectUpdateSerializer,
+)
 from plane.app.permissions import ProjectBasePermission
 from plane.utils.openapi.decorators import project_docs
 
@@ -155,7 +159,7 @@ class ProjectAPIEndpoint(BaseAPIView):
 
     @project_docs(
         operation_id="create_project",
-        request=ProjectSerializer,
+        request=ProjectCreateSerializer,
         responses={
             201: ProjectSerializer,
             404: OpenApiResponse(description="Workspace not found"),
@@ -170,7 +174,7 @@ class ProjectAPIEndpoint(BaseAPIView):
         """
         try:
             workspace = Workspace.objects.get(slug=slug)
-            serializer = ProjectSerializer(
+            serializer = ProjectCreateSerializer(
                 data={**request.data}, context={"workspace_id": workspace.id}
             )
             if serializer.is_valid():
@@ -178,25 +182,25 @@ class ProjectAPIEndpoint(BaseAPIView):
 
                 # Add the user as Administrator to the project
                 _ = ProjectMember.objects.create(
-                    project_id=serializer.data["id"], member=request.user, role=20
+                    project_id=serializer.instance.id, member=request.user, role=20
                 )
                 # Also create the issue property for the user
                 _ = IssueUserProperty.objects.create(
-                    project_id=serializer.data["id"], user=request.user
+                    project_id=serializer.instance.id, user=request.user
                 )
 
-                if serializer.data["project_lead"] is not None and str(
-                    serializer.data["project_lead"]
+                if serializer.instance.project_lead is not None and str(
+                    serializer.instance.project_lead
                 ) != str(request.user.id):
                     ProjectMember.objects.create(
-                        project_id=serializer.data["id"],
-                        member_id=serializer.data["project_lead"],
+                        project_id=serializer.instance.id,
+                        member_id=serializer.instance.project_lead,
                         role=20,
                     )
                     # Also create the issue property for the user
                     IssueUserProperty.objects.create(
-                        project_id=serializer.data["id"],
-                        user_id=serializer.data["project_lead"],
+                        project_id=serializer.instance.id,
+                        user_id=serializer.instance.project_lead,
                     )
 
                 # Default states
@@ -250,7 +254,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                     ]
                 )
 
-                project = self.get_queryset().filter(pk=serializer.data["id"]).first()
+                project = self.get_queryset().filter(pk=serializer.instance.id).first()
 
                 # Model activity
                 model_activity.delay(
@@ -284,7 +288,7 @@ class ProjectAPIEndpoint(BaseAPIView):
 
     @project_docs(
         operation_id="update_project",
-        request=ProjectSerializer,
+        request=ProjectUpdateSerializer,
         responses={
             200: ProjectSerializer,
             404: OpenApiResponse(description="Project not found"),
@@ -312,7 +316,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            serializer = ProjectSerializer(
+            serializer = ProjectUpdateSerializer(
                 project,
                 data={**request.data, "intake_view": intake_view},
                 context={"workspace_id": workspace.id},
@@ -332,7 +336,7 @@ class ProjectAPIEndpoint(BaseAPIView):
                             is_default=True,
                         )
 
-                project = self.get_queryset().filter(pk=serializer.data["id"]).first()
+                project = self.get_queryset().filter(pk=serializer.instance.id).first()
 
                 model_activity.delay(
                     model_name="project",

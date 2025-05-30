@@ -58,7 +58,7 @@ def project_docs(**kwargs):
     """Decorator for project-related endpoints"""
     defaults = {
         "tags": ["Projects"],
-        "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
+        "parameters": [WORKSPACE_SLUG_PARAMETER],
         "responses": {
             401: UNAUTHORIZED_RESPONSE,
             403: FORBIDDEN_RESPONSE,
