@@ -50,7 +50,7 @@ class StateAPIEndpoint(BaseAPIView):
     )
     def post(self, request, slug, project_id):
         """Create state
-        
+
         Create a new workflow state for a project with specified name, color, and group.
         Supports external ID tracking for integration purposes.
         """
@@ -111,7 +111,7 @@ class StateAPIEndpoint(BaseAPIView):
     )
     def get(self, request, slug, project_id, state_id=None):
         """List or retrieve states
-        
+
         Retrieve all workflow states for a project or get details of a specific state.
         Returns paginated results when listing all states.
         """
@@ -139,7 +139,7 @@ class StateAPIEndpoint(BaseAPIView):
     )
     def delete(self, request, slug, project_id, state_id):
         """Delete state
-        
+
         Permanently remove a workflow state from a project.
         Default states and states with existing issues cannot be deleted.
         """
@@ -174,12 +174,14 @@ class StateAPIEndpoint(BaseAPIView):
                 response=StateSerializer,
             ),
             400: OpenApiResponse(description="Invalid request data"),
-            409: OpenApiResponse(description="State with same external ID already exists"),
+            409: OpenApiResponse(
+                description="State with same external ID already exists"
+            ),
         },
     )
     def patch(self, request, slug, project_id, state_id=None):
         """Update state
-        
+
         Partially update an existing workflow state's properties like name, color, or group.
         Validates external ID uniqueness if provided.
         """

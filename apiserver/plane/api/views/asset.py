@@ -391,7 +391,6 @@ class GenericAssetEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            size_limit = settings.FILE_SIZE_LIMIT
 
             # Generate presigned URL for GET
             storage = S3Storage(request=request, is_server=True)

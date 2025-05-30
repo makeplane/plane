@@ -151,12 +151,14 @@ class ModuleAPIEndpoint(BaseAPIView):
             ),
             400: OpenApiResponse(description="Invalid request"),
             404: OpenApiResponse(description="Project not found"),
-            409: OpenApiResponse(description="Module with same external ID already exists"),
+            409: OpenApiResponse(
+                description="Module with same external ID already exists"
+            ),
         },
     )
     def post(self, request, slug, project_id):
         """Create module
-        
+
         Create a new project module with specified name, description, and timeline.
         Automatically assigns the creator as module lead and tracks activity.
         """
@@ -216,12 +218,14 @@ class ModuleAPIEndpoint(BaseAPIView):
                 description="Invalid request data", response=ModuleSerializer
             ),
             404: OpenApiResponse(description="Module not found"),
-            409: OpenApiResponse(description="Module with same external ID already exists"),
+            409: OpenApiResponse(
+                description="Module with same external ID already exists"
+            ),
         },
     )
     def patch(self, request, slug, project_id, pk):
         """Update module
-        
+
         Modify an existing module's properties like name, description, status, or timeline.
         Tracks all changes in model activity logs for audit purposes.
         """
@@ -284,7 +288,7 @@ class ModuleAPIEndpoint(BaseAPIView):
     )
     def get(self, request, slug, project_id, pk=None):
         """List or retrieve modules
-        
+
         Retrieve all modules in a project or get details of a specific module.
         Returns paginated results with module statistics and member information.
         """
@@ -312,7 +316,7 @@ class ModuleAPIEndpoint(BaseAPIView):
     )
     def delete(self, request, slug, project_id, pk):
         """Delete module
-        
+
         Permanently remove a module and all its associated issue relationships.
         Only admins or the module creator can perform this action.
         """
@@ -409,7 +413,7 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
     )
     def get(self, request, slug, project_id, module_id):
         """List module issues
-        
+
         Retrieve all issues assigned to a module with detailed information.
         Returns paginated results including assignees, labels, and attachments.
         """
@@ -471,7 +475,7 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
     )
     def post(self, request, slug, project_id, module_id):
         """Add module issues
-        
+
         Assign multiple issues to a module or move them from another module.
         Automatically handles bulk creation and updates with activity tracking.
         """
@@ -563,7 +567,7 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
     )
     def delete(self, request, slug, project_id, module_id, issue_id):
         """Remove module issue
-        
+
         Remove an issue from a module while keeping the issue in the project.
         Records the removal activity for tracking purposes.
         """
@@ -691,7 +695,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     )
     def get(self, request, slug, project_id, pk):
         """List archived modules
-        
+
         Retrieve all modules that have been archived in the project.
         Returns paginated results with module statistics and completion data.
         """
@@ -708,13 +712,15 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         request={},
         responses={
             204: OpenApiResponse(description="Module archived"),
-            400: OpenApiResponse(description="Only completed or cancelled modules can be archived"),
+            400: OpenApiResponse(
+                description="Only completed or cancelled modules can be archived"
+            ),
             404: OpenApiResponse(description="Module not found"),
         },
     )
     def post(self, request, slug, project_id, pk):
         """Archive module
-        
+
         Move a completed module to archived status for historical tracking.
         Only modules with completed status can be archived.
         """
@@ -743,7 +749,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     )
     def delete(self, request, slug, project_id, pk):
         """Unarchive module
-        
+
         Restore an archived module to active status, making it available for regular use.
         The module will reappear in active module lists and become fully functional.
         """

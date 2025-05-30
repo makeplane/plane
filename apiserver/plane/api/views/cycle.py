@@ -26,7 +26,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.api.serializers import (
-    CycleIssueSerializer, 
+    CycleIssueSerializer,
     CycleSerializer,
     CycleIssueRequestSerializer,
     TransferCycleIssueRequestSerializer,
@@ -154,7 +154,7 @@ class CycleAPIEndpoint(BaseAPIView):
     )
     def get(self, request, slug, project_id, pk=None):
         """List or retrieve cycles
-        
+
         Retrieve all cycles in a project or get details of a specific cycle.
         Supports filtering by cycle status like current, upcoming, completed, or draft.
         """
@@ -270,7 +270,7 @@ class CycleAPIEndpoint(BaseAPIView):
     )
     def post(self, request, slug, project_id):
         """Create cycle
-        
+
         Create a new development cycle with specified name, description, and date range.
         Supports external ID tracking for integration purposes.
         """
@@ -339,7 +339,7 @@ class CycleAPIEndpoint(BaseAPIView):
     )
     def patch(self, request, slug, project_id, pk):
         """Update cycle
-        
+
         Modify an existing cycle's properties like name, description, or date range.
         Completed cycles can only have their sort order changed.
         """
@@ -415,7 +415,7 @@ class CycleAPIEndpoint(BaseAPIView):
     )
     def delete(self, request, slug, project_id, pk):
         """Delete cycle
-        
+
         Permanently remove a cycle and all its associated issue relationships.
         Only admins or the cycle creator can perform this action.
         """
@@ -583,7 +583,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     )
     def get(self, request, slug, project_id):
         """List archived cycles
-        
+
         Retrieve all cycles that have been archived in the project.
         Returns paginated results with cycle statistics and completion data.
         """
@@ -605,7 +605,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     )
     def post(self, request, slug, project_id, cycle_id):
         """Archive cycle
-        
+
         Move a completed cycle to archived status for historical tracking.
         Only cycles that have ended can be archived.
         """
@@ -636,7 +636,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     )
     def delete(self, request, slug, project_id, cycle_id):
         """Unarchive cycle
-        
+
         Restore an archived cycle to active status, making it available for regular use.
         The cycle will reappear in active cycle lists.
         """
@@ -690,7 +690,7 @@ class CycleIssueAPIEndpoint(BaseAPIView):
     )
     def get(self, request, slug, project_id, cycle_id, issue_id=None):
         """List or retrieve cycle issues
-        
+
         Retrieve all issues assigned to a cycle or get details of a specific cycle issue.
         Returns paginated results with issue details, assignees, and labels.
         """
@@ -767,7 +767,7 @@ class CycleIssueAPIEndpoint(BaseAPIView):
     )
     def post(self, request, slug, project_id, cycle_id):
         """Add cycle issues
-        
+
         Assign multiple issues to a cycle or move them from another cycle.
         Automatically handles bulk creation and updates with activity tracking.
         """
@@ -861,7 +861,7 @@ class CycleIssueAPIEndpoint(BaseAPIView):
     )
     def delete(self, request, slug, project_id, cycle_id, issue_id):
         """Remove cycle issue
-        
+
         Remove an issue from a cycle while keeping the issue in the project.
         Records the removal activity for tracking purposes.
         """
@@ -930,7 +930,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
     )
     def post(self, request, slug, project_id, cycle_id):
         """Transfer cycle issues
-        
+
         Move incomplete issues from the current cycle to a new target cycle.
         Captures progress snapshot and transfers only unfinished work items.
         """

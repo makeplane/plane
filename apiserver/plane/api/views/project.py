@@ -118,7 +118,7 @@ class ProjectAPIEndpoint(BaseAPIView):
     )
     def get(self, request, slug, pk=None):
         """List or retrieve projects
-        
+
         Retrieve all projects in a workspace or get details of a specific project.
         Returns projects ordered by user's custom sort order with member information.
         """
@@ -164,7 +164,7 @@ class ProjectAPIEndpoint(BaseAPIView):
     )
     def post(self, request, slug):
         """Create project
-        
+
         Create a new project in the workspace with default states and member assignments.
         Automatically adds the creator as admin and sets up default workflow states.
         """
@@ -293,7 +293,7 @@ class ProjectAPIEndpoint(BaseAPIView):
     )
     def patch(self, request, slug, pk):
         """Update project
-        
+
         Partially update an existing project's properties like name, description, or settings.
         Tracks changes in model activity logs for audit purposes.
         """
@@ -371,7 +371,7 @@ class ProjectAPIEndpoint(BaseAPIView):
     )
     def delete(self, request, slug, pk):
         """Delete project
-        
+
         Permanently remove a project and all its associated data from the workspace.
         Only admins can delete projects and the action cannot be undone.
         """
@@ -409,7 +409,7 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
     )
     def post(self, request, slug, project_id):
         """Archive project
-        
+
         Move a project to archived status, hiding it from active project lists.
         Archived projects remain accessible but are excluded from regular workflows.
         """
@@ -428,7 +428,7 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
     )
     def delete(self, request, slug, project_id):
         """Unarchive project
-        
+
         Restore an archived project to active status, making it available in regular workflows.
         The project will reappear in active project lists and become fully functional.
         """

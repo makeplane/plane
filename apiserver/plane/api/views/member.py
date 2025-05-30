@@ -65,7 +65,7 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
     # Get all the users that are present inside the workspace
     def get(self, request, slug):
         """List workspace members
-        
+
         Retrieve all users who are members of the specified workspace.
         Returns user profiles with their respective workspace roles and permissions.
         """
@@ -126,7 +126,7 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
     # Get all the users that are present inside the workspace
     def get(self, request, slug, project_id):
         """List project members
-        
+
         Retrieve all users who are members of the specified project.
         Returns user profiles with their project-specific roles and access levels.
         """

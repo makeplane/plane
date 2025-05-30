@@ -16,7 +16,7 @@ from drf_spectacular.utils import OpenApiResponse
 
 # Module imports
 from plane.api.serializers import (
-    IntakeIssueSerializer, 
+    IntakeIssueSerializer,
     IssueSerializer,
     CreateIntakeIssueRequestSerializer,
     UpdateIntakeIssueRequestSerializer,
@@ -80,7 +80,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
     )
     def get(self, request, slug, project_id, issue_id=None):
         """List or retrieve intake issues
-        
+
         Retrieve all issues in the project's intake queue or get details of a specific intake issue.
         Returns paginated results when listing all intake issues.
         """
@@ -111,7 +111,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
     )
     def post(self, request, slug, project_id):
         """Create intake issue
-        
+
         Submit a new issue to the project's intake queue for review and triage.
         Automatically creates the issue with default triage state and tracks activity.
         """
@@ -186,7 +186,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
     )
     def patch(self, request, slug, project_id, issue_id):
         """Update intake issue
-        
+
         Modify an existing intake issue's properties or status for triage processing.
         Supports status changes like accept, reject, or mark as duplicate.
         """
@@ -363,7 +363,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
     )
     def delete(self, request, slug, project_id, issue_id):
         """Delete intake issue
-        
+
         Permanently remove an intake issue from the triage queue.
         Also deletes the underlying issue if it hasn't been accepted yet.
         """

@@ -79,6 +79,7 @@ from drf_spectacular.utils import (
 )
 from drf_spectacular.types import OpenApiTypes
 
+
 class WorkspaceIssueAPIEndpoint(BaseAPIView):
     """
     This viewset provides `retrieveByIssueId` on workspace level
@@ -313,12 +314,14 @@ class IssueAPIEndpoint(BaseAPIView):
                 description="Invalid request data", response=IssueSerializer
             ),
             404: OpenApiResponse(description="Project not found"),
-            409: OpenApiResponse(description="Issue with same external ID already exists"),
+            409: OpenApiResponse(
+                description="Issue with same external ID already exists"
+            ),
         },
     )
     def post(self, request, slug, project_id):
         """Create work item
-        
+
         Create a new work item in the specified project with the provided details.
         Supports external ID tracking for integration purposes.
         """
@@ -406,7 +409,7 @@ class IssueAPIEndpoint(BaseAPIView):
     )
     def put(self, request, slug, project_id):
         """Update or create work item
-        
+
         Update an existing work item identified by external ID and source, or create a new one if it doesn't exist.
         Requires external_id and external_source parameters for identification.
         """
@@ -530,12 +533,14 @@ class IssueAPIEndpoint(BaseAPIView):
                 description="Invalid request data", response=IssueSerializer
             ),
             404: OpenApiResponse(description="Work Item not found"),
-            409: OpenApiResponse(description="Issue with same external ID already exists"),
+            409: OpenApiResponse(
+                description="Issue with same external ID already exists"
+            ),
         },
     )
     def patch(self, request, slug, project_id, pk=None):
         """Update work item
-        
+
         Partially update an existing work item with the provided fields.
         Supports external ID validation to prevent conflicts.
         """
@@ -595,7 +600,7 @@ class IssueAPIEndpoint(BaseAPIView):
     )
     def delete(self, request, slug, project_id, pk=None):
         """Delete work item
-        
+
         Permanently delete an existing work item from the project.
         Only admins or the item creator can perform this action.
         """
@@ -666,12 +671,14 @@ class LabelAPIEndpoint(BaseAPIView):
             400: OpenApiResponse(
                 description="Invalid request data", response=LabelSerializer
             ),
-            409: OpenApiResponse(description="Label with same name/external ID already exists"),
+            409: OpenApiResponse(
+                description="Label with same name/external ID already exists"
+            ),
         },
     )
     def post(self, request, slug, project_id):
         """Create label
-        
+
         Create a new label in the specified project with name, color, and description.
         Supports external ID tracking for integration purposes.
         """
@@ -730,7 +737,7 @@ class LabelAPIEndpoint(BaseAPIView):
     )
     def get(self, request, slug, project_id, pk=None):
         """List or retrieve labels
-        
+
         Retrieve all labels in the project or get details of a specific label.
         Returns paginated results when listing all labels.
         """
@@ -757,12 +764,14 @@ class LabelAPIEndpoint(BaseAPIView):
                 description="Invalid request data", response=LabelSerializer
             ),
             404: OpenApiResponse(description="Label not found"),
-            409: OpenApiResponse(description="Label with same external ID already exists"),
+            409: OpenApiResponse(
+                description="Label with same external ID already exists"
+            ),
         },
     )
     def patch(self, request, slug, project_id, pk=None):
         """Update label
-        
+
         Partially update an existing label's properties like name, color, or description.
         Validates external ID uniqueness if provided.
         """
@@ -801,7 +810,7 @@ class LabelAPIEndpoint(BaseAPIView):
     )
     def delete(self, request, slug, project_id, pk=None):
         """Delete label
-        
+
         Permanently remove a label from the project.
         This action cannot be undone.
         """
@@ -848,7 +857,7 @@ class IssueLinkAPIEndpoint(BaseAPIView):
     )
     def get(self, request, slug, project_id, issue_id, pk=None):
         """List or retrieve issue links
-        
+
         Retrieve all links associated with an issue or get details of a specific link.
         Returns paginated results when listing all links.
         """
@@ -884,7 +893,7 @@ class IssueLinkAPIEndpoint(BaseAPIView):
     )
     def post(self, request, slug, project_id, issue_id):
         """Create issue link
-        
+
         Add a new external link to an issue with URL, title, and metadata.
         Automatically tracks link creation activity.
         """
@@ -921,7 +930,7 @@ class IssueLinkAPIEndpoint(BaseAPIView):
     )
     def patch(self, request, slug, project_id, issue_id, pk):
         """Update issue link
-        
+
         Modify the URL, title, or metadata of an existing issue link.
         Tracks all changes in issue activity logs.
         """
@@ -956,7 +965,7 @@ class IssueLinkAPIEndpoint(BaseAPIView):
     )
     def delete(self, request, slug, project_id, issue_id, pk):
         """Delete issue link
-        
+
         Permanently remove an external link from an issue.
         Records deletion activity for audit purposes.
         """
@@ -1028,7 +1037,7 @@ class IssueCommentAPIEndpoint(BaseAPIView):
     )
     def get(self, request, slug, project_id, issue_id, pk=None):
         """List or retrieve issue comments
-        
+
         Retrieve all comments for an issue or get details of a specific comment.
         Returns paginated results when listing all comments.
         """
@@ -1056,12 +1065,14 @@ class IssueCommentAPIEndpoint(BaseAPIView):
             ),
             400: OpenApiResponse(description="Invalid request data"),
             404: OpenApiResponse(description="Issue not found"),
-            409: OpenApiResponse(description="Comment with same external ID already exists"),
+            409: OpenApiResponse(
+                description="Comment with same external ID already exists"
+            ),
         },
     )
     def post(self, request, slug, project_id, issue_id):
         """Create issue comment
-        
+
         Add a new comment to an issue with HTML content.
         Supports external ID tracking for integration purposes.
         """
@@ -1125,12 +1136,14 @@ class IssueCommentAPIEndpoint(BaseAPIView):
             ),
             400: OpenApiResponse(description="Invalid request data"),
             404: OpenApiResponse(description="Issue comment not found"),
-            409: OpenApiResponse(description="Comment with same external ID already exists"),
-        }
+            409: OpenApiResponse(
+                description="Comment with same external ID already exists"
+            ),
+        },
     )
     def patch(self, request, slug, project_id, issue_id, pk):
         """Update issue comment
-        
+
         Modify the content of an existing comment on an issue.
         Validates external ID uniqueness if provided.
         """
@@ -1185,11 +1198,11 @@ class IssueCommentAPIEndpoint(BaseAPIView):
         responses={
             204: OpenApiResponse(description="Issue comment deleted successfully"),
             404: OpenApiResponse(description="Issue comment not found"),
-        }
+        },
     )
     def delete(self, request, slug, project_id, issue_id, pk):
         """Delete issue comment
-        
+
         Permanently remove a comment from an issue.
         Records deletion activity for audit purposes.
         """
@@ -1227,7 +1240,7 @@ class IssueActivityAPIEndpoint(BaseAPIView):
     )
     def get(self, request, slug, project_id, issue_id, pk=None):
         """List or retrieve issue activities
-        
+
         Retrieve chronological activity logs for an issue or get details of a specific activity.
         Excludes comment, vote, reaction, and draft activities.
         """
@@ -1332,7 +1345,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
     )
     def post(self, request, slug, project_id, issue_id):
         """Create issue attachment
-        
+
         Generate presigned URL for uploading file attachments to an issue.
         Validates file type and size before creating the attachment record.
         """
@@ -1431,7 +1444,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
     )
     def delete(self, request, slug, project_id, issue_id, pk):
         """Delete issue attachment
-        
+
         Soft delete an attachment from an issue by marking it as deleted.
         Records deletion activity and triggers metadata cleanup.
         """
@@ -1472,7 +1485,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
     )
     def get(self, request, slug, project_id, issue_id, pk=None):
         """List or download issue attachments
-        
+
         List all attachments for an issue or generate download URL for a specific attachment.
         Returns presigned URL for secure file access.
         """
@@ -1512,11 +1525,9 @@ class IssueAttachmentEndpoint(BaseAPIView):
     @issue_attachment_docs(
         operation_id="upload_issue_attachment",
         request={
-            'application/json': {
-                'type': 'object',
-                'properties': {
-                    'file': {'type': 'string', 'format': 'binary'}
-                }
+            "application/json": {
+                "type": "object",
+                "properties": {"file": {"type": "string", "format": "binary"}},
             }
         },
         responses={
@@ -1526,7 +1537,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
     )
     def patch(self, request, slug, project_id, issue_id, pk):
         """Confirm attachment upload
-        
+
         Mark an attachment as uploaded after successful file transfer to storage.
         Triggers activity logging and metadata extraction.
         """
@@ -1648,7 +1659,7 @@ class IssueSearchEndpoint(BaseAPIView):
     )
     def get(self, request, slug):
         """Search issues
-        
+
         Perform semantic search across issue names, sequence IDs, and project identifiers.
         Supports workspace-wide or project-specific search with configurable result limits.
         """
