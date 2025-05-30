@@ -78,7 +78,7 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
     setDeleteIssueModal,
     handleDelete,
     handleUpdate,
-    storeType: EIssuesStoreType.PROJECT,
+    storeType: EIssuesStoreType.DRAFT,
   };
 
   const MENU_ITEMS = useDraftIssueMenuItems(menuItemProps);
@@ -102,7 +102,7 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
         onSubmit={async (data) => {
           if (issueToEdit && handleUpdate) await handleUpdate(data);
         }}
-        storeType={EIssuesStoreType.PROJECT}
+        storeType={EIssuesStoreType.DRAFT}
         isDraft={isDraftIssue}
       />
 
