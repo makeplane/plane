@@ -59,14 +59,10 @@ def page_transaction(new_value, old_value, page_id):
 
             # Filter out None IDs before creating sets
             new_mentions_ids = {
-                mention.get("id")
-                for mention in new_mentions
-                if mention.get("id")
+                mention.get("id") for mention in new_mentions if mention.get("id")
             }
             old_mention_ids = {
-                mention.get("id")
-                for mention in old_mentions
-                if mention.get("id")
+                mention.get("id") for mention in old_mentions if mention.get("id")
             }
             deleted_transaction_ids.update(old_mention_ids - new_mentions_ids)
 

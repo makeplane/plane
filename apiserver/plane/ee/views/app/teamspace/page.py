@@ -45,6 +45,7 @@ from plane.ee.bgtasks.team_space_activities_task import team_space_activity
 from plane.ee.bgtasks.page_update import nested_page_update
 from plane.ee.utils.page_events import PageAction
 
+
 class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
     permission_classes = [TeamspacePermission]
 

@@ -19,7 +19,6 @@ from plane.ee.utils.entity_state_progress import (
 
 
 class CycleIssueStateAnalyticsEndpoint(BaseAPIView):
-
     @check_feature_flag(FeatureFlag.CYCLE_PROGRESS_CHARTS)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, cycle_id):

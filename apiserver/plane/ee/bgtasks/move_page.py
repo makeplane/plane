@@ -6,7 +6,6 @@ from celery import shared_task
 
 @shared_task
 def move_page(page_id, old_project_id, new_project_id):
-
     # Get all the members for the new project
     new_project_members_list = ProjectMember.objects.filter(
         project_id=new_project_id,

@@ -1,5 +1,5 @@
-
 from rest_framework.throttling import SimpleRateThrottle
+
 
 class InternalServiceRateThrottle(SimpleRateThrottle):
     scope = "service_token"

@@ -7,7 +7,6 @@ from rest_framework import serializers
 
 
 class IssueWorkLogAPISerializer(BaseSerializer):
-
     class Meta:
         model = IssueWorkLog
         fields = [
@@ -25,9 +24,6 @@ class IssueWorkLogAPISerializer(BaseSerializer):
         read_only_fields = ["logged_by", "workspace", "project"]
 
     def validate(self, data):
-        if (
-            data.get("duration", None) is not None
-            and data.get("duration") < 0
-        ):
+        if data.get("duration", None) is not None and data.get("duration") < 0:
             raise serializers.ValidationError("Duration cannot be negative")
         return data

@@ -5,7 +5,6 @@ from rest_framework import serializers
 
 
 class WorkspaceCredentialAPISerializer(BaseSerializer):
-
     user_id = serializers.PrimaryKeyRelatedField(
         source="user", queryset=User.objects.all()
     )
@@ -13,7 +12,6 @@ class WorkspaceCredentialAPISerializer(BaseSerializer):
     workspace_id = serializers.PrimaryKeyRelatedField(
         source="workspace", queryset=Workspace.objects.all()
     )
-
 
     class Meta:
         model = WorkspaceCredential

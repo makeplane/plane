@@ -134,12 +134,16 @@ class MovePageEndpoint(BaseAPIView):
 
         # change the page version
         PageVersion.objects.filter(page_id=pk).update(
-            page_id=new_page_id, updated_by_id=request.user.id, updated_at=timezone.now()
+            page_id=new_page_id,
+            updated_by_id=request.user.id,
+            updated_at=timezone.now(),
         )
 
         # change the uploaded files in the page
         FileAsset.objects.filter(page_id=pk, project_id=project_id).update(
-            page_id=new_page_id, updated_by_id=request.user.id, updated_at=timezone.now()
+            page_id=new_page_id,
+            updated_by_id=request.user.id,
+            updated_at=timezone.now(),
         )
 
         # change the deployed board url for the page

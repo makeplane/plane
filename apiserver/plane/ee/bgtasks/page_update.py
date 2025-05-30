@@ -2,6 +2,7 @@ import requests
 import json
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+
 # Django imports
 from django.conf import settings
 from django.utils import timezone
@@ -28,6 +29,7 @@ from plane.bgtasks.page_transaction_task import page_transaction
 from plane.ee.utils.page_descendants import get_descendant_page_ids
 from plane.ee.utils.page_events import PageAction
 from plane.utils.url import normalize_url_path
+
 
 @shared_task
 def replace_page_id(old_to_new_page_mapping, page_id):

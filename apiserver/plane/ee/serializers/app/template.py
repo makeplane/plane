@@ -21,6 +21,7 @@ class TemplateSerializer(BaseSerializer):
     categories = serializers.PrimaryKeyRelatedField(
         queryset=TemplateCategory.objects.all(), many=True, required=False
     )
+
     class Meta:
         model = Template
         fields = "__all__"

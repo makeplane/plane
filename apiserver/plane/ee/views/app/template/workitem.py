@@ -43,15 +43,19 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
             serializer = TemplateDataSerializer(templates)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        templates = Template.objects.filter(
-            workspace__slug=slug, template_type=Template.TemplateType.WORKITEM
-        ).prefetch_related(
-            Prefetch(
-                "workitem_templates",
-                queryset=WorkitemTemplate.objects.filter(workspace__slug=slug),
-                to_attr="template_data",
+        templates = (
+            Template.objects.filter(
+                workspace__slug=slug, template_type=Template.TemplateType.WORKITEM
             )
-        ).prefetch_related("attachments", "categories")
+            .prefetch_related(
+                Prefetch(
+                    "workitem_templates",
+                    queryset=WorkitemTemplate.objects.filter(workspace__slug=slug),
+                    to_attr="template_data",
+                )
+            )
+            .prefetch_related("attachments", "categories")
+        )
         serializer = TemplateDataSerializer(templates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -171,19 +175,23 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
     def get(self, request, slug, project_id):
-        templates = Template.objects.filter(
-            workspace__slug=slug,
-            template_type=Template.TemplateType.WORKITEM,
-            project_id=project_id,
-        ).prefetch_related(
-            Prefetch(
-                "workitem_templates",
-                queryset=WorkitemTemplate.objects.filter(
-                    workspace__slug=slug, project_id=project_id
-                ),
-                to_attr="template_data",
+        templates = (
+            Template.objects.filter(
+                workspace__slug=slug,
+                template_type=Template.TemplateType.WORKITEM,
+                project_id=project_id,
             )
-        ).prefetch_related("attachments", "categories")
+            .prefetch_related(
+                Prefetch(
+                    "workitem_templates",
+                    queryset=WorkitemTemplate.objects.filter(
+                        workspace__slug=slug, project_id=project_id
+                    ),
+                    to_attr="template_data",
+                )
+            )
+            .prefetch_related("attachments", "categories")
+        )
         serializer = TemplateDataSerializer(templates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -253,10 +261,8 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
         if serializer.is_valid():
             serializer.save()
         else:
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
-        
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
         # validate template data
         if template_data:
             success, errors = self.validate_workitem_fields(template_data)

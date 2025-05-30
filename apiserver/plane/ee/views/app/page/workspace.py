@@ -438,9 +438,7 @@ class WorkspacePageDuplicateEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def post(self, request, slug, pk):
-        page = Page.objects.get(
-            id=pk, workspace__slug=slug
-        )
+        page = Page.objects.get(id=pk, workspace__slug=slug)
 
         # check for permission
         if page.access == Page.PRIVATE_ACCESS and page.owned_by_id != request.user.id:
@@ -596,10 +594,8 @@ class WorkspacePageFavoriteEndpoint(BaseAPIView):
 
 
 class WorkspacePageRestoreEndpoint(BaseAPIView):
-
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def post(self, request, slug, page_id, pk):
-
         page_version = PageVersion.objects.get(pk=pk, page_id=page_id)
 
         # Get the latest sub pages data
@@ -621,7 +617,6 @@ class WorkspacePageRestoreEndpoint(BaseAPIView):
 
         # Find pages that need to be deleted (in latest but not in old version)
         pages_to_delete = set(latest_sub_pages) - set(version_sub_page_ids)
-
 
         # get the datetime at which the page was deleted and restore the page at that time with their children
         pages_to_restore = Page.all_objects.filter(id__in=pages_to_restore)
@@ -666,7 +661,9 @@ class WorkspacePageRestoreEndpoint(BaseAPIView):
                 PageVersion.all_objects.filter(
                     page_id__in=descendant_page_ids + [str(page.id)],
                     workspace__slug=slug,
-                ).update(deleted_at=None, updated_at=timezone.now(), updated_by=request.user)
+                ).update(
+                    deleted_at=None, updated_at=timezone.now(), updated_by=request.user
+                )
 
         # delete the pages that need to be deleted
         if pages_to_delete:

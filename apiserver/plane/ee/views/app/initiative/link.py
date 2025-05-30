@@ -60,9 +60,7 @@ class InitiativeLinkViewSet(BaseViewSet):
             initiative_activity.delay(
                 type="link.activity.created",
                 slug=slug,
-                requested_data=json.dumps(
-                    serializer.data, cls=DjangoJSONEncoder
-                ),
+                requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
                 actor_id=str(request.user.id),
                 initiative_id=str(self.kwargs.get("initiative_id")),
                 current_instance=None,

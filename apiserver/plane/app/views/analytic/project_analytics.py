@@ -241,7 +241,6 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
     def work_item_completion_chart(
         self, project_id, cycle_id=None, module_id=None, epic=False
     ) -> Dict[str, Any]:
-
         queryset = None
 
         if cycle_id is not None:
@@ -462,7 +461,6 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
             )
 
         elif type == "work-items":
-
             return Response(
                 self.work_item_completion_chart(
                     project_id=project_id,

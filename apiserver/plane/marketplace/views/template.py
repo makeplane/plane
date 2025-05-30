@@ -40,12 +40,7 @@ class PublishedTemplateFilter(FilterSet):
 
     class Meta:
         model = Template
-        fields = [
-            "template_type",
-            "is_verified",
-            "company_name",
-            "category"
-        ]
+        fields = ["template_type", "is_verified", "company_name", "category"]
 
 
 class PublishedTemplateEndpoint(BaseAPIView):
@@ -67,7 +62,7 @@ class PublishedTemplateEndpoint(BaseAPIView):
         queryset = self.model.objects.filter(
             is_published=True,
             is_verified=True,
-            template_type=Template.TemplateType.PROJECT
+            template_type=Template.TemplateType.PROJECT,
         ).prefetch_related(
             "attachments",
             "categories",
@@ -110,7 +105,7 @@ class PublishedTemplateMetaEndpoint(BaseAPIView):
         queryset = self.model.objects.filter(
             is_published=True,
             is_verified=True,
-            template_type=Template.TemplateType.PROJECT
+            template_type=Template.TemplateType.PROJECT,
         ).prefetch_related(
             "categories",
         )

@@ -223,7 +223,6 @@ def build_widget_chart(
     group_by: Optional[str] = None,
     x_axis_date_grouping: Optional[str] = None,
 ) -> Dict[str, Union[List[Dict[str, Any]], Dict[str, str]]]:
-
     # Validate x_axis
     if chart_type != "NUMBER" and x_axis not in Widget.PropertyEnum.values:
         raise ValidationError(f"Invalid x_axis field: {x_axis}")

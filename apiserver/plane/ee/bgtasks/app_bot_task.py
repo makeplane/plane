@@ -26,7 +26,7 @@ def add_app_bots_to_project(project_id: str, user_id: Optional[str] = None) -> N
         app_installations = WorkspaceAppInstallation.objects.filter(
             workspace=project.workspace,
             status=WorkspaceAppInstallation.Status.INSTALLED,
-            deleted_at__isnull=True
+            deleted_at__isnull=True,
         )
 
         # Create ProjectMember records for each app bot
@@ -38,7 +38,7 @@ def add_app_bots_to_project(project_id: str, user_id: Optional[str] = None) -> N
                     project=project,
                     workspace=project.workspace,
                     member=installation.app_bot,
-                    role=ROLE.MEMBER.value
+                    role=ROLE.MEMBER.value,
                 )
                 if user_id:
                     pm.created_by_id = user_id
@@ -47,9 +47,6 @@ def add_app_bots_to_project(project_id: str, user_id: Optional[str] = None) -> N
 
         # Bulk create all the project members
         if project_members:
-            ProjectMember.objects.bulk_create(
-                project_members,
-                ignore_conflicts=True
-            )
+            ProjectMember.objects.bulk_create(project_members, ignore_conflicts=True)
     except Exception as e:
         print(f"Error adding app bots to project {project_id}: {str(e)}")

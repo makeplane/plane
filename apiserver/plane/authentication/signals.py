@@ -8,6 +8,7 @@ from plane.db.models.project import Project
 
 from crum import get_current_user
 
+
 @receiver(post_save, sender=Project)
 def trigger_app_bots_to_project(sender, instance, created, **kwargs):
     """

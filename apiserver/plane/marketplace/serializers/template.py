@@ -16,6 +16,7 @@ class TemplateCategorySerializer(serializers.ModelSerializer):
             "is_active",
         ]
 
+
 class PublishedTemplateSerializer(DynamicBaseSerializer):
     attachments = serializers.SerializerMethodField()
     categories = serializers.SerializerMethodField()
@@ -50,7 +51,6 @@ class PublishedTemplateSerializer(DynamicBaseSerializer):
 
 
 class PublishedTemplateDetailSerializer(PublishedTemplateSerializer):
-
     class Meta(PublishedTemplateSerializer.Meta):
         fields = PublishedTemplateSerializer.Meta.fields + [
             "created_at",

@@ -111,9 +111,7 @@ class InitiativeAttachmentEndpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission(
-        [ROLE.ADMIN], creator=True, model=FileAsset, level="WORKSPACE"
-    )
+    @allow_permission([ROLE.ADMIN], creator=True, model=FileAsset, level="WORKSPACE")
     def delete(self, request, slug, initiative_id, pk):
         initiative_attachment = FileAsset.objects.get(
             pk=pk, workspace__slug=slug, entity_identifier=initiative_id
@@ -178,9 +176,7 @@ class InitiativeAttachmentEndpoint(BaseAPIView):
             is_uploaded=True,
         )
         # Serialize the attachments
-        serializer = InitiativeAttachmentSerializer(
-            initiative_attachments, many=True
-        )
+        serializer = InitiativeAttachmentSerializer(initiative_attachments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.INITIATIVES)

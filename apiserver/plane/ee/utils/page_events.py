@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class PageAction(str, Enum):
     SUB_PAGE = "sub_page"
     ARCHIVED = "archived"

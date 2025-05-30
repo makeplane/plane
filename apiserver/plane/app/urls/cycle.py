@@ -99,5 +99,4 @@ urlpatterns = [
         CycleAnalyticsEndpoint.as_view(),
         name="project-cycle",
     ),
-
 ]

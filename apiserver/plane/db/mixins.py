@@ -5,7 +5,7 @@ from django.utils import timezone
 # Module imports
 from plane.bgtasks.deletion_task import soft_delete_related_objects
 
-#Relative imports
+# Relative imports
 from .signals import post_bulk_create, post_bulk_update
 
 
@@ -61,7 +61,7 @@ class BulkOperationHooks:
         if len(args):
             objs = args[0]
         else:
-            objs = kwargs.get('objs')
+            objs = kwargs.get("objs")
         for obj in objs:
             if hasattr(obj, "pre_bulk_create"):
                 obj.pre_bulk_create()

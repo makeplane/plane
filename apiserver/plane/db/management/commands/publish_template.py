@@ -88,11 +88,13 @@ class Command(BaseCommand):
                 if missing_fields:
                     missing_fields_str = ", ".join(missing_fields)
                     self.stdout.write(
-                        self.style.ERROR((
-                            "Template cannot be published. "
-                            "The following required fields are missing: "
-                            f"{missing_fields_str}"
-                        ))
+                        self.style.ERROR(
+                            (
+                                "Template cannot be published. "
+                                "The following required fields are missing: "
+                                f"{missing_fields_str}"
+                            )
+                        )
                     )
                     return
 

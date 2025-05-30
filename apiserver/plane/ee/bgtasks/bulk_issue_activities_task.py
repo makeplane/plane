@@ -1,6 +1,7 @@
 # Python imports
 import json
 from typing import List
+
 # Third Party imports
 from celery import shared_task
 
@@ -177,6 +178,7 @@ def create_cycle_issue_activity(
             )
         )
 
+
 def delete_cycle_issue_activity(
     issue_id: str,
     project_id: str,
@@ -187,13 +189,12 @@ def delete_cycle_issue_activity(
     requested_data: None | dict = None,
     current_instance: None | dict = None,
 ) -> List[IssueActivity]:
-    
     """Create a cycle activity when a cycle is removed from an issue"""
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
         json.loads(current_instance) if current_instance is not None else None
     )
-    
+
     # If the issue has a cycle, create a cycle activity
     if current_instance.get("cycle_id"):
         old_cycle = Cycle.objects.filter(pk=current_instance.get("cycle_id")).first()

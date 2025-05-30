@@ -1,6 +1,7 @@
 from django.db import connection
 from collections import defaultdict
 
+
 def get_all_related_issues(issue_id):
     query = """
     WITH RECURSIVE Descendants AS (

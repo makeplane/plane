@@ -8,6 +8,7 @@ from plane.ee.models import ImportJob, ImportReport, WorkspaceCredential
 from plane.ee.serializers import ImportJobAPISerializer
 from plane.ee.views.api import BaseServiceAPIView
 
+
 class ImportJobAPIView(BaseServiceAPIView):
     def post(self, request):
         # Get required fields from request data
@@ -29,9 +30,7 @@ class ImportJobAPIView(BaseServiceAPIView):
 
         if not credential:
             return Response(
-                {
-                    "error": f"No credentials found for workspace with source {source}"
-                },
+                {"error": f"No credentials found for workspace with source {source}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

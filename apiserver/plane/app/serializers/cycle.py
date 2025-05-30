@@ -41,7 +41,13 @@ class CycleWriteSerializer(BaseSerializer):
     class Meta:
         model = Cycle
         fields = "__all__"
-        read_only_fields = ["workspace", "project", "owned_by", "archived_at", "version"]
+        read_only_fields = [
+            "workspace",
+            "project",
+            "owned_by",
+            "archived_at",
+            "version",
+        ]
 
 
 class CycleSerializer(BaseSerializer):

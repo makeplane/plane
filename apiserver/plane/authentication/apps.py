@@ -6,4 +6,4 @@ class AuthConfig(AppConfig):
 
     def ready(self):
         # Import signals to register them
-        import plane.authentication.signals # noqa
+        import plane.authentication.signals  # noqa

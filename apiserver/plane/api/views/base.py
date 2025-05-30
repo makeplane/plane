@@ -48,7 +48,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
     permission_classes = [
         IsAuthenticated,
         IsAuthenticatedOrTokenHasScope,
-        OauthApplicationWorkspacePermission
+        OauthApplicationWorkspacePermission,
     ]
     required_scopes = ["read", "write"]
 

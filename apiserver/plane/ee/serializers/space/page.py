@@ -25,6 +25,7 @@ class PagePublicSerializer(BaseSerializer):
 
 class SubPagePublicSerializer(BaseSerializer):
     anchor = serializers.CharField(read_only=True)
+
     class Meta:
         model = Page
         fields = [

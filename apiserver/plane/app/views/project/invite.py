@@ -35,7 +35,6 @@ from plane.utils.host import base_host
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 
 
-
 class ProjectInvitationsViewset(BaseViewSet):
     serializer_class = ProjectMemberInviteSerializer
     model = ProjectMemberInvite

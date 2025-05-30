@@ -4,6 +4,7 @@ from plane.db.models.workspace import Workspace
 from plane.api.serializers.base import BaseSerializer
 from rest_framework import serializers
 
+
 class WorkspaceConnectionAPISerializer(BaseSerializer):
     # Handle workspace_id as input
     workspace_id = serializers.PrimaryKeyRelatedField(

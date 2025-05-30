@@ -80,4 +80,4 @@ class TeamspaceSearchSerializer(BaseSearchSerializer):
     name = serializers.CharField()
     id = serializers.CharField()
     workspace_slug = serializers.CharField()
-    logo_props = serializers.JSONField() 
+    logo_props = serializers.JSONField()

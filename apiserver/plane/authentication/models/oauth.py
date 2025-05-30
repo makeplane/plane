@@ -51,7 +51,7 @@ class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
         "db.FileAsset",
         related_name="applications",
         through="authentication.ApplicationAttachment",
-        blank=True
+        blank=True,
     )
     categories = models.ManyToManyField(
         "authentication.ApplicationCategory",
@@ -263,13 +263,14 @@ class ApplicationAttachment(BaseModel):
         verbose_name = "Application attachment"
         verbose_name_plural = "Application attachments"
         db_table = "oauth_application_attachments"
-    
+
     @property
     def file_asset_url(self):
         # Return the file asset url if it exists
         if self.file_asset:
             return self.file_asset.asset_url
         return None
+
 
 class ApplicationCategory(BaseModel):
     name = models.CharField(max_length=255, unique=True)

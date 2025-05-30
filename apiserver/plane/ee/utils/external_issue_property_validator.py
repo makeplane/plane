@@ -202,6 +202,7 @@ def get_property_validator(issue_property):
 
     return validator
 
+
 # validate the values
 def externalIssuePropertyValueValidator(issue_property, value):
     validator = get_property_validator(issue_property)

@@ -34,6 +34,7 @@ from plane.payment.flags.flag_decorator import (
 )
 from plane.payment.flags.flag import FeatureFlag
 
+
 class InitiativeActivityEndpoint(BaseAPIView):
     permission_classes = [
         WorkSpaceBasePermission,
@@ -73,9 +74,7 @@ class InitiativeActivityEndpoint(BaseAPIView):
             .prefetch_related(
                 Prefetch(
                     "initiative_reactions",
-                    queryset=InitiativeCommentReaction.objects.select_related(
-                        "actor"
-                    ),
+                    queryset=InitiativeCommentReaction.objects.select_related("actor"),
                 )
             )
         )

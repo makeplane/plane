@@ -397,7 +397,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         if entity_type in [
             FileAsset.EntityTypeContext.WORKSPACE_LOGO,
             FileAsset.EntityTypeContext.PROJECT_COVER,
-            FileAsset.EntityTypeContext.CUSTOMER_LOGO
+            FileAsset.EntityTypeContext.CUSTOMER_LOGO,
         ]:
             size_limit = min(size, settings.FILE_SIZE_LIMIT)
         else:

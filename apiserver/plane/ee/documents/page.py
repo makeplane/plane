@@ -1,12 +1,6 @@
-
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import (
-    Q,
-    UUIDField,
-    Value,
-    Prefetch
-)
+from django.db.models import Q, UUIDField, Value, Prefetch
 from django.db.models.functions import Coalesce
 from django_elasticsearch_dsl import fields
 from django_elasticsearch_dsl.registries import registry
@@ -26,14 +20,13 @@ class PageDocument(BaseDocument):
     active_member_user_ids = fields.ListField(fields.KeywordField())
     logo_props = JsonKeywordField(attr="logo_props")
     is_deleted = fields.BooleanField()
+
     class Index:
         name = "pages"
 
     class Django:
         model = Page
-        fields = [
-            "id", "name", "deleted_at"
-        ]
+        fields = ["id", "name", "deleted_at"]
         # queryset_pagination tells dsl to add chunk_size to the queryset iterator.
         # which is required for django to use prefetch_related when using iterator.
         # NOTE: This number can be different for other indexes based on complexity
@@ -42,23 +35,25 @@ class PageDocument(BaseDocument):
         related_models = [WorkspaceMember]
 
     def apply_related_to_queryset(self, qs):
-        return qs.select_related(
-            "workspace"
-        ).prefetch_related(
-            Prefetch(
-                "projects",
-                queryset=Project.objects.filter(
-                    archived_at__isnull=True
-                ).only('id', 'identifier')
+        return (
+            qs.select_related("workspace")
+            .prefetch_related(
+                Prefetch(
+                    "projects",
+                    queryset=Project.objects.filter(archived_at__isnull=True).only(
+                        "id", "identifier"
+                    ),
+                )
             )
-        ).annotate(
-            active_member_user_ids=Coalesce(
-                ArrayAgg(
-                    "workspace__workspace_member__member_id",
-                    distinct=True,
-                    filter=Q(workspace__workspace_member__is_active=True)
-                ),
-                Value([], output_field=ArrayField(UUIDField())),
+            .annotate(
+                active_member_user_ids=Coalesce(
+                    ArrayAgg(
+                        "workspace__workspace_member__member_id",
+                        distinct=True,
+                        filter=Q(workspace__workspace_member__is_active=True),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                )
             )
         )
 
@@ -96,7 +91,7 @@ class PageDocument(BaseDocument):
         else:
             active_member_user_ids = instance.workspace.workspace_member.filter(
                 is_active=True
-            ).values_list('member_id')
+            ).values_list("member_id")
             return list(active_member_user_ids)
 
     def prepare_is_deleted(self, instance):

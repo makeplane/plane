@@ -43,15 +43,19 @@ class PageTemplateEndpoint(TemplateBaseEndpoint):
             serializer = TemplateDataSerializer(templates)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        templates = Template.objects.filter(
-            workspace__slug=slug, template_type=Template.TemplateType.PAGE
-        ).prefetch_related(
-            Prefetch(
-                "page_templates",
-                queryset=PageTemplate.objects.filter(workspace__slug=slug),
-                to_attr="template_data",
+        templates = (
+            Template.objects.filter(
+                workspace__slug=slug, template_type=Template.TemplateType.PAGE
             )
-        ).prefetch_related("attachments", "categories")
+            .prefetch_related(
+                Prefetch(
+                    "page_templates",
+                    queryset=PageTemplate.objects.filter(workspace__slug=slug),
+                    to_attr="template_data",
+                )
+            )
+            .prefetch_related("attachments", "categories")
+        )
         serializer = TemplateDataSerializer(templates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

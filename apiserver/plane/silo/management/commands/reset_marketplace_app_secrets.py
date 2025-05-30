@@ -25,7 +25,9 @@ class Command(BaseCommand):
 
             # delete existing application secrets for marketplace applications
             for appkey in applications_keys:
-                app_query_set = ApplicationSecret.objects.all().filter(key__regex=appkey)
+                app_query_set = ApplicationSecret.objects.all().filter(
+                    key__regex=appkey
+                )
                 self.stdout.write(
                     f"Deleting application secrets for applications {appkey}: {app_query_set.count()}"
                 )

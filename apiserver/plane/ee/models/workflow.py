@@ -27,7 +27,6 @@ class Workflow(ProjectBaseModel):
 
 
 class WorkflowTransition(ProjectBaseModel):
-
     workflow = models.ForeignKey(
         Workflow, on_delete=models.CASCADE, related_name="workflow_transitions"
     )

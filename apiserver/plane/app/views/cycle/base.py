@@ -61,6 +61,7 @@ from plane.ee.bgtasks.entity_issue_state_progress_task import (
     entity_issue_state_activity_task,
 )
 
+
 class CycleViewSet(BaseViewSet):
     serializer_class = CycleSerializer
     model = Cycle

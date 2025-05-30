@@ -1890,12 +1890,16 @@ def issue_activity(
                     event=(
                         "issue_comment"
                         if activity.field == "comment"
-                        else "intake_issue" if intake else "issue"
+                        else "intake_issue"
+                        if intake
+                        else "issue"
                     ),
                     event_id=(
                         activity.issue_comment_id
                         if activity.field == "comment"
-                        else intake if intake else activity.issue_id
+                        else intake
+                        if intake
+                        else activity.issue_id
                     ),
                     verb=activity.verb,
                     field=(

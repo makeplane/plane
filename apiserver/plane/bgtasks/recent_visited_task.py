@@ -45,11 +45,19 @@ def recent_visited_task(entity_name, entity_identifier, user_id, slug, project_i
             UserRecentVisit.objects.filter(id__in=recent_visited_ids).delete(soft=False)
 
             # Delete records beyond the 20 most recent visits for "workspace_page" entities
-            recent_page_visited_ids = UserRecentVisit.objects.filter(
-                entity_name="workspace_page", user_id=user_id, workspace_id=workspace.id
-            ).order_by("-created_at").values_list("id", flat=True)[20:]
+            recent_page_visited_ids = (
+                UserRecentVisit.objects.filter(
+                    entity_name="workspace_page",
+                    user_id=user_id,
+                    workspace_id=workspace.id,
+                )
+                .order_by("-created_at")
+                .values_list("id", flat=True)[20:]
+            )
 
-            UserRecentVisit.objects.filter(id__in=recent_page_visited_ids).delete(soft=False)
+            UserRecentVisit.objects.filter(id__in=recent_page_visited_ids).delete(
+                soft=False
+            )
 
             recent_activity = UserRecentVisit.objects.create(
                 entity_name=entity_name,

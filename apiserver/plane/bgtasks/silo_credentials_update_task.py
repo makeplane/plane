@@ -44,7 +44,7 @@ class CredentialsUpdate(DatabaseMigration):
                     for cred in current_batch:
                         WorkspaceCredential.objects.filter(id=cred["id"]).update(
                             source_auth_email=cred["user_email"],
-                            updated_at=timezone.now()
+                            updated_at=timezone.now(),
                         )
 
                     records_processed += len(current_batch)
@@ -55,7 +55,7 @@ class CredentialsUpdate(DatabaseMigration):
             except Exception as e:
                 print(f"Error processing credentials batch {batch_num + 1}: {str(e)}")
                 raise
-    
+
     def migrate_all(self):
         try:
             print("Starting Credential Update process...")

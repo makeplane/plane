@@ -16,6 +16,7 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.ee.models import ProjectReaction
 from plane.ee.bgtasks.project_activites_task import project_activity
 
+
 class ProjectReactionViewSet(BaseViewSet):
     serializer_class = ProjectReactionSerializer
     model = ProjectReaction
@@ -39,9 +40,7 @@ class ProjectReactionViewSet(BaseViewSet):
     def create(self, request, slug, project_id):
         serializer = ProjectReactionSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(
-                project_id=project_id, actor=request.user
-            )
+            serializer.save(project_id=project_id, actor=request.user)
             project_activity.delay(
                 type="project_reaction.activity.created",
                 requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),

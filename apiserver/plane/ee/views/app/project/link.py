@@ -53,9 +53,7 @@ class ProjectLinkViewSet(BaseViewSet):
             serializer.save(project_id=project_id)
             project_activity.delay(
                 type="link.activity.created",
-                requested_data=json.dumps(
-                    serializer.data, cls=DjangoJSONEncoder
-                ),
+                requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
                 actor_id=str(self.request.user.id),
                 project_id=str(self.kwargs.get("project_id")),
                 current_instance=None,

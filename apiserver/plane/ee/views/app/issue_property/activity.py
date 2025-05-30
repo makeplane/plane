@@ -25,13 +25,17 @@ class IssuePropertyActivityEndpoint(BaseAPIView):
         order_by = request.GET.get("order_by", "-created_at")
 
         # Get all issue properties for a specific issue
-        activities = IssuePropertyActivity.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            issue_id=issue_id,
-            property__issue_type__is_epic=False,
-            **filters,
-        ).select_related('actor').order_by(order_by)
+        activities = (
+            IssuePropertyActivity.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                issue_id=issue_id,
+                property__issue_type__is_epic=False,
+                **filters,
+            )
+            .select_related("actor")
+            .order_by(order_by)
+        )
 
         # Serialize the data
         serializer = IssuePropertyActivitySerializer(activities, many=True)

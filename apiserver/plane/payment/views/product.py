@@ -229,7 +229,6 @@ class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
                     },
                 )
 
-
                 # Check if the request was successful
                 response.raise_for_status()
 
@@ -240,7 +239,9 @@ class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
                 return Response(status=status.HTTP_204_NO_CONTENT)
             except requests.exceptions.RequestException as e:
                 if hasattr(e, "response") and e.response.status_code == 400:
-                    return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
+                    return Response(
+                        e.response.json(), status=status.HTTP_400_BAD_REQUEST
+                    )
                 return Response(
                     {"error": "error in syncing workspace license"},
                     status=status.HTTP_400_BAD_REQUEST,

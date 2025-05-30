@@ -1,4 +1,3 @@
-
 from django.db.models import Prefetch
 from django_elasticsearch_dsl import fields
 from django_elasticsearch_dsl.registries import registry
@@ -25,9 +24,7 @@ class CycleDocument(BaseDocument):
 
     class Django:
         model = Cycle
-        fields = [
-            "id", "name", "description", "deleted_at"
-        ]
+        fields = ["id", "name", "description", "deleted_at"]
         # queryset_pagination tells dsl to add chunk_size to the queryset iterator.
         # which is required for django to use prefetch_related when using iterator.
         # NOTE: This number can be different for other indexes based on complexity
@@ -36,15 +33,13 @@ class CycleDocument(BaseDocument):
         related_models = [Project, ProjectMember]
 
     def apply_related_to_queryset(self, qs):
-        return qs.select_related(
-            "workspace"
-        ).prefetch_related(
+        return qs.select_related("workspace").prefetch_related(
             "project",
             Prefetch(
                 "project__project_projectmember",
                 queryset=ProjectMember.objects.filter(is_active=True).only("member_id"),
-                to_attr="active_project_members"
-            )
+                to_attr="active_project_members",
+            ),
         )
 
     def get_instances_from_related(self, related_instance):

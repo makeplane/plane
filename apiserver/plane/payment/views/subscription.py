@@ -14,7 +14,10 @@ from plane.app.permissions.workspace import WorkspaceOwnerPermission
 from plane.db.models import Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.ee.models import WorkspaceLicense
 from plane.utils.exception_logger import log_exception
-from plane.payment.utils.workspace_license_request import resync_workspace_license, is_on_trial
+from plane.payment.utils.workspace_license_request import (
+    resync_workspace_license,
+    is_on_trial,
+)
 
 
 class SubscriptionEndpoint(BaseAPIView):
@@ -307,7 +310,7 @@ class CancelTrialSubscriptionEndpoint(BaseAPIView):
     def post(self, request, slug):
         try:
             if settings.PAYMENT_SERVER_BASE_URL:
-            # Fetch the workspace license
+                # Fetch the workspace license
                 workspace_license = WorkspaceLicense.objects.filter(
                     workspace__slug=slug,
                 ).first()
@@ -358,11 +361,10 @@ class CancelTrialSubscriptionEndpoint(BaseAPIView):
             return Response(
                 {"error": "Error in canceling trial subscription"},
                 status=status.HTTP_400_BAD_REQUEST,
-           )
+            )
 
 
 class ProrationPreviewEndpoint(BaseAPIView):
-
     permission_classes = [WorkspaceOwnerPermission]
 
     def post(self, request, slug):

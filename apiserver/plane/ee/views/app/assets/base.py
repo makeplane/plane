@@ -11,8 +11,8 @@ from plane.app.permissions import ROLE, allow_permission
 from rest_framework import status
 from rest_framework.response import Response
 
-class DuplicateAssetEndpoint(BaseAPIView):
 
+class DuplicateAssetEndpoint(BaseAPIView):
     def get_entity_id_field(self, entity_type, entity_id):
         # Workspace Logo
         if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
@@ -54,7 +54,6 @@ class DuplicateAssetEndpoint(BaseAPIView):
             return {"entity_identifier": entity_id}
 
         return {}
-
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def post(self, request, slug):

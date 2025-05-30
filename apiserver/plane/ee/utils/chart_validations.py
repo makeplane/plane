@@ -19,7 +19,6 @@ CHART_VALIDATION_RULES = {
 }
 
 
-
 def validate_chart_config(chart_model, chart_type, config):
     rules = CHART_VALIDATION_RULES.get(chart_model, {}).get(chart_type, {})
 

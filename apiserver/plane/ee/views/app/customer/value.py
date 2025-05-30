@@ -13,7 +13,12 @@ from plane.ee.views.base import BaseAPIView
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.app.permissions import WorkSpaceAdminPermission
-from plane.ee.models import CustomerPropertyValue, PropertyTypeEnum, Customer, CustomerProperty
+from plane.ee.models import (
+    CustomerPropertyValue,
+    PropertyTypeEnum,
+    Customer,
+    CustomerProperty,
+)
 from django.db.models import Q, CharField, Func
 from plane.ee.utils.customer_property_validators import (
     property_savers,
@@ -64,32 +69,33 @@ class CustomerPropertyValueEndpoint(BaseAPIView):
                         property__property_type=PropertyTypeEnum.OPTION,
                         then=Cast(F("value_option"), output_field=CharField()),
                     ),
-                    default=Value(""), # Default value is none if the conditions match
+                    default=Value(""),  # Default value is none if the conditions match
                     output_field=CharField(),
                 ),
                 filter=Q(property_id=F("property_id")),
                 distinct=True,
-                
             )
         )
-    
+
     @check_feature_flag(FeatureFlag.CUSTOMERS)
     def get(self, request, slug, customer_id):
         # Get all customer property values
         customer_property_values = CustomerPropertyValue.objects.filter(
             workspace__slug=slug,
             customer_id=customer_id,
-            property__is_active=True, 
-        )        
+            property__is_active=True,
+        )
 
         # Annotate the query
-        customer_property_values = self. query_annotator(customer_property_values).values(
-            "property_id", "values"
-        )
+        customer_property_values = self.query_annotator(
+            customer_property_values
+        ).values("property_id", "values")
 
         # Create dictionary of property_id and value
         response = {
-            str(customer_property_value["property_id"]): customer_property_value["values"]
+            str(customer_property_value["property_id"]): customer_property_value[
+                "values"
+            ]
             for customer_property_value in customer_property_values
         }
 
@@ -149,25 +155,21 @@ class CustomerPropertyValueEndpoint(BaseAPIView):
             )
 
             return Response(status=status.HTTP_201_CREATED)
-        except (ValidationError, ValueError)as e:
+        except (ValidationError, ValueError) as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        
-    
+
     @check_feature_flag(FeatureFlag.CUSTOMERS)
     def patch(self, request, slug, customer_id, property_id):
         try:
             customer_property = CustomerProperty.objects.get(
-                workspace__slug=slug,
-                pk=property_id
+                workspace__slug=slug, pk=property_id
             )
 
             existing_prop_queryset = CustomerPropertyValue.objects.filter(
-                workspace__slug=slug,
-                customer_id=customer_id,
-                property_id=property_id
+                workspace__slug=slug, customer_id=customer_id, property_id=property_id
             )
 
-            # Get the values 
+            # Get the values
             values = request.data.get("values", [])
 
             # Check if the property is required
@@ -175,7 +177,10 @@ class CustomerPropertyValueEndpoint(BaseAPIView):
                 not values or not [v for v in values if v]
             ):
                 return Response(
-                    {"error": customer_property.display_name + " is a required property"},
+                    {
+                        "error": customer_property.display_name
+                        + " is a required property"
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -187,7 +192,7 @@ class CustomerPropertyValueEndpoint(BaseAPIView):
                     validator(property=customer_property, value=value)
             else:
                 raise ValidationError("Invalid property type")
-            
+
             # Save the values
             saver = SAVE_MAPPER.get(customer_property.property_type)
 
@@ -203,7 +208,9 @@ class CustomerPropertyValueEndpoint(BaseAPIView):
                 # Delete the old values
                 existing_prop_queryset.filter(property_id=property_id).delete()
                 # Bulk create the issue property values
-                CustomerPropertyValue.objects.bulk_create(property_values, batch_size=10)
+                CustomerPropertyValue.objects.bulk_create(
+                    property_values, batch_size=10
+                )
 
             else:
                 raise ValidationError("Invalid property type")
@@ -211,4 +218,3 @@ class CustomerPropertyValueEndpoint(BaseAPIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except (ValidationError, ValueError) as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-                

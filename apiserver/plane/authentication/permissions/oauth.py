@@ -38,7 +38,7 @@ class OauthApplicationWorkspacePermission(BasePermission):
             application_installation = WorkspaceAppInstallation.objects.filter(
                 application=application,
                 workspace__slug=workspace_slug,
-                deleted_at__isnull=True
+                deleted_at__isnull=True,
             ).first()
 
             return bool(application_installation)

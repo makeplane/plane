@@ -115,9 +115,10 @@ def show_payment_button(workspace_license):
         return True
     # If the workspace is on pro product and is on trial then show the payment button
     if (
-        workspace_license.plan in [
+        workspace_license.plan
+        in [
             WorkspaceLicense.PlanChoice.PRO.value,
-            WorkspaceLicense.PlanChoice.BUSINESS.value
+            WorkspaceLicense.PlanChoice.BUSINESS.value,
         ]
         and is_on_trial(workspace_license)
         and not has_upgraded(workspace_license)
@@ -196,6 +197,7 @@ def is_free_member_count_exceeded(workspace_license):
     else:
         return False
 
+
 def can_delete_workspace(workspace_license):
     """Determine if the workspace can be deleted"""
     if workspace_license.plan != WorkspaceLicense.PlanChoice.FREE:
@@ -218,11 +220,11 @@ def show_verification_failed_banner(workspace_license):
     if (
         workspace_license.plan != WorkspaceLicense.PlanChoice.FREE
         and workspace_license.last_verified_at
-        and (timezone.now() - workspace_license.last_verified_at
-        > timedelta(days=2))
+        and (timezone.now() - workspace_license.last_verified_at > timedelta(days=2))
     ):
         return True
     return False
+
 
 def resync_workspace_license(workspace_slug, force=False):
     # Fetch the workspace
@@ -269,9 +271,15 @@ def resync_workspace_license(workspace_slug, force=False):
             workspace_license.current_period_start_date = response.get(
                 "current_period_start_date"
             )
-            workspace_license.last_verified_at = response.get("last_verified_at", timezone.now())
-            workspace_license.last_payment_failed_date = response.get("last_payment_failed_date", None)
-            workspace_license.last_payment_failed_count = response.get("last_payment_failed_count", 0)
+            workspace_license.last_verified_at = response.get(
+                "last_verified_at", timezone.now()
+            )
+            workspace_license.last_payment_failed_date = response.get(
+                "last_payment_failed_date", None
+            )
+            workspace_license.last_payment_failed_count = response.get(
+                "last_payment_failed_count", 0
+            )
             workspace_license.save()
 
             workspace_license = WorkspaceLicense.objects.get(workspace=workspace)

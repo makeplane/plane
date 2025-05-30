@@ -41,7 +41,4 @@ class JsonKeywordField(fields.KeywordField):
             return "{}"
 
 
-lowercase_normalizer = analysis.normalizer(
-    'lowercase_normalizer',
-    filter=['lowercase']
-)
+lowercase_normalizer = analysis.normalizer("lowercase_normalizer", filter=["lowercase"])

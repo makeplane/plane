@@ -3,7 +3,7 @@ from django.urls import path
 from plane.api.views import (
     UserAssetEndpoint,
     UserServerAssetEndpoint,
-    GenericAssetEndpoint
+    GenericAssetEndpoint,
 )
 
 urlpatterns = [

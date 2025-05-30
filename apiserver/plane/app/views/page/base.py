@@ -209,9 +209,7 @@ class PageViewSet(BaseViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Page.DoesNotExist:
             return Response(
-                {
-                    "error": "Page not found"
-                },
+                {"error": "Page not found"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

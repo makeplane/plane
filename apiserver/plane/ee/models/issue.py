@@ -215,8 +215,6 @@ class EntityProgress(BaseModel):
         return f"{self.progress_date} <{self.entity_type}>"
 
 
-
-
 class EntityUpdates(BaseModel):
     class UpdatesEnum(models.TextChoices):
         ON_TRACK = "ON-TRACK", "On Track"
@@ -345,8 +343,12 @@ class EpicUserProperties(ProjectBaseModel):
 
 
 class WorkItemPage(ProjectBaseModel):
-    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="workitem_pages")
-    page = models.ForeignKey(Page, on_delete=models.CASCADE, related_name="workitem_pages")
+    issue = models.ForeignKey(
+        Issue, on_delete=models.CASCADE, related_name="workitem_pages"
+    )
+    page = models.ForeignKey(
+        Page, on_delete=models.CASCADE, related_name="workitem_pages"
+    )
 
     class Meta:
         verbose_name = "Work Item Page"

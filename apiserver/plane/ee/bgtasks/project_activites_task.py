@@ -50,7 +50,9 @@ def track_description(
     project_activities,
     epoch,
 ):
-    if current_instance.get("description_html") != requested_data.get("description_html"):
+    if current_instance.get("description_html") != requested_data.get(
+        "description_html"
+    ):
         last_activity = (
             WorkspaceActivity.objects.filter(project_id=project_id)
             .order_by("-created_at")
@@ -117,9 +119,7 @@ def track_state(
 ):
     if current_instance.get("state_id") != requested_data.get("state_id"):
         new_state = ProjectState.objects.get(pk=requested_data.get("state_id", None))
-        old_state = ProjectState.objects.get(
-            pk=current_instance.get("state_id", None)
-        )
+        old_state = ProjectState.objects.get(pk=current_instance.get("state_id", None))
 
         project_activities.append(
             WorkspaceActivity(
@@ -417,7 +417,9 @@ def track_members(
                     workspace_id=workspace_id,
                     old_identifier=None,
                     new_identifier=member.id,
-                    comment="joined the project" if requested_data.get("joined", None) else "added the member",
+                    comment="joined the project"
+                    if requested_data.get("joined", None)
+                    else "added the member",
                     epoch=epoch,
                 )
             )
@@ -453,8 +455,7 @@ def track_project_state(
     actor_id,
     project_activities,
     epoch,
-):  
-
+):
     if requested_data.get("project_state"):
         new_state = State.objects.get(id=requested_data.get("project_state"))
         project_activities.append(
@@ -472,7 +473,7 @@ def track_project_state(
                 epoch=epoch,
             )
         )
-    
+
     if current_instance.get("project_state"):
         project_activities.append(
             WorkspaceActivity(
@@ -489,6 +490,7 @@ def track_project_state(
                 epoch=epoch,
             )
         )
+
 
 def track_label(
     requested_data,
@@ -516,7 +518,7 @@ def track_label(
                 epoch=epoch,
             )
         )
-    
+
     if current_instance.get("label"):
         project_activities.append(
             WorkspaceActivity(
@@ -594,7 +596,7 @@ def update_project_activity(
         "intake_view",
         "is_time_tracking_enabled",
         "is_issue_type_enabled",
-        "estimate"
+        "estimate",
     ]
 
     requested_data = json.loads(requested_data) if requested_data is not None else None

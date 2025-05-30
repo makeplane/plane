@@ -102,6 +102,7 @@ def filter_state(params, issue_filter, method, prefix=""):
             issue_filter[f"{prefix}state__in"] = params.get("state")
     return issue_filter
 
+
 def filter_state_group(params, issue_filter, method, prefix=""):
     if method == "GET":
         state_group = [

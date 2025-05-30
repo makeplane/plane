@@ -9,7 +9,6 @@ class Command(BaseCommand):
     help = "Sync the license user for a workspace with the payment server"
 
     def handle(self, *args, **options):
-
         # Trigger the sync license on startup task
         update_licenses.delay()
 

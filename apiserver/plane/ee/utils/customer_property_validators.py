@@ -30,9 +30,7 @@ from plane.ee.utils.base_validators import (
 
 
 def validate_option(property, value):
-    if not CustomerPropertyOption.objects.filter(
-        property=property, id=value
-    ).exists():
+    if not CustomerPropertyOption.objects.filter(property=property, id=value).exists():
         raise ValidationError(f"{value} is not a valid option")
 
 
@@ -51,16 +49,13 @@ def validate_relation(property, value):
         ).exists():
             raise ValidationError(f"{value} is not a valid user")
     else:
-        raise ValidationError(
-            f"{property.relation_type} is not a valid relation type"
-        )
+        raise ValidationError(f"{property.relation_type} is not a valid relation type")
 
 
 ## Save functions
 
-def save_text(
-    customer_property, values, existing_values, customer_id, workspace_id
-):
+
+def save_text(customer_property, values, existing_values, customer_id, workspace_id):
     if values:
         # Case 1 - The property is updated
         if existing_values and values[0] != existing_values[0]:
@@ -105,9 +100,7 @@ def save_datetime(
     return bulk_customer_prop_values
 
 
-def save_decimal(
-    customer_property, values, existing_values, customer_id, workspace_id
-):
+def save_decimal(customer_property, values, existing_values, customer_id, workspace_id):
     bulk_customer_prop_values = []
     for value in values:
         # Case 1 - The property is updated
@@ -123,9 +116,7 @@ def save_decimal(
     return bulk_customer_prop_values
 
 
-def save_boolean(
-    customer_property, values, existing_values, customer_id, workspace_id
-):
+def save_boolean(customer_property, values, existing_values, customer_id, workspace_id):
     bulk_customer_prop_values = []
     for value in values:
         # Case 1 - The property is updated
@@ -141,9 +132,7 @@ def save_boolean(
     return bulk_customer_prop_values
 
 
-def save_option(
-    customer_property, values, existing_values, customer_id, workspace_id
-):
+def save_option(customer_property, values, existing_values, customer_id, workspace_id):
     bulk_customer_prop_values = []
     for value in values:
         # Case 1 - The property is updated
@@ -177,9 +166,7 @@ def save_relation(
     return bulk_customer_prop_values
 
 
-def save_url(
-    customer_property, values, existing_values, customer_id, workspace_id
-):
+def save_url(customer_property, values, existing_values, customer_id, workspace_id):
     bulk_customer_prop_values = []
     for value in values:
         # Case 1 - The property is updated
@@ -195,9 +182,7 @@ def save_url(
     return bulk_customer_prop_values
 
 
-def save_email(
-    customer_property, values, existing_values, customer_id, workspace_id
-):
+def save_email(customer_property, values, existing_values, customer_id, workspace_id):
     bulk_customer_prop_values = []
     for value in values:
         # Case 1 - The property is updated
@@ -213,9 +198,7 @@ def save_email(
     return bulk_customer_prop_values
 
 
-def save_file(
-    customer_property, values, existing_values, customer_id, workspace_id
-):
+def save_file(customer_property, values, existing_values, customer_id, workspace_id):
     bulk_customer_prop_values = []
     for value in values:
         # Case 1 - The property is updated
@@ -243,7 +226,7 @@ VALIDATOR_MAPPER = {
     PropertyTypeEnum.EMAIL: validate_email_value,
     PropertyTypeEnum.FILE: validate_file,
 }
-    
+
 
 def property_validators(properties, property_values, existing_prop_values):
     # Validate the property values

@@ -110,11 +110,12 @@ def run_search_index_command(*args, **kwargs):
     run_search_index_command.delay('--create', '--models', 'app_name.ModelOne', 'app_name.ModelTwo')
     """
     from django.core.management import call_command
+
     print("Running search_index command with args:", args)
     # Remove '--background' if present
-    args = [arg for arg in args if arg != '--background']
+    args = [arg for arg in args if arg != "--background"]
     if "-f" in args:
-        call_command('manage_search_index', *args, **kwargs)
+        call_command("manage_search_index", *args, **kwargs)
     else:
-        call_command('manage_search_index', '-f', *args, **kwargs)
+        call_command("manage_search_index", "-f", *args, **kwargs)
     print("Search index command completed")

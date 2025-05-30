@@ -27,6 +27,7 @@ from plane.ee.bgtasks.entity_issue_state_progress_task import (
     entity_issue_state_activity_task,
 )
 
+
 def generate_random_name(length=10):
     letters = string.ascii_lowercase
     return "".join(random.choice(letters) for i in range(length))
@@ -224,9 +225,9 @@ class EstimatePointEndpoint(BaseViewSet):
             # If cycle exists, proceed with the logic
             if cycle:
                 cycle_id = str(cycle.id)
-                issues = Issue.objects.annotate(cycle_id=F("issue_cycle__cycle_id")).filter(
-                    estimate_point_id=estimate_point_id, cycle_id=cycle.id
-                )
+                issues = Issue.objects.annotate(
+                    cycle_id=F("issue_cycle__cycle_id")
+                ).filter(estimate_point_id=estimate_point_id, cycle_id=cycle.id)
 
                 # Trigger the entity issue state activity task
                 entity_issue_state_activity_task.delay(

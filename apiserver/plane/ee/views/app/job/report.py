@@ -1,4 +1,4 @@
- # Third party imports
+# Third party imports
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -15,9 +15,11 @@ class ImportReportView(BaseAPIView):
     permission_classes = [ProjectBasePermission]
 
     @check_feature_flag(FeatureFlag.SILO)
-    def get(self, request, slug, pk = None):        
+    def get(self, request, slug, pk=None):
         if not pk:
-            import_reports = ImportReport.objects.filter(**request.query_params).order_by("-created_at")
+            import_reports = ImportReport.objects.filter(
+                **request.query_params
+            ).order_by("-created_at")
             serializer = ImportReportSerializer(import_reports, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         import_report = ImportReport.objects.filter(pk=pk).first()
@@ -29,18 +31,12 @@ class ImportReportView(BaseAPIView):
         import_report = ImportReport.objects.filter(pk=pk).first()
 
         serializer = ImportReportSerializer(
-            import_report,
-            data=request.data,
-            partial=True
+            import_report, data=request.data, partial=True
         )
-        
+
         if serializer.is_valid():
             updated_report = serializer.save()
             return Response(
-                ImportReportSerializer(updated_report).data,
-                status=status.HTTP_200_OK
+                ImportReportSerializer(updated_report).data, status=status.HTTP_200_OK
             )
-        return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

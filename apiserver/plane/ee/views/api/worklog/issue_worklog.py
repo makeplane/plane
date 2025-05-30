@@ -124,7 +124,6 @@ class ProjectWorklogAPIEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def get(self, request, slug, project_id):
-
         project_feature = Project.objects.filter(
             workspace__slug=slug, pk=project_id
         ).first()

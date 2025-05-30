@@ -167,7 +167,14 @@ def get_new_comment_mentions(new_value, old_value):
 
 
 def create_mention_notification(
-    project, notification_comment, issue, actor_id, mention_id, issue_id, activity, entity_name
+    project,
+    notification_comment,
+    issue,
+    actor_id,
+    mention_id,
+    issue_id,
+    activity,
+    entity_name,
 ):
     return Notification(
         workspace=project.workspace,
@@ -323,10 +330,7 @@ def notifications(
                 .values_list("subscriber", flat=True)
             )
 
-            issue = (
-                Issue.objects.filter(pk=issue_id)
-                .first()
-            )
+            issue = Issue.objects.filter(pk=issue_id).first()
 
             if issue.type and issue.type.is_epic:
                 entity_name = "epic"

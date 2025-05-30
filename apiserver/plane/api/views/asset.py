@@ -373,9 +373,7 @@ class GenericAssetEndpoint(BaseAPIView):
         # Get the presigned URL
         storage = S3Storage(request=request, is_server=True)
         presigned_url = storage.generate_presigned_post(
-            object_name=asset_key,
-            file_type=type,
-            file_size=size_limit
+            object_name=asset_key, file_type=type, file_size=size_limit
         )
 
         return Response(
@@ -390,9 +388,7 @@ class GenericAssetEndpoint(BaseAPIView):
     def patch(self, request, slug, asset_id):
         try:
             asset = FileAsset.objects.get(
-                id=asset_id,
-                workspace__slug=slug,
-                is_deleted=False
+                id=asset_id, workspace__slug=slug, is_deleted=False
             )
 
             # Update is_uploaded status
@@ -404,11 +400,8 @@ class GenericAssetEndpoint(BaseAPIView):
 
             asset.save(update_fields=["is_uploaded"])
 
-            return Response(
-                status=status.HTTP_204_NO_CONTENT
-            )
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except FileAsset.DoesNotExist:
             return Response(
-                {"error": "Asset not found"},
-                status=status.HTTP_404_NOT_FOUND
+                {"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND
             )

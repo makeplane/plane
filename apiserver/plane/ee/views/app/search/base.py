@@ -4,31 +4,39 @@ from rest_framework.response import Response
 
 from plane.app.views.base import BaseAPIView
 from plane.ee.documents import (
-    IssueDocument, ProjectDocument, CycleDocument,
-    TeamspaceDocument, ModuleDocument, IssueViewDocument,
-    PageDocument
+    IssueDocument,
+    ProjectDocument,
+    CycleDocument,
+    TeamspaceDocument,
+    ModuleDocument,
+    IssueViewDocument,
+    PageDocument,
 )
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.serializers.app.search_serializers import (
-    IssueSearchSerializer, ProjectSearchSerializer, CycleSearchSerializer,
-    ModuleSearchSerializer, PageSearchSerializer, IssueViewSearchSerializer,
-    TeamspaceSearchSerializer
+    IssueSearchSerializer,
+    ProjectSearchSerializer,
+    CycleSearchSerializer,
+    ModuleSearchSerializer,
+    PageSearchSerializer,
+    IssueViewSearchSerializer,
+    TeamspaceSearchSerializer,
 )
 
 
 # Build a boolean filter query
 def build_filters(filters):
-    filter_list = [Q('term', is_deleted=False)]  # Exclude deleted items
+    filter_list = [Q("term", is_deleted=False)]  # Exclude deleted items
     for f in filters:
-        filter_list.append(Q('term', **f))  # Add filters
+        filter_list.append(Q("term", **f))  # Add filters
     return Q("bool", must=filter_list)  # Return filter query
 
 
 # Build a search query with query_string for wildcard support
 def build_query(query, search_fields):
     wildcard_query = f"{query}*"
-    return Q('query_string', query=wildcard_query, fields=search_fields)
+    return Q("query_string", query=wildcard_query, fields=search_fields)
 
 
 def build_search(document, filters, query, search_fields, fields_to_retrieve):
@@ -132,28 +140,31 @@ def build_search(document, filters, query, search_fields, fields_to_retrieve):
 
 
 class EnhancedGlobalSearchEndpoint(BaseAPIView):
-
     def filter_issues(self, query, slug, is_epic=False):
         # permission filters
         filters = [
             dict(workspace_slug=f"{slug}"),
             dict(active_project_member_user_ids=f"{self.request.user.id}"),
             dict(project_is_archived=False),
-            dict(is_epic=is_epic)
+            dict(is_epic=is_epic),
         ]
         search_fields = [
-            "name", "description", "pretty_sequence", "project_indentifier"
+            "name",
+            "description",
+            "pretty_sequence",
+            "project_indentifier",
         ]
         fields_to_retrieve = [
-            "name", "id", "sequence_id", "project_identifier",
-            "project_id", "workspace_slug", "type_id"
+            "name",
+            "id",
+            "sequence_id",
+            "project_identifier",
+            "project_id",
+            "workspace_slug",
+            "type_id",
         ]
         search = build_search(
-            IssueDocument,
-            filters,
-            query,
-            search_fields,
-            fields_to_retrieve
+            IssueDocument, filters, query, search_fields, fields_to_retrieve
         )
         return search
 
@@ -165,21 +176,18 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
         filters = [
             dict(workspace_slug=f"{slug}"),
             dict(active_member_user_ids=f"{self.request.user.id}"),
-            dict(is_archived=False)
+            dict(is_archived=False),
         ]
-        search_fields = [
-            "name", "identifier"
-        ]
+        search_fields = ["name", "identifier"]
         fields_to_retrieve = [
-            "name", "id", "identifier",
-            "workspace_slug", "logo_props"
+            "name",
+            "id",
+            "identifier",
+            "workspace_slug",
+            "logo_props",
         ]
         search = build_search(
-            ProjectDocument,
-            filters,
-            query,
-            search_fields,
-            fields_to_retrieve
+            ProjectDocument, filters, query, search_fields, fields_to_retrieve
         )
         return search
 
@@ -188,21 +196,19 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
         filters = [
             dict(workspace_slug=f"{slug}"),
             dict(active_project_member_user_ids=f"{self.request.user.id}"),
-            dict(project_is_archived=False)
+            dict(project_is_archived=False),
         ]
-        search_fields = [
-            "name", "description"
-        ]
+        search_fields = ["name", "description"]
         fields_to_retrieve = [
-            "name", "id", "project_id",
-            "logo_props", "project_identifier", "workspace_slug"
+            "name",
+            "id",
+            "project_id",
+            "logo_props",
+            "project_identifier",
+            "workspace_slug",
         ]
         search = build_search(
-            CycleDocument,
-            filters,
-            query,
-            search_fields,
-            fields_to_retrieve
+            CycleDocument, filters, query, search_fields, fields_to_retrieve
         )
         return search
 
@@ -211,21 +217,19 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
         filters = [
             dict(workspace_slug=f"{slug}"),
             dict(active_project_member_user_ids=f"{self.request.user.id}"),
-            dict(project_is_archived=False)
+            dict(project_is_archived=False),
         ]
-        search_fields = [
-            "name", "description"
-        ]
+        search_fields = ["name", "description"]
         fields_to_retrieve = [
-            "name", "id", "project_id",
-            "logo_props", "project_identifier", "workspace_slug"
+            "name",
+            "id",
+            "project_id",
+            "logo_props",
+            "project_identifier",
+            "workspace_slug",
         ]
         search = build_search(
-            ModuleDocument,
-            filters,
-            query,
-            search_fields,
-            fields_to_retrieve
+            ModuleDocument, filters, query, search_fields, fields_to_retrieve
         )
         return search
 
@@ -233,21 +237,19 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
         # permission filters
         filters = [
             dict(workspace_slug=f"{slug}"),
-            dict(active_member_user_ids=f"{self.request.user.id}")
+            dict(active_member_user_ids=f"{self.request.user.id}"),
         ]
-        search_fields = [
-            "name", "description"
-        ]
+        search_fields = ["name", "description"]
         fields_to_retrieve = [
-            "name", "id", "project_ids",
-            "logo_props", "project_identifiers", "workspace_slug"
+            "name",
+            "id",
+            "project_ids",
+            "logo_props",
+            "project_identifiers",
+            "workspace_slug",
         ]
         search = build_search(
-            PageDocument,
-            filters,
-            query,
-            search_fields,
-            fields_to_retrieve
+            PageDocument, filters, query, search_fields, fields_to_retrieve
         )
         return search
 
@@ -256,21 +258,19 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
         filters = [
             dict(workspace_slug=f"{slug}"),
             dict(active_project_member_user_ids=f"{self.request.user.id}"),
-            dict(project_is_archived=False)
+            dict(project_is_archived=False),
         ]
-        search_fields = [
-            "name", "description"
-        ]
+        search_fields = ["name", "description"]
         fields_to_retrieve = [
-            "name", "id", "project_id",
-            "logo_props", "project_identifier", "workspace_slug"
+            "name",
+            "id",
+            "project_id",
+            "logo_props",
+            "project_identifier",
+            "workspace_slug",
         ]
         search = build_search(
-            IssueViewDocument,
-            filters,
-            query,
-            search_fields,
-            fields_to_retrieve
+            IssueViewDocument, filters, query, search_fields, fields_to_retrieve
         )
         return search
 
@@ -278,20 +278,12 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
         # permission filters
         filters = [
             dict(workspace_slug=f"{slug}"),
-            dict(active_member_user_ids=f"{self.request.user.id}")
+            dict(active_member_user_ids=f"{self.request.user.id}"),
         ]
-        search_fields = [
-            "name"
-        ]
-        fields_to_retrieve = [
-            "name", "id", "workspace_slug", "logo_props"
-        ]
+        search_fields = ["name"]
+        fields_to_retrieve = ["name", "id", "workspace_slug", "logo_props"]
         search = build_search(
-            TeamspaceDocument,
-            filters,
-            query,
-            search_fields,
-            fields_to_retrieve
+            TeamspaceDocument, filters, query, search_fields, fields_to_retrieve
         )
         return search
 
@@ -307,7 +299,7 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
             "modules": ("module", ModuleSearchSerializer),
             "pages": ("page", PageSearchSerializer),
             "issue_views": ("work_item_view", IssueViewSearchSerializer),
-            "teamspaces": ("teamspace", TeamspaceSearchSerializer)
+            "teamspaces": ("teamspace", TeamspaceSearchSerializer),
         }
 
         # Initialize organized results dictionary
@@ -324,9 +316,7 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
 
         if not query:
             return Response(
-                {
-                    "results": organized_results
-                },
+                {"results": organized_results},
                 status=status.HTTP_200_OK,
             )
 
@@ -351,10 +341,16 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
                 continue
             index_name = response[0].meta.index
             if index_name == "issues" and response[0].is_epic:
-                organized_results["epic"].extend(IssueSearchSerializer(response, many=True).data)
+                organized_results["epic"].extend(
+                    IssueSearchSerializer(response, many=True).data
+                )
             else:
-                result_key, serializer_class = index_to_key_map.get(index_name, (None, None))
+                result_key, serializer_class = index_to_key_map.get(
+                    index_name, (None, None)
+                )
                 if result_key:
-                    organized_results[result_key].extend(serializer_class(response, many=True).data)
+                    organized_results[result_key].extend(
+                        serializer_class(response, many=True).data
+                    )
 
         return Response({"results": organized_results}, status=status.HTTP_200_OK)

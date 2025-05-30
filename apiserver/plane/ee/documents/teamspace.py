@@ -1,11 +1,6 @@
-
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import (
-    Q,
-    UUIDField,
-    Value
-)
+from django.db.models import Q, UUIDField, Value
 from django.db.models.functions import Coalesce
 from django_elasticsearch_dsl import fields
 from django_elasticsearch_dsl.registries import registry
@@ -22,14 +17,13 @@ class TeamspaceDocument(BaseDocument):
     active_member_user_ids = fields.ListField(fields.KeywordField())
     logo_props = JsonKeywordField(attr="logo_props")
     is_deleted = fields.BooleanField()
+
     class Index:
         name = "teamspaces"
 
     class Django:
         model = Teamspace
-        fields = [
-            "id", "name", "deleted_at"
-        ]
+        fields = ["id", "name", "deleted_at"]
         # queryset_pagination tells dsl to add chunk_size to the queryset iterator.
         # which is required for django to use prefetch_related when using iterator.
         # NOTE: This number can be different for other indexes based on complexity
@@ -43,7 +37,7 @@ class TeamspaceDocument(BaseDocument):
                 ArrayAgg(
                     "members__member_id",
                     distinct=True,
-                    filter=Q(members__member__is_active=True)
+                    filter=Q(members__member__is_active=True),
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
             )

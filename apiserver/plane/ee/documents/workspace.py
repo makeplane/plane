@@ -1,4 +1,3 @@
-
 from django.db.models import Prefetch
 from django_elasticsearch_dsl import fields
 from django_elasticsearch_dsl.registries import registry
@@ -12,14 +11,13 @@ class WorkspaceDocument(BaseDocument):
     slug = fields.KeywordField(attr="slug")
     active_member_user_ids = fields.ListField(fields.KeywordField())
     is_deleted = fields.BooleanField()
+
     class Index:
         name = "workspaces"
 
     class Django:
         model = Workspace
-        fields = [
-            "id", "name", "deleted_at"
-        ]
+        fields = ["id", "name", "deleted_at"]
         # queryset_pagination tells dsl to add chunk_size to the queryset iterator.
         # which is required for django to use prefetch_related when using iterator.
         # NOTE: This number can be different for other indexes based on complexity
@@ -31,8 +29,10 @@ class WorkspaceDocument(BaseDocument):
         return qs.prefetch_related(
             Prefetch(
                 "workspace_member",
-                queryset=WorkspaceMember.objects.filter(is_active=True).only("member_id"),
-                to_attr="active_members"
+                queryset=WorkspaceMember.objects.filter(is_active=True).only(
+                    "member_id"
+                ),
+                to_attr="active_members",
             )
         )
 

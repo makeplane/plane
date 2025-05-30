@@ -59,8 +59,8 @@ class WorkflowTransitionActorSerializer(BaseSerializer):
 
 
 class WorkflowTransitionActivitySerializer(BaseSerializer):
-
     state_id = serializers.UUIDField(source="workflow.state_id", read_only=True)
+
     class Meta:
         model = WorkflowTransitionActivity
         fields = "__all__"

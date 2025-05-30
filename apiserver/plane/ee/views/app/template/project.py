@@ -54,15 +54,19 @@ class ProjectTemplateEndpoint(TemplateBaseEndpoint):
             serializer = TemplateDataSerializer(templates)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        templates = Template.objects.filter(
-            workspace__slug=slug, template_type=Template.TemplateType.PROJECT
-        ).prefetch_related(
-            Prefetch(
-                "project_templates",
-                queryset=ProjectTemplate.objects.filter(workspace__slug=slug),
-                to_attr="template_data",
+        templates = (
+            Template.objects.filter(
+                workspace__slug=slug, template_type=Template.TemplateType.PROJECT
             )
-        ).prefetch_related("attachments", "categories")
+            .prefetch_related(
+                Prefetch(
+                    "project_templates",
+                    queryset=ProjectTemplate.objects.filter(workspace__slug=slug),
+                    to_attr="template_data",
+                )
+            )
+            .prefetch_related("attachments", "categories")
+        )
         serializer = TemplateDataSerializer(templates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -179,7 +183,6 @@ class ProjectTemplateEndpoint(TemplateBaseEndpoint):
 
 
 class CopyProjectTemplateEndpoint(TemplateBaseEndpoint):
-
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.PROJECT_TEMPLATES)
     def post(self, request: HttpRequest, slug: str) -> Response:
@@ -188,7 +191,7 @@ class CopyProjectTemplateEndpoint(TemplateBaseEndpoint):
         if not template_id:
             return Response(
                 data={"error": "Template ID is required"},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Get and validate the source template
@@ -200,23 +203,20 @@ class CopyProjectTemplateEndpoint(TemplateBaseEndpoint):
 
         # Create new template and project template
         new_template: Template = self._create_new_template(template, workspace)
-        _ = self._create_new_project_template(
-            project_template, new_template, workspace
-        )
+        _ = self._create_new_project_template(project_template, new_template, workspace)
 
         return Response(
-            data={"template_id": new_template.id},
-            status=status.HTTP_201_CREATED
+            data={"template_id": new_template.id}, status=status.HTTP_201_CREATED
         )
 
     def _get_source_template(
-            self, template_id: str
-        ) -> Tuple[Optional[Template], Optional[ProjectTemplate]]:
+        self, template_id: str
+    ) -> Tuple[Optional[Template], Optional[ProjectTemplate]]:
         """Get and validate the source template and project template."""
         template: Optional[Template] = Template.objects.filter(
             pk=template_id,
             template_type=Template.TemplateType.PROJECT,
-            is_published=True
+            is_published=True,
         ).first()
 
         if not template:
@@ -229,15 +229,19 @@ class CopyProjectTemplateEndpoint(TemplateBaseEndpoint):
         return template, project_template
 
     def _create_new_template(
-            self, source_template: Template, workspace: Workspace
-        ) -> Template:
+        self, source_template: Template, workspace: Workspace
+    ) -> Template:
         """Create a new template based on the source template."""
         # Check if a template with the same name already exists, then add (copy) to the name
-        recent_matching_template = Template.objects.filter(
-            name__startswith=source_template.name,
-            workspace=workspace,
-            template_type=Template.TemplateType.PROJECT,
-        ).order_by("-created_at").first()
+        recent_matching_template = (
+            Template.objects.filter(
+                name__startswith=source_template.name,
+                workspace=workspace,
+                template_type=Template.TemplateType.PROJECT,
+            )
+            .order_by("-created_at")
+            .first()
+        )
         if recent_matching_template:
             source_template.name = f"{recent_matching_template.name} (copy)"
 
@@ -246,7 +250,7 @@ class CopyProjectTemplateEndpoint(TemplateBaseEndpoint):
             short_description=source_template.short_description,
             template_type=Template.TemplateType.PROJECT,
             workspace=workspace,
-            created_by=self.request.user
+            created_by=self.request.user,
         )
 
     def _create_new_project_template(
@@ -270,10 +274,12 @@ class CopyProjectTemplateEndpoint(TemplateBaseEndpoint):
         # Process workitem types and epics to clear relation options
         if source_project_template.workitem_types:
             new_project_template.workitem_types = self._clean_workitem_types(
-                    source_project_template.workitem_types
-                )
+                source_project_template.workitem_types
+            )
         if source_project_template.epics:
-            new_project_template.epics = self._clean_epics(source_project_template.epics)
+            new_project_template.epics = self._clean_epics(
+                source_project_template.epics
+            )
 
         # Copy the cover asset
         new_project_template.cover_asset = self._copy_cover_asset(
@@ -284,10 +290,8 @@ class CopyProjectTemplateEndpoint(TemplateBaseEndpoint):
         return new_project_template
 
     def _copy_project_template(
-            self,
-            source_project_template: ProjectTemplate,
-            workspace: Workspace
-        ) -> ProjectTemplate:
+        self, source_project_template: ProjectTemplate, workspace: Workspace
+    ) -> ProjectTemplate:
         """Create a copy of the project template without saving it."""
         # Use model_to_dict to get all field values, then create a new instance
 
@@ -300,44 +304,49 @@ class CopyProjectTemplateEndpoint(TemplateBaseEndpoint):
         new_project_template.members = []
         new_project_template.project_state = {}
 
-        latest_matching_project_template = ProjectTemplate.objects.filter(
-            name__startswith=source_project_template.name,
-            workspace=workspace,
-        ).order_by("-created_at").first()
+        latest_matching_project_template = (
+            ProjectTemplate.objects.filter(
+                name__startswith=source_project_template.name,
+                workspace=workspace,
+            )
+            .order_by("-created_at")
+            .first()
+        )
         if latest_matching_project_template:
-            new_project_template.name = f"{latest_matching_project_template.name} (copy)"
+            new_project_template.name = (
+                f"{latest_matching_project_template.name} (copy)"
+            )
 
         return new_project_template
 
     def _clean_workitem_types(
-            self,
-            workitem_types: List[Dict[str, Any]]
-        ) -> List[Dict[str, Any]]:
+        self, workitem_types: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
         """Clean workitem types by removing relation options."""
         # Deep copy to avoid modifying the original
         cleaned_workitem_types: List[Dict[str, Any]] = copy.deepcopy(workitem_types)
         for workitem_type in cleaned_workitem_types:
-            wi_properties: List[Dict[str, Any]] = workitem_type.get('properties', [])
+            wi_properties: List[Dict[str, Any]] = workitem_type.get("properties", [])
             for wi_property in wi_properties:
-                if wi_property.get('property_type') == "RELATION":
-                    wi_property['default_value'] = []
+                if wi_property.get("property_type") == "RELATION":
+                    wi_property["default_value"] = []
         return cleaned_workitem_types
 
     def _clean_epics(self, epics: Dict[str, Any]) -> Dict[str, Any]:
         """Clean epics by removing relation options."""
         # Deep copy to avoid modifying the original
         cleaned_epics: Dict[str, Any] = copy.deepcopy(epics)
-        epic_properties: List[Dict[str, Any]] = cleaned_epics.get('properties', [])
+        epic_properties: List[Dict[str, Any]] = cleaned_epics.get("properties", [])
         for epic_property in epic_properties:
-            if epic_property.get('property_type') == "RELATION":
-                epic_property['default_value'] = []
+            if epic_property.get("property_type") == "RELATION":
+                epic_property["default_value"] = []
         return cleaned_epics
 
     def _copy_cover_asset(
-            self,
-            workspace: Workspace,
-            source_project_template: ProjectTemplate,
-        ) -> Optional[str]:
+        self,
+        workspace: Workspace,
+        source_project_template: ProjectTemplate,
+    ) -> Optional[str]:
         """Copy the cover asset from the source project template to the new project template."""
 
         # If the template cover asset is a url we need not do anything
@@ -360,7 +369,7 @@ class CopyProjectTemplateEndpoint(TemplateBaseEndpoint):
                 workspace=workspace,
                 entity_type=FileAsset.EntityTypeContext.PROJECT_COVER,
                 created_by=self.request.user,
-                asset=new_asset_key
+                asset=new_asset_key,
             )
             return new_asset.asset_url
         return None
@@ -375,7 +384,7 @@ class CopyProjectTemplateEndpoint(TemplateBaseEndpoint):
         Returns:
             Optional[str]: None if the URL is invalid, otherwise the extracted asset ID.
         """
-        url_pattern: str = r"^/api/assets/v2/static/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/?$" # noqa: E501
+        url_pattern: str = r"^/api/assets/v2/static/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/?$"  # noqa: E501
 
         pattern_match = re.match(url_pattern, url)
         if not pattern_match:

@@ -36,6 +36,7 @@ from plane.authentication.adapter.error import (
 from plane.utils.ip_address import get_client_ip
 from plane.silo.bgtasks.integration_apps_task import create_integration_applications
 
+
 class InstanceAdminEndpoint(BaseAPIView):
     permission_classes = [InstanceAdminPermission]
 

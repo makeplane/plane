@@ -20,7 +20,9 @@ class AuthenticationThrottle(AnonRateThrottle):
     rate = "30/minute"
     scope = "authentication"
 
-    def throttle_failure_view(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+    def throttle_failure_view(
+        self, request: Request, *args: Any, **kwargs: Any
+    ) -> Response:
         try:
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["RATE_LIMIT_EXCEEDED"],
@@ -36,10 +38,13 @@ class OAuthTokenRateThrottle(SimpleRateThrottle):
     """
     Throttle for API endpoints using OAuth tokens
     """
+
     rate = "5000/hour"
     scope = "oauth_api_token"
 
-    def get_cache_key(self, request: Request, view: Optional[Any] = None) -> Optional[str]:
+    def get_cache_key(
+        self, request: Request, view: Optional[Any] = None
+    ) -> Optional[str]:
         # Check if the request is authenticated via OAuth
         oauth2authenticated = isinstance(
             request.successful_authenticator, OAuth2Authentication
@@ -90,6 +95,7 @@ Django Ratelimit based throttling for OAuth endpoints which use Django's native 
 This implementation uses django-ratelimit with custom key functions.
 """
 
+
 def token_ratelimit_key(group: Optional[str], request: HttpRequest) -> str:
     """Generate cache key for token endpoint rate limiting"""
     if request.user.is_authenticated:
@@ -123,10 +129,10 @@ def add_ratelimit_headers(
     response: HttpResponse,
     rate: str,
     key_func: Callable[[Optional[str], HttpRequest], str],
-    group: Optional[str] = None
+    group: Optional[str] = None,
 ) -> HttpResponse:
     """Add rate limit headers using django-ratelimit's usage data"""
-    rate_parts = rate.split('/')
+    rate_parts = rate.split("/")
     rate_num = int(rate_parts[0])
 
     # Get current count and reset time from django-ratelimit
@@ -135,15 +141,15 @@ def add_ratelimit_headers(
     if usage is None:
         return response
 
-    count = usage['count']
-    reset = usage.get('time_left')
+    count = usage["count"]
+    reset = usage.get("time_left")
 
     remaining = max(0, rate_num - count)
 
     # Add standard rate limit headers
-    response['X-RateLimit-Limit'] = str(rate_num)
-    response['X-RateLimit-Remaining'] = str(remaining)
+    response["X-RateLimit-Limit"] = str(rate_num)
+    response["X-RateLimit-Remaining"] = str(remaining)
     if reset is not None:
-        response['X-RateLimit-Reset'] = str(int(reset))
+        response["X-RateLimit-Reset"] = str(int(reset))
 
     return response

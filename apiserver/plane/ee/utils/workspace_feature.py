@@ -9,6 +9,7 @@ class WorkspaceFeatureContext(Enum):
     IS_PROJECT_GROUPING_ENABLED = "is_project_grouping_enabled"
     IS_CUSTOMER_ENABLED = "is_customer_enabled"
 
+
 def check_workspace_feature(slug, feature: WorkspaceFeatureContext):
     # Dynamically build the filter using the feature's value
     filter_kwargs = {"workspace__slug": slug, feature.value: True}

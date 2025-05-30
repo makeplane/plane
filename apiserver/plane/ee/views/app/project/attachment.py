@@ -26,6 +26,7 @@ from plane.payment.flags.flag_decorator import (
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.bgtasks.project_activites_task import project_activity
 
+
 class ProjectAttachmentV2Endpoint(BaseAPIView):
     serializer_class = ProjectAttachmentSerializer
     model = FileAsset
@@ -170,9 +171,7 @@ class ProjectAttachmentV2Endpoint(BaseAPIView):
                 requested_data=None,
                 actor_id=str(self.request.user.id),
                 project_id=str(self.kwargs.get("project_id", None)),
-                current_instance=json.dumps(
-                    serializer.data, cls=DjangoJSONEncoder
-                ),
+                current_instance=json.dumps(serializer.data, cls=DjangoJSONEncoder),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
                 origin=request.META.get("HTTP_ORIGIN"),

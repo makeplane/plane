@@ -239,7 +239,6 @@ class WorkflowEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.WORKFLOWS)
     @allow_permission([ROLE.ADMIN])
     def delete(self, request, slug, project_id):
-
         # Get the workflow for the project
         workflow = Workflow.objects.filter(
             workspace__slug=slug, project_id=project_id

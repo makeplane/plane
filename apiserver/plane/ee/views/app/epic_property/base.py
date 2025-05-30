@@ -226,9 +226,7 @@ class EpicPropertyEndpoint(BaseAPIView):
             return Response(response, status=status.HTTP_201_CREATED)
         except IntegrityError:
             return Response(
-                {
-                    "error": "A Property with the same name already exists in this epic"
-                },
+                {"error": "A Property with the same name already exists in this epic"},
                 status=status.HTTP_409_CONFLICT,
             )
 

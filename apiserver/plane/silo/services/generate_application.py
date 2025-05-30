@@ -35,7 +35,7 @@ def generate_application(
     if application_secret_model.objects.filter(key=f"x-{app_key}-id").exists():
         logger.info(f"Application for {app_key} already exists, skipping...")
         return None
-    
+
     app_data = APPLICATIONS[app_key]
     app_slug = app_data["slug"]
     user = user_model.objects.get(id=user_id)
@@ -107,11 +107,11 @@ def create_applications(
     user_model = user_model or User
     # create applications
     for app_key in APPLICATIONS.keys():
-          logger.info(f"Creating application for {app_key}")
-          generate_application(
-              user_id,
-              app_key,
-              application_model,
-              application_secret_model,
-              user_model,
-          )
+        logger.info(f"Creating application for {app_key}")
+        generate_application(
+            user_id,
+            app_key,
+            application_model,
+            application_secret_model,
+            user_model,
+        )

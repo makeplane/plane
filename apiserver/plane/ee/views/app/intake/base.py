@@ -167,9 +167,9 @@ class IntakeSettingEndpoint(BaseAPIView):
                 if check_workspace_feature_flag(
                     FeatureFlag.INTAKE_EMAIL, slug, user_id=request.user.id
                 ):
-                    data["anchors"][
-                        "intake_email"
-                    ] = f"{slug}-{deployboard['anchor']}@{self.get_intake_email_domain()}"
+                    data["anchors"]["intake_email"] = (
+                        f"{slug}-{deployboard['anchor']}@{self.get_intake_email_domain()}"
+                    )
             elif deployboard["entity_name"] == "intake":
                 if check_workspace_feature_flag(
                     FeatureFlag.INTAKE_FORM, slug, user_id=request.user.id

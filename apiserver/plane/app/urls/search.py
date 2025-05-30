@@ -29,5 +29,5 @@ urlpatterns = [
         "workspaces/<str:slug>/app-search/",
         WorkspaceSearchEndpoint.as_view(),
         name="app-search",
-    )
+    ),
 ]

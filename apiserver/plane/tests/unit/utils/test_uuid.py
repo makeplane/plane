@@ -19,7 +19,9 @@ class TestUUIDUtils:
         assert is_valid_uuid("not-a-uuid") is False
         assert is_valid_uuid("123456789") is False
         assert is_valid_uuid("") is False
-        assert is_valid_uuid("00000000-0000-0000-0000-000000000000") is False  # This is a valid UUID but version 1
+        assert (
+            is_valid_uuid("00000000-0000-0000-0000-000000000000") is False
+        )  # This is a valid UUID but version 1
 
     def test_convert_uuid_to_integer(self):
         """Test convert_uuid_to_integer function"""
@@ -46,4 +48,6 @@ class TestUUIDUtils:
         test_uuid = uuid.UUID(test_uuid_str)
 
         # Should get the same result whether passing UUID or string
-        assert convert_uuid_to_integer(test_uuid) == convert_uuid_to_integer(test_uuid_str)
+        assert convert_uuid_to_integer(test_uuid) == convert_uuid_to_integer(
+            test_uuid_str
+        )

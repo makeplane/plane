@@ -7,8 +7,10 @@ from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.core.validators import validate_email
 
+
 def validate_text(property, value):
     pass
+
 
 def validate_uuid(property, value):
     try:
@@ -17,7 +19,7 @@ def validate_uuid(property, value):
     except ValueError:
         # Raise a validation error
         raise ValidationError(f"{value} is not a valid UUID")
-    
+
 
 def validate_datetime(property, value):
     try:
@@ -27,6 +29,7 @@ def validate_datetime(property, value):
             datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
         except ValueError:
             raise ValidationError(f"{value} is not a valid datetime")
+
 
 def validate_decimal(property, value):
     try:
@@ -45,6 +48,7 @@ def validate_boolean(property, value):
     except ValueError:
         # Raise a validation error
         raise ValidationError(f"{value} is not a valid boolean")
+
 
 def validate_url(property, value):
     # Validate the URL

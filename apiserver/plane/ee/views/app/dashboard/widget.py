@@ -24,7 +24,6 @@ from rest_framework.response import Response
 
 
 class WidgetEndpoint(BaseAPIView):
-
     def get_queryset(self):
         return Widget.objects.filter(
             dashboard_widgets__dashboard_id=self.kwargs.get("dashboard_id"),
@@ -106,7 +105,6 @@ class WidgetListEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.DASHBOARDS)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, dashboard_id, widget_id):
-
         dashboard = Dashboard.objects.filter(
             id=dashboard_id, workspace__slug=slug
         ).first()

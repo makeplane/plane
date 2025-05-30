@@ -28,9 +28,7 @@ from plane.ee.utils.base_validators import (
 
 
 def validate_option(property, value):
-    if not IssuePropertyOption.objects.filter(
-        property=property, id=value
-    ).exists():
+    if not IssuePropertyOption.objects.filter(property=property, id=value).exists():
         raise ValidationError(f"{value} is not a valid option")
 
 
@@ -49,9 +47,8 @@ def validate_relation(property, value):
         ).exists():
             raise ValidationError(f"{value} is not a valid user")
     else:
-        raise ValidationError(
-            f"{property.relation_type} is not a valid relation type"
-        )
+        raise ValidationError(f"{property.relation_type} is not a valid relation type")
+
 
 ## Save functions
 
