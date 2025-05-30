@@ -22,7 +22,7 @@ const ProfileAppearancePage = observer(() => {
         <ProfileSettingContentWrapper>
           <ProfileSettingContentHeader title={t("appearance")} />
           <PreferencesList />
-          <StartOfWeekPreference />
+          <StartOfWeekPreference option={{ title: "Start of week", description: "Select the start of the week" }} />
         </ProfileSettingContentWrapper>
       ) : (
         <div className="grid h-full w-full place-items-center px-4 sm:px-0">

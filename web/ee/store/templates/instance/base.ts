@@ -194,7 +194,7 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
     if (!workspaceSlug) return undefined;
 
     if (this.project) {
-      return this.rootStore.user.permission.projectPermissionsByWorkspaceSlugAndProjectId(workspaceSlug, this.project);
+      return this.rootStore.user.permission.getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, this.project);
     }
 
     return this.rootStore.user.permission.workspaceInfoBySlug(workspaceSlug)?.role ?? undefined;

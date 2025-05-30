@@ -158,20 +158,6 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
     return false;
   });
 
-  /**
-   * @description Returns whether the user has the permission to access a page
-   * @param { string } page
-   * @returns { boolean }
-   */
-  hasPageAccess = computedFn((workspaceSlug: string, key: string): boolean => {
-    if (!workspaceSlug || !key) return false;
-    const settings = WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS.find((item) => item.key === key);
-    if (settings) {
-      return this.allowPermissions(settings.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug);
-    }
-    return false;
-  });
-
   // action helpers
   /**
    * @description Returns whether the user has the permission to perform an action

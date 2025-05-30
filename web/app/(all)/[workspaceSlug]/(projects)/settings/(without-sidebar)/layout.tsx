@@ -6,13 +6,13 @@ import { observer } from "mobx-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
-import { AppHeader } from "@/components/core";
+// import { AppHeader } from "@/components/core";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 // plane web imports
 import { LicenseSeatsBanner } from "@/plane-web/components/license";
 // local components
-import { WorkspaceSettingHeader } from "../header";
+// import { WorkspaceSettingHeader } from "../header";
 
 export interface IWorkspaceEntityCreationLayout {
   children: ReactNode;
@@ -28,7 +28,7 @@ const WorkspaceEntityCreationLayout: FC<IWorkspaceEntityCreationLayout> = observ
 
   return (
     <>
-      <AppHeader header={<WorkspaceSettingHeader />} />
+      {/* <AppHeader header={<WorkspaceSettingHeader />} /> */}
       <div className="flex flex-col w-full h-full overflow-hidden">
         {/* free banner */}
         <LicenseSeatsBanner />
