@@ -869,7 +869,10 @@
     "view": "Подання",
     "deactivated_user": "Деактивований користувач",
     "apply": "Застосувати",
-    "applying": "Застосовується"
+    "applying": "Застосовується",
+    "users": "Користувачі",
+    "admins": "Адміністратори",
+    "guests": "Гості"
   },
   "chart": {
     "x_axis": "Вісь X",
@@ -1345,21 +1348,22 @@
     },
     "created_vs_resolved": "Створено vs Вирішено",
     "customized_insights": "Персоналізовані аналітичні дані",
-    "backlog_work_items": "Робочі елементи у беклозі",
+    "backlog_work_items": "{entity} у беклозі",
     "active_projects": "Активні проєкти",
     "trend_on_charts": "Тенденція на графіках",
     "all_projects": "Усі проєкти",
     "summary_of_projects": "Зведення проєктів",
     "project_insights": "Аналітика проєкту",
-    "started_work_items": "Розпочаті робочі елементи",
-    "total_work_items": "Усього робочих елементів",
+    "started_work_items": "Розпочаті {entity}",
+    "total_work_items": "Усього {entity}",
     "total_projects": "Усього проєктів",
     "total_admins": "Усього адміністраторів",
     "total_users": "Усього користувачів",
     "total_intake": "Загальний дохід",
-    "un_started_work_items": "Нерозпочаті робочі елементи",
+    "un_started_work_items": "Нерозпочаті {entity}",
     "total_guests": "Усього гостей",
-    "completed_work_items": "Завершені робочі елементи"
+    "completed_work_items": "Завершені {entity}",
+    "total": "Усього {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Проєкт} few {Проєкти} other {Проєктів}}",

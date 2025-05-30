@@ -867,7 +867,10 @@
     "view": "Lihat",
     "deactivated_user": "Pengguna dinonaktifkan",
     "apply": "Terapkan",
-    "applying": "Terapkan"
+    "applying": "Terapkan",
+    "users": "Pengguna",
+    "admins": "Admin",
+    "guests": "Tamu"
   },
   "chart": {
     "x_axis": "Sumbu-X",
@@ -1343,21 +1346,22 @@
     },
     "created_vs_resolved": "Dibuat vs Diselesaikan",
     "customized_insights": "Wawasan yang Disesuaikan",
-    "backlog_work_items": "Item pekerjaan backlog",
+    "backlog_work_items": "{entity} backlog",
     "active_projects": "Proyek Aktif",
     "trend_on_charts": "Tren pada grafik",
     "all_projects": "Semua Proyek",
     "summary_of_projects": "Ringkasan Proyek",
     "project_insights": "Wawasan Proyek",
-    "started_work_items": "Item pekerjaan yang telah dimulai",
-    "total_work_items": "Total item pekerjaan",
+    "started_work_items": "{entity} yang telah dimulai",
+    "total_work_items": "Total {entity}",
     "total_projects": "Total Proyek",
     "total_admins": "Total Admin",
     "total_users": "Total Pengguna",
     "total_intake": "Total Pemasukan",
-    "un_started_work_items": "Item pekerjaan yang belum dimulai",
+    "un_started_work_items": "{entity} yang belum dimulai",
     "total_guests": "Total Tamu",
-    "completed_work_items": "Item pekerjaan yang telah selesai"
+    "completed_work_items": "{entity} yang telah selesai",
+    "total": "Total {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Proyek} other {Proyek}}",

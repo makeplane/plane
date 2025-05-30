@@ -868,7 +868,10 @@
     "view": "Xem",
     "deactivated_user": "Người dùng bị vô hiệu hóa",
     "apply": "Áp dụng",
-    "applying": "Đang áp dụng"
+    "applying": "Đang áp dụng",
+    "users": "Người dùng",
+    "admins": "Quản trị viên",
+    "guests": "Khách"
   },
   "chart": {
     "x_axis": "Trục X",
@@ -1344,21 +1347,22 @@
     },
     "created_vs_resolved": "Đã tạo vs Đã giải quyết",
     "customized_insights": "Thông tin chi tiết tùy chỉnh",
-    "backlog_work_items": "Các hạng mục công việc tồn đọng",
+    "backlog_work_items": "{entity} tồn đọng",
     "active_projects": "Dự án đang hoạt động",
     "trend_on_charts": "Xu hướng trên biểu đồ",
     "all_projects": "Tất cả dự án",
     "summary_of_projects": "Tóm tắt dự án",
     "project_insights": "Thông tin chi tiết dự án",
-    "started_work_items": "Hạng mục công việc đã bắt đầu",
-    "total_work_items": "Tổng số hạng mục công việc",
+    "started_work_items": "{entity} đã bắt đầu",
+    "total_work_items": "Tổng số {entity}",
     "total_projects": "Tổng số dự án",
     "total_admins": "Tổng số quản trị viên",
     "total_users": "Tổng số người dùng",
     "total_intake": "Tổng thu",
-    "un_started_work_items": "Hạng mục công việc chưa bắt đầu",
+    "un_started_work_items": "{entity} chưa bắt đầu",
     "total_guests": "Tổng số khách",
-    "completed_work_items": "Hạng mục công việc đã hoàn thành"
+    "completed_work_items": "{entity} đã hoàn thành",
+    "total": "Tổng số {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {dự án} other {dự án}}",
