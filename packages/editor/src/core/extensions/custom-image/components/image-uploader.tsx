@@ -6,12 +6,14 @@ import { cn } from "@plane/utils";
 import { ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
-import { CustoBaseImageNodeViewProps, getImageComponentImageFileMap } from "@/extensions/custom-image";
+import { CustomBaseImageNodeViewProps, getImageComponentImageFileMap } from "@/extensions/custom-image";
+// helpers
+import { EFileError } from "@/helpers/file";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // hooks
 import { useUploader, useDropZone, uploadFirstFileAndInsertRemaining } from "@/hooks/use-file-upload";
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
-type CustomImageUploaderProps = CustoBaseImageNodeViewProps & {
+type CustomImageUploaderProps = CustomBaseImageNodeViewProps & {
   maxFileSize: number;
   loadImageFromFileSystem: (file: string) => void;
   failedToLoadImage: boolean;
@@ -71,23 +73,37 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     },
     [imageComponentImageFileMap, imageEntityId, updateAttributes, getPos]
   );
+
+  const uploadImageEditorCommand = useCallback(
+    async (file: File) => await editor?.commands.uploadImage(imageEntityId ?? "", file),
+    [editor, imageEntityId]
+  );
+
+  const handleProgressStatus = useCallback(
+    (isUploading: boolean) => {
+      getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY).uploadInProgress = isUploading;
+    },
+    [editor]
+  );
+
+  const handleInvalidFile = useCallback((_error: EFileError, _file: File, message: string) => {
+    alert(message);
+  }, []);
+
   // hooks
   const { isUploading: isImageBeingUploaded, uploadFile } = useUploader({
     acceptedMimeTypes: ACCEPTED_IMAGE_MIME_TYPES,
     // @ts-expect-error - TODO: fix typings, and don't remove await from here for now
-    editorCommand: async (file) => await editor?.commands.uploadImage(imageEntityId, file),
-    handleProgressStatus: (isUploading) => {
-      getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY).uploadInProgress = isUploading;
-    },
+    editorCommand: uploadImageEditorCommand,
+    handleProgressStatus,
     loadFileFromFileSystem: loadImageFromFileSystem,
     maxFileSize,
+    onInvalidFile: handleInvalidFile,
     onUpload,
   });
+
   const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({
-    acceptedMimeTypes: ACCEPTED_IMAGE_MIME_TYPES,
     editor,
-    maxFileSize,
-    onInvalidFile: (_error, message) => alert(message),
     pos: getPos(),
     type: "image",
     uploader: uploadFile,
@@ -122,11 +138,8 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         return;
       }
       await uploadFirstFileAndInsertRemaining({
-        acceptedMimeTypes: ACCEPTED_IMAGE_MIME_TYPES,
         editor,
         filesList,
-        maxFileSize,
-        onInvalidFile: (_error, message) => alert(message),
         pos: getPos(),
         type: "image",
         uploader: uploadFile,

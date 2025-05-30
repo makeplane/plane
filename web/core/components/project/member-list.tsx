@@ -12,6 +12,8 @@ import { ProjectMemberListItem, SendProjectInvitationModal } from "@/components/
 import { MembersSettingsLoader } from "@/components/ui";
 // hooks
 import { useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
+import { getProjectSettingsPageLabelI18nKey } from "@/plane-web/helpers/project-settings";
+import { SettingsHeading } from "../settings";
 
 type TProjectMemberListProps = {
   projectId: string;
@@ -56,31 +58,35 @@ export const ProjectMemberList: React.FC<TProjectMemberListProps> = observer((pr
         projectId={projectId}
         workspaceSlug={workspaceSlug}
       />
-      <div className="flex items-center justify-between gap-4 border-b border-custom-border-100 py-3 overflow-x-hidden">
-        <div className="text-base font-semibold">{t("members")}</div>
-        <div className="ml-auto flex items-center justify-start gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2 py-1">
-          <Search className="h-3.5 w-3.5" />
-          <input
-            className="w-full max-w-[234px] border-none bg-transparent text-sm focus:outline-none placeholder:text-custom-text-400"
-            placeholder="Search"
-            value={searchQuery}
-            autoFocus
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-        {isAdmin && (
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => {
-              setTrackElement("PROJECT_SETTINGS_MEMBERS_PAGE_HEADER");
-              setInviteModal(true);
-            }}
-          >
-            {t("add_member")}
-          </Button>
-        )}
-      </div>
+      <SettingsHeading
+        title={t(getProjectSettingsPageLabelI18nKey("members", "common.members"))}
+        appendToRight={
+          <div className="flex gap-2">
+            <div className="ml-auto flex items-center justify-start gap-1 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5">
+              <Search className="h-3.5 w-3.5" />
+              <input
+                className="w-full max-w-[234px] border-none bg-transparent text-sm focus:outline-none placeholder:text-custom-text-400"
+                placeholder="Search"
+                value={searchQuery}
+                autoFocus
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            {isAdmin && (
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setTrackElement("PROJECT_SETTINGS_MEMBERS_PAGE_HEADER");
+                  setInviteModal(true);
+                }}
+              >
+                {t("add_member")}
+              </Button>
+            )}
+          </div>
+        }
+      />
+
       {!projectMemberIds ? (
         <MembersSettingsLoader />
       ) : (

@@ -85,6 +85,7 @@ export interface IProjectMemberLite {
 export type TProjectMembership = {
   member: string;
   role: TUserPermissions | EUserProjectRoles;
+  created_at: string;
 } & (
   | {
       id: string;

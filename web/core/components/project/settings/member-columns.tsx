@@ -40,7 +40,7 @@ export const NameColumn: React.FC<NameProps> = (props) => {
       {({}) => (
         <div className="relative group">
           <div className="flex items-center gap-2 w-72">
-            <div className="flex items-center gap-x-2 gap-y-2">
+            <div className="flex items-center gap-x-2 gap-y-2 flex-1">
               {avatar_url && avatar_url.trim() !== "" ? (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
                   <span className="relative flex size-4 items-center justify-center rounded-full capitalize text-white">

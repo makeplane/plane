@@ -45,8 +45,13 @@ export const ForgotPasswordPopover = () => {
           >
             <span className="flex-shrink-0">🤥</span>
             <p className="text-xs">{t("auth.forgot_password.errors.smtp_not_enabled")}</p>
-            <button type="button" className="flex-shrink-0" onClick={() => close()}>
-              <X className="h-3 w-3 text-onboarding-text-200" />
+            <button
+              type="button"
+              className="flex-shrink-0 size-3 grid place-items-center"
+              onClick={() => close()}
+              aria-label={t("aria_labels.auth_forms.close_popover")}
+            >
+              <X className="size-3 text-onboarding-text-200" />
             </button>
           </div>
         )}

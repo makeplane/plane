@@ -1,5 +1,7 @@
 import { Editor } from "@tiptap/core";
 import { EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
+// constants
+import { CORE_EDITOR_META } from "@/constants/meta";
 // plane editor imports
 import { NODE_FILE_MAP } from "@/plane-editor/constants/utility";
 // types
@@ -32,7 +34,7 @@ export const TrackFileDeletionPlugin = (editor: Editor, deleteHandler: TFileHand
 
       transactions.forEach((transaction) => {
         // if the transaction has meta of skipFileDeletion set to true, then return (like while clearing the editor content programmatically)
-        if (transaction.getMeta("skipFileDeletion")) return;
+        if (transaction.getMeta(CORE_EDITOR_META.SKIP_FILE_DELETION)) return;
 
         const removedFiles: TFileNode[] = [];
 

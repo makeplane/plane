@@ -174,7 +174,11 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
       id: projectMember.id,
       role: projectMember.role,
       original_role: projectMember.original_role,
-      member: this.memberRoot?.memberMap?.[projectMember.member],
+      member: {
+        ...this.memberRoot?.memberMap?.[projectMember.member],
+        joining_date: projectMember.created_at,
+      },
+      created_at: projectMember.created_at,
     };
     return memberDetails;
   });
