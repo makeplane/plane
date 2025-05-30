@@ -518,22 +518,7 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
         tags=["Projects"],
         summary="Archive Project",
         description="Archive an existing project",
-        parameters=[
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="project_id",
-                description="Project ID",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-        ],
+        request={},
         responses={
             204: OpenApiResponse(description="Project archived"),
             401: UNAUTHORIZED_RESPONSE,
@@ -554,15 +539,6 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
         summary="Unarchive Project",
         description="Unarchive an existing project",
         request={},
-        parameters=[
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-        ],
         responses={
             204: OpenApiResponse(description="Project unarchived"),
             401: UNAUTHORIZED_RESPONSE,

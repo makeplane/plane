@@ -19,7 +19,6 @@ from plane.api.serializers import (
     AssetUpdateSerializer,
     GenericAssetUploadSerializer,
     GenericAssetUpdateSerializer,
-    FileAssetSerializer,
 )
 from plane.utils.openapi import (
     ASSET_ID_PARAMETER,
@@ -34,11 +33,10 @@ from plane.utils.openapi import (
     ASSET_DELETED_RESPONSE,
     VALIDATION_ERROR_RESPONSE,
     ASSET_NOT_FOUND_RESPONSE,
-    UNAUTHORIZED_RESPONSE,
-    FORBIDDEN_RESPONSE,
     NOT_FOUND_RESPONSE,
     asset_docs,
 )
+
 
 class UserAssetEndpoint(BaseAPIView):
     """This endpoint is used to upload user profile images."""
@@ -73,7 +71,7 @@ class UserAssetEndpoint(BaseAPIView):
         responses={
             200: PRESIGNED_URL_SUCCESS_RESPONSE,
             400: VALIDATION_ERROR_RESPONSE,
-        }
+        },
     )
     def post(self, request):
         """Generate presigned URL for user asset upload.
@@ -150,7 +148,7 @@ class UserAssetEndpoint(BaseAPIView):
         responses={
             204: ASSET_UPDATED_RESPONSE,
             404: NOT_FOUND_RESPONSE,
-        }
+        },
     )
     def patch(self, request, asset_id):
         """Update user asset after upload completion.
@@ -177,7 +175,7 @@ class UserAssetEndpoint(BaseAPIView):
         responses={
             204: ASSET_DELETED_RESPONSE,
             404: NOT_FOUND_RESPONSE,
-        }
+        },
     )
     def delete(self, request, asset_id):
         """Delete user asset.
@@ -229,7 +227,7 @@ class UserServerAssetEndpoint(BaseAPIView):
         responses={
             200: PRESIGNED_URL_SUCCESS_RESPONSE,
             400: VALIDATION_ERROR_RESPONSE,
-        }
+        },
     )
     def post(self, request):
         """Generate presigned URL for user server asset upload.
@@ -306,7 +304,7 @@ class UserServerAssetEndpoint(BaseAPIView):
         responses={
             204: ASSET_UPDATED_RESPONSE,
             404: NOT_FOUND_RESPONSE,
-        }
+        },
     )
     def patch(self, request, asset_id):
         """Update user server asset after upload completion.
@@ -333,7 +331,7 @@ class UserServerAssetEndpoint(BaseAPIView):
         responses={
             204: ASSET_DELETED_RESPONSE,
             404: NOT_FOUND_RESPONSE,
-        }
+        },
     )
     def delete(self, request, asset_id):
         """Delete user server asset.
@@ -362,7 +360,7 @@ class GenericAssetEndpoint(BaseAPIView):
             200: ASSET_DOWNLOAD_SUCCESS_RESPONSE,
             400: ASSET_DOWNLOAD_ERROR_RESPONSE,
             404: ASSET_NOT_FOUND_RESPONSE,
-        }
+        },
     )
     def get(self, request, slug, asset_id=None):
         """Get presigned URL for asset download.
@@ -433,7 +431,7 @@ class GenericAssetEndpoint(BaseAPIView):
             400: GENERIC_ASSET_VALIDATION_ERROR_RESPONSE,
             404: NOT_FOUND_RESPONSE,
             409: ASSET_CONFLICT_RESPONSE,
-        }
+        },
     )
     def post(self, request, slug):
         """Generate presigned URL for generic asset upload.
@@ -506,9 +504,7 @@ class GenericAssetEndpoint(BaseAPIView):
         # Get the presigned URL
         storage = S3Storage(request=request, is_server=True)
         presigned_url = storage.generate_presigned_post(
-            object_name=asset_key,
-            file_type=type,
-            file_size=size_limit
+            object_name=asset_key, file_type=type, file_size=size_limit
         )
 
         return Response(
@@ -527,7 +523,7 @@ class GenericAssetEndpoint(BaseAPIView):
         responses={
             204: ASSET_UPDATED_RESPONSE,
             404: ASSET_NOT_FOUND_RESPONSE,
-        }
+        },
     )
     def patch(self, request, slug, asset_id):
         """Update generic asset after upload completion.
@@ -538,9 +534,7 @@ class GenericAssetEndpoint(BaseAPIView):
         """
         try:
             asset = FileAsset.objects.get(
-                id=asset_id,
-                workspace__slug=slug,
-                is_deleted=False
+                id=asset_id, workspace__slug=slug, is_deleted=False
             )
 
             # Update is_uploaded status
@@ -552,11 +546,8 @@ class GenericAssetEndpoint(BaseAPIView):
 
             asset.save(update_fields=["is_uploaded"])
 
-            return Response(
-                status=status.HTTP_204_NO_CONTENT
-            )
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except FileAsset.DoesNotExist:
             return Response(
-                {"error": "Asset not found"},
-                status=status.HTTP_404_NOT_FOUND
+                {"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND
             )

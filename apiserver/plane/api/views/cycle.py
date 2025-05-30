@@ -981,37 +981,15 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="transfer_cycle_issues",
         tags=["Cycles"],
-        parameters=[
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="project_id",
-                description="Project ID",
-                required=True,
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="cycle_id",
-                description="Cycle ID",
-                required=True,
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
-            ),
-        ],
         request={
-            "type": "object",
-            "required": ["new_cycle_id"],
-            "properties": {
-                "new_cycle_id": {
-                    "type": "string",
-                    "format": "uuid",
-                    "description": "ID of the target cycle to transfer issues to",
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "new_cycle_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID of the target cycle to transfer issues to",
+                    },
                 },
             },
         },
