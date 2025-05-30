@@ -284,6 +284,7 @@ def send_email_notification(
                 "project": str(issue.project.name),
                 "user_preference": f"{base_api}/profile/preferences/email",
                 "comments": comments,
+                "entity_type": "issue",
             }
             html_content = render_to_string(
                 "emails/notifications/issue-updates.html", context
