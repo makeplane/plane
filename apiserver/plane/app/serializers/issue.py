@@ -815,6 +815,7 @@ class IssueDetailSerializer(IssueSerializer):
                 self.fields["customer_request_ids"] = serializers.ListField(
                     read_only=True
                 )
+                self.fields["initiative_ids"] = serializers.ListField(read_only=True)
 
 
 class IssuePublicSerializer(BaseSerializer):

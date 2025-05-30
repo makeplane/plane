@@ -29,7 +29,7 @@ export const CustomerPreview: FC<TProps> = (props) => {
       <div ref={setPopperElement} className={"min-w-[350px] max-w-[400px] z-20"} style={styles.popper}>
         <div className="bg-custom-background-100 border border-custom-border-200 rounded-lg p-5 shadow-custom-shadow-sm">
           <div className="flex justify-between items-center">
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center truncate">
               <div className="border border-custom-border-200 rounded-md">
                 {customer.logo_url ? (
                   <img
@@ -44,7 +44,7 @@ export const CustomerPreview: FC<TProps> = (props) => {
                 )}
               </div>
               <div className="flex flex-col truncate">
-                <span className="text-custom-text-200 text-base font-medium">{customer.name}</span>
+                <span className="text-custom-text-200 text-base font-medium truncate">{customer.name}</span>
                 {customer.website_url && (
                   <Link
                     className="text-sm text-custom-text-300 truncate cursor-pointer hover:underline flex gap-1 items-center w-full"
@@ -62,7 +62,7 @@ export const CustomerPreview: FC<TProps> = (props) => {
                 )}
               </div>
             </div>
-            <div>
+            <div className="flex-shrink-0">
               <Button
                 variant="neutral-primary"
                 size="sm"

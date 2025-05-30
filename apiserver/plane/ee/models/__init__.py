@@ -91,3 +91,5 @@ from .dashboard import (
 )
 
 from .template import Template, WorkitemTemplate, PageTemplate, ProjectTemplate, TemplateCategory
+
+from .page import PageUser

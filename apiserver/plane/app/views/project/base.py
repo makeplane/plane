@@ -7,6 +7,7 @@ from django.db import IntegrityError
 from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery
 from django.core.serializers.json import DjangoJSONEncoder
 
+
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import serializers, status
@@ -40,7 +41,7 @@ from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.host import base_host
 
 # EE imports
-from plane.ee.models import ProjectState, ProjectAttribute, ProjectFeature
+from plane.ee.models import ProjectState, ProjectAttribute, ProjectFeature, Initiative
 from plane.ee.utils.workspace_feature import (
     WorkspaceFeatureContext,
     check_workspace_feature,
@@ -118,6 +119,9 @@ class ProjectViewSet(BaseViewSet):
                 target_date=ProjectAttribute.objects.filter(
                     workspace__slug=self.kwargs.get("slug"), project_id=OuterRef("pk")
                 ).values("target_date")[:1]
+            )
+            .prefetch_related(
+                "initiatives",
             )
             # EE: project_grouping ends
             .prefetch_related(
@@ -459,6 +463,7 @@ class ProjectViewSet(BaseViewSet):
             workspace = Workspace.objects.get(slug=slug)
 
             project = self.get_queryset().get(pk=pk)
+
             intake_view = request.data.get("inbox_view", project.intake_view)
             current_instance = json.dumps(
                 ProjectListSerializer(project).data, cls=DjangoJSONEncoder
@@ -472,7 +477,7 @@ class ProjectViewSet(BaseViewSet):
             serializer = ProjectSerializer(
                 project,
                 data={**request.data, "intake_view": intake_view},
-                context={"workspace_id": workspace.id},
+                context={"workspace_id": workspace.id, "user_id": request.user.id},
                 partial=True,
             )
 

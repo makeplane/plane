@@ -12,11 +12,15 @@ from plane.db.models import (
     ProjectIdentifier,
     ProjectPublicMember,
 )
+from plane.ee.models.initiative import InitiativeProject
 
 
 class ProjectSerializer(BaseSerializer):
     workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
     inbox_view = serializers.BooleanField(read_only=True, source="intake_view")
+    initiative_ids = serializers.ListField(
+        child=serializers.UUIDField(), required=False, write_only=True
+    )
 
     class Meta:
         model = Project
@@ -43,7 +47,26 @@ class ProjectSerializer(BaseSerializer):
         return project
 
     def update(self, instance, validated_data):
+        initiative_ids = validated_data.pop("initiative_ids", [])
+
         identifier = validated_data.get("identifier", "").strip().upper()
+        workspace_id = self.context["workspace_id"]
+
+        if initiative_ids:
+            InitiativeProject.objects.filter(project_id=instance.id).delete()
+
+            InitiativeProject.objects.bulk_create(
+                [
+                    InitiativeProject(
+                        project_id=instance.id,
+                        initiative_id=initiative_id,
+                        workspace_id=workspace_id,
+                        created_by_id=self.context["user_id"],
+                    )
+                    for initiative_id in initiative_ids
+                ],
+                batch_size=10,
+            )
 
         # If identifier is not passed update the project and return
         if identifier == "":
@@ -66,6 +89,7 @@ class ProjectSerializer(BaseSerializer):
         # If found check if the project_id to be updated and identifier project id is same
         if project_identifier.project_id == instance.id:
             # If same pass update
+
             project = super().update(instance, validated_data)
             return project
 
@@ -100,6 +124,7 @@ class ProjectListSerializer(DynamicBaseSerializer):
     priority = serializers.CharField(read_only=True)
     start_date = serializers.DateTimeField(read_only=True)
     target_date = serializers.DateTimeField(read_only=True)
+    initiative_ids = serializers.SerializerMethodField(read_only=True)
     # EE: project_grouping ends
     inbox_view = serializers.BooleanField(read_only=True, source="intake_view")
 
@@ -112,6 +137,11 @@ class ProjectListSerializer(DynamicBaseSerializer):
                 for member in project_members
                 if member.is_active and (member.member and not member.member.is_bot)
             ]
+        return []
+
+    def get_initiative_ids(self, obj):
+        if obj.initiatives.all():
+            return [initiative.initiative_id for initiative in obj.initiatives.all()]
         return []
 
     class Meta:

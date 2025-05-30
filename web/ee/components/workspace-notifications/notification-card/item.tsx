@@ -6,6 +6,7 @@ import orderBy from "lodash/orderBy";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Popover, Transition } from "@headlessui/react";
+import { EIssueServiceType } from "@plane/constants";
 import { MemberDropdown } from "@/components/dropdowns";
 //helpers
 import { cn } from "@/helpers/common.helper";
@@ -17,6 +18,7 @@ import { IssueIdentifier } from "@/plane-web/components/issues";
 import { NotificationCardPreview, NotificationOption } from "@/plane-web/components/workspace-notifications";
 // eslint-disable-next-line import/order
 import { TNotification } from "@plane/types";
+import { useIssueType } from "@/plane-web/hooks/store";
 export interface INotificationItem {
   issueId: string;
   workspaceSlug: string;
@@ -30,6 +32,7 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isSnoozeStateModalOpen, setIsSnoozeStateModalOpen] = useState(false);
   const [customSnoozeModal, setCustomSnoozeModal] = useState(false);
+  const [showPreview, setShowPreview] = useState<boolean>(false);
   //hooks
   const {
     getNotificationsGroupedByIssue,
@@ -38,14 +41,19 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
     setCurrentSelectedNotificationId,
     setHighlightedActivityIds,
   } = useWorkspaceNotifications();
-  const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
 
-  //derived values
   const groupedNotifications = getNotificationsGroupedByIssue(workspaceId);
   const notificationList = groupedNotifications[issueId];
   const issue = notificationList[0].data?.issue;
+
+  const { getIsIssuePeeked, setPeekIssue } = useIssueDetail(EIssueServiceType.ISSUES);
+  const { setPeekIssue: setPeekEpic, getIsIssuePeeked: getIsEpicPeeked } = useIssueDetail(EIssueServiceType.EPICS);
+
+  //derived values
+  const workItemType = useIssueType(issue?.type_id);
   const unreadCount = notificationList.filter((e) => !e.read_at).length;
   const projectId = notificationList[0].project;
+  const isWorkItemPeeked = workItemType?.is_epic ? getIsEpicPeeked(issueId) : getIsIssuePeeked(issueId);
 
   const authorIds: string[] = uniq(
     notificationList.map((e) => e.triggered_by).filter((id): id is string => id != undefined && id != null)
@@ -71,14 +79,16 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
   const handleNotificationIssuePeekOverview = async () => {
     setShowPreview(false);
     if (workspaceSlug && projectId && issueId && !isSnoozeStateModalOpen && !customSnoozeModal) {
+      // reset peek view
       setPeekIssue(undefined);
+      setPeekEpic(undefined);
       setCurrentSelectedNotificationId(notificationList[0].id);
 
       // make the notification as read
       if (unreadCount > 0) {
         try {
           setHighlightedActivityIds(getUnreadActivityIds(notificationList));
-          //filter unread notifications and set activity ids to higlight
+          //filter unread notifications and set activity ids to highlight
           await markBulkNotificationsAsRead(notificationList, workspaceSlug);
         } catch (error) {
           console.error(error);
@@ -86,13 +96,12 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
       }
 
       if (!containsInboxIssue(notificationList)) {
-        if (!getIsIssuePeeked(issueId)) setPeekIssue({ workspaceSlug, projectId, issueId });
+        const peekMethod = workItemType?.is_epic ? setPeekEpic : setPeekIssue;
+        if (!peekMethod) return;
+        peekMethod({ workspaceSlug, projectId, issueId });
       }
     }
   };
-
-  // states
-  const [showPreview, setShowPreview] = useState<boolean>(false);
 
   if (!notificationList || !issue || !issue.id || !authorIds || !projectId) return <></>;
 
@@ -101,7 +110,7 @@ export const NotificationItem: FC<INotificationItem> = observer((props) => {
       <div
         className={cn(
           "border-b relative transition-all py-4 border-custom-border-200 cursor-pointer group w-full",
-          getIsIssuePeeked(issue.id) && "bg-custom-background-80/30",
+          isWorkItemPeeked && "bg-custom-background-80/30",
           unreadCount > 0 ? "bg-custom-primary-100/5" : ""
         )}
         ref={setReferenceElement}

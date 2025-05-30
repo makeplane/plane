@@ -37,9 +37,9 @@ export const CustomerSidebarListitem: FC<TCustomerListItem> = observer((props) =
 
   if (!customer) return null;
   return (
-    <Popover as="div">
+    <Popover as="div" className="truncate max-w-[200px]">
       <div
-        className="flex gap-2 items-center py-0.5 px-1.5 border rounded-full border-custom-border-100 cursor-default"
+        className="flex gap-2 items-center py-0.5 px-1.5 border rounded-full border-custom-border-100 cursor-default truncate"
         onMouseEnter={() => setShowPreview(true)}
         onMouseLeave={() => setShowPreview(false)}
         ref={setReferenceElement}
@@ -53,8 +53,8 @@ export const CustomerSidebarListitem: FC<TCustomerListItem> = observer((props) =
             </div>
           )}
         </div>
-        <div className="text-custom-text-200 flex flex-col">
-          <span className="text-xs font-medium">{customer.name}</span>
+        <div className="text-custom-text-200 flex flex-col truncate">
+          <span className="text-xs font-medium truncate">{customer.name}</span>
         </div>
       </div>
       <Transition as={Fragment} show={showPreview}>

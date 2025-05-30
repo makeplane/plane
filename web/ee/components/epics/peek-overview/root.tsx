@@ -11,7 +11,7 @@ import {
   ISSUE_UPDATED,
   ISSUE_DELETED,
 } from "@plane/constants";
-import { TIssue } from "@plane/types";
+import { TIssue, IWorkItemPeekOverview } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { TIssueOperations } from "@/components/issues";
@@ -20,12 +20,7 @@ import { useEventTracker, useIssueDetail, useUserPermissions } from "@/hooks/sto
 // plane web constants
 import { EpicView } from "./view";
 
-interface IIssuePeekOverview {
-  embedIssue?: boolean;
-  embedRemoveCurrentNotification?: () => void;
-}
-
-export const EpicPeekOverview: FC<IIssuePeekOverview> = observer((props) => {
+export const EpicPeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
   const { embedIssue = false, embedRemoveCurrentNotification } = props;
   const pathname = usePathname();
   // store hook

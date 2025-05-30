@@ -75,6 +75,7 @@ from .app.epic import (
     EpicTypeSerializer,
     EpicUserPropertySerializer,
     EpicReactionSerializer,
+    EpicSubscriberSerializer,
 )
 
 from .app.workflow import (

@@ -61,6 +61,7 @@ export type TProject = TPartialProject &
     description_html?: string | undefined;
     project_name?: string;
     update_status?: EUpdateStatus | undefined;
+    initiative_ids?: string[];
   };
 
 export type TProjectFeaturesList = {

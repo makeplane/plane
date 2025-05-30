@@ -23,8 +23,9 @@ from plane.db.models import (
     IssueType,
     IssueComment,
     IssueReaction,
+    IssueSubscriber,
 )
-from plane.ee.models import EpicUserProperties
+from plane.ee.models import EpicUserProperties, InitiativeEpic
 from plane.app.serializers import (
     UserLiteSerializer,
     ProjectLiteSerializer,
@@ -58,6 +59,17 @@ class EpicCreateSerializer(BaseSerializer):
         required=False,
     )
     project_id = serializers.UUIDField(source="project.id", read_only=True)
+    initiative_ids = serializers.ListField(
+        child=serializers.UUIDField(), required=False, write_only=True
+    )
+    initiative_id_resp = serializers.SerializerMethodField(read_only=True)
+
+    def get_initiative_id_resp(self, obj):
+        if obj.initiative_epics.all():
+            return [
+                initiative.initiative_id for initiative in obj.initiative_epics.all()
+            ]
+        return []
 
     class Meta:
         model = Issue
@@ -142,6 +154,7 @@ class EpicCreateSerializer(BaseSerializer):
     def update(self, instance, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
         labels = validated_data.pop("label_ids", None)
+        initiative_ids = validated_data.pop("initiative_ids", None)
 
         # Related models
         project_id = instance.project_id
@@ -149,6 +162,21 @@ class EpicCreateSerializer(BaseSerializer):
         created_by_id = instance.created_by_id
         updated_by_id = instance.updated_by_id
 
+        if initiative_ids is not None:
+            InitiativeEpic.objects.filter(epic=instance).delete()
+            InitiativeEpic.objects.bulk_create(
+                [
+                    InitiativeEpic(
+                        epic_id=instance.id,
+                        initiative_id=initiative_id,
+                        workspace_id=workspace_id,
+                        created_by_id=created_by_id,
+                        updated_by_id=updated_by_id,
+                    )
+                    for initiative_id in initiative_ids
+                ],
+                batch_size=10,
+            )
         if assignees is not None:
             IssueAssignee.objects.filter(issue=instance).delete()
             IssueAssignee.objects.bulk_create(
@@ -361,6 +389,7 @@ class EpicDetailSerializer(EpicSerializer):
     customer_request_ids = serializers.ListField(
         child=serializers.UUIDField(), required=False
     )
+    initiative_ids = serializers.ListField(read_only=True)
 
     class Meta(EpicSerializer.Meta):
         fields = EpicSerializer.Meta.fields + [
@@ -368,6 +397,7 @@ class EpicDetailSerializer(EpicSerializer):
             "is_subscribed",
             "customer_ids",
             "customer_request_ids",
+            "initiative_ids",
         ]
         read_only_fields = fields
 
@@ -418,3 +448,10 @@ class EpicReactionSerializer(BaseSerializer):
         model = IssueReaction
         fields = "__all__"
         read_only_fields = ["workspace", "project", "issue", "actor", "deleted_at"]
+
+
+class EpicSubscriberSerializer(BaseSerializer):
+    class Meta:
+        model = IssueSubscriber
+        fields = "__all__"
+        read_only_fields = ["workspace", "project", "issue"]

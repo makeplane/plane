@@ -14,7 +14,16 @@ import {
   Users,
 } from "lucide-react";
 import { IUserLite } from "@plane/types";
-import { DiceIcon, LayersIcon, Tooltip, ContrastIcon, ArchiveIcon, Intake, Avatar } from "@plane/ui";
+import {
+  DiceIcon,
+  Tooltip,
+  ContrastIcon,
+  ArchiveIcon,
+  Intake,
+  Avatar,
+  CustomersIcon,
+  DoubleCircleIcon,
+} from "@plane/ui";
 import { getValidKeysFromObject } from "@/helpers/array.helper";
 import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
@@ -31,8 +40,8 @@ type TIssueActivityBlock = {
   triggeredBy: IUserLite | undefined;
 };
 
-export const acitvityIconsMap: Record<string, ReactElement> = {
-  state: <LayersIcon width={14} height={14} className="text-custom-text-200" aria-hidden="true" />,
+export const activityIconMap: Record<string, ReactElement> = {
+  state: <DoubleCircleIcon width={14} height={14} className="text-custom-text-200" aria-hidden="true" />,
   name: <MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />,
   description: <MessageSquare size={14} className="text-custom-text-200" aria-hidden="true" />,
   assignees: <Users className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
@@ -49,6 +58,8 @@ export const acitvityIconsMap: Record<string, ReactElement> = {
   archived_at: <ArchiveIcon className="h-3.5 w-3.5 text-custom-text-200" aria-hidden="true" />,
   inbox: <Intake className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
   type: <ArrowRightLeft className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
+  customer: <CustomersIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
+  customer_request: <CustomersIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />,
 };
 
 export const IssueActivityBlock: FC<TIssueActivityBlock> = (props) => {
@@ -69,7 +80,7 @@ export const IssueActivityBlock: FC<TIssueActivityBlock> = (props) => {
           ? triggeredBy && <Avatar src={getFileURL(triggeredBy.avatar_url)} name={triggeredBy.display_name} size={28} />
           : activityRelations.find((field) => field === notificationField)
             ? ISSUE_RELATION_OPTIONS[notificationField as TIssueRelationTypes]?.icon(14)
-            : acitvityIconsMap[notificationField]}
+            : activityIconMap[notificationField]}
       </div>
       <div className="w-full text-custom-text-200 flex gap-2">
         <span className="truncate"> {children} </span>

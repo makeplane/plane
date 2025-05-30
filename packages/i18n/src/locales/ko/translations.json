@@ -870,7 +870,10 @@
     "view": "보기",
     "deactivated_user": "비활성화된 사용자",
     "apply": "적용",
-    "applying": "적용 중"
+    "applying": "적용 중",
+    "users": "사용자",
+    "admins": "관리자",
+    "guests": "게스트"
   },
   "chart": {
     "x_axis": "X축",
@@ -1346,21 +1349,22 @@
     },
     "created_vs_resolved": "생성됨 vs 해결됨",
     "customized_insights": "맞춤형 인사이트",
-    "backlog_work_items": "백로그 작업 항목",
+    "backlog_work_items": "백로그 {entity}",
     "active_projects": "활성 프로젝트",
     "trend_on_charts": "차트의 추세",
     "all_projects": "모든 프로젝트",
     "summary_of_projects": "프로젝트 요약",
     "project_insights": "프로젝트 인사이트",
-    "started_work_items": "시작된 작업 항목",
-    "total_work_items": "총 작업 항목",
+    "started_work_items": "시작된 {entity}",
+    "total_work_items": "총 {entity}",
     "total_projects": "총 프로젝트 수",
     "total_admins": "총 관리자 수",
     "total_users": "총 사용자 수",
     "total_intake": "총 수입",
-    "un_started_work_items": "시작되지 않은 작업 항목",
+    "un_started_work_items": "시작되지 않은 {entity}",
     "total_guests": "총 게스트 수",
-    "completed_work_items": "완료된 작업 항목"
+    "completed_work_items": "완료된 {entity}",
+    "total": "총 {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {프로젝트} other {프로젝트}}",

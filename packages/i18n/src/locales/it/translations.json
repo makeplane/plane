@@ -867,7 +867,10 @@
     "view": "Visualizza",
     "deactivated_user": "Utente disattivato",
     "apply": "Applica",
-    "applying": "Applicazione"
+    "applying": "Applicazione",
+    "users": "Utenti",
+    "admins": "Amministratori",
+    "guests": "Ospiti"
   },
   "chart": {
     "x_axis": "Asse X",
@@ -1343,21 +1346,22 @@
     },
     "created_vs_resolved": "Creato vs Risolto",
     "customized_insights": "Approfondimenti personalizzati",
-    "backlog_work_items": "Elementi di lavoro nel backlog",
+    "backlog_work_items": "{entity} nel backlog",
     "active_projects": "Progetti attivi",
     "trend_on_charts": "Tendenza nei grafici",
     "all_projects": "Tutti i progetti",
     "summary_of_projects": "Riepilogo dei progetti",
     "project_insights": "Approfondimenti sul progetto",
-    "started_work_items": "Elementi di lavoro iniziati",
-    "total_work_items": "Totale elementi di lavoro",
+    "started_work_items": "{entity} iniziati",
+    "total_work_items": "Totale {entity}",
     "total_projects": "Progetti totali",
     "total_admins": "Totale amministratori",
     "total_users": "Totale utenti",
     "total_intake": "Entrate totali",
-    "un_started_work_items": "Elementi di lavoro non avviati",
+    "un_started_work_items": "{entity} non avviati",
     "total_guests": "Totale ospiti",
-    "completed_work_items": "Elementi di lavoro completati"
+    "completed_work_items": "{entity} completati",
+    "total": "Totale {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Progetto} other {Progetti}}",

@@ -868,7 +868,10 @@
     "view": "Pohled",
     "deactivated_user": "Deaktivovaný uživatel",
     "apply": "Použít",
-    "applying": "Používání"
+    "applying": "Používání",
+    "users": "Uživatelé",
+    "admins": "Administrátoři",
+    "guests": "Hosté"
   },
   "chart": {
     "x_axis": "Osa X",
@@ -1344,21 +1347,22 @@
     },
     "created_vs_resolved": "Vytvořeno vs Vyřešeno",
     "customized_insights": "Přizpůsobené přehledy",
-    "backlog_work_items": "Pracovní položky v backlogu",
+    "backlog_work_items": "Backlog {entity}",
     "active_projects": "Aktivní projekty",
     "trend_on_charts": "Trend na grafech",
     "all_projects": "Všechny projekty",
     "summary_of_projects": "Souhrn projektů",
     "project_insights": "Přehled projektu",
-    "started_work_items": "Zahájené pracovní položky",
-    "total_work_items": "Celkový počet pracovních položek",
+    "started_work_items": "Zahájené {entity}",
+    "total_work_items": "Celkový počet {entity}",
     "total_projects": "Celkový počet projektů",
     "total_admins": "Celkový počet administrátorů",
     "total_users": "Celkový počet uživatelů",
     "total_intake": "Celkový příjem",
-    "un_started_work_items": "Nezahájené pracovní položky",
+    "un_started_work_items": "Nezahájené {entity}",
     "total_guests": "Celkový počet hostů",
-    "completed_work_items": "Dokončené pracovní položky"
+    "completed_work_items": "Dokončené {entity}",
+    "total": "Celkový počet {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projekt} few {Projekty} other {Projektů}}",

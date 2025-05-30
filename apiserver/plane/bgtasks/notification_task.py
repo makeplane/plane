@@ -167,7 +167,7 @@ def get_new_comment_mentions(new_value, old_value):
 
 
 def create_mention_notification(
-    project, notification_comment, issue, actor_id, mention_id, issue_id, activity
+    project, notification_comment, issue, actor_id, mention_id, issue_id, activity, entity_name
 ):
     return Notification(
         workspace=project.workspace,
@@ -175,7 +175,7 @@ def create_mention_notification(
         triggered_by_id=actor_id,
         receiver_id=mention_id,
         entity_identifier=issue_id,
-        entity_name="issue",
+        entity_name=entity_name,
         project=project,
         message=notification_comment,
         data={
@@ -325,9 +325,13 @@ def notifications(
 
             issue = (
                 Issue.objects.filter(pk=issue_id)
-                .filter(Q(type__isnull=True) | Q(type__is_epic=False))
                 .first()
             )
+
+            if issue.type and issue.type.is_epic:
+                entity_name = "epic"
+            else:
+                entity_name = "issue"
 
             if subscriber:
                 # add the user to issue subscriber
@@ -416,7 +420,7 @@ def notifications(
                             triggered_by_id=actor_id,
                             receiver_id=subscriber,
                             entity_identifier=issue_id,
-                            entity_name="issue",
+                            entity_name=entity_name,
                             project=project,
                             title=issue_activity.get("comment"),
                             data={
@@ -462,7 +466,7 @@ def notifications(
                                 triggered_by_id=actor_id,
                                 receiver_id=subscriber,
                                 entity_identifier=issue_id,
-                                entity_name="issue",
+                                entity_name=entity_name,
                                 data={
                                     "issue": {
                                         "id": str(issue_id),
@@ -542,6 +546,7 @@ def notifications(
                             mention_id=mention_id,
                             issue_id=issue_id,
                             activity=issue_activity,
+                            entity_name=entity_name,
                         )
 
                         # check for email notifications
@@ -551,7 +556,7 @@ def notifications(
                                     triggered_by_id=actor_id,
                                     receiver_id=mention_id,
                                     entity_identifier=issue_id,
-                                    entity_name="issue",
+                                    entity_name=entity_name,
                                     data={
                                         "issue": {
                                             "id": str(issue_id),
@@ -619,7 +624,7 @@ def notifications(
                                 triggered_by_id=actor_id,
                                 receiver_id=mention_id,
                                 entity_identifier=issue_id,
-                                entity_name="issue",
+                                entity_name=entity_name,
                                 project=project,
                                 message=f"You have been mentioned in the issue {issue.name}",
                                 data={
@@ -663,7 +668,7 @@ def notifications(
                                     triggered_by_id=actor_id,
                                     receiver_id=subscriber,
                                     entity_identifier=issue_id,
-                                    entity_name="issue",
+                                    entity_name=entity_name,
                                     data={
                                         "issue": {
                                             "id": str(issue_id),
@@ -712,6 +717,7 @@ def notifications(
                                 mention_id=mention_id,
                                 issue_id=issue_id,
                                 activity=issue_activity,
+                                entity_name=entity_name,
                             )
                             if preference.mention:
                                 bulk_email_logs.append(
@@ -719,7 +725,7 @@ def notifications(
                                         triggered_by_id=actor_id,
                                         receiver_id=subscriber,
                                         entity_identifier=issue_id,
-                                        entity_name="issue",
+                                        entity_name=entity_name,
                                         data={
                                             "issue": {
                                                 "id": str(issue_id),
@@ -790,6 +796,10 @@ def notifications(
             EmailNotificationLog.objects.bulk_create(
                 bulk_email_logs, batch_size=100, ignore_conflicts=True
             )
+
+            # currently disabled the push notifications for epics in mobile.
+            if issue.type and issue.type.is_epic:
+                return
 
             """
             # Send Mobile Push Notifications for state, assignee, priority,

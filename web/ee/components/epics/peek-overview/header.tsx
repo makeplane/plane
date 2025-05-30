@@ -24,7 +24,7 @@ import {
 } from "@plane/ui";
 import { copyUrlToClipboard } from "@plane/utils";
 // components
-import { NameDescriptionUpdateStatus } from "@/components/issues";
+import { IssueSubscription, NameDescriptionUpdateStatus } from "@/components/issues";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { generateWorkItemLink } from "@/helpers/issue.helper";
@@ -199,6 +199,12 @@ export const EpicPeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pro
       </div>
       <div className="flex items-center gap-x-4">
         <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
+        <IssueSubscription
+          serviceType={EIssueServiceType.EPICS}
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+        />
         <div className="flex items-center gap-4">
           <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="WORK_ITEM_CONVERSION" fallback={<></>}>
             <ConvertWorkItemAction

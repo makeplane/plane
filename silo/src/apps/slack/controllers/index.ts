@@ -544,12 +544,12 @@ export default class SlackController {
         const details = await getConnectionDetails(payload.team.id);
         if (!details) {
           logger.info(`[SLACK] No connection details found for team ${payload.team.id}`);
-          return;
+          return res.status(200).json({});
         }
 
         const { workspaceConnection, planeClient } = details;
         const values = parseIssueFormData(payload.view.state.values);
-        const labels = await planeClient.label.list(workspaceConnection.workspace_id, values.project);
+        const labels = await planeClient.label.list(workspaceConnection.workspace_slug, values.project);
         const filteredLabels = labels.results
           .filter((label) => label.name.toLowerCase().includes(text.toLowerCase()))
           .sort((a, b) => a.name.localeCompare(b.name));

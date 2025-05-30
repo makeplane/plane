@@ -1481,6 +1481,18 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 )
+            ).annotate(
+                initiative_ids=Coalesce(
+                    ArrayAgg(
+                        "initiative_epics__initiative_id",
+                        distinct=True,
+                        filter=Q(
+                            initiative_epics__deleted_at__isnull=True,
+                            initiative_epics__initiative_id__isnull=False,
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                )
             )
 
         issue = issue.first()

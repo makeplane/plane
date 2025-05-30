@@ -870,7 +870,10 @@
     "view": "Widok",
     "deactivated_user": "Dezaktywowany użytkownik",
     "apply": "Zastosuj",
-    "applying": "Zastosowanie"
+    "applying": "Zastosowanie",
+    "users": "Użytkownicy",
+    "admins": "Administratorzy",
+    "guests": "Goście"
   },
   "chart": {
     "x_axis": "Oś X",
@@ -1346,21 +1349,22 @@
     },
     "created_vs_resolved": "Utworzone vs Rozwiązane",
     "customized_insights": "Dostosowane informacje",
-    "backlog_work_items": "Elementy pracy w backlogu",
+    "backlog_work_items": "{entity} w backlogu",
     "active_projects": "Aktywne projekty",
     "trend_on_charts": "Trend na wykresach",
     "all_projects": "Wszystkie projekty",
     "summary_of_projects": "Podsumowanie projektów",
     "project_insights": "Wgląd w projekt",
-    "started_work_items": "Rozpoczęte elementy pracy",
-    "total_work_items": "Łączna liczba elementów pracy",
+    "started_work_items": "Rozpoczęte {entity}",
+    "total_work_items": "Łączna liczba {entity}",
     "total_projects": "Łączna liczba projektów",
     "total_admins": "Łączna liczba administratorów",
     "total_users": "Łączna liczba użytkowników",
     "total_intake": "Całkowity dochód",
-    "un_started_work_items": "Nierozpoczęte elementy pracy",
+    "un_started_work_items": "Nierozpoczęte {entity}",
     "total_guests": "Łączna liczba gości",
-    "completed_work_items": "Ukończone elementy pracy"
+    "completed_work_items": "Ukończone {entity}",
+    "total": "Łączna liczba {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projekt} few {Projekty} other {Projektów}}",
