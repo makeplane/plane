@@ -48,7 +48,7 @@ from drf_spectacular.utils import (
     OpenApiTypes,
     OpenApiResponse,
 )
-from plane.utils.openapi_spec_helpers import (
+from plane.utils.openapi import (
     UNAUTHORIZED_RESPONSE,
     FORBIDDEN_RESPONSE,
 )

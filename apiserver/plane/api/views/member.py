@@ -13,7 +13,7 @@ from .base import BaseAPIView
 from plane.api.serializers import UserLiteSerializer
 from plane.db.models import User, Workspace, WorkspaceMember, ProjectMember
 from plane.app.permissions import ProjectMemberPermission, WorkSpaceAdminPermission
-from plane.utils.openapi_spec_helpers import (
+from plane.utils.openapi import (
     UNAUTHORIZED_RESPONSE,
     FORBIDDEN_RESPONSE,
 )

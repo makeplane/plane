@@ -60,7 +60,7 @@ from .base import BaseAPIView
 from plane.utils.host import base_host
 from plane.bgtasks.webhook_task import model_activity
 
-from plane.utils.openapi_spec_helpers import (
+from plane.utils.openapi import (
     UNAUTHORIZED_RESPONSE,
     FORBIDDEN_RESPONSE,
 )
