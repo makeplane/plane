@@ -22,6 +22,13 @@
       "collapse_sidebar": "Colapsar barra lateral",
       "expand_sidebar": "Expandir barra lateral",
       "edition_badge": "Abrir modal de planes de pago"
+    },
+    "auth_forms": {
+      "clear_email": "Limpiar correo electrónico",
+      "show_password": "Mostrar contraseña",
+      "hide_password": "Ocultar contraseña",
+      "close_alert": "Cerrar alerta",
+      "close_popover": "Cerrar ventana emergente"
     }
   }
 }

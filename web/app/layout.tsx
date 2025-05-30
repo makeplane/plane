@@ -69,7 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               "app-container"
             )}
           >
-            <div className="w-full h-full overflow-hidden relative">{children}</div>
+            <main className="w-full h-full overflow-hidden relative">{children}</main>
           </div>
         </AppProvider>
       </body>

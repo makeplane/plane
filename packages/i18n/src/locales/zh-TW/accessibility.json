@@ -22,6 +22,13 @@
       "collapse_sidebar": "摺疊側邊欄",
       "expand_sidebar": "展開側邊欄",
       "edition_badge": "打開付費計劃模態框"
+    },
+    "auth_forms": {
+      "clear_email": "清除電子郵件",
+      "show_password": "顯示密碼",
+      "hide_password": "隱藏密碼",
+      "close_alert": "關閉警告",
+      "close_popover": "關閉彈出框"
     }
   }
 }
