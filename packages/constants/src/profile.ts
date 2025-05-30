@@ -1,3 +1,5 @@
+import { EXTENDED_PROFILE_ACTION_LINKS } from "./profile-extended";
+
 export const PROFILE_SETTINGS = {
   profile: {
     key: "profile",
@@ -35,7 +37,9 @@ export const PROFILE_SETTINGS = {
     href: `/settings/account/api-tokens`,
     highlight: (pathname: string) => pathname === "/settings/account/api-tokens/",
   },
+  ...EXTENDED_PROFILE_ACTION_LINKS,
 };
+
 export const PROFILE_ACTION_LINKS: {
   key: string;
   i18n_label: string;

@@ -44,28 +44,49 @@ def page_transaction(new_value, old_value, page_id):
         new_transactions = []
         deleted_transaction_ids = set()
 
-        # TODO - Add "issue-embed-component", "img", "todo" components
-        components = ["mention-component"]
+        # TODO - "todo" components
+        components = [
+            "mention-component",
+            "issue-embed-component",
+            "page-embed-component",
+            "page-link-component",
+            "image-component",
+        ]
+
         for component in components:
             old_mentions = extract_components(old_value, component)
             new_mentions = extract_components(new_value, component)
 
-            new_mentions_ids = {mention["id"] for mention in new_mentions}
-            old_mention_ids = {mention["id"] for mention in old_mentions}
+            # Filter out None IDs before creating sets
+            new_mentions_ids = {
+                mention.get("id")
+                for mention in new_mentions
+                if mention.get("id")
+            }
+            old_mention_ids = {
+                mention.get("id")
+                for mention in old_mentions
+                if mention.get("id")
+            }
             deleted_transaction_ids.update(old_mention_ids - new_mentions_ids)
 
             new_transactions.extend(
                 PageLog(
-                    transaction=mention["id"],
+                    transaction=mention.get("id"),
                     page_id=page_id,
-                    entity_identifier=mention["entity_identifier"],
-                    entity_name=mention["entity_name"],
+                    entity_identifier=mention.get("entity_identifier", None),
+                    entity_name=(
+                        mention.get("entity_name", None)
+                        if mention.get("entity_name", None)
+                        else "issue"
+                    ),
                     workspace_id=page.workspace_id,
                     created_at=timezone.now(),
                     updated_at=timezone.now(),
                 )
                 for mention in new_mentions
-                if mention["id"] not in old_mention_ids or not new_page_mention
+                if mention.get("id")
+                and (mention.get("id") not in old_mention_ids or not new_page_mention)
             )
 
         # Create new PageLog objects for new transactions

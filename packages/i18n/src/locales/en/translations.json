@@ -61,8 +61,10 @@
   "language_setting": "Choose the language used in the user interface.",
   "settings_moved_to_preferences": "Timezone & Language settings have been moved to preferences.",
   "go_to_preferences": "Go to preferences",
+  "select_the_cursor_motion_style_that_feels_right_for_you": "Select the cursor motion style that feels right for you.",
   "theme": "Theme",
-  "system_preference": "System preference",
+  "smooth_cursor": "Smooth Cursor",
+  "system_preference": "System Preference",
   "light": "Light",
   "dark": "Dark",
   "light_contrast": "Light high contrast",
@@ -476,6 +478,9 @@
     "modules": "Modules",
     "labels": "Labels",
     "label": "Label",
+    "admins": "Admins",
+    "users": "Users",
+    "guests": "Guests",
     "assignees": "Assignees",
     "assignee": "Assignee",
     "created_by": "Created by",
@@ -504,6 +509,8 @@
     "work_item": "Work item",
     "work_items": "Work items",
     "sub_work_item": "Sub-work item",
+    "views": "Views",
+    "pages": "Pages",
     "add": "Add",
     "warning": "Warning",
     "updating": "Updating",
@@ -616,7 +623,13 @@
       "label": "Search",
       "placeholder": "Type to search",
       "no_matches_found": "No matches found",
-      "no_matching_results": "No matching results"
+      "no_matching_results": "No matching results",
+      "min_chars": "Type at least {count} characters to search",
+      "error": "Error fetching search results",
+      "no_results": {
+        "title": "No matching results",
+        "description": "Remove the search criteria to see all results"
+      }
     },
     "actions": {
       "edit": "Edit",
@@ -655,6 +668,7 @@
     "or": "or",
     "next": "Next",
     "back": "Back",
+    "retry": "Retry",
     "cancelling": "Cancelling",
     "configuring": "Configuring",
     "clear": "Clear",
@@ -1169,16 +1183,11 @@
         }
       }
     },
-    "total_work_items": "Total work items",
-    "started_work_items": "Started work items",
-    "backlog_work_items": "Backlog work items",
-    "un_started_work_items": "Unstarted work items",
-    "completed_work_items": "Completed work items",
-    "total_guests": "Total Guests",
-    "total_intake": "Total Intake",
-    "total_users": "Total Users",
-    "total_admins": "Total Admins",
-    "total_projects": "Total Projects",
+    "total": "Total {entity}",
+    "started_work_items": "Started {entity}",
+    "backlog_work_items": "Backlog {entity}",
+    "un_started_work_items": "Unstarted {entity}",
+    "completed_work_items": "Completed {entity}",
     "project_insights": "Project Insights",
     "summary_of_projects": "Summary of Projects",
     "all_projects": "All Projects",
@@ -1310,23 +1319,23 @@
     }
   },
   "account_settings": {
-    "profile":{},
-    "preferences":{
+    "profile": {},
+    "preferences": {
       "heading": "Preferences",
       "description": "Customize your app experience the way you work"
     },
-    "notifications":{
+    "notifications": {
       "heading": "Email notifications",
-      "description": "Stay in the loop on Work items you are subscribed to. Enable this to get notified."    
+      "description": "Stay in the loop on Work items you are subscribed to. Enable this to get notified."
     },
-    "security":{
+    "security": {
       "heading": "Security"
     },
-    "api_tokens":{
+    "api_tokens": {
       "heading": "Personal Access Tokens",
       "description": "Generate secure API tokens to integrate your data with external systems and applications."
     },
-    "activity":{
+    "activity": {
       "heading": "Activity",
       "description": "Track your recent actions and changes across all projects and work items."
     }
@@ -1398,7 +1407,7 @@
       },
       "billing_and_plans": {
         "heading": "Billing & Plans",
-        "description":"Choose your plan, manage subscriptions, and easily upgrade as your needs grow.",
+        "description": "Choose your plan, manage subscriptions, and easily upgrade as your needs grow.",
         "title": "Billing & Plans",
         "current_plan": "Current plan",
         "free_plan": "You are currently using the free plan",
@@ -1958,7 +1967,7 @@
     "empty_state": {
       "general": {
         "title": "Save filtered views for your project. Create as many as you need",
-        "description": "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best.",
+        "description": "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone's views and choose whichever suits their needs best.",
         "primary_button": {
           "text": "Create your first view",
           "comic": {
@@ -2232,7 +2241,7 @@
     },
     "admin": {
       "title": "Admin",
-      "description": "All permissions set to true within the workspace."
+      "description": "All permissions set to true within the workspace."
     }
   },
   "user_roles": {
@@ -2342,5 +2351,48 @@
     "last_edited_by": "Last edited by",
     "previously_edited_by": "Previously edited by",
     "edited_by": "Edited by"
+  },
+  "intake_forms": {
+    "create": {
+      "title": "Create a work item",
+      "sub-title": "Let the team know what you would like them to work on.",
+      "name": "Name",
+      "email": "Email",
+      "about": "What's this work item about?",
+      "description": "Describe what should happen",
+      "description_placeholder": "Add as much detail as you'd like to help the team identify your exact situation and needs.",
+      "loading": "Creating",
+      "create_work_item": "Create work item",
+      "errors": {
+        "name": "Name is required",
+        "name_max_length": "Name should be less than 255 characters",
+        "email": "Email is required",
+        "email_invalid": "Invalid email address",
+        "title": "Title is required",
+        "title_max_length": "Title should be less than 255 characters"
+      }
+    },
+    "success": {
+      "title": "Yay! Your work item is now in the team's queue.",
+      "description": "The team can now either approve or discard this work item from their Intake queue.",
+      "primary_button": {
+        "text": "Add another work item"
+      },
+      "secondary_button": {
+        "text": "Learn more about Intake"
+      }
+    },
+    "how_it_works": {
+      "title": "How it works?",
+      "heading": "This is an Intake form.",
+      "description": "Intake is a Plane feature that lets project admins and managers get work items from outside into their projects. ",
+      "steps": {
+        "step_1": "This short form lets you create a new work item in a Plane project.",
+        "step_2": "When you submit this form, a new work item is created in that project's Intake.",
+        "step_3": "Someone from that project or team will review this.",
+        "step_4": "If they approve it, this work item will move to the project's queue of work. Otherwise, it will be rejected.",
+        "step_5": "To check for the status of that work item, get in touch with the project's manager, admin, or whoever sent you the link to this page."
+      }
+    }
   }
 }

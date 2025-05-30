@@ -12,6 +12,10 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 INSTALLED_APPS += ("scout_apm.django",)  # noqa
 
+if os.environ.get("IS_MULTI_CLOUD", "0") == "1":
+    SECURE_SSL_REDIRECT = True
+else:
+    SECURE_SSL_REDIRECT = False
 
 # Scout Settings
 SCOUT_MONITOR = os.environ.get("SCOUT_MONITOR", False)
@@ -83,5 +87,13 @@ LOGGING = {
             "handlers": ["console"],
             "propagate": False,
         },
+        "plane.silo": {
+            "level": "DEBUG" if DEBUG else "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
     },
 }
+
+
+IS_HEROKU = os.environ.get("IS_HEROKU", "0") == "1"

@@ -46,7 +46,7 @@ const PriorityChart = observer((props: Props) => {
   const { t } = useTranslation();
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics-v2/empty-chart-bar" });
   // store hooks
-  const { selectedDuration, selectedProjects, selectedCycle, selectedModule, isPeekView } = useAnalyticsV2();
+  const { selectedDuration, selectedProjects, selectedCycle, selectedModule, isPeekView, isEpic } = useAnalyticsV2();
   const { workspaceStates } = useProjectState();
   const { resolvedTheme } = useTheme();
   // router
@@ -65,6 +65,8 @@ const PriorityChart = observer((props: Props) => {
           ...(selectedProjects?.length > 0 && { project_ids: selectedProjects?.join(",") }),
           ...(selectedCycle ? { cycle_id: selectedCycle } : {}),
           ...(selectedModule ? { module_id: selectedModule } : {}),
+          ...(isEpic ? { epic: true } : {}),
+
           ...props,
         },
         isPeekView

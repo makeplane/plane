@@ -25,6 +25,15 @@ export type TLogoProps = {
 
 export type TNameDescriptionLoader = "submitting" | "submitted" | "saved";
 
+export type TStateAnalytics = {
+  overdue_issues: number;
+  backlog_issues: number;
+  unstarted_issues: number;
+  started_issues: number;
+  completed_issues: number;
+  cancelled_issues: number;
+};
+
 export type TFetchStatus = "partial" | "complete" | undefined;
 
 export type ICustomSearchSelectOption = {

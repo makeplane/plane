@@ -64,7 +64,7 @@ export const SidebarMenu = observer(() => {
   return (
     <div className="flex h-full w-full flex-col gap-2.5 overflow-y-scroll vertical-scrollbar scrollbar-sm px-4 py-4">
       {INSTANCE_ADMIN_LINKS.map((item, index) => {
-        const isActive = item.href === pathName || pathName.includes(item.href);
+        const isActive = item.href === pathName || pathName?.includes(item.href);
         return (
           <Link key={index} href={item.href} onClick={handleItemClick}>
             <div>
