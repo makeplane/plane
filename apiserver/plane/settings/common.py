@@ -454,10 +454,10 @@ if ENABLE_DRF_SPECTACULAR:
         "SCHEMA_PATH_PREFIX_TRIM": True,
         "SCHEMA_PATH_PREFIX_INSERT": "",
         "PREPROCESSING_HOOKS": [
-            "plane.utils.openapi_spec_helpers.preprocess_filter_api_v1_paths",
+            "plane.utils.openapi.hooks.preprocess_filter_api_v1_paths",
         ],
         "POSTPROCESSING_HOOKS": [
-            "plane.utils.openapi_spec_helpers.postprocess_assign_tags",
+            "plane.utils.openapi.hooks.postprocess_assign_tags",
         ],
         "SERVERS": [{"url": "/api/v1", "description": "API v1"}],
         "TAGS": [
@@ -505,17 +505,5 @@ if ENABLE_DRF_SPECTACULAR:
         "AUTHENTICATION_WHITELIST": [
             "plane.api.middleware.api_authentication.APIKeyAuthentication",
         ],
-        "SECURITY": [
-            {
-                "apiKeyAuth": {
-                    "type": "apiKey",
-                    "in": "header",
-                    "name": "X-API-Key",
-                }
-            },
-        ],
-        "EXTENSIONS_INFO": {
-            "plane.utils.openapi_spec_helpers.APIKeyAuthenticationExtension": {},
-        },
         "SCHEMA_CACHE_TIMEOUT": 0,  # disables caching
     }

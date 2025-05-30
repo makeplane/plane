@@ -10,7 +10,7 @@ from drf_spectacular.utils import (
 from plane.api.serializers import UserLiteSerializer
 from plane.api.views.base import BaseAPIView
 from plane.db.models import User
-from plane.utils.openapi_spec_helpers import UNAUTHORIZED_RESPONSE
+from plane.utils.openapi import UNAUTHORIZED_RESPONSE
 
 
 class UserEndpoint(BaseAPIView):

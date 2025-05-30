@@ -37,7 +37,7 @@ from .base import BaseAPIView
 from plane.utils.host import base_host
 from plane.api.serializers import ProjectSerializer
 from plane.app.permissions import ProjectBasePermission
-from plane.utils.openapi_spec_helpers import UNAUTHORIZED_RESPONSE, FORBIDDEN_RESPONSE
+from plane.utils.openapi import UNAUTHORIZED_RESPONSE, FORBIDDEN_RESPONSE
 
 
 class ProjectAPIEndpoint(BaseAPIView):
