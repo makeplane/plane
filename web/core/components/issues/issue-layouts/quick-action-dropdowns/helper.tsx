@@ -46,18 +46,17 @@ export interface MenuItemFactoryProps {
 export const useIssueActionHandlers = (props: MenuItemFactoryProps) => {
   const { issue, workspaceSlug, projectIdentifier, handleRestore } = props;
 
-  const workItemLink = useMemo(() => {
-    if (workspaceSlug && projectIdentifier) {
-      return generateWorkItemLink({
+  const workItemLink = useMemo(
+    () =>
+      generateWorkItemLink({
         workspaceSlug,
         projectId: issue?.project_id,
         issueId: issue?.id,
         projectIdentifier,
         sequenceId: issue?.sequence_id,
-      });
-    }
-    return `${workspaceSlug}/projects/${issue.project_id}/archives/issues/${issue.id}`;
-  }, [workspaceSlug, projectIdentifier, issue]);
+      }),
+    [workspaceSlug, projectIdentifier, issue]
+  );
 
   const handleCopyIssueLink = () =>
     copyUrlToClipboard(workItemLink).then(() =>
