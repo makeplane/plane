@@ -114,7 +114,46 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
             .order_by(self.kwargs.get("order_by", "-created_at"))
         ).distinct()
 
+    @extend_schema(
+        operation_id="get_workspace_work_item",
+        tags=["Work Items"],
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="project__identifier",
+                description="Project identifier",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="issue__identifier",
+                description="Issue sequence ID",
+                required=True,
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
+        responses={
+            200: OpenApiResponse(
+                description="Work item details",
+                response=IssueSerializer,
+            ),
+            404: OpenApiResponse(description="Work item not found"),
+        },
+    )
     def get(self, request, slug, project__identifier=None, issue__identifier=None):
+        """Retrieve work item by identifiers
+
+        Retrieve a specific work item using workspace slug, project identifier, and issue identifier.
+        This endpoint provides workspace-level access to work items.
+        """
         if issue__identifier and project__identifier:
             issue = Issue.issue_objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))

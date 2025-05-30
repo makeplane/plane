@@ -5,7 +5,7 @@ from plane.db.models import IntakeIssue, Issue
 from rest_framework import serializers
 
 
-class IssueSerializer(BaseSerializer):
+class IssueForIntakeSerializer(BaseSerializer):
     """Serializer for intake issues"""
 
     class Meta:
@@ -30,7 +30,7 @@ class IssueSerializer(BaseSerializer):
 class IntakeIssueCreateSerializer(BaseSerializer):
     """Serializer for creating intake issues"""
 
-    issue = IssueSerializer(help_text="Issue data for the intake issue")
+    issue = IssueForIntakeSerializer(help_text="Issue data for the intake issue")
 
     class Meta:
         model = IntakeIssue
@@ -76,7 +76,7 @@ class IntakeIssueSerializer(BaseSerializer):
 class IntakeIssueUpdateSerializer(BaseSerializer):
     """Serializer for updating intake issues"""
 
-    issue = IssueSerializer(
+    issue = IssueForIntakeSerializer(
         required=False, help_text="Issue data to update in the intake issue"
     )
 
@@ -88,6 +88,7 @@ class IntakeIssueUpdateSerializer(BaseSerializer):
             "duplicate_to",
             "source",
             "source_email",
+            "issue",
         ]
         read_only_fields = [
             "id",
