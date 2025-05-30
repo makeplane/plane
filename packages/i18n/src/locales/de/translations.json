@@ -223,9 +223,11 @@
   "you_do_not_have_the_permission_to_access_this_page": "Sie haben keine Berechtigung zum Zugriff auf diese Seite.",
   "something_went_wrong_please_try_again": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
   "load_more": "Mehr laden",
-  "select_or_customize_your_interface_color_scheme": "Wählen oder gestalten Sie Ihr Farbdesign für die Benutzeroberfläche.",
-  "theme": "Theme",
-  "system_preference": "Systemeinstellungen",
+  "select_or_customize_your_interface_color_scheme": "Wählen Sie Ihr Interface-Farbschema aus oder passen Sie es an.",
+  "select_the_cursor_motion_style_that_feels_right_for_you": "Wählen Sie den Cursorbewegungsstil, der sich für Sie richtig anfühlt.",
+  "theme": "Thema",
+  "smooth_cursor": "Sanfter Cursor",
+  "system_preference": "Systemeinstellung",
   "light": "Hell",
   "dark": "Dunkel",
   "light_contrast": "Heller hoher Kontrast",
@@ -500,6 +502,8 @@
   "export": "Exportieren",
   "member": "{count, plural, one{# Mitglied} few{# Mitglieder} other{# Mitglieder}}",
   "new_password_must_be_different_from_old_password": "Das neue Passwort muss von dem alten Passwort abweichen",
+  "edited": "Bearbeitet",
+  "bot": "Bot",
   "project_view": {
     "sort_by": {
       "created_at": "Erstellt am",
@@ -546,7 +550,7 @@
       "create_project": {
         "title": "Projekt erstellen",
         "description": "Die meisten Dinge beginnen mit einem Projekt in Plane.",
-        "cta": "Los geht’s"
+        "cta": "Los geht's"
       },
       "invite_team": {
         "title": "Team einladen",

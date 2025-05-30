@@ -2,15 +2,18 @@
 
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
-// components
 import { usePathname } from "next/navigation";
+// constants
 import { EUserWorkspaceRoles, WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
-// hooks
+// components
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { CommandPalette } from "@/components/command-palette";
 import { SettingsMobileNav } from "@/components/settings";
 import { getWorkspaceActivePath, pathnameToAccessKey } from "@/components/settings/helper";
+// hooks
 import { useUserPermissions } from "@/hooks/store";
+// plane web components
+import { LicenseSeatsBanner } from "@/plane-web/components/license";
 // local components
 import { WorkspaceSettingsSidebar } from "./sidebar";
 
@@ -40,6 +43,8 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
         hamburgerContent={WorkspaceSettingsSidebar}
         activePath={getWorkspaceActivePath(pathname) || ""}
       />
+      {/* free banner */}
+      <LicenseSeatsBanner />
       <div className="inset-y-0 flex flex-row w-full">
         {workspaceUserInfo && !isAuthorized ? (
           <NotAuthorizedView section="settings" className="h-auto" />
