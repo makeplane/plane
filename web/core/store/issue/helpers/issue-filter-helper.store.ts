@@ -105,10 +105,14 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
       type: displayFilters?.type || undefined,
       sub_issue: displayFilters?.sub_issue ?? true,
       hub_code: filters?.hub_code || undefined,
+      hub_name: filters?.hub_name || undefined,
       worker_code: filters?.worker_code || undefined,
+      worker_name: filters?.worker_name || undefined,
       customer_code: filters?.customer_code || undefined,
+      customer_name: filters?.customer_name || undefined,
       trip_reference_number: filters?.trip_reference_number || undefined,
       vendor_code: filters?.vendor_code || undefined,
+      vendor_name: filters?.vendor_name || undefined,
       reference_number: filters?.reference_number || undefined,
     };
 
@@ -152,10 +156,14 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     subscriber: filters?.subscriber || null,
     issue_type: filters?.issue_type || null,
     hub_code: filters?.hub_code || null,
+    hub_name: filters?.hub_name || null,
     worker_code: filters?.worker_code || null,
+    worker_name: filters?.worker_name || null,
     customer_code: filters?.customer_code || null,
+    customer_name: filters?.customer_name || null,
     trip_reference_number: filters?.trip_reference_number || null,
     vendor_code: filters?.vendor_code || null,
+    vendor_name: filters?.vendor_name || null,
     reference_number: filters?.reference_number || null,
   });
 

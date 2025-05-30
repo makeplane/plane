@@ -183,11 +183,15 @@ export class IssueStore implements IIssueStore {
       is_subscribed: issue?.is_subscribed,
       custom_properties: issue?.custom_properties,
       hub_code: issue?.hub_code, 
+      hub_name: issue?.hub_name,
       customer_code: issue?.customer_code, 
+      customer_name: issue?.customer_name, 
       reference_number: issue?.reference_number, 
       trip_reference_number: issue?.trip_reference_number, 
       vendor_code: issue?.vendor_code, 
-      worker_code: issue?.worker_code
+      vendor_name: issue?.vendor_name, 
+      worker_code: issue?.worker_code,
+      worker_name: issue?.worker_name
     };
 
     this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);
