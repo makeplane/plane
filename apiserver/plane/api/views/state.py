@@ -43,8 +43,6 @@ class StateAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="create_state",
         tags=["States"],
-        summary="Create State",
-        description="Create a new state for a project",
         request={
             "application/json": {
                 "type": "object",
@@ -99,6 +97,11 @@ class StateAPIEndpoint(BaseAPIView):
         },
     )
     def post(self, request, slug, project_id):
+        """Create state
+        
+        Create a new workflow state for a project with specified name, color, and group.
+        Supports external ID tracking for integration purposes.
+        """
         try:
             serializer = StateSerializer(
                 data=request.data, context={"project_id": project_id}
@@ -148,8 +151,6 @@ class StateAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="get_state",
         tags=["States"],
-        summary="Get State",
-        description="Get a state for a project",
         responses={
             200: OpenApiResponse(
                 description="State retrieved",
@@ -158,6 +159,11 @@ class StateAPIEndpoint(BaseAPIView):
         },
     )
     def get(self, request, slug, project_id, state_id=None):
+        """List or retrieve states
+        
+        Retrieve all workflow states for a project or get details of a specific state.
+        Returns paginated results when listing all states.
+        """
         if state_id:
             serializer = StateSerializer(
                 self.get_queryset().get(pk=state_id),
@@ -176,8 +182,6 @@ class StateAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="delete_state",
         tags=["States"],
-        summary="Delete State",
-        description="Delete a state for a project",
         responses={
             204: OpenApiResponse(description="State deleted"),
             401: UNAUTHORIZED_RESPONSE,
@@ -186,6 +190,11 @@ class StateAPIEndpoint(BaseAPIView):
         },
     )
     def delete(self, request, slug, project_id, state_id):
+        """Delete state
+        
+        Permanently remove a workflow state from a project.
+        Default states and states with existing issues cannot be deleted.
+        """
         state = State.objects.get(
             is_triage=False, pk=state_id, project_id=project_id, workspace__slug=slug
         )
@@ -211,8 +220,6 @@ class StateAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="update_state",
         tags=["States"],
-        summary="Update State",
-        description="Update a state for a project",
         request={
             "application/json": {
                 "type": "object",
@@ -266,6 +273,11 @@ class StateAPIEndpoint(BaseAPIView):
         },
     )
     def patch(self, request, slug, project_id, state_id=None):
+        """Update state
+        
+        Partially update an existing workflow state's properties like name, color, or group.
+        Validates external ID uniqueness if provided.
+        """
         state = State.objects.get(
             workspace__slug=slug, project_id=project_id, pk=state_id
         )

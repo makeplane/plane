@@ -147,8 +147,6 @@ class ModuleAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="create_module",
         tags=["Modules"],
-        summary="Create module",
-        description="Create module",
         request={
             "application/json": {
                 "type": "object",
@@ -221,6 +219,11 @@ class ModuleAPIEndpoint(BaseAPIView):
         },
     )
     def post(self, request, slug, project_id):
+        """Create module
+        
+        Create a new project module with specified name, description, and timeline.
+        Automatically assigns the creator as module lead and tracks activity.
+        """
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         serializer = ModuleSerializer(
             data=request.data,
@@ -269,8 +272,6 @@ class ModuleAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="update_module",
         tags=["Modules"],
-        summary="Update module",
-        description="Update module",
         request={
             "application/json": {
                 "type": "object",
@@ -334,6 +335,11 @@ class ModuleAPIEndpoint(BaseAPIView):
         },
     )
     def patch(self, request, slug, project_id, pk):
+        """Update module
+        
+        Modify an existing module's properties like name, description, status, or timeline.
+        Tracks all changes in model activity logs for audit purposes.
+        """
         module = Module.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
 
         current_instance = json.dumps(
@@ -387,8 +393,6 @@ class ModuleAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="get_module",
         tags=["Modules"],
-        summary="Get module",
-        description="Get modules",
         responses={
             200: OpenApiResponse(description="Module", response=ModuleSerializer),
             401: UNAUTHORIZED_RESPONSE,
@@ -397,6 +401,11 @@ class ModuleAPIEndpoint(BaseAPIView):
         },
     )
     def get(self, request, slug, project_id, pk=None):
+        """List or retrieve modules
+        
+        Retrieve all modules in a project or get details of a specific module.
+        Returns paginated results with module statistics and member information.
+        """
         if pk:
             queryset = self.get_queryset().filter(archived_at__isnull=True).get(pk=pk)
             data = ModuleSerializer(
@@ -414,10 +423,13 @@ class ModuleAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="delete_module",
         tags=["Modules"],
-        summary="Delete module",
-        description="Delete module",
     )
     def delete(self, request, slug, project_id, pk):
+        """Delete module
+        
+        Permanently remove a module and all its associated issue relationships.
+        Only admins or the module creator can perform this action.
+        """
         module = Module.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         if module.created_by_id != request.user.id and (
             not ProjectMember.objects.filter(
@@ -505,8 +517,6 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="get_module_issues",
         tags=["Modules"],
-        summary="Get module issues",
-        description="Get module issues",
         responses={
             200: OpenApiResponse(description="Module issues", response=IssueSerializer),
             401: UNAUTHORIZED_RESPONSE,
@@ -515,6 +525,11 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
         },
     )
     def get(self, request, slug, project_id, module_id):
+        """List module issues
+        
+        Retrieve all issues assigned to a module with detailed information.
+        Returns paginated results including assignees, labels, and attachments.
+        """
         order_by = request.GET.get("order_by", "created_at")
         issues = (
             Issue.issue_objects.filter(
@@ -563,8 +578,6 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="add_module_issues",
         tags=["Modules"],
-        summary="Add module issues",
-        description="Add module issues",
         request={
             "application/json": {
                 "type": "object",
@@ -588,6 +601,11 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
         },
     )
     def post(self, request, slug, project_id, module_id):
+        """Add module issues
+        
+        Assign multiple issues to a module or move them from another module.
+        Automatically handles bulk creation and updates with activity tracking.
+        """
         issues = request.data.get("issues", [])
         if not len(issues):
             return Response(
@@ -670,8 +688,6 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="delete_module_issue",
         tags=["Modules"],
-        summary="Delete module issue",
-        description="Delete module issue",
         responses={
             204: OpenApiResponse(description="Module issue deleted"),
             401: UNAUTHORIZED_RESPONSE,
@@ -680,6 +696,11 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
         },
     )
     def delete(self, request, slug, project_id, module_id, issue_id):
+        """Remove module issue
+        
+        Remove an issue from a module while keeping the issue in the project.
+        Records the removal activity for tracking purposes.
+        """
         module_issue = ModuleIssue.objects.get(
             workspace__slug=slug,
             project_id=project_id,
@@ -796,8 +817,6 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="get_archived_modules",
         tags=["Modules"],
-        summary="Get archived modules",
-        description="Get archived modules",
         request={},
         responses={
             200: OpenApiResponse(
@@ -809,6 +828,11 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         },
     )
     def get(self, request, slug, project_id, pk):
+        """List archived modules
+        
+        Retrieve all modules that have been archived in the project.
+        Returns paginated results with module statistics and completion data.
+        """
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),
@@ -820,8 +844,6 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="archive_module",
         tags=["Modules"],
-        summary="Archive module",
-        description="Archive module",
         request={},
         responses={
             204: OpenApiResponse(description="Module archived"),
@@ -832,6 +854,11 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         },
     )
     def post(self, request, slug, project_id, pk):
+        """Archive module
+        
+        Move a completed module to archived status for historical tracking.
+        Only modules with completed status can be archived.
+        """
         module = Module.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
         if module.status not in ["completed", "cancelled"]:
             return Response(
@@ -851,8 +878,6 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="unarchive_module",
         tags=["Modules"],
-        summary="Unarchive module",
-        description="Unarchive module",
         responses={
             204: OpenApiResponse(description="Module unarchived"),
             401: UNAUTHORIZED_RESPONSE,
@@ -861,6 +886,11 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         },
     )
     def delete(self, request, slug, project_id, pk):
+        """Unarchive module
+        
+        Restore an archived module to active status, making it available for regular use.
+        The module will reappear in active module lists and become fully functional.
+        """
         module = Module.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
         module.archived_at = None
         module.save()

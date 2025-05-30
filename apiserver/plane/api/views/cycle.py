@@ -149,8 +149,6 @@ class CycleAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="get_cycles",
         tags=["Cycles"],
-        summary="Get cycles",
-        description="Get cycles",
         responses={
             200: OpenApiResponse(
                 description="Cycles",
@@ -162,6 +160,11 @@ class CycleAPIEndpoint(BaseAPIView):
         },
     )
     def get(self, request, slug, project_id, pk=None):
+        """List or retrieve cycles
+        
+        Retrieve all cycles in a project or get details of a specific cycle.
+        Supports filtering by cycle status like current, upcoming, completed, or draft.
+        """
         project = Project.objects.get(workspace__slug=slug, pk=project_id)
         if pk:
             queryset = self.get_queryset().filter(archived_at__isnull=True).get(pk=pk)
@@ -265,8 +268,6 @@ class CycleAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="create_cycle",
         tags=["Cycles"],
-        summary="Create cycle",
-        description="Create cycle",
         request={
             "application/json": {
                 "type": "object",
@@ -309,6 +310,11 @@ class CycleAPIEndpoint(BaseAPIView):
         },
     )
     def post(self, request, slug, project_id):
+        """Create cycle
+        
+        Create a new development cycle with specified name, description, and date range.
+        Supports external ID tracking for integration purposes.
+        """
         if (
             request.data.get("start_date", None) is None
             and request.data.get("end_date", None) is None
@@ -365,8 +371,6 @@ class CycleAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="update_cycle",
         tags=["Cycles"],
-        summary="Update cycle",
-        description="Update cycle",
         request={
             "application/json": {
                 "type": "object",
@@ -408,6 +412,11 @@ class CycleAPIEndpoint(BaseAPIView):
         },
     )
     def patch(self, request, slug, project_id, pk):
+        """Update cycle
+        
+        Modify an existing cycle's properties like name, description, or date range.
+        Completed cycles can only have their sort order changed.
+        """
         cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
 
         current_instance = json.dumps(
@@ -475,8 +484,6 @@ class CycleAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="delete_cycle",
         tags=["Cycles"],
-        summary="Delete cycle",
-        description="Delete cycle",
         responses={
             204: OpenApiResponse(description="Cycle deleted"),
             401: UNAUTHORIZED_RESPONSE,
@@ -485,6 +492,11 @@ class CycleAPIEndpoint(BaseAPIView):
         },
     )
     def delete(self, request, slug, project_id, pk):
+        """Delete cycle
+        
+        Permanently remove a cycle and all its associated issue relationships.
+        Only admins or the cycle creator can perform this action.
+        """
         cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         if cycle.owned_by_id != request.user.id and (
             not ProjectMember.objects.filter(
@@ -640,8 +652,6 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="get_archived_cycles",
         tags=["Cycles"],
-        summary="Get archived cycles",
-        description="Get archived cycles",
         request={},
         responses={
             200: OpenApiResponse(
@@ -654,6 +664,11 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         },
     )
     def get(self, request, slug, project_id):
+        """List archived cycles
+        
+        Retrieve all cycles that have been archived in the project.
+        Returns paginated results with cycle statistics and completion data.
+        """
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),
@@ -665,8 +680,6 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="archive_cycle",
         tags=["Cycles"],
-        summary="Archive cycle",
-        description="Archive cycle",
         request={},
         responses={
             204: OpenApiResponse(description="Cycle archived"),
@@ -677,6 +690,11 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         },
     )
     def post(self, request, slug, project_id, cycle_id):
+        """Archive cycle
+        
+        Move a completed cycle to archived status for historical tracking.
+        Only cycles that have ended can be archived.
+        """
         cycle = Cycle.objects.get(
             pk=cycle_id, project_id=project_id, workspace__slug=slug
         )
@@ -698,8 +716,6 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="unarchive_cycle",
         tags=["Cycles"],
-        summary="Unarchive cycle",
-        description="Unarchive cycle",
         request={},
         responses={
             204: OpenApiResponse(description="Cycle unarchived"),
@@ -709,6 +725,11 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         },
     )
     def delete(self, request, slug, project_id, cycle_id):
+        """Unarchive cycle
+        
+        Restore an archived cycle to active status, making it available for regular use.
+        The cycle will reappear in active cycle lists.
+        """
         cycle = Cycle.objects.get(
             pk=cycle_id, project_id=project_id, workspace__slug=slug
         )
@@ -757,10 +778,13 @@ class CycleIssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="get_cycle_issues",
         tags=["Cycles"],
-        summary="Get cycle issues",
-        description="Get cycle issues",
     )
     def get(self, request, slug, project_id, cycle_id, issue_id=None):
+        """List or retrieve cycle issues
+        
+        Retrieve all issues assigned to a cycle or get details of a specific cycle issue.
+        Returns paginated results with issue details, assignees, and labels.
+        """
         # Get
         if issue_id:
             cycle_issue = CycleIssue.objects.get(
@@ -824,8 +848,6 @@ class CycleIssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="add_cycle_issues",
         tags=["Cycles"],
-        summary="Add cycle issues",
-        description="Add cycle issues",
         request={
             "application/json": {
                 "type": "object",
@@ -853,6 +875,11 @@ class CycleIssueAPIEndpoint(BaseAPIView):
         },
     )
     def post(self, request, slug, project_id, cycle_id):
+        """Add cycle issues
+        
+        Assign multiple issues to a cycle or move them from another cycle.
+        Automatically handles bulk creation and updates with activity tracking.
+        """
         issues = request.data.get("issues", [])
 
         if not issues:
@@ -941,10 +968,13 @@ class CycleIssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="delete_cycle_issue",
         tags=["Cycles"],
-        summary="Delete cycle issue",
-        description="Delete cycle issue",
     )
     def delete(self, request, slug, project_id, cycle_id, issue_id):
+        """Remove cycle issue
+        
+        Remove an issue from a cycle while keeping the issue in the project.
+        Records the removal activity for tracking purposes.
+        """
         cycle_issue = CycleIssue.objects.get(
             issue_id=issue_id,
             workspace__slug=slug,
@@ -1022,10 +1052,13 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             403: FORBIDDEN_RESPONSE,
             404: OpenApiResponse(description="Cycle not found"),
         },
-        summary="Transfer issues to a new cycle",
-        description="Transfer issues from the current cycle to a new cycle",
     )
     def post(self, request, slug, project_id, cycle_id):
+        """Transfer cycle issues
+        
+        Move incomplete issues from the current cycle to a new target cycle.
+        Captures progress snapshot and transfers only unfinished work items.
+        """
         new_cycle_id = request.data.get("new_cycle_id", False)
 
         if not new_cycle_id:

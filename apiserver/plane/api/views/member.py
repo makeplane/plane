@@ -36,8 +36,6 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
                 location=OpenApiParameter.PATH,
             ),
         ],
-        summary="Get all the users that are present inside the workspace",
-        description="Get all the users that are present inside the workspace",
         responses={
             200: OpenApiResponse(
                 description="List of workspace members with their roles",
@@ -66,6 +64,11 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
     )
     # Get all the users that are present inside the workspace
     def get(self, request, slug):
+        """List workspace members
+        
+        Retrieve all users who are members of the specified workspace.
+        Returns user profiles with their respective workspace roles and permissions.
+        """
         # Check if the workspace exists
         if not Workspace.objects.filter(slug=slug).exists():
             return Response(
@@ -110,8 +113,6 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
                 location=OpenApiParameter.PATH,
             ),
         ],
-        summary="Get all the users that are present inside the project",
-        description="Get all the users that are present inside the project",
         responses={
             200: OpenApiResponse(
                 description="List of project members with their roles",
@@ -124,6 +125,11 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
     )
     # Get all the users that are present inside the workspace
     def get(self, request, slug, project_id):
+        """List project members
+        
+        Retrieve all users who are members of the specified project.
+        Returns user profiles with their project-specific roles and access levels.
+        """
         # Check if the workspace exists
         if not Workspace.objects.filter(slug=slug).exists():
             return Response(

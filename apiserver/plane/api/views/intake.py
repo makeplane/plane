@@ -69,8 +69,6 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="get_intake_issues",
         tags=["Intake"],
-        summary="Get intake issues",
-        description="Get intake issues",
         responses={
             200: OpenApiResponse(
                 description="Intake issues", response=IntakeIssueSerializer
@@ -81,6 +79,11 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
         },
     )
     def get(self, request, slug, project_id, issue_id=None):
+        """List or retrieve intake issues
+        
+        Retrieve all issues in the project's intake queue or get details of a specific intake issue.
+        Returns paginated results when listing all intake issues.
+        """
         if issue_id:
             intake_issue_queryset = self.get_queryset().get(issue_id=issue_id)
             intake_issue_data = IntakeIssueSerializer(
@@ -99,8 +102,6 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="create_intake_issue",
         tags=["Intake"],
-        summary="Create intake issue",
-        description="Create intake issue",
         request={
             "application/json": {
                 "type": "object",
@@ -153,6 +154,11 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
         },
     )
     def post(self, request, slug, project_id):
+        """Create intake issue
+        
+        Submit a new issue to the project's intake queue for review and triage.
+        Automatically creates the issue with default triage state and tracks activity.
+        """
         if not request.data.get("issue", {}).get("name", False):
             return Response(
                 {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
@@ -221,8 +227,6 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="update_intake_issue",
         tags=["Intake"],
-        summary="Update intake issue",
-        description="Update intake issue",
         request={
             "application/json": {
                 "type": "object",
@@ -255,6 +259,11 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
         },
     )
     def patch(self, request, slug, project_id, issue_id):
+        """Update intake issue
+        
+        Modify an existing intake issue's properties or status for triage processing.
+        Supports status changes like accept, reject, or mark as duplicate.
+        """
         intake = Intake.objects.filter(
             workspace__slug=slug, project_id=project_id
         ).first()
@@ -423,8 +432,6 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="delete_intake_issue",
         tags=["Intake"],
-        summary="Delete intake issue",
-        description="Delete intake issue",
         responses={
             204: OpenApiResponse(description="Intake issue deleted"),
             401: UNAUTHORIZED_RESPONSE,
@@ -433,6 +440,11 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
         },
     )
     def delete(self, request, slug, project_id, issue_id):
+        """Delete intake issue
+        
+        Permanently remove an intake issue from the triage queue.
+        Also deletes the underlying issue if it hasn't been accepted yet.
+        """
         intake = Intake.objects.filter(
             workspace__slug=slug, project_id=project_id
         ).first()

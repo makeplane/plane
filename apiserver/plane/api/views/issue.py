@@ -160,16 +160,6 @@ class IssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="get_work_item",
         tags=["Work Items"],
-        summary="Work Item retrieve endpoints",
-        description="""
-        List all work items in a project if pk is None, otherwise retrieve a specific work item.
-
-        When pk is None:
-        Returns a list of all work items in the project.
-
-        When pk is provided:
-        Returns the details of a specific work item.
-        """,
         parameters=[
             # Parameters for list operation
             OpenApiParameter(
@@ -198,6 +188,11 @@ class IssueAPIEndpoint(BaseAPIView):
         },
     )
     def get(self, request, slug, project_id, pk=None):
+        """List or retrieve work items
+
+        Retrieve a paginated list of all work items in a project, or get details of a specific work item.
+        Supports filtering, ordering, and field selection through query parameters.
+        """
 
         external_id = request.GET.get("external_id")
         external_source = request.GET.get("external_source")
@@ -325,8 +320,6 @@ class IssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="create_work_item",
         tags=["Work Items"],
-        summary="Create an work item",
-        description="Create a new work item in the project.",
         request=IssueSerializer,
         responses={
             201: OpenApiResponse(
@@ -341,6 +334,11 @@ class IssueAPIEndpoint(BaseAPIView):
         },
     )
     def post(self, request, slug, project_id):
+        """Create work item
+        
+        Create a new work item in the specified project with the provided details.
+        Supports external ID tracking for integration purposes.
+        """
         project = Project.objects.get(pk=project_id)
 
         serializer = IssueSerializer(
@@ -413,8 +411,6 @@ class IssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="update_work_item",
         tags=["Work Items"],
-        summary="Update an work item",
-        description="Update an work item in the project.",
         request=IssueSerializer,
         responses={
             200: OpenApiResponse(
@@ -429,6 +425,11 @@ class IssueAPIEndpoint(BaseAPIView):
         },
     )
     def put(self, request, slug, project_id):
+        """Update or create work item
+        
+        Update an existing work item identified by external ID and source, or create a new one if it doesn't exist.
+        Requires external_id and external_source parameters for identification.
+        """
         # Get the entities required for putting the issue, external_id and
         # external_source are must to identify the issue here
         project = Project.objects.get(pk=project_id)
@@ -541,8 +542,6 @@ class IssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="patch_work_item",
         tags=["Work Items"],
-        summary="Patch an work item",
-        description="Patch an existing work item in the project.",
         request=IssueSerializer,
         responses={
             200: OpenApiResponse(
@@ -557,6 +556,11 @@ class IssueAPIEndpoint(BaseAPIView):
         },
     )
     def patch(self, request, slug, project_id, pk=None):
+        """Update work item
+        
+        Partially update an existing work item with the provided fields.
+        Supports external ID validation to prevent conflicts.
+        """
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         project = Project.objects.get(pk=project_id)
         current_instance = json.dumps(
@@ -606,8 +610,6 @@ class IssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="delete_work_item",
         tags=["Work Items"],
-        summary="Delete an work item",
-        description="Delete an existing work item in the project.",
         responses={
             204: OpenApiResponse(description="Work Item deleted successfully"),
             401: UNAUTHORIZED_RESPONSE,
@@ -616,6 +618,11 @@ class IssueAPIEndpoint(BaseAPIView):
         },
     )
     def delete(self, request, slug, project_id, pk=None):
+        """Delete work item
+        
+        Permanently delete an existing work item from the project.
+        Only admins or the item creator can perform this action.
+        """
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         if issue.created_by_id != request.user.id and (
             not ProjectMember.objects.filter(
@@ -676,8 +683,6 @@ class LabelAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="create_label",
         tags=["Labels"],
-        summary="Create a label",
-        description="Create a new label in the project.",
         request={
             "application/json": {
                 "type": "object",
@@ -714,6 +719,11 @@ class LabelAPIEndpoint(BaseAPIView):
         },
     )
     def post(self, request, slug, project_id):
+        """Create label
+        
+        Create a new label in the specified project with name, color, and description.
+        Supports external ID tracking for integration purposes.
+        """
         try:
             serializer = LabelSerializer(data=request.data)
             if serializer.is_valid():
@@ -761,8 +771,6 @@ class LabelAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="get_labels",
         tags=["Labels"],
-        summary="Get labels",
-        description="Get all labels in the project.",
         parameters=[
             OpenApiParameter(
                 name="slug",
@@ -786,6 +794,11 @@ class LabelAPIEndpoint(BaseAPIView):
         },
     )
     def get(self, request, slug, project_id, pk=None):
+        """List or retrieve labels
+        
+        Retrieve all labels in the project or get details of a specific label.
+        Returns paginated results when listing all labels.
+        """
         if pk is None:
             return self.paginate(
                 request=request,
@@ -801,8 +814,6 @@ class LabelAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="update_label",
         tags=["Labels"],
-        summary="Update a label",
-        description="Update a label in the project.",
         request={
             "application/json": {
                 "type": "object",
@@ -843,6 +854,11 @@ class LabelAPIEndpoint(BaseAPIView):
         },
     )
     def patch(self, request, slug, project_id, pk=None):
+        """Update label
+        
+        Partially update an existing label's properties like name, color, or description.
+        Validates external ID uniqueness if provided.
+        """
         label = self.get_queryset().get(pk=pk)
         serializer = LabelSerializer(label, data=request.data, partial=True)
         if serializer.is_valid():
@@ -872,8 +888,6 @@ class LabelAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="delete_label",
         tags=["Labels"],
-        summary="Delete a label",
-        description="Delete a label in the project.",
         parameters=[
             OpenApiParameter(
                 name="slug",
@@ -899,6 +913,11 @@ class LabelAPIEndpoint(BaseAPIView):
         },
     )
     def delete(self, request, slug, project_id, pk=None):
+        """Delete label
+        
+        Permanently remove a label from the project.
+        This action cannot be undone.
+        """
         label = self.get_queryset().get(pk=pk)
         label.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -933,8 +952,6 @@ class IssueLinkAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="get_issue_links",
         tags=["Issue Links"],
-        summary="Get issue links",
-        description="Get all issue links in a project.",
         parameters=[
             OpenApiParameter(
                 name="slug",
@@ -963,6 +980,11 @@ class IssueLinkAPIEndpoint(BaseAPIView):
         },
     )
     def get(self, request, slug, project_id, issue_id, pk=None):
+        """List or retrieve issue links
+        
+        Retrieve all links associated with an issue or get details of a specific link.
+        Returns paginated results when listing all links.
+        """
         if pk is None:
             issue_links = self.get_queryset()
             serializer = IssueLinkSerializer(
@@ -984,8 +1006,6 @@ class IssueLinkAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="create_issue_link",
         tags=["Issue Links"],
-        summary="Create an issue link",
-        description="Create a new issue link in a project.",
         request={
             "application/json": {
                 "type": "object",
@@ -1026,6 +1046,11 @@ class IssueLinkAPIEndpoint(BaseAPIView):
         },
     )
     def post(self, request, slug, project_id, issue_id):
+        """Create issue link
+        
+        Add a new external link to an issue with URL, title, and metadata.
+        Automatically tracks link creation activity.
+        """
         serializer = IssueLinkSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id)
@@ -1048,8 +1073,6 @@ class IssueLinkAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="update_issue_link",
         tags=["Issue Links"],
-        summary="Update an issue link",
-        description="Update an issue link in a project.",
         request={
             "application/json": {
                 "type": "object",
@@ -1095,6 +1118,11 @@ class IssueLinkAPIEndpoint(BaseAPIView):
         },
     )
     def patch(self, request, slug, project_id, issue_id, pk):
+        """Update issue link
+        
+        Modify the URL, title, or metadata of an existing issue link.
+        Tracks all changes in issue activity logs.
+        """
         issue_link = IssueLink.objects.get(
             workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
         )
@@ -1120,8 +1148,6 @@ class IssueLinkAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="delete_issue_link",
         tags=["Issue Links"],
-        summary="Delete an issue link",
-        description="Delete an issue link in a project.",
         parameters=[
             OpenApiParameter(
                 name="slug",
@@ -1152,6 +1178,11 @@ class IssueLinkAPIEndpoint(BaseAPIView):
         },
     )
     def delete(self, request, slug, project_id, issue_id, pk):
+        """Delete issue link
+        
+        Permanently remove an external link from an issue.
+        Records deletion activity for audit purposes.
+        """
         issue_link = IssueLink.objects.get(
             workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
         )
@@ -1211,8 +1242,6 @@ class IssueCommentAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="get_issue_comments",
         tags=["Issue Comments"],
-        summary="Get issue comments",
-        description="Get all comments for an issue.",
         parameters=[
             OpenApiParameter(
                 name="slug",
@@ -1241,6 +1270,11 @@ class IssueCommentAPIEndpoint(BaseAPIView):
         },
     )
     def get(self, request, slug, project_id, issue_id, pk=None):
+        """List or retrieve issue comments
+        
+        Retrieve all comments for an issue or get details of a specific comment.
+        Returns paginated results when listing all comments.
+        """
         if pk:
             issue_comment = self.get_queryset().get(pk=pk)
             serializer = IssueCommentSerializer(
@@ -1258,8 +1292,6 @@ class IssueCommentAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="create_issue_comment",
         tags=["Issue Comments"],
-        summary="Create an issue comment",
-        description="Create a new comment for an issue.",
         request={
             "application/json": {
                 "type": "object",
@@ -1296,6 +1328,11 @@ class IssueCommentAPIEndpoint(BaseAPIView):
         },
     )
     def post(self, request, slug, project_id, issue_id):
+        """Create issue comment
+        
+        Add a new comment to an issue with HTML content.
+        Supports external ID tracking for integration purposes.
+        """
         # Validation check if the issue already exists
         if (
             request.data.get("external_id")
@@ -1349,8 +1386,6 @@ class IssueCommentAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="update_issue_comment",
         tags=["Issue Comments"],
-        summary="Update an issue comment",
-        description="Update an existing comment for an issue.",
         request={
             "application/json": {
                 "type": "object",
@@ -1392,6 +1427,11 @@ class IssueCommentAPIEndpoint(BaseAPIView):
         }
     )
     def patch(self, request, slug, project_id, issue_id, pk):
+        """Update issue comment
+        
+        Modify the content of an existing comment on an issue.
+        Validates external ID uniqueness if provided.
+        """
         issue_comment = IssueComment.objects.get(
             workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
         )
@@ -1441,8 +1481,6 @@ class IssueCommentAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="delete_issue_comment",
         tags=["Issue Comments"],
-        summary="Delete an issue comment",
-        description="Delete an existing comment for an issue.",
         parameters=[
             OpenApiParameter(
                 name="slug",
@@ -1473,6 +1511,11 @@ class IssueCommentAPIEndpoint(BaseAPIView):
         }
     )
     def delete(self, request, slug, project_id, issue_id, pk):
+        """Delete issue comment
+        
+        Permanently remove a comment from an issue.
+        Records deletion activity for audit purposes.
+        """
         issue_comment = IssueComment.objects.get(
             workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
         )
@@ -1498,8 +1541,6 @@ class IssueActivityAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="get_issue_activities",
         tags=["Issues"],
-        summary="Get issue activities",
-        description="Get issue activities",
         parameters=[
             OpenApiParameter(
                 name="slug",
@@ -1534,6 +1575,11 @@ class IssueActivityAPIEndpoint(BaseAPIView):
         },
     )
     def get(self, request, slug, project_id, issue_id, pk=None):
+        """List or retrieve issue activities
+        
+        Retrieve chronological activity logs for an issue or get details of a specific activity.
+        Excludes comment, vote, reaction, and draft activities.
+        """
         issue_activities = (
             IssueActivity.objects.filter(
                 issue_id=issue_id, workspace__slug=slug, project_id=project_id
@@ -1567,12 +1613,8 @@ class IssueAttachmentEndpoint(BaseAPIView):
     model = FileAsset
 
     @extend_schema(
-        operation_id="get_issue_attachment",
+        operation_id="create_issue_attachment",
         tags=["Issues"],
-        summary="Get issue attachment",
-        description="""
-        Get an issue attachment.
-        """,
         parameters=[
             OpenApiParameter(
                 name="slug",
@@ -1591,13 +1633,6 @@ class IssueAttachmentEndpoint(BaseAPIView):
             OpenApiParameter(
                 name="issue_id",
                 description="Issue ID",
-                required=True,
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="pk",
-                description="Issue Attachment ID",
                 required=True,
                 type=OpenApiTypes.UUID,
                 location=OpenApiParameter.PATH,
@@ -1691,6 +1726,11 @@ class IssueAttachmentEndpoint(BaseAPIView):
         },
     )
     def post(self, request, slug, project_id, issue_id):
+        """Create issue attachment
+        
+        Generate presigned URL for uploading file attachments to an issue.
+        Validates file type and size before creating the attachment record.
+        """
         name = request.data.get("name")
         type = request.data.get("type", False)
         size = request.data.get("size")
@@ -1780,8 +1820,6 @@ class IssueAttachmentEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="delete_issue_attachment",
         tags=["Issue Attachments"],
-        summary="Delete an issue attachment",
-        description="Delete an issue attachment",
         parameters=[
             OpenApiParameter(
                 name="slug",
@@ -1818,6 +1856,11 @@ class IssueAttachmentEndpoint(BaseAPIView):
         },
     )
     def delete(self, request, slug, project_id, issue_id, pk):
+        """Delete issue attachment
+        
+        Soft delete an attachment from an issue by marking it as deleted.
+        Records deletion activity and triggers metadata cleanup.
+        """
         issue_attachment = FileAsset.objects.get(
             pk=pk, workspace__slug=slug, project_id=project_id
         )
@@ -1846,8 +1889,6 @@ class IssueAttachmentEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="get_issue_attachment",
         tags=["Issue Attachments"],
-        summary="Get an issue attachment",
-        description="Get an issue attachment",
         parameters=[
             OpenApiParameter(
                 name="slug",
@@ -1866,6 +1907,11 @@ class IssueAttachmentEndpoint(BaseAPIView):
         },
     )
     def get(self, request, slug, project_id, issue_id, pk=None):
+        """List or download issue attachments
+        
+        List all attachments for an issue or generate download URL for a specific attachment.
+        Returns presigned URL for secure file access.
+        """
         if pk:
             # Get the asset
             asset = FileAsset.objects.get(
@@ -1902,8 +1948,6 @@ class IssueAttachmentEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="upload_issue_attachment",
         tags=["Issue Attachments"],
-        summary="Upload an issue attachment",
-        description="Upload an issue attachment",
         parameters=[
             OpenApiParameter(
                 name="slug",
@@ -1941,6 +1985,11 @@ class IssueAttachmentEndpoint(BaseAPIView):
         },
     )
     def patch(self, request, slug, project_id, issue_id, pk):
+        """Confirm attachment upload
+        
+        Mark an attachment as uploaded after successful file transfer to storage.
+        Triggers activity logging and metadata extraction.
+        """
         issue_attachment = FileAsset.objects.get(
             pk=pk, workspace__slug=slug, project_id=project_id
         )
@@ -1977,8 +2026,6 @@ class IssueSearchEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="search_issues",
         tags=["Issues"],
-        summary="Search issues",
-        description="Search issues",
         parameters=[
             OpenApiParameter(
                 name="slug",
@@ -2060,6 +2107,11 @@ class IssueSearchEndpoint(BaseAPIView):
         },
     )
     def get(self, request, slug):
+        """Search issues
+        
+        Perform semantic search across issue names, sequence IDs, and project identifiers.
+        Supports workspace-wide or project-specific search with configurable result limits.
+        """
         query = request.query_params.get("search", False)
         limit = request.query_params.get("limit", 10)
         workspace_search = request.query_params.get("workspace_search", "false")

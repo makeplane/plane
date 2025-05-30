@@ -114,8 +114,6 @@ class ProjectAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="list_projects",
         tags=["Projects"],
-        summary="List Projects",
-        description="List all projects in a workspace",
         responses={
             200: OpenApiResponse(
                 description="List of projects or project details",
@@ -127,14 +125,10 @@ class ProjectAPIEndpoint(BaseAPIView):
         },
     )
     def get(self, request, slug, pk=None):
-        """
-        List all projects in a workspace if pk is None, otherwise retrieve a specific project.
-
-        When pk is None:
-        Returns a list of all projects in the workspace.
-
-        When pk is provided:
-        Returns the details of a specific project.
+        """List or retrieve projects
+        
+        Retrieve all projects in a workspace or get details of a specific project.
+        Returns projects ordered by user's custom sort order with member information.
         """
         if pk is None:
             sort_order_query = ProjectMember.objects.filter(
@@ -170,8 +164,6 @@ class ProjectAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="create_project",
         tags=["Projects"],
-        summary="Create Project",
-        description="Create a new project",
         request={
             "application/json": {
                 "type": "object",
@@ -246,6 +238,11 @@ class ProjectAPIEndpoint(BaseAPIView):
         },
     )
     def post(self, request, slug):
+        """Create project
+        
+        Create a new project in the workspace with default states and member assignments.
+        Automatically adds the creator as admin and sets up default workflow states.
+        """
         try:
             workspace = Workspace.objects.get(slug=slug)
             serializer = ProjectSerializer(
@@ -363,8 +360,6 @@ class ProjectAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="update_project",
         tags=["Projects"],
-        summary="Update Project",
-        description="Update an existing project",
         parameters=[
             OpenApiParameter(
                 name="slug",
@@ -393,6 +388,11 @@ class ProjectAPIEndpoint(BaseAPIView):
         },
     )
     def patch(self, request, slug, pk):
+        """Update project
+        
+        Partially update an existing project's properties like name, description, or settings.
+        Tracks changes in model activity logs for audit purposes.
+        """
         try:
             workspace = Workspace.objects.get(slug=slug)
             project = Project.objects.get(pk=pk)
@@ -462,8 +462,6 @@ class ProjectAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="delete_project",
         tags=["Projects"],
-        summary="Delete Project",
-        description="Delete an existing project",
         parameters=[
             OpenApiParameter(
                 name="slug",
@@ -488,6 +486,11 @@ class ProjectAPIEndpoint(BaseAPIView):
         },
     )
     def delete(self, request, slug, pk):
+        """Delete project
+        
+        Permanently remove a project and all its associated data from the workspace.
+        Only admins can delete projects and the action cannot be undone.
+        """
         project = Project.objects.get(pk=pk, workspace__slug=slug)
         # Delete the user favorite cycle
         UserFavorite.objects.filter(
@@ -516,9 +519,23 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="archive_project",
         tags=["Projects"],
-        summary="Archive Project",
-        description="Archive an existing project",
         request={},
+        parameters=[
+            OpenApiParameter(
+                name="slug",
+                description="Workspace slug",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+            OpenApiParameter(
+                name="project_id",
+                description="Project ID",
+                required=True,
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH,
+            ),
+        ],
         responses={
             204: OpenApiResponse(description="Project archived"),
             401: UNAUTHORIZED_RESPONSE,
@@ -527,6 +544,11 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
         },
     )
     def post(self, request, slug, project_id):
+        """Archive project
+        
+        Move a project to archived status, hiding it from active project lists.
+        Archived projects remain accessible but are excluded from regular workflows.
+        """
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         project.archived_at = timezone.now()
         project.save()
@@ -536,8 +558,6 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="unarchive_project",
         tags=["Projects"],
-        summary="Unarchive Project",
-        description="Unarchive an existing project",
         request={},
         responses={
             204: OpenApiResponse(description="Project unarchived"),
@@ -547,6 +567,11 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
         },
     )
     def delete(self, request, slug, project_id):
+        """Unarchive project
+        
+        Restore an archived project to active status, making it available in regular workflows.
+        The project will reappear in active project lists and become fully functional.
+        """
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         project.archived_at = None
         project.save()

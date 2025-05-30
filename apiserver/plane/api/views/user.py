@@ -20,8 +20,6 @@ class UserEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="get_current_user",
         tags=["Users"],
-        summary="Get User",
-        description="Get the current user",
         responses={
             200: OpenApiResponse(
                 description="User retrieved",
@@ -31,5 +29,10 @@ class UserEndpoint(BaseAPIView):
         },
     )
     def get(self, request):
+        """Get current user
+        
+        Retrieve the authenticated user's profile information including basic details.
+        Returns user data based on the current authentication context.
+        """
         serializer = UserLiteSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
