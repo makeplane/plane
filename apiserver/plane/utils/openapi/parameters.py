@@ -7,18 +7,19 @@ across multiple API endpoints to ensure consistency.
 
 from drf_spectacular.utils import OpenApiParameter, OpenApiExample
 from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.openapi import AutoSchema
 
 
 # Path Parameters
 WORKSPACE_SLUG_PARAMETER = OpenApiParameter(
     name="slug",
+    description="Workspace slug",
+    required=True,
     type=OpenApiTypes.STR,
     location=OpenApiParameter.PATH,
-    description="Workspace slug identifier",
-    required=True,
     examples=[
         OpenApiExample(
-            name="Example workspace slug",
+            name="Example workspace",
             value="my-workspace",
             description="A typical workspace slug",
         )
@@ -27,10 +28,10 @@ WORKSPACE_SLUG_PARAMETER = OpenApiParameter(
 
 PROJECT_ID_PARAMETER = OpenApiParameter(
     name="project_id",
+    description="Project ID",
+    required=True,
     type=OpenApiTypes.UUID,
     location=OpenApiParameter.PATH,
-    description="Project UUID identifier",
-    required=True,
     examples=[
         OpenApiExample(
             name="Example project ID",
@@ -40,20 +41,19 @@ PROJECT_ID_PARAMETER = OpenApiParameter(
     ],
 )
 
-ISSUE_ID_PARAMETER = OpenApiParameter(
-    name="issue_id",
+ASSET_ID_PARAMETER = OpenApiParameter(
+    name="asset_id",
+    description="Asset ID",
+    required=True,
     type=OpenApiTypes.UUID,
     location=OpenApiParameter.PATH,
-    description="Issue UUID identifier",
-    required=True,
-)
-
-ASSET_ID_PARAMETER = OpenApiParameter(
-    name='asset_id',
-    description='UUID of the asset',
-    required=True,
-    type=OpenApiTypes.UUID,
-    location=OpenApiParameter.PATH
+    examples=[
+        OpenApiExample(
+            name="Example asset ID",
+            value="550e8400-e29b-41d4-a716-446655440000",
+            description="A typical asset UUID",
+        )
+    ],
 )
 
 

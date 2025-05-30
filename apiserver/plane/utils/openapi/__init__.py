@@ -16,10 +16,7 @@ from .auth import APIKeyAuthenticationExtension, APITokenAuthenticationExtension
 from .parameters import (
     WORKSPACE_SLUG_PARAMETER,
     PROJECT_ID_PARAMETER,
-    ISSUE_ID_PARAMETER,
     ASSET_ID_PARAMETER,
-    CURSOR_PARAMETER,
-    PER_PAGE_PARAMETER,
 )
 
 # Responses
@@ -52,7 +49,19 @@ from .decorators import (
     workspace_docs,
     project_docs,
     issue_docs,
+    intake_docs,
     asset_docs,
+    user_docs,
+    cycle_docs,
+    work_item_docs,
+    label_docs,
+    issue_link_docs,
+    issue_comment_docs,
+    issue_activity_docs,
+    issue_attachment_docs,
+    module_docs,
+    module_issue_docs,
+    state_docs,
 )
 
 # Schema processing hooks
@@ -70,10 +79,7 @@ __all__ = [
     # Parameters
     'WORKSPACE_SLUG_PARAMETER',
     'PROJECT_ID_PARAMETER', 
-    'ISSUE_ID_PARAMETER',
     'ASSET_ID_PARAMETER',
-    'CURSOR_PARAMETER',
-    'PER_PAGE_PARAMETER',
     
     # Responses
     'UNAUTHORIZED_RESPONSE',
@@ -100,7 +106,19 @@ __all__ = [
     'workspace_docs',
     'project_docs',
     'issue_docs',
+    'intake_docs',
     'asset_docs',
+    'user_docs',
+    'cycle_docs',
+    'work_item_docs',
+    'label_docs',
+    'issue_link_docs',
+    'issue_comment_docs',
+    'issue_activity_docs',
+    'issue_attachment_docs',
+    'module_docs',
+    'module_issue_docs',
+    'state_docs',
     
     # Hooks
     'preprocess_filter_api_v1_paths',

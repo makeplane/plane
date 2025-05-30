@@ -4,10 +4,7 @@ from django.db import IntegrityError
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from drf_spectacular.utils import (
-    extend_schema,
-    OpenApiResponse,
-)
+from drf_spectacular.utils import OpenApiResponse
 
 # Module imports
 from plane.api.serializers import StateSerializer
@@ -17,6 +14,7 @@ from .base import BaseAPIView
 from plane.utils.openapi import (
     UNAUTHORIZED_RESPONSE,
     FORBIDDEN_RESPONSE,
+    state_docs,
 )
 
 
@@ -40,18 +38,15 @@ class StateAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
-    @extend_schema(
+    @state_docs(
         operation_id="create_state",
-        tags=["States"],
         request=StateSerializer,
         responses={
             200: OpenApiResponse(
                 description="State created",
                 response=StateSerializer,
             ),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
-            404: OpenApiResponse(description="Project not found"),
+            400: OpenApiResponse(description="Invalid request data"),
             409: OpenApiResponse(description="State with the same name already exists"),
         },
     )
@@ -107,9 +102,8 @@ class StateAPIEndpoint(BaseAPIView):
                 status=status.HTTP_409_CONFLICT,
             )
 
-    @extend_schema(
+    @state_docs(
         operation_id="get_state",
-        tags=["States"],
         responses={
             200: OpenApiResponse(
                 description="State retrieved",
@@ -138,14 +132,11 @@ class StateAPIEndpoint(BaseAPIView):
             ).data,
         )
 
-    @extend_schema(
+    @state_docs(
         operation_id="delete_state",
-        tags=["States"],
         responses={
             204: OpenApiResponse(description="State deleted"),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
-            404: OpenApiResponse(description="State not found"),
+            400: OpenApiResponse(description="State cannot be deleted"),
         },
     )
     def delete(self, request, slug, project_id, state_id):
@@ -176,18 +167,16 @@ class StateAPIEndpoint(BaseAPIView):
         state.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @extend_schema(
+    @state_docs(
         operation_id="update_state",
-        tags=["States"],
         request=StateSerializer,
         responses={
             200: OpenApiResponse(
                 description="State updated",
                 response=StateSerializer,
             ),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
-            404: OpenApiResponse(description="State not found"),
+            400: OpenApiResponse(description="Invalid request data"),
+            409: OpenApiResponse(description="State with same external ID already exists"),
         },
     )
     def patch(self, request, slug, project_id, state_id=None):

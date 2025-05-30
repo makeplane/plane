@@ -47,16 +47,8 @@ from plane.utils.analytics_plot import burndown_plot
 from plane.utils.host import base_host
 from .base import BaseAPIView
 from plane.bgtasks.webhook_task import model_activity
-from drf_spectacular.utils import (
-    extend_schema,
-    OpenApiParameter,
-    OpenApiTypes,
-    OpenApiResponse,
-)
-from plane.utils.openapi import (
-    UNAUTHORIZED_RESPONSE,
-    FORBIDDEN_RESPONSE,
-)
+from drf_spectacular.utils import OpenApiResponse
+from plane.utils.openapi.decorators import cycle_docs
 
 
 class CycleAPIEndpoint(BaseAPIView):
@@ -151,17 +143,13 @@ class CycleAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
-    @extend_schema(
+    @cycle_docs(
         operation_id="get_cycles",
-        tags=["Cycles"],
         responses={
             200: OpenApiResponse(
                 description="Cycles",
                 response=CycleSerializer,
             ),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
-            404: OpenApiResponse(description="Project not found"),
         },
     )
     def get(self, request, slug, project_id, pk=None):
@@ -270,9 +258,8 @@ class CycleAPIEndpoint(BaseAPIView):
             ).data,
         )
 
-    @extend_schema(
+    @cycle_docs(
         operation_id="create_cycle",
-        tags=["Cycles"],
         request=CycleSerializer,
         responses={
             201: OpenApiResponse(
@@ -340,9 +327,8 @@ class CycleAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    @extend_schema(
+    @cycle_docs(
         operation_id="update_cycle",
-        tags=["Cycles"],
         request=CycleSerializer,
         responses={
             200: OpenApiResponse(
@@ -421,14 +407,10 @@ class CycleAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @extend_schema(
+    @cycle_docs(
         operation_id="delete_cycle",
-        tags=["Cycles"],
         responses={
             204: OpenApiResponse(description="Cycle deleted"),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
-            404: OpenApiResponse(description="Cycle not found"),
         },
     )
     def delete(self, request, slug, project_id, pk):
@@ -589,18 +571,14 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
-    @extend_schema(
+    @cycle_docs(
         operation_id="get_archived_cycles",
-        tags=["Cycles"],
         request={},
         responses={
             200: OpenApiResponse(
                 description="Archived cycles",
                 response=CycleSerializer,
             ),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
-            404: OpenApiResponse(description="Project not found"),
         },
     )
     def get(self, request, slug, project_id):
@@ -617,16 +595,12 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             ).data,
         )
 
-    @extend_schema(
+    @cycle_docs(
         operation_id="archive_cycle",
-        tags=["Cycles"],
         request={},
         responses={
             204: OpenApiResponse(description="Cycle archived"),
             400: OpenApiResponse(description="Cycle cannot be archived"),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
-            404: OpenApiResponse(description="Cycle not found"),
         },
     )
     def post(self, request, slug, project_id, cycle_id):
@@ -653,15 +627,11 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @extend_schema(
+    @cycle_docs(
         operation_id="unarchive_cycle",
-        tags=["Cycles"],
         request={},
         responses={
             204: OpenApiResponse(description="Cycle unarchived"),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
-            404: OpenApiResponse(description="Cycle not found"),
         },
     )
     def delete(self, request, slug, project_id, cycle_id):
@@ -715,9 +685,8 @@ class CycleIssueAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
-    @extend_schema(
+    @cycle_docs(
         operation_id="get_cycle_issues",
-        tags=["Cycles"],
     )
     def get(self, request, slug, project_id, cycle_id, issue_id=None):
         """List or retrieve cycle issues
@@ -785,9 +754,8 @@ class CycleIssueAPIEndpoint(BaseAPIView):
             ).data,
         )
 
-    @extend_schema(
+    @cycle_docs(
         operation_id="add_cycle_issues",
-        tags=["Cycles"],
         request=CycleIssueRequestSerializer,
         responses={
             200: OpenApiResponse(
@@ -795,9 +763,6 @@ class CycleIssueAPIEndpoint(BaseAPIView):
                 response=CycleIssueSerializer,
             ),
             400: OpenApiResponse(description="Issues are required"),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
-            404: OpenApiResponse(description="Cycle not found"),
         },
     )
     def post(self, request, slug, project_id, cycle_id):
@@ -891,9 +856,8 @@ class CycleIssueAPIEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
-    @extend_schema(
+    @cycle_docs(
         operation_id="delete_cycle_issue",
-        tags=["Cycles"],
     )
     def delete(self, request, slug, project_id, cycle_id, issue_id):
         """Remove cycle issue
@@ -934,9 +898,8 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
 
     permission_classes = [ProjectEntityPermission]
 
-    @extend_schema(
+    @cycle_docs(
         operation_id="transfer_cycle_issues",
-        tags=["Cycles"],
         request=TransferCycleIssueRequestSerializer,
         responses={
             200: OpenApiResponse(
@@ -963,9 +926,6 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                     },
                 },
             ),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
-            404: OpenApiResponse(description="Cycle not found"),
         },
     )
     def post(self, request, slug, project_id, cycle_id):

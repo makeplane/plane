@@ -456,9 +456,9 @@ if ENABLE_DRF_SPECTACULAR:
         "PREPROCESSING_HOOKS": [
             "plane.utils.openapi.hooks.preprocess_filter_api_v1_paths",
         ],
-        "POSTPROCESSING_HOOKS": [
-            "plane.utils.openapi.hooks.postprocess_assign_tags",
-        ],
+        # "POSTPROCESSING_HOOKS": [
+        #     "plane.utils.openapi.hooks.postprocess_assign_tags",
+        # ],
         "SERVERS": [{"url": "/api/v1", "description": "API v1"}],
         "TAGS": [
             {
@@ -470,8 +470,24 @@ if ENABLE_DRF_SPECTACULAR:
                 "description": "Work item management endpoints - create, update, assign, and track work items",
             },
             {
+                "name": "Work Item Links",
+                "description": "Work item link management endpoints - manage external links attached to work items",
+            },
+            {
+                "name": "Work Item Comments",
+                "description": "Work item comment management endpoints - manage comments and discussions on work items",
+            },
+            {
+                "name": "Work Item Activity",
+                "description": "Work item activity and search endpoints - track changes and search work items",
+            },
+            {
+                "name": "Work Item Attachments",
+                "description": "Work item attachment management endpoints - manage file attachments on work items",
+            },
+            {
                 "name": "Cycles",
-                "description": "Sprint/Cycle management endpoints - manage development cycles and sprints",
+                "description": "Cycle management endpoints - manage development cycles",
             },
             {
                 "name": "Modules",
@@ -483,7 +499,7 @@ if ENABLE_DRF_SPECTACULAR:
             },
             {
                 "name": "Labels",
-                "description": "Issue label management endpoints - categorize and organize issues",
+                "description": "Work item label management endpoints - categorize and organize work items",
             },
             {
                 "name": "Members",
@@ -499,7 +515,7 @@ if ENABLE_DRF_SPECTACULAR:
             },
             {
                 "name": "Intake",
-                "description": "Intake management endpoints - manage intake issues and intake issue details",
+                "description": "Intake management endpoints - manage work item intake and triage processes",
             },
         ],
         "AUTHENTICATION_WHITELIST": [

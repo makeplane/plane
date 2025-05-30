@@ -26,7 +26,7 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
 
     @extend_schema(
         operation_id="get_workspace_members",
-        tags=["Workspaces"],
+        tags=["Members"],
         parameters=[
             OpenApiParameter(
                 name="slug",
@@ -96,7 +96,7 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
 
     @extend_schema(
         operation_id="get_project_members",
-        tags=["Projects"],
+        tags=["Members"],
         parameters=[
             OpenApiParameter(
                 name="slug",

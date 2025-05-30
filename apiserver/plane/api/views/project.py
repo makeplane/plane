@@ -11,12 +11,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
-from drf_spectacular.utils import (
-    extend_schema,
-    OpenApiParameter,
-    OpenApiTypes,
-    OpenApiResponse,
-)
+from drf_spectacular.utils import OpenApiResponse
 
 
 # Module imports
@@ -37,7 +32,7 @@ from .base import BaseAPIView
 from plane.utils.host import base_host
 from plane.api.serializers import ProjectSerializer
 from plane.app.permissions import ProjectBasePermission
-from plane.utils.openapi import UNAUTHORIZED_RESPONSE, FORBIDDEN_RESPONSE
+from plane.utils.openapi.decorators import project_docs
 
 
 class ProjectAPIEndpoint(BaseAPIView):
@@ -111,16 +106,13 @@ class ProjectAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
-    @extend_schema(
+    @project_docs(
         operation_id="list_projects",
-        tags=["Projects"],
         responses={
             200: OpenApiResponse(
                 description="List of projects or project details",
                 response=ProjectSerializer,
             ),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
             404: OpenApiResponse(description="Project not found"),
         },
     )
@@ -161,17 +153,11 @@ class ProjectAPIEndpoint(BaseAPIView):
         serializer = ProjectSerializer(project, fields=self.fields, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @extend_schema(
+    @project_docs(
         operation_id="create_project",
-        tags=["Projects"],
         request=ProjectSerializer,
         responses={
-            201: OpenApiResponse(
-                description="Project created",
-                response=ProjectSerializer,
-            ),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
+            201: ProjectSerializer,
             404: OpenApiResponse(description="Workspace not found"),
             409: OpenApiResponse(description="Project name already taken"),
         },
@@ -296,33 +282,11 @@ class ProjectAPIEndpoint(BaseAPIView):
                 status=status.HTTP_409_CONFLICT,
             )
 
-    @extend_schema(
+    @project_docs(
         operation_id="update_project",
-        tags=["Projects"],
         request=ProjectSerializer,
-        parameters=[
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="pk",
-                description="Project ID",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-        ],
         responses={
-            200: OpenApiResponse(
-                description="Project updated",
-                response=ProjectSerializer,
-            ),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
+            200: ProjectSerializer,
             404: OpenApiResponse(description="Project not found"),
             409: OpenApiResponse(description="Project name already taken"),
         },
@@ -399,30 +363,10 @@ class ProjectAPIEndpoint(BaseAPIView):
                 status=status.HTTP_409_CONFLICT,
             )
 
-    @extend_schema(
+    @project_docs(
         operation_id="delete_project",
-        tags=["Projects"],
-        parameters=[
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="pk",
-                description="Project ID",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-        ],
         responses={
             204: OpenApiResponse(description="Project deleted"),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
-            404: OpenApiResponse(description="Project not found"),
         },
     )
     def delete(self, request, slug, pk):
@@ -456,31 +400,11 @@ class ProjectAPIEndpoint(BaseAPIView):
 class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectBasePermission]
 
-    @extend_schema(
+    @project_docs(
         operation_id="archive_project",
-        tags=["Projects"],
         request={},
-        parameters=[
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="project_id",
-                description="Project ID",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-        ],
         responses={
             204: OpenApiResponse(description="Project archived"),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
-            404: OpenApiResponse(description="Project not found"),
         },
     )
     def post(self, request, slug, project_id):
@@ -495,15 +419,11 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
         UserFavorite.objects.filter(workspace__slug=slug, project=project_id).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @extend_schema(
+    @project_docs(
         operation_id="unarchive_project",
-        tags=["Projects"],
         request={},
         responses={
             204: OpenApiResponse(description="Project unarchived"),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
-            404: OpenApiResponse(description="Project not found"),
         },
     )
     def delete(self, request, slug, project_id):

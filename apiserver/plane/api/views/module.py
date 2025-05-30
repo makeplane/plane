@@ -10,10 +10,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from drf_spectacular.utils import (
-    extend_schema,
-    OpenApiResponse,
-)
+from drf_spectacular.utils import OpenApiResponse
 
 # Module imports
 from plane.api.serializers import (
@@ -42,6 +39,8 @@ from plane.utils.host import base_host
 from plane.utils.openapi import (
     UNAUTHORIZED_RESPONSE,
     FORBIDDEN_RESPONSE,
+    module_docs,
+    module_issue_docs,
 )
 
 
@@ -145,18 +144,16 @@ class ModuleAPIEndpoint(BaseAPIView):
             .order_by(self.kwargs.get("order_by", "-created_at"))
         )
 
-    @extend_schema(
+    @module_docs(
         operation_id="create_module",
-        tags=["Modules"],
         request=ModuleSerializer,
         responses={
             201: OpenApiResponse(
                 description="Module created", response=ModuleSerializer
             ),
             400: OpenApiResponse(description="Invalid request"),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
             404: OpenApiResponse(description="Project not found"),
+            409: OpenApiResponse(description="Module with same external ID already exists"),
         },
     )
     def post(self, request, slug, project_id):
@@ -210,10 +207,19 @@ class ModuleAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @extend_schema(
+    @module_docs(
         operation_id="update_module",
-        tags=["Modules"],
         request=ModuleSerializer,
+        responses={
+            200: OpenApiResponse(
+                description="Module updated successfully", response=ModuleSerializer
+            ),
+            400: OpenApiResponse(
+                description="Invalid request data", response=ModuleSerializer
+            ),
+            404: OpenApiResponse(description="Module not found"),
+            409: OpenApiResponse(description="Module with same external ID already exists"),
+        },
     )
     def patch(self, request, slug, project_id, pk):
         """Update module
@@ -271,14 +277,11 @@ class ModuleAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @extend_schema(
+    @module_docs(
         operation_id="get_module",
-        tags=["Modules"],
         responses={
             200: OpenApiResponse(description="Module", response=ModuleSerializer),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
-            404: OpenApiResponse(description="Project not found"),
+            404: OpenApiResponse(description="Module not found"),
         },
     )
     def get(self, request, slug, project_id, pk=None):
@@ -301,9 +304,13 @@ class ModuleAPIEndpoint(BaseAPIView):
             ).data,
         )
 
-    @extend_schema(
+    @module_docs(
         operation_id="delete_module",
-        tags=["Modules"],
+        responses={
+            204: OpenApiResponse(description="Module deleted successfully"),
+            403: OpenApiResponse(description="Only admin or creator can delete"),
+            404: OpenApiResponse(description="Module not found"),
+        },
     )
     def delete(self, request, slug, project_id, pk):
         """Delete module
@@ -395,14 +402,11 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
-    @extend_schema(
+    @module_issue_docs(
         operation_id="get_module_issues",
-        tags=["Modules"],
         responses={
             200: OpenApiResponse(description="Module issues", response=IssueSerializer),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
-            404: OpenApiResponse(description="Project not found"),
+            404: OpenApiResponse(description="Module not found"),
         },
     )
     def get(self, request, slug, project_id, module_id):
@@ -456,15 +460,15 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
             ).data,
         )
 
-    @extend_schema(
+    @module_issue_docs(
         operation_id="add_module_issues",
-        tags=["Modules"],
         request=ModuleIssueRequestSerializer,
         responses={
             200: OpenApiResponse(
                 description="Module issues added", response=ModuleIssueSerializer
             ),
-            400: OpenApiResponse(description="Invalid request"),
+            400: OpenApiResponse(description="Issues are required"),
+            404: OpenApiResponse(description="Module not found"),
         },
     )
     def post(self, request, slug, project_id, module_id):
@@ -552,13 +556,10 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
-    @extend_schema(
+    @module_issue_docs(
         operation_id="delete_module_issue",
-        tags=["Modules"],
         responses={
             204: OpenApiResponse(description="Module issue deleted"),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
             404: OpenApiResponse(description="Module issue not found"),
         },
     )
@@ -681,16 +682,12 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             .order_by(self.kwargs.get("order_by", "-created_at"))
         )
 
-    @extend_schema(
+    @module_docs(
         operation_id="get_archived_modules",
-        tags=["Modules"],
-        request={},
         responses={
             200: OpenApiResponse(
                 description="Archived modules", response=ModuleSerializer
             ),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
             404: OpenApiResponse(description="Project not found"),
         },
     )
@@ -708,15 +705,12 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             ).data,
         )
 
-    @extend_schema(
+    @module_docs(
         operation_id="archive_module",
-        tags=["Modules"],
         request={},
         responses={
             204: OpenApiResponse(description="Module archived"),
-            400: OpenApiResponse(description="Invalid request"),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
+            400: OpenApiResponse(description="Only completed or cancelled modules can be archived"),
             404: OpenApiResponse(description="Module not found"),
         },
     )
@@ -742,13 +736,10 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @extend_schema(
+    @module_docs(
         operation_id="unarchive_module",
-        tags=["Modules"],
         responses={
             204: OpenApiResponse(description="Module unarchived"),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
             404: OpenApiResponse(description="Module not found"),
         },
     )

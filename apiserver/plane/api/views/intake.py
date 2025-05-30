@@ -12,7 +12,7 @@ from django.contrib.postgres.fields import ArrayField
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema, OpenApiResponse
+from drf_spectacular.utils import OpenApiResponse
 
 # Module imports
 from plane.api.serializers import (
@@ -30,6 +30,7 @@ from plane.db.models.intake import SourceType
 from plane.utils.openapi import (
     UNAUTHORIZED_RESPONSE,
     FORBIDDEN_RESPONSE,
+    intake_docs,
 )
 
 
@@ -71,16 +72,12 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
             .order_by(self.kwargs.get("order_by", "-created_at"))
         )
 
-    @extend_schema(
+    @intake_docs(
         operation_id="get_intake_issues",
-        tags=["Intake"],
         responses={
             200: OpenApiResponse(
                 description="Intake issues", response=IntakeIssueSerializer
             ),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
-            404: OpenApiResponse(description="Project not found"),
         },
     )
     def get(self, request, slug, project_id, issue_id=None):
@@ -104,18 +101,14 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
             ).data,
         )
 
-    @extend_schema(
+    @intake_docs(
         operation_id="create_intake_issue",
-        tags=["Intake"],
         request=CreateIntakeIssueRequestSerializer,
         responses={
             201: OpenApiResponse(
                 description="Intake issue created", response=IntakeIssueSerializer
             ),
             400: OpenApiResponse(description="Invalid request"),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
-            404: OpenApiResponse(description="Project not found"),
         },
     )
     def post(self, request, slug, project_id):
@@ -189,9 +182,8 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
         serializer = IntakeIssueSerializer(intake_issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @extend_schema(
+    @intake_docs(
         operation_id="update_intake_issue",
-        tags=["Intake"],
         request=UpdateIntakeIssueRequestSerializer,
     )
     def patch(self, request, slug, project_id, issue_id):
@@ -365,14 +357,10 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
                 IntakeIssueSerializer(intake_issue).data, status=status.HTTP_200_OK
             )
 
-    @extend_schema(
+    @intake_docs(
         operation_id="delete_intake_issue",
-        tags=["Intake"],
         responses={
             204: OpenApiResponse(description="Intake issue deleted"),
-            401: UNAUTHORIZED_RESPONSE,
-            403: FORBIDDEN_RESPONSE,
-            404: OpenApiResponse(description="Intake issue not found"),
         },
     )
     def delete(self, request, slug, project_id, issue_id):
