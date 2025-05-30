@@ -16,7 +16,7 @@ export const PROJECT_SETTINGS = {
   },
   members: {
     key: "members",
-    i18n_label: "members",
+    i18n_label: "common.members",
     href: `/members`,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/members/`,

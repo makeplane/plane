@@ -148,11 +148,13 @@ class ProjectMemberAdminSerializer(BaseSerializer):
         fields = "__all__"
 
 
-class ProjectMemberRoleSerializer(DynamicBaseSerializer):
+class ProjectMemberRoleSerializer(DynamicBaseSerializer): 
+    original_role = serializers.IntegerField(source='role', read_only=True)
+
     class Meta:
         model = ProjectMember
-        fields = ("id", "role", "member", "project", "created_at")
-        read_only_fields = ["created_at"]
+        fields = ("id", "role", "member", "project", "original_role", "created_at")
+        read_only_fields = ["original_role", "created_at"]
 
 
 class ProjectMemberInviteSerializer(BaseSerializer):

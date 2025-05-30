@@ -1,27 +1,27 @@
 "use client";
 
 import { observer } from "mobx-react";
-
+// plane imports
 import { PROJECT_MEMBER_LEAVE } from "@plane/constants";
 import { TOAST_TYPE, Table, setToast } from "@plane/ui";
 // components
 import { ConfirmProjectMemberRemove } from "@/components/project";
-// constants
-
 // hooks
 import { useEventTracker, useMember, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
 import { useProjectColumns } from "@/plane-web/components/projects/settings/useProjectColumns";
-import { IProjectMemberDetails } from "@/store/member/project-member.store";
+// store
+import { IProjectMemberDetails } from "@/store/member/base-project-member.store";
 
 type Props = {
   memberDetails: (IProjectMemberDetails | null)[];
+  projectId: string;
+  workspaceSlug: string;
 };
 
 export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
-  const { memberDetails } = props;
-  const { columns, workspaceSlug, projectId, removeMemberModal, setRemoveMemberModal } = useProjectColumns();
-
+  const { memberDetails, projectId, workspaceSlug } = props;
   // router
   const router = useAppRouter();
   // store hooks
@@ -31,7 +31,11 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
     project: { removeMemberFromProject },
   } = useMember();
   const { captureEvent } = useEventTracker();
-  // const { isMobile } = usePlatformOS();
+  // helper hooks
+  const { columns, removeMemberModal, setRemoveMemberModal } = useProjectColumns({
+    projectId,
+    workspaceSlug,
+  });
 
   const handleRemove = async (memberId: string) => {
     if (!workspaceSlug || !projectId || !memberId) return;

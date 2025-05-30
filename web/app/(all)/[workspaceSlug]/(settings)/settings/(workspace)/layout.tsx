@@ -21,18 +21,17 @@ export interface IWorkspaceSettingLayout {
 const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => {
   const { children } = props;
   // store hooks
-  const { workspaceUserInfo } = useUserPermissions();
+  const { workspaceUserInfo, getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   // next hooks
   const pathname = usePathname();
   // derived values
   const { workspaceSlug, accessKey } = pathnameToAccessKey(pathname);
-  const userWorkspaceRole = workspaceUserInfo?.[workspaceSlug.toString()]?.role;
+  const userWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug.toString());
 
-  const isAuthorized: boolean | string =
-    pathname &&
-    workspaceSlug &&
-    userWorkspaceRole &&
-    WORKSPACE_SETTINGS_ACCESS[accessKey]?.includes(userWorkspaceRole as EUserWorkspaceRoles);
+  let isAuthorized: boolean | string = false;
+  if (pathname && workspaceSlug && userWorkspaceRole) {
+    isAuthorized = WORKSPACE_SETTINGS_ACCESS[accessKey]?.includes(userWorkspaceRole as EUserWorkspaceRoles);
+  }
 
   return (
     <>

@@ -8,6 +8,7 @@ import { Loader } from "@plane/ui";
 import { cn } from "@/helpers/common.helper";
 import { useProject, useUserPermissions, useUserSettings } from "@/hooks/store";
 import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants/project";
+import { getProjectSettingsPageLabelI18nKey } from "@/plane-web/helpers/project-settings";
 
 export const NavItemChildren = observer((props: { projectId: string }) => {
   const { projectId } = props;
@@ -65,7 +66,7 @@ export const NavItemChildren = observer((props: { projectId: string }) => {
                       "text-sm font-medium"
                     )}
                   >
-                    {t(link.i18n_label)}
+                    {t(getProjectSettingsPageLabelI18nKey(link.key, link.i18n_label))}
                   </div>
                 </Link>
               )

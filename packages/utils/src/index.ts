@@ -8,6 +8,7 @@ export * from "./emoji";
 export * from "./file";
 export * from "./get-icon-for-link";
 export * from "./issue";
+export * from "./permission";
 export * from "./state";
 export * from "./string";
 export * from "./subscription";

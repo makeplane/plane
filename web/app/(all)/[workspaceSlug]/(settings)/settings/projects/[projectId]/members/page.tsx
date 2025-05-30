@@ -1,20 +1,32 @@
 "use client";
 
 import { observer } from "mobx-react";
-// components
+import { useParams } from "next/navigation";
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+// components
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { ProjectMemberList, ProjectSettingsMemberDefaults } from "@/components/project";
 // hooks
 import { SettingsContentWrapper } from "@/components/settings";
 import { useProject, useUserPermissions } from "@/hooks/store";
+// plane web imports
+import { ProjectTeamspaceList } from "@/plane-web/components/projects/teamspaces";
+import { getProjectSettingsPageLabelI18nKey } from "@/plane-web/helpers/project-settings";
 
 const MembersSettingsPage = observer(() => {
-  // store
+  // router
+  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
+  // plane hooks
+  const { t } = useTranslation();
+  // store hooks
   const { currentProjectDetails } = useProject();
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   // derived values
+  const projectId = routerProjectId?.toString();
+  const workspaceSlug = routerWorkspaceSlug?.toString();
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Members` : undefined;
   const isProjectMemberOrAdmin = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -31,8 +43,14 @@ const MembersSettingsPage = observer(() => {
     <SettingsContentWrapper size="lg">
       <PageHead title={pageTitle} />
       <section className={`w-full`}>
-        <ProjectSettingsMemberDefaults />
-        <ProjectMemberList />
+        <div className="flex items-center border-b border-custom-border-100 pb-3.5">
+          <div className="text-lg font-semibold">
+            {t(getProjectSettingsPageLabelI18nKey("members", "common.members"))}
+          </div>
+        </div>
+        <ProjectSettingsMemberDefaults projectId={projectId} workspaceSlug={workspaceSlug} />
+        <ProjectTeamspaceList projectId={projectId} workspaceSlug={workspaceSlug} />
+        <ProjectMemberList projectId={projectId} workspaceSlug={workspaceSlug} />
       </section>
     </SettingsContentWrapper>
   );
