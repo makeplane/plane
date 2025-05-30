@@ -78,6 +78,7 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^15.3.2",
     "@plane/eslint-config": "*",
     "@plane/tailwind-config": "*",
     "@plane/typescript-config": "*",

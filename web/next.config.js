@@ -3,6 +3,11 @@
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 require("dotenv").config({ path: ".env" });
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+});
+
 const nextConfig = {
   trailingSlash: true,
   reactStrictMode: false,
@@ -37,7 +42,115 @@ const nextConfig = {
       "lodash",
       "clsx",
       "tailwind-merge",
+      "recharts",
+      "axios",
+      "mobx",
+      "mobx-react",
     ],
+    // Enable modern bundling features
+    turbo: {
+      rules: {
+        "*.svg": {
+          loaders: ["@svgr/webpack"],
+          as: "*.js",
+        },
+      },
+    },
+  },
+  webpack: (config, { dev, isServer }) => {
+    // Apply aggressive optimizations only for client-side production builds
+    if (!dev && !isServer) {
+      // Enhanced tree shaking (client-side only)
+      config.optimization.usedExports = true;
+      config.optimization.sideEffects = false;
+      config.optimization.providedExports = true;
+      config.optimization.concatenateModules = true;
+
+      // Client-side chunk splitting strategy
+      config.optimization.splitChunks = {
+        chunks: "all",
+        minSize: 20000,
+        maxSize: 300000, // Increased from 200000 to reduce chunk fragmentation
+        maxAsyncRequests: 30,
+        maxInitialRequests: 25,
+        cacheGroups: {
+          // Framework chunks (React ecosystem)
+          react: {
+            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+            name: "react",
+            chunks: "all",
+            priority: 40,
+            enforce: true,
+          },
+          // Large UI libraries
+          ui: {
+            test: /[\\/]node_modules[\\/](@headlessui|@radix-ui|@blueprintjs)[\\/]/,
+            name: "ui-libs",
+            chunks: "all",
+            priority: 35,
+          },
+          // Chart libraries (async loading for better performance)
+          charts: {
+            test: /[\\/]node_modules[\\/](@nivo|recharts)[\\/]/,
+            name: "charts",
+            chunks: "async", // Only load when needed
+            priority: 30,
+            enforce: true,
+          },
+          // Editor libraries (async loading)
+          editor: {
+            test: /[\\/]node_modules[\\/](@tiptap|prosemirror|@plane\/editor)[\\/]/,
+            name: "editor",
+            chunks: "async", // Only load when needed
+            priority: 30,
+            enforce: true,
+          },
+          // Date/time libraries
+          date: {
+            test: /[\\/]node_modules[\\/](date-fns|react-day-picker)[\\/]/,
+            name: "date-libs",
+            chunks: "all",
+            priority: 25,
+          },
+          // Utility libraries
+          utils: {
+            test: /[\\/]node_modules[\\/](lodash|clsx|tailwind-merge|uuid)[\\/]/,
+            name: "utils",
+            chunks: "all",
+            priority: 20,
+          },
+          // Vendor chunks for other libraries
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: "vendors",
+            chunks: "all",
+            priority: 10,
+            minChunks: 2,
+          },
+          // Common application code
+          common: {
+            name: "common",
+            minChunks: 2,
+            chunks: "all",
+            priority: 5,
+            reuseExistingChunk: true,
+          },
+        },
+      };
+
+      // Additional client-side optimizations
+      config.optimization.moduleIds = "deterministic";
+      config.optimization.chunkIds = "deterministic";
+    }
+
+    // Universal optimizations (both client and server)
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      // Reduce bundle size by aliasing to smaller alternatives where possible
+      "react/jsx-runtime": require.resolve("react/jsx-runtime"),
+    };
+
+    return config;
   },
   transpilePackages: [
     "@plane/constants",
@@ -125,4 +238,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+module.exports = withBundleAnalyzer(nextConfig);
