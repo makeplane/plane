@@ -24,6 +24,7 @@ class StateSerializer(BaseSerializer):
             "workspace",
             "project",
             "deleted_at",
+            "slug",
         ]
 
 

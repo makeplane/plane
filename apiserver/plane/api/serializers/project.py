@@ -39,6 +39,7 @@ class ProjectCreateSerializer(BaseSerializer):
 
         read_only_fields = [
             "id",
+            "workspace",
             "created_at",
             "updated_at",
             "created_by",
@@ -93,6 +94,8 @@ class ProjectUpdateSerializer(ProjectCreateSerializer):
             "default_state",
             "estimate",
         ]
+
+        read_only_fields = ProjectCreateSerializer.Meta.read_only_fields
 
     def update(self, instance, validated_data):
         """Update a project"""
