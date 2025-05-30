@@ -11,6 +11,7 @@ import usePeekOverviewOutsideClickDetector from "@/hooks/use-peek-overview-outsi
 // local components
 import { useCustomers } from "@/plane-web/hooks/store";
 import { useEpics } from "@/plane-web/hooks/store/epics/use-epics";
+import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { EpicDetailRoot } from "../details/root";
 import { EpicPeekOverviewError } from "./error";
 import { EpicPeekOverviewHeader, TPeekModes } from "./header";
@@ -61,6 +62,9 @@ export const EpicView: FC<IEpicView> = observer((props) => {
   const { setPeekIssue: setIssuePeekIssue } = useIssueDetail();
   const { isAnyModalOpen: isAnyIssueModalOpen } = useIssueDetail();
   const { isAnyModalOpen: isAnyCustomerModalOpen } = useCustomers();
+  const {
+    initiative: { isInitiativeModalOpen },
+  } = useInitiatives();
   const issue = getIssueById(issueId);
   // remove peek id
   const removeRoutePeekId = () => {
@@ -79,7 +83,8 @@ export const EpicView: FC<IEpicView> = observer((props) => {
           !deleteEpicModal &&
           !editEpicModal &&
           !deleteModalId &&
-          !isAnyCustomerModalOpen
+          !isAnyCustomerModalOpen &&
+          !isInitiativeModalOpen
         ) {
           removeRoutePeekId();
         }

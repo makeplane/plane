@@ -4,6 +4,7 @@ import json
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
+
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import (
     F,
@@ -16,6 +17,7 @@ from django.db.models import (
     When,
     Count,
     Subquery,
+    Prefetch,
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -163,6 +165,12 @@ class EpicViewSet(BaseViewSet):
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
+            )
+            .prefetch_related(
+                Prefetch(
+                    "initiative_epics",
+                    queryset=InitiativeEpic.objects.filter(deleted_at__isnull=True),
+                )
             )
         ).distinct()
 
