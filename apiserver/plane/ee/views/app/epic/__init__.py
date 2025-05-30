@@ -21,3 +21,4 @@ from .update import (
     EpicsUpdateCommentsViewSet,
     EpicsUpdatesReactionViewSet,
 )
+from .subscriber import EpicSubscriberViewSet

@@ -17,6 +17,7 @@ from django.db.models import (
     When,
     Count,
     Subquery,
+    Exists,
     Prefetch,
 )
 from django.db.models.functions import Coalesce
@@ -40,6 +41,7 @@ from plane.db.models import (
     CycleIssue,
     ProjectIssueType,
     ProjectMember,
+    IssueSubscriber,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
@@ -360,7 +362,21 @@ class EpicViewSet(BaseViewSet):
     )
     @check_feature_flag(FeatureFlag.EPICS)
     def retrieve(self, request, slug, project_id, pk=None):
-        epic = self.get_queryset().filter(pk=pk).first()
+        epic = (
+            self.get_queryset()
+            .filter(pk=pk)
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                        issue_id=OuterRef("pk"),
+                        subscriber=request.user,
+                    )
+                )
+            )
+            .first()
+        )
         if not epic:
             return Response(
                 {"error": "The required object does not exist."},

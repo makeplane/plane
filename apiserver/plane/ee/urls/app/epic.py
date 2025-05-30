@@ -20,6 +20,7 @@ from plane.ee.views.app.epic import (
     EpicMetaEndpoint,
     EpicDetailIdentifierEndpoint,
     EpicDescriptionVersionEndpoint,
+    EpicSubscriberViewSet,
 )
 from plane.ee.views.app.epic_property import (
     WorkspaceEpicTypeEndpoint,
@@ -208,4 +209,13 @@ urlpatterns = [
         EpicDescriptionVersionEndpoint.as_view(),
         name="epic-description-versions",
     ),
+    # Epic Subscribers
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/epics/<uuid:epic_id>/subscribe/",
+        EpicSubscriberViewSet.as_view(
+            {"get": "subscription_status", "post": "subscribe", "delete": "unsubscribe"}
+        ),
+        name="project-epic-subscribers",
+    ),
+    ## End epic Subscribers
 ]

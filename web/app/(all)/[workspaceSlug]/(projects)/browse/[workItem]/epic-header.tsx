@@ -16,6 +16,7 @@ import { Breadcrumbs, EpicIcon, Header, Logo } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // helpers
+import { IssueSubscription } from "@/components/issues/issue-detail/subscription";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useIssueDetail, useProject, useUserPermissions } from "@/hooks/store";
@@ -119,6 +120,14 @@ export const EpicItemDetailsHeader = observer(() => {
         </div>
       </Header.LeftItem>
       <Header.RightItem>
+        {epicId && projectId && (
+          <IssueSubscription
+            workspaceSlug={workspaceSlug?.toString()}
+            projectId={projectId?.toString()}
+            issueId={epicId}
+            serviceType={EIssueServiceType.EPICS}
+          />
+        )}
         {issueDetails && (
           <div ref={parentRef} className="flex items-center gap-2">
             <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="WORK_ITEM_CONVERSION" fallback={<></>}>

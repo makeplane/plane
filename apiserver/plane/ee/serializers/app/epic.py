@@ -23,6 +23,7 @@ from plane.db.models import (
     IssueType,
     IssueComment,
     IssueReaction,
+    IssueSubscriber,
 )
 from plane.ee.models import EpicUserProperties, InitiativeEpic
 from plane.app.serializers import (
@@ -447,3 +448,10 @@ class EpicReactionSerializer(BaseSerializer):
         model = IssueReaction
         fields = "__all__"
         read_only_fields = ["workspace", "project", "issue", "actor", "deleted_at"]
+
+
+class EpicSubscriberSerializer(BaseSerializer):
+    class Meta:
+        model = IssueSubscriber
+        fields = "__all__"
+        read_only_fields = ["workspace", "project", "issue"]
