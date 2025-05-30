@@ -24,6 +24,7 @@ import { TProject } from "@/plane-web/types/projects";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 // local imports
 import ProjectAttributes from "./attributes";
+import { ProjectCreateLoader } from "./loader";
 import { ProjectCreationProvider } from "./provider";
 
 export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) => (
@@ -37,7 +38,7 @@ export const CreateProjectFormBase: FC<TCreateProjectFormProps> = observer((prop
   // store
   const { captureProjectEvent } = useEventTracker();
   const { addProjectToFavorites, createProject } = useProject();
-  const { createProjectUsingTemplate } = useProjectAdvanced();
+  const { projectCreationLoader, createProjectUsingTemplate } = useProjectAdvanced();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
   // store hooks
@@ -117,7 +118,12 @@ export const CreateProjectFormBase: FC<TCreateProjectFormProps> = observer((prop
     }
 
     const createProjectService = projectTemplateId
-      ? createProjectUsingTemplate.bind(createProjectUsingTemplate, workspaceSlug.toString(), projectTemplateId)
+      ? createProjectUsingTemplate.bind(
+          createProjectUsingTemplate,
+          workspaceSlug.toString(),
+          projectTemplateId,
+          handleNextStep
+        )
       : createProject.bind(createProject, workspaceSlug.toString());
 
     return createProjectService(formData)
@@ -146,7 +152,9 @@ export const CreateProjectFormBase: FC<TCreateProjectFormProps> = observer((prop
         if (setToFavorite) {
           handleAddToFavorites(res.id);
         }
-        handleNextStep(res.id);
+        if (!projectTemplateId) {
+          handleNextStep(res.id);
+        }
       })
       .catch((err) => {
         Object.keys(err?.data ?? {}).map((key) => {
@@ -175,6 +183,11 @@ export const CreateProjectFormBase: FC<TCreateProjectFormProps> = observer((prop
   };
 
   if (!currentWorkspace) return null;
+
+  if (projectCreationLoader) {
+    return <ProjectCreateLoader />;
+  }
+
   return (
     <FormProvider {...methods}>
       <div className="p-3">

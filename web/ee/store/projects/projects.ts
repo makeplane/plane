@@ -23,6 +23,7 @@ export interface IProjectStore {
   attachmentStore: IProjectAttachmentStore;
   featuresLoader: boolean;
   features: Record<string, TProjectFeatures>; // projectId -> project features
+  projectCreationLoader: boolean;
   // computed methods
   isProjectFeatureEnabled: (projectId: string, featureKey: keyof TProjectFeaturesList) => boolean;
   // helpers
@@ -34,7 +35,12 @@ export interface IProjectStore {
     data: Partial<TProjectFeaturesList>,
     shouldSync?: boolean
   ) => Promise<void>;
-  createProjectUsingTemplate: (workspaceSlug: string, templateId: string, data: Partial<TProject>) => Promise<TProject>;
+  createProjectUsingTemplate: (
+    workspaceSlug: string,
+    templateId: string,
+    handleNextStep: (projectId: string) => void,
+    data: Partial<TProject>
+  ) => Promise<TProject>;
   fetchProjectFeatures: (workspaceSlug: string) => Promise<void>;
   fetchProjectAttributes: (
     workspaceSlug: string,
@@ -48,6 +54,7 @@ export interface IProjectStore {
 export class ProjectStore implements IProjectStore {
   features: Record<string, TProjectFeatures> = {};
   featuresLoader: boolean = false;
+  projectCreationLoader: boolean = false;
   //store
   rootStore: RootStore;
   linkStore: IProjectLinkStore;
@@ -61,6 +68,7 @@ export class ProjectStore implements IProjectStore {
       // observables
       featuresLoader: observable.ref,
       features: observable,
+      projectCreationLoader: observable,
       // actions
       createProjectUsingTemplate: action,
       fetchProjectFeatures: action,
@@ -121,12 +129,22 @@ export class ProjectStore implements IProjectStore {
    * Creates a project in the workspace using a template
    * @param workspaceSlug
    * @param templateId
+   * @param handleNextStep
    * @param data
    * @returns Promise<TProject>
    */
-  createProjectUsingTemplate = async (workspaceSlug: string, templateId: string, data: Partial<TProject>) => {
+  createProjectUsingTemplate = async (
+    workspaceSlug: string,
+    templateId: string,
+    handleNextStep: (projectId: string) => void,
+    data: Partial<TProject>
+  ) => {
     try {
       const response = await this.projectService.createProjectUsingTemplate(workspaceSlug, templateId, data);
+      this.projectCreationLoader = true;
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      handleNextStep(response.id);
+      this.projectCreationLoader = false;
       this.rootStore.projectRoot.project.processProjectAfterCreation(workspaceSlug, response);
 
       // Get template detail to set project features
@@ -146,6 +164,7 @@ export class ProjectStore implements IProjectStore {
 
       return response;
     } catch (error) {
+      this.projectCreationLoader = false;
       console.error("Error creating project using template", error);
       throw error;
     }
