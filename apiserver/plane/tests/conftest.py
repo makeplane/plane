@@ -7,7 +7,7 @@ from plane.db.models.api import APIToken
 
 
 @pytest.fixture(scope="session")
-def django_db_setup(django_db_setup):
+def django_db_setup(django_db_setup):  # noqa: F811
     """Set up the Django database for the test session"""
     pass
 
@@ -25,7 +25,7 @@ def user_data():
         "email": "test@plane.so",
         "password": "test-password",
         "first_name": "Test",
-        "last_name": "User"
+        "last_name": "User",
     }
 
 
@@ -35,7 +35,7 @@ def create_user(db, user_data):
     user = User.objects.create(
         email=user_data["email"],
         first_name=user_data["first_name"],
-        last_name=user_data["last_name"]
+        last_name=user_data["last_name"],
     )
     user.set_password(user_data["password"])
     user.save()
