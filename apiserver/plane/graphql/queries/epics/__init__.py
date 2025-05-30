@@ -6,3 +6,4 @@ from .work_item import EpicWorkItemsQuery
 from .relation import EpicRelationQuery
 from .activity import EpicActivityQuery
 from .comment import EpicCommentQuery
+from .comment_reaction import EpicCommentReactionQuery

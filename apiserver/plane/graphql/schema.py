@@ -75,6 +75,7 @@ from .queries.epics import (
     EpicRelationQuery,
     EpicActivityQuery,
     EpicCommentQuery,
+    EpicCommentReactionQuery,
 )
 
 # mutations
@@ -142,6 +143,7 @@ from .mutations.epics import (
     EpicWorkItemsMutation,
     EpicRelationMutation,
     EpicCommentMutation,
+    EpicCommentReactionMutation,
 )
 from .mutations.auth import SetPasswordMutation
 
@@ -218,6 +220,7 @@ class Query(
     EpicRelationQuery,
     EpicActivityQuery,
     EpicCommentQuery,
+    EpicCommentReactionQuery,
     # workspace invites
     WorkspaceInviteQuery,
     PublicWorkspaceInviteQuery,
@@ -280,6 +283,7 @@ class Mutation(
     EpicWorkItemsMutation,
     EpicRelationMutation,
     EpicCommentMutation,
+    EpicCommentReactionMutation,
     # auth
     SetPasswordMutation,
     # workspace invites
