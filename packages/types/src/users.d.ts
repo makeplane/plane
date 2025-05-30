@@ -12,6 +12,7 @@ export interface IUserLite {
   id: string;
   is_bot: boolean;
   last_name: string;
+  joining_date?: string;
 }
 export interface IUser extends IUserLite {
   // only for uploading the cover image
