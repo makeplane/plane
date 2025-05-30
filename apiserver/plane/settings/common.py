@@ -505,17 +505,5 @@ if ENABLE_DRF_SPECTACULAR:
         "AUTHENTICATION_WHITELIST": [
             "plane.api.middleware.api_authentication.APIKeyAuthentication",
         ],
-        "SECURITY": [
-            {
-                "apiKeyAuth": {
-                    "type": "apiKey",
-                    "in": "header",
-                    "name": "X-API-Key",
-                }
-            },
-        ],
-        "EXTENSIONS_INFO": {
-            "plane.utils.openapi_spec_helpers.APIKeyAuthenticationExtension": {},
-        },
         "SCHEMA_CACHE_TIMEOUT": 0,  # disables caching
     }
