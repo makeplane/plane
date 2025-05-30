@@ -20,6 +20,7 @@ from plane.api.serializers import (
     IssueSerializer,
     ModuleIssueSerializer,
     ModuleSerializer,
+    ModuleIssueRequestSerializer,
 )
 from plane.app.permissions import ProjectEntityPermission
 from plane.bgtasks.issue_activities_task import issue_activity
@@ -147,67 +148,7 @@ class ModuleAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="create_module",
         tags=["Modules"],
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "description": "Module name",
-                        "maxLength": 255,
-                        "example": "Module 1",
-                    },
-                    "description": {
-                        "type": "string",
-                        "description": "Module description",
-                        "nullable": True,
-                        "example": "This is a module description",
-                    },
-                    "start_date": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "Start date",
-                        "nullable": True,
-                        "example": "2025-01-01T00:00:00Z",
-                    },
-                    "target_date": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "Target date",
-                        "nullable": True,
-                        "example": "2025-01-01T00:00:00Z",
-                    },
-                    "status": {
-                        "type": "string",
-                        "description": "Module status",
-                        "enum": [
-                            "backlog",
-                            "planned",
-                            "in-progress",
-                            "paused",
-                            "completed",
-                            "cancelled",
-                        ],
-                        "example": "planned",
-                    },
-                    "lead": {
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "Lead user ID",
-                        "nullable": True,
-                        "example": "123e4567-e89b-12d3-a456-426614174000",
-                    },
-                    "members": {
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "uuid",
-                            "description": "Member user ID",
-                        },
-                    },
-                },
-            }
-        },
+        request=ModuleSerializer,
         responses={
             201: OpenApiResponse(
                 description="Module created", response=ModuleSerializer
@@ -272,67 +213,7 @@ class ModuleAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="update_module",
         tags=["Modules"],
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "description": "Module name",
-                        "maxLength": 255,
-                        "example": "Module 1",
-                    },
-                    "description": {
-                        "type": "string",
-                        "description": "Module description",
-                        "nullable": True,
-                        "example": "This is a module description",
-                    },
-                    "start_date": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "Start date",
-                        "nullable": True,
-                        "example": "2025-01-01T00:00:00Z",
-                    },
-                    "target_date": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "Target date",
-                        "nullable": True,
-                        "example": "2025-01-01T00:00:00Z",
-                    },
-                    "status": {
-                        "type": "string",
-                        "description": "Module status",
-                        "enum": [
-                            "backlog",
-                            "planned",
-                            "in-progress",
-                            "paused",
-                            "completed",
-                            "cancelled",
-                        ],
-                        "example": "planned",
-                    },
-                    "lead": {
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "Lead user ID",
-                        "nullable": True,
-                        "example": "123e4567-e89b-12d3-a456-426614174000",
-                    },
-                    "members": {
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "uuid",
-                            "description": "Member user ID",
-                        },
-                    },
-                },
-            },
-        },
+        request=ModuleSerializer,
     )
     def patch(self, request, slug, project_id, pk):
         """Update module
@@ -578,21 +459,7 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="add_module_issues",
         tags=["Modules"],
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "issues": {
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "uuid",
-                            "description": "Issue ID",
-                        },
-                    },
-                },
-            },
-        },
+        request=ModuleIssueRequestSerializer,
         responses={
             200: OpenApiResponse(
                 description="Module issues added", response=ModuleIssueSerializer

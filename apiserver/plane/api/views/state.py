@@ -43,48 +43,7 @@ class StateAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="create_state",
         tags=["States"],
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "description": "State name",
-                        "maxLength": 255,
-                        "example": "State 1",
-                    },
-                    "description": {
-                        "type": "string",
-                        "description": "State description",
-                        "nullable": True,
-                        "example": "This is a state description",
-                    },
-                    "color": {
-                        "type": "string",
-                        "description": "State color",
-                        "example": "#000000",
-                    },
-                    "group": {
-                        "type": "string",
-                        "description": "State group",
-                        "enum": [
-                            "backlog",
-                            "unstarted",
-                            "started",
-                            "completed",
-                            "cancelled",
-                            "triage",
-                        ],
-                        "example": "backlog",
-                    },
-                    "default": {
-                        "type": "boolean",
-                        "description": "Default state",
-                        "example": False,
-                    },
-                },
-            },
-        },
+        request=StateSerializer,
         responses={
             200: OpenApiResponse(
                 description="State created",
@@ -220,48 +179,7 @@ class StateAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="update_state",
         tags=["States"],
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "description": "State name",
-                        "maxLength": 255,
-                        "example": "State 1",
-                    },
-                    "description": {
-                        "type": "string",
-                        "description": "State description",
-                        "nullable": True,
-                        "example": "This is a state description",
-                    },
-                    "color": {
-                        "type": "string",
-                        "description": "State color",
-                        "example": "#000000",
-                    },
-                    "group": {
-                        "type": "string",
-                        "description": "State group",
-                        "enum": [
-                            "backlog",
-                            "unstarted",
-                            "started",
-                            "completed",
-                            "cancelled",
-                            "triage",
-                        ],
-                        "example": "backlog",
-                    },
-                    "default": {
-                        "type": "boolean",
-                        "description": "Default state",
-                        "example": False,
-                    },
-                },
-            },
-        },
+        request=StateSerializer,
         responses={
             200: OpenApiResponse(
                 description="State updated",

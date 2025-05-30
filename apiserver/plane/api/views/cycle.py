@@ -25,7 +25,12 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.api.serializers import CycleIssueSerializer, CycleSerializer
+from plane.api.serializers import (
+    CycleIssueSerializer, 
+    CycleSerializer,
+    CycleIssueRequestSerializer,
+    TransferCycleIssueRequestSerializer,
+)
 from plane.app.permissions import ProjectEntityPermission
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
@@ -268,40 +273,7 @@ class CycleAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="create_cycle",
         tags=["Cycles"],
-        request={
-            "application/json": {
-                "type": "object",
-                "required": ["name"],
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "description": "Cycle Name",
-                        "maxLength": 255,
-                        "example": "Cycle 1",
-                    },
-                    "description": {
-                        "type": "string",
-                        "description": "Cycle Description",
-                        "nullable": True,
-                        "example": "This is a cycle description",
-                    },
-                    "start_date": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "Start Date",
-                        "nullable": True,
-                        "example": "2025-01-01T00:00:00Z",
-                    },
-                    "end_date": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "End Date",
-                        "nullable": True,
-                        "example": "2025-01-01T00:00:00Z",
-                    },
-                },
-            },
-        },
+        request=CycleSerializer,
         responses={
             201: OpenApiResponse(
                 description="Cycle created",
@@ -371,39 +343,7 @@ class CycleAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="update_cycle",
         tags=["Cycles"],
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "description": "Cycle Name",
-                        "maxLength": 255,
-                        "example": "Cycle 1",
-                    },
-                    "description": {
-                        "type": "string",
-                        "description": "Cycle Description",
-                        "nullable": True,
-                        "example": "This is a cycle description",
-                    },
-                    "start_date": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "Start Date",
-                        "nullable": True,
-                        "example": "2025-01-01T00:00:00Z",
-                    },
-                    "end_date": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "End Date",
-                        "nullable": True,
-                        "example": "2025-01-01T00:00:00Z",
-                    },
-                },
-            }
-        },
+        request=CycleSerializer,
         responses={
             200: OpenApiResponse(
                 description="Cycle updated",
@@ -848,21 +788,7 @@ class CycleIssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="add_cycle_issues",
         tags=["Cycles"],
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "issues": {
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "uuid",
-                            "description": "Issue ID",
-                        },
-                    },
-                },
-            },
-        },
+        request=CycleIssueRequestSerializer,
         responses={
             200: OpenApiResponse(
                 description="Cycle issues added",
@@ -1011,18 +937,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="transfer_cycle_issues",
         tags=["Cycles"],
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "new_cycle_id": {
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "ID of the target cycle to transfer issues to",
-                    },
-                },
-            },
-        },
+        request=TransferCycleIssueRequestSerializer,
         responses={
             200: OpenApiResponse(
                 description="Issues transferred successfully",

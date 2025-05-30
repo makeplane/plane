@@ -464,3 +464,25 @@ class IssueExpandSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+
+
+class IssueAttachmentUploadSerializer(serializers.Serializer):
+    """Serializer for issue attachment upload requests"""
+    name = serializers.CharField(
+        help_text="Original filename of the asset"
+    )
+    type = serializers.CharField(
+        required=False,
+        help_text="MIME type of the file"
+    )
+    size = serializers.IntegerField(
+        help_text="File size in bytes"
+    )
+    external_id = serializers.CharField(
+        required=False,
+        help_text="External identifier for the asset (for integration tracking)"
+    )
+    external_source = serializers.CharField(
+        required=False,
+        help_text="External source system (for integration tracking)"
+    )

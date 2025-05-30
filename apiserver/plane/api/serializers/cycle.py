@@ -88,3 +88,18 @@ class CycleLiteSerializer(BaseSerializer):
     class Meta:
         model = Cycle
         fields = "__all__"
+
+
+class CycleIssueRequestSerializer(serializers.Serializer):
+    """Serializer for adding/managing cycle issues"""
+    issues = serializers.ListField(
+        child=serializers.UUIDField(),
+        help_text="List of issue IDs to add to the cycle"
+    )
+
+
+class TransferCycleIssueRequestSerializer(serializers.Serializer):
+    """Serializer for transferring cycle issues to another cycle"""
+    new_cycle_id = serializers.UUIDField(
+        help_text="ID of the target cycle to transfer issues to"
+    )

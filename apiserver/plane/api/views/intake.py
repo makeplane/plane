@@ -15,7 +15,12 @@ from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema, OpenApiResponse
 
 # Module imports
-from plane.api.serializers import IntakeIssueSerializer, IssueSerializer
+from plane.api.serializers import (
+    IntakeIssueSerializer, 
+    IssueSerializer,
+    CreateIntakeIssueRequestSerializer,
+    UpdateIntakeIssueRequestSerializer,
+)
 from plane.app.permissions import ProjectLitePermission
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import Intake, IntakeIssue, Issue, Project, ProjectMember, State
@@ -102,47 +107,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="create_intake_issue",
         tags=["Intake"],
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "issue": {
-                        "type": "object",
-                        "properties": {
-                            "issue": {
-                                "type": "object",
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "description": "Issue name",
-                                        "maxLength": 255,
-                                        "example": "Issue 1",
-                                    },
-                                    "description_html": {
-                                        "type": "string",
-                                        "description": "Issue description HTML",
-                                        "nullable": True,
-                                        "example": "<p>This is an issue description</p>",
-                                    },
-                                    "priority": {
-                                        "type": "string",
-                                        "description": "Issue priority",
-                                        "enum": [
-                                            "low",
-                                            "medium",
-                                            "high",
-                                            "urgent",
-                                            "none",
-                                        ],
-                                        "example": "low",
-                                    },
-                                },
-                            }
-                        },
-                    },
-                },
-            },
-        },
+        request=CreateIntakeIssueRequestSerializer,
         responses={
             201: OpenApiResponse(
                 description="Intake issue created", response=IntakeIssueSerializer
@@ -227,36 +192,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="update_intake_issue",
         tags=["Intake"],
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "issue": {
-                        "type": "object",
-                        "properties": {
-                            "name": {
-                                "type": "string",
-                                "description": "Issue name",
-                                "maxLength": 255,
-                                "example": "Issue 1",
-                            },
-                            "description_html": {
-                                "type": "string",
-                                "description": "Issue description HTML",
-                                "nullable": True,
-                                "example": "<p>This is an issue description</p>",
-                            },
-                            "priority": {
-                                "type": "string",
-                                "description": "Issue priority",
-                                "enum": ["low", "medium", "high", "urgent", "none"],
-                                "example": "low",
-                            },
-                        },
-                    },
-                },
-            },
-        },
+        request=UpdateIntakeIssueRequestSerializer,
     )
     def patch(self, request, slug, project_id, issue_id):
         """Update intake issue

@@ -177,3 +177,11 @@ class ModuleLiteSerializer(BaseSerializer):
     class Meta:
         model = Module
         fields = "__all__"
+
+
+class ModuleIssueRequestSerializer(serializers.Serializer):
+    """Serializer for module issue request bodies"""
+    issues = serializers.ListField(
+        child=serializers.UUIDField(),
+        help_text="List of issue IDs to add to the module"
+    )

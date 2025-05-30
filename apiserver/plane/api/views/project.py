@@ -164,68 +164,7 @@ class ProjectAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="create_project",
         tags=["Projects"],
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "description": "Project name",
-                        "maxLength": 255,
-                        "example": "Project 1",
-                    },
-                    "identifier": {
-                        "type": "string",
-                        "description": "Project identifier",
-                        "maxLength": 255,
-                        "example": "project-1",
-                    },
-                    "description": {
-                        "type": "string",
-                        "description": "Project description",
-                        "nullable": True,
-                        "example": "This is a project description",
-                    },
-                    "project_lead": {
-                        "type": "string",
-                        "description": "Project lead",
-                        "format": "uuid",
-                        "example": "123e4567-e89b-12d3-a456-426614174000",
-                    },
-                    "intake_view": {
-                        "type": "boolean",
-                        "description": "Intake view",
-                        "example": False,
-                    },
-                    "module_view": {
-                        "type": "boolean",
-                        "description": "Module view",
-                        "example": True,
-                    },
-                    "cycle_view": {
-                        "type": "boolean",
-                        "description": "Cycle view",
-                        "example": True,
-                    },
-                    "issue_views_view": {
-                        "type": "boolean",
-                        "description": "Issue views view",
-                        "example": True,
-                    },
-                    "page_view": {
-                        "type": "boolean",
-                        "description": "Page view",
-                        "example": True,
-                    },
-                    "network": {
-                        "type": "integer",
-                        "description": "Network",
-                        "enum": [0, 2],
-                        "example": 2,
-                    },
-                },
-            },
-        },
+        request=ProjectSerializer,
         responses={
             201: OpenApiResponse(
                 description="Project created",
@@ -360,6 +299,7 @@ class ProjectAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="update_project",
         tags=["Projects"],
+        request=ProjectSerializer,
         parameters=[
             OpenApiParameter(
                 name="slug",

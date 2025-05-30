@@ -35,6 +35,7 @@ from plane.api.serializers import (
     IssueLinkSerializer,
     IssueSerializer,
     LabelSerializer,
+    IssueAttachmentUploadSerializer,
 )
 from plane.app.permissions import (
     ProjectEntityPermission,
@@ -683,17 +684,7 @@ class LabelAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="create_label",
         tags=["Labels"],
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "name": {"type": "string"},
-                    "color": {"type": "string"},
-                    "description": {"type": "string"},
-                },
-                "required": ["name", "color", "description"],
-            },
-        },
+        request=LabelSerializer,
         parameters=[
             OpenApiParameter(
                 name="slug",
@@ -814,16 +805,7 @@ class LabelAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="update_label",
         tags=["Labels"],
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "name": {"type": "string"},
-                    "color": {"type": "string"},
-                    "description": {"type": "string"},
-                },
-            }
-        },
+        request=LabelSerializer,
         parameters=[
             OpenApiParameter(
                 name="slug",
@@ -1006,17 +988,7 @@ class IssueLinkAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="create_issue_link",
         tags=["Issue Links"],
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "url": {"type": "string"},
-                    "title": {"type": "string"},
-                    "metadata": {"type": "object"},
-                },
-                "required": ["url", "title", "metadata"],
-            },
-        },
+        request=IssueLinkSerializer,
         parameters=[
             OpenApiParameter(
                 name="slug",
@@ -1073,17 +1045,7 @@ class IssueLinkAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="update_issue_link",
         tags=["Issue Links"],
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "url": {"type": "string"},
-                    "title": {"type": "string"},
-                    "metadata": {"type": "object"},
-                },
-                "required": ["url", "title", "metadata"],
-            },
-        },
+        request=IssueLinkSerializer,
         parameters=[
             OpenApiParameter(
                 name="slug",
@@ -1292,13 +1254,7 @@ class IssueCommentAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="create_issue_comment",
         tags=["Issue Comments"],
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {"comment_html": {"type": "string"}},
-                "required": ["comment_html"],
-            },
-        },
+        request=IssueCommentSerializer,
         parameters=[
             OpenApiParameter(
                 name="slug",
@@ -1386,13 +1342,7 @@ class IssueCommentAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="update_issue_comment",
         tags=["Issue Comments"],
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {"comment_html": {"type": "string"}},
-                "required": ["comment_html"],
-            },
-        },
+        request=IssueCommentSerializer,
         parameters=[
             OpenApiParameter(
                 name="slug",
@@ -1638,27 +1588,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
                 location=OpenApiParameter.PATH,
             ),
         ],
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "description": "Original filename of the asset",
-                    },
-                    "type": {"type": "string", "description": "MIME type of the file"},
-                    "size": {"type": "integer", "description": "File size in bytes"},
-                    "external_id": {
-                        "type": "string",
-                        "description": "External identifier for the asset (for integration tracking)",
-                    },
-                    "external_source": {
-                        "type": "string",
-                        "description": "External source system (for integration tracking)",
-                    },
-                },
-            },
-        },
+        request=IssueAttachmentUploadSerializer,
         responses={
             200: OpenApiResponse(
                 description="Presigned download URL generated successfully",
