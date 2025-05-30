@@ -57,7 +57,9 @@ class YourWorkQuery:
                 projects__project_projectmember__is_active=True,
                 archived_at__isnull=True,
                 owned_by_id=user_id,
-            ).values_list("id", flat=True)
+            )
+            .filter(moved_to_page__isnull=True)
+            .values_list("id", flat=True)
         )
 
         your_work = WorkspaceYourWorkType(
