@@ -29,6 +29,7 @@ export const getReadOnlyEditorFileHandlers = (args: Pick<TArgs, "anchor" | "work
   const { anchor, workspaceId } = args;
 
   return {
+    checkIfAssetExists: async () => true,
     getAssetSrc: async (path) => {
       if (!path) return "";
       if (path?.startsWith("http")) {

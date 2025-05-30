@@ -707,3 +707,14 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
                 pass
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class AssetCheckEndpoint(BaseAPIView):
+    """Endpoint to check if an asset exists."""
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def get(self, request, slug, asset_id):
+        asset = FileAsset.all_objects.filter(
+            id=asset_id, workspace__slug=slug, deleted_at__isnull=True
+        ).exists()
+        return Response({"exists": asset}, status=status.HTTP_200_OK)
