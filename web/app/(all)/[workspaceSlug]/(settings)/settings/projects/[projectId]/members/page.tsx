@@ -1,0 +1,41 @@
+"use client";
+
+import { observer } from "mobx-react";
+// components
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { NotAuthorizedView } from "@/components/auth-screens";
+import { PageHead } from "@/components/core";
+import { ProjectMemberList, ProjectSettingsMemberDefaults } from "@/components/project";
+// hooks
+import { SettingsContentWrapper } from "@/components/settings";
+import { useProject, useUserPermissions } from "@/hooks/store";
+
+const MembersSettingsPage = observer(() => {
+  // store
+  const { currentProjectDetails } = useProject();
+  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
+  // derived values
+  const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Members` : undefined;
+  const isProjectMemberOrAdmin = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
+  const isWorkspaceAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const canPerformProjectMemberActions = isProjectMemberOrAdmin || isWorkspaceAdmin;
+
+  if (workspaceUserInfo && !canPerformProjectMemberActions) {
+    return <NotAuthorizedView section="settings" isProjectView className="h-auto" />;
+  }
+
+  return (
+    <SettingsContentWrapper size="lg">
+      <PageHead title={pageTitle} />
+      <section className={`w-full`}>
+        <ProjectSettingsMemberDefaults />
+        <ProjectMemberList />
+      </section>
+    </SettingsContentWrapper>
+  );
+});
+
+export default MembersSettingsPage;

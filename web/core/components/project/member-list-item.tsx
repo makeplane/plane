@@ -78,9 +78,9 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
         data={(memberDetails?.filter((member): member is IProjectMemberDetails => member !== null) ?? []) as any}
         keyExtractor={(rowData) => rowData?.member.id ?? ""}
         tHeadClassName="border-b border-custom-border-100"
-        thClassName="text-left font-medium divide-x-0"
+        thClassName="text-left font-medium divide-x-0 text-custom-text-400"
         tBodyClassName="divide-y-0"
-        tBodyTrClassName="divide-x-0"
+        tBodyTrClassName="divide-x-0 p-4 h-[40px] text-custom-text-200"
         tHeadTrClassName="divide-x-0"
       />
     </>

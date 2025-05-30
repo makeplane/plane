@@ -8,7 +8,7 @@ import { Transition, Dialog } from "@headlessui/react";
 // plane imports
 import { ACCEPTED_AVATAR_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
 import { EFileAssetType } from "@plane/types/src/enums";
-import { Button } from "@plane/ui";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { getAssetIdFromUrl, getFileURL } from "@/helpers/file.helper";
 import { checkURLValidity } from "@/helpers/string.helper";
@@ -71,9 +71,13 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
       );
       updateWorkspaceLogo(workspaceSlug.toString(), asset_url);
       onSuccess(asset_url);
-    } catch (error) {
+    } catch (error: any) {
       console.log("error", error);
-      throw new Error("Error in uploading file.");
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error",
+        message: error.error || "Something went wrong",
+      });
     } finally {
       setIsImageUploading(false);
     }

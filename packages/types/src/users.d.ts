@@ -79,6 +79,8 @@ export interface IUserSettings {
   workspace: {
     last_workspace_id: string | undefined;
     last_workspace_slug: string | undefined;
+    last_workspace_name: string | undefined;
+    last_workspace_logo: string | undefined;
     fallback_workspace_id: string | undefined;
     fallback_workspace_slug: string | undefined;
     invites: number | undefined;
