@@ -3,11 +3,22 @@ from rest_framework import serializers
 
 # Module import
 from plane.db.models import Account, Profile, User, Workspace, WorkspaceMemberInvite
+from plane.utils.url import contains_url
 
 from .base import BaseSerializer
 
 
 class UserSerializer(BaseSerializer):
+    def validate_first_name(self, value):
+        if contains_url(value):
+            raise serializers.ValidationError("First name cannot contain a URL.")
+        return value
+
+    def validate_last_name(self, value):
+        if contains_url(value):
+            raise serializers.ValidationError("Last name cannot contain a URL.")
+        return value
+
     class Meta:
         model = User
         # Exclude password field from the serializer
