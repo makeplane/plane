@@ -85,8 +85,8 @@ export const useEditor = (props: CustomEditorProps) => {
       editorProps: {
         ...CoreEditorProps({
           editorClassName,
-          ...editorProps,
         }),
+        ...editorProps,
       },
       extensions: [
         ...CoreEditorExtensions({
