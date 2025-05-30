@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Disclosure } from "@headlessui/react";
@@ -23,7 +24,7 @@ export type TSettingsSidebarNavItemProps = {
   renderChildren?: (key: string) => React.ReactNode;
 };
 
-const SettingsSidebarNavItem = (props: TSettingsSidebarNavItemProps) => {
+const SettingsSidebarNavItem = observer((props: TSettingsSidebarNavItemProps) => {
   const { workspaceSlug, setting, isActive, actionIcons, appendItemsToTitle, renderChildren } = props;
   // router
   const { projectId } = useParams();
@@ -88,6 +89,6 @@ const SettingsSidebarNavItem = (props: TSettingsSidebarNavItemProps) => {
       )}
     </Disclosure>
   );
-};
+});
 
 export default SettingsSidebarNavItem;

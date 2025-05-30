@@ -62,6 +62,10 @@
   "settings_moved_to_preferences": "Timezone & Language settings have been moved to preferences.",
   "go_to_preferences": "Go to preferences",
   "select_the_cursor_motion_style_that_feels_right_for_you": "Select the cursor motion style that feels right for you.",
+  "timezone_setting": "Current timezone setting.",
+  "language_setting": "Choose the language used in the user interface.",
+  "settings_moved_to_preferences": "Timezone & Language settings have been moved to preferences.",
+  "go_to_preferences": "Go to preferences",
   "theme": "Theme",
   "smooth_cursor": "Smooth Cursor",
   "system_preference": "System Preference",
@@ -1319,23 +1323,23 @@
     }
   },
   "account_settings": {
-    "profile": {},
-    "preferences": {
+    "profile":{},
+    "preferences":{
       "heading": "Preferences",
       "description": "Customize your app experience the way you work"
     },
-    "notifications": {
+    "notifications":{
       "heading": "Email notifications",
-      "description": "Stay in the loop on Work items you are subscribed to. Enable this to get notified."
+      "description": "Stay in the loop on Work items you are subscribed to. Enable this to get notified."    
     },
-    "security": {
+    "security":{
       "heading": "Security"
     },
-    "api_tokens": {
+    "api_tokens":{
       "heading": "Personal Access Tokens",
       "description": "Generate secure API tokens to integrate your data with external systems and applications."
     },
-    "activity": {
+    "activity":{
       "heading": "Activity",
       "description": "Track your recent actions and changes across all projects and work items."
     }
@@ -1407,7 +1411,7 @@
       },
       "billing_and_plans": {
         "heading": "Billing & Plans",
-        "description": "Choose your plan, manage subscriptions, and easily upgrade as your needs grow.",
+        "description":"Choose your plan, manage subscriptions, and easily upgrade as your needs grow.",
         "title": "Billing & Plans",
         "current_plan": "Current plan",
         "free_plan": "You are currently using the free plan",

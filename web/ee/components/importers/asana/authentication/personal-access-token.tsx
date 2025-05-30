@@ -12,6 +12,8 @@ import { TAsanaPATFormFields } from "@/plane-web/types/importers/asana";
 import { useTranslation } from "@plane/i18n";
 import { TImporterPATError } from "@/plane-web/types";
 import ErrorBanner from "../../ui/error-banner";
+import AsanaLogo from "@/public/services/asana.svg";
+import ImporterHeader from "../../header";
 
 export const PersonalAccessTokenAuth: FC = observer(() => {
   // hooks
@@ -88,19 +90,22 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="relative flex flex-col border-b border-custom-border-100 pb-3.5">
-        <h3 className="text-xl font-medium">Asana to Plane {t("importers.migration_assistant")}</h3>
-        <p className="text-custom-text-300 text-sm">
-          {t("importers.migration_assistant_description", { "serviceName": "Asana" })}
-        </p>
-      </div>
-      <div className="space-y-6">
-        {
-          patError.showPATError && (
-            <ErrorBanner message={t("importers.invalid_pat")} onClose={() => { togglePATError(false) }} />
-          )
-        }
+    <div className="space-y-6 w-full">
+      <ImporterHeader
+        config={{
+          serviceName: "Asana",
+          logo: AsanaLogo,
+        }}
+      />
+      <div className="space-y-6 w-full">
+        {patError.showPATError && (
+          <ErrorBanner
+            message={t("importers.invalid_pat")}
+            onClose={() => {
+              togglePATError(false);
+            }}
+          />
+        )}
         <div className="grid grid-cols-1 gap-x-12 gap-y-8 w-full">
           {asanaPatFormFields.map((field) => (
             <AuthFormInput
@@ -116,12 +121,12 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
             />
           ))}
         </div>
-        <div className="relative flex justify-end gap-4">
+        <div className="relative flex justify-start gap-4">
+          <Button variant="primary" onClick={handlePATAuthentication} loading={isLoading} disabled={isLoading}>
+            {isLoading ? t("common.authorizing") : t("importers.connect_importer", { serviceName: "Asana" })}
+          </Button>{" "}
           <Button variant="link-neutral" className="font-medium" onClick={clearFromData}>
             {t("common.clear")}
-          </Button>
-          <Button variant="primary" onClick={handlePATAuthentication} loading={isLoading} disabled={isLoading}>
-            {isLoading ? t("common.authorizing") : t("importers.connect_importer", { "serviceName": "Asana" })}
           </Button>
         </div>
       </div>

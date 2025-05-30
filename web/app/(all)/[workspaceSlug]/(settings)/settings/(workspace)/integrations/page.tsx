@@ -6,16 +6,13 @@ import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// components
 import { NotAuthorizedView } from "@/components/auth-screens";
-import { PageHead } from "@/components/core/page-title";
-import { IntegrationsEmptyState } from "@/components/integration";
-import { SettingsContentWrapper } from "@/components/settings";
+import { PageHead } from "@/components/core";
+import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
 // hooks
 import { useUserPermissions, useUserProfile, useWorkspace } from "@/hooks/store";
 // plane web components
-import { IntegrationsList } from "@/plane-web/components/integrations";
-// plane web hooks
+import { IntegrationsList, IntegrationsEmptyState } from "@/plane-web/components/integrations";
 import { useFlag } from "@/plane-web/hooks/store";
 // services
 import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
@@ -47,32 +44,30 @@ const WorkspaceIntegrationsPage = observer(() => {
     }
   );
 
-  if (supportedIntegrationsLoading) {
+  if (supportedIntegrationsLoading && !supportedIntegrations) {
     return (
-      <>
+      <div className="w-full">
         <PageHead title={pageTitle} />
         <div className="mt-10 flex h-full w-full justify-center">
           <p className="text-sm text-custom-text-300">{t("integrations.loading")}</p>
         </div>
-      </>
+      </div>
     );
   }
 
-  if (!isAdmin)
-    return (
-      <>
-        <PageHead title={pageTitle} />
-        <div className="mt-10 flex h-full w-full justify-center">
-          <p className="text-sm text-custom-text-300">{t("integrations.unauthorized")}</p>
-        </div>
-      </>
-    );
+  if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
 
   if (!integrationsEnabled)
     return (
       <>
         <PageHead title={pageTitle} />
-        <IntegrationsEmptyState theme={currentUserProfile?.theme.theme || "light"} />
+        <div className="w-full flex flex-col gap-5">
+          <SettingsHeading
+            title={t("workspace_settings.settings.integrations.heading")}
+            description={t("workspace_settings.settings.integrations.description")}
+          />
+          <IntegrationsEmptyState theme={currentUserProfile?.theme.theme || "light"} />
+        </div>
       </>
     );
 
@@ -81,10 +76,11 @@ const WorkspaceIntegrationsPage = observer(() => {
   return (
     <SettingsContentWrapper size="lg">
       <PageHead title={pageTitle} />
-      <section className="w-full overflow-y-auto">
-        <div className="flex items-center border-b border-custom-border-100 pb-3.5">
-          <h3 className="text-xl font-medium">{t("integrations.integrations")}</h3>
-        </div>
+      <section className="w-full flex flex-col">
+        <SettingsHeading
+          title={t("workspace_settings.settings.integrations.heading")}
+          description={t("workspace_settings.settings.integrations.description")}
+        />
         {workspaceSlug && (
           <IntegrationsList
             workspaceSlug={workspaceSlug.toString()}

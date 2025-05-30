@@ -77,15 +77,7 @@ const Upgrade = observer(() => {
 });
 
 export const WorkspaceProjectStatesUpgrade: FC = () => (
-  <div className="pr-10">
-    <div className="flex items-center justify-between gap-2 border-b border-custom-border-200 pb-3">
-      <div>
-        <h3 className="text-xl font-medium">See progress overview for all projects.</h3>
-        <span className="text-custom-sidebar-text-400 text-sm font-medium">
-          Project States is a Plane-only feature for tracking progress of all your projects by any project property.
-        </span>
-      </div>
-    </div>
+  <div className="w-full">
     <Upgrade />
   </div>
 );

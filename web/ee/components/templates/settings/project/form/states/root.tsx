@@ -54,7 +54,9 @@ export const ProjectStates = observer((props: TProjectStatesProps) => {
           // ensure the next sequence number is not greater than 65535
           const nextSequenceNumber = Math.min(highestSequenceNumber + 1000, 65535);
           // update the state with the highest sequence number
-          setValue("project.states", [...projectStates, { ...state, sequence: nextSequenceNumber }]);
+          setValue("project.states", [...projectStates, { ...state, sequence: nextSequenceNumber }], {
+            shouldDirty: true,
+          });
           return state;
         }),
       // Update an existing state
@@ -62,7 +64,10 @@ export const ProjectStates = observer((props: TProjectStatesProps) => {
         mockCreateOrUpdateState({ workspaceSlug, projectId, data: { ...data, id: stateId } }).then((state) => {
           setValue(
             "project.states",
-            projectStates.map((s) => (s.id === stateId ? { ...s, ...state } : s))
+            projectStates.map((s) => (s.id === stateId ? { ...s, ...state } : s)),
+            {
+              shouldDirty: true,
+            }
           );
           return state;
         }),
@@ -70,13 +75,19 @@ export const ProjectStates = observer((props: TProjectStatesProps) => {
       deleteState: async (stateId: string) =>
         setValue(
           "project.states",
-          projectStates.filter((s) => s.id !== stateId)
+          projectStates.filter((s) => s.id !== stateId),
+          {
+            shouldDirty: true,
+          }
         ),
       // Move a state to a new position
       moveStatePosition: async (stateId: string, data: Partial<IState>) => {
         setValue(
           "project.states",
-          projectStates.map((s) => (s.id === stateId ? { ...s, ...data } : s))
+          projectStates.map((s) => (s.id === stateId ? { ...s, ...data } : s)),
+          {
+            shouldDirty: true,
+          }
         );
       },
       // Mark a state as default
@@ -86,7 +97,10 @@ export const ProjectStates = observer((props: TProjectStatesProps) => {
           projectStates.map((state) => ({
             ...state,
             default: state.id === stateId,
-          }))
+          })),
+          {
+            shouldDirty: true,
+          }
         );
       },
     }),

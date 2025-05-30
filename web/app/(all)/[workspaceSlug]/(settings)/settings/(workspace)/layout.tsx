@@ -12,8 +12,6 @@ import { SettingsMobileNav } from "@/components/settings";
 import { getWorkspaceActivePath, pathnameToAccessKey } from "@/components/settings/helper";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
-// plane web components
-import { LicenseSeatsBanner } from "@/plane-web/components/license";
 // local components
 import { WorkspaceSettingsSidebar } from "./sidebar";
 
@@ -43,8 +41,6 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
         hamburgerContent={WorkspaceSettingsSidebar}
         activePath={getWorkspaceActivePath(pathname) || ""}
       />
-      {/* free banner */}
-      <LicenseSeatsBanner />
       <div className="inset-y-0 flex flex-row w-full">
         {workspaceUserInfo && !isAuthorized ? (
           <NotAuthorizedView section="settings" className="h-auto" />

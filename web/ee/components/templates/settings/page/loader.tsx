@@ -1,13 +1,13 @@
 import { Loader } from "@plane/ui";
 
 export const PageTemplateLoader = () => (
-  <Loader className="flex flex-col items-center w-full h-full">
-    <Loader className="space-y-4 w-full max-w-4xl px-page-x py-page-y md:p-9">
+  <Loader className="flex flex-col items-center w-full h-full mt-4">
+    <Loader className="space-y-4 w-full">
       <Loader.Item height="40px" />
       <Loader.Item height="80px" />
     </Loader>
-    <Loader className="bg-custom-background-90/80 flex flex-col items-center w-full h-full">
-      <div className="w-full max-w-4xl px-page-x py-page-y md:p-9">
+    <Loader className="flex flex-col items-center w-full h-full">
+      <div className="w-full">
         <div className="space-y-2">
           <Loader className="flex flex-col gap-y-4 py-4 w-full">
             <Loader.Item height="40px" />

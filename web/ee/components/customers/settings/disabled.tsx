@@ -24,7 +24,7 @@ export const CustomerSettingsDisabled: FC<TCustomerSettingsDisabled> = (props) =
       title=""
       assetPath={resolvedPath}
       primaryButton={{ text: t("customers.settings.enable"), onClick: () => toggleCustomersFeature() }}
-      className="h-fit min-h-full items-start"
+      className="h-fit min-h-full items-start !p-0"
     />
   );
 };

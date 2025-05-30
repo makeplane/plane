@@ -5,6 +5,8 @@ import os
 from datetime import date
 import uuid
 import requests
+import uuid
+
 from dateutil.relativedelta import relativedelta
 
 # Django imports
@@ -195,11 +197,18 @@ class WorkSpaceViewSet(BaseViewSet):
                         "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
                     },
                 )
+                if response.status_code == 404:
+                    self.remove_last_workspace_ids_from_user_settings(workspace.id)
+                    Workspace.objects.filter(id=workspace.id).delete()
+
+                    return Response(status=status.HTTP_200_OK)
+
                 # Check if the response is successful
                 response.raise_for_status()
                 # Return the response
                 response = response.json()
                 # Check if the response contains the product key
+                self.remove_last_workspace_ids_from_user_settings(workspace.id)
                 super().destroy(request, *args, **kwargs)
                 return Response(response, status=status.HTTP_200_OK)
             except requests.exceptions.RequestException as e:
@@ -213,6 +222,7 @@ class WorkSpaceViewSet(BaseViewSet):
                 )
         else:
             # Delete the workspace
+            self.remove_last_workspace_ids_from_user_settings(workspace.id)
             return super().destroy(request, *args, **kwargs)
 
 

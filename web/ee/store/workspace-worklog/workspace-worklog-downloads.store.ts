@@ -4,7 +4,7 @@ import isEmpty from "lodash/isEmpty";
 import orderBy from "lodash/orderBy";
 import set from "lodash/set";
 import update from "lodash/update";
-import { action, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // helpers
 import { convertToEpoch } from "@/helpers/date-time.helper";
@@ -39,6 +39,7 @@ export interface IWorkspaceWorklogDownloadStore {
   paginatedWorklogDownloadIds: Record<string, string[]>;
   // computed functions
   worklogDownloadIdsByWorkspaceId: (workspaceId: string) => string[] | undefined;
+  orderedWorklogDownloads: (workspaceId: string) => IWorklogDownload[];
   // helper functions
   mutateWorklogDownloads: (worklogDownloads: TWorklogDownload[]) => void;
   // helper actions
@@ -76,6 +77,12 @@ export class WorkspaceWorklogDownloadStore implements IWorkspaceWorklogDownloadS
       createWorklogDownload: action,
     });
   }
+
+  orderedWorklogDownloads = computedFn((workspaceId: string) =>
+    orderBy(Object.values(this.worklogDownloads || []), (download) => convertToEpoch(download.created_at), [
+      "desc",
+    ]).filter((download) => download.workspace === workspaceId)
+  );
 
   // computed functions
   /**

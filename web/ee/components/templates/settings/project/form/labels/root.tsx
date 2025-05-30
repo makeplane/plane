@@ -40,14 +40,19 @@ export const ProjectLabels = observer((props: TProjectLabelsProps) => {
     () => ({
       createLabel: async (data: Partial<IIssueLabel>) =>
         mockCreateOrUpdateLabel(workspaceSlug, projectId, data).then((label) => {
-          setValue("project.labels", [label, ...projectLabels]);
+          setValue("project.labels", [label, ...projectLabels], {
+            shouldDirty: true,
+          });
           return label;
         }),
       updateLabel: async (labelId: string, data: Partial<IIssueLabel>) =>
         mockCreateOrUpdateLabel(workspaceSlug, projectId, { ...data, id: labelId }).then((label) => {
           setValue(
             "project.labels",
-            projectLabels.map((l) => (l.id === labelId ? label : l))
+            projectLabels.map((l) => (l.id === labelId ? label : l)),
+            {
+              shouldDirty: true,
+            }
           );
           return label;
         }),
@@ -59,7 +64,10 @@ export const ProjectLabels = observer((props: TProjectLabelsProps) => {
     (label: IIssueLabel) => {
       setValue(
         "project.labels",
-        projectLabels.filter((l) => l.id !== label.id)
+        projectLabels.filter((l) => l.id !== label.id),
+        {
+          shouldDirty: true,
+        }
       );
     },
     [projectLabels, setValue]

@@ -53,15 +53,14 @@ export const IntegrationsList: FC<IntegrationsListProps> = observer((props) => {
   const { workspaceSlug, supportedIntegrations } = props;
 
   return (
-    <div>
+    <div className="flex flex-wrap gap-4 mt-6">
       {INTEGRATIONS_LIST.map((item) => (
-        <>
-          <IntegrationListItem
-            workspaceSlug={workspaceSlug}
-            provider={item}
-            isSupported={supportedIntegrations.includes(item.key.toUpperCase() as E_INTEGRATION_KEYS)}
-          />
-        </>
+        <IntegrationListItem
+          key={item.key}
+          workspaceSlug={workspaceSlug}
+          provider={item}
+          isSupported={supportedIntegrations.includes(item.key.toUpperCase() as E_INTEGRATION_KEYS)}
+        />
       ))}
     </div>
   );

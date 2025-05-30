@@ -149,15 +149,15 @@ export const ConfigureFlatfileChild: FC = observer(() => {
 
   return (
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
+      <div id="flatfile_container" className="w-full min-h-44 max-h-full overflow-y-auto">
+        <Space config={spaceProps}>{<Workbook config={workbookConfig} />}</Space>
+      </div>
       <div className="flex-shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
           <Button variant="primary" size="sm" onClick={openPortal}>
             {isSubmitting ? "Submitting..." : "Upload CSV"}
           </Button>
         </StepperNavigation>
-      </div>
-      <div id="flatfile_container" className="w-full min-h-44 max-h-full overflow-y-auto">
-        <Space config={spaceProps}>{<Workbook config={workbookConfig} />}</Space>
       </div>
     </div>
   );

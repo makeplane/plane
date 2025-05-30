@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 // hooks
@@ -19,6 +20,7 @@ const ImportsPage = observer(() => {
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
+  const { t } = useTranslation();
   // derived values
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Imports` : undefined;
@@ -28,12 +30,11 @@ const ImportsPage = observer(() => {
   return (
     <SettingsContentWrapper size="lg">
       <PageHead title={pageTitle} />
-      <section className="w-full overflow-y-auto">
-        <SettingsHeading title="Imports" />
-        <div className="flex items-center border-b border-custom-border-100 pb-3.5">
-          <h3 className="text-xl font-medium">Imports</h3>
-        </div>
-        {/* <IntegrationGuide /> */}
+      <section className="w-full">
+        <SettingsHeading
+          title={t("workspace_settings.settings.imports.heading")}
+          description={t("workspace_settings.settings.imports.description")}
+        />
         {workspaceSlug && <ImportersList workspaceSlug={workspaceSlug.toString()} />}
       </section>
     </SettingsContentWrapper>

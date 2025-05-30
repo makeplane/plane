@@ -8,6 +8,7 @@ import {
   EProductSubscriptionEnum,
   SUBSCRIPTION_WITH_BILLING_FREQUENCY,
 } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import {
   IPaymentProduct,
   IPaymentProductPrice,
@@ -18,6 +19,7 @@ import {
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn, getSubscriptionProduct, getSubscriptionProductPrice } from "@plane/utils";
 // helpers
+import { SettingsHeading } from "@/components/settings";
 import { getBillingAndPlansCardVariantStyle } from "@/components/workspace/billing/subscription";
 // plane web imports
 import {
@@ -53,6 +55,7 @@ export const BillingRoot = observer(() => {
     freeTrialSubscription,
     handleSuccessModalToggle,
   } = useWorkspaceSubscription();
+  const { t } = useTranslation();
   // fetch products
   const { isLoading: isProductsAPILoading, data } = useSWR(
     workspaceSlug ? ["PAYMENT_PRODUCTS", workspaceSlug.toString()] : null,
@@ -228,11 +231,10 @@ export const BillingRoot = observer(() => {
 
   return (
     <section className="relative size-full flex flex-col overflow-y-auto scrollbar-hide">
-      <div>
-        <div className="flex items-center">
-          <h3 className="text-xl font-medium flex gap-4">Billing and plans</h3>
-        </div>
-      </div>
+      <SettingsHeading
+        title={t("workspace_settings.settings.billing_and_plans.heading")}
+        description={t("workspace_settings.settings.billing_and_plans.description")}
+      />
       <div
         className={cn(
           "transition-all duration-500 ease-in-out will-change-[height,opacity]",

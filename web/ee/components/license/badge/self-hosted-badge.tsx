@@ -8,29 +8,21 @@ import { PlaneIcon } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // plane web imports
 import { SubscriptionButton } from "@/plane-web/components/common";
-import { PaidPlanUpgradeModal, PlaneOneEditionBadge } from "@/plane-web/components/license";
-import { SubscriptionActivationModal } from "@/plane-web/components/workspace";
-import { useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { PlaneOneEditionBadge } from "@/plane-web/components/license";
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export const SelfHostedEditionBadge = observer(() => {
   // hooks
   const {
-    isPaidPlanModalOpen,
     currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
     togglePaidPlanModal,
     handleSuccessModalToggle,
   } = useWorkspaceSubscription();
-  const { isActivationModalOpen, toggleLicenseActivationModal } = useSelfHostedSubscription();
   const { t } = useTranslation();
 
   if (!subscriptionDetail || subscriptionDetail.product === EProductSubscriptionEnum.FREE)
     return (
       <>
-        <SubscriptionActivationModal
-          isOpen={isActivationModalOpen}
-          handleClose={() => toggleLicenseActivationModal(false)}
-        />
-        <PaidPlanUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
         <SubscriptionButton
           subscriptionType={subscriptionDetail?.product ?? EProductSubscriptionEnum.FREE}
           handleClick={() => togglePaidPlanModal(true)}

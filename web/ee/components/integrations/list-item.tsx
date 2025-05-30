@@ -30,29 +30,29 @@ export const IntegrationListItem: FC<IntegrationListItemProps> = (props) => {
   return (
     <div
       key={provider.key}
-      className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100  px-4 py-6 flex-shrink-0"
+      className="flex flex-col max-w-[300px] justify-between gap-2 rounded-md border border-custom-border-100 bg-custom-background-100  px-4 py-6 flex-shrink-0"
     >
-      <div className="flex items-start gap-4">
-        <div className="relative h-10 w-10 flex-shrink-0">
-          <Image src={provider.logo} layout="fill" objectFit="cover" alt={`${provider.key} Logo`} />
-        </div>
-        <div>
-          <div className="relative flex items-center gap-2">
-            <h3 className="flex items-center gap-4 text-sm font-medium">{t(`${provider.key}_integration.name`)}</h3>
-            {provider.beta && (
-              <div className="w-fit cursor-pointer rounded-2xl text-custom-primary-200 bg-custom-primary-100/20 text-center font-medium outline-none text-xs px-2">
-                Beta
-              </div>
-            )}
-          </div>
-          <p className="text-sm tracking-tight text-custom-text-200">{t(`${provider.key}_integration.description`)}</p>
-        </div>
+      <div className="relative h-12 w-12 flex-shrink-0 bg-custom-background-90 rounded flex items-center justify-center">
+        <Image src={provider.logo} alt={`${provider.key} Logo`} width={32} height={32} />
       </div>
+
+      <div className="relative flex items-center gap-2">
+        <h3 className="flex items-center gap-4 text-sm font-medium">{t(`${provider.key}_integration.name`)}</h3>
+        {provider.beta && (
+          <div className="w-fit cursor-pointer rounded-2xl text-custom-primary-200 bg-custom-primary-100/20 text-center font-medium outline-none text-xs px-2">
+            Beta
+          </div>
+        )}
+      </div>
+      <p className="text-sm tracking-tight text-custom-text-300">{t(`${provider.key}_integration.description`)}</p>
+
       {isSupported ? (
         <div className="flex-shrink-0">
           <Link href={`/${workspaceSlug}/settings/integrations/${provider.key}`}>
             <span>
-              <Button variant="primary">{t("integrations.configure")}</Button>
+              <Button variant="accent-primary" size="sm">
+                {t("integrations.configure")}
+              </Button>
             </span>
           </Link>
         </div>

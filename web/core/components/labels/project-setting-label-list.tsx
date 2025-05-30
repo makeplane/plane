@@ -106,10 +106,15 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
           projectLabels.length === 0 && !showLabelForm ? (
             <div className="flex items-center justify-center h-full w-full">
               <DetailedEmptyState
-                title={t("project_settings.empty_state.labels.title")}
-                description={t("project_settings.empty_state.labels.description")}
+                title={""}
+                description={""}
+                primaryButton={{
+                  text: "Create your first label",
+                  onClick: newLabel,
+                }}
                 assetPath={resolvedPath}
-                className="w-full !px-0 !py-4"
+                className="w-full !px-0 !py-0"
+                size="md"
               />
             </div>
           ) : (

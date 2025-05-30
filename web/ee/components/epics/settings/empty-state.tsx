@@ -2,14 +2,15 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 // plane imports
 import { EProductSubscriptionEnum } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { DetailedEmptyState } from "@/components/empty-state";
 // plane web hooks
+import { SettingsHeading } from "@/components/settings";
 import { useFlag, useIssueTypes, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 type TIssueTypeEmptyState = {
@@ -27,6 +28,7 @@ export const EpicsEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
   // store hooks
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
   const { enableEpics } = useIssueTypes();
+  const { t } = useTranslation();
   // states
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const isSelfManagedUpgradeDisabled =
@@ -57,55 +59,48 @@ export const EpicsEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
       });
   };
 
+  const cta = (
+    <div className="relative flex items-center justify-center gap-2 flex-shrink-0">
+      {isEpicsSettingsEnabled ? (
+        redirect ? (
+          <a
+            href={`/${workspaceSlug}/projects/${projectId}/settings/epics/`}
+            className={getButtonStyling("primary", "md")}
+          >
+            Enable
+          </a>
+        ) : (
+          <Button disabled={isLoading} onClick={() => handleEnableEpic()}>
+            Enable
+          </Button>
+        )
+      ) : isSelfManagedUpgradeDisabled ? (
+        <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
+          Get Pro
+        </a>
+      ) : (
+        <Button disabled={isLoading} onClick={() => togglePaidPlanModal(true)}>
+          Upgrade
+        </Button>
+      )}
+    </div>
+  );
   return (
     <>
-      <div className={cn("flex justify-center min-h-full overflow-y-auto py-10 px-5", className)}>
-        <div className={cn("flex flex-col gap-5 md:min-w-[24rem] max-w-[45rem]")}>
-          <div className="flex flex-col gap-1.5 flex-shrink">
-            <h3 className="text-xl font-semibold">
-              {isEpicsSettingsEnabled
-                ? "Enable Epics"
-                : isSelfManagedUpgradeDisabled
-                  ? "Get Pro to enable Epics."
-                  : "Upgrade to enable Epics."}
-            </h3>
-            <p className="text-sm text-custom-text-200">
-              For larger bodies of work that span several cycles and can live across modules, create an epic. Link work
-              items and sub-work items in a project to an epic and jump into a work item from the overview.
-            </p>
-          </div>
-          <Image
-            src={resolvedEmptyStatePath}
-            alt="epics empty state"
-            width={384}
-            height={250}
-            layout="responsive"
-            lazyBoundary="100%"
+      <SettingsHeading
+        title={t("project_settings.epics.heading")}
+        description={t("project_settings.epics.description")}
+        appendToRight={cta}
+      />
+      <div className="w-full py-2">
+        <div className="flex items-center justify-center h-full w-full">
+          <DetailedEmptyState
+            size="md"
+            title={""}
+            assetPath={resolvedEmptyStatePath}
+            className="w-full !px-0 !py-0"
+            customPrimaryButton={cta}
           />
-          <div className="relative flex items-center justify-center gap-2 flex-shrink-0 w-full">
-            {isEpicsSettingsEnabled ? (
-              redirect ? (
-                <a
-                  href={`/${workspaceSlug}/projects/${projectId}/settings/epics/`}
-                  className={getButtonStyling("primary", "md")}
-                >
-                  Enable
-                </a>
-              ) : (
-                <Button disabled={isLoading} onClick={() => handleEnableEpic()}>
-                  Enable
-                </Button>
-              )
-            ) : isSelfManagedUpgradeDisabled ? (
-              <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
-                Get Pro
-              </a>
-            ) : (
-              <Button disabled={isLoading} onClick={() => togglePaidPlanModal(true)}>
-                Upgrade
-              </Button>
-            )}
-          </div>
         </div>
       </div>
     </>

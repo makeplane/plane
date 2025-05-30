@@ -85,9 +85,9 @@ export const SelectPlaneProjectRoot: FC = observer(() => {
   );
 
   return (
-    <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
+    <>
       {/* content */}
-      <div className="w-full min-h-44 max-h-full overflow-y-auto space-y-2">
+      <div className="w-full overflow-y-auto space-y-2">
         <div className="text-sm text-custom-text-200">
           {t("importers.select_service_project", { serviceName: "Plane" })}
         </div>
@@ -121,13 +121,13 @@ export const SelectPlaneProjectRoot: FC = observer(() => {
       </div>
 
       {/* stepper button */}
-      <div className="flex-shrink-0 relative flex items-center gap-2">
+      <div className="flex-shrink-0 relative flex items-center gap-2 justify-between">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
           <Button variant="primary" size="sm" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
             {t("common.next")}
           </Button>
         </StepperNavigation>
       </div>
-    </div>
+    </>
   );
 });

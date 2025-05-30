@@ -31,7 +31,8 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
     subscriptionDetail?.is_self_managed && subscriptionDetail?.product !== EProductSubscriptionEnum.FREE;
   // derived values
   const isIssueTypeSettingsEnabled = useFlag(workspaceSlug, "ISSUE_TYPES");
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/issue-types/issue-type", extension: "svg" });
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/issue-types/issue-type", extension: "png" });
+
   // handlers
   const handleEnableIssueTypes = async () => {
     setIsLoading(true);
@@ -59,13 +60,15 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
     if (isIssueTypeSettingsEnabled) {
       return (
         <DetailedEmptyState
-          title={t("work_item_types.empty_state.enable.title")}
-          description={t("work_item_types.empty_state.enable.description")}
+          className="!p-0 w-full"
+          title=""
+          description=""
           assetPath={resolvedPath}
           primaryButton={{
             text: t("work_item_types.empty_state.enable.primary_button.text"),
             onClick: () => setEnableIssueTypeConfirmation(true),
           }}
+          size="md"
         />
       );
     }
@@ -73,32 +76,36 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
     if (isSelfManagedUpgradeDisabled) {
       return (
         <DetailedEmptyState
-          title={t("work_item_types.empty_state.get_pro.title")}
-          description={t("work_item_types.empty_state.get_pro.description")}
+          className="!p-0 w-full"
+          title=""
+          description=""
           assetPath={resolvedPath}
           primaryButton={{
             text: t("work_item_types.empty_state.get_pro.primary_button.text"),
             onClick: () => window.open("https://prime.plane.so/", "_blank"),
           }}
+          size="md"
         />
       );
     }
 
     return (
       <DetailedEmptyState
-        title={t("work_item_types.empty_state.upgrade.title")}
-        description={t("work_item_types.empty_state.upgrade.description")}
+        className="!p-0 w-full"
+        title=""
+        description=""
         assetPath={resolvedPath}
         primaryButton={{
           text: t("work_item_types.empty_state.upgrade.primary_button.text"),
           onClick: () => togglePaidPlanModal(true),
         }}
+        size="md"
       />
     );
   };
 
   return (
-    <>
+    <div className="w-full">
       <AlertModalCore
         variant="primary"
         isOpen={enableIssueTypeConfirmation}
@@ -126,6 +133,6 @@ export const IssueTypeEmptyState: FC<TIssueTypeEmptyState> = observer((props) =>
         secondaryButtonText={t("common.cancel")}
       />
       {getEmptyStateContent()}
-    </>
+    </div>
   );
 });

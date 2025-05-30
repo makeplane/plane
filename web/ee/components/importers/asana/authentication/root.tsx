@@ -17,5 +17,5 @@ export const AuthenticationRoot: FC = observer(() => {
 
   if (currentAuth?.isAuthenticated) return <div>{t("common.authenticated")}</div>;
 
-  return <div>{currentAuth?.isOAuthEnabled ? <OAuth /> : <PersonalAccessTokenAuth />}</div>;
+  return <>{currentAuth?.isOAuthEnabled ? <OAuth /> : <PersonalAccessTokenAuth />}</>;
 });

@@ -2,7 +2,6 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import useSWR from "swr";
 import { Briefcase, CircleX, Info, Loader, RefreshCcw } from "lucide-react";
 import { E_JOB_STATUS, TJobStatus } from "@plane/etl/core";
@@ -12,6 +11,7 @@ import { TImportJob, TLogoProps } from "@plane/types";
 import { Button, ModalCore, Tooltip } from "@plane/ui";
 import { Logo } from "@/components/common";
 import { renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
+import ImporterHeader from "../../header";
 import { RerunModal, CancelModal } from "./modals";
 import { IconFieldRender, SyncJobStatus } from "./";
 
@@ -189,44 +189,37 @@ export const BaseDashboard = observer(<T,>(props: IBaseDashboardProps<T>) => {
         <CancelModalComponent onClose={handleClose} onSubmit={handleCancelJob} isLoading={modalLoader} />
       </ModalCore>
       <div className="space-y-6 relative w-full h-full overflow-auto flex flex-col">
-        <div className="flex-shrink-0 text-lg font-medium">{t("importers.imports")}</div>
         {/* header */}
-        <div className="flex-shrink-0 relative flex items-center gap-4 rounded bg-custom-background-90 p-4">
-          <div className="flex-shrink-0 w-10 h-10 relative flex justify-center items-center overflow-hidden">
-            <Image src={logo} layout="fill" objectFit="contain" alt={`${serviceName} ${t("importers.logo")}`} />
-          </div>
-          <div className="w-full h-full overflow-hidden">
-            <div className="text-lg font-medium">{serviceName}</div>
-            <div className="text-sm text-custom-text-200">
-              {t("importers.import_message", { serviceName: serviceName })}
+        <ImporterHeader
+          config={config}
+          actions={
+            <div className="flex-shrink-0 relative flex items-center gap-4">
+              {!config.hideDeactivate && (
+                <Button
+                  variant="link-danger"
+                  size="sm"
+                  onClick={handleDeactivateAuth}
+                  className="bg-transparent"
+                  disabled={deactivateLoader}
+                >
+                  {deactivateLoader ? "Deactivating..." : "Deactivate"}
+                </Button>
+              )}
+              {!currentAuth?.sourceTokenInvalid ? (
+                <Button size="sm" onClick={handleDashboardView}>
+                  {t("importers.import")}
+                </Button>
+              ) : (
+                <Tooltip tooltipContent={t("importers.source_token_expired_description")}>
+                  <div className="flex gap-1.5 cursor-help flex-shrink-0 items-center text-custom-text-200">
+                    <Info size={12} />
+                    <div className="text-xs">{t("importers.source_token_expired")}</div>
+                  </div>
+                </Tooltip>
+              )}
             </div>
-          </div>
-          <div className="flex-shrink-0 relative flex items-center gap-4">
-            {!config.hideDeactivate && (
-              <Button
-                variant="link-danger"
-                size="sm"
-                onClick={handleDeactivateAuth}
-                className="bg-transparent"
-                disabled={deactivateLoader}
-            >
-              {deactivateLoader ? "Deactivating..." : "Deactivate"}
-              </Button>
-            )}
-            {!currentAuth?.sourceTokenInvalid ? (
-              <Button size="sm" onClick={handleDashboardView}>
-                {t("importers.import")}
-              </Button>
-            ) : (
-              <Tooltip tooltipContent={t("importers.source_token_expired_description")}>
-                <div className="flex gap-1.5 cursor-help flex-shrink-0 items-center text-custom-text-200">
-                  <Info size={12} />
-                  <div className="text-xs">{t("importers.source_token_expired")}</div>
-                </div>
-              </Tooltip>
-            )}
-          </div>
-        </div>
+          }
+        />
         {/* migrations */}
         <div className="w-full h-full space-y-3 relative flex flex-col">
           {loader ? (

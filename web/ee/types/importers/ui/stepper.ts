@@ -10,6 +10,7 @@ export type TStepperBlock<T> = {
 
 export type TStepper<T> = {
   logo?: string;
+  serviceName: string;
   steps: TStepperBlock<T>[];
   currentStepIndex: number;
   redirectCallback?: () => void;

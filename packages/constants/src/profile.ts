@@ -1,4 +1,4 @@
-import { EXTENDED_PROFILE_ACTION_LINKS } from "./profile-extended";
+import { EXTENDED_PREFERENCE_OPTIONS, EXTENDED_PROFILE_ACTION_LINKS } from "./profile-extended";
 
 export const PROFILE_SETTINGS = {
   profile: {
@@ -52,6 +52,7 @@ export const PROFILE_ACTION_LINKS: {
   PROFILE_SETTINGS["preferences"],
   PROFILE_SETTINGS["notifications"],
   PROFILE_SETTINGS["api-tokens"],
+  PROFILE_SETTINGS["connections"],
 ];
 
 export const PROFILE_VIEWER_TAB = [
@@ -105,6 +106,7 @@ export const PREFERENCE_OPTIONS: {
     title: "First day of the week",
     description: "This will change how all calendars in your app look.",
   },
+  ...EXTENDED_PREFERENCE_OPTIONS,
 ];
 
 /**

@@ -12,6 +12,8 @@ import { useJiraImporter } from "@/plane-web/hooks/store";
 import { AuthFormInput, TAuthFormInputFormField } from "@/plane-web/silo/ui/auth-form-input";
 // plane web types
 import { TImporterPATError, TJiraPATFormFields } from "@/plane-web/types";
+import JiraLogo from "@/public/services/jira.svg";
+import ImporterHeader from "../../header";
 import ErrorBanner from "../../ui/error-banner";
 
 export const PersonalAccessTokenAuth: FC = observer(() => {
@@ -86,7 +88,8 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
             className="text-custom-primary-100 hover:underline"
             rel="noreferrer"
           >
-            {" "} {t("jira_importer.atlassian_security_settings")}
+            {" "}
+            {t("jira_importer.atlassian_security_settings")}
           </a>
         </>
       ),
@@ -116,20 +119,23 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="relative flex flex-col border-b border-custom-border-100 pb-3.5">
-        <h3 className="text-xl font-medium">Jira to Plane {t("importers.migration_assistant")}</h3>
-        <p className="text-custom-text-300 text-sm">
-          {t("importers.migration_assistant_description", { "serviceName": "Jira" })}
-        </p>
-      </div>
-      <div className="space-y-6">
-        {
-          patError.showPATError && (
-            <ErrorBanner message={t("importers.invalid_pat")} onClose={() => { togglePATError(false) }} />
-          )
-        }
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 w-full">
+    <div className="space-y-6 w-full">
+      <ImporterHeader
+        config={{
+          serviceName: "Jira",
+          logo: JiraLogo,
+        }}
+      />
+      <div className="space-y-6 w-full">
+        {patError.showPATError && (
+          <ErrorBanner
+            message={t("importers.invalid_pat")}
+            onClose={() => {
+              togglePATError(false);
+            }}
+          />
+        )}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-12 gap-y-8 w-full">
           {jiraPatFormFields.map((field) => (
             <AuthFormInput
               key={field.key}
@@ -146,7 +152,7 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
         </div>
         <div className="relative flex gap-4">
           <Button variant="primary" onClick={handlePATAuthentication} disabled={isLoading}>
-            {isLoading ? t("common.authorizing") : t("importers.connect_importer", { "serviceName": "Jira" })}
+            {isLoading ? t("common.authorizing") : t("importers.connect_importer", { serviceName: "Jira" })}
           </Button>
           <Button variant="link-neutral" className="font-medium" onClick={clearFromData} disabled={isLoading}>
             {t("common.clear")}

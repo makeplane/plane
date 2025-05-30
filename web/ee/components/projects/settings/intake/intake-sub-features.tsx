@@ -133,7 +133,7 @@ const IntakeSubFeatures = observer((props: Props) => {
                   <div className="flex gap-2 w-full">
                     <div className="flex justify-center rounded mt-1">{feature.icon}</div>
                     <div className="w-full">
-                      <div className={cn("flex justify-between gap-2", {})}>
+                      <div className={cn("flex justify-between gap-4", {})}>
                         <div className="flex-1 w-full">
                           <div className="text-sm font-medium leading-5 align-top ">{feature.title}</div>
                           <p className="text-sm text-custom-text-300 text-wrap mt-1">{feature.description} </p>

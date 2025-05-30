@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import Fuse from 'fuse.js'
+import Fuse from "fuse.js";
 // ui
 import { PriorityConfig, AsanaCustomField, AsanaEnumOption } from "@plane/etl/asana";
 import { Button } from "@plane/ui";
@@ -19,6 +19,7 @@ import { useAsanaImporter } from "@/plane-web/hooks/store";
 import { E_IMPORTER_STEPS, TImporterDataPayload } from "@/plane-web/types/importers/asana";
 import { TPlanePriorityData } from "@/plane-web/types";
 import { useTranslation } from "@plane/i18n";
+import ImporterTable from "../../../ui/table";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.MAP_PRIORITY];
 
@@ -116,23 +117,23 @@ export const MapPriorityRoot: FC = observer(() => {
     if (!asanaPriorityOptions?.length || !priorities.length || fuzzySearchDone || !formData.customFieldGid) {
       return;
     }
-  
+
     // in list search on which keys to perform the search
     const options = {
       includeScore: true,
       keys: ["label"],
     };
-  
+
     // Create Fuse instance once
     const fuse = new Fuse(priorities, options);
-  
+
     // Create a new priorityMap to store all mappings
     const newPriorityMap: Record<string, string> = {};
-  
+
     asanaPriorityOptions?.forEach((asanaState) => {
       if (asanaState.name) {
         const result = fuse.search(asanaState.name);
-  
+
         if (result.length > 0) {
           const planeState = result[0].item as TPlanePriorityData;
           if (asanaState.gid && planeState.key) {
@@ -142,12 +143,11 @@ export const MapPriorityRoot: FC = observer(() => {
       }
     });
 
-  
     // Update the entire priorityMap at once
     if (Object.keys(newPriorityMap).length > 0) {
       handleFormData("priorityMap", { ...formData.priorityMap, ...newPriorityMap });
     }
-  
+
     // mark the fuzzy search as done
     setFuzzySearchDone(true);
   }, [asanaPriorityOptions, priorities, fuzzySearchDone, handleFormData, formData.customFieldGid]);
@@ -177,15 +177,15 @@ export const MapPriorityRoot: FC = observer(() => {
           }}
         />
         {formData.customFieldGid && (
-          <div className="py-4">
-            <div className="relative grid grid-cols-2 items-center bg-custom-background-90 p-3 text-sm font-medium">
-              <div>Asana Priorities</div>
-              <div>Plane Priorities</div>
-            </div>
-            <div className="divide-y divide-custom-border-200">
-              {asanaPriorityOptions &&
-                priorities &&
-                asanaPriorityOptions.map((asanaPriorityOption: AsanaEnumOption) => (
+          <ImporterTable
+            headerLeft="Asana Priorities"
+            headerRight="Plane Priorities"
+            iterator={
+              asanaPriorityOptions &&
+              asanaPriorityOptions.map((asanaPriorityOption: AsanaEnumOption) => ({
+                id: asanaPriorityOption.gid,
+                name: t("asana_importer.select_asana_priority_field"),
+                value: (
                   <MapPrioritiesSelection
                     key={asanaPriorityOption.gid}
                     value={formData.priorityMap[asanaPriorityOption.gid]}
@@ -196,9 +196,10 @@ export const MapPriorityRoot: FC = observer(() => {
                     asanaPriorityOption={asanaPriorityOption}
                     planePriorities={priorities}
                   />
-                ))}
-            </div>
-          </div>
+                ),
+              }))
+            }
+          />
         )}
       </div>
       {/* stepper button */}

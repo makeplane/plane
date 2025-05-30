@@ -50,7 +50,7 @@ export const ProjectStateGroupList: FC<TGroupList> = observer((props) => {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 mt-5">
       {Object.entries(groupProjectStates).map(([key, value]) => {
         const groupKey = key as TProjectStateGroupKey;
         const groupStateIds = value;

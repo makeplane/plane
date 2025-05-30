@@ -95,7 +95,7 @@ export const InitiativesUpgrade: FC<Props> = observer((props) => {
   };
 
   return (
-    <div className="pr-10">
+    <div className="">
       <div
         className={cn("flex flex-col rounded-xl mt-5 xl:flex-row", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),

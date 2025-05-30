@@ -75,12 +75,12 @@ export const PageTemplateFormRoot: React.FC<Props> = observer((props) => {
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Template Section */}
-        <div className="space-y-4 w-full max-w-4xl px-page-x py-page-y md:p-9 mx-auto">
+        <div className="space-y-4 w-full max-w-4xl py-page-y">
           <TemplateDetails />
         </div>
         {/* Page Section */}
-        <div className="bg-custom-background-90/40 size-full">
-          <div className="w-full max-w-4xl px-page-x py-page-y md:p-9 mx-auto">
+        <div className="size-full">
+          <div className="w-full max-w-4xl">
             <PageTemplatePageDetails workspaceSlug={workspaceSlug} templateId={preloadedData?.template?.id} />
             {/* Form Actions */}
             <div className="flex items-center justify-between gap-2 pt-8 mt-8 border-t border-custom-border-200">

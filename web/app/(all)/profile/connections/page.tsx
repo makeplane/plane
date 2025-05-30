@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { PageHead } from "@/components/core";
 import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
-import { UserConnectionsView } from "@/components/profile/connection/user-connections-view";
+import { UserConnectionsView } from "@/plane-web/components/profile/user-connections-view";
 
 export default function ProfileNotificationPage() {
   const { t } = useTranslation();

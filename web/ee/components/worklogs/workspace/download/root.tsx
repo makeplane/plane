@@ -70,11 +70,7 @@ export const WorkspaceWorklogDownloadRoot: FC<TWorkspaceWorklogDownloadRoot> = o
         </div>
       </div>
 
-      {disclosureState && (
-        <div className="py-4">
-          <WorkspaceWorklogDownloadList workspaceSlug={workspaceSlug} workspaceId={workspaceId} />
-        </div>
-      )}
+      {disclosureState && <WorkspaceWorklogDownloadList workspaceSlug={workspaceSlug} workspaceId={workspaceId} />}
     </Fragment>
   );
 });

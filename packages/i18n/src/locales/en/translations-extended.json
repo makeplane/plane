@@ -107,6 +107,14 @@
     }
   },
   "project_settings": {
+    "workflows": {
+      "heading": "Workflows",
+      "description": "Automate work item transitions and set rules to control how tasks move through your project pipeline."
+    },
+    "work_item_types": {
+      "heading": "Work item Types",
+      "description": "Create and customize different types of work items with unique properties"
+    },
     "initiatives": {
       "heading": "Initiatives",
       "sub_heading": "Unlock the highest level of organization for all your work in Plane.",
@@ -122,7 +130,8 @@
     "customers": {
       "heading": "Customers",
       "settings_heading": "Manage work by what's important to your customers.",
-      "settings_sub_heading": "Bring customer requests to work items, assign priority by requests, and roll up work items' states into customer records. Soon, you will integrate with your CRM or Support tool for even better work management by customer attributes."
+      "settings_sub_heading": "Bring customer requests to work items, assign priority by requests, and roll up work items' states into customer records. Soon, you will integrate with your CRM or Support tool for even better work management by customer attributes.",
+      "description": "Bring customer requests to work items, assign priority by requests, and roll up work items' states into customer records. Soon, you will integrate with your CRM or Support tool for even better work management by customer attributes."
     },
     "empty_state": {
       "integrations": {
@@ -173,11 +182,21 @@
       }
     },
     "epics": {
+      "heading": "Epics",
+      "description": "For larger bodies of work that span several cycles and can live across modules",
       "properties": {
         "title": "Properties",
         "description": "Add custom properties to your epic."
       },
       "disabled": "Disabled"
+    },
+    "project_updates": {
+      "heading": "Project Updates",
+      "description":"Consolidated tracking and progress monitoring for this project"
+    },
+    "templates": {
+      "heading": "Templates",
+      "description": "Save 80% time spent on creating projects, work items, and pages when you use templates."
     }
   },
   "teamspaces": {
@@ -443,25 +462,44 @@
   "workspace_settings": {
     "settings": {
       "integrations": {
-        "title": "Integrations"
+        "title": "Integrations",
+        "heading": "Integrations",
+        "description": "Connect with popular tools and services to sync your work across your entire workflow ecosystem."
       },
       "imports": {
-        "title": "Imports"
+        "title": "Imports",
+        "heading": "Imports",
+        "description": "Connect and import data from your existing project management tools to streamline your workflow integration."
       },
       "worklogs": {
-        "title": "Worklogs"
+        "title": "Worklogs",
+        "heading": "Worklogs",
+        "description": "Download worklogs AKA timesheets for anyone in any project."
       },
       "project_states": {
-        "title": "Project states"
+        "title": "Project states",
+        "heading": "See progress overview for all projects.",
+        "description": "Project States is a Plane-only feature for tracking progress of all your projects by any project property."
       },
       "teamspaces": {
-        "title": "Teamspaces"
+        "title": "Teamspaces",
+        "heading": "Teamspaces",
+        "description": "See your team’s work in a separate space with linked projects, tasks, team charts, pages, and views."
       },
       "initiatives": {
-        "title": "Initiatives"
+        "title": "Initiatives",
+        "heading": "Initiatives",
+        "description": "Unlock the highest level of organization for all your work in Plane."
       },
       "customers": {
-        "title": "Customers"
+        "title": "Customers",
+        "heading": "Manage work by what's important to your customers.",
+        "description": "Bring customer requests to work items, assign priority by requests, and roll up work items' states into customer records. Soon, you will integrate with your CRM or Support tool for even better work management by customer attributes."
+      },
+      "templates": {
+        "title": "Templates",
+        "heading": "Templates",
+        "description": "Save 80% time spent on creating projects, work items, and pages when you use templates."
       },
       "cancel_trial": {
         "title": "Cancel your trial first.",
@@ -576,6 +614,14 @@
       }
     }
   },
+  "account_settings": {
+    "connections": {
+      "title": "Connections",
+      "heading": "Connections",
+      "description": "Manage your workspace connections settings."
+    }
+  },
+
   "bulk_operations": {
     "error_details": {
       "invalid_archive_state_group": {
@@ -1950,6 +1996,9 @@
     "settings": {
       "title": "Templates",
       "description": "Save 80% time spent on creating projects, work items, and pages when you use templates.",
+      "new_project_template": "New project template",
+      "new_work_item_template": "New work item template",
+      "new_page_template": "New page template",
       "options": {
         "project": {
           "label": "Project templates"

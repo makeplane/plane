@@ -72,4 +72,5 @@ export * from "./moved-page-icon";
 export * from "./restricted-page-icon";
 export * from "./empty-page-icon";
 export * from "./moved-icon";
+export * from "./project-states-icon";
 export * from "./display-properties";

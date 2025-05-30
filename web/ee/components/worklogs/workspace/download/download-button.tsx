@@ -62,16 +62,16 @@ export const WorkspaceWorklogDownloadButton: FC<TWorkspaceWorklogDownloadButton>
       disabled={buttonLoader}
     >
       <div
-        className="flex w-full h-full px-2.5 py-1 text-sm font-medium border-r border-white"
+        className="flex w-full h-full px-2 py-0.5 text-sm font-medium border-r border-white"
         onClick={() => downloadWorklogs("csv")}
       >
         {buttonLoader ? "Downloading..." : "Download"}
       </div>
       <PopoverMenu
-        buttonClassName="outline-none focus:outline-none"
+        buttonClassName="outline-none focus:outline-none flex"
         button={
-          <div className="flex-shrink-0 w-6 h-7 overflow-hidden flex justify-center items-center">
-            <ChevronDown size={16} />
+          <div className="flex-shrink-0 px-2 py-0.5 overflow-hidden flex justify-center items-center my-auto">
+            <ChevronDown size={16} className="my-auto" />
           </div>
         }
         data={downloadFormatOptions}

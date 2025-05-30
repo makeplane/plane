@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AppSidebar } from "app/(all)/[workspaceSlug]/(projects)/sidebar";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -17,8 +18,6 @@ import { PaidPlanUpgradeModal } from "@/plane-web/components/license";
 // assets
 import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
-// eslint-disable-next-line import/order
-import { AppSidebar } from "app/(all)/[workspaceSlug]/(projects)/sidebar";
 
 export const WorkspaceDisabledPage: React.FC = observer(() => {
   // router

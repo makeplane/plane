@@ -1,18 +1,17 @@
 "use client";
 
-import { Fragment } from "react";
-import Image from "next/image";
-import { ArrowLeft } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // silo types
 import { TStepper, TStepperNavigation } from "@/plane-web/types/importers";
-import { useTranslation } from "@plane/i18n";
+import ImporterHeader from "../header";
 
 export const Stepper = <T,>(props: TStepper<T>) => {
   // props
-  const { logo, steps, currentStepIndex, redirectCallback } = props;
+  const { logo, steps, currentStepIndex, serviceName } = props;
+
   // derived value
   const currentStepDetails = steps[currentStepIndex];
 
@@ -20,72 +19,66 @@ export const Stepper = <T,>(props: TStepper<T>) => {
 
   return (
     <div className="relative w-full h-full flex flex-col space-y-6 overflow-hidden">
-      <div className="space-y-6">
+      <ImporterHeader
+        config={{
+          serviceName,
+          logo,
+        }}
+      />
+      <div className="border border-custom-border-100 rounded-lg flex divide-x divide-custom-border-100 overflow-hidden h-full">
         {/* stepper header */}
-        <div className="flex-shrink-0 relative flex items-center gap-2">
-          {redirectCallback && (
-            <div
-              className="flex-shrink-0 relative flex justify-center items-center w-6 h-6 rounded overflow-hidden hover:bg-custom-background-90 cursor-pointer"
-              onClick={redirectCallback}
-            >
-              <ArrowLeft size={16} />
-            </div>
-          )}
-
+        <div className="relative flex gap-2 md:w-1/4 p-2 md:p-6 flex-shrink-0 h-fit">
           <div className="w-full relative flex items-center gap-6">
-            {logo && (
-              <div className="flex-shrink-0 w-12 h-12 bg-custom-background-90 relative flex justify-center items-center rounded overflow-hidden">
-                <Image src={logo} objectFit="contain" alt={`Importer Logo`} className="w-8 h-8" />
-              </div>
-            )}
-
-            <div className="w-full h-full relative overflow-hidden flex justify-between items-center">
+            <div className="w-full h-full relative overflow-hidden flex flex-col justify-between">
               {steps.map((step, index) => (
-                <Fragment key={index}>
-                  {/* left bar */}
-                  {step?.prevStep && (
+                <div key={index}>
+                  <div className="flex">
+                    {/* indicator */}
                     <div
-                      className={cn("h-[1.5px] w-full bg-custom-border-200 transition-all", {
-                        "bg-custom-primary-100": index <= currentStepIndex,
-                      })}
-                    />
-                  )}
-
-                  {/* content */}
-                  <div
-                    className={cn(
-                      "flex-shrink-0 w-8 h-8 relative flex justify-center items-center border bg-custom-border-200 border-custom-border-200 text-custom-text-200 rounded-full transition-all",
-                      {
-                        "bg-custom-primary-100 border-custom-primary-100 text-white": index <= currentStepIndex,
-                      }
-                    )}
-                  >
-                    {step?.icon ? step?.icon() : index + 1}
+                      className={cn(
+                        "relative flex-shrink-0 w-5 h-5  flex justify-center items-center bg-transparent text-custom-text-200 rounded-full transition-all",
+                        {
+                          "bg-custom-primary-90/10  text-white": index === currentStepIndex,
+                        }
+                      )}
+                    >
+                      <div
+                        className={cn("text-sm font-medium w-2 h-2 rounded-full bg-custom-border-200", {
+                          "bg-custom-primary-100": index <= currentStepIndex,
+                        })}
+                      />
+                    </div>
+                    {/* title */}
+                    <div className="text-sm font-medium ml-4 hidden md:flex">{t(step?.i18n_title)}</div>
                   </div>
-
                   {/* right bar */}
                   {step?.nextStep && index < steps.length - 1 && (
                     <div
-                      className={cn("h-[1.5px] w-full bg-custom-border-200 transition-all", {
+                      className={cn(" ml-[10px] h-[40px] w-[1px] bg-custom-border-100 transition-all", {
                         "bg-custom-primary-100": index < currentStepIndex,
                       })}
                     />
                   )}
-                </Fragment>
+                </div>
               ))}
             </div>
           </div>
         </div>
-
-        {/* title and description */}
-        <div className="flex-shrink-0 space-y-1">
-          <div className="text-xl font-bold">{t(currentStepDetails?.i18n_title)}</div>
-          <div className="text-custom-text-200 text-sm">{t(currentStepDetails?.i18n_description)}</div>
+        {/* content */}
+        <div className="md:w-3/4 h-full flex flex-col overflow-auto">
+          {/* title and description */}
+          <div className="flex-shrink-0 space-y-1 p-6">
+            <div className="font-medium">{t(currentStepDetails?.i18n_title)}</div>
+            <div className="text-custom-text-200 text-base">{t(currentStepDetails?.i18n_description)}</div>
+          </div>
+          {/* component */}
+          {currentStepDetails?.component && (
+            <div className="h-full overflow-y-scroll flex flex-col justify-between mx-6">
+              {currentStepDetails.component()}
+            </div>
+          )}
         </div>
       </div>
-
-      {/* component */}
-      {currentStepDetails?.component && <div className="h-full overflow-hidden">{currentStepDetails.component()}</div>}
     </div>
   );
 };
@@ -97,7 +90,7 @@ export const StepperNavigation = <T,>(props: TStepperNavigation<T>) => {
   const { t } = useTranslation();
 
   return (
-    <div className="flex-shrink-0 relative flex items-center gap-2">
+    <div className="flex-shrink-0 relative flex items-center gap-2 w-full py-4 justify-between border-t border-custom-border-100">
       <Button
         variant="neutral-primary"
         size="sm"

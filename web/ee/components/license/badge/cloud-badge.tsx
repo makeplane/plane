@@ -12,7 +12,6 @@ import { useEventTracker } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { SubscriptionButton } from "@/plane-web/components/common";
-import { PaidPlanUpgradeModal } from "@/plane-web/components/license";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export const CloudEditionBadge = observer(() => {
@@ -23,7 +22,6 @@ export const CloudEditionBadge = observer(() => {
   // hooks
   const { captureEvent } = useEventTracker();
   const {
-    isPaidPlanModalOpen,
     currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
     togglePaidPlanModal,
     handleSuccessModalToggle,
@@ -70,7 +68,6 @@ export const CloudEditionBadge = observer(() => {
   if (!subscriptionDetail || !currentSubscription) return null;
   return (
     <>
-      <PaidPlanUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
       {showPaymentButton && (
         <SubscriptionButton
           className="min-w-24"

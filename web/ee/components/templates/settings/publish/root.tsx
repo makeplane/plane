@@ -75,7 +75,7 @@ export const PublishTemplate = observer(<T extends TBaseTemplateWithData>(props:
   };
 
   return (
-    <div className="w-full max-w-4xl px-page-x py-page-y mx-auto">
+    <div className="w-full max-w-4xl mx-auto">
       <div className="flex items-center justify-between border-b border-custom-border-200 pb-3 tracking-tight w-full">
         <h3 className="text-lg font-semibold">{t("templates.settings.form.publish.title")}</h3>
       </div>

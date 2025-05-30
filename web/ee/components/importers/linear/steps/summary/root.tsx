@@ -15,6 +15,7 @@ import { StepperNavigation, AddSeatsAlertBanner, SkipUserImport } from "@/plane-
 import { useLinearImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web types
 import { E_LINEAR_IMPORTER_STEPS } from "@/plane-web/types/importers/linear";
+import ImporterTable from "../../../ui/table";
 
 export const SummaryRoot: FC = observer(() => {
   // hooks
@@ -123,21 +124,16 @@ export const SummaryRoot: FC = observer(() => {
   return (
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
       {/* content */}
-      <div className="w-full min-h-44 max-h-full overflow-y-auto">
-        <div className="relative grid grid-cols-2 items-center bg-custom-background-90 p-3 text-sm font-medium">
-          <div>Linear {t("common.entities")}</div>
-          <div>{t("importers.migrating")}</div>
-        </div>
-        <div className="divide-y divide-custom-border-200">
-          {linearTeamId &&
-            Object.entries(linearDataSummary[linearTeamId]).map(([key, count]) => (
-              <div key={key} className="relative grid grid-cols-2 items-center p-3 text-sm">
-                <div className="text-custom-text-200">{key.charAt(0).toUpperCase() + key.slice(1)}</div>
-                <div>{count.toString()}</div>
-              </div>
-            ))}
-        </div>
-      </div>
+      <ImporterTable
+        isLoading={!configData}
+        headerLeft={`Linear ${t("common.entities")}`}
+        headerRight={t("importers.migrating")}
+        iterator={Object.entries(linearTeamId ? linearDataSummary[linearTeamId] : {}).map(([key, count]) => ({
+          id: key,
+          name: key.charAt(0).toUpperCase() + key.slice(1),
+          value: count.toString(),
+        }))}
+      />
 
       {/* user import warning and skip */}
       {isJiraAdditionalUsersDataLoading ? (
@@ -150,24 +146,26 @@ export const SummaryRoot: FC = observer(() => {
       ) : (
         <></>
       )}
-      <SkipUserImport
-        importSourceName="Linear"
-        userSkipToggle={userSkipToggle}
-        handleUserSkipToggle={handleUserSkipToggle}
-      />
+      <div className="flex flex-col gap-4">
+        <SkipUserImport
+          importSourceName="Linear"
+          userSkipToggle={userSkipToggle}
+          handleUserSkipToggle={handleUserSkipToggle}
+        />
 
-      {/* stepper button */}
-      <div className="flex-shrink-0 relative flex items-center gap-2">
-        <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleOnClickNext}
-            disabled={createConfigLoader || isNextBtnDisabled}
-          >
-            {createConfigLoader ? t("common.configuring") : t("common.confirm")}
-          </Button>
-        </StepperNavigation>
+        {/* stepper button */}
+        <div className="flex-shrink-0 relative flex items-center gap-2">
+          <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={handleOnClickNext}
+              disabled={createConfigLoader || isNextBtnDisabled}
+            >
+              {createConfigLoader ? t("common.configuring") : t("common.confirm")}
+            </Button>
+          </StepperNavigation>
+        </div>
       </div>
     </div>
   );

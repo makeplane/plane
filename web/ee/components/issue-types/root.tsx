@@ -4,8 +4,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
 // plane web components
+import { SettingsHeading } from "@/components/settings";
 import { IssueTypeEmptyState, IssueTypesList, CreateOrUpdateIssueTypeModal } from "@/plane-web/components/issue-types";
 // plane web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
@@ -30,14 +30,15 @@ export const IssueTypesRoot = observer(() => {
 
   return (
     <div className="container mx-auto h-full pb-8">
-      <div className="flex items-center justify-between border-b border-custom-border-100 pb-3.5 gap-14">
-        <h3 className="text-xl font-medium">{t("work_item_types.label")}</h3>
-        {isWorkItemTypeEnabled && (
-          <Button variant="primary" size="sm" onClick={() => setIsModalOpen(true)}>
-            {t("work_item_types.create.button")}
-          </Button>
-        )}
-      </div>
+      <SettingsHeading
+        title={t("project_settings.work_item_types.heading")}
+        description={t("project_settings.work_item_types.description")}
+        showButton={isWorkItemTypeEnabled}
+        button={{
+          label: t("work_item_types.create.button"),
+          onClick: () => setIsModalOpen(true),
+        }}
+      />
       <div className="my-2 h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
         {isWorkItemTypeEnabled ? (
           <IssueTypesList onEditIssueTypeIdChange={handleEditIssueTypeIdChange} />

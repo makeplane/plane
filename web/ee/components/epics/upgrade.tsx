@@ -1,51 +1,71 @@
 "use client";
 
-import { FC } from "react";
+import React, { FC } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import Image from "next/image";
 import { useTheme } from "next-themes";
-// plane imports
-import { E_FEATURE_FLAGS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
 // helpers
+import { Crown } from "lucide-react";
+import { EProductSubscriptionEnum } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { Button, getButtonStyling } from "@plane/ui";
+import { SettingsHeading } from "@/components/settings";
 import { cn } from "@/helpers/common.helper";
-import { UpgradeEmptyStateButton } from "../workspace";
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import EpicsUpgradeDark from "@/public/empty-state/epics/settings-dark.png";
+import EpicsUpgradeLight from "@/public/empty-state/epics/settings-light.png";
 
 export const EpicsUpgrade: FC = observer(() => {
-  // router
-  const { workspaceSlug } = useParams();
   // store hooks
-  const { resolvedTheme } = useTheme();
   const { t } = useTranslation();
+  const { resolvedTheme } = useTheme();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
+  const isPlaneOneInstance =
+    subscriptionDetail?.is_self_managed && subscriptionDetail?.product === EProductSubscriptionEnum.ONE;
+
+  const getUpgradeButton = (): React.ReactNode => {
+    if (isPlaneOneInstance) {
+      return (
+        <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
+          Upgrade to higher subscription
+        </a>
+      );
+    }
+    return (
+      <Button variant="primary" onClick={() => togglePaidPlanModal(true)}>
+        <Crown className="h-3.5 w-3.5" />
+        Upgrade
+      </Button>
+    );
+  };
+
   return (
-    <div className="pr-10">
+    <div className="divide-y divide-custom-border-100">
+      <SettingsHeading
+        title={t("project_settings.epics.heading")}
+        description={t("project_settings.epics.description")}
+      />
       <div
-        className={cn("flex flex-col rounded-xl mt-5 xl:flex-row", {
+        className={cn("flex flex-col md:flex-row rounded-xl mt-5 xl:flex-row", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),
           "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": !resolvedTheme?.includes("dark"),
         })}
       >
         <div className={cn("flex w-full flex-col  justify-center relative p-5 xl:pl-10 xl:min-h-[25rem]")}>
-          <div className="flex flex-col w-full xl:max-w-[360px] gap-y-4">
-            <div className="text-xl font-semibold">Epics</div>
-            <div className="font-medium text-custom-text-300">
-              For larger bodies of work that span several cycles and can live across modules, create an epic. Link work
-              items and sub-work items in a project to an epic and jump into a work item from the overview.
+          <div className="w-full xl:max-w-[300px]">
+            <div className="text-2xl font-semibold">Track multi-module, multi-cycle work from one place.</div>
+            <div className="text-sm my-6 ">
+              Epics are great for housing work that spans several cycles and modules so you can track overall progress
+              from one place.
             </div>
-            <div className="flex mt-6 gap-4 flex-wrap">
-              <UpgradeEmptyStateButton workspaceSlug={workspaceSlug?.toString()} flag={E_FEATURE_FLAGS.EPICS} />
-              <Link
-                target="_blank"
-                href="https://plane.so/contact"
-                className={"bg-transparent underline text-sm text-custom-primary-200 my-auto font-medium"}
-                onClick={() => {}}
-              >
-                {t("common.upgrade_cta.talk_to_sales")}
-              </Link>
-            </div>
+            <div className="flex gap-4 flex-wrap">{getUpgradeButton()}</div>
           </div>
         </div>
+        <Image
+          src={resolvedTheme === "dark" ? EpicsUpgradeDark : EpicsUpgradeLight}
+          alt=""
+          className="max-h-[320px] self-end flex pb-0 xl:p-0 w-auto"
+        />
       </div>
     </div>
   );

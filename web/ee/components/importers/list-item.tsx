@@ -19,28 +19,26 @@ export const ImportersListItem: FC<ImportersListItemProps> = (props) => {
   return (
     <div
       key={provider.key}
-      className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100  px-4 py-6 flex-shrink-0"
+      className="flex flex-col w-full md:w-[30%] justify-between gap-2 rounded-md border border-custom-border-100 bg-custom-background-100  px-4 py-6 flex-shrink-0 overflow-hidden"
     >
-      <div className="flex items-start gap-4">
-        <div className="relative h-10 w-10 flex-shrink-0">
-          <Image src={provider.logo} layout="fill" objectFit="cover" alt={`${provider.title} Logo`} />
-        </div>
-        <div>
-          <div className="relative flex items-center gap-2">
-            <h3 className="flex items-center gap-4 text-sm font-medium">{provider.title}</h3>
-            {provider.beta && (
-              <div className="w-fit cursor-pointer rounded-2xl text-custom-primary-200 bg-custom-primary-100/20 text-center font-medium outline-none text-xs px-2">
-                {t("common.beta")}
-              </div>
-            )}
-          </div>
-          <p className="text-sm tracking-tight text-custom-text-200">{t(provider.i18n_description)}</p>
-        </div>
+      <div className="relative h-12 w-12 flex-shrink-0 bg-custom-background-90 rounded flex items-center justify-center">
+        <Image src={provider.logo} width={32} height={32} alt={`${provider.title} Logo`} />
       </div>
+      <div className="relative flex items-center gap-2">
+        <h3 className="flex items-center gap-4 text-sm font-medium">{provider.title}</h3>
+        {provider.beta && (
+          <div className="w-fit cursor-pointer rounded-2xl text-custom-primary-200 bg-custom-primary-100/20 text-center font-medium outline-none text-xs px-2">
+            {t("common.beta")}
+          </div>
+        )}
+      </div>
+      <p className="text-sm tracking-tight text-custom-text-200 truncate">{t(provider.i18n_description)}</p>
       <div className="flex-shrink-0">
         <Link href={`/${workspaceSlug}/settings/imports/${provider.key}`}>
           <span>
-            <Button variant="primary">{t("importers.import")}</Button>
+            <Button size="sm" variant="accent-primary">
+              {t("importers.import")}
+            </Button>
           </span>
         </Link>
       </div>

@@ -1,14 +1,15 @@
 "use client";
 
 import { FC, useEffect, useState } from "react";
+import Fuse from "fuse.js";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { IStateConfig, JiraStatus } from "@plane/etl/jira";
+import { useTranslation } from "@plane/i18n";
 import { ExState } from "@plane/sdk";
 import { IState } from "@plane/types";
 import { Button, Loader } from "@plane/ui";
-import Fuse from 'fuse.js'
 // silo components
 import { MapStatesSelection } from "@/plane-web/components/importers/jira";
 import { StepperNavigation } from "@/plane-web/components/importers/ui";
@@ -16,7 +17,7 @@ import { StepperNavigation } from "@/plane-web/components/importers/ui";
 import { useJiraImporter } from "@/plane-web/hooks/store";
 //  plane web types
 import { E_IMPORTER_STEPS, TImporterDataPayload } from "@/plane-web/types/importers";
-import { useTranslation } from "@plane/i18n";
+import ImporterTable from "../../../ui/table";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.MAP_STATES];
 
@@ -102,24 +103,23 @@ export const MapStatesRoot: FC = observer(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [importerData]);
 
-
   useEffect(() => {
     if (!jiraProjectStates.length || !planeProjectStates.length || fuzzySearchDone) {
       return;
     }
-  
+
     const options = {
       includeScore: true,
       keys: ["name"],
     };
-  
+
     // Create Fuse instance once
     const fuse = new Fuse(planeProjectStates, options);
-  
+
     jiraProjectStates.forEach((jiraState) => {
       if (jiraState.name) {
         const result = fuse.search(jiraState.name);
-  
+
         if (result.length > 0) {
           const planeState = result[0].item as IState;
           if (jiraState.id && planeState.id) {
@@ -131,7 +131,6 @@ export const MapStatesRoot: FC = observer(() => {
     // mark the fuzzy search as done
     setFuzzySearchDone(true);
   }, [jiraProjectStates, planeProjectStates, fuzzySearchDone, handleFormData]);
-
 
   // fetching the jira project states
   const { isLoading: isJiraProjectStatesLoading } = useSWR(
@@ -154,41 +153,33 @@ export const MapStatesRoot: FC = observer(() => {
   return (
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
       {/* content */}
-      <div className="w-full min-h-44 max-h-full overflow-y-auto">
-        <div className="relative grid grid-cols-2 items-center bg-custom-background-90 p-3 text-sm font-medium">
-          <div>Jira {t("common.states")}</div>
-          <div>Plane {t("common.states")}</div>
-        </div>
-        <div className="divide-y divide-custom-border-200">
-          {(isJiraProjectStatesLoading && (!jiraProjectStates || jiraProjectStates.length === 0)) ||
-            (isPlaneProjectStatesLoading && (!planeProjectStates || planeProjectStates.length === 0)) ? (
-            <Loader className="relative w-full grid grid-cols-2 items-center py-4 gap-4">
-              <Loader.Item height="35px" width="100%" />
-              <Loader.Item height="35px" width="100%" />
-              <Loader.Item height="35px" width="100%" />
-              <Loader.Item height="35px" width="100%" />
-              <Loader.Item height="35px" width="100%" />
-              <Loader.Item height="35px" width="100%" />
-            </Loader>
-          ) : (
-            jiraProjectStates &&
-            planeProjectStates &&
-            jiraProjectStates.map(
-              (jiraState: JiraStatus) =>
-                jiraState.id && (
+      <ImporterTable
+        isLoading={
+          (isJiraProjectStatesLoading && (!jiraProjectStates || jiraProjectStates.length === 0)) ||
+          (isPlaneProjectStatesLoading && (!planeProjectStates || planeProjectStates.length === 0))
+        }
+        headerLeft={`Jira ${t("common.states")}`}
+        headerRight={`Plane ${t("common.states")}`}
+        iterator={
+          jiraProjectStates &&
+          planeProjectStates &&
+          jiraProjectStates.map(
+            (jiraState: JiraStatus) =>
+              jiraState.id && {
+                id: jiraState.id,
+                name: jiraState.name,
+                value: (
                   <MapStatesSelection
                     key={jiraState.id}
-                    value={formData[jiraState.id]}
+                    value={formData[jiraState?.id]}
                     handleValue={(value: string | undefined) => jiraState.id && handleFormData(jiraState.id, value)}
-                    jiraState={jiraState}
                     planeStates={planeProjectStates}
                   />
-                )
-            )
-          )}
-        </div>
-      </div>
-
+                ),
+              }
+          )
+        }
+      />
       {/* stepper button */}
       <div className="flex-shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>

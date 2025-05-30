@@ -18,6 +18,7 @@ export const StepsRoot: FC = observer(() => {
   return (
     <div className="relative w-full h-full overflow-hidden">
       <Stepper
+        serviceName="Linear"
         logo={LinearLogo}
         steps={IMPORTER_LINEAR_STEPS}
         currentStepIndex={currentStepIndex}

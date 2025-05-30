@@ -2,17 +2,13 @@ import { observer } from "mobx-react";
 // plane imports
 import { Loader } from "@plane/ui";
 // plane web imports
-import { CloudEditionBadge, PaidPlanSuccessModal, SelfHostedEditionBadge } from "@/plane-web/components/license";
+import { CloudEditionBadge, SelfHostedEditionBadge } from "@/plane-web/components/license";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export const WorkspaceEditionBadge = observer(() => {
   // hooks
-  const {
-    isSuccessPlanModalOpen,
-    currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
-    handleSuccessModalToggle,
-  } = useWorkspaceSubscription();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   // derived values
   const isSelfHosted = subscriptionDetail?.is_self_managed;
 
@@ -23,14 +19,5 @@ export const WorkspaceEditionBadge = observer(() => {
       </Loader>
     );
 
-  return (
-    <>
-      <PaidPlanSuccessModal
-        variant={subscriptionDetail.product}
-        isOpen={isSuccessPlanModalOpen}
-        handleClose={() => handleSuccessModalToggle(false)}
-      />
-      {isSelfHosted ? <SelfHostedEditionBadge /> : <CloudEditionBadge />}
-    </>
-  );
+  return <>{isSelfHosted ? <SelfHostedEditionBadge /> : <CloudEditionBadge />}</>;
 });

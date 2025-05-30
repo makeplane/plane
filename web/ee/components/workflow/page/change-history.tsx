@@ -187,12 +187,15 @@ export const WorkflowChangeHistory: FC<TWorkflowChangeHistoryProps> = observer((
     <div
       ref={ref}
       className={cn(
-        "absolute top-0 right-0 h-full z-[19] flex flex-col justify-between gap-4 w-[368px] transform transition-all duration-300 ease-in-out bg-custom-sidebar-background-100 border-l border-custom-sidebar-border-200 shadow-md py-4",
+        "absolute top-0 right-0 h-full z-[19] -my-6 -mx-4 flex flex-col justify-between gap-4 w-[368px] transform transition-all duration-300 ease-in-out bg-custom-sidebar-background-100 border-l border-custom-sidebar-border-200 shadow-md py-4",
         {
           "opacity-100": isOpen,
           "opacity-0 invisible": !isOpen,
         }
       )}
+      style={{
+        height: "calc(100% + 2.7rem)",
+      }}
     >
       <div className="relative flex flex-col gap-y-2 h-full overflow-hidden">
         <div className="p-4 pt-2 flex flex-col">

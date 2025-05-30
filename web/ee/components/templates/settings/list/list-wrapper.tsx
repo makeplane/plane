@@ -21,7 +21,7 @@ export const TemplateListWrapper = observer((props: TemplateListWrapperProps) =>
 
   if (!isInitializing && !areTemplatesAvailable) return null;
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 w-full">
       <h3 className="text-sm font-semibold text-custom-text-400">{t(getTemplateI18nLabel(type))}</h3>
       <div className="flex flex-col gap-4">
         {isInitializing ? (

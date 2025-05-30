@@ -16,6 +16,7 @@ import { AddSeatsAlertBanner, SkipUserImport, StepperNavigation } from "@/plane-
 import { useAsanaImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // plane web types
 import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/asana";
+import ImporterTable from "../../../ui/table";
 
 export const SummaryRoot: FC = observer(() => {
   // hooks
@@ -40,7 +41,7 @@ export const SummaryRoot: FC = observer(() => {
     },
   } = useAsanaImporter();
   const { currentWorkspaceSubscriptionAvailableSeats } = useWorkspaceSubscription();
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   // states
   const [createConfigLoader, setCreateConfigLoader] = useState<boolean>(false);
@@ -123,33 +124,23 @@ export const SummaryRoot: FC = observer(() => {
   return (
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
       {/* content */}
-      <div className="w-full min-h-44 max-h-full overflow-y-auto">
-        <div className="relative grid grid-cols-2 items-center bg-custom-background-90 p-3 text-sm font-medium">
-          <div>Asana {t("common.entities")}</div>
-          <div>{t("importers.migrating")}</div>
-        </div>
-        {isAsanaTaskCountLoading ? (
-          <Loader className="relative w-full grid grid-cols-2 items-center py-4 gap-4">
-            <Loader.Item height="35px" width="100%" />
-            <Loader.Item height="35px" width="100%" />
-            <Loader.Item height="35px" width="100%" />
-            <Loader.Item height="35px" width="100%" />
-            <Loader.Item height="35px" width="100%" />
-            <Loader.Item height="35px" width="100%" />
-          </Loader>
-        ) : (
-          <div className="divide-y divide-custom-border-200">
-            <div className="relative grid grid-cols-2 items-center p-3 text-sm">
-              <div className="text-custom-text-200">{t("common.tasks")}</div>
-              <div>{`${asanaProjectTaskCount}`} {t("common.tasks")}</div>
-            </div>
-            <div className="relative grid grid-cols-2 items-center p-3 text-sm">
-              <div className="text-custom-text-200">{t("common.sections")}</div>
-              <div>{`${asanaProjectSections?.length || 0} ${t("common.sections")}`}</div>
-            </div>
-          </div>
-        )}
-      </div>
+      <ImporterTable
+        isLoading={isAsanaTaskCountLoading}
+        headerLeft={`Asana ${t("common.entities")}`}
+        headerRight={t("importers.migrating")}
+        iterator={[
+          {
+            id: "0",
+            name: t("common.tasks"),
+            value: `${asanaProjectTaskCount} ${t("common.tasks")}`,
+          },
+          {
+            id: "1",
+            name: t("common.sections"),
+            value: `${asanaProjectSections?.length || 0} ${t("common.sections")}`,
+          },
+        ]}
+      />
 
       {isJiraAdditionalUsersDataLoading ? (
         <Loader.Item height="35px" width="100%" />
@@ -161,24 +152,26 @@ export const SummaryRoot: FC = observer(() => {
       ) : (
         <></>
       )}
-      <SkipUserImport
-        importSourceName="Asana"
-        userSkipToggle={userSkipToggle}
-        handleUserSkipToggle={handleUserSkipToggle}
-      />
+      <div className="flex flex-col gap-4">
+        <SkipUserImport
+          importSourceName="Asana"
+          userSkipToggle={userSkipToggle}
+          handleUserSkipToggle={handleUserSkipToggle}
+        />
 
-      {/* stepper button */}
-      <div className="flex-shrink-0 relative flex items-center gap-2">
-        <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleOnClickNext}
-            disabled={createConfigLoader || isNextBtnDisabled}
-          >
-            {createConfigLoader ? t("common.configuring") : t("common.confirm")}
-          </Button>
-        </StepperNavigation>
+        {/* stepper button */}
+        <div className="flex-shrink-0 relative flex items-center gap-2">
+          <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={handleOnClickNext}
+              disabled={createConfigLoader || isNextBtnDisabled}
+            >
+              {createConfigLoader ? t("common.configuring") : t("common.confirm")}
+            </Button>
+          </StepperNavigation>
+        </div>
       </div>
     </div>
   );

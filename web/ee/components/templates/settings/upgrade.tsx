@@ -30,7 +30,7 @@ export const TemplatesUpgrade: FC<TTemplatesUpgradeProps> = observer((props: TTe
   const { t } = useTranslation();
 
   return (
-    <div className="pr-10">
+    <div className="w-full">
       <div
         className={cn("flex flex-col rounded-xl mt-5 xl:flex-row", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),
@@ -40,8 +40,12 @@ export const TemplatesUpgrade: FC<TTemplatesUpgradeProps> = observer((props: TTe
         <div className={cn("flex w-full flex-col  justify-center relative p-5 xl:pl-10 xl:min-h-[25rem]")}>
           <div className="flex flex-col w-full xl:max-w-[360px] gap-y-4">
             <div className="text-xl font-semibold">{t("templates.empty_state.upgrade.title")}</div>
-            <div className="font-medium text-custom-text-300">{t("templates.empty_state.upgrade.description")}</div>
-            <div className="font-medium text-custom-text-300">{t("templates.empty_state.upgrade.sub_description")}</div>
+            <div className="font-medium text-custom-text-300 text-sm">
+              {t("templates.empty_state.upgrade.description")}
+            </div>
+            <div className="font-medium text-custom-text-300 text-sm">
+              {t("templates.empty_state.upgrade.sub_description")}
+            </div>
             <div className="flex mt-6 gap-4 flex-wrap">
               <UpgradeEmptyStateButton workspaceSlug={workspaceSlug?.toString()} flag={flag} />
               <Link
@@ -58,7 +62,7 @@ export const TemplatesUpgrade: FC<TTemplatesUpgradeProps> = observer((props: TTe
         <Image
           src={resolvedTheme === "dark" ? TemplatesUpgradeDark : TemplatesUpgradeLight}
           alt=""
-          className="max-h-[320px] self-end flex p-5 pb-0 xl:p-0"
+          className="max-h-[320px] self-end flex p-5 pb-0 xl:p-0 w-auto"
         />
       </div>
     </div>

@@ -12,6 +12,8 @@ import { TLinearPATFormFields } from "@/plane-web/types/importers/linear";
 import { useTranslation } from "@plane/i18n";
 import { TImporterPATError } from "@/plane-web/types";
 import ErrorBanner from "../../ui/error-banner";
+import LinearLogo from "@/public/services/linear.svg";
+import ImporterHeader from "../../header";
 
 export const PersonalAccessTokenAuth: FC = observer(() => {
   // hooks
@@ -91,19 +93,22 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="relative flex flex-col border-b border-custom-border-100 pb-3.5">
-        <h3 className="text-xl font-medium">Linear to Plane {t("importers.migration_assistant")}</h3>
-        <p className="text-custom-text-300 text-sm">
-          {t("importers.migration_assistant_description", { "serviceName": "Linear" })}
-        </p>
-      </div>
-      <div className="space-y-6">
-        {
-          patError.showPATError && (
-            <ErrorBanner message={t("importers.invalid_pat")} onClose={() => { togglePATError(false) }} />
-          )
-        }
+    <div className="space-y-6 w-full">
+      <ImporterHeader
+        config={{
+          serviceName: "Linear",
+          logo: LinearLogo,
+        }}
+      />
+      <div className="space-y-6 w-full">
+        {patError.showPATError && (
+          <ErrorBanner
+            message={t("importers.invalid_pat")}
+            onClose={() => {
+              togglePATError(false);
+            }}
+          />
+        )}
         {linearPatFormFields.map((field) => (
           <AuthFormInput
             key={field.key}
@@ -117,12 +122,12 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
             error={field.error}
           />
         ))}
-        <div className="relative flex justify-end gap-4">
+        <div className="relative flex justify-start gap-4">
+          <Button variant="primary" onClick={handlePATAuthentication} disabled={isLoading}>
+            {isLoading ? t("common.authorizing") : t("importers.connect_importer", { serviceName: "Linear" })}
+          </Button>
           <Button variant="link-neutral" className="font-medium" onClick={clearFromData} disabled={isLoading}>
             {t("common.clear")}
-          </Button>
-          <Button variant="primary" onClick={handlePATAuthentication} disabled={isLoading}>
-            {isLoading ? t("common.authorizing") : t("importers.connect_importer", { "serviceName": "Linear" })}
           </Button>
         </div>
       </div>

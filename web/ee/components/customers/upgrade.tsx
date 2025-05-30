@@ -22,15 +22,7 @@ export const CustomerUpgrade: FC = observer(() => {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-2 border-b border-custom-border-200 pb-3">
-        <div className="tracking-tight">
-          <h3 className="text-xl font-medium">{t("project_settings.customers.settings_heading")}</h3>
-          <span className="text-custom-sidebar-text-400 text-sm font-medium">
-            {t("project_settings.customers.settings_sub_heading")}
-          </span>
-        </div>
-      </div>
-      <div className="pr-10">
+      <div className="">
         <div
           className={cn("flex flex-col rounded-xl mt-5 xl:flex-row", {
             "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),

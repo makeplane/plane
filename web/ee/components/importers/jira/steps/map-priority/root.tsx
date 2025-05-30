@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import Fuse from 'fuse.js'
+import Fuse from "fuse.js";
 import { IPriorityConfig, JiraPriority } from "@plane/etl/jira";
 import { Button, Loader } from "@plane/ui";
 // plane web components
@@ -16,6 +16,7 @@ import { useJiraImporter } from "@/plane-web/hooks/store";
 import { E_IMPORTER_STEPS, TImporterDataPayload } from "@/plane-web/types/importers/jira";
 import { useTranslation } from "@plane/i18n";
 import { TPlanePriorityData } from "@/plane-web/types";
+import ImporterTable from "../../../ui/table";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.MAP_PRIORITY];
 
@@ -95,27 +96,25 @@ export const MapPriorityRoot: FC = observer(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [importerData]);
 
-
-
   // fuzzy search and default values
   useEffect(() => {
     if (!jiraProjectPriorities.length || !priorities.length || fuzzySearchDone) {
       return;
     }
-  
+
     // in list search on which keys to perform the search
     const options = {
       includeScore: true,
       keys: ["label"],
     };
-  
+
     // Create Fuse instance once
     const fuse = new Fuse(priorities, options);
-  
+
     jiraProjectPriorities.forEach((jiraState) => {
       if (jiraState.name) {
         const result = fuse.search(jiraState.name);
-  
+
         if (result.length > 0) {
           const planeState = result[0].item as TPlanePriorityData;
           if (jiraState.id && planeState.key) {
@@ -127,9 +126,6 @@ export const MapPriorityRoot: FC = observer(() => {
     // mark the fuzzy search as done
     setFuzzySearchDone(true);
   }, [jiraProjectPriorities, priorities, fuzzySearchDone, handleFormData]);
-
-
-
 
   // fetching the jira project priorities
   const { isLoading: isJiraProjectPrioritiesLoading } = useSWR(
@@ -145,42 +141,32 @@ export const MapPriorityRoot: FC = observer(() => {
   return (
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
       {/* content */}
-      <div className="w-full min-h-44 max-h-full overflow-y-auto">
-        <div className="relative grid grid-cols-2 items-center bg-custom-background-90 p-3 text-sm font-medium">
-          <div>Jira Priorities</div>
-          <div>Plane Priorities</div>
-        </div>
-        <div className="divide-y divide-custom-border-200">
-          {isJiraProjectPrioritiesLoading && (!jiraProjectPriorities || jiraProjectPriorities.length === 0) ? (
-            <Loader className="relative w-full grid grid-cols-2 items-center py-4 gap-4">
-              <Loader.Item height="35px" width="100%" />
-              <Loader.Item height="35px" width="100%" />
-              <Loader.Item height="35px" width="100%" />
-              <Loader.Item height="35px" width="100%" />
-              <Loader.Item height="35px" width="100%" />
-              <Loader.Item height="35px" width="100%" />
-            </Loader>
-          ) : (
-            jiraProjectPriorities &&
-            priorities &&
-            jiraProjectPriorities.map(
-              (jiraPriority: JiraPriority) =>
-                jiraPriority.id && (
+      <ImporterTable
+        isLoading={isJiraProjectPrioritiesLoading && (!jiraProjectPriorities || jiraProjectPriorities.length === 0)}
+        headerLeft="Jira Priorities"
+        headerRight="Plane Priorities"
+        iterator={
+          jiraProjectPriorities &&
+          priorities &&
+          jiraProjectPriorities.map(
+            (jiraPriority: JiraPriority) =>
+              jiraPriority.id && {
+                id: jiraPriority.id,
+                name: jiraPriority.name,
+                value: (
                   <MapPrioritiesSelection
                     key={jiraPriority.id}
                     value={formData[jiraPriority.id]}
                     handleValue={(value: string | undefined) =>
                       jiraPriority.id && handleFormData(jiraPriority.id, value)
                     }
-                    jiraPriority={jiraPriority}
                     planePriorities={priorities}
                   />
-                )
-            )
-          )}
-        </div>
-      </div>
-
+                ),
+              }
+          )
+        }
+      />
       {/* stepper button */}
       <div className="flex-shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>

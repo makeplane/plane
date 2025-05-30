@@ -18,6 +18,7 @@ import { useLinearImporter } from "@/plane-web/hooks/store";
 //  plane web types
 import { E_LINEAR_IMPORTER_STEPS, TImporterLinearDataPayload } from "@/plane-web/types/importers/linear";
 import { useTranslation } from "@plane/i18n";
+import ImporterTable from "../../../ui/table";
 
 type TFormData = TImporterLinearDataPayload[E_LINEAR_IMPORTER_STEPS.MAP_STATES];
 
@@ -130,7 +131,6 @@ export const MapStatesRoot: FC = observer(() => {
     setFuzzySearchDone(true);
   }, [linearTeamStates, planeProjectStates, fuzzySearchDone, handleFormData]);
 
-
   // fetching the linear project states
   const { isLoading: isLinearTeamStatesLoading } = useSWR(
     workspaceId && userId && linearTeamId ? `IMPORTER_LINEAR_STATES_${workspaceId}_${userId}_${linearTeamId}` : null,
@@ -148,40 +148,33 @@ export const MapStatesRoot: FC = observer(() => {
   return (
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
       {/* content */}
-      <div className="w-full min-h-44 max-h-full overflow-y-auto">
-        <div className="relative grid grid-cols-2 items-center bg-custom-background-90 p-3 text-sm font-medium">
-          <div>Linear States</div>
-          <div>Plane States</div>
-        </div>
-        <div className="divide-y divide-custom-border-200">
-          {(isLinearTeamStatesLoading && (!linearTeamStates || linearTeamStates.length === 0)) ||
-            (isPlaneProjectStatesLoading && (!planeProjectStates || planeProjectStates.length === 0)) ? (
-            <Loader className="relative w-full grid grid-cols-2 items-center py-4 gap-4">
-              <Loader.Item height="35px" width="100%" />
-              <Loader.Item height="35px" width="100%" />
-              <Loader.Item height="35px" width="100%" />
-              <Loader.Item height="35px" width="100%" />
-              <Loader.Item height="35px" width="100%" />
-              <Loader.Item height="35px" width="100%" />
-            </Loader>
-          ) : (
-            linearTeamStates &&
-            planeProjectStates &&
-            linearTeamStates.map(
-              (linearState: LinearState) =>
-                linearState.id && (
+      <ImporterTable
+        isLoading={
+          (isLinearTeamStatesLoading && (!linearTeamStates || linearTeamStates.length === 0)) ||
+          (isPlaneProjectStatesLoading && (!planeProjectStates || planeProjectStates.length === 0))
+        }
+        headerLeft="Linear States"
+        headerRight="Plane States"
+        iterator={
+          linearTeamStates &&
+          planeProjectStates &&
+          linearTeamStates.map(
+            (linearState: LinearState) =>
+              linearState.id && {
+                id: linearState.id,
+                name: linearState.name,
+                value: (
                   <MapStatesSelection
                     key={linearState.id}
                     value={formData[linearState.id]}
                     handleValue={(value: string | undefined) => linearState.id && handleFormData(linearState.id, value)}
-                    linearState={linearState}
                     planeStates={planeProjectStates}
                   />
-                )
-            )
-          )}
-        </div>
-      </div>
+                ),
+              }
+          )
+        }
+      />
 
       {/* stepper button */}
       <div className="flex-shrink-0 relative flex items-center gap-2">

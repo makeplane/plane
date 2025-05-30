@@ -61,7 +61,7 @@ export const getTemplateSettingsBasePath = (props: TBaseTemplateSettingsPathProp
   if (level === ETemplateLevel.WORKSPACE) {
     basePath = `/${workspaceSlug}/settings/templates`;
   } else if (level === ETemplateLevel.PROJECT && "projectId" in props) {
-    basePath = `/${workspaceSlug}/projects/${props.projectId}/settings/templates`;
+    basePath = `/${workspaceSlug}/settings/projects/${props.projectId}/templates`;
   }
 
   return basePath;

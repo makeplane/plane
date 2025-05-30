@@ -19,6 +19,7 @@ import { useAsanaImporter } from "@/plane-web/hooks/store";
 import { E_IMPORTER_STEPS, TImporterDataPayload } from "@/plane-web/types/importers/asana";
 import Fuse from "fuse.js";
 import { useTranslation } from "@plane/i18n";
+import ImporterTable from "../../../ui/table";
 
 type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.MAP_STATES];
 
@@ -108,19 +109,19 @@ export const MapStatesRoot: FC = observer(() => {
     if (!asanaProjectSections.length || !planeProjectStates.length || fuzzySearchDone) {
       return;
     }
-  
+
     const options = {
       includeScore: true,
       keys: ["name"],
     };
-  
+
     // Create Fuse instance once
     const fuse = new Fuse(planeProjectStates, options);
-  
+
     asanaProjectSections.forEach((asanaState) => {
       if (asanaState.name) {
         const result = fuse.search(asanaState.name);
-  
+
         if (result.length > 0) {
           const planeState = result[0].item as IState;
           if (asanaState.gid && planeState.id) {
@@ -132,7 +133,6 @@ export const MapStatesRoot: FC = observer(() => {
     // mark the fuzzy search as done
     setFuzzySearchDone(true);
   }, [asanaProjectSections, planeProjectStates, fuzzySearchDone, handleFormData]);
-
 
   // fetching the asana project sections
   const { isLoading: isAsanaProjectSectionsLoading } = useSWR(
@@ -159,36 +159,27 @@ export const MapStatesRoot: FC = observer(() => {
   return (
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
       {/* content */}
-      <div className="w-full min-h-44 max-h-full overflow-y-auto">
-        <div className="relative grid grid-cols-2 items-center bg-custom-background-90 p-3 text-sm font-medium">
-          <div>Asana Sections</div>
-          <div>Plane States</div>
-        </div>
-        <div className="divide-y divide-custom-border-200">
-          {isStatesMappingLoading ? (
-            <Loader className="relative w-full grid grid-cols-2 items-center py-4 gap-4">
-              <Loader.Item height="35px" width="100%" />
-              <Loader.Item height="35px" width="100%" />
-              <Loader.Item height="35px" width="100%" />
-              <Loader.Item height="35px" width="100%" />
-              <Loader.Item height="35px" width="100%" />
-              <Loader.Item height="35px" width="100%" />
-            </Loader>
-          ) : (
-            asanaProjectSections &&
-            planeProjectStates &&
-            asanaProjectSections.map((asanaSection: AsanaSection) => (
+      <ImporterTable
+        isLoading={isStatesMappingLoading}
+        headerLeft="Asana Sections"
+        headerRight="Plane States"
+        iterator={
+          asanaProjectSections &&
+          planeProjectStates &&
+          asanaProjectSections.map((asanaSection: AsanaSection) => ({
+            id: asanaSection.gid,
+            name: asanaSection.name,
+            value: (
               <MapStatesSelection
                 key={asanaSection.gid}
                 value={formData[asanaSection.gid]}
                 handleValue={(value: string | undefined) => handleFormData(asanaSection.gid, value)}
-                asanaSection={asanaSection}
                 planeStates={planeProjectStates}
               />
-            ))
-          )}
-        </div>
-      </div>
+            ),
+          }))
+        }
+      />
       {/* stepper button */}
       <div className="flex-shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>

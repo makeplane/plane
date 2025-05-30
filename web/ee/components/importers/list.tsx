@@ -63,11 +63,9 @@ export const ImportersList: FC<ImportersListProps> = observer((props) => {
   const { workspaceSlug } = props;
 
   return (
-    <div>
+    <div className="flex flex-wrap gap-4 mt-6 pb-6">
       {IMPORTERS_LIST.map((item) => (
-        <>
-          <ImportersListItem workspaceSlug={workspaceSlug} provider={item} />
-        </>
+        <ImportersListItem key={item.key} workspaceSlug={workspaceSlug} provider={item} />
       ))}
     </div>
   );

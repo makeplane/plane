@@ -1,10 +1,10 @@
 "use client";
 
-import { FC, Fragment } from "react";
+import { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Button } from "@plane/ui";
+import { DetailedEmptyState } from "@/components/empty-state";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export const WorkspaceWorklogsUpgrade: FC = observer(() => {
@@ -15,24 +15,31 @@ export const WorkspaceWorklogsUpgrade: FC = observer(() => {
   const resolvedEmptyStatePath = `/empty-state/worklogs/worklog-${resolvedTheme === "light" ? "light" : "dark"}.png`;
 
   return (
-    <Fragment>
-      <div className="flex flex-col gap-5 items-center justify-center min-h-full min-w-full overflow-y-auto py-10 md:px-20 px-5">
-        <div className="flex flex-col gap-1.5 flex-shrink">
-          <h3 className="text-xl font-semibold">Get detailed time-tracking reports from your workspace</h3>
-          <p className="text-sm">
-            Set date ranges for logged time by any member in any project in your workspace and get full CSVs in a click.
-          </p>
+    <div className="w-full">
+      <div className="flex items-center justify-between gap-2 border-b border-custom-border-200 pb-3">
+        <div>
+          <h3 className="text-xl font-medium">Worklogs</h3>
+          <span className="text-sm text-custom-text-300">
+            Download worklogs AKA timesheets for anyone in any project.
+          </span>
         </div>
-        <Image
-          src={resolvedEmptyStatePath}
-          alt={"Worklog empty state"}
-          width={384}
-          height={250}
-          layout="responsive"
-          lazyBoundary="100%"
-        />
-        <Button onClick={() => togglePaidPlanModal(true)}>Upgrade</Button>
+        <Button onClick={() => togglePaidPlanModal(true)} className="w-fit" size="sm">
+          Upgrade
+        </Button>
       </div>
-    </Fragment>
+      <DetailedEmptyState
+        title={"Get detailed time-tracking reports from your workspace"}
+        description={
+          "Set date ranges for logged time by any member in any project in your workspace and get full CSVs in a click."
+        }
+        assetPath={resolvedEmptyStatePath}
+        className="w-[600px] !px-0 min-h-fit"
+        size="sm"
+        primaryButton={{
+          text: "Upgrade",
+          onClick: () => togglePaidPlanModal(true),
+        }}
+      />
+    </div>
   );
 });

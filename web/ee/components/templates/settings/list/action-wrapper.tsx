@@ -141,7 +141,9 @@ export const TemplateListActionWrapper = observer((props: TTemplateListActionWra
         storeType={EIssuesStoreType.PROJECT}
         templateId={selectedTemplateId ?? undefined}
       />
-      <div className="flex flex-col gap-10 py-6">{children({ selectedTemplateId, handleUseTemplateAction })}</div>
+      <div className="flex flex-col gap-10 py-6 w-full">
+        {children({ selectedTemplateId, handleUseTemplateAction })}
+      </div>
     </>
   );
 });

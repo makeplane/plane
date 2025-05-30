@@ -94,6 +94,16 @@ const nextConfig = {
         destination: "/",
         permanent: true,
       },
+      {
+        source: "/:workspaceSlug/projects/:projectId/settings/:path*",
+        destination: "/:workspaceSlug/settings/projects/:projectId/:path*",
+        permanent: true,
+      },
+      {
+        source: "/:workspaceSlug/settings/api-tokens",
+        destination: "/:workspaceSlug/settings/account/api-tokens",
+        permanent: true,
+      },
     ];
   },
   async rewrites() {

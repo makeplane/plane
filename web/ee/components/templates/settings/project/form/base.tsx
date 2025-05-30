@@ -1,9 +1,11 @@
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 import merge from "lodash/merge";
 import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
 import { EIssuePropertyType, EProjectPriority, PROJECT_UNSPLASH_COVERS, RANDOM_EMOJI_CODES } from "@plane/constants";
+// import { usePreventOutsideClick } from "@plane/hooks";
+import { usePreventOutsideClick } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { IIssueProperty, IIssueType, TProjectTemplateForm, TProjectTemplateFormData } from "@plane/types";
 import { Button } from "@plane/ui";
@@ -15,6 +17,7 @@ import {
 } from "@plane/utils";
 // root store
 import { useMember } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { rootStore } from "@/lib/store-context";
 // plane web imports
 import { COMMON_BUTTON_CLASS_NAME } from "@/plane-web/components/templates/settings/common";
@@ -22,6 +25,7 @@ import { useProjectTemplates, useWorkspaceProjectStates } from "@/plane-web/hook
 import { IssuePropertyOption } from "@/plane-web/store/issue-types/issue-property-option";
 import { IssueType } from "@/plane-web/store/issue-types/issue-type";
 // local imports
+import { DiscardModal } from "../../discard-modal";
 import { ProjectAttributes } from "./attributes";
 import { ProjectEpicWorkItemType } from "./epics";
 import { ProjectFeatures } from "./features";
@@ -105,7 +109,14 @@ export const DEFAULT_PROJECT_TEMPLATE_FORM_DATA: TProjectTemplateForm = {
 
 export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRootProps) => {
   const { workspaceSlug, templateId, operation, handleFormCancel, handleFormSubmit } = props;
+  const formRef = useRef<HTMLFormElement>(null);
+  // router
+  const router = useAppRouter();
+  // ref
+  const isDirtyRef = useRef<boolean>(false);
   // states
+  const [bubbledHref, setBubbledHref] = useState<string | null>(null);
+  const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false);
   const [preloadedData, setPreloadedData] = useState<TProjectTemplateForm | undefined>(undefined);
   const [isApplyingTemplate, setIsApplyingTemplate] = useState<boolean>(false);
   const [templateInvalidIds, setTemplateInvalidIds] = useState<
@@ -129,6 +140,8 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
+
+  const isDirty = Object.keys(methods.formState.dirtyFields).length > 0;
 
   // handlers
   /**
@@ -290,76 +303,114 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
     [handleFormCancel]
   );
 
+  usePreventOutsideClick(
+    formRef,
+    (anchorElement: HTMLAnchorElement | null) => {
+      if (!anchorElement || !anchorElement.href) return;
+
+      if (isDirtyRef.current) {
+        setIsDiscardModalOpen(true);
+        setBubbledHref(anchorElement.href);
+      } else {
+        router.push(anchorElement.href);
+      }
+    },
+    ["discard-modal-button"]
+  );
+
+  useEffect(() => {
+    if (isDirty !== isDirtyRef.current) {
+      isDirtyRef.current = isDirty;
+    }
+  }, [isDirty]);
+
   if (loader === "init-loader" || isApplyingTemplate || (templateId && !preloadedData)) {
     return <ProjectTemplateLoader />;
   }
 
   return (
-    <FormProvider {...methods}>
-      <form onKeyDown={handleFormKeyDown} onSubmit={handleSubmit(onSubmit)}>
-        {/* Template Section */}
-        <div className="space-y-4 w-full max-w-4xl px-page-x py-page-y md:p-9 mx-auto">
-          <TemplateDetails />
-        </div>
-        <div className="bg-custom-background-90/40 border-t border-custom-border-100 size-full">
-          <div className="w-full max-w-4xl px-page-x py-page-y md:p-9 mx-auto">
-            {/* Project Details Section */}
-            <div>
-              {/* Project Details */}
-              <div className="flex flex-col gap-y-4 py-6 w-full">
-                <ProjectDetails />
+    <>
+      <DiscardModal
+        isOpen={isDiscardModalOpen}
+        onClose={() => setIsDiscardModalOpen(false)}
+        onDiscard={() => {
+          if (bubbledHref) {
+            router.push(bubbledHref);
+          }
+        }}
+      />
+      <FormProvider {...methods}>
+        <form onKeyDown={handleFormKeyDown} onSubmit={handleSubmit(onSubmit)} ref={formRef}>
+          {/* Template Section */}
+          <div className="space-y-4 w-full max-w-4xl py-page-y">
+            <TemplateDetails />
+          </div>
+          <div className="border-t border-custom-border-100 size-full">
+            <div className="w-full max-w-4xl py-page-y">
+              {/* Project Details Section */}
+              <div>
+                {/* Project Details */}
+                <div className="flex flex-col gap-y-4 py-6 w-full">
+                  <ProjectDetails />
+                </div>
+                {/* Project Attributes */}
+                <ProjectAttributes
+                  workspaceSlug={workspaceSlug?.toString()}
+                  templateInvalidIds={templateInvalidIds}
+                  handleTemplateInvalidIdsChange={handleTemplateInvalidIdsChange}
+                />
+                {/* Project Features */}
+                <ProjectFeatures />
+                {/* Project States */}
+                <ProjectStates
+                  workspaceSlug={workspaceSlug?.toString()}
+                  projectId={preloadedData?.template?.id ?? ""}
+                />
+                {/* Project Labels */}
+                <ProjectLabels
+                  workspaceSlug={workspaceSlug?.toString()}
+                  projectId={preloadedData?.template?.id ?? ""}
+                />
+                {/* Project Work Item Types */}
+                <ProjectWorkItemTypes
+                  workspaceSlug={workspaceSlug?.toString()}
+                  projectTemplateId={preloadedData?.template?.id}
+                  getWorkItemTypeById={getWorkItemTypeById}
+                  getCustomPropertyById={getCustomPropertyById}
+                />
+                {/* Project Epic Work Item Type */}
+                <ProjectEpicWorkItemType />
               </div>
-              {/* Project Attributes */}
-              <ProjectAttributes
-                workspaceSlug={workspaceSlug?.toString()}
-                templateInvalidIds={templateInvalidIds}
-                handleTemplateInvalidIdsChange={handleTemplateInvalidIdsChange}
-              />
-              {/* Project Features */}
-              <ProjectFeatures />
-              {/* Project States */}
-              <ProjectStates workspaceSlug={workspaceSlug?.toString()} projectId={preloadedData?.template?.id ?? ""} />
-              {/* Project Labels */}
-              <ProjectLabels workspaceSlug={workspaceSlug?.toString()} projectId={preloadedData?.template?.id ?? ""} />
-              {/* Project Work Item Types */}
-              <ProjectWorkItemTypes
-                workspaceSlug={workspaceSlug?.toString()}
-                projectTemplateId={preloadedData?.template?.id}
-                getWorkItemTypeById={getWorkItemTypeById}
-                getCustomPropertyById={getCustomPropertyById}
-              />
-              {/* Project Epic Work Item Type */}
-              <ProjectEpicWorkItemType />
-            </div>
-            {/* Form Actions */}
-            <div className="flex items-center justify-end gap-2 pt-8">
-              <Button
-                variant="neutral-primary"
-                size="sm"
-                className={cn(COMMON_BUTTON_CLASS_NAME)}
-                onClick={handleFormCancel}
-                disabled={isSubmitting}
-              >
-                {t("common.cancel")}
-              </Button>
-              <Button
-                variant="primary"
-                type="submit"
-                size="sm"
-                className={cn("shadow-sm")}
-                loading={isSubmitting}
-                disabled={isSubmitting}
-              >
-                {isSubmitting
-                  ? t("common.confirming")
-                  : operation === EProjectFormOperation.CREATE
-                    ? t("templates.settings.form.project.button.create")
-                    : t("templates.settings.form.project.button.update")}
-              </Button>
+              {/* Form Actions */}
+              <div className="flex items-center justify-end gap-2 pt-8">
+                <Button
+                  variant="neutral-primary"
+                  size="sm"
+                  className={cn(COMMON_BUTTON_CLASS_NAME)}
+                  onClick={handleFormCancel}
+                  disabled={isSubmitting}
+                >
+                  {t("common.cancel")}
+                </Button>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  size="sm"
+                  className={cn("shadow-sm")}
+                  loading={isSubmitting}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting
+                    ? t("common.confirming")
+                    : operation === EProjectFormOperation.CREATE
+                      ? t("templates.settings.form.project.button.create")
+                      : t("templates.settings.form.project.button.update")}
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      </form>
-    </FormProvider>
+        </form>
+      </FormProvider>
+    </>
   );
 });

@@ -4,15 +4,17 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { stripTrailingSlash } from "@plane/etl/core";
+import { useTranslation } from "@plane/i18n";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // plane web components
 import { AuthFormInput, TAuthFormInputFormField } from "@/plane-web/components/importers/ui/auth-form-input";
 // plane web hooks
 import { useJiraServerImporter } from "@/plane-web/hooks/store";
 // plane web types
-import { TJiraPATFormFields } from "@/plane-web/types/importers/jira-server";
-import { useTranslation } from "@plane/i18n";
 import { TImporterPATError } from "@/plane-web/types";
+import { TJiraPATFormFields } from "@/plane-web/types/importers/jira-server";
+import JiraLogo from "@/public/services/jira.svg";
+import ImporterHeader from "../../header";
 import ErrorBanner from "../../ui/error-banner";
 
 export const PersonalAccessTokenAuth: FC = observer(() => {
@@ -118,20 +120,23 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="relative flex flex-col border-b border-custom-border-100 pb-3.5">
-        <h3 className="text-xl font-medium">Jira Server to Plane {t("importers.migration_assistant")}</h3>
-        <p className="text-custom-text-300 text-sm">
-          {t("importers.migration_assistant_description", { "serviceName": "Jira" })}
-        </p>
-      </div>
-      <div className="space-y-6">
-        {
-          patError.showPATError && (
-            <ErrorBanner message={t("importers.invalid_pat")} onClose={() => { togglePATError(false) }} />
-          )
-        }
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 w-full">
+    <div className="space-y-6 w-full">
+      <ImporterHeader
+        config={{
+          serviceName: "Jira Server",
+          logo: JiraLogo,
+        }}
+      />
+      <div className="space-y-6 w-full">
+        {patError.showPATError && (
+          <ErrorBanner
+            message={t("importers.invalid_pat")}
+            onClose={() => {
+              togglePATError(false);
+            }}
+          />
+        )}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-12 gap-y-8 w-full">
           {jiraPatFormFields.map((field) => (
             <AuthFormInput
               key={field.key}
@@ -148,7 +153,7 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
         </div>
         <div className="relative flex gap-4">
           <Button variant="primary" onClick={handlePATAuthentication} disabled={isLoading}>
-            {isLoading ? t("common.authorizing") : t("importers.connect_importer", { "serviceName": "Jira" })}
+            {isLoading ? t("common.authorizing") : t("importers.connect_importer", { serviceName: "Jira" })}
           </Button>
           <Button variant="link-neutral" className="font-medium" onClick={clearFromData} disabled={isLoading}>
             {t("common.clear")}

@@ -5,8 +5,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { EWorkItemTypeEntity } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { setPromiseToast, ToggleSwitch, Tooltip } from "@plane/ui";
 // hooks
+import { SettingsHeading } from "@/components/settings";
 import { useProject } from "@/hooks/store";
 // plane web components
 import { EpicsEmptyState, EpicPropertiesRoot } from "@/plane-web/components/epics";
@@ -23,6 +25,7 @@ export const EpicsRoot = observer(() => {
   const { getProjectEpicDetails, enableEpics, disableEpics, getProjectWorkItemPropertiesLoader } = useIssueTypes();
   const { getProjectById } = useProject();
   const { getProjectFeatures } = useProjectAdvanced();
+  const { t } = useTranslation();
   // derived values
   const epicDetails = getProjectEpicDetails(projectId?.toString());
   const project = getProjectById(projectId?.toString());
@@ -60,12 +63,10 @@ export const EpicsRoot = observer(() => {
     <div className="container mx-auto h-full pb-8">
       <div className="my-2 h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
         <div className="flex justify-between gap-2 border-b border-custom-border-100 pb-3.5 ">
-          <div className="flex flex-col gap-1">
-            <h3 className="text-xl font-medium">Epics</h3>
-            <p className="text-sm text-custom-text-400">
-              For larger bodies of work that span several cycles and can live across modules
-            </p>
-          </div>
+          <SettingsHeading
+            title={t("project_settings.epics.heading")}
+            description={t("project_settings.epics.description")}
+          />
           <div className="flex-shrink-0 flex items-center justify-center px-4">
             <Tooltip
               className="shadow"

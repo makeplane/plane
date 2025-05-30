@@ -48,7 +48,13 @@ export const ProjectWorkItemTypes = observer((props: TProjectWorkItemTypesProps)
 
   const handleWorkItemTypeListUpdate = (workItemTypeData: IIssueType) => {
     if (workItemTypeData.id && typeof workItemTypeData.id === "string") {
-      setValue("project.workitem_types", { ...workItemTypes, [workItemTypeData.id]: workItemTypeData });
+      setValue(
+        "project.workitem_types",
+        { ...workItemTypes, [workItemTypeData.id]: workItemTypeData },
+        {
+          shouldDirty: true,
+        }
+      );
     }
   };
 

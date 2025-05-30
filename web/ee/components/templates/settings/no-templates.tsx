@@ -23,13 +23,24 @@ export const NoTemplatesEmptyState = observer((props: TNoTemplatesEmptyStateProp
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/templates/no-templates" });
 
   return (
-    <DetailedEmptyState
-      title={""}
-      assetPath={resolvedPath}
-      customPrimaryButton={
-        <CreateTemplatesButton {...props} buttonSize="md" buttonI18nLabel="templates.empty_state.no_templates.button" />
-      }
-      className="h-fit min-h-full items-start"
-    />
+    <>
+      <div className="w-full py-2">
+        <div className="flex items-center justify-center h-full w-full">
+          <DetailedEmptyState
+            title={""}
+            assetPath={resolvedPath}
+            className="h-fit min-h-full items-start !p-0"
+            size="md"
+            customPrimaryButton={
+              <CreateTemplatesButton
+                {...props}
+                buttonSize="md"
+                buttonI18nLabel="templates.empty_state.no_templates.button"
+              />
+            }
+          />
+        </div>
+      </div>
+    </>
   );
 });

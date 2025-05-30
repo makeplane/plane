@@ -42,7 +42,7 @@ export const TeamspaceUpgrade: FC = observer(() => {
   };
 
   return (
-    <div className="pr-10">
+    <div className="w-full">
       <div
         className={cn("flex flex-col rounded-xl mt-5 xl:flex-row", {
           "bg-gradient-to-l from-[#CFCFCF]  to-[#212121]": resolvedTheme?.includes("dark"),
