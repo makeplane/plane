@@ -9,7 +9,6 @@
     "business": "商业版",
     "customers": "客户"
   },
-
   "workspace_dashboards": "仪表板",
   "pi_chat": "PI 聊天",
   "in_app": "应用内",
@@ -20,7 +19,6 @@
   "learn_more_about_workspaces": "了解更多关于工作区的信息",
   "no_workspaces_to_connect": "没有工作区可连接",
   "no_workspaces_to_connect_description": "您需要创建工作区才能连接此应用程序",
-
   "common": {
     "worklogs": "工作日志",
     "live": "实时",
@@ -29,7 +27,6 @@
     "overview": "概览",
     "workflows": "工作流"
   },
-
   "updates": {
     "add_update": "添加更新",
     "add_update_placeholder": "在这里输入您的更新",
@@ -97,7 +94,6 @@
       }
     }
   },
-
   "issue": {
     "relation": {
       "start_before": "开始于之前",
@@ -106,13 +102,11 @@
       "finish_after": "结束于之后"
     }
   },
-
   "profile": {
     "actions": {
       "connections": "连接"
     }
   },
-
   "project_settings": {
     "initiatives": {
       "heading": "计划",
@@ -177,7 +171,6 @@
       "disabled": "已禁用"
     }
   },
-
   "teamspaces": {
     "label": "团队空间",
     "empty_state": {
@@ -190,7 +183,6 @@
       }
     }
   },
-
   "teamspace_projects": {
     "empty_state": {
       "general": {
@@ -199,7 +191,6 @@
       }
     }
   },
-
   "teamspace_work_items": {
     "empty_state": {
       "no_work_items": {
@@ -218,7 +209,6 @@
       }
     }
   },
-
   "teamspace_cycles": {
     "empty_state": {
       "current": {
@@ -235,7 +225,6 @@
       }
     }
   },
-
   "teamspace_views": {
     "empty_state": {
       "team_view": {
@@ -255,7 +244,6 @@
       }
     }
   },
-
   "teamspace_pages": {
     "empty_state": {
       "team_page": {
@@ -279,7 +267,6 @@
       }
     }
   },
-
   "teamspace_analytics": {
     "empty_state": {
       "progress": {
@@ -308,7 +295,6 @@
       }
     }
   },
-
   "initiatives": {
     "label": "计划",
     "add_initiative": "添加计划",
@@ -359,7 +345,6 @@
       }
     }
   },
-
   "workspace_pages": {
     "empty_state": {
       "general": {
@@ -389,7 +374,6 @@
       }
     }
   },
-
   "epics": {
     "label": "史诗",
     "no_epics_selected": "未选择史诗",
@@ -413,7 +397,6 @@
       }
     }
   },
-
   "epic_relation": {
     "empty_state": {
       "search": {
@@ -424,7 +407,6 @@
       }
     }
   },
-
   "workspace_cycles": {
     "empty_state": {
       "active": {
@@ -433,7 +415,6 @@
       }
     }
   },
-
   "active_cycle_analytics": {
     "empty_state": {
       "progress": {
@@ -450,7 +431,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "settings": {
       "integrations": {
@@ -587,7 +567,6 @@
       }
     }
   },
-
   "bulk_operations": {
     "error_details": {
       "invalid_archive_state_group": {
@@ -608,7 +587,6 @@
       }
     }
   },
-
   "work_item_types": {
     "label": "工作项类型",
     "label_lowercase": "工作项类型",
@@ -807,7 +785,9 @@
         },
         "error": {
           "title": "错误！",
-          "message": "创建工作项类型失败。请重试！"
+          "message": {
+            "conflict": "{name} 类型已存在。请选择其他名称。"
+          }
         }
       }
     },
@@ -821,7 +801,9 @@
         },
         "error": {
           "title": "错误！",
-          "message": "更新工作项类型失败。请重试！"
+          "message": {
+            "conflict": "{name} 类型已存在。请选择其他名称。"
+          }
         }
       }
     },
@@ -881,7 +863,6 @@
       }
     }
   },
-
   "importers": {
     "imports": "导入",
     "logo": "标志",
@@ -929,7 +910,6 @@
     "skip_user_import_description": "跳过用户导入将导致工作项、评论和来自 {serviceName} 的其他数据由在 Plane 中执行迁移的用户创建。您以后仍可以手动添加用户。",
     "invalid_pat": "无效的个人访问令牌"
   },
-
   "integrations": {
     "integrations": "集成",
     "loading": "正在加载",
@@ -945,7 +925,6 @@
     "back_to_integrations": "返回集成",
     "select_state": "选择状态"
   },
-
   "github_integration": {
     "name": "GitHub",
     "description": "连接并同步您的 GitHub 工作项与 Plane。",
@@ -973,7 +952,6 @@
     "MR_MERGED": "当 PR 合并时，将状态设置为",
     "MR_CLOSED": "当 PR 关闭时，将状态设置为"
   },
-
   "gitlab_integration": {
     "name": "Gitlab",
     "description": "连接并同步您的 Gitlab 合并请求与 Plane。",
@@ -1000,7 +978,6 @@
     "choose_project": "选择项目",
     "link_plane_project": "链接 Plane 项目"
   },
-
   "slack_integration": {
     "name": "Slack",
     "description": "将您的 Slack 工作区与 Plane 连接。",
@@ -1041,7 +1018,6 @@
       }
     }
   },
-
   "file_upload": {
     "upload_text": "点击此处上传文件",
     "drag_drop_text": "拖放",
@@ -1050,7 +1026,6 @@
     "missing_fields": "缺少字段",
     "success": "{fileName} 已上传！"
   },
-
   "silo_errors": {
     "invalid_query_params": "提供的查询参数无效或缺少必需字段",
     "invalid_installation_account": "提供的安装账户无效",
@@ -1064,7 +1039,6 @@
     "invalid_app_credentials": "提供的应用凭证无效",
     "invalid_app_installation_id": "安装应用失败"
   },
-
   "import_status": {
     "created": "已创建",
     "initiated": "已启动",
@@ -1077,7 +1051,6 @@
     "error": "错误",
     "cancelled": "已取消"
   },
-
   "jira_importer": {
     "jira_importer_description": "将您的 Jira 数据导入到 Plane 项目中。",
     "personal_access_token": "个人访问令牌",
@@ -1101,7 +1074,6 @@
       "description_summary": "以下是将从 Jira 迁移到 Plane 的数据摘要。"
     }
   },
-
   "asana_importer": {
     "asana_importer_description": "将您的 Asana 数据导入到 Plane 项目中。",
     "select_asana_priority_field": "选择 Asana 优先级字段",
@@ -1118,7 +1090,6 @@
       "description_summary": "以下是将从 Asana 迁移到 Plane 的数据摘要。"
     }
   },
-
   "linear_importer": {
     "linear_importer_description": "将您的 Linear 数据导入到 Plane 项目中。",
     "steps": {
@@ -1134,7 +1105,6 @@
       "description_summary": "以下是将从 Linear 迁移到 Plane 的数据摘要。"
     }
   },
-
   "jira_server_importer": {
     "jira_server_importer_description": "将您的 Jira Server 数据导入到 Plane 项目中。",
     "steps": {
@@ -1150,7 +1120,6 @@
       "description_summary": "以下是将从 Jira 迁移到 Plane 的数据摘要。"
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "将您的 CSV 数据导入到 Plane 项目中。",
     "steps": {
@@ -1160,7 +1129,6 @@
       "description_configure_csv": "请上传您的 CSV 文件并配置要映射到 Plane 字段的字段。"
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -1446,7 +1414,6 @@
       "editing": "编辑中"
     }
   },
-
   "workflows": {
     "workflow_states": {
       "work_item_creation": "允许新工作项",
@@ -1545,7 +1512,6 @@
       }
     }
   },
-
   "customers": {
     "label": "{count, plural, one {客户} other {客户}}",
     "dropdown": {
@@ -1923,7 +1889,6 @@
       "properties": "属性"
     }
   },
-
   "templates": {
     "settings": {
       "title": "模板",

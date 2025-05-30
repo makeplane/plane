@@ -9,7 +9,6 @@
     "business": "Bisnis",
     "customers": "Pelanggan"
   },
-
   "workspace_dashboards": "Dasbor",
   "pi_chat": "Obrolan Pi",
   "in_app": "Dalam Aplikasi",
@@ -20,7 +19,6 @@
   "learn_more_about_workspaces": "Pelajari lebih lanjut tentang ruang kerja",
   "no_workspaces_to_connect": "Tidak ada ruang kerja untuk menghubungkan",
   "no_workspaces_to_connect_description": "Anda perlu membuat ruang kerja untuk dapat menghubungkan integrasi dan template",
-  
   "common": {
     "worklogs": "Log Kerja",
     "live": "Langsung",
@@ -30,7 +28,6 @@
     "workflows": "Alur Kerja",
     "templates": "Templat"
   },
-
   "updates": {
     "add_update": "Tambahkan update",
     "add_update_placeholder": "Tambahkan update Anda di sini",
@@ -98,7 +95,6 @@
       }
     }
   },
-
   "issue": {
     "relation": {
       "start_before": "Mulai Sebelum",
@@ -107,13 +103,11 @@
       "finish_after": "Selesai Setelah"
     }
   },
-
   "profile": {
     "actions": {
       "connections": "Koneksi"
     }
   },
-
   "project_settings": {
     "initiatives": {
       "heading": "Inisiatif",
@@ -178,7 +172,6 @@
       "disabled": "Dinonaktifkan"
     }
   },
-
   "teamspaces": {
     "label": "Ruang Tim",
     "empty_state": {
@@ -191,7 +184,6 @@
       }
     }
   },
-
   "teamspace_projects": {
     "empty_state": {
       "general": {
@@ -200,7 +192,6 @@
       }
     }
   },
-
   "teamspace_work_items": {
     "empty_state": {
       "no_work_items": {
@@ -219,7 +210,6 @@
       }
     }
   },
-
   "teamspace_cycles": {
     "empty_state": {
       "current": {
@@ -236,7 +226,6 @@
       }
     }
   },
-
   "teamspace_views": {
     "empty_state": {
       "team_view": {
@@ -256,7 +245,6 @@
       }
     }
   },
-
   "teamspace_pages": {
     "empty_state": {
       "team_page": {
@@ -280,7 +268,6 @@
       }
     }
   },
-
   "teamspace_analytics": {
     "empty_state": {
       "progress": {
@@ -309,7 +296,6 @@
       }
     }
   },
-
   "initiatives": {
     "label": "Inisiatif",
     "add_initiative": "Tambah Inisiatif",
@@ -360,7 +346,6 @@
       }
     }
   },
-
   "workspace_pages": {
     "empty_state": {
       "general": {
@@ -390,7 +375,6 @@
       }
     }
   },
-
   "epics": {
     "label": "Epik",
     "no_epics_selected": "Tidak ada epik yang dipilih",
@@ -414,7 +398,6 @@
       }
     }
   },
-
   "epic_relation": {
     "empty_state": {
       "search": {
@@ -425,7 +408,6 @@
       }
     }
   },
-
   "workspace_cycles": {
     "empty_state": {
       "active": {
@@ -434,7 +416,6 @@
       }
     }
   },
-
   "active_cycle_analytics": {
     "empty_state": {
       "progress": {
@@ -451,7 +432,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "settings": {
       "integrations": {
@@ -588,7 +568,6 @@
       }
     }
   },
-
   "bulk_operations": {
     "error_details": {
       "invalid_archive_state_group": {
@@ -609,7 +588,6 @@
       }
     }
   },
-
   "work_item_types": {
     "label": "Tipe Item Kerja",
     "label_lowercase": "tipe item kerja",
@@ -808,7 +786,9 @@
         },
         "error": {
           "title": "Kesalahan!",
-          "message": "Gagal membuat tipe item kerja. Silakan coba lagi!"
+          "message": {
+            "conflict": "Tipe {name} sudah ada. Pilih nama lain."
+          }
         }
       }
     },
@@ -822,7 +802,9 @@
         },
         "error": {
           "title": "Kesalahan!",
-          "message": "Gagal memperbarui tipe item kerja. Silakan coba lagi!"
+          "message": {
+            "conflict": "Tipe {name} sudah ada. Pilih nama lain."
+          }
         }
       }
     },
@@ -882,7 +864,6 @@
       }
     }
   },
-
   "importers": {
     "imports": "Impor",
     "logo": "Logo",
@@ -930,7 +911,6 @@
     "skip_user_import_description": "Melewati impor pengguna akan mengakibatkan item kerja, komentar, dan data lain dari {serviceName} dibuat oleh pengguna yang melakukan migrasi di Plane. Anda masih dapat menambahkan pengguna secara manual nanti.",
     "invalid_pat": "Token Akses Personal Tidak Valid"
   },
-
   "integrations": {
     "integrations": "Integrasi",
     "loading": "Memuat",
@@ -946,7 +926,6 @@
     "back_to_integrations": "Kembali ke integrasi",
     "select_state": "Pilih Status"
   },
-
   "github_integration": {
     "name": "GitHub",
     "description": "Hubungkan dan sinkronkan Item kerja GitHub Anda dengan Plane.",
@@ -974,7 +953,6 @@
     "MR_MERGED": "Saat PR digabung, atur status ke",
     "MR_CLOSED": "Saat PR ditutup, atur status ke"
   },
-
   "gitlab_integration": {
     "name": "Gitlab",
     "description": "Hubungkan dan sinkronkan Permintaan Gabungan Gitlab Anda dengan Plane.",
@@ -1001,7 +979,6 @@
     "choose_project": "Pilih Projek",
     "link_plane_project": "Hubungkan projek Plane"
   },
-
   "slack_integration": {
     "name": "Slack",
     "description": "Hubungkan workspace Slack Anda dengan Plane.",
@@ -1042,7 +1019,6 @@
       }
     }
   },
-
   "file_upload": {
     "upload_text": "Klik di sini untuk mengunggah file",
     "drag_drop_text": "Tarik dan Lepas",
@@ -1051,7 +1027,6 @@
     "missing_fields": "Bidang yang hilang",
     "success": "{fileName} Diunggah!"
   },
-
   "silo_errors": {
     "invalid_query_params": "Parameter kueri yang diberikan tidak valid atau bidang yang diperlukan tidak ada",
     "invalid_installation_account": "Akun instalasi yang diberikan tidak valid",
@@ -1064,7 +1039,6 @@
     "invalid_app_credentials": "Informasi autentikasi aplikasi yang diberikan tidak valid",
     "invalid_app_installation_id": "Gagal menginstal aplikasi"
   },
-
   "import_status": {
     "created": "Dibuat",
     "initiated": "Dimulai",
@@ -1077,7 +1051,6 @@
     "error": "Kesalahan",
     "cancelled": "Dibatalkan"
   },
-
   "jira_importer": {
     "jira_importer_description": "Impor data Jira Anda ke dalam projek Plane.",
     "personal_access_token": "Token Akses Personal",
@@ -1101,7 +1074,6 @@
       "description_summary": "Berikut adalah ringkasan data yang akan dimigrasikan dari Jira ke Plane."
     }
   },
-
   "asana_importer": {
     "asana_importer_description": "Impor data Asana Anda ke dalam projek Plane.",
     "select_asana_priority_field": "Pilih Bidang Prioritas Asana",
@@ -1118,7 +1090,6 @@
       "description_summary": "Berikut adalah ringkasan data yang akan dimigrasikan dari Asana ke Plane."
     }
   },
-
   "linear_importer": {
     "linear_importer_description": "Impor data Linear Anda ke dalam projek Plane.",
     "steps": {
@@ -1134,7 +1105,6 @@
       "description_summary": "Berikut adalah ringkasan data yang akan dimigrasikan dari Linear ke Plane."
     }
   },
-
   "jira_server_importer": {
     "jira_server_importer_description": "Impor data Jira Server Anda ke dalam projek Plane.",
     "steps": {
@@ -1150,7 +1120,6 @@
       "description_summary": "Berikut adalah ringkasan data yang akan dimigrasikan dari Jira ke Plane."
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "Impor data CSV Anda ke dalam projek Plane.",
     "steps": {
@@ -1160,7 +1129,6 @@
       "description_configure_csv": "Silakan unggah file CSV Anda dan konfigurasikan bidang yang akan dipetakan ke bidang Plane."
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -1446,7 +1414,6 @@
       "editing": "Mengedit"
     }
   },
-
   "workflows": {
     "workflow_states": {
       "work_item_creation": "Izinkan item kerja baru",
@@ -1545,7 +1512,6 @@
       }
     }
   },
-
   "customers": {
     "label": "{count, plural, one {Pelanggan} other {Pelanggan}}",
     "open": "Buka pelanggan",
@@ -1921,7 +1887,6 @@
       "properties": "Properti"
     }
   },
-
   "templates": {
     "settings": {
       "title": "Template",

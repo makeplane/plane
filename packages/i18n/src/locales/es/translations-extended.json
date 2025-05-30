@@ -9,7 +9,6 @@
     "business": "Business",
     "customers": "Clientes"
   },
-
   "workspace_dashboards": "Tableros",
   "pi_chat": "PI Chat",
   "in_app": "En la aplicación",
@@ -20,7 +19,6 @@
   "learn_more_about_workspaces": "Aprende más sobre espacios de trabajo",
   "no_workspaces_to_connect": "No hay espacios de trabajo para conectar",
   "no_workspaces_to_connect_description": "Necesitarás crear un espacio de trabajo para poder conectar integraciones y plantillas",
-
   "common": {
     "worklogs": "Registros de trabajo",
     "live": "En vivo",
@@ -29,7 +27,6 @@
     "overview": "Resumen",
     "workflows": "Flujos de trabajo"
   },
-
   "updates": {
     "add_update": "Agregar actualización",
     "add_update_placeholder": "Escribe tu actualización aquí",
@@ -97,7 +94,6 @@
       }
     }
   },
-
   "issue": {
     "relation": {
       "start_before": "Comienza antes",
@@ -106,13 +102,11 @@
       "finish_after": "Termina después"
     }
   },
-
   "profile": {
     "actions": {
       "connections": "Conexiones"
     }
   },
-
   "project_settings": {
     "initiatives": {
       "heading": "Iniciativas",
@@ -177,7 +171,6 @@
       "disabled": "Deshabilitado"
     }
   },
-
   "teamspaces": {
     "label": "Espacios de equipo",
     "empty_state": {
@@ -190,7 +183,6 @@
       }
     }
   },
-
   "teamspace_projects": {
     "empty_state": {
       "general": {
@@ -199,7 +191,6 @@
       }
     }
   },
-
   "teamspace_work_items": {
     "empty_state": {
       "no_work_items": {
@@ -218,7 +209,6 @@
       }
     }
   },
-
   "teamspace_cycles": {
     "empty_state": {
       "current": {
@@ -235,7 +225,6 @@
       }
     }
   },
-
   "teamspace_views": {
     "empty_state": {
       "team_view": {
@@ -255,7 +244,6 @@
       }
     }
   },
-
   "teamspace_pages": {
     "empty_state": {
       "team_page": {
@@ -279,7 +267,6 @@
       }
     }
   },
-
   "teamspace_analytics": {
     "empty_state": {
       "progress": {
@@ -308,7 +295,6 @@
       }
     }
   },
-
   "initiatives": {
     "label": "Iniciativas",
     "add_initiative": "Agregar Iniciativa",
@@ -359,7 +345,6 @@
       }
     }
   },
-
   "workspace_pages": {
     "empty_state": {
       "general": {
@@ -389,7 +374,6 @@
       }
     }
   },
-
   "epics": {
     "label": "Epics",
     "no_epics_selected": "No hay Epics seleccionados",
@@ -413,7 +397,6 @@
       }
     }
   },
-
   "epic_relation": {
     "empty_state": {
       "search": {
@@ -424,7 +407,6 @@
       }
     }
   },
-
   "workspace_cycles": {
     "empty_state": {
       "active": {
@@ -433,7 +415,6 @@
       }
     }
   },
-
   "active_cycle_analytics": {
     "empty_state": {
       "progress": {
@@ -450,7 +431,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "settings": {
       "integrations": {
@@ -587,7 +567,6 @@
       }
     }
   },
-
   "bulk_operations": {
     "error_details": {
       "invalid_archive_state_group": {
@@ -608,7 +587,6 @@
       }
     }
   },
-
   "work_item_types": {
     "label": "Tipos de elementos de trabajo",
     "label_lowercase": "tipos de elementos de trabajo",
@@ -807,7 +785,9 @@
         },
         "error": {
           "title": "¡Error!",
-          "message": "Error al crear el tipo de elemento de trabajo. ¡Por favor intente nuevamente!"
+          "message": {
+            "conflict": "El tipo {name} ya existe. Elige un nombre diferente."
+          }
         }
       }
     },
@@ -821,7 +801,9 @@
         },
         "error": {
           "title": "¡Error!",
-          "message": "Error al actualizar el tipo de elemento de trabajo. ¡Por favor intente nuevamente!"
+          "message": {
+            "conflict": "El tipo {name} ya existe. Elige un nombre diferente."
+          }
         }
       }
     },
@@ -881,7 +863,6 @@
       }
     }
   },
-
   "importers": {
     "imports": "Importaciones",
     "logo": "Logo",
@@ -929,7 +910,6 @@
     "skip_user_import_description": "Omitir la importación de usuarios resultará en que los elementos de trabajo, comentarios y otros datos de {serviceName} sean creados por el usuario que realiza la migración en Plane. Aún puedes agregar usuarios manualmente más tarde.",
     "invalid_pat": "Token de acceso personal inválido"
   },
-
   "integrations": {
     "integrations": "Integraciones",
     "loading": "Cargando",
@@ -945,7 +925,6 @@
     "back_to_integrations": "Volver a integraciones",
     "select_state": "Seleccionar estado"
   },
-
   "github_integration": {
     "name": "GitHub",
     "description": "Conecta y sincroniza tu elemento de trabajo de GitHub con Plane",
@@ -973,7 +952,6 @@
     "MR_MERGED": "Al fusionar PR, establecer el estado a",
     "MR_CLOSED": "Al cerrar PR, establecer el estado a"
   },
-
   "gitlab_integration": {
     "name": "GitLab",
     "description": "Conecta y sincroniza tus solicitudes de fusión de GitLab con Plane",
@@ -1000,7 +978,6 @@
     "choose_project": "Elegir proyecto",
     "link_plane_project": "Vincular proyecto de Plane"
   },
-
   "slack_integration": {
     "name": "Slack",
     "description": "Conecta tu espacio de trabajo de Slack con Plane",
@@ -1041,7 +1018,6 @@
       }
     }
   },
-
   "file_upload": {
     "upload_text": "Haz clic aquí para subir archivo",
     "drag_drop_text": "Arrastrar y soltar",
@@ -1050,7 +1026,6 @@
     "missing_fields": "Campos faltantes",
     "success": "¡{fileName} subido!"
   },
-
   "silo_errors": {
     "invalid_query_params": "Los parámetros de consulta proporcionados son inválidos o faltan campos requeridos",
     "invalid_installation_account": "La cuenta de instalación proporcionada no es válida",
@@ -1064,7 +1039,6 @@
     "invalid_app_credentials": "Las credenciales de la aplicación proporcionadas son inválidas",
     "invalid_app_installation_id": "Error al instalar la aplicación"
   },
-
   "import_status": {
     "created": "Creado",
     "initiated": "Iniciado",
@@ -1077,7 +1051,6 @@
     "error": "Error",
     "cancelled": "Cancelado"
   },
-
   "jira_importer": {
     "jira_importer_description": "Importa tus datos de Jira a proyectos de Plane",
     "personal_access_token": "Token de acceso personal",
@@ -1101,7 +1074,6 @@
       "description_summary": "Aquí hay un resumen de los datos que serán migrados de Jira a Plane."
     }
   },
-
   "asana_importer": {
     "asana_importer_description": "Importa tus datos de Asana a proyectos de Plane",
     "select_asana_priority_field": "Seleccionar campo de prioridad de Asana",
@@ -1118,7 +1090,6 @@
       "description_summary": "Aquí hay un resumen de los datos que serán migrados de Asana a Plane."
     }
   },
-
   "linear_importer": {
     "linear_importer_description": "Importa tus datos de Linear a proyectos de Plane",
     "steps": {
@@ -1134,7 +1105,6 @@
       "description_summary": "Aquí hay un resumen de los datos que serán migrados de Linear a Plane."
     }
   },
-
   "jira_server_importer": {
     "jira_server_importer_description": "Importa tus datos de Jira Server a proyectos de Plane",
     "steps": {
@@ -1150,7 +1120,6 @@
       "description_summary": "Aquí hay un resumen de los datos que serán migrados de Jira a Plane."
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "Importa tus datos CSV a proyectos de Plane",
     "steps": {
@@ -1160,7 +1129,6 @@
       "description_configure_csv": "Por favor, sube tu archivo CSV y configura los campos que se mapearán a los campos de Plane."
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -1446,7 +1414,6 @@
       "editing": "Editando"
     }
   },
-
   "workflows": {
     "workflow_states": {
       "work_item_creation": "Permitir nuevos elementos de trabajo",
@@ -1545,7 +1512,6 @@
       }
     }
   },
-
   "customers": {
     "label": "{count, plural, one {Cliente} other {Clientes}}",
     "drop_down": {
@@ -1922,7 +1888,6 @@
       "properties": "Propiedades"
     }
   },
-
   "templates": {
     "settings": {
       "title": "Plantillas",

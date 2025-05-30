@@ -9,7 +9,6 @@
     "business": "Biznis",
     "customers": "Kastımırs"
   },
-
   "workspace_dashboards": "Dashbordlar",
   "pi_chat": "Pi Chat",
   "in_app": "Uygulama İçi",
@@ -20,7 +19,6 @@
   "learn_more_about_workspaces": "Çalışma alanları hakkında daha fazla bilgi edinin",
   "no_workspaces_to_connect": "Bağlamak için çalışma alanı yok",
   "no_workspaces_to_connect_description": "Bir çalışma alanı oluşturmak için lütfen bu sayfaya dönün",
-
   "common": {
     "worklogs": "Çalışma Logları",
     "live": "Canlı",
@@ -30,7 +28,6 @@
     "workflows": "İş Akışları",
     "templates": "Şablonlar"
   },
-
   "updates": {
     "add_update": "Güncelleme Ekle",
     "add_update_placeholder": "Buraya güncelleme ekleyin",
@@ -96,7 +93,6 @@
       "comments": "{count, plural, one{# yorum} other{# yorum}}"
     }
   },
-
   "issue": {
     "relation": {
       "start_before": "Starts Bifor",
@@ -113,13 +109,11 @@
       }
     }
   },
-
   "profile": {
     "actions": {
       "connections": "Bağlantılar"
     }
   },
-
   "project_settings": {
     "initiatives": {
       "heading": "İnisiyatifler",
@@ -194,7 +188,6 @@
       "disabled": "Deaktive"
     }
   },
-
   "teamspaces": {
     "label": "Takım Alanları",
     "empty_state": {
@@ -207,7 +200,6 @@
       }
     }
   },
-
   "teamspace_projects": {
     "empty_state": {
       "general": {
@@ -216,7 +208,6 @@
       }
     }
   },
-
   "teamspace_work_items": {
     "empty_state": {
       "no_work_items": {
@@ -235,7 +226,6 @@
       }
     }
   },
-
   "teamspace_cycles": {
     "empty_state": {
       "current": {
@@ -252,7 +242,6 @@
       }
     }
   },
-
   "teamspace_views": {
     "empty_state": {
       "team_view": {
@@ -272,7 +261,6 @@
       }
     }
   },
-
   "teamspace_pages": {
     "empty_state": {
       "team_page": {
@@ -296,7 +284,6 @@
       }
     }
   },
-
   "teamspace_analytics": {
     "empty_state": {
       "progress": {
@@ -325,7 +312,6 @@
       }
     }
   },
-
   "initiatives": {
     "label": "İnisiyatifler",
     "add_initiative": "İnisiyatif Ekle",
@@ -376,7 +362,6 @@
       }
     }
   },
-
   "workspace_pages": {
     "empty_state": {
       "general": {
@@ -406,7 +391,6 @@
       }
     }
   },
-
   "epics": {
     "label": "Epikler",
     "no_epics_selected": "Seçili epik yok",
@@ -430,7 +414,6 @@
       }
     }
   },
-
   "epic_relation": {
     "empty_state": {
       "search": {
@@ -441,7 +424,6 @@
       }
     }
   },
-
   "workspace_cycles": {
     "empty_state": {
       "active": {
@@ -450,7 +432,6 @@
       }
     }
   },
-
   "active_cycle_analytics": {
     "empty_state": {
       "progress": {
@@ -467,7 +448,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "settings": {
       "integrations": {
@@ -604,7 +584,6 @@
       }
     }
   },
-
   "bulk_operations": {
     "error_details": {
       "invalid_archive_state_group": {
@@ -625,7 +604,6 @@
       }
     }
   },
-
   "work_item_types": {
     "label": "İş Öğesi Tipleri",
     "label_lowercase": "iş öğesi tipleri",
@@ -824,7 +802,9 @@
         },
         "error": {
           "title": "Hata!",
-          "message": "İş öğesi tipi oluşturulamadı. Lütfen tekrar deneyin!"
+          "message": {
+            "conflict": "{name} türü zaten mevcut. Farklı bir ad seçin."
+          }
         }
       }
     },
@@ -838,7 +818,9 @@
         },
         "error": {
           "title": "Hata!",
-          "message": "İş öğesi tipi güncellenemedi. Lütfen tekrar deneyin!"
+          "message": {
+            "conflict": "{name} türü zaten mevcut. Farklı bir ad seçin."
+          }
         }
       }
     },
@@ -898,7 +880,6 @@
       }
     }
   },
-
   "importers": {
     "imports": "İmportlar",
     "logo": "Logo",
@@ -946,7 +927,6 @@
     "skip_user_import_description": "Kullanıcı importunu atlamak, {serviceName}'den gelen iş öğelerinin, yorumların ve diğer verilerin Plane'de taşımayı gerçekleştiren kullanıcı tarafından oluşturulmasıyla sonuçlanacaktır. Yine de daha sonra manuel olarak kullanıcı ekleyebilirsiniz.",
     "invalid_pat": "Geçersiz Kişisel Erişim Tokeni"
   },
-
   "integrations": {
     "integrations": "Entegrasyonlar",
     "loading": "Yükleniyor",
@@ -962,7 +942,6 @@
     "back_to_integrations": "Entegrasyonlara geri dön",
     "select_state": "Durum Seçin"
   },
-
   "github_integration": {
     "name": "GitHub",
     "description": "GitHub İş öğenizi Plane ile bağlayın ve senkronize edin.",
@@ -990,7 +969,6 @@
     "MR_MERGED": "PR birleştirildiğinde, durumu şuna ayarla",
     "MR_CLOSED": "PR kapatıldığında, durumu şuna ayarla"
   },
-
   "gitlab_integration": {
     "name": "Gitlab",
     "description": "Gitlab Merge Requestlerinizi Plane ile bağlayın ve senkronize edin.",
@@ -1017,7 +995,6 @@
     "choose_project": "Proje Seçin",
     "link_plane_project": "Plane projesini bağla"
   },
-
   "slack_integration": {
     "name": "Slack",
     "description": "Slack workspacenizi Plane ile bağlayın.",
@@ -1058,7 +1035,6 @@
       }
     }
   },
-
   "file_upload": {
     "upload_text": "Dosya yüklemek için buraya tıklayın",
     "drag_drop_text": "Sürükle ve Bırak",
@@ -1067,7 +1043,6 @@
     "missing_fields": "Eksik alanlar",
     "success": "{fileName} Yüklendi!"
   },
-
   "silo_errors": {
     "invalid_query_params": "Sağlanan sorgu parametreleri geçersiz veya gerekli alanlar eksik",
     "invalid_installation_account": "Sağlanan kurulum hesabı geçerli değil",
@@ -1081,7 +1056,6 @@
     "invalid_app_credentials": "Sağlanan uygulama kimlik bilgileri geçersiz",
     "invalid_app_installation_id": "Uygulama yüklenemedi"
   },
-
   "import_status": {
     "created": "Oluşturuldu",
     "initiated": "Başlatıldı",
@@ -1094,7 +1068,6 @@
     "error": "Hata",
     "cancelled": "İptal Edildi"
   },
-
   "jira_importer": {
     "jira_importer_description": "Jira verilerinizi Plane projelerine import edin.",
     "personal_access_token": "Kişisel Erişim Tokeni",
@@ -1118,7 +1091,6 @@
       "description_summary": "İşte Jira'dan Plane'e taşınacak verilerin bir özeti."
     }
   },
-
   "asana_importer": {
     "asana_importer_description": "Asana verilerinizi Plane projelerine import edin.",
     "select_asana_priority_field": "Asana Öncelik Alanını Seçin",
@@ -1135,7 +1107,6 @@
       "description_summary": "İşte Asana'dan Plane'e taşınacak verilerin bir özeti."
     }
   },
-
   "linear_importer": {
     "linear_importer_description": "Linear verilerinizi Plane projelerine import edin.",
     "steps": {
@@ -1151,7 +1122,6 @@
       "description_summary": "İşte Linear'dan Plane'e taşınacak verilerin bir özeti."
     }
   },
-
   "jira_server_importer": {
     "jira_server_importer_description": "Jira Server verilerinizi Plane projelerine import edin.",
     "steps": {
@@ -1167,7 +1137,6 @@
       "description_summary": "İşte Jira'dan Plane'e taşınacak verilerin bir özeti."
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "CSV verilerinizi Plane projelerine import edin.",
     "steps": {
@@ -1177,7 +1146,6 @@
       "description_configure_csv": "Lütfen CSV dosyanızı yükleyin ve Plane alanlarına eşlenecek alanları yapılandırın."
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -1505,7 +1473,6 @@
       "editing": "Editliniyor"
     }
   },
-
   "workflows": {
     "workflow_states": {
       "work_item_creation": "Yeni iş öğelerine izin ver",
@@ -1604,7 +1571,6 @@
       }
     }
   },
-
   "customers": {
     "label": "{count, plural, one {Müşteri} other {Müşteriler}}",
     "open": "Müşteriyi aç",
@@ -1986,7 +1952,6 @@
       "properties": "Özellikler"
     }
   },
-
   "templates": {
     "settings": {
       "title": "Şablonlar",

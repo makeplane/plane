@@ -12,13 +12,12 @@
   "pi_chat": "Pi Чат",
   "in_app": "В приложении",
   "forms": "Формы",
-  "choose_workspace_for_integration": "Выберите рабочее пространство для подключения этого приложения", 
+  "choose_workspace_for_integration": "Выберите рабочее пространство для подключения этого приложения",
   "integrations_description": "Приложения, которые работают с Plane, должны быть подключены к рабочему пространству, где вы являетесь администратором.",
   "create_a_new_workspace": "Создать новое рабочее пространство",
   "learn_more_about_workspaces": "Узнать больше о рабочих пространствах",
   "no_workspaces_to_connect": "Нет рабочих пространств для подключения",
   "no_workspaces_to_connect_description": "Вы должны создать рабочее пространство, чтобы подключить интеграции и шаблоны",
-
   "common": {
     "worklogs": "Рабочие журналы",
     "live": "В реальном времени",
@@ -27,7 +26,6 @@
     "overview": "Обзор",
     "workflows": "Рабочие процессы"
   },
-
   "updates": {
     "add_update": "Добавить обновление",
     "add_update_placeholder": "Введите ваше обновление здесь",
@@ -90,7 +88,6 @@
       }
     }
   },
-
   "issue": {
     "relation": {
       "start_before": "Начинается до",
@@ -99,13 +96,11 @@
       "finish_after": "Заканчивается после"
     }
   },
-
   "profile": {
     "actions": {
       "connections": "Соединения"
     }
   },
-
   "project_settings": {
     "initiatives": {
       "heading": "Инициативы",
@@ -170,7 +165,6 @@
       "disabled": "Отключено"
     }
   },
-
   "teamspaces": {
     "label": "Командные пространства",
     "empty_state": {
@@ -183,7 +177,6 @@
       }
     }
   },
-
   "teamspace_projects": {
     "empty_state": {
       "general": {
@@ -192,7 +185,6 @@
       }
     }
   },
-
   "teamspace_work_items": {
     "empty_state": {
       "no_work_items": {
@@ -211,7 +203,6 @@
       }
     }
   },
-
   "teamspace_cycles": {
     "empty_state": {
       "current": {
@@ -228,7 +219,6 @@
       }
     }
   },
-
   "teamspace_views": {
     "empty_state": {
       "team_view": {
@@ -248,7 +238,6 @@
       }
     }
   },
-
   "teamspace_pages": {
     "empty_state": {
       "team_page": {
@@ -272,7 +261,6 @@
       }
     }
   },
-
   "teamspace_analytics": {
     "empty_state": {
       "progress": {
@@ -301,7 +289,6 @@
       }
     }
   },
-
   "initiatives": {
     "label": "Инициативы",
     "add_initiative": "Добавить инициативу",
@@ -352,7 +339,6 @@
       }
     }
   },
-
   "workspace_pages": {
     "empty_state": {
       "general": {
@@ -379,7 +365,6 @@
       }
     }
   },
-
   "epics": {
     "label": "Эпики",
     "no_epics_selected": "Эпики не выбраны",
@@ -403,7 +388,6 @@
       }
     }
   },
-
   "epic_relation": {
     "empty_state": {
       "search": {
@@ -414,7 +398,6 @@
       }
     }
   },
-
   "workspace_cycles": {
     "empty_state": {
       "active": {
@@ -423,7 +406,6 @@
       }
     }
   },
-
   "active_cycle_analytics": {
     "empty_state": {
       "progress": {
@@ -440,7 +422,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "settings": {
       "integrations": {
@@ -577,7 +558,6 @@
       }
     }
   },
-
   "bulk_operations": {
     "error_details": {
       "invalid_archive_state_group": {
@@ -598,7 +578,6 @@
       }
     }
   },
-
   "work_item_types": {
     "label": "Типы рабочих элементов",
     "label_lowercase": "типы рабочих элементов",
@@ -797,7 +776,9 @@
         },
         "error": {
           "title": "Ошибка!",
-          "message": "Не удалось создать тип рабочего элемента. Пожалуйста, попробуйте снова!"
+          "message": {
+            "conflict": "Тип {name} уже существует. Выберите другое имя."
+          }
         }
       }
     },
@@ -811,7 +792,9 @@
         },
         "error": {
           "title": "Ошибка!",
-          "message": "Не удалось обновить тип рабочего элемента. Пожалуйста, попробуйте снова!"
+          "message": {
+            "conflict": "Тип {name} уже существует. Выберите другое имя."
+          }
         }
       }
     },
@@ -871,7 +854,6 @@
       }
     }
   },
-
   "importers": {
     "imports": "Импорт",
     "logo": "Логотип",
@@ -919,7 +901,6 @@
     "skip_user_import_description": "Пропуск импорта пользователя приведет к тому, что рабочие элементы, комментарии и другие данные от {serviceName} будут созданы пользователем, выполняющим миграцию в Plane. Вы все еще можете вручную добавить пользователей позже.",
     "invalid_pat": "Недействительный личный токен доступа"
   },
-
   "integrations": {
     "integrations": "Интеграции",
     "loading": "Загрузка",
@@ -935,7 +916,6 @@
     "back_to_integrations": "Назад к интеграциям",
     "select_state": "Выбрать состояние"
   },
-
   "github_integration": {
     "name": "GitHub",
     "description": "Подключите и синхронизируйте ваши рабочие элементы GitHub с Plane.",
@@ -963,7 +943,6 @@
     "MR_MERGED": "При слиянии PR установить состояние на",
     "MR_CLOSED": "При закрытии PR установить состояние на"
   },
-
   "gitlab_integration": {
     "name": "Gitlab",
     "description": "Подключите и синхронизируйте ваши запросы на слияние Gitlab с Plane.",
@@ -990,7 +969,6 @@
     "choose_project": "Выбрать проект",
     "link_plane_project": "Ссылка на проект Plane"
   },
-
   "slack_integration": {
     "name": "Slack",
     "description": "Подключите ваше рабочее пространство Slack к Plane.",
@@ -1031,7 +1009,6 @@
       }
     }
   },
-
   "file_upload": {
     "upload_text": "Нажмите здесь, чтобы загрузить файл",
     "drag_drop_text": "Перетащите и отпустите",
@@ -1040,7 +1017,6 @@
     "missing_fields": "Отсутствуют поля",
     "success": "{fileName} загружен!"
   },
-
   "silo_errors": {
     "invalid_query_params": "Предоставленные параметры запроса недействительны или отсутствуют обязательные поля",
     "invalid_installation_account": "Предоставленный аккаунт установки недействителен",
@@ -1054,7 +1030,6 @@
     "invalid_app_credentials": "Предоставленные учетные данные приложения недействительны",
     "invalid_app_installation_id": "Не удалось установить приложение"
   },
-
   "import_status": {
     "created": "Создано",
     "initiated": "Инициировано",
@@ -1067,7 +1042,6 @@
     "error": "Ошибка",
     "cancelled": "Отменено"
   },
-
   "jira_importer": {
     "jira_importer_description": "Импортируйте ваши данные Jira в проекты Plane.",
     "personal_access_token": "Личный токен доступа",
@@ -1091,7 +1065,6 @@
       "description_summary": "Вот резюме данных, которые будут мигрированы из Jira в Plane."
     }
   },
-
   "asana_importer": {
     "asana_importer_description": "Импортируйте ваши данные Asana в проекты Plane.",
     "select_asana_priority_field": "Выберите поле приоритета Asana",
@@ -1108,7 +1081,6 @@
       "description_summary": "Вот резюме данных, которые будут мигрированы из Asana в Plane."
     }
   },
-
   "linear_importer": {
     "linear_importer_description": "Импортируйте ваши данные Linear в проекты Plane.",
     "steps": {
@@ -1124,7 +1096,6 @@
       "description_summary": "Вот резюме данных, которые будут мигрированы из Linear в Plane."
     }
   },
-
   "jira_server_importer": {
     "jira_server_importer_description": "Импортируйте ваши данные Jira Server в проекты Plane.",
     "steps": {
@@ -1140,7 +1111,6 @@
       "description_summary": "Вот резюме данных, которые будут мигрированы из Jira Server в Plane."
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "Импортируйте ваши данные CSV в проекты Plane.",
     "steps": {
@@ -1150,7 +1120,6 @@
       "description_configure_csv": "Пожалуйста, загрузите ваш файл CSV и настройте поля для сопоставления с полями Plane."
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -1436,7 +1405,6 @@
       "editing": "Редактирование"
     }
   },
-
   "workflows": {
     "workflow_states": {
       "work_item_creation": "Разрешить новые рабочие элементы",
@@ -1535,7 +1503,6 @@
       }
     }
   },
-
   "customers": {
     "label": "{count, plural, one {Клиент} other {Клиенты}}",
     "dropdown": {
@@ -1913,7 +1880,6 @@
       "properties": "Свойства"
     }
   },
-
   "templates": {
     "settings": {
       "title": "Шаблоны",

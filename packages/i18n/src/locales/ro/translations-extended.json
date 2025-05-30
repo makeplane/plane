@@ -9,7 +9,6 @@
     "business": "Business",
     "customers": "Clienți"
   },
-
   "workspace_dashboards": "Dashboarduri",
   "pi_chat": "Pi Chat",
   "in_app": "În-app",
@@ -29,7 +28,6 @@
     "workflows": "Fluxuri de lucru",
     "templates": "Șabloane"
   },
-
   "updates": {
     "add_update": "Adaugă actualizare",
     "add_update_placeholder": "Adaugă actualizarea ta aici",
@@ -97,7 +95,6 @@
       }
     }
   },
-
   "issue": {
     "relation": {
       "start_before": "Începe înainte",
@@ -106,13 +103,11 @@
       "finish_after": "Termină după"
     }
   },
-
   "profile": {
     "actions": {
       "connections": "Conexiuni"
     }
   },
-
   "project_settings": {
     "initiatives": {
       "heading": "Inițiative",
@@ -177,7 +172,6 @@
       "disabled": "Dezactivat"
     }
   },
-
   "teamspaces": {
     "label": "Spații de echipă",
     "empty_state": {
@@ -190,7 +184,6 @@
       }
     }
   },
-
   "teamspace_projects": {
     "empty_state": {
       "general": {
@@ -199,7 +192,6 @@
       }
     }
   },
-
   "teamspace_work_items": {
     "empty_state": {
       "no_work_items": {
@@ -218,7 +210,6 @@
       }
     }
   },
-
   "teamspace_cycles": {
     "empty_state": {
       "current": {
@@ -235,7 +226,6 @@
       }
     }
   },
-
   "teamspace_views": {
     "empty_state": {
       "team_view": {
@@ -255,7 +245,6 @@
       }
     }
   },
-
   "teamspace_pages": {
     "empty_state": {
       "team_page": {
@@ -279,7 +268,6 @@
       }
     }
   },
-
   "teamspace_analytics": {
     "empty_state": {
       "progress": {
@@ -308,7 +296,6 @@
       }
     }
   },
-
   "initiatives": {
     "label": "Inițiative",
     "add_initiative": "Adaugă Inițiativă",
@@ -359,7 +346,6 @@
       }
     }
   },
-
   "workspace_pages": {
     "empty_state": {
       "general": {
@@ -389,7 +375,6 @@
       }
     }
   },
-
   "epics": {
     "label": "Epice",
     "no_epics_selected": "Niciun epic selectat",
@@ -413,7 +398,6 @@
       }
     }
   },
-
   "epic_relation": {
     "empty_state": {
       "search": {
@@ -424,7 +408,6 @@
       }
     }
   },
-
   "workspace_cycles": {
     "empty_state": {
       "active": {
@@ -433,7 +416,6 @@
       }
     }
   },
-
   "active_cycle_analytics": {
     "empty_state": {
       "progress": {
@@ -450,7 +432,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "settings": {
       "integrations": {
@@ -587,7 +568,6 @@
       }
     }
   },
-
   "bulk_operations": {
     "error_details": {
       "invalid_archive_state_group": {
@@ -608,7 +588,6 @@
       }
     }
   },
-
   "work_item_types": {
     "label": "Tipuri de Elemente de Lucru",
     "label_lowercase": "tipuri de elemente de lucru",
@@ -807,7 +786,9 @@
         },
         "error": {
           "title": "Eroare!",
-          "message": "Nu s-a putut crea tipul de element de lucru. Te rugăm să încerci din nou!"
+          "message": {
+            "conflict": "Tipul {name} există deja. Alegeți un alt nume."
+          }
         }
       }
     },
@@ -821,7 +802,9 @@
         },
         "error": {
           "title": "Eroare!",
-          "message": "Nu s-a putut actualiza tipul de element de lucru. Te rugăm să încerci din nou!"
+          "message": {
+            "conflict": "Tipul {name} există deja. Alegeți un alt nume."
+          }
         }
       }
     },
@@ -881,7 +864,6 @@
       }
     }
   },
-
   "importers": {
     "imports": "Importuri",
     "logo": "Logo",
@@ -929,7 +911,6 @@
     "skip_user_import_description": "Omiterea importului utilizatorilor va avea ca rezultat crearea elementelor de lucru, a comentariilor și a altor date din {serviceName} de către utilizatorul care efectuează migrarea în Plane. Poți adăuga manual utilizatori mai târziu.",
     "invalid_pat": "Token de Acces Personal Invalid"
   },
-
   "integrations": {
     "integrations": "Integrări",
     "loading": "Se încarcă",
@@ -945,7 +926,6 @@
     "back_to_integrations": "Înapoi la integrări",
     "select_state": "Selectează Starea"
   },
-
   "github_integration": {
     "name": "GitHub",
     "description": "Conectează și sincronizează elementul tău de lucru GitHub cu Plane.",
@@ -973,7 +953,6 @@
     "MR_MERGED": "La fuzionarea PR-ului, setează starea la",
     "MR_CLOSED": "La închiderea PR-ului, setează starea la"
   },
-
   "gitlab_integration": {
     "name": "Gitlab",
     "description": "Conectează și sincronizează cererile tale de fuzionare Gitlab cu Plane.",
@@ -1000,7 +979,6 @@
     "choose_project": "Alege Proiectul",
     "link_plane_project": "Leagă proiectul Plane"
   },
-
   "slack_integration": {
     "name": "Slack",
     "description": "Conectează workspace-ul tău Slack cu Plane.",
@@ -1041,7 +1019,6 @@
       }
     }
   },
-
   "file_upload": {
     "upload_text": "Click aici pentru a încărca fișierul",
     "drag_drop_text": "Trage și Plasează",
@@ -1050,7 +1027,6 @@
     "missing_fields": "Câmpuri lipsă",
     "success": "{fileName} Încărcat!"
   },
-
   "silo_errors": {
     "invalid_query_params": "Parametrii de interogare furnizați sunt invalizi sau lipsesc câmpuri obligatorii",
     "invalid_installation_account": "Contul de instalare furnizat nu este valid",
@@ -1063,7 +1039,6 @@
     "invalid_app_credentials": "Credențialele aplicației furnizate sunt invalide",
     "invalid_app_installation_id": "A apărut o eroare la instalarea aplicației"
   },
-
   "import_status": {
     "created": "Creat",
     "initiated": "Inițiat",
@@ -1076,7 +1051,6 @@
     "error": "Eroare",
     "cancelled": "Anulat"
   },
-
   "jira_importer": {
     "jira_importer_description": "Importă datele tale Jira în proiectele Plane.",
     "personal_access_token": "Token de Acces Personal",
@@ -1100,7 +1074,6 @@
       "description_summary": "Iată un sumar al datelor care vor fi migrate de la Jira la Plane."
     }
   },
-
   "asana_importer": {
     "asana_importer_description": "Importă datele tale Asana în proiectele Plane.",
     "select_asana_priority_field": "Selectează Câmpul de Prioritate Asana",
@@ -1117,7 +1090,6 @@
       "description_summary": "Iată un sumar al datelor care vor fi migrate de la Asana la Plane."
     }
   },
-
   "linear_importer": {
     "linear_importer_description": "Importă datele tale Linear în proiectele Plane.",
     "steps": {
@@ -1133,7 +1105,6 @@
       "description_summary": "Iată un sumar al datelor care vor fi migrate de la Linear la Plane."
     }
   },
-
   "jira_server_importer": {
     "jira_server_importer_description": "Importă datele tale Jira Server în proiectele Plane.",
     "steps": {
@@ -1149,7 +1120,6 @@
       "description_summary": "Iată un sumar al datelor care vor fi migrate de la Jira la Plane."
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "Importă datele tale CSV în proiectele Plane.",
     "steps": {
@@ -1159,7 +1129,6 @@
       "description_configure_csv": "Te rugăm să încarci fișierul tău CSV și să configurezi câmpurile care vor fi mapate la câmpurile Plane."
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -1445,7 +1414,6 @@
       "editing": "Editare"
     }
   },
-
   "workflows": {
     "workflow_states": {
       "work_item_creation": "Permite elemente noi de lucru",
@@ -1544,7 +1512,6 @@
       }
     }
   },
-
   "customers": {
     "label": "{count, plural, one {Client} other {Clienți}}",
     "open": "Deschide client",
@@ -1920,7 +1887,6 @@
       "properties": "Proprietăți"
     }
   },
-
   "templates": {
     "settings": {
       "title": "Șabloane",

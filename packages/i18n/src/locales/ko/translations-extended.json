@@ -9,7 +9,6 @@
     "business": "비즈니스",
     "customers": "커스터머스"
   },
-
   "workspace_dashboards": "대시보드",
   "pi_chat": "파이 챗",
   "in_app": "인앱",
@@ -20,7 +19,6 @@
   "learn_more_about_workspaces": "작업 공간에 대해 자세히 알아보기",
   "no_workspaces_to_connect": "연결할 작업 공간이 없습니다",
   "no_workspaces_to_connect_description": "연결할 작업 공간을 만들어야 합니다",
-
   "common": {
     "worklogs": "워크로그",
     "live": "라이브",
@@ -30,7 +28,6 @@
     "workflows": "워크플로우",
     "templates": "템플릿"
   },
-
   "updates": {
     "add_update": "업데이트 추가",
     "add_update_placeholder": "여기에 업데이트를 입력하세요",
@@ -98,7 +95,6 @@
       }
     }
   },
-
   "issue": {
     "relation": {
       "start_before": "시작 이전",
@@ -107,13 +103,11 @@
       "finish_after": "완료 이후"
     }
   },
-
   "profile": {
     "actions": {
       "connections": "커넥션"
     }
   },
-
   "project_settings": {
     "initiatives": {
       "heading": "이니셔티브",
@@ -178,7 +172,6 @@
       "disabled": "비활성화됨"
     }
   },
-
   "teamspaces": {
     "label": "팀스페이스",
     "empty_state": {
@@ -191,7 +184,6 @@
       }
     }
   },
-
   "teamspace_projects": {
     "empty_state": {
       "general": {
@@ -200,7 +192,6 @@
       }
     }
   },
-
   "teamspace_work_items": {
     "empty_state": {
       "no_work_items": {
@@ -219,7 +210,6 @@
       }
     }
   },
-
   "teamspace_cycles": {
     "empty_state": {
       "current": {
@@ -236,7 +226,6 @@
       }
     }
   },
-
   "teamspace_views": {
     "empty_state": {
       "team_view": {
@@ -256,7 +245,6 @@
       }
     }
   },
-
   "teamspace_pages": {
     "empty_state": {
       "team_page": {
@@ -280,7 +268,6 @@
       }
     }
   },
-
   "teamspace_analytics": {
     "empty_state": {
       "progress": {
@@ -309,7 +296,6 @@
       }
     }
   },
-
   "initiatives": {
     "label": "이니셔티브",
     "add_initiative": "이니셔티브 추가",
@@ -360,7 +346,6 @@
       }
     }
   },
-
   "workspace_pages": {
     "empty_state": {
       "general": {
@@ -390,7 +375,6 @@
       }
     }
   },
-
   "epics": {
     "label": "에픽스",
     "no_epics_selected": "선택된 에픽 없음",
@@ -414,7 +398,6 @@
       }
     }
   },
-
   "epic_relation": {
     "empty_state": {
       "search": {
@@ -425,7 +408,6 @@
       }
     }
   },
-
   "workspace_cycles": {
     "empty_state": {
       "active": {
@@ -434,7 +416,6 @@
       }
     }
   },
-
   "active_cycle_analytics": {
     "empty_state": {
       "progress": {
@@ -451,7 +432,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "settings": {
       "integrations": {
@@ -588,7 +568,6 @@
       }
     }
   },
-
   "bulk_operations": {
     "error_details": {
       "invalid_archive_state_group": {
@@ -609,7 +588,6 @@
       }
     }
   },
-
   "work_item_types": {
     "label": "워크 아이템 타입",
     "label_lowercase": "워크 아이템 타입",
@@ -808,7 +786,9 @@
         },
         "error": {
           "title": "에러!",
-          "message": "워크 아이템 타입 생성에 실패했습니다. 다시 시도해 주세요!"
+          "message": {
+            "conflict": "{name} 유형이 이미 존재합니다. 다른 이름을 선택하세요."
+          }
         }
       }
     },
@@ -822,7 +802,9 @@
         },
         "error": {
           "title": "에러!",
-          "message": "워크 아이템 타입 업데이트에 실패했습니다. 다시 시도해 주세요!"
+          "message": {
+            "conflict": "{name} 유형이 이미 존재합니다. 다른 이름을 선택하세요."
+          }
         }
       }
     },
@@ -882,7 +864,6 @@
       }
     }
   },
-
   "importers": {
     "imports": "임포트",
     "logo": "로고",
@@ -930,7 +911,6 @@
     "skip_user_import_description": "사용자 임포트를 건너뛰면 {serviceName}의 작업 항목, 댓글 및 기타 데이터가 플레인에서 마이그레이션을 수행하는 사용자에 의해 생성됩니다. 나중에 수동으로 사용자를 추가할 수 있습니다.",
     "invalid_pat": "유효하지 않은 퍼스널 액세스 토큰"
   },
-
   "integrations": {
     "integrations": "인테그레이션",
     "loading": "로딩 중",
@@ -946,7 +926,6 @@
     "back_to_integrations": "인테그레이션으로 돌아가기",
     "select_state": "스테이트 선택"
   },
-
   "github_integration": {
     "name": "깃허브",
     "description": "깃허브 작업 항목을 플레인과 연결하고 동기화하세요.",
@@ -974,7 +953,6 @@
     "MR_MERGED": "PR 병합 시, 스테이트를 다음으로 설정",
     "MR_CLOSED": "PR 닫힘 시, 스테이트를 다음으로 설정"
   },
-
   "gitlab_integration": {
     "name": "깃랩",
     "description": "깃랩 머지 리퀘스트를 플레인과 연결하고 동기화하세요.",
@@ -1001,7 +979,6 @@
     "choose_project": "프로젝트 선택",
     "link_plane_project": "플레인 프로젝트 연결"
   },
-
   "slack_integration": {
     "name": "슬랙",
     "description": "슬랙 워크스페이스를 플레인과 연결하세요.",
@@ -1042,7 +1019,6 @@
       }
     }
   },
-
   "file_upload": {
     "upload_text": "파일을 업로드하려면 여기를 클릭하세요",
     "drag_drop_text": "드래그 앤 드롭",
@@ -1051,7 +1027,6 @@
     "missing_fields": "필드 누락",
     "success": "{fileName} 업로드 완료!"
   },
-
   "silo_errors": {
     "invalid_query_params": "제공된 쿼리 파라미터가 유효하지 않거나 필수 필드가 누락되었습니다",
     "invalid_installation_account": "제공된 인스톨레이션 계정이 유효하지 않습니다",
@@ -1064,7 +1039,6 @@
     "invalid_app_credentials": "제공된 앱 자격 증명이 유효하지 않습니다",
     "invalid_app_installation_id": "앱 설치에 실패했습니다"
   },
-
   "import_status": {
     "created": "생성됨",
     "initiated": "시작됨",
@@ -1077,7 +1051,6 @@
     "error": "오류",
     "cancelled": "취소됨"
   },
-
   "jira_importer": {
     "jira_importer_description": "지라 데이터를 플레인 프로젝트로 임포트하세요.",
     "personal_access_token": "퍼스널 액세스 토큰",
@@ -1101,7 +1074,6 @@
       "description_summary": "지라에서 플레인으로 마이그레이션될 데이터의 요약입니다."
     }
   },
-
   "asana_importer": {
     "asana_importer_description": "아사나 데이터를 플레인 프로젝트로 임포트하세요.",
     "select_asana_priority_field": "아사나 프라이오리티 필드 선택",
@@ -1118,7 +1090,6 @@
       "description_summary": "아사나에서 플레인으로 마이그레이션될 데이터의 요약입니다."
     }
   },
-
   "linear_importer": {
     "linear_importer_description": "리니어 데이터를 플레인 프로젝트로 임포트하세요.",
     "steps": {
@@ -1134,7 +1105,6 @@
       "description_summary": "리니어에서 플레인으로 마이그레이션될 데이터의 요약입니다."
     }
   },
-
   "jira_server_importer": {
     "jira_server_importer_description": "지라 서버 데이터를 플레인 프로젝트로 임포트하세요.",
     "steps": {
@@ -1150,7 +1120,6 @@
       "description_summary": "지라에서 플레인으로 마이그레이션될 데이터의 요약입니다."
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "CSV 데이터를 플레인 프로젝트로 임포트하세요.",
     "steps": {
@@ -1160,7 +1129,6 @@
       "description_configure_csv": "CSV 파일을 업로드하고 플레인 필드에 매핑할 필드를 구성하세요."
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -1446,7 +1414,6 @@
       "editing": "편집 중"
     }
   },
-
   "workflows": {
     "workflow_states": {
       "work_item_creation": "새 워크 아이템 허용",
@@ -1545,7 +1512,6 @@
       }
     }
   },
-
   "customers": {
     "label": "{count, plural, one {커스터머} other {커스터머}}",
     "open": "커스터머 열기",
@@ -1924,7 +1890,6 @@
       "properties": "프로퍼티"
     }
   },
-
   "templates": {
     "settings": {
       "title": "템플릿",

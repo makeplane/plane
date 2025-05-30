@@ -9,7 +9,6 @@
     "business": "Doanh nghiệp",
     "customers": "Khách hàng"
   },
-
   "workspace_dashboards": "Bảng điều khiển",
   "pi_chat": "Pi Chat",
   "in_app": "Trong ứng dụng",
@@ -20,7 +19,6 @@
   "learn_more_about_workspaces": "Tìm hiểu thêm về không gian làm việc",
   "no_workspaces_to_connect": "Không có không gian làm việc để kết nối",
   "no_workspaces_to_connect_description": "Bạn cần tạo không gian làm việc để kết nối ứng dụng này",
-
   "common": {
     "worklogs": "Nhật ký công việc",
     "live": "Trực tiếp",
@@ -30,7 +28,6 @@
     "workflows": "Quy trình làm việc",
     "templates": "Mẫu"
   },
-
   "updates": {
     "add_update": "Thêm cập nhật",
     "add_update_placeholder": "Thêm cập nhật của bạn ở đây",
@@ -88,7 +85,6 @@
       "comments": "{count, plural, one{# bình luận} other{# bình luận}}"
     }
   },
-
   "issue": {
     "relation": {
       "start_before": "Bắt đầu Trước",
@@ -97,13 +93,11 @@
       "finish_after": "Kết thúc Sau"
     }
   },
-
   "profile": {
     "actions": {
       "connections": "Kết nối"
     }
   },
-
   "project_settings": {
     "initiatives": {
       "heading": "Sáng kiến",
@@ -168,7 +162,6 @@
       "disabled": "Đã vô hiệu hóa"
     }
   },
-
   "teamspaces": {
     "label": "Không gian nhóm",
     "empty_state": {
@@ -181,7 +174,6 @@
       }
     }
   },
-
   "teamspace_projects": {
     "empty_state": {
       "general": {
@@ -190,7 +182,6 @@
       }
     }
   },
-
   "teamspace_work_items": {
     "empty_state": {
       "no_work_items": {
@@ -209,7 +200,6 @@
       }
     }
   },
-
   "teamspace_cycles": {
     "empty_state": {
       "current": {
@@ -226,7 +216,6 @@
       }
     }
   },
-
   "teamspace_views": {
     "empty_state": {
       "team_view": {
@@ -246,7 +235,6 @@
       }
     }
   },
-
   "teamspace_pages": {
     "empty_state": {
       "team_page": {
@@ -270,7 +258,6 @@
       }
     }
   },
-
   "teamspace_analytics": {
     "empty_state": {
       "progress": {
@@ -299,7 +286,6 @@
       }
     }
   },
-
   "initiatives": {
     "label": "Sáng kiến",
     "add_initiative": "Thêm Sáng kiến",
@@ -350,7 +336,6 @@
       }
     }
   },
-
   "workspace_pages": {
     "empty_state": {
       "general": {
@@ -380,7 +365,6 @@
       }
     }
   },
-
   "epics": {
     "label": "Epics",
     "no_epics_selected": "Không có epic nào được chọn",
@@ -404,7 +388,6 @@
       }
     }
   },
-
   "epic_relation": {
     "empty_state": {
       "search": {
@@ -415,7 +398,6 @@
       }
     }
   },
-
   "workspace_cycles": {
     "empty_state": {
       "active": {
@@ -424,7 +406,6 @@
       }
     }
   },
-
   "active_cycle_analytics": {
     "empty_state": {
       "progress": {
@@ -441,7 +422,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "settings": {
       "integrations": {
@@ -578,7 +558,6 @@
       }
     }
   },
-
   "bulk_operations": {
     "error_details": {
       "invalid_archive_state_group": {
@@ -599,7 +578,6 @@
       }
     }
   },
-
   "work_item_types": {
     "label": "Loại mục công việc",
     "label_lowercase": "loại mục công việc",
@@ -798,7 +776,9 @@
         },
         "error": {
           "title": "Lỗi!",
-          "message": "Không thể tạo loại mục công việc. Vui lòng thử lại!"
+          "message": {
+            "conflict": "Loại {name} đã tồn tại. Hãy chọn một tên khác."
+          }
         }
       }
     },
@@ -812,7 +792,9 @@
         },
         "error": {
           "title": "Lỗi!",
-          "message": "Không thể cập nhật loại mục công việc. Vui lòng thử lại!"
+          "message": {
+            "conflict": "Loại {name} đã tồn tại. Hãy chọn một tên khác."
+          }
         }
       }
     },
@@ -872,7 +854,6 @@
       }
     }
   },
-
   "importers": {
     "imports": "Nhập",
     "logo": "Logo",
@@ -920,7 +901,6 @@
     "skip_user_import_description": "Việc bỏ qua nhập người dùng sẽ dẫn đến mục công việc, bình luận và dữ liệu khác từ {serviceName} được tạo bởi người dùng thực hiện việc di chuyển trong Plane. Bạn vẫn có thể thêm người dùng thủ công sau.",
     "invalid_pat": "Mã thông báo truy cập cá nhân không hợp lệ"
   },
-
   "integrations": {
     "integrations": "Tích hợp",
     "loading": "Đang tải",
@@ -936,7 +916,6 @@
     "back_to_integrations": "Quay lại tích hợp",
     "select_state": "Chọn trạng thái"
   },
-
   "github_integration": {
     "name": "GitHub",
     "description": "Kết nối và đồng bộ mục công việc GitHub của bạn với Plane.",
@@ -964,7 +943,6 @@
     "MR_MERGED": "Khi PR được hợp nhất, đặt trạng thái thành",
     "MR_CLOSED": "Khi PR đóng, đặt trạng thái thành"
   },
-
   "gitlab_integration": {
     "name": "Gitlab",
     "description": "Kết nối và đồng bộ Merge Requests của Gitlab với Plane.",
@@ -991,7 +969,6 @@
     "choose_project": "Chọn dự án",
     "link_plane_project": "Liên kết dự án Plane"
   },
-
   "slack_integration": {
     "name": "Slack",
     "description": "Kết nối workspace Slack của bạn với Plane.",
@@ -1032,7 +1009,6 @@
       }
     }
   },
-
   "file_upload": {
     "upload_text": "Nhấp vào đây để tải lên tệp",
     "drag_drop_text": "Kéo và thả",
@@ -1041,7 +1017,6 @@
     "missing_fields": "Thiếu trường",
     "success": "{fileName} đã được tải lên!"
   },
-
   "silo_errors": {
     "invalid_query_params": "Tham số truy vấn được cung cấp không hợp lệ hoặc thiếu trường bắt buộc",
     "invalid_installation_account": "Tài khoản cài đặt được cung cấp không hợp lệ",
@@ -1054,7 +1029,6 @@
     "invalid_app_credentials": "Các thông tin xác thực ứng dụng đã cung cấp không hợp lệ",
     "invalid_app_installation_id": "Không thể cài đặt ứng dụng"
   },
-
   "import_status": {
     "created": "Đã tạo",
     "initiated": "Đã bắt đầu",
@@ -1067,7 +1041,6 @@
     "error": "Lỗi",
     "cancelled": "Đã hủy"
   },
-
   "jira_importer": {
     "jira_importer_description": "Nhập dữ liệu Jira của bạn vào các dự án Plane.",
     "personal_access_token": "Mã thông báo truy cập cá nhân",
@@ -1091,7 +1064,6 @@
       "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ Jira sang Plane."
     }
   },
-
   "asana_importer": {
     "asana_importer_description": "Nhập dữ liệu Asana của bạn vào các dự án Plane.",
     "select_asana_priority_field": "Chọn trường ưu tiên Asana",
@@ -1108,7 +1080,6 @@
       "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ Asana sang Plane."
     }
   },
-
   "linear_importer": {
     "linear_importer_description": "Nhập dữ liệu Linear của bạn vào các dự án Plane.",
     "steps": {
@@ -1124,7 +1095,6 @@
       "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ Linear sang Plane."
     }
   },
-
   "jira_server_importer": {
     "jira_server_importer_description": "Nhập dữ liệu Jira Server của bạn vào các dự án Plane.",
     "steps": {
@@ -1140,7 +1110,6 @@
       "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ Jira sang Plane."
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "Nhập dữ liệu CSV của bạn vào các dự án Plane.",
     "steps": {
@@ -1150,7 +1119,6 @@
       "description_configure_csv": "Vui lòng tải lên tệp CSV của bạn và cấu hình các trường được ánh xạ đến trường Plane."
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -1438,7 +1406,6 @@
       "editing": "Đang chỉnh sửa"
     }
   },
-
   "workflows": {
     "workflow_states": {
       "work_item_creation": "Cho phép mục công việc mới",
@@ -1537,7 +1504,6 @@
       }
     }
   },
-
   "customers": {
     "label": "{count, plural, one {Khách hàng} other {Khách hàng}}",
     "upgrade": {
@@ -1907,7 +1873,6 @@
       "properties": "Thuộc tính"
     }
   },
-
   "templates": {
     "settings": {
       "title": "Mẫu",

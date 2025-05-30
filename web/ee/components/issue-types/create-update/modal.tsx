@@ -79,11 +79,19 @@ export const CreateOrUpdateIssueTypeModal: FC<Props> = observer((props) => {
         });
       })
       .catch((error) => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("work_item_types.create.toast.error.title"),
-          message: error?.error ?? t("work_item_types.create.toast.error.message"),
-        });
+        if (error.code === "ISSUE_TYPE_ALREADY_EXIST") {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("work_item_types.create.toast.error.title"),
+            message: t("work_item_types.create.toast.error.message.conflict", { name: issueTypeFormData?.name }),
+          });
+        } else {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("work_item_types.create.toast.error.title"),
+            message: t("work_item_types.create.toast.error.message.default"),
+          });
+        }
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -105,11 +113,19 @@ export const CreateOrUpdateIssueTypeModal: FC<Props> = observer((props) => {
         });
       })
       .catch((error) => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("work_item_types.update.toast.error.title"),
-          message: error?.error ?? t("work_item_types.update.toast.error.message"),
-        });
+        if (error.code === "ISSUE_TYPE_ALREADY_EXIST") {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("work_item_types.update.toast.error.title"),
+            message: t("work_item_types.update.toast.error.message.conflict", { name: issueTypeFormData?.name }),
+          });
+        } else {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("work_item_types.update.toast.error.title"),
+            message: t("work_item_types.update.toast.error.message.default"),
+          });
+        }
       })
       .finally(() => {
         setIsSubmitting(false);

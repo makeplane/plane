@@ -9,7 +9,6 @@
     "business": "Бізнес",
     "customers": "Кастомерз"
   },
-
   "workspace_dashboards": "Дешборди",
   "pi_chat": "Пі Чат",
   "in_app": "В-апп",
@@ -20,7 +19,6 @@
   "learn_more_about_workspaces": "Дізнатися більше про робочі простори",
   "no_workspaces_to_connect": "Немає робочих просторів для підключення",
   "no_workspaces_to_connect_description": "Ви повинні створити робочий простір, щоб підключити інтеграції та шаблони",
-
   "common": {
     "worklogs": "Ворклоги",
     "live": "Лайв",
@@ -30,7 +28,6 @@
     "workflows": "Воркфлоус",
     "templates": "Темплейти"
   },
-
   "updates": {
     "add_update": "Додати оновлення",
     "add_update_placeholder": "Додайте ваше оновлення тут",
@@ -98,7 +95,6 @@
       }
     }
   },
-
   "issue": {
     "relation": {
       "start_before": "Стартує Перед",
@@ -107,13 +103,11 @@
       "finish_after": "Фінішує Після"
     }
   },
-
   "profile": {
     "actions": {
       "connections": "Коннекшнс"
     }
   },
-
   "project_settings": {
     "initiatives": {
       "heading": "Ініціативи",
@@ -178,7 +172,6 @@
       "disabled": "Вимкнено"
     }
   },
-
   "teamspaces": {
     "label": "Тімспейси",
     "empty_state": {
@@ -191,7 +184,6 @@
       }
     }
   },
-
   "teamspace_projects": {
     "empty_state": {
       "general": {
@@ -200,7 +192,6 @@
       }
     }
   },
-
   "teamspace_work_items": {
     "empty_state": {
       "no_work_items": {
@@ -219,7 +210,6 @@
       }
     }
   },
-
   "teamspace_cycles": {
     "empty_state": {
       "current": {
@@ -236,7 +226,6 @@
       }
     }
   },
-
   "teamspace_views": {
     "empty_state": {
       "team_view": {
@@ -256,7 +245,6 @@
       }
     }
   },
-
   "teamspace_pages": {
     "empty_state": {
       "team_page": {
@@ -280,7 +268,6 @@
       }
     }
   },
-
   "teamspace_analytics": {
     "empty_state": {
       "progress": {
@@ -309,7 +296,6 @@
       }
     }
   },
-
   "initiatives": {
     "label": "Ініціативи",
     "add_initiative": "Додати Ініціативу",
@@ -360,7 +346,6 @@
       }
     }
   },
-
   "workspace_pages": {
     "empty_state": {
       "general": {
@@ -390,7 +375,6 @@
       }
     }
   },
-
   "epics": {
     "label": "Епіки",
     "no_epics_selected": "Не вибрано епіків",
@@ -414,7 +398,6 @@
       }
     }
   },
-
   "epic_relation": {
     "empty_state": {
       "search": {
@@ -425,7 +408,6 @@
       }
     }
   },
-
   "workspace_cycles": {
     "empty_state": {
       "active": {
@@ -434,7 +416,6 @@
       }
     }
   },
-
   "active_cycle_analytics": {
     "empty_state": {
       "progress": {
@@ -451,7 +432,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "settings": {
       "integrations": {
@@ -588,7 +568,6 @@
       }
     }
   },
-
   "bulk_operations": {
     "error_details": {
       "invalid_archive_state_group": {
@@ -609,7 +588,6 @@
       }
     }
   },
-
   "work_item_types": {
     "label": "Типи Робочих Елементів",
     "label_lowercase": "типи робочих елементів",
@@ -808,7 +786,9 @@
         },
         "error": {
           "title": "Помилка!",
-          "message": "Не вдалося створити тип робочого елемента. Будь ласка, спробуйте ще раз!"
+          "message": {
+            "conflict": "Тип {name} вже існує. Виберіть іншу назву."
+          }
         }
       }
     },
@@ -822,7 +802,9 @@
         },
         "error": {
           "title": "Помилка!",
-          "message": "Не вдалося оновити тип робочого елемента. Будь ласка, спробуйте ще раз!"
+          "message": {
+            "conflict": "Тип {name} вже існує. Виберіть іншу назву."
+          }
         }
       }
     },
@@ -882,7 +864,6 @@
       }
     }
   },
-
   "importers": {
     "imports": "Імпорти",
     "logo": "Лого",
@@ -930,7 +911,6 @@
     "skip_user_import_description": "Пропуск імпорту користувачів призведе до того, що робочі елементи, коментарі та інші дані з {serviceName} будуть створені користувачем, який виконує міграцію в Плейн. Ви все ще можете вручну додати користувачів пізніше.",
     "invalid_pat": "Недійсний Персональний Токен Доступу"
   },
-
   "integrations": {
     "integrations": "Інтеграції",
     "loading": "Завантаження",
@@ -946,7 +926,6 @@
     "back_to_integrations": "Назад до інтеграцій",
     "select_state": "Виберіть Стейт"
   },
-
   "github_integration": {
     "name": "GitHub",
     "description": "Підключіть та синхронізуйте ваш робочий елемент GitHub з Плейн.",
@@ -974,7 +953,6 @@
     "MR_MERGED": "Коли ПР змерджено, встановити стан на",
     "MR_CLOSED": "Коли ПР закрито, встановити стан на"
   },
-
   "gitlab_integration": {
     "name": "Gitlab",
     "description": "Підключіть та синхронізуйте ваші Мердж Ріквести Gitlab з Плейн.",
@@ -1001,7 +979,6 @@
     "choose_project": "Виберіть Проджект",
     "link_plane_project": "Прив'язати проджект Плейн"
   },
-
   "slack_integration": {
     "name": "Slack",
     "description": "Підключіть ваш воркспейс Slack до Плейн.",
@@ -1042,7 +1019,6 @@
       }
     }
   },
-
   "file_upload": {
     "upload_text": "Натисніть тут, щоб завантажити файл",
     "drag_drop_text": "Перетягніть",
@@ -1051,7 +1027,6 @@
     "missing_fields": "Відсутні поля",
     "success": "{fileName} Завантажено!"
   },
-
   "silo_errors": {
     "invalid_query_params": "Надані параметри запиту недійсні або відсутні обов'язкові поля",
     "invalid_installation_account": "Наданий аккаунт інсталяції недійсний",
@@ -1064,7 +1039,6 @@
     "invalid_app_credentials": "Наданий токен аутентифікації недійсний",
     "invalid_app_installation_id": "Не вдалося встановити застосунок"
   },
-
   "import_status": {
     "created": "Створено",
     "initiated": "Ініційовано",
@@ -1077,7 +1051,6 @@
     "error": "Помилка",
     "cancelled": "Скасовано"
   },
-
   "jira_importer": {
     "jira_importer_description": "Імпортуйте ваші дані Jira у проджекти Плейн.",
     "personal_access_token": "Персональний Токен Доступу",
@@ -1101,7 +1074,6 @@
       "description_summary": "Ось підсумок даних, які будуть мігровані з Jira до Плейн."
     }
   },
-
   "asana_importer": {
     "asana_importer_description": "Імпортуйте ваші дані Asana у проджекти Плейн.",
     "select_asana_priority_field": "Виберіть Поле Пріоритету Asana",
@@ -1118,7 +1090,6 @@
       "description_summary": "Ось підсумок даних, які будуть мігровані з Asana до Плейн."
     }
   },
-
   "linear_importer": {
     "linear_importer_description": "Імпортуйте ваші дані Linear у проджекти Плейн.",
     "steps": {
@@ -1134,7 +1105,6 @@
       "description_summary": "Ось підсумок даних, які будуть мігровані з Linear до Плейн."
     }
   },
-
   "jira_server_importer": {
     "jira_server_importer_description": "Імпортуйте ваші дані Jira Server у проджекти Плейн.",
     "steps": {
@@ -1150,7 +1120,6 @@
       "description_summary": "Ось підсумок даних, які будуть мігровані з Jira до Плейн."
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "Імпортуйте ваші дані CSV у проджекти Плейн.",
     "steps": {
@@ -1160,7 +1129,6 @@
       "description_configure_csv": "Будь ласка, завантажте ваш CSV файл і налаштуйте поля, які будуть мапитися до полів Плейн."
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -1446,7 +1414,6 @@
       "editing": "Редагування"
     }
   },
-
   "workflows": {
     "workflow_states": {
       "work_item_creation": "Дозволити нові робочі елементи",
@@ -1545,7 +1512,6 @@
       }
     }
   },
-
   "customers": {
     "label": "{count, plural, one {Кастомер} other {Кастомери}}",
     "open": "Відкрити кастомера",
@@ -1924,7 +1890,6 @@
       "properties": "Проперті"
     }
   },
-
   "templates": {
     "settings": {
       "title": "Темплейти",

@@ -9,7 +9,6 @@
     "business": "商業",
     "customers": "客戶"
   },
-
   "workspace_dashboards": "儀表板",
   "pi_chat": "Pi 聊天",
   "in_app": "應用內",
@@ -20,7 +19,6 @@
   "learn_more_about_workspaces": "了解更多關於工作區的資訊",
   "no_workspaces_to_connect": "沒有工作區可連接",
   "no_workspaces_to_connect_description": "您需要建立工作區才能連接整合和模板",
-
   "common": {
     "worklogs": "工作日誌",
     "live": "即時",
@@ -30,7 +28,6 @@
     "workflows": "工作流程",
     "templates": "模板"
   },
-
   "updates": {
     "add_update": "新增更新",
     "add_update_placeholder": "在此輸入您的更新",
@@ -98,7 +95,6 @@
       }
     }
   },
-
   "issue": {
     "relation": {
       "start_before": "在之前開始",
@@ -107,13 +103,11 @@
       "finish_after": "在之後完成"
     }
   },
-
   "profile": {
     "actions": {
       "connections": "連接"
     }
   },
-
   "project_settings": {
     "initiatives": {
       "heading": "倡議",
@@ -178,7 +172,6 @@
       "disabled": "已停用"
     }
   },
-
   "teamspaces": {
     "label": "團隊空間",
     "empty_state": {
@@ -191,7 +184,6 @@
       }
     }
   },
-
   "teamspace_projects": {
     "empty_state": {
       "general": {
@@ -200,7 +192,6 @@
       }
     }
   },
-
   "teamspace_work_items": {
     "empty_state": {
       "no_work_items": {
@@ -219,7 +210,6 @@
       }
     }
   },
-
   "teamspace_cycles": {
     "empty_state": {
       "current": {
@@ -236,7 +226,6 @@
       }
     }
   },
-
   "teamspace_views": {
     "empty_state": {
       "team_view": {
@@ -256,7 +245,6 @@
       }
     }
   },
-
   "teamspace_pages": {
     "empty_state": {
       "team_page": {
@@ -280,7 +268,6 @@
       }
     }
   },
-
   "teamspace_analytics": {
     "empty_state": {
       "progress": {
@@ -309,7 +296,6 @@
       }
     }
   },
-
   "initiatives": {
     "label": "倡議",
     "add_initiative": "添加倡議",
@@ -360,7 +346,6 @@
       }
     }
   },
-
   "workspace_pages": {
     "empty_state": {
       "general": {
@@ -390,7 +375,6 @@
       }
     }
   },
-
   "epics": {
     "label": "史詩",
     "no_epics_selected": "未選擇史詩",
@@ -414,7 +398,6 @@
       }
     }
   },
-
   "epic_relation": {
     "empty_state": {
       "search": {
@@ -425,7 +408,6 @@
       }
     }
   },
-
   "workspace_cycles": {
     "empty_state": {
       "active": {
@@ -434,7 +416,6 @@
       }
     }
   },
-
   "active_cycle_analytics": {
     "empty_state": {
       "progress": {
@@ -451,7 +432,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "settings": {
       "integrations": {
@@ -588,7 +568,6 @@
       }
     }
   },
-
   "bulk_operations": {
     "error_details": {
       "invalid_archive_state_group": {
@@ -609,7 +588,6 @@
       }
     }
   },
-
   "work_item_types": {
     "label": "工作項目類型",
     "label_lowercase": "工作項目類型",
@@ -808,7 +786,9 @@
         },
         "error": {
           "title": "錯誤！",
-          "message": "創建工作項目類型失敗。請再試一次！"
+          "message": {
+            "conflict": "{name} 類型已存在。請選擇其他名稱。"
+          }
         }
       }
     },
@@ -822,7 +802,9 @@
         },
         "error": {
           "title": "錯誤！",
-          "message": "更新工作項目類型失敗。請再試一次！"
+          "message": {
+            "conflict": "{name} 類型已存在。請選擇其他名稱。"
+          }
         }
       }
     },
@@ -882,7 +864,6 @@
       }
     }
   },
-
   "importers": {
     "imports": "導入",
     "logo": "標誌",
@@ -930,7 +911,6 @@
     "skip_user_import_description": "跳過用戶導入將導致來自 {serviceName} 的工作項目、評論和其他數據由在 Plane 中執行遷移的用戶創建。您仍然可以稍後手動添加用戶。",
     "invalid_pat": "無效的個人訪問令牌"
   },
-
   "integrations": {
     "integrations": "整合",
     "loading": "加載中",
@@ -946,7 +926,6 @@
     "back_to_integrations": "返回整合",
     "select_state": "選擇狀態"
   },
-
   "github_integration": {
     "name": "GitHub",
     "description": "連接並同步您的 GitHub 工作項目與 Plane。",
@@ -974,7 +953,6 @@
     "MR_MERGED": "當 PR 已合併時，將狀態設置為",
     "MR_CLOSED": "當 PR 關閉時，將狀態設置為"
   },
-
   "gitlab_integration": {
     "name": "Gitlab",
     "description": "連接並同步您的 Gitlab 合併請求與 Plane。",
@@ -1001,7 +979,6 @@
     "choose_project": "選擇專案",
     "link_plane_project": "連接 Plane 專案"
   },
-
   "slack_integration": {
     "name": "Slack",
     "description": "將您的 Slack 工作區與 Plane 連接。",
@@ -1042,7 +1019,6 @@
       }
     }
   },
-
   "file_upload": {
     "upload_text": "點擊此處上傳文件",
     "drag_drop_text": "拖放",
@@ -1051,7 +1027,6 @@
     "missing_fields": "缺少字段",
     "success": "{fileName} 已上傳！"
   },
-
   "silo_errors": {
     "invalid_query_params": "提供的查詢參數無效或缺少必填字段",
     "invalid_installation_account": "提供的安裝帳戶無效",
@@ -1064,7 +1039,6 @@
     "invalid_app_credentials": "提供的應用憑證無效",
     "invalid_app_installation_id": "安裝應用失敗"
   },
-
   "import_status": {
     "created": "已創建",
     "initiated": "已啟動",
@@ -1077,7 +1051,6 @@
     "error": "錯誤",
     "cancelled": "已取消"
   },
-
   "jira_importer": {
     "jira_importer_description": "將您的 Jira 數據導入到 Plane 專案中。",
     "personal_access_token": "個人訪問令牌",
@@ -1101,7 +1074,6 @@
       "description_summary": "以下是將從 Jira 遷移到 Plane 的數據摘要。"
     }
   },
-
   "asana_importer": {
     "asana_importer_description": "將您的 Asana 數據導入到 Plane 專案中。",
     "select_asana_priority_field": "選擇 Asana 優先級字段",
@@ -1118,7 +1090,6 @@
       "description_summary": "以下是將從 Asana 遷移到 Plane 的數據摘要。"
     }
   },
-
   "linear_importer": {
     "linear_importer_description": "將您的 Linear 數據導入到 Plane 專案中。",
     "steps": {
@@ -1134,7 +1105,6 @@
       "description_summary": "以下是將從 Linear 遷移到 Plane 的數據摘要。"
     }
   },
-
   "jira_server_importer": {
     "jira_server_importer_description": "將您的 Jira Server 數據導入到 Plane 專案中。",
     "steps": {
@@ -1150,7 +1120,6 @@
       "description_summary": "以下是將從 Jira 遷移到 Plane 的數據摘要。"
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "將您的 CSV 數據導入到 Plane 專案中。",
     "steps": {
@@ -1160,7 +1129,6 @@
       "description_configure_csv": "請上傳您的 CSV 文件並配置要映射到 Plane 字段的字段。"
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -1446,7 +1414,6 @@
       "editing": "編輯中"
     }
   },
-
   "workflows": {
     "workflow_states": {
       "work_item_creation": "允許新工作項目",
@@ -1545,7 +1512,6 @@
       }
     }
   },
-
   "customers": {
     "label": "{count, plural, one {客戶} other {客戶}}",
     "open": "開啟客戶",
@@ -1924,7 +1890,6 @@
       "properties": "屬性"
     }
   },
-
   "templates": {
     "settings": {
       "title": "模板",

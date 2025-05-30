@@ -9,7 +9,6 @@
     "business": "ビジネス",
     "customers": "顧客"
   },
-
   "workspace_dashboards": "ダッシュボード",
   "pi_chat": "PIチャット",
   "in_app": "アプリ内",
@@ -20,7 +19,6 @@
   "learn_more_about_workspaces": "ワークスペースについて詳しくはこちら",
   "no_workspaces_to_connect": "接続するワークスペースがありません",
   "no_workspaces_to_connect_description": "接続するワークスペースを作成する必要があります",
-
   "common": {
     "worklogs": "作業ログ",
     "live": "ライブ",
@@ -29,7 +27,6 @@
     "overview": "概要",
     "workflows": "ワークフロー"
   },
-
   "updates": {
     "add_update": "更新を追加",
     "add_update_placeholder": "ここに更新を入力してください",
@@ -97,7 +94,6 @@
       }
     }
   },
-
   "issue": {
     "relation": {
       "start_before": "開始前",
@@ -106,13 +102,11 @@
       "finish_after": "終了後"
     }
   },
-
   "profile": {
     "actions": {
       "connections": "接続"
     }
   },
-
   "project_settings": {
     "initiatives": {
       "heading": "イニシアチブ",
@@ -177,7 +171,6 @@
       "disabled": "無効"
     }
   },
-
   "teamspaces": {
     "label": "チームスペース",
     "empty_state": {
@@ -190,7 +183,6 @@
       }
     }
   },
-
   "teamspace_projects": {
     "empty_state": {
       "general": {
@@ -199,7 +191,6 @@
       }
     }
   },
-
   "teamspace_work_items": {
     "empty_state": {
       "no_work_items": {
@@ -218,7 +209,6 @@
       }
     }
   },
-
   "teamspace_cycles": {
     "empty_state": {
       "current": {
@@ -235,7 +225,6 @@
       }
     }
   },
-
   "teamspace_views": {
     "empty_state": {
       "team_view": {
@@ -255,7 +244,6 @@
       }
     }
   },
-
   "teamspace_pages": {
     "empty_state": {
       "team_page": {
@@ -279,7 +267,6 @@
       }
     }
   },
-
   "teamspace_analytics": {
     "empty_state": {
       "progress": {
@@ -308,7 +295,6 @@
       }
     }
   },
-
   "initiatives": {
     "label": "イニシアチブ",
     "add_initiative": "イニシアチブを追加",
@@ -359,7 +345,6 @@
       }
     }
   },
-
   "workspace_pages": {
     "empty_state": {
       "general": {
@@ -389,7 +374,6 @@
       }
     }
   },
-
   "epics": {
     "label": "エピック",
     "no_epics_selected": "エピックが選択されていません",
@@ -413,7 +397,6 @@
       }
     }
   },
-
   "epic_relation": {
     "empty_state": {
       "search": {
@@ -424,7 +407,6 @@
       }
     }
   },
-
   "workspace_cycles": {
     "empty_state": {
       "active": {
@@ -433,7 +415,6 @@
       }
     }
   },
-
   "active_cycle_analytics": {
     "empty_state": {
       "progress": {
@@ -450,7 +431,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "settings": {
       "integrations": {
@@ -587,7 +567,6 @@
       }
     }
   },
-
   "bulk_operations": {
     "error_details": {
       "invalid_archive_state_group": {
@@ -608,7 +587,6 @@
       }
     }
   },
-
   "work_item_types": {
     "label": "作業項目タイプ",
     "label_lowercase": "作業項目タイプ",
@@ -807,7 +785,9 @@
         },
         "error": {
           "title": "エラー！",
-          "message": "作業項目タイプの作成に失敗しました。もう一度お試しください！"
+          "message": {
+            "conflict": "{name} タイプはすでに存在します。別の名前を選んでください。"
+          }
         }
       }
     },
@@ -821,7 +801,9 @@
         },
         "error": {
           "title": "エラー！",
-          "message": "作業項目タイプの更新に失敗しました。もう一度お試しください！"
+          "message": {
+            "conflict": "{name} タイプはすでに存在します。別の名前を選んでください。"
+          }
         }
       }
     },
@@ -881,7 +863,6 @@
       }
     }
   },
-
   "importers": {
     "imports": "インポート",
     "logo": "ロゴ",
@@ -929,7 +910,6 @@
     "skip_user_import_description": "ユーザーのインポートをスキップすると、{serviceName}からの作業項目、コメント、その他のデータはPlaneで移行を実行しているユーザーによって作成されます。後でユーザーを手動で追加することもできます。",
     "invalid_pat": "無効な個人アクセストークン"
   },
-
   "integrations": {
     "integrations": "インテグレーション",
     "loading": "読み込み中",
@@ -945,7 +925,6 @@
     "back_to_integrations": "インテグレーションに戻る",
     "select_state": "状態を選択"
   },
-
   "github_integration": {
     "name": "GitHub",
     "description": "GitHubの作業項目をPlaneと連携・同期します。",
@@ -973,7 +952,6 @@
     "MR_MERGED": "PRがマージされたとき、状態を次に設定",
     "MR_CLOSED": "PRがクローズされたとき、状態を次に設定"
   },
-
   "gitlab_integration": {
     "name": "GitLab",
     "description": "GitLabのマージリクエストをPlaneと連携・同期します。",
@@ -1000,7 +978,6 @@
     "choose_project": "プロジェクトを選択",
     "link_plane_project": "Planeプロジェクトをリンク"
   },
-
   "slack_integration": {
     "name": "Slack",
     "description": "SlackワークスペースをPlaneと接続します。",
@@ -1041,7 +1018,6 @@
       }
     }
   },
-
   "file_upload": {
     "upload_text": "クリックしてファイルをアップロード",
     "drag_drop_text": "ドラッグ＆ドロップ",
@@ -1050,7 +1026,6 @@
     "missing_fields": "必須フィールドが不足しています",
     "success": "{fileName}がアップロードされました！"
   },
-
   "silo_errors": {
     "invalid_query_params": "提供されたクエリパラメータが無効か、必須フィールドが不足しています",
     "invalid_installation_account": "提供されたインストールアカウントが無効です",
@@ -1064,7 +1039,6 @@
     "invalid_app_credentials": "提供されたアプリの資格情報が無効です",
     "invalid_app_installation_id": "アプリのインストールに失敗しました"
   },
-
   "import_status": {
     "created": "作成済み",
     "initiated": "開始済み",
@@ -1077,7 +1051,6 @@
     "error": "エラー",
     "cancelled": "キャンセル済み"
   },
-
   "jira_importer": {
     "jira_importer_description": "JiraのデータをPlaneプロジェクトにインポートします。",
     "personal_access_token": "個人アクセストークン",
@@ -1101,7 +1074,6 @@
       "description_summary": "JiraからPlaneに移行されるデータのサマリーです。"
     }
   },
-
   "asana_importer": {
     "asana_importer_description": "AsanaのデータをPlaneプロジェクトにインポートします。",
     "select_asana_priority_field": "Asana優先度フィールドを選択",
@@ -1118,7 +1090,6 @@
       "description_summary": "AsanaからPlaneに移行されるデータのサマリーです。"
     }
   },
-
   "linear_importer": {
     "linear_importer_description": "LinearのデータをPlaneプロジェクトにインポートします。",
     "steps": {
@@ -1134,7 +1105,6 @@
       "description_summary": "LinearからPlaneに移行されるデータのサマリーです。"
     }
   },
-
   "jira_server_importer": {
     "jira_server_importer_description": "Jira ServerのデータをPlaneプロジェクトにインポートします。",
     "steps": {
@@ -1150,7 +1120,6 @@
       "description_summary": "JiraからPlaneに移行されるデータのサマリーです。"
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "CSVデータをPlaneプロジェクトにインポートします。",
     "steps": {
@@ -1160,7 +1129,6 @@
       "description_configure_csv": "CSVファイルをアップロードし、Planeのフィールドにマッピングするフィールドを設定してください。"
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -1446,7 +1414,6 @@
       "editing": "エディティング"
     }
   },
-
   "workflows": {
     "workflow_states": {
       "work_item_creation": "新しい作業項目を許可",
@@ -1545,7 +1512,6 @@
       }
     }
   },
-
   "customers": {
     "label": "{count, plural, one {顧客} other {顧客たち}}",
     "dropdown": {

@@ -9,7 +9,6 @@
     "business": "Biznis",
     "customers": "Kastomers"
   },
-
   "workspace_dashboards": "Dešbordy",
   "pi_chat": "Pi Čet",
   "in_app": "V aplikácii",
@@ -20,7 +19,6 @@
   "learn_more_about_workspaces": "Zjistit více o pracovních prostorech",
   "no_workspaces_to_connect": "Žádné pracovní prostory k připojení",
   "no_workspaces_to_connect_description": "Musíte vytvořit pracovní prostor, abyste mohli připojit integraci a šablony",
-
   "common": {
     "worklogs": "Pracovné záznamy",
     "live": "Naživo",
@@ -30,7 +28,6 @@
     "workflows": "Vorkflou",
     "templates": "Šablóny"
   },
-
   "updates": {
     "add_update": "Pridať aktualizáciu",
     "add_update_placeholder": "Vložte vašu aktualizáciu tu",
@@ -98,7 +95,6 @@
       }
     }
   },
-
   "issue": {
     "relation": {
       "start_before": "Začína pred",
@@ -107,13 +103,11 @@
       "finish_after": "Končí po"
     }
   },
-
   "profile": {
     "actions": {
       "connections": "Pripojenia"
     }
   },
-
   "project_settings": {
     "initiatives": {
       "heading": "Iniciatívy",
@@ -178,7 +172,6 @@
       "disabled": "Zakázané"
     }
   },
-
   "teamspaces": {
     "label": "Tímspejsy",
     "empty_state": {
@@ -191,7 +184,6 @@
       }
     }
   },
-
   "teamspace_projects": {
     "empty_state": {
       "general": {
@@ -200,7 +192,6 @@
       }
     }
   },
-
   "teamspace_work_items": {
     "empty_state": {
       "no_work_items": {
@@ -219,7 +210,6 @@
       }
     }
   },
-
   "teamspace_cycles": {
     "empty_state": {
       "current": {
@@ -236,7 +226,6 @@
       }
     }
   },
-
   "teamspace_views": {
     "empty_state": {
       "team_view": {
@@ -256,7 +245,6 @@
       }
     }
   },
-
   "teamspace_pages": {
     "empty_state": {
       "team_page": {
@@ -280,7 +268,6 @@
       }
     }
   },
-
   "teamspace_analytics": {
     "empty_state": {
       "progress": {
@@ -309,7 +296,6 @@
       }
     }
   },
-
   "initiatives": {
     "label": "Iniciatívy",
     "add_initiative": "Pridať Iniciatívu",
@@ -360,7 +346,6 @@
       }
     }
   },
-
   "workspace_pages": {
     "empty_state": {
       "general": {
@@ -390,7 +375,6 @@
       }
     }
   },
-
   "epics": {
     "label": "Epiky",
     "no_epics_selected": "Neboli vybrané žiadne epiky",
@@ -414,7 +398,6 @@
       }
     }
   },
-
   "epic_relation": {
     "empty_state": {
       "search": {
@@ -425,7 +408,6 @@
       }
     }
   },
-
   "workspace_cycles": {
     "empty_state": {
       "active": {
@@ -434,7 +416,6 @@
       }
     }
   },
-
   "active_cycle_analytics": {
     "empty_state": {
       "progress": {
@@ -451,7 +432,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "settings": {
       "integrations": {
@@ -588,7 +568,6 @@
       }
     }
   },
-
   "bulk_operations": {
     "error_details": {
       "invalid_archive_state_group": {
@@ -609,7 +588,6 @@
       }
     }
   },
-
   "work_item_types": {
     "label": "Typy pracovných položiek",
     "label_lowercase": "typy pracovných položiek",
@@ -808,7 +786,9 @@
         },
         "error": {
           "title": "Chyba!",
-          "message": "Nepodarilo sa vytvoriť typ pracovnej položky. Skúste to znova!"
+          "message": {
+            "conflict": "Typ {name} už existuje. Zvoľte iný názov."
+          }
         }
       }
     },
@@ -822,7 +802,9 @@
         },
         "error": {
           "title": "Chyba!",
-          "message": "Nepodarilo sa aktualizovať typ pracovnej položky. Skúste to znova!"
+          "message": {
+            "conflict": "Typ {name} už existuje. Zvoľte iný názov."
+          }
         }
       }
     },
@@ -882,7 +864,6 @@
       }
     }
   },
-
   "importers": {
     "imports": "Importy",
     "logo": "Logo",
@@ -930,7 +911,6 @@
     "skip_user_import_description": "Preskočenie importu používateľov bude mať za následok, že pracovné položky, komentáre a ďalšie údaje z {serviceName} budú vytvorené používateľom vykonávajúcim migráciu v Plane. Používateľov môžete stále manuálne pridať neskôr.",
     "invalid_pat": "Neplatný osobný prístupový token"
   },
-
   "integrations": {
     "integrations": "Integrácie",
     "loading": "Načítava sa",
@@ -946,7 +926,6 @@
     "back_to_integrations": "Späť na integrácie",
     "select_state": "Vyberte stav"
   },
-
   "github_integration": {
     "name": "GitHub",
     "description": "Pripojte a synchronizujte vašu GitHub pracovnú položku s Plane.",
@@ -974,7 +953,6 @@
     "MR_MERGED": "Pri zlúčení PR nastaviť stav na",
     "MR_CLOSED": "Pri uzavretí PR nastaviť stav na"
   },
-
   "gitlab_integration": {
     "name": "Gitlab",
     "description": "Pripojte a synchronizujte vaše Gitlab žiadosti o zlúčenie s Plane.",
@@ -1001,7 +979,6 @@
     "choose_project": "Vyberte projekt",
     "link_plane_project": "Prepojiť projekt Plane"
   },
-
   "slack_integration": {
     "name": "Slack",
     "description": "Pripojte váš Slack vorkspejs s Plane.",
@@ -1042,7 +1019,6 @@
       }
     }
   },
-
   "file_upload": {
     "upload_text": "Kliknite sem na nahratie súboru",
     "drag_drop_text": "Drag and Drop",
@@ -1051,7 +1027,6 @@
     "missing_fields": "Chýbajúce polia",
     "success": "{fileName} nahraný!"
   },
-
   "silo_errors": {
     "invalid_query_params": "Poskytnuté parametre dotazu sú neplatné alebo chýbajú povinné polia",
     "invalid_installation_account": "Poskytnutý inštalačný účet nie je platný",
@@ -1064,7 +1039,6 @@
     "invalid_app_credentials": "Poskytnuté údaje aplikácie sú neplatné",
     "invalid_app_installation_id": "Nepodarilo sa nainštalovať aplikáciu"
   },
-
   "import_status": {
     "created": "Vytvorené",
     "initiated": "Iniciované",
@@ -1077,7 +1051,6 @@
     "error": "Chyba",
     "cancelled": "Zrušené"
   },
-
   "jira_importer": {
     "jira_importer_description": "Importujte vaše Jira dáta do projektov Plane.",
     "personal_access_token": "Osobný prístupový token",
@@ -1101,7 +1074,6 @@
       "description_summary": "Tu je súhrn dát, ktoré budú migrované z Jira do Plane."
     }
   },
-
   "asana_importer": {
     "asana_importer_description": "Importujte vaše Asana dáta do projektov Plane.",
     "select_asana_priority_field": "Vyberte pole priority Asana",
@@ -1118,7 +1090,6 @@
       "description_summary": "Tu je súhrn dát, ktoré budú migrované z Asana do Plane."
     }
   },
-
   "linear_importer": {
     "linear_importer_description": "Importujte vaše Linear dáta do projektov Plane.",
     "steps": {
@@ -1134,7 +1105,6 @@
       "description_summary": "Tu je súhrn dát, ktoré budú migrované z Linear do Plane."
     }
   },
-
   "jira_server_importer": {
     "jira_server_importer_description": "Importujte vaše Jira Server dáta do projektov Plane.",
     "steps": {
@@ -1150,7 +1120,6 @@
       "description_summary": "Tu je súhrn dát, ktoré budú migrované z Jira do Plane."
     }
   },
-
   "flatfile_importer": {
     "flatfile_importer_description": "Importujte vaše CSV dáta do projektov Plane.",
     "steps": {
@@ -1160,7 +1129,6 @@
       "description_configure_csv": "Nahrajte váš CSV súbor a nakonfigurujte polia, ktoré majú byť mapované na polia Plane."
     }
   },
-
   "dashboards": {
     "widget": {
       "chart_types": {
@@ -1446,7 +1414,6 @@
       "editing": "Upravuje sa"
     }
   },
-
   "workflows": {
     "workflow_states": {
       "work_item_creation": "Povoliť nové pracovné položky",
@@ -1545,7 +1512,6 @@
       }
     }
   },
-
   "customers": {
     "label": "{count, plural, one {Zákazník} few {Zákazníci} other {Zákazníkov}}",
     "open": "Otvoriť zákazníka",
@@ -1924,7 +1890,6 @@
       "properties": "Vlastnosti"
     }
   },
-
   "templates": {
     "settings": {
       "title": "Šablóny",
