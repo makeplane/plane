@@ -1,5 +1,5 @@
 {
-  "extends": "@plane/typescript-config/react-library.json",
+  "extends": "@plane/typescript-config/base.json",
   "compilerOptions": {
     "jsx": "react",
     "lib": ["esnext", "dom"]

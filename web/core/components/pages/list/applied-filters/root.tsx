@@ -3,9 +3,9 @@ import { useTranslation } from "@plane/i18n";
 import { TPageFilterProps } from "@plane/types";
 // components
 import { Tag } from "@plane/ui";
+import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 import { AppliedDateFilters, AppliedMembersFilters } from "@/components/common/applied-filters";
 // helpers
-import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 // types
 
 type Props = {

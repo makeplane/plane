@@ -4,9 +4,9 @@ import { CalendarClock } from "lucide-react";
 // types
 import { TIssue } from "@plane/types";
 // components
+import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns";
 // helpers
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 
 type Props = {
   issue: TIssue;

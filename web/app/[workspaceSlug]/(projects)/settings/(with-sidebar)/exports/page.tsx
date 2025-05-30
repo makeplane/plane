@@ -4,11 +4,11 @@ import { observer } from "mobx-react";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { cn } from "@plane/utils";
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core/page-title";
 import ExportGuide from "@/components/exporter/guide";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
 

@@ -9,7 +9,7 @@ import { TRecentCollaboratorsWidgetResponse } from "@plane/types";
 // ui
 import { Avatar } from "@plane/ui";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL } from "@plane/utils";
 // hooks
 import { useDashboard, useMember, useUser } from "@/hooks/store";
 // components

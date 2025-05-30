@@ -16,7 +16,7 @@ import { EFileAssetType } from "@plane/types/src/enums";
 // ui
 import { Button, Input, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL } from "@plane/utils";
 // hooks
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 // services

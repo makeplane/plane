@@ -6,7 +6,7 @@ import { computedFn } from "mobx-utils";
 import { EUserPermissions, EUserProjectRoles } from "@plane/constants";
 import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 // helpers
-import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@/helpers/page.helper";
+import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
 // plane web constants
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";

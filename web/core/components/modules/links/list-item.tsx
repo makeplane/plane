@@ -4,10 +4,9 @@ import { Copy, Pencil, Trash2 } from "lucide-react";
 import { ILinkDetails } from "@plane/types";
 // plane ui
 import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
-import { getIconForLink } from "@plane/utils";
+import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
 // helpers
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
-import { copyTextToClipboard } from "@/helpers/string.helper";
+//
 // hooks
 import { useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

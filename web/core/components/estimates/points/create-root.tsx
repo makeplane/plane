@@ -3,12 +3,12 @@
 import { Dispatch, FC, SetStateAction, useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
+import { estimateCount } from "@plane/constants";
 import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeError } from "@plane/types";
 import { Button, Sortable } from "@plane/ui";
 // components
 import { EstimatePointCreate, EstimatePointItemPreview } from "@/components/estimates/points";
 // plane web constants
-import { estimateCount } from "@/plane-web/constants/estimates";
 
 type TEstimatePointCreateRoot = {
   workspaceSlug: string;

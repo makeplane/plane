@@ -19,7 +19,7 @@ import {
   TBulkOperationsPayload,
 } from "@plane/types";
 // helpers
-import { getDistributionPathsPostUpdate } from "@/helpers/distribution-update.helper";
+import { getDistributionPathsPostUpdate } from "@plane/utils";
 //local
 import { storage } from "@/lib/local-storage";
 import { persistence } from "@/local-db/storage.sqlite";

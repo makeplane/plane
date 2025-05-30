@@ -1,8 +1,6 @@
+import { cn, getFileURL } from "@plane/utils";
 // plane utils
-import { cn } from "@plane/utils";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
-
 type Props = {
   logo: string | null | undefined;
   name: string | undefined;

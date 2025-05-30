@@ -6,8 +6,8 @@ import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES } from "@plane/constan
 import { IAnalyticsParams, IAnalyticsResponse, TIssuePriorities } from "@plane/types";
 import { PriorityIcon, Tooltip } from "@plane/ui";
 // helpers
+import { cn } from "@plane/utils";
 import { generateBarColor, generateDisplayName, renderChartDynamicLabel } from "@/helpers/analytics.helper";
-import { cn } from "@/helpers/common.helper";
 
 type Props = {
   analytics: IAnalyticsResponse;

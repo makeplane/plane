@@ -6,11 +6,9 @@ import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Input, TextArea, Tooltip } from "@plane/ui";
+import { cn, projectIdentifierSanitizer, getTabIndex } from "@plane/utils";
 // plane utils
-import { cn } from "@plane/utils";
 // helpers
-import { projectIdentifierSanitizer } from "@/helpers/project.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // plane-web types
 import { TProject } from "@/plane-web/types/projects";
 

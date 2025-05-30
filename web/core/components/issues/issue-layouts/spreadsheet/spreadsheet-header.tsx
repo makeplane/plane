@@ -6,10 +6,10 @@ import { SPREADSHEET_SELECT_GROUP } from "@plane/constants";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 // components
 import { Row } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { MultipleSelectGroupAction } from "@/components/core";
 import { SpreadsheetHeaderColumn } from "@/components/issues/issue-layouts";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 

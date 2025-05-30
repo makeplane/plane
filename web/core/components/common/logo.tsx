@@ -11,7 +11,7 @@ import { TLogoProps } from "@plane/types";
 // ui
 import { LUCIDE_ICONS_LIST } from "@plane/ui";
 // helpers
-import { emojiCodeToUnicode } from "@/helpers/emoji.helper";
+import { emojiCodeToUnicode } from "@plane/utils";
 
 type Props = {
   logo: TLogoProps;

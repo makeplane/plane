@@ -8,7 +8,7 @@ import { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { csvDownload } from "@/helpers/download.helper";
+import { csvDownload } from "@plane/utils";
 // hooks
 import useKeypress from "@/hooks/use-keypress";
 // components

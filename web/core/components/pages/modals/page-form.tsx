@@ -10,12 +10,11 @@ import { useTranslation } from "@plane/i18n";
 import { TPage } from "@plane/types";
 // ui
 import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input } from "@plane/ui";
+import { convertHexEmojiToDecimal, getTabIndex } from "@plane/utils";
 import { Logo } from "@/components/common";
 // constants
 import { AccessField } from "@/components/common/access-field";
 // helpers
-import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 

@@ -8,12 +8,10 @@ import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 // plane ui
 import { CustomEmojiIconPicker, EmojiIconPickerTypes, Logo } from "@plane/ui";
+import { convertHexEmojiToDecimal, getFileURL, getTabIndex } from "@plane/utils";
 // components
 import { ImagePickerPopover } from "@/components/core";
 // helpers
-import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
-import { getFileURL } from "@/helpers/file.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // plane web imports
 import { ProjectTemplateSelect } from "@/plane-web/components/projects/create/template-select";
 

@@ -5,7 +5,7 @@ import { IFavorite } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 type Props = {
   ref: React.MutableRefObject<HTMLDivElement | null>;

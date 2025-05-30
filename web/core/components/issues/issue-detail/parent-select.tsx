@@ -8,9 +8,9 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { Tooltip } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { ParentIssuesListModal } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

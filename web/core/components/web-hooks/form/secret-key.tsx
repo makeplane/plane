@@ -10,9 +10,8 @@ import { useTranslation } from "@plane/i18n";
 import { IWebhook } from "@plane/types";
 // ui
 import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { csvDownload, copyTextToClipboard } from "@plane/utils";
 // helpers
-import { csvDownload } from "@/helpers/download.helper";
-import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useWebhook, useWorkspace } from "@/hooks/store";
 // types

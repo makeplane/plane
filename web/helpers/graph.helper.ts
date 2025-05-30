@@ -1,3 +1,5 @@
+// ------------ DEPRECATED (Use re-charts and its helpers instead) ------------
+
 export const generateYAxisTickValues = (data: number[]) => {
   if (!data || !Array.isArray(data) || data.length === 0) return [];
 

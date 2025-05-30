@@ -2,15 +2,13 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { ANALYTICS_Y_AXIS_VALUES, EEstimateSystem } from "@plane/constants";
 // plane imports
-import { ANALYTICS_Y_AXIS_VALUES } from "@plane/constants";
 import { TYAxisValues } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 // hooks
 import { useProjectEstimates } from "@/hooks/store";
 // plane web constants
-import { EEstimateSystem } from "@/plane-web/constants/estimates";
-
 type Props = {
   value: TYAxisValues;
   onChange: () => void;
