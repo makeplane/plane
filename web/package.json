@@ -53,7 +53,7 @@
     "mobx": "^6.10.0",
     "mobx-react": "^9.1.1",
     "mobx-utils": "^6.0.8",
-    "next": "^14.2.28",
+    "next": "^14.2.29",
     "next-themes": "^0.2.1",
     "nprogress": "^0.2.0",
     "posthog-js": "^1.131.3",
