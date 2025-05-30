@@ -236,22 +236,6 @@ class IssuesType:
         issue_project_id = await sync_to_async(lambda: self.project_id)()
 
         if parent_issue_project_id == issue_project_id:
-            # check if epic is feature enabled
-            is_feature_flagged = await is_epic_feature_flagged(
-                user_id=user_id, workspace_slug=workspace_slug, raise_exception=False
-            )
-            if not is_feature_flagged:
-                return None
-
-            # check if epic is enabled in the project
-            is_epics_enabled = await is_project_epics_enabled(
-                workspace_slug=workspace_slug,
-                project_id=project_id,
-                raise_exception=False,
-            )
-            if not is_epics_enabled:
-                return None
-
             # check if the parent issue issue_type is not epic
             parent_issue_is_epic = await sync_to_async(
                 lambda: self.parent.type.is_epic
@@ -260,9 +244,27 @@ class IssuesType:
             )()
 
             if parent_issue_is_epic:
-                return str(self.parent_id)
+                # check if epic is feature enabled
+                is_feature_flagged = await is_epic_feature_flagged(
+                    user_id=user_id,
+                    workspace_slug=workspace_slug,
+                    raise_exception=False,
+                )
+                if not is_feature_flagged:
+                    return None
 
-            return str(self.parent_id)
+                # check if epic is enabled in the project
+                is_epics_enabled = await is_project_epics_enabled(
+                    workspace_slug=workspace_slug,
+                    project_id=project_id,
+                    raise_exception=False,
+                )
+                if not is_epics_enabled:
+                    return None
+
+                return str(self.parent_id)
+            else:
+                return str(self.parent_id)
 
         return None
 
