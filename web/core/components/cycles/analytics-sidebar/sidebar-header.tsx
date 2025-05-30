@@ -3,21 +3,12 @@
 import React, { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import {
-  ArchiveIcon,
-  ArchiveRestoreIcon,
-  ArrowRight,
-  ChevronRight,
-  EllipsisIcon,
-  LinkIcon,
-  Trash2,
-} from "lucide-react";
+import { ArrowRight, ChevronRight } from "lucide-react";
 // Plane Imports
 import { CYCLE_STATUS, CYCLE_UPDATED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ICycle } from "@plane/types";
-import { CustomMenu, setToast, TOAST_TYPE } from "@plane/ui";
-import { copyUrlToClipboard } from "@plane/utils";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns";
 // helpers
@@ -239,6 +230,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
                         {renderFormattedDateInUserTimezone(cycleDetails.end_date ?? "")}
                       </span>
                     }
+                    mergeDates
                     showTooltip={!!cycleDetails.start_date && !!cycleDetails.end_date} // show tooltip only if both start and end date are present
                     required={cycleDetails.status !== "draft"}
                     disabled={!isEditingAllowed || isArchived || isCompleted}
