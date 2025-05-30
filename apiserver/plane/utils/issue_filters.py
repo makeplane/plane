@@ -614,6 +614,14 @@ def filter_character_fields(params, issue_filter, method, prefix=""):
 
     return issue_filter
 
+def filter_sequence_id(params, issue_filter, method, prefix=""):
+    """
+    Filter issues by sequence_id
+    """
+    sequence_id = params.get(f"{prefix}sequence_id", None)
+    if sequence_id is not None:
+        issue_filter[f"{prefix}sequence_id"] = sequence_id
+
 def filter_issue_type_id(params, issue_filter, method, prefix=""):
     """
     Filter issues by type_id
@@ -652,6 +660,7 @@ def issue_filters(query_params, method, prefix=""):
         "sub_issue": filter_sub_issue_toggle,
         "subscriber": filter_subscribed_issues,
         "start_target_date": filter_start_target_date_issues,
+        "sequence_id" : filter_sequence_id,
         "custom_properties": filter_custom_properties,
     }
 
