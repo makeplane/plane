@@ -20,10 +20,10 @@ export const EstimateEmptyScreen: FC<TEstimateEmptyScreen> = (props) => {
   const resolvedPath = `/empty-state/project-settings/estimates-${resolvedTheme === "light" ? "light" : "dark"}.png`;
   return (
     <DetailedEmptyState
-      title={t("project_settings.empty_state.estimates.title")}
-      description={t("project_settings.empty_state.estimates.description")}
+      title={""}
+      description={""}
       assetPath={resolvedPath}
-      className="w-full !px-0 !py-4"
+      className="w-full !px-0 !py-0"
       primaryButton={{
         text: t("project_settings.empty_state.estimates.primary_button"),
         onClick: onButtonClick,

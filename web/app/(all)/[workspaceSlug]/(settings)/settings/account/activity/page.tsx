@@ -57,10 +57,10 @@ const ProfileActivityPage = observer(() => {
           description={t("account_settings.activity.description")}
         />
         <DetailedEmptyState
-          title={t("profile.empty_state.activity.title")}
-          description={t("profile.empty_state.activity.description")}
+          title={""}
+          description={""}
           assetPath={resolvedPath}
-          className="w-full !px-0 justify-center mx-auto min-h-fit"
+          className="w-full !p-0 justify-center mx-auto min-h-fit"
           size="md"
         />
       </div>
