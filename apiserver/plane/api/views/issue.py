@@ -62,8 +62,6 @@ from plane.utils.host import base_host
 from plane.bgtasks.webhook_task import model_activity
 
 from plane.utils.openapi import (
-    UNAUTHORIZED_RESPONSE,
-    FORBIDDEN_RESPONSE,
     work_item_docs,
     label_docs,
     issue_link_docs,

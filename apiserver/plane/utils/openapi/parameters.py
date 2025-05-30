@@ -7,7 +7,6 @@ across multiple API endpoints to ensure consistency.
 
 from drf_spectacular.utils import OpenApiParameter, OpenApiExample
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.openapi import AutoSchema
 
 
 # Path Parameters

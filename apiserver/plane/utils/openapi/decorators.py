@@ -13,15 +13,15 @@ from .responses import UNAUTHORIZED_RESPONSE, FORBIDDEN_RESPONSE, NOT_FOUND_RESP
 def _merge_schema_options(defaults, kwargs):
     """Helper function to merge responses and parameters from kwargs into defaults"""
     # Merge responses
-    if 'responses' in kwargs:
-        defaults['responses'].update(kwargs['responses'])
-        kwargs = {k: v for k, v in kwargs.items() if k != 'responses'}
-    
+    if "responses" in kwargs:
+        defaults["responses"].update(kwargs["responses"])
+        kwargs = {k: v for k, v in kwargs.items() if k != "responses"}
+
     # Merge parameters
-    if 'parameters' in kwargs:
-        defaults['parameters'].extend(kwargs['parameters'])
-        kwargs = {k: v for k, v in kwargs.items() if k != 'parameters'}
-    
+    if "parameters" in kwargs:
+        defaults["parameters"].extend(kwargs["parameters"])
+        kwargs = {k: v for k, v in kwargs.items() if k != "parameters"}
+
     defaults.update(kwargs)
     return defaults
 
@@ -35,7 +35,7 @@ def user_docs(**kwargs):
             401: UNAUTHORIZED_RESPONSE,
         },
     }
-    
+
     return extend_schema(**_merge_schema_options(defaults, kwargs))
 
 
@@ -50,7 +50,7 @@ def workspace_docs(**kwargs):
             404: NOT_FOUND_RESPONSE,
         },
     }
-    
+
     return extend_schema(**_merge_schema_options(defaults, kwargs))
 
 
@@ -65,7 +65,7 @@ def project_docs(**kwargs):
             404: NOT_FOUND_RESPONSE,
         },
     }
-    
+
     return extend_schema(**_merge_schema_options(defaults, kwargs))
 
 
@@ -80,7 +80,7 @@ def cycle_docs(**kwargs):
             404: NOT_FOUND_RESPONSE,
         },
     }
-    
+
     return extend_schema(**_merge_schema_options(defaults, kwargs))
 
 
@@ -95,7 +95,7 @@ def issue_docs(**kwargs):
             404: NOT_FOUND_RESPONSE,
         },
     }
-    
+
     return extend_schema(**_merge_schema_options(defaults, kwargs))
 
 
@@ -110,7 +110,7 @@ def intake_docs(**kwargs):
             404: NOT_FOUND_RESPONSE,
         },
     }
-    
+
     return extend_schema(**_merge_schema_options(defaults, kwargs))
 
 
@@ -124,7 +124,7 @@ def asset_docs(**kwargs):
             403: FORBIDDEN_RESPONSE,
         },
     }
-    
+
     return extend_schema(**_merge_schema_options(defaults, kwargs))
 
 
@@ -140,7 +140,7 @@ def work_item_docs(**kwargs):
             404: NOT_FOUND_RESPONSE,
         },
     }
-    
+
     return extend_schema(**_merge_schema_options(defaults, kwargs))
 
 
@@ -155,7 +155,7 @@ def label_docs(**kwargs):
             404: NOT_FOUND_RESPONSE,
         },
     }
-    
+
     return extend_schema(**_merge_schema_options(defaults, kwargs))
 
 
@@ -170,7 +170,7 @@ def issue_link_docs(**kwargs):
             404: NOT_FOUND_RESPONSE,
         },
     }
-    
+
     return extend_schema(**_merge_schema_options(defaults, kwargs))
 
 
@@ -185,7 +185,7 @@ def issue_comment_docs(**kwargs):
             404: NOT_FOUND_RESPONSE,
         },
     }
-    
+
     return extend_schema(**_merge_schema_options(defaults, kwargs))
 
 
@@ -200,7 +200,7 @@ def issue_activity_docs(**kwargs):
             404: NOT_FOUND_RESPONSE,
         },
     }
-    
+
     return extend_schema(**_merge_schema_options(defaults, kwargs))
 
 
@@ -215,7 +215,7 @@ def issue_attachment_docs(**kwargs):
             404: NOT_FOUND_RESPONSE,
         },
     }
-    
+
     return extend_schema(**_merge_schema_options(defaults, kwargs))
 
 
@@ -230,7 +230,7 @@ def module_docs(**kwargs):
             404: NOT_FOUND_RESPONSE,
         },
     }
-    
+
     return extend_schema(**_merge_schema_options(defaults, kwargs))
 
 
@@ -245,7 +245,7 @@ def module_issue_docs(**kwargs):
             404: NOT_FOUND_RESPONSE,
         },
     }
-    
+
     return extend_schema(**_merge_schema_options(defaults, kwargs))
 
 
@@ -260,5 +260,5 @@ def state_docs(**kwargs):
             404: NOT_FOUND_RESPONSE,
         },
     }
-    
+
     return extend_schema(**_merge_schema_options(defaults, kwargs))

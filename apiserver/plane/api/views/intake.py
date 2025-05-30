@@ -28,8 +28,6 @@ from plane.utils.host import base_host
 from .base import BaseAPIView
 from plane.db.models.intake import SourceType
 from plane.utils.openapi import (
-    UNAUTHORIZED_RESPONSE,
-    FORBIDDEN_RESPONSE,
     intake_docs,
 )
 

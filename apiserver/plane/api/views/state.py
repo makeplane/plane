@@ -12,8 +12,6 @@ from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import Issue, State
 from .base import BaseAPIView
 from plane.utils.openapi import (
-    UNAUTHORIZED_RESPONSE,
-    FORBIDDEN_RESPONSE,
     state_docs,
 )
 
