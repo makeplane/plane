@@ -106,7 +106,7 @@ const CustomizedYAxisTicks = (props: TProps) => {
   if (x === undefined || y === undefined || payload === undefined) return null;
   return (
     <text x={x - 10} y={y} dy={3} textAnchor="middle" fill={text} style={{ fontSize: "10px" }}>
-      {payload.value}
+      {payload.value % 1 === 0 ? payload.value : payload.value.toFixed(1)}
     </text>
   );
 };
