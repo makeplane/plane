@@ -16,6 +16,8 @@ import {
   TEpicPropertiesOptions,
 } from "@plane/types";
 import { buildWorkItemTypeSchema } from "@plane/utils";
+// local db utils
+import { deleteIssueFromLocal } from "@/local-db/utils/load-issues";
 // plane web services
 import {
   epicIssueTypeService,
@@ -748,6 +750,8 @@ export class IssueTypes implements IIssueTypesStore {
         } else if (convertTo === EWorkItemConversionType.EPIC) {
           this.rootStore.issue.projectIssues.removeIssueFromList(workItemId);
           this.rootStore.issue.projectEpics.addIssueToList(workItemId);
+          // delete the issue from local db
+          deleteIssueFromLocal(workItemId);
           // update is_epic to true
           this.rootStore.issue.issues.updateIssue(workItemId, { is_epic: true });
           detailStore.fetchActivities(workspaceSlug, projectId, workItemId);
