@@ -10,6 +10,7 @@ from celery.schedules import crontab
 
 # Module imports
 from plane.settings.redis import redis_instance
+from plane.celery_task_routes import task_routes
 
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plane.settings.production")
@@ -17,6 +18,28 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plane.settings.production")
 ri = redis_instance()
 
 app = Celery("plane")
+
+# Load task modules from all registered Django app configs.
+app.autodiscover_tasks()
+
+app.conf.update(
+    task_routes,
+    task_default_queue="default",
+    task_queues={
+        "high": {
+            "exchange": "high",
+            "routing_key": "high",
+        },
+        "default": {
+            "exchange": "default",
+            "routing_key": "default",
+        },
+        "low": {
+            "exchange": "low",
+            "routing_key": "low",
+        },
+    },
+)
 
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.
@@ -76,8 +99,5 @@ def setup_task_loggers(logger, *args, **kwargs):
     handler.setFormatter(fmt=formatter)
     logger.addHandler(handler)
 
-
-# Load task modules from all registered Django app configs.
-app.autodiscover_tasks()
 
 app.conf.beat_scheduler = "django_celery_beat.schedulers.DatabaseScheduler"
