@@ -47,8 +47,9 @@ from .app.password_management import ForgotPasswordEndpoint, ResetPasswordEndpoi
 
 
 # Mobile web view authentication exports
+from .app.mobile.check import MobileEmailCheckEndpoint
 from .app.mobile.email import MobileSignInAuthEndpoint
-from .app.mobile.magic import MobileMagicSignInEndpoint
+from .app.mobile.magic import MobileMagicSignInEndpoint, MobileMagicGenerateEndpoint
 from .app.mobile.token import (
     MobileSessionTokenCheckEndpoint,
     MobileSessionTokenEndpoint,

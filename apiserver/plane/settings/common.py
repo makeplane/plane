@@ -583,5 +583,8 @@ if ELASTICSEARCH_ENABLED:
 # Web URL
 WEB_URL = os.environ.get("WEB_URL", "http://localhost:3000")
 
+# admin email for user deletion
+MOBILE_USER_DELETE_ADMIN_EMAILS = os.environ.get("MOBILE_USER_DELETE_ADMIN_EMAILS", "")
+
 # Intake Email Domain
 INTAKE_EMAIL_DOMAIN = os.environ.get("INTAKE_EMAIL_DOMAIN", "example.com")

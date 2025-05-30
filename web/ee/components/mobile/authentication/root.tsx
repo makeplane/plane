@@ -24,10 +24,7 @@ import {
   OAuthRoot,
 } from "@/plane-web/components/mobile";
 // services
-import { AuthService } from "@/services/auth.service";
-
-// service initialization
-const authService = new AuthService();
+import mobileAuthService from "@/plane-web/services/mobile.service";
 
 // constants
 const AUTH_HEADER_CONTENT_OPTIONS = {
@@ -91,7 +88,7 @@ export const AuthRoot: FC = observer(() => {
   const generateEmailUniqueCode = async (email: string) => {
     if (!isSMTPConfigured || !email || email === "") return;
     const payload = { email: email };
-    return await authService
+    return await mobileAuthService
       .generateUniqueCode(payload)
       .then(() => ({ code: "" }))
       .catch((error) => {

@@ -10,9 +10,7 @@ import { API_BASE_URL } from "@/helpers/common.helper";
 // hooks
 import { useInstance } from "@/hooks/store";
 // services
-import { AuthService } from "@/services/auth.service";
-
-const authService = new AuthService();
+import mobileAuthService from "@/plane-web/services/mobile.service";
 
 type TMobileAuthPasswordForm = {
   email: string;
@@ -48,7 +46,7 @@ export const MobileAuthPasswordForm: FC<TMobileAuthPasswordForm> = observer((pro
 
   useEffect(() => {
     if (csrfPromise === undefined) {
-      const promise = authService.requestCSRFToken();
+      const promise = mobileAuthService.requestCSRFToken();
       setCsrfPromise(promise);
     }
   }, [csrfPromise]);

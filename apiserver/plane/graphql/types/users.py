@@ -1,32 +1,33 @@
 # Python imports
-from typing import Optional
+from dataclasses import dataclass, field
 from datetime import datetime
-from asgiref.sync import sync_to_async
-
-# Django Imports
-from django.db.models import Q
+from typing import Optional
 
 # Strawberry imports
 import strawberry
 import strawberry_django
-from strawberry.types import Info
+
+# Django Imports
+from asgiref.sync import sync_to_async
+from django.db.models import Q
 from strawberry.scalars import JSON
+from strawberry.types import Info
 
 # Module imports
-from plane.graphql.utils.timezone import user_timezone_converter
 from plane.db.models import (
-    User,
-    Profile,
-    Workspace,
-    UserFavorite,
-    UserRecentVisit,
-    Project,
     Cycle,
-    Module,
     Issue,
     IssueView,
+    Module,
     Page,
+    Profile,
+    Project,
+    User,
+    UserFavorite,
+    UserRecentVisit,
+    Workspace,
 )
+from plane.graphql.utils.timezone import user_timezone_converter
 
 
 @strawberry_django.type(User)
@@ -48,6 +49,14 @@ class UserType:
     last_login_medium: str
     avatar_url: Optional[str]
     cover_image_url: Optional[str]
+
+
+@strawberry.input
+@dataclass
+class ProfileUpdateInputType:
+    mobile_timezone_auto_set: Optional[bool] = field(default_factory=lambda: None)
+    is_mobile_onboarded: Optional[bool] = field(default_factory=lambda: None)
+    mobile_onboarding_step: Optional[JSON] = field(default_factory=lambda: None)
 
 
 @strawberry_django.type(Profile)

@@ -15,11 +15,7 @@ import {
 import { cn } from "@/helpers/common.helper";
 import { checkEmailValidity } from "@/helpers/string.helper";
 // plane web services
-import mobileService from "@/plane-web/services/mobile.service";
-// services
-import { AuthService } from "@/services/auth.service";
-
-const authService = new AuthService();
+import mobileAuthService from "@/plane-web/services/mobile.service";
 
 type TMobileAuthEmailValidationForm = {
   email: string;
@@ -56,7 +52,7 @@ export const MobileAuthEmailValidationForm: FC<TMobileAuthEmailValidationForm> =
     let userCanAuthenticate = true;
 
     try {
-      await mobileService.currentUser();
+      await mobileAuthService.currentUser();
       userExists = true;
     } catch {
       userExists = false;
@@ -64,7 +60,7 @@ export const MobileAuthEmailValidationForm: FC<TMobileAuthEmailValidationForm> =
 
     if (userExists) {
       try {
-        await mobileService.signOut();
+        await mobileAuthService.signOut();
         userCanAuthenticate = true;
       } catch {
         userCanAuthenticate = false;
@@ -80,7 +76,7 @@ export const MobileAuthEmailValidationForm: FC<TMobileAuthEmailValidationForm> =
       email: email,
     };
 
-    await authService
+    await mobileAuthService
       .emailCheck(payload)
       .then(async (response) => {
         if (response.existing) {

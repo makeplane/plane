@@ -2,25 +2,58 @@
 from urllib.parse import urlencode, urljoin
 
 # Django imports
+from django.core.validators import validate_email
 from django.http import HttpResponseRedirect
 from django.views import View
 
+# Third party imports
+from rest_framework import status
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 # Module imports
-from plane.authentication.provider.credentials.magic_code import MagicCodeProvider
-from plane.authentication.utils.mobile.login import (
-    ValidateAuthToken,
-    mobile_validate_user_onboarding,
+from plane.authentication.adapter.error import (
+    AUTHENTICATION_ERROR_CODES,
+    AuthenticationException,
 )
-from plane.authentication.utils.user_auth_workflow import post_user_auth_workflow
+from plane.authentication.provider.credentials.magic_code import MagicCodeProvider
+from plane.authentication.rate_limit import AuthenticationThrottle
 from plane.authentication.utils.host import base_host
+from plane.authentication.utils.mobile.login import ValidateAuthToken
+from plane.authentication.utils.user_auth_workflow import post_user_auth_workflow
+from plane.bgtasks.magic_link_code_task import magic_link
 from plane.db.models import User
 from plane.license.models import Instance
-from plane.authentication.adapter.error import (
-    AuthenticationException,
-    AUTHENTICATION_ERROR_CODES,
-)
 from plane.utils.exception_logger import log_exception
+
+
+class MobileMagicGenerateEndpoint(APIView):
+    permission_classes = [AllowAny]
+
+    throttle_classes = [AuthenticationThrottle]
+
+    def post(self, request):
+        # Check if instance is configured
+        instance = Instance.objects.first()
+        if instance is None or not instance.is_setup_done:
+            exc = AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["INSTANCE_NOT_CONFIGURED"],
+                error_message="INSTANCE_NOT_CONFIGURED",
+            )
+            return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
+
+        email = request.data.get("email", "").strip().lower()
+        try:
+            validate_email(email)
+            adapter = MagicCodeProvider(request=request, key=email)
+            key, token = adapter.initiate()
+            # If the smtp is configured send through here
+            magic_link.delay(email, key, token)
+            return Response({"key": str(key)}, status=status.HTTP_200_OK)
+        except AuthenticationException as e:
+            params = e.get_error_dict()
+            return Response(params, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MobileMagicSignInEndpoint(View):
@@ -82,20 +115,6 @@ class MobileMagicSignInEndpoint(View):
                 callback=post_user_auth_workflow,
             )
             user = provider.authenticate()
-
-            is_onboarded = mobile_validate_user_onboarding(user=user)
-            if not is_onboarded:
-                exc = AuthenticationException(
-                    error_code=AUTHENTICATION_ERROR_CODES["USER_NOT_ONBOARDED"],
-                    error_message="USER_NOT_ONBOARDED",
-                    payload={"email": str(email)},
-                )
-                params = exc.get_error_dict()
-                url = urljoin(
-                    base_host(request=request, is_app=True),
-                    "m/auth/?" + urlencode(params),
-                )
-                return HttpResponseRedirect(url)
 
             # Login the user and record his device info
             session_token = ValidateAuthToken()

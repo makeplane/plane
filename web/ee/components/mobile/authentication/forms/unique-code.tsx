@@ -10,9 +10,7 @@ import { API_BASE_URL } from "@/helpers/common.helper";
 // hooks
 import useTimer from "@/hooks/use-timer";
 // services
-import { AuthService } from "@/services/auth.service";
-
-const authService = new AuthService();
+import mobileAuthService from "@/plane-web/services/mobile.service";
 
 type TMobileAuthUniqueCodeForm = {
   email: string;
@@ -50,7 +48,7 @@ export const MobileAuthUniqueCodeForm: FC<TMobileAuthUniqueCodeForm> = observer(
 
   useEffect(() => {
     if (csrfPromise === undefined) {
-      const promise = authService.requestCSRFToken();
+      const promise = mobileAuthService.requestCSRFToken();
       setCsrfPromise(promise);
     }
   }, [csrfPromise]);

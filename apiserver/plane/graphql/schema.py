@@ -9,9 +9,11 @@ from .queries.workspace import (
     WorkspaceIssuesQuery,
     YourWorkQuery,
     WorkspaceLicenseQuery,
+    WorkspaceInviteQuery,
+    PublicWorkspaceInviteQuery,
 )
 from .queries.users import UserQuery, UserFavoritesQuery, UserRecentVisitQuery
-from .queries.users import ProfileQuery
+from .queries.users import ProfileQuery, UserDeleteQuery
 from .queries.project import ProjectQuery, ProjectMembersQuery
 from .queries.label import LabelQuery, WorkspaceLabelQuery
 from .queries.state import StateQuery, WorkspaceStateQuery
@@ -76,7 +78,11 @@ from .queries.epics import (
 )
 
 # mutations
-from .mutations.workspace import WorkspaceMutation, WorkspaceInviteMutation
+from .mutations.workspace import (
+    WorkspaceMutation,
+    WorkspaceInviteMutation,
+    PublicWorkspaceInviteMutation,
+)
 from .mutations.project import (
     ProjectMutation,
     ProjectInviteMutation,
@@ -89,7 +95,7 @@ from .mutations.issue import (
     IssueSubscriptionMutation,
 )
 from .mutations.notification import NotificationMutation
-from .mutations.user import ProfileMutation, UserMutation
+from .mutations.user import ProfileMutation, UserMutation, UserDeleteMutation
 from .mutations.page import PageMutation, PageFavoriteMutation, WorkspacePageMutation
 from .mutations.cycle import (
     CycleIssueMutation,
@@ -137,6 +143,7 @@ from .mutations.epics import (
     EpicRelationMutation,
     EpicCommentMutation,
 )
+from .mutations.auth import SetPasswordMutation
 
 
 # combined query class for all
@@ -211,6 +218,11 @@ class Query(
     EpicRelationQuery,
     EpicActivityQuery,
     EpicCommentQuery,
+    # workspace invites
+    WorkspaceInviteQuery,
+    PublicWorkspaceInviteQuery,
+    # user delete
+    UserDeleteQuery,
 ):
     pass
 
@@ -219,7 +231,6 @@ class Query(
 @strawberry.type
 class Mutation(
     WorkspaceMutation,
-    WorkspaceInviteMutation,
     ProjectMutation,
     ProjectInviteMutation,
     IssueMutation,
@@ -269,6 +280,13 @@ class Mutation(
     EpicWorkItemsMutation,
     EpicRelationMutation,
     EpicCommentMutation,
+    # auth
+    SetPasswordMutation,
+    # workspace invites
+    WorkspaceInviteMutation,
+    PublicWorkspaceInviteMutation,
+    # user delete
+    UserDeleteMutation,
 ):
     pass
 

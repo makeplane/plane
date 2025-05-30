@@ -97,7 +97,12 @@ class CustomGraphQLView(AsyncGraphQLView):
         return None
 
     def is_public_operation(self, query_name: str) -> bool:
-        auth_neglect_list = ["VersionCheckQuery", "InstanceQuery"]
+        auth_neglect_list = [
+            "VersionCheckQuery",
+            "InstanceQuery",
+            "PublicWorkspaceInviteMutation",
+            "PublicWorkspaceInviteQuery",
+        ]
 
         if query_name in auth_neglect_list:
             return True

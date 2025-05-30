@@ -31,7 +31,7 @@ from plane.app.permissions import (
 # Module imports
 from plane.app.serializers import (
     WorkSpaceSerializer,
-    WorkspaceThemeSerializer, 
+    WorkspaceThemeSerializer,
     WorkspaceUserMeSerializer,
 )
 from plane.app.views.base import BaseAPIView, BaseViewSet
@@ -142,12 +142,11 @@ class WorkSpaceViewSet(BaseViewSet):
                 data = serializer.data
                 data["total_members"] = total_members
                 data["role"] = 20
-                
+
                 # seed the workspace
                 workspace_seed.delay(serializer.data["id"])
                 # Sync workspace members
                 member_sync_task.delay(slug)
-
 
                 return Response(data, status=status.HTTP_201_CREATED)
             return Response(
