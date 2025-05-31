@@ -1083,7 +1083,9 @@
     "select": {
       "error": "請至少選擇一個工作事項",
       "empty": "未選擇工作事項",
-      "add_selected": "新增已選取的工作事項"
+      "add_selected": "新增已選取的工作事項",
+      "select_all": "全選",
+      "deselect_all": "取消全選"
     },
     "open_in_full_screen": "以全螢幕開啟工作事項"
   },

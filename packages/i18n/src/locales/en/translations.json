@@ -924,7 +924,9 @@
     "select": {
       "error": "Please select at least one work item",
       "empty": "No work items selected",
-      "add_selected": "Add selected work items"
+      "add_selected": "Add selected work items",
+      "select_all": "Select all",
+      "deselect_all": "Deselect all"
     },
     "open_in_full_screen": "Open work item in full screen"
   },
