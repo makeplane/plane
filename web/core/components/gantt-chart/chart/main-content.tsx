@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
+import { cn, getDate } from "@plane/utils";
 // components
 import { MultipleSelectGroup } from "@/components/core";
 import {
@@ -17,8 +18,6 @@ import {
   WeekChartView,
 } from "@/components/gantt-chart";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getDate } from "@/helpers/date-time.helper";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // plane web components

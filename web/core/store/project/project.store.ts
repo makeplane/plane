@@ -7,7 +7,7 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import { TFetchStatus, TLoader, TProjectAnalyticsCount, TProjectAnalyticsCountParams } from "@plane/types";
 // helpers
-import { orderProjects, shouldFilterProject } from "@/helpers/project.helper";
+import { orderProjects, shouldFilterProject } from "@plane/utils";
 // services
 import { TProject, TPartialProject } from "@/plane-web/types/projects";
 import { IssueLabelService, IssueService } from "@/services/issue";

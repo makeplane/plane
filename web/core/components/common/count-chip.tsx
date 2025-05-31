@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 //
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 type TCountChip = {
   count: string | number;

@@ -5,11 +5,10 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArchiveRestoreIcon, Check, ExternalLink, LinkIcon, Lock, Settings, Trash2, UserPlus } from "lucide-react";
-// types
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import type { IProject } from "@plane/types";
-// ui
 import {
   Avatar,
   AvatarGroup,
@@ -22,19 +21,14 @@ import {
   TContextMenuItem,
   FavoriteStar,
 } from "@plane/ui";
-import { copyUrlToClipboard } from "@plane/utils";
+import { copyUrlToClipboard, cn, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from "@/components/project";
-// helpers
-import { cn } from "@/helpers/common.helper";
-import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane-web constants
 
 type Props = {
   project: IProject;

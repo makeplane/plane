@@ -2,7 +2,7 @@
 
 // helpers
 import { Tooltip } from "@plane/ui";
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // types
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS } from "./constants";

@@ -12,7 +12,7 @@ import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_DEFAULT_SEARCH_RESUL
 import { useTranslation } from "@plane/i18n";
 import { IWorkspaceSearchResults } from "@plane/types";
 import { LayersIcon, Loader, ToggleSwitch } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, getTabIndex } from "@plane/utils";
 // components
 import {
   ChangeIssueAssignee,
@@ -27,7 +27,6 @@ import {
 } from "@/components/command-palette";
 import { SimpleEmptyState } from "@/components/empty-state";
 // helpers
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import {
   useCommandPalette,

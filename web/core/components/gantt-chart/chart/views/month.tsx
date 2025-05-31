@@ -1,9 +1,9 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // components
+import { cn } from "@plane/utils";
 import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // types

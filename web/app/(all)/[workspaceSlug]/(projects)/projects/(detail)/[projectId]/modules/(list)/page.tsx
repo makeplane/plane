@@ -8,11 +8,11 @@ import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TModuleFilters } from "@plane/types";
 // components
-import { PageHead } from "@/components/core";
+import { calculateTotalFilters } from "@plane/utils";
+import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state";
 import { ModuleAppliedFiltersList, ModulesListView } from "@/components/modules";
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useModuleFilter, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

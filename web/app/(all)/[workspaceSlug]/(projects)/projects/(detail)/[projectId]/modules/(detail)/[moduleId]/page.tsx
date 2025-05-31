@@ -4,12 +4,12 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
+import { cn } from "@plane/utils";
 import { EmptyState } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { ModuleLayoutRoot } from "@/components/issues";
 import { ModuleAnalyticsSidebar } from "@/components/modules";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useModule, useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

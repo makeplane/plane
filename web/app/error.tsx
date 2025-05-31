@@ -1,9 +1,9 @@
 "use client";
 
 // ui
+import { API_BASE_URL } from "@plane/constants";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // layouts

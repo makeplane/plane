@@ -8,12 +8,11 @@ import { ArchiveRestoreIcon, ExternalLink, Link, Trash2 } from "lucide-react";
 // ui
 import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
-import { copyUrlToClipboard } from "@plane/utils";
+import { copyUrlToClipboard, cn } from "@plane/utils";
 // components
 import { DeleteIssueModal } from "@/components/issues";
 // constants
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker, useIssues, useUserPermissions } from "@/hooks/store";
 // types

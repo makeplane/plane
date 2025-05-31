@@ -1,28 +1,19 @@
 import { startOfToday, format } from "date-fns";
-import { isEmpty, orderBy, uniqBy } from "lodash";
+import isEmpty from "lodash/isEmpty";
+import orderBy from "lodash/orderBy";
 import sortBy from "lodash/sortBy";
+import uniqBy from "lodash/uniqBy";
+// plane imports
 import { ICycle, TCycleFilters } from "@plane/types";
-// helpers
-import { findTotalDaysInRange, generateDateArray, getDate } from "@/helpers/date-time.helper";
-import { satisfiesDateFilter } from "@/helpers/filter.helper";
-
-export type TProgressChartData = {
-  date: string;
-  scope: number;
-  completed: number;
-  backlog: number;
-  started: number;
-  unstarted: number;
-  cancelled: number;
-  pending: number;
-  ideal: number;
-  actual: number;
-}[];
+// local imports
+import { findTotalDaysInRange, generateDateArray, getDate  } from "./datetime";
+import { satisfiesDateFilter  } from "./filter";
 
 /**
- * @description orders cycles based on their status
- * @param {ICycle[]} cycles
- * @returns {ICycle[]}
+ * Orders cycles based on their status
+ * @param {ICycle[]} cycles - Array of cycles to be ordered
+ * @param {boolean} sortByManual - Whether to sort by manual order
+ * @returns {ICycle[]} Ordered array of cycles
  */
 export const orderCycles = (cycles: ICycle[], sortByManual: boolean): ICycle[] => {
   if (cycles.length === 0) return [];
@@ -48,10 +39,10 @@ export const orderCycles = (cycles: ICycle[], sortByManual: boolean): ICycle[] =
 };
 
 /**
- * @description filters cycles based on the filter
- * @param {ICycle} cycle
- * @param {TCycleFilters} filter
- * @returns {boolean}
+ * Filters cycles based on provided filter criteria
+ * @param {ICycle} cycle - The cycle to be filtered
+ * @param {TCycleFilters} filter - Filter criteria to apply
+ * @returns {boolean} Whether the cycle passes the filter
  */
 export const shouldFilterCycle = (cycle: ICycle, filter: TCycleFilters): boolean => {
   let fallsInFilters = true;
@@ -76,7 +67,21 @@ export const shouldFilterCycle = (cycle: ICycle, filter: TCycleFilters): boolean
   return fallsInFilters;
 };
 
+/**
+ * Calculates the scope based on whether it's an issue or estimate points
+ * @param {any} p - Progress data
+ * @param {boolean} isTypeIssue - Whether the type is an issue
+ * @returns {number} Calculated scope
+ */
 const scope = (p: any, isTypeIssue: boolean) => (isTypeIssue ? p.total_issues : p.total_estimate_points);
+
+/**
+ * Calculates the ideal progress value
+ * @param {string} date - Current date
+ * @param {number} scope - Total scope
+ * @param {ICycle} cycle - Cycle data
+ * @returns {number} Ideal progress value
+ */
 const ideal = (date: string, scope: number, cycle: ICycle) =>
   Math.floor(
     ((findTotalDaysInRange(date, cycle.end_date) || 0) /
@@ -84,6 +89,14 @@ const ideal = (date: string, scope: number, cycle: ICycle) =>
       scope
   );
 
+/**
+ * Formats cycle data for version 1
+ * @param {boolean} isTypeIssue - Whether the type is an issue
+ * @param {ICycle} cycle - Cycle data
+ * @param {boolean} isBurnDown - Whether it's a burn down chart
+ * @param {Date|string} endDate - End date
+ * @returns {TProgressChartData} Formatted progress data
+ */
 const formatV1Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, endDate: Date | string) => {
   const today = format(startOfToday(), "yyyy-MM-dd");
   const data = isTypeIssue ? cycle.distribution : cycle.estimate_distribution;
@@ -117,6 +130,14 @@ const formatV1Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, 
   return progress;
 };
 
+/**
+ * Formats cycle data for version 2
+ * @param {boolean} isTypeIssue - Whether the type is an issue
+ * @param {ICycle} cycle - Cycle data
+ * @param {boolean} isBurnDown - Whether it's a burn down chart
+ * @param {Date|string} endDate - End date
+ * @returns {TProgressChartData} Formatted progress data
+ */
 const formatV2Data = (isTypeIssue: boolean, cycle: ICycle, isBurnDown: boolean, endDate: Date | string) => {
   if (!cycle.progress) return [];
   let today: Date | string = startOfToday();

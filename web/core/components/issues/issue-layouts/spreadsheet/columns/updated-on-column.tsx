@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { TIssue } from "@plane/types";
 // helpers
 import { Row } from "@plane/ui";
-import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { renderFormattedDate } from "@plane/utils";
 
 type Props = {
   issue: TIssue;

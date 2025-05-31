@@ -9,7 +9,7 @@ import { TIssueServiceType } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // helper
-import { getFileName } from "@/helpers/attachment.helper";
+import { getFileName } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // types

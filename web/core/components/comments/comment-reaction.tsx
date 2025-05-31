@@ -6,9 +6,9 @@ import { observer } from "mobx-react";
 import { TCommentsOperations, TIssueComment } from "@plane/types";
 import { Tooltip } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { ReactionSelector } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { renderEmoji } from "@/helpers/emoji.helper";
 
 export type TProps = {

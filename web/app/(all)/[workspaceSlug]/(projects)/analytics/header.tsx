@@ -4,15 +4,15 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { BarChart2, PanelRight } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
-// ui
 import { Breadcrumbs, Header } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
-import { BreadcrumbLink } from "@/components/common";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { useAppTheme } from "@/hooks/store";
+
 export const WorkspaceAnalyticsHeader = observer(() => {
   const { t } = useTranslation();
   const searchParams = useSearchParams();

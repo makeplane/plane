@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 // ui
 import { DragHandle, Tooltip } from "@plane/ui";
 // helper
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 

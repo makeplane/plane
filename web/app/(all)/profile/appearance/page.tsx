@@ -9,11 +9,11 @@ import { useTranslation } from "@plane/i18n";
 import { IUserTheme } from "@plane/types";
 import { setPromiseToast } from "@plane/ui";
 // components
+import { applyTheme, unsetCustomCssVariables } from "@plane/utils";
 import { LogoSpinner } from "@/components/common";
 import { ThemeSwitch, PageHead, CustomThemeSelector } from "@/components/core";
 import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
 // helpers
-import { applyTheme, unsetCustomCssVariables } from "@/helpers/theme.helper";
 // hooks
 import { useUserProfile } from "@/hooks/store";
 

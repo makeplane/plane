@@ -12,10 +12,10 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 // ui
 import { Breadcrumbs, LayersIcon, Tooltip } from "@plane/ui";
 // components
+import { isIssueFilterActive } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // helpers
-import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

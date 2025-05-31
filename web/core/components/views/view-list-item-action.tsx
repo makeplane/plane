@@ -8,11 +8,10 @@ import { useLocalStorage } from "@plane/hooks";
 import { IProjectView } from "@plane/types";
 // ui
 import { Tooltip, FavoriteStar } from "@plane/ui";
+import { calculateTotalFilters, getPublishViewLink } from "@plane/utils";
 // components
 import { DeleteProjectViewModal, CreateUpdateProjectViewModal, ViewQuickActions } from "@/components/views";
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
-import { getPublishViewLink } from "@/helpers/project-views.helpers";
 // hooks
 import { useMember, useProjectView, useUserPermissions } from "@/hooks/store";
 import { PublishViewModal } from "@/plane-web/components/views/publish";

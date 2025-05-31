@@ -1,5 +1,6 @@
 /* eslint-disable no-useless-catch */
 
+import { API_BASE_URL } from "@plane/constants";
 import type {
   TNotificationPaginatedInfo,
   TNotificationPaginatedInfoQueryParams,
@@ -7,7 +8,6 @@ import type {
   TUnreadNotificationsCount,
 } from "@plane/types";
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 

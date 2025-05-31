@@ -9,7 +9,7 @@ import { TIssue } from "@plane/types";
 // hooks
 import { DoubleCircleIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { copyTextToClipboard } from "@/helpers/string.helper";
+import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { useCommandPalette, useIssueDetail, useUser } from "@/hooks/store";
 

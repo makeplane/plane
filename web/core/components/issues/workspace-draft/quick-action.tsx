@@ -5,7 +5,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 export interface Props {
   parentRef: React.RefObject<HTMLElement>;

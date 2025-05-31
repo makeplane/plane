@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { Crown } from "lucide-react";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 type TProIcon = {
   className?: string;

@@ -2,7 +2,7 @@
 
 import { MARKETING_PLANE_ONE_PAGE_LINK } from "@plane/constants";
 import { getButtonStyling } from "@plane/ui";
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 type Props = {
   className?: string;

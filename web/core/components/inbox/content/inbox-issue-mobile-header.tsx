@@ -17,13 +17,11 @@ import {
 } from "lucide-react";
 import { TNameDescriptionLoader } from "@plane/types";
 import { Header, CustomMenu, EHeaderVariant } from "@plane/ui";
+import { cn, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components
 import { InboxIssueStatus } from "@/components/inbox";
 import { NameDescriptionUpdateStatus } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

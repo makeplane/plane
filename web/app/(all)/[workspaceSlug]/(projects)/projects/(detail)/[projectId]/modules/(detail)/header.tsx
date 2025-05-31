@@ -25,13 +25,12 @@ import {
 // ui
 import { Breadcrumbs, Button, DiceIcon, Tooltip, Header, CustomSearchSelect } from "@plane/ui";
 // components
+import { cn, isIssueFilterActive } from "@plane/utils";
 import { WorkItemsModal } from "@/components/analytics-v2/work-items/modal";
 import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // helpers
 import { ModuleQuickActions } from "@/components/modules";
-import { cn } from "@/helpers/common.helper";
-import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import {
   useEventTracker,

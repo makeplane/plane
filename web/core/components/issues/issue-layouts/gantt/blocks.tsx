@@ -4,11 +4,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { Tooltip, ControlLink } from "@plane/ui";
+import { findTotalDaysInRange, generateWorkItemLink } from "@plane/utils";
 // components
-import { findTotalDaysInRange } from "@plane/utils";
 import { SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";
 // helpers
-import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useIssues, useProject, useProjectState } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
