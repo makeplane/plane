@@ -1320,19 +1320,6 @@
       "custom": "Análisis Personalizado"
     },
     "empty_state": {
-      "general": {
-        "title": "Rastrea el progreso, cargas de trabajo y asignaciones. Identifica tendencias, elimina bloqueos y mueve el trabajo más rápido",
-        "description": "Observa el alcance versus la demanda, estimaciones y el aumento del alcance. Obtén el rendimiento por miembros del equipo y equipos, y asegúrate de que tu proyecto se ejecute a tiempo.",
-        "primary_button": {
-          "text": "Inicia tu primer proyecto",
-          "comic": {
-            "title": "El análisis funciona mejor con Ciclos + Módulos",
-            "description": "Primero, organiza tus elementos de trabajo en Ciclos y, si puedes, agrupa los elementos de trabajo que abarcan más de un ciclo en Módulos. Revisa ambos en la navegación izquierda."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Los elementos de trabajo asignados a ti, desglosados por estado, aparecerán aquí.",
         "title": "Aún no hay datos"

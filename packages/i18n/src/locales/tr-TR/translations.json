@@ -1320,19 +1320,6 @@
       "custom": "Özel Analitik"
     },
     "empty_state": {
-      "general": {
-        "title": "İlerlemeyi, iş yükünü ve tahsisatları izleyin. Eğilimleri tespit edin, engelleri kaldırın ve işleri hızlandırın",
-        "description": "Kapsam ve talep, tahminler ve kapsam genişlemesini görün. Takım üyeleri ve ekiplerin performansını izleyin ve projenizin zamanında ilerlemesini sağlayın.",
-        "primary_button": {
-          "text": "İlk projenizi başlatın",
-          "comic": {
-            "title": "Analitik Döngüler + Modüllerle en iyi şekilde çalışır",
-            "description": "Öncelikle, iş öğelerinizi Döngülere zamanlayın ve mümkünse, bir döngüden uzun süren iş öğelerini Modüllerde gruplayın. Her ikisini de sol gezintide bulabilirsiniz."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Size atanan iş öğeleri, duruma göre ayrılarak burada gösterilecektir.",
         "title": "Henüz veri yok"

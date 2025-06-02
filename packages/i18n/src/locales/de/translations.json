@@ -1317,19 +1317,6 @@
       "custom": "Benutzerdefinierte Analysen"
     },
     "empty_state": {
-      "general": {
-        "title": "Verfolgen Sie Fortschritt, Auslastung und Zuordnungen. Erkennen Sie Trends, entfernen Sie Blocker und beschleunigen Sie die Arbeit",
-        "description": "Behalten Sie Umfang vs. Nachfrage, Schätzungen und Umfang im Blick. Verfolgen Sie die Leistung von Mitgliedern und Teams, um sicherzustellen, dass Projekte pünktlich abgeschlossen werden.",
-        "primary_button": {
-          "text": "Erstes Projekt starten",
-          "comic": {
-            "title": "Analysen funktionieren am besten mit Zyklen + Modulen",
-            "description": "Begrenzen Sie zuerst Arbeit zeitlich in Zyklen und gruppieren Sie die übergreifenden Elemente in Module. Sie finden sie im linken Menü."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Ihnen zugewiesene Arbeitselemente, aufgeschlüsselt nach Status, werden hier angezeigt.",
         "title": "Noch keine Daten"

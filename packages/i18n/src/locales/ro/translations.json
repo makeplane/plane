@@ -1317,19 +1317,6 @@
       "custom": "Analitice personalizate"
     },
     "empty_state": {
-      "general": {
-        "title": "Urmărește progresul, activitățile și alocările. Observă tendințele, elimină blocajele și accelerează munca",
-        "description": "Vezi raportul dintre activitățile asumate și cerere, estimările și eventualele extinderi neplanificate ale activităților asumate. Obține performanța pe membri și echipe și asigură-te că proiectul tău se încadrează în timp.",
-        "primary_button": {
-          "text": "Începe primul tău proiect",
-          "comic": {
-            "title": "Statisticile funcționează cel mai bine cu Cicluri + Module",
-            "description": "Mai întâi, încadrează-ți activitățile în Cicluri și, dacă poți, grupează-le pe cele care se întind pe mai multe cicluri în Module. Le găsești în meniul din stânga."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Elementele de lucru atribuite ție, împărțite pe stări, vor apărea aici.",
         "title": "Nu există date încă"

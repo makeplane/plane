@@ -1319,19 +1319,6 @@
       "custom": "Analizy niestandardowe"
     },
     "empty_state": {
-      "general": {
-        "title": "Śledź postępy, obciążenie i alokacje. Identyfikuj trendy, usuwaj przeszkody i przyspieszaj pracę",
-        "description": "Obserwuj zakres vs. zapotrzebowanie, szacunki i zakres. Sprawdzaj wydajność członków i zespołów, upewnij się, że projekty kończą się na czas.",
-        "primary_button": {
-          "text": "Zacznij pierwszy projekt",
-          "comic": {
-            "title": "Analizy najlepiej działają z Cyklem + Modułami",
-            "description": "Najpierw ogranicz pracę w cyklach i grupuj zadania w modułach obejmujących wiele cykli. Znajdziesz je w menu po lewej."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Przypisane do Ciebie elementy pracy, podzielone według stanu, pojawią się tutaj.",
         "title": "Brak danych"

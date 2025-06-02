@@ -1317,19 +1317,6 @@
       "custom": "Vlastní analytika"
     },
     "empty_state": {
-      "general": {
-        "title": "Sledujte pokrok, vytížení a alokace. Identifikujte trendy, odstraňte překážky a zrychlete práci",
-        "description": "Sledujte rozsah vs. poptávku, odhady a rozsah. Zjistěte výkonnost členů a týmů, zajistěte včasné dokončení projektů.",
-        "primary_button": {
-          "text": "Začněte první projekt",
-          "comic": {
-            "title": "Analytika funguje nejlépe s Cykly + Moduly",
-            "description": "Nejprve časově ohraničte práci do Cyklů a seskupte položky přesahující cyklus do Modulů. Najdete je v levém menu."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Pracovní položky přiřazené vám, rozdělené podle stavu, se zde zobrazí.",
         "title": "Zatím žádná data"

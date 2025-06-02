@@ -1318,19 +1318,6 @@
       "custom": "Analytique Personnalisée"
     },
     "empty_state": {
-      "general": {
-        "title": "Suivez les progrès, les charges de travail et les allocations. Repérez les tendances, supprimez les blocages et accélérez le travail",
-        "description": "Visualisez la portée par rapport à la demande, les estimations et l'augmentation de la portée. Obtenez les performances par membres de l'équipe et équipes, et assurez-vous que votre projet se déroule dans les délais.",
-        "primary_button": {
-          "text": "Commencez votre premier projet",
-          "comic": {
-            "title": "L'analytique fonctionne mieux avec les Cycles + Modules",
-            "description": "D'abord, planifiez vos éléments de travail dans des Cycles et, si possible, regroupez les éléments de travail qui s'étendent sur plus d'un cycle dans des Modules. Consultez les deux dans la navigation de gauche."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Les éléments de travail qui vous sont assignés, répartis par état, s'afficheront ici.",
         "title": "Pas encore de données"

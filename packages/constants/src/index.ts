@@ -33,4 +33,4 @@ export * from "./emoji";
 export * from "./subscription";
 export * from "./settings";
 export * from "./icon";
-export * from "./analytics-v2";
+export * from "./analytics";

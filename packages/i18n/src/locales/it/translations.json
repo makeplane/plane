@@ -1316,19 +1316,6 @@
       "custom": "Analisi personalizzata"
     },
     "empty_state": {
-      "general": {
-        "title": "Traccia il progresso, i carichi di lavoro e le assegnazioni. Individua tendenze, rimuovi gli ostacoli e accelera il lavoro",
-        "description": "Visualizza l'ambito rispetto alla domanda, le stime e il fenomeno del scope creep. Ottieni le prestazioni dei membri del team e dei team, e assicurati che il tuo progetto rispetti le scadenze.",
-        "primary_button": {
-          "text": "Inizia il tuo primo progetto",
-          "comic": {
-            "title": "Le analisi funzionano meglio con Cicli + Moduli",
-            "description": "Prima, definisci i tuoi elementi di lavoro in cicli e, se puoi, raggruppa quelli che si estendono per più di un ciclo in moduli. Dai un'occhiata ad entrambi nel menu di sinistra."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Gli elementi di lavoro assegnati a te, suddivisi per stato, verranno visualizzati qui.",
         "title": "Nessun dato disponibile"
