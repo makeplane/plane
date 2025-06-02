@@ -306,6 +306,30 @@ class IssueLiteSerializer(BaseSerializer):
         read_only_fields = fields
 
 
+class LabelCreateUpdateSerializer(BaseSerializer):
+    class Meta:
+        model = Label
+        fields = [
+            "name",
+            "color",
+            "description",
+            "external_source",
+            "external_id",
+            "parent",
+            "sort_order",
+        ]
+        read_only_fields = [
+            "id",
+            "workspace",
+            "project",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+        ]
+
+
 class LabelSerializer(BaseSerializer):
     class Meta:
         model = Label
@@ -322,10 +346,10 @@ class LabelSerializer(BaseSerializer):
         ]
 
 
-class IssueLinkSerializer(BaseSerializer):
+class IssueLinkCreateSerializer(BaseSerializer):
     class Meta:
         model = IssueLink
-        fields = "__all__"
+        fields = ["url", "issue_id"]
         read_only_fields = [
             "id",
             "workspace",
@@ -361,6 +385,15 @@ class IssueLinkSerializer(BaseSerializer):
             )
         return IssueLink.objects.create(**validated_data)
 
+
+class IssueLinkUpdateSerializer(IssueLinkCreateSerializer):
+    class Meta(IssueLinkCreateSerializer.Meta):
+        model = IssueLink
+        fields = IssueLinkCreateSerializer.Meta.fields + [
+            "issue_id",
+        ]
+        read_only_fields = IssueLinkCreateSerializer.Meta.read_only_fields
+
     def update(self, instance, validated_data):
         if (
             IssueLink.objects.filter(
@@ -376,6 +409,22 @@ class IssueLinkSerializer(BaseSerializer):
         return super().update(instance, validated_data)
 
 
+class IssueLinkSerializer(BaseSerializer):
+    class Meta:
+        model = IssueLink
+        fields = "__all__"
+        read_only_fields = [
+            "id",
+            "workspace",
+            "project",
+            "issue",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+
+
 class IssueAttachmentSerializer(BaseSerializer):
     class Meta:
         model = FileAsset
@@ -387,6 +436,32 @@ class IssueAttachmentSerializer(BaseSerializer):
             "issue",
             "updated_by",
             "updated_at",
+        ]
+
+
+class IssueCommentCreateSerializer(BaseSerializer):
+    class Meta:
+        model = IssueComment
+        fields = [
+            "comment_json",
+            "comment_html",
+            "access",
+            "external_source",
+            "external_id",
+        ]
+        read_only_fields = [
+            "id",
+            "workspace",
+            "project",
+            "issue",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+            "actor",
+            "comment_stripped",
+            "edited_at",
         ]
 
 
@@ -468,21 +543,27 @@ class IssueExpandSerializer(BaseSerializer):
 
 class IssueAttachmentUploadSerializer(serializers.Serializer):
     """Serializer for issue attachment upload requests"""
-    name = serializers.CharField(
-        help_text="Original filename of the asset"
-    )
-    type = serializers.CharField(
-        required=False,
-        help_text="MIME type of the file"
-    )
-    size = serializers.IntegerField(
-        help_text="File size in bytes"
-    )
+
+    name = serializers.CharField(help_text="Original filename of the asset")
+    type = serializers.CharField(required=False, help_text="MIME type of the file")
+    size = serializers.IntegerField(help_text="File size in bytes")
     external_id = serializers.CharField(
         required=False,
-        help_text="External identifier for the asset (for integration tracking)"
+        help_text="External identifier for the asset (for integration tracking)",
     )
     external_source = serializers.CharField(
-        required=False,
-        help_text="External source system (for integration tracking)"
+        required=False, help_text="External source system (for integration tracking)"
     )
+
+
+class IssueSearchSerializer(serializers.Serializer):
+    """Serializer for searching issues"""
+
+    id = serializers.CharField(required=True, help_text="Issue ID")
+    name = serializers.CharField(required=True, help_text="Issue name")
+    sequence_id = serializers.CharField(required=True, help_text="Issue sequence ID")
+    project__identifier = serializers.CharField(
+        required=True, help_text="Project identifier"
+    )
+    project_id = serializers.CharField(required=True, help_text="Project ID")
+    workspace__slug = serializers.CharField(required=True, help_text="Workspace slug")

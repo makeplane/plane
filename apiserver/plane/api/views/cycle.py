@@ -402,7 +402,7 @@ class CycleAPIEndpoint(BaseAPIView):
             # Send the model activity
             model_activity.delay(
                 model_name="cycle",
-                model_id=str(serializer.data["id"]),
+                model_id=str(serializer.instance.id),
                 requested_data=request.data,
                 current_instance=current_instance,
                 actor_id=request.user.id,

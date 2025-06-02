@@ -36,6 +36,11 @@ from plane.api.serializers import (
     IssueSerializer,
     LabelSerializer,
     IssueAttachmentUploadSerializer,
+    IssueSearchSerializer,
+    IssueCommentCreateSerializer,
+    IssueLinkCreateSerializer,
+    IssueLinkUpdateSerializer,
+    LabelCreateUpdateSerializer,
 )
 from plane.app.permissions import (
     ProjectEntityPermission,
@@ -702,7 +707,7 @@ class LabelAPIEndpoint(BaseAPIView):
 
     @label_docs(
         operation_id="create_label",
-        request=LabelSerializer,
+        request=LabelCreateUpdateSerializer,
         responses={
             201: OpenApiResponse(
                 description="Label created successfully", response=LabelSerializer
@@ -722,7 +727,7 @@ class LabelAPIEndpoint(BaseAPIView):
         Supports external ID tracking for integration purposes.
         """
         try:
-            serializer = LabelSerializer(data=request.data)
+            serializer = LabelCreateUpdateSerializer(data=request.data)
             if serializer.is_valid():
                 if (
                     request.data.get("external_id")
@@ -749,6 +754,8 @@ class LabelAPIEndpoint(BaseAPIView):
                     )
 
                 serializer.save(project_id=project_id)
+                label = Label.objects.get(pk=serializer.instance.id)
+                serializer = LabelSerializer(label)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError:
@@ -794,7 +801,7 @@ class LabelAPIEndpoint(BaseAPIView):
 
     @label_docs(
         operation_id="update_label",
-        request=LabelSerializer,
+        request=LabelCreateUpdateSerializer,
         responses={
             200: OpenApiResponse(
                 description="Label updated successfully", response=LabelSerializer
@@ -815,7 +822,7 @@ class LabelAPIEndpoint(BaseAPIView):
         Validates external ID uniqueness if provided.
         """
         label = self.get_queryset().get(pk=pk)
-        serializer = LabelSerializer(label, data=request.data, partial=True)
+        serializer = LabelCreateUpdateSerializer(label, data=request.data, partial=True)
         if serializer.is_valid():
             if (
                 str(request.data.get("external_id"))
@@ -837,6 +844,8 @@ class LabelAPIEndpoint(BaseAPIView):
                     status=status.HTTP_409_CONFLICT,
                 )
             serializer.save()
+            label = Label.objects.get(pk=serializer.instance.id)
+            serializer = LabelSerializer(label)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -920,7 +929,7 @@ class IssueLinkAPIEndpoint(BaseAPIView):
 
     @issue_link_docs(
         operation_id="create_issue_link",
-        request=IssueLinkSerializer,
+        request=IssueLinkCreateSerializer,
         responses={
             201: OpenApiResponse(
                 description="Issue link created successfully",
@@ -936,11 +945,11 @@ class IssueLinkAPIEndpoint(BaseAPIView):
         Add a new external link to an issue with URL, title, and metadata.
         Automatically tracks link creation activity.
         """
-        serializer = IssueLinkSerializer(data=request.data)
+        serializer = IssueLinkCreateSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id)
 
-            link = IssueLink.objects.get(pk=serializer.data["id"])
+            link = IssueLink.objects.get(pk=serializer.instance.id)
             link.created_by_id = request.data.get("created_by", request.user.id)
             link.save(update_fields=["created_by"])
             issue_activity.delay(
@@ -952,12 +961,13 @@ class IssueLinkAPIEndpoint(BaseAPIView):
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
             )
+            serializer = IssueLinkSerializer(link)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @issue_link_docs(
         operation_id="update_issue_link",
-        request=IssueLinkSerializer,
+        request=IssueLinkUpdateSerializer,
         responses={
             200: OpenApiResponse(
                 description="Issue link updated successfully",
@@ -992,6 +1002,7 @@ class IssueLinkAPIEndpoint(BaseAPIView):
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
             )
+            serializer = IssueLinkSerializer(issue_link)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1096,7 +1107,7 @@ class IssueCommentAPIEndpoint(BaseAPIView):
 
     @issue_comment_docs(
         operation_id="create_issue_comment",
-        request=IssueCommentSerializer,
+        request=IssueCommentCreateSerializer,
         responses={
             201: OpenApiResponse(
                 description="Issue comment created successfully",
@@ -1140,12 +1151,12 @@ class IssueCommentAPIEndpoint(BaseAPIView):
                 status=status.HTTP_409_CONFLICT,
             )
 
-        serializer = IssueCommentSerializer(data=request.data)
+        serializer = IssueCommentCreateSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(
                 project_id=project_id, issue_id=issue_id, actor=request.user
             )
-            issue_comment = IssueComment.objects.get(pk=serializer.data.get("id"))
+            issue_comment = IssueComment.objects.get(pk=serializer.instance.id)
             # Update the created_at and the created_by and save the comment
             issue_comment.created_at = request.data.get("created_at", timezone.now())
             issue_comment.created_by_id = request.data.get(
@@ -1162,12 +1173,14 @@ class IssueCommentAPIEndpoint(BaseAPIView):
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
             )
+            issue_comment = IssueComment.objects.get(pk=serializer.instance.id)
+            serializer = IssueCommentSerializer(issue_comment)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @issue_comment_docs(
         operation_id="update_issue_comment",
-        request=IssueCommentSerializer,
+        request=IssueCommentCreateSerializer,
         responses={
             200: OpenApiResponse(
                 description="Issue comment updated successfully",
@@ -1215,7 +1228,7 @@ class IssueCommentAPIEndpoint(BaseAPIView):
                 status=status.HTTP_409_CONFLICT,
             )
 
-        serializer = IssueCommentSerializer(
+        serializer = IssueCommentCreateSerializer(
             issue_comment, data=request.data, partial=True
         )
         if serializer.is_valid():
@@ -1229,6 +1242,8 @@ class IssueCommentAPIEndpoint(BaseAPIView):
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
             )
+            issue_comment = IssueComment.objects.get(pk=serializer.instance.id)
+            serializer = IssueCommentSerializer(issue_comment)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1655,44 +1670,8 @@ class IssueSearchEndpoint(BaseAPIView):
         ],
         responses={
             200: OpenApiResponse(
-                description="Issues",
-                response={
-                    "type": "object",
-                    "properties": {
-                        "issues": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "description": "Issue name",
-                                    },
-                                    "id": {
-                                        "type": "string",
-                                        "description": "Issue ID",
-                                    },
-                                    "sequence_id": {
-                                        "type": "string",
-                                        "description": "Issue sequence ID",
-                                    },
-                                    "project__identifier": {
-                                        "type": "string",
-                                        "description": "Project identifier",
-                                    },
-                                    "project_id": {
-                                        "type": "string",
-                                        "description": "Project ID",
-                                    },
-                                    "workspace__slug": {
-                                        "type": "string",
-                                        "description": "Workspace slug",
-                                    },
-                                },
-                            },
-                        }
-                    },
-                },
+                description="Issue search results",
+                response=IssueSearchSerializer,
             ),
         },
     )

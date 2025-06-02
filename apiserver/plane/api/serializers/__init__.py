@@ -8,6 +8,7 @@ from .project import (
 )
 from .issue import (
     IssueSerializer,
+    LabelCreateUpdateSerializer,
     LabelSerializer,
     IssueLinkSerializer,
     IssueCommentSerializer,
@@ -16,6 +17,10 @@ from .issue import (
     IssueExpandSerializer,
     IssueLiteSerializer,
     IssueAttachmentUploadSerializer,
+    IssueSearchSerializer,
+    IssueCommentCreateSerializer,
+    IssueLinkCreateSerializer,
+    IssueLinkUpdateSerializer,
 )
 from .state import StateLiteSerializer, StateSerializer
 from .cycle import (
