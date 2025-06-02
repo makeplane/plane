@@ -4,9 +4,11 @@ import { useCallback, useEffect, useRef } from "react";
 import tippy, { Instance } from "tippy.js";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
+import { TExtensions } from "@/types";
 
 interface BlockMenuProps {
   editor: Editor;
+  disabledExtensions?: TExtensions[];
 }
 
 export const BlockMenu = (props: BlockMenuProps) => {

@@ -79,6 +79,7 @@ declare module "@tiptap/core" {
 export type CustomLinkStorage = {
   isPreviewOpen: boolean;
   posToInsert: { from: number; to: number };
+  isBubbleMenuOpen: boolean;
 };
 
 export const CustomLinkExtension = Mark.create<LinkOptions, CustomLinkStorage>({
