@@ -521,4 +521,5 @@ if ENABLE_DRF_SPECTACULAR:
         ],
         "SCHEMA_CACHE_TIMEOUT": 0,  # disables caching
         "COMPONENT_NO_READ_ONLY_REQUIRED": True,
+        "COMPONENT_SPLIT_REQUEST": True,
     }
