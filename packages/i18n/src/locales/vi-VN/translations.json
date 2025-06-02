@@ -849,6 +849,7 @@
     "live": "Trực tiếp",
     "change_history": "Lịch sử thay đổi",
     "coming_soon": "Sắp ra mắt",
+    "member": "Thành viên",
     "members": "Thành viên",
     "you": "Bạn",
     "upgrade_cta": {
@@ -1081,7 +1082,9 @@
     "select": {
       "error": "Vui lòng chọn ít nhất một mục công việc",
       "empty": "Chưa chọn mục công việc",
-      "add_selected": "Thêm mục công việc đã chọn"
+      "add_selected": "Thêm mục công việc đã chọn",
+      "select_all": "Chọn tất cả",
+      "deselect_all": "Bỏ chọn tất cả"
     },
     "open_in_full_screen": "Mở mục công việc trong chế độ toàn màn hình"
   },

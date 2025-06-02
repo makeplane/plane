@@ -848,6 +848,7 @@
     "live": "Live",
     "change_history": "Änderungsverlauf",
     "coming_soon": "Demnächst verfügbar",
+    "member": "Mitglied",
     "members": "Mitglieder",
     "you": "Sie",
     "upgrade_cta": {
@@ -1080,7 +1081,9 @@
     "select": {
       "error": "Wählen Sie mindestens ein Arbeitselement aus",
       "empty": "Keine Arbeitselemente ausgewählt",
-      "add_selected": "Ausgewählte Arbeitselemente hinzufügen"
+      "add_selected": "Ausgewählte Arbeitselemente hinzufügen",
+      "select_all": "Alle auswählen",
+      "deselect_all": "Alle abwählen"
     },
     "open_in_full_screen": "Arbeitselement im Vollbild öffnen"
   },

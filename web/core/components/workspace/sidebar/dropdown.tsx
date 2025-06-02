@@ -3,6 +3,7 @@
 import { Fragment, Ref, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 // icons
 import { ChevronDown, CirclePlus, LogOut, Mails, Settings } from "lucide-react";
@@ -25,6 +26,7 @@ import { WorkspaceLogo } from "../logo";
 import SidebarDropdownItem from "./dropdown-item";
 
 export const SidebarDropdown = observer(() => {
+  const { workspaceSlug } = useParams();
   // store hooks
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { data: currentUser } = useUser();
@@ -218,7 +220,7 @@ export const SidebarDropdown = observer(() => {
           >
             <div className="flex flex-col gap-2.5 pb-2">
               <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
-              <Link href="/profile">
+              <Link href={`/${workspaceSlug}/settings/account`}>
                 <Menu.Item as="div">
                   <span className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
                     <Settings className="h-4 w-4 stroke-[1.5]" />

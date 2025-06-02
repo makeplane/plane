@@ -851,6 +851,7 @@
     "live": "Canlı",
     "change_history": "Değişiklik Geçmişi",
     "coming_soon": "Çok Yakında",
+    "member": "Üye",
     "members": "Üyeler",
     "you": "Siz",
     "upgrade_cta": {
@@ -1083,7 +1084,9 @@
     "select": {
       "error": "Lütfen en az bir iş öğesi seçin",
       "empty": "Hiç iş öğesi seçilmedi",
-      "add_selected": "Seçilen iş öğelerini ekle"
+      "add_selected": "Seçilen iş öğelerini ekle",
+      "select_all": "Tümünü seç",
+      "deselect_all": "Tümünü seçme"
     },
     "open_in_full_screen": "İş öğesini tam ekranda aç"
   },

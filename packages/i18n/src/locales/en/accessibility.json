@@ -22,6 +22,13 @@
       "collapse_sidebar": "Collapse sidebar",
       "expand_sidebar": "Expand sidebar",
       "edition_badge": "Open paid plans' modal"
+    },
+    "auth_forms": {
+      "clear_email": "Clear email",
+      "show_password": "Show password",
+      "hide_password": "Hide password",
+      "close_alert": "Close alert",
+      "close_popover": "Close popover"
     }
   }
 }

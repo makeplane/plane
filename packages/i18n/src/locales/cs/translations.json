@@ -848,6 +848,7 @@
     "live": "Živě",
     "change_history": "Historie změn",
     "coming_soon": "Již brzy",
+    "member": "Člen",
     "members": "Členové",
     "you": "Vy",
     "upgrade_cta": {
@@ -1080,7 +1081,9 @@
     "select": {
       "error": "Vyberte alespoň jednu pracovní položku",
       "empty": "Nevybrány žádné pracovní položky",
-      "add_selected": "Přidat vybrané pracovní položky"
+      "add_selected": "Přidat vybrané pracovní položky",
+      "select_all": "Vybrat vše",
+      "deselect_all": "Zrušit výběr všeho"
     },
     "open_in_full_screen": "Otevřít pracovní položku na celou obrazovku"
   },

@@ -102,9 +102,9 @@ export const AuthHeader: FC<TAuthHeader> = observer((props) => {
   return (
     <>
       <div className="space-y-1 text-center">
-        <h3 className="text-3xl font-bold text-onboarding-text-100">
+        <h1 className="text-3xl font-bold text-onboarding-text-100">
           {typeof header === "string" ? t(header) : header}
-        </h3>
+        </h1>
         <p className="font-medium text-onboarding-text-400">{t(subHeader)}</p>
       </div>
       {children}
