@@ -1085,7 +1085,9 @@
     "select": {
       "error": "Veuillez sélectionner au moins un élément de travail",
       "empty": "Aucun élément de travail sélectionné",
-      "add_selected": "Ajouter les éléments de travail sélectionnés"
+      "add_selected": "Ajouter les éléments de travail sélectionnés",
+      "select_all": "Sélectionner tout",
+      "deselect_all": "Tout désélectionner"
     },
     "open_in_full_screen": "Ouvrir l'élément de travail en plein écran"
   },

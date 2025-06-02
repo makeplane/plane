@@ -2,14 +2,15 @@
 
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
-// components
 import { usePathname } from "next/navigation";
+// constants
 import { EUserWorkspaceRoles, WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
-// hooks
+// components
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { CommandPalette } from "@/components/command-palette";
 import { SettingsMobileNav } from "@/components/settings";
 import { getWorkspaceActivePath, pathnameToAccessKey } from "@/components/settings/helper";
+// hooks
 import { useUserPermissions } from "@/hooks/store";
 // local components
 import { WorkspaceSettingsSidebar } from "./sidebar";
