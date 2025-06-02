@@ -20,7 +20,6 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 // ui
 import { CustomMenu } from "@plane/ui";
 // components
-import { ProjectAnalyticsModal } from "@/components/analytics";
 import { WorkItemsModal } from "@/components/analytics-v2/work-items/modal";
 import {
   DisplayFiltersSelection,

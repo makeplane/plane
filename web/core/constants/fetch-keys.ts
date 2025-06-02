@@ -1,4 +1,4 @@
-import { IAnalyticsParams, IJiraMetadata } from "@plane/types";
+import { IJiraMetadata } from "@plane/types";
 
 const paramsToKey = (params: any) => {
   const {
@@ -236,14 +236,6 @@ export const MY_PAGES_LIST = (pageId: string) => `MY_PAGE_LIST_${pageId}`;
 // estimates
 export const ESTIMATES_LIST = (projectId: string) => `ESTIMATES_LIST_${projectId.toUpperCase()}`;
 export const ESTIMATE_DETAILS = (estimateId: string) => `ESTIMATE_DETAILS_${estimateId.toUpperCase()}`;
-
-// analytics
-export const ANALYTICS = (workspaceSlug: string, params: IAnalyticsParams) =>
-  `ANALYTICS${workspaceSlug.toUpperCase()}_${params.x_axis}_${params.y_axis}_${
-    params.segment
-  }_${params.project?.toString()}`;
-export const DEFAULT_ANALYTICS = (workspaceSlug: string, params?: Partial<IAnalyticsParams>) =>
-  `DEFAULT_ANALYTICS_${workspaceSlug.toUpperCase()}_${params?.project?.toString()}_${params?.cycle}_${params?.module}`;
 
 // profile
 export const USER_PROFILE_DATA = (workspaceSlug: string, userId: string) =>

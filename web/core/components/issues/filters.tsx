@@ -17,7 +17,6 @@ import { isIssueFilterActive } from "@/helpers/filter.helper";
 import { useLabel, useProjectState, useMember, useIssues } from "@/hooks/store";
 // plane web types
 import { TProject } from "@/plane-web/types";
-import { ProjectAnalyticsModal } from "../analytics";
 import { WorkItemsModal } from "../analytics-v2/work-items/modal";
 
 type Props = {
