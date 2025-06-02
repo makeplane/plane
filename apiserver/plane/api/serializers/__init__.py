@@ -24,12 +24,16 @@ from .cycle import (
     CycleLiteSerializer,
     CycleIssueRequestSerializer,
     TransferCycleIssueRequestSerializer,
+    CycleCreateSerializer,
+    CycleUpdateSerializer,
 )
 from .module import (
     ModuleSerializer,
     ModuleIssueSerializer,
     ModuleLiteSerializer,
     ModuleIssueRequestSerializer,
+    ModuleCreateSerializer,
+    ModuleUpdateSerializer,
 )
 from .intake import (
     IntakeIssueSerializer,

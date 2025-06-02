@@ -30,6 +30,8 @@ from plane.api.serializers import (
     CycleSerializer,
     CycleIssueRequestSerializer,
     TransferCycleIssueRequestSerializer,
+    CycleCreateSerializer,
+    CycleUpdateSerializer,
 )
 from plane.app.permissions import ProjectEntityPermission
 from plane.bgtasks.issue_activities_task import issue_activity
@@ -260,7 +262,7 @@ class CycleAPIEndpoint(BaseAPIView):
 
     @cycle_docs(
         operation_id="create_cycle",
-        request=CycleSerializer,
+        request=CycleCreateSerializer,
         responses={
             201: OpenApiResponse(
                 description="Cycle created",
@@ -281,7 +283,7 @@ class CycleAPIEndpoint(BaseAPIView):
             request.data.get("start_date", None) is not None
             and request.data.get("end_date", None) is not None
         ):
-            serializer = CycleSerializer(data=request.data)
+            serializer = CycleCreateSerializer(data=request.data)
             if serializer.is_valid():
                 if (
                     request.data.get("external_id")
@@ -310,13 +312,16 @@ class CycleAPIEndpoint(BaseAPIView):
                 # Send the model activity
                 model_activity.delay(
                     model_name="cycle",
-                    model_id=str(serializer.data["id"]),
+                    model_id=str(serializer.instance.id),
                     requested_data=request.data,
                     current_instance=None,
                     actor_id=request.user.id,
                     slug=slug,
                     origin=base_host(request=request, is_app=True),
                 )
+
+                cycle = Cycle.objects.get(pk=serializer.instance.id)
+                serializer = CycleSerializer(cycle)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -329,7 +334,7 @@ class CycleAPIEndpoint(BaseAPIView):
 
     @cycle_docs(
         operation_id="update_cycle",
-        request=CycleSerializer,
+        request=CycleUpdateSerializer,
         responses={
             200: OpenApiResponse(
                 description="Cycle updated",
@@ -371,7 +376,7 @@ class CycleAPIEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        serializer = CycleSerializer(cycle, data=request.data, partial=True)
+        serializer = CycleUpdateSerializer(cycle, data=request.data, partial=True)
         if serializer.is_valid():
             if (
                 request.data.get("external_id")
@@ -404,6 +409,8 @@ class CycleAPIEndpoint(BaseAPIView):
                 slug=slug,
                 origin=base_host(request=request, is_app=True),
             )
+            cycle = Cycle.objects.get(pk=serializer.instance.id)
+            serializer = CycleSerializer(cycle)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

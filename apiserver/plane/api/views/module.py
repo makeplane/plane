@@ -18,6 +18,8 @@ from plane.api.serializers import (
     ModuleIssueSerializer,
     ModuleSerializer,
     ModuleIssueRequestSerializer,
+    ModuleCreateSerializer,
+    ModuleUpdateSerializer,
 )
 from plane.app.permissions import ProjectEntityPermission
 from plane.bgtasks.issue_activities_task import issue_activity
@@ -144,7 +146,7 @@ class ModuleAPIEndpoint(BaseAPIView):
 
     @module_docs(
         operation_id="create_module",
-        request=ModuleSerializer,
+        request=ModuleCreateSerializer,
         responses={
             201: OpenApiResponse(
                 description="Module created", response=ModuleSerializer
@@ -163,7 +165,7 @@ class ModuleAPIEndpoint(BaseAPIView):
         Automatically assigns the creator as module lead and tracks activity.
         """
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
-        serializer = ModuleSerializer(
+        serializer = ModuleCreateSerializer(
             data=request.data,
             context={"project_id": project_id, "workspace_id": project.workspace_id},
         )
@@ -195,21 +197,21 @@ class ModuleAPIEndpoint(BaseAPIView):
             # Send the model activity
             model_activity.delay(
                 model_name="module",
-                model_id=str(serializer.data["id"]),
+                model_id=str(serializer.instance.id),
                 requested_data=request.data,
                 current_instance=None,
                 actor_id=request.user.id,
                 slug=slug,
                 origin=base_host(request=request, is_app=True),
             )
-            module = Module.objects.get(pk=serializer.data["id"])
+            module = Module.objects.get(pk=serializer.instance.id)
             serializer = ModuleSerializer(module)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @module_docs(
         operation_id="update_module",
-        request=ModuleSerializer,
+        request=ModuleUpdateSerializer,
         responses={
             200: OpenApiResponse(
                 description="Module updated successfully", response=ModuleSerializer
@@ -268,7 +270,7 @@ class ModuleAPIEndpoint(BaseAPIView):
             # Send the model activity
             model_activity.delay(
                 model_name="module",
-                model_id=str(serializer.data["id"]),
+                model_id=str(serializer.instance.id),
                 requested_data=request.data,
                 current_instance=current_instance,
                 actor_id=request.user.id,

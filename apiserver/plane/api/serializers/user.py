@@ -10,6 +10,7 @@ class UserLiteSerializer(BaseSerializer):
     avatar_url = serializers.CharField(
         help_text="Avatar URL",
         read_only=True,
+        required=False,
     )
 
     class Meta:

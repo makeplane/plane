@@ -8,16 +8,8 @@ from plane.db.models import Cycle, CycleIssue
 from plane.utils.timezone_converter import convert_to_utc
 
 
-class CycleSerializer(BaseSerializer):
-    total_issues = serializers.IntegerField(read_only=True)
-    cancelled_issues = serializers.IntegerField(read_only=True)
-    completed_issues = serializers.IntegerField(read_only=True)
-    started_issues = serializers.IntegerField(read_only=True)
-    unstarted_issues = serializers.IntegerField(read_only=True)
-    backlog_issues = serializers.IntegerField(read_only=True)
-    total_estimates = serializers.FloatField(read_only=True)
-    completed_estimates = serializers.FloatField(read_only=True)
-    started_estimates = serializers.FloatField(read_only=True)
+class CycleCreateSerializer(BaseSerializer):
+    """Serializer for creating a cycle"""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -26,6 +18,29 @@ class CycleSerializer(BaseSerializer):
             project_timezone = pytz.timezone(project.timezone)
             self.fields["start_date"].timezone = project_timezone
             self.fields["end_date"].timezone = project_timezone
+
+    class Meta:
+        model = Cycle
+        fields = [
+            "name",
+            "description",
+            "start_date",
+            "end_date",
+            "owned_by",
+            "external_source",
+            "external_id",
+            "timezone",
+        ]
+        read_only_fields = [
+            "id",
+            "workspace",
+            "project",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+        ]
 
     def validate(self, data):
         if (
@@ -58,6 +73,28 @@ class CycleSerializer(BaseSerializer):
                 project_id=project_id,
             )
         return data
+
+
+class CycleUpdateSerializer(CycleCreateSerializer):
+    """Serializer for updating a cycle"""
+
+    class Meta(CycleCreateSerializer.Meta):
+        model = Cycle
+        fields = CycleCreateSerializer.Meta.fields + [
+            "owned_by",
+        ]
+
+
+class CycleSerializer(BaseSerializer):
+    total_issues = serializers.IntegerField(read_only=True)
+    cancelled_issues = serializers.IntegerField(read_only=True)
+    completed_issues = serializers.IntegerField(read_only=True)
+    started_issues = serializers.IntegerField(read_only=True)
+    unstarted_issues = serializers.IntegerField(read_only=True)
+    backlog_issues = serializers.IntegerField(read_only=True)
+    total_estimates = serializers.FloatField(read_only=True)
+    completed_estimates = serializers.FloatField(read_only=True)
+    started_estimates = serializers.FloatField(read_only=True)
 
     class Meta:
         model = Cycle
@@ -92,14 +129,15 @@ class CycleLiteSerializer(BaseSerializer):
 
 class CycleIssueRequestSerializer(serializers.Serializer):
     """Serializer for adding/managing cycle issues"""
+
     issues = serializers.ListField(
-        child=serializers.UUIDField(),
-        help_text="List of issue IDs to add to the cycle"
+        child=serializers.UUIDField(), help_text="List of issue IDs to add to the cycle"
     )
 
 
 class TransferCycleIssueRequestSerializer(serializers.Serializer):
     """Serializer for transferring cycle issues to another cycle"""
+
     new_cycle_id = serializers.UUIDField(
         help_text="ID of the target cycle to transfer issues to"
     )

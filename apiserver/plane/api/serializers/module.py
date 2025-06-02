@@ -13,7 +13,9 @@ from plane.db.models import (
 )
 
 
-class ModuleSerializer(BaseSerializer):
+class ModuleCreateSerializer(BaseSerializer):
+    """Serializer for creating a module"""
+
     members = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(
             queryset=User.objects.values_list("id", flat=True)
@@ -21,16 +23,20 @@ class ModuleSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
-    total_issues = serializers.IntegerField(read_only=True)
-    cancelled_issues = serializers.IntegerField(read_only=True)
-    completed_issues = serializers.IntegerField(read_only=True)
-    started_issues = serializers.IntegerField(read_only=True)
-    unstarted_issues = serializers.IntegerField(read_only=True)
-    backlog_issues = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Module
-        fields = "__all__"
+        fields = [
+            "name",
+            "description",
+            "start_date",
+            "target_date",
+            "status",
+            "lead",
+            "members",
+            "external_source",
+            "external_id",
+        ]
         read_only_fields = [
             "id",
             "workspace",
@@ -41,11 +47,6 @@ class ModuleSerializer(BaseSerializer):
             "updated_at",
             "deleted_at",
         ]
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data["members"] = [str(member.id) for member in instance.members.all()]
-        return data
 
     def validate(self, data):
         if (
@@ -96,6 +97,17 @@ class ModuleSerializer(BaseSerializer):
 
         return module
 
+
+class ModuleUpdateSerializer(ModuleCreateSerializer):
+    """Serializer for updating a module"""
+
+    class Meta(ModuleCreateSerializer.Meta):
+        model = Module
+        fields = ModuleCreateSerializer.Meta.fields + [
+            "members",
+        ]
+        read_only_fields = ModuleCreateSerializer.Meta.read_only_fields
+
     def update(self, instance, validated_data):
         members = validated_data.pop("members", None)
         module_name = validated_data.get("name")
@@ -129,6 +141,41 @@ class ModuleSerializer(BaseSerializer):
             )
 
         return super().update(instance, validated_data)
+
+
+class ModuleSerializer(BaseSerializer):
+    members = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(
+            queryset=User.objects.values_list("id", flat=True)
+        ),
+        write_only=True,
+        required=False,
+    )
+    total_issues = serializers.IntegerField(read_only=True)
+    cancelled_issues = serializers.IntegerField(read_only=True)
+    completed_issues = serializers.IntegerField(read_only=True)
+    started_issues = serializers.IntegerField(read_only=True)
+    unstarted_issues = serializers.IntegerField(read_only=True)
+    backlog_issues = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Module
+        fields = "__all__"
+        read_only_fields = [
+            "id",
+            "workspace",
+            "project",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+        ]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["members"] = [str(member.id) for member in instance.members.all()]
+        return data
 
 
 class ModuleIssueSerializer(BaseSerializer):
@@ -181,7 +228,8 @@ class ModuleLiteSerializer(BaseSerializer):
 
 class ModuleIssueRequestSerializer(serializers.Serializer):
     """Serializer for module issue request bodies"""
+
     issues = serializers.ListField(
         child=serializers.UUIDField(),
-        help_text="List of issue IDs to add to the module"
+        help_text="List of issue IDs to add to the module",
     )
