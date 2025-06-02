@@ -141,7 +141,7 @@ export class IssueLinkStore implements IIssueLinkStore {
           set(this.linkMap, [linkId, key], initialData[key as keyof TIssueLink]);
         });
       });
-      return initialData;
+      throw error;
     }
   };
 

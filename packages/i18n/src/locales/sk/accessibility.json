@@ -22,6 +22,13 @@
       "collapse_sidebar": "Zbaliť bočný panel",
       "expand_sidebar": "Rozbaliť bočný panel",
       "edition_badge": "Otvoriť modal platených plánov"
+    },
+    "auth_forms": {
+      "clear_email": "Vymazať e-mail",
+      "show_password": "Zobraziť heslo",
+      "hide_password": "Skryť heslo",
+      "close_alert": "Zavrieť upozornenie",
+      "close_popover": "Zavrieť vyskakovacie okno"
     }
   }
 }

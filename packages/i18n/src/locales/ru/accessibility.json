@@ -22,6 +22,13 @@
       "collapse_sidebar": "Свернуть боковую панель",
       "expand_sidebar": "Развернуть боковую панель",
       "edition_badge": "Открыть модал платных планов"
+    },
+    "auth_forms": {
+      "clear_email": "Очистить email",
+      "show_password": "Показать пароль",
+      "hide_password": "Скрыть пароль",
+      "close_alert": "Закрыть уведомление",
+      "close_popover": "Закрыть всплывающее окно"
     }
   }
 }

@@ -9,11 +9,11 @@ import { TEditorCommands } from "@/types";
 
 type TUploaderArgs = {
   acceptedMimeTypes: string[];
-  editorCommand: (file: File) => Promise<string>;
+  editorCommand: (file: File) => Promise<string | undefined>;
   handleProgressStatus?: (isUploading: boolean) => void;
   loadFileFromFileSystem?: (file: string) => void;
   maxFileSize: number;
-  onInvalidFile: (error: EFileError, message: string) => void;
+  onInvalidFile: (error: EFileError, file: File, message: string) => void;
   onUpload: (url: string, file: File) => void;
 };
 
@@ -38,7 +38,7 @@ export const useUploader = (args: TUploaderArgs) => {
         acceptedMimeTypes,
         file,
         maxFileSize,
-        onError: onInvalidFile,
+        onError: (error, message) => onInvalidFile(error, file, message),
       });
       if (!isValid) {
         handleProgressStatus?.(false);
@@ -60,7 +60,7 @@ export const useUploader = (args: TUploaderArgs) => {
           };
           reader.readAsDataURL(file);
         }
-        const url: string = await editorCommand(file);
+        const url = await editorCommand(file);
 
         if (!url) {
           throw new Error("Something went wrong while uploading the file.");
@@ -74,24 +74,29 @@ export const useUploader = (args: TUploaderArgs) => {
         setIsUploading(false);
       }
     },
-    [acceptedMimeTypes, editorCommand, handleProgressStatus, loadFileFromFileSystem, maxFileSize, onUpload]
+    [
+      acceptedMimeTypes,
+      editorCommand,
+      handleProgressStatus,
+      loadFileFromFileSystem,
+      maxFileSize,
+      onInvalidFile,
+      onUpload,
+    ]
   );
 
   return { isUploading, uploadFile };
 };
 
 type TDropzoneArgs = {
-  acceptedMimeTypes: string[];
   editor: Editor;
-  maxFileSize: number;
-  onInvalidFile: (error: EFileError, message: string) => void;
   pos: number;
   type: Extract<TEditorCommands, "attachment" | "image">;
   uploader: (file: File) => Promise<void>;
 };
 
 export const useDropZone = (args: TDropzoneArgs) => {
-  const { acceptedMimeTypes, editor, maxFileSize, onInvalidFile, pos, type, uploader } = args;
+  const { editor, pos, type, uploader } = args;
   // states
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [draggedInside, setDraggedInside] = useState<boolean>(false);
@@ -118,22 +123,21 @@ export const useDropZone = (args: TDropzoneArgs) => {
     async (e: DragEvent<HTMLDivElement>) => {
       e.preventDefault();
       setDraggedInside(false);
-      if (e.dataTransfer.files.length === 0 || !editor.isEditable) {
+      const filesList = e.dataTransfer.files;
+
+      if (filesList.length === 0 || !editor.isEditable) {
         return;
       }
-      const filesList = e.dataTransfer.files;
+
       await uploadFirstFileAndInsertRemaining({
-        acceptedMimeTypes,
         editor,
         filesList,
-        maxFileSize,
-        onInvalidFile,
         pos,
         type,
         uploader,
       });
     },
-    [acceptedMimeTypes, editor, maxFileSize, onInvalidFile, pos, type, uploader]
+    [editor, pos, type, uploader]
   );
   const onDragEnter = useCallback(() => setDraggedInside(true), []);
   const onDragLeave = useCallback(() => setDraggedInside(false), []);
@@ -148,11 +152,8 @@ export const useDropZone = (args: TDropzoneArgs) => {
 };
 
 type TMultipleFileArgs = {
-  acceptedMimeTypes: string[];
   editor: Editor;
   filesList: FileList;
-  maxFileSize: number;
-  onInvalidFile: (error: EFileError, message: string) => void;
   pos: number;
   type: Extract<TEditorCommands, "attachment" | "image">;
   uploader: (file: File) => Promise<void>;
@@ -160,35 +161,18 @@ type TMultipleFileArgs = {
 
 // Upload the first file and insert the remaining ones for uploading multiple files
 export const uploadFirstFileAndInsertRemaining = async (args: TMultipleFileArgs) => {
-  const { acceptedMimeTypes, editor, filesList, maxFileSize, onInvalidFile, pos, type, uploader } = args;
-  const filteredFiles: File[] = [];
-  for (let i = 0; i < filesList.length; i += 1) {
-    const file = filesList.item(i);
-    if (
-      file &&
-      isFileValid({
-        acceptedMimeTypes,
-        file,
-        maxFileSize,
-        onError: onInvalidFile,
-      })
-    ) {
-      filteredFiles.push(file);
-    }
-  }
-  if (filteredFiles.length !== filesList.length) {
-    console.warn("Some files were invalid and have been ignored.");
-  }
-  if (filteredFiles.length === 0) {
+  const { editor, filesList, pos, type, uploader } = args;
+  const filesArray = Array.from(filesList);
+  if (filesArray.length === 0) {
     console.error("No files found to upload.");
     return;
   }
 
   // Upload the first file
-  const firstFile = filteredFiles[0];
+  const firstFile = filesArray[0];
   uploader(firstFile);
   // Insert the remaining files
-  const remainingFiles = filteredFiles.slice(1);
+  const remainingFiles = filesArray.slice(1);
   if (remainingFiles.length > 0) {
     const docSize = editor.state.doc.content.size;
     const posOfNextFileToBeInserted = Math.min(pos + 1, docSize);

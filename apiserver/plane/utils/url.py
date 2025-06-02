@@ -4,6 +4,14 @@ from typing import Optional
 from urllib.parse import urlparse, urlunparse
 
 
+def contains_url(value: str) -> bool:
+    """
+    Check if the value contains a URL.
+    """
+    url_pattern = re.compile(r"https?://|www\\.")
+    return bool(url_pattern.search(value))
+
+
 def is_valid_url(url: str) -> bool:
     """
     Validates whether the given string is a well-formed URL.

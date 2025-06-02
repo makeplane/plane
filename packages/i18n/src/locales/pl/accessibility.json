@@ -22,6 +22,13 @@
       "collapse_sidebar": "Zwiń pasek boczny",
       "expand_sidebar": "Rozwiń pasek boczny",
       "edition_badge": "Otwórz modal płatnych planów"
+    },
+    "auth_forms": {
+      "clear_email": "Wyczyść e-mail",
+      "show_password": "Pokaż hasło",
+      "hide_password": "Ukryj hasło",
+      "close_alert": "Zamknij alert",
+      "close_popover": "Zamknij popover"
     }
   }
 }

@@ -1,4 +1,5 @@
 export type TReadOnlyFileHandler = {
+  checkIfAssetExists: (assetId: string) => Promise<boolean>;
   getAssetSrc: (path: string) => Promise<string>;
   restore: (assetSrc: string) => Promise<void>;
 };

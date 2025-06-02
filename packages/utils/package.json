@@ -4,14 +4,10 @@
   "description": "Helper functions shared across multiple apps internally",
   "license": "AGPL-3.0",
   "private": true,
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist/**"
-  ],
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
   "scripts": {
-    "build": "tsup ./src/index.ts --format esm,cjs --dts --external react --minify",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:errors": "eslint src --ext .ts,.tsx --quiet"
   },
@@ -29,7 +25,6 @@
     "@types/node": "^22.5.4",
     "@types/react": "^18.3.11",
     "@types/zxcvbn": "^4.4.5",
-    "tsup": "8.4.0",
     "typescript": "^5.3.3"
   }
 }

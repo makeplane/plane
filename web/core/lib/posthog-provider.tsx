@@ -25,10 +25,13 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
   const { currentWorkspace } = useWorkspace();
   const { instance } = useInstance();
   const { workspaceSlug, projectId } = useParams();
-  const { workspaceInfoBySlug, projectUserInfo } = useUserPermissions();
+  const { getWorkspaceRoleByWorkspaceSlug, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
 
-  const currentProjectRole = projectUserInfo?.[workspaceSlug?.toString()]?.[projectId?.toString()]?.role;
-  const currentWorkspaceRole = workspaceInfoBySlug(workspaceSlug?.toString())?.role;
+  const currentProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(
+    workspaceSlug?.toString(),
+    projectId?.toString()
+  );
+  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug?.toString());
   const is_telemetry_enabled = instance?.is_telemetry_enabled || false;
 
   useEffect(() => {

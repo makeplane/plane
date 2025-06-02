@@ -364,7 +364,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                   )}
                   <CustomMenu.MenuItem
                     onClick={() => {
-                      console.log("clicked settings");
                       setIsMenuActive(false);
                     }}
                   >

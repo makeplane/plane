@@ -11,7 +11,7 @@ import { setPromiseToast } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common";
 import { ThemeSwitch, PageHead, CustomThemeSelector } from "@/components/core";
-import { ProfileSettingContentHeader, ProfileSettingContentWrapper, StartOfWeekPreference } from "@/components/profile";
+import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
 // helpers
 import { applyTheme, unsetCustomCssVariables } from "@/helpers/theme.helper";
 // hooks
@@ -75,7 +75,6 @@ const ProfileAppearancePage = observer(() => {
             </div>
           </div>
           {userProfile?.theme?.theme === "custom" && <CustomThemeSelector applyThemeChange={applyThemeChange} />}
-          <StartOfWeekPreference />
         </ProfileSettingContentWrapper>
       ) : (
         <div className="grid h-full w-full place-items-center px-4 sm:px-0">
