@@ -1087,7 +1087,9 @@
     "select": {
       "error": "少なくとも1つの作業項目を選択してください",
       "empty": "作業項目が選択されていません",
-      "add_selected": "選択した作業項目を追加"
+      "add_selected": "選択した作業項目を追加",
+      "select_all": "すべて選択",
+      "deselect_all": "すべての選択を解除"
     },
     "open_in_full_screen": "作業項目をフルスクリーンで開く"
   },

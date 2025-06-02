@@ -1086,7 +1086,9 @@
     "select": {
       "error": "Selectează cel puțin o activitate",
       "empty": "Nicio activitate selectată",
-      "add_selected": "Adaugă activitățile selectate"
+      "add_selected": "Adaugă activitățile selectate",
+      "select_all": "Selectează tot",
+      "deselect_all": "Deselează tot"
     },
     "open_in_full_screen": "Deschide activitatea pe tot ecranul"
   },

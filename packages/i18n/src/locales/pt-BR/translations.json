@@ -1088,7 +1088,9 @@
     "select": {
       "error": "Selecione pelo menos um item de trabalho",
       "empty": "Nenhum item de trabalho selecionado",
-      "add_selected": "Adicionar itens de trabalho selecionados"
+      "add_selected": "Adicionar itens de trabalho selecionados",
+      "select_all": "Selecionar tudo",
+      "deselect_all": "Desmarcar tudo"
     },
     "open_in_full_screen": "Abrir item de trabalho em tela cheia"
   },

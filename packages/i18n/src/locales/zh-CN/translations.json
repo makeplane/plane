@@ -1087,7 +1087,9 @@
     "select": {
       "error": "请至少选择一个工作项",
       "empty": "未选择工作项",
-      "add_selected": "添加所选工作项"
+      "add_selected": "添加所选工作项",
+      "select_all": "全选",
+      "deselect_all": "取消全选"
     },
     "open_in_full_screen": "在全屏中打开工作项"
   },
