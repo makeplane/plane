@@ -9,6 +9,7 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 import { TDisplayConfig } from "@/types";
 // components
 import { LinkViewContainer } from "./link-view-container";
+import { LinkContainer } from "@/plane-editor/components/link-container";
 
 interface EditorContainerProps {
   children: ReactNode;
@@ -96,7 +97,7 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
         )}
       >
         {children}
-        <LinkViewContainer editor={editor} containerRef={containerRef} />
+        <LinkContainer editor={editor} containerRef={containerRef} />
       </div>
     </>
   );
