@@ -17,7 +17,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
           {/* Header */}
           <SettingsHeader />
           {/* Content */}
-          <ContentWrapper className="px-4 md:pl-12 md:py-page-y md:flex w-full">
+          <ContentWrapper className="px-4 md:pl-12 md:pt-page-y md:flex w-full">
             <SettingsContentLayout>{children}</SettingsContentLayout>
           </ContentWrapper>
         </main>
