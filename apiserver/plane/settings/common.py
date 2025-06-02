@@ -520,4 +520,5 @@ if ENABLE_DRF_SPECTACULAR:
             "plane.api.middleware.api_authentication.APIKeyAuthentication",
         ],
         "SCHEMA_CACHE_TIMEOUT": 0,  # disables caching
+        "COMPONENT_NO_READ_ONLY_REQUIRED": True,
     }
