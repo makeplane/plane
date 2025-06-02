@@ -88,10 +88,10 @@ const ApiTokensPage = observer(() => {
             />
             <div className="h-full w-full flex items-center justify-center">
               <DetailedEmptyState
-                title={t("workspace_settings.empty_state.api_tokens.title")}
-                description={t("workspace_settings.empty_state.api_tokens.description")}
+                title=""
+                description=""
                 assetPath={resolvedPath}
-                className="w-full !px-0 justify-center mx-auto"
+                className="w-full !p-0 justify-center mx-auto"
                 size="md"
                 primaryButton={{
                   text: t("workspace_settings.settings.api_tokens.add_token"),

@@ -1,9 +1,10 @@
+import { observer } from "mobx-react";
 import { WorkspaceLogo } from "@/components/workspace";
 import { getUserRole } from "@/helpers/user.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { SubscriptionPill } from "@/plane-web/components/common";
 
-export const SettingsSidebarHeader = (props: { customHeader?: React.ReactNode }) => {
+export const SettingsSidebarHeader = observer((props: { customHeader?: React.ReactNode }) => {
   const { customHeader } = props;
   const { currentWorkspace } = useWorkspace();
   return customHeader
@@ -26,8 +27,8 @@ export const SettingsSidebarHeader = (props: { customHeader?: React.ReactNode })
             </div>
           </div>
           <div className="flex-shrink-0">
-            <SubscriptionPill workspace={currentWorkspace} />
+            <SubscriptionPill />
           </div>
         </div>
       );
-};
+});
