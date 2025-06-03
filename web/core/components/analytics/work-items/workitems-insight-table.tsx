@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { ColumnDef, Row } from "@tanstack/react-table";
+import { download, generateCsv } from "export-to-csv";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -16,6 +17,7 @@ import { useAnalytics } from "@/hooks/store/use-analytics";
 import { useProject } from "@/hooks/store/use-project";
 import { AnalyticsService } from "@/services/analytics.service";
 // plane web components
+import { csvConfig } from "../config";
 import { InsightTable } from "../insight-table";
 
 const analyticsService = new AnalyticsService();
@@ -44,7 +46,7 @@ const WorkItemsInsightTable = observer(() => {
       )
   );
   // derived values
-  const columnsLabels = useMemo(
+  const columnsLabels: Record<string, string> = useMemo(
     () => ({
       backlog_work_items: t("workspace_projects.state.backlog"),
       started_work_items: t("workspace_projects.state.started"),
@@ -135,6 +137,22 @@ const WorkItemsInsightTable = observer(() => {
     [columnsLabels, getProjectById, isPeekView, t]
   );
 
+  const exportCSV = (rows: Row<AnalyticsTableDataMap["work-items"]>[]) => {
+    const rowData: any = rows.map((row) => {
+      const { project_id, avatar_url, assignee_id, ...exportableData } = row.original;
+      return Object.fromEntries(
+        Object.entries(exportableData).map(([key, value]) => {
+          if (columnsLabels?.[key]) {
+            return [columnsLabels[key], value];
+          }
+          return [key, value];
+        })
+      );
+    });
+    const csv = generateCsv(csvConfig(workspaceSlug))(rowData);
+    download(csvConfig(workspaceSlug))(csv);
+  };
+
   return (
     <InsightTable<"work-items">
       analyticsType="work-items"
@@ -143,6 +161,7 @@ const WorkItemsInsightTable = observer(() => {
       columns={columns}
       columnsLabels={columnsLabels}
       headerText={isPeekView ? columnsLabels["display_name"] : columnsLabels["project__name"]}
+      onExport={exportCSV}
     />
   );
 });
