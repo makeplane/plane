@@ -22,8 +22,8 @@
     "lint:errors": "eslint src --ext .ts,.tsx --quiet"
   },
   "peerDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "^1.1.10",
@@ -63,9 +63,9 @@
     "@storybook/test": "^8.1.1",
     "@types/lodash": "^4.17.6",
     "@types/node": "^20.5.2",
-    "@types/react": "^18.3.11",
+    "@types/react": "^19.1.6",
     "@types/react-color": "^3.0.9",
-    "@types/react-dom": "^18.2.18",
+    "@types/react-dom": "^19.1.5",
     "autoprefixer": "^10.4.19",
     "classnames": "^2.3.2",
     "postcss-cli": "^11.0.0",

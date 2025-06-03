@@ -1,5 +1,5 @@
-import * as React from "react";
 import { ChevronRight } from "lucide-react";
+import * as React from "react";
 
 type BreadcrumbsProps = {
   children: React.ReactNode;
@@ -71,7 +71,7 @@ const Breadcrumbs = ({ children, onBack, isLoading = false }: BreadcrumbsProps) 
 type Props = {
   type?: "text" | "component";
   component?: React.ReactNode;
-  link?: JSX.Element;
+  link?: React.ReactNode;
 };
 
 const BreadcrumbItem: React.FC<Props> = (props) => {
