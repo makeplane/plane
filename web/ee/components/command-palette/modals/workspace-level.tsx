@@ -1,6 +1,4 @@
 import { observer } from "mobx-react";
-// plane imports
-import { SUBSCRIPTION_WITH_SEATS_MANAGEMENT } from "@plane/constants";
 // ce components
 import {
   WorkspaceLevelModals as BaseWorkspaceLevelModals,
@@ -22,7 +20,7 @@ export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps)
   const { workspaceSlug } = props;
   // store hooks
   const {
-    currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
+    isSeatManagementEnabled,
     addWorkspaceSeatsModal,
     removeUnusedSeatsConfirmationModal,
     toggleAddWorkspaceSeatsModal,
@@ -46,12 +44,6 @@ export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps)
       updateCreateUpdateModalPayload: updateWorkspaceDashboardModalPayload,
     },
   } = useDashboards();
-  // derived values
-  const isOfflineSubscription = subscriptionDetail?.is_offline_payment;
-  const isSeatsManagementEnabled =
-    subscriptionDetail &&
-    !isOfflineSubscription &&
-    SUBSCRIPTION_WITH_SEATS_MANAGEMENT.includes(subscriptionDetail?.product);
 
   return (
     <>
@@ -88,7 +80,7 @@ export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps)
         customerId={createUpdateCustomerModal.customerId}
         onClose={() => toggleCreateCustomerModal({ isOpen: false, customerId: undefined })}
       />
-      {isSeatsManagementEnabled && (
+      {isSeatManagementEnabled && (
         <AddSeatsModal
           data={addWorkspaceSeatsModal}
           onClose={() => {
@@ -96,7 +88,7 @@ export const WorkspaceLevelModals = observer((props: TWorkspaceLevelModalsProps)
           }}
         />
       )}
-      {isSeatsManagementEnabled && (
+      {isSeatManagementEnabled && (
         <RemoveUnusedSeatsModal
           isOpen={removeUnusedSeatsConfirmationModal}
           handleClose={() => toggleRemoveUnusedSeatsConfirmationModal()}

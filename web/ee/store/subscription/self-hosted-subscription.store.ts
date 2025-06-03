@@ -24,7 +24,8 @@ export interface ISelfHostedSubscriptionStore {
   toggleLicenseActivationModal: (isOpen?: boolean) => void;
   // actions
   fetchSubscription: (workspaceSlug: string) => Promise<TSelfHostedSubscription | undefined>;
-  activateSubscription: (workspaceSlug: string, license_key: string) => Promise<TSelfHostedSubscription | undefined>;
+  activateUsingLicenseKey: (workspaceSlug: string, license_key: string) => Promise<TSelfHostedSubscription | undefined>;
+  activateUsingLicenseFile: (workspaceSlug: string, file: File) => Promise<TSelfHostedSubscription | undefined>;
   syncLicense: (workspaceSlug: string) => Promise<void>;
   deactivateLicense: (workspaceSlug: string) => Promise<void>;
 }
@@ -43,7 +44,8 @@ export class SelfHostedSubscriptionStore implements ISelfHostedSubscriptionStore
       toggleLicenseActivationModal: action,
       // actions
       fetchSubscription: action,
-      activateSubscription: action,
+      activateUsingLicenseKey: action,
+      activateUsingLicenseFile: action,
       syncLicense: action,
       deactivateLicense: action,
     });
@@ -88,13 +90,25 @@ export class SelfHostedSubscriptionStore implements ISelfHostedSubscriptionStore
     }
   };
 
+  private processLicenseActivation = async (workspaceSlug: string, license: TSelfHostedSubscription | undefined) => {
+    await Promise.all([
+      this.rootStore.workspaceSubscription.fetchWorkspaceSubscribedPlan(workspaceSlug),
+      this.rootStore.featureFlags.fetchFeatureFlags(workspaceSlug),
+    ]);
+    if (license) {
+      runInAction(() => {
+        set(this.licenses, workspaceSlug, license);
+      });
+    }
+  };
+
   /**
    * @description update worklog
    * @param { string } workspaceSlug
    * @param { string } license_key
    * @returns { TWorklog | undefined }
    */
-  activateSubscription = async (
+  activateUsingLicenseKey = async (
     workspaceSlug: string,
     license_key: string
   ): Promise<TSelfHostedSubscription | undefined> => {
@@ -104,19 +118,33 @@ export class SelfHostedSubscriptionStore implements ISelfHostedSubscriptionStore
       const payload = {
         license_key: license_key,
       };
-      const license = await selfHostedSubscriptionService.activateSubscription(workspaceSlug, payload);
-      await Promise.all([
-        this.rootStore.workspaceSubscription.fetchWorkspaceSubscribedPlan(workspaceSlug),
-        this.rootStore.featureFlags.fetchFeatureFlags(workspaceSlug),
-      ]);
-      if (license) {
-        runInAction(() => {
-          set(this.licenses, workspaceSlug, license);
-        });
-      }
+      const license = await selfHostedSubscriptionService.activateUsingLicenseKey(workspaceSlug, payload);
+      await this.processLicenseActivation(workspaceSlug, license);
       return license;
     } catch (error) {
       console.error("worklog -> updateWorklogById -> error", error);
+      throw error;
+    }
+  };
+
+  /**
+   * @description activate workspace license using license file
+   * @param { string } workspaceSlug
+   * @param { File } file
+   * @returns { TSelfHostedSubscription | undefined }
+   */
+  activateUsingLicenseFile = async (
+    workspaceSlug: string,
+    file: File
+  ): Promise<TSelfHostedSubscription | undefined> => {
+    if (!workspaceSlug) return undefined;
+
+    try {
+      const license = await selfHostedSubscriptionService.activateUsingLicenseFile(workspaceSlug, file);
+      await this.processLicenseActivation(workspaceSlug, license);
+      return license;
+    } catch (error) {
+      console.error("selfHostedSubscriptionService -> activateUsingLicenseFile -> error", error);
       throw error;
     }
   };

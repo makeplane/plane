@@ -62,6 +62,24 @@ func (h *CronHandler) ScheduleCronJobs(options SchedulerOptions) {
 	)
 }
 
+// Schedules the cron jobs available for the instance of the prime scheduler
+func (h *CronHandler) ScheduleAirgappedCronJobs(options SchedulerOptions) {
+
+	// Schedule License Refresh Job for Instances
+	h.primeScheduler.RegisterLicenseRefreshJob(
+		context.Background(),
+		gocron.DurationJob(time.Duration(options.ResyncFlagsInterval)*time.Minute),
+		func(ctx context.Context) {
+			credentials := h.GetCredentials()
+			api := prime_api.NewMonitorApi(credentials.Host, credentials.MachineSignature, credentials.InstanceId, credentials.AppVersion)
+			err := UpdateFlagsHandler(context.Background(), api)
+			if err != nil {
+				h.GetLogger().Error(ctx, err.Error())
+			}
+		},
+	)
+}
+
 // Get the logger associated with the cron handler
 func (h *CronHandler) GetLogger() *logger.Handler {
 	return h.logger

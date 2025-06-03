@@ -3,6 +3,7 @@ package error_msgs
 // ------------------ CMD Errors ----------------------
 const (
 	APP_VERSION_ABSENT     = "expecting a version to be available in OS Env under 'APP_VERSION', none found"
+	API_HOSTNAME_ABSENT    = "expecting a hostname to be available in OS Env under 'API_HOSTNAME', none found"
 	INSTANCE_ID_ABSENT     = "expecting an instance id to be available in OS Env under 'INSTANCE_ID', none found"
 	APP_DOMAIN_ABSENT      = "expecting a domain to be available in OS Env under 'APP_DOMAIN', none found"
 	MACHINE_SIG_ABSENT     = "expecting a signature to be available in OS Env under 'MACHINE_SIGNATURE', none found"

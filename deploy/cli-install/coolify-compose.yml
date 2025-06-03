@@ -4,7 +4,7 @@
 # logo: svgs/plane.svg
 
 x-plane-commercial: &plane-commercial
-  APP_VERSION: ${APP_RELEASE_VERSION:-v1.9.0}
+  APP_VERSION: ${APP_RELEASE_VERSION:-v1.10.0}
   APP_DOMAIN: ${SERVICE_URL_PLANE}
   MACHINE_SIGNATURE: ${SERVICE_PASSWORD_64_MACHINESIGNATURE}
   DEPLOY_PLATFORM: coolify
@@ -19,6 +19,7 @@ x-monitor-env: &monitor-env
   SERVICE_TCP_REDIS: plane-redis:6379
   SERVICE_TCP_POSTGRES: plane-db:5432
   TRUSTED_PROXIES: ${TRUSTED_PROXIES:-0.0.0.0/0}
+  API_HOSTNAME: ${API_HOSTNAME:-http://api:8000}
 
 x-proxy-env: &proxy-env
   SERVICE_FQDN_PLANE_80: /

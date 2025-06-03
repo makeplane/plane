@@ -1,5 +1,5 @@
 x-plane: &plane
-  APP_VERSION: ${APP_RELEASE_VERSION:-v1.9.0}
+  APP_VERSION: ${APP_RELEASE_VERSION:-v1.10.0}
   APP_DOMAIN: ${DOMAIN_NAME:-localhost}
   MACHINE_SIGNATURE: ${MACHINE_SIGNATURE}
   DEPLOY_PLATFORM: docker_compose
@@ -14,6 +14,7 @@ x-monitor-env: &monitor-env
   SERVICE_TCP_REDIS: plane-redis:6379
   SERVICE_TCP_POSTGRES: plane-db:5432
   TRUSTED_PROXIES: ${TRUSTED_PROXIES:-0.0.0.0/0}
+  API_HOSTNAME: ${API_HOSTNAME:-http://api:8000}
 
 x-proxy-env: &proxy-env
   SITE_ADDRESS: ${SITE_ADDRESS:-localhost:80}

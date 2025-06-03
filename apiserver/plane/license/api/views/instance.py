@@ -214,6 +214,9 @@ class InstanceEndpoint(BaseAPIView):
 
         data["is_elasticsearch_enabled"] = ELASTICSEARCH_ENABLED == "1"
 
+        # Airgapped mode
+        data["is_airgapped"] = settings.IS_AIRGAPPED
+
         instance_data = serializer.data
         instance_data["workspaces_exist"] = Workspace.objects.count() >= 1
 

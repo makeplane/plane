@@ -26,11 +26,11 @@ export const SubscriptionButton: FC<TSubscriptionButtonProps> = observer((props)
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, getIsInTrialPeriod } = useWorkspaceSubscription();
   // derived values
   const currentPlan = subscriptionDetail?.product ?? EProductSubscriptionEnum.FREE;
   const subscriptionName = getSubscriptionName(subscriptionType);
-  const isOnTrialPeriod = !!subscriptionDetail?.is_on_trial && !subscriptionDetail?.has_added_payment_method;
+  const isOnTrialPeriod = getIsInTrialPeriod(true);
   const showCurrentSubscriptionButton = currentPlan === subscriptionType && !isOnTrialPeriod;
   const isHigherTierPlan = EProductSubscriptionTier[subscriptionType] >= EProductSubscriptionTier[currentPlan];
   const showUpgradeButton = isHigherTierPlan && (isOnTrialPeriod || currentPlan !== subscriptionType);
