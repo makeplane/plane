@@ -98,7 +98,6 @@ export type TIssueParams =
   | "show_empty_groups"
   | "cursor"
   | "per_page"
-  | "hub_code"
   | "issue_type"
   | "layout"
   | "expand"
