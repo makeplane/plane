@@ -7,6 +7,11 @@ from .base import BaseSerializer
 
 
 class UserLiteSerializer(BaseSerializer):
+    avatar_url = serializers.CharField(
+        help_text="Avatar URL",
+        read_only=True,
+    )
+
     class Meta:
         model = User
         fields = [
