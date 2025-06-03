@@ -78,12 +78,12 @@ export class AnalyticsService extends APIService {
   processUrl<T extends string>(
     endpoint: string,
     workspaceSlug: string,
-    tab: T,
+    tab: TAnalyticsGraphsBase | TAnalyticsTabsBase,
     params?: Record<string, any>,
     isPeekView?: boolean
   ) {
     let processedUrl = `/api/workspaces/${workspaceSlug}`;
-    if (isPeekView && tab === "work-items") {
+    if (isPeekView && (tab === "work-items" || tab === "custom-work-items")) {
       const projectId = params?.project_ids.split(",")[0];
       processedUrl += `/projects/${projectId}`;
     }
