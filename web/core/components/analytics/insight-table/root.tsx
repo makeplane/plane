@@ -42,7 +42,7 @@ export const InsightTable = <T extends Exclude<TAnalyticsTabsBase, "overview">>(
           )}
         />
       ) : (
-        <div>No data</div>
+        <div>{t("common.no_data_yet")}</div>
       )}
     </div>
   );

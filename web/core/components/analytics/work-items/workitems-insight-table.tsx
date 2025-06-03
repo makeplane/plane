@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { download, generateCsv } from "export-to-csv";
 import { observer } from "mobx-react";
@@ -46,18 +46,19 @@ const WorkItemsInsightTable = observer(() => {
       )
   );
   // derived values
-  const columnsLabels: Record<string, string> = useMemo(
-    () => ({
-      backlog_work_items: t("workspace_projects.state.backlog"),
-      started_work_items: t("workspace_projects.state.started"),
-      un_started_work_items: t("workspace_projects.state.unstarted"),
-      completed_work_items: t("workspace_projects.state.completed"),
-      cancelled_work_items: t("workspace_projects.state.cancelled"),
-      project__name: t("common.project"),
-      display_name: t("common.assignee"),
-    }),
-    [t]
-  );
+  const columnsLabels: Record<keyof Omit<WorkItemInsightColumns, "project_id" | "avatar_url" | "assignee_id">, string> =
+    useMemo(
+      () => ({
+        backlog_work_items: t("workspace_projects.state.backlog"),
+        started_work_items: t("workspace_projects.state.started"),
+        un_started_work_items: t("workspace_projects.state.unstarted"),
+        completed_work_items: t("workspace_projects.state.completed"),
+        cancelled_work_items: t("workspace_projects.state.cancelled"),
+        project__name: t("common.project"),
+        display_name: t("common.assignee"),
+      }),
+      [t]
+    );
   const columns = useMemo(
     () =>
       [
@@ -137,21 +138,24 @@ const WorkItemsInsightTable = observer(() => {
     [columnsLabels, getProjectById, isPeekView, t]
   );
 
-  const exportCSV = (rows: Row<AnalyticsTableDataMap["work-items"]>[]) => {
-    const rowData: any = rows.map((row) => {
-      const { project_id, avatar_url, assignee_id, ...exportableData } = row.original;
-      return Object.fromEntries(
-        Object.entries(exportableData).map(([key, value]) => {
-          if (columnsLabels?.[key]) {
-            return [columnsLabels[key], value];
-          }
-          return [key, value];
-        })
-      );
-    });
-    const csv = generateCsv(csvConfig(workspaceSlug))(rowData);
-    download(csvConfig(workspaceSlug))(csv);
-  };
+  const exportCSV = useCallback(
+    (rows: Row<AnalyticsTableDataMap["work-items"]>[]) => {
+      const rowData: any = rows.map((row) => {
+        const { project_id, avatar_url, assignee_id, ...exportableData } = row.original;
+        return Object.fromEntries(
+          Object.entries(exportableData).map(([key, value]) => {
+            if (columnsLabels?.[key as keyof typeof columnsLabels]) {
+              return [columnsLabels[key as keyof typeof columnsLabels], value];
+            }
+            return [key, value];
+          })
+        );
+      });
+      const csv = generateCsv(csvConfig(workspaceSlug))(rowData);
+      download(csvConfig(workspaceSlug))(csv);
+    },
+    [columnsLabels, workspaceSlug]
+  );
 
   return (
     <InsightTable<"work-items">

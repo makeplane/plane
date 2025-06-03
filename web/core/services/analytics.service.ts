@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@plane/constants";
-import { IAnalyticsResponse, TAnalyticsTabsBase, TAnalyticsGraphsBase } from "@plane/types";
+import { IAnalyticsResponse, TAnalyticsTabsBase, TAnalyticsGraphsBase, TAnalyticsFilterParams } from "@plane/types";
 import { APIService } from "./api.service";
 
 export class AnalyticsService extends APIService {
@@ -10,7 +10,7 @@ export class AnalyticsService extends APIService {
   async getAdvanceAnalytics<T extends IAnalyticsResponse>(
     workspaceSlug: string,
     tab: TAnalyticsTabsBase,
-    params?: Record<string, any>,
+    params?: TAnalyticsFilterParams,
     isPeekView?: boolean
   ): Promise<T> {
     return this.get(this.processUrl<TAnalyticsTabsBase>("advance-analytics", workspaceSlug, tab, params, isPeekView), {
@@ -28,7 +28,7 @@ export class AnalyticsService extends APIService {
   async getAdvanceAnalyticsStats<T>(
     workspaceSlug: string,
     tab: Exclude<TAnalyticsTabsBase, "overview">,
-    params?: Record<string, any>,
+    params?: TAnalyticsFilterParams,
     isPeekView?: boolean
   ): Promise<T> {
     const processedUrl = this.processUrl<Exclude<TAnalyticsTabsBase, "overview">>(
@@ -53,7 +53,7 @@ export class AnalyticsService extends APIService {
   async getAdvanceAnalyticsCharts<T>(
     workspaceSlug: string,
     tab: TAnalyticsGraphsBase,
-    params?: Record<string, any>,
+    params?: TAnalyticsFilterParams,
     isPeekView?: boolean
   ): Promise<T> {
     const processedUrl = this.processUrl<TAnalyticsGraphsBase>(
@@ -79,12 +79,19 @@ export class AnalyticsService extends APIService {
     endpoint: string,
     workspaceSlug: string,
     tab: TAnalyticsGraphsBase | TAnalyticsTabsBase,
-    params?: Record<string, any>,
+    params?: TAnalyticsFilterParams,
     isPeekView?: boolean
   ) {
     let processedUrl = `/api/workspaces/${workspaceSlug}`;
     if (isPeekView && (tab === "work-items" || tab === "custom-work-items")) {
-      const projectId = params?.project_ids.split(",")[0];
+      const projectIds = params?.project_ids;
+      if (typeof projectIds !== "string" || !projectIds.trim()) {
+        throw new Error("project_ids parameter is required for peek view of work items");
+      }
+      const projectId = projectIds.split(",")[0];
+      if (!projectId) {
+        throw new Error("Invalid project_ids format - no project ID found");
+      }
       processedUrl += `/projects/${projectId}`;
     }
     return `${processedUrl}/${endpoint}`;

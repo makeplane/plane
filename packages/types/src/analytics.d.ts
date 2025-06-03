@@ -3,6 +3,11 @@ import { TChartData } from "./charts";
 
 export type TAnalyticsTabsBase = "overview" | "work-items";
 export type TAnalyticsGraphsBase = "projects" | "work-items" | "custom-work-items";
+export type TAnalyticsFilterParams = {
+  project_ids?: string;
+  cycle_id?: string;
+  module_id?: string;
+};
 
 // service types
 
