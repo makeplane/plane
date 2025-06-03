@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
 import { ChevronDown, ListFilter } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // types
 import { TProjectFilters } from "@plane/types";
 // hooks
@@ -13,7 +14,6 @@ import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/pr
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useMember, useProjectFilter } from "@/hooks/store";
-import { useTranslation } from "@plane/i18n";
 
 export const ProjectsListMobileHeader = observer(() => {
   const { t } = useTranslation();

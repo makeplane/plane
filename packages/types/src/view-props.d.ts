@@ -98,17 +98,20 @@ export type TIssueParams =
   | "show_empty_groups"
   | "cursor"
   | "per_page"
-  | "hub_code"
   | "issue_type"
   | "layout"
   | "expand"
   | "customer_code"
+  | "customer_name"
   | "worker_code"
+  | "worker_name"
   | "trip_reference_number"
   | "reference_number"
   | "vendor_code"
+  | "vendor_name"
   | "custom_properties"
-  | "hub_code";
+  | "hub_code"
+  | "hub_name";
 
 export type TCalendarLayouts = "month" | "week";
 
@@ -128,11 +131,15 @@ export interface IIssueFilterOptions {
   target_date?: string[] | null;
   issue_type?: string[] | null;
   hub_code?: string[] | null;
+  hub_name?: string[] | null;
   customer_code?: string[] | null;
+  customer_name?: string[] | null;
   worker_code?: string[] | null;
+  worker_name?: string[] | null;
   trip_reference_number?: string[] | null;
   reference_number?: string[] | null;
   vendor_code?: string[] | null;
+  vendor_name?: string[] | null;
   custom_properties?: string[] | null;
 }
 
