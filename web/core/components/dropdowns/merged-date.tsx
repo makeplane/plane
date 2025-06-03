@@ -1,7 +1,7 @@
 import React from "react";
-import { format } from "date-fns";
 import { observer } from "mobx-react";
 // helpers
+import { formatDateRange } from "@plane/utils";
 import { getDate } from "@/helpers/date-time.helper";
 
 type Props = {
@@ -24,54 +24,7 @@ export const MergedDateDisplay: React.FC<Props> = observer((props) => {
   const parsedStartDate = getDate(startDate);
   const parsedEndDate = getDate(endDate);
 
-  // Helper function to format date range
-  const formatDateRange = (): string => {
-    // If no dates are provided
-    if (!parsedStartDate && !parsedEndDate) {
-      return "";
-    }
-
-    // If only start date is provided
-    if (parsedStartDate && !parsedEndDate) {
-      return format(parsedStartDate, "MMM dd, yyyy");
-    }
-
-    // If only end date is provided
-    if (!parsedStartDate && parsedEndDate) {
-      return format(parsedEndDate, "MMM dd, yyyy");
-    }
-
-    // If both dates are provided
-    if (parsedStartDate && parsedEndDate) {
-      const startYear = parsedStartDate.getFullYear();
-      const startMonth = parsedStartDate.getMonth();
-      const endYear = parsedEndDate.getFullYear();
-      const endMonth = parsedEndDate.getMonth();
-
-      // Same year, same month
-      if (startYear === endYear && startMonth === endMonth) {
-        const startDay = format(parsedStartDate, "dd");
-        const endDay = format(parsedEndDate, "dd");
-        return `${format(parsedStartDate, "MMM")} ${startDay} - ${endDay}, ${startYear}`;
-      }
-
-      // Same year, different month
-      if (startYear === endYear) {
-        const startFormatted = format(parsedStartDate, "MMM dd");
-        const endFormatted = format(parsedEndDate, "MMM dd");
-        return `${startFormatted} - ${endFormatted}, ${startYear}`;
-      }
-
-      // Different year
-      const startFormatted = format(parsedStartDate, "MMM dd, yyyy");
-      const endFormatted = format(parsedEndDate, "MMM dd, yyyy");
-      return `${startFormatted} - ${endFormatted}`;
-    }
-
-    return "";
-  };
-
-  const displayText = formatDateRange();
+  const displayText = formatDateRange(parsedStartDate, parsedEndDate);
 
   if (!displayText) {
     return null;
