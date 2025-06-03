@@ -46,10 +46,24 @@ class PublishedApplicationSerializer(serializers.ModelSerializer):
 class ApplicationCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ApplicationCategory
+        fields = ["id", "name", "description", "logo_props", "is_active"]
+
+
+class ApplicationTemplateMetaSerializer(serializers.ModelSerializer):
+    first_attachment = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Application
         fields = [
             "id",
             "name",
-            "description",
-            "logo_props",
-            "is_active",
+            "slug",
+            "short_description",
+            "company_name",
+            "first_attachment",
+            "logo_url",
         ]
+
+    def get_first_attachment(self, obj):
+        first_attachment = obj.attachments.first()
+        return first_attachment.asset_url if first_attachment else ""

@@ -27,6 +27,7 @@ export interface IBaseTemplateInstance<T extends TBaseTemplateWithData>
   canCurrentUserEditTemplate: boolean;
   canCurrentUserDeleteTemplate: boolean;
   canCurrentUserPublishTemplate: boolean;
+  canCurrentUserUnpublishTemplate: boolean;
   // helper actions
   mutateInstance: (templateData: Partial<T>) => void;
   // actions
@@ -204,6 +205,7 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
   abstract get canCurrentUserEditTemplate(): boolean;
   abstract get canCurrentUserDeleteTemplate(): boolean;
   abstract get canCurrentUserPublishTemplate(): boolean;
+  abstract get canCurrentUserUnpublishTemplate(): boolean;
 
   // helper actions
   /**

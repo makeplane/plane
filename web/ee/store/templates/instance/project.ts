@@ -34,4 +34,8 @@ export class ProjectTemplateInstance
       this.getUserRoleForTemplateInstance === EUserPermissions.ADMIN
     );
   }
+
+  get canCurrentUserUnpublishTemplate() {
+    return this.canCurrentUserPublishTemplate && this.is_published;
+  }
 }

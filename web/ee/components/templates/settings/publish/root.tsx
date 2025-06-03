@@ -46,6 +46,8 @@ export const PublishTemplate = observer(<T extends TBaseTemplateWithData>(props:
           // Ensure URLs have http protocol
           privacy_policy_url: data.privacy_policy_url ? ensureUrlHasProtocol(data.privacy_policy_url) : undefined,
           terms_of_service_url: data.terms_of_service_url ? ensureUrlHasProtocol(data.terms_of_service_url) : undefined,
+          // Set is_published to true
+          is_published: true,
         };
         // Update template with processed data
         await templateInstance.update(processedData as T); // This is done just to satisfy the typescript (publish data is always partial of the base template)

@@ -29,4 +29,8 @@ export class WorkItemTemplateInstance
   get canCurrentUserPublishTemplate() {
     return false;
   }
+
+  get canCurrentUserUnpublishTemplate() {
+    return this.canCurrentUserPublishTemplate && this.is_published;
+  }
 }

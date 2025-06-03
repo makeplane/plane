@@ -2008,7 +2008,8 @@
           }
         },
         "publish": {
-          "action": "Publikovať šablónu",
+          "action": "{isPublished, select, true {Nastavenia publikovania} other {Publikovať na Marketplace}}",
+          "unpublish_action": "Odstrániť z Marketplace",
           "title": "Urobte vašu šablónu objaviteľnou a rozpoznateľnou.",
           "name": {
             "label": "Názov šablóny",
@@ -2138,6 +2139,16 @@
           "title": "Nepodarilo sa odstrániť túto šablónu.",
           "message": "Skúste odstrániť ju znova alebo sa vráťte k nej neskôr. Ak stále nepodarí, kontaktujte nás."
         }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Šablóna stiahnuta",
+          "message": "{templateName}, šablóna typu {templateType}, bola stiahnutá z marketplace."
+        },
+        "error": {
+          "title": "Nepodarilo sa stiahnuť šablónu.",
+          "message": "Skúste ju stiahnuť znova alebo sa vráťte k nej neskôr. Ak stále nepodarí, kontaktujte nás."
+        }
       }
     },
     "delete_confirmation": {
@@ -2145,6 +2156,13 @@
       "description": {
         "prefix": "Ste si istí, že chcete odstrániť šablónu-",
         "suffix": "? Všetky údaje spojené s touto šablónou budú natrvalo odstránené. Tento krok nie je možné vrátiť späť."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Stiahnuť šablónu",
+      "description": {
+        "prefix": "Ste si istí, že chcete stiahnuť šablónu-",
+        "suffix": "? Šablóna bude stiahnutá z marketplace a nebude viac dostupná pre ostatných."
       }
     },
     "dropdown": {

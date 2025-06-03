@@ -116,7 +116,7 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
         template = Template.objects.get(
             workspace__slug=slug, template_type=Template.TemplateType.WORKITEM, pk=pk
         )
-        template_data = request.data.pop("template_data")
+        template_data = request.data.pop("template_data", {})
 
         template_serializer = TemplateSerializer(
             template, data=request.data, partial=True
@@ -255,7 +255,7 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
             project_id=project_id,
             pk=pk,
         )
-        template_data = request.data.pop("template_data")
+        template_data = request.data.pop("template_data", {})
 
         serializer = TemplateSerializer(template, data=request.data, partial=True)
         if serializer.is_valid():

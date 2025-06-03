@@ -2005,7 +2005,8 @@
           }
         },
         "publish": {
-          "action": "Publică șablonul",
+          "action": "{isPublished, select, true {Setări de publicare} other {Publică pe Marketplace}}",
+          "unpublish_action": "Elimină din Marketplace",
           "title": "Faceți-vă șablonul detectabil și recunoscut.",
           "name": {
             "label": "Numele șablonului",
@@ -2135,6 +2136,16 @@
           "title": "Nu am putut șterge acel șablon.",
           "message": "Încearcă să-l ștergi din nou sau revino la el mai târziu. Dacă nu îl poți șterge nici atunci, contactează-ne."
         }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Șablon retras",
+          "message": "{templateName}, șablonul de {templateType}, a fost retras de pe marketplace."
+        },
+        "error": {
+          "title": "Nu am putut retrage șablonul.",
+          "message": "Încearcă să-l retragi din nou sau revino la el mai târziu. Dacă nu îl poți retrage nici atunci, contactează-ne."
+        }
       }
     },
     "delete_confirmation": {
@@ -2142,6 +2153,13 @@
       "description": {
         "prefix": "Ești sigur că vrei să ștergi șablonul-",
         "suffix": "? Toate datele legate de șablon vor fi eliminate permanent. Această acțiune nu poate fi anulată."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Retrage șablonul",
+      "description": {
+        "prefix": "Ești sigur că vrei să retragi șablonul-",
+        "suffix": "? Șablonul va fi retras din marketplace și nu va mai fi disponibil pentru alții."
       }
     },
     "dropdown": {

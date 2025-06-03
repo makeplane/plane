@@ -2006,7 +2006,8 @@
           }
         },
         "publish": {
-          "action": "Pubblica modello",
+          "action": "{isPublished, select, true {Impostazioni di pubblicazione} other {Pubblica nel Marketplace}}",
+          "unpublish_action": "Rimuovi dal Marketplace",
           "title": "Rendi il tuo modello scopribile e riconoscibile.",
           "name": {
             "label": "Nome del modello",
@@ -2136,6 +2137,16 @@
           "title": "Non è stato possibile eliminare quel modello questa volta.",
           "message": "Prova a eliminarlo di nuovo o torna più tardi. Se non riesci a eliminarlo, contattaci."
         }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Modello rimosso",
+          "message": "{templateName}, il modello di {templateType}, è stato rimosso."
+        },
+        "error": {
+          "title": "Non è stato possibile rimuovere quel modello questa volta.",
+          "message": "Prova a rimuoverlo di nuovo o torna più tardi. Se non riesci a rimuoverlo, contattaci."
+        }
       }
     },
     "delete_confirmation": {
@@ -2143,6 +2154,13 @@
       "description": {
         "prefix": "Sei sicuro di voler eliminare il modello-",
         "suffix": "? Tutti i dati relativi al modello saranno rimossi definitivamente. Questa azione non può essere annullata."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Rimuovi modello",
+      "description": {
+        "prefix": "Sei sicuro di voler rimuovere il modello-",
+        "suffix": "? Questo modello non sarà più disponibile per gli utenti nel marketplace."
       }
     },
     "dropdown": {

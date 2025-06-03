@@ -7,6 +7,7 @@ from .views import (
     TemplateCategoryEndpoint,
     PublishedTemplateEndpoint,
     PublishedTemplateMetaEndpoint,
+    PublishedApplicationMetaEndpoint,
 )
 
 
@@ -50,5 +51,10 @@ urlpatterns = [
         "published-templates/<uuid:pk>/meta/",
         PublishedTemplateMetaEndpoint.as_view(),
         name="published-template-meta",
+    ),
+    path(
+        "published-applications/<str:slug>/meta/",
+        PublishedApplicationMetaEndpoint.as_view(),
+        name="published-application-meta",
     ),
 ]

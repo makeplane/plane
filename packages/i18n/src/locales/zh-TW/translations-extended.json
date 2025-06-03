@@ -2008,7 +2008,8 @@
           }
         },
         "publish": {
-          "action": "發布模板",
+          "action": "{isPublished, select, true {發布設定} other {發布到市場}}",
+          "unpublish_action": "從市場移除",
           "title": "讓您的模板可被發現和識別。",
           "name": {
             "label": "模板名稱",
@@ -2138,6 +2139,16 @@
           "title": "我們無法刪除該模板。",
           "message": "嘗試再次刪除它或稍後再試。如果您仍然無法刪除它，請聯繫我們。"
         }
+      },
+      "unpublish": {
+        "success": {
+          "title": "模板已移除",
+          "message": "{templateName}，{templateType}模板，已被移除。"
+        },
+        "error": {
+          "title": "我們無法移除該模板。",
+          "message": "嘗試再次移除它或稍後再試。如果您仍然無法移除它，請聯繫我們。"
+        }
       }
     },
     "delete_confirmation": {
@@ -2145,6 +2156,13 @@
       "description": {
         "prefix": "您確定要刪除模板-",
         "suffix": "嗎？與模板相關的所有數據將被永久移除。此操作無法撤銷。"
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "移除模板",
+      "description": {
+        "prefix": "您確定要移除模板-",
+        "suffix": "嗎？此模板將不再在市場上供用戶使用。"
       }
     },
     "dropdown": {

@@ -2007,7 +2007,8 @@
           }
         },
         "publish": {
-          "action": "Publier le modèle",
+          "action": "{isPublished, select, true {Paramètres de publication} other {Publier sur le Marketplace}}",
+          "unpublish_action": "Retirer du Marketplace",
           "title": "Rendez votre modèle découvrable et reconnaissable.",
           "name": {
             "label": "Nom du modèle",
@@ -2137,6 +2138,16 @@
           "title": "Nous n'avons pas pu supprimer ce modèle cette fois-ci.",
           "message": "Essayez de le supprimer à nouveau ou revenez-y plus tard. Si vous ne pouvez toujours pas le supprimer, contactez-nous."
         }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Modèle retiré",
+          "message": "{templateName}, le modèle de {templateType}, a maintenant été retiré."
+        },
+        "error": {
+          "title": "Nous n'avons pas pu retirer ce modèle cette fois-ci.",
+          "message": "Essayez de le retirer à nouveau ou revenez-y plus tard. Si vous ne pouvez toujours pas le retirer, contactez-nous."
+        }
       }
     },
     "delete_confirmation": {
@@ -2144,6 +2155,13 @@
       "description": {
         "prefix": "Êtes-vous sûr de vouloir supprimer le modèle-",
         "suffix": "? Toutes les données relatives au modèle seront définitivement supprimées. Cette action ne peut pas être annulée."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Retirer le modèle",
+      "description": {
+        "prefix": "Êtes-vous sûr de vouloir retirer le modèle-",
+        "suffix": "? Ce modèle ne sera plus disponible pour les utilisateurs sur le marketplace."
       }
     },
     "dropdown": {

@@ -2008,7 +2008,8 @@
           }
         },
         "publish": {
-          "action": "템플릿 게시",
+          "action": "{isPublished, select, true {게시 설정} other {마켓플레이스에 게시}}",
+          "unpublish_action": "마켓플레이스에서 제거",
           "title": "템플릿을 발견 가능하고 인식 가능하게 만드세요.",
           "name": {
             "label": "템플릿 이름",
@@ -2138,6 +2139,16 @@
           "title": "이 템플릿을 삭제할 수 없습니다.",
           "message": "다시 삭제하거나 나중에 돌아오세요. 그때도 삭제할 수 없으면 문의하세요."
         }
+      },
+      "unpublish": {
+        "success": {
+          "title": "템플릿 제거됨",
+          "message": "{templateType} 템플릿인 {templateName}이(가) 제거되었습니다."
+        },
+        "error": {
+          "title": "이 템플릿을 제거할 수 없습니다.",
+          "message": "다시 제거하거나 나중에 돌아오세요. 그때도 제거할 수 없으면 문의하세요."
+        }
       }
     },
     "delete_confirmation": {
@@ -2145,6 +2156,13 @@
       "description": {
         "prefix": "템플릿-",
         "suffix": "을(를) 삭제하시겠습니까? 템플릿과 관련된 모든 데이터가 영구적으로 제거됩니다. 이 작업은 취소할 수 없습니다."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "템플릿 제거",
+      "description": {
+        "prefix": "템플릿-",
+        "suffix": "을(를) 제거하시겠습니까? 이 템플릿은 마켓플레이스에서 사용자가 더 이상 사용할 수 없습니다."
       }
     },
     "dropdown": {

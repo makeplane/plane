@@ -115,7 +115,7 @@ class PageTemplateEndpoint(TemplateBaseEndpoint):
         template = Template.objects.get(
             workspace__slug=slug, template_type=Template.TemplateType.PAGE, pk=pk
         )
-        template_data = request.data.pop("template_data")
+        template_data = request.data.pop("template_data", {})
 
         template_serializer = TemplateSerializer(
             template, data=request.data, partial=True
@@ -248,7 +248,7 @@ class PageProjectTemplateEndpoint(TemplateBaseEndpoint):
             pk=pk,
             template_type=Template.TemplateType.PAGE,
         )
-        template_data = request.data.pop("template_data")
+        template_data = request.data.pop("template_data", {})
 
         template_serializer = TemplateSerializer(
             template, data=request.data, partial=True

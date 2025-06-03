@@ -2067,7 +2067,8 @@
           }
         },
         "publish": {
-          "action": "Şablonu yayınla",
+          "action": "{isPublished, select, true {Yayın ayarları} other {Marketplace'de yayınla}}",
+          "unpublish_action": "Marketplace'den kaldır",
           "title": "Şablonunuzu keşfedilebilir ve tanınabilir yapın.",
           "name": {
             "label": "Şablon adı",
@@ -2197,6 +2198,16 @@
           "title": "O şablonu bu sefer silemedik.",
           "message": "Tekrar silmeyi deneyin veya daha sonra tekrar gelin. O zaman silemezseniz bizimle iletişime geçin."
         }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Şablon yayından kaldırıldı",
+          "message": "{templateType} şablonu olan {templateName} marketplace'den kaldırıldı."
+        },
+        "error": {
+          "title": "Şablonu yayından kaldıramadık.",
+          "message": "Tekrar yayından kaldırmayı deneyin veya daha sonra tekrar gelin. O zaman kaldıramazsanız bizimle iletişime geçin."
+        }
       }
     },
     "delete_confirmation": {
@@ -2204,6 +2215,13 @@
       "description": {
         "prefix": "Şablonu silmek istediğinizden emin misiniz-",
         "suffix": "? Şablonla ilgili tüm veriler kalıcı olarak kaldırılacak. Bu işlem geri alınamaz."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Şablonu yayından kaldır",
+      "description": {
+        "prefix": "Şablonu yayından kaldırmak istediğinizden emin misiniz-",
+        "suffix": "? Şablon marketplace'den kaldırılacak ve diğerleri için artık mevcut olmayacak."
       }
     },
     "dropdown": {

@@ -2006,7 +2006,8 @@
           }
         },
         "publish": {
-          "action": "Publicar plantilla",
+          "action": "{isPublished, select, true {Configuración de publicación} other {Publicar en el Marketplace}}",
+          "unpublish_action": "Retirar del Marketplace",
           "title": "Haga que su plantilla sea descubrible y reconocible.",
           "name": {
             "label": "Nombre de la plantilla",
@@ -2136,6 +2137,16 @@
           "title": "No pudimos eliminar esa plantilla esta vez.",
           "message": "Intenta eliminarla de nuevo o vuelve a intentarlo más tarde. Si no puedes eliminarla entonces, contacta con nosotros."
         }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Plantilla retirada",
+          "message": "{templateName}, la plantilla de {templateType}, ha sido retirada."
+        },
+        "error": {
+          "title": "No pudimos retirar esa plantilla esta vez.",
+          "message": "Intenta retirarla de nuevo o vuelve a intentarlo más tarde. Si no puedes retirarla entonces, contacta con nosotros."
+        }
       }
     },
     "delete_confirmation": {
@@ -2143,6 +2154,13 @@
       "description": {
         "prefix": "¿Estás seguro de que quieres eliminar la plantilla-",
         "suffix": "? Todos los datos relacionados con la plantilla se eliminarán permanentemente. Esta acción no se puede deshacer."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Retirar plantilla",
+      "description": {
+        "prefix": "¿Estás seguro de que quieres retirar la plantilla-",
+        "suffix": "? Esta plantilla ya no estará disponible para los usuarios en el marketplace."
       }
     },
     "dropdown": {

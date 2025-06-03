@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // icons
-import { Earth, Pencil, Trash2 } from "lucide-react";
+import { Earth, EarthLock, Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -36,6 +36,8 @@ export const TemplateQuickActions = observer(
     // states
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+    const [isUnpublishModalOpen, setIsUnpublishModalOpen] = useState(false);
+    const [isUnpublishLoading, setIsUnpublishLoading] = useState(false);
     // plane hooks
     const { t } = useTranslation();
     // derived values
@@ -70,8 +72,37 @@ export const TemplateQuickActions = observer(
       router.push(publishTemplatePath);
     };
 
-    const handleDeleteTemplateModal = () => {
-      setIsDeleteModalOpen(true);
+    const handleUnpublishTemplate = async () => {
+      if (!template.id) return;
+      setIsUnpublishLoading(true);
+      await template
+        .update({
+          is_published: false,
+        } as Partial<T>)
+        .then(() => {
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: t("templates.toasts.unpublish.success.title"),
+            message: t("templates.toasts.unpublish.success.message", {
+              templateName: template.name,
+              templateType: t(getTemplateTypeI18nName(template.template_type))?.toLowerCase(),
+            }),
+          });
+        })
+        .catch(() => {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("templates.toasts.unpublish.error.title"),
+            message: t("templates.toasts.unpublish.error.message", {
+              templateName: template.name,
+              templateType: t(getTemplateTypeI18nName(template.template_type))?.toLowerCase(),
+            }),
+          });
+        })
+        .finally(() => {
+          setIsUnpublishModalOpen(false);
+          setIsUnpublishLoading(false);
+        });
     };
 
     const handleTemplateDeletion = async () => {
@@ -111,14 +142,24 @@ export const TemplateQuickActions = observer(
       },
       {
         key: "publish",
-        title: t("templates.settings.form.publish.action"),
+        title: t("templates.settings.form.publish.action", {
+          isPublished: template.is_published,
+        }),
         icon: Earth,
         action: handlePublishTemplate,
         shouldRender: template.canCurrentUserPublishTemplate,
       },
       {
+        key: "unpublish",
+        title: t("templates.settings.form.publish.unpublish_action"),
+        icon: EarthLock,
+        action: () => setIsUnpublishModalOpen(true),
+        shouldRender: template.canCurrentUserUnpublishTemplate,
+        className: "text-red-500",
+      },
+      {
         key: "delete",
-        action: handleDeleteTemplateModal,
+        action: () => setIsDeleteModalOpen(true),
         title: t("common.actions.delete"),
         icon: Trash2,
         shouldRender: template.canCurrentUserDeleteTemplate,
@@ -141,6 +182,24 @@ export const TemplateQuickActions = observer(
               {t("templates.delete_confirmation.description.suffix")}
             </>
           }
+        />
+        <AlertModalCore
+          handleClose={() => setIsUnpublishModalOpen(false)}
+          handleSubmit={handleUnpublishTemplate}
+          isSubmitting={isUnpublishLoading}
+          isOpen={isUnpublishModalOpen}
+          title={t("templates.unpublish_confirmation.title")}
+          content={
+            <>
+              {t("templates.unpublish_confirmation.description.prefix")}
+              <span className="font-medium text-custom-text-100">{template.name}</span>
+              {t("templates.unpublish_confirmation.description.suffix")}
+            </>
+          }
+          primaryButtonText={{
+            default: t("common.confirm"),
+            loading: t("common.confirming"),
+          }}
         />
         {parentRef && <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />}
         <CustomMenu ellipsis placement="bottom-end" closeOnSelect>

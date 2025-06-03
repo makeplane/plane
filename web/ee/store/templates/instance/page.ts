@@ -26,4 +26,8 @@ export class PageTemplateInstance extends BaseTemplateInstance<TPageTemplate> im
   get canCurrentUserPublishTemplate() {
     return false;
   }
+
+  get canCurrentUserUnpublishTemplate() {
+    return this.canCurrentUserPublishTemplate && this.is_published;
+  }
 }

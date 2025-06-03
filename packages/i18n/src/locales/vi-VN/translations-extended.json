@@ -1991,7 +1991,8 @@
           }
         },
         "publish": {
-          "action": "Xuất bản mẫu",
+          "action": "{isPublished, select, true {Cài đặt xuất bản} other {Xuất bản lên Marketplace}}",
+          "unpublish_action": "Gỡ khỏi Marketplace",
           "title": "Làm cho mẫu của bạn dễ khám phá và nhận biết.",
           "name": {
             "label": "Tên mẫu",
@@ -2121,6 +2122,16 @@
           "title": "Chúng tôi không thể xóa mẫu đó lần này.",
           "message": "Thử xóa nó lại hoặc quay lại nó sau. Nếu vẫn còn vấn đề, liên hệ với chúng tôi."
         }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Mẫu đã được gỡ xuất bản",
+          "message": "{templateName}, mẫu {templateType}, đã được gỡ xuất bản."
+        },
+        "error": {
+          "title": "Chúng tôi không thể gỡ xuất bản mẫu đó lần này.",
+          "message": "Thử gỡ xuất bản nó lại hoặc quay lại nó sau. Nếu vẫn còn vấn đề, liên hệ với chúng tôi."
+        }
       }
     },
     "delete_confirmation": {
@@ -2128,6 +2139,13 @@
       "description": {
         "prefix": "Bạn có chắc chắn muốn xóa mẫu-",
         "suffix": "? Tất cả dữ liệu liên quan đến mẫu sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Gỡ xuất bản mẫu",
+      "description": {
+        "prefix": "Bạn có chắc chắn muốn gỡ xuất bản mẫu-",
+        "suffix": "? Mẫu này sẽ không còn khả dụng cho người dùng trên marketplace."
       }
     },
     "dropdown": {

@@ -2008,7 +2008,8 @@
           }
         },
         "publish": {
-          "action": "Publikuj szablon",
+          "action": "{isPublished, select, true {Ustawienia publikacji} other {Publikuj na Marketplace}}",
+          "unpublish_action": "Usuń z Marketplace",
           "title": "Ułatw swoim szablonom by były znalezione i rozpoznawalne.",
           "name": {
             "label": "Nazwa szablonu",
@@ -2138,6 +2139,16 @@
           "title": "Nie mogliśmy usunąć tego szablonu.",
           "message": "Spróbuj usunąć go ponownie lub wróć do niego później. Jeśli nadal nie możesz go usunąć, skontaktuj się z nami."
         }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Szablon wycofany z publikacji",
+          "message": "{templateName}, szablon typu {templateType}, został wycofany z marketplace."
+        },
+        "error": {
+          "title": "Nie mogliśmy wycofać tego szablonu z publikacji.",
+          "message": "Spróbuj wycofać go ponownie lub wróć do tego później. Jeśli nadal nie możesz go wycofać, skontaktuj się z nami."
+        }
       }
     },
     "delete_confirmation": {
@@ -2145,6 +2156,13 @@
       "description": {
         "prefix": "Czy na pewno chcesz usunąć szablon-",
         "suffix": "? Wszystkie dane związane z szablonem zostaną trwale usunięte. Tej akcji nie można cofnąć."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Wycofaj szablon z publikacji",
+      "description": {
+        "prefix": "Czy na pewno chcesz wycofać szablon z publikacji-",
+        "suffix": "? Szablon zostanie usunięty z marketplace i nie będzie już dostępny dla innych."
       }
     },
     "dropdown": {

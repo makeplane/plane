@@ -2008,7 +2008,8 @@
           }
         },
         "publish": {
-          "action": "Publikovat šablonu",
+          "action": "{isPublished, select, true {Nastavení publikování} other {Publikovat na Marketplace}}",
+          "unpublish_action": "Odebrat z Marketplace",
           "title": "Uložte svou šablonu, aby byla pro vaše uživatele dostupná.",
           "name": {
             "label": "Název šablony",
@@ -2138,6 +2139,16 @@
           "title": "Chyba!",
           "message": "Nepodařilo se smazat šablonu. Zkuste to znovu!"
         }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Šablona stažena",
+          "message": "{templateName}, šablona typu {templateType}, byla stažena z marketplace."
+        },
+        "error": {
+          "title": "Nepodařilo se stáhnout šablonu.",
+          "message": "Zkuste ji stáhnout znovu nebo se k ní vraťte později. Pokud ji stále nemůžete stáhnout, kontaktujte nás."
+        }
       }
     },
     "delete_confirmation": {
@@ -2145,6 +2156,13 @@
       "description": {
         "prefix": "Opravdu chcete smazat šablonu-",
         "suffix": "? Všechna data související se šablonou budou trvale odstraněna. Tuto akci nelze vrátit zpět."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Stáhnout šablonu",
+      "description": {
+        "prefix": "Opravdu chcete stáhnout šablonu-",
+        "suffix": "? Šablona bude stažena z marketplace a nebude více dostupná pro ostatní."
       }
     },
     "dropdown": {

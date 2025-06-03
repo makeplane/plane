@@ -2008,7 +2008,8 @@
           }
         },
         "publish": {
-          "action": "Vorlage veröffentlichen",
+          "action": "{isPublished, select, true {Veröffentlichungseinstellungen} other {Im Marketplace veröffentlichen}}",
+          "unpublish_action": "Vom Marketplace zurückziehen",
           "title": "Machen Sie Ihre Vorlage entdeckbar und erkennbar.",
           "name": {
             "label": "Vorlagenname",
@@ -2138,6 +2139,16 @@
           "title": "Wir konnten diese Vorlage nicht löschen.",
           "message": "Versuchen Sie, sie erneut zu löschen oder kommen Sie später darauf zurück. Wenn Sie sie dann nicht löschen können, kontaktieren Sie uns."
         }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Vorlage zurückgezogen",
+          "message": "{templateName}, die {templateType}-Vorlage, wurde jetzt zurückgezogen."
+        },
+        "error": {
+          "title": "Wir konnten diese Vorlage nicht zurückziehen.",
+          "message": "Versuchen Sie, sie erneut zurückzuziehen oder kommen Sie später darauf zurück. Wenn Sie sie dann nicht zurückziehen können, kontaktieren Sie uns."
+        }
       }
     },
     "delete_confirmation": {
@@ -2145,6 +2156,13 @@
       "description": {
         "prefix": "Sind Sie sicher, dass Sie die Vorlage löschen möchten-",
         "suffix": "? Alle mit der Vorlage verbundenen Daten werden dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Vorlage zurückziehen",
+      "description": {
+        "prefix": "Sind Sie sicher, dass Sie die Vorlage zurückziehen möchten-",
+        "suffix": "? Diese Vorlage wird den Benutzern im Marketplace nicht mehr zur Verfügung stehen."
       }
     },
     "dropdown": {

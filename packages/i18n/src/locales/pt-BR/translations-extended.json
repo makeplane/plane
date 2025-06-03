@@ -2001,7 +2001,8 @@
           }
         },
         "publish": {
-          "action": "Publicar modelo",
+          "action": "{isPublished, select, true {Configurações de publicação} other {Publicar no Marketplace}}",
+          "unpublish_action": "Remover do Marketplace",
           "title": "Upewnij się, że szablon jest odkrywalny i rozpoznawalny.",
           "name": {
             "label": "Nazwa szablonu",
@@ -2131,6 +2132,16 @@
           "title": "Não conseguimos excluir esse modelo.",
           "message": "Tente excluí-lo novamente ou volte a ele mais tarde. Se você não conseguir excluí-lo, entre em contato conosco."
         }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Modelo removido",
+          "message": "{templateName}, o modelo de {templateType}, foi removido."
+        },
+        "error": {
+          "title": "Não conseguimos remover esse modelo desta vez.",
+          "message": "Tente removê-lo novamente ou volte a ele mais tarde. Se você não conseguir removê-lo, entre em contato conosco."
+        }
       }
     },
     "delete_confirmation": {
@@ -2138,6 +2149,13 @@
       "description": {
         "prefix": "Tem certeza que deseja excluir o modelo-",
         "suffix": "? Todos os dados relacionados ao modelo serão removidos permanentemente. Esta ação não pode ser desfeita."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Remover modelo",
+      "description": {
+        "prefix": "Tem certeza que deseja remover o modelo-",
+        "suffix": "? Este modelo não estará mais disponível para usuários no marketplace."
       }
     }
   },

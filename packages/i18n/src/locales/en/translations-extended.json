@@ -192,7 +192,7 @@
     },
     "project_updates": {
       "heading": "Project Updates",
-      "description":"Consolidated tracking and progress monitoring for this project"
+      "description": "Consolidated tracking and progress monitoring for this project"
     },
     "templates": {
       "heading": "Templates",
@@ -2113,7 +2113,8 @@
           }
         },
         "publish": {
-          "action": "Publish to Marketplace",
+          "action": "{isPublished, select, true {Publish settings} other {Publish to Marketplace}}",
+          "unpublish_action": "Unpublish from Marketplace",
           "title": "Make your template discoverable and recognizable.",
           "name": {
             "label": "Name of template",
@@ -2254,6 +2255,16 @@
           "title": "We couldn't delete that template this.",
           "message": "Try deleting it again or come back to it later. If you can't delete it then, reach out to us."
         }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Template unpublished",
+          "message": "{templateName}, the {templateType} template, has now been unpublished."
+        },
+        "error": {
+          "title": "We couldn't unpublish that template this.",
+          "message": "Try unpublishing it again or come back to it later. If you can't unpublish it then, reach out to us."
+        }
       }
     },
     "delete_confirmation": {
@@ -2261,6 +2272,13 @@
       "description": {
         "prefix": "Are you sure you want to delete template-",
         "suffix": "? All of the data related to the template will be permanently removed. This action cannot be undone."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Unpublish template",
+      "description": {
+        "prefix": "Are you sure you want to unpublish template-",
+        "suffix": "? This template will no longer be available to users on the marketplace."
       }
     },
     "dropdown": {

@@ -11,7 +11,11 @@ from rest_framework.request import Request
 # Local imports
 from plane.authentication.models import Application, ApplicationCategory
 from plane.ee.views.base import BaseAPIView
-from ..serializers import PublishedApplicationSerializer, ApplicationCategorySerializer
+from ..serializers import (
+    PublishedApplicationSerializer,
+    ApplicationCategorySerializer,
+    ApplicationTemplateMetaSerializer,
+)
 
 
 class PublishedApplicationEndpoint(BaseAPIView):
@@ -21,9 +25,7 @@ class PublishedApplicationEndpoint(BaseAPIView):
 
     def get_queryset(self) -> QuerySet[Application]:
         return (
-            self.model.objects.filter(
-                published_at__isnull=False,
-            )
+            self.model.objects.filter(published_at__isnull=False)
             .select_related("logo_asset")
             .prefetch_related("attachments", "categories")
         )
@@ -48,9 +50,7 @@ class PublishedApplicationBySlugEndpoint(BaseAPIView):
 
     def get_queryset(self) -> QuerySet[Application]:
         return (
-            self.model.objects.filter(
-                published_at__isnull=False,
-            )
+            self.model.objects.filter(published_at__isnull=False)
             .select_related("logo_asset")
             .prefetch_related("attachments", "categories")
         )
@@ -76,3 +76,19 @@ class ApplicationCategoryEndpoint(BaseAPIView):
         return Response(
             serialised_application_categories.data, status=status.HTTP_200_OK
         )
+
+
+class PublishedApplicationMetaEndpoint(BaseAPIView):
+    permission_classes = [AllowAny]
+    model = Application
+    serializer_class = ApplicationTemplateMetaSerializer
+
+    def get_queryset(self) -> QuerySet[Application]:
+        queryset = self.model.objects.filter(published_at__isnull=False)
+
+        return queryset
+
+    def get(self, request: Request, slug: str) -> Response:
+        application = self.get_queryset().get(slug=slug)
+        serialised_application = self.serializer_class(application)
+        return Response(serialised_application.data, status=status.HTTP_200_OK)

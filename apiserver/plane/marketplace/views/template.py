@@ -50,12 +50,7 @@ class PublishedTemplateEndpoint(BaseAPIView):
     detail_serializer_class = PublishedTemplateDetailSerializer
     filter_backends = (DjangoFilterBackend, SearchFilter)
     filterset_class = PublishedTemplateFilter
-    search_fields = [
-        "name",
-        "description_stripped",
-        "company_name",
-        "categories__name",
-    ]
+    search_fields = ["name", "description_stripped", "company_name", "categories__name"]
     ordering_fields = ["name", "created_at"]
 
     def get_queryset(self) -> QuerySet[Template]:
@@ -63,10 +58,7 @@ class PublishedTemplateEndpoint(BaseAPIView):
             is_published=True,
             is_verified=True,
             template_type=Template.TemplateType.PROJECT,
-        ).prefetch_related(
-            "attachments",
-            "categories",
-        )
+        ).prefetch_related("attachments", "categories")
 
         # Filter by category name if provided
         category = self.request.query_params.get("category", None)
@@ -106,8 +98,6 @@ class PublishedTemplateMetaEndpoint(BaseAPIView):
             is_published=True,
             is_verified=True,
             template_type=Template.TemplateType.PROJECT,
-        ).prefetch_related(
-            "categories",
         )
         return queryset
 

@@ -2005,7 +2005,8 @@
           }
         },
         "publish": {
-          "action": "Publikasikan template",
+          "action": "{isPublished, select, true {Pengaturan publikasi} other {Publikasikan ke Marketplace}}",
+          "unpublish_action": "Hapus dari Marketplace",
           "title": "Buat template Anda dapat dikenali dan ditemukan.",
           "name": {
             "label": "Nama template",
@@ -2135,6 +2136,16 @@
           "title": "Kami tidak dapat menghapus template itu.",
           "message": "Coba hapus lagi atau kembali nanti. Jika Anda tidak dapat menghapusnya, hubungi kami."
         }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Template dihapus dari publikasi",
+          "message": "{templateName}, template {templateType}, telah dihapus dari publikasi."
+        },
+        "error": {
+          "title": "Kami tidak dapat menghapus template itu dari publikasi.",
+          "message": "Coba hapus dari publikasi lagi atau kembali nanti. Jika Anda tidak dapat menghapusnya dari publikasi, hubungi kami."
+        }
       }
     },
     "delete_confirmation": {
@@ -2142,6 +2153,13 @@
       "description": {
         "prefix": "Apakah Anda yakin ingin menghapus template-",
         "suffix": "? Semua data terkait template akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Hapus template dari publikasi",
+      "description": {
+        "prefix": "Apakah Anda yakin ingin menghapus template-",
+        "suffix": " dari publikasi? Template ini tidak akan lagi tersedia untuk pengguna di marketplace."
       }
     },
     "dropdown": {
