@@ -10,7 +10,7 @@ import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { ProjectMemberList, ProjectSettingsMemberDefaults } from "@/components/project";
 // hooks
-import { SettingsContentWrapper } from "@/components/settings";
+import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
 import { useProject, useUserPermissions } from "@/hooks/store";
 // plane web imports
 import { ProjectTeamspaceList } from "@/plane-web/components/projects/teamspaces";
@@ -42,16 +42,10 @@ const MembersSettingsPage = observer(() => {
   return (
     <SettingsContentWrapper size="lg">
       <PageHead title={pageTitle} />
-      <section className={`w-full`}>
-        <div className="flex items-center border-b border-custom-border-100 pb-3.5">
-          <div className="text-lg font-semibold">
-            {t(getProjectSettingsPageLabelI18nKey("members", "common.members"))}
-          </div>
-        </div>
-        <ProjectSettingsMemberDefaults projectId={projectId} workspaceSlug={workspaceSlug} />
-        <ProjectTeamspaceList projectId={projectId} workspaceSlug={workspaceSlug} />
-        <ProjectMemberList projectId={projectId} workspaceSlug={workspaceSlug} />
-      </section>
+      <SettingsHeading title={t(getProjectSettingsPageLabelI18nKey("members", "common.members"))} />
+      <ProjectSettingsMemberDefaults projectId={projectId} workspaceSlug={workspaceSlug} />
+      <ProjectTeamspaceList projectId={projectId} workspaceSlug={workspaceSlug} />
+      <ProjectMemberList projectId={projectId} workspaceSlug={workspaceSlug} />
     </SettingsContentWrapper>
   );
 });
