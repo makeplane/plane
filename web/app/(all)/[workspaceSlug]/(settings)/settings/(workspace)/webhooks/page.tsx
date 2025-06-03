@@ -82,9 +82,9 @@ const WebhooksListPage = observer(() => {
           <div className="flex h-full w-full flex-col">
             <div className="h-full w-full flex items-center justify-center">
               <DetailedEmptyState
-                className="!px-0 py-5"
-                title={t("workspace_settings.empty_state.webhooks.title")}
-                description={t("workspace_settings.empty_state.webhooks.description")}
+                className="!p-0"
+                title=""
+                description=""
                 assetPath={resolvedPath}
                 size="md"
                 primaryButton={{

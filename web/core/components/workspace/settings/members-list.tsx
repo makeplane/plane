@@ -62,7 +62,7 @@ export const WorkspaceMembersList: FC<{ searchQuery: string; isAdmin: boolean }>
           isOpen={showPendingInvites}
           onToggle={() => setShowPendingInvites((prev) => !prev)}
           buttonClassName="w-full"
-          className="h-full"
+          className=""
           title={
             <div className="flex w-full items-center justify-between pt-4">
               <div className="flex">

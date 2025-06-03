@@ -1081,7 +1081,9 @@
     "select": {
       "error": "Silakan pilih setidaknya satu item kerja",
       "empty": "Tidak ada item kerja yang dipilih",
-      "add_selected": "Tambah item kerja yang dipilih"
+      "add_selected": "Tambah item kerja yang dipilih",
+      "select_all": "Pilih semua item kerja",
+      "deselect_all": "Batalkan pilihan semua item kerja"
     },
     "open_in_full_screen": "Buka item kerja dalam layar penuh"
   },

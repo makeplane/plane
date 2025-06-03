@@ -236,6 +236,19 @@ export class FileService extends APIService {
       });
   }
 
+  async checkIfAssetExists(
+    workspaceSlug: string,
+    assetId: string
+  ): Promise<{
+    exists: boolean;
+  }> {
+    return this.get(`/api/assets/v2/workspaces/${workspaceSlug}/check/${assetId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async restoreOldEditorAsset(workspaceId: string, src: string): Promise<void> {
     const assetKey = getAssetIdFromUrl(src);
     return this.post(`/api/workspaces/file-assets/${workspaceId}/${assetKey}/restore/`)

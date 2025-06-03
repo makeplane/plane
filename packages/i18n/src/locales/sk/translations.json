@@ -1083,7 +1083,9 @@
     "select": {
       "error": "Vyberte aspoň jednu pracovnú položku",
       "empty": "Nie sú vybrané žiadne pracovné položky",
-      "add_selected": "Pridať vybrané pracovné položky"
+      "add_selected": "Pridať vybrané pracovné položky",
+      "select_all": "Vybrať všetko",
+      "deselect_all": "Zrušiť výber všetkého"
     },
     "open_in_full_screen": "Otvoriť pracovnú položku na celú obrazovku"
   },
