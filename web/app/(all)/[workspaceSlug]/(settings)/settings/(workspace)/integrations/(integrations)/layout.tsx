@@ -2,7 +2,9 @@
 
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
+import { ChevronLeftIcon } from "lucide-react";
 import { SILO_BASE_URL, SILO_BASE_PATH, E_FEATURE_FLAGS } from "@plane/constants";
 // hooks
 import { SettingsContentWrapper } from "@/components/settings";
@@ -41,7 +43,16 @@ const IntegrationLayout: FC<TIntegrationLayout> = observer((props) => {
       fallback={<IntegrationsEmptyState theme={currentUserProfile?.theme.theme || "light"} />}
     >
       <SettingsContentWrapper size="lg">
-        <div className="w-full h-full">{children}</div>
+        <div className="w-full h-full">
+          <Link
+            href={`/${workspaceSlug}/settings/integrations`}
+            className="flex items-center gap-2 text-sm font-semibold text-custom-text-300 mb-6"
+          >
+            <ChevronLeftIcon className="w-4 h-4" />
+            Back to integrations
+          </Link>
+          <div className="w-full h-full">{children}</div>
+        </div>
       </SettingsContentWrapper>
     </WithFeatureFlagHOC>
   );

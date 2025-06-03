@@ -10,6 +10,7 @@ import { TUserApplication } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { Button, Input, Loader, setToast, TOAST_TYPE } from "@plane/ui";
 import { RichTextEditor } from "@/components/editor";
+import { SettingsHeading } from "@/components/settings";
 import { getAssetIdFromUrl, getFileURL } from "@/helpers/file.helper";
 import { useWorkspace, useEditorAsset, useUserProfile } from "@/hooks/store";
 import { AppImageUploadModal } from "@/plane-web/components/common/modal";
@@ -148,6 +149,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
   };
 
   const handleCredentialsModalClose = () => {
+    setIsCredentialsModalOpen(false);
     router.push(`/${workspaceSlug}/settings/applications`);
     setClientId(undefined);
     setClientSecret(undefined);
@@ -159,10 +161,8 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
 
   return (
     <form onSubmit={handleAppFormSubmit}>
-      <div className="space-y-4 py-5">
-        <h3 className="text-xl font-medium text-custom-text-200">
-          {!watch("id") ? "Let's get all the necessary info" : "Edit your app's details"}
-        </h3>
+      <div className="space-y-4">
+        <SettingsHeading title={!watch("id") ? "Let's get all the necessary info" : "Edit your app's details"} />
         <AppImageUploadModal
           isOpen={isImageModalOpen}
           onClose={() => setIsImageModalOpen(false)}

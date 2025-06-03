@@ -1,10 +1,12 @@
-"use client"
+"use client";
 
 import { observer } from "mobx-react";
 
 // component
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+import { ChevronLeftIcon } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TUserApplication } from "@plane/types";
 import { Breadcrumbs, setToast, TOAST_TYPE } from "@plane/ui";
@@ -28,14 +30,12 @@ const ApplicationCreatePage = observer(() => {
   const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Create Application` : undefined;
 
-  const { data: categories } = useSWR(APPLICATION_CATEGORIES_LIST(), async () =>
-    fetchApplicationCategories()
-  );
+  const { data: categories } = useSWR(APPLICATION_CATEGORIES_LIST(), async () => fetchApplicationCategories());
 
   const handleFormSubmit = async (data: Partial<TUserApplication>) => {
     try {
       if (!data) return;
-    const response = await createApplication(data);
+      const response = await createApplication(data);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success",
@@ -53,34 +53,24 @@ const ApplicationCreatePage = observer(() => {
   };
 
   if (workspaceUserInfo && !canPerformWorkspaceAdminActions) {
-    return <NotAuthorizedView section="settings" />;
+    return <NotAuthorizedView section="settings" className="h-auto" />;
   }
-
 
   return (
     <>
       <PageHead title={pageTitle} />
-      <div>
-          <Breadcrumbs>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <BreadcrumbLink
-                  href={`/${workspaceSlug}/settings/applications`}
-                  label="Applications"
-                />
-              }
-            />
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={<BreadcrumbLink label={`Add Details`} />}
-            />
-          </Breadcrumbs>
-        </div>
-      <CreateUpdateApplication handleFormSubmit={handleFormSubmit} />
+      <div className="w-full h-full">
+        <Link
+          href={`/${workspaceSlug}/settings/applications`}
+          className="flex items-center gap-2 text-sm font-semibold text-custom-text-300 mb-6"
+        >
+          <ChevronLeftIcon className="w-4 h-4" />
+          Back to applications
+        </Link>
+        <CreateUpdateApplication handleFormSubmit={handleFormSubmit} />
+      </div>
     </>
   );
 });
-
 
 export default ApplicationCreatePage;

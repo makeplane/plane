@@ -1,11 +1,12 @@
-"use client"
+"use client";
 
 import { observer } from "mobx-react";
 
 // component
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, ChevronLeftIcon } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TApplication } from "@plane/types";
 import { Breadcrumbs, setToast, TOAST_TYPE } from "@plane/ui";
@@ -24,8 +25,8 @@ const ApplicationEditPage = observer(() => {
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
-  const { applicationId, workspaceSlug } = useParams()
-  const { updateApplication, getApplicationById, fetchApplication, fetchApplicationCategories } = useApplications()
+  const { applicationId, workspaceSlug } = useParams();
+  const { updateApplication, getApplicationById, fetchApplication, fetchApplicationCategories } = useApplications();
 
   // derived values
   const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
@@ -33,14 +34,12 @@ const ApplicationEditPage = observer(() => {
   const application = getApplicationById(applicationId?.toString() || "");
 
   // state
-  const { data, isLoading } = useSWR(applicationId ? APPLICATION_DETAILS(applicationId.toString()) : null, applicationId ? async () =>
-    fetchApplication(applicationId.toString()) : null
+  const { data, isLoading } = useSWR(
+    applicationId ? APPLICATION_DETAILS(applicationId.toString()) : null,
+    applicationId ? async () => fetchApplication(applicationId.toString()) : null
   );
 
-  const { data: categories } = useSWR(APPLICATION_CATEGORIES_LIST(), async () =>
-    fetchApplicationCategories()
-  );
-
+  const { data: categories } = useSWR(APPLICATION_CATEGORIES_LIST(), async () => fetchApplicationCategories());
 
   const handleFormSubmit = async (data: Partial<TApplication>): Promise<TApplication | undefined> => {
     try {
@@ -67,7 +66,6 @@ const ApplicationEditPage = observer(() => {
     return <EmailSettingsLoader />;
   }
 
-
   if (workspaceUserInfo && !canPerformWorkspaceAdminActions) {
     return <NotAuthorizedView section="settings" />;
   }
@@ -75,24 +73,9 @@ const ApplicationEditPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <div>
-        <Breadcrumbs>
-          <Breadcrumbs.BreadcrumbItem
-            type="text"
-            link={
-              <BreadcrumbLink
-                href={`/${workspaceSlug}/settings/applications`}
-                label="Back"
-                icon={<ChevronLeft className="w-4 h-4" />}
-              />
-            }
-          />
-        </Breadcrumbs>
-      </div>
       <CreateUpdateApplication formData={application} handleFormSubmit={handleFormSubmit} />
     </>
   );
 });
-
 
 export default ApplicationEditPage;

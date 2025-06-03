@@ -7,6 +7,7 @@ import {
   CreditCard,
   Shapes,
   Timer,
+  ToyBrick,
   Users,
   Webhook,
 } from "lucide-react";
@@ -37,6 +38,7 @@ const ICONS = {
   templates: Shapes,
   integrations: Cable,
   project_states: ProjectStatesIcon,
+  applications: ToyBrick,
 };
 
 export const WorkspaceActionIcons = ({
