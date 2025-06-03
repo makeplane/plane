@@ -230,8 +230,6 @@ class UserWorkSpacesEndpoint(BaseAPIView):
     search_fields = ["name"]
     filterset_fields = ["owner"]
 
-    @method_decorator(cache_control(private=True, max_age=12))
-    @method_decorator(vary_on_cookie)
     def get(self, request):
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
         member_count = (
