@@ -502,7 +502,6 @@
   "export": "Exportovat",
   "member": "{count, plural, one{# člen} few{# členové} other{# členů}}",
   "new_password_must_be_different_from_old_password": "Nové heslo musí být odlišné od starého hesla",
-
   "project_view": {
     "sort_by": {
       "created_at": "Vytvořeno dne",
@@ -749,7 +748,8 @@
         "message": "Něco se pokazilo. Zkuste to prosím znovu."
       },
       "required": "Toto pole je povinné",
-      "entity_required": "{entity} je povinná"
+      "entity_required": "{entity} je povinná",
+      "restricted_entity": "{entity} je omezen"
     },
     "update_link": "Aktualizovat odkaz",
     "attach": "Připojit",
@@ -1110,6 +1110,18 @@
     "remove": {
       "success": "Podřízená pracovní položka úspěšně odebrána",
       "error": "Chyba při odebírání podřízené položky"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Nemáte podřízené pracovní položky, které odpovídají použitým filtrům.",
+        "description": "Chcete-li zobrazit všechny podřízené pracovní položky, odstraňte všechny použité filtry.",
+        "action": "Odstranit filtry"
+      },
+      "list_filters": {
+        "title": "Nemáte pracovní položky, které odpovídají použitým filtrům.",
+        "description": "Chcete-li zobrazit všechny pracovní položky, odstraňte všechny použité filtry.",
+        "action": "Odstranit filtry"
+      }
     }
   },
   "view": {

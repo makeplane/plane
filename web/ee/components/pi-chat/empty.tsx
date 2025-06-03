@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 import { Crown } from "lucide-react";
 // plane imports
 import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
-import { Button } from "@plane/ui";
+import { BetaBadge, Button } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
@@ -28,9 +28,10 @@ export const EmptyPiChat = observer(() => {
   return (
     <div className={cn("h-full bg-pi-50 px-page-x pt-4 ")}>
       <div className="flex justify-between h-8">
-        <div className="flex">
+        <div className="flex gap-1">
           <Image width={16} height={16} src={PiChatLogo} alt="Pi" className="my-auto" />
           <span className="font-medium text-sm my-auto "> Pi Chat</span>
+          <BetaBadge />
         </div>
       </div>
       <div className="flex flex-col flex-1 px-page-x pt-4 pb-8 relative h-full">

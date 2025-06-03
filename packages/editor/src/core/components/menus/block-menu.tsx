@@ -12,6 +12,9 @@ import { Editor } from "@tiptap/react";
 import { Copy, LucideIcon, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@plane/utils";
+// cotatast
+import { CORE_EXTENSIONS } from "@/constants/extension";
+import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 
 interface BlockMenuProps {
   editor: Editor;
@@ -133,9 +136,9 @@ export const BlockMenu = (props: BlockMenuProps) => {
       key: "duplicate",
       label: "Duplicate",
       isDisabled:
-        editor.state.selection.content().content.firstChild?.type.name === "image" ||
-        editor.isActive("imageComponent") ||
-        editor.isActive("pageEmbedComponent"),
+        editor.state.selection.content().content.firstChild?.type.name === CORE_EXTENSIONS.IMAGE ||
+        editor.isActive(CORE_EXTENSIONS.CUSTOM_IMAGE) ||
+        editor.isActive(ADDITIONAL_EXTENSIONS.PAGE_EMBED_COMPONENT),
       onClick: (e) => {
         e.preventDefault();
         e.stopPropagation();

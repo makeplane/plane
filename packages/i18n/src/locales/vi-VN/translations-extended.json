@@ -14,6 +14,12 @@
   "pi_chat": "Pi Chat",
   "in_app": "Trong ứng dụng",
   "forms": "Biểu mẫu",
+  "choose_workspace_for_integration": "Chọn không gian làm việc để kết nối ứng dụng này",
+  "integrations_description": "Ứng dụng làm việc với Plane phải kết nối với không gian làm việc mà bạn là quản trị viên.",
+  "create_a_new_workspace": "Tạo không gian làm việc mới",
+  "learn_more_about_workspaces": "Tìm hiểu thêm về không gian làm việc",
+  "no_workspaces_to_connect": "Không có không gian làm việc để kết nối",
+  "no_workspaces_to_connect_description": "Bạn cần tạo không gian làm việc để kết nối ứng dụng này",
 
   "common": {
     "worklogs": "Nhật ký công việc",
@@ -43,7 +49,7 @@
       }
     },
     "update": {
-      "success": {  
+      "success": {
         "title": "Cập nhật đã được cập nhật",
         "message": "Cập nhật đã được cập nhật thành công."
       },
@@ -81,7 +87,7 @@
       "since_last_update": "Từ lần cập nhật cuối cùng",
       "comments": "{count, plural, one{# bình luận} other{# bình luận}}"
     }
-  },  
+  },
 
   "issue": {
     "relation": {
@@ -336,6 +342,11 @@
         "primary_button": {
           "text": "Xem Sáng kiến khác"
         }
+      },
+      "epics": {
+        "title": "Không có sáng kiến phù hợp",
+        "subHeading": "Tạo một sáng kiến mới thay thế.",
+        "action": "Tạo sáng kiến"
       }
     }
   },
@@ -2013,6 +2024,82 @@
             "create": "Tạo mẫu trang",
             "update": "Cập nhật mẫu trang"
           }
+        },
+        "publish": {
+          "action": "Xuất bản mẫu",
+          "title": "Làm cho mẫu của bạn dễ khám phá và nhận biết.",
+          "name": {
+            "label": "Tên mẫu",
+            "placeholder": "Đặt tên cho mẫu của bạn",
+            "validation": {
+              "required": "Tên mẫu là bắt buộc",
+              "maxLength": "Tên mẫu không nên vượt quá 255 ký tự"
+            }
+          },
+          "short_description": {
+            "label": "Mô tả ngắn",
+            "placeholder": "Mẫu này rất phù hợp cho các Quản lý Dự án đang quản lý nhiều dự án cùng lúc.",
+            "validation": {
+              "required": "Mô tả ngắn là bắt buộc"
+            }
+          },
+          "description": {
+            "label": "Mô tả",
+            "placeholder": "Nâng cao năng suất và tối ưu hóa giao tiếp với tính năng Chuyển đổi Giọng nói thành Văn bản.\n• Chuyển đổi thời gian thực: Chuyển đổi lời nói thành văn bản chính xác ngay lập tức.\n• Tạo nhiệm vụ và bình luận: Thêm nhiệm vụ, mô tả và bình luận thông qua lệnh thoại.",
+            "validation": {
+              "required": "Mô tả là bắt buộc"
+            }
+          },
+          "category": {
+            "label": "Danh mục",
+            "placeholder": "Chọn nơi bạn nghĩ phù hợp nhất. Bạn có thể chọn nhiều hơn một.",
+            "validation": {
+              "required": "Cần ít nhất một danh mục"
+            }
+          },
+          "keywords": {
+            "label": "Từ khóa",
+            "placeholder": "Sử dụng các thuật ngữ mà bạn nghĩ người dùng sẽ tìm kiếm khi tìm mẫu này."
+          },
+          "company_name": {
+            "label": "Tên công ty",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Tên công ty là bắt buộc",
+              "maxLength": "Tên công ty không nên vượt quá 255 ký tự"
+            }
+          },
+          "contact_email": {
+            "label": "Email hỗ trợ",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Địa chỉ email không hợp lệ",
+              "required": "Email hỗ trợ là bắt buộc",
+              "maxLength": "Email hỗ trợ không nên vượt quá 255 ký tự"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Liên kết đến chính sách bảo mật của bạn",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "URL không hợp lệ",
+              "maxLength": "URL không nên vượt quá 800 ký tự"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Liên kết đến điều khoản sử dụng của bạn",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "URL không hợp lệ",
+              "maxLength": "URL không nên vượt quá 800 ký tự"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Bao gồm tài liệu và hình ảnh mà bạn nghĩ sẽ giúp người xem hiểu rõ hơn về mẫu này.",
+            "validation": {
+              "required": "Cần ít nhất một ảnh chụp màn hình"
+            }
+          }
         }
       }
     },
@@ -2027,6 +2114,16 @@
       },
       "no_labels": {
         "description": "Chưa có nhãn nào. Tạo nhãn để giúp tổ chức và lọc mục công việc trong dự án của bạn."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Không có mẫu nào mà bạn có quyền truy cập.",
+          "description": "Vui lòng tạo một mẫu"
+        },
+        "no_results": {
+          "title": "Điều đó không khớp với mẫu nào.",
+          "description": "Thử tìm kiếm bằng các thuật ngữ khác."
+        }
       }
     },
     "toasts": {

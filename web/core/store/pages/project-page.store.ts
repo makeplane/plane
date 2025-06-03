@@ -54,12 +54,19 @@ export interface IProjectPageStore {
   removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
   movePage: (params: {
     workspaceSlug: string;
-    projectId: string;
-    pageId: string;
     newProjectId: string;
+    pageId: string;
+    projectId: string;
     shouldSync?: boolean;
   }) => Promise<void>;
-  getOrFetchPageInstance: (pageId: string) => Promise<TProjectPage | undefined>;
+  getOrFetchPageInstance: ({
+    pageId,
+    projectId,
+  }: {
+    pageId: string;
+    projectId?: string;
+  }) => Promise<TProjectPage | undefined>;
+  removePageInstance: (pageId: string) => void;
 }
 
 export class ProjectPageStore implements IProjectPageStore {
@@ -367,57 +374,58 @@ export class ProjectPageStore implements IProjectPageStore {
    * @param {string} workspaceSlug
    * @param {string} projectId
    * @param {string} pageId
-   * @param {string} newProjectId
+   * @param {string} projectId
    */
   movePage = async ({
     workspaceSlug,
     pageId,
-    projectId,
     newProjectId,
+    projectId,
     shouldSync = true,
   }: {
     workspaceSlug: string;
-    projectId: string;
-    pageId: string;
     newProjectId: string;
+    pageId: string;
+    projectId: string;
     shouldSync?: boolean;
   }) => {
     try {
-      runInAction(() => {
-        const page = this.getPageById(pageId);
-        if (page) {
-          page.mutateProperties({ moved_to_project: newProjectId });
-        }
-      });
       if (shouldSync) {
         await this.service.move(workspaceSlug, projectId, pageId, newProjectId);
       }
     } catch (error) {
       console.error("Unable to move page", error);
       runInAction(() => {
-        const page = this.getPageById(pageId);
         this.loader = undefined;
         this.error = {
           title: "Failed",
           description: "Failed to move a page, Please try again later.",
         };
-        page.mutateProperties({ moved_to_project: undefined });
       });
       throw error;
     }
   };
 
-  getOrFetchPageInstance = async (pageId: string) => {
+  getOrFetchPageInstance = async ({ pageId, projectId }: { pageId: string; projectId?: string }) => {
     const pageInstance = this.getPageById(pageId);
     if (pageInstance) {
       return pageInstance;
     } else {
-      const { workspaceSlug, projectId } = this.store.router;
-      if (!workspaceSlug || !projectId) return;
-      const page = await this.fetchPageDetails(projectId, pageId);
+      const { workspaceSlug, projectId: projectIdFromRouter } = this.store.router;
+
+      const actualProjectId = projectId || projectIdFromRouter;
+
+      // Additional type safety check
+      if (!actualProjectId || !workspaceSlug) return;
+
+      const page = await this.fetchPageDetails(actualProjectId, pageId);
       if (page) {
         return new ProjectPage(this.store, page);
       }
     }
+  };
+
+  removePageInstance = (pageId: string) => {
+    delete this.data[pageId];
   };
 }

@@ -14,3 +14,5 @@ export const DEFAULT_BACKGROUND_COLORS = [
   "#5D407A",
   "#999AA0",
 ];
+
+export const RESTRICTED_WORK_ITEM_TYPES = ["task"];

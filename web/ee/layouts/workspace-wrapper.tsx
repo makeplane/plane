@@ -25,10 +25,12 @@ import {
   useCustomers,
   usePageTemplates,
   useProjectTemplates,
+  useTemplateHelper,
 } from "@/plane-web/hooks/store";
 // plane web types
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
+
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
   // props
   const { children } = props;
@@ -49,6 +51,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { fetchAllTemplates: fetchAllProjectTemplates } = useProjectTemplates();
   const { fetchAllTemplates: fetchAllWorkItemTemplates } = useWorkItemTemplates();
   const { fetchAllTemplates: fetchAllPageTemplates } = usePageTemplates();
+  const { getIsTemplatePublishEnabled, fetchTemplateCategories } = useTemplateHelper();
   const { fetchAllCustomerPropertiesAndOptions } = useCustomerProperties();
   const { isCustomersFeatureEnabled, fetchCustomers } = useCustomers();
   // derived values
@@ -62,6 +65,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const isProjectTemplatesEnabled = useFlag(workspaceSlug?.toString(), "PROJECT_TEMPLATES");
   const isWorkItemTemplatesEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TEMPLATES");
   const isPageTemplatesEnabled = useFlag(workspaceSlug?.toString(), "PAGE_TEMPLATES");
+  const isTemplatePublishEnabled = getIsTemplatePublishEnabled(workspaceSlug.toString());
 
   // fetching feature flags
   const { isLoading: flagsLoader, error: flagsError } = useSWR(
@@ -164,6 +168,13 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceSlug && isPageTemplatesEnabled
       ? () => fetchAllPageTemplates({ workspaceSlug: workspaceSlug.toString(), level: ETemplateLevel.WORKSPACE })
       : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  // fetching template categories
+  useSWR(
+    workspaceSlug && isTemplatePublishEnabled ? ["templateCategories", workspaceSlug, isTemplatePublishEnabled] : null,
+    workspaceSlug && isTemplatePublishEnabled ? () => fetchTemplateCategories() : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 

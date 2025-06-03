@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { RESTRICTED_WORK_ITEM_TYPES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssueType } from "@plane/types";
 import { Button, Input, TextArea } from "@plane/ui";
@@ -32,11 +33,16 @@ export const CreateOrUpdateIssueTypeForm: React.FC<Props> = observer((props) => 
     if (!data.name || data.name.trim() === "") {
       newErrors.name = t("common.errors.entity_required", { entity: t("common.name") });
     }
+    if (data.name && RESTRICTED_WORK_ITEM_TYPES.includes(data.name.toLowerCase())) {
+      newErrors.name = t("common.errors.restricted_entity", { entity: t("common.name") });
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleIssueTypeFormSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleIssueTypeFormSubmit = async (
+    e: React.MouseEvent<HTMLButtonElement> | React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     if (validateForm(formData)) {
       await handleFormSubmit();
@@ -49,7 +55,7 @@ export const CreateOrUpdateIssueTypeForm: React.FC<Props> = observer((props) => 
   };
 
   return (
-    <form>
+    <form onSubmit={handleIssueTypeFormSubmit}>
       <div className="space-y-3 p-5 pb-2">
         <h3 className="text-xl font-medium text-custom-text-200">
           {formData.id ? t("work_item_types.update.title") : t("work_item_types.create.title")}
@@ -102,7 +108,14 @@ export const CreateOrUpdateIssueTypeForm: React.FC<Props> = observer((props) => 
           <Button variant="neutral-primary" size="sm" onClick={handleModalClose} tabIndex={3}>
             {t("common.cancel")}
           </Button>
-          <Button variant="primary" size="sm" onClick={handleIssueTypeFormSubmit} loading={isSubmitting} tabIndex={4}>
+          <Button
+            variant="primary"
+            type="submit"
+            size="sm"
+            onClick={handleIssueTypeFormSubmit}
+            loading={isSubmitting}
+            tabIndex={4}
+          >
             {formData.id ? t("work_item_types.update.button") : t("work_item_types.create.button")}
           </Button>
         </div>

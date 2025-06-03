@@ -14,7 +14,7 @@ import { TDocumentTypes, type HocusPocusServerContext } from "@/core/types/commo
 import { catchAsync } from "@/core/helpers/error-handling/error-handler";
 import { handleError } from "@/core/helpers/error-handling/error-factory";
 // server agent
-import { serverAgentManager } from "@/ee/agents/server-agent";
+import { serverAgentManager } from "./agents/server-agent";
 
 export const getHocusPocusServer = async () => {
   const extensions = await getExtensions();

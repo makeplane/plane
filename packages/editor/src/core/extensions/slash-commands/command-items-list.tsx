@@ -26,12 +26,7 @@ import {
   toggleBulletList,
   toggleOrderedList,
   toggleTaskList,
-  toggleHeadingOne,
-  toggleHeadingTwo,
-  toggleHeadingThree,
-  toggleHeadingFour,
-  toggleHeadingFive,
-  toggleHeadingSix,
+  toggleHeading,
   toggleTextColor,
   toggleBackgroundColor,
   insertImage,
@@ -138,7 +133,7 @@ export const getSlashCommandFilteredSections =
             description: "Big section heading.",
             searchTerms: ["title", "big", "large"],
             icon: <Heading1 className="size-3.5" />,
-            command: ({ editor, range }) => toggleHeadingOne(editor, range),
+            command: ({ editor, range }) => toggleHeading(editor, 1, range),
           },
           {
             commandKey: "h2",
@@ -147,7 +142,7 @@ export const getSlashCommandFilteredSections =
             description: "Medium section heading.",
             searchTerms: ["subtitle", "medium"],
             icon: <Heading2 className="size-3.5" />,
-            command: ({ editor, range }) => toggleHeadingTwo(editor, range),
+            command: ({ editor, range }) => toggleHeading(editor, 2, range),
           },
           {
             commandKey: "h3",
@@ -156,7 +151,7 @@ export const getSlashCommandFilteredSections =
             description: "Small section heading.",
             searchTerms: ["subtitle", "small"],
             icon: <Heading3 className="size-3.5" />,
-            command: ({ editor, range }) => toggleHeadingThree(editor, range),
+            command: ({ editor, range }) => toggleHeading(editor, 3, range),
           },
           {
             commandKey: "h4",
@@ -165,7 +160,7 @@ export const getSlashCommandFilteredSections =
             description: "Small section heading.",
             searchTerms: ["subtitle", "small"],
             icon: <Heading4 className="size-3.5" />,
-            command: ({ editor, range }) => toggleHeadingFour(editor, range),
+            command: ({ editor, range }) => toggleHeading(editor, 4, range),
           },
           {
             commandKey: "h5",
@@ -174,7 +169,7 @@ export const getSlashCommandFilteredSections =
             description: "Small section heading.",
             searchTerms: ["subtitle", "small"],
             icon: <Heading5 className="size-3.5" />,
-            command: ({ editor, range }) => toggleHeadingFive(editor, range),
+            command: ({ editor, range }) => toggleHeading(editor, 5, range),
           },
           {
             commandKey: "h6",
@@ -183,7 +178,7 @@ export const getSlashCommandFilteredSections =
             description: "Small section heading.",
             searchTerms: ["subtitle", "small"],
             icon: <Heading6 className="size-3.5" />,
-            command: ({ editor, range }) => toggleHeadingSix(editor, range),
+            command: ({ editor, range }) => toggleHeading(editor, 6, range),
           },
           {
             commandKey: "to-do-list",

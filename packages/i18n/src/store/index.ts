@@ -3,7 +3,7 @@ import get from "lodash/get";
 import merge from "lodash/merge";
 import { makeAutoObservable, runInAction } from "mobx";
 // constants
-import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY } from "../constants";
+import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY, ETranslationFiles } from "../constants";
 // core translations imports
 import coreEnExtended from "../locales/en/core-extended.json";
 import coreEn from "../locales/en/core.json";
@@ -117,18 +117,10 @@ export class TranslationStore {
     if (this.loadedLanguages.has(language)) return;
 
     try {
-      const [translations, translationsExtended] = await Promise.all([
-        this.importLanguageFile(language),
-        this.importLanguageFileExtended(language),
-      ]);
+      const translations = await this.importLanguageFile(language);
       runInAction(() => {
         // Use lodash merge for deep merging
-        this.translations[language] = merge(
-          {},
-          this.coreTranslations[language] || {},
-          translations.default,
-          translationsExtended.default
-        );
+        this.translations[language] = merge({}, this.coreTranslations[language] || {}, translations.default);
         // Add to loaded languages
         this.loadedLanguages.add(language);
         // Clear cache
@@ -140,103 +132,31 @@ export class TranslationStore {
   }
 
   /**
-   * Imports the translations for the given language
-   * @param language - The language to import the translations for
-   * @returns {Promise<any>}
+   * Helper function to import and merge multiple translation files for a language
+   * @param language - The language code
+   * @param files - Array of file names to import (without .json extension)
+   * @returns Promise that resolves to merged translations
    */
-  private importLanguageFile(language: TLanguage): Promise<any> {
-    switch (language) {
-      case "en":
-        return import("../locales/en/translations.json");
-      case "fr":
-        return import("../locales/fr/translations.json");
-      case "es":
-        return import("../locales/es/translations.json");
-      case "ja":
-        return import("../locales/ja/translations.json");
-      case "zh-CN":
-        return import("../locales/zh-CN/translations.json");
-      case "zh-TW":
-        return import("../locales/zh-TW/translations.json");
-      case "ru":
-        return import("../locales/ru/translations.json");
-      case "it":
-        return import("../locales/it/translations.json");
-      case "cs":
-        return import("../locales/cs/translations.json");
-      case "sk":
-        return import("../locales/sk/translations.json");
-      case "de":
-        return import("../locales/de/translations.json");
-      case "ua":
-        return import("../locales/ua/translations.json");
-      case "pl":
-        return import("../locales/pl/translations.json");
-      case "ko":
-        return import("../locales/ko/translations.json");
-      case "pt-BR":
-        return import("../locales/pt-BR/translations.json");
-      case "id":
-        return import("../locales/id/translations.json");
-      case "ro":
-        return import("../locales/ro/translations.json");
-      case "vi-VN":
-        return import("../locales/vi-VN/translations.json");
-      case "tr-TR":
-        return import("../locales/tr-TR/translations.json");
-      default:
-        throw new Error(`Unsupported language: ${language}`);
+  private async importAndMergeFiles(language: TLanguage, files: string[]): Promise<any> {
+    try {
+      const importPromises = files.map((file) => import(`../locales/${language}/${file}.json`));
+
+      const modules = await Promise.all(importPromises);
+      const merged = modules.reduce((acc, module) => merge(acc, module.default), {});
+      return { default: merged };
+    } catch (error) {
+      throw new Error(`Failed to import and merge files for ${language}: ${error}`);
     }
   }
 
   /**
-   * Imports the extended translations for the given language
+   * Imports the translations for the given language
    * @param language - The language to import the translations for
    * @returns {Promise<any>}
    */
-  private importLanguageFileExtended(language: TLanguage): Promise<any> {
-    switch (language) {
-      case "en":
-        return import("../locales/en/translations-extended.json");
-      case "fr":
-        return import("../locales/fr/translations-extended.json");
-      case "es":
-        return import("../locales/es/translations-extended.json");
-      case "ja":
-        return import("../locales/ja/translations-extended.json");
-      case "zh-CN":
-        return import("../locales/zh-CN/translations-extended.json");
-      case "zh-TW":
-        return import("../locales/zh-TW/translations-extended.json");
-      case "ru":
-        return import("../locales/ru/translations-extended.json");
-      case "it":
-        return import("../locales/it/translations-extended.json");
-      case "cs":
-        return import("../locales/cs/translations-extended.json");
-      case "sk":
-        return import("../locales/sk/translations-extended.json");
-      case "de":
-        return import("../locales/de/translations-extended.json");
-      case "ua":
-        return import("../locales/ua/translations-extended.json");
-      case "pl":
-        return import("../locales/pl/translations-extended.json");
-      case "ko":
-        return import("../locales/ko/translations-extended.json");
-      case "id":
-        return import("../locales/id/translations-extended.json");
-      case "ro":
-        return import("../locales/ro/translations-extended.json");
-      case "pt-BR":
-        return import("../locales/pt-BR/translations-extended.json");
-      case "vi-VN":
-        return import("../locales/vi-VN/translations-extended.json");
-      case "tr-TR":
-        return import("../locales/tr-TR/translations-extended.json");
-      default:
-        throw new Error(`Unsupported language: ${language}`);
-    }
+  private async importLanguageFile(language: TLanguage): Promise<any> {
+    const files = Object.values(ETranslationFiles);
+    return this.importAndMergeFiles(language, files);
   }
 
   /** Checks if the language is valid based on the supported languages */

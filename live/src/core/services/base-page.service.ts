@@ -45,7 +45,7 @@ export abstract class BasePageService extends APIService {
     }
 
     if (env.LIVE_SERVER_SECRET_KEY) {
-      headers["LIVE-SERVER-SECRET-KEY"] = env.LIVE_SERVER_SECRET_KEY;
+      headers["live-server-secret-key"] = env.LIVE_SERVER_SECRET_KEY;
     }
 
     if (isBinary) {

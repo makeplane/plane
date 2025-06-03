@@ -228,20 +228,4 @@ export class ProjectPage extends BasePage implements TProjectPage {
       throw error;
     }
   };
-
-  getOrFetchPageInstance = async (pageId: string) => {
-    const pageInstance = this.rootStore.projectPages.getPageById(pageId);
-    if (pageInstance) {
-      return pageInstance;
-    } else {
-      if (!this.workspace) return;
-      const workspaceSlug = this.rootStore.workspaceRoot.getWorkspaceById(this.workspace)?.slug;
-      const projectId = this.project_ids?.[0];
-      if (!workspaceSlug || !projectId) return;
-      const page = await this.rootStore.projectPages.fetchPageDetails(projectId, pageId);
-      if (page) {
-        return new ProjectPage(this.rootStore, page);
-      }
-    }
-  };
 }

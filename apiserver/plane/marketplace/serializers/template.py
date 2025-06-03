@@ -26,6 +26,7 @@ class PublishedTemplateSerializer(DynamicBaseSerializer):
             "short_description",
             "categories",
             "attachments",
+            "keywords",
         ]
 
     def get_attachments(self, obj):
@@ -51,8 +52,10 @@ class PublishedTemplateDetailSerializer(PublishedTemplateSerializer):
             "description_html",
             "company_name",
             "supported_languages",
-            "support",
-            "resources",
+            "privacy_policy_url",
+            "terms_of_service_url",
+            "contact_email",
+            "support_url",
         ]
 
 

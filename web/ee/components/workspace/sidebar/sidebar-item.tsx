@@ -41,7 +41,7 @@ export const SidebarItem: FC<TSidebarItemProps> = observer((props) => {
     if (window.innerWidth < 768) {
       toggleSidebar();
     }
-    if (extendedSidebarCollapsed) toggleExtendedSidebar();
+    if (!extendedSidebarCollapsed) toggleExtendedSidebar();
   };
 
   const staticItems = ["home", "inbox", "pi_chat", "projects"];

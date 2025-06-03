@@ -2,7 +2,11 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // plane imports
-import { DEFAULT_ADD_WORKSPACE_SEATS_MODAL_DATA, EProductSubscriptionEnum } from "@plane/constants";
+import {
+  DEFAULT_ADD_WORKSPACE_SEATS_MODAL_DATA,
+  EProductSubscriptionEnum,
+  SUBSCRIPTION_WITH_SEATS_MANAGEMENT,
+} from "@plane/constants";
 import { IWorkspaceProductSubscription, TAddWorkspaceSeatsModal } from "@plane/types";
 // services
 import { PaymentService } from "@/plane-web/services/payment.service";
@@ -25,6 +29,10 @@ export interface IWorkspaceSubscriptionStore {
   // computed
   currentWorkspaceSubscribedPlanDetail: IWorkspaceProductSubscription | undefined;
   currentWorkspaceSubscriptionAvailableSeats: number;
+  isSubscriptionManagementEnabled: boolean;
+  isSeatManagementEnabled: boolean;
+  // computed function
+  getIsInTrialPeriod: (checkForUpgrade: boolean) => boolean;
   // helper actions
   togglePaidPlanModal: (value?: boolean) => void;
   toggleAddWorkspaceSeatsModal: (value?: TAddWorkspaceSeatsModal) => void;
@@ -59,6 +67,8 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
       // computed
       currentWorkspaceSubscribedPlanDetail: computed,
       currentWorkspaceSubscriptionAvailableSeats: computed,
+      isSubscriptionManagementEnabled: computed,
+      isSeatManagementEnabled: computed,
       // helper actions
       togglePaidPlanModal: action,
       handleSuccessModalToggle: action,
@@ -117,6 +127,41 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
       );
     }
   }
+
+  /**
+   * Get the subscription management enabled for the current workspace
+   * @returns boolean
+   */
+  get isSubscriptionManagementEnabled() {
+    const subscriptionDetail = this.currentWorkspaceSubscribedPlanDetail;
+    if (!subscriptionDetail) return false;
+    if (subscriptionDetail.is_offline_payment || this.rootStore.instance.config?.is_airgapped) return false;
+    return true;
+  }
+
+  /**
+   * Get the seats management enabled for the current workspace
+   * @returns boolean
+   */
+  get isSeatManagementEnabled() {
+    const subscriptionDetail = this.currentWorkspaceSubscribedPlanDetail;
+    if (!subscriptionDetail) return false;
+    if (subscriptionDetail.is_offline_payment || this.rootStore.instance.config?.is_airgapped) return false;
+    return SUBSCRIPTION_WITH_SEATS_MANAGEMENT.includes(subscriptionDetail?.product);
+  }
+
+  // --------------- Computed function ---------------
+  /**
+   * Get the in trial period for the current workspace
+   * @returns boolean
+   */
+  getIsInTrialPeriod = (checkForUpgrade: boolean) => {
+    const subscriptionDetail = this.currentWorkspaceSubscribedPlanDetail;
+    if (!subscriptionDetail) return false;
+    if (subscriptionDetail.is_self_managed) return false;
+    if (checkForUpgrade) return subscriptionDetail.is_on_trial && !subscriptionDetail.has_upgraded;
+    return subscriptionDetail.is_on_trial;
+  };
 
   // --------------- Helper Actions ---------------
   /**

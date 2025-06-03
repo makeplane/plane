@@ -5,9 +5,7 @@ import os
 
 class SecretKeyAuthentication(BaseAuthentication):
     def authenticate(self, request):
-        secret_key = request.headers.get(
-            "LIVE-SERVER-SECRET-KEY"
-        )
+        secret_key = request.headers.get("live-server-secret-key")
 
         if not secret_key:
             raise AuthenticationFailed(

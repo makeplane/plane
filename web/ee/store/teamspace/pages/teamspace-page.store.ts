@@ -48,7 +48,8 @@ export interface ITeamspacePageStore {
   // CRUD actions
   createPage: (data: Partial<TPage>) => Promise<TPage>;
   removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
-  getOrFetchPageInstance: (pageId: string) => Promise<TTeamspacePageDetails | undefined>;
+  getOrFetchPageInstance: ({ pageId }: { pageId: string }) => Promise<TTeamspacePageDetails | undefined>;
+  removePageInstance: (pageId: string) => void;
 }
 
 export class TeamspacePageStore implements ITeamspacePageStore {
@@ -388,7 +389,7 @@ export class TeamspacePageStore implements ITeamspacePageStore {
     }
   };
 
-  getOrFetchPageInstance = async (pageId: string) => {
+  getOrFetchPageInstance = async ({ pageId }: { pageId: string }) => {
     const pageInstance = this.getPageById(pageId);
     if (pageInstance) {
       return pageInstance;
@@ -399,6 +400,13 @@ export class TeamspacePageStore implements ITeamspacePageStore {
       if (page) {
         return page.team ? new TeamspacePage(this.rootStore, page) : new ProjectPage(this.rootStore, page);
       }
+    }
+  };
+
+  removePageInstance = (pageId: string) => {
+    const page = this.getPageById(pageId);
+    if (page && page.team) {
+      delete this.pageMap[page.team][pageId];
     }
   };
 }

@@ -1,10 +1,11 @@
 import { Mark, mergeAttributes } from "@tiptap/core";
 // constants
 import { COLORS_LIST } from "@/constants/common";
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    color: {
+    [CORE_EXTENSIONS.CUSTOM_COLOR]: {
       /**
        * Set the text color
        * @param {string} color The color to set
@@ -34,7 +35,7 @@ declare module "@tiptap/core" {
 }
 
 export const CustomColorExtension = Mark.create({
-  name: "customColor",
+  name: CORE_EXTENSIONS.CUSTOM_COLOR,
 
   addOptions() {
     return {

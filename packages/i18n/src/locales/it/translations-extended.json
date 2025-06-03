@@ -12,6 +12,12 @@
   "pi_chat": "Pi Chat",
   "in_app": "In-app",
   "forms": "Moduli",
+  "choose_workspace_for_integration": "Scegli uno spazio di lavoro per connettere questa app",
+  "integrations_description": "Le app che funzionano con Plane devono connettersi a uno spazio di lavoro dove sei amministratore.",
+  "create_a_new_workspace": "Crea uno spazio di lavoro nuovo",
+  "learn_more_about_workspaces": "Scopri di più sui tuoi spazi di lavoro",
+  "no_workspaces_to_connect": "Nessuno spazio di lavoro per connettere",
+  "no_workspaces_to_connect_description": "Devi creare uno spazio di lavoro per poter connettere le integrazioni e i modelli",
 
   "common": {
     "worklogs": "Registrazioni di lavoro",
@@ -343,6 +349,11 @@
         "primary_button": {
           "text": "Visualizza altre iniziative"
         }
+      },
+      "epics": {
+        "title": "Non hai epiche che corrispondono ai filtri che hai applicato.",
+        "subHeading": "Per vedere tutte le epiche, cancella tutti i filtri applicati.",
+        "action": "Cancella filtri"
       }
     }
   },
@@ -2003,6 +2014,106 @@
             "create": "Crea modello di elemento di lavoro",
             "update": "Aggiorna modello di elemento di lavoro"
           }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Nome il tuo modello di pagina.",
+              "validation": {
+                "required": "Il nome del modello è obbligatorio",
+                "maxLength": "Il nome del modello deve contenere meno di 255 caratteri"
+              }
+            },
+            "description": {
+              "placeholder": "Descrivi quando e come utilizzare questo modello."
+            }
+          },
+          "name": {
+            "placeholder": "Pagina senza titolo",
+            "validation": {
+              "maxLength": "Il nome della pagina deve contenere meno di 255 caratteri"
+            }
+          },
+          "button": {
+            "create": "Crea modello di pagina",
+            "update": "Aggiorna modello di pagina"
+          }
+        },
+        "publish": {
+          "action": "Pubblica modello",
+          "title": "Rendi il tuo modello scopribile e riconoscibile.",
+          "name": {
+            "label": "Nome del modello",
+            "placeholder": "Dai un nome al tuo modello",
+            "validation": {
+              "required": "Il nome del modello è obbligatorio",
+              "maxLength": "Il nome del modello deve contenere meno di 255 caratteri"
+            }
+          },
+          "short_description": {
+            "label": "Descrizione breve",
+            "placeholder": "Questo modello è ottimo per i Project Managers che gestiscono più progetti contemporaneamente.",
+            "validation": {
+              "required": "La descrizione breve è obbligatoria"
+            }
+          },
+          "description": {
+            "label": "Descrizione",
+            "placeholder": "Migliora la produttività e semplifica la comunicazione con la nostra integrazione di riconoscimento vocale.\n• Trascrizione in tempo reale: Converti parole pronunciate in testo preciso istantaneamente.\n• Creazione di attività e commenti: Aggiungi attività, descrizioni e commenti tramite comandi vocali.",
+            "validation": {
+              "required": "La descrizione è obbligatoria"
+            }
+          },
+          "category": {
+            "label": "Categoria",
+            "placeholder": "Scegli dove pensi che questo si adatti meglio. Puoi scegliere più di una.",
+            "validation": {
+              "required": "Almeno una categoria è obbligatoria"
+            }
+          },
+          "keywords": {
+            "label": "Parole chiave",
+            "placeholder": "Usa termini che pensi che i tuoi utenti cercheranno quando cercano questo modello."
+          },
+          "company_name": {
+            "label": "Nome dell'azienda",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Il nome dell'azienda è obbligatorio",
+              "maxLength": "Il nome dell'azienda deve contenere meno di 255 caratteri"
+            }
+          },
+          "contact_email": {
+            "label": "Email di supporto",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Indirizzo email non valido",
+              "required": "L'email di supporto è obbligatoria",
+              "maxLength": "L'email di supporto deve contenere meno di 255 caratteri"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Link alla tua politica privacy",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "URL non valido",
+              "maxLength": "URL deve contenere meno di 800 caratteri"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Link alla tua politica di utilizzo",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "URL non valido",
+              "maxLength": "URL deve contenere meno di 800 caratteri"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Includi documenti e immagini che pensi aiuti a comprendere meglio questo modello.",
+            "validation": {
+              "required": "Almeno una schermata è obbligatoria"
+            }
+          }
         }
       }
     },
@@ -2017,6 +2128,16 @@
       },
       "no_labels": {
         "description": " Nessuna etichetta ancora. Crea etichette per aiutare a organizzare e filtrare gli elementi di lavoro nel tuo progetto."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Non ci sono modelli a cui hai accesso.",
+          "description": "Per favore crea un modello"
+        },
+        "no_results": {
+          "title": "Questo non corrisponde a nessun modello.",
+          "description": "Prova a cercare con altri termini."
+        }
       }
     },
     "toasts": {

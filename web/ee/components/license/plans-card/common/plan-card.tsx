@@ -15,11 +15,10 @@ type TPlanCard = {
 };
 
 export const PlanCard = observer(({ planVariant, planDescription, button }: TPlanCard) => {
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
+  const { getIsInTrialPeriod } = useWorkspaceSubscription();
   // derived values
   const planName = getSubscriptionName(planVariant);
-  const isSelfManaged = !!subscriptionDetail?.is_self_managed;
-  const isInTrialPeriod = !isSelfManaged && subscriptionDetail?.is_on_trial;
+  const isInTrialPeriod = getIsInTrialPeriod(false);
 
   return (
     <div className="flex gap-2 font-medium items-center justify-between">

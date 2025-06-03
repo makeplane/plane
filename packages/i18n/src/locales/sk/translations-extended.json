@@ -14,6 +14,12 @@
   "pi_chat": "Pi Čet",
   "in_app": "V aplikácii",
   "forms": "Formuláre",
+  "choose_workspace_for_integration": "Vyberte pracovný priestor pre pripojenie tejto aplikácie",
+  "integrations_description": "Aplikácie, ktoré fungujú s Plane, musia byť pripojené k pracovnom priestoru, kde ste správca.",
+  "create_a_new_workspace": "Vytvoriť nový pracovný priestor",
+  "learn_more_about_workspaces": "Zjistit více o pracovních prostorech",
+  "no_workspaces_to_connect": "Žádné pracovní prostory k připojení",
+  "no_workspaces_to_connect_description": "Musíte vytvořit pracovní prostor, abyste mohli připojit integraci a šablony",
 
   "common": {
     "worklogs": "Pracovné záznamy",
@@ -346,6 +352,11 @@
         "primary_button": {
           "text": "Zobraziť iné Iniciatívy"
         }
+      },
+      "epics": {
+        "title": "Nemáte žiadne epiky, ktoré by zodpovedali filtrom, ktoré ste použili.",
+        "subHeading": "Aby ste videli všetky epiky, vymažte všetky použité filtre.",
+        "action": "Vymazať filtre"
       }
     }
   },
@@ -2030,6 +2041,82 @@
             "create": "Vytvoriť šablónu stránky",
             "update": "Aktualizovať šablónu stránky"
           }
+        },
+        "publish": {
+          "action": "Publikovať šablónu",
+          "title": "Urobte vašu šablónu objaviteľnou a rozpoznateľnou.",
+          "name": {
+            "label": "Názov šablóny",
+            "placeholder": "Pomenujte vašu šablónu",
+            "validation": {
+              "required": "Názov šablóny je povinný",
+              "maxLength": "Názov šablóny by nemal presiahnuť 255 znakov"
+            }
+          },
+          "short_description": {
+            "label": "Krátky popis",
+            "placeholder": "Táto šablóna je skvelá pre projektových manažérov, ktorí riadia niekoľko projektov súčasne.",
+            "validation": {
+              "required": "Krátky popis je povinný"
+            }
+          },
+          "description": {
+            "label": "Popis",
+            "placeholder": "Zvyšte produktivitu a zefektívnite komunikáciu s našou integráciou Reč-do-Textu.\n• Prepis v reálnom čase: Okamžite preveďte hovorené slová do presného textu.\n• Vytváranie úloh a komentárov: Pridávajte úlohy, popisy a komentáre pomocou hlasových príkazov.",
+            "validation": {
+              "required": "Popis je povinný"
+            }
+          },
+          "category": {
+            "label": "Kategória",
+            "placeholder": "Vyberte, kde si myslíte, že to najlepšie zapadá. Môžete vybrať viacero.",
+            "validation": {
+              "required": "Je vyžadovaná aspoň jedna kategória"
+            }
+          },
+          "keywords": {
+            "label": "Kľúčové slová",
+            "placeholder": "Použite výrazy, ktoré si myslíte, že vaši používatelia budú hľadať pri hľadaní tejto šablóny."
+          },
+          "company_name": {
+            "label": "Názov spoločnosti",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Názov spoločnosti je povinný",
+              "maxLength": "Názov spoločnosti by nemal presiahnuť 255 znakov"
+            }
+          },
+          "contact_email": {
+            "label": "Email podpory",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Neplatná emailová adresa",
+              "required": "Email podpory je povinný",
+              "maxLength": "Email podpory by nemal presiahnuť 255 znakov"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Odkaz na vaše zásady ochrany súkromia",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "Neplatná URL",
+              "maxLength": "URL by nemala presiahnuť 800 znakov"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Odkaz na vaše podmienky používania",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "Neplatná URL",
+              "maxLength": "URL by nemala presiahnuť 800 znakov"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Zahrňte dokumenty a obrázky, ktoré si myslíte, že urobia prezeračov tejto šablóny.",
+            "validation": {
+              "required": "Je vyžadovaná aspoň jedna snímka obrazovky"
+            }
+          }
         }
       }
     },
@@ -2044,6 +2131,16 @@
       },
       "no_labels": {
         "description": "Žiadne štítky ešte neexistujú. Vytvorte štítky na pomoc organizácii a filtrovaniu pracovných položiek v projekte."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Neexistujú žiadne šablóny, ku ktorým máte prístup.",
+          "description": "Prosím, vytvorte šablónu"
+        },
+        "no_results": {
+          "title": "To sa nezhoduje so žiadnou šablónou.",
+          "description": "Skúste hľadať pomocou iných výrazov."
+        }
       }
     },
     "toasts": {

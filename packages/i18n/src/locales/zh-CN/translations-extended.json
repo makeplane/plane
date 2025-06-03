@@ -14,6 +14,12 @@
   "pi_chat": "PI 聊天",
   "in_app": "应用内",
   "forms": "表单",
+  "choose_workspace_for_integration": "选择工作区以连接此应用程序",
+  "integrations_description": "与 Plane 一起工作的应用程序必须连接到您是管理员的工作区",
+  "create_a_new_workspace": "创建新的工作区",
+  "learn_more_about_workspaces": "了解更多关于工作区的信息",
+  "no_workspaces_to_connect": "没有工作区可连接",
+  "no_workspaces_to_connect_description": "您需要创建工作区才能连接此应用程序",
 
   "common": {
     "worklogs": "工作日志",
@@ -345,6 +351,11 @@
         "primary_button": {
           "text": "查看其他计划"
         }
+      },
+      "epics": {
+        "title": "没有匹配的史诗",
+        "subHeading": "要查看所有史诗，请清除所有应用的筛选器。",
+        "action": "清除筛选器"
       }
     }
   },
@@ -2005,6 +2016,106 @@
             "create": "创建工作项模板",
             "update": "更新工作项模板"
           }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "为您的页面模板命名。",
+              "validation": {
+                "required": "模板名称是必填项",
+                "maxLength": "模板名称应少于255个字符"
+              }
+            },
+            "description": {
+              "placeholder": "描述何时以及如何使用此模板。"
+            }
+          },
+          "name": {
+            "placeholder": "未命名页面",
+            "validation": {
+              "maxLength": "页面名称应少于255个字符"
+            }
+          },
+          "button": {
+            "create": "创建页面模板",
+            "update": "更新页面模板"
+          }
+        },
+        "publish": {
+          "action": "发布模板",
+          "title": "让您的模板可被发现和识别。",
+          "name": {
+            "label": "模板名称",
+            "placeholder": "为您的模板命名",
+            "validation": {
+              "required": "模板名称是必填项",
+              "maxLength": "模板名称应少于255个字符"
+            }
+          },
+          "short_description": {
+            "label": "简短描述",
+            "placeholder": "此模板非常适合同时管理多个项目的项目经理。",
+            "validation": {
+              "required": "简短描述是必填项"
+            }
+          },
+          "description": {
+            "label": "描述",
+            "placeholder": "通过我们的语音转文字集成提高生产力并简化沟通。\n• 实时转录：立即将语音转换为准确的文本。\n• 任务和评论创建：通过语音命令添加任务、描述和评论。",
+            "validation": {
+              "required": "描述是必填项"
+            }
+          },
+          "category": {
+            "label": "类别",
+            "placeholder": "选择您认为最合适的位置。您可以选择多个。",
+            "validation": {
+              "required": "至少需要一个类别"
+            }
+          },
+          "keywords": {
+            "label": "关键词",
+            "placeholder": "使用您认为用户在查找此模板时会搜索的术语。"
+          },
+          "company_name": {
+            "label": "公司名称",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "公司名称是必填项",
+              "maxLength": "公司名称应少于255个字符"
+            }
+          },
+          "contact_email": {
+            "label": "支持邮箱",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "无效的邮箱地址",
+              "required": "支持邮箱是必填项",
+              "maxLength": "支持邮箱应少于255个字符"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "隐私政策链接",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "无效的URL",
+              "maxLength": "URL应少于800个字符"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "使用条款链接",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "无效的URL",
+              "maxLength": "URL应少于800个字符"
+            }
+          },
+          "attach_screenshots": {
+            "label": "包含您认为对查看此模板的用户有帮助的文档和图片。",
+            "validation": {
+              "required": "至少需要一张截图"
+            }
+          }
         }
       }
     },
@@ -2019,6 +2130,16 @@
       },
       "no_labels": {
         "description": " 还没有标签。创建标签以帮助组织和筛选项目中的工作项。"
+      },
+      "page": {
+        "no_templates": {
+          "title": "您没有访问任何模板。",
+          "description": "请创建一个模板"
+        },
+        "no_results": {
+          "title": "没有找到模板。",
+          "description": "尝试使用其他术语搜索。"
+        }
       }
     },
     "toasts": {

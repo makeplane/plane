@@ -14,7 +14,13 @@
   "pi_chat": "Pi Tschät",
   "in_app": "In-äpp",
   "forms": "Forms",
-
+  "choose_workspace_for_integration": "Wählen Sie einen Arbeitsbereich aus, um diese App zu verbinden",
+  "integrations_description": "Apps, die mit Plane arbeiten, müssen einen Arbeitsbereich verbinden, in dem Sie ein Administrator sind.",
+  "create_a_new_workspace": "Neuen Arbeitsbereich erstellen",
+  "learn_more_about_workspaces": "Mehr über Arbeitsbereiche erfahren",
+  "no_workspaces_to_connect": "Keine Arbeitsbereiche zum Verbinden",
+  "no_workspaces_to_connect_description": "Sie müssen einen Arbeitsbereich erstellen, um Integrationen und Vorlagen zu verbinden",
+  
   "common": {
     "worklogs": "Arbeitsberichte",
     "live": "Live",
@@ -346,6 +352,11 @@
         "primary_button": {
           "text": "Andere Initiativen anzeigen"
         }
+      },
+      "epics": {
+        "title": "Sie haben keine Epics, die den von Ihnen angewendeten Filtern entsprechen.",
+        "subHeading": "Um alle Epics zu sehen, löschen Sie alle angewendeten Filter.",
+        "action": "Alle Filter löschen"
       }
     }
   },
@@ -2006,6 +2017,106 @@
             "create": "Arbeitsaufgabenvorlage erstellen",
             "update": "Arbeitsaufgabenvorlage aktualisieren"
           }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Benennen Sie Ihre Seitenvorlage.",
+              "validation": {
+                "required": "Vorlagenname ist erforderlich",
+                "maxLength": "Vorlagenname sollte weniger als 255 Zeichen enthalten"
+              }
+            },
+            "description": {
+              "placeholder": "Beschreiben Sie, wann und wie diese Vorlage verwendet werden soll."
+            }
+          },
+          "name": {
+            "placeholder": "Unbenannte Seite",
+            "validation": {
+              "maxLength": "Seitentitel sollte weniger als 255 Zeichen enthalten"
+            }
+          },
+          "button": {
+            "create": "Seitenvorlage erstellen",
+            "update": "Seitenvorlage aktualisieren"
+          }
+        },
+        "publish": {
+          "action": "Vorlage veröffentlichen",
+          "title": "Machen Sie Ihre Vorlage entdeckbar und erkennbar.",
+          "name": {
+            "label": "Vorlagenname",
+            "placeholder": "Benennen Sie Ihre Vorlage",
+            "validation": {
+              "required": "Vorlagenname ist erforderlich",
+              "maxLength": "Vorlagenname sollte weniger als 255 Zeichen enthalten"
+            }
+          },
+          "short_description": {
+            "label": "Kurze Beschreibung",
+            "placeholder": "Diese Vorlage ist ideal für Projektmanager, die mehrere Projekte gleichzeitig verwalten.",
+            "validation": {
+              "required": "Kurze Beschreibung ist erforderlich"
+            }
+          },
+          "description": {
+            "label": "Beschreibung",
+            "placeholder": "Steigern Sie die Produktivität und optimieren Sie die Kommunikation mit unserer Sprach-zu-Text-Integration.\n• Echtzeit-Transkription: Konvertieren Sie gesprochene Wörter sofort in präzisen Text.\n• Aufgaben- und Kommentarerstellung: Fügen Sie Aufgaben, Beschreibungen und Kommentare über Sprachbefehle hinzu.",
+            "validation": {
+              "required": "Beschreibung ist erforderlich"
+            }
+          },
+          "category": {
+            "label": "Kategorie",
+            "placeholder": "Wählen Sie, wo Sie denken, dass dies am besten passt. Sie können mehrere auswählen.",
+            "validation": {
+              "required": "Mindestens eine Kategorie ist erforderlich"
+            }
+          },
+          "keywords": {
+            "label": "Schlüsselwörter",
+            "placeholder": "Verwenden Sie Begriffe, die Sie denken, dass Ihre Benutzer beim Suchen nach dieser Vorlage verwenden werden."
+          },
+          "company_name": {
+            "label": "Unternehmensname",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Unternehmensname ist erforderlich",
+              "maxLength": "Unternehmensname sollte weniger als 255 Zeichen enthalten"
+            }
+          },
+          "contact_email": {
+            "label": "Support-E-Mail",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Ungültige E-Mail-Adresse",
+              "required": "Support-E-Mail ist erforderlich",
+              "maxLength": "Support-E-Mail sollte weniger als 255 Zeichen enthalten"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Link zu Ihrer Datenschutzerklärung",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "Ungültige URL",
+              "maxLength": "URL sollte weniger als 800 Zeichen enthalten"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Link zu Ihren Nutzungsbedingungen",
+            "placeholder": "https://planes.so/terms-of-service",
+            "validation": {
+              "invalid": "Ungültige URL",
+              "maxLength": "URL sollte weniger als 800 Zeichen enthalten"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Dokumente und Bilder einfügen, die Sie denken, dass die Anzeigende dieser Vorlage hilfreich sein können.",
+            "validation": {
+              "required": "Mindestens ein Screenshot ist erforderlich"
+            }
+          }
         }
       }
     },
@@ -2020,6 +2131,16 @@
       },
       "no_labels": {
         "description": " Noch keine Labels vorhanden. Erstellen Sie Labels, um Arbeitsaufgaben in Ihrem Projekt zu organisieren und zu filtern."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Es gibt keine Vorlagen, auf die Sie Zugriff haben.",
+          "description": "Bitte erstellen Sie eine Vorlage"
+        },
+        "no_results": {
+          "title": "Das entspricht keiner Vorlage.",
+          "description": "Versuchen Sie es mit anderen Suchbegriffen."
+        }
       }
     },
     "toasts": {

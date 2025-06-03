@@ -185,7 +185,7 @@ class InstanceEndpoint(BaseAPIView):
         data["has_unsplash_configured"] = bool(UNSPLASH_ACCESS_KEY)
 
         # Open AI settings
-        data["has_openai_configured"] = bool(LLM_API_KEY)
+        data["has_llm_configured"] = bool(LLM_API_KEY)
 
         # File size settings
         data["file_size_limit"] = float(os.environ.get("FILE_SIZE_LIMIT", 5242880))
@@ -213,6 +213,9 @@ class InstanceEndpoint(BaseAPIView):
         data["instance_changelog_url"] = settings.INSTANCE_CHANGELOG_URL
 
         data["is_elasticsearch_enabled"] = ELASTICSEARCH_ENABLED == "1"
+
+        # Airgapped mode
+        data["is_airgapped"] = settings.IS_AIRGAPPED
 
         instance_data = serializer.data
         instance_data["workspaces_exist"] = Workspace.objects.count() >= 1

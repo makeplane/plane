@@ -11,12 +11,6 @@ import (
 	"gorm.io/gorm"
 )
 
-/*
-1. On boot up, go to prime and hit the license initialize v2 endpoint, which is activate free workspace endpoint.
-2. Fetch the feature flags for all the licenses fetch the FF for the pain ones.
-3. Resync license information to the API, once it's up and running.
-*/
-
 // LICENSE_VERIFICATION_FAILED_THRESHOLD is the threshold for the license verification for moving to the free plan
 const LICENSE_VERIFICATION_FAILED_THRESHOLD = 7 * 24 * time.Hour
 
@@ -37,6 +31,11 @@ func UpdateFlagsHandler(ctx context.Context, api prime_api.IPrimeMonitorApi) err
 			// If the license is paid, update the users with the member list provided
 			if err != nil {
 				return err
+			}
+
+			// If the license is airgapped, pause the execution of the function and return nil
+			if api.IsAirgapped() {
+				return nil
 			}
 
 			// Job Two: Update the users with the member list provided
@@ -88,12 +87,21 @@ func RefreshLicense(ctx context.Context, api prime_api.IPrimeMonitorApi, license
 		MembersList:   workspaceMembers,
 	})
 
-	// If the license sync failed, we need to check the last verified date
+	verificationThreshhold := LICENSE_VERIFICATION_FAILED_THRESHOLD
+
+	shouldDeactivate := false
+	// If the license is airgapped, we need to check the current period end date
+	if api.IsAirgapped() && license.CurrentPeriodEndDate != nil {
+		shouldDeactivate = time.Since(*license.CurrentPeriodEndDate) > 0
+	} else {
+		shouldDeactivate = license.LastVerifiedAt != nil && time.Since(*license.LastVerifiedAt) > verificationThreshhold
+	}
+
 	if err != nil {
 		// The license sync failed, we need to check the last verified date
 		if license.LastVerifiedAt != nil && license.ProductType != "FREE" {
 			// Check if the last verified date is greater than 14 days
-			if time.Since(*license.LastVerifiedAt) > LICENSE_VERIFICATION_FAILED_THRESHOLD {
+			if shouldDeactivate {
 				// Deactivate the license
 				newLicense := &db.License{
 					ID:                     license.ID,
@@ -145,13 +153,25 @@ func RefreshLicense(ctx context.Context, api prime_api.IPrimeMonitorApi, license
 					FreeSeats:        12,
 					Interval:         "MONTHLY",
 					IsOfflinePayment: false,
-					IsCancelled:      true,
+					IsCancelled:      false,
 					MemberList:       []prime_api.WorkspaceMember{},
 				}, nil
 			}
 		}
-
-		// Return the error
+		// if the license is airgapped, we need to return nil, nil, nil
+		if api.IsAirgapped() {
+			return license, &prime_api.WorkspaceActivationResponse{
+				Product:          license.Product,
+				ProductType:      license.ProductType,
+				WorkspaceSlug:    license.WorkspaceSlug,
+				Seats:            license.Seats,
+				FreeSeats:        license.FreeSeats,
+				Interval:         license.Interval,
+				IsOfflinePayment: license.IsOfflinePayment,
+				IsCancelled:      license.IsCancelled,
+				MemberList:       []prime_api.WorkspaceMember{},
+			}, nil
+		}
 		return nil, nil, fmt.Errorf(F2_LICENSE_VERFICATION_FAILED, license.LicenseKey, license.WorkspaceSlug)
 	}
 
@@ -174,8 +194,9 @@ func RefreshLicense(ctx context.Context, api prime_api.IPrimeMonitorApi, license
 	workspaceUUID, _ := uuid.Parse(data.WorkspaceID)
 	instanceUUID, _ := uuid.Parse(data.InstanceID)
 
-	// Update the db for license with the new data
 	now := time.Now()
+
+	// Update the db for license with the new data
 	licenseNew := &db.License{
 		ID:                     license.ID,
 		LicenseKey:             data.LicenceKey,
@@ -250,7 +271,6 @@ func RefreshLicenseUsers(ctx context.Context, license *db.License, activationRep
 func RefreshFeatureFlags(ctx context.Context, api prime_api.IPrimeMonitorApi, license db.License, tx *gorm.DB) error {
 	flags, err := api.GetFeatureFlags(license.LicenseKey)
 	if err != nil {
-		fmt.Println("Failed to fetch flags for license", license.LicenseKey)
 		return fmt.Errorf(F2_LICENSE_VERFICATION_FAILED, license.LicenseKey, license.WorkspaceSlug)
 	}
 
@@ -272,4 +292,75 @@ func RefreshFeatureFlags(ctx context.Context, api prime_api.IPrimeMonitorApi, li
 	}
 
 	return nil
+}
+
+func ConvertWorkspaceActivationResponseToLicense(data *prime_api.WorkspaceActivationResponse) (*db.License, error) {
+	workspaceUUID, _ := uuid.Parse(data.WorkspaceID)
+	instanceUUID, _ := uuid.Parse(data.InstanceID)
+
+	// Check for the current period end date
+	var currentPeriodEndDate *time.Time
+	if data.CurrentPeriodEndDate.IsZero() {
+		currentPeriodEndDate = nil
+	} else {
+		currentPeriodEndDate = &data.CurrentPeriodEndDate
+	}
+
+	// Check for the trial end date
+	var trialEndDate *time.Time
+	if data.TrialEndDate.IsZero() {
+		trialEndDate = nil
+	} else {
+		trialEndDate = &data.TrialEndDate
+	}
+
+	now := time.Now()
+	license := &db.License{
+		LicenseKey:             data.LicenceKey,
+		InstanceID:             instanceUUID,
+		WorkspaceID:            workspaceUUID,
+		Product:                data.Product,
+		ProductType:            data.ProductType,
+		WorkspaceSlug:          data.WorkspaceSlug,
+		Seats:                  data.Seats,
+		FreeSeats:              data.FreeSeats,
+		Interval:               data.Interval,
+		IsOfflinePayment:       data.IsOfflinePayment,
+		IsCancelled:            data.IsCancelled,
+		Subscription:           data.Subscription,
+		CurrentPeriodEndDate:   currentPeriodEndDate,
+		TrialEndDate:           trialEndDate,
+		HasAddedPaymentMethod:  data.HasAddedPayment,
+		HasActivatedFreeTrial:  data.HasActivatedFree,
+		LastVerifiedAt:         &now,
+		LastPaymentFailedDate:  data.LastPaymentFailedDate,
+		LastPaymentFailedCount: data.LastPaymentFailedCount,
+	}
+
+	return license, nil
+}
+
+func ConvertLicenseToWorkspaceActivationPayload(license *db.License, userLicenses []db.UserLicense) (*prime_api.WorkspaceActivationPayload, error) {
+	// Convert WorkspaceID to string
+	workspaceIDStr := license.WorkspaceID.String()
+
+	// Create MembersList from UserLicenses
+	membersList := make([]prime_api.WorkspaceMember, len(userLicenses))
+	for i, userLicense := range userLicenses {
+		membersList[i] = prime_api.WorkspaceMember{
+			UserId:   userLicense.UserID.String(),
+			UserRole: userLicense.Role,
+			IsActive: userLicense.IsActive,
+		}
+	}
+
+	// Create and return the WorkspaceActivationPayload
+	payload := &prime_api.WorkspaceActivationPayload{
+		WorkspaceSlug: license.WorkspaceSlug,
+		WorkspaceID:   workspaceIDStr,
+		MembersList:   membersList,
+		LicenceKey:    license.LicenseKey,
+	}
+
+	return payload, nil
 }

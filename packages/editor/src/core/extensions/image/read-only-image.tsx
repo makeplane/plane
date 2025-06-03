@@ -1,4 +1,4 @@
-import Image from "@tiptap/extension-image";
+import { Image as BaseImageExtension } from "@tiptap/extension-image";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 // extensions
 import { CustomImageNode } from "@/extensions";
@@ -8,7 +8,7 @@ import { TReadOnlyFileHandler } from "@/types";
 export const ReadOnlyImageExtension = (props: TReadOnlyFileHandler) => {
   const { getAssetSrc } = props;
 
-  return Image.extend({
+  return BaseImageExtension.extend({
     addAttributes() {
       return {
         ...this.parent?.(),

@@ -10,6 +10,11 @@ import (
 )
 
 type IPrimeMonitorApi interface {
+	// Getters for the api
+	IsAirgapped() bool
+	AppVersion() string
+	ApiHostname() string
+
 	PostServiceStatus(StatusPayload) ErrorCode
 	GetFeatureFlags(licenseKey string) (*FlagDataResponse, *APIError)
 	ActivateInstance() *APIError
@@ -102,6 +107,19 @@ func NewMonitorApi(host, machineSignature, instanceId, appVersion string) IPrime
 		version:          appVersion,
 		machineSignature: machineSignature,
 	}
+}
+
+// We don't need this for the normal api, but we need it for the airgapped api
+func (api *PrimeMonitorApi) ApiHostname() string {
+	return ""
+}
+
+func (api *PrimeMonitorApi) AppVersion() string {
+	return api.appVersion
+}
+
+func (api *PrimeMonitorApi) IsAirgapped() bool {
+	return false
 }
 
 func (api *PrimeMonitorApi) SetClient(client string) {

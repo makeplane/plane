@@ -318,7 +318,10 @@ def nested_page_update(
         response = requests.post(
             url,
             json=payload,
-            headers={"Content-Type": "application/json"},
+            headers={
+                "Content-Type": "application/json",
+                "LIVE_SERVER_SECRET_KEY": settings.LIVE_SERVER_SECRET_KEY,
+            },
         )
         response.raise_for_status()
         return

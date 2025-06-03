@@ -1,5 +1,6 @@
 /* eslint-disable no-useless-catch */
 // helpers
+import { AxiosError } from "axios";
 import { API_BASE_URL } from "@/helpers/common.helper";
 // plane web types
 import { TSelfHostedSubscription } from "@/plane-web/types/self-hosted-subscription";
@@ -31,7 +32,7 @@ export class SelfHostedSubscriptionService extends APIService {
    * @param { { license_key: string } } payload
    * @returns { TSelfHostedSubscription | undefined }
    */
-  async activateSubscription(
+  async activateUsingLicenseKey(
     workspaceSlug: string,
     payload: { license_key: string }
   ): Promise<TSelfHostedSubscription | undefined> {
@@ -39,7 +40,32 @@ export class SelfHostedSubscriptionService extends APIService {
       const { data } = await this.post(`/api/payments/workspaces/${workspaceSlug}/licenses/`, payload);
       return data || undefined;
     } catch (error) {
-      throw error;
+      if (error instanceof AxiosError) {
+        throw error.response?.data;
+      }
+    }
+  }
+
+  /**
+   * @description activating workspace license using license file
+   * @param { string } workspaceSlug
+   * @param { File } file
+   * @returns { TSelfHostedSubscription | undefined }
+   */
+  async activateUsingLicenseFile(workspaceSlug: string, file: File): Promise<TSelfHostedSubscription | undefined> {
+    try {
+      const formData = new FormData();
+      formData.append("license_file", file);
+      const { data } = await this.post(`/api/payments/workspaces/${workspaceSlug}/licenses/upload/`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return data || undefined;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        throw error.response?.data;
+      }
     }
   }
 

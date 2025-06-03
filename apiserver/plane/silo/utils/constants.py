@@ -1,23 +1,27 @@
 APPLICATIONS = {
     "github": {
+        "key": "github",
         "name": "Github",
         "slug": "silo-github",
         "short_description": "Github Integration",
         "description_html": "<p>Github Integration</p>",
     },
     "gitlab": {
+        "key": "gitlab",
         "name": "Gitlab",
         "slug": "silo-gitlab",
         "short_description": "Gitlab Integration",
         "description_html": "<p>Gitlab Integration</p>",
     },
     "slack": {
+        "key": "slack",
         "name": "Slack",
         "slug": "silo-slack",
         "short_description": "Slack Integration",
         "description_html": "<p>Slack Integration</p>",
     },
     "jira": {
+        "key": "jira",
         "name": "Jira",
         "slug": "silo-jira",
         "short_description": "Jira Importer",
@@ -30,15 +34,24 @@ APPLICATIONS = {
         "description_html": "<p>Jira Server Importer</p>",
     },
     "linear": {
+        "key": "linear",
         "name": "Linear",
         "slug": "silo-linear",
         "short_description": "Linear Importer",
         "description_html": "<p>Linear Importer</p>",
     },
     "asana": {
+        "key": "asana",
         "name": "Asana",
         "slug": "silo-asana",
         "short_description": "Asana Importer",
         "description_html": "<p>Asana Importer</p>",
+    },
+    "importer": {
+        "key": "importer",
+        "name": "Importer",
+        "slug": "silo-importer",
+        "short_description": "Importer",
+        "description_html": "<p>Importer</p>",
     },
 }

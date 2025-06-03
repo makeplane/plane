@@ -380,7 +380,7 @@ if LIVE_BASE_URL and not is_valid_url(LIVE_BASE_URL):
 LIVE_BASE_PATH = os.environ.get("LIVE_BASE_PATH", "live/")
 
 LIVE_URL = urljoin(LIVE_BASE_URL, LIVE_BASE_PATH) if LIVE_BASE_URL else None
-
+LIVE_SERVER_SECRET_KEY = os.environ.get("LIVE_SERVER_SECRET_KEY", "")
 
 SILO_BASE_URL = os.environ.get("SILO_BASE_URL", "")
 SILO_BASE_PATH = os.environ.get("SILO_BASE_PATH", "/silo")
@@ -585,3 +585,5 @@ WEB_URL = os.environ.get("WEB_URL", "http://localhost:3000")
 
 # Intake Email Domain
 INTAKE_EMAIL_DOMAIN = os.environ.get("INTAKE_EMAIL_DOMAIN", "example.com")
+
+IS_AIRGAPPED = os.environ.get("IS_AIRGAPPED", "0") == "1"

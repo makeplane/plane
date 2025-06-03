@@ -33,6 +33,7 @@ type Props = {
   projectId: string | undefined;
   issueId?: string;
   searchEpic?: boolean;
+  convertToWorkItem?: boolean;
 };
 
 // services
@@ -46,6 +47,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   projectId,
   issueId,
   searchEpic = false,
+  convertToWorkItem = false,
 }) => {
   // i18n
   const { t } = useTranslation();
@@ -78,14 +80,15 @@ export const ParentIssuesListModal: React.FC<Props> = ({
         parent: searchEpic ? undefined : true,
         issue_id: issueId,
         workspace_search: false,
-        epic: searchEpic ? true : undefined,
+        epic: searchEpic && !convertToWorkItem ? true : undefined,
+        convert: convertToWorkItem ? true : undefined,
       })
       .then((res) => setIssues(res))
       .finally(() => {
         setIsSearching(false);
         setIsLoading(false);
       });
-  }, [debouncedSearchTerm, isOpen, issueId, projectId, workspaceSlug]);
+  }, [debouncedSearchTerm, isOpen, issueId, projectId, workspaceSlug, convertToWorkItem, searchEpic]);
 
   return (
     <>

@@ -56,7 +56,7 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
   const sidebarPreference = getNavigationPreferences(workspaceSlug.toString());
   const isPinned = sidebarPreference?.[item.key]?.is_pinned;
 
-  const handleLinkClick = () => toggleExtendedSidebar();
+  const handleLinkClick = () => toggleExtendedSidebar(true);
 
   useEffect(() => {
     const element = navigationIemRef.current;

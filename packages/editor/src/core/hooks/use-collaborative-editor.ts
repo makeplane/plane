@@ -2,7 +2,6 @@ import { HocuspocusProvider } from "@hocuspocus/provider";
 import Collaboration from "@tiptap/extension-collaboration";
 // react
 import { useEffect, useMemo, useState } from "react";
-// core
 // indexeddb
 import { IndexeddbPersistence } from "y-indexeddb";
 // extensions

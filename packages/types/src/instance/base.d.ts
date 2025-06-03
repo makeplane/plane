@@ -8,6 +8,8 @@ import {
   // enterprise
   TInstanceEnterpriseAuthenticationKeys,
 } from "./";
+// extended
+import { IInstanceConfigExtended } from "./base-extended";
 
 type TProductType = "plane-ce" | "plane-one";
 
@@ -42,7 +44,7 @@ export interface IInstance {
   workspaces_exist: boolean;
 }
 
-export interface IInstanceConfig {
+export interface IInstanceConfig extends IInstanceConfigExtended {
   enable_signup: boolean;
   is_workspace_creation_disabled: boolean;
   is_google_enabled: boolean;
@@ -55,7 +57,7 @@ export interface IInstanceConfig {
   posthog_api_key: string | undefined;
   posthog_host: string | undefined;
   has_unsplash_configured: boolean;
-  has_openai_configured: boolean;
+  has_llm_configured: boolean;
   file_size_limit: number | undefined;
   is_smtp_configured: boolean;
   app_base_url: string | undefined;
@@ -65,18 +67,6 @@ export interface IInstanceConfig {
   is_intercom_enabled: boolean;
   intercom_app_id: string | undefined;
   instance_changelog_url?: string;
-  // enterprise
-  is_oidc_enabled: boolean;
-  oidc_provider_name: string | undefined;
-  is_saml_enabled: boolean;
-  saml_provider_name: string | undefined;
-  payment_server_base_url?: string;
-  prime_server_base_url?: string;
-  feature_flag_server_base_url?: string;
-  // silo
-  silo_base_url: string | undefined;
-  // elasticsearch
-  is_elasticsearch_enabled: boolean;
 }
 
 export interface IInstanceUpdate {

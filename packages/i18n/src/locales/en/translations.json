@@ -336,8 +336,6 @@
   "new_password_must_be_different_from_old_password": "New password must be different from old password",
   "edited": "edited",
   "bot": "Bot",
-
-
   "project_view": {
     "sort_by": {
       "created_at": "Created at",
@@ -586,7 +584,8 @@
         "message": "Something went wrong. Please try again."
       },
       "required": "This field is required",
-      "entity_required": "{entity} is required"
+      "entity_required": "{entity} is required",
+      "restricted_entity": "{entity} is restricted"
     },
     "update_link": "Update link",
     "attach": "Attach",
@@ -956,6 +955,18 @@
     "remove": {
       "success": "Sub-work item removed successfully",
       "error": "Error removing sub-work item"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "You don't have sub-work items that match the filters you've applied.",
+        "description": "To see all sub-work items, clear all applied filters.",
+        "action": "Clear filters"
+      },
+      "list_filters": {
+        "title": "You don't have work items that match the filters you've applied.",
+        "description": "To see all work items, clear all applied filters.",
+        "action": "Clear filters"
+      }
     }
   },
   "view": {
@@ -2296,7 +2307,6 @@
     "previously_edited_by": "Previously edited by",
     "edited_by": "Edited by"
   },
-
   "intake_forms": {
     "create": {
       "title": "Create a work item",

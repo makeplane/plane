@@ -17,7 +17,8 @@ import { PaidPlanUpgradeModal } from "@/plane-web/components/license";
 // assets
 import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
-import { AppSidebar } from "app/[workspaceSlug]/(projects)/sidebar";
+// eslint-disable-next-line import/order
+import { AppSidebar } from "app/(all)/[workspaceSlug]/(projects)/sidebar";
 
 export const WorkspaceDisabledPage: React.FC = observer(() => {
   // router

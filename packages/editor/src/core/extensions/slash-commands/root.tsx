@@ -3,6 +3,8 @@ import { ReactRenderer, posToDOMRect } from "@tiptap/react";
 import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
 import { computePosition, flip, shift } from "@floating-ui/dom";
 import { FC } from "react";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { CommandListInstance } from "@/helpers/tippy";
 // types
@@ -40,7 +42,7 @@ export type TSlashCommandAdditionalOption = ISlashCommandItem & {
 };
 
 const Command = Extension.create<SlashCommandOptions>({
-  name: "slash-command",
+  name: CORE_EXTENSIONS.SLASH_COMMANDS,
   addOptions() {
     return {
       suggestion: {
@@ -52,9 +54,15 @@ const Command = Extension.create<SlashCommandOptions>({
           const { selection } = editor.state;
           const parentNode = selection.$from.node(selection.$from.depth);
           const blockType = parentNode.type.name;
-          if (blockType === "codeBlock" || editor.isActive("table")) {
+
+          if (blockType === CORE_EXTENSIONS.CODE_BLOCK) {
             return false;
           }
+
+          if (editor.isActive(CORE_EXTENSIONS.TABLE)) {
+            return false;
+          }
+
           return true;
         },
       },

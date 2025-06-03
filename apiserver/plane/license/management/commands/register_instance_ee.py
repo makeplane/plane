@@ -4,6 +4,7 @@ import os
 import requests
 
 # Django imports
+from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 
@@ -22,6 +23,9 @@ class Command(BaseCommand):
 
     def get_instance_from_prime(self, machine_signature, prime_host):
         try:
+            if settings.IS_AIRGAPPED:
+                return {}
+
             response = requests.get(
                 f"{prime_host}/api/v2/instances/me/",
                 headers={

@@ -14,6 +14,12 @@
   "pi_chat": "PI Chat",
   "in_app": "Dans l'application",
   "forms": "Formulaires",
+  "choose_workspace_for_integration": "Choisissez un espace de travail pour connecter cette application",
+  "integrations_description": "Les applications qui fonctionnent avec Plane doivent se connecter à un espace de travail où vous êtes administrateur.",
+  "create_a_new_workspace": "Créer un nouvel espace de travail",
+  "learn_more_about_workspaces": "En savoir plus sur les espaces de travail",
+  "no_workspaces_to_connect": "Aucun espace de travail à connecter",
+  "no_workspaces_to_connect_description": "Vous devez créer un espace de travail pour pouvoir connecter des intégrations et des modèles",
 
   "common": {
     "worklogs": "Journaux de travail",
@@ -345,6 +351,11 @@
         "primary_button": {
           "text": "Voir les autres initiatives"
         }
+      },
+      "epics": {
+        "title": "Vous n'avez pas d'Epics qui correspondent aux filtres que vous avez appliqués.",
+        "subHeading": "Pour voir tous les Epics, effacez tous les filtres appliqués.",
+        "action": "Effacer les filtres"
       }
     }
   },
@@ -2005,6 +2016,106 @@
             "create": "Créer un modèle d'élément de travail",
             "update": "Mettre à jour le modèle d'élément de travail"
           }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Nommez votre modèle de page.",
+              "validation": {
+                "required": "Le nom du modèle est requis",
+                "maxLength": "Le nom du modèle doit comporter moins de 255 caractères"
+              }
+            },
+            "description": {
+              "placeholder": "Décrivez quand et comment utiliser ce modèle."
+            }
+          },
+          "name": {
+            "placeholder": "Page sans titre",
+            "validation": {
+              "maxLength": "Le nom de la page doit comporter moins de 255 caractères"
+            }
+          },
+          "button": {
+            "create": "Créer un modèle de page",
+            "update": "Mettre à jour le modèle de page"
+          }
+        },
+        "publish": {
+          "action": "Publier le modèle",
+          "title": "Rendez votre modèle découvrable et reconnaissable.",
+          "name": {
+            "label": "Nom du modèle",
+            "placeholder": "Nommez votre modèle",
+            "validation": {
+              "required": "Le nom du modèle est requis",
+              "maxLength": "Le nom du modèle doit comporter moins de 255 caractères"
+            }
+          },
+          "short_description": {
+            "label": "Description courte",
+            "placeholder": "Ce modèle est idéal pour les gestionnaires de projets qui gèrent plusieurs projets en même temps.",
+            "validation": {
+              "required": "La description courte est requise"
+            }
+          },
+          "description": {
+            "label": "Description",
+            "placeholder": "Améliorez la productivité et simplifiez la communication avec notre intégration de reconnaissance vocale.\n• Transcription en temps réel : Convertissez les mots prononcés en texte précis instantanément.\n• Création de tâches et de commentaires : Ajoutez des tâches, des descriptions et des commentaires via des commandes vocales.",
+            "validation": {
+              "required": "La description est requise"
+            }
+          },
+          "category": {
+            "label": "Catégorie",
+            "placeholder": "Choisissez où vous pensez que cela correspond le mieux. Vous pouvez en choisir plusieurs.",
+            "validation": {
+              "required": "Au moins une catégorie est requise"
+            }
+          },
+          "keywords": {
+            "label": "Mots-clés",
+            "placeholder": "Utilisez des termes que vous pensez que vos utilisateurs rechercheront lorsqu'ils cherchent ce modèle."
+          },
+          "company_name": {
+            "label": "Nom de l'entreprise",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Le nom de l'entreprise est requis",
+              "maxLength": "Le nom de l'entreprise doit comporter moins de 255 caractères"
+            }
+          },
+          "contact_email": {
+            "label": "Adresse email du support",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Adresse email invalide",
+              "required": "L'adresse email du support est requise",
+              "maxLength": "L'adresse email du support doit comporter moins de 255 caractères"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Lien vers votre politique de confidentialité",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "URL invalide",
+              "maxLength": "L'URL doit comporter moins de 800 caractères"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Lien vers vos conditions d'utilisation",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "URL invalide",
+              "maxLength": "L'URL doit comporter moins de 800 caractères"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Incluez des documents et des images que vous pensez rendront les utilisateurs de ce modèle plus intéressés.",
+            "validation": {
+              "required": "Au moins une capture d'écran est requise"
+            }
+          }
         }
       }
     },
@@ -2019,6 +2130,16 @@
       },
       "no_labels": {
         "description": " Aucune étiquette pour le moment. Créez des étiquettes pour aider à organiser et filtrer les éléments de travail dans votre projet."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Il n'y a aucun modèle auquel vous avez accès.",
+          "description": "Veuillez créer un modèle"
+        },
+        "no_results": {
+          "title": "Cela ne correspond à aucun modèle.",
+          "description": "Essayez de rechercher avec d'autres termes."
+        }
       }
     },
     "toasts": {

@@ -26,6 +26,8 @@ import { getAllControllers } from "./core/controller-registry";
 import { initializeDocumentHandlers } from "@/plane-live/document-types";
 // Shutdown manager
 import { shutdownManager } from "@/core/shutdown-manager";
+import { serverAgentManager } from "./core/agents/server-agent";
+import { serverAgentHandler } from "./core/document-types/server-agent-handlers";
 
 // WebSocket router type definition
 interface WebSocketRouter extends Router {
@@ -108,8 +110,12 @@ export class Server {
     // Initialize the Hocuspocus server
     this.hocusPocusServer = await getHocusPocusServer();
 
+    // Initialize the server agent manager with the Hocuspocus server
+    serverAgentManager.initialize(this.hocusPocusServer);
+    serverAgentHandler.register();
+
     // initialize all document handlers
-    initializeDocumentHandlers(this.hocusPocusServer);
+    initializeDocumentHandlers();
   }
 
   /**

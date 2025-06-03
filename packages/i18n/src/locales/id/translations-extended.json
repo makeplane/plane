@@ -14,7 +14,13 @@
   "pi_chat": "Obrolan Pi",
   "in_app": "Dalam Aplikasi",
   "forms": "Formulir",
-
+  "choose_workspace_for_integration": "Pilih ruang kerja untuk menghubungkan aplikasi ini",
+  "integrations_description": "Aplikasi yang bekerja dengan Plane harus menghubungkan ke ruang kerja di mana Anda adalah admin.",
+  "create_a_new_workspace": "Buat ruang kerja baru",
+  "learn_more_about_workspaces": "Pelajari lebih lanjut tentang ruang kerja",
+  "no_workspaces_to_connect": "Tidak ada ruang kerja untuk menghubungkan",
+  "no_workspaces_to_connect_description": "Anda perlu membuat ruang kerja untuk dapat menghubungkan integrasi dan template",
+  
   "common": {
     "worklogs": "Log Kerja",
     "live": "Langsung",
@@ -92,7 +98,7 @@
       }
     }
   },
-  
+
   "issue": {
     "relation": {
       "start_before": "Mulai Sebelum",
@@ -346,6 +352,11 @@
         "primary_button": {
           "text": "Lihat Inisiatif lain"
         }
+      },
+      "epics": {
+        "title": "Anda tidak memiliki epik yang cocok dengan filter yang Anda terapkan.",
+        "subHeading": "Untuk melihat semua epik, hapus semua filter yang diterapkan.",
+        "action": "Hapus filter"
       }
     }
   },
@@ -2003,6 +2014,106 @@
             "create": "Buat template item kerja",
             "update": "Perbarui template item kerja"
           }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Beri nama template halaman Anda.",
+              "validation": {
+                "required": "Nama template diperlukan",
+                "maxLength": "Nama template harus kurang dari 255 karakter"
+              }
+            },
+            "description": {
+              "placeholder": "Jelaskan kapan dan bagaimana menggunakan template ini."
+            }
+          },
+          "name": {
+            "placeholder": "Halaman tidak berjudul",
+            "validation": {
+              "maxLength": "Nama halaman harus kurang dari 255 karakter"
+            }
+          },
+          "button": {
+            "create": "Buat template halaman",
+            "update": "Perbarui template halaman"
+          }
+        },
+        "publish": {
+          "action": "Publikasikan template",
+          "title": "Buat template Anda dapat dikenali dan ditemukan.",
+          "name": {
+            "label": "Nama template",
+            "placeholder": "Beri nama template Anda",
+            "validation": {
+              "required": "Nama template diperlukan",
+              "maxLength": "Nama template harus kurang dari 255 karakter"
+            }
+          },
+          "short_description": {
+            "label": "Deskripsi singkat",
+            "placeholder": "Template ini cocok untuk Manajer Proyek yang mengelola beberapa proyek sekaligus.",
+            "validation": {
+              "required": "Deskripsi singkat diperlukan"
+            }
+          },
+          "description": {
+            "label": "Deskripsi",
+            "placeholder": "Perbaiki produktivitas dan sederhanakan komunikasi dengan integrasi Speech-To-Text kami.\n• Transkripsi real-time: Konversi kata yang diucapkan menjadi teks yang akurat secara instan.\n• Membuat tugas dan komentar: Tambahkan tugas, deskripsi, dan komentar melalui perintah suara.",
+            "validation": {
+              "required": "Deskripsi diperlukan"
+            }
+          },
+          "category": {
+            "label": "Kategori",
+            "placeholder": "Pilih di mana Anda pikir ini cocok paling baik. Anda dapat memilih lebih dari satu.",
+            "validation": {
+              "required": "Setidaknya satu kategori diperlukan"
+            }
+          },
+          "keywords": {
+            "label": "Kata kunci",
+            "placeholder": "Gunakan istilah yang Anda pikir pengguna akan cari ketika mencari template ini."
+          },
+          "company_name": {
+            "label": "Nama perusahaan",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Nama perusahaan diperlukan",
+              "maxLength": "Nama perusahaan harus kurang dari 255 karakter"
+            }
+          },
+          "contact_email": {
+            "label": "Email dukungan",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Alamat email tidak valid",
+              "required": "Email dukungan diperlukan",
+              "maxLength": "Email dukungan harus kurang dari 255 karakter"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Tautan ke kebijakan privasi Anda",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "URL tidak valid",
+              "maxLength": "URL harus kurang dari 800 karakter"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Tautan ke kebijakan penggunaan Anda",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "URL tidak valid",
+              "maxLength": "URL harus kurang dari 800 karakter"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Sertakan dokumen dan gambar yang Anda pikir akan membuat pengguna template.",
+            "validation": {
+              "required": "Setidaknya satu screenshot diperlukan"
+            }
+          }
         }
       }
     },
@@ -2017,6 +2128,16 @@
       },
       "no_labels": {
         "description": " Belum ada label. Buat label untuk membantu mengatur dan memfilter item kerja dalam proyek Anda."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Tidak ada template yang dapat Anda akses.",
+          "description": "Silakan buat template"
+        },
+        "no_results": {
+          "title": "Itu tidak cocok dengan template.",
+          "description": "Coba cari dengan istilah lain."
+        }
       }
     },
     "toasts": {

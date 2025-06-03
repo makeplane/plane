@@ -9,7 +9,7 @@ import { cn, getSubscriptionName } from "@plane/utils";
 // plane web imports
 import { SubscriptionButton } from "@/plane-web/components/common";
 import { PaidPlanUpgradeModal, PlaneOneEditionBadge } from "@/plane-web/components/license";
-import { SubscriptionActivationModal } from "@/plane-web/components/workspace";
+import { SubscriptionActivationModal } from "@/plane-web/components/license/activation";
 import { useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export const SelfHostedEditionBadge = observer(() => {

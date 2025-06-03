@@ -25,6 +25,11 @@ on:
         required: false
         default: false
         type: boolean
+      airgapped_build:
+        description: "Build for airgapped installation"
+        required: false
+        default: false
+        type: boolean
 
 env:
   TARGET_BRANCH: ${{ github.ref_name }}
@@ -32,6 +37,7 @@ env:
   BUILD_TYPE: ${{ github.event.inputs.build_type }}
   RELEASE_VERSION: ${{ github.event.inputs.releaseVersion }}
   IS_PRERELEASE: ${{ github.event.inputs.isPrerelease }}
+  AIRGAPPED_BUILD: ${{ github.event.inputs.airgapped_build }}
 
 jobs:
   branch_build_setup:
@@ -63,6 +69,8 @@ jobs:
       build_release: ${{ steps.set_env_variables.outputs.BUILD_RELEASE }}
       build_prerelease: ${{ steps.set_env_variables.outputs.BUILD_PRERELEASE }}
       release_version: ${{ steps.set_env_variables.outputs.RELEASE_VERSION }}
+      airgapped_build: ${{ steps.set_env_variables.outputs.AIRGAPPED_BUILD }}
+      arm64_build: ${{ steps.set_env_variables.outputs.ARM64_BUILD }}
 
     steps:
       - id: set_env_variables
@@ -73,11 +81,13 @@ jobs:
             echo "BUILDX_VERSION=lab:latest" >> $GITHUB_OUTPUT
             echo "BUILDX_PLATFORMS=linux/amd64,linux/arm64" >> $GITHUB_OUTPUT
             echo "BUILDX_ENDPOINT=makeplane/plane-dev" >> $GITHUB_OUTPUT
+            echo "ARM64_BUILD=true" >> $GITHUB_OUTPUT
           else
             echo "BUILDX_DRIVER=docker-container" >> $GITHUB_OUTPUT
             echo "BUILDX_VERSION=latest" >> $GITHUB_OUTPUT
             echo "BUILDX_PLATFORMS=linux/amd64" >> $GITHUB_OUTPUT
             echo "BUILDX_ENDPOINT=" >> $GITHUB_OUTPUT
+            echo "ARM64_BUILD=false" >> $GITHUB_OUTPUT
           fi
           BR_NAME=$( echo "${{ env.TARGET_BRANCH }}" |sed 's/[^a-zA-Z0-9.-]//g')
           echo "TARGET_BRANCH=$BR_NAME" >> $GITHUB_OUTPUT
@@ -97,6 +107,8 @@ jobs:
           BUILD_PRERELEASE=false
           RELVERSION="latest"
           HARBOR_PUSH=false
+
+          echo "AIRGAPPED_BUILD=${{ env.AIRGAPPED_BUILD }}" >> $GITHUB_OUTPUT
 
           if [ "${{ env.BUILD_TYPE }}" == "Release" ]; then
             FLAT_RELEASE_VERSION=$(echo "${{ env.RELEASE_VERSION }}" | sed 's/[^a-zA-Z0-9.-]//g')
@@ -399,6 +411,131 @@ jobs:
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+
+  package_airgapped_artifacts:
+    if: ${{ needs.branch_build_setup.outputs.airgapped_build == 'true' || needs.branch_build_setup.outputs.build_type == 'Release' }}
+    name: Package Airgapped Artifacts
+    runs-on: ubuntu-22.04
+    needs: [branch_build_setup, branch_build_push_admin, branch_build_push_web, branch_build_push_space, branch_build_push_live, branch_build_push_apiserver, branch_build_push_proxy, branch_build_push_monitor, branch_build_push_email, branch_build_push_silo]
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.SELF_HOST_BUCKET_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.SELF_HOST_BUCKET_SECRET_KEY }}
+      AIRGAPPED_RELEASE_VERSION: ${{ needs.branch_build_setup.outputs.release_version }}
+      S3_PATH_AMD: "s3://${{ vars.SELF_HOST_BUCKET_NAME }}/plane-enterprise/${{ needs.branch_build_setup.outputs.artifact_s3_suffix }}/airgapped-amd64.tar.gz"
+      S3_PATH_ARM: "s3://${{ vars.SELF_HOST_BUCKET_NAME }}/plane-enterprise/${{ needs.branch_build_setup.outputs.artifact_s3_suffix }}/airgapped-arm64.tar.gz"
+      S3_REGION: ${{ vars.SELF_HOST_BUCKET_REGION }}
+      COMMIT_HASH: $(git rev-parse HEAD)
+      PRESIGNED_URL_EXPIRY: 604800 # 7 days (max allowed by AWS)
+      AIRGAPPED_ARM64_BUILD: ${{ needs.branch_build_setup.outputs.arm64_build == 'true' }}
+    steps:
+      - id: checkout_files
+        name: Checkout Files
+        uses: actions/checkout@v4
+
+      - id: install-qemu
+        uses: docker/setup-qemu-action@v3
+
+      - name: Docker Setup
+        uses: docker/setup-buildx-action@v3
+
+      - name: Setup yq
+        run: |
+          echo "Installing yq..."
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Install crane
+        run: |
+          echo "Installing crane..."
+          curl -sL "https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz" | tar -xz -C /usr/local/bin crane
+          sudo chmod +x /usr/local/bin/crane
+
+      - id: install-aws-cli
+        uses: unfor19/install-aws-cli-action@v1
+        with:
+          version: 2
+
+      - id: package_airgapped_artifacts
+        name: Package Airgapped Artifacts
+        run: |
+          AIRGAPPED_RELEASE_VERSION=${{ env.AIRGAPPED_RELEASE_VERSION }}
+          if [ "${{ needs.branch_build_setup.outputs.build_type}}" == "Build" ]; then
+            AIRGAPPED_RELEASE_VERSION=${{ needs.branch_build_setup.outputs.gh_branch_name }}
+            # for testing
+            # AIRGAPPED_RELEASE_VERSION=v1.10.0
+          fi
+          echo "AIRGAPPED_RELEASE_VERSION=$AIRGAPPED_RELEASE_VERSION" >> $GITHUB_ENV
+
+          # build for amd64
+          cd ${{ github.workspace }}/deploy/airgapped
+          bash ./build.sh --release=$AIRGAPPED_RELEASE_VERSION --platform=linux/amd64
+          cd dist
+          echo "Packaging airgapped artifacts and uploading to S3"
+          tar -czf - * | aws s3 cp - ${{ env.S3_PATH_AMD}}
+          echo "Airgapped artifacts uploaded to S3 at ${{ env.S3_PATH_AMD }}"
+
+          # create a presigned url for the airgapped artifacts for 7 days
+          S3_PRESIGNED_URL_AMD=$(aws s3 presign ${{ env.S3_PATH_AMD }} --expires-in ${{ env.PRESIGNED_URL_EXPIRY }} --region ${{ env.S3_REGION }})
+          echo "$S3_PRESIGNED_URL_AMD" > /tmp/presigned_url_amd.txt
+
+          echo "AIRGAPPED_ARM64_BUILD=${{ env.AIRGAPPED_ARM64_BUILD }}" >> $GITHUB_OUTPUT
+          # build for arm64
+          if [ "${{ env.AIRGAPPED_ARM64_BUILD }}" == "true" ]; then
+            cd ${{ github.workspace }}/deploy/airgapped
+            bash ./build.sh --release=$AIRGAPPED_RELEASE_VERSION --platform=linux/arm64
+            cd dist
+            echo "Packaging airgapped artifacts and uploading to S3"
+            tar -czf - * | aws s3 cp - ${{ env.S3_PATH_ARM}}
+            echo "Airgapped artifacts uploaded to S3 at ${{ env.S3_PATH_ARM }}"
+
+            # create a presigned url for the airgapped artifacts for 7 days
+            S3_PRESIGNED_URL_ARM=$(aws s3 presign ${{ env.S3_PATH_ARM }} --expires-in ${{ env.PRESIGNED_URL_EXPIRY }} --region ${{ env.S3_REGION }})
+            echo "$S3_PRESIGNED_URL_ARM" > /tmp/presigned_url_arm.txt
+          fi
+          
+          echo "COMMIT_HASH=$(git rev-parse HEAD)" >> $GITHUB_ENV
+
+      - name: upload_artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pre-signed-url-amd.txt
+          path: /tmp/presigned_url_amd.txt
+
+      - name: upload_artifact
+        if: ${{ steps.package_airgapped_artifacts.outputs.AIRGAPPED_ARM64_BUILD == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: pre-signed-url-arm.txt
+          path: /tmp/presigned_url_arm.txt
+
+      - name: Airgapped Package Summary
+        run: |
+
+          # Print Step Build Summary
+          echo "# 🚀 Airgapped Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 🌍 Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "| Key | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
+          echo "| Release Version | \`${{ env.AIRGAPPED_RELEASE_VERSION }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| S3 Path AMD | \`${{ env.S3_PATH_AMD }}\` |" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.package_airgapped_artifacts.outputs.AIRGAPPED_ARM64_BUILD }}" == "true" ]; then
+            echo "| S3 Path ARM | \`${{ env.S3_PATH_ARM }}\` |" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "| Git Branch | \`${{env.TARGET_BRANCH}}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Git Commit Hash | \`${{ env.COMMIT_HASH }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          cat >> $GITHUB_STEP_SUMMARY << 'EOF'
+          ## 📘 Usage Instructions
+          ```bash
+          curl -fsSL -o airgapped.tar.gz "<presigned-url>"
+          mkdir -p airgapped
+          tar -xzf airgapped.tar.gz -C airgapped
+          cd airgapped
+          bash install.sh
+          ```
+          EOF
 
 
   upload_artifacts_s3:

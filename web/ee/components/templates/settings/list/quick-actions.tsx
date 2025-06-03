@@ -3,13 +3,18 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // icons
-import { Pencil, Trash2 } from "lucide-react";
+import { Earth, Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TBaseTemplateWithData } from "@plane/types";
 import { AlertModalCore, ContextMenu, CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
-import { cn, getCreateUpdateTemplateSettingsPath, getTemplateTypeI18nName } from "@plane/utils";
+import {
+  cn,
+  getCreateUpdateTemplateSettingsPath,
+  getPublishTemplateSettingsPath,
+  getTemplateTypeI18nName,
+} from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
@@ -53,6 +58,18 @@ export const TemplateQuickActions = observer(
       router.push(updateTemplatePath);
     };
 
+    const handlePublishTemplate = () => {
+      const publishTemplatePath = getPublishTemplateSettingsPath({
+        type: template.template_type,
+        workspaceSlug,
+        ...(template.project
+          ? { level: ETemplateLevel.PROJECT, projectId: template.project }
+          : { level: ETemplateLevel.WORKSPACE }),
+        templateId,
+      });
+      router.push(publishTemplatePath);
+    };
+
     const handleDeleteTemplateModal = () => {
       setIsDeleteModalOpen(true);
     };
@@ -91,6 +108,13 @@ export const TemplateQuickActions = observer(
         icon: Pencil,
         action: handleEditTemplate,
         shouldRender: template.canCurrentUserEditTemplate,
+      },
+      {
+        key: "publish",
+        title: t("templates.settings.form.publish.action"),
+        icon: Earth,
+        action: handlePublishTemplate,
+        shouldRender: template.canCurrentUserPublishTemplate,
       },
       {
         key: "delete",

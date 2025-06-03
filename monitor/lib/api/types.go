@@ -29,27 +29,28 @@ type WorkspaceMember struct {
 }
 
 type WorkspaceActivationResponse struct {
-	WorkspaceID            string            `json:"workspace_id"`
-	WorkspaceSlug          string            `json:"workspace_slug"`
-	LicenceKey             string            `json:"license"`
-	Product                string            `json:"product"`
-	ProductType            string            `json:"product_type"`
-	MemberList             []WorkspaceMember `json:"license_users"`
-	OwnerEmail             string            `json:"owner_email"`
-	Seats                  int               `json:"purchased_seats"`
-	UserCount              int               `json:"user_count"`
-	InstanceID             string            `json:"instance_id"`
-	Interval               string            `json:"interval"`
-	FreeSeats              int               `json:"free_seats"`
-	IsOfflinePayment       bool              `json:"is_offline_payment"`
-	IsCancelled            bool              `json:"is_cancelled"`
-	Subscription           string            `json:"subscription"`
-	CurrentPeriodEndDate   time.Time         `json:"current_period_end_date"`
-	TrialEndDate           time.Time         `json:"trial_end_date"`
-	HasAddedPayment        bool              `json:"has_added_payment_method"`
-	HasActivatedFree       bool              `json:"has_activated_free_trial"`
-	LastPaymentFailedDate  *time.Time        `json:"last_payment_failed_date"`
-	LastPaymentFailedCount int               `json:"last_payment_failed_count"`
+	WorkspaceID            string                     `json:"workspace_id"`
+	WorkspaceSlug          string                     `json:"workspace_slug"`
+	LicenceKey             string                     `json:"license"`
+	Product                string                     `json:"product"`
+	ProductType            string                     `json:"product_type"`
+	MemberList             []WorkspaceMember          `json:"license_users"`
+	OwnerEmail             string                     `json:"owner_email"`
+	Seats                  int                        `json:"purchased_seats"`
+	UserCount              int                        `json:"user_count"`
+	InstanceID             string                     `json:"instance_id"`
+	Interval               string                     `json:"interval"`
+	FreeSeats              int                        `json:"free_seats"`
+	IsOfflinePayment       bool                       `json:"is_offline_payment"`
+	IsCancelled            bool                       `json:"is_cancelled"`
+	Subscription           string                     `json:"subscription"`
+	CurrentPeriodEndDate   time.Time                  `json:"current_period_end_date"`
+	TrialEndDate           time.Time                  `json:"trial_end_date"`
+	HasAddedPayment        bool                       `json:"has_added_payment_method"`
+	HasActivatedFree       bool                       `json:"has_activated_free_trial"`
+	LastPaymentFailedDate  *time.Time                 `json:"last_payment_failed_date"`
+	LastPaymentFailedCount int                        `json:"last_payment_failed_count"`
+	Flags                  *EncryptedFlagsWithVersion `json:"flags"`
 }
 
 type WorkspaceActivationPayload struct {
@@ -78,6 +79,7 @@ type EncyptedFlagData struct {
 	Nonce      string `json:"nonce"`
 	CipherText string `json:"ciphertext"`
 	Tag        string `json:"tag"`
+	Version    string `json:"version"`
 }
 
 type FlagDataResponse struct {

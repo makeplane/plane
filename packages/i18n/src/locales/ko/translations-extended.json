@@ -14,6 +14,12 @@
   "pi_chat": "파이 챗",
   "in_app": "인앱",
   "forms": "폼스",
+  "choose_workspace_for_integration": "이 앱에 연결할 작업 공간을 선택하세요",
+  "integrations_description": "Plane의 앱은 관리자인 작업 공간에 연결해야 합니다.",
+  "create_a_new_workspace": "새 작업 공간 만들기",
+  "learn_more_about_workspaces": "작업 공간에 대해 자세히 알아보기",
+  "no_workspaces_to_connect": "연결할 작업 공간이 없습니다",
+  "no_workspaces_to_connect_description": "연결할 작업 공간을 만들어야 합니다",
 
   "common": {
     "worklogs": "워크로그",
@@ -346,6 +352,11 @@
         "primary_button": {
           "text": "다른 이니셔티브 보기"
         }
+      },
+      "epics": {
+        "title": "이니셔티브가 존재하지 않습니다",
+        "subHeading": "모든 이니셔티브를 보려면 모든 적용된 필터를 지우세요.",
+        "action": "필터 지우기"
       }
     }
   },
@@ -2006,6 +2017,106 @@
             "create": "워크 아이템 템플릿 생성",
             "update": "워크 아이템 템플릿 업데이트"
           }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "페이지 템플릿의 이름을 지정하세요.",
+              "validation": {
+                "required": "템플릿 이름이 필요합니다",
+                "maxLength": "템플릿 이름은 255자 미만이어야 합니다"
+              }
+            },
+            "description": {
+              "placeholder": "이 템플릿을 언제 어떻게 사용할지 설명하세요."
+            }
+          },
+          "name": {
+            "placeholder": "제목 없음",
+            "validation": {
+              "maxLength": "페이지 이름은 255자 미만이어야 합니다"
+            }
+          },
+          "button": {
+            "create": "페이지 템플릿 생성",
+            "update": "페이지 템플릿 업데이트"
+          }
+        },
+        "publish": {
+          "action": "템플릿 게시",
+          "title": "템플릿을 발견 가능하고 인식 가능하게 만드세요.",
+          "name": {
+            "label": "템플릿 이름",
+            "placeholder": "템플릿 이름을 지정하세요",
+            "validation": {
+              "required": "템플릿 이름이 필요합니다",
+              "maxLength": "템플릿 이름은 255자 미만이어야 합니다"
+            }
+          },
+          "short_description": {
+            "label": "짧은 설명",
+            "placeholder": "이 템플릿은 동시에 여러 프로젝트를 관리하는 프로젝트 관리자에게 적합합니다.",
+            "validation": {
+              "required": "짧은 설명이 필요합니다"
+            }
+          },
+          "description": {
+            "label": "설명",
+            "placeholder": "음성-텍스트 변환 기능으로 생산성을 향상시키고 커뮤니케이션을 효율화하세요.\n• 실시간 음성 변환: 말한 내용을 즉시 정확한 텍스트로 변환합니다.\n• 작업 및 댓글 생성: 음성 명령으로 작업, 설명, 댓글을 추가할 수 있습니다.",
+            "validation": {
+              "required": "설명이 필요합니다"
+            }
+          },
+          "category": {
+            "label": "카테고리",
+            "placeholder": "이 템플릿이 가장 적합한 위치를 선택하세요. 여러 개를 선택할 수 있습니다.",
+            "validation": {
+              "required": "최소 하나의 카테고리가 필요합니다"
+            }
+          },
+          "keywords": {
+            "label": "키워드",
+            "placeholder": "이 템플릿을 찾을 때 사용자가 검색할 것으로 생각하는 용어를 사용하세요."
+          },
+          "company_name": {
+            "label": "회사 이름",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "회사 이름이 필요합니다",
+              "maxLength": "회사 이름은 255자 미만이어야 합니다"
+            }
+          },
+          "contact_email": {
+            "label": "지원 이메일",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "유효하지 않은 이메일 주소",
+              "required": "지원 이메일이 필요합니다",
+              "maxLength": "지원 이메일은 255자 미만이어야 합니다"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "개인정보 처리 방침 링크",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "유효하지 않은 URL",
+              "maxLength": "URL은 800자 미만이어야 합니다"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "이용 약관 링크",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "유효하지 않은 URL",
+              "maxLength": "URL은 800자 미만이어야 합니다"
+            }
+          },
+          "attach_screenshots": {
+            "label": "이 템플릿의 뷰어에게 도움이 될 것으로 생각되는 문서와 사진을 포함하세요.",
+            "validation": {
+              "required": "최소 하나의 스크린샷이 필요합니다"
+            }
+          }
         }
       }
     },
@@ -2020,6 +2131,16 @@
       },
       "no_labels": {
         "description": " 아직 라벨이 없습니다. 프로젝트의 워크 아이템을 구성하고 필터링하는 데 도움이 되는 라벨을 만드세요."
+      },
+      "page": {
+        "no_templates": {
+          "title": "액세스할 수 있는 템플릿이 없습니다.",
+          "description": "템플릿을 생성해 주세요"
+        },
+        "no_results": {
+          "title": "템플릿과 일치하지 않습니다.",
+          "description": "다른 용어로 검색해 보세요."
+        }
       }
     },
     "toasts": {

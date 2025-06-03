@@ -7,15 +7,21 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
-import { E_FEATURE_FLAGS } from "@plane/constants";
+import { TSupportedFlagsForUpgrade } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
+// plane web imports
+import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace/upgrade-empty-state-button";
 // assets
 import TemplatesUpgradeDark from "@/public/empty-state/templates/upgrade-dark.webp";
 import TemplatesUpgradeLight from "@/public/empty-state/templates/upgrade-light.webp";
-import { UpgradeEmptyStateButton } from "../../workspace";
 
-export const TemplatesUpgrade: FC = observer(() => {
+type TTemplatesUpgradeProps = {
+  flag: TSupportedFlagsForUpgrade;
+};
+
+export const TemplatesUpgrade: FC<TTemplatesUpgradeProps> = observer((props: TTemplatesUpgradeProps) => {
+  const { flag } = props;
   // router
   const { workspaceSlug } = useParams();
   // store hooks
@@ -37,10 +43,7 @@ export const TemplatesUpgrade: FC = observer(() => {
             <div className="font-medium text-custom-text-300">{t("templates.empty_state.upgrade.description")}</div>
             <div className="font-medium text-custom-text-300">{t("templates.empty_state.upgrade.sub_description")}</div>
             <div className="flex mt-6 gap-4 flex-wrap">
-              <UpgradeEmptyStateButton
-                workspaceSlug={workspaceSlug?.toString()}
-                flag={E_FEATURE_FLAGS.WORKITEM_TEMPLATES}
-              />
+              <UpgradeEmptyStateButton workspaceSlug={workspaceSlug?.toString()} flag={flag} />
               <Link
                 target="_blank"
                 href="https://plane.so/contact"

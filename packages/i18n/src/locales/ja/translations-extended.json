@@ -14,6 +14,12 @@
   "pi_chat": "PIチャット",
   "in_app": "アプリ内",
   "forms": "フォーム",
+  "choose_workspace_for_integration": "このアプリケーションに接続するワークスペースを選択してください",
+  "integrations_description": "Planeのアプリケーションは、管理者であるワークスペースに接続する必要があります。",
+  "create_a_new_workspace": "新しいワークスペースを作成",
+  "learn_more_about_workspaces": "ワークスペースについて詳しくはこちら",
+  "no_workspaces_to_connect": "接続するワークスペースがありません",
+  "no_workspaces_to_connect_description": "接続するワークスペースを作成する必要があります",
 
   "common": {
     "worklogs": "作業ログ",
@@ -91,7 +97,6 @@
       }
     }
   },
-
 
   "issue": {
     "relation": {
@@ -346,6 +351,11 @@
         "primary_button": {
           "text": "他のイニシアチブを表示"
         }
+      },
+      "epics": {
+        "title": "イニシアチブが存在しません",
+        "subHeading": "すべてのイニシアチブを表示するには、すべての適用されたフィルターを削除してください。",
+        "action": "フィルターを削除"
       }
     }
   },
@@ -2005,6 +2015,106 @@
             "create": "作業項目テンプレートを作成",
             "update": "作業項目テンプレートを更新"
           }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "ページテンプレートに名前を付けてください。",
+              "validation": {
+                "required": "テンプレート名は必須です",
+                "maxLength": "テンプレート名は255文字未満にしてください"
+              }
+            },
+            "description": {
+              "placeholder": "このテンプレートをいつ、どのように使用するかを説明してください。"
+            }
+          },
+          "name": {
+            "placeholder": "未命名のページ",
+            "validation": {
+              "maxLength": "ページ名は255文字未満にしてください"
+            }
+          },
+          "button": {
+            "create": "ページテンプレートを作成",
+            "update": "ページテンプレートを更新"
+          }
+        },
+        "publish": {
+          "action": "テンプレートを公開",
+          "title": "テンプレートを発見可能かつ認識可能にする",
+          "name": {
+            "label": "テンプレート名",
+            "placeholder": "テンプレートに名前を付けてください",
+            "validation": {
+              "required": "テンプレート名は必須です",
+              "maxLength": "テンプレート名は255文字未満にしてください"
+            }
+          },
+          "short_description": {
+            "label": "短い説明",
+            "placeholder": "このテンプレートは、同時に複数のプロジェクトを管理するプロジェクトマネージャーに最適です。",
+            "validation": {
+              "required": "短い説明は必須です"
+            }
+          },
+          "description": {
+            "label": "説明",
+            "placeholder": "音声認識機能を活用して生産性を向上させ、コミュニケーションを効率化しましょう。\n• リアルタイム文字起こし：話した言葉を瞬時に正確なテキストに変換します。\n• タスクとコメントの作成：音声コマンドでタスク、説明、コメントを追加できます。",
+            "validation": {
+              "required": "説明は必須です"
+            }
+          },
+          "category": {
+            "label": "カテゴリ",
+            "placeholder": "最も適切な場所を選択してください。複数のカテゴリを選択できます。",
+            "validation": {
+              "required": "少なくとも1つのカテゴリが必要です"
+            }
+          },
+          "keywords": {
+            "label": "キーワード",
+            "placeholder": "ユーザーがこのテンプレートを検索するときに使用する用語を使用してください。"
+          },
+          "company_name": {
+            "label": "会社名",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "会社名は必須です",
+              "maxLength": "会社名は255文字未満にしてください"
+            }
+          },
+          "contact_email": {
+            "label": "サポートメールアドレス",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "無効なメールアドレス",
+              "required": "サポートメールアドレスは必須です",
+              "maxLength": "サポートメールアドレスは255文字未満にしてください"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "プライバシーポリシーのURL",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "無効なURL",
+              "maxLength": "URLは800文字未満にしてください"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "利用規約のURL",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "無効なURL",
+              "maxLength": "URLは800文字未満にしてください"
+            }
+          },
+          "attach_screenshots": {
+            "label": "ビューアーにこのテンプレートを理解させるためのドキュメントと画像を含めます。",
+            "validation": {
+              "required": "少なくとも1つのスクリーンショットが必要です"
+            }
+          }
         }
       }
     },
@@ -2019,6 +2129,16 @@
       },
       "no_labels": {
         "description": " まだラベルがありません。プロジェクト内の作業項目を整理してフィルタリングするためのラベルを作成してください。"
+      },
+      "page": {
+        "no_templates": {
+          "title": "アクセス可能なテンプレートがありません。",
+          "description": "テンプレートを作成してください"
+        },
+        "no_results": {
+          "title": "テンプレートと一致しませんでした。",
+          "description": "他の用語で検索してみてください。"
+        }
       }
     },
     "toasts": {

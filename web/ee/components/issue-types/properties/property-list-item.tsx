@@ -6,7 +6,7 @@ import omitBy from "lodash/omitBy";
 import uniqBy from "lodash/uniqBy";
 import { observer } from "mobx-react";
 // plane imports
-import { EIssuePropertyType } from "@plane/constants";
+import { EIssuePropertyType, RESTRICTED_WORK_ITEM_PROPERTY_DISPLAY_NAMES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import {
   TIssueProperty,
@@ -256,7 +256,10 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
         setIssuePropertyData(issuePropertyDetail);
       })
       .finally(() => {
-        resetOptions();
+        // reset options after mobx computed value is updated
+        requestAnimationFrame(() => {
+          resetOptions();
+        });
         setIsSubmitting(false);
       });
   };
@@ -317,6 +320,16 @@ export const IssuePropertyListItem = observer((props: TIssuePropertyListItem) =>
   ) => {
     // reset error
     if (issuePropertyError[key]) setIssuePropertyError((prev) => ({ ...prev, [key]: "" }));
+    if (
+      value &&
+      key === "display_name" &&
+      RESTRICTED_WORK_ITEM_PROPERTY_DISPLAY_NAMES.includes(value.toString().toLowerCase())
+    ) {
+      setIssuePropertyError((prev) => ({
+        ...prev,
+        display_name: t("common.errors.restricted_entity", { entity: t("common.name") }),
+      }));
+    }
     // update property data
     setIssuePropertyData((prev) => ({ ...prev, [key]: value }));
     // sync with server if required

@@ -6,10 +6,14 @@ import { useImperativeHandle, MutableRefObject, useEffect } from "react";
 import * as Y from "yjs";
 // components
 import { getEditorMenuItems } from "@/components/menus";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EDITOR_META } from "@/constants/meta";
 // extensions
 import { CoreEditorExtensions } from "@/extensions";
 // helpers
 import { getParagraphCount } from "@/helpers/common";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 import { insertContentAtSavedSelection } from "@/helpers/insert-content-at-cursor-position";
 import { IMarking, scrollSummary, scrollToNodeViaDOMCoordinates } from "@/helpers/scroll-to-node";
 // props
@@ -116,16 +120,19 @@ export const useEditor = (props: CustomEditorProps) => {
     // value is null when intentionally passed where syncing is not yet
     // supported and value is undefined when the data from swr is not populated
     if (value == null) return;
-    if (editor && !editor.isDestroyed && !editor.storage.imageComponent?.uploadInProgress) {
-      try {
-        editor.commands.setContent(value, false, { preserveWhitespace: "full" });
-        if (editor.state.selection) {
-          const docLength = editor.state.doc.content.size;
-          const relativePosition = Math.min(editor.state.selection.from, docLength - 1);
-          editor.commands.setTextSelection(relativePosition);
+    if (editor) {
+      const isUploadInProgress = getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.uploadInProgress;
+      if (!editor.isDestroyed && !isUploadInProgress) {
+        try {
+          editor.commands.setContent(value, false, { preserveWhitespace: "full" });
+          if (editor.state.selection) {
+            const docLength = editor.state.doc.content.size;
+            const relativePosition = Math.min(editor.state.selection.from, docLength - 1);
+            editor.commands.setTextSelection(relativePosition);
+          }
+        } catch (error) {
+          console.error("Error syncing editor content with external value:", error);
         }
-      } catch (error) {
-        console.error("Error syncing editor content with external value:", error);
       }
     }
   }, [editor, value, id]);
@@ -150,16 +157,16 @@ export const useEditor = (props: CustomEditorProps) => {
       clearEditor: (emitUpdate = false) => {
         editor
           ?.chain()
-          .setMeta("skipImageDeletion", true)
-          .setMeta("intentionalDeletion", true)
+          .setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true)
+          .setMeta(CORE_EDITOR_META.INTENTIONAL_DELETION, true)
           .clearContent(emitUpdate)
           .run();
       },
       setEditorValue: (content: string, emitUpdate = false) => {
         editor
           ?.chain()
-          .setMeta("skipImageDeletion", true)
-          .setMeta("intentionalDeletion", true)
+          .setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true)
+          .setMeta(CORE_EDITOR_META.INTENTIONAL_DELETION, true)
           .setContent(content, emitUpdate, { preserveWhitespace: "full" })
           .run();
       },
@@ -194,7 +201,10 @@ export const useEditor = (props: CustomEditorProps) => {
       onHeadingChange: (callback: (headings: IMarking[]) => void) => {
         // Subscribe to update event emitted from headers extension
         editor?.on("update", () => {
-          callback(editor?.storage.headingList.headings);
+          const headings = getExtensionStorage(editor, CORE_EXTENSIONS.HEADINGS_LIST)?.headings;
+          if (headings) {
+            callback(headings);
+          }
         });
         // Return a function to unsubscribe to the continuous transactions of
         // the editor on unmounting the component that has subscribed to this
@@ -203,7 +213,7 @@ export const useEditor = (props: CustomEditorProps) => {
           editor?.off("update");
         };
       },
-      getHeadings: () => editor?.storage.headingList.headings,
+      getHeadings: () => (editor ? getExtensionStorage(editor, CORE_EXTENSIONS.HEADINGS_LIST)?.headings : []),
       onStateChange: (callback: () => void) => {
         // Subscribe to editor state changes
         editor?.on("transaction", () => {
@@ -236,7 +246,8 @@ export const useEditor = (props: CustomEditorProps) => {
         if (!editor) return;
         scrollSummary(editor, marking);
       },
-      isEditorReadyToDiscard: () => editor?.storage.imageComponent?.uploadInProgress === false,
+      isEditorReadyToDiscard: () =>
+        !!editor && getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.uploadInProgress === false,
       setFocusAtPosition: (position: number) => {
         if (!editor || editor.isDestroyed) {
           console.error("Editor reference is not available or has been destroyed.");
@@ -247,7 +258,7 @@ export const useEditor = (props: CustomEditorProps) => {
           const safePosition = Math.max(0, Math.min(position, docSize));
           editor
             .chain()
-            .insertContentAt(safePosition, [{ type: "paragraph" }])
+            .insertContentAt(safePosition, [{ type: CORE_EXTENSIONS.PARAGRAPH }])
             .focus()
             .run();
         } catch (error) {
@@ -306,8 +317,9 @@ export const useEditor = (props: CustomEditorProps) => {
           ?.chain()
           .command(({ tr }) => {
             // Set the metadata directly on the transaction
-            tr.setMeta("intentionalDeletion", true);
-            tr.setMeta("addToHistory", false);
+            tr.setMeta(CORE_EDITOR_META.INTENTIONAL_DELETION, true);
+            tr.setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true);
+            tr.setMeta(CORE_EDITOR_META.ADD_TO_HISTORY, false);
 
             let modified = false;
 
@@ -350,7 +362,7 @@ export const useEditor = (props: CustomEditorProps) => {
           .run();
       },
     }),
-    [editor]
+    [editor, provider]
   );
 
   if (!editor) {

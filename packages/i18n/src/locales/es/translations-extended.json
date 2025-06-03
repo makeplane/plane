@@ -14,6 +14,12 @@
   "pi_chat": "PI Chat",
   "in_app": "En la aplicación",
   "forms": "Formularios",
+  "choose_workspace_for_integration": "Elige un espacio de trabajo para conectar esta app",
+  "integrations_description": "Las apps que funcionan con Plane deben conectarse a un espacio de trabajo donde eres administrador.",
+  "create_a_new_workspace": "Crear un nuevo espacio de trabajo",
+  "learn_more_about_workspaces": "Aprende más sobre espacios de trabajo",
+  "no_workspaces_to_connect": "No hay espacios de trabajo para conectar",
+  "no_workspaces_to_connect_description": "Necesitarás crear un espacio de trabajo para poder conectar integraciones y plantillas",
 
   "common": {
     "worklogs": "Registros de trabajo",
@@ -345,6 +351,11 @@
         "primary_button": {
           "text": "Ver otras Iniciativas"
         }
+      },
+      "epics": {
+        "title": "No tienes Epics que coincidan con los filtros que has aplicado.",
+        "subHeading": "Para ver todos los Epics, elimina todos los filtros aplicados.",
+        "action": "Eliminar filtros"
       }
     }
   },
@@ -2004,6 +2015,106 @@
             "create": "Crear plantilla de elemento de trabajo",
             "update": "Actualizar plantilla de elemento de trabajo"
           }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Nombra tu plantilla de página.",
+              "validation": {
+                "required": "El nombre de la plantilla es obligatorio",
+                "maxLength": "El nombre de la plantilla debe tener menos de 255 caracteres"
+              }
+            },
+            "description": {
+              "placeholder": "Describe cuándo y cómo utilizar esta plantilla."
+            }
+          },
+          "name": {
+            "placeholder": "Página sin título",
+            "validation": {
+              "maxLength": "El nombre de la página debe tener menos de 255 caracteres"
+            }
+          },
+          "button": {
+            "create": "Crear plantilla de página",
+            "update": "Actualizar plantilla de página"
+          }
+        },
+        "publish": {
+          "action": "Publicar plantilla",
+          "title": "Haga que su plantilla sea descubrible y reconocible.",
+          "name": {
+            "label": "Nombre de la plantilla",
+            "placeholder": "Nombra tu plantilla",
+            "validation": {
+              "required": "El nombre de la plantilla es obligatorio",
+              "maxLength": "El nombre de la plantilla debe tener menos de 255 caracteres"
+            }
+          },
+          "short_description": {
+            "label": "Descripción corta",
+            "placeholder": "Esta plantilla es ideal para los Project Managers que gestionan varios proyectos al mismo tiempo.",
+            "validation": {
+              "required": "La descripción corta es obligatoria"
+            }
+          },
+          "description": {
+            "label": "Descripción",
+            "placeholder": "Mejora la productividad y simplifica la comunicación con nuestra integración de reconocimiento de voz.\n• Transcripción en tiempo real: Convierte palabras habladas en texto preciso instantáneamente.\n• Creación de tareas y comentarios: Añade tareas, descripciones y comentarios a través de comandos de voz.",
+            "validation": {
+              "required": "La descripción es obligatoria"
+            }
+          },
+          "category": {
+            "label": "Categoría",
+            "placeholder": "Elige dónde crees que esta plantilla se adapte mejor. Puedes elegir más de una.",
+            "validation": {
+              "required": "Al menos una categoría es obligatoria"
+            }
+          },
+          "keywords": {
+            "label": "Palabras clave",
+            "placeholder": "Usa términos que creas que tus usuarios buscarán cuando estén buscando esta plantilla."
+          },
+          "company_name": {
+            "label": "Nombre de la empresa",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "El nombre de la empresa es obligatorio",
+              "maxLength": "El nombre de la empresa debe tener menos de 255 caracteres"
+            }
+          },
+          "contact_email": {
+            "label": "Correo electrónico de soporte",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Dirección de correo electrónico no válida",
+              "required": "El correo electrónico de soporte es obligatorio",
+              "maxLength": "El correo electrónico de soporte debe tener menos de 255 caracteres"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Enlace a tu política de privacidad",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "URL no válida",
+              "maxLength": "La URL debe tener menos de 800 caracteres"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Enlace a tus términos de uso",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "URL no válida",
+              "maxLength": "La URL debe tener menos de 800 caracteres"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Incluye documentos y capturas de pantalla que creas que harán que los usuarios de esta plantilla vean lo que puedes hacer con ella.",
+            "validation": {
+              "required": "Al menos una captura de pantalla es obligatoria"
+            }
+          }
         }
       }
     },
@@ -2018,6 +2129,16 @@
       },
       "no_labels": {
         "description": " Aún no hay etiquetas. Crea etiquetas para ayudar a organizar y filtrar elementos de trabajo en tu proyecto."
+      },
+      "page": {
+        "no_templates": {
+          "title": "No hay plantillas a las que tengas acceso.",
+          "description": "Por favor, crea una plantilla"
+        },
+        "no_results": {
+          "title": "Eso no coincide con ninguna plantilla.",
+          "description": "Intenta buscar con otros términos."
+        }
       }
     },
     "toasts": {

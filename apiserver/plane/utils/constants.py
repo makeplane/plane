@@ -67,3 +67,6 @@ RESTRICTED_WORKSPACE_SLUGS = [
     "oauth",
     "applications",
 ]
+
+RESTRICTED_ISSUE_PROPERTY_DISPLAY_NAMES = ["state", "due date", "cycle", "modules"]
+RESTRICTED_ISSUE_TYPES = ["Task"]

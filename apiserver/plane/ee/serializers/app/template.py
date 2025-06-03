@@ -3,13 +3,31 @@ from rest_framework import serializers
 
 # Module imports
 from plane.app.serializers import BaseSerializer
-from plane.ee.models import Template, WorkitemTemplate, PageTemplate, ProjectTemplate, TemplateCategory
+from plane.ee.models import (
+    Template,
+    WorkitemTemplate,
+    PageTemplate,
+    ProjectTemplate,
+    TemplateCategory,
+)
+from plane.db.models import FileAsset
 
 
 class TemplateSerializer(BaseSerializer):
+    attachments_urls = serializers.SerializerMethodField()
+    attachments = serializers.PrimaryKeyRelatedField(
+        queryset=FileAsset.objects.all(), many=True, required=False
+    )
+    categories = serializers.PrimaryKeyRelatedField(
+        queryset=TemplateCategory.objects.all(), many=True, required=False
+    )
     class Meta:
         model = Template
         fields = "__all__"
+        read_only_fields = ["workspace", "template_type"]
+
+    def get_attachments_urls(self, obj):
+        return [attachment.asset_url for attachment in obj.attachments.all()]
 
 
 class WorkitemTemplateSerializer(BaseSerializer):
@@ -117,6 +135,13 @@ class ProjectTemplateDataSerializer(BaseSerializer):
 
 class TemplateDataSerializer(BaseSerializer):
     template_data = serializers.SerializerMethodField()
+    attachments_urls = serializers.SerializerMethodField()
+    attachments = serializers.PrimaryKeyRelatedField(
+        queryset=FileAsset.objects.all(), many=True, required=False
+    )
+    categories = serializers.PrimaryKeyRelatedField(
+        queryset=TemplateCategory.objects.all(), many=True, required=False
+    )
 
     class Meta:
         model = Template
@@ -130,6 +155,23 @@ class TemplateDataSerializer(BaseSerializer):
             "template_data",
             "created_at",
             "updated_at",
+            "attachments",
+            "categories",
+            "attachments_urls",
+            "contact_email",
+            "description",
+            "description_html",
+            "description_stripped",
+            "description_binary",
+            "is_published",
+            "is_verified",
+            "keywords",
+            "privacy_policy_url",
+            "terms_of_service_url",
+            "support_url",
+            "video_url",
+            "company_name",
+            "supported_languages",
         ]
 
     def get_template_data(self, obj):
@@ -144,6 +186,9 @@ class TemplateDataSerializer(BaseSerializer):
                 return ProjectTemplateDataSerializer(obj.template_data[0]).data
 
         return {}
+
+    def get_attachments_urls(self, obj):
+        return [attachment.asset_url for attachment in obj.attachments.all()]
 
 
 class TemplateCategorySerializer(BaseSerializer):

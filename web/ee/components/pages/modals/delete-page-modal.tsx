@@ -57,7 +57,7 @@ export const WikiDeletePageModal: React.FC<TConfirmPageDeletionProps> = observer
           title: "Success!",
           message: "Page deleted successfully.",
         });
-        router.push(`/${workspaceSlug}/pages`);
+        router.back();
       })
       .catch(() => {
         capturePageEvent({

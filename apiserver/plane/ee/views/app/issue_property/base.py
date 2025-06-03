@@ -179,6 +179,19 @@ class IssuePropertyEndpoint(BaseAPIView):
             # Get the options
             options = request.data.pop("options", [])
 
+            issue_properties = IssueProperty.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                issue_type_id=issue_type_id,
+                issue_type__is_epic=False,
+            ).values_list("display_name", flat=True)
+
+            if request.data.get("display_name") in issue_properties:
+                return Response(
+                    {"error": "Custom property with this name already exists"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             # Check is_active
             if not request.data.get("is_active"):
                 request.data["is_active"] = False

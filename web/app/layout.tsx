@@ -2,14 +2,9 @@ import { Metadata, Viewport } from "next";
 import Script from "next/script";
 // styles
 import "@/styles/globals.css";
-import "@/styles/command-pallette.css";
-import "@/styles/emoji.css";
-import "@/styles/react-day-picker.css";
-// meta data info
-
 import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
 // helpers
-import { API_BASE_URL, cn } from "@/helpers/common.helper";
+import { cn } from "@/helpers/common.helper";
 // plane web components
 import { DesktopAppProviderRoot } from "@/plane-web/components/desktop";
 import { FreeTrialBanner } from "@/plane-web/components/license";
@@ -63,17 +58,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png" />
         <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.png" />
         <link rel="manifest" href="/manifest.json" />
-        {/* preloading */}
-        <link rel="preload" href={`${API_BASE_URL}/api/instances/`} as="fetch" crossOrigin="use-credentials" />
-        <link rel="preload" href={`${API_BASE_URL}/api/users/me/ `} as="fetch" crossOrigin="use-credentials" />
-        <link rel="preload" href={`${API_BASE_URL}/api/users/me/profile/ `} as="fetch" crossOrigin="use-credentials" />
-        <link rel="preload" href={`${API_BASE_URL}/api/users/me/settings/ `} as="fetch" crossOrigin="use-credentials" />
-        <link
-          rel="preload"
-          href={`${API_BASE_URL}/api/users/me/workspaces/?v=${Date.now()}`}
-          as="fetch"
-          crossOrigin="use-credentials"
-        />
       </head>
       <body>
         <div id="context-menu-portal" />

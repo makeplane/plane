@@ -29,13 +29,17 @@ export const EnterprisePlanCard: React.FC<TEnterprisePlanCardProps> = observer((
   // states
   const [isLoading, setIsLoading] = useState<boolean>(false);
   // hooks
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
+  const {
+    currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
+    isSubscriptionManagementEnabled,
+    getIsInTrialPeriod,
+  } = useWorkspaceSubscription();
   // derived values
   const isSelfManaged = subscriptionDetail?.is_self_managed;
   const startDate = subscriptionDetail?.current_period_start_date;
   const endDate = subscriptionDetail?.current_period_end_date;
   const isSubscriptionCancelled = subscriptionDetail?.is_cancelled;
-  const isInTrialPeriod = !isSelfManaged && subscriptionDetail?.is_on_trial && !subscriptionDetail?.has_upgraded;
+  const isInTrialPeriod = getIsInTrialPeriod(true);
 
   useEffect(() => {
     setIsLoading(upgradeLoader === EProductSubscriptionEnum.ENTERPRISE);
@@ -94,7 +98,7 @@ export const EnterprisePlanCard: React.FC<TEnterprisePlanCardProps> = observer((
         </>
       }
       button={
-        !subscriptionDetail.is_offline_payment && (
+        isSubscriptionManagementEnabled && (
           <div className="flex items-center gap-2.5">
             <Button
               variant="link-neutral"

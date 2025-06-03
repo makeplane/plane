@@ -4,11 +4,12 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
 // plane imports
+import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser, useUserPermissions } from "@/hooks/store";
 // Plane-web
 import { TInitiative } from "@/plane-web/types/initiative";
 // local components
@@ -30,9 +31,12 @@ export const InitiativeQuickActions: React.FC<Props> = observer((props) => {
   const [deleteModal, setDeleteModal] = useState(false);
   // store hooks
   const { data } = useUser();
+  const { allowPermissions } = useUserPermissions();
 
   // derived values
-  const isOwner = data?.id === initiative?.created_by;
+
+  const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const isOwnerOrAdmin = data?.id === initiative?.created_by || isAdmin;
 
   const { t } = useTranslation();
 
@@ -80,7 +84,7 @@ export const InitiativeQuickActions: React.FC<Props> = observer((props) => {
       action: handleDeleteCycle,
       title: t("delete"),
       icon: Trash2,
-      shouldRender: !disabled && isOwner,
+      shouldRender: !disabled && isOwnerOrAdmin,
     },
   ];
 

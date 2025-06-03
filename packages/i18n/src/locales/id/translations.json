@@ -502,7 +502,6 @@
   "export": "Ekspor",
   "member": "{count, plural, one{# anggota} other{# anggota}}",
   "new_password_must_be_different_from_old_password": "Kata sandi baru harus berbeda dari kata sandi lama",
-
   "project_view": {
     "sort_by": {
       "created_at": "Dibuat pada",
@@ -749,7 +748,8 @@
         "message": "Sesuatu telah salah. Silakan coba lagi."
       },
       "required": "Bidang ini diperlukan",
-      "entity_required": "{entity} diperlukan"
+      "entity_required": "{entity} diperlukan",
+      "restricted_entity": "{entity} dibatasi"
     },
     "update_link": "Perbarui tautan",
     "attach": "Lampirkan",
@@ -1110,6 +1110,18 @@
     "remove": {
       "success": "Sub-item kerja berhasil dihapus",
       "error": "Kesalahan saat menghapus sub-item kerja"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Anda tidak memiliki sub-item kerja yang cocok dengan filter yang Anda terapkan.",
+        "description": "Untuk melihat semua sub-item kerja, hapus semua filter yang diterapkan.",
+        "action": "Hapus filter"
+      },
+      "list_filters": {
+        "title": "Anda tidak memiliki item kerja yang cocok dengan filter yang Anda terapkan.",
+        "description": "Untuk melihat semua item kerja, hapus semua filter yang diterapkan.",
+        "action": "Hapus filter"
+      }
     }
   },
   "view": {

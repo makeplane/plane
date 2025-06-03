@@ -2,18 +2,23 @@
 import { EProductSubscriptionEnum } from "@plane/constants";
 import { IWorkspace } from "@plane/types";
 import { cn, getSubscriptionName } from "@plane/utils";
+// components
 import { getSubscriptionTextAndBackgroundColor } from "@/components/workspace/billing/subscription";
+// plane web hooks
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 type TProps = { workspace: IWorkspace };
 
 export const SubscriptionPill = (props: TProps) => {
   const { workspace } = props;
+  // store hooks
+  const { getIsInTrialPeriod } = useWorkspaceSubscription();
   // derived values
   const subscriptionName = getSubscriptionName(workspace.current_plan ?? EProductSubscriptionEnum.FREE);
   const subscriptionColor = getSubscriptionTextAndBackgroundColor(
     workspace.current_plan ?? EProductSubscriptionEnum.FREE
   );
-  const isOnTrial = workspace.is_on_trial;
+  const isOnTrial = getIsInTrialPeriod(false);
 
   return (
     <div

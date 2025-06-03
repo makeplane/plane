@@ -3,7 +3,12 @@
   "pi_chat": "Pi Chat",
   "in_app": "In-app",
   "forms": "Forms",
-  
+  "choose_workspace_for_integration": "Choose a workspace to connect this app to",
+  "integrations_description": "Apps that work with Plane must connect to a workspace where you are an admin.",
+  "create_a_new_workspace": "Create a new workspace",
+  "learn_more_about_workspaces": "Learn more about workspaces",
+  "no_workspaces_to_connect": "No workspaces to connect",
+  "no_workspaces_to_connect_description": "You will need to create a workspace to be able to connect integrations and templates",
 
   "common": {
     "worklogs": "Worklogs",
@@ -354,6 +359,11 @@
         "primary_button": {
           "text": "View other Initiatives"
         }
+      },
+      "epics": {
+        "title": "You don't have epics that match the filters you have applied.",
+        "subHeading": "To see all epics, clear all applied filters.",
+        "action": "Clear filters"
       }
     }
   },
@@ -2084,6 +2094,82 @@
             "create": "Create page template",
             "update": "Update page template"
           }
+        },
+        "publish": {
+          "action": "Publish to Marketplace",
+          "title": "Make your template discoverable and recognizable.",
+          "name": {
+            "label": "Name of template",
+            "placeholder": "Name your template",
+            "validation": {
+              "required": "Template name is required",
+              "maxLength": "Template name should be less than 255 characters"
+            }
+          },
+          "short_description": {
+            "label": "Short description",
+            "placeholder": "This template is great for Project Managers who manage several projects at the same time.",
+            "validation": {
+              "required": "Short description is required"
+            }
+          },
+          "description": {
+            "label": "Description",
+            "placeholder": "Enhance productivity and streamline communication with our Speech-To-Text integration.\n• Real-time transcription: Convert spoken words into accurate text instantly.\n• Task and comment creation: Add tasks, descriptions, and comments through voice commands.",
+            "validation": {
+              "required": "Description is required"
+            }
+          },
+          "category": {
+            "label": "Category",
+            "placeholder": "Choose where you think this fits best. You can choose more than one.",
+            "validation": {
+              "required": "At least one category is required"
+            }
+          },
+          "keywords": {
+            "label": "Keywords",
+            "placeholder": "Use terms that you think your users will search for when looking for this template."
+          },
+          "company_name": {
+            "label": "Company name",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Company name is required",
+              "maxLength": "Company name should be less than 255 characters"
+            }
+          },
+          "contact_email": {
+            "label": "Support email",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Invalid email address",
+              "required": "Support email is required",
+              "maxLength": "Support email should be less than 255 characters"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Link to your privacy policy",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "Invalid URL",
+              "maxLength": "URL should be less than 800 characters"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Link to your terms of use",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "Invalid URL",
+              "maxLength": "URL should be less than 800 characters"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Include pictures you think will make viewers of this template.",
+            "validation": {
+              "required": "At least one screenshot is required"
+            }
+          }
         }
       }
     },
@@ -2098,6 +2184,16 @@
       },
       "no_labels": {
         "description": " No labels yet. Create labels to help organize and filter work items in you project."
+      },
+      "page": {
+        "no_templates": {
+          "title": "There are no templates you have access to.",
+          "description": "Please create a template"
+        },
+        "no_results": {
+          "title": "That didn't match a template.",
+          "description": "Try searching by other terms."
+        }
       }
     },
     "toasts": {

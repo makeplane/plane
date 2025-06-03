@@ -3,6 +3,7 @@ import os
 import requests
 
 # Django imports
+from django.conf import settings
 from django.utils import timezone
 
 # Third Party Imports
@@ -85,7 +86,7 @@ def version_check():
 
         # If license version is not provided then read from package.json
 
-        if prime_host and machine_signature:
+        if prime_host and machine_signature and not settings.IS_AIRGAPPED:
             # Get the instance data
             data = get_instance_me(machine_signature, license_key, prime_host)
             # Update the instance data

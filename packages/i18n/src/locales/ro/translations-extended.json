@@ -14,7 +14,12 @@
   "pi_chat": "Pi Chat",
   "in_app": "În-app",
   "forms": "Formulare",
-
+  "choose_workspace_for_integration": "Alegeți un spațiu de lucru pentru a conecta această aplicație",
+  "integrations_description": "Aplicațiile care funcționează cu Plane trebuie să se conecteze la un spațiu de lucru unde sunteți administrator.",
+  "create_a_new_workspace": "Creați un nou spațiu de lucru",
+  "no_workspaces_to_connect": "Nu există spații de lucru pentru a conecta",
+  "no_workspaces_to_connect_description": "Trebuie să creați un spațiu de lucru pentru a putea conecta integrări și modele",
+  "learn_more_about_workspaces": "Află mai multe despre spațiile de lucru",
   "common": {
     "worklogs": "Jurnale de lucru",
     "live": "Live",
@@ -346,6 +351,11 @@
         "primary_button": {
           "text": "Vezi alte Inițiative"
         }
+      },
+      "epics": {
+        "title": "Nu ai epice care să se potrivească cu filtrele pe care le-ai aplicat.",
+        "subHeading": "Pentru a vedea toate epicele, șterge toate filtrele aplicate.",
+        "action": "Șterge filtrele"
       }
     }
   },
@@ -2003,6 +2013,106 @@
             "create": "Creează șablon de element de lucru",
             "update": "Actualizează șablon de element de lucru"
           }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Numele șablonului paginii.",
+              "validation": {
+                "required": "Numele șablonului este obligatoriu",
+                "maxLength": "Numele șablonului trebuie să fie mai mic de 255 de caractere"
+              }
+            },
+            "description": {
+              "placeholder": "Descrie când și cum să folosești acest șablon."
+            }
+          },
+          "name": {
+            "placeholder": "Pagina fără nume",
+            "validation": {
+              "maxLength": "Numele paginii trebuie să fie mai mic de 255 de caractere"
+            }
+          },
+          "button": {
+            "create": "Creează șablon de pagină",
+            "update": "Actualizează șablon de pagină"
+          }
+        },
+        "publish": {
+          "action": "Publică șablonul",
+          "title": "Faceți-vă șablonul detectabil și recunoscut.",
+          "name": {
+            "label": "Numele șablonului",
+            "placeholder": "Numele șablonului",
+            "validation": {
+              "required": "Numele șablonului este obligatoriu",
+              "maxLength": "Numele șablonului trebuie să fie mai mic de 255 de caractere"
+            }
+          },
+          "short_description": {
+            "label": "Descriere scurtă",
+            "placeholder": "Acest șablon este excelent pentru managerii proiectelor care gestionează mai multe proiecte în același timp.",
+            "validation": {
+              "required": "Descrierea scurtă este obligatorie"
+            }
+          },
+          "description": {
+            "label": "Descriere",
+            "placeholder": "Îmbunătățiți productivitatea și optimizați comunicarea cu integrarea noastră Vorbire-În-Text.\n• Transcriere în timp real: Convertiți cuvintele rostite în text precis instantaneu.\n• Crearea sarcinilor și comentariilor: Adăugați sarcini, descrieri și comentarii prin comenzi vocale.",
+            "validation": {
+              "required": "Descrierea este obligatorie"
+            }
+          },
+          "category": {
+            "label": "Categorie",
+            "placeholder": "Alege unde crezi că acest șablon încalcă cel mai bine. Poți alege mai multe.",
+            "validation": {
+              "required": "Cel puțin o categorie este obligatorie"
+            }
+          },
+          "keywords": {
+            "label": "Cuvinte cheie",
+            "placeholder": "Folosește termeni care crezi că utilizatorii vor căuta atunci când vor căuta acest șablon."
+          },
+          "company_name": {
+            "label": "Numele companiei",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Numele companiei este obligatoriu",
+              "maxLength": "Numele companiei trebuie să fie mai mic de 255 de caractere"
+            }
+          },
+          "contact_email": {
+            "label": "Email de suport",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Adresa email-ului este invalidă",
+              "required": "Adresa email-ului este obligatorie",
+              "maxLength": "Adresa email-ului trebuie să fie mai mică de 255 de caractere"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Link către politică de confidențialitate",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "URL-ul este invalid",
+              "maxLength": "URL-ul trebuie să fie mai mic de 800 de caractere"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Link către termenii de utilizare",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "URL-ul este invalid",
+              "maxLength": "URL-ul trebuie să fie mai mic de 800 de caractere"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Include documente și capturi de ecran care credeți că vor face vizualizatorii acestui șablon mai interesanți.",
+            "validation": {
+              "required": "Cel puțin o captură de ecran este obligatorie"
+            }
+          }
         }
       }
     },
@@ -2017,6 +2127,16 @@
       },
       "no_labels": {
         "description": " Nu există etichete încă. Creează etichete pentru a ajuta la organizarea și filtrarea elementelor de lucru în proiectul tău."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Nu există șabloane la care aveți acces.",
+          "description": "Vă rugăm să creați un șablon"
+        },
+        "no_results": {
+          "title": "Aceasta nu se potrivește cu un șablon.",
+          "description": "Încercați să căutați cu alți termeni."
+        }
       }
     },
     "toasts": {

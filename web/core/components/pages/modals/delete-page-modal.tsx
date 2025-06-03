@@ -68,7 +68,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
         });
 
         if (routePageId) {
-          router.push(`/${workspaceSlug}/pages`);
+          router.back();
         }
       })
       .catch(() => {

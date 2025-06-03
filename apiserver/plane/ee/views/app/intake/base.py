@@ -164,12 +164,16 @@ class IntakeSettingEndpoint(BaseAPIView):
 
         for deployboard in deployboards:
             if deployboard["entity_name"] == "intake_email":
-                if check_workspace_feature_flag(FeatureFlag.INTAKE_EMAIL, slug):
+                if check_workspace_feature_flag(
+                    FeatureFlag.INTAKE_EMAIL, slug, user_id=request.user.id
+                ):
                     data["anchors"][
                         "intake_email"
                     ] = f"{slug}-{deployboard['anchor']}@{self.get_intake_email_domain()}"
             elif deployboard["entity_name"] == "intake":
-                if check_workspace_feature_flag(FeatureFlag.INTAKE_FORM, slug):
+                if check_workspace_feature_flag(
+                    FeatureFlag.INTAKE_FORM, slug, user_id=request.user.id
+                ):
                     data["anchors"][deployboard["entity_name"]] = deployboard["anchor"]
             else:
                 data["anchors"] = {}
@@ -193,7 +197,7 @@ class IntakeSettingEndpoint(BaseAPIView):
         request_data = request.data.copy()
 
         if request_data.get("is_form_enabled") and not check_workspace_feature_flag(
-            FeatureFlag.INTAKE_FORM, slug
+            FeatureFlag.INTAKE_FORM, slug, user_id=request.user.id
         ):
             return Response(
                 {"error": "INTAKE_FORM is not enabled"},
@@ -202,7 +206,7 @@ class IntakeSettingEndpoint(BaseAPIView):
 
         # Only keep email enabled if feature flag is active
         if request_data.get("is_email_enabled") and not check_workspace_feature_flag(
-            FeatureFlag.INTAKE_EMAIL, slug
+            FeatureFlag.INTAKE_EMAIL, slug, user_id=request.user.id
         ):
             return Response(
                 {"error": "INTAKE_EMAIL is not enabled"},

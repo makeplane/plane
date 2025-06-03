@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { Tab } from "@headlessui/react";
 import { ETeamspaceEntityScope } from "@plane/constants";
 import { TabList } from "@plane/ui";
 // plane web imports
@@ -29,9 +28,5 @@ export const StatisticsScope: React.FC<TStatisticsFilterProps<"scope">> = observ
     [handleFilterChange, isLoading]
   );
 
-  return (
-    <Tab.Group>
-      <TabList tabs={TEAM_STATISTICS_SCOPE} selectedTab={value} size="sm" tabListClassName="w-36" />
-    </Tab.Group>
-  );
+  return <TabList tabs={TEAM_STATISTICS_SCOPE} selectedTab={value} size="sm" tabListClassName="w-36" />;
 });
