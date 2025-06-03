@@ -1,55 +1,16 @@
 import React from "react";
-import { eachDayOfInterval, isValid } from "date-fns";
 import { AreaChart } from "@plane/propel/charts/area-chart";
 import { TChartData, TModuleCompletionChartDistribution } from "@plane/types";
-// ui
-// helpers
-import { getDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
-//types
+import { renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
 
 type Props = {
   distribution: TModuleCompletionChartDistribution;
-  startDate: string | Date;
-  endDate: string | Date;
   totalIssues: number;
   className?: string;
   plotTitle?: string;
 };
 
-const styleById = {
-  ideal: {
-    strokeDasharray: "6, 3",
-    strokeWidth: 1,
-  },
-  default: {
-    strokeWidth: 1,
-  },
-};
-
-const DashedLine = ({ series, lineGenerator, xScale, yScale }: any) =>
-  series.map(({ id, data, color }: any) => (
-    <path
-      key={id}
-      d={lineGenerator(
-        data.map((d: any) => ({
-          x: xScale(d.data.x),
-          y: yScale(d.data.y),
-        }))
-      )}
-      fill="none"
-      stroke={color ?? "#ddd"}
-      style={styleById[id as keyof typeof styleById] || styleById.default}
-    />
-  ));
-
-const ProgressChart: React.FC<Props> = ({
-  distribution,
-  startDate,
-  endDate,
-  totalIssues,
-  className = "",
-  plotTitle = "work items",
-}) => {
+const ProgressChart: React.FC<Props> = ({ distribution, totalIssues, className = "", plotTitle = "work items" }) => {
   const chartData: TChartData<string, string>[] = Object.keys(distribution ?? []).map((key, index) => ({
     name: renderFormattedDateWithoutYear(key),
     current: distribution[key] ?? 0,
@@ -63,7 +24,7 @@ const ProgressChart: React.FC<Props> = ({
         areas={[
           {
             key: "current",
-            label: "Current Completed",
+            label: `Current ${plotTitle}`,
             strokeColor: "#3F76FF",
             fill: "#3F76FF33",
             fillOpacity: 1,
@@ -74,7 +35,7 @@ const ProgressChart: React.FC<Props> = ({
           },
           {
             key: "ideal",
-            label: "Ideal Completion",
+            label: `Ideal ${plotTitle}`,
             strokeColor: "#A9BBD0",
             fill: "#A9BBD0",
             fillOpacity: 0,
@@ -82,10 +43,14 @@ const ProgressChart: React.FC<Props> = ({
             smoothCurves: true,
             strokeOpacity: 1,
             stackId: "bar-two",
+            style: {
+              strokeDasharray: "6, 3",
+              strokeWidth: 1,
+            },
           },
         ]}
         xAxis={{ key: "name", label: "Date" }}
-        yAxis={{ key: "current", label: "Current" }}
+        yAxis={{ key: "current", label: "Completion" }}
         margin={{ bottom: 30 }}
         className="h-[370px] w-full"
         legend={{

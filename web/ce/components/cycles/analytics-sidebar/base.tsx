@@ -69,8 +69,6 @@ export const SidebarChart: FC<ProgressChartProps> = observer((props) => {
             <Fragment>
               <ProgressChart
                 distribution={completionChartDistributionData}
-                startDate={cycleStartDate}
-                endDate={cycleEndDate}
                 totalIssues={estimateType === "points" ? totalEstimatePoints : totalIssues}
                 plotTitle={estimateType === "points" ? t("points") : t("work_items")}
               />

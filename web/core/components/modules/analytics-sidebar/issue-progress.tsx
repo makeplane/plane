@@ -216,16 +216,12 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
                       {plotType === "points" ? (
                         <ProgressChart
                           distribution={completionChartDistributionData}
-                          startDate={moduleStartDate}
-                          endDate={moduleEndDate}
                           totalIssues={totalEstimatePoints}
                           plotTitle={"points"}
                         />
                       ) : (
                         <ProgressChart
                           distribution={completionChartDistributionData}
-                          startDate={moduleStartDate}
-                          endDate={moduleEndDate}
                           totalIssues={totalIssues}
                           plotTitle={"work items"}
                         />
