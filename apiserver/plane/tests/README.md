@@ -12,6 +12,29 @@ Tests are organized into the following categories:
   - **App tests**: Test the web application API endpoints (under `/api/`).
 - **Smoke tests**: Basic tests to verify that the application runs correctly.
 
+## Continuous Integration (CI)
+
+Tests run automatically on pull requests via GitHub Actions:
+
+### Automated Testing Workflow
+
+When a pull request is created or updated with changes to `apiserver/**` files, the `test-pull-request.yml` workflow automatically:
+
+1. **Sets up test environment**: PostgreSQL 14, Redis 7, Python 3.11
+2. **Runs unit tests**: Fast, isolated component tests with coverage
+3. **Runs contract tests**: API endpoint verification
+4. **Generates coverage reports**: Enforces 90% threshold with HTML, terminal, and XML formats
+5. **Uploads to Codecov**: If token is configured
+
+### CI Environment Variables
+
+The CI automatically configures comprehensive environment variables including:
+- Database and Redis connections
+- Security settings (disabled for testing)
+- Base URLs for all components
+- File upload and storage settings
+- External service configurations (mocked)
+
 ## API vs App Endpoints
 
 Plane has two types of API endpoints:
@@ -31,6 +54,8 @@ Plane has two types of API endpoints:
    - Test files are in `contract/app/`
 
 ## Running Tests
+
+### Local Testing
 
 To run all tests:
 
@@ -54,20 +79,19 @@ python -m pytest plane/tests/contract/app/
 python -m pytest plane/tests/smoke/
 ```
 
-For convenience, we also provide a helper script:
+### Using the Test Runner
+
+For convenience, we provide helper scripts:
 
 ```bash
-# Run all tests
-./run_tests.py
+# Using Python script directly
+python run_tests.py --coverage --verbose  # Full test suite with coverage
+python run_tests.py -u -v                 # Unit tests only
+python run_tests.py -c -v                 # Contract tests only
+python run_tests.py -p -v                 # Parallel execution
 
-# Run only unit tests
-./run_tests.py -u
-
-# Run contract tests with coverage report
-./run_tests.py -c -o
-
-# Run tests in parallel
-./run_tests.py -p
+# Using shell wrapper
+./run_tests.sh --coverage --verbose       # Full test suite with coverage
 ```
 
 ## Fixtures
@@ -134,9 +158,30 @@ Generate a coverage report with:
 
 ```bash
 python -m pytest --cov=plane --cov-report=term --cov-report=html
+# Or using the test runner
+python run_tests.py --coverage
 ```
 
-This creates an HTML report in the `htmlcov/` directory.
+This creates an HTML report in the `htmlcov/` directory and enforces the 90% coverage threshold.
+
+## CI Troubleshooting
+
+### Common CI Issues
+
+1. **Test failures**: Check the GitHub Actions logs for specific error messages
+2. **Coverage below threshold**: Add tests for uncovered code
+3. **Database connection issues**: Ensure PostgreSQL service is healthy in CI
+4. **Redis connection issues**: Ensure Redis service is healthy in CI
+
+### Local Setup for CI Testing
+
+Make sure you have the test dependencies installed:
+
+```bash
+pip install -r requirements/test.txt
+```
+
+Set up your local environment with PostgreSQL and Redis, or use the provided Docker setup.
 
 ## Migration from Old Tests
 

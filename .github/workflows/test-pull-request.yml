@@ -1,0 +1,190 @@
+name: Test Pull Request
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: ["opened", "synchronize", "ready_for_review"]
+    paths:
+      - 'apiserver/**'
+      - '.github/workflows/test-pull-request.yml'
+
+jobs:
+  test-apiserver:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_PASSWORD: plane
+          POSTGRES_USER: plane
+          POSTGRES_DB: plane
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          
+      - name: Cache Python dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements/test.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            
+      - name: Install Python dependencies
+        run: |
+          cd apiserver
+          python -m pip install --upgrade pip
+          pip install -r requirements/test.txt
+          
+      - name: Set up test environment
+        run: |
+          cd apiserver
+          cat > .env << EOF
+          # Basic Django settings
+          DEBUG=1
+          SECRET_KEY=test-secret-key-for-ci-only-do-not-use-in-production
+          
+          # Database Configuration
+          DATABASE_URL=postgres://plane:plane@localhost:5432/plane
+          
+          # Redis Configuration  
+          REDIS_URL=redis://localhost:6379
+          
+          # Email Backend for Testing
+          EMAIL_BACKEND=django.core.mail.backends.locmem.EmailBackend
+          
+          # CORS Settings for Testing
+          CORS_ALLOW_ALL_ORIGINS=True
+          CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001,http://localhost:3002
+          
+          # Disable SSL and security features for testing
+          SECURE_SSL_REDIRECT=False
+          SECURE_HSTS_SECONDS=0
+          SESSION_COOKIE_SECURE=False
+          CSRF_COOKIE_SECURE=False
+          
+          # Instance settings
+          INSTANCE_KEY=test-instance-key-for-ci
+          SKIP_ENV_VAR=1
+          
+          # File upload settings for testing
+          FILE_SIZE_LIMIT=5242880
+          USE_MINIO=0
+          
+          # Base URLs for testing
+          WEB_URL=http://localhost:8000
+          APP_BASE_URL=http://localhost:3000
+          ADMIN_BASE_URL=http://localhost:3001
+          SPACE_BASE_URL=http://localhost:3002
+          LIVE_BASE_URL=http://localhost:3100
+          
+          # Session settings
+          SESSION_COOKIE_AGE=604800
+          SESSION_COOKIE_NAME=session-id
+          ADMIN_SESSION_COOKIE_AGE=3600
+          
+          # API settings
+          API_KEY_RATE_LIMIT=60/minute
+          
+          # Disable external services for testing
+          ENABLE_SIGNUP=1
+          POSTHOG_API_KEY=
+          ANALYTICS_SECRET_KEY=
+          GITHUB_ACCESS_TOKEN=
+          UNSPLASH_ACCESS_KEY=
+          
+          # RabbitMQ/Celery settings (will be mocked in tests)
+          RABBITMQ_HOST=localhost
+          RABBITMQ_PORT=5672
+          RABBITMQ_USER=guest
+          RABBITMQ_PASSWORD=guest
+          RABBITMQ_VHOST=/
+          
+          # AWS/Storage settings (will be mocked in tests)
+          AWS_ACCESS_KEY_ID=test-access-key
+          AWS_SECRET_ACCESS_KEY=test-secret-key
+          AWS_S3_BUCKET_NAME=test-uploads
+          AWS_REGION=us-east-1
+          EOF
+          
+      - name: Run unit tests
+        run: |
+          cd apiserver
+          python run_tests.py -u -v --coverage
+          
+      - name: Run contract tests
+        run: |
+          cd apiserver
+          python run_tests.py -c -v
+          
+      - name: Show coverage summary
+        if: always()
+        run: |
+          cd apiserver
+          python -m coverage report --show-missing
+          
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        if: always() && env.CODECOV_TOKEN != ''
+        with:
+          file: ./apiserver/coverage.xml
+          flags: apiserver
+          name: apiserver-coverage
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Generate coverage badge
+        if: always()
+        run: |
+          cd apiserver
+          coverage-badge -o coverage.svg
+        continue-on-error: true
+
+  test-summary:
+    if: always() && github.event.pull_request.draft == false
+    needs: [test-apiserver]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test Results Summary
+        run: |
+          echo "# Test Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ needs.test-apiserver.result }}" == "success" ]]; then
+            echo "✅ **API Server Tests**: PASSED" >> $GITHUB_STEP_SUMMARY
+            echo "All tests completed successfully with coverage reporting." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **API Server Tests**: FAILED" >> $GITHUB_STEP_SUMMARY
+            echo "Tests failed. Please check the logs for details." >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Test Categories Executed" >> $GITHUB_STEP_SUMMARY
+          echo "- **Unit Tests**: Fast, isolated component tests" >> $GITHUB_STEP_SUMMARY
+          echo "- **Contract Tests**: API endpoint verification" >> $GITHUB_STEP_SUMMARY 
