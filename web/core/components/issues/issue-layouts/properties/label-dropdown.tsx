@@ -158,7 +158,7 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
       setQuery("");
     }
 
-    if (query !== "" && e.key === "Enter" && canCreateLabel) {
+    if (query !== "" && e.key === "Enter" && !e.nativeEvent.isComposing && canCreateLabel) {
       e.preventDefault();
       await handleAddLabel(query);
     }
