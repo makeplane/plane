@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
+import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
 // components
@@ -54,7 +55,12 @@ const IssueDetailsPage = observer(() => {
   const issueLoader = !issue || isLoading;
   const pageTitle = project && issue ? `${project?.identifier}-${issue?.sequence_id} ${issue?.name}` : undefined;
 
-  useWorkItemProperties(projectId, workspaceSlug.toString(), issueId);
+  useWorkItemProperties(
+    projectId,
+    workspaceSlug.toString(),
+    issueId,
+    issue?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES
+  );
 
   useEffect(() => {
     const handleToggleIssueDetailSidebar = () => {
