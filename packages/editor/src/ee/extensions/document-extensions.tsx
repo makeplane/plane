@@ -1,7 +1,11 @@
-import { HocuspocusProvider } from "@hocuspocus/provider";
-import { Extension, Node } from "@tiptap/core";
+import { Extension } from "@tiptap/core";
 import { FileText } from "lucide-react";
-// ui
+// core imports
+import {
+  TDocumentEditorAdditionalExtensionsProps,
+  TDocumentEditorAdditionalExtensionsRegistry,
+} from "src/ce/extensions";
+// plane imports
 import { LayersIcon } from "@plane/ui";
 // extensions
 import { SlashCommands, TSlashCommandAdditionalOption } from "@/extensions";
@@ -9,29 +13,10 @@ import { SlashCommands, TSlashCommandAdditionalOption } from "@/extensions";
 import { insertPageEmbed } from "@/helpers/editor-commands";
 // plane editor extensions
 import { IssueEmbedSuggestions, IssueListRenderer, PageEmbedExtension } from "@/plane-editor/extensions";
-// plane editor types
-import { TEmbedConfig } from "@/plane-editor/types";
 // types
-import { TExtensions, TUserDetails } from "@/types";
-// local extensions
+import { TExtensions } from "@/types";
+// local imports
 import { CustomCollaborationCursor } from "./collaboration-cursor";
-
-type Props = {
-  disabledExtensions?: TExtensions[];
-  embedConfig: TEmbedConfig | undefined;
-  provider?: HocuspocusProvider;
-  userDetails: TUserDetails;
-};
-
-/**
- * Registry entry configuration for extensions
- */
-type ExtensionConfig = {
-  /** Determines if the extension should be enabled based on disabled extensions */
-  isEnabled: (disabledExtensions: TExtensions[]) => boolean;
-  /** Returns the extension instance(s) when enabled */
-  getExtension: (props: Props) => Extension[] | Node[] | undefined;
-};
 
 /**
  * Registry for slash commands
@@ -58,7 +43,7 @@ const slashCommandRegistry = [
   {
     // Page embed slash command
     isEnabled: (disabledExtensions: TExtensions[]) => !disabledExtensions.includes("nested-pages"),
-    getOption: ({ embedConfig }: Props): TSlashCommandAdditionalOption | null => {
+    getOption: ({ embedConfig }: TDocumentEditorAdditionalExtensionsProps): TSlashCommandAdditionalOption | null => {
       // Only enable if page config with createCallback exists
       const pageConfig = embedConfig?.page;
       if (!pageConfig?.createCallback) return null;
@@ -94,7 +79,7 @@ const slashCommandRegistry = [
  * Main extension registry
  * Each entry defines a TipTap extension with its own enabling logic
  */
-const extensionRegistry: ExtensionConfig[] = [
+const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
   {
     // Slash commands extension
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("slash-commands"),
@@ -105,12 +90,10 @@ const extensionRegistry: ExtensionConfig[] = [
         .map((command) => command.getOption(props))
         .filter((option): option is TSlashCommandAdditionalOption => option !== null);
 
-      return [
-        SlashCommands({
-          additionalOptions: slashCommandOptions,
-          disabledExtensions: props.disabledExtensions,
-        }),
-      ];
+      return SlashCommands({
+        additionalOptions: slashCommandOptions,
+        disabledExtensions: props.disabledExtensions,
+      });
     },
   },
   {
@@ -121,27 +104,24 @@ const extensionRegistry: ExtensionConfig[] = [
       const searchCallback = issueConfig?.searchCallback;
 
       // Only enable if search callback exists
-      if (!searchCallback) return [];
+      if (!searchCallback) return undefined;
 
-      return [
-        IssueEmbedSuggestions.configure({
-          suggestion: {
-            render: () => IssueListRenderer(searchCallback),
-          },
-        }),
-      ];
+      return IssueEmbedSuggestions.configure({
+        suggestion: {
+          render: () => IssueListRenderer(searchCallback),
+        },
+      });
     },
   },
   {
     // Collaboration cursor extension
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("collaboration-cursor"),
     getExtension: ({ provider, userDetails }) =>
-      provider && [
-        CustomCollaborationCursor({
-          provider,
-          userDetails,
-        }),
-      ],
+      provider &&
+      CustomCollaborationCursor({
+        provider,
+        userDetails,
+      }),
   },
   {
     // Page embed extension
@@ -150,17 +130,15 @@ const extensionRegistry: ExtensionConfig[] = [
       const pageConfig = embedConfig?.page;
 
       // Only enable if widget callback exists
-      if (!pageConfig) return [];
+      if (!pageConfig) return undefined;
 
-      return [
-        PageEmbedExtension({
-          widgetCallback: pageConfig.widgetCallback,
-          archivePage: pageConfig.archivePage,
-          unarchivePage: pageConfig.unarchivePage,
-          deletePage: pageConfig.deletePage,
-          getPageDetailsCallback: pageConfig.getPageDetailsCallback,
-        }),
-      ];
+      return PageEmbedExtension({
+        widgetCallback: pageConfig.widgetCallback,
+        archivePage: pageConfig.archivePage,
+        unarchivePage: pageConfig.unarchivePage,
+        deletePage: pageConfig.deletePage,
+        getPageDetailsCallback: pageConfig.getPageDetailsCallback,
+      });
     },
   },
 ];
@@ -168,14 +146,13 @@ const extensionRegistry: ExtensionConfig[] = [
 /**
  * Returns all enabled extensions for the document editor
  */
-export const DocumentEditorAdditionalExtensions = (props: Props) => {
+export const DocumentEditorAdditionalExtensions = (props: TDocumentEditorAdditionalExtensionsProps) => {
   const { disabledExtensions = [] } = props;
 
   // Filter enabled extensions and flatten the result
   const extensions: Extension[] = extensionRegistry
     .filter((config) => config.isEnabled(disabledExtensions))
     .map((config) => config.getExtension(props))
-    .flat()
     .filter((extension): extension is Extension => extension !== undefined);
 
   return extensions;

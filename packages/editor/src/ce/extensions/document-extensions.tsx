@@ -1,36 +1,38 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
-import { AnyExtension } from "@tiptap/core";
+import { AnyExtension, Extensions } from "@tiptap/core";
 import { SlashCommands } from "@/extensions";
 // plane editor types
-import { TIssueEmbedConfig } from "@/plane-editor/types";
+import { TEmbedConfig } from "@/plane-editor/types";
 // types
-import { TExtensions, TUserDetails } from "@/types";
+import { TExtensions, TFileHandler, TUserDetails } from "@/types";
 
-type Props = {
-  disabledExtensions?: TExtensions[];
-  issueEmbedConfig: TIssueEmbedConfig | undefined;
-  provider: HocuspocusProvider;
+export type TDocumentEditorAdditionalExtensionsProps = {
+  disabledExtensions: TExtensions[];
+  embedConfig: TEmbedConfig | undefined;
+  fileHandler: TFileHandler;
+  provider?: HocuspocusProvider;
   userDetails: TUserDetails;
 };
 
-type ExtensionConfig = {
+export type TDocumentEditorAdditionalExtensionsRegistry = {
   isEnabled: (disabledExtensions: TExtensions[]) => boolean;
-  getExtension: (props: Props) => AnyExtension;
+  getExtension: (props: TDocumentEditorAdditionalExtensionsProps) => AnyExtension | undefined;
 };
 
-const extensionRegistry: ExtensionConfig[] = [
+const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
   {
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("slash-commands"),
-    getExtension: () => SlashCommands({}),
+    getExtension: ({ disabledExtensions }) => SlashCommands({ disabledExtensions }),
   },
 ];
 
-export const DocumentEditorAdditionalExtensions = (_props: Props) => {
-  const { disabledExtensions = [] } = _props;
+export const DocumentEditorAdditionalExtensions = (props: TDocumentEditorAdditionalExtensionsProps) => {
+  const { disabledExtensions = [] } = props;
 
-  const documentExtensions = extensionRegistry
+  const documentExtensions: Extensions = extensionRegistry
     .filter((config) => config.isEnabled(disabledExtensions))
-    .map((config) => config.getExtension(_props));
+    .map((config) => config.getExtension(props))
+    .filter((extension): extension is AnyExtension => extension !== undefined);
 
   return documentExtensions;
 };

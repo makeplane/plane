@@ -50,6 +50,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
       ...DocumentEditorAdditionalExtensions({
         disabledExtensions,
         embedConfig: embedHandler,
+        fileHandler,
         userDetails: user,
       })
     );

@@ -172,8 +172,9 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomTextAlignExtension,
     CustomCalloutExtension,
     UtilityExtension({
-      isEditable: editable,
+      disabledExtensions,
       fileHandler,
+      isEditable: editable,
     }),
     CustomColorExtension,
     ...CoreEditorAdditionalExtensions({
