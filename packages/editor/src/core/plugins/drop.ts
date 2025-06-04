@@ -3,10 +3,17 @@ import { Plugin, PluginKey } from "@tiptap/pm/state";
 // constants
 import { ACCEPTED_ATTACHMENT_MIME_TYPES, ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
 // types
-import { TEditorCommands } from "@/types";
+import { TEditorCommands, TExtensions } from "@/types";
 
-export const DropHandlerPlugin = (editor: Editor): Plugin =>
-  new Plugin({
+type Props = {
+  disabledExtensions: TExtensions[];
+  editor: Editor;
+};
+
+export const DropHandlerPlugin = (props: Props): Plugin => {
+  const { disabledExtensions, editor } = props;
+
+  return new Plugin({
     key: new PluginKey("drop-handler-plugin"),
     props: {
       handlePaste: (view, event) => {
@@ -25,6 +32,7 @@ export const DropHandlerPlugin = (editor: Editor): Plugin =>
           if (acceptedFiles.length) {
             const pos = view.state.selection.from;
             insertFilesSafely({
+              disabledExtensions,
               editor,
               files: acceptedFiles,
               initialPos: pos,
@@ -58,6 +66,7 @@ export const DropHandlerPlugin = (editor: Editor): Plugin =>
             if (coordinates) {
               const pos = coordinates.pos;
               insertFilesSafely({
+                disabledExtensions,
                 editor,
                 files: acceptedFiles,
                 initialPos: pos,
@@ -71,8 +80,10 @@ export const DropHandlerPlugin = (editor: Editor): Plugin =>
       },
     },
   });
+};
 
 type InsertFilesSafelyArgs = {
+  disabledExtensions: TExtensions[];
   editor: Editor;
   event: "insert" | "drop";
   files: File[];
@@ -81,7 +92,7 @@ type InsertFilesSafelyArgs = {
 };
 
 export const insertFilesSafely = async (args: InsertFilesSafelyArgs) => {
-  const { editor, event, files, initialPos, type } = args;
+  const { disabledExtensions, editor, event, files, initialPos, type } = args;
   let pos = initialPos;
 
   for (const file of files) {
@@ -100,7 +111,7 @@ export const insertFilesSafely = async (args: InsertFilesSafelyArgs) => {
         else if (ACCEPTED_ATTACHMENT_MIME_TYPES.includes(file.type)) fileType = "attachment";
       }
       // insert file depending on the type at the current position
-      if (fileType === "image") {
+      if (fileType === "image" && !disabledExtensions.includes("image")) {
         editor.commands.insertImageComponent({
           file,
           pos,

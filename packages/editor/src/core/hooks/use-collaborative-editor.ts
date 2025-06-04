@@ -92,7 +92,8 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
       ...(extensions ?? []),
       ...DocumentEditorAdditionalExtensions({
         disabledExtensions,
-        issueEmbedConfig: embedHandler?.issue,
+        embedConfig: embedHandler,
+        fileHandler,
         provider,
         userDetails: user,
       }),
