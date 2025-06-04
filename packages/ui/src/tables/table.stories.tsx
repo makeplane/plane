@@ -1,25 +1,9 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-webpack5";
 import React from "react";
 import { Table } from "./table";
+import { TTableColumn } from "./types";
 
-const meta: Meta<typeof Table> = {
-  title: "Table",
-  component: Table,
-};
-
-export default meta;
-
-// types
-type TTableData = {
-  id: string;
-  name: string;
-  age: number;
-};
-
-type Story = StoryObj<typeof Table<TTableData>>;
-
-// data
-const tableData: TTableData[] = [
+const tableData = [
   { id: "1", name: "Ernest", age: 25 },
   { id: "2", name: "Ann", age: 30 },
   { id: "3", name: "Russell", age: 35 },
@@ -30,22 +14,23 @@ const tableColumns = [
   {
     key: "id",
     content: "Id",
-    tdRender: (rowData: TTableData) => <span>{rowData.id}</span>,
+    tdRender: (rowData) => <span>{rowData.id}</span>,
   },
   {
     key: "name",
     content: "Name",
-    tdRender: (rowData: TTableData) => <span>{rowData.name}</span>,
+    tdRender: (rowData) => <span>{rowData.name}</span>,
   },
   {
     key: "age",
     content: "Age",
-    tdRender: (rowData: TTableData) => <span>{rowData.age}</span>,
+    tdRender: (rowData) => <span>{rowData.age}</span>,
   },
-];
+] satisfies TTableColumn<typeof tableData[number]>[];
 
-// stories
-export const Default: Story = {
+const meta: Meta<typeof Table<typeof tableData[number]>> = {
+  title: "Table",
+  component: Table,
   args: {
     data: tableData,
     columns: tableColumns,
@@ -59,3 +44,9 @@ export const Default: Story = {
     tdClassName: "font-medium",
   },
 };
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};

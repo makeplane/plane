@@ -1,14 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-webpack5";
 import React from "react";
 import { Sortable } from "./sortable";
-
-const meta: Meta<typeof Sortable> = {
-  title: "Sortable",
-  component: Sortable,
-};
-
-export default meta;
-type Story = StoryObj<typeof Sortable>;
 
 const data = [
   { id: "1", name: "John Doe" },
@@ -17,17 +9,28 @@ const data = [
   { id: "4", name: "Bob" },
   { id: "5", name: "Charlie" },
 ];
-export const Default: Story = {
+
+const meta: Meta<typeof Sortable<(typeof data)[number]>> = {
+  title: "Sortable",
+  component: Sortable,
   args: {
     data,
-    render: (item: any) => (
+    render: (item) => (
       // <Draggable data={item} className="rounded-lg">
       <div className="border ">{item.name}</div>
       // </Draggable>
     ),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onChange: (data) => console.log(data.map(({ id }: any) => id)),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    keyExtractor: (item: any) => item.id,
+    keyExtractor: (item) => item.id,
+  },
+  argTypes: {
+    onChange: {
+      action: true,
+    },
   },
 };
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};
