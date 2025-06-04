@@ -6,9 +6,9 @@ import { cn } from "@plane/utils";
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // types
+import { LinkContainer } from "@/plane-editor/components/link-container";
 import { TDisplayConfig } from "@/types";
 // components
-import { LinkViewContainer } from "./link-view-container";
 
 interface EditorContainerProps {
   children: ReactNode;
@@ -96,7 +96,7 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
         )}
       >
         {children}
-        <LinkViewContainer editor={editor} containerRef={containerRef} />
+        <LinkContainer editor={editor} containerRef={containerRef} />
       </div>
     </>
   );

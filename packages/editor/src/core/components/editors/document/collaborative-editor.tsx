@@ -91,6 +91,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
       editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
       id={id}
       tabIndex={tabIndex}
+      disabledExtensions={disabledExtensions}
     />
   );
 };
