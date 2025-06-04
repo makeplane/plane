@@ -1325,23 +1325,23 @@
     }
   },
   "account_settings": {
-    "profile":{},
-    "preferences":{
+    "profile": {},
+    "preferences": {
       "heading": "Preferences",
       "description": "Customize your app experience the way you work"
     },
-    "notifications":{
+    "notifications": {
       "heading": "Email notifications",
-      "description": "Stay in the loop on Work items you are subscribed to. Enable this to get notified."    
+      "description": "Stay in the loop on Work items you are subscribed to. Enable this to get notified."
     },
-    "security":{
+    "security": {
       "heading": "Security"
     },
-    "api_tokens":{
+    "api_tokens": {
       "heading": "Personal Access Tokens",
       "description": "Generate secure API tokens to integrate your data with external systems and applications."
     },
-    "activity":{
+    "activity": {
       "heading": "Activity",
       "description": "Track your recent actions and changes across all projects and work items."
     }
@@ -1413,7 +1413,7 @@
       },
       "billing_and_plans": {
         "heading": "Billing & Plans",
-        "description":"Choose your plan, manage subscriptions, and easily upgrade as your needs grow.",
+        "description": "Choose your plan, manage subscriptions, and easily upgrade as your needs grow.",
         "title": "Billing & Plans",
         "current_plan": "Current plan",
         "free_plan": "You are currently using the free plan",
@@ -2358,47 +2358,8 @@
     "previously_edited_by": "Previously edited by",
     "edited_by": "Edited by"
   },
-  "intake_forms": {
-    "create": {
-      "title": "Create a work item",
-      "sub-title": "Let the team know what you would like them to work on.",
-      "name": "Name",
-      "email": "Email",
-      "about": "What's this work item about?",
-      "description": "Describe what should happen",
-      "description_placeholder": "Add as much detail as you'd like to help the team identify your exact situation and needs.",
-      "loading": "Creating",
-      "create_work_item": "Create work item",
-      "errors": {
-        "name": "Name is required",
-        "name_max_length": "Name should be less than 255 characters",
-        "email": "Email is required",
-        "email_invalid": "Invalid email address",
-        "title": "Title is required",
-        "title_max_length": "Title should be less than 255 characters"
-      }
-    },
-    "success": {
-      "title": "Yay! Your work item is now in the team's queue.",
-      "description": "The team can now either approve or discard this work item from their Intake queue.",
-      "primary_button": {
-        "text": "Add another work item"
-      },
-      "secondary_button": {
-        "text": "Learn more about Intake"
-      }
-    },
-    "how_it_works": {
-      "title": "How it works?",
-      "heading": "This is an Intake form.",
-      "description": "Intake is a Plane feature that lets project admins and managers get work items from outside into their projects. ",
-      "steps": {
-        "step_1": "This short form lets you create a new work item in a Plane project.",
-        "step_2": "When you submit this form, a new work item is created in that project's Intake.",
-        "step_3": "Someone from that project or team will review this.",
-        "step_4": "If they approve it, this work item will move to the project's queue of work. Otherwise, it will be rejected.",
-        "step_5": "To check for the status of that work item, get in touch with the project's manager, admin, or whoever sent you the link to this page."
-      }
-    }
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane didn't start up. This could be because one or more Plane services failed to start.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Choose View Logs from setup.sh and Docker logs to be sure."
   }
 }

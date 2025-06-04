@@ -2298,5 +2298,48 @@
         "project": "No templates found."
       }
     }
+  },
+  "intake_forms": {
+    "create": {
+      "title": "Create a work item",
+      "sub-title": "Let the team know what you would like them to work on.",
+      "name": "Name",
+      "email": "Email",
+      "about": "What's this work item about?",
+      "description": "Describe what should happen",
+      "description_placeholder": "Add as much detail as you'd like to help the team identify your exact situation and needs.",
+      "loading": "Creating",
+      "create_work_item": "Create work item",
+      "errors": {
+        "name": "Name is required",
+        "name_max_length": "Name should be less than 255 characters",
+        "email": "Email is required",
+        "email_invalid": "Invalid email address",
+        "title": "Title is required",
+        "title_max_length": "Title should be less than 255 characters"
+      }
+    },
+    "success": {
+      "title": "Yay! Your work item is now in the team's queue.",
+      "description": "The team can now either approve or discard this work item from their Intake queue.",
+      "primary_button": {
+        "text": "Add another work item"
+      },
+      "secondary_button": {
+        "text": "Learn more about Intake"
+      }
+    },
+    "how_it_works": {
+      "title": "How it works?",
+      "heading": "This is an Intake form.",
+      "description": "Intake is a Plane feature that lets project admins and managers get work items from outside into their projects. ",
+      "steps": {
+        "step_1": "This short form lets you create a new work item in a Plane project.",
+        "step_2": "When you submit this form, a new work item is created in that project's Intake.",
+        "step_3": "Someone from that project or team will review this.",
+        "step_4": "If they approve it, this work item will move to the project's queue of work. Otherwise, it will be rejected.",
+        "step_5": "To check for the status of that work item, get in touch with the project's manager, admin, or whoever sent you the link to this page."
+      }
+    }
   }
 }

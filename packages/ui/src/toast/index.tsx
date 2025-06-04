@@ -109,7 +109,7 @@ export const setToast = (props: SetToastProps) => {
         )}
       >
         <X
-          className="fixed top-2 right-2.5 text-toast-text-secondary hover:text-toast-text-tertiary cursor-pointer"
+          className="absolute top-2 right-2.5 text-toast-text-secondary hover:text-toast-text-tertiary cursor-pointer"
           strokeWidth={1.5}
           width={14}
           height={14}
