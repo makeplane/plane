@@ -3,8 +3,11 @@ import logging
 
 # Third party imports
 from celery import shared_task
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
 
 # Django imports
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -13,6 +16,18 @@ from django.utils.html import strip_tags
 from plane.db.models import User, Workspace, WorkspaceMemberInvite
 from plane.license.utils.instance_value import get_email_configuration
 from plane.utils.exception_logger import log_exception
+
+
+def push_updated_to_slack(workspace, workspace_member_invite):
+    # Send message on slack as well
+    client = WebClient(token=settings.SLACK_BOT_TOKEN)
+    try:
+        _ = client.chat_postMessage(
+            channel="#trackers",
+            text=f"{workspace_member_invite.email} has been invited to {workspace.name} as a {workspace_member_invite.role}",
+        )
+    except SlackApiError as e:
+        print(f"Got an error: {e.response['error']}")
 
 
 @shared_task
@@ -79,7 +94,12 @@ def workspace_invitation(email, workspace_id, token, current_site, inviter):
         msg.attach_alternative(html_content, "text/html")
         msg.send()
         logging.getLogger("plane.worker").info("Email sent successfully")
+
+        # Send message on slack as well
+        if settings.SLACK_BOT_TOKEN:
+            push_updated_to_slack(workspace, workspace_member_invite)
         return
+
     except (Workspace.DoesNotExist, WorkspaceMemberInvite.DoesNotExist):
         return
     except Exception as e:

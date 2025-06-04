@@ -2,7 +2,7 @@
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Breadcrumbs, ContrastIcon, Header } from "@plane/ui";
+import { Breadcrumbs, ContrastIcon, Header, BetaBadge } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // plane web components
@@ -14,18 +14,21 @@ export const WorkspaceActiveCycleHeader = observer(() => {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs>
-        <Breadcrumbs.BreadcrumbItem
-          type="text"
-          link={
-            <BreadcrumbLink
-              label={t("active_cycles")}
-              icon={<ContrastIcon className="h-4 w-4 text-custom-text-300 rotate-180" />}
+          <div className="flex gap-2">
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              link={
+                <BreadcrumbLink
+                  label={t("active_cycles")}
+                  icon={<ContrastIcon className="h-4 w-4 text-custom-text-300 rotate-180" />}
+                />
+              }
             />
-          }
-        />
-      </Breadcrumbs>
-      <UpgradeBadge size="md" />
-    </Header.LeftItem>
-  </Header>
+            <BetaBadge />
+          </div>
+        </Breadcrumbs>
+        <UpgradeBadge size="md" flag="WORKSPACE_ACTIVE_CYCLES" />
+      </Header.LeftItem>
+    </Header>
   );
 });

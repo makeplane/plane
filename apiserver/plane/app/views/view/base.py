@@ -25,6 +25,7 @@ from plane.db.models import (
     Project,
     CycleIssue,
     UserRecentVisit,
+    DeployBoard,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -385,6 +386,14 @@ class IssueViewViewSet(BaseViewSet):
             .select_related("project")
             .select_related("workspace")
             .annotate(is_favorite=Exists(subquery))
+            .annotate(
+                anchor=DeployBoard.objects.filter(
+                    entity_name="view",
+                    entity_identifier=OuterRef("pk"),
+                    project_id=self.kwargs.get("project_id"),
+                    workspace__slug=self.kwargs.get("slug"),
+                ).values("anchor")
+            )
             .order_by("-is_favorite", "name")
             .distinct()
         )
@@ -503,6 +512,13 @@ class IssueViewViewSet(BaseViewSet):
                 entity_identifier=pk,
                 entity_name="view",
             ).delete(soft=False)
+            # Delete the view from the deploy board
+            DeployBoard.objects.filter(
+                entity_name="view",
+                entity_identifier=pk,
+                project_id=project_id,
+                workspace__slug=slug,
+            ).delete()
         else:
             return Response(
                 {"error": "Only admin or owner can delete the view"},

@@ -1,18 +1,21 @@
+# Python imports
 import random
 import string
 import json
 
 # Django imports
 from django.utils import timezone
+from django.db.models import F
 
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
 
+
 # Module imports
 from ..base import BaseViewSet, BaseAPIView
 from plane.app.permissions import ProjectEntityPermission, allow_permission, ROLE
-from plane.db.models import Project, Estimate, EstimatePoint, Issue
+from plane.db.models import Project, Estimate, EstimatePoint, Issue, Cycle
 from plane.app.serializers import (
     EstimateSerializer,
     EstimatePointSerializer,
@@ -20,6 +23,9 @@ from plane.app.serializers import (
 )
 from plane.utils.cache import invalidate_cache
 from plane.bgtasks.issue_activities_task import issue_activity
+from plane.ee.bgtasks.entity_issue_state_progress_task import (
+    entity_issue_state_activity_task,
+)
 
 
 def generate_random_name(length=10):
@@ -202,6 +208,41 @@ class EstimatePointEndpoint(BaseViewSet):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
+        # also track the entity state change
+        if Project.objects.filter(
+            workspace__slug=slug,
+            pk=project_id,
+            estimate__isnull=False,
+            estimate__type="points",
+        ).exists():
+            cycle = Cycle.objects.filter(
+                start_date__lte=timezone.now(),
+                end_date__gte=timezone.now(),
+                project_id=project_id,
+                workspace__slug=slug,
+            ).first()
+
+            # If cycle exists, proceed with the logic
+            if cycle:
+                cycle_id = str(cycle.id)
+                issues = Issue.objects.annotate(
+                    cycle_id=F("issue_cycle__cycle_id")
+                ).filter(estimate_point_id=estimate_point_id, cycle_id=cycle.id)
+
+                # Trigger the entity issue state activity task
+                entity_issue_state_activity_task.delay(
+                    issue_cycle_data=[
+                        {
+                            "issue_id": str(issue.id),
+                            "cycle_id": str(cycle_id),
+                        }
+                        for issue in issues
+                    ],
+                    user_id=str(request.user.id),
+                    slug=slug,
+                    action="UPDATED",
+                )
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -266,6 +307,7 @@ class EstimatePointEndpoint(BaseViewSet):
                     ),
                     epoch=int(timezone.now().timestamp()),
                 )
+            issues.update(estimate_point_id=None)
 
         # delete the estimate point
         old_estimate_point = EstimatePoint.objects.filter(pk=estimate_point_id).first()
@@ -280,8 +322,53 @@ class EstimatePointEndpoint(BaseViewSet):
         EstimatePoint.objects.bulk_update(
             updated_estimate_points, ["key"], batch_size=10
         )
+        # also track the entity state change
+        if Project.objects.filter(
+            workspace__slug=slug,
+            pk=project_id,
+            estimate__isnull=False,
+            estimate__type="points",
+        ).exists():
+            cycle = Cycle.objects.filter(
+                start_date__lte=timezone.now(),
+                end_date__gte=timezone.now(),
+                project_id=project_id,
+                workspace__slug=slug,
+            ).first()
+            if cycle:
+                cycle_id = str(cycle.id)
+                new_estimate_value = (
+                    EstimatePoint.objects.filter(pk=new_estimate_id)
+                    .values_list("value", flat=True)
+                    .first()
+                    if new_estimate_id
+                    else None
+                )
+
+                issues = Issue.objects.filter(
+                    estimate_point_id=(
+                        new_estimate_id if new_estimate_id else estimate_point_id
+                    ),
+                    issue_cycle__cycle_id=cycle.id,
+                )
+
+                # Trigger the entity issue state activity task
+                entity_issue_state_activity_task.delay(
+                    issue_cycle_data=[
+                        {
+                            "issue_id": str(issue.id),
+                            "cycle_id": str(cycle_id),
+                        }
+                        for issue in issues
+                    ],
+                    user_id=str(request.user.id),
+                    slug=slug,
+                    action="UPDATED",
+                )
 
         old_estimate_point.delete()
+
+        # TODO: track the issue activity as well if the estimate point is deleted
 
         return Response(
             EstimatePointSerializer(updated_estimate_points, many=True).data,
