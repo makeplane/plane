@@ -1,0 +1,2183 @@
+{
+  "sidebar": {
+    "pi_chat": "Pi Chat",
+    "initiatives": "Inițiative",
+    "teamspaces": "Spații de echipă",
+    "epics": "Epice",
+    "upgrade_plan": "Actualizare plan",
+    "plane_pro": "Plane Pro",
+    "business": "Business",
+    "customers": "Clienți"
+  },
+  "workspace_dashboards": "Dashboarduri",
+  "pi_chat": "Pi Chat",
+  "in_app": "În-app",
+  "forms": "Formulare",
+  "choose_workspace_for_integration": "Alegeți un spațiu de lucru pentru a conecta această aplicație",
+  "integrations_description": "Aplicațiile care funcționează cu Plane trebuie să se conecteze la un spațiu de lucru unde sunteți administrator.",
+  "create_a_new_workspace": "Creați un nou spațiu de lucru",
+  "no_workspaces_to_connect": "Nu există spații de lucru pentru a conecta",
+  "no_workspaces_to_connect_description": "Trebuie să creați un spațiu de lucru pentru a putea conecta integrări și modele",
+  "learn_more_about_workspaces": "Află mai multe despre spațiile de lucru",
+  "common": {
+    "worklogs": "Jurnale de lucru",
+    "live": "Live",
+    "epics": "Epice",
+    "project_updates": "Actualizări proiect",
+    "overview": "Prezentare generală",
+    "workflows": "Fluxuri de lucru",
+    "templates": "Șabloane"
+  },
+  "updates": {
+    "add_update": "Adaugă actualizare",
+    "add_update_placeholder": "Adaugă actualizarea ta aici",
+    "empty": {
+      "title": "Încă nu există actualizări",
+      "description": "Poți vedea actualizările aici."
+    },
+    "delete": {
+      "title": "Șterge actualizare",
+      "confirmation": "Ești sigur că vrei să ștergi această actualizare? Această acțiune este ireversibilă.",
+      "success": {
+        "title": "Actualizare ștearsă",
+        "message": "Actualizarea a fost ștearsă cu succes."
+      },
+      "error": {
+        "title": "Actualizare năo ștearsă",
+        "message": "Actualizarea nu a putut fi ștearsă."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Actualizare actualizată",
+        "message": "Actualizarea a fost actualizată cu succes."
+      },
+      "error": {
+        "title": "Actualizare năo actualizată",
+        "message": "Actualizarea nu a putut fi actualizată."
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reacție creată",
+          "message": "Reacția a fost creată cu succes."
+        },
+        "error": {
+          "title": "Reacție năo creată",
+          "message": "Reacția nu a putut fi creată."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reacție ștearsă",
+          "message": "Reacția a fost ștearsă cu succes."
+        },
+        "error": {
+          "title": "Reacție năo ștearsă",
+          "message": "Reacția nu a putut fi ștearsă."
+        }
+      }
+    },
+    "progress": {
+      "title": "Progres",
+      "since_last_update": "De la ultima actualizare",
+      "comments": "{count, plural, one{# comentariu} other{# comentarii}}"
+    },
+    "create": {
+      "success": {
+        "title": "Actualizare creată",
+        "message": "Actualizarea a fost creată cu succes."
+      },
+      "error": {
+        "title": "Actualizare năo creată",
+        "message": "Actualizarea nu a putut fi creată."
+      }
+    }
+  },
+  "issue": {
+    "relation": {
+      "start_before": "Începe înainte",
+      "start_after": "Începe după",
+      "finish_before": "Termină înainte",
+      "finish_after": "Termină după"
+    }
+  },
+  "profile": {
+    "actions": {
+      "connections": "Conexiuni"
+    }
+  },
+  "project_settings": {
+    "initiatives": {
+      "heading": "Inițiative",
+      "sub_heading": "Deblochează cel mai înalt nivel de organizare pentru tot lucrul tău în Plane.",
+      "title": "Activează Inițiative",
+      "description": "Setează obiective mai mari pentru a monitoriza progresul",
+      "toast": {
+        "updating": "Actualizarea funcției de inițiative",
+        "enable_success": "Funcția de inițiative activată cu succes.",
+        "disable_success": "Funcția de inițiative dezactivată cu succes.",
+        "error": "Eșec la actualizarea funcției de inițiative!"
+      }
+    },
+    "customers": {
+      "heading": "Clienți",
+      "settings_heading": "Gestionează munca după ce este important pentru clienții tăi.",
+      "settings_sub_heading": "Aduce cererile clienților la elementele de lucru, atribuie prioritate după cereri și grupează stările elementelor de lucru în înregistrările clienților. În curând, vei putea integra cu CRM-ul tău sau cu instrumentul de suport pentru o gestionare și mai bună a muncii după atributele clientului."
+    },
+    "empty_state": {
+      "integrations": {
+        "title": "Nicio integrare configurată",
+        "description": "Configurează GitHub și alte integrări pentru a sincroniza elementele de lucru ale proiectului tău."
+      }
+    },
+    "estimates": {
+      "edit": {
+        "title": "Editează sistemul de estimări",
+        "add_or_update": {
+          "title": "Adaugă, actualizează sau elimină estimări",
+          "description": "Gestionează sistemul curent prin adăugarea, actualizarea sau eliminarea punctelor sau categoriilor."
+        },
+        "switch": {
+          "title": "Schimbă tipul de estimare",
+          "description": "Convertește sistemul tău de puncte în sistem de categorii și invers."
+        }
+      },
+      "switch": "Schimbă sistemul de estimări",
+      "current": "Sistemul de estimări curent",
+      "select": "Selectează un sistem de estimări",
+      "toasts": {
+        "reorder": {
+          "success": {
+            "title": "Estimări reordonate",
+            "message": "Estimările au fost reordonate în proiectul tău."
+          },
+          "error": {
+            "title": "Reordonarea estimărilor a eșuat",
+            "message": "Nu am putut reordona estimările, te rugăm să încerci din nou"
+          }
+        }
+      },
+      "validation": {
+        "fill": "Te rugăm să completezi acest câmp de estimare",
+        "repeat": "Valoarea estimării nu poate fi repetată"
+      }
+    },
+    "epics": {
+      "properties": {
+        "title": "Proprietăți",
+        "description": "Adaugă proprietăți personalizate la epicul tău."
+      },
+      "disabled": "Dezactivat"
+    }
+  },
+  "teamspaces": {
+    "label": "Spații de echipă",
+    "empty_state": {
+      "general": {
+        "title": "Spațiile de echipă deblochează o mai bună organizare și urmărire în Plane.",
+        "description": "Creează o suprafață dedicată pentru fiecare echipă din lumea reală, separată de toate celelalte suprafețe de lucru din Plane, și personalizează-le pentru a se potrivi cu modul în care lucrează echipa ta.",
+        "primary_button": {
+          "text": "Creează un nou spațiu de echipă"
+        }
+      }
+    }
+  },
+  "teamspace_projects": {
+    "empty_state": {
+      "general": {
+        "title": "Începe prin conectarea proiectelor la acest spațiu de echipă.",
+        "description": "Spațiile de echipă conectează proiectele în care se află membrii echipei, astfel încât să poți vedea doar munca lor, contribuția lor la progresul în acele proiecte și metrici de lucru specifice echipei."
+      }
+    }
+  },
+  "teamspace_work_items": {
+    "empty_state": {
+      "no_work_items": {
+        "title": "Creează elemente de lucru specifice echipei.",
+        "description": "Elementele de lucru care sunt atribuite membrilor acestei echipe în orice proiect conectat vor apărea automat aici. Dacă te aștepți să vezi anumite elemente de lucru aici, asigură-te că proiectele tale conectate au elemente de lucru atribuite membrilor acestei echipe sau creează elemente de lucru.",
+        "primary_button": {
+          "text": "Adaugă elemente de lucru la un proiect conectat"
+        }
+      },
+      "work_items_empty_filter": {
+        "title": "Nu există elemente de lucru specifice echipei pentru filtrele aplicate",
+        "description": "Schimbă unele dintre acele filtre sau șterge-le pe toate pentru a vedea elementele de lucru relevante pentru acest spațiu.",
+        "secondary_button": {
+          "text": "Șterge toate filtrele"
+        }
+      }
+    }
+  },
+  "teamspace_cycles": {
+    "empty_state": {
+      "current": {
+        "title": "Niciunul dintre proiectele tale conectate nu are un ciclu activ.",
+        "description": "Ciclurile active din proiectele conectate vor apărea automat aici. Dacă te aștepți să vezi un ciclu activ, asigură-te că rulează într-un proiect conectat chiar acum."
+      },
+      "completed": {
+        "title": "Niciunul dintre proiectele tale conectate nu are un ciclu finalizat.",
+        "description": "Ciclurile finalizate în proiectele conectate vor apărea automat aici. Dacă te aștepți să vezi un ciclu finalizat, asigură-te că este, de asemenea, finalizat într-un proiect conectat."
+      },
+      "upcoming": {
+        "title": "Niciunul dintre proiectele tale conectate nu are un ciclu viitor.",
+        "description": "Ciclurile viitoare în proiectele conectate vor apărea automat aici. Dacă te aștepți să vezi un ciclu viitor, asigură-te că există și într-un proiect conectat."
+      }
+    }
+  },
+  "teamspace_views": {
+    "empty_state": {
+      "team_view": {
+        "title": "Vizualizările echipei tale asupra muncii tale fără a perturba alte vizualizări din spațiul tău de lucru",
+        "description": "Vezi munca echipei tale în vizualizări care sunt salvate doar pentru echipa ta și separat de vizualizările unui proiect.",
+        "primary_button": {
+          "text": "Creează o vizualizare"
+        }
+      },
+      "project_view": {
+        "title": "Niciunul dintre proiectele tale conectate nu are vizualizări publice.",
+        "description": "Vizualizările publice din proiectele conectate vor apărea automat aici. Pentru a vedea vizualizări publice din proiectele conectate aici, asigură-te că acele proiecte au vizualizări publice accesibile tuturor membrilor proiectului."
+      },
+      "filter": {
+        "title": "Nicio vizualizare care să se potrivească",
+        "description": "Nicio vizualizare nu corespunde criteriilor de căutare. \n Creează o nouă vizualizare în schimb."
+      }
+    }
+  },
+  "teamspace_pages": {
+    "empty_state": {
+      "team_page": {
+        "title": "Găzduiește cunoștințele echipei tale în Paginile Echipei.",
+        "description": "Spre deosebire de paginile dintr-un proiect, poți salva cunoștințe specifice unei echipe într-un set separat de pagini aici. Obține toate funcțiile Paginilor, creează documente cu cele mai bune practici și wiki-uri de echipă cu ușurință.",
+        "primary_button": {
+          "text": "Creează prima ta pagină de echipă"
+        }
+      },
+      "project_page": {
+        "title": "Niciunul dintre proiectele tale conectate nu are pagini publice.",
+        "description": "Paginile publice din proiectele conectate vor apărea automat aici. Dacă te aștepți să vezi pagini publice aici, asigură-te că proiectele tale conectate au pagini publice disponibile tuturor membrilor proiectului."
+      },
+      "filter": {
+        "title": "Nicio pagină care să se potrivească",
+        "description": "Elimină filtrele pentru a vedea toate paginile"
+      },
+      "search": {
+        "title": "Nicio pagină care să se potrivească",
+        "description": "Elimină criteriile de căutare pentru a vedea toate paginile"
+      }
+    }
+  },
+  "teamspace_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Niciunul dintre proiectele tale conectate nu are elemente de lucru publicate.",
+        "description": "Creează câteva elemente de lucru într-unul sau mai multe dintre acele proiecte pentru a vedea progresul după date, stări și prioritate."
+      },
+      "relation": {
+        "blocking": {
+          "title": "Nu ai niciun element de lucru care să blocheze un coleg de echipă.",
+          "description": "Bună treabă! Ai eliberat calea pentru echipa ta. Ești un bun jucător de echipă."
+        },
+        "blocked": {
+          "title": "Nu ai niciun element de lucru al colegilor tăi care să te blocheze.",
+          "description": "Vești bune! Poți face progrese în toate elementele de lucru atribuite ție."
+        }
+      },
+      "stats": {
+        "general": {
+          "title": "Niciunul dintre proiectele tale conectate nu are elemente de lucru publicate.",
+          "description": "Creează câteva elemente de lucru într-unul sau mai multe dintre acele proiecte pentru a vedea distribuția muncii după proiect și membrii echipei."
+        },
+        "filter": {
+          "title": "Nu există statistici de echipă pentru filtrele aplicate.",
+          "description": "Creează câteva elemente de lucru într-unul sau mai multe dintre acele proiecte pentru a vedea distribuția muncii după proiect și membrii echipei."
+        }
+      }
+    }
+  },
+  "initiatives": {
+    "label": "Inițiative",
+    "add_initiative": "Adaugă Inițiativă",
+    "create_initiative": "Creează Inițiativă",
+    "update_initiative": "Actualizează Inițiativă",
+    "initiative_name": "Numele inițiativei",
+    "all_initiatives": "Toate Inițiativele",
+    "delete_initiative": "Șterge Inițiativă",
+    "fill_all_required_fields": "Te rugăm să completezi toate câmpurile obligatorii.",
+    "toast": {
+      "create_success": "Inițiativa {name} creată cu succes.",
+      "create_error": "Eșec la crearea inițiativei. Te rugăm să încerci din nou!",
+      "update_success": "Inițiativa {name} actualizată cu succes.",
+      "update_error": "Eșec la actualizarea inițiativei. Te rugăm să încerci din nou!",
+      "delete": {
+        "success": "Inițiativa ștearsă cu succes.",
+        "error": "Eșec la ștergerea Inițiativei"
+      },
+      "link_copied": "Link-ul inițiativei copiat în clipboard.",
+      "project_update_success": "Proiectele inițiativei actualizate cu succes.",
+      "project_update_error": "Eșec la actualizarea proiectelor inițiativei. Te rugăm să încerci din nou!",
+      "epic_update_success": "Epic{count, plural, one { adăugat la Inițiativă cu succes.} other {e adăugate la Inițiativă cu succes.}}",
+      "epic_update_error": "Adăugarea Epicului la Inițiativă a eșuat. Te rugăm să încerci din nou mai târziu."
+    },
+    "empty_state": {
+      "general": {
+        "title": "Organizează munca la cel mai înalt nivel cu Inițiative",
+        "description": "Când ai nevoie să organizezi munca care acoperă mai multe proiecte și echipe, Inițiativele vin în ajutor. Conectează proiecte și epice la inițiative, vezi actualizări automat grupate și vezi pădurea înainte de a ajunge la copaci.",
+        "primary_button": {
+          "text": "Creează o inițiativă"
+        }
+      },
+      "search": {
+        "title": "Nicio inițiativă care să se potrivească",
+        "description": "Nu s-au detectat inițiative cu criteriile de potrivire. \n Creează o nouă inițiativă în schimb."
+      },
+      "not_found": {
+        "title": "Inițiativa nu există",
+        "description": "Inițiativa pe care o cauți nu există sau a fost ștearsă.",
+        "primary_button": {
+          "text": "Vezi alte Inițiative"
+        }
+      },
+      "epics": {
+        "title": "Nu ai epice care să se potrivească cu filtrele pe care le-ai aplicat.",
+        "subHeading": "Pentru a vedea toate epicele, șterge toate filtrele aplicate.",
+        "action": "Șterge filtrele"
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "Scrie o notă, un document sau o bază de cunoștințe completă. Obține ajutorul lui Galileo, asistentul AI al Plane, pentru a începe",
+        "description": "Paginile sunt spații de gândire în Plane. Notează notițe de întâlnire, formatează-le ușor, încorporează elemente de lucru, aranjează-le folosind o bibliotecă de componente și păstrează-le toate în contextul proiectului tău. Pentru a face o muncă scurtă din orice document, invocă Galileo, AI-ul Plane, cu o scurtătură sau click pe un buton.",
+        "primary_button": {
+          "text": "Creează prima ta pagină"
+        }
+      },
+      "private": {
+        "title": "Încă nu există pagini private",
+        "description": "Păstrează-ți gândurile private aici. Când ești gata să le împărtășești, echipa este la doar un click distanță.",
+        "primary_button": {
+          "text": "Creează prima ta pagină"
+        }
+      },
+      "public": {
+        "title": "Încă nu există pagini publice",
+        "description": "Vezi paginile împărtășite cu toată lumea din spațiul tău de lucru chiar aici.",
+        "primary_button": {
+          "text": "Creează prima ta pagină"
+        }
+      },
+      "archived": {
+        "title": "Încă nu există pagini arhivate",
+        "description": "Arhivează paginile care nu sunt pe radarul tău. Accesează-le aici când ai nevoie."
+      }
+    }
+  },
+  "epics": {
+    "label": "Epice",
+    "no_epics_selected": "Niciun epic selectat",
+    "add_selected_epics": "Adaugă epicele selectate",
+    "epic_link_copied_to_clipboard": "Link-ul epicului copiat în clipboard.",
+    "project_link_copied_to_clipboard": "Link-ul proiectului copiat în clipboard",
+    "empty_state": {
+      "general": {
+        "title": "Creează un epic și atribuie-l cuiva, chiar și ție",
+        "description": "Pentru corpuri mai mari de muncă care acoperă mai multe cicluri și pot trăi în mai multe module, creează un epic. Leagă elemente de lucru și sub-elemente de lucru într-un proiect la un epic și sari într-un element de lucru din prezentarea generală.",
+        "primary_button": {
+          "text": "Creează un Epic"
+        }
+      },
+      "section": {
+        "title": "Încă nu există epice",
+        "description": "Începe să adaugi epice pentru a gestiona și urmări progresul.",
+        "primary_button": {
+          "text": "Adaugă epice"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Nu s-au găsit epice care să se potrivească"
+      },
+      "no_epics": {
+        "title": "Nu s-au găsit epice"
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "Niciun ciclu activ",
+        "description": "Ciclurile proiectelor tale care includ orice perioadă care cuprinde data de astăzi în intervalul său. Găsește progresul și detaliile tuturor ciclurilor tale active aici."
+      }
+    }
+  },
+  "active_cycle_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Adaugă elemente de lucru la ciclu pentru a-i vedea \n progresul"
+      },
+      "priority": {
+        "title": "Observă elementele de lucru cu prioritate ridicată abordate în \n ciclu dintr-o privire."
+      },
+      "assignee": {
+        "title": "Adaugă responsabili la elementele de lucru pentru a vedea o \n defalcare a muncii după responsabili."
+      },
+      "label": {
+        "title": "Adaugă etichete la elementele de lucru pentru a vedea \n defalcarea muncii după etichete."
+      }
+    }
+  },
+  "workspace_settings": {
+    "settings": {
+      "integrations": {
+        "title": "Integrări"
+      },
+      "imports": {
+        "title": "Importuri"
+      },
+      "worklogs": {
+        "title": "Jurnale de lucru"
+      },
+      "project_states": {
+        "title": "Stări de proiect"
+      },
+      "teamspaces": {
+        "title": "Spații de echipă"
+      },
+      "initiatives": {
+        "title": "Inițiative"
+      },
+      "customers": {
+        "title": "Clienți"
+      },
+      "cancel_trial": {
+        "title": "Anulează mai întâi perioada de probă.",
+        "description": "Ai o perioadă de probă activă pentru unul dintre planurile noastre plătite. Te rugăm să o anulezi mai întâi pentru a continua.",
+        "dismiss": "Respinge",
+        "cancel": "Anulează perioada de probă",
+        "cancel_success_title": "Perioada de probă anulată.",
+        "cancel_success_message": "Acum poți șterge workspace-ul.",
+        "cancel_error_title": "Asta nu a funcționat.",
+        "cancel_error_message": "Încearcă din nou, te rog."
+      },
+      "applications": {
+        "title": "Applications",
+        "applicationId_copied": "ID-ul aplicației copiat în clipboard",
+        "clientId_copied": "ID-ul clientului copiat în clipboard",
+        "clientSecret_copied": "Secretul clientului copiat în clipboard",
+        "third_party_apps": "Aplicații de terță parte",
+        "your_apps": "Aplicațiile tale",
+        "connect": "Conectează",
+        "connected": "Conectat",
+        "app_available": "Ai făcut această aplicație disponibilă pentru a fi folosită cu un workspace al Plane",
+        "app_available_description": "Conectează un workspace al Plane pentru a începe să folosesti",
+        "client_id_and_secret": "ID-ul clientului și Secretul",
+        "client_id_and_secret_description": "Copiază și salvează această cheie secretă în Pagini. Nu poți vedea această cheie din nou după ce închizi.",
+        "client_id_and_secret_download": "Poți descărca un fișier CSV cu cheia de aici.",
+        "application_id": "ID-ul aplicației",
+        "client_id": "ID-ul clientului",
+        "client_secret": "Secretul clientului",
+        "export_as_csv": "Exportă ca CSV",
+        "slug_already_exists": "Slug deja există",
+        "failed_to_create_application": "Eroare la crearea aplicației",
+        "upload_logo": "Încarcă Logo",
+        "app_name_title": "Cum vei numi această aplicație",
+        "app_name_error": "Numele aplicației este obligatoriu",
+        "app_short_description_title": "Dați această aplicație o descriere scurtă",
+        "app_short_description_error": "Descrierea scurtă a aplicației este obligatorie",
+        "app_description_title": "Scrie și o descriere mai lungă pentru cei care doresc să știe mai multe. Apăsați / pentru comenzi",
+        "app_description_error": "Descrierea aplicației este obligatorie",
+        "app_slug_title": "Slug-ul aplicației",
+        "app_slug_error": "Slug-ul aplicației este obligatoriu",
+        "app_maker_title": "Maker-ul aplicației",
+        "app_maker_error": "Maker-ul aplicației este obligatoriu",
+        "webhook_url_title": "URL-ul webhook-ului",
+        "webhook_url_error": "URL-ul webhook-ului este obligatoriu",
+        "invalid_webhook_url_error": "URL-ul webhook-ului este invalid",
+        "redirect_uris_title": "Redirect URIs",
+        "redirect_uris_error": "Redirect URIs sunt obligatorii",
+        "invalid_redirect_uris_error": "Redirect URIs sunt inva",
+        "redirect_uris_description": "Introduceți URI-uri separate prin spațiu unde aplicația va fi redirecționată după utilizator e.g https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "Authorized Javascript Origins",
+        "authorized_javascript_origins_error": "Authorized Javascript Origins sunt obligatorii",
+        "invalid_authorized_javascript_origins_error": "Authorized Javascript Origins sunt inva",
+        "authorized_javascript_origins_description": "Introduceți spațiu separat originile unde aplicația va fi permisă să facă cereri e.g app.com example.com",
+        "create_app": "Creează aplicație",
+        "update_app": "Actualizează aplicație",
+        "regenerate_client_secret_description": "Regenerate the client secret. If you regenerate the secret, you can copy the key or download it to a CSV file right after.",
+        "regenerate_client_secret": "Regenerate client secret",
+        "regenerate_client_secret_confirm_title": "Sigur vrei să regenerezi secretul client?",
+        "regenerate_client_secret_confirm_description": "Aplicația care folosește acest secret va înceta să funcționeze. Trebuie să actualizezi secretul în aplicație.",
+        "regenerate_client_secret_confirm_cancel": "Anulează",
+        "regenerate_client_secret_confirm_regenerate": "Regenerate",
+        "read_only_access_to_workspace": "Acces doar pentru citire la workspace-ul tău",
+        "write_access_to_workspace": "Acces pentru scriere la workspace-ul tău",
+        "read_only_access_to_user_profile": "Acces doar pentru citire la profilul tău",
+        "write_access_to_user_profile": "Acces pentru scriere la profilul tău",
+        "connect_app_to_workspace": "Conectează {app} la workspace-ul tău {workspace}",
+        "user_permissions": "Permisiuni pentru utilizator",
+        "user_permissions_description": "Permisiunile pentru utilizator sunt folosite pentru a acorda acces la profilul utilizatorului.",
+        "workspace_permissions": "Permisiuni pentru workspace",
+        "workspace_permissions_description": "Permisiunile pentru workspace sunt folosite pentru a acorda acces la workspace.",
+        "with_the_permissions": "cu permisiunile",
+        "app_consent_title": "{app} cere acces la workspace-ul tău și profilul tău.",
+        "choose_workspace_to_connect_app_with": "Alege un workspace pentru a conecta aplicația",
+        "app_consent_workspace_permissions_title": "{app} ar dori să",
+        "app_consent_user_permissions_title": "{app} poate solicita și permisiuni pentru utilizator pentru următoarele resurse. Aceste permisiuni vor fi solicitate și autorizate doar de un utilizator.",
+        "app_consent_accept_title": "Prin acceptare, tu",
+        "app_consent_accept_1": "Permite aplicației acces la datele Plane în orice loc unde poți folosi aplicația în interior sau în afara Plane",
+        "app_consent_accept_2": "Apreciază politica de confidențialitate și termenii de utilizare a {app}",
+        "accepting": "Acceptând...",
+        "accept": "Acceptă",
+        "categories": "Categorii",
+        "select_app_categories": "Selectează categorii de aplicație",
+        "categories_title": "Categorii",
+        "categories_error": "Categorii sunt obligatorii",
+        "invalid_categories_error": "Categorii sunt inva",
+        "categories_description": "Selectează categorii care descriu cel mai bine aplicația",
+        "privacy_policy_url_title": "URL-ul politică de confidențialitate",
+        "privacy_policy_url_error": "Privacy Policy URL is required",
+        "invalid_privacy_policy_url_error": "URL-ul politică de confidențialitate este invalid",
+        "terms_of_service_url_title": "URL-ul termenilor de serviciu",
+        "terms_of_service_url_error": "URL-ul termenilor de serviciu este obligatoriu",
+        "invalid_terms_of_service_url_error": "URL-ul termenilor de serviciu este invalid",
+        "support_url_title": "URL-ul suportului",
+        "support_url_error": "URL-ul suportului este obligatoriu",
+        "invalid_support_url_error": "URL-ul suportului este invalid",
+        "video_url_title": "URL-ul video",
+        "video_url_error": "URL-ul video este obligatoriu",
+        "invalid_video_url_error": "URL-ul video este invalid",
+        "setup_url_title": "URL-ul setup-ului",
+        "setup_url_error": "URL-ul setup-ului este obligatoriu",
+        "invalid_setup_url_error": "URL-ul setup-ului este invalid",
+        "contact_email_title": "Email-ul contactului",
+        "contact_email_error": "Email-ul contactului este obligatoriu",
+        "invalid_contact_email_error": "Email-ul contactului este invalid",
+        "upload_attachments": "Încarcă atașamente",
+        "uploading_images": "Încarcă {count} imagine{count, plural, one {s} other {s}}",
+        "drop_images_here": "Aruncă imagini aici",
+        "click_to_upload_images": "Click pentru a încărca imagini",
+        "invalid_file_or_exceeds_size_limit": "Fișier invalid sau depășește limita de dimensiune ({size} MB)",
+        "uploading": "Încarcă...",
+        "upload_and_save": "Încarcă și salvează"
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "Imposibil de arhivat elementele de lucru",
+        "message": "Doar elementele de lucru aparținând grupelor de stare Finalizate sau Anulate pot fi arhivate."
+      },
+      "invalid_issue_start_date": {
+        "title": "Imposibil de actualizat elementele de lucru",
+        "message": "Data de început selectată succede data scadentă pentru unele elemente de lucru. Asigură-te că data de început este înainte de data scadentă."
+      },
+      "invalid_issue_target_date": {
+        "title": "Imposibil de actualizat elementele de lucru",
+        "message": "Data scadentă selectată precedă data de început pentru unele elemente de lucru. Asigură-te că data scadentă este după data de început."
+      },
+      "invalid_state_transition": {
+        "title": "Imposibil de actualizat elementele de lucru",
+        "message": "Schimbarea stării nu este permisă pentru unele elemente de lucru. Asigură-te că schimbarea stării este permisă."
+      }
+    }
+  },
+  "work_item_types": {
+    "label": "Tipuri de Elemente de Lucru",
+    "label_lowercase": "tipuri de elemente de lucru",
+    "settings": {
+      "title": "Tipuri de Elemente de Lucru",
+      "properties": {
+        "title": "Proprietăți personalizate",
+        "tooltip": "Fiecare tip de element de lucru vine cu un set implicit de proprietăți precum Titlu, Descriere, Responsabil, Stare, Prioritate, Data de început, Data scadentă, Modul, Ciclu etc. De asemenea, poți personaliza și adăuga propriile proprietăți pentru a le adapta nevoilor echipei tale.",
+        "add_button": "Adaugă proprietate nouă",
+        "dropdown": {
+          "label": "Tip de proprietate",
+          "placeholder": "Selectează tipul"
+        },
+        "property_type": {
+          "text": {
+            "label": "Text"
+          },
+          "number": {
+            "label": "Număr"
+          },
+          "dropdown": {
+            "label": "Dropdown"
+          },
+          "boolean": {
+            "label": "Boolean"
+          },
+          "date": {
+            "label": "Dată"
+          },
+          "member_picker": {
+            "label": "Selector de membri"
+          }
+        },
+        "attributes": {
+          "label": "Atribute",
+          "text": {
+            "single_line": {
+              "label": "Linie unică"
+            },
+            "multi_line": {
+              "label": "Paragraf"
+            },
+            "readonly": {
+              "label": "Doar citire",
+              "header": "Date doar pentru citire"
+            },
+            "invalid_text_format": {
+              "label": "Format de text invalid"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "Adaugă număr"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "Selecție unică"
+            },
+            "multi_select": {
+              "label": "Selecție multiplă"
+            },
+            "no_default_value": {
+              "label": "Nicio valoare implicită"
+            }
+          },
+          "boolean": {
+            "label": "Adevărat | Fals",
+            "no_default": "Nicio valoare implicită"
+          },
+          "option": {
+            "create_update": {
+              "label": "Opțiuni",
+              "form": {
+                "placeholder": "Adaugă opțiune",
+                "errors": {
+                  "name": {
+                    "required": "Numele opțiunii este obligatoriu.",
+                    "integrity": "Opțiunea cu același nume există deja."
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "Selectează opțiune",
+                "multi": {
+                  "default": "Selectează opțiuni",
+                  "variable": "{count} opțiuni selectate"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "Succes!",
+              "message": "Proprietatea {name} a fost creată cu succes."
+            },
+            "error": {
+              "title": "Eroare!",
+              "message": "Nu s-a putut crea proprietatea. Te rugăm să încerci din nou!"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "Succes!",
+              "message": "Proprietatea {name} a fost actualizată cu succes."
+            },
+            "error": {
+              "title": "Eroare!",
+              "message": "Nu s-a putut actualiza proprietatea. Te rugăm să încerci din nou!"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "Succes!",
+              "message": "Proprietatea {name} a fost ștearsă cu succes."
+            },
+            "error": {
+              "title": "Eroare!",
+              "message": "Nu s-a putut șterge proprietatea. Te rugăm să încerci din nou!"
+            }
+          },
+          "enable_disable": {
+            "loading": "{action} proprietatea {name}",
+            "success": {
+              "title": "Succes!",
+              "message": "Proprietatea {name} {action} cu succes."
+            },
+            "error": {
+              "title": "Eroare!",
+              "message": "Nu s-a putut {action} proprietatea. Te rugăm să încerci din nou!"
+            }
+          }
+        },
+        "create_update": {
+          "form": {
+            "display_name": {
+              "placeholder": "Titlu"
+            },
+            "description": {
+              "placeholder": "Descriere"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "Trebuie să denumești proprietatea ta.",
+              "max_length": "Numele proprietății nu trebuie să depășească 255 de caractere."
+            },
+            "property_type": {
+              "required": "Trebuie să selectezi un tip de proprietate."
+            },
+            "options": {
+              "required": "Trebuie să adaugi cel puțin o opțiune."
+            }
+          }
+        },
+        "enable_disable": {
+          "label": "Activ",
+          "tooltip": {
+            "disabled": "Click pentru a dezactiva",
+            "enabled": "Click pentru a activa"
+          }
+        },
+        "delete_confirmation": {
+          "title": "Șterge această proprietate",
+          "description": "Ștergerea proprietăților poate duce la pierderea datelor existente.",
+          "secondary_description": "Vrei să dezactivezi proprietatea în schimb?",
+          "primary_button": "{action}, șterge-o",
+          "secondary_button": "Da, dezactiveaz-o"
+        },
+        "mandate_confirmation": {
+          "label": "Proprietate obligatorie",
+          "content": "Se pare că există o opțiune implicită pentru această proprietate. Dacă faci proprietatea obligatorie, aceasta va elimina valoarea implicită, iar utilizatorii vor trebui să adauge o valoare la alegerea lor.",
+          "tooltip": {
+            "disabled": "Acest tip de proprietate nu poate fi făcut obligatoriu",
+            "enabled": "Debifează pentru a marca câmpul ca opțional",
+            "checked": "Bifează pentru a marca câmpul ca obligatoriu"
+          }
+        },
+        "empty_state": {
+          "title": "Adaugă proprietăți personalizate",
+          "description": "Noile proprietăți pe care le adaugi pentru acest tip de element de lucru vor apărea aici."
+        }
+      }
+    },
+    "create": {
+      "title": "Creează tip de element de lucru",
+      "button": "Adaugă tip de element de lucru",
+      "toast": {
+        "success": {
+          "title": "Succes!",
+          "message": "Tipul de element de lucru a fost creat cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": {
+            "conflict": "Tipul {name} există deja. Alegeți un alt nume."
+          }
+        }
+      }
+    },
+    "update": {
+      "title": "Actualizează tipul de element de lucru",
+      "button": "Actualizează tipul de element de lucru",
+      "toast": {
+        "success": {
+          "title": "Succes!",
+          "message": "Tipul de element de lucru {name} a fost actualizat cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": {
+            "conflict": "Tipul {name} există deja. Alegeți un alt nume."
+          }
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "Dă acestui tip de element de lucru un nume unic"
+        },
+        "description": {
+          "placeholder": "Descrie pentru ce este destinat acest tip de element de lucru și când trebuie utilizat."
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "{action} tipul de element de lucru {name}",
+        "success": {
+          "title": "Succes!",
+          "message": "Tipul de element de lucru {name} {action} cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Nu s-a putut {action} tipul de element de lucru. Te rugăm să încerci din nou!"
+        }
+      },
+      "tooltip": "Click pentru a {action}"
+    },
+    "empty_state": {
+      "enable": {
+        "title": "Activează Tipurile de Elemente de Lucru",
+        "description": "Modelează elementele de lucru pentru munca ta cu Tipuri de elemente de lucru. Personalizează cu pictograme, fundaluri și proprietăți și configurează-le pentru acest proiect.",
+        "primary_button": {
+          "text": "Activează"
+        },
+        "confirmation": {
+          "title": "Odată activate, Tipurile de Elemente de Lucru nu pot fi dezactivate.",
+          "description": "Elementul de Lucru al Plane va deveni tipul implicit de element de lucru pentru acest proiect și va apărea cu pictograma și fundalul său în acest proiect.",
+          "button": {
+            "default": "Activează",
+            "loading": "Se configurează"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "Obține Pro pentru a activa Tipurile de Elemente de Lucru.",
+        "description": "Modelează elementele de lucru pentru munca ta cu Tipuri de elemente de lucru. Personalizează cu pictograme, fundaluri și proprietăți și configurează-le pentru acest proiect.",
+        "primary_button": {
+          "text": "Obține Pro"
+        }
+      },
+      "upgrade": {
+        "title": "Actualizează pentru a activa Tipurile de Elemente de Lucru.",
+        "description": "Modelează elementele de lucru pentru munca ta cu Tipuri de elemente de lucru. Personalizează cu pictograme, fundaluri și proprietăți și configurează-le pentru acest proiect.",
+        "primary_button": {
+          "text": "Actualizează"
+        }
+      }
+    }
+  },
+  "importers": {
+    "imports": "Importuri",
+    "logo": "Logo",
+    "import_message": "Importă datele tale {serviceName} în proiectele plane.",
+    "deactivate": "Dezactivează",
+    "deactivating": "Se dezactivează",
+    "migrating": "Se migrează",
+    "migrations": "Migrări",
+    "refreshing": "Se reîmprospătează",
+    "import": "Importă",
+    "serial_number": "Nr. Sr.",
+    "project": "Proiect",
+    "workspace": "Workspace",
+    "status": "Status",
+    "total_batches": "Total Loturi",
+    "imported_batches": "Loturi Importate",
+    "re_run": "Rulează din nou",
+    "cancel": "Anulează",
+    "start_time": "Timp de începere",
+    "no_jobs_found": "Nu s-au găsit joburi",
+    "no_project_imports": "Nu ai importat încă niciun proiect {serviceName}.",
+    "cancel_import_job": "Anulează jobul de import",
+    "cancel_import_job_confirmation": "Ești sigur că vrei să anulezi acest job de import? Acest lucru va opri procesul de import pentru acest proiect.",
+    "re_run_import_job": "Rerulează jobul de import",
+    "re_run_import_job_confirmation": "Ești sigur că vrei să rerulezi acest job de import? Acest lucru va reporni procesul de import pentru acest proiect.",
+    "upload_csv_file": "Încarcă un fișier CSV pentru a importa date despre utilizatori.",
+    "connect_importer": "Conectează {serviceName}",
+    "migration_assistant": "Asistent de Migrare",
+    "migration_assistant_description": "Migrează fără probleme proiectele tale {serviceName} către Plane cu asistentul nostru puternic.",
+    "token_helper": "Vei obține acest lucru de la",
+    "personal_access_token": "Token de Acces Personal",
+    "source_token_expired": "Token Expirat",
+    "source_token_expired_description": "Tokenul furnizat a expirat. Te rugăm să dezactivezi și să reconectezi cu un nou set de credențiale.",
+    "user_email": "Email Utilizator",
+    "select_state": "Selectează Starea",
+    "select_service_project": "Selectează Proiectul {serviceName}",
+    "loading_service_projects": "Se încarcă proiectele {serviceName}",
+    "select_service_workspace": "Selectează Workspace-ul {serviceName}",
+    "loading_service_workspaces": "Se încarcă Workspace-urile {serviceName}",
+    "select_priority": "Selectează Prioritatea",
+    "select_service_team": "Selectează Echipa {serviceName}",
+    "add_seat_msg_free_trial": "Încerci să imporți {additionalUserCount} utilizatori neînregistrați și ai doar {currentWorkspaceSubscriptionAvailableSeats} locuri disponibile în planul curent. Pentru a continua importul, actualizează acum.",
+    "add_seat_msg_paid": "Încerci să imporți {additionalUserCount} utilizatori neînregistrați și ai doar {currentWorkspaceSubscriptionAvailableSeats} locuri disponibile în planul curent. Pentru a continua importul, cumpără cel puțin {extraSeatRequired} locuri suplimentare.",
+    "skip_user_import_title": "Omite importul datelor utilizatorilor",
+    "skip_user_import_description": "Omiterea importului utilizatorilor va avea ca rezultat crearea elementelor de lucru, a comentariilor și a altor date din {serviceName} de către utilizatorul care efectuează migrarea în Plane. Poți adăuga manual utilizatori mai târziu.",
+    "invalid_pat": "Token de Acces Personal Invalid"
+  },
+  "integrations": {
+    "integrations": "Integrări",
+    "loading": "Se încarcă",
+    "unauthorized": "Nu ești autorizat să vezi această pagină.",
+    "configure": "Configurează",
+    "not_enabled": "{name} nu este activat pentru acest workspace.",
+    "not_configured": "Neconfigurat",
+    "disconnect_personal_account": "Deconectează contul personal {providerName}",
+    "not_configured_message_admin": "Integrarea {name} nu este configurată. Te rugăm să contactezi administratorul instanței pentru a o configura.",
+    "not_configured_message_support": "Integrarea {name} nu este configurată. Te rugăm să contactezi suportul pentru a o configura.",
+    "external_api_unreachable": "Nu se poate accesa API-ul extern. Te rugăm să încerci din nou mai târziu.",
+    "error_fetching_supported_integrations": "Nu se pot prelua integrările suportate. Te rugăm să încerci din nou mai târziu.",
+    "back_to_integrations": "Înapoi la integrări",
+    "select_state": "Selectează Starea"
+  },
+  "github_integration": {
+    "name": "GitHub",
+    "description": "Conectează și sincronizează elementul tău de lucru GitHub cu Plane.",
+    "connect_org": "Conectează Organizația",
+    "connect_org_description": "Conectează organizația ta GitHub cu Plane.",
+    "processing": "Se procesează",
+    "org_added_desc": "Organizația GitHub adăugată de și timpul",
+    "connection_fetch_error": "Eroare la preluarea detaliilor conexiunii de la server",
+    "personal_account_connected": "Cont personal conectat",
+    "personal_account_connected_description": "Contul tău personal GitHub este conectat la Plane.",
+    "connect_personal_account": "Conectează Contul Personal",
+    "connect_personal_account_description": "Conectează contul tău personal GitHub cu Plane.",
+    "repo_mapping": "Mapare Repozitoriu",
+    "repo_mapping_description": "Mapează repozitoriile tale GitHub cu proiectele Plane.",
+    "remove_entity": "Elimină entitatea",
+    "remove_entity_confirmation": "Ești sigur că vrei să elimini această entitate?",
+    "issue_sync_message": "Elementele de lucru sunt sincronizate cu {project}",
+    "link": "Leagă repozitoriul GitHub de proiectul Plane",
+    "pull_request_automation": "Automatizare Pull Request",
+    "pull_request_automation_description": "Configurează maparea stării pull request de la GitHub la Plane",
+    "DRAFT_MR_OPENED": "La deschiderea PR-ului draft, setează starea la",
+    "MR_OPENED": "La deschiderea PR-ului, setează starea la",
+    "MR_READY_FOR_MERGE": "Când PR-ul este gata de fuzionare, setează starea la",
+    "MR_REVIEW_REQUESTED": "La solicitarea revizuirii PR-ului, setează starea la",
+    "MR_MERGED": "La fuzionarea PR-ului, setează starea la",
+    "MR_CLOSED": "La închiderea PR-ului, setează starea la"
+  },
+  "gitlab_integration": {
+    "name": "Gitlab",
+    "description": "Conectează și sincronizează cererile tale de fuzionare Gitlab cu Plane.",
+    "connection_fetch_error": "Eroare la preluarea detaliilor conexiunii de la server",
+    "connect_org": "Conectează Organizația",
+    "connect_org_description": "Conectează organizația ta Gitlab cu Plane.",
+    "project_connections": "Conexiuni Proiect Gitlab",
+    "project_connections_description": "Sincronizează cererile de fuzionare de la Gitlab la proiectele Plane.",
+    "plane_project_connection": "Conexiune Proiect Plane",
+    "plane_project_connection_description": "Configurează maparea stării cererilor pull de la Gitlab la proiectele Plane",
+    "remove_connection": "Elimină Conexiunea",
+    "remove_connection_confirmation": "Ești sigur că vrei să elimini această conexiune?",
+    "link": "Leagă repozitoriul Gitlab la proiectul Plane",
+    "pull_request_automation": "Automatizare Pull Request",
+    "pull_request_automation_description": "Configurează maparea stării pull request de la Gitlab la Plane",
+    "DRAFT_MR_OPENED": "La deschiderea MR-ului draft, setează starea la",
+    "MR_OPENED": "La deschiderea MR-ului, setează starea la",
+    "MR_REVIEW_REQUESTED": "La solicitarea revizuirii MR-ului, setează starea la",
+    "MR_READY_FOR_MERGE": "Când MR-ul este gata de fuzionare, setează starea la",
+    "MR_MERGED": "La fuzionarea MR-ului, setează starea la",
+    "MR_CLOSED": "La închiderea MR-ului, setează starea la",
+    "integration_enabled_text": "Cu integrarea Gitlab activată, poți automatiza fluxurile de lucru ale elementelor de lucru",
+    "choose_entity": "Alege Entitatea",
+    "choose_project": "Alege Proiectul",
+    "link_plane_project": "Leagă proiectul Plane"
+  },
+  "slack_integration": {
+    "name": "Slack",
+    "description": "Conectează workspace-ul tău Slack cu Plane.",
+    "connect_personal_account": "Conectează contul tău personal Slack cu Plane.",
+    "personal_account_connected": "Contul tău personal {providerName} este acum conectat la Plane.",
+    "link_personal_account": "Leagă contul tău personal {providerName} de Plane.",
+    "connected_slack_workspaces": "Workspace-uri Slack conectate",
+    "connected_on": "Conectat pe {date}",
+    "disconnect_workspace": "Deconectează workspace-ul {name}",
+    "project_updates": {
+      "title": "Actualizări Proiect",
+      "description": "Configurează notificări de actualizări ale proiectelor pentru proiectele tale",
+      "add_new_project_update": "Adaugă o nouă notificare de actualizări proiect",
+      "project_updates_empty_state": "Proiectele conectate cu Canale Slack vor apărea aici.",
+      "project_updates_form": {
+        "title": "Configurează Actualizări Proiect",
+        "description": "Primește notificări de actualizări proiect în Slack când sunt create elemente de lucru",
+        "failed_to_load_channels": "Nu s-au putut încărca canalele din Slack",
+        "project_dropdown": {
+          "placeholder": "Selectează un proiect",
+          "label": "Proiect Plane",
+          "no_projects": "Nu există proiecte disponibile"
+        },
+        "channel_dropdown": {
+          "label": "Canal Slack",
+          "placeholder": "Selectează un canal",
+          "no_channels": "Nu există canale disponibile"
+        },
+        "all_projects_connected": "Toate proiectele sunt deja conectate la canale Slack.",
+        "all_channels_connected": "Toate canalele Slack sunt deja conectate la proiecte.",
+        "project_connection_success": "Conexiunea proiectului a fost creată cu succes",
+        "project_connection_updated": "Conexiunea proiectului a fost actualizată cu succes",
+        "project_connection_deleted": "Conexiunea proiectului a fost ștearsă cu succes",
+        "failed_delete_project_connection": "Nu s-a putut șterge conexiunea proiectului",
+        "failed_create_project_connection": "Nu s-a putut crea conexiunea proiectului",
+        "failed_upserting_project_connection": "Nu s-a putut actualiza conexiunea proiectului",
+        "failed_loading_project_connections": "Nu am putut încărca conexiunile proiectelor tale. Acest lucru ar putea fi din cauza unei probleme de rețea sau a unei probleme cu integrarea."
+      }
+    }
+  },
+  "file_upload": {
+    "upload_text": "Click aici pentru a încărca fișierul",
+    "drag_drop_text": "Trage și Plasează",
+    "processing": "Se procesează",
+    "invalid": "Tip de fișier invalid",
+    "missing_fields": "Câmpuri lipsă",
+    "success": "{fileName} Încărcat!"
+  },
+  "silo_errors": {
+    "invalid_query_params": "Parametrii de interogare furnizați sunt invalizi sau lipsesc câmpuri obligatorii",
+    "invalid_installation_account": "Contul de instalare furnizat nu este valid",
+    "generic_error": "A apărut o eroare neașteptată în timpul procesării cererii tale",
+    "connection_not_found": "Conexiunea solicitată nu a putut fi găsită",
+    "multiple_connections_found": "Au fost găsite mai multe conexiuni când se aștepta doar una",
+    "installation_not_found": "Instalarea solicitată nu a putut fi găsită",
+    "user_not_found": "Utilizatorul solicitat nu a putut fi găsit",
+    "error_fetching_token": "Nu s-a putut prelua tokenul de autentificare",
+    "invalid_app_credentials": "Credențialele aplicației furnizate sunt invalide",
+    "invalid_app_installation_id": "A apărut o eroare la instalarea aplicației"
+  },
+  "import_status": {
+    "created": "Creat",
+    "initiated": "Inițiat",
+    "pulling": "Se extrag",
+    "pulled": "Extras",
+    "transforming": "Se transformă",
+    "transformed": "Transformat",
+    "pushing": "Se încarcă",
+    "finished": "Finalizat",
+    "error": "Eroare",
+    "cancelled": "Anulat"
+  },
+  "jira_importer": {
+    "jira_importer_description": "Importă datele tale Jira în proiectele Plane.",
+    "personal_access_token": "Token de Acces Personal",
+    "user_email": "Email Utilizator",
+    "atlassian_security_settings": "Setări de Securitate Atlassian",
+    "email_description": "Acesta este emailul asociat cu tokenul tău de acces personal",
+    "jira_domain": "Domeniu Jira",
+    "jira_domain_description": "Acesta este domeniul instanței tale Jira",
+    "steps": {
+      "title_configure_plane": "Configurează Plane",
+      "description_configure_plane": "Te rugăm să creezi mai întâi proiectul în Plane unde intenționezi să migrezi datele tale Jira. Odată ce proiectul este creat, selectează-l aici.",
+      "title_configure_jira": "Configurează Jira",
+      "description_configure_jira": "Te rugăm să selectezi workspace-ul Jira din care dorești să migrezi datele tale.",
+      "title_import_users": "Importă Utilizatori",
+      "description_import_users": "Te rugăm să adaugi utilizatorii pe care dorești să-i migrezi de la Jira la Plane. Alternativ, poți sări peste acest pas și adăuga manual utilizatori mai târziu.",
+      "title_map_states": "Mapează Stările",
+      "description_map_states": "Am potrivit automat statusurile Jira cu stările Plane cât mai bine posibil. Te rugăm să mapezi orice stări rămase înainte de a continua, poți de asemenea să creezi stări și să le mapezi manual.",
+      "title_map_priorities": "Mapează Prioritățile",
+      "description_map_priorities": "Am potrivit automat prioritățile cât mai bine posibil. Te rugăm să mapezi orice priorități rămase înainte de a continua.",
+      "title_summary": "Sumar",
+      "description_summary": "Iată un sumar al datelor care vor fi migrate de la Jira la Plane."
+    }
+  },
+  "asana_importer": {
+    "asana_importer_description": "Importă datele tale Asana în proiectele Plane.",
+    "select_asana_priority_field": "Selectează Câmpul de Prioritate Asana",
+    "steps": {
+      "title_configure_plane": "Configurează Plane",
+      "description_configure_plane": "Te rugăm să creezi mai întâi proiectul în Plane unde intenționezi să migrezi datele tale Asana. Odată ce proiectul este creat, selectează-l aici.",
+      "title_configure_asana": "Configurează Asana",
+      "description_configure_asana": "Te rugăm să selectezi workspace-ul și proiectul Asana din care dorești să migrezi datele tale.",
+      "title_map_states": "Mapează Stările",
+      "description_map_states": "Te rugăm să selectezi stările Asana pe care dorești să le mapezi la statusurile proiectului Plane.",
+      "title_map_priorities": "Mapează Prioritățile",
+      "description_map_priorities": "Te rugăm să selectezi prioritățile Asana pe care dorești să le mapezi la prioritățile proiectului Plane.",
+      "title_summary": "Sumar",
+      "description_summary": "Iată un sumar al datelor care vor fi migrate de la Asana la Plane."
+    }
+  },
+  "linear_importer": {
+    "linear_importer_description": "Importă datele tale Linear în proiectele Plane.",
+    "steps": {
+      "title_configure_plane": "Configurează Plane",
+      "description_configure_plane": "Te rugăm să creezi mai întâi proiectul în Plane unde intenționezi să migrezi datele tale Linear. Odată ce proiectul este creat, selectează-l aici.",
+      "title_configure_linear": "Configurează Linear",
+      "description_configure_linear": "Te rugăm să selectezi echipa Linear din care dorești să migrezi datele tale.",
+      "title_map_states": "Mapează Stările",
+      "description_map_states": "Am potrivit automat statusurile Linear cu stările Plane cât mai bine posibil. Te rugăm să mapezi orice stări rămase înainte de a continua, poți de asemenea să creezi stări și să le mapezi manual.",
+      "title_map_priorities": "Mapează Prioritățile",
+      "description_map_priorities": "Te rugăm să selectezi prioritățile Linear pe care dorești să le mapezi la prioritățile proiectului Plane.",
+      "title_summary": "Sumar",
+      "description_summary": "Iată un sumar al datelor care vor fi migrate de la Linear la Plane."
+    }
+  },
+  "jira_server_importer": {
+    "jira_server_importer_description": "Importă datele tale Jira Server în proiectele Plane.",
+    "steps": {
+      "title_configure_plane": "Configurează Plane",
+      "description_configure_plane": "Te rugăm să creezi mai întâi proiectul în Plane unde intenționezi să migrezi datele tale Jira. Odată ce proiectul este creat, selectează-l aici.",
+      "title_configure_jira": "Configurează Jira",
+      "description_configure_jira": "Te rugăm să selectezi workspace-ul Jira din care dorești să migrezi datele tale.",
+      "title_map_states": "Mapează Stările",
+      "description_map_states": "Te rugăm să selectezi stările Jira pe care dorești să le mapezi la statusurile proiectului Plane.",
+      "title_map_priorities": "Mapează Prioritățile",
+      "description_map_priorities": "Te rugăm să selectezi prioritățile Jira pe care dorești să le mapezi la prioritățile proiectului Plane.",
+      "title_summary": "Sumar",
+      "description_summary": "Iată un sumar al datelor care vor fi migrate de la Jira la Plane."
+    }
+  },
+  "flatfile_importer": {
+    "flatfile_importer_description": "Importă datele tale CSV în proiectele Plane.",
+    "steps": {
+      "title_configure_plane": "Configurează Plane",
+      "description_configure_plane": "Te rugăm să creezi mai întâi proiectul în Plane unde intenționezi să migrezi datele tale CSV. Odată ce proiectul este creat, selectează-l aici.",
+      "title_configure_csv": "Configurează CSV",
+      "description_configure_csv": "Te rugăm să încarci fișierul tău CSV și să configurezi câmpurile care vor fi mapate la câmpurile Plane."
+    }
+  },
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "Bară",
+          "long_label": "Grafic cu bare",
+          "chart_models": {
+            "basic": "De bază",
+            "stacked": "Stivuit",
+            "grouped": "Grupat"
+          },
+          "orientation": {
+            "label": "Orientare",
+            "horizontal": "Orizontal",
+            "vertical": "Vertical",
+            "placeholder": "Adaugă orientare"
+          },
+          "bar_color": "Culoarea barei"
+        },
+        "line_chart": {
+          "short_label": "Linie",
+          "long_label": "Grafic cu linii",
+          "chart_models": {
+            "basic": "De bază",
+            "multi_line": "Multi-linie"
+          },
+          "line_color": "Culoarea liniei",
+          "line_type": {
+            "label": "Tipul liniei",
+            "solid": "Solid",
+            "dashed": "Punctat",
+            "placeholder": "Adaugă tipul liniei"
+          }
+        },
+        "area_chart": {
+          "short_label": "Arie",
+          "long_label": "Grafic arie",
+          "chart_models": {
+            "basic": "De bază",
+            "stacked": "Stivuit",
+            "comparison": "Comparație"
+          },
+          "fill_color": "Culoare de umplere"
+        },
+        "donut_chart": {
+          "short_label": "Gogoașă",
+          "long_label": "Grafic gogoașă",
+          "chart_models": {
+            "basic": "De bază",
+            "progress": "Progres"
+          },
+          "center_value": "Valoare centrală",
+          "completed_color": "Culoare completat"
+        },
+        "pie_chart": {
+          "short_label": "Plăcintă",
+          "long_label": "Grafic plăcintă",
+          "chart_models": {
+            "basic": "De bază"
+          },
+          "group": {
+            "label": "Bucăți grupate",
+            "group_thin_pieces": "Grupează bucățile subțiri",
+            "minimum_threshold": {
+              "label": "Prag minim",
+              "placeholder": "Adaugă prag"
+            },
+            "name_group": {
+              "label": "Nume grup",
+              "placeholder": "\"Mai puțin de 5%\""
+            }
+          },
+          "show_values": "Arată valorile",
+          "value_type": {
+            "percentage": "Procentaj",
+            "count": "Număr"
+          }
+        },
+        "text": {
+          "short_label": "Text",
+          "long_label": "Text",
+          "alignment": {
+            "label": "Aliniere text",
+            "left": "Stânga",
+            "center": "Centru",
+            "right": "Dreapta",
+            "placeholder": "Adaugă alinierea textului"
+          },
+          "text_color": "Culoare text"
+        }
+      },
+      "color_palettes": {
+        "modern": "Modern",
+        "horizon": "Orizont",
+        "earthen": "Pământiu"
+      },
+      "common": {
+        "add_widget": "Adaugă widget",
+        "widget_title": {
+          "label": "Denumește acest widget",
+          "placeholder": "ex., \"De făcut ieri\", \"Toate Completate\""
+        },
+        "chart_type": "Tip grafic",
+        "visualization_type": {
+          "label": "Tip vizualizare",
+          "placeholder": "Adaugă tip vizualizare"
+        },
+        "date_group": {
+          "label": "Grupare după dată",
+          "placeholder": "Adaugă grupare după dată"
+        },
+        "group_by": "Grupează după",
+        "stack_by": "Stivuiește după",
+        "daily": "Zilnic",
+        "weekly": "Săptămânal",
+        "monthly": "Lunar",
+        "yearly": "Anual",
+        "work_item_count": "Număr de elemente de lucru",
+        "estimate_point": "Punct de estimare",
+        "pending_work_item": "Elemente de lucru în așteptare",
+        "completed_work_item": "Elemente de lucru completate",
+        "in_progress_work_item": "Elemente de lucru în progres",
+        "blocked_work_item": "Elemente de lucru blocate",
+        "work_item_due_this_week": "Elemente de lucru scadente săptămâna aceasta",
+        "work_item_due_today": "Elemente de lucru scadente astăzi",
+        "color_scheme": {
+          "label": "Schemă de culori",
+          "placeholder": "Adaugă schemă de culori"
+        },
+        "smoothing": "Netezire",
+        "markers": "Markeri",
+        "legends": "Legende",
+        "tooltips": "Tooltipuri",
+        "opacity": {
+          "label": "Opacitate",
+          "placeholder": "Adaugă opacitate"
+        },
+        "border": "Bordură",
+        "widget_configuration": "Configurare widget",
+        "configure_widget": "Configurează widget",
+        "guides": "Ghiduri",
+        "style": "Stil",
+        "area_appearance": "Aspectul ariei",
+        "comparison_line_appearance": "Aspectul liniei de comparație",
+        "add_property": "Adaugă proprietate",
+        "add_metric": "Adaugă metrică"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "Axa x lipsește o valoare.",
+            "y_axis_metric": "Metrica lipsește o valoare."
+          },
+          "stacked": {
+            "x_axis_property": "Axa x lipsește o valoare.",
+            "y_axis_metric": "Metrica lipsește o valoare.",
+            "group_by": "Stivuiește după lipsește o valoare."
+          },
+          "grouped": {
+            "x_axis_property": "Axa x lipsește o valoare.",
+            "y_axis_metric": "Metrica lipsește o valoare.",
+            "group_by": "Grupează după lipsește o valoare."
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "Axa x lipsește o valoare.",
+            "y_axis_metric": "Metrica lipsește o valoare."
+          },
+          "multi_line": {
+            "x_axis_property": "Axa x lipsește o valoare.",
+            "y_axis_metric": "Metrica lipsește o valoare.",
+            "group_by": "Grupează după lipsește o valoare."
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "Axa x lipsește o valoare.",
+            "y_axis_metric": "Metrica lipsește o valoare."
+          },
+          "stacked": {
+            "x_axis_property": "Axa x lipsește o valoare.",
+            "y_axis_metric": "Metrica lipsește o valoare.",
+            "group_by": "Stivuiește după lipsește o valoare."
+          },
+          "comparison": {
+            "x_axis_property": "Axa x lipsește o valoare.",
+            "y_axis_metric": "Metrica lipsește o valoare."
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "Axa x lipsește o valoare.",
+            "y_axis_metric": "Metrica lipsește o valoare."
+          },
+          "progress": {
+            "y_axis_metric": "Metrica lipsește o valoare."
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "Axa x lipsește o valoare.",
+            "y_axis_metric": "Metrica lipsește o valoare."
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "Metrica lipsește o valoare."
+          }
+        },
+        "ask_admin": "Întreabă administratorul tău pentru a configura acest widget."
+      }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Creează dashboard nou",
+        "update": "Actualizează dashboard"
+      },
+      "title": {
+        "label": "Denumește dashboard-ul tău.",
+        "placeholder": "\"Capacitate între proiecte\", \"Încărcare de lucru pe echipă\", \"Stare în toate proiectele\"",
+        "required_error": "Titlul este obligatoriu"
+      },
+      "project": {
+        "label": "Alege proiecte",
+        "placeholder": "Datele din aceste proiecte vor alimenta acest dashboard.",
+        "required_error": "Proiectele sunt obligatorii"
+      },
+      "create_dashboard": "Creează dashboard",
+      "update_dashboard": "Actualizează dashboard"
+    },
+    "delete_modal": {
+      "heading": "Șterge dashboard"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "Prezintă-ți progresul în dashboard-uri la cerere, pentru totdeauna.",
+        "description": "Construiește orice dashboard de care ai nevoie și personalizează modul în care arată datele tale pentru prezentarea perfectă a progresului tău.",
+        "coming_soon_to_mobile": "În curând în aplicația mobilă",
+        "card_1": {
+          "title": "Pentru toate proiectele tale",
+          "description": "Obține o viziune divină completă a workspace-ului tău cu toate proiectele tale sau segmentează datele de lucru pentru acea vizualizare perfectă a progresului tău."
+        },
+        "card_2": {
+          "title": "Pentru orice date din Plane",
+          "description": "Depășește Analiticile predefinite și graficele Ciclurilor gata făcute pentru a privi echipele, inițiativele sau orice altceva așa cum nu ai făcut-o până acum."
+        },
+        "card_3": {
+          "title": "Pentru toate nevoile tale de vizualizare de date",
+          "description": "Alege din mai multe grafice personalizabile cu controale fine pentru a vedea și a arăta datele tale de lucru exact așa cum dorești."
+        },
+        "card_4": {
+          "title": "La cerere și permanent",
+          "description": "Construiește o dată, păstrează pentru totdeauna cu actualizări automate ale datelor tale, flag-uri contextuale pentru modificări de scop și linkuri permanente partajabile."
+        },
+        "card_5": {
+          "title": "Exporturi și comunicări programate",
+          "description": "Pentru acele momente când linkurile nu funcționează, obține dashboard-urile tale în PDF-uri unice sau programează-le să fie trimise automat către părțile interesate."
+        },
+        "card_6": {
+          "title": "Auto-aranjate pentru toate dispozitivele",
+          "description": "Redimensionează widget-urile tale pentru aspectul dorit și vezi-l exact la fel pe mobile, tabletă și alte browsere."
+        }
+      },
+      "dashboards_list": {
+        "title": "Vizualizează datele în widget-uri, construiește dashboard-urile tale cu widget-uri și vezi cele mai recente la cerere.",
+        "description": "Construiește dashboard-urile tale cu Widget-uri Personalizate care îți arată datele în domeniul specificat. Obține dashboard-uri pentru tot lucrul tău între proiecte și echipe și distribuie link-uri permanente către părțile interesate pentru urmărire la cerere."
+      },
+      "dashboards_search": {
+        "title": "Asta nu se potrivește cu numele unui dashboard.",
+        "description": "Asigură-te că interogarea ta este corectă sau încearcă o altă interogare."
+      },
+      "widgets_list": {
+        "title": "Vizualizează-ți datele așa cum dorești.",
+        "description": "Folosește linii, bare, plăcinte și alte formate pentru a-ți vedea datele\nașa cum dorești din sursele pe care le specifici."
+      },
+      "widget_data": {
+        "title": "Nimic de văzut aici",
+        "description": "Reîmprospătează sau adaugă date pentru a le vedea aici."
+      }
+    },
+    "common": {
+      "editing": "Editare"
+    }
+  },
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Permite elemente noi de lucru",
+      "work_item_creation_disable_tooltip": "Crearea de elemente de lucru este dezactivată pentru această stare",
+      "default_state": "Starea implicită permite tuturor membrilor să creeze elemente noi de lucru. Acest lucru nu poate fi schimbat",
+      "state_change_count": "{count, plural, one {1 schimbare de stare permisă} other {{count} schimbări de stare permise}}",
+      "movers_count": "{count, plural, one {1 evaluator listat} other {{count} evaluatori listați}}",
+      "state_changes": {
+        "label": {
+          "default": "Adaugă schimbare de stare permisă",
+          "loading": "Se adaugă schimbare de stare permisă"
+        },
+        "move_to": "Schimbă starea la",
+        "movers": {
+          "label": "Când este evaluat de",
+          "tooltip": "Evaluatorii sunt persoane care au permisiunea de a muta elemente de lucru dintr-o stare în alta.",
+          "add": "Adaugă evaluatori"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "Nu poți muta acest element de lucru aici."
+    },
+    "workflow_enabled": {
+      "label": "Schimbare de stare"
+    },
+    "workflow_tree": {
+      "label": "Pentru elemente de lucru în",
+      "state_change_label": "poate să-l mute la"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Controlează haosul schimbărilor și evaluărilor cu Fluxuri de lucru.",
+        "description": "Setează reguli pentru unde se mută lucrul tău, de către cine și când cu Fluxuri de lucru în Plane."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "Vezi istoricul schimbărilor",
+      "reset_workflow": "Resetează fluxul de lucru"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "Ești sigur că vrei să resetezi acest flux de lucru?",
+        "description": "Dacă resetezi acest flux de lucru, toate regulile tale de schimbare a stării vor fi șterse și va trebui să le creezi din nou pentru a le rula în acest proiect."
+      },
+      "delete_state_change": {
+        "title": "Ești sigur că vrei să ștergi această regulă de schimbare a stării?",
+        "description": "Odată ștearsă, nu poți anula această schimbare și va trebui să setezi regula din nou dacă vrei să o rulezi pentru acest proiect."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action} flux de lucru",
+        "success": {
+          "title": "Succes",
+          "message": "Flux de lucru {action} cu succes"
+        },
+        "error": {
+          "title": "Eroare",
+          "message": "Fluxul de lucru nu a putut fi {action}. Te rugăm să încerci din nou."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Succes",
+          "message": "Fluxul de lucru a fost resetat cu succes"
+        },
+        "error": {
+          "title": "Eroare la resetarea fluxului de lucru",
+          "message": "Fluxul de lucru nu a putut fi resetat. Te rugăm să încerci din nou."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Eroare la adăugarea regulii de schimbare a stării",
+          "message": "Regula de schimbare a stării nu a putut fi adăugată. Te rugăm să încerci din nou."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Eroare la modificarea regulii de schimbare a stării",
+          "message": "Regula de schimbare a stării nu a putut fi modificată. Te rugăm să încerci din nou."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Eroare la eliminarea regulii de schimbare a stării",
+          "message": "Regula de schimbare a stării nu a putut fi eliminată. Te rugăm să încerci din nou."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Eroare la modificarea evaluatorilor regulii de schimbare a stării",
+          "message": "Evaluatorii regulii de schimbare a stării nu au putut fi modificați. Te rugăm să încerci din nou."
+        }
+      }
+    }
+  },
+  "customers": {
+    "label": "{count, plural, one {Client} other {Clienți}}",
+    "open": "Deschide client",
+    "dropdown": {
+      "placeholder": "Selectează client",
+      "required": "Te rugăm să selectezi un client",
+      "no_selection": "Niciun client"
+    },
+    "upgrade": {
+      "title": "Prioritizează și gestionează munca cu Clienți.",
+      "description": "Mapează munca ta la clienți și prioritizează după atributele clientului."
+    },
+    "properties": {
+      "default": {
+        "title": "Proprietăți implicite",
+        "customer_name": {
+          "name": "Numele clientului",
+          "placeholder": "Acesta poate fi numele persoanei sau afacerii",
+          "validation": {
+            "required": "Numele clientului este obligatoriu.",
+            "max_length": "Numele clientului nu poate depăși 255 de caractere."
+          }
+        },
+        "description": {
+          "name": "Descriere",
+          "validation": {}
+        },
+        "email": {
+          "name": "Email",
+          "placeholder": "Introduceți email",
+          "validation": {
+            "required": "Email-ul este obligatoriu.",
+            "pattern": "Adresă de email invalidă."
+          }
+        },
+        "website_url": {
+          "name": "Website",
+          "placeholder": "Orice URL cu https:// va funcționa.",
+          "placeholder_short": "Adaugă website",
+          "validation": {
+            "pattern": "URL de website invalid"
+          }
+        },
+        "employees": {
+          "name": "Angajați",
+          "placeholder": "Numărul de angajați dacă clientul tău este o afacere.",
+          "validation": {
+            "min_length": "Angajații nu pot fi mai puțini de 0."
+          }
+        },
+        "size": {
+          "name": "Dimensiune",
+          "placeholder": "Adaugă dimensiunea companiei",
+          "validation": {
+            "min_length": "Dimensiune invalidă"
+          }
+        },
+        "domain": {
+          "name": "Industrie",
+          "placeholder": "Retail, e-Commerce, Fintech, Banking",
+          "placeholder_short": "Adaugă industrie",
+          "validation": {}
+        },
+        "stage": {
+          "name": "Etapă",
+          "placeholder": "Selectează etapa",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "Stare Contract",
+          "placeholder": "Selectează starea contractului",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "Venit",
+          "placeholder": "Acesta este venitul pe care clientul tău îl generează anual.",
+          "validation": {
+            "min_length": "Venitul nu poate fi mai mic de 0."
+          }
+        }
+      },
+      "custom": {
+        "title": "Proprietăți personalizate",
+        "info": "Adaugă atributele unice ale clienților tăi în Plane astfel încât să poți gestiona mai bine elementele de lucru sau înregistrările clienților."
+      },
+      "empty_state": {
+        "title": "Nu ai încă nicio proprietate personalizată.",
+        "description": "Proprietățile personalizate pe care ai dori să le vezi în elementele de lucru, în altă parte din Plane sau în afara Plane într-un CRM sau alt instrument, vor apărea aici când le adaugi."
+      },
+      "add": {
+        "primary_button": "Adaugă proprietate nouă"
+      }
+    },
+    "stage": {
+      "lead": "Lead",
+      "sales_qualified_lead": "Lead calificat pentru vânzări",
+      "contract_negotiation": "Negociere contract",
+      "closed_won": "Câștigat închis",
+      "closed_lost": "Pierdut închis"
+    },
+    "contract_status": {
+      "active": "Activ",
+      "pre_contract": "Pre-contract",
+      "signed": "Semnat",
+      "inactive": "Inactiv"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Nu am putut găsi acea înregistrare a clientului.",
+        "description": "Link-ul către această înregistrare ar putea fi greșit sau această înregistrare ar fi putut fi ștearsă.",
+        "primary_button": "Mergi la clienți",
+        "secondary_button": "Adaugă un client"
+      },
+      "search": {
+        "title": "Se pare că nu ai înregistrări de clienți care să corespundă acelui termen.",
+        "description": "Încearcă cu un alt termen de căutare sau contactează-ne dacă ești sigur că ar trebui să vezi rezultate pentru acel termen."
+      },
+      "list": {
+        "title": "Gestionează volumul, cadența și fluxul muncii tale în funcție de ce este important pentru clienții tăi.",
+        "description": "Cu Clienți, o funcție exclusivă Plane, poți crea acum noi clienți de la zero și să-i conectezi la munca ta. În curând, îi vei putea aduce din alte instrumente împreună cu atributele lor personalizate care contează pentru tine.",
+        "primary_button": "Adaugă primul tău client"
+      }
+    },
+    "settings": {
+      "unauthorized": "Nu ești autorizat să accesezi această pagină.",
+      "description": "Urmărește și gestionează relațiile cu clienții în fluxul tău de lucru.",
+      "enable": "Activează Clienți",
+      "toasts": {
+        "enable": {
+          "loading": "Se activează funcția de clienți...",
+          "success": {
+            "title": "Ai activat Clienți pentru acest workspace.",
+            "message": "Nu o poți dezactiva din nou."
+          },
+          "error": {
+            "title": "Nu am putut activa Clienți de această dată.",
+            "message": "Încearcă din nou sau revino la acest ecran mai târziu. Dacă tot nu funcționează.",
+            "action": "Vorbește cu suportul"
+          }
+        },
+        "disable": {
+          "loading": "Se dezactivează funcția de clienți...",
+          "success": {
+            "title": "Clienți dezactivați",
+            "message": "Funcția de clienți a fost dezactivată cu succes!"
+          },
+          "error": {
+            "title": "Eroare",
+            "message": "Nu s-a putut dezactiva funcția de clienți!"
+          }
+        }
+      }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "Nu am putut obține lista ta de clienți.",
+          "message": "Încearcă din nou sau reîmprospătează această pagină."
+        }
+      },
+      "copy_link": {
+        "title": "Ai copiat link-ul direct către acest client.",
+        "message": "Lipește-l oriunde și va duce direct înapoi aici."
+      },
+      "create": {
+        "success": {
+          "title": "{customer_name} este acum disponibil",
+          "message": "Poți face referire la acest client în elementele de lucru și poți urmări, de asemenea, cererile de la ei.",
+          "actions": {
+            "view": "Vizualizează",
+            "copy_link": "Copiază link",
+            "copied": "Copiat!"
+          }
+        },
+        "error": {
+          "title": "Nu am putut crea acea înregistrare de această dată.",
+          "message": "Încearcă să o salvezi din nou sau copiază textul nesalvat într-o intrare nouă, de preferință într-o altă filă."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Succes!",
+          "message": "Client actualizat cu succes!"
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Nu s-a putut actualiza clientul. Încearcă din nou!"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "Nu am putut încărca logo-ul clientului.",
+          "message": "Încearcă să salvezi logo-ul din nou sau începe de la zero."
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "Ai eliminat un element de lucru din înregistrarea acestui client.",
+            "message": "Am eliminat automat acest client și din elementul de lucru."
+          },
+          "error": {
+            "title": "Nu am putut elimina acel element de lucru din înregistrarea acestui client de această dată.",
+            "message": "Am eliminat automat acest client și din elementul de lucru."
+          }
+        },
+        "add": {
+          "error": {
+            "title": "Nu am putut adăuga acel element de lucru la înregistrarea acestui client de această dată.",
+            "message": "Încearcă să adaugi acel element de lucru din nou sau revino la el mai târziu. Dacă tot nu funcționează, contactează-ne."
+          },
+          "success": {
+            "title": "Ai adăugat un element de lucru la înregistrarea acestui client.",
+            "message": "Am adăugat automat acest client și la elementul de lucru."
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "Editează",
+      "copy_link": "Copiază link către client",
+      "delete": "Șterge"
+    },
+    "create": {
+      "label": "Creează înregistrare client",
+      "loading": "Se creează",
+      "cancel": "Anulează"
+    },
+    "update": {
+      "label": "Actualizează client",
+      "loading": "Se actualizează"
+    },
+    "delete": {
+      "title": "Ești sigur că vrei să ștergi înregistrarea clientului {customer_name}?",
+      "description": "Toate datele asociate cu această înregistrare vor fi șterse permanent. Nu poți restaura această înregistrare mai târziu."
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "Nu există încă cereri de arătat.",
+          "description": "Creează cereri de la clienții tăi pentru a le putea lega de elementele de lucru.",
+          "button": "Adaugă cerere nouă"
+        },
+        "search": {
+          "title": "Se pare că nu ai cereri care să corespundă acelui termen.",
+          "description": "Încearcă cu un alt termen de căutare sau contactează-ne dacă ești sigur că ar trebui să vezi rezultate pentru acel termen."
+        }
+      },
+      "label": "{count, plural, one {Cerere} other {Cereri}}",
+      "add": "Adaugă cerere",
+      "create": "Creează cerere",
+      "update": "Actualizează cerere",
+      "form": {
+        "name": {
+          "placeholder": "Denumește această cerere",
+          "validation": {
+            "required": "Numele este obligatoriu.",
+            "max_length": "Numele cererii nu trebuie să depășească 255 de caractere."
+          }
+        },
+        "description": {
+          "placeholder": "Descrie natura cererii sau lipește comentariul acestui client din alt instrument."
+        },
+        "source": {
+          "add": "Adaugă sursă",
+          "update": "Actualizează sursă",
+          "url": {
+            "label": "URL",
+            "required": "URL-ul este obligatoriu",
+            "invalid": "URL de website invalid"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "Link copiat",
+          "message": "Link-ul cererii clientului a fost copiat în clipboard."
+        },
+        "attachment": {
+          "upload": {
+            "loading": "Se încarcă atașamentul...",
+            "success": {
+              "title": "Atașament încărcat",
+              "message": "Atașamentul a fost încărcat cu succes."
+            },
+            "error": {
+              "title": "Atașament neîncărcat",
+              "message": "Atașamentul nu a putut fi încărcat."
+            }
+          },
+          "size": {
+            "error": {
+              "title": "Eroare!",
+              "message": "Doar un fișier poate fi încărcat la un moment dat."
+            }
+          },
+          "length": {
+            "message": "Fișierul trebuie să aibă {size}MB sau mai puțin în dimensiune"
+          },
+          "remove": {
+            "success": {
+              "title": "Atașament eliminat",
+              "message": "Atașamentul a fost eliminat cu succes"
+            },
+            "error": {
+              "title": "Atașament neeliminat",
+              "message": "Atașamentul nu a putut fi eliminat"
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "Succes!",
+              "message": "Sursă actualizată cu succes!"
+            },
+            "error": {
+              "title": "Eroare!",
+              "message": "Nu s-a putut actualiza sursa."
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "Eroare!",
+              "message": "Nu s-au putut adăuga elemente de lucru la cerere. Încearcă din nou."
+            },
+            "success": {
+              "title": "Succes!",
+              "message": "S-au adăugat elemente de lucru la cerere."
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "Cerere actualizată cu succes!",
+            "title": "Succes!"
+          },
+          "error": {
+            "title": "Eroare!",
+            "message": "Nu s-a putut actualiza cererea. Încearcă din nou!"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "Cerere creată cu succes!",
+            "title": "Succes!"
+          },
+          "error": {
+            "title": "Eroare!",
+            "message": "Nu s-a putut crea cererea. Încearcă din nou!"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "Elemente de lucru legate",
+      "link": "Leagă elemente de lucru",
+      "empty_state": {
+        "list": {
+          "title": "Se pare că nu ai încă elemente de lucru legate de acest client.",
+          "description": "Leagă elementele de lucru existente din orice proiect aici pentru a le putea urmări după acest client.",
+          "button": "Leagă element de lucru"
+        }
+      },
+      "action": {
+        "remove_epic": "Elimină epic",
+        "remove": "Elimină element de lucru"
+      }
+    },
+    "sidebar": {
+      "properties": "Proprietăți"
+    }
+  },
+  "templates": {
+    "settings": {
+      "title": "Șabloane",
+      "description": "Economisește 80% din timpul petrecut pentru crearea proiectelor, a elementelor de lucru și a paginilor când folosești șabloane.",
+      "options": {
+        "project": {
+          "label": "Șabloane de proiect"
+        },
+        "work_item": {
+          "label": "Șabloane de elemente de lucru"
+        },
+        "page": {
+          "label": "Șabloane de pagină"
+        }
+      },
+      "create_template": {
+        "label": "Creează șablon",
+        "no_permission": {
+          "project": "Contactează administratorul proiectului pentru a crea șabloane",
+          "workspace": "Contactează administratorul workspace-ului pentru a crea șabloane"
+        }
+      },
+      "use_template": {
+        "button": {
+          "default": "Folosește șablon",
+          "loading": "Folosind"
+        }
+      },
+      "template_source": {
+        "workspace": {
+          "info": "Derivat din workspace"
+        },
+        "project": {
+          "info": "Derivat din proiect"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Denumește șablonul tău de proiect.",
+              "validation": {
+                "required": "Numele șablonului este obligatoriu",
+                "maxLength": "Numele șablonului trebuie să fie mai mic de 255 de caractere"
+              }
+            },
+            "description": {
+              "placeholder": "Descrie când și cum să folosești acest șablon."
+            }
+          },
+          "name": {
+            "placeholder": "Denumește proiectul tău.",
+            "validation": {
+              "required": "Titlul proiectului este obligatoriu",
+              "maxLength": "Titlul proiectului trebuie să fie mai mic de 255 de caractere"
+            }
+          },
+          "description": {
+            "placeholder": "Descrie scopul și obiectivele acestui proiect."
+          },
+          "button": {
+            "create": "Creează șablon de proiect",
+            "update": "Actualizează șablon de proiect"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "Denumește șablonul tău de element de lucru.",
+              "validation": {
+                "required": "Numele șablonului este obligatoriu",
+                "maxLength": "Numele șablonului trebuie să fie mai mic de 255 de caractere"
+              }
+            },
+            "description": {
+              "placeholder": "Descrie când și cum să folosești acest șablon."
+            }
+          },
+          "name": {
+            "placeholder": "Dă acestui element de lucru un titlu.",
+            "validation": {
+              "required": "Titlul elementului de lucru este obligatoriu",
+              "maxLength": "Titlul elementului de lucru trebuie să fie mai mic de 255 de caractere"
+            }
+          },
+          "description": {
+            "placeholder": "Descrie acest element de lucru astfel încât să fie clar ce vei realiza când îl vei completa."
+          },
+          "button": {
+            "create": "Creează șablon de element de lucru",
+            "update": "Actualizează șablon de element de lucru"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Numele șablonului paginii.",
+              "validation": {
+                "required": "Numele șablonului este obligatoriu",
+                "maxLength": "Numele șablonului trebuie să fie mai mic de 255 de caractere"
+              }
+            },
+            "description": {
+              "placeholder": "Descrie când și cum să folosești acest șablon."
+            }
+          },
+          "name": {
+            "placeholder": "Pagina fără nume",
+            "validation": {
+              "maxLength": "Numele paginii trebuie să fie mai mic de 255 de caractere"
+            }
+          },
+          "button": {
+            "create": "Creează șablon de pagină",
+            "update": "Actualizează șablon de pagină"
+          }
+        },
+        "publish": {
+          "action": "{isPublished, select, true {Setări de publicare} other {Publică pe Marketplace}}",
+          "unpublish_action": "Elimină din Marketplace",
+          "title": "Faceți-vă șablonul detectabil și recunoscut.",
+          "name": {
+            "label": "Numele șablonului",
+            "placeholder": "Numele șablonului",
+            "validation": {
+              "required": "Numele șablonului este obligatoriu",
+              "maxLength": "Numele șablonului trebuie să fie mai mic de 255 de caractere"
+            }
+          },
+          "short_description": {
+            "label": "Descriere scurtă",
+            "placeholder": "Acest șablon este excelent pentru managerii proiectelor care gestionează mai multe proiecte în același timp.",
+            "validation": {
+              "required": "Descrierea scurtă este obligatorie"
+            }
+          },
+          "description": {
+            "label": "Descriere",
+            "placeholder": "Îmbunătățiți productivitatea și optimizați comunicarea cu integrarea noastră Vorbire-În-Text.\n• Transcriere în timp real: Convertiți cuvintele rostite în text precis instantaneu.\n• Crearea sarcinilor și comentariilor: Adăugați sarcini, descrieri și comentarii prin comenzi vocale.",
+            "validation": {
+              "required": "Descrierea este obligatorie"
+            }
+          },
+          "category": {
+            "label": "Categorie",
+            "placeholder": "Alege unde crezi că acest șablon încalcă cel mai bine. Poți alege mai multe.",
+            "validation": {
+              "required": "Cel puțin o categorie este obligatorie"
+            }
+          },
+          "keywords": {
+            "label": "Cuvinte cheie",
+            "placeholder": "Folosește termeni care crezi că utilizatorii vor căuta atunci când vor căuta acest șablon."
+          },
+          "company_name": {
+            "label": "Numele companiei",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Numele companiei este obligatoriu",
+              "maxLength": "Numele companiei trebuie să fie mai mic de 255 de caractere"
+            }
+          },
+          "contact_email": {
+            "label": "Email de suport",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Adresa email-ului este invalidă",
+              "required": "Adresa email-ului este obligatorie",
+              "maxLength": "Adresa email-ului trebuie să fie mai mică de 255 de caractere"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Link către politică de confidențialitate",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "URL-ul este invalid",
+              "maxLength": "URL-ul trebuie să fie mai mic de 800 de caractere"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Link către termenii de utilizare",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "URL-ul este invalid",
+              "maxLength": "URL-ul trebuie să fie mai mic de 800 de caractere"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Include documente și capturi de ecran care credeți că vor face vizualizatorii acestui șablon mai interesanți.",
+            "validation": {
+              "required": "Cel puțin o captură de ecran este obligatorie"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Șabloane",
+        "description": "Cu șabloane de proiect, element de lucru și pagină în Plane, nu trebuie să creezi un proiect de la zero sau să setezi manual proprietățile elementelor de lucru.",
+        "sub_description": "Recuperează 80% din timpul tău administrativ când folosești Șabloane."
+      },
+      "no_templates": {
+        "button": "Creează primul tău șablon"
+      },
+      "no_labels": {
+        "description": " Nu există etichete încă. Creează etichete pentru a ajuta la organizarea și filtrarea elementelor de lucru în proiectul tău."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Nu există șabloane la care aveți acces.",
+          "description": "Vă rugăm să creați un șablon"
+        },
+        "no_results": {
+          "title": "Aceasta nu se potrivește cu un șablon.",
+          "description": "Încercați să căutați cu alți termeni."
+        }
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Șablon creat",
+          "message": "{templateName}, șablonul de {templateType}, este acum disponibil pentru workspace-ul tău."
+        },
+        "error": {
+          "title": "Nu am putut crea acel șablon de data aceasta.",
+          "message": "Încearcă să salvezi detaliile din nou sau copiază-le într-un nou șablon, de preferință într-o altă filă."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Șablon modificat",
+          "message": "{templateName}, șablonul de {templateType}, a fost modificat."
+        },
+        "error": {
+          "title": "Nu am putut salva modificările la acest șablon.",
+          "message": "Încearcă să salvezi detaliile din nou sau revino la acest șablon mai târziu. Dacă tot apar probleme, contactează-ne."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Șablon șters",
+          "message": "{templateName}, șablonul de {templateType}, a fost acum șters din workspace-ul tău."
+        },
+        "error": {
+          "title": "Nu am putut șterge acel șablon.",
+          "message": "Încearcă să-l ștergi din nou sau revino la el mai târziu. Dacă nu îl poți șterge nici atunci, contactează-ne."
+        }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Șablon retras",
+          "message": "{templateName}, șablonul de {templateType}, a fost retras de pe marketplace."
+        },
+        "error": {
+          "title": "Nu am putut retrage șablonul.",
+          "message": "Încearcă să-l retragi din nou sau revino la el mai târziu. Dacă nu îl poți retrage nici atunci, contactează-ne."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Șterge șablon",
+      "description": {
+        "prefix": "Ești sigur că vrei să ștergi șablonul-",
+        "suffix": "? Toate datele legate de șablon vor fi eliminate permanent. Această acțiune nu poate fi anulată."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Retrage șablonul",
+      "description": {
+        "prefix": "Ești sigur că vrei să retragi șablonul-",
+        "suffix": "? Șablonul va fi retras din marketplace și nu va mai fi disponibil pentru alții."
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Adaugă șablon nou",
+        "project": "Adaugă șablon nou"
+      },
+      "label": {
+        "project": "Alege un șablon de proiect",
+        "page": "Alege un șablon"
+      },
+      "tooltip": {
+        "work_item": "Alege un șablon de element de lucru"
+      },
+      "no_results": {
+        "work_item": "Nu s-au găsit șabloane.",
+        "project": "Nu s-au găsit șabloane."
+      }
+    }
+  }
+}

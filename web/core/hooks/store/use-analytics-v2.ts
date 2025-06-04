@@ -2,7 +2,7 @@ import { useContext } from "react";
 // mobx store
 import { StoreContext } from "@/lib/store-context";
 // types
-import { IAnalyticsStoreV2 } from "@/store/analytics-v2.store";
+import { IAnalyticsStoreV2 } from "@/plane-web/store/analytics-v2.store";
 
 export const useAnalyticsV2 = (): IAnalyticsStoreV2 => {
   const context = useContext(StoreContext);

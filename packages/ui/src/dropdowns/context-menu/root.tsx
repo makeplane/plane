@@ -127,7 +127,7 @@ const ContextMenuWithoutPortal: React.FC<ContextMenuProps> = (props) => {
   return (
     <div
       className={cn(
-        "fixed h-screen w-screen top-0 left-0 cursor-default z-20 opacity-0 pointer-events-none transition-opacity",
+        "fixed h-screen w-screen top-0 left-0 cursor-default z-30 opacity-0 pointer-events-none transition-opacity",
         {
           "opacity-100 pointer-events-auto": isOpen,
         }

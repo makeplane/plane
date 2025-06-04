@@ -32,6 +32,7 @@ export enum ETranslationFiles {
   TRANSLATIONS = "translations",
   ACCESSIBILITY = "accessibility",
   EDITOR = "editor",
+  TRANSLATIONS_EXTENDED = "translations-extended",
 }
 
 export const LANGUAGE_STORAGE_KEY = "userLanguage";

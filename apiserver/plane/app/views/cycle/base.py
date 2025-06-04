@@ -30,6 +30,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+
+# Module imports
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import (
     CycleSerializer,
@@ -55,6 +57,9 @@ from plane.utils.host import base_host
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.webhook_task import model_activity
 from plane.utils.timezone_converter import convert_to_utc, user_timezone_converter
+from plane.ee.bgtasks.entity_issue_state_progress_task import (
+    entity_issue_state_activity_task,
+)
 
 
 class CycleViewSet(BaseViewSet):
@@ -285,7 +290,7 @@ class CycleViewSet(BaseViewSet):
                 data=request.data, context={"project_id": project_id}
             )
             if serializer.is_valid():
-                serializer.save(project_id=project_id, owned_by=request.user)
+                serializer.save(project_id=project_id, owned_by=request.user, version=2)
                 cycle = (
                     self.get_queryset()
                     .filter(pk=serializer.data["id"])
@@ -1042,6 +1047,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             project_id=project_id,
             workspace__slug=slug,
             issue__state__group__in=["backlog", "unstarted", "started"],
+            issue__deleted_at__isnull=True,
         )
 
         updated_cycles = []
@@ -1057,8 +1063,34 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 }
             )
 
-        cycle_issues = CycleIssue.objects.bulk_update(
-            updated_cycles, ["cycle_id"], batch_size=100
+        _ = CycleIssue.objects.bulk_update(updated_cycles, ["cycle_id"], batch_size=100)
+
+        # Trigger the entity issue state activity task for removal of issues
+        entity_issue_state_activity_task.delay(
+            issue_cycle_data=[
+                {
+                    "issue_id": str(cycle_issue.issue_id),
+                    "cycle_id": str(cycle_id),
+                }
+                for cycle_issue in cycle_issues
+            ],
+            user_id=str(self.request.user.id),
+            slug=slug,
+            action="REMOVED",
+        )
+
+        # trigger the entity issue state activity task for adding issues
+        entity_issue_state_activity_task.delay(
+            issue_cycle_data=[
+                {
+                    "issue_id": str(cycle_issue.issue_id),
+                    "cycle_id": str(new_cycle_id),
+                }
+                for cycle_issue in cycle_issues
+            ],
+            user_id=str(self.request.user.id),
+            slug=slug,
+            action="ADDED",
         )
 
         # Capture Issue Activity
@@ -1283,6 +1315,12 @@ class CycleAnalyticsEndpoint(BaseAPIView):
             )
             .first()
         )
+
+        if not cycle:
+            return Response(
+                {"error": "Cycle not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         if not cycle.start_date or not cycle.end_date:
             return Response(

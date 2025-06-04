@@ -14,7 +14,7 @@ import {
   EUserPermissionsLevel,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssue } from "@plane/types";
+import { IWorkItemPeekOverview, TIssue } from "@plane/types";
 // plane ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
@@ -24,14 +24,8 @@ import { IssueView, TIssueOperations } from "@/components/issues";
 import { useEventTracker, useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 
-interface IIssuePeekOverview {
-  embedIssue?: boolean;
-  embedRemoveCurrentNotification?: () => void;
-  is_draft?: boolean;
-  storeType?: EIssuesStoreType;
-}
 
-export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
+export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
   const {
     embedIssue = false,
     embedRemoveCurrentNotification,

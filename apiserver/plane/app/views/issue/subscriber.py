@@ -8,6 +8,8 @@ from plane.app.serializers import IssueSubscriberSerializer, ProjectMemberLiteSe
 from plane.app.permissions import ProjectEntityPermission, ProjectLitePermission
 from plane.db.models import IssueSubscriber, ProjectMember
 
+from django.db.models import Q
+
 
 class IssueSubscriberViewSet(BaseViewSet):
     serializer_class = IssueSubscriberSerializer
@@ -63,14 +65,20 @@ class IssueSubscriberViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def subscribe(self, request, slug, project_id, issue_id):
-        if IssueSubscriber.objects.filter(
-            issue_id=issue_id,
-            subscriber=request.user,
-            workspace__slug=slug,
-            project=project_id,
-        ).exists():
+        if (
+            IssueSubscriber.objects.filter(
+                Q(issue__type__is_epic=False) | Q(issue__type__isnull=True)
+            )
+            .filter(
+                issue_id=issue_id,
+                subscriber=request.user,
+                workspace__slug=slug,
+                project=project_id,
+            )
+            .exists()
+        ):
             return Response(
-                {"message": "User already subscribed to the issue."},
+                {"message": "Failed to subscribe to the issue."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

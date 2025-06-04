@@ -20,7 +20,7 @@ export const SettingsHeader = observer(() => {
   return (
     <div
       className={cn(
-        "bg-custom-background-90 px-4 py-4 gap-2 md:px-12 md:py-8 transition-all duration-300 ease-in-out relative",
+        "bg-custom-background-90 px-4 py-4 gap-2 md:px-12 md:py-6 transition-all duration-300 ease-in-out relative",
         {
           "!pt-4 flex md:flex-col": isScrolled,
         }
@@ -41,7 +41,7 @@ export const SettingsHeader = observer(() => {
       <Link
         href={`/${currentWorkspace?.slug}`}
         className={cn(
-          "group flex  gap-2 text-custom-text-300 mb-4 border border-transparent w-fit rounded-lg",
+          "group flex  gap-2 text-custom-text-300 mb-3 border border-transparent w-fit rounded-lg",
           !isScrolled ? "hover:bg-custom-background-100 hover:border-custom-border-200 items-center pr-2 " : " h-0 m-0"
         )}
       >
@@ -72,10 +72,12 @@ export const SettingsHeader = observer(() => {
           </div>
         </div>
       </Link>
-      <div className="flex flex-col gap-2">
-        {/* Description */}
-        <div className="text-custom-text-100 font-semibold text-2xl">{t("settings")}</div>
-        {!isScrolled && <div className="text-custom-text-200 text-base">{t("settings_description")}</div>}
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-0.5">
+          {/* Description */}
+          <div className="text-custom-text-100 font-semibold text-2xl">{t("settings")}</div>
+          {!isScrolled && <div className="text-custom-text-200 text-base">{t("settings_description")}</div>}
+        </div>
         {/* Actions */}
         <SettingsTabs />
       </div>

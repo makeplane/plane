@@ -61,8 +61,14 @@
   "language_setting": "Choose the language used in the user interface.",
   "settings_moved_to_preferences": "Timezone & Language settings have been moved to preferences.",
   "go_to_preferences": "Go to preferences",
+  "select_the_cursor_motion_style_that_feels_right_for_you": "Select the cursor motion style that feels right for you.",
+  "timezone_setting": "Current timezone setting.",
+  "language_setting": "Choose the language used in the user interface.",
+  "settings_moved_to_preferences": "Timezone & Language settings have been moved to preferences.",
+  "go_to_preferences": "Go to preferences",
   "theme": "Theme",
-  "system_preference": "System preference",
+  "smooth_cursor": "Smooth Cursor",
+  "system_preference": "System Preference",
   "light": "Light",
   "dark": "Dark",
   "light_contrast": "Light high contrast",
@@ -476,6 +482,9 @@
     "modules": "Modules",
     "labels": "Labels",
     "label": "Label",
+    "admins": "Admins",
+    "users": "Users",
+    "guests": "Guests",
     "assignees": "Assignees",
     "assignee": "Assignee",
     "created_by": "Created by",
@@ -504,6 +513,8 @@
     "work_item": "Work item",
     "work_items": "Work items",
     "sub_work_item": "Sub-work item",
+    "views": "Views",
+    "pages": "Pages",
     "add": "Add",
     "warning": "Warning",
     "updating": "Updating",
@@ -616,7 +627,13 @@
       "label": "Search",
       "placeholder": "Type to search",
       "no_matches_found": "No matches found",
-      "no_matching_results": "No matching results"
+      "no_matching_results": "No matching results",
+      "min_chars": "Type at least {count} characters to search",
+      "error": "Error fetching search results",
+      "no_results": {
+        "title": "No matching results",
+        "description": "Remove the search criteria to see all results"
+      }
     },
     "actions": {
       "edit": "Edit",
@@ -655,6 +672,7 @@
     "or": "or",
     "next": "Next",
     "back": "Back",
+    "retry": "Retry",
     "cancelling": "Cancelling",
     "configuring": "Configuring",
     "clear": "Clear",
@@ -1171,16 +1189,11 @@
         }
       }
     },
-    "total_work_items": "Total work items",
-    "started_work_items": "Started work items",
-    "backlog_work_items": "Backlog work items",
-    "un_started_work_items": "Unstarted work items",
-    "completed_work_items": "Completed work items",
-    "total_guests": "Total Guests",
-    "total_intake": "Total Intake",
-    "total_users": "Total Users",
-    "total_admins": "Total Admins",
-    "total_projects": "Total Projects",
+    "total": "Total {entity}",
+    "started_work_items": "Started {entity}",
+    "backlog_work_items": "Backlog {entity}",
+    "un_started_work_items": "Unstarted {entity}",
+    "completed_work_items": "Completed {entity}",
     "project_insights": "Project Insights",
     "summary_of_projects": "Summary of Projects",
     "all_projects": "All Projects",
@@ -1312,23 +1325,23 @@
     }
   },
   "account_settings": {
-    "profile":{},
-    "preferences":{
+    "profile": {},
+    "preferences": {
       "heading": "Preferences",
       "description": "Customize your app experience the way you work"
     },
-    "notifications":{
+    "notifications": {
       "heading": "Email notifications",
-      "description": "Stay in the loop on Work items you are subscribed to. Enable this to get notified."    
+      "description": "Stay in the loop on Work items you are subscribed to. Enable this to get notified."
     },
-    "security":{
+    "security": {
       "heading": "Security"
     },
-    "api_tokens":{
+    "api_tokens": {
       "heading": "Personal Access Tokens",
       "description": "Generate secure API tokens to integrate your data with external systems and applications."
     },
-    "activity":{
+    "activity": {
       "heading": "Activity",
       "description": "Track your recent actions and changes across all projects and work items."
     }
@@ -1400,7 +1413,7 @@
       },
       "billing_and_plans": {
         "heading": "Billing & Plans",
-        "description":"Choose your plan, manage subscriptions, and easily upgrade as your needs grow.",
+        "description": "Choose your plan, manage subscriptions, and easily upgrade as your needs grow.",
         "title": "Billing & Plans",
         "current_plan": "Current plan",
         "free_plan": "You are currently using the free plan",
@@ -1960,7 +1973,7 @@
     "empty_state": {
       "general": {
         "title": "Save filtered views for your project. Create as many as you need",
-        "description": "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best.",
+        "description": "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone's views and choose whichever suits their needs best.",
         "primary_button": {
           "text": "Create your first view",
           "comic": {
@@ -2234,7 +2247,7 @@
     },
     "admin": {
       "title": "Admin",
-      "description": "All permissions set to true within the workspace."
+      "description": "All permissions set to true within the workspace."
     }
   },
   "user_roles": {
