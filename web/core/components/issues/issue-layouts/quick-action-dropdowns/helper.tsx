@@ -11,6 +11,41 @@ import { generateWorkItemLink } from "@/helpers/issue.helper";
 // types
 import { createCopyMenuWithDuplication } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
 
+// Generic helper function to handle optional function calls gracefully
+// Overload for functions without parameters
+export function handleOptionalAction(
+  optionalFn: (() => void) | (() => Promise<void>) | undefined,
+  actionName: string
+): void;
+
+// Overload for functions with one parameter
+export function handleOptionalAction<T>(
+  optionalFn: ((param: T) => void) | ((param: T) => Promise<void>) | undefined,
+  actionName: string,
+  param: T
+): void;
+
+// Implementation
+export function handleOptionalAction<T>(
+  optionalFn: (() => void) | (() => Promise<void>) | ((param: T) => void) | ((param: T) => Promise<void>) | undefined,
+  actionName: string,
+  param?: T
+): void {
+  if (optionalFn) {
+    if (param !== undefined) {
+      (optionalFn as (param: T) => void | Promise<void>)(param);
+    } else {
+      (optionalFn as () => void | Promise<void>)();
+    }
+  } else {
+    setToast({
+      type: TOAST_TYPE.ERROR,
+      title: "Action not available",
+      message: `${actionName} action is not implemented.`,
+    });
+  }
+}
+
 export interface MenuItemFactoryProps {
   issue: TIssue;
   workspaceSlug?: string;
@@ -70,7 +105,10 @@ export const useIssueActionHandlers = (props: MenuItemFactoryProps) => {
   const handleOpenInNewTab = () => window.open(workItemLink, "_blank");
 
   const handleIssueRestore = async () => {
-    if (!handleRestore) return;
+    if (!handleRestore) {
+      handleOptionalAction(handleRestore, "Restore");
+      return;
+    }
     await handleRestore()
       .then(() => {
         setToast({
@@ -171,7 +209,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     key: "remove-from-cycle",
     title: "Remove from cycle",
     icon: XCircle,
-    action: () => handleRemoveFromView?.(),
+    action: () => handleOptionalAction(handleRemoveFromView, "Remove from cycle"),
     shouldRender: isEditingAllowed,
   });
 
@@ -179,7 +217,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     key: "remove-from-module",
     title: "Remove from module",
     icon: XCircle,
-    action: () => handleRemoveFromView?.(),
+    action: () => handleOptionalAction(handleRemoveFromView, "Remove from module"),
     shouldRender: isEditingAllowed,
   });
 
@@ -190,7 +228,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     icon: ArchiveIcon,
     className: "items-start",
     iconClassName: "mt-1",
-    action: () => setArchiveIssueModal?.(true),
+    action: () => handleOptionalAction(setArchiveIssueModal, "Archive", true),
     disabled: !isInArchivableGroup,
     shouldRender: isArchivingAllowed,
   });
