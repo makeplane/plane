@@ -127,8 +127,9 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
     CustomTextAlignExtension,
     CustomCalloutReadOnlyExtension,
     UtilityExtension({
-      isEditable: false,
+      disabledExtensions,
       fileHandler,
+      isEditable: false,
     }),
     ...CoreReadOnlyEditorAdditionalExtensions({
       disabledExtensions,
