@@ -17,7 +17,7 @@ export const DEFAULT_ADD_WORKSPACE_SEATS_MODAL_DATA: TAddWorkspaceSeatsModal = {
 /**
  * Subscription types that support trial periods
  */
-export const SUBSCRIPTION_WITH_TRIAL = [EProductSubscriptionEnum.PRO];
+export const SUBSCRIPTION_WITH_TRIAL = [EProductSubscriptionEnum.BUSINESS];
 
 /**
  * Subscription types that support seats management

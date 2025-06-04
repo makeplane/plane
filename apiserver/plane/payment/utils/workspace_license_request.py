@@ -57,7 +57,6 @@ def is_trial_allowed(workspace_license):
     """
     if (
         settings.IS_MULTI_TENANT
-        and not workspace_license.subscription
         and not workspace_license.has_activated_free_trial
     ):
         return True

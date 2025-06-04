@@ -33,7 +33,7 @@ export const SubscriptionButton: FC<TSubscriptionButtonProps> = observer((props)
   const isOnTrialPeriod = !!subscriptionDetail?.is_on_trial && !subscriptionDetail?.has_added_payment_method;
   const showCurrentSubscriptionButton = currentPlan === subscriptionType && !isOnTrialPeriod;
   const isHigherTierPlan = EProductSubscriptionTier[subscriptionType] >= EProductSubscriptionTier[currentPlan];
-  const showUpgradeButton = isHigherTierPlan && (isOnTrialPeriod || currentPlan !== subscriptionType);
+  const showUpgradeButton = isOnTrialPeriod || (isHigherTierPlan && currentPlan !== subscriptionType);
   const upgradeButtonStyle =
     getUpgradeButtonStyle(subscriptionType, !!upgradeLoader) ?? getButtonStyling("primary", "lg", !!upgradeLoader);
 

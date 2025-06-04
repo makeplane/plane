@@ -13,7 +13,6 @@ from .views import (
     WorkspaceLicenseRefreshEndpoint,
     WorkspaceLicenseSyncEndpoint,
     WorkspaceFreeTrialEndpoint,
-    WorkspaceTrialUpgradeEndpoint,
     PurchaseSubscriptionSeatEndpoint,
     RemoveUnusedSeatsEndpoint,
     LicenseDeActivateEndpoint,
@@ -75,11 +74,6 @@ urlpatterns = [
         "workspaces/<str:slug>/trial-subscriptions/",
         WorkspaceFreeTrialEndpoint.as_view(),
         name="trial-subscriptions",
-    ),
-    path(
-        "workspaces/<str:slug>/trial-subscriptions/upgrade/",
-        WorkspaceTrialUpgradeEndpoint.as_view(),
-        name="trial-upgrade",
     ),
     path(
         "workspaces/<str:slug>/subscriptions/seats/",

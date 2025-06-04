@@ -11,24 +11,22 @@ import {
   EProductSubscriptionEnum,
   PRO_PLAN_FEATURES,
   SUBSCRIPTION_WEBPAGE_URLS,
+  SUBSCRIPTION_WITH_TRIAL,
 } from "@plane/constants";
 import { IPaymentProduct } from "@plane/types";
 import { EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, getSubscriptionName } from "@plane/utils";
+// components
 import { FreePlanCard, PlanUpgradeCard } from "@/components/license";
 import { TCheckoutParams } from "@/components/license/modal/card/checkout-button";
+import { getSubscriptionTextAndBackgroundColor } from "@/components/workspace/billing/subscription";
 // plane web imports
-import { ProTrialButton } from "@/plane-web/components/license/modal/trial-button";
 import { useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { PaymentService } from "@/plane-web/services/payment.service";
+// local imports
+import { TrialButton } from "./trial-button";
 
 const paymentService = new PaymentService();
-
-export type TTrialButtonProps = {
-  productId: string | undefined;
-  priceId: string | undefined;
-  handleClose: () => void;
-};
 
 export type PaidPlanUpgradeModalProps = {
   isOpen: boolean;
@@ -60,10 +58,6 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
   const isOnTrial = subscriptionDetail?.is_on_trial;
   const isTrialEnded = subscriptionDetail?.is_trial_ended;
   const currentPlan = subscriptionDetail?.product;
-  const planeName =
-    currentPlan && ["PRO", "BUSINESS", "ENTERPRISE"].includes(currentPlan)
-      ? currentPlan?.charAt(0).toUpperCase() + currentPlan?.slice(1).toLowerCase()
-      : "";
   // product details
   const proProduct = (data || [])?.find((product: IPaymentProduct) => product?.type === EProductSubscriptionEnum.PRO);
   const businessProduct = (data || [])?.find(
@@ -110,15 +104,31 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
       });
   };
 
+  const renderTrialButton = (
+    variant: EProductSubscriptionEnum,
+    productId: string | undefined,
+    priceId: string | undefined
+  ) => {
+    if (SUBSCRIPTION_WITH_TRIAL.includes(variant)) {
+      return <TrialButton productId={productId} priceId={priceId} handleClose={handleClose} />;
+    }
+    return null;
+  };
+
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.VIIXL} className="rounded-2xl">
       <div className="p-10 max-h-[90vh] overflow-auto">
         <div className="grid grid-cols-12 gap-6 h-full">
           <div className={cn(COMMON_CARD_CLASSNAME)}>
-            {isOnTrial && (
+            {isOnTrial && currentPlan && (
               <div className="relative flex justify-start items-center pb-4">
-                <div className="p-1 px-2 bg-custom-primary-100/20 text-custom-primary-100 text-xs rounded-full font-medium">
-                  {planeName ? `${planeName} trial in progress` : "Trial in progress"}
+                <div
+                  className={cn(
+                    "px-1 py-0.5 text-xs font-semibold rounded",
+                    getSubscriptionTextAndBackgroundColor(currentPlan)
+                  )}
+                >
+                  {`${getSubscriptionName(currentPlan)} trial`}
                 </div>
               </div>
             )}
@@ -167,9 +177,9 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
                   </a>
                 </p>
               }
-              renderTrialButton={({ productId, priceId }) => (
-                <ProTrialButton productId={productId} priceId={priceId} handleClose={handleClose} />
-              )}
+              renderTrialButton={({ productId, priceId }) =>
+                renderTrialButton(EProductSubscriptionEnum.PRO, productId, priceId)
+              }
               handleCheckout={handleStripeCheckout}
               isSelfHosted={!!isSelfHosted}
               isTrialAllowed={!!isTrialAllowed}
@@ -190,6 +200,9 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
                   </a>
                 </p>
               }
+              renderTrialButton={({ productId, priceId }) =>
+                renderTrialButton(EProductSubscriptionEnum.BUSINESS, productId, priceId)
+              }
               handleCheckout={handleStripeCheckout}
               isSelfHosted={!!isSelfHosted}
               isTrialAllowed={!!isTrialAllowed}
@@ -209,6 +222,9 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
                     See full features list
                   </a>
                 </p>
+              }
+              renderTrialButton={({ productId, priceId }) =>
+                renderTrialButton(EProductSubscriptionEnum.ENTERPRISE, productId, priceId)
               }
               handleCheckout={handleStripeCheckout}
               isSelfHosted={!!isSelfHosted}

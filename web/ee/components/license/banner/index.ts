@@ -1,2 +1,2 @@
-export * from "./free-trial-banner";
+export * from "./trial-banner";
 export * from "./seats-banner";

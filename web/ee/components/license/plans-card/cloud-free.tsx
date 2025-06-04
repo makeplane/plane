@@ -65,7 +65,7 @@ export const CloudFreePlanCard: FC<TCloudFreePlanCardProps> = observer((props: T
             </button>
           )}
           {subscriptionDetail?.is_trial_ended && (
-            <div className="px-2 text-center text-xs text-red-500 font-medium">Pro trial ended</div>
+            <div className="px-2 text-center text-xs text-red-500 font-medium">Trial ended</div>
           )}
           {subscriptionDetail?.is_trial_allowed && (
             <>

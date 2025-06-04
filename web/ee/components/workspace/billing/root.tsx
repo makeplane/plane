@@ -256,7 +256,7 @@ export const BillingRoot = observer(() => {
                     <SelfHostedFreePlanCard />
                   ) : (
                     <CloudFreePlanCard
-                      upgradeProductType={EProductSubscriptionEnum.PRO}
+                      upgradeProductType={EProductSubscriptionEnum.BUSINESS}
                       isProductsAPILoading={isProductsAPILoading}
                       trialLoader={trialLoader}
                       upgradeLoader={upgradeLoader}

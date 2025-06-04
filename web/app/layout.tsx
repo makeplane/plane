@@ -7,7 +7,7 @@ import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
 import { cn } from "@/helpers/common.helper";
 // plane web components
 import { DesktopAppProviderRoot } from "@/plane-web/components/desktop";
-import { FreeTrialBanner } from "@/plane-web/components/license";
+import { TrialBanner } from "@/plane-web/components/license";
 // local
 import { AppProvider } from "./provider";
 
@@ -71,7 +71,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             )}
           >
             {/* free trial banner */}
-            <FreeTrialBanner />
+            <TrialBanner />
             <main className="w-full h-full overflow-hidden relative">{children}</main>
           </div>
         </AppProvider>

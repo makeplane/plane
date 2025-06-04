@@ -7,10 +7,15 @@ import { Loader } from "lucide-react";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
-import { TTrialButtonProps } from "@/plane-web/components/license";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
-export const ProTrialButton: React.FC<TTrialButtonProps> = (props: TTrialButtonProps) => {
+export type TTrialButtonProps = {
+  productId: string | undefined;
+  priceId: string | undefined;
+  handleClose: () => void;
+};
+
+export const TrialButton: React.FC<TTrialButtonProps> = (props: TTrialButtonProps) => {
   const { productId, priceId, handleClose } = props;
   // router
   const { workspaceSlug } = useParams();
