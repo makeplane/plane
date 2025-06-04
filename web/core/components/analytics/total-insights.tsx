@@ -2,7 +2,7 @@
 import { observer } from "mobx-react-lite";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { EIssuesStoreType, insightsFields } from "@plane/constants";
+import { IInsightField, insightsFields } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IAnalyticsResponse, TAnalyticsTabsBase } from "@plane/types";
 //hooks
@@ -14,6 +14,34 @@ import { AnalyticsService } from "@/services/analytics.service";
 import InsightCard from "./insight-card";
 
 const analyticsService = new AnalyticsService();
+
+const getInsightLabel = (
+  analyticsType: TAnalyticsTabsBase,
+  item: IInsightField,
+  isEpic: boolean | undefined,
+  t: (key: string, options?: any) => string
+) => {
+  if (analyticsType === "work-items") {
+    return isEpic
+      ? t(item.i18nKey, { entity: t("common.epics") })
+      : t(item.i18nKey, { entity: t("common.work_items") });
+  }
+
+  // Get the base translation with entity
+  const baseTranslation = t(item.i18nKey, {
+    ...item.i18nProps,
+    entity: item.i18nProps?.entity && t(item.i18nProps?.entity),
+  });
+
+  // Add prefix if available
+  const prefix = item.i18nProps?.prefix ? `${t(item.i18nProps.prefix)} ` : "";
+
+  // Add suffix if available
+  const suffix = item.i18nProps?.suffix ? ` ${t(item.i18nProps.suffix)}` : "";
+
+  // Combine prefix, base translation, and suffix
+  return `${prefix}${baseTranslation}${suffix}`;
+};
 
 const TotalInsights: React.FC<{
   analyticsType: TAnalyticsTabsBase;
@@ -42,6 +70,7 @@ const TotalInsights: React.FC<{
           ...(selectedProjects?.length > 0 ? { project_ids: selectedProjects.join(",") } : {}),
           ...(selectedCycle ? { cycle_id: selectedCycle } : {}),
           ...(selectedModule ? { module_id: selectedModule } : {}),
+          ...(isEpic ? { epic: true } : {}),
         },
         isPeekView
       )
@@ -51,7 +80,7 @@ const TotalInsights: React.FC<{
       className={cn(
         "grid grid-cols-1 gap-8 sm:grid-cols-2 md:gap-10",
         !peekView
-          ? insightsFields[analyticsType].length % 5 === 0
+          ? insightsFields[analyticsType]?.length % 5 === 0
             ? "gap-10 lg:grid-cols-5"
             : "gap-8 lg:grid-cols-4"
           : "grid-cols-2"
@@ -62,16 +91,7 @@ const TotalInsights: React.FC<{
           key={`${analyticsType}-${item.key}`}
           isLoading={isLoading}
           data={totalInsightsData?.[item.key]}
-          label={
-            analyticsType === "work-items"
-              ? isEpic
-                ? t(item.i18nKey, { entity: t("common.epics") })
-                : t(item.i18nKey, { entity: t("common.work_items") })
-              : t(item.i18nKey, {
-                  ...item.i18nProps,
-                  entity: item.i18nProps?.entity && t(item.i18nProps?.entity),
-                })
-          }
+          label={getInsightLabel(analyticsType, item, isEpic, t)}
           versus={selectedDurationLabel}
         />
       ))}

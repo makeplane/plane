@@ -869,7 +869,16 @@
     "applying": "Aplicând",
     "users": "Utilizatori",
     "admins": "Administratori",
-    "guests": "Invitați"
+    "guests": "Invitați",
+    "on_track": "Pe drumul cel bun",
+    "off_track": "În afara traiectoriei",
+    "timeline": "Cronologie",
+    "completion": "Finalizare",
+    "upcoming": "Viitor",
+    "completed": "Finalizat",
+    "in_progress": "În desfășurare",
+    "planned": "Planificat",
+    "paused": "Pauzat"
   },
   "chart": {
     "x_axis": "axa-X",

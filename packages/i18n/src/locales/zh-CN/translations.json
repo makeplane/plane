@@ -870,7 +870,16 @@
     "applying": "应用中",
     "users": "用户",
     "admins": "管理员",
-    "guests": "访客"
+    "guests": "访客",
+    "on_track": "进展顺利",
+    "off_track": "偏离轨道",
+    "timeline": "时间轴",
+    "completion": "完成",
+    "upcoming": "即将发生",
+    "completed": "已完成",
+    "in_progress": "进行中",
+    "planned": "已计划",
+    "paused": "暂停"
   },
   "chart": {
     "x_axis": "X轴",

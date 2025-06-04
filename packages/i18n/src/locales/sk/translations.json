@@ -871,7 +871,16 @@
     "applying": "Používanie",
     "users": "Používatelia",
     "admins": "Administrátori",
-    "guests": "Hostia"
+    "guests": "Hostia",
+    "on_track": "Na správnej ceste",
+    "off_track": "Mimo plán",
+    "timeline": "Časová os",
+    "completion": "Dokončenie",
+    "upcoming": "Nadchádzajúce",
+    "completed": "Dokončené",
+    "in_progress": "Prebieha",
+    "planned": "Plánované",
+    "paused": "Pozastavené"
   },
   "chart": {
     "x_axis": "Os X",

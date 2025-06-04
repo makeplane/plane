@@ -871,7 +871,16 @@
     "applying": "Zastosowanie",
     "users": "Użytkownicy",
     "admins": "Administratorzy",
-    "guests": "Goście"
+    "guests": "Goście",
+    "on_track": "Na dobrej drodze",
+    "off_track": "Poza planem",
+    "timeline": "Oś czasu",
+    "completion": "Zakończenie",
+    "upcoming": "Nadchodzące",
+    "completed": "Zakończone",
+    "in_progress": "W trakcie",
+    "planned": "Zaplanowane",
+    "paused": "Wstrzymane"
   },
   "chart": {
     "x_axis": "Oś X",

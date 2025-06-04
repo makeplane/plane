@@ -164,7 +164,7 @@ const WorkItemsInsightTable = observer(() => {
       isLoading={isLoading}
       columns={columns}
       columnsLabels={columnsLabels}
-      headerText={isPeekView ? columnsLabels["display_name"] : columnsLabels["project__name"]}
+      headerText={isPeekView ? t("common.assignee") : t("common.projects")}
       onExport={exportCSV}
     />
   );

@@ -869,7 +869,16 @@
     "applying": "Používání",
     "users": "Uživatelé",
     "admins": "Administrátoři",
-    "guests": "Hosté"
+    "guests": "Hosté",
+    "on_track": "Na správné cestě",
+    "off_track": "Mimo plán",
+    "timeline": "Časová osa",
+    "completion": "Dokončení",
+    "upcoming": "Nadcházející",
+    "completed": "Dokončeno",
+    "in_progress": "Probíhá",
+    "planned": "Plánováno",
+    "paused": "Pozastaveno"
   },
   "chart": {
     "x_axis": "Osa X",

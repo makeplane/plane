@@ -869,7 +869,16 @@
     "applying": "Terapkan",
     "users": "Pengguna",
     "admins": "Admin",
-    "guests": "Tamu"
+    "guests": "Tamu",
+    "on_track": "Sesuai Jalur",
+    "off_track": "Menyimpang",
+    "timeline": "Linimasa",
+    "completion": "Penyelesaian",
+    "upcoming": "Mendatang",
+    "completed": "Selesai",
+    "in_progress": "Sedang berlangsung",
+    "planned": "Direncanakan",
+    "paused": "Dijedaikan"
   },
   "chart": {
     "x_axis": "Sumbu-X",

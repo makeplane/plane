@@ -869,7 +869,16 @@
     "applying": "Wird angewendet",
     "users": "Benutzer",
     "admins": "Administratoren",
-    "guests": "Gäste"
+    "guests": "Gäste",
+    "on_track": "Im Plan",
+    "off_track": "Außer Plan",
+    "timeline": "Zeitleiste",
+    "completion": "Fertigstellung",
+    "upcoming": "Bevorstehend",
+    "completed": "Abgeschlossen",
+    "in_progress": "In Bearbeitung",
+    "planned": "Geplant",
+    "paused": "Pausiert"
   },
   "chart": {
     "x_axis": "X-Achse",

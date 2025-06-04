@@ -868,7 +868,16 @@
     "applying": "Applicazione",
     "users": "Utenti",
     "admins": "Amministratori",
-    "guests": "Ospiti"
+    "guests": "Ospiti",
+    "on_track": "In linea",
+    "off_track": "Fuori rotta",
+    "timeline": "Cronologia",
+    "completion": "Completamento",
+    "upcoming": "In arrivo",
+    "completed": "Completato",
+    "in_progress": "In corso",
+    "planned": "Pianificato",
+    "paused": "In pausa"
   },
   "chart": {
     "x_axis": "Asse X",

@@ -870,7 +870,16 @@
     "applying": "Đang áp dụng",
     "users": "Người dùng",
     "admins": "Quản trị viên",
-    "guests": "Khách"
+    "guests": "Khách",
+    "on_track": "Đúng tiến độ",
+    "off_track": "Chệch hướng",
+    "timeline": "Dòng thời gian",
+    "completion": "Hoàn thành",
+    "upcoming": "Sắp tới",
+    "completed": "Đã hoàn thành",
+    "in_progress": "Đang tiến hành",
+    "planned": "Đã lên kế hoạch",
+    "paused": "Tạm dừng"
   },
   "chart": {
     "x_axis": "Trục X",

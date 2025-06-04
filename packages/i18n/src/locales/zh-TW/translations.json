@@ -871,7 +871,16 @@
     "applying": "應用中",
     "users": "使用者",
     "admins": "管理員",
-    "guests": "訪客"
+    "guests": "訪客",
+    "on_track": "進展順利",
+    "off_track": "偏離軌道",
+    "timeline": "時間軸",
+    "completion": "完成",
+    "upcoming": "即將發生",
+    "completed": "已完成",
+    "in_progress": "進行中",
+    "planned": "已計劃",
+    "paused": "暫停"
   },
   "chart": {
     "x_axis": "X 軸",
