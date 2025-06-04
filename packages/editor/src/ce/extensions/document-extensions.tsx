@@ -14,12 +14,12 @@ export type TDocumentEditorAdditionalExtensionsProps = {
   userDetails: TUserDetails;
 };
 
-type ExtensionConfig = {
+export type TDocumentEditorAdditionalExtensionsRegistry = {
   isEnabled: (disabledExtensions: TExtensions[]) => boolean;
   getExtension: (props: TDocumentEditorAdditionalExtensionsProps) => AnyExtension;
 };
 
-const extensionRegistry: ExtensionConfig[] = [
+const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
   {
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("slash-commands"),
     getExtension: ({ disabledExtensions }) => SlashCommands({ disabledExtensions }),
