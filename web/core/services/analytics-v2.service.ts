@@ -86,7 +86,7 @@ export class AnalyticsV2Service extends APIService {
     isPeekView?: boolean
   ) {
     let processedUrl = `/api/workspaces/${workspaceSlug}`;
-    if (isPeekView && tab === "work-items") {
+    if (isPeekView && (tab === "work-items" || tab === "custom-work-items")) {
       const projectId = params?.project_ids.split(",")[0];
       processedUrl += `/projects/${projectId}`;
     }

@@ -3,14 +3,17 @@ import { generateHTML, generateJSON } from "@tiptap/html";
 import { prosemirrorJSONToYDoc, yXmlFragmentToProseMirrorRootNode } from "y-prosemirror";
 import * as Y from "yjs";
 // extensions
+import { TDocumentPayload } from "@plane/types";
 import {
   CoreEditorExtensionsWithoutProps,
   DocumentEditorExtensionsWithoutProps,
 } from "@/extensions/core-without-props";
+import { TitleExtensions } from "@/extensions/title-extension";
 
 // editor extension configs
 const RICH_TEXT_EDITOR_EXTENSIONS = CoreEditorExtensionsWithoutProps;
 const DOCUMENT_EDITOR_EXTENSIONS = [...CoreEditorExtensionsWithoutProps, ...DocumentEditorExtensionsWithoutProps];
+export const TITLE_EDITOR_EXTENSIONS = TitleExtensions;
 // editor schemas
 // @ts-expect-error tiptap types are incorrect
 const richTextEditorSchema = getSchema(RICH_TEXT_EDITOR_EXTENSIONS);
@@ -122,11 +125,16 @@ export const getAllDocumentFormatsFromDocumentEditorBinaryData = (
   contentBinaryEncoded: string;
   contentJSON: object;
   contentHTML: string;
+  titleHTML: string;
 } => {
   // encode binary description data
   const base64Data = convertBinaryDataToBase64String(description);
   const yDoc = new Y.Doc();
   Y.applyUpdate(yDoc, description);
+  const title = yDoc.getXmlFragment("title");
+  const titleJSON = yXmlFragmentToProseMirrorRootNode(title, documentEditorSchema).toJSON();
+  // @ts-expect-error tiptap types are incorrect
+  const titleHTML = extractTextFromHTML(generateHTML(titleJSON, DOCUMENT_EDITOR_EXTENSIONS));
   // convert to JSON
   const type = yDoc.getXmlFragment("default");
   const contentJSON = yXmlFragmentToProseMirrorRootNode(type, documentEditorSchema).toJSON();
@@ -138,5 +146,59 @@ export const getAllDocumentFormatsFromDocumentEditorBinaryData = (
     contentBinaryEncoded: base64Data,
     contentJSON,
     contentHTML,
+    titleHTML,
   };
+};
+
+type TConvertHTMLDocumentToAllFormatsArgs = {
+  document_html: string;
+  variant: "rich" | "document";
+};
+
+/**
+ * @description Converts HTML content to all supported document formats (JSON, HTML, and binary)
+ * @param {TConvertHTMLDocumentToAllFormatsArgs} args - Arguments containing HTML content and variant type
+ * @param {string} args.document_html - The HTML content to convert
+ * @param {"rich" | "document"} args.variant - The type of editor variant to use for conversion
+ * @returns {TDocumentPayload} Object containing the document in all supported formats
+ * @throws {Error} If an invalid variant is provided
+ */
+export const convertHTMLDocumentToAllFormats = (args: TConvertHTMLDocumentToAllFormatsArgs): TDocumentPayload => {
+  const { document_html, variant } = args;
+
+  let allFormats: TDocumentPayload;
+
+  if (variant === "rich") {
+    // Convert HTML to binary format for rich text editor
+    const contentBinary = getBinaryDataFromRichTextEditorHTMLString(document_html);
+    // Generate all document formats from the binary data
+    const { contentBinaryEncoded, contentHTML, contentJSON } =
+      getAllDocumentFormatsFromRichTextEditorBinaryData(contentBinary);
+    allFormats = {
+      description: contentJSON,
+      description_html: contentHTML,
+      description_binary: contentBinaryEncoded,
+    };
+  } else if (variant === "document") {
+    // Convert HTML to binary format for document editor
+    const contentBinary = getBinaryDataFromDocumentEditorHTMLString(document_html);
+    // Generate all document formats from the binary data
+    const { contentBinaryEncoded, contentHTML, contentJSON } =
+      getAllDocumentFormatsFromDocumentEditorBinaryData(contentBinary);
+    allFormats = {
+      description: contentJSON,
+      description_html: contentHTML,
+      description_binary: contentBinaryEncoded,
+    };
+  } else {
+    throw new Error(`Invalid variant provided: ${variant}`);
+  }
+
+  return allFormats;
+};
+
+export const extractTextFromHTML = (html: string): string => {
+  // Use a regex to extract text between tags
+  const textMatch = html.replace(/<[^>]*>/g, "");
+  return textMatch || "";
 };

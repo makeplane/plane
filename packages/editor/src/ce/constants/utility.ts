@@ -1,4 +1,4 @@
-import { ExtensionFileSetStorageKey } from "@/plane-editor/types/storage";
+import { ExtensionFileSetStorageKey } from "../types/storage";
 
 export const NODE_FILE_MAP: {
   [key: string]: {
