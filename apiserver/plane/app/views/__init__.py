@@ -106,6 +106,7 @@ from .asset.v2 import (
     AssetRestoreEndpoint,
     ProjectAssetEndpoint,
     ProjectBulkAssetEndpoint,
+    AssetCheckEndpoint,
 )
 from .issue.base import (
     IssueListEndpoint,
@@ -203,6 +204,12 @@ from .analytic.advance import (
     AdvanceAnalyticsEndpoint,
     AdvanceAnalyticsStatsEndpoint,
     AdvanceAnalyticsChartEndpoint,
+)
+
+from .analytic.project_analytics import (
+    ProjectAdvanceAnalyticsEndpoint,
+    ProjectAdvanceAnalyticsStatsEndpoint,
+    ProjectAdvanceAnalyticsChartEndpoint,
 )
 
 from .notification.base import (

@@ -43,7 +43,8 @@
   "your_account": "Your account",
   "security": "Security",
   "activity": "Activity",
-  "appearance": "Appearance",
+  "preferences": "Preferences",
+  "language_and_time": "Language & Time",
   "notifications": "Notifications",
   "workspaces": "Workspaces",
   "create_workspace": "Create workspace",
@@ -56,6 +57,10 @@
   "something_went_wrong_please_try_again": "Something went wrong. Please try again.",
   "load_more": "Load more",
   "select_or_customize_your_interface_color_scheme": "Select or customize your interface color scheme.",
+  "timezone_setting": "Current timezone setting.",
+  "language_setting": "Choose the language used in the user interface.",
+  "settings_moved_to_preferences": "Timezone & Language settings have been moved to preferences.",
+  "go_to_preferences": "Go to preferences",
   "theme": "Theme",
   "system_preference": "System preference",
   "light": "Light",
@@ -334,6 +339,8 @@
   "new_password_must_be_different_from_old_password": "New password must be different from old password",
   "edited": "edited",
   "bot": "Bot",
+  "settings_description": "Manage your account, workspace, and project preferences all in one place. Switch between tabs to easily configure.",
+  "back_to_workspace": "Back to workspace",
   "project_view": {
     "sort_by": {
       "created_at": "Created at",
@@ -580,7 +587,8 @@
         "message": "Something went wrong. Please try again."
       },
       "required": "This field is required",
-      "entity_required": "{entity} is required"
+      "entity_required": "{entity} is required",
+      "restricted_entity": "{entity} is restricted"
     },
     "update_link": "Update link",
     "attach": "Attach",
@@ -682,6 +690,7 @@
     "live": "Live",
     "change_history": "Change History",
     "coming_soon": "Coming soon",
+    "member": "Member",
     "members": "Members",
     "you": "You",
     "upgrade_cta": {
@@ -915,7 +924,9 @@
     "select": {
       "error": "Please select at least one work item",
       "empty": "No work items selected",
-      "add_selected": "Add selected work items"
+      "add_selected": "Add selected work items",
+      "select_all": "Select all",
+      "deselect_all": "Deselect all"
     },
     "open_in_full_screen": "Open work item in full screen"
   },
@@ -943,6 +954,18 @@
     "remove": {
       "success": "Sub-work item removed successfully",
       "error": "Error removing sub-work item"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "You don't have sub-work items that match the filters you've applied.",
+        "description": "To see all sub-work items, clear all applied filters.",
+        "action": "Clear filters"
+      },
+      "list_filters": {
+        "title": "You don't have work items that match the filters you've applied.",
+        "description": "To see all work items, clear all applied filters.",
+        "action": "Clear filters"
+      }
     }
   },
   "view": {
@@ -1288,6 +1311,28 @@
       }
     }
   },
+  "account_settings": {
+    "profile":{},
+    "preferences":{
+      "heading": "Preferences",
+      "description": "Customize your app experience the way you work"
+    },
+    "notifications":{
+      "heading": "Email notifications",
+      "description": "Stay in the loop on Work items you are subscribed to. Enable this to get notified."    
+    },
+    "security":{
+      "heading": "Security"
+    },
+    "api_tokens":{
+      "heading": "Personal Access Tokens",
+      "description": "Generate secure API tokens to integrate your data with external systems and applications."
+    },
+    "activity":{
+      "heading": "Activity",
+      "description": "Track your recent actions and changes across all projects and work items."
+    }
+  },
   "workspace_settings": {
     "label": "Workspace settings",
     "page_label": "{workspace} - General settings",
@@ -1354,16 +1399,22 @@
         }
       },
       "billing_and_plans": {
+        "heading": "Billing & Plans",
+        "description":"Choose your plan, manage subscriptions, and easily upgrade as your needs grow.",
         "title": "Billing & Plans",
         "current_plan": "Current plan",
         "free_plan": "You are currently using the free plan",
         "view_plans": "View plans"
       },
       "exports": {
+        "heading": "Exports",
+        "description": "Export your project data in various formats and access your export history with download links.",
         "title": "Exports",
         "exporting": "Exporting",
         "previous_exports": "Previous exports",
         "export_separate_files": "Export the data into separate files",
+        "exporting_projects": "Exporting project",
+        "format": "Format",
         "modal": {
           "title": "Export to",
           "toasts": {
@@ -1379,6 +1430,8 @@
         }
       },
       "webhooks": {
+        "heading": "Webhooks",
+        "description": "Automate notifications to external services when project events occur.",
         "title": "Webhooks",
         "add_webhook": "Add webhook",
         "modal": {
@@ -1430,29 +1483,29 @@
         }
       },
       "api_tokens": {
-        "title": "API Tokens",
-        "add_token": "Add API token",
+        "title": "Personal Access Tokens",
+        "add_token": "Add personal access token",
         "create_token": "Create token",
         "never_expires": "Never expires",
         "generate_token": "Generate token",
         "generating": "Generating",
         "delete": {
-          "title": "Delete API token",
+          "title": "Delete personal access token",
           "description": "Any application using this token will no longer have the access to Plane data. This action cannot be undone.",
           "success": {
             "title": "Success!",
-            "message": "The API token has been successfully deleted"
+            "message": "The token has been successfully deleted"
           },
           "error": {
             "title": "Error!",
-            "message": "The API token could not be deleted"
+            "message": "The token could not be deleted"
           }
         }
       }
     },
     "empty_state": {
       "api_tokens": {
-        "title": "No API tokens created",
+        "title": "No personal access tokens created",
         "description": "Plane APIs can be used to integrate your data in Plane with any external system. Create a token to get started."
       },
       "webhooks": {
@@ -1502,8 +1555,9 @@
       "profile": "Profile",
       "security": "Security",
       "activity": "Activity",
-      "appearance": "Appearance",
-      "notifications": "Notifications"
+      "preferences": "Preferences",
+      "notifications": "Notifications",
+      "api-tokens": "Personal Access Tokens"
     },
     "tabs": {
       "summary": "Summary",
@@ -1565,6 +1619,8 @@
       }
     },
     "states": {
+      "heading": "States",
+      "description": "Define and customize workflow states to track the progress of your work items.",
       "describe_this_state_for_your_members": "Describe this state for your members.",
       "empty_state": {
         "title": "No states available for the {groupKey} group",
@@ -1572,6 +1628,8 @@
       }
     },
     "labels": {
+      "heading": "Labels",
+      "description": "Create custom labels to categorize and organize your work items",
       "label_title": "Label title",
       "label_title_is_required": "Label title is required",
       "label_max_char": "Label name should not exceed 255 characters",
@@ -1580,9 +1638,11 @@
       }
     },
     "estimates": {
+      "heading": "Estimates",
+      "description": "Set up estimation systems to track and communicate the effort required for each work item.",
       "label": "Estimates",
       "title": "Enable estimates for my project",
-      "description": "They help you in communicating complexity and workload of the team.",
+      "enable_description": "They help you in communicating complexity and workload of the team.",
       "no_estimate": "No estimate",
       "new": "New estimate system",
       "create": {
@@ -1664,6 +1724,8 @@
     },
     "automations": {
       "label": "Automations",
+      "heading": "Automations",
+      "description": "Configure automated actions to streamline your project management workflow and reduce manual tasks.",
       "auto-archive": {
         "title": "Auto-archive closed work items",
         "description": "Plane will auto archive work items that have been completed or canceled.",
@@ -2282,5 +2344,9 @@
     "last_edited_by": "Last edited by",
     "previously_edited_by": "Previously edited by",
     "edited_by": "Edited by"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane didn't start up. This could be because one or more Plane services failed to start.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Choose View Logs from setup.sh and Docker logs to be sure."
   }
 }

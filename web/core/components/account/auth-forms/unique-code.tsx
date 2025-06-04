@@ -96,7 +96,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
       <input type="hidden" value={uniqueCodeFormData.email} name="email" />
       {nextPath && <input type="hidden" value={nextPath} name="next_path" />}
       <div className="space-y-1">
-        <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
+        <label htmlFor="email" className="text-sm font-medium text-onboarding-text-300">
           {t("auth.common.email.label")}
         </label>
         <div
@@ -109,25 +109,30 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
             value={uniqueCodeFormData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder={t("auth.common.email.placeholder")}
-            className={`disable-autofill-style h-[46px] w-full placeholder:text-onboarding-text-400 border-0`}
+            className="disable-autofill-style h-[46px] w-full placeholder:text-onboarding-text-400 border-0"
             autoComplete="on"
             disabled
           />
           {uniqueCodeFormData.email.length > 0 && (
-            <XCircle
-              className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+            <button
+              type="button"
+              className="absolute right-3 size-5 grid place-items-center"
+              aria-label={t("aria_labels.auth_forms.clear_email")}
               onClick={handleEmailClear}
-            />
+            >
+              <XCircle className="size-5 stroke-custom-text-400" />
+            </button>
           )}
         </div>
       </div>
 
       <div className="space-y-1">
-        <label className="text-sm font-medium text-onboarding-text-300" htmlFor="code">
+        <label htmlFor="unique-code" className="text-sm font-medium text-onboarding-text-300">
           {t("auth.common.unique_code.label")}
         </label>
         <Input
           name="code"
+          id="unique-code"
           value={uniqueCodeFormData.code}
           onChange={(e) => handleFormChange("code", e.target.value)}
           placeholder={t("auth.common.unique_code.placeholder")}
@@ -142,11 +147,11 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
           <button
             type="button"
             onClick={() => generateNewCode(uniqueCodeFormData.email)}
-            className={`${
+            className={
               isRequestNewCodeDisabled
                 ? "text-onboarding-text-400"
                 : "font-medium text-custom-primary-300 hover:text-custom-primary-200"
-            }`}
+            }
             disabled={isRequestNewCodeDisabled}
           >
             {resendTimerCode > 0
@@ -160,7 +165,13 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
 
       <div className="space-y-2.5">
         <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
-          {isRequestingNewCode ? t("auth.common.unique_code.sending_code") : isSubmitting ? <Spinner height="20px" width="20px" /> : t("common.continue")}
+          {isRequestingNewCode ? (
+            t("auth.common.unique_code.sending_code")
+          ) : isSubmitting ? (
+            <Spinner height="20px" width="20px" />
+          ) : (
+            t("common.continue")
+          )}
         </Button>
       </div>
     </form>

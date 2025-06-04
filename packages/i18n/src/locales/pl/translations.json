@@ -748,7 +748,8 @@
         "message": "Coś poszło nie tak. Spróbuj ponownie."
       },
       "required": "To pole jest wymagane",
-      "entity_required": "{entity} jest wymagane"
+      "entity_required": "{entity} jest wymagane",
+      "restricted_entity": "{entity} jest ograniczony"
     },
     "update_link": "Zaktualizuj link",
     "attach": "Dołącz",
@@ -849,6 +850,7 @@
     "live": "Na żywo",
     "change_history": "Historia zmian",
     "coming_soon": "Wkrótce",
+    "member": "Członek",
     "members": "Członkowie",
     "you": "Ty",
     "upgrade_cta": {
@@ -1081,7 +1083,9 @@
     "select": {
       "error": "Wybierz co najmniej jeden element pracy",
       "empty": "Nie wybrano żadnych elementów pracy",
-      "add_selected": "Dodaj wybrane elementy pracy"
+      "add_selected": "Dodaj wybrane elementy pracy",
+      "select_all": "Wybierz wszystko",
+      "deselect_all": "Odznacz wszystko"
     },
     "open_in_full_screen": "Otwórz element pracy na pełnym ekranie"
   },
@@ -1109,6 +1113,18 @@
     "remove": {
       "success": "Podrzędny element pracy usunięto pomyślnie",
       "error": "Błąd podczas usuwania elementu podrzędnego"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Nie masz elementów podrzędnych, które pasują do filtrów, które zastosowałeś.",
+        "description": "Aby zobaczyć wszystkie elementy podrzędne, wyczyść wszystkie zastosowane filtry.",
+        "action": "Wyczyść filtry"
+      },
+      "list_filters": {
+        "title": "Nie masz elementów pracy, które pasują do filtrów, które zastosowałeś.",
+        "description": "Aby zobaczyć wszystkie elementy pracy, wyczyść wszystkie zastosowane filtry.",
+        "action": "Wyczyść filtry"
+      }
     }
   },
   "view": {
@@ -2447,5 +2463,9 @@
     "last_edited_by": "Ostatnio edytowane przez",
     "previously_edited_by": "Wcześniej edytowane przez",
     "edited_by": "Edytowane przez"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane nie uruchomił się. Może to być spowodowane tym, że jedna lub więcej usług Plane nie mogła się uruchomić.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Wybierz View Logs z setup.sh i logów Docker, aby mieć pewność."
   }
 }

@@ -19,6 +19,7 @@ import {
 // hooks
 import { useLabel, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+import { SettingsHeading } from "../settings";
 // plane web imports
 
 export const ProjectSettingsLabelList: React.FC = observer(() => {
@@ -75,14 +76,16 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
         data={selectDeleteLabel ?? null}
         onClose={() => setSelectDeleteLabel(null)}
       />
-      <div className="flex items-center justify-between border-b border-custom-border-100 pb-3.5">
-        <h3 className="text-xl font-medium">Labels</h3>
-        {isEditable && (
-          <Button variant="primary" onClick={newLabel} size="sm">
-            {t("common.add_label")}
-          </Button>
-        )}
-      </div>
+      <SettingsHeading
+        title={t("project_settings.labels.heading")}
+        description={t("project_settings.labels.description")}
+        button={{
+          label: t("common.add_label"),
+          onClick: newLabel,
+        }}
+        showButton={isEditable}
+      />
+
       <div className="w-full py-2">
         {showLabelForm && (
           <div className="my-2 w-full rounded border border-custom-border-200 px-3.5 py-2">
@@ -103,9 +106,15 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
           projectLabels.length === 0 && !showLabelForm ? (
             <div className="flex items-center justify-center h-full w-full">
               <DetailedEmptyState
-                title={t("project_settings.empty_state.labels.title")}
-                description={t("project_settings.empty_state.labels.description")}
+                title={""}
+                description={""}
+                primaryButton={{
+                  text: "Create your first label",
+                  onClick: newLabel,
+                }}
                 assetPath={resolvedPath}
+                className="w-full !px-0 !py-0"
+                size="md"
               />
             </div>
           ) : (

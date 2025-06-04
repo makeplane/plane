@@ -746,7 +746,8 @@
         "message": "Ceva a funcționat greșit. Te rugăm să încerci din nou."
       },
       "required": "Acest câmp este obligatoriu",
-      "entity_required": "{entity} este obligatoriu"
+      "entity_required": "{entity} este obligatoriu",
+      "restricted_entity": "{entity} este restricționat"
     },
     "update_link": "Actualizează link-ul",
     "attach": "Atașează",
@@ -847,6 +848,7 @@
     "live": "În direct",
     "change_history": "Istoric modificări",
     "coming_soon": "În curând",
+    "member": "Membru",
     "members": "Membri",
     "you": "Tu",
     "upgrade_cta": {
@@ -1079,7 +1081,9 @@
     "select": {
       "error": "Selectează cel puțin o activitate",
       "empty": "Nicio activitate selectată",
-      "add_selected": "Adaugă activitățile selectate"
+      "add_selected": "Adaugă activitățile selectate",
+      "select_all": "Selectează tot",
+      "deselect_all": "Deselează tot"
     },
     "open_in_full_screen": "Deschide activitatea pe tot ecranul"
   },
@@ -1107,6 +1111,18 @@
     "remove": {
       "success": "Sub-activitatea a fost eliminată cu succes",
       "error": "Eroare la eliminarea sub-activității"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Nu ai sub-elemente de lucru care corespund filtrelor pe care le-ai aplicat.",
+        "description": "Pentru a vedea toate sub-elementele de lucru, șterge toate filtrele aplicate.",
+        "action": "Șterge filtrele"
+      },
+      "list_filters": {
+        "title": "Nu ai elemente de lucru care corespund filtrelor pe care le-ai aplicat.",
+        "description": "Pentru a vedea toate elementele de lucru, șterge toate filtrele aplicate.",
+        "action": "Șterge filtrele"
+      }
     }
   },
   "view": {
@@ -2440,5 +2456,9 @@
     "last_edited_by": "Ultima editare de către",
     "previously_edited_by": "Editat anterior de către",
     "edited_by": "Editat de"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane nu a pornit. Aceasta ar putea fi din cauza că unul sau mai multe servicii Plane au eșuat să pornească.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Alegeți View Logs din setup.sh și logurile Docker pentru a fi siguri."
   }
 }

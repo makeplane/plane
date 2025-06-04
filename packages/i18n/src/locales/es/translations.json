@@ -750,7 +750,8 @@
         "message": "Algo salió mal. Por favor, inténtalo de nuevo."
       },
       "required": "Este campo es obligatorio",
-      "entity_required": "{entity} es obligatorio"
+      "entity_required": "{entity} es obligatorio",
+      "restricted_entity": "{entity} está restringido"
     },
     "update_link": "Actualizar enlace",
     "attach": "Adjuntar",
@@ -850,6 +851,7 @@
     "live": "En vivo",
     "change_history": "Historial de cambios",
     "coming_soon": "Próximamente",
+    "member": "Miembro",
     "members": "Miembros",
     "you": "Tú",
     "upgrade_cta": {
@@ -1082,7 +1084,9 @@
     "select": {
       "error": "Por favor selecciona al menos un elemento de trabajo",
       "empty": "No hay elementos de trabajo seleccionados",
-      "add_selected": "Agregar elementos seleccionados"
+      "add_selected": "Agregar elementos seleccionados",
+      "select_all": "Seleccionar todo",
+      "deselect_all": "Deseleccionar todo"
     },
     "open_in_full_screen": "Abrir elemento de trabajo en pantalla completa"
   },
@@ -1110,6 +1114,18 @@
     "remove": {
       "success": "Sub-elemento eliminado correctamente",
       "error": "Error al eliminar el sub-elemento"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "No tienes sub-elementos de trabajo que coincidan con los filtros que has aplicado.",
+        "description": "Para ver todos los sub-elementos de trabajo, elimina todos los filtros aplicados.",
+        "action": "Eliminar filtros"
+      },
+      "list_filters": {
+        "title": "No tienes elementos de trabajo que coincidan con los filtros que has aplicado.",
+        "description": "Para ver todos los elementos de trabajo, elimina todos los filtros aplicados.",
+        "action": "Eliminar filtros"
+      }
     }
   },
   "view": {
@@ -2448,5 +2464,9 @@
     "last_edited_by": "Última edición por",
     "previously_edited_by": "Editado anteriormente por",
     "edited_by": "Editado por"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane no se inició. Esto podría deberse a que uno o más servicios de Plane fallaron al iniciar.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Selecciona View Logs desde setup.sh y los logs de Docker para estar seguro."
   }
 }

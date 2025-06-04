@@ -748,7 +748,8 @@
         "message": "문제가 발생했습니다. 다시 시도해주세요."
       },
       "required": "이 필드는 필수입니다",
-      "entity_required": "{entity}가 필요합니다"
+      "entity_required": "{entity}가 필요합니다",
+      "restricted_entity": "{entity}은(는) 제한되어 있습니다"
     },
     "update_link": "링크 업데이트",
     "attach": "첨부",
@@ -849,6 +850,7 @@
     "live": "라이브",
     "change_history": "변경 기록",
     "coming_soon": "곧 출시",
+    "member": "멤버",
     "members": "멤버",
     "you": "나",
     "upgrade_cta": {
@@ -1081,7 +1083,9 @@
     "select": {
       "error": "최소 하나의 작업 항목을 선택하세요",
       "empty": "선택된 작업 항목 없음",
-      "add_selected": "선택된 작업 항목 추가"
+      "add_selected": "선택된 작업 항목 추가",
+      "select_all": "모두 선택",
+      "deselect_all": "모두 선택 해제"
     },
     "open_in_full_screen": "작업 항목을 전체 화면으로 열기"
   },
@@ -1109,6 +1113,18 @@
     "remove": {
       "success": "하위 작업 항목이 성공적으로 제거되었습니다",
       "error": "하위 작업 항목 제거 중 오류 발생"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "적용된 필터에 일치하는 하위 작업 항목이 없습니다.",
+        "description": "모든 하위 작업 항목을 보려면 모든 적용된 필터를 지우세요.",
+        "action": "필터 지우기"
+      },
+      "list_filters": {
+        "title": "적용된 필터에 일치하는 작업 항목이 없습니다.",
+        "description": "모든 작업 항목을 보려면 모든 적용된 필터를 지우세요.",
+        "action": "필터 지우기"
+      }
     }
   },
   "view": {
@@ -2448,5 +2464,9 @@
     "last_edited_by": "마지막 편집자",
     "previously_edited_by": "이전 편집자",
     "edited_by": "편집자"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane이 시작되지 않았습니다. 이는 하나 이상의 Plane 서비스가 시작에 실패했기 때문일 수 있습니다.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "확실히 하려면 setup.sh와 Docker 로그에서 View Logs를 선택하세요."
   }
 }

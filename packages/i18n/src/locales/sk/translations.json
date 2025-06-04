@@ -748,7 +748,8 @@
         "message": "Niečo sa pokazilo. Skúste to prosím znova."
       },
       "required": "Toto pole je povinné",
-      "entity_required": "{entity} je povinná"
+      "entity_required": "{entity} je povinná",
+      "restricted_entity": "{entity} je obmedzený"
     },
     "update_link": "Aktualizovať odkaz",
     "attach": "Pripojiť",
@@ -849,6 +850,7 @@
     "live": "Živé",
     "change_history": "História zmien",
     "coming_soon": "Už čoskoro",
+    "member": "Člen",
     "members": "Členovia",
     "you": "Vy",
     "upgrade_cta": {
@@ -1081,7 +1083,9 @@
     "select": {
       "error": "Vyberte aspoň jednu pracovnú položku",
       "empty": "Nie sú vybrané žiadne pracovné položky",
-      "add_selected": "Pridať vybrané pracovné položky"
+      "add_selected": "Pridať vybrané pracovné položky",
+      "select_all": "Vybrať všetko",
+      "deselect_all": "Zrušiť výber všetkého"
     },
     "open_in_full_screen": "Otvoriť pracovnú položku na celú obrazovku"
   },
@@ -1109,6 +1113,18 @@
     "remove": {
       "success": "Podriadená pracovná položka bola úspešne odstránená",
       "error": "Chyba pri odstraňovaní podriadenej položky"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Nemáte podriadené pracovné položky, ktoré zodpovedajú použitým filtrom.",
+        "description": "Pre zobrazenie všetkých podriadených pracovných položiek vymažte všetky použité filtre.",
+        "action": "Vymazať filtre"
+      },
+      "list_filters": {
+        "title": "Nemáte pracovné položky, ktoré zodpovedajú použitým filtrom.",
+        "description": "Pre zobrazenie všetkých pracovných položiek vymažte všetky použité filtre.",
+        "action": "Vymazať filtre"
+      }
     }
   },
   "view": {
@@ -2447,5 +2463,9 @@
     "last_edited_by": "Naposledy upravené používateľom",
     "previously_edited_by": "Predtým upravené používateľom",
     "edited_by": "Upravené používateľom"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane sa nespustil. Toto môže byť spôsobené tým, že sa jedna alebo viac služieb Plane nepodarilo spustiť.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Vyberte View Logs z setup.sh a Docker logov, aby ste si boli istí."
   }
 }

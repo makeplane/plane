@@ -748,7 +748,8 @@
         "message": "問題が発生しました。もう一度お試しください。"
       },
       "required": "この項目は必須です",
-      "entity_required": "{entity}は必須です"
+      "entity_required": "{entity}は必須です",
+      "restricted_entity": "{entity} は制限されています"
     },
     "update_link": "リンクを更新",
     "attach": "添付",
@@ -848,6 +849,7 @@
     "live": "ライブ",
     "change_history": "変更履歴",
     "coming_soon": "近日公開",
+    "member": "メンバー",
     "members": "メンバー",
     "you": "あなた",
     "upgrade_cta": {
@@ -1080,7 +1082,9 @@
     "select": {
       "error": "少なくとも1つの作業項目を選択してください",
       "empty": "作業項目が選択されていません",
-      "add_selected": "選択した作業項目を追加"
+      "add_selected": "選択した作業項目を追加",
+      "select_all": "すべて選択",
+      "deselect_all": "すべての選択を解除"
     },
     "open_in_full_screen": "作業項目をフルスクリーンで開く"
   },
@@ -1108,6 +1112,18 @@
     "remove": {
       "success": "サブ作業項目を削除しました",
       "error": "サブ作業項目の削除中にエラーが発生しました"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "適用されたフィルターに一致するサブ作業項目がありません。",
+        "description": "すべてのサブ作業項目を表示するには、すべての適用されたフィルターをクリアしてください。",
+        "action": "フィルターをクリア"
+      },
+      "list_filters": {
+        "title": "適用されたフィルターに一致する作業項目がありません。",
+        "description": "すべての作業項目を表示するには、すべての適用されたフィルターをクリアしてください。",
+        "action": "フィルターをクリア"
+      }
     }
   },
   "view": {
@@ -2446,5 +2462,9 @@
     "last_edited_by": "最終編集者",
     "previously_edited_by": "以前の編集者",
     "edited_by": "編集者"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Planeが起動しませんでした。これは1つまたは複数のPlaneサービスの起動に失敗したことが原因である可能性があります。",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "setup.shとDockerログからView Logsを選択して確認してください。"
   }
 }

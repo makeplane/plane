@@ -748,7 +748,8 @@
         "message": "发生错误。请重试。"
       },
       "required": "此字段为必填项",
-      "entity_required": "{entity}为必填项"
+      "entity_required": "{entity}为必填项",
+      "restricted_entity": "{entity}已被限制"
     },
     "update_link": "更新链接",
     "attach": "附加",
@@ -848,6 +849,7 @@
     "live": "实时",
     "change_history": "变更历史",
     "coming_soon": "即将推出",
+    "member": "成员",
     "members": "成员",
     "you": "你",
     "upgrade_cta": {
@@ -1080,7 +1082,9 @@
     "select": {
       "error": "请至少选择一个工作项",
       "empty": "未选择工作项",
-      "add_selected": "添加所选工作项"
+      "add_selected": "添加所选工作项",
+      "select_all": "全选",
+      "deselect_all": "取消全选"
     },
     "open_in_full_screen": "在全屏中打开工作项"
   },
@@ -1108,6 +1112,18 @@
     "remove": {
       "success": "子工作项移除成功",
       "error": "移除子工作项时出错"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "您没有符合您应用的过滤器的子工作项。",
+        "description": "要查看所有子工作项，请清除所有应用的过滤器。",
+        "action": "清除过滤器"
+      },
+      "list_filters": {
+        "title": "您没有符合您应用的过滤器的工作项。",
+        "description": "要查看所有工作项，请清除所有应用的过滤器。",
+        "action": "清除过滤器"
+      }
     }
   },
   "view": {
@@ -2427,5 +2443,9 @@
     "last_edited_by": "最后编辑者",
     "previously_edited_by": "之前编辑者",
     "edited_by": "编辑者"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane 未能启动。这可能是因为一个或多个 Plane 服务启动失败。",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "请选择“查看日志”来查看 setup.sh 和 Docker 日志，以确认问题。"
   }
 }

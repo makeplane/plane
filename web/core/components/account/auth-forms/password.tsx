@@ -167,7 +167,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
         <input type="hidden" value={passwordFormData.email} name="email" />
         {nextPath && <input type="hidden" value={nextPath} name="next_path" />}
         <div className="space-y-1">
-          <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
+          <label htmlFor="email" className="text-sm font-medium text-onboarding-text-300">
             {t("auth.common.email.label")}
           </label>
           <div
@@ -184,21 +184,26 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
               disabled
             />
             {passwordFormData.email.length > 0 && (
-              <XCircle
-                className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
+              <button
+                type="button"
+                className="absolute right-3 size-5"
                 onClick={handleEmailClear}
-              />
+                aria-label={t("aria_labels.auth_forms.clear_email")}
+              >
+                <XCircle className="size-5 stroke-custom-text-400" />
+              </button>
             )}
           </div>
         </div>
 
         <div className="space-y-1">
-          <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
+          <label htmlFor="password" className="text-sm text-onboarding-text-300 font-medium">
             {mode === EAuthModes.SIGN_IN ? t("auth.common.password.label") : t("auth.common.password.set_password")}
           </label>
           <div className="relative flex items-center rounded-md bg-onboarding-background-200">
             <Input
               type={showPassword?.password ? "text" : "password"}
+              id="password"
               name="password"
               value={passwordFormData.password}
               onChange={(e) => handleFormChange("password", e.target.value)}
@@ -209,29 +214,33 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
               autoComplete="on"
               autoFocus
             />
-            {showPassword?.password ? (
-              <EyeOff
-                className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                onClick={() => handleShowPassword("password")}
-              />
-            ) : (
-              <Eye
-                className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                onClick={() => handleShowPassword("password")}
-              />
-            )}
+            <button
+              type="button"
+              onClick={() => handleShowPassword("password")}
+              className="absolute right-3 size-5 grid place-items-center"
+              aria-label={t(
+                showPassword?.password ? "aria_labels.auth_forms.hide_password" : "aria_labels.auth_forms.show_password"
+              )}
+            >
+              {showPassword?.password ? (
+                <EyeOff className="size-5 stroke-custom-text-400" />
+              ) : (
+                <Eye className="size-5 stroke-custom-text-400" />
+              )}
+            </button>
           </div>
           {passwordSupport}
         </div>
 
         {mode === EAuthModes.SIGN_UP && (
           <div className="space-y-1">
-            <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
+            <label htmlFor="confirm-password" className="text-sm text-onboarding-text-300 font-medium">
               {t("auth.common.password.confirm_password.label")}
             </label>
             <div className="relative flex items-center rounded-md bg-onboarding-background-200">
               <Input
                 type={showPassword?.retypePassword ? "text" : "password"}
+                id="confirm-password"
                 name="confirm_password"
                 value={passwordFormData.confirm_password}
                 onChange={(e) => handleFormChange("confirm_password", e.target.value)}
@@ -240,17 +249,22 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
                 onFocus={() => setIsRetryPasswordInputFocused(true)}
                 onBlur={() => setIsRetryPasswordInputFocused(false)}
               />
-              {showPassword?.retypePassword ? (
-                <EyeOff
-                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                  onClick={() => handleShowPassword("retypePassword")}
-                />
-              ) : (
-                <Eye
-                  className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
-                  onClick={() => handleShowPassword("retypePassword")}
-                />
-              )}
+              <button
+                type="button"
+                className="absolute right-3 size-5 grid place-items-center"
+                aria-label={t(
+                  showPassword?.retypePassword
+                    ? "aria_labels.auth_forms.hide_password"
+                    : "aria_labels.auth_forms.show_password"
+                )}
+                onClick={() => handleShowPassword("retypePassword")}
+              >
+                {showPassword?.retypePassword ? (
+                  <EyeOff className="size-5 stroke-custom-text-400" />
+                ) : (
+                  <Eye className="size-5 stroke-custom-text-400" />
+                )}
+              </button>
             </div>
             {!!passwordFormData.confirm_password &&
               passwordFormData.password !== passwordFormData.confirm_password &&

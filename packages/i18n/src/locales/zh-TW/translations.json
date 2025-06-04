@@ -748,7 +748,8 @@
         "message": "發生錯誤。請再試一次。"
       },
       "required": "此欄位為必填",
-      "entity_required": "{entity} 為必填"
+      "entity_required": "{entity} 為必填",
+      "restricted_entity": "{entity}已被限制"
     },
     "update_link": "更新連結",
     "attach": "附加",
@@ -849,6 +850,7 @@
     "live": "即時",
     "change_history": "變更歷史記錄",
     "coming_soon": "即將推出",
+    "member": "成員",
     "members": "成員",
     "you": "您",
     "upgrade_cta": {
@@ -1081,7 +1083,9 @@
     "select": {
       "error": "請至少選擇一個工作事項",
       "empty": "未選擇工作事項",
-      "add_selected": "新增已選取的工作事項"
+      "add_selected": "新增已選取的工作事項",
+      "select_all": "全選",
+      "deselect_all": "取消全選"
     },
     "open_in_full_screen": "以全螢幕開啟工作事項"
   },
@@ -1109,6 +1113,18 @@
     "remove": {
       "success": "子工作事項移除成功",
       "error": "移除子工作事項時發生錯誤"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "您沒有符合您應用過的過濾器的子工作事項。",
+        "description": "要查看所有子工作事項，請清除所有應用過的過濾器。",
+        "action": "清除過濾器"
+      },
+      "list_filters": {
+        "title": "您沒有符合您應用過的過濾器的工作事項。",
+        "description": "要查看所有工作事項，請清除所有應用過的過濾器。",
+        "action": "清除過濾器"
+      }
     }
   },
   "view": {
@@ -2448,5 +2464,10 @@
     "last_edited_by": "最後編輯者",
     "previously_edited_by": "先前編輯者",
     "edited_by": "編輯者"
+  },
+
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane 未能啟動。這可能是因為一個或多個 Plane 服務啟動失敗。",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "從 setup.sh 和 Docker 日誌中選擇 View Logs 來確認。"
   }
 }

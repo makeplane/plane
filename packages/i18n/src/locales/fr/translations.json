@@ -748,7 +748,8 @@
         "message": "Quelque chose s'est mal passé. Veuillez réessayer."
       },
       "required": "Ce champ est obligatoire",
-      "entity_required": "{entity} est requis"
+      "entity_required": "{entity} est requis",
+      "restricted_entity": "{entity} est restreint"
     },
     "update_link": "Mettre à jour le lien",
     "attach": "Joindre",
@@ -848,6 +849,7 @@
     "live": "En direct",
     "change_history": "Historique des modifications",
     "coming_soon": "À venir",
+    "member": "Membre",
     "members": "Membres",
     "you": "Vous",
     "upgrade_cta": {
@@ -1080,7 +1082,9 @@
     "select": {
       "error": "Veuillez sélectionner au moins un élément de travail",
       "empty": "Aucun élément de travail sélectionné",
-      "add_selected": "Ajouter les éléments de travail sélectionnés"
+      "add_selected": "Ajouter les éléments de travail sélectionnés",
+      "select_all": "Sélectionner tout",
+      "deselect_all": "Tout désélectionner"
     },
     "open_in_full_screen": "Ouvrir l'élément de travail en plein écran"
   },
@@ -1108,6 +1112,18 @@
     "remove": {
       "success": "Sous-élément de travail supprimé avec succès",
       "error": "Erreur lors de la suppression du sous-élément de travail"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Vous n'avez pas de sous-éléments de travail qui correspondent aux filtres que vous avez appliqués.",
+        "description": "Pour voir tous les sous-éléments de travail, effacer tous les filtres appliqués.",
+        "action": "Effacer les filtres"
+      },
+      "list_filters": {
+        "title": "Vous n'avez pas d'éléments de travail qui correspondent aux filtres que vous avez appliqués.",
+        "description": "Pour voir tous les éléments de travail, effacer tous les filtres appliqués.",
+        "action": "Effacer les filtres"
+      }
     }
   },
   "view": {
@@ -2446,5 +2462,9 @@
     "last_edited_by": "Dernière modification par",
     "previously_edited_by": "Précédemment modifié par",
     "edited_by": "Modifié par"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane n&apos;a pas démarré. Cela pourrait être dû au fait qu&apos;un ou plusieurs services Plane ont échoué à démarrer.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Choisissez View Logs depuis setup.sh et les logs Docker pour en être sûr."
   }
 }
