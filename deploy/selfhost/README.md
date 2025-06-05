@@ -486,7 +486,7 @@ When you want to restore the previously backed-up data, follow the instructions 
 1. Download the restore script using the command below. We suggest downloading it in the same folder as `setup.sh`.
 
    ```bash
-   curl -fsSL -o restore.sh https://raw.githubusercontent.com/makeplane/plane/master/deploy/selfhost/restore.sh
+   curl -fsSL -o restore.sh https://github.com/makeplane/plane/releases/latest/download/restore.sh
    chmod +x restore.sh
    ```
 
@@ -526,6 +526,31 @@ When you want to restore the previously backed-up data, follow the instructions 
    ```
 
 1. Start the Plane instance using `./setup.sh start`.
+
+---
+
+### Restore for Commercial Air-Gapped (Docker Compose)
+
+When you want to restore the previously backed-up data on Plane Commercial Air-Gapped version, follow the instructions below.
+
+1. Download the restore script using the command below
+
+   ```bash
+   curl -fsSL -o restore.sh https://github.com/makeplane/plane/releases/latest/download/restore-airgapped.sh
+   chmod +x restore-airgapped.sh
+   ```
+
+1. Copy the backup folder and the `restore-airgapped.sh` to `Commercial Airgapped Edition` server
+
+1. Make sure that Plane Commercial (Airgapped) is extracted and ready to get started. In case it is running, you would need to stop that.
+
+1. Execute the command below to restore your data.
+
+   ```bash
+   ./restore-airgapped.sh <path to backup folder containing *.tar.gz files>
+   ```
+
+1. After restoration, you are ready to start Plane Commercial (Airgapped) will all your previously saved data. 
 
 ---
 
