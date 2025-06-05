@@ -100,9 +100,6 @@ Each object in `custom_properties` can have:
 - `key`: string (required)
 - `value`: string/int/bool/date (required)
 - `data_type`: string (`string`, `number`, `boolean`, `date`)
-- `int_value`: int (if data_type is number)
-- `bool_value`: bool (if data_type is boolean)
-- `date_value`: date (if data_type is date)
 - `issue_type_custom_property`: UUID (required)
 
 ### Example Request
@@ -148,6 +145,7 @@ Each object in `custom_properties` can have:
 ### Create Issue API Validations
 
 - `name` is a required field.
+- `created_by` is a required field. If you have UUID, send it. If not, then add a name. It will create a default user for it.
 - `state_id`, `type_id`, `parent` (if provided) must correspond to existing and valid UUIDs.
 - `priority` must be one of the allowed string values: `urgent`, `high`, `medium`, `low`, `none`.
 - `start_date` and `target_date` must be valid dates in YYYY-MM-DD format.
@@ -156,7 +154,6 @@ Each object in `custom_properties` can have:
   - `key` and `issue_type_custom_property` are required for each custom property object.
   - `value` is required and its type should match `data_type`.
   - `data_type` must be one of `string`, `number`, `boolean`, `date`.
-  - Corresponding `int_value`, `bool_value`, or `date_value` should be provided if `data_type` is `number`, `boolean`, or `date` respectively.
 
 ### Create Issue API Default Values
 
@@ -287,7 +284,7 @@ GET /api/v1/workspaces/{slug}/projects/{project_id}/issues/
 
 | Parameter      | Type    | Description                                                                 |
 |---------------|---------|-----------------------------------------------------------------------------|
-| per_page       | int     | Number of items per page (default: 20, max: 1000). Defines the slice size for pagination. |
+| per_page       | int     | Number of items per page (default: 1000, max: 1000). Defines the slice size for pagination. |
 | cursor         | string  | Pagination cursor in the format "per_page:offset:is_prev". Defaults to "per_page:0:0" if not provided. |
 | order_by       | string  | Field to sort by (e.g., `created_at`, `priority`, `-created_at`)            |
 | filters        | object  | JSON object with filter criteria (see below)                                |
