@@ -15,6 +15,7 @@ import { AppProvider } from "./provider";
 export const metadata: Metadata = {
   title: "Plane | Simple, extensible, open-source project management tool.",
   description: SITE_DESCRIPTION,
+  metadataBase: new URL("https://app.plane.so"),
   openGraph: {
     title: "Plane | Simple, extensible, open-source project management tool.",
     description: "Open-source project management tool to manage work items, cycles, and product roadmaps easily",
