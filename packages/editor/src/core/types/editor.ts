@@ -160,6 +160,7 @@ export interface IReadOnlyEditorProps {
   disabledExtensions: TExtensions[];
   displayConfig?: TDisplayConfig;
   editorClassName?: string;
+  extensions?: Extensions;
   fileHandler: TReadOnlyFileHandler;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
   id: string;

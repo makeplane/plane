@@ -36,7 +36,7 @@ from plane.db.models import (
     Workspace,
     WorkspaceMember,
     WorkspaceTheme,
-    Profile
+    Profile,
 )
 from plane.app.permissions import ROLE, allow_permission
 from django.utils.decorators import method_decorator
@@ -159,14 +159,13 @@ class WorkSpaceViewSet(BaseViewSet):
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
 
-
     def remove_last_workspace_ids_from_user_settings(self, id: uuid.UUID) -> None:
         """
         Remove the last workspace id from the user settings
         """
         Profile.objects.filter(last_workspace_id=id).update(last_workspace_id=None)
         return
-    
+
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def destroy(self, request, *args, **kwargs):
         # Get the workspace
@@ -179,8 +178,6 @@ class UserWorkSpacesEndpoint(BaseAPIView):
     search_fields = ["name"]
     filterset_fields = ["owner"]
 
-    @method_decorator(cache_control(private=True, max_age=12))
-    @method_decorator(vary_on_cookie)
     def get(self, request):
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
         member_count = (

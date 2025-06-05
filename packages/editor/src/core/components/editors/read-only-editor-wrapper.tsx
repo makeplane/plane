@@ -15,6 +15,7 @@ export const ReadOnlyEditorWrapper = (props: IReadOnlyEditorProps) => {
     disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
     editorClassName = "",
+    extensions,
     fileHandler,
     forwardedRef,
     id,
@@ -25,6 +26,7 @@ export const ReadOnlyEditorWrapper = (props: IReadOnlyEditorProps) => {
   const editor = useReadOnlyEditor({
     disabledExtensions,
     editorClassName,
+    extensions,
     fileHandler,
     forwardedRef,
     initialValue,
