@@ -440,7 +440,7 @@ ATTACHMENT_MIME_TYPES = [
 # Seed directory path
 SEED_DIR = os.path.join(BASE_DIR, "seeds")
 
-ENABLE_DRF_SPECTACULAR = os.environ.get("ENABLE_DRF_SPECTACULAR", "1") == "1"
+ENABLE_DRF_SPECTACULAR = os.environ.get("ENABLE_DRF_SPECTACULAR", "0") == "1"
 
 if ENABLE_DRF_SPECTACULAR:
     INSTALLED_APPS.append("drf_spectacular")
