@@ -29,7 +29,7 @@ export const PRO_PLAN_FEATURES_MAP = [
   },
   {
     label: "Work Item Templates",
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     label: "Epics",
@@ -37,14 +37,14 @@ export const PRO_PLAN_FEATURES_MAP = [
   },
   {
     label: "Dashboards + Reports",
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     label: "Initiatives",
     comingSoon: false,
   },
   {
-    label: "Shared And Public Views",
+    label: "Public And Private Views",
     comingSoon: false,
   },
 ];
@@ -81,7 +81,7 @@ export const ONE_TO_PRO_PLAN_FEATURES_MAP = [
   },
   {
     label: "Work Item Templates",
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     label: "Epics",
@@ -89,14 +89,14 @@ export const ONE_TO_PRO_PLAN_FEATURES_MAP = [
   },
   {
     label: "Dashboards + Reports",
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     label: "Initiatives",
     comingSoon: false,
   },
   {
-    label: "Shared And Public Views",
+    label: "Public And Private Views",
     comingSoon: false,
   },
 ];
@@ -111,11 +111,7 @@ export const BUSINESS_PLAN_FEATURES_MAP = [
     comingSoon: false,
   },
   {
-    label: "Decision + Loops Automation",
-    comingSoon: false,
-  },
-  {
-    label: "Custom Reports",
+    label: "Customers",
     comingSoon: false,
   },
   {
@@ -123,23 +119,27 @@ export const BUSINESS_PLAN_FEATURES_MAP = [
     comingSoon: false,
   },
   {
-    label: "Intake Forms",
+    label: "Intake Forms & Emails",
     comingSoon: false,
   },
   {
-    label: "SLAs",
+    label: "Page Templates",
+    comingSoon: false,
+  },
+  // {
+  //   label: "Advanced Page Analytics",
+  //   comingSoon: true,
+  // },
+  {
+    label: "Decision + Loops Automation",
     comingSoon: true,
   },
+  // {
+  //   label: "SLAs",
+  //   comingSoon: true,
+  // },
   {
     label: "Baselines And Deviations",
-    comingSoon: true,
-  },
-  {
-    label: "Page Templates",
-    comingSoon: true,
-  },
-  {
-    label: "Advanced Page Analytics",
     comingSoon: true,
   },
 ];
