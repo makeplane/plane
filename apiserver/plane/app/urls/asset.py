@@ -91,7 +91,7 @@ urlpatterns = [
         name="asset-check",
     ),
     path(
-        "assets/v2/workspaces/<slug:slug>/duplicate-assets/",
+        "assets/v2/workspaces/<str:slug>/duplicate-assets/",
         DuplicateAssetEndpoint.as_view(),
         name="duplicate-assets",
     ),
