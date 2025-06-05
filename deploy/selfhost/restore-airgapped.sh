@@ -1,5 +1,5 @@
 #!/bin/bash
-
++set -euo pipefail
 
 function print_header() {
 clear
@@ -97,7 +97,7 @@ function restoreData() {
         chown -R $CURRENT_USER_ID:$CURRENT_GROUP_ID "$AIRGAPPED_INSTALL_PATH/data"
     fi
 
-    for BACKUP_FILE in $BACKUP_FOLDER/*.tar.gz; do
+    for BACKUP_FILE in "$BACKUP_FOLDER/*.tar.gz"; do
         if [ -e "$BACKUP_FILE" ]; then
 
             # get the basefilename without the extension
@@ -122,7 +122,7 @@ function restoreData() {
             echo ""
             echo "Please provide the path to the backup file."
             echo ""
-            echo "Usage: ./restore.sh /path/to/backup"
+            echo "Usage: $0 /path/to/backup"  
             exit 1
         fi
     done

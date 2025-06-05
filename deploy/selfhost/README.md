@@ -536,7 +536,7 @@ When you want to restore the previously backed-up data on Plane Commercial Air-G
 1. Download the restore script using the command below
 
    ```bash
-   curl -fsSL -o restore.sh https://github.com/makeplane/plane/releases/latest/download/restore-airgapped.sh
+   curl -fsSL -o restore-airgapped.sh https://github.com/makeplane/plane/releases/latest/download/restore-airgapped.sh
    chmod +x restore-airgapped.sh
    ```
 
