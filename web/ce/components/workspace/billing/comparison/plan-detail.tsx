@@ -11,10 +11,12 @@ import { useTranslation } from "@plane/i18n";
 import { TBillingFrequency } from "@plane/types";
 import { getButtonStyling } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
+// components
+import { DiscountInfo } from "@/components/license/modal/card/discount-info";
 // constants
 import { getUpgradeButtonStyle } from "@/components/workspace/billing/subscription";
 import { TPlanDetail } from "@/constants/plans";
-// components
+// local imports
 import { PlanFrequencyToggle } from "./frequency-toggle";
 
 type TPlanDetailProps = {
@@ -64,11 +66,17 @@ export const PlanDetail: FC<TPlanDetailProps> = observer((props) => {
         </div>
         <div className="flex gap-x-2 items-start text-custom-text-300 pb-1 transition-all duration-300 animate-slide-up">
           {isSubscriptionActive && displayPrice !== undefined && (
-            <span className="text-custom-text-100 text-2xl font-semibold transition-all duration-300">
-              {"$" + displayPrice}
-            </span>
+            <div className="flex items-center gap-1 text-2xl text-custom-text-100 font-semibold transition-all duration-300">
+              <DiscountInfo
+                currency="$"
+                frequency={billingFrequency ?? "month"}
+                price={displayPrice}
+                subscriptionType={subscriptionType}
+                className="mr-1.5"
+              />
+            </div>
           )}
-          <div className="pt-2">
+          <div className="pt-1">
             {pricingDescription && <div className="transition-all duration-300">{pricingDescription}</div>}
             {pricingSecondaryDescription && (
               <div className="text-xs text-custom-text-400 transition-all duration-300">
