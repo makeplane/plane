@@ -19,17 +19,6 @@ logger = logging.getLogger("plane.worker")
 
 DEFAULT_FAVICON = "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWxpbmstaWNvbiBsdWNpZGUtbGluayI+PHBhdGggZD0iTTEwIDEzYTUgNSAwIDAgMCA3LjU0LjU0bDMtM2E1IDUgMCAwIDAtNy4wNy03LjA3bC0xLjcyIDEuNzEiLz48cGF0aCBkPSJNMTQgMTFhNSA1IDAgMCAwLTcuNTQtLjU0bC0zIDNhNSA1IDAgMCAwIDcuMDcgNy4wN2wxLjcxLTEuNzEiLz48L3N2Zz4="  # noqa: E501
 
-
-@shared_task
-def crawl_work_item_link_title(id: str, url: str) -> None:
-    meta_data = crawl_work_item_link_title_and_favicon(url)
-    issue_link = IssueLink.objects.get(id=id)
-
-    issue_link.metadata = meta_data
-
-    issue_link.save()
-
-
 def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
     """
     Crawls a URL to extract the title and favicon.
@@ -57,17 +46,18 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"  # noqa: E501
         }
 
-        # Fetch the main page
-        response = requests.get(url, headers=headers, timeout=2)
+        soup = None
+        title = None
 
-        response.raise_for_status()
+        try:
+            response = requests.get(url, headers=headers, timeout=1)
 
-        # Parse HTML
-        soup = BeautifulSoup(response.content, "html.parser")
+            soup = BeautifulSoup(response.content, "html.parser")
+            title_tag = soup.find("title")
+            title = title_tag.get_text().strip() if title_tag else None
 
-        # Extract title
-        title_tag = soup.find("title")
-        title = title_tag.get_text().strip() if title_tag else None
+        except requests.RequestException as e:
+            logger.warning(f"Failed to fetch HTML for title: {str(e)}")
 
         # Fetch and encode favicon
         favicon_base64 = fetch_and_encode_favicon(headers, soup, url)
@@ -82,14 +72,6 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
 
         return result
 
-    except requests.RequestException as e:
-        log_exception(e)
-        return {
-            "error": f"Request failed: {str(e)}",
-            "title": None,
-            "favicon": None,
-            "url": url,
-        }
     except Exception as e:
         log_exception(e)
         return {
@@ -131,7 +113,6 @@ def find_favicon_url(soup: BeautifulSoup, base_url: str) -> Optional[str]:
     # Check if fallback exists
     try:
         response = requests.head(fallback_url, timeout=2)
-        response.raise_for_status()
         if response.status_code == 200:
             return fallback_url
     except requests.RequestException as e:
@@ -162,8 +143,7 @@ def fetch_and_encode_favicon(
                 "favicon_base64": f"data:image/svg+xml;base64,{DEFAULT_FAVICON}",
             }
 
-        response = requests.get(favicon_url, headers=headers, timeout=2)
-        response.raise_for_status()
+        response = requests.get(favicon_url, headers=headers, timeout=1)
 
         # Get content type
         content_type = response.headers.get("content-type", "image/x-icon")
@@ -183,3 +163,13 @@ def fetch_and_encode_favicon(
             "favicon_url": None,
             "favicon_base64": f"data:image/svg+xml;base64,{DEFAULT_FAVICON}",
         }
+
+
+@shared_task
+def crawl_work_item_link_title(id: str, url: str) -> None:
+    meta_data = crawl_work_item_link_title_and_favicon(url)
+    issue_link = IssueLink.objects.get(id=id)
+
+    issue_link.metadata = meta_data
+
+    issue_link.save()
