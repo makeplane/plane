@@ -60,7 +60,7 @@ const TotalInsights: React.FC<{
     isEpic,
   } = useAnalytics();
   const { data: totalInsightsData, isLoading } = useSWR(
-    `total-insights-${analyticsType}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}`,
+    `total-insights-${analyticsType}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isEpic}`,
     () =>
       analyticsService.getAdvanceAnalytics<IAnalyticsResponse>(
         workspaceSlug,

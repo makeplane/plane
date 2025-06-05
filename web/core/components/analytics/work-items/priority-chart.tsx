@@ -46,7 +46,7 @@ const PriorityChart = observer((props: Props) => {
   const { t } = useTranslation();
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics/empty-chart-bar" });
   // store hooks
-  const { selectedDuration, selectedProjects, selectedCycle, selectedModule, isPeekView } = useAnalytics();
+  const { selectedDuration, selectedProjects, selectedCycle, selectedModule, isPeekView, isEpic } = useAnalytics();
   const { workspaceStates } = useProjectState();
   const { resolvedTheme } = useTheme();
   // router
@@ -55,7 +55,7 @@ const PriorityChart = observer((props: Props) => {
 
   const { data: priorityChartData, isLoading: priorityChartLoading } = useSWR(
     `customized-insights-chart-${workspaceSlug}-${selectedDuration}-
-    ${selectedProjects}-${selectedCycle}-${selectedModule}-${props.x_axis}-${props.y_axis}-${props.group_by}-${isPeekView}`,
+    ${selectedProjects}-${selectedCycle}-${selectedModule}-${props.x_axis}-${props.y_axis}-${props.group_by}-${isPeekView}-${isEpic}`,
     () =>
       analyticsService.getAdvanceAnalyticsCharts<TChart>(
         workspaceSlug,
@@ -65,6 +65,7 @@ const PriorityChart = observer((props: Props) => {
           ...(selectedProjects?.length > 0 && { project_ids: selectedProjects?.join(",") }),
           ...(selectedCycle ? { cycle_id: selectedCycle } : {}),
           ...(selectedModule ? { module_id: selectedModule } : {}),
+          ...(isEpic ? { epic: true } : {}),
           ...props,
         },
         isPeekView

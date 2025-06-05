@@ -19,14 +19,21 @@ import { ChartLoader } from "../loaders";
 
 const analyticsService = new AnalyticsService();
 const CreatedVsResolved = observer(() => {
-  const { selectedDuration, selectedDurationLabel, selectedProjects, selectedCycle, selectedModule, isPeekView } =
-    useAnalytics();
+  const {
+    selectedDuration,
+    selectedDurationLabel,
+    selectedProjects,
+    selectedCycle,
+    selectedModule,
+    isPeekView,
+    isEpic,
+  } = useAnalytics();
   const params = useParams();
   const { t } = useTranslation();
   const workspaceSlug = params.workspaceSlug.toString();
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics/empty-chart-area" });
   const { data: createdVsResolvedData, isLoading: isCreatedVsResolvedLoading } = useSWR(
-    `created-vs-resolved-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}`,
+    `created-vs-resolved-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}-${isEpic}`,
     () =>
       analyticsService.getAdvanceAnalyticsCharts<IChartResponse>(
         workspaceSlug,
@@ -36,6 +43,7 @@ const CreatedVsResolved = observer(() => {
           ...(selectedProjects?.length > 0 && { project_ids: selectedProjects?.join(",") }),
           ...(selectedCycle ? { cycle_id: selectedCycle } : {}),
           ...(selectedModule ? { module_id: selectedModule } : {}),
+          ...(isEpic ? { epic: true } : {}),
         },
         isPeekView
       )
@@ -92,11 +100,11 @@ const CreatedVsResolved = observer(() => {
           areas={areas}
           xAxis={{
             key: "name",
-            label: "Date",
+            label: t("date"),
           }}
           yAxis={{
             key: "count",
-            label: "Number of Issues",
+            label: t("no_of", { entity: t("work_items") }),
             offset: -30,
             dx: -22,
           }}
