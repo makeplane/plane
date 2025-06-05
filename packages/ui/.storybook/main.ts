@@ -13,16 +13,37 @@ const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
   addons: [
     getAbsolutePath("@storybook/addon-webpack5-compiler-swc"),
-    getAbsolutePath("@storybook/addon-onboarding"),
     getAbsolutePath("@storybook/addon-links"),
-    getAbsolutePath("@storybook/addon-essentials"),
     getAbsolutePath("@chromatic-com/storybook"),
-    getAbsolutePath("@storybook/addon-interactions"),
-    "@storybook/addon-styling-webpack"
+    getAbsolutePath("@storybook/addon-docs")
   ],
   framework: {
     name: getAbsolutePath("@storybook/react-webpack5"),
     options: {},
+  },
+  webpackFinal: async (config) => {
+    if (!config.module) config.module = { rules: [] };
+    if (!config.module.rules) config.module.rules = [];
+    // Find the existing CSS rule
+    const cssRule = config.module.rules.find(
+      (rule) =>
+        typeof rule === 'object' &&
+        rule !== null &&
+        'test' in rule &&
+        rule.test instanceof RegExp &&
+        rule.test.test('test.css')
+    );
+    if (cssRule && typeof cssRule === 'object' && 'use' in cssRule) {
+      cssRule.use = [
+        'style-loader',
+        {
+          loader: 'css-loader',
+          options: { importLoaders: 1 }
+        },
+        'postcss-loader'
+      ];
+    }
+    return config;
   },
 };
 export default config;
