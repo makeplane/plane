@@ -867,7 +867,19 @@
     "view": "ビュー",
     "deactivated_user": "無効化されたユーザー",
     "apply": "適用",
-    "applying": "適用中"
+    "applying": "適用中",
+    "users": "ユーザー",
+    "admins": "管理者",
+    "guests": "ゲスト",
+    "on_track": "順調",
+    "off_track": "遅れ",
+    "timeline": "タイムライン",
+    "completion": "完了",
+    "upcoming": "今後の予定",
+    "completed": "完了",
+    "in_progress": "進行中",
+    "planned": "計画済み",
+    "paused": "一時停止"
   },
   "chart": {
     "x_axis": "エックス アクシス",
@@ -1317,19 +1329,6 @@
       "custom": "カスタムアナリティクス"
     },
     "empty_state": {
-      "general": {
-        "title": "進捗、ワークロード、割り当てを追跡。傾向を把握し、ブロッカーを解消して、作業をより速く進めましょう",
-        "description": "スコープと需要、見積もり、スコープクリープを確認できます。チームメンバーとチームのパフォーマンスを把握し、プロジェクトが予定通りに進むようにします。",
-        "primary_button": {
-          "text": "最初のプロジェクトを開始",
-          "comic": {
-            "title": "アナリティクスはサイクル + モジュールで最も効果を発揮",
-            "description": "まず、作業項目をサイクルでタイムボックス化し、可能であれば、複数のサイクルにまたがる作業項目をモジュールにグループ化します。左のナビゲーションで両方を確認してください。"
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "あなたに割り当てられた作業項目は、ステータスごとに分類されてここに表示されます。",
         "title": "まだデータがありません"
@@ -1345,21 +1344,22 @@
     },
     "created_vs_resolved": "作成 vs 解決",
     "customized_insights": "カスタマイズされたインサイト",
-    "backlog_work_items": "バックログの作業項目",
+    "backlog_work_items": "バックログの{entity}",
     "active_projects": "アクティブなプロジェクト",
     "trend_on_charts": "グラフの傾向",
     "all_projects": "すべてのプロジェクト",
     "summary_of_projects": "プロジェクトの概要",
     "project_insights": "プロジェクトのインサイト",
-    "started_work_items": "開始された作業項目",
-    "total_work_items": "作業項目の合計",
+    "started_work_items": "開始された{entity}",
+    "total_work_items": "{entity}の合計",
     "total_projects": "プロジェクト合計",
     "total_admins": "管理者の合計",
     "total_users": "ユーザー総数",
     "total_intake": "総収入",
-    "un_started_work_items": "未開始の作業項目",
+    "un_started_work_items": "未開始の{entity}",
     "total_guests": "ゲストの合計",
-    "completed_work_items": "完了した作業項目"
+    "completed_work_items": "完了した{entity}",
+    "total": "{entity}の合計"
   },
   "workspace_projects": {
     "label": "{count, plural, one {プロジェクト} other {プロジェクト}}",

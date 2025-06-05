@@ -866,7 +866,19 @@
     "view": "Ansicht",
     "deactivated_user": "Deaktivierter Benutzer",
     "apply": "Anwenden",
-    "applying": "Wird angewendet"
+    "applying": "Wird angewendet",
+    "users": "Benutzer",
+    "admins": "Administratoren",
+    "guests": "Gäste",
+    "on_track": "Im Plan",
+    "off_track": "Außer Plan",
+    "timeline": "Zeitleiste",
+    "completion": "Fertigstellung",
+    "upcoming": "Bevorstehend",
+    "completed": "Abgeschlossen",
+    "in_progress": "In Bearbeitung",
+    "planned": "Geplant",
+    "paused": "Pausiert"
   },
   "chart": {
     "x_axis": "X-Achse",
@@ -1316,19 +1328,6 @@
       "custom": "Benutzerdefinierte Analysen"
     },
     "empty_state": {
-      "general": {
-        "title": "Verfolgen Sie Fortschritt, Auslastung und Zuordnungen. Erkennen Sie Trends, entfernen Sie Blocker und beschleunigen Sie die Arbeit",
-        "description": "Behalten Sie Umfang vs. Nachfrage, Schätzungen und Umfang im Blick. Verfolgen Sie die Leistung von Mitgliedern und Teams, um sicherzustellen, dass Projekte pünktlich abgeschlossen werden.",
-        "primary_button": {
-          "text": "Erstes Projekt starten",
-          "comic": {
-            "title": "Analysen funktionieren am besten mit Zyklen + Modulen",
-            "description": "Begrenzen Sie zuerst Arbeit zeitlich in Zyklen und gruppieren Sie die übergreifenden Elemente in Module. Sie finden sie im linken Menü."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Ihnen zugewiesene Arbeitselemente, aufgeschlüsselt nach Status, werden hier angezeigt.",
         "title": "Noch keine Daten"
@@ -1344,21 +1343,22 @@
     },
     "created_vs_resolved": "Erstellt vs Gelöst",
     "customized_insights": "Individuelle Einblicke",
-    "backlog_work_items": "Backlog-Arbeitselemente",
+    "backlog_work_items": "Backlog-{entity}",
     "active_projects": "Aktive Projekte",
     "trend_on_charts": "Trend in Diagrammen",
     "all_projects": "Alle Projekte",
     "summary_of_projects": "Projektübersicht",
     "project_insights": "Projekteinblicke",
-    "started_work_items": "Begonnene Arbeitselemente",
-    "total_work_items": "Gesamte Arbeitselemente",
+    "started_work_items": "Begonnene {entity}",
+    "total_work_items": "Gesamte {entity}",
     "total_projects": "Gesamtprojekte",
     "total_admins": "Gesamtanzahl der Admins",
     "total_users": "Gesamtanzahl der Benutzer",
     "total_intake": "Gesamteinnahmen",
-    "un_started_work_items": "Nicht begonnene Arbeitselemente",
+    "un_started_work_items": "Nicht begonnene {entity}",
     "total_guests": "Gesamtanzahl der Gäste",
-    "completed_work_items": "Abgeschlossene Arbeitselemente"
+    "completed_work_items": "Abgeschlossene {entity}",
+    "total": "Gesamte {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projekt} few {Projekte} other {Projekte}}",
