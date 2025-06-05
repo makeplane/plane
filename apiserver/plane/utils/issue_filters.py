@@ -1,6 +1,6 @@
 import re
 import uuid
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from django.utils import timezone
 from django.db.models import Q, OuterRef
@@ -772,6 +772,89 @@ def filter_issue_type_id(params, issue_filter, method, prefix=""):
     if type_id is not None:
         issue_filter[f"{prefix}type_id"] = type_id
 
+
+def timestamp_filter(issue_filter, field, queries):
+    """
+    Applies timestamp filtering on the specified field using a list of query strings.
+
+    Each query should be in the format:
+      <ISO8601_timestamp>[;operator]
+
+    - The timestamp must be in ISO 8601 format with millisecond precision (e.g., 2024-06-01T12:00:00.000Z).
+    - The operator can be one of:
+         'after'  -> applies __gte (records matching field >= provided timestamp).
+         'before' -> applies __lte (records matching field <= provided timestamp).
+    - If no operator is provided, an exact match is used.
+
+    Returns the modified issue_filter dictionary.
+    """
+    for query in queries:
+        if query:
+            parts = query.split(";")
+            try:
+                # Parse the first timestamp
+                time_str = parts[0]
+                iso_str = time_str.replace("Z", "+00:00")
+                ts = datetime.fromisoformat(iso_str)
+            except Exception:
+                continue
+            if len(parts) > 1:
+                direction = parts[1].strip().lower()
+                if direction == "after":
+                    issue_filter[f"{field}__gte"] = ts
+                elif direction == "before":
+                    issue_filter[f"{field}__lte"] = ts
+            else:
+                issue_filter[f"{field}__exact"] = ts
+    return issue_filter
+
+
+def filter_created_at_ts(params, issue_filter, method, prefix=""):
+    """
+    Applies timestamp-level filtering to the created_at field based on the 'created_at_ts' parameter.
+
+    Expected format: an ISO 8601 timestamp with millisecond precision, optionally with an operator.
+    Examples:
+      - '?created_at_ts=2024-06-01T12:00:00.000Z;after'
+      - '?created_at_ts=2024-06-01T12:00:00.000Z;after,2024-06-01T12:15:00.000Z;before'
+    
+    Note: For GET requests, parameters are expected as a comma-separated string; for non-GET methods, parameter handling might differ.
+    """
+    if method == "GET":
+        # In GET, expect query parameters as comma-separated string
+        created_ts = params.get("created_at_ts")
+        if created_ts:
+            queries = created_ts.split(",")
+            timestamp_filter(issue_filter, f"{prefix}created_at", queries)
+    else:
+        if params.get("created_at_ts", None):
+            queries = params.get("created_at_ts")
+            timestamp_filter(issue_filter, f"{prefix}created_at", queries)
+    return issue_filter
+
+
+def filter_updated_at_ts(params, issue_filter, method, prefix=""):
+    """
+    Applies timestamp-level filtering to the updated_at field based on the 'updated_at_ts' parameter.
+
+    Expected format: an ISO 8601 timestamp with millisecond precision, optionally with an operator.
+    Examples:
+      - '?updated_at_ts=2024-06-01T12:00:00.000Z;before'
+      - '?updated_at_ts=2024-06-01T12:00:00.000Z;after,2024-06-01T12:15:00.000Z;before'
+    
+    Note: Differentiation based on HTTP method is to correctly handle parameter formats between GET (query string) and non-GET (payload) requests.
+    """
+    if method == "GET":
+        updated_ts = params.get("updated_at_ts")
+        if updated_ts:
+            queries = updated_ts.split(",")
+            timestamp_filter(issue_filter, f"{prefix}updated_at", queries)
+    else:
+        if params.get("updated_at_ts", None):
+            queries = params.get("updated_at_ts")
+            timestamp_filter(issue_filter, f"{prefix}updated_at", queries)
+    return issue_filter
+
 def issue_filters(query_params, method, prefix=""):
     issue_filter = {}
 
@@ -804,6 +887,8 @@ def issue_filters(query_params, method, prefix=""):
         "start_target_date": filter_start_target_date_issues,
         "sequence_id" : filter_sequence_id,
         "custom_properties": filter_custom_properties,
+        "created_at_ts": filter_created_at_ts,
+        "updated_at_ts": filter_updated_at_ts,
     }
 
     for key, value in ISSUE_FILTER.items():
