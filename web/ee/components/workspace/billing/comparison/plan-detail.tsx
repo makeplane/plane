@@ -17,6 +17,7 @@ import {
   getSubscriptionProductStatus,
 } from "@plane/utils";
 // constants
+import { DiscountInfo } from "@/components/license/modal/card/discount-info";
 import { TPlanDetail } from "@/constants/plans";
 // plane web
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
@@ -131,12 +132,17 @@ export const PlanDetail: FC<TPlanDetailProps> = observer((props) => {
         ) : (
           <div className="flex gap-x-2 items-start text-custom-text-300 pb-1 transition-all duration-300 animate-slide-up">
             {isSubscriptionActive && displayPrice !== undefined && (
-              <span className="text-custom-text-100 text-2xl font-semibold transition-all duration-300">
-                {activePricingDetails.currency}
-                {displayPrice}
-              </span>
+              <div className="flex items-center gap-1 text-2xl text-custom-text-100 font-semibold transition-all duration-300">
+                <DiscountInfo
+                  currency={activePricingDetails.currency}
+                  frequency={billingFrequency ?? "month"}
+                  price={displayPrice}
+                  subscriptionType={subscriptionType}
+                  className="mr-1.5"
+                />
+              </div>
             )}
-            <div className="pt-2">
+            <div className="pt-1">
               {pricingDescription && <div className="transition-all duration-300">{pricingDescription}</div>}
               {pricingSecondaryDescription && (
                 <div className="text-xs text-custom-text-400 transition-all duration-300">
