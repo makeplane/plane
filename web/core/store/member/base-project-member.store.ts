@@ -169,13 +169,14 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
    */
   getProjectMemberDetails = computedFn((userId: string, projectId: string) => {
     const projectMember = this.getProjectMembershipByUserId(userId, projectId);
-    if (!projectMember) return null;
+    const userDetails = this.memberRoot?.memberMap?.[projectMember?.member];
+    if (!projectMember || !userDetails) return null;
     const memberDetails: IProjectMemberDetails = {
       id: projectMember.id,
       role: projectMember.role,
       original_role: projectMember.original_role,
       member: {
-        ...this.memberRoot?.memberMap?.[projectMember.member],
+        ...userDetails,
         joining_date: projectMember.created_at,
       },
       created_at: projectMember.created_at,

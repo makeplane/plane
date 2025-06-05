@@ -18,11 +18,28 @@ export const metadata: Metadata = {
     title: "Plane | Simple, extensible, open-source project management tool.",
     description: "Open-source project management tool to manage work items, cycles, and product roadmaps easily",
     url: "https://app.plane.so/",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Plane - Modern project management",
+      },
+    ],
   },
   keywords:
     "software development, plan, ship, software, accelerate, code management, release management, project management, work item tracking, agile, scrum, kanban, collaboration",
   twitter: {
     site: "@planepowers",
+    card: "summary_large_image",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Plane - Modern project management",
+      },
+    ],
   },
 };
 
