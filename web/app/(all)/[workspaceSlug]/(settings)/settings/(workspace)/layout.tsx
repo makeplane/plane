@@ -7,7 +7,6 @@ import { usePathname } from "next/navigation";
 import { EUserWorkspaceRoles, WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
-import { CommandPalette } from "@/components/command-palette";
 import { SettingsMobileNav } from "@/components/settings";
 import { getWorkspaceActivePath, pathnameToAccessKey } from "@/components/settings/helper";
 // hooks
@@ -36,7 +35,6 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
 
   return (
     <>
-      <CommandPalette />
       <SettingsMobileNav
         hamburgerContent={WorkspaceSettingsSidebar}
         activePath={getWorkspaceActivePath(pathname) || ""}
