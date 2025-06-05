@@ -12,6 +12,7 @@ import {
   ISSUE_RESTORED,
   EUserPermissions,
   EUserPermissionsLevel,
+  EIssueServiceType,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
@@ -23,6 +24,7 @@ import { IssueView, TIssueOperations } from "@/components/issues";
 // hooks
 import { useEventTracker, useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
+import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 
 interface IIssuePeekOverview {
   embedIssue?: boolean;
@@ -57,6 +59,13 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const storeType = issueStoreFromProps ?? issueStoreType;
   const { issues } = useIssues(storeType);
   const { captureIssueEvent } = useEventTracker();
+
+  useWorkItemProperties(
+    peekIssue?.projectId,
+    peekIssue?.workspaceSlug,
+    peekIssue?.issueId,
+    storeType === EIssuesStoreType.EPIC ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES
+  );
   // state
   const [error, setError] = useState(false);
 

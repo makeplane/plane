@@ -5,6 +5,7 @@ import { EIssueServiceType } from "@plane/constants";
 import { ICycle, IIssueLabel, IModule, IProject, IState, IUserLite, TIssueServiceType } from "@plane/types";
 // plane web store
 import { IProjectEpics, IProjectEpicsFilter, ProjectEpics, ProjectEpicsFilter } from "@/plane-web/store/issue/epic";
+import { IIssueDetail, IssueDetail } from "@/plane-web/store/issue/issue-details/root.store";
 import { ITeamIssuesFilter, ITeamIssues, TeamIssues, TeamIssuesFilter } from "@/plane-web/store/issue/team";
 import {
   ITeamViewIssues,
@@ -19,7 +20,6 @@ import { IWorkspaceMembership } from "@/store/member/workspace-member.store";
 import { IArchivedIssuesFilter, ArchivedIssuesFilter, IArchivedIssues, ArchivedIssues } from "./archived";
 import { ICycleIssuesFilter, CycleIssuesFilter, ICycleIssues, CycleIssues } from "./cycle";
 import { IDraftIssuesFilter, DraftIssuesFilter, IDraftIssues, DraftIssues } from "./draft";
-import { IIssueDetail, IssueDetail } from "./issue-details/root.store";
 import { IIssueStore, IssueStore } from "./issue.store";
 import { ICalendarStore, CalendarStore } from "./issue_calendar_view.store";
 import { IIssueKanBanViewStore, IssueKanBanViewStore } from "./issue_kanban_view.store";
