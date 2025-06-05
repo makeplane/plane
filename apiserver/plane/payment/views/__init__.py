@@ -1,13 +1,11 @@
 from .product import (
     ProductEndpoint,
     WorkspaceProductEndpoint,
-    WebsiteUserWorkspaceEndpoint,
     WorkspaceLicenseRefreshEndpoint,
     WorkspaceLicenseSyncEndpoint,
 )
 from .payment import (
     PaymentLinkEndpoint,
-    WebsitePaymentLinkEndpoint,
     WorkspaceFreeTrialEndpoint,
 )
 from .license_activate import WorkspaceLicenseEndpoint, LicenseDeActivateEndpoint

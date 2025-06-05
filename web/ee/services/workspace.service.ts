@@ -3,8 +3,6 @@ import { EViewAccess } from "@plane/constants";
 import { ISearchIssueResponse, TWorkspaceEpicsSearchParams } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
-// types
-import { TWorkspaceWithProductDetails } from "@/plane-web/types";
 // services
 import { WorkspaceService as CoreWorkspaceService } from "@/services/workspace.service";
 
@@ -29,14 +27,6 @@ export class WorkspaceService extends CoreWorkspaceService {
     return this.delete(`/api/workspaces/${workspaceSlug}/views/${viewId}/lock/`).catch((error) => {
       throw error?.response?.data;
     });
-  }
-
-  async getWorkspacesWithPlanDetails(): Promise<TWorkspaceWithProductDetails[]> {
-    return this.get(`/api/payments/website/workspaces/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response;
-      });
   }
 
   async searchAcrossWorkspace(

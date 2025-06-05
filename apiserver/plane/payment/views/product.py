@@ -92,62 +92,6 @@ class ProductEndpoint(BaseAPIView):
             )
 
 
-class WebsiteUserWorkspaceEndpoint(BaseAPIView):
-    """
-    Get the workspaces where the user is admin
-    """
-
-    def get(self, request):
-        try:
-            # Get all the workspaces where the user is admin
-            workspaces = (
-                WorkspaceMember.objects.filter(
-                    member=request.user, is_active=True, role=20
-                )
-                .annotate(
-                    slug=F("workspace__slug"),
-                    logo=F("workspace__logo"),
-                    name=F("workspace__name"),
-                )
-                .values("workspace_id", "slug", "name", "logo")
-            )
-
-            workspace_ids = [workspace["workspace_id"] for workspace in workspaces]
-
-            # Fetch the workspaces from the workspace license
-            workspace_licenses = WorkspaceLicense.objects.filter(
-                workspace_id__in=workspace_ids
-            )
-
-            for workspace in workspaces:
-                licenses = [
-                    license
-                    for license in workspace_licenses
-                    if str(license.workspace_id) == str(workspace["workspace_id"])
-                ]
-
-                if licenses:
-                    workspace["product"] = licenses[0].plan
-                    workspace["is_on_trial"] = is_on_trial(licenses[0])
-                    workspace["is_billing_active"] = is_billing_active(licenses[0])
-                else:
-                    workspace["product"] = "FREE"
-                    workspace["is_on_trial"] = False
-                    workspace["is_billing_active"] = False
-
-            # Get the workspace details
-            return Response(workspaces, status=status.HTTP_200_OK)
-
-        except requests.exceptions.RequestException as e:
-            if hasattr(e, "response") and e.response.status_code == 400:
-                return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
-            log_exception(e)
-            return Response(
-                {"error": "error in fetching workspace products"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
 class WorkspaceProductEndpoint(BaseAPIView):
     permission_classes = [WorkspaceUserPermission]
 

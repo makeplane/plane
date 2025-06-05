@@ -33,7 +33,11 @@ export const SubscriptionButton: FC<TSubscriptionButtonProps> = observer((props)
   const isOnTrialPeriod = !!subscriptionDetail?.is_on_trial && !subscriptionDetail?.has_added_payment_method;
   const showCurrentSubscriptionButton = currentPlan === subscriptionType && !isOnTrialPeriod;
   const isHigherTierPlan = EProductSubscriptionTier[subscriptionType] >= EProductSubscriptionTier[currentPlan];
-  const showUpgradeButton = isOnTrialPeriod || (isHigherTierPlan && currentPlan !== subscriptionType);
+  // If the workspace is on trial, allow upgrade if the user has not added a payment method
+  // Else, allow upgrade if the current plan is a higher tier than the subscription type
+  const showUpgradeButton = !!subscriptionDetail?.is_on_trial
+    ? !subscriptionDetail?.has_added_payment_method
+    : isHigherTierPlan && currentPlan !== subscriptionType;
   const upgradeButtonStyle =
     getUpgradeButtonStyle(subscriptionType, !!upgradeLoader) ?? getButtonStyling("primary", "lg", !!upgradeLoader);
 
