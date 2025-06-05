@@ -13,6 +13,7 @@ from plane.app.views import (
     ProjectAssetEndpoint,
     ProjectBulkAssetEndpoint,
     AssetCheckEndpoint,
+    DuplicateAssetEndpoint,
 )
 
 
@@ -88,5 +89,10 @@ urlpatterns = [
         "assets/v2/workspaces/<str:slug>/check/<uuid:asset_id>/",
         AssetCheckEndpoint.as_view(),
         name="asset-check",
+    ),
+    path(
+        "assets/v2/workspaces/<slug:slug>/duplicate-assets/",
+        DuplicateAssetEndpoint.as_view(),
+        name="duplicate-assets",
     ),
 ]
