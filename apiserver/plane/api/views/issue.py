@@ -121,6 +121,7 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
 
     @extend_schema(
         operation_id="get_workspace_work_item",
+        summary="Retrieve work item by identifiers",
         tags=["Work Items"],
         parameters=[
             OpenApiParameter(
@@ -209,6 +210,7 @@ class IssueAPIEndpoint(BaseAPIView):
 
     @work_item_docs(
         operation_id="get_work_item",
+        summary="List or retrieve work items",
         responses={
             200: OpenApiResponse(
                 description="List of issues or issue details",
@@ -349,6 +351,7 @@ class IssueAPIEndpoint(BaseAPIView):
 
     @work_item_docs(
         operation_id="create_work_item",
+        summary="Create work item",
         request=IssueSerializer,
         responses={
             201: OpenApiResponse(
@@ -440,6 +443,7 @@ class IssueAPIEndpoint(BaseAPIView):
 
     @work_item_docs(
         operation_id="update_work_item",
+        summary="Update or create work item",
         request=IssueSerializer,
         responses={
             200: OpenApiResponse(
@@ -568,6 +572,7 @@ class IssueAPIEndpoint(BaseAPIView):
 
     @work_item_docs(
         operation_id="patch_work_item",
+        summary="Partially update work item",
         request=IssueSerializer,
         responses={
             200: OpenApiResponse(
@@ -636,6 +641,7 @@ class IssueAPIEndpoint(BaseAPIView):
 
     @work_item_docs(
         operation_id="delete_work_item",
+        summary="Delete work item",
         responses={
             204: OpenApiResponse(description="Work Item deleted successfully"),
             403: OpenApiResponse(description="Only admin or creator can delete"),

@@ -72,6 +72,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
 
     @intake_docs(
         operation_id="get_intake_issues",
+        summary="List or retrieve intake issues",
         responses={
             200: OpenApiResponse(
                 description="Intake issues", response=IntakeIssueSerializer
@@ -101,6 +102,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
 
     @intake_docs(
         operation_id="create_intake_issue",
+        summary="Create intake issue",
         request=IntakeIssueCreateSerializer,
         responses={
             201: OpenApiResponse(
@@ -182,6 +184,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
 
     @intake_docs(
         operation_id="update_intake_issue",
+        summary="Update intake issue",
         request=IntakeIssueUpdateSerializer,
         responses={
             200: OpenApiResponse(
@@ -363,6 +366,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
 
     @intake_docs(
         operation_id="delete_intake_issue",
+        summary="Delete intake issue",
         responses={
             204: OpenApiResponse(description="Intake issue deleted"),
         },

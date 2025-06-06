@@ -38,6 +38,7 @@ class StateAPIEndpoint(BaseAPIView):
 
     @state_docs(
         operation_id="create_state",
+        summary="Create state",
         request=StateSerializer,
         responses={
             200: OpenApiResponse(
@@ -102,6 +103,7 @@ class StateAPIEndpoint(BaseAPIView):
 
     @state_docs(
         operation_id="get_state",
+        summary="List or retrieve states",
         responses={
             200: OpenApiResponse(
                 description="State retrieved",
@@ -132,6 +134,7 @@ class StateAPIEndpoint(BaseAPIView):
 
     @state_docs(
         operation_id="delete_state",
+        summary="Delete state",
         responses={
             204: OpenApiResponse(description="State deleted"),
             400: OpenApiResponse(description="State cannot be deleted"),
@@ -167,6 +170,7 @@ class StateAPIEndpoint(BaseAPIView):
 
     @state_docs(
         operation_id="update_state",
+        summary="Update state",
         request=StateSerializer,
         responses={
             200: OpenApiResponse(

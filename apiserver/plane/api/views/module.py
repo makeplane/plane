@@ -146,6 +146,7 @@ class ModuleAPIEndpoint(BaseAPIView):
 
     @module_docs(
         operation_id="create_module",
+        summary="Create module",
         request=ModuleCreateSerializer,
         responses={
             201: OpenApiResponse(
@@ -211,6 +212,7 @@ class ModuleAPIEndpoint(BaseAPIView):
 
     @module_docs(
         operation_id="update_module",
+        summary="Update module",
         request=ModuleUpdateSerializer,
         responses={
             200: OpenApiResponse(
@@ -283,6 +285,7 @@ class ModuleAPIEndpoint(BaseAPIView):
 
     @module_docs(
         operation_id="get_module",
+        summary="List or retrieve modules",
         responses={
             200: OpenApiResponse(description="Module", response=ModuleSerializer),
             404: OpenApiResponse(description="Module not found"),
@@ -310,6 +313,7 @@ class ModuleAPIEndpoint(BaseAPIView):
 
     @module_docs(
         operation_id="delete_module",
+        summary="Delete module",
         responses={
             204: OpenApiResponse(description="Module deleted successfully"),
             403: OpenApiResponse(description="Only admin or creator can delete"),
@@ -688,6 +692,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
 
     @module_docs(
         operation_id="get_archived_modules",
+        summary="List archived modules",
         responses={
             200: OpenApiResponse(
                 description="Archived modules", response=ModuleSerializer
@@ -711,6 +716,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
 
     @module_docs(
         operation_id="archive_module",
+        summary="Archive module",
         request={},
         responses={
             204: OpenApiResponse(description="Module archived"),
@@ -744,6 +750,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
 
     @module_docs(
         operation_id="unarchive_module",
+        summary="Unarchive module",
         responses={
             204: OpenApiResponse(description="Module unarchived"),
             404: OpenApiResponse(description="Module not found"),

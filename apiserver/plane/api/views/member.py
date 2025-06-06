@@ -24,6 +24,7 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
 
     @extend_schema(
         operation_id="get_workspace_members",
+        summary="List workspace members",
         tags=["Members"],
         responses={
             200: OpenApiResponse(
@@ -85,6 +86,7 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
 
     @extend_schema(
         operation_id="get_project_members",
+        summary="List project members",
         tags=["Members"],
         responses={
             200: OpenApiResponse(

@@ -67,6 +67,7 @@ class UserAssetEndpoint(BaseAPIView):
 
     @asset_docs(
         operation_id="create_user_asset_upload",
+        summary="Generate presigned URL for user asset upload",
         request=UserAssetUploadSerializer,
         responses={
             200: PRESIGNED_URL_SUCCESS_RESPONSE,
@@ -143,6 +144,7 @@ class UserAssetEndpoint(BaseAPIView):
 
     @asset_docs(
         operation_id="update_user_asset",
+        summary="Mark user asset as uploaded",
         parameters=[ASSET_ID_PARAMETER],
         request=AssetUpdateSerializer,
         responses={
@@ -171,6 +173,7 @@ class UserAssetEndpoint(BaseAPIView):
 
     @asset_docs(
         operation_id="delete_user_asset",
+        summary="Delete user asset",
         parameters=[ASSET_ID_PARAMETER],
         responses={
             204: ASSET_DELETED_RESPONSE,
@@ -223,6 +226,7 @@ class UserServerAssetEndpoint(BaseAPIView):
 
     @asset_docs(
         operation_id="create_user_server_asset_upload",
+        summary="Generate presigned URL for user server asset upload",
         request=UserAssetUploadSerializer,
         responses={
             200: PRESIGNED_URL_SUCCESS_RESPONSE,
@@ -299,6 +303,7 @@ class UserServerAssetEndpoint(BaseAPIView):
 
     @asset_docs(
         operation_id="update_user_server_asset",
+        summary="Mark user server asset as uploaded",
         parameters=[ASSET_ID_PARAMETER],
         request=AssetUpdateSerializer,
         responses={
@@ -327,6 +332,7 @@ class UserServerAssetEndpoint(BaseAPIView):
 
     @asset_docs(
         operation_id="delete_user_server_asset",
+        summary="Delete user server asset",
         parameters=[ASSET_ID_PARAMETER],
         responses={
             204: ASSET_DELETED_RESPONSE,
@@ -355,6 +361,7 @@ class GenericAssetEndpoint(BaseAPIView):
 
     @asset_docs(
         operation_id="get_generic_asset",
+        summary="Get presigned URL for asset download",
         parameters=[WORKSPACE_SLUG_PARAMETER],
         responses={
             200: ASSET_DOWNLOAD_SUCCESS_RESPONSE,
@@ -422,6 +429,7 @@ class GenericAssetEndpoint(BaseAPIView):
 
     @asset_docs(
         operation_id="create_generic_asset_upload",
+        summary="Generate presigned URL for generic asset upload",
         parameters=[WORKSPACE_SLUG_PARAMETER],
         request=GenericAssetUploadSerializer,
         responses={
@@ -516,6 +524,7 @@ class GenericAssetEndpoint(BaseAPIView):
 
     @asset_docs(
         operation_id="update_generic_asset",
+        summary="Update generic asset after upload completion",
         parameters=[WORKSPACE_SLUG_PARAMETER, ASSET_ID_PARAMETER],
         request=GenericAssetUpdateSerializer,
         responses={

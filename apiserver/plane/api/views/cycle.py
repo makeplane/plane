@@ -147,6 +147,7 @@ class CycleAPIEndpoint(BaseAPIView):
 
     @cycle_docs(
         operation_id="get_cycles",
+        summary="List or retrieve cycles",
         responses={
             200: OpenApiResponse(
                 description="Cycles",
@@ -262,6 +263,7 @@ class CycleAPIEndpoint(BaseAPIView):
 
     @cycle_docs(
         operation_id="create_cycle",
+        summary="Create cycle",
         request=CycleCreateSerializer,
         responses={
             201: OpenApiResponse(
@@ -334,6 +336,7 @@ class CycleAPIEndpoint(BaseAPIView):
 
     @cycle_docs(
         operation_id="update_cycle",
+        summary="Update cycle",
         request=CycleUpdateSerializer,
         responses={
             200: OpenApiResponse(
@@ -416,6 +419,7 @@ class CycleAPIEndpoint(BaseAPIView):
 
     @cycle_docs(
         operation_id="delete_cycle",
+        summary="Delete cycle",
         responses={
             204: OpenApiResponse(description="Cycle deleted"),
         },
@@ -580,6 +584,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
 
     @cycle_docs(
         operation_id="get_archived_cycles",
+        summary="List archived cycles",
         request={},
         responses={
             200: OpenApiResponse(
@@ -604,6 +609,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
 
     @cycle_docs(
         operation_id="archive_cycle",
+        summary="Archive cycle",
         request={},
         responses={
             204: OpenApiResponse(description="Cycle archived"),
@@ -636,6 +642,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
 
     @cycle_docs(
         operation_id="unarchive_cycle",
+        summary="Unarchive cycle",
         request={},
         responses={
             204: OpenApiResponse(description="Cycle unarchived"),
@@ -694,6 +701,7 @@ class CycleIssueAPIEndpoint(BaseAPIView):
 
     @cycle_docs(
         operation_id="get_cycle_issues",
+        summary="List or retrieve cycle issues",
     )
     def get(self, request, slug, project_id, cycle_id, issue_id=None):
         """List or retrieve cycle issues
@@ -763,6 +771,7 @@ class CycleIssueAPIEndpoint(BaseAPIView):
 
     @cycle_docs(
         operation_id="add_cycle_issues",
+        summary="Add cycle issues",
         request=CycleIssueRequestSerializer,
         responses={
             200: OpenApiResponse(
@@ -865,6 +874,7 @@ class CycleIssueAPIEndpoint(BaseAPIView):
 
     @cycle_docs(
         operation_id="delete_cycle_issue",
+        summary="Delete cycle issue",
     )
     def delete(self, request, slug, project_id, cycle_id, issue_id):
         """Remove cycle issue
@@ -907,6 +917,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
 
     @cycle_docs(
         operation_id="transfer_cycle_issues",
+        summary="Transfer cycle issues",
         request=TransferCycleIssueRequestSerializer,
         responses={
             200: OpenApiResponse(

@@ -14,7 +14,11 @@ def preprocess_filter_api_v1_paths(endpoints):
     filtered = []
     for path, path_regex, method, callback in endpoints:
         # Only include paths that start with /api/v1/ and exclude PUT methods
-        if path.startswith("/api/v1/") and method.upper() != "PUT":
+        if (
+            path.startswith("/api/v1/")
+            and method.upper() != "PUT"
+            and "server" not in path.lower()
+        ):
             filtered.append((path, path_regex, method, callback))
     return filtered
 

@@ -112,6 +112,7 @@ class ProjectAPIEndpoint(BaseAPIView):
 
     @project_docs(
         operation_id="list_projects",
+        summary="List or retrieve projects",
         responses={
             200: OpenApiResponse(
                 description="List of projects or project details",
@@ -159,6 +160,7 @@ class ProjectAPIEndpoint(BaseAPIView):
 
     @project_docs(
         operation_id="create_project",
+        summary="Create project",
         request=ProjectCreateSerializer,
         responses={
             201: ProjectSerializer,
@@ -288,6 +290,7 @@ class ProjectAPIEndpoint(BaseAPIView):
 
     @project_docs(
         operation_id="update_project",
+        summary="Update project",
         request=ProjectUpdateSerializer,
         responses={
             200: ProjectSerializer,
@@ -369,6 +372,7 @@ class ProjectAPIEndpoint(BaseAPIView):
 
     @project_docs(
         operation_id="delete_project",
+        summary="Delete project",
         responses={
             204: OpenApiResponse(description="Project deleted"),
         },
@@ -406,6 +410,7 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
 
     @project_docs(
         operation_id="archive_project",
+        summary="Archive project",
         request={},
         responses={
             204: OpenApiResponse(description="Project archived"),
@@ -425,6 +430,7 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
 
     @project_docs(
         operation_id="unarchive_project",
+        summary="Unarchive project",
         request={},
         responses={
             204: OpenApiResponse(description="Project unarchived"),

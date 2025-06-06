@@ -13,7 +13,11 @@ class UserEndpoint(BaseAPIView):
     serializer_class = UserLiteSerializer
     model = User
 
-    @user_docs(operation_id="get_current_user", responses={200: UserLiteSerializer})
+    @user_docs(
+        operation_id="get_current_user",
+        summary="Get current user",
+        responses={200: UserLiteSerializer},
+    )
     def get(self, request):
         """Get current user
 
