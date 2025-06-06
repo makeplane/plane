@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { DateRange, Matcher } from "react-day-picker";
 import { usePopper } from "react-popper";
-import { ArrowRight, CalendarCheck2, CalendarDays } from "lucide-react";
+import { ArrowRight, CalendarCheck2, CalendarDays, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -17,6 +17,7 @@ import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { useDropdown } from "@/hooks/use-dropdown";
 // components
 import { DropdownButton } from "./buttons";
+import { MergedDateDisplay } from "./merged-date";
 // types
 import { TButtonVariants } from "./types";
 
@@ -30,11 +31,14 @@ type Props = {
   buttonVariant: TButtonVariants;
   cancelButtonText?: string;
   className?: string;
+  clearIconClassName?: string;
   disabled?: boolean;
   hideIcon?: {
     from?: boolean;
     to?: boolean;
   };
+  isClearable?: boolean;
+  mergeDates?: boolean;
   minDate?: Date;
   maxDate?: Date;
   onSelect?: (range: DateRange | undefined) => void;
@@ -65,11 +69,14 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
     buttonToDateClassName,
     buttonVariant,
     className,
+    clearIconClassName = "",
     disabled = false,
     hideIcon = {
       from: true,
       to: true,
     },
+    isClearable = false,
+    mergeDates,
     minDate,
     maxDate,
     onSelect,
@@ -118,19 +125,17 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
     setIsOpen,
   });
 
-  const handleClose = () => {
-    if (!isOpen) return;
-    setIsOpen(false);
-    setDateRange({
-      from: value.from,
-      to: value.to,
-    });
-    if (referenceElement) referenceElement.blur();
-  };
-
   const disabledDays: Matcher[] = [];
   if (minDate) disabledDays.push({ before: minDate });
   if (maxDate) disabledDays.push({ after: maxDate });
+
+  const clearDates = () => {
+    const clearedRange = { from: undefined, to: undefined };
+    setDateRange(clearedRange);
+    onSelect?.(clearedRange);
+  };
+
+  const hasDisplayedDates = dateRange.from || dateRange.to;
 
   useEffect(() => {
     setDateRange(value);
@@ -158,9 +163,9 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
         tooltipContent={
           customTooltipContent ?? (
             <>
-              {dateRange.from ? renderFormattedDate(dateRange.from) : "N/A"}
-              {" - "}
-              {dateRange.to ? renderFormattedDate(dateRange.to) : "N/A"}
+              {dateRange.from ? renderFormattedDate(dateRange.from) : ""}
+              {dateRange.from && dateRange.to ? " - " : ""}
+              {dateRange.to ? renderFormattedDate(dateRange.to) : ""}
             </>
           )
         }
@@ -168,19 +173,70 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
         variant={buttonVariant}
         renderToolTipByDefault={renderByDefault}
       >
-        <span
-          className={cn("h-full flex items-center justify-center gap-1 rounded-sm flex-grow", buttonFromDateClassName)}
-        >
-          {!hideIcon.from && <CalendarDays className="h-3 w-3 flex-shrink-0" />}
-          {dateRange.from ? renderFormattedDate(dateRange.from) : renderPlaceholder ? placeholder.from : ""}
-        </span>
-        <ArrowRight className="h-3 w-3 flex-shrink-0" />
-        <span
-          className={cn("h-full flex items-center justify-center gap-1 rounded-sm flex-grow", buttonToDateClassName)}
-        >
-          {!hideIcon.to && <CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
-          {dateRange.to ? renderFormattedDate(dateRange.to) : renderPlaceholder ? placeholder.to : ""}
-        </span>
+        {mergeDates ? (
+          // Merged date display
+          <div className="flex items-center gap-1.5 w-full">
+            {!hideIcon.from && <CalendarDays className="h-3 w-3 flex-shrink-0" />}
+            {dateRange.from || dateRange.to ? (
+              <MergedDateDisplay
+                startDate={dateRange.from}
+                endDate={dateRange.to}
+                className="flex-grow truncate text-xs"
+              />
+            ) : (
+              renderPlaceholder && (
+                <>
+                  <span className="text-custom-text-400">{placeholder.from}</span>
+                  <ArrowRight className="h-3 w-3 flex-shrink-0 text-custom-text-400" />
+                  <span className="text-custom-text-400">{placeholder.to}</span>
+                </>
+              )
+            )}
+            {isClearable && !disabled && hasDisplayedDates && (
+              <X
+                className={cn("h-2.5 w-2.5 flex-shrink-0 cursor-pointer", clearIconClassName)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  clearDates();
+                }}
+              />
+            )}
+          </div>
+        ) : (
+          // Original separate date display
+          <>
+            <span
+              className={cn(
+                "h-full flex items-center justify-center gap-1 rounded-sm flex-grow",
+                buttonFromDateClassName
+              )}
+            >
+              {!hideIcon.from && <CalendarDays className="h-3 w-3 flex-shrink-0" />}
+              {dateRange.from ? renderFormattedDate(dateRange.from) : renderPlaceholder ? placeholder.from : ""}
+            </span>
+            <ArrowRight className="h-3 w-3 flex-shrink-0" />
+            <span
+              className={cn(
+                "h-full flex items-center justify-center gap-1 rounded-sm flex-grow",
+                buttonToDateClassName
+              )}
+            >
+              {!hideIcon.to && <CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+              {dateRange.to ? renderFormattedDate(dateRange.to) : renderPlaceholder ? placeholder.to : ""}
+            </span>
+            {isClearable && !disabled && hasDisplayedDates && (
+              <X
+                className={cn("h-2.5 w-2.5 flex-shrink-0 cursor-pointer ml-1", clearIconClassName)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  clearDates();
+                }}
+              />
+            )}
+          </>
+        )}
       </DropdownButton>
     </button>
   );
