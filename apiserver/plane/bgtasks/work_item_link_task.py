@@ -82,7 +82,7 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
         }
 
 
-def find_favicon_url(soup: BeautifulSoup, base_url: str) -> Optional[str]:
+def find_favicon_url(soup: Optional[BeautifulSoup], base_url: str) -> Optional[str]:
     """
     Find the favicon URL from HTML soup.
 
@@ -93,18 +93,20 @@ def find_favicon_url(soup: BeautifulSoup, base_url: str) -> Optional[str]:
     Returns:
         str: Absolute URL to favicon or None
     """
-    # Look for various favicon link tags
-    favicon_selectors = [
-        'link[rel="icon"]',
-        'link[rel="shortcut icon"]',
-        'link[rel="apple-touch-icon"]',
-        'link[rel="apple-touch-icon-precomposed"]',
-    ]
 
-    for selector in favicon_selectors:
-        favicon_tag = soup.select_one(selector)
-        if favicon_tag and favicon_tag.get("href"):
-            return urljoin(base_url, favicon_tag["href"])
+    if soup is not None:
+        # Look for various favicon link tags
+        favicon_selectors = [
+            'link[rel="icon"]',
+            'link[rel="shortcut icon"]',
+            'link[rel="apple-touch-icon"]',
+            'link[rel="apple-touch-icon-precomposed"]',
+        ]
+
+        for selector in favicon_selectors:
+            favicon_tag = soup.select_one(selector)
+            if favicon_tag and favicon_tag.get("href"):
+                return urljoin(base_url, favicon_tag["href"])
 
     # Fallback to /favicon.ico
     parsed_url = urlparse(base_url)
@@ -123,8 +125,8 @@ def find_favicon_url(soup: BeautifulSoup, base_url: str) -> Optional[str]:
 
 
 def fetch_and_encode_favicon(
-    headers: Dict[str, str], soup: BeautifulSoup, url: str
-) -> Optional[Dict[str, str]]:
+    headers: Dict[str, str], soup: Optional[BeautifulSoup], url: str
+) -> Dict[str, Optional[str]]:
     """
     Fetch favicon and encode it as base64.
 
