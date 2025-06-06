@@ -1,5 +1,4 @@
 export * from "./ai";
-export * from "./analytics";
 export * from "./auth";
 export * from "./chart";
 export * from "./endpoints";
@@ -35,5 +34,5 @@ export * from "./emoji";
 export * from "./subscription";
 export * from "./settings";
 export * from "./icon";
-export * from "./analytics-v2";
 export * from "./estimates";
+export * from "./analytics";

@@ -1,4 +1,3 @@
-import { forwardRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EProductSubscriptionEnum } from "@plane/constants";
@@ -10,52 +9,40 @@ import { PLANE_PLANS, TPlanePlans } from "@/constants/plans";
 import { PlanDetail } from "./plan-detail";
 
 type TPlansComparisonProps = {
-  isScrolled: boolean;
   isCompareAllFeaturesSectionOpen: boolean;
   getBillingFrequency: (subscriptionType: EProductSubscriptionEnum) => TBillingFrequency | undefined;
   setBillingFrequency: (subscriptionType: EProductSubscriptionEnum, frequency: TBillingFrequency) => void;
   setIsCompareAllFeaturesSectionOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsScrolled: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const PlansComparison = observer(
-  forwardRef<HTMLDivElement, TPlansComparisonProps>(function PlansComparison(
-    props: TPlansComparisonProps,
-    ref: React.Ref<HTMLDivElement>
-  ) {
-    const {
-      isScrolled,
-      isCompareAllFeaturesSectionOpen,
-      getBillingFrequency,
-      setBillingFrequency,
-      setIsCompareAllFeaturesSectionOpen,
-      setIsScrolled,
-    } = props;
-    // plan details
-    const { planDetails } = PLANE_PLANS;
+export const PlansComparison = observer((props: TPlansComparisonProps) => {
+  const {
+    isCompareAllFeaturesSectionOpen,
+    getBillingFrequency,
+    setBillingFrequency,
+    setIsCompareAllFeaturesSectionOpen,
+  } = props;
+  // plan details
+  const { planDetails } = PLANE_PLANS;
 
-    return (
-      <PlansComparisonBase
-        ref={ref}
-        planeDetails={Object.entries(planDetails).map(([planKey, plan]) => {
-          const currentPlanKey = planKey as TPlanePlans;
-          if (!shouldRenderPlanDetail(currentPlanKey)) return null;
-          return (
-            <PlanDetail
-              key={planKey}
-              subscriptionType={plan.id}
-              planDetail={plan}
-              billingFrequency={getBillingFrequency(plan.id)}
-              setBillingFrequency={(frequency) => setBillingFrequency(plan.id, frequency)}
-            />
-          );
-        })}
-        isSelfManaged
-        isScrolled={isScrolled}
-        isCompareAllFeaturesSectionOpen={isCompareAllFeaturesSectionOpen}
-        setIsCompareAllFeaturesSectionOpen={setIsCompareAllFeaturesSectionOpen}
-        setIsScrolled={setIsScrolled}
-      />
-    );
-  })
-);
+  return (
+    <PlansComparisonBase
+      planeDetails={Object.entries(planDetails).map(([planKey, plan]) => {
+        const currentPlanKey = planKey as TPlanePlans;
+        if (!shouldRenderPlanDetail(currentPlanKey)) return null;
+        return (
+          <PlanDetail
+            key={planKey}
+            subscriptionType={plan.id}
+            planDetail={plan}
+            billingFrequency={getBillingFrequency(plan.id)}
+            setBillingFrequency={(frequency) => setBillingFrequency(plan.id, frequency)}
+          />
+        );
+      })}
+      isSelfManaged
+      isCompareAllFeaturesSectionOpen={isCompareAllFeaturesSectionOpen}
+      setIsCompareAllFeaturesSectionOpen={setIsCompareAllFeaturesSectionOpen}
+    />
+  );
+});

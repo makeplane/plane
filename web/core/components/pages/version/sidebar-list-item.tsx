@@ -1,8 +1,8 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
-// plane types
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { TPageVersion } from "@plane/types";
-// plane ui
 import { Avatar } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedTime, getFileURL } from "@plane/utils";
 // helpers
@@ -21,6 +21,8 @@ export const PlaneVersionsSidebarListItem: React.FC<Props> = observer((props) =>
   const { getUserDetails } = useMember();
   // derived values
   const ownerDetails = getUserDetails(version.owned_by);
+  // translation
+  const { t } = useTranslation();
 
   return (
     <Link
@@ -40,7 +42,7 @@ export const PlaneVersionsSidebarListItem: React.FC<Props> = observer((props) =>
           size="sm"
           className="flex-shrink-0"
         />
-        <span className="text-custom-text-300">{ownerDetails?.display_name}</span>
+        <span className="text-custom-text-300">{ownerDetails?.display_name ?? t("common.deactivated_user")}</span>
       </p>
     </Link>
   );

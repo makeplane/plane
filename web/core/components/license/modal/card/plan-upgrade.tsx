@@ -56,12 +56,14 @@ export const PlanUpgradeCard: FC<PlanUpgradeCardProps> = observer((props) => {
         href={TALK_TO_SALES_URL}
         isLoading={isLoading}
         features={features}
+        product={product}
         prices={prices}
         upgradeLoaderType={upgradeLoaderType}
         verticalFeatureList={verticalFeatureList}
         extraFeatures={extraFeatures}
         isSelfHosted={isSelfHosted}
         isTrialAllowed={isTrialAllowed}
+        renderTrialButton={renderTrialButton}
       />
     );
   }

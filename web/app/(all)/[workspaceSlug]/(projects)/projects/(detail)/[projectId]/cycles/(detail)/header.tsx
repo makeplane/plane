@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 // icons
 import { PanelRight } from "lucide-react";
-// plane constants
+// plane imports
 import {
   EIssueFilterType,
   EIssueLayoutTypes,
@@ -15,24 +15,20 @@ import {
   EUserPermissionsLevel,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
 } from "@plane/constants";
-// i18n
 import { useTranslation } from "@plane/i18n";
-// types
 import {
   ICustomSearchSelectOption,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
 } from "@plane/types";
-// ui
 import { Breadcrumbs, Button, ContrastIcon, CustomSearchSelect, Header, Tooltip } from "@plane/ui";
-// components
 import { cn, isIssueFilterActive } from "@plane/utils";
-import { WorkItemsModal } from "@/components/analytics-v2/work-items/modal";
+// components
+import { WorkItemsModal } from "@/components/analytics/work-items/modal";
 import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 import { CycleQuickActions } from "@/components/cycles";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
-// helpers
 // hooks
 import {
   useCommandPalette,
@@ -48,7 +44,7 @@ import {
 import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web
+// plane web imports
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
 
 export const CycleIssuesHeader: React.FC = observer(() => {

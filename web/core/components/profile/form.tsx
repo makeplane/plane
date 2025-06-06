@@ -6,10 +6,9 @@ import { Controller, useForm } from "react-hook-form";
 import { ChevronDown, CircleUserRound, InfoIcon } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
-import { USER_ROLES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { IUser, TUserProfile } from "@plane/types";
-import { Button, CustomSelect, Input, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import { Button, Input, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
 import { getButtonStyling } from "@plane/ui/src/button";
 import { cn, getFileURL } from "@plane/utils";
@@ -340,35 +339,6 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                     />
                   )}
                 />
-              </div>
-              <div className="flex flex-col gap-1">
-                <h4 className="text-sm font-medium text-custom-text-200">
-                  {t("role")}&nbsp;
-                  <span className="text-red-500">*</span>
-                </h4>
-                <Controller
-                  name="role"
-                  control={control}
-                  rules={{ required: "Role is required." }}
-                  render={({ field: { value, onChange } }) => (
-                    <CustomSelect
-                      value={value}
-                      onChange={onChange}
-                      label={value ? t(value) : "Select your role"}
-                      buttonClassName={errors.role ? "border-red-500" : "border-none"}
-                      className="rounded-md border-[0.5px] !border-custom-border-200"
-                      optionsClassName="w-full"
-                      input
-                    >
-                      {USER_ROLES.map((item) => (
-                        <CustomSelect.Option key={item.value} value={item.i18n_label}>
-                          {t(item.i18n_label)}
-                        </CustomSelect.Option>
-                      ))}
-                    </CustomSelect>
-                  )}
-                />
-                {errors.role && <span className="text-xs text-red-500">Please select a role</span>}
               </div>
             </div>
           </div>
