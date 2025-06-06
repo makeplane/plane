@@ -47,37 +47,13 @@ const paramsToKey = (params: any) => {
   return `${layoutKey}_${projectKey}_${stateGroupKey}_${stateKey}_${priorityKey}_${assigneesKey}_${mentionsKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${subscriberKey}`;
 };
 
-const myIssuesParamsToKey = (params: any) => {
-  const { assignees, created_by, labels, priority, state_group, subscriber, start_date, target_date } = params;
-
-  let assigneesKey = assignees ? assignees.split(",") : [];
-  let createdByKey = created_by ? created_by.split(",") : [];
-  let stateGroupKey = state_group ? state_group.split(",") : [];
-  let subscriberKey = subscriber ? subscriber.split(",") : [];
-  let priorityKey = priority ? priority.split(",") : [];
-  let labelsKey = labels ? labels.split(",") : [];
-  const startDateKey = start_date ?? "";
-  const targetDateKey = target_date ?? "";
-  const type = params?.type ? params.type.toUpperCase() : "NULL";
-  const groupBy = params?.group_by ? params.group_by.toUpperCase() : "NULL";
-  const orderBy = params?.order_by ? params.order_by.toUpperCase() : "NULL";
-
-  // sorting each keys in ascending order
-  assigneesKey = assigneesKey.sort().join("_");
-  createdByKey = createdByKey.sort().join("_");
-  stateGroupKey = stateGroupKey.sort().join("_");
-  subscriberKey = subscriberKey.sort().join("_");
-  priorityKey = priorityKey.sort().join("_");
-  labelsKey = labelsKey.sort().join("_");
-
-  return `${assigneesKey}_${createdByKey}_${stateGroupKey}_${subscriberKey}_${priorityKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}`;
-};
-
 export const USER_WORKSPACES_LIST = "USER_WORKSPACES_LIST";
 
 export const WORKSPACE_MEMBERS = (workspaceSlug: string) => `WORKSPACE_MEMBERS_${workspaceSlug.toUpperCase()}`;
 
 export const WORKSPACE_INVITATION = (invitationId: string) => `WORKSPACE_INVITATION_${invitationId}`;
+
+export const PROJECT_DETAILS = (projectId: string) => `PROJECT_DETAILS_${projectId.toUpperCase()}`;
 
 export const PROJECT_MEMBERS = (projectId: string) => `PROJECT_MEMBERS_${projectId.toUpperCase()}`;
 
