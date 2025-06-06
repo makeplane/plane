@@ -355,7 +355,7 @@ class GenericAssetEndpoint(BaseAPIView):
 
     @asset_docs(
         operation_id="get_generic_asset",
-        parameters=[WORKSPACE_SLUG_PARAMETER, ASSET_ID_PARAMETER],
+        parameters=[WORKSPACE_SLUG_PARAMETER],
         responses={
             200: ASSET_DOWNLOAD_SUCCESS_RESPONSE,
             400: ASSET_DOWNLOAD_ERROR_RESPONSE,
@@ -390,7 +390,6 @@ class GenericAssetEndpoint(BaseAPIView):
                     {"error": "Asset not yet uploaded"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
 
             # Generate presigned URL for GET
             storage = S3Storage(request=request, is_server=True)

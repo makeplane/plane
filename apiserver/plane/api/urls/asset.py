@@ -7,24 +7,34 @@ from plane.api.views import (
 )
 
 urlpatterns = [
-    path("assets/user-assets/", UserAssetEndpoint.as_view(), name="users"),
     path(
-        "assets/user-assets/<uuid:asset_id>/", UserAssetEndpoint.as_view(), name="users"
+        "assets/user-assets/",
+        UserAssetEndpoint.as_view(http_method_names=["post"]),
+        name="user-assets",
     ),
-    path("assets/user-assets/server/", UserServerAssetEndpoint.as_view(), name="users"),
+    path(
+        "assets/user-assets/<uuid:asset_id>/",
+        UserAssetEndpoint.as_view(http_method_names=["patch", "delete"]),
+        name="user-assets-detail",
+    ),
+    path(
+        "assets/user-assets/server/",
+        UserServerAssetEndpoint.as_view(http_method_names=["post"]),
+        name="user-server-assets",
+    ),
     path(
         "assets/user-assets/<uuid:asset_id>/server/",
-        UserServerAssetEndpoint.as_view(),
-        name="users",
+        UserServerAssetEndpoint.as_view(http_method_names=["patch", "delete"]),
+        name="user-server-assets-detail",
     ),
     path(
         "workspaces/<str:slug>/assets/",
-        GenericAssetEndpoint.as_view(),
+        GenericAssetEndpoint.as_view(http_method_names=["get", "post"]),
         name="generic-asset",
     ),
     path(
         "workspaces/<str:slug>/assets/<uuid:asset_id>/",
-        GenericAssetEndpoint.as_view(),
+        GenericAssetEndpoint.as_view(http_method_names=["get", "patch"]),
         name="generic-asset-detail",
     ),
 ]
