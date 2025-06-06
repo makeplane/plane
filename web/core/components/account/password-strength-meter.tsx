@@ -1,15 +1,10 @@
 "use client";
 
 import { FC, useMemo } from "react";
+// plane imports
+import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// import { CircleCheck } from "lucide-react";
-// helpers
-import { cn } from "@plane/utils";
-import {
-  E_PASSWORD_STRENGTH,
-  // PASSWORD_CRITERIA,
-  getPasswordStrength,
-} from "@/helpers/password.helper";
+import { cn, getPasswordStrength } from "@plane/utils";
 
 type TPasswordStrengthMeter = {
   password: string;
@@ -59,7 +54,7 @@ export const PasswordStrengthMeter: FC<TPasswordStrengthMeter> = (props) => {
         };
       }
     }
-  }, [strength,t]);
+  }, [strength, t]);
 
   const isPasswordMeterVisible = isFocused ? true : strength === E_PASSWORD_STRENGTH.STRENGTH_VALID ? false : true;
 

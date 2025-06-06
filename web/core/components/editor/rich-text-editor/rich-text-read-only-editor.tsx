@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 // plane imports
 import { EditorReadOnlyRefApi, IRichTextReadOnlyEditor, RichTextReadOnlyEditorWithRef } from "@plane/editor";

@@ -2,19 +2,15 @@ import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
+import { ChartDataType, IBlockUpdateData, IBlockUpdateDependencyData, IGanttBlock, TGanttViews } from "@plane/types";
 import { cn, getDate } from "@plane/utils";
 // components
 import { MultipleSelectGroup } from "@/components/core";
 import {
-  ChartDataType,
   GanttChartBlocksList,
   GanttChartSidebar,
-  IBlockUpdateData,
-  IBlockUpdateDependencyData,
-  IGanttBlock,
   MonthChartView,
   QuarterChartView,
-  TGanttViews,
   WeekChartView,
 } from "@/components/gantt-chart";
 // helpers

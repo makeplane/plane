@@ -74,6 +74,7 @@ export type TAuthErrorInfo = {
   message: React.ReactNode;
 };
 
+
 export enum EAdminAuthErrorCodes {
   // Admin
   ADMIN_ALREADY_EXIST = "5150",
@@ -86,6 +87,13 @@ export enum EAdminAuthErrorCodes {
   ADMIN_USER_DOES_NOT_EXIST = "5185",
   ADMIN_USER_DEACTIVATED = "5190",
 }
+
+export type TAdminAuthErrorInfo = {
+  type: EErrorAlertType;
+  code: EAdminAuthErrorCodes;
+  title: string;
+  message: React.ReactNode;
+};
 
 export enum EAuthErrorCodes {
   // Global

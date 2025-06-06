@@ -1,6 +1,7 @@
+"use client";
+
 // plane imports
-import { RANDOM_EMOJI_CODES } from "@plane/constants";
-import { LUCIDE_ICONS_LIST } from "@plane/ui";
+import { LUCIDE_ICONS_LIST, RANDOM_EMOJI_CODES } from "@plane/constants";
 
 /**
  * Converts a hyphen-separated hexadecimal emoji code to its decimal representation

@@ -5,10 +5,11 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
 import { Eye, EyeOff, Info, X, XCircle } from "lucide-react";
-import { FORGOT_PASSWORD, SIGN_IN_WITH_CODE, SIGN_IN_WITH_PASSWORD, SIGN_UP_WITH_PASSWORD, API_BASE_URL, E_PASSWORD_STRENGTH, getPasswordStrength } from "@plane/constants";
 // plane imports
+import { FORGOT_PASSWORD, SIGN_IN_WITH_CODE, SIGN_IN_WITH_PASSWORD, SIGN_UP_WITH_PASSWORD, API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, Input, Spinner } from "@plane/ui";
+import { getPasswordStrength } from "@plane/utils";
 // components
 import { ForgotPasswordPopover, PasswordStrengthMeter } from "@/components/account";
 // constants
