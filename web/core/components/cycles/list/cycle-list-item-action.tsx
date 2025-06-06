@@ -23,7 +23,7 @@ import { Avatar, AvatarGroup, FavoriteStar, LayersIcon, Tooltip, TransferIcon, s
 import { CycleQuickActions, TransferIssuesModal } from "@/components/cycles";
 import { DateRangeDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { getDate } from "@/helpers/date-time.helper";
+import { getDate, renderSafeFormattedDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { generateQueryParams } from "@/helpers/router.helper";
@@ -230,9 +230,11 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
             >
               <div className="flex gap-1 text-xs text-custom-text-300 font-medium items-center">
                 <CalendarDays className="h-3 w-3 flex-shrink-0 my-auto" />
-                {cycleDetails.start_date && <span>{format(parseISO(cycleDetails.start_date), "MMM dd, yyyy")}</span>}
+                {cycleDetails.start_date && (
+                  <span>{renderSafeFormattedDate(cycleDetails.start_date, "MMM dd, yyyy")}</span>
+                )}
                 <ArrowRight className="h-3 w-3 flex-shrink-0 my-auto" />
-                {cycleDetails.end_date && <span>{format(parseISO(cycleDetails.end_date), "MMM dd, yyyy")}</span>}
+                {cycleDetails.end_date && <span>{renderSafeFormattedDate(cycleDetails.end_date, "MMM dd, yyyy")}</span>}
               </div>
             </Tooltip>
             {projectUTCOffset && (
