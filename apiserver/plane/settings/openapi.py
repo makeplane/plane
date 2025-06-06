@@ -14,6 +14,11 @@ SPECTACULAR_SETTINGS = {
         "Visit our quick start guide and full API documentation at "
         "[developers.plane.so](https://developers.plane.so/api-reference/introduction)."
     ),
+    "CONTACT": {
+        "name": "Plane",
+        "url": "https://plane.so",
+        "email": "support@plane.so",
+    },
     "VERSION": "0.0.1",
     # ========================================================================
     # Schema Generation Settings
