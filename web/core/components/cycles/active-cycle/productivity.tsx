@@ -54,17 +54,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
         {cycle.total_issues > 0 ? (
           <>
             <div className="h-full w-full px-2">
-              <div className="flex items-center justify-between gap-4 py-1 text-xs text-custom-text-300">
-                <div className="flex items-center gap-3 text-custom-text-300">
-                  <div className="flex items-center justify-center gap-1">
-                    <span className="h-2 w-2 rounded-full bg-[#A9BBD0]" />
-                    <span>{t("project_cycles.active_cycle.ideal")}</span>
-                  </div>
-                  <div className="flex items-center justify-center gap-1">
-                    <span className="h-2 w-2 rounded-full bg-[#4C8FFF]" />
-                    <span>{t("project_cycles.active_cycle.current")}</span>
-                  </div>
-                </div>
+              <div className="flex items-center justify-end gap-4 py-1 text-xs text-custom-text-300">
                 {estimateType === "points" ? (
                   <span>{`Pending points - ${cycle.backlog_estimate_points + cycle.unstarted_estimate_points + cycle.started_estimate_points}`}</span>
                 ) : (
@@ -78,16 +68,12 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
                     {estimateType === "points" ? (
                       <ProgressChart
                         distribution={completionChartDistributionData}
-                        startDate={cycle.start_date ?? ""}
-                        endDate={cycle.end_date ?? ""}
                         totalIssues={cycle.total_estimate_points || 0}
                         plotTitle={"points"}
                       />
                     ) : (
                       <ProgressChart
                         distribution={completionChartDistributionData}
-                        startDate={cycle.start_date ?? ""}
-                        endDate={cycle.end_date ?? ""}
                         totalIssues={cycle.total_issues || 0}
                         plotTitle={"work items"}
                       />

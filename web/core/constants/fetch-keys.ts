@@ -1,4 +1,4 @@
-import { IAnalyticsParams, IJiraMetadata } from "@plane/types";
+import { IJiraMetadata } from "@plane/types";
 
 const paramsToKey = (params: any) => {
   const {
@@ -99,14 +99,6 @@ export const GITHUB_REPOSITORY_INFO = (workspaceSlug: string, repoName: string) 
 // slack-project-integration
 export const SLACK_CHANNEL_INFO = (workspaceSlug: string, projectId: string) =>
   `SLACK_CHANNEL_INFO_${workspaceSlug.toString().toUpperCase()}_${projectId.toUpperCase()}`;
-
-// analytics
-export const ANALYTICS = (workspaceSlug: string, params: IAnalyticsParams) =>
-  `ANALYTICS${workspaceSlug.toUpperCase()}_${params.x_axis}_${params.y_axis}_${
-    params.segment
-  }_${params.project?.toString()}`;
-export const DEFAULT_ANALYTICS = (workspaceSlug: string, params?: Partial<IAnalyticsParams>) =>
-  `DEFAULT_ANALYTICS_${workspaceSlug.toUpperCase()}_${params?.project?.toString()}_${params?.cycle}_${params?.module}`;
 
 // profile
 export const USER_PROFILE_DATA = (workspaceSlug: string, userId: string) =>
