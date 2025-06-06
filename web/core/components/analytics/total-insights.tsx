@@ -5,12 +5,12 @@ import useSWR from "swr";
 import { IInsightField, insightsFields } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IAnalyticsResponse, TAnalyticsTabsBase } from "@plane/types";
-//hooks
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
+// hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
-//services
+// services
 import { AnalyticsService } from "@/services/analytics.service";
-// plane web components
+// local imports
 import InsightCard from "./insight-card";
 
 const analyticsService = new AnalyticsService();
