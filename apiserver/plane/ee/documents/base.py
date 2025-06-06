@@ -4,7 +4,7 @@ import json
 # Third-party imports
 from django_opensearch_dsl import Document, fields
 from opensearchpy.helpers import analysis
-
+from django.conf import settings
 
 lowercase_normalizer = analysis.normalizer("lowercase_normalizer", filter=["lowercase"])
 
@@ -29,8 +29,8 @@ class BaseDocument(Document):
 
     class Index:
         settings = {
-            "number_of_shards": 1,
-            "number_of_replicas": 0,
+            "number_of_shards": settings.OPENSEARCH_SHARD_COUNT,
+            "number_of_replicas": settings.OPENSEARCH_REPLICA_COUNT,
             "analysis": {
                 "normalizer": {
                     "lowercase_normalizer": lowercase_normalizer.get_definition()

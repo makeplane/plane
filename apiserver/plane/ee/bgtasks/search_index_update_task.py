@@ -27,7 +27,7 @@ def handle_project_member_update(objs, indices_to_update):
         else:
             qs = index_model.objects.filter(project_id__in=project_ids)
         qs = index().apply_related_to_queryset(qs)
-        index().update(qs)
+        index().update(qs, action="index")
 
 
 @shared_task
@@ -39,7 +39,7 @@ def handle_project_udpate(objs, indices_to_update):
         index_model = index.django.model
         qs = index_model.objects.filter(project_id__in=project_ids)
         qs = index().apply_related_to_queryset(qs)
-        index().update(qs)
+        index().update(qs, action="index")
 
 
 @shared_task
@@ -54,7 +54,7 @@ def handle_workspace_member_update(objs, indices_to_update):
         else:
             qs = index_model.objects.filter(workspace_id__in=workspace_ids)
         qs = index().apply_related_to_queryset(qs)
-        index().update(qs)
+        index().update(qs, action="index")
 
 
 @shared_task
@@ -64,7 +64,7 @@ def handle_teamspace_member_update(objs, indices_to_update):
     teamspace_ids = [obj["team_space"] for obj in objs]
     qs = Teamspace.objects.filter(id__in=teamspace_ids)
     qs = TeamspaceDocument().apply_related_to_queryset(qs)
-    TeamspaceDocument().update(qs)
+    TeamspaceDocument().update(qs, action="index")
 
 
 @shared_task
