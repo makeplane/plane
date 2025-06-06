@@ -1,10 +1,4 @@
 import DOMPurify from "isomorphic-dompurify";
-import {
-  CYCLE_ISSUES_WITH_PARAMS,
-  MODULE_ISSUES_WITH_PARAMS,
-  PROJECT_ISSUES_LIST_WITH_PARAMS,
-  VIEW_ISSUES,
-} from "@/constants/fetch-keys";
 
 export const addSpaceIfCamelCase = (str: string) => {
   if (str === undefined || str === null) return "";
@@ -148,29 +142,6 @@ export const objToQueryParams = (obj: any) => {
   }
 
   return params.toString();
-};
-
-export const getFetchKeysForIssueMutation = (options: {
-  cycleId?: string | string[];
-  moduleId?: string | string[];
-  viewId?: string | string[];
-  projectId: string;
-  viewGanttParams: any;
-  ganttParams: any;
-}) => {
-  const { cycleId, moduleId, viewId, projectId, viewGanttParams, ganttParams } = options;
-
-  const ganttFetchKey = cycleId
-    ? { ganttFetchKey: CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), ganttParams) }
-    : moduleId
-      ? { ganttFetchKey: MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), ganttParams) }
-      : viewId
-        ? { ganttFetchKey: VIEW_ISSUES(viewId.toString(), viewGanttParams) }
-        : { ganttFetchKey: PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", ganttParams) };
-
-  return {
-    ...ganttFetchKey,
-  };
 };
 
 /**

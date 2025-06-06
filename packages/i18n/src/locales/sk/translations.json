@@ -873,7 +873,16 @@
     "applying": "Používanie",
     "users": "Používatelia",
     "admins": "Administrátori",
-    "guests": "Hostia"
+    "guests": "Hostia",
+    "on_track": "Na správnej ceste",
+    "off_track": "Mimo plán",
+    "timeline": "Časová os",
+    "completion": "Dokončenie",
+    "upcoming": "Nadchádzajúce",
+    "completed": "Dokončené",
+    "in_progress": "Prebieha",
+    "planned": "Plánované",
+    "paused": "Pozastavené"
   },
   "chart": {
     "x_axis": "Os X",
@@ -1323,19 +1332,6 @@
       "custom": "Vlastná analytika"
     },
     "empty_state": {
-      "general": {
-        "title": "Sledujte pokrok, vyťaženie a alokácie. Identifikujte trendy, odstráňte prekážky a zrýchlite prácu",
-        "description": "Sledujte rozsah vs. dopyt, odhady a rozsah. Zistite výkonnosť členov a tímov, zabezpečte včasné dokončenie projektov.",
-        "primary_button": {
-          "text": "Začnite prvý projekt",
-          "comic": {
-            "title": "Analytika funguje najlepšie s Cykly + Moduly",
-            "description": "Najprv časovo ohraničte prácu do cyklov a zoskupte položky presahujúce cyklus do modulov. Nájdete ich v ľavom menu."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Pracovné položky priradené vám, rozdelené podľa stavu, sa zobrazia tu.",
         "title": "Zatiaľ žiadne údaje"

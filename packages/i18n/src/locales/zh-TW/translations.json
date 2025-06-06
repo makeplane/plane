@@ -873,7 +873,16 @@
     "applying": "應用中",
     "users": "使用者",
     "admins": "管理員",
-    "guests": "訪客"
+    "guests": "訪客",
+    "on_track": "進展順利",
+    "off_track": "偏離軌道",
+    "timeline": "時間軸",
+    "completion": "完成",
+    "upcoming": "即將發生",
+    "completed": "已完成",
+    "in_progress": "進行中",
+    "planned": "已計劃",
+    "paused": "暫停"
   },
   "chart": {
     "x_axis": "X 軸",
@@ -1323,19 +1332,6 @@
       "custom": "自訂分析"
     },
     "empty_state": {
-      "general": {
-        "title": "追蹤進度、工作量和分配。發現趨勢、移除阻礙，加快工作進展",
-        "description": "檢視範圍與需求、評估和範圍擴展。取得團隊成員和團隊的績效，確保您的專案按時進行。",
-        "primary_button": {
-          "text": "開始您的第一個專案",
-          "comic": {
-            "title": "分析最適合搭配週期 + 模組使用",
-            "description": "首先，將您的工作事項時間區段到週期中，如果可以的話，將跨週期的工作事項分組到模組中。請檢視左側導覽列中的兩個功能。"
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "指派給您的工作項目將依狀態分類顯示在此處。",
         "title": "尚無資料"
@@ -2471,7 +2467,6 @@
     "previously_edited_by": "先前編輯者",
     "edited_by": "編輯者"
   },
-
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane 未能啟動。這可能是因為一個或多個 Plane 服務啟動失敗。",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "從 setup.sh 和 Docker 日誌中選擇 View Logs 來確認。"

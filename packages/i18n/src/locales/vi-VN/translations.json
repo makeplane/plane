@@ -872,7 +872,16 @@
     "applying": "Đang áp dụng",
     "users": "Người dùng",
     "admins": "Quản trị viên",
-    "guests": "Khách"
+    "guests": "Khách",
+    "on_track": "Đúng tiến độ",
+    "off_track": "Chệch hướng",
+    "timeline": "Dòng thời gian",
+    "completion": "Hoàn thành",
+    "upcoming": "Sắp tới",
+    "completed": "Đã hoàn thành",
+    "in_progress": "Đang tiến hành",
+    "planned": "Đã lên kế hoạch",
+    "paused": "Tạm dừng"
   },
   "chart": {
     "x_axis": "Trục X",
@@ -1322,19 +1331,6 @@
       "custom": "Phân tích tùy chỉnh"
     },
     "empty_state": {
-      "general": {
-        "title": "Theo dõi tiến độ, khối lượng công việc và phân công. Khám phá xu hướng, loại bỏ rào cản và đẩy nhanh công việc",
-        "description": "Xem phạm vi so với nhu cầu, ước tính và mở rộng phạm vi. Nhận hiệu suất của thành viên nhóm và nhóm, đảm bảo dự án của bạn đúng tiến độ.",
-        "primary_button": {
-          "text": "Bắt đầu dự án đầu tiên của bạn",
-          "comic": {
-            "title": "Phân tích hoạt động tốt nhất trong chu kỳ + mô-đun",
-            "description": "Đầu tiên, giới hạn mục công việc của bạn trong chu kỳ và nếu có thể, nhóm mục công việc kéo dài nhiều chu kỳ thành mô-đun. Xem cả hai trong thanh điều hướng bên trái."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Các hạng mục công việc được giao cho bạn, phân loại theo trạng thái, sẽ hiển thị tại đây.",
         "title": "Chưa có dữ liệu"

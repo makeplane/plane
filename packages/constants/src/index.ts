@@ -1,5 +1,4 @@
 export * from "./ai";
-export * from "./analytics";
 export * from "./auth";
 export * from "./chart";
 export * from "./dashboards";
@@ -49,4 +48,4 @@ export * from "./enhanced-search";
 export * from "./customers";
 export * from "./projects-extended";
 export * from "./state-extended";
-export * from "./analytics-v2";
+export * from "./analytics";

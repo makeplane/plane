@@ -873,7 +873,16 @@
     "applying": "적용 중",
     "users": "사용자",
     "admins": "관리자",
-    "guests": "게스트"
+    "guests": "게스트",
+    "on_track": "계획대로 진행 중",
+    "off_track": "계획 이탈",
+    "timeline": "타임라인",
+    "completion": "완료",
+    "upcoming": "예정된",
+    "completed": "완료됨",
+    "in_progress": "진행 중",
+    "planned": "계획된",
+    "paused": "일시 중지됨"
   },
   "chart": {
     "x_axis": "X축",
@@ -1323,19 +1332,6 @@
       "custom": "맞춤형 분석"
     },
     "empty_state": {
-      "general": {
-        "title": "진행 상황, 작업량 및 할당을 추적하세요. 트렌드를 파악하고, 차단 요소를 제거하며, 작업을 더 빠르게 진행하세요",
-        "description": "범위 대 수요, 추정치 및 범위 크리프를 확인하세요. 팀원과 팀의 성과를 확인하고 프로젝트가 제시간에 진행되도록 하세요.",
-        "primary_button": {
-          "text": "첫 번째 프로젝트 시작",
-          "comic": {
-            "title": "분석은 주기 + 모듈과 함께 작동합니다",
-            "description": "먼저 작업 항목을 주기로 시간 상자화하고, 주기를 초과하는 작업 항목을 모듈로 그룹화하세요. 왼쪽 탐색에서 둘 다 확인하세요."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "귀하에게 할당된 작업 항목이 상태별로 나누어 여기에 표시됩니다.",
         "title": "아직 데이터가 없습니다"

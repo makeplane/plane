@@ -21,15 +21,46 @@ export type TContextMenuItem = {
   disabled?: boolean;
   className?: string;
   iconClassName?: string;
+  nestedMenuItems?: TContextMenuItem[];
 };
+
+// Portal component for nested menus
+interface PortalProps {
+  children: React.ReactNode;
+  container?: Element | null;
+}
+
+export const Portal: React.FC<PortalProps> = ({ children, container }) => {
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
+  const targetContainer = container || document.body;
+  return ReactDOM.createPortal(children, targetContainer);
+};
+
+// Context for managing nested menus
+export const ContextMenuContext = React.createContext<{
+  closeAllSubmenus: () => void;
+  registerSubmenu: (closeSubmenu: () => void) => () => void;
+  portalContainer?: Element | null;
+} | null>(null);
 
 type ContextMenuProps = {
   parentRef: React.RefObject<HTMLElement>;
   items: TContextMenuItem[];
+  portalContainer?: Element | null;
 };
 
 const ContextMenuWithoutPortal: React.FC<ContextMenuProps> = (props) => {
-  const { parentRef, items } = props;
+  const { parentRef, items, portalContainer } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState({
@@ -39,11 +70,24 @@ const ContextMenuWithoutPortal: React.FC<ContextMenuProps> = (props) => {
   const [activeItemIndex, setActiveItemIndex] = useState<number>(0);
   // refs
   const contextMenuRef = useRef<HTMLDivElement>(null);
+  const submenuClosersRef = useRef<Set<() => void>>(new Set());
   // derived values
   const renderedItems = items.filter((item) => item.shouldRender !== false);
   const { isMobile } = usePlatformOS();
 
+  const closeAllSubmenus = React.useCallback(() => {
+    submenuClosersRef.current.forEach((closeSubmenu) => closeSubmenu());
+  }, []);
+
+  const registerSubmenu = React.useCallback((closeSubmenu: () => void) => {
+    submenuClosersRef.current.add(closeSubmenu);
+    return () => {
+      submenuClosersRef.current.delete(closeSubmenu);
+    };
+  }, []);
+
   const handleClose = () => {
+    closeAllSubmenus();
     setIsOpen(false);
     setActiveItemIndex(0);
   };
@@ -121,8 +165,37 @@ const ContextMenuWithoutPortal: React.FC<ContextMenuProps> = (props) => {
     };
   }, [activeItemIndex, isOpen, renderedItems, setIsOpen]);
 
-  // close on clicking outside
-  useOutsideClickDetector(contextMenuRef, handleClose);
+  // Custom handler for nested menu portal clicks
+  React.useEffect(() => {
+    const handleDocumentClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+
+      // Check if the click is on a nested menu element
+      const isNestedMenuClick = target.closest('[data-context-submenu="true"]');
+      const isMainMenuClick = contextMenuRef.current?.contains(target);
+
+      // Also check if the target itself has the data attribute
+      const isNestedMenuElement = target.hasAttribute("data-context-submenu");
+
+      // If it's a nested menu click, main menu click, or nested menu element, don't close
+      if (isNestedMenuClick || isMainMenuClick || isNestedMenuElement) {
+        return;
+      }
+
+      // If menu is open and it's an outside click, close it
+      if (isOpen) {
+        handleClose();
+      }
+    };
+
+    if (isOpen) {
+      // Use capture phase to ensure we handle the event before other handlers
+      document.addEventListener("mousedown", handleDocumentClick, true);
+      return () => {
+        document.removeEventListener("mousedown", handleDocumentClick, true);
+      };
+    }
+  }, [isOpen, handleClose]);
 
   return (
     <div
@@ -140,16 +213,19 @@ const ContextMenuWithoutPortal: React.FC<ContextMenuProps> = (props) => {
           top: position.y,
           left: position.x,
         }}
+        data-context-menu="true"
       >
-        {renderedItems.map((item, index) => (
-          <ContextMenuItem
-            key={item.key}
-            handleActiveItem={() => setActiveItemIndex(index)}
-            handleClose={handleClose}
-            isActive={index === activeItemIndex}
-            item={item}
-          />
-        ))}
+        <ContextMenuContext.Provider value={{ closeAllSubmenus, registerSubmenu, portalContainer }}>
+          {renderedItems.map((item, index) => (
+            <ContextMenuItem
+              key={item.key}
+              handleActiveItem={() => setActiveItemIndex(index)}
+              handleClose={handleClose}
+              isActive={index === activeItemIndex}
+              item={item}
+            />
+          ))}
+        </ContextMenuContext.Provider>
       </div>
     </div>
   );

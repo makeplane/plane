@@ -873,7 +873,16 @@
     "applying": "Aplicando",
     "users": "Usuários",
     "admins": "Administradores",
-    "guests": "Convidados"
+    "guests": "Convidados",
+    "on_track": "No caminho certo",
+    "off_track": "Fora do caminho",
+    "timeline": "Linha do tempo",
+    "completion": "Conclusão",
+    "upcoming": "Próximo",
+    "completed": "Concluído",
+    "in_progress": "Em andamento",
+    "planned": "Planejado",
+    "paused": "Pausado"
   },
   "chart": {
     "x_axis": "Eixo X",
@@ -1323,19 +1332,6 @@
       "custom": "Análises Personalizadas"
     },
     "empty_state": {
-      "general": {
-        "title": "Acompanhe o progresso, as cargas de trabalho e as alocações. Identifique tendências, remova bloqueadores e mova o trabalho mais rapidamente",
-        "description": "Veja o escopo versus a demanda, as estimativas e o aumento do escopo. Obtenha o desempenho por membros da equipe e equipes, e certifique-se de que seu projeto seja executado no prazo.",
-        "primary_button": {
-          "text": "Comece seu primeiro projeto",
-          "comic": {
-            "title": "A análise funciona melhor com Ciclos + Módulos",
-            "description": "Primeiro, coloque seus itens de trabalho em Ciclos e, se puder, agrupe os itens de trabalho que abrangem mais de um ciclo em Módulos. Confira ambos na navegação à esquerda."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Os itens de trabalho atribuídos a você, divididos por estado, aparecerão aqui.",
         "title": "Ainda não há dados"

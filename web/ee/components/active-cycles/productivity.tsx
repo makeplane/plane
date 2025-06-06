@@ -117,16 +117,12 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
                 {plotType === "points" ? (
                   <ProgressChart
                     distribution={completionChartDistributionData}
-                    startDate={cycle.start_date ?? ""}
-                    endDate={cycle.end_date ?? ""}
                     totalIssues={cycle.total_estimate_points || 0}
                     plotTitle={"points"}
                   />
                 ) : (
                   <ProgressChart
                     distribution={completionChartDistributionData}
-                    startDate={cycle.start_date ?? ""}
-                    endDate={cycle.end_date ?? ""}
                     totalIssues={cycle.total_issues || 0}
                     plotTitle={"work items"}
                   />

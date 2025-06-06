@@ -2,7 +2,7 @@ import { enableStaticRendering } from "mobx-react";
 // plane imports
 import { FALLBACK_LANGUAGE, LANGUAGE_STORAGE_KEY } from "@plane/i18n";
 // plane web store
-import { AnalyticsStoreV2, IAnalyticsStoreV2 } from "@/plane-web/store/analytics-v2.store";
+import { AnalyticsStore, IAnalyticsStore } from "@/plane-web/store/analytics.store";
 import { CommandPaletteStore, ICommandPaletteStore } from "@/plane-web/store/command-palette.store";
 import { RootStore } from "@/plane-web/store/root.store";
 import { IStateStore, StateStore } from "@/plane-web/store/state.store";
@@ -50,7 +50,7 @@ export class CoreRootStore {
   state: IStateStore;
   label: ILabelStore;
   dashboard: IDashboardStore;
-  analyticsV2: IAnalyticsStoreV2;
+  analytics: IAnalyticsStore;
   projectPages: IProjectPageStore;
   router: IRouterStore;
   commandPalette: ICommandPaletteStore;
@@ -96,7 +96,7 @@ export class CoreRootStore {
     this.transient = new TransientStore();
     this.stickyStore = new StickyStore();
     this.editorAssetStore = new EditorAssetStore();
-    this.analyticsV2 = new AnalyticsStoreV2();
+    this.analytics = new AnalyticsStore();
   }
 
   resetOnSignOut() {
