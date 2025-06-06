@@ -1,11 +1,10 @@
 import { test as setup } from '@playwright/test';
 import path from 'path';
 
-
 const authFile = path.join(__dirname, '../playwright/.auth/user.json');
 
 setup('authenticate', async ({ page }) => {
-  
+
   const BASE_URL = process.env.BASE_URL;
   const EMAIL = process.env.EMAIL;
   // decode the password
@@ -20,8 +19,8 @@ setup('authenticate', async ({ page }) => {
   if (await page.getByRole('button', { name: 'Continue' }).isVisible()) {
     await page.getByRole('button', { name: 'Continue' }).click();
   }
-  await page.getByRole('textbox', { name: 'Enter password' }).click();
-  await page.getByRole('textbox', { name: 'Enter password' }).fill(PWD);
+  await page.getByRole('textbox', { name: 'password' }).click();
+  await page.getByRole('textbox', { name: 'password' }).fill(PWD);
 
   await page.keyboard.press('Enter');
 
