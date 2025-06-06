@@ -150,7 +150,7 @@ export class SelfHostedSubscriptionStore implements ISelfHostedSubscriptionStore
       // fetch workspace subscribed plan
       await this.rootStore.workspaceSubscription.fetchWorkspaceSubscribedPlan(workspaceSlug);
       // remove feature flags
-      this.rootStore.featureFlags.flags[workspaceSlug] = {};
+      delete this.rootStore.featureFlags.flags[workspaceSlug];
     } catch (error) {
       console.error("selfHostedSubscriptionService -> deactivateLicense -> error", error);
       throw error;
