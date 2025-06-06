@@ -269,6 +269,15 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     icon: Tags,
     Column: SpreadsheetStandardPropertyColumn,
   },
+  business_type: {
+    title: "business_type",
+    ascendingOrderKey: "business_type",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-business_type",
+    descendingOrderTitle: "Z",
+    icon: Tags,
+    Column: SpreadsheetStandardPropertyColumn,
+  },
 };
 
 export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
@@ -296,6 +305,7 @@ export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
   "vendor_code",
   "worker_code",
   "worker_name",
+  "business_type",
 ];
 
 export const SPREADSHEET_SELECT_GROUP = "spreadsheet-issues";
