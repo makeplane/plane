@@ -290,39 +290,142 @@ GET /api/v1/workspaces/{slug}/projects/{project_id}/issues/
 | filters        | object  | JSON object with filter criteria (see below)                                |
 | expand         | string  | Comma-separated list of related fields to expand (e.g., `assignees,labels`) |
 
-#### Filtering
+#### Available Filters
 
-You can filter issues by any of the following fields (as query params or in a `filters` JSON object):
+You can filter issues using any of the following parameters:
 
-- `state_id`, `priority`, `assignees`, `labels`, `type_id`, `parent`, `hub_code`, `vendor_code`, `customer_code`, `worker_code`, `reference_number`, `trip_reference_number`, `hub_name`, `customer_name`, `vendor_name`, `worker_name`, `created_at`, `updated_at`, etc.
+| Filter Parameter      | Type      | Description                                                                 |
+|-----------------------|-----------|-----------------------------------------------------------------------------|
+| state                 | UUID[]    | Comma-separated list of state UUIDs                                         |
+| state_group           | string[]  | Comma-separated list of state groups (`backlog`, `unstarted`, `started`, `completed`, `cancelled`) |
+| estimate_point        | string[]  | Comma-separated list of estimate points                                     |
+| priority              | string[]  | Comma-separated list of priorities (`urgent`, `high`, `medium`, `low`, `none`) |
+| parent                | UUID[]    | Comma-separated list of parent issue UUIDs. Use "None" to filter issues without parents |
+| labels                | UUID[]    | Comma-separated list of label UUIDs. Use "None" to filter issues without labels |
+| assignees             | UUID[]    | Comma-separated list of assignee UUIDs. Use "None" to filter unassigned issues |
+| mentions              | UUID[]    | Comma-separated list of user UUIDs mentioned in issues                     |
+| created_by            | UUID[]    | Comma-separated list of creator UUIDs. Use "None" to filter issues without creators |
+| created_by_username   | string[]  | Comma-separated list of creator usernames                                   |
+| logged_by             | UUID[]    | Comma-separated list of logger UUIDs. Use "None" to filter issues without loggers |
+| name                  | string    | Filter issues by name (case-insensitive contains)                           |
+| created_at            | string[]  | Date filters (see Date Filtering section)                                   |
+| updated_at            | string[]  | Date filters (see Date Filtering section)                                   |
+| start_date            | string[]  | Date filters (see Date Filtering section)                                   |
+| target_date           | string[]  | Date filters (see Date Filtering section)                                   |
+| completed_at          | string[]  | Date filters (see Date Filtering section)                                   |
+| type                  | string    | Filter by issue type (`all`, `backlog`, `active`)                          |
+| type_id               | UUID      | Filter by specific issue type ID                                            |
+| project               | UUID[]    | Comma-separated list of project UUIDs                                       |
+| cycle                 | UUID[]    | Comma-separated list of cycle UUIDs. Use "None" to filter issues not in any cycle |
+| module                | UUID[]    | Comma-separated list of module UUIDs. Use "None" to filter issues not in any module |
+| inbox_status          | string[]  | Comma-separated list of inbox statuses                                       |
+| sub_issue             | boolean   | Filter sub-issues (`true`) or parent issues (`false`)                      |
+| subscriber            | UUID[]    | Comma-separated list of subscriber UUIDs                                     |
+| start_target_date     | boolean   | Filter issues with both start and target dates (`true`)                    |
+| sequence_id           | integer   | Filter by specific sequence ID                                              |
+| custom_properties     | object    | Custom property filters (see Custom Property Filtering section)              |
+| created_at_ts         | string[]  | Timestamp filters (see Timestamp Filtering section)                         |
+| updated_at_ts         | string[]  | Timestamp filters (see Timestamp Filtering section)                         |
 
-In addition to the above, you can now filter issues using timestamp-level precision with the following new query parameters:
+#### Character Field Filters
 
-- `created_at_ts`: Filters issues based on the exact creation timestamp. This parameter accepts an ISO 8601 formatted timestamp with millisecond precision (e.g., `2024-06-01T12:00:00.000Z`). It can optionally be followed by a semicolon and a condition (`after`, `before`) to indicate the filter type. For example, `?created_at_ts=2024-06-01T12:00:00.000Z;after` returns issues created after that timestamp, and `?created_at_ts=2024-06-01T12:00:00.000Z;after,2024-06-01T12:15:00.000Z;before` returns issues created between the two timestamps.
+The following fields support exact matching and can be filtered using comma-separated values:
 
-- `updated_at_ts`: Works similarly to `created_at_ts` but applies to the update timestamp of the issue.
+- `trip_reference_number`
+- `reference_number`
+- `hub_code`
+- `hub_name`
+- `customer_code`
+- `customer_name`
+- `vendor_name`
+- `vendor_code`
+- `worker_code`
+- `worker_name`
+- `source`
 
-**Filtering by Issue Status:**
-You can filter by the issue's state (status) using:
+Example: `?hub_code=HUB123,HUB456` will return issues with either HUB123 or HUB456 as their hub code.
 
-- `state_id`: comma-separated list of state UUIDs to return issues in those exact states. (e.g., `?state_id=state1-uuid,state2-uuid`)
-- `state_group`: comma-separated workflow group names (`backlog`, `unstarted`, `started`, `completed`, `cancelled`). (e.g., `?state_group=backlog,started`)
+#### Date Filtering
 
-**Multiple Hub Codes:**
-For `hub_code`, you can specify multiple codes as a comma-separated list to match any of the provided hubs. For example, `?hub_code=HUB123,HUB456` filters issues belonging to either HUB123 or HUB456.
+Date filters support the following formats:
 
-**Example filter as query string:**
+1. **Exact Date**: `YYYY-MM-DD`
+2. **Relative Time**: `{number}_{unit}` where:
+   - `number` is a positive integer
+   - `unit` is either `weeks` or `months`
+   - Example: `2_weeks`, `3_months`
 
-```text
-?priority=high&state_id=state-uuid&hub_code=HUB123
-```
+3. **Date Range**: Combine with operators:
+   - `after`: Filter dates after the specified date
+   - `before`: Filter dates before the specified date
+   - `fromnow`: Calculate from current date
+   - `beforenow`: Calculate from current date
 
-#### Pagination
+Examples:
 
-- Pagination is enabled by default.
-- Use `per_page` and `cursor` to control which results you get.
-- The response includes pagination metadata.
-- For reference check [Plane Pagination Documenation](https://developers.plane.so/api-reference/introduction#pagination-documentation)
+- `?created_at=2024-06-01;after` - Issues created after June 1, 2024
+- `?created_at=2_weeks;after;fromnow` - Issues created in the next 2 weeks
+- `?created_at=3_months;before;beforenow` - Issues created in the last 3 months
+
+#### Timestamp Filtering
+
+For more precise filtering, you can use timestamp-level filters:
+
+- `created_at_ts`: Filter by exact creation timestamp
+- `updated_at_ts`: Filter by exact update timestamp
+
+Format: `YYYY-MM-DDThh:mm:ss.sssZ` with optional operator:
+
+- `;after` - Filter timestamps after the specified time
+- `;before` - Filter timestamps before the specified time
+
+Examples:
+
+- `?created_at_ts=2024-06-01T12:00:00.000Z;after` - Issues created after June 1, 2024, 12:00:00 UTC
+- `?created_at_ts=2024-06-01T12:00:00.000Z;after,2024-06-01T12:15:00.000Z;before` - Issues created between two timestamps
+
+#### Custom Property Filtering
+
+Custom properties can be filtered using the following format:
+
+1. **Simple Format**: `key:value`
+2. **Advanced Format**: `key__operator:value`
+
+Supported operators:
+
+- For strings:
+  - `contains`: Case-insensitive contains
+  - `not_contains`: Case-insensitive not contains
+  - `is_equal_to`: Exact match
+  - `is_not_equal_to`: Not exact match
+  - `isnull`: Is null
+  - `isnotnull`: Is not null
+- For numbers and dates:
+  - `isbetween`: Range between two values (use `^` as separator)
+  - `gte`: Greater than or equal
+  - `lte`: Less than or equal
+  - `gt`: Greater than
+  - `lt`: Less than
+  - `exact`: Exact match
+  - `ne`: Not equal
+  - `isnull`: Is null
+  - `isnotnull`: Is not null
+- For booleans:
+  - `is_true`: Is true
+  - `is_false`: Is false
+  - `isnull`: Is null
+  - `isnotnull`: Is not null
+
+Examples:
+
+- `?custom_properties=weight:10` - Issues with weight property equal to 10
+- `?custom_properties=weight__gte:10` - Issues with weight property greater than or equal to 10
+- `?custom_properties=weight__isbetween:10^20` - Issues with weight property between 10 and 20
+- `?custom_properties=status__contains:active` - Issues with status containing "active"
+- `?custom_properties=is_completed__is_true` - Issues with is_completed property set to true
+
+Multiple custom property filters can be combined using the pipe (`|`) separator:
+`?custom_properties=weight__gte:10|status__contains:active`
 
 ### Fetch Issues API Response Codes
 
