@@ -11,6 +11,7 @@ from django.db import IntegrityError
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from rest_framework.throttling import ScopedRateThrottle
 
 # Module imports
 from ..base import BaseAPIView
@@ -19,7 +20,6 @@ from plane.settings.storage import S3Storage
 from plane.app.permissions import allow_permission, ROLE
 from plane.utils.cache import invalidate_cache_directly
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
-
 
 class UserAssetsV2Endpoint(BaseAPIView):
     """This endpoint is used to upload user profile images."""
@@ -721,6 +721,10 @@ class AssetCheckEndpoint(BaseAPIView):
 
 
 class DuplicateAssetEndpoint(BaseAPIView):
+
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "image_duplicate"
+
     def get_entity_id_field(self, entity_type, entity_id):
         # Workspace Logo
         if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
