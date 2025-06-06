@@ -66,7 +66,12 @@ export const ProjectItem = observer((props: Props) => {
         </>
       }
       quickActionElement={
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="block md:hidden">
+          <QuickActions project={projectDetails} workspaceSlug={workspaceSlug.toString()} initiativeId={initiativeId} />
+        </div>
+      }
+      actionableItems={
+        <>
           <Attributes
             project={projectDetails}
             isArchived={projectDetails.archived_at !== null}
@@ -81,14 +86,14 @@ export const ProjectItem = observer((props: Props) => {
               date: isProjectGroupingEnabled,
             }}
           />
-          <div className={cn("hidden md:flex")}>
+          <div className="hidden md:flex">
             <QuickActions
               project={projectDetails}
               workspaceSlug={workspaceSlug.toString()}
               initiativeId={initiativeId}
             />
           </div>
-        </div>
+        </>
       }
       itemClassName="overflow-visible"
       isMobile={isMobile}

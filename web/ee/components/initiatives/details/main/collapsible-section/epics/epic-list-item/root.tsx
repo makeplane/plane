@@ -109,7 +109,17 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
         </>
       }
       quickActionElement={
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="block md:hidden">
+          <EpicQuickActions
+            workspaceSlug={workspaceSlug}
+            epicId={epicId}
+            initiativeId={initiativeId}
+            disabled={disabled}
+          />
+        </div>
+      }
+      actionableItems={
+        <>
           <EpicProperties
             workspaceSlug={workspaceSlug}
             initiativeId={initiativeId}
@@ -126,7 +136,7 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
               disabled={disabled}
             />
           </div>
-        </div>
+        </>
       }
       itemClassName="overflow-visible"
       isMobile={isMobile}
