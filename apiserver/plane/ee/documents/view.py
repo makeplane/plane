@@ -1,9 +1,10 @@
+from django.conf import settings
 from django.db.models import Prefetch
-from django_elasticsearch_dsl import fields
-from django_elasticsearch_dsl.registries import registry
+from django_opensearch_dsl import fields
+from django_opensearch_dsl.registries import registry
 from plane.db.models import IssueView, Project, ProjectMember
 
-from .base import BaseDocument, JsonKeywordField
+from .base import BaseDocument, JsonKeywordField, edge_ngram_analyzer
 
 
 @registry.register_document
@@ -18,13 +19,18 @@ class IssueViewDocument(BaseDocument):
     active_project_member_user_ids = fields.ListField(fields.KeywordField())
     logo_props = JsonKeywordField(attr="logo_props")
     is_deleted = fields.BooleanField()
+    name = fields.TextField(analyzer=edge_ngram_analyzer, search_analyzer="standard")
 
-    class Index:
-        name = "issue_views"
+    class Index(BaseDocument.Index):
+        name = (
+            f"{settings.OPENSEARCH_INDEX_PREFIX}_issue_views"
+            if settings.OPENSEARCH_INDEX_PREFIX
+            else "issue_views"
+        )
 
     class Django:
         model = IssueView
-        fields = ["id", "name", "deleted_at"]
+        fields = ["id", "deleted_at"]
         # queryset_pagination tells dsl to add chunk_size to the queryset iterator.
         # which is required for django to use prefetch_related when using iterator.
         # NOTE: This number can be different for other indexes based on complexity
@@ -37,7 +43,7 @@ class IssueViewDocument(BaseDocument):
             "project",
             Prefetch(
                 "project__project_projectmember",
-                queryset=ProjectMember.objects.filter(is_active=True).only("member_id"),
+                queryset=ProjectMember.objects.filter(is_active=True),
                 to_attr="active_project_members",
             ),
         )

@@ -1,13 +1,14 @@
+from django.conf import settings
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import Q, UUIDField, Value
 from django.db.models.functions import Coalesce
-from django_elasticsearch_dsl import fields
-from django_elasticsearch_dsl.registries import registry
+from django_opensearch_dsl import fields
+from django_opensearch_dsl.registries import registry
 
 from plane.ee.models import Teamspace, TeamspaceMember
 
-from .base import BaseDocument, JsonKeywordField
+from .base import BaseDocument, JsonKeywordField, edge_ngram_analyzer
 
 
 @registry.register_document
@@ -17,13 +18,18 @@ class TeamspaceDocument(BaseDocument):
     active_member_user_ids = fields.ListField(fields.KeywordField())
     logo_props = JsonKeywordField(attr="logo_props")
     is_deleted = fields.BooleanField()
+    name = fields.TextField(analyzer=edge_ngram_analyzer, search_analyzer="standard")
 
-    class Index:
-        name = "teamspaces"
+    class Index(BaseDocument.Index):
+        name = (
+            f"{settings.OPENSEARCH_INDEX_PREFIX}_teamspaces"
+            if settings.OPENSEARCH_INDEX_PREFIX
+            else "teamspaces"
+        )
 
     class Django:
         model = Teamspace
-        fields = ["id", "name", "deleted_at"]
+        fields = ["id", "deleted_at"]
         # queryset_pagination tells dsl to add chunk_size to the queryset iterator.
         # which is required for django to use prefetch_related when using iterator.
         # NOTE: This number can be different for other indexes based on complexity

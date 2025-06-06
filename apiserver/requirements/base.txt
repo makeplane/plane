@@ -76,9 +76,6 @@ openfeature-sdk==0.7.0
 strawberry-graphql-django==0.48.0
 # django rest framework jwt
 djangorestframework-simplejwt==5.4.0
-# Elastic Search Integration
-elasticsearch-dsl>=8.0.0,<9.0.0
-django-elasticsearch-dsl==8.0.0
 # firebase admin
 firebase-admin==6.6.0
 # oauth toolkit
@@ -89,3 +86,7 @@ pydantic==2.10.6
 
 # rate limiting
 django-ratelimit==4.1.0
+
+# OpenSearch Integration
+opensearch-py==2.8.0
+django-opensearch-dsl==0.7.0

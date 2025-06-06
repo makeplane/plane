@@ -563,22 +563,30 @@ OAUTH2_PROVIDER = {
     "PKCE_REQUIRED": is_pkce_required,
 }
 
-# ElasticSearch settings
-ELASTICSEARCH_ENABLED = os.environ.get("ELASTICSEARCH_ENABLED", "0") == "1"
-if ELASTICSEARCH_ENABLED:
-    # Elastic Search Config
-    ELASTICSEARCH_DSL = {
+# OpenSearch settings
+OPENSEARCH_ENABLED = os.environ.get("OPENSEARCH_ENABLED", "0") == "1"
+OPENSEARCH_INDEX_PREFIX = os.environ.get("OPENSEARCH_INDEX_PREFIX", "")
+if OPENSEARCH_ENABLED:
+    # OpenSearch Config
+    OPENSEARCH_DSL = {
         "default": {
-            "hosts": os.environ.get("ELASTICSEARCH_URL"),
-            "api_key": os.environ.get("ELASTICSEARCH_API_KEY"),
+            "hosts": os.environ.get("OPENSEARCH_URL"),
+            "http_auth": (
+                os.environ.get("OPENSEARCH_USERNAME"),
+                os.environ.get("OPENSEARCH_PASSWORD"),
+            ),
+            "use_ssl": True,
+            "verify_certs": False,
+            "ssl_show_warn": False,
+            "timeout": 60,
         }
     }
-    ELASTICSEARCH_DSL_SIGNAL_PROCESSOR = os.environ.get(
-        "ELASTICSEARCH_SIGNAL_PROCESSOR",
-        "plane.ee.documents.signal_handler.CustomCelerySignalProcessor",
+    OPENSEARCH_DSL_SIGNAL_PROCESSOR = os.environ.get(
+        "OPENSEARCH_DSL_SIGNAL_PROCESSOR",
+        "django_opensearch_dsl.signals.CelerySignalProcessor",
     )
 
-    INSTALLED_APPS += ["django_elasticsearch_dsl"]
+    INSTALLED_APPS += ["django_opensearch_dsl"]
 
 # Web URL
 WEB_URL = os.environ.get("WEB_URL", "http://localhost:3000")

@@ -1,8 +1,8 @@
 import json
 
 from celery import shared_task
-from django_elasticsearch_dsl.registries import registry
-from django_elasticsearch_dsl.signals import CelerySignalProcessor
+from django_opensearch_dsl.registries import registry
+from django_opensearch_dsl.signals import CelerySignalProcessor
 
 from django.apps import apps
 from django.core.serializers.json import DjangoJSONEncoder
@@ -10,7 +10,7 @@ from django.forms.models import model_to_dict
 from django.conf import settings
 
 from plane.db.signals import post_bulk_create, post_bulk_update
-from plane.ee.bgtasks.elasticsearch_index_update_task import (
+from plane.ee.bgtasks.search_index_update_task import (
     handle_project_member_update,
     handle_project_udpate,
     handle_teamspace_member_update,
@@ -59,7 +59,7 @@ def update_index_on_bulk_create_update(sender, **kwargs):
     )
 
 
-if settings.ELASTICSEARCH_ENABLED:
+if settings.OPENSEARCH_ENABLED:
     post_bulk_create.connect(update_index_on_bulk_create_update)
     post_bulk_update.connect(update_index_on_bulk_create_update)
 

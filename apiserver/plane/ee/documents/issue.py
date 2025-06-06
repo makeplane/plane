@@ -1,16 +1,21 @@
+from django.conf import settings
 from django.db.models import Prefetch
-from django_elasticsearch_dsl import fields
-from django_elasticsearch_dsl.registries import registry
+from django_opensearch_dsl import fields
+from django_opensearch_dsl.registries import registry
 from plane.db.models import Issue, ProjectMember, Project
 
-from .base import BaseDocument, lowercase_normalizer
+from .base import BaseDocument, edge_ngram_analyzer
 
 
 @registry.register_document
 class IssueDocument(BaseDocument):
     description = fields.TextField(attr="description_stripped")
     project_id = fields.KeywordField(attr="project_id")
-    project_identifier = fields.TextField()
+    project_identifier = fields.TextField(
+        analyzer=edge_ngram_analyzer,
+        search_analyzer="standard",
+        search_quote_analyzer="standard",
+    )
     project_archived_at = fields.DateField()
     project_is_archived = fields.BooleanField()
     workspace_id = fields.KeywordField(attr="workspace_id")
@@ -18,15 +23,20 @@ class IssueDocument(BaseDocument):
     type_id = fields.KeywordField(attr="type_id")
     is_epic = fields.BooleanField()
     active_project_member_user_ids = fields.ListField(fields.KeywordField())
-    pretty_sequence = fields.KeywordField(normalizer=lowercase_normalizer)
+    pretty_sequence = fields.TextField()
     is_deleted = fields.BooleanField()
+    name = fields.TextField(analyzer=edge_ngram_analyzer, search_analyzer="standard")
 
-    class Index:
-        name = "issues"
+    class Index(BaseDocument.Index):
+        name = (
+            f"{settings.OPENSEARCH_INDEX_PREFIX}_issues"
+            if settings.OPENSEARCH_INDEX_PREFIX
+            else "issues"
+        )
 
     class Django:
         model = Issue
-        fields = ["id", "name", "sequence_id", "priority", "deleted_at"]
+        fields = ["id", "sequence_id", "priority", "deleted_at"]
         # queryset_pagination tells dsl to add chunk_size to the queryset iterator.
         # which is required for django to use prefetch_related when using iterator.
         # NOTE: This number can be different for other indexes based on complexity
@@ -39,7 +49,7 @@ class IssueDocument(BaseDocument):
             "project",
             Prefetch(
                 "project__project_projectmember",
-                queryset=ProjectMember.objects.filter(is_active=True).only("member_id"),
+                queryset=ProjectMember.objects.filter(is_active=True),
                 to_attr="active_project_members",
             ),
         )

@@ -1,5 +1,8 @@
+# Standard library imports
+from opensearchpy.helpers.utils import AttrList, AttrDict
+
+# Third-party imports
 from rest_framework import serializers
-from elasticsearch_dsl import AttrList
 
 
 # Custom ListField to handle AttrList conversion
@@ -7,6 +10,13 @@ class AttrListField(serializers.ListField):
     def to_representation(self, value):
         if isinstance(value, AttrList):
             value = list(value)
+        return super().to_representation(value)
+
+
+class AttrDictField(serializers.JSONField):
+    def to_representation(self, value):
+        if isinstance(value, AttrDict):
+            value = value.to_dict()
         return super().to_representation(value)
 
 
@@ -32,7 +42,7 @@ class ProjectSearchSerializer(BaseSearchSerializer):
     id = serializers.CharField()
     identifier = serializers.CharField()
     workspace_slug = serializers.CharField()
-    logo_props = serializers.JSONField()
+    logo_props = AttrDictField()
 
 
 # Serializer for CycleDocument
@@ -40,7 +50,7 @@ class CycleSearchSerializer(BaseSearchSerializer):
     name = serializers.CharField()
     id = serializers.CharField()
     project_id = serializers.CharField()
-    logo_props = serializers.JSONField()
+    logo_props = AttrDictField()
     project_identifier = serializers.CharField()
     workspace_slug = serializers.CharField()
 
@@ -50,7 +60,7 @@ class ModuleSearchSerializer(BaseSearchSerializer):
     name = serializers.CharField()
     id = serializers.CharField()
     project_id = serializers.CharField()
-    logo_props = serializers.JSONField()
+    logo_props = AttrDictField()
     project_identifier = serializers.CharField()
     workspace_slug = serializers.CharField()
 
@@ -60,7 +70,7 @@ class PageSearchSerializer(BaseSearchSerializer):
     name = serializers.CharField()
     id = serializers.CharField()
     project_ids = AttrListField(child=serializers.CharField())
-    logo_props = serializers.JSONField()
+    logo_props = AttrDictField()
     project_identifiers = AttrListField(child=serializers.CharField())
     workspace_slug = serializers.CharField()
 
@@ -70,7 +80,7 @@ class IssueViewSearchSerializer(BaseSearchSerializer):
     name = serializers.CharField()
     id = serializers.CharField()
     project_id = serializers.CharField()
-    logo_props = serializers.JSONField()
+    logo_props = AttrDictField()
     project_identifier = serializers.CharField()
     workspace_slug = serializers.CharField()
 
@@ -80,4 +90,4 @@ class TeamspaceSearchSerializer(BaseSearchSerializer):
     name = serializers.CharField()
     id = serializers.CharField()
     workspace_slug = serializers.CharField()
-    logo_props = serializers.JSONField()
+    logo_props = AttrDictField()

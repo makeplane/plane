@@ -21,7 +21,7 @@ export const AppSearch = observer(() => {
   const isOnSearchPage = pathname.includes(`${workspaceSlug}/search`);
   const { config } = useInstance();
 
-  if (!config?.is_elasticsearch_enabled) return <BaseAppSearch />;
+  if (!config?.is_opensearch_enabled) return <BaseAppSearch />;
   return (
     <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="ADVANCED_SEARCH" fallback={<BaseAppSearch />}>
       <Link

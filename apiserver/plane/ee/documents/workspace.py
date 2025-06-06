@@ -1,9 +1,10 @@
+from django.conf import settings
 from django.db.models import Prefetch
-from django_elasticsearch_dsl import fields
-from django_elasticsearch_dsl.registries import registry
+from django_opensearch_dsl import fields
+from django_opensearch_dsl.registries import registry
 from plane.db.models import Workspace, WorkspaceMember
 
-from .base import BaseDocument
+from .base import BaseDocument, edge_ngram_analyzer
 
 
 @registry.register_document
@@ -11,13 +12,18 @@ class WorkspaceDocument(BaseDocument):
     slug = fields.KeywordField(attr="slug")
     active_member_user_ids = fields.ListField(fields.KeywordField())
     is_deleted = fields.BooleanField()
+    name = fields.TextField(analyzer=edge_ngram_analyzer, search_analyzer="standard")
 
-    class Index:
-        name = "workspaces"
+    class Index(BaseDocument.Index):
+        name = (
+            f"{settings.OPENSEARCH_INDEX_PREFIX}_workspaces"
+            if settings.OPENSEARCH_INDEX_PREFIX
+            else "workspaces"
+        )
 
     class Django:
         model = Workspace
-        fields = ["id", "name", "deleted_at"]
+        fields = ["id", "deleted_at"]
         # queryset_pagination tells dsl to add chunk_size to the queryset iterator.
         # which is required for django to use prefetch_related when using iterator.
         # NOTE: This number can be different for other indexes based on complexity
@@ -29,9 +35,7 @@ class WorkspaceDocument(BaseDocument):
         return qs.prefetch_related(
             Prefetch(
                 "workspace_member",
-                queryset=WorkspaceMember.objects.filter(is_active=True).only(
-                    "member_id"
-                ),
+                queryset=WorkspaceMember.objects.filter(is_active=True),
                 to_attr="active_members",
             )
         )
