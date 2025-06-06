@@ -2,6 +2,7 @@
 import { IPagesListStore, PagesListStore } from "@/plane-web/store/pages";
 // store
 import { CoreRootStore } from "@/store/root.store";
+import { FeatureFlagsStore, IFeatureFlagsStore } from "./feature_flags.store";
 import { IIntakeStore, IntakeStore } from "./intake.store";
 import { CalendarStore, ICalendarStore } from "./issue_calendar_view.store";
 import { ProjectViewStore } from "./views/project-view.store";
@@ -15,6 +16,7 @@ export class RootStore extends CoreRootStore {
   viewIssuesFilter: IViewIssueFilterStore;
   calendarStore: ICalendarStore;
   intakeStore: IIntakeStore;
+  featureFlagsStore: IFeatureFlagsStore;
 
   constructor() {
     super();
@@ -24,6 +26,7 @@ export class RootStore extends CoreRootStore {
     this.viewIssuesFilter = new ViewIssueFilterStore(this);
     this.calendarStore = new CalendarStore();
     this.intakeStore = new IntakeStore();
+    this.featureFlagsStore = new FeatureFlagsStore();
   }
 
   reset() {
@@ -33,5 +36,7 @@ export class RootStore extends CoreRootStore {
     this.viewIssues = new ViewIssueStore(this);
     this.viewIssuesFilter = new ViewIssueFilterStore(this);
     this.calendarStore = new CalendarStore();
+    this.intakeStore = new IntakeStore();
+    this.featureFlagsStore = new FeatureFlagsStore();
   }
 }

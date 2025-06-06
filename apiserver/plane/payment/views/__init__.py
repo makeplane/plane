@@ -17,4 +17,4 @@ from .subscription import (
     CancelTrialSubscriptionEndpoint,
     ProrationPreviewEndpoint,
 )
-from .feature_flag import FeatureFlagProxyEndpoint
+from .feature_flag import FeatureFlagProxyEndpoint, FeatureFlagProxySpaceEndpoint

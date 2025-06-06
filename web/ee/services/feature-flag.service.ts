@@ -1,10 +1,13 @@
+// plane imports
+import { E_FEATURE_FLAGS } from "@plane/constants";
+// helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 
 export type TFeatureFlagsResponse = {
   values: {
-    [featureFlag: string]: boolean;
+    [featureFlag in E_FEATURE_FLAGS]: boolean;
   };
 };
 

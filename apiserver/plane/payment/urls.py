@@ -16,6 +16,7 @@ from .views import (
     LicenseDeActivateEndpoint,
     CancelTrialSubscriptionEndpoint,
     ProrationPreviewEndpoint,
+    FeatureFlagProxySpaceEndpoint,
 )
 
 urlpatterns = [
@@ -87,5 +88,14 @@ urlpatterns = [
         "workspaces/<str:slug>/subscriptions/proration-preview/",
         ProrationPreviewEndpoint.as_view(),
         name="proration-preview",
+    ),
+]
+
+
+space_urlpatterns = [
+    path(
+        "anchor/<str:anchor>/flags/",
+        FeatureFlagProxySpaceEndpoint.as_view(),
+        name="flags",
     ),
 ]

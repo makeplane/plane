@@ -9,7 +9,7 @@ import { CoreRootStore } from "@/store/root.store";
 
 const featureFlagService = new FeatureFlagService();
 
-type TFeatureFlagsMaps = Record<string, boolean>; // feature flag -> boolean
+type TFeatureFlagsMaps = Record<E_FEATURE_FLAGS, boolean>; // feature flag -> boolean
 
 export interface IFeatureFlagsStore {
   flags: Record<string, TFeatureFlagsMaps>; // workspaceSlug -> feature flag map
@@ -38,7 +38,7 @@ export class FeatureFlagsStore implements IFeatureFlagsStore {
       runInAction(() => {
         if (response.values) {
           Object.keys(response.values).forEach((key) => {
-            set(this.flags, [workspaceSlug, key], response.values[key]);
+            set(this.flags, [workspaceSlug, key], response.values[key as E_FEATURE_FLAGS]);
           });
         }
       });
