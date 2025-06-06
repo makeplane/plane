@@ -269,28 +269,31 @@ export function generateIconColors(color: string) {
 }
 
 /**
- * Generate a random color based on a string
- * @param {string} string - The string to generate a color from
- * @returns {string} The random color in HSL format
+ * @description Generates a deterministic HSL color based on input string
+ * @param {string} input - Input string to generate color from
+ * @returns {THsl} An object containing the HSL values
+ * @example
+ * generateRandomColor("hello") // returns consistent HSL color for "hello"
+ * generateRandomColor("") // returns { h: 0, s: 0, l: 0 }
  */
-export const generateRandomColor = (string: string): string => {
-  if (!string) return "rgb(var(--color-primary-100))";
+export const generateRandomColor = (input: string): THsl => {
+  // If input is falsy, generate a random seed string.
+  // The random seed is created by converting a random number to base-36 and taking a substring.
+  const seed = input || Math.random().toString(36).substring(2, 8);
 
-  string = `${string}`;
+  const uniqueId = seed.length.toString() + seed; // Unique identifier based on string length
+  const combinedString = uniqueId + seed;
 
-  const uniqueId = string.length.toString() + string; // Unique identifier based on string length
-  const combinedString = uniqueId + string;
-
+  // Create a hash value from the combined string.
   const hash = Array.from(combinedString).reduce((acc, char) => {
     const charCode = char.charCodeAt(0);
     return (acc << 5) - acc + charCode;
   }, 0);
 
-  const hue = hash % 360;
-  const saturation = 70; // Higher saturation for pastel colors
-  const lightness = 60; // Mid-range lightness for pastel colors
+  // Derive the HSL values from the hash.
+  const hue = Math.abs(hash % 360);
+  const saturation = 70; // Maintains a good amount of color
+  const lightness = 70; // Increased lightness for a pastel look
 
-  const randomColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-
-  return randomColor;
+  return { h: hue, s: saturation, l: lightness };
 };

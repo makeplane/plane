@@ -1,6 +1,7 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
 // api service
+import { EFileAssetType } from "@plane/types/src/enums";
 import { APIService } from "../api.service";
 // helpers
 import { getAssetIdFromUrl } from "./helper";
@@ -59,6 +60,29 @@ export class FileService extends APIService {
   async restoreOldEditorAsset(workspaceId: string, src: string): Promise<void> {
     const assetKey = getAssetIdFromUrl(src);
     return this.post(`/api/workspaces/file-assets/${workspaceId}/${assetKey}/restore/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Duplicates assets
+   * @param {string} workspaceSlug - The workspace slug
+   * @param {object} data - The data for the duplicate assets
+   * @returns {Promise<Record<string, string>>} Promise resolving to a record of asset IDs
+   * @throws {Error} If the request fails
+   */
+  async duplicateAssets(
+    workspaceSlug: string,
+    data: {
+      entity_id: string;
+      entity_type: EFileAssetType;
+      project_id?: string;
+      asset_ids: string[];
+    }
+  ): Promise<Record<string, string>> {
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/duplicate-assets/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
