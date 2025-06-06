@@ -124,7 +124,7 @@ export const UpdateBlock = observer((props: TProps) => {
           </div>
 
           {/* Update */}
-          <div className="text-base my-3 break-words w-full">{updateData.description}</div>
+          <div className="text-base my-3 break-words w-full whitespace-pre-wrap">{updateData.description}</div>
 
           {/* Progress */}
           <Progress completedIssues={updateData.completed_issues} totalIssues={updateData.total_issues} />
