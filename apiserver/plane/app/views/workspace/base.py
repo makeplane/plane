@@ -4,16 +4,20 @@ import io
 import os
 from datetime import date
 import uuid
+import requests
+import uuid
 
 from dateutil.relativedelta import relativedelta
-from django.db import IntegrityError
-from django.db.models import Count, F, Func, OuterRef, Prefetch, Q
-
-from django.db.models.fields import DateField
-from django.db.models.functions import Cast, ExtractDay, ExtractWeek
-
 
 # Django imports
+from django.db import IntegrityError, models
+from django.db.models import Case, When, Exists, Value
+from django.db.models.functions import Concat
+
+# Django imports
+from django.db.models import Count, F, Func, OuterRef, Prefetch, Q, Subquery
+from django.db.models.fields import DateField
+from django.db.models.functions import Cast, ExtractDay, ExtractWeek
 from django.http import HttpResponse
 from django.utils import timezone
 
@@ -28,7 +32,11 @@ from plane.app.permissions import (
 )
 
 # Module imports
-from plane.app.serializers import WorkSpaceSerializer, WorkspaceThemeSerializer
+from plane.app.serializers import (
+    WorkSpaceSerializer,
+    WorkspaceThemeSerializer,
+    WorkspaceUserMeSerializer,
+)
 from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.db.models import (
     Issue,
@@ -38,6 +46,7 @@ from plane.db.models import (
     WorkspaceTheme,
     Profile,
 )
+from plane.ee.models import WorkspaceLicense
 from plane.app.permissions import ROLE, allow_permission
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
@@ -46,6 +55,8 @@ from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.workspace_seed_task import workspace_seed
 from plane.utils.url import contains_url
+from plane.payment.bgtasks.member_sync_task import member_sync_task
+from django.conf import settings
 
 
 class WorkSpaceViewSet(BaseViewSet):
@@ -136,7 +147,10 @@ class WorkSpaceViewSet(BaseViewSet):
                 data["total_members"] = total_members
                 data["role"] = 20
 
+                # seed the workspace
                 workspace_seed.delay(serializer.data["id"])
+                # Sync workspace members
+                member_sync_task.delay(slug)
 
                 return Response(data, status=status.HTTP_201_CREATED)
             return Response(
@@ -171,7 +185,45 @@ class WorkSpaceViewSet(BaseViewSet):
         # Get the workspace
         workspace = self.get_object()
         self.remove_last_workspace_ids_from_user_settings(workspace.id)
-        return super().destroy(request, *args, **kwargs)
+
+        # Fetch the workspace subcription
+        if settings.PAYMENT_SERVER_BASE_URL:
+            try:
+                # Make a cancel request to the payment server
+                response = requests.post(
+                    f"{settings.PAYMENT_SERVER_BASE_URL}/api/licenses/{str(workspace.id)}/workspace-delete/",
+                    headers={
+                        "content-type": "application/json",
+                        "x-api-key": settings.PAYMENT_SERVER_AUTH_TOKEN,
+                    },
+                )
+                if response.status_code == 404:
+                    self.remove_last_workspace_ids_from_user_settings(workspace.id)
+                    Workspace.objects.filter(id=workspace.id).delete()
+
+                    return Response(status=status.HTTP_200_OK)
+
+                # Check if the response is successful
+                response.raise_for_status()
+                # Return the response
+                response = response.json()
+                # Check if the response contains the product key
+                self.remove_last_workspace_ids_from_user_settings(workspace.id)
+                super().destroy(request, *args, **kwargs)
+                return Response(response, status=status.HTTP_200_OK)
+            except requests.exceptions.RequestException as e:
+                if hasattr(e, "response") and e.response.status_code == 400:
+                    return Response(
+                        e.response.json(), status=status.HTTP_400_BAD_REQUEST
+                    )
+                return Response(
+                    {"error": "error in checking workspace subscription"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        else:
+            # Delete the workspace
+            self.remove_last_workspace_ids_from_user_settings(workspace.id)
+            return super().destroy(request, *args, **kwargs)
 
 
 class UserWorkSpacesEndpoint(BaseAPIView):
@@ -193,7 +245,7 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             workspace=OuterRef("id"), member=request.user, is_active=True
         ).values("role")
 
-        workspace = (
+        workspaces = (
             Workspace.objects.prefetch_related(
                 Prefetch(
                     "workspace_member",
@@ -206,11 +258,25 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             .filter(
                 workspace_member__member=request.user, workspace_member__is_active=True
             )
+            .annotate(
+                current_plan=Subquery(
+                    WorkspaceLicense.objects.filter(workspace_id=OuterRef("id")).values(
+                        "plan"
+                    )[:1]
+                ),
+                is_on_trial=Exists(
+                    WorkspaceLicense.objects.filter(
+                        workspace_id=OuterRef("id"),
+                        trial_end_date__gt=timezone.now(),
+                        plan__in=["PRO", "BUSINESS", "ENTERPRISE"],
+                    )
+                ),
+            )
             .distinct()
         )
 
-        workspaces = WorkSpaceSerializer(
-            self.filter_queryset(workspace),
+        workspaces = WorkspaceUserMeSerializer(
+            self.filter_queryset(workspaces),
             fields=fields if fields else None,
             many=True,
         ).data

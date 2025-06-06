@@ -224,8 +224,10 @@
   "something_went_wrong_please_try_again": "發生錯誤，請再試一次。",
   "load_more": "載入更多",
   "select_or_customize_your_interface_color_scheme": "選擇或自訂您的介面配色方案。",
+  "select_the_cursor_motion_style_that_feels_right_for_you": "選擇適合您的游標移動樣式。",
   "theme": "主題",
-  "system_preference": "系統偏好設定",
+  "smooth_cursor": "平滑游標",
+  "system_preference": "系統偏好",
   "light": "淺色",
   "dark": "深色",
   "light_contrast": "高對比淺色",
@@ -2465,7 +2467,6 @@
     "previously_edited_by": "先前編輯者",
     "edited_by": "編輯者"
   },
-
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane 未能啟動。這可能是因為一個或多個 Plane 服務啟動失敗。",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "從 setup.sh 和 Docker 日誌中選擇 View Logs 來確認。"
