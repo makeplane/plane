@@ -1,5 +1,5 @@
-import { EIssueServiceType } from "@plane/constants";
 // types
+import { EIssueServiceType, API_BASE_URL } from "@plane/constants";
 import {
   TIssueParams,
   type IIssueDisplayProperties,
@@ -12,8 +12,7 @@ import {
   type TIssueSubIssues,
 } from "@plane/types";
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
-import { getIssuesShouldFallbackToServer } from "@/helpers/issue.helper";
+import { getIssuesShouldFallbackToServer } from "@plane/utils";
 import { persistence } from "@/local-db/storage.sqlite";
 // services
 

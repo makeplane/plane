@@ -10,7 +10,7 @@ import { TIssue } from "@plane/types";
 // ui
 import { ControlLink, CustomMenu } from "@plane/ui";
 // helpers
-import { generateWorkItemLink } from "@/helpers/issue.helper";
+import { generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssues, useProject, useProjectState } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";

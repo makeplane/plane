@@ -3,16 +3,16 @@ import { observer } from "mobx-react";
 // plane imports
 import { EStartOfTheWeek } from "@plane/constants";
 // components
+import type { ChartDataType, IBlockUpdateData, IBlockUpdateDependencyData, TGanttViews } from "@plane/types";
+import { cn } from "@plane/utils";
 import { GanttChartHeader, GanttChartMainContent } from "@/components/gantt-chart";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useUserProfile } from "@/hooks/store";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
 import { SIDEBAR_WIDTH } from "../constants";
 import { currentViewDataWithView } from "../data";
-import { ChartDataType, IBlockUpdateData, IBlockUpdateDependencyData, TGanttViews } from "../types";
 import {
   getNumberOfDaysBetweenTwoDates,
   IMonthBlock,

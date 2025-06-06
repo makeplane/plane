@@ -5,9 +5,8 @@ import { useTranslation } from "@plane/i18n";
 import { IApiToken } from "@plane/types";
 // ui
 import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { renderFormattedDate, renderFormattedTime, copyTextToClipboard } from "@plane/utils";
 // helpers
-import { renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
-import { copyTextToClipboard } from "@/helpers/string.helper";
 // types
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // hooks

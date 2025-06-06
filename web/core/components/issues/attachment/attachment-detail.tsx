@@ -6,15 +6,13 @@ import Link from "next/link";
 import { AlertCircle, X } from "lucide-react";
 // ui
 import { Tooltip } from "@plane/ui";
+import { convertBytesToSize, getFileExtension, getFileName, getFileURL, renderFormattedDate, truncateText } from "@plane/utils";
 // icons
+//
 import { getFileIcon } from "@/components/icons";
 // components
 import { IssueAttachmentDeleteModal } from "@/components/issues";
 // helpers
-import { convertBytesToSize, getFileExtension, getFileName } from "@/helpers/attachment.helper";
-import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
-import { truncateText } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetail, useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

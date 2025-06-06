@@ -4,10 +4,8 @@ import Link from "next/link";
 import { useTranslation } from "@plane/i18n";
 import { TPageVersion } from "@plane/types";
 import { Avatar } from "@plane/ui";
+import { cn, renderFormattedDate, renderFormattedTime, getFileURL } from "@plane/utils";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 

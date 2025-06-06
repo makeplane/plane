@@ -11,11 +11,10 @@ import type { IUser, TUserProfile } from "@plane/types";
 import { Button, Input, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
 import { getButtonStyling } from "@plane/ui/src/button";
-import { cn } from "@plane/utils";
+import { cn, getFileURL } from "@plane/utils";
 import { DeactivateAccountModal } from "@/components/account";
 import { ImagePickerPopover, UserImageUploadModal } from "@/components/core";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useUser, useUserProfile } from "@/hooks/store";
 

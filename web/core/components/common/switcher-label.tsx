@@ -1,8 +1,7 @@
 import { FC } from "react";
 import { TLogoProps } from "@plane/types";
 import { ISvgIcons, Logo } from "@plane/ui";
-import { getFileURL } from "@plane/utils";
-import { truncateText } from "@/helpers/string.helper";
+import { getFileURL, truncateText } from "@plane/utils";
 type TSwitcherLabelProps = {
   logo_props?: TLogoProps;
   logo_url?: string;

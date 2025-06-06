@@ -5,7 +5,7 @@ import { ISSUE_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssueOrderByOptions } from "@plane/types";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // plane web imports
 import { WorkFlowDisabledOverlay } from "@/plane-web/components/workflow";
 

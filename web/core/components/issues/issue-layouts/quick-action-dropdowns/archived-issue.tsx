@@ -6,10 +6,10 @@ import { useParams } from "next/navigation";
 // ui
 import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { ContextMenu, CustomMenu } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { DeleteIssueModal } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker, useIssues, useUserPermissions } from "@/hooks/store";
 // types

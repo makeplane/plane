@@ -8,10 +8,9 @@ import { useParams, usePathname } from "next/navigation";
 import { ARCHIVABLE_STATE_GROUPS, EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TIssue } from "@plane/types";
 import { ContextMenu, CustomMenu } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
-// helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker, useIssues, useProject, useProjectState, useUserPermissions } from "@/hooks/store";
 // plane-web components

@@ -11,7 +11,7 @@ import { TIssue } from "@plane/types";
 // ui
 import { Input } from "@plane/ui";
 // helpers
-import { getTabIndex } from "@/helpers/tab-indices.helper";
+import { getTabIndex } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 

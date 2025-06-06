@@ -17,12 +17,12 @@ import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
 //ui
 // components
 import { Header, EHeaderVariant, Loader } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { AppliedFiltersList } from "@/components/issues";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
 import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
 // constants
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker, useGlobalView, useIssues, useLabel, useUser, useUserPermissions } from "@/hooks/store";
 import { getAreFiltersEqual } from "../../../utils";

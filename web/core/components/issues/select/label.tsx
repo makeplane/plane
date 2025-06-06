@@ -8,9 +8,9 @@ import { Combobox } from "@headlessui/react";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 // components
+import { cn } from "@plane/utils";
 import { IssueLabelsList } from "@/components/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useLabel } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";

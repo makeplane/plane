@@ -9,7 +9,7 @@ import { PostHogProvider as PHProvider } from "posthog-js/react";
 // constants
 import { GROUP_WORKSPACE } from "@plane/constants";
 // helpers
-import { getUserRole } from "@/helpers/user.helper";
+import { getUserRole } from "@plane/utils";
 // hooks
 import { useWorkspace, useUser, useInstance, useUserPermissions } from "@/hooks/store";
 // dynamic imports

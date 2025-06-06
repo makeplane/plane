@@ -2,10 +2,10 @@ import React from "react";
 // plane imports
 import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
 import { MakeOptional } from "@plane/types";
+import { cn } from "@plane/utils";
 // components
 import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
 

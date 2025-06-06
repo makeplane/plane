@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane utils
-import { cn } from "@plane/utils";
+import { cn, renderFormattedDate } from "@plane/utils";
 //helpers
-import { renderFormattedDate } from "@/helpers/date-time.helper";
+//
 //hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 

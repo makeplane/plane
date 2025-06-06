@@ -9,12 +9,11 @@ import { ORGANIZATION_SIZE, WORKSPACE_UPDATED, EUserPermissions, EUserPermission
 import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
 import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import { copyUrlToClipboard } from "@plane/utils";
+import { copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
 import { LogoSpinner } from "@/components/common";
 import { WorkspaceImageUploadModal } from "@/components/core";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useEventTracker, useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web components

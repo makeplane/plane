@@ -8,15 +8,13 @@ import { useParams, usePathname } from "next/navigation";
 import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TIssue } from "@plane/types";
 import { ContextMenu, CustomMenu } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
-// helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker, useUserPermissions } from "@/hooks/store";
-// types
+// local imports
 import { IQuickActionProps } from "../list/list-view-types";
-// helper
 import { useDraftIssueMenuItems, MenuItemFactoryProps } from "./helper";
 
 export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {

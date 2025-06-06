@@ -1,7 +1,7 @@
 // types
 import { TLogoProps } from "@plane/types";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 type Props = {
   className?: string;

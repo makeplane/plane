@@ -2,12 +2,12 @@ import { FC, useState } from "react";
 import concat from "lodash/concat";
 import uniq from "lodash/uniq";
 import { observer } from "mobx-react";
+import { PAST_DURATION_FILTER_OPTIONS } from "@plane/constants";
 import { TInboxIssueFilterDateKeys } from "@plane/types";
 // components
 import { DateFilterModal } from "@/components/core";
 import { FilterHeader, FilterOption } from "@/components/issues";
 // constants
-import { PAST_DURATION_FILTER_OPTIONS } from "@/helpers/inbox.helper";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
 

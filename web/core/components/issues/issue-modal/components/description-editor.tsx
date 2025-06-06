@@ -15,12 +15,11 @@ import { TIssue } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 // ui
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import { getDescriptionPlaceholderI18n, getTabIndex } from "@plane/utils";
 // components
 import { GptAssistantPopover } from "@/components/core";
 import { RichTextEditor } from "@/components/editor";
 // helpers
-import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useEditorAsset, useInstance, useWorkspace } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";

@@ -1,11 +1,11 @@
 import { useRef, useState } from "react";
 // Plane
+import type { IBlockUpdateDependencyData, IGanttBlock } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
 import { DEFAULT_BLOCK_WIDTH, SIDEBAR_WIDTH } from "../../constants";
-import { IBlockUpdateDependencyData, IGanttBlock } from "../../types";
 
 export const useGanttResizable = (
   block: IGanttBlock,

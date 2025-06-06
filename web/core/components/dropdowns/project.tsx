@@ -7,9 +7,9 @@ import { Combobox } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { ComboDropDown } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { Logo } from "@/components/common";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProject } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";

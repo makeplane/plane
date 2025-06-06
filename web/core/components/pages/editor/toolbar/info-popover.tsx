@@ -6,12 +6,10 @@ import { usePopper } from "react-popper";
 import { Info } from "lucide-react";
 // plane imports
 import { Avatar } from "@plane/ui";
-import { getFileURL, renderFormattedDate } from "@plane/utils";
-// helpers
-import { calculateTimeAgoShort, getReadTimeFromWordsCount } from "@/helpers/date-time.helper";
+import { calculateTimeAgoShort, getFileURL, getReadTimeFromWordsCount, renderFormattedDate } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store";
-// store types
+// store
 import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {

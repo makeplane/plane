@@ -1,6 +1,6 @@
+import { API_BASE_URL } from "@plane/constants";
 import type { TIssueRelation, TIssue } from "@plane/types";
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
 // Plane-web
 import { TIssueRelationTypes } from "@/plane-web/types";
 // services

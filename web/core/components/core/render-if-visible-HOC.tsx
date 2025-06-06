@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, ReactNode, MutableRefObject } from "react";
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 type Props = {
   defaultHeight?: string;

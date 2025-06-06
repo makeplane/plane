@@ -8,7 +8,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 // types
 // helpers
 import { TIssueCommentReaction, TIssueCommentReactionIdMap, TIssueCommentReactionMap } from "@plane/types";
-import { groupReactions } from "@/helpers/emoji.helper";
+import { groupReactions } from "@plane/utils";
 import { IssueReactionService } from "@/services/issue";
 import { IIssueDetail } from "./root.store";
 
