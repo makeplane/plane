@@ -49,14 +49,6 @@ export class PaymentService extends APIService {
       });
   }
 
-  async getPaymentLink(data = {}) {
-    return this.post(`/api/payments/website/payment-link/`, data)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   async getFreeTrialSubscription(workspaceSlug: string, payload: { product_id: string; price_id: string }) {
     return this.post(`/api/payments/workspaces/${workspaceSlug}/trial-subscriptions/`, payload)
       .then((response) => response?.data)

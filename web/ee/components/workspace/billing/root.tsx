@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -39,10 +39,7 @@ const paymentService = new PaymentService();
 export const BillingRoot = observer(() => {
   // router
   const { workspaceSlug } = useParams();
-  // refs
-  const containerRef = useRef<HTMLDivElement>(null);
   // states
-  const [isScrolled, setIsScrolled] = useState(false);
   const [productBillingFrequency, setProductBillingFrequency] = useState<TProductBillingFrequency>(
     DEFAULT_PRODUCT_BILLING_FREQUENCY
   );
@@ -72,20 +69,6 @@ export const BillingRoot = observer(() => {
     subscriptionDetail?.product && subscriptionDetail?.product !== EProductSubscriptionEnum.FREE
       ? getBillingAndPlansCardVariantStyle(subscriptionDetail?.product)
       : null;
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const handleScroll = () => {
-      const scrollTop = container.scrollTop;
-      const isScrolled = isCompareAllFeaturesSectionOpen ? scrollTop > 0 : false;
-      setIsScrolled(isScrolled);
-    };
-
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, [isCompareAllFeaturesSectionOpen]);
 
   /**
    * Initiates a free trial for a selected subscription plan
@@ -235,12 +218,7 @@ export const BillingRoot = observer(() => {
         title={t("workspace_settings.settings.billing_and_plans.heading")}
         description={t("workspace_settings.settings.billing_and_plans.description")}
       />
-      <div
-        className={cn(
-          "transition-all duration-500 ease-in-out will-change-[height,opacity]",
-          isScrolled ? "h-0 opacity-0 pointer-events-none" : "h-[300px] opacity-100"
-        )}
-      >
+      <div className={cn("transition-all duration-500 ease-in-out will-change-[height,opacity]")}>
         <div className="py-6">
           <div className={cn("px-6 py-4 border border-custom-border-200 rounded-lg", planCardVariantStyle)}>
             {!subscriptionDetail && (
@@ -281,9 +259,7 @@ export const BillingRoot = observer(() => {
         <div className="text-xl font-semibold mt-3">All plans</div>
       </div>
       <PlansComparison
-        ref={containerRef}
         products={data}
-        isScrolled={isScrolled}
         isProductsAPILoading={isProductsAPILoading}
         trialLoader={trialLoader}
         upgradeLoader={upgradeLoader}
@@ -293,7 +269,6 @@ export const BillingRoot = observer(() => {
         getBillingFrequency={getBillingFrequency}
         setBillingFrequency={setBillingFrequency}
         setIsCompareAllFeaturesSectionOpen={setIsCompareAllFeaturesSectionOpen}
-        setIsScrolled={setIsScrolled}
       />
     </section>
   );
