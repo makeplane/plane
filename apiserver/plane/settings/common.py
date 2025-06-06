@@ -439,3 +439,6 @@ ATTACHMENT_MIME_TYPES = [
 
 # Seed directory path
 SEED_DIR = os.path.join(BASE_DIR, "seeds")
+
+# Use X-Forwarded-Host for get_host calls when behind proxy
+USE_X_FORWARDED_HOST = int(os.environ.get("USE_X_FORWARDED_HOST", 0)) == 1
