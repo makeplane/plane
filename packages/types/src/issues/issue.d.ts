@@ -65,6 +65,7 @@ export type TIssue = TBaseIssue & {
   trip_reference_number?: string[] | null;
   reference_number?: string[] | null;
   vendor_code?: string[] | null;
+  business_type?: string[] | null;
   // tempId is used for optimistic updates. It is not a part of the API response.
   tempId?: string;
   // sourceIssueId is used to store the original issue id when creating a copy of an issue. Used in cloning property values. It is not a part of the API response.

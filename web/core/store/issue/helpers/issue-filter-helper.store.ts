@@ -113,6 +113,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
       trip_reference_number: filters?.trip_reference_number || undefined,
       vendor_code: filters?.vendor_code || undefined,
       vendor_name: filters?.vendor_name || undefined,
+      business_type: filters?.business_type || undefined,
       reference_number: filters?.reference_number || undefined,
     };
 
@@ -164,6 +165,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     trip_reference_number: filters?.trip_reference_number || null,
     vendor_code: filters?.vendor_code || null,
     vendor_name: filters?.vendor_name || null,
+    business_type: filters?.business_type || null,
     reference_number: filters?.reference_number || null,
   });
 

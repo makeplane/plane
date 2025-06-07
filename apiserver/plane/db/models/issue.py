@@ -86,6 +86,7 @@ def get_default_display_properties():
         "vendor_code":True,
         "worker_code":True,
         "worker_name":True,
+        "business_type":True,
     }
 
 
@@ -153,6 +154,7 @@ class Issue(ProjectBaseModel):
     customer_name = models.CharField(max_length=255, blank=True, null=True)
     vendor_name = models.CharField(max_length=255, blank=True, null=True)
     worker_name = models.CharField(max_length=255, blank=True, null=True)
+    business_type = models.CharField(max_length=255, blank=True, null=True)
     source = models.CharField(max_length=255, blank=True, null=True)
     name = models.CharField(max_length=255, verbose_name="Issue Name")
     description = models.JSONField(blank=True, default=dict)
