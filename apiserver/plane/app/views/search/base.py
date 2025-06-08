@@ -36,6 +36,7 @@ from plane.db.models import (
     ProjectPage,
     WorkspaceMember,
 )
+from plane.db.models.user import BotTypeEnum
 from plane.ee.models import (
     TeamspaceMember,
     TeamspacePage,
@@ -338,6 +339,8 @@ class SearchEndpoint(BaseAPIView):
 
         response_data = {}
 
+        bot_filter = Q(member__is_bot=False) | Q(member__bot_type=BotTypeEnum.APP_BOT.value) # noqa: E501
+
         if team_id:
             team_projects = TeamspaceProject.objects.filter(
                 team_space_id=team_id, workspace__slug=slug
@@ -359,8 +362,8 @@ class SearchEndpoint(BaseAPIView):
                     users = (
                         TeamspaceMember.objects.filter(
                             q,
+                            bot_filter,
                             workspace__slug=slug,
-                            member__is_bot=False,
                             team_space_id=team_id,
                         )
                         .annotate(
@@ -588,9 +591,9 @@ class SearchEndpoint(BaseAPIView):
                     users = (
                         ProjectMember.objects.filter(
                             q,
+                            bot_filter,
                             is_active=True,
                             workspace__slug=slug,
-                            member__is_bot=False,
                             project_id=project_id,
                         )
                         .annotate(
@@ -827,9 +830,9 @@ class SearchEndpoint(BaseAPIView):
                     users = (
                         WorkspaceMember.objects.filter(
                             q,
+                            bot_filter,
                             is_active=True,
                             workspace__slug=slug,
-                            member__is_bot=False,
                         )
                         .annotate(
                             member__avatar_url=Case(

@@ -1,5 +1,8 @@
 import uuid
 
+from django.contrib.auth.hashers import make_password
+from django.db import models
+
 from oauth2_provider.models import (
     AbstractAccessToken,
     AbstractApplication,
@@ -9,15 +12,12 @@ from oauth2_provider.models import (
     ApplicationManager,
 )
 
-from django.db import models
-from django.contrib.auth.hashers import make_password
-
-from plane.db.mixins import UserAuditModel, SoftDeleteModel
-from plane.db.models import BaseModel, User, WorkspaceMember, ProjectMember, Project
 from plane.app.permissions.base import ROLE
-
-from plane.utils.html_processor import strip_tags
 from plane.authentication.bgtasks.app_webhook_url_updates import app_webhook_url_updates
+from plane.db.mixins import SoftDeleteModel, UserAuditModel
+from plane.db.models import BaseModel, Project, ProjectMember, User, WorkspaceMember
+from plane.db.models.user import BotTypeEnum
+from plane.utils.html_processor import strip_tags
 
 
 # oauth models
@@ -221,6 +221,7 @@ class WorkspaceAppInstallation(BaseModel):
                 first_name=f"{self.application.name}",
                 last_name="Bot",
                 is_bot=True,
+                bot_type=BotTypeEnum.APP_BOT.value,
                 email=f"{username}@plane.so",
                 password=make_password(uuid.uuid4().hex),
                 is_password_autoset=True,

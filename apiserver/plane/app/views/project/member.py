@@ -7,6 +7,7 @@ import json
 # Django imports
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Q
 
 
 # Module imports
@@ -17,12 +18,9 @@ from plane.app.serializers import (
     ProjectMemberRoleSerializer,
 )
 
-from plane.app.permissions import (
-    ProjectMemberPermission,
-    ProjectLitePermission,
-    WorkspaceUserPermission,
-)
+from plane.app.permissions import WorkspaceUserPermission
 from plane.db.models import Project, ProjectMember, IssueUserProperty, WorkspaceMember
+from plane.db.models.user import BotTypeEnum
 from plane.ee.models import TeamspaceMember, TeamspaceProject
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
 from plane.utils.host import base_host
@@ -215,10 +213,11 @@ class ProjectMemberViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         # Get the list of project members for the project
+        bot_filter = Q(member__is_bot=False) | Q(member__bot_type=BotTypeEnum.APP_BOT.value) # noqa: E501
         project_members = ProjectMember.objects.filter(
+            bot_filter,
             project_id=project_id,
             workspace__slug=slug,
-            member__is_bot=False,
             is_active=True,
             member__member_workspace__workspace__slug=slug,
             member__member_workspace__is_active=True,

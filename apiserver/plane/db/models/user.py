@@ -43,6 +43,7 @@ class BotTypeEnum(models.TextChoices):
     SLACK_BOT = "SLACK_BOT", "Slack Bot"
     GITHUB_BOT = "GITHUB_BOT", "Github Bot"
     INTAKE_BOT = "INTAKE_BOT", "Intake Bot"
+    APP_BOT = "APP_BOT", "App Bot"
 
 
 class User(AbstractBaseUser, PermissionsMixin):
