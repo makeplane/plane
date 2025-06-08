@@ -2025,7 +2025,11 @@
           },
           "keywords": {
             "label": "Từ khóa",
-            "placeholder": "Sử dụng các thuật ngữ mà bạn nghĩ người dùng sẽ tìm kiếm khi tìm mẫu này."
+            "placeholder": "Sử dụng các thuật ngữ mà bạn nghĩ người dùng sẽ tìm kiếm khi tìm mẫu này.",
+            "helperText": "Nhập các từ khóa được phân tách bằng dấu phẩy, có khả năng giúp người dùng tìm kiếm từ khóa này.",
+            "validation": {
+              "required": "Cần ít nhất một từ khóa"
+            }
           },
           "company_name": {
             "label": "Tên công ty",

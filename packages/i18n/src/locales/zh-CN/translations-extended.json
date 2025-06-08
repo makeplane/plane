@@ -2041,7 +2041,11 @@
           },
           "keywords": {
             "label": "关键词",
-            "placeholder": "使用您认为用户在查找此模板时会搜索的术语。"
+            "placeholder": "使用您认为用户在查找此模板时会搜索的术语。",
+            "helperText": "输入逗号分隔的关键词，这些关键词可能有助于人们从搜索中找到此模板。",
+            "validation": {
+              "required": "至少需要一个关键词"
+            }
           },
           "company_name": {
             "label": "公司名称",

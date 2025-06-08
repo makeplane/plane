@@ -2039,7 +2039,11 @@
           },
           "keywords": {
             "label": "Kata kunci",
-            "placeholder": "Gunakan istilah yang Anda pikir pengguna akan cari ketika mencari template ini."
+            "placeholder": "Gunakan istilah yang Anda pikir pengguna akan cari ketika mencari template ini.",
+            "helperText": "Masukkan kata kunci yang dipisahkan dengan koma yang akan membantu orang menemukan ini dari pencarian.",
+            "validation": {
+              "required": "Setidaknya satu kata kunci diperlukan"
+            }
           },
           "company_name": {
             "label": "Nama perusahaan",

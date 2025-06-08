@@ -2040,7 +2040,11 @@
           },
           "keywords": {
             "label": "Parole chiave",
-            "placeholder": "Usa termini che pensi che i tuoi utenti cercheranno quando cercano questo modello."
+            "placeholder": "Usa termini che pensi che i tuoi utenti cercheranno quando cercano questo modello.",
+            "helperText": "Inserisci parole chiave separate da virgole che aiuteranno le persone a trovare questo dalla ricerca.",
+            "validation": {
+              "required": "Almeno una parola chiave è obbligatoria"
+            }
           },
           "company_name": {
             "label": "Nome dell'azienda",

@@ -2042,7 +2042,11 @@
           },
           "keywords": {
             "label": "Klíčová slova",
-            "placeholder": "Použijte termíny, které si myslíte, že vaši uživatele při hledání této šablony použijí."
+            "placeholder": "Použijte termíny, které si myslíte, že vaši uživatele při hledání této šablony použijí.",
+            "helperText": "Zadejte klíčová slova oddělená čárkami, která pomůžou lidem najít tuto šablonu z hledání.",
+            "validation": {
+              "required": "Alespoň jedno klíčové slovo je povinné"
+            }
           },
           "company_name": {
             "label": "Název společnosti",

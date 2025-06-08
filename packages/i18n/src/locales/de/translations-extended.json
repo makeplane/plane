@@ -2042,7 +2042,11 @@
           },
           "keywords": {
             "label": "Schlüsselwörter",
-            "placeholder": "Verwenden Sie Begriffe, die Sie denken, dass Ihre Benutzer beim Suchen nach dieser Vorlage verwenden werden."
+            "placeholder": "Verwenden Sie Begriffe, die Sie denken, dass Ihre Benutzer beim Suchen nach dieser Vorlage verwenden werden.",
+            "helperText": "Geben Sie Schlüsselwörter ein, die wahrscheinlich helfen, diese von der Suche zu finden.",
+            "validation": {
+              "required": "Mindestens ein Schlüsselwort ist erforderlich"
+            }
           },
           "company_name": {
             "label": "Unternehmensname",

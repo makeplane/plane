@@ -2040,7 +2040,11 @@
           },
           "keywords": {
             "label": "Palabras clave",
-            "placeholder": "Usa términos que creas que tus usuarios buscarán cuando estén buscando esta plantilla."
+            "placeholder": "Usa términos que creas que tus usuarios buscarán cuando estén buscando esta plantilla.",
+            "helperText": "Introduce palabras clave separadas por comas que sean útiles para que los usuarios encuentren esta plantilla en la búsqueda.",
+            "validation": {
+              "required": "Al menos una palabra clave es obligatoria"
+            }
           },
           "company_name": {
             "label": "Nombre de la empresa",

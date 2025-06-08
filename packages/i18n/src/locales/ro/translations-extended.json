@@ -2039,7 +2039,11 @@
           },
           "keywords": {
             "label": "Cuvinte cheie",
-            "placeholder": "Folosește termeni care crezi că utilizatorii vor căuta atunci când vor căuta acest șablon."
+            "placeholder": "Folosește termeni care crezi că utilizatorii vor căuta atunci când vor căuta acest șablon.",
+            "helperText": "Introduceți cuvinte cheie separate de virgule care vor ajuta oamenii să găsească acest lucru din căutare.",
+            "validation": {
+              "required": "Cel puțin un cuvânt cheie este obligatoriu"
+            }
           },
           "company_name": {
             "label": "Numele companiei",

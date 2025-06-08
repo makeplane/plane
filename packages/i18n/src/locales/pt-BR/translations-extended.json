@@ -2034,8 +2034,12 @@
             }
           },
           "keywords": {
-            "label": "Słowa kluczowe",
-            "placeholder": "Użyj terminów, które uważasz, że użytkownicy będą szukać podczas wyszukiwania tego szablonu."
+            "label": "Palavras-chave",
+            "placeholder": "Use termos que você acha que seus usuários procurarão ao buscar por este modelo.",
+            "helperText": "Insira palavras-chave separadas por vírgulas que ajudarão as pessoas a encontrar este modelo na pesquisa.",
+            "validation": {
+              "required": "Pelo menos uma palavra-chave é obrigatória"
+            }
           },
           "company_name": {
             "label": "Nazwa firmy",

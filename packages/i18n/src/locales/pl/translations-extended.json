@@ -2042,7 +2042,11 @@
           },
           "keywords": {
             "label": "Słowa kluczowe",
-            "placeholder": "Użyj terminów, które uważasz, że Twoi użytkownicy będą szukać podczas wyszukiwania tego szablonu."
+            "placeholder": "Użyj terminów, które uważasz, że Twoi użytkownicy będą szukać podczas wyszukiwania tego szablonu.",
+            "helperText": "Wprowadź słowa kluczowe oddzielone przecinkami, które pomożą ludziom znaleźć to z wyszukiwania.",
+            "validation": {
+              "required": "Przynajmniej jedno słowo kluczowe jest wymagane"
+            }
           },
           "company_name": {
             "label": "Nazwa firmy",

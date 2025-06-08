@@ -2041,7 +2041,11 @@
           },
           "keywords": {
             "label": "Mots-clés",
-            "placeholder": "Utilisez des termes que vous pensez que vos utilisateurs rechercheront lorsqu'ils cherchent ce modèle."
+            "placeholder": "Utilisez des termes que vous pensez que vos utilisateurs rechercheront lorsqu'ils cherchent ce modèle.",
+            "helperText": "Entrez des mots-clés séparés par des virgules qui aideront les gens à trouver ce modèle dans la recherche.",
+            "validation": {
+              "required": "Au moins un mot-clé est requis"
+            }
           },
           "company_name": {
             "label": "Nom de l'entreprise",

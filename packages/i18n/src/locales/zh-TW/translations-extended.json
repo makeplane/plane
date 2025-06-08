@@ -2042,7 +2042,11 @@
           },
           "keywords": {
             "label": "關鍵字",
-            "placeholder": "使用您認為用戶在尋找此模板時會搜索的術語。"
+            "placeholder": "使用您認為用戶在尋找此模板時會搜索的術語。",
+            "helperText": "輸入逗號分隔的關鍵詞，這些關鍵詞可能會幫助人們從搜索中找到此模板。",
+            "validation": {
+              "required": "至少需要一個關鍵詞"
+            }
           },
           "company_name": {
             "label": "公司名稱",

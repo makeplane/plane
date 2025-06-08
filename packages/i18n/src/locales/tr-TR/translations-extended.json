@@ -2101,7 +2101,11 @@
           },
           "keywords": {
             "label": "Anahtar kelimeler",
-            "placeholder": "Kullanıcılarınızın bu şablonu ararken arayacağını düşündüğünüz terimleri kullanın."
+            "placeholder": "Kullanıcılarınızın bu şablonu ararken arayacağını düşündüğünüz terimleri kullanın.",
+            "helperText": "Virgül ile ayrılmış anahtar kelimeleri girin, bu, insanların bu şablonu aramadan bulmasına yardımcı olacaktır.",
+            "validation": {
+              "required": "En az bir anahtar kelime gereklidir"
+            }
           },
           "company_name": {
             "label": "Şirket adı",

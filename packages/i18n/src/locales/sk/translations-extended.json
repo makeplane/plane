@@ -2042,7 +2042,11 @@
           },
           "keywords": {
             "label": "Kľúčové slová",
-            "placeholder": "Použite výrazy, ktoré si myslíte, že vaši používatelia budú hľadať pri hľadaní tejto šablóny."
+            "placeholder": "Použite výrazy, ktoré si myslíte, že vaši používatelia budú hľadať pri hľadaní tejto šablóny.",
+            "helperText": "Zadajte kľúčové slová oddelené čiarkami, ktoré pomôžu ľuďom nájsť túto šablónu z vyhľadávania.",
+            "validation": {
+              "required": "Aspoň jedno kľúčové slovo je povinné"
+            }
           },
           "company_name": {
             "label": "Názov spoločnosti",

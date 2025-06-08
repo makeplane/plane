@@ -2148,7 +2148,7 @@
           "keywords": {
             "label": "Keywords",
             "placeholder": "Use terms that you think your users will search for when looking for this template.",
-            "helperText": "Separate keywords with commas (,)",
+            "helperText": "Enter comma-separated keywords that are likely to help people find this from search.",
             "validation": {
               "required": "At least one keyword is required"
             }
