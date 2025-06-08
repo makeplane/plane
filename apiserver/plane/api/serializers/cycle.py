@@ -9,7 +9,12 @@ from plane.utils.timezone_converter import convert_to_utc
 
 
 class CycleCreateSerializer(BaseSerializer):
-    """Serializer for creating a cycle"""
+    """
+    Serializer for creating cycles with timezone handling and date validation.
+
+    Manages cycle creation including project timezone conversion, date range validation,
+    and UTC normalization for time-bound iteration planning and sprint management.
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -76,7 +81,12 @@ class CycleCreateSerializer(BaseSerializer):
 
 
 class CycleUpdateSerializer(CycleCreateSerializer):
-    """Serializer for updating a cycle"""
+    """
+    Serializer for updating cycles with enhanced ownership management.
+
+    Extends cycle creation with update-specific features including ownership
+    assignment and modification tracking for cycle lifecycle management.
+    """
 
     class Meta(CycleCreateSerializer.Meta):
         model = Cycle
@@ -86,6 +96,13 @@ class CycleUpdateSerializer(CycleCreateSerializer):
 
 
 class CycleSerializer(BaseSerializer):
+    """
+    Cycle serializer with comprehensive project metrics and time tracking.
+
+    Provides cycle details including work item counts by status, progress estimates,
+    and time-bound iteration data for project management and sprint planning.
+    """
+
     total_issues = serializers.IntegerField(read_only=True)
     cancelled_issues = serializers.IntegerField(read_only=True)
     completed_issues = serializers.IntegerField(read_only=True)
@@ -113,6 +130,13 @@ class CycleSerializer(BaseSerializer):
 
 
 class CycleIssueSerializer(BaseSerializer):
+    """
+    Serializer for cycle-issue relationships with sub-issue counting.
+
+    Manages the association between cycles and work items, including
+    hierarchical issue tracking for nested work item structures.
+    """
+
     sub_issues_count = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -122,13 +146,25 @@ class CycleIssueSerializer(BaseSerializer):
 
 
 class CycleLiteSerializer(BaseSerializer):
+    """
+    Lightweight cycle serializer for minimal data transfer.
+
+    Provides essential cycle information without computed metrics,
+    optimized for list views and reference lookups.
+    """
+
     class Meta:
         model = Cycle
         fields = "__all__"
 
 
 class CycleIssueRequestSerializer(serializers.Serializer):
-    """Serializer for adding/managing cycle issues"""
+    """
+    Serializer for bulk work item assignment to cycles.
+
+    Validates work item ID lists for batch operations including
+    cycle assignment and sprint planning workflows.
+    """
 
     issues = serializers.ListField(
         child=serializers.UUIDField(), help_text="List of issue IDs to add to the cycle"
@@ -136,7 +172,12 @@ class CycleIssueRequestSerializer(serializers.Serializer):
 
 
 class TransferCycleIssueRequestSerializer(serializers.Serializer):
-    """Serializer for transferring cycle issues to another cycle"""
+    """
+    Serializer for transferring work items between cycles.
+
+    Handles work item migration between cycles including validation
+    and relationship updates for sprint reallocation workflows.
+    """
 
     new_cycle_id = serializers.UUIDField(
         help_text="ID of the target cycle to transfer issues to"

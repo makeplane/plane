@@ -7,6 +7,13 @@ from .base import BaseSerializer
 
 
 class UserLiteSerializer(BaseSerializer):
+    """
+    Lightweight user serializer for minimal data transfer.
+
+    Provides essential user information including names, avatar, and contact details
+    optimized for member lists, assignee displays, and user references.
+    """
+
     avatar_url = serializers.CharField(
         help_text="Avatar URL",
         read_only=True,

@@ -14,6 +14,12 @@ from .base import BaseSerializer
 
 
 class ProjectCreateSerializer(BaseSerializer):
+    """
+    Serializer for creating projects with workspace validation.
+
+    Handles project creation including identifier validation, member verification,
+    and workspace association for new project initialization.
+    """
 
     class Meta:
         model = Project
@@ -86,7 +92,12 @@ class ProjectCreateSerializer(BaseSerializer):
 
 
 class ProjectUpdateSerializer(ProjectCreateSerializer):
-    """Serializer for updating a project"""
+    """
+    Serializer for updating projects with enhanced state and estimation management.
+
+    Extends project creation with update-specific validations including default state
+    assignment, estimation configuration, and project setting modifications.
+    """
 
     class Meta(ProjectCreateSerializer.Meta):
         model = Project
@@ -124,6 +135,13 @@ class ProjectUpdateSerializer(ProjectCreateSerializer):
 
 
 class ProjectSerializer(BaseSerializer):
+    """
+    Comprehensive project serializer with metrics and member context.
+
+    Provides complete project data including member counts, cycle/module totals,
+    deployment status, and user-specific context for project management.
+    """
+
     total_members = serializers.IntegerField(read_only=True)
     total_cycles = serializers.IntegerField(read_only=True)
     total_modules = serializers.IntegerField(read_only=True)
@@ -197,6 +215,13 @@ class ProjectSerializer(BaseSerializer):
 
 
 class ProjectLiteSerializer(BaseSerializer):
+    """
+    Lightweight project serializer for minimal data transfer.
+
+    Provides essential project information including identifiers, visual properties,
+    and basic metadata optimized for list views and references.
+    """
+
     cover_image_url = serializers.CharField(read_only=True)
 
     class Meta:

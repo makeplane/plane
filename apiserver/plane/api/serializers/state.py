@@ -4,6 +4,13 @@ from plane.db.models import State
 
 
 class StateSerializer(BaseSerializer):
+    """
+    Serializer for work item states with default state management.
+
+    Handles state creation and updates including default state validation
+    and automatic default state switching for workflow management.
+    """
+
     def validate(self, data):
         # If the default is being provided then make all other states default False
         if data.get("default", False):
@@ -29,6 +36,13 @@ class StateSerializer(BaseSerializer):
 
 
 class StateLiteSerializer(BaseSerializer):
+    """
+    Lightweight state serializer for minimal data transfer.
+
+    Provides essential state information including visual properties
+    and grouping data optimized for UI display and filtering.
+    """
+
     class Meta:
         model = State
         fields = ["id", "name", "color", "group"]
