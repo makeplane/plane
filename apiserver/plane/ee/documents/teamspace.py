@@ -51,7 +51,7 @@ class TeamspaceDocument(BaseDocument):
 
     def get_instances_from_related(self, related_instance):
         if isinstance(related_instance, TeamspaceMember):
-            qs = related_instance.team_space.all()
+            qs = self.django.model.objects.filter(id=related_instance.team_space.id)
         else:
             qs = self.django.model.objects.none()
         return self.apply_related_to_queryset(qs)
@@ -66,7 +66,10 @@ class TeamspaceDocument(BaseDocument):
         """
         Data preparation method for active_project_member_user_ids field
         """
-        return instance.active_member_user_ids
+        if hasattr(instance, "active_member_user_ids"):
+            return instance.active_member_user_ids
+        else:
+            return [member.member_id for member in instance.members.all()]
 
     def prepare_is_deleted(self, instance):
         """

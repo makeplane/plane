@@ -86,12 +86,28 @@ class PageDocument(BaseDocument):
         if instance.projects.count() > 0:
             project_member_ids = []
             for project in instance.projects.all():
-                project_member_ids.extend(
-                    [member.member_id for member in project.project_members]
-                )
+                if hasattr(project, "project_members"):
+                    project_member_ids.extend(
+                        [member.member_id for member in project.project_members]
+                    )
+                else:
+                    project_member_ids.extend(
+                        [
+                            member.member_id
+                            for member in project.project_projectmember.all()
+                        ]
+                    )
             return project_member_ids
         else:
-            return [member.member_id for member in instance.workspace.workspace_members]
+            if hasattr(instance.workspace, "workspace_members"):
+                return [
+                    member.member_id for member in instance.workspace.workspace_members
+                ]
+            else:
+                return [
+                    member.member_id
+                    for member in instance.workspace.workspace_member.all()
+                ]
 
     def prepare_is_deleted(self, instance):
         """
